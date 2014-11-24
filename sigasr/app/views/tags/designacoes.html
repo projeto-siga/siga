@@ -148,6 +148,9 @@
 	
 	// Limpa os dados da tela.
 	function limparDadosDesignacaoModal() {
+		
+		unblock();
+		
 		// recupera as comboboxes
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0],
@@ -684,26 +687,26 @@
     		
 		// valida o item selecionado
 		if (rowValues) {
-			if (rowValues[1] != '' && rowValues[1] > 0)
-				params += '&designacao.orgaoUsuario.idOrgaoUsu=' + rowValues[1];
+			//if (rowValues[1] != '' && rowValues[1] > 0)
+				params += '&designacao.orgaoUsuario=' + rowValues[1];
 			
-			if (rowValues[3] != '' && rowValues[3] > 0)
-				params += '&designacao.complexo.idComplexo=' + rowValues[3];
+			//if (rowValues[3] != '' && rowValues[3] > 0)
+				params += '&designacao.complexo=' + rowValues[3];
 			
-			if (rowValues[12] != '')
-	            params += '&designacao.atendente.id=' + rowValues[12];
+			//if (rowValues[12] != '')
+	            params += '&designacao.atendente=' + rowValues[12];
 			
-			if (rowValues[15] != '')
-	            params += '&designacao.preAtendente.id=' + rowValues[15];
+			//if (rowValues[15] != '')
+	            params += '&designacao.preAtendente=' + rowValues[15];
 			
-			if (rowValues[18] != '')
-	            params += '&designacao.posAtendente.id=' + rowValues[18];
+			//if (rowValues[18] != '')
+	            params += '&designacao.posAtendente=' + rowValues[18];
 			
-			if (rowValues[21] != '')
-	            params += '&designacao.equipeQualidade.id=' + rowValues[21];
+			//if (rowValues[21] != '')
+	            params += '&designacao.equipeQualidade=' + rowValues[21];
 			
-			if (rowValues[24] != '' && rowValues[24] > 0)
-				params += '&designacao.pesquisaSatisfacao.id=' + rowValues[24];
+			//if (rowValues[24] != '' && rowValues[24] > 0)
+				params += '&designacao.pesquisaSatisfacao=' + rowValues[24];
 			
 			if (rowValues[26] != '')
 				params += '&designacao.slaPreAtendimentoQuantidade=' + rowValues[26];
@@ -761,46 +764,36 @@
     function getDadosSolicitante(rowValues, i) {
     	var params = '';
     	
-    	// só atualiza os valores caso tenha algum selecionado na tela
-    	if (rowValues[6] != '') {
-    		// caso seja pessoa
 			if (rowValues[5] == 1) {
-				params += '&designacao.dpPessoa.id=' + rowValues[6];
-				params += '&designacao.lotacao.id=0';
-				params += '&designacao.funcaoConfianca.idFuncao=0';
-				params += '&designacao.cargo.id=0';
+				params += '&designacao.dpPessoa=' + rowValues[6];
+				params += '&designacao.lotacao=';
+				params += '&designacao.funcaoConfianca=';
+				params += '&designacao.cargo=0';
 			}
 			
 			// caso seja lotação
 			else if (rowValues[5] == 2) {
-				params += '&designacao.lotacao.id=' + rowValues[6];
-				params += '&designacao.dpPessoa.id=0';
-				params += '&designacao.funcaoConfianca.idFuncao=0';
-				params += '&designacao.cargo.id=0';
+				params += '&designacao.lotacao=' + rowValues[6];
+				params += '&designacao.dpPessoa=';
+				params += '&designacao.funcaoConfianca=';
+				params += '&designacao.cargo=';
 			}
 			
 			// caso seja função
 			else if (rowValues[5] == 3) {
-				params += '&designacao.funcaoConfianca.idFuncao=' + rowValues[6];
-				params += '&designacao.dpPessoa.id=0';
-				params += '&designacao.lotacao.id=0';
-				params += '&designacao.cargo.id=0';
+				params += '&designacao.funcaoConfianca=' + rowValues[6];
+				params += '&designacao.dpPessoa=';
+				params += '&designacao.lotacao=';
+				params += '&designacao.cargo=';
 			}
 			
 			// caso seja cargo
 			else if (rowValues[5] == 4) {
-				params += '&designacao.cargo.id=' + rowValues[6];
-				params += '&designacao.dpPessoa.id=0';
-				params += '&designacao.lotacao.id=0';
-				params += '&designacao.funcaoConfianca.idFuncao=0';
+				params += '&designacao.cargo=' + rowValues[6];
+				params += '&designacao.dpPessoa=';
+				params += '&designacao.lotacao=';
+				params += '&designacao.funcaoConfianca=';
 			}
-    	}
-    	else {
-           	params += '&designacao.dpPessoa.id=0';
-			params += '&designacao.lotacao.id=0';
-			params += '&designacao.funcaoConfianca.idFuncao=0';
-			params += '&designacao.cargo.id=0';
-    	}
     	
     	return params;
     }

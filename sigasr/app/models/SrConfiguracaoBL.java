@@ -151,8 +151,10 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if (cpConfiguracao.getHisDtFim() == null
 					&& atendeExigencias(confFiltro, atributosDesconsiderados,
-							(SrConfiguracao) cpConfiguracao, null))
+							(SrConfiguracao) cpConfiguracao, null)) {
 				listaFinal.add((SrConfiguracao) cpConfiguracao);
+			}
+			
 		}
 		return listaFinal;
 	}

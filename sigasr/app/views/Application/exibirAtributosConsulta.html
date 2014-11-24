@@ -1,0 +1,172 @@
+<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
+
+<tr id="atributos">
+	<td>Atributos</td>
+	<td style="padding-left:0px">
+		<table>
+			#{list items:filtro.tiposAtributosConsulta, as:'tipoAtributo'}
+				<tr>
+					<td>
+						#{select name:'name_['+tipoAtributo.idTipoAtributo+']', value:tipoAtributo.idTipoAtributo, onchange : 'alterarCampoParaTipoAtributo($(this))' }
+							#{list items:filtro.itensDisponiveis(tiposAtributosDisponiveisAdicao, tipoAtributo), as: 'tipoAtributoDisponivel' }
+								#{option tipoAtributoDisponivel.idTipoAtributo}
+									${tipoAtributoDisponivel.nomeTipoAtributo}
+								#{/option}
+							#{/list}
+						#{/select}
+					</td>
+					
+					<td class="valoresAtribudos">
+						#{if tipoAtributo.formatoCampo != null}
+							#{if tipoAtributo.formatoCampo.name() == "TEXTO"}
+								<input type="text" name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" class="${tipoAtributo.idTipoAtributo}"/>
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+							#{/if}
+							#{if tipoAtributo.formatoCampo.name() == "DATA"}
+								<input type="text" name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" id="calendarioAtributo${tipoAtributo.idTipoAtributo}" class="${tipoAtributo.idTipoAtributo}"/>
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+								<script>
+									$(function() {
+										$( "#calendarioAtributo${tipoAtributo.idTipoAtributo}" ).datepicker({
+									        showOn: "button",
+									        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+									        buttonImageOnly: true,
+									        dateFormat: 'dd/mm/yy'
+									    });
+										$("#calendarioAtributo${tipoAtributo.idTipoAtributo}").mask("99/99/9999");
+									});
+								</script>
+							#{/if}
+							#{if tipoAtributo.formatoCampo.name() == "NUM_INTEIRO"}
+								<input type="text" class="${tipoAtributo.idTipoAtributo}"
+									onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
+									name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" />
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+							#{/if}
+							#{if tipoAtributo.formatoCampo.name() == "NUM_DECIMAL"}
+								<input type="text" name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" 
+									id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${tipoAtributo.idTipoAtributo}"/>
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+							#{/if}
+							#{if tipoAtributo.formatoCampo.name() == "HORA"}
+								<input type="text" name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" id="horarioAtributo${tipoAtributo.idTipoAtributo}" class="${tipoAtributo.idTipoAtributo}" />
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+								<span style="color: red; display: none;" id="erroHoraAtributo${tipoAtributo.idTipoAtributo}">Horário inválido</span>
+								<script>
+									$(function() {
+										$("#horarioAtributo${tipoAtributo.idTipoAtributo}").mask("99:99");
+										$("#horarioAtributo${tipoAtributo.idTipoAtributo}").blur(function() {
+											var hora = this.value;
+											var array = hora.split(':');
+											if (array[0] > 23 || array[1] > 59) {
+												$('#erroHoraAtributo${tipoAtributo.idTipoAtributo}').show(); 
+												return;
+											}
+											$('#erroHoraAtributo${tipoAtributo.idTipoAtributo}').hide();	
+										});
+									});
+								</script>
+							#{/if}
+							#{if tipoAtributo.formatoCampo.name() == "VL_PRE_DEFINIDO"}
+								#{select name:'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']', value:filtro.atributoMap[tipoAtributo.idTipoAtributo], class:tipoAtributo.idTipoAtributo+' '}
+									#{list items:tipoAtributo.preDefinidoSet, as:'valorAtributo' }
+										#{option valorAtributo}
+											${valorAtributo}
+										#{/option}
+									#{/list}
+								#{/select}
+							#{/if}
+						#{/if}
+					<td>
+					<td>
+						<img src="/siga/css/famfamfam/icons/delete.png" style="margin-left:-29px"
+							onclick="removerFiltroAtributo(this)" title="Remover atributo dos filtros"></img>
+					</td>
+				</tr>
+			#{/list}
+			<tr id="ddlNovoAtributoContainer">
+				<td>
+					<div>
+						#{select name:'adicionar_novo_atributo', onchange : 'carregarCampoParaTipoAtributo($(this))' }
+							#{option ""}#{/option}
+							#{list items:tiposAtributosDisponiveisAdicao, as: 'tipoAtributoDisponivel' }
+								#{option tipoAtributoDisponivel.idTipoAtributo}
+									${tipoAtributoDisponivel.nomeTipoAtributo}
+								#{/option}
+							#{/list}
+						#{/select}
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td id="btnAdicionarAtributo">
+					<img src="/siga/css/famfamfam/icons/add.png" 
+						onclick="adicionarFiltroAtributo()" title="Adicionar atributo como filtro"></img>
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>
+
+<script>
+	// Esconde a combo onde ficam os tipos de atributos disponiveis e seleciona a opcao vazia
+	$("#ddlNovoAtributoContainer").hide();
+	$("#ddlNovoAtributoContainer select option:nth(0)").attr('selected', 'selected');
+
+	function adicionarFiltroAtributo() {
+		if($("#ddlNovoAtributoContainer select option").size() > 1) {
+			$("#ddlNovoAtributoContainer").show();
+		}
+    } 
+
+	// Remove um filtro de atributo da tela
+    function removerFiltroAtributo(input) {
+    	removerFiltroAtributoDaTela(input); // Remove o filtro atual da tela (usuario clicou no remover)
+        carregarCampoParaTipoAtributo();
+    }
+
+    // Remove a linha que contem um atributo 
+    function removerFiltroAtributoDaTela(input) {
+        $(input).parent('td').parent('tr').remove();
+    }
+
+    // Carrega o template que representa os atributos quando o usuario seleciona uma novo atributo
+    function carregarCampoParaTipoAtributo(select) {
+    	var params = '';
+		if(select) {
+			select.attr('disabled', true);
+			params = ('filtro.atributoMap[' + select.val() + "]=&");
+		}
+		params += construirParametrosRequisicaoAtributos();
+		PassAjaxResponseToFunction('@{Application.exibirAtributosConsulta()}?' + params, 'carregouCampoAtributo', null, false, null);
+    }
+
+    // Carrega o template que representa os atributos quando o usuario altera um atributo jah presenta na tela
+    function alterarCampoParaTipoAtributo(select) {
+    	select.attr('disabled', true);
+    	
+    	removerFiltroAtributoDaTela(select);
+        var params = 'filtro.atributoMap[' + select.val() + "]=&" + construirParametrosRequisicaoAtributos();
+		PassAjaxResponseToFunction('@{Application.exibirAtributosConsulta()}?' + params, 'carregouCampoAtributo', null, false, null);
+    }
+
+    // Pega os campos que representam os atributos e constuir a query da URL
+    function construirParametrosRequisicaoAtributos() {
+		var params = '';
+		$('#atributos .valoresAtribudos').find('input,select').each(function() {
+			params += $(this).attr('name') + '=' + $(this).val() + '&';  
+		});
+		return params;
+    }
+
+    // Callback da requisicao que busca o template com os atributos
+	function carregouCampoAtributo(response, param) {
+		var div = document.getElementById('atributos');
+		div.innerHTML = response;
+		var scripts = div.getElementsByTagName("script");
+		for(var i=0;i<scripts.length;i++)
+			eval(scripts[i].text);
+	}
+</script>
+
+						

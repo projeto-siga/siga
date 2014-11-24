@@ -6,8 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -83,10 +85,6 @@ public class SrMovimentacao extends GenericModel {
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista lista;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_SOLICITACAO_VINCULO")
-	public SrSolicitacaoVinculo vinculo;
-
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_CANCELADORA")
 	public SrMovimentacao movCanceladora;
@@ -141,19 +139,23 @@ public class SrMovimentacao extends GenericModel {
 		return respostaSet;
 	}
 
-	public void setRespostaMap(Map<Long, String> respostaMap)
+	public List<SrResposta> setRespostaMap(HashMap<Long, Object> respostas)
 			throws Exception {
+		
 		respostaSet = new ArrayList<SrResposta>();
-		for (Long idPergunta : respostaMap.keySet()){
+		Iterator<Map.Entry<Long, Object>> entries = respostas.entrySet()
+				.iterator();
+		while (entries.hasNext()) {
+			Entry<Long, Object> entry = entries.next();
 			SrResposta resp = new SrResposta();
-			resp.movimentacao = this;
-			resp.pergunta = SrPergunta.findById(idPergunta);
-			if (resp.pergunta.tipoPergunta.idTipoPergunta == SrTipoPergunta.TIPO_PERGUNTA_TEXTO_LIVRE)
-				resp.descrResposta = respostaMap.get(idPergunta);
-			else
-				resp.grauSatisfacao = SrGrauSatisfacao.valueOf(respostaMap.get(idPergunta));
+			Long entrada = entry.getKey();
+			resp.pergunta = SrPergunta.findById(entrada);
+			if (resp.pergunta.tipoPergunta.idTipoPergunta == 1) 
+					resp.descrResposta = (String) entry.getValue();
+			else resp.grauSatisfacao = (SrGrauSatisfacao) entry.getValue();
 			respostaSet.add(resp);
 		}
+		return respostaSet;
 	}
 
 	public HashMap<Long, String> getRespostaMap() {
@@ -174,7 +176,7 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public boolean isReplanejada() {
-		return tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO;
+		return tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO;
 	}
 
 	public boolean isCanceladoOuCancelador() {
@@ -285,14 +287,14 @@ public class SrMovimentacao extends GenericModel {
 
 		if (solicitacao == null)
 			throw new Exception(
-					"Movimentação precisa fazer parte de uma solicitação");
+					"Movimentaï¿½ï¿½o precisa fazer parte de uma solicitaï¿½ï¿½o");
 
 		if (arquivo != null) {
 			double lenght = (double) arquivo.blob.length / 1024 / 1024;
 			if (lenght > 2)
 				throw new IllegalArgumentException("O tamanho do arquivo ("
 						+ new DecimalFormat("#.00").format(lenght)
-						+ "MB) é maior que o máximo permitido (2MB)");
+						+ "MB) ï¿½ maior que o mï¿½ximo permitido (2MB)");
 		}
 
 		if (dtIniMov == null)
@@ -319,7 +321,7 @@ public class SrMovimentacao extends GenericModel {
 
 		if (!solicitacao.isRascunho()) {
 			if (atendente == null && lotaAtendente == null)
-				throw new Exception("Atendente não pode ser nulo");
+				throw new Exception("Atendente nï¿½o pode ser nulo");
 
 			if (lotaAtendente == null)
 				lotaAtendente = atendente.getLotacao();

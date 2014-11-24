@@ -31,9 +31,9 @@ $(function(){
 		<p></p>
 		<h3>
 			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)} #{if
-			solicitacao.solicitacaoJuntada} a <a
-				href="@{Application.exibir(solicitacao.solicitacaoJuntada.idSolicitacao)}">
-				${solicitacao.solicitacaoJuntada.codigo} </a> #{/if}
+			solicitacao.solicitacaoPrincipal} a <a
+				href="@{Application.exibir(solicitacao.solicitacaoPrincipal.idSolicitacao)}">
+				${solicitacao.solicitacaoPrincipal.codigo} </a> #{/if}
 		</h3>
 
 		#{if solicitacao.estaForaAtendenteDesignado()}
@@ -187,7 +187,18 @@ $(function(){
 			<h3>Dados da Solicitação</h3>
 			<p>
 				<b>Solicitante:</b>
-				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
+				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao}
+			</p>
+			<p>
+				<b>Interlocutor:</b>
+				${solicitacao?.interlocutor?.descricaoIniciaisMaiusculas}
+			</p>
+			<p>
+				<b>Origem da Demanda:</b>
+				${solicitacao?.meioComunicacao?.descrMeioComunicacao}
+			</p>
+			<p>
+				<b>Lotação:</b> ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
 				solicitacao.local} (${solicitacao.local.nomeComplexo}) #{/if}
 			</p>
 			#{if solicitacao.telPrincipal}
@@ -288,7 +299,7 @@ $(function(){
 		<div class="gt-sidebar-content">
 			<h3>Vinculada a esta solicitação</h3>
 			<p>
-				#{list items:solicitacao.getSolicitacaoVinculadaSet(), as:'vinculada'} <a
+				#{list items:solicitacao.solicitacoesVinculadas, as:'vinculada'} <a
 					href="@{Application.exibir(vinculada.idSolicitacao)}">
 					${vinculada.codigo} </a> , #{/list}
 			</p>
@@ -348,7 +359,49 @@ $(function(){
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</form>
 	#{/modal}
-	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao} 
+	#{modal nome:'juntar', titulo:'Juntar'}
+		<form action="@{Application.juntarSolicitacoes()}" method="post"
+			enctype="multipart/form-data" id="formGravarJuncao">
+			<input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
+			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+				<label>Solicitação</label> <br />
+				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeJuntada',
+					value: idSolicitacaoRecebeJuntada, grande:true,
+					onchange: "validarAssociacao('Juncao');"  /}
+				<span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
+			</div>
+			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+				<label>Justificativa</label>
+				<textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaJuncao" maxlength="255" onkeyup="validarAssociacao('Juncao')"></textarea>
+				<span id="erroJustificativaJuncao" style="color: red; display: none;"><br />Justificativa não informada.</span>
+			</div>
+			<div style="display: inline" class="gt-form-row ">
+				<input type="button" onclick="gravarAssociacao('Juncao');" value="Gravar" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</form>
+	#{/modal}
+	#{modal nome:'vincular', titulo:'Vincular'}
+		<form action="@{Application.vincularSolicitacoes()}" method="post"
+			enctype="multipart/form-data" id="formGravarVinculo">
+			<input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
+			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+				<label>Solicitação</label> <br />
+				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeVinculo',
+					value: idSolicitacaoRecebeVinculo, grande:true,
+					onchange: "validarAssociacao('Vinculo');"  /}
+				<span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
+			</div>
+			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+				<label>Justificativa</label>
+				<textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaVinculo" maxlength="255" onkeyup="validarAssociacao('Vinculo')"></textarea>
+				<span id="erroJustificativaVinculo" style="color: red; display: none;"><br />Justificativa não informada.</span>
+			</div>
+			<div style="display: inline" class="gt-form-row ">
+				<input type="button" onclick="gravarAssociacao('Vinculo');" value="Gravar" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</form>
+	#{/modal}
+	#{modal nome:'associarLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/associarLista?idSolicitacao='+solicitacao.idSolicitacao} 
 	#{/modal} 
 	#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa', url:'/sigasr/solicitacao/responderPesquisa?id='+solicitacao.idSolicitacao}
 	#{/modal}
@@ -408,12 +461,35 @@ $(function(){
 	
 <script language="javascript">
 
-function terminarPendencia(motivo, idMov){
-	$("#motivoId").val(motivo);
-	$("#movimentacaoId").val(idMov);
-	$( "#terminarPendenciaModal_dialog" ).dialog( "open" );
-}
-
+	function terminarPendencia(motivo, idMov){
+		$("#motivoId").val(motivo);
+		$("#movimentacaoId").val(idMov);
+		$( "#terminarPendenciaModal_dialog" ).dialog( "open" );
+	}
+	
+	function validarAssociacao(tipo) 
+	{
+		$("#erroSolicitacao"+tipo).hide();
+		$("#erroJustificativa"+tipo).hide();
+	
+		if ((tipo == 'Juncao' && $("#idSolicitacaoRecebeJuntadaSpan").html() == "")
+				|| (tipo == 'Vinculo' && $("#idSolicitacaoRecebeVinculoSpan").html() == "")) {
+			$("#erroSolicitacao"+tipo).show();
+			return false;
+		}
+		if ($("#justificativa"+tipo).val() == "") {
+			$("#erroJustificativa"+tipo).show();
+			return false;
+		}
+		return true;
+	}
+	
+	function gravarAssociacao(tipo)
+	{
+		if (validarAssociacao(tipo)) {
+			document.getElementById("formGravar"+tipo).submit();
+		}
+	}
 </script>
 
 #{modal nome:'terminarPendenciaModal', titulo:'Terminar Pendencia'}
@@ -439,5 +515,4 @@ $("#terminarPendenciaModal_dialog").dialog({
     modal: true,
     resizable: false
   });
-  
 </script>

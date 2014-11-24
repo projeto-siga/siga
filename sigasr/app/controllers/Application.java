@@ -153,8 +153,11 @@ public class Application extends SigaApplication {
 		render(solicitacao.deduzirLocalRamalEMeioContato());
 	}
 	
-	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, boolean carregarLotaSolicitante) 
+	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoMap, boolean carregarLotaSolicitante) 
 			throws Exception{
+		
+		solicitacao.setAtributoMap(atributoMap);
+		
 		if(carregarLotaSolicitante){
 			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
 			solicitacao.solicitante = null;
@@ -167,6 +170,23 @@ public class Application extends SigaApplication {
 		render(solicitacao);
 	}
 
+	public static void exibirAtributosConsulta(SrSolicitacaoFiltro filtro) throws Exception {
+		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		render(filtro, tiposAtributosDisponiveisAdicao);
+	}
+
+	public static List<SrTipoAtributo> tiposAtributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) {
+		List<SrTipoAtributo> listaAtributosAdicao = new ArrayList<SrTipoAtributo>();
+		HashMap<Long, String> atributoMap = filtro.getAtributoMap();
+
+		for (SrTipoAtributo srTipoAtributo : SrTipoAtributo.listar()) {
+			if (!atributoMap.containsKey(srTipoAtributo.idTipoAtributo)) {
+				listaAtributosAdicao.add(srTipoAtributo);
+			}
+		}
+		return listaAtributosAdicao;
+	}
+	
 	public static void exibirItemConfiguracao(SrSolicitacao solicitacao)
 			throws Exception {
 		if (solicitacao.getItensDisponiveis().contains(
@@ -332,9 +352,11 @@ public class Application extends SigaApplication {
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao, long dtIniEdicao) throws Exception {
+	public static void gravar(SrSolicitacao solicitacao, HashMap<Long, String> atributoMap, long dtIniEdicao) throws Exception {
         solicitacao.dtIniEdicao = new Date(dtIniEdicao);
-		if(!solicitacao.isRascunho())
+        solicitacao.setAtributoMap(atributoMap);
+        
+		if(!solicitacao.rascunho)
         	validarFormEditar(solicitacao);
         
 		solicitacao.salvar(cadastrante(), lotaTitular());
@@ -342,79 +364,27 @@ public class Application extends SigaApplication {
 		exibir(id, completo());
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void juntarSolicitacoes(Long id, Long idSolicitacaoRecebeJuntada, SrSolicitacaoFiltro filtro) throws Exception {
-		List<SrSolicitacao> listaSolicitacao;
-		SrSolicitacao solicitacaoRecebeJuntada = null;
-		
-		SrSolicitacao solicitacaoAJuntar =  SrSolicitacao.findById(id);
-
-		if(idSolicitacaoRecebeJuntada != null)
-			solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
-		
-		if (filtro.pesquisar)
-			listaSolicitacao = filtro.buscar();
-		else
-			listaSolicitacao = new ArrayList<SrSolicitacao>();
-
-		String[] tipos = new String[] { "Pessoa", "Lota��o" };
-		
-		List<CpMarcador> marcadores = JPA.em()
-				.createQuery("select distinct cpMarcador from SrMarca m where m.cpMarcador.idMarcador in (42, 44, 46, 47)")
-				.getResultList();
-		listaSolicitacao.remove(solicitacaoAJuntar);
-
-		render(solicitacaoAJuntar, solicitacaoRecebeJuntada, listaSolicitacao, tipos, marcadores, filtro, Boolean.FALSE);
-	}
-	
-	public static void juntarSolicitacoesGravar(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
+	public static void juntarSolicitacoes(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAJuntar);
 		SrSolicitacao solRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
 		sol.juntar(lotaTitular(), cadastrante(), solRecebeJuntada, justificativa);
 		exibir(idSolicitacaoAJuntar, completo());
 	}
 	
-	@SuppressWarnings("unchecked")
-    public static void vincularSolicitacoes(Long id, Long idSolicitacaoRecebeVinculo, SrSolicitacaoFiltro filtro, boolean mostrarDesativados) throws Exception{
-        List<SrSolicitacao> listaSolicitacao;
-        SrSolicitacao solicitacaoRecebeJuntada = null;
-        
-        SrSolicitacao solicitacaoAVincular =  SrSolicitacao.findById(id);
-
-        if(idSolicitacaoRecebeVinculo != null)
-            solicitacaoRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
-        
-        if (filtro.pesquisar)
-            listaSolicitacao = filtro.buscar();
-        else
-            listaSolicitacao = new ArrayList<SrSolicitacao>();
-
-        String[] tipos = new String[] { "Pessoa", "Lota��o" };
-        
-        List<CpMarcador> marcadores = JPA.em()
-                .createQuery("select distinct cpMarcador from SrMarca")
-                .getResultList();
-        listaSolicitacao.remove(solicitacaoAVincular);
-
-        render(solicitacaoAVincular, solicitacaoRecebeJuntada, listaSolicitacao, tipos, marcadores, filtro, mostrarDesativados);
-    }
-
-    public static void vincularSolicitacoesGravar(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
+    public static void vincularSolicitacoes(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAVincular);
         SrSolicitacao solRecebeVinculo = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
-        
         sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
+        exibir(idSolicitacaoAVincular, completo());
     }
 	
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
-
-		List<SrSolicitacao> listaSolicitacao;
-
+		List<SrSolicitacao> list;
 		if (filtro.pesquisar) {
-			listaSolicitacao = filtro.buscar();
+			list = filtro.buscar();
 		} else {
-			listaSolicitacao = new ArrayList<SrSolicitacao>();
+			list = new ArrayList<SrSolicitacao>();
 		}
 		
 		// Montando o filtro...
@@ -422,8 +392,18 @@ public class Application extends SigaApplication {
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
-
-		render(listaSolicitacao, tipos, marcadores, filtro);
+		
+		// DB1: Trecho de código que garante que só sejam exibidos as solicitações para a lotação cadastrante
+		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
+		for (SrSolicitacao sol : list) 
+			if (!sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO))
+					listaSolicitacao.add(sol);
+			else
+				if (sol.lotaCadastrante == lotaTitular())
+					listaSolicitacao.add(sol);
+		
+		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		render(listaSolicitacao, tipos, marcadores, filtro, tiposAtributosDisponiveisAdicao);
 	}
 	
 	public static void estatistica() throws Exception {
@@ -607,28 +587,29 @@ public class Application extends SigaApplication {
 
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
+		lista.validarPodeExibirLista(lotaTitular(), cadastrante());
 		render(lista);
 	}
 	
-	public static void incluirEmLista(Long idSolicitacao) throws Exception {
+	public static void associarLista(Long idSolicitacao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		solicitacao = solicitacao.getSolicitacaoAtual();
 		render(solicitacao);
 	}
-
-	public static void incluirEmListaGravar(Long idSolicitacao, Long idLista)
+	
+	public static void associarListaGravar(Long idSolicitacao, Long idLista)
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular());
+		solicitacao.associarLista(lista, cadastrante(), lotaTitular());
 		exibir(idSolicitacao, completo());
 	}
 
-	public static void retirarDeLista(Long idSolicitacao, Long idLista)
+	public static void desassociarLista(Long idSolicitacao, Long idLista)
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.retirarDeLista(lista, cadastrante(), lotaTitular());
+		solicitacao.desassociarLista(lista, cadastrante(), lotaTitular());
 		exibirLista(idLista);
 	}
 
@@ -649,11 +630,50 @@ public class Application extends SigaApplication {
 		exibirLista(id);
 	}
 
-	public static void selecionar(String sigla) throws Exception {
+	public static void selecionarSolicitacao(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
 		sel.cadastrante = cadastrante();
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
+	}
+	
+	//	DB1: foi necessário receber e passar o parametro "nome"(igual ao buscarItem())
+	//	para chamar a function javascript correta,
+	//	e o parametro "popup" porque este metodo é usado também na lista,
+	//	e não foi possível deixar default no template(igual ao buscarItem.html) 
+	@SuppressWarnings("unchecked")
+	public static void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) {
+
+		List<SrSolicitacao> list;
+
+		try {
+			if (filtro.pesquisar) {
+					list = filtro.buscar();
+			} else {
+				list = new ArrayList<SrSolicitacao>();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			list = new ArrayList<SrSolicitacao>();
+		}
+		
+		// Montando o filtro...
+		String[] tipos = new String[] { "Pessoa", "Lotação" };
+		List<CpMarcador> marcadores = JPA.em()
+				.createQuery("select distinct cpMarcador from SrMarca")
+				.getResultList();
+		
+		// DB1: Trecho de código que garante que só sejam exibidos as solicitações para a lotação cadastrante
+		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
+		for (SrSolicitacao sol : list) 
+			if (!sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO))
+					listaSolicitacao.add(sol);
+			else
+				if (sol.lotaCadastrante == lotaTitular())
+					listaSolicitacao.add(sol);
+
+		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup, tiposAtributosDisponiveisAdicao);
 	}
 
 	public static void baixar(Long idArquivo) {
@@ -700,10 +720,11 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void responderPesquisaGravar(Long id,
-			Map<Long, String> respostaMap) throws Exception {
+			HashMap<Long, Object> respostaMap) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.responderPesquisa(lotaTitular(), cadastrante(), respostaMap);
-		exibir(id, completo());
+		SrMovimentacao movimentacao = new SrMovimentacao();
+		List<SrResposta> respostas = movimentacao.setRespostaMap(respostaMap);
+		sol.responderPesquisa(lotaTitular(), cadastrante(), respostas);
 	}
 
 	public static void retornarAoAtendimento(Long id) throws Exception {
@@ -942,8 +963,13 @@ public class Application extends SigaApplication {
 					+ " salvo, mas nao foi possivel atualizar conhecimento");
 			e.printStackTrace();
 		}
+//		DB1:Foi necessário retirar a chamada da lista
+//		porque o gravarItem() é chamado via Ajax pelo template,
+//		o Play ao tentar renderizar a lista de itens se perde,
+//		e busca o o arquivo listarItem.TXT
+//		A lista de itens está sendo chamada pelo Callback Success do Ajax
 		
-		listarItem(false);
+//		listarItem(false);
 	}
 
 	public static void desativarItem(Long id) throws Exception {

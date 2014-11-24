@@ -1,10 +1,11 @@
 #{extends 'main.html' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
-
 	$(document).ready(function() {
 		/* Table initialization */
 		var table = $('#solicitacoes_table')
@@ -57,8 +58,9 @@
 	    		detail = tr.next('tr.detail');
     		
 		   if(detail.size() == 0) {
-				var data = tr.find('td');			   
-			   tr.addClass('shown');
+	       		var data = tr.find('td');
+	    		tr.addClass('shown');
+	    		format(data).insertAfter(tr);
 		   }
 		   else {
 		    	if ( detail.is(':visible') ) {
@@ -185,9 +187,21 @@
 							<tr>
 								<td class="gt-celula-nowrap details-control"></td>
 								<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-										<a href="@{Application.exibir(sol.idSolicitacao)}">
-											${sol.codigo}
-										</a>
+									#{if popup}
+										<a href="javascript:opener.retorna_solicitacao${nome}('${sol.idSolicitacao}','${sol.codigo}','${sol.codigo}');window.close()">${sol.codigo}</a>
+									#{/if}
+									#{else}
+										#{if sol.isRascunho()}
+											<a href="@{Application.editar(sol.idSolicitacao)}">
+												${sol.codigo}
+											</a>
+										#{/if}
+										#{else}
+											<a href="@{Application.exibir(sol.idSolicitacao)}">
+												${sol.codigo}
+											</a>
+										#{/else}
+									#{/else}
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
 									<b>${sol.descrItem}:</b>&nbsp;
@@ -218,8 +232,10 @@
 		#{/elseif }
 		
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-			<form action="@{Application.listar}" onsubmit="javascript: return block();">
+			<form action="@{Application.buscarSolicitacao}">
 				<input type="hidden" name="filtro.pesquisar" value="true" />
+				<input type="hidden" name="nome" value="${nome}" />
+				<input type="hidden" name="popup" value="${popup}" />
 				<table class="gt-form-table">
 					<tr class="header">
 					<td align="center" valign="top" colspan="4">Dados para busca</td>
@@ -294,9 +310,11 @@
 								id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="100"></input>
 							</td>
 						</tr>
+						
+						#{include 'Application/exibirAtributosConsulta.html' /}
+							
 						<tr>
-							<td colspan="2"><input type="submit" value="Buscar"
-								class="gt-btn-medium gt-btn-left" /></td>
+							<td colspan="2"><input type="submit" value="Buscar" class="gt-btn-medium gt-btn-left" /></td>
 						</tr>
 				</table>
 			</form>

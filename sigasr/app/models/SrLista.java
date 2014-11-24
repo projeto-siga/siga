@@ -196,11 +196,13 @@ public class SrLista extends HistoricoSuporte {
 		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.PRIORIZACAO);
 	}
 
-	private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, SrTipoPermissaoLista tipoPermissaoLista) {
+	private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, Long tipoPermissaoLista) {
 		List<SrConfiguracao> permissoesEncontradas = getPermissoes(lotaTitular, pess);
 		for (SrConfiguracao srConfiguracao : permissoesEncontradas) {
-			if (tipoPermissaoLista.equals(srConfiguracao.tipoPermissao)) {
-				return Boolean.TRUE;
+			for (SrTipoPermissaoLista permissao: srConfiguracao.tipoPermissaoSet) {
+				if (tipoPermissaoLista == permissao.getIdTipoPermissaoLista()) {
+					return Boolean.TRUE;
+				}
 			}
 		}
 		return Boolean.FALSE;

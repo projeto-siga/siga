@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 import models.SrAcao.SrAcaoVO;
 import models.SrItemConfiguracao.SrItemConfiguracaoVO;
 
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
@@ -161,9 +162,13 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Type(type = "yes_no")
 	public Boolean notificarAtendente;
 
-	@Column(name = "TIPO_PERMISSAO")
-	@Enumerated
-	public SrTipoPermissaoLista tipoPermissao;
+//	@Column(name = "TIPO_PERMISSAO")
+//	@Enumerated
+//	public SrTipoPermissaoLista tipoPermissao;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_TIPO_PERMISSAO")})
+	public List<SrTipoPermissaoLista> tipoPermissaoSet;
 
 	@Transient
 	public SrSubTipoConfiguracao subTipoConfig;

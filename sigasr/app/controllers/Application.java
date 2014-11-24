@@ -36,6 +36,7 @@ import models.SrTipoAtributo;
 import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
+import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
@@ -1253,8 +1254,9 @@ public class Application extends SigaApplication {
 					.listarPermissoesUsoLista(lista, false);
 		} catch (Exception e) {
 		}
+		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
 		
-		render(lista, orgaos, locais);
+		render(lista, orgaos, locais, tiposPermissao);
 	}
 
 	public static void gravarLista(SrLista lista) throws Exception {

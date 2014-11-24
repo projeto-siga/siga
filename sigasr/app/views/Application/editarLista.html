@@ -234,6 +234,89 @@
 	};
 	
 	$(function() {
+		
+		var jTipoPermissao = $("#tipoPermissao"),
+		tipoPermissao = jTipoPermissao[0],
+        jDialog = $("#dialog"),
+        dialog = jDialog[0],
+        jTipoPermissao = $("#tipoPermissao"),
+		jTipoPermissaoSelecionada = $("#itemTipoPermissao");
+       
+        $( "#tipoPermissao" ).sortable({placeholder: "ui-state-highlight"});
+        $( "#tipoPermissao" ).disableSelection();
+       
+        $("#botaoIncluir").click(function(){
+                jDialog.data('acao',tipoPermissao.incluirItem).dialog('open');
+        });
+       
+        jDialog.dialog({
+                autoOpen: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                resizable: false,
+                close: function() {
+                        jDialog.data('tipoPermissao','');
+                },
+                open: function(){
+                        jDialog.dialog('option', 'title', 'Incluir Tipo de Permissão');                  
+                        jTipoPermissao.find("option[value=" + jDialog.data("tipoPermissao") + "]").prop('selected', true);
+                }
+        });
+        $("#modalOk").click(function(){
+                var acao = jDialog.data('acao');
+                var jTipoPermissaoEscolhido = jTipoPermissao.find("option:selected");
+                acao(jTipoEscolhido.val(), jTipoEscolhido.text(), jDialog.data("id"));
+                jTipoPermissaoSelecionada[0].remove(jTipoPermissaoSelecionada[0].selectedIndex);
+                jDialog.dialog('close');
+        });
+        $("#modalCancel").click(function(){
+                jDialog.dialog('close');
+        });
+
+        perguntas["index"] = 0;
+        perguntas.incluirItem = function(descr, idTipo, descrTipo, id){
+                if (!id)
+                        id = 'novo_' + ++perguntas["index"];
+                jPerguntas.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
+                var jNewTr = jPerguntas.find("li:last-child");
+                jNewTr.append("<span>" + descr + "</span> - <span style=\"display: inline-block\" id=\"" + idTipo + "\">"
+                                + descrTipo + "</span>");
+                jNewTr.append("&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/pencil.png\" style=\"visibility:hidden; cursor: pointer\" />");
+                jNewTr.append("&nbsp;<img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: hidden; cursor: pointer\" />");
+                jNewTr.find("img:eq(0)").click(function(){
+                        var jDivs=jNewTr.find("span");
+                        jDialog.data("descrPergunta",jDivs[0].innerHTML)
+                                .data("tipoPergunta",jDivs[1].id)
+                                .data("id",id)
+                                .data("acao", perguntas.alterarItem)
+                                .dialog("open");
+                });
+                jNewTr.find("img:eq(1)").click(function(){
+                        perguntas.removerItem(jNewTr.attr("id"));
+                });
+                jNewTr.mouseover(function(){
+                        jNewTr.find("img").css("visibility", "visible");
+                });
+                jNewTr.mouseout(function(){
+                        jNewTr.find("img").css("visibility", "hidden");
+                });
+        }
+        perguntas.alterarItem = function(descr, idTipo, descrTipo, id){
+                var jDivs=$("#"+id).find("span");
+                jDivs[0].innerHTML = descr;
+                jDivs[1].id = idTipo;
+                jDivs[1].innerHTML = descrTipo;
+        }
+        perguntas.removerItem = function(idItem){
+                $("#"+idItem).remove();
+                perguntas["index"]--;
+        }
+
+        #{list items:pesq.getPerguntaSetAtivas(), as:'pergunta'}
+                perguntas.incluirItem('${pergunta.descrPergunta}', '${pergunta.tipoPergunta.idTipoPergunta}', '${pergunta.tipoPergunta.nomeTipoPergunta}', ${pergunta.idPergunta});
+        #{/list}
+		
 		$("[value='Gravar']").click(function(){
 			var jForm = $("form"),
             	params = jForm.serialize();
@@ -342,8 +425,8 @@
 									<td>${perm.funcaoConfianca?.id}</td>
 									<td>${perm.funcaoConfianca?.sigla}</td>
 									<td>${perm.funcaoConfianca?.descricao}</td>
-									<td>${perm.tipoPermissao}</td>
-									<td>${perm.tipoPermissao?.descrTipoPermissaoLista}</td>
+									<td>${perm.funcaoConfianca?.sigla}</td>
+									<td>${perm.funcaoConfianca?.sigla}</td>
 									<td>${perm.id}</td>
 								</tr>
 							#{/list}
@@ -414,10 +497,10 @@
 			
 			<div class="gt-form-row div-modal-table">
 				<label>Tipo Permissão</label>
-				#{select name:'tipoPermissao',
-				items:models.SrTipoPermissaoLista.values(),
-				labelProperty:'descrTipoPermissaoLista',
-				value:tipoPermissao /}
+					<ul id="tipoPermissao" style="color: #365b6d"></ul>
+					<input type="button" value="Incluir" id="botaoIncluirtipoPermissao"
+		                      class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+				</div>
 			</div>
 			
 			<div class="gt-form-row">
@@ -428,6 +511,23 @@
 						class="gt-btn-medium gt-btn-left"
 						onclick="location.href='@{Application.desativarPermissaoUsoLista()}?id=${idConfiguracao}'" />
 				#{/if}
+			</div>
+		</div>
+	</div>
+	<div id="dialogTipoPermissao">
+		<div class="gt-content">
+			<div class="gt-form gt-content-box">
+				<div class="gt-form-row">
+					<div class="gt-form-row gt-width-66">
+						<label>Lista</label> #{select name:'itemTipoPermissao', id:'itemTipoPermissao'}
+							 #{list items:tiposPermissao, as:'item'} #{option item.idTipoPermissaoLista} ${item.descrTipoPermissaoLista} #{/option} #{/list} #{/select}
+					</div>
+					<div class="gt-form-row">
+						<input type="button" id="modalOkLista" value="Ok"
+	                           class="gt-btn-medium gt-btn-left" />
+						<input type="button" value="Cancelar" id="modalCancelLista" class="gt-btn-medium gt-btn-left" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

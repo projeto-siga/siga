@@ -142,10 +142,6 @@ $(function() {
                                         <input type="button" value="Gravar"
                                                 class="gt-btn-medium gt-btn-left" /> 
                                        	<a href="@{Application.listarPesquisa}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-                                       	#{if pesq?.idPesquisa} <input
-                                                type="button" value="Desativar" class="gt-btn-medium gt-btn-left"
-                                                onclick="location.href='@{Application.desativarPesquisa()}?id=${pesq.idPesquisa}'" />
-                                        #{/if}
                                 </div>
                         </form>
                 </div>

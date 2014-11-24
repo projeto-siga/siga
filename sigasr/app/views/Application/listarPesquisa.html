@@ -1,5 +1,12 @@
 #{extends 'main.html' /} #{set title:'Pesquisas de Satisfação' /}
 
+<script>
+	function desativarPesquisa(event, idPesquisa) {
+		event.stopPropagation();
+		window.location = '@{Application.desativarPesquisa()}?' + jQuery.param({id : idPesquisa});
+	}
+</script>
+
 <div class="gt-bd clearfix">
 	<div class="gt-content">
 		<h2>Pesquisas de Satisfação</h2>
@@ -10,6 +17,7 @@
 					<tr>
 						<th>Nome</th>
 						<th>Descrição</th>
+						<th>Ações</th>
 					</tr>
 				</thead>
 
@@ -20,6 +28,13 @@
 						style="cursor: pointer;">
 						<td >${pesq.nomePesquisa}</td>
 						<td>${pesq.descrPesquisa}</td>
+						<td>
+							#{desativarReativar id:pesq.idPesquisa, 
+												onDesativar :'desativarPesquisa',
+												isAtivo:pesq.isAtivo() }
+							#{/desativarReativar}
+						</td>
+						
 					</tr>
 					</a> #{/list}
 				</tbody>

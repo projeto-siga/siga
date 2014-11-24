@@ -1,5 +1,12 @@
 #{extends 'main.html' /} #{set title:'Tipos de atributo' /}
 
+<script>
+	function desativarTipoAtributo(event, id) {
+		event.stopPropagation();
+		window.location = '@{Application.desativarTipoAtributo()}?' + jQuery.param({id : id});
+	}
+</script>
+
 <div class="gt-bd clearfix">
 	<div class="gt-content">
 		<h2>Tipos de atributo</h2>
@@ -11,6 +18,7 @@
 						<th>Nome</th>
 						<th>Descrição</th>
 						<th>Formato</th>
+						<th>Ações</th>
 					</tr>
 				</thead>
 
@@ -22,6 +30,13 @@
 						<td >${att.nomeTipoAtributo}</td>
 						<td>${att.descrTipoAtributo}</td>
 						<td>${att.formatoCampo?.descrFormatoCampo}</td>
+						<td>
+							#{desativarReativar id:att.idTipoAtributo,
+												onReativar:'reativarTipoAtributo',
+												onDesativar :'desativarTipoAtributo',
+												isAtivo:att.isAtivo() }
+							#{/desativarReativar}
+						</td>
 					</tr>
 					</a> #{/list}
 				</tbody>

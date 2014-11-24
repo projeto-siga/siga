@@ -988,17 +988,24 @@ public class Application extends SigaApplication {
 		listarItem(false);
 	}
 
-	public static void desativarItem(Long id) throws Exception {
+	public static void desativarItem(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
 		item.finalizar();
-		listarItem(Boolean.FALSE);
+		listarItem(mostrarDesativados);
 	}
+	
+	public static void reativarItem(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
+		item.salvar();
+		listarItem(mostrarDesativados);
+	}
+
 
 	public static void selecionarItem(String sigla, SrSolicitacao sol)
 			throws Exception {
-		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla,
-				sol.getItensDisponiveis());
+		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla, sol.getItensDisponiveis());
 		render("@selecionar", sel);
 	}
 
@@ -1178,11 +1185,18 @@ public class Application extends SigaApplication {
 		listarAcao(false);
 	}
 
-	public static void desativarAcao(Long id) throws Exception {
+	public static void desativarAcao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcao acao = SrAcao.findById(id);
 		acao.finalizar();
-		listarAcao(Boolean.FALSE);
+		listarAcao(mostrarDesativados);
+	}
+	
+	public static void reativarAcao(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrAcao acao = SrAcao.findById(id);
+		acao.salvar();
+		listarAcao(mostrarDesativados);
 	}
 
 	public static void selecionarAcao(String sigla, SrSolicitacao sol)
@@ -1257,10 +1271,16 @@ public class Application extends SigaApplication {
 		listarLista(Boolean.FALSE);
 	}
 
-	public static void desativarLista(Long id) throws Exception {
+	public static void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		lista.finalizar();
-		listarLista(Boolean.FALSE);
+		listarLista(mostrarDesativados);
+	}
+	
+	public static void reativarLista(Long id, boolean mostrarDesativados) throws Exception {
+		SrLista lista = SrLista.findById(id);
+		lista.salvar();
+		listarLista(mostrarDesativados);
 	}
 
 	public static void relSolicitacoes(SrSolicitacaoFiltro filtro)

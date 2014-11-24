@@ -250,12 +250,6 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content">
 		<h2>Cadastro de Lista</h2>
-		<p class="gt-table-action-list">
-		#{if lista?.idLista} 
-		<a class="once" href="@{Application.desativarLista(lista.idLista)}">
-		<img src="/siga/css/famfamfam/icons/disconnect.png" style="margin-right: 5px;">Desativar</a>
-		#{/if}
-		</p>
 		<div class="gt-form gt-content-box">
 			<form id="formLista"> #{if
 				lista?.idLista} <input type="hidden" id="idLista" name="lista.idLista" value="${lista.idLista}">

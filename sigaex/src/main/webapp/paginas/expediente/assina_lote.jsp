@@ -10,6 +10,18 @@
 
 <siga:pagina titulo="Assinatura em Lote" onLoad="javascript: TestarAssinaturaDigital()">
 
+	<script type="text/javascript" language="Javascript1.1">
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
+		}
+	</script>
+
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
 
@@ -54,10 +66,12 @@
 			<td>
 				<div id="dados-assinatura" style="visible: hidden">
 				    <c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action" />
+				    <c:set var="jspServerSenha" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_senha_gravar.action" />
 		   	 	    <c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/siga/principal.action"  />
 		    	    <c:set var="urlPath" value="${request.contextPath}" />
 		
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
+					<ww:hidden id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 					<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
 					<c:set var="urlBase"
@@ -90,6 +104,9 @@
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
 			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
 	         	</c:if>
+	         	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
+	         		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>  
+	         	</c:if>
 	        </td> 				
 			</tr>
 		</table>	
@@ -101,12 +118,14 @@
 		    <table class="gt-table">			    
 			    <tr>
 			        <th width="3%"></th>
+			        <th width="3%"></th>
 			        <th width="13%" align="left">Número</th>	
 			        <th  width="5%"></th>		       	        
 			        <th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>	
 			        <th width="15%"></th>	 <th width="49%"></th>			       
 			    </tr>
 			    <tr>
+			        <th width="3%"></th>
 			        <th width="3%" align="right"><input type="checkbox" name="checkall"
 			    					onclick="checkUncheckAll(this)" /></th>	
 			     	<th width="13%"></th>													
@@ -122,9 +141,21 @@
 				    <c:if test="${param[x] == 'true'}">
 				       <c:set var="x_checked" scope="request">checked</c:set>
 				    </c:if>
+				   <c:set var="podeAssinarComSenha" value="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+                   <c:set var="classAssinarComSenha" value="nao-pode-assinar-senha"/>
+		           <c:if test="${podeAssinarComSenha}">
+		              <c:set var="classAssinarComSenha" value="pode-assinar-senha"/>
+		           </c:if>
 			        <tr class="even">
-				        <td width="3%"align="center"><input type="checkbox" name="${x}"
-				           value="true" ${x_checked} /></td>		       
+				        <td width="3%"align="center">
+        		           <c:if test="${podeAssinarComSenha}">
+								<img src="/siga/css/famfamfam/icons/keyboard.png" alt="Permite assinatura com senha" title="Permite assinatura com senha" />
+						   </c:if> 
+				        </td>
+				        <td width="3%"align="center">
+				           <input type="checkbox" name="${x}"
+				           value="true" ${x_checked} class="${classAssinarComSenha}" />
+				        </td>
      			        <td width="13%"align="left">
 	    		            <ww:url id="url" action="exibir" namespace="/expediente/doc">
 		    		            <ww:param name="sigla">${doc.sigla}</ww:param>
@@ -142,7 +173,73 @@
 			    </c:forEach>   
 			 </table>
 	         </div>
-	      </c:if>       		    
+	      </c:if>      		    
 	  </ww:form>
 	</div></div>	
+	
+	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
+		<div id="dialog-form" title="Assinar com Senha">
+ 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" >
+ 				<ww:hidden id="id" name="id" value="${mov.idMov}" />
+ 				<ww:hidden id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
+    			<fieldset>
+    			  <label>Matrícula</label> <br/>
+    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+    			  <label>Senha</label> <br/>
+    			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off" />
+    			</fieldset>
+  			</form>
+		</div>
+		
+		<div id="dialog-message" title="Basic dialog">
+ 				<p id="mensagemAssinaSenha"></p>
+		</div>
+
+		 <script> 
+		    dialog = $("#dialog-form").dialog({
+		      autoOpen: false,
+		      height: 210,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+                  "Assinar": assinarGravar,
+		          "Cancelar": function() {
+		            dialog.dialog( "close" );
+		          }
+		      },
+		      close: function() {
+		        
+		      }
+		    });
+
+		    function assinarGravar() {
+		    	AssinarDocumentosSenha('false', this);
+			}
+
+		    dialogM = $("#dialog-message").dialog({
+		        autoOpen: false,
+		    });
+		
+		    function assinarComSenha() {
+		      var n = $("input.nao-pode-assinar-senha:checked").length;
+
+		      if(n > 0) {
+		      	$("#mensagemAssinaSenha").html( n + (n === 1 ? " documento selecionado não pode ser assinado somente com senha." : " documentos selecionados não podem ser assinados somente com senha.") + " Selecione somente os documentos que estão marcados com ");
+		      	$("#mensagemAssinaSenha").append("<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />" );
+
+		      	dialogM.dialog("open");
+		      } else {
+		    	    var nPode = $("input.pode-assinar-senha:checked").length;
+
+                    if(nPode == 0) {
+				      	$("#mensagemAssinaSenha").html("Nenhum documento selecionado. Selecione somente os documentos que estão marcados com ");
+				      	$("#mensagemAssinaSenha").append("<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />" );
+				      	dialogM.dialog("open");
+                    } else {
+       		    	    dialog.dialog("open");
+                    }
+			  }
+		    }
+		  </script>
+	</c:if>
 </siga:pagina>

@@ -264,6 +264,11 @@ public class SrMovimentacao extends GenericModel {
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
+		
+		//Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
+		if (solicitacao.isFilha() &&
+				tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+			Correio.notificarAtendente(this); //notifica o atendente da solicitacao pai, caso a filha seja fechada
 		return this;
 	}
 

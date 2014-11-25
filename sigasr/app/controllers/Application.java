@@ -134,6 +134,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static void editar(Long id) throws Exception {
+		
 		SrSolicitacao solicitacao;
 		if (id == null) {
 			solicitacao = new SrSolicitacao();
@@ -151,6 +152,21 @@ public class Application extends SigaApplication {
 	public static void exibirLocalRamalEMeioContato(SrSolicitacao solicitacao)
 			throws Exception {
 		render(solicitacao.deduzirLocalRamalEMeioContato());
+	}
+	
+	public static void listarAcoesSlugify(){
+		String acoes = "";
+		for (Object o : SrAcao.listar(false)){
+			SrAcao a = (SrAcao) o;
+			acoes += a.siglaAcao + "&nbsp;&nbsp;" + (a.getGcTags()) + "<br/>";
+		}
+		
+		String itens = "";
+		for (Object o : SrItemConfiguracao.listar(false)){
+			SrItemConfiguracao a = (SrItemConfiguracao) o;
+			itens += a.siglaItemConfiguracao + "&nbsp;&nbsp;" + (a.getGcTags()) + "<br/>";
+		}
+		render(acoes, itens);
 	}
 	
 	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoMap, boolean carregarLotaSolicitante) 
@@ -356,14 +372,14 @@ public class Application extends SigaApplication {
         solicitacao.dtIniEdicao = new Date(dtIniEdicao);
         solicitacao.setAtributoMap(atributoMap);
         
-		if(!solicitacao.rascunho)
+        if(!solicitacao.isRascunho())
         	validarFormEditar(solicitacao);
         
 		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
 		exibir(id, completo());
 	}
-
+	
 	public static void juntarSolicitacoes(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAJuntar);
 		SrSolicitacao solRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
@@ -381,6 +397,7 @@ public class Application extends SigaApplication {
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
 		List<SrSolicitacao> list;
+		
 		if (filtro.pesquisar) {
 			list = filtro.buscar();
 		} else {

@@ -1085,9 +1085,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;
 		}
 
-		if(isEletronico() && !isAssinadoEletronicoPorTodosOsSignatarios())
+		/*if(isEletronico() && !isAssinadoEletronicoPorTodosOsSignatarios())
+			return false;*/
+		
+		if(isEletronico() && !isAssinadoEletronicoOuPorSenhaPorTodosOsSignatarios())
 			return false;
-					
+		
 		if(!isEletronico()) {			
 			ExMovimentacao mov = getMovAssinatura();
 			if (mov == null)
@@ -1113,6 +1116,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return false;
 	}
 
+	/**
+	 * Verifica se um documento eletrônico possui pelo menos uma assinatura com Senha
+	 */
+	public boolean isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha() {
+		if(!isEletronico())
+			return false;
+		
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Verifica se um documento já foi assinado pelo Subscritor.
 	 */
@@ -1195,6 +1214,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			final ExMovimentacao movIterate = (ExMovimentacao) element;
 
 			if ((movIterate.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO || movIterate
+					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA || movIterate
 					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO)
 					&& movIterate.getExMovimentacaoCanceladora() == null) {
 				return movIterate;
@@ -1783,7 +1803,52 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return null;
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
-			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO 
+					|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * Retorna uma lista de movimentações do tipo assinatura com senha do
+	 * documento.
+	 */
+	public Set<ExMovimentacao> getApenasAssinaturasComToken() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getMobilGeral() == null)
+			return null;
+
+		if (getMobilGeral().getExMovimentacaoSet() == null)
+			return null;
+
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * Retorna uma lista de movimentações do tipo assinatura com senha do
+	 * documento.
+	 */
+	public Set<ExMovimentacao> getApenasAssinaturasComSenha() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getMobilGeral() == null)
+			return null;
+
+		if (getMobilGeral().getExMovimentacaoSet() == null)
+			return null;
+
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -1792,11 +1857,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	public String getAssinantesCompleto() {
-		String assinantes = Documento
-				.getAssinantesString(getAssinaturasDigitais());
-		if (assinantes.length() > 0)
-			return "Assinado digitalmente por " + assinantes + ".\n";
-		return "";
+		String retorno =  "";
+		String assinantesToken = Documento
+				.getAssinantesString(getApenasAssinaturasComToken());
+		String assinantesSenha = Documento
+				.getAssinantesString(getApenasAssinaturasComSenha());
+		
+		if (assinantesToken.length() > 0)
+			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
+		
+		if (assinantesSenha.length() > 0)
+			retorno = retorno + "Assinado com senha por " + assinantesSenha + ".\n";
+		
+		return retorno;
 	}
 
 	/**
@@ -2121,6 +2194,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
 			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO || m
+					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA|| m
 					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
@@ -2167,6 +2241,45 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Verifica se um documento foi assinado pelo subscritor e por todos os
+	 * cosignatários com Login e Senha ou por token
+	 */
+	private boolean isAssinadoEletronicoOuPorSenhaPorTodosOsSignatarios() {
+		// Interno antigo e externo são considerados como assinados
+		if (getExTipoDocumento().getIdTpDoc() != 1L) {
+			return getExMobilSet() != null && getExMobilSet().size() > 1;
+		}
+
+		ExMovimentacao mov = getMovAssinatura();
+		if (mov == null)
+			return false;
+
+		List<DpPessoa> todosQueJaAssinaram = new ArrayList<DpPessoa>();
+
+		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
+			if (assinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+					|| assinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
+				todosQueJaAssinaram.add(assinatura.getSubscritor());
+		}
+
+		for (DpPessoa signatario : getSubscritorECosignatarios()) {
+			boolean encontrou = false;
+
+			for (DpPessoa jaAssinou : todosQueJaAssinaram) {
+				if (jaAssinou.equivale(signatario)) {
+					encontrou = true;
+					break;
+				}
+			}
+
+			if (!encontrou)
+				return false;
+		}
+
+		return true;
+	}
+	
 	/**
 	 * Verifica se todos os móbiles do documento estão eliminados.
 	 */

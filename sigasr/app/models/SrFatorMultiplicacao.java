@@ -16,7 +16,7 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 
 @Entity
-@Table(name = "SR_FATOR_MULTIPLICACAO")
+@Table(name = "SR_FATOR_MULTIPLICACAO", schema = "SIGASR")
 public class SrFatorMultiplicacao extends Objeto{
 	
 	@Id

@@ -293,6 +293,16 @@ public class SrConfiguracao extends CpConfiguracao {
 		return (SrConfiguracao) SrConfiguracaoBL.get().buscaConfiguracao(conf,
 				atributosDesconsideradosFiltro, null);
 	}
+	
+	public static List<SrConfiguracao> listar(SrConfiguracao conf) throws Exception {
+		return listar(conf, new int[] {});
+	}
+
+	public static List<SrConfiguracao> listar(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
+		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf,
+				atributosDesconsideradosFiltro);
+	}
 
 	@Override
 	public Long getId() {

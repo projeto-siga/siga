@@ -376,6 +376,99 @@ function AssinarDocumentos(Copia, oElm){
 	process.run();
 }
 
+function AssinarDocumentosSenha(Copia, oElm){
+	process.reset();
+	gTecnologia = "Com Senha";
+
+//   	oElm = document.getElementById(Id);
+//    oElm.innerHTML = Caption;
+    if(Copia == "true"){
+  		Copia = "true";
+		// alert("Iniciando conferência")
+     	process.push(function(){Log("Iniciando conferência")});
+ 	}else{
+  		Copia = "false";
+		// alert("Iniciando assinatura")
+     	process.push(function(){Log("Iniciando assinatura")});
+    }
+
+    var oUrlPost, oNextUrl, oUrlBase, oUrlPath, oNome, oUrl, oChk;
+
+	oUrlPost = document.getElementById("jspServerSenha");
+	if(oUrlPost == null){
+        alert("element jspserver does not exist");
+        return;
+    }
+    oUrlNext = document.getElementById("nexturl");
+    if(oUrlNext == null){
+        alert("element nexturl does not exist");
+        return;
+    }
+    oUrlBase = document.getElementById("urlbase");
+    if(oUrlBase == null){
+        alert("element urlbase does not exist");
+        return;
+    }
+    oUrlPath = document.getElementById("urlpath");
+    if(oUrlPath == null){
+        alert("element urlpath does not exist");
+        return;
+    }
+
+    var Codigo;
+    var NodeList = document.getElementsByTagName("INPUT");
+
+    for (var i=0,len=NodeList.length; i<len; i++) {
+        var Elem = NodeList[i];
+       	if(Elem.name.substr(0,7) == "pdfchk_"){
+		    Codigo = Elem.name.substr(7);
+		    //alert(Codigo)
+		
+		    var oNome = document.getElementsByName("pdfchk_" + Codigo)[0];
+		    if(oNome == null){
+		        alert("element pdfchk_" + Codigo + " does ! exist");
+		        return;
+		    }
+		    oUrl = document.getElementsByName("urlchk_" + Codigo)[0];
+		    oChk = document.getElementsByName("chk_" + Codigo)[0];
+		
+			var b;
+		    if(oChk == null){
+		        b = true;
+		    }else{
+		        b = oChk.checked;
+		    } 
+		
+      		process.push("Copia=" + Copia + ";");
+		    if(b){
+	            var ret;
+	            process.push("gNome='" + oNome.value + "'; gUrlDocumento = '" + oUrlBase.value + oUrlPath.value + oUrl.value + "&semmarcas=1';");
+	      		process.push(function(){Log(gNome + ": Assinando...")});
+	      		process.push(function(){Log(gNome + ": Gravando assinatura de " + $("#nomeUsuarioSubscritor").val())});
+	      		
+	            process.push(function(){
+		            var DadosDoPost = "sigla=" + encodeURIComponent(gNome) + "&copia=" + Copia + "&nomeUsuarioSubscritor=" + encodeURIComponent($("#nomeUsuarioSubscritor").val()) + "&senhaUsuarioSubscritor=" + encodeURIComponent($("#senhaUsuarioSubscritor").val());
+		
+					//alert("oNome: " + oNome.value);
+					var aNome = gNome.split(":");
+					if(aNome.length == 2){
+						//alert("id: " + aNome(1));
+						DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
+					}
+			
+			        Status = GravarAssinaturaSenha(oUrlPost.value, DadosDoPost);
+			        return Status;
+	    		});
+		    }
+       	}
+	}
+    
+    process.push(function(){Log("Concluído, redirecionando...");});
+    process.push(function(){location.href = oUrlNext.value;});
+	process.run();
+}
+
+
 function GravarAssinatura(url, datatosend) {
 	objHTTP = new ActiveXObject("MSXML2.XMLHTTP");
 	objHTTP.Open("POST", url, false);
@@ -399,6 +492,27 @@ function GravarAssinatura(url, datatosend) {
  	}
 	return "OK";
 }
+
+
+function GravarAssinaturaSenha(url, datatosend) {
+	$.ajax({				     				  
+		  url: url,
+		  type: "POST",
+		  data: datatosend,	
+		  async:  false,				    					   					 
+		  success: function(Conteudo) {
+			if (Conteudo.indexOf("gt-error-page-hd") != -1 && Conteudo.indexOf("function GravarAssinatura") < 0) {
+				Inicio = Conteudo.indexOf("<h3>") + 4;
+				Fim = Conteudo.indexOf("</h3>",Inicio);
+				Texto = Conteudo.substr(Inicio, Fim - Inicio);
+				return Texto;
+		     }				    
+	 	 }
+	});	
+	
+	return "OK";
+}
+
 
 //var intID 'a global variable
 

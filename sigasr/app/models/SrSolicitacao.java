@@ -711,12 +711,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return null;
 	}
 
-	public Set<SrMovimentacao> getPendentes() {
+	public Set<SrMovimentacao> getPendencias() {
 		Set<SrMovimentacao> setIni = getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
 		Set<SrMovimentacao> setPendentes = new HashSet<SrMovimentacao>();
 
 		for (SrMovimentacao ini : setIni) {
-			if (ini.movFinalizadora == null)
+			if ((ini.movFinalizadora == null || ini.movFinalizadora.isCancelada()) && 
+					(ini.dtAgenda == null || ini.dtAgenda.after(new Date())))
+
 				setPendentes.add(ini);
 		}
 
@@ -760,7 +762,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		
 		return listaFinal;
 	}
-	
+
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
@@ -959,7 +961,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean isPendente() {
 		Set<SrMovimentacao> setIni = getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
 		for (SrMovimentacao ini : setIni) {
-			if (ini.movFinalizadora == null)
+			if ((ini.movFinalizadora == null || ini.movFinalizadora.isCancelada()) 
+					&& (ini.dtAgenda == null || ini.dtAgenda.after(new Date())))
+
 				return true;
 		}
 		return false;
@@ -1049,9 +1053,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean estaCom(DpLotacao lota, DpPessoa pess) {
 		SrMovimentacao ultMov = getUltimaMovimentacao();
-		return ultMov != null
-				&& ((ultMov.atendente != null && pess != null && ultMov.atendente
-						.equivale(pess)) || ultMov.lotaAtendente.equivale(lota));
+		SrMovimentacao ultMovDoPai = null;
+		if (isFilha())
+			 ultMovDoPai = this.solicitacaoPai.getUltimaMovimentacao();
+		if (isRascunho())
+			return foiCadastradaPor(lota, pess) || foiSolicitadaPor(lota, pess);
+		return (ultMov.atendente != null && pess != null && ultMov.atendente.equivale(pess)) 
+					|| (ultMov.lotaAtendente != null && ultMov.lotaAtendente.equivale(lota))
+					|| (ultMovDoPai != null && ((ultMovDoPai.atendente != null && ultMovDoPai.atendente.equivale(pess))
+												|| (ultMovDoPai.lotaAtendente != null && ultMovDoPai.lotaAtendente.equivale(lota))));
+
 	}
 
 	public boolean estaForaAtendenteDesignado() throws Exception {
@@ -1069,7 +1080,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean isParteDeArvore() {
 		return solicitacaoPai != null
 				|| (getSolicitacaoFilhaSet() != null && !getSolicitacaoFilhaSet()
-						.isEmpty());
+				.isEmpty());
 	}
 
 	public SrSolicitacao getPaiDaArvore() {
@@ -1095,9 +1106,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO);
 	}
 
-	public boolean podeCriarFilha(DpLotacao lota, DpPessoa pess) {
-		return estaCom(lota, pess) && (isEmAtendimento() || isPendente())
-				&& !isFilha();
+	public boolean podeEscalonar(DpLotacao lota, DpPessoa pess) {
+		return estaCom(lota, pess) && (isEmAtendimento() || isEmPreAtendimento());
+
 	}
 
 	public boolean podeJuntar(DpLotacao lota, DpPessoa pess) {
@@ -1179,7 +1190,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeAnexarArquivo(DpLotacao lota, DpPessoa pess) {
-		return (isEmPreAtendimento() || isEmAtendimento() || isPendente());
+		return (isEmPreAtendimento() || isEmAtendimento() || isPendente() || isRascunho());
 	}
 
 	public boolean podeImprimirTermoAtendimento(DpLotacao lota, DpPessoa pess) {
@@ -1194,9 +1205,22 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return estaCom(lota, pess) && isEmAtendimento();
 	}
 
-	public boolean podeResponderPesquisa(DpLotacao lotaTitular, DpPessoa titular) {
-		return (isFechadoParcialmente() && foiSolicitadaPor(lotaTitular,
-				titular));
+	public boolean podeResponderPesquisa(DpLotacao lotaTitular, DpPessoa titular)
+			throws Exception {
+
+		if (!isFechado() || !foiSolicitadaPor(lotaTitular, titular)
+				|| !temPesquisaSatisfacao())
+			return false;
+
+		for (SrMovimentacao mov : getMovimentacaoSet())
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO)
+				return false;
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+				return true;
+
+
+		return false;
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1258,11 +1282,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
 		if (solicitante != null)
 			locais = JPA
-					.em()
-					.createQuery(
-							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-									+ solicitante.getOrgaoUsuario()
-											.getIdOrgaoUsu()).getResultList();
+			.em()
+			.createQuery(
+					"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
+							+ solicitante.getOrgaoUsuario()
+							.getIdOrgaoUsu()).getResultList();
 		return locais;
 	}
 
@@ -1390,15 +1414,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeVincular(lotaTitular, titular),
 				"vincular", "modal=true"));
 
-		operacoes
-				.add(new SrOperacao("arrow_divide", "Criar Solicitação Filha",
-						podeCriarFilha(lotaTitular, titular),
-						"Application.criarFilha"));
+		operacoes.add(new SrOperacao("arrow_divide",
+				"Escalonar", podeEscalonar(lotaTitular,
+
+						titular), "Application.escalonar"));
 
 		operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitações",
 				podeJuntar(lotaTitular, titular),
 				"juntar", "modal=true"));
 
+				
 		operacoes.add(new SrOperacao("text_list_numbers", "Definir Lista",
 				podeAssociarLista(lotaTitular, titular), "associarLista",
 				"modal=true"));
@@ -1429,20 +1454,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(
 				lotaTitular, titular), "Application.reabrir"));
 
-		// operacoes.add(new SrOperacao("clock_pause", "Deixar Pendente",
-		// podeDeixarPendente(lotaTitular,
-		// titular),"Application.deixarPendente"));
-
-		operacoes.add(new SrOperacao("clock_pause", "Pendência",
+		operacoes.add(new SrOperacao("clock_pause", "Incluir Pendência",
 				podeDeixarPendente(lotaTitular, titular), "pendencia",
 				"modal=true"));
 
 		/*operacoes.add(new SrOperacao("clock_go", "Alterar Prazo",
-		podeAlterarPrazo(lotaTitular, titular), "alterarPrazo",
-		"modal=true"));*/
+				podeAlterarPrazo(lotaTitular, titular), "alterarPrazo",
+				"modal=true"));*/
 
-		operacoes.add(new SrOperacao("cross", "Excluir", podeExcluir(
-				lotaTitular, titular), "excluir", "modal=true"));
+		operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir",
+				podeExcluir(lotaTitular, titular),
+				"Deseja realmente excluir esta solicitação?", null, "", ""));
 
 		operacoes.add(new SrOperacao("attach", "Anexar Arquivo",
 				podeAnexarArquivo(lotaTitular, titular), "anexarArquivo",
@@ -2168,17 +2190,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		if (estadoAtual == TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO) {
 			if (temPesquisaSatisfacao()) {
-				fecharParcialmente(lota, pess, motivo);
+				//fecharParcialmente(lota, pess, motivo);
 				enviarPesquisa();
-			} else
-				estadoAtual = TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL;
+			} 
+
+			estadoAtual = TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL;
 		}
 
 		if (estadoAtual == TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL
 				|| estadoAtual == TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE)
 			fecharTotalmente(lota, pess, motivo);
 	}
-
+	
 	public void excluir(DpLotacao lota, DpPessoa pess) throws Exception {
 
 		if ((pess != null) && !podeExcluir(lota, pess))
@@ -2229,10 +2252,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		// if (avaliacao.isSuficiente)...
 		// fecharTotalmente()
 		// else
-		if (getEquipeQualidadeDesignada() != null)
-			iniciarControleQualidade(lota, pess);
-		else
-			fecharTotalmente(null, null, "Fechado.");
+		//if (getEquipeQualidadeDesignada() != null)
+		//	iniciarControleQualidade(lota, pess);
+		//else
+		//	fecharTotalmente(null, null, "Fechado.");
 	}
 
 	private void iniciarControleQualidade(DpLotacao lota, DpPessoa pess)

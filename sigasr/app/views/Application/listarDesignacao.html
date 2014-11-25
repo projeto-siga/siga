@@ -764,7 +764,16 @@
     	
     	return params;
     }
-	
+
+    function reativarDesignacao(event, id) {
+		event.stopPropagation();
+		window.location = '@{Application.reativarDesignacao()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+    }
+
+    function desativarDesignacao(event, id) {
+		event.stopPropagation();
+		window.location = '@{Application.desativarDesignacao()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+    }
 </script>
 
 <div class="gt-bd clearfix">
@@ -827,6 +836,7 @@
 						<th>Herdado</th>
 						<th>Utilizar Herdado</th>
 						<th>Listas Serializadas</th>
+						<th>Ações</th>
 					</tr>
 				</thead>
 
@@ -881,6 +891,13 @@
 						<th>${design.isHerdado}</th>
 						<th>${design.utilizarItemHerdado}</th>
 						<td></td>
+						<td>
+							#{desativarReativar id:design.id,
+												onReativar:'reativarDesignacao',
+												onDesativar :'desativarDesignacao',
+												isAtivo:design.isAtivo() }
+							#{/desativarReativar}
+						</td>
 					</tr>
 					#{/list}
 				</tbody>
@@ -895,6 +912,5 @@
 </div>
 
 #{modal nome:'designacao', titulo:'Cadastrar Designacao'}
-	<div id="divEditarDesignacaoItem">#{include
-				'Application/editarDesignacaoItem.html' /}</div>
+	<div id="divEditarDesignacaoItem">#{include 'Application/editarDesignacaoItem.html' /}</div>
 #{/modal}

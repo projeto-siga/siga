@@ -26,7 +26,7 @@
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Tipo de atributo</label> #{select 'associacao.tipoAtributo',
-				items:models.SrTipoAtributo.listar(), labelProperty:'nomeTipoAtributo',
+				items:models.SrTipoAtributo.listar(false), labelProperty:'nomeTipoAtributo',
 				value:associacao.tipoAtributo?.atual?.idTipoAtributo, valueProperty:'idTipoAtributo'}
 				#{/select}
 				

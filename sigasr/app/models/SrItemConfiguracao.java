@@ -305,7 +305,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
 		
 		for (SrItemConfiguracao pai : this.getListaPai()) {
-			listasDesignacoesPai.addAll(SrConfiguracao.marcarComoHerdadas(SrConfiguracao.listarDesignacoes(false, pai.getId()), this));
+			listasDesignacoesPai.addAll(SrConfiguracao.marcarComoHerdadas(SrConfiguracao.listarDesignacoes(pai.getId()), this));
 		}
 		
 		return listasDesignacoesPai;

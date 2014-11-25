@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
@@ -70,8 +71,16 @@ public class SrTipoAtributo extends HistoricoSuporte {
 		idTipoAtributo = id;
 	}
 
-	public static List<SrTipoAtributo> listar() {
-		return SrTipoAtributo.find("byHisDtFimIsNull").fetch();
+	public static List<SrTipoAtributo> listar(boolean mostrarDesativados) {
+		StringBuilder queryBuilder = new StringBuilder();
+
+		if (!mostrarDesativados) {
+			queryBuilder.append(" hisDtFim is null");
+		} else {
+			queryBuilder.append("SELECT ta FROM SrTipoAtributo ta ");
+			queryBuilder.append("WHERE ta.idTipoAtributo in (SELECT MAX(idTipoAtributo) FROM SrTipoAtributo GROUP BY hisIdIni) ");
+		}
+		return SrTipoAtributo.find(queryBuilder.toString()).fetch();
 	}
 
 	public List<SrTipoAtributo> getHistoricoTipoAtributo() {

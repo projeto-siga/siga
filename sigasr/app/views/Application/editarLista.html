@@ -1,6 +1,13 @@
 #{extends 'main.html' /} #{set title:'Edição de Lista' /}
+
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+<style>
+	tr {
+		cursor : pointer !important;
+	}
+</style>
 
 <script language="javascript">
 	var prioridadesTable, 
@@ -36,7 +43,7 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [0, 2, 4, 5, 7, 8, 10, 12, 13, 15, 16, 18],
+				"targets": [0, 2, 4, 5, 7, 8, 10, 12, 13, 15, 16, 19],
 				"visible": false,
 				"searchable": false
 			}]
@@ -51,7 +58,19 @@
 			    controleAcessoModalAbrir(true);
 			}
 		});
+
+		$('.desassociarPermissao').bind('click', desativarPermissaoUsoListaEdicao);
 	});
+
+	function desativarPermissaoUsoListaEdicao(event) {
+		event.stopPropagation();
+		
+		var me = $(this),
+			idPermissao = me.find('.idPermissao').val(),
+			idLista = $("#idLista").val();
+		
+		location.href='@{Application.desativarPermissaoUsoListaEdicao()}?' + jQuery.param({idLista : idLista, idPermissao : idPermissao});
+	}
 	
 	function atualizarControleAcessoModal(itemArray) {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
@@ -77,7 +96,7 @@
 		$("#funcaoConfiancaSpan").html(itemArray[14]);
 		$("#funcaoConfianca_sigla").val(itemArray[15]);
 		jTipoPermissaoCbb.selectedIndex = findSelectedIndexByValue(jTipoPermissaoCbb, itemArray[16]);
-		$("#idConfiguracao").val(itemArray[18]);
+		$("#idConfiguracao").val(itemArray[19]);
 	};
 	
 	function findSelectedIndexByValue(comboBox, value) {
@@ -168,8 +187,8 @@
 		if (row[16] != '')
         	params += '&permissao.tipoPermissao=' + row[16];
 		
-		if (row[18] != '')
-			params += '&permissao.id=' + row[18];
+		if (row[19] != '')
+			params += '&permissao.id=' + row[19];
 
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
 			params += '&permissao.listaPrioridade.id=' + $("#idLista").val();
@@ -211,7 +230,16 @@
 	         data: serializePermissao(row),
 	         dataType: "text",
 	         success: function(response) {
-		        row[18] = response;
+				var html = 
+				'<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
+					'<a class="once desassociarPermissao" title="Remover permissão">' + 
+						'<input class="idPermissao" type="hidden" value="' + response + '"/>' + 
+						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+					'</a>' + 
+				'</td>';
+						         
+		        row[18] = html;
+		        row[19] = response;
 
 	          	if (isEditing) {
 	          		prioridadesTable.row('.selected').data(row);
@@ -219,8 +247,8 @@
 			    else {
 			    	prioridadesTable.row.add(row).draw();
 			    }
-			    
 				controleAcessoModalFechar();
+				$('.desassociarPermissao').bind('click', desativarPermissaoUsoListaEdicao);
 	         },
 	         error: function(response) {
 	        	$('#modal-permissao').hide(); 
@@ -230,7 +258,6 @@
 	        	modalErro.show(); 
 	         }
         });
-
 	};
 	
 	$(function() {
@@ -313,6 +340,7 @@
 								<th>Função</th>
 								<th>ID Tipo Permissao</th>
 								<th>Tipo Permissão</th>	
+								<th>Ações</th>
 								<th>ID Permissão</th>
 							</tr>
 						</thead>
@@ -338,6 +366,12 @@
 									<td>${perm.funcaoConfianca?.descricao}</td>
 									<td>${perm.tipoPermissao}</td>
 									<td>${perm.tipoPermissao?.descrTipoPermissaoLista}</td>
+									<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+										<a class="once desassociarPermissao" title="Remover permissão">
+											<input class="idPermissao" type="hidden" value="${perm.id}"/>
+											<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
+										</a>
+									</td>
 									<td>${perm.id}</td>
 								</tr>
 							#{/list}

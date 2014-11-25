@@ -18,6 +18,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
@@ -85,9 +86,19 @@ public class SrPesquisa extends HistoricoSuporte {
 			return null;
 		return pesquisas.get(0);
 	}
-
-	public static List<SrPesquisa> listar() {
-		return SrPesquisa.find("byHisDtFimIsNull").fetch();
+	
+	public static List<SrPesquisa> listar(boolean mostrarDesativados) {
+		if (!mostrarDesativados) {
+			return SrPesquisa.find("byHisDtFimIsNull").fetch();
+		} else {
+			StringBuilder str = new StringBuilder();
+			str.append("SELECT p FROM SrPesquisa p where p.idPesquisa IN (");
+			str.append("SELECT MAX(idPesquisa) FROM SrPesquisa GROUP BY hisIdIni)");
+			
+			return JPA.em()
+					.createQuery(str.toString())
+					.getResultList();
+		}
 	}
 
 	// Edson: Não consegui fazer com que esse cascade fosse automático.

@@ -47,7 +47,7 @@
 					if(table) {
 						var btn = $('.bt-expandir'),
 							expandir = btn.hasClass('expandido');
-						$.fn.mostrarDetalhes.expandirContrairLinhas(btn, expandir);
+						$('#itens_configuracao_table').expandirContrairLinhas(expandir);
 					}
 				})
 			.DataTable({
@@ -74,15 +74,20 @@
 				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
-				"columnDefs": [{
-					"targets": [5],
+				// Define que a ordenacao deve comecar na segunda coluna (para evitar coluna com acoes de expandir)
+				"aaSorting" : [[1, 'asc']],
+				"columnDefs": [
+				// Coluna com expandir da grid, coluna de acoes
+				{
+					"targets": [0,5],
 					"searchable": false,
 					"sortable": false
 				},
+				// Coluna similaridade
 				{
 					"targets": [4],
 					"visible": false
-				}],
+				}]
 			});
 			$('#itens_configuracao_table').mostrarDetalhes(format, table);
 	});
@@ -121,7 +126,7 @@
 			<table id="itens_configuracao_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
-						<th style="color: #333;">
+						<th style="color: #333">
 							<button class="gt-btn-medium gt-btn-left bt-expandir">
 								<span id="iconeBotaoExpandirTodos">+</span>
 							</button>
@@ -136,7 +141,7 @@
 
 				<tbody>
 					#{list items:itens, as:'item'}
-						<tr  style="cursor: pointer;">
+						<tr  onclick="javascript:window.location='@{Application.editaritem(item.idItemConfiguracao)}'" style="cursor: pointer;">
 							<td class="gt-celula-nowrap details-control"></td>
 							<td>${item.siglaItemConfiguracao}</td>
 							<td><span style="margin-left: ${(item.nivel-1)*2}em; #{if item.nivel == 1}font-weight: bold;#{/if} #{if item.nivel == 2}font-style: italic;#{/if}">${item.tituloItemConfiguracao}</span></td>

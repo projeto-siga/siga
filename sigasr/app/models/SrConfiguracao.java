@@ -52,7 +52,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
 	public SrItemConfiguracao itemConfiguracao;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_ITEM", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
 	public List<SrItemConfiguracao> itemConfiguracaoSet;
 	
@@ -60,7 +60,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_ACAO")
 	public SrAcao acao;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name="SR_CONFIGURACAO_ACAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
 	public List<SrAcao> acoesSet;
 
@@ -219,29 +219,46 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarDesignacoes(
-			boolean mostrarDesativados, Long idItemConfiguracao) {
-		StringBuffer sb = new StringBuffer(
-				"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, Long idItemConfiguracao) {
+		StringBuffer sb = queryDesignacoesBuilder(mostrarDesativados);
 
 		if (idItemConfiguracao != null) {
 			sb.append(" and item.idItemConfiguracao = ");
 			sb.append(idItemConfiguracao);
 		}
+		sb.append(" order by item.siglaItemConfiguracao, conf.orgaoUsuario ");
 
-		if (!mostrarDesativados)
-			sb.append(" and conf.hisDtFim is null");
+		return JPA
+				.em()
+				.createQuery(sb.toString())
+				.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados) {
+		StringBuffer sb = queryDesignacoesBuilder(mostrarDesativados);
+
+		if (mostrarDesativados)
+			sb.append(" AND conf.idConfiguracao IN (SELECT MAX(idConfiguracao) FROM SrConfiguracao GROUP BY hisIdIni) ");
 
 		sb.append(" order by item.siglaItemConfiguracao, conf.orgaoUsuario ");
 
 		return JPA
 				.em()
-				.createQuery(
-						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario")
+				.createQuery(sb.toString())
 				.getResultList();
+	}
+
+	private static StringBuffer queryDesignacoesBuilder(boolean mostrarDesativados) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("select conf from SrConfiguracao as conf ");
+		sb.append("left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		
+		if (!mostrarDesativados)
+			sb.append(" and conf.hisDtFim is null");
+		
+		return sb;
 	}
 
 	public void salvarComoPermissaoUsoLista() throws Exception {
@@ -291,13 +308,24 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarAssociacoesTipoAtributo() {
+	public static List<SrConfiguracao> listarAssociacoesTipoAtributo(Boolean mostrarDesativados) {
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("select conf from SrConfiguracao as conf inner join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);
+		
+		if (!mostrarDesativados) {
+			queryBuilder.append(" and conf.hisDtFim is null ");
+		} else {
+			queryBuilder.append(" and conf.idConfiguracao IN (");
+			queryBuilder.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			queryBuilder.append(" SrConfiguracao GROUP BY hisIdIni)) ");
+		}
+		queryBuilder.append(" order by item.siglaItemConfiguracao, conf.orgaoUsuario");
+		
 		return JPA
 				.em()
 				.createQuery(
-						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
-								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario")
+						queryBuilder.toString())
 				.getResultList();
 	}
 

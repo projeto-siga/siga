@@ -28,9 +28,11 @@ public abstract class ObjetoBase extends GenericModel {
 				// https://groups.google.com/forum/?fromgroups=#!topic/play-framework/waYNFtLCH40
 				ObjetoBase thisAntigo = JPA.em().find(this.getClass(),
 						thisHistorico.getId());
-				thisAntigo.finalizar();
-				thisHistorico.setHisIdIni(((Historico) thisAntigo)
-						.getHisIdIni());
+				
+				if(((Historico) thisAntigo).getHisDtFim() == null) {
+					thisAntigo.finalizar();
+				}
+				thisHistorico.setHisIdIni(((Historico) thisAntigo).getHisIdIni());
 				thisHistorico.setId(null);
 			}
 			this.save();
@@ -43,14 +45,10 @@ public abstract class ObjetoBase extends GenericModel {
 	public void finalizar() throws Exception {
 		try {
 			Historico historico = ((Historico) this);
-			// Se jah nao foi finalizado, finaliza
-			if (historico.getHisDtFim() == null) {
-				historico.setHisDtFim(new Date());
-				this.save();
-			}
+			historico.setHisDtFim(new Date());
+			this.save();
 		} catch (ClassCastException cce) {
 			this.save();
 		}
 	}
-
 }

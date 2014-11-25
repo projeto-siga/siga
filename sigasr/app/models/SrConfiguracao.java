@@ -1,7 +1,6 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -24,12 +23,10 @@ import models.SrItemConfiguracao.SrItemConfiguracaoVO;
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
-import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 import com.google.gson.Gson;
@@ -48,20 +45,22 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Column(name = "FORMA_ACOMPANHAMENTO")
 	public SrFormaAcompanhamento formaAcompanhamento;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
-	public SrItemConfiguracao itemConfiguracao;
-	
+	//@ManyToOne
+	//@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
+	@Transient
+	public SrItemConfiguracao itemConfiguracaoFiltro;
+
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_ITEM", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
+	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
 	public List<SrItemConfiguracao> itemConfiguracaoSet;
 	
-	@ManyToOne
-	@JoinColumn(name = "ID_ACAO")
-	public SrAcao acao;
+	//@ManyToOne
+	//@JoinColumn(name = "ID_ACAO")
+	@Transient
+	public SrAcao acaoFiltro;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_ACAO", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
+	@JoinTable(name="SR_CONFIGURACAO_ACAO", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
 	public List<SrAcao> acoesSet;
 
 	@Column(name = "GRAVIDADE")
@@ -102,7 +101,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrLista listaPrioridade;
 	
 	@OneToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SR_LISTA_CONFIGURACAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
+	@JoinTable(name = "SR_LISTA_CONFIGURACAO", schema="SIGASR", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
 	private List<SrLista> listaConfiguracaoSet;
 
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
@@ -178,21 +177,6 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	}
 
-	public SrConfiguracao(DpLotacao lota, DpPessoa pess, CpComplexo local,
-			SrItemConfiguracao item, SrAcao acao, SrTipoAtributo tipoAtributo,
-			SrLista lista, CpTipoConfiguracao tipo,
-			SrSubTipoConfiguracao subTipoConfig) {
-		this.setLotacao(lota);
-		this.setDpPessoa(pess);
-		this.setComplexo(local);
-		this.itemConfiguracao = item;
-		this.acao = acao;
-		this.tipoAtributo = tipoAtributo;
-		this.listaPrioridade = lista;
-		this.setCpTipoConfiguracao(tipo);
-		this.subTipoConfig = subTipoConfig;
-	}
-
 	public Selecionavel getSolicitante() {
 		if (this.getDpPessoa() != null)
 			return this.getDpPessoa();
@@ -219,35 +203,34 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarDesignacoes(
-			boolean mostrarDesativados, Long idItemConfiguracao) {
-		StringBuffer sb = new StringBuffer(
-				"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, DpLotacao atendente) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
-
-		if (idItemConfiguracao != null) {
-			sb.append(" and item.idItemConfiguracao = ");
-			sb.append(idItemConfiguracao);
+		
+		if (atendente != null) {
+			sb.append(" and conf.atendente.idLotacao = ");
+			sb.append(atendente.getId());
 		}
-
+		
 		if (!mostrarDesativados)
 			sb.append(" and conf.hisDtFim is null");
-
-		sb.append(" order by item.siglaItemConfiguracao, conf.orgaoUsuario ");
-
+		else {
+			sb.append(" and conf.idConfiguracao in (");
+			sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
+		}
+		
 		return JPA
 				.em()
-				.createQuery(
-						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario")
-				.getResultList();
+				.createQuery(sb.toString()).getResultList();
 	}
 
 	public void salvarComoPermissaoUsoLista() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 		salvar();
+		
+		
 	}
 
 	public static List<SrConfiguracao> listarPermissoesUsoLista(DpLotacao lota,
@@ -295,119 +278,30 @@ public class SrConfiguracao extends CpConfiguracao {
 		return JPA
 				.em()
 				.createQuery(
-						"select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = "
+						"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = "
 								+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
-								+ " and conf.hisDtFim is null order by item.siglaItemConfiguracao, conf.orgaoUsuario")
+								+ " and conf.hisDtFim is null order by conf.orgaoUsuario")
 				.getResultList();
 	}
 
-	public static SrConfiguracao getConfiguracao(DpPessoa pess,
-			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
-			long idTipo, SrSubTipoConfiguracao subTipo) throws Exception {
-
-		return getConfiguracao(null, pess, local, item, acao, null, idTipo,
-				subTipo);
+	public static SrConfiguracao buscar(SrConfiguracao conf) throws Exception {
+		return buscar(conf, new int[] {});
 	}
 
-	public static SrConfiguracao getConfiguracao(DpLotacao lotaTitular,
-			DpPessoa pess, long idTipo, SrLista lista) throws Exception {
-		return getConfiguracao(lotaTitular, pess, null, null, null, lista,
-				idTipo, null);
+	public static SrConfiguracao buscar(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
+		return (SrConfiguracao) SrConfiguracaoBL.get().buscaConfiguracao(conf,
+				atributosDesconsideradosFiltro, null);
+	}
+	
+	public static List<SrConfiguracao> listar(SrConfiguracao conf) throws Exception {
+		return listar(conf, new int[] {});
 	}
 
-	public static SrConfiguracao getConfiguracao(DpLotacao lota, DpPessoa pess,
-			CpComplexo local, SrItemConfiguracao item, SrAcao acao,
-			SrLista lista, long idTipo, SrSubTipoConfiguracao subTipo)
-			throws Exception {
-
-		SrConfiguracao conf = new SrConfiguracao(lota, pess, local, item, acao,
-				null, lista, JPA.em().find(CpTipoConfiguracao.class, idTipo),
-				subTipo);
-
-		return SrConfiguracaoBL.get().buscarConfiguracao(conf);
-	}
-
-	public static List<SrConfiguracao> getConfiguracoes(DpPessoa pess,
-			CpComplexo complexo, SrItemConfiguracao item, SrAcao acao,
-			long idTipo, SrSubTipoConfiguracao subTipo,
-			int atributosDesconsideradosFiltro[]) throws Exception {
-		return getConfiguracoes(null, pess, complexo, item, acao, null, null,
-				idTipo, subTipo, atributosDesconsideradosFiltro);
-	}
-
-	public static List<SrConfiguracao> getConfiguracoes(DpLotacao lotaTitular,
-			DpPessoa pess, long idTipo, int atributoDesconsideradoFiltro[])
-			throws Exception {
-		return getConfiguracoes(lotaTitular, pess, null, null, null, null,
-				null, idTipo, null, atributoDesconsideradoFiltro);
-	}
-
-	public static List<SrConfiguracao> getConfiguracoes(DpLotacao lota,
-			DpPessoa pess, CpComplexo local, SrItemConfiguracao item,
-			SrAcao acao, SrTipoAtributo tpAtt, SrLista lista, long idTipo,
-			SrSubTipoConfiguracao subTipo, int atributoDesconsideradoFiltro[])
-			throws Exception {
-		SrConfiguracao conf = new SrConfiguracao(lota, pess, local, item, acao,
-				tpAtt, lista, JPA.em().find(CpTipoConfiguracao.class, idTipo),
-				subTipo);
+	public static List<SrConfiguracao> listar(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
 		return SrConfiguracaoBL.get().listarConfiguracoesAtivasPorFiltro(conf,
-				atributoDesconsideradoFiltro);
-	}
-
-	public static void notificarQueMudou(SrItemConfiguracao item)
-			throws Exception {
-		if (item == null)
-			return;
-		List<SrConfiguracao> designacoesApontando = getConfiguracoes(null,
-				null, null, item, null, null, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.ACAO });
-		List<SrConfiguracao> designacoesAAtualizar = new ArrayList<SrConfiguracao>();
-		for (SrConfiguracao c : designacoesApontando)
-			if (c.itemConfiguracao != null)
-				designacoesAAtualizar.add(c);
-		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
-				designacoesAAtualizar);
-	}
-
-	public static void notificarQueMudou(SrAcao acao) throws Exception {
-		if (acao == null)
-			return;
-		List<SrConfiguracao> designacoesApontando = getConfiguracoes(null,
-				null, null, null, acao, null, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE,
-				new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO });
-		List<SrConfiguracao> designacoesAAtualizar = new ArrayList<SrConfiguracao>();
-		for (SrConfiguracao c : designacoesApontando)
-			if (c.acao != null)
-				designacoesAAtualizar.add(c);
-		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
-				designacoesAAtualizar);
-	}
-
-	public static void notificarQueMudou(SrTipoAtributo tipoAtt)
-			throws Exception {
-		if (tipoAtt == null)
-			return;
-		List<SrConfiguracao> associacoesApontando = getConfiguracoes(null,
-				null, null, null, null, tipoAtt, null,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO,
-				null, new int[] {});
-		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
-				associacoesApontando);
-	}
-
-	public static void notificarQueMudou(SrLista lista) throws Exception {
-		if (lista == null)
-			return;
-		List<SrConfiguracao> permissoesApontando = getConfiguracoes(null, null,
-				null, null, null, null, lista,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA, null,
-				new int[] {});
-		SrConfiguracaoBL.get().atualizarConfiguracoesDoCache(
-				permissoesApontando);
+				atributosDesconsideradosFiltro);
 	}
 
 	@Override
@@ -542,67 +436,53 @@ public class SrConfiguracao extends CpConfiguracao {
 		}
 	}
 
-	/**
-	 * Marca os itens como herdados.
-	 */
-	public static List<SrConfiguracao> marcarComoHerdadas(
-			List<SrConfiguracao> listasDesignacoesPai, SrItemConfiguracao item) {
-		Iterator<SrConfiguracao> i = listasDesignacoesPai.iterator();
-
-		while (i.hasNext()) {
-			SrConfiguracao conf = i.next();
-			boolean encontrou = false;
-
-			conf.isHerdado = true;
-			conf.utilizarItemHerdado = true;
-
-			List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada
-					.findByConfiguracao(conf);
-
-			for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
-				// Se a configuração for do Item, vai como desmarcado
-				if (item.getId().equals(igItem.itemConfiguracao.getId())) {
-					conf.utilizarItemHerdado = false;
-				}
-
-				// se a configuração for do Item (histórico), vai como
-				// desmarcado
-				else if (item.getHistoricoItemConfiguracao() != null
-						&& item.getHistoricoItemConfiguracao().size() > 0) {
-					for (SrItemConfiguracao itemHist : item
-							.getHistoricoItemConfiguracao()) {
-						if (itemHist.getId().equals(
-								igItem.itemConfiguracao.getId())) {
-							conf.utilizarItemHerdado = false;
-							encontrou = true;
-							break;
-						}
-					}
-				}
-
-				else {
-					SrItemConfiguracao itemPai = item.getPaiPorSigla();
-
-					while (itemPai != null) {
-
-						// Se for configuração do pai, não aparece na tela caso
-						// esteja marcada para Ignorar no Pai
-						if (itemPai.getId().equals(
-								igItem.itemConfiguracao.getId())) {
-							i.remove();
-							break;
-						} else
-							itemPai = itemPai.getPaiPorSigla();
-					}
-				}
-
-				// Caso tenha encontrado a configuração correta, interrompe o
-				// loop
-				if (encontrou)
-					break;
+	public int getNivelItemParaComparar() {
+		int soma = 0;
+		if (itemConfiguracaoSet != null && itemConfiguracaoSet.size() > 0){
+			for (SrItemConfiguracao i : itemConfiguracaoSet){
+				soma += i.getNivel();
 			}
+			return soma / itemConfiguracaoSet.size();
 		}
-
-		return listasDesignacoesPai;
+		return 0;
 	}
+	
+	public int getNivelAcaoParaComparar() {
+		int soma = 0;
+		if (acoesSet != null && acoesSet.size() > 0){
+			for (SrAcao i : acoesSet){
+				soma += i.getNivel();
+			}
+			return soma / acoesSet.size();
+		}
+		return 0;
+	}
+
+	public SrItemConfiguracao getItemConfiguracaoUnitario() {
+		if (itemConfiguracaoSet == null || itemConfiguracaoSet.size() == 0)
+			return null;
+		return itemConfiguracaoSet.get(0);
+	}
+
+	public void setItemConfiguracaoUnitario(SrItemConfiguracao itemConfiguracao) {
+		itemConfiguracaoSet = new ArrayList<SrItemConfiguracao>();
+		itemConfiguracaoSet.add(itemConfiguracao);
+	}
+
+	public SrAcao getAcaoUnitaria() {
+		if (acoesSet == null || acoesSet.size() == 0)
+			return null;
+		return acoesSet.get(0);
+	}
+
+	public void setAcaoUnitaria(SrAcao acao) {
+		acoesSet = new ArrayList<SrAcao>();
+		acoesSet.add(acao);
+	}
+
+	@Override
+	public CpConfiguracao getConfiguracaoAtual() {
+		return super.getConfiguracaoAtual();
+	}
+	
 }

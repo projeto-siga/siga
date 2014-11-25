@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,6 +23,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -40,7 +40,7 @@ public class SrLista extends HistoricoSuporte {
 	private static final long serialVersionUID = 1L;
 
 	private class SrSolicitacaoListaComparator implements
-			Comparator<SrSolicitacao> {
+	Comparator<SrSolicitacao> {
 
 		private SrLista lista;
 
@@ -86,7 +86,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
 
@@ -94,7 +94,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrLista listaInicial;
 
-	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
 
@@ -162,11 +162,12 @@ public class SrLista extends HistoricoSuporte {
 	public Set<SrMovimentacao> getMovimentacaoSet(boolean ordemCrescente) {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new SrMovimentacaoComparator(ordemCrescente));
-		SrLista ini = listaInicial != null ? listaInicial : this;
-		if (ini.meuMovimentacaoSet != null)
-			for (SrMovimentacao movimentacao : ini.meuMovimentacaoSet)
-				if ((!movimentacao.isCanceladoOuCancelador()))
-					listaCompleta.add(movimentacao);
+		if (listaInicial != null)
+			for (SrLista lista : getHistoricoLista())
+				if (lista.meuMovimentacaoSet != null)
+					for (SrMovimentacao movimentacao : lista.meuMovimentacaoSet)
+						if ((!movimentacao.isCanceladoOuCancelador()))
+							listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
 
@@ -175,7 +176,7 @@ public class SrLista extends HistoricoSuporte {
 			return movimentacao;
 		return null;
 	}
-
+	
 	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa pess) {
 		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
 	}
@@ -208,10 +209,13 @@ public class SrLista extends HistoricoSuporte {
 
 	public List<SrConfiguracao> getPermissoes(DpLotacao lotaTitular, DpPessoa pess) {
 		try {
-			return SrConfiguracao.getConfiguracoes(
-					lotaTitular, pess,
-					CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA,
-					new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
+			SrConfiguracao confFiltro = new SrConfiguracao();
+			confFiltro.setLotacao(lotaTitular);
+			confFiltro.setDpPessoa(pess);
+			confFiltro.setCpTipoConfiguracao(JPA.em().find(
+					CpTipoConfiguracao.class,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -277,36 +281,13 @@ public class SrLista extends HistoricoSuporte {
 	public void salvar() throws Exception {
 		super.salvar();
 
-		// Edson: comentado o codigo abaixo porque muitos problemas ocorriam.
-		// Mas
-		// tem de ser corrigido.
-
-		// Edson: eh necessario o refresh porque, abaixo, as configuracoes
-		// referenciando
-		// serao recarregadas do banco, e precisarao reconhecer o novo estado
-		// desta lista
-		// refresh();
-
-		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
-		// instancia do objeto, caso contrario, nao ha configuracao
-		// referenciando
-		if (listaInicial != null)
-			SrConfiguracaoBL
-					.get()
-					.limparCache(
-							(CpTipoConfiguracao) CpTipoConfiguracao
-									.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
-
-		// DB1: precisa salvar item a item
+		// DB1: precisa salvar item a item 
 		if (this.permissoes != null) {
 			for (SrConfiguracao permissao : this.permissoes) {
 				permissao.listaPrioridade = this;
 				permissao.salvarComoPermissaoUsoLista();
 			}
 		}
-
-		// if (listaInicial != null)
-		// SrConfiguracao.notificarQueMudou(this);
 	}
 
 	/**

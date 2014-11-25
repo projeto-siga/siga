@@ -1328,6 +1328,18 @@ public class CpDao extends ModeloDao {
 		return query.list();
 	}
 
+	public List<CpConfiguracao> consultarConfiguracoesPorTipo(final Long idTipoConfig) {
+		Query query = getSessao().getNamedQuery("consultarCpConfiguracoesPorTipo");
+
+		query.setLong("idTpConfiguracao", idTipoConfig);
+
+		query.setCacheable(false);
+
+		return query.list();
+
+	}
+
+
 	public List<CpConfiguracao> porLotacaoPessoaServicoTipo(
 			final CpConfiguracao exemplo) {
 		Query query = getSessao().getNamedQuery(

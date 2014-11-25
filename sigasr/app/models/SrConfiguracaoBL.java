@@ -20,6 +20,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 	public static int LISTA_PRIORIDADE = 33;
 
 	public static int TIPO_ATRIBUTO = 34;
+	
+	public static int ATENDENTE = 35;
 
 	public static SrConfiguracaoBL get() {
 		return (SrConfiguracaoBL) Sr.getInstance().getConf();
@@ -30,20 +32,15 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		setComparator(new SrConfiguracaoComparator());
 	}
 
-	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)
-			throws Exception {
-		return (SrConfiguracao) buscaConfiguracao(conf, new int[] { 0 }, null);
-	}
-
 	@Override
 	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
 		super.deduzFiltro(cpConfiguracao);
 		if (cpConfiguracao instanceof SrConfiguracao) {
 			SrConfiguracao srConf = (SrConfiguracao) cpConfiguracao;
-			if (srConf.itemConfiguracao != null)
-				srConf.itemConfiguracao = srConf.itemConfiguracao.getAtual();
-			if (srConf.acao != null)
-				srConf.acao = srConf.acao.getAtual();
+			if (srConf.itemConfiguracaoFiltro != null)
+				srConf.itemConfiguracaoFiltro = srConf.itemConfiguracaoFiltro.getAtual();
+			if (srConf.acaoFiltro != null)
+				srConf.acaoFiltro = srConf.acaoFiltro.getAtual();
 			if (srConf.listaPrioridade != null)
 				srConf.listaPrioridade = srConf.listaPrioridade.getListaAtual();
 		}
@@ -79,22 +76,41 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE
 					&& conf.equipeQualidade == null)
 				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO
+					&& conf.pesquisaSatisfacao == null)
+				return false;
 
-			if (!atributosDesconsiderados.contains(ACAO) && conf.acoesSet != null) {
+			if (!atributosDesconsiderados.contains(ACAO)
+					&& conf.acoesSet != null && conf.acoesSet.size() > 0) {
+				boolean acaoAtende = false;
 				for (SrAcao item : conf.acoesSet) {
-					if (filtro.acao == null || (filtro.acao != null 
-							&& !item.getAtual().isPaiDeOuIgualA(filtro.acao)))
-						return false;
+					if (filtro.acaoFiltro != null
+							&& item.getAtual().isPaiDeOuIgualA(
+									filtro.acaoFiltro)) {
+						acaoAtende = true;
+						break;
+					}
 				}
+				if (!acaoAtende)
+					return false;
 			}
 			
-			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO) && conf.itemConfiguracaoSet != null) {
+			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO)
+					&& conf.itemConfiguracaoSet != null
+					&& conf.itemConfiguracaoSet.size() > 0) {
+				boolean itemAtende = false;
 				for (SrItemConfiguracao item : conf.itemConfiguracaoSet) {
-					if (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null 
-							&& !item.getAtual().isPaiDeOuIgualA(filtro.itemConfiguracao)))
-						return false;
+					if (filtro.itemConfiguracaoFiltro != null
+							&& item.getAtual().isPaiDeOuIgualA(
+									filtro.itemConfiguracaoFiltro)){
+						itemAtende = true;
+						break;
+					}
 				}
-			}
+				if (!itemAtende)
+					return false;
+			}			
 			
 			if (!atributosDesconsiderados.contains(LISTA_PRIORIDADE)
 					&& conf.listaPrioridade != null
@@ -106,6 +122,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& conf.tipoAtributo != null
 					&& (filtro.tipoAtributo == null || (filtro.tipoAtributo != null && !conf.tipoAtributo
 							.getAtual().equivale(filtro.tipoAtributo))))
+				return false;
+			
+			if (!atributosDesconsiderados.contains(ATENDENTE)
+					&& conf.atendente != null
+					&& (filtro.atendente == null || (filtro.atendente != null && !conf.atendente
+							.getLotacaoAtual().equivale(filtro.atendente))))
 				return false;
 
 		}

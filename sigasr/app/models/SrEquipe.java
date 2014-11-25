@@ -54,5 +54,39 @@ public class SrEquipe extends HistoricoSuporte {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
+	
+	@Override
+	public void salvar() throws Exception {
+		super.salvar();
+		
+		// Atualiza e salva as excessões de horário
+		if (excecaoHorarioSet != null)
+            for (SrExcecaoHorario excecao : excecaoHorarioSet){
+                excecao.equipe = this;
+                excecao.salvar();
+            }
+	}
+
+	public List<SrConfiguracao> getDesignacoes() throws Exception {
+		if (lotacao == null)
+			return null;
+		else
+			return SrConfiguracao.listarDesignacoes(false, lotacao);
+	}
+
+	public static List<SrEquipe> listar(boolean mostrarDesativados) {
+		StringBuffer sb = new StringBuffer();
+		
+		if (!mostrarDesativados)
+			sb.append(" hisDtFim is null ");
+		else {
+			sb.append(" idEquipe in (");
+			sb.append(" SELECT max(idEquipe) as idEquipe FROM ");
+			sb.append(" SrEquipe GROUP BY hisIdIni) ");
+		}
+		
+		return SrEquipe.find(sb.toString()).fetch();
+		
+	}
 
 }

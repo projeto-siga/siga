@@ -6,7 +6,7 @@ public enum SrUrgencia {
 	SEM_PRESSA(1, "Sem urgência.", "Sem pressa"), NORMAL(2,
 			"Urgência normal.", "Quando for oportuno"), URGENCIA(
 			3, "Urgente.", "Com urgência"), MUITA_URGENCIA(
-			4, "Muito urgente", "Com muita urgência"), AGIR_IMEDIATO(5,
+			4, "Muito urgente.", "Com muita urgência"), AGIR_IMEDIATO(5,
 			"Extremamente urgente.", "Imediatamente");
 
 	public int nivelUrgencia;

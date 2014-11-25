@@ -16,13 +16,13 @@
 
 			<div class="gt-form-row gt-width-66">
 				<label>Item</label> #{selecao tipo:'item',
-				nome:'associacao.itemConfiguracao',
-				value:associacao.itemConfiguracao?.atual /}
+				nome:'associacao.itemConfiguracaoUnitario',
+				value:associacao.itemConfiguracaoUnitario?.atual /}
 			</div>
 
 			<div class="gt-form-row gt-width-66">
 				<label>Serviço</label> #{selecao tipo:'acao',
-				nome:'associacao.acao', value:associacao.acao?.atual /}
+				nome:'associacao.acaoUnitaria', value:associacao.acaoUnitaria?.atual /}
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Tipo de atributo</label> #{select 'associacao.tipoAtributo',
@@ -37,17 +37,11 @@
 			</div>
 			<div class="gt-form-row">
 				#{if associacao.hisDtFim}
-					<input type="submit" value="Reativar"
-						class="gt-btn-medium gt-btn-left" />
 				#{/if}
 				#{else}
 					<input type="submit" value="Gravar"
 						class="gt-btn-medium gt-btn-left" />
 					<a href="@{Application.listarAssociacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-					#{if associacao?.idConfiguracao} <input type="button" value="Desativar"
-						class="gt-btn-medium gt-btn-left"
-						onclick="location.href='@{Application.desativarAssociacao()}?id=${associacao.idConfiguracao}'" />
-				#{/if}
 				#{/else}
 			</div>
 			#{/form}

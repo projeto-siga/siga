@@ -58,17 +58,15 @@
 			    controleAcessoModalAbrir(true);
 			}
 		});
-
-		$('.desassociarPermissao').bind('click', desativarPermissaoUsoListaEdicao);
 	});
 
-	function desativarPermissaoUsoListaEdicao(event) {
+	function desativarPermissaoUsoListaEdicao(event, idPermissaoDesativar) {
 		event.stopPropagation();
 		
 		var me = $(this),
-			idPermissao = me.find('.idPermissao').val(),
+			idPermissao = idPermissaoDesativar ? idPermissaoDesativar : me.find('.idPermissao').val(),
 			idLista = $("#idLista").val();
-		
+
 		location.href='@{Application.desativarPermissaoUsoListaEdicao()}?' + jQuery.param({idLista : idLista, idPermissao : idPermissao});
 	}
 	
@@ -262,6 +260,8 @@
 	
 	$(function() {
 		$("[value='Gravar']").click(function(){
+			if (!block())
+				return false;
 			var jForm = $("form"),
             	params = jForm.serialize();
 			
@@ -367,7 +367,7 @@
 									<td>${perm.tipoPermissao}</td>
 									<td>${perm.tipoPermissao?.descrTipoPermissaoLista}</td>
 									<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-										<a class="once desassociarPermissao" title="Remover permissão">
+										<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissão">
 											<input class="idPermissao" type="hidden" value="${perm.id}"/>
 											<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
 										</a>
@@ -383,7 +383,7 @@
 				<div class="gt-form-row">
 					<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
 					<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
-					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" />
+					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left"  />
 					#{if lista?.idLista }<a href="@{Application.exibirLista(lista.idLista)}" class="gt-btn-medium gt-btn-left">Cancelar</a>#{/if}
 					#{else}<a href="@{Application.listarlista}" class="gt-btn-medium gt-btn-left">Cancelar</a>#{/else}
 				</div>

@@ -9,7 +9,7 @@ $(function() {
         buttonImageOnly: true,
         dateFormat: 'dd/mm/yy'
     });
-    $( "#calendarioReplanejar" ).datepicker({
+    $( "#calendarioAlterarPrazo" ).datepicker({
         showOn: "button",
         buttonImage: "/siga/css/famfamfam/icons/calendar.png",
         buttonImageOnly: true,
@@ -21,7 +21,7 @@ $(function() {
 <script>
 $(function(){
 	$("#horario").mask("99:99");
-	$("#horarioReplanejar").mask("99:99");
+	$("#horarioAlterarPrazo").mask("99:99");
 });
 </script>
 
@@ -40,16 +40,16 @@ $(function(){
 		<div
 			style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
 			<img src="/siga/css/famfamfam/icons/error.png"
-				style="margin-right: 1px;"> O atendente atual não é o
+				style="margin-right: 1px;"> O atendente atual n&atilde;o &eacute; o
 			atendente designado.
 		</div>
 		#{/if} #{links acoes:solicitacao.operacoes(lotaTitular, titular,
 		completo), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-				${solicitacao.itemConfiguracao?.descricao} -
-				${solicitacao.acao?.descricao}</p>
-			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descrSolicitacao}</p>
+				${solicitacao.descrItem} -
+				${solicitacao.descrAcao}</p>
+			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 			<script language="javascript">
 				var descricao = document.getElementById('descrSolicitacao');
 				descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
@@ -66,7 +66,7 @@ $(function(){
 		<div class="gt-content-box gt-form"
 			style="margin-bottom: 0px !important">
 			<form action="@{Application.darAndamento()}" method="post"
-				enctype="multipart/form-data">
+				enctype="multipart/form-data" onsubmit="javascript: return block();">
 				<input type="hidden" name="completo" value="${completo}" /> <input
 					type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
@@ -100,8 +100,7 @@ $(function(){
 		#{if completo} #{set movs:solicitacao.movimentacaoSetComCancelados /}
 		#{/if} #{else} #{set movs:solicitacao.movimentacoesPrincipais /}
 		#{/else} #{if movs}
-		<h3 style="padding-top: 25px;">#{if
-			completo}Movimentações#{/if}#{else}Andamentos#{/else}</h3>
+		<br/><br/>
 
 		<div class="gt-content-box">
 			<table border="0" width="100%" class="gt-table mov">
@@ -119,15 +118,16 @@ $(function(){
 					<col width="15%" />
 					<col width="10%" />
 					<col width="10%" />
-					<col width="65%" />
+					<col width="10%" />
+					<col width="55%" />
 					#{/else}
 				</colgroup>
 				<thead>
 					<tr>
 						#{if completo}
 						<th></th> #{/if}
-						<th>Momento</th> #{if completo}
-						<th>Tipo</th> #{/if}
+						<th>Momento</th>
+						<th>Evento</th>
 						<th colspan="2">Cadastrante</th> #{if completo}
 						<th colspan="2">Atendente</th> #{/if}
 						<th>Descrição</th>
@@ -140,8 +140,8 @@ $(function(){
 						#{if completo}
 						<td>${movimentacao.numSequencia}</td> #{/if} #{if completo}
 						<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>#{/if} #{else}
-						<td>${movimentacao.dtIniString}</td>#{/else} #{if completo}
-						<td>${movimentacao.tipoMov.nome}</td> #{/if}
+						<td>${movimentacao.dtIniString}</td>#{/else} 
+						<td>${movimentacao.tipoMov.nome}</td>
 						<td>#{selecionado
 							sigla:movimentacao.lotaCadastrante?.siglaLotacao,
 							descricao:movimentacao.lotaCadastrante?.nomeLotacao /}</td>
@@ -158,11 +158,15 @@ $(function(){
 						#{/if}
 						<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
 							#{if movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
-							arquivo:movimentacao.arquivo /}#{/if} #{if
-							movimentacao.tipoMov.idTipoMov == 16}&nbsp;|&nbsp; <a
-							style="color: #365b6d; text-decoration: none"
-							href="@{Application.exibirPesquisa(movimentacao.idMovimentacao)}">
-								Olá</a>#{/if}
+							arquivo:movimentacao.arquivo /}#{/if} 
+							#{if movimentacao.tipoMov.idTipoMov == 16}
+							#{list items:movimentacao.respostaSet, as:'resposta'}
+								#{if resposta.pergunta.tipoPergunta.idTipoPergunta == 1}<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.descrResposta}#{/if}
+								#{elseif resposta.pergunta.tipoPergunta.idTipoPergunta == 2}<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.grauSatisfacao}
+								#{/elseif}
+								</li>
+							#{/list}
+							#{/if}
 						</td>
 						<script language="javascript">
 							var descricao = document.getElementById('descrMovimentacao${movimentacao.idMovimentacao}');
@@ -183,7 +187,7 @@ $(function(){
 			<h3>Dados da Solicitação</h3>
 			<p>
 				<b>Solicitante:</b>
-				${solicitacao?.solicitante?.descricaoIniciaisMaiusculas}
+				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao}
 			</p>
 			<p>
 				<b>Interlocutor:</b>
@@ -204,34 +208,38 @@ $(function(){
 			#{/if}
 			<p>
 				<b>Cadastrante:</b>
-				${solicitacao?.cadastrante?.descricaoIniciaisMaiusculas}
+				${solicitacao.cadastrante?.descricaoIniciaisMaiusculas}
 			</p>
+			#{if solicitacao.meioComunicacao}
 			<p>
-				<b>Abertura:</b> ${solicitacao.solicitacaoInicial.dtRegString}
+				<b>Origem da Demanda:</b>
+				${solicitacao.meioComunicacao?.descrMeioComunicacao}
+			</p>
+			#{/if}
+			#{if solicitacao.dtOrigem}
+			<p>
+				<b>Contato Inicial:</b>
+				${solicitacao.dtOrigemString}
+			</p>
+			#{/if}
+			<p>
+				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>
 			<p>
 				<b>Item de Configuração:</b>
-				${solicitacao.itemConfiguracao?.siglaItemConfiguracao} -
-				${solicitacao.itemConfiguracao?.descricao}
+				${solicitacao.siglaEDescrItem}
 			</p>
 			<p>
-				<b>Ação:</b> ${solicitacao.acao?.siglaAcao} -
-				${solicitacao.acao?.descricao}
+				<b>Ação:</b>
+				${solicitacao.siglaEDescrAcao}
 			</p>
 			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
 			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
 			#{/elseif} #{else} #{set priorColor:'' /} #{/else}
 			<p>
-				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent}
-					${solicitacao.GUTString}</span>
+				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
+					<br /> ${solicitacao.GUTString}</span>
 			</p>
-			#{if (solicitacao.pendente) &&
-			(solicitacao.getUltimaMovimentacaoPorTipo(9).dtAgenda != "")}
-			<p>
-				<b>Agendamento:</b>
-				${solicitacao.getUltimaMovimentacaoPorTipo(9).getDtAgendaDDMMYYHHMM()}
-			</p>
-			#{/if}
 		</div>
 	</div>
 
@@ -256,7 +264,7 @@ $(function(){
 						value="${listas?.idLista}"> <a
 						style="color: #365b6d; text-decoration: none"
 						href="@{Application.exibirLista(listas?.idLista)}">
-							${listas?.nomeLista} </a>
+							${listas?.listaAtual?.nomeLista} </a>
 					</td>
 				</tr>
 				#{/list}
@@ -301,7 +309,7 @@ $(function(){
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Pendências</h3>
-			#{list items:solicitacao.getPendentes(), as:'pendencia'}
+			#{list items:solicitacao.pendencias, as:'pendencia'}
 				<p>
 					<b>${pendencia.descrMovimentacao}</b>
 					<a href="javascript:terminarPendencia('${pendencia.motivoPendencia}', '${pendencia.idMovimentacao}');"> 
@@ -318,7 +326,7 @@ $(function(){
 	#{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
 	<div class="gt-content-box gt-form">
 		<form action="@{Application.anexarArquivo()}" method="post"
-			enctype="multipart/form-data">
+			enctype="multipart/form-data" onsubmit="javascript: return block();">
 			<input type="hidden" name="completo" value="${completo}" /> <input
 				type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 				value="${movimentacao.solicitacao.idSolicitacao}"> <input
@@ -341,7 +349,7 @@ $(function(){
 	</div>
 	#{/modal} #{modal nome:'fechar', titulo:'Fechar'}
 	<form action="@{Application.fechar()}" method="post"
-		enctype="multipart/form-data">
+		enctype="multipart/form-data" onsubmit="javascript: return block();">
 		<div style="display: inline" class="gt-form-row gt-width-66">
 			<label>Motivo</label>
 			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
@@ -349,32 +357,6 @@ $(function(){
 		<input type="hidden" name="completo" value="${completo}" /> <input
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-	</form>
-	#{/modal} #{modal nome:'excluir', titulo:'Excluir'}
-	<form action="@{Application.excluir()}" method="post"
-		enctype="multipart/form-data">
-		<div style="display: inline" class="gt-form-row gt-width-100">
-			<table border="0" class="gt-table">
-				<col width="100%" />
-				<thead>
-					<tr class="gt-celula-nowrap">
-						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Deseja realmente excluir esta solicitação?</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="gt-celula-nowrap"
-							style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<input type="hidden" name="completo" value="${completo}" /> <input
-								type="hidden" name="id" value="${solicitacao.id}" /> <input
-								type="submit" value="Excluir" class="gt-btn-medium gt-btn-left" />
-							 <a href="@{Application.exibir(solicitacao.idSolicitacao)}"
-								class="gt-btn-medium gt-btn-left">Voltar</a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
 	</form>
 	#{/modal}
 	#{modal nome:'juntar', titulo:'Juntar'}
@@ -421,84 +403,60 @@ $(function(){
 	#{/modal}
 	#{modal nome:'associarLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/associarLista?idSolicitacao='+solicitacao.idSolicitacao} 
 	#{/modal} 
+	#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa', url:'/sigasr/solicitacao/responderPesquisa?id='+solicitacao.idSolicitacao}
+	#{/modal}
 	#{modal nome:'pendencia', titulo:'Pendência'}
+	<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
+	<div class="gt-content-box gt-for-table gt-form">
 	<form action="@{Application.deixarPendente()}" method="post"
-		enctype="multipart/form-data">
-		<div style="display: inline" class="gt-form-row gt-width-66">
-			<label>Em caso de agendamento, preencha a data/hora desejada:</label>
-			<table border="0" class="gt-table">
-				<col width="30%" />
-				<col width="30%" />
-				<col width="40%" />
-				<tbody>
-					<tr class="gt-celula-nowrap">
-						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Data</th>
-						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Hora</th>
-						<th style="color: #333; font-weight: bold; padding: 7px 10px;">Motivo</th>
-					</tr>
-					<tr>
-						<td class="gt-celula-nowrap"
-							style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<input type="text" name="calendario" id="calendario">
-						</td>
-						<td class="gt-celula-nowrap"
-							style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
-							<input type="text" name="horario" id="horario">
-						</td>
-						<td class="gt-celula-nowrap"
-							style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
-							#{select
+		enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<div class="gt-form-row gt-width-66">
+			<label>Data de Término</label>
+			<input type="text" name="calendario" id="calendario">
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Horário de Término</label>
+			<input type="text" name="horario" id="horario">
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Motivo</label>
+			#{select
 								name:'motivo', items:models.SrTipoMotivoPendencia.values(),
 								labelProperty:'descrTipoMotivoPendencia', style:'width:235px;' /}
-						</td>
-					</tr>
-				</tbody>
-			</table>
 		</div>
-		<p>
-		<div style="display: inline" class="gt-form-row gt-width-66">
+		<div class="gt-form-row gt-width-66">
 			<label>Detalhamento do Motivo</label>
-			<textarea style="width: 100%" name="detalheMotivo" cols="50" rows="4"> </textarea>
+			<textarea name="detalheMotivo" cols="50" rows="4"> </textarea>
 		</div>
+		<div class="gt-form-row">
 		<input type="hidden" name="completo" value="${completo}" /> <input
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+		</div>
 	</form>
-	#{/modal} #{modal nome:'replanejar', titulo:'Replanejar'}
-		<form action="@{Application.replanejar()}" method="post"
-			enctype="multipart/form-data">
-			<div style="display: inline" class="gt-form-row gt-width-66">
-				<label>Preencha a data/hora desejada:</label>
-				<table border="0" class="gt-table">
-					<col width="20%" />
-					<col width="20%" />
-					<tbody>
-						<tr class="gt-celula-nowrap">
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Data</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Hora</th>
-						</tr>
-						<tr>
-							<td class="gt-celula-nowrap"
-								style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-								<input type="text" name="calendario" id="calendarioReplanejar">
-							</td>
-							<td class="gt-celula-nowrap"
-								style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;">
-								<input type="text" name="horario" id="horarioReplanejar">
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<p>
-			<div style="display: inline" class="gt-form-row gt-width-66">
-				<label>Motivo</label>
-				<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
-			</div>
-			<input type="hidden" name="completo" value="${completo}" /> <input
-				type="hidden" name="id" value="${solicitacao.id}" /> <input
-				type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+	</div>
+	</div>
+	#{/modal} #{modal nome:'alterarPrazo', titulo:'Alterar Prazo'}
+		<div class="gt-form gt-content-box">
+		<form action="@{Application.alterarPrazo()}" method="post"
+			enctype="multipart/form-data" onsubmit="javascript: return block();">
+				<div class="gt-form-row gt-width-66">
+					<label>Data</label>
+					<input type="text" name="calendario" id="calendarioAlterarPrazo">
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Hora</label>
+					<input type="text" name="horario" id="horarioAlterarPrazo">
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Motivo</label>
+					<textarea name="motivo" cols="50" rows="4"> </textarea> 
+				</div>
+				<input type="hidden" name="completo" value="${completo}" />
+				<input type="hidden" name="id" value="${solicitacao.id}" /> 
+				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 		</form>
+		</div>
 	#{/modal}
 	
 <script language="javascript">

@@ -45,7 +45,7 @@ public class SrPergunta extends HistoricoSuporte {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrPergunta perguntaInicial;
 
-	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "perguntaInicial", cascade = CascadeType.PERSIST)
+	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "perguntaInicial")
 	@OrderBy("hisDtIni desc")
 	public List<SrPergunta> meuPerguntaHistoricoSet;
 

@@ -4,8 +4,10 @@
 	carregarConhecimentosRelacionados();
 	
 	// Codigo para atualizacao dos filtros na tela
+	*{
 	removerFiltrosSemCampo();
 	carregarFiltrosAtributos();
+	}*
 	carregarSolRelacionadas();
 </script>
 
@@ -14,10 +16,13 @@
 		<div id="gc-ancora-item-acao"></div>
 	</div>
 	<script type="text/javascript">
-		<!-- Edson: carrega o conhecimento do item + acao -->
 		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.gcTagAbertura}&estilo=inplace&popup=true&msgvazio=Não existe conhecimento registrado para ${solicitacao.itemConfiguracao.tituloItemConfiguracao} - ${solicitacao.acao.tituloAcao}. Clique <a href=\"$1\">aqui</a> para contribuir.&titulo=${solicitacao.gcTituloAbertura}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item-acao'));
 	</script>
 #{/if}
+
+<script type="text/javascript"> 
+	carregarConhecimentosRelacionados();
+</script>
 
 <div id="atributos">
 	#{list items:solicitacao.tiposAtributoAssociados, as:'tipoAtributo'}

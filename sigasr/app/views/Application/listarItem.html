@@ -40,17 +40,18 @@
 			else
 				location.href = '@{Application.listarItem()}';	
 		});
-		
 		/* Table initialization */
 		var table = $('#itens_configuracao_table')
 			.on('draw.dt', function() {
 					if(table) {
 						var btn = $('.bt-expandir'),
 							expandir = btn.hasClass('expandido');
+						
+						$('#itens_configuracao_table').mostrarDetalhes(format, table);
 						$('#itens_configuracao_table').expandirContrairLinhas(expandir);
 					}
 				})
-			.DataTable({
+			.dataTable({
 				"language": {
 					"emptyTable":     "Não existem resultados",
 				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",

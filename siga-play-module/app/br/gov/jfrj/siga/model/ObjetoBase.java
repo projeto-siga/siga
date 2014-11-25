@@ -26,8 +26,7 @@ public abstract class ObjetoBase extends GenericModel {
 				// m�ximo, � @MappedSuperclass
 				// Veja
 				// https://groups.google.com/forum/?fromgroups=#!topic/play-framework/waYNFtLCH40
-				ObjetoBase thisAntigo = JPA.em().find(this.getClass(),
-						thisHistorico.getId());
+				ObjetoBase thisAntigo = JPA.em().find(this.getClass(), thisHistorico.getId());
 				
 				if(((Historico) thisAntigo).getHisDtFim() == null) {
 					thisAntigo.finalizar();

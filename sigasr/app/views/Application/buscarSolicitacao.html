@@ -15,10 +15,11 @@
 					var btn = $('.bt-expandir'),
 						expandir = btn.hasClass('expandido');
 					
+					$('#solicitacoes_table').mostrarDetalhes(format, table);
 					$('#solicitacoes_table').expandirContrairLinhas(expandir);
 				}
 			})
-			.DataTable({
+			.dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -100,7 +101,7 @@
 				<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
 					<col width="7%" />
 					<col width="15%" />
-		    		<col width="35%" />
+		    		<col width="26%" />
 		    		<col width="10%" />
 		    		<col width="10%" />
 		    		<col width="14%" />
@@ -142,17 +143,10 @@
 											</a>
 										#{/else}
 									#{/else}
-									
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
-									#{if sol.isAtivo()}
-										<b style="color: #333">
-									#{/if}
-									#{else}
-										<b>
-									#{/else}
-									${sol.itemConfiguracao?.descricao}:</b>&nbsp;
-									#{selecionado sigla:sol.descrSolicitacao,descricao:sol.descrSolicitacao /}
+									<b>${sol.descrItem}:</b>&nbsp;
+									#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
 								</td>
 							
 								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
@@ -165,7 +159,7 @@
 								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
 									<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-									#{selecionado sigla:sol.ultimoAndamento?.descrMovimentacao,descricao:sol.ultimoAndamento?.descrMovimentacao /}</td>
+									#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}</td>
 								<td>${sol.isAtivo()}</td>
 									
 							</tr>

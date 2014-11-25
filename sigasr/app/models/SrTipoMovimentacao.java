@@ -15,6 +15,11 @@ import play.db.jpa.GenericModel;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class SrTipoMovimentacao extends GenericModel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	final static public long TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO = 1;
 
 	final static public long TIPO_MOVIMENTACAO_ANDAMENTO = 2;

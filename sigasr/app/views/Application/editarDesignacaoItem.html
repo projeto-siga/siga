@@ -77,11 +77,8 @@
 				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
-				"columnDefs": [{
-					"targets": [0],
-					"visible": false,
-					"searchable": false
-				}],
+				"columnDefs": [{"targets": [0], "visible": false, "searchable": false},
+				               { "width": "5px", "targets": 3 }],
 				"iDisplayLength": 3
 		    } );
 		}
@@ -114,11 +111,11 @@
 				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
-				"columnDefs": [{
-					"targets": [0],
-					"visible": false,
-					"searchable": false
-				}],
+				"columnDefs": [{ "targets": [0], "visible": false, "searchable": false},
+				               { "width": "80px", "targets": 1 },
+				               { "width": "100px", targets: [2,3]},
+				               { "width": "320px", targets: [4]},
+				               { "width": "5px", targets: [5]}],
 				"iDisplayLength": 3
 			});
 		}
@@ -246,7 +243,7 @@
 			<div class="box gt-width-50">
 				<label>Órgão</label> 
 				#{select name:'orgaoUsuario', 
-					items:orgaos, 
+					items:_orgaos, 
 					valueProperty:'idOrgaoUsu',
 					labelProperty:'nmOrgaoUsu',
 					value:orgaoUsuario?.idOrgaoUsu,
@@ -261,7 +258,7 @@
 			<div class="box box-left gt-width-50">
 				<label>Local</label> 
 				#{select name:'complexo', 
-					items:locais, 
+					items:_locais, 
 					valueProperty:'idComplexo',
 					labelProperty:'nomeComplexo', 
 					value:complexo?.idComplexo,
@@ -302,7 +299,7 @@
 			<div class="box gt-width-50">
 				<label>Pesquisa de satisfação</label> 
 					#{select name:'pesquisaSatisfacao', 
-						items:pesquisaSatisfacao, 
+						items:_pesquisaSatisfacao, 
 						valueProperty:'idPesquisa',
 						labelProperty:'nomePesquisa', 
 						value:pesquisaSatisfacao?.idPesquisa,
@@ -318,10 +315,10 @@
 			<label>Itens de Configuração</label>
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
-				<table id="itemConfiguracao_table" border="0" class="gt-table display">
+				<table id="itemConfiguracao_table" border="0" class="gt-table-nowrap display">
 					<thead>
 						<tr>
-							<th>ID</th>
+							<th >ID</th>
 							<th>Sigla</th>
 							<th>Titulo</th>
 							<th>Descrição</th>
@@ -345,7 +342,7 @@
 				</table>
 			</div>
 			<div class="gt-table-buttons">
-				<a href="javascript: modalAbrir('itemConfiguracao')" class="gt-btn-medium gt-btn-left">Incluir</a>
+				<a href="javascript: modalAbrir('itemConfiguracao')" class="gt-btn-small gt-btn-left">Incluir</a>
 			</div>
 		</div>
 		
@@ -377,119 +374,120 @@
 				</table>
 			</div>
 			<div class="gt-table-buttons">
-				<a href="javascript: modalAbrir('acao')" class="gt-btn-medium gt-btn-left">Incluir</a>
+				<a href="javascript: modalAbrir('acao')" class="gt-btn-small gt-btn-left">Incluir</a>
 			</div>
 		</div>
 		
-		<hr/>
-		<label>SLA</label>
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left">
-				<label>Pré-atendimento</label>
-				<div>
-					<input id="slaPreAtendimentoQuantidade"
-						type="text"
-						name="slaPreAtendimentoQuantidade" 
-						value="${slaPreAtendimentoQuantidade}" />
-					#{select name:'unidadeMedidaPreAtendimento', 
-						items:unidadesMedida, 
-						valueProperty:'idUnidadeMedida',
-						labelProperty:'descricao', 
-						value:unidadeMedidaPreAtendimento?.idUnidadeMedida}
-						#{option 0}Nenhum#{/option} 
-					#{/select}
+		<div style="display: none"> <!-- escondendo parte que sair� desta tela -->
+			<hr/>
+			<label>SLA</label>
+			<div class="gt-form-row box-wrapper">
+				<div class="box box-left">
+					<label>Pré-atendimento</label>
+					<div>
+						<input id="slaPreAtendimentoQuantidade"
+							type="text"
+							name="slaPreAtendimentoQuantidade" 
+							value="${slaPreAtendimentoQuantidade}" />
+						#{select name:'unidadeMedidaPreAtendimento', 
+							items:_unidadesMedida, 
+							valueProperty:'idUnidadeMedida',
+							labelProperty:'descricao', 
+							value:unidadeMedidaPreAtendimento?.idUnidadeMedida}
+							#{option 0}Nenhum#{/option} 
+						#{/select}
+					</div>
+					<label>Atendimento</label>
+					<div>
+						<input id="slaAtendimentoQuantidade"
+							type="text"
+							name="slaAtendimentoQuantidade" 
+							value="${slaAtendimentoQuantidade}" />
+						#{select name:'unidadeMedidaAtendimento', 
+							items:_unidadesMedida, 
+							valueProperty:'idUnidadeMedida',
+							labelProperty:'descricao', 
+							value:unidadeMedidaAtendimento?.idUnidadeMedida}
+							#{option 0}Nenhum#{/option} 
+						#{/select}
+					</div>
+					<label>Pós-atendimento</label>
+					<div>
+						<input id="slaPosAtendimentoQuantidade"
+							type="text"
+							name="slaPosAtendimentoQuantidade" 
+							value="${slaPosAtendimentoQuantidade}" />
+						#{select name:'unidadeMedidaPosAtendimento', 
+							items:_unidadesMedida, 
+							valueProperty:'idUnidadeMedida',
+							labelProperty:'descricao', 
+							value:unidadeMedidaPosAtendimento?.idUnidadeMedida}
+							#{option 0}Nenhum#{/option} 
+						#{/select}
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Margem de segurança na divulgação (%)</label>
+						<input id="margemSeguranca"
+							type="text"
+							name="margemSeguranca" 
+							value="${margemSeguranca}" />
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>#{checkbox name:'divulgarSLA',
+							value:divulgarSLA/} Divulgar SLA</label>
+					</div>
 				</div>
-				<label>Atendimento</label>
-				<div>
-					<input id="slaAtendimentoQuantidade"
-						type="text"
-						name="slaAtendimentoQuantidade" 
-						value="${slaAtendimentoQuantidade}" />
-					#{select name:'unidadeMedidaAtendimento', 
-						items:unidadesMedida, 
-						valueProperty:'idUnidadeMedida',
-						labelProperty:'descricao', 
-						value:unidadeMedidaAtendimento?.idUnidadeMedida}
-						#{option 0}Nenhum#{/option} 
-					#{/select}
+				<div class="box">
+					<div class="gt-form-row gt-width-100">
+						<label>Observação para divulgação de SLA</label>
+						<textarea cols="70" rows="10" name="observacaoSLA"
+							id="observacaoSLA" maxlength="8192">${observacaoSLA}</textarea>
+					</div>
 				</div>
-				<label>Pós-atendimento</label>
-				<div>
-					<input id="slaPosAtendimentoQuantidade"
-						type="text"
-						name="slaPosAtendimentoQuantidade" 
-						value="${slaPosAtendimentoQuantidade}" />
-					#{select name:'unidadeMedidaPosAtendimento', 
-						items:unidadesMedida, 
-						valueProperty:'idUnidadeMedida',
-						labelProperty:'descricao', 
-						value:unidadeMedidaPosAtendimento?.idUnidadeMedida}
-						#{option 0}Nenhum#{/option} 
-					#{/select}
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>Margem de segurança na divulgação (%)</label>
-					<input id="margemSeguranca"
-						type="text"
-						name="margemSeguranca" 
-						value="${margemSeguranca}" />
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>#{checkbox name:'divulgarSLA',
-						value:divulgarSLA/} Divulgar SLA</label>
-				</div>
-			</div>
-			<div class="box">
-				<div class="gt-form-row gt-width-100">
-					<label>Observação para divulgação de SLA</label>
-					<textarea cols="70" rows="10" name="observacaoSLA"
-						id="observacaoSLA" maxlength="8192">${observacaoSLA}</textarea>
-				</div>
-			</div>
-		</div>
-		
-		<hr/>
-		<label>Notificação de atraso</label>
-		<div class="gt-form-row box-wrapper">
-			<div class="gt-width-50">
-				<label>#{checkbox name:'notificarGestor',
-					value:notificarGestor/} Gestor do item de Configuração</label>
-			</div>
-			<div class="gt-width-25">
-				<label>#{checkbox name:'notificarSolicitante',
-					value:notificarSolicitante/} Solicitante</label>
 			</div>
 			
-			<div class="gt-width-25">
-				<label>#{checkbox name:'notificarCadastrante',
-					value:notificarCadastrante/} Cadastrante</label>
-			</div>
-		</div>
-		
-		<div class="gt-form-row box-wrapper">
-			<div class="gt-width-50">
-				<label>#{checkbox name:'notificarInterlocutor',
-					value:notificarInterlocutor/} Interlocutor</label>
+			<hr/>
+			<label>Notificação de atraso</label>
+			<div class="gt-form-row box-wrapper">
+				<div class="gt-width-50">
+					<label>#{checkbox name:'notificarGestor',
+						value:notificarGestor/} Gestor do item de Configuração</label>
+				</div>
+				<div class="gt-width-25">
+					<label>#{checkbox name:'notificarSolicitante',
+						value:notificarSolicitante/} Solicitante</label>
+				</div>
+				
+				<div class="gt-width-25">
+					<label>#{checkbox name:'notificarCadastrante',
+						value:notificarCadastrante/} Cadastrante</label>
+				</div>
 			</div>
 			
-			<div class="gt-width-50">
-				<label>#{checkbox name:'notificarAtendente',
-					value:notificarAtendente/} Atendente</label>
+			<div class="gt-form-row box-wrapper">
+				<div class="gt-width-50">
+					<label>#{checkbox name:'notificarInterlocutor',
+						value:notificarInterlocutor/} Interlocutor</label>
+				</div>
+				
+				<div class="gt-width-50">
+					<label>#{checkbox name:'notificarAtendente',
+						value:notificarAtendente/} Atendente</label>
+				</div>
 			</div>
-		</div>
-		
-		<hr/>
-		<label>Priorização</label>
-		<div class="gt-form-row">
-			<label>Lista de Prioridade</label>
-			<ul id="listasDesignacao" style="color: #365b6d"></ul>
-			<input type="button" value="Incluir" id="botaoIncluirDesignacaoLista"
-                      class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
-		</div>
-		
+			
+			<hr/>
+			<label>Priorização</label>
+			<div class="gt-form-row">
+				<label>Lista de Prioridade</label>
+				<ul id="listasDesignacao" style="color: #365b6d"></ul>
+				<input type="button" value="Incluir" id="botaoIncluirDesignacaoLista"
+	                      class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+	        </div>
+        </div><!-- escondendo parte que sair� desta tela -->
 		<div class="gt-form-row">
 			<div class="gt-form-row">
-				<a href="javascript: gravarDesignacao()" class="gt-btn-medium gt-btn-left">Ok</a>
+				<a href="javascript: if (block()) gravarDesignacao();" class="gt-btn-medium gt-btn-left">Ok</a>
 				<a href="javascript: designacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 				#{if idConfiguracao} 
 					<input type="button" value="Desativar"
@@ -498,6 +496,8 @@
 				#{/if}
 			</div>
 		</div>
+		
+		
 		
 		<div class="gt-form-row gt-width-100">
 			<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram
@@ -512,7 +512,7 @@
 			<div class="gt-form-row">
 				<div class="gt-form-row gt-width-66">
 					<label>Lista</label> #{select name:'itemListaDesignacao', id:'itemListaDesignacao'}
-						 #{list items:listasPrioridade, as:'item'} #{option item.idLista} ${item.nomeLista} #{/option} #{/list} #{/select}
+						 #{list items:_listasPrioridade, as:'item'} #{option item.idLista} ${item.nomeLista} #{/option} #{/list} #{/select}
 				</div>
 				<div class="gt-form-row">
 					<input type="button" id="modalOkLista" value="Ok"

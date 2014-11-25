@@ -132,16 +132,9 @@
 										<a href="javascript:opener.retorna_solicitacao${nome}('${sol.idSolicitacao}','${sol.codigo}','${sol.codigo}');window.close()">${sol.codigo}</a>
 									#{/if}
 									#{else}
-										#{if sol.isRascunho()}
-											<a href="@{Application.editar(sol.idSolicitacao)}">
-												${sol.codigo}
-											</a>
-										#{/if}
-										#{else}
 											<a href="@{Application.exibir(sol.idSolicitacao)}">
 												${sol.codigo}
 											</a>
-										#{/else}
 									#{/else}
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">

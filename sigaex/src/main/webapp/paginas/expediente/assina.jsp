@@ -8,6 +8,18 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
 <siga:pagina titulo="Documento" onLoad="javascript: TestarAssinaturaDigital();">
+	<script type="text/javascript" language="Javascript1.1">
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
+		}
+	</script>
+	
 	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
 	</c:if>
@@ -98,4 +110,45 @@
 			</div>
 		</div>
 	</div>
+	<c:if test="${f:podeAssinarComSenha(titular,lotaTitular,mob)}">
+		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
+        		
+		<div id="dialog-form" title="Assinar com Senha">
+ 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_senha_gravar.action" >
+ 				<ww:hidden id="sigla" name="sigla"	value="${sigla}" />
+    			<fieldset>
+    			  <label>Matrícula</label> <br/>
+    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+    			  <label>Senha</label> <br/>
+    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off"/>
+    			</fieldset>
+  			</form>
+		</div>
+
+		 <script> 
+		    dialog = $("#dialog-form").dialog({
+		      autoOpen: false,
+		      height: 210,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+		          "Assinar": assinarGravar,
+		          "Cancelar": function() {
+		            dialog.dialog( "close" );
+		          }
+		      },
+		      close: function() {
+		        
+		      }
+		    });
+		
+		    function assinarComSenha() {
+		       dialog.dialog( "open" );
+		    }
+
+		    function assinarGravar() {
+		    	$("#form-assinarSenha").submit();
+			}
+		  </script>
+	</c:if>	
 </siga:pagina>

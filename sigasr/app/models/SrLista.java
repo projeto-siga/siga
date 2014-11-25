@@ -23,6 +23,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import play.db.jpa.JPA;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -174,7 +176,7 @@ public class SrLista extends HistoricoSuporte {
 			return movimentacao;
 		return null;
 	}
-
+	
 	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa pess) {
 		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
 	}
@@ -207,7 +209,13 @@ public class SrLista extends HistoricoSuporte {
 
 	public List<SrConfiguracao> getPermissoes(DpLotacao lotaTitular, DpPessoa pess) {
 		try {
-			return SrConfiguracao.listarPermissoesUsoLista(lotaTitular, false);
+			SrConfiguracao confFiltro = new SrConfiguracao();
+			confFiltro.setLotacao(lotaTitular);
+			confFiltro.setDpPessoa(pess);
+			confFiltro.setCpTipoConfiguracao(JPA.em().find(
+					CpTipoConfiguracao.class,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -187,7 +187,8 @@ $(function(){
 			<h3>Dados da Solicitação</h3>
 			<p>
 				<b>Solicitante:</b>
-				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao}
+				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
+				solicitacao.local} (${solicitacao.local.nomeComplexo}) #{/if}
 			</p>
 			<p>
 				<b>Interlocutor:</b>
@@ -358,6 +359,8 @@ $(function(){
 			type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</form>
+	#{/modal}
+	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao} 
 	#{/modal}
 	#{modal nome:'juntar', titulo:'Juntar'}
 		<form action="@{Application.juntarSolicitacoes()}" method="post"

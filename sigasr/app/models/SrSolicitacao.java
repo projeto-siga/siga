@@ -777,13 +777,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				: new TreeSet<SrMarca>();
 	}
 
-	private Long getTempoCadastramento() {
-		if (dtIniEdicao == null)
+	public Long getTempoCadastramento() {
+		if (getInicioPrimeiraEdicao() == null)
 			return 0L;
-
-		Duration duration = new Duration(dtIniEdicao.getTime(), getHisDtIni()
-				.getTime());
-		return duration.getMillis();
+		else {
+			SrMovimentacao atendimentoInicial = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO);
+			
+			if (atendimentoInicial == null)
+				atendimentoInicial = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
+			
+			if (atendimentoInicial != null)
+				return new Duration(getInicioPrimeiraEdicao().getTime(), atendimentoInicial.dtIniMov.getTime()).getMillis();
+			else
+				return new Duration(getInicioPrimeiraEdicao().getTime(), new Date().getTime()).getMillis();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -793,9 +800,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrSolicitacao> list = JPA.em().createQuery(stringQuery)
 				.getResultList();
 		Duration duration = new Duration(0L);
-		for (SrSolicitacao sol : list) {
-			duration = duration.plus(sol.getTempoCadastramento());
-		}
+//		for (SrSolicitacao sol : list) {
+//			duration = duration.plus(sol.getTempoCadastramento());
+//		}
 		if (duration == null)
 			return 0L;
 
@@ -2343,5 +2350,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						formatter.parseDateTime(stringDtMeioContato)).toDate();
 		}
 		this.stringDtMeioContato = stringDtMeioContato;
+	}
+	
+	private Date getInicioPrimeiraEdicao() {
+		if (solicitacaoInicial != null)
+			return solicitacaoInicial.dtIniEdicao;
+		else
+			return this.dtIniEdicao;
 	}
 }

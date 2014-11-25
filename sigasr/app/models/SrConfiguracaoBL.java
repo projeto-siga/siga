@@ -144,39 +144,39 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		for (CpConfiguracao conf : provResults) {
 			if (!(conf instanceof SrConfiguracao))
 				continue;
+			
 			SrConfiguracao srConf = (SrConfiguracao) conf;
 			if (srConf.preAtendente != null)
 				srConf.preAtendente.getLotacaoAtual();
+			
 			if (srConf.atendente != null)
 				srConf.atendente.getLotacaoAtual();
+			
 			if (srConf.posAtendente != null)
 				srConf.posAtendente.getLotacaoAtual();
-
-			if (srConf.itemConfiguracao != null) {
-				SrItemConfiguracao atual = srConf.itemConfiguracao.getAtual();
-				if (atual != null)
-					atual.getItemETodosDescendentes();
-
-				// Edson: varrer os pais � necess�rio porque o
-				// getItensDisponiveis() precisa dessa
-				// informa��o
-				SrItemConfiguracao itemPai = atual.pai;
-				while (itemPai != null) {
-					itemPai.getDescricao();
-					itemPai = itemPai.pai;
+			
+			if (srConf.itemConfiguracaoSet != null)
+				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet)
+					i.getAtual();
+			
+			if (srConf.acoesSet != null)
+				for (SrAcao i : srConf.acoesSet)
+					i.getAtual();
+			
+			if (srConf.tipoAtributo != null)
+				srConf.tipoAtributo.getHisIdIni();
+			
+			if (srConf.listaPrioridade != null)
+				srConf.listaPrioridade.getHisIdIni();
+			
+			if (srConf.pesquisaSatisfacao != null)
+				srConf.pesquisaSatisfacao.getHisIdIni();
+			
+			if (srConf.getListaConfiguracaoSet() != null) {
+				for (SrLista listaConf : srConf.getListaConfiguracaoSet()){
+					listaConf.getId();
 				}
 			}
-
-			if (srConf.acao != null) {
-				SrAcao atual = srConf.acao.getAtual();
-				if (atual != null)
-					atual.getAcaoETodasDescendentes();
-			}
-			if (srConf.tipoAtributo != null)
-				srConf.tipoAtributo.getAtual();
-			if (srConf.listaPrioridade != null)
-				srConf.listaPrioridade.getListaAtual();
-
 		}
 	}
 

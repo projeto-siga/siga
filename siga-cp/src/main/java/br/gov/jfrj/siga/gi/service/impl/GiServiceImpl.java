@@ -46,7 +46,7 @@ import java.util.List;
  * @author tah
  * 
  */
-@WebService(serviceName = "GiService",endpointInterface = "br.gov.jfrj.siga.gi.service.GiService")
+@WebService(serviceName = "GiService", endpointInterface = "br.gov.jfrj.siga.gi.service.GiService", targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public class GiServiceImpl implements GiService {
 
     @Override

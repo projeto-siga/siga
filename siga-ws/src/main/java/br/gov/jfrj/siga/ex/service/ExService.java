@@ -25,7 +25,7 @@ import java.util.Date;
 
 import javax.jws.WebService;
 
-@WebService
+@WebService(targetNamespace = "http://impl.service.ex.siga.jfrj.gov.br/")
 public interface ExService extends Remote {
 
     @WebMethod

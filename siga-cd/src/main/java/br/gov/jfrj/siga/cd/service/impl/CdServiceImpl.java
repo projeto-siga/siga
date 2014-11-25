@@ -35,7 +35,7 @@ import br.gov.jfrj.siga.cd.service.CdService;
  * @author tah
  * 
  */
-@WebService(endpointInterface = "br.gov.jfrj.siga.cd.service.CdService")
+@WebService(serviceName = "CdService", endpointInterface = "br.gov.jfrj.siga.cd.service.CdService", targetNamespace = "http://impl.service.cd.siga.jfrj.gov.br/")
 public class CdServiceImpl implements CdService {
 
 	private boolean hideStackTrace = false;

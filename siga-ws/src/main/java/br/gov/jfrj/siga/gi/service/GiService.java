@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.Remote;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
-@WebService
+@WebService(targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public interface GiService extends Remote {
 
     @WebMethod

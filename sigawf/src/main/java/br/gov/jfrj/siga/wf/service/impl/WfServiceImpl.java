@@ -49,7 +49,7 @@ import java.util.List;
  * @author kpf
  * 
  */
-@WebService(serviceName ="WfService", endpointInterface = "br.gov.jfrj.siga.wf.service.WfService")
+@WebService(serviceName ="WfService", endpointInterface = "br.gov.jfrj.siga.wf.service.WfService", targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
 public class WfServiceImpl implements WfService {
 
 	private boolean hideStackTrace = false;

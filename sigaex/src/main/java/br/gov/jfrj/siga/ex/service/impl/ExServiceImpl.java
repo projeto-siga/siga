@@ -61,7 +61,7 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.webwork.action.ExMobilSelecao;
 
 
-@WebService(endpointInterface = "br.gov.jfrj.siga.ex.service.ExService")
+@WebService(serviceName = "ExService", endpointInterface = "br.gov.jfrj.siga.ex.service.ExService", targetNamespace = "http://impl.service.ex.siga.jfrj.gov.br/")
 public class ExServiceImpl implements ExService {
 
 	private boolean hideStackTrace = false;

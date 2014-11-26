@@ -9,15 +9,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
@@ -35,7 +35,6 @@ import notifiers.Correio;
 import org.apache.commons.lang.ArrayUtils;
 
 import play.Play;
-import play.Play.Mode;
 import play.data.Upload;
 import play.db.jpa.JPA;
 import play.mvc.Before;
@@ -47,12 +46,11 @@ import utils.GcCloud;
 import utils.GcGraficoEvolucao;
 import utils.GcGraficoEvolucaoItem;
 import utils.GcInformacaoFiltro;
+import utils.GcLabelValue;
 import utils.diff_match_patch;
 import utils.diff_match_patch.Diff;
 import utils.diff_match_patch.Operation;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -60,7 +58,6 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.DadosRI;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -79,16 +76,17 @@ import com.google.gson.GsonBuilder;
 
 public class Application extends SigaApplication {
 
+	private static final String CATEGORIA_OUTRAS = "[Outros]";
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 	private static final int CONTROLE_HASH_TAG = 1;
 
-	@Before
+	@Before(unless = {"pontoDeEntrada"})
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
 		Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
-	@Before(unless = { "publicKnowledge", "dadosRI" })
+	@Before(unless = { "publicKnowledge", "dadosRI", "pontoDeEntrada"})
 	public static void addDefaults() throws Exception {
 
 		try {
@@ -115,7 +113,68 @@ public class Application extends SigaApplication {
 		List contagens = query.getResultList();
 		render(contagens);
 	}
+	
+	private static List<GcLabelValue> lCachePontoDeEntrada = null;
+	private static Date dtCachePontoDeEntrada = null;
 
+	public static void pontoDeEntrada(String texto) {
+		pontosDeEntradaAtualizarCache();
+		
+		List<GcLabelValue> l = new ArrayList<GcLabelValue>();
+
+		if (texto != null && texto.trim().length() > 0) {
+			texto = GcLabelValue.removeAcento(texto).trim().toLowerCase();
+			texto = texto.replace("  ", " ");
+			String[] palavras = texto.split(" ");
+			for (GcLabelValue lv : lCachePontoDeEntrada) {
+				if (lv.fts(palavras))
+					l.add(lv);
+			}
+		}
+		
+		if (l.size() == 0)
+			renderJSON("[]");
+		
+		renderJSON(l);
+	}
+
+	public static void pontosDeEntrada(String texto) {
+		pontosDeEntradaAtualizarCache();
+		
+		Map<String,SortedSet<GcLabelValue>> map = new TreeMap<String,SortedSet<GcLabelValue>>();
+		for (GcLabelValue lv : lCachePontoDeEntrada) {
+			String[] a = lv.getLabel().split(": ");
+			if (a.length == 2) {
+				if (!map.containsKey(a[0]))
+					map.put(a[0], new TreeSet<GcLabelValue>());
+				map.get(a[0]).add(lv);
+			} else if (a.length == 1) {
+				if (!map.containsKey(CATEGORIA_OUTRAS))
+					map.put(CATEGORIA_OUTRAS, new TreeSet<GcLabelValue>());
+				map.get(CATEGORIA_OUTRAS).add(lv);
+			}
+		}		
+		render(map);
+	}
+
+	private static void pontosDeEntradaAtualizarCache() {
+		if (lCachePontoDeEntrada == null || dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new Date())) {
+			synchronized (GcLabelValue.class) {
+				if (lCachePontoDeEntrada == null || dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new Date())) {
+					lCachePontoDeEntrada = new ArrayList<GcLabelValue>();
+					Query q = JPA.em().createNamedQuery("pontosDeEntrada");
+					q.setParameter("texto", "%");
+					List<Object[]> lista = q.getResultList();
+					for (Object[] ao : lista) {
+						GcInformacao i = (GcInformacao) ao[0];
+						GcArquivo a = (GcArquivo) ao[1];
+						lCachePontoDeEntrada.add(new GcLabelValue(a.titulo, i.getSigla()));
+					}
+					dtCachePontoDeEntrada = new Date(new Date().getTime() + 60000);
+				}
+			}
+		}
+	}
 	public static void publicKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo, boolean popup,
 			String estiloBusca) throws Exception {
@@ -536,6 +595,27 @@ public class Application extends SigaApplication {
 							+ informacao.visualizacao.nome
 							+ ") : O usuÃ¡rio nÃ£o tem permissÃ£o para visualizar o conhecimento solicitado.");
 	}
+	 
+	public static void exibirPontoDeEntrada(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		DpPessoa titular = titular();
+		DpLotacao lotaTitular = lotaTitular();
+		CpIdentidade idc = idc();
+
+		if (informacao.acessoPermitido(titular, lotaTitular,
+				informacao.visualizacao.id)) {
+			String conteudo = Util.marcarLinkNoConteudo(informacao.arq
+					.getConteudoTXT());
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+			GcBL.logarVisita(informacao, idc, titular, lotaTitular);
+			render(informacao);
+		} else
+			throw new AplicacaoException(
+					"RestriÃ§Ã£o de Acesso ("
+							+ informacao.visualizacao.nome
+							+ ") : O usuÃ¡rio nÃ£o tem permissÃ£o para visualizar o conhecimento solicitado.");
+	}
 
 	public static void editar(String sigla, String classificacao,
 			String titulo, String origem, String conteudo, GcTipoInformacao tipo)
@@ -544,7 +624,7 @@ public class Application extends SigaApplication {
 		DpPessoa titular = titular();
 		DpLotacao lotaTitular = lotaTitular();
 
-		// Edson: está estranho referenciar o TMPGC-0. Ver solução melhor.
+		// Edson: estï¿½ estranho referenciar o TMPGC-0. Ver soluï¿½ï¿½o melhor.
 		if (sigla != null && !sigla.equals("TMPGC-0"))
 			informacao = GcInformacao.findBySigla(sigla);
 		else
@@ -888,8 +968,8 @@ public class Application extends SigaApplication {
 			for (Upload file : files) {
 				if (file.getSize() > 2097152)
 					throw new AplicacaoException(
-							"O tamanho do arquivo é maior que o "
-									+ "máximo permitido (2MB)");
+							"O tamanho do arquivo ï¿½ maior que o "
+									+ "mï¿½ximo permitido (2MB)");
 				if (file.getSize() > 0) {
 					/*
 					 * ----NÃ£o pode ser usado porque o "plupload" retorna um

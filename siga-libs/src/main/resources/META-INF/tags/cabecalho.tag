@@ -304,6 +304,33 @@ ${meta}
 												return;
 
 											}
+
+
+											var options, a;
+											jQuery(function(){
+												a = $('#buscar_genericoSel_sigla').autocomplete({
+												    source: function (request, response) {
+												        $.getJSON("/sigagc/app/pontoDeEntrada", {
+												            texto: request.term
+												        }, function(data) {
+												        	response(data);
+												        })
+												    },
+												    select: function (event, ui) {
+												      var label = ui.item.label;
+												      var value = ui.item.value;
+												      window.location.href = "/sigagc/app/exibirPontoDeEntrada?sigla=" + value; 
+												    },
+												    minLength: 3
+												});
+											}); 
+
+											// Create autocomplete:
+											//jQuery(function(){
+											//	$('#buscar_genericoSel_sigla').autocomplete({
+											//		serviceUrl:'/sigagc/app/entryPoint'});
+											//}); 
+																						
 										</script>
 									</div>
 							</c:if>

@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -67,7 +66,7 @@ public class SrMovimentacao extends GenericModel {
 	public DpPessoa atendente;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_LOTA_ATENDENTE", nullable = false)
+	@JoinColumn(name = "ID_LOTA_ATENDENTE")
 	public DpLotacao lotaAtendente;
 
 	@ManyToOne
@@ -104,17 +103,17 @@ public class SrMovimentacao extends GenericModel {
 	@JoinColumn(name = "ID_PESQUISA")
 	public SrPesquisa pesquisa;
 
-	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch=FetchType.LAZY)
+	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
 	// @OrderBy("pergunta asc")
 	protected List<SrResposta> respostaSet;
 
 	@Column(name = "DT_AGENDAMENTO")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date dtAgenda;
-	
+
 	@Enumerated
 	public SrTipoMotivoPendencia motivoPendencia;
-	
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_FINALIZADORA")
 	public SrMovimentacao movFinalizadora;
@@ -142,7 +141,7 @@ public class SrMovimentacao extends GenericModel {
 
 	public List<SrResposta> setRespostaMap(HashMap<Long, Object> respostas)
 			throws Exception {
-
+		
 		respostaSet = new ArrayList<SrResposta>();
 		Iterator<Map.Entry<Long, Object>> entries = respostas.entrySet()
 				.iterator();
@@ -151,10 +150,9 @@ public class SrMovimentacao extends GenericModel {
 			SrResposta resp = new SrResposta();
 			Long entrada = entry.getKey();
 			resp.pergunta = SrPergunta.findById(entrada);
-			if (resp.pergunta.tipoPergunta.idTipoPergunta == 1)
-				resp.descrResposta = (String) entry.getValue();
-			else
-				resp.grauSatisfacao = (SrGrauSatisfacao) entry.getValue();
+			if (resp.pergunta.tipoPergunta.idTipoPergunta == 1) 
+					resp.descrResposta = (String) entry.getValue();
+			else resp.grauSatisfacao = (SrGrauSatisfacao) entry.getValue();
 			respostaSet.add(resp);
 		}
 		return respostaSet;
@@ -176,7 +174,7 @@ public class SrMovimentacao extends GenericModel {
 	public boolean isCancelada() {
 		return movCanceladora != null;
 	}
-	
+
 	public boolean isReplanejada() {
 		return tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO;
 	}
@@ -251,25 +249,26 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public SrMovimentacao salvar() throws Exception {
-		
+
 		//Edson: considerar deixar esse codigo em SrSolicitacao.movimentar(),
 		//visto que sao chamadas muitas operacoes daquela classe
-		
+
 		checarCampos();
 		super.save();
-		
-		// Edson: atualizando o srMovimentacaoSet...
-		if (solicitacao.meuMovimentacaoSet == null)
-			solicitacao.meuMovimentacaoSet = new TreeSet<SrMovimentacao>();
-		solicitacao.meuMovimentacaoSet.add(this);
-		
+		solicitacao.refresh();
+
 		solicitacao.atualizarMarcas();
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
 				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.NUNCA
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
-						&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
+				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
+		
+		//Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
+		if (solicitacao.isFilha() &&
+				tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+			Correio.notificarAtendente(this); //notifica o atendente da solicitacao pai, caso a filha seja fechada
 		return this;
 	}
 
@@ -293,10 +292,7 @@ public class SrMovimentacao extends GenericModel {
 
 		if (solicitacao == null)
 			throw new Exception(
-					"Movimentação precisa fazer parte de uma solicitação");
-
-		solicitacao = solicitacao.solicitacaoInicial != null ? solicitacao.solicitacaoInicial
-				: solicitacao;
+					"Movimenta��o precisa fazer parte de uma solicita��o");
 
 		if (arquivo != null) {
 			double lenght = (double) arquivo.blob.length / 1024 / 1024;
@@ -321,20 +317,20 @@ public class SrMovimentacao extends GenericModel {
 
 			if (numSequencia == null)
 				numSequencia = solicitacao
-						.getUltimaMovimentacaoMesmoSeCancelada().numSequencia + 1;
+				.getUltimaMovimentacaoMesmoSeCancelada().numSequencia + 1;
 		}
 
 		if (tipoMov == null)
 			tipoMov = SrTipoMovimentacao
-					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
+			.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
 
-		if (!solicitacao.rascunho) {
+		if (!solicitacao.isRascunho()) {
 			if (atendente == null && lotaAtendente == null)
-				throw new Exception("Atendente não pode ser nulo");
+				throw new Exception("Atendente n�o pode ser nulo");
+
+			if (lotaAtendente == null)
+				lotaAtendente = atendente.getLotacao();
 		}
-			
-		if (lotaAtendente == null)
-			lotaAtendente = atendente.getLotacao();
 	}
 
 	public void notificar() {

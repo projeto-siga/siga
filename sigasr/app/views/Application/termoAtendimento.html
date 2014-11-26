@@ -32,10 +32,11 @@ function printpage()
 	document.write(day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds);
     </script>
 	<p>
-	Previsão:
+	<!-- Previs&atilde;o: -->
 	</div>
 	<div style="clear:both;"></div>
-	<h2 style="font-size: 161.6%; font-weight: bold; color: #0E2029; text-align:center;">RELATÓRIO TÉCNICO</h2>
+	<br/><br/>
+	<h2 style="font-size: 161.6%; font-weight: bold; color: #0E2029; text-align:center;">TERMO DE ATENDIMENTO</h2>
 		<div style="width: 45%; float: left;">
 		<p>
 			<font style="font-size: 11pt; font-weight: bold; color: #0E2029; padding:0px;">
@@ -51,7 +52,7 @@ function printpage()
 			</font>
 			<p>
 			<font style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Lotação:&nbsp;
+			Lota&ccedil;&atilde;o:&nbsp;
 			</font>
 			${solicitacao.lotaSolicitante?.siglaLotacao} 
 				#{if solicitacao.local}
@@ -77,53 +78,30 @@ function printpage()
 			</font>
 			</p>
 		</div>
-		<div style="width: 45%; float: right;">
-			<p>
-			<font style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Equipamentos:
-			</font>
-			</p>
-			<p style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Nº de Série:
-			</p>
-			<p style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Nº de Etiqueta:
-			</p>
-			<p style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Nº de Patrimônio:
-			</p>
-			<p style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Etiqueta Externa:
-			</p>
-		</div>
 		
 		<div style="clear:both;text-align:left;">
 		<p>
 			<font style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			Item de Configuração:&nbsp;
+			Item de Configura&ccedil;&atilde;o:&nbsp;
 			</font>
 			<font style="font-size: 11pt;">
-			${solicitacao.itemConfiguracao?.siglaItemConfiguracao} - ${solicitacao.itemConfiguracao?.descricaoCompleta}
+			${solicitacao.itemConfiguracao?.siglaItemConfiguracao} - ${solicitacao.itemConfiguracao?.descricao}
 			</font>
 			</p>
 			<p>
-			<b>Ação:</b>
-			${solicitacao.acao?.siglaAcao} - ${solicitacao.acao?.descricaoCompleta}
+			<b>A&ccedil;&atilde;o:</b>
+			${solicitacao.acao?.siglaAcao} - ${solicitacao.acao?.descricao}
 			</p>
 		</div>
 		
 		<div style="clear:both;">
-		<h3 style="font-size: 161.6%; font-weight: bold; color: #0E2029; text-align:center;">DADOS DO RELATÓRIO TÉCNICO</h3>
+		<h3 style="font-size: 161.6%; font-weight: bold; color: #0E2029; text-align:center;">DADOS DA SOLICITA&Ccedil;&Atilde;O</h3>
 		<p> 
 			<font style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			OCORRÊNCIA:&nbsp;
+			DESCRI&Ccedil;&Atilde;O:
 			</font>
 			<font style="font-size: 11pt;">
 			${solicitacao.descrSolicitacao}
-			<script language="javascript">
-				var descricao = document.getElementById('descrSolicitacao');
-				descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
-			</script>
 			</font>
 		</p>
 		</div>
@@ -131,7 +109,7 @@ function printpage()
 		<div style="width:100%;">
 		<p> 
 			<font style="font-size: 11pt; font-weight: bold; text-align:left; ">
-			ANDAMENTO/SOLUÇÃO:&nbsp;
+			ANDAMENTO/SOLU&Ccedil;&Atilde;O:&nbsp;
 			</font>
 			<p style="text-align: left;">
 			________________________________________________________________________________________________________________
@@ -142,18 +120,18 @@ function printpage()
 		</p>
 		</div>
 		
-		<div style="height: 80px;">
+		<!--  <div style="height: 80px;">
 		<p> 
 			<font style="font-size: 11pt; font-weight: bold; text-align:left; ">
 			Data/hora:&nbsp;
 			</font>
 			<p style="margin-left: 35px; text-align: left;">
-			Início: __/__/____	__:__&nbsp;&nbsp;
-			Término: __/__/____	__:__
+			In&iacute;cio: __/__/____	__:__&nbsp;&nbsp;
+			T&eacute;rmino: __/__/____	__:__
 			</p>
 		</p>
 		</div>
-		 
+
 		<div style="height: 80px; text-align:center; ">
 		<p> 
 			<font style="font-size: 11pt; font-weight: bold; text-align:center; ">
@@ -163,12 +141,14 @@ function printpage()
 			Situação Usuário: ( ) Operacional ( ) Não Operacional ( ) A Determinar 
 			</p>
 		</div>
+		-->
+		
 		<p></p>
 		<div style="height: 80px; font-size: 11pt; font-weight: bold; text-align:center; ">
-		ACEITAÇÃO DO USUÁRIO
+		ACEITA&Ccedil;&Atilde;O DO USU&Aacute;RIO
 		<p></p>
 		<font style="font-weight: normal;">
-		DECLARO ESTAR CIENTE E DE ACORDO COM AS CONDIÃ‡Ã•ES DE ATENDIMENTO E QUE OS SERVIÃ‡OS DA PRESENTE SOLICITAÇÃO FORAM 
+		DECLARO ESTAR CIENTE E DE ACORDO COM AS CONDI&Ccedil;&Otilde;ES DE ATENDIMENTO E QUE OS SERVIÇOS DA PRESENTE SOLICITAÇÃO FORAM 
 		EFETIVAMENTE TESTADOS TENDO SIDO DADOS COMO ACEITOS POR MIM NESTA DATA. 
 		</font>
 		</div>
@@ -186,18 +166,15 @@ function printpage()
 		<div style="height: 80px; font-size: 11pt; font-weight: bold; text-align:center; ">
 			<div>
 			<p style="font-weight: normal; text-align: left;">
-		 	NOME DO TÉCNICO:
+		 	NOME DO T&Eacute;CNICO:
 		 	</p>
 		 	</div>
 			<div style="width: 45%; float: left; font-weight: normal; text-align:left;">
-		   	VISTO DO TÉCNICO:
+		   	VISTO DO T&Eacute;CNICO:
 		   	</div>
-			<div style="width: 45%; float: right; font-weight: normal; text-align:left;">
+			<!-- <div style="width: 45%; float: right; font-weight: normal; text-align:left;">
 			Data:&nbsp;__/__/____&nbsp;&nbsp;__:__
-			<p>
-			Data:&nbsp;__/__/____&nbsp;&nbsp;__:__
-			</p>
-			</div>		
+			</div> -->		
 		</div>
 		
 </div>

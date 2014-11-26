@@ -26,7 +26,7 @@ GET     /public/                            staticDir:public
 
 *		/item/editar/{id}					Application.editarItem
 *		/item/editar						Application.editarItem
-POST	/item/gravar						Application.gravarItem
+*		/item/gravar						Application.gravarItem
 *		/item/listar						Application.listarItem
 *		/item/selecionar					Application.selecionarItem
 *		/item/buscar						Application.buscarItem
@@ -77,9 +77,9 @@ POST	/item/gravar						Application.gravarItem
 *		/solicitacao/listarLista/gravar 				Application.gravarLista
 *		/solicitacao/exibirLista/{id}		 			Application.exibirLista
 *		/solicitacao/priorizarLista		 				Application.priorizarLista
-*		/solicitacao/associarLista/{id}				    Application.associarLista
-*		/solicitacao/associarListaGravar/{id}			Application.associarListaGravar
-*		/solicitacao/desassociarLista					Application.desassociarLista
+*		/solicitacao/incluirEmLista/{id}				Application.incluirEmLista
+*		/solicitacao/incluirEmListaGravar/{id}			Application.incluirEmListaGravar
+*		/solicitacao/retirarDeLista						Application.retirarDeLista
 *		/solicitacao/editarLista/{id}					Application.editarLista
 *		/solicitacao/selecionar							Application.selecionarSolicitacao
 *		/solicitacao/buscar								Application.buscarSolicitacao

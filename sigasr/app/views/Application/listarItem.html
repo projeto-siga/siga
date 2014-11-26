@@ -1,6 +1,8 @@
 #{extends 'main.html' /} #{set title:'Designação de solicitações' /}
+
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 
 <script type="text/javascript">
 	var QueryString = function () {
@@ -38,43 +40,80 @@
 			else
 				location.href = '@{Application.listarItem()}';	
 		});
-		
 		/* Table initialization */
-		$('#itens_configuracao_table').DataTable({
-			"language": {
-				"emptyTable":     "Não existem resultados",
-			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-			    "infoPostFix":    "",
-			    "thousands":      ".",
-			    "lengthMenu":     "Mostrar _MENU_ registros",
-			    "loadingRecords": "Carregando...",
-			    "processing":     "Processando...",
-			    "search":         "Filtrar:",
-			    "zeroRecords":    "Nenhum registro encontrado",
-			    "paginate": {
-			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
-			        "previous":   "Anterior"
-			    },
-			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
-			    }
-			},
-			"columnDefs": [{
-				"targets": [3],
-				"visible": false,
-				"searchable": false
-			}],
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (aData[3] == 'false')
-					$('td', nRow).addClass('item-desativado');
-			}
-		});
+		var table = $('#itens_configuracao_table')
+			.on('draw.dt', function() {
+					if(table) {
+						var btn = $('.bt-expandir'),
+							expandir = btn.hasClass('expandido');
+						
+						$('#itens_configuracao_table').mostrarDetalhes(format, table);
+						$('#itens_configuracao_table').expandirContrairLinhas(expandir);
+					}
+				})
+			.dataTable({
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				// Define que a ordenacao deve comecar na segunda coluna (para evitar coluna com acoes de expandir)
+				"aaSorting" : [[1, 'asc']],
+				"columnDefs": [
+				// Coluna com expandir da grid, coluna de acoes
+				{
+					"targets": [0,5],
+					"searchable": false,
+					"sortable": false
+				},
+				// Coluna similaridade
+				{
+					"targets": [4],
+					"visible": false
+				}]
+			});
+			$('#itens_configuracao_table').mostrarDetalhes(format, table);
 	});
+
+	function format( d ) {
+		var tr = $('<tr class="detail">'),
+			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+			'<tr>'+
+				'<td><b>Similaridade:</b></td>'+
+					'<td>' + d[4] + '</td>'+
+		        '</tr>'+
+		    '</table><td>';
+		    
+	    return tr.append(detailHTML);
+	}
+	
+	function desativarItem(event, idItemConfiguracao) {
+		event.stopPropagation();
+		window.location = '@{Application.desativarItem()}?' + queryDesativarReativar(idItemConfiguracao, QueryString.mostrarDesativados);
+	}
+
+	function reativarItem(event, idItemConfiguracao) {
+		event.stopPropagation();
+		window.location = '@{Application.reativarItem()}?' + queryDesativarReativar(idItemConfiguracao, QueryString.mostrarDesativados);
+	}
 </script>
 
 <div class="gt-bd clearfix">
@@ -88,32 +127,43 @@
 			<table id="itens_configuracao_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
+						<th style="color: #333">
+							<button class="gt-btn-medium gt-btn-left bt-expandir">
+								<span id="iconeBotaoExpandirTodos">+</span>
+							</button>
+						</th>
 						<th>Código</th>
 						<th>Título</th>
 						<th>Descrição</th>
-						<th>Item Ativado?</th>
+						<th>Similaridade</th>
+						<th>Ações</th>
 					</tr>
 				</thead>
 
 				<tbody>
 					#{list items:itens, as:'item'}
-					<tr
-						onclick="javascript:window.location='@{Application.editaritem(item.idItemConfiguracao)}'"
-						style="cursor: pointer;">
-						<td>${item.siglaItemConfiguracao}</td>
-						<td><span style="margin-left: ${(item.nivel-1)*2}em; #{if item.nivel == 1}font-weight: bold;#{/if} #{if item.nivel == 2}font-style: italic;#{/if}">${item.tituloItemConfiguracao}</span></td>
-						<td>${item.descrItemConfiguracao}</td>
-						<td>${item.isAtivo()}</td>
-					</tr>
-					</a> #{/list}
+						<tr  onclick="javascript:window.location='@{Application.editaritem(item.idItemConfiguracao)}'" style="cursor: pointer;">
+							<td class="gt-celula-nowrap details-control"></td>
+							<td>${item.siglaItemConfiguracao}</td>
+							<td><span style="margin-left: ${(item.nivel-1)*2}em; #{if item.nivel == 1}font-weight: bold;#{/if} #{if item.nivel == 2}font-style: italic;#{/if}">${item.tituloItemConfiguracao}</span></td>
+							<td>${item.descrItemConfiguracao}</td>
+							<td>${item.descricaoSimilaridade}</td>
+							<td>
+								#{desativarReativar id:item.idItemConfiguracao, 
+													onReativar:'reativarItem',
+													onDesativar :'desativarItem',
+													isAtivo:item.isAtivo() }
+								#{/desativarReativar}
+							</td>
+						</tr>
+					#{/list}
 				</tbody>
 			</table>
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarItem}" class="gt-btn-medium gt-btn-left">Incluir</a>
+			<a href="@{Application.editarItem}" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
-
 	</div>
 </div>
 

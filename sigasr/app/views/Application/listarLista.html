@@ -65,17 +65,23 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [2],
-				"visible": false,
-				"searchable": false
+				"targets" : [2],
+				"searchable": false,
+				"sortable" : false
 			}],
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (aData[2] == 'false')
-					$('td', nRow).addClass('item-desativado');
-			},
 			"iDisplayLength": 25
 		});
 	});
+
+	function desativarLista(event, idLista) {
+		event.stopPropagation();
+		window.location = '@{Application.desativarLista()}?' + queryDesativarReativar(idLista, QueryString.mostrarDesativados);
+	}
+
+	function reativarLista(event, idLista) {
+		event.stopPropagation();
+		window.location = '@{Application.reativarLista()}?'  + queryDesativarReativar(idLista, QueryString.mostrarDesativados);
+	}
 </script>
 
 <div class="gt-bd clearfix">
@@ -91,7 +97,7 @@
 					<tr>
 						<th>Nome</th>
 						<th>Lotação</th>
-						<th>Item Ativado?</th>
+						<th>Ações</th>
 					</tr>
 				</thead>
 
@@ -107,7 +113,13 @@
 						#{/if}
 						
 						<td>${lista.lotaCadastrante.nomeLotacao}</td>
-						<td>${lista.isAtivo()}</td>
+						<td>
+							#{desativarReativar id:lista.idLista, 
+												onReativar:'reativarLista',
+												onDesativar :'desativarLista',
+												isAtivo:lista.isAtivo() }
+							#{/desativarReativar}
+						</td>
 					</tr>
 					</a> #{/list}
 				</tbody>

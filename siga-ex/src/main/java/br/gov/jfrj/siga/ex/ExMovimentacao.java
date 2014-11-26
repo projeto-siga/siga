@@ -792,7 +792,9 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			for (ExMovimentacao movRef : this
 					.getExMovimentacaoReferenciadoraSet()) {
 				if (movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
-						|| movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+						|| movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+						|| movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
+						|| movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 					return true;
 			}
 		}
@@ -834,7 +836,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
-			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO 
+					|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -842,6 +845,42 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return set;
 	}
 
+	/**
+	 * Retorna uma coleção de movimentações dos tipo:
+	 * ASSINATURA_DIGITAL_MOVIMENTACAO.
+	 * 
+	 * @return Coleção de movimentações de assinaturas com Token.
+	 */
+	public Set<ExMovimentacao> getApenasAssinaturasComToken() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * Retorna uma coleção de movimentações dos tipo:
+	 * ASSINATURA_DIGITAL_MOVIMENTACAO.
+	 * 
+	 * @return Coleção de movimentações de assinaturas com Senha.
+	 */
+	public Set<ExMovimentacao> getApenasAssinaturasComSenha() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
 	/**
 	 * Retorna uma coleção de movimentações dos tipo
 	 * CONFERENCIA_COPIA_DOCUMENTO.
@@ -852,6 +891,25 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO ||
+					m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * Retorna uma coleção de movimentações dos tipo
+	 * CONFERENCIA_COPIA_DOCUMENTO.
+	 * 
+	 * @return Coleção de movimentações de conferências de cópia com token.
+	 */
+	public Set<ExMovimentacao> getApenasConferenciasCopiaComToken() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
 			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
@@ -859,24 +917,51 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 		return set;
 	}
+	
+	/**
+	 * Retorna uma coleção de movimentações dos tipo
+	 * CONFERENCIA_COPIA_DOCUMENTO.
+	 * 
+	 * @return Coleção de movimentações de conferências de cópia com senha.
+	 */
+	public Set<ExMovimentacao> getApenasConferenciasCopiaComSenha() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
-	public String getAssinantesString() {
-		return Documento.getAssinantesString(getApenasAssinaturas());
+		for (ExMovimentacao m : getExMovimentacaoReferenciadoraSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+
+	public String getAssinantesComTokenString() {
+		return Documento.getAssinantesString(getApenasAssinaturasComToken());
+	}
+
+	public String getAssinantesComSenhaString() {
+		return Documento.getAssinantesString(getApenasAssinaturasComSenha());
 	}
 
 	public String getConferentesString() {
 		return Documento.getAssinantesString(getApenasConferenciasCopia());
 	}
 
+
 	public String getAssinantesCompleto() {
 		String conferentes = getConferentesString();
-		String assinantes = getAssinantesString();
+		String assinantesToken = getAssinantesComTokenString();
+		String assinantesSenha = getAssinantesComSenhaString();
 		String retorno = "";
-		retorno += assinantes.length() > 0 ? "Assinado digitalmente por "
-				+ assinantes + ".\n" : "";
+		retorno += assinantesToken.length() > 0 ? "Assinado digitalmente por "
+				+ assinantesToken + ".\n" : "";
+		retorno += assinantesSenha.length() > 0 ? "Assinado com senha por "
+				+ assinantesSenha + ".\n" : "";
+		
 		retorno += conferentes.length() > 0 ? "Cópia conferida com documento original por "
-				+ conferentes + ".\n"
-				: "";
+				+ conferentes + ".\n" : "";
+
 		return retorno;
 	}
 

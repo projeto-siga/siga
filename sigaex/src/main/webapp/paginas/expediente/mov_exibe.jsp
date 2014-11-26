@@ -8,6 +8,17 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Documento" popup="true" onLoad="javascript: TestarAssinaturaDigital();">
+	<script type="text/javascript" language="Javascript1.1">
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
+		}
+	</script>
 
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -343,4 +354,64 @@ function visualizarImpressao(via) {
 			</div>
 		</div>
 	</div>
+	
+	<c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+	<c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+	
+	<c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
+		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
+        		
+		<div id="dialog-form" title="Assinar com Senha">
+ 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" >
+ 				<ww:hidden id="id" name="id" value="${mov.idMov}" />
+ 				<ww:hidden id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
+    			<fieldset>
+    			  <label>Matrícula</label> <br/>
+    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+    			  <label>Senha</label> <br/>
+    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>
+    			</fieldset>
+  			</form>
+		</div>
+
+		 <script> 
+		    dialog = $("#dialog-form").dialog({
+		      autoOpen: false,
+		      height: 210,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+		    	  <c:if test="${podeAssinarMovimentacaoComSenha}">
+		          	"Assinar": assinarGravar,
+		          </c:if>	
+		    	  <c:if test="${podeConferirCopiaMovimentacaoComSenha}">
+			          "Conferir Cópia": conferirCopiaGravar,
+		          </c:if>	
+		          "Cancelar": function() {
+		            dialog.dialog( "close" );
+		          }
+		      },
+		      close: function() {
+		        
+		      }
+		    });
+		
+		    function assinarComSenha() {
+		       dialog.dialog( "open" );
+		    }
+
+		    function assinarGravar() {
+		    	AssinarDocumentosSenha('false', this);
+			}
+
+		    function conferirCopiaGravar() {
+		    	AssinarDocumentosSenha('true', this);
+			}
+
+			function conferirCopiaGravar() {
+		    	$('#tipoAssinaturaMov').val('C');
+		    	$("#form-assinarSenha").submit();
+			}
+		  </script>
+	</c:if>			
 </siga:pagina>

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -67,7 +66,7 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 	@Enumerated()
 	public SrFormaAtendimentoAcao formaAtendimento;
 
-	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrAcao> meuAcaoHistoricoSet;
 
@@ -75,7 +74,7 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 	@JoinColumn(name = "ID_PAI")
 	public SrAcao pai;
 
-	@OneToMany(targetEntity = SrAcao.class, mappedBy = "pai", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrAcao.class, mappedBy = "pai", fetch = FetchType.LAZY)
 	public List<SrAcao> filhoSet;
 
 	public SrAcao() {
@@ -291,19 +290,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 			pai = getPaiPorSigla();
 		}
 		super.salvar();
-		
-		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
-		//tem de ser corrigido.
-		
-		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
-		//serao recarregadas do banco, e precisarao reconhecer o novo estado desta acao
-		//refresh();
-
-		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
-		// instancia do objeto, caso contrario, nao ha configuracao
-		// referenciando
-		//if (acaoInicial != null)
-		//	SrConfiguracao.notificarQueMudou(this);
 	}
 
 	public List<SrAcao> getAcaoETodasDescendentes() {
@@ -314,6 +300,11 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 				lista.addAll(filho.getAcaoETodasDescendentes());
 		}
 		return lista;
+	}
+	
+	@Override
+	public String toString() {
+		return siglaAcao + " - " + tituloAcao;
 	}
 
 	@Override

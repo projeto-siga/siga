@@ -1,0 +1,1 @@
+update corporativo.cp_tipo_configuracao set id_sit_configuracao = 2 where id_tp_configuracao = 6;

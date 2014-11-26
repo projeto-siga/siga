@@ -5,7 +5,7 @@
 		<h2>Cadastro de Tipo de Atributo</h2>
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarTipoAtributo()} #{if att?.idTipoAtributo} <input
+			#{form @Application.gravarTipoAtributo(), onsubmit: 'javascript: return block()'} #{if att?.idTipoAtributo} <input
 				type="hidden" name="att.idTipoAtributo"
 				value="${att.idTipoAtributo}"> #{/if}
 			#{ifErrors}
@@ -41,10 +41,6 @@
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" />
 				<a href="@{Application.listarTipoAtributo}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-				#{if att?.idTipoAtributo} <input type="button" value="Desativar"
-					class="gt-btn-medium gt-btn-left"
-					onclick="location.href='@{Application.desativarTipoAtributo()}?id=${att.idTipoAtributo}'" />
-				#{/if}
 			</div>
 			#{/form}
 		</div>

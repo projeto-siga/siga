@@ -21,6 +21,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
 import java.io.File;
+import java.io.ObjectInputStream.GetField;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -396,7 +397,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 
 		if (solicitacaoPai != null) {
-			codigo = solicitacaoPai.getCodigo() + "." + getNumSequenciaString();
+			codigo = solicitacaoPai.getCodigo() + getNumSequenciaString();
 			return;
 		}
 
@@ -505,7 +506,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getNumSequenciaString() {
 		if (numSequencia == null)
 			return null;
-		return (numSequencia < 10 ? "0" : "") + numSequencia.toString();
+		return "." + (numSequencia < 10 ? "0" : "") + numSequencia.toString();
 	}
 
 	public List<SrSolicitacao> getHistoricoSolicitacao() {
@@ -529,42 +530,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				: new ArrayList<SrAtributo>();
 	}
 
-	public Set<SrMovimentacao> getMovimentacaoSet() {
-		return getMovimentacaoSet(false, null);
-	}
-
-	public Set<SrMovimentacao> getMovimentacaoSetPorTipo(Long tipoMov) {
-		return getMovimentacaoSet(false, tipoMov);
-	}
-
-	public Set<SrMovimentacao> getMovimentacaoSetComCancelados() {
-		return getMovimentacaoSet(true, null);
-	}
-
-	public Set<SrMovimentacao> getMovimentacaoSetOrdemCrescente() {
-		return getMovimentacaoSet(false, null, true);
-	}
-
-	public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCancelados,
-			Long tipoMov) {
-		return getMovimentacaoSet(considerarCancelados, tipoMov, false);
-	}
-
-	public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCancelados,
-			Long tipoMov, boolean ordemCrescente) {
-		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
-				new SrMovimentacaoComparator(ordemCrescente));
-		if (solicitacaoInicial != null)
-			for (SrSolicitacao sol : getHistoricoSolicitacao())
-
-				if (sol.meuMovimentacaoSet != null)
-					for (SrMovimentacao movimentacao : sol.meuMovimentacaoSet)
-						if ((!movimentacao.isCanceladoOuCancelador() || considerarCancelados)
-								&& (tipoMov == null || movimentacao.tipoMov.idTipoMov == tipoMov))
-							listaCompleta.add(movimentacao);
-		return listaCompleta;
-	}
-
 	public Set<SrMovimentacao> getMovimentacaoReferenciaSet() {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new SrMovimentacaoComparator(false));
@@ -577,30 +542,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaCompleta;
 	}
 	
+	public SrMovimentacao getUltimoAndamento() {
+		return getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_ANDAMENTO);
+	}
+	
 	public SrMovimentacao getUltimaMovimentacao() {
 		for (SrMovimentacao movimentacao : getMovimentacaoSet())
 			return movimentacao;
 		return null;
 	}
 
-	public SrMovimentacao getUltimaMovimentacaoMesmoSeCancelada() {
-		for (SrMovimentacao movimentacao : getMovimentacaoSetComCancelados())
+	public SrMovimentacao getUltimaMovimentacaoMesmoSeCanceladaTodoOContexto() {
+		for (SrMovimentacao movimentacao : getMovimentacaoSetComCanceladosTodoOContexto())
 			return movimentacao;
 		return null;
-	}
-
-	public boolean jaFoiDesignada() {
-		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
-			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO
-					|| mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
-					|| mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_FECHAMENTO)
-				return true;
-		}
-		return false;
-	}
-
-	public SrMovimentacao getUltimoAndamento() {
-		return getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_ANDAMENTO);
 	}
 
 	public SrMovimentacao getUltimaMovimentacaoQuePossuaDescricao() {
@@ -613,7 +568,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public SrMovimentacao getUltimaMovimentacaoPorTipo(Long idTpMov) {
-		for (SrMovimentacao movimentacao : getMovimentacaoSet(false, idTpMov))
+		for (SrMovimentacao movimentacao : getMovimentacaoSetPorTipo(idTpMov))
 			return movimentacao;
 		return null;
 	}
@@ -631,20 +586,75 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return null;
 	}
 
-	public Set<SrMovimentacao> getMovimentacoesPrincipais() {
-		Set<SrMovimentacao> set = new LinkedHashSet<SrMovimentacao>();
-		for (SrMovimentacao m : getMovimentacaoSet()) {
-			if (m.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_ANDAMENTO
-					|| m.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO
-					|| m.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
-					|| m.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL 
-					|| m.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_FECHAMENTO
-					|| m.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_AVALIACAO)
+	public Set<SrMovimentacao> getMovimentacaoSet() {
+		return getMovimentacaoSet(false, null, false, false, false);
+	}
 
+	public Set<SrMovimentacao> getMovimentacaoSetPorTipo(Long tipoMov) {
+		return getMovimentacaoSet(false, tipoMov, false, false, false);
+	}
 
-				set.add(m);
+	public Set<SrMovimentacao> getMovimentacaoSetComCancelados() {
+		return getMovimentacaoSet(true, null, false, false, false);
+	}
+	
+	public Set<SrMovimentacao> getMovimentacaoSetComCanceladosTodoOContexto() {
+		return getMovimentacaoSet(true, null, false, true, false);
+	}
+
+	public Set<SrMovimentacao> getMovimentacaoSetOrdemCrescente() {
+		return getMovimentacaoSet(false, null, true, false, false);
+	}
+
+	public Set<SrMovimentacao> getMovimentacaoSet(
+			boolean considerarCanceladas, Long tipoMov, boolean ordemCrescente,
+			boolean todoOContexto, boolean apenasPrincipais) {
+		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
+				new SrMovimentacaoComparator(ordemCrescente));
+
+		List<Long> tiposPrincipais = Arrays.asList(TIPO_MOVIMENTACAO_ANDAMENTO,
+				TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO,
+				TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO,
+				TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL,
+				TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_AVALIACAO);
+
+		Set<SrSolicitacao> solsAConsiderar = new LinkedHashSet<SrSolicitacao>();
+		if (todoOContexto) {
+			solsAConsiderar.addAll(getPaiDaArvore()
+					.getSolicitacaoFilhaSetRecursivo());
+		} else
+			solsAConsiderar.add(this);
+
+		for (SrSolicitacao sol : solsAConsiderar) {
+			if (sol.solicitacaoInicial != null)
+				for (SrSolicitacao instancia : sol.getHistoricoSolicitacao())
+					if (instancia.meuMovimentacaoSet != null)
+						for (SrMovimentacao movimentacao : instancia.meuMovimentacaoSet) {
+							if (!considerarCanceladas
+									&& movimentacao.isCanceladoOuCancelador())
+								continue;
+							if (tipoMov != null
+									&& movimentacao.tipoMov.idTipoMov != tipoMov)
+								continue;
+							if (apenasPrincipais
+									&& !tiposPrincipais
+											.contains(movimentacao.tipoMov.idTipoMov))
+								continue;
+
+							listaCompleta.add(movimentacao);
+						}
 		}
-		return set;
+		return listaCompleta;
+	}
+
+	public boolean jaFoiDesignada() {
+		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
+			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO
+					|| mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
+					|| mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_FECHAMENTO)
+				return true;
+		}
+		return false;
 	}
 
 	public DpLotacao getLotaAtendente() {
@@ -857,8 +867,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 	}
 
 	private Set<SrSolicitacao> getSolicitacaoFilhaSet() {
-		if (getHisIdIni() == null)
-			return null;
 		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
 				new Comparator<SrSolicitacao>() {
 					@Override
@@ -866,14 +874,23 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 						return s1.numSequencia.compareTo(s2.numSequencia);
 					}
 				});
-		for (SrSolicitacao sol : getHistoricoSolicitacao()) {
-
-
-			if (sol.meuSolicitacaoFilhaSet != null)
-				for (SrSolicitacao filha : sol.meuSolicitacaoFilhaSet)
-					if (filha.getHisDtFim() == null)
-						listaCompleta.add(filha);
+		
+		if (solicitacaoInicial != null){
+			for (SrSolicitacao sol : getHistoricoSolicitacao()) {
+				if (sol.meuSolicitacaoFilhaSet != null)
+					for (SrSolicitacao filha : sol.meuSolicitacaoFilhaSet)
+						if (filha.getHisDtFim() == null)
+							listaCompleta.add(filha);
+			}
 		}
+		return listaCompleta;
+	}
+	
+	public Set<SrSolicitacao> getSolicitacaoFilhaSetRecursivo(){
+		Set<SrSolicitacao> listaCompleta = new LinkedHashSet<SrSolicitacao>();
+		listaCompleta.add(this);
+		for (SrSolicitacao filha : getSolicitacaoFilhaSet())
+			listaCompleta.addAll(filha.getSolicitacaoFilhaSetRecursivo());
 		return listaCompleta;
 	}
 
@@ -1394,9 +1411,8 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 
 	@SuppressWarnings("serial")
 	public SortedSet<SrOperacao> operacoes(final DpLotacao lotaTitular,
-			final DpPessoa titular, final boolean vendoHistoricoCompleto)
-
-			throws Exception {
+			final DpPessoa titular)
+					throws Exception {
 
 		SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
 			@Override
@@ -1406,8 +1422,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 				if (e.params == null)
 					e.params = new HashMap<String, Object>();
 				e.params.put("id", idSolicitacao);
-				if (vendoHistoricoCompleto && e.params.get("completo") == null)
-					e.params.put("completo", true);
 				if (!e.isModal())
 					e.url = Router.reverse(e.url, e.params).url;
 				if (!e.pode)
@@ -1489,17 +1503,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 				+ (ultCancelavel != null ? ultCancelavel.tipoMov.nome : ""),
 				podeDesfazerMovimentacao(lotaTitular, titular),
 				"Application.desfazerUltimaMovimentacao"));
-
-		operacoes
-				.add(new SrOperacao("eye", "Ver Todas as Movimentações",
-						!vendoHistoricoCompleto, "Application.exibir",
-						"completo=true"));
-
-		operacoes
-				.add(new SrOperacao("eye", "Ver Apenas Andamentos",
-						vendoHistoricoCompleto, "Application.exibir",
-						"completo=false"));
-
+		
 		return operacoes;
 	}
 
@@ -1658,6 +1662,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 			filha.numSequencia = 1L;
 		else
 			filha.numSequencia++;
+		filha.atualizarCodigo();
 		return filha;
 	}
 
@@ -1989,7 +1994,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	}
 
 	public boolean temSolicitacaoVinculada() {
-		return getMovimentacaoSet(Boolean.TRUE, TIPO_MOVIMENTACAO_VINCULACAO)
+		return getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_VINCULACAO)
 				.size() > 0;
 	}
 

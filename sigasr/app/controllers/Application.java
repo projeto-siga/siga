@@ -100,8 +100,12 @@ public class Application extends SigaApplication {
 		}
 	}
 
-	public static boolean completo() {
-		return Boolean.parseBoolean(params.get("completo"));
+	public static boolean ocultas() {
+		return Boolean.parseBoolean(params.get("ocultas"));
+	}
+	
+	public static boolean todoOContexto() {
+		return Boolean.parseBoolean(params.get("todoOContexto"));
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
@@ -378,21 +382,21 @@ public class Application extends SigaApplication {
         
 		solicitacao.salvar(cadastrante(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
-		exibir(id, completo());
+		exibir(id, todoOContexto(), ocultas());
 	}
 	
 	public static void juntarSolicitacoes(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAJuntar);
 		SrSolicitacao solRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
 		sol.juntar(lotaTitular(), cadastrante(), solRecebeJuntada, justificativa);
-		exibir(idSolicitacaoAJuntar, completo());
+		exibir(idSolicitacaoAJuntar, todoOContexto(), ocultas());
 	}
 	
     public static void vincularSolicitacoes(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAVincular);
         SrSolicitacao solRecebeVinculo = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
         sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
-        exibir(idSolicitacaoAVincular, completo());
+        exibir(idSolicitacaoAVincular, todoOContexto(), ocultas());
     }
 	
 	@SuppressWarnings("unchecked")
@@ -580,7 +584,7 @@ public class Application extends SigaApplication {
 		render(lista, evolucao, top10);
 	}
 
-	public static void exibir(Long id, boolean completo) throws Exception {
+	public static void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		if (solicitacao == null)
 			throw new Exception("Solicita��o n�o encontrada");
@@ -592,7 +596,17 @@ public class Application extends SigaApplication {
 		
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
-		render(solicitacao, movimentacao, completo);
+		if (todoOContexto == null)
+			todoOContexto = solicitacao.isParteDeArvore();
+			//Edson: foi solicitado que funcionasse do modo abaixo. Eh o melhor modo??
+			//todoOContexto = solicitacao.solicitacaoPai == null ? true : false;
+		if (ocultas == null)
+			ocultas = false;
+	
+		Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas,
+				null, false, todoOContexto, !ocultas);
+
+		render(solicitacao, movimentacao, todoOContexto, ocultas, movs);
 	}
 
 	public static void exibirLista(Long id) throws Exception {
@@ -612,7 +626,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
 		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular());
-		exibir(idSolicitacao, completo());
+		exibir(idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void retirarDeLista(Long idSolicitacao, Long idLista)
@@ -697,19 +711,19 @@ public class Application extends SigaApplication {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
 		movimentacao.salvar(cadastrante(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		exibir(movimentacao.solicitacao.idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void anexarArquivo(SrMovimentacao movimentacao)
 			throws Exception {
 		movimentacao.salvar(cadastrante(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, completo());
+		exibir(movimentacao.solicitacao.idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void fechar(Long id, String motivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.fechar(lotaTitular(), cadastrante(), motivo);
-		exibir(sol.idSolicitacao, completo());
+		exibir(sol.idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void excluir(Long id) throws Exception {
@@ -733,13 +747,13 @@ public class Application extends SigaApplication {
 			Map<Long, String> respostaMap) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.responderPesquisa(lotaTitular(), cadastrante(), respostaMap);
-		exibir(id, completo());
+		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void retornarAoAtendimento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.retornarAoAtendimento(lotaTitular(), cadastrante());
-		exibir(id, completo());
+		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void termoAtendimento(Long id) throws Exception {
@@ -750,19 +764,19 @@ public class Application extends SigaApplication {
 	public static void cancelar(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.cancelar(lotaTitular(), cadastrante());
-		exibir(id, completo());
+		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void finalizarPreAtendimento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.finalizarPreAtendimento(lotaTitular(), cadastrante());
-		exibir(sol.idSolicitacao, completo());
+		exibir(sol.idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void retornarAoPreAtendimento(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.retornarAoPreAtendimento(lotaTitular(), cadastrante());
-		exibir(sol.idSolicitacao, completo());
+		exibir(sol.idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void deixarPendente(Long id, SrTipoMotivoPendencia motivo,String calendario,
@@ -770,7 +784,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.deixarPendente(lotaTitular(), cadastrante(), motivo, calendario,
 				horario, detalheMotivo);
-		exibir(id, completo());
+		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void alterarPrazo(Long id, String motivo,
@@ -778,25 +792,25 @@ public class Application extends SigaApplication {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.alterarPrazo(lotaTitular(), cadastrante(), motivo, calendario,
 				horario);
-		exibir(id, completo());
+		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void terminarPendencia(Long id, String descricao, Long idMovimentacao) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.terminarPendencia(lotaTitular(), cadastrante(), descricao, idMovimentacao);
-		exibir(id, completo());
+		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void reabrir(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.reabrir(lotaTitular(), cadastrante());
-		exibir(id, completo());
+		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void desfazerUltimaMovimentacao(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.desfazerUltimaMovimentacao(cadastrante(), lotaTitular());
-		exibir(id, completo());
+		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void escalonar(Long id) throws Exception {

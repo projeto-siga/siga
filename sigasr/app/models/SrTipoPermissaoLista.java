@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import models.SrAcao.SrAcaoVO;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -43,5 +45,22 @@ public class SrTipoPermissaoLista extends GenericModel{
 		return descrTipoPermissaoLista;
 	}
 	
+	/**
+	 * Classe que representa um V.O. de {@link SrTipoPermissaoLista}.
+	 */
+	public class SrTipoPermissaoListaVO {
+		
+		public Long idTipoPermissaoLista;
+		public String descrTipoPermissaoLista;
+		
+		public SrTipoPermissaoListaVO(Long id, String descricao) {
+			this.idTipoPermissaoLista = id;
+			this.descrTipoPermissaoLista= descricao;
+		}
+	}
+	
+	public SrTipoPermissaoListaVO toVO() {
+		return new SrTipoPermissaoListaVO(this.idTipoPermissaoLista, this.descrTipoPermissaoLista);
+	}
 	
 }

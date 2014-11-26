@@ -46,7 +46,13 @@
 				"targets": [0, 2, 4, 5, 7, 8, 10, 12, 13, 15, 16, 17, 18],
 				"visible": false,
 				"searchable": false
-			}]
+			},
+			{
+				"targets": [20],
+				"sortable" : false,
+				"searchable": false
+			}
+			]
 		});
 		
 		$('#prioridades_table tbody').on('click', 'tr', function () {
@@ -231,7 +237,7 @@
 				'<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
 					'<a class="once desassociarPermissao" title="Remover permissão">' + 
 						'<input class="idPermissao" type="hidden" value="' + response + '"/>' + 
-						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 					'</a>' + 
 				'</td>';
 						         
@@ -505,7 +511,7 @@
 									<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 										<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissão">
 											<input class="idPermissao" type="hidden" value="${perm.id}"/>
-											<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
+											<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> 
 										</a>
 									</td>
 								</tr>

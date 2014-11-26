@@ -314,7 +314,7 @@ public class CpConfiguracaoBL {
 		return null;
 	}
 
-	private SortedSet<CpPerfil> consultarPerfisPorPessoaELotacao(
+	public SortedSet<CpPerfil> consultarPerfisPorPessoaELotacao(
 			DpPessoa pessoa, DpLotacao lotacao, Date dtEvn) throws Exception {
 		if (pessoa == null && lotacao == null)
 			return null;

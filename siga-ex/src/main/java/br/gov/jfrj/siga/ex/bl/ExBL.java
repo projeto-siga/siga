@@ -791,6 +791,8 @@ public class ExBL extends CpBL {
 											mov.getDtIniMov(),
 											mov.getSubscritor(), null);
 							}
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) {
+								acrescentarMarca(set, mob, CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA, mov.getDtIniMov(), mov.getSubscritor(), null);
 						}
 					}
 					if (mDje != null && !mob.doc().isEliminado()) {
@@ -920,7 +922,15 @@ public class ExBL extends CpBL {
 						}
 					}
 				}
+				
+				if(t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA, dt, mov.getSubscritor(), null);
+				}
 
+				if(t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) {
+						acrescentarMarca(set, mob, CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA, dt, mov.getSubscritor(), null);
+				}
+				
 				if (m != mAnterior) {
 					dt = mov.getDtIniMov();
 					mAnterior = m;

@@ -12,3 +12,9 @@ Insert into SIGA.EX_CONFIGURACAO (ID_CONFIGURACAO_EX,ID_TP_MOV) values (CORPORAT
 
 Insert into CORPORATIVO.CP_CONFIGURACAO (ID_CONFIGURACAO,HIS_DT_INI,ID_SIT_CONFIGURACAO,ID_TP_CONFIGURACAO) values (CORPORATIVO.CP_CONFIGURACAO_SEQ.nextval,sysdate,'2','1');
 Insert into SIGA.EX_CONFIGURACAO (ID_CONFIGURACAO_EX,ID_TP_MOV) values (CORPORATIVO.CP_CONFIGURACAO_SEQ.currval,60);
+
+insert into corporativo.cp_marcador values(62, 'Documento Assinado com Senha', 1, null);
+
+insert into corporativo.cp_marcador values(63, 'Movimentação Assinada com Senha', 1, null);
+
+insert into corporativo.cp_marcador values(64, 'Movimentação Conferida com Senha', 1, null);

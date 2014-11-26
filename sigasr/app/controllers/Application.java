@@ -185,18 +185,23 @@ public class Application extends SigaApplication {
 
 	public static void exibirItemConfiguracao(SrSolicitacao solicitacao)
 			throws Exception {
+		if (solicitacao.solicitante == null)
+			render(solicitacao);
+		
 		if (solicitacao.getItensDisponiveis().contains(
 				solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
 		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao
 				.getAcoesDisponiveisComAtendenteOrdemTitulo();
-		if (solicitacao.acao == null
-				|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
-			if (acoesEAtendentes.size() > 0)
-				solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
-			else
-				solicitacao.acao = null;
+		if (acoesEAtendentes != null){
+			if (solicitacao.acao == null
+					|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
+				if (acoesEAtendentes.size() > 0)
+					solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
+				else
+					solicitacao.acao = null;
+			}
 		}
 		render(solicitacao, acoesEAtendentes);
 	}
@@ -244,6 +249,10 @@ public class Application extends SigaApplication {
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
 
+		if (solicitacao.solicitante == null) {
+			validation.addError("solicitacao.solicitante",
+					"Solicitante n&atilde;o informado");
+		}
 		if (solicitacao.itemConfiguracao == null) {
 			validation.addError("solicitacao.itemConfiguracao",
 					"Item n&atilde;o informado");

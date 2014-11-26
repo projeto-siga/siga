@@ -1217,6 +1217,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
+		
+		if (solicitante == null)
+			return null;
+		
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
 
 		SrConfiguracao confFiltro = new SrConfiguracao();
@@ -1249,11 +1253,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
-		return new ArrayList<SrAcao>(getAcoesDisponiveisComAtendente().keySet());
+		Map<SrAcao, DpLotacao> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		return acoesEAtendentes != null ? new ArrayList<SrAcao>(acoesEAtendentes.keySet()) : null;
 	}
 
 	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendente()
 			throws Exception {
+		
+		if (solicitante == null || itemConfiguracao == null)
+			return null;
+		
 		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
 
 		SrConfiguracao confFiltro = new SrConfiguracao();
@@ -1295,19 +1304,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendenteOrdemTitulo()
 			throws Exception {
-		Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
-				new Comparator<SrAcao>() {
-					@Override
-					public int compare(SrAcao o1, SrAcao o2) {
-						int i = o1.tituloAcao.compareTo(o2.tituloAcao);
-						if (i != 0)
-							return i;
-						return o1.idAcao.compareTo(o2.idAcao);
-					}
-				});
+		Map acoesEAtendentes = getAcoesDisponiveisComAtendente();
 
-		m.putAll(getAcoesDisponiveisComAtendente());
-		return m;
+		if (acoesEAtendentes != null){
+			Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
+					new Comparator<SrAcao>() {
+						@Override
+						public int compare(SrAcao o1, SrAcao o2) {
+							int i = o1.tituloAcao.compareTo(o2.tituloAcao);
+							if (i != 0)
+								return i;
+							return o1.idAcao.compareTo(o2.idAcao);
+						}
+					});
+
+
+			m.putAll(acoesEAtendentes);
+			return m;
+		}
+		return null;
 	}
 
 	@SuppressWarnings("serial")

@@ -298,7 +298,10 @@ public class SrMovimentacao extends GenericModel {
 		if (dtIniMov == null)
 			dtIniMov = new Date();
 
-		if (solicitacao.getMovimentacaoSetComCancelados().size() == 0) {
+		SrMovimentacao ultimaMovDoContexto = solicitacao
+				.getUltimaMovimentacaoMesmoSeCanceladaTodoOContexto();
+		
+		if (ultimaMovDoContexto == null) {
 			numSequencia = 1L;
 		} else {
 			SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
@@ -309,8 +312,7 @@ public class SrMovimentacao extends GenericModel {
 			}
 
 			if (numSequencia == null)
-				numSequencia = solicitacao
-				.getUltimaMovimentacaoMesmoSeCancelada().numSequencia + 1;
+				numSequencia = ultimaMovDoContexto.numSequencia + 1;
 		}
 
 		if (tipoMov == null)

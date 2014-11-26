@@ -540,7 +540,9 @@
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" id="gravar" /> <a
-					href="@{Application.listar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					#{if solicitacao.solicitacaoPai}href="@{Application.exibir(solicitacao.solicitacaoPai.idSolicitacao)}"#{/if} 
+					#{else}href="@{Application.listar}"#{/else}
+					class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
 			#{/form}
 		</div>

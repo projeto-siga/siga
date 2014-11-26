@@ -16,13 +16,14 @@ $(function() {
         dateFormat: 'dd/mm/yy'
     });
 });
-</script>
-
-<script>
 $(function(){
 	$("#horario").mask("99:99");
 	$("#horarioAlterarPrazo").mask("99:99");
 });
+
+function postback(){
+	location.href="@{Application.exibir(solicitacao.idSolicitacao)}&todoOContexto="+$("#todoOContexto").val()+"&ocultas="+$("#ocultas").val();
+}
 </script>
 
 <div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
@@ -43,8 +44,7 @@ $(function(){
 				style="margin-right: 1px;"> O atendente atual n&atilde;o &eacute; o
 			atendente designado.
 		</div>
-		#{/if} #{links acoes:solicitacao.operacoes(lotaTitular, titular,
-		completo), base:_base /}
+		#{/if} #{links acoes:solicitacao.operacoes(lotaTitular, titular), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
 				${solicitacao.descrItem} -
@@ -67,8 +67,7 @@ $(function(){
 			style="margin-bottom: 0px !important">
 			<form action="@{Application.darAndamento()}" method="post"
 				enctype="multipart/form-data" onsubmit="javascript: return block();">
-				<input type="hidden" name="completo" value="${completo}" /> <input
-					type="hidden" name="movimentacao.solicitacao.idSolicitacao"
+				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
 				solicitacao.podeTrocarAtendente(lotaTitular, cadastrante)}
 				<div class="gt-form-row">
@@ -97,50 +96,41 @@ $(function(){
 			</form>
 		</div>
 
-		#{if completo} #{set movs:solicitacao.movimentacaoSetComCancelados /}
-		#{/if} #{else} #{set movs:solicitacao.movimentacoesPrincipais /}
-		#{/else} #{if movs}
-		<br/><br/>
-
+		<p style="padding-top: 30px; font-weight: bold; color: #365b6d;" >
+		#{checkbox name:'todoOContexto',
+					value:todoOContexto, onchange:'postback();' /} Todo o Contexto
+		&nbsp;&nbsp;
+		#{checkbox name:'ocultas',
+					value:ocultas, onchange:'postback();' /} Mais Detalhes
+		</p>
+		
 		<div class="gt-content-box">
 			<table border="0" width="100%" class="gt-table mov">
-				<colgroup>
-					#{if completo}
-					<col width="5%" />
-					<col width="15%" />
-					<col width="8%" />
-					<col width="10%" />
-					<col width="10%" />
-					<col width="10%" />
-					<col width="10%" />
-					<col width="34%" />
-					#{/if} #{else}
-					<col width="15%" />
-					<col width="10%" />
-					<col width="10%" />
-					<col width="10%" />
-					<col width="55%" />
-					#{/else}
-				</colgroup>
 				<thead>
 					<tr>
-						#{if completo}
-						<th></th> #{/if}
+						*{#{if ocultas}
+						<th>#</th> #{/if}}*
 						<th>Momento</th>
+						#{if todoOContexto}
+						<th>Solicita&ccedil;&atilde;o</th> #{/if}
 						<th>Evento</th>
-						<th colspan="2">Cadastrante</th> #{if completo}
+						<th colspan="2">Cadastrante</th> #{if ocultas}
 						<th colspan="2">Atendente</th> #{/if}
 						<th>Descrição</th>
 					</tr>
 				</thead>
-
+				
 				<tbody>
+				#{if movs}
 					#{list items:movs, as:'movimentacao'}
 					<tr #{if movimentacao.canceladoOuCancelador} class="disabled"#{/if}>
-						#{if completo}
-						<td>${movimentacao.numSequencia}</td> #{/if} #{if completo}
+						*{#{if ocultas}
+						<td>${movimentacao.numSequencia}</td> #{/if}}*  #{if ocultas}
 						<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>#{/if} #{else}
 						<td>${movimentacao.dtIniString}</td>#{/else} 
+						#{if todoOContexto}
+						<td><a style="color: #365b6d;" href="@{Application.exibir(movimentacao.solicitacao.idSolicitacao)}"
+	style="text-decoration: none"> ${movimentacao.solicitacao.numSequenciaString}</td> #{/if}
 						<td>${movimentacao.tipoMov.nome}</td>
 						<td>#{selecionado
 							sigla:movimentacao.lotaCadastrante?.siglaLotacao,
@@ -148,7 +138,7 @@ $(function(){
 						<td>#{selecionado
 							sigla:movimentacao.cadastrante?.nomeAbreviado,
 							descricao:movimentacao.cadastrante?.descricaoIniciaisMaiusculas
-							/}</td> #{if completo}
+							/}</td> #{if ocultas}
 						<td>#{selecionado
 							sigla:movimentacao.lotaAtendente?.siglaLotacao,
 							descricao:movimentacao.lotaAtendente?.nomeLotacao /}</td>
@@ -174,10 +164,14 @@ $(function(){
 						</script>
 					</tr>
 					#{/list}
+				
+				#{/if}
+				#{else}
+					<tr><td align="center" colspan="10">N&atilde;o h&aacute; movimenta&ccedil;&otilde;es nesse modo de exibi&ccedil;&atilde;o</td></tr>
+				#{/else}
 				</tbody>
 			</table>
 		</div>
-		#{/if}
 
 	</div>
 
@@ -316,8 +310,7 @@ $(function(){
 	<div class="gt-content-box gt-form">
 		<form action="@{Application.anexarArquivo()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
-			<input type="hidden" name="completo" value="${completo}" /> <input
-				type="hidden" name="movimentacao.solicitacao.idSolicitacao"
+			<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 				value="${movimentacao.solicitacao.idSolicitacao}"> <input
 				type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12">
 			<div class="gt-form-row">
@@ -343,8 +336,7 @@ $(function(){
 			<label>Motivo</label>
 			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
 		</div>
-		<input type="hidden" name="completo" value="${completo}" /> <input
-			type="hidden" name="id" value="${solicitacao.id}" /> <input
+		<input type="hidden" name="id" value="${solicitacao.id}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</form>
 	#{/modal}
@@ -376,10 +368,9 @@ $(function(){
 			<textarea name="detalheMotivo" cols="50" rows="4"> </textarea>
 		</div>
 		<div class="gt-form-row">
-		<input type="hidden" name="completo" value="${completo}" /> <input
-			type="hidden" name="id" value="${solicitacao.id}" /> <input
-			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-		</div>
+					<input type="hidden" name="id" value="${solicitacao.id}" /> <input
+						type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+				</div>
 	</form>
 	</div>
 	</div>
@@ -399,7 +390,6 @@ $(function(){
 					<label>Motivo</label>
 					<textarea name="motivo" cols="50" rows="4"> </textarea> 
 				</div>
-				<input type="hidden" name="completo" value="${completo}" />
 				<input type="hidden" name="id" value="${solicitacao.id}" /> 
 				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 		</form>
@@ -423,7 +413,7 @@ function terminarPendencia(motivo, idMov){
 			<label>Descrição</label>
 			<textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
 		</div>
-		<input type="hidden" name="completo" value="${completo}" /> <input
+		<input
 			type="hidden" name="idMovimentacao" id="movimentacaoId" value="" /><input
 			type="hidden" name="motivo" id="motivoId" value="" /><input
 			type="hidden" name="id" value="${solicitacao.id}" /> <input

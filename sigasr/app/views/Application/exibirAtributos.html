@@ -36,7 +36,7 @@
 				#{if tipoAtributo.formatoCampo != null}
 					#{if tipoAtributo.formatoCampo.name() == "TEXTO"}
 					<input type="text" name="solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${solicitacao.atributoMap[tipoAtributo.idTipoAtributo]}" class="${tipoAtributo.idTipoAtributo}"
-						onchange="notificarCampoAtributoMudou('.${tipoAtributo.idTipoAtributo}', '${tipoAtributo.nomeTipoAtributo}', 'solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]');" />
+						onchange="notificarCampoAtributoMudou('.${tipoAtributo.idTipoAtributo}', '${tipoAtributo.nomeTipoAtributo}', 'solicitacao.atributoMap[${tipoAtributo.idTipoAtributo}]');" size="85"/>
 					<span style="color: red">#{error 'solicitacao.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
 				#{/if}
 				#{if tipoAtributo.formatoCampo.name() == "DATA"}

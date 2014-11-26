@@ -69,6 +69,7 @@ self.resposta_ajax_${nomeclean} = function(response, d1, d2, d3) {
 }
 
 self.ajax_${nomeclean} = function() {
+	${_onblur};
 	var sigla = document.getElementById('${nomeclean}_sigla').value;
 	if (sigla == '') {
 		return retorna_${_tipo}${nomeclean}('', '', '');

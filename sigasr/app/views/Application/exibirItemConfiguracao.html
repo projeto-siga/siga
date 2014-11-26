@@ -1,3 +1,4 @@
+#{if solicitacao.solicitante}
 <script>
 function carregarAcao(){
 	frm = document.getElementById('formSolicitacao');
@@ -28,3 +29,4 @@ function carregouAcao(response, param){
 		'solicitacao.itemConfiguracao' /}</span>
 </div>
 <div id="divAcao">#{include 'Application/exibirAcao.html' /}</div>
+#{/if}

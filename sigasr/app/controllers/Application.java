@@ -27,9 +27,7 @@ import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
-import models.SrPergunta;
 import models.SrPesquisa;
-import models.SrPrioridade;
 import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
@@ -846,18 +844,20 @@ public class Application extends SigaApplication {
 		return designacao.getId();
 	}
 
-	public static void desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
+	public static Long desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
-		listarDesignacao(mostrarDesativados);
+		
+		return designacao.getId();
 	}
 
-	public static void reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
+	public static Long reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.salvar();
-		listarDesignacao(mostrarDesativados);
+		
+		return designacao.getId();
 	}
 
 	public static void listarPermissaoUsoLista(boolean mostrarDesativados) throws Exception {

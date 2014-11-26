@@ -187,8 +187,9 @@ public class SrConfiguracao extends CpConfiguracao {
 			return this.getLotacao();
 		else if (this.getCargo() != null)
 			return this.getCargo();
-		else
+		else if (this.getFuncaoConfianca() != null)
 			return this.getFuncaoConfianca();
+		else return this.getCpGrupo();
 	}
 
 	public String getPesquisaSatisfacaoString() {
@@ -369,6 +370,8 @@ public class SrConfiguracao extends CpConfiguracao {
 			return 3;
 		else if (this.getCargo() != null)
 			return 4;
+		else if (this.getCpGrupo() != null)
+			return 5;
 		else
 			return 1;
 	}

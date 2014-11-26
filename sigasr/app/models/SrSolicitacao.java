@@ -668,6 +668,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confFiltro.setComplexo(local);
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.acaoFiltro = acao;
+		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
@@ -688,6 +689,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		confFiltro.setComplexo(local);
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.acaoFiltro = acao;
+		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
@@ -708,6 +710,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		confFiltro.setComplexo(local);
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.acaoFiltro = acao;
+		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
@@ -788,6 +791,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		confFiltro.setComplexo(local);
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.acaoFiltro = acao;
+		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
@@ -808,6 +812,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		confFiltro.setComplexo(local);
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.acaoFiltro = acao;
+		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
@@ -1286,6 +1291,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
+		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(
 				CpTipoConfiguracao.class,
 
@@ -1330,6 +1336,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
+		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(
 				CpTipoConfiguracao.class,

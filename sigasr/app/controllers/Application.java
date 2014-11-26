@@ -1204,15 +1204,15 @@ public class Application extends SigaApplication {
 		render(itens, filtro, nome, sol);
 	}
 
-	public static void selecionarSiga(String sigla, String tipo, String nome)
+	public static void selecionarSiga(String sigla, String prefixo, String tipo, String nome)
 			throws Exception {
-		redirect("/siga/" + tipo + "/selecionar.action?" + "propriedade="
+		redirect("/siga/" + (prefixo != null ? prefixo + "/" : "") + tipo + "/selecionar.action?" + "propriedade="
 				+ tipo + nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
-	public static void buscarSiga(String sigla, String tipo, String nome)
+	public static void buscarSiga(String sigla, String prefixo, String tipo, String nome)
 			throws Exception {
-		redirect("/siga/" + tipo + "/buscar.action?" + "propriedade=" + tipo
+		redirect("/siga/" + (prefixo != null ? prefixo + "/" : "") + tipo + "/buscar.action?" + "propriedade=" + tipo
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 

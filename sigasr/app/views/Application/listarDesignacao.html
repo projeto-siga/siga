@@ -195,7 +195,7 @@
 		jUnMedPreAtendimentoCbb = document.getElementsByName("unidadeMedidaPreAtendimento")[0],
 		jUnMedAtendimentoCbb = document.getElementsByName("unidadeMedidaAtendimento")[0],
 		jUnMedPosAtendimentoCbb = document.getElementsByName("unidadeMedidaPosAtendimento")[0],
-		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargo")[0];
+		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
 		
 		// resetando os valores das combos
 		jOrgaoUsuarioCbb.selectedIndex = 0;
@@ -223,6 +223,10 @@
 		$("#cargo_descricao").val('');
 		$("#cargo_sigla").val('');
 		$("#cargoSpan").html('');
+		$("#cpGrupo").val('');
+		$("#cpGrupo_descricao").val('');
+		$("#cpGrupo_sigla").val('');
+		$("#cpGrupoSpan").html('');
 			
 		// limpando os valores dos demais campos
 		$("#acao").val('');
@@ -279,7 +283,7 @@
 		jUnMedPreAtendimentoCbb = document.getElementsByName("unidadeMedidaPreAtendimento")[0],
 		jUnMedAtendimentoCbb = document.getElementsByName("unidadeMedidaAtendimento")[0],
 		jUnMedPosAtendimentoCbb = document.getElementsByName("unidadeMedidaPosAtendimento")[0],
-		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargo")[0];
+		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
 		
 		// atualiza os valores das combos
 		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[1]);
@@ -332,7 +336,7 @@
         getSiglaFieldSolicitante(itemArray[5]).val(itemArray[8]);
         getSpanFieldSolicitante(itemArray[5]).html(itemArray[7]);
         
-        $("#dpPessoalotacaofuncaoConfiancacargo")[0].onchange();
+        $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 	};
 	
 	function findSelectedIndexByValue(comboBox, value) {
@@ -388,7 +392,7 @@
 			jUnMedAtendimento = jUnMedAtendimentoCbb.options[jUnMedAtendimentoCbb.selectedIndex]
 			jUnMedPosAtendimentoCbb = document.getElementsByName("unidadeMedidaPosAtendimento")[0],
 			jUnMedPosAtendimento = jUnMedPosAtendimentoCbb.options[jUnMedPosAtendimentoCbb.selectedIndex],
-			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargo")[0],
+			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0],
 			jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
 		
 		var idDesignacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
@@ -626,8 +630,10 @@
 			return $("#lotacao");
 		else if (tipo == 3)
 			return $("#funcaoConfianca");
-		else
+		else if (tipo == 4)
 			return $("#cargo");
+		else 
+			return $("#cpGrupo");
 	};
 	
 	function getDescricaoFieldSolicitante(tipo) {
@@ -637,8 +643,10 @@
 			return $("#lotacao_descricao");
 		else if (tipo == 3)
 			return $("#funcaoConfianca_descricao");
-		else
+		else if (tipo == 4)
 			return $("#cargo_descricao");
+		else 
+			return $("#cpGrupo_descricao");
 	};
 	
 	function getSiglaFieldSolicitante(tipo) {
@@ -648,8 +656,10 @@
 			return $("#lotacao_sigla");
 		else if (tipo == 3)
 			return $("#funcaoConfianca_sigla");
-		else
+		else if (tipo == 4)
 			return $("#cargo_sigla");
+		else 
+			return $("#cpGrupo_sigla");
 	};
 	
 	function getSpanFieldSolicitante(tipo) {
@@ -659,8 +669,10 @@
 			return $("#lotacaoSpan");
 		else if (tipo == 3)
 			return $("#funcaoConfiancaSpan");
-		else
+		else if (tipo == 4)
 			return $("#cargoSpan");
+		else
+			return $("#cpGrupoSpan");
 	};
 	
 	function serializeDesignacao(rowValues) {
@@ -756,6 +768,7 @@
               	params += '&designacao.lotacao=';
               	params += '&designacao.funcaoConfianca=';
               	params += '&designacao.cargo=';
+              	params += '&designacao.cpGrupo=';
 			
 			// caso seja lotação
 			} else if (rowValues[5] == 2){
@@ -763,6 +776,7 @@
 				params += '&designacao.dpPessoa=';
               	params += '&designacao.funcaoConfianca=';
               	params += '&designacao.cargo=';
+              	params += '&designacao.cpGrupo=';
 			
 			// caso seja função
 			} else if (rowValues[5] == 3){
@@ -770,6 +784,7 @@
 				params += '&designacao.dpPessoa=';
               	params += '&designacao.lotacao=';
               	params += '&designacao.cargo=';
+              	params += '&designacao.cpGrupo=';
 			
 			// caso seja cargo
 			} else if (rowValues[5] == 4){
@@ -777,6 +792,15 @@
 				params += '&designacao.dpPessoa=';
               	params += '&designacao.funcaoConfianca=';
               	params += '&designacao.lotacao=';
+              	params += '&designacao.cpGrupo=';
+
+			// caso seja grupo
+			} else if (rowValues[5] == 5){
+				params += '&designacao.cpGrupo=' + rowValues[6];
+				params += '&designacao.dpPessoa=';
+      			params += '&designacao.funcaoConfianca=';
+      			params += '&designacao.lotacao=';
+      			params += '&designacao.cargo=';
 			}
     	//}
     	

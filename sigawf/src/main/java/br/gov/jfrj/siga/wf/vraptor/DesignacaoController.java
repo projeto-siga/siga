@@ -34,6 +34,7 @@ import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.taskmgmt.def.Swimlane;
 import org.jbpm.taskmgmt.def.Task;
 
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -166,6 +167,7 @@ public class DesignacaoController extends WfController {
 	 * @return
 	 * @throws Exception
 	 */
+	@Path("/app/designacao/pesquisar/{orgao}/{procedimento}")
 	public void pesquisar(String orgao, String procedimento) throws Exception {
 		assertAcesso("DESIGNAR:Designar tarefas");
 
@@ -322,34 +324,7 @@ public class DesignacaoController extends WfController {
 				d.setRaia(raia.getName());
 				cfgFiltro.setRaia(raia.getName());
 
-				WfConfiguracao cfg = (WfConfiguracao) Wf.getInstance()
-						.getConf()
-						.buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
-
-				if (cfg != null) {
-					d.setAtor(cfg.getAtor());
-					d.setLotaAtor(cfg.getLotaAtor());
-
-					if (cfg.getExpressao() != null) {
-						d.setExpressao(cfg.getExpressao());
-						for (WfTipoResponsavel tr : listaTipoResponsavel) {
-							if (tr.getValor().equals(d.getExpressao())) {
-								d.setTipoResponsavel(tr.getId());
-							}
-						}
-						if (d.getTipoResponsavel() == null) {
-							d.setTipoResponsavel(TIPO_RESP_EXPRESSAO);
-							d.setExpressao(cfg.getExpressao());
-						}
-					}
-				}
-
-				if (d.getAtor() != null) {
-					d.setTipoResponsavel(TIPO_RESP_MATRICULA);
-				}
-				if (d.getLotaAtor() != null) {
-					d.setTipoResponsavel(TIPO_RESP_LOTACAO);
-				}
+				preencherDesignacao(cfgFiltro, d);
 
 				resultado.add(d);
 			}
@@ -392,33 +367,7 @@ public class DesignacaoController extends WfController {
 				d.setTarefa(t.getName());
 				cfgFiltro.setTarefa(d.getTarefa());
 
-				WfConfiguracao cfg = (WfConfiguracao) Wf.getInstance()
-						.getConf()
-						.buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
-
-				if (cfg != null) {
-					d.setAtor(cfg.getAtor());
-					d.setLotaAtor(cfg.getLotaAtor());
-
-					if (cfg.getExpressao() != null) {
-						d.setExpressao(cfg.getExpressao());
-						for (WfTipoResponsavel tr : listaTipoResponsavel) {
-							if (tr.getValor().equals(d.getExpressao())) {
-								d.setTipoResponsavel(tr.getId());
-							}
-						}
-						if (d.getTipoResponsavel() == null) {
-							d.setTipoResponsavel(TIPO_RESP_EXPRESSAO);
-							d.setExpressao(cfg.getExpressao());
-						}
-					}
-				}
-				if (d.getAtor() != null) {
-					d.setTipoResponsavel(TIPO_RESP_MATRICULA);
-				}
-				if (d.getLotaAtor() != null) {
-					d.setTipoResponsavel(TIPO_RESP_LOTACAO);
-				}
+				preencherDesignacao(cfgFiltro, d);
 
 				resultado.add(d);
 			}
@@ -426,6 +375,39 @@ public class DesignacaoController extends WfController {
 
 		return resultado;
 
+	}
+
+	private void preencherDesignacao(WfConfiguracao cfgFiltro, Designacao d)
+			throws Exception {
+		WfConfiguracao cfg = (WfConfiguracao) Wf.getInstance()
+				.getConf()
+				.buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
+
+		if (cfg != null) {
+			if (cfg.getAtor() != null)
+				d.setAtor(daoPes(cfg.getAtor().getIdPessoa()));
+			if (cfg.getLotaAtor() != null)
+				d.setLotaAtor(daoLot(cfg.getLotaAtor().getIdLotacao()));
+
+			if (cfg.getExpressao() != null) {
+				d.setExpressao(cfg.getExpressao());
+				for (WfTipoResponsavel tr : listaTipoResponsavel) {
+					if (tr.getValor().equals(d.getExpressao())) {
+						d.setTipoResponsavel(tr.getId());
+					}
+				}
+				if (d.getTipoResponsavel() == null) {
+					d.setTipoResponsavel(TIPO_RESP_EXPRESSAO);
+					d.setExpressao(cfg.getExpressao());
+				}
+			}
+		}
+		if (d.getAtor() != null) {
+			d.setTipoResponsavel(TIPO_RESP_MATRICULA);
+		}
+		if (d.getLotaAtor() != null) {
+			d.setTipoResponsavel(TIPO_RESP_LOTACAO);
+		}
 	}
 
 	/**

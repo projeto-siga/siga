@@ -63,14 +63,17 @@
 
 	function gravarResponsabilidade() {
 		var frm = document.getElementById("formulario");
-		frm.action = 'gravar';
+		frm.action = '${linkTo[DesignacaoController].gravar}';
 		frm.submit();
 	}
 
 	function pesquisarProcedimento() {
 		var frm = document.getElementById("formulario");
-		frm.action = 'pesquisar';
-		frm.submit();
+		var e1 = document.getElementById("orgao");
+		var orgao = e1.options[e1.selectedIndex].value;
+		var e2 = document.getElementById("procedimento");
+		var procedimento = e2.options[e2.selectedIndex].value;
+		window.location.href = '${linkTo[DesignacaoController].pesquisar}'.replace(/\/\/$/, '/' + orgao + '/' + procedimento);
 	}
 </script>
 
@@ -83,10 +86,10 @@
 				<form id="formulario" action="" method="POST" class="form">
 
 					<table class="gt-form-table">
-						<siga:select label="Órgão" name="orgao" list="listaOrgao"
+						<siga:select label="Órgão" id="orgao" name="orgao" list="listaOrgao"
 							listValue="acronimoOrgaoUsu" listKey="acronimoOrgaoUsu"
 							multiple="false"/>
-						<siga:select label="Procedimento" name="procedimento"
+						<siga:select label="Procedimento" id="procedimento" name="procedimento"
 							list="listaProcedimento" listValue="name" listKey="name"
 							multiple="false" />
 						<tr>
@@ -136,7 +139,7 @@
 								<div
 									style="display: ${(tipoResponsavel == 1) ? 'inline' : 'none'};"
 									id="matricula_${idRaia}">
-									<siga:selecao modulo="/siga" tipo="pessoa" tema="simple"
+									<siga:selecao modulo="siga" tipo="pessoa" tema="simple"
 										propriedade="matricula_${idRaia}"
 										siglaInicial="${r.value[0].ator.sigla}"
 										idInicial="${r.value[0].ator.id}"
@@ -145,7 +148,7 @@
 								<div
 									style="display: ${(tipoResponsavel == 2) ? 'inline' : 'none'};"
 									id="lotacao_${idRaia}">
-									<siga:selecao modulo="/siga" tipo="lotacao" tema="simple"
+									<siga:selecao modulo="siga" tipo="lotacao" tema="simple"
 										propriedade="lotacao_${idRaia}"
 										siglaInicial="${r.value[0].lotaAtor.sigla}"
 										idInicial="${r.value[0].lotaAtor.id}"
@@ -180,7 +183,7 @@
 								<div
 									style="display: ${(dTarefa.tipoResponsavel == 1) ? 'inline' : 'none'};"
 									id="matricula_${dTarefa.id}">
-									<siga:selecao modulo="/siga" tipo="pessoa" tema="simple"
+									<siga:selecao modulo="siga" tipo="pessoa" tema="simple"
 										propriedade="matricula_${dTarefa.id}"
 										siglaInicial="${dTarefa.ator.sigla}"
 										idInicial="${dTarefa.ator.id}"
@@ -189,7 +192,7 @@
 								<div
 									style="display: ${(dTarefa.tipoResponsavel == 2) ? 'inline' : 'none'};"
 									id="lotacao_${dTarefa.id}">
-									<siga:selecao modulo="/siga" tipo="lotacao" tema="simple"
+									<siga:selecao modulo="siga" tipo="lotacao" tema="simple"
 										propriedade="lotacao_${dTarefa.id}"
 										siglaInicial="${dTarefa.lotaAtor.sigla}"
 										idInicial="${dTarefa.lotaAtor.id}"

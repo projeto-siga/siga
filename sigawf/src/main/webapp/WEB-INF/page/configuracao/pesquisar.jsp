@@ -117,14 +117,14 @@
 										<c:when test="${p.tipoResponsavel == 1}">
 											<!-- MATRÍCULA -->
 											<div style="display: none;" id="lotacao_${p.id}">
-												<siga:selecao modulo="/siga" tipo="lotacao"
+												<siga:selecao modulo="siga" tipo="lotacao"
 													tema="simple" propriedade="lotacao_${p.id}"
 													siglaInicial="${p.lotacao.sigla}"
 													idInicial="${p.lotacao.id}"
 													descricaoInicial="${p.lotacao.descricao}" />
 											</div>
 											<div style="display: inline;" id="matricula_${p.id}">
-												<siga:selecao modulo="/siga" tipo="pessoa" tema="simple"
+												<siga:selecao modulo="siga" tipo="pessoa" tema="simple"
 													propriedade="matricula_${p.id}"
 													siglaInicial="${p.pessoa.sigla}" idInicial="${p.pessoa.id}"
 													descricaoInicial="${p.pessoa.descricao}" />
@@ -133,14 +133,14 @@
 										<c:when test="${p.tipoResponsavel == 2}">
 											<!-- LOTAÇÃO -->
 											<div style="display: inline;" id="lotacao_${p.id}">
-												<siga:selecao modulo="/siga" tipo="lotacao"
+												<siga:selecao modulo="siga" tipo="lotacao"
 													tema="simple" propriedade="lotacao_${p.id}"
 													siglaInicial="${p.lotacao.sigla}"
 													idInicial="${p.lotacao.id}"
 													descricaoInicial="${p.lotacao.descricao}" />
 											</div>
 											<div style="display: none;" id="matricula_${p.id}">
-												<siga:selecao modulo="/siga" tipo="pessoa" tema="simple"
+												<siga:selecao modulo="siga" tipo="pessoa" tema="simple"
 													propriedade="matricula_${p.id}"
 													siglaInicial="${p.pessoa.sigla}" idInicial="${p.pessoa.id}"
 													descricaoInicial="${p.pessoa.descricao}" />
@@ -167,11 +167,11 @@
 									onchange="javascript:solicitarInformacao('${idNovaPermissao}');" />
 							--%> 
 								<div style="display: none;" id="lotacao_${idNovaPermissao}">
-									<siga:selecao modulo="/siga" tipo="lotacao" tema="simple"
+									<siga:selecao modulo="siga" tipo="lotacao" tema="simple"
 										propriedade="lotacao_${idNovaPermissao}" />
 								</div>
 								<div style="display: none;" id="matricula_${idNovaPermissao}">
-									<siga:selecao modulo="/siga" tipo="pessoa" tema="simple"
+									<siga:selecao modulo="siga" tipo="pessoa" tema="simple"
 										propriedade="matricula_${idNovaPermissao}" />
 								</div>
 							</td>

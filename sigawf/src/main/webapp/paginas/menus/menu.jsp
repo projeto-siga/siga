@@ -14,7 +14,7 @@
 			<li><a href="#">Iniciar</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
-						<li><a href="${linkTo[AppController].initializeProcess}?pdId=${pd.id}">${pd.name}</a>
+						<li><a href="${linkTo[AppController].initializeProcess[pd.id]}">${pd.name}</a>
 						</li>
 					</c:forEach>
 				</ul></li>
@@ -28,7 +28,7 @@
 					<li><a href="#">Configurar</a>
 						<ul class="navmenu-large">
 							<c:forEach var="pd" items="${processDefinitions}">
-								<li><a href="${linkTo[ConfiguracaoController].pesquisar}?orgao=${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}&procedimento=${pd.name}">${pd.name}</a>
+								<li><a href="${linkTo[ConfiguracaoController].pesquisar[lotaTitular.orgaoUsuario.acronimoOrgaoUsu][pd.name]}">${pd.name}</a>
 								</li>
 							</c:forEach>
 						</ul></li>
@@ -39,7 +39,7 @@
 					<li><a href="#">Designar Tarefas</a>
 						<ul class="navmenu-large">
 							<c:forEach var="pd" items="${processDefinitions}">
-								<li><a href="${linkTo[DesignacaoController].pesquisar}?orgao=${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}&procedimento=${pd.name}">${pd.name}</a>
+								<li><a href="${linkTo[DesignacaoController].pesquisar[lotaTitular.orgaoUsuario.acronimoOrgaoUsu][pd.name]}">${pd.name}</a>
 								</li>
 							</c:forEach>
 						</ul></li>

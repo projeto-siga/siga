@@ -1905,13 +1905,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		filtro.setDpPessoa(solicitante);
 		filtro.setComplexo(local);
 		filtro.itemConfiguracaoFiltro = itemConfiguracao;
+		filtro.acaoFiltro = acao;
 		filtro.setCpTipoConfiguracao(JPA.em().find(
 				CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		
 		filtro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE;
 		
-		for (SrConfiguracao conf : SrConfiguracao.listar(filtro)) {
+		for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] { SrConfiguracaoBL.ATENDENTE })) {
 			for (SrLista lista : conf.getListaConfiguracaoSet()) {
 				SrLista listaAtual = lista.getListaAtual();
 				if (!listaFinal.contains(listaAtual))

@@ -629,6 +629,14 @@ public class Application extends SigaApplication {
 		solicitacao.desassociarLista(lista, cadastrante(), lotaTitular());
 		exibirLista(idLista);
 	}
+
+	public static void retirarDeLista(Long idSolicitacao, Long idLista)
+			throws Exception {
+			SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
+			SrLista lista = SrLista.findById(idLista);
+			solicitacao.retirarDeLista(lista, cadastrante(), lotaTitular());
+			exibirLista(idLista);
+	}
 	
 	public static void priorizarLista(@As(",") List<Long> ids, Long id)
 			throws Exception {

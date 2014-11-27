@@ -137,6 +137,7 @@ $(function(){
 				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 					<input type="hidden" name="idLista" value="${lista.idLista}">
 					<input type="hidden" name="idSolicitacao" value="${sol.idSolicitacao}">
+					<a onclick="javascript: return block();" href="@{Application.retirarDeLista(sol.idSolicitacao,lista.idLista)}" title="Remover da Lista" name="idSolicitacao" value="${sol.idSolicitacao}">
 					<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> </a>
 				</td>
 				#{/if}

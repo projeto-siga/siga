@@ -117,6 +117,10 @@ public class SrMovimentacao extends GenericModel {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_FINALIZADORA")
 	public SrMovimentacao movFinalizadora;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_SOLICITACAO_REFERENCIA")
+	public SrSolicitacao solicitacaoReferencia;
 
 	public SrMovimentacao() throws Exception {
 		this(null);

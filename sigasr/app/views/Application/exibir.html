@@ -284,18 +284,20 @@ $(function(){
 			</p>
 		</div>
 	</div>
-	#{/if} #{if solicitacao.meuSolicitacaoJuntadasSet}
-	<div class="gt-sidebar">
-		<div class="gt-sidebar-content">
-			<h3>Juntada a esta solicitação</h3>
-			<p>
-				#{list items:solicitacao.meuSolicitacaoJuntadasSet, as:'juntada'} <a
-					href="@{Application.exibir(juntada.idSolicitacao)}">
-					${juntada.codigo} </a> , #{/list}
-			</p>
+	#{/if} 
+	*{#{if solicitacao.meuSolicitacaoJuntadasSet}
+		<div class="gt-sidebar">
+			<div class="gt-sidebar-content">
+				<h3>Juntada a esta solicitação</h3>
+				<p>
+					#{list items:solicitacao.meuSolicitacaoJuntadasSet, as:'juntada'} <a
+						href="@{Application.exibir(juntada.idSolicitacao)}">
+						${juntada.codigo} </a> , #{/list}
+				</p>
+			</div>
 		</div>
-	</div>
-	#{/if} #{if solicitacao.temSolicitacaoVinculada()}
+	#{/if} }* 
+	#{if solicitacao.solicitacoesVinculadas}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Vinculada a esta solicitação</h3>

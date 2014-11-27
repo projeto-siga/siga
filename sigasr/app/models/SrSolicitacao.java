@@ -118,6 +118,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE")
 	public DpLotacao lotaCadastrante;
 
+	@Transient
+	public DpLotacao atendenteNaoDesignado;
+
 	@ManyToOne
 	@JoinColumn(name = "ID_ORGAO_USU")
 	public CpOrgaoUsuario orgaoUsuario;
@@ -1522,10 +1525,10 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 
 			if (fecharAoAbrir)
 				fechar(lotaCadastrante, cadastrante, motivoFechamentoAbertura);
-			else if (temPreAtendenteDesignado())
+			else if (temPreAtendenteDesignado() && atendenteNaoDesignado == null)
 				iniciarPreAtendimento(lotaCadastrante, cadastrante);
 			else
-				iniciarAtendimento(lotaCadastrante, cadastrante);
+				iniciarAtendimento(lotaCadastrante, cadastrante, atendenteNaoDesignado);
 
 			for (SrLista lista : getListasParaInclusaoAutomatica(lotaCadastrante)) {
 
@@ -2098,7 +2101,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			throws Exception {
 		if (!podeFinalizarPreAtendimento(lota, pess))
 			throw new Exception("Operação nÃ£o permitida");
-		iniciarAtendimento(lota, pess);
+		iniciarAtendimento(lota, pess, null);
 	}
 
 	public void retornarAoPreAtendimento(DpLotacao lota, DpPessoa pess)
@@ -2108,12 +2111,15 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		iniciarPreAtendimento(lota, pess);
 	}
 
-	private void iniciarAtendimento(DpLotacao lota, DpPessoa pess)
+	private void iniciarAtendimento(DpLotacao lota, DpPessoa pess, DpLotacao lotaAtend)
 			throws Exception {
 		SrMovimentacao mov = new SrMovimentacao(this);
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO);
-		mov.lotaAtendente = mov.solicitacao.getAtendenteDesignado();
+		if (lotaAtend == null)
+			mov.lotaAtendente = mov.solicitacao.getAtendenteDesignado();
+		else
+			mov.lotaAtendente = lotaAtend;
 		mov.salvar(pess, lota);
 	}
 
@@ -2217,7 +2223,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			throws Exception {
 		if (!podeRetornarAoAtendimento(lota, pess))
 			throw new Exception("Operação nÃ£o permitida");
-		iniciarAtendimento(lota, pess);
+		iniciarAtendimento(lota, pess, getLotaAtendente());
 	}
 
 	private void fecharTotalmente(DpLotacao lota, DpPessoa pess, String motivo)

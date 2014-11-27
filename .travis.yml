@@ -1,6 +1,5 @@
 language: java
 jdk:
   - oraclejdk7
-env:
-  - siga.versao=3.14.0.0
+install: mvn install -DskipTests=true -Dsiga.versao=3.14.0.0
   

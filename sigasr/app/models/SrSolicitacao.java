@@ -1045,8 +1045,9 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 			 ultMovDoPai = this.solicitacaoPai.getUltimaMovimentacao();
 		if (isRascunho())
 			return foiCadastradaPor(lota, pess) || foiSolicitadaPor(lota, pess);
-		return (ultMov.atendente != null && pess != null && ultMov.atendente.equivale(pess)) 
-					|| (ultMov.lotaAtendente != null && ultMov.lotaAtendente.equivale(lota))
+		return (ultMov != null && ((ultMov.atendente != null && pess != null && ultMov.atendente.equivale(pess)) 
+					|| (ultMov.lotaAtendente != null && ultMov.lotaAtendente.equivale(lota))))
+
 					|| (ultMovDoPai != null && ((ultMovDoPai.atendente != null && ultMovDoPai.atendente.equivale(pess))
 												|| (ultMovDoPai.lotaAtendente != null && ultMovDoPai.lotaAtendente.equivale(lota))));
 

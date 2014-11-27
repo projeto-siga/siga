@@ -337,7 +337,7 @@
 					}
 				</div>
 				<a
-						onclick="javascript: document.getElementById('page').style.display='none'; document.getElementById('svg').style.display='block'; bigmap();"
+						onclick="javascript: showBig();"
 						title="Zoom" href="#">
 				<div class="gt-sidebar-list-content" id="output">
 				</div>
@@ -380,7 +380,7 @@
 				</div>
 			</div>
 		</div>
-		<a href="task.action?tiId=${taskInstance.id}"
+		<a href="javascript: hideBig();"
 			class="gt-btn-large gt-btn-left">Voltar</a>
 
 	</div>
@@ -414,11 +414,29 @@
 	</script>
 	</c:if>
 	
-	<script src="/siga/javascript/viz.js" language="JavaScript1.1" type="text/javascript"></script> 
-	
 	<script>
+		if (window.Worker) {
+			window.VizWorker = new Worker("/siga/javascript/viz.js");
+			window.VizWorker.onmessage = function (oEvent) {
+				  document.getElementById(oEvent.data.id).innerHTML = oEvent.data.svg;
+				  $(document).ready(function () {
+					    updateContainer();
+					});
+				};
+		} else {
+			document.write("<script src='/siga/javascript/viz.js' language='JavaScript1.1' type='text/javascript'>"+"<"+"/script>");
+		}
+	</script>
+    <script>
 		function bigmap() {
 			var input = 'digraph G { graph[size="100,100"]; ${dot} }';
+
+			if (window.VizWorker) {
+				document.getElementById("output2").innerHTML = "Aguarde..."; 
+				window.VizWorker.postMessage({id:"output2", graph:input});
+				return;
+			}
+
 			var format = "svg";
 			var engine = "dot";
 			
@@ -436,6 +454,13 @@
 		
 		function smallmap() {
 			var input = 'digraph G { graph[size="3,3"]; ${dot} }';
+
+			if (window.VizWorker) {
+				document.getElementById("output").innerHTML = "Aguarde..."; 
+				window.VizWorker.postMessage({id:"output", graph:input});
+				return;
+			}
+			
 			var format = "svg";
 			var engine = "dot";
 			
@@ -448,6 +473,18 @@
 			}
 		}
 
+		function showBig() {
+			document.getElementById('page').style.display='none';
+			document.getElementById('svg').style.display='block';
+			bigmap();
+		}
+		
+		function hideBig() {
+			document.getElementById('page').style.display='block';
+			document.getElementById('svg').style.display='none';
+			updateContainer();
+		}
+		
 		smallmap();
 
 		$(document).ready(function () {

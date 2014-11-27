@@ -463,6 +463,18 @@ $(function(){
 		</form>
 		</div>
 	#{/modal}
+	#{modal nome:'desentranhar', titulo:'Desentranhar'}
+		<form action="@{Application.desentranharSolicitacao()}" method="post"
+			enctype="multipart/form-data" onsubmit="javascript: return block();">
+			<div style="display: inline" class="gt-form-row gt-width-66">
+				<label>Justificativa</label>
+				<textarea style="width: 100%" name="justificativa" cols="50" rows="4"> </textarea>
+			</div>
+			<input type="hidden" name="completo" value="${completo}" /> <input
+				type="hidden" name="id" value="${solicitacao.id}" /> <input
+				type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+		</form>
+	#{/modal}
 	
 <script language="javascript">
 

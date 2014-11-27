@@ -394,6 +394,12 @@ public class Application extends SigaApplication {
         sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
         exibir(idSolicitacaoAVincular, completo());
     }
+    
+    public static void desentranharSolicitacao(Long id, String justificativa) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.desentranhar(lotaTitular(), cadastrante(), justificativa);
+		exibir(id, completo());
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {

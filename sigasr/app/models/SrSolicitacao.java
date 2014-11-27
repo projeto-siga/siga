@@ -21,6 +21,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RASCUNHO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO_SOLICITACAO;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
 import java.io.File;
@@ -935,7 +936,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean isJuntada() {
-		return sofreuMov(TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO);
+		return sofreuMov(TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO,
+				TIPO_MOVIMENTACAO_DESENTRANHAMENTO_SOLICITACAO);
 	}
 
 	public boolean isEditado() {
@@ -1033,6 +1035,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public SrSolicitacao getSolicitacaoPrincipal() {
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO_SOLICITACAO
+					&& !mov.isCancelada())
+				return null;
+
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO
 					&& !mov.isCancelada())
 				return mov.solicitacaoReferencia;
@@ -1133,6 +1139,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean podeJuntar(DpLotacao lota, DpPessoa pess) {
 		return estaCom(lota, pess) && (isEmAtendimento() || isPendente())
 				&& !isJuntada();
+	}
+
+	public boolean podeDesentranhar(DpLotacao lota, DpPessoa pess) {
+		return estaCom(lota, pess) && isJuntada();
 	}
 
 	public boolean podeVincular(DpLotacao lotaTitular, DpPessoa titular) {
@@ -1438,6 +1448,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitações",
 				podeJuntar(lotaTitular, titular), "juntar", "modal=true"));
+		
+		operacoes.add(new SrOperacao("arrow_out", "Desentranhar",
+				podeDesentranhar(lotaTitular, titular), "desentranhar", "modal=true"));
 
 		operacoes.add(new SrOperacao("text_list_numbers", "Definir Lista",
 				podeAssociarLista(lotaTitular, titular), "associarLista",
@@ -1756,6 +1769,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				}
 				if (t == TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO) {
 					marcador = CpMarcador.MARCADOR_JUNTADO;
+					movMarca = mov;
+				}
+				if (t == TIPO_MOVIMENTACAO_DESENTRANHAMENTO_SOLICITACAO) {
+					marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
 					movMarca = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
@@ -2482,14 +2499,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao = movimentacao.salvar(pess, lota);
 
 		Set<SrMovimentacao> movimentacoes = getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNCAO_SOLICITACAO);
-		SrMovimentacao movFinalizada = null;
 		for (SrMovimentacao mov : movimentacoes)
 			if (mov.movFinalizadora == null) {
-				movFinalizada = mov;
+				mov.movFinalizadora = movimentacao;
+				mov.save();
 				break;
 			}
-		movFinalizada.movFinalizadora = movimentacao;
-		movFinalizada.save();
+		
 	}
 
 	@SuppressWarnings("unchecked")

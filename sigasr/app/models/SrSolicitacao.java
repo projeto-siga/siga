@@ -750,7 +750,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 		
-		for (SrTipoAtributo t : SrTipoAtributo.listar(Boolean.FALSE)){
+		for (SrTipoAtributo t : SrTipoAtributo.listar(Boolean.FALSE)) {
 			confFiltro.tipoAtributo = t;
 			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 			if (conf != null){
@@ -759,7 +759,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					map.put(t.idTipoAtributo, conf.atributoObrigatorio);
 			}
 		}
-		
 		return listaFinal;
 	}
 
@@ -1899,24 +1898,42 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
-	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular)
-			throws Exception {
+	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular) throws Exception {
 		List<SrLista> listaFinal = new ArrayList<SrLista>();
-/*
- * 		Edson:DB1, acertar conforme o item 24
- * 
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
-				solicitante, local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {});
-		for (SrConfiguracao conf : confs) {
+
+		SrConfiguracao filtro = new SrConfiguracao();
+		filtro.setDpPessoa(solicitante);
+		filtro.setComplexo(local);
+		filtro.itemConfiguracaoFiltro = itemConfiguracao;
+		filtro.setCpTipoConfiguracao(JPA.em().find(
+				CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		
+		filtro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE;
+		
+		for (SrConfiguracao conf : SrConfiguracao.listar(filtro)) {
 			for (SrLista lista : conf.getListaConfiguracaoSet()) {
 				SrLista listaAtual = lista.getListaAtual();
 				if (!listaFinal.contains(listaAtual))
 					listaFinal.add(listaAtual);
 			}
 		}
-*/
+		
+/*
+ * 		Edson:DB1, acertar conforme o item 24
+ */
+		
+//		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
+//				solicitante, local, itemConfiguracao, acao,
+//				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+//				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {});
+//		for (SrConfiguracao conf : confs) {
+//			for (SrLista lista : conf.getListaConfiguracaoSet()) {
+//				SrLista listaAtual = lista.getListaAtual();
+//				if (!listaFinal.contains(listaAtual))
+//					listaFinal.add(listaAtual);
+//			}
+//		}
 		return new ArrayList<SrLista>(listaFinal);
 	}
 

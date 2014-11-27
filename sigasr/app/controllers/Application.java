@@ -276,15 +276,16 @@ public class Application extends SigaApplication {
 			validation.addError("solicitacao.descrSolicitacao",
 					"Descri&ccedil&atilde;o n&atilde;o informada");
 		}
-
-		HashMap<Long, Boolean> obrigatorio = solicitacao
-				.getObrigatoriedadeTiposAtributoAssociados();
+		
+		HashMap<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
 		for (SrAtributo att : solicitacao.getAtributoSet()) {
-			if (att.valorAtributo.trim().equals("")
-					&& obrigatorio.get(att.tipoAtributo.idTipoAtributo))
-				validation.addError("solicitacao.atributoMap["
-						+ att.tipoAtributo.idTipoAtributo + "]",
-						att.tipoAtributo.nomeTipoAtributo + " n&atilde;o informado");
+			// Para evitar NullPointerExcetpion quando nao encontrar no Map
+			if(Boolean.TRUE.equals(obrigatorio.get(att.tipoAtributo.idTipoAtributo))) {
+				if ((att.valorAtributo == null || att.valorAtributo.trim().equals("")))
+					validation.addError("solicitacao.atributoMap["
+							+ att.tipoAtributo.idTipoAtributo + "]",
+							att.tipoAtributo.nomeTipoAtributo + " n&atilde;o informado");
+			}
 		}
 
 		if (validation.hasErrors()) {

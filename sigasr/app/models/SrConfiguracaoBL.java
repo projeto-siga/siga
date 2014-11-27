@@ -80,6 +80,10 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO
 					&& conf.pesquisaSatisfacao == null)
 				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE
+					&& (conf.getListaConfiguracaoSet() == null || conf.getListaConfiguracaoSet().isEmpty()))
+				return false;
 
 			if (!atributosDesconsiderados.contains(ACAO)
 					&& conf.acoesSet != null && conf.acoesSet.size() > 0) {

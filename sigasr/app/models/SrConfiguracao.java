@@ -22,10 +22,12 @@ import models.SrItemConfiguracao.SrItemConfiguracaoVO;
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
+import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 import com.google.gson.Gson;
@@ -173,7 +175,12 @@ public class SrConfiguracao extends CpConfiguracao {
 	public boolean utilizarItemHerdado;
 
 	public SrConfiguracao() {
+	}
 
+	public SrConfiguracao(DpPessoa solicitante, CpComplexo local, SrItemConfiguracao item) {
+		this.setDpPessoa(solicitante);
+		this.setComplexo(local);
+		this.itemConfiguracaoFiltro = item;
 	}
 
 	public Selecionavel getSolicitante() {

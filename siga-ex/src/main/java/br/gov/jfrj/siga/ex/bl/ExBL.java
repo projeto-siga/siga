@@ -2251,7 +2251,16 @@ public class ExBL extends CpBL {
 			throws Exception {
 		
 		DpPessoa subscritor = null;
+		boolean fValido = false;
 		
+		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
+			throw new AplicacaoException(
+					"Matrícula do Subscritor não foi informada.");
+
+		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
+			throw new AplicacaoException(
+					"Senha do Subscritor não foi informada.");
+
 		final String hashAtual = GeraMessageDigest.executaHash(
 				senhaSubscritor.getBytes(), "MD5");
 
@@ -2282,6 +2291,41 @@ public class ExBL extends CpBL {
 		
 		if (!getComp().podeAssinarComSenha(subscritor, subscritor.getLotacao(), doc.getMobilGeral()))
 			throw new AplicacaoException("Usuário não tem permissão de assinar documento com senha.");
+		
+		
+		// Verifica se a matrícula confere com o subscritor titular ou com um
+		// cossignatario
+		try {
+			if (subscritor != null) {
+				if (doc.getSubscritor() != null
+						&& subscritor.equivale(doc.getSubscritor())) {
+					fValido = true;
+				}
+				if (!fValido) {
+					fValido = (subscritor.equivale(doc.getCadastrante()))
+							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO);
+				}
+				if (!fValido)
+					for (ExMovimentacao m : doc.getMobilGeral()
+							.getExMovimentacaoSet()) {
+						if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+								&& m.getExMovimentacaoCanceladora() == null
+								&& subscritor.equivale(m.getSubscritor())) {
+							fValido = true;
+							continue;
+						}
+					}
+			}
+
+			if (fValido == false)
+				throw new AplicacaoException(
+						"Assinante não é subscritor nem cossignatario");
+		} catch (final Exception e) {
+			throw new AplicacaoException(
+					"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento",
+					0, e);
+		}
+		
 
 		String s = null;
 		try {

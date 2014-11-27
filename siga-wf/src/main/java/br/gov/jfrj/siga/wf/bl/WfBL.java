@@ -34,6 +34,7 @@ import org.jbpm.db.GraphSession;
 import org.jbpm.graph.def.Node;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.def.Transition;
+import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
 import org.jbpm.instantiation.Delegation;
@@ -167,7 +168,9 @@ public class WfBL extends CpBL {
 					rootToken.signal(defaultLeavingTransition);
 					// context.addSuccessMessage("Signalled root token");
 				}
-			}
+			} 
+		} else {
+			startTaskInstance.assign(new ExecutionContext(startTaskInstance.getToken()));
 		}
 
 		// context.selectOutcome("started");

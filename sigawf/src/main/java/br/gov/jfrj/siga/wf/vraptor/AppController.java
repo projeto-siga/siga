@@ -83,6 +83,7 @@ public class AppController extends WfController {
 	 * @return
 	 * @throws Exception
 	 */
+	@Path("/app/initializeProcess/{pdId}")
 	public void initializeProcess(Long pdId) throws Exception {
 		if (pdId == null)
 			throw new RuntimeException();
@@ -358,8 +359,8 @@ public class AppController extends WfController {
 	 * @return
 	 * @throws CsisException
 	 */
-	public void assignTask(Long tiId, DpPessoaSelecao atorSel,
-			DpLotacaoSelecao lotaAtorSel, Integer prioridade,
+	public void assignTask(Long tiId, DpPessoaSelecao ator_pessoaSel,
+			DpLotacaoSelecao lotaAtor_lotacaoSel, Integer prioridade,
 			String justificativa) throws Exception {
 		TaskInstance taskInstance = getTaskInstance(tiId);
 		ProcessInstance pi = taskInstance.getProcessInstance();
@@ -367,10 +368,10 @@ public class AppController extends WfController {
 		String actorId = null;
 		String lotaActorId = null;
 
-		if (atorSel.getId() != null)
-			actorId = daoPes(atorSel.getId()).getSigla();
-		if (lotaAtorSel.getId() != null)
-			lotaActorId = daoLot(lotaAtorSel.getId()).getSiglaCompleta();
+		if (ator_pessoaSel.getId() != null)
+			actorId = daoPes(ator_pessoaSel.getId()).getSigla();
+		if (lotaAtor_lotacaoSel.getId() != null)
+			lotaActorId = daoLot(lotaAtor_lotacaoSel.getId()).getSiglaCompleta();
 
 		if (actorId == null && lotaActorId == null)
 			throw new AplicacaoException(
@@ -412,7 +413,7 @@ public class AppController extends WfController {
 			if (actorId != null) {
 				util.assertLotacaoAscendenteOuDescendente(
 						lotAtualAtor != null ? lotAtualAtor : lotAtualPool,
-						daoPes(atorSel.getId()).getLotacao());
+						daoPes(ator_pessoaSel.getId()).getLotacao());
 			}
 			taskInstance.setActorId(actorId);
 		}
@@ -423,7 +424,7 @@ public class AppController extends WfController {
 			else {
 				util.assertLotacaoAscendenteOuDescendente(
 						lotAtualPool != null ? lotAtualPool : lotAtualAtor,
-						daoLot(lotaAtorSel.getId()));
+						daoLot(lotaAtor_lotacaoSel.getId()));
 				taskInstance.setPooledActors(new String[] { lotaActorId });
 			}
 		}

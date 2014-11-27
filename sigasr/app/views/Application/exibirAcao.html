@@ -1,5 +1,6 @@
 <script>
 
+
 $(document).ready(function() {
 	notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
 });
@@ -85,7 +86,8 @@ function carregouAtributos(response, param){
 			#{/if}
 			#{else}${lotacaoNaoDesignada.raw()}#{/else}
 		</span>
-		#{if solicitacao.isFilha()}
+		<!-- So habilita para solicitacoes filhas que estao sendo criadas. Quando editar sol. filha esse botao nao aparece -->
+		#{if solicitacao.isFilha() && solicitacao.idSolicitacao == null}
 		<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin:5px 0 0 -3px;" >Alterar atendente</a>
 		<input type="hidden" name="solicitacao.atendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
 		#{/if}

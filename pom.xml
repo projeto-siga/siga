@@ -15,6 +15,7 @@
         <module>siga-cp</module>
         <module>siga-sinc-lib</module>
         <module>siga-libs</module>
+        <module>siga-vraptor-module</module>
         <module>siga-ldap</module>
         <module>siga</module>
         <module>siga-ext</module>
@@ -192,6 +193,11 @@
             <dependency>
                 <groupId>projeto-siga</groupId>
                 <artifactId>siga-libs</artifactId>
+                <version>${siga.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>projeto-siga</groupId>
+                <artifactId>siga-vraptor-module</artifactId>
                 <version>${siga.version}</version>
             </dependency>
             <dependency>

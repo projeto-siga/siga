@@ -520,6 +520,27 @@
 					</table>
 				</div>
 				
+				<div class="gt-content" style="margin-top:20px">
+					<h3>Inclusão automática</h3>
+					<div class="gt-form gt-content-box">
+					
+						<input type="hidden" name="lista.configuracaoInsercaoAutomatica.idConfiguracao" value="${lista.configuracaoInsercaoAutomatica.idConfiguracao}"/>
+						
+						<div class="gt-form-row gt-width-66">
+							<label>Item</label> 
+							#{selecao tipo:'item',
+								nome:'lista.configuracaoInsercaoAutomatica.itemConfiguracaoUnitario',
+								value:lista.configuracaoInsercaoAutomatica.itemConfiguracaoUnitario?.atual 
+							/}
+						</div>
+					
+						<div class="gt-form-row gt-width-66">
+							<label>Ação</label> 
+							#{selecao tipo:'acao', nome:'lista.configuracaoInsercaoAutomatica.acaoUnitaria', value:lista.configuracaoInsercaoAutomatica.acaoUnitaria?.atual 
+							/}
+						</div>
+					</div>
+				</div>
 				
 				<div class="gt-form-row">
 					<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
@@ -532,6 +553,9 @@
 		</div>
 	</div>
 </div>
+
+
+
 
 #{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}
 	<div class="gt-form gt-content-box" id="modal-permissao">

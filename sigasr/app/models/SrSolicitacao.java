@@ -1908,7 +1908,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		filtro.acaoFiltro = acao;
 		filtro.setCpTipoConfiguracao(JPA.em().find(
 				CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
 		
 		filtro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE;
 		

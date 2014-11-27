@@ -1346,6 +1346,7 @@ public class Application extends SigaApplication {
 		} catch (Exception e) {
 		}
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
+		lista.configuracaoInsercaoAutomatica = SrConfiguracao.buscarConfiguracaoInsercaoAutomaticaLista(lista);
 		
 		render(lista, orgaos, locais, tiposPermissao);
 	}

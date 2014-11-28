@@ -277,7 +277,10 @@ $(document).ready(function() {
 	//CKEDITOR.config.autoGrow_maxHeight = 400;
 	CKEDITOR.config.removePlugins = 'elementspath'; 
 	CKEDITOR.config.image_previewText = ' ';
-	CKEDITOR.replace( 'conteudo', {
+	CKEDITOR.config.height = 270;
+	CKEDITOR.config.removeDialogTabs = 'link:advanced;link:upload;image:advanced;image:Link';
+	CKEDITOR.replace('conteudo', {
+		filebrowserUploadUrl: '@{Application.gravarArquivo}?origem=editar',
 		toolbar: [
 		    	{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
 		    	{ name: 'editing', groups: [ 'find', 'selection'], items: [ 'Find', 'Replace', '-', 'SelectAll'] },

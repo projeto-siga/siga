@@ -19,6 +19,7 @@ import models.GcMovimentacao;
 import models.GcTag;
 import models.GcTipoMovimentacao;
 import models.GcTipoTag;
+import play.data.Upload;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
@@ -515,7 +516,7 @@ public class GcBL {
 						GcBL.gravar(informacao, idc, titular, lotaTitular);
 					}
 				} else {
-					// Edson: desenvolver esquema para marcar ci�ncia de grupo
+					// Edson: desenvolver esquema para marcar ciencia de grupo
 					// de e-mail,
 					// chamando, inclusive, um todoGrupoCiente()
 				}
@@ -630,12 +631,45 @@ public class GcBL {
 	public static void cancelarMovimentacao(GcInformacao info,
 			GcMovimentacao mov, CpIdentidade idc, DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
-		GcMovimentacao m = GcBL
-				.movimentar(
-						info,
+		GcMovimentacao m = movimentar(info,
 						GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 						null, null, null, null, null, null, mov, null, null);
 		mov.movCanceladora = m;
-		GcBL.gravar(info, idc, titular, lotaTitular);
+		gravar(info, idc, titular, lotaTitular);
+	}
+	
+	/**
+	 * Metodo que grava arquivos no GcArquivo e atrela esse arquivo a um conhecimento atraves  
+	 * da movimentacao TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO.
+	 * Chamado pela página anexar.html
+	 */
+	public static void gravarArquivoComMovimentacao(GcInformacao info,
+			CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular,
+			String titulo, Upload file) throws Exception {
+		if (titulo == null || titulo.trim().length() == 0)
+			titulo = file.getFileName();
+		movimentar(info,
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
+				null, null, null, titulo, null, null, null, null,
+				file.asBytes());
+		gravar(info, idc, titular, lotaTitular);
+	}
+	
+	/**
+	 * Metodo que grava imagens no GcArquivo sem associa-las a um conhecimento.
+	 * Chamado pela página editar.html
+	 */
+	public static long gravarArquivoSemMovimentacao(Upload file) {
+		GcArquivo arq = new GcArquivo();
+		arq.titulo = file.getFileName();
+		arq.classificacao = null;
+		arq.setConteudoBinario(file.asBytes(), file.getContentType().toLowerCase());
+		if (arq.isImage()) {
+			arq.save();
+			return arq.id;
+		}
+		else
+			return -1; //nao existe arquivo no banco com id negativo, 
+						//assim esse retorno indica que o arquivo nao foi salvo no banco
 	}
 }

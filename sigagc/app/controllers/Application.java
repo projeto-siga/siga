@@ -884,37 +884,28 @@ public class Application extends SigaApplication {
 		render(informacao);
 	}
 
-	public static void anexarGravar(GcInformacao informacao, String titulo,
-			File fake) throws Exception {
+	public static void gravarArquivo(GcInformacao informacao, String titulo,
+			File fake, String CKEditorFuncNum, String origem) throws Exception {
 		List<Upload> files = (List<Upload>) request.args.get("__UPLOADS");
-		DpPessoa titular = titular();
-		DpLotacao lotaTitular = lotaTitular();
-		CpIdentidade idc = idc();
 		if (files != null)
 			for (Upload file : files) {
 				if (file.getSize() > 2097152)
 					throw new AplicacaoException(
-							"O tamanho do arquivo � maior que o "
-									+ "m�ximo permitido (2MB)");
-				if (file.getSize() > 0) {
-					/*
-					 * ----Não pode ser usado porque o "plupload" retorna um
-					 * mime type padrão "octet stream" String mimeType =
-					 * file.getContentType().toLowerCase();
-					 */
-					byte anexo[] = file.asBytes();
-					if (titulo == null || titulo.trim().length() == 0)
-						titulo = file.getFileName();
-					GcBL.movimentar(
-							informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
-							null, null, null, titulo, null, null, null, null,
-							anexo);
-					GcBL.gravar(informacao, idc, titular, lotaTitular);
-					renderText("success");
-				} else
+							"O tamanho do arquivo é maior que o máximo permitido (2MB)");
+				if (!(file.getSize() > 0)) 
 					throw new AplicacaoException(
 							"Não é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
+				if (origem.equals("editar")) {
+					long id = GcBL.gravarArquivoSemMovimentacao(file);
+					String url = "/sigagc/app/baixar?id=" + id;
+					renderHtml("<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('"
+									+ CKEditorFuncNum + "','" + url + "');</script>");	
+				}
+				else {
+					GcBL.gravarArquivoComMovimentacao(informacao, idc(), titular(), 
+								lotaTitular(), titulo, file);
+					renderText("success");
+				}
 			}
 	}
 

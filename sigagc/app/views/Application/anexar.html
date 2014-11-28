@@ -14,7 +14,7 @@
 			<span id="codigoInf">Anexar - ${informacao?.sigla}</span>
 		</h2>
 
-		<!-- <div class="gt-form gt-content-box">
+		*{<!-- <div class="gt-form gt-content-box">
 			<form action="@{Application.anexarGravar}" enctype="multipart/form-data" method="post">
 				<input type="hidden" name="informacao.id" value="${informacao?.id}" />
 				#{if false}
@@ -43,7 +43,7 @@
 					</p>
 				</div>
 			</form>
-		</div> -->
+		</div> --> }*
 		<div id="uploader">
             <p>Sistema de Upload encontra-se com problema. Favor reportar erro para a equipe responsável.</p>
         </div> 
@@ -63,7 +63,7 @@
         $("#uploader").plupload({
             // General settings
             runtimes : 'html5,flash,silverlight,html4',
-            url: '@{Application.anexarGravar}', 
+            url: '@{Application.gravarArquivo}', 
             max_file_count: 0,
             prevent_duplicates: true,
             //chunk_size: '1mb',
@@ -72,9 +72,9 @@
                 max_file_size: '2mb', //-- quando alterar esse valor alterar tb o arquivo pt_BR.js para alterar a msg de erro
                 // Specify what files to browse for
                 mime_types: [
-                    {title: "Todos os arquivos", extensions : "jpg,gif,png,tiff,txt,doc,docx,xls,xlsx,ppt,pptx,pdf"},
-                    {title: "Arquivos de imagem", extensions : "jpg,gif,png,tiff"},
-                    {title: "Arquivos de documento", extensions:"txt,doc,docx,xls,xlsx,ppt,pptx,pdf"}
+                    {title: "Todos os arquivos", extensions : "jpg,bmp,png,doc,docx,xls,xlsx,ppt,pptx,pdf"},
+                    {title: "Arquivos de imagem", extensions : "jpg,bmp,png"},
+                    {title: "Arquivos de documento", extensions:"doc,docx,xls,xlsx,ppt,pptx,pdf"}
                 ]
             },
             // Rename files by clicking on their titles
@@ -86,6 +86,7 @@
             multipart: true,
             multipart_params: {
                 "informacao.id": "${informacao?.id}",
+                "origem": "anexar"
             },
             // Views to activate
             views: {            

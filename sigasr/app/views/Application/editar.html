@@ -23,7 +23,6 @@
 </style>
 <script language="javascript">
 	$(document).ready(function() {
-
 		$('#gravar').click(function() {
 			if ($('#siglaCadastrante').val() != $('#solicitacaosolicitante_sigla')[0].value) {
 				var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
@@ -553,9 +552,9 @@
 		contarTempo: true /}
 	
 	*{<div class="gt-sidebar">
-		<div class="gt-sidebar-content">
+		<div class="gt-sidebar-content" id="solicitacoesRelacionadas">
 			<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
-			<div class="gt-content-box gt-form" id="filtroSolicitacoes">
+			<div class="gt-content-box gt-form">
 				<label>Filtro</label>
 
 				<div id="filtro">

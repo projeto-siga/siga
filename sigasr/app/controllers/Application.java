@@ -27,9 +27,7 @@ import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
-import models.SrPergunta;
 import models.SrPesquisa;
-import models.SrPrioridade;
 import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
@@ -278,15 +276,16 @@ public class Application extends SigaApplication {
 			validation.addError("solicitacao.descrSolicitacao",
 					"Descri&ccedil&atilde;o n&atilde;o informada");
 		}
-
-		HashMap<Long, Boolean> obrigatorio = solicitacao
-				.getObrigatoriedadeTiposAtributoAssociados();
+		
+		HashMap<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
 		for (SrAtributo att : solicitacao.getAtributoSet()) {
-			if (att.valorAtributo.trim().equals("")
-					&& obrigatorio.get(att.tipoAtributo.idTipoAtributo))
-				validation.addError("solicitacao.atributoMap["
-						+ att.tipoAtributo.idTipoAtributo + "]",
-						att.tipoAtributo.nomeTipoAtributo + " n&atilde;o informado");
+			// Para evitar NullPointerExcetpion quando nao encontrar no Map
+			if(Boolean.TRUE.equals(obrigatorio.get(att.tipoAtributo.idTipoAtributo))) {
+				if ((att.valorAtributo == null || att.valorAtributo.trim().equals("")))
+					validation.addError("solicitacao.atributoMap["
+							+ att.tipoAtributo.idTipoAtributo + "]",
+							att.tipoAtributo.nomeTipoAtributo + " n&atilde;o informado");
+			}
 		}
 
 		if (validation.hasErrors()) {
@@ -630,6 +629,14 @@ public class Application extends SigaApplication {
 		solicitacao.desassociarLista(lista, cadastrante(), lotaTitular());
 		exibirLista(idLista);
 	}
+
+	public static void retirarDeLista(Long idSolicitacao, Long idLista)
+			throws Exception {
+			SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
+			SrLista lista = SrLista.findById(idLista);
+			solicitacao.retirarDeLista(lista, cadastrante(), lotaTitular());
+			exibirLista(idLista);
+	}
 	
 	public static void priorizarLista(@As(",") List<Long> ids, Long id)
 			throws Exception {
@@ -847,18 +854,20 @@ public class Application extends SigaApplication {
 		return designacao.getId();
 	}
 
-	public static void desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
+	public static Long desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
-		listarDesignacao(mostrarDesativados);
+		
+		return designacao.getId();
 	}
 
-	public static void reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
+	public static Long reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.salvar();
-		listarDesignacao(mostrarDesativados);
+		
+		return designacao.getId();
 	}
 
 	public static void listarPermissaoUsoLista(boolean mostrarDesativados) throws Exception {
@@ -1337,6 +1346,7 @@ public class Application extends SigaApplication {
 		} catch (Exception e) {
 		}
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
+		lista.configuracaoInsercaoAutomatica = SrConfiguracao.buscarConfiguracaoInsercaoAutomaticaLista(lista);
 		
 		render(lista, orgaos, locais, tiposPermissao);
 	}

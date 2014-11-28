@@ -108,3 +108,7 @@ td.padding-table {
 .bt-expandir.expandido {
     background: url("/siga/css/famfamfam/icons/bullet_toggle_minus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
 }
+
+.details-control {
+	width: 2%  !important;
+}

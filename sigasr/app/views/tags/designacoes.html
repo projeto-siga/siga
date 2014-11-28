@@ -53,6 +53,7 @@
 		colunas.herdado= 						44;
 		colunas.utilizarHerdado= 				45;
 		colunas.listasSerializadas= 			46;
+		colunas.reativarDesativar=				47;
 
 	
 	//removendo a referencia de '$' para o jQuery
@@ -138,8 +139,9 @@
 				"searchable": false
 			},
 			{
-				"targets": [colunas.id],
-				"sortable": false
+				"targets": [colunas.id, colunas.reativarDesativar, colunas.acaoExpandir],
+				"sortable": false,
+				"searchable" : false
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 				if (aData[colunas.herdado] == 'true') {
@@ -535,8 +537,8 @@
 		var idDesignacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
 		
 		var row = [ 
-		            // esta primeira coluna é um comboBox que só é renderizado quando há herança de designação 
 		            '',
+		            // esta primeira coluna é um comboBox que só é renderizado quando há herança de designação 
 		            '',
 		            jOrgaoUsuario.value,
           			jOrgaoUsuario.text, 
@@ -605,7 +607,6 @@
 				$("#erroAoSalvar_dialog").dialog("open");
 				return;
 			}
-				
 		}
 		
 		$.ajax({
@@ -942,12 +943,94 @@
 
 	function desativarDesignacao(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.desativarDesignacao()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
+		
+		$.ajax({
+        	type: "POST",
+        	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(id, mostrarDesativados),
+        	data: '',
+        	dataType: "text",
+        	success: function(id) {
+            	var tr = $('[designacao-id=' + id + ']');
+            	
+            	if(!mostrarDesativados) {
+            		tr.remove();
+               	} else {
+                   	var td = tr.find('td:last'),
+                   		a = $('<a class="once" title="Reativar"/>'),
+                   		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
+                   		
+                   		a.bind('click', function(event) {
+                   			reativarDesignacao(event, id);
+                     	});
+                   		td.html('');
+                   		a.append(img);
+                     	td.append(a);
+               	}
+        	},
+        	error: function(error) {
+        		var fieldsError = error.responseText.split(";");
+        		// limpa as mensagens de erros
+        		resetAllErrorMessage();
+        		
+        		// Mostra a mensagem de campos obrigatórios
+        		document.getElementById("erroCamposObrigatorios").style.display="inherit";
+        		
+        		for (var i = 0; i < fieldsError.length; i++) {
+        			var fieldName = fieldsError[i];
+        			var fooElement = document.getElementById(fieldName);
+        			
+        			if (fooElement != undefined)
+        				fooElement.style.display = "inline";
+        		}
+        	}
+       	});
 	}
 
 	function reativarDesignacao(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.reativarDesignacao()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
+
+		$.ajax({
+        	type: "POST",
+        	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(id, mostrarDesativados),
+        	data: '',
+        	dataType: "text",
+        	success: function(id) {
+        		var tr = $('[designacao-id=' + id + ']');
+            	
+            	if(!mostrarDesativados) {
+            		tr.remove();
+               	} else {
+                   	var td = tr.find('td:last'),
+                   		a = $('<a class="once" title="Desativar"/>'),
+                   		img = $('<img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">');
+               		
+                   		a.bind('click', function(event) {
+                   			desativarDesignacao(event, id);
+                     	});
+                   		td.html('');
+                   		a.append(img);
+                     	td.append(a);
+               	}
+        	},
+        	error: function(error) {
+        		var fieldsError = error.responseText.split(";");
+        		// limpa as mensagens de erros
+        		resetAllErrorMessage();
+        		
+        		// Mostra a mensagem de campos obrigatórios
+        		document.getElementById("erroCamposObrigatorios").style.display="inherit";
+        		
+        		for (var i = 0; i < fieldsError.length; i++) {
+        			var fieldName = fieldsError[i];
+        			var fooElement = document.getElementById(fieldName);
+        			
+        			if (fooElement != undefined)
+        				fooElement.style.display = "inline";
+        		}
+        	}
+       	});
 	}
 	
 </script>
@@ -1022,7 +1105,7 @@
 
 			<tbody>
 				#{list items:_designacoes, as:'design'}
-				<tr>
+				<tr designacao-id="${design.id}">
 					<td class="gt-celula-nowrap details-control"></td>
 					<td class="checkbox-hidden" style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
 						<input type="checkbox" checked="${design.utilizarItemHerdado}" id="check${design.id}"/>

@@ -1,4 +1,5 @@
 #{extends 'main.html' /} #{set title:'Cadastro de solicitação' /}
+<script src="/sigasr/public/javascripts/moment.js"></script>
 <style>
 .barra-subtitulo {
 	color: #365b6d !important;
@@ -16,7 +17,7 @@
 	color: #365b6d;
 	font-weight: normal;
 	margin-bottom: 0px;
-	font-size: 138.5%;
+	font-size: 115.0%;
 	border: 0;
 }
 </style>
@@ -43,32 +44,35 @@
 			$('#checkRascunho').prop('value', 'false');
 		});
 
-		function formatarValorTimer(num) {
-			if (num.toString().length == 1) 
-	      		return "0" + num;
-
-	  		return num;
-		};
-
-		var andamento = 0;	
-		function moveRelogio(mili){ 
-			andamento = andamento + mili;
-		   	dtAndamento = new Date(andamento);
-		   	dtTotal = new Date((${solicitacao.getTempoCadastramentoTotal()} + andamento));
-		   	
-		   	andamentoString = formatarValorTimer(dtAndamento .getUTCHours()) + ":" + formatarValorTimer(dtAndamento .getUTCMinutes()); 
-		   	totalString = formatarValorTimer(dtTotal .getUTCHours()) + ":" + formatarValorTimer(dtTotal .getUTCMinutes()); 
-
-		   	$('#andamento').html(andamentoString);
-		   	$('#total').html(totalString);
-
-		   	setTimeout("moveRelogio(60000)",60000);
-		}; 
-
 		carregarFiltrosAoIniciar();
-		//moveRelogio(0);
 	});
 
+	function formatarValorTimer(num) {
+		if (num.toString().length == 1) 
+      		return "0" + num;
+
+  		return num;
+	};
+	
+	var andamento = 0;	
+	function moveRelogio(mili){ 
+		andamento = andamento + mili;
+	   	dtAndamento = new Date(andamento);
+	   	dtTotal = new Date((${solicitacao.getTempoCadastramentoTotal()} + andamento));
+	   	
+	   	andamentoString = formatarValorTimer(dtAndamento .getUTCHours()) + ":" + formatarValorTimer(dtAndamento .getUTCMinutes()); 
+	   	totalString = formatarValorTimer(dtTotal .getUTCHours()) + ":" + formatarValorTimer(dtTotal .getUTCMinutes()); 
+
+	   	var dateA = moment().subtract('millisecond', andamento);
+		
+	   	moment.locale('pt-br');
+	   	$('#andamento').html(dateA.fromNow());
+	   	$('#total').html(totalString);
+	   	
+	   	setTimeout("moveRelogio(1000)",1000);
+	}; 
+
+	
 	function carregarLocalRamalEMeioContato() {
 		frm = document.getElementById('formSolicitacao');
 		params = '';
@@ -542,21 +546,12 @@
 			#{/form}
 		</div>
 	</div>
-	*{<div class="gt-sidebar">
+	<div class="gt-sidebar">
 		<div class="gt-sidebar-content"><h2>&nbsp;</h2></div>
 	</div>
-	<div class="gt-sidebar">
-		<div class="gt-sidebar-content tempo">
-			<h3>
-				<img src="/siga/css/famfamfam/icons/clock_play.png" width="20px;"
-					style="vertical-align: bottom;"> Atendimento: <span
-					id="andamento"></span> horas
-			</h3>
-			<h3 style="margin-left: 25px;">
-				Total: <span id="total"></span> horas
-			</h3>
-		</div>
-	</div>}*
+	#{cronometro tempoPercorrido: solicitacao.getTempoCadastramentoTotal(), 
+		contarTempo: true /}
+	
 	*{<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>

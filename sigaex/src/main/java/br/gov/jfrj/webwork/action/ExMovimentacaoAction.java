@@ -1419,8 +1419,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), 
 							getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(), tpMovAssinatura);
 		} catch (final Exception e) {
-			getRequest().setAttribute("err", e.getMessage());
-			return "ERRO";
+			throw e;
 		}
 
 		return Action.SUCCESS;

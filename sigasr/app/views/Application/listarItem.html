@@ -143,7 +143,7 @@
 				<tbody>
 					#{list items:itens, as:'item'}
 						<tr  onclick="javascript:window.location='@{Application.editaritem(item.idItemConfiguracao)}'" style="cursor: pointer;">
-							<td class="gt-celula-nowrap details-control"></td>
+							<td class="details-control"></td>
 							<td>${item.siglaItemConfiguracao}</td>
 							<td><span style="margin-left: ${(item.nivel-1)*2}em; #{if item.nivel == 1}font-weight: bold;#{/if} #{if item.nivel == 2}font-style: italic;#{/if}">${item.tituloItemConfiguracao}</span></td>
 							<td>${item.descrItemConfiguracao}</td>

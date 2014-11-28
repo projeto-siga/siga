@@ -2366,7 +2366,16 @@ public class ExBL extends CpBL {
 			long tpMovAssinatura) throws Exception {
 		
         DpPessoa subscritor = null;
-		
+    	boolean fValido = false;
+    	
+        if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
+			throw new AplicacaoException(
+					"Matrícula do Subscritor não foi informada.");
+
+		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
+			throw new AplicacaoException(
+					"Senha do Subscritor não foi informada.");
+        
 		final String hashAtual = GeraMessageDigest.executaHash(
 				senhaSubscritor.getBytes(), "MD5");
 
@@ -2408,13 +2417,10 @@ public class ExBL extends CpBL {
 				!getComp().podeAssinarMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
 			throw new AplicacaoException("Usuário não tem permissão de assinar com senha.");
 
+		
 		// Verifica se a matrícula confere com o subscritor do Despacho ou
 		// do
 		// desentranhamento
-		
-		boolean fValido = false;
-		
-
 		try {
 		
 			if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO

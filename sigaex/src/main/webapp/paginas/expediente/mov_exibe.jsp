@@ -410,11 +410,6 @@ function visualizarImpressao(via) {
 		    function conferirCopiaGravar() {
 		    	AssinarDocumentosSenha('true', this);
 			}
-
-			function conferirCopiaGravar() {
-		    	$('#tipoAssinaturaMov').val('C');
-		    	$("#form-assinarSenha").submit();
-			}
 		  </script>
 	</c:if>			
 </siga:pagina>

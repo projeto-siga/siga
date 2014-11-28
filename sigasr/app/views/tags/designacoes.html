@@ -54,6 +54,7 @@
 		colunas.utilizarHerdado= 				45;
 		colunas.listasSerializadas= 			46;
 		colunas.reativarDesativar=				47;
+		colunas.ativo=							48;
 
 	
 	//removendo a referencia de '$' para o jQuery
@@ -134,7 +135,8 @@
 							colunas.idDesignacao, 
 							colunas.herdado, 
 							colunas.utilizarHerdado, 
-							colunas.listasSerializadas],
+							colunas.listasSerializadas,
+							colunas.ativo],
 				"visible": false,
 				"searchable": false
 			},
@@ -534,8 +536,12 @@
 			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargo")[0],
 			jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
 		
-		var idDesignacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
-		
+		var idDesignacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '',
+			rowSelecionada = designacoesTable.api().row('.selected'),
+			tdDesignacao = $(rowSelecionada.node()),
+			itemSelecionado = rowSelecionada.data(),
+			ativo = itemSelecionado[colunas.ativo];
+
 		var row = [ 
 		            '',
 		            // esta primeira coluna é um comboBox que só é renderizado quando há herança de designação 
@@ -589,7 +595,8 @@
           			
           			// Atualiza as informações das listas da designação
           			getListasAsString(),
-          			''
+          			tdDesignacao.find('td.acoes').html(),
+          			ativo
 		];
 		
 		// Realiza validação específica caso seja aberto a partir da tela de equipe
@@ -623,8 +630,17 @@
 				else {
 					designacoesTable.api().row.add(row).draw();
 				}
-        		
         		designacaoModalFechar();
+
+        		var a = tdDesignacao.find('td.acoes a');
+        		a.unbind('click');
+        		a.bind('click', function(event) {
+            		if(ativo) {
+                		desativarDesignacao(event, id);
+               		} else {
+                		reativarDesignacao(event, id);
+               		}
+           		});
         	},
         	error: function(error) {
         		var fieldsError = error.responseText.split(";");
@@ -941,22 +957,27 @@
     	return params;
     }
 
-	function desativarDesignacao(event, id) {
+	function desativarDesignacao(event, idOriginal) {
+		var tr = $(event.currentTarget).parent().parent();
 		event.stopPropagation();
 		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
 		
 		$.ajax({
         	type: "POST",
-        	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(id, mostrarDesativados),
+        	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(idOriginal, mostrarDesativados),
         	data: '',
         	dataType: "text",
         	success: function(id) {
-            	var tr = $('[designacao-id=' + id + ']');
-            	
+        		var itemSelecionado = designacoesTable.api().row(tr).data();
+        		itemSelecionado[colunas.idDesignacao] = id;
+        		itemSelecionado[colunas.ativo] = false;
+        		
+        		designacoesTable.api().row(tr).data(itemSelecionado);
+        		
             	if(!mostrarDesativados) {
             		tr.remove();
                	} else {
-                   	var td = tr.find('td:last'),
+                   	var td = tr.find('td.acoes'),
                    		a = $('<a class="once" title="Reativar"/>'),
                    		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
                    		
@@ -987,22 +1008,27 @@
        	});
 	}
 
-	function reativarDesignacao(event, id) {
+	function reativarDesignacao(event, idOriginal) {
+		var tr = $(event.currentTarget).parent().parent();
 		event.stopPropagation();
 		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
 
 		$.ajax({
         	type: "POST",
-        	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(id, mostrarDesativados),
+        	url: '@{Application.reativarDesignacao()}?' + queryDesativarReativar(idOriginal, mostrarDesativados),
         	data: '',
         	dataType: "text",
         	success: function(id) {
-        		var tr = $('[designacao-id=' + id + ']');
-            	
+        		var itemSelecionado = designacoesTable.api().row(tr).data();
+        		itemSelecionado[colunas.idDesignacao] = id;
+        		itemSelecionado[colunas.ativo] = true;
+        		
+        		designacoesTable.api().row(tr).data(itemSelecionado);
+        		
             	if(!mostrarDesativados) {
             		tr.remove();
                	} else {
-                   	var td = tr.find('td:last'),
+                   	var td = tr.find('td.acoes'),
                    		a = $('<a class="once" title="Desativar"/>'),
                    		img = $('<img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">');
                		
@@ -1100,12 +1126,13 @@
 					<th>Utilizar Herdado</th>
 					<th>Listas Serializadas</th>
 					<th>Ações</th>
+					<th>ativo</th>
 				</tr>
 			</thead>
-
+			
 			<tbody>
 				#{list items:_designacoes, as:'design'}
-				<tr designacao-id="${design.id}">
+				<tr>
 					<td class="gt-celula-nowrap details-control"></td>
 					<td class="checkbox-hidden" style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
 						<input type="checkbox" checked="${design.utilizarItemHerdado}" id="check${design.id}"/>
@@ -1155,13 +1182,14 @@
 					<th>${design.isHerdado}</th>
 					<th>${design.utilizarItemHerdado}</th>
 					<td></td>
-					<td>
+					<td class="acoes"> 
 						#{desativarReativar id:design.id, 
 											onReativar:'reativarDesignacao',
 											onDesativar :'desativarDesignacao',
 											isAtivo:design.isAtivo() }
 						#{/desativarReativar}
 					</td>
+					<td>${design.isAtivo()}</td>
 				</tr>
 				#{/list}
 			</tbody>

@@ -37,4 +37,19 @@ public class CpUnidadeMedida extends AbstractCpUnidadeMedida {
 		
 		return lista;
 	}
+	
+	public Long toMilis() {
+		Long milis = 0L;
+		
+		if (getIdUnidadeMedida() != null) {
+			switch(getIdUnidadeMedida().intValue()) {
+				case ANO: milis = 31557600000L;
+				case MES: milis = 2629800000L;
+				case DIA: milis = 86400000L;
+				case HORA: milis = 3600000L;
+			}
+		}
+		
+		return milis;
+	}
 }

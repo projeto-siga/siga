@@ -80,6 +80,14 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO
 					&& conf.pesquisaSatisfacao == null)
 				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_ATENDENTE
+					&& conf.slaAtendimentoQuantidade == null)
+				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_PRE_ATENDENTE
+					&& conf.slaPreAtendimentoQuantidade == null)
+				return false;
 
 			if (!atributosDesconsiderados.contains(ACAO)
 					&& conf.acoesSet != null && conf.acoesSet.size() > 0) {
@@ -185,8 +193,13 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				for (SrAcao i : srConf.acoesSet)
 					i.getAtual();
 			
-			if (srConf.tipoAtributo != null)
+			if (srConf.tipoAtributo != null) {
 				srConf.tipoAtributo.getHisIdIni();
+				
+				for (SrTipoAtributo tipoAt : srConf.tipoAtributo.meuTipoAtributoHistoricoSet) {
+					tipoAt.getAtual();
+				}
+			}
 			
 			if (srConf.listaPrioridade != null)
 				srConf.listaPrioridade.getHisIdIni();

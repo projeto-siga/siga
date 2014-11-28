@@ -540,8 +540,8 @@
 			rowSelecionada = designacoesTable.api().row('.selected'),
 			tdDesignacao = $(rowSelecionada.node()),
 			itemSelecionado = rowSelecionada.data(),
-			ativo = itemSelecionado[colunas.ativo];
-
+			ativo = itemSelecionado ? itemSelecionado[colunas.ativo] : true;
+			
 		var row = [ 
 		            '',
 		            // esta primeira coluna é um comboBox que só é renderizado quando há herança de designação 

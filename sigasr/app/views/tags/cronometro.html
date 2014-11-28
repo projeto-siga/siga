@@ -12,33 +12,48 @@
 </div>
 
 <script type="text/javascript">
-	moveRelogio(0);
+	moment.locale('pt-br');
 
-	var andamento = 0;	
-	function moveRelogio(mili) { 
-		andamento = andamento + mili;
-	   	var dtTempoPercorrido = new Date(${_tempoPercorrido})
-	   		dtTotal = new Date((${_tempoPercorrido} + andamento));
-
-	   	moment.locale('pt-br');
-	   	$('#total').html(getTempoTotal(dtTempoPercorrido));
-		$('#andamento').html(getTempoAndamento(dtTempoPercorrido, andamento));
+	$(document).ready(function() {
+		moveRelogio(0);
+	})
+	
+	function moveRelogio(andamento) { 
+	   	$('#andamento').html(intervaloPercorrido(andamento));
+		$('#total').html(intervaloPercorrido(${_tempoPercorrido} + andamento));
 		
 	   	#{if _contarTempo == true}
-	   		setTimeout("moveRelogio(1000)",1000);
+	   		setTimeout(function() {
+	   			moveRelogio(andamento + 1000);
+	   		}, 1000);
 	   	#{/if}
 	}; 
 
-	function getTempoAndamento(dtTempoPercorrido, andamento) {
-		#{if _contarTempo == true}
-	   		return moment().subtract('millisecond', andamento).fromNow();
-	   	#{/if}
-		#{else}
-		   	return moment(dtTempoPercorrido).fromNow();
-		#{/else}
-	}
+	function intervaloPercorrido(tempoPercorrido) {
+		var tempoString = new String(),
+			duration = moment.duration(tempoPercorrido),
+			anos = duration.years(),
+			dias = duration.days(),
+			horas = duration.hours(),
+			minutos = duration.minutes();
 
-	function getTempoTotal(dtTempoPercorrido) {
-		return moment(dtTempoPercorrido).fromNow();
+		if(anos == 0 && dias == 0 && horas == 0 && minutos == 0){
+			tempoString = 'Neste instante';
+		}
+		else {
+			if(anos > 0) {
+				tempoString += anos + ' anos(s) ';
+			}
+			if(dias > 0) {
+				tempoString += dias + ' dia(s) ';
+			}
+			if(horas > 0) {
+				tempoString += horas + ' hora(s) ';
+			}
+			if(minutos > 0) {
+				tempoString += minutos + ' minuto(s)';
+			}
+		}
+		return tempoString;
 	}
 </script>

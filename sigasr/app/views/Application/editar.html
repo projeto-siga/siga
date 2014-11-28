@@ -53,25 +53,6 @@
   		return num;
 	};
 	
-	var andamento = 0;	
-	function moveRelogio(mili){ 
-		andamento = andamento + mili;
-	   	dtAndamento = new Date(andamento);
-	   	dtTotal = new Date((${solicitacao.getTempoCadastramentoTotal()} + andamento));
-	   	
-	   	andamentoString = formatarValorTimer(dtAndamento .getUTCHours()) + ":" + formatarValorTimer(dtAndamento .getUTCMinutes()); 
-	   	totalString = formatarValorTimer(dtTotal .getUTCHours()) + ":" + formatarValorTimer(dtTotal .getUTCMinutes()); 
-
-	   	var dateA = moment().subtract('millisecond', andamento);
-		
-	   	moment.locale('pt-br');
-	   	$('#andamento').html(dateA.fromNow());
-	   	$('#total').html(totalString);
-	   	
-	   	setTimeout("moveRelogio(1000)",1000);
-	}; 
-
-	
 	function carregarLocalRamalEMeioContato() {
 		frm = document.getElementById('formSolicitacao');
 		params = '';

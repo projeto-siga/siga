@@ -56,7 +56,7 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrTipoAtributo tipoAtributoInicial;
 
-	@OneToMany(targetEntity = SrTipoAtributo.class, mappedBy = "tipoAtributoInicial")
+	@OneToMany(targetEntity = SrTipoAtributo.class, mappedBy = "tipoAtributoInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrTipoAtributo> meuTipoAtributoHistoricoSet;
 

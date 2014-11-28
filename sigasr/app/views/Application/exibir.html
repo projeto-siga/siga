@@ -241,6 +241,11 @@ $(function(){
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
 					<br /> ${solicitacao.GUTString}</span>
 			</p>
+			
+			<!--  ESPAÇO DESTINADO A EXIBIÇÃO DOS TEMPOS DA SOLICITAÇÃO -->
+			<p>
+				<b>Prazo:</b> <span style=""></span>
+			</p>
 		</div>
 	</div>
 
@@ -301,8 +306,8 @@ $(function(){
 			<h3>Vinculada a esta solicitação</h3>
 			<p>
 				#{list items:solicitacao.solicitacoesVinculadas, as:'vinculada'} <a
-					href="@{Application.exibir(vinculada.idSolicitacao)}">
-					${vinculada.codigo} </a> , #{/list}
+					href="@{Application.exibir(vinculada?.idSolicitacao)}">
+					${vinculada?.codigo} </a> , #{/list}
 			</p>
 		</div>
 	</div>
@@ -313,7 +318,7 @@ $(function(){
 			#{list items:solicitacao.pendencias, as:'pendencia'}
 				<p>
 					<b>${pendencia.descrMovimentacao}</b>
-					<a href="javascript:terminarPendencia('${pendencia.motivoPendencia}', '${pendencia.idMovimentacao}');"> 
+					<a href="javascript:terminarPendencia('${pendencia?.motivoPendencia}', '${pendencia?.idMovimentacao}');"> 
 						<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">
 					</a> 
 				</p>

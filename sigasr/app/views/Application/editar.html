@@ -22,6 +22,8 @@
 }
 </style>
 <script language="javascript">
+	var cadastramento = ${solicitacao.getTempoAtendimento()};
+	
 	$(document).ready(function() {
 		$('#gravar').click(function() {
 			if ($('#siglaCadastrante').val() != $('#solicitacaosolicitante_sigla')[0].value) {
@@ -378,6 +380,20 @@
 		}
 		window.open('@{Application.buscarSolicitacao()}?' + params + "","_blank");
 	}
+	
+	function formatarValorTimer(num) {
+		if (num.toString().length == 1) 
+      		return "0" + num;
+
+  		return num;
+	};
+	
+	function moveRelogio(){ 
+		cadastramento = cadastramento;
+	   	dtCadastramento = new Date(cadastramento);
+	   	cadastramentoString = formatarValorTimer(dtCadastramento .getHours()) + ":" + formatarValorTimer(dtCadastramento .getMinutes()); 
+	   	$('#cadastramento').html(cadastramentoString);
+	}; 
 </script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
@@ -531,7 +547,6 @@
 	</div>
 	#{cronometro tempoPercorrido: solicitacao.getTempoCadastramentoTotal(), 
 		contarTempo: true /}
-	
 	*{<div class="gt-sidebar">
 		<div class="gt-sidebar-content" id="solicitacoesRelacionadas">
 			<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>

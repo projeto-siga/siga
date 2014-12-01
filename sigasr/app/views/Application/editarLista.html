@@ -1,6 +1,13 @@
 #{extends 'main.html' /} #{set title:'Edição de Lista' /}
+
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+<style>
+	tr {
+		cursor : pointer !important;
+	}
+</style>
 
 <script language="javascript">
 	var prioridadesTable, 
@@ -36,10 +43,16 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [0, 2, 4, 5, 7, 8, 10, 12, 13, 15, 16, 18],
+				"targets": [0, 2, 4, 5, 7, 8, 10, 12, 13, 15, 16, 17, 18],
 				"visible": false,
 				"searchable": false
-			}]
+			},
+			{
+				"targets": [20],
+				"sortable" : false,
+				"searchable": false
+			}
+			]
 		});
 		
 		$('#prioridades_table tbody').on('click', 'tr', function () {
@@ -52,11 +65,20 @@
 			}
 		});
 	});
+
+	function desativarPermissaoUsoListaEdicao(event, idPermissaoDesativar) {
+		event.stopPropagation();
+		
+		var me = $(this),
+			idPermissao = idPermissaoDesativar ? idPermissaoDesativar : me.find('.idPermissao').val(),
+			idLista = $("#idLista").val();
+
+		location.href='@{Application.desativarPermissaoUsoListaEdicao()}?' + jQuery.param({idLista : idLista, idPermissao : idPermissao});
+	}
 	
 	function atualizarControleAcessoModal(itemArray) {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-		jComplexoCbb = document.getElementsByName("complexo")[0]
-		jTipoPermissaoCbb = document.getElementsByName("tipoPermissao")[0];
+		jComplexoCbb = document.getElementsByName("complexo")[0];
 		
 		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[0]);
 		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[2]);
@@ -76,8 +98,8 @@
 		$("#funcaoConfianca_descricao").val(itemArray[14]);
 		$("#funcaoConfiancaSpan").html(itemArray[14]);
 		$("#funcaoConfianca_sigla").val(itemArray[15]);
-		jTipoPermissaoCbb.selectedIndex = findSelectedIndexByValue(jTipoPermissaoCbb, itemArray[16]);
-		$("#idConfiguracao").val(itemArray[18]);
+		atualizarListasTipoPermissaoEdicao(itemArray);
+		$("#idConfiguracao").val(itemArray[17]);
 	};
 	
 	function findSelectedIndexByValue(comboBox, value) {
@@ -115,8 +137,7 @@
 		$("#controleAcesso_dialog").dialog("close");
 		
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-		jComplexoCbb = document.getElementsByName("complexo")[0],
-		jTipoPermissaoCbb = document.getElementsByName("tipoPermissao")[0];
+		jComplexoCbb = document.getElementsByName("complexo")[0];
 		
 		jOrgaoUsuarioCbb.selectedIndex = 0;
 		jComplexoCbb.selectedIndex = 0;
@@ -136,7 +157,7 @@
 		$("#funcaoConfianca_descricao").val('');
 		$("#funcaoConfiancaSpan").html('');
 		$("#funcaoConfianca_sigla").val('');
-		jTipoPermissaoCbb.selectedIndex = 0;
+		removerItensListaTipoPermissao();
 		$("#idConfiguracao").val('');
 
 		$('#modal-permissao-error').css('display', 'none');
@@ -165,14 +186,14 @@
 		if (row[13] != '')
         	params += '&permissao.funcaoConfianca.idFuncao=' + row[13];
 		
-		if (row[16] != '')
-        	params += '&permissao.tipoPermissao=' + row[16];
-		
-		if (row[18] != '')
-			params += '&permissao.id=' + row[18];
+		if (row[17] != '')
+			params += '&permissao.id=' + row[17];
 
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
 			params += '&permissao.listaPrioridade.id=' + $("#idLista").val();
+
+		// lista de TipoPermissao
+		params += row[18];
 
 		return params;
 	};
@@ -181,9 +202,7 @@
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
 			jComplexoCbb = document.getElementsByName("complexo")[0],
-			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex],
-			jTipoPermissaoCbb = document.getElementsByName("tipoPermissao")[0]
-			jTipoPermissao = jTipoPermissaoCbb.options[jTipoPermissaoCbb.selectedIndex];
+			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex];
 		
 		var row = [ jOrgaoUsuario.value,
           			jOrgaoUsuario.text, 
@@ -201,9 +220,11 @@
           			$("#funcaoConfianca").val(),
           			$("#funcaoConfianca_descricao").val(),
           			$("#funcaoConfianca_sigla").val(),
-          			jTipoPermissao.value,
-          			jTipoPermissao.text,
-          			$("#idConfiguracao").val() ];
+          			atualizaTipoPermissaoJson(),			//16
+          			$("#idConfiguracao").val(),				//17    
+          			getListasAsString(),					//18
+          			getDescricaoTipoPermissao()				//19	
+          			];
 
 		$.ajax({
 	         type: "POST",
@@ -211,7 +232,16 @@
 	         data: serializePermissao(row),
 	         dataType: "text",
 	         success: function(response) {
-		        row[18] = response;
+		        row[17] = response;
+				var html = 
+				'<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
+					'<a class="once desassociarPermissao" title="Remover permissão">' + 
+						'<input class="idPermissao" type="hidden" value="' + response + '"/>' + 
+						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
+					'</a>' + 
+				'</td>';
+						         
+		        row[20] = html;
 
 	          	if (isEditing) {
 	          		prioridadesTable.row('.selected').data(row);
@@ -219,8 +249,8 @@
 			    else {
 			    	prioridadesTable.row.add(row).draw();
 			    }
-			    
 				controleAcessoModalFechar();
+				$('.desassociarPermissao').bind('click', desativarPermissaoUsoListaEdicao);
 	         },
 	         error: function(response) {
 	        	$('#modal-permissao').hide(); 
@@ -230,10 +260,144 @@
 	        	modalErro.show(); 
 	         }
         });
-
 	};
+
+	function atualizarListasTipoPermissaoEdicao(itemArray) {
+		var tipoPermissaoJson;
+		
+		// transforma o valor String em objeto, caso necessário
+		if (itemArray[16].constructor.name ==  'String' && itemArray[16] != '')
+			designacaoJson = JSON.parse(itemArray[16]);
+		else
+			designacaoJson = itemArray[16];
+		
+		if (designacaoJson) {
+			
+			if (designacaoJson.listaTipoPermissaoListaVO) {
+				// cria os itens da lista de TipoPermissao, e adiciona na tela
+				for (i = 0; i < designacaoJson.listaTipoPermissaoListaVO.length; i++) {
+					var lista = designacaoJson.listaTipoPermissaoListaVO[i];
+					$("#permissoes")[0].incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
+				}
+			}
+		}
+	};
+
+	function getDescricaoTipoPermissao() {
+		var descricao = $('#permissoes').find("li:first-child").find("span:eq(0)").html();
+		
+		if (descricao != null) {
+			return descricao + " ...";
+		}
+		return descricao;
+	}
+
+	function removerItensListaTipoPermissao() {
+    	$("#permissoes").find("li").each(function(i){
+            this.remove();
+            $("#permissoes")[0]["index"]--;
+        });
+    };
+
+	function atualizaTipoPermissaoJson() {
+		var listaTipoPermissaoListaVO = [];
+    	
+		// Percorre listas de TipoPermissao
+    	$("#permissoes").find("li").each(function(i){
+            var jDivs=$(this).find("span");
+            listaTipoPermissaoListaVO.push({
+            	"idTipoPermissaoLista": jDivs[0].id,
+            	"descrTipoPermissaoLista": jDivs[0].innerHTML
+            });
+        });
+
+    	var tipoPermissaoJson = {
+   			"listaTipoPermissaoListaVO": listaTipoPermissaoListaVO
+   		};
+   		
+   		return tipoPermissaoJson;
+   	}
+
+    function getListasAsString() {
+		var params = '';
+	
+		// Percorre listas de TipoPermissao
+		$("#permissoes").find("li").each(function(i){
+	        var jDivs=$(this).find("span");
+	        
+	        // Atualiza a string serializada
+        	params += '&permissao.tipoPermissaoSet[' + i + '].idTipoPermissaoLista=' + jDivs[0].id;
+	    });
+		return params;
+    };
 	
 	$(function() {
+		
+		var jPermissoes = $("#permissoes"),
+		permissoes = jPermissoes[0],
+        jDialog = $("#dialog"),
+        dialog = jDialog[0],
+        jTipoPermissao = $("#tipoPermissao"),
+		jTipoPermissaoSelecionada = $("#itemTipoPermissao"),
+		listaTipoPermissaoAux;
+       
+        $( "#permissoes" ).sortable({placeholder: "ui-state-highlight"});
+        $( "#permissoes" ).disableSelection();
+       
+        $("#botaoIncluir").click(function(){
+                jDialog.data('acao',permissoes.incluirItem).dialog('open');
+        });
+       
+        jDialog.dialog({
+                autoOpen: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                resizable: false,
+                close: function() {
+                        jDialog.data('tipoPermissao','');
+                },
+                open: function(){
+                        jDialog.dialog('option', 'title', 'Incluir Tipo de Permissão');                  
+                        jTipoPermissao.find("option[value=" + jDialog.data("tipoPermissao") + "]").prop('selected', true);
+                }
+        });
+        $("#modalOk").click(function(){
+                var acao = jDialog.data('acao');
+                var jTipoPermissaoEscolhido = jTipoPermissaoSelecionada.find("option:selected");
+                acao(jTipoPermissaoEscolhido.val(), jTipoPermissaoEscolhido.text(), jDialog.data("id"));
+                jTipoPermissaoSelecionada[0].remove(jTipoPermissaoSelecionada[0].selectedIndex);
+                jDialog.dialog('close');
+        });
+        $("#modalCancel").click(function(){
+                jDialog.dialog('close');
+        });
+
+        permissoes["index"] = 0;
+        permissoes.incluirItem = function(idTipo, descrTipo, id){
+                if (!id)
+                        id = 'novo_' + ++permissoes["index"];
+                jPermissoes.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
+                var jNewTr = jPermissoes.find("li:last-child");
+                jNewTr.append("<span style=\"display: inline-block\" id=\"" + idTipo + "\">"
+                                + descrTipo + "</span>");
+                jNewTr.append("&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: hidden; cursor: pointer\" />");
+                jNewTr.find("img:eq(0)").click(function(){
+                	permissoes.removerItem(jNewTr.attr("id"));
+                });
+                jNewTr.mouseover(function(){
+                        jNewTr.find("img").css("visibility", "visible");
+                });
+                jNewTr.mouseout(function(){
+                        jNewTr.find("img").css("visibility", "hidden");
+                });
+        }
+       
+        permissoes.removerItem = function(idItem){
+                $("#"+idItem).remove();
+                permissoes["index"]--;
+        }
+
 		$("[value='Gravar']").click(function(){
 			if (!block())
 				return false;
@@ -252,12 +416,6 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content">
 		<h2>Cadastro de Lista</h2>
-		<p class="gt-table-action-list">
-		#{if lista?.idLista} 
-		<a class="once" href="@{Application.desativarLista(lista.idLista)}">
-		<img src="/siga/css/famfamfam/icons/disconnect.png" style="margin-right: 5px;">Desativar</a>
-		#{/if}
-		</p>
 		<div class="gt-form gt-content-box">
 			<form id="formLista"> #{if
 				lista?.idLista} <input type="hidden" id="idLista" name="lista.idLista" value="${lista.idLista}">
@@ -311,7 +469,7 @@
 								<th>Nome Lotação</th>
 								<th>Lotação</th>
 								<th>ID Pessoa</th>
-								<th>Nome Pessoa
+								<th>Nome Pessoa</th>
 								<th>Pessoa</th>
 								<th>ID Cargo</th>
 								<th>Cargo</th>
@@ -319,9 +477,11 @@
 								<th>ID Função</th>
 								<th>Função</th>
 								<th>Função</th>
+								<th>Tipo Permissão</th>
 								<th>ID Tipo Permissao</th>
 								<th>Tipo Permissão</th>	
-								<th>ID Permissão</th>
+								<th>Tipo Permissão</th>	
+								<th>Ações</th>
 							</tr>
 						</thead>
 		
@@ -344,15 +504,43 @@
 									<td>${perm.funcaoConfianca?.id}</td>
 									<td>${perm.funcaoConfianca?.sigla}</td>
 									<td>${perm.funcaoConfianca?.descricao}</td>
-									<td>${perm.tipoPermissao}</td>
-									<td>${perm.tipoPermissao?.descrTipoPermissaoLista}</td>
+									<td>${perm.getSrConfiguracaoTipoPermissaoJson()}</td>
 									<td>${perm.id}</td>
+									<td></td>
+									<td>${perm.descrTipoPermissao}</td>
+									<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+										<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissão">
+											<input class="idPermissao" type="hidden" value="${perm.id}"/>
+											<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> 
+										</a>
+									</td>
 								</tr>
 							#{/list}
 						</tbody>
 					</table>
 				</div>
 				
+				<div class="gt-content" style="margin-top:20px">
+					<h3>Inclusão automática</h3>
+					<div class="gt-form gt-content-box">
+					
+						<input type="hidden" name="lista.configuracaoInsercaoAutomatica.idConfiguracao" value="${lista.configuracaoInsercaoAutomatica.idConfiguracao}"/>
+						
+						<div class="gt-form-row gt-width-66">
+							<label>Item</label> 
+							#{selecao tipo:'item',
+								nome:'lista.configuracaoInsercaoAutomatica.itemConfiguracaoUnitario',
+								value:lista.configuracaoInsercaoAutomatica.itemConfiguracaoUnitario?.atual 
+							/}
+						</div>
+					
+						<div class="gt-form-row gt-width-66">
+							<label>Ação</label> 
+							#{selecao tipo:'acao', nome:'lista.configuracaoInsercaoAutomatica.acaoUnitaria', value:lista.configuracaoInsercaoAutomatica.acaoUnitaria?.atual 
+							/}
+						</div>
+					</div>
+				</div>
 				
 				<div class="gt-form-row">
 					<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
@@ -365,6 +553,9 @@
 		</div>
 	</div>
 </div>
+
+
+
 
 #{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}
 	<div class="gt-form gt-content-box" id="modal-permissao">
@@ -416,10 +607,10 @@
 			
 			<div class="gt-form-row div-modal-table">
 				<label>Tipo Permissão</label>
-				#{select name:'tipoPermissao',
-				items:models.SrTipoPermissaoLista.values(),
-				labelProperty:'descrTipoPermissaoLista',
-				value:tipoPermissao /}
+					<ul id="permissoes" style="color: #365b6d"></ul>
+					<input type="button" value="Incluir" id="botaoIncluir"
+		                      class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+				</div>
 			</div>
 			
 			<div class="gt-form-row">
@@ -430,6 +621,23 @@
 						class="gt-btn-medium gt-btn-left"
 						onclick="location.href='@{Application.desativarPermissaoUsoLista()}?id=${idConfiguracao}'" />
 				#{/if}
+			</div>
+		</div>
+	</div>
+	<div id="dialog">
+		<div class="gt-content">
+			<div class="gt-form gt-content-box">
+				<div class="gt-form-row">
+					<div class="gt-form-row gt-width-66">
+						<label>Tipo de Permissão</label> #{select name:'itemTipoPermissao', id:'itemTipoPermissao'}
+							 #{list items:tiposPermissao, as:'item'} #{option item.idTipoPermissaoLista} ${item.descrTipoPermissaoLista} #{/option} #{/list} #{/select}
+					</div>
+					<div class="gt-form-row">
+						<input type="button" id="modalOk" value="Ok"
+	                           class="gt-btn-medium gt-btn-left" />
+						<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

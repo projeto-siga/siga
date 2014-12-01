@@ -1,0 +1,39 @@
+<script src="/sigasr/public/javascripts/moment.js"></script>
+
+<p>
+	<img src="/siga/css/famfamfam/icons/clock_play.png" width="15px;"
+		style="vertical-align: bottom;"><b> ${_descricao}: </b><span
+		id="andamento"></span>
+</p>
+
+<script type="text/javascript">
+	moveRelogio(0);
+
+	var andamento = 0;	
+	function moveRelogio(mili) { 
+		andamento = andamento + mili;
+	   	var dtTempoPercorrido = new Date(${_tempoPercorrido})
+	   		dtTotal = new Date((${_tempoPercorrido} + andamento));
+
+	   	moment.locale('pt-br');
+	   	$('#total').html(getTempoTotal(dtTempoPercorrido));
+		$('#andamento').html(getTempoAndamento(dtTempoPercorrido, andamento));
+		
+	   	#{if _contarTempo == true}
+	   		setTimeout("moveRelogio(1000)",1000);
+	   	#{/if}
+	}; 
+
+	function getTempoAndamento(dtTempoPercorrido, andamento) {
+		#{if _contarTempo == true}
+	   		return moment().subtract('millisecond', andamento).fromNow();
+	   	#{/if}
+		#{else}
+		   	return moment(dtTempoPercorrido).fromNow();
+		#{/else}
+	}
+
+	function getTempoTotal(dtTempoPercorrido) {
+		return moment(dtTempoPercorrido).fromNow();
+	}
+</script>

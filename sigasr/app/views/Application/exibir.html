@@ -185,6 +185,23 @@ $(function(){
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Dados da Solicitação</h3>
+			#{if solicitacao.exibirCronometro() == true}
+				#{cronometro descricao:solicitacao.getDescricaoCronometro(),
+				 tempoPercorrido:solicitacao.getTempoCronometro(),
+				 contarTempo:true /}
+			#{/if}
+			#{else}
+				#{cronometro descricao:'Cadastramento',
+							 tempoPercorrido:solicitacao.getTempoAtendimento(),
+							 contarTempo:false /}
+				#{cronometro descricao:'Atendimento',
+							 tempoPercorrido:solicitacao.getTempoCadastramento(),
+							 contarTempo:false /}
+			#{/else}
+			<p>
+				<b>Prazo SLA:</b>
+				${solicitacao.getPrazoTotalAtendimento()} 
+			</p>
 			<p>
 				<b>Solicitante:</b>
 				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
@@ -240,11 +257,6 @@ $(function(){
 			<p>
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
 					<br /> ${solicitacao.GUTString}</span>
-			</p>
-			
-			<!--  ESPAÇO DESTINADO A EXIBIÇÃO DOS TEMPOS DA SOLICITAÇÃO -->
-			<p>
-				<b>Prazo:</b> <span style=""></span>
 			</p>
 		</div>
 	</div>

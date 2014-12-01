@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -69,8 +70,16 @@ public class SrTipoAtributo extends HistoricoSuporte {
 		idTipoAtributo = id;
 	}
 
-	public static List<SrTipoAtributo> listar() {
-		return SrTipoAtributo.find("byHisDtFimIsNull").fetch();
+	public static List<SrTipoAtributo> listar(boolean mostrarDesativados) {
+		StringBuilder queryBuilder = new StringBuilder();
+
+		if (!mostrarDesativados) {
+			queryBuilder.append(" hisDtFim is null");
+		} else {
+			queryBuilder.append("SELECT ta FROM SrTipoAtributo ta ");
+			queryBuilder.append("WHERE ta.idTipoAtributo in (SELECT MAX(idTipoAtributo) FROM SrTipoAtributo GROUP BY hisIdIni) ");
+		}
+		return SrTipoAtributo.find(queryBuilder.toString()).fetch();
 	}
 
 	public List<SrTipoAtributo> getHistoricoTipoAtributo() {

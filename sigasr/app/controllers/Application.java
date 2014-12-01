@@ -27,15 +27,14 @@ import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
-import models.SrPergunta;
 import models.SrPesquisa;
-import models.SrPrioridade;
 import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
+import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
@@ -194,8 +193,8 @@ public class Application extends SigaApplication {
 	public static List<SrTipoAtributo> tiposAtributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) {
 		List<SrTipoAtributo> listaAtributosAdicao = new ArrayList<SrTipoAtributo>();
 		HashMap<Long, String> atributoMap = filtro.getAtributoMap();
-
-		for (SrTipoAtributo srTipoAtributo : SrTipoAtributo.listar()) {
+		
+		for (SrTipoAtributo srTipoAtributo : SrTipoAtributo.listar(Boolean.FALSE)) {
 			if (!atributoMap.containsKey(srTipoAtributo.idTipoAtributo)) {
 				listaAtributosAdicao.add(srTipoAtributo);
 			}
@@ -277,15 +276,16 @@ public class Application extends SigaApplication {
 			validation.addError("solicitacao.descrSolicitacao",
 					"Descri&ccedil&atilde;o n&atilde;o informada");
 		}
-
-		HashMap<Long, Boolean> obrigatorio = solicitacao
-				.getObrigatoriedadeTiposAtributoAssociados();
+		
+		HashMap<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
 		for (SrAtributo att : solicitacao.getAtributoSet()) {
-			if (att.valorAtributo.trim().equals("")
-					&& obrigatorio.get(att.tipoAtributo.idTipoAtributo))
-				validation.addError("solicitacao.atributoMap["
-						+ att.tipoAtributo.idTipoAtributo + "]",
-						att.tipoAtributo.nomeTipoAtributo + " n&atilde;o informado");
+			// Para evitar NullPointerExcetpion quando nao encontrar no Map
+			if(Boolean.TRUE.equals(obrigatorio.get(att.tipoAtributo.idTipoAtributo))) {
+				if ((att.valorAtributo == null || att.valorAtributo.trim().equals("")))
+					validation.addError("solicitacao.atributoMap["
+							+ att.tipoAtributo.idTipoAtributo + "]",
+							att.tipoAtributo.nomeTipoAtributo + " n&atilde;o informado");
+			}
 		}
 
 		if (validation.hasErrors()) {
@@ -630,6 +630,14 @@ public class Application extends SigaApplication {
 		exibirLista(idLista);
 	}
 
+	public static void retirarDeLista(Long idSolicitacao, Long idLista)
+			throws Exception {
+			SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
+			SrLista lista = SrLista.findById(idLista);
+			solicitacao.retirarDeLista(lista, cadastrante(), lotaTitular());
+			exibirLista(idLista);
+	}
+	
 	public static void priorizarLista(@As(",") List<Long> ids, Long id)
 			throws Exception {
 
@@ -846,11 +854,20 @@ public class Application extends SigaApplication {
 		return designacao.getId();
 	}
 
-	public static void desativarDesignacao(Long id) throws Exception {
+	public static Long desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
-		listarDesignacao(Boolean.TRUE);
+		
+		return designacao.getId();
+	}
+
+	public static Long reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
+		designacao.salvar();
+		
+		return designacao.getId();
 	}
 
 	public static void listarPermissaoUsoLista(boolean mostrarDesativados) throws Exception {
@@ -873,8 +890,7 @@ public class Application extends SigaApplication {
 		render(permissao, orgaos, locais, listasPrioridade);
 	}
 
-	public static Long gravarPermissaoUsoLista(SrConfiguracao permissao)
-			throws Exception {
+	public static Long gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarPermissaoUsoLista(permissao);
 		permissao.salvarComoPermissaoUsoLista();
@@ -886,11 +902,21 @@ public class Application extends SigaApplication {
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
 	}
-
-	public static void listarAssociacao() throws Exception {
+	
+	public static void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrConfiguracao> listaAssociacao = SrConfiguracao
-				.listarAssociacoesTipoAtributo();
+		SrConfiguracao configuracao = JPA.em().find(SrConfiguracao.class, idPermissao);
+		configuracao.finalizar();
+		editarLista(idLista);
+	}
+
+	public static void listarAssociacaoDesativadas() throws Exception {
+		listarAssociacao(Boolean.TRUE);
+	}
+	
+	public static void listarAssociacao(boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrConfiguracao> listaAssociacao = SrConfiguracao.listarAssociacoesTipoAtributo(mostrarDesativados);
 		render(listaAssociacao);
 	}
 
@@ -903,18 +929,24 @@ public class Application extends SigaApplication {
 		render(associacao);
 	}
 
-	public static void gravarAssociacao(SrConfiguracao associacao)
-			throws Exception {
+	public static void gravarAssociacao(SrConfiguracao associacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		associacao.salvarComoAssociacaoTipoAtributo();
-		listarAssociacao();
+		listarAssociacao(Boolean.FALSE);
 	}
 
-	public static void desativarAssociacao(Long id) throws Exception {
+	public static void desativarAssociacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
 		associacao.finalizar();
-		listarAssociacao();
+		listarAssociacao(mostrarDesativados);
+	}
+
+	public static void reativarAssociacao(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
+		associacao.salvar();
+		listarAssociacao(mostrarDesativados);
 	}
 
 	public static void listarItem(boolean mostrarDesativados) throws Exception {
@@ -989,17 +1021,24 @@ public class Application extends SigaApplication {
 //		listarItem(false);
 	}
 
-	public static void desativarItem(Long id) throws Exception {
+	public static void desativarItem(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
 		item.finalizar();
-		listarItem(Boolean.FALSE);
+		listarItem(mostrarDesativados);
 	}
+	
+	public static void reativarItem(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
+		item.salvar();
+		listarItem(mostrarDesativados);
+	}
+
 
 	public static void selecionarItem(String sigla, SrSolicitacao sol)
 			throws Exception {
-		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla,
-				sol.getItensDisponiveis());
+		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla, sol.getItensDisponiveis());
 		render("@selecionar", sel);
 	}
 
@@ -1023,9 +1062,13 @@ public class Application extends SigaApplication {
 		render(itens, filtro, nome, sol);
 	}
 
-	public static void listarTipoAtributo() throws Exception {
+	public static void listarTipoAtributoDesativados() throws Exception {
+		listarTipoAtributo(Boolean.TRUE);
+	}
+	
+	public static void listarTipoAtributo(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrTipoAtributo> atts = SrTipoAtributo.listar();
+		List<SrTipoAtributo> atts = SrTipoAtributo.listar(mostrarDesativados);
 		render(atts);
 	}
 
@@ -1046,7 +1089,7 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarTipoAtributo(att);
 		att.salvar();
-		listarTipoAtributo();
+		listarTipoAtributo(Boolean.FALSE);
 	}
 
 	private static void validarFormEditarTipoAtributo(SrTipoAtributo att) {
@@ -1070,17 +1113,28 @@ public class Application extends SigaApplication {
 		}
 	}
 
-	public static void desativarTipoAtributo(Long id) throws Exception {
+	public static void desativarTipoAtributo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrTipoAtributo item = SrTipoAtributo.findById(id);
 		item.finalizar();
-		listarTipoAtributo();
+		listarTipoAtributo(mostrarDesativados);
 	}
 
-	public static void listarPesquisa() throws Exception {
+	public static void reativarTipoAtributo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrPesquisa> pesquisas = SrPesquisa.listar();
+		SrTipoAtributo item = SrTipoAtributo.findById(id);
+		item.salvar();
+		listarTipoAtributo(mostrarDesativados);
+	}
+
+	public static void listarPesquisa(boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrPesquisa> pesquisas = SrPesquisa.listar(mostrarDesativados);
 		render(pesquisas);
+	}
+	
+	public static void listarPesquisaDesativadas() throws Exception {
+		listarPesquisa(Boolean.TRUE);
 	}
 
 	public static void editarPesquisa(Long id) throws Exception {
@@ -1095,14 +1149,21 @@ public class Application extends SigaApplication {
 	public static void gravarPesquisa(SrPesquisa pesq) throws Exception {
 		assertAcesso("ADM:Administrar");
 		pesq.salvar();
-		listarPesquisa();
+		listarPesquisa(Boolean.FALSE);
 	}
 
-	public static void desativarPesquisa(Long id) throws Exception {
+	public static void desativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrPesquisa pesq = SrPesquisa.findById(id);
 		pesq.finalizar();
-		listarPesquisa();
+		listarPesquisa(mostrarDesativados);
+	}
+	
+	public static void reativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrPesquisa pesq = SrPesquisa.findById(id);
+		pesq.salvar();
+		listarPesquisa(mostrarDesativados);
 	}
 	
 	public static void listarEquipe(boolean mostrarDesativados) throws Exception {
@@ -1207,11 +1268,18 @@ public class Application extends SigaApplication {
 		listarAcao(false);
 	}
 
-	public static void desativarAcao(Long id) throws Exception {
+	public static void desativarAcao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcao acao = SrAcao.findById(id);
 		acao.finalizar();
-		listarAcao(Boolean.FALSE);
+		listarAcao(mostrarDesativados);
+	}
+	
+	public static void reativarAcao(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrAcao acao = SrAcao.findById(id);
+		acao.salvar();
+		listarAcao(mostrarDesativados);
 	}
 
 	public static void selecionarAcao(String sigla, SrSolicitacao sol)
@@ -1277,8 +1345,10 @@ public class Application extends SigaApplication {
 					.listarPermissoesUsoLista(lista, false);
 		} catch (Exception e) {
 		}
+		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
+		lista.configuracaoInsercaoAutomatica = SrConfiguracao.buscarConfiguracaoInsercaoAutomaticaLista(lista);
 		
-		render(lista, orgaos, locais);
+		render(lista, orgaos, locais, tiposPermissao);
 	}
 
 	public static void gravarLista(SrLista lista) throws Exception {
@@ -1286,10 +1356,16 @@ public class Application extends SigaApplication {
 		exibirLista(lista.idLista);
 	}
 
-	public static void desativarLista(Long id) throws Exception {
+	public static void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		lista.finalizar();
-		listarLista(Boolean.FALSE);
+		listarLista(mostrarDesativados);
+	}
+	
+	public static void reativarLista(Long id, boolean mostrarDesativados) throws Exception {
+		SrLista lista = SrLista.findById(id);
+		lista.salvar();
+		listarLista(mostrarDesativados);
 	}
 
 	public static void relSolicitacoes(SrSolicitacaoFiltro filtro)

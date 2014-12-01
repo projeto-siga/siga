@@ -1,21 +1,78 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 
 <script type="text/javascript">
-	var posDesignJson = 40,
-		posListaPrioHTML = 41,
-		posIdDesignacao = 42,
-		posIsHerdado = 43,
-		posUtilizarHerdado = 44,
-		posListasSerialadas = 45,
-		parametroTela = '${_modoExibicao}';
+		var parametroTela = '${_modoExibicao}';
+
+		var colunas = {};
+		colunas.acaoExpandir=					0 ;
+		colunas.id = 							1 ;
+		colunas.idOrgao=						2 ;
+		colunas.orgao=							3 ;
+		colunas.idLocal =						4 ;
+		colunas.local=							5 ;
+		colunas.tipoSolicitante = 				6 ;
+		colunas.idSolicitante = 				7 ;
+		colunas.descricaoSolicitante = 			8 ;
+		colunas.solicitante=					9 ;
+		colunas.itemConfiguracao=				10;
+		colunas.acao=							11;
+		colunas.siglaAcao = 					12;
+		colunas.idAtendente = 					13;
+		colunas.descricaoAtendente = 			14;
+		colunas.atendente=						15;
+		colunas.idPreAtendente = 				16;
+		colunas.descricaoPreAtendente = 		17;
+		colunas.pre=							18;
+		colunas.idPosAtendente = 				19;
+		colunas.descricaoPosAtendente = 		20;
+		colunas.pos=							21;
+		colunas.idEqQualidade = 				22;
+		colunas.descricaoEqQualidade = 			23;
+		colunas.siglaEqQualidade = 				24;
+		colunas.idPesquisaSatisfacao = 			25;
+		colunas.descricaoPesquisaSatisfacao = 	26;
+		colunas.slaPreAtendimento = 			27;
+		colunas.idUndMedPre=					28;
+		colunas.slaAtendimento = 				29;
+		colunas.idUnMedAt	=					30;
+		colunas.slaPosAtendimento = 			31;
+		colunas.idUnMedPos= 					32;
+		colunas.margemSeguranca = 				33;
+		colunas.divulgarSLA = 					34;
+		colunas.obsSLA =						35;
+		colunas.notificaGestor	=				36;
+		colunas.notificaSolicitante=			37;
+		colunas.notificaCadastrante=			38;
+		colunas.notificaInterlocutor=			39;
+		colunas.notificaAtendente=				40;
+		colunas.jSonDesignacao= 				41;
+		colunas.listasPrioridadeHtml= 			42;
+		colunas.idDesignacao= 					43;
+		colunas.herdado= 						44;
+		colunas.utilizarHerdado= 				45;
+		colunas.listasSerializadas= 			46;
+		colunas.reativarDesativar=				47;
+
 	
 	//removendo a referencia de '$' para o jQuery
 	$.noConflict();
-	
+
+	var designacoesTable = null;
 	jQuery( document ).ready(function( $ ) {
 		/* Table initialization */
-		designacoesTable = $('#designacoes_table').dataTable({
+		designacoesTable = $('#designacoes_table')
+			.on('draw.dt', function() {
+					if(designacoesTable) {
+						var btn = $('.bt-expandir'),
+							expandir = btn.hasClass('expandido');
+
+						$('#designacoes_table').mostrarDetalhes(detalhesDesignacao, designacoesTable);
+						$('#designacoes_table').expandirContrairLinhas(expandir);
+					}
+				})
+			.dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -40,24 +97,64 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [0, 1, 3, 5, 6, 7, 11, 12, 13, 15, 16, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45],
+				"targets": [colunas.id, 
+							colunas.idOrgao, 
+							colunas.idLocal, 
+							colunas.tipoSolicitante, 
+							colunas.idSolicitante, 
+							colunas.descricaoSolicitante, 
+							colunas.siglaAcao, 
+							colunas.idAtendente, 
+							colunas.descricaoAtendente, 
+							colunas.idPreAtendente, 
+							colunas.descricaoPreAtendente, 
+							colunas.idPosAtendente, 
+							colunas.descricaoPosAtendente, 
+							colunas.idEqQualidade, 
+							colunas.descricaoEqQualidade, 
+							colunas.siglaEqQualidade, 
+							colunas.idPesquisaSatisfacao, 
+							colunas.descricaoPesquisaSatisfacao, 
+							colunas.slaPreAtendimento, 
+							colunas.idUndMedPre, 
+							colunas.slaAtendimento, 
+							colunas.idUnMedAt, 
+							colunas.slaPosAtendimento, 
+							colunas.idUnMedPos, 
+							colunas.margemSeguranca, 
+							colunas.divulgarSLA, 
+							colunas.obsSLA, 
+							colunas.notificaGestor, 
+							colunas.notificaSolicitante, 
+							colunas.notificaCadastrante, 
+							colunas.notificaInterlocutor, 
+							colunas.notificaAtendente, 
+							colunas.jSonDesignacao, 
+							colunas.listasPrioridadeHtml, 
+							colunas.idDesignacao, 
+							colunas.herdado, 
+							colunas.utilizarHerdado, 
+							colunas.listasSerializadas],
 				"visible": false,
 				"searchable": false
 			},
 			{
-				"targets": [0],
-				"sortable": false
+				"targets": [colunas.id, colunas.reativarDesativar, colunas.acaoExpandir],
+				"sortable": false,
+				"searchable" : false
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (aData[posIsHerdado] == 'true') {
+				if (aData[colunas.herdado] == 'true') {
 					$('td', nRow).addClass('item-desativado');
 					$('td:eq(0)', nRow).removeClass('checkbox-hidden');
-					if (document.getElementById("check"+aData[posIdDesignacao]))
-						document.getElementById("check"+aData[posIdDesignacao]).checked = aData[posListaPrioSerial] == 'true';
+					if (document.getElementById("check"+aData[colunas.idDesignacao]))
+						document.getElementById("check"+aData[colunas.idDesignacao]).checked = aData[posListaPrioSerial] == 'true';
 				}
 			},
 			"iDisplayLength": 25
 		});
+
+		$('#designacoes_table').mostrarDetalhes(detalhesDesignacao, designacoesTable);
 		
 		$('#designacoes_table tbody').on('click', 'tr', function () {
 			var itemSelecionado = designacoesTable.api().row(this).data();
@@ -69,22 +166,67 @@
 		        }
 
 				// só abre o modal caso seja click em alguma designação 'não-herdada'
-				if (itemSelecionado[posIsHerdado] == 'false') {
+				if (itemSelecionado[ colunas.herdado] == 'false') {
 					atualizarDesignacaoModal(itemSelecionado);
 					designacaoModalAbrir(true);
 				}
 			}
 		});
 	});
-	
+
+	function detalhesDesignacao(d) {
+		var designacao = typeof d[colunas.jSonDesignacao] == 'string' ? JSON.parse(d[colunas.jSonDesignacao]) : d[colunas.jSonDesignacao],
+				tr = $('<tr class="detail">'),
+				td = $('<td colspan="10">');
+				table  = $('<table>'),
+				trItens = $('<tr>'),
+				trAcoes = $('<tr>');
+
+		detalheLista("Itens de configuração:", designacao.listaItemConfiguracaoVO, trItens);
+		detalheLista("Ações:", designacao.listaAcaoVO, trAcoes);
+
+		table.append(trItens);
+		table.append(trAcoes);
+		
+		td.append(table);
+		tr.append(td);
+		return tr;
+	}
+
+	function detalheLista(label, listaItemConfiguracaoVO, tr) {
+		var tdTituloItens = $('<td colspan="2">' + label + '</td>'),
+		    tdDadosItens = $('<td colspan="5">'),
+		    table = $('<table>');
+
+	    for(var i = 0; i < listaItemConfiguracaoVO.length; i++) {
+		    var itemConfiguracao = listaItemConfiguracaoVO[i],
+		    	trItem = $('<tr>'),
+		    	tdCodigo = $('<td>'),
+		    	tdDescricao = $('<td>');
+		
+				tdCodigo.html(itemConfiguracao.sigla);
+				tdDescricao.html('Descricao ' + itemConfiguracao.titulo);
+									  
+				trItem.append(tdCodigo);
+				trItem.append(tdDescricao);
+									  
+				table.append(trItem);
+		}
+		
+		tdDadosItens.append(table);
+		
+		tr.append(tdTituloItens);
+		tr.append(tdDadosItens);
+		
+	}
 	function atualizarItensBooleanos(itemArray) {
-		//ajusta os valores booleanos das colunas 33, 35, 36, 37, 38 e 39
-		itemArray[33] = transformStringToBoolean(itemArray[33]);
-		itemArray[35] = transformStringToBoolean(itemArray[35]);
-		itemArray[36] = transformStringToBoolean(itemArray[36]);
-		itemArray[37] = transformStringToBoolean(itemArray[37]);
-		itemArray[38] = transformStringToBoolean(itemArray[38]);
-		itemArray[39] = transformStringToBoolean(itemArray[39]);
+		//ajusta os valores booleanos das colunas colunas.divulgarSLA, colunas.notificaGestor, colunas.notificaSolicitante, colunas.notificaCadastrante, colunas.notificaInterlocutor e colunas.notificaAtendente
+		itemArray[colunas.divulgarSLA] = transformStringToBoolean(itemArray[colunas.divulgarSLA]);
+		itemArray[colunas.notificaGestor] = transformStringToBoolean(itemArray[colunas.notificaGestor]);
+		itemArray[colunas.notificaSolicitante] = transformStringToBoolean(itemArray[colunas.notificaSolicitante]);
+		itemArray[colunas.notificaCadastrante] = transformStringToBoolean(itemArray[colunas.notificaCadastrante]);
+		itemArray[colunas.notificaInterlocutor] = transformStringToBoolean(itemArray[colunas.notificaInterlocutor]);
+		itemArray[colunas.notificaAtendente] = transformStringToBoolean(itemArray[colunas.notificaAtendente]);
 	};
 	
 	function transformStringToBoolean(value) {
@@ -98,10 +240,10 @@
 		var designacaoJson;
 		
 		// transforma o valor String em objeto, caso necessário
-		if (itemArray[posDesignJson].constructor.name ==  'String' && itemArray[posDesignJson] != '')
-			designacaoJson = JSON.parse(itemArray[posDesignJson]);
+		if (itemArray[colunas.jSonDesignacao].constructor.name ==  'String' && itemArray[colunas.jSonDesignacao] != '')
+			designacaoJson = JSON.parse(itemArray[colunas.jSonDesignacao]);
 		else
-			designacaoJson = itemArray[posDesignJson];
+			designacaoJson = itemArray[colunas.jSonDesignacao];
 		
 		if (designacaoJson) {
 			
@@ -255,60 +397,61 @@
 		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargo")[0];
 		
 		// atualiza os valores das combos
-		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[1]);
-		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[3]);
-		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[5]);
-		jPesquisaSatisfacaoCbb.selectedIndex = findSelectedIndexByValue(jPesquisaSatisfacaoCbb, itemArray[24]);
-		jUnMedPreAtendimentoCbb.selectedIndex = findSelectedIndexByValue(jUnMedPreAtendimentoCbb, itemArray[27]);
-		jUnMedAtendimentoCbb.selectedIndex = findSelectedIndexByValue(jUnMedAtendimentoCbb, itemArray[29]);
-		jUnMedPosAtendimentoCbb.selectedIndex = findSelectedIndexByValue(jUnMedPosAtendimentoCbb, itemArray[31]);
+		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
+		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
+		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[colunas.tipoSolicitante]);
+		jPesquisaSatisfacaoCbb.selectedIndex = findSelectedIndexByValue(jPesquisaSatisfacaoCbb, itemArray[colunas.idPesquisaSatisfacao]);
+		jUnMedPreAtendimentoCbb.selectedIndex = findSelectedIndexByValue(jUnMedPreAtendimentoCbb, itemArray[colunas.idUndMedPre]);
+		jUnMedAtendimentoCbb.selectedIndex = findSelectedIndexByValue(jUnMedAtendimentoCbb, itemArray[colunas.idUnMedAt]);
+		jUnMedPosAtendimentoCbb.selectedIndex = findSelectedIndexByValue(jUnMedPosAtendimentoCbb, itemArray[colunas.idUnMedPos]);
 		
 		// atualiza os valores dos demais campos
-		$("#acao").val(itemArray[9]);
-		$("#acao_descricao").val(itemArray[10]);
-		$("#acao_sigla").val(itemArray[11]);
-		$("#acaoSpan").html(itemArray[10]);
-		$("#atendente").val(itemArray[12]);
-		$("#atendente_descricao").val(itemArray[13]);
-		$("#atendente_sigla").val(itemArray[14]);
-		$("#atendenteSpan").html(itemArray[13]);
-		$("#preAtendente").val(itemArray[15]);
-		$("#preAtendente_descricao").val(itemArray[16]);
-		$("#preAtendente_sigla").val(itemArray[17]);
-		$("#preAtendenteSpan").html(itemArray[16]);
-		$("#posAtendente").val(itemArray[18]);
-		$("#posAtendente_descricao").val(itemArray[19]);
-		$("#posAtendente_sigla").val(itemArray[20]);
-		$("#posAtendenteSpan").html(itemArray[19]);
-		$("#equipeQualidade").val(itemArray[21]);
-		$("#equipeQualidade_descricao").val(itemArray[22]);
-		$("#equipeQualidade_sigla").val(itemArray[22]);
-		$("#equipeQualidadeSpan").html(itemArray[22]);
-		$("#slaPreAtendimentoQuantidade").val(itemArray[26]);
-		$("#slaAtendimentoQuantidade").val(itemArray[28]);
-		$("#slaPosAtendimentoQuantidade").val(itemArray[30]);
-		$("#margemSeguranca").val(itemArray[32]);
-		$("#checkdivulgarSLA")[0].checked = itemArray[33];
-		$("#observacaoSLA").val(itemArray[34]);
-		$("#checknotificarGestor")[0].checked = itemArray[35];
-		$("#checknotificarSolicitante")[0].checked = itemArray[36];
-		$("#checknotificarCadastrante")[0].checked = itemArray[37];
-		$("#checknotificarInterlocutor")[0].checked = itemArray[38];
-		$("#checknotificarAtendente")[0].checked = itemArray[39];
-		$("#idConfiguracao").val(itemArray[42]);
+		$("#acao").val(itemArray[colunas.itemConfiguracao]);
+		$("#acao_descricao").val(itemArray[colunas.acao]);
+		$("#acao_sigla").val(itemArray[colunas.siglaAcao]);
+		$("#acaoSpan").html(itemArray[colunas.acao]);
+		$("#atendente").val(itemArray[colunas.idAtendente]);
+		$("#atendente_descricao").val(itemArray[colunas.descricaoAtendente]);
+		$("#atendente_sigla").val(itemArray[colunas.atendente]);
+		$("#atendenteSpan").html(itemArray[colunas.descricaoAtendente]);
+		$("#preAtendente").val(itemArray[colunas.idPreAtendente]);
+		$("#preAtendente_descricao").val(itemArray[colunas.descricaoPreAtendente]);
+		$("#preAtendente_sigla").val(itemArray[colunas.pre]);
+		$("#preAtendenteSpan").html(itemArray[colunas.descricaoPreAtendente]);
+		$("#posAtendente").val(itemArray[colunas.idPosAtendente]);
+		$("#posAtendente_descricao").val(itemArray[colunas.descricaoPosAtendente]);
+		$("#posAtendente_sigla").val(itemArray[colunas.pos]);
+		$("#posAtendenteSpan").html(itemArray[colunas.descricaoPosAtendente]);
+		$("#equipeQualidade").val(itemArray[colunas.idEqQualidade]);
+		$("#equipeQualidade_descricao").val(itemArray[colunas.descricaoEqQualidade]);
+		$("#equipeQualidade_sigla").val(itemArray[colunas.descricaoEqQualidade]);
+		$("#equipeQualidadeSpan").html(itemArray[colunas.descricaoEqQualidade]);
+		$("#slaPreAtendimentoQuantidade").val(itemArray[colunas.slaPreAtendimento]);
+		$("#slaAtendimentoQuantidade").val(itemArray[colunas.slaAtendimento]);
+		$("#slaPosAtendimentoQuantidade").val(itemArray[colunas.slaPosAtendimento]);
+		$("#margemSeguranca").val(itemArray[colunas.margemSeguranca]);
+		$("#checkdivulgarSLA")[0].checked = itemArray[colunas.divulgarSLA];
+		$("#observacaoSLA").val(itemArray[colunas.obsSLA]);
+		$("#checknotificarGestor")[0].checked = itemArray[colunas.notificaGestor];
+		$("#checknotificarSolicitante")[0].checked = itemArray[colunas.notificaSolicitante];
+		$("#checknotificarCadastrante")[0].checked = itemArray[colunas.notificaCadastrante];
+		$("#checknotificarInterlocutor")[0].checked = itemArray[colunas.notificaInterlocutor];
+		$("#checknotificarAtendente")[0].checked = itemArray[colunas.notificaAtendente];
+		$("#idConfiguracao").val(itemArray[colunas.idDesignacao]);
 		
 		atualizarListasDesignacaoEdicao(itemArray);
 		
 		// atualiza os valores do componente pessoaLotaFuncCargoSelecao
-		getIdFieldSolicitante(itemArray[5]).val(itemArray[6]);
-		getDescricaoFieldSolicitante(itemArray[5]).val(itemArray[7]);
-        getSiglaFieldSolicitante(itemArray[5]).val(itemArray[8]);
-        getSpanFieldSolicitante(itemArray[5]).html(itemArray[7]);
+		getIdFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.idSolicitante]);
+		getDescricaoFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.descricaoSolicitante]);
+        getSiglaFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.solicitante]);
+        getSpanFieldSolicitante(itemArray[colunas.tipoSolicitante]).html(itemArray[colunas.descricaoSolicitante]);
         
         $("#dpPessoalotacaofuncaoConfiancacargo")[0].onchange();
         
         validarCamposTela();
 	};
+
 	
 	function validarCamposTela() {
 		var idEquipeLotacao = $("#equipelotacao").val(),
@@ -394,9 +537,9 @@
 		var idDesignacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
 		
 		var row = [ 
+		            '',
 		            // esta primeira coluna é um comboBox que só é renderizado quando há herança de designação 
 		            '',
-		            
 		            jOrgaoUsuario.value,
           			jOrgaoUsuario.text, 
           			jComplexo.value,
@@ -445,7 +588,8 @@
           			'false',
           			
           			// Atualiza as informações das listas da designação
-          			getListasAsString()
+          			getListasAsString(),
+          			''
 		];
 		
 		// Realiza validação específica caso seja aberto a partir da tela de equipe
@@ -463,7 +607,6 @@
 				$("#erroAoSalvar_dialog").dialog("open");
 				return;
 			}
-				
 		}
 		
 		$.ajax({
@@ -472,7 +615,7 @@
         	data: serializeDesignacao(row),
         	dataType: "text",
         	success: function(id) {
-        		row[posIdDesignacao] = id;
+        		row[colunas.idDesignacao] = id;
         		
         		if (isEditing) {
 					designacoesTable.api().row('.selected').data(row);
@@ -687,75 +830,75 @@
     		
 		// valida o item selecionado
 		if (rowValues) {
-			//if (rowValues[1] != '' && rowValues[1] > 0)
-				params += '&designacao.orgaoUsuario=' + rowValues[1];
+			//if (rowValues[colunas.idOrgao] != '' && rowValues[colunas.idOrgao] > 0)
+				params += '&designacao.orgaoUsuario=' + rowValues[colunas.idOrgao];
 			
-			//if (rowValues[3] != '' && rowValues[3] > 0)
-				params += '&designacao.complexo=' + rowValues[3];
+			//if (rowValues[colunas.idLocal] != '' && rowValues[colunas.idLocal] > 0)
+				params += '&designacao.complexo=' + rowValues[colunas.idLocal];
 			
-			//if (rowValues[12] != '')
-	            params += '&designacao.atendente=' + rowValues[12];
+			//if (rowValues[colunas.idAtendente] != '')
+	            params += '&designacao.atendente=' + rowValues[colunas.idAtendente];
 			
-			//if (rowValues[15] != '')
-	            params += '&designacao.preAtendente=' + rowValues[15];
+			//if (rowValues[colunas.idPreAtendente] != '')
+	            params += '&designacao.preAtendente=' + rowValues[colunas.idPreAtendente];
 			
-			//if (rowValues[18] != '')
-	            params += '&designacao.posAtendente=' + rowValues[18];
+			//if (rowValues[colunas.idPosAtendente] != '')
+	            params += '&designacao.posAtendente=' + rowValues[colunas.idPosAtendente];
 			
-			//if (rowValues[21] != '')
-	            params += '&designacao.equipeQualidade=' + rowValues[21];
+			//if (rowValues[colunas.idEqQualidade] != '')
+	            params += '&designacao.equipeQualidade=' + rowValues[colunas.idEqQualidade];
 			
-			//if (rowValues[24] != '' && rowValues[24] > 0)
-				params += '&designacao.pesquisaSatisfacao=' + rowValues[24];
+			//if (rowValues[colunas.idPesquisaSatisfacao] != '' && rowValues[colunas.idPesquisaSatisfacao] > 0)
+				params += '&designacao.pesquisaSatisfacao=' + rowValues[colunas.idPesquisaSatisfacao];
 			
-			if (rowValues[26] != '')
-				params += '&designacao.slaPreAtendimentoQuantidade=' + rowValues[26];
+			if (rowValues[colunas.slaPreAtendimento] != '')
+				params += '&designacao.slaPreAtendimentoQuantidade=' + rowValues[colunas.slaPreAtendimento];
 			
-			if (rowValues[27] != '' && rowValues[27] > 0)
-				params += '&designacao.unidadeMedidaPreAtendimento=' + rowValues[27];
+			if (rowValues[colunas.idUndMedPre] != '' && rowValues[colunas.idUndMedPre] > 0)
+				params += '&designacao.unidadeMedidaPreAtendimento=' + rowValues[colunas.idUndMedPre];
 			
-			if (rowValues[28] != '')
-				params += '&designacao.slaAtendimentoQuantidade=' + rowValues[28];
+			if (rowValues[colunas.slaAtendimento] != '')
+				params += '&designacao.slaAtendimentoQuantidade=' + rowValues[colunas.slaAtendimento];
 			
-			if (rowValues[29] != '' && rowValues[29] > 0)
-				params += '&designacao.unidadeMedidaAtendimento=' + rowValues[29];
+			if (rowValues[colunas.idUnMedAt] != '' && rowValues[colunas.idUnMedAt] > 0)
+				params += '&designacao.unidadeMedidaAtendimento=' + rowValues[colunas.idUnMedAt];
 			
-			if (rowValues[30] != '')
-				params += '&designacao.slaPosAtendimentoQuantidade=' + rowValues[30];
+			if (rowValues[colunas.slaPosAtendimento] != '')
+				params += '&designacao.slaPosAtendimentoQuantidade=' + rowValues[colunas.slaPosAtendimento];
 			
-			if (rowValues[31] != '' && rowValues[31] > 0)
-				params += '&designacao.unidadeMedidaPosAtendimento=' + rowValues[31];
+			if (rowValues[colunas.idUnMedPos] != '' && rowValues[colunas.idUnMedPos] > 0)
+				params += '&designacao.unidadeMedidaPosAtendimento=' + rowValues[colunas.idUnMedPos];
 			
-			if (rowValues[32] != '')
-				params += '&designacao.margemSeguranca=' + rowValues[32];
+			if (rowValues[colunas.margemSeguranca] != '')
+				params += '&designacao.margemSeguranca=' + rowValues[colunas.margemSeguranca];
 			
-			if (rowValues[34] != '')
-				params += '&designacao.observacaoSLA=' + rowValues[34];
+			if (rowValues[colunas.obsSLA] != '')
+				params += '&designacao.observacaoSLA=' + rowValues[colunas.obsSLA];
 			
-			if (rowValues[42] != '' && rowValues[42] != undefined)
-				params += '&designacao.idConfiguracao=' + rowValues[42];
+			if (rowValues[colunas.idDesignacao] != '' && rowValues[colunas.idDesignacao] != undefined)
+				params += '&designacao.idConfiguracao=' + rowValues[colunas.idDesignacao];
 			
 			// atualiza o solicitante
 			params += getDadosSolicitante(rowValues, i);
 			
 			// Valores Booleanos
-			params += '&designacao.divulgarSLA=' + rowValues[33];
-			params += '&designacao.notificarGestor=' + rowValues[35];
-			params += '&designacao.notificarSolicitante=' + rowValues[36];
-			params += '&designacao.notificarCadastrante=' + rowValues[37];
-			params += '&designacao.notificarInterlocutor=' + rowValues[38];
-			params += '&designacao.notificarAtendente=' + rowValues[39];
+			params += '&designacao.divulgarSLA=' + rowValues[colunas.divulgarSLA];
+			params += '&designacao.notificarGestor=' + rowValues[colunas.notificaGestor];
+			params += '&designacao.notificarSolicitante=' + rowValues[colunas.notificaSolicitante];
+			params += '&designacao.notificarCadastrante=' + rowValues[colunas.notificaCadastrante];
+			params += '&designacao.notificarInterlocutor=' + rowValues[colunas.notificaInterlocutor];
+			params += '&designacao.notificarAtendente=' + rowValues[colunas.notificaAtendente];
 			
 			// Item de configuração herdado
-			if (rowValues[43] == "true") {
-				var isTrue = document.getElementById("check"+rowValues[42]).checked;
+			if (rowValues[colunas.herdado] == "true") {
+				var isTrue = document.getElementById("check"+rowValues[colunas.idDesignacao]).checked;
 				
 				params += '&designacao.utilizarItemHerdado=' + isTrue;
-				params += '&designacao.isHerdado=' + rowValues[43];
+				params += '&designacao.isHerdado=' + rowValues[colunas.herdado];
 			} 
 			
 			// lista da designacao
-			params += rowValues[45];
+			params += rowValues[colunas.listasSerializadas];
 		}
    		
    		return params;
@@ -764,32 +907,32 @@
     function getDadosSolicitante(rowValues, i) {
     	var params = '';
     	
-			if (rowValues[5] == 1) {
-				params += '&designacao.dpPessoa=' + rowValues[6];
+			if (rowValues[colunas.tipoSolicitante] == 1) {
+				params += '&designacao.dpPessoa=' + rowValues[colunas.idSolicitante];
 				params += '&designacao.lotacao=';
 				params += '&designacao.funcaoConfianca=';
 				params += '&designacao.cargo=0';
 			}
 			
 			// caso seja lotação
-			else if (rowValues[5] == 2) {
-				params += '&designacao.lotacao=' + rowValues[6];
+			else if (rowValues[colunas.tipoSolicitante] == 2) {
+				params += '&designacao.lotacao=' + rowValues[colunas.idSolicitante];
 				params += '&designacao.dpPessoa=';
 				params += '&designacao.funcaoConfianca=';
 				params += '&designacao.cargo=';
 			}
 			
 			// caso seja função
-			else if (rowValues[5] == 3) {
-				params += '&designacao.funcaoConfianca=' + rowValues[6];
+			else if (rowValues[colunas.tipoSolicitante] == 3) {
+				params += '&designacao.funcaoConfianca=' + rowValues[colunas.idSolicitante];
 				params += '&designacao.dpPessoa=';
 				params += '&designacao.lotacao=';
 				params += '&designacao.cargo=';
 			}
 			
 			// caso seja cargo
-			else if (rowValues[5] == 4) {
-				params += '&designacao.cargo=' + rowValues[6];
+			else if (rowValues[colunas.tipoSolicitante] == 4) {
+				params += '&designacao.cargo=' + rowValues[colunas.idSolicitante];
 				params += '&designacao.dpPessoa=';
 				params += '&designacao.lotacao=';
 				params += '&designacao.funcaoConfianca=';
@@ -797,6 +940,98 @@
     	
     	return params;
     }
+
+	function desativarDesignacao(event, id) {
+		event.stopPropagation();
+		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
+		
+		$.ajax({
+        	type: "POST",
+        	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(id, mostrarDesativados),
+        	data: '',
+        	dataType: "text",
+        	success: function(id) {
+            	var tr = $('[designacao-id=' + id + ']');
+            	
+            	if(!mostrarDesativados) {
+            		tr.remove();
+               	} else {
+                   	var td = tr.find('td:last'),
+                   		a = $('<a class="once" title="Reativar"/>'),
+                   		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
+                   		
+                   		a.bind('click', function(event) {
+                   			reativarDesignacao(event, id);
+                     	});
+                   		td.html('');
+                   		a.append(img);
+                     	td.append(a);
+               	}
+        	},
+        	error: function(error) {
+        		var fieldsError = error.responseText.split(";");
+        		// limpa as mensagens de erros
+        		resetAllErrorMessage();
+        		
+        		// Mostra a mensagem de campos obrigatórios
+        		document.getElementById("erroCamposObrigatorios").style.display="inherit";
+        		
+        		for (var i = 0; i < fieldsError.length; i++) {
+        			var fieldName = fieldsError[i];
+        			var fooElement = document.getElementById(fieldName);
+        			
+        			if (fooElement != undefined)
+        				fooElement.style.display = "inline";
+        		}
+        	}
+       	});
+	}
+
+	function reativarDesignacao(event, id) {
+		event.stopPropagation();
+		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
+
+		$.ajax({
+        	type: "POST",
+        	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(id, mostrarDesativados),
+        	data: '',
+        	dataType: "text",
+        	success: function(id) {
+        		var tr = $('[designacao-id=' + id + ']');
+            	
+            	if(!mostrarDesativados) {
+            		tr.remove();
+               	} else {
+                   	var td = tr.find('td:last'),
+                   		a = $('<a class="once" title="Desativar"/>'),
+                   		img = $('<img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">');
+               		
+                   		a.bind('click', function(event) {
+                   			desativarDesignacao(event, id);
+                     	});
+                   		td.html('');
+                   		a.append(img);
+                     	td.append(a);
+               	}
+        	},
+        	error: function(error) {
+        		var fieldsError = error.responseText.split(";");
+        		// limpa as mensagens de erros
+        		resetAllErrorMessage();
+        		
+        		// Mostra a mensagem de campos obrigatórios
+        		document.getElementById("erroCamposObrigatorios").style.display="inherit";
+        		
+        		for (var i = 0; i < fieldsError.length; i++) {
+        			var fieldName = fieldsError[i];
+        			var fooElement = document.getElementById(fieldName);
+        			
+        			if (fooElement != undefined)
+        				fooElement.style.display = "inline";
+        		}
+        	}
+       	});
+	}
 	
 </script>
 
@@ -813,6 +1048,11 @@
 		<table id="designacoes_table" border="0" class="gt-table display">
 			<thead>
 				<tr>
+					<th style="color: #333">
+						<button class="gt-btn-medium gt-btn-left bt-expandir">
+							<span id="iconeBotaoExpandirTodos">+</span>
+						</button>
+					</th>
 					<th></th>
 					<th>ID Orgão</th>
 					<th>Orgão</th>
@@ -859,12 +1099,14 @@
 					<th>Herdado</th>
 					<th>Utilizar Herdado</th>
 					<th>Listas Serializadas</th>
+					<th>Ações</th>
 				</tr>
 			</thead>
 
 			<tbody>
 				#{list items:_designacoes, as:'design'}
-				<tr>
+				<tr designacao-id="${design.id}">
+					<td class="gt-celula-nowrap details-control"></td>
 					<td class="checkbox-hidden" style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
 						<input type="checkbox" checked="${design.utilizarItemHerdado}" id="check${design.id}"/>
 					</td>
@@ -913,6 +1155,13 @@
 					<th>${design.isHerdado}</th>
 					<th>${design.utilizarItemHerdado}</th>
 					<td></td>
+					<td>
+						#{desativarReativar id:design.id, 
+											onReativar:'reativarDesignacao',
+											onDesativar :'desativarDesignacao',
+											isAtivo:design.isAtivo() }
+						#{/desativarReativar}
+					</td>
 				</tr>
 				#{/list}
 			</tbody>

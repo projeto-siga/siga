@@ -43,6 +43,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -750,7 +751,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 		
-		for (SrTipoAtributo t : SrTipoAtributo.listar()){
+		for (SrTipoAtributo t : SrTipoAtributo.listar(Boolean.FALSE)) {
 			confFiltro.tipoAtributo = t;
 			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 			if (conf != null){
@@ -759,7 +760,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					map.put(t.idTipoAtributo, conf.atributoObrigatorio);
 			}
 		}
-		
 		return listaFinal;
 	}
 
@@ -893,125 +893,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				set.add(m);
 		}
 		return set;
-	}
-
-	public Long getTempoCadastramento() {
-		Long tempoCadastramento = new Long(0);
-		Date dtCalculo = new Date();
-		
-		// Se é o cadastro da Solicitação, tem tempo de cadastramento igual a zero
-		if (getInicioPrimeiraEdicao() == null)
-			return tempoCadastramento;
-		else {
-			Duration tempoPendencia = new Duration(0L, 0L);
-			Map<Long, SrMovimentacao> mapPendencias = new LinkedHashMap<Long, SrMovimentacao>();
-			
-			// percorre todas as movimentações dessa solicitação
-			for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
-				
-				// se for movimentação de início de pré atendimento ou de atendimento, finaliza o laço e atualiza a data para cálculo
-				if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO 
-						|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO) {
-					dtCalculo = mov.dtIniMov;
-					break;
-				}
-				
-				// se for pendência
-				else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
-					// verifica se é pendência já resolvida, e calcula o tempo
-					if (mov.movFinalizadora != null)
-						tempoPendencia = tempoPendencia.plus(new Duration(mov.dtIniMov.getTime(), mov.movFinalizadora.dtIniMov.getTime()).getMillis());
-					
-					// caso não seja, adiciona ao map de pendêncais
-					else
-						mapPendencias.put(mov.idMovimentacao, mov);
-				}
-			}
-			
-			if (!mapPendencias.isEmpty()) {
-				// recupera a data da primeira das pendências que ainda estão em aberto
-				for (SrMovimentacao mov : mapPendencias.values()) {
-					dtCalculo = mov.dtIniMov;
-					break;
-				}
-			}
-			
-			tempoCadastramento = new Duration(getInicioPrimeiraEdicao().getTime(), dtCalculo.getTime()).getMillis() - tempoPendencia.getMillis();
-			
-			return tempoCadastramento;
-		}
-	}
-	
-	public Long getTempoAtendimento() {
-		Long tempoAtendimento = new Long(0);
-		Date dtInicioAtendimento = null;
-		Date dtCalculo = new Date();
-		boolean encontrouInicioAtendimento = false;
-		
-		Duration tempoPendencia = new Duration(0L, 0L);
-		Map<Long, SrMovimentacao> mapPendencias = new LinkedHashMap<Long, SrMovimentacao>();
-		
-		// percorre todas as movimentações dessa solicitação
-		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
-			
-			// Se não encontrou o início de atendimento, não começa os cálculos 
-			if (!encontrouInicioAtendimento) {
-				if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO 
-						|| mov.tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
-					dtInicioAtendimento = mov.dtIniMov;
-					encontrouInicioAtendimento = true;
-				}
-				
-				continue;
-			}
-			
-			// se for pendência
-			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
-				// verifica se é pendência já resolvida, e calcula o tempo
-				if (mov.movFinalizadora != null)
-					tempoPendencia = tempoPendencia.plus(new Duration(mov.dtIniMov.getTime(), mov.movFinalizadora.dtIniMov.getTime()).getMillis());
-				
-				// caso não seja, adiciona ao map de pendêncais
-				else
-					mapPendencias.put(mov.idMovimentacao, mov);
-			}
-			
-			// se iniciou pós-atendimento ou finalizou 
-			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO 
-					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO) {
-				dtCalculo = mov.dtIniMov;
-				tempoAtendimento = tempoAtendimento + new Duration(dtInicioAtendimento.getTime(), dtCalculo.getTime()).getMillis();
-			}
-			
-			// Se for reabertura
-			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA) {
-				dtInicioAtendimento = mov.dtIniMov;
-				dtCalculo = new Date();
-			}
-			
-			// se for início de pré atendimento ou atendimento
-			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO
-					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
-				dtCalculo = mov.dtIniMov;
-				tempoAtendimento = tempoAtendimento + new Duration(dtInicioAtendimento.getTime(), dtCalculo.getTime()).getMillis();
-				dtInicioAtendimento = mov.dtIniMov;
-				dtCalculo = new Date();
-			}
-		}
-		
-		if (!mapPendencias.isEmpty()) {
-			// recupera a data da primeira das pendências que ainda estão em aberto, e calcula o tempo de pendência
-			for (SrMovimentacao mov : mapPendencias.values()) {
-				dtCalculo = mov.dtIniMov;
-				tempoPendencia = tempoPendencia.plus(new Duration(dtCalculo.getTime(), new Date().getTime()).getMillis());
-				break;
-			}
-		}
-		
-		// subtrai o tempo em impedimento do tempo total de atendimento
-		tempoAtendimento = tempoAtendimento - tempoPendencia.getMillis();
-		
-		return tempoAtendimento;
 	}
 
 	public boolean isJuntada() {
@@ -1993,24 +1874,43 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
-	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular)
-			throws Exception {
+	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular) throws Exception {
 		List<SrLista> listaFinal = new ArrayList<SrLista>();
-/*
- * 		Edson:DB1, acertar conforme o item 24
- * 
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
-				solicitante, local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {});
-		for (SrConfiguracao conf : confs) {
+
+		SrConfiguracao filtro = new SrConfiguracao();
+		filtro.setDpPessoa(solicitante);
+		filtro.setComplexo(local);
+		filtro.itemConfiguracaoFiltro = itemConfiguracao;
+		filtro.acaoFiltro = acao;
+		filtro.setCpTipoConfiguracao(JPA.em().find(
+				CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+		
+		filtro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE;
+		
+		for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] { SrConfiguracaoBL.ATENDENTE })) {
 			for (SrLista lista : conf.getListaConfiguracaoSet()) {
 				SrLista listaAtual = lista.getListaAtual();
 				if (!listaFinal.contains(listaAtual))
 					listaFinal.add(listaAtual);
 			}
 		}
-*/
+		
+/*
+ * 		Edson:DB1, acertar conforme o item 24
+ */
+		
+//		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
+//				solicitante, local, itemConfiguracao, acao,
+//				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+//				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {});
+//		for (SrConfiguracao conf : confs) {
+//			for (SrLista lista : conf.getListaConfiguracaoSet()) {
+//				SrLista listaAtual = lista.getListaAtual();
+//				if (!listaFinal.contains(listaAtual))
+//					listaFinal.add(listaAtual);
+//			}
+//		}
 		return new ArrayList<SrLista>(listaFinal);
 	}
 
@@ -2639,11 +2539,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return this.dtIniEdicao;
 	}
 	
-	public Long getPrazoTotalAtendimento() throws Exception{
+	public String getPrazoTotalAtendimento() throws Exception{
 		if (solicitante == null)
 			return null;
 		
-		return getPrazoPreAtendimento() + getPrazoAtendimento();
+		Long prazo = getPrazoPreAtendimento() + getPrazoAtendimento();
+		String str = null;
+		Long umDia = 86400000L;
+		
+		if (prazo > umDia)
+			str = String.format("%d dia(s)", TimeUnit.MILLISECONDS.toDays(prazo));
+		else
+			str = String.format("%d hora(s)", TimeUnit.MILLISECONDS.toHours(prazo));
+		
+		return str;
 	}
 	
 	private Long getPrazoPreAtendimento() throws Exception {
@@ -2678,5 +2587,142 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return conf.slaPreAtendimentoQuantidade * conf.unidadeMedidaAtendimento.toMilis();
 		else
 			return 0L;
+	}
+	
+	public boolean exibirCronometro() {
+		return isFechado() || isPendente() || isEmPosAtendimento();
+	}
+	
+	public String getDescricaoCronometro() {
+		if (jaFoiDesignada())
+			return "Atendimento";
+		else
+			return "Cadastramento";
+	}
+	
+	public Long getTempoCronometro() {
+		if (jaFoiDesignada())
+			return getTempoAtendimento();
+		else
+			return getTempoCadastramento();
+	}
+	
+	public Long getTempoCadastramento() {
+		Long tempoCadastramento = 0L;
+		Date dtCalculo = new Date();
+		
+		// Se é o cadastro da Solicitação, tem tempo de cadastramento igual a zero
+		if (getInicioPrimeiraEdicao() == null)
+			return new Date().getTime();
+		else {
+			Duration tempoPendencia = new Duration(0L, 0L);
+			Map<Long, SrMovimentacao> mapPendencias = new LinkedHashMap<Long, SrMovimentacao>();
+			
+			// percorre todas as movimentações dessa solicitação
+			for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
+				
+				// se for movimentação de início de pré atendimento ou de atendimento, finaliza o laço e atualiza a data para cálculo
+				if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO 
+						|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO) {
+					dtCalculo = mov.dtIniMov;
+					break;
+				}
+				
+				// se for pendência
+				else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
+					// verifica se é pendência já resolvida, e calcula o tempo
+					if (mov.movFinalizadora != null)
+						tempoPendencia = tempoPendencia.plus(new Duration(mov.dtIniMov.getTime(), mov.movFinalizadora.dtIniMov.getTime()).getMillis());
+					
+					// caso não seja, adiciona ao map de pendêncais
+					else
+						mapPendencias.put(mov.idMovimentacao, mov);
+				}
+			}
+			
+			if (!mapPendencias.isEmpty()) {
+				// recupera a data da primeira das pendências que ainda estão em aberto
+				for (SrMovimentacao mov : mapPendencias.values()) {
+					dtCalculo = mov.dtIniMov;
+					break;
+				}
+			}
+			
+			tempoCadastramento = new Duration(getInicioPrimeiraEdicao().getTime(), dtCalculo.getTime()).getMillis() - tempoPendencia.getMillis();
+			
+			return tempoCadastramento;
+		}
+	}
+	
+	public Long getTempoAtendimento() {
+		Date dtInicioAtendimento = null;
+		Date dtCalculo = new Date();
+		Long tempoAtendimento = 0L;
+		boolean encontrouInicioAtendimento = false;
+		
+		Duration tempoPendencia = new Duration(0L, 0L);
+		Map<Long, SrMovimentacao> mapPendencias = new LinkedHashMap<Long, SrMovimentacao>();
+		
+		// percorre todas as movimentações dessa solicitação
+		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
+			
+			// Se não encontrou o início de atendimento, não começa os cálculos 
+			if (!encontrouInicioAtendimento) {
+				if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO 
+						|| mov.tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
+					dtInicioAtendimento = mov.dtIniMov;
+					encontrouInicioAtendimento = true;
+				}
+				
+				continue;
+			}
+			
+			// se for pendência
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
+				// verifica se é pendência já resolvida, e calcula o tempo
+				if (mov.movFinalizadora != null)
+					tempoPendencia = tempoPendencia.plus(new Duration(mov.dtIniMov.getTime(), mov.movFinalizadora.dtIniMov.getTime()).getMillis());
+				
+				// caso não seja, adiciona ao map de pendêncais
+				else
+					mapPendencias.put(mov.idMovimentacao, mov);
+			}
+			
+			// se iniciou pós-atendimento ou finalizou 
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO 
+					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO) {
+				dtCalculo = mov.dtIniMov;
+				tempoAtendimento = tempoAtendimento + new Duration(dtInicioAtendimento.getTime(), dtCalculo.getTime()).getMillis();
+			}
+			
+			// Se for reabertura
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA) {
+				dtInicioAtendimento = mov.dtIniMov;
+				dtCalculo = new Date();
+			}
+			
+			// se for início de pré atendimento ou atendimento
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO
+					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
+				dtCalculo = mov.dtIniMov;
+				tempoAtendimento = tempoAtendimento + new Duration(dtInicioAtendimento.getTime(), dtCalculo.getTime()).getMillis();
+				dtInicioAtendimento = mov.dtIniMov;
+				dtCalculo = new Date();
+			}
+		}
+		
+		if (!mapPendencias.isEmpty()) {
+			// recupera a data da primeira das pendências que ainda estão em aberto, e calcula o tempo de pendência
+			for (SrMovimentacao mov : mapPendencias.values()) {
+				dtCalculo = mov.dtIniMov;
+				tempoPendencia = tempoPendencia.plus(new Duration(dtCalculo.getTime(), new Date().getTime()).getMillis());
+				break;
+			}
+		}
+		
+		// subtrai o tempo em impedimento do tempo total de atendimento
+		tempoAtendimento = tempoAtendimento - tempoPendencia.getMillis();
+		
+		return tempoAtendimento;
 	}
 }

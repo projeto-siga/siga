@@ -1,4 +1,5 @@
 #{extends 'main.html' /} #{set title:'Ações' /}
+
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
@@ -66,16 +67,21 @@
 			},
 			"columnDefs": [{
 				"targets": [3],
-				"visible": false,
-				"searchable": false
-			}],
-			"iDisplayLength": 100,
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (aData[3] == 'false')
-					$('td', nRow).addClass('item-desativado');
-			}
+				"searchable": false,
+				"sortable" : false
+			}]
 		});
 	});
+
+	function desativarAcao(event, idAcao) {
+		event.stopPropagation();
+		window.location = '@{Application.desativarAcao()}?' + queryDesativarReativar(idAcao, QueryString.mostrarDesativados);
+	}
+
+	function reativarAcao(event, idAcao) {
+		event.stopPropagation();
+		window.location = '@{Application.reativarAcao()}?' + queryDesativarReativar(idAcao, QueryString.mostrarDesativados);
+	}
 </script>
 
 <div class="gt-bd clearfix">
@@ -92,7 +98,7 @@
 						<th>Código</th>
 						<th>Título</th>
 						<th>Descrição</th>
-						<th>Item Ativado?</th>
+						<th>Ações</th>
 					</tr>
 				</thead>
 
@@ -105,15 +111,21 @@
 						<td><span style="margin-left: ${(acao.nivel-1)*2}em; #{if acao.nivel == 1}font-weight: bold;#{/if}">#{selecionado sigla:acao.atual?.tituloAcao, 
 						descricao:acao.atual?.descricao /}</span></td>
 						<td>${acao.descrAcao}</td>
-						<td>${acao.isAtivo()}</td>
+						<td>
+							#{desativarReativar id:acao.idAcao, 
+												onReativar:'reativarAcao',
+												onDesativar :'desativarAcao',
+												isAtivo:acao.isAtivo() }
+							#{/desativarReativar}
+						</td>
 					</tr>
-					</a> #{/list}
+					#{/list}
 				</tbody>
 			</table>
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarAcao}" class="gt-btn-medium gt-btn-left">Incluir</a>
+			<a href="@{Application.editarAcao}" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 
 	</div>

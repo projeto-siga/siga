@@ -22,10 +22,12 @@ import models.SrItemConfiguracao.SrItemConfiguracaoVO;
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
+import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 import com.google.gson.Gson;
@@ -173,7 +175,12 @@ public class SrConfiguracao extends CpConfiguracao {
 	public boolean utilizarItemHerdado;
 
 	public SrConfiguracao() {
+	}
 
+	public SrConfiguracao(DpPessoa solicitante, CpComplexo local, SrItemConfiguracao item) {
+		this.setDpPessoa(solicitante);
+		this.setComplexo(local);
+		this.itemConfiguracaoFiltro = item;
 	}
 
 	public Selecionavel getSolicitante() {
@@ -198,6 +205,13 @@ public class SrConfiguracao extends CpConfiguracao {
 	public void salvarComoDesignacao() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		salvar();
+	}
+
+	public void salvarComoInclusaoAutomaticaLista(SrLista srLista) throws Exception {
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+		adicionarListaConfiguracoes(srLista);
 		salvar();
 	}
 
@@ -537,5 +551,31 @@ public class SrConfiguracao extends CpConfiguracao {
 	public CpConfiguracao getConfiguracaoAtual() {
 		return super.getConfiguracaoAtual();
 	}
+	
+	public static SrConfiguracao buscarConfiguracaoInsercaoAutomaticaLista(SrLista lista) throws Exception {
+		SrLista listaAtual = lista.getListaAtual();
+		
+		for (CpConfiguracao cpConfiguracao : SrConfiguracaoBL.get().getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA)) {
+			SrConfiguracao srConfiguracao = (SrConfiguracao) cpConfiguracao;
+			// DB: Nao implementei utilizando "contains" na lista por que implementacao do super.equals esta comparando instancias e nao iria funcionar nesse caso
+			for (SrLista listaEncontrada : srConfiguracao.getListaConfiguracaoSet()) {
+				// DB1: Conversamos com o Edson e por enquanto sera apenas uma configuracao para cada lista.
+				if (srConfiguracao.getListaConfiguracaoSet() != null && listaEncontrada.getId().equals(listaAtual.getId())) {
+					return srConfiguracao;
+				}
+			}
+		}
+		return new SrConfiguracao();
+	}
+
+	public void adicionarListaConfiguracoes(SrLista srLista) {
+		if (this.listaConfiguracaoSet == null) {
+			this.listaConfiguracaoSet = new ArrayList<SrLista>();
+		}
+		if (!this.listaConfiguracaoSet.contains(srLista)) {
+			this.listaConfiguracaoSet.add(srLista);
+		}
+	}
+	
 	
 }

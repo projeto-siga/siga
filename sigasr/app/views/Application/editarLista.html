@@ -46,7 +46,13 @@
 				"targets": [0, 2, 4, 5, 7, 8, 10, 12, 13, 15, 16, 17, 18],
 				"visible": false,
 				"searchable": false
-			}]
+			},
+			{
+				"targets": [20],
+				"sortable" : false,
+				"searchable": false
+			}
+			]
 		});
 		
 		$('#prioridades_table tbody').on('click', 'tr', function () {
@@ -231,7 +237,7 @@
 				'<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
 					'<a class="once desassociarPermissao" title="Remover permissão">' + 
 						'<input class="idPermissao" type="hidden" value="' + response + '"/>' + 
-						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 					'</a>' + 
 				'</td>';
 						         
@@ -411,8 +417,9 @@
 	<div class="gt-content">
 		<h2>Cadastro de Lista</h2>
 		<div class="gt-form gt-content-box">
-			<form id="formLista"> #{if
-				lista?.idLista} <input type="hidden" id="idLista" name="lista.idLista" value="${lista.idLista}">
+			<form id="formLista"> 
+				#{if lista?.idLista} 
+					<input type="hidden" id="idLista" name="lista.idLista" value="${lista.idLista}">
 				#{/if}
 				<div class="gt-form-row gt-width-66">
 					<label>Nome</label> <input type="text"
@@ -505,7 +512,7 @@
 									<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 										<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissão">
 											<input class="idPermissao" type="hidden" value="${perm.id}"/>
-											<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
+											<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> 
 										</a>
 									</td>
 								</tr>
@@ -514,6 +521,27 @@
 					</table>
 				</div>
 				
+				<div class="gt-content" style="margin-top:20px">
+					<h3>Inclusão automática</h3>
+					<div class="gt-form gt-content-box">
+					
+						<input type="hidden" name="lista.configuracaoInsercaoAutomatica.idConfiguracao" value="${lista.configuracaoInsercaoAutomatica.idConfiguracao}"/>
+						
+						<div class="gt-form-row gt-width-66">
+							<label>Item</label> 
+							#{selecao tipo:'item',
+								nome:'lista.configuracaoInsercaoAutomatica.itemConfiguracaoUnitario',
+								value:lista.configuracaoInsercaoAutomatica.itemConfiguracaoUnitario?.atual 
+							/}
+						</div>
+					
+						<div class="gt-form-row gt-width-66">
+							<label>Ação</label> 
+							#{selecao tipo:'acao', nome:'lista.configuracaoInsercaoAutomatica.acaoUnitaria', value:lista.configuracaoInsercaoAutomatica.acaoUnitaria?.atual 
+							/}
+						</div>
+					</div>
+				</div>
 				
 				<div class="gt-form-row">
 					<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
@@ -526,6 +554,9 @@
 		</div>
 	</div>
 </div>
+
+
+
 
 #{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}
 	<div class="gt-form gt-content-box" id="modal-permissao">

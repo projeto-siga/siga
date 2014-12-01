@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -60,7 +61,7 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrTipoAtributo tipoAtributoInicial;
 
-	@OneToMany(targetEntity = SrTipoAtributo.class, mappedBy = "tipoAtributoInicial")
+	@OneToMany(targetEntity = SrTipoAtributo.class, mappedBy = "tipoAtributoInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrTipoAtributo> meuTipoAtributoHistoricoSet;
 	

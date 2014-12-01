@@ -29,6 +29,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
@@ -86,7 +87,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.EAGER)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
 
@@ -101,6 +102,9 @@ public class SrLista extends HistoricoSuporte {
 	@Transient
 	public List<SrConfiguracao> permissoes;
 
+	@Transient
+	public SrConfiguracao configuracaoInsercaoAutomatica;
+	
 	public static List<SrLista> listar(boolean mostrarDesativado) {
 		StringBuffer sb = new StringBuffer();
 
@@ -290,6 +294,14 @@ public class SrLista extends HistoricoSuporte {
 				permissao.salvarComoPermissaoUsoLista();
 			}
 		}
+		if (deveAssociarComConfiguracaoAutomatica()) {
+			configuracaoInsercaoAutomatica.salvarComoInclusaoAutomaticaLista(this);
+		}
+	}
+
+	private boolean deveAssociarComConfiguracaoAutomatica() {
+		return configuracaoInsercaoAutomatica != null && 
+				Objeto.algumNaoNulo(configuracaoInsercaoAutomatica.getAcaoUnitaria(), configuracaoInsercaoAutomatica.getItemConfiguracaoUnitario());
 	}
 
 	/**

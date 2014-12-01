@@ -8,9 +8,15 @@ function postback(){
 }
 function ocultaGrupo(){
 	if ($("#informacaoVisualizacao").val() == 7
-			|| $("#informacaoEdicao").val == 7){
+			|| $("#informacaoEdicao").val() == 7){
 		$("#informacaoGrupo").show();
-	} else $("#informacaoGrupo").hide();
+	} else {
+		$("#informacaoGrupo").hide();
+		$("#informacaogrupo").val("");
+		$("#informacaogrupo_sigla").val("");
+		$("#informacaogrupo_descricao").val("");
+		$("#informacaogrupoSpan").text("");
+	}
 }
 $(document).ready(function() {
 	ocultaGrupo();

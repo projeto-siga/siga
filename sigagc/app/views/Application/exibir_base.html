@@ -72,6 +72,11 @@ Informação'/}
 			<p>
 				<b>Órgão Usuário:</b> ${informacao?.ou?.acronimoOrgaoUsu}
 			</p>
+			#{if informacao?.grupo}
+			<p>
+				<b>Grupo:</b> ${informacao.grupo.siglaGrupo} - ${informacao.grupo.dscGrupo}
+			</p>
+			#{/if}
 			<p>
 				<b>Visualização:</b> ${informacao?.visualizacao?.nome}
 			</p>

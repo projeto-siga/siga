@@ -124,10 +124,11 @@ public class Application extends SigaApplication {
 	}
 
 	public static void knowledge(Long id, String[] tags, String estilo,
-			String msgvazio, String urlvazio, String titulo, boolean popup,
-			String estiloBusca) throws Exception {
-		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, false,
-				popup, estiloBusca);
+			String msgvazio, String urlvazio, String titulo,
+			boolean testarAcesso, boolean popup, String estiloBusca)
+			throws Exception {
+		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca);
 	}
 
 	private static void renderKnowledge(Long id, String[] tags, String estilo,
@@ -789,10 +790,10 @@ public class Application extends SigaApplication {
 		classificacao = Util.findHashTag(conteudo, classificacao,
 				CONTROLE_HASH_TAG);
 		
-		if ((informacao.edicao.id == GcAcesso.ACESSO_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_GRUPO)
+		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
 				&& informacao.grupo == null)
 			throw new Exception(
-					"Para acesso do tipo 'Grupo', &eacute; necess&aacute;rio informar um grupo para restri&ccedil;&atilde;o.");
+					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restrição.");
 
 		if (informacao.id != 0)
 			GcBL.movimentar(informacao,

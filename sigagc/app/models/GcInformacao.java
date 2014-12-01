@@ -548,8 +548,8 @@ public class GcInformacao extends GenericModel {
 			return lotacao.equivale(lotaTitular);
 		case (int) GcAcesso.ACESSO_PESSOAL:
 			return autor.equivale(titular);
-		case (int) GcAcesso.ACESSO_GRUPO:
-			if (autor.equivale(titular))
+		case (int) GcAcesso.ACESSO_LOTACAO_E_GRUPO:
+			if (lotacao.equivale(lotaTitular))
 				return true;
 			try {
 				for (CpPerfil perfil : Cp

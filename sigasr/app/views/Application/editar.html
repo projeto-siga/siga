@@ -421,12 +421,18 @@
 			<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram
 				preenchidos ${error}</p>
 			#{/ifErrors}
-
-			<div class="gt-form-row gt-width-66">
-				<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
-					type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
-					value="${cadastrante.sigla}" />
-			</div>
+			<div class="gt-form-row box-wrapper">
+				<div class="gt-form-row gt-width-66">
+					<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
+						type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
+						value="${cadastrante.sigla}" />
+				</div>
+				<div class="gt-form-row gt-width-33">
+					#{cronometro descricao:solicitacao.getDescricaoCronometro(),
+					 tempoPercorrido:solicitacao.getTempoCronometro(),
+					 contarTempo: solicitacao.exibirCronometro() /}
+				</div>
+			</div>	 
 
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
@@ -535,9 +541,6 @@
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content"><h2>&nbsp;</h2></div>
 	</div>
-	#{cronometro descricao:solicitacao.getDescricaoCronometro(),
-				 tempoPercorrido:solicitacao.getTempoCronometro(),
-				 contarTempo: solicitacao.contarTempoCronometro() /}
 	*{<div class="gt-sidebar">
 		<div class="gt-sidebar-content" id="solicitacoesRelacionadas">
 			<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>

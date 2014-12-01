@@ -393,6 +393,12 @@ public class Application extends SigaApplication {
         sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
         exibir(idSolicitacaoAVincular, completo());
     }
+    
+    public static void desentranharSolicitacao(Long id, String justificativa) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.desentranhar(lotaTitular(), cadastrante(), justificativa);
+		exibir(id, completo());
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
@@ -929,10 +935,17 @@ public class Application extends SigaApplication {
 		render(associacao);
 	}
 
-	public static void gravarAssociacao(SrConfiguracao associacao) throws Exception {
+	public static Long gravarAssociacao(SrConfiguracao associacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		associacao.salvarComoAssociacaoTipoAtributo();
-		listarAssociacao(Boolean.FALSE);
+		return associacao.getId();		
+	}
+	
+	public static void desativarAssociacaoEdicao(Long idTipoAtributo, Long idAssociacao) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, idAssociacao);
+		associacao.finalizar();
+		editarTipoAtributo(idTipoAtributo);
 	}
 
 	public static void desativarAssociacao(Long id, boolean mostrarDesativados) throws Exception {
@@ -1082,6 +1095,7 @@ public class Application extends SigaApplication {
 				formatoAnterior = att.formatoCampo.name();
 			}
 		}
+		att.associacoes = SrConfiguracao.listarAssociacoesTipoAtributo(att, Boolean.FALSE);
 		render(att, formatoAnterior);
 	}
 

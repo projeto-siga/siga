@@ -275,6 +275,26 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAssociacoesTipoAtributo(SrTipoAtributo tpAtributo, Boolean mostrarDesativados) {
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);
+		queryBuilder.append(" and conf.tipoAtributo.hisIdIni = ");
+		queryBuilder.append(tpAtributo.getHisIdIni());
+		
+		if (!mostrarDesativados) {
+			queryBuilder.append(" and conf.hisDtFim is null ");
+		} else {
+			queryBuilder.append(" and conf.idConfiguracao IN (");
+			queryBuilder.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			queryBuilder.append(" SrConfiguracao GROUP BY hisIdIni)) ");
+		}
+		queryBuilder.append(" order by conf.orgaoUsuario");
+		
+		return JPA.em().createQuery(queryBuilder.toString()).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarAssociacoesTipoAtributo(Boolean mostrarDesativados) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");

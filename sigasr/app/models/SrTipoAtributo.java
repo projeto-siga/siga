@@ -16,12 +16,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import play.db.jpa.JPA;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
@@ -59,6 +63,9 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	@OneToMany(targetEntity = SrTipoAtributo.class, mappedBy = "tipoAtributoInicial")
 	@OrderBy("hisDtIni desc")
 	public List<SrTipoAtributo> meuTipoAtributoHistoricoSet;
+	
+	@Transient
+	public List<SrConfiguracao> associacoes;
 
 	@Override
 	public Long getId() {
@@ -108,6 +115,20 @@ public class SrTipoAtributo extends HistoricoSuporte {
 			preDefinidos.addAll(Arrays.asList(descrPreDefinido.split(";"))); 
 		}
 		return preDefinidos;
+	}
+
+	public List<SrConfiguracao> getAssociacoes(DpLotacao lotaTitular, DpPessoa pess) {
+		try {
+			SrConfiguracao confFiltro = new SrConfiguracao();
+			confFiltro.setLotacao(lotaTitular);
+			confFiltro.setDpPessoa(pess);
+			confFiltro.setCpTipoConfiguracao(JPA.em().find(
+					CpTipoConfiguracao.class,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO });
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

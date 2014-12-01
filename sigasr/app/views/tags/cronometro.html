@@ -14,8 +14,7 @@
 	})
 	
 	function moveRelogio(andamento) { 
-	   	$('#andamento').html(intervaloPercorrido(andamento));
-		$('#total').html(intervaloPercorrido(${_tempoPercorrido} + andamento));
+	   	$('#${_descricao}').html(intervaloPercorrido(andamento));
 		
 	   	#{if _contarTempo == true}
 	   		setTimeout(function() {

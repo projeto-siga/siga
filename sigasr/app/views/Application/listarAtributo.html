@@ -35,9 +35,9 @@
 			
 		$("#checkmostrarDesativado").click(function() {
 			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = '@{Application.listarTipoAtributoDesativados()}';
+				location.href = '@{Application.listarAtributoDesativados()}';
 			else
-				location.href = '@{Application.listarTipoAtributo()}';	
+				location.href = '@{Application.listarAtributo()}';	
 		});
 		
 		$('#tipo_atributo_table').DataTable({
@@ -72,14 +72,14 @@
 		});
 	});
 
-	function desativarTipoAtributo(event, id) {
+	function desativarAtributo(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.desativarTipoAtributo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+		window.location = '@{Application.desativarAtributo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
 	}
 
-	function reativarTipoAtributo(event, id) {
+	function reativarAtributo(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.reativarTipoAtributo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+		window.location = '@{Application.reativarAtributo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
 	}
 </script>
 
@@ -105,15 +105,15 @@
 				<tbody>
 					#{list items:atts, as:'att'}
 					<tr
-						onclick="javascript:window.location='@{Application.editarTipoAtributo(att.idTipoAtributo)}'"
+						onclick="javascript:window.location='@{Application.editarAtributo(att.idAtributo)}'"
 						style="cursor: pointer;">
-						<td >${att.nomeTipoAtributo}</td>
-						<td>${att.descrTipoAtributo}</td>
-						<td>${att.formatoCampo?.descrFormatoCampo}</td>
+						<td >${att.nomeAtributo}</td>
+						<td>${att.descrAtributo}</td>
+						<td>${att.tipoAtributo?.descrFormatoCampo}</td>
 						<td>
-							#{desativarReativar id:att.idTipoAtributo,
-												onReativar:'reativarTipoAtributo',
-												onDesativar :'desativarTipoAtributo',
+							#{desativarReativar id:att.idAtributo,
+												onReativar:'reativarAtributo',
+												onDesativar :'desativarAtributo',
 												isAtivo:att.isAtivo() }
 							#{/desativarReativar}
 						</td>
@@ -124,7 +124,7 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarTipoAtributo}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a href="@{Application.editarAtributo}" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 
 	</div>

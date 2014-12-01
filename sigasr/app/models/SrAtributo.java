@@ -43,39 +43,40 @@ public class SrAtributo extends HistoricoSuporte {
 	@SequenceGenerator(sequenceName = "SIGASR.SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
 	@GeneratedValue(generator = "srTipoAtributoSeq")
 	@Column(name = "ID_TIPO_ATRIBUTO")
-	public Long idTipoAtributo;
+	public Long idAtributo;
 
 	@Column(name = "NOME")
-	public String nomeTipoAtributo;
+	public String nomeAtributo;
 
 	@Column(name = "DESCRICAO")
-	public String descrTipoAtributo;
-	
+	public String descrAtributo;
+
+	@Column(name = "FORMATOCAMPO")
 	@Enumerated
-	public SrTipoAtributo formatoCampo;
+	public SrTipoAtributo tipoAtributo;
 	
 	@Column(name = "DESCR_PRE_DEFINIDO")
 	public String descrPreDefinido;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrAtributo tipoAtributoInicial;
+	public SrAtributo atributoInicial;
 
-	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "tipoAtributoInicial", fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "atributoInicial", fetch = FetchType.EAGER)
 	@OrderBy("hisDtIni desc")
-	public List<SrAtributo> meuTipoAtributoHistoricoSet;
+	public List<SrAtributo> meuAtributoHistoricoSet;
 	
 	@Transient
 	public List<SrConfiguracao> associacoes;
 
 	@Override
 	public Long getId() {
-		return idTipoAtributo;
+		return idAtributo;
 	}
 
 	@Override
 	public void setId(Long id) {
-		idTipoAtributo = id;
+		idAtributo = id;
 	}
 
 	public static List<SrAtributo> listar(boolean mostrarDesativados) {
@@ -84,22 +85,22 @@ public class SrAtributo extends HistoricoSuporte {
 		if (!mostrarDesativados) {
 			queryBuilder.append(" hisDtFim is null");
 		} else {
-			queryBuilder.append("SELECT ta FROM SrTipoAtributo ta ");
-			queryBuilder.append("WHERE ta.idTipoAtributo in (SELECT MAX(idTipoAtributo) FROM SrTipoAtributo GROUP BY hisIdIni) ");
+			queryBuilder.append("SELECT ta FROM SrAtributo ta ");
+			queryBuilder.append("WHERE ta.idAtributo in (SELECT MAX(idAtributo) FROM SrAtributo GROUP BY hisIdIni) ");
 		}
 		return SrAtributo.find(queryBuilder.toString()).fetch();
 	}
 
-	public List<SrAtributo> getHistoricoTipoAtributo() {
-		if (tipoAtributoInicial != null)
-			return tipoAtributoInicial.meuTipoAtributoHistoricoSet;
+	public List<SrAtributo> getHistoricoAtributo() {
+		if (atributoInicial != null)
+			return atributoInicial.meuAtributoHistoricoSet;
 		return null;
 	}
 
 	public SrAtributo getAtual() {
 		if (getHisDtFim() == null)
 			return this;
-		List<SrAtributo> sols = getHistoricoTipoAtributo();
+		List<SrAtributo> sols = getHistoricoAtributo();
 		if (sols == null)
 			return null;
 		return sols.get(0);
@@ -112,7 +113,7 @@ public class SrAtributo extends HistoricoSuporte {
 	
 	public Set<String> getPreDefinidoSet() {
 		Set<String> preDefinidos = new HashSet<String>();
-		if (formatoCampo == SrTipoAtributo.VL_PRE_DEFINIDO){
+		if (tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO){
 			preDefinidos.addAll(Arrays.asList(descrPreDefinido.split(";"))); 
 		}
 		return preDefinidos;

@@ -14,7 +14,7 @@ import play.data.binding.TypeBinder;
 import play.db.jpa.JPA;
 
 @Global
-public class SrTipoAtributoBinder implements TypeBinder<SrAtributo> {
+public class SrAtributoBinder implements TypeBinder<SrAtributo> {
 
 	@Override
 	public Object bind(String name, Annotation[] anns, String value,

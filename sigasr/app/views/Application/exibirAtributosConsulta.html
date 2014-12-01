@@ -7,68 +7,68 @@
 			#{list items:filtro.tiposAtributosConsulta, as:'tipoAtributo'}
 				<tr>
 					<td>
-						#{select name:'name_['+tipoAtributo.idTipoAtributo+']', value:tipoAtributo.idTipoAtributo, onchange : 'alterarCampoParaTipoAtributo($(this))' }
+						#{select name:'name_['+tipoAtributo.idAtributo+']', value:tipoAtributo.idAtributo, onchange : 'alterarCampoParaTipoAtributo($(this))' }
 							#{list items:filtro.itensDisponiveis(tiposAtributosDisponiveisAdicao, tipoAtributo), as: 'tipoAtributoDisponivel' }
-								#{option tipoAtributoDisponivel.idTipoAtributo}
-									${tipoAtributoDisponivel.nomeTipoAtributo}
+								#{option tipoAtributoDisponivel.idAtributo}
+									${tipoAtributoDisponivel.nomeAtributo}
 								#{/option}
 							#{/list}
 						#{/select}
 					</td>
 					
 					<td class="valoresAtribudos">
-						#{if tipoAtributo.formatoCampo != null}
-							#{if tipoAtributo.formatoCampo.name() == "TEXTO"}
-								<input type="text" name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" class="${tipoAtributo.idTipoAtributo}"/>
-								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+						#{if tipoAtributo.tipoAtributo != null}
+							#{if tipoAtributo.tipoAtributo.name() == "TEXTO"}
+								<input type="text" name="filtro.atributoMap[${tipoAtributo.idAtributo}]" value="${filtro.atributoMap[tipoAtributo.idAtributo]}" class="${tipoAtributo.idAtributo}"/>
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idAtributo+']' /}</span>
 							#{/if}
-							#{if tipoAtributo.formatoCampo.name() == "DATA"}
-								<input type="text" name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" id="calendarioAtributo${tipoAtributo.idTipoAtributo}" class="${tipoAtributo.idTipoAtributo}"/>
-								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+							#{if tipoAtributo.tipoAtributo.name() == "DATA"}
+								<input type="text" name="filtro.atributoMap[${tipoAtributo.idAtributo}]" value="${filtro.atributoMap[tipoAtributo.idAtributo]}" id="calendarioAtributo${tipoAtributo.idAtributo}" class="${tipoAtributo.idAtributo}"/>
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idAtributo+']' /}</span>
 								<script>
 									$(function() {
-										$( "#calendarioAtributo${tipoAtributo.idTipoAtributo}" ).datepicker({
+										$( "#calendarioAtributo${tipoAtributo.idAtributo}" ).datepicker({
 									        showOn: "button",
 									        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
 									        buttonImageOnly: true,
 									        dateFormat: 'dd/mm/yy'
 									    });
-										$("#calendarioAtributo${tipoAtributo.idTipoAtributo}").mask("99/99/9999");
+										$("#calendarioAtributo${tipoAtributo.idAtributo}").mask("99/99/9999");
 									});
 								</script>
 							#{/if}
-							#{if tipoAtributo.formatoCampo.name() == "NUM_INTEIRO"}
-								<input type="text" class="${tipoAtributo.idTipoAtributo}"
+							#{if tipoAtributo.tipoAtributo.name() == "NUM_INTEIRO"}
+								<input type="text" class="${tipoAtributo.idAtributo}"
 									onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-									name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" />
-								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+									name="filtro.atributoMap[${tipoAtributo.idAtributo}]" value="${filtro.atributoMap[tipoAtributo.idAtributo]}" />
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idAtributo+']' /}</span>
 							#{/if}
-							#{if tipoAtributo.formatoCampo.name() == "NUM_DECIMAL"}
-								<input type="text" name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" 
-									id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${tipoAtributo.idTipoAtributo}"/>
-								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
+							#{if tipoAtributo.tipoAtributo.name() == "NUM_DECIMAL"}
+								<input type="text" name="filtro.atributoMap[${tipoAtributo.idAtributo}]" value="${filtro.atributoMap[tipoAtributo.idAtributo]}" 
+									id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${tipoAtributo.idAtributo}"/>
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idAtributo+']' /}</span>
 							#{/if}
-							#{if tipoAtributo.formatoCampo.name() == "HORA"}
-								<input type="text" name="filtro.atributoMap[${tipoAtributo.idTipoAtributo}]" value="${filtro.atributoMap[tipoAtributo.idTipoAtributo]}" id="horarioAtributo${tipoAtributo.idTipoAtributo}" class="${tipoAtributo.idTipoAtributo}" />
-								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']' /}</span>
-								<span style="color: red; display: none;" id="erroHoraAtributo${tipoAtributo.idTipoAtributo}">Horário inválido</span>
+							#{if tipoAtributo.tipoAtributo.name() == "HORA"}
+								<input type="text" name="filtro.atributoMap[${tipoAtributo.idAtributo}]" value="${filtro.atributoMap[tipoAtributo.idAtributo]}" id="horarioAtributo${tipoAtributo.idAtributo}" class="${tipoAtributo.idAtributo}" />
+								<span style="color: red">#{error 'filtro.atributoMap['+tipoAtributo.idAtributo+']' /}</span>
+								<span style="color: red; display: none;" id="erroHoraAtributo${tipoAtributo.idAtributo}">Horário inválido</span>
 								<script>
 									$(function() {
-										$("#horarioAtributo${tipoAtributo.idTipoAtributo}").mask("99:99");
-										$("#horarioAtributo${tipoAtributo.idTipoAtributo}").blur(function() {
+										$("#horarioAtributo${tipoAtributo.idAtributo}").mask("99:99");
+										$("#horarioAtributo${tipoAtributo.idAtributo}").blur(function() {
 											var hora = this.value;
 											var array = hora.split(':');
 											if (array[0] > 23 || array[1] > 59) {
-												$('#erroHoraAtributo${tipoAtributo.idTipoAtributo}').show(); 
+												$('#erroHoraAtributo${tipoAtributo.idAtributo}').show(); 
 												return;
 											}
-											$('#erroHoraAtributo${tipoAtributo.idTipoAtributo}').hide();	
+											$('#erroHoraAtributo${tipoAtributo.idAtributo}').hide();	
 										});
 									});
 								</script>
 							#{/if}
-							#{if tipoAtributo.formatoCampo.name() == "VL_PRE_DEFINIDO"}
-								#{select name:'filtro.atributoMap['+tipoAtributo.idTipoAtributo+']', value:filtro.atributoMap[tipoAtributo.idTipoAtributo], class:tipoAtributo.idTipoAtributo+' '}
+							#{if tipoAtributo.tipoAtributo.name() == "VL_PRE_DEFINIDO"}
+								#{select name:'filtro.atributoMap['+tipoAtributo.idAtributo+']', value:filtro.atributoMap[tipoAtributo.idAtributo], class:tipoAtributo.idAtributo+' '}
 									#{list items:tipoAtributo.preDefinidoSet, as:'valorAtributo' }
 										#{option valorAtributo}
 											${valorAtributo}
@@ -90,8 +90,8 @@
 						#{select name:'adicionar_novo_atributo', onchange : 'carregarCampoParaTipoAtributo($(this))' }
 							#{option ""}#{/option}
 							#{list items:tiposAtributosDisponiveisAdicao, as: 'tipoAtributoDisponivel' }
-								#{option tipoAtributoDisponivel.idTipoAtributo}
-									${tipoAtributoDisponivel.nomeTipoAtributo}
+								#{option tipoAtributoDisponivel.idAtributo}
+									${tipoAtributoDisponivel.nomeAtributo}
 								#{/option}
 							#{/list}
 						#{/select}

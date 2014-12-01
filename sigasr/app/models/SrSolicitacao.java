@@ -418,7 +418,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		String s = "";
 		for (SrAtributoSolicitacao att : getAtributoSet()) {
 			if (att.valorAtributo != null)
-				s += att.tipoAtributo.nomeTipoAtributo + ": "
+				s += att.tipoAtributo.nomeAtributo + ": "
 						+ att.valorAtributo + ". ";
 		}
 		return s;
@@ -760,7 +760,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (conf != null) {
 				listaFinal.add(t);
 				if (map != null)
-					map.put(t.idTipoAtributo, conf.atributoObrigatorio);
+					map.put(t.idAtributo, conf.atributoObrigatorio);
 			}
 		}
 
@@ -860,7 +860,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 																		// insercao
 		if (meuAtributoSet != null)
 			for (SrAtributoSolicitacao att : meuAtributoSet) {
-				map.put(att.tipoAtributo.idTipoAtributo, att.valorAtributo);
+				map.put(att.tipoAtributo.idAtributo, att.valorAtributo);
 			}
 		return map;
 	}

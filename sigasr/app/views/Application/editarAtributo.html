@@ -202,8 +202,8 @@
 		if (row[colunas.idAssociacao] != '')
         	params += '&associacao.idConfiguracao=' + row[colunas.idAssociacao];
 
-		if ($("#idTipoAtributo").val() != undefined && $("#idTipoAtributo").val() != '')
-			params += '&associacao.tipoAtributo.idTipoAtributo=' + $("#idTipoAtributo").val();
+		if ($("#idAtributo").val() != undefined && $("#idAtributo").val() != '')
+			params += '&associacao.tipoAtributo.idAtributo=' + $("#idAtributo").val();
 
 		return params;
 	};
@@ -285,9 +285,9 @@
 		
 		var me = $(this),
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : me.find('.idAssociacao').val();
-			idTipoAtributo = $("#idTipoAtributo").val();
+			idAtributo = $("#idAtributo").val();
 
-		location.href='@{Application.desativarAssociacaoEdicao()}?' + jQuery.param({idTipoAtributo : idTipoAtributo, idAssociacao : idAssociacao});
+		location.href='@{Application.desativarAssociacaoEdicao()}?' + jQuery.param({idAtributo : idAtributo, idAssociacao : idAssociacao});
 	}
 
 </script>
@@ -297,28 +297,28 @@
 		<h2>Cadastro de Tipo de Atributo</h2>
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarTipoAtributo(), onsubmit: 'javascript: return block()'} #{if att?.idTipoAtributo} <input
-				type="hidden" name="att.idTipoAtributo"
-				id="idTipoAtributo"
-				value="${att.idTipoAtributo}"> #{/if}
+			#{form @Application.gravarAtributo(), onsubmit: 'javascript: return block()'} #{if att?.idAtributo} <input
+				type="hidden" name="att.idAtributo"
+				id="idAtributo"
+				value="${att.idAtributo}"> #{/if}
 			#{ifErrors}
 			<p class="gt-error">Alguns campos obrigatórios não foram
 				preenchidos ${error}</p>
 			#{/ifErrors}	
 			<div class="gt-form-row gt-width-66">
 				<label>Nome</label> <input type="text"
-					name="att.nomeTipoAtributo"
-					value="${att?.nomeTipoAtributo}" size="60" />
+					name="att.nomeAtributo"
+					value="${att?.nomeAtributo}" size="60" />
 					<span style="color: red">#{error
-					'att.nomeTipoAtributo' /}</span>
+					'att.nomeAtributo' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label> <input type="text"
-					name="att.descrTipoAtributo"
-					value="${att?.descrTipoAtributo}" size="60" />
+					name="att.descrAtributo"
+					value="${att?.descrAtributo}" size="60" />
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Formato</label> #{select name:'att.formatoCampo', items:models.SrFormatoCampo.values(),
+				<label>Formato</label> #{select name:'att.tipoAtributo', items:models.SrTipoAtributo.values(),
 				labelProperty:'descrFormatoCampo', value:formatoAnterior, style:'width:393px;' /}
 			</div>
 			<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
@@ -388,7 +388,7 @@
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" />
-				<a href="@{Application.listarTipoAtributo}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				<a href="@{Application.listarAtributo}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
 			#{/form}
 		</div>
@@ -439,7 +439,7 @@
 
 <script type="text/javascript">
 function verificarFormatoCampo() {
-	if($("select[name='att.formatoCampo']").val() === 'VL_PRE_DEFINIDO') {
+	if($("select[name='att.tipoAtributo']").val() === 'VL_PRE_DEFINIDO') {
 		$('#vlPreDefinidos').show();
 		return;
 	}
@@ -448,12 +448,12 @@ function verificarFormatoCampo() {
 
 verificarFormatoCampo();
 
-$("select[name='att.formatoCampo']").change(function() {
+$("select[name='att.tipoAtributo']").change(function() {
 	verificarFormatoCampo(); 
 });
 
 if($('#erroDescrPreDefinido').html()) {
-	$("select[name='att.formatoCampo']").val('VL_PRE_DEFINIDO');
+	$("select[name='att.tipoAtributo']").val('VL_PRE_DEFINIDO');
 	$('#vlPreDefinidos').show();
 };
 </script>

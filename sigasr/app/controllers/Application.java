@@ -195,7 +195,7 @@ public class Application extends SigaApplication {
 		HashMap<Long, String> atributoMap = filtro.getAtributoMap();
 		
 		for (SrAtributo srTipoAtributo : SrAtributo.listar(Boolean.FALSE)) {
-			if (!atributoMap.containsKey(srTipoAtributo.idTipoAtributo)) {
+			if (!atributoMap.containsKey(srTipoAtributo.idAtributo)) {
 				listaAtributosAdicao.add(srTipoAtributo);
 			}
 		}
@@ -280,11 +280,11 @@ public class Application extends SigaApplication {
 		HashMap<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
 		for (SrAtributoSolicitacao att : solicitacao.getAtributoSet()) {
 			// Para evitar NullPointerExcetpion quando nao encontrar no Map
-			if(Boolean.TRUE.equals(obrigatorio.get(att.tipoAtributo.idTipoAtributo))) {
+			if(Boolean.TRUE.equals(obrigatorio.get(att.tipoAtributo.idAtributo))) {
 				if ((att.valorAtributo == null || att.valorAtributo.trim().equals("")))
 					validation.addError("solicitacao.atributoMap["
-							+ att.tipoAtributo.idTipoAtributo + "]",
-							att.tipoAtributo.nomeTipoAtributo + " n&atilde;o informado");
+							+ att.tipoAtributo.idAtributo + "]",
+							att.tipoAtributo.nomeAtributo + " n&atilde;o informado");
 			}
 		}
 
@@ -945,7 +945,7 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, idAssociacao);
 		associacao.finalizar();
-		editarTipoAtributo(idTipoAtributo);
+		editarAtributo(idTipoAtributo);
 	}
 
 	public static void desativarAssociacao(Long id, boolean mostrarDesativados) throws Exception {
@@ -1075,44 +1075,44 @@ public class Application extends SigaApplication {
 		render(itens, filtro, nome, sol);
 	}
 
-	public static void listarTipoAtributoDesativados() throws Exception {
-		listarTipoAtributo(Boolean.TRUE);
+	public static void listarAtributoDesativados() throws Exception {
+		listarAtributo(Boolean.TRUE);
 	}
 	
-	public static void listarTipoAtributo(boolean mostrarDesativados) throws Exception {
+	public static void listarAtributo(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrAtributo> atts = SrAtributo.listar(mostrarDesativados);
 		render(atts);
 	}
 
-	public static void editarTipoAtributo(Long id) throws Exception {
+	public static void editarAtributo(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		String formatoAnterior = null;
 		SrAtributo att = new SrAtributo();
 		if (id != null) {
 			att = SrAtributo.findById(id);
-			if(att.formatoCampo != null) {
-				formatoAnterior = att.formatoCampo.name();
+			if(att.tipoAtributo != null) {
+				formatoAnterior = att.tipoAtributo.name();
 			}
 		}
 		att.associacoes = SrConfiguracao.listarAssociacoesTipoAtributo(att, Boolean.FALSE);
 		render(att, formatoAnterior);
 	}
 
-	public static void gravarTipoAtributo(SrAtributo att) throws Exception {
+	public static void gravarAtributo(SrAtributo att) throws Exception {
 		assertAcesso("ADM:Administrar");
-		validarFormEditarTipoAtributo(att);
+		validarFormEditarAtributo(att);
 		att.salvar();
-		listarTipoAtributo(Boolean.FALSE);
+		listarAtributo(Boolean.FALSE);
 	}
 
-	private static void validarFormEditarTipoAtributo(SrAtributo att) {
-		if (att.nomeTipoAtributo.equals("")) {
+	private static void validarFormEditarAtributo(SrAtributo att) {
+		if (att.nomeAtributo.equals("")) {
 			validation.addError("att.nomeTipoAtributo",
 					"Nome de atributo n�o informado");
 		}
 
-		if (att.formatoCampo == SrTipoAtributo.VL_PRE_DEFINIDO 
+		if (att.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO 
 				&& att.descrPreDefinido.equals("")) {
 			validation.addError("att.descrPreDefinido",
 					"Valores Pré-definido n�o informados");
@@ -1123,22 +1123,22 @@ public class Application extends SigaApplication {
 		}
 
 		if (validation.hasErrors()) {
-			render("@editarTipoAtributo", att);
+			render("@editarAtributo", att);
 		}
 	}
 
-	public static void desativarTipoAtributo(Long id, boolean mostrarDesativados) throws Exception {
+	public static void desativarAtributo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAtributo item = SrAtributo.findById(id);
 		item.finalizar();
-		listarTipoAtributo(mostrarDesativados);
+		listarAtributo(mostrarDesativados);
 	}
 
-	public static void reativarTipoAtributo(Long id, boolean mostrarDesativados) throws Exception {
+	public static void reativarAtributo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAtributo item = SrAtributo.findById(id);
 		item.salvar();
-		listarTipoAtributo(mostrarDesativados);
+		listarAtributo(mostrarDesativados);
 	}
 
 	public static void listarPesquisa(boolean mostrarDesativados) throws Exception {

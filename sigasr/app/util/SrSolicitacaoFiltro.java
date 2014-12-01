@@ -167,7 +167,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			for (SrAtributoSolicitacao att : meuAtributoSet) {
 				if (att.valorAtributo != null && !att.valorAtributo.trim().isEmpty()) {
 					subqueryAtributo.append("(");
-						subqueryAtributo.append(" att.tipoAtributo.idTipoAtributo = " + att.tipoAtributo.idTipoAtributo);
+						subqueryAtributo.append(" att.tipoAtributo.idTipoAtributo = " + att.tipoAtributo.idAtributo);
 						subqueryAtributo.append(" and att.valorAtributo = '" + att.valorAtributo + "' ");
 					
 					subqueryAtributo.append(")");
@@ -204,7 +204,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		Collections.sort(arrayList, new Comparator<SrAtributo>() {
 			@Override
 			public int compare(SrAtributo s0, SrAtributo s1) {
-				return s0.nomeTipoAtributo.compareTo(s1.nomeTipoAtributo);
+				return s0.nomeAtributo.compareTo(s1.nomeAtributo);
 			}
 		});
 		return arrayList;

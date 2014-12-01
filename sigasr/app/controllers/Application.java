@@ -18,11 +18,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import models.SrAcao;
 import models.SrArquivo;
-import models.SrAtributo;
+import models.SrAtributoSolicitacao;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
 import models.SrEquipe;
-import models.SrFormatoCampo;
+import models.SrTipoAtributo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
@@ -30,7 +30,7 @@ import models.SrMovimentacao;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
-import models.SrTipoAtributo;
+import models.SrAtributo;
 import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
@@ -186,15 +186,15 @@ public class Application extends SigaApplication {
 	}
 
 	public static void exibirAtributosConsulta(SrSolicitacaoFiltro filtro) throws Exception {
-		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		List<SrAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
 		render(filtro, tiposAtributosDisponiveisAdicao);
 	}
 
-	public static List<SrTipoAtributo> tiposAtributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) {
-		List<SrTipoAtributo> listaAtributosAdicao = new ArrayList<SrTipoAtributo>();
+	public static List<SrAtributo> tiposAtributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) {
+		List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
 		HashMap<Long, String> atributoMap = filtro.getAtributoMap();
 		
-		for (SrTipoAtributo srTipoAtributo : SrTipoAtributo.listar(Boolean.FALSE)) {
+		for (SrAtributo srTipoAtributo : SrAtributo.listar(Boolean.FALSE)) {
 			if (!atributoMap.containsKey(srTipoAtributo.idTipoAtributo)) {
 				listaAtributosAdicao.add(srTipoAtributo);
 			}
@@ -278,7 +278,7 @@ public class Application extends SigaApplication {
 		}
 		
 		HashMap<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
-		for (SrAtributo att : solicitacao.getAtributoSet()) {
+		for (SrAtributoSolicitacao att : solicitacao.getAtributoSet()) {
 			// Para evitar NullPointerExcetpion quando nao encontrar no Map
 			if(Boolean.TRUE.equals(obrigatorio.get(att.tipoAtributo.idTipoAtributo))) {
 				if ((att.valorAtributo == null || att.valorAtributo.trim().equals("")))
@@ -425,7 +425,7 @@ public class Application extends SigaApplication {
 				if (sol.lotaCadastrante == lotaTitular())
 					listaSolicitacao.add(sol);
 		
-		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		List<SrAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
 		render(listaSolicitacao, tipos, marcadores, filtro, tiposAtributosDisponiveisAdicao);
 	}
 	
@@ -703,7 +703,7 @@ public class Application extends SigaApplication {
 				if (sol.lotaCadastrante == lotaTitular())
 					listaSolicitacao.add(sol);
 
-		List<SrTipoAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		List<SrAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
 		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup, tiposAtributosDisponiveisAdicao);
 	}
 
@@ -1081,16 +1081,16 @@ public class Application extends SigaApplication {
 	
 	public static void listarTipoAtributo(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrTipoAtributo> atts = SrTipoAtributo.listar(mostrarDesativados);
+		List<SrAtributo> atts = SrAtributo.listar(mostrarDesativados);
 		render(atts);
 	}
 
 	public static void editarTipoAtributo(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		String formatoAnterior = null;
-		SrTipoAtributo att = new SrTipoAtributo();
+		SrAtributo att = new SrAtributo();
 		if (id != null) {
-			att = SrTipoAtributo.findById(id);
+			att = SrAtributo.findById(id);
 			if(att.formatoCampo != null) {
 				formatoAnterior = att.formatoCampo.name();
 			}
@@ -1099,20 +1099,20 @@ public class Application extends SigaApplication {
 		render(att, formatoAnterior);
 	}
 
-	public static void gravarTipoAtributo(SrTipoAtributo att) throws Exception {
+	public static void gravarTipoAtributo(SrAtributo att) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarTipoAtributo(att);
 		att.salvar();
 		listarTipoAtributo(Boolean.FALSE);
 	}
 
-	private static void validarFormEditarTipoAtributo(SrTipoAtributo att) {
+	private static void validarFormEditarTipoAtributo(SrAtributo att) {
 		if (att.nomeTipoAtributo.equals("")) {
 			validation.addError("att.nomeTipoAtributo",
 					"Nome de atributo n�o informado");
 		}
 
-		if (att.formatoCampo == SrFormatoCampo.VL_PRE_DEFINIDO 
+		if (att.formatoCampo == SrTipoAtributo.VL_PRE_DEFINIDO 
 				&& att.descrPreDefinido.equals("")) {
 			validation.addError("att.descrPreDefinido",
 					"Valores Pré-definido n�o informados");
@@ -1129,14 +1129,14 @@ public class Application extends SigaApplication {
 
 	public static void desativarTipoAtributo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		SrTipoAtributo item = SrTipoAtributo.findById(id);
+		SrAtributo item = SrAtributo.findById(id);
 		item.finalizar();
 		listarTipoAtributo(mostrarDesativados);
 	}
 
 	public static void reativarTipoAtributo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		SrTipoAtributo item = SrTipoAtributo.findById(id);
+		SrAtributo item = SrAtributo.findById(id);
 		item.salvar();
 		listarTipoAtributo(mostrarDesativados);
 	}

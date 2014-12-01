@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import models.SrAtributo;
+import models.SrAtributoSolicitacao;
 import models.SrSolicitacao;
-import models.SrTipoAtributo;
+import models.SrAtributo;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -164,7 +164,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (meuAtributoSet != null && meuAtributoSet.size() > 0) {
 			subqueryAtributo.append(" and (");
 
-			for (SrAtributo att : meuAtributoSet) {
+			for (SrAtributoSolicitacao att : meuAtributoSet) {
 				if (att.valorAtributo != null && !att.valorAtributo.trim().isEmpty()) {
 					subqueryAtributo.append("(");
 						subqueryAtributo.append(" att.tipoAtributo.idTipoAtributo = " + att.tipoAtributo.idTipoAtributo);
@@ -186,24 +186,24 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		}
 	}
 	
-	public List<SrTipoAtributo> getTiposAtributosConsulta() {
-		List<SrTipoAtributo> tiposAtributosConsulta = new ArrayList<SrTipoAtributo>();
+	public List<SrAtributo> getTiposAtributosConsulta() {
+		List<SrAtributo> tiposAtributosConsulta = new ArrayList<SrAtributo>();
 		
 		if (meuAtributoSet != null) {
-			for (SrAtributo srAtributo : meuAtributoSet) {
+			for (SrAtributoSolicitacao srAtributo : meuAtributoSet) {
 				tiposAtributosConsulta.add(srAtributo.tipoAtributo);
 			}
 		}
 		return tiposAtributosConsulta;
 	}
 	
-	public List<SrTipoAtributo> itensDisponiveis(List<SrTipoAtributo> tiposAtributosDisponiveis, SrTipoAtributo tipoAtributo) {
-		ArrayList<SrTipoAtributo> arrayList = new ArrayList<SrTipoAtributo>(tiposAtributosDisponiveis);
+	public List<SrAtributo> itensDisponiveis(List<SrAtributo> tiposAtributosDisponiveis, SrAtributo tipoAtributo) {
+		ArrayList<SrAtributo> arrayList = new ArrayList<SrAtributo>(tiposAtributosDisponiveis);
 		arrayList.add(tipoAtributo);
 		
-		Collections.sort(arrayList, new Comparator<SrTipoAtributo>() {
+		Collections.sort(arrayList, new Comparator<SrAtributo>() {
 			@Override
-			public int compare(SrTipoAtributo s0, SrTipoAtributo s1) {
+			public int compare(SrAtributo s0, SrAtributo s1) {
 				return s0.nomeTipoAtributo.compareTo(s1.nomeTipoAtributo);
 			}
 		});

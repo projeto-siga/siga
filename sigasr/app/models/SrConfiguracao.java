@@ -91,7 +91,7 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_ATRIBUTO")
-	public SrTipoAtributo tipoAtributo;
+	public SrAtributo tipoAtributo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESQUISA")
@@ -289,7 +289,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarAssociacoesTipoAtributo(SrTipoAtributo tpAtributo, Boolean mostrarDesativados) {
+	public static List<SrConfiguracao> listarAssociacoesTipoAtributo(SrAtributo tpAtributo, Boolean mostrarDesativados) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);

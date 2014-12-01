@@ -1,135 +1,20 @@
 package models;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+public enum SrTipoAtributo {
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+	TEXTO(1, "Texto"), 
+	DATA(2, "Data"), 
+	NUM_INTEIRO(3, "Número Inteiro"), 
+	NUM_DECIMAL(4, "Número com duas casas decimais"), 
+	HORA(5, "Hora"), 
+	VL_PRE_DEFINIDO(6, "Valores pré-definidos");
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+	public int idFormatoCampo;
 
-import play.db.jpa.JPA;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.Assemelhavel;
+	public String descrFormatoCampo;
 
-@Entity
-@Table(name = "SR_TIPO_ATRIBUTO", schema = "SIGASR")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class SrTipoAtributo extends HistoricoSuporte {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
-	@GeneratedValue(generator = "srTipoAtributoSeq")
-	@Column(name = "ID_TIPO_ATRIBUTO")
-	public Long idTipoAtributo;
-
-	@Column(name = "NOME")
-	public String nomeTipoAtributo;
-
-	@Column(name = "DESCRICAO")
-	public String descrTipoAtributo;
-	
-	@Enumerated
-	public SrFormatoCampo formatoCampo;
-	
-	@Column(name = "DESCR_PRE_DEFINIDO")
-	public String descrPreDefinido;
-
-	@ManyToOne()
-	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrTipoAtributo tipoAtributoInicial;
-
-	@OneToMany(targetEntity = SrTipoAtributo.class, mappedBy = "tipoAtributoInicial", fetch = FetchType.LAZY)
-	@OrderBy("hisDtIni desc")
-	public List<SrTipoAtributo> meuTipoAtributoHistoricoSet;
-	
-	@Transient
-	public List<SrConfiguracao> associacoes;
-
-	@Override
-	public Long getId() {
-		return idTipoAtributo;
+	private SrTipoAtributo(int nivel, String descrFormato) {
+		this.idFormatoCampo = nivel;
+		this.descrFormatoCampo = descrFormato;
 	}
-
-	@Override
-	public void setId(Long id) {
-		idTipoAtributo = id;
-	}
-
-	public static List<SrTipoAtributo> listar(boolean mostrarDesativados) {
-		StringBuilder queryBuilder = new StringBuilder();
-
-		if (!mostrarDesativados) {
-			queryBuilder.append(" hisDtFim is null");
-		} else {
-			queryBuilder.append("SELECT ta FROM SrTipoAtributo ta ");
-			queryBuilder.append("WHERE ta.idTipoAtributo in (SELECT MAX(idTipoAtributo) FROM SrTipoAtributo GROUP BY hisIdIni) ");
-		}
-		return SrTipoAtributo.find(queryBuilder.toString()).fetch();
-	}
-
-	public List<SrTipoAtributo> getHistoricoTipoAtributo() {
-		if (tipoAtributoInicial != null)
-			return tipoAtributoInicial.meuTipoAtributoHistoricoSet;
-		return null;
-	}
-
-	public SrTipoAtributo getAtual() {
-		if (getHisDtFim() == null)
-			return this;
-		List<SrTipoAtributo> sols = getHistoricoTipoAtributo();
-		if (sols == null)
-			return null;
-		return sols.get(0);
-	}
-
-	@Override
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		return false;
-	}
-	
-	public Set<String> getPreDefinidoSet() {
-		Set<String> preDefinidos = new HashSet<String>();
-		if (formatoCampo == SrFormatoCampo.VL_PRE_DEFINIDO){
-			preDefinidos.addAll(Arrays.asList(descrPreDefinido.split(";"))); 
-		}
-		return preDefinidos;
-	}
-
-	public List<SrConfiguracao> getAssociacoes(DpLotacao lotaTitular, DpPessoa pess) {
-		try {
-			SrConfiguracao confFiltro = new SrConfiguracao();
-			confFiltro.setLotacao(lotaTitular);
-			confFiltro.setDpPessoa(pess);
-			confFiltro.setCpTipoConfiguracao(JPA.em().find(
-					CpTipoConfiguracao.class,
-					CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
-			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO });
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 }

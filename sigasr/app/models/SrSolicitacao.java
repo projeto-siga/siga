@@ -207,8 +207,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OrderBy("hisDtIni desc")
 	public List<SrSolicitacao> meuSolicitacaoHistoricoSet;
 
-	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-	protected List<SrAtributo> meuAtributoSet;
+	@OneToMany(targetEntity = SrAtributoSolicitacao.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	protected List<SrAtributoSolicitacao> meuAtributoSet;
 
 	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "solicitacao", fetch = FetchType.LAZY)
 	@OrderBy("dtIniMov DESC")
@@ -416,7 +416,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public String getAtributosString() {
 		String s = "";
-		for (SrAtributo att : getAtributoSet()) {
+		for (SrAtributoSolicitacao att : getAtributoSet()) {
 			if (att.valorAtributo != null)
 				s += att.tipoAtributo.nomeTipoAtributo + ": "
 						+ att.valorAtributo + ". ";
@@ -517,9 +517,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return sols.get(0);
 	}
 
-	public List<SrAtributo> getAtributoSet() {
+	public List<SrAtributoSolicitacao> getAtributoSet() {
 		return meuAtributoSet != null ? meuAtributoSet
-				: new ArrayList<SrAtributo>();
+				: new ArrayList<SrAtributoSolicitacao>();
 	}
 
 	public Set<SrMovimentacao> getMovimentacaoSet() {
@@ -734,16 +734,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return map;
 	}
 
-	public List<SrTipoAtributo> getTiposAtributoAssociados() throws Exception {
+	public List<SrAtributo> getTiposAtributoAssociados() throws Exception {
 		return getTiposAtributoAssociados(null);
 	}
 
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
-	private List<SrTipoAtributo> getTiposAtributoAssociados(
+	private List<SrAtributo> getTiposAtributoAssociados(
 			HashMap<Long, Boolean> map) throws Exception {
-		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
+		List<SrAtributo> listaFinal = new ArrayList<SrAtributo>();
 
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
@@ -754,7 +754,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 
-		for (SrTipoAtributo t : SrTipoAtributo.listar(Boolean.FALSE)) {
+		for (SrAtributo t : SrAtributo.listar(Boolean.FALSE)) {
 			confFiltro.tipoAtributo = t;
 			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 			if (conf != null) {
@@ -841,10 +841,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// solicitacao.getAtributoSet().put...
 	public void setAtributoMap(HashMap<Long, String> atributos) {
 		if (atributos != null) {
-			meuAtributoSet = new ArrayList<SrAtributo>();
+			meuAtributoSet = new ArrayList<SrAtributoSolicitacao>();
 			for (Long idTipoAtt : atributos.keySet()) {
-				SrTipoAtributo tipoAtt = SrTipoAtributo.findById(idTipoAtt);
-				SrAtributo att = new SrAtributo(tipoAtt,
+				SrAtributo tipoAtt = SrAtributo.findById(idTipoAtt);
+				SrAtributoSolicitacao att = new SrAtributoSolicitacao(tipoAtt,
 						atributos.get(idTipoAtt), this);
 				meuAtributoSet.add(att);
 			}
@@ -859,7 +859,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 																		// de
 																		// insercao
 		if (meuAtributoSet != null)
-			for (SrAtributo att : meuAtributoSet) {
+			for (SrAtributoSolicitacao att : meuAtributoSet) {
 				map.put(att.tipoAtributo.idTipoAtributo, att.valorAtributo);
 			}
 		return map;

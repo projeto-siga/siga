@@ -107,13 +107,9 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO = 301;
 
 	public static final long TIPO_CONFIG_SR_PERMISSAO_USO_LISTA = 302;
-<<<<<<< HEAD
-
-=======
 	
 	public static final long TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA = 303;
 	
->>>>>>> ad9df88d3da5316b8b110488c18e28b057251228
 	public static final long TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO = 34;
 	
 	public static final long TIPO_CONFIG_AUTUAVEL = 35;
@@ -124,10 +120,6 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_DESIGNAR_TAREFA = 101;
 
 	// SIGA-GI
-<<<<<<< HEAD
-
-=======
->>>>>>> ad9df88d3da5316b8b110488c18e28b057251228
 	public static final long TIPO_CONFIG_UTILIZAR_SERVICO = 200;
 	public static final long TIPO_CONFIG_HABILITAR_SERVICO = 201;
 	public static final long TIPO_CONFIG_HABILITAR_SERVICO_DE_DIRETORIO = 202;

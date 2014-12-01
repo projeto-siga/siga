@@ -922,7 +922,7 @@ public class Application extends SigaApplication {
 	
 	public static void listarAssociacao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrConfiguracao> listaAssociacao = SrConfiguracao.listarAssociacoesTipoAtributo(mostrarDesativados);
+		List<SrConfiguracao> listaAssociacao = SrConfiguracao.listarAssociacoesAtributo(mostrarDesativados);
 		render(listaAssociacao);
 	}
 
@@ -937,7 +937,7 @@ public class Application extends SigaApplication {
 
 	public static Long gravarAssociacao(SrConfiguracao associacao) throws Exception {
 		assertAcesso("ADM:Administrar");
-		associacao.salvarComoAssociacaoTipoAtributo();
+		associacao.salvarComoAssociacaoAtributo();
 		return associacao.getId();		
 	}
 	
@@ -1095,7 +1095,7 @@ public class Application extends SigaApplication {
 				formatoAnterior = att.tipoAtributo.name();
 			}
 		}
-		att.associacoes = SrConfiguracao.listarAssociacoesTipoAtributo(att, Boolean.FALSE);
+		att.associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.FALSE);
 		render(att, formatoAnterior);
 	}
 

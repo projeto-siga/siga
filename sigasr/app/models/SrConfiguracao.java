@@ -282,19 +282,19 @@ public class SrConfiguracao extends CpConfiguracao {
 		return JPA.em().createQuery(sb.toString()).getResultList();
 	}
 
-	public void salvarComoAssociacaoTipoAtributo() throws Exception {
+	public void salvarComoAssociacaoAtributo() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 		salvar();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarAssociacoesTipoAtributo(SrAtributo tpAtributo, Boolean mostrarDesativados) {
+	public static List<SrConfiguracao> listarAssociacoesAtributo(SrAtributo atributo, Boolean mostrarDesativados) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);
-		queryBuilder.append(" and conf.tipoAtributo.hisIdIni = ");
-		queryBuilder.append(tpAtributo.getHisIdIni());
+		queryBuilder.append(" and conf.atributo.hisIdIni = ");
+		queryBuilder.append(atributo.getHisIdIni());
 		
 		if (!mostrarDesativados) {
 			queryBuilder.append(" and conf.hisDtFim is null ");
@@ -309,7 +309,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarAssociacoesTipoAtributo(Boolean mostrarDesativados) {
+	public static List<SrConfiguracao> listarAssociacoesAtributo(Boolean mostrarDesativados) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);

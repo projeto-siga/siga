@@ -123,9 +123,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				return false;
 
 			if (!atributosDesconsiderados.contains(TIPO_ATRIBUTO)
-					&& conf.tipoAtributo != null
-					&& (filtro.tipoAtributo == null || (filtro.tipoAtributo != null && !conf.tipoAtributo
-							.getAtual().equivale(filtro.tipoAtributo))))
+					&& conf.atributo != null
+					&& (filtro.atributo == null || (filtro.atributo != null && !conf.atributo
+							.getAtual().equivale(filtro.atributo))))
 				return false;
 			
 			if (!atributosDesconsiderados.contains(ATENDENTE)
@@ -189,8 +189,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				for (SrAcao i : srConf.acoesSet)
 					i.getAtual();
 			
-			if (srConf.tipoAtributo != null)
-				srConf.tipoAtributo.getHisIdIni();
+			if (srConf.atributo != null)
+				srConf.atributo.getHisIdIni();
 			
 			if (srConf.listaPrioridade != null)
 				srConf.listaPrioridade.getHisIdIni();

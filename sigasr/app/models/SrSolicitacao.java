@@ -755,7 +755,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 
 		for (SrAtributo t : SrAtributo.listar(Boolean.FALSE)) {
-			confFiltro.tipoAtributo = t;
+			confFiltro.atributo = t;
 			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
 			if (conf != null) {
 				listaFinal.add(t);

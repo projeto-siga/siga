@@ -91,7 +91,7 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_ATRIBUTO")
-	public SrAtributo tipoAtributo;
+	public SrAtributo atributo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESQUISA")

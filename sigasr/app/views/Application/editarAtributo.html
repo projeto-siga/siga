@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Edição de Tipo de Atributo' /}
+#{extends 'main.html' /} #{set title:'Edição de atributo' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
@@ -203,7 +203,7 @@
         	params += '&associacao.idConfiguracao=' + row[colunas.idAssociacao];
 
 		if ($("#idAtributo").val() != undefined && $("#idAtributo").val() != '')
-			params += '&associacao.tipoAtributo.idAtributo=' + $("#idAtributo").val();
+			params += '&associacao.atributo.idAtributo=' + $("#idAtributo").val();
 
 		return params;
 	};
@@ -294,7 +294,7 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Cadastro de Tipo de Atributo</h2>
+		<h2>Cadastro de Atributo</h2>
 
 		<div class="gt-form gt-content-box">
 			#{form @Application.gravarAtributo(), onsubmit: 'javascript: return block()'} #{if att?.idAtributo} <input

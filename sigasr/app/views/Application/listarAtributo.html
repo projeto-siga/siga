@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Tipos de atributo' /}
+#{extends 'main.html' /} #{set title:'Atributos' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
@@ -40,7 +40,7 @@
 				location.href = '@{Application.listarAtributo()}';	
 		});
 		
-		$('#tipo_atributo_table').DataTable({
+		$('#atributo_table').DataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -85,14 +85,14 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Tipos de atributo</h2>
+		<h2>Pesquisa de atributos</h2>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
 			<div class="gt-form-row dataTables_length">
 				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
 			</div>
 			
-			<table id="tipo_atributo_table" border="0" class="gt-table display">
+			<table id="atributo_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
 						<th>Nome</th>

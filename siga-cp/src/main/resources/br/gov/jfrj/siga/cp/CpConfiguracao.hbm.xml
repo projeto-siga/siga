@@ -125,6 +125,14 @@
 			and hisDtFim is null
 		]]>
 	</query>
+	<query name="consultarCpConfiguracoesPorTipo">
+		<![CDATA[
+			from CpConfiguracao cpcfg
+			where (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)
+			and hisDtFim is null
+		]]>
+	</query>
+	
 
 </hibernate-mapping>
 

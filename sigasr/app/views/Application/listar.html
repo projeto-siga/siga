@@ -1,144 +1,304 @@
 #{extends 'main.html' /}
-	<div class="gt-bd clearfix">
-	<div class="gt-content clearfix">
-	<h2>Pesquisa de solicitações</h2>
- 	#{if listaSolicitacao}
-	<div class="gt-content-box gt-for-table">
-	<table border="0" class="gt-table-nowrap">
-			<col width="15%" />
-    		<col width="35%" />
-    		<col width="10%" />
-    		<col width="15%" />
-    		<col width="15%" />
-    		<col width="15%" />
-    		<thead>
-				<tr >
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Aberto</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Situação</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 0px;">Último Andamento</th>
-				</tr>
-			</thead>
-			<tbody>
-			#{list items:listaSolicitacao, as:'sol'}	
-			<tr>
-			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-						<a href="@{Application.exibir(sol.idSolicitacao)}">
-							${sol.codigo}
-						</a>	
-			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
-			<b style="color: #333">
-			${sol.itemConfiguracao?.descricao}:</b>&nbsp;
-			#{selecionado sigla:sol.descrSolicitacao,descricao:sol.descrSolicitacao /}
-			</td>
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		/* Table initialization */
+		var table = $('#solicitacoes_table')
+			.on('draw.dt', function() {
+				if(table) {
+					var btn = $('#botaoExpandirContrair'),
+						expandir = btn.hasClass('expandido');
+					expandirContrairLinas(btn, expandir);
+				}
+			})
+			.dataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			},
+			"columnDefs": [{
+				"targets": [7],
+				"visible": false,
+				"searchable": false
+			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				if (aData[7] == 'false')
+					$('td', nRow).addClass('item-desativado');
+			},
+			"iDisplayLength": 25
+		});
+
+	    // Adicionando listener para tratar a abertura e fechamento dos detalhes
+	    $('#solicitacoes_table tbody').on('click', 'td.details-control', function () {
+	    	var tr = $(this).closest('tr'),
+	    		detail = tr.next('tr.detail');
+    		
+		   if(detail.size() == 0) {
+				var data = tr.find('td');			   
+			   tr.addClass('shown');
+		   }
+		   else {
+		    	if ( detail.is(':visible') ) {
+		    		// Se alguma linha já está com os detalhes abertos, fecha-o
+		    		detail.hide();
+		    		tr.removeClass('shown');
+		    	}
+		    	else {
+		    		// Abre a linha
+		    		detail.show();
+		    		tr.addClass('shown');
+		    	}
+		   }
+	    });
+	});
+
+	/* Função de formatação para células de detalhes */
+	function format( d ) {
+		var tr = $('<tr class="detail">'),
+		// 'd' é o objeto contendo os dados da linha
+		detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+			'<tr>'+
+				'<td><b>Teor:</b></td>'+
+					'<td>' + d[2].innerHTML + '</td>'+
+		        '</tr>'+
+		        '<tr>'+
+		            '<td><b>Último Andamento:</b></td>'+
+		            '<td>' + d[6].innerHTML + '</td>'+
+		        '</tr>'+
+		    '</table><td>';
+
+	    return tr.append(detailHTML);
+	}
+	
+    function expandirContrairLinas(btn, expandir) {
+    	var elements = $('#solicitacoes_table tbody td.details-control');
+    	
+    	if(expandir) {
+        	btn.addClass('expandido');
+        	
+        	elements.each(function() {
+            	var tr = $(this).closest('tr'),
+            		detail = tr.next('tr.detail');
+
+        		if(detail.size() == 0) {
+            		var data = tr.find('td');
+            		tr.addClass('shown');
+            		format(data).insertAfter(tr);
+           		}
+           		detail.show();
+           		tr.addClass('shown');
+           	});
+        } else {
+        	btn.removeClass('expandido');
+        	
+        	elements.each(function() {
+          		var tr = $(this).closest('tr'),
+          			detail = tr.next('tr.detail');
+        		
+	    		detail.hide();
+	    		tr.removeClass('shown');
+           	});
+        }
+    }
+
+    function expandirTodos() {
+        var btn = $('#botaoExpandirContrair'),
+        	expandir = !btn.hasClass('expandido');
+    	
+        expandirContrairLinas(btn, expandir);
+    }
+</script>
+
+	<style>
+		.bt-expandir {
+		    background: url("/siga/css/famfamfam/icons/bullet_toggle_plus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+		    height: 25px;
+		    width: 30px;
+		    cursor: pointer;
+		}
 				
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
-			#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
-			#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
-			</td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-			#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
-			</td>						
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-				<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
-			<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-				#{selecionado sigla:sol.ultimoAndamento?.descrMovimentacao,descricao:sol.ultimoAndamento?.descrMovimentacao /}
-			</tr>		
-			</tbody>			
-			#{/list}
-			</table>
-		</div>
-	#{/if}
-	#{elseif filtro?.pesquisar} 
-	<div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>	
-	#{/elseif }
+		.bt-expandir.expandido {
+		    background: url("/siga/css/famfamfam/icons/bullet_toggle_minus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+		}
 		
+		.hide-sort-arrow.sorting_asc, .hide-sort-arrow.sorting_desc {
+			background: none !important;
+		}
+	</style>
+
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		<h2>Pesquisa de Solicitações</h2>
+ 		#{if listaSolicitacao}
+			<div class="gt-content-box gt-for-table dataTables_div">
+				<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
+					<col width="7%" />
+					<col width="15%" />
+		    		<col width="26%" />
+		    		<col width="10%" />
+		    		<col width="10%" />
+		    		<col width="14%" />
+		    		<col width="14%" />
+		    		<col width="0%" />
+		    		<thead>
+						<tr>
+							<th style="color: #333;" class="hide-sort-arrow">
+								<button id="botaoExpandirContrair" onclick="expandirTodos()" class="gt-btn-medium gt-btn-left bt-expandir">
+									<span id="iconeBotaoExpandirTodos">+</span>
+									<!--  span id="textoBotaoExpandirTodos"> Expandir</span-->
+								</button>
+							</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Aberto</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Situação</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Último Andamento</th>
+							<th >Item Ativado?</th>
+						</tr>
+					</thead>
+					<tbody>
+						#{list items:listaSolicitacao, as:'sol'}
+							<tr>
+								<td class="gt-celula-nowrap details-control"></td>
+								<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+										<a href="@{Application.exibir(sol.idSolicitacao)}">
+											${sol.codigo}
+										</a>
+								</td>
+								<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
+									<b>${sol.descrItem}:</b>&nbsp;
+									#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
+								</td>
+							
+								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
+									#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
+									#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
+								</td>
+								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+									#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
+								</td>
+								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+									<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
+								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+									#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}</td>
+								<td>${sol.isAtivo()}</td>
+									
+							</tr>
+						#{/list}
+					</tbody>
+				</table>
+			</div>
+		#{/if}
+		#{elseif filtro?.pesquisar} 
+			<div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>	
+		#{/elseif }
 		
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form action="@{Application.listar}">
-		<input type="hidden" name="filtro.pesquisar" value="true" />
-			<table class="gt-form-table">
-				<tr class="header">
-				<td align="center" valign="top" colspan="4">Dados para busca</td>
-				</tr>
-					<tr>
-						<td>Situação</td>
-						<td>#{select name:'filtro.situacao', items:marcadores,
-							labelProperty:'descrMarcador', valueProperty:'idMarcador',
-							value:filtro.situacao?.idMarcador} #{option 0}Todas#{/option}
-							#{/select} com #{pessoaLotaSelecao
-							nomeSelPessoa:'filtro.atendente',
-							nomeSelLotacao:'filtro.lotaAtendente',
-							valuePessoa:filtro.atendente, valueLotacao:filtro.lotaAtendente
-							/}
-							<div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
-								<label>#{checkbox name:'filtro.naoDesignados',
-								value:filtro.naoDesignados /} Apenas não designadas</label>
-							</div>
-							<script language="javascript">
-								$("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
-							</script>
+			<form action="@{Application.listar}" onsubmit="javascript: return block();">
+				<input type="hidden" name="filtro.pesquisar" value="true" />
+				<table class="gt-form-table">
+					<tr class="header">
+					<td align="center" valign="top" colspan="4">Dados para busca</td>
+					</tr>
+						<tr>
+							<td>Situação</td>
+							<td>#{select name:'filtro.situacao', items:marcadores,
+								labelProperty:'descrMarcador', valueProperty:'idMarcador',
+								value:filtro.situacao?.idMarcador} #{option 0}Todas#{/option}
+								#{/select} com #{pessoaLotaSelecao
+								nomeSelPessoa:'filtro.atendente',
+								nomeSelLotacao:'filtro.lotaAtendente',
+								valuePessoa:filtro.atendente, valueLotacao:filtro.lotaAtendente
+								/}
+								<div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
+									<label>#{checkbox name:'filtro.naoDesignados',
+									value:filtro.naoDesignados /} Apenas não designadas</label>
+								</div>
+								<script language="javascript">
+									$("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
+								</script>
+								</td>
+						</tr>
+						<tr>
+							<td>Cadastrante</td>
+							<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.cadastrante',
+								nomeSelLotacao:'filtro.lotaCadastrante',
+								valuePessoa:filtro.cadastrante,
+								valueLotacao:filtro.lotaCadastrante /}</span>
 							</td>
-					</tr>
-					<tr>
-						<td>Cadastrante</td>
-						<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.cadastrante',
-							nomeSelLotacao:'filtro.lotaCadastrante',
-							valuePessoa:filtro.cadastrante,
-							valueLotacao:filtro.lotaCadastrante /}</span>
-						</td>
-					</tr>
-					<tr>
-						<td>Solicitante</td>
-						<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.solicitante',
-							nomeSelLotacao:'filtro.lotaSolicitante',
-							valuePessoa:filtro.solicitante,
-							valueLotacao:filtro.lotaSolicitante /}</td>
-					</tr>
-					<tr>
-						<td>Data de abertura</td>
-						<td>
-							<input type="text" name="filtro.dtIni" onblur="javascript:verifica_data(this,true)" value="${filtro.dtIni}" id="filtro.dtIni" /> a 
-							<input type="text" name="filtro.dtFim" onblur="javascript:verifica_data(this,true)" value="${filtro.dtFim}" id="filtro.dtFim" />
-						</td>
-					
-					</tr>
-					<tr>
-						<td>Item</td>
-						<td>#{selecao tipo:'item', grande:true, nome:'filtro.itemConfiguracao',
-							value:filtro.itemConfiguracao /}</td>
-					</tr>
-					<tr>
-						<td>Ação</td>
-						<td>#{selecao tipo:'acao', nome:'filtro.acao',
-							value:filtro.acao /}</td>
-					</tr>
-					<tr>
-						<td>Prioridade</td>
-						<td colspan="3">#{select 'filtro.urgencia', items:models.SrUrgencia.values(),
-							labelProperty:'descrUrgencia', value:filtro.urgencia } #{option
-							0}Todas#{/option}#{/select} #{select 'filtro.gravidade',
-							items:models.SrGravidade.values(), labelProperty:'descrGravidade',
-							value:filtro.gravidade }#{option
-							0}Todas#{/option}#{/select} #{select 'filtro.tendencia',
-							items:models.SrTendencia.values(), labelProperty:'descrTendencia',
-							value:filtro.tendencia}#{option
-							0}Todas#{/option}#{/select}</td>
-					</tr>
-					<tr>
-						<td>Descrição</td>
-						<td><input type="text" name="filtro.descrSolicitacao"
-							id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="100"></input>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2"><input type="submit" value="Buscar"
-							class="gt-btn-medium gt-btn-left" /></td>
-					</tr>
-			</table>
-		</form>
+						</tr>
+						<tr>
+							<td>Solicitante</td>
+							<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.solicitante',
+								nomeSelLotacao:'filtro.lotaSolicitante',
+								valuePessoa:filtro.solicitante,
+								valueLotacao:filtro.lotaSolicitante /}</td>
+						</tr>
+						<tr>
+							<td>Data de abertura</td>
+							<td>
+								<input type="text" name="filtro.dtIni" onblur="javascript:verifica_data(this,true)" value="${filtro.dtIni}" id="filtro.dtIni" /> a 
+								<input type="text" name="filtro.dtFim" onblur="javascript:verifica_data(this,true)" value="${filtro.dtFim}" id="filtro.dtFim" />
+							</td>
+						
+						</tr>
+						<tr>
+							<td>Item</td>
+							<td>#{selecao tipo:'item', grande:true, nome:'filtro.itemConfiguracao',
+								value:filtro.itemConfiguracao /}</td>
+						</tr>
+						<tr>
+							<td>Ação</td>
+							<td>#{selecao tipo:'acao', nome:'filtro.acao',
+								value:filtro.acao /}</td>
+						</tr>
+						<tr>
+							<td>Prioridade</td>
+							<td colspan="3">#{select 'filtro.urgencia', items:models.SrUrgencia.values(),
+								labelProperty:'descrUrgencia', value:filtro.urgencia } #{option
+								0}Todas#{/option}#{/select} #{select 'filtro.gravidade',
+								items:models.SrGravidade.values(), labelProperty:'descrGravidade',
+								value:filtro.gravidade }#{option
+								0}Todas#{/option}#{/select} #{select 'filtro.tendencia',
+								items:models.SrTendencia.values(), labelProperty:'descrTendencia',
+								value:filtro.tendencia}#{option
+								0}Todas#{/option}#{/select}</td>
+						</tr>
+						<tr>
+							<td>Descrição</td>
+							<td><input type="text" name="filtro.descrSolicitacao"
+								id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="100"></input>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2"><input type="submit" value="Buscar"
+								class="gt-btn-medium gt-btn-left" /></td>
+						</tr>
+				</table>
+			</form>
 		</div>
 	</div>

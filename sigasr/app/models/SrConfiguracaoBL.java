@@ -30,20 +30,15 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		setComparator(new SrConfiguracaoComparator());
 	}
 
-	public SrConfiguracao buscarConfiguracao(SrConfiguracao conf)
-			throws Exception {
-		return (SrConfiguracao) buscaConfiguracao(conf, new int[] { 0 }, null);
-	}
-
 	@Override
 	public void deduzFiltro(CpConfiguracao cpConfiguracao) {
 		super.deduzFiltro(cpConfiguracao);
 		if (cpConfiguracao instanceof SrConfiguracao) {
 			SrConfiguracao srConf = (SrConfiguracao) cpConfiguracao;
-			if (srConf.itemConfiguracao != null)
-				srConf.itemConfiguracao = srConf.itemConfiguracao.getAtual();
-			if (srConf.acao != null)
-				srConf.acao = srConf.acao.getAtual();
+			if (srConf.itemConfiguracaoFiltro != null)
+				srConf.itemConfiguracaoFiltro = srConf.itemConfiguracaoFiltro.getAtual();
+			if (srConf.acaoFiltro != null)
+				srConf.acaoFiltro = srConf.acaoFiltro.getAtual();
 			if (srConf.listaPrioridade != null)
 				srConf.listaPrioridade = srConf.listaPrioridade.getListaAtual();
 		}
@@ -79,20 +74,42 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE
 					&& conf.equipeQualidade == null)
 				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO
+					&& conf.pesquisaSatisfacao == null)
+				return false;
 
 			if (!atributosDesconsiderados.contains(ACAO)
-					&& conf.acao != null
-					&& (filtro.acao == null || (filtro.acao != null && !conf.acao
-							.getAtual().isPaiDeOuIgualA(filtro.acao))))
-				return false;
-
+					&& conf.acoesSet != null && conf.acoesSet.size() > 0) {
+				boolean acaoAtende = false;
+				for (SrAcao item : conf.acoesSet) {
+					if (filtro.acaoFiltro != null
+							&& item.getAtual().isPaiDeOuIgualA(
+									filtro.acaoFiltro)) {
+						acaoAtende = true;
+						break;
+					}
+				}
+				if (!acaoAtende)
+					return false;
+			}
+			
 			if (!atributosDesconsiderados.contains(ITEM_CONFIGURACAO)
-					&& conf.itemConfiguracao != null
-					&& (filtro.itemConfiguracao == null || (filtro.itemConfiguracao != null && !conf.itemConfiguracao
-							.getAtual()
-							.isPaiDeOuIgualA(filtro.itemConfiguracao))))
-				return false;
-
+					&& conf.itemConfiguracaoSet != null
+					&& conf.itemConfiguracaoSet.size() > 0) {
+				boolean itemAtende = false;
+				for (SrItemConfiguracao item : conf.itemConfiguracaoSet) {
+					if (filtro.itemConfiguracaoFiltro != null
+							&& item.getAtual().isPaiDeOuIgualA(
+									filtro.itemConfiguracaoFiltro)){
+						itemAtende = true;
+						break;
+					}
+				}
+				if (!itemAtende)
+					return false;
+			}			
+			
 			if (!atributosDesconsiderados.contains(LISTA_PRIORIDADE)
 					&& conf.listaPrioridade != null
 					&& (filtro.listaPrioridade == null || (filtro.listaPrioridade != null && !conf.listaPrioridade
@@ -146,35 +163,27 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				srConf.atendente.getLotacaoAtual();
 			if (srConf.posAtendente != null)
 				srConf.posAtendente.getLotacaoAtual();
-
-			if (srConf.itemConfiguracao != null) {
-				SrItemConfiguracao atual = srConf.itemConfiguracao.getAtual();
-				if (atual != null)
-					atual.getItemETodosDescendentes();
-
-				// Edson: varrer os pais é necessário porque o
-				// getItensDisponiveis() precisa dessa
-				// informação
-				SrItemConfiguracao itemPai = atual.pai;
-				while (itemPai != null) {
-					itemPai.getDescricao();
-					itemPai = itemPai.pai;
+			if (srConf.itemConfiguracaoSet != null)
+				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet)
+					i.getAtual();
+			if (srConf.acoesSet != null)
+				for (SrAcao i : srConf.acoesSet)
+					i.getAtual();
+			if (srConf.tipoAtributo != null)
+				srConf.tipoAtributo.getHisIdIni();
+			if (srConf.listaPrioridade != null)
+				srConf.listaPrioridade.getHisIdIni();
+			if (srConf.pesquisaSatisfacao != null)
+				srConf.pesquisaSatisfacao.getHisIdIni();
+			if (srConf.getListaConfiguracaoSet() != null) {
+				for (SrLista listaConf : srConf.getListaConfiguracaoSet()){
+					listaConf.getId();
 				}
 			}
-
-			if (srConf.acao != null) {
-				SrAcao atual = srConf.acao.getAtual();
-				if (atual != null)
-					atual.getAcaoETodasDescendentes();
-			}
-			if (srConf.tipoAtributo != null)
-				srConf.tipoAtributo.getAtual();
-			if (srConf.listaPrioridade != null)
-				srConf.listaPrioridade.getListaAtual();
-
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void atualizarConfiguracoesDoCache(List<SrConfiguracao> configs) {
 		List<SrConfiguracao> evitarLazy = new ArrayList<SrConfiguracao>();
 		for (SrConfiguracao conf : configs) {

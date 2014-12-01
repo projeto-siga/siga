@@ -39,6 +39,7 @@ import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
+import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 
@@ -92,12 +93,12 @@ public class SrSolicitacaoTest extends UnitTest {
 	@Test
 	public void listarItensSelecionaveis() throws Exception {
 
-		// Não traz nenhum pois não tem designação
+		// Nï¿½o traz nenhum pois nï¿½o tem designaï¿½ï¿½o
 		SrSolicitacao sol = new SrSolicitacao();
 		sol.solicitante = eeh();
 		assertEquals(0, sol.getItensDisponiveis().size());
 
-		// Não traz nenhum, pois está fora do escopo
+		// Nï¿½o traz nenhum, pois estï¿½ fora do escopo
 		SrConfiguracao designTRF = new SrConfiguracao();
 		designTRF.atendente = sesuti();
 		designTRF.setOrgaoUsuario(t2());
@@ -105,12 +106,12 @@ public class SrSolicitacaoTest extends UnitTest {
 		apagaCacheDesignacao();
 		assertEquals(0, sol.getItensDisponiveis().size());
 
-		// Traz todos, pois designação não define item
+		// Traz todos, pois designaï¿½ï¿½o nï¿½o define item
 		sol.solicitante = funcionarioTRF();
 		assertEquals(5, sol.getItensDisponiveis().size());
 
 		// Traz item designado e sua linhagem acima e abaixo
-		designTRF.itemConfiguracao = sysdoc();
+		//designTRF.itemConfiguracao = sysdoc();
 		designTRF.salvar();
 		apagaCacheDesignacao();
 		assertEquals(4, sol.getItensDisponiveis().size());
@@ -129,14 +130,14 @@ public class SrSolicitacaoTest extends UnitTest {
 		// Nao traz nenhum, pois item escolhido esta fora do escopo da
 		// designacao
 		SrConfiguracao design = new SrConfiguracao();
-		design.itemConfiguracao = sysdoc();
+		//design.itemConfiguracao = sysdoc();
 		design.atendente = csis();
 		design.salvarComoDesignacao();
 		apagaCacheDesignacao();
 		sol.itemConfiguracao = systrab();
 		assertEquals(0, sol.getAcoesDisponiveis().size());
 
-		// Traz todas as acoes, mas associadas à mesma lotacao, que eh a
+		// Traz todas as acoes, mas associadas ï¿½ mesma lotacao, que eh a
 		// definida na designacao
 		sol.itemConfiguracao = sigadoc();
 		Map<SrAcao, DpLotacao> acoesELotas = sol
@@ -145,11 +146,11 @@ public class SrSolicitacaoTest extends UnitTest {
 		assertTrue(acoesELotas.get(manterSoft()).equivale(csis()));
 		assertTrue(acoesELotas.get(criarSoft()).equivale(csis()));
 
-		// Traz todas as ações,ainda associadas à mesma lotacao, visto que a
+		// Traz todas as aï¿½ï¿½es,ainda associadas ï¿½ mesma lotacao, visto que a
 		// nova design criada abaixo nao fica visivel por ser de menor
 		// prioridade do que a designacao anterior, que define item
 		SrConfiguracao design2 = new SrConfiguracao();
-		design2.acao = manterSoft();
+		//design2.acao = manterSoft();
 		design2.atendente = sesia();
 		design2.salvarComoDesignacao();
 		apagaCacheDesignacao();
@@ -160,7 +161,7 @@ public class SrSolicitacaoTest extends UnitTest {
 
 		// Cada acao com uma lotacao - design2 fica visivel por passar a ter
 		// especificidade maior
-		design2.itemConfiguracao = sigadoc();
+		//design2.itemConfiguracao = sigadoc();
 		design2.salvar();
 		apagaCacheDesignacao();
 		acoesELotas = sol.getAcoesDisponiveisComAtendente();
@@ -174,13 +175,13 @@ public class SrSolicitacaoTest extends UnitTest {
 
 		SrConfiguracao design = new SrConfiguracao();
 		design.tipoAtributo = attPrazo();
-		design.itemConfiguracao = sysdoc();
+		//design.itemConfiguracao = sysdoc();
 		design.salvarComoAssociacaoTipoAtributo();
 		apagaCacheAssociacao();
 
 		SrConfiguracao design2 = new SrConfiguracao();
 		design2.tipoAtributo = attNumDoc();
-		design2.acao = manterSoft();
+		//design2.acao = manterSoft();
 		design2.salvarComoAssociacaoTipoAtributo();
 		apagaCacheAssociacao();
 
@@ -214,7 +215,7 @@ public class SrSolicitacaoTest extends UnitTest {
 
 	@Test
 	public void editarEVerSeHistoricoFicaOk() throws Exception {
-		// Ver se a lista de movimentações é a mesma
+		// Ver se a lista de movimentaï¿½ï¿½es ï¿½ a mesma
 		SrConfiguracao d = new SrConfiguracao();
 		d.atendente = sesia();
 		d.salvarComoDesignacao();
@@ -262,7 +263,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		SrSolicitacao sol2 = new SrSolicitacao();
 		sol2.solicitante = eeh();
 		sol2.cadastrante = eeh();
-		sol2.deduzirLocalERamal();
+		sol2.deduzirLocalRamalEMeioContato();
 		assertEquals(barroso(), sol2.local);
 		assertEquals("ramal 9700", sol2.telPrincipal);
 		sol2.local = null;
@@ -271,7 +272,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		SrSolicitacao sol3 = new SrSolicitacao();
 		sol3.solicitante = eeh();
 		sol3.cadastrante = eeh();
-		sol3.deduzirLocalERamal();
+		sol3.deduzirLocalRamalEMeioContato();
 		assertEquals(null, sol3.local);
 		assertEquals("ramal 9700", sol3.telPrincipal);
 	}
@@ -333,12 +334,12 @@ public class SrSolicitacaoTest extends UnitTest {
 		sol.solicitante = eeh();
 		sol.salvar();
 
-		sol.deixarPendente(sesia(), eeh(), "Teste", "", "");
+		sol.deixarPendente(sesia(), eeh(), SrTipoMotivoPendencia.AGUARDANDO_RECURSO_EXTERNO, "", "", "");
 		assertTrue(sol.isPendente());
 		assertTrue(sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
 				sesia()));
 
-		sol.terminarPendencia(sesia(), eeh());
+		//sol.terminarPendencia(sesia(), eeh(), "", SrTipoMotivoPendencia.AGUARDANDO_PRIORIZACAO, 0L);
 		assertFalse(sol.isPendente());
 		assertFalse(sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
 				sesia()));
@@ -357,7 +358,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		lista.refresh();
 
 		SrLista lista2 = new SrLista();
-		lista2.nomeLista = "Lista de Teste de Outra Lotação";
+		lista2.nomeLista = "Lista de Teste de Outra Lotaï¿½ï¿½o";
 		lista2.lotaCadastrante = csis();
 		lista2.salvar();
 		lista2.refresh();
@@ -380,36 +381,36 @@ public class SrSolicitacaoTest extends UnitTest {
 		assertEquals(1, sol.getListasDisponiveisParaInclusao(sesia(), null).size());
 
 		// Incluir as solicitacoes na lista e checar ordem
-		sol.associarLista(lista, eeh(), sesia());
-		sol2.associarLista(lista, eeh(), sesia());
-		sol3.associarLista(lista, eeh(), sesia());
+		sol.incluirEmLista(lista, eeh(), sesia());
+		sol2.incluirEmLista(lista, eeh(), sesia());
+		sol3.incluirEmLista(lista, eeh(), sesia());
 		assertEquals(1, sol.getPrioridadeNaLista(lista));
 		assertEquals(2, sol2.getPrioridadeNaLista(lista));
 		assertEquals(3, sol3.getPrioridadeNaLista(lista));
 
-		// Tirando a sol nº1, a 2 e 3 mudam de ordem para ocupar a vaga
-		sol.desassociarLista(lista, eeh(), sesia());
+		// Tirando a sol nï¿½1, a 2 e 3 mudam de ordem para ocupar a vaga
+		sol.retirarDeLista(lista, eeh(), sesia());
 		assertEquals(1, sol2.getPrioridadeNaLista(lista));
 		assertEquals(2, sol3.getPrioridadeNaLista(lista));
 		assertFalse(sol.isEmLista(lista));
 
 		// Editar a lista e garantir que continua ok, retirando
-		// a sol nº 3 e checando ordem
+		// a sol nï¿½ 3 e checando ordem
 		lista.nomeLista = "Lista de Teste alterada";
 		lista.salvar();
 		lista.refresh();
 		lista.listaInicial.refresh();
 		assertTrue(sol2.isEmLista(lista));
 		assertTrue(sol2.isEmLista(lista.listaInicial));
-		sol3.desassociarLista(lista, eeh(), sesia());
+		sol3.retirarDeLista(lista, eeh(), sesia());
 		assertEquals(1, sol2.getPrioridadeNaLista(lista));
 		assertFalse(sol3.isEmLista(lista));
 
-		// reincluir as solicitações retiradas (fica 2-1-3), mandar reordenar
-		// pra 3-1-2 e checar ordem, conferindo se a nº 1 ficou sem mov
-		// de priorização, visto que não saiu da posição
-		sol.associarLista(lista, eeh(), sesia());
-		sol3.associarLista(lista, eeh(), sesia());
+		// reincluir as solicitaï¿½ï¿½es retiradas (fica 2-1-3), mandar reordenar
+		// pra 3-1-2 e checar ordem, conferindo se a nï¿½ 1 ficou sem mov
+		// de priorizaï¿½ï¿½o, visto que nï¿½o saiu da posiï¿½ï¿½o
+		sol.incluirEmLista(lista, eeh(), sesia());
+		sol3.incluirEmLista(lista, eeh(), sesia());
 		lista.priorizar(eeh(), sesia(),
 				Arrays.asList(new SrSolicitacao[] { sol3, sol, sol2 }));
 		assertEquals(1, sol3.getPrioridadeNaLista(lista));
@@ -431,7 +432,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		sol.solicitante = eeh();
 		sol.salvar();
 
-		sol.fechar(sesia(), eeh(), "Fechando. Iniciar pós-atendimento.");
+		sol.fechar(sesia(), eeh(), "Fechando. Iniciar pï¿½s-atendimento.");
 		assertTrue(sol.isEmPosAtendimento());
 		assertTrue(sol.isMarcada(
 				CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO, csis()));
@@ -475,7 +476,7 @@ public class SrSolicitacaoTest extends UnitTest {
 		assertTrue(sol.isMarcada(
 				CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL, sesia()));
 
-		// Não pode fechar diretamente nesse estágio
+		// Nï¿½o pode fechar diretamente nesse estï¿½gio
 		assertFalse(sol.podeFechar(sesia(), eeh()));
 
 		// Soh quem pode responder a pesquisa eh o subscritor

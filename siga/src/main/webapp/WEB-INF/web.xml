@@ -4,10 +4,12 @@
 
 	<display-name>Sistema Integrado de Gestão Administrativa</display-name>
 
+<!-- 
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
 	</listener>
-
+ -->
+ 
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
 	</listener>
@@ -137,6 +139,10 @@
 			<web-resource-name>sigalibs</web-resource-name>
 			<url-pattern>/sigalibs/*</url-pattern>
 		</web-resource-collection>
+		<web-resource-collection>
+            <web-resource-name>servicos</web-resource-name>
+            <url-pattern>/servicos/*</url-pattern>
+        </web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>pagina_vazia</web-resource-name>
 			<url-pattern>/pagina_vazia.action</url-pattern>

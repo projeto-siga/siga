@@ -136,8 +136,6 @@ public class CpMarcador extends AbstractCpMarcador {
 	final static public long MARCADOR_SOLICITACAO_FECHADO_PARCIAL = 53;
 
 	final static public long MARCADOR_SOLICITACAO_EM_CONTROLE_QUALIDADE = 54;
-
-	final static public long MARCADOR_SOLICITACAO_AGENDADO = 55;
 	
 	final static public long MARCADOR_A_DEVOLVER = 56;
 	
@@ -148,6 +146,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	final static public long MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO = 59;
 
 	final static public long MARCADOR_PENDENTE_DE_ANEXACAO = 60;
+	
+	final static public long MARCADOR_SOLICITACAO_EM_ELABORACAO = 61;
 	
 	public CpMarcador() {
 		super();

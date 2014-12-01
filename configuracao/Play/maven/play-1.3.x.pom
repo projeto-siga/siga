@@ -74,7 +74,6 @@ limitations under the License.
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <version>0.9.2.1</version>
-            <scope>provided</scope>
         </dependency>
         
         <dependency>

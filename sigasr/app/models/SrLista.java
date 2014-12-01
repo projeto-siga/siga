@@ -16,12 +16,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -32,8 +35,13 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Table(name = "SR_LISTA", schema = "SIGASR")
 public class SrLista extends HistoricoSuporte {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private class SrSolicitacaoListaComparator implements
-			Comparator<SrSolicitacao> {
+	Comparator<SrSolicitacao> {
 
 		private SrLista lista;
 
@@ -63,11 +71,23 @@ public class SrLista extends HistoricoSuporte {
 	@Column(name = "NOME_LISTA")
 	public String nomeLista;
 
+	@Lob
+	@Column(name = "DESCR_ABRANGENCIA", length = 8192)
+	public String descrAbrangencia;
+
+	@Lob
+	@Column(name = "DESCR_JUSTIFICATIVA", length = 8192)
+	public String descrJustificativa;
+
+	@Lob
+	@Column(name = "DESCR_PRIORIZACAO", length = 8192)
+	public String descrPriorizacao;
+
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
 
@@ -75,12 +95,27 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrLista listaInicial;
 
-	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
 
-	public static List<SrLista> listar() {
-		return SrLista.find("hisDtFim is null order by idLista").fetch();
+	@Transient
+	public List<SrConfiguracao> permissoes;
+
+	public static List<SrLista> listar(boolean mostrarDesativado) {
+		StringBuffer sb = new StringBuffer();
+
+		if (!mostrarDesativado)
+			sb.append(" hisDtFim is null ");
+		else {
+			sb.append(" idLista in (");
+			sb.append(" SELECT max(idLista) as idLista FROM ");
+			sb.append(" SrLista GROUP BY hisIdIni) ");
+		}
+
+		sb.append(" order by idLista ");
+
+		return SrLista.find(sb.toString()).fetch();
 	}
 
 	public static List<SrLista> getCriadasPelaLotacao(DpLotacao lota) {
@@ -128,12 +163,12 @@ public class SrLista extends HistoricoSuporte {
 	public Set<SrMovimentacao> getMovimentacaoSet(boolean ordemCrescente) {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new SrMovimentacaoComparator(ordemCrescente));
-		SrLista ini = listaInicial != null ? listaInicial
-				: this;
-		if (ini.meuMovimentacaoSet != null)
-			for (SrMovimentacao movimentacao : ini.meuMovimentacaoSet)
-				if ((!movimentacao.isCanceladoOuCancelador()))
-					listaCompleta.add(movimentacao);
+		if (listaInicial != null)
+			for (SrLista lista : getHistoricoLista())
+				if (lista.meuMovimentacaoSet != null)
+					for (SrMovimentacao movimentacao : lista.meuMovimentacaoSet)
+						if ((!movimentacao.isCanceladoOuCancelador()))
+							listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
 
@@ -144,21 +179,26 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
-		return (lota.equals(lotaCadastrante));
+		return (lota.equivale(lotaCadastrante));
 	}
 
 	public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess)
 			throws Exception {
-		return (lotaTitular.equals(lotaCadastrante));
+		return (lotaTitular.equivale(lotaCadastrante));
 	}
 
 	public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess)
 			throws Exception {
-		if ((lotaTitular.equals(lotaCadastrante)))
+		if ((lotaTitular.equivale(lotaCadastrante)))
 			return true;
-		SrConfiguracao conf = SrConfiguracao.getConfiguracao(lotaTitular, pess,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA, this);
-		return conf != null;
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setLotacao(lotaTitular);
+		confFiltro.setDpPessoa(pess);
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(
+				CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+		confFiltro.listaPrioridade = this;
+		return SrConfiguracao.buscar(confFiltro) != null;
 	}
 
 	public Set<SrSolicitacao> getSolicitacaoSet() throws Exception {
@@ -187,15 +227,15 @@ public class SrLista extends HistoricoSuporte {
 
 		if (sols.size() != getSolicitacaoSet().size())
 			throw new IllegalArgumentException(
-					"O número de elementos passados ("
+					"O nÃ­mero de elementos passados ("
 							+ sols.size()
-							+ ") é diferente do número de solicitações existentes na lista ("
+							+ ") Ã© diferente do nÃºmero de solicitaÃ§Ãµes existentes na lista ("
 							+ getSolicitacaoSet().size() + ")");
 
 		for (SrSolicitacao sol : sols) {
 			if (!sol.isEmLista(this))
-				throw new IllegalArgumentException("A solicitação "
-						+ sol.getCodigo() + " não faz parte da lista");
+				throw new IllegalArgumentException("A solicitaÃ§Ã£o "
+						+ sol.getCodigo() + " nÃ£o faz parte da lista");
 		}
 
 		this.recalcularPrioridade(cadastrante, lotaCadastrante, sols);
@@ -220,19 +260,31 @@ public class SrLista extends HistoricoSuporte {
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
-		
-		//Edson: comentado o codigo abaixo porque muitos problemas ocorriam. Mas
-		//tem de ser corrigido.
-		
-		//Edson: eh necessario o refresh porque, abaixo, as configuracoes referenciando
-		//serao recarregadas do banco, e precisarao reconhecer o novo estado desta lista
-		//refresh();
 
-		// Edson: soh apaga o cache de configuracoes se ja existia antes uma
-		// instancia do objeto, caso contrario, nao ha configuracao
-		// referenciando
-		//if (listaInicial != null)
-		//	SrConfiguracao.notificarQueMudou(this);
+		// DB1: precisa salvar item a item 
+		if (this.permissoes != null) {
+			for (SrConfiguracao permissao : this.permissoes) {
+				permissao.listaPrioridade = this;
+				permissao.salvarComoPermissaoUsoLista();
+			}
+		}
 	}
 
+	/**
+	 * Classe que representa um V.O. de {@link SrLista}.
+	 */
+	public class SrListaVO {
+
+		public Long idLista;
+		public String nomeLista;
+
+		public SrListaVO(Long idLista, String nomeLista) {
+			this.idLista = idLista;
+			this.nomeLista = nomeLista;
+		}
+	}
+
+	public SrListaVO toVO() {
+		return new SrListaVO(this.idLista, this.nomeLista);
+	}
 }

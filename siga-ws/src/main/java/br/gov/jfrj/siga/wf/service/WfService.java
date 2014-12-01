@@ -24,7 +24,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.util.ArrayList;
 
-@WebService
+@WebService(targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
 public interface WfService extends Remote {
 
 	/**

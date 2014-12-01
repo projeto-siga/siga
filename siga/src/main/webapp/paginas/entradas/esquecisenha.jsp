@@ -80,16 +80,21 @@ function exibirDadosIntegracaoAD(response,param){
 
 function checkEmailValido(){
 	var matricula = document.getElementById('txtMatricula').value;
-	PassAjaxResponseToFunction('${check_email_valido_url}?matricula=' + matricula, 'permitirInclusaoUsuario',  false,true, null);
+	$.ajax({
+		method:'GET',
+		url: '${check_email_valido_url}?matricula=' + matricula
+	}).done(function(data){permitirInclusaoUsuario(data)});
 }
 
 function permitirInclusaoUsuario(response,param){
 	if (response == "0"){
-		document.getElementById('painel-dados-usuario').style.display = 'none';
-		document.getElementById('msgEmail').className = 'email-invalido';
-	}else{
 		document.getElementById('painel-dados-usuario').style.display = 'block';
 		document.getElementById('msgEmail').className = 'oculto';
+	}else{
+		document.getElementById('painel-dados-usuario').style.display = 'none';
+		document.getElementById('msgEmail').className = 'email-invalido';
+		$('#msgEmail').text(response);
+
 	}
 
 }
@@ -263,7 +268,7 @@ function refreshWindow(){
 
 
 					</div>
-					<p id="msgEmail" class="oculto">Você ainda não possui um e-mail válido. Tente mais tarde.</p>
+					<p id="msgEmail" class="oculto"></p>
 				</ww:form>
 			</div>
 

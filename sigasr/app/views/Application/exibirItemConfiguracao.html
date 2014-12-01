@@ -14,16 +14,17 @@ function carregouAcao(response, param){
 	div.innerHTML = response;
 	var scripts = div.getElementsByTagName("script");
 	for(var i=0;i<scripts.length;i++)  
-	   eval(scripts[i].text);  
+	   eval(scripts[i].text);
+
+	notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
 }
 </script>
 
 <div class="gt-form-row gt-width-66" >
-				<label>Item</label> #{selecao tipo:'item',
-				nome:'solicitacao.itemConfiguracao',
-				value:solicitacao.itemConfiguracao, grande:true, onchange:'carregarAcao();',
-				params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo /} <span style="color: red">#{error
-					'solicitacao.itemConfiguracao' /}</span>
+	<label>Item</label> #{selecao tipo:'item',
+	nome:'solicitacao.itemConfiguracao',
+	value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')",
+	params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo /} <span style="color: red">#{error
+		'solicitacao.itemConfiguracao' /}</span>
 </div>
-<div id="divAcao">#{include 'Application/exibirAcao.html'
-				/}</div>
+<div id="divAcao">#{include 'Application/exibirAcao.html' /}</div>

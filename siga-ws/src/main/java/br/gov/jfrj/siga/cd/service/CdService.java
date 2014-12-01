@@ -20,11 +20,12 @@ package br.gov.jfrj.siga.cd.service;
 
 import java.util.Date;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 import br.gov.jfrj.siga.Remote;
 
-@WebService
+@WebService(targetNamespace = "http://impl.service.cd.siga.jfrj.gov.br/")
 public interface CdService extends Remote {
 
 	// public final static String MIME_TYPE_CMS = "application/cms-signature";
@@ -51,20 +52,25 @@ public interface CdService extends Remote {
 	 * @throws Exception
 	 */
 
+	@WebMethod
 	byte[] produzPacoteAssinavel(byte[] certificado, byte[] certificadoHash,
 			byte[] documento, boolean politica, Date dtAssinatura)
 			throws Exception;
 
+	@WebMethod
 	byte[] validarECompletarPacoteAssinavel(byte[] certificado,
 			byte[] documento, byte[] assinatura, boolean politica,
 			Date dtAssinatura) throws Exception;
 
+	@WebMethod
 	byte[] validarECompletarAssinatura(byte[] assinatura, byte[] documento,
 			boolean politica, Date dtAssinatura) throws Exception;
 
+	@WebMethod
 	String validarAssinatura(byte[] assinatura, byte[] documento,
 			Date dtAssinatura, boolean verificarLCRs) throws Exception;
 
+	@WebMethod
 	String validarAssinaturaPKCS7(byte[] digest, String digestAlgorithm,
 			byte[] assinatura, Date dtAssinatura, boolean verificarLCRs)
 			throws Exception;

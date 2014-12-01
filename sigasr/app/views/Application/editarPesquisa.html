@@ -100,7 +100,9 @@ $(function() {
                 perguntas.incluirItem('${pergunta.descrPergunta}', '${pergunta.tipoPergunta.idTipoPergunta}', '${pergunta.tipoPergunta.nomeTipoPergunta}', ${pergunta.idPergunta});
         #{/list}
 
-        $("[value='Salvar']").click(function(){
+        $("[value='Gravar']").click(function(){
+            	if (!block())
+                	return false;
                 var jForm = $("form"),
                         params = jForm.serialize();
                 jPerguntas.find("li").each(function(i){
@@ -117,7 +119,7 @@ $(function() {
 </script>
 <div class="gt-bd clearfix">
         <div class="gt-content">
-                <h2>Pesquisa de Satisfação</h2>
+                <h2>Cadastro de Pesquisa de Satisfação</h2>
 
                 <div class="gt-form gt-content-box">
                         <form>
@@ -139,8 +141,10 @@ $(function() {
                                                 class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
                                 </div>
                                 <div class="gt-form-row">
-                                        <input type="button" value="Salvar"
-                                                class="gt-btn-medium gt-btn-left" /> #{if pesq?.idPesquisa} <input
+                                        <input type="button" value="Gravar"
+                                                class="gt-btn-medium gt-btn-left" /> 
+                                       	<a href="@{Application.listarPesquisa}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+                                       	#{if pesq?.idPesquisa} <input
                                                 type="button" value="Desativar" class="gt-btn-medium gt-btn-left"
                                                 onclick="location.href='@{Application.desativarPesquisa()}?id=${pesq.idPesquisa}'" />
                                         #{/if}

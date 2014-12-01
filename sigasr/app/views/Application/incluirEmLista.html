@@ -1,5 +1,5 @@
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form action="@{Application.associarListaGravar(solicitacao?.idSolicitacao, lista?.idLista)}">
+		<form action="@{Application.incluirEmListaGravar(solicitacao?.idSolicitacao, lista?.idLista)}" onsubmit="javascript: return block();">
 		<div style="max-height: 500px; overflow-y: scroll;">
 		<table border="0" class="gt-table">
 			<col width="20%" />

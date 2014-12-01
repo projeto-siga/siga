@@ -2,7 +2,7 @@ package utils;
 
 import java.text.Normalizer;
 
-public class GcLabelValue {
+public class GcLabelValue implements Comparable {
 	private String label;
 	private String value;
 	private String text;
@@ -49,5 +49,10 @@ public class GcLabelValue {
 //				.replaceAll("[םלמ]", "i").replaceAll("[ץפףע]", "o")
 //				.replaceAll("[ûתשü]", "u").replaceAll("[ח]", "c"));
 //		return semacentos;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		return getLabel().compareTo(((GcLabelValue)o).getLabel());
 	}
 }

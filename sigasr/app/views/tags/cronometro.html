@@ -10,20 +10,20 @@
 	moment.locale('pt-br');
 
 	$(document).ready(function() {
-		moveRelogio(0);
+		moveRelogio${_descricao}(0);
 	})
 	
-	function moveRelogio(andamento) { 
-	   	$('#${_descricao}').html(intervaloPercorrido(andamento));
+	function moveRelogio${_descricao}(andamento) { 
+	   	$('#${_descricao}').html(intervaloPercorrido${_descricao}(andamento));
 		
 	   	#{if _contarTempo == true}
 	   		setTimeout(function() {
-	   			moveRelogio(andamento + 1000);
+	   			moveRelogio${_descricao}(andamento + 1000);
 	   		}, 1000);
 	   	#{/if}
 	}; 
 
-	function intervaloPercorrido(tempoPercorrido) {
+	function intervaloPercorrido${_descricao}(tempoPercorrido) {
 		var tempoString = new String(),
 			duration = moment.duration(tempoPercorrido),
 			anos = duration.years(),

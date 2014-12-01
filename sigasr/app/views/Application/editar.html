@@ -1,5 +1,4 @@
 #{extends 'main.html' /} #{set title:'Cadastro de solicitação' /}
-<script src="/sigasr/public/javascripts/moment.js"></script>
 <style>
 .barra-subtitulo {
 	color: #365b6d !important;
@@ -387,13 +386,6 @@
 
   		return num;
 	};
-	
-	function moveRelogio(){ 
-		cadastramento = cadastramento;
-	   	dtCadastramento = new Date(cadastramento);
-	   	cadastramentoString = formatarValorTimer(dtCadastramento .getHours()) + ":" + formatarValorTimer(dtCadastramento .getMinutes()); 
-	   	$('#cadastramento').html(cadastramentoString);
-	}; 
 </script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 

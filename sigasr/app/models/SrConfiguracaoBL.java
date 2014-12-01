@@ -81,6 +81,14 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& conf.pesquisaSatisfacao == null)
 				return false;
 			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_ATENDENTE
+					&& conf.slaAtendimentoQuantidade == null)
+				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_PRE_ATENDENTE
+					&& conf.slaPreAtendimentoQuantidade == null)
+				return false;
+			
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE
 					&& (conf.getListaConfiguracaoSet() == null || conf.getListaConfiguracaoSet().isEmpty()))
 				return false;

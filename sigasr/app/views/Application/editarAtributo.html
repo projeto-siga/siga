@@ -22,11 +22,13 @@
 
 	//removendo a referencia de '$' para o jQuery
 	$.noConflict();
+
+	var table = null;
 	
 	jQuery( document ).ready(function( $ ) {
 		
 		/* Table initialization */
-		var table = $('#associacao_table')
+		table = $('#associacao_table')
 			.on('draw.dt', function() {
 						if(table) {
 							var btn = $('.bt-expandir'),
@@ -210,7 +212,7 @@
 
 	function gravarAssociacao() {
 		var idAssociacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
-
+		
 		var row = [
 					'',                                                                    // colunas.botaoExpandir
 					$("#itemConfiguracaoUnitario").val(),                                  // colunas.idItemConfiguracao
@@ -281,13 +283,15 @@
 	}
 
 	function desassociar(event, idAssociacaoDesativar) {
-		event.stopPropagation();
+		event.stopPropagation()
 		
 		var me = $(this),
-			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : me.find('.idAssociacao').val();
+			tr = $(event.currentTarget).parent().parent()[0],
+			row = table.api().row(tr).data(),
+			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunas.idAssociacao];
 			idAtributo = $("#idAtributo").val();
-
-		location.href='@{Application.desativarAssociacaoEdicao()}?' + jQuery.param({idAtributo : idAtributo, idAssociacao : idAssociacao});
+			
+			location.href='@{Application.desativarAssociacaoEdicao()}?' + jQuery.param({idAtributo : idAtributo, idAssociacao : idAssociacao});
 	}
 
 </script>

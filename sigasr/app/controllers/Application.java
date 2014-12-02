@@ -375,7 +375,7 @@ public class Application extends SigaApplication {
 	public static void gravar(SrSolicitacao solicitacao, HashMap<Long, String> atributoMap, long dtIniEdicao) throws Exception {
         solicitacao.dtIniEdicao = new Date(dtIniEdicao);
 
-        solicitacao.setAtributoMap(atributoMap);
+        //solicitacao.setAtributoMap(atributoMap);
         
         if(!solicitacao.isRascunho())
         	validarFormEditar(solicitacao);

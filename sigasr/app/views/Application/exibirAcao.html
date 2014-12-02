@@ -81,8 +81,13 @@ function carregouAtributos(response, param){
 		<label>Atendente</label>
 		<span id="atendentePadrao" style="display:block;">
 			 <!-- Para solicitacoes cadastradas, pegar o atendente da ultima movimentacao -->
+			 <!-- Para solicitacoes filhas que estao sendo cadastradas, pegar o atendente da ultima movimentacao do pai -->
+			 <!-- Para solicitacoes que estao sendo cadastradas, pegar o atendente da designacao -->
 			#{if solicitacao.numSolicitacao != null} 
-				${solicitacao.lotaAtendente?.sigla} - ${solicitacao.lotaAtendente?.descricao.raw()}
+				#{if solicitacao.isFilha() && solicitacao.idSolicitacao == null}
+					${solicitacao.solicitacaoPai?.lotaAtendente?.sigla} - ${solicitacao.solicitacaoPai?.lotaAtendente?.descricao.raw()}
+				#{/if}
+				#{else}${solicitacao.lotaAtendente?.sigla} - ${solicitacao.lotaAtendente?.descricao.raw()}#{/else}
 			#{/if}
 			#{else}${lotacaoNaoDesignada.raw()}#{/else}
 		</span>

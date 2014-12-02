@@ -35,7 +35,8 @@ submitOk = function() {
 			&& listEstado[0] != 13 && listEstado[0] != 16
 			&& listEstado[0] != 18 && listEstado[0] != 20 
 			&& listEstado[0] != 21 && listEstado[0] != 22 
-			&& listEstado[0] != 26 && listEstado[0] != 32}">
+			&& listEstado[0] != 26 && listEstado[0] != 32
+			&& listEstado[0] != 62 && listEstado[0] != 63 && listEstado[0] != 64}">
 
 					<c:set var="titulo1" value=""></c:set>
 					<c:set var="titulo2" value=""></c:set>

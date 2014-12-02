@@ -21,8 +21,8 @@ public class SrAtributoSolicitacao extends GenericModel {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SOLICITACAO_SEQ", name = "srAtributoSeq")
-	@GeneratedValue(generator = "srAtributoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SOLICITACAO_SEQ", name = "srAtributoSolicitacaoSeq")
+	@GeneratedValue(generator = "srAtributoSolicitacaoSeq")
 	@Column(name = "ID_ATRIBUTO_SOLICITACAO")
 	public long id;
 	

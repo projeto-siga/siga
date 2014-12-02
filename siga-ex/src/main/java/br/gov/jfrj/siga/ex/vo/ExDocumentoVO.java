@@ -488,7 +488,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"script_key",
-				"Assinar",
+				"Assinar Digitalmente",
 				"/expediente/mov",
 				"assinar",
 				Ex.getInstance().getComp()

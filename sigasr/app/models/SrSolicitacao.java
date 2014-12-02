@@ -14,7 +14,10 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALID
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO;
+
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
+
+
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA;
@@ -55,6 +58,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -91,6 +95,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	/**
 	 * 
 	 */
+	 
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -164,6 +169,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Enumerated
 	public SrUrgencia urgencia;
+
 
 	@Enumerated
 	public SrPrioridade prioridade;
@@ -316,27 +322,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Override
 	public String getDescricao() {
 		if (descrSolicitacao == null || descrSolicitacao.length() == 0)
-			return "Descrição não informada";
+			return "Descricao nao informada";
 		return descrSolicitacao;
 	}
 
 	public String getDescrItem() {
 		return itemConfiguracao != null ? itemConfiguracao.tituloItemConfiguracao
-				: "Item não informado";
+				: "Item nao informado";
 	}
 
 	public String getDescrAcao() {
-		return acao != null ? acao.tituloAcao : "Ação não informada";
+		return acao != null ? acao.tituloAcao : "Acao nao informada";
 	}
 
 	public String getSiglaEDescrItem() {
 		return itemConfiguracao != null ? itemConfiguracao.toString()
-				: "Item não informado";
+				: "Item nao informado";
 	}
 
 	public String getSiglaEDescrAcao() {
-		return acao != null ? acao.toString() : "Ação não informada";
+		return acao != null ? acao.toString() : "Acao nao informada";
 	}
+
 	
 	@Override
 	public void setDescricao(String descricao) {
@@ -431,7 +438,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return s;
 	}
 
-	// Edson: Necessário porque não há binder para arquivo
+	// Edson: Necess�rio porque nao h� binder para arquivo
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
@@ -463,6 +470,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		else if (Util.isbetween(100, 125, valorGUT))
 			prioridade = SrPrioridade.IMEDIATO;
 	}
+
 
 	public String getDtRegDDMMYYYYHHMM() {
 		if (dtReg != null) {
@@ -532,12 +540,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public Set<SrMovimentacao> getMovimentacaoReferenciaSet() {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
+
 				new SrMovimentacaoComparator(false));
 		SrSolicitacao sol = solicitacaoInicial != null ? solicitacaoInicial
+
 				: this;
 		if (sol.meuMovimentacaoSet != null)
 			for (SrMovimentacao movimentacao : sol.meuMovimentacaoSet)
 				if (!movimentacao.isCanceladoOuCancelador())
+
+
 					listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
@@ -690,7 +702,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return null;
 	}
 
-public DpLotacao getAtendenteDesignado() throws Exception {
+	public DpLotacao getAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
 		
@@ -757,7 +769,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		return getTiposAtributoAssociados(null);
 	}
 
-	
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
@@ -787,10 +798,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		
 		return listaFinal;
 	}
-
-
-	@Transient
-	public boolean mock;
 
 	public DpLotacao getPosAtendenteDesignado() throws Exception {
 		if (solicitante == null)
@@ -842,7 +849,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		return null;
 	}
 
-	// Edson: poderia também guardar num HashMap transiente e, ao salvar(),
+	// Edson: poderia tamb�m guardar num HashMap transiente e, ao salvar(),
 	// mandar criar os atributos, caso se quisesse permitir um
 	// solicitacao.getAtributoSet().put...
 	public void setAtributoMap(HashMap<Long, String> atributos) {
@@ -853,7 +860,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 			SrAtributo att = new SrAtributo(tipoAtt, atributos.get(idTipoAtt),
 					this);
 			meuAtributoSet.add(att);
-
 		}
 	}
 
@@ -867,6 +873,8 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 	}
 
 	private Set<SrSolicitacao> getSolicitacaoFilhaSet() {
+
+
 		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
 				new Comparator<SrSolicitacao>() {
 					@Override
@@ -1131,7 +1139,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 
 	public boolean podeVincular(DpLotacao lotaTitular, DpPessoa titular) {
 		return !isRascunho();
-
 	}
 
 	public boolean podeDesfazerMovimentacao(DpLotacao lota, DpPessoa pess) {
@@ -1144,7 +1151,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
 		return (estaCom(lota, pess) || isEmListaPertencenteA(lota))
 				&& (isEmPreAtendimento() || isEmAtendimento() || isRascunho());
-
 	}
 
 	public boolean podePriorizar(DpLotacao lota, DpPessoa pess) {
@@ -1187,7 +1193,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 	public boolean podeDeixarPendente(DpLotacao lota, DpPessoa pess) {
 		return isRascunho()
 				|| ((isEmAtendimento() || isPendente()) && estaCom(lota, pess));
-
 	}
 
 	public boolean podeAlterarPrazo(DpLotacao lota, DpPessoa pess) {
@@ -1202,7 +1207,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 	public boolean podeReabrir(DpLotacao lota, DpPessoa pess) {
 		return isFechado()
 				&& (estaCom(lota, pess) || foiCadastradaPor(lota, pess) || foiSolicitadaPor(
-						lota, pess));
+					lota, pess));
 	}
 
 	public boolean podeAnexarArquivo(DpLotacao lota, DpPessoa pess) {
@@ -1215,7 +1220,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 
 	public boolean podeIncluirEmLista(DpLotacao lota, DpPessoa pess) {
 		return isEmAtendimento();
-
 	}
 
 	public boolean podeTrocarAtendente(DpLotacao lota, DpPessoa pess) {
@@ -1235,7 +1239,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
 				return true;
 
-
 		return false;
 
 	}
@@ -1249,7 +1252,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		if (lotaSolicitante == null)
 			lotaSolicitante = solicitante.getLotacao();
 
-		// Tenta buscar a �ltima aberta pelo solicitante
+		// Tenta buscar a ultima aberta pelo solicitante
 		String queryString = "from SrSolicitacao sol where sol.idSolicitacao = ("
 				+ "	select max(idSolicitacao) from SrSolicitacao "
 				+ "	where solicitante.idPessoa in ("
@@ -1262,7 +1265,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		if (listaProvisoria != null && listaProvisoria.size() > 0)
 			ultima = listaProvisoria.get(0);
 
-		// Tenta buscar a �ltima aberta pela lota��o dele
+		// Tenta buscar a ultima aberta pela lotacao dele
 		if (ultima == null && lotaSolicitante != null) {
 			queryString = "from SrSolicitacao sol where sol.idSolicitacao = ("
 					+ "	select max(idSolicitacao) from SrSolicitacao "
@@ -1302,6 +1305,10 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 	}
 
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
+
+		if (solicitante == null)
+			return null;
+			
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
 
 
@@ -1332,7 +1339,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 
 					itemPai = itemPai.pai;
 
-
 				}
 			}
 		}
@@ -1343,11 +1349,16 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 	}
 
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
-		return new ArrayList<SrAcao>(getAcoesDisponiveisComAtendente().keySet());
+		Map<SrAcao, DpLotacao> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		return acoesEAtendentes != null ? new ArrayList<SrAcao>(acoesEAtendentes.keySet()) : null;
 	}
 
 	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendente()
 			throws Exception {
+
+		if (solicitante == null || itemConfiguracao == null)
+			return null;
+
 		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
 
 		SrConfiguracao confFiltro = new SrConfiguracao();
@@ -1370,7 +1381,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 			if (conf != null)
 
 				listaFinal.put(a, conf.atendente);
-
 		}
 
 		return listaFinal;
@@ -1394,6 +1404,10 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 
 	public Map<SrAcao, DpLotacao> getAcoesDisponiveisComAtendenteOrdemTitulo()
 			throws Exception {
+		Map acoesEAtendentes = getAcoesDisponiveisComAtendente();
+
+		if (acoesEAtendentes != null){
+		
 		Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
 				new Comparator<SrAcao>() {
 					@Override
@@ -1402,26 +1416,31 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 						if (i != 0)
 							return i;
 						return o1.idAcao.compareTo(o2.idAcao);
+
 					}
 				});
 
-		m.putAll(getAcoesDisponiveisComAtendente());
-		return m;
+			m.putAll(acoesEAtendentes);
+			return m;
+		}
+		return null;
 	}
 
 	@SuppressWarnings("serial")
 	public SortedSet<SrOperacao> operacoes(final DpLotacao lotaTitular,
+
 			final DpPessoa titular)
 					throws Exception {
-
 		SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
 			@Override
 			public boolean add(SrOperacao e) {
-				// Edson: será que essas coisas poderiam estar dentro do
+				// Edson: ser� que essas coisas poderiam estar dentro do
 				// SrOperacao?
 				if (e.params == null)
 					e.params = new HashMap<String, Object>();
 				e.params.put("id", idSolicitacao);
+
+
 				if (!e.isModal())
 					e.url = Router.reverse(e.url, e.params).url;
 				if (!e.pode)
@@ -1436,15 +1455,16 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		operacoes.add(new SrOperacao("table_relationship", "Vincular",
 				podeVincular(lotaTitular, titular),
 
+
 				"vincular", "modal=true"));
 
 		operacoes.add(new SrOperacao("arrow_divide",
 				"Escalonar", podeEscalonar(lotaTitular,
-
 						titular), "Application.escalonar"));
 
-		operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitações",
+		operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitac�es",
 				podeJuntar(lotaTitular, titular),
+
 				"juntar", "modal=true"));
 
 				
@@ -1460,11 +1480,11 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 				"responderPesquisa", "modal=true"));
 
 		operacoes.add(new SrOperacao("arrow_rotate_anticlockwise",
-				"Retornar ao Pré-Atendimento", podeRetornarAoPreAtendimento(
+				"Retornar ao Pr�-Atendimento", podeRetornarAoPreAtendimento(
 						lotaTitular, titular),
 				"Application.retornarAoPreAtendimento"));
 
-		operacoes.add(new SrOperacao("accept", "Finalizar Pré-Atendimento",
+		operacoes.add(new SrOperacao("accept", "Finalizar Pr�-Atendimento",
 				podeFinalizarPreAtendimento(lotaTitular, titular),
 				"Application.finalizarPreAtendimento"));
 
@@ -1472,13 +1492,13 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 				podeRetornarAoAtendimento(lotaTitular, titular),
 				"Application.retornarAoAtendimento"));
 
-		operacoes.add(new SrOperacao("cross", "Cancelar Solicitação",
+		operacoes.add(new SrOperacao("cross", "Cancelar Solicitacao",
 				podeCancelar(lotaTitular, titular), "Application.cancelar"));
 
 		operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(
 				lotaTitular, titular), "Application.reabrir"));
 
-		operacoes.add(new SrOperacao("clock_pause", "Incluir Pendência",
+		operacoes.add(new SrOperacao("clock_pause", "Incluir Pend�ncia",
 				podeDeixarPendente(lotaTitular, titular), "pendencia",
 				"modal=true"));
 
@@ -1488,7 +1508,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 
 		operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir",
 				podeExcluir(lotaTitular, titular),
-				"Deseja realmente excluir esta solicitação?", null, "", ""));
+				"Deseja realmente excluir esta solicitacao?", null, "", ""));
 
 		operacoes.add(new SrOperacao("attach", "Anexar Arquivo",
 				podeAnexarArquivo(lotaTitular, titular), "anexarArquivo",
@@ -1503,7 +1523,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 				+ (ultCancelavel != null ? ultCancelavel.tipoMov.nome : ""),
 				podeDesfazerMovimentacao(lotaTitular, titular),
 				"Application.desfazerUltimaMovimentacao"));
-		
+
 		return operacoes;
 	}
 
@@ -1517,7 +1537,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 	public void salvar() throws Exception {
 
 		checarEPreencherCampos();
-		//Edson: Ver por que isto está sendo necessário. Sem isso, após o salvar(),
+		//Edson: Ver por que isto est� sendo necess�rio. Sem isso, ap�s o salvar(),
 		//ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's
 		if (solicitacaoInicial != null)
 			for (SrSolicitacao s : solicitacaoInicial.meuSolicitacaoHistoricoSet){
@@ -1525,6 +1545,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 			}
 
 		super.salvar();
+
 
 		//Edson: melhorar isto, pra nao precisar salvar novamente
 
@@ -1557,6 +1578,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 			atualizarMarcas();
 	}
 
+
 	public void excluir() throws Exception{
 		finalizar();
 		for (SrMarca e : getMarcaSet()) {
@@ -1568,7 +1590,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 	private void checarEPreencherCampos() throws Exception {
 
 		if (cadastrante == null)
-			throw new Exception("Cadastrante não pode ser nulo");
+			throw new Exception("Cadastrante nao pode ser nulo");
 
 		if (dtReg == null)
 			dtReg = new Date();
@@ -1578,7 +1600,7 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 			if (lenght > 2)
 				throw new IllegalArgumentException("O tamanho do arquivo ("
 						+ new DecimalFormat("#.00").format(lenght)
-						+ "MB) � maior que o m�ximo permitido (2MB)");
+						+ "MB) e maior que o maximo permitido (2MB)");
 		}
 
 		if (lotaCadastrante == null)
@@ -1612,23 +1634,23 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 		if (tendencia == null)
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
 		
-		// só valida o atendente caso não seja rascunho
+		// s� valida o atendente caso nao seja rascunho
 		if (!isRascunho() && !temAtendenteDesignado()
 				&& !temPreAtendenteDesignado())
 			throw new Exception(
-					"Não foi encontrado nenhum atendente designado "
-							+ "para esta solicitação. Sugestão: alterar item de "
-							+ "configuração e/ou ação");
+					"Nao foi encontrado nenhum atendente designado "
+							+ "para esta solicitacao. Sugestao: alterar item de "
+							+ "configuracao e/ou acao");
 	}
 
 	public void desfazerUltimaMovimentacao(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante) throws Exception {
 		if (!podeDesfazerMovimentacao(lotaCadastrante, cadastrante))
-			throw new Exception("Operação não permitida");
+			throw new Exception("Operacao nao permitida");
 
 		SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
 
-		// tratamento pois pode ter retorno nulo do método
+		// tratamento pois pode ter retorno nulo do m�todo
 		// getUltimaMovimentacaoCancelave()
 		if (movimentacao != null) {
 
@@ -1640,12 +1662,10 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 					reInserirListasDePrioridade(lotaCadastrante, cadastrante);
 
 				if (movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_JUNTADA) {
-
 					this.solicitacaoReferencia = null;
 					this.save();
 				}
 			}
-
 			movimentacao.desfazer(cadastrante, lotaCadastrante);
 		}
 	}
@@ -1898,7 +1918,6 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 			sb.append(")");
 		}
 
-
 		if (sb.length() == 0)
 			return null;
 		return sb.toString();
@@ -1932,12 +1951,10 @@ public DpLotacao getAtendenteDesignado() throws Exception {
 /*
  * 		Edson:DB1, acertar conforme o item 24
  * 
-
 		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
 				solicitante, local, itemConfiguracao, acao,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
 				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {});
-
 		for (SrConfiguracao conf : confs) {
 			for (SrLista lista : conf.getListaConfiguracaoSet()) {
 				SrLista listaAtual = lista.getListaAtual();
@@ -1969,7 +1986,6 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 
 				listaFinal.add(l);
 		}
-
 
 		listaFinal.removeAll(getListasAssociadas());
 		Collections.sort(listaFinal, new Comparator<SrLista>() {
@@ -2042,11 +2058,11 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota)
 			throws Exception {
 		if (lista == null)
-			throw new IllegalArgumentException("Lista não informada");
+			throw new IllegalArgumentException("Lista nao informada");
 
 		if (isEmLista(lista))
 			throw new IllegalArgumentException("Lista " + lista.nomeLista
-					+ " já contém a solicitação " + getCodigo());
+					+ " j� cont�m a solicitacao " + getCodigo());
 
 		SrMovimentacao mov = new SrMovimentacao();
 		mov.prioridade = (long) lista.getProximaPosicao();
@@ -2054,7 +2070,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "InclusÃ£o na lista " + lista.nomeLista
+		mov.descrMovimentacao = "Inclusa�o na lista " + lista.nomeLista
 				+ " com a prioridade " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = this;
@@ -2065,14 +2081,14 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void retirarDeLista(SrLista lista, DpPessoa pess, DpLotacao lota)
 			throws Exception {
 		if (lista == null)
-			throw new IllegalArgumentException("Lista não informada");
+			throw new IllegalArgumentException("Lista nao informada");
 
 		SrMovimentacao mov = new SrMovimentacao();
 		mov.cadastrante = pess;
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA);
-		mov.descrMovimentacao = "Cancelamento de InclusÃ£o em Lista";
+		mov.descrMovimentacao = "Cancelamento de Inclusa�o em Lista";
 		mov.solicitacao = this;
 		mov.lista = lista;
 		mov.salvar();
@@ -2081,10 +2097,10 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		lista.recalcularPrioridade(pess, lota);
 	}
 
-	// Edson: este método é protected porque não pode ser chamado pelo
-	// usuário,
-	// mas sim pela SrLista, passando a posição correta a ser colocada a
-	// solicitação
+	// Edson: este m�todo � protected porque nao pode ser chamado pelo
+	// usu�rio,
+	// mas sim pela SrLista, passando a posicao correta a ser colocada a
+	// solicitacao
 	protected void priorizar(SrLista lista, long prioridade, DpPessoa pess,
 			DpLotacao lota) throws Exception {
 		SrMovimentacao mov = new SrMovimentacao();
@@ -2093,7 +2109,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		mov.descrMovimentacao = "Alteração de prioridade na lista "
+		mov.descrMovimentacao = "Alteracao de prioridade na lista "
 				+ lista.nomeLista + ": " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = this;
@@ -2113,14 +2129,14 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void finalizarPreAtendimento(DpLotacao lota, DpPessoa pess)
 			throws Exception {
 		if (!podeFinalizarPreAtendimento(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
+			throw new Exception("Operacao na�o permitida");
 		iniciarAtendimento(lota, pess, null);
 	}
 
 	public void retornarAoPreAtendimento(DpLotacao lota, DpPessoa pess)
 			throws Exception {
 		if (!podeRetornarAoPreAtendimento(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
+			throw new Exception("Operacao na�o permitida");
 		iniciarPreAtendimento(lota, pess);
 	}
 
@@ -2150,11 +2166,11 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			throws Exception {
 
 		if ((pess != null) && !podeFechar(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
+			throw new Exception("Operacao na�o permitida");
 
 		long estadoAtual = 0L;
-		// Edson: A variÃ¡vel estadoAtual e o bloco abaixo, que a define, nÃ£o
-		// seriam necessÃ¡rios se tivÃ©ssemos a classe SrEstado.
+		// Edson: A varia�vel estadoAtual e o bloco abaixo, que a define, na�o
+		// seriam necessa�rios se tiva�ssemos a classe SrEstado.
 		if (isEmPreAtendimento())
 			estadoAtual = TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO;
 		if (isEmAtendimento())
@@ -2187,6 +2203,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 				|| estadoAtual == TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE)
 			fecharTotalmente(lota, pess, motivo);
 	}
+
 	
 	public void enviarPesquisa() throws Exception {
 		// Implementar
@@ -2205,10 +2222,10 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void responderPesquisa(DpLotacao lota, DpPessoa pess,
 			Map<Long, String> respostaMap) throws Exception {
 		if (!podeResponderPesquisa(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
+			throw new Exception("Operacao na�o permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.pesquisa = this.getPesquisaDesignada();
-		movimentacao.descrMovimentacao = "Avaliação realizada.";
+		movimentacao.descrMovimentacao = "Avaliacao realizada.";
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_AVALIACAO);
 		movimentacao.setRespostaMap(respostaMap);
@@ -2235,7 +2252,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void retornarAoAtendimento(DpLotacao lota, DpPessoa pess)
 			throws Exception {
 		if (!podeRetornarAoAtendimento(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
+			throw new Exception("Operacao na�o permitida");
 		iniciarAtendimento(lota, pess, getLotaAtendente());
 	}
 
@@ -2260,7 +2277,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 
 	public void reabrir(DpLotacao lota, DpPessoa pess) throws Exception {
 		if (!podeReabrir(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
+			throw new Exception("Operacao na�o permitida");
 		reInserirListasDePrioridade(lota, pess);
 
 		SrMovimentacao mov = new SrMovimentacao(this);
@@ -2288,7 +2305,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			SrTipoMotivoPendencia motivo, String calendario, String horario,
 			String detalheMotivo) throws Exception {
 		if (!podeDeixarPendente(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
+			throw new Exception("Operacao na�o permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		DateTime datetime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
@@ -2308,7 +2325,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void alterarPrazo(DpLotacao lota, DpPessoa pess, String motivo,
 			String calendario, String horario) throws Exception {
 		if (!podeAlterarPrazo(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
+			throw new Exception("Operacao na�o permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		DateTime datetime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
@@ -2328,7 +2345,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void terminarPendencia(DpLotacao lota, DpPessoa pess, String descricao, Long idMovimentacao)
 			throws Exception {
 		if (!podeTerminarPendencia(lota, pess))
-			throw new Exception("Operação não permitida");
+			throw new Exception("Operacao nao permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
@@ -2343,7 +2360,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 
 	public void cancelar(DpLotacao lota, DpPessoa pess) throws Exception {
 		if (!podeCancelar(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
+			throw new Exception("Operacao na�o permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO);
@@ -2358,7 +2375,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			SrSolicitacao solRecebeJuntada, String justificativa)
 			throws Exception {
 		if ((pess != null) && !podeJuntar(lota, pess))
-			throw new Exception("Operação não permitida");
+			throw new Exception("Operacao nao permitida");
 
 		this.solicitacaoReferencia = solRecebeJuntada;
 		this.save();
@@ -2376,28 +2393,9 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			SrSolicitacao solRecebeVinculo, String justificativa)
 			throws Exception {
 		if ((pess != null) && !podeVincular(lota, pess))
-			throw new Exception("Operação não permitida");
+			throw new Exception("Operacao nao permitida");
 
-
-
-
-
-
-
-		
 		this.solicitacaoReferencia = solRecebeVinculo;
-
-
-
-
-
-
-
-
-
-
-
-
 
 		this.save();
 
@@ -2407,12 +2405,6 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao.salvar(pess, lota);
-
-
-
-
-
-
 	}
 
 	public String getGcTags() {
@@ -2469,19 +2461,12 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		return "";
 	}
 
-
-
-
 	public String getDtOrigemString() {
 
 		if (dtOrigem != null){
 			SigaPlayCalendar cal = new SigaPlayCalendar();
 			cal.setTime(dtOrigem);
 			return cal.getTempoTranscorridoString(false);
-
-
-
-
 		}
 		return "";
 	}

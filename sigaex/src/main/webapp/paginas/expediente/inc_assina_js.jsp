@@ -495,22 +495,24 @@ function GravarAssinatura(url, datatosend) {
 
 
 function GravarAssinaturaSenha(url, datatosend) {
+	retorno = "OK"; 
 	$.ajax({				     				  
 		  url: url,
 		  type: "POST",
 		  data: datatosend,	
 		  async:  false,				    					   					 
-		  success: function(Conteudo) {
+		  statusCode: {
+			200: function(Conteudo) {
 			if (Conteudo.indexOf("gt-error-page-hd") != -1 && Conteudo.indexOf("function GravarAssinatura") < 0) {
 				Inicio = Conteudo.indexOf("<h3>") + 4;
 				Fim = Conteudo.indexOf("</h3>",Inicio);
-				Texto = Conteudo.substr(Inicio, Fim - Inicio);
-				return Texto;
+				retorno = Conteudo.substr(Inicio, Fim - Inicio);
+				return retorno;
 		     }				    
-	 	 }
+	 	 }}
 	});	
 	
-	return "OK";
+	return retorno;
 }
 
 

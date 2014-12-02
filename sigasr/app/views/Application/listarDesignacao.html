@@ -473,6 +473,7 @@
         		designacaoModalFechar();
         	},
         	error: function(error) {
+        		unblock();
         		var fieldsError = error.responseText.split(";");
         		// limpa as mensagens de erros
         		resetAllErrorMessage();

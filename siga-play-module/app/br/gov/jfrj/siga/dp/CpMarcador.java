@@ -149,6 +149,12 @@ public class CpMarcador extends AbstractCpMarcador {
 	
 	final static public long MARCADOR_SOLICITACAO_EM_ELABORACAO = 61;
 	
+	final static public long MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA = 62;
+	
+	final static public long MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA = 63;
+
+	final static public long MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA = 64;
+
 	public CpMarcador() {
 		super();
 	}

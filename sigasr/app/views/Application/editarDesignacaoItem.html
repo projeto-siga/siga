@@ -529,6 +529,18 @@
 </div>
 
 #{modal nome:'itemConfiguracao', titulo:'Adicionar Item de Configuração'}
+	<script>
+	//Edson: esta funcao evita que o usuario de ok sem a busca por ajax ter terminado
+	function bloqueiaItemOk(){
+		$("#modalItemOk").attr("disabled", "disabled");
+	}
+	function bloqueiaItemOkSeVazio(){
+		if ($("#itemConfiguracao").val() && $("#itemConfiguracao_sigla").val() && $("#itemConfiguracaoSpan").text())
+			$("#modalItemOk").removeAttr('disabled');
+		else 
+			$("#modalItemOk").attr("disabled", "disabled");
+	}
+	</script>
 	<div id="dialogItemConfiguracao">
 		<div class="gt-content">
 			<div class="gt-form gt-content-box">
@@ -536,11 +548,11 @@
 					<div class="gt-form-row">
 						<label>Item de Configuração</label> #{selecao tipo:'item',
 							nome:'itemConfiguracao',
-							value:itemConfiguracao?.atual /}
+							value:itemConfiguracao?.atual, onblur:'bloqueiaItemOk();', onchange:'bloqueiaItemOkSeVazio();' /}
 						<span style="display:none;color: red" id="designacao.itemConfiguracao">Item de Configuração não informado.</span>
 					</div>
 					<div class="gt-form-row">
-						<a href="javascript: inserirItemConfiguracao()" class="gt-btn-medium gt-btn-left">Ok</a>
+						<button id="modalItemOk" onclick="javascript: inserirItemConfiguracao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>
 						<a href="javascript: modalFechar('itemConfiguracao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
 					</div>
 				</div>
@@ -550,17 +562,29 @@
 #{/modal}
 
 #{modal nome:'acao', titulo:'Adicionar Ação'}
+	<script>
+	//Edson: esta funcao evita que o usuario de ok sem a busca por ajax ter terminado
+	function bloqueiaAcaoOk(){
+		$("#modalAcaoOk").attr("disabled", "disabled");
+	}
+	function bloqueiaAcaoOkSeVazio(){
+		if ($("#acao").val() && $("#acao_sigla").val() && $("#acaoSpan").text())
+			$("#modalAcaoOk").removeAttr('disabled');
+		else 
+			$("#modalAcaoOk").attr("disabled", "disabled");
+	}
+	</script>
 	<div id="dialogAcao">
 		<div class="gt-content">
 			<div class="gt-form gt-content-box">
 				<div class="gt-form-row">
 					<div class="gt-form-row">
 						<label>Ação</label> #{selecao tipo:'acao',
-							nome:'acao', value:acao?.atual /}
+							nome:'acao', value:acao?.atual, onblur:'bloqueiaAcaoOk();', onchange:'bloqueiaAcaoOkSeVazio();' /}
 						<span style="display:none;color: red" id="designacao.acao">Ação não informada.</span>
 					</div>
 					<div class="gt-form-row">
-						<a href="javascript: inserirAcao()" class="gt-btn-medium gt-btn-left">Ok</a>
+						<button id="modalAcaoOk" onclick="javascript: inserirAcao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>
 						<a href="javascript: modalFechar('acao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
 					</div>
 				</div>

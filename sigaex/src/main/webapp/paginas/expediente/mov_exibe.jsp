@@ -290,11 +290,14 @@ function visualizarImpressao(via) {
 
 					<c:set var="jspServer"
 						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
+					<c:set var="jspServerSenha" 
+					    value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_login_senha_gravar.action" />
 					<c:set var="nextURL"
 						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
 					
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
+					<ww:hidden id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 					<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
 					<c:set var="urlBase"
@@ -369,7 +372,7 @@ function visualizarImpressao(via) {
     			  <label>Matrícula</label> <br/>
     			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
     			  <label>Senha</label> <br/>
-    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>
+    			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>
     			</fieldset>
   			</form>
 		</div>
@@ -406,11 +409,6 @@ function visualizarImpressao(via) {
 
 		    function conferirCopiaGravar() {
 		    	AssinarDocumentosSenha('true', this);
-			}
-
-			function conferirCopiaGravar() {
-		    	$('#tipoAssinaturaMov').val('C');
-		    	$("#form-assinarSenha").submit();
 			}
 		  </script>
 	</c:if>			

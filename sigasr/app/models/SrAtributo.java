@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
-@Table(name = "SR_TIPO_ATRIBUTO", schema = "SIGASR")
+@Table(name = "SR_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SrAtributo extends HistoricoSuporte {
 
@@ -42,7 +42,7 @@ public class SrAtributo extends HistoricoSuporte {
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
 	@GeneratedValue(generator = "srTipoAtributoSeq")
-	@Column(name = "ID_TIPO_ATRIBUTO")
+	@Column(name = "ID_ATRIBUTO")
 	public Long idAtributo;
 
 	@Column(name = "NOME")
@@ -51,7 +51,7 @@ public class SrAtributo extends HistoricoSuporte {
 	@Column(name = "DESCRICAO")
 	public String descrAtributo;
 
-	@Column(name = "FORMATOCAMPO")
+	@Column(name = "TIPO_ATRIBUTO")
 	@Enumerated
 	public SrTipoAtributo tipoAtributo;
 	

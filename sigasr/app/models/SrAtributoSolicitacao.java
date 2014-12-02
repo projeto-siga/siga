@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import play.db.jpa.GenericModel;
 
 @Entity
-@Table(name="SR_ATRIBUTO", schema="SIGASR")
+@Table(name="SR_ATRIBUTO_SOLICITACAO", schema="SIGASR")
 public class SrAtributoSolicitacao extends GenericModel {
 	
 	/**
@@ -23,14 +23,14 @@ public class SrAtributoSolicitacao extends GenericModel {
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
 	@GeneratedValue(generator = "srAtributoSeq")
-	@Column(name = "ID_ATRIBUTO")
+	@Column(name = "ID_ATRIBUTO_SOLICITACAO")
 	public long id;
 	
-	@Column(name = "VALOR_ATRIBUTO")
+	@Column(name = "VALOR_ATRIBUTO_SOLICITACAO")
 	public String valorAtributoSolicitacao;
 	
 	@ManyToOne
-	@JoinColumn(name="ID_TIPO_ATRIBUTO")
+	@JoinColumn(name="ID_TIPO_ATRIBUTO_SOLICITACAO")
 	public SrAtributo atributo;
 	
 	@ManyToOne

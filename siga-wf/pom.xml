@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>ys.wikiparser</groupId>
-            <artifactId>WikiParser</artifactId>
+            <artifactId>WikiParser-siga</artifactId>
         </dependency>
         <dependency>
             <groupId>jbpm</groupId>

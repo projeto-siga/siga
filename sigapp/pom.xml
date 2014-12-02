@@ -135,7 +135,7 @@
                 </dependency>
                 <dependency>
                     <groupId>ys.wikiparser</groupId>
-                    <artifactId>WikiParser</artifactId>
+                    <artifactId>WikiParser-siga</artifactId>
                     <version>1.0.0</version>
                 </dependency>
                 
@@ -354,6 +354,12 @@
         	</plugins>
         </pluginManagement>
     </build>
+    <repositories>
+		<repository>
+			<id>siga-repo</id>
+			<url>https://raw.githubusercontent.com/projeto-siga/siga-repo/master/repo</url>
+		</repository>
+	</repositories>
 
 
 <properties>

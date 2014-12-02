@@ -126,6 +126,10 @@
         </plugins>
     </build>
     <repositories>
+    	<repository>
+            <id>siga-repo</id>
+            <url>https://raw.githubusercontent.com/projeto-siga/siga-repo/master/repo</url>
+        </repository>
         <repository>
             <id>JBoss Thirdparty Releases</id>
             <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
@@ -458,7 +462,7 @@
             </dependency>
             <dependency>
                 <groupId>ys.wikiparser</groupId>
-                <artifactId>WikiParser</artifactId>
+                <artifactId>WikiParser-siga</artifactId>
                 <version>1.0.0</version>
             </dependency>
             <dependency>

@@ -591,12 +591,12 @@ public class Application extends SigaApplication {
 	public static void exibir(Long id, boolean completo) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		if (solicitacao == null)
-			throw new Exception("Solicita��o n�o encontrada");
+			throw new Exception("Solicitação não encontrada");
 		else
 			solicitacao = solicitacao.getSolicitacaoAtual();
 		
 		if (solicitacao == null)
-			throw new Exception("Esta solicita��o foi exclu�da");
+			throw new Exception("Esta solicitação foi excluída");
 		
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 

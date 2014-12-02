@@ -62,7 +62,7 @@ public class SrAtributo extends HistoricoSuporte {
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrAtributo atributoInicial;
 
-	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "atributoInicial", fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "atributoInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrAtributo> meuAtributoHistoricoSet;
 	

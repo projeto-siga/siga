@@ -386,5 +386,10 @@
   <name>podeConferirCopiaMovimentacaoDoMobilComSenha</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.Boolean podeConferirCopiaMovimentacaoComSenha(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExMobil)</function-signature>
+ </function>
+  <function>
+  <name>podeAutenticarDocumento</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.Boolean podeAutenticarDocumento(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, br.gov.jfrj.siga.ex.ExDocumento)</function-signature>
  </function> 
 </taglib>

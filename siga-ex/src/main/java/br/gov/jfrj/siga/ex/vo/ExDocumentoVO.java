@@ -494,6 +494,14 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeAssinar(titular, lotaTitular, mob));
 		
+		vo.addAcao(
+				"script_key",
+				"Autenticar",
+				"/expediente/mov",
+				"autenticar_documento",
+				Ex.getInstance().getComp()
+				.podeAutenticarDocumento(titular, lotaTitular, mob.doc()));
+		
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados
 			if (mob.temAnexos())

@@ -1855,6 +1855,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 		return set;
 	}
+	
+	/**
+	 * Um documento está autenticado quando ele possui pelo menos uma assinatura com senha.
+	 */
+	public boolean isAutenticado() {
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO ||
+					m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
+				
+				return true;
+			}
+		}
+	
+		return false;
+	}
 
 	public String getAssinantesCompleto() {
 		String retorno =  "";

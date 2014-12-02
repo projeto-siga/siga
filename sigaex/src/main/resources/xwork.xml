@@ -519,6 +519,10 @@
 			method="aAssinar">
 			<result>/paginas/expediente/assina.jsp</result>
 		</action>
+		<action name="autenticar_documento" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAutenticarDocumento">
+			<result>/paginas/expediente/assina.jsp</result>
+		</action>
 		<action name="assinar_anexos_geral" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarAnexosGeral">
 			<result>/paginas/expediente/anexa.jsp</result>

@@ -265,6 +265,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String senhaUsuarioSubscritor;
 	
 	private String tipoAssinaturaMov;
+	
+	private boolean autenticando;
 
 	public String getAtributoAssinavelDataHora() {
 		return atributoAssinavelDataHora;
@@ -1219,6 +1221,22 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aAssinar() throws Exception {
+		buscarDocumento(true);
+
+		boolean fPreviamenteAssinado = doc.isAssinado();
+
+		if (!fPreviamenteAssinado
+				&& (doc.getExModelo() != null && ("template/freemarker"
+						.equals(doc.getExModelo().getConteudoTpBlob())))) {
+			Ex.getInstance().getBL()
+					.processarComandosEmTag(doc, "pre_assinatura");
+		}
+
+		return Action.SUCCESS;
+	}
+	
+	public String aAutenticarDocumento() throws Exception {
+		setAutenticando(true);
 		buscarDocumento(true);
 
 		boolean fPreviamenteAssinado = doc.isAssinado();
@@ -4414,5 +4432,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	public void setMovimentacoesQuePodemSerAssinadasComSenha(
 			List<ExMovimentacao> movimentacoesQuePodemSerAssinadasComSenha) {
 		this.movimentacoesQuePodemSerAssinadasComSenha = movimentacoesQuePodemSerAssinadasComSenha;
+	}
+
+	public boolean isAutenticando() {
+		return autenticando;
+	}
+
+	public void setAutenticando(boolean autenticando) {
+		this.autenticando = autenticando;
 	}
 }

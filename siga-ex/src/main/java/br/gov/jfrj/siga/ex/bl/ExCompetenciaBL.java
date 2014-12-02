@@ -28,12 +28,15 @@ import java.util.Set;
 import org.hibernate.LockMode;
 
 import sun.security.action.GetLongAction;
+import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
@@ -53,6 +56,7 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.dao.DaoFiltro;
 
 public class ExCompetenciaBL extends CpCompetenciaBL {
 
@@ -1168,6 +1172,42 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
 				null, exTpMov, null, null, null, lotaTitular, titular, null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
+	/*
+	 * Retorna se pode autenticar um documento que só foi assinado com senha.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAutenticarDocumento(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExDocumento doc) throws Exception {
+		
+		if (doc.isEletronico() && !doc.isAutenticado()) {
+			
+			ExConfiguracao exConfig = new ExConfiguracao();;
+			exConfig.setDpPessoa(titular);
+			exConfig.setLotacao(lotaTitular);
+			exConfig.setExFormaDocumento(doc.getExFormaDocumento());
+			exConfig.setExModelo(doc.getExModelo());
+			exConfig.setCpTipoConfiguracao(CpDao.getInstance().consultar(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, CpTipoConfiguracao.class, false));
+			exConfig.setExTipoMovimentacao(ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO, ExTipoMovimentacao.class, false));
+			exConfig.setCpSituacaoConfiguracao(CpDao.getInstance().consultar(CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO, CpSituacaoConfiguracao.class, false));
+			
+			CpSituacaoConfiguracao obrigatorio = Ex 
+			.getInstance()
+			.getConf()
+			.buscaSituacao(exConfig);
+			
+			if(obrigatorio != null && obrigatorio.getIdSitConfiguracao().equals(CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
+			 return true;
+			
+		}
+
+		return false;
 	}
 	
 	/*

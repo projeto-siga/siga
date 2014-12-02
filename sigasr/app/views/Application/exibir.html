@@ -67,6 +67,8 @@ function postback(){
 			style="margin-bottom: 0px !important">
 			<form action="@{Application.darAndamento()}" method="post"
 				enctype="multipart/form-data" onsubmit="javascript: return block();">
+				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
 				solicitacao.podeTrocarAtendente(lotaTitular, cadastrante)}
@@ -318,6 +320,8 @@ function postback(){
 	<div class="gt-content-box gt-form">
 		<form action="@{Application.anexarArquivo()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
+			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+			<input type="hidden" name="ocultas" value="${ocultas}" />
 			<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 				value="${movimentacao.solicitacao.idSolicitacao}"> <input
 				type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12">
@@ -340,6 +344,8 @@ function postback(){
 	#{/modal} #{modal nome:'fechar', titulo:'Fechar'}
 	<form action="@{Application.fechar()}" method="post"
 		enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div style="display: inline" class="gt-form-row gt-width-66">
 			<label>Motivo</label>
 			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
@@ -353,6 +359,8 @@ function postback(){
 	#{modal nome:'juntar', titulo:'Juntar'}
 		<form action="@{Application.juntarSolicitacoes()}" method="post"
 			enctype="multipart/form-data" id="formGravarJuncao">
+			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+			<input type="hidden" name="ocultas" value="${ocultas}" />
 			<input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
 			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
 				<label>Solicitação</label> <br />
@@ -374,6 +382,8 @@ function postback(){
 	#{modal nome:'vincular', titulo:'Vincular'}
 		<form action="@{Application.vincularSolicitacoes()}" method="post"
 			enctype="multipart/form-data" id="formGravarVinculo">
+			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+			<input type="hidden" name="ocultas" value="${ocultas}" />
 			<input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
 			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
 				<label>Solicitação</label> <br />
@@ -399,6 +409,8 @@ function postback(){
 	<div class="gt-content-box gt-for-table gt-form">
 	<form action="@{Application.deixarPendente()}" method="post"
 		enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div class="gt-form-row gt-width-66">
 			<label>Data de Término</label>
 			<input type="text" name="calendario" id="calendario">
@@ -428,6 +440,8 @@ function postback(){
 		<div class="gt-form gt-content-box">
 		<form action="@{Application.alterarPrazo()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
+				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<div class="gt-form-row gt-width-66">
 					<label>Data</label>
 					<input type="text" name="calendario" id="calendarioAlterarPrazo">
@@ -482,6 +496,8 @@ function postback(){
 #{modal nome:'terminarPendenciaModal', titulo:'Terminar Pendencia'}
 	<form action="@{Application.terminarPendencia()}" method="post"
 		enctype="multipart/form-data">
+		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div style="display: inline" class="gt-form-row gt-width-66">
 			<label>Descrição</label>
 			<textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>

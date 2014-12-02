@@ -81,8 +81,24 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& conf.pesquisaSatisfacao == null)
 				return false;
 			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_ATENDENTE
+					&& conf.slaAtendimentoQuantidade == null)
+				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_PRE_ATENDENTE
+					&& conf.slaPreAtendimentoQuantidade == null)
+				return false;
+			
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE
 					&& (conf.getListaConfiguracaoSet() == null || conf.getListaConfiguracaoSet().isEmpty()))
+				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_ATENDENTE
+					&& conf.slaAtendimentoQuantidade == null)
+				return false;
+			
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_PRE_ATENDENTE
+					&& conf.slaPreAtendimentoQuantidade == null)
 				return false;
 
 			if (!atributosDesconsiderados.contains(ACAO)
@@ -188,9 +204,14 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (srConf.acoesSet != null)
 				for (SrAcao i : srConf.acoesSet)
 					i.getAtual();
-			
-			if (srConf.atributo != null)
+
+			if (srConf.atributo != null) {
 				srConf.atributo.getHisIdIni();
+				
+				for (SrAtributo att : srConf.atributo.meuAtributoHistoricoSet) {
+					att.getAtual();
+				}
+			}
 			
 			if (srConf.listaPrioridade != null)
 				srConf.listaPrioridade.getHisIdIni();
@@ -201,6 +222,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (srConf.getListaConfiguracaoSet() != null) {
 				for (SrLista listaConf : srConf.getListaConfiguracaoSet()){
 					listaConf.getListaAtual();
+					listaConf.getId();
 				}
 			}
 		}

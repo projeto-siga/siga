@@ -1,35 +1,29 @@
-<div class="gt-sidebar">
-	<div class="gt-sidebar-content tempo">
-		<h3>
-			<img src="/siga/css/famfamfam/icons/clock_play.png" width="15px;"
-				style="vertical-align: bottom;"> Atendimento: <span
-				id="andamento"></span>
-		</h3>
-		<h3 style="margin-left: 25px;">
-			Total: <span id="total"></span>
-		</h3>
-	</div>
-</div>
+<script src="/sigasr/public/javascripts/moment.js"></script>
+
+<p>
+	<img src="/siga/css/famfamfam/icons/clock_play.png" width="15px;"
+		style="vertical-align: bottom;"><b> ${_descricao}: </b><span
+		id="${_descricao}"></span>
+</p>
 
 <script type="text/javascript">
 	moment.locale('pt-br');
 
 	$(document).ready(function() {
-		moveRelogio(0);
+		moveRelogio${_descricao}(0);
 	})
 	
-	function moveRelogio(andamento) { 
-	   	$('#andamento').html(intervaloPercorrido(andamento));
-		$('#total').html(intervaloPercorrido(${_tempoPercorrido} + andamento));
+	function moveRelogio${_descricao}(andamento) { 
+	   	$('#${_descricao}').html(intervaloPercorrido${_descricao}(andamento));
 		
 	   	#{if _contarTempo == true}
 	   		setTimeout(function() {
-	   			moveRelogio(andamento + 1000);
+	   			moveRelogio${_descricao}(andamento + 1000);
 	   		}, 1000);
 	   	#{/if}
 	}; 
 
-	function intervaloPercorrido(tempoPercorrido) {
+	function intervaloPercorrido${_descricao}(tempoPercorrido) {
 		var tempoString = new String(),
 			duration = moment.duration(tempoPercorrido),
 			anos = duration.years(),

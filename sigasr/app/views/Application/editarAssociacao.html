@@ -25,9 +25,9 @@
 				nome:'associacao.acaoUnitaria', value:associacao.acaoUnitaria?.atual /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Tipo de atributo</label> #{select 'associacao.tipoAtributo',
+				<label>Tipo de atributo</label> #{select 'associacao.atributo',
 				items:models.SrAtributo.listar(false), labelProperty:'nomeAtributo',
-				value:associacao.tipoAtributo?.atual?.idAtributo, valueProperty:'idAtributo'}
+				value:associacao.atributo?.atual?.idAtributo, valueProperty:'idAtributo'}
 				#{/select}
 				
 			</div>

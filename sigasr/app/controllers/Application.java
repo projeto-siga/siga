@@ -18,11 +18,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import models.SrAcao;
 import models.SrArquivo;
+import models.SrAtributo;
 import models.SrAtributoSolicitacao;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
 import models.SrEquipe;
-import models.SrTipoAtributo;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
@@ -30,7 +30,7 @@ import models.SrMovimentacao;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
-import models.SrAtributo;
+import models.SrTipoAtributo;
 import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
@@ -168,15 +168,10 @@ public class Application extends SigaApplication {
 		render(acoes, itens);
 	}
 	
-	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoMap, boolean carregarLotaSolicitante) 
+	public static void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) 
 			throws Exception{
 		
-		solicitacao.setAtributoMap(atributoMap);
-		
-		if(carregarLotaSolicitante){
-			solicitacao.lotaSolicitante = solicitacao.solicitante.getLotacao();
-			solicitacao.solicitante = null;
-    	}
+		solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
 		List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
 		render(solicitacoesRelacionadas);
 	}
@@ -186,17 +181,17 @@ public class Application extends SigaApplication {
 	}
 
 	public static void exibirAtributosConsulta(SrSolicitacaoFiltro filtro) throws Exception {
-		List<SrAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
-		render(filtro, tiposAtributosDisponiveisAdicao);
+		List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
+		render(filtro, atributosDisponiveisAdicao);
 	}
 
-	public static List<SrAtributo> tiposAtributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) {
+	public static List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) {
 		List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
-		HashMap<Long, String> atributoMap = filtro.getAtributoMap();
+		HashMap<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
 		
-		for (SrAtributo srTipoAtributo : SrAtributo.listar(Boolean.FALSE)) {
-			if (!atributoMap.containsKey(srTipoAtributo.idAtributo)) {
-				listaAtributosAdicao.add(srTipoAtributo);
+		for (SrAtributo srAtributo : SrAtributo.listar(Boolean.FALSE)) {
+			if (!atributoMap.containsKey(srAtributo.idAtributo)) {
+				listaAtributosAdicao.add(srAtributo);
 			}
 		}
 		return listaAtributosAdicao;
@@ -278,13 +273,13 @@ public class Application extends SigaApplication {
 		}
 		
 		HashMap<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
-		for (SrAtributoSolicitacao att : solicitacao.getAtributoSet()) {
+		for (SrAtributoSolicitacao att : solicitacao.getAtributoSolicitacaoSet()) {
 			// Para evitar NullPointerExcetpion quando nao encontrar no Map
-			if(Boolean.TRUE.equals(obrigatorio.get(att.tipoAtributo.idAtributo))) {
-				if ((att.valorAtributo == null || att.valorAtributo.trim().equals("")))
+			if(Boolean.TRUE.equals(obrigatorio.get(att.atributo.idAtributo))) {
+				if ((att.valorAtributoSolicitacao == null || att.valorAtributoSolicitacao.trim().equals("")))
 					validation.addError("solicitacao.atributoMap["
-							+ att.tipoAtributo.idAtributo + "]",
-							att.tipoAtributo.nomeAtributo + " n&atilde;o informado");
+							+ att.atributo.idAtributo + "]",
+							att.atributo.nomeAtributo + " n&atilde;o informado");
 			}
 		}
 
@@ -370,7 +365,7 @@ public class Application extends SigaApplication {
 
 	public static void gravar(SrSolicitacao solicitacao, HashMap<Long, String> atributoMap, long dtIniEdicao) throws Exception {
         solicitacao.dtIniEdicao = new Date(dtIniEdicao);
-        solicitacao.setAtributoMap(atributoMap);
+        solicitacao.setAtributoSolicitacaoMap(atributoMap);
         
         if(!solicitacao.isRascunho())
         	validarFormEditar(solicitacao);
@@ -425,7 +420,7 @@ public class Application extends SigaApplication {
 				if (sol.lotaCadastrante == lotaTitular())
 					listaSolicitacao.add(sol);
 		
-		List<SrAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
+		List<SrAtributo> tiposAtributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
 		render(listaSolicitacao, tipos, marcadores, filtro, tiposAtributosDisponiveisAdicao);
 	}
 	
@@ -703,8 +698,8 @@ public class Application extends SigaApplication {
 				if (sol.lotaCadastrante == lotaTitular())
 					listaSolicitacao.add(sol);
 
-		List<SrAtributo> tiposAtributosDisponiveisAdicao = tiposAtributosDisponiveisAdicaoConsulta(filtro);
-		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup, tiposAtributosDisponiveisAdicao);
+		List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
+		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao);
 	}
 
 	public static void baixar(Long idArquivo) {
@@ -941,11 +936,11 @@ public class Application extends SigaApplication {
 		return associacao.getId();		
 	}
 	
-	public static void desativarAssociacaoEdicao(Long idTipoAtributo, Long idAssociacao) throws Exception {
+	public static void desativarAssociacaoEdicao(Long idAtributo, Long idAssociacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, idAssociacao);
 		associacao.finalizar();
-		editarAtributo(idTipoAtributo);
+		editarAtributo(idAtributo);
 	}
 
 	public static void desativarAssociacao(Long id, boolean mostrarDesativados) throws Exception {
@@ -1087,16 +1082,16 @@ public class Application extends SigaApplication {
 
 	public static void editarAtributo(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
-		String formatoAnterior = null;
+		String tipoAtributoAnterior = null;
 		SrAtributo att = new SrAtributo();
 		if (id != null) {
 			att = SrAtributo.findById(id);
 			if(att.tipoAtributo != null) {
-				formatoAnterior = att.tipoAtributo.name();
+				tipoAtributoAnterior = att.tipoAtributo.name();
 			}
 		}
 		att.associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.FALSE);
-		render(att, formatoAnterior);
+		render(att, tipoAtributoAnterior);
 	}
 
 	public static void gravarAtributo(SrAtributo att) throws Exception {

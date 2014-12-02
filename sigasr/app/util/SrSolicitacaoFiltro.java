@@ -161,14 +161,14 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		Boolean existeFiltroPreenchido = Boolean.FALSE; // Indica se foi preenchido algum dos atributos informados na requisicao
 		
 		StringBuffer subqueryAtributo = new StringBuffer();
-		if (meuAtributoSet != null && meuAtributoSet.size() > 0) {
+		if (meuAtributoSolicitacaoSet != null && meuAtributoSolicitacaoSet.size() > 0) {
 			subqueryAtributo.append(" and (");
 
-			for (SrAtributoSolicitacao att : meuAtributoSet) {
-				if (att.valorAtributo != null && !att.valorAtributo.trim().isEmpty()) {
+			for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
+				if (att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.trim().isEmpty()) {
 					subqueryAtributo.append("(");
-						subqueryAtributo.append(" att.tipoAtributo.idTipoAtributo = " + att.tipoAtributo.idAtributo);
-						subqueryAtributo.append(" and att.valorAtributo = '" + att.valorAtributo + "' ");
+						subqueryAtributo.append(" att.atributo.idAtributo = " + att.atributo.idAtributo);
+						subqueryAtributo.append(" and att.valorAtributoSolicitacao = '" + att.valorAtributoSolicitacao + "' ");
 					
 					subqueryAtributo.append(")");
 					subqueryAtributo.append(AND);
@@ -180,7 +180,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			subqueryAtributo.append(" )");
 		}
 		if (existeFiltroPreenchido) {
-			subqueryAtributo.insert(0, " and exists (from SrAtributo att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
+			subqueryAtributo.insert(0, " and exists (from SrAtributoSolicitacao att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
 			subqueryAtributo.append(" )");
 			query.append(subqueryAtributo);
 		}
@@ -189,21 +189,28 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public List<SrAtributo> getTiposAtributosConsulta() {
 		List<SrAtributo> tiposAtributosConsulta = new ArrayList<SrAtributo>();
 		
-		if (meuAtributoSet != null) {
-			for (SrAtributoSolicitacao srAtributo : meuAtributoSet) {
-				tiposAtributosConsulta.add(srAtributo.tipoAtributo);
+		if (meuAtributoSolicitacaoSet != null) {
+			for (SrAtributoSolicitacao srAtributo : meuAtributoSolicitacaoSet) {
+				tiposAtributosConsulta.add(srAtributo.atributo);
 			}
 		}
 		return tiposAtributosConsulta;
 	}
 	
-	public List<SrAtributo> itensDisponiveis(List<SrAtributo> tiposAtributosDisponiveis, SrAtributo tipoAtributo) {
-		ArrayList<SrAtributo> arrayList = new ArrayList<SrAtributo>(tiposAtributosDisponiveis);
-		arrayList.add(tipoAtributo);
+	public List<SrAtributo> itensDisponiveis(List<SrAtributo> atributosDisponiveis, SrAtributo atributo) {
+		ArrayList<SrAtributo> arrayList = new ArrayList<SrAtributo>(atributosDisponiveis);
+		arrayList.add(atributo);
 		
 		Collections.sort(arrayList, new Comparator<SrAtributo>() {
 			@Override
 			public int compare(SrAtributo s0, SrAtributo s1) {
+				if (s0.nomeAtributo == null && s1.nomeAtributo == null) {
+					return 0;
+				} else if (s0.nomeAtributo == null) {
+					return 1;
+				} else if (s1.nomeAtributo == null) {
+					return -1;
+				}
 				return s0.nomeAtributo.compareTo(s1.nomeAtributo);
 			}
 		});

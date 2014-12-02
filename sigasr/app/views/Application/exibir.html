@@ -54,10 +54,10 @@ $(function(){
 				var descricao = document.getElementById('descrSolicitacao');
 				descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 			</script>
-			#{list items:solicitacao.atributoSet, as:'att'} #{if
-			att.valorAtributo}
+			#{list items:solicitacao.atributoSolicitacaoSet, as:'att'} #{if
+			att.valorAtributoSolicitacao}
 			<p style="font-size: 9pt; padding: 0px">
-				<b>${att.tipoAtributo.nomeAtributo}:</b> ${att.valorAtributo}
+				<b>${att.atributo.nomeAtributo}:</b> ${att.valorAtributoSolicitacao}
 			</p>
 			#{/if} #{/list}
 		</div>

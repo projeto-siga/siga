@@ -318,8 +318,8 @@
 					value="${att?.descrAtributo}" size="60" />
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Formato</label> #{select name:'att.tipoAtributo', items:models.SrTipoAtributo.values(),
-				labelProperty:'descrFormatoCampo', value:formatoAnterior, style:'width:393px;' /}
+				<label>Tipo de atributo</label> #{select name:'att.tipoAtributo', items:models.SrTipoAtributo.values(),
+				labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:393px;' /}
 			</div>
 			<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
 				<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
@@ -438,7 +438,7 @@
 #{/modal}
 
 <script type="text/javascript">
-function verificarFormatoCampo() {
+function verificarTipoAtributo() {
 	if($("select[name='att.tipoAtributo']").val() === 'VL_PRE_DEFINIDO') {
 		$('#vlPreDefinidos').show();
 		return;
@@ -446,10 +446,10 @@ function verificarFormatoCampo() {
 	$('#vlPreDefinidos').hide();
 };
 
-verificarFormatoCampo();
+verificarTipoAtributo();
 
 $("select[name='att.tipoAtributo']").change(function() {
-	verificarFormatoCampo(); 
+	verificarTipoAtributo(); 
 });
 
 if($('#erroDescrPreDefinido').html()) {

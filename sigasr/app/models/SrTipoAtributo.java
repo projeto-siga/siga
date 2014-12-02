@@ -9,12 +9,12 @@ public enum SrTipoAtributo {
 	HORA(5, "Hora"), 
 	VL_PRE_DEFINIDO(6, "Valores pré-definidos");
 
-	public int idFormatoCampo;
+	public int idTipoAtributo;
 
-	public String descrFormatoCampo;
+	public String descrTipoAtributo;
 
-	private SrTipoAtributo(int nivel, String descrFormato) {
-		this.idFormatoCampo = nivel;
-		this.descrFormatoCampo = descrFormato;
+	private SrTipoAtributo(int idTipoAtributo, String descrTipoAtributo) {
+		this.idTipoAtributo = idTipoAtributo;
+		this.descrTipoAtributo = descrTipoAtributo;
 	}
 }

@@ -27,11 +27,11 @@ public class SrAtributoSolicitacao extends GenericModel {
 	public long id;
 	
 	@Column(name = "VALOR_ATRIBUTO")
-	public String valorAtributo;
+	public String valorAtributoSolicitacao;
 	
 	@ManyToOne
 	@JoinColumn(name="ID_TIPO_ATRIBUTO")
-	public SrAtributo tipoAtributo;
+	public SrAtributo atributo;
 	
 	@ManyToOne
 	@JoinColumn(name="ID_SOLICITACAO")
@@ -41,8 +41,8 @@ public class SrAtributoSolicitacao extends GenericModel {
 	}
 	
 	public SrAtributoSolicitacao(SrAtributo tipo, String valor, SrSolicitacao sol){
-		this.tipoAtributo = tipo;
-		this.valorAtributo = valor;
+		this.atributo = tipo;
+		this.valorAtributoSolicitacao = valor;
 		this.solicitacao = sol;
 	}
 }

@@ -113,8 +113,6 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
-		   
-		notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')
 	}
 
 	function carregarConhecimentosRelacionados(){
@@ -214,6 +212,7 @@
 	// Recebe notificacao de alteracao em campo que eh atributo
 	function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl, teste) {
 		var label = $(campoRef).prev('label').html().trim();
+
 		notificarCampoMudou(campoRef, label, optionVl);
 		carregarSolRelacionadas();
 	}
@@ -262,7 +261,7 @@
 		
 		if(filtrosSelecionados.size() > 0) {
 			if(existeFiltroSelecionavel()) {
-				var params = construirParametrosDoFiltro(filtrosSelecionados, $('#formSolicitacao'));
+				var params = construirParametrosDoFiltro($('#formSolicitacao'));
 				iniciarCarregarSolicitacoesRelacionadas();
 				PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
 			}
@@ -273,12 +272,12 @@
 		}
 	}
 
-	function construirParametrosDoFiltro(filtrosSelecionados, frm) {
+	function construirParametrosDoFiltro(frm) {
 		var authField = frm.find('input:nth(0)');
 		var params = authField.attr('name') + '=' + encodeURI(authField.val()) + '&';
-		
+
 		// Preenche a string que representa os parametros da requisicao
-		filtrosSelecionados.each(function() {
+		$('#filtro input:checked').each(function() {
 			var input = frm.find("[name='" +  $(this).attr('name') + "']");
 			params = params + input.attr('name') + '=' + input.val() + '&'
 		});
@@ -330,7 +329,7 @@
 				atrClass = '.' + inputAtributo.className.split(' ')[0];
 				atrHtml = labelAtributo.innerHTML + ' - ' + inputAtributo.value;
 				atrName = inputAtributo.name;
-				
+
 				// Se for select, busca pelo atributo selecionado
 				if (inputAtributo.tagName == 'SELECT') {
 					atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
@@ -388,12 +387,12 @@
 					break;
 				}
 		} */
-		var params = construirParametrosDoFiltro($('#filtro input:checked'), $('#formSolicitacao')) + '&filtro.pesquisar=true&';
+		var params = construirParametrosDoFiltro($('#formSolicitacao')) + '&filtro.pesquisar=true&';
 		// Replace All
 		while(params.indexOf('solicitacao') >= 0) {
 			params = params.replace("solicitacao", "filtro");
 		}
-		window.open('@{Application.listar()}?' + params + "","_blank");
+		window.open('@{Application.buscarSolicitacao()}?' + params + "","_blank");
 	}
 </script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
@@ -451,8 +450,7 @@
 			<div class="gt-form-row gt-width-66" id="interlocutor"
 				style="display: none;">
 				<label>Interlocutor</label> #{selecao tipo:'pessoa',
-				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor,
-				onchange:'' /}
+				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor /}
 			</div>
 			
 			<div id="divLocalRamalEMeioContato">#{include
@@ -540,9 +538,7 @@
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" id="gravar" /> <a
-					#{if solicitacao.solicitacaoPai}href="@{Application.exibir(solicitacao.solicitacaoPai.idSolicitacao)}"#{/if} 
-					#{else}href="@{Application.listar}"#{/else}
-					class="gt-btn-medium gt-btn-left">Cancelar</a>
+					href="@{Application.buscarSolicitacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
 			#{/form}
 		</div>

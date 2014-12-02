@@ -1,7 +1,19 @@
 <script>
+
+
+$(document).ready(function() {
+	notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
+});
+
 function carregarAtributos(){
 	var frm = document.getElementById('formSolicitacao'),
 		params = '';
+	//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
+	var idAcao = $("#selectAcao option:selected").val();
+	var lotacaoDaAcao = $("#lotacao-" + idAcao).html();
+	$("#atendentePadrao").html(lotacaoDaAcao);
+	//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
+	$("#atendenteNaoDesignado").val('');
 
 	for (i = 0; i < frm.length; i++){
 		if (frm[i].name && frm[i].value)
@@ -38,27 +50,102 @@ function carregouAtributos(response, param){
 		<div id="gc-ancora-item"></div>
 	</div>
 	<script type="text/javascript">
-	SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.itemConfiguracao.gcTagAbertura}&estilo=inplace&popup=true&msgvazio=&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item'));
+	SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledge?tags=${solicitacao.itemConfiguracao.gcTagAbertura}&estilo=inplace&testarAcesso=true&popup=true&msgvazio=&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item'));
 	</script>
 #{/if}
 
 
 #{if solicitacao.itemConfiguracao && acoesEAtendentes} 
-<div class="gt-form-row gt-width-66">
-	<label>Ação</label> 
-	#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
-		#{option ""}#{/option}
-		#{list items:acoesEAtendentes.keySet(), as:'acao' }
-			#{option acao.idAcao}
-				${acao.tituloAcao} (${acoesEAtendentes[acao].sigla})
-			#{/option}
+	<div class="gt-form-row gt-width-66">
+	<label>Ação</label>
+		#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
+			#{option}#{/option}	
+			#{list items:acoesEAtendentes.keySet(), as:'acao' }
+				#{option acao.idAcao} ${acao.tituloAcao} #{/option}					 
+			#{/list}
+		#{/select}  
+	 <span style="color: red">#{error 'solicitacao.acao' /}</span>
+	</div>
+	<div>
+		*{#{set lotacaoNaoDesignada : "" /}}*
+		<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
+				ja que acima no select nao tem como "esconder" essa informacao -->
+		#{list items:acoesEAtendentes.keySet(), as:'acaoAtend' }
+			<span id="lotacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).sigla} - ${acoesEAtendentes.get(acaoAtend).descricao.raw()}</span>
+			
+			#{if acaoAtend_isFirst} 
+				#{set lotacaoNaoDesignada : acoesEAtendentes.get(acaoAtend).sigla + ' - ' + acoesEAtendentes.get(acaoAtend).descricao /} 
+			#{/if}
 		#{/list}
-	#{/select}
-	
-	 <span
-		style="color: red">#{error 'solicitacao.acao' /}</span>
-</div>
+
+		<label>Atendente</label>
+		<span id="atendentePadrao" style="display:block;">
+			 <!-- Para solicitacoes cadastradas, pegar o atendente da ultima movimentacao -->
+			 <!-- Para solicitacoes filhas que estao sendo cadastradas, pegar o atendente da ultima movimentacao do pai -->
+			 <!-- Para solicitacoes que estao sendo cadastradas, pegar o atendente da designacao -->
+			#{if solicitacao.numSolicitacao != null} 
+				#{if solicitacao.isFilha() && solicitacao.idSolicitacao == null}
+					${solicitacao.solicitacaoPai?.lotaAtendente?.sigla} - ${solicitacao.solicitacaoPai?.lotaAtendente?.descricao.raw()}
+				#{/if}
+				#{else}${solicitacao.lotaAtendente?.sigla} - ${solicitacao.lotaAtendente?.descricao.raw()}#{/else}
+			#{/if}
+			#{else}${lotacaoNaoDesignada.raw()}#{/else}
+		</span>
+		<!-- So habilita para solicitacoes filhas que estao sendo criadas. Quando editar sol. filha esse botao nao aparece -->
+		#{if solicitacao.isFilha() && solicitacao.idSolicitacao == null}
+		<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin:5px 0 0 -3px;" >Alterar atendente</a>
+		<input type="hidden" name="solicitacao.atendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
+		#{/if}
+
+	</div>
 #{/if}
 
 <div id="divAtributos">#{include 'Application/exibirAtributos.html' /}</div>
 
+#{modal nome:'lotacaoAtendente', titulo:'Alterar Atendente padrão'}
+	<div id="dialogAtendente">
+		<div class="gt-content">
+			<div class="gt-form gt-content-box">
+				<div class="gt-form-row">
+					<div class="gt-form-row">
+						<label>Lotação Atendente</label>
+							#{selecao tipo:'lotacao',
+								nome:'lotacaoSelecao',
+								value:lotacaoSelecao /}			
+						<span style="display:none;color: red" id="atendente">Atendente não informado.</span>
+					</div>
+					<div class="gt-form-row">
+						<a href="javascript: alterarAtendente()" class="gt-btn-medium gt-btn-left">Ok</a>
+						<a href="javascript: modalFechar('lotacaoAtendente')" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+#{/modal}
+
+<script>	
+	function modalAbrir(componentId) {
+		limparCampos();
+		$("#" + componentId + "_dialog").dialog('option', 'width', 560);
+		$("#" + componentId + "_dialog").dialog('open');
+	}
+	
+	function modalFechar(componentId) {
+		$("#" + componentId + "_dialog").dialog('close');
+	}
+	// limpa campos do componente de busca - tag selecao
+	function limparCampos() {
+		$("#lotacaoSelecao").val('');
+		$("#lotacaoSelecao_descricao").val('');
+		$("#lotacaoSelecao_sigla").val('');
+		$("#lotacaoSelecaoSpan").html('');
+	}
+	function alterarAtendente() {
+		var inputNovoAtendente = $("#lotacaoSelecao").val();
+		var spanNovoAtendente = $("#lotacaoSelecao_sigla").val() + " - " + $("#lotacaoSelecao_descricao").val();
+		modalFechar('lotacaoAtendente');
+		$("#atendenteNaoDesignado").val(inputNovoAtendente);
+		$("#atendentePadrao").html(spanNovoAtendente);
+	}
+</script>

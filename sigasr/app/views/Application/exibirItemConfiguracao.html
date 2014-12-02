@@ -1,5 +1,10 @@
 #{if solicitacao.solicitante}
 <script>
+
+$(document).ready(function() {
+	notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
+});
+
 function carregarAcao(){
 	frm = document.getElementById('formSolicitacao');
 	params = '';
@@ -16,8 +21,6 @@ function carregouAcao(response, param){
 	var scripts = div.getElementsByTagName("script");
 	for(var i=0;i<scripts.length;i++)  
 	   eval(scripts[i].text);
-
-	notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
 }
 </script>
 

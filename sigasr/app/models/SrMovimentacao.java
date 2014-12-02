@@ -83,10 +83,6 @@ public class SrMovimentacao extends GenericModel {
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista lista;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_SOLICITACAO_VINCULO")
-	public SrSolicitacaoVinculo vinculo;
-
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_CANCELADORA")
 	public SrMovimentacao movCanceladora;
@@ -262,6 +258,11 @@ public class SrMovimentacao extends GenericModel {
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.FECHAMENTO
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
+		
+		//Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
+		if (solicitacao.isFilha() &&
+				tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+			Correio.notificarAtendente(this); //notifica o atendente da solicitacao pai, caso a filha seja fechada
 		return this;
 	}
 
@@ -270,7 +271,7 @@ public class SrMovimentacao extends GenericModel {
 		movCanceladora.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 		movCanceladora.descrMovimentacao = "Cancelando "
-				+ tipoMov.nome.toLowerCase() + " nº " + numSequencia;
+				+ tipoMov.nome.toLowerCase();
 
 		SrMovimentacao ultimaValida = getAnterior();
 		movCanceladora.atendente = ultimaValida.atendente;

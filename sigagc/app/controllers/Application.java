@@ -183,15 +183,16 @@ public class Application extends SigaApplication {
 	}
 
 	public static void knowledge(Long id, String[] tags, String estilo,
-			String msgvazio, String urlvazio, String titulo, boolean popup,
-			String estiloBusca) throws Exception {
-		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, false,
-				popup, estiloBusca);
+			String msgvazio, String urlvazio, String titulo,
+			boolean testarAcesso, boolean popup, String estiloBusca)
+			throws Exception {
+		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca);
 	}
 
 	private static void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
-			boolean testarAcessoPublico, boolean popup, String estiloBusca)
+			boolean testarAcesso, boolean popup, String estiloBusca)
 			throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
@@ -213,8 +214,9 @@ public class Application extends SigaApplication {
 
 			info = GcInformacao.findById(idOutroConhecimento);
 
-			if (testarAcessoPublico
-					&& (info.visualizacao.id != GcAcesso.ACESSO_PUBLICO))
+			if (testarAcesso
+					&& !info.acessoPermitido(titular(), lotaTitular(),
+							info.visualizacao.id))
 				continue;
 
 			// o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
@@ -867,6 +869,11 @@ public class Application extends SigaApplication {
 		// Atualiza a classificação com as hashTags encontradas
 		classificacao = Util.findHashTag(conteudo, classificacao,
 				CONTROLE_HASH_TAG);
+		
+		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
+				&& informacao.grupo == null)
+			throw new Exception(
+					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restrição.");
 
 		if (informacao.id != 0)
 			GcBL.movimentar(informacao,
@@ -958,12 +965,9 @@ public class Application extends SigaApplication {
 		render(informacao);
 	}
 
-	public static void anexarGravar(GcInformacao informacao, String titulo,
-			File fake) throws Exception {
+	public static void gravarArquivo(GcInformacao informacao, String titulo,
+			File fake, String CKEditorFuncNum, String origem) throws Exception {
 		List<Upload> files = (List<Upload>) request.args.get("__UPLOADS");
-		DpPessoa titular = titular();
-		DpLotacao lotaTitular = lotaTitular();
-		CpIdentidade idc = idc();
 		if (files != null)
 			for (Upload file : files) {
 				if (file.getSize() > 2097152)
@@ -984,11 +988,22 @@ public class Application extends SigaApplication {
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
 							null, null, null, titulo, null, null, null, null,
 							anexo);
-					GcBL.gravar(informacao, idc, titular, lotaTitular);
+					GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 					renderText("success");
 				} else
 					throw new AplicacaoException(
 							"Não é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
+				if (origem.equals("editar")) {
+					long id = GcBL.gravarArquivoSemMovimentacao(file);
+					String url = "/sigagc/app/baixar?id=" + id;
+					renderHtml("<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('"
+									+ CKEditorFuncNum + "','" + url + "');</script>");	
+				}
+				else {
+					GcBL.gravarArquivoComMovimentacao(informacao, idc(), titular(), 
+								lotaTitular(), titulo, file);
+					renderText("success");
+				}
 			}
 	}
 
@@ -1170,16 +1185,16 @@ public class Application extends SigaApplication {
 		// "Content-Length", Integer.toString(ba.length)));
 	}
 
-	public static void selecionarSiga(String sigla, String tipo, String nome)
+	public static void selecionarSiga(String sigla, String prefixo, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/selecionar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
+		redirect("/siga/" + (prefixo != null ? prefixo + "/" : "") + tipo + "/selecionar.action?" + "propriedade="
+				+ tipo + nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
-	public static void buscarSiga(String sigla, String tipo, String nome)
+	public static void buscarSiga(String sigla, String prefixo, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/buscar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
+		redirect("/siga/" + (prefixo != null ? prefixo + "/" : "") + tipo + "/buscar.action?" + "propriedade=" + tipo
+				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSigaFromPopup(String tipo) throws Exception {

@@ -32,19 +32,19 @@ function postback(){
 		<p></p>
 		<h3>
 			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)} #{if
-			solicitacao.solicitacaoJuntada} a <a
-				href="@{Application.exibir(solicitacao.solicitacaoJuntada.idSolicitacao)}">
-				${solicitacao.solicitacaoJuntada.codigo} </a> #{/if}
+			solicitacao.solicitacaoPrincipal} a <a
+				href="@{Application.exibir(solicitacao.solicitacaoPrincipal.idSolicitacao)}">
+				${solicitacao.solicitacaoPrincipal.codigo} </a> #{/if}
 		</h3>
 
-		#{if solicitacao.estaForaAtendenteDesignado()}
+		*{#{if solicitacao.estaForaAtendenteDesignado()}
 		<div
 			style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
 			<img src="/siga/css/famfamfam/icons/error.png"
 				style="margin-right: 1px;"> O atendente atual n&atilde;o &eacute; o
 			atendente designado.
 		</div>
-		#{/if} #{links acoes:solicitacao.operacoes(lotaTitular, titular), base:_base /}
+		#{/if}}* #{links acoes:solicitacao.operacoes(lotaTitular, titular), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
 				${solicitacao.descrItem} -
@@ -67,6 +67,11 @@ function postback(){
 			style="margin-bottom: 0px !important">
 			<form action="@{Application.darAndamento()}" method="post"
 				enctype="multipart/form-data" onsubmit="javascript: return block();">
+<<<<<<< HEAD
+=======
+				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+				<input type="hidden" name="ocultas" value="${ocultas}" />
+>>>>>>> release-3.14.0
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
 				solicitacao.podeTrocarAtendente(lotaTitular, cadastrante)}
@@ -97,9 +102,17 @@ function postback(){
 		</div>
 
 		<p style="padding-top: 30px; font-weight: bold; color: #365b6d;" >
+<<<<<<< HEAD
 		#{checkbox name:'todoOContexto',
 					value:todoOContexto, onchange:'postback();' /} Todo o Contexto
 		&nbsp;&nbsp;
+=======
+		#{if solicitacao.parteDeArvore}
+		#{checkbox name:'todoOContexto',
+					value:todoOContexto, onchange:'postback();' /} Todo o Contexto
+		&nbsp;&nbsp;
+		#{/if}
+>>>>>>> release-3.14.0
 		#{checkbox name:'ocultas',
 					value:ocultas, onchange:'postback();' /} Mais Detalhes
 		</p>
@@ -184,6 +197,24 @@ function postback(){
 				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
 				solicitacao.local} (${solicitacao.local.nomeComplexo}) #{/if}
 			</p>
+			#{if solicitacao.interlocutor}
+			<p>
+				<b>Interlocutor:</b>
+				${solicitacao.interlocutor.descricaoIniciaisMaiusculas}
+			</p>
+			#{/if}
+			#{if solicitacao.dtOrigem}
+			<p>
+				<b>Contato Inicial:</b>
+				${solicitacao.dtOrigemString}
+			</p>
+			#{/if}
+			#{if solicitacao.meioComunicacao}
+			<p>
+				<b>Origem da Demanda:</b>
+				${solicitacao.meioComunicacao?.descrMeioComunicacao}
+			</p>
+			#{/if}
 			#{if solicitacao.telPrincipal}
 			<p>
 				<b>Telefone:</b> ${solicitacao.telPrincipal}
@@ -193,18 +224,6 @@ function postback(){
 				<b>Cadastrante:</b>
 				${solicitacao.cadastrante?.descricaoIniciaisMaiusculas}
 			</p>
-			#{if solicitacao.meioComunicacao}
-			<p>
-				<b>Origem da Demanda:</b>
-				${solicitacao.meioComunicacao?.descrMeioComunicacao}
-			</p>
-			#{/if}
-			#{if solicitacao.dtOrigem}
-			<p>
-				<b>Contato Inicial:</b>
-				${solicitacao.dtOrigemString}
-			</p>
-			#{/if}
 			<p>
 				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>
@@ -282,7 +301,7 @@ function postback(){
 		<div class="gt-sidebar-content">
 			<h3>Vinculada a esta solicitação</h3>
 			<p>
-				#{list items:solicitacao.getSolicitacaoVinculadaSet(), as:'vinculada'} <a
+				#{list items:solicitacao.solicitacoesVinculadas, as:'vinculada'} <a
 					href="@{Application.exibir(vinculada.idSolicitacao)}">
 					${vinculada.codigo} </a> , #{/list}
 			</p>
@@ -310,6 +329,11 @@ function postback(){
 	<div class="gt-content-box gt-form">
 		<form action="@{Application.anexarArquivo()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
+<<<<<<< HEAD
+=======
+			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+			<input type="hidden" name="ocultas" value="${ocultas}" />
+>>>>>>> release-3.14.0
 			<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 				value="${movimentacao.solicitacao.idSolicitacao}"> <input
 				type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12">
@@ -332,6 +356,8 @@ function postback(){
 	#{/modal} #{modal nome:'fechar', titulo:'Fechar'}
 	<form action="@{Application.fechar()}" method="post"
 		enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div style="display: inline" class="gt-form-row gt-width-66">
 			<label>Motivo</label>
 			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
@@ -341,7 +367,53 @@ function postback(){
 	</form>
 	#{/modal}
 	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao} 
-	#{/modal} 
+	#{/modal}
+	#{modal nome:'juntar', titulo:'Juntar'}
+		<form action="@{Application.juntarSolicitacoes()}" method="post"
+			enctype="multipart/form-data" id="formGravarJuncao">
+			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+			<input type="hidden" name="ocultas" value="${ocultas}" />
+			<input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
+			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+				<label>Solicitação</label> <br />
+				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeJuntada',
+					value: idSolicitacaoRecebeJuntada, grande:true,
+					onchange: "validarAssociacao('Juncao');"  /}
+				<span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
+			</div>
+			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+				<label>Justificativa</label>
+				<textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaJuncao" maxlength="255" onkeyup="validarAssociacao('Juncao')"></textarea>
+				<span id="erroJustificativaJuncao" style="color: red; display: none;"><br />Justificativa não informada.</span>
+			</div>
+			<div style="display: inline" class="gt-form-row ">
+				<input type="button" onclick="gravarAssociacao('Juncao');" value="Gravar" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</form>
+	#{/modal}
+	#{modal nome:'vincular', titulo:'Vincular'}
+		<form action="@{Application.vincularSolicitacoes()}" method="post"
+			enctype="multipart/form-data" id="formGravarVinculo">
+			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+			<input type="hidden" name="ocultas" value="${ocultas}" />
+			<input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
+			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+				<label>Solicitação</label> <br />
+				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeVinculo',
+					value: idSolicitacaoRecebeVinculo, grande:true,
+					onchange: "validarAssociacao('Vinculo');"  /}
+				<span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
+			</div>
+			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+				<label>Justificativa</label>
+				<textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaVinculo" maxlength="255" onkeyup="validarAssociacao('Vinculo')"></textarea>
+				<span id="erroJustificativaVinculo" style="color: red; display: none;"><br />Justificativa não informada.</span>
+			</div>
+			<div style="display: inline" class="gt-form-row ">
+				<input type="button" onclick="gravarAssociacao('Vinculo');" value="Gravar" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</form>
+	#{/modal}
 	#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa', url:'/sigasr/solicitacao/responderPesquisa?id='+solicitacao.idSolicitacao}
 	#{/modal}
 	#{modal nome:'pendencia', titulo:'Pendência'}
@@ -349,6 +421,8 @@ function postback(){
 	<div class="gt-content-box gt-for-table gt-form">
 	<form action="@{Application.deixarPendente()}" method="post"
 		enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div class="gt-form-row gt-width-66">
 			<label>Data de Término</label>
 			<input type="text" name="calendario" id="calendario">
@@ -378,6 +452,8 @@ function postback(){
 		<div class="gt-form gt-content-box">
 		<form action="@{Application.alterarPrazo()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
+				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<div class="gt-form-row gt-width-66">
 					<label>Data</label>
 					<input type="text" name="calendario" id="calendarioAlterarPrazo">
@@ -398,17 +474,42 @@ function postback(){
 	
 <script language="javascript">
 
-function terminarPendencia(motivo, idMov){
-	$("#motivoId").val(motivo);
-	$("#movimentacaoId").val(idMov);
-	$( "#terminarPendenciaModal_dialog" ).dialog( "open" );
-}
-
+	function terminarPendencia(motivo, idMov){
+		$("#motivoId").val(motivo);
+		$("#movimentacaoId").val(idMov);
+		$( "#terminarPendenciaModal_dialog" ).dialog( "open" );
+	}
+	
+	function validarAssociacao(tipo) 
+	{
+		$("#erroSolicitacao"+tipo).hide();
+		$("#erroJustificativa"+tipo).hide();
+	
+		if ((tipo == 'Juncao' && $("#idSolicitacaoRecebeJuntadaSpan").html() == "")
+				|| (tipo == 'Vinculo' && $("#idSolicitacaoRecebeVinculoSpan").html() == "")) {
+			$("#erroSolicitacao"+tipo).show();
+			return false;
+		}
+		if ($("#justificativa"+tipo).val() == "") {
+			$("#erroJustificativa"+tipo).show();
+			return false;
+		}
+		return true;
+	}
+	
+	function gravarAssociacao(tipo)
+	{
+		if (validarAssociacao(tipo)) {
+			document.getElementById("formGravar"+tipo).submit();
+		}
+	}
 </script>
 
 #{modal nome:'terminarPendenciaModal', titulo:'Terminar Pendencia'}
 	<form action="@{Application.terminarPendencia()}" method="post"
 		enctype="multipart/form-data">
+		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div style="display: inline" class="gt-form-row gt-width-66">
 			<label>Descrição</label>
 			<textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
@@ -429,5 +530,4 @@ $("#terminarPendenciaModal_dialog").dialog({
     modal: true,
     resizable: false
   });
-  
 </script>

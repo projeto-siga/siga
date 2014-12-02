@@ -259,11 +259,11 @@ public class CpConfiguracaoBL {
 		}
 
 		SortedSet<CpPerfil> perfis = null;
-		if (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null
+		if (cpConfiguracaoFiltro.isBuscarPorPerfis() || (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null
 				&& cpConfiguracaoFiltro
 						.getCpTipoConfiguracao()
 						.getIdTpConfiguracao()
-						.equals(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO)) {
+						.equals(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO))) {
 			perfis = consultarPerfisPorPessoaELotacao(
 					cpConfiguracaoFiltro.getDpPessoa(),
 					cpConfiguracaoFiltro.getLotacao(), dtEvn);
@@ -314,7 +314,7 @@ public class CpConfiguracaoBL {
 		return null;
 	}
 
-	private SortedSet<CpPerfil> consultarPerfisPorPessoaELotacao(
+	public SortedSet<CpPerfil> consultarPerfisPorPessoaELotacao(
 			DpPessoa pessoa, DpLotacao lotacao, Date dtEvn) throws Exception {
 		if (pessoa == null && lotacao == null)
 			return null;

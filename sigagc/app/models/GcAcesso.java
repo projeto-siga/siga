@@ -19,6 +19,7 @@ public class GcAcesso extends GenericModel {
 	public static final long ACESSO_LOTACAO_E_INFERIORES = 4;
 	public static final long ACESSO_LOTACAO = 5;
 	public static final long ACESSO_PESSOAL = 6;
+	public static final long ACESSO_LOTACAO_E_GRUPO = 7;
 
 	@Id
 	@Column(name = "ID_ACESSO")

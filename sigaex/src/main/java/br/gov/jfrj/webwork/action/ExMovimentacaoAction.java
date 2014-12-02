@@ -1380,11 +1380,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// }
 
 		try {
+			long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
+			
+			if(getCopia() || (getTipoAssinaturaMov() != null && getTipoAssinaturaMov().equals("C")))
+				tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
+			
 			setMsg(Ex
 					.getInstance()
 					.getBL()
 					.assinarDocumento(getCadastrante(), getLotaTitular(), doc,
-							dt, assinatura, certificado));
+							dt, assinatura, certificado, tpMovAssinatura));
 		} catch (final Exception e) {
 			if (fApplet) {
 				getRequest().setAttribute("err", e.getMessage());

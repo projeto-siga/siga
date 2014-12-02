@@ -116,151 +116,45 @@
 			</div>
 		</div>
 	</div>
-	<c:if test="${autenticando}">
-		 <h2>Assinaturas para Autenticar</h2>
-					<table class="gt-table mov">
-						<thead>
-							<tr>
-								<td></td>
-								<th align="center" rowspan="2">&nbsp;&nbsp;&nbsp;Data</th>
-								<th colspan="2" align="center">Cadastrante</th>
-								<th colspan="2" align="center">Atendente</th>
-								<th rowspan="2">Descrição</th>
-							</tr>
-							<tr>
-							    <ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-									<td align="center"><input type="checkbox" name="checkall"
-										onclick="checkUncheckAll(this)" /></td>
-								</ww:if>
-								<ww:else><td></td></ww:else>	
-								<th align="left">Lotação</th>
-								<th align="left">Pessoa</th>
-								<th align="left">Lotação</th>
-								<th align="left">Pessoa</th>
-							</tr>
-						</thead>
-						<c:set var="i" value="${0}" />
-						<c:forEach var="mov" items="${doc.apenasAssinaturasComSenhaNaoAutenticadas}">
-						    <c:if test="${(not mov.cancelada)}">
-							    <tr class="${mov.classe} ${mov.disabled}">
-								    <c:set var="dt" value="${mov.dtRegMovDDMMYY}" />
-									<ww:if test="${dt == dtUlt}">
-									    <c:set var="dt" value="" />
-									</ww:if>
-									<ww:else>
-									    <c:set var="dtUlt" value="${dt}" />
-									</ww:else>
-									<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-									    <c:set var="x" scope="request">chk_${mov.mov.idMov}</c:set>
-										<c:remove var="x_checked" scope="request" />
-										<c:if test="${param[x] == 'true'}">
-												<c:set var="x_checked" scope="request">checked</c:set>
-										</c:if>
-										<td align="center"><input type="checkbox" name="${x}"
-												value="true" ${x_checked} /></td>
-									</ww:if>
-									<ww:else>
-									    <td></td>
-									</ww:else>		
-									<td align="center">${dt}</td>
-									<td align="left"><siga:selecionado
-										sigla="${mov.parte.lotaCadastrante.sigla}"
-										descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}" />
-									</td>
-									<td align="left"><siga:selecionado
-										sigla="${mov.parte.cadastrante.nomeAbreviado}"
-										descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}" />
-									</td>
-									<td align="left"><siga:selecionado
-										sigla="${mov.parte.lotaResp.sigla}"
-										descricao="${mov.parte.lotaResp.descricaoAmpliada}" /></td>
-									<td align="left"><siga:selecionado
-										sigla="${mov.parte.resp.nomeAbreviado}"
-										descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" />
-									</td>
-									<td>${mov.descricao}<c:if test='${mov.idTpMov != 2}'> ${mov.complemento}</c:if>
-										<c:set var="assinadopor" value="${true}" /> <siga:links
-									           inline="${true}"
-											   separator="${not empty mov.descricao and mov.descricao != null}">
-										<c:forEach var="acao" items="${mov.acoes}">
-										    <c:choose>
-												<c:when test='${mov.idTpMov == 32}'>
-													<ww:url id="url" value="${acao.nameSpace}/${acao.acao}">
-											     		<c:forEach var="p" items="${acao.params}">
-												     		<ww:param name="${p.key}">${p.value}</ww:param>
-													    </c:forEach>
-												     </ww:url>
-												</c:when>
-											    <c:otherwise>
-												    <ww:url id="url" action="${acao.acao}"
-													    	namespace="${acao.nameSpace}">
-									                    <c:forEach var="p" items="${acao.params}">
-													        <ww:param name="${p.key}">${p.value}</ww:param>
-													    </c:forEach>
-												    </ww:url>
-											    </c:otherwise>
-											</c:choose>
-											<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
-														pos="${acao.pos}" url="${url}" test="${true}"
-														popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
-														ajax="${acao.ajax}" idAjax="${mov.idMov}" />
-											    <c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
-												    <c:set var="assinadopor" value="${false}" />
-												</c:if>
-											</c:forEach>
-										    </siga:links>    
-										
-										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-										      <ww:hidden name="pdf${x}" value="${mov.mov.referencia}" />
-						  					  <ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.mov.nmPdf}"/>
-										</c:if>	
-									</td>
-							    </tr>
-						    </c:if>
-					    </c:forEach>
-					</table>	
-	</c:if>
-	<c:if test="${not autenticando}">
-		<c:if test="${f:podeAssinarComSenha(titular,lotaTitular,mob)}">
-			<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
+	<c:if test="${f:podeAssinarComSenha(titular,lotaTitular,mob)}">
+		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
 	        		
-			<div id="dialog-form" title="Assinar com Senha">
-	 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_senha_gravar.action" >
-	 				<ww:hidden id="sigla" name="sigla"	value="${sigla}" />
-	    			<fieldset>
-	    			  <label>Matrícula</label> <br/>
-	    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
-	    			  <label>Senha</label> <br/>
-	    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off"/>
-	    			</fieldset>
-	  			</form>
-			</div>
+		<div id="dialog-form" title="Assinar com Senha">
+ 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_senha_gravar.action" >
+ 				<ww:hidden id="sigla" name="sigla"	value="${sigla}" />
+    			<fieldset>
+    			  <label>Matrícula</label> <br/>
+    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+    			  <label>Senha</label> <br/>
+    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off"/>
+    			</fieldset>
+  			</form>
+		</div>
 	
-			 <script> 
-			    dialog = $("#dialog-form").dialog({
-			      autoOpen: false,
-			      height: 210,
-			      width: 350,
-			      modal: true,
-			      buttons: {
-			          "Assinar": assinarGravar,
-			          "Cancelar": function() {
-			            dialog.dialog( "close" );
-			          }
-			      },
-			      close: function() {
-			        
-			      }
-			    });
+		 <script> 
+		    dialog = $("#dialog-form").dialog({
+		      autoOpen: false,
+		      height: 210,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+		          "Assinar": assinarGravar,
+		          "Cancelar": function() {
+		            dialog.dialog( "close" );
+		          }
+		      },
+		      close: function() {
+		        
+		      }
+		    });
 			
-			    function assinarComSenha() {
-			       dialog.dialog( "open" );
-			    }
+		    function assinarComSenha() {
+		       dialog.dialog( "open" );
+		    }
 	
-			    function assinarGravar() {
-			    	$("#form-assinarSenha").submit();
-				}
-			  </script>
-		</c:if>
-	</c:if>	
+		    function assinarGravar() {
+		    	$("#form-assinarSenha").submit();
+			}
+		  </script>
+	</c:if>
 </siga:pagina>

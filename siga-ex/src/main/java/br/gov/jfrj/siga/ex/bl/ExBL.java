@@ -2020,7 +2020,7 @@ public class ExBL extends CpBL {
 
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
-			final Date dtMov, final byte[] pkcs7, final byte[] certificado)
+			final Date dtMov, final byte[] pkcs7, final byte[] certificado, long tpMovAssinatura)
 			throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
@@ -2142,6 +2142,10 @@ public class ExBL extends CpBL {
 							continue;
 						}
 					}
+				
+				if(!fValido && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
+					fValido = true;
+				}
 			}
 
 			if (!fValido && lCPF != null) {
@@ -2165,6 +2169,10 @@ public class ExBL extends CpBL {
 							continue;
 						}
 					}
+				
+				if(!fValido && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
+					fValido = true;
+				}
 			}
 
 			if (lMatricula == null && lCPF == null)
@@ -2187,7 +2195,7 @@ public class ExBL extends CpBL {
 				usuarioDoToken = cadastrante;
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
+					tpMovAssinatura,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					usuarioDoToken, null, null, null, null);
 

@@ -1163,9 +1163,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAssinarComSenha(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		
-		if (!podeAssinar(titular, lotaTitular, mob))
-			return false;
-		
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 				ExTipoMovimentacao.class, false);
 
@@ -1186,25 +1183,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAutenticarDocumento(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExDocumento doc) throws Exception {
 		
-		if (doc.isEletronico() && !doc.isAutenticado()) {
-			
-			ExConfiguracao exConfig = new ExConfiguracao();;
-			exConfig.setDpPessoa(titular);
-			exConfig.setLotacao(lotaTitular);
-			exConfig.setExFormaDocumento(doc.getExFormaDocumento());
-			exConfig.setExModelo(doc.getExModelo());
-			exConfig.setCpTipoConfiguracao(CpDao.getInstance().consultar(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, CpTipoConfiguracao.class, false));
-			exConfig.setExTipoMovimentacao(ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO, ExTipoMovimentacao.class, false));
-			exConfig.setCpSituacaoConfiguracao(CpDao.getInstance().consultar(CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO, CpSituacaoConfiguracao.class, false));
-			
-			CpSituacaoConfiguracao obrigatorio = Ex 
-			.getInstance()
-			.getConf()
-			.buscaSituacao(exConfig);
-			
-			if(obrigatorio != null && obrigatorio.getIdSitConfiguracao().equals(CpSituacaoConfiguracao.SITUACAO_OBRIGATORIO))
+		if (doc.isEletronico() && !doc.isAutenticado() && podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral())) {
 			 return true;
-			
 		}
 
 		return false;

@@ -1103,14 +1103,14 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditarAtributo(SrAtributo att) {
 		if (att.nomeAtributo.equals("")) {
-			validation.addError("att.nomeTipoAtributo",
-					"Nome de atributo n�o informado");
+			validation.addError("att.nomeAtributo",
+					"Nome de atributo não informado");
 		}
 
 		if (att.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO 
 				&& att.descrPreDefinido.equals("")) {
 			validation.addError("att.descrPreDefinido",
-					"Valores Pré-definido n�o informados");
+					"Valores Pré-definido não informados");
 		}
 		
 		for (play.data.validation.Error error : validation.errors()) {

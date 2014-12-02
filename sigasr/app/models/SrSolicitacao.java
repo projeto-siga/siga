@@ -841,21 +841,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void setAtributoSolicitacaoMap(HashMap<Long, String> atributosSolicitacao) {
 		if (atributosSolicitacao != null) {
 			meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
-			for (Long idTipoAtt : atributosSolicitacao.keySet()) {
-				SrAtributo tipoAtt = SrAtributo.findById(idTipoAtt);
-				SrAtributoSolicitacao att = new SrAtributoSolicitacao(tipoAtt, atributosSolicitacao.get(idTipoAtt), this);
-				meuAtributoSolicitacaoSet.add(att);
+			for (Long idAtt : atributosSolicitacao.keySet()) {
+				SrAtributo att = SrAtributo.findById(idAtt);
+				SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(att, atributosSolicitacao.get(idAtt), this);
+				meuAtributoSolicitacaoSet.add(attSolicitacao);
 			}
 		}
 	}
 
 	public HashMap<Long, String> getAtributoSolicitacaoMap() {
-		HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para
-																		// manter
-																		// a
-																		// ordem
-																		// de
-																		// insercao
+		HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para manter a ordem de insercao
 		if (meuAtributoSolicitacaoSet != null)
 			for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
 				map.put(att.atributo.idAtributo, att.valorAtributoSolicitacao);

@@ -9,7 +9,7 @@ $(function() {
         buttonImageOnly: true,
         dateFormat: 'dd/mm/yy'
     });
-    $( "#calendarioAlterarPrazo" ).datepicker({
+    $( "#calendarioReplanejar" ).datepicker({
         showOn: "button",
         buttonImage: "/siga/css/famfamfam/icons/calendar.png",
         buttonImageOnly: true,
@@ -21,7 +21,7 @@ $(function() {
 <script>
 $(function(){
 	$("#horario").mask("99:99");
-	$("#horarioAlterarPrazo").mask("99:99");
+	$("#horarioReplanejar").mask("99:99");
 });
 </script>
 
@@ -258,11 +258,6 @@ $(function(){
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
 					<br /> ${solicitacao.GUTString}</span>
 			</p>
-			
-			<!--  ESPAÇO DESTINADO A EXIBIÇÃO DOS TEMPOS DA SOLICITAÇÃO -->
-			<p>
-				<b>Prazo:</b> <span style=""></span>
-			</p>
 		</div>
 	</div>
 
@@ -463,17 +458,17 @@ $(function(){
 	</form>
 	</div>
 	</div>
-	#{/modal} #{modal nome:'alterarPrazo', titulo:'Alterar Prazo'}
+	#{/modal} #{modal nome:'replanejar', titulo:'Replanejar'}
 		<div class="gt-form gt-content-box">
-		<form action="@{Application.alterarPrazo()}" method="post"
+		<form action="@{Application.replanejar()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
 				<div class="gt-form-row gt-width-66">
 					<label>Data</label>
-					<input type="text" name="calendario" id="calendarioAlterarPrazo">
+					<input type="text" name="calendario" id="calendarioReplanejar">
 				</div>
 				<div class="gt-form-row gt-width-66">
 					<label>Hora</label>
-					<input type="text" name="horario" id="horarioAlterarPrazo">
+					<input type="text" name="horario" id="horarioReplanejar">
 				</div>
 				<div class="gt-form-row gt-width-66">
 					<label>Motivo</label>

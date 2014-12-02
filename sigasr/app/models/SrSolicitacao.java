@@ -1173,7 +1173,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeReplanejar(DpLotacao lota, DpPessoa pess) {
-		return true;
+		return !isRascunho() && !isFechado() && estaCom(lota, pess);
 	}
 
 	public boolean podeTerminarPendencia(DpLotacao lota, DpPessoa pess) {
@@ -1454,11 +1454,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeDeixarPendente(lotaTitular, titular), "pendencia",
 				"modal=true"));
 
-		/*
-		 * operacoes.add(new SrOperacao("clock_go", "Alterar Prazo",
-		 * podeAlterarPrazo(lotaTitular, titular), "alterarPrazo",
-		 * "modal=true"));
-		 */
+		operacoes.add(new SrOperacao("clock_go", "Replanejar",
+				podeReplanejar(lotaTitular, titular), "replanejar",
+				"modal=true"));
 
 		operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir",
 				podeExcluir(lotaTitular, titular),
@@ -2371,29 +2369,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.salvar(pess, lota);
 	}
 
-	public void alterarPrazo(DpLotacao lota, DpPessoa pess, String motivo,
-			String calendario, String horario) throws Exception {
-		if (!podeReplanejar(lota, pess))
-			throw new Exception("Operação nÃ£o permitida");
-		SrMovimentacao movimentacao = new SrMovimentacao(this);
-		DateTime datetime = new DateTime();
-		DateTimeFormatter formatter = DateTimeFormat
-				.forPattern("dd/MM/yyyy HH:mm");
-		if (!calendario.equals("")) {
-			datetime = new DateTime(formatter.parseDateTime(calendario + " "
-					+ horario));
-			movimentacao.dtAgenda = datetime.toDate();
-		}
-		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO);
-		movimentacao.descrMovimentacao = motivo;
-		movimentacao.salvar(pess, lota);
-	}
-
 	public void replanejar(DpLotacao lota, DpPessoa pess, String motivo,
 			String calendario, String horario) throws Exception {
 		if (!podeReplanejar(lota, pess))
-			throw new Exception("Operação não permitida");
+			throw new Exception("Operação nÃ£o permitida");
+		
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		DateTime datetime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
@@ -2403,13 +2383,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					+ horario));
 			movimentacao.dtAgenda = datetime.toDate();
 		}
-		String descrMovimentacao = "Prazo alterado para " + calendario + " "
+		String descrMovimentacao = "Prazo alterado para " + calendario + " " 
 				+ horario + " - " + motivo;
-
+		
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REPLANEJAMENTO);
 		movimentacao.descrMovimentacao = descrMovimentacao;
-		movimentacao.salvar(pess, lota);
+		movimentacao.salvar(pess, lota);		
 	}
 
 	public void terminarPendencia(DpLotacao lota, DpPessoa pess,

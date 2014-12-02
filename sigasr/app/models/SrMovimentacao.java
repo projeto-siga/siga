@@ -271,7 +271,7 @@ public class SrMovimentacao extends GenericModel {
 		movCanceladora.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 		movCanceladora.descrMovimentacao = "Cancelando "
-				+ tipoMov.nome.toLowerCase() + " nº " + numSequencia;
+				+ tipoMov.nome.toLowerCase();
 
 		SrMovimentacao ultimaValida = getAnterior();
 		movCanceladora.atendente = ultimaValida.atendente;

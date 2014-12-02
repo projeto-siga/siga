@@ -37,14 +37,14 @@ function postback(){
 				${solicitacao.solicitacaoPrincipal.codigo} </a> #{/if}
 		</h3>
 
-		#{if solicitacao.estaForaAtendenteDesignado()}
+		*{#{if solicitacao.estaForaAtendenteDesignado()}
 		<div
 			style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
 			<img src="/siga/css/famfamfam/icons/error.png"
 				style="margin-right: 1px;"> O atendente atual n&atilde;o &eacute; o
 			atendente designado.
 		</div>
-		#{/if} #{links acoes:solicitacao.operacoes(lotaTitular, titular), base:_base /}
+		#{/if}}* #{links acoes:solicitacao.operacoes(lotaTitular, titular), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
 				${solicitacao.descrItem} -
@@ -186,10 +186,24 @@ function postback(){
 				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
 				solicitacao.local} (${solicitacao.local.nomeComplexo}) #{/if}
 			</p>
+			#{if solicitacao.interlocutor}
 			<p>
 				<b>Interlocutor:</b>
-				${solicitacao?.interlocutor?.descricaoIniciaisMaiusculas}
+				${solicitacao.interlocutor.descricaoIniciaisMaiusculas}
 			</p>
+			#{/if}
+			#{if solicitacao.dtOrigem}
+			<p>
+				<b>Contato Inicial:</b>
+				${solicitacao.dtOrigemString}
+			</p>
+			#{/if}
+			#{if solicitacao.meioComunicacao}
+			<p>
+				<b>Origem da Demanda:</b>
+				${solicitacao.meioComunicacao?.descrMeioComunicacao}
+			</p>
+			#{/if}
 			#{if solicitacao.telPrincipal}
 			<p>
 				<b>Telefone:</b> ${solicitacao.telPrincipal}
@@ -199,18 +213,6 @@ function postback(){
 				<b>Cadastrante:</b>
 				${solicitacao.cadastrante?.descricaoIniciaisMaiusculas}
 			</p>
-			#{if solicitacao.meioComunicacao}
-			<p>
-				<b>Origem da Demanda:</b>
-				${solicitacao.meioComunicacao?.descrMeioComunicacao}
-			</p>
-			#{/if}
-			#{if solicitacao.dtOrigem}
-			<p>
-				<b>Contato Inicial:</b>
-				${solicitacao.dtOrigemString}
-			</p>
-			#{/if}
 			<p>
 				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>

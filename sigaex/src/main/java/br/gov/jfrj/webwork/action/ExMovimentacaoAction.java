@@ -1237,18 +1237,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	
 	public String aAutenticarDocumento() throws Exception {
 		setAutenticando(true);
-		buscarDocumento(true);
-
-		boolean fPreviamenteAssinado = doc.isAssinado();
-
-		if (!fPreviamenteAssinado
-				&& (doc.getExModelo() != null && ("template/freemarker"
-						.equals(doc.getExModelo().getConteudoTpBlob())))) {
-			Ex.getInstance().getBL()
-					.processarComandosEmTag(doc, "pre_assinatura");
-		}
-
-		return Action.SUCCESS;
+		return aAssinar();
 	}
 
 	public String aConferirCopia() throws Exception {
@@ -1935,6 +1924,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setEnderecoAutenticacao(SigaExProperties.getEnderecoAutenticidadeDocs());
 
 		return Action.SUCCESS;
+	}
+
+	public String aAutenticarMovimentacao() throws Exception {
+		setAutenticando(true);
+		return aExibir();
 	}
 
 	public String aGerarProtocolo() throws Exception {

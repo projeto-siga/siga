@@ -317,25 +317,32 @@ function visualizarImpressao(via) {
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
 					<div id="capicom-div">
-						<c:choose>
-							<c:when
-								test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Despacho</a> 
-							</c:when>
-							<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Transferir</a> 
-							</c:when>
-							<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Desentranhamento</a> 
-							</c:when>
-							<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Encerramento</a> 
-							</c:when>
-							<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
-								<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Conferir Cópia</a> 
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Anexo</a> 
-							</c:when>
-						</c:choose>
+						<c:if
+							test="${not autenticando}">
+							<c:choose>
+								<c:when
+									test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Despacho</a> 
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Transferir</a> 
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Desentranhamento</a> 
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Encerramento</a> 
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
+									<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Conferir Cópia</a> 
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Anexo</a> 
+								</c:when>
+							</c:choose>
+						</c:if>
+						<c:if
+							test="${autenticando}">
+							<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar Documento</a>
+						</c:if>
 					</div>
 					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
 					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>

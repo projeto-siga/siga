@@ -800,6 +800,33 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 		return false;
 	}
+	
+	/**
+	 * Uma movimentação está autenticado quando ela possui pelo menos uma assinatura com senha.
+	 */
+	public boolean isAutenticada() {
+		if (!this.isCancelada()
+				&& this.getExMovimentacaoReferenciadoraSet() != null) {
+			for (ExMovimentacao movRef : this
+					.getExMovimentacaoReferenciadoraSet()) {
+				if (movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+						|| movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Retorna se uma movimentação possui assinaturas com senha.
+	 */
+	public boolean temAssinaturasComSenha() {
+		if(getApenasAssinaturasComSenha() != null && getApenasAssinaturasComSenha().size() > 0)
+			return true;
+		
+		return false;
+	}
 
 	public String getSiglaAssinatura() {
 		return getExDocumento().getIdDoc()

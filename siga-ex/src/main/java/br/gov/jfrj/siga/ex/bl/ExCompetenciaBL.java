@@ -1191,6 +1191,25 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
+	 * Retorna se pode autenticar uma movimentação que só foi assinada com senha.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAutenticarMovimentacao(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+		
+		if (mov.getExDocumento().isEletronico() &&  !mov.isAutenticada() && mov.temAssinaturasComSenha()) {
+			 return true;
+		}
+
+		return false;
+	}
+	
+	/*
 	 * Retorna se é possível assinar uma movimentação com senha:
 	 * 
 	 * @param titular

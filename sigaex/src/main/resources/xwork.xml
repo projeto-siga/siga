@@ -1238,6 +1238,10 @@
 			method="aExibir">
 			<result>/paginas/expediente/mov_exibe.jsp</result>
 		</action>
+		<action name="autenticar_mov" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAutenticarMovimentacao">
+			<result>/paginas/expediente/mov_exibe.jsp</result>
+		</action>
 		<action name="assinar_mov" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarMov">
 			<result>/paginas/expediente/assina_mov.jsp</result>

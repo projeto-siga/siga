@@ -251,7 +251,7 @@ public class ExMovimentacaoVO extends ExVO {
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
-							&& mov.isAssinada())
+							&& mov.isAssinada()) {
 						
 						addAcao(
 								"printer",
@@ -262,7 +262,10 @@ public class ExMovimentacaoVO extends ExVO {
 										.podeVisualizarImpressao(titular, lotaTitular, mov.mob()),
 								null, "&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
 
-					else if(!(mov.isAssinada() && mov.mob().isEmTransito())) {
+						addAcao(null, "Autenticar", "/expediente/mov", "autenticar_mov",
+							true, null, "&popup=true", null, null, null);
+
+					} else if(!(mov.isAssinada() && mov.mob().isEmTransito())) {
 						addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir",
 								true, null, "&popup=true", null, null, null);
 					}

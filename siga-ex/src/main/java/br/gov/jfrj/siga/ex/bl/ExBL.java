@@ -792,6 +792,16 @@ public class ExBL extends CpBL {
 											mov.getSubscritor(), null);
 							}
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) {
+							boolean jaAutenticado = false;
+							for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
+								if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || 
+										movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
+									jaAutenticado = true;
+									break;
+								}
+							}	
+							
+							if(!jaAutenticado)
 								acrescentarMarca(set, mob, CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA, mov.getDtIniMov(), mov.getSubscritor(), null);
 						}
 					}

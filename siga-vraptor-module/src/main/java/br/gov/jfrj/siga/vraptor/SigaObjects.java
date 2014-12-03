@@ -22,9 +22,6 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoUsuarioDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
-import br.gov.jfrj.siga.wf.dao.WfDao;
-
-import com.opensymphony.webwork.interceptor.PrincipalProxy;
 
 @Component
 @RequestScoped
@@ -167,7 +164,7 @@ public class SigaObjects implements ConheceUsuario {
 	public CpOrgaoUsuario daoOU(String sigla) {
 		CpOrgaoUsuarioDaoFiltro fltOrgao = new CpOrgaoUsuarioDaoFiltro();
 		fltOrgao.setSigla(sigla);
-		CpOrgaoUsuario orgaoUsuario = (CpOrgaoUsuario) WfDao.getInstance()
+		CpOrgaoUsuario orgaoUsuario = (CpOrgaoUsuario) CpDao.getInstance()
 				.consultarPorSigla(fltOrgao);
 		return orgaoUsuario;
 	}

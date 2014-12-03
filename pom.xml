@@ -253,7 +253,7 @@
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>projeto-siga</groupId>
+				<groupId>siga</groupId>
 				<artifactId>siga-vraptor-module</artifactId>
 				<version>${siga.version}</version>
 			</dependency>

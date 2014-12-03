@@ -222,8 +222,8 @@ public class SrConfiguracao extends CpConfiguracao {
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
 		
 		if (atendente != null) {
-			sb.append(" and conf.atendente.idLotacao = ");
-			sb.append(atendente.getId());
+			sb.append(" and conf.atendente.idLotacaoIni = ");
+			sb.append(atendente.getIdLotacaoIni());
 		}
 		
 		if (!mostrarDesativados)

@@ -109,6 +109,11 @@ start with 1
 increment by 1
 cache 20;
 
+alter table sr_equipe add HIS_ATIVO NUMBER(10,0)
+alter table sr_equipe add HIS_DT_FIM TIMESTAMP (6);
+alter table sr_equipe add HIS_ID_INI NUMBER(19,0);
+alter table sr_equipe add HIS_DT_INI TIMESTAMP (6);
+
 -- OSI_FS0004 - Item 37
 ALTER TABLE SR_SOLICITACAO 
 	ADD (

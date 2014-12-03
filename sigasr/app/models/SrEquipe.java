@@ -37,7 +37,7 @@ public class SrEquipe extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_EQUIPE")
 	public DpLotacao lotacao;
 	
-	@OneToMany(targetEntity = SrExcecaoHorario.class, mappedBy = "equipe", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrExcecaoHorario.class, mappedBy = "equipe", fetch = FetchType.LAZY)
 	public List<SrExcecaoHorario> excecaoHorarioSet;
 
 	@Override
@@ -55,16 +55,18 @@ public class SrEquipe extends HistoricoSuporte {
 		return false;
 	}
 	
+	// Edson: Nao foi possivel deixar cascade automatico.
+	// Isso porque, no primeiro salvamento, o formulario nao consegue
+	// fazer automaticamente a conexao abaixo, entre os horarios e a equipe,
+	// visto que a equipe nao tem ID
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
-		
-		// Atualiza e salva as excessões de horário
 		if (excecaoHorarioSet != null)
-            for (SrExcecaoHorario excecao : excecaoHorarioSet){
-                excecao.equipe = this;
-                excecao.salvar();
-            }
+			for (SrExcecaoHorario eh : excecaoHorarioSet) {
+				eh.equipe = this;
+				eh.salvar();
+			}
 	}
 
 	public List<SrConfiguracao> getDesignacoes() throws Exception {

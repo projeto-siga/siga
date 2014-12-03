@@ -178,15 +178,16 @@
 	}
 	
 	function inserirEquipe() {
-		$.ajax({
-        	type: "POST",
-        	url: "@{Application.gravarEquipe()}",
-        	data: serializeEquipe(),
-        	dataType: "text",
-        	success: function() {
-        		location.href = "@{Application.listarEquipe()}";
-        	}
-       	});
+		if block()
+			$.ajax({
+	        	type: "POST",
+        		url: "@{Application.gravarEquipe()}",
+        		data: serializeEquipe(),
+        		dataType: "text",
+        		success: function() {
+	        		location.href = "@{Application.listarEquipe()}";
+        		}
+       		});
 	}
 	
 	function serializeEquipe() {
@@ -219,7 +220,7 @@
 				params += '&equipe.excecaoHorarioSet[' + i + '].strInterIni=' + atualizaHora(dataAux, rowValues[5]).toJSON();
 				params += '&equipe.excecaoHorarioSet[' + i + '].strInterFim=' + atualizaHora(dataAux, rowValues[6]).toJSON();
 				
-				params += '&equipe.excecaoHorarioSet[' + i + '].equipe.idEquipe=' + idEquipe;
+				//params += '&equipe.excecaoHorarioSet[' + i + '].equipe.idEquipe=' + idEquipe;
 			}
 		});
 		

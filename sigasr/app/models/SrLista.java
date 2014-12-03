@@ -182,23 +182,23 @@ public class SrLista extends HistoricoSuporte {
 	}
 	
 	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa pess) {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
 	}
 	
 	public boolean podeIncluir(DpLotacao lotaTitular, DpPessoa pess) {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.INCLUSAO);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.INCLUSAO);
 	}
 
 	public boolean podeConsultar(DpLotacao lotaTitular, DpPessoa pess) {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
 	}
 
 	public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
 	}
 	
 	public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.PRIORIZACAO);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.PRIORIZACAO);
 	}
 
 	private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, Long tipoPermissaoLista) {

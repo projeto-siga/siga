@@ -104,21 +104,22 @@
 				<tbody>
 					#{list items:lista, as:'lista'}
 					<tr>
-						#{if lista.podeIncluir(lotaTitular, cadastrante)}
+						#{if lista.podeConsultar(lotaTitular, cadastrante)}
 							<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'" style="cursor: pointer;">${lista.nomeLista}</td>
 						#{/if}
-						
-						#{if !lista.podeIncluir(lotaTitular, cadastrante)}							
+						#{else}							
 							<td>${lista.nomeLista}</td>
-						#{/if}
+						#{/else}
 						
 						<td>${lista.lotaCadastrante.nomeLotacao}</td>
 						<td>
+							#{if lista.podeEditar(lotaTitular, cadastrante)}
 							#{desativarReativar id:lista.idLista, 
 												onReativar:'reativarLista',
 												onDesativar :'desativarLista',
 												isAtivo:lista.isAtivo() }
 							#{/desativarReativar}
+							#{/if}
 						</td>
 					</tr>
 					</a> #{/list}

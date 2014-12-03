@@ -1879,16 +1879,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
 		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
 
-		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setLotacao(lotaTitular);
-		confFiltro.setDpPessoa(cadastrante);
-		confFiltro.setCpTipoConfiguracao(JPA.em().find(
-				CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
-
 		for (SrLista l : SrLista.listar(false)) {
-			confFiltro.listaPrioridade = l;
-			if (SrConfiguracao.buscar(confFiltro) != null)
+			if (l.podeIncluir(lotaTitular, cadastrante))
 				listaFinal.add(l);
 		}
 

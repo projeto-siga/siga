@@ -2220,6 +2220,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			throws Exception {
 		if ((pess != null) && !podeJuntar(lota, pess))
 			throw new Exception("Operação não permitida");
+		if (solRecebeJuntada.equivale(this))
+	        throw new Exception("Não e possivel juntar uma solicita�ao a si mesma.");
 
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
@@ -2528,5 +2530,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		tempoAtendimento = tempoAtendimento - tempoPendencia.getMillis();
 		
 		return tempoAtendimento;
+	}
+	
+	@Override
+	public boolean equivale(Object other) {
+		try {
+			SrSolicitacao outra = (SrSolicitacao) other;
+			return outra.getHisIdIni().equals(this.getHisIdIni());
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

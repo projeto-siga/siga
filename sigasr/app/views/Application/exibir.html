@@ -522,6 +522,8 @@ function postback(){
 	
 	function gravarAssociacao(tipo)
 	{
+		if (!block())
+			return false;
 		if (validarAssociacao(tipo)) {
 			document.getElementById("formGravar"+tipo).submit();
 		}

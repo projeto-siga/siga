@@ -318,15 +318,18 @@ function postback(){
 		</div>
 	</div>
 	#{/if} #{if solicitacao.isPendente()}
+	#{set podeTerminar:solicitacao.podeTerminarPendencia(lotaTitular, cadastrante) /}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Pendências</h3>
 			#{list items:solicitacao.pendencias, as:'pendencia'}
 				<p>
-					<b>${pendencia.descrMovimentacao}</b>
-					<a href="javascript:terminarPendencia('${pendencia?.motivoPendencia}', '${pendencia?.idMovimentacao}');"> 
-						<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">
-					</a> 
+					<b>${pendencia.motivoPendenciaString}</b> at&eacute; ${pendencia.dtAgendaDDMMYYHHMM} - ${pendencia.descrMovimentacao}
+					#{if podeTerminar}
+						<a href="javascript:terminarPendencia('${pendencia.idMovimentacao}');">
+							<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">
+						</a>
+					#{/if}
 				</p>
 			#{/list}
 		</div>
@@ -495,8 +498,7 @@ function postback(){
 	
 <script language="javascript">
 
-	function terminarPendencia(motivo, idMov){
-		$("#motivoId").val(motivo);
+	function terminarPendencia(idMov){
 		$("#movimentacaoId").val(idMov);
 		$( "#terminarPendenciaModal_dialog" ).dialog( "open" );
 	}

@@ -1835,6 +1835,28 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 	
 	/**
+	 * Retorna uma lista de movimentações do tipo autenticação de
+	 * documento.
+	 */
+	public Set<ExMovimentacao> getApenasAutenticacoes() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getMobilGeral() == null)
+			return null;
+
+		if (getMobilGeral().getExMovimentacaoSet() == null)
+			return null;
+
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
 	 * Retorna uma lista de movimentações do tipo assinatura com senha do
 	 * documento.
 	 */
@@ -1873,6 +1895,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	public String getAssinantesCompleto() {
 		String retorno =  "";
+		String conferentes = Documento
+				.getAssinantesString(getApenasAutenticacoes());
 		String assinantesToken = Documento
 				.getAssinantesString(getApenasAssinaturasComToken());
 		String assinantesSenha = Documento
@@ -1883,6 +1907,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		
 		if (assinantesSenha.length() > 0)
 			retorno = retorno + "Assinado com senha por " + assinantesSenha + ".\n";
+		
+		if (conferentes.length() > 0)
+			retorno += conferentes.length() > 0 ? "Autenticado digitalmente por "
+				+ conferentes + ".\n" : "";
 		
 		return retorno;
 	}

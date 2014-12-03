@@ -1879,6 +1879,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 	
 	/**
+	 * Retorna se um documento possui assinaturas com senha.
+	 */
+	public boolean temAssinaturasComSenha() {
+		if(getApenasAssinaturasComSenha() != null && getApenasAssinaturasComSenha().size() > 0)
+			return true;
+		
+		return false;
+	}
+	
+	/**
 	 * Um documento está autenticado quando ele possui pelo menos uma assinatura com senha.
 	 */
 	public boolean isAutenticado() {

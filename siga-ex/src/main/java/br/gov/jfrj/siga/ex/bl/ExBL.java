@@ -794,7 +794,7 @@ public class ExBL extends CpBL {
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) {
 							boolean jaAutenticado = false;
 							for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
-								if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || 
+								if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO || 
 										movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
 									jaAutenticado = true;
 									break;
@@ -2153,7 +2153,7 @@ public class ExBL extends CpBL {
 						}
 					}
 				
-				if(!fValido && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
+				if(!fValido && tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
 					fValido = true;
 				}
 			}
@@ -2180,7 +2180,7 @@ public class ExBL extends CpBL {
 						}
 					}
 				
-				if(!fValido && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
+				if(!fValido && tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
 					fValido = true;
 				}
 			}

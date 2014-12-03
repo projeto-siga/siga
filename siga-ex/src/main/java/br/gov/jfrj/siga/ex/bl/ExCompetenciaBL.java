@@ -1183,7 +1183,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAutenticarDocumento(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExDocumento doc) throws Exception {
 		
-		if (doc.isEletronico() && !doc.isAutenticado() && podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral())) {
+		if (doc.isEletronico() &&  !doc.isAutenticado() && doc.temAssinaturasComSenha() && podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral())) {
 			 return true;
 		}
 

@@ -1,58 +1,4 @@
-package model;
-
-import static model.TestUtil.apagaCacheAssociacao;
-import static model.TestUtil.apagaCacheDesignacao;
-import static model.TestUtil.attNumDoc;
-import static model.TestUtil.attPrazo;
-import static model.TestUtil.barroso;
-import static model.TestUtil.criarDadosBasicos;
-import static model.TestUtil.criarSoft;
-import static model.TestUtil.csis;
-import static model.TestUtil.eeh;
-import static model.TestUtil.funcionarioTRF;
-import static model.TestUtil.limparBase;
-import static model.TestUtil.manterSoft;
-import static model.TestUtil.prepararSessao;
-import static model.TestUtil.tipoPerguntaNota1A5;
-import static model.TestUtil.tipoPerguntaTexto;
-import static model.TestUtil.sesia;
-import static model.TestUtil.sesuti;
-import static model.TestUtil.sigadoc;
-import static model.TestUtil.sysdoc;
-import static model.TestUtil.systrab;
-import static model.TestUtil.t2;
-
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import models.SrAcao;
-import models.SrArquivo;
-import models.SrConfiguracao;
-import models.SrLista;
-import models.SrMarca;
-import models.SrMovimentacao;
-import models.SrPergunta;
-import models.SrPesquisa;
-import models.SrResposta;
-import models.SrSolicitacao;
-import models.SrTipoAtributo;
-import models.SrTipoMotivoPendencia;
-import models.SrTipoMovimentacao;
-import models.SrTipoPergunta;
-
-import org.apache.commons.collections.ListUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import play.test.UnitTest;
-import br.gov.jfrj.siga.dp.CpMarca;
-import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.DpLotacao;
+import models.SrAtributo;
 
 public class SrSolicitacaoTest extends UnitTest {
 
@@ -174,41 +120,41 @@ public class SrSolicitacaoTest extends UnitTest {
 	public void listarAtributos() throws Exception {
 
 		SrConfiguracao design = new SrConfiguracao();
-		design.tipoAtributo = attPrazo();
+		design.atributo = attPrazo();
 		//design.itemConfiguracao = sysdoc();
-		design.salvarComoAssociacaoTipoAtributo();
+		design.salvarComoAssociacaoAtributo();
 		apagaCacheAssociacao();
 
 		SrConfiguracao design2 = new SrConfiguracao();
-		design2.tipoAtributo = attNumDoc();
+		design2.atributo = attNumDoc();
 		//design2.acao = manterSoft();
-		design2.salvarComoAssociacaoTipoAtributo();
+		design2.salvarComoAssociacaoAtributo();
 		apagaCacheAssociacao();
 
 		// Nao traz nenhum, pois nao ha item escolhido
 		SrSolicitacao sol = new SrSolicitacao();
 		sol.solicitante = eeh();
-		assertEquals(0, sol.getTiposAtributoAssociados().size());
+		assertEquals(0, sol.getAtributoAssociados().size());
 
 		// Nao traz nenhum, pois item estah fora do escopo das designacoes
 		sol.itemConfiguracao = systrab();
-		assertEquals(0, sol.getTiposAtributoAssociados().size());
+		assertEquals(0, sol.getAtributoAssociados().size());
 
 		// Traz um
 		sol.itemConfiguracao = sigadoc();
-		assertEquals(1, sol.getTiposAtributoAssociados().size());
+		assertEquals(1, sol.getAtributoAssociados().size());
 
 		// Traz os dois
 		sol.acao = manterSoft();
-		assertEquals(2, sol.getTiposAtributoAssociados().size());
+		assertEquals(2, sol.getAtributoAssociados().size());
 
 		// Garantir que a mudanca no nome do tipo de atributo funciona
-		SrTipoAtributo attNumDoc = attNumDoc();
-		attNumDoc.nomeTipoAtributo = "Numero do Expediente";
+		SrAtributo attNumDoc = attNumDoc();
+		attNumDoc.nomeAtributo = "Numero do Expediente";
 		attNumDoc.salvar();
 		boolean mudouMesmo = false;
-		for (SrTipoAtributo t : sol.getTiposAtributoAssociados())
-			if (t.nomeTipoAtributo.contains("Expediente"))
+		for (SrAtributo t : sol.getAtributoAssociados())
+			if (t.nomeAtributo.contains("Expediente"))
 				mudouMesmo = true;
 		assertTrue(mudouMesmo);
 	}

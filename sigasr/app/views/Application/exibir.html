@@ -9,7 +9,7 @@ $(function() {
         buttonImageOnly: true,
         dateFormat: 'dd/mm/yy'
     });
-    $( "#calendarioAlterarPrazo" ).datepicker({
+    $( "#calendarioReplanejar" ).datepicker({
         showOn: "button",
         buttonImage: "/siga/css/famfamfam/icons/calendar.png",
         buttonImageOnly: true,
@@ -18,7 +18,7 @@ $(function() {
 });
 $(function(){
 	$("#horario").mask("99:99");
-	$("#horarioAlterarPrazo").mask("99:99");
+	$("#horarioReplanejar").mask("99:99");
 });
 
 function postback(){
@@ -54,10 +54,10 @@ function postback(){
 				var descricao = document.getElementById('descrSolicitacao');
 				descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 			</script>
-			#{list items:solicitacao.atributoSet, as:'att'} #{if
-			att.valorAtributo}
+			#{list items:solicitacao.atributoSolicitacaoSet, as:'att'} #{if
+			att.valorAtributoSolicitacao}
 			<p style="font-size: 9pt; padding: 0px">
-				<b>${att.tipoAtributo.nomeTipoAtributo}:</b> ${att.valorAtributo}
+				<b>${att.atributo.nomeAtributo}:</b> ${att.valorAtributoSolicitacao}
 			</p>
 			#{/if} #{/list}
 		</div>
@@ -183,6 +183,23 @@ function postback(){
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Dados da Solicitação</h3>
+			#{if solicitacao.exibirCronometro() == true}
+				#{cronometro descricao:solicitacao.getDescricaoCronometro(),
+				 tempoPercorrido:solicitacao.getTempoCronometro(),
+				 contarTempo:true /}
+			#{/if}
+			#{else}
+				#{cronometro descricao:'Cadastramento',
+							 tempoPercorrido:solicitacao.getTempoAtendimento(),
+							 contarTempo:false /}
+				#{cronometro descricao:'Atendimento',
+							 tempoPercorrido:solicitacao.getTempoCadastramento(),
+							 contarTempo:false /}
+			#{/else}
+			<p>
+				<b>Prazo SLA:</b>
+				${solicitacao.getPrazoTotalAtendimento()} 
+			</p>
 			<p>
 				<b>Solicitante:</b>
 				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
@@ -197,7 +214,7 @@ function postback(){
 			#{if solicitacao.dtOrigem}
 			<p>
 				<b>Contato Inicial:</b>
-				${solicitacao.dtOrigemString}
+				${solicitacao.dtOrigemString}#{if solicitacao.meioComunicacao}, por ${solicitacao.meioComunicacao.descrMeioComunicacao}#{/if}
 			</p>
 			#{/if}
 			#{if solicitacao.meioComunicacao}
@@ -276,25 +293,27 @@ function postback(){
 			</p>
 		</div>
 	</div>
-	#{/if} #{if solicitacao.meuSolicitacaoJuntadasSet}
-	<div class="gt-sidebar">
-		<div class="gt-sidebar-content">
-			<h3>Juntada a esta solicitação</h3>
-			<p>
-				#{list items:solicitacao.meuSolicitacaoJuntadasSet, as:'juntada'} <a
-					href="@{Application.exibir(juntada.idSolicitacao)}">
-					${juntada.codigo} </a> , #{/list}
-			</p>
+	#{/if} 
+	*{#{if solicitacao.meuSolicitacaoJuntadasSet}
+		<div class="gt-sidebar">
+			<div class="gt-sidebar-content">
+				<h3>Juntada a esta solicitação</h3>
+				<p>
+					#{list items:solicitacao.meuSolicitacaoJuntadasSet, as:'juntada'} <a
+						href="@{Application.exibir(juntada.idSolicitacao)}">
+						${juntada.codigo} </a> , #{/list}
+				</p>
+			</div>
 		</div>
-	</div>
-	#{/if} #{if solicitacao.temSolicitacaoVinculada()}
+	#{/if} }* 
+	#{if solicitacao.solicitacoesVinculadas}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Vinculada a esta solicitação</h3>
 			<p>
 				#{list items:solicitacao.solicitacoesVinculadas, as:'vinculada'} <a
-					href="@{Application.exibir(vinculada.idSolicitacao)}">
-					${vinculada.codigo} </a> , #{/list}
+					href="@{Application.exibir(vinculada?.idSolicitacao)}">
+					${vinculada?.codigo} </a> , #{/list}
 			</p>
 		</div>
 	</div>
@@ -305,7 +324,7 @@ function postback(){
 			#{list items:solicitacao.pendencias, as:'pendencia'}
 				<p>
 					<b>${pendencia.descrMovimentacao}</b>
-					<a href="javascript:terminarPendencia('${pendencia.motivoPendencia}', '${pendencia.idMovimentacao}');"> 
+					<a href="javascript:terminarPendencia('${pendencia?.motivoPendencia}', '${pendencia?.idMovimentacao}');"> 
 						<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">
 					</a> 
 				</p>
@@ -402,6 +421,8 @@ function postback(){
 			</div>
 		</form>
 	#{/modal}
+	#{modal nome:'associarLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/associarLista?idSolicitacao='+solicitacao.idSolicitacao} 
+	#{/modal} 
 	#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa', url:'/sigasr/solicitacao/responderPesquisa?id='+solicitacao.idSolicitacao}
 	#{/modal}
 	#{modal nome:'pendencia', titulo:'Pendência'}
@@ -436,19 +457,19 @@ function postback(){
 	</form>
 	</div>
 	</div>
-	#{/modal} #{modal nome:'alterarPrazo', titulo:'Alterar Prazo'}
+	#{/modal} #{modal nome:'replanejar', titulo:'Replanejar'}
 		<div class="gt-form gt-content-box">
-		<form action="@{Application.alterarPrazo()}" method="post"
+		<form action="@{Application.replanejar()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<div class="gt-form-row gt-width-66">
 					<label>Data</label>
-					<input type="text" name="calendario" id="calendarioAlterarPrazo">
+					<input type="text" name="calendario" id="calendarioReplanejar">
 				</div>
 				<div class="gt-form-row gt-width-66">
 					<label>Hora</label>
-					<input type="text" name="horario" id="horarioAlterarPrazo">
+					<input type="text" name="horario" id="horarioReplanejar">
 				</div>
 				<div class="gt-form-row gt-width-66">
 					<label>Motivo</label>
@@ -458,6 +479,18 @@ function postback(){
 				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 		</form>
 		</div>
+	#{/modal}
+	#{modal nome:'desentranhar', titulo:'Desentranhar'}
+		<form action="@{Application.desentranharSolicitacao()}" method="post"
+			enctype="multipart/form-data" onsubmit="javascript: return block();">
+			<div style="display: inline" class="gt-form-row gt-width-66">
+				<label>Justificativa</label>
+				<textarea style="width: 100%" name="justificativa" cols="50" rows="4"> </textarea>
+			</div>
+			<input type="hidden" name="completo" value="${completo}" /> <input
+				type="hidden" name="id" value="${solicitacao.id}" /> <input
+				type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+		</form>
 	#{/modal}
 	
 <script language="javascript">

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +29,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
@@ -87,7 +87,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.EAGER)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
 
@@ -102,6 +102,9 @@ public class SrLista extends HistoricoSuporte {
 	@Transient
 	public List<SrConfiguracao> permissoes;
 
+	@Transient
+	public SrConfiguracao configuracaoInsercaoAutomatica;
+	
 	public static List<SrLista> listar(boolean mostrarDesativado) {
 		StringBuffer sb = new StringBuffer();
 
@@ -177,7 +180,7 @@ public class SrLista extends HistoricoSuporte {
 			return movimentacao;
 		return null;
 	}
-
+	
 	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa pess) {
 		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
 	}
@@ -198,11 +201,13 @@ public class SrLista extends HistoricoSuporte {
 		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.PRIORIZACAO);
 	}
 
-	private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, SrTipoPermissaoLista tipoPermissaoLista) {
+	private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, Long tipoPermissaoLista) {
 		List<SrConfiguracao> permissoesEncontradas = getPermissoes(lotaTitular, pess);
 		for (SrConfiguracao srConfiguracao : permissoesEncontradas) {
-			if (tipoPermissaoLista.equals(srConfiguracao.tipoPermissao)) {
-				return Boolean.TRUE;
+			for (SrTipoPermissaoLista permissao: srConfiguracao.tipoPermissaoSet) {
+				if (tipoPermissaoLista == permissao.getIdTipoPermissaoLista()) {
+					return Boolean.TRUE;
+				}
 			}
 		}
 		return Boolean.FALSE;
@@ -289,6 +294,14 @@ public class SrLista extends HistoricoSuporte {
 				permissao.salvarComoPermissaoUsoLista();
 			}
 		}
+		if (deveAssociarComConfiguracaoAutomatica()) {
+			configuracaoInsercaoAutomatica.salvarComoInclusaoAutomaticaLista(this);
+		}
+	}
+
+	private boolean deveAssociarComConfiguracaoAutomatica() {
+		return configuracaoInsercaoAutomatica != null && 
+				Objeto.algumNaoNulo(configuracaoInsercaoAutomatica.getAcaoUnitaria(), configuracaoInsercaoAutomatica.getItemConfiguracaoUnitario());
 	}
 
 	/**

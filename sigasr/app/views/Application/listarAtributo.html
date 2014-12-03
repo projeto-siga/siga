@@ -1,9 +1,9 @@
-#{extends 'main.html' /} #{set title:'Ações' /}
+#{extends 'main.html' /} #{set title:'Atributos' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
-<script type="text/javascript">
+<script>
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
 		// the return value is assigned to QueryString!
@@ -26,7 +26,7 @@
 		}
 		return query_string;
 	}();
-	
+
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
 			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
@@ -35,13 +35,12 @@
 			
 		$("#checkmostrarDesativado").click(function() {
 			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = '@{Application.listarAcaoDesativados()}';
+				location.href = '@{Application.listarAtributoDesativados()}';
 			else
-				location.href = '@{Application.listarAcao()}';	
+				location.href = '@{Application.listarAtributo()}';	
 		});
 		
-		/* Table initialization */
-		$('#acoes_table').DataTable({
+		$('#atributo_table').DataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -73,59 +72,59 @@
 		});
 	});
 
-	function desativarAcao(event, idAcao) {
+	function desativarAtributo(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.desativarAcao()}?' + queryDesativarReativar(idAcao, QueryString.mostrarDesativados);
+		window.location = '@{Application.desativarAtributo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
 	}
 
-	function reativarAcao(event, idAcao) {
+	function reativarAtributo(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.reativarAcao()}?' + queryDesativarReativar(idAcao, QueryString.mostrarDesativados);
+		window.location = '@{Application.reativarAtributo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
 	}
 </script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Ações</h2>
+		<h2>Pesquisa de atributos</h2>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
 			<div class="gt-form-row dataTables_length">
 				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
 			</div>
-			<table id="acoes_table" class="gt-table display">
+			
+			<table id="atributo_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
-						<th>Código</th>
-						<th>Título</th>
+						<th>Nome</th>
 						<th>Descrição</th>
+						<th>Formato</th>
 						<th>Ações</th>
 					</tr>
 				</thead>
 
 				<tbody>
-					#{list items:acoes, as:'acao'}
+					#{list items:atts, as:'att'}
 					<tr
-						onclick="javascript:window.location='@{Application.editarAcao(acao.idAcao)}'"
+						onclick="javascript:window.location='@{Application.editarAtributo(att.idAtributo)}'"
 						style="cursor: pointer;">
-						<td>${acao.siglaAcao}</td>
-						<td><span style="margin-left: ${(acao.nivel-1)*2}em; #{if acao.nivel == 1}font-weight: bold;#{/if}">#{selecionado sigla:acao.atual?.tituloAcao, 
-						descricao:acao.atual?.descricao /}</span></td>
-						<td>${acao.descrAcao}</td>
+						<td >${att.nomeAtributo}</td>
+						<td>${att.descrAtributo}</td>
+						<td>${att.tipoAtributo?.descrTipoAtributo}</td>
 						<td>
-							#{desativarReativar id:acao.idAcao, 
-												onReativar:'reativarAcao',
-												onDesativar :'desativarAcao',
-												isAtivo:acao.isAtivo() }
+							#{desativarReativar id:att.idAtributo,
+												onReativar:'reativarAtributo',
+												onDesativar :'desativarAtributo',
+												isAtivo:att.isAtivo() }
 							#{/desativarReativar}
 						</td>
 					</tr>
-					#{/list}
+					</a> #{/list}
 				</tbody>
 			</table>
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-			<a href="@{Application.editarAcao}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a href="@{Application.editarAtributo}" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 
 	</div>

@@ -118,10 +118,8 @@
         gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
             if (!id)
                 id = 'novo_' + ++gestores["index"];
-
             jGestores.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
 	        var jNewTr = jGestores.find("li:last-child");
-
 	        jNewTr.append("<span id=\"" + tipoGestor + "\">" + siglaGestor + "</span> - <span style=\"display: inline-block\" id=\"" 
 	    	        + idDerivadoGestor + "\">" + nomeGestor + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer;\" />");
 	        jNewTr.find("img:eq(0)").click(function(){
@@ -183,9 +181,9 @@
 	            open: function(){
 	            	$('#erroNumFatorMult').hide();
                     if (jDialogFator.data("gestorSet"))
-                    	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplica&ccedil;&atilde;o');
+                    	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
                     else
-                    	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplica&ccedil;&atilde;o');  
+                    	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
 	            }
         });
         $("#modalOkFator").click(function(){
@@ -214,10 +212,8 @@
         fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
             if (!idF)
                 idF = 'novo_fator' + ++fatores["index"];
-
             jFatores.append("<li style=\"cursor: move\" id =\"" + idF + "\"></li>");
 	        var jNewFatorTr = jFatores.find("li:last-child");
-
 	        jNewFatorTr.append("<span id=\"" + tipoFator + "\">" + siglaSolicitante + "-" 
 	    	        + nomeSolicitante + "</span> <span style=\"display: inline-block\" id=\"" + idDerivadoFator + "\"> / Fator: "
 	                + numFator + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\" visibility:hidden; cursor: pointer;\" />");
@@ -275,9 +271,7 @@
                 	params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].numFatorMultiplicacao=' + jDivsF[1].innerHTML;
        	 	});
             
-			 location.href = "@{Application.gravarItem()}?" + params;
-	 
-			 
+            location.href = "@{Application.gravarItem()}?" + params;
         });
 	});
 </script>
@@ -285,12 +279,12 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 
-		<h2 class="gt-form-head">Cadastro de Item de Configura&ccedil;&atilde;o</h2>
+		<h2 class="gt-form-head">Cadastro de Item de Configuração</h2>
 		<div class="gt-content-box gt-for-table">
 			<form id="form" class="form100">
 				<table class="gt-form-table">
 					<tr class="header">
-						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados B&aacute;sicos</td>
+						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados Básicos</td>
 					</tr>
 					<tr>
 						<td colspan="2">
@@ -301,14 +295,14 @@
 							<input type="hidden" name="itemConfiguracao.hisIdIni"
 								value="${itemConfiguracao.hisIdIni}"> #{/if}
 							#{ifErrors}
-							<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram
+							<p class="gt-error">Alguns campos obrigatórios não foram
 								preenchidos ${error}</p>
 							#{/ifErrors}
 						</td>
 					</tr>
 					<tr>
 						<td width="5%">
-							<label class="inline">C&oacute;digo:</label> 
+							<label class="inline">Código:</label> 
 						</td>
 						<td>
 							<input
@@ -319,7 +313,7 @@
 							'itemConfiguracao.siglaItemConfiguracao' /}</span> 
 							
 							<label class="inline"
-							style="margin-left: 10px;">T&iacute;tulo:</label> 
+							style="margin-left: 10px;">Título:</label> 
 							
 							<input type="text"
 							id="itemConfiguracao.tituloItemConfiguracao"
@@ -331,7 +325,7 @@
 					</tr>
 					<tr>
 						<td>
-							<label class="inline">Descri&ccedil;&atilde;o:</label> 
+							<label class="inline">Descrição:</label> 
 						</td>
 						<td colspan="2">
 							<input type="text"
@@ -343,18 +337,14 @@
 						<td>
 							<label>Gestores: </label>
 						</td>
-
 					</tr>
 					<tr>
 						<td colspan="3" style="padding: 0 10px;">
 							<ul id="gestoresUl" style="color: #365b6d"></ul>
 						</td>
 					</tr>
-
 					<tr>
 						<td style="padding-top: 0px;">
-
-
 							<input type="button" value="Incluir" id="botaoIncluir"
                                                 class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
 						</td>
@@ -362,7 +352,7 @@
 					<tr>
 						<td colspan="3">
 							<label class="inline">Similaridade (Separar itens com
-								ponto e v&iacute;rgula):</label>
+								ponto e vírgula):</label>
 							<textarea cols="81" rows="4"
 								name="itemConfiguracao.descricaoSimilaridade"
 								id="descricaoSimilaridade">${itemConfiguracao.descricaoSimilaridade}</textarea>
@@ -370,11 +360,11 @@
 					</tr>
 				</table>
 				<table class="gt-form-table">
-					<tr class="header"><td align="center" valign="top" colspan="3">Prioriza&ccedil;&atilde;o</td></tr>
+					<tr class="header"><td align="center" valign="top" colspan="3">Priorização</td></tr>
 
 					<tr>
 						<td width="10.5%">
-							<label class="inline">Fator de Multiplica&ccedil;&atilde;o:</label> 
+							<label class="inline">Fator de Multiplicação:</label> 
 						</td>
 						<td>
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
@@ -384,12 +374,9 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<label class="inline">Fator de Multiplica&ccedil;&atilde;o por Solicitante:</label> 
-
-
+							<label class="inline">Fator de Multiplicação por Solicitante:</label> 
 						</td>
 					</tr>
-
 					<tr>
 						<td colspan="3" style="padding: 0 10px;">
 							<ul id="fatoresUl" style="color: #365b6d"></ul>
@@ -408,11 +395,7 @@
 							<input type="button" value="Gravar"
 								class="gt-btn-medium gt-btn-left" /> <a
 								href="@{Application.listarItem}"
-								class="gt-btn-medium gt-btn-left">Cancelar</a> #{if
-							itemConfiguracao?.idItemConfiguracao} <input type="button"
-								value="Desativar" class="gt-btn-medium gt-btn-left"
-								onclick="location.href='@{Application.desativarItem()}?id=${itemConfiguracao.idItemConfiguracao}'" />
-							#{/if}
+								class="gt-btn-medium gt-btn-left">Cancelar</a> 
 						</td>
 					</tr>
 				</table>
@@ -451,10 +434,10 @@
 					disabled:disabled /}</div>
 			</div>
 			<div class="gt-form-row ">
-				<label>Fator de Multiplica&ccedil;&atilde;o: </label>
+				<label>Fator de Multiplicação: </label>
 				<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
 					   type="text" name="numfatorMult" value="1" size="43" />
-					   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplica&ccedil;&atilde;o menor que 1</span>
+					   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
 			</div>
 			<div class="gt-form-row">
 				<input type="button" id="modalOkFator" value="Ok"

@@ -1,12 +1,10 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -93,7 +91,7 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_ATRIBUTO")
-	public SrTipoAtributo tipoAtributo;
+	public SrAtributo atributo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESQUISA")
@@ -106,6 +104,10 @@ public class SrConfiguracao extends CpConfiguracao {
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "SR_LISTA_CONFIGURACAO", schema="SIGASR", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
 	private List<SrLista> listaConfiguracaoSet;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_TIPO_PERMISSAO"))
+	public List<SrTipoPermissaoLista> tipoPermissaoSet;
 
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
@@ -163,10 +165,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Type(type = "yes_no")
 	public Boolean notificarAtendente;
 
-	@Column(name = "TIPO_PERMISSAO")
-	@Enumerated
-	public SrTipoPermissaoLista tipoPermissao;
-
 	@Transient
 	public SrSubTipoConfiguracao subTipoConfig;
 
@@ -177,7 +175,12 @@ public class SrConfiguracao extends CpConfiguracao {
 	public boolean utilizarItemHerdado;
 
 	public SrConfiguracao() {
+	}
 
+	public SrConfiguracao(DpPessoa solicitante, CpComplexo local, SrItemConfiguracao item) {
+		this.setDpPessoa(solicitante);
+		this.setComplexo(local);
+		this.itemConfiguracaoFiltro = item;
 	}
 
 	public Selecionavel getSolicitante() {
@@ -206,28 +209,48 @@ public class SrConfiguracao extends CpConfiguracao {
 		salvar();
 	}
 
+	public void salvarComoInclusaoAutomaticaLista(SrLista srLista) throws Exception {
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+		adicionarListaConfiguracoes(srLista);
+		salvar();
+	}
+
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarDesignacoes(
-			boolean mostrarDesativados, Long idItemConfiguracao) {
+	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, DpLotacao atendente) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		
+		if (atendente != null) {
+			sb.append(" and conf.atendente.idLotacao = ");
+			sb.append(atendente.getId());
+		}
+		
+		if (!mostrarDesativados)
+			sb.append(" and conf.hisDtFim is null");
+		else {
+			sb.append(" and conf.idConfiguracao in (");
+			sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
+		}
+		
 		return JPA
 				.em()
-				.createQuery(
-						"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO
-								+ " and conf.hisDtFim is null")
-				.getResultList();
+				.createQuery(sb.toString()).getResultList();
 	}
 
 	public void salvarComoPermissaoUsoLista() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 		salvar();
+		
+		
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarPermissoesUsoLista(DpLotacao lota,
 			boolean mostrarDesativado) {
-		StringBuffer sb = new StringBuffer(
-				"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
 		sb.append(" and conf.listaPrioridade.lotaCadastrante.idLotacaoIni = ");
 		sb.append(lota.getLotacaoInicial().getIdLotacao());
@@ -237,7 +260,9 @@ public class SrConfiguracao extends CpConfiguracao {
 
 		sb.append(" order by conf.orgaoUsuario");
 
-		return JPA.em().createQuery(sb.toString(), SrConfiguracao.class)
+		return JPA
+				.em()
+				.createQuery(sb.toString())
 				.getResultList();
 	}
 
@@ -258,20 +283,50 @@ public class SrConfiguracao extends CpConfiguracao {
 		return JPA.em().createQuery(sb.toString()).getResultList();
 	}
 
-	public void salvarComoAssociacaoTipoAtributo() throws Exception {
+	public void salvarComoAssociacaoAtributo() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 		salvar();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarAssociacoesTipoAtributo() {
+	public static List<SrConfiguracao> listarAssociacoesAtributo(SrAtributo atributo, Boolean mostrarDesativados) {
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);
+		queryBuilder.append(" and conf.atributo.hisIdIni = ");
+		queryBuilder.append(atributo.getHisIdIni());
+		
+		if (!mostrarDesativados) {
+			queryBuilder.append(" and conf.hisDtFim is null ");
+		} else {
+			queryBuilder.append(" and conf.idConfiguracao IN (");
+			queryBuilder.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			queryBuilder.append(" SrConfiguracao GROUP BY hisIdIni)) ");
+		}
+		queryBuilder.append(" order by conf.orgaoUsuario");
+		
+		return JPA.em().createQuery(queryBuilder.toString()).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAssociacoesAtributo(Boolean mostrarDesativados) {
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);
+		
+		if (!mostrarDesativados) {
+			queryBuilder.append(" and conf.hisDtFim is null ");
+		} else {
+			queryBuilder.append(" and conf.idConfiguracao IN (");
+			queryBuilder.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			queryBuilder.append(" SrConfiguracao GROUP BY hisIdIni)) ");
+		}
+		queryBuilder.append(" order by conf.orgaoUsuario");
+		
 		return JPA
 				.em()
-				.createQuery(
-						"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = "
-								+ CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO
-								+ " and conf.hisDtFim is null order by conf.orgaoUsuario")
+				.createQuery(queryBuilder.toString())
 				.getResultList();
 	}
 
@@ -333,6 +388,14 @@ public class SrConfiguracao extends CpConfiguracao {
 		return descrItemConfiguracao;
 	}
 	
+	public String getDescrTipoPermissao() {
+		if (this.tipoPermissaoSet != null && this.tipoPermissaoSet.size() > 0) {
+			SrTipoPermissaoLista tipoPermissao = this.tipoPermissaoSet.get(0);	
+			return tipoPermissao.descrTipoPermissaoLista.concat(" ...");
+		}
+		return "";
+	}
+	
 	public String getDescrAcaoAtual() {
 		String descrAcao = null;
 		if (this.acoesSet != null && this.acoesSet.size() > 0) {
@@ -385,7 +448,11 @@ public class SrConfiguracao extends CpConfiguracao {
 	 * 
 	 */
 	public String getSrConfiguracaoJson() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet).toJson();
+		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null).toJson();
+	}
+
+	public String getSrConfiguracaoTipoPermissaoJson() {
+		return new SrConfiguracaoVO(null, null, null, tipoPermissaoSet).toJson();
 	}
 
 	/**
@@ -398,23 +465,33 @@ public class SrConfiguracao extends CpConfiguracao {
 		public List<SrLista.SrListaVO> listaVO; 
 		public List<SrItemConfiguracao.SrItemConfiguracaoVO> listaItemConfiguracaoVO;
 		public List<SrAcao.SrAcaoVO> listaAcaoVO;
+		public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
 
-		public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) {
+		public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet) {
 			listaVO = new ArrayList<SrLista.SrListaVO>();
 			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracao.SrItemConfiguracaoVO>();
 			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
+			listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
 			
-			for (SrLista item : listaConfiguracaoSet) {
-				listaVO.add(item.toVO());
-			}
+			if(listaConfiguracaoSet != null)
+				for (SrLista item : listaConfiguracaoSet) {
+					listaVO.add(item.toVO());
+				}
 			
-			for (SrItemConfiguracao item : itemConfiguracaoSet) {
-				listaItemConfiguracaoVO.add(item.toVO());
-			}
+			if(itemConfiguracaoSet != null)
+				for (SrItemConfiguracao item : itemConfiguracaoSet) {
+					listaItemConfiguracaoVO.add(item.toVO());
+				}
 			
-			for (SrAcao item : acoesSet) {
-				listaAcaoVO.add(item.toVO());
-			}
+			if(acoesSet != null)
+				for (SrAcao item : acoesSet) {
+					listaAcaoVO.add(item.toVO());
+				}
+
+			if(tipoPermissaoSet != null)
+				for (SrTipoPermissaoLista item : tipoPermissaoSet) {
+					listaTipoPermissaoListaVO.add(item.toVO());
+				}
 		}
 
 		/**
@@ -475,8 +552,33 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	@Override
 	public CpConfiguracao getConfiguracaoAtual() {
-		// TODO Auto-generated method stub
 		return super.getConfiguracaoAtual();
 	}
+	
+	public static SrConfiguracao buscarConfiguracaoInsercaoAutomaticaLista(SrLista lista) throws Exception {
+		SrLista listaAtual = lista.getListaAtual();
+		
+		for (CpConfiguracao cpConfiguracao : SrConfiguracaoBL.get().getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA)) {
+			SrConfiguracao srConfiguracao = (SrConfiguracao) cpConfiguracao;
+			// DB: Nao implementei utilizando "contains" na lista por que implementacao do super.equals esta comparando instancias e nao iria funcionar nesse caso
+			for (SrLista listaEncontrada : srConfiguracao.getListaConfiguracaoSet()) {
+				// DB1: Conversamos com o Edson e por enquanto sera apenas uma configuracao para cada lista.
+				if (srConfiguracao.getListaConfiguracaoSet() != null && listaEncontrada.getId().equals(listaAtual.getId())) {
+					return srConfiguracao;
+				}
+			}
+		}
+		return new SrConfiguracao();
+	}
+
+	public void adicionarListaConfiguracoes(SrLista srLista) {
+		if (this.listaConfiguracaoSet == null) {
+			this.listaConfiguracaoSet = new ArrayList<SrLista>();
+		}
+		if (!this.listaConfiguracaoSet.contains(srLista)) {
+			this.listaConfiguracaoSet.add(srLista);
+		}
+	}
+	
 	
 }

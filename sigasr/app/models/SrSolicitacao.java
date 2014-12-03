@@ -4,7 +4,9 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_L
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA;
@@ -12,17 +14,12 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO;
-
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
-
-
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
 import java.io.File;
-import java.io.ObjectInputStream.GetField;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +39,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,7 +55,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -93,7 +91,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	/**
 	 * 
 	 */
-	 
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -133,10 +130,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@JoinColumn(name = "ID_SOLICITACAO_PAI")
 	public SrSolicitacao solicitacaoPai;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_SOLICITACAO_REFERENCIA")
-	public SrSolicitacao solicitacaoReferencia;
-
 	@Enumerated
 	public SrFormaAcompanhamento formaAcompanhamento;
 
@@ -167,7 +160,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@Enumerated
 	public SrUrgencia urgencia;
-
 
 	@Enumerated
 	public SrPrioridade prioridade;
@@ -214,8 +206,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OrderBy("hisDtIni desc")
 	public List<SrSolicitacao> meuSolicitacaoHistoricoSet;
 
-	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-	protected List<SrAtributo> meuAtributoSet;
+	@OneToMany(targetEntity = SrAtributoSolicitacao.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	protected List<SrAtributoSolicitacao> meuAtributoSolicitacaoSet;
 
 	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "solicitacao", fetch = FetchType.LAZY)
 	@OrderBy("dtIniMov DESC")
@@ -225,10 +217,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@OrderBy("numSequencia asc")
 	protected Set<SrSolicitacao> meuSolicitacaoFilhaSet;
 
-	@OneToMany(mappedBy = "solicitacaoReferencia")
-	protected Set<SrSolicitacao> meuSolicitacaoJuntadasSet;
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "solicitacaoReferencia", fetch = FetchType.LAZY)
 
-	@OneToMany(targetEntity = SrSolicitacao.class, mappedBy = "solicitacaoReferencia", fetch = FetchType.LAZY)
 	private Set<SrMovimentacao> meuMovimentacaoReferenciaSet;
 
 	// Edson: O where abaixo teve de ser explicito porque os id_refs conflitam
@@ -253,10 +243,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Override
 	public void setId(Long id) {
 		this.idSolicitacao = id;
-	}
-
-	public Boolean isRascunho() {
-		return rascunho != null && rascunho;
 	}
 
 	@Override
@@ -320,29 +306,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Override
 	public String getDescricao() {
 		if (descrSolicitacao == null || descrSolicitacao.length() == 0)
-			return "Descricao nao informada";
+			return "Descrição não informada";
 		return descrSolicitacao;
 	}
 
 	public String getDescrItem() {
 		return itemConfiguracao != null ? itemConfiguracao.tituloItemConfiguracao
-				: "Item nao informado";
+				: "Item não informado";
 	}
 
 	public String getDescrAcao() {
-		return acao != null ? acao.tituloAcao : "Acao nao informada";
+		return acao != null ? acao.tituloAcao : "Ação não informada";
 	}
 
 	public String getSiglaEDescrItem() {
 		return itemConfiguracao != null ? itemConfiguracao.toString()
-				: "Item nao informado";
+				: "Item não informado";
 	}
 
 	public String getSiglaEDescrAcao() {
-		return acao != null ? acao.toString() : "Acao nao informada";
+		return acao != null ? acao.toString() : "Ação não informada";
 	}
 
-	
 	@Override
 	public void setDescricao(String descricao) {
 		this.descrSolicitacao = descricao;
@@ -389,7 +374,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-	
+
 	public String getCodigo() {
 		return codigo;
 	}
@@ -419,6 +404,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		codigo = orgaoUsuario.getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao()
 				+ "/" + numString;
 	}
+	
+	public List<SrAtributoSolicitacao> getAtributoSolicitacaoSet() {
+		return meuAtributoSolicitacaoSet != null ? meuAtributoSolicitacaoSet : new ArrayList<SrAtributoSolicitacao>();
+	}
 
 	public String getDtRegString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
@@ -428,10 +417,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public String getAtributosString() {
 		String s = "";
-		for (SrAtributo att : getAtributoSet()) {
-			if (att.valorAtributo != null)
-				s += att.tipoAtributo.nomeTipoAtributo + ": "
-						+ att.valorAtributo + ". ";
+		for (SrAtributoSolicitacao att : getAtributoSolicitacaoSet()) {
+			if (att.valorAtributoSolicitacao != null)
+				s += att.atributo.nomeAtributo + ": "
+						+ att.valorAtributoSolicitacao + ". ";
 		}
 		return s;
 	}
@@ -468,7 +457,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		else if (Util.isbetween(100, 125, valorGUT))
 			prioridade = SrPrioridade.IMEDIATO;
 	}
-
 
 	public String getDtRegDDMMYYYYHHMM() {
 		if (dtReg != null) {
@@ -531,23 +519,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	}
 
-	public List<SrAtributo> getAtributoSet() {
-		return meuAtributoSet != null ? meuAtributoSet
-				: new ArrayList<SrAtributo>();
-	}
-
 	public Set<SrMovimentacao> getMovimentacaoReferenciaSet() {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
-
 				new SrMovimentacaoComparator(false));
 		SrSolicitacao sol = solicitacaoInicial != null ? solicitacaoInicial
-
 				: this;
 		if (sol.meuMovimentacaoSet != null)
 			for (SrMovimentacao movimentacao : sol.meuMovimentacaoSet)
 				if (!movimentacao.isCanceladoOuCancelador())
-
-
 					listaCompleta.add(movimentacao);
 		return listaCompleta;
 	}
@@ -555,7 +534,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrMovimentacao getUltimoAndamento() {
 		return getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_ANDAMENTO);
 	}
-	
+
 	public SrMovimentacao getUltimaMovimentacao() {
 		for (SrMovimentacao movimentacao : getMovimentacaoSet())
 			return movimentacao;
@@ -680,7 +659,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public DpLotacao getPreAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		
+
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
@@ -692,7 +671,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE;
 		
-		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro,
+				new int[] { SrConfiguracaoBL.ATENDENTE });
+
 		if (conf != null)
 			return conf.preAtendente.getLotacaoAtual();
 		return null;
@@ -701,7 +682,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public DpLotacao getAtendenteDesignado() throws Exception {
 		if (solicitante == null)
 			return null;
-		
+
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
@@ -713,7 +694,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 
-		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro,
+				new int[] { SrConfiguracaoBL.ATENDENTE });
 		if (conf != null)
 			return conf.atendente.getLotacaoAtual();
 		return null;
@@ -722,7 +704,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrPesquisa getPesquisaDesignada() throws Exception {
 		if (solicitante == null)
 			return null;
-		
+
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
@@ -730,7 +712,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confFiltro.acaoFiltro = acao;
 		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
-
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO;
 		
@@ -747,7 +728,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrMovimentacao ini : setIni) {
 			if ((ini.movFinalizadora == null || ini.movFinalizadora.isCancelada()) && 
 					(ini.dtAgenda == null || ini.dtAgenda.after(new Date())))
-
 				setPendentes.add(ini);
 		}
 
@@ -755,43 +735,42 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	// Edson: ver comentario abaixo, em getTiposAtributoAssociados()
-	public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados() throws Exception {
+	public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados()
+			throws Exception {
 		HashMap<Long, Boolean> map = new HashMap<Long, Boolean>();
-		getTiposAtributoAssociados(map);
+		getAtributoAssociados(map);
 		return map;
 	}
 
-	public List<SrTipoAtributo> getTiposAtributoAssociados() throws Exception {
-		return getTiposAtributoAssociados(null);
+	public List<SrAtributo> getAtributoAssociados() throws Exception {
+		return getAtributoAssociados(null);
 	}
 
 	// Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
 	// Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
 	// a obrigatoriedade dele
-	private List<SrTipoAtributo> getTiposAtributoAssociados(HashMap<Long, Boolean> map) throws Exception {
-		List<SrTipoAtributo> listaFinal = new ArrayList<SrTipoAtributo>();
+	private List<SrAtributo> getAtributoAssociados(HashMap<Long, Boolean> map) throws Exception {
+		List<SrAtributo> listaFinal = new ArrayList<SrAtributo>();
 
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.acaoFiltro = acao;
-		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
-
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(
+				CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
-		
-		for (SrTipoAtributo t : SrTipoAtributo.listar()){
-			confFiltro.tipoAtributo = t;
+
+		for (SrAtributo t : SrAtributo.listar(Boolean.FALSE)) {
+			confFiltro.atributo = t;
 			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
-
-
-			if (conf != null){
+			if (conf != null) {
 				listaFinal.add(t);
 				if (map != null)
-					map.put(t.idTipoAtributo, conf.atributoObrigatorio);
+					map.put(t.idAtributo, conf.atributoObrigatorio);
 			}
 		}
-		
+
 		return listaFinal;
 	}
 
@@ -810,7 +789,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE;
 		
-		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro,
+				new int[] { SrConfiguracaoBL.ATENDENTE });
 		if (conf != null)
 			return conf.posAtendente.getLotacaoAtual();
 		return null;
@@ -827,29 +807,27 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// Edson: poderia também guardar num HashMap transiente e, ao salvar(),
 	// mandar criar os atributos, caso se quisesse permitir um
 	// solicitacao.getAtributoSet().put...
-	public void setAtributoMap(HashMap<Long, String> atributos) {
-
-		meuAtributoSet = new ArrayList<SrAtributo>();
-		for (Long idTipoAtt : atributos.keySet()) {
-			SrTipoAtributo tipoAtt = SrTipoAtributo.findById(idTipoAtt);
-			SrAtributo att = new SrAtributo(tipoAtt, atributos.get(idTipoAtt),
-					this);
-			meuAtributoSet.add(att);
+	public void setAtributoSolicitacaoMap(HashMap<Long, String> atributosSolicitacao) {
+		if (atributosSolicitacao != null) {
+			meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
+			for (Long idAtt : atributosSolicitacao.keySet()) {
+				SrAtributo att = SrAtributo.findById(idAtt);
+				SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(att, atributosSolicitacao.get(idAtt), this);
+				meuAtributoSolicitacaoSet.add(attSolicitacao);
+			}
 		}
 	}
 
-	public HashMap<Long, String> getAtributoMap() {
-		HashMap<Long, String> map = new HashMap<Long, String>();
-		if (meuAtributoSet != null)
-			for (SrAtributo att : meuAtributoSet) {
-				map.put(att.tipoAtributo.idTipoAtributo, att.valorAtributo);
+	public HashMap<Long, String> getAtributoSolicitacaoMap() {
+		HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para manter a ordem de insercao
+		if (meuAtributoSolicitacaoSet != null)
+			for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
+				map.put(att.atributo.idAtributo, att.valorAtributoSolicitacao);
 			}
 		return map;
 	}
 
 	private Set<SrSolicitacao> getSolicitacaoFilhaSet() {
-
-
 		TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(
 				new Comparator<SrSolicitacao>() {
 					@Override
@@ -886,7 +864,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		TreeSet<SrMarca> listaCompleta = new TreeSet<SrMarca>();
 		if (solicitacaoInicial != null)
 			for (SrSolicitacao sol : getHistoricoSolicitacao())
-
 				if (sol.meuMarcaSet != null)
 					listaCompleta.addAll(sol.meuMarcaSet);
 		return listaCompleta;
@@ -903,33 +880,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return set;
 	}
 
-	private Long getTempoCadastramento() {
-		if (dtIniEdicao == null)
-			return 0L;
-
-		Duration duration = new Duration(dtIniEdicao.getTime(), getHisDtIni()
-				.getTime());
-		return duration.getMillis();
-	}
-
-	@SuppressWarnings("unchecked")
-	public Long getTempoCadastramentoTotal() {
-		String stringQuery = "from SrSolicitacao where solicitacaoInicial.idSolicitacao = "
-				+ getIdInicial();
-		List<SrSolicitacao> list = JPA.em().createQuery(stringQuery)
-				.getResultList();
-		Duration duration = new Duration(0L);
-		for (SrSolicitacao sol : list) {
-			duration = duration.plus(sol.getTempoCadastramento());
-		}
-		if (duration == null)
-			return 0L;
-
-		return duration.getMillis();
-	}
-
 	public boolean isJuntada() {
-		return sofreuMov(TIPO_MOVIMENTACAO_JUNTADA);
+		return sofreuMov(TIPO_MOVIMENTACAO_JUNTADA,
+				TIPO_MOVIMENTACAO_DESENTRANHAMENTO);
 	}
 
 	public boolean isEditado() {
@@ -938,6 +891,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean isCancelado() {
 		return getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO) != null;
+	}
+
+	public Boolean isRascunho() {
+		return rascunho != null ? rascunho : false;
 	}
 
 	public boolean isFechado() {
@@ -1006,12 +963,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return false;
 	}
-	
+
 	public SrSolicitacao getSolicitacaoPrincipal() {
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA 
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO
 					&& !mov.isCancelada())
-				return mov.solicitacao.solicitacaoReferencia;
+				return null;
+
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA
+					&& !mov.isCancelada())
+				return mov.solicitacaoReferencia;
 		}
 		return null;
 	}
@@ -1022,7 +983,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean temPesquisaSatisfacao() throws Exception {
 		return getPesquisaDesignada() != null;
-
 	}
 
 	public boolean temPosAtendenteDesignado() throws Exception {
@@ -1094,12 +1054,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean podeEscalonar(DpLotacao lota, DpPessoa pess) {
 		return estaCom(lota, pess) && (isEmAtendimento() || isEmPreAtendimento());
-
 	}
 
 	public boolean podeJuntar(DpLotacao lota, DpPessoa pess) {
 		return estaCom(lota, pess) && (isEmAtendimento() || isPendente())
 				&& !isJuntada();
+	}
+
+	public boolean podeDesentranhar(DpLotacao lota, DpPessoa pess) {
+		return estaCom(lota, pess) && isJuntada();
 	}
 
 	public boolean podeVincular(DpLotacao lotaTitular, DpPessoa titular) {
@@ -1162,7 +1125,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean podeAlterarPrazo(DpLotacao lota, DpPessoa pess) {
 		return !isRascunho() && !isFechado() && estaCom(lota, pess);
-
 	}
 
 	public boolean podeTerminarPendencia(DpLotacao lota, DpPessoa pess) {
@@ -1247,7 +1209,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			telPrincipal = ultima.telPrincipal;
 			local = ultima.local;
 			meioComunicacao = ultima.meioComunicacao;
-				
 		} else {
 			telPrincipal = "";
 			local = null;
@@ -1270,7 +1231,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
-
 		if (solicitante == null)
 			return null;
 			
@@ -1283,7 +1243,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(
 				CpTipoConfiguracao.class,
-
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 
@@ -1292,17 +1251,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				continue;
 			confFiltro.itemConfiguracaoFiltro = i;
 			if (SrConfiguracao.buscar(confFiltro,
-					new int[] { SrConfiguracaoBL.ACAO }) != null){
-
+					new int[] { SrConfiguracaoBL.ACAO, SrConfiguracaoBL.ATENDENTE }) != null){
 				listaFinal.add(i);
-
 				SrItemConfiguracao itemPai = i.pai;
 				while (itemPai != null) {
 					if (!listaFinal.contains(itemPai))
 						listaFinal.add(itemPai);
-
 					itemPai = itemPai.pai;
-
 				}
 			}
 		}
@@ -1332,7 +1287,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(
 				CpTipoConfiguracao.class,
-
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 
@@ -1340,10 +1294,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (!a.isEspecifico())
 				continue;
 			confFiltro.acaoFiltro = a;
-			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
-
+			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro, new int[]{SrConfiguracaoBL.ATENDENTE});
 			if (conf != null)
-
 				listaFinal.put(a, conf.atendente);
 		}
 
@@ -1371,7 +1323,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Map acoesEAtendentes = getAcoesDisponiveisComAtendente();
 
 		if (acoesEAtendentes != null){
-		
 		Map<SrAcao, DpLotacao> m = new TreeMap<SrAcao, DpLotacao>(
 				new Comparator<SrAcao>() {
 					@Override
@@ -1380,7 +1331,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						if (i != 0)
 							return i;
 						return o1.idAcao.compareTo(o2.idAcao);
-
 					}
 				});
 
@@ -1392,7 +1342,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	@SuppressWarnings("serial")
 	public SortedSet<SrOperacao> operacoes(final DpLotacao lotaTitular,
-
 			final DpPessoa titular)
 					throws Exception {
 		SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
@@ -1403,7 +1352,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				if (e.params == null)
 					e.params = new HashMap<String, Object>();
 				e.params.put("id", idSolicitacao);
-
 
 				if (!e.isModal())
 					e.url = Router.reverse(e.url, e.params).url;
@@ -1416,19 +1364,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		operacoes.add(new SrOperacao("pencil", "Editar", podeEditar(
 				lotaTitular, titular), "Application.editar"));
 
-		/*operacoes.add(new SrOperacao("table_relationship", "Vincular",
+		operacoes.add(new SrOperacao("table_relationship", "Vincular",
 				podeVincular(lotaTitular, titular),
-				"vincular", "modal=true"));*/
+				"vincular", "modal=true"));
 
 		operacoes.add(new SrOperacao("arrow_divide",
 				"Escalonar", podeEscalonar(lotaTitular,
 						titular), "Application.escalonar"));
 
-		/*operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitac�es",
+		operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitac�es",
 				podeJuntar(lotaTitular, titular),
-				"juntar", "modal=true"));*/
-
-				
+				"juntar", "modal=true"));
+		
+		operacoes.add(new SrOperacao("arrow_out", "Desentranhar",
+				podeDesentranhar(lotaTitular, titular), "desentranhar", "modal=true"));
+		
 		operacoes.add(new SrOperacao("text_list_numbers", "Incluir em Lista",
 				podeIncluirEmLista(lotaTitular, titular), "incluirEmLista",
 				"modal=true"));
@@ -1453,7 +1403,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeRetornarAoAtendimento(lotaTitular, titular),
 				"Application.retornarAoAtendimento"));
 
-		operacoes.add(new SrOperacao("cross", "Cancelar Solicitacao",
+		operacoes.add(new SrOperacao("cross", "Cancelar Solicitação",
 				podeCancelar(lotaTitular, titular), "Application.cancelar"));
 
 		operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(
@@ -1463,13 +1413,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeDeixarPendente(lotaTitular, titular), "pendencia",
 				"modal=true"));
 
-		/*operacoes.add(new SrOperacao("clock_go", "Alterar Prazo",
+		operacoes.add(new SrOperacao("clock_go", "Alterar Prazo",
 				podeAlterarPrazo(lotaTitular, titular), "alterarPrazo",
-				"modal=true"));*/
+				"modal=true"));
 
 		operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir",
 				podeExcluir(lotaTitular, titular),
-				"Deseja realmente excluir esta solicitacao?", null, "", ""));
+				"Deseja realmente excluir esta solicitação?", null, "", ""));
 
 		operacoes.add(new SrOperacao("attach", "Anexar Arquivo",
 				podeAnexarArquivo(lotaTitular, titular), "anexarArquivo",
@@ -1507,7 +1457,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		super.salvar();
 
-
 		//Edson: melhorar isto, pra nao precisar salvar novamente
 
 		if (isRascunho()) {
@@ -1525,9 +1474,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				iniciarAtendimento(lotaCadastrante, cadastrante, atendenteNaoDesignado);
 
 			for (SrLista lista : getListasParaInclusaoAutomatica(lotaCadastrante)) {
-
-
-
 				incluirEmLista(lista, cadastrante, lotaCadastrante);
 			}
 
@@ -1538,7 +1484,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		} else
 			atualizarMarcas();
 	}
-
 
 	public void excluir() throws Exception{
 		finalizar();
@@ -1551,7 +1496,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	private void checarEPreencherCampos() throws Exception {
 
 		if (cadastrante == null)
-			throw new Exception("Cadastrante nao pode ser nulo");
+			throw new Exception("Cadastrante não pode ser nulo");
 
 		if (dtReg == null)
 			dtReg = new Date();
@@ -1561,7 +1506,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (lenght > 2)
 				throw new IllegalArgumentException("O tamanho do arquivo ("
 						+ new DecimalFormat("#.00").format(lenght)
-						+ "MB) e maior que o maximo permitido (2MB)");
+						+ "MB) � maior que o m�ximo permitido (2MB)");
 		}
 
 		if (lotaCadastrante == null)
@@ -1573,7 +1518,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (lotaSolicitante == null)
 			lotaSolicitante = solicitante.getLotacao();
 
-		if (solicitante.equivale(cadastrante)){
+		if (solicitante.equivale(cadastrante)) {
 			dtOrigem = null;
 			meioComunicacao = null;
 		}
@@ -1584,7 +1529,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (numSolicitacao == null)
 			if (!isRascunho())
 				numSolicitacao = getProximoNumero();
-				atualizarCodigo();
+		atualizarCodigo();
 
 		if (gravidade == null)
 			gravidade = SrGravidade.NORMAL;
@@ -1594,20 +1539,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		if (tendencia == null)
 			tendencia = SrTendencia.PIORA_MEDIO_PRAZO;
-		
-		// s� valida o atendente caso nao seja rascunho
+
+		// só valida o atendente caso não seja rascunho
 		if (!isRascunho() && !temAtendenteDesignado()
 				&& !temPreAtendenteDesignado())
 			throw new Exception(
-					"Nao foi encontrado nenhum atendente designado "
-							+ "para esta solicitacao. Sugestao: alterar item de "
-							+ "configuracao e/ou acao");
+					"Não foi encontrado nenhum atendente designado "
+							+ "para esta solicitação. Sugestão: alterar item de "
+							+ "configuração e/ou ação");
 	}
 
 	public void desfazerUltimaMovimentacao(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante) throws Exception {
 		if (!podeDesfazerMovimentacao(lotaCadastrante, cadastrante))
-			throw new Exception("Operacao nao permitida");
+			throw new Exception("Operação não permitida");
 
 		SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
 
@@ -1623,10 +1568,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					reInserirListasDePrioridade(lotaCadastrante, cadastrante);
 
 				if (movimentacao.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_JUNTADA) {
-					this.solicitacaoReferencia = null;
 					this.save();
 				}
 			}
+
 			movimentacao.desfazer(cadastrante, lotaCadastrante);
 		}
 	}
@@ -1648,10 +1593,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public void atualizarMarcas() {
-
-
 		SortedSet<SrMarca> setA = new TreeSet<SrMarca>();
-
 
 		// Edson: Obtido do sigagc - Excluir marcas duplicadas (???)
 		for (SrMarca m : getMarcaSet()) {
@@ -1701,7 +1643,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					continue;
 				if (t == TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
 					marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
-
 					movMarca = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO) {
@@ -1712,7 +1653,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					marcador = CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO;
 					movMarca = mov;
 				}
-
 				if (t == TIPO_MOVIMENTACAO_FECHAMENTO) {
 					marcador = CpMarcador.MARCADOR_SOLICITACAO_FECHADO;
 					movMarca = mov;
@@ -1727,6 +1667,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				}
 				if (t == TIPO_MOVIMENTACAO_JUNTADA) {
 					marcador = CpMarcador.MARCADOR_JUNTADO;
+					movMarca = mov;
+				}
+				if (t == TIPO_MOVIMENTACAO_DESENTRANHAMENTO) {
+					marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
 					movMarca = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
@@ -1763,6 +1707,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						movPendencia.atendente, movPendencia.lotaAtendente);
 			}
 
+			if (marcador != 0L)
+				acrescentarMarca(set, marcador, movMarca.dtIniMov, null,
+						movMarca.atendente, movMarca.lotaAtendente);
+
+			if (pendencias > 0) {
+				if (isRascunho())
+					acrescentarMarca(set,
+							CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
+							movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
+							cadastrante, lotaCadastrante);
+				else
+					acrescentarMarca(set,
+							CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
+							movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
+							movPendencia.atendente, movPendencia.lotaAtendente);
+			}
+
 			if (!isFechado() && !isCancelado()) {
 				acrescentarMarca(set,
 						CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
@@ -1770,9 +1731,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				acrescentarMarca(set,
 						CpMarcador.MARCADOR_SOLICITACAO_COMO_SOLICITANTE, null,
 						null, solicitante, lotaSolicitante);
-
 			}
-
 		}
 
 		return set;
@@ -1863,14 +1822,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (mar.getDpPessoaIni() != null) {
 				String nome = mar.getDpPessoaIni().getDescricaoIniciaisMaiusculas();
 				sb.append(nome.substring(0, nome.indexOf(" ")));
-
 				sb.append(", ");
-
 			}
-
 			if (mar.getDpLotacaoIni() != null) {
 				sb.append(mar.getDpLotacaoIni().getSigla());
-
 			}
 			sb.append(")");
 		}
@@ -1905,42 +1860,35 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular)
 			throws Exception {
 		List<SrLista> listaFinal = new ArrayList<SrLista>();
-/*
- * 		Edson:DB1, acertar conforme o item 24
- * 
-		List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
-				solicitante, local, itemConfiguracao, acao,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
-				SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {});
-		for (SrConfiguracao conf : confs) {
-			for (SrLista lista : conf.getListaConfiguracaoSet()) {
-				SrLista listaAtual = lista.getListaAtual();
-				if (!listaFinal.contains(listaAtual))
-					listaFinal.add(listaAtual);
-			}
-		}
-*/
-
+		/*
+		 * Edson:DB1, acertar conforme o item 24
+		 * 
+		 * List<SrConfiguracao> confs = SrConfiguracao.getConfiguracoes(
+		 * solicitante, local, itemConfiguracao, acao,
+		 * CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO,
+		 * SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE, new int[] {}); for
+		 * (SrConfiguracao conf : confs) { for (SrLista lista :
+		 * conf.getListaConfiguracaoSet()) { SrLista listaAtual =
+		 * lista.getListaAtual(); if (!listaFinal.contains(listaAtual))
+		 * listaFinal.add(listaAtual); } }
+		 */
 		return new ArrayList<SrLista>(listaFinal);
 	}
 
-public List<SrLista> getListasDisponiveisParaInclusao(
+	public List<SrLista> getListasDisponiveisParaInclusao(
 			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
-
 		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
 
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setLotacao(lotaTitular);
 		confFiltro.setDpPessoa(cadastrante);
-		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(
+				CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 
-		
-		for (SrLista l : SrLista.listar(false)){
-
+		for (SrLista l : SrLista.listar(false)) {
 			confFiltro.listaPrioridade = l;
 			if (SrConfiguracao.buscar(confFiltro) != null)
-
 				listaFinal.add(l);
 		}
 
@@ -1973,14 +1921,14 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 
 	public Set<SrSolicitacao> getSolicitacoesVinculadas() {
 		Set<SrSolicitacao> solVinculadas = new HashSet<SrSolicitacao>();
-		for (SrMovimentacao mov: getMovimentacaoSetOrdemCrescente()) 
+		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente())
 			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_VINCULACAO
 					&& !mov.isCancelada())
-				solVinculadas.add(mov.solicitacao.solicitacaoReferencia);
-		
-		for (SrMovimentacao mov: getMovimentacaoReferenciaSet())
-			if (!mov.isCancelada() &&
-					this.equals(mov.solicitacao.solicitacaoReferencia))
+				if(mov.solicitacaoReferencia != null)
+					solVinculadas.add(mov.solicitacaoReferencia);
+
+		for (SrMovimentacao mov : getMovimentacaoReferenciaSet())
+			if (!mov.isCancelada() && this.equals(mov.solicitacaoReferencia))
 				solVinculadas.add(mov.solicitacao);
 		return solVinculadas;
 	}
@@ -2015,11 +1963,11 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota)
 			throws Exception {
 		if (lista == null)
-			throw new IllegalArgumentException("Lista nao informada");
+			throw new IllegalArgumentException("Lista não informada");
 
 		if (isEmLista(lista))
 			throw new IllegalArgumentException("Lista " + lista.nomeLista
-					+ " j� contém a solicitacao " + getCodigo());
+					+ " já contém a solicitação " + getCodigo());
 
 		SrMovimentacao mov = new SrMovimentacao();
 		mov.prioridade = (long) lista.getProximaPosicao();
@@ -2027,7 +1975,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "Inclusa�o na lista " + lista.nomeLista
+		mov.descrMovimentacao = "InclusÃ£o na lista " + lista.nomeLista
 				+ " com a prioridade " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = this;
@@ -2038,14 +1986,14 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void retirarDeLista(SrLista lista, DpPessoa pess, DpLotacao lota)
 			throws Exception {
 		if (lista == null)
-			throw new IllegalArgumentException("Lista nao informada");
+			throw new IllegalArgumentException("Lista não informada");
 
 		SrMovimentacao mov = new SrMovimentacao();
 		mov.cadastrante = pess;
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA);
-		mov.descrMovimentacao = "Cancelamento de Inclusa�o em Lista";
+		mov.descrMovimentacao = "Cancelamento de InclusÃ£o em Lista";
 		mov.solicitacao = this;
 		mov.lista = lista;
 		mov.salvar();
@@ -2066,7 +2014,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		mov.descrMovimentacao = "Alteracao de prioridade na lista "
+		mov.descrMovimentacao = "Alteração de prioridade na lista "
 				+ lista.nomeLista + ": " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = this;
@@ -2086,14 +2034,14 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void finalizarPreAtendimento(DpLotacao lota, DpPessoa pess)
 			throws Exception {
 		if (!podeFinalizarPreAtendimento(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação não permitida");
 		iniciarAtendimento(lota, pess, null);
 	}
 
 	public void retornarAoPreAtendimento(DpLotacao lota, DpPessoa pess)
 			throws Exception {
 		if (!podeRetornarAoPreAtendimento(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação não permitida");
 		iniciarPreAtendimento(lota, pess);
 	}
 
@@ -2123,7 +2071,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			throws Exception {
 
 		if ((pess != null) && !podeFechar(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação não permitida");
 
 		if ((isEmPreAtendimento() || isEmAtendimento())
 				&& temPosAtendenteDesignado()) {
@@ -2135,7 +2083,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		}
 		
 	}
-	
+
 	public void enviarPesquisa() throws Exception {
 		// Implementar
 		Correio.pesquisaSatisfacao(this);
@@ -2144,10 +2092,10 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void responderPesquisa(DpLotacao lota, DpPessoa pess,
 			Map<Long, String> respostaMap) throws Exception {
 		if (!podeResponderPesquisa(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.pesquisa = this.getPesquisaDesignada();
-		movimentacao.descrMovimentacao = "Avaliacao realizada.";
+		movimentacao.descrMovimentacao = "Avaliação realizada.";
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_AVALIACAO);
 		movimentacao.setRespostaMap(respostaMap);
@@ -2157,7 +2105,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void retornarAoAtendimento(DpLotacao lota, DpPessoa pess)
 			throws Exception {
 		if (!podeRetornarAoAtendimento(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação não permitida");
 		iniciarAtendimento(lota, pess, getLotaAtendente());
 	}
 
@@ -2182,7 +2130,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 
 	public void reabrir(DpLotacao lota, DpPessoa pess) throws Exception {
 		if (!podeReabrir(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação não permitida");
 		reInserirListasDePrioridade(lota, pess);
 
 		SrMovimentacao mov = new SrMovimentacao(this);
@@ -2205,12 +2153,11 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		}
 	}
 
-	
 	public void deixarPendente(DpLotacao lota, DpPessoa pess,
 			SrTipoMotivoPendencia motivo, String calendario, String horario,
 			String detalheMotivo) throws Exception {
 		if (!podeDeixarPendente(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		DateTime datetime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
@@ -2230,7 +2177,7 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	public void alterarPrazo(DpLotacao lota, DpPessoa pess, String motivo,
 			String calendario, String horario) throws Exception {
 		if (!podeAlterarPrazo(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação nÃ£o permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		DateTime datetime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat
@@ -2243,14 +2190,15 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO);
-		movimentacao.descrMovimentacao = motivo;
+		movimentacao.descrMovimentacao = "Prazo alterado para " + calendario + " " 
+				+ horario + " - " + motivo;
 		movimentacao.salvar(pess, lota);
 	}
 
 	public void terminarPendencia(DpLotacao lota, DpPessoa pess, String descricao, Long idMovimentacao)
 			throws Exception {
 		if (!podeTerminarPendencia(lota, pess))
-			throw new Exception("Operacao nao permitida");
+			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
@@ -2260,12 +2208,11 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 		SrMovimentacao movFinalizada = SrMovimentacao.findById(idMovimentacao);
 		movFinalizada.movFinalizadora = movimentacao;
 		movFinalizada.save();
-		
 	}
 
 	public void cancelar(DpLotacao lota, DpPessoa pess) throws Exception {
 		if (!podeCancelar(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO);
@@ -2280,17 +2227,35 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			SrSolicitacao solRecebeJuntada, String justificativa)
 			throws Exception {
 		if ((pess != null) && !podeJuntar(lota, pess))
-			throw new Exception("Operacao nao permitida");
+			throw new Exception("Operação não permitida");
 
-		this.solicitacaoReferencia = solRecebeJuntada;
-		this.save();
-		
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_JUNTADA);
+		movimentacao.solicitacaoReferencia = solRecebeJuntada;
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao.salvar(pess, lota);
 
+	}
+
+	public void desentranhar(DpLotacao lota, DpPessoa pess, String justificativa)
+			throws Exception {
+		if (!podeDesentranhar(lota, pess))
+			throw new Exception("Operação não permitida");
+		SrMovimentacao movimentacao = new SrMovimentacao(this);
+		movimentacao.tipoMov = SrTipoMovimentacao
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO);
+		movimentacao.descrMovimentacao = justificativa;
+		movimentacao = movimentacao.salvar(pess, lota);
+
+		Set<SrMovimentacao> movimentacoes = getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);
+		for (SrMovimentacao mov : movimentacoes)
+			if (mov.movFinalizadora == null) {
+				mov.movFinalizadora = movimentacao;
+				mov.save();
+				break;
+			}
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2298,16 +2263,12 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			SrSolicitacao solRecebeVinculo, String justificativa)
 			throws Exception {
 		if ((pess != null) && !podeVincular(lota, pess))
-			throw new Exception("Operacao nao permitida");
-
-		this.solicitacaoReferencia = solRecebeVinculo;
-
-		this.save();
+			throw new Exception("Operação não permitida");
 
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_VINCULACAO);
-
+		movimentacao.solicitacaoReferencia = solRecebeVinculo;
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao.salvar(pess, lota);
 	}
@@ -2354,7 +2315,6 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			final SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 			return df.format(dtOrigem);
 		}
-
 		return "";
 	}
 
@@ -2367,7 +2327,6 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 	}
 
 	public String getDtOrigemString() {
-
 		if (dtOrigem != null){
 			SigaPlayCalendar cal = new SigaPlayCalendar();
 			cal.setTime(dtOrigem);
@@ -2378,11 +2337,204 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 
 	public void setDtOrigemString(String stringDtMeioContato) {
 		DateTimeFormatter formatter = forPattern("dd/MM/yyyy HH:mm");
-		if (stringDtMeioContato != null 
-				&& !stringDtMeioContato.isEmpty()
-				&& stringDtMeioContato.contains("/") 
+		if (stringDtMeioContato != null && !stringDtMeioContato.isEmpty()
+				&& stringDtMeioContato.contains("/")
 				&& stringDtMeioContato.contains(":"))
-			this.dtOrigem = new DateTime (formatter.parseDateTime(stringDtMeioContato)).toDate();
-
+			this.dtOrigem = new DateTime(
+					formatter.parseDateTime(stringDtMeioContato)).toDate();
+	}
+	
+	private Date getInicioPrimeiraEdicao() {
+		if (solicitacaoInicial != null)
+			return solicitacaoInicial.dtIniEdicao;
+		else
+			return this.dtIniEdicao;
+	}
+	
+	public String getPrazoTotalAtendimento() throws Exception{
+		if (solicitante == null)
+			return null;
+		
+		Long prazo = getPrazoPreAtendimento() + getPrazoAtendimento();
+		String str = null;
+		Long umDia = 86400000L;
+		
+		if (prazo > umDia)
+			str = String.format("%d dia(s)", TimeUnit.MILLISECONDS.toDays(prazo));
+		else
+			str = String.format("%d hora(s)", TimeUnit.MILLISECONDS.toHours(prazo));
+		
+		return str;
+	}
+	
+	private Long getPrazoPreAtendimento() throws Exception {
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		confFiltro.acaoFiltro = acao;
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_PRAZO_PRE_ATENDENTE;
+		
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+		if (conf != null && conf.slaAtendimentoQuantidade != null && conf.unidadeMedidaAtendimento != null)
+			return conf.slaPreAtendimentoQuantidade * conf.unidadeMedidaPreAtendimento.toMilis();
+		else
+			return 0L;
+	}
+	
+	private Long getPrazoAtendimento() throws Exception {
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		confFiltro.acaoFiltro = acao;
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, 
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_PRAZO_ATENDENTE;
+		
+		SrConfiguracao conf = SrConfiguracao.buscar(confFiltro);
+		if (conf != null)
+			return conf.slaPreAtendimentoQuantidade * conf.unidadeMedidaAtendimento.toMilis();
+		else
+			return 0L;
+	}
+	
+	public boolean exibirCronometro() {
+		return isFechado() || isPendente() || isEmPosAtendimento();
+	}
+	
+	public String getDescricaoCronometro() {
+		if (jaFoiDesignada())
+			return "Atendimento";
+		else
+			return "Cadastramento";
+	}
+	
+	public Long getTempoCronometro() {
+		if (jaFoiDesignada())
+			return getTempoAtendimento();
+		else
+			return getTempoCadastramento();
+	}
+	
+	public Long getTempoCadastramento() {
+		Long tempoCadastramento = 0L;
+		Date dtCalculo = new Date();
+		
+		// Se é o cadastro da Solicitação, tem tempo de cadastramento igual a zero
+		if (getInicioPrimeiraEdicao() == null)
+			return new Date().getTime();
+		else {
+			Duration tempoPendencia = new Duration(0L, 0L);
+			Map<Long, SrMovimentacao> mapPendencias = new LinkedHashMap<Long, SrMovimentacao>();
+			
+			// percorre todas as movimentações dessa solicitação
+			for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
+				
+				// se for movimentação de início de pré atendimento ou de atendimento, finaliza o laço e atualiza a data para cálculo
+				if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO 
+						|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO) {
+					dtCalculo = mov.dtIniMov;
+					break;
+				}
+				
+				// se for pendência
+				else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
+					// verifica se é pendência já resolvida, e calcula o tempo
+					if (mov.movFinalizadora != null)
+						tempoPendencia = tempoPendencia.plus(new Duration(mov.dtIniMov.getTime(), mov.movFinalizadora.dtIniMov.getTime()).getMillis());
+					
+					// caso não seja, adiciona ao map de pendêncais
+					else
+						mapPendencias.put(mov.idMovimentacao, mov);
+				}
+			}
+			
+			if (!mapPendencias.isEmpty()) {
+				// recupera a data da primeira das pendências que ainda estão em aberto
+				for (SrMovimentacao mov : mapPendencias.values()) {
+					dtCalculo = mov.dtIniMov;
+					break;
+				}
+			}
+			
+			tempoCadastramento = new Duration(getInicioPrimeiraEdicao().getTime(), dtCalculo.getTime()).getMillis() - tempoPendencia.getMillis();
+			
+			return tempoCadastramento;
+		}
+	}
+	
+	public Long getTempoAtendimento() {
+		Date dtInicioAtendimento = null;
+		Date dtCalculo = new Date();
+		Long tempoAtendimento = 0L;
+		boolean encontrouInicioAtendimento = false;
+		
+		Duration tempoPendencia = new Duration(0L, 0L);
+		Map<Long, SrMovimentacao> mapPendencias = new LinkedHashMap<Long, SrMovimentacao>();
+		
+		// percorre todas as movimentações dessa solicitação
+		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
+			
+			// Se não encontrou o início de atendimento, não começa os cálculos 
+			if (!encontrouInicioAtendimento) {
+				if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO 
+						|| mov.tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
+					dtInicioAtendimento = mov.dtIniMov;
+					encontrouInicioAtendimento = true;
+				}
+				
+				continue;
+			}
+			
+			// se for pendência
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
+				// verifica se é pendência já resolvida, e calcula o tempo
+				if (mov.movFinalizadora != null)
+					tempoPendencia = tempoPendencia.plus(new Duration(mov.dtIniMov.getTime(), mov.movFinalizadora.dtIniMov.getTime()).getMillis());
+				
+				// caso não seja, adiciona ao map de pendêncais
+				else
+					mapPendencias.put(mov.idMovimentacao, mov);
+			}
+			
+			// se iniciou pós-atendimento ou finalizou 
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO 
+					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO) {
+				dtCalculo = mov.dtIniMov;
+				tempoAtendimento = tempoAtendimento + new Duration(dtInicioAtendimento.getTime(), dtCalculo.getTime()).getMillis();
+			}
+			
+			// Se for reabertura
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA) {
+				dtInicioAtendimento = mov.dtIniMov;
+				dtCalculo = new Date();
+			}
+			
+			// se for início de pré atendimento ou atendimento
+			else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO
+					|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
+				dtCalculo = mov.dtIniMov;
+				tempoAtendimento = tempoAtendimento + new Duration(dtInicioAtendimento.getTime(), dtCalculo.getTime()).getMillis();
+				dtInicioAtendimento = mov.dtIniMov;
+				dtCalculo = new Date();
+			}
+		}
+		
+		if (!mapPendencias.isEmpty()) {
+			// recupera a data da primeira das pendências que ainda estão em aberto, e calcula o tempo de pendência
+			for (SrMovimentacao mov : mapPendencias.values()) {
+				dtCalculo = mov.dtIniMov;
+				tempoPendencia = tempoPendencia.plus(new Duration(dtCalculo.getTime(), new Date().getTime()).getMillis());
+				break;
+			}
+		}
+		
+		// subtrai o tempo em impedimento do tempo total de atendimento
+		tempoAtendimento = tempoAtendimento - tempoPendencia.getMillis();
+		
+		return tempoAtendimento;
 	}
 }

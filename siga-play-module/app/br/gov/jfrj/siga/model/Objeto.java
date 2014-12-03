@@ -62,5 +62,13 @@ public class Objeto extends ObjetoBase{
 	public Objeto unproxyIfInstance(Class clazz) {
 		return isInstance(clazz) ? this : null;
 	}
-
+	
+	public static boolean algumNaoNulo(Object... valores) {
+		for (Object valor : valores) {
+			if (valor != null) {
+				return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
+	}
 }

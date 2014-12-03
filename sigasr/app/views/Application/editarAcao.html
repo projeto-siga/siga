@@ -64,10 +64,6 @@
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" />
 				<a href="@{Application.listarAcao}" class="gt-btn-medium gt-btn-left">Cancelar</a>	
-				#{if acao?.idAcao} <input type="button" value="Desativar"
-					class="gt-btn-medium gt-btn-left"
-					onclick="location.href='@{Application.desativarAcao()}?id=${acao.idAcao}'" />
-				#{/if}
 			</div>
 			#{/form}
 		</div>

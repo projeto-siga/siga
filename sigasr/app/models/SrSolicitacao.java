@@ -2258,7 +2258,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			throws Exception {
 		if ((pess != null) && !podeVincular(lota, pess))
 			throw new Exception("Operação não permitida");
-
+		if (solRecebeVinculo.equivale(this))
+	        throw new Exception("Não e possivel vincular uma solicita�ao a si mesma.");
+		
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_VINCULACAO);

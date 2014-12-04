@@ -923,8 +923,8 @@ public class ExDocumentoAction extends ExActionSupport {
 			Boolean alguemPodeAcessar = false;
 			
 			if (getLotaTitular().equals(lotaDest)  /* a pessoa que está tentando acessar está na mesma lotação onde se encontra o doc*/ 
-					&& (mob.doc().getIdExNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA) 
-					     || mob.doc().getIdExNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL) {
+					&& (mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA					
+					     || mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
 				
 				Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet(); 
 				for (DpPessoa pes : pessoas) { /* verificar se alguem da lotação pode acessar o documento */

@@ -240,6 +240,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Column(name = "FG_RASCUNHO")
 	@Type(type = "yes_no")
 	public Boolean rascunho;
+	
+	@Column(name = "FECHADO_AUTOMATICAMENTE")
+	@Type(type = "yes_no")
+	public Boolean fechadoAutomaticamente;
 
 	public SrSolicitacao() {
 
@@ -346,6 +350,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	@Override
 	public void setDescricao(String descricao) {
 		this.descrSolicitacao = descricao;
+	}
+	
+	public Boolean getFechadoAutomaticamente() {
+		return fechadoAutomaticamente;
+	}
+
+	public void setFechadoAutomaticamente(Boolean fechadoAutomaticamente) {
+		this.fechadoAutomaticamente = fechadoAutomaticamente;
 	}
 
 	@Override
@@ -1207,6 +1219,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 
 	}
+	
+	public boolean podeFecharPaiAutomatico() {
+		return isFilha() && solicitacaoPai.getSolicitacaoAtual().fechadoAutomaticamente 
+							&& solicitacaoPai.isAFechar();
+	}
 
 	@SuppressWarnings("unchecked")
 	public SrSolicitacao deduzirLocalRamalEMeioContato() {
@@ -1421,8 +1438,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				"vincular", "modal=true"));*/
 
 		operacoes.add(new SrOperacao("arrow_divide",
-				"Escalonar", podeEscalonar(lotaTitular,
-						titular), "Application.escalonar"));
+				"Escalonar", podeEscalonar(lotaTitular, titular) && !this.isPai() && !this.isFilha(), 
+				"marcaSeFechaAutoEAposEscalona", "modal=true")); 
+
+		operacoes.add(new SrOperacao("arrow_divide",
+				"Escalonar", podeEscalonar(lotaTitular, titular), 
+				"Application.escalonar"));
 
 		/*operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitac�es",
 				podeJuntar(lotaTitular, titular),
@@ -1657,6 +1678,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrMarca m : getMarcaSet()) {
 			if (setA.contains(m))
 				m.delete();
+
 			else
 				setA.add(m);
 		}
@@ -2121,15 +2143,22 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 
 	public void fechar(DpLotacao lota, DpPessoa pess, String motivo)
 			throws Exception {
-
+		if(isPai() && !isAFechar())
+			throw new Exception("Operação não permitida. Necessário fechar toda solicitação " + 
+									"escalonada a partir dessa que deseja fechar.");
+			
 		if ((pess != null) && !podeFechar(lota, pess))
-			throw new Exception("Operacao na�o permitida");
+			throw new Exception("Operação não permitida");
 
 		if ((isEmPreAtendimento() || isEmAtendimento())
 				&& temPosAtendenteDesignado()) {
 			iniciarPosAtendimento(lota, pess, motivo);
 		} else {
 			fecharTotalmente(lota, pess, motivo);
+			if (podeFecharPaiAutomatico())
+				solicitacaoPai.fechar(solicitacaoPai.getLotaAtendente(), pess, 
+								"Solicitação fechada automaticamente");
+	
 			if (temPesquisaSatisfacao())
 				enviarPesquisa();
 		}
@@ -2385,4 +2414,5 @@ public List<SrLista> getListasDisponiveisParaInclusao(
 			this.dtOrigem = new DateTime (formatter.parseDateTime(stringDtMeioContato)).toDate();
 
 	}
+		
 }

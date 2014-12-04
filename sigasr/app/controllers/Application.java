@@ -832,6 +832,18 @@ public class Application extends SigaApplication {
 		formEditar(filha);
 	}
 	
+	/**
+	 * Metodo grava a opcao do atendente da solicitacao pai ao abrir uma solicitacao filha,
+	 * se a solicitacao pai deve deve ser fechada automaticamente 
+	 * quando todas as filhas estiverem fechadas.
+	 */
+	public static void marcarFechamentoAutomatico(Long id, Boolean fechadoAuto) throws Exception {
+		SrSolicitacao sol = SrSolicitacao.findById(id);
+		sol.setFechadoAutomaticamente(fechadoAuto);
+		sol.salvar(cadastrante(), lotaTitular());
+		escalonar(sol.idSolicitacao);
+	}
+	
 	public static void listarDesignacao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados, null);
@@ -1614,5 +1626,16 @@ public class Application extends SigaApplication {
 	public static void exibirPrioridade(SrSolicitacao solicitacao) {
 		solicitacao.associarPrioridadePeloGUT();
 		render(solicitacao);
+	}
+	
+	public static void atualizarFechamentoAutomatico() throws Exception {
+		List<SrSolicitacao> todasSolicitacoes = SrSolicitacao.findAll();
+		for (SrSolicitacao sol : todasSolicitacoes) {
+			if (sol.isPai()) {
+				sol.setFechadoAutomaticamente(false);
+				sol.salvar(cadastrante(), lotaTitular());
+			}
+		}
+		renderText("Atualização realizada com sucesso");
 	}
 }

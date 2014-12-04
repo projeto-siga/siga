@@ -224,6 +224,15 @@ public class ExMovimentacaoVO extends ExVO {
 											mov.mob(), mov));
 					addAcao(null, "Assinar/Conferir cópia", "/expediente/mov",
 							"exibir", true, null, "&popup=true", null, null, null);
+					
+					addAcao(
+							"script_key",
+							"Autenticar",
+							"/expediente/mov",
+							"autenticar_mov",
+							Ex.getInstance().getComp()
+									.podeAutenticarMovimentacao(titular, lotaTitular, mov),
+							null, "&popup=true", null, null, null);
 				}
 			}
 
@@ -261,9 +270,15 @@ public class ExMovimentacaoVO extends ExVO {
 								Ex.getInstance().getComp()
 										.podeVisualizarImpressao(titular, lotaTitular, mov.mob()),
 								null, "&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
-
-						addAcao(null, "Autenticar", "/expediente/mov", "autenticar_mov",
-							true, null, "&popup=true", null, null, null);
+						
+						addAcao(
+								"script_key",
+								"Autenticar",
+								"/expediente/mov",
+								"autenticar_mov",
+								Ex.getInstance().getComp()
+										.podeAutenticarMovimentacao(titular, lotaTitular, mov),
+								null, "&popup=true", null, null, null);
 
 					} else if(!(mov.isAssinada() && mov.mob().isEmTransito())) {
 						addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir",

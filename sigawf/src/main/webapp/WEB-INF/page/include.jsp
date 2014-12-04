@@ -8,4 +8,3 @@
 <%@ taglib uri="http://localhost/libstag" 				prefix="f" %>
 <%@ taglib uri="http://localhost/sigatags" 				prefix="siga" %>
 <%@ taglib uri="http://localhost/functiontag" 			prefix="wf" %>
-

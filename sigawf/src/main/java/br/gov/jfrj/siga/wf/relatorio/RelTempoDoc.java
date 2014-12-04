@@ -46,6 +46,7 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;

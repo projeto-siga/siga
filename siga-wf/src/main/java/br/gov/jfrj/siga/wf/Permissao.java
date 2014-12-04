@@ -29,7 +29,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
  */
 public class Permissao {
     private String procedimento;
-    private Long Id;
+    private Long id;
     private DpPessoa pessoa;
     private DpLotacao lotacao;
     private Integer tipoResponsavel;
@@ -108,7 +108,7 @@ public class Permissao {
 	 * @return
 	 */
 	public Long getId() {
-		return Id;
+		return this.id;
 	}
 	
 	/**
@@ -116,7 +116,7 @@ public class Permissao {
 	 * @param id
 	 */
 	public void setId(Long id) {
-		Id = id;
+		this.id = id;
 	}
 
 }

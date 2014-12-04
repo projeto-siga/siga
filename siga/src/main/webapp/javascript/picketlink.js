@@ -18,7 +18,7 @@ window.Siga = {
 
     modules: {
         sigawf: {
-            url: "/sigawf/inbox.action",
+            url: "/sigawf/app/inbox",
             params: {},
             viewId: "right"
         },

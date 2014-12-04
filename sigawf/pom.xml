@@ -45,16 +45,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.opensymphony</groupId>
-			<artifactId>webwork</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>info.bliki.wiki</groupId>
-			<artifactId>bliki-core</artifactId>
-		</dependency>
-
 		<!-- JBPM -->
 		<dependency>
 			<groupId>org.jbpm.jbpm3</groupId>
@@ -126,6 +116,10 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-libs</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>siga</groupId>
+            <artifactId>siga-vraptor-module</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-rel</artifactId>

@@ -1772,7 +1772,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (marcador == CpMarcador.MARCADOR_SOLICITACAO_FECHADO && isFilha())
 				solicitacaoPai.atualizarMarcas();
 			
-			if (isAFechar())
+			if (!isFechado() && isAFechar())
 				acrescentarMarca(set,
 						CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL, movMarca.dtIniMov,
 						null, movMarca.atendente, movMarca.lotaAtendente);

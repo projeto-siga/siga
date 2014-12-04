@@ -960,7 +960,15 @@ public class Application extends SigaApplication {
 	public static void listarItem(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar(mostrarDesativados);
-		render(itens, mostrarDesativados);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
+				"hisDtFim is null").fetch();
+		List<SrLista> listasPrioridade = SrLista.listar(false);
+		
+		render(itens, mostrarDesativados, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}
 	
 	public static void listarItemDesativados() throws Exception {

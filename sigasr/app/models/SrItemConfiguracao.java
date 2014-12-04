@@ -23,6 +23,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import models.vo.SrItemConfiguracaoVO;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -390,30 +392,15 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	public String toString() {
 		return siglaItemConfiguracao + " - " + tituloItemConfiguracao;
 	}
-		
-	/**
-	 * Classe que representa um V.O. de {@link SrItemConfiguracao}.
-	 */
-	public class SrItemConfiguracaoVO {
-		
-		public Long id;
-		public String descricao;
-		public String titulo;
-		public String sigla;
-		public Long hisIdIni;
-		public String descricaoSimilaridade;
-		
-		public SrItemConfiguracaoVO(Long id, String descricao, String titulo, String sigla, Long hisIdIni, String descricaoSimilaridade) {
-			this.id = id;
-			this.descricao = descricao;
-			this.titulo = titulo;
-			this.sigla = sigla;
-			this.hisIdIni = hisIdIni;
-			this.descricaoSimilaridade = descricaoSimilaridade;
-		}
-	}
 	
 	public SrItemConfiguracaoVO toVO() {
-		return new SrItemConfiguracaoVO(this.idItemConfiguracao, this.descrItemConfiguracao, this.tituloItemConfiguracao, this.siglaItemConfiguracao, this.getHisIdIni(), this.descricaoSimilaridade);
+		return SrItemConfiguracaoVO.createFrom(this);
+	}
+	
+	/**
+	 * Retorna um Json de {@link SrItemConfiguracao}.
+	 */
+	public String getSrItemConfiguracaoJson() {
+		return this.toVO().toJson();
 	}
 }

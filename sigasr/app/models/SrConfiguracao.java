@@ -17,7 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import models.SrAcao.SrAcaoVO;
-import models.SrItemConfiguracao.SrItemConfiguracaoVO;
+import models.vo.SrItemConfiguracaoVO;
 
 import org.hibernate.annotations.Type;
 
@@ -437,7 +437,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	/**
-
 	 * Retorna um Json de {@link SrConfiguracaoVO} que contém:
 	 * <li> {@link SrListaConfiguracaoVO}</li>
 	 * <li> {@link SrItemConfiguracaoVO}</li>
@@ -460,13 +459,13 @@ public class SrConfiguracao extends CpConfiguracao {
 	 */
 	public class SrConfiguracaoVO {
 		public List<SrLista.SrListaVO> listaVO; 
-		public List<SrItemConfiguracao.SrItemConfiguracaoVO> listaItemConfiguracaoVO;
+		public List<SrItemConfiguracaoVO> listaItemConfiguracaoVO;
 		public List<SrAcao.SrAcaoVO> listaAcaoVO;
 		public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
 
 		public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet) {
 			listaVO = new ArrayList<SrLista.SrListaVO>();
-			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracao.SrItemConfiguracaoVO>();
+			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
 			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
 			listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
 			

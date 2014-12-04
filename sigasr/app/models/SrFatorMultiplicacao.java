@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import models.vo.SrFatorMultiplicacaoVO;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Objeto;
@@ -19,6 +20,11 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 @Table(name = "SR_FATOR_MULTIPLICACAO", schema = "SIGASR")
 public class SrFatorMultiplicacao extends Objeto{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_FATOR_MULTIPLICACAO_SEQ", name = "srFatorMultiplicacao")
 	@GeneratedValue(generator = "srFatorMultiplicacao")
@@ -56,6 +62,10 @@ public class SrFatorMultiplicacao extends Objeto{
 	
 	public void setDpLotacao(DpLotacao dpLotacao) {
 		this.dpLotacao = dpLotacao;
+	}
+	
+	public SrFatorMultiplicacaoVO toVO() {
+		return new SrFatorMultiplicacaoVO(this.idFatorMultiplicacao, this.numFatorMultiplicacao, this.dpPessoa, this.dpLotacao);
 	}
 
 }

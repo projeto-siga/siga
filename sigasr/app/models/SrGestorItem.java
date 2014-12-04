@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import models.vo.SrGestorItemVO;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Objeto;
@@ -18,6 +19,11 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 @Entity
 @Table(name = "SR_GESTOR_ITEM", schema = "SIGASR")
 public class SrGestorItem extends Objeto{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_GESTOR_ITEM_SEQ", name = "srGestorItemSeq")
@@ -53,6 +59,10 @@ public class SrGestorItem extends Objeto{
 	
 	public void setDpLotacao(DpLotacao dpLotacao) {
 		this.dpLotacao = dpLotacao;
+	}
+	
+	public SrGestorItemVO toVO() {
+		return new SrGestorItemVO(this.idGestorItem, this.dpPessoa, this.dpLotacao);
 	}
 	
 }

@@ -1,5 +1,3 @@
-#{extends 'main.html' /} #{set title:'Edição de Item de Configuração' /}
-
 <style>
 .inline {
 	display: inline-flex !important;
@@ -11,23 +9,23 @@
 }
 
 .tabela tr {
-	border: solid;
-	border-color: rgb(169, 169, 169);
-	border-width: 1px;
-	font-weight: bold;
+ 	border: solid;
+ 	border-color: rgb(169, 169, 169);
+ 	border-width: 1px;
+ 	font-weight: bold;
 	line-height: 20px;
 }
 
 .tabela th {
-	color: #365b6d;
-	font-size: 100%;
-	padding: 5px 10px;
-	border: solid 1px rgb(169, 169, 169);
+ 	color: #365b6d;
+ 	font-size: 100%;
+ 	padding: 5px 10px;
+ 	border: solid 1px rgb(169, 169, 169);
 }
 
 .tabela td {
 	color: #000;
-	padding-right: 10px !important;
+ 	padding-right: 10px !important;
 }
 
 .gt-form-table td {
@@ -48,18 +46,21 @@
 	border-radius: 5px 5px 0 0;
 	margin: -16px 0 10px -16px;
 }
+
+.div-editar-item {
+	border-left-width: 0px;
+	border-right-width: 0px;
+	border-top-width: 0px;
+	border-bottom-width: 0px;
+	width: 800px !important;
+	max-width: 800px !important;
+}
 </style>
 
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
-
 <script>
-	
-	$("#itemConfiguracao").mask("99.99.99");
-
-	//removendo a referencia de '$' para o jQuery
-	$.noConflict();
+	jQuery(document).ready(function($) {
+		$("#itemConfiguracaoSigla").mask("99.99.99");
+	});
 
 	$(function() {
 		// POPUP PARA ADICIONAR UM GESTOR
@@ -93,25 +94,25 @@
 	            },
 	            open: function(){
                     if (jDialog.data("gestorSet"))
-                            jDialog.dialog('option', 'title', 'Alterar Gestor');
+                       jDialog.dialog('option', 'title', 'Alterar Gestor');
                     else
-                            jDialog.dialog('option', 'title', 'Incluir Gestor');  
+                       jDialog.dialog('option', 'title', 'Incluir Gestor');  
 	            }
         });
         $("#modalOk").click(function(){
-                var acao = jDialog.data('acao');
-                var jTipoEscolhido = jSelect.find("option:selected");
-                
-                if(jTipoEscolhido.val() == 1) {
-                	acao($("#gestorpessoa_sigla").val(), $("#gestorpessoa_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
-                } else if (jTipoEscolhido.val() == 2) {
-                	acao($("#gestorlotacao_sigla").val(), $("#gestorlotacao_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
-                }
-                
-                jDialog.dialog('close');
+	        var acao = jDialog.data('acao');
+	        var jTipoEscolhido = jSelect.find("option:selected");
+	        
+	        if(jTipoEscolhido.val() == 1) {
+	        	acao($("#gestorpessoa_sigla").val(), $("#gestorpessoa_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
+	        } else if (jTipoEscolhido.val() == 2) {
+	        	acao($("#gestorlotacao_sigla").val(), $("#gestorlotacao_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
+	        }
+	        
+	        jDialog.dialog('close');
         });
         $("#modalCancel").click(function(){
-                jDialog.dialog('close');
+            jDialog.dialog('close');
         });
 
         gestores["index"] = 0;
@@ -133,11 +134,11 @@
 	        });
   		}
         gestores.removerItem = function(idItem){
-                $("#"+idItem).remove();
-                gestores["index"]--;
+            $("#"+idItem).remove();
+            gestores["index"]--;
         }
 
-        #{list items:itemConfiguracao.gestorSet, as:'item'}
+        #{list items:itemConfiguracao?.gestorSet, as:'item'}
         	#{if item.dpPessoa}
 	        	gestores.incluirItem('${item.dpPessoa.sesbPessoa}${item.dpPessoa.matricula}', '${item.dpPessoa.nomePessoa}', 'pessoa', ${item.dpPessoa.idPessoa}, ${item.idGestorItem});
         	#{/if}
@@ -146,8 +147,7 @@
 	        #{/if}
 		#{/list}
 
-        
-// 		POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÇÃO E SOLICITANTE
+	    //POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÇÃO E SOLICITANTE
         var jFatores = $("#fatoresUl"),
         fatores = jFatores[0],
         jDialogFator = $("#dialogFator"),
@@ -187,23 +187,23 @@
 	            }
         });
         $("#modalOkFator").click(function(){
-                var acaoFator = jDialogFator.data('acaoFator');
-                var jTipoEscolhidoFator = jSelectFator.find("option:selected");
-                var numFatorMult = $('#numfatorMult');
-				
-				if(numFatorMult.val() > 0) {
-	                if(jTipoEscolhidoFator.val() == 1) {
-	                	acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
-	                } else if (jTipoEscolhidoFator.val() == 2) {
-	                	acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
-	                }
-	                jDialogFator.dialog('close');
-				} else {
-					$('#erroNumFatorMult').show();
+            var acaoFator = jDialogFator.data('acaoFator');
+            var jTipoEscolhidoFator = jSelectFator.find("option:selected");
+            var numFatorMult = $('#numfatorMult');
+
+            if(numFatorMult.val() > 0) {
+                if(jTipoEscolhidoFator.val() == 1) {
+                    acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
+                } else if (jTipoEscolhidoFator.val() == 2) {
+                    acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
 				}
+    			jDialogFator.dialog('close');
+			} else {
+				$('#erroNumFatorMult').show();
+			}
                 
                 
-        });
+         });
         $("#modalCancelFator").click(function(){
         	jDialogFator.dialog('close');
         });
@@ -233,7 +233,7 @@
                 fatores["index"]--;
         };
 
-        #{list items:itemConfiguracao.fatorMultiplicacaoSet, as:'itemFator'}
+        #{list items:itemConfiguracao?.fatorMultiplicacaoSet, as:'itemFator'}
         	#{if itemFator.dpPessoa}
 	        	fatores.incluirItem('${itemFator.dpPessoa.sesbPessoa}${itemFator.dpPessoa.matricula}', '${itemFator.dpPessoa.nomePessoa}', ${itemFator.numFatorMultiplicacao}, 'pessoa', ${itemFator.dpPessoa.idPessoa}, '${itemFator.idFatorMultiplicacao}Fator');
         	#{/if}
@@ -241,45 +241,48 @@
 	        		fatores.incluirItem('${itemFator.dpLotacao.siglaLotacao}', '${itemFator.dpLotacao.nomeLotacao}', ${itemFator.numFatorMultiplicacao}, 'lotacao', ${itemFator.dpLotacao.idLotacao}, '${itemFator.idFatorMultiplicacao}Fator');
 	        #{/if}
 		#{/list}
-
-
-// 		UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICAÇÃO
-        $("[value='Gravar']").click(function(){
-            var jForm = $("form"),
-                    params = jForm.serialize();
-            jGestores.find("li").each(function(i){
-                    var jDivs=$(this).find("span");
-                    var tipo = jDivs[0].id;
-                    if(tipo === 'pessoa'){
-                    	params += '&itemConfiguracao.gestorSet[' + i + '].dpPessoa.idPessoa=' + jDivs[1].id;
-                    } else if (tipo === 'lotacao') {
-                    	params += '&itemConfiguracao.gestorSet[' + i + '].dpLotacao.idLotacao=' + jDivs[1].id;
-                    }                            
-            });
-            jFatores.find("tr").each(function(i){
-                var jDivsF=$(this).find("span");
-
-                if(jDivsF.length == 0) return;
-                
-                var tipoF = jDivsF[0].id;
-                var indice = i-1;
-                if(tipoF === 'pessoa'){
-                	params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].dpPessoa.idPessoa=' + jDivsF[1].id;
-                } else if (tipoF === 'lotacao') {
-                	params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].dpLotacao.idLotacao=' + jDivsF[1].id;
-                }
-                	params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].numFatorMultiplicacao=' + jDivsF[1].innerHTML;
-       	 	});
-            
-            location.href = "@{Application.gravarItem()}?" + params;
-        });
 	});
+
+	function serializarItemConfiguracao() {
+		// UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICAÇÃO
+        var jForm = $("form"),
+            params = jForm.serialize();
+
+        jGestores.find("li").each(function(i){
+            var jDivs=$(this).find("span");
+            var tipo = jDivs[0].id;
+            
+            if(tipo === 'pessoa'){
+            	params += '&itemConfiguracao.gestorSet[' + i + '].dpPessoa.idPessoa=' + jDivs[1].id;
+            } else if (tipo === 'lotacao') {
+            	params += '&itemConfiguracao.gestorSet[' + i + '].dpLotacao.idLotacao=' + jDivs[1].id;
+            }                            
+        });
+        jFatores.find("tr").each(function(i){
+            var jDivsF=$(this).find("span");
+            
+            if(jDivsF.length == 0) return;
+
+            var tipoF = jDivsF[0].id,
+            	indice = i-1;
+        	
+            if(tipoF === 'pessoa') {
+                params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].dpPessoa.idPessoa=' + jDivsF[1].id;
+                } else if (tipoF === 'lotacao') {
+                    params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].dpLotacao.idLotacao=' + jDivsF[1].id;
+                }
+
+            params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].numFatorMultiplicacao=' + jDivsF[1].innerHTML;
+   	 	});
+            
+        return params;
+    }
 </script>
 
-<div class="gt-bd clearfix">
-	<div class="gt-content clearfix">
-
-		<h2 class="gt-form-head">Cadastro de Item de Configuração</h2>
+<div class="gt-form gt-content-box div-editar-item">
+	<input type="hidden" name="idItemConfiguracao" value="idItemConfiguracao">
+	<input type="hidden" name="hisIdIni" value="hisIdIni">
+	<div>
 		<div class="gt-content-box gt-for-table">
 			<form id="form" class="form100">
 				<table class="gt-form-table">
@@ -288,16 +291,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							#{if itemConfiguracao.idItemConfiguracao}
-							<input type="hidden" name="itemConfiguracao.idItemConfiguracao"
-								value="${itemConfiguracao.idItemConfiguracao}"> #{/if}
-							#{if itemConfiguracao.hisIdIni}
-							<input type="hidden" name="itemConfiguracao.hisIdIni"
-								value="${itemConfiguracao.hisIdIni}"> #{/if}
-							#{ifErrors}
-							<p class="gt-error">Alguns campos obrigatórios não foram
-								preenchidos ${error}</p>
-							#{/ifErrors}
+							<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram preenchidos.</p>
 						</td>
 					</tr>
 					<tr>
@@ -306,7 +300,7 @@
 						</td>
 						<td>
 							<input
-							id="itemConfiguracao" type="text"
+							id="itemConfiguracaoSigla" type="text"
 							name="itemConfiguracao.siglaItemConfiguracao"
 							value="${itemConfiguracao?.siglaItemConfiguracao}" /> <span
 							style="color: red;">#{error
@@ -316,9 +310,10 @@
 							style="margin-left: 10px;">Título:</label> 
 							
 							<input type="text"
-							id="itemConfiguracao.tituloItemConfiguracao"
-							name="itemConfiguracao.tituloItemConfiguracao"
-							value="${itemConfiguracao?.tituloItemConfiguracao}" size="84" />
+								id="itemConfiguracao.tituloItemConfiguracao"
+								name="itemConfiguracao.tituloItemConfiguracao"
+								value="${itemConfiguracao?.tituloItemConfiguracao}"
+								style="width: 474px;"/>
 							<span style="display: inline; color: red;">#{error
 							'itemConfiguracao.tituloItemConfiguracao' /}</span>
 						</td>
@@ -329,8 +324,9 @@
 						</td>
 						<td colspan="2">
 							<input type="text"
-							name="itemConfiguracao.descrItemConfiguracao"
-							value="${itemConfiguracao?.descrItemConfiguracao}" size="119" />
+								name="itemConfiguracao.descrItemConfiguracao"
+								value="${itemConfiguracao?.descrItemConfiguracao}"
+								style="width: 690px" />
 						</td>
 					</tr>
 					<tr>
@@ -353,9 +349,9 @@
 						<td colspan="3">
 							<label class="inline">Similaridade (Separar itens com
 								ponto e vírgula):</label>
-							<textarea cols="81" rows="4"
+							<textarea cols="63" rows="3" maxlength="8192"
 								name="itemConfiguracao.descricaoSimilaridade"
-								id="descricaoSimilaridade">${itemConfiguracao.descricaoSimilaridade}</textarea>
+								id="descricaoSimilaridade">${itemConfiguracao?.descricaoSimilaridade}</textarea>
 						</td>
 					</tr>
 				</table>
@@ -392,10 +388,8 @@
  				<table class="gt-form-table">
 					<tr>
 						<td colspan="4">
-							<input type="button" value="Gravar"
-								class="gt-btn-medium gt-btn-left" /> <a
-								href="@{Application.listarItem}"
-								class="gt-btn-medium gt-btn-left">Cancelar</a> 
+							<a href="javascript: gravarItemConfiguracao();" class="gt-btn-medium gt-btn-left">Gravar</a>
+							<a href="javascript: itemModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a> 
 						</td>
 					</tr>
 				</table>
@@ -447,8 +441,3 @@
 		</div>
 	</div>
 </div>
-
-#{modal nome:'designacao', titulo:'Cadastrar Designacao'}
-	<div id="divEditarDesignacaoItem">#{include
-				'Application/editarDesignacaoItem.html' /}</div>
-#{/modal}

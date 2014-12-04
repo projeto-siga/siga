@@ -509,7 +509,7 @@
 				#{select
 					name:'solicitacao.prioridade', id:'prioridade', items:models.SrPrioridade.values(), 
 					labelProperty:'descPrioridade', value:solicitacao.prioridade ?: 'PLANEJADO', style:'width:235px;border:none;display:none;'  /}
-					<br /><br />
+					<br />
 			</div>
 
 
@@ -528,11 +528,20 @@
 					id="motivoFechamentoAbertura" />
 			</div>
 			#{if !solicitacao.jaFoiDesignada()}
+			<br />
 			<div class="gt-form-row">
 				<label> #{checkbox name:'solicitacao.rascunho',
 					value:solicitacao.rascunho /} Rascunho </label>
 			</div>
 			#{/if}
+			#{elseif solicitacao.isPai() && solicitacao.idSolicitacao != null}
+			<div class="gt-form-table">
+				<div class="barra-subtitulo header" align="center" valign="top"> Fechamento Automático</div>
+			</div>
+			<p> #{checkbox name:'solicitacao.fechadoAutomaticamente',
+				value:solicitacao.fechadoAutomaticamente /}Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>.</p>
+			<br />
+			#{/elseif}
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" id="gravar" /> <a

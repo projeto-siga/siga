@@ -250,6 +250,11 @@ function postback(){
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
 					<br /> ${solicitacao.GUTString}</span>
 			</p>
+			#{if solicitacao.fechadoAutomaticamente != null}
+			<p>
+				<b>Fechamento Automático:</b> ${solicitacao.fechadoAutomaticamente.yesno('Sim', 'Não')  }
+			</p>
+			#{/if}
 		</div>
 	</div>
 
@@ -500,6 +505,21 @@ function postback(){
 		</form>
 	#{/modal}
 	
+	#{modal nome:'marcaSeFechaAutoEAposEscalona', titulo:'Fechamento Automático'}
+	<form action="@{Application.marcarFechamentoAutomatico}" method="post"
+		enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<div style="display: inline" class="gt-form-row gt-width-66">
+			<br />
+			#{checkbox name:'fechadoAuto',
+					value:solicitacao.fechadoAutomaticamente /} Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>, quando 
+					todas as solicitaç&otilde;es criadas <br /> através do seu escalonamento forem fechadas pelos seus respectivos atendentes.
+			<br /><br />
+		</div>
+		<input type="hidden" name="id" value="${solicitacao.id}" />
+		<input type="submit" value="Gravar e Escalonar" class="gt-btn-large gt-btn-left" />
+	</form>
+	#{/modal}
+	
 <script language="javascript">
 
 	function terminarPendencia(idMov){
@@ -532,6 +552,13 @@ function postback(){
 			document.getElementById("formGravar"+tipo).submit();
 		}
 	}
+	$('#checksolicitacao.fechadoAutomaticamente').change(function() {
+		if(this.checked) {
+			$('#checksolicitacao.fechadoAutomaticamente').prop('value', 'true');
+			return;
+		}
+		$('#checksolicitacao.fechadoAutomaticamente').prop('value', 'false');
+	});
 </script>
 
 #{modal nome:'terminarPendenciaModal', titulo:'Terminar Pendencia'}

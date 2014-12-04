@@ -66,9 +66,6 @@ public class SrAtributo extends HistoricoSuporte {
 	@OrderBy("hisDtIni desc")
 	public List<SrAtributo> meuAtributoHistoricoSet;
 	
-	@Transient
-	public List<SrConfiguracao> associacoes;
-
 	@Override
 	public Long getId() {
 		return idAtributo;

@@ -264,12 +264,15 @@
 
 	function atualizarListasTipoPermissaoEdicao(itemArray) {
 		var tipoPermissaoJson;
-		
+
 		// transforma o valor String em objeto, caso necessário
-		if (itemArray[16].constructor.name ==  'String' && itemArray[16] != '')
+		// Edson: comentando, pois nao funciona no IE
+		try{
+
 			designacaoJson = JSON.parse(itemArray[16]);
-		else
+		} catch(e){
 			designacaoJson = itemArray[16];
+		}
 		
 		if (designacaoJson) {
 			
@@ -294,7 +297,7 @@
 
 	function removerItensListaTipoPermissao() {
     	$("#permissoes").find("li").each(function(i){
-            this.remove();
+            $(this).remove();
             $("#permissoes")[0]["index"]--;
         });
     };
@@ -452,11 +455,6 @@
 					<div class="title-table">
 						<h3 style="padding-top: 25px;">Permissões</h3>
 					</div>
-					<div class="button-table">
-						<a href="javascript: controleAcessoModalAbrir(false)" title="Adicionar Permissão">
-							<img src="/siga/css/famfamfam/icons/add.png">
-						</a>
-					</div>
 				</div>
 				<div class="gt-content-box gt-for-table dataTables_div">
 					<table id="prioridades_table" border="0" class="gt-table display">
@@ -487,7 +485,7 @@
 						</thead>
 		
 						<tbody>
-							#{list items:lista.permissoes, as:'perm'}
+							#{list items:permissoes, as:'perm'}
 								<tr style="cursor: pointer;">
 									<td>${perm.orgaoUsuario?.id}</td>
 									<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
@@ -520,28 +518,9 @@
 						</tbody>
 					</table>
 				</div>
-				
-				<div class="gt-content" style="margin-top:20px">
-					<h3>Inclusão automática</h3>
-					<div class="gt-form gt-content-box">
-					
-						<input type="hidden" name="lista.configuracaoInsercaoAutomatica.idConfiguracao" value="${lista.configuracaoInsercaoAutomatica.idConfiguracao}"/>
-						
-						<div class="gt-form-row gt-width-66">
-							<label>Item</label> 
-							#{selecao tipo:'item',
-								nome:'lista.configuracaoInsercaoAutomatica.itemConfiguracaoUnitario',
-								value:lista.configuracaoInsercaoAutomatica.itemConfiguracaoUnitario?.atual 
-							/}
+				<div class="gt-table-buttons">
+							<a href="javascript: controleAcessoModalAbrir(false)" class="gt-btn-medium gt-btn-left">Incluir</a>
 						</div>
-					
-						<div class="gt-form-row gt-width-66">
-							<label>Ação</label> 
-							#{selecao tipo:'acao', nome:'lista.configuracaoInsercaoAutomatica.acaoUnitaria', value:lista.configuracaoInsercaoAutomatica.acaoUnitaria?.atual 
-							/}
-						</div>
-					</div>
-				</div>
 				
 				<div class="gt-form-row">
 					<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">

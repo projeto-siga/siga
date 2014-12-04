@@ -1,7 +1,9 @@
 #{extends 'main.html' /} #{set title:'Edição de Equipes' /}
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <style>
 .barra-subtitulo-top {
@@ -21,10 +23,8 @@
 }
 </style>
 <script type="text/javascript">
-	//removendo a referencia de '$' para o jQuery
-	$.noConflict();
-	
-	jQuery(document).ready(function($) {
+
+	$(document).ready(function() {
 		/* Table initialization */
 		excecoesTable = $('#excecoes_table').dataTable({
 			"language": {
@@ -178,7 +178,7 @@
 	}
 	
 	function inserirEquipe() {
-		if block()
+		if (block())
 			$.ajax({
 	        	type: "POST",
         		url: "@{Application.gravarEquipe()}",

@@ -338,11 +338,6 @@
 				<div class="title-table">
 					<h3 style="padding-top: 25px;">Associações</h3>
 				</div>
-				<div class="button-table">
-					<a href="javascript: inserirAssociacao()" title="Adicionar Associação">
-						<img src="/siga/css/famfamfam/icons/add.png">
-					</a>
-				</div>
 			</div>
 			<div class="gt-content-box dataTables_div">
 				<table id="associacao_table" border="0" class="gt-table display">
@@ -354,7 +349,7 @@
 								</button>
 							</th>
 							<th>idItemConfiguracao</th>
-							<th><i>Item &darr;</i></th>
+							<th><i>Item</i></th>
 							<th>siglaItemConfiguracao</th>
 							<th>idAcao</th>
 							<th>Ação</th>
@@ -362,11 +357,11 @@
 							<th>Obrigatório</th>
 							<th>Obrigatório</th>
 							<th>idAssociacao</th>
-							<th>Ações</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
-						#{list items:att.associacoes, as:'assoc'}
+						#{list items:associacoes, as:'assoc'}
 						<tr>
 							<td class="gt-celula-nowrap details-control"></td>
 							<td>${assoc.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>
@@ -381,7 +376,7 @@
 							<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 								<a class="once desassociar" onclick="desassociar(event, ${assoc?.idConfiguracao})" title="Remover permissão">
 									<input class="idAssociacao" type="hidden" value="${assoc?.idConfiguracao}"/>
-									<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
+									<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> 
 								</a>
 							</td>
 						</tr>
@@ -389,6 +384,9 @@
 					</tbody>
 				</table>
 			</div>
+			<div class="gt-table-buttons">
+							<a href="javascript: inserirAssociacao()" class="gt-btn-medium gt-btn-left">Incluir</a>
+						</div>
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" />

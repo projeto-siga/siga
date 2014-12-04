@@ -99,12 +99,6 @@ public class SrLista extends HistoricoSuporte {
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
 
-	@Transient
-	public List<SrConfiguracao> permissoes;
-
-	@Transient
-	public SrConfiguracao configuracaoInsercaoAutomatica;
-	
 	public static List<SrLista> listar(boolean mostrarDesativado) {
 		StringBuffer sb = new StringBuffer();
 
@@ -282,28 +276,7 @@ public class SrLista extends HistoricoSuporte {
 				s.priorizar(this, i, pessoa, lota);
 		}
 	}
-
-	@Override
-	public void salvar() throws Exception {
-		super.salvar();
-
-		// DB1: precisa salvar item a item 
-		if (this.permissoes != null) {
-			for (SrConfiguracao permissao : this.permissoes) {
-				permissao.listaPrioridade = this;
-				permissao.salvarComoPermissaoUsoLista();
-			}
-		}
-		if (deveAssociarComConfiguracaoAutomatica()) {
-			configuracaoInsercaoAutomatica.salvarComoInclusaoAutomaticaLista(this);
-		}
-	}
-
-	private boolean deveAssociarComConfiguracaoAutomatica() {
-		return configuracaoInsercaoAutomatica != null && 
-				Objeto.algumNaoNulo(configuracaoInsercaoAutomatica.getAcaoUnitaria(), configuracaoInsercaoAutomatica.getItemConfiguracaoUnitario());
-	}
-
+	
 	/**
 	 * Classe que representa um V.O. de {@link SrLista}.
 	 */

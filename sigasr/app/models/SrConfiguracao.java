@@ -246,25 +246,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		
 		
 	}
-	
-	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarPermissoesUsoLista(DpLotacao lota,
-			boolean mostrarDesativado) {
-		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
-		sb.append(" and conf.listaPrioridade.lotaCadastrante.idLotacaoIni = ");
-		sb.append(lota.getLotacaoInicial().getIdLotacao());
-
-		if (!mostrarDesativado)
-			sb.append(" and conf.hisDtFim is null ");
-
-		sb.append(" order by conf.orgaoUsuario");
-
-		return JPA
-				.em()
-				.createQuery(sb.toString())
-				.getResultList();
-	}
 
 	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarPermissoesUsoLista(SrLista lista,
@@ -272,6 +253,23 @@ public class SrConfiguracao extends CpConfiguracao {
 		StringBuffer sb = new StringBuffer(
 				"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
+		sb.append(" and conf.listaPrioridade.hisIdIni = ");
+		sb.append(lista.getHisIdIni());
+
+		if (!mostrarDesativado)
+			sb.append(" and conf.hisDtFim is null ");
+
+		sb.append(" order by conf.orgaoUsuario");
+
+		return JPA.em().createQuery(sb.toString()).getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarInclusaoAutomatica(SrLista lista,
+			boolean mostrarDesativado) {
+		StringBuffer sb = new StringBuffer(
+				"select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA);
 		sb.append(" and conf.listaPrioridade.hisIdIni = ");
 		sb.append(lista.getHisIdIni());
 
@@ -510,7 +508,9 @@ public class SrConfiguracao extends CpConfiguracao {
 		int soma = 0;
 		if (itemConfiguracaoSet != null && itemConfiguracaoSet.size() > 0){
 			for (SrItemConfiguracao i : itemConfiguracaoSet){
-				soma += i.getNivel();
+				SrItemConfiguracao iAtual = i.getAtual();
+				if (iAtual != null)
+					soma += i.getNivel();
 			}
 			return soma / itemConfiguracaoSet.size();
 		}
@@ -521,7 +521,9 @@ public class SrConfiguracao extends CpConfiguracao {
 		int soma = 0;
 		if (acoesSet != null && acoesSet.size() > 0){
 			for (SrAcao i : acoesSet){
-				soma += i.getNivel();
+				SrAcao iAtual = i.getAtual();
+				if (iAtual != null)
+					soma += i.getNivel();
 			}
 			return soma / acoesSet.size();
 		}

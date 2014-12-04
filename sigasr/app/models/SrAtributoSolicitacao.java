@@ -30,7 +30,7 @@ public class SrAtributoSolicitacao extends GenericModel {
 	public String valorAtributoSolicitacao;
 	
 	@ManyToOne
-	@JoinColumn(name="ID_TIPO_ATRIBUTO_SOLICITACAO")
+	@JoinColumn(name="ID_ATRIBUTO")
 	public SrAtributo atributo;
 	
 	@ManyToOne

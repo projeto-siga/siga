@@ -1,6 +1,3 @@
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 
 <script type="text/javascript">
 		var parametroTela = '${_modoExibicao}';
@@ -56,12 +53,8 @@
 		colunas.reativarDesativar=				47;
 		colunas.ativo=							48;
 
-	
-	//removendo a referencia de '$' para o jQuery
-	$.noConflict();
-
 	var designacoesTable = null;
-	jQuery( document ).ready(function( $ ) {
+	$( document ).ready(function() {
 		/* Table initialization */
 		designacoesTable = $('#designacoes_table')
 			.on('draw.dt', function() {
@@ -143,16 +136,16 @@
 			},
 			{
 				"targets": [0],
-				"sortable": false
+				"sortable": false,
 				"searchable" : false
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (aData[posIsHerdado] == 'true') {
+				/*if (aData[posIsHerdado] == 'true') {
 					$('td', nRow).addClass('item-desativado');
 					$('td:eq(0)', nRow).removeClass('checkbox-hidden');
 					if (document.getElementById("check"+aData[posIdDesignacao]))
 						document.getElementById("check"+aData[posIdDesignacao]).checked = aData[posListaPrioSerial] == 'true';
-				}
+				}*/
 			},
 			"iDisplayLength": 100
 		});
@@ -254,15 +247,6 @@
 		}
 		
 		if (designacaoJson) {
-			
-			if (designacaoJson.listaVO) {
-				// cria os itens da lista de prioridade, e adiciona na tela
-				for (i = 0; i < designacaoJson.listaVO.length; i++) {
-					var lista = designacaoJson.listaVO[i];
-					
-					$("#listasDesignacao")[0].incluirItem(lista.idLista, lista.nomeLista, lista.idListaConfiguracao);
-				}
-			}
 			
 			if (designacaoJson.listaItemConfiguracaoVO) {
 				// cria a lista de Itens de Configuração, e adiciona na tela
@@ -379,7 +363,6 @@
 		
 		itemConfiguracaoTable.api().clear().draw();
 		acaoTable.api().clear().draw();
-		removerItensListaPrioridade();
 		
 		// limpa as mensagens de erros
 		resetAllErrorMessage();
@@ -517,15 +500,7 @@
 		
 		$("#designacao_dialog").dialog('open');
 	}
-	
-	$("#designacao_dialog").dialog({
-	    autoOpen: false,
-	    height: 'auto',
-	    width: 'auto',
-	    modal: true,
-	    resizable: false
-	});
-	
+
 	function designacaoModalFechar() {
 		isEditing = false;
 		$("#designacao_dialog").dialog("close");
@@ -561,7 +536,7 @@
 
 		            // esta primeira coluna é um comboBox que só é renderizado quando há herança de designação 
 		            '',
-		            
+		            '',
 		            jOrgaoUsuario.value,
           			jOrgaoUsuario.text, 
           			jComplexo.value,
@@ -605,7 +580,8 @@
           			$("#checknotificarInterlocutor")[0].checked,
           			$("#checknotificarAtendente")[0].checked,
           			atualizaDesignacaoJson(),
-          			$("#listasDesignacao").find("li"),
+          			//Edson: antiga posicao da lista de prioridade. Tirar daqui:
+          			'',
           			$("#idConfiguracao").val(),
           			
           			// estas duas colunas só devem ser 'true' quando uma designação é herdada (informação vem do java apenas) 
@@ -613,7 +589,7 @@
           			'false',
           			
           			// Atualiza as informações das listas da designação
-          			getListasAsString()
+          			getListasAsString(),
 					tdDesignacao.find('td.acoes').html(),
           			ativo
 		];
@@ -727,19 +703,8 @@
 	}
 	
 	function atualizaDesignacaoJson() {
-		var listaVO = [],
-			listaItemConfiguracaoVO = [],
+		var listaItemConfiguracaoVO = [],
 			listaAcaoVO = [];
-    	
-		// Percorre listas de prioridade
-    	$("#listasDesignacao").find("li").each(function(i){
-            var jDivs=$(this).find("span");
-            listaVO.push({
-            	"idLista": jDivs[1].id,
-            	"idListaConfiguracao": "",
-            	"nomeLista": jDivs[1].innerText
-            });
-        });
     	
     	// Percorre lista de Itens de Configuração
 		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
@@ -773,7 +738,6 @@
 		
  		var designacaoJson = {
  			"listaItemConfiguracaoVO": listaItemConfiguracaoVO,
- 			"listaVO": listaVO, 
  			"listaAcaoVO": listaAcaoVO
  		};
 		
@@ -783,14 +747,6 @@
 	function getListasAsString() {
 		var params = '';
 	
-		// Percorre listas de prioridade
-		$("#listasDesignacao").find("li").each(function(i){
-	        var jDivs=$(this).find("span");
-	        
-	        // Atualiza a string serializada
-	        params += '&designacao.listaConfiguracaoSet[' + i + '].idLista=' + jDivs[1].id;
-	    });
-		
 		// Percorre lista de Itens de Configuração
 		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
 			var rowValues = itemConfiguracaoTable.api().row(i).data();
@@ -810,13 +766,6 @@
 		});
 		
 		return params;
-    };
-    
-    function removerItensListaPrioridade() {
-    	$("#listasDesignacao").find("li").each(function(i){
-            this.remove();
-            $("#listasDesignacao")[0]["index"]--;
-        });
     };
 	
 	function getIdFieldSolicitante(tipo) {
@@ -949,9 +898,10 @@
 				params += '&designacao.utilizarItemHerdado=' + isTrue;
 				params += '&designacao.isHerdado=' + rowValues[colunas.herdado];
 			} 
-			
+
 			// lista da designacao
 			params += rowValues[colunas.listasSerializadas];
+			
 		}
    		
    		return params;
@@ -964,7 +914,7 @@
 		
 		
 			if (rowValues[colunas.tipoSolicitante] == 1){
-              	params += '&designacao.dpPessoa=' + rowValues[6];
+              	params += '&designacao.dpPessoa=' + rowValues[colunas.idSolicitante];
               	params += '&designacao.lotacao=';
               	params += '&designacao.funcaoConfianca=';
               	params += '&designacao.cargo=';
@@ -973,7 +923,7 @@
 			
 			// caso seja lotação
 			} else if (rowValues[colunas.tipoSolicitante] == 2){
-				params += '&designacao.lotacao=' + rowValues[6];
+				params += '&designacao.lotacao=' + rowValues[colunas.idSolicitante];
 				params += '&designacao.dpPessoa=';
               	params += '&designacao.funcaoConfianca=';
               	params += '&designacao.cargo=';
@@ -982,7 +932,7 @@
 			
 			// caso seja função
 			} else if (rowValues[colunas.tipoSolicitante] == 3){
-				params += '&designacao.funcaoConfianca=' + rowValues[6];
+				params += '&designacao.funcaoConfianca=' + rowValues[colunas.idSolicitante];
 				params += '&designacao.dpPessoa=';
               	params += '&designacao.lotacao=';
               	params += '&designacao.cargo=';
@@ -991,7 +941,7 @@
 			
 			// caso seja cargo
 			} else if (rowValues[colunas.tipoSolicitante] == 4){
-				params += '&designacao.cargo=' + rowValues[6];
+				params += '&designacao.cargo=' + rowValues[colunas.idSolicitante];
 				params += '&designacao.dpPessoa=';
               	params += '&designacao.funcaoConfianca=';
               	params += '&designacao.lotacao=';
@@ -999,7 +949,7 @@
 
 			// caso seja grupo
 			} else if (rowValues[colunas.tipoSolicitante] == 5){
-				params += '&designacao.cpGrupo=' + rowValues[6];
+				params += '&designacao.cpGrupo=' + rowValues[colunas.idSolicitante];
 				params += '&designacao.dpPessoa=';
       			params += '&designacao.funcaoConfianca=';
       			params += '&designacao.lotacao=';
@@ -1179,7 +1129,7 @@
 					<th>Herdado</th>
 					<th>Utilizar Herdado</th>
 					<th>Listas Serializadas</th>
-					<th>Ações</th>
+					<th></th>
 					<th>ativo</th>
 				</tr>
 			</thead>

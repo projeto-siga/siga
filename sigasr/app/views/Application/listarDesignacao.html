@@ -1,5 +1,7 @@
 #{extends 'main.html' /} #{set title:'Designação de solicitações' /}
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
@@ -29,9 +31,7 @@
 	}();
 	
 	//removendo a referencia de '$' para o jQuery
-	$.noConflict();
-	
-	jQuery( document ).ready(function( $ ) {
+	$( document ).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
 			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
 			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';

@@ -290,7 +290,7 @@ public class Application extends SigaApplication {
 			// Para evitar NullPointerExcetpion quando nao encontrar no Map
 			if(Boolean.TRUE.equals(obrigatorio.get(att.atributo.idAtributo))) {
 				if ((att.valorAtributoSolicitacao == null || att.valorAtributoSolicitacao.trim().equals("")))
-					validation.addError("solicitacao.atributoMap["
+					validation.addError("solicitacao.atributoSolicitacaoMap["
 							+ att.atributo.idAtributo + "]",
 							att.atributo.nomeAtributo + " n&atilde;o informado");
 			}
@@ -630,6 +630,20 @@ public class Application extends SigaApplication {
 		lista.validarPodeExibirLista(lotaTitular(), cadastrante());
 		render(lista);
 	}
+	
+	public static void incluirEmLista(Long idSolicitacao) throws Exception {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
+		solicitacao = solicitacao.getSolicitacaoAtual();
+		render(solicitacao);
+	}
+
+	public static void incluirEmListaGravar(Long idSolicitacao, Long idLista)
+			throws Exception {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
+		SrLista lista = SrLista.findById(idLista);
+		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular());
+		exibir(idSolicitacao, todoOContexto(), ocultas());
+	}
 
 	public static void retirarDeLista(Long idSolicitacao, Long idLista)
 			throws Exception {
@@ -860,13 +874,6 @@ public class Application extends SigaApplication {
 		
 		return designacao.getId();
 	}
-
-	public static void listarPermissaoUsoLista(boolean mostrarDesativados) throws Exception {
-		assertAcesso("ADM:Administrar");
-		List<SrConfiguracao> permissoes = SrConfiguracao
-				.listarPermissoesUsoLista(lotaTitular(), mostrarDesativados);
-		render(permissoes);
-	}
 	
 	public static void editarPermissaoUsoLista(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
@@ -901,16 +908,6 @@ public class Application extends SigaApplication {
 		editarLista(idLista);
 	}
 
-	public static void listarAssociacaoDesativadas() throws Exception {
-		listarAssociacao(Boolean.TRUE);
-	}
-	
-	public static void listarAssociacao(boolean mostrarDesativados) throws Exception {
-		assertAcesso("ADM:Administrar");
-		List<SrConfiguracao> listaAssociacao = SrConfiguracao.listarAssociacoesAtributo(mostrarDesativados);
-		render(listaAssociacao);
-	}
-
 	public static void editarAssociacao(Long id) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = new SrConfiguracao();
@@ -937,14 +934,14 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
 		associacao.finalizar();
-		listarAssociacao(mostrarDesativados);
+		//listarAssociacao(mostrarDesativados);
 	}
 
 	public static void reativarAssociacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
 		associacao.salvar();
-		listarAssociacao(mostrarDesativados);
+		//listarAssociacao(mostrarDesativados);
 	}
 
 	public static void listarItem(boolean mostrarDesativados) throws Exception {
@@ -1075,8 +1072,8 @@ public class Application extends SigaApplication {
 				tipoAtributoAnterior = att.tipoAtributo.name();
 			}
 		}
-		att.associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.FALSE);
-		render(att, tipoAtributoAnterior);
+		List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.FALSE);
+		render(att, tipoAtributoAnterior, associacoes);
 	}
 
 	public static void gravarAtributo(SrAtributo att) throws Exception {
@@ -1333,16 +1330,11 @@ public class Application extends SigaApplication {
 		if (id != null)
 			lista = SrLista.findById(id);
 		
-		try {
-			assertAcesso("ADM:Administrar");
-			lista.permissoes = SrConfiguracao
-					.listarPermissoesUsoLista(lista, false);
-		} catch (Exception e) {
-		}
+		List<SrConfiguracao> permissoes = SrConfiguracao
+				.listarPermissoesUsoLista(lista, false);
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
-		lista.configuracaoInsercaoAutomatica = SrConfiguracao.buscarConfiguracaoInsercaoAutomaticaLista(lista);
 		
-		render(lista, orgaos, locais, tiposPermissao);
+		render(lista, orgaos, locais, tiposPermissao, permissoes);
 	}
 
 	public static void gravarLista(SrLista lista) throws Exception {

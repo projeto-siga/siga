@@ -80,6 +80,9 @@
 					<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
 
 					<c:set var="botao" value="" />
+					<c:if test="${autenticando}">
+						<c:set var="botao" value="autenticando" />
+					</c:if>
 					<c:set var="lote" value="false" />
 				</div>
 				
@@ -116,45 +119,47 @@
 			</div>
 		</div>
 	</div>
-	<c:if test="${f:podeAssinarComSenha(titular,lotaTitular,mob)}">
-		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
-	        		
-		<div id="dialog-form" title="Assinar com Senha">
- 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_senha_gravar.action" >
- 				<ww:hidden id="sigla" name="sigla"	value="${sigla}" />
-    			<fieldset>
-    			  <label>Matrícula</label> <br/>
-    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
-    			  <label>Senha</label> <br/>
-    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off"/>
-    			</fieldset>
-  			</form>
-		</div>
-	
-		 <script> 
-		    dialog = $("#dialog-form").dialog({
-		      autoOpen: false,
-		      height: 210,
-		      width: 350,
-		      modal: true,
-		      buttons: {
-		          "Assinar": assinarGravar,
-		          "Cancelar": function() {
-		            dialog.dialog( "close" );
-		          }
-		      },
-		      close: function() {
-		        
-		      }
-		    });
-			
-		    function assinarComSenha() {
-		       dialog.dialog( "open" );
-		    }
-	
-		    function assinarGravar() {
-		    	$("#form-assinarSenha").submit();
-			}
-		  </script>
+	<c:if test="${not autenticando}">
+		<c:if test="${f:podeAssinarComSenha(titular,lotaTitular,mob)}">
+			<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
+		        		
+			<div id="dialog-form" title="Assinar com Senha">
+	 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_senha_gravar.action" >
+	 				<ww:hidden id="sigla" name="sigla"	value="${sigla}" />
+	    			<fieldset>
+	    			  <label>Matrícula</label> <br/>
+	    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+	    			  <label>Senha</label> <br/>
+	    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off"/>
+	    			</fieldset>
+	  			</form>
+			</div>
+		
+			 <script> 
+			    dialog = $("#dialog-form").dialog({
+			      autoOpen: false,
+			      height: 210,
+			      width: 350,
+			      modal: true,
+			      buttons: {
+			          "Assinar": assinarGravar,
+			          "Cancelar": function() {
+			            dialog.dialog( "close" );
+			          }
+			      },
+			      close: function() {
+			        
+			      }
+			    });
+				
+			    function assinarComSenha() {
+			       dialog.dialog( "open" );
+			    }
+		
+			    function assinarGravar() {
+			    	$("#form-assinarSenha").submit();
+				}
+			  </script>
+		</c:if>
 	</c:if>
 </siga:pagina>

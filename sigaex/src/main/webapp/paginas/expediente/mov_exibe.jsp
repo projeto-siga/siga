@@ -304,12 +304,18 @@ function visualizarImpressao(via) {
 						value="${request.scheme}://${request.serverName}:${request.serverPort}" />
 					<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
 					
-					<ww:if test="${mov.exTipoMovimentacao.idTpMov==2}">
-						<c:set var="botao" value="ambos" />
-					</ww:if>
-					<ww:else>
-						<c:set var="botao" value="" />
-					</ww:else>
+					<c:if test="${not autenticando}">
+						<ww:if test="${mov.exTipoMovimentacao.idTpMov==2}">
+							<c:set var="botao" value="ambos" />
+						</ww:if>
+						<ww:else>
+							<c:set var="botao" value="" />
+						</ww:else>
+					</c:if>
+					<c:if test="${autenticando}">
+						<c:set var="botao" value="autenticando" />
+					</c:if>
+					
 					<c:set var="lote" value="false" />
 				</div>		
 				<p><b>Link para assinatura externa: </b>${enderecoAutenticacao} (informar o código ${mov.siglaAssinaturaExterna})</p>

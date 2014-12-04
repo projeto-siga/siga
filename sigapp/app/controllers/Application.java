@@ -726,6 +726,9 @@ public class Application extends SigaApplication {
 		}
 
 	}
+	public static void agendadas_hoje_print() {
+		render();
+	}
 	public static void agendamento_imprime(String frm_data_ag){
 		String matriculaSessao = cadastrante().getMatricula().toString();
 		String lotacaoSessao = cadastrante().getLotacao().getSiglaLotacao();

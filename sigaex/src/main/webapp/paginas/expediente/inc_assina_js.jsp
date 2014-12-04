@@ -166,7 +166,7 @@ function InicializarCapicom(){
 	if (oCertificates.Count > 1) {
 		oCertificates = oCertificates.Select(
 		"Seleção de Certificado Digital",
-		"Escolha o certificado digital que deseja utilizar para assinar ou conferir cópia:", false);
+		"Escolha o certificado digital que deseja utilizar para assinar ou autenticar:", false);
 	}
 
 	if (oCertificates.Count == 0) {

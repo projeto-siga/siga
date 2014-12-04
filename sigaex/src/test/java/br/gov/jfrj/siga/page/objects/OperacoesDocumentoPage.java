@@ -273,7 +273,7 @@ public class OperacoesDocumentoPage {
 	}
 	
 	public void clicarAssinarCopia(String baseURL, String codigoDocumento) {		
-		new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.linkText("Assinar/Conferir cópia"))).click();
+		new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.linkText("Assinar/Autenticar"))).click();
 		String codigoAnexo;
 		
 		util.openPopup(driver);

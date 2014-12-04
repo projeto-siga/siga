@@ -334,7 +334,7 @@ function visualizarImpressao(via) {
 									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Encerramento</a> 
 								</c:when>
 								<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
-									<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Conferir Cópia</a> 
+									<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar</a> 
 									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Anexo</a> 
 								</c:when>
 							</c:choose>
@@ -396,7 +396,7 @@ function visualizarImpressao(via) {
 			          	"Assinar": assinarGravar,
 			          </c:if>	
 			    	  <c:if test="${podeConferirCopiaMovimentacaoComSenha}">
-				          "Conferir Cópia": conferirCopiaGravar,
+				          "Autenticar": conferirCopiaGravar,
 			          </c:if>	
 			          "Cancelar": function() {
 			            dialog.dialog( "close" );

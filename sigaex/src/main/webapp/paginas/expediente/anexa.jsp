@@ -327,7 +327,7 @@
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<div id="capicom-div">
-						<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Conferir Cópia em Lote</a> 
+						<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a> 
 						<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
 					</div> 
 				<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
@@ -377,7 +377,7 @@
 				          			"Assinar": assinarGravar,
 				          		</c:if>	
 				    	  		<c:if test="${podeConferirCopiaMovimentacaoComSenha}">
-					          		"Conferir Cópia": conferirCopiaGravar,
+					          		"Autenticar": conferirCopiaGravar,
 				          		</c:if>	
 				          			"Cancelar": function() {
 				            		dialog.dialog( "close" );

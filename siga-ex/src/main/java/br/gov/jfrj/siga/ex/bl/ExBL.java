@@ -2429,7 +2429,7 @@ public class ExBL extends CpBL {
 		
 		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA &&
 				!getComp().podeConferirCopiaMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
-			throw new AplicacaoException("Usuário não tem permissão de conferir cópia de documento com senha.");
+			throw new AplicacaoException("Usuário não tem permissão de autenticar documento com senha.");
 		
 		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA &&
 				!getComp().podeAssinarMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))

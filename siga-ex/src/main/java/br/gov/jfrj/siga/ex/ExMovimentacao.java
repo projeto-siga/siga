@@ -986,7 +986,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		retorno += assinantesSenha.length() > 0 ? "Assinado com senha por "
 				+ assinantesSenha + ".\n" : "";
 		
-		retorno += conferentes.length() > 0 ? "Cópia conferida com documento original por "
+		retorno += conferentes.length() > 0 ? "Autenticado digitalmente por "
 				+ conferentes + ".\n" : "";
 
 		return retorno;

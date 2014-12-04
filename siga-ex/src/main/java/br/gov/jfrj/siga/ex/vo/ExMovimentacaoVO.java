@@ -222,7 +222,7 @@ public class ExMovimentacaoVO extends ExVO {
 									.getComp()
 									.podeCancelarAnexo(titular, lotaTitular,
 											mov.mob(), mov));
-					addAcao(null, "Assinar/Conferir cópia", "/expediente/mov",
+					addAcao(null, "Assinar/Autenticar", "/expediente/mov",
 							"exibir", true, null, "&popup=true", null, null, null);
 					
 					addAcao(
@@ -311,7 +311,7 @@ public class ExMovimentacaoVO extends ExVO {
 					complemento = " | Assinado por: " + complemento;
 
 				if (fConferencias)
-					complemento += " | Cópia conferida por: "
+					complemento += " | Autenticado por: "
 							+ complementoConferencias;
 			}
 		}

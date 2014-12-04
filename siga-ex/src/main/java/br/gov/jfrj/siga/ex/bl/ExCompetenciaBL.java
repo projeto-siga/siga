@@ -1202,6 +1202,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAutenticarMovimentacao(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
 		
+		//Não é necessário autenticar movimentação de anexação pois o link para assinar/autenticar sempre está disponível. 
+		if(mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
+			return false;
+		
 		if (mov.getExDocumento().isEletronico() &&  !mov.isAutenticada() && mov.temAssinaturasComSenha()) {
 			 return true;
 		}

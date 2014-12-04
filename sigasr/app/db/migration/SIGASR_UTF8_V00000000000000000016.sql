@@ -168,3 +168,6 @@ ALTER TABLE SR_MOVIMENTACAO
 	
 -- OSI_FS0005 - Item 06
 INSERT INTO "SIGASR"."SR_TIPO_MOVIMENTACAO" (ID_TIPO_MOVIMENTACAO, NOME_TIPO_MOVIMENTACAO) VALUES ('19', 'Desentranhamento');
+update sigasr.sr_tipo_movimentacao set nome_tipo_movimentacao = 'Juntada' where id_tipo_movimentacao = 18;
+update sigasr.sr_tipo_movimentacao set nome_tipo_movimentacao = 'Vinculação' where id_tipo_movimentacao = 20;
+commit;

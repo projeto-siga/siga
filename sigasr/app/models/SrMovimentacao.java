@@ -6,10 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -106,6 +105,9 @@ public class SrMovimentacao extends GenericModel {
 	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
 	// @OrderBy("pergunta asc")
 	protected List<SrResposta> respostaSet;
+	
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "movFinalizadora", fetch=FetchType.LAZY)
+	protected List<SrMovimentacao> movFinalizadaSet;
 
 	@Column(name = "DT_AGENDAMENTO")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -175,6 +177,10 @@ public class SrMovimentacao extends GenericModel {
 		return movCanceladora != null;
 	}
 
+	public boolean isFinalizada() {
+		return movFinalizadora != null;
+	}
+	
 	public boolean isCanceladoOuCancelador() {
 		return isCancelada()
 				|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
@@ -278,10 +284,19 @@ public class SrMovimentacao extends GenericModel {
 		SrMovimentacao ultimaValida = getAnterior();
 		movCanceladora.atendente = ultimaValida.atendente;
 		movCanceladora.lotaAtendente = ultimaValida.lotaAtendente;
-
 		movCanceladora.salvar(pessoa, lota);
+		
 		this.movCanceladora = movCanceladora;
+		
+		if (movFinalizadaSet != null)
+			for (SrMovimentacao movFinalizada : movFinalizadaSet){
+				movFinalizada.movFinalizadora = null;
+				movFinalizada.save();
+			}
+		movFinalizadaSet = new ArrayList<SrMovimentacao>();
+		
 		this.salvar();
+		
 	}
 
 	private void checarCampos() throws Exception {

@@ -518,18 +518,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return sols.get(0);
 
 	}
-
-	public Set<SrMovimentacao> getMovimentacaoReferenciaSet() {
-		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
-				new SrMovimentacaoComparator(false));
-		SrSolicitacao sol = solicitacaoInicial != null ? solicitacaoInicial
-				: this;
-		if (sol.meuMovimentacaoSet != null)
-			for (SrMovimentacao movimentacao : sol.meuMovimentacaoSet)
-				if (!movimentacao.isCanceladoOuCancelador())
-					listaCompleta.add(movimentacao);
-		return listaCompleta;
-	}
 	
 	public SrMovimentacao getUltimoAndamento() {
 		return getUltimaMovimentacaoPorTipo(TIPO_MOVIMENTACAO_ANDAMENTO);
@@ -575,28 +563,32 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public Set<SrMovimentacao> getMovimentacaoSet() {
-		return getMovimentacaoSet(false, null, false, false, false);
+		return getMovimentacaoSet(false, null, false, false, false, false);
 	}
 
 	public Set<SrMovimentacao> getMovimentacaoSetPorTipo(Long tipoMov) {
-		return getMovimentacaoSet(false, tipoMov, false, false, false);
+		return getMovimentacaoSet(false, tipoMov, false, false, false, false);
+	}
+	
+	public Set<SrMovimentacao> getMovimentacaoReferenciaSetPorTipo(Long tipoMov) {
+		return getMovimentacaoSet(false, tipoMov, false, false, false, true);
 	}
 
 	public Set<SrMovimentacao> getMovimentacaoSetComCancelados() {
-		return getMovimentacaoSet(true, null, false, false, false);
+		return getMovimentacaoSet(true, null, false, false, false, false);
 	}
 	
 	public Set<SrMovimentacao> getMovimentacaoSetComCanceladosTodoOContexto() {
-		return getMovimentacaoSet(true, null, false, true, false);
+		return getMovimentacaoSet(true, null, false, true, false, false);
 	}
 
 	public Set<SrMovimentacao> getMovimentacaoSetOrdemCrescente() {
-		return getMovimentacaoSet(false, null, true, false, false);
+		return getMovimentacaoSet(false, null, true, false, false, false);
 	}
 
 	public Set<SrMovimentacao> getMovimentacaoSet(
 			boolean considerarCanceladas, Long tipoMov, boolean ordemCrescente,
-			boolean todoOContexto, boolean apenasPrincipais) {
+			boolean todoOContexto, boolean apenasPrincipais, boolean inversoJPA) {
 		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
 				new SrMovimentacaoComparator(ordemCrescente));
 
@@ -614,9 +606,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		for (SrSolicitacao sol : solsAConsiderar) {
 			if (sol.solicitacaoInicial != null)
-				for (SrSolicitacao instancia : sol.getHistoricoSolicitacao())
-					if (instancia.meuMovimentacaoSet != null)
-						for (SrMovimentacao movimentacao : instancia.meuMovimentacaoSet) {
+				for (SrSolicitacao instancia : sol.getHistoricoSolicitacao()) {
+					Set<SrMovimentacao> movSet = inversoJPA ? instancia.meuMovimentacaoReferenciaSet
+							: instancia.meuMovimentacaoSet;
+					if (movSet != null)
+						for (SrMovimentacao movimentacao : movSet) {
 							if (!considerarCanceladas
 									&& movimentacao.isCanceladoOuCancelador())
 								continue;
@@ -630,6 +624,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 							listaCompleta.add(movimentacao);
 						}
+				}
 		}
 		return listaCompleta;
 	}
@@ -726,7 +721,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Set<SrMovimentacao> setPendentes = new HashSet<SrMovimentacao>();
 
 		for (SrMovimentacao ini : setIni) {
-			if ((ini.movFinalizadora == null || ini.movFinalizadora.isCancelada()) && 
+			if ((!ini.isFinalizada()) && 
 					(ini.dtAgenda == null || ini.dtAgenda.after(new Date())))
 				setPendentes.add(ini);
 		}
@@ -905,7 +900,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean isPendente() {
 		Set<SrMovimentacao> setIni = getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
 		for (SrMovimentacao ini : setIni) {
-			if ((ini.movFinalizadora == null || ini.movFinalizadora.isCancelada()) 
+			if ((!ini.isFinalizada()) 
 					&& (ini.dtAgenda == null || ini.dtAgenda.after(new Date())))
 
 				return true;
@@ -966,12 +961,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public SrSolicitacao getSolicitacaoPrincipal() {
 		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO
-					&& !mov.isCancelada())
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO)
 				return null;
-
-			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA
-					&& !mov.isCancelada())
+			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
 				return mov.solicitacaoReferencia;
 		}
 		return null;
@@ -1372,7 +1364,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				"Escalonar", podeEscalonar(lotaTitular,
 						titular), "Application.escalonar"));
 
-		operacoes.add(new SrOperacao("arrow_join", "Juntar Solicitacões",
+		operacoes.add(new SrOperacao("arrow_join", "Juntar",
 				podeJuntar(lotaTitular, titular),
 				"juntar", "modal=true"));
 		
@@ -1906,23 +1898,29 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return associadas;
 	}
 
-	public boolean temSolicitacaoVinculada() {
-		return getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_VINCULACAO)
-				.size() > 0;
-	}
-
 	public Set<SrSolicitacao> getSolicitacoesVinculadas() {
 		Set<SrSolicitacao> solVinculadas = new HashSet<SrSolicitacao>();
-		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente())
-			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_VINCULACAO
-					&& !mov.isCancelada())
+		
+		//vinculações partindo desta solicitação
+		for (SrMovimentacao mov : getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
+			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_VINCULACAO)
 				if(mov.solicitacaoReferencia != null)
 					solVinculadas.add(mov.solicitacaoReferencia);
 
-		for (SrMovimentacao mov : getMovimentacaoReferenciaSet())
-			if (!mov.isCancelada() && this.equals(mov.solicitacaoReferencia))
+		//vinculações partindo de outra solicitação referenciando esta
+		for (SrMovimentacao mov : getMovimentacaoReferenciaSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
+			if (this.equals(mov.solicitacaoReferencia))
 				solVinculadas.add(mov.solicitacao);
 		return solVinculadas;
+	}
+	
+	public Set<SrSolicitacao> getSolicitacoesJuntadas() {
+		Set<SrSolicitacao> solJuntadas = new HashSet<SrSolicitacao>();
+
+		for (SrMovimentacao mov : getMovimentacaoReferenciaSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA))
+			if (!mov.isFinalizada() && this.equals(mov.solicitacaoReferencia))
+				solJuntadas.add(mov.solicitacao);
+		return solJuntadas;
 	}
 
 	public boolean isEmLista() {
@@ -2221,13 +2219,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if ((pess != null) && !podeJuntar(lota, pess))
 			throw new Exception("OperaÃ§Ã£o nÃ£o permitida");
 		if (solRecebeJuntada.equivale(this))
-	        throw new Exception("NÃ£o e possivel juntar uma solicitaçao a si mesma.");
+	        throw new Exception("NÃ£o e possivel juntar uma solicitaÃ§Ã£o a si mesma.");
+		if (solRecebeJuntada.isJuntada() && solRecebeJuntada.getSolicitacaoPrincipal().equivale(this))
+	        throw new Exception("NÃ£o e possivel realizar juntada circular.");
+		if (solRecebeJuntada.isFilha() && solRecebeJuntada.solicitacaoPai.equivale(this))
+	        throw new Exception("NÃ£o e possivel juntar uma solicitaÃ§Ã£o a uma das suas filhas. Favor realizar o processo inverso.");
 
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_JUNTADA);
 		movimentacao.solicitacaoReferencia = solRecebeJuntada;
-		movimentacao.descrMovimentacao = justificativa;
+		movimentacao.descrMovimentacao = justificativa + " | Juntando a " + solRecebeJuntada.codigo;
 		movimentacao.salvar(pess, lota);
 
 	}
@@ -2242,13 +2244,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.descrMovimentacao = justificativa;
 		movimentacao = movimentacao.salvar(pess, lota);
 
-		Set<SrMovimentacao> movimentacoes = getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);
-		for (SrMovimentacao mov : movimentacoes)
-			if (mov.movFinalizadora == null) {
-				mov.movFinalizadora = movimentacao;
-				mov.save();
-				break;
-			}
+		SrMovimentacao juntada = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA);
+		juntada.movFinalizadora = movimentacao;
+		juntada.save();
 		
 	}
 
@@ -2265,7 +2263,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_VINCULACAO);
 		movimentacao.solicitacaoReferencia = solRecebeVinculo;
-		movimentacao.descrMovimentacao = justificativa;
+		movimentacao.descrMovimentacao = justificativa + " | Vinculando a " + solRecebeVinculo.codigo;
 		movimentacao.salvar(pess, lota);
 	}
 
@@ -2439,7 +2437,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				// se for pendÃªncia
 				else if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
 					// verifica se Ã© pendÃªncia jÃ¡ resolvida, e calcula o tempo
-					if (mov.movFinalizadora != null)
+					if (mov.isFinalizada())
 						tempoPendencia = tempoPendencia.plus(new Duration(mov.dtIniMov.getTime(), mov.movFinalizadora.dtIniMov.getTime()).getMillis());
 					
 					// caso nÃ£o seja, adiciona ao map de pendÃªncais

@@ -387,21 +387,21 @@ public class Application extends SigaApplication {
 		exibir(id, todoOContexto(), ocultas());
 	}
 	
-	public static void juntarSolicitacoes(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
+	public static void juntar(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAJuntar);
 		SrSolicitacao solRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
 		sol.juntar(lotaTitular(), cadastrante(), solRecebeJuntada, justificativa);
 		exibir(idSolicitacaoAJuntar, todoOContexto(), ocultas());
 	}
 	
-    public static void vincularSolicitacoes(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
+    public static void vincular(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAVincular);
         SrSolicitacao solRecebeVinculo = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
         sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
         exibir(idSolicitacaoAVincular, todoOContexto(), ocultas());
     }
     
-    public static void desentranharSolicitacao(Long id, String justificativa) throws Exception {
+    public static void desentranhar(Long id, String justificativa) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.desentranhar(lotaTitular(), cadastrante(), justificativa);
 		exibir(id, todoOContexto(), ocultas());
@@ -620,7 +620,7 @@ public class Application extends SigaApplication {
 			ocultas = false;
 	
 		Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas,
-				null, false, todoOContexto, !ocultas);
+				null, false, todoOContexto, !ocultas, false);
 
 		render(solicitacao, movimentacao, todoOContexto, ocultas, movs);
 	}

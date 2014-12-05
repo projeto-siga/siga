@@ -147,6 +147,8 @@ public class Application extends SigaApplication {
 		
 		if (solicitacao.dtOrigem == null)
 			solicitacao.dtOrigem = new Date();
+		if (solicitacao.dtIniEdicao == null)
+			solicitacao.dtIniEdicao = new Date();
 
 		formEditar(solicitacao.deduzirLocalRamalEMeioContato());
 	}
@@ -376,9 +378,8 @@ public class Application extends SigaApplication {
 			SrConfiguracao designacao) {
 	}
 
-	public static void gravar(SrSolicitacao solicitacao, long dtIniEdicao) throws Exception {
-        solicitacao.dtIniEdicao = new Date(dtIniEdicao);
-        
+	public static void gravar(SrSolicitacao solicitacao) throws Exception {
+
         if(!solicitacao.isRascunho())
         	validarFormEditar(solicitacao);
         

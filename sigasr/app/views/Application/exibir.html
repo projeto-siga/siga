@@ -178,28 +178,12 @@ function postback(){
 		</div>
 
 	</div>
-
+	
+	#{include 'Application/exibirCronometro.html' /}
 
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Dados da Solicitação</h3>
-			#{if solicitacao.exibirCronometro() == true}
-				#{cronometro descricao:solicitacao.getDescricaoCronometro(),
-				 tempoPercorrido:solicitacao.getTempoCronometro(),
-				 contarTempo:true /}
-			#{/if}
-			#{else}
-				#{cronometro descricao:'Cadastramento',
-							 tempoPercorrido:solicitacao.getTempoAtendimento(),
-							 contarTempo:false /}
-				#{cronometro descricao:'Atendimento',
-							 tempoPercorrido:solicitacao.getTempoCadastramento(),
-							 contarTempo:false /}
-			#{/else}
-			<p>
-				<b>Prazo SLA:</b>
-				${solicitacao.getPrazoTotalAtendimento()} 
-			</p>
 			<p>
 				<b>Solicitante:</b>
 				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
@@ -232,9 +216,9 @@ function postback(){
 				<b>Cadastrante:</b>
 				${solicitacao.cadastrante?.descricaoIniciaisMaiusculas}
 			</p>
-			<p>
+			*{<p>
 				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
-			</p>
+			</p>}*
 			<p>
 				<b>Item de Configuração:</b>
 				${solicitacao.siglaEDescrItem}

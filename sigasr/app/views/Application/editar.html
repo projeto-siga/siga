@@ -21,7 +21,6 @@
 }
 </style>
 <script language="javascript">
-	var cadastramento = ${solicitacao.getTempoAtendimento()};
 	
 	$(document).ready(function() {
 		$('#gravar').click(function() {
@@ -409,8 +408,6 @@
 				<input type="hidden"
 				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
 				<input type="hidden"
-				name="dtIniEdicao" value="${dtIniEdicao}" />
-				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 				
 			<div class="gt-form-table">
@@ -428,11 +425,6 @@
 					<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
 						type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
 						value="${cadastrante.sigla}" />
-				</div>
-				<div class="gt-form-row gt-width-33">
-					#{cronometro descricao:solicitacao.getDescricaoCronometro(),
-					 tempoPercorrido:solicitacao.getTempoCronometro(),
-					 contarTempo: solicitacao.exibirCronometro() /}
 				</div>
 			</div>	 
 
@@ -550,9 +542,7 @@
 			#{/form}
 		</div>
 	</div>
-	<div class="gt-sidebar">
-		<div class="gt-sidebar-content"><h2>&nbsp;</h2></div>
-	</div>
+	#{include 'Application/exibirCronometro.html' /}
 	
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content" id="solicitacoesRelacionadas">

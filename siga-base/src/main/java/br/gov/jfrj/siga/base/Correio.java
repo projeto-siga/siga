@@ -18,9 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.base;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -51,13 +54,42 @@ public class Correio {
 			final String[] destinatarios, final String assunto,
 			final String conteudo, final String conteudoHTML) throws Exception {
 
+		List<String> listaServidoresEmail = SigaBaseProperties.getListaServidoresEmail();
+		
+		//lista indisponivel. Tenta ler apenas 1 servidor definido.
+		if(listaServidoresEmail == null || listaServidoresEmail.size() == 0){
+			listaServidoresEmail = new ArrayList<String>();
+			listaServidoresEmail.add(SigaBaseProperties.getString("servidor.smtp"));
+		}
+		
+		boolean servidorDisponivel = false;
+		for (String servidorEmail : listaServidoresEmail) {
+			try{
+				enviarParaServidor(servidorEmail,remetente, destinatarios, assunto, conteudo,
+						conteudoHTML);
+				servidorDisponivel = true;
+				break;
+			}catch(Exception e){
+				Logger.getLogger("siga.email").warning("Servidor de e-mail indisponível: " + servidorEmail);;
+			}
+		}
+		
+		if (!servidorDisponivel){
+			throw new AplicacaoException("Não foi possível se conectar ao servidor de e-mail!");
+		}
+
+	}
+
+	private static void enviarParaServidor(final String servidorEmail,
+			String remetente, final String[] destinatarios, final String assunto,
+			final String conteudo, final String conteudoHTML) throws Exception {
 		// Cria propriedades a serem usadas na sessão.
 		final Properties props = new Properties();
 
 		// Define propriedades da sessão.
 		props.put("mail.transport.protocol", "smtp");
-		props.put("mail.smtp.host", SigaBaseProperties.getString("servidor.smtp"));
-		props.put("mail.host", SigaBaseProperties.getString("servidor.smtp"));
+		props.put("mail.smtp.host", servidorEmail);
+		props.put("mail.host", servidorEmail);
 		props.put("mail.mime.charset", "UTF-8");
 
 		// Cria sessão. setDebug(true) é interessante pois
@@ -140,7 +172,7 @@ public class Correio {
 			//Transport.send(msg);
 			
 			Transport tr = new br.gov.jfrj.siga.base.SMTPTransport(session, null);
-			tr.connect(SigaBaseProperties.getString("servidor.smtp"), Integer.valueOf(SigaBaseProperties.getString("servidor.smtp.porta")), null, null);
+			tr.connect(servidorEmail, Integer.valueOf(SigaBaseProperties.getString("servidor.smtp.porta")), null, null);
 			msg.saveChanges(); // don't forget this
 			tr.sendMessage(msg, msg.getAllRecipients());
 			tr.close();

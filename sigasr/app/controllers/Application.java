@@ -851,16 +851,11 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
+
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
-		List<SrLista> listasPrioridade = SrLista.listar(false);
 		
-		render(designacoes, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
-	}
-	
-	public static void listarDesignacaoDesativados() throws Exception {
-		listarDesignacao(Boolean.TRUE);
+		render(designacoes, orgaos, locais, pesquisaSatisfacao);
 	}
 
 	public static Long gravarDesignacao(SrConfiguracao designacao)
@@ -878,6 +873,34 @@ public class Application extends SigaApplication {
 		designacao.finalizar();
 		
 		return designacao.getId();
+	}
+	
+	public static void listarAcordoNivelServico(boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrConfiguracao> designacoes = SrConfiguracao.listarAcordosNivelServico(mostrarDesativados, null);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
+		
+		render(designacoes, orgaos, locais, unidadesMedida);
+	}
+
+	public static Long gravarAcordoNivelServico(SrConfiguracao sla)
+			throws Exception {
+		assertAcesso("ADM:Administrar");
+		//validarFormEditarAcordoNivelServico(designacao);
+		sla.salvarComoAcordoNivelServico();
+		
+		return sla.getId();
+	}
+
+	public static Long desativarAcordoNivelServico(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao acordo = JPA.em().find(SrConfiguracao.class, id);
+		acordo.finalizar();
+		
+		return acordo.getId();
 	}
 
 	public static Long reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
@@ -1189,8 +1212,10 @@ public class Application extends SigaApplication {
 		
 		if (id != null)
 			equipe = SrEquipe.findById(id);
-		else
+		else{
 			equipe = new SrEquipe();
+			equipe.lotacao = lotaTitular();
+		}
 		
 		List<SrConfiguracao> designacoesEquipe = equipe.getDesignacoes();
 		

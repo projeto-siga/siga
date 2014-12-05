@@ -107,6 +107,10 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO = 301;
 
 	public static final long TIPO_CONFIG_SR_PERMISSAO_USO_LISTA = 302;
+	
+	public static final long TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA = 303;
+	
+	public static final long TIPO_CONFIG_SR_ACORDO_NIVEL_SERVICO = 304;
 
 	public static final long TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO = 34;
 	

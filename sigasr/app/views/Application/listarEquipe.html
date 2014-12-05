@@ -48,8 +48,9 @@
 
 				<tbody>
 					#{list items:listaEquipe, as:'eq'}
-					<tr onclick="javascript:window.location='@{Application.editarEquipe(eq.idEquipe)}'"
-						style="cursor: pointer;">
+					<tr style="cursor: pointer;"
+					#{if eq.podeEditar(lotaTitular, cadastrante)}
+					onclick="javascript:window.location='@{Application.editarEquipe(eq.idEquipe)}'"#{/if}>
 						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 							${eq.lotacao?.sigla}
 						</td>

@@ -1431,7 +1431,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeDeixarPendente(lotaTitular, titular), "pendencia",
 				"modal=true"));
 
-		operacoes.add(new SrOperacao("clock_go", "Alterar Prazo",
+		operacoes.add(new SrOperacao("clock_edit", "Alterar Prazo",
 				podeAlterarPrazo(lotaTitular, titular), "alterarPrazo",
 				"modal=true"));
 

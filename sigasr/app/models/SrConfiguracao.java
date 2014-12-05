@@ -238,6 +238,32 @@ public class SrConfiguracao extends CpConfiguracao {
 				.em()
 				.createQuery(sb.toString()).getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAcordosNivelServico(boolean mostrarDesativados, DpLotacao atendente) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ACORDO_NIVEL_SERVICO);
+		
+		if (!mostrarDesativados)
+			sb.append(" and conf.hisDtFim is null");
+		else {
+			sb.append(" and conf.idConfiguracao in (");
+			sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
+		}
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
+	public void salvarComoAcordoNivelServico() throws Exception {
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ACORDO_NIVEL_SERVICO));
+		salvar();
+		
+		
+	}
 
 	public void salvarComoPermissaoUsoLista() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,

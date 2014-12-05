@@ -110,6 +110,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	
 	public static final long TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA = 303;
 	
+	public static final long TIPO_CONFIG_SR_ACORDO_NIVEL_SERVICO = 304;
+
 	public static final long TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO = 34;
 	
 	public static final long TIPO_CONFIG_AUTUAVEL = 35;
@@ -120,6 +122,7 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_DESIGNAR_TAREFA = 101;
 
 	// SIGA-GI
+
 	public static final long TIPO_CONFIG_UTILIZAR_SERVICO = 200;
 	public static final long TIPO_CONFIG_HABILITAR_SERVICO = 201;
 	public static final long TIPO_CONFIG_HABILITAR_SERVICO_DE_DIRETORIO = 202;

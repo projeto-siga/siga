@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,13 +15,16 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.ws.http.HTTPException;
 
 import models.SrAcao;
 import models.SrArquivo;
 import models.SrAtributo;
 import models.SrAtributoSolicitacao;
 import models.SrConfiguracao;
+import models.SrConfiguracao.SrConfiguracaoVO;
 import models.SrConfiguracaoBL;
 import models.SrEquipe;
 import models.SrGravidade;
@@ -38,6 +42,8 @@ import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
+
+import com.google.gson.JsonObject;
 
 import play.Logger;
 import play.Play;
@@ -290,6 +296,7 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditarItem(
 			SrItemConfiguracao itemConfiguracao) throws Exception {
+		StringBuffer sb = new StringBuffer();
 
 		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.siglaItemConfiguracao",
@@ -308,10 +315,13 @@ public class Application extends SigaApplication {
 		
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.message());
+			sb.append(error.message());
+			sb.append(";");
 		}
 
 		if (validation.hasErrors()) {
-			render("@editarItem", itemConfiguracao);
+			//render("@editarItem", itemConfiguracao);
+			throw new HTTPException(HttpServletResponse.SC_PRECONDITION_FAILED);
 		}
 	}
 
@@ -995,7 +1005,7 @@ public class Application extends SigaApplication {
 		render(itemConfiguracao, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}
 
-	public static void gravarItem(SrItemConfiguracao itemConfiguracao)
+	public static String gravarItem(SrItemConfiguracao itemConfiguracao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarItem(itemConfiguracao);
@@ -1035,6 +1045,8 @@ public class Application extends SigaApplication {
 //		A lista de itens está sendo chamada pelo Callback Success do Ajax
 		
 //		listarItem(false);
+		
+		return itemConfiguracao.getSrItemConfiguracaoJson();
 	}
 
 	public static void desativarItem(Long id, boolean mostrarDesativados) throws Exception {

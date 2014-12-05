@@ -138,14 +138,14 @@
             gestores["index"]--;
         }
 
-        #{list items:itemConfiguracao?.gestorSet, as:'item'}
-        	#{if item.dpPessoa}
-	        	gestores.incluirItem('${item.dpPessoa.sesbPessoa}${item.dpPessoa.matricula}', '${item.dpPessoa.nomePessoa}', 'pessoa', ${item.dpPessoa.idPessoa}, ${item.idGestorItem});
-        	#{/if}
-	        #{if item.dpLotacao}
-	        		gestores.incluirItem('${item.dpLotacao.siglaLotacao}', '${item.dpLotacao.nomeLotacao}', 'lotacao', ${item.dpLotacao.idLotacao}, ${item.idGestorItem});
-	        #{/if}
-		#{/list}
+//         #{list items:itemConfiguracao?.gestorSet, as:'item'}
+//         	#{if item.dpPessoa}
+// 	        	gestores.incluirItem('${item.dpPessoa.sesbPessoa}${item.dpPessoa.matricula}', '${item.dpPessoa.nomePessoa}', 'pessoa', ${item.dpPessoa.idPessoa}, ${item.idGestorItem});
+//         	#{/if}
+// 	        #{if item.dpLotacao}
+// 	        		gestores.incluirItem('${item.dpLotacao.siglaLotacao}', '${item.dpLotacao.nomeLotacao}', 'lotacao', ${item.dpLotacao.idLotacao}, ${item.idGestorItem});
+// 	        #{/if}
+// 		#{/list}
 
 	    //POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÇÃO E SOLICITANTE
         var jFatores = $("#fatoresUl"),
@@ -233,14 +233,14 @@
                 fatores["index"]--;
         };
 
-        #{list items:itemConfiguracao?.fatorMultiplicacaoSet, as:'itemFator'}
-        	#{if itemFator.dpPessoa}
-	        	fatores.incluirItem('${itemFator.dpPessoa.sesbPessoa}${itemFator.dpPessoa.matricula}', '${itemFator.dpPessoa.nomePessoa}', ${itemFator.numFatorMultiplicacao}, 'pessoa', ${itemFator.dpPessoa.idPessoa}, '${itemFator.idFatorMultiplicacao}Fator');
-        	#{/if}
-	        #{if itemFator.dpLotacao}
-	        		fatores.incluirItem('${itemFator.dpLotacao.siglaLotacao}', '${itemFator.dpLotacao.nomeLotacao}', ${itemFator.numFatorMultiplicacao}, 'lotacao', ${itemFator.dpLotacao.idLotacao}, '${itemFator.idFatorMultiplicacao}Fator');
-	        #{/if}
-		#{/list}
+//         #{list items:itemConfiguracao?.fatorMultiplicacaoSet, as:'itemFator'}
+//         	#{if itemFator.dpPessoa}
+// 	        	fatores.incluirItem('${itemFator.dpPessoa.sesbPessoa}${itemFator.dpPessoa.matricula}', '${itemFator.dpPessoa.nomePessoa}', ${itemFator.numFatorMultiplicacao}, 'pessoa', ${itemFator.dpPessoa.idPessoa}, '${itemFator.idFatorMultiplicacao}Fator');
+//         	#{/if}
+// 	        #{if itemFator.dpLotacao}
+// 	        		fatores.incluirItem('${itemFator.dpLotacao.siglaLotacao}', '${itemFator.dpLotacao.nomeLotacao}', ${itemFator.numFatorMultiplicacao}, 'lotacao', ${itemFator.dpLotacao.idLotacao}, '${itemFator.idFatorMultiplicacao}Fator');
+// 	        #{/if}
+// 		#{/list}
 	});
 
 	function serializarItemConfiguracao() {
@@ -248,9 +248,9 @@
         var jForm = $("form"),
             params = jForm.serialize();
 
-        jGestores.find("li").each(function(i){
-            var jDivs=$(this).find("span");
-            var tipo = jDivs[0].id;
+        $("#gestoresUl").find("li").each(function(i){
+            var jDivs=$(this).find("span"),
+            	tipo = jDivs[0].id;
             
             if(tipo === 'pessoa'){
             	params += '&itemConfiguracao.gestorSet[' + i + '].dpPessoa.idPessoa=' + jDivs[1].id;
@@ -258,41 +258,34 @@
             	params += '&itemConfiguracao.gestorSet[' + i + '].dpLotacao.idLotacao=' + jDivs[1].id;
             }                            
         });
-        jFatores.find("tr").each(function(i){
-            var jDivsF=$(this).find("span");
-            
-            if(jDivsF.length == 0) return;
-
-            var tipoF = jDivsF[0].id,
-            	indice = i-1;
+        $("#fatoresUl").find("li").each(function(i){
+            var jDivsF=$(this).find("span"),
+            	tipoF = jDivsF[0].id;
         	
             if(tipoF === 'pessoa') {
-                params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].dpPessoa.idPessoa=' + jDivsF[1].id;
-                } else if (tipoF === 'lotacao') {
-                    params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].dpLotacao.idLotacao=' + jDivsF[1].id;
-                }
+                params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].dpPessoa.idPessoa=' + jDivsF[1].id;
+            } else if (tipoF === 'lotacao') {
+                params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].dpLotacao.idLotacao=' + jDivsF[1].id;
+            }
 
-            params += '&itemConfiguracao.fatorMultiplicacaoSet[' + indice + '].numFatorMultiplicacao=' + jDivsF[1].innerHTML;
+            params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].numFatorMultiplicacao=' + parseInt(jDivsF[1].innerHTML.replace(" / Fator: ", ""));
    	 	});
-            
+
+        console.log(params);
+        
         return params;
     }
 </script>
 
 <div class="gt-form gt-content-box div-editar-item">
-	<input type="hidden" name="idItemConfiguracao" value="idItemConfiguracao">
-	<input type="hidden" name="hisIdIni" value="hisIdIni">
 	<div>
 		<div class="gt-content-box gt-for-table">
 			<form id="form" class="form100">
+				<input type="hidden" name="itemConfiguracao.idItemConfiguracao" value="itemConfiguracao.idItemConfiguracao" id="idItemConfiguracao">
+				<input type="hidden" name="itemConfiguracao.hisIdIni" value="itemConfiguracao.hisIdIni" id="hisIdIni">
 				<table class="gt-form-table">
 					<tr class="header">
 						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados Básicos</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram preenchidos.</p>
-						</td>
 					</tr>
 					<tr>
 						<td width="5%">
@@ -310,7 +303,7 @@
 							style="margin-left: 10px;">Título:</label> 
 							
 							<input type="text"
-								id="itemConfiguracao.tituloItemConfiguracao"
+								id="tituloItemConfiguracao"
 								name="itemConfiguracao.tituloItemConfiguracao"
 								value="${itemConfiguracao?.tituloItemConfiguracao}"
 								style="width: 474px;"/>
@@ -324,6 +317,7 @@
 						</td>
 						<td colspan="2">
 							<input type="text"
+								id="descrItemConfiguracao"
 								name="itemConfiguracao.descrItemConfiguracao"
 								value="${itemConfiguracao?.descrItemConfiguracao}"
 								style="width: 690px" />
@@ -364,7 +358,8 @@
 						</td>
 						<td>
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
- 								type="text" name="itemConfiguracao.numFatorMultiplicacaoGeral" value="${itemConfiguracao?.numFatorMultiplicacaoGeral}" size="20" />
+								   type="text" id="numFatorMultiplicacaoGeral" name="itemConfiguracao.numFatorMultiplicacaoGeral" 
+								   value="${itemConfiguracao?.numFatorMultiplicacaoGeral}" size="20" />
  								<span style="display: inline; color: red;">#{error 'itemConfiguracao.numFatorMultiplicacaoGeral' /}</span>
 						</td>
 					</tr>
@@ -387,6 +382,11 @@
 				</table>
  				<table class="gt-form-table">
 					<tr>
+						<tr>
+							<td>
+								<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Não foi possível gravar o registro.</p>
+							</td>
+						</tr>
 						<td colspan="4">
 							<a href="javascript: gravarItemConfiguracao();" class="gt-btn-medium gt-btn-left">Gravar</a>
 							<a href="javascript: itemModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a> 

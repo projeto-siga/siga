@@ -41,7 +41,8 @@
 
 	//removendo a referencia de '$' para o jQuery
 	$.noConflict();
-	
+
+	var table = null;
 	jQuery(document).ready(function($) {
 		if (QueryString.mostrarDesativados != undefined) {
 			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
@@ -54,8 +55,9 @@
 			else
 				location.href = '@{Application.listarItem()}';	
 		});
+		
 		/* Table initialization */
-		var table = $('#itens_configuracao_table')
+		table = $('#itens_configuracao_table')
 			.on('draw.dt', function() {
 					if(table) {
 						var btn = $('.bt-expandir'),
@@ -100,10 +102,14 @@
 					},
 					// Coluna similaridade e JSon 
 					{
-						"targets": [colunas.similaridade],
+						"targets": [colunas.similaridade, colunas.jSon],
 						"visible": false
 					}
-				]
+				],
+				"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+					var jSonItem = getJsonByString(aData[colunas.jSon]);
+					$('td:eq('+colunas.expandir+')', nRow).addClass('details-control');
+				}
 			});
 			$('#itens_configuracao_table').mostrarDetalhes(format, table);
 
@@ -112,7 +118,7 @@
 				
 				if (itemSelecionado != undefined) {
 					if (!$(this).hasClass('selected') ) {
-			            designacoesTable.$('tr.selected').removeClass('selected');
+						table.$('tr.selected').removeClass('selected');
 			            $(this).addClass('selected');
 			        }
 
@@ -162,16 +168,91 @@
 
 	function itemModalFechar() {
 		$("#editarItem_dialog").dialog('close');
+		limparDadosItemModal();
 	}
 
 	function gravarItemConfiguracao() {
-		//location.href = "@{Application.gravarItem()}?" + serializarItemConfiguracao();
-		itemModalFechar();
+		var row = recuperarInformacoesTela();
+
+		$.ajax({
+        	type: "POST",
+        	url: "@{Application.gravarItem()}",
+        	data: serializarItemConfiguracao(),
+        	dataType: "text",
+        	success: function(itemJson) {
+        		var jSon = getJsonByString(itemJson);
+        		row[colunas.jSon] = jSon;
+        		
+        		if (isEditing) {
+					table.api().row('.selected').data(row);
+				}
+				else {
+					table.api().row.add(row).draw();
+				}
+				
+        		itemModalFechar();
+        	},
+        	error: function(error) {
+        		var fieldsError = error.responseText.split(";");
+        		// limpa as mensagens de erros
+        		resetAllErrorMessage();
+        		
+        		// Mostra a mensagem de campos obrigatórios
+        		document.getElementById("erroCamposObrigatorios").style.display="inherit";
+        		
+        		for (var i = 0; i < fieldsError.length; i++) {
+        			var fieldName = fieldsError[i];
+        			var fooElement = document.getElementById(fieldName);
+        			
+        			if (fooElement != undefined)
+        				fooElement.style.display = "inline";
+        		}
+        	}
+       	});
+	}
+
+	function recuperarInformacoesTela() {
+		var jSonItem = atualizaItemConfiguracaoJson(),
+			id = jSonItem.id,
+			row = [
+				'',
+				$("#itemConfiguracaoSigla").val(),
+				$("#tituloItemConfiguracao").val(),
+				$("#descrItemConfiguracao").val(),
+				$("#descricaoSimilaridade").val(),
+				'<a class="once" onclick="desativarItem(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
+				jSonItem
+			];
+
+		return row;
 	}
 
 	function limparDadosItemModal() {
-		
+		$("#itemConfiguracaoSigla").val('');
+		$("#idItemConfiguracao").val('');
+		$("#hisIdIni").val('');
+		$("#tituloItemConfiguracao").val('');
+		$("#descrItemConfiguracao").val('');
+		$("#descricaoSimilaridade").val('');
+		$("#numFatorMultiplicacaoGeral").val('');
+
+		removerItensLista('gestoresUl');
+		removerItensLista('fatoresUl');
+
+		resetAllErrorMessage();
 	}
+
+	//Limpa as mensagens de campos obrigatórios.
+	function resetAllErrorMessage() {
+		//document.getElementById("erroCamposObrigatorios").style.display="none";
+	}
+
+	function removerItensLista(nomeLista) {
+		$("#"+nomeLista).find("li").each(function(i){
+            this.remove();
+            $("#"+nomeLista)[0]["index"]--;
+        });
+    }
 
 	function atualizaItemConfiguracaoJson() {
 		var gestorSetVO = [],
@@ -181,23 +262,25 @@
     	$("#gestoresUl").find("li").each(function(i){
             var jDivs=$(this).find("span"),
             	tipoGestor = jDivs[0].id,
-            	atributoGestor = '';
+            	atributoGestor = '',
+            	jSon = {};
 
             if(tipoGestor === 'pessoa'){
             	atributoGestor = 'dpPessoaVO';
             } else if (tipoGestor === 'lotacao') {
             	atributoGestor = 'dpLotacaoVO';
             }
+
+            jSon[atributoGestor] = jDivs[1].id;
             
-            gestorSetVO.push({
-            	atributoGestor: jDivs[1].id
-            });
+            gestorSetVO.push(jSon);
         });
 
-    	$("#fatoresUl").find("tr").each(function(i){
+    	$("#fatoresUl").find("li").each(function(i){
             var jDivsF=$(this).find("span"),
             	tipoFator = '',
-            	atributoFator = '';
+            	atributoFator = '',
+            	jSon = {};
             
             if(jDivsF.length == 0) return;
 
@@ -210,32 +293,53 @@
                 atributoFator = 'dpLotacaoVO';
             }
 
-            fatorMultiplicacaoSetVO.push({
-            	atributoFator: jDivsF[1].id,
-            	'numFatorMultiplicacao': jDivsF[1].innerHTML
-            });
+            jSon[atributoFator] = jDivsF[1].id;
+            jSon['numFatorMultiplicacao'] = parseInt(jDivsF[1].innerHTML.replace(" / Fator: ", ""));
+
+            fatorMultiplicacaoSetVO.push(jSon);
    	 	});
 
  		var itemConfiguracaoJSon = {
- 			"gestorSetVO": gestorSetVO,
- 			"fatorMultiplicacaoSetVO": fatorMultiplicacaoSetVO
+			'id': $("#idItemConfiguracao").val(),
+			'hisIdIni': $("#hisIdIni").val(),
+			'sigla': $("#itemConfiguracaoSigla").val(),
+			'titulo': $("#tituloItemConfiguracao").val(),
+			'descricao': $("#descrItemConfiguracao").val(),
+			'descricaoSimilaridade': $("#descricaoSimilaridade").val(),
+			'numFatorMultiplicacaoGeral': $("#numFatorMultiplicacaoGeral").val(),
+ 			'gestorSetVO': gestorSetVO,
+ 			'fatorMultiplicacaoSetVO': fatorMultiplicacaoSetVO
  		};
 		
  		return itemConfiguracaoJSon;
 	}
 
 	function atualizarModalItem(itemArray) {
-		var itemConfiguracaoJSon;
+		var jSonItem = getJsonByString(itemArray[colunas.jSon]);
+		
+		if (jSonItem) {
+			$("#itemConfiguracaoSigla").val(jSonItem.sigla);
+			$("#idItemConfiguracao").val(jSonItem.id);
+			$("#hisIdIni").val(jSonItem.hisIdIni);
+			$("#tituloItemConfiguracao").val(jSonItem.titulo);
+			$("#descrItemConfiguracao").val(jSonItem.descricao);
+			$("#descricaoSimilaridade").val(jSonItem.descricaoSimilaridade);
+			$("#numFatorMultiplicacaoGeral").val(jSonItem.numFatorMultiplicacaoGeral);
+			atualizarListaGestores(jSonItem);
+			atualizarListaFatorMultiplicacao(jSonItem);
+		}
+	}
+
+	function getJsonByString(value) {
+		var jSonItem;
 		
 		// transforma o valor String em objeto, caso necessário
-		if (itemArray[colunas.jSon].constructor.name ==  'String' && itemArray[colunas.jSon] != '')
-			itemConfiguracaoJSon = JSON.parse(itemArray[colunas.jSon]);
+		if (value && value.constructor.name ==  'String' && value != '')
+			jSonItem = JSON.parse(value);
 		else
-			itemConfiguracaoJSon = itemArray[colunas.jSon];
-		
-		if (itemConfiguracaoJSon) {
-			atualizarListaGestores(itemConfiguracaoJson);
-		}
+			jSonItem = value;
+
+		return jSonItem;
 	}
 
 	function atualizarListaGestores(jSon) {
@@ -250,6 +354,22 @@
 					gestoresUI.incluirItem(gestorItem.dpPessoaVO.sigla, gestorItem.dpPessoaVO.descricao, 'pessoa', gestorItem.dpPessoaVO.id, gestorItem.idGestorItem);
 				else if (gestorItem.dpLotacaoVO)
 		        	gestoresUI.incluirItem(gestorItem.dpLotacaoVO.sigla, gestorItem.dpLotacaoVO.descricao, 'lotacao', gestorItem.dpLotacaoVO.id, gestorItem.idGestorItem);
+			}
+		}
+	}
+
+	function atualizarListaFatorMultiplicacao(jSon) {
+		var fatoresUI = $("#fatoresUl")[0];
+		
+		if (jSon.fatorMultiplicacaoSetVO) {
+			// cria os itens da lista de gestores, e adiciona na tela
+			for (i = 0; i < jSon.fatorMultiplicacaoSetVO.length; i++) {
+				var fatorItem = jSon.fatorMultiplicacaoSetVO[i];
+
+				if (fatorItem.dpPessoaVO)
+					fatoresUI.incluirItem(fatorItem.dpPessoaVO.sigla, fatorItem.dpPessoaVO.descricao, fatorItem.numFatorMultiplicacao, 'pessoa', fatorItem.dpPessoaVO.id, fatorItem.idFatorMultiplicacao+'Fator');
+				else if (fatorItem.dpLotacaoVO)
+					fatoresUI.incluirItem(fatorItem.dpLotacaoVO.sigla, fatorItem.dpLotacaoVO.descricao, fatorItem.numFatorMultiplicacao, 'lotacao', fatorItem.idFatorMultiplicacao+'Fator');
 			}
 		}
 	}

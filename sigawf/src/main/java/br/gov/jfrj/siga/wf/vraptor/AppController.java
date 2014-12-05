@@ -409,8 +409,12 @@ public class AppController extends WfController {
 			util.assertPodeTransferirDocumentosVinculados(taskInstance,
 					util.getSiglaTitular());
 
+		Boolean temPermissaoDesignar = Wf.getInstance().getConf()
+				.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), 
+						"SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Workflow;DESIGNAR:Designar tarefas");
+		
 		if (fActorChanged) {
-			if (actorId != null) {
+			if (actorId != null && !temPermissaoDesignar) {
 				util.assertLotacaoAscendenteOuDescendente(
 						lotAtualAtor != null ? lotAtualAtor : lotAtualPool,
 						daoPes(ator_pessoaSel.getId()).getLotacao());
@@ -422,9 +426,11 @@ public class AppController extends WfController {
 			if (lotaActorId == null)
 				taskInstance.setPooledActors(new String[] {});
 			else {
-				util.assertLotacaoAscendenteOuDescendente(
-						lotAtualPool != null ? lotAtualPool : lotAtualAtor,
-						daoLot(lotaAtor_lotacaoSel.getId()));
+				if (!temPermissaoDesignar){
+					util.assertLotacaoAscendenteOuDescendente(
+							lotAtualPool != null ? lotAtualPool : lotAtualAtor,
+							daoLot(lotaAtor_lotacaoSel.getId()));
+				}
 				taskInstance.setPooledActors(new String[] { lotaActorId });
 			}
 		}

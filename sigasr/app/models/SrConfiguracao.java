@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -19,6 +20,7 @@ import javax.persistence.Transient;
 import models.SrAcao.SrAcaoVO;
 import models.SrItemConfiguracao.SrItemConfiguracaoVO;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
@@ -100,6 +102,9 @@ public class SrConfiguracao extends CpConfiguracao {
 	@ManyToOne
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista listaPrioridade;
+	
+	@Enumerated
+	public SrPrioridade prioridade;
 	
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "SR_LISTA_CONFIGURACAO", schema="SIGASR", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
@@ -354,16 +359,41 @@ public class SrConfiguracao extends CpConfiguracao {
 				.getResultList();
 	}
 
-	public static SrConfiguracao buscar(SrConfiguracao conf) throws Exception {
-		return buscar(conf, new int[] {});
-	}
-
-	public static SrConfiguracao buscar(SrConfiguracao conf,
+	private static SrConfiguracao buscar(SrConfiguracao conf,
 			int[] atributosDesconsideradosFiltro) throws Exception {
 		return (SrConfiguracao) SrConfiguracaoBL.get().buscaConfiguracao(conf,
 				atributosDesconsideradosFiltro, null);
 	}
 	
+	public static SrConfiguracao buscarDesignacao(SrConfiguracao conf)
+			throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		return buscar(conf, new int[] { SrConfiguracaoBL.ATENDENTE});
+	}
+	
+	public static SrConfiguracao buscarDesignacao(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		return buscar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro,
+				new int[] { SrConfiguracaoBL.ATENDENTE }));
+	}
+	
+	public static SrConfiguracao buscarAssociacao(SrConfiguracao conf)
+			throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+		return buscar(conf, new int[] {});
+	}
+	
+	public static SrConfiguracao buscarAcordoNivelServico(SrConfiguracao conf)
+			throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ACORDO_NIVEL_SERVICO));
+		return buscar(conf, new int[] {});
+	}
+
 	public static List<SrConfiguracao> listar(SrConfiguracao conf) throws Exception {
 		return listar(conf, new int[] {});
 	}

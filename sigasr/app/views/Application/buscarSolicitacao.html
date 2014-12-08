@@ -248,6 +248,20 @@
 						#{include 'Application/exibirAtributosConsulta.html' /}
 							
 						<tr>
+							<td>Acordo</td>
+							<td>#{selecao tipo:'acordo', nome:'filtro.acordo',
+								value:filtro.acordo, grande:true /}
+								<div id="chkNaoSatisfatorios" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
+									<label>#{checkbox name:'filtro.naoSatisfatorios',
+									value:filtro.naoSatisfatorios /} Apenas solicita&ccedil;&otilde;es em descumprimento dos seus acordos</label>
+								</div>
+								<script language="javascript">
+									$("#chkNaoSatisfatorios").appendTo("#spanAcordofiltroacordo");
+								</script>
+							</td>
+						</tr>	
+							
+						<tr>
 							<td colspan="2"><input type="submit" value="Buscar" class="gt-btn-medium gt-btn-left" /></td>
 						</tr>
 				</table>

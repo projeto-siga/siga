@@ -5,7 +5,15 @@
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 
 <script type="text/javascript">
-	
+
+	function ocultaAssociacoes(){
+		if ($("#objetivo").val() == 1){
+			$("#associacoes").show();
+		} else {
+			$("#associacoes").hide();
+		}
+	}
+
 	var tableAssociacao,
 		colunas = {};
 	colunas.botaoExpandir =               0;
@@ -26,6 +34,8 @@
 	var table = null;
 	
 	jQuery( document ).ready(function( $ ) {
+
+		ocultaAssociacoes();
 		
 		/* Table initialization */
 		table = $('#associacao_table')
@@ -322,6 +332,16 @@
 					value="${att?.descrAtributo}" size="60" />
 			</div>
 			<div class="gt-form-row gt-width-66">
+				<label>C&oacute;digo</label> <input type="text"
+					name="att.codigoAtributo"
+					value="${att?.codigoAtributo}" size="60" />
+			</div>
+			<div class="gt-form-row gt-width-66">
+				<label>Objetivo do atributo</label> #{select id:'objetivo', name:'att.objetivoAtributo.idObjetivo', items:objetivos,
+				labelProperty:'descrObjetivo', valueProperty:'idObjetivo', value:att.objetivoAtributo.idObjetivo, style:'width:393px;',
+				onchange:'javascript:ocultaAssociacoes();'/}
+			</div>
+			<div class="gt-form-row gt-width-66">
 				<label>Tipo de atributo</label> #{select name:'att.tipoAtributo', items:models.SrTipoAtributo.values(),
 				labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:393px;' /}
 			</div>
@@ -334,6 +354,7 @@
 					<span style="color: red" id="erroDescrPreDefinido">#{error
 					'att.descrPreDefinido' /}</span>
 			</div>
+			<div id="associacoes">
 			<div class="container">
 				<div class="title-table">
 					<h3 style="padding-top: 25px;">Associações</h3>
@@ -387,6 +408,7 @@
 			<div class="gt-table-buttons">
 							<a href="javascript: inserirAssociacao()" class="gt-btn-medium gt-btn-left">Incluir</a>
 						</div>
+			</div><!-- id="associacoes" -->
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" />

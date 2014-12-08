@@ -405,6 +405,8 @@
 				type="hidden" name="solicitacao.idSolicitacao" id="idSol"
 				value="${solicitacao.idSolicitacao}" /> 
 				#{/if}
+				<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMM" 
+				value="${solicitacao.dtIniEdicaoDDMMYYYYHHMM}" /> 
 				<input type="hidden"
 				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
 				<input type="hidden"
@@ -543,6 +545,7 @@
 		</div>
 	</div>
 	#{include 'Application/exibirCronometro.html' /}
+	#{include 'Application/exibirPendencias.html' /}
 	
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content" id="solicitacoesRelacionadas">

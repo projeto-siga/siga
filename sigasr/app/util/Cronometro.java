@@ -3,18 +3,18 @@ package util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.joda.time.Interval;
+
 import models.SrSolicitacao;
 
 public class Cronometro {
 
 	private String descricao;
 
-	private String inicio;
+	private Date inicio;
 
-	private Long decorrido;
+	private Date fim;
 
-	private String prazo;
-	
 	private boolean ligado;
 
 	public boolean isLigado() {
@@ -36,29 +36,41 @@ public class Cronometro {
 	}
 
 	public String getInicio() {
-		return inicio;
+		if (inicio != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return df.format(inicio);
+		}
+		return "";
 	}
 
-	public String getPrazo() {
-		return prazo;
-	}
-
-	public Long getDecorrido() {
-		return decorrido;
-	}
-
-	public Cronometro setInicio(String inicio) {
+	public Cronometro setInicio(Date inicio) {
 		this.inicio = inicio;
 		return this;
 	}
 
-	public Cronometro setDecorrido(Long decorrido) {
-		this.decorrido = decorrido;
+	public String getFim() {
+		if (fim != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return df.format(fim);
+		}
+		return "";
+	}
+
+	public Cronometro setFim(Date fim) {
+		this.fim = fim;
 		return this;
 	}
 
-	public Cronometro setPrazo(String prazo) {
-		this.prazo = prazo;
-		return this;
+	public Long getRemanescente() {
+		if (!isLigado() || fim == null)
+			return null;
+		Date now = new Date();
+		if (now.before(fim))
+			return new Interval(new Date().getTime(), fim.getTime())
+					.toDurationMillis();
+		else
+			return new Interval(fim.getTime(), new Date().getTime())
+					.toDurationMillis() * -1;
 	}
+
 }

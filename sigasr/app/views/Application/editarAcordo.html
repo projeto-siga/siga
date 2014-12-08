@@ -1,0 +1,183 @@
+#{extends 'main.html' /} #{set title:'Edição de Acordo' /}
+<style>
+#sortable ul {
+        height: 1.5em;
+        line-height: 1.2em;
+}
+
+.ui-state-highlight {
+        height: 1.5em;
+        line-height: 1.2em;
+}
+</style>
+<script>
+$(function() {
+
+        var jParametrosAcordo = $("#parametrosAcordo"),
+        parametrosAcordo = jParametrosAcordo[0],
+        jDialog = $("#dialog"),
+        dialog = jDialog[0],
+        jValor = $("#valor"),
+        jParametro = $("#parametro");
+        jUnidadeMedida = $("#unidadeMedida");
+   
+        $("#botaoIncluir").click(function(){
+                jDialog.data('acao',parametrosAcordo.incluirItem).dialog('open');
+        });
+       
+        jDialog.dialog({
+                autoOpen: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                resizable: false,
+                close: function() {
+                        jValor.val('');
+                        jDialog.data('valor','');
+                        jDialog.data('parametro','');
+                        jDialog.data('unidadeMedida','');
+                },
+                open: function(){
+                        if (jDialog.data("valor"))
+                                jDialog.dialog('option', 'title', 'Alterar ParametroAcordo');
+                        else
+                                jDialog.dialog('option', 'title', 'Incluir ParametroAcordo');                  
+                        jValor.val(jDialog.data("valor"));
+                        jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
+                        jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);
+                }
+        });
+        $("#modalOk").click(function(){
+                var acao = jDialog.data('acao');
+                var jParametroEscolhido = jParametro.find("option:selected");
+                var jUnidadeEscolhida = jUnidadeMedida.find("option:selected");
+                acao(jParametroEscolhido.val(), jParametroEscolhido.text(), jValor.val(), jUnidadeEscolhida.val(), jUnidadeEscolhida.text().trim(), jDialog.data("id"));
+                jDialog.dialog('close');
+        });
+        $("#modalCancel").click(function(){
+                jDialog.dialog('close');
+        });
+
+        parametrosAcordo["index"] = 0;
+        parametrosAcordo.incluirItem = function(idParametro, nomeParametro, valor, idUnidadeMedida, descrUnidadeMedida, id){
+                if (!id)
+                        id = 'novo_' + ++parametrosAcordo["index"];
+                jParametrosAcordo.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
+                var jNewTr = jParametrosAcordo.find("li:last-child");
+                jNewTr.append("<span style=\"display: inline-block\" id=\"" + idParametro + "\">"
+                                + nomeParametro + "</span>: <span>" + valor + "</span> <span id=\"" + idUnidadeMedida + "\">" + descrUnidadeMedida + "</span>");                
+                jNewTr.append("&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/pencil.png\" style=\"visibility:hidden; cursor: pointer\" />");
+                jNewTr.append("&nbsp;<img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: hidden; cursor: pointer\" />");
+                jNewTr.find("img:eq(0)").click(function(){
+                        var jDivs=jNewTr.find("span");
+                        jDialog.data("parametro",jDivs[0].id)
+                        		.data("valor",jDivs[1].innerHTML)
+                        		.data("unidadeMedida",jDivs[2].id)
+                                .data("id",id)
+                                .data("acao", parametrosAcordo.alterarItem)
+                                .dialog("open");
+                });
+                jNewTr.find("img:eq(1)").click(function(){
+                        parametrosAcordo.removerItem(jNewTr.attr("id"));
+                });
+                jNewTr.mouseover(function(){
+                        jNewTr.find("img").css("visibility", "visible");
+                });
+                jNewTr.mouseout(function(){
+                        jNewTr.find("img").css("visibility", "hidden");
+                });
+        }
+        parametrosAcordo.alterarItem = function(idParametro, nomeParametro, valor, idUnidadeMedida, descrUnidadeMedida, id){
+                var jDivs=$("#"+id).find("span");
+                jDivs[0].id = idParametro;
+                jDivs[0].innerHTML = nomeParametro;
+                jDivs[1].innerHTML = valor;
+                jDivs[2].id = idUnidadeMedida;
+                jDivs[2].innerHTML = descrUnidadeMedida;
+        }
+        parametrosAcordo.removerItem = function(idItem){
+                $("#"+idItem).remove();
+                parametrosAcordo["index"]--;
+        }
+
+        #{list items:acordo.atributoAcordoSet, as:'parametroAcordo'}
+                parametrosAcordo.incluirItem('${parametroAcordo.atributo.idAtributo}', '${parametroAcordo.atributo.nomeAtributo}', '${parametroAcordo.valor}', '${parametroAcordo.unidadeMedida?.idUnidadeMedida}', '${parametroAcordo.unidadeMedida?.plural}', ${parametroAcordo.idAtributoAcordo});
+        #{/list}
+
+        $("[value='Gravar']").click(function(){
+            	if (!block())
+                	return false;
+                var jForm = $("form"),
+                        params = jForm.serialize();
+                jParametrosAcordo.find("li").each(function(i){
+                        var jDivs=$(this).find("span");
+                        params += '&acordo.atributoAcordoSet[' + i + '].valor=' + jDivs[1].innerHTML;
+                        params += '&acordo.atributoAcordoSet[' + i + '].atributo.idAtributo=' + jDivs[0].id;
+                        params += '&acordo.atributoAcordoSet[' + i + '].unidadeMedida=' + jDivs[2].id;
+                        if (this.id.indexOf("novo_") < 1)
+                                params += '&acordo.atributoAcordoSet[' + i + '].idAtributoAcordo=' + this.id;
+                });
+                location.href = '@{Application.gravarAcordo()}?' + params;
+        });
+});
+</script>
+<div class="gt-bd clearfix">
+        <div class="gt-content">
+                <h2>Cadastro de Acordo</h2>
+
+                <div class="gt-form gt-content-box">
+                        <form>
+                                #{if acordo?.idAcordo} <input type="hidden" name="acordo.idAcordo"
+                                        value="${acordo.idAcordo}"> #{/if}
+                                <div class="gt-form-row gt-width-66">
+                                        <label>Nome</label> <input type="text" name="acordo.nomeAcordo"
+                                                value="${acordo?.nomeAcordo}" size="60" />
+                                </div>
+                                <div class="gt-form-row gt-width-66">
+                                        <label>Descrição</label> <input type="text"
+                                                name="acordo.descrAcordo" value="${acordo?.descrAcordo}" size="60" />
+                                </div>
+                                <div class="gt-form-row">
+                                        <label>Par&acirc;metros</label>
+                                        <ul id="parametrosAcordo" style="color: #365b6d">
+                                        </ul>
+                                        <input type="button" value="Incluir" id="botaoIncluir"
+                                                class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+                                </div>
+                                <div class="gt-form-row">
+                                        <input type="button" value="Gravar"
+                                                class="gt-btn-medium gt-btn-left" /> 
+                                       	<a href="@{Application.buscarAcordo}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+                                </div>
+                        </form>
+                </div>
+        </div>
+</div>
+
+<div id="dialog">
+        <div class="gt-content">
+                <div class="gt-form gt-content-box">
+                        <div class="gt-form-row">
+                                <label>Par&acirc;metro</label> #{select name:'parametro', id:'parametro'}
+                                #{list items:parametros, as:'parametro'} #{option parametro.idAtributo}
+                                ${parametro.nomeAtributo} #{/option} #{/list} #{/select}
+                        </div>
+                         <div class="gt-form-row">
+                                <label>Valor</label> <input type="text" id="valor"
+                                        name="valor" value="" />
+                        #{select name:'unidadeMedida', 
+                        	id:'unidadeMedida',
+							items:unidadesMedida, 
+							valueProperty:'idUnidadeMedida',
+							labelProperty:'plural'}
+							#{option 0}#{/option} 
+						#{/select}
+						</div>
+                        <div class="gt-form-row">
+                                <input type="button" id="modalOk" value="Ok"
+                                        class="gt-btn-medium gt-btn-left" /> <input type="button"
+                                        value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+                        </div>
+                </div>
+        </div>
+</div>

@@ -7,9 +7,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import models.SrAcordo;
+import models.SrAtributo;
 import models.SrAtributoSolicitacao;
 import models.SrSolicitacao;
-import models.SrAtributo;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -33,10 +34,14 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public CpMarcador situacao;
 
 	public DpPessoa atendente;
+	
+	public SrAcordo acordo;
 
 	public DpLotacao lotaAtendente;
 
 	public boolean naoDesignados;
+	
+	public boolean naoSatisfatorios;
 	
 	public boolean apenasFechados;
 
@@ -44,14 +49,22 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SrSolicitacao> buscar() throws Exception {
-		String query = montarBusca(" from SrSolicitacao sol where ");
-
-		List listaRetorno = JPA
+		String query = montarBusca("select sol from SrSolicitacao sol ");
+		
+		List<SrSolicitacao> lista = JPA
 				.em()
 				.createQuery( query )
 				.getResultList();
+		
+		List<SrSolicitacao> listaFinal = new ArrayList<SrSolicitacao>();
+		
+		if (naoSatisfatorios){
+			for (SrSolicitacao sol : lista)
+				if (!sol.isAcordosSatisfeitos())
+					listaFinal.add(sol);
+		} else listaFinal.addAll(lista);
 
-		return listaRetorno;
+		return listaFinal;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -71,6 +84,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private String montarBusca(String queryString) {
 		
 		StringBuffer query = new StringBuffer(queryString);
+		
+		if (acordo != null && acordo.idAcordo > 0L)
+			query.append(" inner join sol.acordos acordo where acordo.hisIdIni = "
+					+ acordo.getHisIdIni() + " and ");
+		else query.append(" where ");
+		
 		query.append(" sol.hisDtFim is null ");
 		
 		if (cadastrante != null)

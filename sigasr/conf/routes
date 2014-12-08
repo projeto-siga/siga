@@ -32,12 +32,19 @@ GET     /public/                            staticDir:public
 *		/item/buscar						Application.buscarItem
 *		/item/desativar/{id}				Application.desativarItem
 
+*		/acordo/editar/{id}					Application.editarAcordo
+*		/acordo/editar						Application.editarAcordo
+*		/acordo/gravar						Application.gravarAcordo
+*		/acordo/buscar						Application.buscarAcordo
+*		/acordo/selecionar					Application.selecionarAcordo
+*		/acordo/desativar/{id}				Application.desativarAcordo
+
 *		/atributo/editar/{id}				Application.editarAtributo		
 *		/atributo/editar					Application.editarAtributo		
 *		/atributo/gravar					Application.gravarAtributo		
 *		/atributo/listar					Application.listarAtributo		
 *		/atributo/desativar/{id}			Application.desativarAtributo	
-		/atributo/reativar/{id}				Application.reativarAtributo	
+*		/atributo/reativar/{id}				Application.reativarAtributo	
 		
 *		/associacao/editar/{id}				Application.editarAssociacao
 *		/associacao/editar					Application.editarAssociacao

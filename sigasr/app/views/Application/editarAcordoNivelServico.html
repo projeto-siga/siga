@@ -179,45 +179,9 @@
 			<div class="box gt-width-50">
 				<label>Atendente</label>#{selecao
 					tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.atendente">Atendente não informado;</span>
+				<span style="display:none;color: red" id="sla.atendente">Atendente não informado;</span>
 			</div>
 		</div>	
-			
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left gt-width-50">
-				<label>Pré-atendente</label>#{selecao
-					tipo:'lotacao', nome:'preAtendente',
-					value:preAtendente?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.preAtendente">Pré-Atendente não informado.</span>
-			</div>
-
-			<div class="box gt-width-50">
-				<label>Pós-atendente</label> #{selecao
-					tipo:'lotacao', nome:'posAtendente',
-					value:posAtendente?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.posAtendente">Pós-Atendente não informado.</span>
-			</div>
-		</div>
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left gt-width-50">
-				<label>Equipe de Qualidade</label> #{selecao
-					tipo:'lotacao', nome:'equipeQualidade',
-					value:equipeQualidade?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.equipeQualidade">Equipe de qualidade não informada.</span>
-			</div>
-			<div class="box gt-width-50">
-				<label>Pesquisa de satisfação</label> 
-					#{select name:'pesquisaSatisfacao', 
-						items:_pesquisaSatisfacao, 
-						valueProperty:'idPesquisa',
-						labelProperty:'nomePesquisa', 
-						value:pesquisaSatisfacao?.idPesquisa,
-						class:'select-siga',
-						style:'width: 100%;'}
-						#{option 0}Nenhuma#{/option} 
-					#{/select}
-			</div>
-		</div>
 
 		<hr/>
 		<div class="gt-content">
@@ -287,6 +251,105 @@
 			</div>
 		</div>
 		
+		<div > 
+			<hr/>
+			<label>SLA</label>
+			<div class="gt-form-row box-wrapper">
+				<div class="box box-left">
+					<label>Pré-atendimento</label>
+					<div>
+						<input id="slaPreAtendimentoQuantidade"
+							type="text"
+							name="slaPreAtendimentoQuantidade" 
+							value="${slaPreAtendimentoQuantidade}" />
+						#{select name:'unidadeMedidaPreAtendimento', 
+							items:_unidadesMedida, 
+							valueProperty:'idUnidadeMedida',
+							labelProperty:'descricao', 
+							value:unidadeMedidaPreAtendimento?.idUnidadeMedida}
+							#{option 0}Nenhum#{/option} 
+						#{/select}
+					</div>
+					<label>Atendimento</label>
+					<div>
+						<input id="slaAtendimentoQuantidade"
+							type="text"
+							name="slaAtendimentoQuantidade" 
+							value="${slaAtendimentoQuantidade}" />
+						#{select name:'unidadeMedidaAtendimento', 
+							items:_unidadesMedida, 
+							valueProperty:'idUnidadeMedida',
+							labelProperty:'descricao', 
+							value:unidadeMedidaAtendimento?.idUnidadeMedida}
+							#{option 0}Nenhum#{/option} 
+						#{/select}
+					</div>
+					<label>Pós-atendimento</label>
+					<div>
+						<input id="slaPosAtendimentoQuantidade"
+							type="text"
+							name="slaPosAtendimentoQuantidade" 
+							value="${slaPosAtendimentoQuantidade}" />
+						#{select name:'unidadeMedidaPosAtendimento', 
+							items:_unidadesMedida, 
+							valueProperty:'idUnidadeMedida',
+							labelProperty:'descricao', 
+							value:unidadeMedidaPosAtendimento?.idUnidadeMedida}
+							#{option 0}Nenhum#{/option} 
+						#{/select}
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Margem de segurança na divulgação (%)</label>
+						<input id="margemSeguranca"
+							type="text"
+							name="margemSeguranca" 
+							value="${margemSeguranca}" />
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>#{checkbox name:'divulgarSLA',
+							value:divulgarSLA/} Divulgar SLA</label>
+					</div>
+				</div>
+				<div class="box">
+					<div class="gt-form-row gt-width-100">
+						<label>Observação para divulgação de SLA</label>
+						<textarea cols="70" rows="10" name="observacaoSLA"
+							id="observacaoSLA" maxlength="8192">${observacaoSLA}</textarea>
+					</div>
+				</div>
+			</div>
+			
+			<hr/>
+			<label>Notificação de atraso</label>
+			<div class="gt-form-row box-wrapper">
+				<div class="gt-width-50">
+					<label>#{checkbox name:'notificarGestor',
+						value:notificarGestor/} Gestor do item de Configuração</label>
+				</div>
+				<div class="gt-width-25">
+					<label>#{checkbox name:'notificarSolicitante',
+						value:notificarSolicitante/} Solicitante</label>
+				</div>
+				
+				<div class="gt-width-25">
+					<label>#{checkbox name:'notificarCadastrante',
+						value:notificarCadastrante/} Cadastrante</label>
+				</div>
+			</div>
+			
+			<div class="gt-form-row box-wrapper">
+				<div class="gt-width-50">
+					<label>#{checkbox name:'notificarInterlocutor',
+						value:notificarInterlocutor/} Interlocutor</label>
+				</div>
+				
+				<div class="gt-width-50">
+					<label>#{checkbox name:'notificarAtendente',
+						value:notificarAtendente/} Atendente</label>
+				</div>
+			</div>
+			
+        </div><!-- escondendo parte que sair� desta tela -->
 		<div class="gt-form-row">
 			<div class="gt-form-row">
 				<a href="javascript: if (block()) gravarDesignacao();" class="gt-btn-medium gt-btn-left">Ok</a>
@@ -324,7 +387,7 @@
 						<label>Item de Configuração</label> #{selecao tipo:'item',
 							nome:'itemConfiguracao',
 							value:itemConfiguracao?.atual, onblur:'bloqueiaItemOk();', onchange:'bloqueiaItemOkSeVazio();' /}
-						<span style="display:none;color: red" id="designacao.itemConfiguracao">Item de Configuração não informado.</span>
+						<span style="display:none;color: red" id="sla.itemConfiguracao">Item de Configuração não informado.</span>
 					</div>
 					<div class="gt-form-row">
 						<button id="modalItemOk" onclick="javascript: inserirItemConfiguracao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>
@@ -356,7 +419,7 @@
 					<div class="gt-form-row">
 						<label>Ação</label> #{selecao tipo:'acao',
 							nome:'acao', value:acao?.atual, onblur:'bloqueiaAcaoOk();', onchange:'bloqueiaAcaoOkSeVazio();' /}
-						<span style="display:none;color: red" id="designacao.acao">Ação não informada.</span>
+						<span style="display:none;color: red" id="sla.acao">Ação não informada.</span>
 					</div>
 					<div class="gt-form-row">
 						<button id="modalAcaoOk" onclick="javascript: inserirAcao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>

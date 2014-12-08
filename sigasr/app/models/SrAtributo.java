@@ -55,8 +55,15 @@ public class SrAtributo extends HistoricoSuporte {
 	@Enumerated
 	public SrTipoAtributo tipoAtributo;
 	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ID_OBJETIVO")
+	public SrObjetivoAtributo objetivoAtributo;
+	
 	@Column(name = "DESCR_PRE_DEFINIDO")
 	public String descrPreDefinido;
+	
+	@Column(name = "CODIGO_ATRIBUTO")
+	public String codigoAtributo;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
@@ -75,8 +82,29 @@ public class SrAtributo extends HistoricoSuporte {
 	public void setId(Long id) {
 		idAtributo = id;
 	}
+	
+	public static List<SrAtributo> listarParaSolicitacao(
+			boolean mostrarDesativados) {
+		SrObjetivoAtributo obj = SrObjetivoAtributo
+				.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO);
+		return listar(obj, mostrarDesativados);
+	}
+	
+	public static List<SrAtributo> listarParaAcordo(
+			boolean mostrarDesativados) {
+		SrObjetivoAtributo obj = SrObjetivoAtributo
+				.findById(SrObjetivoAtributo.OBJETIVO_ACORDO);
+		return listar(obj, mostrarDesativados);
+	}
+	
+	public static List<SrAtributo> listarParaIndicador(
+			boolean mostrarDesativados) {
+		SrObjetivoAtributo obj = SrObjetivoAtributo
+				.findById(SrObjetivoAtributo.OBJETIVO_INDICADOR);
+		return listar(obj, mostrarDesativados);
+	}
 
-	public static List<SrAtributo> listar(boolean mostrarDesativados) {
+	public static List<SrAtributo> listar(SrObjetivoAtributo objetivo, boolean mostrarDesativados) {
 		StringBuilder queryBuilder = new StringBuilder();
 
 		if (!mostrarDesativados) {
@@ -85,6 +113,10 @@ public class SrAtributo extends HistoricoSuporte {
 			queryBuilder.append("SELECT ta FROM SrAtributo ta ");
 			queryBuilder.append("WHERE ta.idAtributo in (SELECT MAX(idAtributo) FROM SrAtributo GROUP BY hisIdIni) ");
 		}
+		
+		if (objetivo != null)
+			queryBuilder.append(" and objetivoAtributo.idObjetivo = " + objetivo.idObjetivo);
+		
 		return SrAtributo.find(queryBuilder.toString()).fetch();
 	}
 
@@ -128,5 +160,18 @@ public class SrAtributo extends HistoricoSuporte {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public static SrAtributo get(String codigo) {
+		return SrAtributo.find("byCodigoAtributo", codigo).first();
+	}
+	
+	@Override
+	public void salvar() throws Exception {
+		
+		if (objetivoAtributo == null)
+			throw new IllegalStateException("Objetivo nao informado");
+		
+		super.salvar();
 	}
 }

@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.cp;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -9,11 +8,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "CP_UNIDADE_MEDIDA", schema = "CORPORATIVO")
 public class CpUnidadeMedida extends AbstractCpUnidadeMedida {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6079358181141108760L;
 
 	final static public int ANO = 1;
 
@@ -23,33 +17,14 @@ public class CpUnidadeMedida extends AbstractCpUnidadeMedida {
 	
 	final static public int HORA = 4;
 	
-	/**
-	 * Recupera a lista de unidades de medida contendo Dia e Hora.
-	 */
-	public static List<CpUnidadeMedida> diaHoraLista() {
-		List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.all().fetch();
-		List<CpUnidadeMedida> lista = new ArrayList<CpUnidadeMedida>();
-		
-		for (CpUnidadeMedida unidadeMedida : unidadesMedida) {
-			if (unidadeMedida.getIdUnidadeMedida().equals(Long.valueOf(DIA)) || unidadeMedida.getIdUnidadeMedida().equals(Long.valueOf(HORA)))
-				lista.add(unidadeMedida);
-		}
-		
-		return lista;
-	}
+	final static public int MINUTO = 5;
 	
-	public Long toMilis() {
-		Long milis = 0L;
-		
-		if (getIdUnidadeMedida() != null) {
-			switch(getIdUnidadeMedida().intValue()) {
-				case ANO: milis = 31557600000L;
-				case MES: milis = 2629800000L;
-				case DIA: milis = 86400000L;
-				case HORA: milis = 3600000L;
-			}
-		}
-		
-		return milis;
+	final static public int SEGUNDO = 6;
+	
+	public String getPlural(){
+		if (getDescricao().endsWith("s"))
+			return getDescricao() + "es";
+		return getDescricao() + "s";
 	}
+
 }

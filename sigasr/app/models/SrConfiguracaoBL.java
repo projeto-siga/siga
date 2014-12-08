@@ -22,6 +22,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 	public static int TIPO_ATRIBUTO = 34;
 	
 	public static int ATENDENTE = 35;
+	
+	public static int PRIORIDADE = 36;
 
 	public static SrConfiguracaoBL get() {
 		return (SrConfiguracaoBL) Sr.getInstance().getConf();
@@ -72,24 +74,16 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE
 					&& conf.posAtendente == null)
 				return false;
-
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_EQUIPE_QUALIDADE
-					&& conf.equipeQualidade == null)
-				return false;
 			
 			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO
 					&& conf.pesquisaSatisfacao == null)
 				return false;
 			
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE
-					&& (conf.getListaConfiguracaoSet() == null || conf.getListaConfiguracaoSet().isEmpty()))
-				return false;
-			
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_ATENDENTE
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.ACORDO_PRAZO_ATENDENTE
 					&& conf.slaAtendimentoQuantidade == null)
 				return false;
 			
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRAZO_PRE_ATENDENTE
+			if (filtro.subTipoConfig == SrSubTipoConfiguracao.ACORDO_PRAZO_PRE_ATENDENTE
 					&& conf.slaPreAtendimentoQuantidade == null)
 				return false;
 
@@ -140,6 +134,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					&& conf.atendente != null
 					&& (filtro.atendente == null || (filtro.atendente != null && !conf.atendente
 							.getLotacaoAtual().equivale(filtro.atendente))))
+				return false;
+			
+			if (!atributosDesconsiderados.contains(PRIORIDADE)
+					&& conf.prioridade != null
+					&& (filtro.prioridade == null || (filtro.prioridade != null && !conf.prioridade
+							.equals(filtro.prioridade))))
 				return false;
 
 		}

@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Atributos' /}
+#{extends 'main.html' /} #{set title:'Acordos' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
@@ -26,7 +26,7 @@
 		}
 		return query_string;
 	}();
-
+	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
 			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
@@ -35,12 +35,12 @@
 			
 		$("#checkmostrarDesativado").click(function() {
 			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = '@{Application.listarAtributoDesativados()}';
+				location.href = '@{Application.buscarAcordoDesativadas()}';
 			else
-				location.href = '@{Application.listarAtributo()}';	
+				location.href = '@{Application.buscarAcordo()}';	
 		});
 		
-		$('#atributo_table').DataTable({
+		$('#acordo_table').DataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -65,70 +65,69 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [3],
+				"targets": [2],
 				"searchable": false,
 				"sortable" : false
 			}]
 		});
 	});
-
-	function desativarAtributo(event, id) {
+	
+	function reativarAcordo(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.desativarAtributo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+		window.location = '@{Application.reativarAcordo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
 	}
-
-	function reativarAtributo(event, id) {
+	
+	function desativarAcordo(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.reativarAtributo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+		window.location = '@{Application.desativarAcordo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
 	}
 </script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Pesquisa de atributos</h2>
+		<h2>Acordos</h2>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
 			<div class="gt-form-row dataTables_length">
 				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
 			</div>
 			
-			<table id="atributo_table" border="0" class="gt-table display">
+			<table id="acordo_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
 						<th>Nome</th>
 						<th>Descrição</th>
-						<th>Objetivo</th>
-						<th>Formato</th>
-						<th>C&oacute;digo</th>
 						<th></th>
 					</tr>
 				</thead>
 
 				<tbody>
-					#{list items:atts, as:'att'}
+					#{list items:acordos, as:'acordo'}
 					<tr
-						onclick="javascript:window.location='@{Application.editarAtributo(att.idAtributo)}'"
-						style="cursor: pointer;">
-						<td >${att.nomeAtributo}</td>
-						<td>${att.descrAtributo}</td>
-						<td>${att.objetivoAtributo.descrObjetivo}</td>
-						<td>${att.tipoAtributo?.descrTipoAtributo}</td>
-						<td>${att.codigoAtributo}</td>
+						#{if popup}
+							onclick="javascript:opener.retorna_acordo${nome}('${acordo.idAcordo}','${acordo.idAcordo}','${acordo.nomeAcordo}');window.close()"
+						#{/if}
+						#{else}
+							onclick="javascript:window.location='@{Application.editarAcordo(acordo.idAcordo)}'"
+						#{/else}
+							style="cursor: pointer;">
+						<td >${acordo.nomeAcordo}</td>
+						<td>${acordo.descrAcordo}</td>
 						<td>
-							#{desativarReativar id:att.idAtributo,
-												onReativar:'reativarAtributo',
-												onDesativar :'desativarAtributo',
-												isAtivo:att.isAtivo() }
+							#{desativarReativar id:acordo.idAcordo, 
+												onDesativar :'desativarAcordo',
+												onReativar :'reativarAcordo',
+												isAtivo:acordo.isAtivo() }
 							#{/desativarReativar}
 						</td>
 					</tr>
-					</a> #{/list}
+					 #{/list}
 				</tbody>
 			</table>
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarAtributo}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a href="@{Application.editarAcordo}" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 
 	</div>

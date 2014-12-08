@@ -44,6 +44,8 @@ import org.joda.time.LocalDate;
 import play.Logger;
 import play.Play;
 import play.data.binding.As;
+import play.data.validation.Error;
+import play.data.validation.Validation;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
@@ -66,6 +68,9 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 
 public class Application extends SigaApplication {
 
@@ -322,19 +327,25 @@ public class Application extends SigaApplication {
 	}
 
 	private static void validarFormEditarAcao(SrAcao acao) {
-
 		if (acao.siglaAcao.equals("")) {
-			validation.addError("acao.siglaAcao", "C�digo n�o informado");
+			Validation.addError("siglaAcao", "Código não informado");
 		}
-
 		if (acao.tituloAcao.equals("")) {
-			validation.addError("acao.tituloAcao", "T�tulo n�o informado");
+			Validation.addError("tituloAcao", "Titulo não informado");
 		}
-
-		if (validation.hasErrors()) {
-			render("@editarAcao", acao);
+		if (Validation.hasErrors()) {
+			enviarErroValidacao();
 		}
+	}
 
+	private static void enviarErroValidacao() {
+		JsonArray jsonArray = new JsonArray();
+		
+		List<Error> errors = Validation.errors();
+		for (Error error : errors) {
+			jsonArray.add(new Gson().toJsonTree(error));
+		}
+		error(Http.StatusCode.BAD_REQUEST, jsonArray.toString());
 	}
 
 	@SuppressWarnings("static-access")
@@ -966,15 +977,7 @@ public class Application extends SigaApplication {
 	public static void listarItem(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar(mostrarDesativados);
-		List<CpOrgaoUsuario> orgaos = JPA.em()
-				.createQuery("from CpOrgaoUsuario").getResultList();
-		List<CpComplexo> locais = CpComplexo.all().fetch();
-		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
-		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
-				"hisDtFim is null").fetch();
-		List<SrLista> listasPrioridade = SrLista.listar(false);
-		
-		render(itens, mostrarDesativados, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
+		render(itens, mostrarDesativados);
 	}
 	
 	public static void listarItemDesativados() throws Exception {
@@ -1259,7 +1262,7 @@ public class Application extends SigaApplication {
 		render(acao);
 	}
 
-	public static void gravarAcao(SrAcao acao) throws Exception {
+	public static String gravarAcao(SrAcao acao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarAcao(acao);
 		acao.salvar();
@@ -1289,8 +1292,7 @@ public class Application extends SigaApplication {
 					+ " salva, mas nao foi possivel atualizar conhecimento");
 			e.printStackTrace();
 		}
-				
-		listarAcao(false);
+		return acao.toJson();
 	}
 
 	public static void desativarAcao(Long id, boolean mostrarDesativados) throws Exception {

@@ -21,9 +21,14 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
@@ -337,5 +342,20 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 	
 	public SrAcaoVO toVO() {
 		return new SrAcaoVO(this.idAcao, this.tituloAcao, this.siglaAcao, this.getHisIdIni());
+	}
+	
+	public String toJson() {
+		Gson gson = createGson();
+		
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		
+		return jsonObject.toString();
+	}
+	
+	private Gson createGson() {
+		return new GsonBuilder()
+			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn("meuAcaoHistoricoSet", "filhoSet", "acaoInicial"))
+			.create();
 	}
 }

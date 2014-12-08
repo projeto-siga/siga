@@ -48,3 +48,10 @@ function unblock(){
 	requesting=false;
 }
 </script>
+
+#{modal nome:'server_error', titulo:'Erro interno no servidor'}
+	<div id="erroInterno">
+		Ocorreu um erro interno no sistema. Entre em contato com o administrador. </br>
+		Descrição do Erro: <span id="codigoErro"></span> - <span id="responseStatus"></span> - <span id="responseText"></span>
+	</div>
+#{/modal}

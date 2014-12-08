@@ -2,7 +2,6 @@ package controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,7 +23,6 @@ import models.SrArquivo;
 import models.SrAtributo;
 import models.SrAtributoSolicitacao;
 import models.SrConfiguracao;
-import models.SrConfiguracao.SrConfiguracaoVO;
 import models.SrConfiguracaoBL;
 import models.SrEquipe;
 import models.SrGravidade;
@@ -42,8 +40,6 @@ import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
-
-import com.google.gson.JsonObject;
 
 import play.Logger;
 import play.Play;

@@ -1,7 +1,7 @@
 #{extends 'main.html' /} #{set title:'Edição de atributo' /}
 
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<!-- <script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
+<!-- <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script> -->
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 
 <script type="text/javascript">
@@ -20,78 +20,85 @@
 	colunas.idAssociacao =                9;
 	colunas.botaoExcluir =                10;
 
-	//removendo a referencia de '$' para o jQuery
-	$.noConflict();
+// 	//removendo a referencia de '$' para o jQuery
+// 	$.noConflict();
 
 	var table = null;
 	
 	jQuery( document ).ready(function( $ ) {
-		
-		/* Table initialization */
-		table = $('#associacao_table')
-			.on('draw.dt', function() {
-						if(table) {
-							var btn = $('.bt-expandir'),
-								expandir = btn.hasClass('expandido');
-							
-							$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
-							$('#associacao_table').expandirContrairLinhas(expandir);
-						}
-					})
-			.dataTable({
-			"language": {
-				"emptyTable":     "Não existem resultados",
-			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-			    "infoPostFix":    "",
-			    "thousands":      ".",
-			    "lengthMenu":     "Mostrar _MENU_ registros",
-			    "loadingRecords": "Carregando...",
-			    "processing":     "Processando...",
-			    "search":         "Filtrar:",
-			    "zeroRecords":    "Nenhum registro encontrado",
-			    "paginate": {
-			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
-			        "previous":   "Anterior"
-			    },
-			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
-			    }
-			},
-			"columnDefs": [{
-				"targets": [4],
-				"searchable": false,
-				"sortable" : false
-			},
-			{
-				"targets": [colunas.idItemConfiguracao, 
-							colunas.siglaItemConfiguracao, 
-							colunas.idAcao, 
-							colunas.siglaAcao,
-							colunas.atributoObrigatorio,
-							colunas.idAssociacao],
-				"visible": false
-			}]
-		});
 
-		$('#associacao_table tbody').on('click', 'tr', function () {
-			var itemSelecionado = table.api().row(this).data();
-			
-			if (itemSelecionado != undefined) {
-				table.$('tr.selected').removeClass('selected');
-	            $(this).addClass('selected');
-	            
-				atualizarAssociacaoModal(itemSelecionado);
-			    associacaoModalAbrir(true);
-			}
-		});
-		$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
 
-		tableAssociacao = table;
+		if ( $.fn.dataTable.isDataTable( '#associacao_table' ) ) {
+			table = $('#associacao_table').dataTable();
+		}
+		else {
+			/* Table initialization */
+			table = $('#associacao_table')
+				.on('draw.dt', function() {
+							if(table) {
+								var btn = $('.bt-expandir'),
+									expandir = btn.hasClass('expandido');
+								
+								$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
+								$('#associacao_table').expandirContrairLinhas(expandir);
+							}
+						})
+				.dataTable({
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				"columnDefs": [{
+					"targets": [4],
+					"searchable": false,
+					"sortable" : false
+				},
+				{
+					"targets": [colunas.idItemConfiguracao, 
+								colunas.siglaItemConfiguracao, 
+								colunas.idAcao, 
+								colunas.siglaAcao,
+								colunas.atributoObrigatorio,
+								colunas.idAssociacao],
+					"visible": false
+				}]
+			});
+	
+			$('#associacao_table tbody').on('click', 'tr', function () {
+				var itemSelecionado = table.api().row(this).data();
+				
+				if (itemSelecionado != undefined) {
+					table.$('tr.selected').removeClass('selected');
+		            $(this).addClass('selected');
+		            
+					atualizarAssociacaoModal(itemSelecionado);
+				    associacaoModalAbrir(true);
+				}
+			});
+			$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
+	
+			tableAssociacao = table;
+		}
+	
 	});
 
 	function inserirAssociacao() {
@@ -100,13 +107,13 @@
 	};
 
 	function associacaoModalAbrir(isEdicao) {
+		var tituloModal = 'Incluir Associação';
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			$("#associacao_dialog").dialog('option', 'title', 'Alterar Associação');
-		else
-			$("#associacao_dialog").dialog('option', 'title', 'Incluir Associação');
+			tituloModal = 'Alterar Associação';
 		
+		$("#associacao_dialog").dialog('option', 'title', tituloModal);
 		$("#associacao_dialog").dialog('open');
 	};
 
@@ -293,113 +300,107 @@
 			
 			location.href='@{Application.desativarAssociacaoEdicao()}?' + jQuery.param({idAtributo : idAtributo, idAssociacao : idAssociacao});
 	}
-
 </script>
 
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-		<h2>Cadastro de Atributo</h2>
-
-		<div class="gt-form gt-content-box">
-			#{form @Application.gravarAtributo(), onsubmit: 'javascript: return block()'} #{if att?.idAtributo} <input
-				type="hidden" name="att.idAtributo"
-				id="idAtributo"
-				value="${att.idAtributo}"> #{/if}
-			#{ifErrors}
-			<p class="gt-error">Alguns campos obrigatórios não foram
-				preenchidos ${error}</p>
-			#{/ifErrors}	
-			<div class="gt-form-row gt-width-66">
-				<label>Nome</label> <input type="text"
-					name="att.nomeAtributo"
-					value="${att?.nomeAtributo}" size="60" />
-					<span style="color: red">#{error
-					'att.nomeAtributo' /}</span>
-			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Descrição</label> <input type="text"
-					name="att.descrAtributo"
-					value="${att?.descrAtributo}" size="60" />
-			</div>
-			<div class="gt-form-row gt-width-66">
-				<label>Tipo de atributo</label> #{select name:'att.tipoAtributo', items:models.SrTipoAtributo.values(),
-				labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:393px;' /}
-			</div>
-			<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
-				<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
-				<input type="text"
-					name="att.descrPreDefinido"
-					id="descrPreDefinido"
-					value="${att?.descrPreDefinido}" size="60" />
-					<span style="color: red" id="erroDescrPreDefinido">#{error
-					'att.descrPreDefinido' /}</span>
-			</div>
-			<div class="container">
-				<div class="title-table">
-					<h3 style="padding-top: 25px;">Associações</h3>
-				</div>
-				<div class="button-table">
-					<a href="javascript: inserirAssociacao()" title="Adicionar Associação">
-						<img src="/siga/css/famfamfam/icons/add.png">
-					</a>
-				</div>
-			</div>
-			<div class="gt-content-box dataTables_div">
-				<table id="associacao_table" border="0" class="gt-table display">
-					<thead>
-						<tr>
-							<th style="color: #333">
-								<button class="gt-btn-medium gt-btn-left bt-expandir">
-									<span id="iconeBotaoExpandirTodos">+</span>
-								</button>
-							</th>
-							<th>idItemConfiguracao</th>
-							<th><i>Item &darr;</i></th>
-							<th>siglaItemConfiguracao</th>
-							<th>idAcao</th>
-							<th>Ação</th>
-							<th>siglaAcao</th>
-							<th>Obrigatório</th>
-							<th>Obrigatório</th>
-							<th>idAssociacao</th>
-							<th>Ações</th>
-						</tr>
-					</thead>
-					<tbody>
-						#{list items:att.associacoes, as:'assoc'}
-						<tr>
-							<td class="gt-celula-nowrap details-control"></td>
-							<td>${assoc.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>
-							<td>${assoc.itemConfiguracaoUnitario?.atual?.tituloItemConfiguracao}</td>
-							<td>${assoc.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>
-							<td>${assoc.acaoUnitaria?.atual?.idAcao}</td>
-							<td>${assoc.acaoUnitaria?.atual?.tituloAcao}</td>
-							<td>${assoc.acaoUnitaria?.atual?.siglaAcao}</td>
-							<td>${assoc.atributoObrigatorio}</td>
-							<td>${assoc.atributoObrigatorioString}</td>
-							<td>${assoc.idConfiguracao}</td>
-							<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-								<a class="once desassociar" onclick="desassociar(event, ${assoc?.idConfiguracao})" title="Remover permissão">
-									<input class="idAssociacao" type="hidden" value="${assoc?.idConfiguracao}"/>
-									<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
-								</a>
-							</td>
-						</tr>
-						</a> #{/list}
-					</tbody>
-				</table>
-			</div>
-			<div class="gt-form-row">
-				<input type="submit" value="Gravar"
-					class="gt-btn-medium gt-btn-left" />
-				<a href="@{Application.listarAtributo}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-			</div>
-			#{/form}
+<div class="gt-form gt-content-box">
+	#{form @Application.gravarAtributo(), onsubmit: 'javascript: return block()'} #{if att?.idAtributo} <input
+		type="hidden" name="att.idAtributo"
+		id="idAtributo"
+		value="${att.idAtributo}"> #{/if}
+	#{ifErrors}
+	<p class="gt-error">Alguns campos obrigatórios não foram
+		preenchidos ${error}</p>
+	#{/ifErrors}	
+	<div class="gt-form-row box-wrapper">
+		<div class="box box-left gt-width-50">
+			<label>Nome</label> <input type="text"
+				name="att.nomeAtributo"
+				id="nomeAtributo"
+				value="${att?.nomeAtributo}" size="50" />
+				<span style="color: red">#{error
+				'att.nomeAtributo' /}</span>
+		</div>
+		<div class="box gt-width-50">
+			<label>Descrição</label> <input type="text"
+				name="att.descrAtributo"
+				id="descrAtributo"
+				value="${att?.descrAtributo}" 
+				style="width: 372px;" />
 		</div>
 	</div>
+	<div class="gt-form-row gt-width-100">
+		<label>Tipo de atributo</label> #{select name:'att.tipoAtributo', items:models.SrTipoAtributo.values(),
+		labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:100%' /}
+	</div>
+	<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
+		<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
+		<input type="text"
+			name="att.descrPreDefinido"
+			id="descrPreDefinido"
+			value="${att?.descrPreDefinido}" size="60" />
+			<span style="color: red" id="erroDescrPreDefinido">#{error
+			'att.descrPreDefinido' /}</span>
+	</div>
+	<div class="gt-content" style="padding-top: 10px;">
+		<h3>Associações</h3>
+		<div class="gt-content-box dataTables_div">
+			<table id="associacao_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th style="color: #333">
+							<button class="gt-btn-medium gt-btn-left bt-expandir">
+								<span id="iconeBotaoExpandirTodos">+</span>
+							</button>
+						</th>
+						<th>idItemConfiguracao</th>
+						<th><i>Item &darr;</i></th>
+						<th>siglaItemConfiguracao</th>
+						<th>idAcao</th>
+						<th>Ação</th>
+						<th>siglaAcao</th>
+						<th>Obrigatório</th>
+						<th>Obrigatório</th>
+						<th>idAssociacao</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+					#{list items:att.associacoes, as:'assoc'}
+					<tr>
+						<td class="gt-celula-nowrap details-control"></td>
+						<td>${assoc.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>
+						<td>${assoc.itemConfiguracaoUnitario?.atual?.tituloItemConfiguracao}</td>
+						<td>${assoc.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>
+						<td>${assoc.acaoUnitaria?.atual?.idAcao}</td>
+						<td>${assoc.acaoUnitaria?.atual?.tituloAcao}</td>
+						<td>${assoc.acaoUnitaria?.atual?.siglaAcao}</td>
+						<td>${assoc.atributoObrigatorio}</td>
+						<td>${assoc.atributoObrigatorioString}</td>
+						<td>${assoc.idConfiguracao}</td>
+						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+							<a class="once desassociar" onclick="desassociar(event, ${assoc?.idConfiguracao})" title="Remover permissão">
+								<input class="idAssociacao" type="hidden" value="${assoc?.idConfiguracao}"/>
+								<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
+							</a>
+						</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<div class="gt-table-buttons">
+			<a href="javascript: inserirAssociacao()" class="gt-btn-small gt-btn-left">Incluir</a>
+		</div>
+	</div>
+	<div class="gt-form-row" style="padding-top: 10px;">
+		<input type="submit" value="Gravar"
+			class="gt-btn-medium gt-btn-left" />
+		<a href="@{Application.listarAtributo}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+	</div>
+	#{/form}
 </div>
 
-#{modal nome:'associacao', titulo:'Cadastrar Associação'}
+#{modal nome:'associacao', titulo:'cadastrar associação'}
 	<div class="gt-form gt-content-box">
 		<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
 	

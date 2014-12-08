@@ -4,6 +4,17 @@
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script>
+	
+	var atributoTable,
+		colunasAtributo = 
+		{
+			nomeAtributo:       0,
+			descrAtributo:      1,
+			descrTipoAtributo:  2,
+			acoes:              3,
+			jSon:               4
+		};
+
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
 		// the return value is assigned to QueryString!
@@ -27,7 +38,10 @@
 		return query_string;
 	}();
 
-	$(document).ready(function() {
+	//removendo a referencia de '$' para o jQuery
+	$.noConflict();
+
+	jQuery(document).ready(function($) {
 		if (QueryString.mostrarDesativados != undefined) {
 			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
 			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
@@ -40,7 +54,7 @@
 				location.href = '@{Application.listarAtributo()}';	
 		});
 		
-		$('#atributo_table').DataTable({
+		atributoTable = $('#atributo_table').DataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -65,13 +79,95 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [3],
+				"targets": [colunasAtributo.acoes, colunasAtributo.jSon ],
 				"searchable": false,
 				"sortable" : false
 			}]
 		});
+		$('#atributo_table tbody').on('click', 'tr', function () {
+			var itemSelecionado = atributoTable.row(this).data();
+			
+			if (itemSelecionado != undefined) {
+				if (!$(this).hasClass('selected') ) {
+					atributoTable.$('tr.selected').removeClass('selected');
+		            $(this).addClass('selected');
+		        }
+	// 			TODO:IMPLEMENTAR O METODO ABAIXO ;D
+				atualizarModalAtributo(itemSelecionado);
+				atributoModalAbrir(true);
+			}
+		});
 	});
 
+	function limparDadosAtributoModal() {
+		$('#idAtributo').val('');
+		$('#nomeAtributo').val('');
+		$('#descrAtributo').val('');
+		$('#tipoAtributo').selectedIndex = 0;
+		$('#descrPreDefinido').val('');
+	} 
+
+	// Alimenta os campos do Popup antes de abrir ao usuário.
+	function atualizarModalAtributo(itemArray) {
+	var jSonAtributo = getJsonByString(itemArray[colunasAtributo.jSon]);
+		
+		if (jSonAtributo) {
+			$('#idAtributo').val(jSonAtributo.idAtributo);
+			$('#nomeAtributo').val(jSonAtributo.nomeAtributo);
+			$('#descrAtributo').val(jSonAtributo.descrAtributo);
+			$('#descrPreDefinido').val(jSonAtributo.descrPreDefinido);
+			atualizarListaAssociacoes(jSonItem);
+		}
+	}
+
+	function getJsonByString(value) {
+		var jSonItem;
+		
+		// transforma o valor String em objeto, caso necessário
+		if (value && value.constructor.name ==  'String' && value != '')
+			jSonItem = JSON.parse(value);
+		else
+			jSonItem = value;
+
+		return jSonItem;
+	}
+
+	function atualizarListaAssociacoes(jSon) {
+		var gestoresUI = $("#gestoresUl")[0];
+		
+		if (jSon.gestorSetVO) {
+			// cria os itens da lista de gestores, e adiciona na tela
+			for (i = 0; i < jSon.gestorSetVO.length; i++) {
+				var gestorItem = jSon.gestorSetVO[i];
+
+				if (gestorItem.dpPessoaVO)
+					gestoresUI.incluirItem(gestorItem.dpPessoaVO.sigla, gestorItem.dpPessoaVO.descricao, 'pessoa', gestorItem.dpPessoaVO.id, gestorItem.idGestorItem);
+				else if (gestorItem.dpLotacaoVO)
+		        	gestoresUI.incluirItem(gestorItem.dpLotacaoVO.sigla, gestorItem.dpLotacaoVO.descricao, 'lotacao', gestorItem.dpLotacaoVO.id, gestorItem.idGestorItem);
+			}
+		}
+	}
+
+	function inserirEditarAtributo() {
+		limparDadosAtributoModal();
+		atributoModalAbrir(false);
+	}
+
+	function atributoModalAbrir(isEdicao) {
+		var tituloModal = 'Incluir Atributo';
+		isEditing = isEdicao;
+		
+		if (isEdicao)
+			tituloModal = 'Alterar Atributo';
+
+		$("#editarAtributo_dialog").dialog('option', 'title', tituloModal);
+		$("#editarAtributo_dialog").dialog('open');
+	}
+
+	function atributoModalFechar() {
+		$("#editarAtributo_dialog").dialog('close');
+	}
+	
 	function desativarAtributo(event, id) {
 		event.stopPropagation();
 		window.location = '@{Application.desativarAtributo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
@@ -99,37 +195,38 @@
 						<th>Descrição</th>
 						<th>Formato</th>
 						<th>Ações</th>
+						<th>jSon</th>
 					</tr>
 				</thead>
 
 				<tbody>
 					#{list items:atts, as:'att'}
-					<tr
-						onclick="javascript:window.location='@{Application.editarAtributo(att.idAtributo)}'"
-						style="cursor: pointer;">
-						<td >${att.nomeAtributo}</td>
-						<td>${att.descrAtributo}</td>
-						<td>${att.tipoAtributo?.descrTipoAtributo}</td>
-						<td>
-							#{desativarReativar id:att.idAtributo,
-												onReativar:'reativarAtributo',
-												onDesativar :'desativarAtributo',
-												isAtivo:att.isAtivo() }
-							#{/desativarReativar}
-						</td>
-					</tr>
-					</a> #{/list}
+						<tr style="cursor: pointer;">
+							<td>${att.nomeAtributo}</td>
+							<td>${att.descrAtributo}</td>
+							<td>${att.tipoAtributo?.descrTipoAtributo}</td>
+							<td>
+								#{desativarReativar id:att.idAtributo,
+													onReativar:'reativarAtributo',
+													onDesativar :'desativarAtributo',
+													isAtivo:att.isAtivo() }
+								#{/desativarReativar}
+							</td>
+							<td>
+								${att.getSrAtributoJson()}
+							</td>
+						</tr>
+					 #{/list}
 				</tbody>
 			</table>
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarAtributo}" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a href="javascript: inserirEditarAtributo()" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 
 	</div>
 </div>
-
-<br />
-<br />
-<br />
+#{modal nome:'editarAtributo', titulo:'Cadastrar Atributo', largura: '820'} 
+	<div>#{include 'Application/editarAtributo.html' /} </div>
+#{/modal}

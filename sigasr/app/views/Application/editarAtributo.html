@@ -2,7 +2,6 @@
 
 <!-- <script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
 <!-- <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script> -->
-<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 
 <script type="text/javascript">
 	
@@ -23,7 +22,8 @@
 // 	//removendo a referencia de '$' para o jQuery
 // 	$.noConflict();
 
-	var table = null;
+	var table = null,
+		isEditingAssociacao = false;
 	
 	jQuery( document ).ready(function( $ ) {
 
@@ -94,6 +94,7 @@
 				    associacaoModalAbrir(true);
 				}
 			});
+			debugger;
 			$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
 	
 			tableAssociacao = table;
@@ -108,7 +109,7 @@
 
 	function associacaoModalAbrir(isEdicao) {
 		var tituloModal = 'Incluir Associação';
-		isEditing = isEdicao;
+		isEditingAssociacao = isEdicao;
 		
 		if (isEdicao)
 			tituloModal = 'Alterar Associação';
@@ -285,7 +286,7 @@
 						         
 		        row[colunas.botaoExcluir] = html;
 
-	          	if (isEditing) {
+	          	if (isEditingAssociacao) {
 	          		tableAssociacao.api().row('.selected').data(row);
 			    }
 			    else {
@@ -306,7 +307,7 @@
 	}
 	
 	function associacaoModalFechar() {
-		isEditing = false;
+		isEditingAssociacao = false;
 		$("#associacao_dialog").dialog("close");
 		limparDadosAssociacaoModal();
 	}

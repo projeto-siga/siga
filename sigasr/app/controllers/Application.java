@@ -1113,12 +1113,11 @@ public class Application extends SigaApplication {
 		render(att, tipoAtributoAnterior);
 	}
 
-	public static void gravarAtributo(SrAtributo att) throws Exception {
+	public static String gravarAtributo(SrAtributo att) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarAtributo(att);
 		att.salvar();
-		att.toVO().toJson();
-//		listarAtributo(Boolean.FALSE);
+		return att.toVO().toJson();
 	}
 
 	private static void validarFormEditarAtributo(SrAtributo att) {

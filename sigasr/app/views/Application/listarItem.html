@@ -367,9 +367,9 @@
 				var fatorItem = jSon.fatorMultiplicacaoSetVO[i];
 
 				if (fatorItem.dpPessoaVO)
-					fatoresUI.incluirItem(fatorItem.dpPessoaVO.sigla, fatorItem.dpPessoaVO.descricao, fatorItem.numFatorMultiplicacao, 'pessoa', fatorItem.dpPessoaVO.id, fatorItem.idFatorMultiplicacao+'Fator');
+					fatoresUI.incluirItem(fatorItem.dpPessoaVO.sigla, fatorItem.dpPessoaVO.descricao, fatorItem.numFatorMultiplicacao, 'pessoa', fatorItem.dpPessoaVO.id, fatorItem.idFatorMultiplicacao);
 				else if (fatorItem.dpLotacaoVO)
-					fatoresUI.incluirItem(fatorItem.dpLotacaoVO.sigla, fatorItem.dpLotacaoVO.descricao, fatorItem.numFatorMultiplicacao, 'lotacao', fatorItem.idFatorMultiplicacao+'Fator');
+					fatoresUI.incluirItem(fatorItem.dpLotacaoVO.sigla, fatorItem.dpLotacaoVO.descricao, fatorItem.numFatorMultiplicacao, 'lotacao', fatorItem.dpLotacaoVO.id, fatorItem.idFatorMultiplicacao);
 			}
 		}
 	}

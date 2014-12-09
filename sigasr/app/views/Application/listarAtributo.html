@@ -54,7 +54,7 @@
 				location.href = '@{Application.listarAtributo()}';	
 		});
 		
-		atributoTable = $('#atributo_table').DataTable({
+		atributoTable = $('#atributo_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -125,6 +125,7 @@
 		if (jSonAtributo) {
 			jTipoAtributoCbb = document.getElementsByName("att.tipoAtributo")[0];
 			jTipoAtributoCbb.selectedIndex = findSelectedIndexByValue(jTipoAtributoCbb, jSonAtributo.tipoAtributo);
+			$("#hisIdIni").val(jSonAtributo.hisIdIni);
 			$('#idAtributo').val(jSonAtributo.idAtributo);
 			$('#nomeAtributo').val(jSonAtributo.nomeAtributo);
 			$('#descrAtributo').val(jSonAtributo.descrAtributo);
@@ -154,6 +155,100 @@
 		return 0;
 	};
 
+	function atualizaAtributoJson() {
+		var atributoJSon = {
+				'id': $("#idAtributo").val(),
+				'hisIdIni': $("#hisIdIni").val(),
+				'nomeAtributo': $("#nomeAtributo").val(),
+				'descrAtributo': $("#descrAtributo").val(),
+				'tipoAtributo': $("#tipoAtributo").val(),
+				'descrPreDefinido': $("#descrPreDefinido").val()
+	 		};
+			
+	 		return atributoJSon;
+	}
+
+	function recuperarInformacoesTela() {
+		var jSonAtt = atualizaAtributoJson(),
+		id = jSonAtt.id,
+		row = [
+			$("#nomeAtributo").val(),
+			$("#tituloItemConfiguracao").val(),
+			$("#tipoAtributo").val(),
+			'<a class="once" onclick="desativarAtributo(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
+			jSonAtt
+		];
+
+	return row;
+	}
+
+	function removerErros() {
+		$('.error').remove();
+	}
+
+	function atributoGravar() {
+		var row = recuperarInformacoesTela(),
+			jForm = $('#atributoForm');
+
+		removerErros();
+		
+		$.ajax({
+	         type: "POST",
+	         url: "@{Application.gravarAtributo()}",
+	         data: jForm.serialize(),
+	         dataType: "text",
+	         success: function(attJson) {
+	        	var jSon = getJsonByString(attJson);
+        		row[colunasAtributo.jSon] = jSon;
+        		
+        		if (isEditing) {
+        			atributoTable.row('.selected').data(row);
+				}
+				else {
+					atributoTable.row.add(row).draw();
+				}
+	          	atributoModalFechar();
+
+// 	        		// 				var html = 
+// // 				'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
+// // 					'<a class="once desativarAtributo" onclick="desativarAtributo(event,' + response + ')" title="Desativar Atributo">' +
+// // 						'<input class="idAtributo" type="hidden" value="' + response + '"/>' +
+// // 						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+// // 					'</a>' +
+// // 				'</td>';
+						         
+// // 		        row[colunas.botaoExcluir] = html;
+
+// 	          	if (isEditing) {
+// 	          		tableAssociacao.api().row('.selected').data(row);
+// 			    }
+// 			    else {
+// 			    	tableAssociacao.api().row.add(row).draw();
+// 			    }
+// 				$('.desativarAtributo').bind('click', desativarAtributo);
+	         },
+	         error: function(error) {
+	     		console.log(error);
+	     		
+	     		if(error.status == 400) {
+	 	    		var errors = JSON.parse(error.responseText);
+	 	    		for(var i = 0; i < errors.length; i++) {
+	 	    			var span = $('<span class="error" style="color: red"></span>');
+	 	    			span.html(errors[i].message);
+	 	    			span.insertAfter($("[name='" + errors[i].key + "']"));
+	 	    		}
+	     		} else {
+	     			
+	     			$("#codigoErro").html( error.status);
+	     			$("#responseText").html( error.responseText);
+	     			$("#responseStatus").html(error.statusText);
+	     			
+	     			$('#server_error_dialog').dialog('open');
+	     		}
+	     	}
+       });
+	}
+
 	function inserirEditarAtributo() {
 		limparDadosAtributoModal();
 		atributoModalAbrir(false);
@@ -162,6 +257,7 @@
 	function atributoModalAbrir(isEdicao) {
 		var tituloModal = 'Incluir Atributo';
 		isEditing = isEdicao;
+		removerErros();
 		
 		if (isEdicao)
 			tituloModal = 'Alterar Atributo';

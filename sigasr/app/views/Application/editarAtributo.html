@@ -354,10 +354,15 @@
 </script>
 
 <div class="gt-form gt-content-box">
-	#{form @Application.gravarAtributo(), onsubmit: 'javascript: return block()'} #{if att?.idAtributo} <input
+	<form id="atributoForm">
+	#{if att?.idAtributo} <input
 		type="hidden" name="att.idAtributo"
 		id="idAtributo"
 		value="${att.idAtributo}"> #{/if}
+		<input
+		type="hidden" name="att.hisIdIni"
+		id="hisIdIni"
+		value="${att.hisIdIni}">
 	#{ifErrors}
 	<p class="gt-error">Alguns campos obrigatórios não foram
 		preenchidos ${error}</p>
@@ -444,11 +449,10 @@
 		</div>
 	</div>
 	<div class="gt-form-row" style="padding-top: 10px;">
-		<input type="submit" value="Gravar"
-			class="gt-btn-medium gt-btn-left" />
+		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoGravar()"/>
 		<a href="javascript: atributoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 	</div>
-	#{/form}
+	</form>
 </div>
 
 #{modal nome:'associacao', titulo:'cadastrar associação'}

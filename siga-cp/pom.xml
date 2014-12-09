@@ -149,17 +149,21 @@
 								<image>
 									<name>alexeiled/docker-oracle-xe-11g:latest</name>
 									<alias>db.server</alias>
+									<run>
+										<ports>
+											<port>49160:22</port>
+											<port>49161:1521</port>
+											<port>49162:8080</port>
+										</ports>
+										<wait>
+											<time>120000</time>
+										</wait>
+									</run>
 								</image>
 							</images>
-							<dockerHost>https://${server.ip}:2376</dockerHost>
-							<!-- SEM TLS: <dockerHost>http://${server.ip}:2375</dockerHost> -->
+							<!-- <dockerHost>https://${server.ip}:2376</dockerHost> -->
+							<dockerHost>http://${server.ip}:2375</dockerHost>
 							<autoPull>true</autoPull>
-							<ports>
-								<port>49160:22</port>
-								<port>49161:1521</port>
-								<port>49162:8080</port>
-							</ports>
-							<wait>120000</wait>
 						</configuration>
 
 						<!-- Connect start/stop to pre- and post-integration-test phase, respectively -->

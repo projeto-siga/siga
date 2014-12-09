@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import models.SrAcao.SrAcaoVO;
+import models.vo.SrConfiguracaoAssociacaoVO;
 import models.vo.SrConfiguracaoVO;
 import models.vo.SrItemConfiguracaoVO;
 
@@ -526,6 +527,11 @@ public class SrConfiguracao extends CpConfiguracao {
 			this.listaConfiguracaoSet.add(srLista);
 		}
 	}
-	
-	
+
+	public SrConfiguracaoAssociacaoVO toAssociacaoVO() {
+		SrItemConfiguracaoVO itemVO = (this.getItemConfiguracaoUnitario() != null? this.getItemConfiguracaoUnitario().getAtual().toVO() : null);
+		SrAcaoVO acaoVO = (this.getAcaoUnitaria() != null? this.getAcaoUnitaria().getAtual().toVO() : null);
+		
+		return new SrConfiguracaoAssociacaoVO(this.getIdConfiguracao(), itemVO, acaoVO, this.atributoObrigatorio);
+	}
 }

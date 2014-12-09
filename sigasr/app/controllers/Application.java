@@ -29,6 +29,7 @@ import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
+import models.SrPergunta;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
@@ -970,7 +971,6 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, idAssociacao);
 		associacao.finalizar();
-		editarAtributo(idAtributo);
 	}
 
 	public static void desativarAssociacao(Long id, boolean mostrarDesativados) throws Exception {
@@ -1130,27 +1130,24 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarAtributo(att);
 		att.salvar();
-		listarAtributo(Boolean.FALSE);
+		att.toVO().toJson();
+//		listarAtributo(Boolean.FALSE);
 	}
 
 	private static void validarFormEditarAtributo(SrAtributo att) {
 		if (att.nomeAtributo.equals("")) {
-			validation.addError("att.nomeAtributo",
+			Validation.addError("att.nomeAtributo",
 					"Nome de atributo não informado");
 		}
 
 		if (att.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO 
 				&& att.descrPreDefinido.equals("")) {
-			validation.addError("att.descrPreDefinido",
+			Validation.addError("att.descrPreDefinido",
 					"Valores Pré-definido não informados");
 		}
 		
-		for (play.data.validation.Error error : validation.errors()) {
-			System.out.println(error.message());
-		}
-
-		if (validation.hasErrors()) {
-			render("@editarAtributo", att);
+		if (Validation.hasErrors()) {
+			enviarErroValidacao();
 		}
 	}
 
@@ -1171,7 +1168,8 @@ public class Application extends SigaApplication {
 	public static void listarPesquisa(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrPesquisa> pesquisas = SrPesquisa.listar(mostrarDesativados);
-		render(pesquisas);
+		List<SrTipoPergunta> tipos = SrTipoPergunta.buscarTodos();
+		render(pesquisas, tipos);
 	}
 	
 	public static void listarPesquisaDesativadas() throws Exception {
@@ -1187,10 +1185,12 @@ public class Application extends SigaApplication {
 		render(pesq, tipos);
 	}
 
-	public static void gravarPesquisa(SrPesquisa pesq) throws Exception {
+	public static String gravarPesquisa(SrPesquisa pesquisa, Set<SrPergunta> perguntaSet) throws Exception {
 		assertAcesso("ADM:Administrar");
-		pesq.salvar();
-		listarPesquisa(Boolean.FALSE);
+		pesquisa.perguntaSet = (perguntaSet != null) ? perguntaSet : new HashSet<SrPergunta>();
+		pesquisa.salvar();
+		
+		return pesquisa.atualizarTiposPerguntas().toJson();
 	}
 
 	public static void desativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {

@@ -3,8 +3,8 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script src="https://raw.githubusercontent.com/dtuite/jquery.populate/master/jquery.populate.js"></script>
-<script src="https://raw.githubusercontent.com/marioizquierdo/jquery.serializeJSON/master/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
 <script src="/sigasr/public/javascripts/base-service.js"></script>
 
 <div class="gt-bd clearfix">
@@ -26,7 +26,7 @@
 				</thead>
 				<tbody>
 					#{list items:acoes, as:'acao'}
-						<tr data-jsonId="${acao.idAcao}" data-json="${acao.toJson()}"
+						<tr data-json-id="${acao.idAcao}" data-json="${acao.toJson()}"
 							onclick="acaoService.editar($(this).data('json'), 'Alterar Ação')"
 							style="cursor: pointer;">
 							<td>${acao.siglaAcao}</td>
@@ -81,7 +81,16 @@
 		return query_string;
 	}();
 
-	var acoesTable = null;
+	var opts = {
+			 urlDesativar : '@{Application.desativarAcao()}?',
+			 urlReativar : '@{Application.reativarAcao()}?',
+			 urlGravar : '@{Application.gravarAcao()}',
+			 dialogCadastro : $('#acao_dialog'),
+			 tabelaRegistros : $('#acoes_table'),
+			 objectName : 'acao',
+			 formCadastro : $('#acaoForm'),
+			 mostrarDesativados : QueryString.mostrarDesativados
+	};
 	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
@@ -97,7 +106,7 @@
 		});
 		
 		/* Table initialization */
-		acoesTable = $('#acoes_table').dataTable({
+		opts.dataTable = $('#acoes_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -129,17 +138,6 @@
 		});
 	});
 
-	var opts = {
-		 urlDesativar : '@{Application.desativarAcao()}?',
-		 urlReativar : '@{Application.reativarAcao()}?',
-		 urlGravar : '@{Application.gravarAcao()}',
-		 dialogCadastro : $('#acao_dialog'),
-		 tabelaRegistros : $('#acoes_table'),
-		 objectName : 'acao',
-		 formCadastro : $('#acaoForm'),
-		 mostrarDesativados : QueryString.mostrarDesativados
-	};
-	
 	// Define a "classe" AcaoService
 	function AcaoService(opts) {
 		// super(opts)
@@ -153,6 +151,18 @@
 		return acao.idAcao;
 	}
 	acaoService.getRow = function(acao) {
-		return [acao.siglaAcao, acao.tituloAcao, acao.descrAcao, ' '];
+		var marginLeft = (acao.nivel-1) * 2,
+			fontWeight = (acao.nivel == 1) ? 'bold' : 'normal',
+			span = $('<span></span>');
+
+		var spanHTML = '<span style="margin-left:{margin-left};font-weight:{font-weight}">{descricao}</span>';
+		spanHTML = spanHTML.replace('{margin-left}', marginLeft + 'em');
+		spanHTML = spanHTML.replace('{font-weight}', fontWeight);
+		spanHTML = spanHTML.replace('{descricao}', acao.tituloAcao);
+		
+		return [acao.siglaAcao, spanHTML, acao.descrAcao, 'COLUNA_ACOES'];
+	}
+	acaoService.onRowClick = function(acao) {
+		acaoService.editar(acao, 'Alterar Ação');
 	}
 </script>

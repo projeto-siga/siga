@@ -23,6 +23,7 @@ public class SrConfiguracaoVO {
 	public List<SrItemConfiguracaoVO> listaItemConfiguracaoVO;
 	public List<SrAcao.SrAcaoVO> listaAcaoVO;
 	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
+	public boolean atributoObrigatorio;
 
 	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet) {
 		listaVO = new ArrayList<SrListaVO>();
@@ -49,6 +50,11 @@ public class SrConfiguracaoVO {
 			for (SrTipoPermissaoLista item : tipoPermissaoSet) {
 				listaTipoPermissaoListaVO.add(item.toVO());
 			}
+	}
+	
+	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet, boolean atributoObrigatorio) {
+		this(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, tipoPermissaoSet);
+		this.atributoObrigatorio = atributoObrigatorio;
 	}
 
 	/**

@@ -349,6 +349,7 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 		
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		jsonObject.add("nivel", gson.toJsonTree(getNivel()));
 		
 		return jsonObject.toString();
 	}

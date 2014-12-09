@@ -1,7 +1,7 @@
 /**
  * Registra o pre-filter que ira mostrar/esconder o sinal de "carregando..."
  */
-jQuery.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
 	var carregando = $('#carregando'),
 		originalPosition = carregando.css('position');
 	
@@ -14,5 +14,3 @@ jQuery.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
 		carregando.css('display', 'none');
 	});
 });
-
-console.log('registrou');

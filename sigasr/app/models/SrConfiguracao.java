@@ -443,11 +443,15 @@ public class SrConfiguracao extends CpConfiguracao {
 	 * 
 	 */
 	public String getSrConfiguracaoJson() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null).toJson();
+		return this.toVO().toJson();
 	}
 
 	public String getSrConfiguracaoTipoPermissaoJson() {
 		return new SrConfiguracaoVO(null, null, null, tipoPermissaoSet).toJson();
+	}
+	
+	public SrConfiguracaoVO toVO() {
+		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null);
 	}
 
 	public int getNivelItemParaComparar() {
@@ -522,10 +526,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		if (!this.listaConfiguracaoSet.contains(srLista)) {
 			this.listaConfiguracaoSet.add(srLista);
 		}
-	}
-	
-	public SrConfiguracaoVO toVO() {
-		return new SrConfiguracaoVO(this.listaConfiguracaoSet, this.itemConfiguracaoSet, this.acoesSet, this.tipoPermissaoSet);
 	}
 
 	public SrConfiguracaoAssociacaoVO toAssociacaoVO() {

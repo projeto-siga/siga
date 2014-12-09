@@ -12,7 +12,6 @@ import models.SrTipoPermissaoLista;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-
 /**
  * Classe que representa um {@link SrConfiguracaoVO VO} da classe
  * {@link SrConfiguracao}.
@@ -20,14 +19,14 @@ import com.google.gson.GsonBuilder;
  * @author DB1
  */
 public class SrConfiguracaoVO {
-	public List<SrLista.SrListaVO> listaVO; 
+	public List<SrListaVO> listaVO; 
 	public List<SrItemConfiguracaoVO> listaItemConfiguracaoVO;
 	public List<SrAcao.SrAcaoVO> listaAcaoVO;
 	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
 	public boolean atributoObrigatorio;
 
 	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet) {
-		listaVO = new ArrayList<SrLista.SrListaVO>();
+		listaVO = new ArrayList<SrListaVO>();
 		listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
 		listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
 		listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();

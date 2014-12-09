@@ -23,6 +23,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import models.vo.SrListaVO;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
@@ -304,27 +305,21 @@ public class SrLista extends HistoricoSuporte {
 				Objeto.algumNaoNulo(configuracaoInsercaoAutomatica.getAcaoUnitaria(), configuracaoInsercaoAutomatica.getItemConfiguracaoUnitario());
 	}
 
-	/**
-	 * Classe que representa um V.O. de {@link SrLista}.
-	 */
-	public class SrListaVO {
-
-		public Long idLista;
-		public String nomeLista;
-
-		public SrListaVO(Long idLista, String nomeLista) {
-			this.idLista = idLista;
-			this.nomeLista = nomeLista;
-		}
-	}
-
 	public SrListaVO toVO() {
-		return new SrListaVO(this.idLista, this.nomeLista);
+		return new SrListaVO(this.idLista, this.nomeLista, this.descrAbrangencia, this.descrJustificativa, 
+				this.descrPriorizacao, this.listaInicial, this.permissoes);
 	}
-
+	
 	public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {
 		if (!podeConsultar(lotacao, cadastrante)) {
 			throw new Exception("Exibição não permitida");
 		}
+	}
+	
+	/**
+	 * Retorna um Json de {@link SrLista}.
+	 */
+	public String getSrListaJson() {
+		return this.toVO().toJson();
 	}
 }

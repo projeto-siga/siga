@@ -623,8 +623,21 @@ public class Application extends SigaApplication {
 
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		
+		try {
+			assertAcesso("ADM:Administrar");
+			lista.permissoes = SrConfiguracao
+					.listarPermissoesUsoLista(lista, false);
+		} catch (Exception e) { }
+		
+		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
+		lista.configuracaoInsercaoAutomatica = SrConfiguracao.buscarConfiguracaoInsercaoAutomaticaLista(lista);
 		lista.validarPodeExibirLista(lotaTitular(), cadastrante());
-		render(lista);
+		
+		render(lista, orgaos, locais, tiposPermissao);
 	}
 	
 	public static void associarLista(Long idSolicitacao) throws Exception {
@@ -1347,8 +1360,13 @@ public class Application extends SigaApplication {
 	}
 
 	public static void listarLista(boolean mostrarDesativados) throws Exception {
-		List<SrLista> lista = SrLista.listar(mostrarDesativados);
-		render(lista, mostrarDesativados);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
+		List<SrLista> listas = SrLista.listar(mostrarDesativados);
+		
+		render(listas, mostrarDesativados, orgaos, locais, tiposPermissao);
 	}
 	
 	public static void listarListaDesativados() throws Exception {
@@ -1377,9 +1395,9 @@ public class Application extends SigaApplication {
 		render(lista, orgaos, locais, tiposPermissao);
 	}
 
-	public static void gravarLista(SrLista lista) throws Exception {
+	public static Long gravarLista(SrLista lista) throws Exception {
 		lista.salvar();
-		exibirLista(lista.idLista);
+		return lista.idLista;
 	}
 
 	public static void desativarLista(Long id, boolean mostrarDesativados) throws Exception {

@@ -140,7 +140,7 @@ public class SrAtributo extends HistoricoSuporte {
 	}
 	
 	/**
-	 * Retorna um Json de {@link SrItemConfiguracao}.
+	 * Retorna um Json de {@link SrAtributo}.
 	 */
 	public String getSrAtributoJson() {
 		return this.toVO().toJson();

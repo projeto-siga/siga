@@ -19,22 +19,24 @@ public class SrAtributoVO {
 	public String nomeAtributo;
 	public String descrAtributo;
 	public SrTipoAtributo tipoAtributo;
+	public String descrPreDefinido;
 	public Long hisIdIni;
-	public List<SrConfiguracaoVO> associacoesVO;
+	public List<SrConfiguracaoAssociacaoVO> associacoesVO;
 	
 	public SrAtributoVO(Long idAtributo, String nomeAtributo,
-			String descrAtributo, SrTipoAtributo tipoAtributo, Long hisIdIni,
-			List<SrConfiguracao> associacoes) {
+			String descrAtributo, SrTipoAtributo tipoAtributo, String descrPreDefinido,
+			Long hisIdIni, List<SrConfiguracao> associacoes) {
 		this.idAtributo = idAtributo;
 		this.nomeAtributo = nomeAtributo;
 		this.descrAtributo = descrAtributo;
 		this.tipoAtributo = tipoAtributo;
+		this.descrPreDefinido = descrPreDefinido;
 		this.hisIdIni = hisIdIni;
-		this.associacoesVO = new ArrayList<SrConfiguracaoVO>();
+		this.associacoesVO = new ArrayList<SrConfiguracaoAssociacaoVO>();
 		
 		if(associacoes != null)
 			for (SrConfiguracao associacao : associacoes) {
-				associacoesVO.add(associacao.toVO());
+				associacoesVO.add(associacao.toAssociacaoVO());
 			}
 	}
 
@@ -50,8 +52,10 @@ public class SrAtributoVO {
 	}
 	
 	public static SrAtributoVO createFrom(SrAtributo atributo) {
-		if (atributo != null)
-			return new SrAtributoVO(atributo.idAtributo, atributo.nomeAtributo, atributo.descrAtributo, atributo.tipoAtributo, atributo.getHisIdIni(), atributo.associacoes);
+		if (atributo != null) {
+			List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(atributo, Boolean.FALSE);
+			return new SrAtributoVO(atributo.idAtributo, atributo.nomeAtributo, atributo.descrAtributo, atributo.tipoAtributo, atributo.descrPreDefinido, atributo.getHisIdIni(), associacoes);
+		}
 
 		return null;
 	}

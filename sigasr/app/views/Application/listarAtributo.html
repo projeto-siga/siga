@@ -82,6 +82,11 @@
 				"targets": [colunasAtributo.acoes, colunasAtributo.jSon ],
 				"searchable": false,
 				"sortable" : false
+			},
+			// Coluna JSon 
+			{
+				"targets": [colunasAtributo.jSon],
+				"visible": false
 			}]
 		});
 		$('#atributo_table tbody').on('click', 'tr', function () {
@@ -92,31 +97,39 @@
 					atributoTable.$('tr.selected').removeClass('selected');
 		            $(this).addClass('selected');
 		        }
-	// 			TODO:IMPLEMENTAR O METODO ABAIXO ;D
 				atualizarModalAtributo(itemSelecionado);
+				verificarTipoAtributo();
 				atributoModalAbrir(true);
 			}
 		});
 	});
 
 	function limparDadosAtributoModal() {
+		jTipoAtributoCbb = document.getElementsByName("att.tipoAtributo")[0];
+		jTipoAtributoCbb.selectedIndex = 0;
 		$('#idAtributo').val('');
 		$('#nomeAtributo').val('');
 		$('#descrAtributo').val('');
 		$('#tipoAtributo').selectedIndex = 0;
 		$('#descrPreDefinido').val('');
+		$('#vlPreDefinidos').hide();
+		tableAssociacao.api().clear().draw();
 	} 
 
 	// Alimenta os campos do Popup antes de abrir ao usuário.
 	function atualizarModalAtributo(itemArray) {
-	var jSonAtributo = getJsonByString(itemArray[colunasAtributo.jSon]);
+		limparDadosAtributoModal();
+		var jSonAtributo = getJsonByString(itemArray[colunasAtributo.jSon]);
+	
 		
 		if (jSonAtributo) {
+			jTipoAtributoCbb = document.getElementsByName("att.tipoAtributo")[0];
+			jTipoAtributoCbb.selectedIndex = findSelectedIndexByValue(jTipoAtributoCbb, jSonAtributo.tipoAtributo);
 			$('#idAtributo').val(jSonAtributo.idAtributo);
 			$('#nomeAtributo').val(jSonAtributo.nomeAtributo);
 			$('#descrAtributo').val(jSonAtributo.descrAtributo);
 			$('#descrPreDefinido').val(jSonAtributo.descrPreDefinido);
-			atualizarListaAssociacoes(jSonItem);
+			atualizarListaAssociacoes(jSonAtributo);
 		}
 	}
 
@@ -132,21 +145,14 @@
 		return jSonItem;
 	}
 
-	function atualizarListaAssociacoes(jSon) {
-		var gestoresUI = $("#gestoresUl")[0];
-		
-		if (jSon.gestorSetVO) {
-			// cria os itens da lista de gestores, e adiciona na tela
-			for (i = 0; i < jSon.gestorSetVO.length; i++) {
-				var gestorItem = jSon.gestorSetVO[i];
-
-				if (gestorItem.dpPessoaVO)
-					gestoresUI.incluirItem(gestorItem.dpPessoaVO.sigla, gestorItem.dpPessoaVO.descricao, 'pessoa', gestorItem.dpPessoaVO.id, gestorItem.idGestorItem);
-				else if (gestorItem.dpLotacaoVO)
-		        	gestoresUI.incluirItem(gestorItem.dpLotacaoVO.sigla, gestorItem.dpLotacaoVO.descricao, 'lotacao', gestorItem.dpLotacaoVO.id, gestorItem.idGestorItem);
-			}
+	function findSelectedIndexByValue(comboBox, value) {
+		for (var i = 0; i < comboBox.options.length; i++) {
+			if (comboBox.options[i].value == value)
+				return i;
 		}
-	}
+		
+		return 0;
+	};
 
 	function inserirEditarAtributo() {
 		limparDadosAtributoModal();
@@ -166,6 +172,7 @@
 
 	function atributoModalFechar() {
 		$("#editarAtributo_dialog").dialog('close');
+		limparDadosAtributoModal();
 	}
 	
 	function desativarAtributo(event, id) {

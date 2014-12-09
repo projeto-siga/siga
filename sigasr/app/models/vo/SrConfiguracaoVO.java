@@ -56,7 +56,6 @@ public class SrConfiguracaoVO {
 	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet, boolean atributoObrigatorio) {
 		this(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, tipoPermissaoSet);
 		this.atributoObrigatorio = atributoObrigatorio;
-		
 	}
 
 	/**

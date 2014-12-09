@@ -188,6 +188,40 @@
 		$("#acaoUnitariaSpan").html(itemArray[colunas.tituloAcao]);
 	}
 
+
+	function atualizarListaAssociacoes(jSon) {
+		if (jSon.associacoesVO) {
+			// cria a lista de associacoes, e adiciona na tela
+			for (i = 0; i < jSon.associacoesVO.length; i++) {
+				var assoc = jSon.associacoesVO[i],
+					html = 
+					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
+						'<a class="once desassociar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
+							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
+							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+						'</a>' +
+					'</td>',
+							         
+					rowAssoc = [
+								'',
+								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.id : '',
+								assoc.itemConfiguracaoUnitario? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.titulo) : '',
+								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.sigla : '',
+								assoc.acaoUnitaria? assoc.acaoUnitaria.id : '',
+								assoc.acaoUnitaria? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : '',
+								assoc.acaoUnitaria? assoc.acaoUnitaria.sigla : '',
+								$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
+								getAtributoObrigatorioString(),
+								assoc.idConfiguracao,
+								html
+			   				];
+	   				
+				// Adiciona na tabela de Associações
+				tableAssociacao.api().row.add(rowAssoc).draw();
+			}
+		}
+	}
+
 	function transformStringToBoolean(value) {
 		if (value.constructor.name == 'String')
 			return value == 'true';
@@ -243,8 +277,8 @@
 		        row[colunas.idAssociacao] = response;
 				var html = 
 				'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-					'<a class="once desassociar" onclick="desassociar(event, ${assoc?.idConfiguracao})" title="Remover permissão">' +
-						'<input class="idAssociacao" type="hidden" value="${assoc?.idConfiguracao}"/>' +
+					'<a class="once desassociar" onclick="desassociar(event,' + response + ')" title="Remover permissão">' +
+						'<input class="idAssociacao" type="hidden" value="' + response + '"/>' +
 						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
 					'</a>' +
 				'</td>';
@@ -298,7 +332,24 @@
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunas.idAssociacao];
 			idAtributo = $("#idAtributo").val();
 			
-			location.href='@{Application.desativarAssociacaoEdicao()}?' + jQuery.param({idAtributo : idAtributo, idAssociacao : idAssociacao});
+			$.ajax({
+		         type: "POST",
+		         url: "@{Application.desativarAssociacaoEdicao()}",
+		         data: {idAtributo : idAtributo, idAssociacao : idAssociacao},
+		         dataType: "text",
+		         success: function(response) {
+		        	 table.api().row(tr).remove().draw();
+		         },
+		         error: function(response) {
+		        	$('#modal-associacao').hide(); 
+
+		        	var modalErro = $('#"modal-associacao-error"');
+		        	modalErro.find("h3").html(response.responseText);
+		        	modalErro.show(); 
+		         }
+	       });
+
+			
 	}
 </script>
 
@@ -330,7 +381,7 @@
 	</div>
 	<div class="gt-form-row gt-width-100">
 		<label>Tipo de atributo</label> #{select name:'att.tipoAtributo', items:models.SrTipoAtributo.values(),
-		labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:100%' /}
+		labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:100%', id:'tipoAtributo' /}
 	</div>
 	<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
 		<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
@@ -395,7 +446,7 @@
 	<div class="gt-form-row" style="padding-top: 10px;">
 		<input type="submit" value="Gravar"
 			class="gt-btn-medium gt-btn-left" />
-		<a href="@{Application.listarAtributo}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+		<a href="javascript: atributoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 	</div>
 	#{/form}
 </div>

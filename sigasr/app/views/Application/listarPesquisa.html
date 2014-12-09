@@ -163,8 +163,8 @@
 	 * Customiza o metodo editar para adicionar a lista de perguntas
 	 */
 	pesquisaService.editar = function(obj, title) {
-		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		perguntas.limpar();									 // Limpa as perguntas sendo mostradas
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 
 		// Adiciona as perguntas dessa pesquisa
 		for(var i = 0; i < obj.perguntasSet.length; i++) {

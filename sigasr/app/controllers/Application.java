@@ -2,7 +2,6 @@ package controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,13 +23,13 @@ import models.SrArquivo;
 import models.SrAtributo;
 import models.SrAtributoSolicitacao;
 import models.SrConfiguracao;
-import models.SrConfiguracao.SrConfiguracaoVO;
 import models.SrConfiguracaoBL;
 import models.SrEquipe;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
+import models.SrPergunta;
 import models.SrPesquisa;
 import models.SrResposta;
 import models.SrSolicitacao;
@@ -42,8 +41,6 @@ import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 
 import org.joda.time.LocalDate;
-
-import com.google.gson.JsonObject;
 
 import play.Logger;
 import play.Play;
@@ -1162,7 +1159,8 @@ public class Application extends SigaApplication {
 	public static void listarPesquisa(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrPesquisa> pesquisas = SrPesquisa.listar(mostrarDesativados);
-		render(pesquisas);
+		List<SrTipoPergunta> tipos = SrTipoPergunta.buscarTodos();
+		render(pesquisas, tipos);
 	}
 	
 	public static void listarPesquisaDesativadas() throws Exception {
@@ -1178,10 +1176,12 @@ public class Application extends SigaApplication {
 		render(pesq, tipos);
 	}
 
-	public static void gravarPesquisa(SrPesquisa pesq) throws Exception {
+	public static String gravarPesquisa(SrPesquisa pesquisa, Set<SrPergunta> perguntaSet) throws Exception {
 		assertAcesso("ADM:Administrar");
-		pesq.salvar();
-		listarPesquisa(Boolean.FALSE);
+		pesquisa.perguntaSet = (perguntaSet != null) ? perguntaSet : new HashSet<SrPergunta>();
+		pesquisa.salvar();
+		
+		return pesquisa.atualizarTiposPerguntas().toJson();
 	}
 
 	public static void desativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {

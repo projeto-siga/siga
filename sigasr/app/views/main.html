@@ -21,6 +21,7 @@ ${_cabecalho_pre_head.raw()}
 <!-- DataTables CSS -->
 <link rel="stylesheet" type="text/css" href="/sigasr/public/stylesheets/main.css">
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css">
+
 ${moreHead?.raw()}
 
 #{if params['popup'] != 'true'}
@@ -48,6 +49,7 @@ function unblock(){
 	requesting=false;
 }
 </script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 
 #{modal nome:'server_error', titulo:'Erro interno no servidor'}
 	<div id="erroInterno">

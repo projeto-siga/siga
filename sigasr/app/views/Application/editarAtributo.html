@@ -80,7 +80,8 @@
 								colunas.atributoObrigatorio,
 								colunas.idAssociacao],
 					"visible": false
-				}]
+				}],
+				"aaSorting" : [[colunas.siglaItemConfiguracao, 'asc']],
 			});
 	
 			$('#associacao_table tbody').on('click', 'tr', function () {
@@ -94,9 +95,7 @@
 				    associacaoModalAbrir(true);
 				}
 			});
-			debugger;
 			$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
-	
 			tableAssociacao = table;
 		}
 	
@@ -218,7 +217,13 @@
 			   				];
 	   				
 				// Adiciona na tabela de Associações
-				tableAssociacao.api().row.add(rowAssoc).draw();
+				var newRow = tableAssociacao
+					.api()
+					.row
+					.add(rowAssoc);
+
+				$(newRow.node()).find('td:first').addClass('details-control');
+				newRow.draw();
 			}
 		}
 	}
@@ -424,7 +429,7 @@
 				<tbody>
 					#{list items:att.associacoes, as:'assoc'}
 					<tr>
-						<td class="gt-celula-nowrap details-control"></td>
+						<td class="details-control">tesdfsdfsdfsdfsdfsdfsdf</td>
 						<td>${assoc.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>
 						<td>${assoc.itemConfiguracaoUnitario?.atual?.tituloItemConfiguracao}</td>
 						<td>${assoc.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>

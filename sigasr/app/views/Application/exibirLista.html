@@ -162,9 +162,14 @@ $(function(){
             return false;
         var ids=[];
     	$("#sortable > tr").each(function() {
-          ids.push($(this).attr('id'));
+			var id = $(this).attr('id');
+
+			if (id != undefined && id != '')
+        		ids.push(id);
  	    });
-    	window.location.href = "@{Application.priorizarLista}?id=${lista.idLista}&ids="+ids;
+
+ 	    if (ids.length > 0)
+    		window.location.href = "@{Application.priorizarLista}?id=${lista.idLista}&ids="+ids;
     });
 });
 </script>

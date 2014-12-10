@@ -255,7 +255,8 @@
 
 <script language="javascript">
 	var prioridadesTable, 
-		isEditing;
+		isEditingLista = false,
+		isEditingContr = false;
 	
 	$( document ).ready(function( ) {
 		/* Table initialization */
@@ -355,7 +356,7 @@
 	};
 	
 	function controleAcessoModalAbrir(isEdicao){
-		isEditing = isEdicao;
+		isEditingContr = isEdicao;
 		
 		if (isEdicao)
 			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permissão');
@@ -367,7 +368,7 @@
 	}
 	
 	function controleAcessoModalFechar() {
-		isEditing = false;
+		isEditingContr = false;
 		$("#controleAcesso_dialog").dialog("close");
 		
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
@@ -477,7 +478,7 @@
 						         
 		        row[20] = html;
 
-	          	if (isEditing) {
+	          	if (isEditingContr ) {
 	          		prioridadesTable.api().row('.selected').data(row);
 			    }
 			    else {
@@ -574,7 +575,7 @@
 	});
 
 	function listaModalAbrir(isEdicao) {
-		isEditing = isEdicao;
+		isEditingLista = isEdicao;
 
 		if (isEdicao)
  			$("#editarLista_dialog").dialog('option', 'title', 'Alterar Lista de Prioridade');
@@ -631,8 +632,9 @@
     		                $("#nomeLotaCadastrante").val(),
     		                '<a class="once" onclick="desativarItem(event, '+idLista+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>'];
 
-	            if (isEditing)
+	            if (!isEditingLista)
 	            	listaTable.api().row.add(row).draw();
+            	
 	        	listaModalFechar();
         	},
         	error: function() {

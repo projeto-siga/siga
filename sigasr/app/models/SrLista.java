@@ -307,7 +307,7 @@ public class SrLista extends HistoricoSuporte {
 
 	public SrListaVO toVO() {
 		return new SrListaVO(this.idLista, this.nomeLista, this.descrAbrangencia, this.descrJustificativa, 
-				this.descrPriorizacao, this.listaInicial, this.permissoes);
+				this.descrPriorizacao);
 	}
 	
 	public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {

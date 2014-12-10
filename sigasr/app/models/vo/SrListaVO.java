@@ -1,9 +1,5 @@
 package models.vo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import models.SrConfiguracao;
 import models.SrLista;
 
 import com.google.gson.Gson;
@@ -19,23 +15,14 @@ public class SrListaVO {
 	public String descrAbrangencia;
 	public String descrJustificativa;
 	public String descrPriorizacao;
-	public SrListaVO listaInicialVO;
-	public List<SrConfiguracaoVO> permissoesVO;
 
 	public SrListaVO(Long idLista, String nomeLista, String descrAbrangencia, String descrJustificativa,
-			String descrPriorizacao, SrLista listaInicial, List<SrConfiguracao> permissoes) {
+			String descrPriorizacao) {
 		this.idLista = idLista;
 		this.nomeLista = nomeLista;
 		this.descrAbrangencia = descrAbrangencia;
 		this.descrJustificativa = descrJustificativa;
 		this.descrPriorizacao = descrPriorizacao;
-		this.listaInicialVO = listaInicial.toVO();
-		permissoesVO = new ArrayList<SrConfiguracaoVO>();
-		
-		if(permissoes != null)
-			for (SrConfiguracao conf: permissoes) {
-				permissoesVO.add(conf.toVO());
-			}
 	}
 	
 	/**

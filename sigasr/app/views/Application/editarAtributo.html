@@ -287,14 +287,16 @@
 						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
 					'</a>' +
 				'</td>';
-						         
+
 		        row[colunas.botaoExcluir] = html;
 
 	          	if (isEditingAssociacao) {
 	          		tableAssociacao.api().row('.selected').data(row);
 			    }
 			    else {
-			    	tableAssociacao.api().row.add(row).draw();
+			    	var tr = tableAssociacao.api().row.add(row).draw();
+			    	$(tr.node()).find('td:first').addClass('details-control');
+			    	jQuery('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
 			    }
 	          	associacaoModalFechar();
 				$('.desassociar').bind('click', desassociar);
@@ -359,7 +361,7 @@
 </script>
 
 <div class="gt-form gt-content-box">
-	<form id="atributoForm">
+	<form id="atributoForm" action="#">
 	#{if att?.idAtributo} <input
 		type="hidden" name="att.idAtributo"
 		id="idAtributo"
@@ -409,9 +411,9 @@
 				<thead>
 					<tr>
 						<th style="color: #333">
-							<button class="gt-btn-medium gt-btn-left bt-expandir">
+							<span class="gt-btn-medium gt-btn-left bt-expandir">
 								<span id="iconeBotaoExpandirTodos">+</span>
-							</button>
+							</span>
 						</th>
 						<th>idItemConfiguracao</th>
 						<th><i>Item &darr;</i></th>
@@ -428,7 +430,7 @@
 				<tbody>
 					#{list items:att.associacoes, as:'assoc'}
 					<tr>
-						<td class="details-control">tesdfsdfsdfsdfsdfsdfsdf</td>
+						<td class="details-control"></td>
 						<td>${assoc.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>
 						<td>${assoc.itemConfiguracaoUnitario?.atual?.tituloItemConfiguracao}</td>
 						<td>${assoc.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>
@@ -450,7 +452,7 @@
 			</table>
 		</div>
 		<div class="gt-table-buttons">
-			<a href="javascript: inserirAssociacao()" class="gt-btn-small gt-btn-left">Incluir</a>
+			<a id="btnIncluirAtributo" class="gt-btn-small gt-btn-left">Incluir</a>
 		</div>
 	</div>
 	<div class="gt-form-row" style="padding-top: 10px;">

@@ -4,6 +4,12 @@
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
+<style>
+	.ui-widget-content a[disabled] {
+		opacity:0.5;
+	}
+</style>
+
 <script>
 	
 	var atributoTable,
@@ -255,8 +261,15 @@
 		isEditing = isEdicao;
 		removerErros();
 		
-		if (isEdicao)
+		if (isEdicao) {
 			tituloModal = 'Alterar Atributo';
+			$("#btnIncluirAtributo").bind('click', inserirAssociacao);
+			$("#btnIncluirAtributo").removeAttr('disabled');
+		}
+		else {
+			$("#btnIncluirAtributo").unbind('click');
+			$("#btnIncluirAtributo").attr('disabled', true);
+		}
 
 		$("#editarAtributo_dialog").dialog('option', 'title', tituloModal);
 		$("#editarAtributo_dialog").dialog('open');

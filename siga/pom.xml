@@ -126,6 +126,11 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-ldap</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-vraptor-module</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>

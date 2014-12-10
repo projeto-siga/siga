@@ -1,6 +1,7 @@
 #{extends 'main.html' /} #{set title:'Atributos' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script>
@@ -90,7 +91,7 @@
 			}]
 		});
 		$('#atributo_table tbody').on('click', 'tr', function () {
-			var itemSelecionado = atributoTable.row(this).data();
+			var itemSelecionado = atributoTable.api().row(this).data();
 			
 			if (itemSelecionado != undefined) {
 				if (!$(this).hasClass('selected') ) {
@@ -120,7 +121,6 @@
 	function atualizarModalAtributo(itemArray) {
 		limparDadosAtributoModal();
 		var jSonAtributo = getJsonByString(itemArray[colunasAtributo.jSon]);
-	
 		
 		if (jSonAtributo) {
 			jTipoAtributoCbb = document.getElementsByName("att.tipoAtributo")[0];
@@ -164,22 +164,19 @@
 				'tipoAtributo': $("#tipoAtributo").val(),
 				'descrPreDefinido': $("#descrPreDefinido").val()
 	 		};
-			
 	 		return atributoJSon;
 	}
 
-	function recuperarInformacoesTela() {
-		var jSonAtt = atualizaAtributoJson(),
-		id = jSonAtt.id,
-		row = [
-			$("#nomeAtributo").val(),
-			$("#tituloItemConfiguracao").val(),
-			$("#tipoAtributo").val(),
-			'<a class="once" onclick="desativarAtributo(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
-			jSonAtt
-		];
-
-	return row;
+	function recuperarInformacoesTela(jSonAtt) {
+			var id = jSonAtt.id,
+			row = [
+				$("#nomeAtributo").val(),
+				$("#descrAtributo").val(),
+				jSonAtt.descrTipoAtributo,
+				'<a class="once" onclick="desativarAtributo(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
+				jSonAtt
+			];
+		return row;
 	}
 
 	function removerErros() {
@@ -187,8 +184,7 @@
 	}
 
 	function atributoGravar() {
-		var row = recuperarInformacoesTela(),
-			jForm = $('#atributoForm');
+		var jForm = $('#atributoForm');
 
 		removerErros();
 		
@@ -199,13 +195,15 @@
 	         dataType: "text",
 	         success: function(attJson) {
 	        	var jSon = getJsonByString(attJson);
+	        	row = recuperarInformacoesTela(jSon);
+	        	
         		row[colunasAtributo.jSon] = jSon;
         		
         		if (isEditing) {
-        			atributoTable.row('.selected').data(row);
+        			atributoTable.api().row('.selected').data(row);
 				}
 				else {
-					atributoTable.row.add(row).draw();
+					atributoTable.api().row.add(row).draw();
 				}
 	          	atributoModalFechar();
 
@@ -228,8 +226,6 @@
 // 				$('.desativarAtributo').bind('click', desativarAtributo);
 	         },
 	         error: function(error) {
-	     		console.log(error);
-	     		
 	     		if(error.status == 400) {
 	 	    		var errors = JSON.parse(error.responseText);
 	 	    		for(var i = 0; i < errors.length; i++) {

@@ -10,6 +10,7 @@ import models.SrTipoAtributo;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 /**
  * Classe que representa um V.O. de {@link SrGestorItem}.
@@ -47,8 +48,13 @@ public class SrAtributoVO {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting().serializeNulls();
 		Gson gson = builder.create();
-
-		return gson.toJson(this);
+		
+		JsonObject jsonTree = (JsonObject) gson.toJsonTree(this);
+		
+		if (this.tipoAtributo != null) {
+			jsonTree.add("descrTipoAtributo", gson.toJsonTree(this.tipoAtributo.descrTipoAtributo));
+		}
+		return jsonTree.toString();
 	}
 	
 	public static SrAtributoVO createFrom(SrAtributo atributo) {
@@ -56,8 +62,6 @@ public class SrAtributoVO {
 			List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(atributo, Boolean.FALSE);
 			return new SrAtributoVO(atributo.idAtributo, atributo.nomeAtributo, atributo.descrAtributo, atributo.tipoAtributo, atributo.descrPreDefinido, atributo.getHisIdIni(), associacoes);
 		}
-
 		return null;
 	}
-	
 }

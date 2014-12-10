@@ -1,0 +1,45 @@
+package br.gov.jfrj.siga.gc;
+
+import javax.persistence.EntityManager;
+
+import br.com.caelum.vraptor.InterceptionException;
+import br.com.caelum.vraptor.Intercepts;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.core.InterceptorStack;
+import br.com.caelum.vraptor.interceptor.Interceptor;
+import br.com.caelum.vraptor.ioc.ApplicationScoped;
+import br.com.caelum.vraptor.resource.ResourceMethod;
+
+@Intercepts
+@ApplicationScoped
+public class ContextInterceptor implements Interceptor {
+
+	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
+
+	private final static ThreadLocal<Result> resultByThread = new ThreadLocal<Result>();
+
+	public ContextInterceptor(EntityManager em, Result result) {
+		emByThread.set(em);
+		resultByThread.set(result);
+	}
+
+	static public EntityManager em() {
+		return emByThread.get();
+	}
+
+	static public Result result() {
+		return resultByThread.get();
+	}
+
+	@Override
+	public boolean accepts(ResourceMethod method) {
+		return false;
+	}
+
+	@Override
+	public void intercept(InterceptorStack stack, ResourceMethod method,
+			Object resourceInstance) throws InterceptionException {
+		return;
+	}
+
+}

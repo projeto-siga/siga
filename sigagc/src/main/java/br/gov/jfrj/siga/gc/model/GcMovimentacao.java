@@ -17,7 +17,7 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.gc.ActiveRecord;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
@@ -29,7 +29,7 @@ public class GcMovimentacao extends Objeto implements
 		Comparable<GcMovimentacao> {
 	private static final long serialVersionUID = 7936898203057280892L;
 
-	static ActiveRecord<GcMovimentacao> AR = new ActiveRecord<>(
+	public static ActiveRecord<GcMovimentacao> AR = new ActiveRecord<>(
 			GcMovimentacao.class);
 
 	@Id

@@ -2,7 +2,9 @@ package br.gov.jfrj.siga.gc;
 
 import java.util.List;
 
-public interface ObjetoSelecionavel {
+import br.gov.jfrj.siga.model.Selecionavel;
+
+public interface ObjetoSelecionavel extends Selecionavel {
 	public Long getId();
 
 	public void setDescricao(String descricao);

@@ -44,15 +44,15 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 @Component
 public class GcDao {
 
-	//private EntityManager em = new EntityManagerCreator().getInstance();
+	// private EntityManager em = new EntityManagerCreator().getInstance();
 
-    private EntityManager em;
-    private CpDao cpDao = null;
+	private CpDao cpDao = null;
 
-    public GcDao(EntityManager em){
-        this.em = em;
-    }
-	
+	private EntityManager em;
+	public GcDao(EntityManager em) {
+		this.em = em;
+	}
+
 	// public static final String CACHE_GC = "gc";
 	//
 	// /**

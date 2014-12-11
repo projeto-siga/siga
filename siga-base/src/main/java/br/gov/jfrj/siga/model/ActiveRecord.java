@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.gc;
+package br.gov.jfrj.siga.model;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,7 @@ public class ActiveRecord<T extends Objeto> {
 	}
 
 	public EntityManager em() {
-		return ContextInterceptor.em();
+		return ContextoPersistencia.em();
 	}
 
 	public long count() {

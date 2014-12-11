@@ -33,6 +33,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
@@ -42,6 +43,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 		Serializable, Selecionavel, Assemelhavel {
+	public static ActiveRecord<CpOrgaoUsuario> AR = new ActiveRecord<>(CpOrgaoUsuario.class);
 
 	/**
 	 * 

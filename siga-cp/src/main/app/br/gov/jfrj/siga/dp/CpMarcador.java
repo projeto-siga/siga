@@ -28,6 +28,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.model.ActiveRecord;
+
 @Entity
 @Table(name = "CP_MARCADOR", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
@@ -148,6 +150,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	final static public long MARCADOR_PENDENTE_DE_ANEXACAO = 60;
 	
 	final static public long MARCADOR_SOLICITACAO_EM_ELABORACAO = 61;
+	
+	public static ActiveRecord<CpMarcador> AR = new ActiveRecord<>(CpMarcador.class);
 	
 	public CpMarcador() {
 		super();

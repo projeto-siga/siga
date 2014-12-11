@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.gc;
+package br.gov.jfrj.siga.cp;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;

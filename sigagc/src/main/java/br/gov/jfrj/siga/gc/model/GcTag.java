@@ -13,9 +13,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.gc.ActiveRecord;
 import br.gov.jfrj.siga.gc.ObjetoSelecionavel;
 import br.gov.jfrj.siga.gc.util.GcBL;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 
@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @NamedQueries({ @NamedQuery(name = "listarTagCategorias", query = "select t.categoria from GcTag t where t.categoria is not null group by t.categoria order by t.categoria") })
 public class GcTag extends Objeto implements Comparable<GcTag>,
 		ObjetoSelecionavel {
-	static ActiveRecord<GcTag> AR = new ActiveRecord<>(GcTag.class);
+	public static ActiveRecord<GcTag> AR = new ActiveRecord<>(GcTag.class);
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcTagSeq")
@@ -111,7 +111,6 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -137,7 +136,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	}
 
 	@Override
-	public Selecionavel selecionar(String sigla) throws Exception {
+	public ObjetoSelecionavel selecionar(String sigla) throws Exception {
 		setSigla(sigla);
 		List<GcTag> itens = (List<GcTag>) buscar(this);
 		if (itens.size() == 0 || itens.size() > 1)
@@ -146,13 +145,13 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	}
 
 	@Override
-	public List<? extends Selecionavel> buscar() throws Exception {
+	public List<? extends ObjetoSelecionavel> buscar() throws Exception {
 		String query = "from GcTag where 1=1";
 		if (titulo != null && titulo.trim().length() > 0) {
 			String t = Texto.slugify(titulo, true, true);
 			query += " and titulo like '%" + t + "%'";
 		}
-		return GcTag.find(query).fetch();
+		return GcTag.AR.find(query).fetch();
 	}
 
 	public static List<? extends Selecionavel> buscar(GcTag tag)

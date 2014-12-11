@@ -7,10 +7,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.model.Objeto;
+
 @Entity
 @Table(name = "GC_TIPO_INFORMACAO", schema = "SIGAGC")
-public class GcTipoInformacao extends Object {
+public class GcTipoInformacao extends Objeto {
 	final static public long TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO = 1;
+	public static ActiveRecord<GcTipoInformacao> AR = new ActiveRecord<>(
+			GcTipoInformacao.class);
 
 	@Id
 	@Column(name = "ID_TIPO_INFORMACAO")

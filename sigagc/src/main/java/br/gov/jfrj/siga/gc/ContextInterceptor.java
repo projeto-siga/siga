@@ -9,6 +9,7 @@ import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.ApplicationScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 @Intercepts
 @ApplicationScoped
@@ -19,7 +20,7 @@ public class ContextInterceptor implements Interceptor {
 	private final static ThreadLocal<Result> resultByThread = new ThreadLocal<Result>();
 
 	public ContextInterceptor(EntityManager em, Result result) {
-		emByThread.set(em);
+		ContextoPersistencia.setEntityManager(em);
 		resultByThread.set(result);
 	}
 

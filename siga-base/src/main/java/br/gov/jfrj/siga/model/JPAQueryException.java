@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.gc;
+package br.gov.jfrj.siga.model;
 
 import java.sql.SQLException;
 

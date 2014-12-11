@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
@@ -13,6 +14,9 @@ public class GcTipoTag extends Objeto {
 	public static final long TIPO_TAG_CLASSIFICACAO = 1;
 	public static final long TIPO_TAG_HASHTAG = 2;
 	public static final long TIPO_TAG_ANCORA = 3;
+
+	public static ActiveRecord<GcTipoTag> AR = new ActiveRecord<>(
+			GcTipoTag.class);
 
 	@Id
 	@Column(name = "ID_TIPO_TAG")

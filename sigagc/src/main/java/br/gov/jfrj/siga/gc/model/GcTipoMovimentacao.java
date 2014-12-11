@@ -5,14 +5,18 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "GC_TIPO_MOVIMENTACAO", schema = "SIGAGC")
 public class GcTipoMovimentacao extends Objeto {
+	public static ActiveRecord<GcTipoMovimentacao> AR = new ActiveRecord<>(
+			GcTipoMovimentacao.class);
+
 	final static public long TIPO_MOVIMENTACAO_CRIACAO = 1;
 
-	final static public long TIPO_MOVIMENTACAO_FECHAMENTO = 2; 
+	final static public long TIPO_MOVIMENTACAO_FECHAMENTO = 2;
 
 	final static public long TIPO_MOVIMENTACAO_CANCELAMENTO = 3;
 
@@ -35,9 +39,9 @@ public class GcTipoMovimentacao extends Objeto {
 	public static final long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO = 12;
 
 	public static final long TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO = 13;
-	
+
 	public static final long TIPO_MOVIMENTACAO_DUPLICAR = 14;
-	
+
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")
 	public long id;

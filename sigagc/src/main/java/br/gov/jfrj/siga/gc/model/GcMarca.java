@@ -12,7 +12,7 @@ import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.gc.ActiveRecord;
+import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
 @DiscriminatorValue("3")

@@ -26,7 +26,7 @@ public class WfController extends SigaController {
 
 	public WfController(HttpServletRequest request, Result result, WfDao dao,
 			SigaObjects so, WfUtil util) {
-		super(request, result, (CpDao) dao, so);
+		super(request, result, (CpDao) dao, so, null);
 		this.util = util;
 
 		result.include("processDefinitions", getProcessDefinitions());

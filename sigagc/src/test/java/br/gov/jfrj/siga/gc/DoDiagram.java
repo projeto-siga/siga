@@ -1,18 +1,18 @@
 package br.gov.jfrj.siga.gc;
 
-import models.GcArquivo;
-import models.GcConfiguracao;
-import models.GcInformacao;
-import models.GcMarca;
-import models.GcMovimentacao;
-import models.GcTag;
-import models.GcTipoInformacao;
-import models.GcTipoMovimentacao;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.gc.model.GcArquivo;
+import br.gov.jfrj.siga.gc.model.GcConfiguracao;
+import br.gov.jfrj.siga.gc.model.GcInformacao;
+import br.gov.jfrj.siga.gc.model.GcMarca;
+import br.gov.jfrj.siga.gc.model.GcMovimentacao;
+import br.gov.jfrj.siga.gc.model.GcTag;
+import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
+import br.gov.jfrj.siga.gc.model.GcTipoMovimentacao;
 
 public class DoDiagram {
 	static {

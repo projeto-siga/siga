@@ -2,17 +2,43 @@ package br.gov.jfrj.siga.gc.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
+
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.gc.model.GcAcesso;
+import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
+import br.gov.jfrj.siga.gc.model.GcMarca;
+import br.gov.jfrj.siga.gc.model.GcMovimentacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
+import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
 
-public class GcInformacaoFiltro extends GcInformacao {
-	
+public class GcInformacaoFiltro {
+	public GcTipoInformacao tipo;
+	public DpPessoa autor;
+	public DpLotacao lotacao;
+	public Integer ano;
+	public Integer numero;
+
 	public boolean pesquisa = false;
 	public String dtCriacaoIni;
 	public String dtCriacaoFim;
@@ -27,47 +53,54 @@ public class GcInformacaoFiltro extends GcInformacao {
 	public DpLotacao lotaResponsavel;
 
 	public List<GcInformacao> buscar() {
-		
+
 		String query = null;
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
 		final SimpleDateFormat dfHibernate = new SimpleDateFormat("yyyy-MM-dd");
 
 		query = "from GcInformacao inf where inf.hisDtIni is not null ";
 
-		if(tag != null)
-			//query = "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = " + tag.id;
-			query = "select inf from GcInformacao inf inner join inf.tags tags where tags.titulo = '" + tag.titulo + "'";
-			//query += " and inf.tags.id = " + tag.id;
+		if (tag != null)
+			// query =
+			// "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = "
+			// + tag.id;
+			query = "select inf from GcInformacao inf inner join inf.tags tags where tags.titulo = '"
+					+ tag.titulo + "'";
+		// query += " and inf.tags.id = " + tag.id;
 
-		if(orgaoUsu != null)
+		if (orgaoUsu != null)
 			query += " and inf.ou = " + orgaoUsu.getId();
-		
-		if(autor != null)
+
+		if (autor != null)
 			query += " and inf.autor.idPessoaIni = " + autor.getIdInicial();
-		if(lotacao != null)
-			query += " and inf.lotacao.idLotacaoIni = " + lotacao.getIdInicial();
-		
-		if(tipo != null)
-				query += " and inf.tipo = " + tipo.id;
-		
-		if(ano != null)
+		if (lotacao != null)
+			query += " and inf.lotacao.idLotacaoIni = "
+					+ lotacao.getIdInicial();
+
+		if (tipo != null)
+			query += " and inf.tipo = " + tipo.id;
+
+		if (ano != null)
 			query += " and inf.ano = " + Integer.parseInt(ano.toString());
-		
-		if(numero != null)
+
+		if (numero != null)
 			query += " and inf.numero = " + Integer.parseInt(numero.toString());
-		
-		if(conteudo != null && !conteudo.trim().equals("")) {
-			for (String s : conteudo.split(" ")){
-				/*query += " and lower(inf.arq.conteudo) like '%"
-						+ s.toLowerCase() + "%' ";
-				 */		
-				//forma de consultar em uma coluna BLOB através do SQL
-				query += " and dbms_lob.instr(inf.arq.conteudo,utl_raw.cast_to_raw('" + s + "'),1,1) > 0";
-			}	
+
+		if (conteudo != null && !conteudo.trim().equals("")) {
+			for (String s : conteudo.split(" ")) {
+				/*
+				 * query += " and lower(inf.arq.conteudo) like '%" +
+				 * s.toLowerCase() + "%' ";
+				 */
+				// forma de consultar em uma coluna BLOB através do SQL
+				query += " and dbms_lob.instr(inf.arq.conteudo,utl_raw.cast_to_raw('"
+						+ s + "'),1,1) > 0";
+			}
 		}
-		if(titulo != null && !titulo.trim().equals("")){
+		if (titulo != null && !titulo.trim().equals("")) {
 			for (String t : titulo.split(" "))
-				query += " and lower(inf.arq.titulo) like '%" + t.toLowerCase() + "%' ";
+				query += " and lower(inf.arq.titulo) like '%" + t.toLowerCase()
+						+ "%' ";
 		}
 
 		if (dtCriacaoIni != null && !dtCriacaoIni.trim().equals(""))
@@ -87,18 +120,22 @@ public class GcInformacaoFiltro extends GcInformacao {
 			} catch (ParseException e) {
 				//
 			}
-		
+
 		String subquery = "";
 
-		if (situacao != null && situacao.getIdMarcador() != null && situacao.getIdMarcador() > 0)
-			subquery += " and situacao.cpMarcador.idMarcador = " + situacao.getIdMarcador() + 
-						" and (situacao.dtFimMarca is null or situacao.dtFimMarca > sysdate)";
+		if (situacao != null && situacao.getIdMarcador() != null
+				&& situacao.getIdMarcador() > 0)
+			subquery += " and situacao.cpMarcador.idMarcador = "
+					+ situacao.getIdMarcador()
+					+ " and (situacao.dtFimMarca is null or situacao.dtFimMarca > sysdate)";
 
 		if (responsavel != null)
-			subquery += " and situacao.dpPessoaIni.idPessoa = " + responsavel.getIdInicial();
+			subquery += " and situacao.dpPessoaIni.idPessoa = "
+					+ responsavel.getIdInicial();
 		if (lotaResponsavel != null)
-			subquery += " and situacao.dpLotacaoIni.idLotacao  = " + lotaResponsavel.getIdInicial();
-		
+			subquery += " and situacao.dpLotacaoIni.idLotacao  = "
+					+ lotaResponsavel.getIdInicial();
+
 		if (dtIni != null && !dtIni.trim().equals(""))
 			try {
 				subquery += " and situacao.dtIniMarca >= to_date('"
@@ -120,7 +157,8 @@ public class GcInformacaoFiltro extends GcInformacao {
 			subquery = " and exists (from GcMarca situacao where situacao.inf = inf "
 					+ subquery + " )";
 
-		List listaRetorno = JPA.em().createQuery(query + subquery + "order by inf.hisDtIni desc")
+		List listaRetorno = GcInformacao.AR.em()
+				.createQuery(query + subquery + "order by inf.hisDtIni desc")
 				.getResultList();
 
 		return listaRetorno;

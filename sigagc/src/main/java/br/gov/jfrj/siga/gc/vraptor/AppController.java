@@ -1,13 +1,6 @@
 package br.gov.jfrj.siga.gc.vraptor;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,88 +11,74 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
+import javax.servlet.http.HttpServletRequest;
 
-import models.GcAcesso;
-import models.GcArquivo;
-import models.GcInformacao;
-import models.GcMovimentacao;
-import models.GcTag;
-import models.GcTipoInformacao;
-import models.GcTipoMovimentacao;
-import notifiers.Correio;
-
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 
-import play.Play;
-import play.data.Upload;
-import play.db.jpa.JPA;
-import play.mvc.Before;
-import play.mvc.Catch;
-import play.mvc.Http;
-import play.mvc.Scope.RenderArgs;
-import utils.GcArvore;
-import utils.GcBL;
-import utils.GcCloud;
-import utils.GcGraficoEvolucao;
-import utils.GcGraficoEvolucaoItem;
-import utils.GcInformacaoFiltro;
-import utils.diff_match_patch;
-import utils.diff_match_patch.Diff;
-import utils.diff_match_patch.Operation;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.gc.GcDao;
+import br.gov.jfrj.siga.gc.model.GcAcesso;
+import br.gov.jfrj.siga.gc.model.GcArquivo;
+import br.gov.jfrj.siga.gc.model.GcInformacao;
+import br.gov.jfrj.siga.gc.model.GcMovimentacao;
+import br.gov.jfrj.siga.gc.model.GcTag;
+import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
+import br.gov.jfrj.siga.gc.model.GcTipoMovimentacao;
+import br.gov.jfrj.siga.gc.util.GcArvore;
+import br.gov.jfrj.siga.gc.util.GcBL;
+import br.gov.jfrj.siga.gc.util.GcCloud;
+import br.gov.jfrj.siga.gc.util.GcGraficoEvolucao;
+import br.gov.jfrj.siga.gc.util.GcGraficoEvolucaoItem;
+import br.gov.jfrj.siga.gc.util.GcInformacaoFiltro;
+import br.gov.jfrj.siga.gc.util.diff_match_patch;
+import br.gov.jfrj.siga.gc.util.diff_match_patch.Diff;
+import br.gov.jfrj.siga.gc.util.diff_match_patch.Operation;
 import br.gov.jfrj.siga.model.DadosRI;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class AppController extends GcController {
 
+	private GcBL bl;
+	private Correio correio;
+
+	public AppController(HttpServletRequest request, Result result, GcBL bl,
+			GcDao dao, SigaObjects so, EntityManager em, Correio correio) {
+		super(request, result, so, em);
+		this.bl = bl;
+		this.correio = correio;
+
+	}
+
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 	private static final int CONTROLE_HASH_TAG = 1;
 
-	@Before(priority = 1)
-	public void addDefaultsAlways() throws Exception {
-		prepararSessao();
-		// Cp.getInstance().getConf().limparCacheSeNecessario();
-	}
-
-	@Before(priority = 2, unless = { "publicKnowledge", "dadosRI" })
-	public void addDefaults() throws Exception {
-		try {
-			SigaApplication.obterCabecalhoEUsuario("#f1f4e2");
-			assertAcesso("");
-		} catch (Exception e) {
-			tratarExcecoes(e);
-		}
-
-		try {
-			assertAcesso("ADM:Administrar");
-
-			RenderArgs.current().put("exibirMenuAdministrar", true);
-		} catch (Exception e) {
-			RenderArgs.current().put("exibirMenuAdministrar", false);
-		}
-	}
-
 	public void gadget() {
-		Query query = JPA.em().createNamedQuery("contarGcMarcas");
-		query.setParameter("idPessoaIni",
-				((DpPessoa) RenderArgs.current().get("cadastrante"))
-						.getIdInicial());
-		query.setParameter("idLotacaoIni", ((DpLotacao) RenderArgs.current()
-				.get("lotaTitular")).getIdInicial());
+		Query query = em().createNamedQuery("contarGcMarcas");
+		query.setParameter("idPessoaIni", getCadastrante().getIdInicial());
+		query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
 		List contagens = query.getResultList();
-		render(contagens);
+		result.include("contagens", contagens);
 	}
 
+	@Path("/public/app/knowledge")
 	public void publicKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo, boolean popup,
 			String estiloBusca) throws Exception {
@@ -107,14 +86,28 @@ public class AppController extends GcController {
 				popup, estiloBusca);
 	}
 
-	public void knowledge(Long id, String[] tags, String estilo,
-			String msgvazio, String urlvazio, String titulo, boolean popup,
-			String estiloBusca) throws Exception {
-		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, false,
+	public void knowledge(Long id, String[] tags, String msgvazio,
+			String urlvazio, String titulo, boolean popup, String estiloBusca)
+			throws Exception {
+		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo, false,
 				popup, estiloBusca);
 	}
 
-	private static void renderKnowledge(Long id, String[] tags, String estilo,
+	public void knowledge_inplace(Long id, String[] tags, String msgvazio,
+			String urlvazio, String titulo, boolean popup, String estiloBusca)
+			throws Exception {
+		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo, false,
+				popup, estiloBusca);
+	}
+
+	public void knowledge_sidebar(Long id, String[] tags, String msgvazio,
+			String urlvazio, String titulo, boolean popup, String estiloBusca)
+			throws Exception {
+		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo, false,
+				popup, estiloBusca);
+	}
+
+	private void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
 			boolean testarAcessoPublico, boolean popup, String estiloBusca)
 			throws UnsupportedEncodingException, Exception {
@@ -123,11 +116,10 @@ public class AppController extends GcController {
 		GcInformacao info = null;
 		Set<GcTag> set = null;
 		if (tags != null)
-			set = GcBL.buscarTags(tags, true);
+			set = bl.buscarTags(tags, true);
 		estiloBusca = estiloBusca != null ? estiloBusca.substring(0, 1)
 				.toUpperCase() + estiloBusca.substring(1) : "";
-		Query query = JPA.em().createNamedQuery(
-				"buscarConhecimento" + estiloBusca);
+		Query query = em().createNamedQuery("buscarConhecimento" + estiloBusca);
 		query.setParameter("tags", set);
 		List<Object[]> conhecimentosCandidatos = query.getResultList();
 		List<Object[]> conhecimentos = new ArrayList<Object[]>();
@@ -136,7 +128,7 @@ public class AppController extends GcController {
 			if (idOutroConhecimento.equals(id))
 				continue;
 
-			info = GcInformacao.findById(idOutroConhecimento);
+			info = GcInformacao.AR.findById(idOutroConhecimento);
 
 			if (testarAcessoPublico
 					&& (info.visualizacao.id != GcAcesso.ACESSO_PUBLICO))
@@ -146,14 +138,15 @@ public class AppController extends GcController {
 			o[3] = info.getSigla();
 			if (o[2] != null && o[2] instanceof byte[]) {
 				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
-				s = GcBL.ellipsize(s, 100);
+				s = bl.ellipsize(s, 100);
 				o[2] = s;
 			}
 			conhecimentos.add(o);
 		}
 
 		if (conhecimentos.size() == 1 && "inplace".equals(estilo)) {
-			GcInformacao inf = GcInformacao.findById(conhecimentos.get(0)[0]);
+			GcInformacao inf = GcInformacao.AR
+					.findById(conhecimentos.get(0)[0]);
 			conhecimentos.get(0)[1] = inf.arq.titulo;
 			conhecimentos.get(0)[2] = inf.getConteudoHTML();
 		}
@@ -163,7 +156,7 @@ public class AppController extends GcController {
 
 		String referer = null;
 		try {
-			referer = request.headers.get("referer").value();
+			referer = getRequest().getHeader("referer");
 		} catch (Exception e) {
 
 		}
@@ -176,9 +169,9 @@ public class AppController extends GcController {
 				classificacao += s;
 			}
 		}
-		// Necess√°rio pq para criar um novo conhecimento a partir de um j√°
-		// existente, a classifica√ß√£o
-		// √© passada como queryString. Sem fazer isso, as hashTags n√£o s√£o
+		// Necess·rio para criar um novo conhecimento a partir de um j·
+		// existente, a classificaÁ„o
+		// È passada como queryString. Sem fazer isso, as hashTags n„o s„o
 		// passadas.
 		// classificacao = URLEncoder.encode(classificacao, "UTF-8");
 		// if (msgvazio != null) {
@@ -186,22 +179,21 @@ public class AppController extends GcController {
 		// "\">aqui</a>");
 		// }
 
-		if (estilo != null)
-			render("@knowledge_" + estilo, conhecimentos, classificacao,
-					msgvazio, urlvazio, titulo, referer, popup);
-		else
-			render("@knowledge", conhecimentos, classificacao, msgvazio,
-					urlvazio, titulo, referer, popup);
+		result.include("conhecimentos", conhecimentos);
+		result.include("classificacao", classificacao);
+		result.include("msgvazio", msgvazio);
+		result.include("urlvazio", urlvazio);
+		result.include("titulo", titulo);
+		result.include("referer", referer);
+		result.include("popup", popup);
 	}
 
 	public void updateTag(String before, String after) {
 
 		// Edson: Atualizando tags de classificacao:
-		JPA.em()
-				.createQuery(
-						"update GcTag set titulo = '" + after
-								+ "' where titulo = '" + before + "'")
-				.executeUpdate();
+		em().createQuery(
+				"update GcTag set titulo = '" + after + "' where titulo = '"
+						+ before + "'").executeUpdate();
 
 		// Edson: Atualizando tags de ancora. O problema aqui eh que,
 		// muitas vezes, o before aparece em tags ancora acompanhado de
@@ -209,11 +201,9 @@ public class AppController extends GcController {
 		// before eh consertar. Os patterns abaixo funcionam, mas nao
 		// sempre. Por exemplo, se houver uma tag cadeira-tentar-consertar
 		// alem da cadeira-consertar, ela vai ser erroneamente atualizada.
-		List<GcTag> tags = JPA
-				.em()
-				.createQuery(
-						"from GcTag where titulo like '%" + before
-								+ "%' and tipo.id = 3").getResultList();
+		List<GcTag> tags = em().createQuery(
+				"from GcTag where titulo like '%" + before
+						+ "%' and tipo.id = 3").getResultList();
 		for (GcTag t : tags) {
 			t.titulo = t.titulo.replaceAll("^" + before + "(-.+|$)", after
 					+ "$1");
@@ -223,8 +213,7 @@ public class AppController extends GcController {
 		}
 
 		// Edson: Atualizando os arquivos:
-		List<GcArquivo> arqs = JPA
-				.em()
+		List<GcArquivo> arqs = em()
 				.createQuery(
 						"select arq from GcInformacao inf inner join inf.arq arq"
 								+ " where inf.hisDtFim is null and arq.classificacao like '%"
@@ -242,60 +231,60 @@ public class AppController extends GcController {
 			arq.save();
 		}
 
-		renderText("OK");
+		result.use(Results.http()).body("OK");
 	}
 
-	public void index() {
-		estatisticaGeral();
+	public void index() throws Exception {
+		result.redirectTo(this).estatisticaGeral();
 	}
 
-	public void estatisticaGeral() {
+	public void estatisticaGeral() throws Exception {
 		// List<GcInformacao> lista = GcInformacao.all().fetch();
 
-		Query query1 = JPA.em().createNamedQuery("maisRecentes");
+		Query query1 = em().createNamedQuery("maisRecentes");
 		query1.setMaxResults(5);
 		List<Object[]> listaMaisRecentes = query1.getResultList();
 		if (listaMaisRecentes.size() == 0)
 			listaMaisRecentes = null;
 
-		Query query2 = JPA.em().createNamedQuery("maisVisitados");
+		Query query2 = em().createNamedQuery("maisVisitados");
 		query2.setMaxResults(5);
 		List<Object[]> listaMaisVisitados = query2.getResultList();
 		if (listaMaisVisitados.size() == 0)
 			listaMaisVisitados = null;
 
-		Query query3 = JPA.em().createNamedQuery("principaisAutores");
+		Query query3 = em().createNamedQuery("principaisAutores");
 		query3.setMaxResults(5);
 		List<Object[]> listaPrincipaisAutores = query3.getResultList();
 		if (listaPrincipaisAutores.size() == 0)
 			listaPrincipaisAutores = null;
 
-		Query query4 = JPA.em().createNamedQuery("principaisLotacoes");
+		Query query4 = em().createNamedQuery("principaisLotacoes");
 		query4.setMaxResults(5);
 		List<Object[]> listaPrincipaisLotacoes = query4.getResultList();
 		if (listaPrincipaisLotacoes.size() == 0)
 			listaPrincipaisLotacoes = null;
 
 		GcCloud cloud = new GcCloud(150.0, 60.0);
-		Query query5 = JPA.em().createNamedQuery("principaisTags");
+		Query query5 = em().createNamedQuery("principaisTags");
 		query5.setMaxResults(50);
 		List<Object[]> listaPrincipaisTags = query5.getResultList();
 		if (listaPrincipaisTags.size() == 0)
 			listaPrincipaisTags = null;
 		else {
 			for (Object[] t : listaPrincipaisTags) {
-				cloud.criarCloud(t);
+				cloud.criarCloud(t, null);
 			}
 		}
 		GcGraficoEvolucao set = new GcGraficoEvolucao();
-		Query query6 = JPA.em().createNamedQuery("evolucaoNovos");
+		Query query6 = em().createNamedQuery("evolucaoNovos");
 		List<Object[]> listaNovos = query6.getResultList();
 		for (Object[] novos : listaNovos) {
 			set.add(new GcGraficoEvolucaoItem((Integer) novos[0],
 					(Integer) novos[1], (Long) novos[2], 0, 0));
 		}
 
-		Query query7 = JPA.em().createNamedQuery("evolucaoVisitados");
+		Query query7 = em().createNamedQuery("evolucaoVisitados");
 		List<Object[]> listaVisitados = query7.getResultList();
 		for (Object[] visitados : listaVisitados) {
 			set.add(new GcGraficoEvolucaoItem((Integer) visitados[0],
@@ -303,16 +292,21 @@ public class AppController extends GcController {
 		}
 		String evolucao = set.criarGrafico();
 
-		render(listaMaisRecentes, listaMaisVisitados, listaPrincipaisAutores,
-				listaPrincipaisLotacoes, listaPrincipaisTags, cloud, evolucao);
+		result.include("listaMaisRecentes", listaMaisRecentes);
+		result.include("listaMaisVisitados", listaMaisVisitados);
+		result.include("listaPrincipaisAutores", listaPrincipaisAutores);
+		result.include("listaPrincipaisLotacoes", listaPrincipaisLotacoes);
+		result.include("listaPrincipaisTags", listaPrincipaisTags);
+		result.include("cloud", cloud);
+		result.include("evolucao", evolucao);
 	}
 
-	public void estatisticaLotacao() {
+	public void estatisticaLotacao() throws Exception {
 		// List<GcInformacao> lista = GcInformacao.all().fetch();
 
-		DpLotacao lotacao = lotaTitular();
+		DpLotacao lotacao = getLotaTitular();
 
-		Query query1 = JPA.em().createNamedQuery("maisRecentesLotacao");
+		Query query1 = em().createNamedQuery("maisRecentesLotacao");
 		// query1.setParameter("idLotacao", lotacao.getId());
 		query1.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query1.setMaxResults(5);
@@ -320,14 +314,14 @@ public class AppController extends GcController {
 		if (listaMaisRecentes.size() == 0)
 			listaMaisRecentes = null;
 
-		Query query2 = JPA.em().createNamedQuery("maisVisitadosLotacao");
+		Query query2 = em().createNamedQuery("maisVisitadosLotacao");
 		query2.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query2.setMaxResults(5);
 		List<Object[]> listaMaisVisitados = query2.getResultList();
 		if (listaMaisVisitados.size() == 0)
 			listaMaisVisitados = null;
 
-		Query query3 = JPA.em().createNamedQuery("principaisAutoresLotacao");
+		Query query3 = em().createNamedQuery("principaisAutoresLotacao");
 		query3.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query3.setMaxResults(5);
 		List<Object[]> listaPrincipaisAutores = query3.getResultList();
@@ -335,7 +329,7 @@ public class AppController extends GcController {
 			listaPrincipaisAutores = null;
 
 		GcCloud cloud = new GcCloud(150.0, 60.0);
-		Query query4 = JPA.em().createNamedQuery("principaisTagsLotacao");
+		Query query4 = em().createNamedQuery("principaisTagsLotacao");
 		query4.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		query4.setMaxResults(50);
 		List<Object[]> listaPrincipaisTags = query4.getResultList();
@@ -347,7 +341,7 @@ public class AppController extends GcController {
 			}
 		}
 		GcGraficoEvolucao set = new GcGraficoEvolucao();
-		Query query5 = JPA.em().createNamedQuery("evolucaoNovosLotacao");
+		Query query5 = em().createNamedQuery("evolucaoNovosLotacao");
 		query5.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		List<Object[]> listaNovos = query5.getResultList();
 		for (Object[] novos : listaNovos) {
@@ -355,7 +349,7 @@ public class AppController extends GcController {
 					(Integer) novos[1], (Long) novos[2], 0, 0));
 		}
 
-		Query query6 = JPA.em().createNamedQuery("evolucaoVisitadosLotacao");
+		Query query6 = em().createNamedQuery("evolucaoVisitadosLotacao");
 		query6.setParameter("idlotacaoInicial", lotacao.getIdLotacaoIni());
 		List<Object[]> listaVisitados = query6.getResultList();
 		for (Object[] visitados : listaVisitados) {
@@ -364,8 +358,13 @@ public class AppController extends GcController {
 		}
 		String evolucao = set.criarGrafico();
 
-		render(lotacao, listaMaisRecentes, listaMaisVisitados,
-				listaPrincipaisAutores, listaPrincipaisTags, cloud, evolucao);
+		result.include("lotacao", lotacao);
+		result.include("listaMaisRecentes", listaMaisRecentes);
+		result.include("listaMaisVisitados", listaMaisVisitados);
+		result.include("listaPrincipaisAutores", listaPrincipaisAutores);
+		result.include("listaPrincipaisTags", listaPrincipaisTags);
+		result.include("cloud", cloud);
+		result.include("evolucao", evolucao);
 	}
 
 	public void listar(GcInformacaoFiltro filtro, int estatistica) {
@@ -376,18 +375,17 @@ public class AppController extends GcController {
 			lista = new ArrayList<GcInformacao>();
 
 		// Montando o filtro...
-		// String[] tipos = new String[] { "Pessoa", "Lota√ß√£o" };
-		List<CpMarcador> marcadores = JPA.em()
-				.createQuery("select distinct cpMarcador from GcMarca")
-				.getResultList();
-		JPA.em().createQuery("select cp from CpOrgaoUsuario cp")
-				.getResultList();
-		List<CpOrgaoUsuario> orgaosusuarios = CpOrgaoUsuario.all().fetch();
+		// String[] tipos = new String[] { "Pessoa", "Lota√ß„o" };
+		List<CpMarcador> marcadores = em().createQuery(
+				"select distinct cpMarcador from GcMarca").getResultList();
+		em().createQuery("select cp from CpOrgaoUsuario cp").getResultList();
+		List<CpOrgaoUsuario> orgaosusuarios = CpOrgaoUsuario.AR.all().fetch();
 
-		List<GcTipoInformacao> tiposinformacao = GcTipoInformacao.all().fetch();
+		List<GcTipoInformacao> tiposinformacao = GcTipoInformacao.AR.all()
+				.fetch();
 
 		List<Integer> anos = new ArrayList<Integer>();
-		int ano = GcBL.dt().getYear() + 1900;
+		int ano = bl.dt().getYear() + 1900;
 		for (int i = 0; i < 10; i++) {
 			anos.add(ano - i);
 		}
@@ -395,17 +393,22 @@ public class AppController extends GcController {
 		if (filtro == null)
 			filtro = new GcInformacaoFiltro();
 
-		render(lista, /* tipos, */marcadores, filtro, orgaosusuarios,
-				tiposinformacao, anos, estatistica);
-
+		result.include("lista", lista);
+		result.include("marcadores", marcadores);
+		result.include("filtro", filtro);
+		result.include("orgaosusuarios", orgaosusuarios);
+		result.include("tiposinformacao", tiposinformacao);
+		result.include("anos", anos);
+		result.include("estatistica", estatistica);
 	}
 
 	public void navegar() {
 		GcArvore arvore = new GcArvore();
 
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
-		// n√£o exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.find("byHisDtFimIsNull").fetch();
+		// n„o exibe conhecimentos cancelados
+		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
+				.fetch();
 
 		for (GcInformacao inf : infs) {
 			for (GcTag tag : inf.tags) {
@@ -415,14 +418,15 @@ public class AppController extends GcController {
 
 		arvore.build();
 
-		render(arvore);
+		result.include("arvore", arvore);
 	}
 
 	public void buscar(String texto, String classificacao) {
 		GcArvore arvore = new GcArvore();
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
-		// n√£o exibe conhecimentos cancelados
-		List<GcInformacao> infs = GcInformacao.find("byHisDtFimIsNull").fetch();
+		// n„o exibe conhecimentos cancelados
+		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
+				.fetch();
 
 		if (texto != null && texto.trim().length() > 0) {
 			texto = texto.trim().toLowerCase();
@@ -459,12 +463,14 @@ public class AppController extends GcController {
 		}
 		// render(arvore);
 		// render(arvore, texto);
-		render(arvore, texto, classificacao);
+		result.include("arvore", arvore);
+		result.include("texto", texto);
+		result.include("classificacao", classificacao);
 	}
 
 	/*
 	 * public void buscar(String texto) { GcArvore arvore = new GcArvore();
-	 * //List<GcInformacao> infs = GcInformacao.all().fetch(); //n√£o exibe
+	 * //List<GcInformacao> infs = GcInformacao.all().fetch(); //n„o exibe
 	 * conhecimentos cancelados List<GcInformacao> infs =
 	 * GcInformacao.find("byHisDtFimIsNull").fetch();
 	 * 
@@ -494,11 +500,11 @@ public class AppController extends GcController {
 	// render(informacoes);
 	// }
 
-	public void exibir(String sigla) throws Exception {
+	public void exibir(String sigla, String mensagem) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		DpPessoa titular = titular();
-		DpLotacao lotaTitular = lotaTitular();
-		CpIdentidade idc = idc();
+		DpPessoa titular = getTitular();
+		DpLotacao lotaTitular = getLotaTitular();
+		CpIdentidade idc = getIdentidadeCadastrante();
 		GcMovimentacao movNotificacao = informacao.podeTomarCiencia(titular,
 				lotaTitular);
 
@@ -506,28 +512,29 @@ public class AppController extends GcController {
 				informacao.visualizacao.id)
 				|| informacao.podeRevisar(titular, lotaTitular)
 				|| movNotificacao != null) {
-			String conteudo = Util.marcarLinkNoConteudo(informacao.arq
+			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
 					.getConteudoTXT());
 			if (conteudo != null)
 				informacao.arq.setConteudoTXT(conteudo);
 			if (movNotificacao != null)
-				GcBL.notificado(informacao, idc, titular, lotaTitular,
+				bl.notificado(informacao, idc, titular, lotaTitular,
 						movNotificacao);
-			GcBL.logarVisita(informacao, idc, titular, lotaTitular);
-			render(informacao);
+			bl.logarVisita(informacao, idc, titular, lotaTitular);
+			result.include("mensagem", mensagem);
+			result.include("informacao", informacao);
 		} else
 			throw new AplicacaoException(
-					"Restri√ß√£o de Acesso ("
+					"RestriÁ„o de Acesso ("
 							+ informacao.visualizacao.nome
-							+ ") : O usu√°rio n√£o tem permiss√£o para visualizar o conhecimento solicitado.");
+							+ ") : O usu·rio n„o tem permiss„o para visualizar o conhecimento solicitado.");
 	}
 
 	public void editar(String sigla, String classificacao, String titulo,
 			String origem, String conteudo, GcTipoInformacao tipo)
 			throws Exception {
 		GcInformacao informacao = null;
-		DpPessoa titular = titular();
-		DpLotacao lotaTitular = lotaTitular();
+		DpPessoa titular = getTitular();
+		DpLotacao lotaTitular = getLotaTitular();
 
 		// Edson: esta estranho referenciar o TMPGC-0. Ver solucao melhor.
 		if (sigla != null && !sigla.equals("TMPGC-0"))
@@ -539,9 +546,9 @@ public class AppController extends GcController {
 				|| informacao.podeRevisar(titular, lotaTitular)
 				|| informacao.acessoPermitido(titular, lotaTitular,
 						informacao.edicao.id)) {
-			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.all()
+			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.AR.all()
 					.fetch();
-			List<GcAcesso> acessos = GcAcesso.all().fetch();
+			List<GcAcesso> acessos = GcAcesso.AR.all().fetch();
 			if (titulo == null)
 				titulo = (informacao.arq != null) ? informacao.arq.titulo
 						: null;
@@ -559,7 +566,7 @@ public class AppController extends GcController {
 						: null;
 
 			if (conteudo != null && !conteudo.trim().startsWith("<")) {
-				conteudo = Util.escapeHashTag(conteudo);
+				conteudo = bl.escapeHashTag(conteudo);
 				informacao.arq.setConteudoTXT(conteudo);
 				conteudo = informacao.getConteudoHTML();
 
@@ -585,8 +592,14 @@ public class AppController extends GcController {
 				informacao.lotacao = lotaTitular;
 			}
 
-			render(informacao, tiposInformacao, acessos, titulo, conteudo,
-					classificacao, origem, tipo);
+			result.include("informacao", informacao);
+			result.include("tiposInformacao", tiposInformacao);
+			result.include("acessos", acessos);
+			result.include("titulo", titulo);
+			result.include("conteudo", conteudo);
+			result.include("classificacao", classificacao);
+			result.include("origem", origem);
+			result.include("tipo", tipo);
 		} else
 			throw new AplicacaoException(
 					"RestriÁ„o de Acesso ("
@@ -597,8 +610,8 @@ public class AppController extends GcController {
 	public void historico(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 
-		if (informacao.podeRevisar(titular(), lotaTitular())
-				|| informacao.acessoPermitido(titular(), lotaTitular(),
+		if (informacao.podeRevisar(getTitular(), getLotaTitular())
+				|| informacao.acessoPermitido(getTitular(), getLotaTitular(),
 						informacao.visualizacao.id)) {
 
 			diff_match_patch diff = new diff_match_patch();
@@ -654,45 +667,48 @@ public class AppController extends GcController {
 				}
 			}
 
-			String conteudo = Util.marcarLinkNoConteudo(informacao.arq
+			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
 					.getConteudoTXT());
 			if (conteudo != null)
 				informacao.arq.setConteudoTXT(conteudo);
 
-			render(informacao, list, mapTitulo, mapTxt);
+			result.include("informacao", informacao);
+			result.include("list", list);
+			result.include("mapTitulo", mapTitulo);
+			result.include("mapTxt", mapTxt);
 		} else
 			throw new AplicacaoException(
-					"Restri√ß√£o de Acesso ("
+					"Restri√ß„o de Acesso ("
 							+ informacao.visualizacao.nome
-							+ ") : O usu√°rio n√£o tem permiss√£o para visualizar o conhecimento solicitado.");
+							+ ") : O usu·rio n„o tem permiss„o para visualizar o conhecimento solicitado.");
 
 	}
 
 	public void movimentacoes(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		if (informacao.podeRevisar(titular(), lotaTitular())
-				|| informacao.acessoPermitido(titular(), lotaTitular(),
+		if (informacao.podeRevisar(getTitular(), getLotaTitular())
+				|| informacao.acessoPermitido(getTitular(), getLotaTitular(),
 						informacao.visualizacao.id)) {
-			String conteudo = Util.marcarLinkNoConteudo(informacao.arq
+			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
 					.getConteudoTXT());
 			if (conteudo != null)
 				informacao.arq.setConteudoTXT(conteudo);
-			render(informacao);
+			result.include("informacao", informacao);
 		} else
 			throw new AplicacaoException(
-					"Restri√ß√£o de Acesso ("
+					"Restri√ß„o de Acesso ("
 							+ informacao.visualizacao.nome
-							+ ") : O usu√°rio n√£o tem permiss√£o para visualizar o conhecimento solicitado.");
+							+ ") : O usu·rio n„o tem permiss„o para visualizar o conhecimento solicitado.");
 	}
 
 	public void fechar(String sigla) throws Exception {
 		GcInformacao inf = GcInformacao.findBySigla(sigla);
-		if (inf.acessoPermitido(titular(), lotaTitular(), inf.edicao.id)) {
-			GcBL.movimentar(inf,
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
-					null, null, null, null, null, null, null, null);
-			GcBL.gravar(inf, idc(), titular(), lotaTitular());
-			exibir(inf.getSigla());
+		if (inf.acessoPermitido(getTitular(), getLotaTitular(), inf.edicao.id)) {
+			bl.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
+					null, null, null, null, null, null, null, null, null);
+			bl.gravar(inf, getIdentidadeCadastrante(), getTitular(),
+					getLotaTitular());
+			result.redirectTo(this).exibir(inf.getSigla(), null);
 		} else
 			throw new AplicacaoException(
 					"RestriÁ„o de Acesso ("
@@ -703,30 +719,33 @@ public class AppController extends GcController {
 	public void duplicar(String sigla) throws Exception {
 		GcInformacao infDuplicada = GcInformacao.findBySigla(sigla);
 
-		GcMovimentacao movLocalizada = GcBL.movimentar(infDuplicada,
+		GcMovimentacao movLocalizada = bl.movimentar(infDuplicada,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, null, null,
 				null, null, null, null, null, null, null);
-		GcBL.gravar(infDuplicada, idc(), titular(), lotaTitular());
+		bl.gravar(infDuplicada, getIdentidadeCadastrante(), getTitular(),
+				getLotaTitular());
 
 		GcInformacao inf = new GcInformacao();
 		GcArquivo arq = new GcArquivo();
 
 		arq = infDuplicada.arq.duplicarConteudoInfo();
-		inf.autor = titular();
-		inf.lotacao = lotaTitular();
+		inf.autor = getTitular();
+		inf.lotacao = getLotaTitular();
 		inf.ou = inf.autor.getOrgaoUsuario();
-		inf.tipo = GcTipoInformacao.findById(infDuplicada.tipo.id);
-		inf.visualizacao = GcAcesso.findById(infDuplicada.visualizacao.id);
-		inf.edicao = GcAcesso.findById(infDuplicada.edicao.id);
+		inf.tipo = GcTipoInformacao.AR.findById(infDuplicada.tipo.id);
+		inf.visualizacao = GcAcesso.AR.findById(infDuplicada.visualizacao.id);
+		inf.edicao = GcAcesso.AR.findById(infDuplicada.edicao.id);
 
-		GcMovimentacao movCriada = GcBL.movimentar(inf,
+		GcMovimentacao movCriada = bl.movimentar(inf,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null, null, null,
 				arq.titulo, arq.getConteudoTXT(), arq.classificacao,
 				movLocalizada, null, null);
-		GcBL.gravar(inf, idc(), titular(), lotaTitular());
+		bl.gravar(inf, getIdentidadeCadastrante(), getTitular(),
+				getLotaTitular());
 
 		movLocalizada.movRef = movCriada;
-		GcBL.gravar(infDuplicada, idc(), titular(), lotaTitular());
+		bl.gravar(infDuplicada, getIdentidadeCadastrante(), getTitular(),
+				getLotaTitular());
 
 		if (infDuplicada.isContemArquivos()) {
 			for (GcMovimentacao movDuplicado : infDuplicada.movs) {
@@ -734,25 +753,26 @@ public class AppController extends GcController {
 					continue;
 				if (movDuplicado.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO
 						&& movDuplicado.movCanceladora == null) {
-					GcMovimentacao m = GcBL
+					GcMovimentacao m = bl
 							.movimentar(
 									inf,
 									movDuplicado.arq,
 									GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO);
 					m.movRef = movLocalizada;
-					GcBL.gravar(inf, idc(), titular(), lotaTitular());
+					bl.gravar(inf, getIdentidadeCadastrante(), getTitular(),
+							getLotaTitular());
 				}
 			}
 		}
-		exibir(inf.getSigla());
+		result.redirectTo(this).exibir(inf.getSigla(), null);
 	}
 
 	public void gravar(GcInformacao informacao, String titulo, String conteudo,
 			String classificacao, String origem, GcTipoInformacao tipo)
 			throws Exception {
 		// DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
-		DpPessoa pessoa = titular();
-		DpLotacao lotacao = lotaTitular();
+		DpPessoa pessoa = getTitular();
+		DpLotacao lotacao = getLotaTitular();
 
 		if (informacao.autor == null) {
 			informacao.autor = pessoa;
@@ -770,29 +790,31 @@ public class AppController extends GcController {
 		informacao.tipo = tipo;
 
 		// Atualiza a classificaÁ„o com as hashTags encontradas
-		classificacao = Util.findHashTag(conteudo, classificacao,
+		classificacao = bl.findHashTag(conteudo, classificacao,
 				CONTROLE_HASH_TAG);
 
 		if (informacao.id != 0)
-			GcBL.movimentar(informacao,
+			bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO, null, null,
 					null, titulo, conteudo, classificacao, null, null, null);
 		else
-			GcBL.movimentar(informacao,
+			bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO, null, null,
 					null, titulo, conteudo, classificacao, null, null, null);
 
-		GcBL.gravar(informacao, idc(), titular(), lotaTitular());
+		bl.gravar(informacao, getIdentidadeCadastrante(), getTitular(),
+				getLotaTitular());
 		if (origem != null && origem.trim().length() != 0) {
 			if (informacao.podeFinalizar(pessoa, lotacao)) {
-				GcBL.movimentar(informacao,
+				bl.movimentar(informacao,
 						GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
 						null, null, null, null, null, null, null, null);
-				GcBL.gravar(informacao, idc(), pessoa, lotacao);
+				bl.gravar(informacao, getIdentidadeCadastrante(), pessoa,
+						lotacao);
 			}
-			redirect(origem);
+			result.redirectTo(origem);
 		} else
-			exibir(informacao.getSigla());
+			result.redirectTo(this).exibir(informacao.getSigla(), null);
 	}
 
 	public void remover(String sigla) throws Exception {
@@ -801,9 +823,9 @@ public class AppController extends GcController {
 		if (informacao.elaboracaoFim != null)
 			throw new AplicacaoException(
 					"N„o È permitido remover informaÁıes que j· foram finalizadas.");
-		JPA.em().createQuery("delete from GcMarca where inf.id = :id")
+		em().createQuery("delete from GcMarca where inf.id = :id")
 				.setParameter("id", informacao.id).executeUpdate();
-		JPA.em().createQuery("delete from GcMovimentacao where inf.id = :id")
+		em().createQuery("delete from GcMovimentacao where inf.id = :id")
 				.setParameter("id", informacao.id).executeUpdate();
 		informacao.delete();
 		index();
@@ -811,24 +833,25 @@ public class AppController extends GcController {
 
 	public void notificar(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		render(informacao);
+		result.include("informacao", informacao);
 	}
 
 	public void notificarGravar(GcInformacao informacao, Long pessoa,
 			Long lotacao, String email) throws Exception {
 		if (pessoa != null || lotacao != null || email != null) {
-			DpPessoa pesResponsavel = (DpPessoa) ((pessoa != null) ? DpPessoa
+			DpPessoa pesResponsavel = (DpPessoa) ((pessoa != null) ? DpPessoa.AR
 					.findById(pessoa) : null);
-			DpLotacao lotResponsavel = (DpLotacao) ((lotacao != null) ? DpLotacao
+			DpLotacao lotResponsavel = (DpLotacao) ((lotacao != null) ? DpLotacao.AR
 					.findById(lotacao) : null);
-			GcBL.movimentar(informacao,
+			bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR,
 					pesResponsavel, lotResponsavel, email, null, null, null,
 					null, null, null);
-			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
-			Correio.notificar(informacao, pesResponsavel, lotResponsavel, email);
-			flash.success("Notificacao realizada com sucesso!");
-			exibir(informacao.getSigla());
+			bl.gravar(informacao, getIdentidadeCadastrante(), getTitular(),
+					getLotaTitular());
+			correio.notificar(informacao, pesResponsavel, lotResponsavel, email);
+			result.redirectTo(this).exibir(informacao.getSigla(),
+					"Notificacao realizada com sucesso!");
 		} else
 			throw new AplicacaoException(
 					"Para notificar so e necessario selecionar uma Pessoa ou Lotacao.");
@@ -836,23 +859,25 @@ public class AppController extends GcController {
 
 	public void solicitarRevisao(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		render(informacao);
+		result.include("informacao", informacao);
 	}
 
 	public void solicitarRevisaoGravar(GcInformacao informacao, Long pessoa,
 			Long lotacao) throws Exception {
 		if (pessoa != null || lotacao != null) {
-			DpPessoa pesResponsavel = (DpPessoa) ((pessoa != null) ? DpPessoa
+			DpPessoa pesResponsavel = (DpPessoa) ((pessoa != null) ? DpPessoa.AR
 					.findById(pessoa) : null);
-			DpLotacao lotResponsavel = (DpLotacao) ((lotacao != null) ? DpLotacao
+			DpLotacao lotResponsavel = (DpLotacao) ((lotacao != null) ? DpLotacao.AR
 					.findById(lotacao) : null);
-			GcBL.movimentar(informacao,
+			bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO,
 					pesResponsavel, lotResponsavel, null, null, null, null,
 					null, null, null);
-			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
-			flash.success("SolicitaÁ„o de revis„o realizada com sucesso!");
-			exibir(informacao.getSigla());
+			bl.gravar(informacao, getIdentidadeCadastrante(), getTitular(),
+					getLotaTitular());
+			result.redirectTo(this).result.redirectTo(this).exibir(
+					informacao.getSigla(),
+					"SolicitaÁ„o de revis„o realizada com sucesso!");
 		} else
 			throw new AplicacaoException(
 					"Para solicitar revis„o È necess·rio selecionar uma Pessoa ou LotaÁ„o.");
@@ -860,95 +885,92 @@ public class AppController extends GcController {
 
 	public void anexar(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		render(informacao);
+		result.include("informacao", informacao);
 	}
 
-	public void anexarGravar(GcInformacao informacao, String titulo, File fake)
-			throws Exception {
-		List<Upload> files = (List<Upload>) request.args.get("__UPLOADS");
-		DpPessoa titular = titular();
-		DpLotacao lotaTitular = lotaTitular();
-		CpIdentidade idc = idc();
-		if (files != null)
-			for (Upload file : files) {
-				if (file.getSize() > 2097152)
-					throw new AplicacaoException(
-							"O tamanho do arquivo È maior que o "
-									+ "m·ximo permitido (2MB)");
-				if (file.getSize() > 0) {
-					/*
-					 * ----N√£o pode ser usado porque o "plupload" retorna um
-					 * mime type padr√£o "octet stream" String mimeType =
-					 * file.getContentType().toLowerCase();
-					 */
-					byte anexo[] = file.asBytes();
-					if (titulo == null || titulo.trim().length() == 0)
-						titulo = file.getFileName();
-					GcBL.movimentar(
-							informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
-							null, null, null, titulo, null, null, null, null,
-							anexo);
-					GcBL.gravar(informacao, idc, titular, lotaTitular);
-					renderText("success");
-				} else
-					throw new AplicacaoException(
-							"Nao e permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
-			}
+	public void anexarGravar(GcInformacao informacao, String titulo,
+			UploadedFile file) throws Exception {
+		DpPessoa titular = getTitular();
+		DpLotacao lotaTitular = getLotaTitular();
+		CpIdentidade idc = getIdentidadeCadastrante();
+		if (file != null)
+			if (file.getSize() > 2097152)
+				throw new AplicacaoException(
+						"O tamanho do arquivo È maior que o "
+								+ "m·ximo permitido (2MB)");
+		if (file.getSize() > 0) {
+			/*
+			 * ----N„o pode ser usado porque o "plupload" retorna um mime type
+			 * padr„o "octet stream" String mimeType =
+			 * file.getContentType().toLowerCase();
+			 */
+			byte anexo[] = IOUtils.toByteArray(file.getFile());
+			if (titulo == null || titulo.trim().length() == 0)
+				titulo = file.getFileName();
+			bl.movimentar(informacao,
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO, null,
+					null, null, titulo, null, null, null, null, anexo);
+			bl.gravar(informacao, idc, titular, lotaTitular);
+			result.use(Results.http()).body("success");
+		} else
+			throw new AplicacaoException(
+					"Nao e permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
 	}
 
 	public void removerAnexo(String sigla, long idArq, long idMov)
 			throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		GcMovimentacao mov = GcMovimentacao.findById(idMov);
+		GcMovimentacao mov = GcMovimentacao.AR.findById(idMov);
 
 		if (mov.arq.id == idArq)
-			GcBL.cancelarMovimentacao(informacao, mov, idc(), titular(),
-					lotaTitular());
+			bl.cancelarMovimentacao(informacao, mov,
+					getIdentidadeCadastrante(), getTitular(), getLotaTitular());
 		/*
 		 * for (GcMovimentacao mov : informacao.movs) { if (mov.isCancelada())
 		 * continue; if (mov.tipo.id ==
 		 * GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO && mov.arq.id ==
 		 * id) { movLocalizada = mov; break; } } GcMovimentacao m =
-		 * GcBL.movimentar(informacao,
+		 * bl.movimentar(informacao,
 		 * GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 		 * null, null, null, null, null, movLocalizada, null, null, null);
-		 * movLocalizada.movCanceladora = m; GcBL.gravar(informacao, idc(),
-		 * titular(), lotaTitular());
+		 * movLocalizada.movCanceladora = m; bl.gravar(informacao,
+		 * getIdentidadeCadastrante(), titular(), lotaTitular());
 		 */
-		render(informacao);
+		result.include("informacao", informacao);
 	}
 
-	public void baixar(Long id) {
-		GcArquivo arq = GcArquivo.findById(id);
+	public Download baixar(Long id) throws Exception {
+		GcArquivo arq = GcArquivo.AR.findById(id);
 		if (arq != null)
-			renderBinary(new ByteArrayInputStream(arq.conteudo), arq.titulo,
-					(long) arq.conteudo.length, arq.mimeType, true);
+			return new ByteArrayDownload(arq.conteudo, arq.mimeType,
+					arq.titulo, true);
+		throw new Exception("Arquivo n„o encontrado.");
 	}
 
 	public void revisado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		if (informacao.movs != null) {
-			DpPessoa titular = titular();
-			DpLotacao lotaTitular = lotaTitular();
+			DpPessoa titular = getTitular();
+			DpLotacao lotaTitular = getLotaTitular();
 			for (GcMovimentacao mov : informacao.movs) {
 				if (mov.isCancelada())
 					continue;
 				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
 						&& (titular.equivale(mov.pessoaAtendente) || lotaTitular
 								.equivale(mov.lotacaoAtendente))) {
-					GcMovimentacao m = GcBL
+					GcMovimentacao m = bl
 							.movimentar(
 									informacao,
 									GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
 									null, null, null, null, null, null, mov,
 									null, null);
 					mov.movCanceladora = m;
-					GcBL.gravar(informacao, idc(), titular, lotaTitular);
-					flash.success("Conhecimento revisado com sucesso!");
+					bl.gravar(informacao, getIdentidadeCadastrante(), titular,
+							lotaTitular);
 					if (informacao.acessoPermitido(titular, lotaTitular,
 							informacao.visualizacao.id))
-						exibir(sigla);
+						result.redirectTo(this).exibir(sigla,
+								"Conhecimento revisado com sucesso!");
 					else {
 						// buscar(null);
 						buscar(null, null);
@@ -958,36 +980,40 @@ public class AppController extends GcController {
 			}
 		}
 		throw new AplicacaoException("N„o h· pedido de revis„o pendente para "
-				+ idc().getDpPessoa().getSigla());
+				+ getIdentidadeCadastrante().getDpPessoa().getSigla());
 	}
 
 	public void marcarComoInteressado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		GcBL.interessado(informacao, idc(), titular(), lotaTitular(), true);
-		exibir(sigla);
+		bl.interessado(informacao, getIdentidadeCadastrante(), getTitular(),
+				getLotaTitular(), true);
+		result.redirectTo(this).exibir(sigla, null);
 	}
 
 	public void desmarcarComoInteressado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		GcBL.interessado(informacao, idc(), titular(), lotaTitular(), false);
-		exibir(sigla);
+		bl.interessado(informacao, getIdentidadeCadastrante(), getTitular(),
+				getLotaTitular(), false);
+		result.redirectTo(this).exibir(sigla, null);
 	}
 
 	public void cancelar(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		GcBL.cancelar(informacao, idc(), titular(), lotaTitular());
-		exibir(sigla);
+		bl.cancelar(informacao, getIdentidadeCadastrante(), getTitular(),
+				getLotaTitular());
+		result.redirectTo(this).exibir(sigla, null);
 	}
 
 	public void selecionarTag(String sigla) throws Exception {
 		GcTag sel = (GcTag) new GcTag().selecionar(sigla);
-		render("@siga-play-module.selecionar", sel);
+		result.include("sel", sel);
+		// render("@siga-play-module.selecionar", sel);
 	}
 
 	public void buscarTag(String sigla, GcTag filtro) {
 		List<GcTag> itens = null;
 
-		Query query = JPA.em().createNamedQuery("listarTagCategorias");
+		Query query = em().createNamedQuery("listarTagCategorias");
 		List<Object[]> listaTagCategorias = query.getResultList();
 		if (listaTagCategorias.size() == 0)
 			listaTagCategorias = null;
@@ -1002,9 +1028,12 @@ public class AppController extends GcController {
 			itens = new ArrayList<GcTag>();
 		}
 
-		render(itens, filtro, listaTagCategorias);
+		result.include("itens", itens);
+		result.include("filtro", filtro);
+		result.include("listaTagCategorias", listaTagCategorias);
 	}
 
+	// @Path("/public/app/dadosRI")
 	public void dadosRI(Long ultimaAtualizacao, Long desempate)
 			throws UnsupportedEncodingException {
 		Date dtUltimaAtualizacao = new Date(0L);
@@ -1014,14 +1043,15 @@ public class AppController extends GcController {
 		if (desempate != null)
 			idDesempate = desempate;
 
-		Query query = JPA.em().createNamedQuery(
-				"dadosParaRecuperacaoDeInformacao");
+		Query query = em().createNamedQuery("dadosParaRecuperacaoDeInformacao");
 		query.setParameter("dt", dtUltimaAtualizacao, TemporalType.TIMESTAMP);
 		query.setParameter("desempate", idDesempate);
 		query.setMaxResults(10);
 		List<Object[]> lista = query.getResultList();
-		if (lista.size() == 0)
-			renderJSON("[]");
+		if (lista.size() == 0) {
+			result.use(Results.http()).body("[]");
+			return;
+		}
 
 		List<DadosRI> resultado = new ArrayList<DadosRI>();
 		for (Object[] ao : lista) {
@@ -1045,96 +1075,16 @@ public class AppController extends GcController {
 		}
 		Gson gson = new GsonBuilder()
 				.setDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").create();
-		renderJSON(gson.toJson(resultado));
-	}
-
-	public void proxy(String url) throws Exception {
-		URL u = new URL(getBaseSiga() + url);
-		URLConnection conn = u.openConnection();
-		for (Http.Header h : request.headers.values())
-			conn.setRequestProperty(h.name, h.value());
-
-		// BufferedReader in = new BufferedReader(new InputStreamReader(u
-		// .openStream()));
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				conn.getInputStream()));
-		String inputLine;
-		StringBuilder sb = new StringBuilder();
-		while ((inputLine = in.readLine()) != null) {
-			sb.append(inputLine);
-		}
-		in.close();
-
-		renderHtml(sb.toString());
-
-		// byte ba[] = inputLine.getBytes("utf-8");
-		// response.contentType = "text/html";
-		// response.out.write(ba);
-		// response.headers.put("Content-Length", new Http.Header(
-		// "Content-Length", Integer.toString(ba.length)));
-	}
-
-	public void selecionarSiga(String sigla, String tipo, String nome)
-			throws Exception {
-		proxy("/" + tipo + "/selecionar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
-	}
-
-	public void buscarSiga(String sigla, String tipo, String nome)
-			throws Exception {
-		proxy("/" + tipo + "/buscar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
-	}
-
-	public void buscarSigaFromPopup(String tipo) throws Exception {
-		String paramString = "?";
-		for (String s : request.params.all().keySet())
-			if (!s.equals("body"))
-				paramString += s + "="
-						+ URLEncoder.encode(request.params.get(s), "UTF-8")
-						+ "&";
-		proxy("/" + tipo + "/buscar.action" + paramString);
-	}
-
-	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("GC:MÛdulo de Gest„o de Conhecimento"
-				+ path);
-	}
-
-	public void erro(String message, String stackTrace) {
-		render(message, stackTrace);
-	}
-
-	@Catch(value = Throwable.class, priority = 1)
-	public void catchError(Throwable throwable) {
-		if (!(throwable instanceof AplicacaoException)) {
-			if (Play.mode.isDev())
-				return;
-		}
-
-		// Flash.current().clear();
-		// Flash.current().put("_cabecalho_pre",
-		// renderArgs.get("_cabecalho_pre"));
-		// Flash.current().put("_cabecalho_pos",
-		// renderArgs.get("_cabecalho_pos"));
-		// Flash.current().put("_rodape", renderArgs.get("_rodape"));
-		while (throwable.getMessage() == null && throwable.getCause() != null)
-			throwable = throwable.getCause();
-		java.io.StringWriter sw = new java.io.StringWriter();
-		java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-		throwable.printStackTrace(pw);
-		String stackTrace = sw.toString();
-		String message = throwable.getMessage();
-		if (message == null)
-			message = "Nenhuma informaÁ„o disponÌvel.";
-		erro(message, stackTrace);
+		result.use(Results.http()).body(gson.toJson(resultado));
 	}
 
 	public void desfazer(String sigla, long movId) throws Exception {
 		GcInformacao info = GcInformacao.findBySigla(sigla);
-		GcMovimentacao mov = GcMovimentacao.findById(movId);
+		GcMovimentacao mov = GcMovimentacao.AR.findById(movId);
 
-		GcBL.cancelarMovimentacao(info, mov, idc(), titular(), lotaTitular());
+		bl.cancelarMovimentacao(info, mov, getIdentidadeCadastrante(),
+				getTitular(), getLotaTitular());
 		movimentacoes(sigla);
 	}
+
 }

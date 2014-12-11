@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Path;
@@ -23,17 +24,19 @@ public class SigaController {
 
 	public Result result;
 
-	public CpDao dao;
-
 	private HttpServletRequest request;
 
+	private EntityManager em;
+	protected CpDao dao;
+
 	public SigaController(HttpServletRequest request, Result result, CpDao dao,
-			SigaObjects so) {
+			SigaObjects so, EntityManager em) {
 		super();
 		this.setRequest(request);
-		this.so = so;
-		this.result = result;
 		this.dao = dao;
+		this.result = result;
+		this.so = so;
+		this.em = em;
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
@@ -136,6 +139,10 @@ public class SigaController {
 
 	protected CpOrgaoUsuario daoOU(String sigla) {
 		return so.daoOU(sigla);
+	}
+
+	public EntityManager em() {
+		return this.em;
 	}
 
 	protected int redirectToHome() {

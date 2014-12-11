@@ -1,10 +1,3 @@
-
-
-ALTER SESSION SET CURRENT_SCHEMA = sigagc;
-
-alter table sigagc.gc_tipo_informacao add arquivo number (19,0) constraint TIPO_INFORMACAO_ARQUIVO_FK references gc_arquivo
---
-
 insert into sigagc.gc_arquivo (id_conteudo, conteudo_tipo, titulo, conteudo) values ((select max(id_conteudo)+1 from sigagc.gc_arquivo), 'text/html', 'Template para Erro Conhecido', utl_raw.cast_to_raw(' '));
 insert into GC_TIPO_INFORMACAO (ID_TIPO_INFORMACAO, NOME_TIPO_INFORMACAO, arquivo) values (2, 'Erro Conhecido', (select max(id_conteudo) from sigagc.gc_arquivo))
 commit;

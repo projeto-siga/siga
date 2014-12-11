@@ -29,17 +29,16 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
-import br.com.caelum.vraptor.http.route.Router;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.gc.ActiveRecord;
 import br.gov.jfrj.siga.gc.ContextInterceptor;
 import br.gov.jfrj.siga.gc.util.WikiParser;
 import br.gov.jfrj.siga.gc.vraptor.AppController;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.vraptor.SigaLogicResult;
 
@@ -81,7 +80,7 @@ import br.gov.jfrj.siga.vraptor.SigaLogicResult;
 // select inf.id, inf.arq.titulo, inf.arq.conteudo from GcInformacao inf join
 // inf.tags tag where tag in (:tags)
 public class GcInformacao extends Objeto {
-	static ActiveRecord<GcInformacao> AR = new ActiveRecord<>(
+	public static ActiveRecord<GcInformacao> AR = new ActiveRecord<>(
 			GcInformacao.class);
 
 	@Id
@@ -334,7 +333,7 @@ public class GcInformacao extends Objeto {
 	}
 
 	public SortedSet<GcAcaoVO> acoes(CpIdentidade idc, DpPessoa titular,
-			DpLotacao lotaTitular) {
+			DpLotacao lotaTitular) throws Exception {
 		SortedSet<GcAcaoVO> acoes = new TreeSet<GcAcaoVO>();
 
 		StringBuilder sb = new StringBuilder();
@@ -342,7 +341,7 @@ public class GcInformacao extends Objeto {
 				SigaLogicResult.class);
 
 		router.getRedirectURL(sb, AppController.class).editar(this.getSigla(),
-				null, null, null, null);
+				null, null, null, null, null);
 		addAcao(acoes, "pencil", "Editar", null, sb.toString(),
 				podeEditar(titular, lotaTitular));
 
@@ -350,22 +349,35 @@ public class GcInformacao extends Objeto {
 		addAcao(acoes, "delete", "Excluir", null, sb.toString(),
 				podeExcluir(titular, lotaTitular),
 				"Confirma a exclusão deste conhecimento?", null, null);
+
+		router.getRedirectURL(sb, AppController.class).historico(
+				this.getSigla());
 		addAcao(acoes, "eye", "Exibir Histórico de Alterações", null,
-				"Application.historico", "historico=true", true);
-		addAcao(acoes, "eye", "Exibir Movimentações", null,
-				"Application.movimentacoes", "movimentacoes=true", true);
+				sb.toString(), true);
+
+		router.getRedirectURL(sb, AppController.class).movimentacoes(
+				this.getSigla());
+		addAcao(acoes, "eye", "Exibir Movimentações", null, sb.toString(), true);
+
 		// addAcao(acoes, "eye", "Exibir Informações Completas", null,
 		// "Application.movimentacoes", "completo=true", true);
+		router.getRedirectURL(sb, AppController.class)
+				.desmarcarComoInteressado(this.getSigla());
 		addAcao(acoes, "heart_delete", "Desmarcar Interesse", null,
-				"Application.desmarcarComoInteressado", null,
-				podeDesmarcarComoInteressado(titular));
-		addAcao(acoes, "heart_add", "Marcar Interesse", null,
-				"Application.marcarComoInteressado", null,
+				sb.toString(), podeDesmarcarComoInteressado(titular));
+
+		router.getRedirectURL(sb, AppController.class).marcarComoInteressado(
+				this.getSigla());
+		addAcao(acoes, "heart_add", "Marcar Interesse", null, sb.toString(),
 				podeMarcarComoInteressado(titular));
-		addAcao(acoes, "bell", "Notificar", null, "Application.notificar",
-				null, podeNotificar(titular, lotaTitular));
-		addAcao(acoes, "lock", "Finalizar Elaboração", null,
-				"Application.fechar", null,
+
+		router.getRedirectURL(sb, AppController.class).notificar(
+				this.getSigla());
+		addAcao(acoes, "bell", "Notificar", null, sb.toString(),
+				podeNotificar(titular, lotaTitular));
+
+		router.getRedirectURL(sb, AppController.class).fechar(this.getSigla());
+		addAcao(acoes, "lock", "Finalizar Elaboração", null, sb.toString(),
 				podeFinalizar(titular, lotaTitular),
 				"Confirma a finalização da elaboração deste conhecimento?",
 				null, null);
@@ -375,22 +387,31 @@ public class GcInformacao extends Objeto {
 		 * "Application.revisado", null, podeRevisar(titular, lotaTitular));
 		 */
 
-		addAcao(acoes, "folder_user", "Revisado", null, "Application.revisado",
-				null, podeRevisar(titular, lotaTitular),
+		router.getRedirectURL(sb, AppController.class)
+				.revisado(this.getSigla());
+		addAcao(acoes, "folder_user", "Revisado", null, sb.toString(),
+				podeRevisar(titular, lotaTitular),
 				"Confirma a revisão deste conhecimento?", null, null);
 
-		addAcao(acoes, "folder_user", "Solicitar Revisão", null,
-				"Application.solicitarRevisao", null,
+		router.getRedirectURL(sb, AppController.class).solicitarRevisao(
+				this.getSigla());
+		addAcao(acoes, "folder_user", "Solicitar Revisão", null, sb.toString(),
 				podeSolicitarRevisao(titular, lotaTitular));
 
-		addAcao(acoes, "cancel", "Cancelar", null, "Application.cancelar",
-				null, podeCancelar(titular, lotaTitular),
+		router.getRedirectURL(sb, AppController.class)
+				.cancelar(this.getSigla());
+		addAcao(acoes, "cancel", "Cancelar", null, sb.toString(),
+				podeCancelar(titular, lotaTitular),
 				"Confirma o cancelamento deste conhecimento?", null, null);
 
-		addAcao(acoes, "attach", "Anexar Arquivo", null, "Application.anexar",
-				null, podeAnexar(titular, lotaTitular));
-		addAcao(acoes, "arrow_divide", "Duplicar", null,
-				"Application.duplicar", null, podeDuplicar(),
+		router.getRedirectURL(sb, AppController.class).anexar(this.getSigla());
+		addAcao(acoes, "attach", "Anexar Arquivo", null, sb.toString(),
+				podeAnexar(titular, lotaTitular));
+
+		router.getRedirectURL(sb, AppController.class)
+				.duplicar(this.getSigla());
+		addAcao(acoes, "arrow_divide", "Duplicar", null, sb.toString(),
+				podeDuplicar(),
 				"Esta operação criará um conhecimento com os mesmos dados do atual. "
 						+ "Prosseguir?", null, null);
 
@@ -408,8 +429,6 @@ public class GcInformacao extends Objeto {
 	protected void addAcao(SortedSet<GcAcaoVO> acoes, String icone,
 			String nome, String nameSpace, String url, boolean pode,
 			String msgConfirmacao, String pre, String pos) {
-		// TreeMap<String, String> params = new TreeMap<String, String>();
-
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		if (pode) {
@@ -586,8 +605,8 @@ public class GcInformacao extends Objeto {
 	}
 
 	/**
-	 * Identifica uma informação através do seu código (JFRJ-GC-2013/00002
-	 * ou TMPGC-23)
+	 * Identifica uma informação através do seu código (JFRJ-GC-2013/00002 ou
+	 * TMPGC-23)
 	 * 
 	 * @throws Exception
 	 * @throws NumberFormatException

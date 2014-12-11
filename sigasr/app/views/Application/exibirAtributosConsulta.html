@@ -7,7 +7,10 @@
 			#{list items:filtro.tiposAtributosConsulta, as:'atributo'}
 				<tr>
 					<td>
-						#{select name:'name_['+atributo.idAtributo+']', value:atributo.idAtributo, onchange : 'alterarCampoParaAtributo($(this))' }
+						#{select name:'name_['+atributo.idAtributo+']', 
+								 value:atributo.idAtributo, 
+								 onchange : 'alterarCampoParaAtributo($(this))',
+								 style:'max-width: 300px;' }
 							#{list items:filtro.itensDisponiveis(atributosDisponiveisAdicao, atributo), as: 'atributoDisponivel' }
 								#{option atributoDisponivel.idAtributo}
 									${atributoDisponivel.nomeAtributo}
@@ -87,7 +90,9 @@
 			<tr id="ddlNovoAtributoContainer">
 				<td>
 					<div>
-						#{select name:'adicionar_novo_atributo', onchange : 'carregarCampoParaAtributo($(this))' }
+						#{select name:'adicionar_novo_atributo', 
+								 onchange : 'carregarCampoParaAtributo($(this))',
+								 style:'max-width: 300px;' }
 							#{option ""}#{/option}
 							#{list items:atributosDisponiveisAdicao, as: 'atributoDisponivel' }
 								#{option atributoDisponivel.idAtributo}

@@ -1247,33 +1247,40 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
 		if (solicitante == null)
 			return null;
-			
+
+		List<SrItemConfiguracao> listaTodosItens = new ArrayList<SrItemConfiguracao>();
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
-
-
+				
 		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
 		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(
 				CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
-
-		for (SrItemConfiguracao i : SrItemConfiguracao.listar(false)) {
+		
+		List<DpPessoa> listaPessoasAConsiderar = considerarPessoasParaDesignacao();
+		
+		listaTodosItens = SrItemConfiguracao.listar(false);
+		
+		for (SrItemConfiguracao i : listaTodosItens) {
 			if (!i.isEspecifico())
 				continue;
 			confFiltro.itemConfiguracaoFiltro = i;
-			if (SrConfiguracao.buscar(confFiltro,
-					new int[] { SrConfiguracaoBL.ACAO, SrConfiguracaoBL.ATENDENTE }) != null){
-				listaFinal.add(i);
-				SrItemConfiguracao itemPai = i.pai;
-				while (itemPai != null) {
-					if (!listaFinal.contains(itemPai))
-						listaFinal.add(itemPai);
-					itemPai = itemPai.pai;
+			for (DpPessoa p : listaPessoasAConsiderar) 
+				if (!listaFinal.contains(i)) {
+					confFiltro.setDpPessoa(p);
+					if (SrConfiguracao.buscar(confFiltro,
+							new int[] { SrConfiguracaoBL.ACAO, SrConfiguracaoBL.ATENDENTE }) != null){
+						listaFinal.add(i);
+						SrItemConfiguracao itemPai = i.pai;
+						while (itemPai != null) {
+							if (!listaFinal.contains(itemPai))
+								listaFinal.add(itemPai);
+							itemPai = itemPai.pai;
+						}
+					}
 				}
-			}
 		}
 
 		Collections.sort(listaFinal, new SrItemConfiguracaoComparator());
@@ -1295,7 +1302,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
 
 		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
 		confFiltro.setBuscarPorPerfis(true);
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
@@ -1303,14 +1309,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
+		
+		List<DpPessoa> listaPessoasAConsiderar = considerarPessoasParaDesignacao();
 
 		for (SrAcao a : SrAcao.listar(false)) {
 			if (!a.isEspecifico())
 				continue;
 			confFiltro.acaoFiltro = a;
-			SrConfiguracao conf = SrConfiguracao.buscar(confFiltro, new int[]{SrConfiguracaoBL.ATENDENTE});
-			if (conf != null)
-				listaFinal.put(a, conf.atendente);
+			for (DpPessoa p : listaPessoasAConsiderar) 
+				if (!listaFinal.containsKey(a)) {
+					confFiltro.setDpPessoa(p);
+					SrConfiguracao conf = SrConfiguracao.buscar(confFiltro, new int[]{SrConfiguracaoBL.ATENDENTE});
+					if (conf != null)
+						listaFinal.put(a, conf.atendente);
+				}
 		}
 
 		return listaFinal;
@@ -2553,5 +2565,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+	
+	/**
+	 * No caso de solicitacoes filhas, deve ser considerado o solicitante e o cadastrante para fins de exibicao 
+	 * de itens de configuracao e acoes disponiveis, alem do atendente designado da solicitacao.
+	 */
+	private List<DpPessoa> considerarPessoasParaDesignacao() {
+		List<DpPessoa> pessoasAConsiderar = new ArrayList<DpPessoa>();
+		if(this.isFilha() && cadastrante != null && !cadastrante.equivale(solicitante)) {
+			pessoasAConsiderar.add(solicitante);
+			pessoasAConsiderar.add(cadastrante);
+		}
+		else
+			pessoasAConsiderar.add(solicitante);
+		return pessoasAConsiderar;
 	}
 }

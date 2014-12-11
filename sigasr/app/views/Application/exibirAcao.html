@@ -67,29 +67,24 @@ function carregouAtributos(response, param){
 	 <span style="color: red">#{error 'solicitacao.acao' /}</span>
 	</div>
 	<div>
-		*{#{set lotacaoNaoDesignada : "" /}}*
 		<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
 				ja que acima no select nao tem como "esconder" essa informacao -->
 		#{list items:acoesEAtendentes.keySet(), as:'acaoAtend' }
-			<span id="lotacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).sigla} - ${acoesEAtendentes.get(acaoAtend).descricao.raw()}</span>
+			<span id="lotacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).sigla} 
+								- ${acoesEAtendentes.get(acaoAtend).descricao.raw()}</span>
 			
 			#{if acaoAtend_isFirst} 
-				#{set lotacaoNaoDesignada : acoesEAtendentes.get(acaoAtend).sigla + ' - ' + acoesEAtendentes.get(acaoAtend).descricao /} 
+				#{set lotacaoDesignada : acoesEAtendentes.get(acaoAtend).sigla + ' - ' + acoesEAtendentes.get(acaoAtend).descricao /} 
 			#{/if}
 		#{/list}
 
 		<label>Atendente</label>
 		<span id="atendentePadrao" style="display:block;">
-			 <!-- Para solicitacoes cadastradas, pegar o atendente da ultima movimentacao -->
-			 <!-- Para solicitacoes filhas que estao sendo cadastradas, pegar o atendente da ultima movimentacao do pai -->
+			<!-- Para solicitacoes cadastradas, pegar o atendente da ultima movimentacao -->
 			 <!-- Para solicitacoes que estao sendo cadastradas, pegar o atendente da designacao -->
-			#{if solicitacao.numSolicitacao != null} 
-				#{if solicitacao.isFilha() && solicitacao.idSolicitacao == null}
-					${solicitacao.solicitacaoPai?.lotaAtendente?.sigla} - ${solicitacao.solicitacaoPai?.lotaAtendente?.descricao.raw()}
-				#{/if}
-				#{else}${solicitacao.lotaAtendente?.sigla} - ${solicitacao.lotaAtendente?.descricao.raw()}#{/else}
-			#{/if}
-			#{else}${lotacaoNaoDesignada.raw()}#{/else}
+			#{if solicitacao.idSolicitacao != null && !solicitacao.isRascunho()}
+						${solicitacao.lotaAtendente?.sigla} - ${solicitacao.lotaAtendente?.descricao.raw()}#{/if}
+			#{else}${lotacaoDesignada.raw()}#{/else}
 		</span>
 		<!-- So habilita para solicitacoes filhas que estao sendo criadas. Quando editar sol. filha esse botao nao aparece -->
 		#{if solicitacao.isFilha() && solicitacao.idSolicitacao == null}

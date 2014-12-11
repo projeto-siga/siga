@@ -63,6 +63,7 @@ import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class Application extends SigaApplication {
@@ -212,6 +213,7 @@ public class Application extends SigaApplication {
 				solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
+		DpPessoa cadastrante = solicitacao.cadastrante;
 		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao
 				.getAcoesDisponiveisComAtendenteOrdemTitulo();
 		if (acoesEAtendentes != null){
@@ -223,7 +225,7 @@ public class Application extends SigaApplication {
 					solicitacao.acao = null;
 			}
 		}
-		render(solicitacao, acoesEAtendentes);
+		render(solicitacao, acoesEAtendentes, cadastrante);
 	}
 
 	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {

@@ -25,10 +25,13 @@ function carregouAcao(response, param){
 </script>
 
 <div class="gt-form-row gt-width-66" >
+	#{set parametroAdicional : "" /}
+	#{if solicitacao.isFilha()} #{verbatim}#{set parametroAdicional : '&sol.solicitacaoPai.idSolicitacao='+solicitacao.solicitacaoPai?.idSolicitacao /}#{/verbatim}#{/if}
 	<label>Item</label> #{selecao tipo:'item',
 	nome:'solicitacao.itemConfiguracao',
 	value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')",
-	params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo /} <span style="color: red">#{error
+	params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo+
+				'&sol.cadastrante.idPessoa='+cadastrante?.idPessoa + parametroAdicional   /} <span style="color: red">#{error
 		'solicitacao.itemConfiguracao' /}</span>
 </div>
 <div id="divAcao">#{include 'Application/exibirAcao.html' /}</div>

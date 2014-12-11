@@ -115,6 +115,9 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 		this.tituloItemConfiguracao = descricao;
 		this.siglaItemConfiguracao = sigla;
 	}
+	public static void main(String[] args) {
+		System.out.println(Integer.MAX_VALUE);
+	}
 
 	@Override
 	public Long getId() {

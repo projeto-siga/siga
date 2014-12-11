@@ -379,12 +379,12 @@
 			<label>Nome</label> <input type="text"
 				name="att.nomeAtributo"
 				id="nomeAtributo"
-				value="${att?.nomeAtributo}" size="50" />
+				value="${att?.nomeAtributo}" size="50" maxlength="255"/>
 				<span style="color: red">#{error
 				'att.nomeAtributo' /}</span>
 		</div>
 		<div class="box gt-width-50">
-			<label>Descrição</label> <input type="text"
+			<label>Descrição</label> <input maxlength="255" type="text"
 				name="att.descrAtributo"
 				id="descrAtributo"
 				value="${att?.descrAtributo}" 
@@ -397,7 +397,7 @@
 	</div>
 	<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
 		<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
-		<input type="text"
+		<input maxlength="255" type="text"
 			name="att.descrPreDefinido"
 			id="descrPreDefinido"
 			value="${att?.descrPreDefinido}" size="60" />

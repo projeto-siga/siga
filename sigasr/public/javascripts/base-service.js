@@ -95,7 +95,7 @@ BaseService.prototype.errorHandler = function(error) {
 	if(error.status == 400) {
 		var errors = JSON.parse(error.responseText);
 		for(var i = 0; i < errors.length; i++) {
-			var span = $('<span class="error" style="color: red"></span>');
+			var span = $('<span class="error" style="color: red; font-weight:bold"></span>');
 			span.html(errors[i].message);
 			span.insertAfter($('[name=' + errors[i].key + ']'));
 		}

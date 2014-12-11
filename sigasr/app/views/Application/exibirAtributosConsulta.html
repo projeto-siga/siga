@@ -1,5 +1,11 @@
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
+<style>
+	#atributos select{
+		max-width: 600px;
+	}
+</style>
+
 <tr id="atributos">
 	<td>Atributos</td>
 	<td style="padding-left:0px">
@@ -114,8 +120,6 @@
 	$("#ddlNovoAtributoContainer select option:nth(0)").attr('selected', 'selected');
 
 	function adicionarFiltroAtributo() {
-		console.log('foi');
-		
 		if($("#ddlNovoAtributoContainer select option").size() > 1) {
 			$("#ddlNovoAtributoContainer").show();
 		}

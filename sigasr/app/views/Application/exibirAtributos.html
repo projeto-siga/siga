@@ -34,7 +34,7 @@
 				#{if atributo.tipoAtributo != null}
 					#{if atributo.tipoAtributo.name() == "TEXTO"}
 					<input type="text" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}"
-						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" />
+						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" maxlength="255"/>
 					<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
 				#{/if}
 				#{if atributo.tipoAtributo.name() == "DATA"}
@@ -57,13 +57,13 @@
 					<input type="text" class="${atributo.idAtributo}"
 						onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
 						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');"
-						name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" />
+						name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" maxlength="9"/>
 					<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
 				#{/if}
 				#{if atributo.tipoAtributo.name() == "NUM_DECIMAL"}
 					<input type="text" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" 
 						id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}"
-						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" />
+						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" maxlength="9"/>
 					<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
 				#{/if}
 				#{if atributo.tipoAtributo.name() == "HORA"}

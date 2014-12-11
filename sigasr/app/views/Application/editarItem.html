@@ -295,7 +295,7 @@
 							<input
 							id="itemConfiguracaoSigla" type="text"
 							name="itemConfiguracao.siglaItemConfiguracao"
-							value="${itemConfiguracao?.siglaItemConfiguracao}" /> <span
+							value="${itemConfiguracao?.siglaItemConfiguracao}" maxlength="255"/> <span
 							style="color: red;">#{error
 							'itemConfiguracao.siglaItemConfiguracao' /}</span> 
 							
@@ -306,7 +306,7 @@
 								id="tituloItemConfiguracao"
 								name="itemConfiguracao.tituloItemConfiguracao"
 								value="${itemConfiguracao?.tituloItemConfiguracao}"
-								style="width: 474px;"/>
+								style="width: 474px;" maxlength="255"/>
 							<span style="display: inline; color: red;">#{error
 							'itemConfiguracao.tituloItemConfiguracao' /}</span>
 						</td>
@@ -320,7 +320,7 @@
 								id="descrItemConfiguracao"
 								name="itemConfiguracao.descrItemConfiguracao"
 								value="${itemConfiguracao?.descrItemConfiguracao}"
-								style="width: 690px" />
+								style="width: 690px" maxlength="255" />
 						</td>
 					</tr>
 					<tr>
@@ -343,7 +343,7 @@
 						<td colspan="3">
 							<label class="inline">Similaridade (Separar itens com
 								ponto e vírgula):</label>
-							<textarea cols="63" rows="3" maxlength="8192"
+							<textarea cols="63" rows="3" maxlength="8192" 
 								name="itemConfiguracao.descricaoSimilaridade"
 								id="descricaoSimilaridade">${itemConfiguracao?.descricaoSimilaridade}</textarea>
 						</td>
@@ -359,7 +359,7 @@
 						<td>
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
 								   type="text" id="numFatorMultiplicacaoGeral" name="itemConfiguracao.numFatorMultiplicacaoGeral" 
-								   value="${itemConfiguracao?.numFatorMultiplicacaoGeral}" size="20" />
+								   value="${itemConfiguracao?.numFatorMultiplicacaoGeral}" size="20" maxlength="9"/>
  								<span style="display: inline; color: red;">#{error 'itemConfiguracao.numFatorMultiplicacaoGeral' /}</span>
 						</td>
 					</tr>
@@ -430,7 +430,7 @@
 			<div class="gt-form-row ">
 				<label>Fator de Multiplicação: </label>
 				<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-					   type="text" name="numfatorMult" value="1" size="43" />
+					   type="text" name="numfatorMult" value="1" size="43" maxlength="9" />
 					   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
 			</div>
 			<div class="gt-form-row">

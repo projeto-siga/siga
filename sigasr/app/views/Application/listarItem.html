@@ -196,16 +196,17 @@
         		var fieldsError = error.responseText.split(";");
         		// limpa as mensagens de erros
         		resetAllErrorMessage();
-        		
-        		// Mostra a mensagem de campos obrigatórios
+
+				// Mostra a mensagem de campos obrigatórios
         		document.getElementById("erroCamposObrigatorios").style.display="inherit";
         		
-        		for (var i = 0; i < fieldsError.length; i++) {
-        			var fieldName = fieldsError[i];
-        			var fooElement = document.getElementById(fieldName);
-        			
-        			if (fooElement != undefined)
-        				fooElement.style.display = "inline";
+        		if(error.status == 400) {
+        			var errors = JSON.parse(error.responseText);
+        			for(var i = 0; i < errors.length; i++) {
+        				var span = $('<span class="error" style="color: red"></span>');
+        				span.html(errors[i].message);
+        				span.insertAfter(document.getElementsByName(errors[i].key));
+        			}
         		}
         	}
        	});
@@ -244,7 +245,9 @@
 
 	//Limpa as mensagens de campos obrigatórios.
 	function resetAllErrorMessage() {
-		//document.getElementById("erroCamposObrigatorios").style.display="none";
+		document.getElementById("erroCamposObrigatorios").style.display="none";
+
+		$('.error').remove();
 	}
 
 	function removerItensLista(nomeLista) {

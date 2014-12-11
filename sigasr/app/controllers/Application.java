@@ -302,28 +302,21 @@ public class Application extends SigaApplication {
 
 		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.siglaItemConfiguracao",
-					"C&oacute;digo n&atilde;o informado");
+					"Código não informado");
 		}
 
 		if (itemConfiguracao.tituloItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.tituloItemConfiguracao",
-					"T&iacute;tulo n&atilde;o informado");
+					"Título não informado");
 		}
 
 		if (itemConfiguracao.numFatorMultiplicacaoGeral < 1 ) {
 			validation.addError("itemConfiguracao.numFatorMultiplicacaoGeral",
-					"Fator de multiplica&ccedil;&atilde;o menor que 1");
+					"Fator de multiplicação menor que 1");
 		}
 		
-		for (play.data.validation.Error error : validation.errors()) {
-			System.out.println(error.message());
-			sb.append(error.message());
-			sb.append(";");
-		}
-
 		if (validation.hasErrors()) {
-			//render("@editarItem", itemConfiguracao);
-			throw new HTTPException(HttpServletResponse.SC_PRECONDITION_FAILED);
+			enviarErroValidacao();
 		}
 	}
 
@@ -368,7 +361,6 @@ public class Application extends SigaApplication {
 		}
 
 		for (play.data.validation.Error error : validation.errors()) {
-			System.out.println(error.message());
 			sb.append(error.getKey() + ";");
 		}
 

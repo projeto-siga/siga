@@ -138,15 +138,6 @@
             gestores["index"]--;
         }
 
-//         #{list items:itemConfiguracao?.gestorSet, as:'item'}
-//         	#{if item.dpPessoa}
-// 	        	gestores.incluirItem('${item.dpPessoa.sesbPessoa}${item.dpPessoa.matricula}', '${item.dpPessoa.nomePessoa}', 'pessoa', ${item.dpPessoa.idPessoa}, ${item.idGestorItem});
-//         	#{/if}
-// 	        #{if item.dpLotacao}
-// 	        		gestores.incluirItem('${item.dpLotacao.siglaLotacao}', '${item.dpLotacao.nomeLotacao}', 'lotacao', ${item.dpLotacao.idLotacao}, ${item.idGestorItem});
-// 	        #{/if}
-// 		#{/list}
-
 	    //POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÇÃO E SOLICITANTE
         var jFatores = $("#fatoresUl"),
         fatores = jFatores[0],
@@ -232,15 +223,6 @@
                 $("#"+idItemF).remove();
                 fatores["index"]--;
         };
-
-//         #{list items:itemConfiguracao?.fatorMultiplicacaoSet, as:'itemFator'}
-//         	#{if itemFator.dpPessoa}
-// 	        	fatores.incluirItem('${itemFator.dpPessoa.sesbPessoa}${itemFator.dpPessoa.matricula}', '${itemFator.dpPessoa.nomePessoa}', ${itemFator.numFatorMultiplicacao}, 'pessoa', ${itemFator.dpPessoa.idPessoa}, '${itemFator.idFatorMultiplicacao}Fator');
-//         	#{/if}
-// 	        #{if itemFator.dpLotacao}
-// 	        		fatores.incluirItem('${itemFator.dpLotacao.siglaLotacao}', '${itemFator.dpLotacao.nomeLotacao}', ${itemFator.numFatorMultiplicacao}, 'lotacao', ${itemFator.dpLotacao.idLotacao}, '${itemFator.idFatorMultiplicacao}Fator');
-// 	        #{/if}
-// 		#{/list}
 	});
 
 	function serializarItemConfiguracao() {
@@ -295,10 +277,14 @@
 							<input
 							id="itemConfiguracaoSigla" type="text"
 							name="itemConfiguracao.siglaItemConfiguracao"
+<<<<<<< HEAD
 							value="${itemConfiguracao?.siglaItemConfiguracao}" maxlength="255"/> <span
 							style="color: red;">#{error
 							'itemConfiguracao.siglaItemConfiguracao' /}</span> 
 							
+=======
+							value="${itemConfiguracao?.siglaItemConfiguracao}" /> 
+>>>>>>> e30787bc42f61622bcc957cd9ad240b8a37fc151
 							<label class="inline"
 							style="margin-left: 10px;">Título:</label> 
 							
@@ -306,9 +292,13 @@
 								id="tituloItemConfiguracao"
 								name="itemConfiguracao.tituloItemConfiguracao"
 								value="${itemConfiguracao?.tituloItemConfiguracao}"
+<<<<<<< HEAD
 								style="width: 474px;" maxlength="255"/>
 							<span style="display: inline; color: red;">#{error
 							'itemConfiguracao.tituloItemConfiguracao' /}</span>
+=======
+								style="width: 474px;"/>
+>>>>>>> e30787bc42f61622bcc957cd9ad240b8a37fc151
 						</td>
 					</tr>
 					<tr>
@@ -357,10 +347,9 @@
 							<label class="inline">Fator de Multiplicação:</label> 
 						</td>
 						<td>
-							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-								   type="text" id="numFatorMultiplicacaoGeral" name="itemConfiguracao.numFatorMultiplicacaoGeral" 
-								   value="${itemConfiguracao?.numFatorMultiplicacaoGeral}" size="20" maxlength="9"/>
- 								<span style="display: inline; color: red;">#{error 'itemConfiguracao.numFatorMultiplicacaoGeral' /}</span>
+							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true; else{ if (tecla==8 || tecla==0) return true; else return false; }"
+								type="text" id="numFatorMultiplicacaoGeral" name="itemConfiguracao.numFatorMultiplicacaoGeral"
+								value="${itemConfiguracao?.numFatorMultiplicacaoGeral}" size="20" maxlength="9"/>
 						</td>
 					</tr>
 					<tr>

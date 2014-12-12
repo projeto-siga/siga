@@ -192,10 +192,10 @@ $(function(){
 			#{/if}
 			#{else}
 				#{cronometro descricao:'Cadastramento',
-							 tempoPercorrido:solicitacao.getTempoAtendimento(),
+							 tempoPercorrido:solicitacao.getTempoCadastramento(),
 							 contarTempo:false /}
 				#{cronometro descricao:'Atendimento',
-							 tempoPercorrido:solicitacao.getTempoCadastramento(),
+							 tempoPercorrido:solicitacao.getTempoAtendimento(),
 							 contarTempo:false /}
 			#{/else}
 			<p>

@@ -2566,10 +2566,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	private Date getInicioPrimeiraEdicao() {
+		// DB1 em 12/12/2014: Mudamos o atributo de dtIniEdicao para dtReg
+		// pois na hora que salva a solicitação, o dtIniEdicao está recebendo
+		// apenas a hora, e a data está ficando com o ano de 1969.
 		if (solicitacaoInicial != null)
-			return solicitacaoInicial.dtIniEdicao;
+			return solicitacaoInicial.dtReg;
 		else
-			return this.dtIniEdicao;
+			return this.dtReg;
 	}
 	
 	public String getPrazoTotalAtendimento() throws Exception{
@@ -2683,7 +2686,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			
 			tempoCadastramento = new Duration(getInicioPrimeiraEdicao().getTime(), dtCalculo.getTime()).getMillis() - tempoPendencia.getMillis();
 			
-			return tempoCadastramento;
+			return tempoCadastramento > 0L ? tempoCadastramento : 0L;
 		}
 	}
 	
@@ -2702,7 +2705,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			// Se não encontrou o início de atendimento, não começa os cálculos 
 			if (!encontrouInicioAtendimento) {
 				if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO 
-						|| mov.tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
+						|| mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
 					dtInicioAtendimento = mov.dtIniMov;
 					encontrouInicioAtendimento = true;
 				}
@@ -2751,11 +2754,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				tempoPendencia = tempoPendencia.plus(new Duration(dtCalculo.getTime(), new Date().getTime()).getMillis());
 				break;
 			}
+			
+			tempoAtendimento = tempoAtendimento + new Duration(dtInicioAtendimento.getTime(), dtCalculo.getTime()).getMillis();
 		}
 		
 		// subtrai o tempo em impedimento do tempo total de atendimento
 		tempoAtendimento = tempoAtendimento - tempoPendencia.getMillis();
 		
-		return tempoAtendimento;
+		return tempoAtendimento > 0L ? tempoAtendimento : 0L;
 	}
 }

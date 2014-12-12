@@ -7,10 +7,11 @@
 </p>
 
 <script type="text/javascript">
+	var tempoPercorrido${_descricao} = ${_tempoPercorrido};
 	moment.locale('pt-br');
 
 	$(document).ready(function() {
-		moveRelogio${_descricao}(0);
+		moveRelogio${_descricao}(tempoPercorrido${_descricao});
 	})
 	
 	function moveRelogio${_descricao}(andamento) { 

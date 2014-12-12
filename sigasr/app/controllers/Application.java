@@ -931,7 +931,7 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao configuracao = JPA.em().find(SrConfiguracao.class, idPermissao);
 		configuracao.finalizar();
-		editarLista(idLista);
+		//editarLista(idLista);
 	}
 
 	public static void listarAssociacaoDesativadas() throws Exception {

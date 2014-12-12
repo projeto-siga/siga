@@ -888,7 +888,8 @@ public class Application extends SigaApplication {
 			acordo = SrAcordo.findById(id);
 		List<SrAtributo> parametros = SrAtributo.listarParaAcordo(false);
 		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
-		render(acordo, parametros, unidadesMedida);
+		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
+		render(acordo, parametros, unidadesMedida, abrangencias);
 	}
 
 	public static void gravarAcordo(SrAcordo acordo) throws Exception {
@@ -909,6 +910,26 @@ public class Application extends SigaApplication {
 		SrAcordo acordo = SrAcordo.findById(id);
 		acordo.salvar();
 		buscarAcordo(null, false, mostrarDesativados);
+	}
+	
+	public static Long gravarAbrangencia(SrConfiguracao abrangencia) throws Exception {
+		assertAcesso("ADM:Administrar");
+		abrangencia.salvarComoAbrangenciaAcordo();
+		return abrangencia.getId();		
+	}
+	
+	public static void desativarAbrangenciaEdicao(Long idAtributo, Long idAssociacao) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao abrangencia = JPA.em().find(SrConfiguracao.class, idAssociacao);
+		abrangencia.finalizar();
+		//editarAbrangencia(idAtributo);
+	}
+
+	public static void reativarAbrangencia(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
+		associacao.salvar();
+		//listarAssociacao(mostrarDesativados);
 	}
 
 	public static Long reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {

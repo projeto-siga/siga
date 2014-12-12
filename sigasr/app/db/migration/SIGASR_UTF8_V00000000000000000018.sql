@@ -24,7 +24,7 @@ rename SR_TIPO_ATRIBUTO_SEQ to SR_ATRIBUTO_SEQ;
 alter table sigasr.sr_solicitacao add FECHADO_AUTOMATICAMENTE CHAR(1 CHAR);
 
 INSERT INTO corporativo.cp_tipo_configuracao (id_tp_configuracao, dsc_tp_configuracao, id_sit_configuracao) 
-	VALUES (304, 'Acordo de Nível de Serviço', 1);
+	VALUES (304, 'Abrangência de Acordo', 1);
 alter table sigasr.sr_configuracao add PRIORIDADE number(10,0);
 
 commit;
@@ -117,3 +117,9 @@ commit;
 alter session set current schema = corporativo;
 insert into cp_marcador(descr_marcador, id_marcador, id_tp_marcador) values ( 'Fora do Prazo', 65, 1);
 commit;
+
+alter session set current schema = corporativo;
+alter table SR_CONFIGURACAO add (ID_ACORDO number(19, 0),
+	CONSTRAINT "CONFIGURACAO_ACORDO_FK" 
+			FOREIGN KEY ("ID_ACORDO") 
+			REFERENCES "SIGASR"."SR_ACORDO" ("ID_ACORDO"));

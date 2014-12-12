@@ -113,6 +113,10 @@ public class SrConfiguracao extends CpConfiguracao {
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"))
 	public List<SrTipoPermissaoLista> tipoPermissaoSet;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ACORDO")
+	public SrAcordo acordo;
 
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
@@ -245,9 +249,14 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<SrConfiguracao> listarAcordosNivelServico(boolean mostrarDesativados, DpLotacao atendente) {
+	public static List<SrConfiguracao> listarAbrangenciasAcordo(boolean mostrarDesativados, SrAcordo acordo) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ACORDO_NIVEL_SERVICO);
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
+		
+		if (acordo != null) {
+			sb.append(" and conf.acordo.hisIdIni = ");
+			sb.append(acordo.getHisIdIni());
+		}
 		
 		if (!mostrarDesativados)
 			sb.append(" and conf.hisDtFim is null");
@@ -262,9 +271,9 @@ public class SrConfiguracao extends CpConfiguracao {
 				.createQuery(sb.toString()).getResultList();
 	}
 	
-	public void salvarComoAcordoNivelServico() throws Exception {
+	public void salvarComoAbrangenciaAcordo() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ACORDO_NIVEL_SERVICO));
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
 		salvar();
 		
 		
@@ -387,10 +396,10 @@ public class SrConfiguracao extends CpConfiguracao {
 		return buscar(conf, new int[] {});
 	}
 	
-	public static SrConfiguracao buscarAcordoNivelServico(SrConfiguracao conf)
+	public static SrConfiguracao buscarAbrangenciaAcordo(SrConfiguracao conf)
 			throws Exception {
 		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ACORDO_NIVEL_SERVICO));
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
 		return buscar(conf, new int[] {});
 	}
 

@@ -29,6 +29,7 @@ import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
 import models.SrObjetivoAtributo;
+import models.SrOperador;
 import models.SrPesquisa;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;

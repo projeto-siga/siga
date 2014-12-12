@@ -71,7 +71,8 @@ CREATE TABLE "SIGASR"."SR_ATRIBUTO_ACORDO"
 		"HIS_DT_FIM" TIMESTAMP (6),
 		"HIS_DT_INI" TIMESTAMP (6) NOT NULL,
 		"HIS_ID_INI"               NUMBER(19,0),
-		"VALOR"      VARCHAR2(255 CHAR),
+		"OPERADOR" NUMBER(10,0),
+		"VALOR"     NUMBER(19,0),
 		"UNIDADE_MEDIDA" NUMBER(19,0),
 		"ID_ATRIBUTO" NUMBER(19,0) NOT NULL,
 		"ID_ACORDO" NUMBER(19,0),
@@ -104,9 +105,10 @@ alter table SR_SOLICITACAO_ACORDO
 
 update sigasr.sr_atributo set id_objetivo = 1 where id_objetivo is null;	
 	
-insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Cadastramento', 'tempoCadastramento', 2);
-insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Escalonamento', 'tempoEscalonamento', 2);
-insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Atendimento', 'tempoAtendimento', 2);
+insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Cadastramento', 'tempoDecorridoCadastramento', 2);
+insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Escalonamento', 'tempoDecorridoEscalonamento', 2);
+insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Atendimento', 'tempoDecorridoAtendimento', 2);
+insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Resultado da Pesquisa de Satisfação', 'resultadoPesquisaSatisfacao', 2);
 
 INSERT INTO CORPORATIVO.CP_UNIDADE_MEDIDA (ID_UNIDADE_MEDIDA, DESCR_UNIDADE_MEDIDA) VALUES (5, 'Minuto');
 INSERT INTO CORPORATIVO.CP_UNIDADE_MEDIDA (ID_UNIDADE_MEDIDA, DESCR_UNIDADE_MEDIDA) VALUES (6, 'Segundo');

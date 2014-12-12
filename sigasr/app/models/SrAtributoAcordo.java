@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -33,8 +34,11 @@ public class SrAtributoAcordo extends HistoricoSuporte {
 	@JoinColumn(name = "ID_ACORDO")
 	public SrAcordo acordo;
 
+	@Enumerated
+	public SrOperador operador;
+
 	@Column(name = "VALOR")
-	public String valor;
+	public Integer valor;
 
 	@ManyToOne
 	@JoinColumn(name = "UNIDADE_MEDIDA")
@@ -77,32 +81,29 @@ public class SrAtributoAcordo extends HistoricoSuporte {
 			return null;
 		return atributoAcordos.get(0);
 	}
+
+	public boolean isNaFaixa(SrValor v) {
+		SrValor valorAtributo = getValorEUnidade();
+		if (operador == SrOperador.IGUAL)
+			return valorAtributo.compareTo(v) == 0;
+		else if (operador == SrOperador.MENOR)
+			return valorAtributo.compareTo(v) > 0;
+		else if (operador == SrOperador.MENOR_OU_IGUAL)
+			return valorAtributo.compareTo(v) >= 0;
+		else if (operador == SrOperador.MAIOR)
+			return valorAtributo.compareTo(v) < 0;
+		else if (operador == SrOperador.MAIOR_OU_IGUAL)
+			return valorAtributo.compareTo(v) <= 0;
+		return false;
+	}
+
+	public SrValor getValorEUnidade() {
+		return new SrValor(valor, unidadeMedida != null ? unidadeMedida
+				.getIdUnidadeMedida().intValue() : null);
+	}
 	
 	public Integer getValorEmSegundos(){
-		if (valor == null || unidadeMedida == null)
-			return null;
-		Integer valor = Integer.valueOf(this.valor);
-		switch (unidadeMedida.getIdUnidadeMedida().intValue()) {
-		case CpUnidadeMedida.ANO:
-			valor *= 946080000;
-			break;
-		case CpUnidadeMedida.MES:
-			valor *= 2592000;
-			break;
-		case CpUnidadeMedida.DIA:
-			valor *= 86400;
-			break;
-		case CpUnidadeMedida.HORA:
-			valor *= 3600;
-			break;
-		case CpUnidadeMedida.MINUTO:
-			valor *= 60;
-			break;
-		case CpUnidadeMedida.SEGUNDO:
-			valor *= 1;
-			break;
-		}
-		return valor;
+		return getValorEUnidade().getValorEmSegundos();
 	}
 
 }

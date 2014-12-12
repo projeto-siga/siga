@@ -70,7 +70,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	@SuppressWarnings("unchecked")
 	public List<Object[]> buscarSimplificado() throws Exception{
 		String query = montarBusca("select sol.idSolicitacao, sol.descrSolicitacao, sol.codigo, item.tituloItemConfiguracao"
-				+ " from SrSolicitacao sol inner join sol.itemConfiguracao as item where ");
+				+ " from SrSolicitacao sol inner join sol.itemConfiguracao as item ");
 		
 		List<Object[]> listaRetorno =  JPA
 				.em()

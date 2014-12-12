@@ -83,6 +83,7 @@ import util.Util;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -2444,88 +2445,33 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return new Date(dtBase.getTime() + segundosAdiante * 1000);
 	}
-	
-	public Integer getTempoCadastramentoAcordado() {
+
+	private Date getDtPrazoCadastramentoAcordado() {
 		if(acordos == null || acordos.size() == 0)
 			return null;
 		Integer menorTempoAcordado = null;
 		for (SrAcordo a : acordos){
-			Integer acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoCadastramento");
+			Integer acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoDecorridoCadastramento");
 			if (menorTempoAcordado == null || (acordado != null && acordado < menorTempoAcordado))
 				menorTempoAcordado = acordado;
 		}
-		return menorTempoAcordado;
-	}
-	
-	private Date getDtPrazoCadastramentoAcordado() {
-		Integer tempoAcordado = getTempoCadastramentoAcordado();
-		if (tempoAcordado == null)
+		if (menorTempoAcordado == null)
 			return null;
-		return getDataAPartirDe(getDtInicioPrimeiraEdicao(), tempoAcordado);
+		return getDataAPartirDe(getDtInicioPrimeiraEdicao(), menorTempoAcordado);
 	}
 	
-	public boolean isTempoCadastramentoSatisfatorio(){
-		return getDtInicioAtendimento().before(getDtPrazoCadastramentoAcordado());
-	}
-	
-	private Integer getTempoAtendimentoAcordado(){
+	private Date getDtPrazoAtendimentoAcordado() {
 		if (acordos == null || acordos.size() == 0)
 			return null;
 		Integer menorTempoAcordado = null;
 		for (SrAcordo a : acordos){
-			Integer acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoAtendimento");
+			Integer acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoDecorridoAtendimento");
 			if (menorTempoAcordado == null || (acordado != null && acordado < menorTempoAcordado))
 				menorTempoAcordado = acordado;
 		}
-		return menorTempoAcordado;
-	}
-	
-	private Date getDtPrazoAtendimentoAcordado() {
-		Integer tempoAcordado = getTempoAtendimentoAcordado();
-		if (tempoAcordado == null)
+		if (menorTempoAcordado == null)
 			return null;
-		return getDataAPartirDe(getDtInicioAtendimento(), tempoAcordado);
-	}
-	
-	public boolean isTempoAtendimentoSatisfatorio(){
-		return getDtEfetivoFechamento().before(getDtPrazoAtendimentoAcordado());
-	}
-	
-	public boolean isAcordosSatisfeitos() {
-		if (acordos == null || acordos.size() == 0)
-			return true;
-		for (SrAcordo a : acordos) {
-			if (!isAcordoSatisfeito(a))
-				return false;
-		}
-		return true;
-	}
-	
-	public boolean isAcordoSatisfeito(SrAcordo acordo) {
-		if (acordo == null)
-			return true;
-		if (acordo.atributoAcordoSet == null)
-			return true;
-		for (SrAtributoAcordo pa : acordo.getAcordoAtual().atributoAcordoSet) {
-			if (!isAtributoAcordoSatisfeito(pa))
-				return false;
-		}
-		return true;
-	}
-	
-	public boolean isAtributoAcordoSatisfeito(SrAtributoAcordo atributoAcordo) {
-		try {
-			String metodo = "is"
-					+ atributoAcordo.atributo.codigoAtributo.substring(0, 1).toUpperCase()
-					+ atributoAcordo.atributo.codigoAtributo.substring(1) + "Satisfeito";
-			return (Boolean) SrSolicitacao.class.getMethod(metodo).invoke(this);
-		} catch (NoSuchMethodException nsme) {
-			return false;
-		} catch (InvocationTargetException ite) {
-			return false;
-		} catch (IllegalAccessException iae) {
-			return false;
-		}
+		return getDataAPartirDe(getDtInicioAtendimento(), menorTempoAcordado);
 	}
 	
 	public Cronometro getCronometro() throws Exception {
@@ -2545,6 +2491,93 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			}
 		}
 		return cron;
+	}
+	
+	// Edson: retorna o tempo decorrido entre duas datas, descontando
+	// os períodos de pendência (blocos).
+	// PPP, abaixo, é o bloco pendente. I é dtIni e F é dtFim
+	public SrValor getTempoDecorrido(Date dtIni, Date dtFim) {
+		Map<Date, Date> pendencias = getTrechosPendentes();
+		Integer decorrido = 0;
+		for (Date dtIniBlocoPendencia : pendencias.keySet()) {
+			Date dtFimBlocoPendencia = pendencias.get(dtIniBlocoPendencia);
+
+			// ----------I----------F---PPPP---
+			if (dtIniBlocoPendencia.after(dtFim))
+				break;
+
+			// ---PPPP---I----------F----------
+			if (dtFimBlocoPendencia.before(dtIni))
+				continue;
+
+			// ---------PIPP--------F----------
+			if (dtIniBlocoPendencia.after(dtIni))
+				decorrido += (int) (dtIniBlocoPendencia.getTime() - dtIni
+						.getTime()) / 1000;
+
+			dtIni = dtFimBlocoPendencia;
+
+			// ----------I---------PPFP---------
+			if (dtFimBlocoPendencia.after(dtFim))
+				return new SrValor(decorrido, CpUnidadeMedida.SEGUNDO);
+		}
+		decorrido += (int) (dtFim.getTime() - dtIni.getTime()) / 1000;
+		return new SrValor(decorrido, CpUnidadeMedida.SEGUNDO);
+	}
+	
+	public SrValor getTempoDecorridoCadastramento(){
+		Date dtInicioAtendimento = getDtInicioAtendimento();
+		if (dtInicioAtendimento == null)
+			dtInicioAtendimento = new Date();
+		return getTempoDecorrido(getDtInicioPrimeiraEdicao(), dtInicioAtendimento);
+	}
+	
+	public SrValor getTempoDecorridoAtendimento(){
+		Date dtFechamento = isFechado() ? getDtEfetivoFechamento() : new Date();
+		return getTempoDecorrido(getDtInicioAtendimento(), dtFechamento);
+	}
+	
+	public Integer getResultadoPesquisaSatisfacao(){
+		return 0;
+	}
+	
+	public boolean isAcordosSatisfeitos() {
+		if (acordos == null || acordos.size() == 0)
+			return true;
+		for (SrAcordo a : acordos) {
+			if (!isAcordoSatisfeito(a))
+				return false;
+		}
+		return true;
+	}
+	
+	public boolean isAcordoSatisfeito(SrAcordo acordo) {
+		if (acordo == null)
+			return true;
+		acordo = acordo.getAcordoAtual();
+		if (acordo.atributoAcordoSet == null)
+			return true;
+		for (SrAtributoAcordo pa : acordo.atributoAcordoSet) {
+			if (!isAtributoAcordoSatisfeito(pa))
+				return false;
+		}
+		return true;
+	}
+	
+	public boolean isAtributoAcordoSatisfeito(SrAtributoAcordo atributoAcordo) {
+		try {
+			SrValor valor = (SrValor) SrSolicitacao.class.getMethod(
+					atributoAcordo.atributo.asGetter()).invoke(this);
+			if (valor == null)
+				return true;
+			return atributoAcordo.isNaFaixa(valor);
+		} catch (NoSuchMethodException nsme) {
+			return false;
+		} catch (InvocationTargetException ite) {
+			return false;
+		} catch (IllegalAccessException iae) {
+			return false;
+		}
 	}
 	
 	@Override

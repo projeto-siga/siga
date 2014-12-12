@@ -20,6 +20,7 @@ $(function() {
         jValor = $("#valor"),
         jParametro = $("#parametro");
         jUnidadeMedida = $("#unidadeMedida");
+        jOperador = $("#operador");
    
         $("#botaoIncluir").click(function(){
                 jDialog.data('acao',parametrosAcordo.incluirItem).dialog('open');
@@ -36,6 +37,7 @@ $(function() {
                         jDialog.data('valor','');
                         jDialog.data('parametro','');
                         jDialog.data('unidadeMedida','');
+                        jDialog.data('operador','');
                 },
                 open: function(){
                         if (jDialog.data("valor"))
@@ -45,13 +47,15 @@ $(function() {
                         jValor.val(jDialog.data("valor"));
                         jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
                         jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);
+                        jOperador.find("option[value=" + jDialog.data("operador") + "]").prop('selected', true);
                 }
         });
         $("#modalOk").click(function(){
                 var acao = jDialog.data('acao');
                 var jParametroEscolhido = jParametro.find("option:selected");
                 var jUnidadeEscolhida = jUnidadeMedida.find("option:selected");
-                acao(jParametroEscolhido.val(), jParametroEscolhido.text(), jValor.val(), jUnidadeEscolhida.val(), jUnidadeEscolhida.text().trim(), jDialog.data("id"));
+                var jOperadorEscolhido = jOperador.find("option:selected");
+                acao(jParametroEscolhido.val(), jParametroEscolhido.text(), jOperadorEscolhido.val(), jOperadorEscolhido.text(), jValor.val(), jUnidadeEscolhida.val(), jUnidadeEscolhida.text().trim(), jDialog.data("id"));
                 jDialog.dialog('close');
         });
         $("#modalCancel").click(function(){
@@ -59,20 +63,21 @@ $(function() {
         });
 
         parametrosAcordo["index"] = 0;
-        parametrosAcordo.incluirItem = function(idParametro, nomeParametro, valor, idUnidadeMedida, descrUnidadeMedida, id){
+        parametrosAcordo.incluirItem = function(idParametro, nomeParametro, idOperador, nomeOperador, valor, idUnidadeMedida, descrUnidadeMedida, id){
                 if (!id)
                         id = 'novo_' + ++parametrosAcordo["index"];
                 jParametrosAcordo.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
                 var jNewTr = jParametrosAcordo.find("li:last-child");
                 jNewTr.append("<span style=\"display: inline-block\" id=\"" + idParametro + "\">"
-                                + nomeParametro + "</span>: <span>" + valor + "</span> <span id=\"" + idUnidadeMedida + "\">" + descrUnidadeMedida + "</span>");                
+                                + nomeParametro + "</span>: <span id=\"" + idOperador + "\">" + nomeOperador + "</span> <span>" + valor + "</span> <span id=\"" + idUnidadeMedida + "\">" + descrUnidadeMedida + "</span>");                
                 jNewTr.append("&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/pencil.png\" style=\"visibility:hidden; cursor: pointer\" />");
                 jNewTr.append("&nbsp;<img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: hidden; cursor: pointer\" />");
                 jNewTr.find("img:eq(0)").click(function(){
                         var jDivs=jNewTr.find("span");
                         jDialog.data("parametro",jDivs[0].id)
-                        		.data("valor",jDivs[1].innerHTML)
-                        		.data("unidadeMedida",jDivs[2].id)
+                        		.data("operador",jDivs[1].id)
+                        		.data("valor",jDivs[2].innerHTML)
+                        		.data("unidadeMedida",jDivs[3].id)
                                 .data("id",id)
                                 .data("acao", parametrosAcordo.alterarItem)
                                 .dialog("open");
@@ -87,13 +92,15 @@ $(function() {
                         jNewTr.find("img").css("visibility", "hidden");
                 });
         }
-        parametrosAcordo.alterarItem = function(idParametro, nomeParametro, valor, idUnidadeMedida, descrUnidadeMedida, id){
+        parametrosAcordo.alterarItem = function(idParametro, nomeParametro, idOperador, nomeOperador, valor, idUnidadeMedida, descrUnidadeMedida, id){
                 var jDivs=$("#"+id).find("span");
                 jDivs[0].id = idParametro;
                 jDivs[0].innerHTML = nomeParametro;
-                jDivs[1].innerHTML = valor;
-                jDivs[2].id = idUnidadeMedida;
-                jDivs[2].innerHTML = descrUnidadeMedida;
+                jDivs[1].id = idOperador;
+                jDivs[1].innerHTML = nomeOperador;
+                jDivs[2].innerHTML = valor;
+                jDivs[3].id = idUnidadeMedida;
+                jDivs[3].innerHTML = descrUnidadeMedida;
         }
         parametrosAcordo.removerItem = function(idItem){
                 $("#"+idItem).remove();
@@ -101,7 +108,7 @@ $(function() {
         }
 
         #{list items:acordo.atributoAcordoSet, as:'parametroAcordo'}
-                parametrosAcordo.incluirItem('${parametroAcordo.atributo.idAtributo}', '${parametroAcordo.atributo.nomeAtributo}', '${parametroAcordo.valor}', '${parametroAcordo.unidadeMedida?.idUnidadeMedida}', '${parametroAcordo.unidadeMedida?.plural}', ${parametroAcordo.idAtributoAcordo});
+                parametrosAcordo.incluirItem('${parametroAcordo.atributo.idAtributo}', '${parametroAcordo.atributo.nomeAtributo}', '${parametroAcordo.operador}', '${parametroAcordo.operador?.nome}', '${parametroAcordo.valor}', '${parametroAcordo.unidadeMedida?.idUnidadeMedida}', '${parametroAcordo.unidadeMedida?.plural}', ${parametroAcordo.idAtributoAcordo});
         #{/list}
 
         $("[value='Gravar']").click(function(){
@@ -111,9 +118,10 @@ $(function() {
                         params = jForm.serialize();
                 jParametrosAcordo.find("li").each(function(i){
                         var jDivs=$(this).find("span");
-                        params += '&acordo.atributoAcordoSet[' + i + '].valor=' + jDivs[1].innerHTML;
+                        params += '&acordo.atributoAcordoSet[' + i + '].valor=' + jDivs[2].innerHTML;
                         params += '&acordo.atributoAcordoSet[' + i + '].atributo.idAtributo=' + jDivs[0].id;
-                        params += '&acordo.atributoAcordoSet[' + i + '].unidadeMedida=' + jDivs[2].id;
+                        params += '&acordo.atributoAcordoSet[' + i + '].unidadeMedida=' + jDivs[3].id;
+                        params += '&acordo.atributoAcordoSet[' + i + '].operador=' + jDivs[1].id;
                         if (this.id.indexOf("novo_") < 1)
                                 params += '&acordo.atributoAcordoSet[' + i + '].idAtributoAcordo=' + this.id;
                 });
@@ -163,15 +171,19 @@ $(function() {
                                 ${parametro.nomeAtributo} #{/option} #{/list} #{/select}
                         </div>
                          <div class="gt-form-row">
-                                <label>Valor</label> <input type="text" id="valor"
-                                        name="valor" value="" />
-                        #{select name:'unidadeMedida', 
-                        	id:'unidadeMedida',
-							items:unidadesMedida, 
-							valueProperty:'idUnidadeMedida',
-							labelProperty:'plural'}
-							#{option 0}#{/option} 
-						#{/select}
+                                <label>Valor</label> 
+                                #{select id:'operador', name:'operador',
+									items:models.SrOperador.values(),
+									labelProperty:'nome' /}
+                                <input type="text" id="valor"
+                                        name="valor" value="" size = "5"/>
+                        		#{select name:'unidadeMedida', 
+                        			id:'unidadeMedida',
+									items:unidadesMedida, 
+									valueProperty:'idUnidadeMedida',
+									labelProperty:'plural'}
+									#{option 0}#{/option} 
+								#{/select}
 						</div>
                         <div class="gt-form-row">
                                 <input type="button" id="modalOk" value="Ok"

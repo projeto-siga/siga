@@ -36,11 +36,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,9 +69,6 @@ import notifiers.Correio;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.Interval;
-import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -80,9 +77,9 @@ import play.mvc.Router;
 import util.Cronometro;
 import util.SigaPlayCalendar;
 import util.Util;
+import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -1603,14 +1600,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrMarca m : getMarcaSet()) {
 			if (setA.contains(m))
 				m.delete();
-
 			else
 				setA.add(m);
 		}
 		SortedSet<SrMarca> setB = calcularMarcadores();
 		Set<SrMarca> marcasAIncluir = new TreeSet<SrMarca>();
 		Set<SrMarca> marcasAExcluir = new TreeSet<SrMarca>();
-		encaixar(setA, setB, marcasAIncluir, marcasAExcluir);
+		Set<Par<SrMarca, SrMarca>> atualizar = new TreeSet<Par<SrMarca, SrMarca>>();
+		encaixar(setA, setB, marcasAIncluir, marcasAExcluir, atualizar);
 
 		if (meuMarcaSet == null)
 			meuMarcaSet = new TreeSet<SrMarca>();
@@ -1621,6 +1618,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrMarca e : marcasAExcluir) {
 			e.solicitacao.meuMarcaSet.remove(e);
 			e.delete();
+		}
+		for (Entry<SrMarca, SrMarca> pair : atualizar) {
+			SrMarca a = pair.getKey();
+			SrMarca b = pair.getValue();
+			a.setDpLotacaoIni(b.getDpLotacaoIni());
+			a.setDpPessoaIni(b.getDpPessoaIni());
+			a.setDtFimMarca(b.getDtFimMarca());
+			a.setDtIniMarca(b.getDtIniMarca());
+			a.save();
 		}
 	}
 
@@ -1736,6 +1742,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				acrescentarMarca(set,
 						CpMarcador.MARCADOR_SOLICITACAO_COMO_SOLICITANTE, null,
 						null, solicitante, lotaSolicitante);
+				
+				Date prazo = getDtPrazoAtendimentoAcordado();
+				if (prazo != null)
+					acrescentarMarca(set,
+							CpMarcador.MARCADOR_SOLICITACAO_FORA_DO_PRAZO, prazo, null,
+							movMarca.atendente, movMarca.lotaAtendente);
 			}
 		}
 
@@ -1743,7 +1755,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	private void encaixar(SortedSet<SrMarca> setA, SortedSet<SrMarca> setB,
-			Set<SrMarca> incluir, Set<SrMarca> excluir) {
+			Set<SrMarca> incluir, Set<SrMarca> excluir, Set<Par<SrMarca, SrMarca>> atualizar) {
 		Iterator<SrMarca> ia = setA.iterator();
 		Iterator<SrMarca> ib = setB.iterator();
 
@@ -1772,7 +1784,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					a = null;
 			} else {
 
-				// O registro existe nos dois - atualizar.add(new Par(b, a));
+				// O registro existe nos dois
+				atualizar.add(new Par<SrMarca, SrMarca>(a, b));
 				if (ib.hasNext())
 					b = ib.next();
 				else
@@ -2213,10 +2226,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
 		movimentacao.descrMovimentacao = descricao;
-		movimentacao = movimentacao.salvar(pess, lota);
 		
+		// Edson: eh necessario setar a finalizadora na finalizada antes de 
+		// salvar() a finalizadora, pq se não, ao atualizarMarcas(), vai 
+		// parecer que a pendencia nao foi finalizada, atrapalhando calculos 
+		// de prazo
 		SrMovimentacao movFinalizada = SrMovimentacao.findById(idMovimentacao);
 		movFinalizada.movFinalizadora = movimentacao;
+		
+		movimentacao = movimentacao.salvar(pess, lota);
 		movFinalizada.save();
 	}
 

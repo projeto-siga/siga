@@ -114,5 +114,6 @@ INSERT INTO CORPORATIVO.CP_UNIDADE_MEDIDA (ID_UNIDADE_MEDIDA, DESCR_UNIDADE_MEDI
 INSERT INTO CORPORATIVO.CP_UNIDADE_MEDIDA (ID_UNIDADE_MEDIDA, DESCR_UNIDADE_MEDIDA) VALUES (6, 'Segundo');
 commit;
 
-
-
+alter session set current schema = corporativo;
+insert into cp_marcador(descr_marcador, id_marcador, id_tp_marcador) values ( 'Fora do Prazo', 65, 1);
+commit;

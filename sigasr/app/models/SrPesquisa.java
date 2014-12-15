@@ -28,7 +28,7 @@ public class SrPesquisa extends HistoricoSuporte {
 
 	/**
 	 * 
-	 */
+	 */	
 	private static final long serialVersionUID = 1L;
 
 	@Id

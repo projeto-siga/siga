@@ -1,0 +1,24 @@
+#{if solicitacao.acordos}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Acordos</h3>
+			#{list items:solicitacao.acordos, as:'acordo'}
+				<p>
+					<b>${acordo.acordoAtual.nomeAcordo}</b>
+					<ul>
+					#{list items:acordo.acordoAtual.atributoAcordoSet, as:'att'}
+					<li>${att.atributo.nomeAtributo} ${att.operador.nome} ${att.valor} ${att.unidadeMedida.plural}: 
+						#{if solicitacao.isAtributoAcordoSatisfeito(att)}
+							<span style="color: green">Ok</span>
+						#{/if}
+						#{else}
+							<span style="color: red">N&atilde;o cumprido</span>
+						#{/else}
+					</li>
+					#{/list}
+					</ul>
+				</p>
+			#{/list}
+		</div>
+	</div>
+	#{/if} 

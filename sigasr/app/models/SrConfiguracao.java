@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -19,6 +20,7 @@ import javax.persistence.Transient;
 import models.SrAcao.SrAcaoVO;
 import models.SrItemConfiguracao.SrItemConfiguracaoVO;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
@@ -101,6 +103,9 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinColumn(name = "ID_LISTA")
 	public SrLista listaPrioridade;
 	
+	@Enumerated
+	public SrPrioridade prioridade;
+	
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "SR_LISTA_CONFIGURACAO", schema="SIGASR", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
 	private List<SrLista> listaConfiguracaoSet;
@@ -108,6 +113,10 @@ public class SrConfiguracao extends CpConfiguracao {
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"))
 	public List<SrTipoPermissaoLista> tipoPermissaoSet;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ACORDO")
+	public SrAcordo acordo;
 
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
@@ -238,6 +247,37 @@ public class SrConfiguracao extends CpConfiguracao {
 				.em()
 				.createQuery(sb.toString()).getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAbrangenciasAcordo(boolean mostrarDesativados, SrAcordo acordo) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
+		
+		if (acordo != null) {
+			sb.append(" and conf.acordo.hisIdIni = ");
+			sb.append(acordo.getHisIdIni());
+		}
+		
+		if (!mostrarDesativados)
+			sb.append(" and conf.hisDtFim is null");
+		else {
+			sb.append(" and conf.idConfiguracao in (");
+			sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
+		}
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
+	public void salvarComoAbrangenciaAcordo() throws Exception {
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+		salvar();
+		
+		
+	}
 
 	public void salvarComoPermissaoUsoLista() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
@@ -328,16 +368,41 @@ public class SrConfiguracao extends CpConfiguracao {
 				.getResultList();
 	}
 
-	public static SrConfiguracao buscar(SrConfiguracao conf) throws Exception {
-		return buscar(conf, new int[] {});
-	}
-
-	public static SrConfiguracao buscar(SrConfiguracao conf,
+	private static SrConfiguracao buscar(SrConfiguracao conf,
 			int[] atributosDesconsideradosFiltro) throws Exception {
 		return (SrConfiguracao) SrConfiguracaoBL.get().buscaConfiguracao(conf,
 				atributosDesconsideradosFiltro, null);
 	}
 	
+	public static SrConfiguracao buscarDesignacao(SrConfiguracao conf)
+			throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		return buscar(conf, new int[] { SrConfiguracaoBL.ATENDENTE});
+	}
+	
+	public static SrConfiguracao buscarDesignacao(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		return buscar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro,
+				new int[] { SrConfiguracaoBL.ATENDENTE }));
+	}
+	
+	public static SrConfiguracao buscarAssociacao(SrConfiguracao conf)
+			throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+		return buscar(conf, new int[] {});
+	}
+	
+	public static SrConfiguracao buscarAbrangenciaAcordo(SrConfiguracao conf)
+			throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+		return buscar(conf, new int[] {});
+	}
+
 	public static List<SrConfiguracao> listar(SrConfiguracao conf) throws Exception {
 		return listar(conf, new int[] {});
 	}

@@ -358,4 +358,15 @@ public class SrMovimentacao extends GenericModel {
 	public String getMotivoPendenciaString() {
 		return this.motivoPendencia.descrTipoMotivoPendencia;
 	}
+	
+	public SrMovimentacao getMovFinalizada(){
+		if (movFinalizadaSet == null || movFinalizadaSet.size() == 0)
+			return null;
+		return movFinalizadaSet.get(0);
+	}
+	
+	public Date getDtFimMov(){
+		return movFinalizadora != null ? movFinalizadora.dtIniMov
+				: dtAgenda;
+	}
 }

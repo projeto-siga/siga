@@ -180,10 +180,10 @@ function postback(){
 	</div>
 	
 	#{include 'Application/exibirCronometro.html' /}
-
+	#{include 'Application/exibirPendencias.html' /}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
-			<h3>Dados da Solicitação</h3>
+			<h3>Solicitação</h3>
 			<p>
 				<b>Solicitante:</b>
 				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
@@ -289,24 +289,6 @@ function postback(){
 			</div>
 		</div>
 	#{/if}
-	#{if solicitacao.isPendente()}
-	#{set podeTerminar:solicitacao.podeTerminarPendencia(lotaTitular, cadastrante) /}
-	<div class="gt-sidebar">
-		<div class="gt-sidebar-content">
-			<h3>Pendências</h3>
-			#{list items:solicitacao.pendencias, as:'pendencia'}
-				<p>
-					<b>${pendencia.motivoPendenciaString}</b> at&eacute; ${pendencia.dtAgendaDDMMYYHHMM} - ${pendencia.descrMovimentacao}
-					#{if podeTerminar}
-						<a href="javascript:terminarPendencia('${pendencia.idMovimentacao}');">
-							<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">
-						</a>
-					#{/if}
-				</p>
-			#{/list}
-		</div>
-	</div>
-	#{/if} 
 	#{if solicitacao.emLista}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
@@ -328,6 +310,10 @@ function postback(){
 		</div>
 	</div>
 	#{/if} 
+	
+	#{include 'Application/exibirAcordos.html' /}
+	
+	
 	<div id="divConhecimentosRelacionados">#{include
 				'Application/exibirConhecimentosRelacionados.html' /}</div>
 	

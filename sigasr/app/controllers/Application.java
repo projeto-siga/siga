@@ -17,6 +17,7 @@ import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
 
 import models.SrAcao;
+import models.SrAcordo;
 import models.SrArquivo;
 import models.SrAtributo;
 import models.SrAtributoSolicitacao;
@@ -27,8 +28,10 @@ import models.SrGravidade;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
+import models.SrObjetivoAtributo;
+import models.SrOperador;
 import models.SrPesquisa;
-import models.SrResposta;
+import models.SrPrioridade;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import models.SrTipoMotivoPendencia;
@@ -150,6 +153,7 @@ public class Application extends SigaApplication {
 			solicitacao.dtOrigem = new Date();
 		if (solicitacao.dtIniEdicao == null)
 			solicitacao.dtIniEdicao = new Date();
+		solicitacao.atualizarAcordos();
 
 		formEditar(solicitacao.deduzirLocalRamalEMeioContato());
 	}
@@ -196,7 +200,7 @@ public class Application extends SigaApplication {
 		List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
 		HashMap<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
 		
-		for (SrAtributo srAtributo : SrAtributo.listar(Boolean.FALSE)) {
+		for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
 			if (!atributoMap.containsKey(srAtributo.idAtributo)) {
 				listaAtributosAdicao.add(srAtributo);
 			}
@@ -853,12 +857,11 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
+
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
-		List<SrLista> listasPrioridade = SrLista.listar(false);
 		
-		render(designacoes, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
+		render(designacoes, orgaos, locais, pesquisaSatisfacao);
 	}
 	
 	public static void listarDesignacaoDesativados() throws Exception {
@@ -882,12 +885,82 @@ public class Application extends SigaApplication {
 		return designacao.getId();
 	}
 
+	public static void editarAcordo(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrAcordo acordo = new SrAcordo();
+		if (id != null)
+			acordo = SrAcordo.findById(id);
+		List<SrAtributo> parametros = SrAtributo.listarParaAcordo(false);
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
+		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		render(acordo, parametros, unidadesMedida, abrangencias, orgaos, locais);
+	}
+
+	public static void gravarAcordo(SrAcordo acordo) throws Exception {
+		assertAcesso("ADM:Administrar");
+		acordo.salvar();
+		buscarAcordo(null, false, false);
+	}
+
+	public static void desativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrAcordo acordo = SrAcordo.findById(id);
+		acordo.finalizar();
+		buscarAcordo(null, false, mostrarDesativados);
+	}
+	
+	public static void reativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrAcordo acordo = SrAcordo.findById(id);
+		acordo.salvar();
+		buscarAcordo(null, false, mostrarDesativados);
+	}
+	
+	public static Long gravarAbrangencia(SrConfiguracao associacao) throws Exception {
+		assertAcesso("ADM:Administrar");
+		associacao.salvarComoAbrangenciaAcordo();
+		return associacao.getId();		
+	}
+	
+	public static void desativarAbrangenciaEdicao(Long idAcordo, Long idAssociacao) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao abrangencia = JPA.em().find(SrConfiguracao.class, idAssociacao);
+		abrangencia.finalizar();
+		editarAcordo(idAcordo);
+	}
+
+	public static void reativarAbrangencia(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
+		associacao.salvar();
+		//listarAssociacao(mostrarDesativados);
+	}
+
 	public static Long reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.salvar();
 		
 		return designacao.getId();
+	}
+	
+	public static void selecionarAcordo(String sigla)
+			throws Exception {
+		SrAcordo sel = new SrAcordo().selecionar(sigla);
+		render("@selecionar", sel);
+	}
+
+	public static void buscarAcordo(String nome, boolean popup, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrAcordo> acordos = SrAcordo.listar(mostrarDesativados);
+		render(acordos, nome, popup, mostrarDesativados);
+	}
+	
+	public static void buscarAcordoDesativadas() throws Exception {
+		buscarAcordo(null, false, true);
 	}
 	
 	public static void editarPermissaoUsoLista(Long id) throws Exception {
@@ -1073,7 +1146,7 @@ public class Application extends SigaApplication {
 	
 	public static void listarAtributo(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrAtributo> atts = SrAtributo.listar(mostrarDesativados);
+		List<SrAtributo> atts = SrAtributo.listar(null, mostrarDesativados);
 		render(atts);
 	}
 
@@ -1087,8 +1160,11 @@ public class Application extends SigaApplication {
 				tipoAtributoAnterior = att.tipoAtributo.name();
 			}
 		}
+		if (att.objetivoAtributo == null)
+			att.objetivoAtributo = SrObjetivoAtributo.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO);
 		List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.FALSE);
-		render(att, tipoAtributoAnterior, associacoes);
+		List<SrObjetivoAtributo> objetivos = SrObjetivoAtributo.all().fetch();
+		render(att, tipoAtributoAnterior, associacoes, objetivos);
 	}
 
 	public static void gravarAtributo(SrAtributo att) throws Exception {
@@ -1184,19 +1260,23 @@ public class Application extends SigaApplication {
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		List<CpUnidadeMedida> unidadesMedida = CpUnidadeMedida.diaHoraLista();
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance()
+				.listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
 		List<SrLista> listasPrioridade = SrLista.listar(false);
-		
+
 		if (id != null)
 			equipe = SrEquipe.findById(id);
-		else
+		else {
 			equipe = new SrEquipe();
-		
+			equipe.lotacao = lotaTitular();
+		}
+
 		List<SrConfiguracao> designacoesEquipe = equipe.getDesignacoes();
-		
-		render(equipe, designacoesEquipe, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
+
+		render(equipe, designacoesEquipe, orgaos, locais, unidadesMedida,
+				pesquisaSatisfacao, listasPrioridade);
 	}
 	
 	public static void gravarEquipe(SrEquipe equipe) throws Exception {

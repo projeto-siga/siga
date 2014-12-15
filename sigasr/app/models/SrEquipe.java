@@ -2,7 +2,6 @@ package models;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +15,7 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
@@ -89,6 +89,10 @@ public class SrEquipe extends HistoricoSuporte {
 		
 		return SrEquipe.find(sb.toString()).fetch();
 		
+	}
+	
+	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa titular){
+		return lotaTitular.equivale(this.lotacao);
 	}
 
 }

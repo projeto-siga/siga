@@ -54,9 +54,16 @@ public class SrAtributo extends HistoricoSuporte {
 	@Column(name = "TIPO_ATRIBUTO")
 	@Enumerated
 	public SrTipoAtributo tipoAtributo;
-	
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ID_OBJETIVO")
+	public SrObjetivoAtributo objetivoAtributo;
+
 	@Column(name = "DESCR_PRE_DEFINIDO")
 	public String descrPreDefinido;
+
+	@Column(name = "CODIGO_ATRIBUTO")
+	public String codigoAtributo;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
@@ -65,7 +72,7 @@ public class SrAtributo extends HistoricoSuporte {
 	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "atributoInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrAtributo> meuAtributoHistoricoSet;
-	
+
 	@Override
 	public Long getId() {
 		return idAtributo;
@@ -76,15 +83,42 @@ public class SrAtributo extends HistoricoSuporte {
 		idAtributo = id;
 	}
 
-	public static List<SrAtributo> listar(boolean mostrarDesativados) {
+	public static List<SrAtributo> listarParaSolicitacao(
+			boolean mostrarDesativados) {
+		SrObjetivoAtributo obj = SrObjetivoAtributo
+				.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO);
+		return listar(obj, mostrarDesativados);
+	}
+
+	public static List<SrAtributo> listarParaAcordo(boolean mostrarDesativados) {
+		SrObjetivoAtributo obj = SrObjetivoAtributo
+				.findById(SrObjetivoAtributo.OBJETIVO_ACORDO);
+		return listar(obj, mostrarDesativados);
+	}
+
+	public static List<SrAtributo> listarParaIndicador(
+			boolean mostrarDesativados) {
+		SrObjetivoAtributo obj = SrObjetivoAtributo
+				.findById(SrObjetivoAtributo.OBJETIVO_INDICADOR);
+		return listar(obj, mostrarDesativados);
+	}
+
+	public static List<SrAtributo> listar(SrObjetivoAtributo objetivo,
+			boolean mostrarDesativados) {
 		StringBuilder queryBuilder = new StringBuilder();
 
 		if (!mostrarDesativados) {
 			queryBuilder.append(" hisDtFim is null");
 		} else {
 			queryBuilder.append("SELECT ta FROM SrAtributo ta ");
-			queryBuilder.append("WHERE ta.idAtributo in (SELECT MAX(idAtributo) FROM SrAtributo GROUP BY hisIdIni) ");
+			queryBuilder
+					.append("WHERE ta.idAtributo in (SELECT MAX(idAtributo) FROM SrAtributo GROUP BY hisIdIni) ");
 		}
+
+		if (objetivo != null)
+			queryBuilder.append(" and objetivoAtributo.idObjetivo = "
+					+ objetivo.idObjetivo);
+
 		return SrAtributo.find(queryBuilder.toString()).fetch();
 	}
 
@@ -107,26 +141,55 @@ public class SrAtributo extends HistoricoSuporte {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
-	
+
 	public Set<String> getPreDefinidoSet() {
 		Set<String> preDefinidos = new HashSet<String>();
-		if (tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO){
-			preDefinidos.addAll(Arrays.asList(descrPreDefinido.split(";"))); 
+		if (tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO) {
+			preDefinidos.addAll(Arrays.asList(descrPreDefinido.split(";")));
 		}
 		return preDefinidos;
 	}
 
-	public List<SrConfiguracao> getAssociacoes(DpLotacao lotaTitular, DpPessoa pess) {
+	public List<SrConfiguracao> getAssociacoes(DpLotacao lotaTitular,
+			DpPessoa pess) {
 		try {
 			SrConfiguracao confFiltro = new SrConfiguracao();
 			confFiltro.setLotacao(lotaTitular);
 			confFiltro.setDpPessoa(pess);
-			confFiltro.setCpTipoConfiguracao(JPA.em().find(
-					CpTipoConfiguracao.class,
-					CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
-			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO });
+			confFiltro
+					.setCpTipoConfiguracao(JPA
+							.em()
+							.find(CpTipoConfiguracao.class,
+									CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+			return SrConfiguracao.listar(confFiltro,
+					new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO });
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static SrAtributo get(String codigo) {
+		return SrAtributo.find("byCodigoAtributo", codigo).first();
+	}
+
+	@Override
+	public void salvar() throws Exception {
+
+		if (objetivoAtributo == null)
+			throw new IllegalStateException("Objetivo nao informado");
+
+		super.salvar();
+	}
+
+	public String asGetter() {
+		if (codigoAtributo == null || codigoAtributo.isEmpty())
+			return null;
+		return "get" + codigoAtributo.substring(0, 1).toUpperCase()
+				+ codigoAtributo.substring(1);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return this.idAtributo.equals(((SrAtributo)obj).idAtributo);
 	}
 }

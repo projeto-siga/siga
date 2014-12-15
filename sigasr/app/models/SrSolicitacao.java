@@ -80,6 +80,7 @@ import util.Util;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -1492,6 +1493,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			e.delete();
 		}
 	}
+	
+	public void atualizarAcordos() throws Exception{
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setDpPessoa(solicitante);
+		confFiltro.setComplexo(local);
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		confFiltro.acaoFiltro = acao;
+		confFiltro.setBuscarPorPerfis(true);
+		confFiltro.prioridade = prioridade;
+		confFiltro.atendente = getAtendenteDesignado();
+		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+
+		acordos = new ArrayList<SrAcordo>();
+		List<SrConfiguracao> confs = SrConfiguracao.listar(confFiltro);
+		for (SrConfiguracao conf : confs) {
+			SrAcordo acordoAtual = ((SrAcordo) SrAcordo
+					.findById(conf.acordo.idAcordo)).getAcordoAtual();
+			if (acordoAtual != null)
+				acordos.add(conf.acordo);
+		}
+	}
 
 	private void checarEPreencherCampos() throws Exception {
 
@@ -1548,6 +1571,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					"Não foi encontrado nenhum atendente designado "
 							+ "para esta solicitação. Sugestão: alterar item de "
 							+ "configuração e/ou ação");
+		
+		atualizarAcordos();
 	}
 
 	public void desfazerUltimaMovimentacao(DpPessoa cadastrante,
@@ -2376,16 +2401,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					formatter.parseDateTime(stringDtMeioContato)).toDate();
 	}
 	
-	public String getDtIniEdicaoDDMMYYYYHHMM(){
+	public String getDtIniEdicaoDDMMYYYYHHMMSS(){
 		if (dtIniEdicao != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			return df.format(dtIniEdicao);
 		}
 		return "";
 	}
 	
-	public void setDtIniEdicaoDDMMYYYYHHMM(String string) {
-		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	public void setDtIniEdicaoDDMMYYYYHHMMSS(String string) {
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		try{
 			this.dtIniEdicao = df.parse(string);
 		} catch(Exception e){
@@ -2465,7 +2490,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	private Date getDtPrazoCadastramentoAcordado() {
-		if(acordos == null || acordos.size() == 0)
+		if(acordos == null || acordos.size() == 0 || isCancelado())
 			return null;
 		Integer menorTempoAcordado = null;
 		for (SrAcordo a : acordos){
@@ -2479,7 +2504,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	private Date getDtPrazoAtendimentoAcordado() {
-		if (acordos == null || acordos.size() == 0)
+		if (acordos == null || acordos.size() == 0 || isCancelado())
 			return null;
 		Integer menorTempoAcordado = null;
 		for (SrAcordo a : acordos){

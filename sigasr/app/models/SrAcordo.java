@@ -15,6 +15,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
@@ -23,6 +26,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @Table(name = "SR_ACORDO", schema = "SIGASR")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 
 	/**

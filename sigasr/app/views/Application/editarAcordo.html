@@ -6,6 +6,15 @@
 
 <script type="text/javascript">
 
+	function findSelectedIndexByValue(comboBox, value) {
+		for (var i = 0; i < comboBox.options.length; i++) {
+			if (comboBox.options[i].value == value)
+				return i;
+		}
+		
+		return 0;
+	};
+
 	var tableAssociacao,
 		colunas = {};
 	colunas.botaoExpandir =               0;
@@ -13,17 +22,23 @@
 	colunas.orgao=							2 ;
 	colunas.idLocal =						3 ;
 	colunas.local=							4 ;
-	colunas.idAtendente = 					5;
-	colunas.descricaoAtendente = 			6;
-	colunas.atendente=						7;
-	colunas.idItemConfiguracao =          8;
-	colunas.tituloItemConfiguracao =      9;
-	colunas.siglaItemConfiguracao =       10;
-	colunas.idAcao =                      11;
-	colunas.tituloAcao =                  12;
-	colunas.siglaAcao =                   13;
-	colunas.idAssociacao =                14;
-	colunas.botaoExcluir =                15;
+	colunas.tipoSolicitante = 				5 ;
+	colunas.idSolicitante = 				6 ;
+	colunas.descricaoSolicitante = 			7 ;
+	colunas.solicitante=					8 ;
+	colunas.idAtendente = 					9;
+	colunas.descricaoAtendente = 			10;
+	colunas.atendente=						11;
+	colunas.idPrioridade =					12;
+	colunas.prioridade=						13;
+	colunas.idItemConfiguracao =          14;
+	colunas.tituloItemConfiguracao =      15;
+	colunas.siglaItemConfiguracao =       16;
+	colunas.idAcao =                      17;
+	colunas.tituloAcao =                  18;
+	colunas.siglaAcao =                   19;
+	colunas.idAssociacao =                20;
+	colunas.botaoExcluir =                21;
 
 	//removendo a referencia de '$' para o jQuery
 	$.noConflict();
@@ -75,7 +90,11 @@
 			{
 				"targets": [colunas.idOrgao, 
 							colunas.idLocal, 
+							colunas.tipoSolicitante, 
+							colunas.idSolicitante, 
+							colunas.descricaoSolicitante, 
 							colunas.idAtendente, 
+							colunas.idPrioridade, 
 							colunas.descricaoAtendente, 
 							colunas.idItemConfiguracao, 
 							colunas.siglaItemConfiguracao, 
@@ -177,9 +196,11 @@
 
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
+		jPrioridadeCbb = document.getElementsByName("prioridade")[0];
 
 		jOrgaoUsuarioCbb.selectedIndex = 0;
 		jComplexoCbb.selectedIndex = 0;
+		jPrioridadeCbb.selectedIndex = 0;
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.
@@ -199,12 +220,25 @@
 		$("#atendente_descricao").val(itemArray[colunas.descricaoAtendente]);
 		$("#atendente_sigla").val(itemArray[colunas.atendente]);
 		$("#atendenteSpan").html(itemArray[colunas.descricaoAtendente]);
+		$("#idConfiguracao").val(itemArray[colunas.idAssociacao]);
 
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
+		jPrioridadeCbb = document.getElementsByName("prioridade")[0];
+		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
 		
 		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
 		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
+		jPrioridadeCbb.selectedIndex = findSelectedIndexByValue(jPrioridadeCbb, itemArray[colunas.idPrioridade]);
+		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[colunas.tipoSolicitante]);
+
+		// atualiza os valores do componente pessoaLotaFuncCargoSelecao
+		getIdFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.idSolicitante]);
+		getDescricaoFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.descricaoSolicitante]);
+        getSiglaFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.solicitante]);
+        getSpanFieldSolicitante(itemArray[colunas.tipoSolicitante]).html(itemArray[colunas.descricaoSolicitante]);
+        
+        $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 	}
 
 	function transformStringToBoolean(value) {
@@ -214,32 +248,143 @@
 			return value;
 	}
 
+	function getIdFieldSolicitante(tipo) {
+		if (tipo == 1)
+			return $("#dpPessoa");
+		else if (tipo == 2)
+			return $("#lotacao");
+		else if (tipo == 3)
+			return $("#funcaoConfianca");
+		else if (tipo == 4)
+
+			return $("#cargo");
+		else 
+			return $("#cpGrupo");
+	};
+	
+	function getDescricaoFieldSolicitante(tipo) {
+		if (tipo == 1)
+			return $("#dpPessoa_descricao");
+		else if (tipo == 2)
+			return $("#lotacao_descricao");
+		else if (tipo == 3)
+			return $("#funcaoConfianca_descricao");
+		else if (tipo == 4)
+
+			return $("#cargo_descricao");
+		else 
+			return $("#cpGrupo_descricao");
+	};
+	
+	function getSiglaFieldSolicitante(tipo) {
+		if (tipo == 1)
+			return $("#dpPessoa_sigla");
+		else if (tipo == 2)
+			return $("#lotacao_sigla");
+		else if (tipo == 3)
+			return $("#funcaoConfianca_sigla");
+		else if (tipo == 4)
+
+			return $("#cargo_sigla");
+		else 
+			return $("#cpGrupo_sigla");
+	};
+	
+	function getSpanFieldSolicitante(tipo) {
+		if (tipo == 1)
+			return $("#dpPessoaSpan");
+		else if (tipo == 2)
+			return $("#lotacaoSpan");
+		else if (tipo == 3)
+			return $("#funcaoConfiancaSpan");
+		else if (tipo == 4)
+			return $("#cargoSpan");
+		else
+			return $("#cpGrupoSpan");
+
+	};
+
 	function serializeAssociacao(row) {
 		var params = "";
 		
 		// caso exista algum item na tabela
-		if (row[colunas.idItemConfiguracao] != '' && row[colunas.idItemConfiguracao] > 0)
-			params += '&associacao.itemConfiguracaoUnitario.idItemConfiguracao=' + row[colunas.idItemConfiguracao];
+		//if (row[colunas.idItemConfiguracao] != '' && row[colunas.idItemConfiguracao] > 0)
+			params += '&associacao.itemConfiguracaoUnitario=' + row[colunas.idItemConfiguracao];
 
-			params += '&associacao.orgaoUsuario=' + rowValues[colunas.idOrgao];
+			params += '&associacao.orgaoUsuario=' + row[colunas.idOrgao];
 		
-			//if (rowValues[colunas.idLocal] != '' && rowValues[colunas.idLocal] > 0)
-			params += '&associacao.complexo=' + rowValues[colunas.idLocal];
+			//if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
+			params += '&associacao.complexo=' + row[colunas.idLocal];
+
+			params += '&associacao.prioridade=' + row[colunas.idPrioridade];
 		
-			//if (rowValues[colunas.idAtendente] != '')
-            params += '&associacao.atendente=' + rowValues[colunas.idAtendente];
+			//if (row[colunas.idAtendente] != '')
+            params += '&associacao.atendente=' + row[colunas.idAtendente];
 		
 			//if (row[colunas.idAcao] != '' && row[colunas.idAcao] > 0)
-        	params += '&associacao.acaoUnitaria.idAcao=' + row[colunas.idAcao];
+        	params += '&associacao.acaoUnitaria=' + row[colunas.idAcao];
 		
 			//if (row[colunas.idAssociacao] != '')
         	params += '&associacao.idConfiguracao=' + row[colunas.idAssociacao];
 
-			if ($("#idAtributo").val() != undefined && $("#idAtributo").val() != '')
-			params += '&associacao.atributo.idAtributo=' + $("#idAtributo").val();
+        	// atualiza o solicitante
+			params += getDadosSolicitante(row, i);
+
+			if ($("#idAcordo").val() != undefined && $("#idAcordo").val() != '')
+			params += '&associacao.acordo.idAcordo=' + $("#idAcordo").val();
 
 		return params;
 	};
+
+	function getDadosSolicitante(rowValues, i) {
+    	var params = '';
+ 
+			if (rowValues[colunas.tipoSolicitante] == 1){
+              	params += '&associacao.dpPessoa=' + rowValues[colunas.idSolicitante];
+              	params += '&associacao.lotacao=';
+              	params += '&associacao.funcaoConfianca=';
+              	params += '&associacao.cargo=';
+              	params += '&associacao.cpGrupo=';
+
+			
+			// caso seja lotação
+			} else if (rowValues[colunas.tipoSolicitante] == 2){
+				params += '&associacao.lotacao=' + rowValues[colunas.idSolicitante];
+				params += '&associacao.dpPessoa=';
+              	params += '&associacao.funcaoConfianca=';
+              	params += '&associacao.cargo=';
+              	params += '&associacao.cpGrupo=';
+
+			
+			// caso seja função
+			} else if (rowValues[colunas.tipoSolicitante] == 3){
+				params += '&associacao.funcaoConfianca=' + rowValues[colunas.idSolicitante];
+				params += '&associacao.dpPessoa=';
+              	params += '&associacao.lotacao=';
+              	params += '&associacao.cargo=';
+              	params += '&associacao.cpGrupo=';
+
+			
+			// caso seja cargo
+			} else if (rowValues[colunas.tipoSolicitante] == 4){
+				params += '&associacao.cargo=' + rowValues[colunas.idSolicitante];
+				params += '&associacao.dpPessoa=';
+              	params += '&associacao.funcaoConfianca=';
+              	params += '&associacao.lotacao=';
+              	params += '&associacao.cpGrupo=';
+
+			// caso seja grupo
+			} else if (rowValues[colunas.tipoSolicitante] == 5){
+				params += '&associacao.cpGrupo=' + rowValues[colunas.idSolicitante];
+				params += '&associacao.dpPessoa=';
+      			params += '&associacao.funcaoConfianca=';
+      			params += '&associacao.lotacao=';
+      			params += '&associacao.cargo=';
+			}
+    	//}
+    	
+    	return params;
+    }
 
 	function gravarAssociacao() {
 		var idAssociacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
@@ -248,6 +393,10 @@
 		jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
 		jComplexoCbb = document.getElementsByName("complexo")[0],
 		jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex];
+		jPrioridadeCbb = document.getElementsByName("prioridade")[0],
+		jPrioridade = jPrioridadeCbb.options[jPrioridadeCbb.selectedIndex];
+		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0],
+		jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
 		
 		var row = [
 					'',                                                                    // colunas.botaoExpandir
@@ -255,9 +404,15 @@
 	          		jOrgaoUsuario.text, 
 	          		jComplexo.value,
 	          		jComplexo.text,
+	          		jPessoaLotaFuncCargo.value,
+          			getIdFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
+          			getDescricaoFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
+          			getSiglaFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
 	          		$("#atendente").val(),
           			$("#atendente_descricao").val(),
           			$("#atendente_sigla").val(),
+          			jPrioridade.value,
+	          		jPrioridade.text,
 					$("#itemConfiguracaoUnitario").val(),                                  // colunas.idItemConfiguracao
 					formatDescricaoLonga($("#itemConfiguracaoUnitario_descricao").val()),  // colunas.tituloItemConfiguracao
 					$("#itemConfiguracaoUnitario_sigla").val(),                            // colunas.siglaItemConfiguracao
@@ -270,7 +425,7 @@
 
 		$.ajax({
 	         type: "POST",
-	         url: "@{Application.gravarAssociacao()}",
+	         url: "@{Application.gravarAbrangencia()}",
 	         data: serializeAssociacao(row),
 	         dataType: "text",
 	         success: function(response) {
@@ -325,9 +480,9 @@
 			tr = $(event.currentTarget).parent().parent()[0],
 			row = table.api().row(tr).data(),
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunas.idAssociacao];
-			idAtributo = $("#idAtributo").val();
+			idAcordo = $("#idAcordo").val();
 			
-			location.href='@{Application.desativarAssociacaoEdicao()}?' + jQuery.param({idAtributo : idAtributo, idAssociacao : idAssociacao});
+			location.href='@{Application.desativarAbrangenciaEdicao()}?' + jQuery.param({idAcordo : idAcordo, idAssociacao : idAssociacao});
 	}
 
 </script>
@@ -364,9 +519,9 @@ jDialog.dialog({
         },
         open: function(){
                 if (jDialog.data("valor"))
-                        jDialog.dialog('option', 'title', 'Alterar ParametroAcordo');
+                        jDialog.dialog('option', 'title', 'Alterar Parametro');
                 else
-                        jDialog.dialog('option', 'title', 'Incluir ParametroAcordo');                  
+                        jDialog.dialog('option', 'title', 'Incluir Parametro');                  
                 jValor.val(jDialog.data("valor"));
                 jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
                 jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);
@@ -461,7 +616,7 @@ $("[value='Gravar']").click(function(){
                 <div class="gt-form gt-content-box">
                         <form>
                                 #{if acordo?.idAcordo} <input type="hidden" name="acordo.idAcordo"
-                                        value="${acordo.idAcordo}"> #{/if}
+                                        id="idAcordo" value="${acordo.idAcordo}"> #{/if}
                                 <div class="gt-form-row gt-width-66">
                                         <label>Nome</label> <input type="text" name="acordo.nomeAcordo"
                                                 value="${acordo?.nomeAcordo}" size="60" />
@@ -497,11 +652,17 @@ $("[value='Gravar']").click(function(){
 												<th>Orgão</th>
 												<th>ID Local</th>
 												<th>Local</th>
+												<th>Tipo Solicitante</th>
+												<th>ID Solicitante</th>
+												<th>Descr. Solicitante</th>
+												<th>Solicitante</th>
 												<th>ID Atendente</th>
 												<th>Descr. Atendente</th>
 												<th>Atendente</th>
+												<th>ID Prioridade</th>
+												<th>Prioridade</th>
 												<th>idItemConfiguracao</th>
-												<th><i>Item</i></th>
+												<th>Item</th>
 												<th>siglaItemConfiguracao</th>
 												<th>idAcao</th>
 												<th>Ação</th>
@@ -518,9 +679,15 @@ $("[value='Gravar']").click(function(){
 												<td>${abrang.orgaoUsuario?.acronimoOrgaoUsu}</td>
 												<td>${abrang.complexo?.idComplexo}</td>
 												<td>${abrang.complexo?.nomeComplexo}</td>
+												<td>${abrang.tipoSolicitante }</td>
+												<td>${abrang.solicitante?.id }</td>
+												<td>${abrang.solicitante?.descricao }</td>
+												<td>${abrang.solicitante?.sigla}</td>
 												<td>${abrang.atendente?.lotacaoAtual?.id }</td>
 												<td>${abrang.atendente?.lotacaoAtual?.nomeLotacao }</td>
 												<td>${abrang.atendente?.lotacaoAtual?.siglaLotacao }</td>
+												<td>${abrang.prioridade}</td>
+												<td>${abrang.prioridade?.descPrioridade}</td>
 												<td>${abrang.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>
 												<td>${abrang.itemConfiguracaoUnitario?.atual?.tituloItemConfiguracao}</td>
 												<td>${abrang.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>
@@ -540,7 +707,7 @@ $("[value='Gravar']").click(function(){
 									</table>
 								</div>
 								<div class="gt-table-buttons">
-									<a href="javascript: inserirAssociacao()" class="gt-btn-small gt-btn-left">Incluir</a>
+									<a href="javascript: inserirAssociacao()" class="gt-btn-small gt-btn-left" style="font-size: 10px;">Incluir</a>
 								</div>
                                 
                                 <div class="gt-form-row">
@@ -590,11 +757,26 @@ $("[value='Gravar']").click(function(){
 	<div class="gt-form gt-content-box">
 		<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
 	
-		<div class="gt-form-row box-wrapper">
-			<div class="box gt-width-50">
+		<div id="divSolicitante" class="gt-form-row gt-width-100">
+				<label>Solicitante</label>
+				#{pessoaLotaFuncCargoSelecao
+					nomeSelLotacao:'lotacao',
+					nomeSelPessoa:'dpPessoa',
+					nomeSelFuncao:'funcaoConfianca',
+					nomeSelCargo:'cargo',
+					nomeSelGrupo:'cpGrupo',
+					valuePessoa:dpPessoa?.pessoaAtual,
+					valueLotacao:lotacao?.lotacaoAtual,
+					valueFuncao:funcaoConfianca,
+					valueCargo:cargo,
+					valueGrupo:cpGrupo,
+					disabled:disabled /}
+		</div>
+	
+		<div class="gt-form-row gt-width-100">
 				<label>Órgão</label> 
 				#{select name:'orgaoUsuario', 
-					items:_orgaos, 
+					items:orgaos, 
 					valueProperty:'idOrgaoUsu',
 					labelProperty:'nmOrgaoUsu',
 					value:orgaoUsuario?.idOrgaoUsu,
@@ -602,14 +784,12 @@ $("[value='Gravar']").click(function(){
 					style:'width: 100%;'}
 				#{option 0}Nenhum#{/option} 
 				#{/select}
-			</div>
 		</div>
 		
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left gt-width-50">
+		<div class="gt-form-row gt-width-100">
 				<label>Local</label> 
 				#{select name:'complexo', 
-					items:_locais, 
+					items:locais, 
 					valueProperty:'idComplexo',
 					labelProperty:'nomeComplexo', 
 					value:complexo?.idComplexo,
@@ -617,12 +797,18 @@ $("[value='Gravar']").click(function(){
 					style:'width: 100%'}
 					#{option 0}Nenhum#{/option} 
 				#{/select}
-			</div>
-			<div class="box gt-width-50">
+		</div>
+		<div class="gt-form-row gt-width-100">
 				<label>Atendente</label>#{selecao
 					tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.atendente">Atendente não informado;</span>
-			</div>
+		</div>
+		
+		<div class="gt-form-row gt-width-100">
+			<label>Prioridade</label>
+			#{select name:'prioridade', items:models.SrPrioridade.values(), 
+				labelProperty:'descPrioridade', style:'width:235px;' }
+				#{option ''}#{/option} 
+			#{/select} 
 		</div>	
 	
 		<div class="gt-form-row gt-width-100">

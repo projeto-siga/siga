@@ -31,6 +31,7 @@ import models.SrMovimentacao;
 import models.SrObjetivoAtributo;
 import models.SrOperador;
 import models.SrPesquisa;
+import models.SrPrioridade;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import models.SrTipoMotivoPendencia;
@@ -151,6 +152,7 @@ public class Application extends SigaApplication {
 			solicitacao.dtOrigem = new Date();
 		if (solicitacao.dtIniEdicao == null)
 			solicitacao.dtIniEdicao = new Date();
+		solicitacao.atualizarAcordos();
 
 		formEditar(solicitacao.deduzirLocalRamalEMeioContato());
 	}
@@ -889,7 +891,10 @@ public class Application extends SigaApplication {
 		List<SrAtributo> parametros = SrAtributo.listarParaAcordo(false);
 		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
 		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
-		render(acordo, parametros, unidadesMedida, abrangencias);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		render(acordo, parametros, unidadesMedida, abrangencias, orgaos, locais);
 	}
 
 	public static void gravarAcordo(SrAcordo acordo) throws Exception {
@@ -912,17 +917,17 @@ public class Application extends SigaApplication {
 		buscarAcordo(null, false, mostrarDesativados);
 	}
 	
-	public static Long gravarAbrangencia(SrConfiguracao abrangencia) throws Exception {
+	public static Long gravarAbrangencia(SrConfiguracao associacao) throws Exception {
 		assertAcesso("ADM:Administrar");
-		abrangencia.salvarComoAbrangenciaAcordo();
-		return abrangencia.getId();		
+		associacao.salvarComoAbrangenciaAcordo();
+		return associacao.getId();		
 	}
 	
-	public static void desativarAbrangenciaEdicao(Long idAtributo, Long idAssociacao) throws Exception {
+	public static void desativarAbrangenciaEdicao(Long idAcordo, Long idAssociacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao abrangencia = JPA.em().find(SrConfiguracao.class, idAssociacao);
 		abrangencia.finalizar();
-		//editarAbrangencia(idAtributo);
+		editarAcordo(idAcordo);
 	}
 
 	public static void reativarAbrangencia(Long id, boolean mostrarDesativados) throws Exception {

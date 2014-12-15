@@ -187,4 +187,9 @@ public class SrAtributo extends HistoricoSuporte {
 		return "get" + codigoAtributo.substring(0, 1).toUpperCase()
 				+ codigoAtributo.substring(1);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return this.idAtributo.equals(((SrAtributo)obj).idAtributo);
+	}
 }

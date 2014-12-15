@@ -189,6 +189,7 @@
 		$("#acaoUnitaria_descricao").val(itemArray[colunas.tituloAcao]);
 		$("#acaoUnitaria_sigla").val(itemArray[colunas.siglaAcao]);
 		$("#acaoUnitariaSpan").html(itemArray[colunas.tituloAcao]);
+		$("#idConfiguracao").val(itemArray[colunas.idAssociacao]);
 	}
 
 	function transformStringToBoolean(value) {
@@ -202,11 +203,11 @@
 		var params = "";
 		
 		// caso exista algum item na tabela
-		if (row[colunas.idItemConfiguracao] != '' && row[colunas.idItemConfiguracao] > 0)
-			params += '&associacao.itemConfiguracaoUnitario.idItemConfiguracao=' + row[colunas.idItemConfiguracao];
+		//if (row[colunas.idItemConfiguracao] != '' && row[colunas.idItemConfiguracao] > 0)
+			params += '&associacao.itemConfiguracaoUnitario=' + row[colunas.idItemConfiguracao];
 		
-		if (row[colunas.idAcao] != '' && row[colunas.idAcao] > 0)
-        	params += '&associacao.acaoUnitaria.idAcao=' + row[colunas.idAcao];
+		//if (row[colunas.idAcao] != '' && row[colunas.idAcao] > 0)
+        	params += '&associacao.acaoUnitaria=' + row[colunas.idAcao];
 		
 		if (row[colunas.atributoObrigatorio] != '')
         	params += '&associacao.atributoObrigatorio=' + row[colunas.atributoObrigatorio];

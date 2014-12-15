@@ -105,6 +105,7 @@ alter table SR_SOLICITACAO_ACORDO
 
 update sigasr.sr_atributo set id_objetivo = 1 where id_objetivo is null;	
 	
+create sequence sigasr.sr_atributo_seq;
 insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Cadastramento', 'tempoDecorridoCadastramento', 2);
 insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Escalonamento', 'tempoDecorridoEscalonamento', 2);
 insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Atendimento', 'tempoDecorridoAtendimento', 2);
@@ -118,7 +119,7 @@ alter session set current schema = corporativo;
 insert into cp_marcador(descr_marcador, id_marcador, id_tp_marcador) values ( 'Fora do Prazo', 65, 1);
 commit;
 
-alter session set current schema = corporativo;
+alter session set current schema = sigasr;
 alter table SR_CONFIGURACAO add (ID_ACORDO number(19, 0),
 	CONSTRAINT "CONFIGURACAO_ACORDO_FK" 
 			FOREIGN KEY ("ID_ACORDO") 

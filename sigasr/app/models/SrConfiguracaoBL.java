@@ -211,6 +211,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (srConf.pesquisaSatisfacao != null)
 				srConf.pesquisaSatisfacao.getHisIdIni();
 			
+			if (srConf.acordo != null)
+				srConf.acordo.getAcordoAtual();
+			
 			if (srConf.getListaConfiguracaoSet() != null) {
 				for (SrLista listaConf : srConf.getListaConfiguracaoSet()){
 					listaConf.getListaAtual();

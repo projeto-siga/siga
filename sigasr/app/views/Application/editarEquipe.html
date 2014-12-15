@@ -185,8 +185,31 @@
         	dataType: "text",
         	success: function() {
         		location.href = "@{Application.listarEquipe()}";
+        	},
+        	error: function(error) {
+        		// limpa as mensagens de erros
+        		resetEquipeErrorMessage();
+
+				// Mostra a mensagem de campos obrigatórios
+        		document.getElementById("erroEquipeCamposObrigatorios").style.display="inherit";
+        		
+        		if(error.status == 400) {
+        			var errors = JSON.parse(error.responseText);
+        			for(var i = 0; i < errors.length; i++) {
+        				var span = $('<span class="error" style="color: red"></span>');
+        				span.html(errors[i].message);
+        				span.insertAfter(document.getElementsByName(errors[i].key));
+        			}
+        		}
         	}
        	});
+	}
+
+	//Limpa as mensagens de campos obrigatórios.
+	function resetEquipeErrorMessage() {
+		document.getElementById("erroEquipeCamposObrigatorios").style.display="none";
+
+		$('.error').remove();
 	}
 	
 	function serializeEquipe() {
@@ -246,10 +269,8 @@
 			<form id="form" class="formEditarEquipe">
 				<input type="hidden" id="idEquipe" name="equipe.idEquipe" value="${equipe.idEquipe}">
 				<input type="hidden" id="idEquipeIni" name="equipe.hisIdIni" value="${equipe.hisIdIni}">
-				#{ifErrors}
-				<p class="gt-error">Alguns campos obrigatórios não foram
-					preenchidos ${error}</p>
-				#{/ifErrors}
+				<p class="gt-error" style="display:none;" id="erroEquipeCamposObrigatorios">Alguns campos obrigatórios não foram
+					preenchidos</p>
 				<div class="gt-form-table">
 					<div class="barra-subtitulo barra-subtitulo-top header"
 						align="center" valign="top">Dados básicos</div>
@@ -308,7 +329,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="gt-table-buttons">
+					<div class="gt-form-row">
 						<a href="javascript: modalExcecaoAbrir()" class="gt-btn-medium gt-btn-left">Incluir</a>
 					</div>
 				</div>
@@ -317,20 +338,21 @@
 					<div class="barra-subtitulo barra-subtitulo-top header"
 						align="center" valign="top">Designações</div>
 				</div>
-				<div class="gt-form-row">
-					#{designacoes designacoes:designacoesEquipe, 
-						modoExibicao:'equipe', 
-						orgaos:orgaos, 
-						locais:locais, 
-						unidadesMedida:unidadesMedida, 
-						pesquisaSatisfacao:pesquisaSatisfacao, 
-						listasPrioridade:listasPrioridade /}
-				</div>
-				<div class="gt-form-row">
-					<a href="javascript: inserirEquipe()" class="gt-btn-medium gt-btn-left">Gravar</a>
-					<a href="@{Application.listarEquipe}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-				</div>
 			</form>
+			
+			<div class="gt-form-row">
+				#{designacoes designacoes:designacoesEquipe, 
+					modoExibicao:'equipe', 
+					orgaos:orgaos, 
+					locais:locais, 
+					unidadesMedida:unidadesMedida, 
+					pesquisaSatisfacao:pesquisaSatisfacao, 
+					listasPrioridade:listasPrioridade /}
+			</div>
+			<div class="gt-form-row">
+				<a href="javascript: inserirEquipe()" class="gt-btn-medium gt-btn-left">Gravar</a>
+				<a href="@{Application.listarEquipe}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+			</div>
 		</div>
 	</div>
 </div>

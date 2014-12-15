@@ -1232,19 +1232,16 @@ public class Application extends SigaApplication {
 	}
 	
 	private static void validarFormEditarEquipe(SrEquipe equipe) throws Exception {
-		StringBuffer sb = new StringBuffer();
-		
 		if (equipe.lotacao == null) {
 			validation.addError("equipe.lotacao", "Lotação não informada");
 		}
 		
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.getKey() + " :" + error.message());
-			sb.append(error.getKey() + ";");
 		}
 
 		if (validation.hasErrors()) {
-			throw new Exception(sb.toString());
+			enviarErroValidacao();
 		}
 	}
 

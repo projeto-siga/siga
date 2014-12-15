@@ -42,7 +42,8 @@
 			<table id="equipes_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
-						<th style="font-weight: bold;">Lotação</th>
+						<th style="font-weight: bold;">Sigla</th>
+						<th>Lotação</th>
 					</tr>
 				</thead>
 
@@ -52,6 +53,9 @@
 						style="cursor: pointer;">
 						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 							${eq.lotacao?.sigla}
+						</td>
+						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+							${eq.lotacao?.descricao}
 						</td>
 					</tr>
 					#{/list}

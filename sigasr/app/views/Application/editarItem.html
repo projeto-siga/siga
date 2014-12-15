@@ -62,168 +62,177 @@
 		$("#itemConfiguracaoSigla").mask("99.99.99");
 	});
 
-	$(function() {
-		// POPUP PARA ADICIONAR UM GESTOR
-        var jGestores = $("#gestoresUl"),
-        gestores = jGestores[0],
-        jDialog = $("#dialog"),
-        dialog = jDialog[0],
-        jSelect = $("#gestorpessoagestorlotacao");
+	// POPUP PARA ADICIONAR UM GESTOR
+    var jGestores = $("#gestoresUl"),
+    gestores = jGestores[0],
+    jDialog = $("#dialog"),
+    dialog = jDialog[0],
+    jSelect = $("#gestorpessoagestorlotacao");
 
-        $( "#gestoresUl" ).sortable({placeholder: "ui-state-highlight"});
-        $( "#gestoresUl" ).disableSelection();
+    $( "#gestoresUl" ).sortable({placeholder: "ui-state-highlight"});
+    $( "#gestoresUl" ).disableSelection();
+  
+    $("#botaoIncluir").click(function(){
+        jDialog.data('acao',gestores.incluirItem).dialog('open');
+    });
+     
+    jDialog.dialog({
+        autoOpen: false,
+        height: 'auto',
+        width: 'auto',
+        modal: true,
+        resizable: false,
+        close: function() {
+        	$("#gestorpessoa_sigla").val('');
+        	$("#gestorlotacao_sigla").val('');
+        	$("#gestorpessoa_descricao").val('');
+        	$("#gestorlotacao_descricao").val('');
+        	$("#gestorpessoaSpan").html('');  
+        	$("#gestorlotacaoSpan").html('');  
+            jDialog.data('gestorSet','');
+        },
+      	open: function(){
+          	if (jDialog.data("gestorSet"))
+              	jDialog.dialog('option', 'title', 'Alterar Gestor');
+          	else
+              	jDialog.dialog('option', 'title', 'Incluir Gestor');  
+      	}
+    });
+
+    $("#modalOk").click(function(){
+    	var acao = jDialog.data('acao');
+    	var jTipoEscolhido = jSelect.find("option:selected");
        
-        $("#botaoIncluir").click(function(){
-        	jDialog.data('acao',gestores.incluirItem).dialog('open');
-        });
+		if(jTipoEscolhido.val() == 1) {
+			acao($("#gestorpessoa_sigla").val(), $("#gestorpessoa_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
+       	} else if (jTipoEscolhido.val() == 2) {
+       		acao($("#gestorlotacao_sigla").val(), $("#gestorlotacao_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
+		}
        
-        jDialog.dialog({
-                autoOpen: false,
-                height: 'auto',
-                width: 'auto',
-                modal: true,
-                resizable: false,
-                close: function() {
-                	$("#gestorpessoa_sigla").val('');
-                	$("#gestorlotacao_sigla").val('');
-                	$("#gestorpessoa_descricao").val('');
-                	$("#gestorlotacao_descricao").val('');
-                	$("#gestorpessoaSpan").html('');  
-                	$("#gestorlotacaoSpan").html('');  
-                    jDialog.data('gestorSet','');
-	            },
-	            open: function(){
-                    if (jDialog.data("gestorSet"))
-                       jDialog.dialog('option', 'title', 'Alterar Gestor');
-                    else
-                       jDialog.dialog('option', 'title', 'Incluir Gestor');  
-	            }
-        });
-        $("#modalOk").click(function(){
-	        var acao = jDialog.data('acao');
-	        var jTipoEscolhido = jSelect.find("option:selected");
-	        
-	        if(jTipoEscolhido.val() == 1) {
-	        	acao($("#gestorpessoa_sigla").val(), $("#gestorpessoa_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
-	        } else if (jTipoEscolhido.val() == 2) {
-	        	acao($("#gestorlotacao_sigla").val(), $("#gestorlotacao_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
-	        }
-	        
-	        jDialog.dialog('close');
-        });
-        $("#modalCancel").click(function(){
-            jDialog.dialog('close');
-        });
-
-        gestores["index"] = 0;
-        gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
-            if (!id)
-                id = 'novo_' + ++gestores["index"];
-            jGestores.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
-	        var jNewTr = jGestores.find("li:last-child");
-	        jNewTr.append("<span id=\"" + tipoGestor + "\">" + siglaGestor + "</span> - <span style=\"display: inline-block\" id=\"" 
-	    	        + idDerivadoGestor + "\">" + nomeGestor + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer;\" />");
-	        jNewTr.find("img:eq(0)").click(function(){
-	        	gestores.removerItem(jNewTr.attr("id"));
-	        });
-	        jNewTr.mouseover(function(){
-                jNewTr.find("img").css("visibility", "visible");
-	        });
-	        jNewTr.mouseout(function(){
-                jNewTr.find("img").css("visibility", "hidden");
-	        });
-  		}
-        gestores.removerItem = function(idItem){
-            $("#"+idItem).remove();
-            gestores["index"]--;
-        }
-
-	    //POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÇÃO E SOLICITANTE
-        var jFatores = $("#fatoresUl"),
-        fatores = jFatores[0],
-        jDialogFator = $("#dialogFator"),
-        dialogFator = jDialogFator[0],
-        jSelectFator = $("#fatorpessoafatorlotacao");
-        jNumFatorMult = $("#numfatorMult");
-
-        $( "#fatoresUl" ).sortable({placeholder: "ui-state-highlight"});
-        $( "#fatoresUl" ).disableSelection();
-       
-        $("#botaoIncluirFator").click(function(){
-        	jDialogFator.data('acaoFator',fatores.incluirItem).dialog('open');
-        });
-       
-        jDialogFator.dialog({
-                autoOpen: false,
-                height: 'auto',
-                width: 'auto',
-                modal: true,
-                resizable: false,
-                close: function() {
-                	$("#fatorpessoa_sigla").val('');
-                	$("#fatorlotacao_sigla").val('');
-                	$("#fatorpessoa_descricao").val('');
-                	$("#fatorlotacao_descricao").val('');
-                	$("#numfatorMult").val('1');
-                	$("#fatorpessoaSpan").html('');  
-                	$("#fatorlotacaoSpan").html('');  
-                	jDialogFator.data('fatorMultiplicacaoSet','');
-	            },
-	            open: function(){
-	            	$('#erroNumFatorMult').hide();
-                    if (jDialogFator.data("gestorSet"))
-                    	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
-                    else
-                    	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
-	            }
-        });
-        $("#modalOkFator").click(function(){
-            var acaoFator = jDialogFator.data('acaoFator');
-            var jTipoEscolhidoFator = jSelectFator.find("option:selected");
-            var numFatorMult = $('#numfatorMult');
-
-            if(numFatorMult.val() > 0) {
-                if(jTipoEscolhidoFator.val() == 1) {
-                    acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
-                } else if (jTipoEscolhidoFator.val() == 2) {
-                    acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
-				}
-    			jDialogFator.dialog('close');
-			} else {
-				$('#erroNumFatorMult').show();
-			}
-                
-                
-         });
-        $("#modalCancelFator").click(function(){
-        	jDialogFator.dialog('close');
-        });
-
-        fatores["index"] = 0;
-        fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
-            if (!idF)
-                idF = 'novo_fator' + ++fatores["index"];
-            jFatores.append("<li style=\"cursor: move\" id =\"" + idF + "\"></li>");
-	        var jNewFatorTr = jFatores.find("li:last-child");
-	        jNewFatorTr.append("<span id=\"" + tipoFator + "\">" + siglaSolicitante + "-" 
-	    	        + nomeSolicitante + "</span> <span style=\"display: inline-block\" id=\"" + idDerivadoFator + "\"> / Fator: "
-	                + numFator + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\" visibility:hidden; cursor: pointer;\" />");
-	        jNewFatorTr.find("img:eq(0)").click(function(){
-	        	fatores.removerItemFator(jNewFatorTr.attr("id"));
-	        });
-	        jNewFatorTr.mouseover(function(){
-	        	jNewFatorTr.find("img").css("visibility", "visible");
-	        });
-	        jNewFatorTr.mouseout(function(){
-	        	jNewFatorTr.find("img").css("visibility", "hidden");
-	        });
-  		};
-  		
-        fatores.removerItemFator = function(idItemF){
-                $("#"+idItemF).remove();
-                fatores["index"]--;
-        };
+		jDialog.dialog('close');
 	});
+
+    $("#modalCancel").click(function(){
+    	jDialog.dialog('close');
+	});
+
+    gestores["index"] = 0;
+    gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
+		if (!id)
+        	id = 'novo_' + ++gestores["index"];
+    	
+        jGestores.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
+       	var jNewTr = jGestores.find("li:last-child");
+       	jNewTr.append("<span id=\"" + tipoGestor + "\">" + siglaGestor + "</span> - <span style=\"display: inline-block\" id=\"" 
+   	        + idDerivadoGestor + "\">" + nomeGestor + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer;\" />");
+       	jNewTr.find("img:eq(0)").click(function(){
+       		gestores.removerItem(jNewTr.attr("id"));
+       	});
+       	jNewTr.mouseover(function(){
+        	jNewTr.find("img").css("visibility", "visible");
+       	});
+       	jNewTr.mouseout(function(){
+            jNewTr.find("img").css("visibility", "hidden");
+       	});
+	}
+
+    gestores.removerItem = function(idItem){
+        $("#"+idItem).remove();
+        gestores["index"]--;
+	}
+
+   	//POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÇÃO E SOLICITANTE
+    var jFatores = $("#fatoresUl"),
+    fatores = jFatores[0],
+    jDialogFator = $("#dialogFator"),
+    dialogFator = jDialogFator[0],
+    jSelectFator = $("#fatorpessoafatorlotacao");
+    jNumFatorMult = $("#numfatorMult");
+
+    $( "#fatoresUl" ).sortable({placeholder: "ui-state-highlight"});
+    $( "#fatoresUl" ).disableSelection();
+   
+    $("#botaoIncluirFator").click(function(){
+        jDialogFator.data('acaoFator',fatores.incluirItem).dialog('open');
+    });
+     
+    jDialogFator.dialog({
+        autoOpen: false,
+        height: 'auto',
+        width: 'auto',
+        modal: true,
+        resizable: false,
+        close: function() {
+        	$("#fatorpessoa_sigla").val('');
+        	$("#fatorlotacao_sigla").val('');
+        	$("#fatorpessoa_descricao").val('');
+        	$("#fatorlotacao_descricao").val('');
+        	$("#numfatorMult").val('1');
+        	$("#fatorpessoaSpan").html('');  
+        	$("#fatorlotacaoSpan").html('');  
+        	jDialogFator.data('fatorMultiplicacaoSet','');
+    	}, 
+    	open: function(){
+        	$('#erroNumFatorMult').hide();
+
+        	if (jDialogFator.data("gestorSet"))
+            	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
+            else
+              	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
+           	}
+    });
+    
+    $("#modalOkFator").click(function() {
+        var acaoFator = jDialogFator.data('acaoFator');
+        var jTipoEscolhidoFator = jSelectFator.find("option:selected");
+        var numFatorMult = $('#numfatorMult');
+
+        if(numFatorMult.val() > 0) {
+            if(jTipoEscolhidoFator.val() == 1) {
+                acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
+            } else if (jTipoEscolhidoFator.val() == 2) {
+                acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
+            }
+            
+        	  jDialogFator.dialog('close');
+        } else {
+            $('#erroNumFatorMult').show();
+        }
+    });
+    
+    $("#modalCancelFator").click(function(){
+        jDialogFator.dialog('close');
+    });
+
+    fatores["index"] = 0;
+    fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
+        if (!idF)
+            idF = 'novo_fator' + ++fatores["index"];
+
+        jFatores.append("<li style=\"cursor: move\" id =\"" + idF + "\"></li>");
+
+        var jNewFatorTr = jFatores.find("li:last-child");
+        jNewFatorTr.append("<span id=\"" + tipoFator + "\">" + siglaSolicitante + "-" 
+ 	      	+ nomeSolicitante + "</span> <span style=\"display: inline-block\" id=\"" + idDerivadoFator + "\"> / Fator: "
+          	+ numFator + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\" visibility:hidden; cursor: pointer;\" />");
+      	
+        jNewFatorTr.find("img:eq(0)").click(function(){
+            fatores.removerItemFator(jNewFatorTr.attr("id"));
+        });
+
+        jNewFatorTr.mouseover(function(){
+            jNewFatorTr.find("img").css("visibility", "visible");
+        });
+
+        jNewFatorTr.mouseout(function(){
+            jNewFatorTr.find("img").css("visibility", "hidden");
+        });
+    };
+
+    fatores.removerItemFator = function(idItemF){
+        $("#"+idItemF).remove();
+        fatores["index"]--;
+    };
 
 	function serializarItemConfiguracao() {
 		// UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICAÇÃO

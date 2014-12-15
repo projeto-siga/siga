@@ -65,6 +65,12 @@ public class SrFatorMultiplicacao extends Objeto{
 	}
 	
 	public SrFatorMultiplicacaoVO toVO() {
+		if (this.dpPessoa != null && this.dpPessoa.getId() != null && (this.dpPessoa.getSigla() == null || this.dpPessoa.getDescricao() == null))
+			this.dpPessoa = DpPessoa.findById(this.dpPessoa.getId());
+		
+		if (this.dpLotacao != null && this.dpLotacao.getId() != null && (this.dpLotacao.getSigla() == null || this.dpLotacao.getDescricao() == null))
+			this.dpLotacao = DpLotacao.findById(this.dpLotacao.getId());
+		
 		return new SrFatorMultiplicacaoVO(this.idFatorMultiplicacao, this.numFatorMultiplicacao, this.dpPessoa, this.dpLotacao);
 	}
 

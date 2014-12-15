@@ -59,14 +59,14 @@
 		/* Table initialization */
 		table = $('#itens_configuracao_table')
 			.on('draw.dt', function() {
-					if(table) {
-						var btn = $('.bt-expandir'),
-							expandir = btn.hasClass('expandido');
+				if(table) {
+					var btn = $('.bt-expandir'),
+						expandir = btn.hasClass('expandido');
 						
-						$('#itens_configuracao_table').mostrarDetalhes(format, table);
-						$('#itens_configuracao_table').expandirContrairLinhas(expandir);
-					}
-				})
+					$('#itens_configuracao_table').mostrarDetalhes(format, table);
+					$('#itens_configuracao_table').expandirContrairLinhas(expandir);
+				}
+			})
 			.dataTable({
 				"language": {
 					"emptyTable":     "Não existem resultados",
@@ -193,7 +193,6 @@
         		itemModalFechar();
         	},
         	error: function(error) {
-        		var fieldsError = error.responseText.split(";");
         		// limpa as mensagens de erros
         		resetAllErrorMessage();
 

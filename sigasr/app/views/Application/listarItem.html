@@ -5,6 +5,22 @@
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 
+<style>
+.item-pai {
+	padding-left: 0em !important;
+	font-weight: bold !important;
+}
+
+.item-filho {
+	padding-left: 2em !important;
+	font-style: italic !important;
+}
+
+.item-neto {
+	padding-left: 4em !important;
+}
+</style>
+
 <script type="text/javascript">
 	var colunas = {
 		expandir: 0,
@@ -109,6 +125,13 @@
 				"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 					var jSonItem = getJsonByString(aData[colunas.jSon]);
 					$('td:eq('+colunas.expandir+')', nRow).addClass('details-control');
+
+					if (jSonItem.nivel == 1)
+						$('td:eq('+colunas.titulo+')', nRow).addClass('item-pai');
+					else if (jSonItem.nivel == 2)
+						$('td:eq('+colunas.titulo+')', nRow).addClass('item-filho');
+					else if (jSonItem.nivel == 3)
+						$('td:eq('+colunas.titulo+')', nRow).addClass('item-neto');
 				}
 			});
 			$('#itens_configuracao_table').mostrarDetalhes(format, table);
@@ -407,7 +430,7 @@
 						<tr style="cursor: pointer;">
 							<td class="details-control"></td>
 							<td>${item.siglaItemConfiguracao}</td>
-							<td><span style="margin-left: ${(item.nivel-1)*2}em; #{if item.nivel == 1}font-weight: bold;#{/if} #{if item.nivel == 2}font-style: italic;#{/if}">${item.tituloItemConfiguracao}</span></td>
+							<td>${item.tituloItemConfiguracao}</td>
 							<td>${item.descrItemConfiguracao}</td>
 							<td>${item.descricaoSimilaridade}</td>
 							<td>

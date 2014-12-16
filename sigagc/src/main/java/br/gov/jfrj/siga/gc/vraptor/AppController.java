@@ -32,7 +32,6 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.gc.GcDao;
 import br.gov.jfrj.siga.gc.model.GcAcesso;
 import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
@@ -62,7 +61,7 @@ public class AppController extends GcController {
 	private Correio correio;
 
 	public AppController(HttpServletRequest request, Result result, GcBL bl,
-			GcDao dao, SigaObjects so, EntityManager em, Correio correio) {
+			SigaObjects so, EntityManager em, Correio correio) {
 		super(request, result, so, em);
 		this.bl = bl;
 		this.correio = correio;

@@ -1248,6 +1248,13 @@ public class Application extends SigaApplication {
 		listarPesquisa(mostrarDesativados);
 	}
 	
+	public static void listarConhecimento(Long idItem, Long idAcao, boolean ajax) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrItemConfiguracao item = idItem != null ? (SrItemConfiguracao)SrItemConfiguracao.findById(idItem) : null;
+		SrAcao acao = idAcao != null ? (SrAcao)SrAcao.findById(idAcao) : null;			
+		render("@listarConhecimento" + (ajax ? "Ajax" : ""), item, acao);
+	}
+	
 	public static void listarEquipe(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrEquipe> listaEquipe = SrEquipe.listar(mostrarDesativados);

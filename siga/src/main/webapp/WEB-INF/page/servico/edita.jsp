@@ -6,15 +6,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<ww:url id="urlGravar" action="gravar!aGravar" namespace="/gi/servico" />
-<ww:url id="urlInserirPessoaExtra"
-	action="inserirPessoaExtra!aInserirPessoaExtra" namespace="/gi/servico" />
+
 
 <siga:pagina
 	titulo="Configuração de Pessoas a ${cpTipoConfiguracaoAConfigurar.dscTpConfiguracao}">
-	<ww:set value="%{getIdTipoConfiguracaoUtilizarServico()}"
+	<c:set value="%{getIdTipoConfiguracaoUtilizarServico()}"
 		name="idTpConfUtilizarSvc" />
-	<ww:set value="%{getIdTipoConfiguracaoUtilizarServicoOutraLotacao()}"
+	<c:set value="%{getIdTipoConfiguracaoUtilizarServicoOutraLotacao()}"
 		name="idTpConfUtilizarSvcOutraLot" />
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
@@ -27,7 +25,7 @@
 					<th>Nome</th>
 					<c:forEach var="servico" items="${cpServicosDisponiveis}">						
 						<th><a href="#" alt="${servico.descricao}"
-							title="${servico.descricao}">		
+							title="${servico.descricao}">
 							<c:choose>
 								<c:when test="${servico.siglaServico == 'FS-RAIZ'}">${servico.labelServico}</c:when>
 								<c:when test="${servico.siglaServico == 'FS-GAB'}">${servico.labelServico}</c:when>
@@ -92,7 +90,7 @@
 							</td>
 							<td>${pessoa.nomePessoa}</td>
 							<c:forEach var="servico" items="${cpServicosDisponiveis}">
-								<td><ww:set
+								<td><c:set
 										value="%{getIdSitConfiguracaoConfManual(${pessoa.id},${servico.id})}"
 										name="idSitConf" /> <select
 									name="configuracao_pessoa_servico"
@@ -119,7 +117,7 @@
 			</div>
 			<br />
 			<div class="gt-content-box gt-for-table">
-				<form id="frmPessoaExtra">
+				<form id="frmPessoaExtra" action="<c:url value='/app/servico-acesso/inserirPessoaExtra'/>">
 					<table class="gt-form-table">
 						<tr class="header">
 							<td>Inserir Pessoa Extra</td>
@@ -130,8 +128,7 @@
 						</tr>
 
 						<tr>
-							<td><input type="button"
-								onclick="javascript:inserirPessoaExtra()"
+							<td><submit type="button"
 								class="gt-btn-medium gt-btn-left" value="Inserir Pessoa" />
 							</td>
 						</tr>
@@ -320,10 +317,10 @@
 	    return t_intCurTop;
 	  }
 	  
-	  function inserirPessoaExtra(){
+	/*   function inserirPessoaExtra(){
 	  	var frm = document.getElementById("frmPessoaExtra");
 	  	frm.action = "${urlInserirPessoaExtra}";
 	  	frm.submit();
-	  }
+	  } */
 		
 </script>

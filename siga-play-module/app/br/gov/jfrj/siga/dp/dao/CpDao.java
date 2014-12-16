@@ -58,6 +58,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
+import org.springframework.stereotype.Component;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
@@ -100,6 +101,7 @@ import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
+@Component
 public class CpDao extends ModeloDao {
 
 	public static final String CACHE_QUERY_SUBSTITUICAO = "query.substituicao";

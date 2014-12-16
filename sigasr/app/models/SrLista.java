@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +29,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
@@ -87,7 +87,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.EAGER)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
 
@@ -98,9 +98,6 @@ public class SrLista extends HistoricoSuporte {
 	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
-
-	@Transient
-	public List<SrConfiguracao> permissoes;
 
 	public static List<SrLista> listar(boolean mostrarDesativado) {
 		StringBuffer sb = new StringBuffer();
@@ -177,32 +174,34 @@ public class SrLista extends HistoricoSuporte {
 			return movimentacao;
 		return null;
 	}
-
+	
 	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa pess) {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
 	}
 	
 	public boolean podeIncluir(DpLotacao lotaTitular, DpPessoa pess) {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.INCLUSAO);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.INCLUSAO);
 	}
 
 	public boolean podeConsultar(DpLotacao lotaTitular, DpPessoa pess) {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
 	}
 
 	public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
 	}
 	
 	public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
-		return (lotaTitular.equals(lotaCadastrante)) && possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.PRIORIZACAO);
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.PRIORIZACAO);
 	}
 
-	private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, SrTipoPermissaoLista tipoPermissaoLista) {
+	private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, Long tipoPermissaoLista) {
 		List<SrConfiguracao> permissoesEncontradas = getPermissoes(lotaTitular, pess);
 		for (SrConfiguracao srConfiguracao : permissoesEncontradas) {
-			if (tipoPermissaoLista.equals(srConfiguracao.tipoPermissao)) {
-				return Boolean.TRUE;
+			for (SrTipoPermissaoLista permissao: srConfiguracao.tipoPermissaoSet) {
+				if (tipoPermissaoLista == permissao.getIdTipoPermissaoLista()) {
+					return Boolean.TRUE;
+				}
 			}
 		}
 		return Boolean.FALSE;
@@ -277,20 +276,7 @@ public class SrLista extends HistoricoSuporte {
 				s.priorizar(this, i, pessoa, lota);
 		}
 	}
-
-	@Override
-	public void salvar() throws Exception {
-		super.salvar();
-
-		// DB1: precisa salvar item a item 
-		if (this.permissoes != null) {
-			for (SrConfiguracao permissao : this.permissoes) {
-				permissao.listaPrioridade = this;
-				permissao.salvarComoPermissaoUsoLista();
-			}
-		}
-	}
-
+	
 	/**
 	 * Classe que representa um V.O. de {@link SrLista}.
 	 */

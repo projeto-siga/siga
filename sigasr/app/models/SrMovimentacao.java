@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -104,6 +105,9 @@ public class SrMovimentacao extends GenericModel {
 	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
 	// @OrderBy("pergunta asc")
 	protected List<SrResposta> respostaSet;
+	
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "movFinalizadora", fetch=FetchType.LAZY)
+	protected List<SrMovimentacao> movFinalizadaSet;
 
 	@Column(name = "DT_AGENDAMENTO")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -115,6 +119,21 @@ public class SrMovimentacao extends GenericModel {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_FINALIZADORA")
 	public SrMovimentacao movFinalizadora;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_SOLICITACAO_REFERENCIA")
+	public SrSolicitacao solicitacaoReferencia;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
+	public SrItemConfiguracao itemConfiguracao;
+
+	@ManyToOne
+	@JoinColumn(name = "ID_ACAO")
+	public SrAcao acao;
+	
+	@Enumerated
+	public SrTipoMotivoEscalonamento motivoEscalonamento;
 
 	public SrMovimentacao() throws Exception {
 		this(null);
@@ -164,15 +183,15 @@ public class SrMovimentacao extends GenericModel {
 			}
 		return map;
 	}
-
+	
 	public boolean isCancelada() {
 		return movCanceladora != null;
 	}
 
-	public boolean isReplanejada() {
-		return tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO;
+	public boolean isFinalizada() {
+		return movFinalizadora != null;
 	}
-
+	
 	public boolean isCanceladoOuCancelador() {
 		return isCancelada()
 				|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
@@ -234,7 +253,7 @@ public class SrMovimentacao extends GenericModel {
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
-
+	
 	public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
 			throws Exception {
 		this.cadastrante = cadastrante;
@@ -276,24 +295,33 @@ public class SrMovimentacao extends GenericModel {
 		SrMovimentacao ultimaValida = getAnterior();
 		movCanceladora.atendente = ultimaValida.atendente;
 		movCanceladora.lotaAtendente = ultimaValida.lotaAtendente;
-
 		movCanceladora.salvar(pessoa, lota);
+		
 		this.movCanceladora = movCanceladora;
+		
+		if (movFinalizadaSet != null)
+			for (SrMovimentacao movFinalizada : movFinalizadaSet){
+				movFinalizada.movFinalizadora = null;
+				movFinalizada.save();
+			}
+		movFinalizadaSet = new ArrayList<SrMovimentacao>();
+		
 		this.salvar();
+		
 	}
 
 	private void checarCampos() throws Exception {
 
 		if (solicitacao == null)
 			throw new Exception(
-					"Movimentação precisa fazer parte de uma solicitação");
+					"Movimentaï¿½ï¿½o precisa fazer parte de uma solicitaï¿½ï¿½o");
 
 		if (arquivo != null) {
 			double lenght = (double) arquivo.blob.length / 1024 / 1024;
 			if (lenght > 2)
 				throw new IllegalArgumentException("O tamanho do arquivo ("
 						+ new DecimalFormat("#.00").format(lenght)
-						+ "MB) é maior que o máximo permitido (2MB)");
+						+ "MB) ï¿½ maior que o mï¿½ximo permitido (2MB)");
 		}
 
 		if (dtIniMov == null)
@@ -322,7 +350,7 @@ public class SrMovimentacao extends GenericModel {
 
 		if (!solicitacao.isRascunho()) {
 			if (atendente == null && lotaAtendente == null)
-				throw new Exception("Atendente não pode ser nulo");
+				throw new Exception("Atendente nï¿½o pode ser nulo");
 
 			if (lotaAtendente == null)
 				lotaAtendente = atendente.getLotacao();
@@ -330,7 +358,7 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public void notificar() {
-		if (isReplanejada())
+		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
 			Correio.notificarReplanejamentoMovimentacao(this);
 		else if (!isCancelada())
 			Correio.notificarMovimentacao(this);
@@ -340,5 +368,36 @@ public class SrMovimentacao extends GenericModel {
 	
 	public String getMotivoPendenciaString() {
 		return this.motivoPendencia.descrTipoMotivoPendencia;
+	}
+	
+	public SrMovimentacao getMovFinalizada(){
+		if (movFinalizadaSet == null || movFinalizadaSet.size() == 0)
+			return null;
+		return movFinalizadaSet.get(0);
+	}
+	
+	public Date getDtFimMov(){
+		return movFinalizadora != null ? movFinalizadora.dtIniMov
+				: dtAgenda;
+	}
+
+	public SrItemConfiguracao getItemConfiguracao() {
+		return itemConfiguracao;
+	}
+
+	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
+		this.itemConfiguracao = itemConfiguracao;
+	}
+
+	public SrAcao getAcao() {
+		return acao;
+	}
+
+	public void setAcao(SrAcao acao) {
+		this.acao = acao;
+	}
+	
+	public String getMotivoEscalonamentoString() {
+		return this.motivoEscalonamento.descrTipoMotivoEscalonamento;
 	}
 }

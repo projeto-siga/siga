@@ -50,12 +50,18 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.instantiation.Delegation;
 import org.jbpm.taskmgmt.def.Swimlane;
 import org.jbpm.taskmgmt.def.Task;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
@@ -155,12 +161,41 @@ public class UploadServlet extends HttpServlet {
 	 */
 	private String doDeployment(FileItem fileItem) {
 		try {
+
+			Wf.getInstance();
+			AnnotationConfiguration cfg;
+			try {
+				cfg = WfDao
+						.criarHibernateCfg("java:/SigaWfDS");
+				HibernateUtil.configurarHibernate(cfg, "");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+			HibernateUtil.getSessao();
+			ModeloDao.freeInstance();
+			WfDao.getInstance();
+
+			// Novo
+			WfContextBuilder.getConfiguration();
+			WfContextBuilder.createJbpmContext();
+
+			// Novo
+			if (!WfDao.getInstance().sessaoEstahAberta())
+				throw new AplicacaoException(
+						"Erro: sessão do Hibernate está fechada.");
+
+			WfDao.iniciarTransacao();
+
 			ZipInputStream zipInputStream = new ZipInputStream(fileItem
 					.getInputStream());
 			JbpmContext jbpmContext = WfContextBuilder.getJbpmContext()
 					.getJbpmContext();
 			ProcessDefinition processDefinition = ProcessDefinition
 					.parseParZipInputStream(zipInputStream);
+			jbpmContext.setSession(WfDao.getInstance().getSessao());
 			jbpmContext.deployProcessDefinition(processDefinition);
 			zipInputStream.close();
 			long id = processDefinition.getId();
@@ -191,10 +226,18 @@ public class UploadServlet extends HttpServlet {
 					t.setAssignmentDelegation(d);
 			}
 
+			WfDao.commitTransacao();
 			return sReturn;
+			
 		} catch (IOException e) {
 			return "IOException";
+		}finally{
+			WfContextBuilder.closeContext();
+			HibernateUtil.fechaSessaoSeEstiverAberta();
+			ModeloDao.freeInstance();
 		}
+		
+		
 	}
 
 	private static Log log = LogFactory.getLog(UploadServlet.class);

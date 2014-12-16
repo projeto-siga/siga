@@ -8,9 +8,11 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import br.com.caelum.vraptor.Path;
+import com.opensymphony.webwork.interceptor.PrincipalAware;
+
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
+import br.gov.jfrj.siga.acesso.ConheceUsuario;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -26,9 +28,12 @@ public class SigaController {
 	public CpDao dao;
 
 	private HttpServletRequest request;
+	
+	protected CpDao dao() {
+		return CpDao.getInstance();
+	}
 
-	public SigaController(HttpServletRequest request, Result result, CpDao dao,
-			SigaObjects so) {
+	public SigaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so) {
 		super();
 		this.setRequest(request);
 		this.so = so;

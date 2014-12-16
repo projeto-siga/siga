@@ -80,15 +80,7 @@
 		<!-- SIGA -->
 		<dependency>
 			<groupId>siga</groupId>
-			<artifactId>siga-wf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
 			<artifactId>siga-base</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
-			<artifactId>siga-libs</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
@@ -140,22 +132,28 @@
 			<groupId>br.com.caelum.vraptor</groupId>
 			<artifactId>vraptor-jpa</artifactId>
 			<version>1.0.2</version>
+			<exclusions>
+				<exclusion>  <!-- declare the exclusion here -->
+					<groupId>org.eclipse.persistence</groupId>
+					<artifactId>javax.persistence</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 
 	</dependencies>
-	
-		<profiles>
+
+	<profiles>
 		<profile>
 			<id>docker-flyway</id>
-	
+
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.jolokia</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
 						<version>0.9.9</version>
-	
+
 						<!-- Connect start/stop to pre- and post-integration-test phase, respectively -->
 						<executions>
 							<!-- <execution> <id>start</id> <phase>pre-integration-test</phase> 
@@ -171,12 +169,12 @@
 					</plugin>
 				</plugins>
 			</build>
-	
+
 		</profile>
-	
+
 		<profile>
 			<id>flyway</id>
-			
+
 			<properties>
 				<maven.test.skip>true</maven.test.skip>
 				<maven.main.skip>true</maven.main.skip>
@@ -221,6 +219,6 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>    
+	</profiles>
 
 </project>

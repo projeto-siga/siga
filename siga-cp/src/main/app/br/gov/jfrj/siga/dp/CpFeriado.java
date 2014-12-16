@@ -39,7 +39,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @Table(name = "CP_FERIADO", schema="CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpFeriado extends AbstractCpFeriado implements Serializable,
 		Selecionavel {
 

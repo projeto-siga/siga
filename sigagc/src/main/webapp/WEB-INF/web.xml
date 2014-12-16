@@ -15,10 +15,6 @@
 		</taglib>
 	</jsp-config>
 
-	<listener>
-		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
-	</listener>
-
 	<welcome-file-list>
 		<welcome-file>app/inbox</welcome-file>
 	</welcome-file-list>
@@ -56,15 +52,11 @@
 	<context-param>  
    		<param-name>br.com.caelum.vraptor.packages</param-name>  
 	   	<param-value>  
-        	br.gov.jfrj.siga.vraptor
+        	br.gov.jfrj.siga.vraptor,
         	br.com.caelum.vraptor.util.jpa  
    		</param-value>  
 	</context-param>  
 	
-	<listener>
-		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
-	</listener>
-
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>

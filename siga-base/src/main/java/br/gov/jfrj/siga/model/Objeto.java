@@ -167,10 +167,14 @@ public class Objeto extends ObjetoBase{
 	}
 
 	public Object _key() {
+		try {
 		Session session = (Session) (em().getDelegate());
 		ClassMetadata meta = session.getSessionFactory().getClassMetadata(
 				this.getClass());
 		return meta.getIdentifier(this, (SessionImplementor) session);
+		} catch (Exception ex) {
+			return null;
+		}
 	}
 
 	// ~~~ SAVING

@@ -44,9 +44,12 @@ public class SigaObjects implements ConheceUsuario {
 
 	private String mensagem;
 
-	public SigaObjects(HttpServletRequest request) throws Exception {
+	private CpDao dao;
+
+	public SigaObjects(HttpServletRequest request, CpDao dao) throws Exception {
 		super();
 		this.request = request;
+		this.dao = dao;
 		carregaPerfil();
 	}
 

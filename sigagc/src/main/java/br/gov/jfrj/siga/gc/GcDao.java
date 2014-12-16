@@ -23,17 +23,7 @@
  */
 package br.gov.jfrj.siga.gc;
 
-import javax.persistence.EntityManager;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.config.CacheConfiguration;
-
-import org.hibernate.cfg.Configuration;
-
-import br.com.caelum.vraptor.ioc.Component;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 /**
  * Classe que representa o DAO do sistema de workflow.
@@ -41,78 +31,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
  * @author kpf
  * 
  */
-@Component
-public class GcDao {
+public class GcDao extends CpDao {
 
-	// private EntityManager em = new EntityManagerCreator().getInstance();
-
-	private CpDao cpDao = null;
-
-	private EntityManager em;
-	public GcDao(EntityManager em) {
-		this.em = em;
-	}
-
-	// public static final String CACHE_GC = "gc";
-	//
-	// /**
-	// * Retorna uma instância do DAO.
-	// *
-	// * @return
-	// */
-	// public static GcDao getInstance() {
-	// return ModeloDao.getInstance(GcDao.class);
-	// }
-	//
-	// /**
-	// * Pesquisa as configurações que são semelhantes ao exemplo
-	// *
-	// * @param exemplo
-	// * Uma configuração de exemplo para a pesquisa.
-	// * @return Lista de configurações encontradas.
-	// */
-	// // public List<GcConfiguracao> consultar(final GcConfiguracao exemplo) {
-	// // Query query = getSessao().getNamedQuery("consultarGcConfiguracoes");
-	// //
-	// // query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
-	// // .getIdTpConfiguracao());
-	// //
-	// // query.setCacheable(true);
-	// // query.setCacheRegion(CACHE_QUERY_CONFIGURACAO);
-	// // return query.list();
-	// // }
-	//
-	// static public Configuration criarHibernateCfg(String datasource)
-	// throws Exception {
-	// Configuration cfg = CpDao.criarHibernateCfg(datasource);
-	//
-	// return GcDao.configurarHibernate(cfg);
-	// }
-	//
-	// static private Configuration configurarHibernate(Configuration cfg)
-	// throws Exception {
-	// // cfg.addClass(br.gov.jfrj.siga.gc.GcConfiguracao.class);
-	//
-	// cfg.addResource("org/jbpm/db/hibernate.queries.hbm.xml");
-	// cfg.addResource("org/jbpm/db/hibernate.types.hbm.xml");
-	// cfg.addResource("hibernate.extra.hbm.xml");
-	//
-	// cfg.addClass(org.jbpm.graph.action.MailAction.class);
-	//
-	// CacheManager manager = CacheManager.getInstance();
-	// Cache cache;
-	// CacheConfiguration config;
-	//
-	// if (!manager.cacheExists(CACHE_GC)) {
-	// manager.addCache(CACHE_GC);
-	// cache = manager.getCache(CACHE_GC);
-	// config = cache.getCacheConfiguration();
-	// config.setTimeToIdleSeconds(3600);
-	// config.setTimeToLiveSeconds(36000);
-	// config.setMaxElementsInMemory(10000);
-	// config.setMaxElementsOnDisk(1000000);
-	// }
-	//
-	// return cfg;
-	// }
+	
 }

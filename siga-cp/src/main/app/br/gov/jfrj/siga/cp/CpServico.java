@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 				+ "where upper(org.siglaServico) like upper(:siglaServico)") })
 @Entity
 @Table(name = "CP_SERVICO", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	/**

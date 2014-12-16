@@ -62,7 +62,8 @@ function postback(){
 			#{/if} #{/list}
 		</div>
 
-		<h3 style="padding-top: 25px;">Próximo Andamento</h3>
+		<br/>
+		<br/>
 		<div class="gt-content-box gt-form"
 			style="margin-bottom: 0px !important">
 			<form action="@{Application.darAndamento()}" method="post"
@@ -83,7 +84,7 @@ function postback(){
 				#{/if}}*
 
 				<div style="display: inline" class="gt-form-row gt-width-66">
-					<label>Descrição</label>
+					<label>Pr&oacute;ximo Andamento</label>
 					<textarea style="width: 100%" name="movimentacao.descrMovimentacao"
 						id="descrSolicitacao" cols="70" rows="4"
 						value="${movimentacao.descrMovimentacao}"></textarea>
@@ -91,9 +92,7 @@ function postback(){
 
 				<div class="gt-form-row">
 					<input type="submit" value="Gravar"
-						class="gt-btn-medium gt-btn-left" /> <a
-						href="@{Application.listarlista}"
-						class="gt-btn-medium gt-btn-left">Cancelar</a>
+						class="gt-btn-medium gt-btn-left" /> 
 				</div>
 			</form>
 		</div>

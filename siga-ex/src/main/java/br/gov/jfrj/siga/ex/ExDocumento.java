@@ -2276,6 +2276,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			if (assinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)
 				todosQueJaAssinaram.add(assinatura.getSubscritor());
 		}
+		
+		// compatibiliza com versoes anteriores do SIGA que permitia transferir
+		// documento antes que todos os cossiganatarios assinassem o documento
+		if (todosQueJaAssinaram.size() > 0 && jaTransferido()){
+			return true;
+		}
 
 		for (DpPessoa signatario : getSubscritorECosignatarios()) {
 			boolean encontrou = false;

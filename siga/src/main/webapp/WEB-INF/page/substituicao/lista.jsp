@@ -24,36 +24,33 @@
 					<tbody>
 						<c:forEach var="substituicao" items="${itens}">
 							<tr>
-								<td align="left"><c:choose>
+								<td align="left">
+									<c:choose>
 										<c:when test="${not empty substituicao.titular}">
-						${substituicao.titular.nomePessoa}
-					</c:when>
+											${substituicao.titular.nomePessoa}
+										</c:when>
 										<c:otherwise>
-						${substituicao.lotaTitular.nomeLotacao}
-					</c:otherwise>
+											${substituicao.lotaTitular.nomeLotacao}
+										</c:otherwise>
 									</c:choose>
 								</td>
-								<td align="left"><c:choose>
+								<td align="left">
+									<c:choose>
 										<c:when test="${not empty substituicao.substituto}">
-						${substituicao.substituto.nomePessoa}
-					</c:when>
+											${substituicao.substituto.nomePessoa}
+										</c:when>
 										<c:otherwise>
-						${substituicao.lotaSubstituto.nomeLotacao}
-					</c:otherwise>
+											${substituicao.lotaSubstituto.nomeLotacao}
+										</c:otherwise>
 									</c:choose>
 								</td>
 								<td align="center">${substituicao.dtIniSubstDDMMYY}</td>
 								<td align="center">${substituicao.dtFimSubstDDMMYY}</td>
 								<td align="center">
-									<ww:url id="url" action="editar" namespace="/substituicao">
-										<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
-									</ww:url>
-									<siga:link title="Alterar" url="${url}" />									
-										<ww:url id="url" action="excluir" namespace="/substituicao">
-												<ww:param name="id">${substituicao.idSubstituicao}</ww:param>
-										</ww:url>
-										<siga:link title="Excluir" url="${url}" 
-												popup="excluir" confirm="Deseja excluir substituição?" />									
+									<siga:link title="Alterar" url="editar/${substituicao.idSubstituicao}" />
+																	
+									<siga:link title="Excluir" url="excluir/${substituicao.idSubstituicao}" 
+										popup="excluir" confirm="Deseja excluir substituição?" />									
 																
 								</td>
 							</tr>
@@ -82,36 +79,34 @@
 							<tbody>
 								<c:forEach var="substTitular" items="${itensTitular}">
 									<tr>
-										<td align="left"><c:choose>
+										<td align="left">
+											<c:choose>
 												<c:when test="${not empty substTitular.titular}">
 														${substTitular.titular.nomePessoa}
 												</c:when>
 												<c:otherwise>
 														${substTitular.lotaTitular.nomeLotacao}
 												</c:otherwise>	
-										</c:choose>
+											</c:choose>
 										</td>
-										<td align="left"><c:choose>
-											<c:when test="${not empty substTitular.substituto}">
-												${substTitular.substituto.nomePessoa}
-											</c:when>
-											<c:otherwise>
-												${substTitular.lotaSubstituto.nomeLotacao}
-											</c:otherwise>
-										</c:choose>
+										<td align="left">
+											<c:choose>
+												<c:when test="${not empty substTitular.substituto}">
+													${substTitular.substituto.nomePessoa}
+												</c:when>
+												<c:otherwise>
+													${substTitular.lotaSubstituto.nomeLotacao}
+												</c:otherwise>
+											</c:choose>
 										</td>
 										<td align="center">${substTitular.dtIniSubstDDMMYY}</td>
 										<td align="center">${substTitular.dtFimSubstDDMMYY}</td>
-										<td align="center"><ww:url id="url" action="editar" namespace="/substituicao">
-												<ww:param name="id">${substTitular.idSubstituicao}</ww:param>
-											</ww:url>
-											<ww:a href="%{url}">Alterar</ww:a>
-											<ww:url id="url" action="excluir" namespace="/substituicao">
-													<ww:param name="id">${substTitular.idSubstituicao}</ww:param>
-											</ww:url>
-											<siga:link title="Excluir" url="${url}" 
-													popup="excluir" confirm="Deseja excluir configuração?" />
-										<%--	<ww:a href="%{url}"> | Excluir</ww:a>  --%>																
+										<td align="center">
+											<siga:link title="Alterar" url="editar/${substTitular.idSubstituicao}" />
+																			
+											<siga:link title="Excluir" url="excluir/${substTitular.idSubstituicao}" 
+												popup="excluir" confirm="Deseja excluir configuração?" />											
+																									
 										</td>
 									</tr>
 								</c:forEach>
@@ -121,10 +116,9 @@
 				</c:when>
 				<c:otherwise>
 					<div class="gt-table-buttons">
-						<ww:url id="url" action="editar" namespace="/substituicao"></ww:url>
 						<input type="button" value="Incluir"
-							onclick="javascript:window.location.href='${url}'"
-							class="gt-btn-medium gt-btn-left">
+							onclick="javascript:window.location.href='editar'"		
+						    class="gt-btn-medium gt-btn-left">
 					</div>			
 				</c:otherwise>
 			</c:choose>

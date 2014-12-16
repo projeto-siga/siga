@@ -44,12 +44,9 @@ public class SigaObjects implements ConheceUsuario {
 
 	private String mensagem;
 
-	private CpDao dao;
-
-	public SigaObjects(HttpServletRequest request, CpDao dao) throws Exception {
+	public SigaObjects(HttpServletRequest request) throws Exception {
 		super();
 		this.request = request;
-		this.dao = dao;
 		carregaPerfil();
 	}
 
@@ -163,7 +160,7 @@ public class SigaObjects implements ConheceUsuario {
 		// flt.setSiglaCompleta(sigla);
 		return (DpLotacao) dao().consultarPorSigla(flt);
 	}
-	
+
 	public CpOrgaoUsuario daoOU(String sigla) {
 		CpOrgaoUsuarioDaoFiltro fltOrgao = new CpOrgaoUsuarioDaoFiltro();
 		fltOrgao.setSigla(sigla);

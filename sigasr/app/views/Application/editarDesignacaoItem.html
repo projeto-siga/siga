@@ -187,6 +187,13 @@
 	}
 	
 	function inserirItemConfiguracao() {
+		var idSelecionado = $("#acao").val();
+		
+		if (idSelecionado == undefined || idSelecionado == '') {
+			alert("Por favor, selecione um item de configuração antes de continuar, ou clique em Cancelar.");
+			return;
+		}
+		
 		var row = [	$("#itemConfiguracao").val(),
 		           	$("#itemConfiguracao_sigla").val(),
 		           	$("#itemConfiguracao_descricao").val(),
@@ -206,6 +213,13 @@
 	}
 	
 	function inserirAcao() {
+		var idSelecionado = $("#acao").val();
+		
+		if (idSelecionado == undefined || idSelecionado == '') {
+			alert("Por favor, selecione uma ação antes de continuar, ou clique em Cancelar.");
+			return;
+		}
+		
 		var row = [	$("#acao").val(),
         			$("#acao_sigla").val(),
         			$("#acao_descricao").val(),
@@ -220,6 +234,18 @@
 		$("#acaoSpan").html('');
 		
 		modalFechar('acao');
+	}
+
+	function duplicarDesignacao(event) {
+		var tr = $(event.currentTarget).parent().parent();
+		event.stopPropagation();
+		var itemSelecionado = designacoesTable.api().row(tr).data();
+
+		manipulaItemSelecionado(itemSelecionado, true);
+	}
+
+	function resetId() {
+		$("#idConfiguracao").val('');
 	}
 </script>
 

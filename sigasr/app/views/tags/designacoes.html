@@ -152,6 +152,8 @@
 					if (document.getElementById("check"+aData[colunas.idDesignacao]))
 						document.getElementById("check"+aData[colunas.idDesignacao]).checked = aData[posListaPrioSerial] == 'true';
 				}
+
+				$('td:eq('+colunas.acaoExpandir+')', nRow).addClass('details-control');
 			},
 			"iDisplayLength": 25
 		});
@@ -161,25 +163,33 @@
 		$('#designacoes_table tbody').on('click', 'tr', function () {
 			var itemSelecionado = designacoesTable.api().row(this).data();
 			
-			if (itemSelecionado != undefined) {
-				if (!$(this).hasClass('selected') ) {
-		            designacoesTable.$('tr.selected').removeClass('selected');
-		            $(this).addClass('selected');
-		        }
-
-				// só abre o modal caso seja click em alguma designação 'não-herdada'
-				if (itemSelecionado[ colunas.herdado] == 'false') {
-					atualizarDesignacaoModal(itemSelecionado);
-					designacaoModalAbrir(true);
-				}
-			}
+			manipulaItemSelecionado(itemSelecionado, false);
 		});
 	});
+
+	function manipulaItemSelecionado(itemSelecionado, duplicarItem) {
+		if (itemSelecionado != undefined) {
+			if (!$(this).hasClass('selected') ) {
+	            designacoesTable.$('tr.selected').removeClass('selected');
+	            $(this).addClass('selected');
+	        }
+
+			// só abre o modal caso seja click em alguma designação 'não-herdada'
+			if (itemSelecionado[ colunas.herdado] == 'false') {
+				atualizarDesignacaoModal(itemSelecionado);
+
+				if (duplicarItem)
+					resetId();
+				
+				designacaoModalAbrir(!duplicarItem);
+			}
+		}
+	}
 
 	function detalhesDesignacao(d) {
 		var designacao = typeof d[colunas.jSonDesignacao] == 'string' ? JSON.parse(d[colunas.jSonDesignacao]) : d[colunas.jSonDesignacao],
 				tr = $('<tr class="detail">'),
-				td = $('<td colspan="10">');
+				td = $('<td colspan="10">'),
 				table  = $('<table>'),
 				trItens = $('<tr>'),
 				trAcoes = $('<tr>');
@@ -363,7 +373,7 @@
 		$("#checknotificarCadastrante")[0].checked = false;
 		$("#checknotificarInterlocutor")[0].checked = false;
 		$("#checknotificarAtendente")[0].checked = false;
-		$("#idConfiguracao").val('');
+		resetId(),
 		
 		itemConfiguracaoTable.api().clear().draw();
 		acaoTable.api().clear().draw();
@@ -491,8 +501,8 @@
 	
 	function inserirDesignacao() {
 		limparDadosDesignacaoModal();
-		designacaoModalAbrir(false);
 	}
+		designacaoModalAbrir(false);
 	
 	function designacaoModalAbrir(isEdicao) {
 		isEditing = isEdicao;
@@ -628,6 +638,9 @@
 					designacoesTable.api().row('.selected').data(row);
 				}
 				else {
+					var desativarButton = '<a class="once" onclick="desativarDesignacao(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+					var duplicarButton = '<a class="once" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>';
+					row[colunas.reativarDesativar] = desativarButton + " " + duplicarButton;
 					designacoesTable.api().row.add(row).draw();
 				}
         		designacaoModalFechar();
@@ -1188,6 +1201,9 @@
 											onDesativar :'desativarDesignacao',
 											isAtivo:design.isAtivo() }
 						#{/desativarReativar}
+						<a class="once" onclick="duplicarDesignacao(event)" title="Duplicar">
+							<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
+						</a>
 					</td>
 					<td>${design.isAtivo()}</td>
 				</tr>

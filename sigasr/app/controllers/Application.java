@@ -34,6 +34,7 @@ import models.SrPesquisa;
 import models.SrPrioridade;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
+import models.SrTipoMotivoEscalonamento;
 import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
@@ -218,30 +219,18 @@ public class Application extends SigaApplication {
 			solicitacao.itemConfiguracao = null;
 
 		DpPessoa cadastrante = solicitacao.cadastrante;
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao
-				.getAcoesDisponiveisComAtendenteOrdemTitulo();
-		if (acoesEAtendentes != null){
-			if (solicitacao.acao == null
-					|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
-				if (acoesEAtendentes.size() > 0)
-					solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
-				else
-					solicitacao.acao = null;
-			}
-		}
+		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes, cadastrante);
 	}
 
 	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao
-				.getAcoesDisponiveisComAtendenteOrdemTitulo();
-		if (solicitacao.acao == null
-				|| !acoesEAtendentes.containsKey(solicitacao.acao)) {
-			if (acoesEAtendentes.size() > 0)
-				solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
-			else
-				solicitacao.acao = null;
-		}
+		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		render(solicitacao, acoesEAtendentes);
+	}
+	
+	public static void exibirAcaoEscalonar(Long id) throws Exception {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
 
@@ -255,19 +244,8 @@ public class Application extends SigaApplication {
 		
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
-
 		
-		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
-		if (solicitacao.itemConfiguracao != null) {
-			acoesEAtendentes = solicitacao.getAcoesDisponiveisComAtendenteOrdemTitulo();
-			if (solicitacao.acao == null || !acoesEAtendentes.containsKey(solicitacao.acao)) {
-				if (acoesEAtendentes.size() > 0) {
-					solicitacao.acao = acoesEAtendentes.keySet().iterator().next();
-				} else {
-					solicitacao.acao = null;
-				}
-			}
-		}
+		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 
@@ -828,27 +806,49 @@ public class Application extends SigaApplication {
 	}
 
 	public static void escalonar(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		SrSolicitacao filha = null;
-		//se for uma solicitacao filha, o escalonar cria uma solicitacao irma
-		if(sol.isFilha())
-			filha = sol.solicitacaoPai.criarFilhaSemSalvar();
-		//se for uma solicitacao pai, cria uma solicitacao filha
-		else
-			filha = sol.criarFilhaSemSalvar();
-		formEditar(filha);
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		if(solicitacao.isFilha())
+			solicitacao = solicitacao.solicitacaoPai;	
+		solicitacao = solicitacao.getSolicitacaoAtual();
+		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		render(solicitacao, acoesEAtendentes);
 	}
 	
-	/**
-	 * Metodo grava a opcao do atendente da solicitacao pai ao abrir uma solicitacao filha,
-	 * se a solicitacao pai deve deve ser fechada automaticamente 
-	 * quando todas as filhas estiverem fechadas.
-	 */
-	public static void marcarFechamentoAutomatico(Long id, Boolean fechadoAuto) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.setFechadoAutomaticamente(fechadoAuto);
-		sol.salvar(cadastrante(), lotaTitular());
-		escalonar(sol.idSolicitacao);
+	public static void escalonarGravar(Long id, Long itemConfiguracao,
+				SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, 
+				SrTipoMotivoEscalonamento motivo, String descricao,
+				Boolean criaFilha, Boolean fechadoAuto) throws Exception {
+		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		if (criaFilha) {
+			if (fechadoAuto != null) {
+				solicitacao.setFechadoAutomaticamente(fechadoAuto);
+				solicitacao.salvar(cadastrante(), lotaTitular());
+			}
+			SrSolicitacao filha = null;
+			if(solicitacao.isFilha())
+				filha = solicitacao.solicitacaoPai.criarFilhaSemSalvar();
+			else
+				filha = solicitacao.criarFilhaSemSalvar();
+			filha.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
+			filha.acao = SrAcao.findById(acao.idAcao);
+			filha.descrSolicitacao = descricao;
+			if (idAtendenteNaoDesignado != null)
+				filha.atendenteNaoDesignado = JPA.em().find(DpLotacao.class, idAtendenteNaoDesignado);
+			filha.salvar(cadastrante(), lotaTitular());
+			exibir(filha.idSolicitacao, todoOContexto(), ocultas());
+		}
+		else {
+			SrMovimentacao mov = new SrMovimentacao(solicitacao);
+			mov.tipoMov = SrTipoMovimentacao
+					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO);
+			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
+			mov.acao = SrAcao.findById(acao.idAcao);
+			mov.lotaAtendente = JPA.em().find(DpLotacao.class, idAtendente);
+			mov.motivoEscalonamento = motivo;
+			mov.salvar(cadastrante(), lotaTitular());
+			exibir(solicitacao.idSolicitacao, todoOContexto(), ocultas());
+		}
+			
 	}
 	
 	public static void listarDesignacao(boolean mostrarDesativados) throws Exception {

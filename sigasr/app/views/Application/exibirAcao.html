@@ -12,8 +12,6 @@ function carregarAtributos(){
 	var idAcao = $("#selectAcao option:selected").val();
 	var lotacaoDaAcao = $("#lotacao-" + idAcao).html();
 	$("#atendentePadrao").html(lotacaoDaAcao);
-	//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
-	$("#atendenteNaoDesignado").val('');
 
 	for (i = 0; i < frm.length; i++){
 		if (frm[i].name && frm[i].value)
@@ -86,61 +84,7 @@ function carregouAtributos(response, param){
 						${solicitacao.lotaAtendente?.sigla} - ${solicitacao.lotaAtendente?.descricao.raw()}#{/if}
 			#{else}${lotacaoDesignada.raw()}#{/else}
 		</span>
-		<!-- So habilita para solicitacoes filhas que estao sendo criadas. Quando editar sol. filha esse botao nao aparece -->
-		#{if solicitacao.isFilha() && solicitacao.idSolicitacao == null}
-		<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin:5px 0 0 -3px;" >Alterar atendente</a>
-		<input type="hidden" name="solicitacao.atendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
-		#{/if}
-
 	</div>
 #{/if}
 
 <div id="divAtributos">#{include 'Application/exibirAtributos.html' /}</div>
-
-#{modal nome:'lotacaoAtendente', titulo:'Alterar Atendente padrão'}
-	<div id="dialogAtendente">
-		<div class="gt-content">
-			<div class="gt-form gt-content-box">
-				<div class="gt-form-row">
-					<div class="gt-form-row">
-						<label>Lotação Atendente</label>
-							#{selecao tipo:'lotacao',
-								nome:'lotacaoSelecao',
-								value:lotacaoSelecao /}			
-						<span style="display:none;color: red" id="atendente">Atendente não informado.</span>
-					</div>
-					<div class="gt-form-row">
-						<a href="javascript: alterarAtendente()" class="gt-btn-medium gt-btn-left">Ok</a>
-						<a href="javascript: modalFechar('lotacaoAtendente')" class="gt-btn-medium gt-btn-left">Cancelar</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-#{/modal}
-
-<script>	
-	function modalAbrir(componentId) {
-		limparCampos();
-		$("#" + componentId + "_dialog").dialog('option', 'width', 560);
-		$("#" + componentId + "_dialog").dialog('open');
-	}
-	
-	function modalFechar(componentId) {
-		$("#" + componentId + "_dialog").dialog('close');
-	}
-	// limpa campos do componente de busca - tag selecao
-	function limparCampos() {
-		$("#lotacaoSelecao").val('');
-		$("#lotacaoSelecao_descricao").val('');
-		$("#lotacaoSelecao_sigla").val('');
-		$("#lotacaoSelecaoSpan").html('');
-	}
-	function alterarAtendente() {
-		var inputNovoAtendente = $("#lotacaoSelecao").val();
-		var spanNovoAtendente = $("#lotacaoSelecao_sigla").val() + " - " + $("#lotacaoSelecao_descricao").val();
-		modalFechar('lotacaoAtendente');
-		$("#atendenteNaoDesignado").val(inputNovoAtendente);
-		$("#atendentePadrao").html(spanNovoAtendente);
-	}
-</script>

@@ -123,6 +123,14 @@ public class SrMovimentacao extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_SOLICITACAO_REFERENCIA")
 	public SrSolicitacao solicitacaoReferencia;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
+	public SrItemConfiguracao itemConfiguracao;
+
+	@ManyToOne
+	@JoinColumn(name = "ID_ACAO")
+	public SrAcao acao;
 
 	public SrMovimentacao() throws Exception {
 		this(null);
@@ -242,7 +250,7 @@ public class SrMovimentacao extends GenericModel {
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
-
+	
 	public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
 			throws Exception {
 		this.cadastrante = cadastrante;
@@ -368,5 +376,21 @@ public class SrMovimentacao extends GenericModel {
 	public Date getDtFimMov(){
 		return movFinalizadora != null ? movFinalizadora.dtIniMov
 				: dtAgenda;
+	}
+
+	public SrItemConfiguracao getItemConfiguracao() {
+		return itemConfiguracao;
+	}
+
+	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
+		this.itemConfiguracao = itemConfiguracao;
+	}
+
+	public SrAcao getAcao() {
+		return acao;
+	}
+
+	public void setAcao(SrAcao acao) {
+		this.acao = acao;
 	}
 }

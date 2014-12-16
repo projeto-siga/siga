@@ -70,7 +70,7 @@ function postback(){
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
+					value="${movimentacao.solicitacao.idSolicitacao}">*{ #{if
 				solicitacao.podeTrocarAtendente(lotaTitular, cadastrante)}
 				<div class="gt-form-row">
 					<label>Atendente</label>
@@ -80,7 +80,7 @@ function postback(){
 						valuePessoa:movimentacao.atendente,
 						valueLotacao:movimentacao.lotaAtendente, disabled:disabled /}</div>
 				</div>
-				#{/if}
+				#{/if}}*
 
 				<div style="display: inline" class="gt-form-row gt-width-66">
 					<label>Descrição</label>
@@ -219,13 +219,17 @@ function postback(){
 			*{<p>
 				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>}*
+			#{if solicitacao.isEscalonada()}
+				#{set itemEscalonar : solicitacao.getItemAposEscalonar().toString().raw() /}
+				#{set acaoEscalonar : solicitacao.getAcaoAposEscalonar().toString().raw() /}
+			#{/if}
 			<p>
 				<b>Item de Configuração:</b>
-				${solicitacao.siglaEDescrItem}
+				${itemEscalonar ?: solicitacao.siglaEDescrItem}
 			</p>
 			<p>
 				<b>Ação:</b>
-				${solicitacao.siglaEDescrAcao}
+				${acaoEscalonar ?: solicitacao.siglaEDescrAcao}
 			</p>
 			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
 			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
@@ -234,7 +238,7 @@ function postback(){
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
 					<br /> ${solicitacao.GUTString}</span>
 			</p>
-			#{if solicitacao.fechadoAutomaticamente != null}
+			#{if solicitacao.fechadoAutomaticamente != null && solicitacao.isPai()}
 			<p>
 				<b>Fechamento Automático:</b> ${solicitacao.fechadoAutomaticamente.yesno('Sim', 'Não')  }
 			</p>
@@ -351,12 +355,16 @@ function postback(){
 			<label>Motivo</label>
 			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
 		</div>
-		<input type="hidden" name="id" value="${solicitacao.id}" /> <input
+		<input type="hidden" name="id" value="${solicitacao.idSolicitacao}" /> <input
 			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</form>
 	#{/modal}
-	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao} 
+	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao}
 	#{/modal}
+		
+	#{modal nome:'escalonar', titulo:'Escalonar Solicitação', 
+				url:'/sigasr/solicitacao/escalonar?id='+solicitacao.idSolicitacao  /}
+
 	#{modal nome:'juntar', titulo:'Juntar'}
 		<form action="@{Application.juntar()}" method="post"
 			enctype="multipart/form-data" id="formGravarJuncao">
@@ -474,22 +482,6 @@ function postback(){
 				type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 		</form>
 	#{/modal}
-	
-	#{modal nome:'marcaSeFechaAutoEAposEscalona', titulo:'Fechamento Automático'}
-	<form action="@{Application.marcarFechamentoAutomatico}" method="post"
-		enctype="multipart/form-data" onsubmit="javascript: return block();">
-		<div style="display: inline" class="gt-form-row gt-width-66">
-			<br />
-			#{checkbox name:'fechadoAuto',
-					value:solicitacao.fechadoAutomaticamente /} Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>, quando 
-					todas as solicitaç&otilde;es criadas <br /> através do seu escalonamento forem fechadas pelos seus respectivos atendentes.
-			<br /><br />
-		</div>
-		<input type="hidden" name="id" value="${solicitacao.id}" />
-		<input type="submit" value="Gravar e Escalonar" class="gt-btn-large gt-btn-left" />
-	</form>
-	#{/modal}
-	
 <script language="javascript">
 
 	function terminarPendencia(idMov){

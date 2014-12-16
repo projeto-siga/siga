@@ -937,6 +937,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				&& !isCancelado() && !isJuntada();
 	}
 	
+	public boolean isEscalonada() {
+		return sofreuMov(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO, 
+					SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
+	}
+	
 	public boolean isAFechar(){
 		Set<SrSolicitacao> filhas = getSolicitacaoFilhaSet();
 		if (filhas.size() == 0)
@@ -1076,7 +1081,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
 		return (estaCom(lota, pess) || isEmListaPertencenteA(lota))
-				&& (isEmPreAtendimento() || isEmAtendimento() || isRascunho());
+				&& (isEmPreAtendimento() || isEmAtendimento() || isRascunho())
+				&& (!jaFoiDesignada());
 	}
 
 	public boolean podePriorizar(DpLotacao lota, DpPessoa pess) {
@@ -1348,6 +1354,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return null;
 	}
+	
+	public Map<SrAcao, DpLotacao> getAcoesEAtendentes() throws Exception {
+		Map<SrAcao, DpLotacao> acoesEAtendentesFinal = this
+				.getAcoesDisponiveisComAtendenteOrdemTitulo();
+		if (acoesEAtendentesFinal != null && this.itemConfiguracao != null){
+			if (this.acao == null
+					|| !acoesEAtendentesFinal.containsKey(this.acao)) {
+				if (acoesEAtendentesFinal.size() > 0)
+					this.acao = acoesEAtendentesFinal.keySet().iterator().next();
+				else
+					this.acao = null;
+			}
+		}
+		return acoesEAtendentesFinal;
+	}
 
 	@SuppressWarnings("serial")
 	public SortedSet<SrOperacao> operacoes(final DpLotacao lotaTitular,
@@ -1378,12 +1399,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				"vincular", "modal=true"));
 
 		operacoes.add(new SrOperacao("arrow_divide",
-				"Escalonar", podeEscalonar(lotaTitular, titular) && !this.isPai() && !this.isFilha(), 
-				"marcaSeFechaAutoEAposEscalona", "modal=true")); 
-
-		operacoes.add(new SrOperacao("arrow_divide",
 				"Escalonar", podeEscalonar(lotaTitular, titular), 
-				"Application.escalonar"));
+				"escalonar", "modal=true")); 
+
+/*		operacoes.add(new SrOperacao("arrow_divide",
+				"Escalonar", podeEscalonar(lotaTitular, titular), 
+				"Application.escalonar"));*/
 
 		operacoes.add(new SrOperacao("arrow_join", "Juntar",
 				podeJuntar(lotaTitular, titular),
@@ -1620,6 +1641,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		filha.idSolicitacao = null;
 		filha.solicitacaoPai = this;
 		filha.numSolicitacao = this.numSolicitacao;
+		filha.rascunho = null;
+		filha.solicitacaoInicial = null;
+		filha.meuMovimentacaoSet = null;
+		filha.meuMovimentacaoReferenciaSet = null;
 		for (SrSolicitacao s : getSolicitacaoFilhaSet())
 			filha.numSequencia = s.numSequencia;
 		if (filha.numSequencia == null)
@@ -1629,7 +1654,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		filha.atualizarCodigo();
 		return filha;
 	}
-
+	
 	public void atualizarMarcas() {
 		SortedSet<SrMarca> setA = new TreeSet<SrMarca>();
 
@@ -1730,9 +1755,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				if (t == TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
 					pendencias--;
 				}
-				if (t == TIPO_MOVIMENTACAO_ANDAMENTO) {
+				if (t == TIPO_MOVIMENTACAO_ANDAMENTO || t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO) {
 					movMarca = mov;
 				}
+				
 			}
 
 			if (marcador != 0L) 
@@ -2658,5 +2684,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		else
 			pessoasAConsiderar.add(solicitante);
 		return pessoasAConsiderar;
+	}
+	
+	public SrItemConfiguracao getItemAposEscalonar() {
+		SrMovimentacao movEscalonar = getUltimaMovimentacaoPorTipo(
+										SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO);		
+		if(movEscalonar != null)
+			return movEscalonar.itemConfiguracao;
+		return null;
+	}
+
+	public SrAcao getAcaoAposEscalonar() {
+		SrMovimentacao movEscalonar = getUltimaMovimentacaoPorTipo(
+										SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO);		
+		if(movEscalonar != null)
+			return movEscalonar.acao;
+		return null;
 	}
 }

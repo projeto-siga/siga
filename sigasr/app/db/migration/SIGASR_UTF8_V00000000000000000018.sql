@@ -124,3 +124,10 @@ alter table SR_CONFIGURACAO add (ID_ACORDO number(19, 0),
 	CONSTRAINT "CONFIGURACAO_ACORDO_FK" 
 			FOREIGN KEY ("ID_ACORDO") 
 			REFERENCES "SIGASR"."SR_ACORDO" ("ID_ACORDO"));
+
+--adicionado para aceitar a movimentacao de escalonamento
+alter table sigasr.sr_movimentacao add ID_ITEM_CONFIGURACAO NUMBER(19,0);
+alter table sigasr.sr_movimentacao add ID_ACAO NUMBER(19,0);
+alter table sigasr.sr_movimentacao add MOTIVOESCALONAMENTO NUMBER(10,0);
+insert into sigasr.sr_tipo_movimentacao (id_tipo_movimentacao, nome_tipo_movimentacao) values (24, 'Escalonamento');
+

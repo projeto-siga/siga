@@ -1507,8 +1507,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	public void atualizarAcordos() throws Exception{
+		acordos = new ArrayList<SrAcordo>();
+		
 		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setDpPessoa(solicitante);
 		confFiltro.setComplexo(local);
 		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
 		confFiltro.acaoFiltro = acao;
@@ -1517,14 +1518,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confFiltro.atendente = getAtendenteDesignado();
 		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
-
-		acordos = new ArrayList<SrAcordo>();
-		List<SrConfiguracao> confs = SrConfiguracao.listar(confFiltro);
-		for (SrConfiguracao conf : confs) {
-			SrAcordo acordoAtual = ((SrAcordo) SrAcordo
-					.findById(conf.acordo.idAcordo)).getAcordoAtual();
-			if (acordoAtual != null)
-				acordos.add(conf.acordo);
+		
+		for (DpPessoa p : considerarPessoasParaDesignacao()) {
+			confFiltro.setDpPessoa(p);
+			List<SrConfiguracao> confs = SrConfiguracao.listar(confFiltro);
+			for (SrConfiguracao conf : confs) {
+				SrAcordo acordoAtual = ((SrAcordo) SrAcordo
+						.findById(conf.acordo.idAcordo)).getAcordoAtual();
+				if (acordoAtual != null && !acordos.contains(acordoAtual))
+					acordos.add(acordoAtual);
+			}
 		}
 	}
 
@@ -2651,7 +2654,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	 */
 	private List<DpPessoa> considerarPessoasParaDesignacao() {
 		List<DpPessoa> pessoasAConsiderar = new ArrayList<DpPessoa>();
-		if(this.isFilha() && cadastrante != null && !cadastrante.equivale(solicitante)) {
+		if(cadastrante != null && !cadastrante.equivale(solicitante)) {
 			pessoasAConsiderar.add(solicitante);
 			pessoasAConsiderar.add(cadastrante);
 		}

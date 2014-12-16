@@ -311,7 +311,9 @@ function postback(){
 	</div>
 	#{/if} 
 	
-	#{include 'Application/exibirAcordos.html' /}
+	#{if solicitacao.estaCom(lotaTitular, cadastrante) || exibirMenuAdministrar}
+		#{include 'Application/exibirAcordos.html' /}
+	#{/if}
 	
 	
 	<div id="divConhecimentosRelacionados">#{include

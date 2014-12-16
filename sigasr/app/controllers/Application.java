@@ -34,6 +34,7 @@ import models.SrPesquisa;
 import models.SrPrioridade;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
+import models.SrTipoMotivoEscalonamento;
 import models.SrTipoMotivoPendencia;
 import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
@@ -814,7 +815,8 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void escalonarGravar(Long id, Long itemConfiguracao,
-				SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, String descricao,
+				SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, 
+				SrTipoMotivoEscalonamento motivo, String descricao,
 				Boolean criaFilha, Boolean fechadoAuto) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		if (criaFilha) {
@@ -842,6 +844,7 @@ public class Application extends SigaApplication {
 			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			mov.acao = SrAcao.findById(acao.idAcao);
 			mov.lotaAtendente = JPA.em().find(DpLotacao.class, idAtendente);
+			mov.motivoEscalonamento = motivo;
 			mov.salvar(cadastrante(), lotaTitular());
 			exibir(solicitacao.idSolicitacao, todoOContexto(), ocultas());
 		}

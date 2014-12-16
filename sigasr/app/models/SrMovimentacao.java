@@ -131,6 +131,9 @@ public class SrMovimentacao extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_ACAO")
 	public SrAcao acao;
+	
+	@Enumerated
+	public SrTipoMotivoEscalonamento motivoEscalonamento;
 
 	public SrMovimentacao() throws Exception {
 		this(null);
@@ -392,5 +395,9 @@ public class SrMovimentacao extends GenericModel {
 
 	public void setAcao(SrAcao acao) {
 		this.acao = acao;
+	}
+	
+	public String getMotivoEscalonamentoString() {
+		return this.motivoEscalonamento.descrTipoMotivoEscalonamento;
 	}
 }

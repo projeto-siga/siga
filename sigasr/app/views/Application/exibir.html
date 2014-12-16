@@ -68,11 +68,8 @@ function postback(){
 			style="margin-bottom: 0px !important">
 			<form action="@{Application.darAndamento()}" method="post"
 				enctype="multipart/form-data" onsubmit="javascript: return block();">
-<<<<<<< HEAD
-=======
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
->>>>>>> release-3.14.0
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 					value="${movimentacao.solicitacao.idSolicitacao}">*{ #{if
 				solicitacao.podeTrocarAtendente(lotaTitular, cadastrante)}
@@ -101,17 +98,11 @@ function postback(){
 		</div>
 
 		<p style="padding-top: 30px; font-weight: bold; color: #365b6d;" >
-<<<<<<< HEAD
-		#{checkbox name:'todoOContexto',
-					value:todoOContexto, onchange:'postback();' /} Todo o Contexto
-		&nbsp;&nbsp;
-=======
 		#{if solicitacao.parteDeArvore}
 		#{checkbox name:'todoOContexto',
 					value:todoOContexto, onchange:'postback();' /} Todo o Contexto
 		&nbsp;&nbsp;
 		#{/if}
->>>>>>> release-3.14.0
 		#{checkbox name:'ocultas',
 					value:ocultas, onchange:'postback();' /} Mais Detalhes
 		</p>
@@ -335,11 +326,8 @@ function postback(){
 	<div class="gt-content-box gt-form">
 		<form action="@{Application.anexarArquivo()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
-<<<<<<< HEAD
-=======
 			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 			<input type="hidden" name="ocultas" value="${ocultas}" />
->>>>>>> release-3.14.0
 			<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 				value="${movimentacao.solicitacao.idSolicitacao}"> <input
 				type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12">

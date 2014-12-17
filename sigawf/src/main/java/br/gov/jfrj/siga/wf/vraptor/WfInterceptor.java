@@ -8,7 +8,7 @@ import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.InstantiateInterceptor;
 import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.SessionScoped;
+import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -17,44 +17,12 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
-@Intercepts(before = InstantiateInterceptor.class)
-@SessionScoped
-public class WfInterceptor implements Interceptor {
-	private static boolean fConfigured = false;
 
-	private static final Object classLock = WfInterceptor.class;
+@Intercepts(before = InstantiateInterceptor.class)
+@RequestScoped
+public class WfInterceptor implements Interceptor {
 
 	private static final Logger log = Logger.getLogger(WfInterceptor.class);
-
-	private void configuraHibernate() throws ExceptionInInitializerError {
-		// Nato: usei um padrao de instanciacao de singleton para configurar a
-		// sessionFactory do Hibernate
-		// na primeira chamada ao filtro.
-		if (!fConfigured) {
-			synchronized (classLock) {
-				if (!fConfigured) {
-					try {
-						Wf.getInstance();
-						Configuration cfg = WfDao
-								.criarHibernateCfg("java:/jboss/datasources/SigaWfDS");
-
-						registerTransactionClasses(cfg);
-
-						HibernateUtil.configurarHibernate(cfg);
-						fConfigured = true;
-					} catch (final Throwable ex) {
-						// Make sure you log the exception, as it might be
-						// swallowed
-						log.error(
-								"[configuraHibernate] - Não foi possível configurar o hibernate.",
-								ex);
-						throw new ExceptionInInitializerError(ex);
-					}
-				}
-
-			}
-		}
-	}
 
 	private void fechaContextoWorkflow() {
 		try {
@@ -141,8 +109,6 @@ public class WfInterceptor implements Interceptor {
 	}
 
 	public void antes() throws Exception {
-		this.configuraHibernate();
-
 		HibernateUtil.getSessao();
 		ModeloDao.freeInstance();
 		WfDao.getInstance();

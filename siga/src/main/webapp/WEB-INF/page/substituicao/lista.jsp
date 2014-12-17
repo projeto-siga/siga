@@ -47,9 +47,9 @@
 								<td align="center">${substituicao.dtIniSubstDDMMYY}</td>
 								<td align="center">${substituicao.dtFimSubstDDMMYY}</td>
 								<td align="center">
-									<siga:link title="Alterar" url="editar/${substituicao.idSubstituicao}" />
+									<siga:link title="Alterar" url="editar?id=${substituicao.idSubstituicao}" />
 																	
-									<siga:link title="Excluir" url="excluir/${substituicao.idSubstituicao}" 
+									<siga:link title="Excluir" url="exclui?id=${substituicao.idSubstituicao}" 
 										popup="excluir" confirm="Deseja excluir substituição?" />									
 																
 								</td>
@@ -102,11 +102,10 @@
 										<td align="center">${substTitular.dtIniSubstDDMMYY}</td>
 										<td align="center">${substTitular.dtFimSubstDDMMYY}</td>
 										<td align="center">
-											<siga:link title="Alterar" url="editar/${substTitular.idSubstituicao}" />
+											<siga:link title="Alterar" url="editar?id=${substTitular.idSubstituicao}" />
 																			
-											<siga:link title="Excluir" url="excluir/${substTitular.idSubstituicao}" 
-												popup="excluir" confirm="Deseja excluir configuração?" />											
-																									
+											<siga:link title="Excluir" url="exclui?id=${substTitular.idSubstituicao}" 
+												popup="excluir" confirm="Deseja excluir configuração?" />										
 										</td>
 									</tr>
 								</c:forEach>

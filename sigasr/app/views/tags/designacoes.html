@@ -200,8 +200,6 @@
 	function atualizarListasDesignacaoEdicao(itemArray) {
 		var designacaoJson;
 		
-		// transforma o valor String em objeto, caso necessário
-		// Edson: comentando, pois nao funciona no IE
 		try{
 
 			designacaoJson = JSON.parse(itemArray[colunas.jSonDesignacao]);

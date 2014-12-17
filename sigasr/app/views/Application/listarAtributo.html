@@ -11,15 +11,16 @@
 </style>
 
 <script>
-	
 	var atributoTable,
 		colunasAtributo = 
 		{
 			nomeAtributo:       0,
 			descrAtributo:      1,
-			descrTipoAtributo:  2,
-			acoes:              3,
-			jSon:               4
+			descrObjetivoAtributo: 2,
+			codigoAtributo: 3,
+			descrTipoAtributo:  4,
+			acoes:              5,
+			jSon:               6
 		};
 
 	var QueryString = function () {
@@ -117,7 +118,9 @@
 		$('#idAtributo').val('');
 		$('#nomeAtributo').val('');
 		$('#descrAtributo').val('');
+		$('#codigoAtributo').val('');
 		$('#tipoAtributo').selectedIndex = 0;
+		$('#objetivoAtributo').selectedIndex = 0;
 		$('#descrPreDefinido').val('');
 		$('#vlPreDefinidos').hide();
 		tableAssociacao.api().clear().draw();
@@ -126,14 +129,18 @@
 	// Alimenta os campos do Popup antes de abrir ao usuário.
 	function atualizarModalAtributo(itemArray) {
 		limparDadosAtributoModal();
-		var jSonAtributo = getJsonByString(itemArray[colunasAtributo.jSon]);
+
+		jSonAtributo = getJsonByString(itemArray[colunasAtributo.jSon]);
 		
 		if (jSonAtributo) {
 			jTipoAtributoCbb = document.getElementsByName("att.tipoAtributo")[0];
 			jTipoAtributoCbb.selectedIndex = findSelectedIndexByValue(jTipoAtributoCbb, jSonAtributo.tipoAtributo);
+			jObjetivoAtributoCbb = document.getElementsByName("att.objetivoAtributo.idObjetivo")[0];
+			jObjetivoAtributoCbb.selectedIndex = findSelectedIndexByValue(jObjetivoAtributoCbb, jSonAtributo.objetivoAtributo.idObjetivo);
 			$("#hisIdIni").val(jSonAtributo.hisIdIni);
 			$('#idAtributo').val(jSonAtributo.idAtributo);
 			$('#nomeAtributo').val(jSonAtributo.nomeAtributo);
+			$('#codigoAtributo').val(jSonAtributo.codigoAtributo);
 			$('#descrAtributo').val(jSonAtributo.descrAtributo);
 			$('#descrPreDefinido').val(jSonAtributo.descrPreDefinido);
 			atualizarListaAssociacoes(jSonAtributo);
@@ -142,13 +149,13 @@
 
 	function getJsonByString(value) {
 		var jSonItem;
-		
-		// transforma o valor String em objeto, caso necessário
-		if (value && value.constructor.name ==  'String' && value != '')
-			jSonItem = JSON.parse(value);
-		else
-			jSonItem = value;
 
+		try{
+			jSonItem = JSON.parse(value);
+		} catch(e){
+			jSonItem = value;
+		}
+		
 		return jSonItem;
 	}
 
@@ -167,6 +174,8 @@
 				'hisIdIni': $("#hisIdIni").val(),
 				'nomeAtributo': $("#nomeAtributo").val(),
 				'descrAtributo': $("#descrAtributo").val(),
+				'objetivoAtributo': $("#objetivoAtributo").val(),
+				'codigoAtributo': $("#codigoAtributo").val(),
 				'tipoAtributo': $("#tipoAtributo").val(),
 				'descrPreDefinido': $("#descrPreDefinido").val()
 	 		};
@@ -178,6 +187,8 @@
 			row = [
 				$("#nomeAtributo").val(),
 				$("#descrAtributo").val(),
+				jSonAtt.descrObjetivoAtributo,
+				$("#codigoAtributo").val(),
 				jSonAtt.descrTipoAtributo,
 				'<a class="once" onclick="desativarAtributo(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
 				jSonAtt
@@ -306,6 +317,7 @@
 						<th>Nome</th>
 						<th>Descrição</th>
 						<th>Objetivo</th>
+						<th>C&oacute;digo</th>
 						<th>Formato</th>
 						<th></th>
 						<th>jSon</th>
@@ -318,6 +330,7 @@
 							<td>${att.nomeAtributo}</td>
 							<td>${att.descrAtributo}</td>
 							<td>${att.objetivoAtributo.descrObjetivo}</td>
+							<td>${att.codigoAtributo}</td>
 							<td>${att.tipoAtributo?.descrTipoAtributo}</td>
 							<td>
 								#{desativarReativar id:att.idAtributo,

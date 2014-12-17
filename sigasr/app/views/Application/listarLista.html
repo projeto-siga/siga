@@ -107,17 +107,17 @@
 				<tbody>
 					#{list items:listas, as:'item'}
 					<tr>
-						#{if lista.podeConsultar(lotaTitular, cadastrante)}
-							<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'" style="cursor: pointer;">${lista.nomeLista}</td>
+						#{if item.podeConsultar(lotaTitular, cadastrante)}
+							<td onclick="javascript:window.location='@{Application.exibirLista(item.idLista)}'" style="cursor: pointer;">${item.nomeLista}</td>
 						#{/if}
 						#{else}							
-							<td>${lista.nomeLista}</td>
+							<td>${item.nomeLista}</td>
 						#{/else}
 						
 						<td>${item.lotaCadastrante.nomeLotacao}</td>
 						<td>
-							#{if lista.podeEditar(lotaTitular, cadastrante)}
-							#{desativarReativar id:lista.idLista, 
+							#{if item.podeEditar(lotaTitular, cadastrante)}
+							#{desativarReativar id:item.idLista, 
 												onReativar:'reativarLista',
 												onDesativar :'desativarLista',
 												isAtivo:item?.isAtivo() }

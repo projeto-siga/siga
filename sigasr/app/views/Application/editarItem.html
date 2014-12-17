@@ -60,7 +60,7 @@
 <script>
 	jQuery(document).ready(function($) {
 		$("#itemConfiguracaoSigla").mask("99.99.99");
-	});
+	
 
 	// POPUP PARA ADICIONAR UM GESTOR
     var jGestores = $("#gestoresUl"),
@@ -234,6 +234,8 @@
         fatores["index"]--;
     };
 
+	});
+
 	function serializarItemConfiguracao() {
 		// UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICAÇÃO
         var jForm = $("form"),
@@ -287,10 +289,14 @@
 							id="itemConfiguracaoSigla" type="text"
 							name="itemConfiguracao.siglaItemConfiguracao"
 							value="${itemConfiguracao?.siglaItemConfiguracao}" maxlength="255"/> 
-							
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<label class="inline"
 							style="margin-left: 10px;">Título:</label> 
-							
+						</td>
+						<td>	
 							<input type="text"
 								id="tituloItemConfiguracao"
 								name="itemConfiguracao.tituloItemConfiguracao"

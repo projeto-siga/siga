@@ -617,6 +617,7 @@ public class Application extends SigaApplication {
 
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
+		lista = lista.getListaAtual();
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
@@ -1166,7 +1167,8 @@ public class Application extends SigaApplication {
 	public static void listarAtributo(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrAtributo> atts = SrAtributo.listar(null, mostrarDesativados);
-		render(atts);
+		List<SrObjetivoAtributo> objetivos = SrObjetivoAtributo.all().fetch();
+		render(atts, objetivos);
 	}
 
 	public static void editarAtributo(Long id) throws Exception {
@@ -1450,6 +1452,8 @@ public class Application extends SigaApplication {
 		SrLista lista = new SrLista();
 		if (id != null)
 			lista = SrLista.findById(id);
+		
+		lista = lista.getListaAtual();
 		
 		List<SrConfiguracao> permissoes = SrConfiguracao
 				.listarPermissoesUsoLista(lista, false);

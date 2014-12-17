@@ -401,11 +401,11 @@
 	</div>
 	<div class="gt-form-row gt-width-66">
 				<label>C&oacute;digo</label> <input type="text"
-					name="att.codigoAtributo"
+					name="att.codigoAtributo" id="codigoAtributo"
 					value="${att?.codigoAtributo}" size="60" />
 	</div>
 	<div class="gt-form-row gt-width-66">
-				<label>Objetivo do atributo</label> #{select id:'objetivo', name:'att.objetivoAtributo.idObjetivo', items:objetivos,
+				<label>Objetivo do atributo</label> #{select id:'objetivoAtributo', name:'att.objetivoAtributo.idObjetivo', items:objetivos,
 				labelProperty:'descrObjetivo', valueProperty:'idObjetivo', value:att.objetivoAtributo.idObjetivo, style:'width:393px;',
 				onchange:'javascript:ocultaAssociacoes();'/}
 	</div>

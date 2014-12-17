@@ -358,11 +358,11 @@
 	function getJsonByString(value) {
 		var jSonItem;
 		
-		// transforma o valor String em objeto, caso necessário
-		if (value && value.constructor.name ==  'String' && value != '')
+		try{
 			jSonItem = JSON.parse(value);
-		else
+		} catch(e){
 			jSonItem = value;
+		}
 
 		return jSonItem;
 	}

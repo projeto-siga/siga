@@ -79,7 +79,7 @@
 						</thead>
 		
 						<tbody>
-							#{list items:lista?.permissoes, as:'perm'}
+							#{list items:lista?.getPermissoes(lotaTitular, cadastrante), as:'perm'}
 								<tr style="cursor: pointer;">
 									<td>${perm.orgaoUsuario?.id}</td>
 									<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
@@ -111,30 +111,6 @@
 							#{/list}
 						</tbody>
 					</table>
-				</div>
-				
-				<div class="gt-content" style="margin-top:20px">
-					<h3>Inclusão automática</h3>
-					<div class="gt-form gt-content-box">
-					
-						<input type="hidden" name="lista.configuracaoInsercaoAutomatica.idConfiguracao" value="${lista?.configuracaoInsercaoAutomatica?.idConfiguracao}"/>
-						
-						<div class="gt-form-row gt-width-66">
-							<label>Item</label> 
-							#{selecao tipo:'item',
-								nome:'lista.configuracaoInsercaoAutomatica.itemConfiguracaoUnitario',
-								value:lista?.configuracaoInsercaoAutomatica?.itemConfiguracaoUnitario?.atual 
-							/}
-						</div>
-					
-						<div class="gt-form-row gt-width-66">
-							<label>Ação</label> 
-							#{selecao tipo:'acao', 
-								nome:'lista.configuracaoInsercaoAutomatica.acaoUnitaria', 
-								value:lista?.configuracaoInsercaoAutomatica?.acaoUnitaria?.atual 
-							/}
-						</div>
-					</div>
 				</div>
 				
 				<div class="gt-form-row">
@@ -300,6 +276,16 @@
 					"searchable": false
 				}]
 			});
+
+			$('#permissoes_table tbody').on('click', 'tr', function () {
+				if (permissoesTable.api().row(this).data() != undefined) {
+		        	permissoesTable.$('tr.selected').removeClass('selected');
+		            $(this).addClass('selected');
+		
+					atualizarControleAcessoModal(permissoesTable.api().row(this).data());
+				    controleAcessoModalAbrir(true);
+				}
+			});
 		}
 	});
 
@@ -416,7 +402,7 @@
 		$('#modal-permissao-error').css('display', 'none');
 		$('#modal-permissao').css('display', 'block');
 
-		$("#itemTipoPermissao").empty().append(itemTipoPermissaoOptions[0].options);
+		//$("#itemTipoPermissao").empty().append(itemTipoPermissaoOptions[0].options);
 	};
 
 	function serializePermissao(row) {

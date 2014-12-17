@@ -808,8 +808,6 @@ public class Application extends SigaApplication {
 
 	public static void escalonar(Long id) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		if(solicitacao.isFilha())
-			solicitacao = solicitacao.solicitacaoPai;	
 		solicitacao = solicitacao.getSolicitacaoAtual();
 		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);

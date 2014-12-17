@@ -36,8 +36,10 @@ function carregouAcao(response, param){
 			onsubmit="javascript: return block();" method="POST">
 		
 		<div class="gt-form-row" >
-			<label>#{checkbox name:'criaFilha',
-					value:criaFilha /} Criar Solicitação filha de ${solicitacao.codigo}</label>
+			<label>#{checkbox name:'criaFilha', value:criaFilha /} 
+					#{if solicitacao.isFilha()} #{set codigo : solicitacao.solicitacaoPai.codigo /} #{/if}
+					#{else} #{set codigo : solicitacao.codigo /} #{/else}
+					Criar Solicitação filha de ${codigo}</label>
 			<br />
 			<label>Item</label> #{selecao tipo:'item',
 			nome:'itemConfiguracao',
@@ -56,7 +58,7 @@ function carregouAcao(response, param){
 			<br /><br />	
 			#{if !solicitacao.isPai() && !solicitacao.isFilha()}
 				#{checkbox name:'fechadoAuto',
-					value:solicitacao.fechadoAutomaticamente /} Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>, quando 
+					value:solicitacao.fechadoAutomaticamente /} Fechar automaticamente a solicitação <b>${codigo}</b>, quando 
 					todas as solicitaç&otilde;es filhas forem fechadas pelos seus respectivos atendentes.
 			#{/if}
 		</div>

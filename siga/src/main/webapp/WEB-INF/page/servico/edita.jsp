@@ -5,27 +5,22 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 
 <siga:pagina
-	titulo="Configuração de Pessoas a ${cpTipoConfiguracaoAConfigurar.dscTpConfiguracao}">
-	<c:set value="%{getIdTipoConfiguracaoUtilizarServico()}"
-		name="idTpConfUtilizarSvc" />
-	<c:set value="%{getIdTipoConfiguracaoUtilizarServicoOutraLotacao()}"
-		name="idTpConfUtilizarSvcOutraLot" />
+	titulo="Configuração de Pessoas a ${dscTpConfiguracao}">	
+		
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Configuração de Pessoas a
-				${cpTipoConfiguracaoAConfigurar.dscTpConfiguracao}</h2>
-			<div class="gt-content-box gt-for-table">
+			<h2>Configuração de Pessoas a ${dscTpConfiguracao}</h2>
+			<div class="gt-content-box gt-for-table">		
 				<table class="gt-table">
 					<theader>
 					<th>Matrícula</th>
 					<th>Nome</th>
 					<c:forEach var="servico" items="${cpServicosDisponiveis}">						
 						<th><a href="#" alt="${servico.descricao}"
-							title="${servico.descricao}">
+							title="${servico.descricao}">									
 							<c:choose>
 								<c:when test="${servico.siglaServico == 'FS-RAIZ'}">${servico.labelServico}</c:when>
 								<c:when test="${servico.siglaServico == 'FS-GAB'}">${servico.labelServico}</c:when>
@@ -80,23 +75,19 @@
 					</c:if>
 					<c:forEach var="pessoa" items="${pessoasGrupoSegManual}">
 						<tr class="">
-							<ww:url id="urlExcluirPessoaExtra"
-								action="excluirPessoaExtra!aExcluirPessoaExtra"
-								namespace="/gi/servico">
-								<ww:param name="pessoaId">${pessoa.id}</ww:param>
-							</ww:url>
-							<td>${pessoa.sesbPessoa}${pessoa.matricula}<a
-								href=${urlExcluirPessoaExtra}>&nbsp(excluir)</a>
-							</td>
+							<td>	
+								${pessoa.sesbPessoa}${pessoa.matricula}<a href="servico-acesso/excluir-pessoa-extra/${pessoa.id}">&nbsp;Excluir</a>
+							</td>												
 							<td>${pessoa.nomePessoa}</td>
 							<c:forEach var="servico" items="${cpServicosDisponiveis}">
-								<td><c:set
-										value="%{getIdSitConfiguracaoConfManual(${pessoa.id},${servico.id})}"
-										name="idSitConf" /> <select
-									name="configuracao_pessoa_servico"
-									id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
-									valorSalvo="${idSitConf}"
-									onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvcOutraLot});">
+								<td>													
+									<c:set  value="${ configuracaoConfManual.executar(pessoa.id, servico.id) }" 
+										var="idSitConf" />										
+									<div >
+									<select	name="configuracao_pessoa_servico"
+										id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
+										valorSalvo="${idSitConf}"
+										onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvcOutraLot});">
 										<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
 										<c:forEach var="sit"
 											items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
@@ -117,7 +108,7 @@
 			</div>
 			<br />
 			<div class="gt-content-box gt-for-table">
-				<form id="frmPessoaExtra" action="<c:url value='/app/servico-acesso/inserirPessoaExtra'/>">
+				<form id="frmPessoaExtra"  action="inserirPessoaExtra" method="post">
 					<table class="gt-form-table">
 						<tr class="header">
 							<td>Inserir Pessoa Extra</td>
@@ -128,8 +119,10 @@
 						</tr>
 
 						<tr>
-							<td><submit type="button"
-								class="gt-btn-medium gt-btn-left" value="Inserir Pessoa" />
+							<td>
+							<button type="submit" class="gt-btn-medium gt-btn-left">
+								Inserir Pessoa
+							</button>
 							</td>
 						</tr>
 					</table>
@@ -140,6 +133,8 @@
 </siga:pagina>
 
 <script type="text/javascript">
+
+
 	alterar = function (p_strIdPessoa,p_strIdServico,p_strIdTpConf) {
 		var t_domSituacao = document.getElementById("configuracao_" + p_strIdPessoa + "_" + p_strIdServico);
 		if (!t_domSituacao) {
@@ -317,10 +312,10 @@
 	    return t_intCurTop;
 	  }
 	  
-	/*   function inserirPessoaExtra(){
+	   /* function inserirPessoaExtra(){
 	  	var frm = document.getElementById("frmPessoaExtra");
-	  	frm.action = "${urlInserirPessoaExtra}";
+	  	frm.action = "inserirPessoaExtra";
 	  	frm.submit();
-	  } */
+	  }  */
 		
 </script>

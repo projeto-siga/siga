@@ -21,7 +21,7 @@
 
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:Módulo de Workflow')}">
-						<li><a href="/sigawf/app/resumo">Workflow</a>
+						<li><a href="/sigawf/resumo.action">Workflow</a>
 						</li>
 					</c:if>
 

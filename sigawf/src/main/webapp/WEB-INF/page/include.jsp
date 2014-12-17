@@ -3,6 +3,7 @@
 	buffer="128kb"%>
 <%@ taglib prefix="c" uri="/core"%>
 <%@ taglib prefix="fmt" uri="/fmt"%>
+<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib prefix="tags" uri="/tags"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>

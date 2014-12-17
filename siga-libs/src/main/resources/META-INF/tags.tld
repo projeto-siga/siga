@@ -69,8 +69,4 @@
 		<name>monobotao</name>
 		<path>/META-INF/tags/monobotao.tag</path>
 	</tag-file>
-	<tag-file>
-		<name>select</name>
-		<path>/META-INF/tags/select.tag</path>
-	</tag-file>
 </taglib>

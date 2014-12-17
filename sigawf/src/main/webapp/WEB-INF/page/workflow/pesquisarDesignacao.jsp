@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/page/include.jsp"%>
+<%@ include file="/WEB-INF/page/include.jsp"%><!--  -->
 
 <script type="text/javascript">
 	function solicitarInformacao(tarefa) {
@@ -6,25 +6,20 @@
 		var objSelecionado = document.getElementById('tipoResponsavel_'
 				+ tarefa);
 
-		document.getElementById('lotacao_' + tarefa
+		document.getElementById('formulario_lotacao_' + tarefa
 				+ '_lotacaoSel_id').value = "";
-		document.getElementById('matricula_' + tarefa
+		document.getElementById('formulario_matricula_' + tarefa
 				+ '_pessoaSel_id').value = "";
 
-		document.getElementById('lotacao_' + tarefa
+		document.getElementById('formulario_lotacao_' + tarefa
 				+ '_lotacaoSel_sigla').value = "";
-		document.getElementById('matricula_' + tarefa
+		document.getElementById('formulario_matricula_' + tarefa
 				+ '_pessoaSel_sigla').value = "";
 
-		document.getElementById('lotacao_' + tarefa
+		document.getElementById('formulario_lotacao_' + tarefa
 				+ '_lotacaoSel_descricao').value = "";
-		document.getElementById('matricula_' + tarefa
+		document.getElementById('formulario_matricula_' + tarefa
 				+ '_pessoaSel_descricao').value = "";
-
-		document.getElementById('lotacao_' + tarefa
-				+ '_lotacaoSelSpan').value = "";
-		document.getElementById('matricula_' + tarefa
-				+ '_pessoaSelSpan').value = "";
 
 		switch (objSelecionado.selectedIndex) {
 
@@ -42,10 +37,10 @@
 		//Lotação superior	
 		case 3:
 			break;
-		//Superior hierárquico	
+			//Superior hierárquico	
 		case 4:
 			break;
-		//Expressão	
+			//Expressão	
 		case 5:
 			var tipo = "expressao";
 			break;
@@ -61,15 +56,24 @@
 		}
 	}
 
-	function gravarResponsabilidade() {
+	<ww:url id="url" action="gerarRelatorioDesignacao" ></ww:url>
+	function gerarRelatorio() {
 		var frm = document.getElementById("formulario");
-		frm.action = 'gravar';
+		frm.action = '<ww:property value="%{url}"/>';
 		frm.submit();
 	}
 
+	<ww:url id="url" action="gravarDesignacao"></ww:url>
+	function gravarResponsabilidade() {
+		var frm = document.getElementById("formulario");
+		frm.action = '<ww:property value="%{url}"/>';
+		frm.submit();
+	}
+
+	<ww:url id="url" action="pesquisarDesignacao" />
 	function pesquisarProcedimento() {
 		var frm = document.getElementById("formulario");
-		frm.action = 'pesquisar';
+		frm.action = '<ww:property value="%{url}"/>';
 		frm.submit();
 	}
 </script>
@@ -80,19 +84,22 @@
 			<h2>Definição de Responsabilidades</h2>
 			<h4>Seleção de Órgão e Procedimento</h4>
 			<div class="gt-content-box gt-for-table">
-				<form id="formulario" action="" method="POST" class="form">
+				<ww:form id="formulario" action="" method="POST" cssClass="form">
 
 					<table class="gt-form-table">
-						<siga:select label="Órgão" name="orgao" list="listaOrgao"
-							listValue="acronimoOrgaoUsu" listKey="acronimoOrgaoUsu"
-							multiple="false"/>
-						<siga:select label="Procedimento" name="procedimento"
-							list="listaProcedimento" listValue="name" listKey="name"
-							multiple="false" />
+						<tr>
+							<ww:select label="Órgão" name="orgao" list="listaOrgao"
+								listValue="AcronimoOrgaoUsu" listKey="AcronimoOrgaoUsu"
+								multiple="false" />
+							<ww:select label="Procedimento" name="procedimento"
+								list="listaProcedimento" listValue="Name" listKey="Name"
+								multiple="false" />
+						</tr>
 						<tr>
 							<td colspan="2"><input type="button" value="Pesquisar"
 								onclick="javascript:pesquisarProcedimento()"
-								class="gt-btn-medium gt-btn-left" /></td>
+								class="gt-btn-medium gt-btn-left" />
+							</td>
 						</tr>
 					</table>
 			</div>
@@ -109,57 +116,64 @@
 
 					<!-- raias -->
 
-					<c:forEach var="r" items="${mapaDesignacaoRaia}">
+					<c:forEach var="r" items="${listaDesignacaoRaia}">
 
-						<c:if test="${not empty r.value[0].id}">
-							<c:set var="idRaia" value="${r.value[0].id}" />
-						</c:if>
-						<c:if test="${not empty r.value[0].tipoResponsavel}">
-							<c:set var="tipoResponsavel"
-								value="${r.value[0].tipoResponsavel}" />
+						<c:if test="${not empty r.id}">
+							<c:set var="idRaia" value="${r.id}" />
 						</c:if>
 
-						<tr>
-							<td>${r.key}</td>
+						<c:if test="${not empty r.tipoResponsavel}">
+							<c:set var="tipoResponsavel" value="${r.tipoResponsavel}" />
+						</c:if>
 
-							<td><c:forEach var="d" items="${r.value}">
-									<span style="cursor: help;" title="${d.nomeDoNo}">${d.tarefa}</span>
-									<br />
-								</c:forEach></td>
+						<ww:set name="raiaProcessada"
+							value="%{isRaiaProcessada('${r.raia}')}" />
 
-							<td>
-								<siga:select id="tipoResponsavel_${idRaia}"
-									name="tipoResponsavel_${idRaia}" list="listaTipoResponsavel"
-									theme="simple" listValue="texto" listKey="id"
-									value="${tipoResponsavel}"
-									onchange="javascript:solicitarInformacao('${idRaia}');" />
-								<div
-									style="display: ${(tipoResponsavel == 1) ? 'inline' : 'none'};"
-									id="matricula_${idRaia}">
-									<siga:selecao modulo="/siga" tipo="pessoa" tema="simple"
-										propriedade="matricula_${idRaia}"
-										siglaInicial="${r.value[0].ator.sigla}"
-										idInicial="${r.value[0].ator.id}"
-										descricaoInicial="${r.value[0].ator.descricao}" />
-								</div>
-								<div
-									style="display: ${(tipoResponsavel == 2) ? 'inline' : 'none'};"
-									id="lotacao_${idRaia}">
-									<siga:selecao modulo="/siga" tipo="lotacao" tema="simple"
-										propriedade="lotacao_${idRaia}"
-										siglaInicial="${r.value[0].lotaAtor.sigla}"
-										idInicial="${r.value[0].lotaAtor.id}"
-										descricaoInicial="${r.value[0].lotaAtor.descricao}" />
-								</div>
-								<div
-									style="display: ${(tipoResponsavel == 5) ? 'inline' : 'none'};"
-									id="expressao_${idRaia}">
-									<input type="text" width="200" name="expressao_${idRaia}"
-										value="${r.value[0].expressao}" />
-								</div>
-							</td>
-						</tr>
+						<c:if test="${not empty r.raia and not raiaProcessada}">
 
+							<tr>
+								<td>${r.raia}</td>
+
+								<td><c:forEach var="d" items="${listaDesignacaoRaia}">
+										<c:if test="${d.raia == r.raia}">
+											<span style="cursor: help;" title="${d.nomeDoNo}">${d.tarefa}</span>
+											<br />
+										</c:if>
+									</c:forEach></td>
+
+								<td><ww:select id="tipoResponsavel_${idRaia}"
+										name="tipoResponsavel_${idRaia}" list="listaTipoResponsavel"
+										theme="simple" listValue="Texto" listKey="id"
+										value="${tipoResponsavel}"
+										onchange="javascript:solicitarInformacao('${idRaia}');" />
+									<div
+										style="display: ${(tipoResponsavel == 1) ? 'inline' : 'none'};"
+										id="matricula_${idRaia}">
+										<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
+											propriedade="matricula_${idRaia}"
+											siglaInicial="${r.ator.sigla}" idInicial="${r.ator.id}"
+											descricaoInicial="${r.ator.descricao}" />
+									</div>
+									<div
+										style="display: ${(tipoResponsavel == 2) ? 'inline' : 'none'};"
+										id="lotacao_${idRaia}">
+										<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
+											propriedade="lotacao_${idRaia}"
+											siglaInicial="${r.lotaAtor.sigla}"
+											idInicial="${r.lotaAtor.id}"
+											descricaoInicial="${r.lotaAtor.descricao}" />
+									</div>
+									<div
+										style="display: ${(tipoResponsavel == 5) ? 'inline' : 'none'};"
+										id="expressao_${idRaia}">
+										<input type="text" width="200" name="expressao_${idRaia}"
+											value="${r.expressao}" />
+									</div>
+								</td>
+
+							</tr>
+
+						</c:if>
 						<c:set var="tipoResponsavel" value="" />
 						<c:set var="idRaia" value="" />
 					</c:forEach>
@@ -171,16 +185,15 @@
 							<td><span style="cursor: help;" title="${dTarefa.nomeDoNo}">${dTarefa.tarefa}</span>
 							</td>
 
-							<td>
-							<siga:select id="tipoResponsavel_${dTarefa.id}"
+							<td><ww:select id="tipoResponsavel_${dTarefa.id}"
 									name="tipoResponsavel_${dTarefa.id}"
-									list="listaTipoResponsavel" theme="simple" listValue="texto"
+									list="listaTipoResponsavel" theme="simple" listValue="Texto"
 									listKey="id" value="${dTarefa.tipoResponsavel}"
 									onchange="javascript:solicitarInformacao('${dTarefa.id}');" />
 								<div
 									style="display: ${(dTarefa.tipoResponsavel == 1) ? 'inline' : 'none'};"
 									id="matricula_${dTarefa.id}">
-									<siga:selecao modulo="/siga" tipo="pessoa" tema="simple"
+									<siga:selecao modulo="../sigaex" tipo="pessoa" tema="simple"
 										propriedade="matricula_${dTarefa.id}"
 										siglaInicial="${dTarefa.ator.sigla}"
 										idInicial="${dTarefa.ator.id}"
@@ -189,7 +202,7 @@
 								<div
 									style="display: ${(dTarefa.tipoResponsavel == 2) ? 'inline' : 'none'};"
 									id="lotacao_${dTarefa.id}">
-									<siga:selecao modulo="/siga" tipo="lotacao" tema="simple"
+									<siga:selecao modulo="../sigaex" tipo="lotacao" tema="simple"
 										propriedade="lotacao_${dTarefa.id}"
 										siglaInicial="${dTarefa.lotaAtor.sigla}"
 										idInicial="${dTarefa.lotaAtor.id}"
@@ -200,17 +213,20 @@
 									id="expressao_${dTarefa.id}">
 									<input type="text" name="expressao_${dTarefa.id}"
 										value="${dTarefa.expressao}" />
-								</div>
-								</td>
+								</div></td>
 						</tr>
 					</c:forEach>
 					<tr>
 						<td align="right" width="90%"><input type="button"
 							value="Gravar" onclick="javascript:gravarResponsabilidade()"
 							class="gt-btn-medium gt-btn-left" /></td>
+						<!-- 
+				<td align="right" width="10%"><input type="button"
+					value="Gerar Relatório" onclick="javascript:gerarRelatorio()" /></td>
+				 -->
 					</tr>
 				</table>
-				<form>
+				</ww:form>
 			</div>
 		</div>
 	</div>

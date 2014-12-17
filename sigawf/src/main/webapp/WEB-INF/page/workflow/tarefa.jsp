@@ -10,15 +10,18 @@
 						style="text-align: right;">&nbsp(${f:espera(taskInstance.create)})</span><br />
 						Tarefa: <a href="/sigawf/task.action?tiId=${task.taskInstance.id}"><span
 							style="font-weight: normal;">${task.taskInstance.task.name}</span>
-					</a> <c:if test="${not empty taskInstance.actorId}">
+					</a> <ww:if test="${not empty taskInstance.actorId}">
 						sendo atendida por <span style="font-weight: normal;">${taskInstance.actorId}</span>
-						</c:if> <c:if test="${empty taskInstance.actorId}">
+						</ww:if> <ww:else>
 						aguardando atendimento
 						<c:if
 								test="${wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance) == true}">
-								<a href="${linkTo[WorkflowController].pegar}?tiId=${taskInstance.id}">(pegar)</a>
+								<ww:url id="url" action="pegar">
+									<ww:param name="tiId">${taskInstance.id}</ww:param>
+								</ww:url>
+								<a href="${url}">(pegar)</a>
 							</c:if>
-						</c:if></td>
+						</ww:else></td>
 				</tr>
 				</c:when>
 				<c:otherwise>
@@ -29,6 +32,7 @@
 						</c:otherwise>
 						</c:choose>
 
+						<ww:url action="saveKnowledge" id="url"></ww:url>
 						<input type="hidden" value="${task.taskInstance.id}" name="tiId" />
 						<tr>
 							<td <c:if test="${task.conhecimentoEditavel}">rowspan="2"</c:if>>Descrição</td>
@@ -46,7 +50,7 @@
 									onclick="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display=''; " />
 									<input name="salvar_conhecimento" type="submit"
 									id="desc_but_gravar" value="Salvar" style="display: none"
-									onclick="javascript: this.form.action='${linkTo[WorkflowController].saveKnowledge}'; " /></td>
+									onclick="javascript: this.form.action='${url}'; " /></td>
 							</tr>
 						</c:if>
 
@@ -54,25 +58,23 @@
 							<c:if test="${not variable.aviso}">
 								<tr>
 									<c:if test="${(empty doc_ref) or (not (doc_ref eq taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]))}">
-											<c:choose>
-									<c:when test="${fn:startsWith(variable.mappedName,'sel_')}">
+									<ww:if test="%{#attr.variable.mappedName.startsWith('sel_')}">
 										<td width="">${fn:substring(variable.variableName,0,fn:indexOf(variable.variableName,'('))}</td>
-									</c:when>
-									<c:otherwise>
+									</ww:if>
+									<ww:else>
 										<td width="">${variable.variableName}</td>
-									</c:otherwise>
-									</c:choose>
+									</ww:else>
 
 									<td width=""><c:set var="editable"
 											value="${variable.writable and (variable.readable or empty taskInstance.token.processInstance.contextInstance.variables[variable.mappedName])}" />
 										<c:if test="${editable}">
 											<input name="fieldNames" type="hidden"
 												value="${variable.mappedName}" />
-										</c:if> <c:choose><c:when test="${fn:startsWith(variable.mappedName,'doc_')}">
+										</c:if> <ww:if test="%{#attr.variable.mappedName.startsWith('doc_')}">
 											<c:choose>
 												<c:when test="${editable}">
 													<siga:selecao propriedade="${variable.mappedName}"
-														modulo="/sigaex" tipo="expediente" tema="simple"
+														modulo="../sigaex" tipo="expediente" tema="simple"
 														ocultardescricao="sim"
 														siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
 												</c:when>
@@ -81,8 +83,8 @@
 														href="/sigaex/expediente/doc/exibir.action?sigla=${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}">${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}</a>
 												</c:otherwise>
 											</c:choose>
-										</c:when> <c:when
-											test="${fn:startsWith(variable.mappedName,'pes_')}">
+										</ww:if> <ww:elseif
+											test="%{#attr.variable.mappedName.startsWith('pes_')}">
 											<c:choose>
 												<c:when test="${editable}">
 													<siga:selecao propriedade="${variable.mappedName}"
@@ -94,8 +96,8 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 								</c:otherwise>
 											</c:choose>
-										</c:when>  <c:when
-											test="${fn:startsWith(variable.mappedName,'lot_')}">
+										</ww:elseif> <ww:elseif
+											test="%{#attr.variable.mappedName.startsWith('lot_')}">
 											<c:choose>
 												<c:when test="${editable}">
 													<siga:selecao propriedade="${variable.mappedName}"
@@ -107,8 +109,8 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 								</c:otherwise>
 											</c:choose>
-										</c:when>  <c:when
-											test="${fn:startsWith(variable.mappedName,'dt_')}">
+										</ww:elseif> <ww:elseif
+											test="%{#attr.variable.mappedName.startsWith('dt_')}">
 											<c:choose>
 												<c:when test="${editable}">
 													<input name="fieldValues" type="text"
@@ -120,8 +122,8 @@
 														value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
 												</c:otherwise>
 											</c:choose>
-										</c:when>  <c:when
-											test="${fn:startsWith(variable.mappedName,'sel_')}">
+										</ww:elseif> <ww:elseif
+											test="%{#attr.variable.mappedName.startsWith('sel_')}">
 											<c:choose>
 												<c:when test="${editable}">
 													<select name="fieldValues">
@@ -135,7 +137,7 @@
 										${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
 											</c:choose>
-										</c:when> <c:otherwise>
+										</ww:elseif> <ww:else>
 											<c:choose>
 												<c:when test="${editable}">
 													<input name="fieldValues" type="text"
@@ -145,8 +147,7 @@
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
 											</c:choose>
-										</c:otherwise>
-											</c:choose>
+										</ww:else>
 									</td>
 								</tr>
 								</c:if>
@@ -169,8 +170,7 @@
 						</td>
 						</tr>
 						<c:forEach var="variable" items="${task.variableList}">
-							
-							<c:if test="${fn:startsWith(variable.mappedName,'doc_')}">
+							<ww:if test="%{#attr.variable.mappedName.startsWith('doc_')}">
 								<!-- 							<c:if test="${variable.aviso}">  -->
 								<!-- 							</c:if>	-->
 								<c:if test="${not empty task.msgAviso}">
@@ -179,7 +179,7 @@
 											${task.msgAviso}</td>
 									</tr>
 								</c:if>
-							</c:if>
+							</ww:if>
 						</c:forEach>
 					</table>
 					</div>

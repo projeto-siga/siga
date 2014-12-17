@@ -1,31 +1,32 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <script type="text/javascript" language="Javascript1.1">
+	<ww:url id="url" action="emitirRelatorio"></ww:url>
 	function sbmt() {
-		frmRelatorio.action = '${linkTo[MedirController].relatorio}';
+		frmRelatorio.action = '<ww:property value="%{url}"/>';
 		frmRelatorio.submit();
 	}
 </script>
 
 <script type="text/javascript">
-	function exibirOpcoesExtras() {
-		if ($("#selecaoRelatorio").val() == '2'
-				|| $("#selecaoRelatorio").val() == '3') {
+	function exibirOpcoesExtras(){
+		if ($("#selecaoRelatorio").val() == '2' || $("#selecaoRelatorio").val() == '3'){
 			$("#opcoesExtras").show();
-		} else {
+		}else{
 			$("#opcoesExtras").hide();
 		}
-		if ($("#selecaoRelatorio").val() == '1') {
+		if ($("#selecaoRelatorio").val() == '1'){
 			$("#opcaoPercentualMediaTruncada").show();
-		} else {
+		}else{
 			$("#opcaoPercentualMediaTruncada").hide();
 		}
-		if ($("#selecaoRelatorio").val() == '3') {
+		if ($("#selecaoRelatorio").val() == '3'){
 			$("#opcaoGrupos").show();
-		} else {
+		}else{
 			$("#opcaoGrupos").hide();
 		}
-
+		
+		
 	}
 </script>
 
@@ -36,73 +37,67 @@
 			<div class="gt-content-box gt-for-table">
 				<form name="frmRelatorio" method="get" class="form">
 					<table class="gt-form-table">
-						<input type="hidden" name="pdId" value="${pdId}" />
-						<input type="hidden" name="orgao" value="${pdId}" />
-						<input type="hidden" name="procedimento" value="${procedimento}" />
+						<ww:hidden name="procedimento" value="${procedimento}" />
+						<ww:hidden name="pdId" value="${pdId}" />
+						<ww:label name="orgao" label="Órgão" value="${orgao}" />
+						<ww:label name="Procedimento" label="Procedimento"
+							value="${procedimento}" />
 						<tr>
-							<td>Órgão</td>
-							<td>${orgao}</td>
-						</tr>
-						<tr>
-							<td>Procedimento</td>
-							<td>${procedimento}</td>
-						</tr>
-						<tr>
-							<siga:select
-								list="#{'1':'Estatísticas gerais', '2':'Tempo de documentos','3':'Tempo de documentos detalhado'}"
-								label="Relatório" name="selecaoRelatorio"
-								onchange="javascript:exibirOpcoesExtras()" />
+							<ww:select list="#{'1':'Estatísticas gerais', '2':'Tempo de documentos','3':'Tempo de documentos detalhado'}" label="Relatório"
+								name="selecaoRelatorio" onchange="javascript:exibirOpcoesExtras()" >
+							</ww:select>
 						</tr>
 						<tr>
 							<td width="25%">Procedimento iniciado de:</td>
-							<td><input type="text" name="dataInicialDe"
-								onblur="javascript:verifica_data(this, true);comparaData(dataInicialDe,dataInicialAte);
+							<td><ww:textfield name="dataInicialDe"
+									onblur="javascript:verifica_data(this, true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe)"
-								size="12" maxlength="10" /> até <input type="text"
-								name="dataInicialAte"
-								onblur="javascript:verifica_data(this, true);comparaData(dataInicialDe,dataInicialAte);
+									theme="simple" size="12" maxlength="10" /> até <ww:textfield
+									name="dataInicialAte"
+									onblur="javascript:verifica_data(this, true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe)"
-								size="12" maxlength="10" /></td>
+									theme="simple" size="12" maxlength="10" /></td>
 						</tr>
 						<tr>
 							<td>Procedimento finalizado de:</td>
-							<td><input type="text" name="dataFinalDe"
-								onblur="javascript:verifica_data(this,true);comparaData(dataInicialDe,dataInicialAte);
+							<td><ww:textfield name="dataFinalDe"
+									onblur="javascript:verifica_data(this,true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe);"
-								size="12" maxlength="10" /> até <input type="text"
-								name="dataFinalAte"
-								onblur="javascript:verifica_data(this,true);comparaData(dataInicialDe,dataInicialAte);
+									theme="simple" size="12" maxlength="10" /> até <ww:textfield
+									name="dataFinalAte"
+									onblur="javascript:verifica_data(this,true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe);"
-								size="12" maxlength="10" /></td>
+									theme="simple" size="12" maxlength="10" /></td>
 						</tr>
-						<tr id="opcoesExtras" style="display: none">
-							<td><input type="checkbox" id="incluirAbertos"
-								name="incluirAbertos" style="float: left"
-								class="gt-form-checkbox"></input> <label>&nbsp;Incluir
-									Procedimentos Abertos</label></td>
+						<tr id="opcoesExtras" style="display: none" >
+							<td>
+								<input type="checkbox" id="incluirAbertos" name="incluirAbertos" style="float: left" class="gt-form-checkbox"></input>
+								<label>&nbsp;Incluir Procedimentos Abertos</label>
+							</td>
 						</tr>
-						<tr id="opcaoPercentualMediaTruncada">
-							<td><label>Percentual&nbsp;da&nbsp;Média&nbsp;Truncada
-									(entre ${minMediaTruncada}% e ${maxMediaTruncada}%):</label></td>
-							<td><input type="text" id="percentualMediaTruncada"
-								name="percentualMediaTruncada" style="float: left"
-								class="gt-form-text" value="${minMediaTruncada}"></input></td>
+						<tr id="opcaoPercentualMediaTruncada"  >
+							<td>
+								<label>Percentual&nbsp;da&nbsp;Média&nbsp;Truncada (entre ${minMediaTruncada}% e ${maxMediaTruncada}%):</label>
+							</td>
+							<td>
+								<input type="text" id="percentualMediaTruncada" name="percentualMediaTruncada" style="float: left" class="gt-form-text" value="${minMediaTruncada}"></input>
+							</td>
 						</tr>
-						<tr id="opcaoGrupos" style="display: none">
+						<tr id="opcaoGrupos"  style="display: none"  >
 							<td>Agrupar tarefas (opcional)</td>
-							<td><label>Tarefa inicial:</label> <siga:select id="grpIni"
-									name="grpIni" list="lstGruposIni" listValue="name" listKey="id"
-									headerKey="-1" headerValue="[Escolha uma tarefa]"
-									theme="simple"/> <label>Tarefa final:</label> <siga:select
-									id="grpFim" name="grpFim" list="lstGruposFim" listValue="name"
-									listKey="id" headerKey="-1" headerValue="[Escolha uma tarefa]"
-									theme="simple"/></td>
+							<td>
+								<label>Tarefa inicial:</label>
+								<ww:select id="grpIni" name="grpIni" list="lstGruposIni" listValue="name" listKey="id" headerKey="-1" headerValue="[Escolha uma tarefa]" theme="simple"></ww:select>
+								<label>Tarefa final:</label>
+								<ww:select id="grpFim" name="grpFim" list="lstGruposFim" listValue="name" listKey="id" headerKey="-1" headerValue="[Escolha uma tarefa]" theme="simple"></ww:select>
+							</td>
 						</tr>
-
+						
 						<tr>
 							<td colspan="2"><input type="button"
 								onclick="javascript:sbmt()" value="Gerar relatório"
-								class="gt-btn-medium gt-btn-left" /></td>
+								class="gt-btn-medium gt-btn-left" />
+							</td>
 						</tr>
 					</table>
 				</form>

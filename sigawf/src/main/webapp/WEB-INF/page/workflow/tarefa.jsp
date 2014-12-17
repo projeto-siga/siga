@@ -8,7 +8,7 @@
 					<td colspan="2">Procedimento: <span
 						style="font-weight: normal;">${taskInstance.task.processDefinition.name}</span><span
 						style="text-align: right;">&nbsp(${f:espera(taskInstance.create)})</span><br />
-						Tarefa: <a href="/sigawf/workflow/task?tiId=${task.taskInstance.id}"><span
+						Tarefa: <a href="/sigawf/task.action?tiId=${task.taskInstance.id}"><span
 							style="font-weight: normal;">${task.taskInstance.task.name}</span>
 					</a> <c:if test="${not empty taskInstance.actorId}">
 						sendo atendida por <span style="font-weight: normal;">${taskInstance.actorId}</span>

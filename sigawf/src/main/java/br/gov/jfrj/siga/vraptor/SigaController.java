@@ -141,7 +141,7 @@ public class SigaController {
 	}
 	
 	public int redirectToHome() {
-		result.redirectTo("/../siga/principal.action");
+		result.redirectTo("../siga/principal.action");
 		return 0;
 	}
 	

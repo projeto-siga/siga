@@ -14,7 +14,7 @@
 			<li><a href="#">Iniciar</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
-						<li><a href="${linkTo[WorkflowController].initializeProcess}?pdId=${pd.id}">${pd.name}</a>
+						<li><a href="${linkTo[WorkflowController].initializeProcess}?pdId=${pd.name}">${pd.name}</a>
 						</li>
 					</c:forEach>
 				</ul></li>

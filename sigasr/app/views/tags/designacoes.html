@@ -19,42 +19,43 @@
 		colunas.itemConfiguracao=				10;
 		colunas.acao=							11;
 		colunas.siglaAcao = 					12;
-		colunas.idAtendente = 					13;
-		colunas.descricaoAtendente = 			14;
-		colunas.atendente=						15;
-		colunas.idPreAtendente = 				16;
-		colunas.descricaoPreAtendente = 		17;
+		colunas.descrConfiguracao = 			13;
+		colunas.idAtendente = 					14;
+		colunas.descricaoAtendente = 			15;
+		colunas.atendente=						16;
+		colunas.idPreAtendente = 				17;
+		colunas.descricaoPreAtendente = 		18;
 		colunas.pre=							18;
-		colunas.idPosAtendente = 				19;
-		colunas.descricaoPosAtendente = 		20;
-		colunas.pos=							21;
-		colunas.idEqQualidade = 				22;
-		colunas.descricaoEqQualidade = 			23;
-		colunas.siglaEqQualidade = 				24;
-		colunas.idPesquisaSatisfacao = 			25;
-		colunas.descricaoPesquisaSatisfacao = 	26;
-		colunas.slaPreAtendimento = 			27;
-		colunas.idUndMedPre=					28;
-		colunas.slaAtendimento = 				29;
-		colunas.idUnMedAt	=					30;
-		colunas.slaPosAtendimento = 			31;
-		colunas.idUnMedPos= 					32;
-		colunas.margemSeguranca = 				33;
-		colunas.divulgarSLA = 					34;
-		colunas.obsSLA =						35;
-		colunas.notificaGestor	=				36;
-		colunas.notificaSolicitante=			37;
-		colunas.notificaCadastrante=			38;
-		colunas.notificaInterlocutor=			39;
-		colunas.notificaAtendente=				40;
-		colunas.jSonDesignacao= 				41;
-		colunas.listasPrioridadeHtml= 			42;
-		colunas.idDesignacao= 					43;
-		colunas.herdado= 						44;
-		colunas.utilizarHerdado= 				45;
-		colunas.listasSerializadas= 			46;
-		colunas.reativarDesativar=				47;
-		colunas.ativo=							48;
+		colunas.idPosAtendente = 				20;
+		colunas.descricaoPosAtendente = 		21;
+		colunas.pos=							22;
+		colunas.idEqQualidade = 				23;
+		colunas.descricaoEqQualidade = 			24;
+		colunas.siglaEqQualidade = 				25;
+		colunas.idPesquisaSatisfacao = 			26;
+		colunas.descricaoPesquisaSatisfacao = 	27;
+		colunas.slaPreAtendimento = 			28;
+		colunas.idUndMedPre=					29;
+		colunas.slaAtendimento = 				30;
+		colunas.idUnMedAt	=					31;
+		colunas.slaPosAtendimento = 			32;
+		colunas.idUnMedPos= 					33;
+		colunas.margemSeguranca = 				34;
+		colunas.divulgarSLA = 					35;
+		colunas.obsSLA =						36;
+		colunas.notificaGestor	=				37;
+		colunas.notificaSolicitante=			38;
+		colunas.notificaCadastrante=			39;
+		colunas.notificaInterlocutor=			40;
+		colunas.notificaAtendente=				41;
+		colunas.jSonDesignacao= 				42;
+		colunas.listasPrioridadeHtml= 			43;
+		colunas.idDesignacao= 					44;
+		colunas.herdado= 						45;
+		colunas.utilizarHerdado= 				46;
+		colunas.listasSerializadas= 			47;
+		colunas.reativarDesativar=				48;
+		colunas.ativo=							49;
 
 	
 	//removendo a referencia de '$' para o jQuery
@@ -104,6 +105,8 @@
 							colunas.tipoSolicitante, 
 							colunas.idSolicitante, 
 							colunas.descricaoSolicitante, 
+							colunas.itemConfiguracao,
+							colunas.acao,
 							colunas.siglaAcao, 
 							colunas.idAtendente, 
 							colunas.descricaoAtendente, 
@@ -163,15 +166,15 @@
 		$('#designacoes_table tbody').on('click', 'tr', function () {
 			var itemSelecionado = designacoesTable.api().row(this).data();
 			
-			manipulaItemSelecionado(itemSelecionado, false);
+			manipulaItemSelecionado(itemSelecionado, false, this);
 		});
 	});
 
-	function manipulaItemSelecionado(itemSelecionado, duplicarItem) {
+	function manipulaItemSelecionado(itemSelecionado, duplicarItem, parent) {
 		if (itemSelecionado != undefined) {
-			if (!$(this).hasClass('selected') ) {
+			if (!$(parent).hasClass('selected') ) {
 	            designacoesTable.$('tr.selected').removeClass('selected');
-	            $(this).addClass('selected');
+	            $(parent).addClass('selected');
 	        }
 
 			// só abre o modal caso seja click em alguma designação 'não-herdada'
@@ -188,15 +191,22 @@
 
 	function detalhesDesignacao(d) {
 		var designacao = typeof d[colunas.jSonDesignacao] == 'string' ? JSON.parse(d[colunas.jSonDesignacao]) : d[colunas.jSonDesignacao],
-				tr = $('<tr class="detail">'),
-				td = $('<td colspan="10">'),
-				table  = $('<table>'),
-				trItens = $('<tr>'),
-				trAcoes = $('<tr>');
+			tr = $('<tr class="detail">'),
+			td = $('<td colspan="10">'),
+			table  = $('<table>'),
+			trDescricao = $('<tr>'),
+			tdDescricao = $('<td>'),
+			trItens = $('<tr>'),
+			trAcoes = $('<tr>'),
+			descricao = designacao.descrConfiguracao != undefined ? designacao.descrConfiguracao : '';
 
-		detalheLista("Itens de configuração:", designacao.listaItemConfiguracaoVO, trItens);
-		detalheLista("Ações:", designacao.listaAcaoVO, trAcoes);
+		detalheLista("<b>Itens de configuração:</b>", designacao.listaItemConfiguracaoVO, trItens);
+		detalheLista("<b>Ações:</b>", designacao.listaAcaoVO, trAcoes);
 
+		tdDescricao.html('<b>Descrição:</b> ' + descricao);
+		trDescricao.append(tdDescricao);
+
+		table.append(trDescricao);
 		table.append(trItens);
 		table.append(trAcoes);
 		
@@ -302,9 +312,6 @@
 	
 	// Limpa os dados da tela.
 	function limparDadosDesignacaoModal() {
-		
-		unblock();
-		
 		// recupera as comboboxes
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0],
@@ -342,6 +349,7 @@
 		$("#cargoSpan").html('');
 			
 		// limpando os valores dos demais campos
+		$("#descrConfiguracao").val('');
 		$("#acao").val('');
 		$("#acao_descricao").val('');
 		$("#acao_sigla").val('');
@@ -418,6 +426,7 @@
 		jUnMedPosAtendimentoCbb.selectedIndex = findSelectedIndexByValue(jUnMedPosAtendimentoCbb, itemArray[colunas.idUnMedPos]);
 		
 		// atualiza os valores dos demais campos
+		$("#descrConfiguracao").val(itemArray[colunas.descrConfiguracao]);
 		$("#acao").val(itemArray[colunas.itemConfiguracao]);
 		$("#acao_descricao").val(itemArray[colunas.acao]);
 		$("#acao_sigla").val(itemArray[colunas.siglaAcao]);
@@ -567,6 +576,7 @@
           			getDescricaoItemConfiguracao(),
           			getDescricaoAcao(),
 		            getDescricaoAcao(),
+		            $("#descrConfiguracao").val(),
           			$("#atendente").val(),
           			$("#atendente_descricao").val(),
           			$("#atendente_sigla").val(),
@@ -654,6 +664,8 @@
                 		reativarDesignacao(event, id);
                		}
            		});
+
+        		unblock();
         	},
         	error: function(error) {
         		var fieldsError = error.responseText.split(";");
@@ -670,6 +682,8 @@
         			if (fooElement != undefined)
         				fooElement.style.display = "inline";
         		}
+
+        		unblock();
         	}
        	});
 	};
@@ -709,6 +723,7 @@
 	//Limpa as mensagens de campos obrigatórios.
 	function resetAllErrorMessage() {
 		document.getElementById("erroCamposObrigatorios").style.display="none";
+		document.getElementById("designacao.descrConfiguracao").style.display="none";
 		document.getElementById("designacao.itemConfiguracao").style.display="none";
 		document.getElementById("designacao.acao").style.display="none";
 		document.getElementById("designacao.atendente").style.display="none";
@@ -859,26 +874,14 @@
     		
 		// valida o item selecionado
 		if (rowValues) {
-			//if (rowValues[colunas.idOrgao] != '' && rowValues[colunas.idOrgao] > 0)
-				params += '&designacao.orgaoUsuario=' + rowValues[colunas.idOrgao];
-			
-			//if (rowValues[colunas.idLocal] != '' && rowValues[colunas.idLocal] > 0)
-				params += '&designacao.complexo=' + rowValues[colunas.idLocal];
-			
-			//if (rowValues[colunas.idAtendente] != '')
-	            params += '&designacao.atendente=' + rowValues[colunas.idAtendente];
-			
-			//if (rowValues[colunas.idPreAtendente] != '')
-	            params += '&designacao.preAtendente=' + rowValues[colunas.idPreAtendente];
-			
-			//if (rowValues[colunas.idPosAtendente] != '')
-	            params += '&designacao.posAtendente=' + rowValues[colunas.idPosAtendente];
-			
-			//if (rowValues[colunas.idEqQualidade] != '')
-	            params += '&designacao.equipeQualidade=' + rowValues[colunas.idEqQualidade];
-			
-			//if (rowValues[colunas.idPesquisaSatisfacao] != '' && rowValues[colunas.idPesquisaSatisfacao] > 0)
-				params += '&designacao.pesquisaSatisfacao=' + rowValues[colunas.idPesquisaSatisfacao];
+			params += '&designacao.descrConfiguracao=' + rowValues[colunas.descrConfiguracao];
+			params += '&designacao.orgaoUsuario=' + rowValues[colunas.idOrgao];
+			params += '&designacao.complexo=' + rowValues[colunas.idLocal];
+            params += '&designacao.atendente=' + rowValues[colunas.idAtendente];
+            params += '&designacao.preAtendente=' + rowValues[colunas.idPreAtendente];
+            params += '&designacao.posAtendente=' + rowValues[colunas.idPosAtendente];
+            params += '&designacao.equipeQualidade=' + rowValues[colunas.idEqQualidade];
+			params += '&designacao.pesquisaSatisfacao=' + rowValues[colunas.idPesquisaSatisfacao];
 			
 			if (rowValues[colunas.slaPreAtendimento] != '')
 				params += '&designacao.slaPreAtendimentoQuantidade=' + rowValues[colunas.slaPreAtendimento];
@@ -1104,6 +1107,7 @@
 					<th>Item Configuração</th>
 					<th>Ação</th>
 					<th>Sigla Ação</th>
+					<th>Descrição</th>
 					<th>ID Atendente</th>
 					<th>Descr. Atendente</th>
 					<th>Atendente</th>
@@ -1161,6 +1165,7 @@
 					<td>${design.descrItemConfiguracaoAtual }</td>
 					<td>${design.descrAcaoAtual }</td>
 					<td>${design.descrAcaoAtual }</td>
+					<td>${design.descrConfiguracao}</td>
 					<td>${design.atendente?.lotacaoAtual?.id }</td>
 					<td>${design.atendente?.lotacaoAtual?.nomeLotacao }</td>
 					<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td>

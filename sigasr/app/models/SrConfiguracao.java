@@ -45,8 +45,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Column(name = "FORMA_ACOMPANHAMENTO")
 	public SrFormaAcompanhamento formaAcompanhamento;
 
-	//@ManyToOne
-	//@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
 	@Transient
 	public SrItemConfiguracao itemConfiguracaoFiltro;
 
@@ -54,8 +52,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
 	public List<SrItemConfiguracao> itemConfiguracaoSet;
 	
-	//@ManyToOne
-	//@JoinColumn(name = "ID_ACAO")
 	@Transient
 	public SrAcao acaoFiltro;
 	

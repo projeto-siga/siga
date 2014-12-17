@@ -187,7 +187,7 @@
 	}
 	
 	function inserirItemConfiguracao() {
-		var idSelecionado = $("#acao").val();
+		var idSelecionado = $("#itemConfiguracao").val();
 		
 		if (idSelecionado == undefined || idSelecionado == '') {
 			alert("Por favor, selecione um item de configuração antes de continuar, ou clique em Cancelar.");
@@ -241,7 +241,7 @@
 		event.stopPropagation();
 		var itemSelecionado = designacoesTable.api().row(tr).data();
 
-		manipulaItemSelecionado(itemSelecionado, true);
+		manipulaItemSelecionado(itemSelecionado, true, tr);
 	}
 
 	function resetId() {
@@ -252,6 +252,16 @@
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 	<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
 	<div>
+		<div class="gt-form-row">
+			<label>Descrição</label>
+			<input id="descrConfiguracao"
+				   type="text"
+				   name="descrConfiguracao"
+				   value="${descrConfiguracao}"
+				   maxlength="255"
+				   style="width: 791px;"/> 
+			<span style="display:none;color: red" id="designacao.descrConfiguracao">Descrição não informada.</span>
+		</div>
 		<div class="gt-form-row box-wrapper">
 			<div id="divSolicitante" class="box box-left gt-width-50">
 				<label>Solicitante</label>

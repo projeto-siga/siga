@@ -359,6 +359,9 @@ public class Application extends SigaApplication {
 			validation.addError("designacao.equipeQualidade",
 					"Equipe de qualidade n&atilde;o informada.");
 		}
+		
+		if (designacao.getDescrConfiguracao() == null || designacao.getDescrConfiguracao().isEmpty())
+			validation.addError("designacao.descrConfiguracao", "Descrição não informada");
 
 		for (play.data.validation.Error error : validation.errors()) {
 			sb.append(error.getKey() + ";");

@@ -46,7 +46,7 @@ public class WfController extends SigaController {
 		return processDefinitions;
 	}
 
-	protected void assertAcesso(String pathServico) throws AplicacaoException,
+	public void assertAcesso(String pathServico) throws AplicacaoException,
 			Exception {
 		so.assertAcesso("WF:Módulo de Workflow;" + pathServico);
 	}
@@ -140,5 +140,7 @@ public class WfController extends SigaController {
 
 		return resultado;
 	}
+
+
 
 }

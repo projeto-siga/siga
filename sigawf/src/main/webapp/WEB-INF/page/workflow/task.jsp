@@ -8,7 +8,7 @@
 				<div id="desc_editar" style="display: none;">
 					<h3>Descrição da Tarefa</h3>
 					<div class="gt-form gt-content-box">
-						<form method="POST" action="${linkTo[AppController].saveKnowledge}">
+						<form method="POST" action="${linkTo[WorkflowController].saveKnowledge}">
 							<input name="tiId" type="hidden" value="${tiId}" />
 							<div class="gt-form-row gt-width-100">
 								<label>Descrição</label>
@@ -27,7 +27,7 @@
 			</c:if>
 
 			<!-- Adicionando a lista de Tarefas -->
-			<form method="POST" action="${linkTo[AppController].executeTask}">
+			<form method="POST" action="${linkTo[WorkflowController].executeTask}">
 				<h3>Execução da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<div style="margin:10px;" >
@@ -181,7 +181,7 @@
 				test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance))}">
 				<h3 class="gt-form-head">Designaçao da Tarefa</h3>
 				<div class="gt-form gt-content-box">
-					<form method="POST" action="${linkTo[AppController].assignTask}">
+					<form method="POST" action="${linkTo[WorkflowController].assignTask}">
 						<input name="tiId" type="hidden" value="${tiId}" />
 						<div class="gt-form-row gt-width-100">
 							<label>Pessoa</label>
@@ -214,7 +214,7 @@
 								class="gt-btn-medium gt-btn-left" />
 							<c:if test="${empty taskInstance.actorId}">
 								<input type="button" value="Pegar tarefa para mim"
-									onclick="javascript:window.location.href='${linkTo[AppController].pegar}?tiId=${taskInstance.id}'"
+									onclick="javascript:window.location.href='${linkTo[WorkflowController].pegar}?tiId=${taskInstance.id}'"
 									class="gt-btn-large gt-btn-left">
 							</c:if>
 						</div>
@@ -246,7 +246,7 @@
 					</table>
 				</div>
 				<div class="gt-form gt-content-box">
-					<form method="POST" action="${linkTo[AppController].commentTask}">
+					<form method="POST" action="${linkTo[WorkflowController].commentTask}">
 						<input name="tiId" type="hidden" value="${tiId}" /> <label>Comentário</label>
 						<div class="gt-form-row gt-width-100">
 							<input type="text" size="80" name="comentario"

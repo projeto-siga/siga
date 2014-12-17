@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/page/include.jsp"%>
+
 #{extends 'main.html' /} #{set title:'Informações' /} 
 #{set 'metaTypeIE'} 
 	 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" >
@@ -107,7 +109,7 @@
 		<h3>Estatísticas - ${lotacao.descricaoIniciaisMaiusculas}</h3><br />
 		<div class="gt-left-col">
 			<h2>Conhecimentos Mais Recentes</h2>
-			#{if listaMaisRecentes != null}
+			<c:if test="${listaMaisRecentes != null}
 			<div class="gt-content-box gt-for-table">
 				<table border="0" class="gt-table gt-user-table">
 					<thead>
@@ -136,7 +138,7 @@
 
 			<!--  -->
 			<h2>Conhecimentos Mais Acessados</h2>
-			#{if listaMaisVisitados != null}
+			<c:if test="${listaMaisVisitados != null}
 			<div class="gt-content-box gt-for-table">
 				<table border="0" class="gt-table gt-user-table">
 					<thead>
@@ -164,7 +166,7 @@
 			#{/else}
 			<br />
 			<h2>Principais Classificações</h2>
-			#{if cloud.size() > 0}
+			<c:if test="${cloud.size() > 0}
 			<div class="gt-content-box gt-tag-cloud">
 				#{list items:cloud.tags(),as:'tag'}
 					<a href="${tag.getLink()}" style="font-size: ${tag.getWeight()}%;">${tag.getName()}</a>
@@ -176,7 +178,7 @@
 		</div>
 		<div class="gt-right-col">
 			<h2>Principais Autores</h2>
-			#{if listaPrincipaisAutores != null}
+			<c:if test="${listaPrincipaisAutores != null}
 			<div class="gt-content-box gt-for-table">
 				<table class="gt-table gt-user-table">
 					<thead>

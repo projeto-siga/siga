@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/page/include.jsp"%>
+
 #{extends 'Application/exibir_base.html' /} #{set title:'Histórico de
 Alterações'/}
 
@@ -30,7 +32,7 @@ Alterações'/}
 						title="${m.hisIdcIni.pessoaAtual.descricao}">${m.hisIdcIni.pessoaAtual.nomeAbreviado}</span>
 					</td>
 					<td style="width: 80%;">
-						<!-- Título -->#{if mapTitulo.containsKey(m)}
+						<!-- Título --><c:if test="${mapTitulo.containsKey(m)}
 						<h4>${mapTitulo.get(m).raw()}</h4>#{/if} <!-- Conteúdo -->#{if
 						mapTxt.containsKey(m)}${mapTxt.get(m).raw()}#{/if}</td>
 				</tr>

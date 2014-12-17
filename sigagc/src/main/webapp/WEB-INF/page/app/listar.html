@@ -1,75 +1,13 @@
-#{extends 'main.html' /} #{set title:'Informações' /}
-#{ set 'moreHead'}
-<script type="text/javascript">
-		$(document).ready(function(){
-			//adiciona uma dica para o preenchimento - número do conhecimento
-			$("#dicaNumero").hide();
-			$("[id^='imgMinus-']").hide();
-			$("[class^='status-']").hide();
-			$(".status-0").show();
-			$("#filtronumero").focus(function (){
-				$("#dicaNumero").show("fast");
-			})
-			.focusout(function(){
-				$("#dicaNumero").hide("fast");
-			});	
+<%@ include file="/WEB-INF/page/include.jsp"%>
 
-			$("[id^='imgMinus-'],[id^='imgPlus-']").mouseenter(function(){
-				$(this).css({"cursor": "pointer","opacity":"0.8","filter":"alpha(opacity=70)"});
-			}).mouseleave(function(){
-				$(this).css({"cursor": "default","opacity":"1","filter":"alpha(opacity=100)"});
-			});
-			$("[id^='imgMinus-']").click(function(){	
-				var idImg = $(this).attr("id");
-				var id = idImg.split("-")[1];
-				$(this).hide("fast");
-				$("#imgPlus-" + id).show("fast");
-				$(".status-" + id).hide("fast");	
-			});		
-			$("[id^='imgPlus-']").click(function(){	
-				var idImg = $(this).attr("id");
-				var id = idImg.split("-")[1];
-				$(this).hide("fast");
-				$("#imgMinus-" + id).show("fast");
-				$(".status-" + id).show("fast");	
-			});	
-			$("#btn-clear").click(function(){	
-				$("#selectSituacao").val('');
-				$("#selectOrgao").val('');
-				$("#selectTipo").val('');
-				$("#selectAno").val('');
-								
-				//$("#filtroautorfiltrolotacao").val('');
-				//$("#filtroresponsavelfiltrolotaResponsavel").val('');
-							
-				$("#filtrolotacaoSpan").empty();
-				$("#filtrolotaResponsavelSpan").empty();
-				$("#filtrotagSpan").empty();
+<siga:pagina titulo="Informações">
 
-				$("#filtrolotacao_sigla").val('');
-				$("#filtrolotaResponsavel_sigla").val('');
-				$("#filtrotag_sigla").val('');
-				
-				$("#filtronumero").val('');
-				$("#dtIniString").val('');
-				$("#dtFimString").val('');
-				$("#dtSituacaoIniString").val('');
-				$("#dtSituacaoFimString").val('');
-				$("#titulo").val('');
-				$("#conteudo").val('');
-				$("#descrMarcador").val('');			
-			});	
-		});
-</script>
-<style>
-	.gt-table-lista tr td{border-top: 1px solid #ccc !important;}
-	.gt-table-lista tr:first-child td {border:none !important;}
-</style>
-#{/set}#{set count: 0 /}
+<c:set var="count" value="${0}"/>
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<h2>Pesquisa de Conhecimentos</h2>
-		#{if lista.size != 0} 
+		<c:choose>
+		<c:when test="${lista.size != 0}"> 
 		<div class="gt-content-box gt-for-table">
 			<table class="gt-table">
 				<thead>
@@ -112,8 +50,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					#{set k: 1 /}
-					#{list items:lista, as:'i'}
+					<c:set var="k" value="${1}"/>
+					<c:forEach items="${lista}" var="i">
 					<tr class="even">
 						<td style="width:12% !important;"><a href="@{Application.exibir(i.sigla)}">${i.sigla}</a></td>
 						<td style="width:10%!important;">${i.dtIniString}</td>
@@ -124,50 +62,52 @@
 						</td>
 						<td style="padding:0; width:30%!important;">
 							<table class="gt-table-lista">
-								#{set cont: 0 /}
-								#{list items:i.marcas, as:'m'}
-								#{if filtro?.situacao?.idMarcador == m.cpMarcador.idMarcador || filtro?.situacao?.idMarcador == null}
-									#{set j = cont == 0 ? 0 : k /}
+								<c:set var="cont" value="${0}"/>
+								<c:forEach items="${marcas}" var="m">
+								<c:if test="${filtro.situacao.idMarcador == m.cpMarcador.idMarcador || filtro.situacao.idMarcador == null}">
+									<c:set var="j" value="${cont == 0 ? 0 : k}"/>
 									<tr class="status-${j}">
 										<td style="width:73px!important;">${m.dtIniMarcaDDMMYYYY}</td>
 										<td style="width:50px!important;">
-											<span title="${m.dpLotacaoIni?.descricao}">${m.dpLotacaoIni?.sigla}</span>
+											<span title="${m.dpLotacaoIni?.descricao}">${m.dpLotacaoIni.sigla}</span>
 										</td>
 										<td style="width:50px!important;">
-											<span title="${m.dpPessoaIni?.descricao}">${m.dpPessoaIni?.sigla}</span>
+											<span title="${m.dpPessoaIni?.descricao}">${m.dpPessoaIni.sigla}</span>
 										</td style="width:20%!important;">
 										<td>${m.cpMarcador.descrMarcador}</td>
 									</tr>
-									#{set cont: cont + 1 /}
-								#{/if}
-								#{/list}
+									<c:set var="cont" value="${cont + 1}"/>
+									</c:if>
+								</c:forEach>
 							</table>
 						</td>
 						<td style="width:11%!important;">${i.tipo.nome}</td>
 						<td>
-							<a href="@{Application.exibir(i.sigla)}">${i.arq.titulo}</a>
+							<a href="${linkTo[AppController].exibir[i.sigla]}">${i.arq.titulo}</a>
 						</td>
 						<td width="2%">
-								#{if cont > 1}
+								<c:if test="${cont > 1}">
 									<img style="width: 13px;" id="imgPlus-${k}"  src="/siga/css/famfamfam/icons/plus_toggle.png" alt="mais" title="Ver Detalhes" />
 									<img style="width: 13px;" id="imgMinus-${k}" src="/siga/css/famfamfam/icons/minus_toggle.png" alt="menos" title="Ocultar Detalhes"/>	
-								#{/if}
+								</c:if>
 						</td>
 					</tr>
-					#{set k: k++ /} 
-					#{/list}
+					<c:set var="k" value="${k + 1}"/>
+					</c:forEach>
 				</tbody>
 			</table>
 		</div>
-		#{/if}
-		#{elseif filtro?.pesquisa}
+		</c:when>
+		<c:when test="${filtro.pesquisa}">
 			<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
-		#{/elseif}
-		#{set count: estatistica - lista.size() /}
-		#{if count > 0} 
+		</c:when>
+		</c:choose>
+		<c:set var="count" value="${estatistica - lista.size()}"/>
+		<c:if test="${count > 0}"> 
 			<br />	
 			<h6 style="background:#d8d8c0;padding:3px 10px;">${count} Conhecimento${count.pluralize()} fo${count.pluralize('i','ram')} Cancelado${count.pluralize()}, por isso não const${count.pluralize('a','am')} no resultado acima.</h6>
-		#{/if} #{set count: 0 /}
+		</c:if>
+		<c:set var="count" value="${0}"/>
 		<!-- </table></div> -->
 		<br>
 		<div class="gt-content-box gt-for-table">
@@ -297,10 +237,72 @@
 			</form>
 		</div>
 	</div>
-	*{<br /> <input type="button" value="Novo"
-		onclick="javascript: window.location='@{Application.editar(0)}';"
-		class="gt-btn-medium gt-btn-right" />
-	}*
 </div>
 
+<script type="text/javascript">
+		$(document).ready(function(){
+			//adiciona uma dica para o preenchimento - número do conhecimento
+			$("#dicaNumero").hide();
+			$("[id^='imgMinus-']").hide();
+			$("[class^='status-']").hide();
+			$(".status-0").show();
+			$("#filtronumero").focus(function (){
+				$("#dicaNumero").show("fast");
+			})
+			.focusout(function(){
+				$("#dicaNumero").hide("fast");
+			});	
+
+			$("[id^='imgMinus-'],[id^='imgPlus-']").mouseenter(function(){
+				$(this).css({"cursor": "pointer","opacity":"0.8","filter":"alpha(opacity=70)"});
+			}).mouseleave(function(){
+				$(this).css({"cursor": "default","opacity":"1","filter":"alpha(opacity=100)"});
+			});
+			$("[id^='imgMinus-']").click(function(){	
+				var idImg = $(this).attr("id");
+				var id = idImg.split("-")[1];
+				$(this).hide("fast");
+				$("#imgPlus-" + id).show("fast");
+				$(".status-" + id).hide("fast");	
+			});		
+			$("[id^='imgPlus-']").click(function(){	
+				var idImg = $(this).attr("id");
+				var id = idImg.split("-")[1];
+				$(this).hide("fast");
+				$("#imgMinus-" + id).show("fast");
+				$(".status-" + id).show("fast");	
+			});	
+			$("#btn-clear").click(function(){	
+				$("#selectSituacao").val('');
+				$("#selectOrgao").val('');
+				$("#selectTipo").val('');
+				$("#selectAno").val('');
+								
+				//$("#filtroautorfiltrolotacao").val('');
+				//$("#filtroresponsavelfiltrolotaResponsavel").val('');
+							
+				$("#filtrolotacaoSpan").empty();
+				$("#filtrolotaResponsavelSpan").empty();
+				$("#filtrotagSpan").empty();
+
+				$("#filtrolotacao_sigla").val('');
+				$("#filtrolotaResponsavel_sigla").val('');
+				$("#filtrotag_sigla").val('');
+				
+				$("#filtronumero").val('');
+				$("#dtIniString").val('');
+				$("#dtFimString").val('');
+				$("#dtSituacaoIniString").val('');
+				$("#dtSituacaoFimString").val('');
+				$("#titulo").val('');
+				$("#conteudo").val('');
+				$("#descrMarcador").val('');			
+			});	
+		});
+</script>
+<style>
+	.gt-table-lista tr td{border-top: 1px solid #ccc !important;}
+	.gt-table-lista tr:first-child td {border:none !important;}
+</style>
+</siga:pagina>
 

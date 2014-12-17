@@ -14,6 +14,11 @@
 			<taglib-location>/WEB-INF/tags/func.tld</taglib-location>
 		</taglib>
 	</jsp-config>
+	
+	
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
+	</listener>
 
 	<welcome-file-list>
 		<welcome-file>app/inbox</welcome-file>
@@ -41,7 +46,7 @@
 	<!-- Inicio de WebServer -->
 	<context-param>
 	    <param-name>br.com.caelum.vraptor.provider</param-name>
-	    <param-value>br.com.caelum.vraptor.ioc.pico.PicoProvider</param-value>
+	    <param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
 	</context-param>	
 	
 	<context-param>

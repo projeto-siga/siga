@@ -1,78 +1,31 @@
-#{extends 'main.html' /} #{set title:'Edição de Tópico de Informação' /}
+<%@ include file="/WEB-INF/page/include.jsp"%>
 
-<script>			
-function postback(){
-	var frm = document.getElementById('frm');
-	frm.action = '@{Application.editar}';
-	frm.submit();
-}
-</script>
+<siga:pagina titulo="Edição de Tópico de Informação">
 
 <div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
 		<h2>
-			<span id="codigoInf">${informacao?.sigla}</span>
+			<span id="codigoInf">${informacao.sigla}</span>
 		</h2>
 
 		<div class="gt-form gt-content-box">
-			<form id="frm" action="@{Application.gravar}" method="POST">
-				<input type="hidden" id="infoId" name="informacao.id" value="${informacao?.id}" />
+			<form id="frm" action="${linkTo[AppController].gravar}" method="POST">
+				<input type="hidden" id="infoId" name="informacao.id" value="${informacao.id}" />
 				<input type="hidden" name="origem" value="${origem}" /> 
-				<input type="hidden" id="siglaId" name="sigla" value="${informacao?.sigla}" /> 
-				*{
-				<div class="gt-form-row gt-width-100">
-					<label>Tópico pai:</label> #{selecao tipo:'pessoa',
-					nome:'informacao.informacaoPai', value:informacao?.informacaoPai /}
-					<span style="color: red">#{error 'informacao.informacaoPai'
-						/}</span>
-				</div>
-				}*
+				<input type="hidden" id="siglaId" name="sigla" value="${informacao.sigla}" /> 
 				<div class="gt-form-row gt-width-100">
 					<div class="gt-left-col gt-width-25" style="margin-right: 2em">
-						<label>Tipo</label>#{select name:'tipo.id',
-						items:tiposInformacao, labelProperty:'nome', valueProperty:'id',
-						value:tipo?.id, onchange:'postback();'} #{/select}
+						<siga:select label="Tipo" name="tipo.id" list="${tiposInformacao}" listKey="id" listValue="nome" onchange="postback();"/>
 					</div>
-					#{if informacao.edicao?.id == null || 
-						informacao.acessoPermitido(titular,lotaTitular, informacao.edicao?.id)}
+					<c:if test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)">
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<label>Visualizacão</label>#{select name:'informacao.visualizacao',
-						items:acessos, labelProperty:'nome', valueProperty:'id',
-						value:informacao.visualizacao?.id} #{/select}
-
+						<siga:select label="Visualizacão" name="informacao.visualizacao" list="${acessos}" listKey="id" listValue="nome"/>
 					</div>
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<label>Edição</label>#{select name:'informacao.edicao',
-						items:acessos, labelProperty:'nome', valueProperty:'id',
-						value:informacao.edicao?.id} #{/select}
-
+						<siga:select label="Edicão" name="informacao.edicao" list="${acessos}" listKey="id" listValue="nome"/>
 					</div>
 					#{/if}
-					*{
-					<div class="gt-left-col gt-width-25">
-						<label>Data Início</label><input type="text" name="dtDocString"
-							size="10" value="" id="frm_dtDocString"
-							onblur="javascript:verifica_data(this, true);">
-					</div>
-					<div class="gt-left-col gt-width-25">
-						<label>Data Fim</label><input type="text" name="dtDocString"
-							size="10" value="" id="frm_dtDocString"
-							onblur="javascript:verifica_data(this, true);">
-					</div>
-					}*
-
 				</div>
-				*{<div class="gt-form-row gt-width-100">
-					<label>Responsável</label> #{selecao tipo:'pessoa',
-					nome:'informacao.autor', value:informacao.autor /} <span
-						style="color: red">#{error 'informacao.autor' /}</span>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>Lotação Responsável</label> #{selecao tipo:'lotacao',
-					nome:'informacao.lotacao', value:informacao.lotacao /} <span
-						style="color: red">#{error 'informacao.lotacao' /}</span>
-				</div>}*
-
 
 				<div class="gt-form-row gt-width-100">
 					<label>Título</label> <input type="text" id="titulo" name="titulo"
@@ -89,12 +42,12 @@ function postback(){
 
 				<div class="gt-form-row gt-width-100">
 					<label>Classificação</label>
-					#{if classificacao != null}
+					<c:if test="${not empty classificacao}">
 						<textarea name="classificacao" class="gt-form-text" readonly>${classificacao}</textarea> 
-					#{/if}
-					#{else}
+					</c:if>
+					<c:if test="${empty classificacao}">
 						<p>Esse conhecimento ainda não possui uma classificação</p>
-					#{/else}
+					</c:if>
 					<span style="color: red">#{error 'classificacao' /}</span>
 				</div>
 
@@ -104,11 +57,15 @@ function postback(){
 						class="gt-btn-medium gt-btn-left" style="cursor: pointer;"/>
 					
 					<p class="gt-cancel">
-						#{if informacao != null && informacao.id != null && informacao.id != 0}
-							ou <a href="@{Application.editar(informacao?.sigla)}">cancelar alterações</a>
-							ou <a href="@{Application.movimentacoes(informacao?.sigla)}">exibir movimentações</a> 
-						#{/if}
-						#{else}<a href="@{Application.editar}">cancelar alterações</a>#{/else}
+						<c:choose>
+							<c:when test="not empty informacao && not empty informacao.id && informacao.id != 0}">
+								ou <a href="@{Application.editar(informacao?.sigla)}">cancelar alterações</a>
+								ou <a href="@{Application.movimentacoes(informacao?.sigla)}">exibir movimentações</a> 
+							</c:when>
+							<c:otherwise>
+								<a href="@{Application.editar}">cancelar alterações</a>
+							</c:otherwise>
+						</c:choose>
 					</p>
 				</div>
 			</form>
@@ -122,31 +79,29 @@ function postback(){
 				de acesso selecionado.</p>
 							
 			<div id="ajax_arquivo">
-				#{if informacao.contemArquivos}
+				<c:if test="${informacao.contemArquivos}">
 					<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no Texto</h3>
 					<p>Clique em uma imagem/arquivo abaixo para incluir uma
 						referência no texto.</p>
-					#{list items:informacao.movs, as:'m'} 
-					#{if m.tipo.id == models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO &&
-						m.movCanceladora == null}
-					<p>
-						<img style="margin-bottom: -4px;" src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
-						<a style="padding-right:5px;"
-							href="javascript: var frm = document.getElementById('frm'); #{if m.arq.image}insertImageAtCursor(${m.arq.id},'${m.arq.titulo}');#{/if}#{else}insertFileAtCursor(${m.arq.id},'${m.arq.titulo}');#{/else}">${m.arq.titulo}</a>
-						[ <img style="margin-bottom: -1px;width:9px;" src="/siga/css/famfamfam/icons/cross.png" /> 
-						<span class="gt-table-action-list">
-						<a href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
-									ReplaceInnerHTMLFromAjaxResponse('removerAnexo?sigla=${informacao?.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
-														null, document.getElementById('ajax_arquivo'));">remover</a></span> &nbsp;]
-					</p>
-				#{/if} #{/list} #{/if}
+					<c:forEach items="${items:informacao.mov}" var="m"> 
+						<c:if test="${m.tipo.id == models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO && m.movCanceladora == null}">
+							<p>
+								<img style="margin-bottom: -4px;" src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
+								<a style="padding-right:5px;"
+									href="javascript: var frm = document.getElementById('frm'); <c:if test="${m.arq.image}">insertImageAtCursor(${m.arq.id},'${m.arq.titulo}');</c:if><c:if test="${not m.arq.image}">insertFileAtCursor(${m.arq.id},'${m.arq.titulo}');</c:if>">${m.arq.titulo}</a>
+								[ <img style="margin-bottom: -1px;width:9px;" src="/siga/css/famfamfam/icons/cross.png" /> 
+								<span class="gt-table-action-list">
+								<a href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
+											ReplaceInnerHTMLFromAjaxResponse('removerAnexo?sigla=${informacao.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
+																null, document.getElementById('ajax_arquivo'));">remover</a></span> &nbsp;]
+							</p>
+						</c:if>
+					</c:forEach> 
+				</c:if>
 			</div>
 			<h3 style="padding-top: 1em">Inserir classificação no Texto</h3>
 			<p>
-				O conteúdo do campo "Texto" pode receber *{<a
-					href="http://www.wikicreole.org">}* uma marcação especial para classificação.*{</a>}* Clique <a
-					id="marcadores" href="#">aqui</a> para
-				visualizar a opção disponível.
+				O conteúdo do campo "Texto" pode receber uma marcação especial para classificação. Clique <a id="marcadores" href="#">aqui</a> para visualizar a opção disponível.
 			</p>
 			<div id="cheatsheet" style="display: none;">
 				<table class="side-bar-light-table">
@@ -258,6 +213,12 @@ function postback(){
 
 <script src="/ckeditor/ckeditor/ckeditor.js"></script>
 <script type="text/javascript">
+	function postback(){
+		var frm = document.getElementById('frm');
+		frm.action = '${linkTo[AppController].editar}';
+		frm.submit();
+	}
+
 	//CKEDITOR.config.autoGrow_onStartup = true;
 	//CKEDITOR.config.autoGrow_bottomSpace = 50;
 	//CKEDITOR.config.autoGrow_maxHeight = 400;
@@ -299,32 +260,6 @@ function postback(){
 		$("#marcadores").click(function(){
 			$("#cheatsheet").show();
 		});
-
-/*  		formAltered = false;
- 		var $inps = $('#frm').find('input,select');
-
-		$inps.change(function() {
-		    formAltered = true;
-		    $inps.unbind('change'); // saves this function running every time.
-		});
-
-		//Verifica se manda "gravar" o conhecimento ou se redireciona direto para o "exibir"  
-		$("#frm").submit(function(event) {
-			//Conhecimento sem alteração no conteudo e que não seja novo - > exibir
-			//Inserida condição para verificar se o conhecimento não é novo para não pegar os seguintes casos que precisam passar pelo "gravar"
-			//Conhecimento novo e o conteudo vazio (validação no servidor). O checkDirty consta como não alterado
-			//Conhecimento novo relacionado a um outro com hashTag. A hashTag já vem preenchida no conteúdo. O checkDirty consta como não alterado
-			if (!formAltered && !CKEDITOR.instances.conteudo.checkDirty()
-					&& $("#infoId").val() != 0) {
-				event.preventDefault(); 
-				var siglaId = $("#siglaId").val();
-				window.location.href = "@{Application.exibir}?sigla=" + siglaId;
-			}
-			else{
-				$('#conteudo').text(CKEDITOR.instances.conteudo.getData());
-			}
-		}); */
-		
 	});
 </script>
 

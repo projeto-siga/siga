@@ -1,10 +1,12 @@
-#{if conhecimentos != null} #{list items:conhecimentos,as:'conhecimento'}
+<%@ include file="/WEB-INF/page/include.jsp"%>
+
+<c:if test="${conhecimentos != null} #{list items:conhecimentos,as:'conhecimento'}
 	#{set "url"}*{@{Application.editar(conhecimento[0], null, null, referer)}}*
 		@{Application.editar(conhecimento[3], null, null, referer)}
 	#{/set}
-#{if cadastrante!=null}	 
+<c:if test="${cadastrante!=null}	 
 	<a style="float: right;" title="Editar conhecimento"
-		href="${url}" target="#{if popup}_blank#{/if}"><img
+		href="${url}" target="<c:if test="${popup}_blank#{/if}"><img
 		src="/siga/css/famfamfam/icons/pencil.png"> </a>
 #{/if}
 	<p style="font-weight: bold">${conhecimento[1]}</p>
@@ -15,12 +17,12 @@
 		@{Application.editar(null, classificacao, titulo, referer)}
 	#{/set} 
 	<a style="float: right;" title="Registrar um novo conhecimento"
-		href="${url}" target="#{if popup}_blank#{/if}"><img src="/siga/css/famfamfam/icons/add.png"> </a>
-	#{if msgvazio != null}
+		href="${url}" target="<c:if test="${popup}_blank#{/if}"><img src="/siga/css/famfamfam/icons/add.png"> </a>
+	<c:if test="${msgvazio != null}
 		<p>${msgvazio.replace("\$1", url).raw()}</p>
 	#{/if}
 	#{else}
-	Nenhum conhecimento relacionado registrado. Clique <a href="${url}" target="#{if popup}_blank#{/if}">aqui</a>
+	Nenhum conhecimento relacionado registrado. Clique <a href="${url}" target="<c:if test="${popup}_blank#{/if}">aqui</a>
 	para registrar um novo conhecimento.
 	#{/else}
 #{/else}

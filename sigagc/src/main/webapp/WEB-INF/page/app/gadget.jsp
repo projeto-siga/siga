@@ -10,7 +10,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach var="contagem" items="${items:contagens}">
+		<c:forEach var="contagem" items="${contagens}">
 			<tr>
 				<td ><a href="${linkTo[AppController].listar}?filtro.situacao=${contagem[0]}&filtro.lotaResponsavel=${lotaTitular.idLotacao}&filtro.pesquisa=true">${contagem[1]}</a></td>
 				<td align="right" ><a href="${linkTo[AppController].listar}?filtro.situacao=${contagem[0]}&filtro.responsavel=${cadastrante.idPessoa}&filtro.pesquisa=true">${contagem[2]}</a></td>
@@ -22,5 +22,5 @@
 </div>
 <br />
 <input type="button" value="Novo"
-	onclick="javascript: window.location='@{Application.editar}';"
+	onclick="javascript: window.location='${linkTo[AppController].editar[0][0][0][0][0][0]}';"
 	class="gt-btn-small gt-btn-right" style="cursor: pointer;" title="Criar Novo Conhecimento"/>

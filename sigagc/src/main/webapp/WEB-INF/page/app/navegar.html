@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/page/include.jsp"%>
+
 #{extends 'main.html' /} #{set title:'Índice' /}
 #{ set 'moreHead'}
 <script type="text/javascript">
@@ -56,7 +58,7 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<h2>Árvore de Conhecimentos</h2>
-		#{if arvore.toString() == ""}
+		<c:if test="${arvore.toString() == ""}
 			<h6 style="background:#d8d8c0;padding:3px 10px;">Nenhum conhecimento com uma classificação para ser listado.</h6>
 		#{/if}
 		#{else}

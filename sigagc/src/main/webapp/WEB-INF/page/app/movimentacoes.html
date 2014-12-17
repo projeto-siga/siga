@@ -1,3 +1,5 @@
+<%@ include file="/WEB-INF/page/include.jsp"%>
+
 #{extends 'Application/exibir_base.html' /} #{set
 title:'Movimentações'/}
 
@@ -28,11 +30,11 @@ title:'Movimentações'/}
 			</thead>
 			<tbody>
 				#{list items:informacao.movs, as:'m'}	
-					#{if m.tipo.id == 13}
+					<c:if test="${m.tipo.id == 13}
 							#{set descricao: m.arq?.titulo  /}
 					#{/if}
 					#{elseif m.tipo.id == 12 && m.movRef != null}
-						#{if m.movRef.tipo.id == 13}
+						<c:if test="${m.movRef.tipo.id == 13}
 							#{set descricao: m.movRef.tipo.nome + ": " + m.movRef.arq?.titulo /} 
 						#{/if}
 						#{elseif m.movRef.tipo.id == 4 || m.movRef.tipo.id == 6}
@@ -46,13 +48,13 @@ title:'Movimentações'/}
 						#{set descricao: m.descricao /} 
 					#{/else}
 					
-					#{if m.movCanceladora != null || m.tipo.id == 12} 
+					<c:if test="${m.movCanceladora != null || m.tipo.id == 12} 
 						#{set classe: 'disabled' /}
 					#{/if}
 					#{else} #{set classe: '' /} #{/else}
 				<tr class="juntada ${classe}">
 					<td align="left">${m.hisDtIni.format('dd/MM/yyyy HH:mm:ss')}</td>
-					#{if informacao.podeDesfazer(titular, m)}
+					<c:if test="${informacao.podeDesfazer(titular, m)}
 						<td>${m.tipo.nome} 
 						[ <img style="margin-bottom: -2px;width:11px;" src="/siga/css/famfamfam/icons/cross.png" /> 
 						<span class="gt-table-action-list">

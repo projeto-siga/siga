@@ -110,70 +110,55 @@ public class WfInterceptor implements Interceptor {
 	@Override
 	public void intercept(InterceptorStack stack, ResourceMethod method,
 			Object resourceInstance) throws InterceptionException {
+		this.configuraHibernate();
+
 		try {
-			antes();
+
+			HibernateUtil.getSessao();
+			ModeloDao.freeInstance();
+			WfDao.getInstance();
+			Wf.getInstance().getConf().limparCacheSeNecessario();
+
+			// Novo
+			WfContextBuilder.getConfiguration();
+			WfContextBuilder.createJbpmContext();
+
+			// Novo
+			if (!WfDao.getInstance().sessaoEstahAberta())
+				throw new AplicacaoException(
+						"Erro: sessão do Hibernate está fechada.");
+
+			WfContextBuilder.getJbpmContext().getJbpmContext()
+					.setSession(WfDao.getInstance().getSessao());
+
+			// Velho
+			// GraphSession s = WfContextBuilder.getJbpmContext()
+			// .getGraphSession();
+			// Field fld = GraphSession.class.getDeclaredField("session");
+			// fld.setAccessible(true);
+			// Session session = (Session) fld.get(s);
+			// if (!session.isOpen())
+			// throw new AplicacaoException(
+			// "Erro: sessão do Hibernate está fechada.");
+			// HibernateUtil.setSessao(session);
+			// WfDao.getInstance();
+
+			WfDao.iniciarTransacao();
 			stack.next(method, resourceInstance);
-			depois();
+			WfDao.commitTransacao();
 
 		} catch (final Exception ex) {
-			excecao();
+			WfDao.rollbackTransacao();
 			if (ex instanceof RuntimeException)
 				throw (RuntimeException) ex;
 			else
 				throw new InterceptionException(ex);
 		} finally {
-			finalmente();
+			this.fechaContextoWorkflow();
+			this.fechaSessaoHibernate();
+			this.liberaInstanciaDao();
 			Thread.interrupted();
 		}
-	}
-
-	public void finalmente() {
-		this.fechaContextoWorkflow();
-		this.fechaSessaoHibernate();
-		this.liberaInstanciaDao();
-	}
-
-	public void excecao() {
-		WfDao.rollbackTransacao();
-	}
-
-	public void depois() {
-		WfDao.commitTransacao();
-	}
-
-	public void antes() throws Exception {
-		this.configuraHibernate();
-
-		HibernateUtil.getSessao();
-		ModeloDao.freeInstance();
-		WfDao.getInstance();
-		Wf.getInstance().getConf().limparCacheSeNecessario();
-
-		// Novo
-		WfContextBuilder.getConfiguration();
-		WfContextBuilder.createJbpmContext();
-
-		// Novo
-		if (!WfDao.getInstance().sessaoEstahAberta())
-			throw new AplicacaoException(
-					"Erro: sessão do Hibernate está fechada.");
-
-		WfContextBuilder.getJbpmContext().getJbpmContext()
-				.setSession(WfDao.getInstance().getSessao());
-
-		// Velho
-		// GraphSession s = WfContextBuilder.getJbpmContext()
-		// .getGraphSession();
-		// Field fld = GraphSession.class.getDeclaredField("session");
-		// fld.setAccessible(true);
-		// Session session = (Session) fld.get(s);
-		// if (!session.isOpen())
-		// throw new AplicacaoException(
-		// "Erro: sessão do Hibernate está fechada.");
-		// HibernateUtil.setSessao(session);
-		// WfDao.getInstance();
-
-		WfDao.iniciarTransacao();
 	}
 
 	@Override

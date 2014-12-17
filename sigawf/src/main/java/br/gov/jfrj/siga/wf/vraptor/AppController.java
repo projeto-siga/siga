@@ -83,7 +83,6 @@ public class AppController extends WfController {
 	 * @return
 	 * @throws Exception
 	 */
-	@Path("/app/initializeProcess/{pdId}")
 	public void initializeProcess(Long pdId) throws Exception {
 		if (pdId == null)
 			throw new RuntimeException();
@@ -359,8 +358,8 @@ public class AppController extends WfController {
 	 * @return
 	 * @throws CsisException
 	 */
-	public void assignTask(Long tiId, DpPessoaSelecao ator_pessoaSel,
-			DpLotacaoSelecao lotaAtor_lotacaoSel, Integer prioridade,
+	public void assignTask(Long tiId, DpPessoaSelecao atorSel,
+			DpLotacaoSelecao lotaAtorSel, Integer prioridade,
 			String justificativa) throws Exception {
 		TaskInstance taskInstance = getTaskInstance(tiId);
 		ProcessInstance pi = taskInstance.getProcessInstance();
@@ -368,10 +367,10 @@ public class AppController extends WfController {
 		String actorId = null;
 		String lotaActorId = null;
 
-		if (ator_pessoaSel.getId() != null)
-			actorId = daoPes(ator_pessoaSel.getId()).getSigla();
-		if (lotaAtor_lotacaoSel.getId() != null)
-			lotaActorId = daoLot(lotaAtor_lotacaoSel.getId()).getSiglaCompleta();
+		if (atorSel.getId() != null)
+			actorId = daoPes(atorSel.getId()).getSigla();
+		if (lotaAtorSel.getId() != null)
+			lotaActorId = daoLot(lotaAtorSel.getId()).getSiglaCompleta();
 
 		if (actorId == null && lotaActorId == null)
 			throw new AplicacaoException(
@@ -417,7 +416,7 @@ public class AppController extends WfController {
 			if (actorId != null && !temPermissaoDesignar) {
 				util.assertLotacaoAscendenteOuDescendente(
 						lotAtualAtor != null ? lotAtualAtor : lotAtualPool,
-						daoPes(ator_pessoaSel.getId()).getLotacao());
+						daoPes(atorSel.getId()).getLotacao());
 			}
 			taskInstance.setActorId(actorId);
 		}

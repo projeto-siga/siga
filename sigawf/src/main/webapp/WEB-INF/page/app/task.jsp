@@ -182,7 +182,7 @@
 				<h3 class="gt-form-head">Designaçao da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<form method="POST" action="${linkTo[AppController].assignTask}">
-						<input name="tiId" type="hidden" value="${taskInstance.id}" />
+						<input name="tiId" type="hidden" value="${tiId}" />
 						<div class="gt-form-row gt-width-100">
 							<label>Pessoa</label>
 							<siga:selecao modulo="siga" tipo="pessoa" tema="simple"
@@ -247,7 +247,7 @@
 				</div>
 				<div class="gt-form gt-content-box">
 					<form method="POST" action="${linkTo[AppController].commentTask}">
-						<input name="tiId" type="hidden" value="${taskInstance.id}" /> <label>Comentário</label>
+						<input name="tiId" type="hidden" value="${tiId}" /> <label>Comentário</label>
 						<div class="gt-form-row gt-width-100">
 							<input type="text" size="80" name="comentario"
 								class="gt-form-text" />
@@ -415,6 +415,7 @@
 	</c:if>
 	
 	<script src="/siga/javascript/viz.js" language="JavaScript1.1" type="text/javascript"></script> 
+	<!-- <script src="http://mdaines.github.io/viz.js/viz.js"></script>-->
 	
 	<script>
 		function bigmap() {

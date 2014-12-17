@@ -40,27 +40,26 @@ import br.gov.jfrj.siga.wf.util.WfTaskVO;
 @SuppressWarnings("unchecked")
 public class WorkflowController extends WfController {
 
-	private static final String WF_REDIRECT_TO = "wf_redirect_to";
-
 	public WorkflowController(HttpServletRequest request, Result result,
 			WfDao dao, SigaObjects so, WfUtil util) {
 		super(request, result, dao, so, util);
 	}
-
+	
 	@Path("/inbox.action")
 	public void endpointForInbox() throws Exception {
 		result.forwardTo(this).inbox();
 	}
-
+	
+	
 	@Path("/doc.action")
 	public void endpointForDoc(String sigla) throws Exception {
 		result.forwardTo(this).doc(sigla);
 	}
-
+	
 	public void resumo() throws Exception {
 		inbox();
 	}
-
+	
 	/**
 	 * Coloca as tarefas que estão para o usuário no atributo "taskInstances".
 	 * Além disso, coloca os procedimentos que podem ser iniciados pelo usuário
@@ -137,11 +136,11 @@ public class WorkflowController extends WfController {
 	public void task(Long tiId) throws Exception {
 		TaskInstance taskInstance = loadTaskInstance(tiId);
 		List<SigaIdDescr> prioridades = new ArrayList<SigaIdDescr>();
-		prioridades.add(new SigaIdDescr(1, "Muito Alta"));
-		prioridades.add(new SigaIdDescr(2, "Alta"));
-		prioridades.add(new SigaIdDescr(3, "Média"));
-		prioridades.add(new SigaIdDescr(4, "Baixa"));
-		prioridades.add(new SigaIdDescr(5, "Muito Baixa"));
+		prioridades.add(new SigaIdDescr(1,"Muito Alta"));
+		prioridades.add(new SigaIdDescr(2,"Alta"));
+		prioridades.add(new SigaIdDescr(3,"Média"));
+		prioridades.add(new SigaIdDescr(4,"Baixa"));
+		prioridades.add(new SigaIdDescr(5,"Muito Baixa"));
 		result.include("prioridades", prioridades);
 		result.include("task", util.inicializarTaskVO(taskInstance));
 		result.include("dot", util.getDot(taskInstance));
@@ -157,8 +156,7 @@ public class WorkflowController extends WfController {
 	 * @throws CsisException
 	 */
 	public void executeTask(Long tiId, String[] fieldNames,
-			String[] fieldValues, String transitionName, String sigla)
-			throws Exception {
+			String[] fieldValues, String transitionName) throws Exception {
 		String cadastrante = getTitular().getSigla() + "@"
 				+ getLotaTitular().getSiglaCompleta();
 
@@ -273,23 +271,6 @@ public class WorkflowController extends WfController {
 		util.transferirDocumentosVinculados(taskInstance.getProcessInstance(),
 				cadastrante);
 
-		// Redireciona para a pagina escolhida quando o procedimento criar uma variavel pre-definida
-		//
-		String redirectTo = (String) taskInstance.getVariable(WF_REDIRECT_TO);
-		if (redirectTo != null) {
-			taskInstance.deleteVariable(WF_REDIRECT_TO);
-			result.redirectTo(redirectTo);
-			return;
-		}
-
-		// Apresenta a pagina do documento quando a sigla for fornecida
-		//
-		if (sigla != null) {
-			result.redirectTo("/../sigaex/expediente/doc/exibir.action?sigla="
-					+ sigla);
-			return;
-		}
-
 		// Verificar se um novo task foi criado para o process instance em
 		// questão. Se esse
 		// task existir e for designado para o mesmo ator, então a próxima
@@ -322,7 +303,7 @@ public class WorkflowController extends WfController {
 		}
 
 		if (sigla != null) {
-			result.redirectTo("/../sigaex/expediente/doc/exibir.action?sigla="
+			result.redirectTo("../sigaex/expediente/doc/exibir.action?sigla="
 					+ sigla);
 			return;
 		}

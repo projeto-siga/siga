@@ -1,8 +1,11 @@
 #{extends 'main.html' /} #{set title:'Listas' /}
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
+	var listaTable;
+	
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
 		// the return value is assigned to QueryString!
@@ -40,7 +43,7 @@
 		});
 		
 		/* Table initialization */
-		$('#listas_table').DataTable({
+		listaTable = $('#listas_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -102,7 +105,7 @@
 				</thead>
 
 				<tbody>
-					#{list items:lista, as:'lista'}
+					#{list items:listas, as:'item'}
 					<tr>
 						#{if lista.podeConsultar(lotaTitular, cadastrante)}
 							<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'" style="cursor: pointer;">${lista.nomeLista}</td>
@@ -111,13 +114,13 @@
 							<td>${lista.nomeLista}</td>
 						#{/else}
 						
-						<td>${lista.lotaCadastrante.nomeLotacao}</td>
+						<td>${item.lotaCadastrante.nomeLotacao}</td>
 						<td>
 							#{if lista.podeEditar(lotaTitular, cadastrante)}
 							#{desativarReativar id:lista.idLista, 
 												onReativar:'reativarLista',
 												onDesativar :'desativarLista',
-												isAtivo:lista.isAtivo() }
+												isAtivo:item?.isAtivo() }
 							#{/desativarReativar}
 							#{/if}
 						</td>
@@ -128,11 +131,15 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-			<a href="@{Application.editarLista}" class="gt-btn-medium gt-btn-left">Cadastrar</a>
-			<div class="gt-table-buttons">
-			</div>
-		</div>
+			<a href="javascript: listaModalAbrir(false)" class="gt-btn-medium gt-btn-left">Cadastrar</a>
+		<div class="gt-table-buttons">
+	</div>
+</div>
 
+#{modal nome:'editarLista', titulo:'Inserir Lista'}
+	<div id="divEditarLista">#{include
+				'Application/editarLista.html' /}</div>
+#{/modal}
 <br />
 <br />
 <br />

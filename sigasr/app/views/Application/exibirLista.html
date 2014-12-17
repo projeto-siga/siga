@@ -1,46 +1,13 @@
 #{extends 'main.html' /} #{set title:'Exibição de solicitação' /}
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-
-<script type="text/javascript">
-	/* Table initialization */
-	$(document).ready(function() {
-		$('#solicitacao_table').DataTable({
-			"language": {
-				"emptyTable":     "Não existem resultados",
-			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-			    "infoPostFix":    "",
-			    "thousands":      ".",
-			    "lengthMenu":     "Mostrar _MENU_ registros",
-			    "loadingRecords": "Carregando...",
-			    "processing":     "Processando...",
-			    "search":         "Filtrar:",
-			    "zeroRecords":    "Nenhum registro encontrado",
-			    "paginate": {
-			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
-			        "previous":   "Anterior"
-			    },
-			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
-			    }
-			},
-			"bSort" : false,
-			"bFilter": false,
-			"bPaginate": false
-		});
-	});
-</script>
 
 <style>
 #sortable table { height: 1.5em; line-height: 1.2em; }
 .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
 </style>
+
 #{set podeRemover:lista.podeRemover(lotaTitular, cadastrante) /}
 #{set podeEditar:lista.podeEditar(lotaTitular, cadastrante) /}
 #{set podePriorizar:lista.podePriorizar(lotaTitular, cadastrante) /}
@@ -54,27 +21,12 @@ $(function() {
 </script>
 #{/if} 
 
-<script>
-$(function(){
-    $('#btn').click(function() {
-        if (!block())
-            return false;
-        var ids=[];
-    	$("#sortable > tr").each(function() {
-          ids.push($(this).attr('id'));
- 	    });
-    	window.location.href = "@{Application.priorizarLista}?id=${lista.idLista}&ids="+ids;
-    });
-});
-</script>
-
-	<div class="gt-bd clearfix">
+<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-	<h2> ${lista.nomeLista}</h2>
+	<h2 id="tituloPagina"> ${lista.nomeLista}</h2>
 	
 		<p class="gt-table-action-list">
-			#{if podeEditar} <a class="once"
-				href="@{Application.editarLista(lista?.idLista)}"> <img
+			#{if podeEditar} <a href="javascript: listaModalAbrir(true)"> <img
 				src="/siga/css/famfamfam/icons/pencil.png"
 				style="margin-right: 5px;">Editar</a>&nbsp;&nbsp;&nbsp; #{/if}
 		</p>
@@ -146,14 +98,78 @@ $(function(){
 				#{/list}
 			</tbody>
 		</table>
-	</div>
-	
+	</div>	
 </div>
 
-		<!-- /content box -->
-		<div class="gt-table-buttons">
-			<input type="hidden" name="idLista" value="${lista.idLista}">
-			#{if podePriorizar} 
-			<input type="button" id="btn" value="Gravar" class="gt-btn-medium gt-btn-left" />#{/if}
-			<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-		</div>
+<!-- /content box -->
+<div class="gt-table-buttons">
+	<input type="hidden" name="idLista" value="${lista.idLista}">
+	#{if podePriorizar} 
+	<input type="button" id="btn" value="Gravar" class="gt-btn-medium gt-btn-left" />#{/if}
+	<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+</div>
+
+#{modal nome:'editarLista', titulo:'Editar Lista'}
+	<div id="divEditarLista">#{include
+				'Application/editarLista.html' /}</div>
+#{/modal}
+
+<script type="text/javascript">
+	var solicitacaoTable;
+	
+	/* Table initialization */
+	$(document).ready(function() {
+		if ( $.fn.dataTable.isDataTable( '#solicitacao_table' ) ) {
+			solicitacaoTable = $('#solicitacao_table').dataTable();
+		}
+		else {
+			solicitacaoTable = $('#solicitacao_table').dataTable({
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				"bSort" : false,
+				"bFilter": false,
+				"bPaginate": false
+			});
+		}
+	});
+</script>
+
+<script>
+$(function(){
+    $('#btn').click(function() {
+        if (!block())
+            return false;
+        var ids=[];
+    	$("#sortable > tr").each(function() {
+			var id = $(this).attr('id');
+
+			if (id != undefined && id != '')
+        		ids.push(id);
+ 	    });
+
+ 	    if (ids.length > 0)
+    		window.location.href = "@{Application.priorizarLista}?id=${lista.idLista}&ids="+ids;
+    });
+});
+</script>

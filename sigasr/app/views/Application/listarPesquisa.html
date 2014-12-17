@@ -1,7 +1,60 @@
 #{extends 'main.html' /} #{set title:'Pesquisas de Satisfação' /}
 
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Pesquisas de Satisfação</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box dataTables_div">
+			<div class="gt-form-row dataTables_length">
+				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
+			</div>
+			
+			<table id="pesquisa_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Descrição</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:pesquisas, as:'pesq'}
+					<tr
+						data-json-id="${pesq.idPesquisa}" data-json="${pesq.toJson()}" onclick="pesquisaService.editar($(this).data('json'), 'Alterar pesquisa')"
+						style="cursor: pointer;">
+						<td >${pesq.nomePesquisa}</td>
+						<td>${pesq.descrPesquisa}</td>
+						<td class="acoes">
+							#{desativarReativar id:pesq.idPesquisa, 
+												onDesativar :'pesquisaService.desativar',
+												onReativar :'pesquisaService.reativar',
+												isAtivo:pesq.isAtivo() }
+							#{/desativarReativar}
+						</td>
+					</tr>
+					 #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a onclick="pesquisaService.cadastrar('Incluir Pesquisa')" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
+
+#{modal nome:'pesquisa', titulo:'Cadastrar Pesquisa'}
+	<div id="divEditarAcaoForm">#{include 'Application/editarPesquisa.html' /}</div>
+#{/modal}
 
 <script>
 	var QueryString = function () {
@@ -26,7 +79,18 @@
 		}
 		return query_string;
 	}();
-	
+
+	var opts = {
+		 urlDesativar : '@{Application.desativarPesquisa()}?',
+		 urlReativar : '@{Application.reativarPesquisa()}?',
+		 urlGravar : '@{Application.gravarPesquisa()}?',
+		 dialogCadastro : $('#pesquisa_dialog'),
+		 tabelaRegistros : $('#pesquisa_table'),
+		 objectName : 'pesquisa',
+		 formCadastro : $('#pesquisaForm'),
+		 mostrarDesativados : QueryString.mostrarDesativados
+	};
+
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
 			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
@@ -40,7 +104,7 @@
 				location.href = '@{Application.listarPesquisa()}';	
 		});
 		
-		$('#pesquisa_table').DataTable({
+		opts.dataTable= $('#pesquisa_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -72,62 +136,79 @@
 		});
 	});
 	
-	function reativarPesquisa(event, id) {
-		event.stopPropagation();
-		window.location = '@{Application.reativarPesquisa()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+	// Define a "classe" pesquisaService
+	function PesquisaService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
 	}
+	// pesquisaService extends BaseService
+	PesquisaService.prototype = Object.create(BaseService.prototype);
 	
-	function desativarPesquisa(event, id) {
-		event.stopPropagation();
-		window.location = '@{Application.desativarPesquisa()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+	var pesquisaService = new PesquisaService(opts);
+	// Sobescreve o metodo cadastrar para limar as perguntas da tela
+	pesquisaService.cadastrar = function(title) {
+		perguntas.limpar();
+		BaseService.prototype.cadastrar.call(this, title);
+	}
+
+	pesquisaService.getId = function(pesquisa) {
+		return pesquisa.idPesquisa;
+	}
+	pesquisaService.getRow = function(pesquisa) {
+		return [pesquisa.nomePesquisa, pesquisa.descrPesquisa, 'COLUNA_ACOES'];
+	}
+	pesquisaService.onRowClick = function(pesquisa) {
+		pesquisaService.editar(pesquisa, 'Alterar pesquisa');
+	}
+	/**
+	 * Customiza o metodo editar para adicionar a lista de perguntas
+	 */
+	pesquisaService.editar = function(obj, title) {
+		perguntas.limpar();									 // Limpa as perguntas sendo mostradas
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+
+		// Adiciona as perguntas dessa pesquisa
+		for(var i = 0; i < obj.perguntasSet.length; i++) {
+			var pergunta = obj.perguntasSet[i];
+			perguntas.incluirItem(pergunta.descrPergunta, pergunta.tipoPergunta.idTipoPergunta, pergunta.tipoPergunta.nomeTipoPergunta, pergunta.idPergunta);
+		}
+	}
+
+	pesquisaService.gravar = function() {
+		var service = this,
+		obj = this.getObjetoParaGravar(),
+		url = this.opts.urlGravar,
+		wrapper = {},
+		success = function(objSalvo) {
+			if(service.onGravar) {
+				service.onGravar(obj, JSON.parse(objSalvo));
+			}
+			opts.dialogCadastro.dialog("close");
+		}
+		wrapper[this.opts.objectName] = obj;
+		var params = jQuery.param(wrapper) + "&" + this.paramsPerguntas();
+		
+		$.ajax({
+	    	type: "POST",
+	    	url: url,
+	    	data: params,
+	    	dataType: "text",
+	    	success: success,
+	    	error: this.errorHandler
+	   	});
+	}
+
+	pesquisaService.paramsPerguntas = function() {
+	    var jForm = $("form"),
+	    	params = new String();
+	    	$("#perguntas").find("li").each(function(i){
+	            var jDivs=$(this).find("span");
+	            params += '&perguntaSet[' + i + '].descrPergunta=' + jDivs[0].innerHTML;
+	            params += '&perguntaSet[' + i + '].tipoPergunta.idTipoPergunta=' + jDivs[1].id;
+	            params += '&perguntaSet[' + i + '].ordemPergunta=' + i;
+	            if (this.id.indexOf("novo_") < 1)
+	                    params += '&perguntaSet[' + i + '].idPergunta=' + this.id;
+	    	});
+    	return params;
 	}
 </script>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-		<h2>Pesquisas de Satisfação</h2>
-		<!-- content bomex -->
-		<div class="gt-content-box dataTables_div">
-			<div class="gt-form-row dataTables_length">
-				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
-			</div>
-			
-			<table id="pesquisa_table" border="0" class="gt-table display">
-				<thead>
-					<tr>
-						<th>Nome</th>
-						<th>Descrição</th>
-						<th></th>
-					</tr>
-				</thead>
-
-				<tbody>
-					#{list items:pesquisas, as:'pesq'}
-					<tr
-						onclick="javascript:window.location='@{Application.editarPesquisa(pesq.idPesquisa)}'"
-						style="cursor: pointer;">
-						<td >${pesq.nomePesquisa}</td>
-						<td>${pesq.descrPesquisa}</td>
-						<td>
-							#{desativarReativar id:pesq.idPesquisa, 
-												onDesativar :'desativarPesquisa',
-												onReativar :'reativarPesquisa',
-												isAtivo:pesq.isAtivo() }
-							#{/desativarReativar}
-						</td>
-					</tr>
-					 #{/list}
-				</tbody>
-			</table>
-		</div>
-		<!-- /content box -->
-		<div class="gt-table-buttons">
-		<a href="@{Application.editarPesquisa}" class="gt-btn-medium gt-btn-left">Incluir</a>
-		</div>
-
-	</div>
-</div>
-
-<br />
-<br />
-<br />

@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
@@ -29,9 +28,8 @@ import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrMovimentacao;
 import models.SrObjetivoAtributo;
-import models.SrOperador;
+import models.SrPergunta;
 import models.SrPesquisa;
-import models.SrPrioridade;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import models.SrTipoMotivoEscalonamento;
@@ -46,6 +44,8 @@ import org.joda.time.LocalDate;
 import play.Logger;
 import play.Play;
 import play.data.binding.As;
+import play.data.validation.Error;
+import play.data.validation.Validation;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
@@ -69,6 +69,9 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 
 public class Application extends SigaApplication {
 
@@ -289,45 +292,48 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditarItem(
 			SrItemConfiguracao itemConfiguracao) throws Exception {
+		StringBuffer sb = new StringBuffer();
 
 		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.siglaItemConfiguracao",
-					"C&oacute;digo n&atilde;o informado");
+					"Código não informado");
 		}
 
 		if (itemConfiguracao.tituloItemConfiguracao.equals("")) {
 			validation.addError("itemConfiguracao.tituloItemConfiguracao",
-					"T&iacute;tulo n&atilde;o informado");
+					"Título não informado");
 		}
 
 		if (itemConfiguracao.numFatorMultiplicacaoGeral < 1 ) {
 			validation.addError("itemConfiguracao.numFatorMultiplicacaoGeral",
-					"Fator de multiplica&ccedil;&atilde;o menor que 1");
+					"Fator de multiplicação menor que 1");
 		}
 		
-		for (play.data.validation.Error error : validation.errors()) {
-			System.out.println(error.message());
-		}
-
 		if (validation.hasErrors()) {
-			render("@editarItem", itemConfiguracao);
+			enviarErroValidacao();
 		}
 	}
 
 	private static void validarFormEditarAcao(SrAcao acao) {
-
 		if (acao.siglaAcao.equals("")) {
-			validation.addError("acao.siglaAcao", "C�digo n�o informado");
+			Validation.addError("siglaAcao", "Código não informado");
 		}
-
 		if (acao.tituloAcao.equals("")) {
-			validation.addError("acao.tituloAcao", "T�tulo n�o informado");
+			Validation.addError("tituloAcao", "Titulo não informado");
 		}
-
-		if (validation.hasErrors()) {
-			render("@editarAcao", acao);
+		if (Validation.hasErrors()) {
+			enviarErroValidacao();
 		}
+	}
 
+	private static void enviarErroValidacao() {
+		JsonArray jsonArray = new JsonArray();
+		
+		List<Error> errors = Validation.errors();
+		for (Error error : errors) {
+			jsonArray.add(new Gson().toJsonTree(error));
+		}
+		error(Http.StatusCode.BAD_REQUEST, jsonArray.toString());
 	}
 
 	@SuppressWarnings("static-access")
@@ -349,7 +355,6 @@ public class Application extends SigaApplication {
 		}
 
 		for (play.data.validation.Error error : validation.errors()) {
-			System.out.println(error.message());
 			sb.append(error.getKey() + ";");
 		}
 
@@ -612,8 +617,23 @@ public class Application extends SigaApplication {
 
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
-		lista.validarPodeExibirLista(lotaTitular(), cadastrante());
-		render(lista);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		
+		try {
+			assertAcesso("ADM:Administrar");
+			List<SrConfiguracao> permissoes = SrConfiguracao
+					.listarPermissoesUsoLista(lista, false);
+		} catch (Exception e) { }
+		
+		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
+		
+		if (!lista.podeConsultar(lotaTitular(), cadastrante())) {
+			throw new Exception("Exibição não permitida");
+		}
+		
+		render(lista, orgaos, locais, tiposPermissao);
 	}
 	
 	public static void incluirEmLista(Long idSolicitacao) throws Exception {
@@ -993,7 +1013,7 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao configuracao = JPA.em().find(SrConfiguracao.class, idPermissao);
 		configuracao.finalizar();
-		editarLista(idLista);
+		//editarLista(idLista);
 	}
 
 	public static void editarAssociacao(Long id) throws Exception {
@@ -1015,7 +1035,6 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, idAssociacao);
 		associacao.finalizar();
-		editarAtributo(idAtributo);
 	}
 
 	public static void desativarAssociacao(Long id, boolean mostrarDesativados) throws Exception {
@@ -1062,7 +1081,7 @@ public class Application extends SigaApplication {
 		render(itemConfiguracao, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
 	}
 
-	public static void gravarItem(SrItemConfiguracao itemConfiguracao)
+	public static String gravarItem(SrItemConfiguracao itemConfiguracao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarItem(itemConfiguracao);
@@ -1096,7 +1115,7 @@ public class Application extends SigaApplication {
 			e.printStackTrace();
 		}
 		
-		listarItem(false);
+		return itemConfiguracao.getSrItemConfiguracaoJson();
 	}
 
 	public static void desativarItem(Long id, boolean mostrarDesativados) throws Exception {
@@ -1167,31 +1186,27 @@ public class Application extends SigaApplication {
 		render(att, tipoAtributoAnterior, associacoes, objetivos);
 	}
 
-	public static void gravarAtributo(SrAtributo att) throws Exception {
+	public static String gravarAtributo(SrAtributo att) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarAtributo(att);
 		att.salvar();
-		listarAtributo(Boolean.FALSE);
+		return att.toVO().toJson();
 	}
 
 	private static void validarFormEditarAtributo(SrAtributo att) {
 		if (att.nomeAtributo.equals("")) {
-			validation.addError("att.nomeAtributo",
+			Validation.addError("att.nomeAtributo",
 					"Nome de atributo não informado");
 		}
 
 		if (att.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO 
 				&& att.descrPreDefinido.equals("")) {
-			validation.addError("att.descrPreDefinido",
+			Validation.addError("att.descrPreDefinido",
 					"Valores Pré-definido não informados");
 		}
 		
-		for (play.data.validation.Error error : validation.errors()) {
-			System.out.println(error.message());
-		}
-
-		if (validation.hasErrors()) {
-			render("@editarAtributo", att);
+		if (Validation.hasErrors()) {
+			enviarErroValidacao();
 		}
 	}
 
@@ -1212,7 +1227,8 @@ public class Application extends SigaApplication {
 	public static void listarPesquisa(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrPesquisa> pesquisas = SrPesquisa.listar(mostrarDesativados);
-		render(pesquisas);
+		List<SrTipoPergunta> tipos = SrTipoPergunta.buscarTodos();
+		render(pesquisas, tipos);
 	}
 	
 	public static void listarPesquisaDesativadas() throws Exception {
@@ -1228,10 +1244,12 @@ public class Application extends SigaApplication {
 		render(pesq, tipos);
 	}
 
-	public static void gravarPesquisa(SrPesquisa pesq) throws Exception {
+	public static String gravarPesquisa(SrPesquisa pesquisa, Set<SrPergunta> perguntaSet) throws Exception {
 		assertAcesso("ADM:Administrar");
-		pesq.salvar();
-		listarPesquisa(Boolean.FALSE);
+		pesquisa.perguntaSet = (perguntaSet != null) ? perguntaSet : new HashSet<SrPergunta>();
+		pesquisa.salvar();
+		
+		return pesquisa.atualizarTiposPerguntas().toJson();
 	}
 
 	public static void desativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {
@@ -1293,19 +1311,16 @@ public class Application extends SigaApplication {
 	}
 	
 	private static void validarFormEditarEquipe(SrEquipe equipe) throws Exception {
-		StringBuffer sb = new StringBuffer();
-		
 		if (equipe.lotacao == null) {
 			validation.addError("equipe.lotacao", "Lotação não informada");
 		}
 		
 		for (play.data.validation.Error error : validation.errors()) {
 			System.out.println(error.getKey() + " :" + error.message());
-			sb.append(error.getKey() + ";");
 		}
 
 		if (validation.hasErrors()) {
-			throw new Exception(sb.toString());
+			enviarErroValidacao();
 		}
 	}
 
@@ -1327,7 +1342,7 @@ public class Application extends SigaApplication {
 		render(acao);
 	}
 
-	public static void gravarAcao(SrAcao acao) throws Exception {
+	public static String gravarAcao(SrAcao acao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarAcao(acao);
 		acao.salvar();
@@ -1357,8 +1372,7 @@ public class Application extends SigaApplication {
 					+ " salva, mas nao foi possivel atualizar conhecimento");
 			e.printStackTrace();
 		}
-				
-		listarAcao(false);
+		return acao.toJson();
 	}
 
 	public static void desativarAcao(Long id, boolean mostrarDesativados) throws Exception {
@@ -1414,8 +1428,13 @@ public class Application extends SigaApplication {
 	}
 
 	public static void listarLista(boolean mostrarDesativados) throws Exception {
-		List<SrLista> lista = SrLista.listar(mostrarDesativados);
-		render(lista, mostrarDesativados);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
+		List<SrLista> listas = SrLista.listar(mostrarDesativados);
+		
+		render(listas, mostrarDesativados, orgaos, locais, tiposPermissao);
 	}
 	
 	public static void listarListaDesativados() throws Exception {
@@ -1439,9 +1458,9 @@ public class Application extends SigaApplication {
 		render(lista, orgaos, locais, tiposPermissao, permissoes);
 	}
 
-	public static void gravarLista(SrLista lista) throws Exception {
+	public static Long gravarLista(SrLista lista) throws Exception {
 		lista.salvar();
-		exibirLista(lista.idLista);
+		return lista.idLista;
 	}
 
 	public static void desativarLista(Long id, boolean mostrarDesativados) throws Exception {

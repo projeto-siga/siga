@@ -18,7 +18,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import models.SrAcao.SrAcaoVO;
-import models.SrItemConfiguracao.SrItemConfiguracaoVO;
+import models.vo.SrConfiguracaoAssociacaoVO;
+import models.vo.SrConfiguracaoVO;
+import models.vo.SrItemConfiguracaoVO;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
@@ -31,9 +33,6 @@ import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Selecionavel;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
@@ -503,7 +502,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	/**
-
 	 * Retorna um Json de {@link SrConfiguracaoVO} que contém:
 	 * <li> {@link SrListaConfiguracaoVO}</li>
 	 * <li> {@link SrItemConfiguracaoVO}</li>
@@ -511,62 +509,15 @@ public class SrConfiguracao extends CpConfiguracao {
 	 * 
 	 */
 	public String getSrConfiguracaoJson() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null).toJson();
+		return this.toVO().toJson();
 	}
 
 	public String getSrConfiguracaoTipoPermissaoJson() {
 		return new SrConfiguracaoVO(null, null, null, tipoPermissaoSet).toJson();
 	}
-
-	/**
-	 * Classe que representa um {@link SrConfiguracaoVO VO} da classe
-	 * {@link SrConfiguracao}.
-	 * 
-	 * @author DB1
-	 */
-	public class SrConfiguracaoVO {
-		public List<SrLista.SrListaVO> listaVO; 
-		public List<SrItemConfiguracao.SrItemConfiguracaoVO> listaItemConfiguracaoVO;
-		public List<SrAcao.SrAcaoVO> listaAcaoVO;
-		public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
-
-		public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet) {
-			listaVO = new ArrayList<SrLista.SrListaVO>();
-			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracao.SrItemConfiguracaoVO>();
-			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
-			listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
-			
-			if(listaConfiguracaoSet != null)
-				for (SrLista item : listaConfiguracaoSet) {
-					listaVO.add(item.toVO());
-				}
-			
-			if(itemConfiguracaoSet != null)
-				for (SrItemConfiguracao item : itemConfiguracaoSet) {
-					listaItemConfiguracaoVO.add(item.toVO());
-				}
-			
-			if(acoesSet != null)
-				for (SrAcao item : acoesSet) {
-					listaAcaoVO.add(item.toVO());
-				}
-
-			if(tipoPermissaoSet != null)
-				for (SrTipoPermissaoLista item : tipoPermissaoSet) {
-					listaTipoPermissaoListaVO.add(item.toVO());
-				}
-		}
-
-		/**
-		 * Converte o objeto para Json.
-		 */
-		public String toJson() {
-			GsonBuilder builder = new GsonBuilder();
-			builder.setPrettyPrinting().serializeNulls();
-			Gson gson = builder.create();
-
-			return gson.toJson(this);
-		}
+	
+	public SrConfiguracaoVO toVO() {
+		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null);
 	}
 
 	public int getNivelItemParaComparar() {
@@ -646,6 +597,11 @@ public class SrConfiguracao extends CpConfiguracao {
 			this.listaConfiguracaoSet.add(srLista);
 		}
 	}
-	
-	
+
+	public SrConfiguracaoAssociacaoVO toAssociacaoVO() {
+		SrItemConfiguracaoVO itemVO = (this.getItemConfiguracaoUnitario() != null? this.getItemConfiguracaoUnitario().getAtual().toVO() : null);
+		SrAcaoVO acaoVO = (this.getAcaoUnitaria() != null? this.getAcaoUnitaria().getAtual().toVO() : null);
+		
+		return new SrConfiguracaoAssociacaoVO(this.getIdConfiguracao(), itemVO, acaoVO, this.atributoObrigatorio);
+	}
 }

@@ -1,5 +1,7 @@
 package models;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -36,5 +38,9 @@ public class SrTipoPergunta extends GenericModel {
 	public void setId(Long id) {
 		idTipoPergunta = id;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public static List<SrTipoPergunta> buscarTodos() {
+		return SrTipoPergunta.all().query.getResultList();
+	}
 }

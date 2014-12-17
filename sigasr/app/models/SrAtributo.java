@@ -19,6 +19,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import models.vo.SrAtributoVO;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -191,5 +193,16 @@ public class SrAtributo extends HistoricoSuporte {
 	@Override
 	public boolean equals(Object obj) {
 		return this.idAtributo.equals(((SrAtributo)obj).idAtributo);
+	}
+	
+	public SrAtributoVO toVO() {
+		return SrAtributoVO.createFrom(this);
+	}
+	
+	/**
+	 * Retorna um Json de {@link SrAtributo}.
+	 */
+	public String getSrAtributoJson() {
+		return this.toVO().toJson();
 	}
 }

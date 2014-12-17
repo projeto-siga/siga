@@ -27,8 +27,6 @@ public class EdicaoController extends WfController {
 		super(request, result, dao, so, util);
 	}
 
-	@Get
-	@Path("/app/edicao/form/{procedimento}")
 	public void form(String procedimento) {
 		result.include("procedimento", procedimento);
 	}

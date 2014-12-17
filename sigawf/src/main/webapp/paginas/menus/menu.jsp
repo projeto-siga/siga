@@ -44,17 +44,6 @@
 							</c:forEach>
 						</ul></li>
 				</c:if>
-				
-				<c:if
-					test="${ff:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;EDITAR:Editar procedimento')}">
-					<li><a href="#">Editar Procedimento</a>
-						<ul class="navmenu-large">
-							<c:forEach var="pd" items="${processDefinitions}">
-								<li><a href="${linkTo[EdicaoController].form[pd.name]}">${pd.name}</a>
-								</li>
-							</c:forEach>
-						</ul></li>
-				</c:if>
 			</ul>
 		</li>
 	</c:if>

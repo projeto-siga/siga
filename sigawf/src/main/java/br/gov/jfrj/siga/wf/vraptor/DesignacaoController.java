@@ -487,7 +487,7 @@ public class DesignacaoController extends WfController {
 				CpTipoConfiguracao.TIPO_CONFIG_DESIGNAR_TAREFA,
 				CpTipoConfiguracao.class, false);
 
-		Wf.getInstance().getConf().limparCacheSeNecessario();
+		Wf.getInstance().getConf().evictListaPorTipo(tipoConfig);
 
 		sfWfDao.evict(CpConfiguracao.class);
 		sfWfDao.evict(WfConfiguracao.class);

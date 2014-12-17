@@ -284,7 +284,7 @@ public class ConfiguracaoController extends WfController {
 				CpTipoConfiguracao.TIPO_CONFIG_INSTANCIAR_PROCEDIMENTO,
 				CpTipoConfiguracao.class, false);
 
-		Wf.getInstance().getConf().limparCacheSeNecessario();
+		Wf.getInstance().getConf().evictListaPorTipo(tipoConfig);
 
 		sfWfDao.evict(CpConfiguracao.class);
 		sfWfDao.evict(WfConfiguracao.class);

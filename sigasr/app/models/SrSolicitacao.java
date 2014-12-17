@@ -2161,7 +2161,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			throws Exception {
 		if(isPai() && !isAFechar())
 			throw new Exception("Operação não permitida. Necessário fechar toda solicitação " + 
-									"escalonada a partir dessa que deseja fechar.");
+									"filha criada partir dessa que deseja fechar.");
 			
 		if ((pess != null) && !podeFechar(lota, pess))
 			throw new Exception("Operação não permitida");

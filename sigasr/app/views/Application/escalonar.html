@@ -17,8 +17,10 @@ $(document).ready(function() {
 	$("#escalonar_dialog").dialog('option', 'width', 580);
 });
 function carregarAcao(){
-	var id = document.getElementById('id');
-	PassAjaxResponseToFunction('@{Application.exibirAcaoEscalonar()}?id='+id , 'carregouAcao', null, false, null);
+	var inputIdSolicitacao = document.getElementById('id');
+	var inputIdItem = document.getElementById('itemConfiguracao');
+	var params = 'id='+ inputIdSolicitacao.value + '&itemConfiguracao='+inputIdItem.value;
+	PassAjaxResponseToFunction('@{Application.exibirAcaoEscalonar}?' + params , 'carregouAcao', null, false, null);
 }
 
 function carregouAcao(response, param){
@@ -34,16 +36,16 @@ function carregouAcao(response, param){
 			onsubmit="javascript: return block();" method="POST">
 		
 		<div class="gt-form-row" >
-			<label>#{checkbox name:'criaFilha',
-					value:criaFilha /} Criar Solicitação filha de ${solicitacao.codigo}</label>
+			<label>#{checkbox name:'criaFilha', value:criaFilha /} 
+					#{if solicitacao.isFilha()} #{set codigo : solicitacao.solicitacaoPai.codigo /} #{/if}
+					#{else} #{set codigo : solicitacao.codigo /} #{/else}
+					Criar Solicitação filha de ${codigo}</label>
 			<br />
-			#{set parametroAdicional : "" /}
-			#{if solicitacao.isFilha()} #{verbatim}#{set parametroAdicional : '&sol.solicitacaoPai.idSolicitacao='+solicitacao.solicitacaoPai?.idSolicitacao /}#{/verbatim}#{/if}
 			<label>Item</label> #{selecao tipo:'item',
 			nome:'itemConfiguracao',
 			value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();",
 			params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo+
-						'&sol.cadastrante.idPessoa='+cadastrante?.idPessoa + parametroAdicional   /} <span style="color: red">#{error
+						'&sol.cadastrante.idPessoa='+cadastrante?.idPessoa /} <span style="color: red">#{error
 				'solicitacao.itemConfiguracao' /}</span>
 		</div>
 		<div id="divAcaoEscalonar">#{include 'Application/exibirAcaoEscalonar.html' /}</div>
@@ -56,7 +58,7 @@ function carregouAcao(response, param){
 			<br /><br />	
 			#{if !solicitacao.isPai() && !solicitacao.isFilha()}
 				#{checkbox name:'fechadoAuto',
-					value:solicitacao.fechadoAutomaticamente /} Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>, quando 
+					value:solicitacao.fechadoAutomaticamente /} Fechar automaticamente a solicitação <b>${codigo}</b>, quando 
 					todas as solicitaç&otilde;es filhas forem fechadas pelos seus respectivos atendentes.
 			#{/if}
 		</div>
@@ -64,6 +66,7 @@ function carregouAcao(response, param){
 			<br />
 			<label>Motivo do Escalonamento</label>
 			#{select name:'motivo', items:models.SrTipoMotivoEscalonamento.values(),
+						value:'NOVO_ATENDENTE',
 						labelProperty:'descrTipoMotivoEscalonamento', style:'width:auto;' /}
 		</div>
 		<div  class="gt-form-row">

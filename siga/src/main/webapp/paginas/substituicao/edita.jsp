@@ -80,7 +80,12 @@
 						<tr>
 							<td>Titular:</td>
 
-							<td><ww:select theme="simple" name="tipoTitular"
+							<td><ww:select theme="simple" name="
+
+
+
+
+Titular"
 									list="listaTipoTitular"
 									onchange="javascript:hideShowSel(this);" /> <c:choose>
 									<c:when test="${tipoTitular == 1}">
@@ -91,10 +96,13 @@
 										<c:set var="titularStyle" value="display:none" />
 										<c:set var="lotaTitularStyle" value="" />
 									</c:when>
-								</c:choose> <span id="spanTitular" style="${titularStyle}"> <siga:selecao
-										propriedade="titular" tema="simple" modulo="siga" /> </span> <span
-								id="spanLotaTitular" style="${lotaTitularStyle}"> <siga:selecao modulo="siga"
-										propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/> </span>
+								</c:choose> 
+								<span id="spanTitular" style="${titularStyle}"> 
+									<siga:selecao propriedade="titular" tema="simple" modulo="siga" /> 
+								</span>
+								<span id="spanLotaTitular" style="${lotaTitularStyle}">
+									<siga:selecao modulo="siga" propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/>
+								</span>
 							</td>
 						</tr>
 

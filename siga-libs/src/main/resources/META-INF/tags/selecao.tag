@@ -26,12 +26,6 @@
 	</c:if>
 </c:forEach>
 
-
-<c:set var="propriedadeSel" value="${propriedade}Sel" />
-<c:set var="propriedadeTipoSel" value="${propriedade}${tipoSel}Sel" />
-
-<c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
-
 <c:choose>
 	<c:when test="${empty tipo}">
 		<c:set var="acaoBusca" value="${requestScope[propriedadeSel].acaoBusca}" />
@@ -43,6 +37,10 @@
 	</c:otherwise>
 </c:choose>
 
+<c:set var="propriedadeSel" value="${propriedade}Sel" />
+<c:set var="propriedadeTipoSel" value="${propriedade}${tipoSel}Sel" />
+
+<c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
 
 <c:set var="larguraPopup" value="600" />
 <c:set var="alturaPopup" value="400" />
@@ -172,10 +170,11 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <input type="hidden" name="${propriedade}${tipoSel}Sel.buscar" />
 <input type="hidden" name="req${propriedade}${tipoSel}Sel" />
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
-<input type="text name="${propriedade}${tipoSel}Sel.sigla"
+<input type="text" name="${propriedade}${tipoSel}Sel.sigla"
+	value="<c:out value="${requestScope[propriedadeTipoSel].sigla}" />"
 	onkeypress="return handleEnter(this, event)"
 	onblur="javascript: ajax_${propriedade}${tipoSel}();" size="25"
-	theme="simple" disabled="${disabled}" />
+	disabled="${disabled}" />
 	
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."

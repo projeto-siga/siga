@@ -13,11 +13,6 @@
 
 
 			<script>
-				function sbmt() {
-					editar_gravar.action = '<ww:property value="%{url}"/>';
-					editar_gravar.submit();
-				}
-
 				function hideShowSel(combo) {
 					var sel1Span = document.getElementById('span'
 							+ combo.name.substring(4));
@@ -68,7 +63,7 @@
 			<div class="gt-content-box gt-for-table">
 				<form action="gravar" onsubmit="verificaData()">
 					<input type="hidden" name="postback" value="1" />
-					<ww:hidden name="id" />
+					<input type="hidden" name="id" />
 					<c:set var="dataFim" value="" />
 					<table class="gt-form-table" width="100%">
 						<tr class="header">
@@ -101,7 +96,7 @@
 								</c:choose> 
 								
 								<span id="spanTitular" style="${titularStyle}"> 
-									<siga:selecao propriedade="titular" tema="simple" modulo="siga" /> 
+									<siga:selecao modulo="siga" propriedade="titular" tema="simple" /> 
 								</span> 
 								<span id="spanLotaTitular" style="${lotaTitularStyle}"> 
 									<siga:selecao modulo="siga" propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/> 
@@ -134,7 +129,7 @@
 								</c:choose> 
 								
 								<span id="spanSubstituto" style="${substitutoStyle}"> 
-									<siga:selecao propriedade="substituto" tema="simple" modulo="siga"/> 
+									<siga:selecao modulo="siga" propriedade="substituto" tema="simple"/> 
 								</span> 
 								<span id="spanLotaSubstituto" style="${lotaSubstitutoStyle}"> 
 									<siga:selecao  modulo="siga" propriedade="lotaSubstituto" tema="simple" /> 
@@ -145,7 +140,7 @@
 						<tr>
 							<td>Data de Início</td>
 							<td>
-								<input type="text" name="substituicao.dtIniSubst" label="Data de Início" value="${substituicao.dtIniSubst}"
+								<input type="text" id="dtIniSubst" name="substituicao.dtIniSubst" label="Data de Início" value="${dtIniSubst}"
 									onblur="javascript:verifica_data(this, true);" theme="simple" />
 								(opcional)
 							</td>
@@ -154,7 +149,7 @@
 						<tr>
 							<td>Data de Fim</td>
 							<td>
-								<input type="text" name="substituicao.dtFimSubst" label="Data de Fim" 
+								<input type="text" id="dtFimSubst" name="substituicao.dtFimSubst" label="Data de Fim" value="${dtFimSubst}"
 									onblur="javascript:verifica_data(this, true);" theme="simple" />
 								(opcional)
 							</td>

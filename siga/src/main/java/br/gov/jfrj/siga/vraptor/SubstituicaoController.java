@@ -45,9 +45,6 @@ public class SubstituicaoController extends SigaController {
 		return map;
 	}	
 		
-	public DpSubstituicao daoSub(long id) {
-		return dao().consultar(id, DpSubstituicao.class, false);
-	}	
 
 	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so) {
 		super(request, result, CpDao.getInstance(), so);
@@ -131,39 +128,51 @@ public class SubstituicaoController extends SigaController {
 
 			if (subst.getTitular() == null) {
 				tipoTitular = 2;
-				this.lotaTitularSel.buscarPorObjeto(subst.getLotaTitular());
-				result.include("lotaTitularSel", this.lotaTitularSel);
+				lotaTitularSel.buscarPorObjeto(subst.getLotaTitular());
+				
 			} else {
 				tipoTitular = 1;
-				this.titularSel.buscarPorObjeto(subst.getTitular());
-				result.include("titularSel", this.titularSel);
+				titularSel.buscarPorObjeto(subst.getTitular());
 			}
 			
 			if (subst.getSubstituto() == null) {
 				tipoSubstituto = 2;
-				this.lotaSubstitutoSel.buscarPorObjeto(subst.getLotaSubstituto());
-				result.include("lotaSubstitutoSel", this.lotaSubstitutoSel);
+				lotaSubstitutoSel.buscarPorObjeto(subst.getLotaSubstituto());
+				
 			} else {
 				tipoSubstituto = 1;
-				this.substitutoSel.buscarPorObjeto(subst.getSubstituto());
-				result.include("substitutoSel", this.substitutoSel);
+				substitutoSel.buscarPorObjeto(subst.getSubstituto());
+				
 			}
 			
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 			try {
-				this.dtFimSubst = df.format(subst.getDtFimSubst());
+				dtFimSubst = df.format(subst.getDtFimSubst());
 			} catch (final Exception e) {
 			}
 
 			try {
-				this.dtIniSubst = df.format(subst.getDtIniSubst());
+				dtIniSubst = df.format(subst.getDtIniSubst());
 			} catch (final Exception e) {
 			}
 			result.include("substituicao", subst);
+			result.include("dtIniSubst", dtIniSubst);
+			result.include("dtFimSubst", dtFimSubst);				
 		}
+		
+		
+		result.include("titularSel", titularSel);
+		result.include("lotaTitularSel", lotaTitularSel);
+		
+		
+		result.include("substitutoSel", substitutoSel);
+		result.include("lotaSubstitutoSel", lotaSubstitutoSel);
+		
+		
 		result.include("tipoTitular", tipoTitular);
 		result.include("tipoSubstituto", tipoSubstituto);
 		result.include("listaTipoTitular", getListaTipoTitular());
+			
 	}
 	
 	public void gravar(DpSubstituicao substituicao
@@ -172,6 +181,8 @@ public class SubstituicaoController extends SigaController {
 			          
 			          ,DpPessoaSelecao substitutoSel
 			          ,DpLotacaoSelecao lotaSubstitutoSel
+			          ,String dtIniSubst
+			          ,String dtFimSubst
 					  ) throws Exception {
 		
 		
@@ -182,6 +193,9 @@ public class SubstituicaoController extends SigaController {
 		this.lotaTitularSel = lotaTitularSel;
 		this.substitutoSel = substitutoSel;
 		this.lotaSubstitutoSel = lotaSubstitutoSel;
+		
+        this.dtIniSubst = dtIniSubst; 
+        this.dtFimSubst = dtFimSubst;		
 		
 		try {
 			dao().iniciarTransacao();
@@ -222,14 +236,14 @@ public class SubstituicaoController extends SigaController {
 			}
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			try {
-				subst.setDtIniSubst(df.parse(this.dtIniSubst + " 00:00"));
+				subst.setDtIniSubst(df.parse(dtIniSubst + " 00:00"));
 			} catch (final ParseException e) {
 				subst.setDtIniSubst(null);
 			} catch (final NullPointerException e) {
 				subst.setDtIniSubst(null);
 			}
 			try {
-				subst.setDtFimSubst(df.parse(this.dtFimSubst + " 23:59"));
+				subst.setDtFimSubst(df.parse(dtFimSubst + " 23:59"));
 			} catch (final ParseException e) {
 				subst.setDtFimSubst(null);
 			} catch (final NullPointerException e) {
@@ -242,7 +256,7 @@ public class SubstituicaoController extends SigaController {
 			subst.setDtIniRegistro(new Date());
 
 			if (substituicao.getIdSubstituicao() != null) {
-				DpSubstituicao substAntiga = daoSub(substituicao.getIdSubstituicao());
+				DpSubstituicao substAntiga = dao().consultar(substituicao.getIdSubstituicao(), DpSubstituicao.class, false);
 				substAntiga.setDtFimRegistro(new Date());
 				substAntiga = dao().gravar(substAntiga);
 				subst.setIdRegistroInicial(substAntiga.getIdRegistroInicial());
@@ -263,11 +277,10 @@ public class SubstituicaoController extends SigaController {
 
 	}
 	
-	@Get("/app/substituicao/excluir")
-	public void excluir(Long id) throws Exception {
+	public void exclui(Long id) throws Exception {
 		
 		if (id != null) {
-			DpSubstituicao dpSub = daoSub(id);
+			DpSubstituicao dpSub = dao().consultar(id, DpSubstituicao.class, false);
 			
 			if ((dpSub.getSubstituto() != null && dpSub.getSubstituto().equivale(getCadastrante()))					
 				|| (dpSub.getSubstituto() == null && dpSub.getLotaSubstituto().equivale(getCadastrante().getLotacao()))
@@ -278,6 +291,7 @@ public class SubstituicaoController extends SigaController {
 				dpSub.setDtFimRegistro(new Date());
 				dpSub = dao().gravar(dpSub);
 				dao().commitTransacao();				
+				result.redirectTo(this).lista();				
 			} else
 				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
 		} else

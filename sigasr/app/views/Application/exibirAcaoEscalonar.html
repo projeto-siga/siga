@@ -15,7 +15,6 @@ function carregarLotacaoDaAcao(){
 	<div class="gt-form-row gt-width-66">
 	<label>Ação</label>
 		#{select name:'acao.idAcao', value:solicitacao.acao?.idAcao, onchange:"carregarLotacaoDaAcao();", id:'selectAcao'}
-			#{option}#{/option}	
 			#{list items:acoesEAtendentes.keySet(), as:'acao' }
 				#{option acao.idAcao} ${acao.tituloAcao} #{/option}					 
 			#{/list}

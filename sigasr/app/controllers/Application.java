@@ -228,8 +228,9 @@ public class Application extends SigaApplication {
 		render(solicitacao, acoesEAtendentes);
 	}
 	
-	public static void exibirAcaoEscalonar(Long id) throws Exception {
+	public static void exibirAcaoEscalonar(Long id, Long itemConfiguracao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
@@ -818,6 +819,9 @@ public class Application extends SigaApplication {
 				SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, 
 				SrTipoMotivoEscalonamento motivo, String descricao,
 				Boolean criaFilha, Boolean fechadoAuto) throws Exception {
+		if(itemConfiguracao == null || acao == null)
+			throw new Exception("Operação não permitida. Necessário informar um item de configuração " + 
+					"e uma ação.");
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		if (criaFilha) {
 			if (fechadoAuto != null) {

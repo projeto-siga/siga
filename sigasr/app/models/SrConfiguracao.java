@@ -111,7 +111,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	private List<SrLista> listaConfiguracaoSet;
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"))
+	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"), schema="SIGASR")
 	public List<SrTipoPermissaoLista> tipoPermissaoSet;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

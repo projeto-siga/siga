@@ -28,10 +28,10 @@
 		<module>sigagc</module>
  		<module>sigasr</module>
  		<module>sigapp</module>
-		<!-- <module>sigari</module> <module>siga-cd</module> <module>sigacd</module> 
-			 <module>siga-autenticidade</module> <module>siga-cd-aut</module> 
-			<module>siga-cp-sinc</module> 
-			<module>siga-assinador</module> <module>siga-dump</module> -->
+ 		<module>siga-cp-sinc</module> 
+ 		<module>siga-dump</module>
+		<!--  <module>siga-cd</module> <module>sigacd</module> 
+			 <  -->
 	</modules>
 
 

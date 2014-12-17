@@ -78,7 +78,7 @@
 												<c:choose>
 													<c:when test="${editable}">
 														<siga:selecao propriedade="${variable.mappedName}"
-															modulo="sigaex" tipo="expediente" tema="simple"
+															modulo="../sigaex" tipo="expediente" tema="simple"
 															ocultardescricao="sim"
 															siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
 													</c:when>
@@ -92,7 +92,7 @@
 												<c:choose>
 													<c:when test="${editable}">
 														<siga:selecao propriedade="${variable.mappedName}"
-															modulo="siga" tipo="pessoa" tema="simple"
+															modulo="../sigaex" tipo="pessoa" tema="simple"
 															ocultardescricao="sim"
 															siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
 													</c:when>
@@ -105,7 +105,7 @@
 												<c:choose>
 													<c:when test="${editable}">
 														<siga:selecao propriedade="${variable.mappedName}"
-															modulo="siga" tipo="lotacao" tema="simple"
+															modulo="../sigaex" tipo="lotacao" tema="simple"
 															ocultardescricao="sim"
 															siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
 													</c:when>
@@ -185,7 +185,7 @@
 						<input name="tiId" type="hidden" value="${tiId}" />
 						<div class="gt-form-row gt-width-100">
 							<label>Pessoa</label>
-							<siga:selecao modulo="siga" tipo="pessoa" tema="simple"
+							<siga:selecao modulo="/siga" tipo="pessoa" tema="simple"
 										propriedade="ator"
 										siglaInicial="${atorSel.sigla}"
 										idInicial="${atorSel.id}"
@@ -195,7 +195,7 @@
 						<div class="gt-form-row gt-width-100">
 
 							<label>Lotação</label>
-							<siga:selecao modulo="siga" tipo="lotacao" tema="simple"
+							<siga:selecao modulo="/siga" tipo="lotacao" tema="simple"
 										propriedade="lotaAtor"
 										siglaInicial="${lotaAtorSel.sigla}"
 										idInicial="${lotaAtorSel.id}"

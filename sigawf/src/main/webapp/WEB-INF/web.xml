@@ -108,12 +108,6 @@
 		<url-pattern>/upload</url-pattern>
 	</servlet-mapping>
 
-	<!-- Inicio de WebServer -->
-	<context-param>
-	    <param-name>br.com.caelum.vraptor.provider</param-name>
-	    <param-value>br.com.caelum.vraptor.ioc.pico.PicoProvider</param-value>
-	</context-param>	
-	
 	<context-param>
 		<param-name>br.com.caelum.vraptor.encoding</param-name>
 		<param-value>UTF-8</param-value>
@@ -121,18 +115,10 @@
 		
 	<context-param>  
    		<param-name>br.com.caelum.vraptor.packages</param-name>  
-	   	<param-value>  
-        	br.gov.jfrj.siga.vraptor  
-   		</param-value>  
-	</context-param>  
-
-	<listener>
-		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
-	</listener>
-
-	<listener>
-		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
-	</listener>
+	   	<param-value>
+            br.gov.jfrj.siga.vraptor
+        </param-value>
+	</context-param>
 
 	<security-constraint>
 		<web-resource-collection>

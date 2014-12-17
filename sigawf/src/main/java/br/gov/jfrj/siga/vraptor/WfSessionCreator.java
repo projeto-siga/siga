@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.wf.vraptor;
+package br.gov.jfrj.siga.vraptor;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

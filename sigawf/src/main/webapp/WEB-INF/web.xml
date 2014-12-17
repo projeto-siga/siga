@@ -131,13 +131,6 @@
 		<param-value>UTF-8</param-value>
 	</context-param> 
 		
-	<context-param>  
-   		<param-name>br.com.caelum.vraptor.packages</param-name>  
-	   	<param-value>  
-        	br.gov.jfrj.siga.vraptor  
-   		</param-value>  
-	</context-param>  
-
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>WEB-INF/applicationContext.xml</param-value>

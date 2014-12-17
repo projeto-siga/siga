@@ -412,10 +412,6 @@
         </dependency>
         <dependency>
             <groupId>projeto-siga</groupId>
-            <artifactId>siga-vraptor-module</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>projeto-siga</groupId>
             <artifactId>siga-rel</artifactId>
             <exclusions>
 		        <exclusion>

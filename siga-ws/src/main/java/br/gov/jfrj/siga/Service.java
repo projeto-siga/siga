@@ -22,7 +22,6 @@ import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.wf.service.WfService;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.xml.namespace.QName;
 import java.io.UnsupportedEncodingException;
@@ -32,8 +31,6 @@ import java.net.URL;
 public abstract class Service {
 
 	public static final String ERRO = "ERRO: ";
-
-	protected static AbstractApplicationContext context = null;
 
 	static WfService wf = null;
 	static ExService ex = null;

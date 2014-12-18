@@ -169,4 +169,16 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 		return (tipo.id == 1 ? "@" : (tipo.id == 2 ? "#" : "^"))
 				+ (categoria != null ? categoria + ":" : "") + titulo;
 	}
+
+	public GcTipoTag getTipo() {
+		return tipo;
+	}
+
+	public String getCategoria() {
+		return categoria;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
 }

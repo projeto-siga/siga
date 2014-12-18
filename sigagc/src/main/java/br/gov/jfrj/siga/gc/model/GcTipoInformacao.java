@@ -37,4 +37,16 @@ public class GcTipoInformacao extends Objeto {
 	public GcTipoInformacao() {
 		super();
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public GcArquivo getArq() {
+		return arq;
+	}
 }

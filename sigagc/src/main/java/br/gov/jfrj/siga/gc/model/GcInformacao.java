@@ -642,4 +642,72 @@ public class GcInformacao extends Objeto {
 	public Set<GcTag> getTags() {
 		return this.tags;
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public GcTipoInformacao getTipo() {
+		return tipo;
+	}
+
+	public GcArquivo getInformacaoPai() {
+		return informacaoPai;
+	}
+
+	public CpOrgaoUsuario getOu() {
+		return ou;
+	}
+
+	public GcAcesso getVisualizacao() {
+		return visualizacao;
+	}
+
+	public GcAcesso getEdicao() {
+		return edicao;
+	}
+
+	public DpPessoa getAutor() {
+		return autor;
+	}
+
+	public DpLotacao getLotacao() {
+		return lotacao;
+	}
+
+	public Date getElaboracaoFim() {
+		return elaboracaoFim;
+	}
+
+	public Integer getAno() {
+		return ano;
+	}
+
+	public Integer getNumero() {
+		return numero;
+	}
+
+	public GcArquivo getArq() {
+		return arq;
+	}
+
+	public java.util.List<GcMarca> getMarcas() {
+		return marcas;
+	}
+
+	public SortedSet<GcMovimentacao> getMovs() {
+		return movs;
+	}
+
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	public Date getHisDtFim() {
+		return hisDtFim;
+	}
+
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
 }

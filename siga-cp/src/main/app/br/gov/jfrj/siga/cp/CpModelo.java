@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.cp;
 import java.io.UnsupportedEncodingException;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -32,7 +33,9 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "CP_MODELO", schema = "CORPORATIVO")
+@NamedQuery(name = "consultarCpModelos", query = "select u from CpModelo u where u.hisDtFim is null")
 public class CpModelo extends AbstractCpModelo {
+	private static final long serialVersionUID = 1256614496347273713L;
 
 	@Transient
 	private byte[] cacheConteudoBlobMod;

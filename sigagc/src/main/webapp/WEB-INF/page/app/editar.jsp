@@ -15,35 +15,34 @@
 				<input type="hidden" id="siglaId" name="sigla" value="${informacao.sigla}" /> 
 				<div class="gt-form-row gt-width-100">
 					<div class="gt-left-col gt-width-25" style="margin-right: 2em">
-						<siga:select label="Tipo" name="tipo.id" list="${tiposInformacao}" listKey="id" listValue="nome" onchange="postback();"/>
+						<siga:select label="Tipo" name="tipo.id" list="tiposInformacao" listKey="id" listValue="nome" onchange="postback();"/>
 					</div>
-					<c:if test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)">
+					<c:if test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<siga:select label="Visualizacão" name="informacao.visualizacao" list="${acessos}" listKey="id" listValue="nome"/>
+						<siga:select label="Visualizacão" name="informacao.visualizacao" list="acessos" listKey="id" listValue="nome"/>
 					</div>
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<siga:select label="Edicão" name="informacao.edicao" list="${acessos}" listKey="id" listValue="nome"/>
+						<siga:select label="Edicão" name="informacao.edicao" list="acessos" listKey="id" listValue="nome"/>
 					</div>
-					#{/if}
+					</c:if>
 				</div>
 
 				<div class="gt-form-row gt-width-100">
-					<label>Título</label> <input type="text" id="titulo" name="titulo"
-						value="${titulo}" class="gt-form-text" /><span style="color: red">#{error
-						'titulo' /}</span>
+					<label>Título</label> <input type="text" id="inftitulo" name="inftitulo"
+						value="${inftitulo}" class="gt-form-text" /><span style="color: red">#{error 'inftitulo' /}</span>
 				</div>
 
 				<div class="gt-form-row gt-width-100">
 					<label>Texto</label>
 					<textarea id="conteudo" name="conteudo" cols="80" rows="25"
-						class="gt-form-textarea">${conteudo}</textarea>
+						class="gt-form-textarea">${informacao.conteudo}</textarea>
 					<span style="color: red">#{error 'conteudo' /}</span>
 				</div>
 
 				<div class="gt-form-row gt-width-100">
 					<label>Classificação</label>
 					<c:if test="${not empty classificacao}">
-						<textarea name="classificacao" class="gt-form-text" readonly>${classificacao}</textarea> 
+						<textarea name="informacao.classificacao" class="gt-form-text" readonly>${classificacao}</textarea> 
 					</c:if>
 					<c:if test="${empty classificacao}">
 						<p>Esse conhecimento ainda não possui uma classificação</p>
@@ -59,11 +58,11 @@
 					<p class="gt-cancel">
 						<c:choose>
 							<c:when test="not empty informacao && not empty informacao.id && informacao.id != 0}">
-								ou <a href="@{Application.editar(informacao?.sigla)}">cancelar alterações</a>
-								ou <a href="@{Application.movimentacoes(informacao?.sigla)}">exibir movimentações</a> 
+								ou <a href="${linkTo[AppController].}editar[informacao.sigla]}">cancelar alterações</a>
+								ou <a href="${linkTo[AppController].movimentacoes[informacao.sigla]}">exibir movimentações</a> 
 							</c:when>
 							<c:otherwise>
-								<a href="@{Application.editar}">cancelar alterações</a>
+								<a href="${linkTo[AppController].editar}">cancelar alterações</a>
 							</c:otherwise>
 						</c:choose>
 					</p>
@@ -83,7 +82,7 @@
 					<h3 style="padding-top: 1em">Incluir Imagens ou Arquivos no Texto</h3>
 					<p>Clique em uma imagem/arquivo abaixo para incluir uma
 						referência no texto.</p>
-					<c:forEach items="${items:informacao.mov}" var="m"> 
+					<c:forEach items="${informacao.mov}" var="m"> 
 						<c:if test="${m.tipo.id == models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO && m.movCanceladora == null}">
 							<p>
 								<img style="margin-bottom: -4px;" src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
@@ -252,7 +251,7 @@
 	}	
 	function postback(){
 		var frm = document.getElementById('frm');
-		frm.action = '@{Application.editar}';
+		frm.action = '${linkTo[AppController].editar}';
 		frm.submit();
 	}
 	$(document).ready(function(){
@@ -262,4 +261,4 @@
 		});
 	});
 </script>
-
+</siga:pagina>

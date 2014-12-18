@@ -154,4 +154,24 @@ public class GcArquivo extends Objeto implements Serializable {
 		}
 		return null;
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public byte[] getConteudo() {
+		return conteudo;
+	}
+
+	public String getMimeType() {
+		return mimeType;
+	}
 }

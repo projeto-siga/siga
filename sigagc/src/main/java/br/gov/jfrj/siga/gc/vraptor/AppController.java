@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.gc.model.GcMovimentacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
 import br.gov.jfrj.siga.gc.model.GcTipoMovimentacao;
+import br.gov.jfrj.siga.gc.model.GcTipoTag;
 import br.gov.jfrj.siga.gc.util.GcArvore;
 import br.gov.jfrj.siga.gc.util.GcBL;
 import br.gov.jfrj.siga.gc.util.GcCloud;
@@ -530,7 +531,7 @@ public class AppController extends GcController {
 							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 	}
 
-	public void editar(String sigla, String classificacao, String titulo,
+	public void editar(String sigla, String classificacao, String inftitulo,
 			String origem, String conteudo, GcTipoInformacao tipo)
 			throws Exception {
 		GcInformacao informacao = null;
@@ -550,8 +551,8 @@ public class AppController extends GcController {
 			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.AR.all()
 					.fetch();
 			List<GcAcesso> acessos = GcAcesso.AR.all().fetch();
-			if (titulo == null)
-				titulo = (informacao.arq != null) ? informacao.arq.titulo
+			if (inftitulo == null)
+				inftitulo = (informacao.arq != null) ? informacao.arq.titulo
 						: null;
 
 			if (conteudo == null)
@@ -560,7 +561,7 @@ public class AppController extends GcController {
 
 			if (tipo == null || tipo.id == 0)
 				tipo = (informacao.tipo != null) ? informacao.tipo
-						: tiposInformacao.get(2);
+						: tiposInformacao.get(0);
 
 			if (informacao.arq == null)
 				conteudo = (tipo.arq != null) ? tipo.arq.getConteudoTXT()
@@ -568,8 +569,10 @@ public class AppController extends GcController {
 
 			if (conteudo != null && !conteudo.trim().startsWith("<")) {
 				conteudo = bl.escapeHashTag(conteudo);
-				informacao.arq.setConteudoTXT(conteudo);
-				conteudo = informacao.getConteudoHTML();
+				if (informacao.arq != null) {
+					informacao.arq.setConteudoTXT(conteudo);
+					conteudo = informacao.getConteudoHTML();
+				}
 
 			}
 
@@ -596,7 +599,7 @@ public class AppController extends GcController {
 			result.include("informacao", informacao);
 			result.include("tiposInformacao", tiposInformacao);
 			result.include("acessos", acessos);
-			result.include("titulo", titulo);
+			result.include("titulo", inftitulo);
 			result.include("conteudo", conteudo);
 			result.include("classificacao", classificacao);
 			result.include("origem", origem);

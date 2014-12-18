@@ -11,6 +11,8 @@ import br.gov.jfrj.siga.model.Objeto;
 @Entity
 @Table(name = "GC_TIPO_MOVIMENTACAO", schema = "SIGAGC")
 public class GcTipoMovimentacao extends Objeto {
+	private static final long serialVersionUID = -4444112339088302985L;
+
 	public static ActiveRecord<GcTipoMovimentacao> AR = new ActiveRecord<>(
 			GcTipoMovimentacao.class);
 
@@ -53,5 +55,13 @@ public class GcTipoMovimentacao extends Objeto {
 		super();
 		this.id = id;
 		this.nome = nome;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public String getNome() {
+		return nome;
 	}
 }

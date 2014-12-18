@@ -140,6 +140,58 @@ public class GcMovimentacao extends Objeto implements
 		return (count == count2);
 	}
 
+	public long getId() {
+		return id;
+	}
+
+	public GcTipoMovimentacao getTipo() {
+		return tipo;
+	}
+
+	public GcInformacao getInf() {
+		return inf;
+	}
+
+	public GcMovimentacao getMovRef() {
+		return movRef;
+	}
+
+	public GcMovimentacao getMovCanceladora() {
+		return movCanceladora;
+	}
+
+	public DpPessoa getPessoaAtendente() {
+		return pessoaAtendente;
+	}
+
+	public DpLotacao getLotacaoAtendente() {
+		return lotacaoAtendente;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public DpPessoa getPessoaTitular() {
+		return pessoaTitular;
+	}
+
+	public DpLotacao getLotacaoTitular() {
+		return lotacaoTitular;
+	}
+
+	public GcArquivo getArq() {
+		return arq;
+	}
+
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
+
 	/*
 	 * Edson: pode ser usado quando o grupo de e-mail notificado for do siga-gi
 	 * public Map<DpLotacao, List<DpPessoa>> getLotasEPessoasDoGrupo() throws

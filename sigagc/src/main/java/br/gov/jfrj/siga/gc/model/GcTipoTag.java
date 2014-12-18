@@ -34,4 +34,12 @@ public class GcTipoTag extends Objeto {
 		this.id = id;
 		this.nome = nome;
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
 }

@@ -7,40 +7,8 @@
 	
 	<display-name>sigacd</display-name>
 	
-	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
-	<!--distributable/-->
 
-	<!--jsp-config>
-		<taglib>
-			<taglib-uri>/core</taglib-uri>
-			<taglib-location>/META-INF/c.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>/fmt</taglib-uri>
-			<taglib-location>/META-INF/fmt.tld</taglib-location>
-		</taglib>		
-		<taglib>
-			<taglib-uri>/tags</taglib-uri>
-			<taglib-location>/META-INF/tags.tld</taglib-location>
-		</taglib>
-	</jsp-config-->
-	
-
-	<welcome-file-list>
-		<welcome-file>inbox.action</welcome-file>
-	</welcome-file-list>
-
-	<!-- Inicio de WebServer -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>WEB-INF/applicationContext.xml</param-value>
-	</context-param>
-	<listener>
-		<listener-class>
-			org.springframework.web.context.ContextLoaderListener
-		</listener-class>
-	</listener>
-
+<!-- 
 	<servlet>
 		<display-name>CXF Servlet</display-name>
 		<servlet-name>CXFServlet</servlet-name>
@@ -54,6 +22,7 @@
 		<servlet-name>CXFServlet</servlet-name>
 		<url-pattern>/servicos/*</url-pattern>
 	</servlet-mapping>
+ -->
 
 	<servlet>
 		<display-name>testes</display-name>

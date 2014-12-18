@@ -12,7 +12,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 public class IdentidadeController extends SigaController {
 
 	public IdentidadeController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+		super(request, result, CpDao.getInstance(), so, Modulo.GI);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

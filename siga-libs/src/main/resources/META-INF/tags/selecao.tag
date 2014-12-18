@@ -26,11 +26,7 @@
 	</c:if>
 </c:forEach>
 
-
 <c:set var="propriedadeSel" value="${propriedade}Sel" />
-<c:set var="propriedadeTipoSel" value="${propriedade}${tipoSel}Sel" />
-
-<c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
 
 <c:choose>
 	<c:when test="${empty tipo}">
@@ -43,6 +39,9 @@
 	</c:otherwise>
 </c:choose>
 
+<c:set var="propriedadeTipoSel" value="${propriedade}${tipoSel}Sel" />
+
+<c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
 
 <c:set var="larguraPopup" value="600" />
 <c:set var="alturaPopup" value="400" />
@@ -147,7 +146,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
-	var url = '${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+	var url = '/${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 	url = url + '&sigla=' + sigla;
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 }
@@ -161,21 +160,21 @@ self.ajax_${propriedade}${tipoSel} = function() {
 </c:if>
 <c:choose>
 	<c:when test="${desativar == 'sim'}">
-		<c:set var="disabled" value="true" />
+		<c:set var="disabledTxt" value="disabled" />
 		<c:set var="disabledBtn" value="disabled" />
 	</c:when>
 </c:choose>
 
 
-<input type="hidden" name="${propriedade}${tipoSel}Sel.id" />
-<input type="hidden" name="${propriedade}${tipoSel}Sel.descricao" />
-<input type="hidden" name="${propriedade}${tipoSel}Sel.buscar" />
-<input type="hidden" name="req${propriedade}${tipoSel}Sel" />
+<input type="hidden" name="req${propriedade}${tipoSel}Sel"  />
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
-<input type="text name="${propriedade}${tipoSel}Sel.sigla"
+<input type="hidden" name="${propriedade}${tipoSel}Sel.id"        value="<c:out value="${requestScope[propriedadeTipoSel].id}" />"/>
+<input type="hidden" name="${propriedade}${tipoSel}Sel.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}" />"/>
+<input type="hidden" name="${propriedade}${tipoSel}Sel.buscar"    value="<c:out value="${requestScope[propriedadeTipoSel].buscar}" />"/>
+<input type="text"   name="${propriedade}${tipoSel}Sel.sigla"     value="<c:out value="${requestScope[propriedadeTipoSel].sigla}" />"
 	onkeypress="return handleEnter(this, event)"
 	onblur="javascript: ajax_${propriedade}${tipoSel}();" size="25"
-	theme="simple" disabled="${disabled}" />
+	"${disabledTxt}" />
 	
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."

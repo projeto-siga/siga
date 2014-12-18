@@ -157,17 +157,21 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		}
 
 		List<SrConfiguracao> listaFinal = new ArrayList<SrConfiguracao>();
-		TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro
-				.getCpTipoConfiguracao().getIdTpConfiguracao());
+		
+		if (confFiltro.getCpTipoConfiguracao() != null) {
+			TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro
+					.getCpTipoConfiguracao().getIdTpConfiguracao());
 
-		for (CpConfiguracao cpConfiguracao : lista) {
-			if (cpConfiguracao.getHisDtFim() == null
-					&& atendeExigencias(confFiltro, atributosDesconsiderados,
-							(SrConfiguracao) cpConfiguracao, null)) {
-				listaFinal.add((SrConfiguracao) cpConfiguracao);
+			for (CpConfiguracao cpConfiguracao : lista) {
+				if (cpConfiguracao.getHisDtFim() == null
+						&& atendeExigencias(confFiltro, atributosDesconsiderados,
+								(SrConfiguracao) cpConfiguracao, null)) {
+					listaFinal.add((SrConfiguracao) cpConfiguracao);
+				}
+				
 			}
-			
 		}
+		
 		return listaFinal;
 	}
 

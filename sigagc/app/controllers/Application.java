@@ -61,6 +61,7 @@ import br.gov.jfrj.siga.model.DadosRI;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jamonapi.utils.Logger;
 
 //Obtaining Hibernate objects programmatically
 //
@@ -94,13 +95,6 @@ public class Application extends SigaApplication {
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
-		}
-
-		try {
-			assertAcesso("ADM:Administrar");
-			renderArgs.put("exibirMenuAdministrar", true);
-		} catch (Exception e) {
-			renderArgs.put("exibirMenuAdministrar", false);
 		}
 	}
 
@@ -681,9 +675,17 @@ public class Application extends SigaApplication {
 			if (informacao.lotacao == null) {
 				informacao.lotacao = lotaTitular;
 			}
+			
+			boolean editarClassificacao = false;
+			try {
+				assertAcesso("EDTCLASS:Editar classificação");
+				editarClassificacao = true;
+			} catch (Exception e) {
+				//
+			}
 
 			render(informacao, tiposInformacao, acessos, titulo, conteudo,
-					classificacao, origem, tipo);
+					classificacao, origem, tipo, editarClassificacao);
 		} else
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
@@ -1208,7 +1210,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento"
+		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento;"
 				+ path);
 	}
 

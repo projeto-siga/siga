@@ -110,7 +110,7 @@ $(document).ready(function() {
 				<div class="gt-form-row gt-width-100">
 					<label>Classificação</label>
 					#{if classificacao != null}
-						<textarea name="classificacao" class="gt-form-text" readonly>${classificacao}</textarea> 
+						<textarea name="classificacao" class="gt-form-text" #{if !editarClassificacao}readonly#{/if}>${classificacao}</textarea> 
 					#{/if}
 					#{else}
 						<p>Este conhecimento ainda não possui uma classificação</p>

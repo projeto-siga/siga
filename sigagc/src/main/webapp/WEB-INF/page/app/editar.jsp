@@ -35,14 +35,14 @@
 				<div class="gt-form-row gt-width-100">
 					<label>Texto</label>
 					<textarea id="conteudo" name="conteudo" cols="80" rows="25"
-						class="gt-form-textarea">${informacao.conteudo}</textarea>
+						class="gt-form-textarea">${conteudo}</textarea>
 					<span style="color: red">#{error 'conteudo' /}</span>
 				</div>
 
 				<div class="gt-form-row gt-width-100">
 					<label>Classificação</label>
 					<c:if test="${not empty classificacao}">
-						<textarea name="informacao.classificacao" class="gt-form-text" readonly>${classificacao}</textarea> 
+						<textarea name="classificacao" class="gt-form-text" readonly>${classificacao}</textarea> 
 					</c:if>
 					<c:if test="${empty classificacao}">
 						<p>Esse conhecimento ainda não possui uma classificação</p>

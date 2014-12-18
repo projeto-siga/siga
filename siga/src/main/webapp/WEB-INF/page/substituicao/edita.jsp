@@ -61,9 +61,9 @@
 			</script>   
 			<h2 class="gt-table-head">Cadastrar substituição</h2>
 			<div class="gt-content-box gt-for-table">
-				<form action="gravar" onsubmit="verificaData()">
+				<form action="gravar" onsubmit="verificaData()" method="post">
 					<input type="hidden" name="postback" value="1" />
-					<input type="hidden" name="id" />
+					<input type="hidden" name="substituicao.idSubstituicao" value="${substituicao.idSubstituicao}"/>
 					<c:set var="dataFim" value="" />
 					<table class="gt-form-table" width="100%">
 						<tr class="header">
@@ -77,7 +77,7 @@
 
 								<select  name="tipoTitular" onchange="javascript:hideShowSel(this);">
 									<c:forEach items="${listaTipoTitular}" var="item">
-										<option value="${item.key}" ${item.key == value ? 'selected' : ''}>
+										<option value="${item.key}" ${item.key == tipoTitular ? 'selected' : ''}>
 											${item.value}
 										</option>  
 									</c:forEach>
@@ -110,8 +110,8 @@
 							<td>
 								
 								<select  name="tipoSubstituto" onchange="javascript:hideShowSel(this);">
-									<c:forEach items="${listaTipoTitular}" var="item">
-										<option value="${item.key}" ${item.key == value ? 'selected' : ''}>
+									<c:forEach items="${listaTipoSubstituto}" var="item">
+										<option value="${item.key}" ${item.key == tipoSubstituto ? 'selected' : ''}>
 											${item.value}
 										</option>  
 									</c:forEach>
@@ -140,7 +140,7 @@
 						<tr>
 							<td>Data de Início</td>
 							<td>
-								<input type="text" id="dtIniSubst" name="substituicao.dtIniSubst" label="Data de Início" value="${dtIniSubst}"
+								<input type="text" id="dtIniSubst" name="dtIniSubst" label="Data de Início" value="${dtIniSubst}"
 									onblur="javascript:verifica_data(this, true);" theme="simple" />
 								(opcional)
 							</td>
@@ -149,7 +149,7 @@
 						<tr>
 							<td>Data de Fim</td>
 							<td>
-								<input type="text" id="dtFimSubst" name="substituicao.dtFimSubst" label="Data de Fim" value="${dtFimSubst}"
+								<input type="text" id="dtFimSubst" name="dtFimSubst" label="Data de Fim" value="${dtFimSubst}"
 									onblur="javascript:verifica_data(this, true);" theme="simple" />
 								(opcional)
 							</td>

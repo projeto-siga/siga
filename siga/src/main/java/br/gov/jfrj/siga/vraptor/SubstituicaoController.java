@@ -11,9 +11,8 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.opensymphony.xwork.Action;
-
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -38,7 +37,7 @@ public class SubstituicaoController extends SigaController {
 	private DpPessoaSelecao substitutoSel;
 	private DpLotacaoSelecao lotaSubstitutoSel;	
 	
-	public Map<Integer, String> getListaTipoTitular() {
+	public Map<Integer, String> getListaTipo() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
 		map.put(2, "Órgão Integrado");
@@ -160,42 +159,44 @@ public class SubstituicaoController extends SigaController {
 			result.include("dtFimSubst", dtFimSubst);				
 		}
 		
-		
-		result.include("titularSel", titularSel);
-		result.include("lotaTitularSel", lotaTitularSel);
-		
-		
-		result.include("substitutoSel", substitutoSel);
-		result.include("lotaSubstitutoSel", lotaSubstitutoSel);
-		
-		
+		//Dados do Titular
+		result.include("listaTipoTitular", getListaTipo());
 		result.include("tipoTitular", tipoTitular);
+		result.include("titularSel", titularSel);//tipoTitular=1
+		result.include("lotaTitularSel", lotaTitularSel);//tipoTitular=2
+		
+		//Dados do Substituto
+		result.include("listaTipoSubstituto", getListaTipo());
 		result.include("tipoSubstituto", tipoSubstituto);
-		result.include("listaTipoTitular", getListaTipoTitular());
-			
+		result.include("substitutoSel", substitutoSel);//tipoSubstituto=1
+		result.include("lotaSubstitutoSel", lotaSubstitutoSel);//tipoSubstituto=2
 	}
 	
+	@Post("/app/substituicao/gravar")
 	public void gravar(DpSubstituicao substituicao
+					  ,Integer tipoTitular
+					  ,Integer tipoSubstituto			
 			          ,DpPessoaSelecao titularSel
 			          ,DpLotacaoSelecao lotaTitularSel
 			          
 			          ,DpPessoaSelecao substitutoSel
 			          ,DpLotacaoSelecao lotaSubstitutoSel
-			          ,String dtIniSubst
-			          ,String dtFimSubst
+				      ,String dtIniSubst
+				      ,String dtFimSubst				          
 					  ) throws Exception {
 		
 		
 		
 
 		DpSubstituicao subst = new DpSubstituicao();
-		this.titularSel = titularSel;
-		this.lotaTitularSel = lotaTitularSel;
-		this.substitutoSel = substitutoSel;
-		this.lotaSubstitutoSel = lotaSubstitutoSel;
 		
-        this.dtIniSubst = dtIniSubst; 
-        this.dtFimSubst = dtFimSubst;		
+		this.tipoTitular = tipoTitular;
+		this.titularSel = titularSel;//tipoTitular=1
+		this.lotaTitularSel = lotaTitularSel;//tipoTitular=2
+		
+		this.tipoSubstituto = tipoSubstituto;
+		this.substitutoSel = substitutoSel;//tipoSubstituto=1
+		this.lotaSubstitutoSel = lotaSubstitutoSel;//tipoSubstituto=2
 		
 		try {
 			dao().iniciarTransacao();
@@ -268,16 +269,20 @@ public class SubstituicaoController extends SigaController {
 				subst.setIdRegistroInicial(subst.getIdSubstituicao());
 
 			subst = dao().gravar(subst);
+			result.redirectTo(this).lista();
 
 			dao().commitTransacao();
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("Não foi possível Gravar", 0, e);
+			result.include("exceptionStack", e);
+			throw new AplicacaoException("Não foi possível Gravar", 0, e);			
 		}
 
 	}
 	
 	public void exclui(Long id) throws Exception {
+		
+		try{
 		
 		if (id != null) {
 			DpSubstituicao dpSub = dao().consultar(id, DpSubstituicao.class, false);
@@ -297,6 +302,11 @@ public class SubstituicaoController extends SigaController {
 		} else
 			throw new AplicacaoException("Não foi informado id");
 		
-	}
+		}catch (Exception e) {
+			result.include("exceptionStack", e);
+			throw new AplicacaoException("Não foi possível Excluir", 0, e);
+		}
+		
+	}	
 
 }

@@ -824,7 +824,7 @@ public class Application extends SigaApplication {
 		if (criaFilha) {
 			if (fechadoAuto != null) {
 				solicitacao.setFechadoAutomaticamente(fechadoAuto);
-				solicitacao.salvar(cadastrante(), lotaTitular());
+				solicitacao.save();
 			}
 			SrSolicitacao filha = null;
 			if(solicitacao.isFilha())

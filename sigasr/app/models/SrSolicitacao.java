@@ -2253,14 +2253,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (!podeDeixarPendente(lota, pess))
 			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
-		DateTime datetime = new DateTime();
-		DateTimeFormatter formatter = DateTimeFormat
-				.forPattern("dd/MM/yyyy HH:mm");
-		if (!calendario.equals("")) {
-			datetime = new DateTime(formatter.parseDateTime(calendario + " "
-					+ horario));
-			movimentacao.dtAgenda = datetime.toDate();
+		
+		if (calendario != null && !calendario.equals("")){
+			DateTime dateTime = null;
+			if (horario != null && !horario.equals("")){
+				DateTimeFormatter formatter = DateTimeFormat
+						.forPattern("dd/MM/yyyy HH:mm");
+				dateTime = new DateTime(formatter.parseDateTime(calendario + " "
+						+ horario));
+			} else {
+				DateTimeFormatter formatter = DateTimeFormat
+						.forPattern("dd/MM/yyyy");
+				dateTime = new DateTime(formatter.parseDateTime(calendario));
+			}
+			if (dateTime != null)
+				movimentacao.dtAgenda = dateTime.toDate();
 		}
+		
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
 		movimentacao.descrMovimentacao = detalheMotivo;

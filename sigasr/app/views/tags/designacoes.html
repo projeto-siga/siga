@@ -632,6 +632,7 @@
 					&& idEquipeLotacao != idPreAtendente
 					&& idEquipeLotacao != idPosAtendente) {
 				$("#erroAoSalvar_dialog").dialog("open");
+				unblock();
 				return;
 			}
 		}

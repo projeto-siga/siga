@@ -163,4 +163,140 @@ public class GcInformacaoFiltro {
 
 		return listaRetorno;
 	}
+
+	public GcTipoInformacao getTipo() {
+		return tipo;
+	}
+
+	public DpPessoa getAutor() {
+		return autor;
+	}
+
+	public DpLotacao getLotacao() {
+		return lotacao;
+	}
+
+	public Integer getAno() {
+		return ano;
+	}
+
+	public Integer getNumero() {
+		return numero;
+	}
+
+	public boolean isPesquisa() {
+		return pesquisa;
+	}
+
+	public String getDtCriacaoIni() {
+		return dtCriacaoIni;
+	}
+
+	public String getDtCriacaoFim() {
+		return dtCriacaoFim;
+	}
+
+	public String getDtIni() {
+		return dtIni;
+	}
+
+	public String getDtFim() {
+		return dtFim;
+	}
+
+	public CpMarcador getSituacao() {
+		return situacao;
+	}
+
+	public CpOrgaoUsuario getOrgaoUsu() {
+		return orgaoUsu;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public String getConteudo() {
+		return conteudo;
+	}
+
+	public GcTag getTag() {
+		return tag;
+	}
+
+	public DpPessoa getResponsavel() {
+		return responsavel;
+	}
+
+	public DpLotacao getLotaResponsavel() {
+		return lotaResponsavel;
+	}
+
+	public void setTipo(GcTipoInformacao tipo) {
+		this.tipo = tipo;
+	}
+
+	public void setAutor(DpPessoa autor) {
+		this.autor = autor;
+	}
+
+	public void setLotacao(DpLotacao lotacao) {
+		this.lotacao = lotacao;
+	}
+
+	public void setAno(Integer ano) {
+		this.ano = ano;
+	}
+
+	public void setNumero(Integer numero) {
+		this.numero = numero;
+	}
+
+	public void setPesquisa(boolean pesquisa) {
+		this.pesquisa = pesquisa;
+	}
+
+	public void setDtCriacaoIni(String dtCriacaoIni) {
+		this.dtCriacaoIni = dtCriacaoIni;
+	}
+
+	public void setDtCriacaoFim(String dtCriacaoFim) {
+		this.dtCriacaoFim = dtCriacaoFim;
+	}
+
+	public void setDtIni(String dtIni) {
+		this.dtIni = dtIni;
+	}
+
+	public void setDtFim(String dtFim) {
+		this.dtFim = dtFim;
+	}
+
+	public void setSituacao(CpMarcador situacao) {
+		this.situacao = situacao;
+	}
+
+	public void setOrgaoUsu(CpOrgaoUsuario orgaoUsu) {
+		this.orgaoUsu = orgaoUsu;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
+	public void setConteudo(String conteudo) {
+		this.conteudo = conteudo;
+	}
+
+	public void setTag(GcTag tag) {
+		this.tag = tag;
+	}
+
+	public void setResponsavel(DpPessoa responsavel) {
+		this.responsavel = responsavel;
+	}
+
+	public void setLotaResponsavel(DpLotacao lotaResponsavel) {
+		this.lotaResponsavel = lotaResponsavel;
+	}
 }

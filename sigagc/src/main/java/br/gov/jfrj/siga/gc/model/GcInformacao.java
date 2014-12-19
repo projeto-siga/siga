@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,6 +38,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gc.ContextInterceptor;
 import br.gov.jfrj.siga.gc.util.WikiParser;
 import br.gov.jfrj.siga.gc.vraptor.AppController;
@@ -201,6 +205,10 @@ public class GcInformacao extends Objeto {
 		return "TMPGC-" + id;
 	}
 
+	public String getSiglaCompacta() {
+		return getSigla().replace("-", "").replace("/", "");
+	}
+
 	public boolean isFinalizado() {
 		return this.elaboracaoFim != null;
 	}
@@ -340,43 +348,45 @@ public class GcInformacao extends Objeto {
 		SigaLogicResult router = ContextInterceptor.result().use(
 				SigaLogicResult.class);
 
-		router.getRedirectURL(sb, AppController.class).editar(this.getSigla(),
-				null, null, null, null, null);
+		router.getRedirectURL(sb, AppController.class).editar(
+				this.getSiglaCompacta(), null, null, null, null, null);
 		addAcao(acoes, "pencil", "Editar", null, sb.toString(),
 				podeEditar(titular, lotaTitular));
 
-		router.getRedirectURL(sb, AppController.class).remover(this.getSigla());
+		router.getRedirectURL(sb, AppController.class).remover(
+				this.getSiglaCompacta());
 		addAcao(acoes, "delete", "Excluir", null, sb.toString(),
 				podeExcluir(titular, lotaTitular),
 				"Confirma a exclusão deste conhecimento?", null, null);
 
 		router.getRedirectURL(sb, AppController.class).historico(
-				this.getSigla());
+				this.getSiglaCompacta());
 		addAcao(acoes, "eye", "Exibir Histórico de Alterações", null,
 				sb.toString(), true);
 
 		router.getRedirectURL(sb, AppController.class).movimentacoes(
-				this.getSigla());
+				this.getSiglaCompacta());
 		addAcao(acoes, "eye", "Exibir Movimentações", null, sb.toString(), true);
 
 		// addAcao(acoes, "eye", "Exibir Informações Completas", null,
 		// "Application.movimentacoes", "completo=true", true);
 		router.getRedirectURL(sb, AppController.class)
-				.desmarcarComoInteressado(this.getSigla());
+				.desmarcarComoInteressado(this.getSiglaCompacta());
 		addAcao(acoes, "heart_delete", "Desmarcar Interesse", null,
 				sb.toString(), podeDesmarcarComoInteressado(titular));
 
 		router.getRedirectURL(sb, AppController.class).marcarComoInteressado(
-				this.getSigla());
+				this.getSiglaCompacta());
 		addAcao(acoes, "heart_add", "Marcar Interesse", null, sb.toString(),
 				podeMarcarComoInteressado(titular));
 
 		router.getRedirectURL(sb, AppController.class).notificar(
-				this.getSigla());
+				this.getSiglaCompacta());
 		addAcao(acoes, "bell", "Notificar", null, sb.toString(),
 				podeNotificar(titular, lotaTitular));
 
-		router.getRedirectURL(sb, AppController.class).fechar(this.getSigla());
+		router.getRedirectURL(sb, AppController.class).fechar(
+				this.getSiglaCompacta());
 		addAcao(acoes, "lock", "Finalizar Elaboração", null, sb.toString(),
 				podeFinalizar(titular, lotaTitular),
 				"Confirma a finalização da elaboração deste conhecimento?",
@@ -387,29 +397,30 @@ public class GcInformacao extends Objeto {
 		 * "Application.revisado", null, podeRevisar(titular, lotaTitular));
 		 */
 
-		router.getRedirectURL(sb, AppController.class)
-				.revisado(this.getSigla());
+		router.getRedirectURL(sb, AppController.class).revisado(
+				this.getSiglaCompacta());
 		addAcao(acoes, "folder_user", "Revisado", null, sb.toString(),
 				podeRevisar(titular, lotaTitular),
 				"Confirma a revisão deste conhecimento?", null, null);
 
 		router.getRedirectURL(sb, AppController.class).solicitarRevisao(
-				this.getSigla());
+				this.getSiglaCompacta());
 		addAcao(acoes, "folder_user", "Solicitar Revisão", null, sb.toString(),
 				podeSolicitarRevisao(titular, lotaTitular));
 
-		router.getRedirectURL(sb, AppController.class)
-				.cancelar(this.getSigla());
+		router.getRedirectURL(sb, AppController.class).cancelar(
+				this.getSiglaCompacta());
 		addAcao(acoes, "cancel", "Cancelar", null, sb.toString(),
 				podeCancelar(titular, lotaTitular),
 				"Confirma o cancelamento deste conhecimento?", null, null);
 
-		router.getRedirectURL(sb, AppController.class).anexar(this.getSigla());
+		router.getRedirectURL(sb, AppController.class).anexar(
+				this.getSiglaCompacta());
 		addAcao(acoes, "attach", "Anexar Arquivo", null, sb.toString(),
 				podeAnexar(titular, lotaTitular));
 
-		router.getRedirectURL(sb, AppController.class)
-				.duplicar(this.getSigla());
+		router.getRedirectURL(sb, AppController.class).duplicar(
+				this.getSiglaCompacta());
 		addAcao(acoes, "arrow_divide", "Duplicar", null, sb.toString(),
 				podeDuplicar(),
 				"Esta operação criará um conhecimento com os mesmos dados do atual. "
@@ -613,23 +624,37 @@ public class GcInformacao extends Objeto {
 	 **/
 	public static GcInformacao findBySigla(String sigla)
 			throws NumberFormatException, Exception {
-		String[] siglaParticionada = sigla.split("-");
+		sigla = sigla.trim().toUpperCase();
+
+		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
+		for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
+			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
+		}
+		String acronimos = "";
+		for (String s : mapAcronimo.keySet()) {
+			acronimos += "|" + s;
+		}
+
+		final Pattern p2 = Pattern.compile("^TMPGC-?([0-9]{1,7})");
+		final Pattern p1 = Pattern.compile("^([A-Za-z0-9]{2}" + acronimos
+				+ ")?-?(GC)?-?(?:([0-9]{4})/?)??([0-9]{1,5})$");
+		final Matcher m2 = p2.matcher(sigla);
+		final Matcher m1 = p1.matcher(sigla);
+
 		GcInformacao info = null;
-		// verificação necessária por conta dos arquivos temporários que
-		// são buscados pelo id, já os finalizados
-		// são buscados pela sua numeração
-		if (siglaParticionada[1].equals("GC")) {
-			String[] siglaAnoENumero = siglaParticionada[2].split("/");
+
+		if (m2.find()) {
+			info = GcInformacao.AR.findById(Long.parseLong(m2.group(1)));
+		}
+
+		if (m1.find()) {
 			info = GcInformacao.AR.find(
 					"ano = ? and numero = ? and ou.acronimoOrgaoUsu = ?",
-					(Integer) Integer.parseInt(siglaAnoENumero[0]),
-					(Integer) Integer.parseInt(siglaAnoENumero[1]),
-					siglaParticionada[0]).first();
-		} else
-			info = GcInformacao.AR.findById(Long
-					.parseLong(siglaParticionada[1]));
-		// info = GcInformacao.find("id = ?",
-		// Long.parseLong(siglaParticionada[1])).first();
+					(Integer) Integer.parseInt(m1.group(3)),
+					(Integer) Integer.parseInt(m1.group(4)), m1.group(1))
+					.first();
+
+		}
 
 		if (info == null) {
 			throw new AplicacaoException(

@@ -7,7 +7,7 @@
 	<div class="gt-content clearfix">
 		<h2>Pesquisa de Conhecimentos</h2>
 		<c:choose>
-		<c:when test="${lista.size != 0}"> 
+		<c:when test="${lista.size() != 0}"> 
 		<div class="gt-content-box gt-for-table">
 			<table class="gt-table">
 				<thead>
@@ -53,7 +53,7 @@
 					<c:set var="k" value="${1}"/>
 					<c:forEach items="${lista}" var="i">
 					<tr class="even">
-						<td style="width:12% !important;"><a href="@{Application.exibir(i.sigla)}">${i.sigla}</a></td>
+						<td style="width:12% !important;"><a href="${linkTo[AppController].exibir[i.siglaCompacta]}">${i.sigla}</a></td>
 						<td style="width:10%!important;">${i.dtIniString}</td>
 						<td style="width:6%!important;"><span
 							title="${i.lotacao.descricao}">${i.lotacao.sigla}</span>

@@ -17,6 +17,7 @@ package br.gov.jfrj.siga.vraptor;
  * limitations under the License.
  */
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -173,7 +174,7 @@ public class SigaLogicResult implements LogicResult {
 
 				//Nato: inseri essas duas linhas para corrigir um problema de codepage no redirecionamento
 				response.setContentType("text/html; charset=UTF-8");
-				path = new String(Charset.forName("UTF-8").encode(path).array());
+//				path = new String(Charset.forName("UTF-8").encode(path).array());
 				
 				sb.setLength(0);
 				sb.append(path);

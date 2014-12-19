@@ -54,7 +54,7 @@ import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
 
 
-@MappedSuperclass
+//@MappedSuperclass
 public class Objeto extends ObjetoBase{
 
 //	@Override

@@ -7,7 +7,15 @@
 		<c:if test="${flash.success}"> <p class="gt-success">${flash.success}</p> </c:if>
 		<h3 style="margin-bottom: 0px;">${informacao.getMarcadoresEmHtml(titular,lotaTitular)}</h3>
 		<!-- Links para as ações de cada mobil -->
-		#{links acoes:informacao.acoes(idc,titular,lotaTitular), base:_base /}
+		<c:set var="acoes" value="${informacao.acoes(idc,titular,lotaTitular)}" />
+		<siga:links>
+			<c:forEach var="acao" items="${acoes}">
+				<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
+					pre="${acao.pre}" pos="${acao.pos}" url="${acao.url}" test="${true}"
+					popup="${acao.popup}" confirm="${acao.msgConfirmacao}" estilo="line-height: 160% !important"/>
+			</c:forEach>
+		</siga:links>
+		
 		<!-- Dados do documento -->
 		<div class="gt-content-box" style="padding: 10px;">
 			<h2>${informacao.arq.titulo}</h2>
@@ -42,10 +50,10 @@
 				<b>Data de criação:</b> ${informacao.dtIniString}
 			</p>
 			<p>
-				<b>Finalizado em:</b> ${informacao.elaboracaoFim.format('dd/MM/yyyy HH:mm:ss')}
+				<b>Finalizado em:</b> ${informacao.elaboracaoFim}
 			</p>
 			<!--  -->
-			<c:var name="cls" value="${informacao.arq.classificacao.split(",")}"/>
+			<c:set var="cls" value="${informacao.arq.classificacao.split(&quot;,&quot;)}" />
 			<!--  -->
 			<c:if test="${not empty cls}">
 			<p>
@@ -59,7 +67,7 @@
 			</c:if>
 			<c:if test="${empty cls}">
 			<p>
-				<b>Classificação:</b> ${informacao.arq.classificacao?: "Esse conhecimento ainda não possui uma classificação"}
+				<b>Classificação:</b> ${(not empty informacao.arq.classificacao) ? informacao.arq.classificacao : "Esse conhecimento ainda não possui uma classificação"}
 			</p>
 			</c:if>
 			<c:if test="${informacao.contemArquivos}">
@@ -81,8 +89,6 @@
 	</div>
 </div>
 
-#{doLayout /}
-
 <script type="text/javascript">
 		$(document).ready(function(){			
 			$(".gt-success").delay(5000).fadeOut("slow", "linear");
@@ -90,5 +96,6 @@
 </script>
 
 <script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("knowledge?estilo=sidebar&ts=${currentTimeMillis}${informacao.gcTags.raw()}&id=${informacao.id}",document.getElementById('gc'));
+		SetInnerHTMLFromAjaxResponse("knowledge?estilo=sidebar&ts=${currentTimeMillis}${informacao.gcTags}&id=${informacao.id}",document.getElementById('gc'));
 </script>
+</siga:pagina>

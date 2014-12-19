@@ -51,6 +51,10 @@ public class GcTipoMovimentacao extends Objeto {
 	@Column(name = "NOME_TIPO_MOVIMENTACAO", nullable = false)
 	public String nome;
 
+	public GcTipoMovimentacao() {
+		super();
+	}
+
 	public GcTipoMovimentacao(long id, String nome) {
 		super();
 		this.id = id;

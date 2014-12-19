@@ -11,11 +11,14 @@ import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.com.caelum.vraptor.util.jpa.extra.ParameterLoaderInterceptor;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.vraptor.ParameterOptionalLoaderInterceptor;
 
-@Intercepts
 @RequestScoped
+@Intercepts(before = { ParameterLoaderInterceptor.class,
+		ParameterOptionalLoaderInterceptor.class })
 public class ContextInterceptor implements Interceptor {
 
 	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
@@ -25,6 +28,7 @@ public class ContextInterceptor implements Interceptor {
 	public ContextInterceptor(EntityManager em, Result result) {
 		ContextoPersistencia.setEntityManager(em);
 		resultByThread.set(result);
+		CpDao.freeInstance();
 		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
 				.getDelegate()).getSessionFactory().openStatelessSession());
 

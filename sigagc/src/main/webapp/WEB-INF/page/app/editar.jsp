@@ -10,7 +10,10 @@
 
 		<div class="gt-form gt-content-box">
 			<form id="frm" action="${linkTo[AppController].gravar}" method="POST">
+				<c:if test="${informacao.id != 0}">
+				</c:if>
 				<input type="hidden" id="infoId" name="informacao.id" value="${informacao.id}" />
+				
 				<input type="hidden" name="origem" value="${origem}" /> 
 				<input type="hidden" id="siglaId" name="sigla" value="${informacao.sigla}" /> 
 				<div class="gt-form-row gt-width-100">
@@ -19,10 +22,10 @@
 					</div>
 					<c:if test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<siga:select label="Visualizacão" name="informacao.visualizacao" list="acessos" listKey="id" listValue="nome"/>
-					</div>
+						<siga:select label="Visualizacão" name="visualizacao.id" list="acessos" listKey="id" listValue="nome"/>
+					</div> 
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<siga:select label="Edicão" name="informacao.edicao" list="acessos" listKey="id" listValue="nome"/>
+						<siga:select label="Edicão" name="edicao.id" list="acessos" listKey="id" listValue="nome"/>
 					</div>
 					</c:if>
 				</div>

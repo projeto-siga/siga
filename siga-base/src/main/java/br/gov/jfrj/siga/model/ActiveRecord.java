@@ -9,11 +9,10 @@ import javax.persistence.Query;
 import br.gov.jfrj.siga.model.Objeto;
 
 public class ActiveRecord<T extends Objeto> {
-	private String entity;
+	private Class<? extends Objeto> clazz;
 
 	public ActiveRecord(Class<? extends Objeto> clazz) {
-		this.entity = clazz.getName().substring(
-				clazz.getName().lastIndexOf(".") + 1);
+		this.clazz = clazz;
 	}
 
 	public EntityManager em() {
@@ -22,67 +21,61 @@ public class ActiveRecord<T extends Objeto> {
 
 	public long count() {
 		return Long.parseLong(em()
-				.createQuery("select count(*) from " + entity + " e")
+				.createQuery(
+						"select count(*) from " + clazz.getSimpleName() + " e")
 				.getSingleResult().toString());
 	}
 
 	public long count(String query, Object[] params) {
 		return Long.parseLong(bindParameters(
-				em().createQuery(
-						createCountQuery(entity, entity, query, params)),
-				params).getSingleResult().toString());
+				em().createQuery(createCountQuery(query, params)), params)
+				.getSingleResult().toString());
 	}
 
 	public List findAll() {
-		return em().createQuery("select e from " + entity + " e")
+		return em()
+				.createQuery("select e from " + clazz.getSimpleName() + " e")
 				.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public T findById(Object id) throws Exception {
-		return (T) em().find(
-				ActiveRecord.class.getClassLoader().loadClass(entity), id);
+		return (T) em().find(clazz, id);
 	}
 
 	public List findBy(String query, Object... params) {
-		Query q = em().createQuery(
-				createFindByQuery(entity, entity, query, params));
+		Query q = em().createQuery(createFindByQuery(query, params));
 		return bindParameters(q, params).getResultList();
 	}
 
 	public JPAQuery find(String query, Object... params) {
-		Query q = em().createQuery(
-				createFindByQuery(entity, entity, query, params));
-		return new JPAQuery(createFindByQuery(entity, entity, query, params),
-				bindParameters(q, params));
+		Query q = em().createQuery(createFindByQuery(query, params));
+		return new JPAQuery(createFindByQuery(query, params), bindParameters(q,
+				params));
 	}
 
 	public JPAQuery find() {
-		Query q = em().createQuery(createFindByQuery(entity, entity, null));
-		return new JPAQuery(createFindByQuery(entity, entity, null),
-				bindParameters(q));
+		Query q = em().createQuery(createFindByQuery(null));
+		return new JPAQuery(createFindByQuery(null), bindParameters(q));
 	}
 
 	public JPAQuery all() {
-		Query q = em().createQuery(createFindByQuery(entity, entity, null));
-		return new JPAQuery(createFindByQuery(entity, entity, null),
-				bindParameters(q));
+		Query q = em().createQuery(createFindByQuery(null));
+		return new JPAQuery(createFindByQuery(null), bindParameters(q));
 	}
 
 	public int delete(String query, Object[] params) {
-		Query q = em().createQuery(
-				createDeleteQuery(entity, entity, query, params));
+		Query q = em().createQuery(createDeleteQuery(query, params));
 		return bindParameters(q, params).executeUpdate();
 	}
 
 	public int deleteAll() {
-		Query q = em().createQuery(createDeleteQuery(entity, entity, null));
+		Query q = em().createQuery(createDeleteQuery(null));
 		return bindParameters(q).executeUpdate();
 	}
 
 	public Objeto findOneBy(String query, Object[] params) {
-		Query q = em().createQuery(
-				createFindByQuery(entity, entity, query, params));
+		Query q = em().createQuery(createFindByQuery(query, params));
 		List results = bindParameters(q, params).getResultList();
 		if (results.size() == 0) {
 			return null;
@@ -100,8 +93,10 @@ public class ActiveRecord<T extends Objeto> {
 	// return ((GenericModel) o).edit(rootParamNode, name);
 	// }
 
-	public String createFindByQuery(String entityName, String entityClass,
-			String query, Object... params) {
+	public String createFindByQuery(String query, Object... params) {
+		String entityName = clazz.getSimpleName();
+		String entityClass = clazz.getCanonicalName();
+
 		if (query == null || query.trim().length() == 0) {
 			return "from " + entityName;
 		}
@@ -128,8 +123,10 @@ public class ActiveRecord<T extends Objeto> {
 		return "from " + entityName + " where " + query;
 	}
 
-	public String createDeleteQuery(String entityName, String entityClass,
-			String query, Object... params) {
+	public String createDeleteQuery(String query, Object... params) {
+		String entityName = clazz.getSimpleName();
+		String entityClass = clazz.getCanonicalName();
+
 		if (query == null) {
 			return "delete from " + entityName;
 		}
@@ -150,8 +147,10 @@ public class ActiveRecord<T extends Objeto> {
 		return "delete from " + entityName + " where " + query;
 	}
 
-	public String createCountQuery(String entityName, String entityClass,
-			String query, Object... params) {
+	public String createCountQuery(String query, Object... params) {
+		String entityName = clazz.getSimpleName();
+		String entityClass = clazz.getCanonicalName();
+
 		if (query.trim().toLowerCase().startsWith("select ")) {
 			return query;
 		}

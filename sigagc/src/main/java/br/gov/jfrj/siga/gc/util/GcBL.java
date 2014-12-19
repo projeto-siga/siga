@@ -35,16 +35,20 @@ import br.gov.jfrj.siga.gc.model.GcTipoMovimentacao;
 import br.gov.jfrj.siga.gc.model.GcTipoTag;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Component
 public class GcBL {
 	private static final long TEMPO_NOVIDADE = 7 * 24 * 60 * 60 * 1000L;
 
 	private EntityManager em;
+	private SigaObjects so;
+	private Date dt;
 
-	public GcBL(EntityManager em) {
+	public GcBL(EntityManager em, SigaObjects so) {
 		super();
 		this.em = em;
+		this.so = so;
 	}
 
 	private String simplificarString(String s) {
@@ -139,14 +143,9 @@ public class GcBL {
 	}
 
 	public Date dt() {
-		Date dt;
-		// try {
-		// dt = dao().dt();
-		// return dt;
-		// } catch (AplicacaoException e) {
-		// e.printStackTrace();
-		// }
-		return new Date();
+		if (this.dt == null)
+			this.dt = so.dao().dt();
+		return this.dt;
 	}
 
 	public GcInformacao gravar(GcInformacao inf, CpIdentidade idc,
@@ -182,6 +181,8 @@ public class GcBL {
 				if (inf.id == 0)
 					inf.save();
 				mov.inf = inf;
+				if (mov.movCanceladora != null)
+					mov.movCanceladora.save();
 				mov.save();
 			}
 		}
@@ -648,6 +649,7 @@ public class GcBL {
 				info,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 				null, null, null, null, null, null, mov, null, null);
+	//	gravar(info, idc, titular, lotaTitular);
 		mov.movCanceladora = m;
 		gravar(info, idc, titular, lotaTitular);
 	}

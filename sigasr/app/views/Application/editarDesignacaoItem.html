@@ -94,6 +94,13 @@
 	}
 	
 	function inserirItemConfiguracao() {
+		var idSelecionado = $("#itemConfiguracao").val();
+		
+		if (idSelecionado == undefined || idSelecionado == '') {
+			alert("Por favor, selecione um item de configuração antes de continuar, ou clique em Cancelar.");
+			return;
+		}
+		
 		var row = [	$("#itemConfiguracao").val(),
 		           	$("#itemConfiguracao_sigla").val(),
 		           	$("#itemConfiguracao_descricao").val(),
@@ -113,6 +120,13 @@
 	}
 	
 	function inserirAcao() {
+		var idSelecionado = $("#acao").val();
+		
+		if (idSelecionado == undefined || idSelecionado == '') {
+			alert("Por favor, selecione uma ação antes de continuar, ou clique em Cancelar.");
+			return;
+		}
+		
 		var row = [	$("#acao").val(),
         			$("#acao_sigla").val(),
         			$("#acao_descricao").val(),
@@ -128,11 +142,33 @@
 		
 		modalFechar('acao');
 	}
+
+	function duplicarDesignacao(event) {
+		var tr = $(event.currentTarget).parent().parent();
+		event.stopPropagation();
+		var itemSelecionado = designacoesTable.api().row(tr).data();
+
+		manipulaItemSelecionado(itemSelecionado, true, tr);
+	}
+
+	function resetId() {
+		$("#idConfiguracao").val('');
+	}
 </script>
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 	<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
 	<div>
+		<div class="gt-form-row">
+			<label>Descrição</label>
+			<input id="descrConfiguracao"
+				   type="text"
+				   name="descrConfiguracao"
+				   value="${descrConfiguracao}"
+				   maxlength="255"
+				   style="width: 791px;"/> 
+			<span style="display:none;color: red" id="designacao.descrConfiguracao">Descrição não informada.</span>
+		</div>
 		<div class="gt-form-row box-wrapper">
 			<div id="divSolicitante" class="box box-left gt-width-50">
 				<label>Solicitante</label>

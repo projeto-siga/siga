@@ -5,7 +5,7 @@ alter session set current schema = corporativo;
 update corporativo.cp_marcador set descr_marcador = 'A Fechar' where id_marcador = 53;
 
 INSERT INTO corporativo.cp_tipo_configuracao (id_tp_configuracao, dsc_tp_configuracao, id_sit_configuracao) 
-	VALUES (303, 'Inclusão automática em lista', 1);
+	VALUES (303, 'Inclusï¿½o automï¿½tica em lista', 1);
   
 ALTER TABLE SR_ATRIBUTO RENAME TO SR_ATRIBUTO_SOLICITACAO;
 ALTER TABLE SR_TIPO_ATRIBUTO RENAME TO SR_ATRIBUTO;
@@ -24,7 +24,7 @@ rename SR_TIPO_ATRIBUTO_SEQ to SR_ATRIBUTO_SEQ;
 alter table sigasr.sr_solicitacao add FECHADO_AUTOMATICAMENTE CHAR(1 CHAR);
 
 INSERT INTO corporativo.cp_tipo_configuracao (id_tp_configuracao, dsc_tp_configuracao, id_sit_configuracao) 
-	VALUES (304, 'Abrangência de Acordo', 1);
+	VALUES (304, 'AbrangÃªncia de Acordo', 1);
 alter table sigasr.sr_configuracao add PRIORIDADE number(10,0);
 
 commit;
@@ -36,10 +36,10 @@ CREATE TABLE "SIGASR"."SR_OBJETIVO_ATRIBUTO"
   primary key (ID_OBJETIVO)
 );
 
-insert into sigasr.sr_objetivo_atributo(id_objetivo, descr_objetivo) values (1, 'Solicitação');
+insert into sigasr.sr_objetivo_atributo(id_objetivo, descr_objetivo) values (1, 'SolicitaÃ§Ã£o');
 insert into sigasr.sr_objetivo_atributo(id_objetivo, descr_objetivo) values (2, 'Acordo');
 insert into sigasr.sr_objetivo_atributo(id_objetivo, descr_objetivo) values (3, 'Indicador');
-insert into sigasr.sr_objetivo_atributo(id_objetivo, descr_objetivo) values (4, 'Item de Configuração');
+insert into sigasr.sr_objetivo_atributo(id_objetivo, descr_objetivo) values (4, 'Item de ConfiguraÃ§Ã£o');
 commit;
 
 alter table sigasr.sr_atributo
@@ -92,7 +92,7 @@ create table SR_SOLICITACAO_ACORDO
   ID_SOLICITACAO      NUMBER(19) not null
 );
 
--- Criação das PKs e FKs
+-- Criaï¿½ï¿½o das PKs e FKs
 alter table SR_SOLICITACAO_ACORDO
   add constraint PK_SR_SOLICITACAO_ACORDO primary key (ID_ACORDO, ID_SOLICITACAO);
 alter table SR_SOLICITACAO_ACORDO
@@ -109,7 +109,7 @@ create sequence sigasr.sr_atributo_seq;
 insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Cadastramento', 'tempoDecorridoCadastramento', 2);
 insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Escalonamento', 'tempoDecorridoEscalonamento', 2);
 insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Atendimento', 'tempoDecorridoAtendimento', 2);
-insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Resultado da Pesquisa de Satisfação', 'resultadoPesquisaSatisfacao', 2);
+insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Resultado da Pesquisa de Satisfaï¿½ï¿½o', 'resultadoPesquisaSatisfacao', 2);
 
 INSERT INTO CORPORATIVO.CP_UNIDADE_MEDIDA (ID_UNIDADE_MEDIDA, DESCR_UNIDADE_MEDIDA) VALUES (5, 'Minuto');
 INSERT INTO CORPORATIVO.CP_UNIDADE_MEDIDA (ID_UNIDADE_MEDIDA, DESCR_UNIDADE_MEDIDA) VALUES (6, 'Segundo');
@@ -130,4 +130,3 @@ alter table sigasr.sr_movimentacao add ID_ITEM_CONFIGURACAO NUMBER(19,0);
 alter table sigasr.sr_movimentacao add ID_ACAO NUMBER(19,0);
 alter table sigasr.sr_movimentacao add MOTIVOESCALONAMENTO NUMBER(10,0);
 insert into sigasr.sr_tipo_movimentacao (id_tipo_movimentacao, nome_tipo_movimentacao) values (24, 'Escalonamento');
-

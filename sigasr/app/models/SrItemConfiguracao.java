@@ -291,23 +291,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				"byHisDtFimIsNullAndSiglaItemConfiguracao", sigla).first();
 	}
 	
-	/**
-	 * Retorna a lista de {@link SrItemConfiguracao Pai} que este item possui.
-	 */
-	private List<SrItemConfiguracao> getListaPai() {
-		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
-		SrItemConfiguracao itemPai = this.pai;
-		
-		while (itemPai != null) {
-			if (!lista.contains(itemPai))
-				lista.add(itemPai);
-				
-			itemPai = itemPai.pai;
-		}
-		
-		return lista;
-	}	
-
 	public boolean isPaiDeOuIgualA(SrItemConfiguracao outroItem) {
 		if (outroItem == null || outroItem.getSigla() == null)
 			return false;

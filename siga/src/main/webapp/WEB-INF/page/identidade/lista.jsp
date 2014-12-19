@@ -157,9 +157,9 @@
 						<c:if test="${ident.bloqueada}">
 							<tr>
 								<td colspan="4"><span style="color: red"><b>Esta
-											identidade está bloqueada. <ww:if
+											identidade está bloqueada. <c:if
 												test="${not pessoaSel.objeto.bloqueada}">Para remover o bloqueio, clique no botão
-					&quot;Desbloquear&quot;, abaixo.</ww:if> </b> </span></td>
+					&quot;Desbloquear&quot;, abaixo.</c:if> </b> </span></td>
 							</tr>
 						</c:if>
 

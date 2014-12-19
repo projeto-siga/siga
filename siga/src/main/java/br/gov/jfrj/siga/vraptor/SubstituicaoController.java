@@ -15,9 +15,12 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.RefererResult;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpPersonalizacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
@@ -280,6 +283,55 @@ public class SubstituicaoController extends SigaController {
 
 	}
 	
+	public void finalizar() throws Exception {
+		CpPersonalizacao per = dao().consultarPersonalizacao(getCadastrante());
+
+		if (per == null) {
+			per = new CpPersonalizacao();
+			per.setPessoa(getCadastrante());
+		}
+
+		per.setPesSubstituindo(null);
+		per.setLotaSubstituindo(null);
+
+		try {
+			dao().iniciarTransacao();
+			dao().gravar(per);
+			dao().commitTransacao();
+		} catch (Exception e) {
+			dao().rollbackTransacao();
+		}
+	}	
+	
+	public void substituirGravar(Long idTitular, Long idLotaTitular) throws Exception {
+		finalizar();
+		if (idTitular != null) {
+			setTitular(daoPes(idTitular));
+			setTitular(dao().consultarPorIdInicial(getTitular().getIdInicial()));
+			setLotaTitular(getTitular().getLotacao());
+			setLotaTitular(dao().consultarPorIdInicial(DpLotacao.class,getTitular().getLotacao().getIdInicial()));
+		} else {
+			setLotaTitular(daoLot(idLotaTitular));
+			setLotaTitular(dao().consultarPorIdInicialInclusiveLotacaoFechada(DpLotacao.class, getLotaTitular().getIdInicial()));
+		}
+
+		CpPersonalizacao per = dao().consultarPersonalizacao(getCadastrante());
+		if (per == null) {
+			per = new CpPersonalizacao();
+		}
+		per.setPessoa(getCadastrante());
+		per.setPesSubstituindo(getTitular() != getCadastrante() ? getTitular(): null);
+		per.setLotaSubstituindo(getLotaTitular() != getCadastrante().getLotacao() ? getLotaTitular() : null);
+		try {
+			dao().iniciarTransacao();
+			dao().gravar(per);
+			dao().commitTransacao();
+			result.use(Results.referer()).redirect();
+		} catch (Exception e) {
+			dao().rollbackTransacao();
+		}
+	}	
+	
 	public void exclui(Long id) throws Exception {
 		
 		try{
@@ -295,8 +347,8 @@ public class SubstituicaoController extends SigaController {
 				dao().iniciarTransacao();		
 				dpSub.setDtFimRegistro(new Date());
 				dpSub = dao().gravar(dpSub);
-				dao().commitTransacao();				
-				result.redirectTo(this).lista();				
+				dao().commitTransacao();
+				result.use(Results.referer()).redirect();				
 			} else
 				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
 		} else

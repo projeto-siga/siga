@@ -65,11 +65,22 @@ public class SigaController {
 		// TODO Auto-generated method stub
 		return so.getLotaTitular();
 	}
+	
+	protected void setLotaTitular(DpLotacao lotaTitular) {
+		// TODO Auto-generated method stub
+		so.setLotaTitular(lotaTitular);
+	}	
 
 	protected DpPessoa getTitular() {
 		// TODO Auto-generated method stub
 		return so.getTitular();
 	}
+	
+	protected void setTitular(DpPessoa titular) {
+		// TODO Auto-generated method stub
+		so.setTitular(titular);
+	}
+	
 
 	protected DpPessoa getCadastrante() {
 		// TODO Auto-generated method stub

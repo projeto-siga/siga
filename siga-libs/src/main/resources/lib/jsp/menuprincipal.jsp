@@ -129,13 +129,13 @@
 						<c:if
 							test="${f:podeCadastrarQqSubstituicaoPorConfiguracao(cadastrante, cadastrante.lotacao)}">
 							<li><ww:a
-									href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+									href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar possíveis substitutos</ww:a>
 							</li>
 						</c:if>
 					</ww:if>
 					<ww:else>
 						<li><ww:a
-								href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+								href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar possíveis substitutos</ww:a>
 						</li>
 					</ww:else>
 				</ul>
@@ -232,23 +232,24 @@
 		<li><a href="#">Substituir</a>
 			<ul class="navmenu-large">
 				<c:forEach var="substituicao" items="${meusTitulares}">
-					<li><a
-						style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
-						href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/substituicao/excluir.action?id=${substituicao.idSubstituicao}&porMenu=true';">
+					<li>
+						<a style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
+						    href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
 							<img style="display: inline;"
 							src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
 							onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
 							onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
-					</a> <a
-						href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
+						</a> 
+						<a href="/siga/app/substituicao/substituirGravar?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
 							<c:choose>
 								<c:when test="${not empty substituicao.titular}">
-						${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}
-					</c:when>
+									${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}
+								</c:when>
 								<c:otherwise>
-						${f:maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
-					</c:otherwise>
-							</c:choose> </a>
+									${f:maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
+								</c:otherwise>
+							</c:choose> 
+						</a>
 					</li>
 				</c:forEach>
 

@@ -459,7 +459,7 @@
 <!-- Somente quando o workflow está ativado -->
 
 <c:if test="${f:resource('isWorkflowEnabled')}">
-	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/app/doc?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>
+	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>
 </c:if>
 <c:if
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">

@@ -25,7 +25,7 @@
 		colunas.atendente=						16;
 		colunas.idPreAtendente = 				17;
 		colunas.descricaoPreAtendente = 		18;
-		colunas.pre=							18;
+		colunas.pre=							19;
 		colunas.idPosAtendente = 				20;
 		colunas.descricaoPosAtendente = 		21;
 		colunas.pos=							22;
@@ -632,6 +632,7 @@
 					&& idEquipeLotacao != idPreAtendente
 					&& idEquipeLotacao != idPosAtendente) {
 				$("#erroAoSalvar_dialog").dialog("open");
+				unblock();
 				return;
 			}
 		}

@@ -19,19 +19,12 @@
 package br.gov.jfrj.siga.cd.servlet;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SignatureException;
-import java.security.cert.CRLException;
-import java.security.cert.CertificateException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cd.ChainValidationException;
 import br.gov.jfrj.siga.cd.service.impl.test.CdServiceImplTest;
 
 public class CdTestesServlet extends HttpServlet {

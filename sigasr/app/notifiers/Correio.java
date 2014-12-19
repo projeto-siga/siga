@@ -10,6 +10,7 @@ import models.SrGestorItem;
 import models.SrMovimentacao;
 import models.SrSolicitacao;
 import models.SrTipoMovimentacao;
+import play.Logger;
 import play.mvc.Mailer;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -46,8 +47,13 @@ public class Correio extends Mailer {
 							&& pessoaDaLotacao.getEmailPessoa() != null)
 						addRecipient(pessoaDaLotacao.getEmailPessoa());
 		}
-		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		send(movimentacao, sol);
+		
+		try{
+			setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
+			send(movimentacao, sol);
+		} catch(Exception e){
+			Logger.error(e, "Nao foi possivel notificar o atendente");
+		}
 	}
 	
 	public static void notificarReplanejamentoMovimentacao(SrMovimentacao movimentacao) {

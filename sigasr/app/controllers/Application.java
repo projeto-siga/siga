@@ -846,6 +846,8 @@ public class Application extends SigaApplication {
 			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			mov.acao = SrAcao.findById(acao.idAcao);
 			mov.lotaAtendente = JPA.em().find(DpLotacao.class, idAtendente);
+			mov.descrMovimentacao = "Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
+					+ "; Ação: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();
 			mov.motivoEscalonamento = motivo;
 			mov.salvar(cadastrante(), lotaTitular());
 			exibir(solicitacao.idSolicitacao, todoOContexto(), ocultas());

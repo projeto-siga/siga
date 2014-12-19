@@ -7,6 +7,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA;
@@ -620,7 +621,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<Long> tiposPrincipais = Arrays.asList(TIPO_MOVIMENTACAO_ANDAMENTO,
 				TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO,
 				TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO,
-				TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_AVALIACAO);
+				TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_AVALIACAO, TIPO_MOVIMENTACAO_ESCALONAMENTO);
 
 		Set<SrSolicitacao> solsAConsiderar = new LinkedHashSet<SrSolicitacao>();
 		if (todoOContexto) {

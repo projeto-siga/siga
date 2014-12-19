@@ -19,7 +19,6 @@
 package br.gov.jfrj.siga.libs.webwork;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

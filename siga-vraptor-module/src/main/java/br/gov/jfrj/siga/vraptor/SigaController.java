@@ -8,11 +8,8 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.opensymphony.webwork.interceptor.PrincipalAware;
-
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
-import br.gov.jfrj.siga.acesso.ConheceUsuario;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -28,18 +25,23 @@ public class SigaController {
 	public CpDao dao;
 
 	private HttpServletRequest request;
+
+	private Modulo modulo;
+	
+	
 	
 	protected CpDao dao() {
 		return CpDao.getInstance();
 	}
 
-	public SigaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so) {
+	public SigaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, Modulo siga) {
 		super();
 		this.setRequest(request);
 		this.so = so;
 		this.result = result;
-		this.dao = dao;
-
+		this.dao = dao;	
+		this.modulo = modulo;
+		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 
@@ -170,4 +172,11 @@ public class SigaController {
 	protected void setRequest(HttpServletRequest request) {
 		this.request = request;
 	}
+	
+	public void assertAcesso(String pathServico) throws AplicacaoException,Exception {
+		so.assertAcesso(modulo.getDescricao() + pathServico);
+	}
+
+
+
 }

@@ -30,15 +30,16 @@
 					null, document.getElementById('SPAN-' + idServico));
 		}
 	}
+	
 </script>
 
 <siga:pagina titulo="Atribuição de Permissões">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Permissões cadastradas j</h2>
+			<h2>Permissões cadastradas </h2> 
 
 			<div class="gt-content-box gt-for-table">
-				<form id="listar" name="listar"
+				<form id="listar" name="listar" 
 					action="/siga/gi/acesso/listar.action" method="GET" class="form100">
 					<table class="gt-form-table">
 						<colgroup>
@@ -83,7 +84,7 @@
 			<br />
 
 
-			<ww:url id="url" action="servconf_gravar" namespace="/gi">
+			<ww:url id="url" action="servconf_gravar" namespace="/gi">			
 			</ww:url>
 
 			<c:if test="${not empty itensHTML}">

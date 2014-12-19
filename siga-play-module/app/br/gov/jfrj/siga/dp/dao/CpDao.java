@@ -101,7 +101,7 @@ import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-@Component
+
 public class CpDao extends ModeloDao {
 
 	public static final String CACHE_QUERY_SUBSTITUICAO = "query.substituicao";

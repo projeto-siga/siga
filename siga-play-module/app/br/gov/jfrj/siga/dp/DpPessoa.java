@@ -41,6 +41,7 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -72,6 +73,9 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
 	@Desconsiderar
 	private String nomePessoaAI;
+	
+	@Transient
+	private Long idSitConfiguracaoConfManual;
 
 	public DpPessoa() {
 
@@ -577,6 +581,14 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
     	}
     	Collections.reverse(listaHistoricoPessoa);
     	return listaHistoricoPessoa;
-    } 
+    }
+    
+    public Long getIdSitConfiguracaoConfManual() {
+		return idSitConfiguracaoConfManual;
+	}
+    
+    public void setIdSitConfiguracaoConfManual(Long idSitConfiguracaoConfManual) {
+		this.idSitConfiguracaoConfManual = idSitConfiguracaoConfManual;
+	}
 
 }

@@ -49,7 +49,7 @@ public class SubstituicaoController extends SigaController {
 		
 
 	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+		super(request, result, CpDao.getInstance(), so, Modulo.SIGA);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

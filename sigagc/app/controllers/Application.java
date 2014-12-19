@@ -630,9 +630,9 @@ public class Application extends SigaApplication {
 				|| informacao.podeRevisar(titular, lotaTitular)
 				|| informacao.acessoPermitido(titular, lotaTitular,
 						informacao.edicao.id)) {
-			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.all()
+			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.find("order by id")
 					.fetch();
-			List<GcAcesso> acessos = GcAcesso.all().fetch();
+			List<GcAcesso> acessos = GcAcesso.find("order by id").fetch();
 			if (titulo == null)
 				titulo = (informacao.arq != null) ? informacao.arq.titulo
 						: null;
@@ -643,7 +643,7 @@ public class Application extends SigaApplication {
 
 			if (tipo == null || tipo.id == 0)
 				tipo = (informacao.tipo != null) ? informacao.tipo
-						: tiposInformacao.get(2);
+						: tiposInformacao.get(0);
 
 			if (informacao.arq == null)
 				conteudo = (tipo.arq != null) ? tipo.arq.getConteudoTXT()

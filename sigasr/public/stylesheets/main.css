@@ -112,3 +112,7 @@ td.padding-table {
 .details-control {
 	width: 2%  !important;
 }
+
+.error {
+   color: red !important;
+}

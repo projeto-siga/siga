@@ -4,6 +4,8 @@
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
 <style>
 .barra-subtitulo-top {
@@ -58,12 +60,24 @@
 		$('#excecoes_table tbody').on('click', 'a.excecao_remove', function () {
 			excecoesTable.api().row($(this).closest('tr')).remove().draw(false);
 		});
+
+		$.validator.addMethod(
+		        "hora",
+		        function(value, element, regexp) {
+		            var re = new RegExp('^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$');
+		            return this.optional(element) || re.test(value);
+		        },
+		        "Hora inválida."
+		);
+		
+		$("#excecaoHorarioForm").validate();
 		
 		$("#dataEspecifica").mask("99/99/9999");
-		$("#horaIni").mask("99:99");
-		$("#horaFim").mask("99:99");
-		$("#interIni").mask("99:99");
-		$("#interFim").mask("99:99");
+		$(".hora").mask("99:99");
+		$("#horaIni").rules("add", {hora: ""});
+		$("#horaFim").rules("add", {hora: ""});
+		$("#interIni").rules("add", {hora: ""});
+		$("#interFim").rules("add", {hora: ""});
 	});
 	
 	function modalExcecaoAbrir() {
@@ -83,7 +97,7 @@
 	}
 	
 	function inserirExcecaoHorario() {
-		if (!camposObrigatoriosExcecaoPreenchidos()) {
+		if ($("#excecaoHorarioForm").valid() && camposObrigatoriosExcecaoPreenchidos()) {
 			// recupera as comboboxes
 			var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0],
 				jDiaSemana = jDiaSemanaCbb.options[jDiaSemanaCbb.selectedIndex],
@@ -122,7 +136,7 @@
 	
 	function camposObrigatoriosExcecaoPreenchidos() {
 		var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0],
-			hasErros = false;
+			isValid = true;
 		
 		// limpa as mensagens de erros
 		resetMensagensErro();
@@ -131,39 +145,16 @@
 		if (document.getElementById("dataEspecifica").value == "" && jDiaSemanaCbb.selectedIndex == 0) {
 			document.getElementById("diaSemanaError").style.display = "inline";
 			document.getElementById("dataEspecificaError").style.display = "inline";
-			hasErros = true;
+			isValid = false;
+			alert("Por favor, preencha o Dia da Semana ou a Data Específica.");
 		}
 		
-		if (document.getElementById("horaIni").value == "") {
-			document.getElementById("horaIniError").style.display = "inline";
-			hasErros = true;
-		}
-		
-		if (document.getElementById("horaFim").value == "") {
-			document.getElementById("horaFimError").style.display = "inline";
-			hasErros = true;
-		}
-		
-		if (document.getElementById("interIni").value == "") {
-			document.getElementById("interIniError").style.display = "inline";
-			hasErros = true;
-		}
-		
-		if (document.getElementById("interFim").value == "") {
-			document.getElementById("interFimError").style.display = "inline";
-			hasErros = true;
-		}
-		
-		return hasErros;
+		return isValid;
 	}
 	
 	function resetMensagensErro() {
 		document.getElementById("diaSemanaError").style.display = "none";
 		document.getElementById("dataEspecificaError").style.display = "none";
-		document.getElementById("horaIniError").style.display = "none";
-		document.getElementById("horaFimError").style.display = "none";
-		document.getElementById("interIniError").style.display = "none";
-		document.getElementById("interFimError").style.display = "none";
 	}
 	
 	function resetCamposTela() {
@@ -360,52 +351,49 @@
 #{modal nome:'excecaoHorario', titulo:'Adicionar Exceção de Horário'}
 	<div id="dialogExcecaoHorario">
 		<div class="gt-content">
-			<div class="gt-form gt-content-box">
-				<div class="gt-form-row gt-width-100">
-					<label>Dia da Semana</label> 
-					#{select name:'diaSemana', 
-						items:models.SrSemana.values(), 
-						valueProperty:'idSemana',
-						labelProperty:'descrDiaSemana', 
-						value:diaSemana?.idSemana,
-						class:'select-siga',
-						style:'width: 100%;'}
-						#{option 0}Nenhuma#{/option} 
-					#{/select}
-					<span style="display:none;color: red" id="diaSemanaError">Dia da Semana não informado</span>
+			<form id="excecaoHorarioForm" method="get" action="">
+				<div class="gt-form gt-content-box">
+					<div class="gt-form-row gt-width-100">
+						<label>Dia da Semana</label> 
+						#{select name:'diaSemana', 
+							items:models.SrSemana.values(), 
+							valueProperty:'idSemana',
+							labelProperty:'descrDiaSemana', 
+							value:diaSemana?.idSemana,
+							class:'select-siga',
+							style:'width: 100%;'}
+							#{option 0}Nenhuma#{/option} 
+						#{/select}
+						<span style="display:none;color: red" id="diaSemanaError">Dia da Semana não informado</span>
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Data Específica</label>
+						<input type="text" name="calendario" id="dataEspecifica" value="${dataEspecifica}">
+						<span style="display:none;color: red" id="dataEspecificaError">Data Específica não informada</span>
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Início Expediente</label>
+						<input type="text" name="horaIni" id="horaIni" value="${horaIni}" class="hora" required>
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Fim Expediente</label>
+						<input type="text" name="horaFim" id="horaFim" value="${horaFim}" class="hora" required>
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Início Intervalo</label>
+						<input type="text" name="interIni" id="interIni" value="${interIni}" class="hora" required>
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Fim Intervalo</label>
+						<input type="text" name="interFim" id="interFim" value="${interFim}" class="hora" required>
+					</div>
+					
+					<div class="gt-form-row">
+						<a href="javascript: inserirExcecaoHorario()" class="gt-btn-medium gt-btn-left">Ok</a>
+						<a href="javascript: modalExcecaoFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					</div>
 				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>Data Específica</label>
-					<input type="text" name="calendario" id="dataEspecifica" value="${dataEspecifica}">
-					<span style="display:none;color: red" id="dataEspecificaError">Data Específica não informada</span>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>Início Expediente</label>
-					<input type="text" name="horaIni" id="horaIni" value="${horaIni}">
-					<span style="display:none;color: red" id="horaIniError">Início Expediente não informado</span>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>Fim Expediente</label>
-					<input type="text" name="horaFim" id="horaFim" value="${horaFim}">
-					<span style="display:none;color: red" id="horaFimError">Fim Expediente não informado</span>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>Início Intervalo</label>
-					<input type="text" name="interIni" id="interIni" value="${interIni}">
-					<span style="display:none;color: red" id="interIniError">Início Intervalo não informado</span>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<label>Fim Intervalo</label>
-					<input type="text" name="interFim" id="interFim" value="${interFim}">
-					<span style="display:none;color: red" id="interFimError">Fim Intervalo não informado</span>
-				</div>
-				
-				<div class="gt-form-row">
-					<a href="javascript: inserirExcecaoHorario()" class="gt-btn-medium gt-btn-left">Ok</a>
-					<a href="javascript: modalExcecaoFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-				</div>
-				
-			</div>
+			</form>
 		</div>
 	</div>
 #{/modal}

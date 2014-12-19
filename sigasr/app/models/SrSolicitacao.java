@@ -1246,11 +1246,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		List<SrItemConfiguracao> listaTodosItens = new ArrayList<SrItemConfiguracao>();
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
-				
-		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setComplexo(local);
-		confFiltro.setBuscarPorPerfis(true);
-		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 		
 		List<DpPessoa> listaPessoasAConsiderar = considerarPessoasParaDesignacao();
 		
@@ -1259,10 +1254,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrItemConfiguracao i : listaTodosItens) {
 			if (!i.isEspecifico())
 				continue;
-			confFiltro.itemConfiguracaoFiltro = i;
 			for (DpPessoa p : listaPessoasAConsiderar) 
 				if (!listaFinal.contains(i)) {
+					
+					SrConfiguracao confFiltro = new SrConfiguracao();
+					confFiltro.setComplexo(local);
+					confFiltro.setBuscarPorPerfis(true);
+					confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
+					confFiltro.itemConfiguracaoFiltro = i;
 					confFiltro.setDpPessoa(p);
+					
 					if (SrConfiguracao.buscarDesignacao(confFiltro,
 							new int[] { SrConfiguracaoBL.ACAO}) != null){
 						listaFinal.add(i);
@@ -1293,22 +1294,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return null;
 
 		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
-
-		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setComplexo(local);
-		confFiltro.setBuscarPorPerfis(true);
-		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
-		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 		
 		List<DpPessoa> listaPessoasAConsiderar = considerarPessoasParaDesignacao();
 
 		for (SrAcao a : SrAcao.listar(false)) {
 			if (!a.isEspecifico())
 				continue;
-			confFiltro.acaoFiltro = a;
 			for (DpPessoa p : listaPessoasAConsiderar) 
 				if (!listaFinal.containsKey(a)) {
+					
+					SrConfiguracao confFiltro = new SrConfiguracao();
+					confFiltro.setComplexo(local);
+					confFiltro.setBuscarPorPerfis(true);
+					confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+					confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
+					confFiltro.acaoFiltro = a;
 					confFiltro.setDpPessoa(p);
+					
 					SrConfiguracao conf = SrConfiguracao.buscarDesignacao(confFiltro);
 					if (conf != null)
 						listaFinal.put(a, conf.atendente);
@@ -1530,19 +1532,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	public void atualizarAcordos() throws Exception{
 		acordos = new ArrayList<SrAcordo>();
-		
-		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
-		confFiltro.acaoFiltro = acao;
-		confFiltro.setBuscarPorPerfis(true);
-		confFiltro.prioridade = prioridade;
-		confFiltro.atendente = getAtendenteDesignado();
-		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
-		
+				
 		for (DpPessoa p : considerarPessoasParaDesignacao()) {
+			
+			SrConfiguracao confFiltro = new SrConfiguracao();
+			confFiltro.setComplexo(local);
+			confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+			confFiltro.acaoFiltro = acao;
+			confFiltro.setBuscarPorPerfis(true);
+			confFiltro.prioridade = prioridade;
+			confFiltro.atendente = getAtendenteDesignado();
+			confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
 			confFiltro.setDpPessoa(p);
+			
 			List<SrConfiguracao> confs = SrConfiguracao.listar(confFiltro);
 			for (SrConfiguracao conf : confs) {
 				SrAcordo acordoAtual = ((SrAcordo) SrAcordo

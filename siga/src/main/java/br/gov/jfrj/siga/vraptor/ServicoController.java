@@ -24,9 +24,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,20 +39,15 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.CpTipoServico;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.rpc.FaultMethodResponseRPC;
-import br.gov.jfrj.siga.libs.rpc.SimpleMethodResponseRPC;
-import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 import br.gov.jfrj.siga.vraptor.suporte.ConfiguracaoConfManual;
 
-import com.opensymphony.xwork.Action;
-import com.opensymphony.xwork.Preparable;
+//MIGRAÇÃO VRAPTOR DA CLASSE WEB-WORK "package br.gov.jfrj.webwork.action.SelfConfigAction"
 
 @Resource
 public class ServicoController 	extends SigaController {
@@ -89,7 +82,7 @@ public class ServicoController 	extends SigaController {
 	
 	
 	public ServicoController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so, Modulo.SIGA);
+		super(request, result, CpDao.getInstance(), so);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
@@ -99,7 +92,7 @@ public class ServicoController 	extends SigaController {
 	}
 
 	
-	@Get("/app/servico-acesso")
+	@Get("/app/gi/servico/editar")
 	public void edita() throws Exception {
 		ConfiguracaoConfManual configuracaoConfManual = new ConfiguracaoConfManual(dao, obterLotacaoEfetiva());
 		setDpPessoasDaLotacao(new ArrayList<DpPessoa>());
@@ -108,7 +101,18 @@ public class ServicoController 	extends SigaController {
 		setCpTipoConfiguracaoAConfigurar(obterCpTipoConfiguracaoAConfigurar(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO));
 		setCpServicosDisponiveis(  obterServicosDaLotacaoEfetiva());
 
-		this.editar();		
+		if (seUsuarioPodeExecutar()) {
+			DpLotacao t_dltLotacao = obterLotacaoEfetiva();
+			dpLotacaoConsiderada = t_dltLotacao;
+			if (t_dltLotacao != null) {
+				// TODO: _LAGS - verificar opção para sublotações
+				setDpPessoasDaLotacao(dao().pessoasPorLotacao(t_dltLotacao.getIdLotacao(), false,false,SituacaoFuncionalEnum.ATIVOS_E_CEDIDOS));
+				setCpConfiguracoesAdotadas(obterConfiguracoesDasPessoasDaLotacaoConsiderada());
+			}
+		} else {
+			throw new AplicacaoException("Acesso não permitido !");
+			
+		}	
 		
 		result.include("configuracaoConfManual", configuracaoConfManual);
 		result.include("cpServicosDisponiveis", cpServicosDisponiveis);
@@ -119,22 +123,6 @@ public class ServicoController 	extends SigaController {
 		result.include("cpTipoConfiguracaoAConfigurar", cpTipoConfiguracaoAConfigurar);
 		result.include("dscTpConfiguracao", cpTipoConfiguracaoAConfigurar.getDscTpConfiguracao());
 		result.include("pessoasGrupoSegManual", Cp.getInstance().getConf().getPessoasGrupoSegManual(obterLotacaoEfetiva()));
-	}
-	
-	private String editar() throws Exception {
-		if (seUsuarioPodeExecutar()) {
-			DpLotacao t_dltLotacao = obterLotacaoEfetiva();
-			dpLotacaoConsiderada = t_dltLotacao;
-			if (t_dltLotacao != null) {
-				// TODO: _LAGS - verificar opção para sublotações
-				setDpPessoasDaLotacao(dao().pessoasPorLotacao(t_dltLotacao.getIdLotacao(), false,false,SituacaoFuncionalEnum.ATIVOS_E_CEDIDOS));
-				setCpConfiguracoesAdotadas(obterConfiguracoesDasPessoasDaLotacaoConsiderada());
-			}
-			return "edita";
-		} else {
-			throw new AplicacaoException("Acesso não permitido !");
-			
-		}
 	}
 	
 	/**
@@ -323,7 +311,7 @@ public class ServicoController 	extends SigaController {
 	}
 	
 
-	@Post("/app/inserirPessoaExtra")
+	@Post("/app/gi/servico/inserirPessoaExtra")
 	public void aInserirPessoaExtra() throws Exception{
 		DpPessoa pes = dao.consultar(paramLong("pessoaExtra_pessoaSel.id"), DpPessoa.class,false);
 		if (pes.getLotacao().equivale(obterLotacaoEfetiva())){
@@ -353,7 +341,7 @@ public class ServicoController 	extends SigaController {
 	
 	
 	
-	@Get("/app/servico-acesso/excluir-pessoa-extra/{id}")
+	@Get("/app/gi/servico/excluir-pessoa-extra/{id}")
 	public void excluirPessoaExtra(Long id) throws Exception{
 		DpPessoa pes = dao().consultar(id, DpPessoa.class,false);
 		CpTipoConfiguracao tpConf =  obterCpTipoConfiguracaoAConfigurar(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);

@@ -76,7 +76,7 @@
 					<c:forEach var="pessoa" items="${pessoasGrupoSegManual}">
 						<tr class="">
 							<td>	
-								${pessoa.sesbPessoa}${pessoa.matricula}<a href="servico-acesso/excluir-pessoa-extra/${pessoa.id}">&nbsp;Excluir</a>
+								${pessoa.sesbPessoa}${pessoa.matricula}<a href="excluir-pessoa-extra/${pessoa.id}">&nbsp;Excluir</a>
 							</td>												
 							<td>${pessoa.nomePessoa}</td>
 							<c:forEach var="servico" items="${cpServicosDisponiveis}">

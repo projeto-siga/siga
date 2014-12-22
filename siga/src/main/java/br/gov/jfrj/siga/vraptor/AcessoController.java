@@ -52,7 +52,7 @@ import br.gov.jfrj.webwork.action.CpPerfilSelecao;
 import com.opensymphony.xwork.Action;
 
 @Resource
-public class AcessoController extends SigaController {
+public class AcessoController extends GiControllerSupport {
 
 	private Long idOrgaoUsu;
 	private DpPessoaSelecao pessoaSel;
@@ -71,7 +71,7 @@ public class AcessoController extends SigaController {
 
 	public AcessoController(HttpServletRequest request, Result result,SigaObjects so) {
 		
-		super(request, result, CpDao.getInstance(), so, Modulo.GI);
+		super(request, result, CpDao.getInstance(), so);
 		pessoaSel = new DpPessoaSelecao();
 		lotacaoSel = new DpLotacaoSelecao();
 		perfilSel = new CpPerfilSelecao();

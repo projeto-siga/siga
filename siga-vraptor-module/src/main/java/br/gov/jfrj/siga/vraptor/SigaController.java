@@ -24,23 +24,19 @@ public class SigaController {
 
 	public CpDao dao;
 
-	private HttpServletRequest request;
-
-	private Modulo modulo;
-	
+	private HttpServletRequest request;	
 	
 	
 	protected CpDao dao() {
 		return CpDao.getInstance();
 	}
 
-	public SigaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, Modulo siga) {
+	public SigaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so) {
 		super();
 		this.setRequest(request);
 		this.so = so;
 		this.result = result;
 		this.dao = dao;	
-		this.modulo = modulo;
 		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
@@ -174,7 +170,7 @@ public class SigaController {
 	}
 	
 	public void assertAcesso(String pathServico) throws AplicacaoException,Exception {
-		so.assertAcesso(modulo.getDescricao() + pathServico);
+		so.assertAcesso(pathServico);
 	}
 
 

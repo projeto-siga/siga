@@ -5,8 +5,6 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <script>
-	<ww:url id="url" action="editar" namespace="/expediente/doc">
-	</ww:url>
 	function sbmt(id, action) {
 		var frm = document.getElementById(id);
 		frm.action = action;
@@ -119,7 +117,7 @@
 		<c:forEach var="ident" items="${itens}">
 			<div class="gt-content-box gt-for-table">
 				<form id="editar_${ident.id}" name="editar_${ident.id}"
-					action="/siga/gi/identidade/editar_gravar.action" method="get"
+					action="editar_gravar" method="get"
 					class="form100">
 					
 					<input type="hidden" name="id" value="${ident.id}" />

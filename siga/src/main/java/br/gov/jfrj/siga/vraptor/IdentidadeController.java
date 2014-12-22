@@ -17,15 +17,16 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 
 @Resource
-public class IdentidadeController extends SigaController {
+public class IdentidadeController extends GiControllerSupport {
 
 	private DpPessoaSelecao selecaoPessoa;
 	
 	public IdentidadeController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so, Modulo.GI);
+		super(request, result, CpDao.getInstance(), so);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
+		selecaoPessoa = new DpPessoaSelecao();
 	}
 	
 	@Get("/app/gi/identidade/listar")

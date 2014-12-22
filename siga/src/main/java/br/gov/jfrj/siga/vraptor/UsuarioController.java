@@ -25,7 +25,7 @@ public class UsuarioController extends SigaController {
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
 
 	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so, Modulo.SIGA);
+		super(request, result, CpDao.getInstance(), so);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

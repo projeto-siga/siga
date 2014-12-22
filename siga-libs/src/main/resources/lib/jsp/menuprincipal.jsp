@@ -175,7 +175,7 @@
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;SELFSERVICE:Gerenciar serviços da própria lotação')}">
-							<li><ww:a href="/siga/gi/servico/acesso.action">Acesso a Serviços</ww:a>
+							<li><ww:a href="/siga/app/gi/servico/editar">Acesso a Serviços</ww:a>
 							</li>
 						</c:if>
 						<c:if

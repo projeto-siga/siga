@@ -2,20 +2,21 @@
 <script>
 $(document).ready(function() {
 	$('#outrasInformacoesDaFilha').hide();
-	$('#checkcriaFilha').change(function() {
-		if(this.checked) {
-			$('#checkcriaFilha').prop('value', 'true');
-			$('#outrasInformacoesDaFilha').show();
-			$('#motivoEscalonamento').hide();
-			return;
-		}
-		$('#checkcriaFilha').prop('value', 'false');
-		$('#outrasInformacoesDaFilha').hide();
-		$('#motivoEscalonamento').show();
-	});	
-
 	$("#escalonar_dialog").dialog('option', 'width', 580);
+	onchangeCheckCriaFilha();
 });
+function onchangeCheckCriaFilha(){
+	var checkbox = $('#checkcriaFilha');
+	if(checkbox[0].checked) {
+		checkbox.prop('value', 'true');
+		$('#outrasInformacoesDaFilha').show();
+		$('#motivoEscalonamento').hide();
+		return;
+	}
+	checkbox.prop('value', 'false');
+	$('#outrasInformacoesDaFilha').hide();
+	$('#motivoEscalonamento').show();
+}
 function carregarAcao(){
 	var inputIdSolicitacao = document.getElementById('id');
 	var inputIdItem = document.getElementById('itemConfiguracao');
@@ -36,7 +37,7 @@ function carregouAcao(response, param){
 			onsubmit="javascript: return block();" method="POST">
 		
 		<div class="gt-form-row" >
-			<label>#{checkbox name:'criaFilha', value:criaFilha /} 
+			<label>#{checkbox name:'criaFilha', onchange:'onchangeCheckCriaFilha();', value:true /} 
 					#{if solicitacao.isFilha()} #{set codigo : solicitacao.solicitacaoPai.codigo /} #{/if}
 					#{else} #{set codigo : solicitacao.codigo /} #{/else}
 					Criar Solicitação filha de ${codigo}</label>

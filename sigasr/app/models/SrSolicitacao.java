@@ -2498,7 +2498,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	// Edson: retorna os periodos de pendencia de forma linear, ou seja, 
 	// colapsando as sobreposicoes, para facilitar os calculos:
-	// Transforma: -----
+	// Transforma: -------
 	//                -------  
 	//
 	// em:         ----------  

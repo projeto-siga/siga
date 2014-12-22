@@ -230,8 +230,11 @@ public class Application extends SigaApplication {
 	
 	public static void exibirAcaoEscalonar(Long id, Long itemConfiguracao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
+		if (itemConfiguracao != null){
+			solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
+			acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		}
 		render(solicitacao, acoesEAtendentes);
 	}
 

@@ -142,18 +142,17 @@
 			</li>
 
 
-			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade')}">
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade')}">
 				<li><a href="#">Gestão de Identidade</a>
 					<ul>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;ID:Gerenciar identidades')}">
-							<li><ww:a href="/siga/gi/identidade/listar.action">Identidade</ww:a>
+							<li><ww:a href="/siga/app/gi/identidade/listar">Identidade</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERMISSAO:Gerenciar permissões')}">
-							<li><ww:a href="/siga/gi/acesso/listar.action">Configurar Permissões</ww:a>
+							<li><ww:a href="/siga/app/gi/acesso/listar">Configurar Permissões</ww:a>
 							</li>
 						</c:if>
 						<c:if

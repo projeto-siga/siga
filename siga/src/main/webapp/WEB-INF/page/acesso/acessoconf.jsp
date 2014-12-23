@@ -8,8 +8,6 @@
 <%-- pageContext.setAttribute("sysdate", new java.util.Date()); --%>
 
 <script>
-	<ww:url id="url" action="listar" namespace="/gi/acesso">
-	</ww:url>
 	function sbmt(id, action) {
 		var frm = document.getElementById(id);
 		frm.action = action;
@@ -17,16 +15,15 @@
 		return;
 	}
 
-	<ww:url id="url" action="gravar" namespace="/gi/acesso">
-	</ww:url>
+	
 	function enviar(idServico, idSituacao) {
 		if (!IsRunningAjaxRequest()) {
 			ReplaceInnerHTMLFromAjaxResponse(
-					'<ww:property value="%{url}"/>?idServico='
-							+ idServico
-							+ '&idSituacao='
-							+ idSituacao
-							+ '<c:if test="${idAbrangencia == 4}">&perfilSel.id=${perfilSel.id}</c:if><c:if test="${idAbrangencia == 3}">&pessoaSel.id=${pessoaSel.id}</c:if><c:if test="${idAbrangencia == 2}">&lotacaoSel.id=${lotacaoSel.id}</c:if><c:if test="${idAbrangencia == 1}">&idOrgaoUsu=${idOrgaoUsu}</c:if>',
+					'gravar?idServico='+idServico+'&idSituacao='+idSituacao
+						+ '<c:if test="${idAbrangencia == 4}">&perfilSel.id=${perfilSel.id}</c:if>'
+						+ '<c:if test="${idAbrangencia == 3}">&pessoaSel.id=${pessoaSel.id}</c:if>'
+						+ '<c:if test="${idAbrangencia == 2}">&lotacaoSel.id=${lotacaoSel.id}</c:if>'
+						+ '<c:if test="${idAbrangencia == 1}">&idOrgaoUsuSel=${idOrgaoUsuSel}</c:if>',
 					null, document.getElementById('SPAN-' + idServico));
 		}
 	}
@@ -39,53 +36,54 @@
 			<h2>Permissões cadastradas </h2> 
 
 			<div class="gt-content-box gt-for-table">
-				<form id="listar" name="listar" 
-					action="/siga/gi/acesso/listar.action" method="GET" class="form100">
+				<form id="listar" name="listar" action="listar" method="GET" class="form100">
 					<table class="gt-form-table">
 						<colgroup>
 							<col width="15%" />
 						</colgroup>
 
 						<tr class="header">
-							<td align="center" valign="top" colspan="4">Selecione a
-								abrangência</td>
+							<td align="center" valign="top" colspan="4">Selecione a abrangência</td>
 						</tr>
 
 						<tr>
 							<td>Abrangência:</td>
-							<td><siga:escolha var='idAbrangencia'>
+							<td>
+								<siga:escolha var='idAbrangencia'>
 									<siga:opcao id='4' texto="Perfil">
-										<siga:selecao tema='simple' titulo="Perfil:"
-											propriedade="perfil" modulo="siga"/>
+										<siga:selecao tema='simple' titulo="Perfil:" propriedade="perfil" modulo="siga"/>
 									</siga:opcao>
-									<siga:opcao id='1' texto="Órgão usuário">
-										<ww:select name="idOrgaoUsu" list="orgaosUsu"
-											listKey="idOrgaoUsu" listValue="nmOrgaoUsu" label="Órgão"
-											theme="simple" />
+									
+									<siga:opcao id='1' texto="Órgão usuário">											
+										<select  name="idOrgaoUsuSel" >
+											<c:forEach items="${orgaosUsu}" var="item">
+												<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsuSel ? 'selected' : ''}>
+													${item.nmOrgaoUsu}
+												</option>  
+											</c:forEach>
+										</select>		
 									</siga:opcao>
+									
 									<siga:opcao id='2' texto="Lotação">
-										<siga:selecao tema='simple' titulo="Lotação:"
-											propriedade="lotacao" modulo="siga"/>
+										<siga:selecao tema='simple' titulo="Lotação:" propriedade="lotacao" modulo="siga"/>
 									</siga:opcao>
+									
 									<siga:opcao id='3' texto="Matrícula">
-										<siga:selecao tema='simple' titulo="Matrícula:"
-											propriedade="pessoa" modulo="siga" />
+										<siga:selecao tema='simple' titulo="Matrícula:" propriedade="pessoa" modulo="siga" />
 									</siga:opcao>
-								</siga:escolha></td>
+								</siga:escolha>
+							</td>
 						</tr>
 
 						<tr>
-							<td colspan="2"><siga:monobotao inputType="submit"
-									value="Buscar" cssClass="gt-btn-medium gt-btn-left" /></td>
+							<td colspan="2">
+								<siga:monobotao inputType="submit" value="Buscar" cssClass="gt-btn-medium gt-btn-left" />
+							</td>
 						</tr>
 					</table>
 				</form>
 			</div>
 			<br />
-
-
-			<ww:url id="url" action="servconf_gravar" namespace="/gi">			
-			</ww:url>
 
 			<c:if test="${not empty itensHTML}">
 				<h2>Permissões</h2>
@@ -97,7 +95,7 @@
 						<c:if test="${idAbrangencia == 1}">
 							<tr class="header">
 								<td>Órgão usuário:</td>
-								<td>${nomeOrgaoUsu}</td>
+								<td>${nomeOrgaoUsuSel}</td>
 							</tr>
 						</c:if>
 						<c:if test="${idAbrangencia == 2}">

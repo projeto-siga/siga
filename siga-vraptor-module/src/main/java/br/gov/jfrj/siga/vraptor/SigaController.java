@@ -5,6 +5,7 @@ import static br.com.caelum.vraptor.view.Results.http;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -171,8 +172,7 @@ public class SigaController {
 	
 	public void assertAcesso(String pathServico) throws AplicacaoException,Exception {
 		so.assertAcesso(pathServico);
-	}
-
+	}	
 
 
 }

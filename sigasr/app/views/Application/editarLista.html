@@ -8,132 +8,128 @@
 	}
 </style>
 
-<div class="clearfix">
-	<div class="gt-content">
-		<div class="gt-form gt-content-box">
-			<form id="formLista"> 
-				<input type="hidden" id="idLista" name="lista.idLista" value="${lista?.idLista}">
-				<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista?.hisIdIni}">
-				<div class="gt-form-row gt-width-66">
-					<label>Nome <span>*<span></label> <input type="text"
-						id="nomeLista"
-						name="lista.nomeLista"
-						value="${lista?.nomeLista}" 
-						size="98"
-						maxlength="255"
-						required/>
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Abrangência</label>
-					<textarea cols="98" rows="5" name="lista.descrAbrangencia"
-						id="descrAbrangencia" maxlength="8192">${lista?.descrAbrangencia}</textarea>
-					<span style="color: red">#{error
-						'lista.descrAbrangencia' /}</span>
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Justificativa</label>
-					<textarea cols="98" rows="5" name="lista.descrJustificativa"
-						id="descrJustificativa" maxlength="8192">${lista?.descrJustificativa}</textarea>
-					<span style="color: red">#{error
-						'lista.descrJustificativa' /}</span>
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Priorização</label>
-					<textarea cols="98" rows="5" name="lista.descrPriorizacao"
-						id="descrPriorizacao" maxlength="8192">${lista?.descrPriorizacao}</textarea>
-					<span style="color: red">#{error
-						'lista.descrPriorizacao"' /}</span>
-				</div>
-				
-				<div class="container">
-					<div class="title-table">
-						<h3 style="padding-top: 25px;">Permissões</h3>
-					</div>
-					<div class="button-table">
-						<a href="javascript: controleAcessoModalAbrir(false)" title="Adicionar Permissão">
-							<img src="/siga/css/famfamfam/icons/add.png">
-						</a>
-					</div>
-				</div>
-				<div class="gt-content-box gt-for-table dataTables_div">
-					<table id="permissoes_table" border="0" class="gt-table display">
-						<thead>
-							<tr>
-								<th>ID Orgão</th>
-								<th>Orgão</th>
-								<th>ID Local</th>
-								<th>Local</th>
-								<th>ID Lotação</th>
-								<th>Nome Lotação</th>
-								<th>Lotação</th>
-								<th>ID Pessoa</th>
-								<th>Nome Pessoa</th>
-								<th>Pessoa</th>
-								<th>ID Cargo</th>
-								<th>Cargo</th>
-								<th>Cargo</th>
-								<th>ID Função</th>
-								<th>Função</th>
-								<th>Função</th>
-								<th>Tipo Permissão</th>
-								<th>ID Tipo Permissao</th>
-								<th>Tipo Permissão</th>	
-								<th>Tipo Permissão</th>	
-								<th>Ações</th>
-							</tr>
-						</thead>
-		
-						<tbody>
-							#{list items:lista?.getPermissoes(lotaTitular, cadastrante), as:'perm'}
-								<tr style="cursor: pointer;">
-									<td>${perm.orgaoUsuario?.id}</td>
-									<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
-									<td>${perm.complexo?.idComplexo}</td>
-									<td>${perm.complexo?.nomeComplexo}</td>
-									<td>${perm.lotacao?.lotacaoAtual?.id}</td>
-									<td>${perm.lotacao?.lotacaoAtual?.nomeLotacao}</td>
-									<td>${perm.lotacao?.lotacaoAtual?.siglaLotacao}</td>
-									*{<td>${perm.dpPessoa?.pessoaAtual?.id}</td>}*
-									<td>${perm.dpPessoa?.id}</td>
-									*{<td>${perm.dpPessoa?.pessoaAtual?.nomePessoa}</td>}*
-									<td>${perm.dpPessoa?.nomePessoa}</td>
-									*{<td>${perm.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>}*
-									<td>${perm.dpPessoa?.nomeAbreviado}</td>
-									<td>${perm.cargo?.id}</td>
-									<td>${perm.cargo?.sigla}</td>
-									<td>${perm.cargo?.descricao}</td>
-									<td>${perm.funcaoConfianca?.id}</td>
-									<td>${perm.funcaoConfianca?.sigla}</td>
-									<td>${perm.funcaoConfianca?.descricao}</td>
-									<td>${perm.getSrConfiguracaoTipoPermissaoJson()}</td>
-									<td>${perm.id}</td>
-									<td></td>
-									<td>${perm.descrTipoPermissao}</td>
-									<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-										<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissão">
-											<input class="idPermissao" type="hidden" value="${perm.id}"/>
-											<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> 
-										</a>
-									</td>
-								</tr>
-							#{/list}
-						</tbody>
-					</table>
-				</div>
-				
-				<div class="gt-form-row">
-					<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
-					<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
-					<input type="hidden" id="nomeLotaCadastrante" name="lista.nomeLotaCadastrante" value="${lotaTitular.descricao}">
-					<a href="javascript: gravarLista()" class="gt-btn-medium gt-btn-left">Ok</a>
-					<a href="javascript: listaModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<p class="gt-error" style="display:none;" id="erroAoSalvar">Não foi possível salvar o registro.</p>
-				</div>
-			</form>
+<div class="gt-form gt-content-box">
+	<form id="formLista"> 
+		<input type="hidden" id="idLista" name="lista.idLista" value="${lista?.idLista}">
+		<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista?.hisIdIni}">
+		<div class="gt-form-row gt-width-66">
+			<label>Nome <span>*<span></label> <input type="text"
+				id="nomeLista"
+				name="lista.nomeLista"
+				value="${lista?.nomeLista}" 
+				size="98"
+				maxlength="255"
+				required/>
 		</div>
-	</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Abrangência</label>
+			<textarea cols="98" rows="5" name="lista.descrAbrangencia"
+				id="descrAbrangencia" maxlength="8192">${lista?.descrAbrangencia}</textarea>
+			<span style="color: red">#{error
+				'lista.descrAbrangencia' /}</span>
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Justificativa</label>
+			<textarea cols="98" rows="5" name="lista.descrJustificativa"
+				id="descrJustificativa" maxlength="8192">${lista?.descrJustificativa}</textarea>
+			<span style="color: red">#{error
+				'lista.descrJustificativa' /}</span>
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Priorização</label>
+			<textarea cols="98" rows="5" name="lista.descrPriorizacao"
+				id="descrPriorizacao" maxlength="8192">${lista?.descrPriorizacao}</textarea>
+			<span style="color: red">#{error
+				'lista.descrPriorizacao"' /}</span>
+		</div>
+		
+		<div class="container">
+			<div class="title-table">
+				<h3 style="padding-top: 25px;">Permissões</h3>
+			</div>
+			<div class="button-table">
+				<a href="javascript: controleAcessoModalAbrir(false)" title="Adicionar Permissão">
+					<img src="/siga/css/famfamfam/icons/add.png">
+				</a>
+			</div>
+		</div>
+		<div class="gt-content-box gt-for-table dataTables_div">
+			<table id="permissoes_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th>ID Orgão</th>
+						<th>Orgão</th>
+						<th>ID Local</th>
+						<th>Local</th>
+						<th>ID Lotação</th>
+						<th>Nome Lotação</th>
+						<th>Lotação</th>
+						<th>ID Pessoa</th>
+						<th>Nome Pessoa</th>
+						<th>Pessoa</th>
+						<th>ID Cargo</th>
+						<th>Cargo</th>
+						<th>Cargo</th>
+						<th>ID Função</th>
+						<th>Função</th>
+						<th>Função</th>
+						<th>Tipo Permissão</th>
+						<th>ID Tipo Permissao</th>
+						<th>Tipo Permissão</th>	
+						<th>Tipo Permissão</th>	
+						<th>Ações</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:lista?.getPermissoes(lotaTitular, cadastrante), as:'perm'}
+						<tr style="cursor: pointer;">
+							<td>${perm.orgaoUsuario?.id}</td>
+							<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
+							<td>${perm.complexo?.idComplexo}</td>
+							<td>${perm.complexo?.nomeComplexo}</td>
+							<td>${perm.lotacao?.lotacaoAtual?.id}</td>
+							<td>${perm.lotacao?.lotacaoAtual?.nomeLotacao}</td>
+							<td>${perm.lotacao?.lotacaoAtual?.siglaLotacao}</td>
+							*{<td>${perm.dpPessoa?.pessoaAtual?.id}</td>}*
+							<td>${perm.dpPessoa?.id}</td>
+							*{<td>${perm.dpPessoa?.pessoaAtual?.nomePessoa}</td>}*
+							<td>${perm.dpPessoa?.nomePessoa}</td>
+							*{<td>${perm.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>}*
+							<td>${perm.dpPessoa?.nomeAbreviado}</td>
+							<td>${perm.cargo?.id}</td>
+							<td>${perm.cargo?.sigla}</td>
+							<td>${perm.cargo?.descricao}</td>
+							<td>${perm.funcaoConfianca?.id}</td>
+							<td>${perm.funcaoConfianca?.sigla}</td>
+							<td>${perm.funcaoConfianca?.descricao}</td>
+							<td>${perm.getSrConfiguracaoTipoPermissaoJson()}</td>
+							<td>${perm.id}</td>
+							<td></td>
+							<td>${perm.descrTipoPermissao}</td>
+							<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+								<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissão">
+									<input class="idPermissao" type="hidden" value="${perm.id}"/>
+									<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> 
+								</a>
+							</td>
+						</tr>
+					#{/list}
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="gt-form-row">
+			<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
+			<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
+			<input type="hidden" id="nomeLotaCadastrante" name="lista.nomeLotaCadastrante" value="${lotaTitular.descricao}">
+			<a href="javascript: gravarLista()" class="gt-btn-medium gt-btn-left">Ok</a>
+			<a href="javascript: listaModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+		</div>
+		<div class="gt-form-row gt-width-100">
+			<p class="gt-error" style="display:none;" id="erroAoSalvar">Não foi possível salvar o registro.</p>
+		</div>
+	</form>
 </div>
 
 #{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}

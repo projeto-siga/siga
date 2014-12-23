@@ -515,6 +515,7 @@
 					&& idEquipeLotacao != idPreAtendente
 					&& idEquipeLotacao != idPosAtendente) {
 				$("#erroAoSalvar_dialog").dialog("open");
+				unblock();
 				return;
 			}
 		}
@@ -1011,14 +1012,15 @@
 					<th>${design.isHerdado}</th>
 					<th>${design.utilizarItemHerdado}</th>
 					<td></td>
-					<td class="acoes">#{desativarReativar id:design.id,
-						onReativar:'reativarDesignacao', onDesativar
-						:'desativarDesignacao', isAtivo:design.isAtivo() }
-						#{/desativarReativar} <a class="once"
-						onclick="duplicarDesignacao(event)" title="Duplicar"> <img
-							src="/siga/css/famfamfam/icons/application_double.png"
-							style="margin-right: 5px;">
-					</a>
+					<td class="acoes"> 
+						#{desativarReativar id:design.id, 
+											onReativar:'reativarDesignacao',
+											onDesativar :'desativarDesignacao',
+											isAtivo:design.isAtivo() }
+						#{/desativarReativar}
+						<a class="once" onclick="duplicarDesignacao(event)" title="Duplicar">
+							<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
+						</a>
 					</td>
 					<td>${design.isAtivo()}</td>
 				</tr>

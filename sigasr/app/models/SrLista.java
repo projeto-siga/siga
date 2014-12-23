@@ -21,7 +21,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import models.vo.SrListaVO;
 import play.db.jpa.JPA;
@@ -30,7 +29,6 @@ import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")

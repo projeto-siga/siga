@@ -11,8 +11,11 @@
 </style>
 
 <script>
-	$( document ).ready(function() {
-		
+	jQuery( document ).ready(function($) {
+		if ( $.fn.dataTable.isDataTable( '#acao_table' ) ) {
+			acaoTable = $('#acao_table').dataTable();
+		}
+		else {
 			acaoTable = $('#acao_table').dataTable( {
 				"language": {
 					"emptyTable":     "Não existem resultados",
@@ -41,7 +44,12 @@
 				               { "width": "5px", "targets": 3 }],
 				"iDisplayLength": 3
 		    } );
-		
+		}
+
+		if ( $.fn.dataTable.isDataTable( '#itemConfiguracao_table' ) ) {
+			itemConfiguracaoTable = $('#itemConfiguracao_table').dataTable();
+		}
+		else {
 			itemConfiguracaoTable = $('#itemConfiguracao_table').dataTable({
 				"language": {
 					"emptyTable":     "Não existem resultados",
@@ -73,6 +81,7 @@
 				               { "width": "5px", targets: [5]}],
 				"iDisplayLength": 3
 			});
+		}
 		
 		// Delete Item Configuração
 		$('#itemConfiguracao_table tbody').on('click', 'a.itemConfiguracao_remove', function () {

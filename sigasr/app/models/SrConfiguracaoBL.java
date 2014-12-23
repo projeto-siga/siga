@@ -209,8 +209,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				}
 			}
 			
-			if (srConf.listaPrioridade != null)
+			if (srConf.listaPrioridade != null) {
 				srConf.listaPrioridade.getHisIdIni();
+			}
 			
 			if (srConf.pesquisaSatisfacao != null)
 				srConf.pesquisaSatisfacao.getHisIdIni();
@@ -223,6 +224,10 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					listaConf.getListaAtual();
 					listaConf.getId();
 				}
+			}
+			
+			if (conf.getDpPessoa() != null) {
+				conf.getDpPessoa().getPessoaInicial().getId();
 			}
 		}
 	}

@@ -26,7 +26,7 @@
 </style>
 <script type="text/javascript">
 
-	$(document).ready(function() {
+	jQuery(document).ready(function($) {
 		/* Table initialization */
 		excecoesTable = $('#excecoes_table').dataTable({
 			"language": {
@@ -97,7 +97,7 @@
 	}
 	
 	function inserirExcecaoHorario() {
-		if ($("#excecaoHorarioForm").valid() && camposObrigatoriosExcecaoPreenchidos()) {
+		if (jQuery("#excecaoHorarioForm").valid() && camposObrigatoriosExcecaoPreenchidos()) {
 			// recupera as comboboxes
 			var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0],
 				jDiaSemana = jDiaSemanaCbb.options[jDiaSemanaCbb.selectedIndex],

@@ -36,7 +36,7 @@ function DesativarReativar(service) {
 	}
 	
 	function innerHTMLAtivar(td, id, service) {
-		var a = $('<a class="once" title="Reativar"/>'),
+		var a = $('<a class="once gt-btn-ativar" title="Reativar"/>'),
    		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
    		
    		a.bind('click', function(event) {
@@ -48,7 +48,7 @@ function DesativarReativar(service) {
 	}
 
 	function innerHTMLDesativar(td, id, service) {
-		var a = $('<a class="once" title="Desativar"/>'),
+		var a = $('<a class="once gt-btn-ativar" title="Desativar"/>'),
    		img = $('<img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">');
    		
    		a.bind('click', function(event) {

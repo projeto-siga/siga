@@ -116,3 +116,7 @@ td.padding-table {
 .error {
    color: red !important;
 }
+
+.gt-btn-small, .gt-btn-medium, .gt-btn-large, .gt-btn-ativar {
+	cursor: pointer;
+}

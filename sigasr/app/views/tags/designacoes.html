@@ -976,7 +976,7 @@
 
 			<tbody>
 				#{list items:_designacoes, as:'design'}
-				<tr>
+				<tr style="cursor: pointer;">
 					<td class="details-control"></td>
 					<td class="checkbox-hidden"
 						style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
@@ -1017,7 +1017,7 @@
 											onDesativar :'desativarDesignacao',
 											isAtivo:design.isAtivo() }
 						#{/desativarReativar}
-						<a class="once" onclick="duplicarDesignacao(event)" title="Duplicar">
+						<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar">
 							<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
 						</a>
 					</td>

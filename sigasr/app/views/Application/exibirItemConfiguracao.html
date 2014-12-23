@@ -25,7 +25,7 @@ function carregouAcao(response, param){
 </script>
 
 <div class="gt-form-row gt-width-66" >
-	<label>Item</label> #{selecao tipo:'item',
+	<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label> #{selecao tipo:'item',
 	nome:'solicitacao.itemConfiguracao',
 	value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')",
 	params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo+

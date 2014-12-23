@@ -42,7 +42,7 @@ function carregouAcao(response, param){
 					#{else} #{set codigo : solicitacao.codigo /} #{/else}
 					Criar Solicitação filha de ${codigo}</label>
 			<br />
-			<label>Item</label> #{selecao tipo:'item',
+			<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label> #{selecao tipo:'item',
 			nome:'itemConfiguracao',
 			value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();",
 			params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo+

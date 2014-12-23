@@ -416,7 +416,7 @@
 				<version>2.2.6</version>
 				<exclusions>
 					<exclusion>
-						<groupId>org.freemarker</groupId>
+						<groupId>freemarker</groupId>
 						<artifactId>freemarker</artifactId>
 					</exclusion>
 				</exclusions>

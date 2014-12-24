@@ -17,6 +17,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.libs.util.Paginador;
 
 public class SigaController {
 	public SigaObjects so;
@@ -26,6 +27,8 @@ public class SigaController {
 	public CpDao dao;
 
 	private HttpServletRequest request;	
+	
+	private Paginador p = new Paginador();
 	
 	
 	protected CpDao dao() {
@@ -174,5 +177,13 @@ public class SigaController {
 		so.assertAcesso(pathServico);
 	}	
 
+	
+	public void setP(Paginador p) {
+		this.p = p;
+	}
+	
+	public Paginador getP() {
+		return p;
+	}
 
 }

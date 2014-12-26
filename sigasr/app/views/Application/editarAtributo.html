@@ -13,7 +13,8 @@
 	}
 
 	var tableAssociacao,
-		colunas = {};
+		colunas = {},
+		validatorAtributoForm;
 	colunas.botaoExpandir =               0;
 	colunas.idItemConfiguracao =          1;
 	colunas.tituloItemConfiguracao =      2;
@@ -104,7 +105,7 @@
 			$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
 			tableAssociacao = table;
 		}
-	
+		validatorAtributoForm = $("#atributoForm").validate();
 	});
 
 	function inserirAssociacao() {
@@ -174,6 +175,9 @@
 		$("#acaoUnitaria_sigla").val('');
 		$("#acaoUnitariaSpan").html('');
 		$("#checkatributoObrigatorio")[0].checked = false;
+
+		// limpa as validações do form
+		validatorAtributoForm.resetForm();
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.
@@ -319,6 +323,12 @@
        });
 
 	}
+
+	function isValidForm() {
+		if ($("#atributoForm").valid()) {
+			 atributoGravar()
+			 }
+		}
 	
 	function associacaoModalFechar() {
 		isEditingAssociacao = false;
@@ -384,10 +394,10 @@
 	#{/ifErrors}	
 	<div class="gt-form-row box-wrapper">
 		<div class="box box-left gt-width-50">
-			<label>Nome</label> <input type="text"
+			<label>Nome <span>*</span></label> <input type="text"
 				name="att.nomeAtributo"
 				id="nomeAtributo"
-				value="${att?.nomeAtributo}" size="50" maxlength="255"/>
+				value="${att?.nomeAtributo}" size="50" maxlength="255" required/>
 				<span style="color: red">#{error
 				'att.nomeAtributo' /}</span>
 		</div>
@@ -474,7 +484,7 @@
 		</div>
 	</div>
 	<div class="gt-form-row" style="padding-top: 10px;">
-		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoGravar()"/>
+		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="isValidForm()"/>
 		<a href="javascript: atributoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 	</div>
 	</form>

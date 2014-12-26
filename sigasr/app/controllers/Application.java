@@ -326,7 +326,6 @@ public class Application extends SigaApplication {
 			enviarErroValidacao();
 		}
 	}
-
 	private static void enviarErroValidacao() {
 		JsonArray jsonArray = new JsonArray();
 		
@@ -1201,11 +1200,6 @@ public class Application extends SigaApplication {
 	}
 
 	private static void validarFormEditarAtributo(SrAtributo att) {
-		if (att.nomeAtributo.equals("")) {
-			Validation.addError("att.nomeAtributo",
-					"Nome de atributo não informado");
-		}
-
 		if (att.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO 
 				&& att.descrPreDefinido.equals("")) {
 			Validation.addError("att.descrPreDefinido",

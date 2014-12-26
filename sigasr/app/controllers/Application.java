@@ -1475,13 +1475,12 @@ public class Application extends SigaApplication {
 	public static void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		lista.finalizar();
-		listarLista(mostrarDesativados);
 	}
 	
-	public static void reativarLista(Long id, boolean mostrarDesativados) throws Exception {
+	public static Long reativarLista(Long id, boolean mostrarDesativados) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		lista.salvar();
-		listarLista(mostrarDesativados);
+		return lista.getId();
 	}
 
 	public static void relSolicitacoes(SrSolicitacaoFiltro filtro)

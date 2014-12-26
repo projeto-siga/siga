@@ -73,7 +73,7 @@
 						<th>ID Função</th>
 						<th>Função</th>
 						<th>Função</th>
-						<th>Tipo Permissão</th>
+						<th>Tipo Permissão JSON</th>
 						<th>ID Tipo Permissao</th>
 						<th>Tipo Permissão</th>	
 						<th>Tipo Permissão</th>	
@@ -237,7 +237,30 @@
 		isEditingContr = false,
 		itemTipoPermissaoOptions = [],
 		validatorFormLista,
-		validatorPermissao;
+		validatorPermissao,
+		colunas = {};
+
+	colunas.idOrgao = 		0;
+	colunas.orgao = 		1;
+	colunas.idLocal = 		2;
+	colunas.local = 		3;
+	colunas.idLotacao = 	4;
+	colunas.nomeLotacao = 	5;
+	colunas.lotacao = 		6;
+	colunas.idPessoa = 		7;
+	colunas.nomePessoa = 	8;
+	colunas.pessoa = 		9;
+	colunas.idCargo = 		10;
+	colunas.siglaCargo =	11;
+	colunas.descrCargo = 	12;
+	colunas.idFuncao = 		13;
+	colunas.siglaFuncao = 	14;
+	colunas.descrFuncao = 	15;
+	colunas.jSonTipoPerm =	16;
+	colunas.idTipoPerm = 	17;
+	colunas.tipoPerm = 		18;
+	colunas.descrTipoPerm = 19;
+	colunas.acoes = 		20;
 	
 	$( document ).ready(function( ) {
 		/* Table initialization */
@@ -270,12 +293,14 @@
 				    }
 				},
 				"columnDefs": [{
-					"targets": [0, 2, 4, 5, 7, 8, 10, 12, 13, 15, 16, 17, 18],
+					"targets": [colunas.idOrgao, colunas.idLocal, colunas.idLotacao, colunas.nomeLotacao, colunas.idPessoa, 
+					            colunas.nomePessoa, colunas.idCargo, colunas.descrCargo, colunas.idFuncao, colunas.descrFuncao,
+					            colunas.jSonTipoPerm, colunas.idTipoPerm, colunas.tipoPerm],
 					"visible": false,
 					"searchable": false
 				},
 				{
-					"targets": [20],
+					"targets": [colunas.acoes],
 					"sortable" : false,
 					"searchable": false
 				}]
@@ -320,8 +345,6 @@
 			idPermissao = idPermissaoDesativar ? idPermissaoDesativar : me.find('.idPermissao').val(),
 			idLista = $("#idLista").val();
 
-		//location.href='@{Application.desativarPermissaoUsoListaEdicao()}?' + jQuery.param({idLista : idLista, idPermissao : idPermissao});
-
 		$.ajax({
 	         type: "POST",
 	         url: "@{Application.desativarPermissaoUsoListaEdicao()}",
@@ -341,26 +364,26 @@
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
 		
-		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[0]);
-		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[2]);
-		$("#lotacao").val(itemArray[4]);
-		$("#lotacao_descricao").val(itemArray[5]);
-		$("#lotacaoSpan").html(itemArray[5]);
-		$("#lotacao_sigla").val(itemArray[6]);
-		$("#dpPessoa").val(itemArray[7]);
-		$("#dpPessoa_descricao").val(itemArray[8]);
-		$("#dpPessoaSpan").html(itemArray[8]);
-		$("#dpPessoa_sigla").val(itemArray[9]);
-		$("#cargo").val(itemArray[10]);
-		$("#cargo_descricao").val(itemArray[11]);
-		$("#cargoSpan").html(itemArray[11]);
-		$("#cargo_sigla").val(itemArray[12]);
-		$("#funcaoConfianca").val(itemArray[13]);
-		$("#funcaoConfianca_descricao").val(itemArray[14]);
-		$("#funcaoConfiancaSpan").html(itemArray[14]);
-		$("#funcaoConfianca_sigla").val(itemArray[15]);
+		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
+		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
+		$("#lotacao").val(itemArray[colunas.idLotacao]);
+		$("#lotacao_descricao").val(itemArray[colunas.nomeLotacao]);
+		$("#lotacaoSpan").html(itemArray[colunas.nomeLotacao]);
+		$("#lotacao_sigla").val(itemArray[colunas.lotacao]);
+		$("#dpPessoa").val(itemArray[colunas.idPessoa]);
+		$("#dpPessoa_descricao").val(itemArray[colunas.nomePessoa]);
+		$("#dpPessoaSpan").html(itemArray[colunas.nomePessoa]);
+		$("#dpPessoa_sigla").val(itemArray[colunas.pessoa]);
+		$("#cargo").val(itemArray[colunas.idCargo]);
+		$("#cargo_descricao").val(itemArray[colunas.siglaCargo]);
+		$("#cargoSpan").html(itemArray[colunas.siglaCargo]);
+		$("#cargo_sigla").val(itemArray[colunas.descrCargo]);
+		$("#funcaoConfianca").val(itemArray[colunas.idfuncao]);
+		$("#funcaoConfianca_descricao").val(itemArray[colunas.siglaFuncao]);
+		$("#funcaoConfiancaSpan").html(itemArray[colunas.siglaFuncao]);
+		$("#funcaoConfianca_sigla").val(itemArray[colunas.descrFuncao]);
 		atualizarListasTipoPermissaoEdicao(itemArray);
-		$("#idConfiguracao").val(itemArray[17]);
+		$("#idConfiguracao").val(itemArray[colunas.idTipoPerm]);
 	};
 	
 	function findSelectedIndexByValue(comboBox, value) {
@@ -423,32 +446,32 @@
 		var params = "";
 		
 		// caso exista algum item na tabela
-		if (row[0] != '' && row[0] > 0)
-			params += '&permissao.orgaoUsuario.idOrgaoUsu=' + row[0];
+		if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
+			params += '&permissao.orgaoUsuario.idOrgaoUsu=' + row[colunas.idOrgao];
 		
-		if (row[2] != '' && row[2] > 0)
-        	params += '&permissao.complexo.idComplexo=' + row[2];
+		if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
+        	params += '&permissao.complexo.idComplexo=' + row[colunas.idLocal];
 		
-		if (row[4] != '')
-        	params += '&permissao.lotacao.id=' + row[4];
+		if (row[colunas.idLotacao] != '')
+        	params += '&permissao.lotacao.id=' + row[colunas.idLotacao];
 		
-		if (row[7] != '')
-        	params += '&permissao.dpPessoa.id=' + row[7];
+		if (row[colunas.idPessoa] != '')
+        	params += '&permissao.dpPessoa.id=' + row[colunas.idPessoa];
 		
-		if (row[10] != '')
-        	params += '&permissao.cargo.id=' + row[10];
+		if (row[colunas.idCargo] != '')
+        	params += '&permissao.cargo.id=' + row[colunas.idCargo];
 		
-		if (row[13] != '')
-        	params += '&permissao.funcaoConfianca.idFuncao=' + row[13];
+		if (row[colunas.idFuncao] != '')
+        	params += '&permissao.funcaoConfianca.idFuncao=' + row[colunas.idFuncao];
 		
-		if (row[17] != '')
-			params += '&permissao.id=' + row[17];
+		if (row[colunas.idTipoPerm] != '')
+			params += '&permissao.id=' + row[colunas.idTipoPerm];
 
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
 			params += '&permissao.listaPrioridade.id=' + $("#idLista").val();
 
 		// lista de TipoPermissao
-		params += row[18];
+		params += row[colunas.tipoPerm];
 
 		return params;
 	};
@@ -488,7 +511,7 @@
 	         data: serializePermissao(row),
 	         dataType: "text",
 	         success: function(response) {
-		        row[17] = response;
+		        row[colunas.idTipoPerm] = response;
 				var html = 
 				'<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
 					'<a class="once desassociarPermissao" title="Remover permissão">' + 
@@ -497,7 +520,7 @@
 					'</a>' + 
 				'</td>';
 						         
-		        row[20] = html;
+		        row[colunas.acoes] = html;
 
 	          	if (isEditingContr ) {
 	          		permissoesTable.api().row('.selected').data(row);
@@ -524,9 +547,9 @@
 		// transforma o valor String em objeto, caso necessário
 		// Edson: comentando, pois nao funciona no IE
 		try{
-			designacaoJson = JSON.parse(itemArray[16]);
+			designacaoJson = JSON.parse(itemArray[colunas.jSonTipoPerm]);
 		} catch(e){
-			designacaoJson = itemArray[16];
+			designacaoJson = itemArray[colunas.jSonTipoPerm];
 		}
 		
 		if (designacaoJson) {

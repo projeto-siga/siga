@@ -325,10 +325,9 @@
 	}
 
 	function isValidForm() {
-		if ($("#atributoForm").valid()) {
-			 atributoGravar()
-			 }
-		}
+		if (jQuery("#atributoForm").valid())
+			atributoGravar()
+	}
 	
 	function associacaoModalFechar() {
 		isEditingAssociacao = false;

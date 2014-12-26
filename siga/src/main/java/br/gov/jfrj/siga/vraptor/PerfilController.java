@@ -44,9 +44,21 @@ public class PerfilController extends GrupoController {
 	}	
 
 	@Get("/app/gi/perfil/editar")
-	public void edita() throws Exception {
+	public void edita(Long idCpGrupo) throws Exception {
 		assertAcesso("PERFIL:Gerenciar grupos de email");
-		super.aEditar();
+		super.aEditar(idCpGrupo);
+		result.include("cpTipoGrupo", getCpTipoGrupo());
+		result.include("idCpTipoGrupo", getIdCpGrupo());
+		result.include("siglaGrupo", getSiglaGrupo());
+		result.include("titular", getTitular());
+		result.include("lotaTitular", getLotaTitular());
+		result.include("idCpGrupo", getIdCpGrupo());
+		result.include("lotacaoGestoraSel", getLotacaoGestoraSel());
+		result.include("confGestores", getConfGestores());
+		result.include("configuracaoGrupo", getConfiguracoesGrupo());
+		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",getTiposConfiguracaoGrupoParaTipoDeGrupo());
+		result.include("tipoConfiguracaoGrupoParaTipoDeGrupoSel", -1);
+		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 	}
 
 	

@@ -139,7 +139,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	/*
 	 * Prepara a edição do grupo selecionado na lista
 	 */
-	public String aEditar() throws Exception {
+	public String aEditar(Long idCpGrupo) throws Exception {
 		Cp.getInstance().getConf().limparCacheSeNecessario();
 
 		Integer t_idTpGrupo = getIdTipoGrupo();
@@ -229,8 +229,12 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		return "lista";
 	}
 
-	public CpGrupo daoGrupo(long id) {
-		return dao().consultar(id, CpGrupo.class, false);
+	public CpGrupo daoGrupo(Long id) {
+		if (id == null){
+		  return null;	
+		}else{
+			return dao().consultar(id, CpGrupo.class, false);
+		}
 	}
 
 	/**
@@ -447,25 +451,28 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				CpSituacaoConfiguracao.SITUACAO_PODE,
 				CpSituacaoConfiguracao.class, false);
 		CpGrupo grp = daoGrupo(getIdCpGrupo());
-		CpConfiguracao fltConf = new CpConfiguracao();
-		fltConf.setCpGrupo(grp);
-		fltConf.setCpTipoConfiguracao(tpConf);
-		fltConf.setCpSituacaoConfiguracao(situacao);
-
-		List<CpConfiguracao> confs = dao().consultar(fltConf);
-
-		Iterator it = confs.iterator();
-		while (it.hasNext()) {
-			CpConfiguracao c = (CpConfiguracao) it.next();
-			if (c.getHisDtFim() != null
-					|| c.getCpGrupo() == null
-					|| !c.getCpGrupo().getIdInicial()
-							.equals(grp.getIdInicial())) {
-				it.remove();
+		if (grp == null){
+			return null;
+		}else{		
+			CpConfiguracao fltConf = new CpConfiguracao();
+			fltConf.setCpGrupo(grp);
+			fltConf.setCpTipoConfiguracao(tpConf);
+			fltConf.setCpSituacaoConfiguracao(situacao);
+	
+			List<CpConfiguracao> confs = dao().consultar(fltConf);
+	
+			Iterator it = confs.iterator();
+			while (it.hasNext()) {
+				CpConfiguracao c = (CpConfiguracao) it.next();
+				if (c.getHisDtFim() != null
+						|| c.getCpGrupo() == null
+						|| !c.getCpGrupo().getIdInicial()
+								.equals(grp.getIdInicial())) {
+					it.remove();
+				}
 			}
+			return confs;
 		}
-
-		return confs;
 	}
 
 	/*

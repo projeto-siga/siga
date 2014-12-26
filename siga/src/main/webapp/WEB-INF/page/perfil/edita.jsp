@@ -6,19 +6,16 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-<ww:url id="urlGravarGestorGrupo" action="gravarGestorGrupo" />
-<ww:url id="urlGravar" action="gravar" />
-<ww:url id="urlExcluir" action="excluir" />
-<ww:url id="urlBuscar" action="listar" />
+
 <script type="text/javascript" language="Javascript1.1">
 	function gravarGestorGrupo() {
-		var t_strUrl = '${urlGravarGestorGrupo}';
+		var t_strUrl = 'gravarGestorGrupo';
 		document.formulario.action =  t_strUrl;
 		document.formulario.submit();
 	}
 	function gravarGrupo() {
 		var t_strIdConfiguracaoNova = '${idConfiguracaoNova}';
-		var t_strUrl = '${urlGravar}';
+		var t_strUrl = 'gravar';
 		if (t_strUrl) { 
 			t_strUrl = t_strUrl.split('?')[0];
 				var t_arr1StrIdConfigGravadas  = obterIdsConfiguracoesGravadas();
@@ -152,7 +149,7 @@
 	function excluirGrupo() {
 		var resp = confirm("Deseja realmente excluir o grupo?")
 		if (resp){
-			var t_strUrl = '${urlExcluir}';
+			var t_strUrl = 'excluir';
 			if (t_strUrl) {
 				t_strUrl = t_strUrl.split('?')[0];
 				document.formulario.action =  t_strUrl;
@@ -163,7 +160,7 @@
 	function sair() {
 		var resp = confirm("Deseja realmente sair?\nCaso positivo, toda alteração realizada desde a última gravação será ignorada.")
 		if (resp){
-			var t_strUrl = '${urlBuscar}'
+			var t_strUrl = 'buscar'
 			if (t_strUrl) {
 				var t_nodTipoGrupoForm = document.formulario.idCpTipoGrupo;
 				if (t_nodTipoGrupoForm) {
@@ -320,23 +317,27 @@
 		<div class="gt-content clearfix">
 			<h2>${cpTipoGrupo.dscTpGrupo}</h2>
 			<div class="gt-content-box gt-for-table">
-				<ww:form name="formulario" id="formulario" method="POST"
-					cssClass="form">
+				<form name="formulario" id="formulario" method="post" cssClass="form">
 					<table class="gt-form-table">
 						<tr class="header">
 							<td colspan=2>Dados de ${cpTipoGrupo.dscTpGrupo}</td>
 						</tr>
 						<input type="hidden" name="idCpTipoGrupo" value="${idCpTipoGrupo}" />
 						<input type="hidden" name="idCpGrupo" value="${idCpGrupo}" />
-						<ww:if
-							test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
-							<ww:textfield label="Sigla" name="siglaGrupo" size="20" />
-						</ww:if>
-						<ww:else>
-							<ww:label label="Sigla" name="siglaGrupo" value="${siglaGrupo}" />
-							<ww:hidden name="siglaGrupo" value="${siglaGrupo}"></ww:hidden>
-						</ww:else>
-						<ww:textfield label="Descrição" name="dscGrupo" size="40" />
+						<tr>
+							<c:choose>
+								<c:when test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
+									<td><label name="lblsiglaGrupo">Sigla</label></td>
+									<td><input type="text" name="siglaGrupo" size="20" /></td>
+								</c:when>
+								<c:otherwise>
+									<td><label name="lblsiglaGrupo">${siglaGrupo}</label></td>
+									<td><input type="hidden" name="siglaGrupo" value="${siglaGrupo}"/></td>
+								</c:otherwise>
+							</c:choose>
+						</tr>
+						<label name="lblDscGrupo">Descrição</label>
+						<input type="text" name="dscGrupo" size="40" />
 						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir') and not empty idCpGrupo and cpTipoGrupo.idTpGrupo == 2}">
 							<table class="gt-form-table">
 								<tr class="header" >
@@ -368,13 +369,15 @@
 						</tr>
 						<c:forEach var="configuracaoGrupo" items="${configuracoesGrupo}">
 							<tr class="">
-								<td valign="top"><ww:select
-										id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-										name="codigoTipoConfiguracao"
-										list="tiposConfiguracaoGrupoParaTipoDeGrupo" theme="simple"
-										listValue="descricao" listKey="codigo" headerValue="[Remover]"
-										headerKey="-1" value="${configuracaoGrupo.tipo.codigo}"
-										onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');" />
+								<td valign="top">
+									<select id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracao" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">              
+							          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
+							           <option value="${item.codigo}" ${item.codigo == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
+							            ${item.descricao}
+							           </option>  
+							          </c:forEach>
+							         </select>										
+										
 									<input type="hidden" name="conteudoConfiguracao"
 									id="conteudo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
 									value="" /> <input type="hidden" name="idConfiguracao"
@@ -385,7 +388,11 @@
 
 									<!-- MATRÍCULA -->
 									<div
-										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 0}">inline</ww:if><ww:else>none</ww:else>;"
+										style="display:
+										<c:choose> 
+											<c:when test="${configuracaoGrupo.tipo.codigo == 0}">inline</c:when>
+											<c:otherwise>none</c:otherwise>
+										</c:choose>;"
 										id="matricula_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
 										<siga:selecao tipo="pessoa" tema="simple"
 											propriedade="matricula_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
@@ -395,7 +402,11 @@
                                             modulo="siga"/>
 									</div> <!-- LOTACAO -->
 									<div
-										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 1}">inline</ww:if><ww:else>none</ww:else>;"
+										style="display: 
+										<c:choose> 
+											<c:when test="${configuracaoGrupo.tipo.codigo == 1}">inline</c:when>
+											<c:otherwise>none</c:otherwise>
+										</c:choose>;"
 										id="lotacao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
 										class="">
 										<siga:selecao tipo="lotacao" tema="simple"
@@ -406,7 +417,11 @@
                                             modulo="siga"/>
 									</div> <!-- CARGO -->
 									<div
-										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 2}">inline</ww:if><ww:else>none</ww:else>;"
+										style="display: 
+										<c:choose> 
+											<c:when test="${configuracaoGrupo.tipo.codigo == 2}">inline</c:when>
+											<c:otherwise>none</c:otherwise>
+										</c:choose>;"
 										id="cargo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
 										<siga:selecao tipo="cargo" tema="simple"
 											propriedade="cargo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
@@ -416,7 +431,11 @@
                                             modulo="siga"/>
 									</div> <!-- funcao -->
 									<div
-										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 3}">inline</ww:if><ww:else>none</ww:else>;"
+										style="display: 
+										<c:choose> 
+											<c:when test="${configuracaoGrupo.tipo.codigo == 3}">inline</c:when>
+											<c:otherwise>none</c:otherwise>
+										</c:choose>;"
 										id="funcao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
 										<siga:selecao tipo="funcao" tema="simple"
 											propriedade="funcao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
@@ -426,7 +445,11 @@
                                             modulo="siga"/>
 									</div> <!-- EMAIL -->
 									<div
-										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 4}">inline</ww:if><ww:else>none</ww:else>;"
+										style="display: 
+										<c:choose> 
+											<c:when test="${configuracaoGrupo.tipo.codigo == 4}">inline</c:when>
+											<c:otherwise>none</c:otherwise>
+										</c:choose>;"
 										id="texto_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
 										<input type="text" size="64" maxlength="64"
 											id="formulario_texto_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
@@ -434,7 +457,11 @@
 											value="${configuracaoGrupo.conteudoConfiguracao}" />
 									</div> <!-- FORMULA -->
 									<div
-										style="display: <ww:if test="${configuracaoGrupo.tipo.codigo == 5}">inline</ww:if><ww:else>none</ww:else>;"
+										style="display: 
+										<c:choose> 
+											<c:when test="${configuracaoGrupo.tipo.codigo == 5}">inline</c:when>
+											<c:otherwise>none</c:otherwise>
+										</c:choose>;"
 										id="area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
 										<textarea rows="3" cols="64"
 											id="formulario_area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
@@ -450,12 +477,16 @@
 							<td>Nova configuração</td>
 						</tr>
 						<tr class="">
-							<td><ww:select id="tipoConfiguracao_${idConfiguracaoNova}"
-									name="codigoTipoConfiguracaoNova"
-									list="tiposConfiguracaoGrupoParaTipoDeGrupo"
-									listValue="descricao" listKey="codigo" headerValue="[Nenhuma]"
-									headerKey="-1" theme="simple"
-									onchange="javascript:solicitarInformacao('${idConfiguracaoNova}');" />
+							<td>
+							
+								<select id="tipoConfiguracao_${idConfiguracaoNova}" name="codigoTipoConfiguracaoNova" onchange="javascript:solicitarInformacao('${idConfiguracaoNova}');">              
+						          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
+						           <option value="${item.codigo}" ${item.codigo == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
+						            ${item.descricao}
+						           </option>  
+						          </c:forEach>
+						         </select>																	
+
 								<div style="display: none;" id="matricula_${idConfiguracaoNova}">
 									<siga:selecao tipo="pessoa" tema="simple"
 										propriedade="matricula_${idConfiguracaoNova}" modulo="siga"/>
@@ -494,7 +525,7 @@
 							</td>
 						</tr>
 					</table>
-				</ww:form>
+				</form>
 			</div>
 		</div>
 	</div>

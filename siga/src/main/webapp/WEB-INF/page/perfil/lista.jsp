@@ -5,8 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
-<ww:url id="url" action="editar" />
 <script type="text/javascript" language="Javascript1.1">
 	function sbmt(offset) {
 		if (offset == null) {
@@ -14,18 +12,6 @@
 		}
 		frm.elements['p.offset'].value = offset;
 		frm.submit();
-	}
-	function editar(p_strId) {
-		var t_strUrl = '${url}';
-		if (p_strId) {
-			if (t_strUrl.indexOf('?') == -1) {
-				window.location.href = t_strUrl + '?' + 'idCpGrupo=' + p_strId;
-			} else {
-				window.location.href = t_strUrl + '&' + 'idCpGrupo=' + p_strId;
-			}
-		} else {
-			window.location.href = t_strUrl;
-		}
 	}
 </script>
 
@@ -47,22 +33,18 @@
 						totalItens="${tamanho}" itens="${itens}" var="grupoItem">
 						<tr class="${evenorodd}">
 							<td align="left"><a
-								href='javascript:editar(${grupoItem.idGrupo })'>${grupoItem.siglaGrupo
-									}</a></td>
+								href="editar?idCpGrupo=${grupoItem.idGrupo }">${grupoItem.siglaGrupo}</a></td>
 							<td align="left"><a
-								href='javascript:editar(${grupoItem.idGrupo })'>${grupoItem.dscGrupo
-									}</a></td>
+								href="editar?idCpGrupo=${grupoItem.idGrupo }">${grupoItem.dscGrupo}</a></td>
 							<td align="left"><a
-								href='javascript:editar(${grupoItem.idGrupo })'>${grupoItem.cpGrupoPai.siglaGrupo
-									}</a></td>
+								href="editar?idCpGrupo=${grupoItem.idGrupo }">${grupoItem.cpGrupoPai.siglaGrupo}</a></td>
 						</tr>
 					</siga:paginador>
 				</table>
 			</div>
 			<br /> 
 			<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
-						<input type="button" value="Incluir"
-				onclick="javascript:editar()" class="gt-btn-medium">
+				<input type="button" value="Incluir" onclick="javascript:window.location.href='editar'" class="gt-btn-medium">
 			</c:if>
 		</div>
 	</div>

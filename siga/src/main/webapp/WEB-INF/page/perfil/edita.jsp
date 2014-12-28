@@ -67,13 +67,13 @@
 			t_strConteudo = t_nodConteudo.value;
 			if (trim(t_strConteudo) == "" ) {
 				var t_nodSelecao = document.getElementById("tipoConfiguracao_" + p_strId) ;
-				if (t_nodSelecao) {
+ 				if (t_nodSelecao) {
 					if (t_nodSelecao.selectedIndex > 0) { 
 						alert("Por favor, digite um conteúdo para a configuração!");
 						t_nodSelecao.focus();
 						return true;
 					}
-				}
+				} 
 			}
 		}
 		return false;
@@ -328,7 +328,7 @@
 							<c:choose>
 								<c:when test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
 									<td><label name="lblsiglaGrupo">Sigla</label></td>
-									<td><input type="text" name="siglaGrupo" size="20" /></td>
+									<td><input type="text" name="siglaGrupo" size="20" value="${siglaGrupo}"/></td>
 								</c:when>
 								<c:otherwise>
 									<td><label name="lblsiglaGrupo">${siglaGrupo}</label></td>
@@ -336,8 +336,10 @@
 								</c:otherwise>
 							</c:choose>
 						</tr>
-						<label name="lblDscGrupo">Descrição</label>
-						<input type="text" name="dscGrupo" size="40" />
+						<tr>
+							<td><label name="lblDscGrupo">Descrição</label></td>
+							<td><input type="text" name="dscGrupo" size="40" value="${dscGrupo}"/></td>
+						</tr>
 						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir') and not empty idCpGrupo and cpTipoGrupo.idTpGrupo == 2}">
 							<table class="gt-form-table">
 								<tr class="header" >
@@ -370,19 +372,22 @@
 						<c:forEach var="configuracaoGrupo" items="${configuracoesGrupo}">
 							<tr class="">
 								<td valign="top">
-									<select id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracao" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">              
+									<select id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracao" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">
+									  <option value="-1">[Remover]</option>									              
 							          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
-							           <option value="${item.codigo}" ${item.codigo == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
+							           <option value="${item.codigo}" >${value == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
 							            ${item.descricao}
 							           </option>  
 							          </c:forEach>
-							         </select>										
-										
+							         </select>
+							         
 									<input type="hidden" name="conteudoConfiguracao"
-									id="conteudo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-									value="" /> <input type="hidden" name="idConfiguracao"
-									id="id_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-									value="${configuracaoGrupo.cpConfiguracao.idConfiguracao}" />
+										id="conteudo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+										value="" /> 
+									
+									<input type="hidden" name="idConfiguracao"
+										id="id_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+										value="${configuracaoGrupo.cpConfiguracao.idConfiguracao}" />
 
 
 
@@ -477,15 +482,21 @@
 							<td>Nova configuração</td>
 						</tr>
 						<tr class="">
+						  
+						
+						
 							<td>
 							
-								<select id="tipoConfiguracao_${idConfiguracaoNova}" name="codigoTipoConfiguracaoNova" onchange="javascript:solicitarInformacao('${idConfiguracaoNova}');">              
+								<select id="tipoConfiguracao_${idConfiguracaoNova}" name="codigoTipoConfiguracaoNova" onchange="javascript:solicitarInformacao('${idConfiguracaoNova}');">
+								   <option value="-1" selected >[Nenhuma]</option>              
 						          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
-						           <option value="${item.codigo}" ${item.codigo == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
+						           <option value="${item.codigo}">
 						            ${item.descricao}
 						           </option>  
 						          </c:forEach>
-						         </select>																	
+						         </select>
+						         
+						         					         
 
 								<div style="display: none;" id="matricula_${idConfiguracaoNova}">
 									<siga:selecao tipo="pessoa" tema="simple"

@@ -20,10 +20,13 @@ package br.gov.jfrj.siga.vraptor;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.eclipse.jdt.core.dom.ThisExpression;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -36,45 +39,14 @@ public class PerfilController extends GrupoController {
 		super(request, result, CpDao.getInstance(), so);
 		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();		
+		result.on(Exception.class).forwardTo(this).exception();
+		
+		prepare();
 	}
 
 	public int getIdTipoGrupo() {
 		return CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO;
-	}	
-
-	@Get("/app/gi/perfil/editar")
-	public void edita(Long idCpGrupo) throws Exception {
-		assertAcesso("PERFIL:Gerenciar grupos de email");
-		super.aEditar(idCpGrupo);
-		result.include("cpTipoGrupo", getCpTipoGrupo());
-		result.include("idCpTipoGrupo", getIdCpGrupo());
-		result.include("siglaGrupo", getSiglaGrupo());
-		result.include("titular", getTitular());
-		result.include("lotaTitular", getLotaTitular());
-		result.include("idCpGrupo", getIdCpGrupo());
-		result.include("lotacaoGestoraSel", getLotacaoGestoraSel());
-		result.include("confGestores", getConfGestores());
-		result.include("configuracaoGrupo", getConfiguracoesGrupo());
-		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",getTiposConfiguracaoGrupoParaTipoDeGrupo());
-		result.include("tipoConfiguracaoGrupoParaTipoDeGrupoSel", -1);
-		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 	}
-
-	
-	@Get("/app/gi/perfil/excluir")
-	public void excluir() throws Exception {
-		assertAcesso("PERFIL:Gerenciar grupos de email");
-		super.aExcluir();
-	}
-
-	
-	@Post("/app/gi/perfil/gravar")
-	public void gravar() throws Exception {
-		assertAcesso("PERFIL:Gerenciar grupos de email");
-		super.aGravar();
-	}
-
 	
 	@Get("/app/gi/perfil/listar")
 	public void lista() throws Exception {
@@ -86,6 +58,55 @@ public class PerfilController extends GrupoController {
 		result.include("tamanho", getTamanho());
 		result.include("titular", getTitular());
 		result.include("lotaTitular", getLotaTitular());
+	}
+	
+
+	@Get("/app/gi/perfil/editar")
+	public void edita(Long idCpGrupo) throws Exception {
+		assertAcesso("PERFIL:Gerenciar grupos de email");
+		super.aEditar(idCpGrupo);
+		//Tipo Grupo = Perfil
+		result.include("idCpTipoGrupo", getIdTipoGrupo());		
+		result.include("cpTipoGrupo", getCpTipoGrupo());
+		//Dados do Grupo Perfil
+		result.include("idCpGrupo", getIdCpGrupo());
+		result.include("siglaGrupo", getSiglaGrupo());
+		result.include("dscGrupo", getDscGrupo());
+		result.include("grupoPaiSel", getGrupoPaiSel());
+		//Dados utilizados para montar a tela				
+		result.include("titular", getTitular());
+		result.include("lotaTitular", getLotaTitular());		
+		result.include("lotacaoGestoraSel", getLotacaoGestoraSel());		
+		result.include("confGestores", getConfGestores(idCpGrupo));
+		result.include("configuracoesGrupo",getConfiguracoesGrupo());
+		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",getTiposConfiguracaoGrupoParaTipoDeGrupo());
+		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
+		
+	}
+	
+	@Post("/app/gi/perfil/gravar")
+	public void gravar(Long idCpGrupo
+			          ,String siglaGrupo
+					  ,String dscGrupo			          
+			          ,CpGrupoDeEmailSelecao grupoPaiSel
+			          ,Integer codigoTipoConfiguracaoNova
+			          ,String conteudoConfiguracaoNova) throws Exception {
+		
+		assertAcesso("PERFIL:Gerenciar grupos de email");
+		super.aGravar(idCpGrupo
+				     ,siglaGrupo
+					 ,dscGrupo
+					 ,grupoPaiSel
+					 ,codigoTipoConfiguracaoNova
+					 ,conteudoConfiguracaoNova);
+		result.redirectTo(this).lista();
+	}	
+
+	@Post("/app/gi/perfil/excluir")
+	public void excluir(Long idCpGrupo) throws Exception {
+		assertAcesso("PERFIL:Gerenciar grupos de email");
+		super.aExcluir(idCpGrupo);
+		result.redirectTo(this).lista();
 	}
 
 }

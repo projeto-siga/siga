@@ -58,12 +58,12 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 	private Integer tamanho;
 
-	public String aBuscar() throws Exception {
-		if (param("postback") == null) {
+	public String aBuscar(String sigla, String postback) throws Exception {
+		if (postback == null) {
 
 		}
-		if (param("sigla") != null) {
-			setNome(param("sigla").toUpperCase());
+		if (sigla != null) {
+			setNome(sigla.toUpperCase());
 		}
 
 		int offset = 0;
@@ -84,11 +84,11 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 		return "busca";
 	}
 
-	public String aSelecionar() throws Exception {
+	public String aSelecionar(String sigla) throws Exception {
 		final DaoFiltroT flt = createDaoFiltro();
 		
 		try {
-			flt.setSigla(param("sigla"));
+			flt.setSigla(sigla);
 		} catch (final Exception ex) {
 			sel = null;
 		}

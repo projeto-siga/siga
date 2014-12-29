@@ -434,7 +434,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		
 	}
 
-	public void aExcluirGestorGrupo(Long idCpGrupo) {
+	public void aExcluirGestorGrupo(Long idCpGrupo, Long idConfGestor) {
 		dao().iniciarTransacao();
 		CpConfiguracao conf = dao().consultar(idConfGestor,
 				CpConfiguracao.class, false);

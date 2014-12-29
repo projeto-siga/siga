@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jdt.core.dom.ThisExpression;
@@ -81,6 +83,7 @@ public class PerfilController extends GrupoController {
 		result.include("configuracoesGrupo",getConfiguracoesGrupo());
 		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",getTiposConfiguracaoGrupoParaTipoDeGrupo());
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
+		result.include("idConfiguracao", getIdConfiguracao());
 		
 	}
 	
@@ -93,12 +96,14 @@ public class PerfilController extends GrupoController {
 			          ,String conteudoConfiguracaoNova) throws Exception {
 		
 		assertAcesso("PERFIL:Gerenciar grupos de email");
+		
 		super.aGravar(idCpGrupo
 				     ,siglaGrupo
 					 ,dscGrupo
 					 ,grupoPaiSel
 					 ,codigoTipoConfiguracaoNova
 					 ,conteudoConfiguracaoNova);
+		
 		result.redirectTo(this).lista();
 	}	
 

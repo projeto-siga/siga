@@ -64,7 +64,7 @@ function checkIntegradoAD(){
 }
 
 function exibirDadosIntegracaoAD(response,param){
-	if (response){
+	if (response != "0"){
 		document.getElementById('dadosIntegracaoAD').style.display = 'block';
 		document.getElementById('msgExplicacao').innerHTML = 'Seu órgão está integrado ao AD. Sua senha de rede email serão alteradas.';
 	}else{
@@ -79,8 +79,10 @@ function checkEmailValido(){
 	var matricula = document.getElementById('txtMatricula').value;
 	$.ajax({
 		method:'GET',
-		url: 'check_email_valido?matricula=' + matricula
-	}).done(function(data){permitirInclusaoUsuario(data)});
+		url: 'check_email_valido?matricula=' + matricula,
+		success: function(data){permitirInclusaoUsuario(data)},
+		error: function(data){permitirInclusaoUsuario(data)} 
+	});
 }
 
 function permitirInclusaoUsuario(response,param){

@@ -73,8 +73,6 @@ import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.X509CRLObject;
-import org.bouncycastle.operator.ContentVerifierProvider;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.Store;
 

@@ -18,26 +18,27 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cd;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.DLSequence;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.x509.extension.X509ExtensionUtil;
 
 public class CertificadoUtil {
+	
 	/**
 	 * Interpreta um dado do tipo otherName. Obs. O JDK 5.0 não tem classes que
 	 * lidem com um dado do tipo OtherName. É necessário usar o BouncyCastle.
@@ -46,27 +47,23 @@ public class CertificadoUtil {
 	 *            O dado em ASN.1.
 	 * @return Um par contendo o OID e o conteúdo.
 	 */
-	public static Pair<ASN1ObjectIdentifier, String> getOtherName(byte[] encoded)
+	public static Pair<ASN1ObjectIdentifier, String> getOtherName(DLSequence sequence)
 			throws IOException {
-		// O JDK 5.0 não tem classes que lidem com um dado do tipo OtherName.
-		// É necessário usar o BouncyCastle.
-		ASN1InputStream inps = new ASN1InputStream(new ByteArrayInputStream(encoded));
-		ASN1Sequence seq = null;
-		ASN1ObjectIdentifier oid = null;
+		
 		String conteudo = "";
-		
-		DERTaggedObject tag = (DERTaggedObject) inps.readObject();
-		inps.close();
-		
-		Enumeration en = seq.getObjects();
-		oid = (ASN1ObjectIdentifier) en.nextElement();
-		ASN1Primitive obj = ((ASN1TaggedObject) ((ASN1TaggedObject) en.nextElement()).getObject()).getObject();
+		@SuppressWarnings("rawtypes")
+		Enumeration en = sequence.getObjects();
+    	ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) en.nextElement();
+    	ASN1TaggedObject taggedObject = (ASN1TaggedObject) en.nextElement();
+    	
+    	ASN1Primitive obj = taggedObject.getObject();
 		if (obj instanceof ASN1String) { // Certificados antigos SERASA -
 			// incorretos
 			conteudo = ((ASN1String) obj).getString();
 		} else if (obj instanceof ASN1OctetString) { // Certificados corretos
 			conteudo = new String(((ASN1OctetString) obj).getOctets(),"ISO-8859-1");
 		}
+		
 		return new Pair<ASN1ObjectIdentifier, String>(oid, conteudo);
 	}
 
@@ -82,32 +79,48 @@ public class CertificadoUtil {
 			X509Certificate cert) throws IOException,
 			CertificateParsingException {
 		Properties props = new Properties();
-		for (List<?> subjectAlternativeName : cert.getSubjectAlternativeNames()) {
-			String email;
-			Pair<ASN1ObjectIdentifier, String> otherName;
-			@SuppressWarnings("unused")
-			int pos;
-
-			// O primeiro elemento é um Integer com o valor 0 = otherName, 1
-			// =
-			// rfc822name etc.
-			// O segundo valor é um byte array ou uma String. Veja o javadoc
-			// de
-			// getSubjectAlternativeNames.
-			switch (((Number) subjectAlternativeName.get(0)).intValue()) {
-			case 0: // OtherName - contém CPF, CNPJ etc.
-				// o OID fica em otherName.first
-				otherName = getOtherName((byte[]) subjectAlternativeName.get(1));
-				props.put(otherName.first.getId(), otherName.second);
-				break;
-			case 1: // rfc822Name - usado para email
-				email = (String) subjectAlternativeName.get(1);
-				props.put("email", email);
-				break;
-			default:
-				break;
-			}
-		}
+		Pair<ASN1ObjectIdentifier, String> otherName;
+		
+		
+		Iterator<?> subjectAltNamesIt=X509ExtensionUtil.getSubjectAlternativeNames(cert).iterator();
+		while (subjectAltNamesIt.hasNext()) {
+		    List<?> altName=(List<?>)subjectAltNamesIt.next();
+		    int type=((Integer)altName.get(0)).intValue();
+		    if (type == GeneralName.rfc822Name) {
+		      String email = (String) altName.get(1);
+		      props.put("email", email);
+		    }else if (type == GeneralName.otherName){
+		    	otherName = getOtherName((DLSequence) altName.get(1));
+		    	props.put(otherName.first.getId(), otherName.second);
+		    }
+		  }
+		
+//		for (List<?> subjectAlternativeName : cert.getSubjectAlternativeNames()) {
+//			String email;
+//			@SuppressWarnings("unused")
+//			int pos;
+//
+//			// O primeiro elemento é um Integer com o valor 0 = otherName, 1
+//			// =
+//			// rfc822name etc.
+//			// O segundo valor é um byte array ou uma String. Veja o javadoc
+//			// de
+//			// getSubjectAlternativeNames.
+//			switch (((Number) subjectAlternativeName.get(0)).intValue()) {
+//			case 0: // OtherName - contém CPF, CNPJ etc.
+//				// o OID fica em otherName.first
+//				Collection collection = X509ExtensionUtil.getSubjectAlternativeNames(cert);
+//				otherName = getOtherName((byte[]) subjectAlternativeName.get(1));
+//				props.put(otherName.first.getId(), otherName.second);
+//				break;
+//			case 1: // rfc822Name - usado para email
+//				email = (String) subjectAlternativeName.get(1);
+//				props.put("email", email);
+//				break;
+//			default:
+//				break;
+//			}
+//		}
 		return props;
 	}
 
@@ -122,7 +135,7 @@ public class CertificadoUtil {
 		try {
 			Properties props = recuperarPropriedadesNomesAlteranativos(cert);
 			String sCPF = props.getProperty("2.16.76.1.3.1").substring(8, 19);
-			
+
 			@SuppressWarnings("unused")
 			long lCPF = Long.valueOf(sCPF); // usado apenas para verificar se é numérico
 			if (!isCPF(sCPF) ) {

@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.sinc.lib.test;
+package br.gov.jfrj.siga.sinc.lib;
 
 import java.util.Date;
 import java.util.List;

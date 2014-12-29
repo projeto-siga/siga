@@ -16,33 +16,29 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.sinc.lib.test;
-
-import java.util.Date;
+package br.gov.jfrj.siga.sinc.lib;
 
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.NaoPropagar;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
-public class Pessoa extends SincronizavelSuporte {
+public class Lotacao extends SincronizavelSuporte {
 
-	public String cpf;
+	public String sigla;
 	public String nome;
-	public Lotacao lotacao;
-	@Desconsiderar
-	public String desconsiderar;
-
+	@NaoPropagar
+	public String naoPropagar;
 
 	public String getDescricaoExterna() {
-		return nome;
+		return sigla;
 	}
 
-	public String getCpf() {
-		return cpf;
+	public String getSigla() {
+		return sigla;
 	}
 
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
 	}
 
 	public String getNome() {
@@ -53,14 +49,4 @@ public class Pessoa extends SincronizavelSuporte {
 		this.nome = nome;
 	}
 
-	public Lotacao getLotacao() {
-		return lotacao;
-	}
-
-	public void setLotacao(Lotacao lotacao) {
-		this.lotacao = lotacao;
-	}
-	public boolean ativaNaData(Date dt) {
-		return ativoNaData(dt) ;
-	}
 }

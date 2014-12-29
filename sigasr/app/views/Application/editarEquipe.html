@@ -25,7 +25,8 @@
 }
 </style>
 <script type="text/javascript">
-
+	var validatorFormExcessao = null;
+	
 	jQuery(document).ready(function($) {
 		/* Table initialization */
 		excecoesTable = $('#excecoes_table').dataTable({
@@ -70,7 +71,7 @@
 		        "Hora inválida."
 		);
 		
-		$("#excecaoHorarioForm").validate();
+		validatorFormExcessao = $("#excecaoHorarioForm").validate();
 		
 		$("#dataEspecifica").mask("99/99/9999");
 		$(".hora").mask("99:99");
@@ -97,7 +98,7 @@
 	}
 	
 	function inserirExcecaoHorario() {
-		if (jQuery("#excecaoHorarioForm").valid() && camposObrigatoriosExcecaoPreenchidos()) {
+		if (isValidForm() && isvalidFormExcecao()) {
 			// recupera as comboboxes
 			var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0],
 				jDiaSemana = jDiaSemanaCbb.options[jDiaSemanaCbb.selectedIndex],
@@ -134,7 +135,7 @@
 		$("#excecaoHorario_dialog").dialog('close');
 	}
 	
-	function camposObrigatoriosExcecaoPreenchidos() {
+	function isvalidFormExcecao() {
 		var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0],
 			isValid = true;
 		
@@ -153,6 +154,7 @@
 	}
 	
 	function resetMensagensErro() {
+		validatorFormExcessao.resetForm();
 		document.getElementById("diaSemanaError").style.display = "none";
 		document.getElementById("dataEspecificaError").style.display = "none";
 	}
@@ -200,6 +202,7 @@
 	function resetEquipeErrorMessage() {
 		document.getElementById("erroEquipeCamposObrigatorios").style.display="none";
 
+		validatorFormExcessao.resetForm();
 		$('span.error').remove();
 	}
 	
@@ -249,6 +252,10 @@
 		data.setMinutes(minuto);
 		
 		return data;
+	}
+
+	function isValidForm() {
+		jQuery("#excecaoHorarioForm").valid();
 	}
 </script>
 

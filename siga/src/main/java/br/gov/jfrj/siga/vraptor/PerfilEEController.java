@@ -22,18 +22,22 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.eclipse.jdt.core.dom.ThisExpression;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 @Resource
-public class PerfilController extends GrupoController {
+public class PerfilEEController extends GrupoController {
 
-	public PerfilController(HttpServletRequest request, Result result, SigaObjects so) {
+	public PerfilEEController(HttpServletRequest request, Result result, SigaObjects so) {
 		super(request, result, CpDao.getInstance(), so);
 		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -43,12 +47,12 @@ public class PerfilController extends GrupoController {
 	}
 
 	public int getIdTipoGrupo() {
-		return CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO;
+		return CpTipoGrupo.TIPO_GRUPO_PERFIL_JEE;
 	}
 	
-	@Get("/app/gi/perfil/listar")
+	@Get("/app/gi/perfilEE/listar")
 	public void lista() throws Exception {
-		assertAcesso("PERFIL:Gerenciar grupos de email");
+		assertAcesso("PERFILJEE:Gerenciar grupos de email");
 		super.aListar();
 		
 		result.include("itens", getItens());
@@ -59,9 +63,9 @@ public class PerfilController extends GrupoController {
 	}
 	
 
-	@Get("/app/gi/perfil/editar")
+	@Get("/app/gi/perfilEE/editar")
 	public void edita(Long idCpGrupo) throws Exception {
-		assertAcesso("PERFIL:Gerenciar grupos de email");
+		assertAcesso("PERFILJEE:Gerenciar grupos de email");
 		super.aEditar(idCpGrupo);
 		//Tipo Grupo = Perfil
 		result.include("idCpTipoGrupo", getIdTipoGrupo());		
@@ -79,11 +83,9 @@ public class PerfilController extends GrupoController {
 		result.include("configuracoesGrupo",getConfiguracoesGrupo());
 		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",getTiposConfiguracaoGrupoParaTipoDeGrupo());
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
-		result.include("idConfiguracao", getIdConfiguracao());
-		
 	}
 	
-	@Post("/app/gi/perfil/gravar")
+	@Post("/app/gi/perfilEE/gravar")
 	public void gravar(Long idCpGrupo
 			          ,String siglaGrupo
 					  ,String dscGrupo			          
@@ -91,21 +93,19 @@ public class PerfilController extends GrupoController {
 			          ,Integer codigoTipoConfiguracaoNova
 			          ,String conteudoConfiguracaoNova) throws Exception {
 		
-		assertAcesso("PERFIL:Gerenciar grupos de email");
-		
+		assertAcesso("PERFILJEE:Gerenciar grupos de email");
 		super.aGravar(idCpGrupo
 				     ,siglaGrupo
 					 ,dscGrupo
 					 ,grupoPaiSel
 					 ,codigoTipoConfiguracaoNova
 					 ,conteudoConfiguracaoNova);
-		
 		result.redirectTo(this).lista();
 	}	
 
-	@Post("/app/gi/perfil/excluir")
+	@Post("/app/gi/perfilEE/excluir")
 	public void excluir(Long idCpGrupo) throws Exception {
-		assertAcesso("PERFIL:Gerenciar grupos de email");
+		assertAcesso("PERFILJEE:Gerenciar grupos de email");
 		super.aExcluir(idCpGrupo);
 		result.redirectTo(this).lista();
 	}

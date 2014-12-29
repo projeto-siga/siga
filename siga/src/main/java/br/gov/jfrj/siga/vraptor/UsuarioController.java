@@ -73,7 +73,64 @@ public class UsuarioController extends SigaController {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 		result.include("titulo", "Novo Usuário");
 		result.include("proxima_acao", "incluir_usuario_gravar");
-		result.redirectTo("esqueciSenha.jsp");
+		result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
+		
+	}
+	
+	@Post("/app/incluir_usuario_gravar")
+	public void gravarIncluirUsuario(UsuarioAction usuario) throws Exception {
+		String msgComplemento = "";
+		String[] senhaGerada = new String[1];
+		boolean senhaTrocadaAD = false;
+		boolean isIntegradoAoAD = isIntegradoAD(usuario.getMatricula());
+		CpIdentidade idNova = null;
+		switch (usuario.getMetodo()) {
+		case 1:
+			
+			idNova = Cp.getInstance().getBL().criarIdentidade(usuario.getMatricula(), usuario.getCpf(),
+					getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD);
+			if (isIntegradoAoAD){
+				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,usuario.getSenhaNova());
+			}
+			break;
+		case 2:
+			if (!Cp.getInstance().getBL().podeAlterarSenha(usuario.getAuxiliar1(), usuario.getCpf1(), usuario.getSenha1(),
+					usuario.getAuxiliar2(), usuario.getCpf2(), usuario.getSenha2(), usuario.getMatricula(), usuario.getCpf(),
+					usuario.getSenhaNova())){
+				String mensagem = "Não foi possível alterar a senha!<br/>" +
+								  "1) As pessoas informadas não podem ser as mesmas;<br/>" +
+								  "2) Verifique se as matrículas e senhas foram informadas corretamente;<br/>" +
+								  "3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>";
+				result.include("mensagem", mensagem);
+				result.redirectTo("/app/incluir_usuario");
+			}else{
+				idNova = Cp.getInstance().getBL().criarIdentidade(usuario.getMatricula(), usuario.getCpf(),
+						getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada,
+						isIntegradoAoAD);
+			}
+			break;
+		default:
+			result.include("mensagem", "Método inválido!");
+			result.redirectTo("/app/incluir_usuario");
+		}
+		
+		if (isIntegradoAoAD){
+			
+			if (senhaTrocadaAD){
+				msgComplemento = "<br/> Atenção: Sua senha de rede e e-mail foi definida com sucesso.";
+			}else{
+				msgComplemento = "<br/> ATENÇÃO: A senha de rede e e-mail NÃO foi definida embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
+			}
+
+			
+		}else{
+			msgComplemento = "<br/> O seu login e senha foram enviados para seu email.";
+		}
+
+		result.include("mensagem", "Usuário cadastrado com sucesso." + msgComplemento);
+		result.include("titulo", "Novo Usuário");
+		result.include("volta", "incluir");
+		result.redirectTo("/app/incluir_usuario");
 	}
 	
 	@Get("/app/esqueci_senha")
@@ -136,8 +193,13 @@ public class UsuarioController extends SigaController {
 
 	
 	@Get("/app/integracao_ldap")
-	public boolean isIntegradoLdap(String matricula) throws AplicacaoException {
-		return isIntegradoAD(matricula);
+	public void isIntegradoLdap(String matricula) throws AplicacaoException {
+		try{
+			String retorno = isIntegradoAD(matricula) ? "" : "0";
+			result.use(Results.http()).body(retorno);
+		}catch(Exception e){
+			result.use(Results.http()).body(e.getMessage());
+		}
 	}
 
 	private boolean isIntegradoAD(String matricula) throws AplicacaoException {

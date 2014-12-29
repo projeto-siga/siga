@@ -283,10 +283,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				PropertyUtils.copyProperties(grpNovo, grp);
 				grpNovo.setIdGrupo(null);
 			}
-			
-			if (grupoPaiSel != null){
-				grpNovo.setCpGrupoPai(grupoPaiSel.getObjeto());
-			}
+     		grpNovo.setCpGrupoPai( grupoPaiSel != null ? grupoPaiSel.getObjeto(): null);
 			grpNovo.setDscGrupo(dscGrupo);
 			grpNovo.setSiglaGrupo(siglaGrupo);
 

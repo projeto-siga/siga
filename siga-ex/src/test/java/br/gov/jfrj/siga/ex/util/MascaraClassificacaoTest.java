@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.util.test;
+package br.gov.jfrj.siga.ex.util;
 
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import junit.framework.TestCase;

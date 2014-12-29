@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.ex.util.test;
+package br.gov.jfrj.siga.ex.util;
 
 import java.io.File;
 import java.io.OutputStreamWriter;

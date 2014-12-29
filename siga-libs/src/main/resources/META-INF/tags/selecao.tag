@@ -82,7 +82,7 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 </c:when>
 <c:otherwise> 
 <%--<ww:set name="urlPrefix" value="%{request.scheme+'://'+request.serverName+':'+request.localPort+'/'+#attr.modulo}"></ww:set>--%>
-<ww:set name="urlPrefix" value="%{'/'+#attr.modulo}"></ww:set>
+<c:set var="urlPrefix" value="/${modulo}" />
 </c:otherwise>
 </c:choose>
 

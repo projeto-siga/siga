@@ -16,13 +16,13 @@
 	color: #365b6d;
 	font-weight: normal;
 	margin-bottom: 0px;
-	font-size: 138.5%;
+	font-size: 115.0%;
 	border: 0;
 }
 </style>
 <script language="javascript">
+	
 	$(document).ready(function() {
-
 		$('#gravar').click(function() {
 			if ($('#siglaCadastrante').val() != $('#solicitacaosolicitante_sigla')[0].value) {
 				var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
@@ -43,32 +43,16 @@
 			$('#checkRascunho').prop('value', 'false');
 		});
 
-		function formatarValorTimer(num) {
-			if (num.toString().length == 1) 
-	      		return "0" + num;
-
-	  		return num;
-		};
-
-		var andamento = 0;	
-		function moveRelogio(mili){ 
-			andamento = andamento + mili;
-		   	dtAndamento = new Date(andamento);
-		   	dtTotal = new Date((${solicitacao.getTempoCadastramentoTotal()} + andamento));
-		   	
-		   	andamentoString = formatarValorTimer(dtAndamento .getUTCHours()) + ":" + formatarValorTimer(dtAndamento .getUTCMinutes()); 
-		   	totalString = formatarValorTimer(dtTotal .getUTCHours()) + ":" + formatarValorTimer(dtTotal .getUTCMinutes()); 
-
-		   	$('#andamento').html(andamentoString);
-		   	$('#total').html(totalString);
-
-		   	setTimeout("moveRelogio(60000)",60000);
-		}; 
-
 		carregarFiltrosAoIniciar();
-		//moveRelogio(0);
 	});
 
+	function formatarValorTimer(num) {
+		if (num.toString().length == 1) 
+      		return "0" + num;
+
+  		return num;
+	};
+	
 	function carregarLocalRamalEMeioContato() {
 		frm = document.getElementById('formSolicitacao');
 		params = '';
@@ -113,8 +97,6 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
-		   
-		notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')
 	}
 
 	function carregarConhecimentosRelacionados(){
@@ -214,6 +196,7 @@
 	// Recebe notificacao de alteracao em campo que eh atributo
 	function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl, teste) {
 		var label = $(campoRef).prev('label').html().trim();
+
 		notificarCampoMudou(campoRef, label, optionVl);
 		carregarSolRelacionadas();
 	}
@@ -262,7 +245,7 @@
 		
 		if(filtrosSelecionados.size() > 0) {
 			if(existeFiltroSelecionavel()) {
-				var params = construirParametrosDoFiltro(filtrosSelecionados, $('#formSolicitacao'));
+				var params = construirParametrosDoFiltro($('#formSolicitacao'));
 				iniciarCarregarSolicitacoesRelacionadas();
 				PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
 			}
@@ -273,12 +256,12 @@
 		}
 	}
 
-	function construirParametrosDoFiltro(filtrosSelecionados, frm) {
+	function construirParametrosDoFiltro(frm) {
 		var authField = frm.find('input:nth(0)');
 		var params = authField.attr('name') + '=' + encodeURI(authField.val()) + '&';
-		
+
 		// Preenche a string que representa os parametros da requisicao
-		filtrosSelecionados.each(function() {
+		$('#filtro input:checked').each(function() {
 			var input = frm.find("[name='" +  $(this).attr('name') + "']");
 			params = params + input.attr('name') + '=' + input.val() + '&'
 		});
@@ -330,7 +313,7 @@
 				atrClass = '.' + inputAtributo.className.split(' ')[0];
 				atrHtml = labelAtributo.innerHTML + ' - ' + inputAtributo.value;
 				atrName = inputAtributo.name;
-				
+
 				// Se for select, busca pelo atributo selecionado
 				if (inputAtributo.tagName == 'SELECT') {
 					atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
@@ -388,13 +371,20 @@
 					break;
 				}
 		} */
-		var params = construirParametrosDoFiltro($('#filtro input:checked'), $('#formSolicitacao')) + '&filtro.pesquisar=true&';
+		var params = construirParametrosDoFiltro($('#formSolicitacao')) + '&filtro.pesquisar=true&';
 		// Replace All
 		while(params.indexOf('solicitacao') >= 0) {
 			params = params.replace("solicitacao", "filtro");
 		}
-		window.open('@{Application.listar()}?' + params + "","_blank");
+		window.open('@{Application.buscarSolicitacao()}?' + params + "","_blank");
 	}
+	
+	function formatarValorTimer(num) {
+		if (num.toString().length == 1) 
+      		return "0" + num;
+
+  		return num;
+	};
 </script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
@@ -415,10 +405,10 @@
 				type="hidden" name="solicitacao.idSolicitacao" id="idSol"
 				value="${solicitacao.idSolicitacao}" /> 
 				#{/if}
+				<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMMSS" 
+				value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
 				<input type="hidden"
 				name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
-				<input type="hidden"
-				name="dtIniEdicao" value="${dtIniEdicao}" />
 				<input type="hidden"
 				name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 				
@@ -432,12 +422,14 @@
 			<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram
 				preenchidos ${error}</p>
 			#{/ifErrors}
-
-			<div class="gt-form-row gt-width-66">
-				<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
-					type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
-					value="${cadastrante.sigla}" />
-			</div>
+			<div class="gt-form-row box-wrapper">
+				<div class="gt-form-row gt-width-66">
+					<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
+						type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
+						value="${cadastrante.sigla}" />
+						<input type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante.idPessoa" value="${cadastrante.idPessoa}" />
+				</div>
+			</div>	 
 
 			<div class="gt-form-row gt-width-66">
 				<label>Solicitante</label> #{selecao tipo:'pessoa',
@@ -446,12 +438,12 @@
 				notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');" /} <span style="margin-left: 10px;"
 					id="spanInterlocutor">#{checkbox name:'mostrarInterlocutor',
 					value:false, depende:'interlocutor'/} Interlocutor</span>
+				<span style="color: red">#{error 'solicitacao.solicitante' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66" id="interlocutor"
 				style="display: none;">
 				<label>Interlocutor</label> #{selecao tipo:'pessoa',
-				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor,
-				onchange:'' /}
+				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor /}
 			</div>
 			
 			<div id="divLocalRamalEMeioContato">#{include
@@ -512,7 +504,7 @@
 				#{select
 					name:'solicitacao.prioridade', id:'prioridade', items:models.SrPrioridade.values(), 
 					labelProperty:'descPrioridade', value:solicitacao.prioridade ?: 'PLANEJADO', style:'width:235px;border:none;display:none;'  /}
-					<br /><br />
+					<br />
 			</div>
 
 
@@ -531,38 +523,36 @@
 					id="motivoFechamentoAbertura" />
 			</div>
 			#{if !solicitacao.jaFoiDesignada()}
+			<br />
 			<div class="gt-form-row">
 				<label> #{checkbox name:'solicitacao.rascunho',
 					value:solicitacao.rascunho /} Rascunho </label>
 			</div>
 			#{/if}
+			#{elseif solicitacao.isPai() && solicitacao.idSolicitacao != null}
+			<div class="gt-form-table">
+				<div class="barra-subtitulo header" align="center" valign="top"> Fechamento Automático</div>
+			</div>
+			<p> #{checkbox name:'solicitacao.fechadoAutomaticamente',
+				value:solicitacao.fechadoAutomaticamente /}Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>.</p>
+			<br />
+			#{/elseif}
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" id="gravar" /> <a
-					href="@{Application.listar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					href="@{Application.buscarSolicitacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
 			#{/form}
 		</div>
 	</div>
-	*{<div class="gt-sidebar">
-		<div class="gt-sidebar-content"><h2>&nbsp;</h2></div>
-	</div>
+	#{include 'Application/exibirCronometro.html' /}
+	#{include 'Application/exibirPendencias.html' /}
+	
+	*{
 	<div class="gt-sidebar">
-		<div class="gt-sidebar-content tempo">
-			<h3>
-				<img src="/siga/css/famfamfam/icons/clock_play.png" width="20px;"
-					style="vertical-align: bottom;"> Atendimento: <span
-					id="andamento"></span> horas
-			</h3>
-			<h3 style="margin-left: 25px;">
-				Total: <span id="total"></span> horas
-			</h3>
-		</div>
-	</div>}*
-	*{<div class="gt-sidebar">
-		<div class="gt-sidebar-content">
+		<div class="gt-sidebar-content" id="solicitacoesRelacionadas">
 			<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
-			<div class="gt-content-box gt-form" id="filtroSolicitacoes">
+			<div class="gt-content-box gt-form">
 				<label>Filtro</label>
 
 				<div id="filtro">
@@ -590,7 +580,8 @@
 				</div>
 			</div>
 		</div>
-	</div>}*
+	</div>
+	}*
 	
 	<div id="divConhecimentosRelacionados">
 	</div>

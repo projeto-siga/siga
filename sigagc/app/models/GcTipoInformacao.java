@@ -14,6 +14,9 @@ import play.db.jpa.GenericModel;
 @Table(name = "GC_TIPO_INFORMACAO", schema = "SIGAGC")
 public class GcTipoInformacao extends GenericModel {
 	final static public long TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO = 1;
+	final static public long TIPO_INFORMACAO_ERRO_CONHECIDO = 2;
+	final static public long TIPO_INFORMACAO_PROCEDIMENTO = 3;
+	final static public long TIPO_INFORMACAO_PONTO_DE_ENTRADA = 4;
 
 	@Id
 	@Column(name = "ID_TIPO_INFORMACAO")

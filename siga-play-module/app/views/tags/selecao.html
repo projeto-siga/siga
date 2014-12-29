@@ -8,7 +8,7 @@
 
 	<script type="text/javascript">
 	
-//O $tipo foi deixado aqui porque o seleção do Siga precisa enxergar este método
+//O $tipo foi deixado aqui porque o seleÃ§Ã£o do Siga precisa enxergar este mÃ©todo
 self.retorna_${_tipo}${nomeclean} = function(id, sigla, descricao) {
     try {
 		newwindow_${nomeclean}.close();
@@ -32,7 +32,7 @@ self.retorna_${_tipo}${nomeclean} = function(id, sigla, descricao) {
 self.newwindow_${nomeclean} = '';
 self.popitup_${nomeclean} = function(sigla) {
 	sigla = encodeURIComponent(sigla);
-	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
+	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicaÃ§Ã£o p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
 	var url = base+'${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
 
 	if (url.indexOf("sigagc/app/lotacao/buscar") != -1){
@@ -82,7 +82,7 @@ self.ajax_${nomeclean} = function() {
 		return retorna_${_tipo}${nomeclean}('', '', '');
 	}
 	sigla = encodeURIComponent(sigla);
-	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
+	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicaÃ§Ã£o p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
 	var url = base+'${_tipo}/selecionar?sigla=' + sigla + '&nome=${nomeclean}&'+'${_params?.raw()}';
 	
 	if (url.indexOf("/app/lotacao") != -1){

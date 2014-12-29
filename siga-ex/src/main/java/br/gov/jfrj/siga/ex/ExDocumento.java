@@ -1,3 +1,4 @@
+package br.gov.jfrj.siga.ex;
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -18,7 +19,7 @@
  ******************************************************************************/
 /*
  */
-package br.gov.jfrj.siga.ex;
+
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -26,7 +27,9 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -41,6 +44,7 @@ import java.util.TreeSet;
 
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Entity;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
@@ -102,7 +106,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o documento pai, a partir do mÛbil pai.
+	 * Retorna o documento pai, a partir do m√≥bil pai.
 	 */
 	public ExDocumento getPai() {
 		if (getExMobilPai() == null)
@@ -111,7 +115,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o nÌvel de acesso (n„o a descriÁ„o) atual do documento.
+	 * Retorna o n√≠vel de acesso (n√£o a descri√ß√£o) atual do documento.
 	 */
 
 	// @Override
@@ -123,23 +127,23 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o nÌvel de acesso (n„o a descriÁ„o) do documento definido no
-	 * momento da criaÁ„o do documento, desconsiderando as redefiniÁıes de
-	 * nÌvel.
+	 * Retorna o n√≠vel de acesso (n√£o a descri√ß√£o) do documento definido no
+	 * momento da cria√ß√£o do documento, desconsiderando as redefini√ß√µes de
+	 * n√≠vel.
 	 */
 	public ExNivelAcesso getExNivelAcessoDoDocumento() {
 		return super.getExNivelAcesso();
 	}
 
 	/**
-	 * Retorna o cÛdigo do documento.
+	 * Retorna o c√≥digo do documento.
 	 */
 	public String getSigla() {
 		return getCodigo();
 	}
 
 	/**
-	 * Retorna a classificaÁ„o atual do documento.
+	 * Retorna a classifica√ß√£o atual do documento.
 	 */
 	public ExClassificacao getExClassificacaoAtual() {
 		ExClassificacao cl = null;
@@ -153,7 +157,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna lista com todos os documentos que s„o filhos do documento atual.
+	 * Retorna lista com todos os documentos que s√£o filhos do documento atual.
 	 */
 	public Set<ExDocumento> getTodosDocumentosFilhosSet() {
 		Set<ExDocumento> docsFilhos = new HashSet<ExDocumento>();
@@ -164,7 +168,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o cÛdigo do documento.
+	 * Retorna o c√≥digo do documento.
 	 * 
 	 * @throws Exception
 	 */
@@ -204,9 +208,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o cÛdigo do documento de modo resumido. Para resumir, o mÈtodo
-	 * considera o Ûrg„o de quem est· solicitando o resumo e, opcionalmente, o
-	 * documento de referÍncia
+	 * Retorna o c√≥digo do documento de modo resumido. Para resumir, o m√©todo
+	 * considera o √≥rg√£o de quem est√° solicitando o resumo e, opcionalmente, o
+	 * documento de refer√™ncia
 	 * 
 	 * @throws Exception
 	 */
@@ -247,7 +251,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o cÛdigo do documento.
+	 * Retorna o c√≥digo do documento.
 	 * 
 	 * @throws Exception
 	 */
@@ -307,7 +311,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o cÛdigo do documento sem "-" ou "/".
+	 * Retorna o c√≥digo do documento sem "-" ou "/".
 	 */
 	public String getCodigoCompacto() {
 		String s = getCodigo();
@@ -317,9 +321,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o cÛdigo do documento. Se o documento for de origem externa,
-	 * adiciona ao cÛdigo do documento o cÛdigo externo. Se for interno
-	 * importado, adiciona ao cÛdigo do documento o n˙mero antigo.
+	 * Retorna o c√≥digo do documento. Se o documento for de origem externa,
+	 * adiciona ao c√≥digo do documento o c√≥digo externo. Se for interno
+	 * importado, adiciona ao c√≥digo do documento o n√∫mero antigo.
 	 */
 	@Field(name = "codigo", store = Store.COMPRESS, index = Index.NO)
 	public String getCodigoString() {
@@ -333,7 +337,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o conte˙do (blob) do documento em formato String. Este mÈtodo
+	 * Retorna o conte√∫do (blob) do documento em formato String. Este m√©todo
 	 * <b>parece</b> estar em desuso.
 	 */
 	public String getConteudo() {
@@ -343,11 +347,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna, em formato array de bytes, o conte˙do de um arquivo contido no
+	 * Retorna, em formato array de bytes, o conte√∫do de um arquivo contido no
 	 * zip gravado no blob do documento.
 	 * 
 	 * @param nome
-	 *            Nome do arquivo compactado cujo conte˙do ser· retornado
+	 *            Nome do arquivo compactado cujo conte√∫do ser√° retornado
 	 */
 	public byte[] getConteudoBlob(final String nome) {
 		final byte[] conteudoZip = getConteudoBlobDoc2();
@@ -360,7 +364,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna, em formato array de bytes, todo o conte˙do do zip gravado no
+	 * Retorna, em formato array de bytes, todo o conte√∫do do zip gravado no
 	 * blob do documento.
 	 */
 	public byte[] getConteudoBlobDoc2() {
@@ -373,15 +377,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna, em formato array de bytes, o conte˙do do arquivo de
-	 * <b>formul·rio</b> contido no zip gravado no blob do documento.
+	 * Retorna, em formato array de bytes, o conte√∫do do arquivo de
+	 * <b>formul√°rio</b> contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobForm() {
 		return getConteudoBlob("doc.form");
 	}
 
 	/**
-	 * Retorna, em formato array de bytes, o conte˙do do arquivo de
+	 * Retorna, em formato array de bytes, o conte√∫do do arquivo de
 	 * <b>resumo</b> contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobResumo() {
@@ -389,7 +393,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna, em formato array de bytes, o conte˙do do arquivo <b>html</b>
+	 * Retorna, em formato array de bytes, o conte√∫do do arquivo <b>html</b>
 	 * contido no zip gravado no blob do documento.
 	 */
 	@Field(name = "conteudoBlobDocHtml")
@@ -400,7 +404,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna, <b>em formato Base64 (String)</b>, o conte˙do do arquivo
+	 * Retorna, <b>em formato Base64 (String)</b>, o conte√∫do do arquivo
 	 * <b>html</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobHtmlB64() {
@@ -408,7 +412,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna, <b>em formato ISO-8859-1 (String)</b>, o conte˙do do arquivo
+	 * Retorna, <b>em formato ISO-8859-1 (String)</b>, o conte√∫do do arquivo
 	 * <b>html</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobHtmlString() {
@@ -423,7 +427,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o conte˙do do arquivo <b>html</b> contido no zip gravado no blob
+	 * Retorna o conte√∫do do arquivo <b>html</b> contido no zip gravado no blob
 	 * do documento, com todas as referencias para outros documentos
 	 * substituidas por links html para os devidos documentos.
 	 * 
@@ -469,7 +473,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna, em formato array de bytes, o conte˙do do arquivo <b>pdf</b>
+	 * Retorna, em formato array de bytes, o conte√∫do do arquivo <b>pdf</b>
 	 * contido no zip gravado no blob do documento.
 	 */
 	public byte[] getConteudoBlobPdf() {
@@ -477,7 +481,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna, <b>em formato Base64 (String)</b>, o conte˙do do arquivo
+	 * Retorna, <b>em formato Base64 (String)</b>, o conte√∫do do arquivo
 	 * <b>pdf</b> contido no zip gravado no blob do documento.
 	 */
 	public String getConteudoBlobPdfB64() {
@@ -485,11 +489,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna um descriÁ„o do documento com no m·ximo 40 caracteres.
+	 * Retorna um descri√ß√£o do documento com no m√°ximo 40 caracteres.
 	 */
 	public java.lang.String getDescrCurta() {
 		if (getDescrDocumento() == null)
-			return "[sem descriÁ„o]";
+			return "[sem descri√ß√£o]";
 		if (getDescrDocumento().length() > 40)
 			return getDescrDocumento().substring(0, 39) + "...";
 		else
@@ -497,7 +501,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna a descriÁ„o completa do documento.
+	 * Retorna a descri√ß√£o completa do documento.
 	 */
 	@Field(name = "descrDocumento", store = Store.COMPRESS)
 	@Analyzer(impl = BrazilianAnalyzer.class)
@@ -507,21 +511,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna a descriÁ„o completa do documento de modo indiferente ‡
-	 * acentuaÁ„o.
+	 * Retorna a descri√ß√£o completa do documento de modo indiferente √†
+	 * acentua√ß√£o.
 	 */
 	public String getDescrDocumentoAI() {
 		return descrDocumentoAI;
 	}
 
 	/**
-	 * Retorna a <b>descriÁ„o</b> do nÌvel de acesso do documento definido no
-	 * momento da criaÁ„o do documento, desconsiderando as redefiniÁıes de
-	 * nÌvel.
+	 * Retorna a <b>descri√ß√£o</b> do n√≠vel de acesso do documento definido no
+	 * momento da cria√ß√£o do documento, desconsiderando as redefini√ß√µes de
+	 * n√≠vel.
 	 */
 	@Field(name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
-		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criaÁ„o do mesmo");
+		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da cria√ß√£o do mesmo");
 		String nivel = null;
 		ExNivelAcesso nivelAcesso = getExNivelAcesso();
 
@@ -529,25 +533,25 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			nivel = nivelAcesso.getGrauNivelAcesso().toString();
 
 		} else {
-			log.warn("[getNivelAcesso] - O nÌvel de acesso ou o grau do nÌvel de acesso do documento È nulo.");
+			log.warn("[getNivelAcesso] - O n√≠vel de acesso ou o grau do n√≠vel de acesso do documento √© nulo.");
 		}
 
 		return nivel;
 	}
 
 	/**
-	 * Retorna a descriÁ„o do destinat·rio de um documento, conforme as
+	 * Retorna a descri√ß√£o do destinat√°rio de um documento, conforme as
 	 * seguintes regras, na seguinte ordem:
 	 * <ul>
-	 * <li>Se foi definida uma pessoa destinat·ria, retorna a descriÁ„o dela com
-	 * iniciais mai˙sculas (getDescricaoIniciaisMaiusculas())</li>
-	 * <li>Ou ent„o, se for definido um destinat·rio em campo livre, retorna o
+	 * <li>Se foi definida uma pessoa destinat√°ria, retorna a descri√ß√£o dela com
+	 * iniciais mai√∫sculas (getDescricaoIniciaisMaiusculas())</li>
+	 * <li>Ou ent√£o, se for definido um destinat√°rio em campo livre, retorna o
 	 * valor digitado.</li>
-	 * <li>Ou ent„o, se for definida uma lotaÁ„o destinat·ria, retorna a
-	 * descriÁ„o dela.</li>
-	 * <li>Ou ent„o, se for definido um Ûrg„o externo destinat·rio, retorna a
-	 * descriÁ„o do Ûrg„o mais a observaÁ„o sobre o Ûrg„o, se houver, ou apenas
-	 * esta ˙ltima, se n„o for selecionado Ûrg„o mas for definida descriÁ„o.</li>
+	 * <li>Ou ent√£o, se for definida uma lota√ß√£o destinat√°ria, retorna a
+	 * descri√ß√£o dela.</li>
+	 * <li>Ou ent√£o, se for definido um √≥rg√£o externo destinat√°rio, retorna a
+	 * descri√ß√£o do √≥rg√£o mais a observa√ß√£o sobre o √≥rg√£o, se houver, ou apenas
+	 * esta √∫ltima, se n√£o for selecionado √≥rg√£o mas for definida descri√ß√£o.</li>
 	 * <li></li>
 	 * </ul>
 	 */
@@ -621,7 +625,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna a data de finalizaÁ„o do documento no formato dd/mm/aa, por
+	 * Retorna a data de finaliza√ß√£o do documento no formato dd/mm/aa, por
 	 * exemplo, 01/02/10.
 	 */
 	public String getDtFinalizacaoDDMMYY() {
@@ -634,14 +638,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o nome da localidade (municÌpio) onde se encontra a lotaÁ„o em
-	 * que o documento foi produzido, caso n„o tenha sido digitado valor para a
-	 * localidade no campo FunÁ„o;LotaÁ„o;Localidade. A escolha da lotaÁ„o para
-	 * obtenÁ„o da localidade obedece ‡ seguinte regra de precedÍncia:
+	 * Retorna o nome da localidade (munic√≠pio) onde se encontra a lota√ß√£o em
+	 * que o documento foi produzido, caso n√£o tenha sido digitado valor para a
+	 * localidade no campo Fun√ß√£o;Lota√ß√£o;Localidade. A escolha da lota√ß√£o para
+	 * obten√ß√£o da localidade obedece √† seguinte regra de preced√™ncia:
 	 * <ul>
-	 * <li>LotaÁ„o titular;</li>
-	 * <li>LotaÁ„o subscritor;</li>
-	 * <li>LotaÁ„o cadastrante;</li>
+	 * <li>Lota√ß√£o titular;</li>
+	 * <li>Lota√ß√£o subscritor;</li>
+	 * <li>Lota√ß√£o cadastrante;</li>
 	 * </ul>
 	 */
 	public String getLocalidadeString() {
@@ -675,13 +679,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * de fevereiro de 2010", por exemplo.
 	 */
 	public String getDtExtenso() {
-		// ForÁando a ficar em pt_BR, antes a data aparecia na linguagem
-		// definida no servidor de aplicaÁ„o (tomcat, jbos, etc.)
+		// For√ßando a ficar em pt_BR, antes a data aparecia na linguagem
+		// definida no servidor de aplica√ß√£o (tomcat, jbos, etc.)
 		SimpleDateFormat df1 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy.",
 				new Locale("pt", "BR"));
 		try {
-			// As linhas abaixo foram comentadas porque o formato j· est·
-			// definido na declaraÁ„o da vari·vel df1.
+			// As linhas abaixo foram comentadas porque o formato j√° est√°
+			// definido na declara√ß√£o da vari√°vel df1.
 			//
 			// df1.applyPattern("dd/MM/yyyy");
 			// df1.applyPattern("dd 'de' MMMM 'de' yyyy.");
@@ -698,14 +702,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * "01 de fevereiro de 2010", por exemplo.
 	 */
 	public String getDtExtensoSemLocalidade() {
-		// ForÁando a ficar em pt_BR, antes a data aparecia na linguagem
-		// definida no servidor de aplicaÁ„o (tomcat, jbos, etc.)
+		// For√ßando a ficar em pt_BR, antes a data aparecia na linguagem
+		// definida no servidor de aplica√ß√£o (tomcat, jbos, etc.)
 
 		SimpleDateFormat df1 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy.",
 				new Locale("pt", "BR"));
 		try {
-			// As linhas abaixo foram comentadas porque o formato j· est·
-			// definido na declaraÁ„o da vari·vel df1.
+			// As linhas abaixo foram comentadas porque o formato j√° est√°
+			// definido na declara√ß√£o da vari√°vel df1.
 			//
 			// df1.applyPattern("dd/MM/yyyy");
 			// df1.applyPattern("dd 'de' MMMM 'de' yyyy.");
@@ -717,7 +721,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna a data do documento sem localidade por extenso, em mai˙sculas, no
+	 * Retorna a data do documento sem localidade por extenso, em mai√∫sculas, no
 	 * formato "01 DE FEVEREIRO DE 2010", por exemplo.
 	 * 
 	 */
@@ -729,7 +733,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o mÍs que faz parte da data do documento
+	 * Retorna o m√™s que faz parte da data do documento
 	 * 
 	 */
 	public String getDtMMMM() {
@@ -755,9 +759,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna a data de disponibilizaÁ„o da ˙ltima movimentaÁ„o do mÛbil geral,
-	 * no formato dd/MM/yy.<b> Obs.: n„o corresponde exatamente ao nome do
-	 * mÈtodo.</b>
+	 * Retorna a data de disponibiliza√ß√£o da √∫ltima movimenta√ß√£o do m√≥bil geral,
+	 * no formato dd/MM/yy.<b> Obs.: n√£o corresponde exatamente ao nome do
+	 * m√©todo.</b>
 	 */
 	public String getDtDispUltimoAgendamento() {
 		Date dt = new Date();
@@ -772,9 +776,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna a data da ˙ltima movimentaÁ„o do Mobil Geral, no formato
-	 * dd/mm/yy, por exemplo, 12/10/10. <b>Obs.: n„o est· corredpondendo
-	 * exatamente ao nome do mÈtodo.</b>
+	 * Retorna a data da √∫ltima movimenta√ß√£o do Mobil Geral, no formato
+	 * dd/mm/yy, por exemplo, 12/10/10. <b>Obs.: n√£o est√° corredpondendo
+	 * exatamente ao nome do m√©todo.</b>
 	 */
 	public String getDtUltimaRemessaParaPublicacao() {
 		if (getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
@@ -812,8 +816,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o valor digitado para a <b>funÁ„o</b> no campo
-	 * FunÁ„o;LotaÁ„o;Localidade.
+	 * Retorna o valor digitado para a <b>fun√ß√£o</b> no campo
+	 * Fun√ß√£o;Lota√ß√£o;Localidade.
 	 */
 	public java.lang.String getNmFuncao() {
 		if (getNmFuncaoSubscritor() == null)
@@ -827,8 +831,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna valor digitado para a <b>lotaÁ„o</b> no campo
-	 * FunÁ„o;LotaÁ„o;Localidade.
+	 * Retorna valor digitado para a <b>lota√ß√£o</b> no campo
+	 * Fun√ß√£o;Lota√ß√£o;Localidade.
 	 */
 	public java.lang.String getNmLotacao() {
 		if (getNmFuncaoSubscritor() == null)
@@ -843,7 +847,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * Retorna valor digitado para a <b>localidade</b> no campo
-	 * FunÁ„o;LotaÁ„o;Localidade.
+	 * Fun√ß√£o;Lota√ß√£o;Localidade.
 	 */
 	public java.lang.String getNmLocalidade() {
 		if (getNmFuncaoSubscritor() == null)
@@ -857,7 +861,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento est· finalizado, ou seja, se possui
+	 * Verifica se um documento est√° finalizado, ou seja, se possui
 	 * dtFinalizacao definida
 	 */
 	public boolean isFinalizado() {
@@ -874,7 +878,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * Retorna o valor digitado para o <b>nome do subscritor</b> no campo
-	 * FunÁ„o;LotaÁ„o;Localidade.
+	 * Fun√ß√£o;Lota√ß√£o;Localidade.
 	 */
 	public java.lang.String getNmSubscritor() {
 		if (getNmFuncaoSubscritor() == null)
@@ -888,7 +892,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o n˙mero da ˙ltima via do documento.
+	 * Retorna o n√∫mero da √∫ltima via do documento.
 	 */
 	public int getNumUltimaVia() {
 		int maxNumVia = 0;
@@ -901,7 +905,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o n˙mero da primeira via do documento.
+	 * Retorna o n√∫mero da primeira via do documento.
 	 */
 	@SuppressWarnings("static-access")
 	public int getNumPrimeiraVia() {
@@ -921,7 +925,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o n˙mero da ˙ltima via n„o cancelada.
+	 * Retorna o n√∫mero da √∫ltima via n√£o cancelada.
 	 */
 	public int getNumUltimaViaNaoCancelada() {
 		ExMobil mobUltimaVia = null;
@@ -939,9 +943,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * COMPLETAR Retorna o set de Vias do documento de acordo com o modelo e a
-	 * classificaÁ„o do assunto. Se o o modelo possuir uma classificaÁ„o
-	 * especÌfica para a criaÁ„o de vias esta ser· utilizada, caso contr·rio,
-	 * ser· utilizada a classificaÁ„o do assunto.
+	 * classifica√ß√£o do assunto. Se o o modelo possuir uma classifica√ß√£o
+	 * espec√≠fica para a cria√ß√£o de vias esta ser√° utilizada, caso contr√°rio,
+	 * ser√° utilizada a classifica√ß√£o do assunto.
 	 * 
 	 * @return Set<ExVia>
 	 */
@@ -956,20 +960,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 				vias = getExClassificacaoAtual().getExViaSet();
 		}
 
-		// Edson: Antes da vers„o DestinaÁ„o, quando se alterava uma via, a nova
-		// inst‚ncia
-		// continuava apontando para a mesma classificaÁ„o, pois esta n„o era
-		// alterada junto. Isso n„o dava problema porque o exViaSet, no
+		// Edson: Antes da vers√£o Destina√ß√£o, quando se alterava uma via, a nova
+		// inst√¢ncia
+		// continuava apontando para a mesma classifica√ß√£o, pois esta n√£o era
+		// alterada junto. Isso n√£o dava problema porque o exViaSet, no
 		// exClassificacao.hbm.xml,
-		// estava com his_ativo = 1, de modo que o hibernate montava o set sÛ
+		// estava com his_ativo = 1, de modo que o hibernate montava o set s√≥
 		// com as vias ativas.
-		// Como isso n„o permitiria saber quais eram as vias de uma
-		// classificaÁ„o num certo
-		// momento do histÛrico, a alteraÁ„o/criaÁ„o/exclus„o de via passou a
+		// Como isso n√£o permitiria saber quais eram as vias de uma
+		// classifica√ß√£o num certo
+		// momento do hist√≥rico, a altera√ß√£o/cria√ß√£o/exclus√£o de via passou a
 		// gerar outro registro
-		// de classificaÁ„o, e o his_ativo = 1 n„o est· mais l·. Por isso, È
+		// de classifica√ß√£o, e o his_ativo = 1 n√£o est√° mais l√°. Por isso, √©
 		// preciso limpar o set
-		// de vias, garantido que sÛ haja uma inst‚ncia de cada via:
+		// de vias, garantido que s√≥ haja uma inst√¢ncia de cada via:
 		HashMap<String, ExVia> viasUmaPorCodigo = new HashMap<String, ExVia>();
 		for (ExVia v : vias) {
 			ExVia vHash = viasUmaPorCodigo.get(v.getCodVia());
@@ -984,7 +988,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 						.getFacilitadorDest() != null)
 			return vias;
 
-		// Expediente externo ou eletrÙnico e com Documento Pai tem apenas 1 via
+		// Expediente externo ou eletr√¥nico e com Documento Pai tem apenas 1 via
 		if (getExTipoDocumento().getIdTpDoc() == 3 || isEletronico()
 				|| getExMobilPai() != null) {
 			if (vias != null)
@@ -1051,7 +1055,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o subscritor do documento, caso exista. Se n„o, retorna o
+	 * Retorna o subscritor do documento, caso exista. Se n√£o, retorna o
 	 * cadastrante do documento.
 	 */
 	public DpPessoa getEditor() {
@@ -1074,18 +1078,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento j· est· assinado ou, sendo externo ou interno
-	 * importado, se est· finalizado.
+	 * Verifica se um documento j√° est√° assinado ou, sendo externo ou interno
+	 * importado, se est√° finalizado.
 	 */
 	public boolean isAssinado() {
-		// Interno antigo e externo s„o considerados como assinados
+		// Interno antigo e externo s√£o considerados como assinados
 		if (getExTipoDocumento().getIdTpDoc() != 1L) {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;
 		}
 
-		if(isEletronico() && !isAssinadoEletronicoPorTodosOsSignatarios())
+		/*if(isEletronico() && !isAssinadoEletronicoPorTodosOsSignatarios())
+			return false;*/
+		
+		if(isEletronico() && !isAssinadoEletronicoOuPorSenhaPorTodosOsSignatarios())
 			return false;
-					
+		
 		if(!isEletronico()) {			
 			ExMovimentacao mov = getMovAssinatura();
 			if (mov == null)
@@ -1096,7 +1103,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 	
 	/**
-	 * Verifica se um documento eletrÙnico possui pelo menos uma assinatura digital
+	 * Verifica se um documento eletr√¥nico possui pelo menos uma assinatura digital
 	 */
 	public boolean isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() {
 		if(!isEletronico())
@@ -1112,7 +1119,23 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento j· foi assinado pelo Subscritor.
+	 * Verifica se um documento eletr√¥nico possui pelo menos uma assinatura com Senha
+	 */
+	public boolean isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha() {
+		if(!isEletronico())
+			return false;
+		
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Verifica se um documento j√° foi assinado pelo Subscritor.
 	 */
 	public boolean isAssinadoSubscritor() {
 		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
@@ -1134,12 +1157,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento est· cancelado, o que È verdadeiro quando todas
-	 * as vias est„o canceladas.
+	 * Verifica se um documento est√° cancelado, o que √© verdadeiro quando todas
+	 * as vias est√£o canceladas.
 	 */
 	@Override
 	public boolean isCancelado() {
-		// Documento sÛ possÌvel a via geral
+		// Documento s√≥ poss√≠vel a via geral
 		if (getExMobilSet().size() == 1)
 			return false;
 
@@ -1153,11 +1176,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento est· arquivado, o que È verdadeiro quando todas
-	 * as vias est„o arquivadas.
+	 * Verifica se um documento est√° arquivado, o que √© verdadeiro quando todas
+	 * as vias est√£o arquivadas.
 	 */
 	public boolean isArquivado() {
-		// Documento sÛ possÌvel a via geral
+		// Documento s√≥ poss√≠vel a via geral
 		if (getExMobilSet().size() == 1)
 			return false;
 
@@ -1181,7 +1204,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna a primeira movimentaÁ„o de assinatura ou de registro de
+	 * Retorna a primeira movimenta√ß√£o de assinatura ou de registro de
 	 * assinatura encontrada.
 	 */
 	private ExMovimentacao getMovAssinatura() {
@@ -1193,6 +1216,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			final ExMovimentacao movIterate = (ExMovimentacao) element;
 
 			if ((movIterate.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO || movIterate
+					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA || movIterate
 					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO)
 					&& movIterate.getExMovimentacaoCanceladora() == null) {
 				return movIterate;
@@ -1202,7 +1226,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento È do tipo eletrÙnico.
+	 * Verifica se um documento √© do tipo eletr√¥nico.
 	 */
 	public boolean isEletronico() {
 		if (getFgEletronico() != null
@@ -1213,14 +1237,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 	
 	/**
-	 * Verifica se um documento È do tipo fÌsico.
+	 * Verifica se um documento √© do tipo f√≠sico.
 	 */
 	public boolean isFisico() {
 		return !isEletronico();
 	}
 
 	/**
-	 * Verifica se um documento possui agendamento de publicaÁ„o no DJE. ()
+	 * Verifica se um documento possui agendamento de publica√ß√£o no DJE. ()
 	 */
 	public boolean isPublicacaoAgendada() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
@@ -1235,7 +1259,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento possui <b>solicitaÁ„o</b> de publicaÁ„o no DJE.
+	 * Verifica se um documento possui <b>solicita√ß√£o</b> de publica√ß√£o no DJE.
 	 */
 	public boolean isPublicacaoSolicitada() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
@@ -1250,7 +1274,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento possui solicitaÁ„o de publicaÁ„o no Boletim
+	 * Verifica se um documento possui solicita√ß√£o de publica√ß√£o no Boletim
 	 * Interno.
 	 */
 	public boolean isPublicacaoBoletimSolicitada() {
@@ -1279,7 +1303,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento j· foi publicado no DJE.
+	 * Verifica se um documento j√° foi publicado no DJE.
 	 */
 	public boolean isDJEPublicado() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
@@ -1294,7 +1318,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna se uma determinada via est· cancelada.
+	 * Retorna se uma determinada via est√° cancelada.
 	 * 
 	 * @param iVia
 	 * @return
@@ -1308,7 +1332,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna se existe uma via de um determinado n˙mero.
+	 * Retorna se existe uma via de um determinado n√∫mero.
 	 * 
 	 * @param iVia
 	 */
@@ -1327,8 +1351,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * 
 	 * @param numVia
 	 * 
-	 * @return Objeto do tipo via de acordo com o n˙mero da via ou null caso n„o
-	 *         exista via com o n˙mero informado.
+	 * @return Objeto do tipo via de acordo com o n√∫mero da via ou null caso n√£o
+	 *         exista via com o n√∫mero informado.
 	 */
 	public ExVia via(final Short numVia) {
 		Short i;
@@ -1349,14 +1373,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna a descriÁ„o da forma do documento. Caso o documento seja
-	 * eltrÙnico, adiciona o texto "digital".
+	 * Retorna a descri√ß√£o da forma do documento. Caso o documento seja
+	 * eltr√¥nico, adiciona o texto "digital".
 	 */
 	public String getDescrFormaDoc() {
 		if (getExFormaDocumento() == null)
 			return null;
 		return getExFormaDocumento().getDescrFormaDoc()
-				+ (isEletronico() ? "" : " (fÌsico)");
+				+ (isEletronico() ? "" : " (f√≠sico)");
 	}
 
 	/**
@@ -1404,7 +1428,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o conte˙do do corpo do documento que se encontra entre as tags
+	 * Retorna o conte√∫do do corpo do documento que se encontra entre as tags
 	 * <!-- INICIO CORPO --> e <!-- FIM CORPO -->
 	 */
 	public String getCorpoHtmlString() {
@@ -1441,7 +1465,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna n˙mero do documento que se encontra entre as tags <!-- INICIO
+	 * Retorna n√∫mero do documento que se encontra entre as tags <!-- INICIO
 	 * NUMERO --> e <!-- FIM NUMERO -->.
 	 */
 	public String getNumeroHtmlString() {
@@ -1533,7 +1557,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna conjunto com todas as movimentaÁıes do documento.
+	 * Retorna conjunto com todas as movimenta√ß√µes do documento.
 	 */
 	@IndexedEmbedded
 	public Set<ExMovimentacao> getExMovimentacaoSet() {
@@ -1634,7 +1658,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	public void removerDesentranhamentosQueNaoFazemParteDoDossie(
 			List<ExArquivoNumerado> list) {
-		// Verifica se tem movimentaÁ„o de desentranhamento que n„o pertence ao
+		// Verifica se tem movimenta√ß√£o de desentranhamento que n√£o pertence ao
 		// documento principal
 		if (list != null && list.get(0) != null) {
 			ExArquivoNumerado arquivoPrincipal = list.get(0);
@@ -1683,10 +1707,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * COMPLETAR A coleÁ„o que ordena as movimentaÁıes deve respeitar a
-	 * cronologia, exceto no caso das movimentaÁıes de cancelamento de juntada,
-	 * anexaÁ„o e despacho, que, quando prossuirem certidÙes de exclus„o, estas
-	 * dever„o ser inseridas no lugar do documento removido.
+	 * COMPLETAR A cole√ß√£o que ordena as movimenta√ß√µes deve respeitar a
+	 * cronologia, exceto no caso das movimenta√ß√µes de cancelamento de juntada,
+	 * anexa√ß√£o e despacho, que, quando prossuirem certid√¥es de exclus√£o, estas
+	 * dever√£o ser inseridas no lugar do documento removido.
 	 * 
 	 * @param mob
 	 * @param list
@@ -1759,15 +1783,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna um cÛdigo alternativo para o documento, baseado num c·lculo feito
-	 * sobre o id e a descriÁ„o.
+	 * Retorna um c√≥digo alternativo para o documento, baseado num c√°lculo feito
+	 * sobre o id e a descri√ß√£o.
 	 */
 	public String getSiglaAssinatura() {
 		return getIdDoc() + "-" + Math.abs(getDescrCurta().hashCode() % 10000);
 	}
 
 	/**
-	 * Retorna uma lista de movimentaÁıes do tipo assinatura digital do
+	 * Retorna uma lista de movimenta√ß√µes do tipo assinatura digital do
 	 * documento.
 	 */
 	@Override
@@ -1781,25 +1805,131 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return null;
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
-			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO 
+					|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
 		}
 		return set;
 	}
+	
+	/**
+	 * Retorna uma lista de movimenta√ß√µes do tipo assinatura com senha do
+	 * documento.
+	 */
+	public Set<ExMovimentacao> getApenasAssinaturasComToken() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getMobilGeral() == null)
+			return null;
+
+		if (getMobilGeral().getExMovimentacaoSet() == null)
+			return null;
+
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * Retorna uma lista de movimenta√ß√µes do tipo autentica√ß√£o de
+	 * documento.
+	 */
+	public Set<ExMovimentacao> getApenasAutenticacoes() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getMobilGeral() == null)
+			return null;
+
+		if (getMobilGeral().getExMovimentacaoSet() == null)
+			return null;
+
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * Retorna uma lista de movimenta√ß√µes do tipo assinatura com senha do
+	 * documento.
+	 */
+	public Set<ExMovimentacao> getApenasAssinaturasComSenha() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getMobilGeral() == null)
+			return null;
+
+		if (getMobilGeral().getExMovimentacaoSet() == null)
+			return null;
+
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
+	 * Retorna se um documento possui assinaturas com senha.
+	 */
+	public boolean temAssinaturasComSenha() {
+		if(getApenasAssinaturasComSenha() != null && getApenasAssinaturasComSenha().size() > 0)
+			return true;
+		
+		return false;
+	}
+	
+	/**
+	 * Um documento est√° autenticado quando ele possui pelo menos uma assinatura com senha.
+	 */
+	public boolean isAutenticado() {
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO ||
+					m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
+				
+				return true;
+			}
+		}
+	
+		return false;
+	}
 
 	public String getAssinantesCompleto() {
-		String assinantes = Documento
-				.getAssinantesString(getAssinaturasDigitais());
-		if (assinantes.length() > 0)
-			return "Assinado digitalmente por " + assinantes + ".\n";
-		return "";
+		String retorno =  "";
+		String conferentes = Documento
+				.getAssinantesString(getApenasAutenticacoes());
+		String assinantesToken = Documento
+				.getAssinantesString(getApenasAssinaturasComToken());
+		String assinantesSenha = Documento
+				.getAssinantesString(getApenasAssinaturasComSenha());
+		
+		if (assinantesToken.length() > 0)
+			retorno = "Assinado digitalmente por " + assinantesToken + ".\n";
+		
+		if (assinantesSenha.length() > 0)
+			retorno = retorno + "Assinado com senha por " + assinantesSenha + ".\n";
+		
+		if (conferentes.length() > 0)
+			retorno += conferentes.length() > 0 ? "Autenticado digitalmente por "
+				+ conferentes + ".\n" : "";
+		
+		return retorno;
 	}
 
 	/**
-	 * verifica se um documento ainda est· em rascunho, ou seja, se n„o est·
-	 * finalizado ou se est· finalizado mas È eletrÙnico.
+	 * verifica se um documento ainda est√° em rascunho, ou seja, se n√£o est√°
+	 * finalizado ou se est√° finalizado mas √© eletr√¥nico.
 	 */
 	@Override
 	public boolean isRascunho() {
@@ -1807,7 +1937,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * verifica se um documento est· sem efeito.
+	 * verifica se um documento est√° sem efeito.
 	 */
 	@Override
 	public boolean isSemEfeito() {
@@ -1833,7 +1963,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna a lotaÁ„o titular ou do subscritor do documento, caso aquela n„o
+	 * Retorna a lota√ß√£o titular ou do subscritor do documento, caso aquela n√£o
 	 * exista.
 	 */
 	public DpLotacao getLotaSubscritorEfetiva() {
@@ -1856,7 +1986,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna uma lista de documentos filhos [de cada mÛbil] do documento
+	 * Retorna uma lista de documentos filhos [de cada m√≥bil] do documento
 	 * atual.
 	 */
 	public java.util.Set<ExDocumento> getExDocumentoFilhoSet() {
@@ -1877,7 +2007,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o n˙mero do ˙ltimo volume (funciona apenas para processo
+	 * Retorna o n√∫mero do √∫ltimo volume (funciona apenas para processo
 	 * administrativo).
 	 */
 	public int getNumUltimoVolume() {
@@ -1891,8 +2021,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o mÛbil-volume de um processo administrativo de acordo com o seu
-	 * n˙mero.
+	 * Retorna o m√≥bil-volume de um processo administrativo de acordo com o seu
+	 * n√∫mero.
 	 */
 	public ExMobil getVolume(int i) {
 		for (final ExMobil mob : getExMobilSet()) {
@@ -1917,7 +2047,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o mÛbil-via de um expediente de acordo com o seu n˙mero.
+	 * Retorna o m√≥bil-via de um expediente de acordo com o seu n√∫mero.
 	 */
 	public ExMobil getVia(int i) {
 		for (final ExMobil mob : getExMobilSet()) {
@@ -1929,7 +2059,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento È do tipo Expediente.
+	 * Verifica se um documento √© do tipo Expediente.
 	 */
 	public boolean isExpediente() {
 		try {
@@ -1947,7 +2077,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento È do tipo Processo.
+	 * Verifica se um documento √© do tipo Processo.
 	 */
 	public boolean isProcesso() {
 		try {
@@ -1965,7 +2095,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o ˙ltimo mÛbil-volume (funciona apenas para processo
+	 * Retorna o √∫ltimo m√≥bil-volume (funciona apenas para processo
 	 * administrativo).
 	 */
 	public ExMobil getUltimoVolume() {
@@ -1973,7 +2103,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o ˙ltimo mÛbil-volume (funciona apenas para processo
+	 * Retorna o √∫ltimo m√≥bil-volume (funciona apenas para processo
 	 * administrativo).
 	 */
 	public ExMobil getUltimaVia() {
@@ -1988,8 +2118,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna o nome completo de um documento, composto pela descriÁ„o da
-	 * origem mais o cÛdigo do documento.
+	 * Retorna o nome completo de um documento, composto pela descri√ß√£o da
+	 * origem mais o c√≥digo do documento.
 	 */
 	public String getNomeCompleto() {
 		return "Documento " + getExTipoDocumento().getDescricao() + ":"
@@ -1997,7 +2127,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se possui alguma movimentaÁ„o com arquivo PDF.
+	 * Verifica se possui alguma movimenta√ß√£o com arquivo PDF.
 	 */
 	public boolean hasPDF() {
 		for (ExMovimentacao m : getExMovimentacaoSet()) {
@@ -2010,7 +2140,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * Retorna uma lista de Mobils do documento, ordenados de forma decrescente
-	 * pelo n˙mero de sequÍncia do mÛbil.
+	 * pelo n√∫mero de sequ√™ncia do m√≥bil.
 	 */
 	public java.util.SortedSet<ExMobil> getExMobilSetInvertido() {
 		final TreeSet<ExMobil> mobilInvertido = new TreeSet<ExMobil>(
@@ -2021,7 +2151,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento È de origem externa.
+	 * Verifica se um documento √© de origem externa.
 	 */
 	public boolean isExterno() {
 		if (getExTipoDocumento() == null)
@@ -2030,7 +2160,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna uma lista com o subscritor e todos os cossignat·rios.
+	 * Retorna uma lista com o subscritor e todos os cossignat√°rios.
 	 */
 	public List<DpPessoa> getSubscritorECosignatarios() {
 		List<DpPessoa> subscritores = new ArrayList<DpPessoa>();
@@ -2044,7 +2174,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna uma lista com o todos os cossignat·rios.
+	 * Retorna uma lista com o todos os cossignat√°rios.
 	 */
 	public List<DpPessoa> getCosignatarios() {
 
@@ -2064,7 +2194,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna uma lista com o todos os cossignat·rios.
+	 * Retorna uma lista com o todos os cossignat√°rios.
 	 */
 	public List<ExMovimentacao> getMovsCosignatario() {
 
@@ -2084,7 +2214,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna uma lista com os subscritores de todos os despachos n„o
+	 * Retorna uma lista com os subscritores de todos os despachos n√£o
 	 * cancelados do documento.
 	 */
 	public List<DpPessoa> getSubscritorDespacho() {
@@ -2105,7 +2235,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Retorna todas as movimentaÁıes de assinatura digital e de registro de
+	 * Retorna todas as movimenta√ß√µes de assinatura digital e de registro de
 	 * assinatura.
 	 */
 	public Set<ExMovimentacao> getTodasAsAssinaturas() {
@@ -2119,6 +2249,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
 			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO || m
+					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA|| m
 					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
@@ -2129,10 +2260,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * Verifica se um documento foi assinado pelo subscritor e por todos os
-	 * cosignat·rios
+	 * cosignat√°rios
 	 */
 	private boolean isAssinadoEletronicoPorTodosOsSignatarios() {
-		// Interno antigo e externo s„o considerados como assinados
+		// Interno antigo e externo s√£o considerados como assinados
 		if (getExTipoDocumento().getIdTpDoc() != 1L) {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;
 		}
@@ -2146,6 +2277,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
 			if (assinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO)
 				todosQueJaAssinaram.add(assinatura.getSubscritor());
+		}
+		
+		// compatibiliza com versoes anteriores do SIGA que permitia transferir
+		// documento antes que todos os cossiganatarios assinassem o documento
+		if (todosQueJaAssinaram.size() > 0 && jaTransferido()){
+			return true;
 		}
 
 		for (DpPessoa signatario : getSubscritorECosignatarios()) {
@@ -2166,7 +2303,46 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se todos os mÛbiles do documento est„o eliminados.
+	 * Verifica se um documento foi assinado pelo subscritor e por todos os
+	 * cosignat√°rios com Login e Senha ou por token
+	 */
+	private boolean isAssinadoEletronicoOuPorSenhaPorTodosOsSignatarios() {
+		// Interno antigo e externo s√£o considerados como assinados
+		if (getExTipoDocumento().getIdTpDoc() != 1L) {
+			return getExMobilSet() != null && getExMobilSet().size() > 1;
+		}
+
+		ExMovimentacao mov = getMovAssinatura();
+		if (mov == null)
+			return false;
+
+		List<DpPessoa> todosQueJaAssinaram = new ArrayList<DpPessoa>();
+
+		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
+			if (assinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+					|| assinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
+				todosQueJaAssinaram.add(assinatura.getSubscritor());
+		}
+
+		for (DpPessoa signatario : getSubscritorECosignatarios()) {
+			boolean encontrou = false;
+
+			for (DpPessoa jaAssinou : todosQueJaAssinaram) {
+				if (jaAssinou.equivale(signatario)) {
+					encontrou = true;
+					break;
+				}
+			}
+
+			if (!encontrou)
+				return false;
+		}
+
+		return true;
+	}
+	
+	/**
+	 * Verifica se todos os m√≥biles do documento est√£o eliminados.
 	 */
 	public boolean isArquivadoPermanente() {
 
@@ -2187,11 +2363,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se todos os mÛbiles do documento est„o eliminados.
+	 * Verifica se todos os m√≥biles do documento est√£o eliminados.
 	 */
 	public boolean isEliminado() {
 
-		// Edson: este mÈtodo, ainda mais nos lugares em que ele È chamado,
+		// Edson: este m√©todo, ainda mais nos lugares em que ele √© chamado,
 		// estava prejudicando a performance. Ver um jeito melhor de fazer
 		return false;
 		/*
@@ -2207,7 +2383,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se um documento j· foi transferido alguma vez
+	 * Verifica se um documento j√° foi transferido alguma vez
 	 */
 	public boolean jaTransferido() {
 		for (ExMovimentacao mov : getExMovimentacaoSet()) {
@@ -2224,7 +2400,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
-	 * Verifica se uma pessoa È subscritor ou cosignat·rio de um documento
+	 * Verifica se uma pessoa √© subscritor ou cosignat√°rio de um documento
 	 */
 	public boolean isSubscritorOuCosignatario(DpPessoa subscritor) {
 		for (DpPessoa signatario : getSubscritorECosignatarios()) {
@@ -2281,11 +2457,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	public void setConteudoBlobPdf(final byte[] conteudo) throws Exception {
 
-		// AtenÁ„o, n„o retirar esse teste nunca, pois ele È quem garante que o
-		// pdf n„o ser· refeito.
+		// Aten√ß√£o, n√£o retirar esse teste nunca, pois ele √© quem garante que o
+		// pdf n√£o ser√° refeito.
 		if (isAssinado() || isAssinadoDigitalmente())
 			throw new AplicacaoException(
-					"O conte˙do n„o pode ser alterado pois o documento j· est· assinado");
+					"O conte√∫do n√£o pode ser alterado pois o documento j√° est√° assinado");
 		setConteudoBlob("doc.pdf", conteudo);
 	}
 
@@ -2302,7 +2478,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 	/**
 	 * 
-	 * @return o id do ExNivelAcesso quando o ExNivelAcesso n„o for nulo.
+	 * @return o id do ExNivelAcesso quando o ExNivelAcesso n√£o for nulo.
 	 */
 	public Long getIdExNivelAcesso() {
 		log.info("Obtendo IdExNivelAcesso...");
@@ -2360,7 +2536,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			if (s.length() > 0)
 				s += ", ";
 			if (ExAcesso.ACESSO_PUBLICO.equals(o))
-				s += "P˙blico";
+				s += "P√∫blico";
 			else if (o instanceof CpOrgaoUsuario)
 				s += ((CpOrgaoUsuario) o).getSigla();
 			else if (o instanceof DpLotacao)

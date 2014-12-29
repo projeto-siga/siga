@@ -1,85 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<parent>
-		<groupId>siga</groupId>
-		<artifactId>play-dependencies</artifactId>
-		<version>1.1</version>
-		<relativePath>../pom-play.xml</relativePath>
-	</parent>
+  <parent>
+    <groupId>siga</groupId>
+    <artifactId>play-dependencies</artifactId>
+    <version>1.1</version>
+    <relativePath>../pom-play.xml</relativePath>
+  </parent>
 
-	<artifactId>sigasr</artifactId>
-	<modelVersion>4.0.0</modelVersion>
-	<packaging>play</packaging>
+  <artifactId>sigasr</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>play</packaging>
 
-	<dependencies>
-		<!-- Demais dependencias -->
-		<dependency>
-			<groupId>ar.com.fdvs</groupId>
-			<artifactId>DynamicJasper</artifactId>
-			<version>3.0.6</version>
-			<exclusions>
-				<exclusion>
-					<groupId>bouncycastle</groupId>
-					<artifactId>bcmail-jdk14</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>bouncycastle</groupId>
-					<artifactId>bcprov-jdk14</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>eclipse</groupId>
-					<artifactId>jdtcore</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+  <dependencies>
+    <!-- Demais dependencias -->
+    <dependency>
+      <groupId>ar.com.fdvs</groupId>
+      <artifactId>DynamicJasper</artifactId>
+      <version>3.0.6</version>
+      <exclusions>
+        <exclusion>
+          <groupId>bouncycastle</groupId>
+          <artifactId>bcmail-jdk14</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>bouncycastle</groupId>
+          <artifactId>bcprov-jdk14</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>eclipse</groupId>
+          <artifactId>jdtcore</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>siga-rel</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>siga-rel</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>net.objectlab.kit</groupId>
-			<artifactId>datecalc-joda</artifactId>
-			<version>1.2.0</version>
-		</dependency>
+    <dependency>
+      <groupId>net.objectlab.kit</groupId>
+      <artifactId>datecalc-joda</artifactId>
+      <version>1.2.0</version>
+    </dependency>
 
-		<dependency>
-			<groupId>de.jollyday</groupId>
-			<artifactId>jollyday</artifactId>
-			<version>0.4.7</version>
-		</dependency>
+    <dependency>
+      <groupId>de.jollyday</groupId>
+      <artifactId>jollyday</artifactId>
+      <version>0.4.7</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>2.3.20</version>
-		</dependency>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>2.3.20</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.zeroturnaround</groupId>
-			<artifactId>javarebel-sdk</artifactId>
-			<version>2.0.2</version>
-		</dependency>
+    <dependency>
+      <groupId>org.zeroturnaround</groupId>
+      <artifactId>javarebel-sdk</artifactId>
+      <version>2.0.2</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.beanshell</groupId>
-			<artifactId>bsh</artifactId>
-			<version>2.0b4</version>
-		</dependency>
+    <dependency>
+      <groupId>org.beanshell</groupId>
+      <artifactId>bsh</artifactId>
+      <version>2.0b4</version>
+    </dependency>
 
-		<dependency>
-			<groupId>backport-util-concurrent</groupId>
-			<artifactId>backport-util-concurrent</artifactId>
-			<version>3.1</version>
-		</dependency>
+    <dependency>
+      <groupId>backport-util-concurrent</groupId>
+      <artifactId>backport-util-concurrent</artifactId>
+      <version>3.1</version>
+    </dependency>
 
-	</dependencies>
+  </dependencies>
 </project>

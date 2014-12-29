@@ -1,0 +1,18 @@
+#{if solicitacao.isPendente()}
+	#{set podeTerminar:solicitacao.podeTerminarPendencia(lotaTitular, cadastrante) /}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Pendências</h3>
+			#{list items:solicitacao.pendenciasEmAberto, as:'pendencia'}
+				<p>
+					<b>${pendencia.motivoPendenciaString}</b>#{if pendencia.dtAgenda} at&eacute; ${pendencia.dtAgendaDDMMYYHHMM}#{/if} - ${pendencia.descrMovimentacao}
+					#{if podeTerminar}
+						<a href="javascript:terminarPendencia('${pendencia.idMovimentacao}');">
+							<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">
+						</a>
+					#{/if}
+				</p>
+			#{/list}
+		</div>
+	</div>
+	#{/if} 

@@ -14,8 +14,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
@@ -45,12 +47,12 @@ import utils.GcCloud;
 import utils.GcGraficoEvolucao;
 import utils.GcGraficoEvolucaoItem;
 import utils.GcInformacaoFiltro;
+import utils.GcLabelValue;
 import utils.diff_match_patch;
 import utils.diff_match_patch.Diff;
 import utils.diff_match_patch.Operation;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -62,16 +64,17 @@ import com.google.gson.GsonBuilder;
 
 public class Application extends SigaApplication{
 
+	private static final String CATEGORIA_OUTRAS = "[Outros]";
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 	private static final int CONTROLE_HASH_TAG = 1;
 
-	@Before(priority = 1)
+	@Before(priority = 1, unless = {"pontoDeEntrada"})
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
 	//	Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
-	@Before(priority = 2,unless = {"publicKnowledge", "dadosRI"})
+	@Before(priority = 2,unless = {"publicKnowledge", "dadosRI", "pontoDeEntrada"})
 	public static void addDefaults() throws Exception {
 		try {
 			SigaApplication.obterCabecalhoEUsuario("#f1f4e2");
@@ -97,8 +100,69 @@ public class Application extends SigaApplication{
 		List contagens = query.getResultList();
 		render(contagens);
 	}
-
 	
+	private static List<GcLabelValue> lCachePontoDeEntrada = null;
+	private static Date dtCachePontoDeEntrada = null;
+
+	public static void pontoDeEntrada(String texto) {
+		pontosDeEntradaAtualizarCache();
+		
+		List<GcLabelValue> l = new ArrayList<GcLabelValue>();
+
+		if (texto != null && texto.trim().length() > 0) {
+			texto = GcLabelValue.removeAcento(texto).trim().toLowerCase();
+			texto = texto.replace("  ", " ");
+			String[] palavras = texto.split(" ");
+			for (GcLabelValue lv : lCachePontoDeEntrada) {
+				if (lv.fts(palavras))
+					l.add(lv);
+			}
+		}
+		
+		if (l.size() == 0)
+			renderJSON("[]");
+		
+		renderJSON(l);
+	}
+
+	public static void pontosDeEntrada(String texto) {
+		pontosDeEntradaAtualizarCache();
+		
+		Map<String,SortedSet<GcLabelValue>> map = new TreeMap<String,SortedSet<GcLabelValue>>();
+		for (GcLabelValue lv : lCachePontoDeEntrada) {
+			String[] a = lv.getLabel().split(": ");
+			if (a.length == 2) {
+				if (!map.containsKey(a[0]))
+					map.put(a[0], new TreeSet<GcLabelValue>());
+				map.get(a[0]).add(lv);
+			} else if (a.length == 1) {
+				if (!map.containsKey(CATEGORIA_OUTRAS))
+					map.put(CATEGORIA_OUTRAS, new TreeSet<GcLabelValue>());
+				map.get(CATEGORIA_OUTRAS).add(lv);
+			}
+		}		
+		render(map);
+	}
+
+	private static void pontosDeEntradaAtualizarCache() {
+		if (lCachePontoDeEntrada == null || dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new Date())) {
+			synchronized (GcLabelValue.class) {
+				if (lCachePontoDeEntrada == null || dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new Date())) {
+					lCachePontoDeEntrada = new ArrayList<GcLabelValue>();
+					Query q = JPA.em().createNamedQuery("pontosDeEntrada");
+					q.setParameter("texto", "%");
+					List<Object[]> lista = q.getResultList();
+					for (Object[] ao : lista) {
+						GcInformacao i = (GcInformacao) ao[0];
+						GcArquivo a = (GcArquivo) ao[1];
+						lCachePontoDeEntrada.add(new GcLabelValue(a.titulo, i.getSigla()));
+					}
+					dtCachePontoDeEntrada = new Date(new Date().getTime() + 60000);
+				}
+			}
+		}
+	}
+
 	public static void publicKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo, boolean popup,
 			String estiloBusca) throws Exception {
@@ -107,15 +171,16 @@ public class Application extends SigaApplication{
 	}
 
 	public static void knowledge(Long id, String[] tags, String estilo,
-			String msgvazio, String urlvazio, String titulo, boolean popup,
-			String estiloBusca) throws Exception {
-		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, false,
-				popup, estiloBusca);
+			String msgvazio, String urlvazio, String titulo,
+			boolean testarAcesso, boolean popup, String estiloBusca)
+			throws Exception {
+		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca);
 	}
 
 	private static void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
-			boolean testarAcessoPublico, boolean popup, String estiloBusca)
+			boolean testarAcesso, boolean popup, String estiloBusca)
 			throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
@@ -137,8 +202,9 @@ public class Application extends SigaApplication{
 
 			info = GcInformacao.findById(idOutroConhecimento);
 
-			if (testarAcessoPublico
-					&& (info.visualizacao.id != GcAcesso.ACESSO_PUBLICO))
+			if (testarAcesso
+					&& !info.acessoPermitido(titular(), lotaTitular(),
+							info.visualizacao.id))
 				continue;
 
 			// o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
@@ -517,6 +583,27 @@ public class Application extends SigaApplication{
 							+ informacao.visualizacao.nome
 							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 	}
+	 
+	public static void exibirPontoDeEntrada(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		DpPessoa titular = titular();
+		DpLotacao lotaTitular = lotaTitular();
+		CpIdentidade idc = idc();
+
+		if (informacao.acessoPermitido(titular, lotaTitular,
+				informacao.visualizacao.id)) {
+			String conteudo = Util.marcarLinkNoConteudo(informacao.arq
+					.getConteudoTXT());
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+			GcBL.logarVisita(informacao, idc, titular, lotaTitular);
+			render(informacao);
+		} else
+			throw new AplicacaoException(
+					"Restrição de Acesso ("
+							+ informacao.visualizacao.nome
+							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
+	}
 
 	public static void editar(String sigla, String classificacao,
 			String titulo, String origem, String conteudo, GcTipoInformacao tipo)
@@ -535,9 +622,9 @@ public class Application extends SigaApplication{
 				|| informacao.podeRevisar(titular, lotaTitular)
 				|| informacao.acessoPermitido(titular, lotaTitular,
 						informacao.edicao.id)) {
-			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.all()
+			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.find("order by id")
 					.fetch();
-			List<GcAcesso> acessos = GcAcesso.all().fetch();
+			List<GcAcesso> acessos = GcAcesso.find("order by id").fetch();
 			if (titulo == null)
 				titulo = (informacao.arq != null) ? informacao.arq.titulo
 						: null;
@@ -548,7 +635,7 @@ public class Application extends SigaApplication{
 
 			if (tipo == null || tipo.id == 0)
 				tipo = (informacao.tipo != null) ? informacao.tipo
-						: tiposInformacao.get(2);
+						: tiposInformacao.get(0);
 
 			if (informacao.arq == null)
 				conteudo = (tipo.arq != null) ? tipo.arq.getConteudoTXT()
@@ -580,9 +667,17 @@ public class Application extends SigaApplication{
 			if (informacao.lotacao == null) {
 				informacao.lotacao = lotaTitular;
 			}
+			
+			boolean editarClassificacao = false;
+			try {
+				assertAcesso("EDTCLASS:Editar classificação");
+				editarClassificacao = true;
+			} catch (Exception e) {
+				//
+			}
 
 			render(informacao, tiposInformacao, acessos, titulo, conteudo,
-					classificacao, origem, tipo);
+					classificacao, origem, tipo, editarClassificacao);
 		} else
 			throw new AplicacaoException(
 					"Restri��o de Acesso ("
@@ -757,6 +852,11 @@ public class Application extends SigaApplication{
 		// Atualiza a classifica��o com as hashTags encontradas
 		classificacao = Util.findHashTag(conteudo, classificacao,
 				CONTROLE_HASH_TAG);
+		
+		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
+				&& informacao.grupo == null)
+			throw new Exception(
+					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restrição.");
 
 		if (informacao.id != 0)
 			GcBL.movimentar(informacao,
@@ -849,18 +949,15 @@ public class Application extends SigaApplication{
 		render(informacao);
 	}
 
-	public static void anexarGravar(GcInformacao informacao, String titulo,
-			File fake) throws Exception {
+	public static void gravarArquivo(GcInformacao informacao, String titulo,
+			File fake, String CKEditorFuncNum, String origem) throws Exception {
 		List<Upload> files = (List<Upload>) request.args.get("__UPLOADS");
-		DpPessoa titular = titular();
-		DpLotacao lotaTitular = lotaTitular();
-		CpIdentidade idc = idc();
 		if (files != null)
 			for (Upload file : files) {
 				if (file.getSize() > 2097152)
 					throw new AplicacaoException(
-							"O tamanho do arquivo � maior que o "
-									+ "m�ximo permitido (2MB)");
+							"O tamanho do arquivo � maior que o "
+									+ "m�ximo permitido (2MB)");
 				if (file.getSize() > 0) {
 					/*
 					 * ----Não pode ser usado porque o "plupload" retorna um
@@ -875,11 +972,22 @@ public class Application extends SigaApplication{
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
 							null, null, null, titulo, null, null, null, null,
 							anexo);
-					GcBL.gravar(informacao, idc, titular, lotaTitular);
+					GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 					renderText("success");
 				} else
 					throw new AplicacaoException(
 							"Nao e permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
+				if (origem.equals("editar")) {
+					long id = GcBL.gravarArquivoSemMovimentacao(file);
+					String url = "/sigagc/app/baixar?id=" + id;
+					renderHtml("<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('"
+									+ CKEditorFuncNum + "','" + url + "');</script>");	
+				}
+				else {
+					GcBL.gravarArquivoComMovimentacao(informacao, idc(), titular(), 
+								lotaTitular(), titulo, file);
+					renderText("success");
+				}
 			}
 	}
 
@@ -1061,16 +1169,16 @@ public class Application extends SigaApplication{
 		// "Content-Length", Integer.toString(ba.length)));
 	}
 
-	public static void selecionarSiga(String sigla, String tipo, String nome)
+	public static void selecionarSiga(String sigla, String prefixo, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/selecionar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
+		redirect("/siga/" + (prefixo != null ? prefixo + "/" : "") + tipo + "/selecionar.action?" + "propriedade="
+				+ tipo + nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
-	public static void buscarSiga(String sigla, String tipo, String nome)
+	public static void buscarSiga(String sigla, String prefixo, String tipo, String nome)
 			throws Exception {
-		proxy("/" + tipo + "/buscar.action?" + "propriedade=" + tipo + nome
-				+ "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
+		redirect("/siga/" + (prefixo != null ? prefixo + "/" : "") + tipo + "/buscar.action?" + "propriedade=" + tipo
+				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
 	public static void buscarSigaFromPopup(String tipo) throws Exception {

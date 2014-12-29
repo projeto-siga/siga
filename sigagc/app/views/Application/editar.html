@@ -6,6 +6,22 @@ function postback(){
 	frm.action = '@{Application.editar}';
 	frm.submit();
 }
+function ocultaGrupo(){
+	if ($("#informacaoVisualizacao").val() == 7
+			|| $("#informacaoEdicao").val() == 7){
+		$("#informacaoGrupo").show();
+	} else {
+		$("#informacaoGrupo").hide();
+		$("#informacaogrupo").val("");
+		$("#informacaogrupo_sigla").val("");
+		$("#informacaogrupo_descricao").val("");
+		$("#informacaogrupoSpan").text("");
+	}
+}
+$(document).ready(function() {
+	ocultaGrupo();
+	//$("#informacaoGrupo").left($("#informacaoVisualizacao").left());
+});
 </script>
 
 <div class="gt-bd gt-cols clearfix">
@@ -36,15 +52,14 @@ function postback(){
 					#{if informacao.edicao?.id == null || 
 						informacao.acessoPermitido(titular,lotaTitular, informacao.edicao?.id)}
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<label>Visualizacão</label>#{select name:'informacao.visualizacao',
+						<label>Visualizacão</label>#{select id:'informacaoVisualizacao', name:'informacao.visualizacao',
 						items:acessos, labelProperty:'nome', valueProperty:'id',
-						value:informacao.visualizacao?.id} #{/select}
-
+						value:informacao.visualizacao?.id, onchange:'javascript:ocultaGrupo();'} #{/select}
 					</div>
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<label>Edição</label>#{select name:'informacao.edicao',
+						<label>Edição</label>#{select id:'informacaoEdicao', name:'informacao.edicao',
 						items:acessos, labelProperty:'nome', valueProperty:'id',
-						value:informacao.edicao?.id} #{/select}
+						value:informacao.edicao?.id, onchange: 'javascript:ocultaGrupo();'} #{/select}
 
 					</div>
 					#{/if}
@@ -73,6 +88,11 @@ function postback(){
 						style="color: red">#{error 'informacao.lotacao' /}</span>
 				</div>}*
 
+				<div class="gt-form-row gt-width-100" id="informacaoGrupo" style="display: none">
+					<label>Grupo</label> #{selecao tipo:'perfil', prefixo:'gi',
+					nome:'informacao.grupo', value:informacao.grupo /}<span style="color: red">#{error
+						'informacao.grupo' /}</span>
+				</div>
 
 				<div class="gt-form-row gt-width-100">
 					<label>Título</label> <input type="text" id="titulo" name="titulo"
@@ -90,10 +110,10 @@ function postback(){
 				<div class="gt-form-row gt-width-100">
 					<label>Classificação</label>
 					#{if classificacao != null}
-						<textarea name="classificacao" class="gt-form-text" readonly>${classificacao}</textarea> 
+						<textarea name="classificacao" class="gt-form-text" #{if !editarClassificacao}readonly#{/if}>${classificacao}</textarea> 
 					#{/if}
 					#{else}
-						<p>Esse conhecimento ainda não possui uma classificação</p>
+						<p>Este conhecimento ainda não possui uma classificação</p>
 					#{/else}
 					<span style="color: red">#{error 'classificacao' /}</span>
 				</div>
@@ -263,7 +283,10 @@ function postback(){
 	//CKEDITOR.config.autoGrow_maxHeight = 400;
 	CKEDITOR.config.removePlugins = 'elementspath'; 
 	CKEDITOR.config.image_previewText = ' ';
-	CKEDITOR.replace( 'conteudo', {
+	CKEDITOR.config.height = 270;
+	CKEDITOR.config.removeDialogTabs = 'link:advanced;link:upload;image:advanced;image:Link';
+	CKEDITOR.replace('conteudo', {
+		filebrowserUploadUrl: '@{Application.gravarArquivo}?origem=editar',
 		toolbar: [
 		    	{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
 		    	{ name: 'editing', groups: [ 'find', 'selection'], items: [ 'Find', 'Replace', '-', 'SelectAll'] },

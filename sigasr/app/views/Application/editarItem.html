@@ -61,16 +61,35 @@
 </style>
 
 <script>
+	var jGestores = null,
+		gestores = null,
+		jDialog = null,
+		dialog = null,
+		jSelect = null,
+		jFatores = null,
+	    fatores = null,
+	    jDialogFator = null,
+	    dialogFator = null,
+	    jSelectFator = null,
+	    jNumFatorMult = null,
+		validatorFormItem = null,
+		validatorFormGestor = null,
+		validatorFormFator = null;
+	
 	jQuery(document).ready(function($) {
 		$("#itemConfiguracaoSigla").mask("99.99.99");
+		
+		validatorFormItem = $("#formItemConfiguracao").validate();
+	    validatorFormGestor = $("#formGestor").validate();
+	    validatorFormFator = $("#formFator").validate();
 
-		// POPUP PARA ADICIONAR UM GESTOR
-	    var jGestores = $("#gestoresUl"),
-	    gestores = jGestores[0],
-	    jDialog = $("#dialog"),
-	    dialog = jDialog[0],
+	 	// POPUP PARA ADICIONAR UM GESTOR
+	    jGestores = $("#gestoresUl");
+	    gestores = jGestores[0];
+	    jDialog = $("#dialog");
+	    dialog = jDialog[0];
 	    jSelect = $("#gestorpessoagestorlotacao");
-	
+
 	    $( "#gestoresUl" ).sortable({placeholder: "ui-state-highlight"});
 	    $( "#gestoresUl" ).disableSelection();
 	  
@@ -92,6 +111,8 @@
 	        	$("#gestorpessoaSpan").html('');  
 	        	$("#gestorlotacaoSpan").html('');  
 	            jDialog.data('gestorSet','');
+
+	            validatorFormGestor.resetForm();
 	        },
 	      	open: function(){
 	          	if (jDialog.data("gestorSet"))
@@ -100,24 +121,7 @@
 	              	jDialog.dialog('option', 'title', 'Incluir Gestor');  
 	      	}
 	    });
-	
-	    $("#modalOk").click(function(){
-	    	var acao = jDialog.data('acao');
-	    	var jTipoEscolhido = jSelect.find("option:selected");
-	       
-			if(jTipoEscolhido.val() == 1) {
-				acao($("#gestorpessoa_sigla").val(), $("#gestorpessoa_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
-	       	} else if (jTipoEscolhido.val() == 2) {
-	       		acao($("#gestorlotacao_sigla").val(), $("#gestorlotacao_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
-			}
-	       
-			jDialog.dialog('close');
-		});
-	
-	    $("#modalCancel").click(function(){
-	    	jDialog.dialog('close');
-		});
-	
+
 	    gestores["index"] = 0;
 	    gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
 			if (!id)
@@ -137,20 +141,20 @@
 	            jNewTr.find("img").css("visibility", "hidden");
 	       	});
 		}
-	
+
 	    gestores.removerItem = function(idItem){
 	        $("#"+idItem).remove();
 	        gestores["index"]--;
 		}
-	
+
 	   	//POPUP PARA ADICIONAR UM FATOR DE MULTIPLICAÇÃO E SOLICITANTE
-	    var jFatores = $("#fatoresUl"),
-	    fatores = jFatores[0],
-	    jDialogFator = $("#dialogFator"),
-	    dialogFator = jDialogFator[0],
+	    jFatores = $("#fatoresUl");
+	    fatores = jFatores[0];
+	    jDialogFator = $("#dialogFator");
+	    dialogFator = jDialogFator[0];
 	    jSelectFator = $("#fatorpessoafatorlotacao");
 	    jNumFatorMult = $("#numfatorMult");
-	
+
 	    $( "#fatoresUl" ).sortable({placeholder: "ui-state-highlight"});
 	    $( "#fatoresUl" ).disableSelection();
 	   
@@ -173,46 +177,26 @@
 	        	$("#fatorpessoaSpan").html('');  
 	        	$("#fatorlotacaoSpan").html('');  
 	        	jDialogFator.data('fatorMultiplicacaoSet','');
+
+	        	validatorFormFator.resetForm();
 	    	}, 
 	    	open: function(){
 	        	$('#erroNumFatorMult').hide();
-	
+
 	        	if (jDialogFator.data("gestorSet"))
 	            	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
 	            else
 	              	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
 	           	}
 	    });
-	    
-	    $("#modalOkFator").click(function() {
-	        var acaoFator = jDialogFator.data('acaoFator');
-	        var jTipoEscolhidoFator = jSelectFator.find("option:selected");
-	        var numFatorMult = $('#numfatorMult');
-	
-	        if(numFatorMult.val() > 0) {
-	            if(jTipoEscolhidoFator.val() == 1) {
-	                acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
-	            } else if (jTipoEscolhidoFator.val() == 2) {
-	                acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
-	            }
-	            
-	        	  jDialogFator.dialog('close');
-	        } else {
-	            $('#erroNumFatorMult').show();
-	        }
-	    });
-	    
-	    $("#modalCancelFator").click(function(){
-	        jDialogFator.dialog('close');
-	    });
-	
+
 	    fatores["index"] = 0;
 	    fatores.incluirItem = function( siglaSolicitante, nomeSolicitante, numFator, tipoFator, idDerivadoFator, idF){
 	        if (!idF)
 	            idF = 'novo_fator' + ++fatores["index"];
-	
+
 	        jFatores.append("<li style=\"cursor: move\" id =\"" + idF + "\"></li>");
-	
+
 	        var jNewFatorTr = jFatores.find("li:last-child");
 	        jNewFatorTr.append("<span id=\"" + tipoFator + "\">" + siglaSolicitante + "-" 
 	 	      	+ nomeSolicitante + "</span> <span style=\"display: inline-block\" id=\"" + idDerivadoFator + "\"> / Fator: "
@@ -221,23 +205,68 @@
 	        jNewFatorTr.find("img:eq(0)").click(function(){
 	            fatores.removerItemFator(jNewFatorTr.attr("id"));
 	        });
-	
+
 	        jNewFatorTr.mouseover(function(){
 	            jNewFatorTr.find("img").css("visibility", "visible");
 	        });
-	
+
 	        jNewFatorTr.mouseout(function(){
 	            jNewFatorTr.find("img").css("visibility", "hidden");
 	        });
 	    };
-	
+
 	    fatores.removerItemFator = function(idItemF){
 	        $("#"+idItemF).remove();
 	        fatores["index"]--;
 	    };
-
-	    $("#formItemConfiguracao").validate();
 	});
+
+    $("#modalOk").click(function(){
+        if (!jQuery("#formGestor").valid())
+            return false;
+        
+    	var acao = jDialog.data('acao');
+    	var jTipoEscolhido = jSelect.find("option:selected");
+       
+		if(jTipoEscolhido.val() == 1) {
+			acao($("#gestorpessoa_sigla").val(), $("#gestorpessoa_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
+       	} else if (jTipoEscolhido.val() == 2) {
+       		acao($("#gestorlotacao_sigla").val(), $("#gestorlotacao_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
+		}
+       
+		jDialog.dialog('close');
+	});
+
+    $("#modalCancel").click(function(){
+    	jDialog.dialog('close');
+    	validatorFormGestor.resetForm();
+	});
+
+    $("#modalOkFator").click(function() {
+        if (!jQuery("#formFator").valid())
+            return false;
+        
+        var acaoFator = jDialogFator.data('acaoFator');
+        var jTipoEscolhidoFator = jSelectFator.find("option:selected");
+        var numFatorMult = $('#numfatorMult');
+
+        if(numFatorMult.val() > 0) {
+            if(jTipoEscolhidoFator.val() == 1) {
+                acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
+            } else if (jTipoEscolhidoFator.val() == 2) {
+                acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
+            }
+            
+        	  jDialogFator.dialog('close');
+        } else {
+            $('#erroNumFatorMult').show();
+        }
+    });
+    
+    $("#modalCancelFator").click(function(){
+        jDialogFator.dialog('close');
+        validatorFormFator.resetForm();
+    });
 
 	function serializarItemConfiguracao() {
 		// UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICAÇÃO
@@ -408,44 +437,52 @@
 
 <div id="dialog">
 	<div class="gt-content">
-		<div class="gt-form gt-content-box">
-			<div class="gt-form-row ">
-				<label>Gestor: </label>
-				<div id="divGestor">#{pessoaLotaSelecao
-					nomeSelPessoa:'gestor.pessoa', nomeSelLotacao:'gestor.lotacao',
-					valuePessoa:pessoaAtual, valueLotacao:lotacaoAtual,
-					disabled:disabled /}</div>
+		<form id="formGestor">
+			<div class="gt-form gt-content-box">
+				<div class="gt-form-row">
+					<label>Gestor: </label>
+					<div id="divGestor">#{pessoaLotaSelecao
+						nomeSelPessoa:'gestor.pessoa', nomeSelLotacao:'gestor.lotacao',
+						valuePessoa:pessoaAtual, valueLotacao:lotacaoAtual,
+						disabled:disabled,
+						requiredValue:'required' /}</div>
+				</div>
+				<div class="gt-form-row">
+					<input type="button" id="modalOk" value="Ok"
+						class="gt-btn-medium gt-btn-left" /> <input type="button"
+						value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+				</div>
 			</div>
-			<div class="gt-form-row">
-				<input type="button" id="modalOk" value="Ok"
-					class="gt-btn-medium gt-btn-left" /> <input type="button"
-					value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
-			</div>
-		</div>
+		</form>
 	</div>
 </div>
 
 <div id="dialogFator">
 	<div class="gt-content">
-		<div class="gt-form gt-content-box">
-			<div class="gt-form-row ">
-				<label>Solicitante: </label>
-				<div id="divFator">#{pessoaLotaSelecao
-					nomeSelPessoa:'fator.pessoa', nomeSelLotacao:'fator.lotacao',
-					valuePessoa:pessoaAtual, valueLotacao:lotacaoAtual,
-					disabled:disabled /}</div>
+		<form id="formFator">
+			<div class="gt-form gt-content-box">
+				<div class="gt-form-row ">
+					<label>Solicitante: </label>
+					<div id="divFator">#{pessoaLotaSelecao
+						nomeSelPessoa:'fator.pessoa', nomeSelLotacao:'fator.lotacao',
+						valuePessoa:pessoaAtual, valueLotacao:lotacaoAtual,
+						disabled:disabled,
+						requiredValue:'required'/}</div>
+				</div>
+				<div class="gt-form-row ">
+					<label>Fator de Multiplicação: </label>
+					<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
+						   type="text" name="numfatorMult" value="1" size="43" maxlength="9"
+						   required 
+						   min="1"/>
+						   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
+				</div>
+				<div class="gt-form-row">
+					<input type="button" id="modalOkFator" value="Ok"
+						class="gt-btn-medium gt-btn-left" /> <input type="button"
+						value="Cancelar" id="modalCancelFator" class="gt-btn-medium gt-btn-left" />
+				</div>
 			</div>
-			<div class="gt-form-row ">
-				<label>Fator de Multiplicação: </label>
-				<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-					   type="text" name="numfatorMult" value="1" size="43" maxlength="9" />
-					   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
-			</div>
-			<div class="gt-form-row">
-				<input type="button" id="modalOkFator" value="Ok"
-					class="gt-btn-medium gt-btn-left" /> <input type="button"
-					value="Cancelar" id="modalCancelFator" class="gt-btn-medium gt-btn-left" />
-			</div>
-		</div>
+		</form>
 	</div>
 </div>

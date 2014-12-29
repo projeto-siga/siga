@@ -272,7 +272,9 @@
 	function resetAllErrorMessage() {
 		document.getElementById("erroCamposObrigatorios").style.display="none";
 
-		$('.error').remove();
+		// limpa as validações do form
+		validatorFormItem.resetForm();
+		$('span.error').remove();
 	}
 
 	function removerItensLista(nomeLista) {

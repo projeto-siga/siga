@@ -31,10 +31,8 @@
  		<module>sigacd</module>
  		<module>siga-cd</module>
  		<module>siga-cd-aut</module>
-		<!-- <module>sigari</module>   
-			 <module>siga-autenticidade</module>  
-			<module>siga-cp-sinc</module> 
-			<module>siga-assinador</module> <module>siga-dump</module> -->
+ 		<module>siga-cp-sinc</module> 
+ 		<module>siga-dump</module>
 	</modules>
 
 
@@ -293,6 +291,7 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.11</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.jettison</groupId>

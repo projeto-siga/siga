@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.cd.service.impl.test;
+package br.gov.jfrj.siga.cd.service.impl;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,8 +25,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import junit.framework.TestCase;
-import br.gov.jfrj.siga.Service;
-import br.gov.jfrj.siga.cd.service.impl.CdServiceImpl;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 

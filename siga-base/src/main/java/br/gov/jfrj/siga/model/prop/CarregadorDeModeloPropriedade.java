@@ -20,7 +20,6 @@ package br.gov.jfrj.siga.model.prop;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
@@ -112,7 +111,8 @@ public class CarregadorDeModeloPropriedade {
 
 		// tentar carregar propriedades a partir diretorio do programa
 		try {
-			return carregarPropriedadesArquivoEspecifico("./" + NOME_ARQ_PROPS);
+			String diretorioProperties = "C:"+File.separatorChar+"Desenvolvimento"+File.separatorChar+"jboss-eap-6.2.3"+File.separatorChar+"standalone"+File.separatorChar+"properties"+File.separatorChar+"";
+			return carregarPropriedadesArquivoEspecifico(diretorioProperties + NOME_ARQ_PROPS);
 		} catch (Exception e) {
 
 		}

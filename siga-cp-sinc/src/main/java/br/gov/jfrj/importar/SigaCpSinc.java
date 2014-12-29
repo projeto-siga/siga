@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -111,6 +111,8 @@ public class SigaCpSinc {
 	private String dataHora;
 
 	private String versao;
+	
+	List<Item> list;
 
 	/*
 	 * // para compatibilizar os arquivos novos e antigos
@@ -148,7 +150,7 @@ public class SigaCpSinc {
 	//
 	@SuppressWarnings("static-access")
 	public void gravar(Date dt) throws Exception {
-		List<Item> list;
+		//List<Item> list;
 		Sincronizador sinc = new Sincronizador();
 		try {
 			sinc.religarListaPorIdExterna(setNovo);
@@ -448,7 +450,7 @@ public class SigaCpSinc {
 
 	public void run() throws Exception, NamingException,
 			AplicacaoException {
-		AnnotationConfiguration cfg;
+		Configuration cfg;
 		if (servidor.equals("prod"))
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.PRODUCAO);
 		else if (servidor.equals("homolo"))
@@ -460,7 +462,7 @@ public class SigaCpSinc {
 		else
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
 
-		HibernateUtil.configurarHibernate(cfg, "");
+		HibernateUtil.configurarHibernate(cfg);
 
 		verificarOrigemDeDados();
 
@@ -1194,10 +1196,9 @@ public class SigaCpSinc {
 		if (maxSinc != -1 && list != null && (list.size() > maxSinc)){
 			logHandler.setAssunto("Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente.");
 		}
-		texto = texto + sbLog.toString();
-		Correio.enviar(
-				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
-				destinatarios, "Log de importação", texto, null);
+		
+		logHandler.setDestinatariosEmail(sDest.split(","));
+
 	}
 
 	private Date parseData(XmlPullParser parser, String campo) {

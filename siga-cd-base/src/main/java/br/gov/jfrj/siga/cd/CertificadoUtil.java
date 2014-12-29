@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cd;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -28,12 +29,13 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
 
 public class CertificadoUtil {
 	/**
@@ -44,29 +46,28 @@ public class CertificadoUtil {
 	 *            O dado em ASN.1.
 	 * @return Um par contendo o OID e o conteúdo.
 	 */
-	@SuppressWarnings("unchecked")
-	public static Pair<DERObjectIdentifier, String> getOtherName(byte[] encoded)
+	public static Pair<ASN1ObjectIdentifier, String> getOtherName(byte[] encoded)
 			throws IOException {
 		// O JDK 5.0 não tem classes que lidem com um dado do tipo OtherName.
 		// É necessário usar o BouncyCastle.
-		ASN1InputStream inps = new ASN1InputStream(encoded);
-		DERSequence seq = null;
-		DERObjectIdentifier oid = null;
+		ASN1InputStream inps = new ASN1InputStream(new ByteArrayInputStream(encoded));
+		ASN1Sequence seq = null;
+		ASN1ObjectIdentifier oid = null;
 		String conteudo = "";
-		seq = (DERSequence) inps.readObject();
+		
+		DERTaggedObject tag = (DERTaggedObject) inps.readObject();
 		inps.close();
+		
 		Enumeration en = seq.getObjects();
-		oid = (DERObjectIdentifier) en.nextElement();
-		ASN1Primitive obj = ((ASN1TaggedObject) ((ASN1TaggedObject) en
-				.nextElement()).getObject()).getObject();
+		oid = (ASN1ObjectIdentifier) en.nextElement();
+		ASN1Primitive obj = ((ASN1TaggedObject) ((ASN1TaggedObject) en.nextElement()).getObject()).getObject();
 		if (obj instanceof ASN1String) { // Certificados antigos SERASA -
 			// incorretos
 			conteudo = ((ASN1String) obj).getString();
-		} else if (obj instanceof DEROctetString) { // Certificados corretos
-			conteudo = new String(((DEROctetString) obj).getOctets(),
-					"ISO-8859-1");
+		} else if (obj instanceof ASN1OctetString) { // Certificados corretos
+			conteudo = new String(((ASN1OctetString) obj).getOctets(),"ISO-8859-1");
 		}
-		return new Pair<DERObjectIdentifier, String>(oid, conteudo);
+		return new Pair<ASN1ObjectIdentifier, String>(oid, conteudo);
 	}
 
 	/**
@@ -83,7 +84,7 @@ public class CertificadoUtil {
 		Properties props = new Properties();
 		for (List<?> subjectAlternativeName : cert.getSubjectAlternativeNames()) {
 			String email;
-			Pair<DERObjectIdentifier, String> otherName;
+			Pair<ASN1ObjectIdentifier, String> otherName;
 			@SuppressWarnings("unused")
 			int pos;
 

@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.cd.service.impl.test;
+package br.gov.jfrj.siga.cd.service.impl;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -35,9 +35,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cd.AssinaturaDigital;
 import br.gov.jfrj.siga.cd.ChainValidationException;
-import br.gov.jfrj.siga.cd.service.impl.CdServiceImpl;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
@@ -101,12 +99,10 @@ public class CdServiceImplTest extends TestCase {
 
 		// Erro pois foi informada o hash errado
 		s = c.validarAssinatura(HASH_SHA1_WRONG, PKCS7, SIGNING_DATE, false);
-		assertTrue(s.startsWith(Service.ERRO)
-				&& s.contains("Assinatura inválida"));
+		assertTrue(s.startsWith(Service.ERRO) && s.contains("Assinatura inválida"));
 
 		// Data de assinatura é posterior a data atual.
-		s = c.validarAssinatura(HASH_SHA1, PKCS7, new Date(
-				new Date().getTime() + 3600), false);
+		s = c.validarAssinatura(HASH_SHA1, PKCS7, new Date(new Date().getTime() + 3600), false);
 		assertTrue(s.startsWith(Service.ERRO));
 
 		// Não é possível validar CRLs se a assinatura for antiga (anterior ao

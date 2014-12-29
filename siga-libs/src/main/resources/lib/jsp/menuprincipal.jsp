@@ -157,12 +157,12 @@
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERFIL:Gerenciar perfis de acesso')}">
-							<li><ww:a href="/siga/gi/perfil/listar.action">Perfil de Acesso</ww:a>
+							<li><ww:a href="/siga/app/gi/perfil/listar">Perfil de Acesso</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERFILJEE:Gerenciar perfis do JEE')}">
-							<li><ww:a href="/siga/gi/perfiljee/listar.action">Perfil de Acesso do JEE</ww:a>
+							<li><ww:a href="/siga/app/gi/perfiljee/listar">Perfil de Acesso do JEE</ww:a>
 							</li>
 						</c:if>
 						<c:if 						

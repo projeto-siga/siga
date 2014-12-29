@@ -27,8 +27,9 @@ function sbmt(nivel){
 					</tr>
 					<tr>
 						<td><input type="hidden" name="nome" value="${nome}" />
-							<input type="hidden" name="sol.solicitante" value="${sol.solicitante}" />
-							<input type="hidden" name="sol.local" value="${sol.local}" />
+							<input type="hidden" name="sol.solicitante" value="${sol.solicitante?.idPessoa}" />
+							<input type="hidden" name="sol.cadastrante" value="${sol.cadastrante?.idPessoa}" />
+							<input type="hidden" name="sol.local" value="${sol.local?.idComplexo}" />
 							<input
 							type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" />
 						</td>

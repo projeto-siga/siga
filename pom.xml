@@ -30,7 +30,9 @@
  		<module>sigapp</module>
  		<module>sigacd</module>
  		<module>siga-cd</module>
+ 		<!--
  		<module>siga-cd-aut</module>
+ 		-->
  		<module>siga-cp-sinc</module> 
  		<module>siga-dump</module>
 	</modules>

@@ -4,9 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
-<ww:url id="urlEmitir" action="emitir_historico_usuario"
-	namespace="/gi/relatorio" />
+
 
 <siga:pagina titulo="Relatório de Histórico de Permissões do Usuário">
 	<div class="gt-bd clearfix">
@@ -44,7 +42,7 @@ function submeter() {
 	var t_strIdPessoa = document.getElementsByName("pessoa_pessoaSel.id")[0];
 	if (t_strIdPessoa) {
 		if (t_strIdPessoa.value) {
-			location.href = '${urlEmitir}?idPessoa=' + t_strIdPessoa.value;
+			location.href = 'emitir_historico_usuario?idPessoa=' + t_strIdPessoa.value;
 			setTimeout( 
 					function () {
 						exibirAguarde();

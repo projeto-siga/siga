@@ -443,6 +443,9 @@
 	};
 	
 	function gravarDesignacao() {
+		if (!jQuery("#formDesignacao").valid())
+			return false;
+		
 		// recupera as comboboxes
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],

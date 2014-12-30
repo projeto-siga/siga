@@ -58,6 +58,7 @@
 #{/modal}
 
 <script type="text/javascript">
+	var validatorAcaoForm;
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
 		// the return value is assigned to QueryString!
@@ -136,6 +137,7 @@
 				"sortable" : false
 			}]
 		});
+		validatorAcaoForm = $("#acaoForm").validate();
 	});
 
 	// Define a "classe" AcaoService

@@ -111,7 +111,7 @@ BaseService.prototype.errorHandler = function(error) {
  * Remove as mensagens de erro na tela
  */
 BaseService.prototype.removerErros = function() {
-	$('.error').remove();
+	$('span.error').remove();
 }
 /**
  * Desativa o registro
@@ -154,6 +154,9 @@ BaseService.prototype.cadastrar = function(title) {
  * Executa a acao de gravar o registro
  */
 BaseService.prototype.gravar = function() {
+	if (!this.isValidForm())
+		return false;
+	
 	var service = this,
 		obj = this.getObjetoParaGravar(),
 		url = this.opts.urlGravar,
@@ -249,4 +252,8 @@ BaseService.prototype.indiceAcoes = function(data) {
 			return i;
 	}
 	return -1;
+}
+
+BaseService.prototype.isValidForm = function() {
+    return jQuery(opts.formCadastro).valid();
 }

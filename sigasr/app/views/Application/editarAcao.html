@@ -1,4 +1,6 @@
 #{extends 'main.html' /} #{set title:'Edição de Ação' /}
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
 <div class="gt-form gt-content-box">
 	<form id="acaoForm">
@@ -9,12 +11,12 @@
 			preenchidos ${error}</p>
 		#{/ifErrors}
 		<div class="gt-form-row gt-width-66">
-			<label>Código</label> 
-			<input type="text" name="siglaAcao" maxlength="255"/>
+			<label>Código <span>*</span></label> 
+			<input type="text" name="siglaAcao" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Título</label> <input type="text"
-				name="tituloAcao" size="100" maxlength="255"/>
+			<label>Título <span>*</span></label> <input type="text"
+				name="tituloAcao" size="100" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Descrição</label> <input type="text"
@@ -54,3 +56,11 @@
 		</div>
 	</form>
 </div>
+
+<script language="javascript">
+	var validatorFormAcao;
+
+	$( document ).ready(function( ) {
+		validatorFormAcao = $("#acaoForm").validate();
+	});
+</script>

@@ -1,3 +1,5 @@
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 <style>
 #sortable ul {
         height: 1.5em;
@@ -92,6 +94,7 @@
 	    $('#acao_table tbody').on( 'click', 'a.acao_remove', function () {
 	    	acaoTable.api().row($(this).closest('tr')).remove().draw(false);
 	    } );
+	    $("#formDesignacao").validate();
 	});
 	
 	function modalAbrir(componentId) {
@@ -166,184 +169,191 @@
 </script>
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
-	<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
-	<div>
-		<div class="gt-form-row">
-			<label>Descrição</label>
-			<input id="descrConfiguracao"
-				   type="text"
-				   name="descrConfiguracao"
-				   value="${descrConfiguracao}"
-				   maxlength="255"
-				   style="width: 791px;"/> 
-			<span style="display:none;color: red" id="designacao.descrConfiguracao">Descrição não informada.</span>
-		</div>
-		<div class="gt-form-row box-wrapper">
-			<div id="divSolicitante" class="box box-left gt-width-50">
-				<label>Solicitante</label>
-				#{pessoaLotaFuncCargoSelecao
-					nomeSelLotacao:'lotacao',
-					nomeSelPessoa:'dpPessoa',
-					nomeSelFuncao:'funcaoConfianca',
-					nomeSelCargo:'cargo',
-					nomeSelGrupo:'cpGrupo',
-					valuePessoa:dpPessoa?.pessoaAtual,
-					valueLotacao:lotacao?.lotacaoAtual,
-					valueFuncao:funcaoConfianca,
-					valueCargo:cargo,
-					valueGrupo:cpGrupo,
-					disabled:disabled /}
+	<form id="formDesignacao">
+		<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
+		<div>
+			<div class="gt-form-row">
+				<label>Descrição <span>*</span></label>
+				<input id="descrConfiguracao"
+					   type="text"
+					   name="descrConfiguracao"
+					   value="${descrConfiguracao}"
+					   maxlength="255"
+					   style="width: 791px;"
+					   required/> 
+				<span style="display:none;color: red" id="designacao.descrConfiguracao">Descrição não informada.</span>
 			</div>
-			<div class="box gt-width-50">
-				<label>Órgão</label> 
-				#{select name:'orgaoUsuario', 
-					items:_orgaos, 
-					valueProperty:'idOrgaoUsu',
-					labelProperty:'nmOrgaoUsu',
-					value:orgaoUsuario?.idOrgaoUsu,
-					class:'select-siga',
-					style:'width: 100%;'}
-				#{option 0}Nenhum#{/option} 
-				#{/select}
-			</div>
-		</div>
-		
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left gt-width-50">
-				<label>Local</label> 
-				#{select name:'complexo', 
-					items:_locais, 
-					valueProperty:'idComplexo',
-					labelProperty:'nomeComplexo', 
-					value:complexo?.idComplexo,
-					class:'select-siga',
-					style:'width: 100%'}
-					#{option 0}Nenhum#{/option} 
-				#{/select}
-			</div>
-			<div class="box gt-width-50">
-				<label>Atendente</label>#{selecao
-					tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.atendente">Atendente não informado;</span>
-			</div>
-		</div>	
-			
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left gt-width-50">
-				<label>Pré-atendente</label>#{selecao
-					tipo:'lotacao', nome:'preAtendente',
-					value:preAtendente?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.preAtendente">Pré-Atendente não informado.</span>
-			</div>
-
-			<div class="box gt-width-50">
-				<label>Pós-atendente</label> #{selecao
-					tipo:'lotacao', nome:'posAtendente',
-					value:posAtendente?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.posAtendente">Pós-Atendente não informado.</span>
-			</div>
-		</div>
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left gt-width-50">
-				<label>Equipe de Qualidade</label> #{selecao
-					tipo:'lotacao', nome:'equipeQualidade',
-					value:equipeQualidade?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.equipeQualidade">Equipe de qualidade não informada.</span>
-			</div>
-			<div class="box gt-width-50">
-				<label>Pesquisa de satisfação</label> 
-					#{select name:'pesquisaSatisfacao', 
-						items:_pesquisaSatisfacao, 
-						valueProperty:'idPesquisa',
-						labelProperty:'nomePesquisa', 
-						value:pesquisaSatisfacao?.idPesquisa,
+			<div class="gt-form-row box-wrapper">
+				<div id="divSolicitante" class="box box-left gt-width-50">
+					<label>Solicitante</label>
+					#{pessoaLotaFuncCargoSelecao
+						nomeSelLotacao:'lotacao',
+						nomeSelPessoa:'dpPessoa',
+						nomeSelFuncao:'funcaoConfianca',
+						nomeSelCargo:'cargo',
+						nomeSelGrupo:'cpGrupo',
+						valuePessoa:dpPessoa?.pessoaAtual,
+						valueLotacao:lotacao?.lotacaoAtual,
+						valueFuncao:funcaoConfianca,
+						valueCargo:cargo,
+						valueGrupo:cpGrupo,
+						disabled:disabled /}
+				</div>
+				<div class="box gt-width-50">
+					<label>Órgão</label> 
+					#{select name:'orgaoUsuario', 
+						items:_orgaos, 
+						valueProperty:'idOrgaoUsu',
+						labelProperty:'nmOrgaoUsu',
+						value:orgaoUsuario?.idOrgaoUsu,
 						class:'select-siga',
 						style:'width: 100%;'}
-						#{option 0}Nenhuma#{/option} 
+					#{option 0}Nenhum#{/option} 
 					#{/select}
+				</div>
 			</div>
-		</div>
-
-		<hr/>
-		<div class="gt-content">
-			<label>Itens de Configuração</label>
-			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
-				<table id="itemConfiguracao_table" border="0" class="gt-table-nowrap display">
-					<thead>
-						<tr>
-							<th >ID</th>
-							<th>Sigla</th>
-							<th>Titulo</th>
-							<th>Descrição</th>
-							<th>Itens Similares</th>
-							<th></th>
-						</tr>
-					</thead>
-					
-					<tbody>
-						#{list items:itemConfiguracaoSet, as:'item'}
-						<tr>
-							<td>${item?.id }</td>
-							<td>${item?.sigla}</td>
-							<td>${item?.tituloItemConfiguracao}</td>
-							<td>${item?.descricao }</td>
-							<td>${item?.descricaoSimilaridade }</td>
-							<td><a class="itemConfiguracao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
-						</tr>
-						#{/list}
-					</tbody>
-				</table>
+			
+			<div class="gt-form-row box-wrapper">
+				<div class="box box-left gt-width-50">
+					<label>Local</label> 
+					#{select name:'complexo', 
+						items:_locais, 
+						valueProperty:'idComplexo',
+						labelProperty:'nomeComplexo', 
+						value:complexo?.idComplexo,
+						class:'select-siga',
+						style:'width: 100%'}
+						#{option 0}Nenhum#{/option} 
+					#{/select}
+				</div>
+				<div class="box gt-width-50">
+					<label>Atendente <span>*</span></label>#{selecao
+						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual,
+						requiredValue:'required' /}
+					<span style="display:none;color: red" id="designacao.atendente">Atendente não informado;</span>
+				</div>
+			</div>	
+				
+			<div class="gt-form-row box-wrapper">
+				<div class="box box-left gt-width-50">
+					<label>Pré-atendente <span>*</span></label>#{selecao
+						tipo:'lotacao', nome:'preAtendente',
+						value:preAtendente?.lotacaoAtual,
+						requiredValue:'required' /}
+					<span style="display:none;color: red" id="designacao.preAtendente">Pré-Atendente não informado.</span>
+				</div>
+	
+				<div class="box gt-width-50">
+					<label>Pós-atendente <span>*</span></label> #{selecao
+						tipo:'lotacao', nome:'posAtendente',
+						value:posAtendente?.lotacaoAtual,
+						requiredValue:'required' /}
+					<span style="display:none;color: red" id="designacao.posAtendente">Pós-Atendente não informado.</span>
+				</div>
 			</div>
-			<div class="gt-table-buttons">
-				<a href="javascript: modalAbrir('itemConfiguracao')" class="gt-btn-small gt-btn-left">Incluir</a>
+			<div class="gt-form-row box-wrapper">
+				<div class="box box-left gt-width-50">
+					<label>Equipe de Qualidade <span>*</span></label> #{selecao
+						tipo:'lotacao', nome:'equipeQualidade',
+						value:equipeQualidade?.lotacaoAtual,
+						requiredValue:'required' /}
+					<span style="display:none;color: red" id="designacao.equipeQualidade">Equipe de qualidade não informada.</span>
+				</div>
+				<div class="box gt-width-50">
+					<label>Pesquisa de satisfação</label> 
+						#{select name:'pesquisaSatisfacao', 
+							items:_pesquisaSatisfacao, 
+							valueProperty:'idPesquisa',
+							labelProperty:'nomePesquisa', 
+							value:pesquisaSatisfacao?.idPesquisa,
+							class:'select-siga',
+							style:'width: 100%;'}
+							#{option 0}Nenhuma#{/option} 
+						#{/select}
+				</div>
 			</div>
-		</div>
-		
-		<hr/>
-		<div class="gt-form-row">
-			<label>Ações</label>
-			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
-				<table id="acao_table" border="0" class="gt-table display">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Sigla</th>
-							<th>Título</th>
-							<th></th>
-						</tr>
-					</thead>
-					
-					<tbody>
-						#{list acoesSet, as:'acao'}
-						<tr>
-							<td>${acao?.id }</td>
-							<td>${acao?.sigla}</td>
-							<td>${acao?.tituloAcao }</td>
-							<td><a class="acao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
-						</tr>
-						#{/list}
-					</tbody>
-				</table>
+	
+			<hr/>
+			<div class="gt-content">
+				<label>Itens de Configuração</label>
+				<!-- content bomex -->
+				<div class="gt-content-box dataTables_div">
+					<table id="itemConfiguracao_table" border="0" class="gt-table-nowrap display">
+						<thead>
+							<tr>
+								<th >ID</th>
+								<th>Sigla</th>
+								<th>Titulo</th>
+								<th>Descrição</th>
+								<th>Itens Similares</th>
+								<th></th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							#{list items:itemConfiguracaoSet, as:'item'}
+							<tr>
+								<td>${item?.id }</td>
+								<td>${item?.sigla}</td>
+								<td>${item?.tituloItemConfiguracao}</td>
+								<td>${item?.descricao }</td>
+								<td>${item?.descricaoSimilaridade }</td>
+								<td><a class="itemConfiguracao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
+							</tr>
+							#{/list}
+						</tbody>
+					</table>
+				</div>
+				<div class="gt-table-buttons">
+					<a href="javascript: modalAbrir('itemConfiguracao')" class="gt-btn-small gt-btn-left">Incluir</a>
+				</div>
 			</div>
-			<div class="gt-table-buttons">
-				<a href="javascript: modalAbrir('acao')" class="gt-btn-small gt-btn-left">Incluir</a>
-			</div>
-		</div>
-		
-		<div class="gt-form-row">
+			
+			<hr/>
 			<div class="gt-form-row">
-				<a href="javascript: if (block()) gravarDesignacao();" class="gt-btn-medium gt-btn-left">Ok</a>
-				<a href="javascript: designacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				<label>Ações</label>
+				<!-- content bomex -->
+				<div class="gt-content-box dataTables_div">
+					<table id="acao_table" border="0" class="gt-table display">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Sigla</th>
+								<th>Título</th>
+								<th></th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							#{list acoesSet, as:'acao'}
+							<tr>
+								<td>${acao?.id }</td>
+								<td>${acao?.sigla}</td>
+								<td>${acao?.tituloAcao }</td>
+								<td><a class="acao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
+							</tr>
+							#{/list}
+						</tbody>
+					</table>
+				</div>
+				<div class="gt-table-buttons">
+					<a href="javascript: modalAbrir('acao')" class="gt-btn-small gt-btn-left">Incluir</a>
+				</div>
+			</div>
+			
+			<div class="gt-form-row">
+				<div class="gt-form-row">
+					<a href="javascript: gravarDesignacao();" class="gt-btn-medium gt-btn-left">Ok</a>
+					<a href="javascript: designacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				</div>
+			</div>
+			
+			<div class="gt-form-row gt-width-100">
+				<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram
+					preenchidos.</p>
 			</div>
 		</div>
-		
-		<div class="gt-form-row gt-width-100">
-			<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram
-				preenchidos.</p>
-		</div>
-	</div>
+	</form>
 </div>
 
 #{modal nome:'itemConfiguracao', titulo:'Adicionar Item de Configuração'}

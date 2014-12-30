@@ -175,6 +175,9 @@
 	}
 
 	pesquisaService.gravar = function() {
+		if (!isValidForm())
+			return false;
+		
 		var service = this,
 		obj = this.getObjetoParaGravar(),
 		url = this.opts.urlGravar,

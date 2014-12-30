@@ -340,20 +340,6 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {
 		StringBuffer sb = new StringBuffer();
 		
-		if ((designacao.atendente == null) && (designacao.preAtendente == null)
-				&& (designacao.posAtendente == null)
-				&& (designacao.equipeQualidade == null)
-				&& (designacao.pesquisaSatisfacao == null)) {
-			validation.addError("designacao.atendente",
-					"Atendente n�o informado.");
-			validation.addError("designacao.preAtendente",
-					"Pr&eacute;-atendente n&atilde;o informado.");
-			validation.addError("designacao.posAtendente",
-					"P&oacute;s-atendente n&atilde;o informado.");
-			validation.addError("designacao.equipeQualidade",
-					"Equipe de qualidade n&atilde;o informada.");
-		}
-		
 		if (designacao.getDescrConfiguracao() == null || designacao.getDescrConfiguracao().isEmpty())
 			validation.addError("designacao.descrConfiguracao", "Descrição não informada");
 
@@ -896,7 +882,6 @@ public class Application extends SigaApplication {
 	public static Long gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
-		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
 		
 		return designacao.getId();

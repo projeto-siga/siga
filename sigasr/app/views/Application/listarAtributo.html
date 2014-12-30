@@ -3,8 +3,6 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
-<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
 <style>
 	.ui-widget-content a[disabled] {
@@ -199,10 +197,13 @@
 	}
 
 	function removerErros() {
-		$('.error').remove();
+		$('span.error').remove();
 	}
 
 	function atributoGravar() {
+		if (!jQuery("#atributoForm").valid())
+			return false;
+		
 		var jForm = $('#atributoForm');
 
 		removerErros();

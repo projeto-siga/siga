@@ -1,4 +1,6 @@
 #{extends 'main.html' /} #{set title:'Edição de atributo' /}
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
 <!-- <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script> -->
 
@@ -106,6 +108,7 @@
 			tableAssociacao = table;
 		}
 		validatorAtributoForm = $("#atributoForm").validate();
+		$("#associacaoForm").validate();
 	});
 
 	function inserirAssociacao() {
@@ -175,9 +178,6 @@
 		$("#acaoUnitaria_sigla").val('');
 		$("#acaoUnitariaSpan").html('');
 		$("#checkatributoObrigatorio")[0].checked = false;
-
-		// limpa as validações do form
-		validatorAtributoForm.resetForm();
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.
@@ -269,6 +269,9 @@
 	};
 
 	function gravarAssociacao() {
+		if (!jQuery("#associacaoForm").valid())
+			return false;
+		
 		var idAssociacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
 		
 		var row = [
@@ -324,11 +327,6 @@
 
 	}
 
-	function isValidForm() {
-		if (jQuery("#atributoForm").valid())
-			atributoGravar()
-	}
-	
 	function associacaoModalFechar() {
 		isEditingAssociacao = false;
 		$("#associacao_dialog").dialog("close");
@@ -483,7 +481,7 @@
 		</div>
 	</div>
 	<div class="gt-form-row" style="padding-top: 10px;">
-		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="isValidForm()"/>
+		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoGravar()"/>
 		<a href="javascript: atributoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 	</div>
 	</form>
@@ -491,28 +489,32 @@
 
 #{modal nome:'associacao', titulo:'cadastrar associação'}
 	<div class="gt-form gt-content-box">
-		<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
-	
-		<div class="gt-form-row gt-width-100">
-			<label>Item</label> 
-			#{selecao tipo:'item',
-				nome:'itemConfiguracaoUnitario',
-				value:itemConfiguracaoUnitario?.atual /}
-		</div>
-	
-		<div class="gt-form-row gt-width-100">
-			<label>Serviço</label> 
-			#{selecao tipo:'acao',
-			nome:'acaoUnitaria', value:acaoUnitaria?.atual /}
-		</div>
-		<div class="gt-form-row">
-			<label>#{checkbox name:'atributoObrigatorio',
-				value:atributoObrigatorio /} Obrigatório</label>
-		</div>
-		<div class="gt-form-row">
-			<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
-			<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-		</div>
+		<form id="associacaoForm">
+			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Item</label> 
+				#{selecao tipo:'item',
+					nome:'itemConfiguracaoUnitario',
+					value:itemConfiguracaoUnitario?.atual,
+					requiredValue:'required' /}
+			</div>
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Serviço</label> 
+				#{selecao tipo:'acao',
+				nome:'acaoUnitaria', value:acaoUnitaria?.atual,
+				requiredValue:'required' /}
+			</div>
+			<div class="gt-form-row">
+				<label>#{checkbox name:'atributoObrigatorio',
+					value:atributoObrigatorio /} Obrigatório</label>
+			</div>
+			<div class="gt-form-row">
+				<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
+				<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+			</div>
+			</form>
 	</div>
 	<div class="gt-content-box" id="modal-associacao-error" style="display: none;">
 		<table width="100%">

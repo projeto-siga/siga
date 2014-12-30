@@ -35,9 +35,9 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 @Resource
-public class PerfilEEController extends GrupoController {
+public class PerfilJEEController extends GrupoController {
 
-	public PerfilEEController(HttpServletRequest request, Result result, SigaObjects so) {
+	public PerfilJEEController(HttpServletRequest request, Result result, SigaObjects so) {
 		super(request, result, CpDao.getInstance(), so);
 		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -50,7 +50,7 @@ public class PerfilEEController extends GrupoController {
 		return CpTipoGrupo.TIPO_GRUPO_PERFIL_JEE;
 	}
 	
-	@Get("/app/gi/perfilEE/listar")
+	@Get("/app/gi/perfilJEE/listar")
 	public void lista() throws Exception {
 		assertAcesso("PERFILJEE:Gerenciar grupos de email");
 		super.aListar();
@@ -63,7 +63,7 @@ public class PerfilEEController extends GrupoController {
 	}
 	
 
-	@Get("/app/gi/perfilEE/editar")
+	@Get("/app/gi/perfilJEE/editar")
 	public void edita(Long idCpGrupo) throws Exception {
 		assertAcesso("PERFILJEE:Gerenciar grupos de email");
 		super.aEditar(idCpGrupo);
@@ -85,7 +85,7 @@ public class PerfilEEController extends GrupoController {
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 	}
 	
-	@Post("/app/gi/perfilEE/gravar")
+	@Post("/app/gi/perfilJEE/gravar")
 	public void gravar(Long idCpGrupo
 			          ,String siglaGrupo
 					  ,String dscGrupo			          
@@ -103,7 +103,7 @@ public class PerfilEEController extends GrupoController {
 		result.redirectTo(this).lista();
 	}	
 
-	@Post("/app/gi/perfilEE/excluir")
+	@Post("/app/gi/perfilJEE/excluir")
 	public void excluir(Long idCpGrupo) throws Exception {
 		assertAcesso("PERFILJEE:Gerenciar grupos de email");
 		super.aExcluir(idCpGrupo);

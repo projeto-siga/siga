@@ -162,7 +162,7 @@
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERFILJEE:Gerenciar perfis do JEE')}">
-							<li><ww:a href="/siga/app/gi/perfiljee/listar">Perfil de Acesso do JEE</ww:a>
+							<li><ww:a href="/siga/app/gi/perfilJEE/listar">Perfil de Acesso do JEE</ww:a>
 							</li>
 						</c:if>
 						<c:if 						

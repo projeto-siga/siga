@@ -31,14 +31,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cd.service.impl.CdServiceImpl;
 
 public class CdTestesServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		CdService service = new CdServiceImpl();
+		CdServiceImpl service = new CdServiceImpl();
 		
 		try{
 			service.validarAssinatura(HASH_SHA1, PKCS7, SIGNING_CALENDAR.getTime(), false);

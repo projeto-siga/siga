@@ -521,6 +521,10 @@
 			method="aAssinar">
 			<result>/paginas/expediente/assina.jsp</result>
 		</action>
+		<action name="autenticar_documento" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAutenticarDocumento">
+			<result>/paginas/expediente/assina.jsp</result>
+		</action>
 		<action name="assinar_anexos_geral" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarAnexosGeral">
 			<result>/paginas/expediente/anexa.jsp</result>
@@ -1053,6 +1057,21 @@
 				<param name="namespace">/expediente/doc</param>
 			</result>
 		</action>
+		<action name="assinar_senha_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAssinarSenhaGravar">
+			<result name="OK" type="plaintext">
+				/paginas/ok.jsp
+			</result>
+			<result name="ERRO">
+				/paginas/erro.jsp
+			</result>
+			<result type="redirect-action">
+				<param name="actionName">
+					exibir?sigla=${mob.sigla}
+				</param>
+				<param name="namespace">/expediente/doc</param>
+			</result>
+		</action>
 		<action name="assinar_verificar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarVerificar">
 			<result>/paginas/assinatura_ok.jsp</result>
@@ -1221,12 +1240,26 @@
 			method="aExibir">
 			<result>/paginas/expediente/mov_exibe.jsp</result>
 		</action>
+		<action name="autenticar_mov" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAutenticarMovimentacao">
+			<result>/paginas/expediente/mov_exibe.jsp</result>
+		</action>
 		<action name="assinar_mov" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarMov">
 			<result>/paginas/expediente/assina_mov.jsp</result>
 		</action>
 		<action name="assinar_mov_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
 			method="aAssinarMovGravar">
+			<result name="OK" type="plaintext">
+				/paginas/ok.jsp
+			</result>
+			<result name="ERRO">
+				/paginas/erro.jsp
+			</result>
+			<result>/paginas/expediente/assinado.jsp?id=786</result>
+		</action>
+		<action name="assinar_mov_login_senha_gravar" class="br.gov.jfrj.webwork.action.ExMovimentacaoAction"
+			method="aAssinarMovSenhaGravar">
 			<result name="OK" type="plaintext">
 				/paginas/ok.jsp
 			</result>

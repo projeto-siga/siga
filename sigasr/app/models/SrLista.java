@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +29,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
@@ -98,9 +98,6 @@ public class SrLista extends HistoricoSuporte {
 	@OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
 	public List<SrLista> meuListaHistoricoSet;
-
-	@Transient
-	public List<SrConfiguracao> permissoes;
 
 	public static List<SrLista> listar(boolean mostrarDesativado) {
 		StringBuffer sb = new StringBuffer();
@@ -177,30 +174,53 @@ public class SrLista extends HistoricoSuporte {
 			return movimentacao;
 		return null;
 	}
-
-	public boolean podeEditar(DpLotacao lota, DpPessoa pess) {
-		return (lota.equivale(lotaCadastrante));
+	
+	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa pess) {
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
+	}
+	
+	public boolean podeIncluir(DpLotacao lotaTitular, DpPessoa pess) {
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.INCLUSAO);
 	}
 
-	public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess)
-			throws Exception {
-		return (lotaTitular.equivale(lotaCadastrante));
+	public boolean podeConsultar(DpLotacao lotaTitular, DpPessoa pess) {
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
 	}
 
-	public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess)
-			throws Exception {
-		if ((lotaTitular.equivale(lotaCadastrante)))
-			return true;
-		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setLotacao(lotaTitular);
-		confFiltro.setDpPessoa(pess);
-		confFiltro.setCpTipoConfiguracao(JPA.em().find(
-				CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
-		confFiltro.listaPrioridade = this;
-		return SrConfiguracao.buscar(confFiltro) != null;
+	public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
+	}
+	
+	public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
+		return (lotaTitular.equals(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.PRIORIZACAO);
 	}
 
+	private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, Long tipoPermissaoLista) {
+		List<SrConfiguracao> permissoesEncontradas = getPermissoes(lotaTitular, pess);
+		for (SrConfiguracao srConfiguracao : permissoesEncontradas) {
+			for (SrTipoPermissaoLista permissao: srConfiguracao.tipoPermissaoSet) {
+				if (tipoPermissaoLista == permissao.getIdTipoPermissaoLista()) {
+					return Boolean.TRUE;
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+
+	public List<SrConfiguracao> getPermissoes(DpLotacao lotaTitular, DpPessoa pess) {
+		try {
+			SrConfiguracao confFiltro = new SrConfiguracao();
+			confFiltro.setLotacao(lotaTitular);
+			confFiltro.setDpPessoa(pess);
+			confFiltro.setCpTipoConfiguracao(JPA.em().find(
+					CpTipoConfiguracao.class,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
+			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public Set<SrSolicitacao> getSolicitacaoSet() throws Exception {
 		Set<SrSolicitacao> sols = new TreeSet<SrSolicitacao>(
 				new SrSolicitacaoListaComparator(this));
@@ -256,20 +276,7 @@ public class SrLista extends HistoricoSuporte {
 				s.priorizar(this, i, pessoa, lota);
 		}
 	}
-
-	@Override
-	public void salvar() throws Exception {
-		super.salvar();
-
-		// DB1: precisa salvar item a item 
-		if (this.permissoes != null) {
-			for (SrConfiguracao permissao : this.permissoes) {
-				permissao.listaPrioridade = this;
-				permissao.salvarComoPermissaoUsoLista();
-			}
-		}
-	}
-
+	
 	/**
 	 * Classe que representa um V.O. de {@link SrLista}.
 	 */
@@ -286,5 +293,11 @@ public class SrLista extends HistoricoSuporte {
 
 	public SrListaVO toVO() {
 		return new SrListaVO(this.idLista, this.nomeLista);
+	}
+
+	public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {
+		if (!podeConsultar(lotacao, cadastrante)) {
+			throw new Exception("Exibição não permitida");
+		}
 	}
 }

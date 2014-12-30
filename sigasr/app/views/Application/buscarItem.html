@@ -42,10 +42,10 @@ function sbmt(nivel){
 	
 	<div class="gt-content-box gt-for-table">
 		<table class="gt-table gt-table-nowrap display" id="tabela">
-			<col width="25%">
+			<col width="40%">
 	  		<col width="10%">
-	  		<col width="35%">
-	  		<col width="30%">
+	  		<col width="25%">
+	  		<col width="25%">
 	  		<thead>
 				<tr id="plim">
 					<th>Título
@@ -72,8 +72,8 @@ function sbmt(nivel){
 						#{else}<span>${item.tituloItemConfiguracao}</span>#{/else}
 					</td>
 					<td class="gt-celula-nowrap">${item.siglaItemConfiguracao}</td>
-					<td class="gt-celula-nowrap">${item.descrItemConfiguracao}</td>
-					<td class="gt-celula-nowrap">${item.descricaoSimilaridade}</td>
+					<td class="gt-celula-nowrap">#{selecionado sigla:item.descrItemConfiguracao,descricao:item.descrItemConfiguracao /}</td>
+					<td class="gt-celula-nowrap">#{selecionado sigla:item.descricaoSimilaridade,descricao:item.descricaoSimilaridade /}</td>
 				</tr>
 				#{/list}
 			</tbody>

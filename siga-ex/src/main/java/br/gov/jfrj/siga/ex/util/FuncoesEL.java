@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
+import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
@@ -1037,4 +1038,46 @@ public class FuncoesEL {
 		InputSource inputSource = new InputSource( new StringReader( xml ) );
 		return freemarker.ext.dom.NodeModel.parse(inputSource);
 	}
+	
+	public static Boolean podeAssinarComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex
+				.getInstance()
+				.getComp().podeAssinarComSenha(titular, lotaTitular, mob);
+	}
+	
+	public static Boolean podeAssinarMovimentacaoComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
+		return Ex
+				.getInstance()
+				.getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
+	}
+	
+	public static Boolean podeConferirCopiaMovimentacaoComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
+		return Ex
+				.getInstance()
+				.getComp().podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular, mov);
+	}
+	
+	public static Boolean podeAssinarMovimentacaoComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex
+				.getInstance()
+				.getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mob);
+	}
+	
+	public static Boolean podeConferirCopiaMovimentacaoComSenha(
+			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex
+				.getInstance()
+				.getComp().podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular, mob);
+	}
+	
+	public static Boolean podeAutenticarDocumento(
+			DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) throws Exception {
+		return Ex
+				.getInstance()
+				.getComp().podeAutenticarDocumento(titular, lotaTitular, doc);
+	}	
 }

@@ -169,7 +169,7 @@
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR:Gerenciar grupos de distribuição')
 							       || (f:podeGerirAlgumGrupo(titular,lotaTitular,2) && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;DELEG:Gerenciar grupos de distribuição delegados'))}"> 	
 	 						<li><ww:a
-									href="${serverAndPort}/siga/gi/email/listar.action">Grupo de Distribuição</ww:a>
+									href="${serverAndPort}/siga/app/gi/grupoDeEmail/listar">Grupo de Distribuição</ww:a>
 							</li>
 						</c:if>
 						<c:if
@@ -182,16 +182,16 @@
 							<li><a href="#">Relatórios</a>
 								<ul>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_acesso_servico.action">Acesso aos Serviços</ww:a>
+											href="/siga/app/gi/relatorio/selecionar_acesso_servico">Acesso aos Serviços</ww:a>
 									</li>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_permissao_usuario.action">Permissões de Usuário</ww:a>
+											href="/siga/app/gi/relatorio/selecionar_permissao_usuario">Permissões de Usuário</ww:a>
 									</li>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_alteracao_direitos.action">Alteração de Direitos</ww:a>
+											href="/siga/app/gi/relatorio/selecionar_alteracao_direitos">Alteração de Direitos</ww:a>
 									</li>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_historico_usuario.action">Histórico de Usuário</ww:a>
+											href="/siga/app/gi/relatorio/selecionar_historico_usuario">Histórico de Usuário</ww:a>
 									</li>
 								</ul></li>
 						</c:if>

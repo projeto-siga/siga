@@ -169,7 +169,7 @@
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR:Gerenciar grupos de distribuição')
 							       || (f:podeGerirAlgumGrupo(titular,lotaTitular,2) && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;DELEG:Gerenciar grupos de distribuição delegados'))}"> 	
 	 						<li><ww:a
-									href="${serverAndPort}/siga/gi/email/listar.action">Grupo de Distribuição</ww:a>
+									href="${serverAndPort}/siga/app/gi/grupoDeEmail/listar">Grupo de Distribuição</ww:a>
 							</li>
 						</c:if>
 						<c:if

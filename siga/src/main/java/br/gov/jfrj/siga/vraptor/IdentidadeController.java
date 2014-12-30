@@ -57,66 +57,65 @@ public class IdentidadeController extends GiControllerSupport {
 		}
 
 		CpIdentidade ident = daoId(id);
-		Cp.getInstance()
-			.getBL()
-			.alterarIdentidade(ident, dataExpiracao, getIdentidadeCadastrante());
+		Cp.getInstance().getBL().alterarIdentidade(ident, dataExpiracao, getIdentidadeCadastrante());
 		
 		result.forwardTo(this).lista(selecaoPessoa);
 	}
 
-	@Get("/siga/app/gi/identidade/cancelar")
-	public void aCancelar(Long id) throws Exception {
+	@Get("/app/gi/identidade/cancelar")
+	public void aCancelar(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id == null)
 			throw new AplicacaoException("Não foi informada id");
 
 		CpIdentidade ident = daoId(id);
-		Cp.getInstance().getBL().cancelarIdentidade(ident,
-				getIdentidadeCadastrante());
+		Cp.getInstance().getBL().cancelarIdentidade(ident, getIdentidadeCadastrante());
+		
+		result.forwardTo(this).lista(pessoaSel);
 	}
 
-	@Get("/siga/app/gi/identidade/desbloquear")
-	public void aBloquear(Long id) throws Exception {
+	@Get("/app/gi/identidade/desbloquear")
+	public void aBloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id != null) {
 			CpIdentidade ident = daoId(id);
-			Cp.getInstance().getBL()
-				.bloquearIdentidade(ident, getIdentidadeCadastrante(), true);
+			Cp.getInstance().getBL().bloquearIdentidade(ident, getIdentidadeCadastrante(), true);
+			result.forwardTo(this).lista(pessoaSel);
 		} else
 			throw new AplicacaoException("Não foi informada id");
 	}
 
-	@Get("/siga/app/gi/identidade/bloquear")
-	public void aDesbloquear(Long id) throws Exception {
+	@Get("/app/gi/identidade/bloquear")
+	public void aDesbloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id != null) {
 			CpIdentidade ident = daoId(id);
-			Cp.getInstance().getBL().bloquearIdentidade(ident,
-					getIdentidadeCadastrante(), false);
+			Cp.getInstance().getBL().bloquearIdentidade(ident,getIdentidadeCadastrante(), false);
+			result.forwardTo(this).lista(pessoaSel);
 		} else
 			throw new AplicacaoException("Não foi informada id");
 	}
 
-	@Get("/siga/app/gi/identidade/bloquear_pessoa")
+	@Get("/app/gi/identidade/bloquear_pessoa")
 	public void aBloquearPessoa(DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		DpPessoa pes = definirPessoa(pessoaSel);
 
 		if (pes != null) {
-			Cp.getInstance().getBL().bloquearPessoa(pes,
-					getIdentidadeCadastrante(), true);
+			Cp.getInstance().getBL().bloquearPessoa(pes,getIdentidadeCadastrante(), true);
+			result.forwardTo(this).lista(pessoaSel);
 		} else
 			throw new AplicacaoException("Não foi informada a pessoa");
 	}
 
-	@Get("/siga/app/gi/identidade/desbloquear_pessoa")
+	@Get("/app/gi/identidade/desbloquear_pessoa")
 	public void aDesbloquearPessoa(DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		DpPessoa pes = definirPessoa(pessoaSel);
 
 		if (pes != null) {
-			Cp.getInstance().getBL().bloquearPessoa(pes,
-					getIdentidadeCadastrante(), false);
+			Cp.getInstance().getBL().bloquearPessoa(pes,getIdentidadeCadastrante(), false);
+			result.forwardTo(this).lista(pessoaSel);
 		} else
 			throw new AplicacaoException("Não foi informada a pessoa");
 	}

@@ -54,7 +54,7 @@ public class AlteracaoDireitosItem extends SincronizavelSuporte implements
 	 */
 	public void setSituacao(CpSituacaoConfiguracao situacao) {
 		this.situacao = situacao;
-		idSituacao = situacao.getIdSitConfiguracao();
+		idSituacao = situacao == null ? null: situacao.getIdSitConfiguracao();
 	}
 
 	/**

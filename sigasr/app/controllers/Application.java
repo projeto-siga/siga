@@ -95,6 +95,13 @@ public class Application extends SigaApplication {
 		} catch (Exception e) {
 			renderArgs.put("exibirMenuAdministrar", false);
 		}
+		
+		try {
+			assertAcesso("EDTCONH:Criar Conhecimentos");
+			renderArgs.put("exibirMenuConhecimentos", true);
+		} catch (Exception e) {
+			renderArgs.put("exibirMenuConhecimentos", false);
+		}
 
 		try {
 			assertAcesso("REL:Relatorios");

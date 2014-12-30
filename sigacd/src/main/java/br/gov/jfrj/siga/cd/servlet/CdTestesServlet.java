@@ -18,32 +18,37 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cd.servlet;
 
+import static br.gov.jfrj.siga.cd.Constants.HASH_SHA1;
+import static br.gov.jfrj.siga.cd.Constants.HASH_SHA1_WRONG;
+import static br.gov.jfrj.siga.cd.Constants.PKCS7;
+import static br.gov.jfrj.siga.cd.Constants.SIGNING_CALENDAR;
+
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.cd.service.impl.test.CdServiceImplTest;
+import br.gov.jfrj.siga.cd.service.CdService;
+import br.gov.jfrj.siga.cd.service.impl.CdServiceImpl;
 
 public class CdTestesServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2L;
-
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		CdServiceImplTest test = new CdServiceImplTest();
-		try {
-			test.testValidarAssinaturaPKCS7();
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		CdService service = new CdServiceImpl();
+		
+		try{
+			service.validarAssinatura(HASH_SHA1, PKCS7, SIGNING_CALENDAR.getTime(), false);
+			service.validarAssinatura(HASH_SHA1_WRONG, PKCS7, SIGNING_CALENDAR.getTime(), false);
+			service.validarAssinatura(HASH_SHA1, PKCS7, new Date(new Date().getTime() + 3600), false);
+			service.recuperarCPF(PKCS7);
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-		test.testRecuperarCPF();
+		
 		resp.setHeader("Content-Type", "text/plain");
 		resp.getWriter().print("OK!");
 	}

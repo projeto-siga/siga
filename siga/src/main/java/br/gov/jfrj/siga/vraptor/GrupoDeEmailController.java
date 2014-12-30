@@ -31,6 +31,7 @@ import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 
 @Resource
 public class GrupoDeEmailController extends GrupoController {
@@ -126,6 +127,20 @@ public class GrupoDeEmailController extends GrupoController {
 		} else {
 			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 		}
-		result.redirectTo(this).edita(idCpGrupo);
+		result.redirectTo("editar?idCpGrupo="+idCpGrupo);
+	}
+	
+	@Post("app/gi/grupoDeEmail/gravarGestorGrupo")
+	public void gravarGestorGrupo(Long idCpGrupo, DpLotacaoSelecao lotacaoGestoraSel) throws Exception {
+		CpConfiguracaoBL conf = Cp.getInstance().getConf();
+		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+				"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição")
+				|| conf.podeGerirAlgumGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
+			
+			super.aGravarGestorGrupo(idCpGrupo, lotacaoGestoraSel);
+		} else {
+			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+		}
+		result.redirectTo("editar?idCpGrupo="+idCpGrupo);
 	}
 }

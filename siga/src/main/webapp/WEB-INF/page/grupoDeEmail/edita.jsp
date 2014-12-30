@@ -5,7 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <script type="text/javascript" language="Javascript1.1">
 	function gravarGestorGrupo() {
@@ -160,7 +159,7 @@
 	function sair() {
 		var resp = confirm("Deseja realmente sair?\nCaso positivo, toda alteração realizada desde a última gravação será ignorada.")
 		if (resp){
-			var t_strUrl = 'buscar'
+			var t_strUrl = 'listar'
 			if (t_strUrl) {
 				var t_nodTipoGrupoForm = document.formulario.idCpTipoGrupo;
 				if (t_nodTipoGrupoForm) {

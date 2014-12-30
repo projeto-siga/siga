@@ -27,12 +27,15 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+
 import net.sf.jasperreports.engine.JRException;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -71,20 +74,25 @@ public class RelatorioController extends SigaController {
 	private String respostaXMLStringRPC;
 
 
-	public void aSelecionarRelAcessoServico() throws Exception {
-		System.out.println("Filtro do relatório chamado");
+	@Get("/app/gi/relatorio/selecionar_acesso_servico")
+	public void selecionarAcessoServico() throws Exception {
+		result.include("cpServicos", cpServicos);	
+		result.include("cpOrgaosUsuario", cpOrgaosUsuario);	
 	}
 
-	public String aEmitirRelAcessoServico() throws Exception {
+	
+	@Post("/app/gi/relatorio/emitir_acesso_servico")
+	public Download emitirAcessoServico(String idServico, String idOrgaoUsuario, String situacoesSelecionadas) throws Exception {
 		Map<String, String> listaParametros = new HashMap<String, String>();
-		listaParametros.put("idServico", getIdServico());
-		listaParametros
-				.put("situacoesSelecionadas", getSituacoesSelecionadas());
-		listaParametros.put("idOrgaoUsuario", getIdOrgaoUsuario());
+		listaParametros.put("idServico", idServico);
+		listaParametros.put("situacoesSelecionadas", situacoesSelecionadas);
+		listaParametros.put("idOrgaoUsuario", idOrgaoUsuario);
+		
 		AcessoServicoRelatorio rel = new AcessoServicoRelatorio(listaParametros);
 		rel.gerar();
 		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
-		return "relatorio";
+		
+		return new InputStreamDownload(inputStream, "application/pdf", "relatorio.pdf");
 	}
 
 	@Get("app/gi/relatorio/selecionar_permissao_usuario")
@@ -100,13 +108,13 @@ public class RelatorioController extends SigaController {
 		extracted(rel);		
 		return new InputStreamDownload(getInputStream(), "application/pdf", "relatorio.pdf");
 	}
-
+	
 	private String extracted(PermissaoUsuarioRelatorio rel) throws Exception,JRException {
 		rel.gerar();
 		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
 		return "relatorio";
-	}
-
+	}	
+	
 	@Get("app/gi/relatorio/selecionar_historico_usuario")
 	public void historico_usuario_selecionar() {
 		System.out.println("Filtro do Relatório foi chamado.");
@@ -119,14 +127,8 @@ public class RelatorioController extends SigaController {
 		listaParametros.put("idPessoa", idPessoa);
 		HistoricoUsuarioRelatorio rel = new HistoricoUsuarioRelatorio(listaParametros);
 		rel.gerar();
-		
-		byte[] bytes = rel.getRelatorioPDF();
-		
-		ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-		
-		this.setInputStream(input);
-		
-		return new InputStreamDownload(getInputStream(), "application/pdf", "relatorio.pdf");
+		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
+		return new InputStreamDownload(getInputStream(), "application/pdf", "relatorio.pdf");		
 	}
 
 	@Get("app/gi/relatorio/selecionar_alteracao_direitos")
@@ -138,7 +140,6 @@ public class RelatorioController extends SigaController {
 	public Download emitirRelAlteracaoDireitos(String dataInicio
 			                                  ,String dataFim
 			                                  ,String idOrgaoUsuario) throws Exception {
-
 		Map<String, String> listaParametros = new HashMap<String, String>();
 		listaParametros.put("dataInicio", dataInicio);
 		listaParametros.put("dataFim", dataFim);
@@ -146,11 +147,11 @@ public class RelatorioController extends SigaController {
 		AlteracaoDireitosRelatorio rel = new AlteracaoDireitosRelatorio(listaParametros);
 		rel.gerar();
 		this.setInputStream(new ByteArrayInputStream(rel.getRelatorioPDF()));
-
 		return new InputStreamDownload(getInputStream(), "application/pdf", "relatorio.pdf");
 	}
 
-	public String aObterSituacoesServico() {
+	@Get("/app/gi/relatorio/obter_situacoes_servico")
+	public void obterSituacoesServico(String idServico) {
 		try {
 			Long t_lngIdServico = Long.parseLong(idServico);
 			CpServico t_cpsServico = dao().consultar(t_lngIdServico,
@@ -189,12 +190,14 @@ public class RelatorioController extends SigaController {
 			t_fmrRetorno.set(0, e.getMessage());
 			setRespostaXMLStringRPC(t_fmrRetorno.toXMLString());
 		}
-		return "situacoesServico";
+	
+		result.use(Results.http()).body(this.respostaXMLStringRPC);
 	}
 
 	private List<CpServico> obterServicos() {
 		return dao().listarServicos();
 	}
+
 
 	private List<CpOrgaoUsuario> obterOrgaosUsuario() {
 		return dao().listarOrgaosUsuarios();
@@ -276,11 +279,9 @@ public class RelatorioController extends SigaController {
 		return cpOrgaosUsuario;
 	}
 
-
 	public void setCpOrgaosUsuario(List<CpOrgaoUsuario> cpOrgaosUsuario) {
 		this.cpOrgaosUsuario = cpOrgaosUsuario;
 	}
-
 
 	public String getSituacoesSelecionadas() {
 		return situacoesSelecionadas;

@@ -408,11 +408,12 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		return Cp.getInstance().getComp().getConfiguracaoBL().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), "SIGA;GI;GDISTR;CONF_AVANC:Configuracões Avançadas");
 	}
 
-	public void aGravarGestorGrupo(Long idCpGrupo) {
-		DpLotacao lot = getLotacaoGestoraSel().getObjeto();
+	public void aGravarGestorGrupo(Long idCpGrupo,DpLotacaoSelecao lotacaoGestoraSel) {
+		DpLotacao lot = lotacaoGestoraSel.getObjeto();
 		if (lot == null){
 			throw new AplicacaoException("A unidade deve ser definida!");
 		}else{
+			dao().iniciarTransacao();
 			CpTipoConfiguracao tpConf = dao().consultar(
 					CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,
 					CpTipoConfiguracao.class, false);
@@ -427,8 +428,8 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			conf.setCpGrupo(daoGrupo(idCpGrupo));
 			conf.setHisDtIni(dao().consultarDataEHoraDoServidor());
 			dao().gravarComHistorico(conf, getIdentidadeCadastrante());
-			
 			setIdCpGrupo(idCpGrupo);
+			dao().commitTransacao();
 		}
 
 		

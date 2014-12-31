@@ -165,13 +165,61 @@
 	
 	function desativarItem(event, idItemConfiguracao) {
 		event.stopPropagation();
-		window.location = '@{Application.desativarItem()}?' + queryDesativarReativar(idItemConfiguracao, QueryString.mostrarDesativados);
+		var tr = $(event.currentTarget).parent().parent()[0],
+			row = table.api().row(tr).data();
+		
+		$.ajax({
+	         type: "POST",
+	         url: "@{Application.desativarItem()}",
+	         data: {id : idItemConfiguracao, mostrarDesativados : QueryString.mostrarDesativados},
+	         dataType: "text",
+	         success: function(response) {
+				if (QueryString.mostrarDesativados) {
+					row[colunas.acoes] = gerarColunaDesativar(idItemConfiguracao);
+		        	table.api().row(tr).data(row);
+				}
+				else {
+					table.api().row(tr).remove().draw();
+				}
+	         },
+	         error: function(response) {
+	        	var modalErro = $('#modal-error');
+	        	modalErro.find("h3").html(response.responseText);
+	        	modalErro.show(); 
+	         }
+	   });
 	}
 
 	function reativarItem(event, idItemConfiguracao) {
 		event.stopPropagation();
-		window.location = '@{Application.reativarItem()}?' + queryDesativarReativar(idItemConfiguracao, QueryString.mostrarDesativados);
+		var tr = $(event.currentTarget).parent().parent()[0],
+		row = table.api().row(tr).data();
+
+		$.ajax({
+	         type: "POST",
+	         url: "@{Application.reativarItem()}",
+	         data: {id : idItemConfiguracao, mostrarDesativados : QueryString.mostrarDesativados},
+	         dataType: "text",
+	         success: function(idItemConfiguracao) {
+		         row[colunas.acoes] = gerarColunaAtivar(idItemConfiguracao);
+		         table.api().row(tr).data(row);
+	         },
+	         error: function(response) {
+	        	var modalErro = $('#modal-error');
+	        	modalErro.find("h3").html(response.responseText);
+	        	modalErro.show(); 
+	         }
+	   });
 	}
+
+	function gerarColunaAtivar(idItemConfiguracao) {
+		var column = '<a class="once gt-btn-ativar" onclick="desativarItem(event, ' + idItemConfiguracao + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+   		return column;
+     }	
+	function gerarColunaDesativar(idItemConfiguracao) {
+		var column = '<a class="once gt-btn-desativar" onclick="reativarItem(event, ' + idItemConfiguracao + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
+   		return column;
+     }	    
 
 	function inserirEditarItem() {
 		limparDadosItemModal();

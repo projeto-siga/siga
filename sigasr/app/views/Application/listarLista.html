@@ -93,7 +93,13 @@
 	         data: {id : idLista, mostrarDesativados : QueryString.mostrarDesativados},
 	         dataType: "text",
 	         success: function(response) {
-	        	 listaTable.api().row(tr).remove().draw();
+				if (QueryString.mostrarDesativados) {
+					row[colunasLista.acoes] = gerarColunaDesativar(idLista);
+		        	listaTable.api().row(tr).data(row);
+				}
+				else {
+					listaTable.api().row(tr).remove().draw();
+				}
 	         },
 	         error: function(response) {
 	        	var modalErro = $('#modal-error');
@@ -130,6 +136,11 @@
 		var column = '<a class="once gt-btn-ativar" onclick="desativarLista(event, ' + idLista + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
    		return column;
      }
+    
+	function gerarColunaDesativar(idLista) {
+		var column = '<a class="once gt-btn-desativar" onclick="reativarLista(event, ' + idLista + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
+   		return column;
+     }	        
 </script>
 
 <div class="gt-bd clearfix">

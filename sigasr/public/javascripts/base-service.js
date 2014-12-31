@@ -118,15 +118,71 @@ BaseService.prototype.removerErros = function() {
  */
 BaseService.prototype.desativar = function(event, id) {
 	event.stopPropagation();
-	window.location = this.opts.urlDesativar + queryDesativarReativar(id, this.opts.mostrarDesativados);
+	var tr = $(event.currentTarget).parent().parent()[0],
+		row = this.opts.dataTable.api().row(tr).data(),
+		service = this;
+	
+	$.ajax({
+	     type: "POST",
+	     url: this.opts.urlDesativar,
+	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
+	     dataType: "text",
+	     success: function(response) {
+			if(service.opts.mostrarDesativados == "true") {
+				row[service.opts.colunas] = service.gerarColunaDesativar(id);
+				service.opts.dataTable.api().row(tr).data(row);
+			}
+			else {
+				service.opts.dataTable.api().row(tr).remove().draw();
+			}
+	     },
+	     error: function(response) {
+	    	var modalErro = $('#modal-error');
+	    	modalErro.find("h3").html(response.responseText);
+	    	modalErro.show(); 
+	     }
+	});
 }
 /**
  * Reativa o registro
  */
 BaseService.prototype.reativar = function(event, id) {
 	event.stopPropagation();
-	window.location = this.opts.urlReativar + queryDesativarReativar(id, this.opts.mostrarDesativados);
+	var tr = $(event.currentTarget).parent().parent()[0],
+		row = this.opts.dataTable.api().row(tr).data(),
+		service = this;
+
+	$.ajax({
+	     type: "POST",
+	     url: this.opts.urlReativar,
+	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
+	     dataType: "text",
+	     success: function(id) {
+	         row[service.opts.colunas] = service.gerarColunaAtivar(id);
+	         service.opts.dataTable.api().row(tr).data(row);
+	     },
+	     error: function(response) {
+	    	var modalErro = $('#modal-error');
+	    	modalErro.find("h3").html(response.responseText);
+	    	modalErro.show(); 
+	     }
+	});
+	
 }
+/**
+ * Gerar a Coluna Ativar
+ */
+BaseService.prototype.gerarColunaAtivar = function(id) {
+	var column = '<a class="once gt-btn-ativar" onclick="' + opts.urlDesativar + '(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+		return column;
+}
+/**
+ * Gerar a Coluna Desativar
+ */
+BaseService.prototype.gerarColunaDesativar = function(id) {
+	var column = '<a class="once gt-btn-desativar" onclick="' + opts.urlReativar + '(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
+		return column;
+ }
 /**
  * Inicia o modal de edicao do registro
  */

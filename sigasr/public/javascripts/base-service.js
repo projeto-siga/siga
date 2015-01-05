@@ -173,14 +173,14 @@ BaseService.prototype.reativar = function(event, id) {
  * Gerar a Coluna Ativar
  */
 BaseService.prototype.gerarColunaAtivar = function(id) {
-	var column = '<a class="once gt-btn-ativar" onclick="' + opts.urlDesativar + '(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+	var column = '<a class="once gt-btn-ativar" onclick="' + opts.objectName + 'Service.desativar(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
 		return column;
 }
 /**
  * Gerar a Coluna Desativar
  */
 BaseService.prototype.gerarColunaDesativar = function(id) {
-	var column = '<a class="once gt-btn-desativar" onclick="' + opts.urlReativar + '(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
+	var column = '<a class="once gt-btn-desativar" onclick="' + opts.objectName + 'Service.reativar(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
 		return column;
  }
 /**

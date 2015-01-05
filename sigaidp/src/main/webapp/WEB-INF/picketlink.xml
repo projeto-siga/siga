@@ -5,10 +5,13 @@
 		<Trust>
 			<Domains>
 					 localhost,
-					 dev-siga.corp.jfrj.gov.br,
-					 volvofh16,volvofh16.corp.jfrj.gov.br,
-					 volvov60,volvov60.corp.jfrj.gov.br,
-					 webserver,siga-appserver
+					 dev-siga,
+					 siga-dev,
+					 volvofh16,
+					 volvov60,
+					 classec250,
+					 siga-webserver,
+					 siga-appserver					 
 			</Domains>
 		</Trust>
 	</PicketLinkIDP>

@@ -4,6 +4,13 @@
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script>
+	var acordoTable,
+	 	colunasAcordo = {};
+
+	colunasAcordo.nome =	0;
+	colunasAcordo.lotacao = 1;
+	colunasAcordo.acoes = 	2;
+	
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
 		// the return value is assigned to QueryString!
@@ -40,7 +47,7 @@
 				location.href = '@{Application.buscarAcordo()}';	
 		});
 		
-		$('#acordo_table').DataTable({
+		acordoTable = $('#acordo_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -65,7 +72,7 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [2],
+				"targets": [colunasAcordo.acoes],
 				"searchable": false,
 				"sortable" : false
 			}]
@@ -74,13 +81,63 @@
 	
 	function reativarAcordo(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.reativarAcordo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+		var tr = $(event.currentTarget).parent().parent()[0],
+			row = acordoTable.api().row(tr).data();
+
+		$.ajax({
+	         type: "POST",
+	         url: "@{Application.reativarAcordo()}",
+	         data: {id : id, mostrarDesativados : QueryString.mostrarDesativados},
+	         dataType: "text",
+	         success: function(id) {
+		         row[colunasAcordo.acoes] = gerarColunaAtivar(id);
+		         acordoTable.api().row(tr).data(row);
+	         },
+	         error: function(response) {
+	        	var modalErro = $('#modal-error');
+	        	modalErro.find("h3").html(response.responseText);
+	        	modalErro.show(); 
+	         }
+	   });
+
 	}
 	
 	function desativarAcordo(event, id) {
 		event.stopPropagation();
-		window.location = '@{Application.desativarAcordo()}?' + queryDesativarReativar(id, QueryString.mostrarDesativados);
+		var tr = $(event.currentTarget).parent().parent()[0],
+			row = acordoTable.api().row(tr).data();
+
+		$.ajax({
+	         type: "POST",
+	         url: "@{Application.desativarAcordo()}",
+	         data: {id : id, mostrarDesativados : QueryString.mostrarDesativados},
+	         dataType: "text",
+	         success: function(response) {
+				if (QueryString.mostrarDesativados) {
+					row[colunasAcordo.acoes] = gerarColunaDesativar(id);
+		        	acordoTable.api().row(tr).data(row);
+				}
+				else {
+					acordoTable.api().row(tr).remove().draw();
+				}
+	         },
+	         error: function(response) {
+	        	var modalErro = $('#modal-error');
+	        	modalErro.find("h3").html(response.responseText);
+	        	modalErro.show(); 
+	         }
+	   });
 	}
+
+	function gerarColunaAtivar(id) {
+		var column = '<a class="once gt-btn-ativar" onclick="desativarAcordo(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+   		return column;
+     }
+
+	function gerarColunaDesativar(id) {
+		var column = '<a class="once gt-btn-desativar" onclick="reativarAcordo(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
+   		return column;
+     }	            
 </script>
 
 <div class="gt-bd clearfix">

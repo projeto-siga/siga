@@ -59,6 +59,12 @@
 
 <script type="text/javascript">
 	var validatorAcaoForm;
+	var colunasAcao = {
+			codigo: 0,
+			titulo: 1,
+			decricao: 2,
+			acoes: 3
+		};
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
 		// the return value is assigned to QueryString!
@@ -90,7 +96,8 @@
 			 tabelaRegistros : $('#acoes_table'),
 			 objectName : 'acao',
 			 formCadastro : $('#acaoForm'),
-			 mostrarDesativados : QueryString.mostrarDesativados
+			 mostrarDesativados : QueryString.mostrarDesativados,
+			 colunas : colunasAcao.acoes
 	};
 	
 	$(document).ready(function() {
@@ -132,7 +139,7 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [3],
+				"targets": [colunasAcao.acoes],
 				"searchable": false,
 				"sortable" : false
 			}]

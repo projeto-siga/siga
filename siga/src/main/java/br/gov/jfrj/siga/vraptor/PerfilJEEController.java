@@ -18,21 +18,15 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletRequest;
-
-import org.eclipse.jdt.core.dom.ThisExpression;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 @Resource
 public class PerfilJEEController extends GrupoController {

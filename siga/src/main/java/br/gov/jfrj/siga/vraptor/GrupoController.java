@@ -63,7 +63,6 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.Preparable;
 
 public abstract class GrupoController<T extends CpGrupo> extends
@@ -72,12 +71,8 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	public GrupoController(HttpServletRequest request, Result result,
 			CpDao dao, SigaObjects so) {
 		super(request, result, dao, so);
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3768576909382652437L;
 	private ArrayList<String> codigoTipoConfiguracao; // 0- Pessoa, 1 -
 	// Lotação,

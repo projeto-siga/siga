@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.webwork.SigaSelecionavelActionSupport;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
@@ -33,7 +32,6 @@ public abstract class GiSelecionavelControllerSupport<T extends Selecionavel, Da
 	public GiSelecionavelControllerSupport(HttpServletRequest request,
 			Result result, CpDao dao, SigaObjects so) {
 		super(request, result, dao, so);
-		// TODO Auto-generated constructor stub
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException,

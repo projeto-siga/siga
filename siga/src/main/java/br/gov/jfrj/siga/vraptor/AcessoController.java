@@ -28,18 +28,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import javax.servlet.http.HttpServletRequest;
-
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.View;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpPerfil;
-import br.gov.jfrj.siga.cp.CpServico;	
+import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -49,10 +46,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
-import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.webwork.action.CpPerfilSelecao;
-
-import com.opensymphony.xwork.Action;
 
 @Resource
 public class AcessoController extends GiControllerSupport {
@@ -141,28 +135,6 @@ public class AcessoController extends GiControllerSupport {
 			for (CpServico srv : l) {
 				ConfiguracaoAcesso ac = ConfiguracaoAcesso.gerar(perfil, pessoa, lotacao, orgao, srv, null);
 
-				// ConfiguracaoAcesso ac = new ConfiguracaoAcesso();
-				// ac.setServico(srv);
-				// ac.setPessoa(pessoa);
-				// ac.setLotacao(lotacao);
-				// ac.setOrgao(orgao);
-				// CpConfiguracao cfgFiltro = new CpConfiguracao();
-				// cfgFiltro.setDpPessoa(pessoa);
-				// cfgFiltro.setLotacao(lotacao);
-				// cfgFiltro.setOrgaoUsuario(orgao);
-				// cfgFiltro.setCpServico(srv);
-				// CpTipoConfiguracao tipo = dao().consultar(
-				// CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
-				// CpTipoConfiguracao.class, false);
-				// cfgFiltro.setCpTipoConfiguracao(tipo);
-				// CpConfiguracao cfg = Cp.getInstance().getConf()
-				// .buscaConfiguracao(cfgFiltro, new int[0]);
-				// ac.setDefault(cfg == null);
-				// if (ac.isDefault()) {
-				// ac.setSituacao(tipo.getSituacaoDefault());
-				// } else {
-				// ac.setSituacao(cfg.getCpSituacaoConfiguracao());
-				// }
 				System.out.print(ac.getSituacao().getDscSitConfiguracao());
 				achm.put(ac.getServico(), ac);
 			}

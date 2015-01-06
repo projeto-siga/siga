@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;

@@ -3471,7 +3471,7 @@ public class ExBL extends CpBL {
 				System.out.println("gravação doc " + doc.getCodigo() + ", "
 						+ new Date().toString() + " - erro na formatação - "
 						+ t.getMessage());
-				t.printStackTrace();
+				//t.printStackTrace();
 			}
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -5233,7 +5233,7 @@ public class ExBL extends CpBL {
 
 	private void concluirAlteracao(ExDocumento doc) throws Exception {
 		if (doc != null) {
-			atualizarMarcas(doc);
+			//atualizarMarcas(doc);
 			atualizarVariaveisDenormalizadas(doc);
 		}
 		ExDao.commitTransacao();

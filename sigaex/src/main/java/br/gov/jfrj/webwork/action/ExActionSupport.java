@@ -26,8 +26,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -139,19 +141,63 @@ public class ExActionSupport extends SigaActionSupport {
 		exStConfig
 			.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
 		config.setCpSituacaoConfiguracao(exStConfig);
-		
-		ExConfiguracao exConfig = ((ExConfiguracao) Ex
+		ExConfiguracao exConfig;
+
+/*		exConfig = ((ExConfiguracao) Ex
 				.getInstance()
 				.getConf()
 				.buscaConfiguracao(config,
-						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
+						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));*/
+		
+		try {
+			exConfig = criarExConfiguracaoPorCpConfiguracao(Ex.getInstance().getConf().buscaConfiguracao(config, new int[] {ExConfiguracaoBL.NIVEL_ACESSO}, dt));
+		} catch (Exception e) {
+			exConfig = null;
+		}
 		
 		if(exConfig != null)
 			return exConfig.getExNivelAcesso();
 		
 		return null;
 	}
-
+	
+	public ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao){
+		ExConfiguracao exConfiguracao = new ExConfiguracao();
+		
+		if (configuracaoBaseParaExConfiguracao.isAtivo())
+			exConfiguracao.setAtivo();
+		exConfiguracao.setCargo(configuracaoBaseParaExConfiguracao.getCargo());
+		exConfiguracao.setComplexo(configuracaoBaseParaExConfiguracao.getComplexo());
+		exConfiguracao.setConfiguracaoInicial(configuracaoBaseParaExConfiguracao.getConfiguracaoInicial());
+		exConfiguracao.setConfiguracoesPosteriores(configuracaoBaseParaExConfiguracao.getConfiguracoesPosteriores());
+		exConfiguracao.setCpGrupo(configuracaoBaseParaExConfiguracao.getCpGrupo());
+		exConfiguracao.setCpIdentidade(configuracaoBaseParaExConfiguracao.getCpIdentidade());
+		exConfiguracao.setCpServico(configuracaoBaseParaExConfiguracao.getCpServico());
+		exConfiguracao.setCpSituacaoConfiguracao(configuracaoBaseParaExConfiguracao.getCpSituacaoConfiguracao());
+		exConfiguracao.setCpTipoConfiguracao(configuracaoBaseParaExConfiguracao.getCpTipoConfiguracao());
+		exConfiguracao.setCpTipoLotacao(configuracaoBaseParaExConfiguracao.getCpTipoLotacao());
+		exConfiguracao.setDpPessoa(configuracaoBaseParaExConfiguracao.getDpPessoa());
+		exConfiguracao.setDscFormula(configuracaoBaseParaExConfiguracao.getDscFormula());
+		exConfiguracao.setDtFimVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtFimVigConfiguracao());
+		exConfiguracao.setDtIniVigConfiguracao(configuracaoBaseParaExConfiguracao.getDtIniVigConfiguracao());
+		exConfiguracao.setFuncaoConfianca(configuracaoBaseParaExConfiguracao.getFuncaoConfianca());
+		exConfiguracao.setHisAtivo(configuracaoBaseParaExConfiguracao.getHisAtivo());
+		exConfiguracao.setHisDtFim(configuracaoBaseParaExConfiguracao.getHisDtFim());
+		exConfiguracao.setHisDtIni(configuracaoBaseParaExConfiguracao.getHisDtIni());
+		exConfiguracao.setHisIdcFim(configuracaoBaseParaExConfiguracao.getHisIdcFim());
+		exConfiguracao.setHisIdcIni(configuracaoBaseParaExConfiguracao.getHisIdcIni());
+		exConfiguracao.setHisIdIni(configuracaoBaseParaExConfiguracao.getHisIdIni());
+		exConfiguracao.setId(configuracaoBaseParaExConfiguracao.getId());
+		exConfiguracao.setIdConfiguracao(configuracaoBaseParaExConfiguracao.getIdConfiguracao());
+		exConfiguracao.setLotacao(configuracaoBaseParaExConfiguracao.getLotacao());
+		exConfiguracao.setNmEmail(configuracaoBaseParaExConfiguracao.getNmEmail());
+		exConfiguracao.setOrgaoObjeto(configuracaoBaseParaExConfiguracao.getOrgaoObjeto());
+		exConfiguracao.setOrgaoUsuario(configuracaoBaseParaExConfiguracao.getOrgaoUsuario());
+		return exConfiguracao;
+		
+		
+	}
+	
 	public String getDescrDocConfidencial(ExDocumento doc) {
 		return Ex.getInstance().getBL().descricaoSePuderAcessar(doc, getTitular(), getLotaTitular());
 	}

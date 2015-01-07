@@ -24,7 +24,12 @@ import models.vo.SrAtributoVO;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
 import play.db.jpa.JPA;
+import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -170,6 +175,20 @@ public class SrAtributo extends HistoricoSuporte {
 		}
 	}
 
+	public String toJson() {
+		Gson gson = createGson("meuAtributoHistoricoSet", "atributoInicial");
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		
+		return jsonObject.toString();
+	}
+
+	private Gson createGson(String... exclusions) {
+		return new GsonBuilder()
+			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
+			.create();
+	}
+	
 	public static SrAtributo get(String codigo) {
 		return SrAtributo.find("byCodigoAtributo", codigo).first();
 	}

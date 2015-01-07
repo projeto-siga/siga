@@ -3,13 +3,74 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
 <script src="/sigasr/public/javascripts/base-service.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 
 <style>
 	.ui-widget-content a[disabled] {
 		opacity:0.5;
 	}
 </style>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Pesquisa de atributos</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box dataTables_div">
+			<div class="gt-form-row dataTables_length">
+				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
+			</div>
+			
+			<table id="atributo_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Descrição</th>
+						<th>Objetivo</th>
+						<th>C&oacute;digo</th>
+						<th>Formato</th>
+						<th></th>
+						<th>jSon</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:atts, as:'att'}
+						<tr data-json-id="${att.idAtributo}" data-json="${att.toJson()}" onclick="atributoService.editar($(this).data('json'), 'Alterar atributo')" 
+							style="cursor: pointer;">
+							<td>${att.nomeAtributo}</td>
+							<td>${att.descrAtributo}</td>
+							<td>${att.objetivoAtributo.descrObjetivo}</td>
+							<td>${att.codigoAtributo}</td>
+							<td>${att.tipoAtributo?.descrTipoAtributo}</td>
+							<td>
+								#{desativarReativar id:att.idAtributo,
+													onReativar:'atributoService.reativar',
+													onDesativar :'atributoService.desativar',
+													isAtivo:att.isAtivo() }
+								#{/desativarReativar}
+							</td>
+							<td>
+								${att.getSrAtributoJson()}
+							</td>
+						</tr>
+					 #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+			<a href="javascript: inserirEditarAtributo()" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
+#{modal nome:'editarAtributo', titulo:'Cadastrar Atributo', largura: '820'} 
+	<div id="divEditarAtributoForm">#{include 'Application/editarAtributo.html' /}</div>
+#{/modal}
 
 <script>
 	var colunasAtributo = 
@@ -45,9 +106,9 @@
 		}
 		return query_string;
 	}();
-
+	
 	//removendo a referencia de '$' para o jQuery
-	$.noConflict();
+	//$.noConflict();
 
 	jQuery(document).ready(function($) {
 		if (QueryString.mostrarDesativados != undefined) {
@@ -292,7 +353,7 @@
 		$("#editarAtributo_dialog").dialog('close');
 		limparDadosAtributoModal();
 	}
-	
+
 	var opts = {
 			 urlDesativar : '@{Application.desativarAtributo()}?',
 			 urlReativar : '@{Application.reativarAtributo()}?',
@@ -300,7 +361,7 @@
 			 dialogCadastro : $('#editarAtributo_dialog'),
 			 tabelaRegistros : $('#atributo_table'),
 			 objectName : 'atributo',
-			 formCadastro : $('#atributoForm'),
+			 formCadastro : jQuery('#atributoForm'),
 			 mostrarDesativados : QueryString.mostrarDesativados,
 			 colunas : colunasAtributo.acoes
 	};
@@ -332,60 +393,10 @@
 	atributoService.onRowClick = function(atributo) {
 		atributoService.editar(atributo, 'Alterar Atributo');
 	}
+	/**
+	 * Customiza o metodo editar
+	 */
+	atributoService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+	}
 </script>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-		<h2>Pesquisa de atributos</h2>
-		<!-- content bomex -->
-		<div class="gt-content-box dataTables_div">
-			<div class="gt-form-row dataTables_length">
-				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
-			</div>
-			
-			<table id="atributo_table" border="0" class="gt-table display">
-				<thead>
-					<tr>
-						<th>Nome</th>
-						<th>Descrição</th>
-						<th>Objetivo</th>
-						<th>C&oacute;digo</th>
-						<th>Formato</th>
-						<th></th>
-						<th>jSon</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					#{list items:atts, as:'att'}
-						<tr style="cursor: pointer;">
-							<td>${att.nomeAtributo}</td>
-							<td>${att.descrAtributo}</td>
-							<td>${att.objetivoAtributo.descrObjetivo}</td>
-							<td>${att.codigoAtributo}</td>
-							<td>${att.tipoAtributo?.descrTipoAtributo}</td>
-							<td>
-								#{desativarReativar id:att.idAtributo,
-													onReativar:'atributoService.reativar',
-													onDesativar :'atributoService.desativar',
-													isAtivo:att.isAtivo() }
-								#{/desativarReativar}
-							</td>
-							<td>
-								${att.getSrAtributoJson()}
-							</td>
-						</tr>
-					 #{/list}
-				</tbody>
-			</table>
-		</div>
-		<!-- /content box -->
-		<div class="gt-table-buttons">
-		<a href="javascript: inserirEditarAtributo()" class="gt-btn-medium gt-btn-left">Incluir</a>
-		</div>
-
-	</div>
-</div>
-#{modal nome:'editarAtributo', titulo:'Cadastrar Atributo', largura: '820'} 
-	<div>#{include 'Application/editarAtributo.html' /} </div>
-#{/modal}

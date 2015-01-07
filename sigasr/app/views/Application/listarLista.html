@@ -2,6 +2,8 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
 <script src="/sigasr/public/javascripts/base-service.js"></script>
 
 <script type="text/javascript">
@@ -98,7 +100,7 @@
 		event.stopPropagation();
 
 		var tr = $(event.currentTarget).parent().parent()[0],
-			row = listaTable.api().row(tr).data();
+			row = opts.dataTable.api().row(tr).data();
 
 		$.ajax({
 	         type: "POST",
@@ -108,10 +110,10 @@
 	         success: function(response) {
 				if (QueryString.mostrarDesativados) {
 					row[colunasLista.acoes] = gerarColunaDesativar(idLista);
-		        	listaTable.api().row(tr).data(row);
+					opts.dataTable.api().row(tr).data(row);
 				}
 				else {
-					listaTable.api().row(tr).remove().draw();
+					opts.dataTable.api().row(tr).remove().draw();
 				}
 	         },
 	         error: function(response) {
@@ -142,7 +144,16 @@
 	listaService.getRow = function(lista) {
 		return [lista.nomeLista, lista.nomeLotacao, 'COLUNA_ACOES'];
 	}
-
+	listaService.onRowClick = function(lista) {
+		listaService.editar(lista, 'Alterar lista');
+	}
+	/**
+	 * Customiza o metodo editar
+	 */
+	listaService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+	}
+	
 	listaService.gravar = function() {
 		if (!isValidForm())
 			return false;
@@ -158,7 +169,7 @@
 			opts.dialogCadastro.dialog("close");
 		}
 		wrapper[this.opts.objectName] = obj;
-		var params = jQuery.param(wrapper) + "&" + this.paramsPerguntas();
+		var params = jQuery.param(wrapper);
 		
 		$.ajax({
 	    	type: "POST",
@@ -190,7 +201,8 @@
 
 				<tbody>
 					#{list items:listas, as:'item'}
-					<tr>
+					<tr 
+						data-json-id="${item.idLista}" data-json="${item.toJson()}" onclick="listaService.editar($(this).data('json'), 'Alterar lista')">
 						#{if item.podeConsultar(lotaTitular, cadastrante)}
 							<td onclick="javascript:window.location='@{Application.exibirLista(item.idLista)}'" style="cursor: pointer;">${item.nomeLista}</td>
 						#{/if}

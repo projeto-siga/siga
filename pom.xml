@@ -8,6 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
+    	<module>siga-integration-test</module>
         <module>siga-base</module>
         <module>siga-ws</module>
         <module>siga-rel</module>

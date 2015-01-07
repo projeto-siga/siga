@@ -2,6 +2,9 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
 
 <script type="text/javascript">
 	var listaTable,
@@ -33,6 +36,18 @@
 		}
 		return query_string;
 	}();
+
+	var opts = {
+			 urlDesativar : '@{Application.desativarLista()}?',
+			 urlReativar : '@{Application.reativarLista()}?',
+			 urlGravar : '@{Application.gravarLista()}?',
+ 			 /*dialogCadastro : $('#pesquisa_dialog'),*/
+			 tabelaRegistros : $('#listas_table'),
+			 objectName : 'lista',
+			 formCadastro : $('#formLista'),
+			 mostrarDesativados : QueryString.mostrarDesativados,
+			 colunas : colunasLista.acoes
+		};	
 	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
@@ -48,7 +63,7 @@
 		});
 		
 		/* Table initialization */
-		listaTable = $('#listas_table').dataTable({
+		opts.dataTable= $('#listas_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -85,7 +100,7 @@
 		event.stopPropagation();
 
 		var tr = $(event.currentTarget).parent().parent()[0],
-			row = listaTable.api().row(tr).data();
+			row = opts.dataTable.api().row(tr).data();
 
 		$.ajax({
 	         type: "POST",
@@ -95,10 +110,10 @@
 	         success: function(response) {
 				if (QueryString.mostrarDesativados) {
 					row[colunasLista.acoes] = gerarColunaDesativar(idLista);
-		        	listaTable.api().row(tr).data(row);
+					opts.dataTable.api().row(tr).data(row);
 				}
 				else {
-					listaTable.api().row(tr).remove().draw();
+					opts.dataTable.api().row(tr).remove().draw();
 				}
 	         },
 	         error: function(response) {
@@ -109,38 +124,62 @@
 	   });
 	}
 
-	function reativarLista(event, idLista) {
-		event.stopPropagation();
+	// Define a "classe" listaService
+	function ListaService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
+	}
+	// listaService extends BaseService
+	ListaService.prototype = Object.create(BaseService.prototype);
 
-		var tr = $(event.currentTarget).parent().parent()[0],
-			row = listaTable.api().row(tr).data();
-
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.reativarLista()}",
-	         data: {id : idLista, mostrarDesativados : QueryString.mostrarDesativados},
-	         dataType: "text",
-	         success: function(idLista) {
-		         row[colunasLista.acoes] = gerarColunaAtivar(idLista);
-		         listaTable.api().row(tr).data(row);
-	         },
-	         error: function(response) {
-	        	var modalErro = $('#modal-error');
-	        	modalErro.find("h3").html(response.responseText);
-	        	modalErro.show(); 
-	         }
-	   });
+	var listaService = new ListaService(opts);
+	// Sobescreve o metodo cadastrar para limpara tela
+	listaService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title);
 	}
 
-	function gerarColunaAtivar(idLista) {
-		var column = '<a class="once gt-btn-ativar" onclick="desativarLista(event, ' + idLista + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
-   		return column;
-     }
-    
-	function gerarColunaDesativar(idLista) {
-		var column = '<a class="once gt-btn-desativar" onclick="reativarLista(event, ' + idLista + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
-   		return column;
-     }	        
+	listaService.getId = function(lista) {
+		return lista.idLista;
+	}
+	listaService.getRow = function(lista) {
+		return [lista.nomeLista, lista.nomeLotacao, 'COLUNA_ACOES'];
+	}
+	listaService.onRowClick = function(lista) {
+		listaService.editar(lista, 'Alterar lista');
+	}
+	/**
+	 * Customiza o metodo editar
+	 */
+	listaService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+	}
+	
+	listaService.gravar = function() {
+		if (!isValidForm())
+			return false;
+		
+		var service = this,
+		obj = this.getObjetoParaGravar(),
+		url = this.opts.urlGravar,
+		wrapper = {},
+		success = function(objSalvo) {
+			if(service.onGravar) {
+				service.onGravar(obj, JSON.parse(objSalvo));
+			}
+			opts.dialogCadastro.dialog("close");
+		}
+		wrapper[this.opts.objectName] = obj;
+		var params = jQuery.param(wrapper);
+		
+		$.ajax({
+	    	type: "POST",
+	    	url: url,
+	    	data: params,
+	    	dataType: "text",
+	    	success: success,
+	    	error: this.errorHandler
+	   	});
+	}
 </script>
 
 <div class="gt-bd clearfix">
@@ -162,7 +201,8 @@
 
 				<tbody>
 					#{list items:listas, as:'item'}
-					<tr>
+					<tr 
+						data-json-id="${item.idLista}" data-json="${item.toJson()}" onclick="listaService.editar($(this).data('json'), 'Alterar lista')">
 						#{if item.podeConsultar(lotaTitular, cadastrante)}
 							<td onclick="javascript:window.location='@{Application.exibirLista(item.idLista)}'" style="cursor: pointer;">${item.nomeLista}</td>
 						#{/if}
@@ -174,8 +214,8 @@
 						<td>
 							#{if item.podeEditar(lotaTitular, cadastrante)}
 							#{desativarReativar id:item.idLista, 
-												onReativar:'reativarLista',
-												onDesativar :'desativarLista',
+												onReativar:'listaService.reativar',
+												onDesativar :'listaService.desativar',
 												isAtivo:item?.isAtivo() }
 							#{/desativarReativar}
 							#{/if}

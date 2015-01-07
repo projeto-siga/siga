@@ -3,6 +3,10 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 
 <style>
 	.ui-widget-content a[disabled] {
@@ -10,9 +14,66 @@
 	}
 </style>
 
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Pesquisa de atributos</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box dataTables_div">
+			<div class="gt-form-row dataTables_length">
+				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
+			</div>
+			
+			<table id="atributo_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Descrição</th>
+						<th>Objetivo</th>
+						<th>C&oacute;digo</th>
+						<th>Formato</th>
+						<th></th>
+						<th>jSon</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:atts, as:'att'}
+						<tr data-json-id="${att.idAtributo}" data-json="${att.toJson()}" onclick="atributoService.editar($(this).data('json'), 'Alterar atributo')" 
+							style="cursor: pointer;">
+							<td>${att.nomeAtributo}</td>
+							<td>${att.descrAtributo}</td>
+							<td>${att.objetivoAtributo.descrObjetivo}</td>
+							<td>${att.codigoAtributo}</td>
+							<td>${att.tipoAtributo?.descrTipoAtributo}</td>
+							<td>
+								#{desativarReativar id:att.idAtributo,
+													onReativar:'atributoService.reativar',
+													onDesativar :'atributoService.desativar',
+													isAtivo:att.isAtivo() }
+								#{/desativarReativar}
+							</td>
+							<td>
+								${att.getSrAtributoJson()}
+							</td>
+						</tr>
+					 #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+			<a href="javascript: inserirEditarAtributo()" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+
+	</div>
+</div>
+
+#{modal nome:'editarAtributo', titulo:'Cadastrar Atributo', largura: '820'} 
+	<div id="divEditarAtributoForm">#{include 'Application/editarAtributo.html' /}</div>
+#{/modal}
+
 <script>
-	var atributoTable,
-		colunasAtributo = 
+	var colunasAtributo = 
 		{
 			nomeAtributo:       0,
 			descrAtributo:      1,
@@ -45,9 +106,9 @@
 		}
 		return query_string;
 	}();
-
+	
 	//removendo a referencia de '$' para o jQuery
-	$.noConflict();
+	//$.noConflict();
 
 	jQuery(document).ready(function($) {
 		if (QueryString.mostrarDesativados != undefined) {
@@ -61,8 +122,7 @@
 			else
 				location.href = '@{Application.listarAtributo()}';	
 		});
-		
-		atributoTable = $('#atributo_table').dataTable({
+		opts.dataTable= $('#atributo_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -98,11 +158,11 @@
 			}]
 		});
 		$('#atributo_table tbody').on('click', 'tr', function () {
-			var itemSelecionado = atributoTable.api().row(this).data();
+			var itemSelecionado = opts.dataTable.api().row(this).data();
 			
 			if (itemSelecionado != undefined) {
 				if (!$(this).hasClass('selected') ) {
-					atributoTable.$('tr.selected').removeClass('selected');
+					opts.dataTable.$('tr.selected').removeClass('selected');
 		            $(this).addClass('selected');
 		        }
 				atualizarModalAtributo(itemSelecionado);
@@ -183,14 +243,14 @@
 	}
 
 	function recuperarInformacoesTela(jSonAtt) {
-			var id = jSonAtt.id,
+			var id = jSonAtt.idAtributo,
 			row = [
 				$("#nomeAtributo").val(),
 				$("#descrAtributo").val(),
 				jSonAtt.descrObjetivoAtributo,
 				$("#codigoAtributo").val(),
 				jSonAtt.descrTipoAtributo,
-				'<a class="once" onclick="desativarAtributo(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
+				'<a class="once gt-btn-ativar" onclick="atributoService.desativar(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
 				jSonAtt
 			];
 		return row;
@@ -220,10 +280,10 @@
         		row[colunasAtributo.jSon] = jSon;
         		
         		if (isEditing) {
-        			atributoTable.api().row('.selected').data(row);
+        			opts.dataTable.api().row('.selected').data(row);
 				}
 				else {
-					atributoTable.api().row.add(row).draw();
+					opts.dataTable.api().row.add(row).draw();
 				}
 	          	atributoModalFechar();
 
@@ -293,119 +353,50 @@
 		$("#editarAtributo_dialog").dialog('close');
 		limparDadosAtributoModal();
 	}
+
+	var opts = {
+			 urlDesativar : '@{Application.desativarAtributo()}?',
+			 urlReativar : '@{Application.reativarAtributo()}?',
+			 urlGravar : '@{Application.gravarAtributo()}',
+			 dialogCadastro : $('#editarAtributo_dialog'),
+			 tabelaRegistros : $('#atributo_table'),
+			 objectName : 'atributo',
+			 formCadastro : jQuery('#atributoForm'),
+			 mostrarDesativados : QueryString.mostrarDesativados,
+			 colunas : colunasAtributo.acoes
+	};
+
+	// Define a "classe" AtributoService
+	function AtributoService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
+	}
+
+	// AtributoService extends BaseService
+	AtributoService.prototype = Object.create(BaseService.prototype);
 	
-	function desativarAtributo(event, id) {
-		event.stopPropagation();
-		var tr = $(event.currentTarget).parent().parent()[0],
-			row = atributoTable.api().row(tr).data();
-
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.desativarAtributo()}",
-	         data: {id : id, mostrarDesativados : QueryString.mostrarDesativados},
-	         dataType: "text",
-	         success: function(response) {
-				if (QueryString.mostrarDesativados) {
-					row[colunasAtributo.acoes] = gerarColunaDesativar(id);
-		        	atributoTable.api().row(tr).data(row);
-				}
-				else {
-					atributoTable.api().row(tr).remove().draw();
-				}
-	         },
-	         error: function(response) {
-	        	var modalErro = $('#modal-error');
-	        	modalErro.find("h3").html(response.responseText);
-	        	modalErro.show(); 
-	         }
-	   });
+	var atributoService = new AtributoService(opts);
+	atributoService.getId = function(atributo) {
+		return atributo.idAtributo;
 	}
+	atributoService.getRow = function(atributo) {
+		var marginLeft = (atributo.nivel-1) * 2,
+			fontWeight = (atributo.nivel == 1) ? 'bold' : 'normal',
+			span = $('<span></span>');
 
-	function reativarAtributo(event, id) {
-		event.stopPropagation();
-		var tr = $(event.currentTarget).parent().parent()[0],
-			row = atributoTable.api().row(tr).data();
-
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.reativarAtributo()}",
-	         data: {id : id, mostrarDesativados : QueryString.mostrarDesativados},
-	         dataType: "text",
-	         success: function(id) {
-		         row[colunasAtributo.acoes] = gerarColunaAtivar(id);
-		         atributoTable.api().row(tr).data(row);
-	         },
-	         error: function(response) {
-	        	var modalErro = $('#modal-error');
-	        	modalErro.find("h3").html(response.responseText);
-	        	modalErro.show(); 
-	         }
-	   });
+		var spanHTML = '<span style="margin-left:{margin-left};font-weight:{font-weight}">{descricao}</span>';
+		spanHTML = spanHTML.replace('{margin-left}', marginLeft + 'em');
+		spanHTML = spanHTML.replace('{font-weight}', fontWeight);
+		spanHTML = spanHTML.replace('{descricao}', atributo.tituloAtributo);
+		return [atributo.nomeAtributo, atributo.descrAtributo, 'COLUNA_ACOES'];
 	}
-
-	function gerarColunaAtivar(id) {
-		var column = '<a class="once gt-btn-ativar" onclick="desativarAtributo(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
-   		return column;
-     }
-
-	function gerarColunaDesativar(id) {
-		var column = '<a class="once gt-btn-desativar" onclick="reativarAtributo(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
-   		return column;
-     }	    
+	atributoService.onRowClick = function(atributo) {
+		atributoService.editar(atributo, 'Alterar Atributo');
+	}
+	/**
+	 * Customiza o metodo editar
+	 */
+	atributoService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+	}
 </script>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-		<h2>Pesquisa de atributos</h2>
-		<!-- content bomex -->
-		<div class="gt-content-box dataTables_div">
-			<div class="gt-form-row dataTables_length">
-				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
-			</div>
-			
-			<table id="atributo_table" border="0" class="gt-table display">
-				<thead>
-					<tr>
-						<th>Nome</th>
-						<th>Descrição</th>
-						<th>Objetivo</th>
-						<th>C&oacute;digo</th>
-						<th>Formato</th>
-						<th></th>
-						<th>jSon</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					#{list items:atts, as:'att'}
-						<tr style="cursor: pointer;">
-							<td>${att.nomeAtributo}</td>
-							<td>${att.descrAtributo}</td>
-							<td>${att.objetivoAtributo.descrObjetivo}</td>
-							<td>${att.codigoAtributo}</td>
-							<td>${att.tipoAtributo?.descrTipoAtributo}</td>
-							<td>
-								#{desativarReativar id:att.idAtributo,
-													onReativar:'reativarAtributo',
-													onDesativar :'desativarAtributo',
-													isAtivo:att.isAtivo() }
-								#{/desativarReativar}
-							</td>
-							<td>
-								${att.getSrAtributoJson()}
-							</td>
-						</tr>
-					 #{/list}
-				</tbody>
-			</table>
-		</div>
-		<!-- /content box -->
-		<div class="gt-table-buttons">
-		<a href="javascript: inserirEditarAtributo()" class="gt-btn-medium gt-btn-left">Incluir</a>
-		</div>
-
-	</div>
-</div>
-#{modal nome:'editarAtributo', titulo:'Cadastrar Atributo', largura: '820'} 
-	<div>#{include 'Application/editarAtributo.html' /} </div>
-#{/modal}

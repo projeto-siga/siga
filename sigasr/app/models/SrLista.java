@@ -23,12 +23,22 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import models.vo.SrListaVO;
+
+import org.hibernate.Hibernate;
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.proxy.HibernateProxy;
+
 import play.db.jpa.JPA;
+import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
@@ -274,6 +284,20 @@ public class SrLista extends HistoricoSuporte {
 			if (s.getPrioridadeNaLista(this) != i)
 				s.priorizar(this, i, pessoa, lota);
 		}
+	}
+	
+	public String toJson() {
+		Gson gson = createGson("meuListaHistoricoSet", "listaInicial", "meuMovimentacaoSet", "lotaCadastrante");
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		
+		return jsonObject.toString();
+	}
+
+	private Gson createGson(String... exclusions) {
+		return new GsonBuilder()
+			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
+			.create();
 	}
 
 	public SrListaVO toVO() {

@@ -100,7 +100,6 @@
 					table.$('tr.selected').removeClass('selected');
 		            $(this).addClass('selected');
 		            
-					atualizarAssociacaoModal(itemSelecionado);
 				    associacaoModalAbrir(true);
 				}
 			});
@@ -180,26 +179,6 @@
 		$("#checkatributoObrigatorio")[0].checked = false;
 	}
 	
-	// Alimenta os campos do Popup antes de abrir ao usuário.
-	function atualizarAssociacaoModal(itemArray) {
-		limparDadosAssociacaoModal();
-
-		// Atualiza campos Booleanos
-		itemArray[colunas.atributoObrigatorio] = transformStringToBoolean(itemArray[colunas.atributoObrigatorio]);
-
-		// Atualiza campos Selecao
-		$("#itemConfiguracaoUnitario").val(itemArray[colunas.idItemConfiguracao]);
-		$("#itemConfiguracaoUnitario_descricao").val(itemArray[colunas.tituloItemConfiguracao]);
-		$("#itemConfiguracaoUnitario_sigla").val(itemArray[colunas.siglaItemConfiguracao]);
-		$("#itemConfiguracaoUnitarioSpan").html(itemArray[colunas.tituloItemConfiguracao]);
-		$("#acaoUnitaria").val(itemArray[colunas.idAcao]);
-		$("#acaoUnitaria_descricao").val(itemArray[colunas.tituloAcao]);
-		$("#acaoUnitaria_sigla").val(itemArray[colunas.siglaAcao]);
-		$("#acaoUnitariaSpan").html(itemArray[colunas.tituloAcao]);
-		$("#idConfiguracao").val(itemArray[colunas.idAssociacao]);
-	}
-
-
 	function atualizarListaAssociacoes(jSon) {
 		if (jSon.associacoesVO) {
 			// cria a lista de associacoes, e adiciona na tela
@@ -380,11 +359,11 @@
 	#{if att?.idAtributo} <input
 		type="hidden" name="att.idAtributo"
 		id="idAtributo"
-		value="${att.idAtributo}"> #{/if}
+		value="${att?.idAtributo}"> #{/if}
 		<input
 		type="hidden" name="att.hisIdIni"
 		id="hisIdIni"
-		value="${att.hisIdIni}">
+		value="${att?.hisIdIni}">
 	#{ifErrors}
 	<p class="gt-error">Alguns campos obrigatórios não foram
 		preenchidos ${error}</p>
@@ -413,7 +392,7 @@
 	</div>
 	<div class="gt-form-row gt-width-66">
 				<label>Objetivo do atributo</label> #{select id:'objetivoAtributo', name:'att.objetivoAtributo.idObjetivo', items:objetivos,
-				labelProperty:'descrObjetivo', valueProperty:'idObjetivo', value:att.objetivoAtributo.idObjetivo, style:'width:393px;',
+				labelProperty:'descrObjetivo', valueProperty:'idObjetivo', value:att?.objetivoAtributo?.idObjetivo, style:'width:393px;',
 				onchange:'javascript:ocultaAssociacoes();'/}
 	</div>
 	<div class="gt-form-row gt-width-100">
@@ -453,7 +432,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					#{list items:att.associacoes, as:'assoc'}
+					#{list items:att?.associacoes, as:'assoc'}
 					<tr>
 						<td class="details-control"></td>
 						<td>${assoc.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>

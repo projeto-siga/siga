@@ -311,7 +311,6 @@
 		        	permissoesTable.$('tr.selected').removeClass('selected');
 		            $(this).addClass('selected');
 		
-					atualizarControleAcessoModal(permissoesTable.api().row(this).data());
 				    controleAcessoModalAbrir(true);
 				}
 			});
@@ -359,32 +358,6 @@
        });
 	       
 	}
-	
-	function atualizarControleAcessoModal(itemArray) {
-		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-		jComplexoCbb = document.getElementsByName("complexo")[0];
-		
-		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
-		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
-		$("#lotacao").val(itemArray[colunas.idLotacao]);
-		$("#lotacao_descricao").val(itemArray[colunas.nomeLotacao]);
-		$("#lotacaoSpan").html(itemArray[colunas.nomeLotacao]);
-		$("#lotacao_sigla").val(itemArray[colunas.lotacao]);
-		$("#dpPessoa").val(itemArray[colunas.idPessoa]);
-		$("#dpPessoa_descricao").val(itemArray[colunas.nomePessoa]);
-		$("#dpPessoaSpan").html(itemArray[colunas.nomePessoa]);
-		$("#dpPessoa_sigla").val(itemArray[colunas.pessoa]);
-		$("#cargo").val(itemArray[colunas.idCargo]);
-		$("#cargo_descricao").val(itemArray[colunas.siglaCargo]);
-		$("#cargoSpan").html(itemArray[colunas.siglaCargo]);
-		$("#cargo_sigla").val(itemArray[colunas.descrCargo]);
-		$("#funcaoConfianca").val(itemArray[colunas.idfuncao]);
-		$("#funcaoConfianca_descricao").val(itemArray[colunas.siglaFuncao]);
-		$("#funcaoConfiancaSpan").html(itemArray[colunas.siglaFuncao]);
-		$("#funcaoConfianca_sigla").val(itemArray[colunas.descrFuncao]);
-		atualizarListasTipoPermissaoEdicao(itemArray);
-		$("#idConfiguracao").val(itemArray[colunas.idTipoPerm]);
-	};
 	
 	function findSelectedIndexByValue(comboBox, value) {
 		for (var i = 0; i < comboBox.options.length; i++) {
@@ -682,7 +655,7 @@
     		                '<a class="once" onclick="desativarItem(event, '+idLista+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>'];
 
 	            if (!isEditingLista)
-	            	listaTable.api().row.add(row).draw();
+	            	opts.dataTable.api().row.add(row).draw();
 
 	            if ($("#tituloPagina"))
 	            	$("#tituloPagina").html($("#nomeLista").val());

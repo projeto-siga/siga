@@ -509,11 +509,11 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public String getSrConfiguracaoTipoPermissaoJson() {
-		return new SrConfiguracaoVO(null, null, null, tipoPermissaoSet).toJson();
+		return new SrConfiguracaoVO(null, null, null, tipoPermissaoSet, getDescrConfiguracao()).toJson();
 	}
 	
 	public SrConfiguracaoVO toVO() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null);
+		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null, getDescrConfiguracao());
 	}
 
 	public int getNivelItemParaComparar() {

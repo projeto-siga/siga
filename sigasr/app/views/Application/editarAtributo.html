@@ -493,7 +493,7 @@
 			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
 		
 			<div class="gt-form-row gt-width-100">
-				<label>Item</label> 
+				<label>Item <span>*</span></label> 
 				#{selecao tipo:'item',
 					nome:'itemConfiguracaoUnitario',
 					value:itemConfiguracaoUnitario?.atual,
@@ -501,7 +501,7 @@
 			</div>
 		
 			<div class="gt-form-row gt-width-100">
-				<label>Serviço</label> 
+				<label>Serviço <span>*</span></label> 
 				#{selecao tipo:'acao',
 				nome:'acaoUnitaria', value:acaoUnitaria?.atual,
 				requiredValue:'required' /}

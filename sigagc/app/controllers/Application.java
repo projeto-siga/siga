@@ -171,22 +171,22 @@ public class Application extends SigaApplication {
 	}
 	public static void publicKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo, boolean popup,
-			String estiloBusca) throws Exception {
+			String estiloBusca, Boolean podeCriar) throws Exception {
 		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, true,
-				popup, estiloBusca);
+				popup, estiloBusca, podeCriar);
 	}
 
 	public static void knowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
-			boolean testarAcesso, boolean popup, String estiloBusca)
+			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar)
 			throws Exception {
 		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo,
-				testarAcesso, popup, estiloBusca);
+				testarAcesso, popup, estiloBusca, podeCriar);
 	}
 
 	private static void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
-			boolean testarAcesso, boolean popup, String estiloBusca)
+			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar)
 			throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
@@ -256,13 +256,16 @@ public class Application extends SigaApplication {
 		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
 		// "\">aqui</a>");
 		// }
+		
+		if (podeCriar == null)
+			podeCriar = true;
 
 		if (estilo != null)
 			render("@knowledge_" + estilo, conhecimentos, classificacao,
-					msgvazio, urlvazio, titulo, referer, popup);
+					msgvazio, urlvazio, titulo, referer, popup, podeCriar);
 		else
 			render("@knowledge", conhecimentos, classificacao, msgvazio,
-					urlvazio, titulo, referer, popup);
+					urlvazio, titulo, referer, popup, podeCriar);
 	}
 
 	public static void updateTag(String before, String after) {

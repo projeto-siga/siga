@@ -16,29 +16,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.vraptor;
+package br.gov.jfrj.siga.base.util;
 
-import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
+public class Paginador {
+	private Integer offset;
 
-import br.com.caelum.vraptor.Result;
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
-
-public abstract class GiSelecionavelControllerSupport<T extends Selecionavel, DaoFiltroT extends DaoFiltroSelecionavel>
-	extends SigaSelecionavelControllerSupport<T, DaoFiltroT>{
-
-	public GiSelecionavelControllerSupport(HttpServletRequest request,
-			Result result, CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
-		// TODO Auto-generated constructor stub
+	public Integer getOffset() {
+		return offset;
 	}
 
-	public void assertAcesso(String pathServico) throws AplicacaoException,
-			Exception {
-		super.assertAcesso("GI:Módulo de Gestão de Identidade;" + pathServico);
+	public void setOffset(final Integer offset) {
+		this.offset = offset;
 	}
-
 }

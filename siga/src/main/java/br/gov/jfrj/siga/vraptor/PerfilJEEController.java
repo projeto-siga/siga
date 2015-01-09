@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jdt.core.dom.ThisExpression;
@@ -37,8 +38,8 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 @Resource
 public class PerfilJEEController extends GrupoController {
 
-	public PerfilJEEController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+	public PerfilJEEController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
 		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

@@ -5,7 +5,6 @@ import static br.com.caelum.vraptor.view.Results.http;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -13,12 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.util.Paginador;
 
 public class SigaController {
 	public SigaObjects so;

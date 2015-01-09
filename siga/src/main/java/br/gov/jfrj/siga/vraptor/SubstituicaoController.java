@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
@@ -48,8 +49,8 @@ public class SubstituicaoController extends SigaController {
 	}	
 		
 
-	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

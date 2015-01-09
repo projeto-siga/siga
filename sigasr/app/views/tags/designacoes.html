@@ -840,16 +840,20 @@
             	if(!mostrarDesativados) {
             		tr.remove();
                	} else {
-                   	var td = tr.find('td.acoes'),
+               		var duplicarButton = '<a class="once" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>',
+                   		td = tr.find('td.acoes'),
                    		a = $('<a class="once" title="Reativar"/>'),
                    		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
                    		
-                   		a.bind('click', function(event) {
-                   			reativarDesignacao(event, id);
-                     	});
-                   		td.html('');
-                   		a.append(img);
-                     	td.append(a);
+               		a.bind('click', function(event) {
+               			reativarDesignacao(event, id);
+                  	});
+               		td.html('');
+               		a.append(img);
+
+               		
+                    td.append(a);
+                    td.append(duplicarButton);
                	}
         	},
         	error: function(error) {
@@ -891,7 +895,8 @@
             	if(!mostrarDesativados) {
             		tr.remove();
                	} else {
-                   	var td = tr.find('td.acoes'),
+               		var duplicarButton = '<a class="once" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>',
+                   		td = tr.find('td.acoes'),
                    		a = $('<a class="once" title="Desativar"/>'),
                    		img = $('<img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">');
                		
@@ -901,6 +906,7 @@
                    		td.html('');
                    		a.append(img);
                      	td.append(a);
+                     	td.append(duplicarButton);
                	}
         	},
         	error: function(error) {

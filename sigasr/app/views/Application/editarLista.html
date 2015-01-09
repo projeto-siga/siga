@@ -91,11 +91,8 @@
 							<td>${perm.lotacao?.lotacaoAtual?.id}</td>
 							<td>${perm.lotacao?.lotacaoAtual?.nomeLotacao}</td>
 							<td>${perm.lotacao?.lotacaoAtual?.siglaLotacao}</td>
-							*{<td>${perm.dpPessoa?.pessoaAtual?.id}</td>}*
 							<td>${perm.dpPessoa?.id}</td>
-							*{<td>${perm.dpPessoa?.pessoaAtual?.nomePessoa}</td>}*
 							<td>${perm.dpPessoa?.nomePessoa}</td>
-							*{<td>${perm.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>}*
 							<td>${perm.dpPessoa?.nomeAbreviado}</td>
 							<td>${perm.cargo?.id}</td>
 							<td>${perm.cargo?.sigla}</td>
@@ -497,12 +494,13 @@
           			$("#cargo_descricao").val(),
           			$("#cargo_sigla").val(),
           			$("#funcaoConfianca").val(),
-          			$("#funcaoConfianca_descricao").val(),
           			$("#funcaoConfianca_sigla").val(),
+          			$("#funcaoConfianca_descricao").val(),
           			atualizaTipoPermissaoJson(),			//16
           			$("#idConfiguracao").val(),				//17    
           			getListasAsString(),					//18
-          			getDescricaoTipoPermissao()				//19	
+          			getDescricaoTipoPermissao(),			//19
+          			''										//20
           			];
 
 		$.ajax({
@@ -567,9 +565,12 @@
 	function getDescricaoTipoPermissao() {
 		var descricao = $('#ulPermissoes').find("li:first-child").find("span:eq(0)").html();
 		
-		if (descricao != null) {
+		if (descricao != null || descricao != undefined) {
 			return descricao + " ...";
 		}
+		else
+			descricao = '';
+		
 		return descricao;
 	}
 

@@ -75,7 +75,7 @@
 		validatorFormItem = null,
 		validatorFormGestor = null,
 		validatorFormFator = null;
-	
+
 	jQuery(document).ready(function($) {
 		$("#itemConfiguracaoSigla").mask("99.99.99");
 		
@@ -417,6 +417,17 @@
 						</td>
 					</tr>
 				</table>
+				
+				<div class="gt-form-row">
+				*{	#{designacoes designacoes:designacoesItem, 
+						modoExibicao:'item', 
+						orgaos:orgaos, 
+						locais:locais, 
+						unidadesMedida:unidadesMedida, 
+						pesquisaSatisfacao:pesquisaSatisfacao, 
+						listasPrioridade:listasPrioridade /} }*
+				</div>
+				
  				<table class="gt-form-table">
 					<tr>
 						<tr>

@@ -4,10 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
-<ww:url id="urlEmitir" action="emitir_permissao_usuario"
-	namespace="/gi/relatorio" />
-
 <siga:pagina titulo="Relatório de Permissão de Usuários">
 
 	<div class="gt-bd clearfix">
@@ -39,7 +35,7 @@
 		var t_strIdPessoa = document.getElementsByName("pessoa_pessoaSel.id")[0];
 		if (t_strIdPessoa) {
 			if (t_strIdPessoa.value) {
-				location.href = '${urlEmitir}?idPessoa=' + t_strIdPessoa.value;
+				location.href = 'emitir_permissao_usuario?idPessoa=' + t_strIdPessoa.value;
 			} else {
 				alert("Por favor, é necessário preencher o campo pessoa!");
 			}

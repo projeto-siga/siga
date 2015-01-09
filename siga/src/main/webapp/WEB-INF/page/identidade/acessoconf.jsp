@@ -35,7 +35,7 @@
 <siga:pagina titulo="Atribuição de Permissões">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Permissões cadastradas j</h2>
+			<h2>Permissões cadastradas</h2>
 
 			<div class="gt-content-box gt-for-table">
 				<form id="listar" name="listar"

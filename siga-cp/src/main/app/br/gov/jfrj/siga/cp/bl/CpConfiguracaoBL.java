@@ -557,6 +557,7 @@ public class CpConfiguracaoBL {
 				new int[] { 0 }, null);
 
 		CpSituacaoConfiguracao situacao;
+		
 		if (cfg != null) {
 			situacao = cfg.getCpSituacaoConfiguracao();
 		} else {

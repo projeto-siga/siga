@@ -26,7 +26,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
-@Table(name = "SR_TIPO_ATRIBUTO", schema = "SIGASR")
+@Table(name = "SR_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SrTipoAtributo extends HistoricoSuporte {
 
@@ -36,9 +36,9 @@ public class SrTipoAtributo extends HistoricoSuporte {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_TIPO_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SEQ", name = "srTipoAtributoSeq")
 	@GeneratedValue(generator = "srTipoAtributoSeq")
-	@Column(name = "ID_TIPO_ATRIBUTO")
+	@Column(name = "ID_ATRIBUTO")
 	public Long idTipoAtributo;
 
 	@Column(name = "NOME")

@@ -5,11 +5,11 @@ import static br.com.caelum.vraptor.view.Results.http;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -18,6 +18,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.libs.util.Paginador;
 
 public class SigaController {
 	public SigaObjects so;
@@ -28,6 +29,13 @@ public class SigaController {
 
 	private EntityManager em;
 	protected CpDao dao;
+
+	private Paginador p = new Paginador();
+	
+	
+	protected CpDao dao() {
+		return CpDao.getInstance();
+	}
 
 	public SigaController(HttpServletRequest request, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
@@ -63,11 +71,22 @@ public class SigaController {
 		// TODO Auto-generated method stub
 		return so.getLotaTitular();
 	}
+	
+	protected void setLotaTitular(DpLotacao lotaTitular) {
+		// TODO Auto-generated method stub
+		so.setLotaTitular(lotaTitular);
+	}	
 
 	protected DpPessoa getTitular() {
 		// TODO Auto-generated method stub
 		return so.getTitular();
 	}
+	
+	protected void setTitular(DpPessoa titular) {
+		// TODO Auto-generated method stub
+		so.setTitular(titular);
+	}
+	
 
 	protected DpPessoa getCadastrante() {
 		// TODO Auto-generated method stub
@@ -161,4 +180,18 @@ public class SigaController {
 	protected void setRequest(HttpServletRequest request) {
 		this.request = request;
 	}
+	
+	public void assertAcesso(String pathServico) throws AplicacaoException,Exception {
+		so.assertAcesso(pathServico);
+	}	
+
+	
+	public void setP(Paginador p) {
+		this.p = p;
+	}
+	
+	public Paginador getP() {
+		return p;
+	}
+
 }

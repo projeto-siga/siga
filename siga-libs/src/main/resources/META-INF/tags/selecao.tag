@@ -24,18 +24,14 @@
 	<c:if test="${not empty p2 and not empty p2[0]}">
 		<c:set var="selecaoParams" value="${urlParams}&${p2[0]}=${p2[1]}" />
 	</c:if>
-	<%--<ww:hidden name="${propriedade}${tipoSel}Sel.${p2[0]}" value="${p2[1]}" />--%>
 </c:forEach>
 
-
-<ww:set name="tam" value="%{[#attr.propriedade+'Sel'].tamanho}" />
-
+<c:set var="propriedadeSel" value="${propriedade}Sel" />
 
 <c:choose>
 	<c:when test="${empty tipo}">
-				<ww:set name="acaoBusca"
-					value="%{[#attr.propriedade+'Sel'].acaoBusca}" />
-		<ww:set name="tipoSel" value="" scope="request" />
+		<c:set var="acaoBusca" value="${requestScope[propriedadeSel].acaoBusca}" />
+		<c:set var="tipoSel" value="" scope="request" />
 	</c:when>
 	<c:otherwise>
 		<c:set var="acaoBusca" value="/${tipo}" />
@@ -43,6 +39,9 @@
 	</c:otherwise>
 </c:choose>
 
+<c:set var="propriedadeTipoSel" value="${propriedade}${tipoSel}Sel" />
+
+<c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
 
 <c:set var="larguraPopup" value="600" />
 <c:set var="alturaPopup" value="400" />
@@ -56,7 +55,9 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
     } catch (E) {
     } finally {
     }
+    
 	document.getElementsByName('${propriedade}${tipoSel}Sel.id')[0].value = id;
+	
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
 			document.getElementsByName('${propriedade}${tipoSel}Sel.descricao')[0].value = descricao;
@@ -64,33 +65,34 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 		} catch (E) {
 		}
 	</c:if>
+	
 	document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value = sigla;
+	
 	<c:if test="${reler == 'sim'}">
-	document.getElementsByName('req${propriedade}${tipoSel}Sel')[0].value = "sim";
-	document.getElementById('alterouSel').value='${propriedade}';
-	sbmt();
+		document.getElementsByName('req${propriedade}${tipoSel}Sel')[0].value = "sim";
+		document.getElementById('alterouSel').value='${propriedade}';
+		sbmt();
 	</c:if>
+	
 	<c:if test="${reler == 'ajax'}">
-	sbmt('${empty idAjax ? propriedade : idAjax}');
+		sbmt('${empty idAjax ? propriedade : idAjax}');
 	</c:if> 
 }
  
  
 <c:choose>
-<c:when test="${empty modulo}">
-<c:set var="urlPrefix" value="/" />
-</c:when>
-<c:otherwise> 
-<%--<ww:set name="urlPrefix" value="%{request.scheme+'://'+request.serverName+':'+request.localPort+'/'+#attr.modulo}"></ww:set>--%>
-<c:set var="urlPrefix" value="${modulo}" />
-</c:otherwise>
+	<c:when test="${empty modulo}">
+		<c:set var="urlPrefix" value="/" />
+	</c:when>
+	<c:otherwise> 
+		<c:set var="urlPrefix" value="${modulo}" />
+	</c:otherwise>
 </c:choose>
 
 self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	//var url = '${request.scheme}://${request.serverName}:${request.localPort}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
-	var url = '${urlPrefix}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+	var url = '/${urlPrefix}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
 	
 	if (!newwindow_${propriedade}.closed && newwindow_${propriedade}.location) {
 		newwindow_${propriedade}.location.href = url;
@@ -144,7 +146,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
-	var url = '${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+	var url = '/${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 	url = url + '&sigla=' + sigla;
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 }
@@ -158,44 +160,38 @@ self.ajax_${propriedade}${tipoSel} = function() {
 </c:if>
 <c:choose>
 	<c:when test="${desativar == 'sim'}">
-		<c:set var="disabled" value="true" />
+		<c:set var="disabledTxt" value="disabled" />
 		<c:set var="disabledBtn" value="disabled" />
 	</c:when>
 </c:choose>
 
 
-<ww:hidden name="${propriedade}${tipoSel}Sel.id" />
-<ww:hidden name="${propriedade}${tipoSel}Sel.descricao" />
-<ww:hidden name="${propriedade}${tipoSel}Sel.buscar" />
-<ww:hidden name="req${propriedade}${tipoSel}Sel" />
-<ww:hidden name="alterouSel" value="" id="alterouSel" />
-<ww:textfield name="${propriedade}${tipoSel}Sel.sigla"
+<input type="hidden" name="req${propriedade}${tipoSel}Sel"  />
+<input type="hidden" name="alterouSel" value="" id="alterouSel" />
+<input type="hidden" name="${propriedade}${tipoSel}Sel.id"        value="<c:out value="${requestScope[propriedadeTipoSel].id}" />"/>
+<input type="hidden" name="${propriedade}${tipoSel}Sel.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}" />"/>
+<input type="hidden" name="${propriedade}${tipoSel}Sel.buscar"    value="<c:out value="${requestScope[propriedadeTipoSel].buscar}" />"/>
+<input type="text"   name="${propriedade}${tipoSel}Sel.sigla"     value="<c:out value="${requestScope[propriedadeTipoSel].sigla}" />"
 	onkeypress="return handleEnter(this, event)"
 	onblur="javascript: ajax_${propriedade}${tipoSel}();" size="25"
-	theme="simple" disabled="${disabled}" />
+	"${disabledTxt}" />
+	
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."
 		onclick="javascript: popitup_${propriedade}${tipoSel}('');"
 		${disabledBtn} theme="simple">
 </c:if>
+
 <c:if test="${ocultardescricao != 'sim'}">
 	<span id="${propriedade}${tipoSel}SelSpan">
-	<ww:property value="${propriedade}${tipoSel}Sel.descricao"
-		escape="false" />
+		<c:out value="${requestScope[propriedadeTipoSel].descricao}" />
 	</span>
-	<%--${ExDocumentoForm.${propriedade}${tipoSel}Sel.descricao} --%>
-	<%--	<script type="text/javascript">
-	//document.getElementById('${propriedade}${tipoSel}SelSpan').innerHTML = '<ww:property value="%{#request[#attr.propriedade+#request.tipoSel+'Sel.descricao']}"/>';
-	</script> --%>
 </c:if>
 
 <c:if test="${not empty tipo}">
 	<c:choose>
 		<c:when test="${empty idInicial}">
-			<c:set var="idSubst">
-				<ww:property escape='false'
-					value="%{#request[#attr.propriedade+#request.tipoSel+'Sel.id']}" />
-			</c:set>
+			<c:set var="idSubst" value="${requestScope[propriedadeTipoSel].id}" />
 		</c:when>
 		<c:otherwise>
 			<c:set var="idSubst" value="${idInicial}" />
@@ -203,10 +199,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:choose>
 	<c:choose>
 		<c:when test="${empty siglaInicial}">
-			<c:set var="siglaSubst">
-				<ww:property escape='false'
-					value="%{#request[#attr.propriedade+#request.tipoSel+'Sel.sigla']}" />
-			</c:set>
+			<c:set var="siglaSubst" value="${requestScope[propriedadeTipoSel].sigla}" />
 		</c:when>
 		<c:otherwise>
 			<c:set var="siglaSubst" value="${siglaInicial}" />
@@ -214,30 +207,23 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:choose>
 	<c:choose>
 		<c:when test="${empty descricaoInicial}">
-			<c:set var="descricaoSubst">
-				<ww:property escape='false'
-					value="%{#request[#attr.propriedade+#request.tipoSel+'Sel.descricao']}" />
-			</c:set>
+			<c:set var="descricaoSubst"  value="${requestScope[propriedadeTipoSel].descricao}" />
 		</c:when>
 		<c:otherwise>
 			<c:set var="descricaoSubst" value="${descricaoInicial}" />
 		</c:otherwise>
 	</c:choose>
 	<script type="text/javascript">
-	document.getElementsByName('${propriedade}${tipoSel}Sel.id')[0].value = '${idSubst}';
-	document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value = '${siglaSubst}';
-	document.getElementsByName('${propriedade}${tipoSel}Sel.descricao')[0].value = "${descricaoSubst}";
-	<c:if test="${ocultardescricao != 'sim'}">
-	document.getElementById('${propriedade}${tipoSel}SelSpan').innerHTML = "${descricaoSubst}";
-	</c:if>
+		document.getElementsByName('${propriedade}${tipoSel}Sel.id')[0].value = '${idSubst}';
+		document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value = '${siglaSubst}';
+		document.getElementsByName('${propriedade}${tipoSel}Sel.descricao')[0].value = "${descricaoSubst}";
+		<c:if test="${ocultardescricao != 'sim'}">
+			document.getElementById('${propriedade}${tipoSel}SelSpan').innerHTML = "${descricaoSubst}";
+		</c:if>
 	</script>
 </c:if>
-
-<%--= pageContext.getAttribute("ExDocumentoForm").getSubscritorSel().getDescricao() --%>
 
 <c:if test="${tema != 'simple'}">
 	</td>
 	</tr>
 </c:if>
-
-<%-- onchange="javascript: ['${propriedade}${tipoSel}Sel.buscar'].value=1; sbmt();" --%>

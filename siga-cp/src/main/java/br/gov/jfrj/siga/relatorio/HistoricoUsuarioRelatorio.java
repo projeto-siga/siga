@@ -233,14 +233,22 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 		ArrayList<Date> arlDatas = new ArrayList<Date>();
 		for (CpConfiguracao conf : confs) {
 
-			if (conf.getCpTipoConfiguracao().getIdTpConfiguracao().equals(
-					CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO)
-					|| conf.getCpTipoConfiguracao().getIdTpConfiguracao()
-							.equals(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
-				arlDatas.add(conf.getHisDtIni());
-				if (conf.getHisDtFim() != null) {
-					arlDatas.add(conf.getHisDtFim());
+			if (conf.getCpTipoConfiguracao() != null){
+				if (conf.getCpTipoConfiguracao().getIdTpConfiguracao().equals(
+						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO)
+						|| conf.getCpTipoConfiguracao().getIdTpConfiguracao()
+								.equals(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
+				
+					if (conf.getHisDtIni() != null) {
+						arlDatas.add(conf.getHisDtIni());
+					}
+					
+					if (conf.getHisDtFim() != null) {
+						arlDatas.add(conf.getHisDtFim());
+					}
+					
 				}
+			
 			}
 		}
 		return arlDatas;

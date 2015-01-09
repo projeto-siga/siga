@@ -129,53 +129,52 @@
 						<c:if
 							test="${f:podeCadastrarQqSubstituicaoPorConfiguracao(cadastrante, cadastrante.lotacao)}">
 							<li><ww:a
-									href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+									href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar possíveis substitutos</ww:a>
 							</li>
 						</c:if>
 					</ww:if>
 					<ww:else>
 						<li><ww:a
-								href="${serverAndPort}/siga/substituicao/listar.action">Gerenciar possíveis substitutos</ww:a>
+								href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar possíveis substitutos</ww:a>
 						</li>
 					</ww:else>
 				</ul>
 			</li>
 
 
-			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade')}">
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade')}">
 				<li><a href="#">Gestão de Identidade</a>
 					<ul>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;ID:Gerenciar identidades')}">
-							<li><ww:a href="/siga/gi/identidade/listar.action">Identidade</ww:a>
+							<li><ww:a href="/siga/app/gi/identidade/listar">Identidade</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERMISSAO:Gerenciar permissões')}">
-							<li><ww:a href="/siga/gi/acesso/listar.action">Configurar Permissões</ww:a>
+							<li><ww:a href="/siga/app/gi/acesso/listar">Configurar Permissões</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERFIL:Gerenciar perfis de acesso')}">
-							<li><ww:a href="/siga/gi/perfil/listar.action">Perfil de Acesso</ww:a>
+							<li><ww:a href="/siga/app/gi/perfil/listar">Perfil de Acesso</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERFILJEE:Gerenciar perfis do JEE')}">
-							<li><ww:a href="/siga/gi/perfiljee/listar.action">Perfil de Acesso do JEE</ww:a>
+							<li><ww:a href="/siga/app/gi/perfilJEE/listar">Perfil de Acesso do JEE</ww:a>
 							</li>
 						</c:if>
 						<c:if 						
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR:Gerenciar grupos de distribuição')
 							       || (f:podeGerirAlgumGrupo(titular,lotaTitular,2) && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;DELEG:Gerenciar grupos de distribuição delegados'))}"> 	
 	 						<li><ww:a
-									href="${serverAndPort}/siga/gi/email/listar.action">Grupo de Distribuição</ww:a>
+									href="${serverAndPort}/siga/app/gi/grupoDeEmail/listar">Grupo de Distribuição</ww:a>
 							</li>
 						</c:if>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;SELFSERVICE:Gerenciar serviços da própria lotação')}">
-							<li><ww:a href="/siga/gi/servico/acesso.action">Acesso a Serviços</ww:a>
+							<li><ww:a href="/siga/app/gi/servico/editar">Acesso a Serviços</ww:a>
 							</li>
 						</c:if>
 						<c:if
@@ -183,16 +182,16 @@
 							<li><a href="#">Relatórios</a>
 								<ul>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_acesso_servico.action">Acesso aos Serviços</ww:a>
+											href="/siga/app/gi/relatorio/selecionar_acesso_servico">Acesso aos Serviços</ww:a>
 									</li>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_permissao_usuario.action">Permissões de Usuário</ww:a>
+											href="/siga/app/gi/relatorio/selecionar_permissao_usuario">Permissões de Usuário</ww:a>
 									</li>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_alteracao_direitos.action">Alteração de Direitos</ww:a>
+											href="/siga/app/gi/relatorio/selecionar_alteracao_direitos">Alteração de Direitos</ww:a>
 									</li>
 									<li><ww:a
-											href="/siga/gi/relatorio/selecionar_historico_usuario.action">Histórico de Usuário</ww:a>
+											href="/siga/app/gi/relatorio/selecionar_historico_usuario">Histórico de Usuário</ww:a>
 									</li>
 								</ul></li>
 						</c:if>
@@ -232,23 +231,24 @@
 		<li><a href="#">Substituir</a>
 			<ul class="navmenu-large">
 				<c:forEach var="substituicao" items="${meusTitulares}">
-					<li><a
-						style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
-						href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/substituicao/excluir.action?id=${substituicao.idSubstituicao}&porMenu=true';">
+					<li>
+						<a style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
+						    href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
 							<img style="display: inline;"
 							src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
 							onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
 							onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
-					</a> <a
-						href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
+						</a> 
+						<a href="/siga/app/substituicao/substituirGravar?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
 							<c:choose>
 								<c:when test="${not empty substituicao.titular}">
-						${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}
-					</c:when>
+									${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}
+								</c:when>
 								<c:otherwise>
-						${f:maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
-					</c:otherwise>
-							</c:choose> </a>
+									${f:maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
+								</c:otherwise>
+							</c:choose> 
+						</a>
 					</li>
 				</c:forEach>
 

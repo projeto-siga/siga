@@ -11,15 +11,8 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 
-			<ww:url id="url" action="editar" namespace="/substituicao">
-			</ww:url>
 
 			<script>
-				function sbmt() {
-					editar_gravar.action = '<ww:property value="%{url}"/>';
-					editar_gravar.submit();
-				}
-
 				function hideShowSel(combo) {
 					var sel1Span = document.getElementById('span'
 							+ combo.name.substring(4));
@@ -68,9 +61,9 @@
 			</script>   
 			<h2 class="gt-table-head">Cadastrar substituição</h2>
 			<div class="gt-content-box gt-for-table">
-				<form action="editar_gravar.action" onsubmit="verificaData()">
+				<form action="gravar" onsubmit="verificaData()" method="post">
 					<input type="hidden" name="postback" value="1" />
-					<ww:hidden name="id" />
+					<input type="hidden" name="substituicao.idSubstituicao" value="${substituicao.idSubstituicao}"/>
 					<c:set var="dataFim" value="" />
 					<table class="gt-form-table" width="100%">
 						<tr class="header">
@@ -80,14 +73,18 @@
 						<tr>
 							<td>Titular:</td>
 
-							<td><ww:select theme="simple" name="
+							<td>														
 
-
-
-
-Titular"
-									list="listaTipoTitular"
-									onchange="javascript:hideShowSel(this);" /> <c:choose>
+								<select  name="tipoTitular" onchange="javascript:hideShowSel(this);">
+									<c:forEach items="${listaTipoTitular}" var="item">
+										<option value="${item.key}" ${item.key == tipoTitular ? 'selected' : ''}>
+											${item.value}
+										</option>  
+									</c:forEach>
+								</select>									
+									
+								
+								<c:choose>
 									<c:when test="${tipoTitular == 1}">
 										<c:set var="titularStyle" value="" />
 										<c:set var="lotaTitularStyle" value="display:none" />
@@ -97,11 +94,12 @@ Titular"
 										<c:set var="lotaTitularStyle" value="" />
 									</c:when>
 								</c:choose> 
+								
 								<span id="spanTitular" style="${titularStyle}"> 
-									<siga:selecao propriedade="titular" tema="simple" modulo="siga" /> 
-								</span>
-								<span id="spanLotaTitular" style="${lotaTitularStyle}">
-									<siga:selecao modulo="siga" propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/>
+									<siga:selecao modulo="siga" propriedade="titular" tema="simple" /> 
+								</span> 
+								<span id="spanLotaTitular" style="${lotaTitularStyle}"> 
+									<siga:selecao modulo="siga" propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/> 
 								</span>
 							</td>
 						</tr>
@@ -109,9 +107,17 @@ Titular"
 						<tr>
 							<td>Substituto:</td>
 
-							<td><ww:select theme="simple" name="tipoSubstituto"
-									list="listaTipoTitular"
-									onchange="javascript:hideShowSel(this);" /> <c:choose>
+							<td>
+								
+								<select  name="tipoSubstituto" onchange="javascript:hideShowSel(this);">
+									<c:forEach items="${listaTipoSubstituto}" var="item">
+										<option value="${item.key}" ${item.key == tipoSubstituto ? 'selected' : ''}>
+											${item.value}
+										</option>  
+									</c:forEach>
+								</select>									
+									
+								<c:choose>
 									<c:when test="${tipoSubstituto == 1}">
 										<c:set var="substitutoStyle" value="" />
 										<c:set var="lotaSubstitutoStyle" value="display:none" />
@@ -120,25 +126,33 @@ Titular"
 										<c:set var="substitutoStyle" value="display:none" />
 										<c:set var="lotaSubstitutoStyle" value="" />
 									</c:when>
-								</c:choose> <span id="spanSubstituto" style="${substitutoStyle}"> <siga:selecao
-										propriedade="substituto" tema="simple" modulo="siga"/> </span> <span
-								id="spanLotaSubstituto" style="${lotaSubstitutoStyle}"> <siga:selecao  modulo="siga"
-										propriedade="lotaSubstituto" tema="simple" /> </span>
+								</c:choose> 
+								
+								<span id="spanSubstituto" style="${substitutoStyle}"> 
+									<siga:selecao modulo="siga" propriedade="substituto" tema="simple"/> 
+								</span> 
+								<span id="spanLotaSubstituto" style="${lotaSubstitutoStyle}"> 
+									<siga:selecao  modulo="siga" propriedade="lotaSubstituto" tema="simple" /> 
+								</span>
 							</td>
 						</tr>
 
 						<tr>
 							<td>Data de Início</td>
-							<td><ww:textfield name="dtIniSubst" label="Data de Início"
+							<td>
+								<input type="text" id="dtIniSubst" name="dtIniSubst" label="Data de Início" value="${dtIniSubst}"
 									onblur="javascript:verifica_data(this, true);" theme="simple" />
-								(opcional)</td>
+								(opcional)
+							</td>
 						</tr>
 
 						<tr>
 							<td>Data de Fim</td>
-							<td><ww:textfield name="dtFimSubst" label="Data de Fim"
+							<td>
+								<input type="text" id="dtFimSubst" name="dtFimSubst" label="Data de Fim" value="${dtFimSubst}"
 									onblur="javascript:verifica_data(this, true);" theme="simple" />
-								(opcional)</td>
+								(opcional)
+							</td>
 						</tr>
 
 						<!-- Incluido para retorno de mensagem de campo nao preenchido -->
@@ -154,9 +168,11 @@ Titular"
 						<c:set var="dataFim" value="" />
 
 						<tr class="button">
-							<td colspan="2"><input type="submit" value="Ok"
-								class="gt-btn-medium gt-btn-left" /> <input type="button"
-								value="Cancela" onclick="javascript:history.back();"
+							<td colspan="2">
+							<input type="submit" value="Ok"
+								class="gt-btn-medium gt-btn-left" /> 
+								
+							<input type="button" value="Cancela" onclick="javascript:history.back();" 
 								class="gt-btn-medium gt-btn-left" />
 						</tr>
 					</table>

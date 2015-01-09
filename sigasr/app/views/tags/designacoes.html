@@ -444,7 +444,7 @@
 	
 	function gravarDesignacao() {
 		if (!jQuery("#formDesignacao").valid())
-			return false;
+			return;
 		
 		// recupera as comboboxes
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],

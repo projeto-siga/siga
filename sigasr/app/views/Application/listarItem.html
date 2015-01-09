@@ -244,7 +244,7 @@
 
 	function gravarItemConfiguracao() {
 		if (!isValidForm())
-			return false;
+			return;
 		
 		var row = recuperarInformacoesTela();
 
@@ -507,6 +507,5 @@
 </div>
 
 #{modal nome:'editarItem', titulo:'Editar Item'}
-	<div id="divEditarItem">#{include
-				'Application/editarItem.html' /}</div>
+	<div id="divEditarItem">#{include 'Application/editarItem.html' /}</div>
 #{/modal}

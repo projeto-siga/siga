@@ -10,4 +10,9 @@ public abstract class AbstractSelecionavel {
 		this.sigla = sigla;
 		this.descricao = descricao;
 	}
+	
+	public AbstractSelecionavel(Long id, String descricao) {
+		this.id = id;
+		this.descricao = descricao;
+	}
 }

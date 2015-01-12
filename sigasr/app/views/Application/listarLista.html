@@ -96,34 +96,6 @@
 		});
 	});
 
-	function desativarLista(event, idLista) {
-		event.stopPropagation();
-
-		var tr = $(event.currentTarget).parent().parent()[0],
-			row = opts.dataTable.api().row(tr).data();
-
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.desativarLista()}",
-	         data: {id : idLista, mostrarDesativados : QueryString.mostrarDesativados},
-	         dataType: "text",
-	         success: function(response) {
-				if (QueryString.mostrarDesativados) {
-					row[colunasLista.acoes] = gerarColunaDesativar(idLista);
-					opts.dataTable.api().row(tr).data(row);
-				}
-				else {
-					opts.dataTable.api().row(tr).remove().draw();
-				}
-	         },
-	         error: function(response) {
-	        	var modalErro = $('#modal-error');
-	        	modalErro.find("h3").html(response.responseText);
-	        	modalErro.show(); 
-	         }
-	   });
-	}
-
 	// Define a "classe" listaService
 	function ListaService(opts) {
 		// super(opts)

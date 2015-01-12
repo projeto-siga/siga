@@ -979,23 +979,7 @@ public class Application extends SigaApplication {
 					throw new AplicacaoException(
 							"O tamanho do arquivo � maior que o "
 									+ "m�ximo permitido (2MB)");
-				if (file.getSize() > 0) {
-					/*
-					 * ----Não pode ser usado porque o "plupload" retorna um
-					 * mime type padrão "octet stream" String mimeType =
-					 * file.getContentType().toLowerCase();
-					 */
-					byte anexo[] = file.asBytes();
-					if (titulo == null || titulo.trim().length() == 0)
-						titulo = file.getFileName();
-					GcBL.movimentar(
-							informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
-							null, null, null, titulo, null, null, null, null,
-							anexo);
-					GcBL.gravar(informacao, idc(), titular(), lotaTitular());
-					renderText("success");
-				} else
+				if (!(file.getSize() > 0)) 
 					throw new AplicacaoException(
 							"Não é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
 				if (origem.equals("editar")) {

@@ -24,36 +24,56 @@ public class SrConfiguracaoVO {
 	public List<SrAcao.SrAcaoVO> listaAcaoVO;
 	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
 	public boolean atributoObrigatorio;
+	public String descrConfiguracao;
+	public DpLotacaoVO atendente;
+	public DpLotacaoVO posAtendente;
+//	public DpLotacaoVO equipeQualidade;
+	public DpLotacaoVO preAtendente;
+	public CpOrgaoUsuarioVO orgaoUsuario;
+	public CpComplexoVO local;
+	
+	
 
-	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet) {
+	public SrConfiguracaoVO(SrConfiguracao configuracao) {
 		listaVO = new ArrayList<SrListaVO>();
 		listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
 		listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
 		listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
+		descrConfiguracao = configuracao.getDescrConfiguracao();
 		
-		if(listaConfiguracaoSet != null)
-			for (SrLista item : listaConfiguracaoSet) {
-				listaVO.add(item.toVO());
-			}
-		
-		if(itemConfiguracaoSet != null)
-			for (SrItemConfiguracao item : itemConfiguracaoSet) {
+		if(configuracao.itemConfiguracaoSet != null)
+			for (SrItemConfiguracao item : configuracao.itemConfiguracaoSet) {
 				listaItemConfiguracaoVO.add(item.toVO());
 			}
 		
-		if(acoesSet != null)
-			for (SrAcao item : acoesSet) {
+		if(configuracao.acoesSet != null)
+			for (SrAcao item : configuracao.acoesSet) {
 				listaAcaoVO.add(item.toVO());
 			}
 
-		if(tipoPermissaoSet != null)
-			for (SrTipoPermissaoLista item : tipoPermissaoSet) {
+		if(configuracao.tipoPermissaoSet != null)
+			for (SrTipoPermissaoLista item : configuracao.tipoPermissaoSet) {
 				listaTipoPermissaoListaVO.add(item.toVO());
 			}
+		
+		if(configuracao.atendente != null)
+			atendente = DpLotacaoVO.createFrom(configuracao.atendente.getLotacaoAtual());
+		
+		if(configuracao.posAtendente != null)
+			posAtendente = DpLotacaoVO.createFrom(configuracao.posAtendente.getLotacaoAtual());
+		
+		if(configuracao.preAtendente != null)
+			preAtendente = DpLotacaoVO.createFrom(configuracao.preAtendente.getLotacaoAtual());
+		
+		if(configuracao.getOrgaoUsuario() != null)
+			orgaoUsuario = CpOrgaoUsuarioVO.createFrom(configuracao.getOrgaoUsuario());
+	
+		if(configuracao.getComplexo() != null)
+			local = CpComplexoVO.createFrom(configuracao.getComplexo());
 	}
 	
-	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet, boolean atributoObrigatorio) {
-		this(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, tipoPermissaoSet);
+	public SrConfiguracaoVO(SrConfiguracao configuracao, boolean atributoObrigatorio) {
+		this(configuracao);
 		this.atributoObrigatorio = atributoObrigatorio;
 	}
 

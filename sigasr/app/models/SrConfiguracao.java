@@ -25,7 +25,12 @@ import models.vo.SrItemConfiguracaoVO;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
 import play.db.jpa.JPA;
+import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -509,11 +514,11 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public String getSrConfiguracaoTipoPermissaoJson() {
-		return new SrConfiguracaoVO(null, null, null, tipoPermissaoSet).toJson();
+		return new SrConfiguracaoVO(this).toJson();
 	}
 	
 	public SrConfiguracaoVO toVO() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null);
+		return new SrConfiguracaoVO(this);
 	}
 
 	public int getNivelItemParaComparar() {
@@ -600,4 +605,19 @@ public class SrConfiguracao extends CpConfiguracao {
 		
 		return new SrConfiguracaoAssociacaoVO(this.getIdConfiguracao(), itemVO, acaoVO, this.atributoObrigatorio);
 	}
+	
+	public String toJson() {
+		Gson gson = createGson("");
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		
+		return jsonObject.toString();
+	}
+
+	private Gson createGson(String... exclusions) {
+		return new GsonBuilder()
+			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.in(exclusions))
+			.create();
+	}
+	
 }

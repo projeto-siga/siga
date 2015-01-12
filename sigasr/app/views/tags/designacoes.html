@@ -1,3 +1,135 @@
+<div class="gt-content">
+	<!-- content bomex -->
+	<div class="gt-content-box dataTables_div">
+		#{if _modoExibicao == 'designacao'}
+		<div class="gt-form-row dataTables_length">
+			<label>#{checkbox name:'mostrarDesativado',
+				value:mostrarDesativado/} <b>Incluir Inativas</b>
+			</label>
+		</div>
+		#{/if}
+
+		<table id="designacoes_table" border="0" class="gt-table display">
+			<thead>
+				<tr>
+					<th style="color: #333">
+						<button class="gt-btn-medium gt-btn-left bt-expandir">
+							<span id="iconeBotaoExpandirTodos">+</span>
+						</button>
+					</th>
+					<th></th>
+					<th>ID Orgão</th>
+					<th>Orgão</th>
+					<th>ID Local</th>
+					<th>Local</th>
+					<th>Tipo Solicitante</th>
+					<th>ID Solicitante</th>
+					<th>Descr. Solicitante</th>
+					<th>Solicitante</th>
+					<th>Item Configuração</th>
+					<th>Ação</th>
+					<th>Sigla Ação</th>
+					<th>Descrição</th>
+					<th>ID Atendente</th>
+					<th>Descr. Atendente</th>
+					<th>Atendente</th>
+					<th>ID Pré-Atendente</th>
+					<th>Descr. Pré-Atendente</th>
+					<th>Pré</th>
+					<th>ID Pós-Atendente</th>
+					<th>Descr. Pós-Atendente</th>
+					<th>Pós</th>
+					<th>ID Pesq. Satisfação</th>
+					<th>Descr. Pesq. Satisfação</th>
+					<th>JSon - Designação</th>
+					<th>ID Designação</th>
+					<th>Herdado</th>
+					<th>Utilizar Herdado</th>
+					<th>Listas Serializadas</th>
+					<th></th>
+					<th>ativo</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				#{list items:_designacoes, as:'design'}
+				<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
+					style="cursor: pointer;">
+					<td class="details-control"></td>
+					<td class="checkbox-hidden"
+						style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
+						<input type="checkbox" checked="${design.utilizarItemHerdado}"
+						id="check${design.id}" />
+					</td>
+					<td>${design.orgaoUsuario?.id}</td>
+					<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
+					<td>${design.complexo?.idComplexo}</td>
+					<td>${design.complexo?.nomeComplexo}</td>
+					<td>${design.tipoSolicitante }</td>
+					<td>${design.solicitante?.id }</td>
+					<td>${design.solicitante?.descricao }</td>
+					<td>${design.solicitante?.sigla}</td>
+					<td>${design.descrItemConfiguracaoAtual }</td>
+					<td>${design.descrAcaoAtual }</td>
+					<td>${design.descrAcaoAtual }</td>
+					<td>${design.descrConfiguracao}</td>
+					<td>${design.atendente?.lotacaoAtual?.id }</td>
+					<td>${design.atendente?.lotacaoAtual?.nomeLotacao }</td>
+					<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td>
+					<td>${design.preAtendente?.lotacaoAtual?.id }</td>
+					<td>${design.preAtendente?.lotacaoAtual?.nomeLotacao }</td>
+					<td>${design.preAtendente?.lotacaoAtual?.siglaLotacao }</td>
+					<td>${design.posAtendente?.lotacaoAtual?.id}</td>
+					<td>${design.posAtendente?.lotacaoAtual?.nomeLotacao }</td>
+					<td>${design.posAtendente?.lotacaoAtual?.siglaLotacao }</td>
+					<td>${design.pesquisaSatisfacao?.id}</td>
+					<td>${design.pesquisaSatisfacao?.descrPesquisa}</td>
+					<td>${design.getSrConfiguracaoJson()}</td>
+					<td>${design.idConfiguracao}</td>
+					<th>${design.isHerdado}</th>
+					<th>${design.utilizarItemHerdado}</th>
+					<td></td>
+					<td class="acoes"> 
+						#{desativarReativar id:design.id, 
+											onReativar:'designacaoService.reativar',
+											onDesativar :'designacaoService.desativar',
+											isAtivo:design.isAtivo() }
+						#{/desativarReativar}
+						<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar">
+							<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
+						</a>
+					</td>
+					<td>${design.isAtivo()}</td>
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+
+	</div>
+	<!-- /content box -->
+	<div class="gt-table-buttons">
+		<a href="javascript: inserirDesignacao()"
+			class="gt-btn-medium gt-btn-left">Incluir</a>
+	</div>
+</div>
+
+#{modal nome:'designacao', titulo:'Cadastrar Designacao'}
+<div id="divEditarDesignacaoItem">#{include
+	'Application/editarDesignacaoItem.html' /}</div>
+#{/modal} #{modal nome:'erroAoSalvar', titulo:'Problemas ao Salvar',
+altura:'200', largura:'450'}
+<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
+	style="text-align: justify;">
+	<label style="padding-top: 5px;">Pelo menos um dos campos
+		"Atendente", "Pré-Atendente" ou "Pós-Atendente" precisa
+		necessáriamente ser a mesma lotação que foi selecionada na tela de
+		equipe. Por favor verifique e tente novamente.</label>
+</div>
+<div class="gt-form-row" style="margin-left: 297px;">
+	<a href="javascript: fecharModalErroAoSalvar()"
+		class="gt-btn-medium gt-btn-left">OK</a>
+</div>
+#{/modal}
 
 <script type="text/javascript">
 	var parametroTela = '${_modoExibicao}';
@@ -37,18 +169,17 @@
 	colunas.ativo=							31;
 	
 	//removendo a referencia de '$' para o jQuery
-	$.noConflict();
+// 	$.noConflict();
 
-	var designacoesTable = null;
 	jQuery( document ).ready(function($) {
 		/* Table initialization */
-		designacoesTable = $('#designacoes_table')
+		opts.dataTable = $('#designacoes_table')
 			.on('draw.dt', function() {
-					if(designacoesTable) {
+					if(opts.dataTable) {
 						var btn = $('.bt-expandir'),
 							expandir = btn.hasClass('expandido');
 
-						$('#designacoes_table').mostrarDetalhes(detalhesDesignacao, designacoesTable);
+						$('#designacoes_table').mostrarDetalhes(detalhesDesignacao, opts.dataTable);
 						$('#designacoes_table').expandirContrairLinhas(expandir);
 					}
 				})
@@ -123,19 +254,32 @@
 			"iDisplayLength": 100
 		});
 
-		$('#designacoes_table').mostrarDetalhes(detalhesDesignacao, designacoesTable);
+		$('#designacoes_table').mostrarDetalhes(detalhesDesignacao, opts.dataTable);
 		
 		$('#designacoes_table tbody').on('click', 'tr', function () {
-			var itemSelecionado = designacoesTable.api().row(this).data();
+			var itemSelecionado = opts.dataTable.api().row(this).data();
 			
 			manipulaItemSelecionado(itemSelecionado, false, this);
 		});
 	});
 
+	var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false,
+		opts = {
+			 urlDesativar : '@{Application.desativarDesignacao()}?',
+			 urlReativar : '@{Application.reativarDesignacao()}?',
+			 urlGravar : '@{Application.gravarDesignacao()}?',
+			 dialogCadastro : jQuery('#designacao_dialog'),
+			 tabelaRegistros : jQuery('#designacoes_table'),
+			 objectName : 'designacao',
+			 formCadastro : jQuery('#formDesignacao'),
+			 mostrarDesativados : mostrarDesativados,
+			 colunas : colunas.acao
+		};	
+
 	function manipulaItemSelecionado(itemSelecionado, duplicarItem, parent) {
 		if (itemSelecionado != undefined) {
 			if (!$(parent).hasClass('selected') ) {
-	            designacoesTable.$('tr.selected').removeClass('selected');
+	            opts.dataTable.$('tr.selected').removeClass('selected');
 	            $(parent).addClass('selected');
 	        }
 
@@ -265,123 +409,123 @@
 	// Limpa os dados da tela.
 	function limparDadosDesignacaoModal() {
 		// recupera as comboboxes
-		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-			jComplexoCbb = document.getElementsByName("complexo")[0],
-			jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
-			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
+// 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
+// 			jComplexoCbb = document.getElementsByName("complexo")[0],
+// 			jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
+// 			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
 		
 		// resetando os valores das combos
-		jOrgaoUsuarioCbb.selectedIndex = 0;
-		jComplexoCbb.selectedIndex = 0;
-		jPesquisaSatisfacaoCbb.selectedIndex = 0;
-		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
+// 		jOrgaoUsuarioCbb.selectedIndex = 0;
+// 		jComplexoCbb.selectedIndex = 0;
+// 		jPesquisaSatisfacaoCbb.selectedIndex = 0;
+// 		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
 		
 		// limpando campos do componente pessoaLotaFuncCargoSelecao
-		$("#dpPessoa").val('');
-		$("#dpPessoa_descricao").val('');
-		$("#dpPessoa_sigla").val('');
-		$("#dpPessoaSpan").html('');
-		$("#lotacao").val('');
-		$("#lotacao_descricao").val('');
-		$("#lotacao_sigla").val('');
-		$("#lotacaoSpan").html('');
-		$("#funcaoConfianca").val('');
-		$("#funcaoConfianca_descricao").val('');
-		$("#funcaoConfianca_sigla").val('');
-		$("#funcaoConfiancaSpan").html('');
-		$("#cargo").val('');
-		$("#cargo_descricao").val('');
-		$("#cargo_sigla").val('');
-		$("#cargoSpan").html('');
-		$("#cpGrupo").val('');
-		$("#cpGrupo_descricao").val('');
-		$("#cpGrupo_sigla").val('');
-		$("#cpGrupoSpan").html('');
+// 		$("#dpPessoa").val('');
+// 		$("#dpPessoa_descricao").val('');
+// 		$("#dpPessoa_sigla").val('');
+// 		$("#dpPessoaSpan").html('');
+// 		$("#lotacao").val('');
+// 		$("#lotacao_descricao").val('');
+// 		$("#lotacao_sigla").val('');
+// 		$("#lotacaoSpan").html('');
+// 		$("#funcaoConfianca").val('');
+// 		$("#funcaoConfianca_descricao").val('');
+// 		$("#funcaoConfianca_sigla").val('');
+// 		$("#funcaoConfiancaSpan").html('');
+// 		$("#cargo").val('');
+// 		$("#cargo_descricao").val('');
+// 		$("#cargo_sigla").val('');
+// 		$("#cargoSpan").html('');
+// 		$("#cpGrupo").val('');
+// 		$("#cpGrupo_descricao").val('');
+// 		$("#cpGrupo_sigla").val('');
+// 		$("#cpGrupoSpan").html('');
 			
 		// limpando os valores dos demais campos
-		$("#descrConfiguracao").val('');
-		$("#acao").val('');
-		$("#acao_descricao").val('');
-		$("#acao_sigla").val('');
-		$("#acaoSpan").html('');
-		$("#atendente").val('');
-		$("#atendente_descricao").val('');
-		$("#atendente_sigla").val('');
-		$("#atendenteSpan").html('');
-		$("#preAtendente").val('');
-		$("#preAtendente_descricao").val('');
-		$("#preAtendente_sigla").val('');
-		$("#preAtendenteSpan").html('');
-		$("#posAtendente").val('');
-		$("#posAtendente_descricao").val('');
-		$("#posAtendente_sigla").val('');
-		$("#posAtendenteSpan").html('');
-		resetId(),
+// 		$("#descrConfiguracao").val('');
+// 		$("#acao").val('');
+// 		$("#acao_descricao").val('');
+// 		$("#acao_sigla").val('');
+// 		$("#acaoSpan").html('');
+// 		$("#atendente").val('');
+// 		$("#atendente_descricao").val('');
+// 		$("#atendente_sigla").val('');
+// 		$("#atendenteSpan").html('');
+// 		$("#preAtendente").val('');
+// 		$("#preAtendente_descricao").val('');
+// 		$("#preAtendente_sigla").val('');
+// 		$("#preAtendenteSpan").html('');
+// 		$("#posAtendente").val('');
+// 		$("#posAtendente_descricao").val('');
+// 		$("#posAtendente_sigla").val('');
+// 		$("#posAtendenteSpan").html('');
+// 		resetId(),
 		
 		itemConfiguracaoTable.api().clear().draw();
 		acaoTable.api().clear().draw();
 		
 		// limpa as mensagens de erros
-		resetAllErrorMessage();
+// 		resetAllErrorMessage();
 
 		// atualiza a visibilidade dos campos
-		if (parametroTela == 'equipe') {
-			document.getElementById("atendente_sigla").disabled = false;
-			document.getElementById("atendenteButton").disabled = false;
-			document.getElementById("preAtendente_sigla").disabled = false;
-			document.getElementById("preAtendenteButton").disabled = false;
-			document.getElementById("posAtendente_sigla").disabled = false;
-			document.getElementById("posAtendenteButton").disabled = false;
-		}
+// 		if (parametroTela == 'equipe') {
+// 			document.getElementById("atendente_sigla").disabled = false;
+// 			document.getElementById("atendenteButton").disabled = false;
+// 			document.getElementById("preAtendente_sigla").disabled = false;
+// 			document.getElementById("preAtendenteButton").disabled = false;
+// 			document.getElementById("posAtendente_sigla").disabled = false;
+// 			document.getElementById("posAtendenteButton").disabled = false;
+// 		}
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.
 	function atualizarDesignacaoModal(itemArray) {
 		limparDadosDesignacaoModal();
 		
-		// recupera as comboboxes
-		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-		jComplexoCbb = document.getElementsByName("complexo")[0],
-		jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
-		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
+// 		// recupera as comboboxes
+// 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
+// 		jComplexoCbb = document.getElementsByName("complexo")[0],
+// 		jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
+// 		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
 		
-		// atualiza os valores das combos
-		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
-		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
-		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[colunas.tipoSolicitante]);
-		jPesquisaSatisfacaoCbb.selectedIndex = findSelectedIndexByValue(jPesquisaSatisfacaoCbb, itemArray[colunas.idPesquisaSatisfacao]);
+// 		// atualiza os valores das combos
+// 		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
+// 		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
+// 		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[colunas.tipoSolicitante]);
+// 		jPesquisaSatisfacaoCbb.selectedIndex = findSelectedIndexByValue(jPesquisaSatisfacaoCbb, itemArray[colunas.idPesquisaSatisfacao]);
 		
-		// atualiza os valores dos demais campos
-		$("#descrConfiguracao").val(itemArray[colunas.descrConfiguracao]);
-		$("#acao").val(itemArray[colunas.itemConfiguracao]);
-		$("#acao_descricao").val(itemArray[colunas.acao]);
-		$("#acao_sigla").val(itemArray[colunas.siglaAcao]);
-		$("#acaoSpan").html(itemArray[colunas.acao]);
-		$("#atendente").val(itemArray[colunas.idAtendente]);
-		$("#atendente_descricao").val(itemArray[colunas.descricaoAtendente]);
-		$("#atendente_sigla").val(itemArray[colunas.atendente]);
-		$("#atendenteSpan").html(itemArray[colunas.descricaoAtendente]);
-		$("#preAtendente").val(itemArray[colunas.idPreAtendente]);
-		$("#preAtendente_descricao").val(itemArray[colunas.descricaoPreAtendente]);
-		$("#preAtendente_sigla").val(itemArray[colunas.pre]);
-		$("#preAtendenteSpan").html(itemArray[colunas.descricaoPreAtendente]);
-		$("#posAtendente").val(itemArray[colunas.idPosAtendente]);
-		$("#posAtendente_descricao").val(itemArray[colunas.descricaoPosAtendente]);
-		$("#posAtendente_sigla").val(itemArray[colunas.pos]);
-		$("#posAtendenteSpan").html(itemArray[colunas.descricaoPosAtendente]);
-		$("#idConfiguracao").val(itemArray[colunas.idDesignacao]);
+// 		// atualiza os valores dos demais campos
+// 		$("#descrConfiguracao").val(itemArray[colunas.descrConfiguracao]);
+// 		$("#acao").val(itemArray[colunas.itemConfiguracao]);
+// 		$("#acao_descricao").val(itemArray[colunas.acao]);
+// 		$("#acao_sigla").val(itemArray[colunas.siglaAcao]);
+// 		$("#acaoSpan").html(itemArray[colunas.acao]);
+// 		$("#atendente").val(itemArray[colunas.idAtendente]);
+// 		$("#atendente_descricao").val(itemArray[colunas.descricaoAtendente]);
+// 		$("#atendente_sigla").val(itemArray[colunas.atendente]);
+// 		$("#atendenteSpan").html(itemArray[colunas.descricaoAtendente]);
+// 		$("#preAtendente").val(itemArray[colunas.idPreAtendente]);
+// 		$("#preAtendente_descricao").val(itemArray[colunas.descricaoPreAtendente]);
+// 		$("#preAtendente_sigla").val(itemArray[colunas.pre]);
+// 		$("#preAtendenteSpan").html(itemArray[colunas.descricaoPreAtendente]);
+// 		$("#posAtendente").val(itemArray[colunas.idPosAtendente]);
+// 		$("#posAtendente_descricao").val(itemArray[colunas.descricaoPosAtendente]);
+// 		$("#posAtendente_sigla").val(itemArray[colunas.pos]);
+// 		$("#posAtendenteSpan").html(itemArray[colunas.descricaoPosAtendente]);
+// 		$("#idConfiguracao").val(itemArray[colunas.idDesignacao]);
 		
 		atualizarListasDesignacaoEdicao(itemArray);
 		
-		// atualiza os valores do componente pessoaLotaFuncCargoSelecao
-		getIdFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.idSolicitante]);
-		getDescricaoFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.descricaoSolicitante]);
-        getSiglaFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.solicitante]);
-        getSpanFieldSolicitante(itemArray[colunas.tipoSolicitante]).html(itemArray[colunas.descricaoSolicitante]);
+// 		// atualiza os valores do componente pessoaLotaFuncCargoSelecao
+// 		getIdFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.idSolicitante]);
+// 		getDescricaoFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.descricaoSolicitante]);
+//         getSiglaFieldSolicitante(itemArray[colunas.tipoSolicitante]).val(itemArray[colunas.solicitante]);
+//         getSpanFieldSolicitante(itemArray[colunas.tipoSolicitante]).html(itemArray[colunas.descricaoSolicitante]);
         
-        $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
+//         $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 
-		validarCamposTela();
+// 		validarCamposTela();
 
 	};
 
@@ -444,7 +588,7 @@
 	
 	function gravarDesignacao() {
 		if (!jQuery("#formDesignacao").valid())
-			return false;
+			return;
 		
 		// recupera as comboboxes
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
@@ -459,7 +603,7 @@
 		
 		
 		var idDesignacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '',
-			rowSelecionada = designacoesTable.api().row('.selected'),
+			rowSelecionada = opts.dataTable.api().row('.selected'),
 			tdDesignacao = $(rowSelecionada.node()),
 			itemSelecionado = rowSelecionada.data(),
 			ativo = itemSelecionado ? itemSelecionado[colunas.ativo] : true;
@@ -532,13 +676,13 @@
         		row[colunas.idDesignacao] = id;
         		
         		if (isEditing) {
-					designacoesTable.api().row('.selected').data(row);
+					opts.dataTable.api().row('.selected').data(row);
 				}
 				else {
 					var desativarButton = '<a class="once" onclick="desativarDesignacao(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
 					var duplicarButton = '<a class="once" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>';
 					row[colunas.reativarDesativar] = desativarButton + " " + duplicarButton;
-					designacoesTable.api().row.add(row).draw();
+					opts.dataTable.api().row.add(row).draw();
 				}
         		
         		designacaoModalFechar();
@@ -820,238 +964,164 @@
     }
 
 
-	function desativarDesignacao(event, idOriginal) {
-		var tr = $(event.currentTarget).parent().parent();
-		event.stopPropagation();
-		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
+// 	function desativarDesignacao(event, idOriginal) {
+// 		var tr = $(event.currentTarget).parent().parent();
+// 		event.stopPropagation();
+// 		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
 		
-		$.ajax({
-        	type: "POST",
-        	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(idOriginal, mostrarDesativados),
-        	data: '',
-        	dataType: "text",
-        	success: function(id) {
-        		var itemSelecionado = designacoesTable.api().row(tr).data();
-        		itemSelecionado[colunas.idDesignacao] = id;
-        		itemSelecionado[colunas.ativo] = false;
+// 		$.ajax({
+//         	type: "POST",
+//         	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(idOriginal, mostrarDesativados),
+//         	data: '',
+//         	dataType: "text",
+//         	success: function(id) {
+//         		var itemSelecionado = designacoesTable.api().row(tr).data();
+//         		itemSelecionado[colunas.idDesignacao] = id;
+//         		itemSelecionado[colunas.ativo] = false;
         		
-        		designacoesTable.api().row(tr).data(itemSelecionado);
+//         		designacoesTable.api().row(tr).data(itemSelecionado);
         		
-            	if(!mostrarDesativados) {
-            		tr.remove();
-               	} else {
-                   	var td = tr.find('td.acoes'),
-                   		a = $('<a class="once" title="Reativar"/>'),
-                   		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
+//             	if(!mostrarDesativados) {
+//             		tr.remove();
+//                	} else {
+//                    	var td = tr.find('td.acoes'),
+//                    		a = $('<a class="once" title="Reativar"/>'),
+//                    		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
                    		
-                   		a.bind('click', function(event) {
-                   			reativarDesignacao(event, id);
-                     	});
-                   		td.html('');
-                   		a.append(img);
-                     	td.append(a);
-               	}
-        	},
-        	error: function(error) {
-        		var fieldsError = error.responseText.split(";");
-        		// limpa as mensagens de erros
-        		resetAllErrorMessage();
+//                    		a.bind('click', function(event) {
+//                    			reativarDesignacao(event, id);
+//                      	});
+//                    		td.html('');
+//                    		a.append(img);
+//                      	td.append(a);
+//                	}
+//         	},
+//         	error: function(error) {
+//         		var fieldsError = error.responseText.split(";");
+//         		// limpa as mensagens de erros
+//         		resetAllErrorMessage();
         		
-        		// Mostra a mensagem de campos obrigatórios
-        		document.getElementById("erroCamposObrigatorios").style.display="inherit";
+//         		// Mostra a mensagem de campos obrigatórios
+//         		document.getElementById("erroCamposObrigatorios").style.display="inherit";
         		
-        		for (var i = 0; i < fieldsError.length; i++) {
-        			var fieldName = fieldsError[i];
-        			var fooElement = document.getElementById(fieldName);
+//         		for (var i = 0; i < fieldsError.length; i++) {
+//         			var fieldName = fieldsError[i];
+//         			var fooElement = document.getElementById(fieldName);
         			
-        			if (fooElement != undefined)
-        				fooElement.style.display = "inline";
-        		}
-        	}
-       	});
+//         			if (fooElement != undefined)
+//         				fooElement.style.display = "inline";
+//         		}
+//         	}
+//        	});
+// 	}
+
+// 	function reativarDesignacao(event, idOriginal) {
+// 		var tr = $(event.currentTarget).parent().parent();
+// 		event.stopPropagation();
+	// Define a "classe" designacaoService
+	function DesignacaoService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
+	}
+	// designacaoService extends BaseService
+	DesignacaoService.prototype = Object.create(BaseService.prototype);
+
+	var designacaoService = new DesignacaoService(opts);
+	// Sobescreve o metodo cadastrar para limpar a tela
+	designacaoService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title);
 	}
 
-	function reativarDesignacao(event, idOriginal) {
-		var tr = $(event.currentTarget).parent().parent();
-		event.stopPropagation();
-		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
-
-		$.ajax({
-        	type: "POST",
-        	url: '@{Application.reativarDesignacao()}?' + queryDesativarReativar(idOriginal, mostrarDesativados),
-        	data: '',
-        	dataType: "text",
-        	success: function(id) {
-        		var itemSelecionado = designacoesTable.api().row(tr).data();
-        		itemSelecionado[colunas.idDesignacao] = id;
-        		itemSelecionado[colunas.ativo] = true;
-        		
-        		designacoesTable.api().row(tr).data(itemSelecionado);
-        		
-            	if(!mostrarDesativados) {
-            		tr.remove();
-               	} else {
-                   	var td = tr.find('td.acoes'),
-                   		a = $('<a class="once" title="Desativar"/>'),
-                   		img = $('<img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">');
-               		
-                   		a.bind('click', function(event) {
-                   			desativarDesignacao(event, id);
-                     	});
-                   		td.html('');
-                   		a.append(img);
-                     	td.append(a);
-               	}
-        	},
-        	error: function(error) {
-        		var fieldsError = error.responseText.split(";");
-        		// limpa as mensagens de erros
-        		resetAllErrorMessage();
-        		
-        		// Mostra a mensagem de campos obrigatórios
-        		document.getElementById("erroCamposObrigatorios").style.display="inherit";
-        		
-        		for (var i = 0; i < fieldsError.length; i++) {
-        			var fieldName = fieldsError[i];
-        			var fooElement = document.getElementById(fieldName);
-        			
-        			if (fooElement != undefined)
-        				fooElement.style.display = "inline";
-        		}
-        	}
-       	});
+	designacaoService.getId = function(designacao) {
+		return designacao.idDesignacao;
+	}
+	designacaoService.getRow = function(designacao) {
+		return [designacao.descrConfiguracao, designacao.orgao, 'COLUNA_ACOES'];
+	}
+	designacaoService.onRowClick = function(designacao) {
+		designacaoService.editar(designacao, 'Alterar designacao');
+	}
+	/**
+	 * Customiza o metodo editar
+	 */
+	designacaoService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 	}
 	
+	designacaoService.gravar = function() {
+		if (!isValidForm())
+			return false;
+		
+		var service = this,
+		obj = this.getObjetoParaGravar(),
+		url = this.opts.urlGravar,
+		wrapper = {},
+		success = function(objSalvo) {
+			if(service.onGravar) {
+				service.onGravar(obj, JSON.parse(objSalvo));
+			}
+			opts.dialogCadastro.dialog("close");
+		}
+		wrapper[this.opts.objectName] = obj;
+		var params = jQuery.param(wrapper);
+		
+		$.ajax({
+	    	type: "POST",
+	    	url: url,
+	    	data: params,
+	    	dataType: "text",
+	    	success: success,
+	    	error: this.errorHandler
+	   	});
+	}
+	
+
+// 	var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
+
+// 		$.ajax({
+//         	type: "POST",
+//         	url: '@{Application.reativarDesignacao()}?' + queryDesativarReativar(idOriginal, mostrarDesativados),
+//         	data: '',
+//         	dataType: "text",
+//         	success: function(id) {
+//         		var itemSelecionado = designacoesTable.api().row(tr).data();
+//         		itemSelecionado[colunas.idDesignacao] = id;
+//         		itemSelecionado[colunas.ativo] = true;
+        		
+//         		designacoesTable.api().row(tr).data(itemSelecionado);
+        		
+//             	if(!mostrarDesativados) {
+//             		tr.remove();
+//                	} else {
+//                    	var td = tr.find('td.acoes'),
+//                    		a = $('<a class="once" title="Desativar"/>'),
+//                    		img = $('<img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">');
+               		
+//                    		a.bind('click', function(event) {
+//                    			desativarDesignacao(event, id);
+//                      	});
+//                    		td.html('');
+//                    		a.append(img);
+//                      	td.append(a);
+//                	}
+//         	},
+//         	error: function(error) {
+//         		var fieldsError = error.responseText.split(";");
+//         		// limpa as mensagens de erros
+//         		resetAllErrorMessage();
+        		
+//         		// Mostra a mensagem de campos obrigatórios
+//         		document.getElementById("erroCamposObrigatorios").style.display="inherit";
+        		
+//         		for (var i = 0; i < fieldsError.length; i++) {
+//         			var fieldName = fieldsError[i];
+//         			var fooElement = document.getElementById(fieldName);
+        			
+//         			if (fooElement != undefined)
+//         				fooElement.style.display = "inline";
+//         		}
+//         	}
+//        	});
+// 	}
+	
 </script>
-
-<div class="gt-content">
-	<!-- content bomex -->
-	<div class="gt-content-box dataTables_div">
-		#{if _modoExibicao == 'designacao'}
-		<div class="gt-form-row dataTables_length">
-			<label>#{checkbox name:'mostrarDesativado',
-				value:mostrarDesativado/} <b>Incluir Inativas</b>
-			</label>
-		</div>
-		#{/if}
-
-		<table id="designacoes_table" border="0" class="gt-table display">
-			<thead>
-				<tr>
-					<th style="color: #333">
-						<button class="gt-btn-medium gt-btn-left bt-expandir">
-							<span id="iconeBotaoExpandirTodos">+</span>
-						</button>
-					</th>
-					<th></th>
-					<th>ID Orgão</th>
-					<th>Orgão</th>
-					<th>ID Local</th>
-					<th>Local</th>
-					<th>Tipo Solicitante</th>
-					<th>ID Solicitante</th>
-					<th>Descr. Solicitante</th>
-					<th>Solicitante</th>
-					<th>Item Configuração</th>
-					<th>Ação</th>
-					<th>Sigla Ação</th>
-					<th>Descrição</th>
-					<th>ID Atendente</th>
-					<th>Descr. Atendente</th>
-					<th>Atendente</th>
-					<th>ID Pré-Atendente</th>
-					<th>Descr. Pré-Atendente</th>
-					<th>Pré</th>
-					<th>ID Pós-Atendente</th>
-					<th>Descr. Pós-Atendente</th>
-					<th>Pós</th>
-					<th>ID Pesq. Satisfação</th>
-					<th>Descr. Pesq. Satisfação</th>
-					<th>JSon - Designação</th>
-					<th>ID Designação</th>
-					<th>Herdado</th>
-					<th>Utilizar Herdado</th>
-					<th>Listas Serializadas</th>
-					<th></th>
-					<th>ativo</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				#{list items:_designacoes, as:'design'}
-				<tr style="cursor: pointer;">
-					<td class="details-control"></td>
-					<td class="checkbox-hidden"
-						style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
-						<input type="checkbox" checked="${design.utilizarItemHerdado}"
-						id="check${design.id}" />
-					</td>
-					<td>${design.orgaoUsuario?.id}</td>
-					<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
-					<td>${design.complexo?.idComplexo}</td>
-					<td>${design.complexo?.nomeComplexo}</td>
-					<td>${design.tipoSolicitante }</td>
-					<td>${design.solicitante?.id }</td>
-					<td>${design.solicitante?.descricao }</td>
-					<td>${design.solicitante?.sigla}</td>
-					<td>${design.descrItemConfiguracaoAtual }</td>
-					<td>${design.descrAcaoAtual }</td>
-					<td>${design.descrAcaoAtual }</td>
-					<td>${design.descrConfiguracao}</td>
-					<td>${design.atendente?.lotacaoAtual?.id }</td>
-					<td>${design.atendente?.lotacaoAtual?.nomeLotacao }</td>
-					<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td>
-					<td>${design.preAtendente?.lotacaoAtual?.id }</td>
-					<td>${design.preAtendente?.lotacaoAtual?.nomeLotacao }</td>
-					<td>${design.preAtendente?.lotacaoAtual?.siglaLotacao }</td>
-					<td>${design.posAtendente?.lotacaoAtual?.id}</td>
-					<td>${design.posAtendente?.lotacaoAtual?.nomeLotacao }</td>
-					<td>${design.posAtendente?.lotacaoAtual?.siglaLotacao }</td>
-					<td>${design.pesquisaSatisfacao?.id}</td>
-					<td>${design.pesquisaSatisfacao?.descrPesquisa}</td>
-					<td>${design.getSrConfiguracaoJson()}</td>
-					<td>${design.idConfiguracao}</td>
-					<th>${design.isHerdado}</th>
-					<th>${design.utilizarItemHerdado}</th>
-					<td></td>
-					<td class="acoes"> 
-						#{desativarReativar id:design.id, 
-											onReativar:'reativarDesignacao',
-											onDesativar :'desativarDesignacao',
-											isAtivo:design.isAtivo() }
-						#{/desativarReativar}
-						<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar">
-							<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
-						</a>
-					</td>
-					<td>${design.isAtivo()}</td>
-				</tr>
-				#{/list}
-			</tbody>
-		</table>
-
-	</div>
-	<!-- /content box -->
-	<div class="gt-table-buttons">
-		<a href="javascript: inserirDesignacao()"
-			class="gt-btn-medium gt-btn-left">Incluir</a>
-	</div>
-</div>
-
-#{modal nome:'designacao', titulo:'Cadastrar Designacao'}
-<div id="divEditarDesignacaoItem">#{include
-	'Application/editarDesignacaoItem.html' /}</div>
-#{/modal} #{modal nome:'erroAoSalvar', titulo:'Problemas ao Salvar',
-altura:'200', largura:'450'}
-<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
-	style="text-align: justify;">
-	<label style="padding-top: 5px;">Pelo menos um dos campos
-		"Atendente", "Pré-Atendente" ou "Pós-Atendente" precisa
-		necessáriamente ser a mesma lotação que foi selecionada na tela de
-		equipe. Por favor verifique e tente novamente.</label>
-</div>
-<div class="gt-form-row" style="margin-left: 297px;">
-	<a href="javascript: fecharModalErroAoSalvar()"
-		class="gt-btn-medium gt-btn-left">OK</a>
-</div>
-#{/modal}

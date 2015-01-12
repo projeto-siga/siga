@@ -1,4 +1,6 @@
 #{extends 'main.html' /} #{set title:'Edição de atributo' /}
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
 <!-- <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script> -->
 
@@ -13,7 +15,8 @@
 	}
 
 	var tableAssociacao,
-		colunas = {};
+		colunas = {},
+		validatorAtributoForm;
 	colunas.botaoExpandir =               0;
 	colunas.idItemConfiguracao =          1;
 	colunas.tituloItemConfiguracao =      2;
@@ -104,7 +107,8 @@
 			$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
 			tableAssociacao = table;
 		}
-	
+		validatorAtributoForm = $("#atributoForm").validate();
+		$("#associacaoForm").validate();
 	});
 
 	function inserirAssociacao() {
@@ -203,7 +207,7 @@
 				var assoc = jSon.associacoesVO[i],
 					html = 
 					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-						'<a class="once desassociar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
+						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
 							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
 							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
 						'</a>' +
@@ -265,6 +269,9 @@
 	};
 
 	function gravarAssociacao() {
+		if (!jQuery("#associacaoForm").valid())
+			return false;
+		
 		var idAssociacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
 		
 		var row = [
@@ -319,7 +326,7 @@
        });
 
 	}
-	
+
 	function associacaoModalFechar() {
 		isEditingAssociacao = false;
 		$("#associacao_dialog").dialog("close");
@@ -384,10 +391,10 @@
 	#{/ifErrors}	
 	<div class="gt-form-row box-wrapper">
 		<div class="box box-left gt-width-50">
-			<label>Nome</label> <input type="text"
+			<label>Nome <span>*</span></label> <input type="text"
 				name="att.nomeAtributo"
 				id="nomeAtributo"
-				value="${att?.nomeAtributo}" size="50" maxlength="255"/>
+				value="${att?.nomeAtributo}" size="50" maxlength="255" required/>
 				<span style="color: red">#{error
 				'att.nomeAtributo' /}</span>
 		</div>
@@ -482,28 +489,32 @@
 
 #{modal nome:'associacao', titulo:'cadastrar associação'}
 	<div class="gt-form gt-content-box">
-		<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
-	
-		<div class="gt-form-row gt-width-100">
-			<label>Item</label> 
-			#{selecao tipo:'item',
-				nome:'itemConfiguracaoUnitario',
-				value:itemConfiguracaoUnitario?.atual /}
-		</div>
-	
-		<div class="gt-form-row gt-width-100">
-			<label>Serviço</label> 
-			#{selecao tipo:'acao',
-			nome:'acaoUnitaria', value:acaoUnitaria?.atual /}
-		</div>
-		<div class="gt-form-row">
-			<label>#{checkbox name:'atributoObrigatorio',
-				value:atributoObrigatorio /} Obrigatório</label>
-		</div>
-		<div class="gt-form-row">
-			<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
-			<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-		</div>
+		<form id="associacaoForm">
+			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Item <span>*</span></label> 
+				#{selecao tipo:'item',
+					nome:'itemConfiguracaoUnitario',
+					value:itemConfiguracaoUnitario?.atual,
+					requiredValue:'required' /}
+			</div>
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Serviço <span>*</span></label> 
+				#{selecao tipo:'acao',
+				nome:'acaoUnitaria', value:acaoUnitaria?.atual,
+				requiredValue:'required' /}
+			</div>
+			<div class="gt-form-row">
+				<label>#{checkbox name:'atributoObrigatorio',
+					value:atributoObrigatorio /} Obrigatório</label>
+			</div>
+			<div class="gt-form-row">
+				<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
+				<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+			</div>
+			</form>
 	</div>
 	<div class="gt-content-box" id="modal-associacao-error" style="display: none;">
 		<table width="100%">

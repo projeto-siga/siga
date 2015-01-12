@@ -4,7 +4,12 @@
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
-	var listaTable;
+	var listaTable,
+		colunasLista = {};
+
+	colunasLista.nome =		0;
+	colunasLista.lotacao = 	1;
+	colunasLista.acoes = 	2;
 	
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
@@ -68,7 +73,7 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets" : [2],
+				"targets" : [colunasLista.acoes],
 				"searchable": false,
 				"sortable" : false
 			}],
@@ -78,13 +83,64 @@
 
 	function desativarLista(event, idLista) {
 		event.stopPropagation();
-		window.location = '@{Application.desativarLista()}?' + queryDesativarReativar(idLista, QueryString.mostrarDesativados);
+
+		var tr = $(event.currentTarget).parent().parent()[0],
+			row = listaTable.api().row(tr).data();
+
+		$.ajax({
+	         type: "POST",
+	         url: "@{Application.desativarLista()}",
+	         data: {id : idLista, mostrarDesativados : QueryString.mostrarDesativados},
+	         dataType: "text",
+	         success: function(response) {
+				if (QueryString.mostrarDesativados) {
+					row[colunasLista.acoes] = gerarColunaDesativar(idLista);
+		        	listaTable.api().row(tr).data(row);
+				}
+				else {
+					listaTable.api().row(tr).remove().draw();
+				}
+	         },
+	         error: function(response) {
+	        	var modalErro = $('#modal-error');
+	        	modalErro.find("h3").html(response.responseText);
+	        	modalErro.show(); 
+	         }
+	   });
 	}
 
 	function reativarLista(event, idLista) {
 		event.stopPropagation();
-		window.location = '@{Application.reativarLista()}?'  + queryDesativarReativar(idLista, QueryString.mostrarDesativados);
+
+		var tr = $(event.currentTarget).parent().parent()[0],
+			row = listaTable.api().row(tr).data();
+
+		$.ajax({
+	         type: "POST",
+	         url: "@{Application.reativarLista()}",
+	         data: {id : idLista, mostrarDesativados : QueryString.mostrarDesativados},
+	         dataType: "text",
+	         success: function(idLista) {
+		         row[colunasLista.acoes] = gerarColunaAtivar(idLista);
+		         listaTable.api().row(tr).data(row);
+	         },
+	         error: function(response) {
+	        	var modalErro = $('#modal-error');
+	        	modalErro.find("h3").html(response.responseText);
+	        	modalErro.show(); 
+	         }
+	   });
 	}
+
+	function gerarColunaAtivar(idLista) {
+		var column = '<a class="once gt-btn-ativar" onclick="desativarLista(event, ' + idLista + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+   		return column;
+     }
+    
+	function gerarColunaDesativar(idLista) {
+		var column = '<a class="once gt-btn-desativar" onclick="reativarLista(event, ' + idLista + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
+   		return column;
+     }	        
 </script>
 
 <div class="gt-bd clearfix">
@@ -128,6 +184,21 @@
 					</a> #{/list}
 				</tbody>
 			</table>
+			<div class="gt-content-box" id="modal-error" style="display: none;">
+				<table width="100%">
+					<tr>
+						<td align="center" valign="middle">
+							<table class="form" width="50%">
+								<tr>
+									<td style="text-align: center; padding-top: 10px;">
+										<h3></h3>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">

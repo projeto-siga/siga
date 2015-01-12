@@ -24,8 +24,10 @@ public class SrConfiguracaoVO {
 	public List<SrAcao.SrAcaoVO> listaAcaoVO;
 	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
 	public boolean atributoObrigatorio;
+	public String descrConfiguracao;
 
-	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet) {
+	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet, String descrConfiguracao) {
+		this.descrConfiguracao = descrConfiguracao;
 		listaVO = new ArrayList<SrListaVO>();
 		listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
 		listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
@@ -52,8 +54,8 @@ public class SrConfiguracaoVO {
 			}
 	}
 	
-	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet, boolean atributoObrigatorio) {
-		this(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, tipoPermissaoSet);
+	public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet, boolean atributoObrigatorio, String descrConfiguracao) {
+		this(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, tipoPermissaoSet, descrConfiguracao);
 		this.atributoObrigatorio = atributoObrigatorio;
 	}
 

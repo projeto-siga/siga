@@ -1,62 +1,66 @@
 #{extends 'main.html' /} #{set title:'Edição de Ação' /}
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-		<h2>Cadastro de Ação</h2>
-
-		<div class="gt-form gt-content-box">
-			<form id="acaoForm">
-				<input type="hidden" name="idAcao">
-				
-				#{ifErrors}
-				<p class="gt-error">Alguns campos obrigatórios não foram
-					preenchidos ${error}</p>
-				#{/ifErrors}
-				<div class="gt-form-row gt-width-66">
-					<label>Código</label> 
-					<input type="text" name="siglaAcao" maxlength="255"/>
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Título</label> <input type="text"
-						name="tituloAcao" size="100" maxlength="255"/>
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Descrição</label> <input type="text"
-						name="descrAcao" size="100" maxlength="255"/>
-				</div>
-				
-				<div class="gt-form-row gt-width-66">
-					<label>Tipo de ação</label>
-						#{select name:'tipoAcao',
-						items:models.SrTipoAcao.values(),
-						labelProperty:'descrTipoAcao',
-						value:acao.tipoAcao,
-						class:'select-siga' /}
-				</div>
-				
-				<div class="gt-form-row gt-width-66">
-					<label>Tipo de execução pelo Pré-atendimento</label>
-						#{select name:'tipoExecucao',
-						items:models.SrTipoExecucaoAcao.values(),
-						labelProperty:'descrTipoExecucaoAcao',
-						value:acao.tipoExecucao,
-						class:'select-siga' /}
-				</div>
-				
-				<div class="gt-form-row gt-width-66">
-					<label>Forma de atendimento</label>
-						#{select name:'formaAtendimento',
-						items:models.SrFormaAtendimentoAcao.values(),
-						labelProperty:'descFormaAtendimentoAcao',
-						value:acao.formaAtendimento,
-						class:'select-siga'/}
-				</div>
-				
-				<div class="gt-form-row">
-					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="acaoService.gravar()"/>
-					<a class="gt-btn-medium gt-btn-left" onclick="acaoService.cancelarGravacao()">Cancelar</a>
-				</div>
-			</form>
+<div class="gt-form gt-content-box">
+	<form id="acaoForm">
+		<input type="hidden" name="idAcao">
+		
+		#{ifErrors}
+		<p class="gt-error">Alguns campos obrigatórios não foram
+			preenchidos ${error}</p>
+		#{/ifErrors}
+		<div class="gt-form-row gt-width-66">
+			<label>Código <span>*</span></label> 
+			<input type="text" name="siglaAcao" maxlength="255" required/>
 		</div>
-	</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Título <span>*</span></label> <input type="text"
+				name="tituloAcao" size="100" maxlength="255" required/>
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Descrição</label> <input type="text"
+				name="descrAcao" size="100" maxlength="255"/>
+		</div>
+		
+		<div class="gt-form-row gt-width-66">
+			<label>Tipo de ação</label>
+				#{select name:'tipoAcao',
+				items:models.SrTipoAcao.values(),
+				labelProperty:'descrTipoAcao',
+				value:acao.tipoAcao,
+				class:'select-siga' /}
+		</div>
+		
+		<div class="gt-form-row gt-width-66">
+			<label>Tipo de execução pelo Pré-atendimento</label>
+				#{select name:'tipoExecucao',
+				items:models.SrTipoExecucaoAcao.values(),
+				labelProperty:'descrTipoExecucaoAcao',
+				value:acao.tipoExecucao,
+				class:'select-siga' /}
+		</div>
+		
+		<div class="gt-form-row gt-width-66">
+			<label>Forma de atendimento</label>
+				#{select name:'formaAtendimento',
+				items:models.SrFormaAtendimentoAcao.values(),
+				labelProperty:'descFormaAtendimentoAcao',
+				value:acao.formaAtendimento,
+				class:'select-siga'/}
+		</div>
+		
+		<div class="gt-form-row">
+			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="acaoService.gravar()"/>
+			<a class="gt-btn-medium gt-btn-left" onclick="acaoService.cancelarGravacao()">Cancelar</a>
+		</div>
+	</form>
 </div>
+
+<script language="javascript">
+	var validatorFormAcao;
+
+	$( document ).ready(function( ) {
+		validatorFormAcao = $("#acaoForm").validate();
+	});
+</script>

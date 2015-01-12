@@ -57,6 +57,11 @@
 #{/modal}
 
 <script>
+	var colunasPesquisa = {
+			nome: 0,
+			descricao: 1,
+			acoes: 2
+		};
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
 		// the return value is assigned to QueryString!
@@ -88,7 +93,8 @@
 		 tabelaRegistros : $('#pesquisa_table'),
 		 objectName : 'pesquisa',
 		 formCadastro : $('#pesquisaForm'),
-		 mostrarDesativados : QueryString.mostrarDesativados
+		 mostrarDesativados : QueryString.mostrarDesativados,
+		 colunas : colunasPesquisa.acoes
 	};
 
 	$(document).ready(function() {
@@ -129,7 +135,7 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [2],
+				"targets": [colunasPesquisa.acoes],
 				"searchable": false,
 				"sortable" : false
 			}]
@@ -175,6 +181,9 @@
 	}
 
 	pesquisaService.gravar = function() {
+		if (!isValidForm())
+			return;
+		
 		var service = this,
 		obj = this.getObjetoParaGravar(),
 		url = this.opts.urlGravar,

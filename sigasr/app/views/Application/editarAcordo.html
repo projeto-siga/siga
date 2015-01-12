@@ -3,6 +3,8 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
 <script type="text/javascript">
 
@@ -119,6 +121,8 @@
 		$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
 
 		tableAssociacao = table;
+		$("#acordoForm").validate();
+		$("#parametroForm").validate();
 	});
 
 	function inserirAssociacao() {
@@ -529,6 +533,9 @@ jDialog.dialog({
         }
 });
 $("#modalOk").click(function(){
+		if (!jQuery("#parametroForm").valid())
+			return false;
+	
         var acao = jDialog.data('acao');
         var jParametroEscolhido = jParametro.find("option:selected");
         var jUnidadeEscolhida = jUnidadeMedida.find("option:selected");
@@ -590,7 +597,7 @@ parametrosAcordo.removerItem = function(idItem){
 #{/list}
 
 $("[value='Gravar']").click(function(){
-    	if (!block())
+    	if (!jQuery("#acordoForm").valid() || !block())
         	return false;
         var jForm = $("form"),
                 params = jForm.serialize();
@@ -614,12 +621,12 @@ $("[value='Gravar']").click(function(){
                 <h2>Cadastro de Acordo</h2>
 
                 <div class="gt-form gt-content-box">
-                        <form>
+                        <form id="acordoForm">
                                 #{if acordo?.idAcordo} <input type="hidden" name="acordo.idAcordo"
                                         id="idAcordo" value="${acordo.idAcordo}"> #{/if}
                                 <div class="gt-form-row gt-width-66">
-                                        <label>Nome</label> <input type="text" name="acordo.nomeAcordo"
-                                                value="${acordo?.nomeAcordo}" size="60" />
+                                        <label>Nome <span>*</span></label> <input type="text" name="acordo.nomeAcordo"
+                                                value="${acordo?.nomeAcordo}" size="60" required/>
                                 </div>
                                 <div class="gt-form-row gt-width-66">
                                         <label>Descrição</label> <input type="text"
@@ -724,31 +731,32 @@ $("[value='Gravar']").click(function(){
 <div id="dialog">
         <div class="gt-content">
                 <div class="gt-form gt-content-box">
-                        <div class="gt-form-row">
-                                <label>Par&acirc;metro</label> #{select name:'parametro', id:'parametro'}
-                                #{list items:parametros, as:'parametro'} #{option parametro.idAtributo}
-                                ${parametro.nomeAtributo} #{/option} #{/list} #{/select}
-                        </div>
-                         <div class="gt-form-row">
-                                <label>Valor</label> 
-                                #{select id:'operador', name:'operador',
-									items:models.SrOperador.values(),
-									labelProperty:'nome' /}
-                                <input type="text" id="valor"
-                                        name="valor" value="" size = "5"/>
-                        		#{select name:'unidadeMedida', 
-                        			id:'unidadeMedida',
-									items:unidadesMedida, 
-									valueProperty:'idUnidadeMedida',
-									labelProperty:'plural'}
-									#{option 0}#{/option} 
-								#{/select}
-						</div>
-                        <div class="gt-form-row">
-                                <input type="button" id="modalOk" value="Ok"
-                                        class="gt-btn-medium gt-btn-left" /> <input type="button"
-                                        value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
-                        </div>
+                        <form id="parametroForm">
+	                        <div class="gt-form-row">
+	                                <label>Par&acirc;metro</label> #{select name:'parametro', id:'parametro'}
+	                                #{list items:parametros, as:'parametro'} #{option parametro.idAtributo}
+	                                ${parametro.nomeAtributo} #{/option} #{/list} #{/select}
+	                        </div>
+	                         <div class="gt-form-row">
+	                                <label>Valor <span>*</span></label> 
+	                                #{select id:'operador', name:'operador',
+										items:models.SrOperador.values(),
+										labelProperty:'nome' /}
+	                                <input type="text" id="valor"
+	                                        name="valor" value="" size = "5" required/>
+	                        		#{select name:'unidadeMedida', 
+	                        			id:'unidadeMedida',
+										items:unidadesMedida, 
+										valueProperty:'idUnidadeMedida',
+										labelProperty:'plural'}
+									#{/select}
+							</div>
+	                        <div class="gt-form-row">
+	                                <input type="button" id="modalOk" value="Ok"
+	                                        class="gt-btn-medium gt-btn-left" /> <input type="button"
+	                                        value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+	                        </div>
+	                    </form>
                 </div>
         </div>
 </div>

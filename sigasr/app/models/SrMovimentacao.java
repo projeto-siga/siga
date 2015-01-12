@@ -367,7 +367,7 @@ public class SrMovimentacao extends GenericModel {
 	}
 	
 	public String getMotivoPendenciaString() {
-		return this.motivoPendencia.descrTipoMotivoPendencia;
+		return this.motivoPendencia != null ? this.motivoPendencia.descrTipoMotivoPendencia : "";
 	}
 	
 	public SrMovimentacao getMovFinalizada(){

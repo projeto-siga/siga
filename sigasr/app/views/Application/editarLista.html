@@ -1,239 +1,263 @@
 #{extends 'main.html' /} #{set title:'Edição de Lista' /}
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
+
 <style>
 	tr {
 		cursor : pointer !important;
 	}
 </style>
 
-<div class="clearfix">
-	<div class="gt-content">
-		<h2>Cadastro de Lista</h2>
-		<div class="gt-form gt-content-box">
-			<form id="formLista"> 
-				<input type="hidden" id="idLista" name="lista.idLista" value="${lista?.idLista}">
-				<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista?.hisIdIni}">
-				<div class="gt-form-row gt-width-66">
-					<label>Nome</label> <input type="text"
-						id="nomeLista"
-						name="lista.nomeLista"
-						value="${lista?.nomeLista}" size="98" maxlength="255"/>
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Abrangência</label>
-					<textarea cols="98" rows="5" name="lista.descrAbrangencia"
-						id="descrAbrangencia" maxlength="8192">${lista?.descrAbrangencia}</textarea>
-					<span style="color: red">#{error
-						'lista.descrAbrangencia' /}</span>
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Justificativa</label>
-					<textarea cols="98" rows="5" name="lista.descrJustificativa"
-						id="descrJustificativa" maxlength="8192">${lista?.descrJustificativa}</textarea>
-					<span style="color: red">#{error
-						'lista.descrJustificativa' /}</span>
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Priorização</label>
-					<textarea cols="98" rows="5" name="lista.descrPriorizacao"
-						id="descrPriorizacao" maxlength="8192">${lista?.descrPriorizacao}</textarea>
-					<span style="color: red">#{error
-						'lista.descrPriorizacao"' /}</span>
-				</div>
-				
-				<div class="container">
-					<div class="title-table">
-						<h3 style="padding-top: 25px;">Permissões</h3>
-					</div>
-					<div class="button-table">
-						<a href="javascript: controleAcessoModalAbrir(false)" title="Adicionar Permissão">
-							<img src="/siga/css/famfamfam/icons/add.png">
-						</a>
-					</div>
-				</div>
-				<div class="gt-content-box gt-for-table dataTables_div">
-					<table id="permissoes_table" border="0" class="gt-table display">
-						<thead>
-							<tr>
-								<th>ID Orgão</th>
-								<th>Orgão</th>
-								<th>ID Local</th>
-								<th>Local</th>
-								<th>ID Lotação</th>
-								<th>Nome Lotação</th>
-								<th>Lotação</th>
-								<th>ID Pessoa</th>
-								<th>Nome Pessoa</th>
-								<th>Pessoa</th>
-								<th>ID Cargo</th>
-								<th>Cargo</th>
-								<th>Cargo</th>
-								<th>ID Função</th>
-								<th>Função</th>
-								<th>Função</th>
-								<th>Tipo Permissão</th>
-								<th>ID Tipo Permissao</th>
-								<th>Tipo Permissão</th>	
-								<th>Tipo Permissão</th>	
-								<th>Ações</th>
-							</tr>
-						</thead>
-		
-						<tbody>
-							#{list items:lista?.getPermissoes(lotaTitular, cadastrante), as:'perm'}
-								<tr style="cursor: pointer;">
-									<td>${perm.orgaoUsuario?.id}</td>
-									<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
-									<td>${perm.complexo?.idComplexo}</td>
-									<td>${perm.complexo?.nomeComplexo}</td>
-									<td>${perm.lotacao?.lotacaoAtual?.id}</td>
-									<td>${perm.lotacao?.lotacaoAtual?.nomeLotacao}</td>
-									<td>${perm.lotacao?.lotacaoAtual?.siglaLotacao}</td>
-									<td>${perm.dpPessoa?.pessoaAtual?.id}</td>
-									<td>${perm.dpPessoa?.pessoaAtual?.nomePessoa}</td>
-									<td>${perm.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>
-									<td>${perm.cargo?.id}</td>
-									<td>${perm.cargo?.sigla}</td>
-									<td>${perm.cargo?.descricao}</td>
-									<td>${perm.funcaoConfianca?.id}</td>
-									<td>${perm.funcaoConfianca?.sigla}</td>
-									<td>${perm.funcaoConfianca?.descricao}</td>
-									<td>${perm.getSrConfiguracaoTipoPermissaoJson()}</td>
-									<td>${perm.id}</td>
-									<td></td>
-									<td>${perm.descrTipoPermissao}</td>
-									<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-										<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissão">
-											<input class="idPermissao" type="hidden" value="${perm.id}"/>
-											<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> 
-										</a>
-									</td>
-								</tr>
-							#{/list}
-						</tbody>
-					</table>
-				</div>
-				
-				<div class="gt-form-row">
-					<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
-					<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
-					<input type="hidden" id="nomeLotaCadastrante" name="lista.nomeLotaCadastrante" value="${lotaTitular.descricao}">
-					<a href="javascript: gravarLista()" class="gt-btn-medium gt-btn-left">Ok</a>
-					<a href="javascript: listaModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-				</div>
-				<div class="gt-form-row gt-width-100">
-					<p class="gt-error" style="display:none;" id="erroAoSalvar">Não foi possível salvar o registro.</p>
-				</div>
-			</form>
+<div class="gt-form gt-content-box">
+	<form id="formLista"> 
+		<input type="hidden" id="idLista" name="lista.idLista" value="${lista?.idLista}">
+		<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista?.hisIdIni}">
+		<div class="gt-form-row gt-width-66">
+			<label>Nome <span>*<span></label> <input type="text"
+				id="nomeLista"
+				name="lista.nomeLista"
+				value="${lista?.nomeLista}" 
+				size="98"
+				maxlength="255"
+				required/>
 		</div>
-	</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Abrangência</label>
+			<textarea cols="98" rows="5" name="lista.descrAbrangencia"
+				id="descrAbrangencia" maxlength="8192">${lista?.descrAbrangencia}</textarea>
+			<span style="color: red">#{error
+				'lista.descrAbrangencia' /}</span>
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Justificativa</label>
+			<textarea cols="98" rows="5" name="lista.descrJustificativa"
+				id="descrJustificativa" maxlength="8192">${lista?.descrJustificativa}</textarea>
+			<span style="color: red">#{error
+				'lista.descrJustificativa' /}</span>
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Priorização</label>
+			<textarea cols="98" rows="5" name="lista.descrPriorizacao"
+				id="descrPriorizacao" maxlength="8192">${lista?.descrPriorizacao}</textarea>
+			<span style="color: red">#{error
+				'lista.descrPriorizacao"' /}</span>
+		</div>
+		
+		<div class="container">
+			<div class="title-table">
+				<h3 style="padding-top: 25px;">Permissões</h3>
+			</div>
+			<div class="button-table">
+				<a href="javascript: controleAcessoModalAbrir(false)" title="Adicionar Permissão">
+					<img src="/siga/css/famfamfam/icons/add.png">
+				</a>
+			</div>
+		</div>
+		<div class="gt-content-box gt-for-table dataTables_div">
+			<table id="permissoes_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th>ID Orgão</th>
+						<th>Orgão</th>
+						<th>ID Local</th>
+						<th>Local</th>
+						<th>ID Lotação</th>
+						<th>Nome Lotação</th>
+						<th>Lotação</th>
+						<th>ID Pessoa</th>
+						<th>Nome Pessoa</th>
+						<th>Pessoa</th>
+						<th>ID Cargo</th>
+						<th>Cargo</th>
+						<th>Cargo</th>
+						<th>ID Função</th>
+						<th>Função</th>
+						<th>Função</th>
+						<th>Tipo Permissão JSON</th>
+						<th>ID Tipo Permissao</th>
+						<th>Tipo Permissão</th>	
+						<th>Tipo Permissão</th>	
+						<th>Ações</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:lista?.getPermissoes(lotaTitular, cadastrante), as:'perm'}
+						<tr style="cursor: pointer;">
+							<td>${perm.orgaoUsuario?.id}</td>
+							<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
+							<td>${perm.complexo?.idComplexo}</td>
+							<td>${perm.complexo?.nomeComplexo}</td>
+							<td>${perm.lotacao?.lotacaoAtual?.id}</td>
+							<td>${perm.lotacao?.lotacaoAtual?.nomeLotacao}</td>
+							<td>${perm.lotacao?.lotacaoAtual?.siglaLotacao}</td>
+							<td>${perm.dpPessoa?.id}</td>
+							<td>${perm.dpPessoa?.nomePessoa}</td>
+							<td>${perm.dpPessoa?.nomeAbreviado}</td>
+							<td>${perm.cargo?.id}</td>
+							<td>${perm.cargo?.sigla}</td>
+							<td>${perm.cargo?.descricao}</td>
+							<td>${perm.funcaoConfianca?.id}</td>
+							<td>${perm.funcaoConfianca?.sigla}</td>
+							<td>${perm.funcaoConfianca?.descricao}</td>
+							<td>${perm.getSrConfiguracaoTipoPermissaoJson()}</td>
+							<td>${perm.id}</td>
+							<td></td>
+							<td>${perm.descrTipoPermissao}</td>
+							<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+								<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissão">
+									<input class="idPermissao" type="hidden" value="${perm.id}"/>
+									<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> 
+								</a>
+							</td>
+						</tr>
+					#{/list}
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="gt-form-row">
+			<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
+			<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
+			<input type="hidden" id="nomeLotaCadastrante" name="lista.nomeLotaCadastrante" value="${lotaTitular.descricao}">
+			<a href="javascript: gravarLista()" class="gt-btn-medium gt-btn-left">Ok</a>
+			<a href="javascript: listaModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+		</div>
+		<div class="gt-form-row gt-width-100">
+			<p class="gt-error" style="display:none;" id="erroAoSalvar">Não foi possível salvar o registro.</p>
+		</div>
+	</form>
 </div>
 
 #{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}
-	<div class="gt-form gt-content-box" id="modal-permissao">
-		<div>
-			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
-			
-			#{ifErrors}
-				<p class="gt-error">Alguns campos obrigatórios não foram preenchidos ${error}</p>
-			#{/ifErrors}	
-			<div class="gt-form-row div-modal-table">
-				<label>Órgão</label> 
-				#{select name:'orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
-				labelProperty:'nmOrgaoUsu', value:orgaoUsuario?.idOrgaoUsu}
-				#{option 0}Nenhum#{/option} 
-				#{/select}
-			</div>
-			<span style="color: red">#{error
-					'orgaoUsuario' /}</span>
-			<div class="gt-form-row div-modal-table">		
-				<label>Local</label> 
-				#{select name:'complexo', items:locais, valueProperty:'idComplexo',
-				labelProperty:'nomeComplexo', value:complexo?.idComplexo}
-				#{option 0}Nenhum#{/option} 
-				#{/select}
-			</div>		
-			<div class="gt-form-row div-modal-table">
-				<label>Lotação</label>#{selecao
-					tipo:'lotacao', nome:'lotacao',
-					value:lotacao?.lotacaoAtual /}
-			</div>
-			
-			<div class="gt-form-row div-modal-table">
-				<label>Pessoa</label>#{selecao
-					tipo:'pessoa', nome:'dpPessoa',
-					value:dpPessoa?.pessoaAtual /}
-			</div>
-			
-			<div class="gt-form-row div-modal-table">
-				<label>Cargo</label>#{selecao
-					tipo:'cargo', nome:'cargo',
-					value:cargo /}
-			</div>
-			
-			<div class="gt-form-row div-modal-table">
-				<label>Função</label>#{selecao
-					tipo:'funcao', nome:'funcaoConfianca',
-					value:funcaoConfianca /}
-			</div>
-			
-			<div class="gt-form-row div-modal-table">
-				<label>Tipo Permissão</label>
-					<ul id="permissoes" style="color: #365b6d"></ul>
-					<input type="button" value="Incluir" id="botaoIncluir"
-		                      class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+	<form id="formControleAcesso">
+		<div class="gt-form gt-content-box" id="modal-permissao">
+			<div>
+				<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
+				<div class="gt-form-row div-modal-table">
+					<label>Órgão</label> 
+					#{select name:'orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
+					labelProperty:'nmOrgaoUsu', value:orgaoUsuario?.idOrgaoUsu}
+					#{option 0}Nenhum#{/option} 
+					#{/select}
 				</div>
-			</div>
-			
-			<div class="gt-form-row">
-				<a href="javascript: inserirAcesso()" class="gt-btn-medium gt-btn-left">Gravar</a>
-				<a href="javascript: controleAcessoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-				#{if idConfiguracao} 
-					<input type="button" value="Desativar"
-						class="gt-btn-medium gt-btn-left"
-						onclick="location.href='@{Application.desativarPermissaoUsoLista()}?id=${idConfiguracao}'" />
-				#{/if}
-			</div>
-		</div>
-	</div>
-	<div id="dialog">
-		<div class="gt-content">
-			<div class="gt-form gt-content-box">
+				<span style="color: red">#{error
+						'orgaoUsuario' /}</span>
+				<div class="gt-form-row div-modal-table">		
+					<label>Local</label> 
+					#{select name:'complexo', items:locais, valueProperty:'idComplexo',
+					labelProperty:'nomeComplexo', value:complexo?.idComplexo}
+					#{option 0}Nenhum#{/option} 
+					#{/select}
+				</div>		
+				<div class="gt-form-row div-modal-table">
+					<label>Lotação</label>#{selecao
+						tipo:'lotacao', nome:'lotacao',
+						value:lotacao?.lotacaoAtual /}
+				</div>
+				
+				<div class="gt-form-row div-modal-table">
+					<label>Pessoa</label>#{selecao
+						tipo:'pessoa', nome:'dpPessoa',
+						value:dpPessoa?.pessoaAtual /}
+				</div>
+				
+				<div class="gt-form-row div-modal-table">
+					<label>Cargo</label>#{selecao
+						tipo:'cargo', nome:'cargo',
+						value:cargo /}
+				</div>
+				
+				<div class="gt-form-row div-modal-table">
+					<label>Função</label>#{selecao
+						tipo:'funcao', nome:'funcaoConfianca',
+						value:funcaoConfianca /}
+				</div>
+				
+				<div class="gt-form-row div-modal-table">
+					<label>Tipo Permissão</label>
+						<ul id="ulPermissoes" style="color: #365b6d" name="ulPermissoes"></ul>
+						<input type="button" value="Incluir" id="botaoIncluir"
+			                      class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+					</div>
+				</div>
+				
 				<div class="gt-form-row">
-					<div class="gt-form-row gt-width-66">
-						<label>Tipo de Permissão</label> #{select name:'itemTipoPermissao', id:'itemTipoPermissao'}
-							 #{list items:tiposPermissao, as:'item'} #{option item.idTipoPermissaoLista} ${item.descrTipoPermissaoLista} #{/option} #{/list} #{/select}
-					</div>
+					<a href="javascript: inserirAcesso()" class="gt-btn-medium gt-btn-left">Gravar</a>
+					<a href="javascript: controleAcessoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					#{if idConfiguracao} 
+						<input type="button" value="Desativar"
+							class="gt-btn-medium gt-btn-left"
+							onclick="location.href='@{Application.desativarPermissaoUsoLista()}?id=${idConfiguracao}'" />
+					#{/if}
+				</div>
+			</div>
+		</div>
+		<div id="dialog">
+			<div class="gt-content">
+				<div class="gt-form gt-content-box">
 					<div class="gt-form-row">
-						<input type="button" id="modalOk" value="Ok"
-	                           class="gt-btn-medium gt-btn-left" />
-						<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+						<div class="gt-form-row gt-width-66">
+							<label>Tipo de Permissão</label> #{select name:'itemTipoPermissao', id:'itemTipoPermissao'}
+								 #{list items:tiposPermissao, as:'item'} #{option item.idTipoPermissaoLista} ${item.descrTipoPermissaoLista} #{/option} #{/list} #{/select}
+						</div>
+						<div class="gt-form-row">
+							<input type="button" id="modalOk" value="Ok"
+		                           class="gt-btn-medium gt-btn-left" />
+							<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="gt-content-box" id="modal-permissao-error" style="display: none;">
-		<table width="100%">
-			<tr>
-				<td align="center" valign="middle">
-					<table class="form" width="50%">
-						<tr>
-							<td style="text-align: center; padding-top: 10px;">
-								<h3></h3>
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
-	</div>
+		<div class="gt-content-box" id="modal-permissao-error" style="display: none;">
+			<table width="100%">
+				<tr>
+					<td align="center" valign="middle">
+						<table class="form" width="50%">
+							<tr>
+								<td style="text-align: center; padding-top: 10px;">
+									<h3></h3>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</form>
 #{/modal}
 
 <script language="javascript">
 	var permissoesTable, 
 		isEditingLista = false,
 		isEditingContr = false,
-		itemTipoPermissaoOptions = [];
+		itemTipoPermissaoOptions = [],
+		validatorFormLista,
+		validatorPermissao,
+		colunas = {};
+
+	colunas.idOrgao = 		0;
+	colunas.orgao = 		1;
+	colunas.idLocal = 		2;
+	colunas.local = 		3;
+	colunas.idLotacao = 	4;
+	colunas.nomeLotacao = 	5;
+	colunas.lotacao = 		6;
+	colunas.idPessoa = 		7;
+	colunas.nomePessoa = 	8;
+	colunas.pessoa = 		9;
+	colunas.idCargo = 		10;
+	colunas.siglaCargo =	11;
+	colunas.descrCargo = 	12;
+	colunas.idFuncao = 		13;
+	colunas.siglaFuncao = 	14;
+	colunas.descrFuncao = 	15;
+	colunas.jSonTipoPerm =	16;
+	colunas.idTipoPerm = 	17;
+	colunas.tipoPerm = 		18;
+	colunas.descrTipoPerm = 19;
+	colunas.acoes = 		20;
 	
 	$( document ).ready(function( ) {
 		/* Table initialization */
@@ -266,12 +290,14 @@
 				    }
 				},
 				"columnDefs": [{
-					"targets": [0, 2, 4, 5, 7, 8, 10, 12, 13, 15, 16, 17, 18],
+					"targets": [colunas.idOrgao, colunas.idLocal, colunas.idLotacao, colunas.nomeLotacao, colunas.idPessoa, 
+					            colunas.nomePessoa, colunas.idCargo, colunas.descrCargo, colunas.idFuncao, colunas.descrFuncao,
+					            colunas.jSonTipoPerm, colunas.idTipoPerm, colunas.tipoPerm],
 					"visible": false,
 					"searchable": false
 				},
 				{
-					"targets": [20],
+					"targets": [colunas.acoes],
 					"sortable" : false,
 					"searchable": false
 				}]
@@ -287,6 +313,16 @@
 				}
 			});
 		}
+
+		validatorFormLista = $("#formLista").validate();
+		validatorPermissao = $("#formControleAcesso").validate({
+			rules: {
+				ulPermissoes: {
+					required: true,
+					minlength: 3
+				}
+			}
+		});
 	});
 
 	$("#controleAcesso_dialog").dialog({
@@ -305,8 +341,6 @@
 			row = permissoesTable.api().row(tr).data(),
 			idPermissao = idPermissaoDesativar ? idPermissaoDesativar : me.find('.idPermissao').val(),
 			idLista = $("#idLista").val();
-
-		//location.href='@{Application.desativarPermissaoUsoListaEdicao()}?' + jQuery.param({idLista : idLista, idPermissao : idPermissao});
 
 		$.ajax({
 	         type: "POST",
@@ -327,26 +361,26 @@
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
 		
-		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[0]);
-		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[2]);
-		$("#lotacao").val(itemArray[4]);
-		$("#lotacao_descricao").val(itemArray[5]);
-		$("#lotacaoSpan").html(itemArray[5]);
-		$("#lotacao_sigla").val(itemArray[6]);
-		$("#dpPessoa").val(itemArray[7]);
-		$("#dpPessoa_descricao").val(itemArray[8]);
-		$("#dpPessoaSpan").html(itemArray[8]);
-		$("#dpPessoa_sigla").val(itemArray[9]);
-		$("#cargo").val(itemArray[10]);
-		$("#cargo_descricao").val(itemArray[11]);
-		$("#cargoSpan").html(itemArray[11]);
-		$("#cargo_sigla").val(itemArray[12]);
-		$("#funcaoConfianca").val(itemArray[13]);
-		$("#funcaoConfianca_descricao").val(itemArray[14]);
-		$("#funcaoConfiancaSpan").html(itemArray[14]);
-		$("#funcaoConfianca_sigla").val(itemArray[15]);
+		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
+		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
+		$("#lotacao").val(itemArray[colunas.idLotacao]);
+		$("#lotacao_descricao").val(itemArray[colunas.nomeLotacao]);
+		$("#lotacaoSpan").html(itemArray[colunas.nomeLotacao]);
+		$("#lotacao_sigla").val(itemArray[colunas.lotacao]);
+		$("#dpPessoa").val(itemArray[colunas.idPessoa]);
+		$("#dpPessoa_descricao").val(itemArray[colunas.nomePessoa]);
+		$("#dpPessoaSpan").html(itemArray[colunas.nomePessoa]);
+		$("#dpPessoa_sigla").val(itemArray[colunas.pessoa]);
+		$("#cargo").val(itemArray[colunas.idCargo]);
+		$("#cargo_descricao").val(itemArray[colunas.siglaCargo]);
+		$("#cargoSpan").html(itemArray[colunas.siglaCargo]);
+		$("#cargo_sigla").val(itemArray[colunas.descrCargo]);
+		$("#funcaoConfianca").val(itemArray[colunas.idfuncao]);
+		$("#funcaoConfianca_descricao").val(itemArray[colunas.siglaFuncao]);
+		$("#funcaoConfiancaSpan").html(itemArray[colunas.siglaFuncao]);
+		$("#funcaoConfianca_sigla").val(itemArray[colunas.descrFuncao]);
 		atualizarListasTipoPermissaoEdicao(itemArray);
-		$("#idConfiguracao").val(itemArray[17]);
+		$("#idConfiguracao").val(itemArray[colunas.idTipoPerm]);
 	};
 	
 	function findSelectedIndexByValue(comboBox, value) {
@@ -409,42 +443,43 @@
 		var params = "";
 		
 		// caso exista algum item na tabela
-		if (row[0] != '' && row[0] > 0)
-			params += '&permissao.orgaoUsuario.idOrgaoUsu=' + row[0];
+		if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
+			params += '&permissao.orgaoUsuario.idOrgaoUsu=' + row[colunas.idOrgao];
 		
-		if (row[2] != '' && row[2] > 0)
-        	params += '&permissao.complexo.idComplexo=' + row[2];
+		if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
+        	params += '&permissao.complexo.idComplexo=' + row[colunas.idLocal];
 		
-		if (row[4] != '')
-        	params += '&permissao.lotacao.id=' + row[4];
+		if (row[colunas.idLotacao] != '')
+        	params += '&permissao.lotacao.id=' + row[colunas.idLotacao];
 		
-		if (row[7] != '')
-        	params += '&permissao.dpPessoa.id=' + row[7];
+		if (row[colunas.idPessoa] != '')
+        	params += '&permissao.dpPessoa.id=' + row[colunas.idPessoa];
 		
-		if (row[10] != '')
-        	params += '&permissao.cargo.id=' + row[10];
+		if (row[colunas.idCargo] != '')
+        	params += '&permissao.cargo.id=' + row[colunas.idCargo];
 		
-		if (row[13] != '')
-        	params += '&permissao.funcaoConfianca.idFuncao=' + row[13];
+		if (row[colunas.idFuncao] != '')
+        	params += '&permissao.funcaoConfianca.idFuncao=' + row[colunas.idFuncao];
 		
-		if (row[17] != '')
-			params += '&permissao.id=' + row[17];
+		if (row[colunas.idTipoPerm] != '')
+			params += '&permissao.id=' + row[colunas.idTipoPerm];
 
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
 			params += '&permissao.listaPrioridade.id=' + $("#idLista").val();
 
 		// lista de TipoPermissao
-		params += row[18];
+		params += row[colunas.tipoPerm];
 
 		return params;
 	};
 	
 	function inserirAcesso() {
+
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
 			jComplexoCbb = document.getElementsByName("complexo")[0],
 			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex];
-		
+			
 		var row = [ jOrgaoUsuario.value,
           			jOrgaoUsuario.text, 
           			jComplexo.value,
@@ -459,12 +494,13 @@
           			$("#cargo_descricao").val(),
           			$("#cargo_sigla").val(),
           			$("#funcaoConfianca").val(),
-          			$("#funcaoConfianca_descricao").val(),
           			$("#funcaoConfianca_sigla").val(),
+          			$("#funcaoConfianca_descricao").val(),
           			atualizaTipoPermissaoJson(),			//16
           			$("#idConfiguracao").val(),				//17    
           			getListasAsString(),					//18
-          			getDescricaoTipoPermissao()				//19	
+          			getDescricaoTipoPermissao(),			//19
+          			''										//20
           			];
 
 		$.ajax({
@@ -473,7 +509,7 @@
 	         data: serializePermissao(row),
 	         dataType: "text",
 	         success: function(response) {
-		        row[17] = response;
+		        row[colunas.idTipoPerm] = response;
 				var html = 
 				'<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
 					'<a class="once desassociarPermissao" title="Remover permissão">' + 
@@ -482,7 +518,7 @@
 					'</a>' + 
 				'</td>';
 						         
-		        row[20] = html;
+		        row[colunas.acoes] = html;
 
 	          	if (isEditingContr ) {
 	          		permissoesTable.api().row('.selected').data(row);
@@ -509,10 +545,9 @@
 		// transforma o valor String em objeto, caso necessário
 		// Edson: comentando, pois nao funciona no IE
 		try{
-
-			designacaoJson = JSON.parse(itemArray[16]);
+			designacaoJson = JSON.parse(itemArray[colunas.jSonTipoPerm]);
 		} catch(e){
-			designacaoJson = itemArray[16];
+			designacaoJson = itemArray[colunas.jSonTipoPerm];
 		}
 		
 		if (designacaoJson) {
@@ -521,25 +556,28 @@
 				// cria os itens da lista de TipoPermissao, e adiciona na tela
 				for (i = 0; i < designacaoJson.listaTipoPermissaoListaVO.length; i++) {
 					var lista = designacaoJson.listaTipoPermissaoListaVO[i];
-					$("#permissoes")[0].incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
+					$("#ulPermissoes")[0].incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
 				}
 			}
 		}
 	};
 
 	function getDescricaoTipoPermissao() {
-		var descricao = $('#permissoes').find("li:first-child").find("span:eq(0)").html();
+		var descricao = $('#ulPermissoes').find("li:first-child").find("span:eq(0)").html();
 		
-		if (descricao != null) {
+		if (descricao != null || descricao != undefined) {
 			return descricao + " ...";
 		}
+		else
+			descricao = '';
+		
 		return descricao;
 	}
 
 	function removerItensListaTipoPermissao() {
-    	$("#permissoes").find("li").each(function(i){
+    	$("#ulPermissoes").find("li").each(function(i){
             $(this).remove();
-            $("#permissoes")[0]["index"]--;
+            $("#ulPermissoes")[0]["index"]--;
         });
     };
 
@@ -547,7 +585,7 @@
 		var listaTipoPermissaoListaVO = [];
     	
 		// Percorre listas de TipoPermissao
-    	$("#permissoes").find("li").each(function(i){
+    	$("#ulPermissoes").find("li").each(function(i){
             var jDivs=$(this).find("span");
             listaTipoPermissaoListaVO.push({
             	"idTipoPermissaoLista": jDivs[0].id,
@@ -566,7 +604,7 @@
 		var params = '';
 	
 		// Percorre listas de TipoPermissao
-		$("#permissoes").find("li").each(function(i){
+		$("#ulPermissoes").find("li").each(function(i){
 	        var jDivs=$(this).find("span");
 	        
 	        // Atualiza a string serializada
@@ -613,6 +651,9 @@
 		$("#listaconfiguracaoInsercaoAutomaticaacaoUnitaria_descricao").val("");
 		$("#listaconfiguracaoInsercaoAutomaticaacaoUnitaria_sigla").val("");
 		$("#listaconfiguracaoInsercaoAutomaticaacaoUnitariaSpan").html("");
+
+		// limpa as validações do form
+		validatorFormLista.resetForm();
 	}
 
 	function listaModalFechar() {
@@ -621,8 +662,8 @@
 	}
 
     function gravarLista() {
-		if (!block())
-				return false;
+		if (!$("#formLista").valid() || !block())
+			return false;
 		
 		var jForm = $("form"),
         	params = jForm.serialize();
@@ -658,7 +699,7 @@
 	
 	$(function() {
 		
-		var jPermissoes = $("#permissoes"),
+		var jPermissoes = $("#ulPermissoes"),
 		permissoes = jPermissoes[0],
         jDialog = $("#dialog"),
         dialog = jDialog[0],
@@ -666,8 +707,8 @@
 		jTipoPermissaoSelecionada = $("#itemTipoPermissao"),
 		listaTipoPermissaoAux;
        
-        $( "#permissoes" ).sortable({placeholder: "ui-state-highlight"});
-        $( "#permissoes" ).disableSelection();
+        $( "#ulPermissoes" ).sortable({placeholder: "ui-state-highlight"});
+        $( "#ulPermissoes" ).disableSelection();
        
         $("#botaoIncluir").click(function(){
             if ($("#itemTipoPermissao")[0].options.length > 0)

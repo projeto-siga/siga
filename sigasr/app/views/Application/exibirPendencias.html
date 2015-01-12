@@ -5,7 +5,7 @@
 			<h3>Pendências</h3>
 			#{list items:solicitacao.pendenciasEmAberto, as:'pendencia'}
 				<p>
-					<b>${pendencia.motivoPendenciaString}</b> at&eacute; ${pendencia.dtAgendaDDMMYYHHMM} - ${pendencia.descrMovimentacao}
+					<b>${pendencia.motivoPendenciaString}</b>#{if pendencia.dtAgenda} at&eacute; ${pendencia.dtAgendaDDMMYYHHMM}#{/if} - ${pendencia.descrMovimentacao}
 					#{if podeTerminar}
 						<a href="javascript:terminarPendencia('${pendencia.idMovimentacao}');">
 							<img src="/siga/css/famfamfam/icons/cross.png" style="margin-left: 5px;">

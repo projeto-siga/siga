@@ -98,6 +98,13 @@ public class Application extends SigaApplication {
 		} catch (Exception e) {
 			renderArgs.put("exibirMenuAdministrar", false);
 		}
+		
+		try {
+			assertAcesso("EDTCONH:Criar Conhecimentos");
+			renderArgs.put("exibirMenuConhecimentos", true);
+		} catch (Exception e) {
+			renderArgs.put("exibirMenuConhecimentos", false);
+		}
 
 		try {
 			assertAcesso("REL:Relatorios");
@@ -233,8 +240,12 @@ public class Application extends SigaApplication {
 	
 	public static void exibirAcaoEscalonar(Long id, Long itemConfiguracao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		solicitacao.cadastrante = cadastrante();
+		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
+		if (itemConfiguracao != null){
+			solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
+			acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		}
 		render(solicitacao, acoesEAtendentes);
 	}
 
@@ -829,6 +840,7 @@ public class Application extends SigaApplication {
 
 	public static void escalonar(Long id) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		solicitacao.cadastrante = cadastrante();
 		solicitacao = solicitacao.getSolicitacaoAtual();
 		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
@@ -845,7 +857,7 @@ public class Application extends SigaApplication {
 		if (criaFilha) {
 			if (fechadoAuto != null) {
 				solicitacao.setFechadoAutomaticamente(fechadoAuto);
-				solicitacao.salvar(cadastrante(), lotaTitular());
+				solicitacao.save();
 			}
 			SrSolicitacao filha = null;
 			if(solicitacao.isFilha())
@@ -867,6 +879,8 @@ public class Application extends SigaApplication {
 			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			mov.acao = SrAcao.findById(acao.idAcao);
 			mov.lotaAtendente = JPA.em().find(DpLotacao.class, idAtendente);
+			mov.descrMovimentacao = "Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
+					+ "; Ação: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();
 			mov.motivoEscalonamento = motivo;
 			mov.salvar(cadastrante(), lotaTitular());
 			exibir(solicitacao.idSolicitacao, todoOContexto(), ocultas());
@@ -1271,7 +1285,7 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void listarConhecimento(Long idItem, Long idAcao, boolean ajax) throws Exception {
-		assertAcesso("ADM:Administrar");
+		assertAcesso("EDTCONH:Criar Conhecimentos");
 		SrItemConfiguracao item = idItem != null ? (SrItemConfiguracao)SrItemConfiguracao.findById(idItem) : null;
 		SrAcao acao = idAcao != null ? (SrAcao)SrAcao.findById(idAcao) : null;			
 		render("@listarConhecimento" + (ajax ? "Ajax" : ""), item, acao);

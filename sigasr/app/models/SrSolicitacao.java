@@ -7,6 +7,7 @@ import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO;
+import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA;
 import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA;
@@ -620,7 +621,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<Long> tiposPrincipais = Arrays.asList(TIPO_MOVIMENTACAO_ANDAMENTO,
 				TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO,
 				TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO,
-				TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_AVALIACAO);
+				TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_AVALIACAO, TIPO_MOVIMENTACAO_ESCALONAMENTO);
 
 		Set<SrSolicitacao> solsAConsiderar = new LinkedHashSet<SrSolicitacao>();
 		if (todoOContexto) {
@@ -1246,11 +1247,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		List<SrItemConfiguracao> listaTodosItens = new ArrayList<SrItemConfiguracao>();
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
-				
-		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setComplexo(local);
-		confFiltro.setBuscarPorPerfis(true);
-		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 		
 		List<DpPessoa> listaPessoasAConsiderar = considerarPessoasParaDesignacao();
 		
@@ -1259,10 +1255,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		for (SrItemConfiguracao i : listaTodosItens) {
 			if (!i.isEspecifico())
 				continue;
-			confFiltro.itemConfiguracaoFiltro = i;
 			for (DpPessoa p : listaPessoasAConsiderar) 
 				if (!listaFinal.contains(i)) {
+					
+					SrConfiguracao confFiltro = new SrConfiguracao();
+					confFiltro.setComplexo(local);
+					confFiltro.setBuscarPorPerfis(true);
+					confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
+					confFiltro.itemConfiguracaoFiltro = i;
 					confFiltro.setDpPessoa(p);
+					
 					if (SrConfiguracao.buscarDesignacao(confFiltro,
 							new int[] { SrConfiguracaoBL.ACAO}) != null){
 						listaFinal.add(i);
@@ -1293,22 +1295,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return null;
 
 		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
-
-		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setComplexo(local);
-		confFiltro.setBuscarPorPerfis(true);
-		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
-		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 		
 		List<DpPessoa> listaPessoasAConsiderar = considerarPessoasParaDesignacao();
 
 		for (SrAcao a : SrAcao.listar(false)) {
 			if (!a.isEspecifico())
 				continue;
-			confFiltro.acaoFiltro = a;
 			for (DpPessoa p : listaPessoasAConsiderar) 
 				if (!listaFinal.containsKey(a)) {
+					
+					SrConfiguracao confFiltro = new SrConfiguracao();
+					confFiltro.setComplexo(local);
+					confFiltro.setBuscarPorPerfis(true);
+					confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+					confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
+					confFiltro.acaoFiltro = a;
 					confFiltro.setDpPessoa(p);
+					
 					SrConfiguracao conf = SrConfiguracao.buscarDesignacao(confFiltro);
 					if (conf != null)
 						listaFinal.put(a, conf.atendente);
@@ -1511,11 +1514,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			for (SrLista lista : getListasParaInclusaoAutomatica(lotaCadastrante)) {
 				incluirEmLista(lista, cadastrante, lotaCadastrante);
 			}
-
-			if (!isEditado()
-					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
-					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
-				Correio.notificarAbertura(this);
+            if (!isEditado())
+            	Correio.notificarAbertura(this);
 		} else
 			atualizarMarcas();
 	}
@@ -1530,19 +1530,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	public void atualizarAcordos() throws Exception{
 		acordos = new ArrayList<SrAcordo>();
-		
-		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
-		confFiltro.acaoFiltro = acao;
-		confFiltro.setBuscarPorPerfis(true);
-		confFiltro.prioridade = prioridade;
-		confFiltro.atendente = getAtendenteDesignado();
-		confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
-		
+				
 		for (DpPessoa p : considerarPessoasParaDesignacao()) {
+			
+			SrConfiguracao confFiltro = new SrConfiguracao();
+			confFiltro.setComplexo(local);
+			confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+			confFiltro.acaoFiltro = acao;
+			confFiltro.setBuscarPorPerfis(true);
+			confFiltro.prioridade = prioridade;
+			confFiltro.atendente = getAtendenteDesignado();
+			confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
 			confFiltro.setDpPessoa(p);
+			
 			List<SrConfiguracao> confs = SrConfiguracao.listar(confFiltro);
 			for (SrConfiguracao conf : confs) {
 				SrAcordo acordoAtual = ((SrAcordo) SrAcordo
@@ -1648,6 +1649,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		filha.rascunho = null;
 		filha.solicitacaoInicial = null;
 		filha.meuMovimentacaoSet = null;
+		filha.dtIniEdicao = new Date();
 		filha.meuMovimentacaoReferenciaSet = null;
 		for (SrSolicitacao s : getSolicitacaoFilhaSet())
 			filha.numSequencia = s.numSequencia;
@@ -2256,14 +2258,23 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (!podeDeixarPendente(lota, pess))
 			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
-		DateTime datetime = new DateTime();
-		DateTimeFormatter formatter = DateTimeFormat
-				.forPattern("dd/MM/yyyy HH:mm");
-		if (!calendario.equals("")) {
-			datetime = new DateTime(formatter.parseDateTime(calendario + " "
-					+ horario));
-			movimentacao.dtAgenda = datetime.toDate();
+		
+		if (calendario != null && !calendario.equals("")){
+			DateTime dateTime = null;
+			if (horario != null && !horario.equals("")){
+				DateTimeFormatter formatter = DateTimeFormat
+						.forPattern("dd/MM/yyyy HH:mm");
+				dateTime = new DateTime(formatter.parseDateTime(calendario + " "
+						+ horario));
+			} else {
+				DateTimeFormatter formatter = DateTimeFormat
+						.forPattern("dd/MM/yyyy");
+				dateTime = new DateTime(formatter.parseDateTime(calendario));
+			}
+			if (dateTime != null)
+				movimentacao.dtAgenda = dateTime.toDate();
 		}
+		
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
 		movimentacao.descrMovimentacao = detalheMotivo;
@@ -2491,7 +2502,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	// Edson: retorna os periodos de pendencia de forma linear, ou seja, 
 	// colapsando as sobreposicoes, para facilitar os calculos:
-	// Transforma: -----
+	// Transforma: -------
 	//                -------  
 	//
 	// em:         ----------  

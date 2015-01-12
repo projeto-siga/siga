@@ -644,7 +644,7 @@
 			
 			// Atualiza a string serializada
 			if (rowValues)
-	        	params += '&designacao.itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0];
+	        	params += '&designacao.itemConfiguracaoSet[' + i + ']=' + rowValues[0];
 		});
 		
 		// Percorre lista de Ações
@@ -653,7 +653,7 @@
 			
 			// Atualiza a string serializada
 			if (rowValues)
-				params += '&designacao.acoesSet[' + i + '].idAcao=' + rowValues[0];
+				params += '&designacao.acoesSet[' + i + ']=' + rowValues[0];
 		});
 		
 		return params;

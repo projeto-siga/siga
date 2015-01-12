@@ -255,6 +255,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 
 	public int getNivel() {
 		int camposVazios = 0;
+		if (getSigla() == null)
+			return 0;
 		int pos = getSigla().indexOf(".00", 0);
 		while (pos > -1) {
 			camposVazios++;

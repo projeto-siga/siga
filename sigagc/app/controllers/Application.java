@@ -61,6 +61,7 @@ import br.gov.jfrj.siga.model.DadosRI;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jamonapi.utils.Logger;
 
 //Obtaining Hibernate objects programmatically
 //
@@ -94,13 +95,6 @@ public class Application extends SigaApplication {
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
-		}
-
-		try {
-			assertAcesso("ADM:Administrar");
-			renderArgs.put("exibirMenuAdministrar", true);
-		} catch (Exception e) {
-			renderArgs.put("exibirMenuAdministrar", false);
 		}
 	}
 
@@ -177,22 +171,22 @@ public class Application extends SigaApplication {
 	}
 	public static void publicKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo, boolean popup,
-			String estiloBusca) throws Exception {
+			String estiloBusca, Boolean podeCriar) throws Exception {
 		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, true,
-				popup, estiloBusca);
+				popup, estiloBusca, podeCriar);
 	}
 
 	public static void knowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
-			boolean testarAcesso, boolean popup, String estiloBusca)
+			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar)
 			throws Exception {
 		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo,
-				testarAcesso, popup, estiloBusca);
+				testarAcesso, popup, estiloBusca, podeCriar);
 	}
 
 	private static void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
-			boolean testarAcesso, boolean popup, String estiloBusca)
+			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar)
 			throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
@@ -262,13 +256,16 @@ public class Application extends SigaApplication {
 		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
 		// "\">aqui</a>");
 		// }
+		
+		if (podeCriar == null)
+			podeCriar = true;
 
 		if (estilo != null)
 			render("@knowledge_" + estilo, conhecimentos, classificacao,
-					msgvazio, urlvazio, titulo, referer, popup);
+					msgvazio, urlvazio, titulo, referer, popup, podeCriar);
 		else
 			render("@knowledge", conhecimentos, classificacao, msgvazio,
-					urlvazio, titulo, referer, popup);
+					urlvazio, titulo, referer, popup, podeCriar);
 	}
 
 	public static void updateTag(String before, String after) {
@@ -636,9 +633,9 @@ public class Application extends SigaApplication {
 				|| informacao.podeRevisar(titular, lotaTitular)
 				|| informacao.acessoPermitido(titular, lotaTitular,
 						informacao.edicao.id)) {
-			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.all()
+			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.find("order by id")
 					.fetch();
-			List<GcAcesso> acessos = GcAcesso.all().fetch();
+			List<GcAcesso> acessos = GcAcesso.find("order by id").fetch();
 			if (titulo == null)
 				titulo = (informacao.arq != null) ? informacao.arq.titulo
 						: null;
@@ -649,7 +646,7 @@ public class Application extends SigaApplication {
 
 			if (tipo == null || tipo.id == 0)
 				tipo = (informacao.tipo != null) ? informacao.tipo
-						: tiposInformacao.get(2);
+						: tiposInformacao.get(0);
 
 			if (informacao.arq == null)
 				conteudo = (tipo.arq != null) ? tipo.arq.getConteudoTXT()
@@ -681,9 +678,17 @@ public class Application extends SigaApplication {
 			if (informacao.lotacao == null) {
 				informacao.lotacao = lotaTitular;
 			}
+			
+			boolean editarClassificacao = false;
+			try {
+				assertAcesso("EDTCLASS:Editar classificação");
+				editarClassificacao = true;
+			} catch (Exception e) {
+				//
+			}
 
 			render(informacao, tiposInformacao, acessos, titulo, conteudo,
-					classificacao, origem, tipo);
+					classificacao, origem, tipo, editarClassificacao);
 		} else
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
@@ -974,23 +979,7 @@ public class Application extends SigaApplication {
 					throw new AplicacaoException(
 							"O tamanho do arquivo � maior que o "
 									+ "m�ximo permitido (2MB)");
-				if (file.getSize() > 0) {
-					/*
-					 * ----Não pode ser usado porque o "plupload" retorna um
-					 * mime type padrão "octet stream" String mimeType =
-					 * file.getContentType().toLowerCase();
-					 */
-					byte anexo[] = file.asBytes();
-					if (titulo == null || titulo.trim().length() == 0)
-						titulo = file.getFileName();
-					GcBL.movimentar(
-							informacao,
-							GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
-							null, null, null, titulo, null, null, null, null,
-							anexo);
-					GcBL.gravar(informacao, idc(), titular(), lotaTitular());
-					renderText("success");
-				} else
+				if (!(file.getSize() > 0)) 
 					throw new AplicacaoException(
 							"Não é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
 				if (origem.equals("editar")) {
@@ -1208,7 +1197,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento"
+		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento;"
 				+ path);
 	}
 

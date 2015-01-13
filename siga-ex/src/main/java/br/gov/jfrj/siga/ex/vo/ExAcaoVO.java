@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import br.gov.jfrj.siga.ex.bl.BIE.Nodo;
@@ -37,74 +38,70 @@ public class ExAcaoVO {
 	String pos;
 	String classe;
 	Map<String, String> params;
-
+	
 	public Map<String, String> getParams() {
 		return params;
 	}
-
+	
 	public String getPre() {
 		return pre;
 	}
-
+	
 	public String getPos() {
 		return pos;
 	}
-
+	
 	public String getIcone() {
 		return icone;
 	}
-
+	
 	public String getNome() {
 		return nome;
 	}
-
+	
 	public String getNomeNbsp() {
 		return getNome().replace(" ", "&nbsp;");
 	}
-
+	
 	public String getNameSpace() {
 		return nameSpace;
 	}
-
+	
 	public String getAcao() {
 		return acao;
 	}
-
+	
 	public boolean isPode() {
 		return pode;
 	}
-
+	
 	public boolean isPopup() {
 		return params.containsKey("popup");
 	}
-
+	
 	public boolean isAjax() {
 		return params.containsKey("ajax");
 	}
-
+	
 	public String getMsgConfirmacao() {
 		return msgConfirmacao;
 	}
-
+	
 	public String getClasse() {
 		return classe;
 	}
-
+	
 	public void setClasse(String classe) {
 		this.classe = classe;
 	}
-
-	public ExAcaoVO(String icone, String nome, String nameSpace, String acao, boolean pode,
-			String msgConfirmacao, TreeMap<String, String> params, String pre,
-			String pos, String classe) {
+	
+	public ExAcaoVO(String icone, String nome, String nameSpace, String acao, boolean pode, String msgConfirmacao,
+			TreeMap<String, String> params, String pre, String pos, String classe) {
 		super();
 		this.icone = icone;
 		this.nome = nome;
 		this.nameSpace = nameSpace;
-		// if (acao.equals("exibir"))
-		// acao = "exibir_vo";
 		this.acao = acao;
-
 		this.pode = pode;
 		this.msgConfirmacao = msgConfirmacao;
 		this.params = params;
@@ -112,17 +109,31 @@ public class ExAcaoVO {
 		this.pos = pos;
 		this.classe = classe;
 	}
-
+	
 	@Override
 	public String toString() {
-		return getPre() + " " + getNome() + " " + getPos() + " <"
-				+ getNameSpace() + " - " + getAcao() + "?" + getParams() + ">";
+		return getPre() + " " + getNome() + " " + getPos() + " <" + getNameSpace() + " - " + getAcao() + "?"
+				+ getParams() + ">";
 	}
 	
 	public static List<ExAcaoVO> ordena(List<ExAcaoVO> acoes, Comparator<ExAcaoVO> comparator) {
 		if (comparator != null)
 			Collections.sort(acoes, comparator);
-		
-			return acoes;
+		return acoes;
+	}
+	
+	public String getUrl() {
+		String resultUrl = "";
+		String valueOfParameterToAdd;
+		Map<String, String> parameters = this.params;
+		Set<String> parametersNames = this.params.keySet();
+		for (String nameOfParameterToAdd : parametersNames) {
+			valueOfParameterToAdd = parameters.get(nameOfParameterToAdd);
+			resultUrl = (nameOfParameterToAdd + "=" + valueOfParameterToAdd + "&").concat(resultUrl);
+		}
+		if (!parametersNames.isEmpty())
+			resultUrl = ("?").concat(resultUrl);
+		resultUrl = (this.nameSpace + "/" + this.acao).concat(resultUrl);
+		return resultUrl;
 	}
 }

@@ -17,76 +17,103 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 public class Correio extends Mailer {
 
 	public static void notificarAbertura(SrSolicitacao sol) {
+		if (sol.solicitante.getEmailPessoa() == null)
+			return;
 		setSubject("Abertura da solicitação " + sol.getCodigo());
 		addRecipient(sol.solicitante.getEmailPessoa());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(sol);
-		
+
 	}
-	
+
 	public static void notificarMovimentacao(SrMovimentacao movimentacao) {
 		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
+		DpPessoa pessoaAtual = sol.solicitante.getPessoaAtual();
+		if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
+			return;
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
-		addRecipient(sol.solicitante.getEmailPessoa());
+		addRecipient(pessoaAtual.getEmailPessoa());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(movimentacao, sol);
 	}
-	
+
 	public static void notificarAtendente(SrMovimentacao movimentacao) {
 		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
-		
+		List<String> recipients = new ArrayList<String>();
+
 		DpPessoa atendenteSolPai = sol.solicitacaoPai.getAtendente();
 		if (atendenteSolPai != null && atendenteSolPai.getEmailPessoa() != null)
-			addRecipient(atendenteSolPai.getEmailPessoa());
+			recipients.add(atendenteSolPai.getEmailPessoa());
 		else {
-			DpLotacao lotaAtendenteSolPai = sol.solicitacaoPai.getLotaAtendente();
+			DpLotacao lotaAtendenteSolPai = sol.solicitacaoPai
+					.getLotaAtendente();
 			if (lotaAtendenteSolPai != null)
-				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai.getDpPessoaLotadosSet())
-					if (pessoaDaLotacao.getDataFim() == null 
+				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai
+						.getDpPessoaLotadosSet())
+					if (pessoaDaLotacao.getDataFim() == null
 							&& pessoaDaLotacao.getEmailPessoa() != null)
-						addRecipient(pessoaDaLotacao.getEmailPessoa());
+						recipients.add(pessoaDaLotacao.getEmailPessoa());
 		}
-		
-		try{
-			setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-			send(movimentacao, sol);
-		} catch(Exception e){
-			Logger.error(e, "Nao foi possivel notificar o atendente");
-		}
+
+		if (recipients.size() > 0)
+			try {
+				addRecipient(recipients.toArray());
+				setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
+				send(movimentacao, sol);
+			} catch (Exception e) {
+				Logger.error(e, "Nao foi possivel notificar o atendente");
+			}
 	}
-	
-	public static void notificarReplanejamentoMovimentacao(SrMovimentacao movimentacao) {
+
+	public static void notificarReplanejamentoMovimentacao(
+			SrMovimentacao movimentacao) {
 		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
+		List<String> recipients = new ArrayList<String>();
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
+		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		for (SrGestorItem gestor : sol.itemConfiguracao.gestorSet) {
 			DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
-			if(pessoaGestorAtual != null && pessoaGestorAtual.getDataFim() == null)
-				if(pessoaGestorAtual.getEmailPessoa() != null)
-					addRecipient(pessoaGestorAtual.getEmailPessoa());
-			
-			if(gestor.getDpLotacao() != null)
-				for (DpPessoa gestorPessoa : gestor.getDpLotacao().getDpPessoaLotadosSet()) 
-					if(gestorPessoa.getPessoaAtual().getDataFim() == null)
-						if(gestorPessoa.getPessoaAtual().getEmailPessoa() != null)
-							addRecipient(gestorPessoa.getPessoaAtual().getEmailPessoa());
+			if (pessoaGestorAtual != null
+					&& pessoaGestorAtual.getDataFim() == null)
+				if (pessoaGestorAtual.getEmailPessoa() != null)
+					recipients.add(pessoaGestorAtual.getEmailPessoa());
+
+			if (gestor.getDpLotacao() != null)
+				for (DpPessoa gestorPessoa : gestor.getDpLotacao()
+						.getDpPessoaLotadosSet())
+					if (gestorPessoa.getPessoaAtual().getDataFim() == null)
+						if (gestorPessoa.getPessoaAtual().getEmailPessoa() != null)
+							recipients.add(gestorPessoa.getPessoaAtual()
+									.getEmailPessoa());
 		}
-		addRecipient(sol.solicitante.getEmailPessoa());
-		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		send(movimentacao, sol);
+		recipients.add(sol.solicitante.getEmailPessoa());
+		if (recipients.size() > 0) {
+			addRecipient(recipients.toArray());
+			send(movimentacao, sol);
+		}
 	}
-	
-	public static void notificarCancelamentoMovimentacao(SrMovimentacao movimentacao) {
+
+	public static void notificarCancelamentoMovimentacao(
+			SrMovimentacao movimentacao) {
 		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
+		DpPessoa solicitanteAtual = sol.solicitante.getPessoaAtual();
+		if (solicitanteAtual.getEmailPessoa() == null)
+			return;
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
-		addRecipient(sol.solicitante.getEmailPessoa());
+		addRecipient(solicitanteAtual.getEmailPessoa());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(movimentacao, sol);
 	}
-	
-	public static void pesquisaSatisfacao(SrSolicitacao sol) throws Exception{
-		setSubject("Pesquisa de Satisfação da solicitação " + sol.getCodigo());
-		addRecipient(sol.solicitante.getEmailPessoa());
+
+	public static void pesquisaSatisfacao(SrSolicitacao sol) throws Exception {
+		SrSolicitacao solAtual = sol.getSolicitacaoAtual();
+		DpPessoa solicitanteAtual = solAtual.solicitante.getPessoaAtual();
+		if (solicitanteAtual.getEmailPessoa() == null)
+			return;
+		setSubject("Pesquisa de Satisfação da solicitação "
+				+ solAtual.getCodigo());
+		addRecipient(solicitanteAtual.getEmailPessoa());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(sol);
 	}

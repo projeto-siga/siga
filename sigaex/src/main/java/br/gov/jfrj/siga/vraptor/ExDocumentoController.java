@@ -494,7 +494,10 @@ public class ExDocumentoController extends ExController {
 		}
 	}
 	
-	public String aExcluirDocMovimentacoes(ExDocumentoDTO exDocumentoDto) throws Exception {
+	@Get("/app/expediente/doc/excluir")
+	public void aExcluirDocMovimentacoes(String sigla) throws Exception {
+		ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
 		ExDocumento doc = exDocumentoDto.getDoc();
 		buscarDocumento(true, exDocumentoDto);
 		try {
@@ -549,6 +552,8 @@ public class ExDocumentoController extends ExController {
 			
 			dao().excluir(doc);
 			ExDao.commitTransacao();
+			result.include("sigla", sigla);
+			result.forwardTo("/app/expediente/doc/listar");			
 		} catch (final AplicacaoException e) {
 			ExDao.rollbackTransacao();
 			throw e;
@@ -556,8 +561,6 @@ public class ExDocumentoController extends ExController {
 			ExDao.rollbackTransacao();
 			throw new AplicacaoException("Ocorreu um Erro durante a Operação", 0, e);
 		}
-		
-		return Action.SUCCESS;
 	}
 	
 	public String aExcluirPreenchimento(ExDocumentoDTO exDocumentoDto) throws Exception {
@@ -626,7 +629,9 @@ public class ExDocumentoController extends ExController {
 	}
 	
 	@Get("/app/expediente/doc/exibir")
-	public void aExibir(ExDocumentoDTO exDocumentoDto) throws Exception {
+	public void exibe(String sigla) throws Exception {
+		ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
 		ExDocumento doc = exDocumentoDto.getDoc();
 		ExMobil mob = exDocumentoDto.getMob();
 		
@@ -650,8 +655,12 @@ public class ExDocumentoController extends ExController {
 		
 		docVO.exibe();
 		
-		// super.getRequest().setAttribute("docVO", docVO);
 		result.include("docVO", docVO);
+		result.include("sigla", exDocumentoDto.getSigla());
+		result.include("id", exDocumentoDto.getId());
+		result.include("mob", exDocumentoDto.getMob());
+		result.include("lota", this.getLotaTitular());
+		result.include("param", exDocumentoDto.getParamsEntrevista());
 	}
 	
 	public String aCorrigirPDF(ExDocumentoDTO exDocumentoDto) throws Exception {

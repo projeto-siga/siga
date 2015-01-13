@@ -91,8 +91,12 @@
       <resource-root path="../main/opencloud-0.3.jar"/>
       <resource-root path="../main/ojdbc6.jar" />
 
-      <!-- Especifico do SigaTP /-->
-       <resource-root path="guava-15.0.jar.jar" />
+      <!-- Especifico do SigaTP -->
+      <resource-root path="guava-15.0.jar" />
+      <resource-root path="jackson-core-asl-1.8.8.jar" />
+      <resource-root path="siga-uteis-play-module-0.0.2.jar" />
+
+
     </resources>
 
     <dependencies>

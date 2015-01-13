@@ -253,38 +253,37 @@ function tryAgainAutoSave(){
 	
 		<h2>
 			<c:choose>
-				<c:when test='${empty doc}'>
+				<c:when test='${empty exDocumentoDTO.doc}'>
 					Novo Documento
 				</c:when>
 				<c:otherwise>
-					<span id="codigoDoc">${doc.codigo}</span>
-					<!-- de: <span id="dataDoc">${doc.dtRegDocDDMMYY}</span>-->
+					<span id="codigoDoc">${exDocumentoDTO.doc.codigo}</span>
+					<!-- de: <span id="dataDoc">${exDocumentoDTO.doc.dtRegDocDDMMYY}</span>-->
 				</c:otherwise>
 			</c:choose>
 		</h2>
 				
 		<div class="gt-content-box gt-for-table">
 
-			<form id="frm" name="frm" action="editar"
-				namespace="/expediente/doc" theme="simple" method="POST">
+			<form id="frm" name="frm" action="editar" namespace="/expediente/doc" theme="simple" method="POST">
 				<!-- <ww:token /> -->
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
 				<input type="hidden" name="postback" value="1" />
-				<input type="hidden" id="sigla" name="sigla" value="%{sigla}" />
+				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" />
 				<input type="hidden" name="nomePreenchimento" value="" />
 				<input type="hidden" name="campos" value="despachando" />
-				<input type="hidden" name="despachando" value="${despachando}" />
+				<input type="hidden" name="exDocumentoDTO.despachando" value="${exDocumentoDTO.despachando}" />
 				<input type="hidden" name="campos" value="criandoAnexo" />
 				<input type="hidden" name="campos" value="autuando" />
-				<input type="hidden" name="autuando" value="${autuando}" />
-				<input type="hidden" name="criandoAnexo" value="${criandoAnexo}" />
+				<input type="hidden" name="exDocumentoDTO.autuando" value="${exDocumentoDTO.autuando}" />
+				<input type="hidden" name="exDocumentoDTO.criandoAnexo" value="${exDocumentoDTO.criandoAnexo}" />
 				<input type="hidden" name="campos" value="idMobilAutuado" />
-				<input type="hidden" name="idMobilAutuado" value="${idMobilAutuado}" />
+				<input type="hidden" name="exDocumentoDTO.idMobilAutuado" value="${exDocumentoDTO.idMobilAutuado}" />
 
 				<table class="gt-form-table">
 					<tr class="header">
 						<c:choose>
-							<c:when test='${empty doc}'>
+							<c:when test='${empty exDocumentoDTO.doc}'>
 								<td colspan="4">Novo Documento</td>
 							</c:when>
 							<c:otherwise>
@@ -294,7 +293,7 @@ function tryAgainAutoSave(){
 					</tr>
 
 					<c:choose>
-						<c:when test="${(doc.eletronico) && (doc.numExpediente != null)}">
+						<c:when test="${(exDocumentoDTO.doc.eletronico) && (exDocumentoDTO.doc.numExpediente != null)}">
 							<c:set var="estiloTipo" value="display: none" />
 							<c:set var="estiloTipoSpan" value="" />
 						</c:when>
@@ -310,28 +309,28 @@ function tryAgainAutoSave(){
 
 						<td width="10%">Origem:</td>
 						<td width="10%">
-							
-							<select  name="idTpDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
-								<c:forEach items="${tiposDocumento}" var="item">
-									<option value="${item.idTpDoc}" ${item.idTpDoc == idTpDoc ? 'selected' : ''}>
+						
+							<select  name="exDocumentoDTO.idTpDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
+								<c:forEach items="${exDocumentoDTO.tiposDocumento}" var="item">
+									<option value="${item.idTpDoc}" ${item.idTpDoc == exDocumentoDTO.idTpDoc ? 'selected' : ''}>
 										${item.descrTipoDocumento}
 									</option>  
 								</c:forEach>
-							</select>&nbsp;									
+							</select>&nbsp;												
 								 
-							<span style="${estiloTipoSpan}">${doc.exTipoDocumento.descrTipoDocumento}</span>
+							<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exTipoDocumento.descrTipoDocumento}</span>
 						</td>
 						<td width="5%" align="right">Data:</td>
 						<input type="hidden" name="campos" value="dtDocString" />
 						<td>
-							<input type="text" name="dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${dtDocString}" /> &nbsp;&nbsp; 
+							<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" /> &nbsp;&nbsp; 
 						
 							<input type="hidden" name="campos" value="nivelAcesso" />
 							
 							Acesso 
-							<select  name="nivelAcesso" >
-								<c:forEach items="${listaNivelAcesso}" var="item">
-									<option value="${item.idNivelAcesso}" ${item.idNivelAcesso == idNivelAcesso ? 'selected' : ''}>
+							<select  name="exDocumentoDTO.nivelAcesso" >
+								<c:forEach items="${exDocumentoDTO.listaNivelAcesso}" var="item">
+									<option value="${item.idNivelAcesso}" ${item.idNivelAcesso == exDocumentoDTO.idNivelAcesso ? 'selected' : ''}>
 										${item.nmNivelAcesso}
 									</option>  
 								</c:forEach>
@@ -340,93 +339,92 @@ function tryAgainAutoSave(){
 							<input type="hidden" name="campos" value="eletronico" /> 
 								
 							<c:choose>
-								<c:when test="${eletronicoFixo}">
-									<input type="hidden" name="eletronico" id="eletronicoHidden" value="${eletronico}" />
-									${eletronicoString}
-									<c:if test="${eletronico == 2}">
+								<c:when test="${exDocumentoDTO.eletronicoFixo}">
+									<input type="hidden" name="exDocumentoDTO.eletronico" id="eletronicoHidden" value="${exDocumentoDTO.eletronico}" />
+									${exDocumentoDTO.eletronicoString}
+									<c:if test="${exDocumentoDTO.eletronico == 2}">
 										<script type="text/javascript">$("html").addClass("fisico");</script>
 									</c:if>
 								</c:when>
 								<c:otherwise>
-								    <input type="radio" name="eletronico" id="eletronicoCheck1" value="1" onchange="setFisico();" disabled="${eletronicoFixo}">
+								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" onchange="setFisico();" <c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>>
 								    <label for="eletronicoCheck1">Digital</label>
-								    <input type="radio" name="eletronico" id="eletronicoCheck2" value="2" onchange="setFisico();" disabled="${eletronicoFixo}">
+								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" onchange="setFisico();" <c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>>
 								    <label for="eletronicoCheck2">Físico</label>
 									<script type="text/javascript">
-										function setFisico() {if ($('input[name=eletronico]:checked').val() == 2) $('html').addClass('fisico'); else $('html').removeClass('fisico');}; setFisico();
+										function setFisico() {if ($('input[name=exDocumentoDTO.eletronico]:checked').val() == 2) $('html').addClass('fisico'); else $('html').removeClass('fisico');}; setFisico();
 									</script>									
 								</c:otherwise>
 							</c:choose>
 						</td>
 					</tr>
-					<c:if test='${tipoDocumento == "antigo"}'>
+					<c:if test='${exDocumentoDTO.tipoDocumento == "antigo"}'>
 						<tr>
 							<td>Nº original:</td>
 							<input type="hidden" name="campos" value="numExtDoc" />
 							<td colspan="3">
-								<input type="text" name="numExtDoc" size="16" maxLength="32" value="${numExtDoc}"/>
+								<input type="text" name="exDocumentoDTO.numExtDoc" size="16" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>
 							</td>
 						</tr>
 						<tr style="font-weight: bold">
 							<td>Nº antigo:</td>
 							<input type="hidden" name="campos" value="numAntigoDoc" />
 							<td colspan="3">
-								<input type="text" name="numAntigoDoc" size="16" maxLength="32" value="${numAntigoDoc}"/> 
+								<input type="text" name="exDocumentoDTO.numAntigoDoc" size="16" maxLength="32" value="${exDocumentoDTO.numAntigoDoc}"/> 
 								(informar o número do documento no antigo sistema de controle de expedientes ou de processos administrativos [SISAPA] ou [PROT])
 							</td>
 						</tr>
 					</c:if>
-					<c:if test='${tipoDocumento == "externo"}'>
+					<c:if test='${exDocumentoDTO.tipoDocumento == "externo"}'>
 						<tr>
 							<td>Data original do documento:</td>
 							<input type="hidden" name="campos" value="dtDocOriginalString" />
 							<td colspan="3">
-								<input type="text" name="dtDocOriginalString" size="10" onblur="javascript:verifica_data(this, true);" value="${dtDocOriginalString}"/>
+								<input type="text" name="exDocumentoDTO.dtDocOriginalString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocOriginalString}"/>
 							</td>
 						</tr>
 						<tr>
 							<td>Nº original:</td>
 							<input type="hidden" name="campos" value="numExtDoc" />
 							<td>
-								<input type="text" name="numExtDoc" size="32" maxLength="32" value="${numExtDoc}"/>
+								<input type="text" name="exDocumentoDTO.numExtDoc" size="32" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>
 							</td>
 							<td align="right">Órgão:</td>
 							<input type="hidden" name="campos" value="cpOrgaoSel.id" />
 							<td>
-								<siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"/>
+								<siga:selecao propriedade="cpOrgao" name="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/>
 							</td>
 						</tr>
 						<tr>
 							<td>Obs. sobre o Órgão Externo:</td>
 							<input type="hidden" name="campos" value="obsOrgao" />
 							<td colspan="3">
-								<input type="text" size="120" name="obsOrgao" maxLength="256" value="${obsOrgao}"/>
+								<input type="text" size="120" name="exDocumentoDTO.obsOrgao" maxLength="256" value="${exDocumentoDTO.obsOrgao}"/>
 							</td>
 						</tr>
 						<tr>
 							<td>Nº antigo:</td>
 							<input type="hidden" name="campos" value="numAntigoDoc" />
 							<td colspan="3">
-								<input type="text" name="numAntigoDoc" size="32" maxLength="34" value="${numAntigoDoc}" /> 
+								<input type="text" name="exDocumentoDTO.numAntigoDoc" size="32" maxLength="34" value="${exDocumentoDTO.numAntigoDoc}" /> 
 								(informar o número do documento no antigo sistema de controle de expedientes, caso tenha sido cadastrado)
 							</td>
 						</tr>
 					</c:if>
-					<input type="hidden" name="desativarDocPai"
-						value="${desativarDocPai}" />
+					<input type="hidden" name="exDocumentoDTO.desativarDocPai" value="${exDocumentoDTO.desativarDocPai}" />
 					<tr style="display: none;">
 						<td>Documento Pai:</td>
 						<td colspan="3">
-							<siga:selecao titulo="Documento Pai:" propriedade="mobilPai" tema="simple" modulo="sigaex" desativar="${desativarDocPai}" reler="sim" />
+							<siga:selecao titulo="Documento Pai:" propriedade="mobilPai" name="exDocumentoDTO.mobilPai" tema="simple" modulo="sigaex" desativar="${exDocumentoDTO.desativarDocPai}" reler="sim" />
 						</td>
 					</tr>
 					<tr>
 						<c:choose>
-							<c:when test='${tipoDocumento == "externo"}'>
+							<c:when test='${exDocumentoDTO.tipoDocumento == "externo"}'>
 								<td>Subscritor:</td>
 								<input type="hidden" name="campos" value="nmSubscritorExt" />
 								<td colspan="3">
-									<input type="text" name="nmSubscritorExt" size="80" maxLength="256" value="${nmSubscritorExt}"/>
+									<input type="text" name="exDocumentoDTO.nmSubscritorExt" size="80" maxLength="256" value="${exDocumentoDTO.nmSubscritorExt}"/>
 								</td>
 							</c:when>
 							<c:otherwise>
@@ -434,15 +432,15 @@ function tryAgainAutoSave(){
 								<input type="hidden" name="campos" value="subscritorSel.id" />
 								<input type="hidden" name="campos" value="substituicao" />
 								<td colspan="3">
-									<siga:selecao propriedade="subscritor" modulo="siga" tema="simple" />&nbsp;&nbsp;
-									<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" />
+									<siga:selecao propriedade="subscritor" name="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />&nbsp;&nbsp;
+									<input type="checkbox" name="exDocumentoDTO.substituicao" onclick="javascript:displayTitular(this);" />
 									Substituto
 								</td>
 							</c:otherwise>
 						</c:choose>
 					</tr>
 					<c:choose>
-						<c:when test="${!substituicao}">
+						<c:when test="${!exDocumentoDTO.substituicao}">
 							<tr id="tr_titular" style="display: none">
 						</c:when>
 						<c:otherwise>
@@ -453,14 +451,14 @@ function tryAgainAutoSave(){
 					<td>Titular:</td>
 					<input type="hidden" name="campos" value="titularSel.id" />
 					<td colspan="3">
-						<siga:selecao propriedade="titular" tema="simple" modulo="siga"/>
+						<siga:selecao propriedade="titular" name="exDocumentoDTO.titular" tema="simple" modulo="siga"/>
 					</td>
 					</tr>
 					<tr>
 						<td>Função;<br/>Lotação;<br/>Localidade:</td>
 						<td colspan="3">
 							<input type="hidden" name="campos" value="nmFuncaoSubscritor" />
-							<input type="text" name="nmFuncaoSubscritor" size="50" maxlength="128" id="frm_nmFuncaoSubscritor" value="${nmFuncaoSubscritor}">							
+							<input type="text" name="exDocumentoDTO.nmFuncaoSubscritor" size="50" maxlength="128" id="frm_nmFuncaoSubscritor" value="${exDocumentoDTO.nmFuncaoSubscritor}">							
 							(Opcionalmente informe a função e a lotação na forma:
 						Função;Lotação;Localidade)
 						</td>
@@ -469,7 +467,7 @@ function tryAgainAutoSave(){
 					<tr>
 					<td>Função:</td>
 					<input type="hidden" name="campos" value="nmSubscritorFuncao" />
-					<td colspan="3"><ww:if test="${empty doc.nmSubscritorFuncao}">
+					<td colspan="3"><ww:if test="${empty exDocumentoDTO.doc.nmSubscritorFuncao}">
 						<c:set var="style_subs_func_editar" value="display:none" />
 						<c:set var="subscritorFuncao" value="false" />
 					</ww:if><ww:else>
@@ -485,43 +483,41 @@ function tryAgainAutoSave(){
 					</td>
 				</tr>
 --%>
-					<%--<c:if test='${tipoDocumento != "externo"}'>--%>
+					<%--<c:if test='${exDocumentoDTO.tipoDocumento != "externo"}'>--%>
 					<tr>
 						<td>Destinatário:</td>
 						<input type="hidden" name="campos" value="tipoDestinatario" />
 						<td colspan="3">
 							
-							<select  name="tipoDestinatario" onchange="javascript:sbmt();">
-								<c:forEach items="${listaTipoDest}" var="item">
-									<option value="${item.key}" ${item.key == tipoDest ? 'selected' : ''}>
+							<select  name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();">
+								<c:forEach items="${exDocumentoDTO.listaTipoDest}" var="item">
+									<option value="${item.key}" ${item.key == exDocumentoDTO.idTipoDest ? 'selected' : ''}>
 										${item.value}
 									</option>  
 								</c:forEach>
-							</select>							
-							
-							
+							</select>			
 							
 							<siga:span id="destinatario" depende="tipoDestinatario">
 								<c:choose>
-									<c:when test='${tipoDestinatario == 1}'>
+									<c:when test='${exDocumentoDTO.tipoDestinatario == 1}'>
 										<input type="hidden" name="campos" value="destinatarioSel.id" />
-										<siga:selecao propriedade="destinatario" tema="simple" idAjax="destinatario" modulo="siga" />										    
+										<siga:selecao propriedade="destinatario" name="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario" modulo="siga" />										    
 									</c:when>
-									<c:when test='${tipoDestinatario == 2}'>
+									<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>
 										<input type="hidden" name="campos" value="lotacaoDestinatarioSel.id" />
-										<siga:selecao propriedade="lotacaoDestinatario" tema="simple" idAjax="destinatario" modulo="siga" />
+										<siga:selecao propriedade="lotacaoDestinatario" name="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario" modulo="siga" />
 										</td>							   
 									</c:when>
-									<c:when test='${tipoDestinatario == 3}'>
+									<c:when test='${exDocumentoDTO.tipoDestinatario == 3}'>
 										<input type="hidden" name="campos" value="orgaoExternoDestinatarioSel.id" />
-										<siga:selecao propriedade="orgaoExternoDestinatario" tema="simple" idAjax="destinatario" modulo="siga" />
+										<siga:selecao propriedade="orgaoExternoDestinatario" name="exDocumentoDTO.orgaoExternoDestinatario" tema="simple" idAjax="destinatario" modulo="siga" />
 										<br>
-										<input type="text" name="nmOrgaoExterno" size="120" maxLength="256" value="${nmOrgaoExterno}"/>
+										<input type="text" name="exDocumentoDTO.nmOrgaoExterno" size="120" maxLength="256" value="${exDocumentoDTO.nmOrgaoExterno}"/>
 										<input type="hidden" name="campos" value="nmOrgaoExterno" />
 										</td>	
 									</c:when>
 									<c:otherwise>
-										<input type="text" name="nmDestinatario" size="80" maxLength="256" value="${nmDestinatario}"/>
+										<input type="text" name="exDocumentoDTO.nmDestinatario" size="80" maxLength="256" value="${exDocumentoDTO.nmDestinatario}"/>
 										<input type="hidden" name="campos" value="nmDestinatario" />
 										</td>
 									</c:otherwise>
@@ -532,19 +528,19 @@ function tryAgainAutoSave(){
 					<%--</c:if>--%>
 
 
-					<c:if test='${ tipoDocumento != "externo"}'>
+					<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
 						<tr>
 							<td>Tipo:</td>
 							<td colspan="3">
-								<select  name="idFormaDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
-									<c:forEach items="${formasDocPorTipo}" var="item">
-										<option value="${item.idFormaDoc}" ${item.idFormaDoc == idFormaDoc ? 'selected' : ''}>
+								<select  name="exDocumentoDTO.idFormaDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
+									<c:forEach items="${exDocumentoDTO.formasDoc}" var="item">
+										<option value="${item.idFormaDoc}" ${item.idFormaDoc == exDocumentoDTO.idFormaDoc ? 'selected' : ''}>
 											${item.descrFormaDoc}
 										</option>  
 									</c:forEach>
 								</select>	
-							<c:if test="${not empty doc.exFormaDocumento}">
-								<span style="${estiloTipoSpan}">${doc.exFormaDocumento.descrFormaDoc}</span>
+							<c:if test="${not empty exDocumentoDTO.doc.exFormaDocumento}">
+								<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exFormaDocumento.descrFormaDoc}</span>
 							</c:if></td>
 						</tr>
 
@@ -555,25 +551,25 @@ function tryAgainAutoSave(){
 									<td colspan="3">
 										<siga:div id="modelo" depende="forma">
 											
-											<select  name="idMod" onchange="document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
-												<c:forEach items="${modelos}" var="item">
-													<option value="${item.idMod}" ${item.idMod == idMod ? 'selected' : ''}>
+											<select  name="exDocumentoDTO.idMod" onchange="document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
+												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
+													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
 														${item.nmMod}
 													</option>  
 												</c:forEach>
 											</select>											
 											
-											<c:if test="${not empty doc.exModelo}">
-												<span style="${estiloTipoSpan}">${doc.exModelo.nmMod}</span>
+											<c:if test="${not empty exDocumentoDTO.doc.exModelo}">
+												<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exexDocumentoDTO.modelo.nmMod}</span>
 											</c:if>
 											<!-- sbmt('modelo') -->
-											<c:if test='${tipoDocumento!="interno"}'>(opcional)</c:if>
+											<c:if test='${exDocumentoDTO.tipoDocumento!="interno"}'>(opcional)</c:if>
 										</siga:div>
 									</td>
 								</tr>
 							</c:when>
 							<c:otherwise>
-								<input type="hidden" name="idMod" value="%{modelo.idMod}" />
+								<input type="hidden" name="idMod" value="${exDocumentoDTO.modelo.idMod}" />
 							</c:otherwise>
 						</c:choose>
 						
@@ -582,15 +578,15 @@ function tryAgainAutoSave(){
 							<input type="hidden" name="campos" value="preenchimento" />
 							<td colspan="3">
 								
-								<select  name="preenchimento" onchange="javascript:carregaPreench()">
-									<c:forEach items="${preenchimentos}" var="item">
-										<option value="${item.idPreenchimento}" ${item.idPreenchimento == idPreenchimento ? 'selected' : ''}>
+								<select  name="exDocumentoDTO.preenchimentos" onchange="javascript:carregaPreench()">
+									<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
+										<option value="${item.idPreenchimento}" ${item.idPreenchimento == exDocumentoDTO.idPreenchimento ? 'selected' : ''}>
 											${item.nomePreenchimento}
 										</option>  
 									</c:forEach>
 								</select>&nbsp;								
 									 
-								<c:if test="${preenchimento==0}">
+								<c:if test="${exDocumentoDTO.preenchimento==0}">
 									<c:set var="desabilitaBtn"> disabled="disabled" </c:set>
 								</c:if>
 								 
@@ -610,11 +606,11 @@ function tryAgainAutoSave(){
 					</tr>
 					--%>
 					</c:if>
-					<c:if test='${ tipoDocumento == "externo" }'>
-						<input type="hidden" name="idFormaDoc" value="%{formaDocPorTipo.idFormaDoc}" />
+					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" }'>
+						<input type="hidden" name="idFormaDoc" value="${exDocumentoDTO.formaDocPorTipo.idFormaDoc}" />
 						<input type="hidden" name="idMod" />
 					</c:if>
-					<%--<c:if test='${ tipoDocumento == "antigo" }'>
+					<%--<c:if test='${ exDocumentoDTO.tipoDocumento == "antigo" }'>
 					<tr>
 						<td>Forma:</td>
 						<td colspan="3"><ww:select name="idFormaDoc"
@@ -633,25 +629,25 @@ function tryAgainAutoSave(){
 				</c:if>--%>
 
 						
-					<tr style="display:<c:choose><c:when test="${modelo.exClassificacao!=null}">none</c:when><c:otherwise>visible</c:otherwise></c:choose>">
+					<tr style="display:<c:choose><c:when test="${exDocumentoDTO.modelo.exClassificacao!=null}">none</c:when><c:otherwise>visible</c:otherwise></c:choose>">
 						<td>Classificação:</td>
-						<c:if test="${modelo.exClassificacao!=null}">
+						<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">
 							<c:set var="desativarClassif" value="sim" />
 						</c:if>
 						<input type="hidden" name="campos" value="classificacaoSel.id" />
 						<td colspan="3">
 							<siga:span id="classificacao" depende="forma;modelo">
-							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao" tema="simple" />
+							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  name="exDocumentoDTO.classificacao" tema="simple" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>
 					<c:if
-						test="${classificacaoSel.id!=null && classificacaoIntermediaria}">
+						test="${exDocumentoDTO.classificacaoSel.id!=null && exDocumentoDTO.classificacaoIntermediaria}">
 						<tr>
 							<td>Descrição da Classificação:</td>
 							<td colspan="3">
 								<siga:span id="descrClassifNovo" depende="forma;modelo;classificacao">
-								<input type="text" name="descrClassifNovo" size="80" value="${descrClassifNovo}" maxLength="4000" />
+								<input type="text" name="exDocumentoDTO.descrClassifNovo" size="80" value="${exDocumentoDTO.descrClassifNovo}" maxLength="4000" />
 							</siga:span></td>
 						</tr>
 					</c:if>
@@ -659,16 +655,16 @@ function tryAgainAutoSave(){
 						<input type="hidden" name="campos" value="descrDocumento" />
 						<td>Descrição:</td>
 						<td colspan="3">
-							<textarea name="descrDocumento" cols="80" rows="2" id="descrDocumento" cssClass="gt-form-textarea"></textarea> <br>
+							<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" cssClass="gt-form-textarea" value="${exDocumentoDTO.descrDocumento}" ></textarea> <br>
 							<span><b>(preencher o campo acima com palavras-chave, sempre usando substantivos, gênero masculino e singular)</b></span>
 						</td>
 					</tr>
 					<%--
 				<c:if
-					test='${tipoDocumento == "externo" or tipoDocumento == "antigo"}'>
+					test='${exDocumentoDTO.tipoDocumento == "externo" or tipoDocumento == "antigo"}'>
 					<tr>
 						<td>Anexo:</td>
-						<td colspan="3"><ww:if test="${empty doc.nmArqDoc}">
+						<td colspan="3"><ww:if test="${empty exDocumentoDTO.doc.nmArqDoc}">
 							<c:set var="style_anexo" value="display:none" />
 							<c:set var="anexar" value="true" />
 						</ww:if><ww:else>
@@ -676,31 +672,31 @@ function tryAgainAutoSave(){
 							<c:set var="anexar" value="false" />
 						</ww:else> <span id="span_anexar" style="${style_anexar}"> <ww:file
 							name="arquivo" theme="simple" /><input type="hidden" id="anexar"
-							name="anexarString" value="${anexar}" /></span><span id="span_anexo"
+							name="anexarString" value="${exDocumentoDTO.anexar}" /></span><span id="span_anexo"
 							style="${style_anexo}"> <ww:url id="url" action="anexo"
 							namespace="/expediente/doc">
-							<ww:param name="id">${doc.idDoc}</ww:param>
-						</ww:url> <tags:anexo url="${url}" nome="${doc.nmArqDoc}"
-							tipo="${doc.conteudoTpDoc}" /> <input type="button"
+							<ww:param name="id">${exDocumentoDTO.doc.idDoc}</ww:param>
+						</ww:url> <tags:anexo url="${url}" nome="${exDocumentoDTO.doc.nmArqDoc}"
+							tipo="${exDocumentoDTO.doc.conteudoTpDoc}" /> <input type="button"
 							name="but_anexar" value="Substituir"
 							onclick="javascript: document.getElementById('span_anexo').style.display='none'; document.getElementById('span_anexar').style.display=''; document.getElementById('anexar').value='true'; " /></span>
 						</td>
 					</tr>
 				</c:if>
 --%>
-					<c:if test='${tipoDocumento == "interno"}'>
-						<c:if test="${modelo.conteudoTpBlob == 'template/freemarker' or not empty modelo.nmArqMod}">
+					<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
+						<c:if test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker' or not empty exDocumentoDTO.modelo.nmArqMod}">
 							<tr class="header">
 								<td colspan="4">Dados complementares</td>
 							</tr>
 							<tr>
 								<td colspan="4">
 									<siga:span id="spanEntrevista" depende="tipoDestinatario;destinatario;forma;modelo">
-										<c:if test="${modelo.conteudoTpBlob == 'template/freemarker'}">
-											${f:processarModelo(doc, 'entrevista', par, preenchRedirect)}
+										<c:if test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
+											${f:processarModelo(exDocumentoDTO.doc, 'entrevista', par, exDocumentoDTO.preenchRedirect)}
 										</c:if>
-										<c:if test="${modelo.conteudoTpBlob != 'template/freemarker'}">
-											<c:import url="/paginas/expediente/modelos/${modelo.nmArqMod}?entrevista=1" />
+										<c:if test="${exDocumentoDTO.modelo.conteudoTpBlob != 'template/freemarker'}">
+											<c:import url="/paginas/expediente/modelos/${exDocumentoDTO.modelo.nmArqMod}?entrevista=1" />
 										</c:if>
 									</siga:span>
 								</td>
@@ -710,8 +706,8 @@ function tryAgainAutoSave(){
 					<tr>
 						<td colspan="4">
 							<input type="button" onclick="javascript: gravarDoc();" name="gravar" value="Ok" class="gt-btn-small gt-btn-left"/>
-						 	<c:if test='${tipoDocumento == "interno"}'>
-							<c:if test="${not empty modelo.nmArqMod or modelo.conteudoTpBlob == 'template/freemarker'}">
+						 	<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
+							<c:if test="${not empty exDocumentoDTO.modelo.nmArqMod or exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
 								<input type="button" name="ver_doc" value="Visualizar o Documento" onclick="javascript: popitup_documento(false);" class="gt-btn-large gt-btn-left"/>
 								<input type="button" name="ver_doc_pdf" onclick="javascript: popitup_documento(true);" value="Visualizar a Impressão" class="gt-btn-large gt-btn-left"/>
 							</c:if>

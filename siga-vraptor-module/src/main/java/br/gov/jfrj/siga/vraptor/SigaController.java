@@ -8,8 +8,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,7 +43,7 @@ public class SigaController {
 	
 	
 	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
-	private Map<String, String[]> par;
+	private Map<String, String[]> par = new HashMap<>();
 	
 	public Map<String, String[]> getPar() {
 		return par;
@@ -85,7 +90,7 @@ public class SigaController {
 		this.setRequest(request);
 		this.so = so;
 		this.result = result;
-		this.dao = dao;	
+		this.dao = dao;
 		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

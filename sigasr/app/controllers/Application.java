@@ -97,6 +97,13 @@ public class Application extends SigaApplication {
 		} catch (Exception e) {
 			renderArgs.put("exibirMenuAdministrar", false);
 		}
+		
+		try {
+			assertAcesso("EDTCONH:Criar Conhecimentos");
+			renderArgs.put("exibirMenuConhecimentos", true);
+		} catch (Exception e) {
+			renderArgs.put("exibirMenuConhecimentos", false);
+		}
 
 		try {
 			assertAcesso("REL:Relatorios");
@@ -1256,7 +1263,7 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void listarConhecimento(Long idItem, Long idAcao, boolean ajax) throws Exception {
-		assertAcesso("ADM:Administrar");
+		assertAcesso("EDTCONH:Criar Conhecimentos");
 		SrItemConfiguracao item = idItem != null ? (SrItemConfiguracao)SrItemConfiguracao.findById(idItem) : null;
 		SrAcao acao = idAcao != null ? (SrAcao)SrAcao.findById(idAcao) : null;			
 		render("@listarConhecimento" + (ajax ? "Ajax" : ""), item, acao);

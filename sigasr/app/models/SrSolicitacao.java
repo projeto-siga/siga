@@ -1514,11 +1514,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			for (SrLista lista : getListasParaInclusaoAutomatica(lotaCadastrante)) {
 				incluirEmLista(lista, cadastrante, lotaCadastrante);
 			}
-
-			if (!isEditado()
-					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
-					&& formaAcompanhamento != SrFormaAcompanhamento.FECHAMENTO)
-				Correio.notificarAbertura(this);
+            if (!isEditado())
+            	Correio.notificarAbertura(this);
 		} else
 			atualizarMarcas();
 	}

@@ -10,10 +10,10 @@
 	</b>
 </p>
 <!--  -->
-#{/list} #{/if} #{else}
+#{/list} #{/if} #{elseif podeCriar}
 <p>
 	Nenhum conhecimento relacionado registrado. Clique <a
 		href="@{Application.editar}?classificacao=${classificacao}" target="#{if popup}_blank#{/if}">aqui</a>
 	para registrar um novo conhecimento.
 </p>
-#{/else}
+#{/elseif}

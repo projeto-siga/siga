@@ -1,253 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	buffer="128kb"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Novo Documento">
 <script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
-	
-<script type="text/javascript">
-<c:set var="url" value="editar" />
-function sbmt(id) {
-	
-	var frm = document.getElementById('frm');
-	
-	//Dispara a função onSave() do editor, caso exista
-    if (typeof(onSave) == "function"){
-    	onSave();
-    } 
-	
-	if (id == null || IsRunningAjaxRequest()) {
-		frm.action='<c:out value="${url}"/>';
-		frm.submit();
-	} else {
-		ReplaceInnerHTMLFromAjaxResponse('<c:out value="${url}"/>', frm, id);
-	}
-	return;
-	
-	if (typeof(frm.submitsave) == "undefined")
-		frm.submitsave = frm.submit;
-	frm.action='<c:out value="${url}"/>';
-                    
-	if (id == null || typeof(id) == 'undefined' || IsRunningAjaxRequest()) {
-		window.customOnsubmit = function() {return true;};
-		frm.onsubmit = null;
-		frm.submit = frm.submitsave;
-		frm.submit();
-	} else {
-		ReplaceInnerHTMLFromAjaxResponse('<c:out value="${url}"/>', frm, id);
-	}
-}
-
-<c:set var="url" value="gravar" />
-function gravarDoc() {
-	clearTimeout(saveTimer);
-	if (!validar(false)){
-		triggerAutoSave();
-		return false;
-	}
-	frm.action='<c:out value="${url}"/>';
-	window.customOnsubmit = function() {return true;};
-	if (typeof(frm.submitsave) != "undefined")
-		frm.submit = frm.submitsave;
-	
-	//Dispara a função onSave() do editor, caso exista
-   	if (typeof(onSave) == "function")
-   		onSave();
-	
-	frm.submit();
-}
-
-function validar(silencioso){
-	
-	var descr = document.getElementsByName('descrDocumento')[0].value;
-	var eletroHidden = document.getElementById('eletronicoHidden');
-	var eletro1 = document.getElementById('eletronicoCheck1');
-	var eletro2 = document.getElementById('eletronicoCheck2');
-
-	if (descr==null || descr=="") {
-		aviso("Preencha o campo Descrição antes de gravar o documento.", silencioso);
-		return false;
-	}
-	
-	if (eletroHidden == null && !eletro1.checked && !eletro2.checked) {
-		aviso("É necessário informar se o documento será digital ou físico, na parte superior da tela.", silencioso);
-		return false;
-	}
-
-	var limite = ${tamanhoMaximoDescricao};
-	if (document.getElementsByName('descrDocumento')[0].value.length >= limite) {
-		aviso('O tamanho máximo da descrição é de ' + limite + ' caracteres', silencioso);
-		return false;
-	}
-	
-	return true;
-	
-}
-
-function aviso(msg, silencioso){
-	if (silencioso)
-		avisoVermelho('O documento não pôde ser salvo: ' + msg);
-	else alert(msg);
-}
-
-<c:set var="url" value="excluirpreench" />
-function removePreench(){
-			//Dispara a função onSave() do editor, caso exista
-    		if (typeof(onSave) == "function"){
-    			onSave();
-    		} 
-frm.action='<c:out value="${url}"/>';
-frm.submit();
-}
-
-<c:set var="url" value="alterarpreench" />
-function alteraPreench(){
-			//Dispara a função onSave() do editor, caso exista
-    		if (typeof(onSave) == "function"){
-    			onSave();
-    		} 
-frm.action='<c:out value="${url}"/>';
-frm.submit();
-}
-
-<c:set var="url" value="carregarpreench" />
-function carregaPreench(){
-if (frm.preenchimento.value==0){
-	frm.btnRemover.disabled="true";
-	frm.btnAlterar.disabled="true";
-}
-else {
-	//Dispara a função onSave() do editor, caso exista
-    		if (typeof(onSave) == "function"){
-    			onSave();
-    		} 
-	frm.btnAlterar.disabled="true";
-	frm.btnRemover.disabled="false";
-	frm.action='<c:out value="${url}"/>';
-	frm.submit();
-	}
-}
-
-<c:set var="url" value="gravarpreench" />
-function adicionaPreench(){
-var result='';
-while((result=='') && (result!=null)){
-	result=prompt('Digite o nome do padrão de preenchimento a ser criado para esse modelo:', '');
-	if (result=='')
- 		alert('O nome do padrão de preenchimento não pode ser vazio');
- 	else if (result!=null){
- 			//Dispara a função onSave() do editor, caso exista
-    		if (typeof(onSave) == "function"){
-    			onSave();
-    		} 
- 			frm.nomePreenchimento.value=result;
- 			frm.action='<c:out value="${url}"/>';
-			frm.submit();
- 	}
-}
-
-}
-
-<c:set var="urlPdf" value="preverPdf" />
-<c:set var="url" value="prever" />
-var newwindow = '';
-function popitup_documento(pdf) {
-	if (!newwindow.closed && newwindow.location) {
-	} else {
-		var popW = 600;
-		var popH = 400;
-		var winleft = (screen.width - popW) / 2;
-		var winUp = (screen.height - popH) / 2;
-		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow=window.open('','${propriedade}',winProp);
-		newwindow.name='doc';
-	}
-	
-	newwindow.opener = self;
-	t = frm.target; 
-	a = frm.action;
-	frm.target = newwindow.name;
-	if (pdf)
-		frm.action='<c:out value="${urlPdf}"/>';
-	else
-		frm.action='<c:out value="${url}"/>';
-//	alert(frm.action);
-	//Dispara a função onSave() do editor, caso exista
-    if (typeof(onSave) == "function"){
-    	onSave();
-    } 
-	frm.submit();
-	frm.target = t; 
-	frm.action = a;
-	
-	if (window.focus) {
-		newwindow.focus()
-	}
-	return false;
-}			
-
-function checkBoxMsg() {
-   window.alert('Atenção: essa opção só deve ser selecionada quando o subscritor possui certificado digital, pois será exigida a assinatura digital do documento.');   
-}
-
-var saveTimer;
-function triggerAutoSave(){
-	clearTimeout(saveTimer);
-	saveTimer=setTimeout('autoSave()',60000 * 2);
-}
-
-triggerAutoSave();
-
-var stillSaving = false;
-<c:set var="url" value="gravar" />
-function autoSave(){
-	if (stillSaving)
-		return;
-	if (!validar(true))
-		return tryAgainAutoSave();
-	for (instance in CKEDITOR.instances)
-		CKEDITOR.instances[instance].updateElement();
-	if (typeof(onSave) == "function")
-		onSave();
-	stillSaving = true;
-	$.ajax({
-		type: "POST",
-		url: "<c:out value="${url}"/>?ajax=true",
-	   	data: $(frm).serialize(),
-	   	timeout: 30000,
-	   	success: doneAutoSave,
-	   	error: failAutoSave
-	});
-}
-
-function doneAutoSave(response){
-	var data = response.split('_');
-    if (data[0] == 'OK'){
-    	avisoVerde('Documento ' + data[1] + ' salvo');
-    	document.getElementById('codigoDoc').innerHTML = data[1];
-    	document.getElementById('sigla').value = data[1];
-    	stillSaving = false;
-    	triggerAutoSave();
-    } else failAutoSave();
-}
-
-function failAutoSave(response){
-	tryAgainAutoSave(); 
-	avisoVermelho('Atenção: Ocorreu um erro ao salvar o documento.');
-	stillSaving = false;
-}
-
-function tryAgainAutoSave(){
-	clearTimeout(saveTimer);
-	saveTimer=setTimeout('autoSave()',60000 * 2);
-}
-
-</script>
-
+<script type="text/javascript" src="../../../javascript/exDocumentoEdita.js"></script>
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 	
@@ -267,6 +26,7 @@ function tryAgainAutoSave(){
 
 			<form id="frm" name="frm" action="editar" namespace="/expediente/doc" theme="simple" method="POST">
 				<!-- <ww:token /> -->
+				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" />
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" />
@@ -343,16 +103,22 @@ function tryAgainAutoSave(){
 									<input type="hidden" name="exDocumentoDTO.eletronico" id="eletronicoHidden" value="${exDocumentoDTO.eletronico}" />
 									${exDocumentoDTO.eletronicoString}
 									<c:if test="${exDocumentoDTO.eletronico == 2}">
-										<script type="text/javascript">$("html").addClass("fisico");</script>
+										<script type="text/javascript">
+											$("html").addClass("fisico");
+										</script>
 									</c:if>
 								</c:when>
 								<c:otherwise>
-								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" onchange="setFisico();" <c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>>
+								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" onchange="javascript:setFisico();" <c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>>
 								    <label for="eletronicoCheck1">Digital</label>
-								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" onchange="setFisico();" <c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>>
+								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" onchange="javascript:setFisico();" <c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>>
 								    <label for="eletronicoCheck2">Físico</label>
 									<script type="text/javascript">
-										function setFisico() {if ($('input[name=exDocumentoDTO.eletronico]:checked').val() == 2) $('html').addClass('fisico'); else $('html').removeClass('fisico');}; setFisico();
+										function setFisico() {
+											if ($('input[name=exDocumentoDTO.eletronico]:checked').val() == 2) 
+												$('html').addClass('fisico'); 
+											else 
+												$('html').removeClass('fisico');}; setFisico();
 									</script>									
 								</c:otherwise>
 							</c:choose>
@@ -392,7 +158,7 @@ function tryAgainAutoSave(){
 							<td align="right">Órgão:</td>
 							<input type="hidden" name="campos" value="cpOrgaoSel.id" />
 							<td>
-								<siga:selecao propriedade="cpOrgao" name="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/>
+								<siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/>
 							</td>
 						</tr>
 						<tr>
@@ -415,7 +181,7 @@ function tryAgainAutoSave(){
 					<tr style="display: none;">
 						<td>Documento Pai:</td>
 						<td colspan="3">
-							<siga:selecao titulo="Documento Pai:" propriedade="mobilPai" name="exDocumentoDTO.mobilPai" tema="simple" modulo="sigaex" desativar="${exDocumentoDTO.desativarDocPai}" reler="sim" />
+							<siga:selecao titulo="Documento Pai:" propriedade="mobilPai" inputName="exDocumentoDTO.mobilPai" tema="simple" modulo="sigaex" desativar="${exDocumentoDTO.desativarDocPai}" reler="sim" />
 						</td>
 					</tr>
 					<tr>
@@ -432,7 +198,7 @@ function tryAgainAutoSave(){
 								<input type="hidden" name="campos" value="subscritorSel.id" />
 								<input type="hidden" name="campos" value="substituicao" />
 								<td colspan="3">
-									<siga:selecao propriedade="subscritor" name="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />&nbsp;&nbsp;
+									<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />&nbsp;&nbsp;
 									<input type="checkbox" name="exDocumentoDTO.substituicao" onclick="javascript:displayTitular(this);" />
 									Substituto
 								</td>
@@ -451,7 +217,7 @@ function tryAgainAutoSave(){
 					<td>Titular:</td>
 					<input type="hidden" name="campos" value="titularSel.id" />
 					<td colspan="3">
-						<siga:selecao propriedade="titular" name="exDocumentoDTO.titular" tema="simple" modulo="siga"/>
+						<siga:selecao propriedade="titular" inputName="exDocumentoDTO.titular" tema="simple" modulo="siga"/>
 					</td>
 					</tr>
 					<tr>
@@ -501,16 +267,16 @@ function tryAgainAutoSave(){
 								<c:choose>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 1}'>
 										<input type="hidden" name="campos" value="destinatarioSel.id" />
-										<siga:selecao propriedade="destinatario" name="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario" modulo="siga" />										    
+										<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario" modulo="siga" />										    
 									</c:when>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>
 										<input type="hidden" name="campos" value="lotacaoDestinatarioSel.id" />
-										<siga:selecao propriedade="lotacaoDestinatario" name="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario" modulo="siga" />
+										<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario" modulo="siga" />
 										</td>							   
 									</c:when>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 3}'>
 										<input type="hidden" name="campos" value="orgaoExternoDestinatarioSel.id" />
-										<siga:selecao propriedade="orgaoExternoDestinatario" name="exDocumentoDTO.orgaoExternoDestinatario" tema="simple" idAjax="destinatario" modulo="siga" />
+										<siga:selecao propriedade="orgaoExternoDestinatario" inputName="exDocumentoDTO.orgaoExternoDestinatario" tema="simple" idAjax="destinatario" modulo="siga" />
 										<br>
 										<input type="text" name="exDocumentoDTO.nmOrgaoExterno" size="120" maxLength="256" value="${exDocumentoDTO.nmOrgaoExterno}"/>
 										<input type="hidden" name="campos" value="nmOrgaoExterno" />
@@ -560,7 +326,7 @@ function tryAgainAutoSave(){
 											</select>											
 											
 											<c:if test="${not empty exDocumentoDTO.doc.exModelo}">
-												<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exexDocumentoDTO.modelo.nmMod}</span>
+												<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exModelo.nmMod}</span>
 											</c:if>
 											<!-- sbmt('modelo') -->
 											<c:if test='${exDocumentoDTO.tipoDocumento!="interno"}'>(opcional)</c:if>
@@ -637,7 +403,7 @@ function tryAgainAutoSave(){
 						<input type="hidden" name="campos" value="classificacaoSel.id" />
 						<td colspan="3">
 							<siga:span id="classificacao" depende="forma;modelo">
-							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  name="exDocumentoDTO.classificacao" tema="simple" />
+							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" tema="simple" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>

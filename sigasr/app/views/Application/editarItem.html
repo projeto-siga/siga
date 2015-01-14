@@ -65,8 +65,8 @@
 	<div>
 		<div class="gt-content-box gt-for-table">
 			<form id="formItemConfiguracao" class="form100">
-				<input type="hidden" name="itemConfiguracao.idItemConfiguracao" value="itemConfiguracao.idItemConfiguracao" id="idItemConfiguracao">
-				<input type="hidden" name="itemConfiguracao.hisIdIni" value="itemConfiguracao.hisIdIni" id="hisIdIni">
+				<input type="hidden" name="id" id="idItemConfiguracao">
+				<input type="hidden" name="hisIdIni" id="hisIdIni">
 				<table class="gt-form-table">
 					<tr class="header">
 						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados Básicos</td>
@@ -76,9 +76,9 @@
 							<label class="inline">Código: <span>*</span></label> 
 						</td>
 						<td>
-							<input id="itemConfiguracaoSigla"
+							<input id="siglaItemConfiguracao"
 								   type="text"
-								   name="itemConfiguracao.siglaItemConfiguracao"
+								   name="siglaItemConfiguracao"
 								   value="${itemConfiguracao?.siglaItemConfiguracao}"
 								   maxlength="255"
 								   required /> 
@@ -92,7 +92,7 @@
 						<td>	
 							<input type="text" 
 								   id="tituloItemConfiguracao"
-								   name="itemConfiguracao.tituloItemConfiguracao"
+								   name="tituloItemConfiguracao"
 								   value="${itemConfiguracao?.tituloItemConfiguracao}"
 								   style="width: 67.6%;"
 								   maxlength="255"
@@ -106,7 +106,7 @@
 						<td colspan="2">
 							<input type="text"
 								id="descrItemConfiguracao"
-								name="itemConfiguracao.descrItemConfiguracao"
+								name="descrItemConfiguracao"
 								value="${itemConfiguracao?.descrItemConfiguracao}"
 								style="width: 690px" maxlength="255" />
 						</td>
@@ -132,7 +132,7 @@
 							<label class="inline">Similaridade (Separar itens com
 								ponto e vírgula):</label>
 							<textarea cols="63" rows="3" maxlength="8192" 
-								name="itemConfiguracao.descricaoSimilaridade"
+								name="descricaoSimilaridade"
 								id="descricaoSimilaridade">${itemConfiguracao?.descricaoSimilaridade}</textarea>
 						</td>
 					</tr>
@@ -147,7 +147,7 @@
 						<td>
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true; else{ if (tecla==8 || tecla==0) return true; else return false; }"
 								   type="text" id="numFatorMultiplicacaoGeral" 
-								   name="itemConfiguracao.numFatorMultiplicacaoGeral"
+								   name="numFatorMultiplicacaoGeral"
 								   value="${itemConfiguracao?.numFatorMultiplicacaoGeral}"
 								   size="20"
 								   maxlength="9"
@@ -174,13 +174,13 @@
 				</table>
 				
 				<div class="gt-form-row">
-				*{#{designacoes designacoes:designacoesItem, 
+					#{designacoes designacoes:designacoesItem, 
 						modoExibicao:'item', 
 						orgaos:orgaos, 
 						locais:locais, 
 						unidadesMedida:unidadesMedida, 
 						pesquisaSatisfacao:pesquisaSatisfacao, 
-						listasPrioridade:listasPrioridade /}}*
+						listasPrioridade:listasPrioridade /}
 				</div>
 				
  				<table class="gt-form-table">
@@ -190,11 +190,11 @@
 								<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Não foi possível gravar o registro.</p>
 							</td>
 						</tr>
-						<td colspan="4">
-							<a href="javascript: gravarItemConfiguracao();" class="gt-btn-medium gt-btn-left">Gravar</a>
-							<a href="javascript: itemModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a> 
+						<div class="gt-form-row">
+							<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="itemConfiguracaoService.gravar()"/>
+							<a class="gt-btn-medium gt-btn-left" onclick="itemConfiguracaoService.cancelarGravacao()">Cancelar</a>
 							<a href="javascript: carregarDesignacoes()" class="gt-btn-medium gt-btn-left">Carregar</a>
-						</td>
+						</div>						
 					</tr>
 				</table>
 			</form>
@@ -271,7 +271,7 @@
 		validatorFormFator = null;
 
 	jQuery(document).ready(function($) {
-		$("#itemConfiguracaoSigla").mask("99.99.99");
+		$("#siglaItemConfiguracao").mask("99.99.99");
 		
 		validatorFormItem = $("#formItemConfiguracao").validate();
 	    validatorFormGestor = $("#formGestor").validate();

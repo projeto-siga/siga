@@ -158,7 +158,7 @@
 	function duplicarDesignacao(event) {
 		var tr = $(event.currentTarget).parent().parent();
 		event.stopPropagation();
-		var itemSelecionado = opts.dataTable.api().row(tr).data();
+		var itemSelecionado = opts.designacoesDataTable.api().row(tr).data();
 
 		manipulaItemSelecionado(itemSelecionado, true, tr);
 	}

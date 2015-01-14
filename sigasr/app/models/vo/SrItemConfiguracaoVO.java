@@ -17,13 +17,13 @@ import com.google.gson.GsonBuilder;
 public class SrItemConfiguracaoVO {
 	
 	public Long id;
-	public String descricao;
-	public String titulo;
-	public String sigla;
+	public String descrItemConfiguracao;
+	public String tituloItemConfiguracao;
+	public String siglaItemConfiguracao;
 	public Long hisIdIni;
 	public String descricaoSimilaridade;
 	public int numFatorMultiplicacaoGeral;
-	public boolean isAtivo;
+	public boolean ativo;
 	public int nivel;
 	public List<SrGestorItemVO> gestorSetVO;
 	public List<SrFatorMultiplicacaoVO> fatorMultiplicacaoSetVO;
@@ -31,12 +31,12 @@ public class SrItemConfiguracaoVO {
 	public SrItemConfiguracaoVO(Long id, String descricao, String titulo, String sigla, Long hisIdIni, String descricaoSimilaridade, 
 			int numFatorMultiplicacaoGeral, boolean isAtivo, int nivel, Set<SrGestorItem> gestorSet, Set<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
 		this.id = id;
-		this.descricao = descricao;
-		this.titulo = titulo;
-		this.sigla = sigla;
+		this.descrItemConfiguracao = descricao;
+		this.tituloItemConfiguracao = titulo;
+		this.siglaItemConfiguracao = sigla;
 		this.hisIdIni = hisIdIni;
 		this.descricaoSimilaridade = descricaoSimilaridade;
-		this.isAtivo = isAtivo;
+		this.ativo = isAtivo;
 		this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
 		this.nivel = nivel;
 		this.gestorSetVO = new ArrayList<SrGestorItemVO>();

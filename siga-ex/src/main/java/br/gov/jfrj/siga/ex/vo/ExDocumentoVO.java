@@ -419,7 +419,7 @@ public class ExDocumentoVO extends ExVO {
 				"Esse documento será cancelado e seus dados serão copiados para um novo expediente em elaboração. Prosseguir?",
 				null, null, null, "once");
 		
-		vo.addAcao("arrow_divide", "Duplicar", "/expediente/doc", "duplicar",
+		vo.addAcao("arrow_divide", "Duplicar", "/app/expediente/doc", "duplicar",
 				Ex.getInstance().getComp().podeDuplicar(titular, lotaTitular, mob),
 				"Esta operação criará um expediente com os mesmos dados do atual. Prosseguir?", null, null, null, "once");
 		

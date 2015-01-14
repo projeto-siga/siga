@@ -1113,7 +1113,11 @@ public class ExDocumentoController extends ExController {
 		return Action.SUCCESS;
 	}
 	
-	public String aDuplicar(ExDocumentoDTO exDocumentoDto) throws Exception {
+	@Get("app/expediente/doc/duplicar")
+	public void aDuplicar(boolean conviteEletronico, String sigla) throws Exception {
+		
+		ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDto);
 		if (!Ex.getInstance().getComp().podeDuplicar(getTitular(), getLotaTitular(), exDocumentoDto.getMob()))
 			throw new AplicacaoException("Não é possível duplicar o documento");
@@ -1122,7 +1126,7 @@ public class ExDocumentoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
+		result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
 	}
 	
 	private void atualizaLotacoesPreenchimentos(DpLotacao lotaTitular) throws AplicacaoException {

@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ import org.hibernate.annotations.Type;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import play.db.jpa.JPA;
@@ -248,6 +250,35 @@ public class SrConfiguracao extends CpConfiguracao {
 				.createQuery(sb.toString()).getResultList();
 	}
 	
+	public static List<SrConfiguracao> listarDesignacoes(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		return listar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro,
+				new int[] {}));
+	}
+	
+//	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, Long idItemConfiguracao) {
+//		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+//		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+//		
+//		if (idItemConfiguracao != null) {
+//			sb.append(" and itemConfiguracaoFiltro.idItemConfiguracao = ");
+//			sb.append(idItemConfiguracao);
+//		}
+//		
+//		if (!mostrarDesativados)
+//			sb.append(" and conf.hisDtFim is null");
+//		
+//		sb.append(" order by item.siglaItemConfiguracao, conf.orgaoUsuario ");
+//		
+//		return JPA
+//				.em()
+//				.createQuery(
+//						sb.toString(), 
+//						SrConfiguracao.class).getResultList();
+//	}
+	
 	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarAbrangenciasAcordo(boolean mostrarDesativados, SrAcordo acordo) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
@@ -283,8 +314,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 		salvar();
-		
-		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -520,6 +549,21 @@ public class SrConfiguracao extends CpConfiguracao {
 	public SrConfiguracaoVO toVO() {
 		return new SrConfiguracaoVO(this);
 	}
+	
+	public static String convertToJSon(List<SrConfiguracao> lista) {
+		List<SrConfiguracaoVO> listaVO = new ArrayList<SrConfiguracaoVO>();
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting().serializeNulls();
+		Gson gson = builder.create();
+
+		if (lista != null) {
+			for (SrConfiguracao conf : lista) {
+				listaVO.add(conf.toVO());
+			}
+		}
+		
+		return gson.toJson(listaVO);
+	}
 
 	public int getNivelItemParaComparar() {
 		int soma = 0;
@@ -618,6 +662,19 @@ public class SrConfiguracao extends CpConfiguracao {
 		return new GsonBuilder()
 			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.in(exclusions))
 			.create();
+	}
+	
+	public static List<SrConfiguracao> listarPorItem(SrItemConfiguracao itemConfiguracao)  throws Exception{
+		List<SrConfiguracao> lista = new ArrayList<SrConfiguracao>();
+		
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setBuscarPorPerfis(true);
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		
+		lista.addAll(SrItemConfiguracao.marcarComoHerdadas(SrConfiguracao.listarDesignacoes(
+					confFiltro, new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO}), itemConfiguracao));
+		
+		return lista;
 	}
 	
 }

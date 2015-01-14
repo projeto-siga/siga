@@ -69,6 +69,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sinc.lib.ItemComparator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -864,7 +865,8 @@ public class Application extends SigaApplication {
 	
 	public static void listarDesignacao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
-		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados, null);
+		List<SrConfiguracao> designacoes = new ArrayList<SrConfiguracao>();
+		//List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados, null);
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
@@ -1042,41 +1044,33 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar(mostrarDesativados);
 		
-//		List<CpOrgaoUsuario> orgaos = JPA.em()
-//				.createQuery("from CpOrgaoUsuario").getResultList();
-//		List<CpComplexo> locais = CpComplexo.all().fetch();
-//		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance()
-//				.listarUnidadesMedida();
-//		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
-//				"hisDtFim is null").fetch();
-//		List<SrLista> listasPrioridade = SrLista.listar(false);
-//		List<SrConfiguracao> designacoesItem = SrConfiguracao.findAll();
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance()
+				.listarUnidadesMedida();
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
+				"hisDtFim is null").fetch();
 		
-		render(itens, mostrarDesativados/*, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade, designacoesItem*/);
+		render(itens, mostrarDesativados, orgaos, locais, unidadesMedida, pesquisaSatisfacao);
 	}
 	
 	public static void listarItemDesativados() throws Exception {
 		listarItem(Boolean.TRUE);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void editarItem(Long id) throws Exception {
-		assertAcesso("ADM:Administrar");
+	public static String buscarDesignacoesItem(Long id) throws Exception {
 		List<SrConfiguracao> designacoes;
-		List<CpOrgaoUsuario> orgaos = JPA.em()
-				.createQuery("from CpOrgaoUsuario").getResultList();
-		List<CpComplexo> locais = CpComplexo.all().fetch();
-		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
-		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
-				"hisDtFim is null").fetch();
-		List<SrLista> listasPrioridade = SrLista.listar(false);
-		
 		SrItemConfiguracao itemConfiguracao = new SrItemConfiguracao();
 		if (id != null) {
 			itemConfiguracao = SrItemConfiguracao.findById(id);
+			designacoes = itemConfiguracao.designacoesSet;
+			designacoes.addAll(itemConfiguracao.getDesignacoesPai());
 		}
+		else
+			designacoes = new ArrayList<SrConfiguracao>();
 		
-		render(itemConfiguracao, orgaos, locais, unidadesMedida, pesquisaSatisfacao, listasPrioridade);
+		return SrConfiguracao.convertToJSon(designacoes);
 	}
 
 	public static String gravarItem(SrItemConfiguracao itemConfiguracao)

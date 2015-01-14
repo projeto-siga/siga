@@ -24,8 +24,6 @@ GET     /public/                            staticDir:public
 *		/pesquisa/gravar					Application.gravarPesquisa
 *		/pesquisa/listar					Application.listarPesquisa
 
-*		/item/editar/{id}					Application.editarItem
-*		/item/editar						Application.editarItem
 *		/item/gravar						Application.gravarItem
 *		/item/listar						Application.listarItem
 *		/item/selecionar					Application.selecionarItem

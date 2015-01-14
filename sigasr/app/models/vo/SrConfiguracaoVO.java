@@ -6,7 +6,6 @@ import java.util.List;
 import models.SrAcao;
 import models.SrConfiguracao;
 import models.SrItemConfiguracao;
-import models.SrLista;
 import models.SrTipoPermissaoLista;
 
 import com.google.gson.Gson;
@@ -19,27 +18,41 @@ import com.google.gson.GsonBuilder;
  * @author DB1
  */
 public class SrConfiguracaoVO {
+	public Long idConfiguracao;
+	public Long hisIdIni;
+	public int tipoSolicitante;
+	public boolean isHerdado;
+	public boolean utilizarItemHerdado;
+	public boolean atributoObrigatorio;
+	public boolean ativo;
+	public String descrConfiguracao;
+	
 	public List<SrListaVO> listaVO; 
 	public List<SrItemConfiguracaoVO> listaItemConfiguracaoVO;
 	public List<SrAcao.SrAcaoVO> listaAcaoVO;
 	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
-	public boolean atributoObrigatorio;
-	public String descrConfiguracao;
 	public DpLotacaoVO atendente;
 	public DpLotacaoVO posAtendente;
-//	public DpLotacaoVO equipeQualidade;
+	public DpLotacaoVO equipeQualidade;
 	public DpLotacaoVO preAtendente;
 	public CpOrgaoUsuarioVO orgaoUsuario;
 	public CpComplexoVO local;
+	public SelecionavelVO solicitante;
+	public SrPesquisaVO pesquisaSatisfacao;
 	
-	
-
 	public SrConfiguracaoVO(SrConfiguracao configuracao) {
+		idConfiguracao = configuracao.getId();
+		hisIdIni = configuracao.getHisIdIni();
+		isHerdado = configuracao.isHerdado;
+		utilizarItemHerdado = configuracao.utilizarItemHerdado;
+		ativo = configuracao.isAtivo();
+		descrConfiguracao = configuracao.getDescrConfiguracao();
+		
+		tipoSolicitante = configuracao.getTipoSolicitante();
 		listaVO = new ArrayList<SrListaVO>();
 		listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
 		listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
 		listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
-		descrConfiguracao = configuracao.getDescrConfiguracao();
 		
 		if(configuracao.itemConfiguracaoSet != null)
 			for (SrItemConfiguracao item : configuracao.itemConfiguracaoSet) {
@@ -70,6 +83,15 @@ public class SrConfiguracaoVO {
 	
 		if(configuracao.getComplexo() != null)
 			local = CpComplexoVO.createFrom(configuracao.getComplexo());
+		
+		if (configuracao.equipeQualidade != null)
+			equipeQualidade = DpLotacaoVO.createFrom(configuracao.equipeQualidade);
+		
+		if (configuracao.getSolicitante() != null)
+			solicitante = SelecionavelVO.createFrom(configuracao.getSolicitante());
+		
+		if (configuracao.pesquisaSatisfacao != null)
+			pesquisaSatisfacao = SrPesquisaVO.createFrom(configuracao.pesquisaSatisfacao);
 	}
 	
 	public SrConfiguracaoVO(SrConfiguracao configuracao, boolean atributoObrigatorio) {

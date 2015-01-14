@@ -120,3 +120,11 @@ td.padding-table {
 .gt-btn-small, .gt-btn-medium, .gt-btn-large, .gt-btn-ativar {
 	cursor: pointer;
 }
+
+.configuracaoHerdada {
+	color: gray !important;
+}
+
+.checkbox-hidden {
+	visibility: hidden;
+}

@@ -300,6 +300,8 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 			.ativo(objSalvo.ativo)
 			.innerHTML(tdAcoes, idNovo);
 	}
+	
+	return tr;
 }
 
 BaseService.prototype.indiceAcoes = function(data) {

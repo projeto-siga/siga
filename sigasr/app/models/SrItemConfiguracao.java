@@ -3,6 +3,7 @@ package models;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -15,7 +16,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -102,6 +105,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	
 	@Transient
 	public List<SrConfiguracao> designacoes;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_CONFIGURACAO")})
+	public List<SrConfiguracao> designacoesSet;
 	
 	public SrItemConfiguracao() {
 		this(null, null);
@@ -362,6 +369,40 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
                 fator.itemConfiguracao = this;
                 fator.salvar();
             }
+        
+        // DB1: precisa salvar item a item 
+      	if (this.designacoes != null) {
+      		for (SrConfiguracao designacao : this.designacoes) {
+      			// se for uma configuração herdada
+      			if (designacao.isHerdado) {
+      				// se estiver marcada como "não Herdar"
+      				if (!designacao.utilizarItemHerdado) {
+      					// cria uma nova entrada na tabela, para que seja ignorada nas próximas vezes
+      					SrConfiguracaoIgnorada.createNew(this, designacao).salvar();
+      				}
+      				
+      				// verifica se existia entrada para "não Herdar", e remove (usuário marcou para usar herança)
+      				else {
+      					List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(designacao);
+      					
+      					for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
+      						// se a configuração for do Item ou de um de seus históricos, remove
+      						if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
+      							for (SrItemConfiguracao itemHist : this.getHistoricoItemConfiguracao()) {
+      								if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
+      									igItem.delete();
+      									break;
+      								}
+      							}
+      						}
+      					}
+      				}
+      			}
+      			else {
+      				designacao.salvarComoDesignacao();
+      			}
+      		}
+      	}
 	}
 
 	public List<SrItemConfiguracao> getItemETodosDescendentes() {
@@ -388,5 +429,114 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	 */
 	public String getSrItemConfiguracaoJson() {
 		return this.toVO().toJson();
+	}
+	
+	public SrItemConfiguracao getPai() {
+		String sigla = getSiglaSemZeros();
+		sigla = sigla.substring(0, sigla.length() - 1);
+		if (sigla.lastIndexOf(".") == -1)
+			return null;
+		sigla = sigla.substring(0, sigla.lastIndexOf("."));
+		for (int i = 0; i < 3 - (getNivel() - 1); i++) {
+			sigla += ".00";
+		}
+		return SrItemConfiguracao.find(
+				"byHisDtFimIsNullAndSiglaItemConfiguracao", sigla).first();
+	}
+	
+	/**
+	 * Retorna a lista de {@link SrItemConfiguracao Pai} que este item possui.
+	 */
+	private List<SrItemConfiguracao> getListaPai() {
+		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
+		SrItemConfiguracao itemPai = this.getPai();
+		
+		while (itemPai != null) {
+			if (!lista.contains(itemPai))
+				lista.add(itemPai);
+				
+			itemPai = itemPai.getPai();
+		}
+		
+		return lista;
+	}
+	
+	/**
+	 * Lista as Designações que são vinculadas aos {@link SrItemConfiguracao Pai} deste item.
+	 */
+	public List<SrConfiguracao> getDesignacoesPai() {
+		List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
+		
+		for (SrItemConfiguracao pai : this.getListaPai()) {
+			try {
+				for (SrConfiguracao confPai : pai.designacoesSet) {
+					confPai.isHerdado = true;
+					confPai.utilizarItemHerdado = true;
+					
+					listasDesignacoesPai.add(confPai);
+				}
+			} catch (Exception e) {
+			}
+			
+		}
+		
+		return listasDesignacoesPai;
+	}
+	
+	
+	/**
+	 * Marca os itens como  herdados.
+	 */
+	public static List<SrConfiguracao> marcarComoHerdadas(List<SrConfiguracao> listasDesignacoesPai, SrItemConfiguracao item) {
+		Iterator<SrConfiguracao> i = listasDesignacoesPai.iterator();
+	
+		while (i.hasNext()) {
+			SrConfiguracao conf = i.next();
+			boolean encontrou = false;
+			
+			conf.isHerdado = true;
+			conf.utilizarItemHerdado = true;
+			
+			List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(conf);
+			
+			for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
+				// Se a configuração for do Item, vai como desmarcado
+				if (item.getId().equals(igItem.itemConfiguracao.getId())) {
+					conf.utilizarItemHerdado = false;
+				}
+				
+				// se a configuração for do Item (histórico), vai como desmarcado
+				else if (item.getHistoricoItemConfiguracao() != null && item.getHistoricoItemConfiguracao().size() > 0) {
+					for (SrItemConfiguracao itemHist : item.getHistoricoItemConfiguracao()) {
+						if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
+							conf.utilizarItemHerdado = false;
+							encontrou = true;
+							break;
+						}
+					}
+				}
+				
+				else {
+					SrItemConfiguracao itemPai = item.getPai();
+					
+					while(itemPai != null) {
+						
+						// Se for configuração do pai, não aparece na tela caso esteja marcada para Ignorar no Pai
+						if (itemPai.getId().equals(igItem.itemConfiguracao.getId())) {
+							i.remove();
+							break;
+						}
+						else
+							itemPai = itemPai.getPai();
+					}
+				}
+				
+				// Caso tenha encontrado a configuração correta, interrompe o loop
+				if (encontrou)
+					break;
+			}
+		}
+		
+		return listasDesignacoesPai;
 	}
 }

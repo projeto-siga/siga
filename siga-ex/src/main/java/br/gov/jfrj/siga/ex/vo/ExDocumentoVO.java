@@ -346,7 +346,7 @@ public class ExDocumentoVO extends ExVO {
 				.podeVisualizarImpressao(titular, lotaTitular, mob), null, "&popup=true&arquivo=" + doc.getReferenciaPDF(), null,
 				null, null);
 		
-		vo.addAcao("lock", "Finalizar", "/expediente/doc",
+		vo.addAcao("lock", "Finalizar", "/app/expediente/doc",
 		
 		"finalizar", Ex.getInstance().getComp().podeFinalizar(titular, lotaTitular, mob), "Confirma a finalização do documento?",
 				null, null, null, "once");

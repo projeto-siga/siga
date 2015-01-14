@@ -293,26 +293,6 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditarItem(
 			SrItemConfiguracao itemConfiguracao) throws Exception {
-		StringBuffer sb = new StringBuffer();
-
-		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
-			validation.addError("itemConfiguracao.siglaItemConfiguracao",
-					"Código não informado");
-		}
-
-		if (itemConfiguracao.tituloItemConfiguracao.equals("")) {
-			validation.addError("itemConfiguracao.tituloItemConfiguracao",
-					"Título não informado");
-		}
-
-		if (itemConfiguracao.numFatorMultiplicacaoGeral < 1 ) {
-			validation.addError("itemConfiguracao.numFatorMultiplicacaoGeral",
-					"Fator de multiplicação menor que 1");
-		}
-		
-		if (validation.hasErrors()) {
-			enviarErroValidacao();
-		}
 	}
 
 	private static void validarFormEditarAcao(SrAcao acao) {

@@ -2,8 +2,11 @@
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
 
 <style>
 .item-pai {
@@ -20,6 +23,66 @@
 	padding-left: 4em !important;
 }
 </style>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Itens de Configuração</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box dataTables_div">
+			<div class="gt-form-row dataTables_length">
+				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
+			</div>
+			<table id="itens_configuracao_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th style="color: #333">
+							<button class="gt-btn-medium gt-btn-left bt-expandir">
+								<span id="iconeBotaoExpandirTodos">+</span>
+							</button>
+						</th>
+						<th>Código</th>
+						<th>Título</th>
+						<th>Descrição</th>
+						<th>Similaridade</th>
+						<th></th>
+						<th>VO Item</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:itens, as:'item'}
+						<tr 
+							data-json-id="${item.idItemConfiguracao}" data-json="${item.toVO().toJson()}" onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
+							style="cursor: pointer;">
+							<td class="details-control"></td>
+							<td>${item.siglaItemConfiguracao}</td>
+							<td>${item.tituloItemConfiguracao}</td>
+							<td>${item.descrItemConfiguracao}</td>
+							<td>${item.descricaoSimilaridade}</td>
+							<td class="acoes">
+								#{desativarReativar id:item.idItemConfiguracao, 
+													onReativar:'itemConfiguracaoService.reativar',
+													onDesativar :'itemConfiguracaoService.desativar',
+													isAtivo:item.isAtivo() }
+								#{/desativarReativar}
+							</td>
+							<td>${item.srItemConfiguracaoJson}</td>
+						</tr>
+					#{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+			<a href="javascript: inserirEditarItem()" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+	</div>
+</div>
+
+#{modal nome:'editarItem', titulo:'Editar Item'}
+	<div id="divEditarItem">#{include
+				'Application/editarItem.html' /}</div>
+#{/modal}
 
 <script type="text/javascript">
 	var colunas = {
@@ -73,13 +136,13 @@
 		});
 		
 		/* Table initialization */
-		table = $('#itens_configuracao_table')
+		opts.dataTable = $('#itens_configuracao_table')
 			.on('draw.dt', function() {
-				if(table) {
+				if(opts.dataTable) {
 					var btn = $('.bt-expandir'),
 						expandir = btn.hasClass('expandido');
 						
-					$('#itens_configuracao_table').mostrarDetalhes(format, table);
+					$('#itens_configuracao_table').mostrarDetalhes(format, opts.dataTable);
 					$('#itens_configuracao_table').expandirContrairLinhas(expandir);
 				}
 			})
@@ -134,14 +197,14 @@
 						$('td:eq('+colunas.titulo+')', nRow).addClass('item-neto');
 				}
 			});
-			$('#itens_configuracao_table').mostrarDetalhes(format, table);
+			$('#itens_configuracao_table').mostrarDetalhes(format, opts.dataTable);
 
 			$('#itens_configuracao_table tbody').on('click', 'tr', function () {
-				var itemSelecionado = table.api().row(this).data();
+				var itemSelecionado = opts.dataTable.api().row(this).data();
 				
 				if (itemSelecionado != undefined) {
 					if (!$(this).hasClass('selected') ) {
-						table.$('tr.selected').removeClass('selected');
+						opts.dataTable.$('tr.selected').removeClass('selected');
 			            $(this).addClass('selected');
 			        }
 
@@ -163,63 +226,44 @@
 	    return tr.append(detailHTML);
 	}
 	
-	function desativarItem(event, idItemConfiguracao) {
-		event.stopPropagation();
-		var tr = $(event.currentTarget).parent().parent()[0],
-			row = table.api().row(tr).data();
-		
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.desativarItem()}",
-	         data: {id : idItemConfiguracao, mostrarDesativados : QueryString.mostrarDesativados},
-	         dataType: "text",
-	         success: function(response) {
-				if (QueryString.mostrarDesativados) {
-					row[colunas.acoes] = gerarColunaDesativar(idItemConfiguracao);
-		        	table.api().row(tr).data(row);
-				}
-				else {
-					table.api().row(tr).remove().draw();
-				}
-	         },
-	         error: function(response) {
-	        	var modalErro = $('#modal-error');
-	        	modalErro.find("h3").html(response.responseText);
-	        	modalErro.show(); 
-	         }
-	   });
+	var opts = {
+			 urlDesativar : '@{Application.desativarItem()}?',
+			 urlReativar : '@{Application.reativarItem()}?',
+			 urlGravar : '@{Application.gravarItem()}',
+			 dialogCadastro : $('#editarItem_dialog'),
+			 tabelaRegistros : $('#itens_configuracao_table'),
+			 objectName : 'itemConfiguracao',
+			 formCadastro : jQuery('#formItemConfiguracao'),
+			 mostrarDesativados : QueryString.mostrarDesativados,
+			 colunas : colunas.acoes
+	};
+	
+	// Define a "classe" ItemConfiguracaoService
+	function ItemConfiguracaoService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
 	}
 
-	function reativarItem(event, idItemConfiguracao) {
-		event.stopPropagation();
-		var tr = $(event.currentTarget).parent().parent()[0],
-		row = table.api().row(tr).data();
-
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.reativarItem()}",
-	         data: {id : idItemConfiguracao, mostrarDesativados : QueryString.mostrarDesativados},
-	         dataType: "text",
-	         success: function(idItemConfiguracao) {
-		         row[colunas.acoes] = gerarColunaAtivar(idItemConfiguracao);
-		         table.api().row(tr).data(row);
-	         },
-	         error: function(response) {
-	        	var modalErro = $('#modal-error');
-	        	modalErro.find("h3").html(response.responseText);
-	        	modalErro.show(); 
-	         }
-	   });
+	// ItemConfiguracaoService extends BaseService
+	ItemConfiguracaoService.prototype = Object.create(BaseService.prototype);
+	
+	var itemConfiguracaoService = new ItemConfiguracaoService(opts);
+	itemConfiguracaoService.getId = function(itemConfiguracao) {
+		return itemConfiguracao.id;
 	}
-
-	function gerarColunaAtivar(idItemConfiguracao) {
-		var column = '<a class="once gt-btn-ativar" onclick="desativarItem(event, ' + idItemConfiguracao + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
-   		return column;
-     }	
-	function gerarColunaDesativar(idItemConfiguracao) {
-		var column = '<a class="once gt-btn-desativar" onclick="reativarItem(event, ' + idItemConfiguracao + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
-   		return column;
-     }	    
+	itemConfiguracaoService.getRow = function(itemConfiguracao) {
+		return ['', itemConfiguracao.siglaItemConfiguracao, itemConfiguracao.tituloItemConfiguracao,
+				itemConfiguracao.descrItemConfiguracao, itemConfiguracao.descricaoSimilaridade, 'COLUNA_ACOES', ''];
+	}
+	itemConfiguracaoService.onRowClick = function(itemConfiguracao) {
+		itemConfiguracaoService.editar(itemConfiguracao, 'Alterar Item de Configuração');
+	}
+	/**
+	 * Customiza o metodo editar
+	 */
+	itemConfiguracaoService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+	}
 
 	function inserirEditarItem() {
 		limparDadosItemModal();
@@ -242,55 +286,12 @@
 		limparDadosItemModal();
 	}
 
-	function gravarItemConfiguracao() {
-		if (!isValidForm())
-			return false;
-		
-		var row = recuperarInformacoesTela();
-
-		$.ajax({
-        	type: "POST",
-        	url: "@{Application.gravarItem()}",
-        	data: serializarItemConfiguracao(),
-        	dataType: "text",
-        	success: function(itemJson) {
-        		var jSon = getJsonByString(itemJson);
-        		row[colunas.jSon] = jSon;
-        		
-        		if (isEditing) {
-					table.api().row('.selected').data(row);
-				}
-				else {
-					table.api().row.add(row).draw();
-				}
-				
-        		itemModalFechar();
-        	},
-        	error: function(error) {
-        		// limpa as mensagens de erros
-        		resetAllErrorMessage();
-
-				// Mostra a mensagem de campos obrigatórios
-        		document.getElementById("erroCamposObrigatorios").style.display="inherit";
-        		
-        		if(error.status == 400) {
-        			var errors = JSON.parse(error.responseText);
-        			for(var i = 0; i < errors.length; i++) {
-        				var span = $('<span class="error" style="color: red"></span>');
-        				span.html(errors[i].message);
-        				span.insertAfter(document.getElementsByName(errors[i].key));
-        			}
-        		}
-        	}
-       	});
-	}
-
 	function recuperarInformacoesTela() {
 		var jSonItem = atualizaItemConfiguracaoJson(),
 			id = jSonItem.id,
 			row = [
 				'',
-				$("#itemConfiguracaoSigla").val(),
+				$("#siglaItemConfiguracao").val(),
 				$("#tituloItemConfiguracao").val(),
 				$("#descrItemConfiguracao").val(),
 				$("#descricaoSimilaridade").val(),
@@ -302,7 +303,7 @@
 	}
 
 	function limparDadosItemModal() {
-		$("#itemConfiguracaoSigla").val('');
+		$("#siglaItemConfiguracao").val('');
 		$("#idItemConfiguracao").val('');
 		$("#hisIdIni").val('');
 		$("#tituloItemConfiguracao").val('');
@@ -380,7 +381,7 @@
  		var itemConfiguracaoJSon = {
 			'id': $("#idItemConfiguracao").val(),
 			'hisIdIni': $("#hisIdIni").val(),
-			'sigla': $("#itemConfiguracaoSigla").val(),
+			'sigla': $("#siglaItemConfiguracao").val(),
 			'titulo': $("#tituloItemConfiguracao").val(),
 			'descricao': $("#descrItemConfiguracao").val(),
 			'descricaoSimilaridade': $("#descricaoSimilaridade").val(),
@@ -396,13 +397,6 @@
 		var jSonItem = getJsonByString(itemArray[colunas.jSon]);
 		
 		if (jSonItem) {
-			$("#itemConfiguracaoSigla").val(jSonItem.sigla);
-			$("#idItemConfiguracao").val(jSonItem.id);
-			$("#hisIdIni").val(jSonItem.hisIdIni);
-			$("#tituloItemConfiguracao").val(jSonItem.titulo);
-			$("#descrItemConfiguracao").val(jSonItem.descricao);
-			$("#descricaoSimilaridade").val(jSonItem.descricaoSimilaridade);
-			$("#numFatorMultiplicacaoGeral").val(jSonItem.numFatorMultiplicacaoGeral);
 			atualizarListaGestores(jSonItem);
 			atualizarListaFatorMultiplicacao(jSonItem);
 		}
@@ -452,61 +446,3 @@
 		}
 	}
 </script>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-		<h2>Itens de Configuração</h2>
-		<!-- content bomex -->
-		<div class="gt-content-box dataTables_div">
-			<div class="gt-form-row dataTables_length">
-				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
-			</div>
-			<table id="itens_configuracao_table" border="0" class="gt-table display">
-				<thead>
-					<tr>
-						<th style="color: #333">
-							<button class="gt-btn-medium gt-btn-left bt-expandir">
-								<span id="iconeBotaoExpandirTodos">+</span>
-							</button>
-						</th>
-						<th>Código</th>
-						<th>Título</th>
-						<th>Descrição</th>
-						<th>Similaridade</th>
-						<th></th>
-						<th>VO Item</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					#{list items:itens, as:'item'}
-						<tr style="cursor: pointer;">
-							<td class="details-control"></td>
-							<td>${item.siglaItemConfiguracao}</td>
-							<td>${item.tituloItemConfiguracao}</td>
-							<td>${item.descrItemConfiguracao}</td>
-							<td>${item.descricaoSimilaridade}</td>
-							<td>
-								#{desativarReativar id:item.idItemConfiguracao, 
-													onReativar:'reativarItem',
-													onDesativar :'desativarItem',
-													isAtivo:item.isAtivo() }
-								#{/desativarReativar}
-							</td>
-							<td>${item.srItemConfiguracaoJson}</td>
-						</tr>
-					#{/list}
-				</tbody>
-			</table>
-		</div>
-		<!-- /content box -->
-		<div class="gt-table-buttons">
-			<a href="javascript: inserirEditarItem()" class="gt-btn-medium gt-btn-left">Incluir</a>
-		</div>
-	</div>
-</div>
-
-#{modal nome:'editarItem', titulo:'Editar Item'}
-	<div id="divEditarItem">#{include
-				'Application/editarItem.html' /}</div>
-#{/modal}

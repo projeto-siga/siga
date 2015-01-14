@@ -805,24 +805,32 @@ public class ExDocumentoController extends ExController {
 			verificaNivelAcesso(exDocumentoDto.getMob());
 	}
 	
-	public String aFinalizar(ExDocumentoDTO exDocumentoDTO) throws Exception {
-		ExDocumento doc = exDocumentoDTO.getDoc();
-		ExMobil mob = exDocumentoDTO.getMob();
-		buscarDocumento(true, exDocumentoDTO);
+	@Get("/app/expediente/doc/finalizar")
+	public void aFinalizar(String sigla) throws Exception {
 		
-		verificaDocumento(doc);
+		ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
 		
-		if (!Ex.getInstance().getComp().podeFinalizar(getTitular(), getLotaTitular(), mob))
+		buscarDocumento(true, exDocumentoDto);
+
+		
+		ExMobil mob = exDocumentoDto.getMob();
+		
+		verificaDocumento(exDocumentoDto.getDoc());
+		
+		if (!Ex.getInstance().getComp().podeFinalizar(getTitular(), getLotaTitular(), exDocumentoDto.getMob()))
 			throw new AplicacaoException("Não é possível Finalizar");
 		
 		try {
+			exDocumentoDto.setMsg(Ex.getInstance().getBL()
+					.finalizar(getCadastrante(), getLotaTitular(), exDocumentoDto.getDoc(), null));
 			
-			exDocumentoDTO.setMsg(Ex.getInstance().getBL().finalizar(getCadastrante(), getLotaTitular(), doc, null));
-			
-			if (doc.getForm() != null) {
-				String funcao = doc.getForm().get("acaoFinalizar");
-				if (funcao != null && funcao.trim().length() > 0) {
-					obterMetodoPorString(funcao, doc);
+
+			if (exDocumentoDto.getDoc().getForm() != null) {
+				if (exDocumentoDto.getDoc().getForm().get("acaoFinalizar") != null
+						&& exDocumentoDto.getDoc().getForm().get("acaoFinalizar").trim().length() > 0) {
+					obterMetodoPorString(exDocumentoDto.getDoc().getForm().get("acaoFinalizar"), exDocumentoDto.getDoc());
+
 				}
 			}
 			
@@ -830,16 +838,17 @@ public class ExDocumentoController extends ExController {
 			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
 		}
 		
-		return Action.SUCCESS;
+		result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
+		
 	}
 	
-	public String aFinalizarAssinar(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	public void aFinalizarAssinar(String sigla) throws Exception {
 		
-		aFinalizar(exDocumentoDTO);
+		aFinalizar(sigla);
 		
-		buscarDocumento(true, exDocumentoDTO);
+		// buscarDocumento(true, exDocumentoDto);
 		
-		return Action.SUCCESS;
+		// return Action.SUCCESS;
 	}
 	
 	@Post("app/expediente/doc/gravar")

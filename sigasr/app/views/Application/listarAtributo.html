@@ -191,7 +191,7 @@
 				jSonAtt.descrObjetivoAtributo,
 				$("#codigoAtributo").val(),
 				jSonAtt.descrTipoAtributo,
-				'<a class="once" onclick="desativarAtributo(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
+				'',
 				jSonAtt
 			];
 		return row;
@@ -219,6 +219,7 @@
 	        	row = recuperarInformacoesTela(jSon);
 	        	
         		row[colunasAtributo.jSon] = jSon;
+        		row[colunasAtributo.acoes] = '<a class="once gt-btn-ativar" onclick="desativarAtributo(event, '+jSon.idAtributo+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
         		
         		if (isEditing) {
         			atributoTable.api().row('.selected').data(row);
@@ -227,24 +228,6 @@
 					atributoTable.api().row.add(row).draw();
 				}
 	          	atributoModalFechar();
-
-// 	        		// 				var html = 
-// // 				'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-// // 					'<a class="once desativarAtributo" onclick="desativarAtributo(event,' + response + ')" title="Desativar Atributo">' +
-// // 						'<input class="idAtributo" type="hidden" value="' + response + '"/>' +
-// // 						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-// // 					'</a>' +
-// // 				'</td>';
-						         
-// // 		        row[colunas.botaoExcluir] = html;
-
-// 	          	if (isEditing) {
-// 	          		tableAssociacao.api().row('.selected').data(row);
-// 			    }
-// 			    else {
-// 			    	tableAssociacao.api().row.add(row).draw();
-// 			    }
-// 				$('.desativarAtributo').bind('click', desativarAtributo);
 	         },
 	         error: function(error) {
 	     		if(error.status == 400) {

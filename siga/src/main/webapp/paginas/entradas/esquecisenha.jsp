@@ -54,9 +54,9 @@
 
 </style>
 
-<ww:url action="integracaoLdap" id="integracao_url"></ww:url>
-<ww:url action="checkEmailValido" id="check_email_valido_url"></ww:url>
-<script type="text/javascript" language="Javascript1.1">
+<ww:url action="integracaoLdap" id="integracao_url" namespace="/usuario"></ww:url>
+<ww:url action="checkEmailValido" id="check_email_valido_url" namespace="/usuario"></ww:url>
+<script type="text/javascript">
 
 function checkIntegradoAD(){
 	

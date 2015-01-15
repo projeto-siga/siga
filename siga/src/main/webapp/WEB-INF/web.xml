@@ -143,6 +143,10 @@
             <web-resource-name>servicos</web-resource-name>
             <url-pattern>/servicos/*</url-pattern>
         </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>usuario</web-resource-name>
+            <url-pattern>/usuario/*</url-pattern>
+        </web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>pagina_vazia</web-resource-name>
 			<url-pattern>/pagina_vazia.action</url-pattern>

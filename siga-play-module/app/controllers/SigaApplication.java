@@ -148,7 +148,7 @@ public class SigaApplication extends Controller {
 	}
 
 	static String getBaseSiga() {
-		return "http://" + Play.configuration.getProperty("servidor.principal")+ ":8080/siga";
+		return "http://" + Play.configuration.getProperty("servidor.principal")+ ":"+Play.configuration.getProperty("porta.principal")+"/siga";
 //		return Request.current().getBase() + "/siga";
 	}
 	

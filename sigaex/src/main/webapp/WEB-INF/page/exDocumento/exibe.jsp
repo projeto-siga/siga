@@ -401,7 +401,7 @@
 						<ul>
 							<c:forEach var="mobRelacionado" items="${mapa.value}">
 								<li><a
-									href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobRelacionado.sigla"
+									href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobRelacionado.sigla}"
 									title="${mobRelacionado.doc.descrDocumento}"style="text-decoration: none">
 									${mobRelacionado.sigla} </a>
 								</li>

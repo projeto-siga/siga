@@ -669,7 +669,7 @@ public class ExDocumentoController extends ExController {
 		docVO.exibe();
 		
 		result.include("docVO", docVO);
-		result.include("sigla", exDocumentoDto.getSigla());
+		result.include("sigla", exDocumentoDto.getSigla().replace("/", ""));
 		result.include("id", exDocumentoDto.getId());
 		result.include("mob", exDocumentoDto.getMob());
 		result.include("lota", this.getLotaTitular());

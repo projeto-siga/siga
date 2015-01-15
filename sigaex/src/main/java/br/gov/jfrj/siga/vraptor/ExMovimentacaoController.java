@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -71,7 +73,6 @@ import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.webwork.action.ExClassificacaoSelecao;
 import br.gov.jfrj.webwork.action.ExDocumentoSelecao;
-import br.gov.jfrj.webwork.action.ExMobilSelecao;
 import br.gov.jfrj.webwork.action.ExMovimentacaoAction;
 
 import com.lowagie.text.Document;
@@ -83,6 +84,8 @@ import com.opensymphony.xwork.Action;
 
 public class ExMovimentacaoController extends ExController {
 	
+	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
+
 	private static final long serialVersionUID = -8223202120027622708L;
 
 	private static final Logger log = Logger
@@ -2071,22 +2074,42 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aApensar() throws Exception {
-		buscarDocumento(true);
-
-		if (!Ex.getInstance().getComp()
-				.podeApensar(getTitular(), getLotaTitular(), mob))
+	@Get("app/expediente/mov/apensar")
+	public void apensar(String sigla) throws Exception {
+		this.setSigla(sigla);
+		this.buscarDocumento(true);
+		 
+		if (!Ex.getInstance().getComp().podeApensar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível apensar");
-
-		return Action.SUCCESS;
+		
+		result.include("mob", mob);
+		result.include("doc", doc);
+		result.include("substituicao", substituicao);
+		result.include("sigla", sigla);
+		result.include("documentoRefSel", getDocumentoRefSel());
+		result.include("titularSel", getTitularSel());
+		result.include("subscritorSel", getSubscritorSel());
 	}
 
-	public String aApensarGravar() throws Exception {
-		buscarDocumento(true);
-		lerForm(mov);
+	@Post("app/expediente/mov/apensar_gravar")
+	public void apensarGravar(ExMobilSelecao documentoRefSel, 
+				DpPessoaSelecao subscritorSel, 
+				DpPessoaSelecao titularSel, 
+				String sigla,
+				String dtMovString,
+				boolean substituicao) throws Exception {
 
-		if (!Ex.getInstance().getComp()
-				.podeApensar(getTitular(), getLotaTitular(), mob))
+		this.dtMovString = dtMovString;
+		this.sigla = sigla;
+		this.substituicao = substituicao;
+		this.documentoRefSel = documentoRefSel;
+		this.subscritorSel = subscritorSel;
+		this.titularSel = titularSel;
+		
+		this.buscarDocumento(true);
+		this.lerForm(mov);
+
+		if (!Ex.getInstance().getComp().podeApensar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível fazer apensar");
 
 		try {
@@ -2107,9 +2130,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		setDoc(mov.getExDocumento());
-		return Action.SUCCESS;
+		result.redirectTo(MessageFormat.format(URL_EXIBIR, mov.getExDocumento().getSigla()));
 	}
 
 	public String aDesapensar() throws Exception {
@@ -3390,6 +3411,8 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	public ExMobilSelecao getDocumentoRefSel() {
+		if (documentoRefSel == null)
+			return new ExMobilSelecao();
 		return documentoRefSel;
 	}
 
@@ -3517,6 +3540,9 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	public DpPessoaSelecao getSubscritorSel() {
+		if (subscritorSel == null) {
+			return new DpPessoaSelecao();
+		}
 		return subscritorSel;
 	}
 
@@ -3564,8 +3590,8 @@ public class ExMovimentacaoController extends ExController {
 
 	private void lerForm(final ExMovimentacao mov) throws Exception {
 		mov.setExMobil(mob);
-
 		mov.setDescrMov(getDescrMov());
+		
 		if (idPapel != null) {
 			mov.setExPapel(dao().consultar(idPapel, ExPapel.class, false));
 		}
@@ -4037,6 +4063,9 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	public DpPessoaSelecao getTitularSel() {
+		if(titularSel == null) {
+			return new DpPessoaSelecao();
+		}
 		return titularSel;
 	}
 

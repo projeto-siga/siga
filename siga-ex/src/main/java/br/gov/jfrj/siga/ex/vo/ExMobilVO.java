@@ -473,8 +473,8 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeReferenciar(titular, lotaTitular, mob));
 
-		addAcao("link_add", "Apensar", "/expediente/mov", "apensar", Ex
-				.getInstance().getComp().podeApensar(titular, lotaTitular, mob));
+		addAcao("link_add", "Apensar", "/app/expediente/mov", "apensar", 
+				Ex.getInstance().getComp().podeApensar(titular, lotaTitular, mob));
 
 		// Não aparece a opção de Cancelar Movimentação para documentos
 		// temporários

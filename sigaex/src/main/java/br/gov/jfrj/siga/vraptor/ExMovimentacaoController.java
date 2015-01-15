@@ -86,10 +86,7 @@ public class ExMovimentacaoController extends ExController {
 	
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 
-	private static final long serialVersionUID = -8223202120027622708L;
-
-	private static final Logger log = Logger
-			.getLogger(ExMovimentacaoAction.class);
+	private static final Logger log = Logger.getLogger(ExMovimentacaoAction.class);
 
 	private ExMobil mob;
 
@@ -2130,6 +2127,10 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
+		redirecionarParaExibir();
+	}
+
+	private void redirecionarParaExibir() {
 		result.redirectTo(MessageFormat.format(URL_EXIBIR, mov.getExDocumento().getSigla()));
 	}
 
@@ -2967,13 +2968,14 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aEncerrarVolumeGravar() throws Exception {
+	@Get("app/expediente/mov/encerrar_volume")
+	public void encerrarVolumeGravar(String sigla) throws Exception {
+		this.sigla = sigla;
 		buscarDocumento(true);
 		lerForm(mov);
 
 		if (mob.isVolumeEncerrado())
-			throw new AplicacaoException(
-					"Não é permitido encerrar um volume já encerrado.");
+			throw new AplicacaoException("Não é permitido encerrar um volume já encerrado.");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -2985,13 +2987,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		/*
-		 * ArrayList lista = new ArrayList(); final Object[] ao = {
-		 * mov.getExDocumento(), UltMov }; lista.add(ao); setItens(lista);
-		 */
-		setMov(mob.getUltimaMovimentacao());
-		return Action.SUCCESS;
+		redirecionarParaExibir();
 	}
 
 	public String aAnotar() throws Exception {

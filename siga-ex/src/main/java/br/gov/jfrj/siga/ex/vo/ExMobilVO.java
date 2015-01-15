@@ -496,9 +496,8 @@ public class ExMobilVO extends ExVO {
 		// exibir+completo,
 		// confirmacao
 
-		addAcao("folder_page_white", "Encerrar Volume", "/expediente/mov",
-				"encerrar_volume_gravar", Ex.getInstance().getComp()
-						.podeEncerrarVolume(titular, lotaTitular, mob),
+		addAcao("folder_page_white", "Encerrar Volume", "/app/expediente/mov",
+				"encerrar_volume", Ex.getInstance().getComp().podeEncerrarVolume(titular, lotaTitular, mob),
 				"Confirma o encerramento do volume?", null, null, null, "once");
 
 		addAcao("cancel", "Cancelar Via", "/expediente/mov",

@@ -275,7 +275,7 @@
 
 	function gravarAssociacao() {
 		if (!jQuery("#associacaoForm").valid())
-			return false;
+			return;
 		
 		var idAssociacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
 		

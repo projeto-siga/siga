@@ -663,7 +663,7 @@
 
     function gravarLista() {
 		if (!$("#formLista").valid() || !block())
-			return false;
+			return;
 		
 		var jForm = $("form"),
         	params = jForm.serialize();

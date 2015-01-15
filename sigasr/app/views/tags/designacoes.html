@@ -443,7 +443,7 @@
 	};
 	
 	function gravarDesignacao() {
-		if (!jQuery("#formDesignacao").valid())
+		if (!jQuery("#formDesignacao").valid() || !camposObrigatoriosPreenchidos())
 			return;
 		
 		// recupera as comboboxes
@@ -455,8 +455,6 @@
 			jPesquisaSatisfacao = jPesquisaSatisfacaoCbb.options[jPesquisaSatisfacaoCbb.selectedIndex],
 			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0],
 			jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
-		
-		
 		
 		var idDesignacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '',
 			rowSelecionada = designacoesTable.api().row('.selected'),
@@ -576,6 +574,19 @@
         	}
        	});
 	};
+
+	function camposObrigatoriosPreenchidos() {
+		if (hasValue($("#atendente")) || hasValue($("#preAtendente")) || hasValue($("#posAtendente")) || hasValue($("#equipeQualidade")))
+			return true;
+		else {
+			alert("Por favor preencha pelo menos um dos seguintes campos: Atendente, Pré-Atendente, Pós-Atendente ou Equipe de Qualidade.")
+			return false;
+		}
+	}
+
+	function hasValue(inputField) {
+		return inputField.val() != '' && inputField.val() != undefined;
+	}
 	
 	function fecharModalErroAoSalvar() {
 		$("#erroAoSalvar_dialog").dialog("close");

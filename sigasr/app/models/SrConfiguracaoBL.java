@@ -220,6 +220,12 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					listaConf.getId();
 				}
 			}
+			
+			if (srConf.tipoPermissaoSet != null) {
+				for (SrTipoPermissaoLista perm : srConf.tipoPermissaoSet){
+					//
+				}
+			}
 		}
 	}
 

@@ -37,10 +37,8 @@ public class WfJobExecutor extends JobExecutor {
 	protected Thread createThread(String threadName) {
 		Thread t = new WfJobExecutorThread(threadName, this);
 		
-		if (t.getContextClassLoader() != Thread.currentThread()
-				.getContextClassLoader())
-			t.setContextClassLoader(Thread.currentThread()
-					.getContextClassLoader());
+		if (t.getContextClassLoader() != Thread.currentThread().getContextClassLoader())
+			t.setContextClassLoader(Thread.currentThread().getContextClassLoader());
 		return t;
 	}
 

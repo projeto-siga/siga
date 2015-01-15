@@ -39,7 +39,7 @@
 
 
 	<properties>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+ 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding> 
 		<siga.version>${project.version}</siga.version>
 		<picketlink.version>2.6.0.Final</picketlink.version>
 		<hibernate.version>4.2.0.Final</hibernate.version>

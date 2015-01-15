@@ -1305,8 +1305,8 @@ public class Documento {
 			} else {
 				sb.append("<div style=\"margin:3pt; padding:3pt;\" class=\"anexo\">");
 				sb.append("<img src=\"/siga/css/famfamfam/icons/page_white_acrobat.png\"/> <a href=\""
-						+ "http://"
-						+ servernameport
+						//+ "http://"
+						//+ servernameport
 						+ contextpath
 						+ "/arquivo/exibir.action?arquivo="
 						+ an.getArquivo().getReferenciaPDF()

@@ -79,9 +79,17 @@
 	jQuery(document).ready(function($) {
 		$("#itemConfiguracaoSigla").mask("99.99.99");
 		
-		validatorFormItem = $("#formItemConfiguracao").validate();
-	    validatorFormGestor = $("#formGestor").validate();
-	    validatorFormFator = $("#formFator").validate();
+		validatorFormItem = $("#formItemConfiguracao").validate({
+			onfocusout: false
+		});
+		
+	    validatorFormGestor = $("#formGestor").validate({
+	    	onfocusout: false
+	    });
+	    
+	    validatorFormFator = $("#formFator").validate({
+	    	onfocusout: false
+	    });
 
 	 	// POPUP PARA ADICIONAR UM GESTOR
 	    jGestores = $("#gestoresUl");

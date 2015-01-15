@@ -73,7 +73,9 @@
 		        "Hora inválida."
 		);
 		
-		validatorFormExcessao = $("#excecaoHorarioForm").validate();
+		validatorFormExcessao = $("#excecaoHorarioForm").validate({
+			onfocusout: false
+		});
 		
 		$("#dataEspecifica").mask("99/99/9999");
 		$(".hora").mask("99:99");

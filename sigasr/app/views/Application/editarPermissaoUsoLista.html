@@ -5,7 +5,7 @@
 		<h2 class="gt-form-head">Cadastro de Permissão para Uso de Lista de Prioridade</h2>
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarPermissaoUsoLista()} #{if
+			#{form @Application.gravarPermissaoUsoLista(), enctype:'multipart/form-data'} #{if
 			permissao?.idConfiguracao} <input type="hidden"
 				name="permissao.idConfiguracao"
 				value="${permissao.idConfiguracao}"> #{/if}

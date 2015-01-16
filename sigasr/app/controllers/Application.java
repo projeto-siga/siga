@@ -268,20 +268,20 @@ public class Application extends SigaApplication {
 			throws Exception {
 
 		if (solicitacao.solicitante == null) {
-			validation.addError("solicitacao.solicitante",
+			validation.current().addError("solicitacao.solicitante",
 					"Solicitante n&atilde;o informado");
 		}
 		if (solicitacao.itemConfiguracao == null) {
-			validation.addError("solicitacao.itemConfiguracao",
+			validation.current().addError("solicitacao.itemConfiguracao",
 					"Item n&atilde;o informado");
 		}
 		if (solicitacao.acao == null) {
-			validation.addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
+			validation.current().addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
 		}
 
 		if (solicitacao.descrSolicitacao == null
 				|| solicitacao.descrSolicitacao.trim().equals("")) {
-			validation.addError("solicitacao.descrSolicitacao",
+			validation.current().addError("solicitacao.descrSolicitacao",
 					"Descri&ccedil&atilde;o n&atilde;o informada");
 		}
 		
@@ -290,13 +290,13 @@ public class Application extends SigaApplication {
 			// Para evitar NullPointerExcetpion quando nao encontrar no Map
 			if(Boolean.TRUE.equals(obrigatorio.get(att.atributo.idAtributo))) {
 				if ((att.valorAtributoSolicitacao == null || att.valorAtributoSolicitacao.trim().equals("")))
-					validation.addError("solicitacao.atributoSolicitacaoMap["
+					validation.current().addError("solicitacao.atributoSolicitacaoMap["
 							+ att.atributo.idAtributo + "]",
 							att.atributo.nomeAtributo + " n&atilde;o informado");
 			}
 		}
 
-		if (validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			formEditar(solicitacao);
 		}
 	}
@@ -305,25 +305,25 @@ public class Application extends SigaApplication {
 			SrItemConfiguracao itemConfiguracao) throws Exception {
 
 		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
-			validation.addError("itemConfiguracao.siglaItemConfiguracao",
+			validation.current().addError("itemConfiguracao.siglaItemConfiguracao",
 					"C&oacute;digo n&atilde;o informado");
 		}
 
 		if (itemConfiguracao.tituloItemConfiguracao.equals("")) {
-			validation.addError("itemConfiguracao.tituloItemConfiguracao",
+			validation.current().addError("itemConfiguracao.tituloItemConfiguracao",
 					"T&iacute;tulo n&atilde;o informado");
 		}
 
 		if (itemConfiguracao.numFatorMultiplicacaoGeral < 1 ) {
-			validation.addError("itemConfiguracao.numFatorMultiplicacaoGeral",
+			validation.current().addError("itemConfiguracao.numFatorMultiplicacaoGeral",
 					"Fator de multiplica&ccedil;&atilde;o menor que 1");
 		}
 		
-		for (play.data.validation.Error error : validation.errors()) {
+		for (play.data.validation.Error error : validation.current().errors()) {
 			System.out.println(error.message());
 		}
 
-		if (validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			render("@editarItem", itemConfiguracao);
 		}
 	}
@@ -331,14 +331,14 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarAcao(SrAcao acao) {
 
 		if (acao.siglaAcao.equals("")) {
-			validation.addError("acao.siglaAcao", "Código não informado");
+			validation.current().addError("acao.siglaAcao", "Código não informado");
 		}
 
 		if (acao.tituloAcao.equals("")) {
-			validation.addError("acao.tituloAcao", "Título não informado");
+			validation.current().addError("acao.tituloAcao", "Título não informado");
 		}
 
-		if (validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			render("@editarAcao", acao);
 		}
 
@@ -352,22 +352,22 @@ public class Application extends SigaApplication {
 				&& (designacao.posAtendente == null)
 				&& (designacao.equipeQualidade == null)
 				&& (designacao.pesquisaSatisfacao == null)) {
-			validation.addError("designacao.atendente",
+			validation.current().addError("designacao.atendente",
 					"Atendente não informado.");
-			validation.addError("designacao.preAtendente",
+			validation.current().addError("designacao.preAtendente",
 					"Pr&eacute;-atendente n&atilde;o informado.");
-			validation.addError("designacao.posAtendente",
+			validation.current().addError("designacao.posAtendente",
 					"P&oacute;s-atendente n&atilde;o informado.");
-			validation.addError("designacao.equipeQualidade",
+			validation.current().addError("designacao.equipeQualidade",
 					"Equipe de qualidade n&atilde;o informada.");
 		}
 
-		for (play.data.validation.Error error : validation.errors()) {
+		for (play.data.validation.Error error : validation.current().errors()) {
 			System.out.println(error.message());
 			sb.append(error.getKey() + ";");
 		}
 
-		if (validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			throw new Exception(sb.toString());
 		}
 	}
@@ -1190,21 +1190,21 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditarAtributo(SrAtributo att) {
 		if (att.nomeAtributo.equals("")) {
-			validation.addError("att.nomeAtributo",
+			validation.current().addError("att.nomeAtributo",
 					"Nome de atributo não informado");
 		}
 
 		if (att.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO 
 				&& att.descrPreDefinido.equals("")) {
-			validation.addError("att.descrPreDefinido",
+			validation.current().addError("att.descrPreDefinido",
 					"Valores Pré-definido não informados");
 		}
 		
-		for (play.data.validation.Error error : validation.errors()) {
+		for (play.data.validation.Error error : validation.current().errors()) {
 			System.out.println(error.message());
 		}
 
-		if (validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			render("@editarAtributo", att);
 		}
 	}
@@ -1310,15 +1310,15 @@ public class Application extends SigaApplication {
 		StringBuffer sb = new StringBuffer();
 		
 		if (equipe.lotacao == null) {
-			validation.addError("equipe.lotacao", "Lotação não informada");
+			validation.current().addError("equipe.lotacao", "Lotação não informada");
 		}
 		
-		for (play.data.validation.Error error : validation.errors()) {
+		for (play.data.validation.Error error : validation.current().errors()) {
 			System.out.println(error.getKey() + " :" + error.message());
 			sb.append(error.getKey() + ";");
 		}
 
-		if (validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			throw new Exception(sb.toString());
 		}
 	}

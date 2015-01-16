@@ -21,7 +21,7 @@ $(function(){
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
 		#{if lotaTitular.getOrgaoUsuario().idOrgaoUsu == 1 }
-		<form id="grelprazo" action="@{Application.grelPrazo}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100" target="relPrazo">
+		<form id="grelprazo" action="@{Application.grelPrazo}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100" target="relPrazo" enctype="multipart/form-data">
 		#{/if}
 		#{elseif lotaTitular.getOrgaoUsuario().idOrgaoUsu == 3 }
 		<form id="grelprazo" action="@{Application.grelPrazoTRF}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100" target="relPrazo">

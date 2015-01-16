@@ -67,7 +67,7 @@ function postback(){
 		<div class="gt-content-box gt-form"
 			style="margin-bottom: 0px !important">
 			<form action="@{Application.darAndamento()}" method="post"
-				enctype="multipart/form-data" onsubmit="javascript: return block();">
+				enctype="multipart/form-data" onsubmit="javascript: return block();" enctype="multipart/form-data">
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
@@ -325,7 +325,7 @@ function postback(){
 	#{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
 	<div class="gt-content-box gt-form">
 		<form action="@{Application.anexarArquivo()}" method="post"
-			enctype="multipart/form-data" onsubmit="javascript: return block();">
+			enctype="multipart/form-data" onsubmit="javascript: return block();" enctype="multipart/form-data">
 			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 			<input type="hidden" name="ocultas" value="${ocultas}" />
 			<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
@@ -349,7 +349,7 @@ function postback(){
 	</div>
 	#{/modal} #{modal nome:'fechar', titulo:'Fechar'}
 	<form action="@{Application.fechar()}" method="post"
-		enctype="multipart/form-data" onsubmit="javascript: return block();">
+		enctype="multipart/form-data" onsubmit="javascript: return block();" enctype="multipart/form-data">
 		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div style="display: inline" class="gt-form-row gt-width-66">
@@ -367,7 +367,7 @@ function postback(){
 				url:'/sigasr/solicitacao/escalonar?id='+solicitacao.idSolicitacao  /}
 
 	#{modal nome:'juntar', titulo:'Juntar'}
-		<form action="@{Application.juntar()}" method="post"
+		<form action="@{Application.juntar()}" method="post" enctype="multipart/form-data"
 			enctype="multipart/form-data" id="formGravarJuncao">
 			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 			<input type="hidden" name="ocultas" value="${ocultas}" />
@@ -390,7 +390,7 @@ function postback(){
 		</form>
 	#{/modal}
 	#{modal nome:'vincular', titulo:'Vincular'}
-		<form action="@{Application.vincular()}" method="post"
+		<form action="@{Application.vincular()}" method="post" enctype="multipart/form-data"
 			enctype="multipart/form-data" id="formGravarVinculo">
 			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 			<input type="hidden" name="ocultas" value="${ocultas}" />
@@ -419,8 +419,7 @@ function postback(){
 	#{modal nome:'pendencia', titulo:'Pendência'}
 	<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
 	<div class="gt-content-box gt-for-table gt-form">
-	<form action="@{Application.deixarPendente()}" method="post"
-		enctype="multipart/form-data" onsubmit="javascript: return block();">
+	<form action="@{Application.deixarPendente()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
 		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div class="gt-form-row gt-width-66">
@@ -472,8 +471,7 @@ function postback(){
 		</div>
 	#{/modal}
 	#{modal nome:'desentranhar', titulo:'Desentranhar'}
-		<form action="@{Application.desentranhar()}" method="post"
-			enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<form action="@{Application.desentranhar()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
 			<div style="display: inline" class="gt-form-row gt-width-66">
 				<label>Justificativa</label>
 				<textarea style="width: 100%" name="justificativa" cols="50" rows="4"> </textarea>
@@ -525,8 +523,7 @@ function postback(){
 </script>
 
 #{modal nome:'terminarPendenciaModal', titulo:'Terminar Pendencia'}
-	<form action="@{Application.terminarPendencia()}" method="post"
-		enctype="multipart/form-data" onsubmit="javascript: return block();">
+	<form action="@{Application.terminarPendencia()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
 		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div style="display: inline" class="gt-form-row gt-width-66">

@@ -34,7 +34,7 @@ function carregouAcao(response, param){
 </script>
 <div class="gt-content-box gt-form">
 	<form id="formEscalonar" action="@{Application.escalonarGravar}" 
-			onsubmit="javascript: return block();" method="POST">
+			onsubmit="javascript: return block();" method="POST" enctype="multipart/form-data">
 		
 		<div class="gt-form-row" >
 			<label>#{checkbox name:'criaFilha', onchange:'onchangeCheckCriaFilha();', value:true /} 

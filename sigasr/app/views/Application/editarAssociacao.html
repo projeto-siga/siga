@@ -9,7 +9,7 @@
 		#{/else}
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarAssociacao()} #{if
+			#{form @Application.gravarAssociacao(), enctype:'multipart/form-data'} #{if
 			associacao?.idConfiguracao} <input type="hidden"
 				name="associacao.idConfiguracao"
 				value="${associacao.idConfiguracao}"> #{/if}

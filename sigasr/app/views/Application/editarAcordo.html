@@ -614,7 +614,7 @@ $("[value='Gravar']").click(function(){
                 <h2>Cadastro de Acordo</h2>
 
                 <div class="gt-form gt-content-box">
-                        <form>
+                        <form enctype="multipart/form-data">
                                 #{if acordo?.idAcordo} <input type="hidden" name="acordo.idAcordo"
                                         id="idAcordo" value="${acordo.idAcordo}"> #{/if}
                                 <div class="gt-form-row gt-width-66">

@@ -121,7 +121,7 @@ ${moreHead?.raw()}
 		<h2>Vincular Solicitações</h2>
  		
  		<div class="gt-content-box gt-form" id="vincularSolicitacao">
-			<form action="@{Application.vincularSolicitacoesGravar()}" id="formGravarVinculo">
+			<form action="@{Application.vincularSolicitacoesGravar()}" id="formGravarVinculo" enctype="multipart/form-data">
 				<input type="hidden" name="idSolicitacaoAVincular" value="${solicitacaoAVincular.idSolicitacao}"> 
 				<input type="hidden" name="idSolicitacaoRecebeVinculo" id="idSolicitacaoRecebeVinculo" value=""> 
 				<div style="display: inline;" class="gt-form-row gt-width-66">
@@ -198,7 +198,7 @@ ${moreHead?.raw()}
 			#{/elseif }
 			
 			<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-				<form action="@{Application.vincularSolicitacoes()}">
+				<form action="@{Application.vincularSolicitacoes()}" enctype="multipart/form-data">
 				<input type="hidden" name="id" value="${solicitacaoAVincular.idSolicitacao}"> 
 					<input type="hidden" name="filtro.pesquisar" value="true" />
 					<table class="gt-form-table">

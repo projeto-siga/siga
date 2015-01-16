@@ -16,7 +16,7 @@ function carregarLotacaoDaAcao(){
 	<label>Ação</label>
 		#{select name:'acao.idAcao', value:solicitacao.acao?.idAcao, onchange:"carregarLotacaoDaAcao();", id:'selectAcao'}
 			#{list items:acoesEAtendentes.keySet(), as:'acao' }
-				#{option acao.idAcao} ${acao.tituloAcao} #{/option}					 
+				#{option acao.idAcao} ${acao.tituloAcao} (${acoesEAtendentes.get(acao).sigla}) #{/option}					 
 			#{/list}
 		#{/select}  
 	 <span style="color: red">#{error 'solicitacao.acao' /}</span>

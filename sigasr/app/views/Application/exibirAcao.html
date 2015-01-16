@@ -59,7 +59,7 @@ function carregouAtributos(response, param){
 		#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
 			#{option}#{/option}	
 			#{list items:acoesEAtendentes.keySet(), as:'acao' }
-				#{option acao.idAcao} ${acao.tituloAcao} #{/option}					 
+				#{option acao.idAcao} ${acao.tituloAcao} (${acoesEAtendentes.get(acao).sigla})#{/option}					 
 			#{/list}
 		#{/select}  
 	 <span style="color: red">#{error 'solicitacao.acao' /}</span>

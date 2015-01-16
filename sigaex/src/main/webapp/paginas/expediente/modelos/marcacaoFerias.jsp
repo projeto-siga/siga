@@ -11,7 +11,7 @@
 			opcoes="Selecione;Marcação;Alteração;Cancelamento" reler="sim"></mod:selecao>
 		<c:choose>
 			<c:when test="${opcao eq 'Marcação'}">
-				<mod:grupo titulo="Fruição/Marcação de férias">
+				<mod:grupo titulo="Fruição/Marcacao de férias">
 					<mod:selecao titulo="Número de marcações" var="marcacoes"
 						opcoes="1;2;3" reler="ajax" idAjax="marcacoesAjax" />
 					<mod:grupo depende="marcacoesAjax">
@@ -42,8 +42,8 @@
 				</mod:grupo>
 
 			</c:when>
-			<c:when test="${opcao eq 'Alteração'}">
-				<mod:grupo titulo="Alteração de Férias">
+			<c:when test="${opcao eq 'Alteracao'}">
+				<mod:grupo titulo="Alteracao de Férias">
 					<mod:selecao titulo="Número de alterações" var="alteracoes"
 						opcoes="1;2;3" reler="ajax" idAjax="alteracoesAjax" />
 					<mod:grupo depende="alteracoesAjax">

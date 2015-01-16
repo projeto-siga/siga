@@ -107,8 +107,13 @@
 			$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
 			tableAssociacao = table;
 		}
-		validatorAtributoForm = $("#atributoForm").validate();
-		$("#associacaoForm").validate();
+		validatorAtributoForm = $("#atributoForm").validate({
+			onfocusout: false
+		});
+		
+		$("#associacaoForm").validate({
+			onfocusout: false
+		});
 	});
 
 	function inserirAssociacao() {
@@ -270,7 +275,7 @@
 
 	function gravarAssociacao() {
 		if (!jQuery("#associacaoForm").valid())
-			return false;
+			return;
 		
 		var idAssociacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
 		

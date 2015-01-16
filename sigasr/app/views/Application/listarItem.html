@@ -217,7 +217,7 @@
    		return column;
      }	
 	function gerarColunaDesativar(idItemConfiguracao) {
-		var column = '<a class="once gt-btn-desativar" onclick="reativarItem(event, ' + idItemConfiguracao + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
+		var column = '<a class="once gt-btn-ativar" onclick="reativarItem(event, ' + idItemConfiguracao + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
    		return column;
      }	    
 
@@ -254,8 +254,11 @@
         	data: serializarItemConfiguracao(),
         	dataType: "text",
         	success: function(itemJson) {
-        		var jSon = getJsonByString(itemJson);
+        		var jSon = getJsonByString(itemJson),
+        			item = JSON.parse(itemJson);
+    			
         		row[colunas.jSon] = jSon;
+        		row[colunas.acoes] = '<a class="once gt-btn-ativar" onclick="desativarItem(event, '+item.id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
         		
         		if (isEditing) {
 					table.api().row('.selected').data(row);
@@ -294,7 +297,7 @@
 				$("#tituloItemConfiguracao").val(),
 				$("#descrItemConfiguracao").val(),
 				$("#descricaoSimilaridade").val(),
-				'<a class="once" onclick="desativarItem(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
+				'',
 				jSonItem
 			];
 

@@ -105,12 +105,17 @@ jQuery(document).ready(function($) {
         perguntas.limpar = function() {
        		$("#perguntas").html('');
        	}
-        $("#pesquisaForm").validate();
-        $("#perguntaForm").validate();
+        var pesquisaFormValidator = $("#pesquisaForm").validate();
+        var perguntaFormValidator = $("#perguntaForm").validate();
 	});
 
 	function isValidForm() {
 	    return jQuery("#pesquisaForm").valid();
+	}
+
+	function resetErrosForm() {
+		pesquisaFormValidator.reset();
+		perguntaFormValidator.reset();
 	}
 </script>
 

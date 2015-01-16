@@ -1,7 +1,4 @@
 #{extends 'main.html' /} #{set title:'Edição de Ação' /}
-<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
-<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
-
 <div class="gt-form gt-content-box">
 	<form id="acaoForm">
 		<input type="hidden" name="idAcao">
@@ -56,11 +53,3 @@
 		</div>
 	</form>
 </div>
-
-<script language="javascript">
-	var validatorFormAcao;
-
-	$( document ).ready(function( ) {
-		validatorFormAcao = $("#acaoForm").validate();
-	});
-</script>

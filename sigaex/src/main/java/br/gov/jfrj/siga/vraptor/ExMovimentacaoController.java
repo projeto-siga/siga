@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
-import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,8 +83,6 @@ import com.opensymphony.xwork.Action;
 
 public class ExMovimentacaoController extends ExController {
 	
-	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
-
 	private static final Logger log = Logger.getLogger(ExMovimentacaoAction.class);
 
 	private ExMobil mob;
@@ -2127,11 +2124,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		redirecionarParaExibir();
-	}
-
-	private void redirecionarParaExibir() {
-		result.redirectTo(MessageFormat.format(URL_EXIBIR, mov.getExDocumento().getSigla()));
+		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
 	}
 
 	public String aDesapensar() throws Exception {
@@ -2987,7 +2980,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		redirecionarParaExibir();
+		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
 	}
 
 	public String aAnotar() throws Exception {

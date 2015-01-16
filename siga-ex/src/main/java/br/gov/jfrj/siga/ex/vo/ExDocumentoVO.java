@@ -380,7 +380,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("add", "Criar Via", "/expediente/doc", "criarVia",
 				Ex.getInstance().getComp().podeCriarVia(titular, lotaTitular, mob), null, null, null, null, "once");
 		
-		vo.addAcao("add", "Abrir Novo Volume", "/expediente/doc", "criarVolume",
+		vo.addAcao("add", "Abrir Novo Volume", "/app/expediente/doc", "criar_volume",
 				Ex.getInstance().getComp().podeCriarVolume(titular, lotaTitular, mob), "Confirma a abertura de um novo volume?",
 				null, null, null, "once");
 		

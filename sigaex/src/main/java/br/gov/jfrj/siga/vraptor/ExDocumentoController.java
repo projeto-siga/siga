@@ -30,13 +30,13 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,16 +44,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.hibernate.ObjectNotFoundException;
@@ -86,7 +83,6 @@ import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
@@ -95,9 +91,6 @@ import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.libs.webwork.Selecao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
@@ -106,6 +99,8 @@ import com.opensymphony.xwork.Action;
 @Resource
 public class ExDocumentoController extends ExController {
 	
+	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
+
 	public ExDocumentoController(HttpServletRequest request, Result result, SigaObjects so) {
 		super(request, result, CpDao.getInstance(), so);
 		
@@ -269,18 +264,20 @@ public class ExDocumentoController extends ExController {
 		return Action.SUCCESS;
 	}
 	
-	public String aCriarVolume(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	@Get("app/expediente/doc/criar_volume")
+	public void criarVolume(String sigla) throws Exception {
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO(sigla);
 		buscarDocumento(true, exDocumentoDTO);
 		
 		if (!Ex.getInstance().getComp().podeCriarVolume(getTitular(), getLotaTitular(), exDocumentoDTO.getMob()))
 			throw new AplicacaoException("Não é possível criar volumes neste documento");
+		
 		try {
 			Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
 		} catch (final Exception e) {
 			throw e;
 		}
-		
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, exDocumentoDTO.getSigla());
 	}
 	
 	@Get("app/expediente/doc/editar")
@@ -1884,4 +1881,7 @@ public class ExDocumentoController extends ExController {
 		return new HierarquizadorBoletimInterno(getLotaTitular().getOrgaoUsuario());
 	}
 	
+	public static void redirecionarParaExibir(Result result, String sigla) {
+		result.redirectTo(MessageFormat.format(URL_EXIBIR, sigla));
+	}
 }

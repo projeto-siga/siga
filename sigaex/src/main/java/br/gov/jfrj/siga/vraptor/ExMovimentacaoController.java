@@ -1157,19 +1157,19 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aSobrestarGravar() throws Exception {
-		buscarDocumento(true);
-		lerForm(mov);
+	@Get("app/expediente/mov/sobrestar_gravar")
+	public void sobrestarGravar(String sigla) throws Exception {
+		this.sigla = sigla;
+		this.buscarDocumento(true);
+		this.lerForm(mov);
 
-		if (!Ex.getInstance().getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-			throw new AplicacaoException(
-					"Acesso permitido a usuários autorizados.");
+		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Acesso permitido a usuários autorizados.");
 		}
 
-		if (!Ex.getInstance().getComp()
-				.podeSobrestar(getTitular(), getLotaTitular(), mob))
+		if (!Ex.getInstance().getComp().podeSobrestar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Via não pode ser sobrestada");
+		
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1178,8 +1178,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
 	public String aAssinar() throws Exception {

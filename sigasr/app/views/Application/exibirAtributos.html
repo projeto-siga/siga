@@ -37,6 +37,11 @@
 						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" maxlength="255"/>
 					<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
 				#{/if}
+				#{if atributo.tipoAtributo.name() == "TEXT_AREA"}
+					<textarea cols="85" rows="10" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" class="${atributo.idAtributo}"
+						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" maxlength="8192">${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
+					<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
+				#{/if}				
 				#{if atributo.tipoAtributo.name() == "DATA"}
 					<input type="text" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" id="calendarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"
 						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" />

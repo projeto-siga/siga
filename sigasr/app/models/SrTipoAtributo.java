@@ -7,7 +7,8 @@ public enum SrTipoAtributo {
 	NUM_INTEIRO(3, "Número Inteiro"), 
 	NUM_DECIMAL(4, "Número com duas casas decimais"), 
 	HORA(5, "Hora"), 
-	VL_PRE_DEFINIDO(6, "Valores pré-definidos");
+	VL_PRE_DEFINIDO(6, "Valores pré-definidos"),
+	TEXT_AREA(7, "TextArea");
 
 	public int idTipoAtributo;
 

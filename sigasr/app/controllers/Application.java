@@ -1271,7 +1271,7 @@ public class Application extends SigaApplication {
 	
 	public static void gravarEquipe(SrEquipe equipe) throws Exception {
 		assertAcesso("ADM:Administrar");
-		validarFormEditarEquipe(equipe);
+//		validarFormEditarEquipe(equipe);
 		equipe.salvar();
 	}
 	

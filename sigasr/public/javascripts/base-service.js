@@ -243,6 +243,30 @@ BaseService.prototype.gravar = function() {
 	}).success(success);
 }
 /**
+ * Executa a acao de aplicar o registro
+ */
+BaseService.prototype.aplicar = function() {
+	if (!this.isValidForm())
+		return false;
+	
+	var service = this,
+		obj = this.getObjetoParaGravar(),
+		url = this.opts.urlGravar,
+		wrapper = {},
+		success = function(objSalvo) {
+			if(service.onGravar) {
+				service.onGravar(obj, JSON.parse(objSalvo));
+			}
+		}
+		
+	wrapper[this.opts.objectName] = obj;
+	
+	this.post({
+		'url' : url, 
+		'obj' : wrapper
+	}).success(success);
+}
+/**
  * Metodo que implementa a forma padrao de pegar o objeto para gravar no servidor
  */
 BaseService.prototype.getObjetoParaGravar = function() {

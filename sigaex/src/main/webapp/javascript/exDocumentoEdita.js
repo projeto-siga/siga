@@ -12,16 +12,16 @@ function sbmt(id) {
     } 
 	
 	if (id == null || IsRunningAjaxRequest()) {
-		frm.action='editar';
+		frm.action='recarregar';
 		frm.submit();
 	} else {
-		ReplaceInnerHTMLFromAjaxResponse('editar', frm, id);
+		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	}
 	return;
 	
 	if (typeof(frm.submitsave) == "undefined")
 		frm.submitsave = frm.submit;
-	frm.action='editar';
+	frm.action='recarregar';
                     
 	if (id == null || typeof(id) == 'undefined' || IsRunningAjaxRequest()) {
 		window.customOnsubmit = function() {return true;};
@@ -29,7 +29,7 @@ function sbmt(id) {
 		frm.submit = frm.submitsave;
 		frm.submit();
 	} else {
-		ReplaceInnerHTMLFromAjaxResponse('editar', frm, id);
+		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	}
 }
 
@@ -107,7 +107,7 @@ frm.submit();
 
 //<c:set var="url" value="carregarpreench" />
 function carregaPreench(){
-if (frm.preenchimento.value==0){
+if (document.getElementById('preenchimento').value==0){
 	frm.btnRemover.disabled="true";
 	frm.btnAlterar.disabled="true";
 }
@@ -135,7 +135,7 @@ while((result=='') && (result!=null)){
     		if (typeof(onSave) == "function"){
     			onSave();
     		} 
- 			frm.nomePreenchimento.value=result;
+ 			document.getElementsByName('exDocumentoDTO.nomePreenchimento')[0].value = result;
  			frm.action='gravarpreench';
 			frm.submit();
  	}

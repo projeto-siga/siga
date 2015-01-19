@@ -40,6 +40,21 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 
 public class ExProcessadorModelo implements ProcessadorModelo {
+	
+	
+	HttpServletRequest request;
+	HttpServletResponse response;
+	ServletContext context;
+	
+	public ExProcessadorModelo(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
+		this.request = request;
+		this.response = response;
+		this.context = context;
+	}
+	
+	public ExProcessadorModelo() {
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * Processar um template JSP e retornar o resultado na forma de uma string
@@ -54,15 +69,22 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 	public String processarModelo(CpOrgaoUsuario ou, Map<String, Object> attrs,
 			Map<String, Object> params) throws Exception {
 
-		// System.out.println(System.currentTimeMillis() + " - INI
-		// processarModelo");
+		System.out.println(System.currentTimeMillis() + " - INI processarModelo");
+		
+		ServletContext sc     ;
+		HttpServletResponse r ;
+		MyHttpRequest rw 	  ;		
+		
+		try {
+			sc     = com.opensymphony.webwork.ServletActionContext.getServletContext();
+			r = com.opensymphony.webwork.ServletActionContext.getResponse();
+			rw 	  = new MyHttpRequest(com.opensymphony.webwork.ServletActionContext.getRequest());
+		} catch (Exception e) {
+			sc     = this.context; 
+			r = this.response;
+			rw 	  = new MyHttpRequest(this.request);
+		}
 
-		ServletContext sc = com.opensymphony.webwork.ServletActionContext
-				.getServletContext();
-		HttpServletResponse r = com.opensymphony.webwork.ServletActionContext
-				.getResponse();
-		MyHttpRequest rw = new MyHttpRequest(
-				com.opensymphony.webwork.ServletActionContext.getRequest());
 
 		rw.clearAttributes();
 
@@ -88,8 +110,7 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 		w.flush();
 		String s = bout.toString();
 
-		// System.out.println(System.currentTimeMillis() + " - FIM
-		// processarModelo");
+		System.out.println(System.currentTimeMillis() + " - FIM processarModelo");
 		return s;
 	}
 

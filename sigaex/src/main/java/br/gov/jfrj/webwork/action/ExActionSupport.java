@@ -143,6 +143,7 @@ public class ExActionSupport extends SigaActionSupport {
 		config.setCpSituacaoConfiguracao(exStConfig);
 		ExConfiguracao exConfig;
 
+		//corrigir este cast
 /*		exConfig = ((ExConfiguracao) Ex
 				.getInstance()
 				.getConf()

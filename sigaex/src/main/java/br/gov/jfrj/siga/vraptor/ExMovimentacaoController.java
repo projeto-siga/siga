@@ -27,8 +27,10 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
@@ -43,6 +45,7 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
@@ -232,8 +235,8 @@ public class ExMovimentacaoController extends ExController {
 
 	private Long idLotDefault;
 	
-	public ExMovimentacaoController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, ExDao.getInstance(), so);
+	public ExMovimentacaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so) {
+		super(request, response, context, result, ExDao.getInstance(), so);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 		subscritorSel = new DpPessoaSelecao();

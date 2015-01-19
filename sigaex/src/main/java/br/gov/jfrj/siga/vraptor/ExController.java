@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -50,14 +52,18 @@ import br.gov.jfrj.siga.util.ExProcessadorModelo;
 
 public class ExController extends SigaController {
 	
-	public ExController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so) {
-		super(request, result, dao, so);
-	}
+	HttpServletResponse response;
+	ServletContext context;
 	
-	static {
+	public ExController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, CpDao dao, SigaObjects so) {
+		super(request, result, dao, so);
+		this.response = response;
+		this.context = context;
+	//}
+	
+	//static {
 		if (Ex.getInstance().getBL().getProcessadorModeloJsp() == null) {
-			Ex.getInstance().getBL()
-					.setProcessadorModeloJsp(new ExProcessadorModelo());
+			Ex.getInstance().getBL().setProcessadorModeloJsp(new ExProcessadorModelo(request, response, context));
 		}
 	}
 
@@ -78,8 +84,7 @@ public class ExController extends SigaController {
 
 	public String getNomeServidorComPorta() {
 		if (getRequest().getServerPort() > 0)
-			return getRequest().getServerName() + ":"
-					+ getRequest().getServerPort();
+			return getRequest().getServerName() + ":"+ getRequest().getServerPort();
 		return getRequest().getServerName();
 	}
 

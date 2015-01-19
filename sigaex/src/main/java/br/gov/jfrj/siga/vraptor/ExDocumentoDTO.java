@@ -225,12 +225,6 @@ public class ExDocumentoDTO {
 	private List<ExTipoDocumento> tiposDocumento;
 	
 	private List<ExNivelAcesso> listaNivelAcesso;
-	
-	private Long idNivelAcesso;
-	
-	private Long idPreenchimento;
-	
-	private Long idTipoDest;
 
 	public ExDocumentoDTO() {
 		classificacaoSel = new ExClassificacaoSelecao();
@@ -255,6 +249,10 @@ public class ExDocumentoDTO {
 		results = new LinkedList<ExDocumento>();
 	}
 	
+	public ExDocumentoDTO(String sigla) {
+		this.sigla = sigla;
+	}
+
 	public boolean isCriandoAnexo() {
 		return criandoAnexo;
 	}
@@ -1011,30 +1009,6 @@ public class ExDocumentoDTO {
     
     public List<ExNivelAcesso> getListaNivelAcesso() {
 		return listaNivelAcesso;
-	}
-    
-    public Long getIdNivelAcesso() {
-		return idNivelAcesso;
-	}
-    
-    public void setIdNivelAcesso(Long idNivelAcesso) {
-		this.idNivelAcesso = idNivelAcesso;
-	}
-    
-    public Long getIdPreenchimento() {
-		return idPreenchimento;
-	}
-    
-    public void setIdPreenchimento(Long idPreenchimento) {
-		this.idPreenchimento = idPreenchimento;
-	}
-    
-    public Long getIdTipoDest() {
-		return idTipoDest;
-	}
-    
-    public void setIdTipoDest(Long idTipoDest) {
-		this.idTipoDest = idTipoDest;
 	}
 
 }

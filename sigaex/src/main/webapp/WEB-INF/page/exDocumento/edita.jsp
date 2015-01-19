@@ -30,7 +30,7 @@
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" />
-				<input type="hidden" name="nomePreenchimento" value="" />
+				<input type="hidden" name="exDocumentoDTO.nomePreenchimento" value="" />
 				<input type="hidden" name="campos" value="despachando" />
 				<input type="hidden" name="exDocumentoDTO.despachando" value="${exDocumentoDTO.despachando}" />
 				<input type="hidden" name="campos" value="criandoAnexo" />
@@ -90,7 +90,7 @@
 							Acesso 
 							<select  name="exDocumentoDTO.nivelAcesso" >
 								<c:forEach items="${exDocumentoDTO.listaNivelAcesso}" var="item">
-									<option value="${item.idNivelAcesso}" ${item.idNivelAcesso == exDocumentoDTO.idNivelAcesso ? 'selected' : ''}>
+									<option value="${item.idNivelAcesso}" ${item.idNivelAcesso == exDocumentoDTO.nivelAcesso ? 'selected' : ''}>
 										${item.nmNivelAcesso}
 									</option>  
 								</c:forEach>
@@ -109,10 +109,20 @@
 									</c:if>
 								</c:when>
 								<c:otherwise>
-								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" onchange="javascript:setFisico();" <c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>>
+								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" 
+								    	onchange="javascript:setFisico();" 
+								    	<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
+								    	<c:if test="${exDocumentoDTO.eletronico == 1}">checked</c:if>	
+								    />
 								    <label for="eletronicoCheck1">Digital</label>
-								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" onchange="javascript:setFisico();" <c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>>
+								    
+								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" 
+								    	onchange="javascript:setFisico();" 
+								    	<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
+								    	<c:if test="${exDocumentoDTO.eletronico == 2}">checked</c:if>
+								    />
 								    <label for="eletronicoCheck2">Físico</label>
+								    
 									<script type="text/javascript">
 										function setFisico() {
 											if ($('input[name=exDocumentoDTO.eletronico]:checked').val() == 2) 
@@ -199,7 +209,8 @@
 								<input type="hidden" name="campos" value="substituicao" />
 								<td colspan="3">
 									<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />&nbsp;&nbsp;
-									<input type="checkbox" name="exDocumentoDTO.substituicao" onclick="javascript:displayTitular(this);" />
+									<input type="checkbox" name="exDocumentoDTO.substituicao" onclick="javascript:displayTitular(this);"
+										<c:if test="${exDocumentoDTO.substituicao}">checked</c:if>/>
 									Substituto
 								</td>
 							</c:otherwise>
@@ -257,7 +268,7 @@
 							
 							<select  name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();">
 								<c:forEach items="${exDocumentoDTO.listaTipoDest}" var="item">
-									<option value="${item.key}" ${item.key == exDocumentoDTO.idTipoDest ? 'selected' : ''}>
+									<option value="${item.key}" ${item.key == exDocumentoDTO.tipoDestinatario ? 'selected' : ''}>
 										${item.value}
 									</option>  
 								</c:forEach>
@@ -335,7 +346,7 @@
 								</tr>
 							</c:when>
 							<c:otherwise>
-								<input type="hidden" name="idMod" value="${exDocumentoDTO.modelo.idMod}" />
+								<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.modelo.idMod}" />
 							</c:otherwise>
 						</c:choose>
 						
@@ -344,9 +355,9 @@
 							<input type="hidden" name="campos" value="preenchimento" />
 							<td colspan="3">
 								
-								<select  name="exDocumentoDTO.preenchimentos" onchange="javascript:carregaPreench()">
+								<select  id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()">
 									<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
-										<option value="${item.idPreenchimento}" ${item.idPreenchimento == exDocumentoDTO.idPreenchimento ? 'selected' : ''}>
+										<option value="${item.idPreenchimento}" ${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
 											${item.nomePreenchimento}
 										</option>  
 									</c:forEach>
@@ -373,8 +384,8 @@
 					--%>
 					</c:if>
 					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" }'>
-						<input type="hidden" name="idFormaDoc" value="${exDocumentoDTO.formaDocPorTipo.idFormaDoc}" />
-						<input type="hidden" name="idMod" />
+						<input type="hidden" name="exDocumentoDTO.idFormaDoc" value="${exDocumentoDTO.formaDocPorTipo.idFormaDoc}" />
+						<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.idMod}"/>
 					</c:if>
 					<%--<c:if test='${ exDocumentoDTO.tipoDocumento == "antigo" }'>
 					<tr>
@@ -421,7 +432,7 @@
 						<input type="hidden" name="campos" value="descrDocumento" />
 						<td>Descrição:</td>
 						<td colspan="3">
-							<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" cssClass="gt-form-textarea" value="${exDocumentoDTO.descrDocumento}" ></textarea> <br>
+							<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" cssClass="gt-form-textarea" value="${exDocumentoDTO.descrDocumento}" >${exDocumentoDTO.descrDocumento}</textarea> <br>
 							<span><b>(preencher o campo acima com palavras-chave, sempre usando substantivos, gênero masculino e singular)</b></span>
 						</td>
 					</tr>

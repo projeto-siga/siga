@@ -36,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,6 +104,7 @@ import com.opensymphony.xwork.Action;
 @Resource
 public class ExDocumentoController extends ExController {
 	
+	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	public ExDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so) {
 		super(request, response, context, result, CpDao.getInstance(), so);
 		
@@ -261,7 +263,9 @@ public class ExDocumentoController extends ExController {
 		
 	}
 	
-	public String aCriarVia(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	@Get("app/expediente/doc/criar_via")
+	public void criarVia(String sigla) throws Exception {
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO(sigla);
 		buscarDocumento(true, exDocumentoDTO);
 		
 		if (!Ex.getInstance().getComp().podeCriarVia(getTitular(), getLotaTitular(), exDocumentoDTO.getMob()))
@@ -271,22 +275,23 @@ public class ExDocumentoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
-	public String aCriarVolume(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	@Get("app/expediente/doc/criar_volume")
+	public void criarVolume(String sigla) throws Exception {
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO(sigla);
 		buscarDocumento(true, exDocumentoDTO);
 		
 		if (!Ex.getInstance().getComp().podeCriarVolume(getTitular(), getLotaTitular(), exDocumentoDTO.getMob()))
 			throw new AplicacaoException("Não é possível criar volumes neste documento");
+		
 		try {
 			Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());
 		} catch (final Exception e) {
 			throw e;
 		}
-		
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, exDocumentoDTO.getSigla());
 	}
 	
 	@Post("app/expediente/doc/recarregar")
@@ -691,7 +696,7 @@ public class ExDocumentoController extends ExController {
 		docVO.exibe();
 		
 		result.include("docVO", docVO);
-		result.include("sigla", exDocumentoDto.getSigla());
+		result.include("sigla", exDocumentoDto.getSigla().replace("/", ""));
 		result.include("id", exDocumentoDto.getId());
 		result.include("mob", exDocumentoDto.getMob());
 		result.include("lota", this.getLotaTitular());
@@ -1067,19 +1072,20 @@ public class ExDocumentoController extends ExController {
 		return new InputStreamDownload(exDocumentoDTO.getPdfStreamResult(), "application/pdf", "document.pdf");
 	}
 	
-	public String aRefazer(ExDocumentoDTO exDocumentoDTO) throws Exception {
-		buscarDocumento(true, exDocumentoDTO);
+	@Get("app/expediente/doc/refazer")
+	public void refazer(String sigla) throws Exception {
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO(sigla);
+		this.buscarDocumento(true, exDocumentoDTO);
 		
 		if (!Ex.getInstance().getComp().podeRefazer(getTitular(), getLotaTitular(), exDocumentoDTO.getMob()))
 			throw new AplicacaoException("Não é possível refazer o documento");
+		
 		try {
-
 			exDocumentoDTO.setDoc(Ex.getInstance().getBL().refazer(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc()));
-
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
 	public String aAtualizarMarcasDoc(ExDocumentoDTO exDocumentoDTO) throws Exception {
@@ -1927,4 +1933,8 @@ public class ExDocumentoController extends ExController {
 		return Ex.getInstance().getBL().processarModelo(mov, acao, formParams, orgaoUsu);
 	}	
 	
+
+	public static void redirecionarParaExibir(Result result, String sigla) {
+		result.redirectTo(MessageFormat.format(URL_EXIBIR, sigla));
+	}
 }

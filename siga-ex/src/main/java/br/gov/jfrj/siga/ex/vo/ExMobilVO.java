@@ -420,7 +420,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("hourglass_add",
 				"Sobrestar",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"sobrestar_gravar",
 				Ex.getInstance().getComp()
 						.podeSobrestar(titular, lotaTitular, mob), null, null,
@@ -463,7 +463,7 @@ public class ExMobilVO extends ExVO {
 						.podeDesobrestar(titular, lotaTitular, mob), null,
 				null, null, null, "once");
 
-		addAcao("link", "Juntar", "/expediente/mov", "juntar", Ex.getInstance()
+		addAcao("link", "Juntar", "/app/expediente/mov", "juntar", Ex.getInstance()
 				.getComp().podeJuntar(titular, lotaTitular, mob));
 
 		addAcao("page_find",
@@ -473,8 +473,8 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeReferenciar(titular, lotaTitular, mob));
 
-		addAcao("link_add", "Apensar", "/expediente/mov", "apensar", Ex
-				.getInstance().getComp().podeApensar(titular, lotaTitular, mob));
+		addAcao("link_add", "Apensar", "/app/expediente/mov", "apensar", 
+				Ex.getInstance().getComp().podeApensar(titular, lotaTitular, mob));
 
 		// Não aparece a opção de Cancelar Movimentação para documentos
 		// temporários
@@ -496,9 +496,8 @@ public class ExMobilVO extends ExVO {
 		// exibir+completo,
 		// confirmacao
 
-		addAcao("folder_page_white", "Encerrar Volume", "/expediente/mov",
-				"encerrar_volume_gravar", Ex.getInstance().getComp()
-						.podeEncerrarVolume(titular, lotaTitular, mob),
+		addAcao("folder_page_white", "Encerrar Volume", "/app/expediente/mov",
+				"encerrar_volume", Ex.getInstance().getComp().podeEncerrarVolume(titular, lotaTitular, mob),
 				"Confirma o encerramento do volume?", null, null, null, "once");
 
 		addAcao("cancel", "Cancelar Via", "/expediente/mov",

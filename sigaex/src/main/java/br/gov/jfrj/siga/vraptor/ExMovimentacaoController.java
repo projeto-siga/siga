@@ -36,6 +36,7 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -74,7 +75,6 @@ import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.webwork.action.ExClassificacaoSelecao;
 import br.gov.jfrj.webwork.action.ExDocumentoSelecao;
-import br.gov.jfrj.webwork.action.ExMobilSelecao;
 import br.gov.jfrj.webwork.action.ExMovimentacaoAction;
 
 import com.lowagie.text.Document;
@@ -86,10 +86,7 @@ import com.opensymphony.xwork.Action;
 
 public class ExMovimentacaoController extends ExController {
 	
-	private static final long serialVersionUID = -8223202120027622708L;
-
-	private static final Logger log = Logger
-			.getLogger(ExMovimentacaoAction.class);
+	private static final Logger log = Logger.getLogger(ExMovimentacaoAction.class);
 
 	private ExMobil mob;
 
@@ -1163,19 +1160,19 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aSobrestarGravar() throws Exception {
-		buscarDocumento(true);
-		lerForm(mov);
+	@Get("app/expediente/mov/sobrestar_gravar")
+	public void sobrestarGravar(String sigla) throws Exception {
+		this.sigla = sigla;
+		this.buscarDocumento(true);
+		this.lerForm(mov);
 
-		if (!Ex.getInstance().getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-			throw new AplicacaoException(
-					"Acesso permitido a usuários autorizados.");
+		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Acesso permitido a usuários autorizados.");
 		}
 
-		if (!Ex.getInstance().getComp()
-				.podeSobrestar(getTitular(), getLotaTitular(), mob))
+		if (!Ex.getInstance().getComp().podeSobrestar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Via não pode ser sobrestada");
+		
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -1184,8 +1181,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
 	public String aAssinar() throws Exception {
@@ -1555,16 +1551,39 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aRedefinirNivelAcesso() throws Exception {
-
-		buscarDocumento(true);
-
-		setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
-
-		return Action.SUCCESS;
+	@Get("app/expediente/mov/redefinir_nivel_acesso")
+	public void redefinirNivelAcesso(String sigla) throws Exception {
+		this.sigla = sigla;
+		this.buscarDocumento(true);
+		this.setNivelAcesso(doc.getExNivelAcesso().getIdNivelAcesso());
+		
+		result.include("substituicao", substituicao);
+		result.include("sigla", sigla);
+		result.include("dtMovString", dtMovString);
+		result.include("campos", getTitularSel().getId());
+		result.include("mob", mob);
+		result.include("listaNivelAcesso", getListaNivelAcesso());
+		result.include("nivelAcesso", nivelAcesso);
+		
+		result.include("subscritorSel", getSubscritorSel());
+		result.include("titularSel", getTitularSel());
 	}
 
-	public String aRedefinirNivelAcessoGravar() throws Exception {
+	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")
+	public void redefinirNivelAcessoGravar(String sigla,
+			DpPessoaSelecao subscritorSel,
+			DpPessoaSelecao titularSel,
+			String dtMovString,
+			boolean substituicao,
+			Long nivelAcesso
+			) throws Exception {
+		this.sigla = sigla;
+		this.subscritorSel = subscritorSel;
+		this.titularSel = titularSel;
+		this.dtMovString = dtMovString;
+		this.substituicao = substituicao;
+		this.nivelAcesso = nivelAcesso;
+		
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -1591,9 +1610,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		setDoc(mov.getExDocumento());
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
 	public String aAssinarVerificar() throws Exception {
@@ -2022,23 +2039,59 @@ public class ExMovimentacaoController extends ExController {
 	// public String getViaChar() {
 	// return "" + (Character.toChars(getNumVia().intValue() + 64))[0];
 	// }
+	@Get("app/expediente/mov/juntar")
+	public void juntar(String sigla) throws Exception {
+		this.sigla = sigla;
+		this.buscarDocumento(true);
 
-	public String aJuntar() throws Exception {
-		buscarDocumento(true);
-
-		if (!Ex.getInstance().getComp()
-				.podeJuntar(getTitular(), getLotaTitular(), mob))
+		if (!Ex.getInstance().getComp().podeJuntar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível fazer juntada");
-
-		return Action.SUCCESS;
+		
+		result.include("sigla", sigla);
+		result.include("mob", mob);
+		result.include("doc", doc);
+		result.include("substituicao", substituicao);
+		result.include("dtMovString", dtMovString);
+		result.include("campos", getTitularSel().getId());
+		result.include("idDocumentoPaiExterno", idDocumentoPaiExterno);
+		
+		result.include("titularSel", getTitularSel());
+		result.include("documentoRefSel", getDocumentoRefSel());
+		result.include("subscritorSel", getSubscritorSel());
 	}
 
-	public String aJuntarGravar() throws Exception {
-		buscarDocumento(true);
-		lerForm(mov);
+//	sigla,
+//	dtMovString	
+//	substituicao
+//	campos
+//	idDocumentoPaiExterno
+//
+//	subscritorSel
+//	titularSel
+//	documentoRefSel
+//	
+	@Post("app/expediente/mov/juntar_gravar")
+	public void aJuntarGravar(String sigla,
+			String dtMovString,
+			boolean substituicao,
+			String idDocumentoPaiExterno,
+			DpPessoaSelecao subscritorSel,
+			DpPessoaSelecao titularSel,
+			ExMobilSelecao documentoRefSel,
+			String idDocumentoEscolha) throws Exception {
+		
+		this.sigla = sigla;
+		this.dtMovString  = dtMovString;
+		this.substituicao = substituicao;
+		this.idDocumentoPaiExterno = idDocumentoPaiExterno;
+		this.subscritorSel = subscritorSel;
+		this.titularSel = titularSel;
+		this.documentoRefSel = documentoRefSel;
+		this.idDocumentoEscolha = idDocumentoEscolha;
+		this.buscarDocumento(true);
+		this.lerForm(mov);
 
-		if (!Ex.getInstance().getComp()
-				.podeJuntar(getTitular(), getLotaTitular(), mob))
+		if (!Ex.getInstance().getComp().podeJuntar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível fazer juntada");
 
 		// Nato: precisamos rever o codigo abaixo, pois a movimentacao nao pode
@@ -2069,27 +2122,45 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		setDoc(mov.getExDocumento());
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
-	public String aApensar() throws Exception {
-		buscarDocumento(true);
-
-		if (!Ex.getInstance().getComp()
-				.podeApensar(getTitular(), getLotaTitular(), mob))
+	@Get("app/expediente/mov/apensar")
+	public void apensar(String sigla) throws Exception {
+		this.setSigla(sigla);
+		this.buscarDocumento(true);
+		 
+		if (!Ex.getInstance().getComp().podeApensar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível apensar");
-
-		return Action.SUCCESS;
+		
+		result.include("mob", mob);
+		result.include("doc", doc);
+		result.include("substituicao", substituicao);
+		result.include("sigla", sigla);
+		result.include("documentoRefSel", getDocumentoRefSel());
+		result.include("titularSel", getTitularSel());
+		result.include("subscritorSel", getSubscritorSel());
 	}
 
-	public String aApensarGravar() throws Exception {
-		buscarDocumento(true);
-		lerForm(mov);
+	@Post("app/expediente/mov/apensar_gravar")
+	public void apensarGravar(ExMobilSelecao documentoRefSel, 
+				DpPessoaSelecao subscritorSel, 
+				DpPessoaSelecao titularSel, 
+				String sigla,
+				String dtMovString,
+				boolean substituicao) throws Exception {
 
-		if (!Ex.getInstance().getComp()
-				.podeApensar(getTitular(), getLotaTitular(), mob))
+		this.dtMovString = dtMovString;
+		this.sigla = sigla;
+		this.substituicao = substituicao;
+		this.documentoRefSel = documentoRefSel;
+		this.subscritorSel = subscritorSel;
+		this.titularSel = titularSel;
+		
+		this.buscarDocumento(true);
+		this.lerForm(mov);
+
+		if (!Ex.getInstance().getComp().podeApensar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível fazer apensar");
 
 		try {
@@ -2110,9 +2181,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		setDoc(mov.getExDocumento());
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
 	}
 
 	public String aDesapensar() throws Exception {
@@ -2949,13 +3018,14 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aEncerrarVolumeGravar() throws Exception {
+	@Get("app/expediente/mov/encerrar_volume")
+	public void encerrarVolumeGravar(String sigla) throws Exception {
+		this.sigla = sigla;
 		buscarDocumento(true);
 		lerForm(mov);
 
 		if (mob.isVolumeEncerrado())
-			throw new AplicacaoException(
-					"Não é permitido encerrar um volume já encerrado.");
+			throw new AplicacaoException("Não é permitido encerrar um volume já encerrado.");
 		try {
 			Ex.getInstance()
 					.getBL()
@@ -2967,13 +3037,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		/*
-		 * ArrayList lista = new ArrayList(); final Object[] ao = {
-		 * mov.getExDocumento(), UltMov }; lista.add(ao); setItens(lista);
-		 */
-		setMov(mob.getUltimaMovimentacao());
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
 	}
 
 	public String aAnotar() throws Exception {
@@ -3393,6 +3457,8 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	public ExMobilSelecao getDocumentoRefSel() {
+		if (documentoRefSel == null)
+			return new ExMobilSelecao();
 		return documentoRefSel;
 	}
 
@@ -3520,6 +3586,9 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	public DpPessoaSelecao getSubscritorSel() {
+		if (subscritorSel == null) {
+			return new DpPessoaSelecao();
+		}
 		return subscritorSel;
 	}
 
@@ -3567,8 +3636,8 @@ public class ExMovimentacaoController extends ExController {
 
 	private void lerForm(final ExMovimentacao mov) throws Exception {
 		mov.setExMobil(mob);
-
 		mov.setDescrMov(getDescrMov());
+		
 		if (idPapel != null) {
 			mov.setExPapel(dao().consultar(idPapel, ExPapel.class, false));
 		}
@@ -4040,6 +4109,9 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	public DpPessoaSelecao getTitularSel() {
+		if(titularSel == null) {
+			return new DpPessoaSelecao();
+		}
 		return titularSel;
 	}
 

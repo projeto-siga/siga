@@ -249,6 +249,10 @@ public class ExDocumentoDTO {
 		results = new LinkedList<ExDocumento>();
 	}
 	
+	public ExDocumentoDTO(String sigla) {
+		this.sigla = sigla;
+	}
+
 	public boolean isCriandoAnexo() {
 		return criandoAnexo;
 	}

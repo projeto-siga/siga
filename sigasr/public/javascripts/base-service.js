@@ -7,12 +7,23 @@ function Formulario(form) {
 		form.populate(obj, {
 			resetForm:true
 		});
+		
+		populateFormObjectValues(form, obj);
 	}
 	
 	this.toJson = function() {
 		return form.serializeJSON();
 	}
 }
+
+function populateFormObjectValues(obj) {
+	for (var x in obj) {
+	    if (obj.hasOwnProperty(x) && typeof obj[x] == 'object') {
+	        console.log("Nome atributo: " + x + " Valor: " + obj[x]);
+	    }
+	}
+}
+
 /**
  * Utilitatio para desenhar o HTML correto do botao de desativar/reativar
  */

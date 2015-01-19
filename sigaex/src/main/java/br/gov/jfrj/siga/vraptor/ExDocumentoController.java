@@ -250,7 +250,9 @@ public class ExDocumentoController extends ExController {
 		return edita(exDocumentoDTO).toString();
 	}
 	
-	public String aCriarVia(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	@Get("app/expediente/doc/criar_via")
+	public void criarVia(String sigla) throws Exception {
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO(sigla);
 		buscarDocumento(true, exDocumentoDTO);
 		
 		if (!Ex.getInstance().getComp().podeCriarVia(getTitular(), getLotaTitular(), exDocumentoDTO.getMob()))
@@ -260,8 +262,7 @@ public class ExDocumentoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
 	@Get("app/expediente/doc/criar_volume")
@@ -1033,19 +1034,20 @@ public class ExDocumentoController extends ExController {
 		return Action.SUCCESS;
 	}
 	
-	public String aRefazer(ExDocumentoDTO exDocumentoDTO) throws Exception {
-		buscarDocumento(true, exDocumentoDTO);
+	@Get("app/expediente/doc/refazer")
+	public void refazer(String sigla) throws Exception {
+		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO(sigla);
+		this.buscarDocumento(true, exDocumentoDTO);
 		
 		if (!Ex.getInstance().getComp().podeRefazer(getTitular(), getLotaTitular(), exDocumentoDTO.getMob()))
 			throw new AplicacaoException("Não é possível refazer o documento");
+		
 		try {
-
 			exDocumentoDTO.setDoc(Ex.getInstance().getBL().refazer(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc()));
-
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
 	public String aAtualizarMarcasDoc(ExDocumentoDTO exDocumentoDTO) throws Exception {

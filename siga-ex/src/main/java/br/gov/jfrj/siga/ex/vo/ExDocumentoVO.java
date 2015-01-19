@@ -377,7 +377,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("cd", "Download do Conteúdo", "/expediente/doc", "anexo",
 				Ex.getInstance().getComp().podeDownloadConteudo(titular, lotaTitular, mob));
 		
-		vo.addAcao("add", "Criar Via", "/expediente/doc", "criarVia",
+		vo.addAcao("add", "Criar Via", "/app/expediente/doc", "criar_via",
 				Ex.getInstance().getComp().podeCriarVia(titular, lotaTitular, mob), null, null, null, null, "once");
 		
 		vo.addAcao("add", "Abrir Novo Volume", "/app/expediente/doc", "criar_volume",
@@ -404,7 +404,7 @@ public class ExDocumentoVO extends ExVO {
 					+ getSigla(), null, null, null);
 		}
 		
-		vo.addAcao("shield", "Redefinir Nível de Acesso", "/expediente/mov", "redefinir_nivel_acesso", Ex.getInstance().getComp()
+		vo.addAcao("shield", "Redefinir Nível de Acesso", "/app/expediente/mov", "redefinir_nivel_acesso", Ex.getInstance().getComp()
 				.podeRedefinirNivelAcesso(titular, lotaTitular, mob));
 		
 		vo.addAcao("book_add", "Solicitar Publicação no Boletim", "/expediente/mov", "boletim_agendar", Ex.getInstance()
@@ -413,9 +413,8 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("book_link", "Registrar Publicação do BIE", "/expediente/mov", "boletim_publicar", Ex.getInstance().getComp()
 				.podeBotaoAgendarPublicacaoBoletim(titular, lotaTitular, mob), null, null, null, null, "once");
 		
-		vo.addAcao("error_go", "Refazer", "/expediente/doc",
-		
-		"refazer", Ex.getInstance().getComp().podeRefazer(titular, lotaTitular, mob),
+		vo.addAcao("error_go", "Refazer", "/app/expediente/doc",
+				"refazer", Ex.getInstance().getComp().podeRefazer(titular, lotaTitular, mob),
 				"Esse documento será cancelado e seus dados serão copiados para um novo expediente em elaboração. Prosseguir?",
 				null, null, null, "once");
 		

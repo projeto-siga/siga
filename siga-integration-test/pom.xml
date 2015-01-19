@@ -3,26 +3,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<parent>
-		<groupId>projeto-siga</groupId>
-		<artifactId>projeto-siga</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<groupId>siga</groupId>
+		<artifactId>siga-doc</artifactId>
+		<version>1.1</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>siga-integration-test</artifactId>
-
-	<profiles>
-		<profile>
-			<activation>
-				<property>
-					<name>server.ip</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-failsafe-plugin</artifactId>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
 						<version>2.12</version>
 						<configuration>
 							<systemProperties>
@@ -43,7 +35,19 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>
+				</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<activation>
+				<property>
+					<name>server.ip</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>					
 					<plugin>
 						<groupId>org.jolokia</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
@@ -190,25 +194,25 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>projeto-siga</groupId>
+			<groupId>siga</groupId>
 			<artifactId>siga</artifactId>
 			<version>${siga.version}</version>
 			<type>war</type>
 		</dependency>
 		<dependency>
-			<groupId>projeto-siga</groupId>
+			<groupId>siga</groupId>
 			<artifactId>sigacd</artifactId>
 			<type>war</type>
 			<version>${siga.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>projeto-siga</groupId>
+			<groupId>siga</groupId>
 			<artifactId>sigaex</artifactId>
 			<type>war</type>
 			<version>${siga.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>projeto-siga</groupId>
+			<groupId>siga</groupId>
 			<artifactId>sigawf</artifactId>
 			<type>war</type>
 			<version>${siga.version}</version>

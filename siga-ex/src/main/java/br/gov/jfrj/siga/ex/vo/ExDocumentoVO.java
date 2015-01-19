@@ -368,7 +368,7 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao("attach", "Anexar Arquivo", "/expediente/mov", "anexar",
 				Ex.getInstance().getComp().podeAnexarArquivo(titular, lotaTitular, mob));
-		vo.addAcao("tag_yellow", "Fazer Anotação", "/expediente/mov", "anotar",
+		vo.addAcao("tag_yellow", "Fazer Anotação", "/app/expediente/mov", "anotar",
 				Ex.getInstance().getComp().podeFazerAnotacao(titular, lotaTitular, mob));
 		
 		vo.addAcao("folder_user", "Definir Perfil", "/expediente/mov", "vincularPapel", Ex.getInstance().getComp()

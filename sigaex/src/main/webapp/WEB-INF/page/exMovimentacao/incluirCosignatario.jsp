@@ -30,9 +30,9 @@
 			<div class="gt-content-box gt-for-table">
 
 				<form action="incluir_cosignatario_gravar"
-					namespace="/expediente/mov" cssClass="form" method="POST">
+					namespace="/expediente/mov" cssClass="form" method="post">
 					<input type="hidden" name="postback" value="1" /> <input
-						type="hidden" name="sigla" value="sigla" />
+						type="hidden" name="sigla" value="${sigla}" />
 					<table class="gt-form-table">
 						<tr class="header">
 							<td colspan="2">Dados do Cossignatário</td>

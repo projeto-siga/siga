@@ -34,6 +34,7 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -80,9 +81,8 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.opensymphony.xwork.Action;
 
 @Resource
-
 public class ExMovimentacaoController extends ExController {
-	
+
 	private static final long serialVersionUID = -8223202120027622708L;
 
 	private static final Logger log = Logger
@@ -231,8 +231,9 @@ public class ExMovimentacaoController extends ExController {
 	private Integer tamMaxDescr;
 
 	private Long idLotDefault;
-	
-	public ExMovimentacaoController(HttpServletRequest request, Result result, SigaObjects so) {
+
+	public ExMovimentacaoController(HttpServletRequest request, Result result,
+			SigaObjects so) {
 		super(request, result, ExDao.getInstance(), so);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
@@ -1472,18 +1473,13 @@ public class ExMovimentacaoController extends ExController {
 
 	/*
 	 * public String aFinalizarAssinarGravar() throws Exception{ if (getId() ==
-	 * null) throw new AplicacaoException("id não foi informada.");
-	 * 
-	 * doc = daoDoc(getId()); // doc = dao.consultarConteudoBlob(doc);
-	 * 
-	 * verificaNivelAcesso(doc, numVia);
-	 * 
-	 * if (!Ex.getInstance().getComp().podeFinalizarAssinar(getTitular(),
+	 * null) throw new AplicacaoException("id não foi informada."); doc =
+	 * daoDoc(getId()); // doc = dao.consultarConteudoBlob(doc);
+	 * verificaNivelAcesso(doc, numVia); if
+	 * (!Ex.getInstance().getComp().podeFinalizarAssinar(getTitular(),
 	 * getLotaTitular(), doc, numVia)) throw new
 	 * AplicacaoException("Operação não permitida");
-	 * 
 	 * Ex.getInstance().getBL().finalizar(getTitular(), getLotaTitular(), doc);
-	 * 
 	 * return aAssinarGravar(); }
 	 */
 
@@ -2193,7 +2189,7 @@ public class ExMovimentacaoController extends ExController {
 
 		return Action.SUCCESS;
 	}
-	
+
 	@Get("/app/expediente/incluir_cosignatario")
 	public void incluirCosignatario(String sigla) throws Exception {
 		this.sigla = sigla;
@@ -2205,9 +2201,17 @@ public class ExMovimentacaoController extends ExController {
 		result.include("sigla", sigla);
 		result.include("documento", doc);
 		result.include("mob", mob);
+		result.include("cosignatarioSel", cosignatarioSel);
 	}
 
-	public String aIncluirCosignatarioGravar() throws Exception {
+	@Post("/app/expediente/incluir_cosignatario_gravar")
+	public void aIncluirCosignatarioGravar(String sigla, ExMobil mob,
+			DpPessoaSelecao cosignatarioSel, String funcaoCosignatario)
+			throws Exception {
+		this.sigla = sigla;
+		this.mob = mob;
+		this.cosignatarioSel = cosignatarioSel;
+		this.funcaoCosignatario = funcaoCosignatario;
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -2232,7 +2236,6 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
 	}
 
 	public String aReceber() throws Exception {
@@ -2804,14 +2807,19 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aReferenciar() throws Exception {
+	@Get("/app/expediente/mov/referenciar")
+	public void aReferenciar(String sigla) throws Exception {
+		this.sigla = sigla;
 		buscarDocumento(true);
-
 		if (!Ex.getInstance().getComp()
 				.podeReferenciar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível fazer vinculação");
 
-		return Action.SUCCESS;
+		result.include("sigla", sigla);
+		result.include("doc", doc);
+		result.include("mob", mob);
+		result.include("substituicao", substituicao);
+		result.include("documentoRefSel", documentoRefSel);
 	}
 
 	public String aPrever() throws Exception {
@@ -2831,7 +2839,13 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aReferenciarGravar() throws Exception {
+	@Post("/app/expediente/mov/referenciar_gravar")
+	public void aReferenciarGravar(String sigla, ExDocumento doc, ExMobil mob,
+			boolean substituicao, DpPessoaSelecao titularSel) throws Exception {
+		this.sigla = sigla;
+		this.doc = doc;
+		this.substituicao = substituicao;
+		this.titularSel = titularSel;
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -2860,10 +2874,11 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		setDoc(mov.getExDocumento());
-		return Action.SUCCESS;
 	}
 
-	public String aTransferir() throws Exception {
+	@Get("/app/expediente/mov/transferir")
+	public void aTransferir(String sigla) throws Exception {
+		this.sigla = sigla;
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -2891,13 +2906,75 @@ public class ExMovimentacaoController extends ExController {
 				.podeDespachar(getTitular(), getLotaTitular(), mob)))
 			throw new AplicacaoException(
 					"Não é possível fazer despacho nem transferência");
-		return Action.SUCCESS;
+
+		result.include("doc", this.getDoc());
+		result.include("mob", this.getMob());
+		result.include("mov", this.getMov());
+		result.include("postback", this.getPostback());
+		result.include("sigla", this.getSigla());
+		result.include("dtMovString", this.getDtMovString());
+		result.include("subscritorSel", this.getSubscritorSel());
+		result.include("substituicao", this.isSubstituicao());
+		result.include("titularSel", this.getTitularSel());
+		result.include("nmFuncaoSubscritor", this.getNmFuncaoSubscritor());
+		result.include("idTpDespacho", this.getIdTpDespacho());
+		result.include("idResp", this.getIdResp());
+		result.include("tiposDespacho", this.getTiposDespacho());
+		result.include("descrMov", this.getDescrMov());
+		result.include("listaTipoResp", this.getListaTipoResp());
+		result.include("tipoResponsavel", this.getTipoResponsavel());
+
+		result.include("lotaResponsavelSel", this.getLotaResponsavelSel());
+		result.include("responsavelSel", this.getResponsavelSel());
+		result.include("cpOrgaoSel", this.getCpOrgaoSel());
+		result.include("obsOrgao", this.getObsOrgao());
 	}
 
-	public String aTransferirGravar() throws Exception {
+	@Post("/app/expediente/mov/transferir_gravar")
+	public String transferir_gravar(int postback, String sigla,
+			String dtMovString, DpPessoaSelecao subscritorSel,
+			boolean substituicao, DpPessoaSelecao titularSel,
+			String nmFuncaoSubscritor, long idTpDespacho, long idResp,
+			List<ExTipoDespacho> tiposDespacho, String descrMov,
+			List<Map<Integer, String>> listaTipoResp, int tipoResponsavel,
+			DpLotacaoSelecao lotaResponsavel, DpPessoaSelecao responsavelSel,
+			CpOrgaoSelecao cpOrgacaoSel, String obsOrgao, String protocolo)
+			throws Exception {
+		this.setId(id);
+		this.setSigla(sigla);
+		// this.setDoc(doc);
+		// this.setMob(mob);
+		// this.setMov(mov);
+		this.setPostback(postback);
+		this.setDtMovString(dtMovString);
+		this.setSubscritorSel(subscritorSel);
+		this.setSubstituicao(substituicao);
+		this.setTitularSel(titularSel);
+		this.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+		this.setIdTpDespacho(idTpDespacho);
+		this.setIdResp(idResp);
+		// result.include("tiposDespacho", this.getTiposDespacho());
+		this.setDescrMov(descrMov);
+		// result.include("listaTipoResp", this.getListaTipoResp());
+		this.setTipoResponsavel(tipoResponsavel);
+
+		if (this.lotaSubscritorSel == null)
+			this.lotaSubscritorSel = new DpLotacaoSelecao();
+
+		if (this.subscritorSel == null)
+			this.subscritorSel = new DpPessoaSelecao();
+
+		if (this.titularSel == null)
+			this.titularSel = new DpPessoaSelecao();
+
+		if (this.responsavelSel == null)
+			this.responsavelSel = new DpPessoaSelecao();
+
+		if (this.lotaResponsavelSel == null)
+			this.lotaResponsavelSel = new DpLotacaoSelecao();
+
 		buscarDocumento(true);
 		lerForm(mov);
-
 		final ExMovimentacao UltMov = mob.getUltimaMovimentacaoNaoCancelada();
 		if ((mov.getLotaResp() != null && mov.getResp() == null
 				&& UltMov.getLotaResp() != null && UltMov.getResp() == null && UltMov
@@ -2935,13 +3012,8 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		/*
-		 * ArrayList lista = new ArrayList(); final Object[] ao = {
-		 * mov.getExDocumento(), UltMov }; lista.add(ao); setItens(lista);
-		 */
 		setMov(mob.getUltimaMovimentacao());
-		if (param("protocolo") != null && param("protocolo").equals("mostrar"))
+		if (protocolo != null && protocolo.equals("mostrar"))
 			return "protocolo";
 		return Action.SUCCESS;
 	}
@@ -2973,19 +3045,58 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aAnotar() throws Exception {
+	@Get("/app/expediente/mov/anotar")
+	public void aAnotar(String sigla) throws Exception {
+		this.setSigla(sigla);
 		buscarDocumento(true);
 
 		if (!Ex.getInstance().getComp()
 				.podeFazerAnotacao(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível fazer anotação");
 
-		return Action.SUCCESS;
+		result.include("sigla", this.getSigla());
+		result.include("dtMovString", this.getDtMovString());
+		result.include("mob", this.getMob());
+		result.include("mov", this.getMov());
+		result.include("doc", this.getDoc());
+		result.include("substituicao", this.isSubstituicao());
+		result.include("nmFuncaoSubscritor", this.getNmFuncaoSubscritor());
+		result.include("descrMov", this.getDescrMov());
+		result.include("tipoResponsavel", this.getTipoResponsavel());
+		result.include("obsOrgao", this.getObsOrgao());
+		result.include("subscritorSel", this.getSubscritorSel());
+		result.include("titularSel", this.getTitularSel());
+
 	}
 
-	public String aAnotarGravar() throws Exception {
-		buscarDocumento(true);
+	@Post("/app/expediente/mov/anotar_gravar")
+	public void anotar_gravar(Integer postback, String sigla,
+			String dtMovString, DpPessoaSelecao subscritorSel,
+			boolean substituicao, DpPessoaSelecao titularSel,
+			String nmFuncaoSubscritor, String descrMov, String obsOrgao,
+			String[] campos) throws Exception {
+		this.setPostback(postback);
+		this.setSigla(sigla);
+		this.setDtMovString(dtMovString);
+		this.setSubscritorSel(subscritorSel);
+		this.setSubstituicao(substituicao);
+		this.setTitularSel(titularSel);
+		this.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+		this.setDescrMov(descrMov);
+		this.setObsOrgao(obsOrgao);
 
+		if (this.subscritorSel == null)
+			subscritorSel = new DpPessoaSelecao();
+
+		if (this.titularSel == null)
+			titularSel = new DpPessoaSelecao();
+
+		// this.setTipoResponsavel(tipoResponsavel);
+		// this.setMob(mob);
+		// this.setMov(mov);
+		// this.setDoc(doc);
+
+		buscarDocumento(true);
 		lerForm(mov);
 
 		final ExMovimentacao UltMov = mob.getUltimaMovimentacaoNaoCancelada();
@@ -3001,16 +3112,14 @@ public class ExMovimentacaoController extends ExController {
 							mov.getDtMov(), mov.getLotaResp(), mov.getResp(),
 							mov.getSubscritor(), mov.getTitular(),
 							mov.getDescrMov(), mov.getNmFuncaoSubscritor());
+
+			result.redirectTo("/app/expediente/doc/exibir?sigla="
+					+ this.getSigla());
+
 		} catch (final Exception e) {
 			throw e;
 		}
 
-		/*
-		 * ArrayList lista = new ArrayList(); final Object[] ao = {
-		 * mov.getExDocumento(), UltMov }; lista.add(ao); setItens(lista);
-		 */
-
-		return Action.SUCCESS;
 	}
 
 	public String aAnotarLote() throws Exception {

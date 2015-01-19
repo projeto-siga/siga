@@ -859,7 +859,7 @@ public class Application extends SigaApplication{
 		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
 				&& informacao.grupo == null)
 			throw new Exception(
-					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restriÃ§Ã£o.");
+					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restrição.");
 
 		if (informacao.id != 0)
 			GcBL.movimentar(informacao,

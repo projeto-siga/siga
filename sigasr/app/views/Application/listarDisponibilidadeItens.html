@@ -1,0 +1,110 @@
+#{extends 'main.html' /} #{set title:'Disponibilidade de itens de configuração' /}
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
+
+<style>
+.item-pai {
+	padding-left: 0em !important;
+	font-weight: bold !important;
+}
+
+.item-filho {
+	padding-left: 2em !important;
+	font-style: italic !important;
+}
+
+.item-neto {
+	padding-left: 4em !important;
+}
+</style>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Itens de Configuração</h2>
+		
+		<div class="gt-content-box dataTables_div">
+			<table id="itens_configuracao_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th>Código</th>
+						<th>Título</th>
+						<th>Descrição</th>
+						<th>Orgãos</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:itens, as:'item'}
+						<tr data-nivel="${item.nivel}" style="cursor: pointer;">
+							<td>${item.siglaItemConfiguracao}</td>
+							<td>${item.tituloItemConfiguracao}</td>
+							<td>${item.descrItemConfiguracao}</td>
+							<td></td>
+						</tr>
+					#{/list}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+	var niveis = {};
+	niveis[1] = 'item-pai';
+	niveis[2] = 'item-filho';
+	niveis[3] = 'item-neto';
+	
+	$('#itens_configuracao_table').dataTable({
+		"language": {
+			"emptyTable":     "Não existem resultados",
+		    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+		    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+		    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+		    "infoPostFix":    "",
+		    "thousands":      ".",
+		    "lengthMenu":     "Mostrar _MENU_ registros",
+		    "loadingRecords": "Carregando...",
+		    "processing":     "Processando...",
+		    "search":         "Filtrar:",
+		    "zeroRecords":    "Nenhum registro encontrado",
+		    "paginate": {
+		        "first":      "Primeiro",
+		        "last":       "Último",
+		        "next":       "Próximo",
+		        "previous":   "Anterior"
+		    },
+		    "aria": {
+		        "sortAscending":  ": clique para ordenação crescente",
+		        "sortDescending": ": clique para ordenação decrescente"
+		    }
+		},
+		// Define que a ordenacao deve comecar na segunda coluna (para evitar coluna com acoes de expandir)
+		"aaSorting" : [[1, 'asc']],
+// 		"columnDefs": [
+// 			// Coluna com expandir da grid, coluna de acoes e JSon
+// 			{
+// 				"targets": [colunas.expandir, colunas.acoes, colunas.jSon],
+// 				"searchable": false,
+// 				"sortable": false
+// 			},
+// 			// Coluna similaridade e JSon 
+// 			{
+// 				"targets": [colunas.similaridade, colunas.jSon],
+// 				"visible": false
+// 			}
+// 		],
+		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			var nivel = $(nRow).data('nivel'),
+				td = $('td:eq(1)', nRow),
+				nivelClass = niveis[nivel];
+			
+			td.addClass(nivelClass);
+		}
+	});
+</script>

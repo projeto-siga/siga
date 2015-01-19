@@ -1244,6 +1244,11 @@ public class Application extends SigaApplication {
 		render("@listarConhecimento" + (ajax ? "Ajax" : ""), item, acao);
 	}
 	
+	public static void listarDisponibilidadeItens() {
+		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar(Boolean.FALSE);
+		render(itens);
+	}
+	
 	public static void listarEquipe(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrEquipe> listaEquipe = SrEquipe.listar(mostrarDesativados);

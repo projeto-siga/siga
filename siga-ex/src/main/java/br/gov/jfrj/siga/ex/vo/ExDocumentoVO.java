@@ -356,7 +356,7 @@ public class ExDocumentoVO extends ExVO {
 		// podeFinalizarAssinar(titular, lotaTitular, mob),
 		// "Confirma a finalização do documento?", null, null, null);
 		
-		vo.addAcao("pencil", "Editar", "/expediente/doc", "editar",
+		vo.addAcao("pencil", "Editar", "/app/expediente/doc", "editar",
 				Ex.getInstance().getComp().podeEditar(titular, lotaTitular, mob));
 		
 		vo.addAcao("delete", "Excluir", "/app/expediente/doc", "excluir",

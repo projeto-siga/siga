@@ -398,7 +398,6 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 	}	
 	
 	public List<CpAplicacaoFeriado> getListaAplicacoes(){
-		
 		List<CpAplicacaoFeriado> aplicacoes = new ArrayList<CpAplicacaoFeriado>();
 		CpAplicacaoFeriado apl = new CpAplicacaoFeriado();
 		CpOcorrenciaFeriado ocorrencia = new CpOcorrenciaFeriado();

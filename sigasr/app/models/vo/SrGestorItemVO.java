@@ -9,12 +9,12 @@ import br.gov.jfrj.siga.dp.DpPessoa;
  */
 public class SrGestorItemVO {
 	public Long idGestorItem;
-	public DpPessoaVO dpPessoaVO;
-	public DpLotacaoVO dpLotacaoVO;
+	public SelecionavelVO dpPessoaVO;
+	public SelecionavelVO dpLotacaoVO;
 	
 	public SrGestorItemVO(Long idGestorItem, DpPessoa dpPessoa, DpLotacao dpLotacao) {
 		this.idGestorItem = idGestorItem;
-		this.dpPessoaVO = DpPessoaVO.createFrom(dpPessoa);
-		this.dpLotacaoVO = DpLotacaoVO.createFrom(dpLotacao);
+		this.dpPessoaVO = SelecionavelVO.createFrom(dpPessoa);
+		this.dpLotacaoVO = SelecionavelVO.createFrom(dpLotacao);
 	}
 }

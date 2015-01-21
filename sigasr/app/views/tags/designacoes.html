@@ -108,8 +108,7 @@
 	</div>
 	<!-- /content box -->
 	<div class="gt-table-buttons">
-		<a href="javascript: inserirDesignacao()"
-			class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a onclick="designacaoService.cadastrar('Incluir Designação')" class="gt-btn-medium gt-btn-left">Incluir</a>
 		<a href="javascript: carregarDesignacoes()" class="gt-btn-medium gt-btn-left">Carregar</a>
 	</div>
 </div>
@@ -169,9 +168,6 @@ altura:'200', largura:'450'}
 	colunasDesignacao.reativarDesativar=				30;
 	colunasDesignacao.ativo=							31;
 	
-	//removendo a referencia de '$' para o jQuery
-// 	$.noConflict();
-
 	jQuery( document ).ready(function($) {
 		/* Table initialization */
 		opts.designacoesDataTable = $('#designacoes_table')
@@ -242,14 +238,6 @@ altura:'200', largura:'450'}
 				"searchable" : false
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				/*if (aData[posIsHerdado] == 'true') {
-					$('td', nRow).addClass('item-desativado');
-					$('td:eq(0)', nRow).removeClass('checkbox-hidden');
-					
-					if (document.getElementById("check"+aData[posIdDesignacao]))
-						document.getElementById("check"+aData[posIdDesignacao]).checked = aData[posListaPrioSerial] == 'true';
-				}*/
-
 				$('td:eq('+colunasDesignacao.acaoExpandir+')', nRow).addClass('details-control');
 			},
 			"iDisplayLength": 100
@@ -257,12 +245,6 @@ altura:'200', largura:'450'}
 
 		$('#designacoes_table').mostrarDetalhes(detalhesDesignacao, opts.designacoesDataTable);
 		
-		$('#designacoes_table tbody').on('click', 'tr', function () {
-			var itemSelecionado = opts.designacoesDataTable.api().row(this).data();
-			
-			manipulaItemSelecionado(itemSelecionado, false, this);
-		});
-
 		opts.dataTable = opts.designacoesDataTable;
 	});
 
@@ -278,25 +260,6 @@ altura:'200', largura:'450'}
 			 mostrarDesativados : mostrarDesativados,
 			 colunas : colunasDesignacao.acao
 		};	
-
-	function manipulaItemSelecionado(itemSelecionado, duplicarItem, parent) {
-		if (itemSelecionado != undefined) {
-			if (!$(parent).hasClass('selected') ) {
-	            opts.designacoesDataTable.$('tr.selected').removeClass('selected');
-	            $(parent).addClass('selected');
-	        }
-
-			// só abre o modal caso seja click em alguma designação 'não-herdada'
-			if (itemSelecionado[ colunasDesignacao.herdado] == 'false') {
-				atualizarDesignacaoModal(itemSelecionado);
-
-				if (duplicarItem)
-					resetId();
-				
-				designacaoModalAbrir(!duplicarItem);
-			}
-		}
-	}
 
 	function detalhesDesignacao(d) {
 		var designacao = typeof d[colunasDesignacao.jSonDesignacao] == 'string' ? JSON.parse(d[colunasDesignacao.jSonDesignacao]) : d[colunasDesignacao.jSonDesignacao],
@@ -382,9 +345,9 @@ altura:'200', largura:'450'}
 				for (i = 0; i < designacaoJson.listaItemConfiguracaoVO.length; i++) {
 					var item = designacaoJson.listaItemConfiguracaoVO[i],
 						rowItem = [item.id, 
-						           item.sigla,
-						           item.titulo,
-						           item.descricao, 
+						           item.siglaItemConfiguracao,
+						           item.tituloItemConfiguracao,
+						           item.descrItemConfiguracao, 
 						           item.descricaoSimilaridade,
 						           "<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 					
@@ -398,7 +361,7 @@ altura:'200', largura:'450'}
 				for (i = 0; i < designacaoJson.listaAcaoVO.length; i++) {
 					var acao = designacaoJson.listaAcaoVO[i],
 						rowAcao = [acao.id,
-						           acao.sigla,
+								   acao.sigla,
 						           acao.titulo,
 						           "<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 					
@@ -411,125 +374,14 @@ altura:'200', largura:'450'}
 	
 	// Limpa os dados da tela.
 	function limparDadosDesignacaoModal() {
-		// recupera as comboboxes
-// 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-// 			jComplexoCbb = document.getElementsByName("complexo")[0],
-// 			jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
-// 			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
-		
-		// resetando os valores das combos
-// 		jOrgaoUsuarioCbb.selectedIndex = 0;
-// 		jComplexoCbb.selectedIndex = 0;
-// 		jPesquisaSatisfacaoCbb.selectedIndex = 0;
-// 		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
-		
-		// limpando campos do componente pessoaLotaFuncCargoSelecao
-// 		$("#dpPessoa").val('');
-// 		$("#dpPessoa_descricao").val('');
-// 		$("#dpPessoa_sigla").val('');
-// 		$("#dpPessoaSpan").html('');
-// 		$("#lotacao").val('');
-// 		$("#lotacao_descricao").val('');
-// 		$("#lotacao_sigla").val('');
-// 		$("#lotacaoSpan").html('');
-// 		$("#funcaoConfianca").val('');
-// 		$("#funcaoConfianca_descricao").val('');
-// 		$("#funcaoConfianca_sigla").val('');
-// 		$("#funcaoConfiancaSpan").html('');
-// 		$("#cargo").val('');
-// 		$("#cargo_descricao").val('');
-// 		$("#cargo_sigla").val('');
-// 		$("#cargoSpan").html('');
-// 		$("#cpGrupo").val('');
-// 		$("#cpGrupo_descricao").val('');
-// 		$("#cpGrupo_sigla").val('');
-// 		$("#cpGrupoSpan").html('');
-			
-		// limpando os valores dos demais campos
-// 		$("#descrConfiguracao").val('');
-// 		$("#acao").val('');
-// 		$("#acao_descricao").val('');
-// 		$("#acao_sigla").val('');
-// 		$("#acaoSpan").html('');
-// 		$("#atendente").val('');
-// 		$("#atendente_descricao").val('');
-// 		$("#atendente_sigla").val('');
-// 		$("#atendenteSpan").html('');
-// 		$("#preAtendente").val('');
-// 		$("#preAtendente_descricao").val('');
-// 		$("#preAtendente_sigla").val('');
-// 		$("#preAtendenteSpan").html('');
-// 		$("#posAtendente").val('');
-// 		$("#posAtendente_descricao").val('');
-// 		$("#posAtendente_sigla").val('');
-// 		$("#posAtendenteSpan").html('');
-// 		resetId(),
-		
 		itemConfiguracaoTable.api().clear().draw();
 		acaoTable.api().clear().draw();
-		
-		// limpa as mensagens de erros
-// 		resetAllErrorMessage();
-
-		// atualiza a visibilidade dos campos
-// 		if (parametroTela == 'equipe') {
-// 			document.getElementById("atendente_sigla").disabled = false;
-// 			document.getElementById("atendenteButton").disabled = false;
-// 			document.getElementById("preAtendente_sigla").disabled = false;
-// 			document.getElementById("preAtendenteButton").disabled = false;
-// 			document.getElementById("posAtendente_sigla").disabled = false;
-// 			document.getElementById("posAtendenteButton").disabled = false;
-// 		}
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.
 	function atualizarDesignacaoModal(itemArray) {
 		limparDadosDesignacaoModal();
-		
-// 		// recupera as comboboxes
-// 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-// 		jComplexoCbb = document.getElementsByName("complexo")[0],
-// 		jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
-// 		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
-		
-// 		// atualiza os valores das combos
-// 		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunasDesignacao.idOrgao]);
-// 		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunasDesignacao.idLocal]);
-// 		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[colunasDesignacao.tipoSolicitante]);
-// 		jPesquisaSatisfacaoCbb.selectedIndex = findSelectedIndexByValue(jPesquisaSatisfacaoCbb, itemArray[colunasDesignacao.idPesquisaSatisfacao]);
-		
-// 		// atualiza os valores dos demais campos
-// 		$("#descrConfiguracao").val(itemArray[colunasDesignacao.descrConfiguracao]);
-// 		$("#acao").val(itemArray[colunasDesignacao.itemConfiguracao]);
-// 		$("#acao_descricao").val(itemArray[colunasDesignacao.acao]);
-// 		$("#acao_sigla").val(itemArray[colunasDesignacao.siglaAcao]);
-// 		$("#acaoSpan").html(itemArray[colunasDesignacao.acao]);
-// 		$("#atendente").val(itemArray[colunasDesignacao.idAtendente]);
-// 		$("#atendente_descricao").val(itemArray[colunasDesignacao.descricaoAtendente]);
-// 		$("#atendente_sigla").val(itemArray[colunasDesignacao.atendente]);
-// 		$("#atendenteSpan").html(itemArray[colunasDesignacao.descricaoAtendente]);
-// 		$("#preAtendente").val(itemArray[colunasDesignacao.idPreAtendente]);
-// 		$("#preAtendente_descricao").val(itemArray[colunasDesignacao.descricaoPreAtendente]);
-// 		$("#preAtendente_sigla").val(itemArray[colunasDesignacao.pre]);
-// 		$("#preAtendenteSpan").html(itemArray[colunasDesignacao.descricaoPreAtendente]);
-// 		$("#posAtendente").val(itemArray[colunasDesignacao.idPosAtendente]);
-// 		$("#posAtendente_descricao").val(itemArray[colunasDesignacao.descricaoPosAtendente]);
-// 		$("#posAtendente_sigla").val(itemArray[colunasDesignacao.pos]);
-// 		$("#posAtendenteSpan").html(itemArray[colunasDesignacao.descricaoPosAtendente]);
-// 		$("#idConfiguracao").val(itemArray[colunasDesignacao.idDesignacao]);
-		
 		atualizarListasDesignacaoEdicao(itemArray);
-		
-// 		// atualiza os valores do componente pessoaLotaFuncCargoSelecao
-// 		getIdFieldSolicitante(itemArray[colunasDesignacao.tipoSolicitante]).val(itemArray[colunasDesignacao.idSolicitante]);
-// 		getDescricaoFieldSolicitante(itemArray[colunasDesignacao.tipoSolicitante]).val(itemArray[colunasDesignacao.descricaoSolicitante]);
-//         getSiglaFieldSolicitante(itemArray[colunasDesignacao.tipoSolicitante]).val(itemArray[colunasDesignacao.solicitante]);
-//         getSpanFieldSolicitante(itemArray[colunasDesignacao.tipoSolicitante]).html(itemArray[colunasDesignacao.descricaoSolicitante]);
-        
-//         $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
-
-// 		validarCamposTela();
-
 	};
 
 	
@@ -567,21 +419,6 @@ altura:'200', largura:'450'}
 		return 0;
 	};
 	
-	function inserirDesignacao() {
-		limparDadosDesignacaoModal();
-		designacaoModalAbrir(false);
-	}
-	
-	function designacaoModalAbrir(isEdicao) {
-		isEditing = isEdicao;
-		
-		if (isEdicao)
-			$("#designacao_dialog").dialog('option', 'title', 'Alterar Designação');
-		else
-			$("#designacao_dialog").dialog('option', 'title', 'Incluir Designação');
-		
-		$("#designacao_dialog").dialog('open');
-	}
 
 	function designacaoModalFechar() {
 		isEditing = false;
@@ -602,8 +439,6 @@ altura:'200', largura:'450'}
 			jPesquisaSatisfacao = jPesquisaSatisfacaoCbb.options[jPesquisaSatisfacaoCbb.selectedIndex],
 			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0],
 			jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
-		
-		
 		
 		var idDesignacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '',
 			rowSelecionada = opts.designacoesDataTable.api().row('.selected'),
@@ -966,61 +801,6 @@ altura:'200', largura:'450'}
     	return params;
     }
 
-
-// 	function desativarDesignacao(event, idOriginal) {
-// 		var tr = $(event.currentTarget).parent().parent();
-// 		event.stopPropagation();
-// 		var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
-		
-// 		$.ajax({
-//         	type: "POST",
-//         	url: '@{Application.desativarDesignacao()}?' + queryDesativarReativar(idOriginal, mostrarDesativados),
-//         	data: '',
-//         	dataType: "text",
-//         	success: function(id) {
-//         		var itemSelecionado = opts.designacoesDataTable.api().row(tr).data();
-//         		itemSelecionado[colunasDesignacao.idDesignacao] = id;
-//         		itemSelecionado[colunasDesignacao.ativo] = false;
-        		
-//         		opts.designacoesDataTable.api().row(tr).data(itemSelecionado);
-        		
-//             	if(!mostrarDesativados) {
-//             		tr.remove();
-//                	} else {
-//                    	var td = tr.find('td.acoes'),
-//                    		a = $('<a class="once" title="Reativar"/>'),
-//                    		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
-                   		
-//                    		a.bind('click', function(event) {
-//                    			reativarDesignacao(event, id);
-//                      	});
-//                    		td.html('');
-//                    		a.append(img);
-//                      	td.append(a);
-//                	}
-//         	},
-//         	error: function(error) {
-//         		var fieldsError = error.responseText.split(";");
-//         		// limpa as mensagens de erros
-//         		resetAllErrorMessage();
-        		
-//         		// Mostra a mensagem de campos obrigatórios
-//         		document.getElementById("erroCamposObrigatorios").style.display="inherit";
-        		
-//         		for (var i = 0; i < fieldsError.length; i++) {
-//         			var fieldName = fieldsError[i];
-//         			var fooElement = document.getElementById(fieldName);
-        			
-//         			if (fooElement != undefined)
-//         				fooElement.style.display = "inline";
-//         		}
-//         	}
-//        	});
-// 	}
-
-// 	function reativarDesignacao(event, idOriginal) {
-// 		var tr = $(event.currentTarget).parent().parent();
-// 		event.stopPropagation();
 	// Define a "classe" designacaoService
 	function DesignacaoService(opts) {
 		// super(opts)
@@ -1037,15 +817,16 @@ altura:'200', largura:'450'}
 
 	designacaoService.getId = function(designacao) {
 		if (designacao)
-			return designacao.idDesignacao;
+			return designacao.idConfiguracao;
 		else
 			return;
 	}
+	
 	designacaoService.getRow = function(designacao) {
 		return ['',
 		        designacao.orgaoUsuario != null ? designacao.orgaoUsuario.descricao : '', 
-				designacao.local != null ? designacao.local.descricao : '',
-				designacao.solicitante != null ? designacao.solicitante.sigla : '',
+				designacao.complexo != null ? designacao.complexo.descricao : '',
+				designacao.solicitante,
 				designacao.descrConfiguracao,
 				designacao.atendente != null ? designacao.atendente.sigla : '',
 				designacao.preAtendente != null ? designacao.preAtendente.sigla : '',
@@ -1096,12 +877,12 @@ altura:'200', largura:'450'}
 		wrapper = {},
 		success = function(objSalvo) {
 			if(service.onGravar) {
-				service.onGravar(obj, objSalvo);
+				service.onGravar(obj, JSON.parse(objSalvo));
 			}
 			opts.dialogCadastro.dialog("close");
 		}
 		wrapper[this.opts.objectName] = obj;
-		var params = jQuery.param(wrapper);
+		var params = jQuery.param(wrapper) + "&" + getListasAsString();
 		
 		$.ajax({
 	    	type: "POST",
@@ -1112,55 +893,6 @@ altura:'200', largura:'450'}
 	    	error: this.errorHandler
 	   	});
 	}
-	
-
-// 	var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false;
-
-// 		$.ajax({
-//         	type: "POST",
-//         	url: '@{Application.reativarDesignacao()}?' + queryDesativarReativar(idOriginal, mostrarDesativados),
-//         	data: '',
-//         	dataType: "text",
-//         	success: function(id) {
-//         		var itemSelecionado = opts.designacoesDataTable.api().row(tr).data();
-//         		itemSelecionado[colunasDesignacao.idDesignacao] = id;
-//         		itemSelecionado[colunasDesignacao.ativo] = true;
-        		
-//         		opts.designacoesDataTable.api().row(tr).data(itemSelecionado);
-        		
-//             	if(!mostrarDesativados) {
-//             		tr.remove();
-//                	} else {
-//                    	var td = tr.find('td.acoes'),
-//                    		a = $('<a class="once" title="Desativar"/>'),
-//                    		img = $('<img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">');
-               		
-//                    		a.bind('click', function(event) {
-//                    			desativarDesignacao(event, id);
-//                      	});
-//                    		td.html('');
-//                    		a.append(img);
-//                      	td.append(a);
-//                	}
-//         	},
-//         	error: function(error) {
-//         		var fieldsError = error.responseText.split(";");
-//         		// limpa as mensagens de erros
-//         		resetAllErrorMessage();
-        		
-//         		// Mostra a mensagem de campos obrigatórios
-//         		document.getElementById("erroCamposObrigatorios").style.display="inherit";
-        		
-//         		for (var i = 0; i < fieldsError.length; i++) {
-//         			var fieldName = fieldsError[i];
-//         			var fooElement = document.getElementById(fieldName);
-        			
-//         			if (fooElement != undefined)
-//         				fooElement.style.display = "inline";
-//         		}
-//         	}
-//        	});
-// 	}
 
 	function carregarDesignacoes() {
         var id = 921;
@@ -1194,6 +926,17 @@ altura:'200', largura:'450'}
 					acoes = acoes.append(duplicarButton);	
 			}
 		}
+	}
+
+	function duplicarDesignacao(event) {
+		var tr = $(event.currentTarget).parent().parent();
+		event.stopPropagation();
+		designacaoService.editar(tr.data('json'), 'Duplicar Designação');
+		resetId();
+	}
+
+	function resetId() {
+		$("#idConfiguracao").val('');
 	}
 	
 </script>

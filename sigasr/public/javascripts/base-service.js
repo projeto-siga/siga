@@ -4,11 +4,12 @@
 function Formulario(form) {
 	this.populateFromJson = function(obj) {
 		form.find('input[type=hidden]').val(''); // WA
+		
+		prepareObjectToForm(obj);
+		
 		form.populate(obj, {
 			resetForm:true
 		});
-		
-		populateFormObjectValues(form, obj);
 	}
 	
 	this.toJson = function() {
@@ -16,12 +17,53 @@ function Formulario(form) {
 	}
 }
 
-function populateFormObjectValues(obj) {
+/**
+ * Faz a preparação do objeto para conter os campos necessários para popular os componentes do TRF. 
+ */
+function prepareObjectToForm(obj) {
 	for (var x in obj) {
 	    if (obj.hasOwnProperty(x) && typeof obj[x] == 'object') {
-	        console.log("Nome atributo: " + x + " Valor: " + obj[x]);
+	    	var component = document.getElementsByName(x)[0],	    		
+	    		className = component != null ? component.className : null,
+	        	objeto = obj[x];
+	        
+	    	// Caso o atributo seja um objeto, verifica qual seu tipo e preenche os valores necessários
+	        if (className && objeto) {
+	        	if (className == 'selecao') {
+	        		prepareForSelecaoComponent(x, obj, objeto);
+	        	}
+		        else if (className == 'pessoaLotaSelecao') {
+		        	var combo = component.closestPreviousElement("select");
+		        	prepareForSelecaoComponent(x, obj, objeto);
+		        	obj[combo.id] = obj[x].tipo;
+		        }
+		        else if (className == 'lotaSelecao')
+		        	prepareForSelecaoComponent(x, obj, objeto);
+		        else if (className == 'pessoaLotaFuncCargoSelecao') {
+		        	var select = jQuery(component).parent().parent().parent().find('select')[0];
+		        	obj[select.id] = objeto.tipo;
+		        	select.onchange();
+		        	prepareForSelecaoComponent(x, obj, objeto);
+		        }
+		        	
+		        else if (className == 'select-siga') {
+		        	obj[x] = objeto ? objeto.id : '';
+		        }
+		        else
+		        	console.log("Algum outro tipo de componente / campo");
+	        }
 	    }
 	}
+}
+
+/**
+ * Cria os atributos esperados pelo componente selecao.html
+ */
+function prepareForSelecaoComponent(atributo, obj, objeto) {
+	obj[atributo] = objeto ? objeto.id : '';
+	obj[atributo+"_sigla"] = objeto ? objeto.sigla : '';
+	obj[atributo+"_descricao"] = objeto ? objeto.descricao : '';
+	obj[atributo+"Span"] = objeto ? objeto.descricao : '';
 }
 
 /**
@@ -213,10 +255,27 @@ BaseService.prototype.editar = function(obj, title) {
  */
 BaseService.prototype.cadastrar = function(title) {
 	this.removerErros();
+	this.limparSpanComponentes();
 	this.formularioHelper.populateFromJson({});
 	this.opts.dialogCadastro.dialog('option', 'title', title);
 	this.opts.dialogCadastro.dialog('open');
 }
+
+/**
+ * Limpa o valor dos Spans dos seguintes componentes:
+ * 
+ * selecao.html
+ * pessoaLotaSelecao.html
+ * lotaSelecao.html
+ * pessoaLotaFuncCargoSelecao.html
+ */
+BaseService.prototype.limparSpanComponentes = function() {
+	$('span.selecao').html('');
+	$('span.pessoaLotaSelecao').html('');
+	$('span.lotaSelecao').html('');
+	$('span.pessoaLotaFuncCargoSelecao').html('');
+}
+
 /**
  * Executa a acao de gravar o registro
  */

@@ -9,14 +9,14 @@
 	#{/set}
 #{/if}
 
-<select id="${_nomeSelPessoaClean}${_nomeSelLotacaoClean}" onchange="" ${pessoaLotaSelecaoDisabled} >
+<select id="${_nomeSelPessoaClean}${_nomeSelLotacaoClean}" onchange="" ${pessoaLotaSelecaoDisabled} class="pessoaLotaSelecao">
   <option value="1">Pessoa</option>
   <option value="2">Lotação</option>
 </select>
 <span id="spanPessoa${_nomeSelPessoaClean}">#{selecao
-	tipo:'pessoa', nome:_nomeSelPessoa, value:_valuePessoa, disabled:_disabled, requiredValue:_requiredValue /}</span>
-<span id="spanLotacao${_nomeSelLotacaoClean}">#{selecao
-	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao, disabled:_disabled, requiredValue:_requiredValue /}</span>
+	tipo:'pessoa', nome:_nomeSelPessoa, value:_valuePessoa, disabled:_disabled, requiredValue:_requiredValue, currentClass:'pessoaLotaSelecao' /}</span>
+<span id="spanLotacao${_nomeSelLotacaoClean}" class="pessoaLotaSelecao">#{selecao
+	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao, disabled:_disabled, requiredValue:_requiredValue, currentClass:'pessoaLotaSelecao' /}</span>
 <script language="javascript">
 var select = document.getElementById('${_nomeSelPessoaClean}${_nomeSelLotacaoClean}');
 if (document.getElementById('${_nomeSelPessoaClean}').value)

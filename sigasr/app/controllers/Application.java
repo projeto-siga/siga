@@ -861,12 +861,12 @@ public class Application extends SigaApplication {
 		listarDesignacao(Boolean.TRUE);
 	}
 
-	public static Long gravarDesignacao(SrConfiguracao designacao)
+	public static String gravarDesignacao(SrConfiguracao designacao)
 			throws Exception {
 		assertAcesso("ADM:Administrar");
 		designacao.salvarComoDesignacao();
 		
-		return designacao.getId();
+		return designacao.getSrConfiguracaoJson();
 	}
 
 	public static Long desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {

@@ -155,16 +155,8 @@
 		modalFechar('acao');
 	}
 
-	function duplicarDesignacao(event) {
-		var tr = $(event.currentTarget).parent().parent();
-		event.stopPropagation();
-		var itemSelecionado = opts.designacoesDataTable.api().row(tr).data();
-
-		manipulaItemSelecionado(itemSelecionado, true, tr);
-	}
-
-	function resetId() {
-		$("#idConfiguracao").val('');
+	function isValidForm() {
+	    return jQuery("#formDesignacao").valid();
 	}
 </script>
 
@@ -343,8 +335,8 @@
 			
 			<div class="gt-form-row">
 				<div class="gt-form-row">
-					<a href="javascript: gravarDesignacao();" class="gt-btn-medium gt-btn-left">Ok</a>
-					<a href="javascript: designacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="designacaoService.gravar()"/>
+					<a class="gt-btn-medium gt-btn-left" onclick="designacaoService.cancelarGravacao()">Cancelar</a>
 				</div>
 			</div>
 			

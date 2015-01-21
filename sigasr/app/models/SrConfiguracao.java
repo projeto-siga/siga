@@ -1,7 +1,6 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -26,11 +25,6 @@ import models.vo.SrItemConfiguracaoVO;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import play.db.jpa.JPA;
 import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -40,6 +34,10 @@ import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Selecionavel;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")

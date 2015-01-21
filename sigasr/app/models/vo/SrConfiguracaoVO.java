@@ -20,25 +20,31 @@ import com.google.gson.GsonBuilder;
 public class SrConfiguracaoVO {
 	public Long idConfiguracao;
 	public Long hisIdIni;
-	public int tipoSolicitante;
 	public boolean isHerdado;
 	public boolean utilizarItemHerdado;
 	public boolean atributoObrigatorio;
 	public boolean ativo;
 	public String descrConfiguracao;
+	public String solicitante;
 	
 	public List<SrListaVO> listaVO; 
 	public List<SrItemConfiguracaoVO> listaItemConfiguracaoVO;
 	public List<SrAcao.SrAcaoVO> listaAcaoVO;
 	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
-	public DpLotacaoVO atendente;
-	public DpLotacaoVO posAtendente;
-	public DpLotacaoVO equipeQualidade;
-	public DpLotacaoVO preAtendente;
-	public CpOrgaoUsuarioVO orgaoUsuario;
-	public CpComplexoVO local;
-	public SelecionavelVO solicitante;
+	public SelecionavelVO atendente;
+	public SelecionavelVO posAtendente;
+	public SelecionavelVO equipeQualidade;
+	public SelecionavelVO preAtendente;
+	public SelecionavelVO orgaoUsuario;
+	public SelecionavelVO complexo;
 	public SrPesquisaVO pesquisaSatisfacao;
+	
+	// Solicitante
+	public SelecionavelVO dpPessoa;
+	public SelecionavelVO lotacao;
+	public SelecionavelVO cargo;
+	public SelecionavelVO funcaoConfianca;
+	public SelecionavelVO grupo;
 	
 	public SrConfiguracaoVO(SrConfiguracao configuracao) {
 		idConfiguracao = configuracao.getId();
@@ -48,50 +54,52 @@ public class SrConfiguracaoVO {
 		ativo = configuracao.isAtivo();
 		descrConfiguracao = configuracao.getDescrConfiguracao();
 		
-		tipoSolicitante = configuracao.getTipoSolicitante();
-		listaVO = new ArrayList<SrListaVO>();
-		listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
-		listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
-		listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
+		if(configuracao.itemConfiguracaoSet != null) {
+			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
 		
-		if(configuracao.itemConfiguracaoSet != null)
 			for (SrItemConfiguracao item : configuracao.itemConfiguracaoSet) {
 				listaItemConfiguracaoVO.add(item.toVO());
 			}
+		}
 		
-		if(configuracao.acoesSet != null)
+		if(configuracao.acoesSet != null) {
+			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
+		
 			for (SrAcao item : configuracao.acoesSet) {
 				listaAcaoVO.add(item.toVO());
 			}
+		}
 
-		if(configuracao.tipoPermissaoSet != null)
+		if(configuracao.tipoPermissaoSet != null) {
+			listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
+		
 			for (SrTipoPermissaoLista item : configuracao.tipoPermissaoSet) {
 				listaTipoPermissaoListaVO.add(item.toVO());
 			}
+		}
 		
-		if(configuracao.atendente != null)
-			atendente = DpLotacaoVO.createFrom(configuracao.atendente.getLotacaoAtual());
+		if (configuracao.atendente != null)
+			atendente = SelecionavelVO.createFrom(configuracao.atendente.getLotacaoAtual());
 		
-		if(configuracao.posAtendente != null)
-			posAtendente = DpLotacaoVO.createFrom(configuracao.posAtendente.getLotacaoAtual());
+		if (configuracao.posAtendente != null)
+			posAtendente = SelecionavelVO.createFrom(configuracao.posAtendente.getLotacaoAtual());
 		
-		if(configuracao.preAtendente != null)
-			preAtendente = DpLotacaoVO.createFrom(configuracao.preAtendente.getLotacaoAtual());
+		if (configuracao.preAtendente != null)
+			preAtendente = SelecionavelVO.createFrom(configuracao.preAtendente.getLotacaoAtual());
 		
-		if(configuracao.getOrgaoUsuario() != null)
-			orgaoUsuario = CpOrgaoUsuarioVO.createFrom(configuracao.getOrgaoUsuario());
-	
-		if(configuracao.getComplexo() != null)
-			local = CpComplexoVO.createFrom(configuracao.getComplexo());
+		orgaoUsuario = SelecionavelVO.createFrom(configuracao.getOrgaoUsuario());
+		complexo = CpComplexoVO.createFrom(configuracao.getComplexo());
+		equipeQualidade = SelecionavelVO.createFrom(configuracao.equipeQualidade);
+		pesquisaSatisfacao = SrPesquisaVO.createFrom(configuracao.pesquisaSatisfacao);
 		
-		if (configuracao.equipeQualidade != null)
-			equipeQualidade = DpLotacaoVO.createFrom(configuracao.equipeQualidade);
+		// Dados do Solicitante
+		dpPessoa = SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante());
+		lotacao = SelecionavelVO.createFrom(configuracao.getLotacao(), configuracao.getTipoSolicitante());
+		cargo = SelecionavelVO.createFrom(configuracao.getCargo(), configuracao.getTipoSolicitante());
+		funcaoConfianca = SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante());
+		grupo = SelecionavelVO.createFrom(configuracao.getCpGrupo(), configuracao.getTipoSolicitante());
 		
-		if (configuracao.getSolicitante() != null)
-			solicitante = SelecionavelVO.createFrom(configuracao.getSolicitante());
-		
-		if (configuracao.pesquisaSatisfacao != null)
-			pesquisaSatisfacao = SrPesquisaVO.createFrom(configuracao.pesquisaSatisfacao);
+		solicitante = configuracao.getSolicitante() != null ? configuracao.getSolicitante().getSigla() : "";
 	}
 	
 	public SrConfiguracaoVO(SrConfiguracao configuracao, boolean atributoObrigatorio) {

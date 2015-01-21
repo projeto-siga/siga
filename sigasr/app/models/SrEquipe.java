@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import models.vo.SelecionavelVO;
 import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -107,6 +108,7 @@ public class SrEquipe extends HistoricoSuporte {
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		jsonObject.add("excecaoHorarioSet", excecaoHorarioArray());
+		jsonObject.add("lotacao", gson.toJsonTree(SelecionavelVO.createFrom(this.lotacao)));
 		
 		return jsonObject.toString();
 	}

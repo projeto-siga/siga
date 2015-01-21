@@ -2938,17 +2938,19 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/referenciar")
 	public void aReferenciar(String sigla) throws Exception {
-		this.sigla = sigla;
+		this.setSigla(sigla);
 		buscarDocumento(true);
 		if (!Ex.getInstance().getComp()
 				.podeReferenciar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível fazer vinculação");
 
-		result.include("sigla", sigla);
-		result.include("doc", doc);
-		result.include("mob", mob);
-		result.include("substituicao", substituicao);
-		result.include("documentoRefSel", documentoRefSel);
+		result.include("sigla", this.getSigla());
+		result.include("doc", this.getDoc());
+		result.include("mob", this.getMob());
+		result.include("substituicao", this.isSubstituicao());
+		result.include("titularSel", this.getTitularSel());
+		result.include("documentoRefSel", this.getDocumentoRefSel());
+		result.include("subscritorSel", this.getSubscritorSel());
 	}
 
 	public String aPrever() throws Exception {
@@ -2969,12 +2971,24 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/referenciar_gravar")
-	public void aReferenciarGravar(String sigla, ExDocumento doc, ExMobil mob,
-			boolean substituicao, DpPessoaSelecao titularSel) throws Exception {
-		this.sigla = sigla;
-		this.doc = doc;
-		this.substituicao = substituicao;
-		this.titularSel = titularSel;
+	public void aReferenciarGravar(String sigla, String dtMovString, boolean substituicao, DpPessoaSelecao titularSel, 
+			DpPessoaSelecao subscritorSel, ExMobilSelecao documentoRefSel) throws Exception {
+		this.setSigla(sigla);
+		this.setDtMovString(dtMovString);
+		this.setSubstituicao(substituicao);
+		this.setTitularSel(titularSel);
+		this.setDocumentoRefSel(documentoRefSel);
+		this.setSubscritorSel(subscritorSel);
+		
+		if (this.getTitularSel() == null)
+			this.setTitularSel(new DpPessoaSelecao());
+			
+		if (this.getDocumentoRefSel() == null)
+			this.setDocumentoRefSel(new ExMobilSelecao());
+		
+		if (this.getSubscritorSel() == null)
+			this.setSubscritorSel(new DpPessoaSelecao());
+		
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -3003,6 +3017,9 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		setDoc(mov.getExDocumento());
+		
+		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
+		
 	}
 
 	@Get("/app/expediente/mov/transferir")

@@ -153,8 +153,7 @@ public class ExArquivoController extends ExController {
 					setContentDisposition("attachment; filename=" + filename + ".sa");
 					CdService client = Service.getCdService();
 					final Date dt = dao().consultarDataEHoraDoServidor();
-					// getResponse().setHeader("Atributo-Assinavel-Data-Hora",
-					// Long.toString(dt.getTime()));
+					 getResponse().setHeader("Atributo-Assinavel-Data-Hora", Long.toString(dt.getTime()));
 					byte[] sa = client.produzPacoteAssinavel(certificado, certificado, ab, true, dt);
 					return new InputStreamDownload(makeByteArrayInputStream(sa, fB64), "application/octet-stream",
 							arquivo);
@@ -173,9 +172,8 @@ public class ExArquivoController extends ExController {
 					throw new Exception("HTML inválido!");
 			}
 			if (imutavel) {
-				// getResponse().setHeader("Cache-Control", cacheControl);
-				// getResponse().setDateHeader("Expires", new Date().getTime() +
-				// (365 * 24 * 3600 * 1000L));
+				 getResponse().setHeader("Cache-Control", cacheControl);
+				 getResponse().setDateHeader("Expires", new Date().getTime() + (365 * 24 * 3600 * 1000L));
 			} else {
 				MessageDigest md = MessageDigest.getInstance("MD5");
 				int m = match(ab);
@@ -185,18 +183,17 @@ public class ExArquivoController extends ExController {
 					md.update(ab);
 				String etag = Base64.encodeBytes(md.digest());
 				String ifNoneMatch = getRequest().getHeader("If-None-Match");
-				// getResponse().setHeader("Cache-Control",
-				// "must-revalidate, " + cacheControl);
-				// getResponse().setDateHeader("Expires", 0);
-				// getResponse().setHeader("ETag", etag);
+				getResponse().setHeader("Cache-Control","must-revalidate, " + cacheControl);
+				getResponse().setDateHeader("Expires", (new Date()).getTime() + 30000);
+				getResponse().setHeader("ETag", etag);
 				
 				if ((etag).equals(ifNoneMatch) && ifNoneMatch != null) {
-					// getResponse()
-					// .sendError(HttpServletResponse.SC_NOT_MODIFIED);
+					getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
 					return new InputStreamDownload(makeByteArrayInputStream((new byte[0]), false), "text/plain",
 							"arquivo inválido");
 				}
 			}
+			getResponse().setHeader("Pragma", "");
 			return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), checkDownloadType(ab, isPdf, fB64),
 					arquivo);
 		} catch (Exception e) {
@@ -242,15 +239,14 @@ public class ExArquivoController extends ExController {
 		
 		this.setContentLength(ab.length);
 		
-		// getResponse().setStatus(200);
-		// getResponse().setContentLength(getContentLength());
-		// getResponse().setContentType(contentType);
-		// if (!getPar().get("arquivo")[0].endsWith(".html"))
-		// getResponse().setHeader("Content-Disposition",
-		// getContentDisposition());
-		// getResponse().getOutputStream().write(ab);
-		// getResponse().getOutputStream().flush();
-		// getResponse().getOutputStream().close();
+		getResponse().setStatus(200);
+		getResponse().setContentLength(getContentLength());
+		getResponse().setContentType(contentType);
+		if (!getPar().get("arquivo")[0].endsWith(".html"))
+			getResponse().setHeader("Content-Disposition", getContentDisposition());
+		getResponse().getOutputStream().write(ab);
+		getResponse().getOutputStream().flush();
+		getResponse().getOutputStream().close();
 		return "donothing";
 	}
 	
@@ -349,13 +345,12 @@ public class ExArquivoController extends ExController {
 			String etag = Base64.encodeBytes(md.digest());
 			
 			String ifNoneMatch = getRequest().getHeader("If-None-Match");
-			// getResponse().setHeader("Cache-Control", "must-revalidate, " +
-			// cacheControl);
-			// getResponse().setDateHeader("Expires", 0);
-			// getResponse().setHeader("ETag", etag);
-			// getResponse().setHeader("Pragma", "");
+			getResponse().setHeader("Cache-Control", "must-revalidate, " + cacheControl);
+			getResponse().setDateHeader("Expires", 0);
+			getResponse().setHeader("ETag", etag);
+			getResponse().setHeader("Pragma", "");
 			if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
-				// getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
+				getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
 				return null;
 			}
 			

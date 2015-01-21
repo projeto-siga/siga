@@ -258,6 +258,16 @@ public class ExController extends SigaController {
 		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
 	}
 	
+	
+	public HttpServletResponse getResponse() {
+		return response;
+	}
+	
+	
+	public ServletContext getContext() {
+		return context;
+	}
+	
 
 
 }

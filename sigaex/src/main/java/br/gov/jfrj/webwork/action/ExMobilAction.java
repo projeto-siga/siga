@@ -723,6 +723,7 @@ public class ExMobilAction extends
 
 	public void setOrgaoUsu(Long orgaoUsu) {
 		this.orgaoUsu = orgaoUsu;
+		this.getOrgaosUsu();
 	}
 
 	public Long getIdTpDoc() {

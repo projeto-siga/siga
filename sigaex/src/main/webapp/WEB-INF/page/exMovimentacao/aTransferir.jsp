@@ -134,7 +134,9 @@ function popitup_movimentacao() {
 						<siga:selecao propriedade="titular" tema="simple" modulo="siga"/></td>
 					</tr>
 					<tr>
-						<td>Função;Lotação;Localidade:</td>
+						<td>
+						Função;Lotação;Localidade:
+						</td>
 						<td colspan="3">
 							<input type="hidden" name="campos" value="${nmFuncaoSubscritor}" />
 							<input type="text" name="nmFuncaoSubscritor" size="50" maxLength="128" />
@@ -142,7 +144,9 @@ function popitup_movimentacao() {
 						Função;Lotação;Localidade)</td>
 					</tr>
 					<tr>
-						<td>Despacho</td>
+						<td>
+							Despacho
+						</td>
 						<td>
 							<select  name="idTpDespacho" onchange="javascript:sbmt();">
 								<c:forEach items="${tiposDespacho}" var="item">
@@ -150,15 +154,16 @@ function popitup_movimentacao() {
 										${item.descTpDespacho}
 									</option>  
 								</c:forEach>
-							</select>&nbsp;							
-							
-							
+							</select>
+							&nbsp;							
 						</td>
 					</tr>
 					<c:choose>
 						<c:when test="${idTpDespacho == -1}">
 							<tr>
-								<td>Texto</td>
+								<td>
+									Texto
+								</td>
                                 <td>
 	                                <input type="text"  rows="3" cols="50"  name="descrMov"  onkeyup="corrige();tamanho();" onblur="tamanho();"
 										onclick="tamanho();" value="${descrMov}"/>

@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -41,6 +42,8 @@ public class SigaController {
 		
 	private Integer postback;
 	
+	
+	private String mensagemAguarde = null;
 	
 	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
 	private Map<String, String[]> par = new HashMap<>();
@@ -240,6 +243,18 @@ public class SigaController {
 
 	public void setPostback(final Integer postback) {
 		this.postback = postback;
+	}
+	
+	public String getMensagemAguarde() {
+		return mensagemAguarde;
+	}
+	
+	public void setMensagemAguarde(String mensagemAguarde) {
+		this.mensagemAguarde = mensagemAguarde;
+	}
+
+	public List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
+		return dao().listarOrgaosUsuarios();
 	}
 	
 	public Paginador getP() {

@@ -356,7 +356,7 @@ public class ExDocumentoVO extends ExVO {
 		// podeFinalizarAssinar(titular, lotaTitular, mob),
 		// "Confirma a finalização do documento?", null, null, null);
 		
-		vo.addAcao("pencil", "Editar", "/expediente/doc", "editar",
+		vo.addAcao("pencil", "Editar", "/app/expediente/doc", "editar",
 				Ex.getInstance().getComp().podeEditar(titular, lotaTitular, mob));
 		
 		vo.addAcao("delete", "Excluir", "/app/expediente/doc", "excluir",
@@ -371,7 +371,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("tag_yellow", "Fazer Anotação", "/app/expediente/mov", "anotar",
 				Ex.getInstance().getComp().podeFazerAnotacao(titular, lotaTitular, mob));
 		
-		vo.addAcao("folder_user", "Definir Perfil", "/expediente/mov", "vincularPapel", Ex.getInstance().getComp()
+		vo.addAcao("folder_user", "Definir Perfil", "/app/expediente/mov", "vincularPapel", Ex.getInstance().getComp()
 				.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 		
 		vo.addAcao("cd", "Download do Conteúdo", "/expediente/doc", "anexo",
@@ -388,7 +388,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp().podeCriarSubprocesso(titular, lotaTitular, mob), null, "mobilPaiSel.sigla="
 						+ getSigla() + "&idForma=" + mob.doc().getExFormaDocumento().getIdFormaDoc(), null, null, null);
 		
-		vo.addAcao("script_edit", "Registrar Assinatura Manual", "/expediente/mov", "registrar_assinatura", Ex.getInstance()
+		vo.addAcao("script_edit", "Registrar Assinatura Manual", "/app/expediente/mov", "registrar_assinatura", Ex.getInstance()
 				.getComp().podeRegistrarAssinatura(titular, lotaTitular, mob));
 		
 		vo.addAcao("script_key", "Assinar Digitalmente", "/expediente/mov", "assinar",
@@ -399,7 +399,7 @@ public class ExDocumentoVO extends ExVO {
 			if (mob.temAnexos())
 				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov", "assinar_anexos_geral", true);
 			
-			vo.addAcao("link_add", "Criar Anexo", "/expediente/doc", "editar", Ex.getInstance().getComp()
+			vo.addAcao("link_add", "Criar Anexo", "/app/expediente/doc", "editar", Ex.getInstance().getComp()
 					.podeAnexarArquivoAlternativo(titular, lotaTitular, mob), null, "criandoAnexo=true&mobilPaiSel.sigla="
 					+ getSigla(), null, null, null);
 		}

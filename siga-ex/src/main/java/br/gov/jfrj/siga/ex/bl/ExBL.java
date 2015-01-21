@@ -5220,7 +5220,7 @@ public class ExBL extends CpBL {
 			set = threadAlteracaoParcial.get();
 		}
 		if (mob.doc() != null) {
-			atualizarMarcas(mob.doc());
+			//atualizarMarcas(mob.doc());
 			atualizarVariaveisDenormalizadas(mob.doc());
 		}
 		set.add(mob);

@@ -459,7 +459,7 @@ public class ExMobilVO extends ExVO {
 								lotaTitular, mob), null, null, null, null,
 				"once");
 
-		addAcao("hourglass_delete", "Desobrestar", "/expediente/mov",
+		addAcao("hourglass_delete", "Desobrestar", "/app/expediente/mov",
 				"desobrestar_gravar", Ex.getInstance().getComp()
 						.podeDesobrestar(titular, lotaTitular, mob), null,
 				null, null, null, "once");

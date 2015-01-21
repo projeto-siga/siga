@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -88,7 +91,7 @@ public class ExMovimentacaoController extends ExController {
 	private static final long serialVersionUID = -8223202120027622708L;
 
 	private static final Logger log = Logger
-			.getLogger(ExMovimentacaoAction.class);
+			.getLogger(ExMovimentacaoController.class);
 
 	private ExMobil mob;
 
@@ -906,7 +909,9 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aAnexar() throws Exception {
+	@Get("app/expediente/mov/anexar")
+	public void anexa(String sigla) throws Exception {
+		this.sigla = sigla;
 		buscarDocumento(true);
 
 		if (!(mob.isGeral() && mob.doc().isFinalizado()))
@@ -916,28 +921,53 @@ public class ExMovimentacaoController extends ExController {
 
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
 				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
-		this.getRequest().setAttribute("mobilVO", mobilVO);
 
 		ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(),
 				getLotaTitular(), true, null, false);
-		this.getRequest().setAttribute("mobilCompletoVO", mobilCompletoVO);
-		return Action.SUCCESS;
+		
+		result.include("mobilCompletoVO", mobilCompletoVO);
+		result.include("mobilVO", mobilVO);
+
+		result.include("sigla", this.sigla);
+		result.include("mob", this.mob);
+		result.include("subscritorSel", this.subscritorSel);
+		result.include("titularSel", this.titularSel);
 	}
 
-	public String aAnexarGravar() throws Exception {
+	@Post("app/expediente/mov/anexar_gravar")
+	public void anexarGravar(String sigla,
+            DpPessoaSelecao subscritorSel,
+            DpPessoaSelecao titularSel,
+            boolean substituicao,
+            UploadedFile arquivo,
+            String dtMovString,
+            String descrMov
+			) throws Exception {
+		
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
+		Date dataMov = new Date(formatter.parse(dtMovString).getTime()); 
+		mov.setDtMov(dataMov);
+		setArquivoContentType(arquivo.getContentType());
+		setArquivoFileName(arquivo.getFileName());
+		mov.setConteudoTpMov(getArquivoContentType());
+		mov.setSubscritor(subscritorSel.getObjeto());
+		mov.setTitular(titularSel.getObjeto());
+		mov.setNmArqMov(getArquivoFileName());
+		mov.setDescrMov(descrMov);
+		setDescrMov(descrMov);
+		this.substituicao = substituicao;
+		this.sigla = sigla;
+		
 		buscarDocumento(true);
 		lerForm(mov);
 
-		mov.setNmArqMov(getArquivoFileName());
-		mov.setConteudoTpMov(getArquivoContentType());
 
-		// bruno.lacerda@avantiprima.com.br
-		if (this.arquivo == null) {
+		if (arquivo.getFile() == null) {
 			throw new AplicacaoException(
 					"O arquivo a ser anexado não foi selecionado!");
 		}
 
-		byte[] baArquivo = toByteArray(getArquivo());
+		byte[] baArquivo = toByteArray(arquivo);
 		if (baArquivo == null)
 			throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
 		if (baArquivo.length > 10 * 1024 * 1024)
@@ -988,7 +1018,7 @@ public class ExMovimentacaoController extends ExController {
 			Ex.getInstance()
 					.getBL()
 					.anexarArquivo(getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
+							dataMov, mov.getSubscritor(), sNmArqMov,
 							mov.getTitular(), mov.getLotaTitular(),
 							mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
 							getDescrMov(), pendencias);
@@ -996,27 +1026,25 @@ public class ExMovimentacaoController extends ExController {
 			throw e;
 		}
 
-		// request.setAttribute("doc", mov.getExDocumento());
 		setDoc(mov.getExDocumento());
-
-		return Action.SUCCESS;
+		result.redirectTo(MessageFormat.format("anexar?sigla={0}", sigla));
 	}
 
-	public String aAssinarAnexosGeral() throws Exception {
-
+	@Post("app/expediente/mov/assinar_anexos_geral")
+	public void assinarAnexosGeral() throws Exception {
 		this.assinandoAnexosGeral = true;
-
-		return aAnexar();
-
+		anexa(null);
 	}
 
-	public String aMostrarAnexosAssinados() throws Exception {
+	@Post("app/expediente/mov/mostrar_anexos_assinados")
+	public void mostrarAnexosAssinados() throws Exception {
 		buscarDocumento(true);
 
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
 				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
-		this.getRequest().setAttribute("mobilVO", mobilVO);
-		return Action.SUCCESS;
+		
+		result.include("mobilVO", mobilVO);
+//		result.forwardTo("app/expediente/mov/mostrar_anexos_assinados");
 	}
 
 	public String aArquivarCorrenteGravar() throws Exception {
@@ -4138,12 +4166,12 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	// Retorna o conteúdo do arquivo em um array de Byte
-	public byte[] toByteArray(final File file) throws IOException {
+	public byte[] toByteArray(final UploadedFile upload) throws IOException {
 
-		final InputStream is = new FileInputStream(file);
+		final InputStream is = upload.getFile();
 
 		// Get the size of the file
-		final long tamanho = file.length();
+		final long tamanho = upload.getSize();
 
 		// Não podemos criar um array usando o tipo long.
 		// é necessário usar o tipo int.
@@ -4166,7 +4194,7 @@ public class ExMovimentacaoController extends ExController {
 		if (offset < meuByteArray.length)
 			throw new IOException(
 					"Não foi possível ler o arquivo completamente "
-							+ file.getName());
+							+ upload.getFileName());
 
 		// Close the input stream and return bytes
 		is.close();

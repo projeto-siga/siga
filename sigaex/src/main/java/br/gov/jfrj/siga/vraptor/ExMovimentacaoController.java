@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -88,7 +91,7 @@ public class ExMovimentacaoController extends ExController {
 	private static final long serialVersionUID = -8223202120027622708L;
 
 	private static final Logger log = Logger
-			.getLogger(ExMovimentacaoAction.class);
+			.getLogger(ExMovimentacaoController.class);
 
 	private ExMobil mob;
 
@@ -906,7 +909,9 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aAnexar() throws Exception {
+	@Get("app/expediente/mov/anexar")
+	public void anexa(String sigla) throws Exception {
+		this.sigla = sigla;
 		buscarDocumento(true);
 
 		if (!(mob.isGeral() && mob.doc().isFinalizado()))
@@ -916,28 +921,54 @@ public class ExMovimentacaoController extends ExController {
 
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
 				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
-		this.getRequest().setAttribute("mobilVO", mobilVO);
 
 		ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(),
 				getLotaTitular(), true, null, false);
-		this.getRequest().setAttribute("mobilCompletoVO", mobilCompletoVO);
-		return Action.SUCCESS;
+		
+		result.include("mobilCompletoVO", mobilCompletoVO);
+		result.include("mobilVO", mobilVO);
+
+		result.include("sigla", this.sigla);
+		result.include("mob", this.mob);
+		result.include("subscritorSel", this.subscritorSel);
+		result.include("titularSel", this.titularSel);
+		result.include("request", getRequest());
 	}
 
-	public String aAnexarGravar() throws Exception {
+	@Post("app/expediente/mov/anexar_gravar")
+	public void anexarGravar(String sigla,
+            DpPessoaSelecao subscritorSel,
+            DpPessoaSelecao titularSel,
+            boolean substituicao,
+            UploadedFile arquivo,
+            String dtMovString,
+            String descrMov
+			) throws Exception {
+		
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
+		Date dataMov = new Date(formatter.parse(dtMovString).getTime()); 
+		mov.setDtMov(dataMov);
+		setArquivoContentType(arquivo.getContentType());
+		setArquivoFileName(arquivo.getFileName());
+		mov.setConteudoTpMov(getArquivoContentType());
+		mov.setSubscritor(subscritorSel.getObjeto());
+		mov.setTitular(titularSel.getObjeto());
+		mov.setNmArqMov(getArquivoFileName());
+		mov.setDescrMov(descrMov);
+		setDescrMov(descrMov);
+		this.substituicao = substituicao;
+		this.sigla = sigla;
+		
 		buscarDocumento(true);
 		lerForm(mov);
 
-		mov.setNmArqMov(getArquivoFileName());
-		mov.setConteudoTpMov(getArquivoContentType());
 
-		// bruno.lacerda@avantiprima.com.br
-		if (this.arquivo == null) {
+		if (arquivo.getFile() == null) {
 			throw new AplicacaoException(
 					"O arquivo a ser anexado não foi selecionado!");
 		}
 
-		byte[] baArquivo = toByteArray(getArquivo());
+		byte[] baArquivo = toByteArray(arquivo);
 		if (baArquivo == null)
 			throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
 		if (baArquivo.length > 10 * 1024 * 1024)
@@ -988,7 +1019,7 @@ public class ExMovimentacaoController extends ExController {
 			Ex.getInstance()
 					.getBL()
 					.anexarArquivo(getCadastrante(), getLotaTitular(), mob,
-							mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
+							dataMov, mov.getSubscritor(), sNmArqMov,
 							mov.getTitular(), mov.getLotaTitular(),
 							mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
 							getDescrMov(), pendencias);
@@ -996,27 +1027,25 @@ public class ExMovimentacaoController extends ExController {
 			throw e;
 		}
 
-		// request.setAttribute("doc", mov.getExDocumento());
 		setDoc(mov.getExDocumento());
-
-		return Action.SUCCESS;
+		result.redirectTo(MessageFormat.format("anexar?sigla={0}", sigla));
 	}
 
-	public String aAssinarAnexosGeral() throws Exception {
-
+    public String aAssinarAnexosGeral() throws Exception {
 		this.assinandoAnexosGeral = true;
-
-		return aAnexar();
-
+		anexa(null);
+		return "";
 	}
 
-	public String aMostrarAnexosAssinados() throws Exception {
+	@Get("app/expediente/mov/mostrar_anexos_assinados")
+	public void mostrarAnexosAssinados(String sigla) throws Exception {
+		this.sigla = sigla;
 		buscarDocumento(true);
 
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
 				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
-		this.getRequest().setAttribute("mobilVO", mobilVO);
-		return Action.SUCCESS;
+		
+		result.include("mobilVO", mobilVO);
 	}
 
 	public String aArquivarCorrenteGravar() throws Exception {
@@ -1830,7 +1859,9 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aExcluir() throws Exception {
+	@Get("/app/expediente/mov/excluir")
+	public void excluir(Long id) throws Exception {
+		setId(id);
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -1842,7 +1873,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, doc.toString());
 	}
 
 	public String aExibir() throws Exception {
@@ -2907,17 +2938,19 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/referenciar")
 	public void aReferenciar(String sigla) throws Exception {
-		this.sigla = sigla;
+		this.setSigla(sigla);
 		buscarDocumento(true);
 		if (!Ex.getInstance().getComp()
 				.podeReferenciar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível fazer vinculação");
 
-		result.include("sigla", sigla);
-		result.include("doc", doc);
-		result.include("mob", mob);
-		result.include("substituicao", substituicao);
-		result.include("documentoRefSel", documentoRefSel);
+		result.include("sigla", this.getSigla());
+		result.include("doc", this.getDoc());
+		result.include("mob", this.getMob());
+		result.include("substituicao", this.isSubstituicao());
+		result.include("titularSel", this.getTitularSel());
+		result.include("documentoRefSel", this.getDocumentoRefSel());
+		result.include("subscritorSel", this.getSubscritorSel());
 	}
 
 	public String aPrever() throws Exception {
@@ -2938,12 +2971,24 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/referenciar_gravar")
-	public void aReferenciarGravar(String sigla, ExDocumento doc, ExMobil mob,
-			boolean substituicao, DpPessoaSelecao titularSel) throws Exception {
-		this.sigla = sigla;
-		this.doc = doc;
-		this.substituicao = substituicao;
-		this.titularSel = titularSel;
+	public void aReferenciarGravar(String sigla, String dtMovString, boolean substituicao, DpPessoaSelecao titularSel, 
+			DpPessoaSelecao subscritorSel, ExMobilSelecao documentoRefSel) throws Exception {
+		this.setSigla(sigla);
+		this.setDtMovString(dtMovString);
+		this.setSubstituicao(substituicao);
+		this.setTitularSel(titularSel);
+		this.setDocumentoRefSel(documentoRefSel);
+		this.setSubscritorSel(subscritorSel);
+		
+		if (this.getTitularSel() == null)
+			this.setTitularSel(new DpPessoaSelecao());
+			
+		if (this.getDocumentoRefSel() == null)
+			this.setDocumentoRefSel(new ExMobilSelecao());
+		
+		if (this.getSubscritorSel() == null)
+			this.setSubscritorSel(new DpPessoaSelecao());
+		
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -2972,6 +3017,9 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		setDoc(mov.getExDocumento());
+		
+		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
+		
 	}
 
 	@Get("/app/expediente/mov/transferir")
@@ -4187,12 +4235,12 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	// Retorna o conteúdo do arquivo em um array de Byte
-	public byte[] toByteArray(final File file) throws IOException {
+	public byte[] toByteArray(final UploadedFile upload) throws IOException {
 
-		final InputStream is = new FileInputStream(file);
+		final InputStream is = upload.getFile();
 
 		// Get the size of the file
-		final long tamanho = file.length();
+		final long tamanho = upload.getSize();
 
 		// Não podemos criar um array usando o tipo long.
 		// é necessário usar o tipo int.
@@ -4215,7 +4263,7 @@ public class ExMovimentacaoController extends ExController {
 		if (offset < meuByteArray.length)
 			throw new IOException(
 					"Não foi possível ler o arquivo completamente "
-							+ file.getName());
+							+ upload.getFileName());
 
 		// Close the input stream and return bytes
 		is.close();

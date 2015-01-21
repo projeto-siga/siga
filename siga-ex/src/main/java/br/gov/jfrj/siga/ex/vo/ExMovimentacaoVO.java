@@ -186,7 +186,7 @@ public class ExMovimentacaoVO extends ExVO {
 			// nome do arquivo.
 			// <c:url var='anexo' value='/anexo/${mov.idMov}/${mov.nmArqMov}' />
 			// tipo="${mov.conteudoTpMov}" />
-			addAcao(null, mov.getNmArqMov(), "/arquivo",
+			addAcao(null, mov.getNmArqMov(), "/app/arquivo",
 					"exibir", mov.getNmArqMov() != null, null,
 					"&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
 
@@ -206,7 +206,7 @@ public class ExMovimentacaoVO extends ExVO {
 						&& !mov.mob().isEmTransito()) {
 					addAcao(null,
 							"Excluir",
-							"/expediente/mov",
+							"/app/expediente/mov",
 							"excluir",
 							Ex.getInstance()
 									.getComp()

@@ -25,7 +25,8 @@ window.Siga = {
         sigaex: {
             url: "/sigaex/expediente/doc/gadget.action",
             params: {
-                idTpFormaDoc: 1
+                idTpFormaDoc: 1,
+                apenasQuadro: true
             },
             viewId: "left"            
         },

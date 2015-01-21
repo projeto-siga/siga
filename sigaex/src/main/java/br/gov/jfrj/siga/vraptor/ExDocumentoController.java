@@ -71,7 +71,6 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -99,8 +98,6 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.Selecao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
-import com.opensymphony.xwork.Action;
-
 @Resource
 public class ExDocumentoController extends ExController {
 	
@@ -115,16 +112,13 @@ public class ExDocumentoController extends ExController {
 
 	@Post("app/expediente/doc/alterarpreench")
 	public void aAlterarPreenchimento(ExDocumentoDTO exDocumentoDTO, String[] vars, String[] campos) throws Exception {
-		getPar().put("vars", vars);
-		getPar().put("campos", campos);
-		
 		ExPreenchimento exPreenchimento = new ExPreenchimento();
 		
 		dao().iniciarTransacao();
 		exPreenchimento.setIdPreenchimento(exDocumentoDTO.getPreenchimento());
 		exPreenchimento = dao().consultar(exDocumentoDTO.getPreenchimento(), ExPreenchimento.class, false);
 		
-		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento());
+		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars, campos));
 		dao().gravar(exPreenchimento);
 		dao().commitTransacao();
 		
@@ -139,15 +133,18 @@ public class ExDocumentoController extends ExController {
 		} else
 			exDocumentoDTO.setPreenchRedirect(getUrlEncodedParameters());
 		
-		result.forwardTo(this).aCarregarPreenchimento(exDocumentoDTO);
+		result.forwardTo(this).aCarregarPreenchimento(exDocumentoDTO, vars);
 	}
 	
 	public String aAnexo(ExDocumentoDTO exDocumentoDTO) throws Exception {
 		buscarDocumento(true, exDocumentoDTO);
-		return Action.SUCCESS;
+		return "success";
 	}
 	
-	public String aCancelarDocumento(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	public String aCancelarDocumento(ExDocumentoDTO exDocumentoDTO, String sigla) throws Exception {
+		if (sigla != null){
+			exDocumentoDTO.setSigla(sigla);
+		}
 		buscarDocumento(true, exDocumentoDTO);
 		
 		try {
@@ -155,7 +152,7 @@ public class ExDocumentoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
+		return "success";
 		
 	}
 	
@@ -188,7 +185,7 @@ public class ExDocumentoController extends ExController {
 	}
 	
 	@Post("app/expediente/doc/carregarpreench")
-	public void aCarregarPreenchimento(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	public void aCarregarPreenchimento(ExDocumentoDTO exDocumentoDTO, String[] vars) throws Exception {
 		ExPreenchimento exPreenchimento = new ExPreenchimento();
 		setPar(getRequest().getParameterMap());
 		
@@ -260,7 +257,7 @@ public class ExDocumentoController extends ExController {
 		
 		exDocumentoDTOPreench.setPreenchRedirect(strURLLimpa + strBancoLimpa);
 		
-		result.forwardTo(this).edita(exDocumentoDTOPreench, null);
+		result.forwardTo(this).edita(exDocumentoDTOPreench, null, vars, exDocumentoDTO.getMobilPaiSel(), exDocumentoDTO.isCriandoAnexo());
 		
 	}
 	
@@ -296,16 +293,18 @@ public class ExDocumentoController extends ExController {
 	}
 	
 	@Post("app/expediente/doc/recarregar")
-	public ExDocumentoDTO recarregar(ExDocumentoDTO exDocumentoDTO) throws Exception {
-		result.forwardTo(this).edita(exDocumentoDTO, null);		
+	public ExDocumentoDTO recarregar(ExDocumentoDTO exDocumentoDTO, String[] vars) throws Exception {
+		result.forwardTo(this).edita(exDocumentoDTO, null, vars, exDocumentoDTO.getMobilPaiSel(),exDocumentoDTO.isCriandoAnexo());		
 		return exDocumentoDTO;
 	}
 	
 	@Get("app/expediente/doc/editar")
-	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO, String sigla) throws Exception {
+	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO, String sigla, String[] vars, ExMobilSelecao mobilPaiSel, Boolean criandoAnexo) throws Exception {
 		boolean isDocNovo = (exDocumentoDTO == null);
 		if (isDocNovo) {
 			exDocumentoDTO = new ExDocumentoDTO();
+			exDocumentoDTO.setCriandoAnexo(criandoAnexo);
+			exDocumentoDTO.setMobilPaiSel(mobilPaiSel);
 		}
 		
 		if ((sigla != null) && (sigla != "")){
@@ -364,7 +363,7 @@ public class ExDocumentoController extends ExController {
 		if (exDocumentoDTO.getTipoDocumento() != null && exDocumentoDTO.getTipoDocumento().equals("externo")) {
 			exDocumentoDTO.setIdMod(((ExModelo) dao().consultarAtivoPorIdInicial(ExModelo.class, 28L)).getIdMod());
 		}
-		carregarBeans(exDocumentoDTO);
+		carregarBeans(exDocumentoDTO, mobilPaiSel);
 		
 		Long idSit = Ex
 				.getInstance()
@@ -390,7 +389,7 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 		
-		lerForm(exDocumentoDTO);
+		lerForm(exDocumentoDTO, vars);
 		
 		// O (&& classif.getCodAssunto() != null) foi adicionado para permitir
 		// que as classificações antigas, ainda não linkadas por equivalência,
@@ -423,15 +422,11 @@ public class ExDocumentoController extends ExController {
 		registraErroExtEditor();
 		
 		// Usado pela extensão editor...
-		getPar().put(
-				"serverAndPort",
-				new String[] { getRequest().getServerName()
-						+ (getRequest().getServerPort() > 0 ? ":" + getRequest().getServerPort() : "") });
+		getPar().put("serverAndPort", new String[] { getRequest().getServerName()+ (getRequest().getServerPort() > 0 ? ":" + getRequest().getServerPort() : "") });
 		
 		// ...inclusive nas operações com preenchimento automático
 		if (exDocumentoDTO.getPreenchRedirect() != null && exDocumentoDTO.getPreenchRedirect().length() > 2) {
-			exDocumentoDTO.setPreenchRedirect(exDocumentoDTO.getPreenchRedirect() + "&serverAndPort="
-					+ getPar().get("serverAndPort")[0]);
+			exDocumentoDTO.setPreenchRedirect(exDocumentoDTO.getPreenchRedirect() + "&serverAndPort="+ getPar().get("serverAndPort")[0]);
 		}
 		
 		exDocumentoDTO.setTiposDocumento(getTiposDocumento());
@@ -441,7 +436,7 @@ public class ExDocumentoController extends ExController {
 		getPreenchimentos(exDocumentoDTO);
 		
 		result.include("possuiMaisQueUmModelo", (getModelos(exDocumentoDTO).size() > 1));
-		result.include("par", getPar());
+		result.include("par", getRequest().getParameterMap());
 		result.include("cpOrgaoSel", exDocumentoDTO.getCpOrgaoSel());
 		result.include("mobilPaiSel", exDocumentoDTO.getMobilPaiSel());
 		result.include("subscritorSel", exDocumentoDTO.getSubscritorSel());
@@ -453,13 +448,16 @@ public class ExDocumentoController extends ExController {
 		return exDocumentoDTO;
 	}
 	
-	public String aExcluir(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	public void aExcluir(ExDocumentoDTO exDocumentoDTO, Long id) throws Exception {
 		ExDocumento documento = null;
-		final String sId = getRequest().getParameter("id");
+		if (exDocumentoDTO == null) {
+			exDocumentoDTO = new ExDocumentoDTO();
+			exDocumentoDTO.setId(id);
+		}		
 		
 		try {
 			ExDao.iniciarTransacao();
-			documento = daoDoc(Long.valueOf(sId));
+			documento = daoDoc(id);
 			
 			verificaNivelAcesso(exDocumentoDTO.getDoc().getMobilGeral());
 			
@@ -494,8 +492,6 @@ public class ExDocumentoController extends ExController {
 			ExDao.rollbackTransacao();
 			throw new AplicacaoException("Ocorreu um Erro durante a Operação", 0, e);
 		}
-		
-		return Action.SUCCESS;
 	}
 	
 	private void registraErroExtEditor() {
@@ -532,9 +528,9 @@ public class ExDocumentoController extends ExController {
 	@Get("/app/expediente/doc/excluir")
 	public void aExcluirDocMovimentacoes(String sigla) throws Exception {
 		ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
-		exDocumentoDTO.setSigla(sigla);
-		ExDocumento doc = exDocumentoDTO.getDoc();
+		exDocumentoDTO.setSigla(sigla);		
 		buscarDocumento(true, exDocumentoDTO);
+		ExDocumento doc = exDocumentoDTO.getDoc();
 		try {
 			ExDao.iniciarTransacao();
 			
@@ -599,18 +595,18 @@ public class ExDocumentoController extends ExController {
 	}
 	
 	@Post("app/expediente/doc/excluirpreench")
-	public void aExcluirPreenchimento(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	public void aExcluirPreenchimento(ExDocumentoDTO exDocumentoDTO, String[] vars) throws Exception {
 		dao().iniciarTransacao();
 		ExPreenchimento exemplo = dao().consultar(exDocumentoDTO.getPreenchimento(), ExPreenchimento.class, false);
 		dao().excluir(exemplo);
 		// preenchDao.excluirPorId(preenchimento);
 		dao().commitTransacao();
 		exDocumentoDTO.setPreenchimento(0L);
-		result.forwardTo(this).edita(exDocumentoDTO, null);
+		result.forwardTo(this).edita(exDocumentoDTO, null, vars, exDocumentoDTO.getMobilPaiSel(), exDocumentoDTO.isCriandoAnexo());
 	}
 	
 	public String aTestarConexao() {
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	public String aAcessar(ExDocumentoDTO exDocumentoDTO) throws Exception {
@@ -618,7 +614,7 @@ public class ExDocumentoController extends ExController {
 		
 		assertAcesso(exDocumentoDTO);
 		
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	private void assertAcesso(ExDocumentoDTO exDocumentoDTO) throws Exception {
@@ -662,7 +658,7 @@ public class ExDocumentoController extends ExController {
 					+ exDocumentoDTO.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
 							.getExMobilRef());
 		
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	@Get("/app/expediente/doc/exibir")
@@ -722,7 +718,7 @@ public class ExDocumentoController extends ExController {
 			
 			Ex.getInstance().getBL().processar(exDocumentoDTO.getMob().getExDocumento(), true, false, null);
 		}
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	private void logStatistics() {
@@ -817,7 +813,7 @@ public class ExDocumentoController extends ExController {
 		if (exDocumentoDto.getMob() != null)
 			exDocumentoDto.setDoc(exDocumentoDto.getMob().doc());
 		if (exDocumentoDto.getDoc() == null) {
-			String id = param("id");
+			String id = param("exDocumentoDto.id");
 			if (id != null && id.length() != 0) {
 				exDocumentoDto.setDoc(daoDoc(Long.parseLong(id)));
 			}
@@ -872,9 +868,6 @@ public class ExDocumentoController extends ExController {
 	
 	@Post("app/expediente/doc/gravar")
 	public String gravar(ExDocumentoDTO exDocumentoDTO, String[] vars, String[] campos) throws Exception {
-		getPar().put("vars", vars);
-		getPar().put("campos", campos);
-		
 		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
 			if (exDocumentoDTO.getDoc() == null){
@@ -884,13 +877,13 @@ public class ExDocumentoController extends ExController {
 			long tempoIni = System.currentTimeMillis();
 			
 			if (!validar()) {
-				edita(exDocumentoDTO, null);
+				edita(exDocumentoDTO, null, vars, exDocumentoDTO.getMobilPaiSel(), exDocumentoDTO.isCriandoAnexo());
 				getPar().put("alerta", new String[] { "Sim" });
 				exDocumentoDTO.setAlerta("Sim");
 				return "form_incompleto";
 			}
 			
-			lerForm(exDocumentoDTO);
+			lerForm(exDocumentoDTO, vars);
 			
 			if (!Ex.getInstance()
 					.getConf()
@@ -982,9 +975,6 @@ public class ExDocumentoController extends ExController {
 	
 	@Post("app/expediente/doc/gravarpreench")
 	public void aGravarPreenchimento(ExDocumentoDTO exDocumentoDTO, String[] vars, String[] campos) throws Exception {
-		getPar().put("vars", vars);
-		getPar().put("campos", campos);
-		
 		dao().iniciarTransacao();
 		ExPreenchimento exPreenchimento = new ExPreenchimento();
 		
@@ -997,32 +987,32 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setExModelo(provMod);
 		exPreenchimento.setNomePreenchimento(exDocumentoDTO.getNomePreenchimento());
 		
-		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento());
+		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars, campos));
 		dao().gravar(exPreenchimento);
 		dao().commitTransacao();
 		
 		exDocumentoDTO.setPreenchimento(exPreenchimento.getIdPreenchimento());
 		
-		result.forwardTo(this).aCarregarPreenchimento(exDocumentoDTO);
+		result.forwardTo(this).aCarregarPreenchimento(exDocumentoDTO, vars);
 		
 	}
 	
 	@Post("app/expediente/doc/prever")
-	public void preve(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	public void preve(ExDocumentoDTO exDocumentoDTO, String[] vars) throws Exception {
 		boolean isDocNovo = (exDocumentoDTO == null);
 		buscarDocumentoOuNovo(true, exDocumentoDTO);
 		if (exDocumentoDTO.getDoc() != null) {
 			if (isDocNovo) {
 				escreverForm(exDocumentoDTO);
 			} else {				
-				lerForm(exDocumentoDTO);
+				lerForm(exDocumentoDTO, vars);
 			}
 		} else {
 			exDocumentoDTO.setDoc(new ExDocumento());
-			lerForm(exDocumentoDTO);
+			lerForm(exDocumentoDTO, vars);
 		}
 		
-		carregarBeans(exDocumentoDTO);
+		carregarBeans(exDocumentoDTO, exDocumentoDTO.getMobilPaiSel());
 		
 		if (exDocumentoDTO.getIdMob() != null) {
 			exDocumentoDTO.setModelo(dao().consultar(exDocumentoDTO.getIdMob(), ExModelo.class, false));
@@ -1031,6 +1021,7 @@ public class ExDocumentoController extends ExController {
 		if (param("processar_modelo") != null)
 			result.forwardTo(this).processa_modelo(exDocumentoDTO);
 		else{
+			result.include("par", getRequest().getParameterMap());
 			result.include("modelo", exDocumentoDTO.getModelo());
 			result.include("nmArqMod", exDocumentoDTO.getModelo().getNmArqMod());
 			result.include("doc", exDocumentoDTO.getDoc());
@@ -1040,27 +1031,28 @@ public class ExDocumentoController extends ExController {
 	
 	
 	public void processa_modelo(ExDocumentoDTO exDocumentoDTO) throws Exception {
+		result.include("par", getRequest().getParameterMap());
 		result.include("modelo", exDocumentoDTO.getModelo());
 		result.include("nmArqMod", exDocumentoDTO.getModelo().getNmArqMod());
 		result.include("doc", exDocumentoDTO.getDoc());
 	}
 	
 	@Post("app/expediente/doc/preverPdf")
-	public Download aPreverPdf(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	public Download aPreverPdf(ExDocumentoDTO exDocumentoDTO, String[] vars) throws Exception {
 		boolean isDocNovo = (exDocumentoDTO == null);
 		buscarDocumentoOuNovo(true, exDocumentoDTO);
 		if (exDocumentoDTO.getDoc() != null) {
 			if (isDocNovo) {
 				escreverForm(exDocumentoDTO);
 			} else {
-				lerForm(exDocumentoDTO);
+				lerForm(exDocumentoDTO, vars);
 			}
 		} else {
 			exDocumentoDTO.setDoc(new ExDocumento());
-			lerForm(exDocumentoDTO);
+			lerForm(exDocumentoDTO, vars);
 		}
 		
-		carregarBeans(exDocumentoDTO);
+		carregarBeans(exDocumentoDTO, exDocumentoDTO.getMobilPaiSel());
 		
 		if (exDocumentoDTO.getIdMob() != null) {
 			exDocumentoDTO.setModelo(dao().consultar(exDocumentoDTO.getIdMob(), ExModelo.class, false));
@@ -1094,11 +1086,11 @@ public class ExDocumentoController extends ExController {
 		buscarDocumento(false, exDocumentoDTO);
 		Ex.getInstance().getBL().atualizarMarcas(exDocumentoDTO.getDoc());
 		
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	public String aTestarPdf() throws Exception {
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	public String aTesteEnvioDJE() throws Exception {
@@ -1113,7 +1105,7 @@ public class ExDocumentoController extends ExController {
 			fakeMov.setNmArqMov(nomeArq + ".zip");
 			
 			PublicacaoDJEBL.primeiroEnvio(fakeMov);
-			return Action.SUCCESS;
+			return "success";
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1140,7 +1132,7 @@ public class ExDocumentoController extends ExController {
 			efetivar = false;
 		}
 		Ex.getInstance().getBL().corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc, efetivar);
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	public String aTesteExclusaoDJE() throws Exception {
@@ -1182,7 +1174,7 @@ public class ExDocumentoController extends ExController {
 			 */
 			
 		}
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	@Get("app/expediente/doc/duplicar")
@@ -1215,7 +1207,11 @@ public class ExDocumentoController extends ExController {
 		}
 	}
 	
-	public String aDesfazerCancelamentoDocumento(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	
+	public String aDesfazerCancelamentoDocumento(ExDocumentoDTO exDocumentoDTO, String sigla) throws Exception {
+		if (sigla != null){
+			exDocumentoDTO.setSigla(sigla);
+		}
 		buscarDocumento(true, exDocumentoDTO);
 		if (!Ex.getInstance().getComp()
 				.podeDesfazerCancelamentoDocumento(getTitular(), getLotaTitular(), exDocumentoDTO.getMob()))
@@ -1227,12 +1223,13 @@ public class ExDocumentoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
+		
+		return "success";
 	}
 	
 	public String aTornarDocumentoSemEfeito(ExDocumentoDTO exDocumentoDTO) throws Exception {
 		buscarDocumento(true, exDocumentoDTO);
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	public String aTornarDocumentoSemEfeitoGravar(ExDocumentoDTO exDocumentoDTO) throws Exception {
@@ -1253,7 +1250,7 @@ public class ExDocumentoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
+		return "success";
 	}
 	
 	public String acriarDocTest() throws Exception {
@@ -1263,10 +1260,11 @@ public class ExDocumentoController extends ExController {
 			throw e;
 		}
 		
-		return Action.SUCCESS;
+		return "success";
 	}
 	
-	private void carregarBeans(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	private void carregarBeans(ExDocumentoDTO exDocumentoDTO, ExMobilSelecao mobilPaiSel) throws Exception {
+		setPar(getRequest().getParameterMap());
 		ExMobil mobPai = null;
 		
 
@@ -1276,11 +1274,13 @@ public class ExDocumentoController extends ExController {
 		
 		if (exDocumentoDTO.getDoc().getIdDoc() == null) {
 			String req = "nao";
-			if (getPar().get("reqdocumentoRefSel") != null)
-				req = getPar().get("reqmobilPaiSel")[0].toString();
+			if (getPar().get("reqexDocumentoDTO.documentoRefSel") != null)
+				req = getPar().get("reqexDocumentoDTO.mobilPaiSel")[0].toString();
 			
-			if (param("mobilPaiSel.sigla") != null)
-				exDocumentoDTO.getMobilPaiSel().setSigla(param("mobilPaiSel.sigla"));
+			if (mobilPaiSel.getSigla() != null)
+				exDocumentoDTO.getMobilPaiSel().setSigla(mobilPaiSel.getSigla());
+			
+			
 			exDocumentoDTO.getMobilPaiSel().buscar();
 			if ((exDocumentoDTO.getMobilPaiSel().getId() != null) || (req.equals("sim"))) {
 				
@@ -1288,7 +1288,7 @@ public class ExDocumentoController extends ExController {
 					// Documento Pai
 					mobPai = daoMob(exDocumentoDTO.getMobilPaiSel().getId());
 					
-					Integer idForma = paramInteger("idForma");
+					Integer idForma = paramInteger("exDocumentoDTO.idFormaDoc");
 					if (idForma != null)
 						exDocumentoDTO.setIdFormaDoc(idForma);
 					
@@ -1408,7 +1408,7 @@ public class ExDocumentoController extends ExController {
 		DpPessoa backupTitular = getTitular();
 		DpPessoa backupCadastrante = getCadastrante();
 		
-		BeanUtils.copyProperties(this, doc);
+		BeanUtils.copyProperties(exDocumentoDTO, doc);
 		
 		setTitular(backupTitular);
 		setLotaTitular(backupLotaTitular);
@@ -1503,10 +1503,10 @@ public class ExDocumentoController extends ExController {
 		
 	}
 	
-	private byte[] getByteArrayFormPreenchimento() throws Exception {
+	private byte[] getByteArrayFormPreenchimento(String[] vars, String[] campos) throws Exception {
 		ByteArrayOutputStream baos = null;
-		String[] aVars = getPar().get("vars");
-		String[] aCampos = getPar().get("campos");
+		String[] aVars = vars;
+		String[] aCampos = campos;
 		ArrayList<String> aFinal = new ArrayList<String>();
 		if (aVars != null && aVars.length > 0)
 			for (String str : aVars) {
@@ -1561,7 +1561,7 @@ public class ExDocumentoController extends ExController {
 	}
 	
 
-	private void lerForm(ExDocumentoDTO exDocumentoDTO) throws IllegalAccessException, NoSuchMethodException, AplicacaoException {
+	private void lerForm(ExDocumentoDTO exDocumentoDTO, String[] vars) throws IllegalAccessException, NoSuchMethodException, AplicacaoException {
 		
 		if (exDocumentoDTO.getAnexar()) {
 			exDocumentoDTO.getDoc().setConteudoTpDoc(exDocumentoDTO.getConteudoTpDoc());
@@ -1709,7 +1709,7 @@ public class ExDocumentoController extends ExController {
 					"<!-- INICIO ASSINATURA -->", "<!-- FIM ASSINATURA -->", "<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
 					"<!-- INICIO ABERTURA", "FIM ABERTURA -->", "<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
 			
-			final String as[] = getPar().get("vars");
+			final String as[] = vars;
 			if (as != null) {
 				baos = new ByteArrayOutputStream();
 				for (final String s : as) {
@@ -1920,20 +1920,7 @@ public class ExDocumentoController extends ExController {
 	
 	public HierarquizadorBoletimInterno getHierarquizadorBIE() {
 		return new HierarquizadorBoletimInterno(getLotaTitular().getOrgaoUsuario());
-	}
-	
-	public String processarModelo(final ExDocumento doc, String acao,
-			Map<String, String> formParams, CpOrgaoUsuario orgaoUsu)
-			throws Exception {
-		return Ex.getInstance().getBL().processarModelo(doc, acao, formParams, orgaoUsu);
-	}
-
-	public String processarModelo(final ExMovimentacao mov, final String acao,
-			Map<String, String> formParams, CpOrgaoUsuario orgaoUsu)
-			throws Exception {
-		return Ex.getInstance().getBL().processarModelo(mov, acao, formParams, orgaoUsu);
 	}	
-	
 
 	public static void redirecionarParaExibir(Result result, String sigla) {
 		result.redirectTo(MessageFormat.format(URL_EXIBIR, sigla));

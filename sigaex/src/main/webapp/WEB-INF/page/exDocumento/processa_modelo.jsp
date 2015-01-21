@@ -7,4 +7,4 @@
 <c:if test="${(empty jsp) and (not empty nmArqMod)}">
 	<c:set var="jsp" scope="request" value="${nmArqMod}" />
 </c:if>
-<c:import url="/modelos/${jsp}" />
+<c:import url="/paginas/expediente/modelos/${jsp}" />

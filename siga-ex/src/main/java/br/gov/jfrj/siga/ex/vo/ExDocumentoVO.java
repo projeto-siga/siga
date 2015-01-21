@@ -356,7 +356,7 @@ public class ExDocumentoVO extends ExVO {
 		// podeFinalizarAssinar(titular, lotaTitular, mob),
 		// "Confirma a finalização do documento?", null, null, null);
 		
-		vo.addAcao("pencil", "Editar", "/expediente/doc", "editar",
+		vo.addAcao("pencil", "Editar", "/app/expediente/doc", "editar",
 				Ex.getInstance().getComp().podeEditar(titular, lotaTitular, mob));
 		
 		vo.addAcao("delete", "Excluir", "/app/expediente/doc", "excluir",
@@ -399,7 +399,7 @@ public class ExDocumentoVO extends ExVO {
 			if (mob.temAnexos())
 				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov", "assinar_anexos_geral", true);
 			
-			vo.addAcao("link_add", "Criar Anexo", "/expediente/doc", "editar", Ex.getInstance().getComp()
+			vo.addAcao("link_add", "Criar Anexo", "/app/expediente/doc", "editar", Ex.getInstance().getComp()
 					.podeAnexarArquivoAlternativo(titular, lotaTitular, mob), null, "criandoAnexo=true&mobilPaiSel.sigla="
 					+ getSigla(), null, null, null);
 		}

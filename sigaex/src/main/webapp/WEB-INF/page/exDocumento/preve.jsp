@@ -31,7 +31,7 @@
 			    </c:choose>
 			</c:if>
 			<c:if test="${modelo.conteudoTpBlob != 'template/freemarker'}">
-				<c:import url="/modelos/${jsp}" />
+				<c:import url="/paginas/expediente/modelos/${jsp}" />
 			</c:if>
 		</tags:fixdocumenthtml></td>
 	</tr>

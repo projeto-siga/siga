@@ -255,7 +255,22 @@
 												<c:set var="assinadopor" value="${true}" /> 
 												<siga:links inline="${true}" separator="${not empty mov.descricao and mov.descricao != null}">
 													<c:forEach var="acao" items="${mov.acoes}">
-														
+														<c:choose>
+															<c:when test='${mov.idTpMov == 32}'>
+																<c:url var="url" value="${acao.nameSpace}/${acao.acao}">
+														     		<c:forEach var="p" items="${acao.params}">
+															     		<c:param name="${p.key}" value="${p.value}"/>
+																    </c:forEach>
+															     </c:url>
+															</c:when>
+														    <c:otherwise>
+															    <c:url var="url" value="${acao.nameSpace}/${acao.acao}">
+												                    <c:forEach var="p" items="${acao.params}">
+															     		<c:param name="${p.key}" value="${p.value}"/>
+																    </c:forEach>
+															    </c:url>
+														    </c:otherwise>
+														</c:choose>
 														<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" url="${url}"
 															test="${true}" popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 															ajax="${acao.ajax}" idAjax="${mov.idMov}" />

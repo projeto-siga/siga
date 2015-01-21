@@ -367,7 +367,7 @@ public class ExMobilVO extends ExVO {
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",
 					"Anexar Arquivo",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"anexar",
 					Ex.getInstance().getComp()
 							.podeAnexarArquivo(titular, lotaTitular, mob));

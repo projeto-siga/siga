@@ -932,6 +932,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", this.mob);
 		result.include("subscritorSel", this.subscritorSel);
 		result.include("titularSel", this.titularSel);
+		result.include("request", getRequest());
 	}
 
 	@Post("app/expediente/mov/anexar_gravar")
@@ -1030,21 +1031,21 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo(MessageFormat.format("anexar?sigla={0}", sigla));
 	}
 
-	@Post("app/expediente/mov/assinar_anexos_geral")
-	public void assinarAnexosGeral() throws Exception {
+    public String aAssinarAnexosGeral() throws Exception {
 		this.assinandoAnexosGeral = true;
 		anexa(null);
+		return "";
 	}
 
-	@Post("app/expediente/mov/mostrar_anexos_assinados")
-	public void mostrarAnexosAssinados() throws Exception {
+	@Get("app/expediente/mov/mostrar_anexos_assinados")
+	public void mostrarAnexosAssinados(String sigla) throws Exception {
+		this.sigla = sigla;
 		buscarDocumento(true);
 
 		ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(),
 				true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
 		
 		result.include("mobilVO", mobilVO);
-//		result.forwardTo("app/expediente/mov/mostrar_anexos_assinados");
 	}
 
 	public String aArquivarCorrenteGravar() throws Exception {
@@ -1858,7 +1859,9 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aExcluir() throws Exception {
+	@Get("/app/expediente/mov/excluir")
+	public void excluir(Long id) throws Exception {
+		setId(id);
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -1870,7 +1873,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, doc.toString());
 	}
 
 	public String aExibir() throws Exception {

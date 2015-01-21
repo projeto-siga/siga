@@ -1144,8 +1144,10 @@ public class ExMovimentacaoController extends ExController {
 
 		return Action.SUCCESS;
 	}
-
-	public String aDesobrestarGravar() throws Exception {
+	
+	@Get("app/expediente/mov/desobrestar_gravar")
+	public void aDesobrestarGravar(String sigla) throws Exception {
+		this.setSigla(sigla);
 		buscarDocumento(true);
 		lerForm(mov);
 
@@ -1160,8 +1162,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
 	@Get("app/expediente/mov/sobrestar_gravar")
@@ -2219,7 +2220,9 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aRegistrarAssinatura() throws Exception {
+	@Get("/app/expediente/mov/registrar_assinatura")
+	public void aRegistrarAssinatura(String sigla) throws Exception {
+		this.setSigla(sigla);
 		buscarDocumento(true);
 
 		if (doc.getSubscritor() != null) {
@@ -2235,14 +2238,33 @@ public class ExMovimentacaoController extends ExController {
 					"Não é possível registrar a assinatura");
 
 		setSubstituicao(false);
-
-		return Action.SUCCESS;
+		
+		result.include("mob", this.getMob());
+		result.include("sigla", this.getSigla());
+		result.include("dtMovString", this.getDtMovString());
+		result.include("subscritorSel", this.getSubscritorSel());
+		result.include("substituicao", this.isSubstituicao());
+		result.include("titularSel", this.getTitularSel());
 	}
 
-	public String aRegistrarAssinaturaGravar() throws Exception {
+	@Post("/app/expediente/mov/registrar_assinatura_gravar")
+	public void registrar_assinatura_gravar(int postback, String sigla, String dtMovString, DpPessoaSelecao subscritorSel, boolean substituicao, DpPessoaSelecao tilularSel) throws Exception {
+		this.setPostback(postback);
+		this.setSigla(sigla);
+		this.setDtMovString(dtMovString);
+		this.setSubscritorSel(subscritorSel);
+		this.setSubstituicao(substituicao);
+		this.setTitularSel(tilularSel);
+		
+		if (this.getSubscritorSel() == null)
+			this.setSubscritorSel(new DpPessoaSelecao());
+		
+		if (this.getTitularSel() == null)
+			this.setTitularSel(new DpPessoaSelecao());
+		
 		buscarDocumento(true);
 		lerForm(mov);
-
+		
 		if (mov.getSubscritor() == null)
 			throw new AplicacaoException("Responsável não informado");
 
@@ -2262,7 +2284,8 @@ public class ExMovimentacaoController extends ExController {
 			throw e;
 		}
 
-		return Action.SUCCESS;
+		result.redirectTo("/app/expediente/doc/exibir?sigla="+this.getSigla());
+		
 	}
 
 	@Get("/app/expediente/incluir_cosignatario")
@@ -3246,20 +3269,45 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aVincularPapel() throws Exception {
+	
+	@Get("/app/expediente/mov/vincularPapel")
+	public void aVincularPapel(String sigla) throws Exception {
+		this.setSigla(sigla);
 		buscarDocumento(true);
 
 		if (!Ex.getInstance().getComp()
 				.podeFazerVinculacaoPapel(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException(
 					"Não é possível fazer vinculação de papel");
-
-		return Action.SUCCESS;
+		
+		result.include("sigla", this.getSigla());
+		result.include("mob", this.getMob());
+		result.include("dtMovString", this.getDtMovString());
+		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
+		result.include("responsavelSel", this.getResponsavelSel());
+		result.include("lotaResponsavelSel",  this.getLotaResponsavelSel());
+		result.include("listaExPapel", this.getListaExPapel());
+		result.include("tipoResponsavel", this.getTipoResponsavel());
+		
 	}
-
-	public String aVincularPapelGravar() throws Exception {
+	
+	@Post("/app/expediente/mov/vincularPapel")
+	public void vincularPapel_gravar(int postback, String sigla, String dtMovString, int tipoResponsavel, DpPessoaSelecao responsavelSel, DpLotacaoSelecao lotaResponsavelSel,  Long idPapel) throws Exception {
+		this.setPostback(postback);
+		this.setSigla(sigla);
+		this.setDtMovString(dtMovString);
+		this.setTipoResponsavel(tipoResponsavel);
+		this.setResponsavelSel(responsavelSel);
+		this.setLotaResponsavelSel(lotaResponsavelSel);
+		this.setIdPapel(idPapel);
+		
+		if (this.getResponsavelSel() == null)
+			this.setResponsavelSel(new DpPessoaSelecao());
+		
+		if (this.getLotaResponsavelSel() == null)
+			this.setLotaResponsavelSel(new DpLotacaoSelecao());
+		
 		buscarDocumento(true);
-
 		lerForm(mov);
 
 		if (mov.getResp() == null && mov.getLotaResp() == null)
@@ -3294,8 +3342,9 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-
-		return Action.SUCCESS;
+		
+		result.redirectTo("/app/expediente/doc/exibir?sigla="+this.getSigla());
+		
 	}
 
 	public String aTransferirLote() throws Exception {

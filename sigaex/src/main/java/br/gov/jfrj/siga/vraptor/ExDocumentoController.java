@@ -106,6 +106,7 @@ public class ExDocumentoController extends ExController {
 	
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	public ExDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so) {
+
 		super(request, response, context, result, CpDao.getInstance(), so);
 		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();

@@ -303,8 +303,11 @@ public class ExDocumentoController extends ExController {
 		boolean isDocNovo = (exDocumentoDTO == null);
 		if (isDocNovo) {
 			exDocumentoDTO = new ExDocumentoDTO();
-			exDocumentoDTO.setCriandoAnexo(criandoAnexo);
-			exDocumentoDTO.setMobilPaiSel(mobilPaiSel);
+			exDocumentoDTO.setCriandoAnexo(criandoAnexo==null?false:criandoAnexo);
+		    
+			if (mobilPaiSel != null){
+				exDocumentoDTO.setMobilPaiSel(mobilPaiSel);
+			}
 		}
 		
 		if ((sigla != null) && (sigla != "")){
@@ -1277,7 +1280,7 @@ public class ExDocumentoController extends ExController {
 			if (getPar().get("reqexDocumentoDTO.documentoRefSel") != null)
 				req = getPar().get("reqexDocumentoDTO.mobilPaiSel")[0].toString();
 			
-			if (mobilPaiSel.getSigla() != null)
+			if ((mobilPaiSel != null) && (mobilPaiSel.getSigla() != null))
 				exDocumentoDTO.getMobilPaiSel().setSigla(mobilPaiSel.getSigla());
 			
 			

@@ -70,16 +70,6 @@
 		<url-pattern>/sigalibs/*</url-pattern>
 	</filter-mapping>
 
-	<servlet>
-		<servlet-name>GiService</servlet-name>
-		<servlet-class>br.gov.jfrj.siga.gi.service.impl.GiServiceImpl</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>GiService</servlet-name>
-		<url-pattern>/servicos/GiService</url-pattern>
-	</servlet-mapping>
- 	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>

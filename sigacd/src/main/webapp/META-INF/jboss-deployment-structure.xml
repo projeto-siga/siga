@@ -11,6 +11,7 @@
             <module name="javax.wsdl4j.api" />
             <module name="org.apache.commons.logging" />
             <module name="org.apache.xalan" />
+            <module name="org.apache.xerces" export="true"/>			
             <module name="asm.asm" />
             
             <module name="sigadoc.ext" />

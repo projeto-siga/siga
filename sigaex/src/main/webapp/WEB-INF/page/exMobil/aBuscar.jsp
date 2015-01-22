@@ -22,8 +22,8 @@ function sbmt(offset) {
 	if (offset==null) {d
 		offset=0;
 	}
-	listar["p.offset"].value=offset;
-	listar.submit();
+	buscar["p.offset"].value=offset;
+	buscar.submit();
 }
 
 function montaDescricao(id,via,descrDoc){
@@ -583,8 +583,8 @@ function limpaCampos()
 							</c:if>
 
 							<div class="gt-content-box gt-for-table">
-								<form id="listar" name="listar" onsubmit="javascript: return limpaCampos()"
-									action="listar" method="get" class="form100">
+								<form id="buscar" name="buscar" onsubmit="javascript: return limpaCampos()"
+									action="buscar" method="get" class="form100">
 									<table class="gt-form-table">
 										<colgroup>
 											<col style="width: 10em;" />

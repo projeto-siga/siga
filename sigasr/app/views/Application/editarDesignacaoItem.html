@@ -95,9 +95,6 @@
 	    	acaoTable.api().row($(this).closest('tr')).remove().draw(false);
 	    } );
 
-	    validatorDesignacaoForm = $("#formDesignacao").validate({
-	    	onfocusout: false
-	    });
 	});
 	
 	function modalAbrir(componentId) {
@@ -156,10 +153,6 @@
 		$("#acaoSpan").html('');
 		
 		modalFechar('acao');
-	}
-
-	function isValidForm() {
-	    return jQuery("#formDesignacao").valid();
 	}
 </script>
 

@@ -415,5 +415,6 @@ BaseService.prototype.isValidForm = function() {
 }
 
 BaseService.prototype.resetErrosForm = function() {
-	opts.validatorForm.resetForm();
+	if (opts.validatorForm)
+		opts.validatorForm.resetForm();
 }

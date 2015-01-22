@@ -330,54 +330,182 @@ public class ExMobilController extends
 		return s;
 	}
 
-	@Override
-	public String aBuscar(String sigla, String postback) throws Exception {
+	@Get("app/expediente/buscar")
+	public void aBuscar(String sigla, String popup, String primeiraVez, String propriedade,
+			Integer postback, int apenasRefresh, Long ultMovIdEstadoDoc, int ordem,
+			int visualizacao, Integer ultMovTipoResp,
+			DpPessoaSelecao ultMovRespSel, DpLotacaoSelecao ultMovLotaRespSel,
+			Long orgaoUsu, Long idTpDoc, String dtDocString,
+			String dtDocFinalString, Long idTipoFormaDoc, Integer idFormaDoc,
+			Long idMod, String anoEmissaoString, String numExpediente,
+			String numExtDoc, CpOrgaoSelecao cpOrgaoSel, String numAntigoDoc,
+			DpPessoaSelecao subscritorSel, Integer tipoCadastrante,
+			DpPessoaSelecao cadastranteSel,
+			DpLotacaoSelecao lotaCadastranteSel, Integer tipoDestinatario,
+			DpPessoaSelecao destinatarioSel,
+			DpLotacaoSelecao lotacaoDestinatarioSel,
+			CpOrgaoSelecao orgaoExternoDestinatarioSel, String nmDestinatario,
+			ExClassificacaoSelecao classificacaoSel, String descrDocument,
+			String fullText, Long ultMovEstadoDoc, Integer offset) throws Exception {
+			this.setSigla(sigla);
+			this.setPostback(postback);
+			this.setUltMovIdEstadoDoc(ultMovIdEstadoDoc);
+			this.setOrdem(ordem);
+			this.setVisualizacao(visualizacao);
+			this.setUltMovTipoResp(ultMovTipoResp);
+			this.setApenasRefresh(apenasRefresh);
+			this.setUltMovRespSel(ultMovRespSel);
+			this.setUltMovLotaRespSel(ultMovLotaRespSel);
+			this.setOrgaoUsu(orgaoUsu);
+			this.setIdTpDoc(idTpDoc);
+			this.setDtDocString(dtDocString);
+			this.setDtDocFinalString(dtDocFinalString);
+			this.setIdTipoFormaDoc(idTipoFormaDoc);
+			this.setIdFormaDoc(idFormaDoc);
+			this.setIdMod(idMod);
+			this.setAnoEmissaoString(anoEmissaoString);
+			this.setNumExpediente(numExpediente);
+			this.setNumExtDoc(numExtDoc);
+			this.setCpOrgaoSel(cpOrgaoSel);
+			this.setNumAntigoDoc(numAntigoDoc);
+			this.setSubscritorSel(subscritorSel);
+			this.setTipoCadastrante(tipoCadastrante);
+			this.setCadastranteSel(cadastranteSel);
+			this.setLotaCadastranteSel(lotaCadastranteSel);
+			this.setTipoDestinatario(tipoDestinatario);
+			this.setDestinatarioSel(destinatarioSel);
+			this.setLotacaoDestinatarioSel(lotacaoDestinatarioSel);
+			this.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel);
+			this.setNmDestinatario(nmDestinatario);
+			this.setClassificacaoSel(classificacaoSel);
+			this.setDescrDocumento(descrDocument);
+			this.setFullText(fullText);
+			this.setUltMovIdEstadoDoc(ultMovIdEstadoDoc);
+			this.setOrdem(ordem);
+		
 
-		int offset = 0;
-		int itemPagina = 0;
-		if (param("p.offset") != null) {
-			offset = paramInteger("p.offset");
-		}
-		if (param("itemPagina") != null) {
-			itemPagina = paramInteger("itemPagina");
-		}
+		if (this.getUltMovRespSel() == null)
+			this.setUltMovRespSel(new DpPessoaSelecao());
 
-		final ExMobilDaoFiltro flt = createDaoFiltro();
+		if (this.getUltMovLotaRespSel() == null)
+			this.setUltMovLotaRespSel(new DpLotacaoSelecao());
 
+		if (this.getCpOrgaoSel() == null)
+			this.setCpOrgaoSel(new CpOrgaoSelecao());
+
+		if (this.getSubscritorSel() == null)
+			this.setSubscritorSel(new DpPessoaSelecao());
+
+		if (this.getCadastranteSel() == null)
+			this.setCadastranteSel(new DpPessoaSelecao());
+
+		if (this.getLotaCadastranteSel() == null)
+			this.setLotaCadastranteSel(new DpLotacaoSelecao());
+
+		if (this.getDestinatarioSel() == null)
+			this.setDestinatarioSel(new DpPessoaSelecao());
+
+		if (this.getLotacaoDestinatarioSel() == null)
+			this.setLotacaoDestinatarioSel(new DpLotacaoSelecao());
+
+		if (this.getOrgaoExternoDestinatarioSel() == null)
+			this.setOrgaoExternoDestinatarioSel(new CpOrgaoSelecao());
+
+		if (this.getClassificacaoSel() == null)
+			this.setClassificacaoSel(new ExClassificacaoSelecao());
+		
 		if (getPostback() == null) {
-			setOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
-
+			if (getOrgaoUsu() == null)
+				setOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
 			setIdTpDoc(0L);
-
-			// getUltMovRespSel().setId(getTitular().getIdPessoa());
-			getUltMovLotaRespSel().setId(getLotaTitular().getIdLotacao());
-			flt.setUltMovLotaRespSelId(getUltMovLotaRespSel().getId());
-			setUltMovTipoResp(2);
-			setUltMovIdEstadoDoc(2L);
-			flt.setUltMovIdEstadoDoc(getUltMovIdEstadoDoc());
-
+			setTipoDestinatario(2);
 			if (getUltMovLotaRespSel().getId() != null)
 				setUltMovTipoResp(2);
 			else
 				setUltMovTipoResp(1);
+			if (getLotaCadastranteSel().getId() != null)
+				setTipoCadastrante(2);
+			else
+				setTipoCadastrante(1);
 		}
 
-		flt.setSigla(param("sigla"));
+		if (offset  == null) {
+			 offset = 0;
+		}
 
-		getClassificacaoSel().buscar();
-		getSubscritorSel().buscar();
-		getDestinatarioSel().buscar();
-		getLotacaoDestinatarioSel().buscar();
-		getOrgaoSel().buscar();
-		getOrgaoExternoDestinatarioSel().buscar();
-		getUltMovRespSel().buscar();
-		getUltMovLotaRespSel().buscar();
+		this.classificacaoSel.buscar();
+		this.destinatarioSel.buscar();
+		this.documentoSel.buscar();
+		this.lotacaoDestinatarioSel.buscar();
+		this.orgaoExternoDestinatarioSel.buscar();
+		this.orgaoSel.buscar();
+		this.subscritorSel.buscar();
+		this.ultMovLotaRespSel.buscar();
+		this.ultMovRespSel.buscar();
+		this.cadastranteSel.buscar();
+		this.lotaCadastranteSel.buscar();
 
-		setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
-				getTitular(), getLotaTitular()));
-		setItens(dao().consultarPorFiltroOtimizado(flt, offset, itemPagina));
+		if (getPrimeiraVez() == null || !getPrimeiraVez().equals("sim")) {
+			final ExMobilDaoFiltro flt = createDaoFiltro();
+			long tempoIni = System.currentTimeMillis();
+			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
+					getTitular(), getLotaTitular()));
 
-		return Action.SUCCESS;
+			System.out.println("Consulta dos por filtro: "
+					+ (System.currentTimeMillis() - tempoIni));
+
+			setItens(dao().consultarPorFiltroOtimizado(flt, offset,
+					getItemPagina(), getTitular(), getLotaTitular()));
+		}
+
+		result.include("primeiraVez", this.getPrimeiraVez());
+		result.include("popup", true);
+		result.include("apenasRefresh", this.getApenasRefresh());
+		result.include("estados", this.getEstados());
+		result.include("listaOrdem", this.getListaOrdem());
+		result.include("ordem", this.getOrdem());
+		result.include("listaVisualizacao", this.getListaVisualizacao());
+		result.include("visualizacao", this.getVisualizacao());
+		result.include("listaTipoResp", this.getListaTipoResp());
+		result.include("ultMovTipoResp", this.getUltMovTipoResp());
+		result.include("ultMovRespSel", this.getUltMovRespSel());
+		result.include("orgaoUsu", this.getOrgaoUsu());
+		result.include("orgaosUsu", this.getOrgaosUsu());
+		result.include("tiposDocumento", this.getTiposDocumento());
+		result.include("idTpDoc", this.getIdTpDoc());
+		result.include("dtDocString", this.getDtDocString());
+		result.include("dtDocFinalString", this.getDtDocFinalString());
+		result.include("tiposFormaDoc", this.getTiposFormaDoc());
+		result.include("idTipoFormaDoc", this.getIdFormaDoc());
+		result.include("anoEmissaoString", this.getAnoEmissaoString());
+		result.include("listaAnos", this.getListaAnos());
+		result.include("numExpediente", this.getNumExpediente());
+		result.include("numExtDoc", this.getNumExtDoc());
+		result.include("cpOrgaoSel", this.getCpOrgaoSel());
+		result.include("numAntigoDoc", this.getNumAntigoDoc());
+		result.include("nmSubscritor", this.getNmSubscritorExt());
+		result.include("subscritorSel", this.getSubscritorSel());
+		result.include("listaTipoResp", this.getListaTipoResp());
+		result.include("tipoCadastrante", this.getTipoCadastrante());
+		result.include("cadastranteSel", this.getCadastranteSel());
+		result.include("lotaCadastrante", this.getLotaCadastranteSel());
+		result.include("listaTipoDest", this.getListaTipoDest());
+		result.include("tipoDestinatario", this.getTipoDestinatario());
+		result.include("destinatarioSel", this.getDestinatarioSel());
+		result.include("lotacaoDestinatarioSel",
+				this.getLotacaoDestinatarioSel());
+		result.include("nmDestinatario", this.getNmDestinatario());
+		result.include("descrDocumento", this.getDescrDocumento());
+		result.include("visualizacao", this.getVisualizacao());
+		result.include("itemPagina", this.getItemPagina());
+		result.include("tamanho", this.getTamanho());
+		result.include("itens", this.getItens());
+		result.include("classificacaoSel", this.getClassificacaoSel());
+		result.include("ultMovLotaRespSel", this.getUltMovLotaRespSel());
+		result.include("ultMovEstadoDoc", this.getUltMovIdEstadoDoc());
+		result.include("p.offset", offset);
+		result.include("sigla", this.getSigla());
+		result.include("propriedade", propriedade);
 	}
 
 	@Get("app/expediente/doc/carregar_lista_formas")
@@ -394,21 +522,21 @@ public class ExMobilController extends
 
 	@Get("app/expediente/doc/listar")
 	public void aListar(String popup, String primeiraVez, String propriedade,
-			int postback, int apenasRefresh, Long ultMovIdEstadoDoc, int ordem,
-			int visualizacao, int ultMovTipoResp,
+			Integer postback, int apenasRefresh, Long ultMovIdEstadoDoc, int ordem,
+			int visualizacao, Integer ultMovTipoResp,
 			DpPessoaSelecao ultMovRespSel, DpLotacaoSelecao ultMovLotaRespSel,
 			Long orgaoUsu, Long idTpDoc, String dtDocString,
-			String dtDocFinalString, Long idTipoFormaDoc, int idFormaDoc,
+			String dtDocFinalString, Long idTipoFormaDoc, Integer idFormaDoc,
 			Long idMod, String anoEmissaoString, String numExpediente,
 			String numExtDoc, CpOrgaoSelecao cpOrgaoSel, String numAntigoDoc,
-			DpPessoaSelecao subscritorSel, int tipoCadastrante,
+			DpPessoaSelecao subscritorSel, Integer tipoCadastrante,
 			DpPessoaSelecao cadastranteSel,
-			DpLotacaoSelecao lotaCadastranteSel, int tipoDestinatario,
+			DpLotacaoSelecao lotaCadastranteSel, Integer tipoDestinatario,
 			DpPessoaSelecao destinatarioSel,
 			DpLotacaoSelecao lotacaoDestinatarioSel,
 			CpOrgaoSelecao orgaoExternoDestinatarioSel, String nmDestinatario,
 			ExClassificacaoSelecao classificacaoSel, String descrDocument,
-			String fullText) throws Exception {
+			String fullText, Long ultMovEstadoDoc, Integer offset) throws Exception {
 		this.setPrimeiraVez(primeiraVez);
 		if (this.getPrimeiraVez() == null) {
 			this.setPostback(postback);
@@ -443,38 +571,41 @@ public class ExMobilController extends
 			this.setClassificacaoSel(classificacaoSel);
 			this.setDescrDocumento(descrDocument);
 			this.setFullText(fullText);
-
-			if (this.getUltMovRespSel() == null)
-				this.setUltMovRespSel(new DpPessoaSelecao());
-
-			if (this.getUltMovLotaRespSel() == null)
-				this.setUltMovLotaRespSel(new DpLotacaoSelecao());
-
-			if (this.getCpOrgaoSel() == null)
-				this.setCpOrgaoSel(new CpOrgaoSelecao());
-
-			if (this.getSubscritorSel() == null)
-				this.setSubscritorSel(new DpPessoaSelecao());
-
-			if (this.getCadastranteSel() == null)
-				this.setCadastranteSel(new DpPessoaSelecao());
-
-			if (this.getLotaCadastranteSel() == null)
-				this.setLotaCadastranteSel(new DpLotacaoSelecao());
-
-			if (this.getDestinatarioSel() == null)
-				this.setDestinatarioSel(new DpPessoaSelecao());
-
-			if (this.getLotacaoDestinatarioSel() == null)
-				this.setLotacaoDestinatarioSel(new DpLotacaoSelecao());
-
-			if (this.getOrgaoExternoDestinatarioSel() == null)
-				this.setOrgaoExternoDestinatarioSel(new CpOrgaoSelecao());
-
-			if (this.getClassificacaoSel() == null)
-				this.setClassificacaoSel(new ExClassificacaoSelecao());
+			this.setUltMovIdEstadoDoc(ultMovIdEstadoDoc);
+			this.setOrdem(ordem);
 		}
+		
 
+		if (this.getUltMovRespSel() == null)
+			this.setUltMovRespSel(new DpPessoaSelecao());
+
+		if (this.getUltMovLotaRespSel() == null)
+			this.setUltMovLotaRespSel(new DpLotacaoSelecao());
+
+		if (this.getCpOrgaoSel() == null)
+			this.setCpOrgaoSel(new CpOrgaoSelecao());
+
+		if (this.getSubscritorSel() == null)
+			this.setSubscritorSel(new DpPessoaSelecao());
+
+		if (this.getCadastranteSel() == null)
+			this.setCadastranteSel(new DpPessoaSelecao());
+
+		if (this.getLotaCadastranteSel() == null)
+			this.setLotaCadastranteSel(new DpLotacaoSelecao());
+
+		if (this.getDestinatarioSel() == null)
+			this.setDestinatarioSel(new DpPessoaSelecao());
+
+		if (this.getLotacaoDestinatarioSel() == null)
+			this.setLotacaoDestinatarioSel(new DpLotacaoSelecao());
+
+		if (this.getOrgaoExternoDestinatarioSel() == null)
+			this.setOrgaoExternoDestinatarioSel(new CpOrgaoSelecao());
+
+		if (this.getClassificacaoSel() == null)
+			this.setClassificacaoSel(new ExClassificacaoSelecao());
+		
 		if (getPostback() == null) {
 			if (getOrgaoUsu() == null)
 				setOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
@@ -490,9 +621,8 @@ public class ExMobilController extends
 				setTipoCadastrante(1);
 		}
 
-		int offset = 0;
-		if (getP().getOffset() != null) {
-			offset = getP().getOffset();
+		if (offset  == null) {
+			 offset = 0;
 		}
 
 		this.classificacaoSel.buscar();
@@ -564,7 +694,8 @@ public class ExMobilController extends
 		result.include("itens", this.getItens());
 		result.include("classificacaoSel", this.getClassificacaoSel());
 		result.include("ultMovLotaRespSel", this.getUltMovLotaRespSel());
-
+		result.include("ultMovEstadoDoc", this.getUltMovIdEstadoDoc());
+		result.include("p.offset", offset);
 	}
 
 	@Override

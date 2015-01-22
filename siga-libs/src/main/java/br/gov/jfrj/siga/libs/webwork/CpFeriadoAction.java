@@ -188,7 +188,7 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 		
 		CpFeriado feriado;
 		if (this.getId() != null){
-			feriado = daoFeriado(getId());		
+			feriado = daoFeriado(getId());
 			this.setDscFeriado(feriado.getDescricao());
 		}			
 		

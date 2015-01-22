@@ -66,7 +66,7 @@
 						<tr>
 							<td>Documento Mestre:</td>
 							<td>
-								<siga:selecao tema='simple' titulo="Documento Mestre:" propriedade="documentoRef" modulo="sigaex" />
+								<siga:selecao tema='simple' titulo="Documento Mestre:" propriedade="documentoRef" urlAcao="buscar" modulo="sigaex" />
 							</td>
 						</tr>
 						<tr class="button">

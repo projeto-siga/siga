@@ -31,27 +31,32 @@
 
 				<form action="incluir_cosignatario_gravar"
 					namespace="/expediente/mov" cssClass="form" method="post">
-					<input type="hidden" name="postback" value="1" /> <input
-						type="hidden" name="sigla" value="${sigla}" />
+					<input type="hidden" name="postback" value="1" />
+					<input type="hidden" name="sigla" value="${sigla}" />
 					<table class="gt-form-table">
 						<tr class="header">
-							<td colspan="2">Dados do Cossignatário</td>
+							<td colspan="2">
+								Dados do Cossignatário
+							</td>
 						</tr>
 
-						<siga:selecao titulo="Cossignatário:" propriedade="cosignatario"
-							modulo="siga" />
+						<siga:selecao titulo="Cossignatário:" propriedade="cosignatario" modulo="siga" />
 
 
 						<tr>
-							<td><label>Função;Lotação;Localidade</label></td>
-							<td><input type="text" name="funcaoCosignatario" size="50"
-								value="${dscGrupo}" maxlength="128" /></td>
+							<td>
+							<label>
+								Função;Lotação;Localidade
+							</label>
+						</td>
+						<td>
+							<input type="text" name="funcaoCosignatario" size="50" value="${funcaoCosignatario}" maxlength="128" />
+						</td>
 						</tr>
 						<tr class="button">
-							<td colspan="2"><input type="submit" value="Ok"
-								class="gt-btn-small gt-btn-left" /> <input type="button"
-								value="Cancela" onclick="javascript:history.back();"
-								class="gt-btn-small gt-btn-left" />
+							<td colspan="2">
+							<input type="submit" value="Ok" class="gt-btn-small gt-btn-left" />
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" />
 						</tr>
 					</table>
 				</form>

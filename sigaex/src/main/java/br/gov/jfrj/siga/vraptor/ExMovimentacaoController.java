@@ -2321,7 +2321,7 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/incluir_cosignatario")
 	public void incluirCosignatario(String sigla) throws Exception {
-		this.sigla = sigla;
+		this.setSigla(sigla);
 		buscarDocumento(true);
 
 		if (!Ex.getInstance().getComp()
@@ -2334,16 +2334,18 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/incluir_cosignatario_gravar")
-	public void aIncluirCosignatarioGravar(String sigla, ExMobil mob,
-			DpPessoaSelecao cosignatarioSel, String funcaoCosignatario)
+	public void aIncluirCosignatarioGravar(String sigla, DpPessoaSelecao cosignatarioSel, String funcaoCosignatario, Integer postback)
 			throws Exception {
-		this.sigla = sigla;
-		this.mob = mob;
-		this.cosignatarioSel = cosignatarioSel;
-		this.funcaoCosignatario = funcaoCosignatario;
+		this.setPostback(postback);
+		this.setFuncaoCosignatario(funcaoCosignatario);
+		this.setSigla(sigla);
+		this.setCosignatarioSel(cosignatarioSel);
 		buscarDocumento(true);
 		lerForm(mov);
-
+		
+		if (this.getCosignatarioSel() == null)
+			this.setCosignatarioSel(new DpPessoaSelecao());
+		
 		mov.setDescrMov(getFuncaoCosignatario());
 		if (getCosignatarioSel().getId() != null) {
 			mov.setSubscritor(dao().consultar(getCosignatarioSel().getId(),
@@ -2353,7 +2355,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		if (!Ex.getInstance().getComp()
-				.podeIncluirCosignatario(getTitular(), getLotaTitular(), mob))
+				.podeIncluirCosignatario(getTitular(), getLotaTitular(), this.mob))
 			throw new AplicacaoException("Não é possível incluir cossignatário");
 
 		try {
@@ -2365,6 +2367,9 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
+		
+		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
+		
 	}
 
 	public String aReceber() throws Exception {

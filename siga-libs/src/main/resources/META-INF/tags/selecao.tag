@@ -18,6 +18,7 @@
 <%@ attribute name="siglaInicial" required="false"%>
 <%@ attribute name="descricaoInicial" required="false"%>
 <%@ attribute name="inputName" required="false"%>
+<%@ attribute name="urlAcao" required="false"%>
 <!-- A lista de par -->
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
@@ -47,6 +48,15 @@
 	</c:when>
 	<c:otherwise>
 		<c:set var="inputNameTipoSel" value="${inputName}${tipoSel}Sel" />
+	</c:otherwise>
+</c:choose>
+
+<c:choose>
+	<c:when test="${empty urlAcao}">
+		<c:set var="urlBuscar" value="${acaoBusca}/buscar.action" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="urlBuscar" value="/app${acaoBusca}/${urlAcao}" />
 	</c:otherwise>
 </c:choose>
 
@@ -101,8 +111,8 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	var url = '/${urlPrefix}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
-	
+	var url = '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+		
 	if (!newwindow_${propriedade}.closed && newwindow_${propriedade}.location) {
 		newwindow_${propriedade}.location.href = url;
 	} else {

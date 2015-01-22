@@ -73,7 +73,7 @@
 					<td>
 						<siga:escolha var='idDocumentoEscolha'>
 							<siga:opcao id='1' texto="Documento Interno" >
-								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" modulo="sigaex"/>
+								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" urlAcao="buscar" modulo="sigaex"/>
 							</siga:opcao>
 							<siga:opcao id='2' texto="Documento Externo ao SIGAEX" >
 								<input type="checkbox" theme='simple' name="idDocumentoPaiExterno" />

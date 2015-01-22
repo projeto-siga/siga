@@ -62,7 +62,7 @@ public class FeriadoController extends SigaController {
 	
 	@Get("/app/feriado/listar")
 	public void lista(Integer id) throws Exception {
-//		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 		
 		if (id != null){
 			CpFeriado feriado = daoFeriado(id);
@@ -75,7 +75,7 @@ public class FeriadoController extends SigaController {
 	
 	@Post("/app/feriado/salvar")
 	public void aEditarGravar(String dscFeriado, Integer id) throws Exception {
-//		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 
 		if (StringUtils.isBlank(dscFeriado)) {
 			throw new AplicacaoException("Descrição do feriado não informada");
@@ -101,7 +101,7 @@ public class FeriadoController extends SigaController {
 	
 	@Get("/app/feriado/excluir")
 	public void excluirFeriado(Integer id) throws Exception {
-//		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 		
 		if (id != null) {
 			try {
@@ -121,8 +121,8 @@ public class FeriadoController extends SigaController {
 	}
 	
 	@Get("/app/feriado/excluir-ocorrencia")
-	public void excluirOcorrencia(Integer idOcorrencia) throws Exception {
-//		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+	public void excluirOcorrencia(Long idOcorrencia) throws Exception {
+		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 		
 		if (idOcorrencia != null) {
 			try {
@@ -170,8 +170,8 @@ public class FeriadoController extends SigaController {
 	}
 	
 	@Post("/app/feriado/gravar-ocorrencia")
-	public void gravarOcorrencia(Date dtIniFeriado, Date dtFimFeriado, Integer idOcorrencia,
-			Integer id, DpLotacaoSelecao lotacao_lotacaoSel, Integer idOrgaoUsu, Integer idLocalidade) throws Exception {
+	public void gravarOcorrencia(Date dtIniFeriado, Date dtFimFeriado, Long idOcorrencia,
+			Integer id, DpLotacaoSelecao lotacao_lotacaoSel, Long idOrgaoUsu, Long idLocalidade) throws Exception {
 		
 //		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 
@@ -246,104 +246,24 @@ public class FeriadoController extends SigaController {
 		result.include("listaLocalidades", localidades);
 	}
 	
-//	
-//	public Integer getId() {
-//		return id;
-//	}
-//
-//	public void setId(Integer id) {
-//		this.id = id;
-//	}	
-//	
-//
-//	public Long getIdOcorrencia() {
-//		return idOcorrencia;
-//	}
-//
-//	public void setIdOcorrencia(Long idOcorrencia) {
-//		this.idOcorrencia = idOcorrencia;
-//	}
-//
-//	public String getDscFeriado() {
-//		return dscFeriado;
-//	}
-//
-//	public void setDscFeriado(String dscFeriado) {
-//		this.dscFeriado = dscFeriado;	
-//	}
-//	
-//	public List getItens() {
-//		return itens;
-//	}
-//
-//	public void setItens(List feriados) {
-//		this.itens = feriados;
-//	}	
-//
-//	public Date getDtIniFeriado() {
-//		return dtIniFeriado;
-//	}
-//
-//	public void setDtIniFeriado(Date dtIniFeriado) {
-//		this.dtIniFeriado = dtIniFeriado;
-//	}
-//
-//	public Date getDtFimFeriado() {
-//		return dtFimFeriado;
-//	}
-//
-//	public void setDtFimFeriado(Date dtFimFeriado) {
-//		this.dtFimFeriado = dtFimFeriado;
-//	}
-//	
-//	public DpLotacaoSelecao getLotacaoSel() {
-//		return lotacaoSel;
-//	}
-//
-//	public void setLotacaoSel(DpLotacaoSelecao lotacaoSel) {
-//		this.lotacaoSel = lotacaoSel;
-//	}
-//
-//	public List getLocalidades() {
-//		return localidades;
-//	}
-//
-//	public void setLocalidades(List localidades) {
-//		this.localidades = localidades;
-//	}
-//	
-//	public Long getIdLocalidade() {
-//		return idLocalidade;
-//	}
-//
-//	public void setIdLocalidade(Long idLocalidade) {
-//		this.idLocalidade = idLocalidade;
-//	}
-//
-//		public Long getIdOrgaoUsu() {
-//		return idOrgaoUsu;
-//	}
-//
-//	public void setIdOrgaoUsu(Long idOrgaoUsu) {
-//		this.idOrgaoUsu = idOrgaoUsu;
-//	}
-//
-//
-//	public String getNmUF() {
-//		return nmUF;
-//	}
-//
-//	public void setNmUF(String nmUF) {
-//		this.nmUF = nmUF;
-//	}
-//
-//	public Long getIdAplicacao() {
-//		return idAplicacao;
-//	}
-//
-//	public void setIdAplicacao(Long idAplicacao) {
-//		this.idAplicacao = idAplicacao;
-//	}
+	@Get("/app/feriado/excluir-aplicacao")
+	public void excluirAplicacao(Integer idAplicacao) throws Exception {
+//		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
+		
+		if (idAplicacao != null) {
+			try {
+				ModeloDao.iniciarTransacao();
+				CpAplicacaoFeriado aplicacao = daoAplicacaoFeriado(idAplicacao);
+				dao().excluir(aplicacao);
+				ModeloDao.commitTransacao();
+			} catch (final Exception e) {
+				ModeloDao.rollbackTransacao();
+				throw new AplicacaoException("Erro na exclusão de ocorrencia de feriado", 0, e);
+			}
+		} else {
+			throw new AplicacaoException("ID da ocorrencia não informada");
+		}
+	}
 
 	public CpFeriado daoFeriado(Integer id) {
 		return dao().consultar(id, CpFeriado.class, false);
@@ -353,27 +273,9 @@ public class FeriadoController extends SigaController {
 		return dao().consultar(id, CpOcorrenciaFeriado.class, false);
 	}
 	
-//	public CpAplicacaoFeriado daoAplicacaoFeriado(long id) {
-//		return dao().consultar(id, CpAplicacaoFeriado.class, false);
-//	}
-
-//	public String aExcluirAplicacao() throws Exception {
-//		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
-//		if (getIdAplicacao() != null) {
-//			try {
-//				dao().iniciarTransacao();
-//				CpAplicacaoFeriado aplicacao = daoAplicacaoFeriado(getIdAplicacao());				
-//				dao().excluir(aplicacao);				
-//				dao().commitTransacao();				
-//			} catch (final Exception e) {
-//				dao().rollbackTransacao();
-//				throw new AplicacaoException("Erro na exclusão de ocorrencia de feriado", 0, e);
-//			}
-//		} else
-//			throw new AplicacaoException("ID da ocorrencia não informada");
-//
-//		return Action.SUCCESS;
-//	}
+	public CpAplicacaoFeriado daoAplicacaoFeriado(long id) {
+		return dao().consultar(id, CpAplicacaoFeriado.class, false);
+	}
 	
 	public Date stringToDate(String data) throws Exception {   
         if (data == null || data.equals(""))  
@@ -389,21 +291,6 @@ public class FeriadoController extends SigaController {
     }  
 
 
-//	public String aListarLocalidades() {
-//
-//			
-//		return Action.SUCCESS;
-//	}
-
-//	public List<CpUF> getListaUF(){
-//		
-//		List<CpUF> uf = new ArrayList<CpUF>();
-//		uf = dao().consultarUF();
-//		
-//		return uf;
-//		
-//	}	
-//	
 	public List<CpAplicacaoFeriado> getListaAplicacoes(Integer idOcorrencia) {
 		List<CpAplicacaoFeriado> aplicacoes = new ArrayList<CpAplicacaoFeriado>();
 		CpAplicacaoFeriado apl = new CpAplicacaoFeriado();

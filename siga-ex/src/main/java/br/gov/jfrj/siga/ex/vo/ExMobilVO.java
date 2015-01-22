@@ -367,7 +367,7 @@ public class ExMobilVO extends ExVO {
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",
 					"Anexar Arquivo",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"anexar",
 					Ex.getInstance().getComp()
 							.podeAnexarArquivo(titular, lotaTitular, mob));
@@ -498,10 +498,10 @@ public class ExMobilVO extends ExVO {
 		// confirmacao
 
 		addAcao("folder_page_white", "Encerrar Volume", "/app/expediente/mov",
-				"encerrar_volume_gravar", Ex.getInstance().getComp()
-						.podeEncerrarVolume(titular, lotaTitular, mob),
+				"encerrar_volume", Ex.getInstance().getComp().podeEncerrarVolume(titular, lotaTitular, mob),
 				"Confirma o encerramento do volume?", null, null, null, "once");
 
+		
 		addAcao("cancel", "Cancelar Via", "/expediente/mov",
 				"cancelarMovimentacao", Ex.getInstance().getComp()
 						.podeCancelarVia(titular, lotaTitular, mob),

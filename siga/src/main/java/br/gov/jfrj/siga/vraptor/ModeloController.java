@@ -21,46 +21,52 @@
  * Criado em  23/11/2005
  *
  */
-package br.gov.jfrj.webwork.action;
+package br.gov.jfrj.siga.vraptor;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-import com.opensymphony.xwork.Action;
+@Resource
+public class ModeloController extends SigaController {
 
-public class CpModeloAction extends SigaActionSupport {
+	public ModeloController(HttpServletRequest request, Result result, SigaObjects so) {
+		super(request, result, CpDao.getInstance(), so);
 
-	private List<CpModelo> itens;
-
-	private Long id;
-
-	private String conteudo;
+		result.on(AplicacaoException.class).forwardTo(this).appexception();
+		result.on(Exception.class).forwardTo(this).exception();
+	}
 
 	public CpModelo daoMod(long id) {
 		return dao().consultar(id, CpModelo.class, false);
 	}
 
-	public String aListar() throws Exception {
+	@Get("/app/modelo/listar")
+	public void lista() throws Exception {
 		assertAcesso("FE:Ferramentas;MODVER:Visualizar modelos");
-		setItens(dao().consultaCpModelos());
-		return Action.SUCCESS;
+		result.include("itens", dao().consultaCpModelos());
 	}
 
-	public String aEditarGravar() throws Exception {
+	@Post("/app/modelo/gravar")
+	public void gravar(Integer id, String conteudo) throws Exception {
 		assertAcesso("FE:Ferramentas;MODEDITAR:Editar modelos");
 
-		if (getId() != null) {
-			CpModelo mod = daoMod(getId());
+		if (id != null) {
+			CpModelo mod = daoMod(id);
 			Cp.getInstance().getBL().alterarCpModelo(mod, conteudo,
 					getIdentidadeCadastrante());
 		} else {
 			try {
-				dao().iniciarTransacao();
+				ModeloDao.iniciarTransacao();
 				CpModelo mod = new CpModelo();
 				mod.setConteudoBlobString(conteudo);
 				if (paramLong("idOrgUsu") != null)
@@ -68,37 +74,14 @@ public class CpModeloAction extends SigaActionSupport {
 							CpOrgaoUsuario.class, false));
 				mod.setHisDtIni(dao().consultarDataEHoraDoServidor());
 				dao().gravarComHistorico(mod, getIdentidadeCadastrante());
-				dao().commitTransacao();
+				ModeloDao.commitTransacao();
 			} catch (Exception e) {
-				dao().rollbackTransacao();
+				ModeloDao.rollbackTransacao();
 				throw new AplicacaoException(
 						"Não foi possível gravar o modelo.", 9, e);
 			}
 		}
-		return Action.SUCCESS;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getConteudo() {
-		return conteudo;
-	}
-
-	public List<CpModelo> getItens() {
-		return itens;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public void setConteudo(String conteudo) {
-		this.conteudo = conteudo;
-	}
-
-	public void setItens(List<CpModelo> itens) {
-		this.itens = itens;
+		
+		result.redirectTo(this).lista();
 	}
 }

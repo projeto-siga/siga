@@ -366,7 +366,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("user_add", "Incluir Cossignatário", "/app/expediente", "incluir_cosignatario", Ex.getInstance().getComp()
 				.podeIncluirCosignatario(titular, lotaTitular, mob), null, "sigla=" + doc.getSigla(), null, null, null);
 		
-		vo.addAcao("attach", "Anexar Arquivo", "/expediente/mov", "anexar",
+		vo.addAcao("attach", "Anexar Arquivo", "/app/expediente/mov", "anexar",
 				Ex.getInstance().getComp().podeAnexarArquivo(titular, lotaTitular, mob));
 		vo.addAcao("tag_yellow", "Fazer Anotação", "/app/expediente/mov", "anotar",
 				Ex.getInstance().getComp().podeFazerAnotacao(titular, lotaTitular, mob));

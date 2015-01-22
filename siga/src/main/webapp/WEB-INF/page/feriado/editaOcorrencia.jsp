@@ -115,7 +115,6 @@
 								<th>UF</th>								
 							</tr>
 						</thead>
-						
 						<tbody>
 							<c:forEach var="apl" items="${aplicFer}">
 								<input type="text" name="idAplicacao" />  
@@ -125,7 +124,7 @@
 									<td>${apl.localidade.nmLocalidade}</td>	
 									<td>${apl.localidade.UF.descricao}</td>	
 									<td align="center" width="10%">									
-	 			 						<a href="javascript:if (confirm('Deseja excluir?')) location.href='/siga/app/feriado/excluir_aplicacao?idAplicacao=${apl.id}&idOcorrencia=${idOcorrencia}';">
+	 			 						<a href="javascript:if (confirm('Deseja excluir?')) location.href='/siga/app/feriado/excluir-aplicacao?idAplicacao=${apl.id}&idOcorrencia=${idOcorrencia}';">
 											<img style="display: inline;"
 												src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir feriado"							
 												onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 

@@ -74,7 +74,7 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-			<a href="javascript: inserirEditarItem()" class="gt-btn-medium gt-btn-left">Incluir</a>
+			<a onclick="itemConfiguracaoService.cadastrar('Incluir Item')" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 	</div>
 </div>
@@ -118,9 +118,6 @@
 		return query_string;
 	}();
 
-	//removendo a referencia de '$' para o jQuery
-	//$.noConflict();
-	
 	var table = null;
 	jQuery(document).ready(function($) {
 		if (QueryString.mostrarDesativados != undefined) {
@@ -198,20 +195,6 @@
 				}
 			});
 			$('#itens_configuracao_table').mostrarDetalhes(format, optsLista.dataTable);
-
-			$('#itens_configuracao_table tbody').on('click', 'tr', function () {
-				var itemSelecionado = optsLista.dataTable.api().row(this).data();
-				
-				if (itemSelecionado != undefined) {
-					if (!$(this).hasClass('selected') ) {
-						optsLista.dataTable.$('tr.selected').removeClass('selected');
-			            $(this).addClass('selected');
-			        }
-
-					atualizarModalItem(itemSelecionado);
-					itemModalAbrir(true);
-				}
-			});
 	});
 
 	function format( d ) {
@@ -251,87 +234,36 @@
 	itemConfiguracaoService.getId = function(itemConfiguracao) {
 		return itemConfiguracao.id;
 	}
+	
 	itemConfiguracaoService.getRow = function(itemConfiguracao) {
 		return ['', itemConfiguracao.siglaItemConfiguracao, itemConfiguracao.tituloItemConfiguracao,
 				itemConfiguracao.descrItemConfiguracao, itemConfiguracao.descricaoSimilaridade, 'COLUNA_ACOES', ''];
 	}
+	
 	itemConfiguracaoService.onRowClick = function(itemConfiguracao) {
 		itemConfiguracaoService.editar(itemConfiguracao, 'Alterar Item de Configuração');
 	}
+	
 	/**
 	 * Customiza o metodo editar
 	 */
 	itemConfiguracaoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+
+		atualizarModalItem(obj);
+
+		// carrega as designações do item
+		carregarDesignacoes(obj.id);
 	}
 
-	function inserirEditarItem() {
-		limparDadosItemModal();
-		itemModalAbrir(false);
+	/**
+	 * Sobescreve o metodo cadastrar para limpar a tela.
+	 */
+	itemConfiguracaoService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title); // super.editar();
+
+		atualizarModalItem();
 	}
-	
-	function itemModalAbrir(isEdicao) {
-		isEditing = isEdicao;
-		
-		if (isEdicao)
-			$("#editarItem_dialog").dialog('option', 'title', 'Alterar Item de Configuração');
-		else
-			$("#editarItem_dialog").dialog('option', 'title', 'Incluir Item de Configuração');
-
-		$("#editarItem_dialog").dialog('open');
-	}
-
-	function itemModalFechar() {
-		$("#editarItem_dialog").dialog('close');
-		limparDadosItemModal();
-	}
-
-	function recuperarInformacoesTela() {
-		var jSonItem = atualizaItemConfiguracaoJson(),
-			id = jSonItem.id,
-			row = [
-				'',
-				$("#siglaItemConfiguracao").val(),
-				$("#tituloItemConfiguracao").val(),
-				$("#descrItemConfiguracao").val(),
-				$("#descricaoSimilaridade").val(),
-				'<a class="once" onclick="desativarItem(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
-				jSonItem
-			];
-
-		return row;
-	}
-
-	function limparDadosItemModal() {
-		$("#siglaItemConfiguracao").val('');
-		$("#idItemConfiguracao").val('');
-		$("#hisIdIni").val('');
-		$("#tituloItemConfiguracao").val('');
-		$("#descrItemConfiguracao").val('');
-		$("#descricaoSimilaridade").val('');
-		$("#numFatorMultiplicacaoGeral").val('');
-
-		removerItensLista('gestoresUl');
-		removerItensLista('fatoresUl');
-
-		resetAllErrorMessage();
-	}
-
-	//Limpa as mensagens de campos obrigatórios.
-	function resetAllErrorMessage() {
-		document.getElementById("erroCamposObrigatorios").style.display="none";
-
-		// limpa as validações do form
-		validatorFormItem.resetForm();
-		$('span.error').remove();
-	}
-
-	function removerItensLista(nomeLista) {
-		$("#"+nomeLista).find("li").each(function(i){
-            this.remove();
-            $("#"+nomeLista)[0]["index"]--;
-        });
-    }
 
 	function atualizaItemConfiguracaoJson() {
 		var gestorSetVO = [],
@@ -393,14 +325,30 @@
  		return itemConfiguracaoJSon;
 	}
 
-	function atualizarModalItem(itemArray) {
-		var jSonItem = getJsonByString(itemArray[colunasLista.jSon]);
+	function atualizarModalItem(jSonItem) {
+		// limpar a lista
+		limparDadosItemModal();
 		
 		if (jSonItem) {
 			atualizarListaGestores(jSonItem);
 			atualizarListaFatorMultiplicacao(jSonItem);
 		}
 	}
+
+	function limparDadosItemModal() {
+		removerItensLista('gestoresUl');
+		removerItensLista('fatoresUl');
+
+		// limpa as designações
+		opts.designacoesDataTable.api().clear().draw();
+	}
+
+	function removerItensLista(nomeLista) {
+		$("#"+nomeLista).find("li").each(function(i){
+            this.remove();
+            $("#"+nomeLista)[0]["index"]--;
+        });
+    }
 
 	function getJsonByString(value) {
 		var jSonItem;

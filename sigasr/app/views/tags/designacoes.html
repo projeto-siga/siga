@@ -109,7 +109,7 @@ altura:'200', largura:'450'}
 	colunasDesignacao.jSonDesignacao= 				9 ;
 	colunasDesignacao.herdado= 						10;
 	colunasDesignacao.utilizarHerdado= 				11;
-	colunasDesignacao.reativarDesativar=			12;
+	colunasDesignacao.acoes=						12;
 	
 	jQuery( document ).ready(function($) {
 		/* Table initialization */
@@ -182,7 +182,7 @@ altura:'200', largura:'450'}
 			 objectName : 'designacao',
 			 formCadastro : jQuery('#formDesignacao'),
 			 mostrarDesativados : mostrarDesativados,
-			 colunas : colunasDesignacao.reativarDesativar
+			 colunas : colunasDesignacao.acoes
 		};	
 
 	function detalhesDesignacao(d) {
@@ -211,19 +211,19 @@ altura:'200', largura:'450'}
 		return tr;
 	}
 
-	function detalheLista(label, listaItemConfiguracaoVO, tr) {
+	function detalheLista(label, listaVO, tr) {
 		var tdTituloItens = $('<td colspan="2">' + label + '</td>'),
 		    tdDadosItens = $('<td colspan="5">'),
 		    table = $('<table>');
 
-	    for(var i = 0; i < listaItemConfiguracaoVO.length; i++) {
-		    var itemConfiguracao = listaItemConfiguracaoVO[i],
+	    for(var i = 0; i < listaVO.length; i++) {
+		    var item = listaVO[i],
 		    	trItem = $('<tr>'),
 		    	tdCodigo = $('<td>'),
 		    	tdDescricao = $('<td>');
 		
-			tdCodigo.html(itemConfiguracao.sigla);
-			tdDescricao.html('Descricao ' + itemConfiguracao.titulo);
+			tdCodigo.html(item.sigla);
+			tdDescricao.html('Descricao ' + item.descricao);
 								  
 			trItem.append(tdCodigo);
 			trItem.append(tdDescricao);
@@ -235,7 +235,6 @@ altura:'200', largura:'450'}
 		
 		tr.append(tdTituloItens);
 		tr.append(tdDadosItens);
-		
 	}
 	
 	function atualizarListasDesignacaoEdicao(designacaoJson) {
@@ -399,10 +398,8 @@ altura:'200', largura:'450'}
 	   	});
 	}
 
-	function carregarDesignacoes() {
-        var id = 921;
-        
-    	$.ajax({
+	function carregarDesignacoes(id) {
+        $.ajax({
         	type: "GET",
         	url: "@{Application.buscarDesignacoesItem()}?id=" + id,
         	dataType: "text",
@@ -411,7 +408,7 @@ altura:'200', largura:'450'}
         		designacaoService.populateFromJSonList(listaJSon, opts.designacoesDataTable);
         	},
         	error: function(error) {
-            	console.log("Falha!");
+            	alert("Não foi possível carregar as Designações deste item.");
         	}
        	});
     }

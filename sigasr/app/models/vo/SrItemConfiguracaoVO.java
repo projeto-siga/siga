@@ -14,9 +14,11 @@ import com.google.gson.GsonBuilder;
 /**
  * Classe que representa um V.O. de {@link SrItemConfiguracao}.
  */
-public class SrItemConfiguracaoVO {
+public class SrItemConfiguracaoVO implements ISelecionavel {
 	
-	public Long id;
+	private Long id;
+	private String sigla;
+	private String descricao;
 	public String descrItemConfiguracao;
 	public String tituloItemConfiguracao;
 	public String siglaItemConfiguracao;
@@ -33,7 +35,9 @@ public class SrItemConfiguracaoVO {
 		this.id = id;
 		this.descrItemConfiguracao = descricao;
 		this.tituloItemConfiguracao = titulo;
+		this.descricao = titulo;
 		this.siglaItemConfiguracao = sigla;
+		this.sigla = sigla;
 		this.hisIdIni = hisIdIni;
 		this.descricaoSimilaridade = descricaoSimilaridade;
 		this.ativo = isAtivo;
@@ -69,5 +73,35 @@ public class SrItemConfiguracaoVO {
 			return new SrItemConfiguracaoVO(item.idItemConfiguracao, item.descrItemConfiguracao, item.tituloItemConfiguracao, item.siglaItemConfiguracao, item.getHisIdIni(), item.descricaoSimilaridade, item.numFatorMultiplicacaoGeral, item.isAtivo(), item.getNivel(), item.gestorSet, item.fatorMultiplicacaoSet);
 		else
 			return null;
+	}
+
+	@Override
+	public Long getId() {
+		return this.id;
+	}
+
+	@Override
+	public String getSigla() {
+		return this.sigla;
+	}
+
+	@Override
+	public String getDescricao() {
+		return this.descricao;
+	}
+	
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Override
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
+	}
+
+	@Override
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 }

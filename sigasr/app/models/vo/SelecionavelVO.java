@@ -33,4 +33,5 @@ public class SelecionavelVO extends AbstractSelecionavel {
 	public static SelecionavelVO createFrom(Long id, String descricao) {
 		return new SelecionavelVO(id, descricao);
 	}
+
 }

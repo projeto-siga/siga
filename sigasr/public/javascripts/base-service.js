@@ -49,8 +49,6 @@ function prepareObjectToForm(obj) {
 		        else if (className == 'select-siga') {
 		        	obj[x] = objeto ? objeto.id : '';
 		        }
-		        else
-		        	console.log("Algum outro tipo de componente / campo");
 	        }
 	    }
 	}
@@ -241,6 +239,7 @@ BaseService.prototype.gerarColunaDesativar = function(id) {
  */
 BaseService.prototype.editar = function(obj, title) {
 	this.removerErros();
+	this.limparSpanComponentes();
 	this.formularioHelper.populateFromJson(obj);
 	
 	if(this.opts.dialogCadastro.size() == 0) {

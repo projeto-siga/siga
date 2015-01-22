@@ -653,7 +653,7 @@ public class ExDocumentoController extends ExController {
 		super.getRequest().setAttribute("docVO", docVO);
 		
 		// logStatistics();
-		
+
 		if (exDocumentoDTO.getMob().isEliminado())
 			throw new AplicacaoException("Documento "
 					+ exDocumentoDTO.getMob().getSigla()
@@ -703,7 +703,7 @@ public class ExDocumentoController extends ExController {
 		result.include("param", exDocumentoDto.getParamsEntrevista());
 	}
 	
-	@Get("/app/expediente/doc/exibeProcesso")
+	@Get("app/expediente/doc/exibirProcesso")
 	public void exibeProcesso(String sigla, boolean podeExibir) throws Exception {
 		exibe(false, sigla, null);
 	}

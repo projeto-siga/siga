@@ -699,17 +699,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			return null;
 
-		SrConfiguracao confFiltro = new SrConfiguracao();
-		confFiltro.setDpPessoa(solicitante);
-		confFiltro.setComplexo(local);
-		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
-		confFiltro.acaoFiltro = acao;
-		confFiltro.setBuscarPorPerfis(true);
-		confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
-
-		SrConfiguracao conf = SrConfiguracao.buscarDesignacao(confFiltro);
-		if (conf != null)
-			return conf.atendente.getLotacaoAtual();
+		for (SrConfiguracao c : getFiltrosParaConsultarConfiguracoes()){
+			c.itemConfiguracaoFiltro = itemConfiguracao;
+			c.acaoFiltro = acao;
+			c.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
+			SrConfiguracao conf = SrConfiguracao.buscarDesignacao(c);
+			if (conf != null)
+				return conf.atendente.getLotacaoAtual();
+		}
+		
 		return null;
 	}
 
@@ -1248,24 +1246,20 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrItemConfiguracao> listaTodosItens = new ArrayList<SrItemConfiguracao>();
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
 		
-		List<DpPessoa> listaPessoasAConsiderar = considerarPessoasParaDesignacao();
+		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarConfiguracoes();
 		
 		listaTodosItens = SrItemConfiguracao.listar(false);
 		
 		for (SrItemConfiguracao i : listaTodosItens) {
 			if (!i.isEspecifico())
 				continue;
-			for (DpPessoa p : listaPessoasAConsiderar) 
+			for (SrConfiguracao c : listaPessoasAConsiderar) 
 				if (!listaFinal.contains(i)) {
 					
-					SrConfiguracao confFiltro = new SrConfiguracao();
-					confFiltro.setComplexo(local);
-					confFiltro.setBuscarPorPerfis(true);
-					confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
-					confFiltro.itemConfiguracaoFiltro = i;
-					confFiltro.setDpPessoa(p);
+					c.itemConfiguracaoFiltro = i;
+					c.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
 					
-					if (SrConfiguracao.buscarDesignacao(confFiltro,
+					if (SrConfiguracao.buscarDesignacao(c,
 							new int[] { SrConfiguracaoBL.ACAO}) != null){
 						listaFinal.add(i);
 						SrItemConfiguracao itemPai = i.pai;
@@ -1296,23 +1290,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		Map<SrAcao, DpLotacao> listaFinal = new HashMap<SrAcao, DpLotacao>();
 		
-		List<DpPessoa> listaPessoasAConsiderar = considerarPessoasParaDesignacao();
+		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarConfiguracoes();
 
 		for (SrAcao a : SrAcao.listar(false)) {
 			if (!a.isEspecifico())
 				continue;
-			for (DpPessoa p : listaPessoasAConsiderar) 
+			for (SrConfiguracao c : listaPessoasAConsiderar) 
 				if (!listaFinal.containsKey(a)) {
 					
-					SrConfiguracao confFiltro = new SrConfiguracao();
-					confFiltro.setComplexo(local);
-					confFiltro.setBuscarPorPerfis(true);
-					confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
-					confFiltro.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
-					confFiltro.acaoFiltro = a;
-					confFiltro.setDpPessoa(p);
+					c.itemConfiguracaoFiltro = itemConfiguracao;
+					c.subTipoConfig = SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE;
+					c.acaoFiltro = a;
 					
-					SrConfiguracao conf = SrConfiguracao.buscarDesignacao(confFiltro);
+					SrConfiguracao conf = SrConfiguracao.buscarDesignacao(c);
 					if (conf != null)
 						listaFinal.put(a, conf.atendente);
 				}
@@ -1531,20 +1521,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void atualizarAcordos() throws Exception{
 		acordos = new ArrayList<SrAcordo>();
 				
-		for (DpPessoa p : considerarPessoasParaDesignacao()) {
+		for (SrConfiguracao c : getFiltrosParaConsultarConfiguracoes()) {
 			
-			SrConfiguracao confFiltro = new SrConfiguracao();
-			confFiltro.setComplexo(local);
-			confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
-			confFiltro.acaoFiltro = acao;
-			confFiltro.setBuscarPorPerfis(true);
-			confFiltro.prioridade = prioridade;
-			confFiltro.atendente = getAtendenteDesignado();
-			confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+			c.itemConfiguracaoFiltro = itemConfiguracao;
+			c.acaoFiltro = acao;
+			c.prioridade = prioridade;
+			c.atendente = getAtendenteDesignado();
+			c.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
-			confFiltro.setDpPessoa(p);
 			
-			List<SrConfiguracao> confs = SrConfiguracao.listar(confFiltro);
+			List<SrConfiguracao> confs = SrConfiguracao.listar(c);
 			for (SrConfiguracao conf : confs) {
 				SrAcordo acordoAtual = ((SrAcordo) SrAcordo
 						.findById(conf.acordo.idAcordo)).getAcordoAtual();
@@ -2690,15 +2676,32 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	 * No caso de solicitacoes filhas, deve ser considerado o solicitante e o cadastrante para fins de exibicao 
 	 * de itens de configuracao e acoes disponiveis, alem do atendente designado da solicitacao.
 	 */
-	private List<DpPessoa> considerarPessoasParaDesignacao() {
-		List<DpPessoa> pessoasAConsiderar = new ArrayList<DpPessoa>();
-		if(cadastrante != null && !cadastrante.equivale(solicitante)) {
-			pessoasAConsiderar.add(solicitante);
-			pessoasAConsiderar.add(cadastrante);
+	private List<SrConfiguracao> getFiltrosParaConsultarConfiguracoes() {
+		
+		List<SrConfiguracao> pessoasAConsiderar = new ArrayList<SrConfiguracao>();
+		
+		if (cadastrante == null)
+			return pessoasAConsiderar;
+		
+		SrConfiguracao confCadastrante = new SrConfiguracao();
+		confCadastrante.setDpPessoa(cadastrante);
+		confCadastrante.setLotacao(lotaCadastrante);
+		pessoasAConsiderar.add(confCadastrante);
+		
+		if (solicitante != null && !cadastrante.equivale(solicitante)){
+			SrConfiguracao confSolicitante = new SrConfiguracao();
+			confSolicitante.setDpPessoa(solicitante);
+			confSolicitante.setLotacao(lotaSolicitante);
+			pessoasAConsiderar.add(confSolicitante);
 		}
-		else
-			pessoasAConsiderar.add(solicitante);
+		
+		for (SrConfiguracao conf : pessoasAConsiderar){
+			conf.setComplexo(local);
+			conf.setBuscarPorPerfis(true);
+		}
+		
 		return pessoasAConsiderar;
+
 	}
 	
 	public SrItemConfiguracao getItemAposEscalonar() {

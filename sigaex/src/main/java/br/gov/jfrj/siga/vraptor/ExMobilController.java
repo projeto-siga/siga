@@ -64,7 +64,6 @@ import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.Aguarde;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import bsh.This;
 
 import com.opensymphony.xwork.Action;
 

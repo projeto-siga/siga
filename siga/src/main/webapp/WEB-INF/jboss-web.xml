@@ -2,7 +2,12 @@
 	<security-domain>sp</security-domain>
 	<context-root>siga</context-root>
 
-    <valve>
-        <class-name>org.picketlink.identity.federation.bindings.tomcat.sp.ServiceProviderAuthenticator</class-name>
-    </valve>
+	<valve>
+		<class-name>org.picketlink.identity.federation.bindings.tomcat.sp.ServiceProviderAuthenticator
+		</class-name>
+		<param>
+			<param-name>characterEncoding</param-name>
+			<param-value>UTF-8</param-value>
+		</param>
+	</valve>
 </jboss-web>

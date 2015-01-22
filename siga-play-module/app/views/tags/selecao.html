@@ -82,7 +82,7 @@ self.ajax_${nomeclean} = function() {
 		return retorna_${_tipo}${nomeclean}('', '', '');
 	}
 	sigla = encodeURIComponent(sigla);
-	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
+	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w|\.|-]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
 	var url = base+'${_tipo}/selecionar?sigla=' + sigla + '&nome=${nomeclean}&'+'${_params?.raw()}';
 	
 	if (url.indexOf("/app/lotacao") != -1){

@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -438,8 +439,18 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDTO.setModelos(getModelos(exDocumentoDTO));
 		getPreenchimentos(exDocumentoDTO);
 		
+		Map<String, String[]> parFreeMarker = new HashMap<>();
+		setPar(getRequest().getParameterMap());
+		if (getPar() != null) {
+			for (final String key : getPar().keySet()) {
+				final String as[] = getPar().get(key);
+				final String chave = key.replace("exDocumentoDTO.", "");
+				parFreeMarker.put(chave, as);				
+			}
+		}
+		
 		result.include("possuiMaisQueUmModelo", (getModelos(exDocumentoDTO).size() > 1));
-		result.include("par", getRequest().getParameterMap());
+		result.include("par", parFreeMarker);
 		result.include("cpOrgaoSel", exDocumentoDTO.getCpOrgaoSel());
 		result.include("mobilPaiSel", exDocumentoDTO.getMobilPaiSel());
 		result.include("subscritorSel", exDocumentoDTO.getSubscritorSel());
@@ -1279,6 +1290,9 @@ public class ExDocumentoController extends ExController {
 			String req = "nao";
 			if (getPar().get("reqexDocumentoDTO.documentoRefSel") != null)
 				req = getPar().get("reqexDocumentoDTO.mobilPaiSel")[0].toString();
+			
+			if (getPar().get("reqdocumentoRefSel") != null)
+				req = getPar().get("reqmobilPaiSel")[0].toString();			
 			
 			if ((mobilPaiSel != null) && (mobilPaiSel.getSigla() != null))
 				exDocumentoDTO.getMobilPaiSel().setSigla(mobilPaiSel.getSigla());

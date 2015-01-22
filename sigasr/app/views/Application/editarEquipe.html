@@ -1,4 +1,5 @@
 #{extends 'main.html' /} #{set title:'Edição de Equipes' /}
+
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
@@ -6,6 +7,7 @@
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
+<script src="/sigasr/public/javascripts/moment.js"></script>
 
 <script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.populate.js"></script>
@@ -266,7 +268,10 @@
 		);
 
 		validatorForm = jQuery("#form").validate();
-		validatorFormExcessao = $("#excecaoHorarioForm").validate();
+		
+		validatorFormExcessao = $("#excecaoHorarioForm").validate({
+			onfocusout: false
+		});
 		
 		$("#dataEspecifica").mask("99/99/9999");
 		$(".hora").mask("99:99");
@@ -279,7 +284,6 @@
 	function modalExcecaoAbrir() {
 		// limpa as mensagens de erros
 		resetMensagensErro();
-		
 		resetCamposTela();
 		
 		$("#dataEspecifica").datepicker({
@@ -336,6 +340,7 @@
 		
 		// limpa as mensagens de erros
 		resetMensagensErro();
+		esconderValidacaoHorario();
 		
 		// Mostra a mensagem de campos obrigatórios
 		if (document.getElementById("dataEspecifica").value == "" && jDiaSemanaCbb.selectedIndex == 0) {
@@ -449,11 +454,61 @@
 		return data;
 	}
 
-	function isValidFormExc() {
-		jQuery("#excecaoHorarioForm").valid();
+	function isValidForm() {
+		esconderValidacaoHorario();
+		
+		if(jQuery("#excecaoHorarioForm").valid()) {
+			return horarioEstaValido();
+		}
+		return false;
 	}
 
-	function isValidForm() {
-        return jQuery("#form").valid();
-    }	
+	function horarioEstaValido() {
+		var horaInicio = moment($("#horaIni").val(), 'hh:mm'),
+		  horaTermino = moment($("#horaFim").val(), 'hh:mm'),
+		  inicioIntervalo = moment($("#interIni").val(), 'hh:mm'),
+		  terminoIntervalo = moment($("#interFim").val(), 'hh:mm'),
+		  valido = true,
+		  mensagem = null;
+		  
+		if(!estaAntes(horaInicio, horaTermino)) {
+			mensagem = "A hora de início de expediente deve ser menor que a de témino"
+			valido = false;
+		}
+		else if(!estaAntes(inicioIntervalo, terminoIntervalo)) {
+			mensagem = "A hora de início do intervalo deve ser menor que a de término"
+			valido = false;
+		}
+		else if(!estaNoIntervalo(inicioIntervalo, horaInicio, horaTermino)) {
+			mensagem = "A hora de início do intervalo está fora do periodo do expediente"
+			valido = false;
+		} 
+		else if(!estaNoIntervalo(terminoIntervalo, horaInicio, horaTermino)) {
+			mensagem = "A hora de término do intervalo está fora do periodo do expediente"
+			valido = false;
+		}
+		mostrarValidacaoHorario(mensagem);
+		return valido;
+	}
+		
+	function estaAntes(inicio, fim) {
+		return inicio.isBefore(fim)
+	}
+
+	function estaNoIntervalo(data, inicio, fim) {
+		return data.isSame(inicio)
+		    || data.isSame(fim)
+		    || (data.isAfter(inicio) && data.isBefore(fim));
+	}
+
+	function mostrarValidacaoHorario(mensagem) {
+		if(mensagem) {
+			$('#erroHorarioInvalido').css('display', 'block');
+			$('#erroHorarioInvalido span').html(mensagem);
+		}
+	}
+
+	function esconderValidacaoHorario() {
+		$('#erroHorarioInvalido').css('display', 'none');
+	}
 </script>

@@ -123,6 +123,10 @@ function DesativarReativar(service) {
 function BaseService(opts) {
 	this.opts = opts;
 	this.formularioHelper = new Formulario(opts.formCadastro);
+	
+	this.opts.validatorForm = opts.formCadastro.validate({
+		onfocusout: false
+	});
 }
 /**
  * Envia uma requisicao para o servidor utilizando o metodo post
@@ -163,6 +167,7 @@ BaseService.prototype.errorHandler = function(error) {
  */
 BaseService.prototype.removerErros = function() {
 	$('span.error').remove();
+	this.resetErrosForm();
 }
 /**
  * Desativa o registro
@@ -407,4 +412,8 @@ BaseService.prototype.indiceAcoes = function(data) {
 
 BaseService.prototype.isValidForm = function() {
     return jQuery(opts.formCadastro).valid();
+}
+
+BaseService.prototype.resetErrosForm = function() {
+	opts.validatorForm.resetForm();
 }

@@ -173,7 +173,6 @@
 					</tr>
 				</table>
 				
-				<tr class="header"><td align="center" valign="top" colspan="3">Priorização</td></tr>
 				<div class="gt-form-row">
 					#{designacoes designacoes:designacoesItem, 
 						modoExibicao:'item', 
@@ -275,9 +274,17 @@
 	jQuery(document).ready(function($) {
 		$("#siglaItemConfiguracao").mask("99.99.99");
 		
-		validatorFormItem = $("#formItemConfiguracao").validate();
-	    validatorFormGestor = $("#formGestor").validate();
-	    validatorFormFator = $("#formFator").validate();
+		validatorFormItem = $("#formItemConfiguracao").validate({
+			onfocusout: false
+		});
+		
+	    validatorFormGestor = $("#formGestor").validate({
+	    	onfocusout: false
+	    });
+	    
+	    validatorFormFator = $("#formFator").validate({
+	    	onfocusout: false
+	    });
 
 	 	// POPUP PARA ADICIONAR UM GESTOR
 	    jGestores = $("#gestoresUl");
@@ -466,7 +473,7 @@
 
 	function serializarItemConfiguracao() {
 		// UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICAÇÃO
-        var jForm = $("formItemConfiguracao"),
+        var jForm = $("#formItemConfiguracao"),
             params = jForm.serialize();
 
         $("#gestoresUl").find("li").each(function(i){

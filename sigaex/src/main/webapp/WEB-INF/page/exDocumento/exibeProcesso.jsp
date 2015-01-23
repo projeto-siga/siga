@@ -241,7 +241,7 @@
 <siga:rodape />
 
 <script>
-	var path = '/sigaex/arquivo/exibir.action?arquivo=';
+	var path = '/sigaex/app/arquivo/exibir?arquivo=';
 	var htmlAtual = '${arqsNum[0].referenciaHtml}&completo=1';
 	var pdfAtual = '${arqsNum[0].referenciaPDF}&completo=1';
 

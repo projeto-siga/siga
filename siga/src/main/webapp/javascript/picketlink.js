@@ -23,7 +23,7 @@ window.Siga = {
             viewId: "right"
         },
         sigaex: {
-            url: "/sigaex/expediente/doc/gadget.action",
+            url: "/sigaex/app/expediente/gadget",
             params: {
                 idTpFormaDoc: 1
             },
@@ -38,7 +38,7 @@ window.Siga = {
             viewId: "rightbottom2"
         },
         processos: {
-            url: "/sigaex/expediente/doc/gadget.action",
+            url: "/sigaex/app/expediente/gadget",
             params: {
                 idTpFormaDoc: 2
             },

@@ -88,8 +88,10 @@ import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
@@ -103,9 +105,12 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 public class ExDocumentoController extends ExController {
 	
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
+	
+	
 	public ExDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so) {
 
 		super(request, response, context, result, CpDao.getInstance(), so);
+		CurrentRequest.set(new RequestInfo(context, request, response));
 		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();	
@@ -295,6 +300,7 @@ public class ExDocumentoController extends ExController {
 	
 	@Post("app/expediente/doc/recarregar")
 	public ExDocumentoDTO recarregar(ExDocumentoDTO exDocumentoDTO, String[] vars) throws Exception {
+		exDocumentoDTO.getClassificacaoSel().apagar();
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars, exDocumentoDTO.getMobilPaiSel(),exDocumentoDTO.isCriandoAnexo());		
 		return exDocumentoDTO;
 	}
@@ -960,7 +966,9 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getDoc().setExMobilAutuado(mobilAutuado);
 			}
 			
-			Ex.getInstance().getBL().gravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc(), null);
+			String realPath = getContext().getRealPath("");
+			Ex.getInstance().getBL()
+				.gravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc(), realPath);
 			
 			lerEntrevista(exDocumentoDTO);
 			
@@ -1072,7 +1080,8 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDTO.setModelo(dao().consultar(exDocumentoDTO.getIdMob(), ExModelo.class, false));
 		}
 		
-		Ex.getInstance().getBL().processar(exDocumentoDTO.getDoc(), false, false, null);
+		String realPath = getContext().getRealPath("");
+		Ex.getInstance().getBL().processar(exDocumentoDTO.getDoc(), false, false, realPath);
 		
 		exDocumentoDTO.setPdfStreamResult(new ByteArrayInputStream(exDocumentoDTO.getDoc().getConteudoBlobPdf()));
 		

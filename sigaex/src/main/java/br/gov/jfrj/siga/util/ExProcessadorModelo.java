@@ -37,6 +37,7 @@ import org.directwebremoting.util.SwallowingHttpServletResponse;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 
 public class ExProcessadorModelo implements ProcessadorModelo {
@@ -55,6 +56,7 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 	public ExProcessadorModelo() {
 		// TODO Auto-generated constructor stub
 	}
+	
 
 	/**
 	 * Processar um template JSP e retornar o resultado na forma de uma string
@@ -80,9 +82,9 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 			r = com.opensymphony.webwork.ServletActionContext.getResponse();
 			rw 	  = new MyHttpRequest(com.opensymphony.webwork.ServletActionContext.getRequest());
 		} catch (Exception e) {
-			sc     = this.context; 
-			r = this.response;
-			rw 	  = new MyHttpRequest(this.request);
+			sc     = CurrentRequest.get().getContext(); 
+			r = CurrentRequest.get().getResponse();
+			rw 	  = new MyHttpRequest(CurrentRequest.get().getRequest());
 		}
 
 
@@ -100,8 +102,7 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		Writer w = new OutputStreamWriter(bout);
-		SwallowingHttpServletResponse r2 = new SwallowingHttpServletResponse(r,
-				w, "iso-8859-1");
+		SwallowingHttpServletResponse r2 = new SwallowingHttpServletResponse(r, w, "iso-8859-1");
 
 		javax.servlet.RequestDispatcher dispatcher = sc
 				.getRequestDispatcher("/paginas/expediente/processa_modelo.jsp");

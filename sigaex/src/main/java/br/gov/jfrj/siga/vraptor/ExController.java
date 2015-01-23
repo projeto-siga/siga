@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.ioc.spring.VRaptorRequestHolder;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -55,16 +56,16 @@ public class ExController extends SigaController {
 	HttpServletResponse response;
 	ServletContext context;
 	
+	static {
+		if (Ex.getInstance().getBL().getProcessadorModeloJsp() == null) {
+			Ex.getInstance().getBL().setProcessadorModeloJsp(new ExProcessadorModelo());
+		}
+	}
+	
 	public ExController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, CpDao dao, SigaObjects so) {
 		super(request, result, dao, so);
 		this.response = response;
 		this.context = context;
-	//}
-	
-	//static {
-		if (Ex.getInstance().getBL().getProcessadorModeloJsp() == null) {
-			Ex.getInstance().getBL().setProcessadorModeloJsp(new ExProcessadorModelo(request, response, context));
-		}
 	}
 
 	protected void verificaNivelAcesso(ExMobil mob) throws Exception {

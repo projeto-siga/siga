@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<deployment>
 		<module-alias name="sigaex" />
 
@@ -15,10 +16,19 @@
 			<module name="javax.wsdl4j.api" />
 			<module name="asm.asm" />
 
-			<module name="sigadoc.org.bouncycastle" export="true"/>
-            <module name="sigadoc.ext" />
+			<module name="sigadoc.org.bouncycastle" export="true" />
+			<module name="sigadoc.ext" />
 
-            <module name="org.javassist" />
+			<module name="org.javassist" />
+			<module name="javax.api" />
+			
+			<system>
+				<paths>
+					<path name="com/sun/org/apache/xml/internal/" />
+				</paths>
+			</system>
 		</dependencies>
 	</deployment>
+
+
 </jboss-deployment-structure>

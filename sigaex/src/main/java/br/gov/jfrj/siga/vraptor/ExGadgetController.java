@@ -35,10 +35,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.hibernate.ExDao;
-
-import com.opensymphony.xwork.Action;
 
 @Resource
 public class ExGadgetController extends ExController {
@@ -48,7 +45,6 @@ public class ExGadgetController extends ExController {
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so) {
 		super(request, response, context, result, ExDao.getInstance(), so);;
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

@@ -101,9 +101,11 @@
 	EquipeService.prototype = Object.create(BaseService.prototype);
 	
 	var equipeService = new EquipeService(opts);
+	
 	equipeService.getId = function(equipe) {
 		return equipe.idEquipe;
 	}
+
 	equipeService.getRow = function(equipe) {
 		return [equipe.lotacao.sigla, equipe.lotacao.descricao];
 	}

@@ -231,10 +231,11 @@
 	ItemConfiguracaoService.prototype = Object.create(BaseService.prototype);
 	
 	var itemConfiguracaoService = new ItemConfiguracaoService(optsLista);
+	
 	itemConfiguracaoService.getId = function(itemConfiguracao) {
 		return itemConfiguracao.id;
 	}
-	
+
 	itemConfiguracaoService.getRow = function(itemConfiguracao) {
 		return ['', itemConfiguracao.siglaItemConfiguracao, itemConfiguracao.tituloItemConfiguracao,
 				itemConfiguracao.descrItemConfiguracao, itemConfiguracao.descricaoSimilaridade, 'COLUNA_ACOES', ''];

@@ -53,7 +53,7 @@
 								#{/desativarReativar}
 							</td>
 							<td>
-								${att.getSrAtributoJson()}
+								${att.toJson()}
 							</td>
 						</tr>
 					 #{/list}
@@ -62,7 +62,7 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-			<a href="javascript: inserirEditarAtributo()" class="gt-btn-medium gt-btn-left">Incluir</a>
+			<a onclick="atributoService.cadastrar('Incluir Atributo')" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 
 	</div>
@@ -107,9 +107,6 @@
 		return query_string;
 	}();
 	
-	//removendo a referencia de '$' para o jQuery
-	//$.noConflict();
-
 	jQuery(document).ready(function($) {
 		if (QueryString.mostrarDesativados != undefined) {
 			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
@@ -157,187 +154,7 @@
 				"visible": false
 			}]
 		});
-		$('#atributo_table tbody').on('click', 'tr', function () {
-			var itemSelecionado = opts.dataTable.api().row(this).data();
-			
-			if (itemSelecionado != undefined) {
-				if (!$(this).hasClass('selected') ) {
-					opts.dataTable.$('tr.selected').removeClass('selected');
-		            $(this).addClass('selected');
-		        }
-				atualizarModalAtributo(itemSelecionado);
-				verificarTipoAtributo();
-				atributoModalAbrir(true);
-			}
-		});
 	});
-
-	function limparDadosAtributoModal() {
-		jTipoAtributoCbb = document.getElementsByName("att.tipoAtributo")[0];
-		jTipoAtributoCbb.selectedIndex = 0;
-		$('#idAtributo').val('');
-		$('#nomeAtributo').val('');
-		$('#descrAtributo').val('');
-		$('#codigoAtributo').val('');
-		$('#tipoAtributo').selectedIndex = 0;
-		$('#objetivoAtributo').selectedIndex = 0;
-		$('#descrPreDefinido').val('');
-		$('#vlPreDefinidos').hide();
-		tableAssociacao.api().clear().draw();
-		validatorAtributoForm.resetForm();
-	} 
-
-	// Alimenta os campos do Popup antes de abrir ao usuário.
-	function atualizarModalAtributo(itemArray) {
-		limparDadosAtributoModal();
-
-		jSonAtributo = getJsonByString(itemArray[colunasAtributo.jSon]);
-		
-		if (jSonAtributo) {
-			jTipoAtributoCbb = document.getElementsByName("att.tipoAtributo")[0];
-			jTipoAtributoCbb.selectedIndex = findSelectedIndexByValue(jTipoAtributoCbb, jSonAtributo.tipoAtributo);
-			jObjetivoAtributoCbb = document.getElementsByName("att.objetivoAtributo.idObjetivo")[0];
-			jObjetivoAtributoCbb.selectedIndex = findSelectedIndexByValue(jObjetivoAtributoCbb, jSonAtributo.objetivoAtributo.idObjetivo);
-			$("#hisIdIni").val(jSonAtributo.hisIdIni);
-			$('#idAtributo').val(jSonAtributo.idAtributo);
-			$('#nomeAtributo').val(jSonAtributo.nomeAtributo);
-			$('#codigoAtributo').val(jSonAtributo.codigoAtributo);
-			$('#descrAtributo').val(jSonAtributo.descrAtributo);
-			$('#descrPreDefinido').val(jSonAtributo.descrPreDefinido);
-			atualizarListaAssociacoes(jSonAtributo);
-		}
-	}
-
-	function getJsonByString(value) {
-		var jSonItem;
-
-		try{
-			jSonItem = JSON.parse(value);
-		} catch(e){
-			jSonItem = value;
-		}
-		
-		return jSonItem;
-	}
-
-	function findSelectedIndexByValue(comboBox, value) {
-		for (var i = 0; i < comboBox.options.length; i++) {
-			if (comboBox.options[i].value == value)
-				return i;
-		}
-		
-		return 0;
-	};
-
-	function atualizaAtributoJson() {
-		var atributoJSon = {
-				'id': $("#idAtributo").val(),
-				'hisIdIni': $("#hisIdIni").val(),
-				'nomeAtributo': $("#nomeAtributo").val(),
-				'descrAtributo': $("#descrAtributo").val(),
-				'objetivoAtributo': $("#objetivoAtributo").val(),
-				'codigoAtributo': $("#codigoAtributo").val(),
-				'tipoAtributo': $("#tipoAtributo").val(),
-				'descrPreDefinido': $("#descrPreDefinido").val()
-	 		};
-	 		return atributoJSon;
-	}
-
-	function recuperarInformacoesTela(jSonAtt) {
-			var id = jSonAtt.idAtributo,
-			row = [
-				$("#nomeAtributo").val(),
-				$("#descrAtributo").val(),
-				jSonAtt.descrObjetivoAtributo,
-				$("#codigoAtributo").val(),
-				jSonAtt.descrTipoAtributo,
-				'<a class="once gt-btn-ativar" onclick="atributoService.desativar(event, '+id+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>',
-				'',
-				jSonAtt
-			];
-		return row;
-	}
-
-	function removerErros() {
-		$('span.error').remove();
-	}
-
-	function atributoGravar() {
-		if (!jQuery("#atributoForm").valid())
-			return false;
-		
-		var jForm = $('#atributoForm');
-
-		removerErros();
-		
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.gravarAtributo()}",
-	         data: jForm.serialize(),
-	         dataType: "text",
-	         success: function(attJson) {
-	        	var jSon = getJsonByString(attJson);
-	        	row = recuperarInformacoesTela(jSon);
-	        	
-        		row[colunasAtributo.jSon] = jSon;
-        		row[colunasAtributo.acoes] = '<a class="once gt-btn-ativar" onclick="desativarAtributo(event, '+jSon.idAtributo+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
-        		
-        		if (isEditing) {
-        			opts.dataTable.api().row('.selected').data(row);
-				}
-				else {
-					opts.dataTable.api().row.add(row).draw();
-				}
-	          	atributoModalFechar();
-	         },
-	         error: function(error) {
-	     		if(error.status == 400) {
-	 	    		var errors = JSON.parse(error.responseText);
-	 	    		for(var i = 0; i < errors.length; i++) {
-	 	    			var span = $('<span class="error" style="color: red"></span>');
-	 	    			span.html(errors[i].message);
-	 	    			span.insertAfter($("[name='" + errors[i].key + "']"));
-	 	    		}
-	     		} else {
-	     			
-	     			$("#codigoErro").html( error.status);
-	     			$("#responseText").html( error.responseText);
-	     			$("#responseStatus").html(error.statusText);
-	     			
-	     			$('#server_error_dialog').dialog('open');
-	     		}
-	     	}
-       });
-	}
-
-	function inserirEditarAtributo() {
-		limparDadosAtributoModal();
-		atributoModalAbrir(false);
-	}
-
-	function atributoModalAbrir(isEdicao) {
-		var tituloModal = 'Incluir Atributo';
-		isEditing = isEdicao;
-		removerErros();
-		
-		if (isEdicao) {
-			tituloModal = 'Alterar Atributo';
-			$("#btnIncluirAtributo").bind('click', inserirAssociacao);
-			$("#btnIncluirAtributo").removeAttr('disabled');
-		}
-		else {
-			$("#btnIncluirAtributo").unbind('click');
-			$("#btnIncluirAtributo").attr('disabled', true);
-		}
-
-		$("#editarAtributo_dialog").dialog('option', 'title', tituloModal);
-		$("#editarAtributo_dialog").dialog('open');
-	}
-
-	function atributoModalFechar() {
-		$("#editarAtributo_dialog").dialog('close');
-		limparDadosAtributoModal();
-	}
 
 	var opts = {
 			 urlDesativar : '@{Application.desativarAtributo()}?',
@@ -361,9 +178,11 @@
 	AtributoService.prototype = Object.create(BaseService.prototype);
 	
 	var atributoService = new AtributoService(opts);
+	
 	atributoService.getId = function(atributo) {
 		return atributo.idAtributo;
 	}
+
 	atributoService.getRow = function(atributo) {
 		var marginLeft = (atributo.nivel-1) * 2,
 			fontWeight = (atributo.nivel == 1) ? 'bold' : 'normal',
@@ -373,15 +192,36 @@
 		spanHTML = spanHTML.replace('{margin-left}', marginLeft + 'em');
 		spanHTML = spanHTML.replace('{font-weight}', fontWeight);
 		spanHTML = spanHTML.replace('{descricao}', atributo.tituloAtributo);
-		return [atributo.nomeAtributo, atributo.descrAtributo, 'COLUNA_ACOES'];
+		return [atributo.nomeAtributo, 
+				atributo.descrAtributo, 
+				atributo.objetivoAtributo ? atributo.objetivoAtributo.descrObjetivo : '', 
+				atributo.codigoAtributo, 
+				atributo.tipoAtributo ? atributo.tipoAtributo.descrTipoAtributo : '',
+				'COLUNA_ACOES',
+				atributo];		
 	}
+	
 	atributoService.onRowClick = function(atributo) {
 		atributoService.editar(atributo, 'Alterar Atributo');
 	}
+	
 	/**
 	 * Customiza o metodo editar
 	 */
 	atributoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+
+		// alimenta a lista de Associações
+		atualizarListaAssociacoes(obj);
+	}
+
+	/**
+	 * Sobescreve o metodo cadastrar para limpar a tela.
+	 */
+	 atributoService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
+
+		// alimenta a lista de Associações
+		atualizarListaAssociacoes();
 	}
 </script>

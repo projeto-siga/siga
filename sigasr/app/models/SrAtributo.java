@@ -124,7 +124,7 @@ public class SrAtributo extends HistoricoSuporte {
 
 		if (objetivo != null)
 			queryBuilder.append(" and objetivoAtributo.idObjetivo = "
-					+ objetivo.idObjetivo);
+					+ objetivo.id);
 
 		return SrAtributo.find(queryBuilder.toString()).fetch();
 	}
@@ -175,19 +175,19 @@ public class SrAtributo extends HistoricoSuporte {
 		}
 	}
 
-	public String toJson() {
-		Gson gson = createGson("meuAtributoHistoricoSet", "atributoInicial");
-		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
-		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
-		
-		return jsonObject.toString();
-	}
+//	public String toJson() {
+//		Gson gson = createGson("meuAtributoHistoricoSet", "atributoInicial");
+//		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+//		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+//		
+//		return jsonObject.toString();
+//	}
 
-	private Gson createGson(String... exclusions) {
-		return new GsonBuilder()
-			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
-			.create();
-	}
+//	private Gson createGson(String... exclusions) {
+//		return new GsonBuilder()
+//			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
+//			.create();
+//	}
 	
 	public static SrAtributo get(String codigo) {
 		return SrAtributo.find("byCodigoAtributo", codigo).first();
@@ -221,7 +221,7 @@ public class SrAtributo extends HistoricoSuporte {
 	/**
 	 * Retorna um Json de {@link SrAtributo}.
 	 */
-	public String getSrAtributoJson() {
+	public String toJson() {
 		return this.toVO().toJson();
 	}
 }

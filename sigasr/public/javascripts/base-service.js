@@ -22,7 +22,7 @@ function Formulario(form) {
  */
 function prepareObjectToForm(obj) {
 	for (var x in obj) {
-	    if (obj.hasOwnProperty(x) && typeof obj[x] == 'object') {
+	    if (typeof obj[x] == 'object') {
 	    	var component = document.getElementsByName(x)[0],	    		
 	    		className = component != null ? component.className : null,
 	        	objeto = obj[x];
@@ -229,14 +229,14 @@ BaseService.prototype.reativar = function(event, id) {
  * Gerar a Coluna Ativar
  */
 BaseService.prototype.gerarColunaAtivar = function(id) {
-	var column = '<a class="once gt-btn-ativar" onclick="' + opts.objectName + 'Service.desativar(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+	var column = '<a class="once gt-btn-ativar" onclick="' + this.opts.objectName + 'Service.desativar(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
 		return column;
 }
 /**
  * Gerar a Coluna Desativar
  */
 BaseService.prototype.gerarColunaDesativar = function(id) {
-	var column = '<a class="once gt-btn-desativar" onclick="' + opts.objectName + 'Service.reativar(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
+	var column = '<a class="once gt-btn-desativar" onclick="' + this.opts.objectName + 'Service.reativar(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
 		return column;
  }
 /**
@@ -284,50 +284,40 @@ BaseService.prototype.limparSpanComponentes = function() {
  * Executa a acao de gravar o registro
  */
 BaseService.prototype.gravar = function() {
-	if (!this.isValidForm())
+	gravarAplicar(this, false);
+}
+
+function gravarAplicar(baseService, isAplicar) {
+	if (!baseService.isValidForm())
 		return false;
 	
-	var service = this,
-		obj = this.getObjetoParaGravar(),
-		url = this.opts.urlGravar,
+	var obj = baseService.getObjetoParaGravar(),
+		url = baseService.opts.urlGravar,
 		wrapper = {},
 		success = function(objSalvo) {
-			if(service.onGravar) {
-				service.onGravar(obj, JSON.parse(objSalvo));
+			if(baseService.onGravar) {
+				baseService.onGravar(obj, JSON.parse(objSalvo));
 			}
-			opts.dialogCadastro.dialog("close");
+			
+			if (isAplicar)
+				alert("Cadastro salvo com sucesso.");
+			else
+				baseService.opts.dialogCadastro.dialog("close");
 		}
 		
-	wrapper[this.opts.objectName] = obj;
+	wrapper[baseService.opts.objectName] = obj;
 	
-	this.post({
+	baseService.post({
 		'url' : url, 
 		'obj' : wrapper
 	}).success(success);
 }
+
 /**
  * Executa a acao de aplicar o registro
  */
 BaseService.prototype.aplicar = function() {
-	if (!this.isValidForm())
-		return false;
-	
-	var service = this,
-		obj = this.getObjetoParaGravar(),
-		url = this.opts.urlGravar,
-		wrapper = {},
-		success = function(objSalvo) {
-			if(service.onGravar) {
-				service.onGravar(obj, JSON.parse(objSalvo));
-			}
-		}
-		
-	wrapper[this.opts.objectName] = obj;
-	
-	this.post({
-		'url' : url, 
-		'obj' : wrapper
-	}).success(success);
+	gravarAplicar(this, true);
 }
 /**
  * Metodo que implementa a forma padrao de pegar o objeto para gravar no servidor
@@ -411,10 +401,10 @@ BaseService.prototype.indiceAcoes = function(data) {
 }
 
 BaseService.prototype.isValidForm = function() {
-    return jQuery(opts.formCadastro).valid();
+    return jQuery(this.opts.formCadastro).valid();
 }
 
 BaseService.prototype.resetErrosForm = function() {
-	if (opts.validatorForm)
-		opts.validatorForm.resetForm();
+	if (this.opts.validatorForm)
+		this.opts.validatorForm.resetForm();
 }

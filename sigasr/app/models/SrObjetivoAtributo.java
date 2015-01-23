@@ -25,9 +25,9 @@ public class SrObjetivoAtributo extends GenericModel {
 	
 	@Id
 	@Column(name = "ID_OBJETIVO")
-	public long idObjetivo;
+	public long id;
 
 	@Column(name = "DESCR_OBJETIVO", nullable = false)
 	public String descrObjetivo;
-
+	
 }

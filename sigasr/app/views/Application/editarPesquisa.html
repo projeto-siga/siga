@@ -138,10 +138,9 @@ jQuery(document).ready(function($) {
 				class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
 		</div>
 		<div class="gt-form-row">
-			<input type="button" value="Gravar"
-				onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
-			<a class="gt-btn-medium gt-btn-left"
-				onclick="pesquisaService.cancelarGravacao()">Cancelar</a>
+			<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
+			<a class="gt-btn-medium gt-btn-left" onclick="pesquisaService.cancelarGravacao()">Cancelar</a>
+			<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="pesquisaService.aplicar()"/>
 		</div>
 	</form>
 </div>
@@ -160,9 +159,8 @@ jQuery(document).ready(function($) {
 					${tipo.nomeTipoPergunta} #{/option} #{/list} #{/select}
 				</div>
 				<div class="gt-form-row">
-					<input type="button" id="modalOk" value="Ok"
-						class="gt-btn-medium gt-btn-left" /> <input type="button"
-						value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+					<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" />
+					<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
 				</div>
 			</form>
 		</div>

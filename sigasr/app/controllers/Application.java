@@ -1044,7 +1044,7 @@ public class Application extends SigaApplication {
 		SrItemConfiguracao itemConfiguracao = new SrItemConfiguracao();
 		if (id != null) {
 			itemConfiguracao = SrItemConfiguracao.findById(id);
-			designacoes = itemConfiguracao.designacoesSet;
+			designacoes = new ArrayList<SrConfiguracao>(itemConfiguracao.designacoesSet);
 			designacoes.addAll(itemConfiguracao.getDesignacoesPai());
 		}
 		else
@@ -1158,16 +1158,16 @@ public class Application extends SigaApplication {
 		render(att, tipoAtributoAnterior, associacoes, objetivos);
 	}
 
-	public static String gravarAtributo(SrAtributo att) throws Exception {
+	public static String gravarAtributo(SrAtributo atributo) throws Exception {
 		assertAcesso("ADM:Administrar");
-		validarFormEditarAtributo(att);
-		att.salvar();
-		return att.toVO().toJson();
+		validarFormEditarAtributo(atributo);
+		atributo.salvar();
+		return atributo.toVO().toJson();
 	}
 
-	private static void validarFormEditarAtributo(SrAtributo att) {
-		if (att.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO 
-				&& att.descrPreDefinido.equals("")) {
+	private static void validarFormEditarAtributo(SrAtributo atributo) {
+		if (atributo.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO 
+				&& atributo.descrPreDefinido.equals("")) {
 			Validation.addError("att.descrPreDefinido",
 					"Valores Pré-definido não informados");
 		}
@@ -1269,26 +1269,12 @@ public class Application extends SigaApplication {
 				pesquisaSatisfacao, listasPrioridade);
 	}
 	
-	public static void gravarEquipe(SrEquipe equipe) throws Exception {
+	public static String gravarEquipe(SrEquipe equipe) throws Exception {
 		assertAcesso("ADM:Administrar");
-//		validarFormEditarEquipe(equipe);
 		equipe.salvar();
+		return equipe.toJson();
 	}
 	
-	private static void validarFormEditarEquipe(SrEquipe equipe) throws Exception {
-		if (equipe.lotacao == null) {
-			validation.addError("equipe.lotacao", "Lotação não informada");
-		}
-		
-		for (play.data.validation.Error error : validation.errors()) {
-			System.out.println(error.getKey() + " :" + error.message());
-		}
-
-		if (validation.hasErrors()) {
-			enviarErroValidacao();
-		}
-	}
-
 	public static void listarAcao(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrAcao> acoes = SrAcao.listar(mostrarDesativados);

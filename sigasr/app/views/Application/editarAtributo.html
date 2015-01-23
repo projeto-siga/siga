@@ -4,6 +4,167 @@
 
 <!-- <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script> -->
 
+<div class="gt-form gt-content-box">
+	<form id="atributoForm" action="#">
+	#{if att?.idAtributo} <input
+		type="hidden" name="idAtributo"
+		id="idAtributo"
+		value="${idAtributo}"> #{/if}
+		<input
+		type="hidden" name="hisIdIni"
+		id="hisIdIni"
+		value="${hisIdIni}">
+	#{ifErrors}
+	<p class="gt-error">Alguns campos obrigatórios não foram
+		preenchidos ${error}</p>
+	#{/ifErrors}	
+	<div class="gt-form-row box-wrapper">
+		<div class="box box-left gt-width-50">
+			<label>Nome <span>*</span></label> <input type="text"
+				name="nomeAtributo"
+				id="nomeAtributo"
+				value="${nomeAtributo}" size="50" maxlength="255" required/>
+				<span style="color: red">#{error
+				'nomeAtributo' /}</span>
+		</div>
+		<div class="box gt-width-50">
+			<label>Descrição</label> <input maxlength="255" type="text"
+				name="descrAtributo"
+				id="descrAtributo"
+				value="${descrAtributo}" 
+				style="width: 372px;" />
+		</div>
+	</div>
+	<div class="gt-form-row gt-width-66">
+				<label>C&oacute;digo</label> <input type="text"
+					name="codigoAtributo" id="codigoAtributo"
+					value="${codigoAtributo}" size="60" />
+	</div>
+	<div class="gt-form-row gt-width-66">
+				<label>Objetivo do atributo<span>*</span></label> #{select id:'objetivoAtributo', name:'objetivoAtributo', items:objetivos,
+				labelProperty:'descrObjetivo', value:idObjetivo, style:'width:393px;',
+				onchange:'javascript:ocultaAssociacoes();',
+				class:'select-siga'/}
+	</div>
+	<div class="gt-form-row gt-width-100">
+		<label>Tipo de atributo</label> #{select name:'tipoAtributo', items:models.SrTipoAtributo.values(),
+		labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:100%', id:'tipoAtributo',
+		class:'select-siga' /}
+	</div>
+	<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
+		<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
+		<input maxlength="255" type="text"
+			name="descrPreDefinido"
+			id="descrPreDefinido"
+			value="${descrPreDefinido}" size="60" />
+			<span style="color: red" id="erroDescrPreDefinido">#{error
+			'descrPreDefinido' /}</span>
+	</div>
+	<div class="gt-content" style="padding-top: 10px;">
+		<h3>Associações</h3>
+		<div class="gt-content-box dataTables_div">
+			<table id="associacao_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th style="color: #333">
+							<span class="gt-btn-medium gt-btn-left bt-expandir">
+								<span id="iconeBotaoExpandirTodos">+</span>
+							</span>
+						</th>
+						<th>idItemConfiguracao</th>
+						<th><i>Item &darr;</i></th>
+						<th>siglaItemConfiguracao</th>
+						<th>idAcao</th>
+						<th>Ação</th>
+						<th>siglaAcao</th>
+						<th>Obrigatório</th>
+						<th>Obrigatório</th>
+						<th>idAssociacao</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+					#{list items:associacoes, as:'assoc'}
+					<tr>
+						<td class="details-control"></td>
+						<td>${assoc.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>
+						<td>${assoc.itemConfiguracaoUnitario?.atual?.tituloItemConfiguracao}</td>
+						<td>${assoc.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>
+						<td>${assoc.acaoUnitaria?.atual?.idAcao}</td>
+						<td>${assoc.acaoUnitaria?.atual?.tituloAcao}</td>
+						<td>${assoc.acaoUnitaria?.atual?.siglaAcao}</td>
+						<td>${assoc.atributoObrigatorio}</td>
+						<td>${assoc.atributoObrigatorioString}</td>
+						<td>${assoc.idConfiguracao}</td>
+						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+							<a class="once desassociar" onclick="desassociar(event, ${assoc?.idConfiguracao})" title="Remover permissão">
+								<input class="idAssociacao" type="hidden" value="${assoc?.idConfiguracao}"/>
+								<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
+							</a>
+						</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<div class="gt-table-buttons">
+			<a id="btnIncluirAtributo" class="gt-btn-small gt-btn-left">Incluir</a>
+		</div>
+	</div>
+	<div class="gt-form-row" style="padding-top: 10px;">
+		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoService.gravar()"/>
+		<a class="gt-btn-medium gt-btn-left" onclick="atributoService.cancelarGravacao()">Cancelar</a>
+		<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="atributoService.aplicar()"/>
+	</div>
+	</form>
+</div>
+
+#{modal nome:'associacao', titulo:'cadastrar associação'}
+	<div class="gt-form gt-content-box">
+		<form id="associacaoForm">
+			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Item <span>*</span></label> 
+				#{selecao tipo:'item',
+					nome:'itemConfiguracaoUnitario',
+					value:itemConfiguracaoUnitario?.atual,
+					requiredValue:'required' /}
+			</div>
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Serviço <span>*</span></label> 
+				#{selecao tipo:'acao',
+				nome:'acaoUnitaria', value:acaoUnitaria?.atual,
+				requiredValue:'required' /}
+			</div>
+			<div class="gt-form-row">
+				<label>#{checkbox name:'atributoObrigatorio',
+					value:atributoObrigatorio /} Obrigatório</label>
+			</div>
+			<div class="gt-form-row">
+				<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
+				<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+			</div>
+			</form>
+	</div>
+	<div class="gt-content-box" id="modal-associacao-error" style="display: none;">
+		<table width="100%">
+			<tr>
+				<td align="center" valign="middle">
+					<table class="form" width="50%">
+						<tr>
+							<td style="text-align: center; padding-top: 10px;">
+								<h3></h3>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+#{/modal}
+
 <script type="text/javascript">
 
 	function ocultaAssociacoes(){
@@ -28,9 +189,6 @@
 	colunas.atributoObrigatorioString =   8;
 	colunas.idAssociacao =                9;
 	colunas.botaoExcluir =                10;
-
-// 	//removendo a referencia de '$' para o jQuery
-// 	$.noConflict();
 
 	var table = null,
 		isEditingAssociacao = false;
@@ -172,7 +330,6 @@
 
 	// Limpa os dados da tela.
 	function limparDadosAssociacaoModal() {
-
 		$("#itemConfiguracaoUnitario").val('');
 		$("#itemConfiguracaoUnitario_descricao").val('');
 		$("#itemConfiguracaoUnitario_sigla").val('');
@@ -185,7 +342,9 @@
 	}
 	
 	function atualizarListaAssociacoes(jSon) {
-		if (jSon.associacoesVO) {
+		tableAssociacao.api().clear().draw();
+		
+		if (jSon && jSon.associacoesVO) {
 			// cria a lista de associacoes, e adiciona na tela
 			for (i = 0; i < jSon.associacoesVO.length; i++) {
 				var assoc = jSon.associacoesVO[i],
@@ -318,10 +477,11 @@
 	}
 
 	function formatDescricaoLonga(descricao) {
-		if (descricao != null) {
+		if (descricao) {
 			return descricao + " ...";
 		}
-		return descricao;
+		else
+			return '';
 	}
 
 	function getAtributoObrigatorioString() {
@@ -354,186 +514,24 @@
 		        	modalErro.show(); 
 		         }
 	       });
-
-			
 	}
-</script>
-
-<div class="gt-form gt-content-box">
-	<form id="atributoForm" action="#">
-	#{if att?.idAtributo} <input
-		type="hidden" name="att.idAtributo"
-		id="idAtributo"
-		value="${att?.idAtributo}"> #{/if}
-		<input
-		type="hidden" name="att.hisIdIni"
-		id="hisIdIni"
-		value="${att?.hisIdIni}">
-	#{ifErrors}
-	<p class="gt-error">Alguns campos obrigatórios não foram
-		preenchidos ${error}</p>
-	#{/ifErrors}	
-	<div class="gt-form-row box-wrapper">
-		<div class="box box-left gt-width-50">
-			<label>Nome <span>*</span></label> <input type="text"
-				name="att.nomeAtributo"
-				id="nomeAtributo"
-				value="${att?.nomeAtributo}" size="50" maxlength="255" required/>
-				<span style="color: red">#{error
-				'att.nomeAtributo' /}</span>
-		</div>
-		<div class="box gt-width-50">
-			<label>Descrição</label> <input maxlength="255" type="text"
-				name="att.descrAtributo"
-				id="descrAtributo"
-				value="${att?.descrAtributo}" 
-				style="width: 372px;" />
-		</div>
-	</div>
-	<div class="gt-form-row gt-width-66">
-				<label>C&oacute;digo</label> <input type="text"
-					name="att.codigoAtributo" id="codigoAtributo"
-					value="${att?.codigoAtributo}" size="60" />
-	</div>
-	<div class="gt-form-row gt-width-66">
-				<label>Objetivo do atributo</label> #{select id:'objetivoAtributo', name:'att.objetivoAtributo.idObjetivo', items:objetivos,
-				labelProperty:'descrObjetivo', valueProperty:'idObjetivo', value:att?.objetivoAtributo?.idObjetivo, style:'width:393px;',
-				onchange:'javascript:ocultaAssociacoes();'/}
-	</div>
-	<div class="gt-form-row gt-width-100">
-		<label>Tipo de atributo</label> #{select name:'att.tipoAtributo', items:models.SrTipoAtributo.values(),
-		labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:100%', id:'tipoAtributo' /}
-	</div>
-	<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
-		<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
-		<input maxlength="255" type="text"
-			name="att.descrPreDefinido"
-			id="descrPreDefinido"
-			value="${att?.descrPreDefinido}" size="60" />
-			<span style="color: red" id="erroDescrPreDefinido">#{error
-			'att.descrPreDefinido' /}</span>
-	</div>
-	<div class="gt-content" style="padding-top: 10px;">
-		<h3>Associações</h3>
-		<div class="gt-content-box dataTables_div">
-			<table id="associacao_table" border="0" class="gt-table display">
-				<thead>
-					<tr>
-						<th style="color: #333">
-							<span class="gt-btn-medium gt-btn-left bt-expandir">
-								<span id="iconeBotaoExpandirTodos">+</span>
-							</span>
-						</th>
-						<th>idItemConfiguracao</th>
-						<th><i>Item &darr;</i></th>
-						<th>siglaItemConfiguracao</th>
-						<th>idAcao</th>
-						<th>Ação</th>
-						<th>siglaAcao</th>
-						<th>Obrigatório</th>
-						<th>Obrigatório</th>
-						<th>idAssociacao</th>
-						<th>Ações</th>
-					</tr>
-				</thead>
-				<tbody>
-					#{list items:att?.associacoes, as:'assoc'}
-					<tr>
-						<td class="details-control"></td>
-						<td>${assoc.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>
-						<td>${assoc.itemConfiguracaoUnitario?.atual?.tituloItemConfiguracao}</td>
-						<td>${assoc.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>
-						<td>${assoc.acaoUnitaria?.atual?.idAcao}</td>
-						<td>${assoc.acaoUnitaria?.atual?.tituloAcao}</td>
-						<td>${assoc.acaoUnitaria?.atual?.siglaAcao}</td>
-						<td>${assoc.atributoObrigatorio}</td>
-						<td>${assoc.atributoObrigatorioString}</td>
-						<td>${assoc.idConfiguracao}</td>
-						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<a class="once desassociar" onclick="desassociar(event, ${assoc?.idConfiguracao})" title="Remover permissão">
-								<input class="idAssociacao" type="hidden" value="${assoc?.idConfiguracao}"/>
-								<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
-							</a>
-						</td>
-					</tr>
-					</a> #{/list}
-				</tbody>
-			</table>
-		</div>
-		<div class="gt-table-buttons">
-			<a id="btnIncluirAtributo" class="gt-btn-small gt-btn-left">Incluir</a>
-		</div>
-	</div>
-	<div class="gt-form-row" style="padding-top: 10px;">
-		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoGravar()"/>
-		<a href="javascript: atributoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-	</div>
-	</form>
-</div>
-
-#{modal nome:'associacao', titulo:'cadastrar associação'}
-	<div class="gt-form gt-content-box">
-		<form id="associacaoForm">
-			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
-		
-			<div class="gt-form-row gt-width-100">
-				<label>Item <span>*</span></label> 
-				#{selecao tipo:'item',
-					nome:'itemConfiguracaoUnitario',
-					value:itemConfiguracaoUnitario?.atual,
-					requiredValue:'required' /}
-			</div>
-		
-			<div class="gt-form-row gt-width-100">
-				<label>Serviço <span>*</span></label> 
-				#{selecao tipo:'acao',
-				nome:'acaoUnitaria', value:acaoUnitaria?.atual,
-				requiredValue:'required' /}
-			</div>
-			<div class="gt-form-row">
-				<label>#{checkbox name:'atributoObrigatorio',
-					value:atributoObrigatorio /} Obrigatório</label>
-			</div>
-			<div class="gt-form-row">
-				<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
-				<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-			</div>
-			</form>
-	</div>
-	<div class="gt-content-box" id="modal-associacao-error" style="display: none;">
-		<table width="100%">
-			<tr>
-				<td align="center" valign="middle">
-					<table class="form" width="50%">
-						<tr>
-							<td style="text-align: center; padding-top: 10px;">
-								<h3></h3>
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
-	</div>
-#{/modal}
-
-<script type="text/javascript">
-function verificarTipoAtributo() {
-	if($("select[name='att.tipoAtributo']").val() === 'VL_PRE_DEFINIDO') {
+	
+	function verificarTipoAtributo() {
+		if($("select[name='att.tipoAtributo']").val() === 'VL_PRE_DEFINIDO') {
+			$('#vlPreDefinidos').show();
+			return;
+		}
+		$('#vlPreDefinidos').hide();
+	};
+	
+	verificarTipoAtributo();
+	
+	$("select[name='att.tipoAtributo']").change(function() {
+		verificarTipoAtributo(); 
+	});
+	
+	if($('#erroDescrPreDefinido').html()) {
+		$("select[name='att.tipoAtributo']").val('VL_PRE_DEFINIDO');
 		$('#vlPreDefinidos').show();
-		return;
-	}
-	$('#vlPreDefinidos').hide();
-};
-
-verificarTipoAtributo();
-
-$("select[name='att.tipoAtributo']").change(function() {
-	verificarTipoAtributo(); 
-});
-
-if($('#erroDescrPreDefinido').html()) {
-	$("select[name='att.tipoAtributo']").val('VL_PRE_DEFINIDO');
-	$('#vlPreDefinidos').show();
-};
+	};
 </script>

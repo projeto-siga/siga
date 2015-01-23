@@ -149,7 +149,7 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = mov.getObs();
 			addAcao(null,
 					"Excluir",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"excluir",
 					Ex.getInstance()
 							.getComp()

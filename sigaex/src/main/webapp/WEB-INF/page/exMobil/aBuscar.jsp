@@ -853,7 +853,7 @@ function limpaCampos()
 											</td>
 											<td>
 												<div style="float: left">
-													<select name="tipoCadastrante" onchange="javascript:alteraCadastranteDocumento();" >
+													<select id="tipoCadastrante" name="tipoCadastrante" onchange="javascript:alteraCadastranteDocumento();" >
 														<c:forEach items="${listaTipoResp}" var="item">
 															<option value="${item.key}" ${item.key == tipoCadastrante ? 'selected' : ''}>
 																${item.value}

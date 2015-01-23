@@ -1855,7 +1855,7 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	@Get("/app/expediente/mov/excluir")
+	@Get("app/expediente/mov/excluir")
 	public void excluir(Long id) throws Exception {
 		setId(id);
 		buscarDocumento(true);

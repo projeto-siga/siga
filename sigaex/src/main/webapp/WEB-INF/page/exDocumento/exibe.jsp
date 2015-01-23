@@ -39,7 +39,7 @@
 				<b>${param.msg}</b>
 			</p>
 		</c:if>
-		<form name="frm" action="exibir" namespace="/expediente/doc" theme="simple" method="POST">
+		<form name="frm" action="exibir" theme="simple" method="POST">
 			<%-- <ww:token /> --%>
 		</form>
 		<h2>

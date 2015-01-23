@@ -488,7 +488,8 @@ public class ExMobilController extends
 		result.include("listaTipoResp", this.getListaTipoResp());
 		result.include("tipoCadastrante", this.getTipoCadastrante());
 		result.include("cadastranteSel", this.getCadastranteSel());
-		result.include("lotaCadastrante", this.getLotaCadastranteSel());
+		result.include("lotaCadastranteSel", this.getLotaCadastranteSel());
+		result.include("orgaoExternoDestinatarioSel", this.getOrgaoExternoDestinatarioSel());
 		result.include("listaTipoDest", this.getListaTipoDest());
 		result.include("tipoDestinatario", this.getTipoDestinatario());
 		result.include("destinatarioSel", this.getDestinatarioSel());
@@ -575,6 +576,8 @@ public class ExMobilController extends
 			this.setOrdem(ordem);
 		}
 		
+		if (this.getLotaCadastranteSel() == null)
+			this.setLotaCadastranteSel(new DpLotacaoSelecao());
 
 		if (this.getUltMovRespSel() == null)
 			this.setUltMovRespSel(new DpPessoaSelecao());
@@ -680,7 +683,8 @@ public class ExMobilController extends
 		result.include("listaTipoResp", this.getListaTipoResp());
 		result.include("tipoCadastrante", this.getTipoCadastrante());
 		result.include("cadastranteSel", this.getCadastranteSel());
-		result.include("lotaCadastrante", this.getLotaCadastranteSel());
+		result.include("lotaCadastranteSel", this.getLotaCadastranteSel());
+		result.include("orgaoExternoDestinatarioSel", this.getOrgaoExternoDestinatarioSel());
 		result.include("listaTipoDest", this.getListaTipoDest());
 		result.include("tipoDestinatario", this.getTipoDestinatario());
 		result.include("destinatarioSel", this.getDestinatarioSel());

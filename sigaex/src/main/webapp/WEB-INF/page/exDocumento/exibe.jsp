@@ -662,7 +662,7 @@
 							<li>${cossig.key.subscritor.nomePessoa}<c:if
 									test="${cossig.value}">&nbsp;
 					<a
-										href="/sigaex/expediente/mov/excluir.action?id=${cossig.key.idMov}">Excluir</a>
+										href="/sigaex/app/expediente/mov/excluir?id=${cossig.key.idMov}">Excluir</a>
 								</c:if>
 							</li>
 						</c:forEach>

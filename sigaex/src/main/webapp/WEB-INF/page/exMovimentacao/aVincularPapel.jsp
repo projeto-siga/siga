@@ -85,11 +85,7 @@ function popitup_movimentacao() {
 								Data:
 							</td>
 							<td>
-								<tr>
-									<td>
-										<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this,0);" />
-									</td>
-								</tr>
+								<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this,0);" />
 							</td>
 						</tr>
 						<tr>

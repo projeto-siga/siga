@@ -2079,13 +2079,13 @@ public class ExMovimentacaoController extends ExController {
 				.podeJuntar(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Não é possível fazer juntada");
 
-		result.include("sigla", sigla);
-		result.include("mob", mob);
-		result.include("doc", doc);
-		result.include("substituicao", substituicao);
-		result.include("dtMovString", dtMovString);
-		result.include("campos", getTitularSel().getId());
-		result.include("idDocumentoPaiExterno", idDocumentoPaiExterno);
+		result.include("sigla", this.getSigla());
+		result.include("mob", this.getMob());
+		result.include("doc", this.getDoc());
+		result.include("substituicao", this.isSubstituicao());
+		result.include("dtMovString", this.getDtMovString());
+		result.include("campos", this.getTitularSel().getId());
+		result.include("idDocumentoPaiExterno", this.getIdDocumentoPaiExterno());
 
 		result.include("titularSel", getTitularSel());
 		result.include("documentoRefSel", getDocumentoRefSel());
@@ -2103,25 +2103,35 @@ public class ExMovimentacaoController extends ExController {
 	// documentoRefSel
 	//
 	@Post("app/expediente/mov/juntar_gravar")
-	public void aJuntarGravar(String sigla, String dtMovString,
+	public void aJuntarGravar(Integer postback, String sigla, String dtMovString,
 			boolean substituicao, String idDocumentoPaiExterno,
 			DpPessoaSelecao subscritorSel, DpPessoaSelecao titularSel,
 			ExMobilSelecao documentoRefSel, String idDocumentoEscolha)
 			throws Exception {
 
-		this.sigla = sigla;
-		this.dtMovString = dtMovString;
-		this.substituicao = substituicao;
-		this.idDocumentoPaiExterno = idDocumentoPaiExterno;
-		this.subscritorSel = subscritorSel;
-		this.titularSel = titularSel;
-		this.documentoRefSel = documentoRefSel;
-		this.idDocumentoEscolha = idDocumentoEscolha;
+		this.setSigla(sigla);
+		this.setDtMovString(dtMovString);
+		this.setSubstituicao(substituicao);
+		this.setIdDocumentoPaiExterno(idDocumentoPaiExterno);
+		this.setSubscritorSel(subscritorSel);
+		this.setTitularSel(titularSel);
+		this.setDocumentoRefSel(documentoRefSel);
+		this.setIdDocumentoEscolha(idDocumentoEscolha);
+		this.setPostback(postback);
+		
+		if (this.getDocumentoRefSel() == null) {
+			this.setDocumentoRefSel(new ExMobilSelecao());
+		}
+		
+		if (this.getSubscritorSel() == null) {
+			this.setSubscritorSel(new DpPessoaSelecao());
+		}
+		
 		this.buscarDocumento(true);
-		this.lerForm(mov);
+		this.lerForm(this.getMov());
 
 		if (!Ex.getInstance().getComp()
-				.podeJuntar(getTitular(), getLotaTitular(), mob))
+				.podeJuntar(getTitular(), getLotaTitular(), this.getMob()))
 			throw new AplicacaoException("Não é possível fazer juntada");
 
 		// Nato: precisamos rever o codigo abaixo, pois a movimentacao nao pode
@@ -2152,7 +2162,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		ExDocumentoController.redirecionarParaExibir(result, this.getSigla());
 	}
 
 	@Get("app/expediente/mov/apensar")

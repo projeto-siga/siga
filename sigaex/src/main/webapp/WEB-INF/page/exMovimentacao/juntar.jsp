@@ -15,42 +15,47 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Juntada de Documento - ${mob.siglaEDescricaoCompleta}</h2>
+			<h2>
+				Juntada de Documento - ${mob.siglaEDescricaoCompleta}
+			</h2>
 			
 			<div class="gt-content-box gt-for-table">
 
-            <form action="juntar_gravar" enctype="multipart/form-data" namespace="/expediente/mov" cssClass="form" method="POST">
+            <form action="juntar_gravar" enctype="multipart/form-data" cssClass="form" method="POST">
 			<input type="hidden" name="postback" value="1" />
 			<input type="hidden" name="sigla" value="${sigla}"/>
 
 			<table class="gt-form-table">
 				<tr class="header">
-					<td colspan="2">Dados da juntada</td>
+					<td colspan="2">
+						Dados da juntada
+					</td>
 				</tr>
-				
-				<!-- Bernardo Inicio -->
-				<!-- Checa se o documento é eletronico ou não. Caso seja, seu valor default para Data é o atual e o Responsável é quem fez o Login. -->
 				<c:choose>
-					<c:when test="${!doc.eletronico}"> <!-- Documento Eletronico -->
+					<c:when test="${!doc.eletronico}">
 						<tr>
 							<td>
-								<label>Data</label>
+								<label>
+									Data
+								</label>
 							</td>
 							<td>
-								<input type="text" name="dtMovString" onblur="javascript:verifica_data(this, true);" />
+								<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this, true);" />
 							</td>
 						<tr>
 						<tr>
-							<td>Responsável:</td>
+							<td>
+								Responsável:
+							</td>
 							<td>
 								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 								&nbsp;&nbsp;
-								<input type="checkbox" theme="simple" name="substituicao"	onclick="javascript:displayTitular(this);" />&nbsp;&nbsp;Substituto
+								<input type="checkbox" theme="simple" name="substituicao" value="${substituicao}" onclick="javascript:displayTitular(this);" />
+								&nbsp;&nbsp;Substituto
 							</td>
 						</tr>
 					</c:when>
 				</c:choose>
-				<!-- Bernardo Fim -->
 			</tr>
 			<c:choose>
 				<c:when test="${!substituicao}">
@@ -61,7 +66,9 @@
 				</c:otherwise>
 			</c:choose>
 
-				<td>Titular:</td>
+				<td>
+					Titular:
+				</td>
 					<input type="hidden" name="campos" value="titularSel.id" />
 				
 				<td colspan="3">
@@ -69,14 +76,16 @@
 				</td>
 			</tr>
 			<tr>
-					<td>Documento:</td>
 					<td>
-						<siga:escolha var='idDocumentoEscolha'>
+						Documento:
+					</td>
+					<td>
+						<siga:escolha var="idDocumentoEscolha">
 							<siga:opcao id='1' texto="Documento Interno" >
 								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" urlAcao="buscar" modulo="sigaex"/>
 							</siga:opcao>
 							<siga:opcao id='2' texto="Documento Externo ao SIGAEX" >
-								<input type="checkbox" theme='simple' name="idDocumentoPaiExterno" />
+								<input type="checkbox" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" />
 							</siga:opcao>
 						</siga:escolha>
 					</td>

@@ -464,7 +464,7 @@ public class ExMobilVO extends ExVO {
 						.podeDesobrestar(titular, lotaTitular, mob), null,
 				null, null, null, "once");
 
-		addAcao("link", "Juntar", "/expediente/mov", "juntar", Ex.getInstance()
+		addAcao("link", "Juntar", "/app/expediente/mov", "juntar", Ex.getInstance()
 				.getComp().podeJuntar(titular, lotaTitular, mob));
 
 		addAcao("page_find",

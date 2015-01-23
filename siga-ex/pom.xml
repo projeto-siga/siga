@@ -130,10 +130,6 @@
             <artifactId>fop</artifactId>
         </dependency>
         <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.ccil.cowan.tagsoup</groupId>
             <artifactId>tagsoup</artifactId>
         </dependency>
@@ -149,6 +145,10 @@
         <dependency>
             <groupId>org.apache.axis</groupId>
             <artifactId>axis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
         </dependency>
 
         <dependency>

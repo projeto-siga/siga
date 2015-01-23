@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.commons.io.output.NullOutputStream;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -85,7 +86,6 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfString;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 /**
  * Links uteis:

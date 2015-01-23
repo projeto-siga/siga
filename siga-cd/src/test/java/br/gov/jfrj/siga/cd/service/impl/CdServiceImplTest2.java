@@ -26,7 +26,7 @@ import java.util.Locale;
 
 import junit.framework.TestCase;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.apache.axis.encoding.Base64;
 
 /**
  * Testa as funcionalidades de cálculo da ExCalculoPCD.

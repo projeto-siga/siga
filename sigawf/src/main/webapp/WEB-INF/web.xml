@@ -65,7 +65,7 @@
 		<url-pattern>*.action</url-pattern>
 		<url-pattern>/loadPhoto</url-pattern>
 		<url-pattern>/upload</url-pattern>
-		<url-pattern>/servicos/*</url-pattern>
+		<url-pattern>*wsdl</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
@@ -152,6 +152,13 @@
 		<auth-constraint>
 			<role-name>superusuario</role-name>
 		</auth-constraint>
+	</security-constraint>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>WFService</web-resource-name>
+			<url-pattern>/WfService?wsdl</url-pattern>
+		</web-resource-collection>
 	</security-constraint>
 
 	<login-config>

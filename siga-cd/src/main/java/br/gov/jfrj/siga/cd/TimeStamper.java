@@ -58,7 +58,7 @@ import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.Store;
 import org.jboss.logging.Logger;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.apache.axis.encoding.Base64;
 
 /**
  * 

@@ -8,22 +8,6 @@
 	<display-name>sigacd</display-name>
 	
 
-<!-- 
-	<servlet>
-		<display-name>CXF Servlet</display-name>
-		<servlet-name>CXFServlet</servlet-name>
-		<servlet-class>
-			br.gov.jfrj.siga.cd.servlet.CdWsServlet
-		</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>CXFServlet</servlet-name>
-		<url-pattern>/servicos/*</url-pattern>
-	</servlet-mapping>
- -->
-
 	<servlet>
 		<display-name>testes</display-name>
 		<servlet-name>testes</servlet-name>

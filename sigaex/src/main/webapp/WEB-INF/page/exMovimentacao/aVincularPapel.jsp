@@ -16,6 +16,7 @@ function sbmt() {
 	frm.action='${pageContext.request.contextPath}/app/expediente/mov/vincularPapel';
 	frm.submit();
 }
+
 function tamanho() {
 	var i = tamanho2();
 	if (i<0) {i=0};
@@ -63,7 +64,25 @@ function popitup_movimentacao() {
 		newwindow.focus()
 	}
 	return false;
-}			
+}	
+
+function alteraResponsavel()
+{
+	var objSelecionado = document.getElementById('tipoResponsavel');
+	
+	switch (parseInt(objSelecionado.value))
+	{
+		case 1:
+			document.getElementById('selecaoResponsavel').style.display = '';
+			document.getElementById('selecaoLotaResponsavel').style.display = 'none';
+			break;
+		case 2:
+			document.getElementById('selecaoResponsavel').style.display = 'none';
+			document.getElementById('selecaoLotaResponsavel').style.display = '';
+			break;
+	}
+}
+
 </script>
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
@@ -94,21 +113,20 @@ function popitup_movimentacao() {
 						    </td>
 							<td>
 			
-								<select  name="tipoResponsavel" onchange="javascript:sbmt();">
+								<select id="tipoResponsavel"  name="tipoResponsavel" onchange="javascript:alteraResponsavel();">
 									<c:forEach items="${listaTipoRespPerfil}" var="item">
 										<option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
 											${item.value}
 										</option>  
 									</c:forEach>
 								</select>		
-		     					<c:choose>							  
-									  <c:when test="${tipoResponsavel == 1}">
-										<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
-									  </c:when>
-									  <c:when test="${tipoResponsavel == 2}">
-										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
-									  </c:when>							  
-								</c:choose>
+								<span id="selecaoResponsavel">
+									<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+								</span>
+								<span id="selecaoLotaResponsavel">
+									<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+								</span>		
+								<script>alteraResponsavel();</script>			  
 							</td>
 					    </tr>
 						<tr>
@@ -116,7 +134,7 @@ function popitup_movimentacao() {
 								Perfil
 							</td>
 							<td>
-								<select  name="idPapel" onchange="javascript:sbmt();">
+								<select  name="idPapel">
 									<c:forEach items="${listaExPapel}" var="item">
 										<option value="${item.idPapel}" ${item.idPapel == idPapel ? 'selected' : ''}>
 											${item.descPapel}

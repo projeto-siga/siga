@@ -3354,7 +3354,7 @@ public class ExMovimentacaoController extends ExController {
 		
 	}
 	
-	@Post("/app/expediente/mov/vincularPapel")
+	@Post("/app/expediente/mov/vincularPapel_gravar")
 	public void vincularPapel_gravar(int postback, String sigla, String dtMovString, int tipoResponsavel, DpPessoaSelecao responsavelSel, DpLotacaoSelecao lotaResponsavelSel,  Long idPapel) throws Exception {
 		this.setPostback(postback);
 		this.setSigla(sigla);
@@ -3364,10 +3364,10 @@ public class ExMovimentacaoController extends ExController {
 		this.setLotaResponsavelSel(lotaResponsavelSel);
 		this.setIdPapel(idPapel);
 		
-		if (this.getResponsavelSel() == null)
+		if (this.getResponsavelSel() == null || this.getTipoResponsavel() == 2)
 			this.setResponsavelSel(new DpPessoaSelecao());
 		
-		if (this.getLotaResponsavelSel() == null)
+		if (this.getLotaResponsavelSel() == null || this.getTipoResponsavel() == 1)
 			this.setLotaResponsavelSel(new DpLotacaoSelecao());
 		
 		buscarDocumento(true);

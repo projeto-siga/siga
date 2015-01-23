@@ -35,6 +35,7 @@
 		}
 		
 		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
 				location.href = '@{Application.listarAssociacaoDesativadas()}';
 			else

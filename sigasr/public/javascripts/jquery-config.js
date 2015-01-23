@@ -1,16 +1,12 @@
 /**
- * Registra o pre-filter que ira mostrar/esconder o sinal de "carregando..."
+ * Registra o block que ira mostrar/esconder o sinal de "carregando..."
  */
+var objBlock = { message: '<h2> Carregando... </h2>' };
+
 $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
-	var carregando = $('#carregando'),
-		originalPosition = carregando.css('position');
-	
-	carregando.css('position', 'fixed');
-	carregando.css('z-index', '999');
-	carregando.css('display', 'block');
+	jQuery.blockUI(objBlock);
 	
 	jqXHR.complete(function() {
-		carregando.css('position', originalPosition);
-		carregando.css('display', 'none');
+		jQuery.unblockUI();
 	});
 });

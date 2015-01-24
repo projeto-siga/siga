@@ -23,11 +23,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import models.vo.SrListaVO;
-
-import org.hibernate.Hibernate;
-import org.hibernate.ObjectNotFoundException;
-import org.hibernate.proxy.HibernateProxy;
-
 import play.db.jpa.JPA;
 import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;

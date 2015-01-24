@@ -289,7 +289,7 @@ BaseService.prototype.gravar = function() {
 
 function gravarAplicar(baseService, isAplicar) {
 	if (!baseService.isValidForm())
-		return false;
+		return;
 	
 	var obj = baseService.getObjetoParaGravar(),
 		url = baseService.opts.urlGravar,

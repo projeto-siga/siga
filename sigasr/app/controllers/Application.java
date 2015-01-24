@@ -63,6 +63,7 @@ import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -1041,9 +1042,9 @@ public class Application extends SigaApplication {
 
 	public static String buscarDesignacoesItem(Long id) throws Exception {
 		List<SrConfiguracao> designacoes;
-		SrItemConfiguracao itemConfiguracao = new SrItemConfiguracao();
+		
 		if (id != null) {
-			itemConfiguracao = SrItemConfiguracao.findById(id);
+			SrItemConfiguracao itemConfiguracao = SrItemConfiguracao.findById(id);
 			designacoes = new ArrayList<SrConfiguracao>(itemConfiguracao.designacoesSet);
 			designacoes.addAll(itemConfiguracao.getDesignacoesPai());
 		}
@@ -1052,6 +1053,27 @@ public class Application extends SigaApplication {
 		
 		return SrConfiguracao.convertToJSon(designacoes);
 	}
+	
+	/**
+	 * Recupera as {@link SrConfiguracao permissoes} de uma {@link SrLista lista}.
+	 * 
+	 * @param id - ID da lista
+	 * @return - String contendo a lista no formato jSon
+	 */
+	public static String buscarPermissoesLista(Long idLista) throws Exception {
+		List<SrConfiguracao> permissoes;
+		
+		if (idLista != null) {
+			SrLista lista = SrLista.findById(idLista);
+			
+			permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(lotaTitular(), cadastrante()));
+		}
+		else
+			permissoes = new ArrayList<SrConfiguracao>();
+		
+		return SrConfiguracao.convertToJSon(permissoes);
+	}
+	
 
 	public static String gravarItem(SrItemConfiguracao itemConfiguracao)
 			throws Exception {

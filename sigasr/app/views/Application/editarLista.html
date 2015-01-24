@@ -2,45 +2,36 @@
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
-<style>
-	tr {
-		cursor : pointer !important;
-	}
-</style>
-
 <div class="gt-form gt-content-box">
 	<form id="formLista"> 
 		<input type="hidden" id="idLista" name="lista.idLista" value="${lista?.idLista}">
 		<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista?.hisIdIni}">
+		<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
+		<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
+		<input type="hidden" id="nomeLotaCadastrante" name="lista.nomeLotaCadastrante" value="${lotaTitular.descricao}">
 		<div class="gt-form-row gt-width-66">
 			<label>Nome <span>*<span></label> <input type="text"
 				id="nomeLista"
-				name="lista.nomeLista"
-				value="${lista?.nomeLista}" 
+				name="nomeLista"
+				value="${nomeLista}" 
 				size="98"
 				maxlength="255"
 				required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Abrangência</label>
-			<textarea cols="98" rows="5" name="lista.descrAbrangencia"
-				id="descrAbrangencia" maxlength="8192">${lista?.descrAbrangencia}</textarea>
-			<span style="color: red">#{error
-				'lista.descrAbrangencia' /}</span>
+			<textarea cols="98" rows="5" name="descrAbrangencia"
+				id="descrAbrangencia" maxlength="8192">${descrAbrangencia}</textarea>
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Justificativa</label>
-			<textarea cols="98" rows="5" name="lista.descrJustificativa"
-				id="descrJustificativa" maxlength="8192">${lista?.descrJustificativa}</textarea>
-			<span style="color: red">#{error
-				'lista.descrJustificativa' /}</span>
+			<textarea cols="98" rows="5" name="descrJustificativa"
+				id="descrJustificativa" maxlength="8192">${descrJustificativa}</textarea>
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Priorização</label>
-			<textarea cols="98" rows="5" name="lista.descrPriorizacao"
-				id="descrPriorizacao" maxlength="8192">${lista?.descrPriorizacao}</textarea>
-			<span style="color: red">#{error
-				'lista.descrPriorizacao"' /}</span>
+			<textarea cols="98" rows="5" name="descrPriorizacao"
+				id="descrPriorizacao" maxlength="8192">${descrPriorizacao}</textarea>
 		</div>
 		
 		<div class="container">
@@ -83,7 +74,7 @@
 
 				<tbody>
 					#{list items:lista?.getPermissoes(lotaTitular, cadastrante), as:'perm'}
-						<tr style="cursor: pointer;">
+						<tr style="cursor: pointer !important;">
 							<td>${perm.orgaoUsuario?.id}</td>
 							<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
 							<td>${perm.complexo?.idComplexo}</td>
@@ -117,11 +108,9 @@
 		</div>
 		
 		<div class="gt-form-row">
-			<input type="hidden" name="lotaTitular" value="${lotaTitular.idLotacao}">
-			<input type="hidden" name="lista.lotaCadastrante" value="${lotaTitular.idLotacao}">
-			<input type="hidden" id="nomeLotaCadastrante" name="lista.nomeLotaCadastrante" value="${lotaTitular.descricao}">
-			<a href="javascript: gravarLista()" class="gt-btn-medium gt-btn-left">Ok</a>
-			<a href="javascript: listaModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="listaService.gravar()"/>
+			<a class="gt-btn-medium gt-btn-left" onclick="listaService.cancelarGravacao()">Cancelar</a>
+			<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="listaService.aplicar()"/>
 		</div>
 		<div class="gt-form-row gt-width-100">
 			<p class="gt-error" style="display:none;" id="erroAoSalvar">Não foi possível salvar o registro.</p>
@@ -408,8 +397,6 @@
 
 		$('#modal-permissao-error').css('display', 'none');
 		$('#modal-permissao').css('display', 'block');
-
-		//$("#itemTipoPermissao").empty().append(itemTipoPermissaoOptions[0].options);
 	};
 
 	function serializePermissao(row) {
@@ -518,17 +505,17 @@
 		// transforma o valor String em objeto, caso necessário
 		// Edson: comentando, pois nao funciona no IE
 		try{
-			designacaoJson = JSON.parse(itemArray[colunas.jSonTipoPerm]);
+			tipoPermissaoJson = JSON.parse(itemArray[colunas.jSonTipoPerm]);
 		} catch(e){
-			designacaoJson = itemArray[colunas.jSonTipoPerm];
+			tipoPermissaoJson = itemArray[colunas.jSonTipoPerm];
 		}
 		
-		if (designacaoJson) {
+		if (tipoPermissaoJson) {
 			
-			if (designacaoJson.listaTipoPermissaoListaVO) {
+			if (tipoPermissaoJson.listaTipoPermissaoListaVO) {
 				// cria os itens da lista de TipoPermissao, e adiciona na tela
-				for (i = 0; i < designacaoJson.listaTipoPermissaoListaVO.length; i++) {
-					var lista = designacaoJson.listaTipoPermissaoListaVO[i];
+				for (i = 0; i < tipoPermissaoJson.listaTipoPermissaoListaVO.length; i++) {
+					var lista = tipoPermissaoJson.listaTipoPermissaoListaVO[i];
 					$("#ulPermissoes")[0].incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
 				}
 			}
@@ -585,90 +572,6 @@
 	    });
 		return params;
     }
-
-    $("#editarLista_dialog").dialog({
-	    autoOpen: false,
-	    height: 'auto',
-	    width: 'auto',
-	    modal: true,
-	    resizable: false
-	});
-
-	function listaModalAbrir(isEdicao) {
-		isEditingLista = isEdicao;
-
-		if (isEdicao)
- 			$("#editarLista_dialog").dialog('option', 'title', 'Alterar Lista de Prioridade');
- 		else {
- 			$("#editarLista_dialog").dialog('option', 'title', 'Incluir Lista de Prioridade');
- 			limparCamposTela();
- 		}
-		
- 		$('#editarLista_dialog').dialog('open');
-	}
-
-	function limparCamposTela() {
-		$("#idLista").val("");
-		$("#hisIdIni").val("");
-		$("#nomeLista").val('');
-		$("#descrAbrangencia").val("");
-		$("#descrJustificativa").val("");
-		$("#descrPriorizacao").val("");
-
-		$("#listaconfiguracaoInsercaoAutomaticaitemConfiguracaoUnitario").val('');
-		$("#listaconfiguracaoInsercaoAutomaticaitemConfiguracaoUnitario_descricao").val('');
-		$("#listaconfiguracaoInsercaoAutomaticaitemConfiguracaoUnitario_sigla").val('');
-		$("#listaconfiguracaoInsercaoAutomaticaitemConfiguracaoUnitarioSpan").html('');
-
-		$("#listaconfiguracaoInsercaoAutomaticaacaoUnitaria").val("");
-		$("#listaconfiguracaoInsercaoAutomaticaacaoUnitaria_descricao").val("");
-		$("#listaconfiguracaoInsercaoAutomaticaacaoUnitaria_sigla").val("");
-		$("#listaconfiguracaoInsercaoAutomaticaacaoUnitariaSpan").html("");
-
-		// limpa as validações do form
-		validatorFormLista.resetForm();
-	}
-
-	function listaModalFechar() {
-		unblock();
-		$("#editarLista_dialog").dialog('close');
-	}
-
-    function gravarLista() {
-		if (!$("#formLista").valid() || !block())
-			return;
-		
-		var jForm = $("form"),
-        	params = jForm.serialize();
-    	
-		$.ajax({
-        	type: "POST",
-        	url: "@{Application.gravarLista()}",
-        	data: params,
-        	dataType: "text",
-        	success: function(idLista) {
-        		// Esconde a mensagem de erro
-        		document.getElementById("erroAoSalvar").style.display="none";
-        		
-            	$("#idLista").val(idLista);
-            	var row = [ '<a class="once" style="text-decoration: none" onclick="javascript:window.location=\'/sigasr/solicitacao/exibirLista/'+idLista+'\'">'+$("#nomeLista").val()+'</a>',
-    		                $("#nomeLotaCadastrante").val(),
-    		                '<a class="once" onclick="desativarItem(event, '+idLista+')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>'];
-
-	            if (!isEditingLista)
-	            	opts.dataTable.api().row.add(row).draw();
-
-	            if ($("#tituloPagina"))
-	            	$("#tituloPagina").html($("#nomeLista").val());
-	            
-	        	listaModalFechar();
-        	},
-        	error: function() {
-        		// Mostra a mensagem de erro
-        		document.getElementById("erroAoSalvar").style.display="inherit";
-        	}
-       	});
-	}
 	
 	$(function() {
 		

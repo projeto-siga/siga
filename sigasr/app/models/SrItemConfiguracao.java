@@ -483,8 +483,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		for (CpOrgaoUsuario orgao : orgaos) {
 			SrDisponibilidade disponibilidade = selecionarDisponibilidadePrioritaria(disponibilidades, disponibilidadesPrioritarias, orgao);
 			
-			if(disponibilidade != null)
-				disponibilidadesPeriorizadas.put(orgao.getSigla(), disponibilidade.pertenceA(this) ? disponibilidade : disponibilidade.clonarParaCriarNovo(this));
+			if(disponibilidade != null) {
+				SrDisponibilidade disponibilidadeSelecionada = disponibilidade.pertenceA(this) ? disponibilidade : disponibilidade.clonarParaCriarNovo(this);
+				disponibilidadesPeriorizadas.put(orgao.getSigla(), disponibilidadeSelecionada);
+			}
 		}
 		return disponibilidadesPeriorizadas;
 	}
@@ -492,9 +494,16 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	private SrDisponibilidade selecionarDisponibilidadePrioritaria(Map<String, SrDisponibilidade> disponibilidades, Map<String, SrDisponibilidade> disponibilidadesPrioritarias, CpOrgaoUsuario orgao) {
 		SrDisponibilidade disponibilidade = disponibilidadesPrioritarias.get(orgao.getSigla());
 		
+		/**
+		 * Se o item nao tem disponibilidade para aquele orgao, entao retorna a disponibilidade do pai
+		 */
 		if (disponibilidade == null) {
 			return disponibilidades.get(orgao.getSigla());
-		} else if (disponibilidade.isNenhuma()) {
+		} 
+		/**
+		 * Senao, se a disponibilidade do item eh nenhuma e o item pai possui disponibilidade, entao utiliza a disponibilidade do pai
+		 */
+		else if (disponibilidade.isNenhuma()) {
 			SrDisponibilidade disponibilidadePai = disponibilidades.get(orgao.getSigla());
 			if (disponibilidadePai != null) {
 				return disponibilidade.clonarParaAtualizar(disponibilidadePai);

@@ -5220,7 +5220,8 @@ public class ExBL extends CpBL {
 			set = threadAlteracaoParcial.get();
 		}
 		if (mob.doc() != null) {
-			//atualizarMarcas(mob.doc());
+			// TODO: descomentar a linha abaixo antes de comitar (*comentada por que não está salvando a marca)
+			atualizarMarcas(mob.doc());
 			atualizarVariaveisDenormalizadas(mob.doc());
 		}
 		set.add(mob);
@@ -5233,7 +5234,8 @@ public class ExBL extends CpBL {
 
 	private void concluirAlteracao(ExDocumento doc) throws Exception {
 		if (doc != null) {
-			//atualizarMarcas(doc);
+			// TODO: descomentar a linha abaixo antes de comitar (*comentada por que não está salvando a marca)
+			atualizarMarcas(doc);
 			atualizarVariaveisDenormalizadas(doc);
 		}
 		ExDao.commitTransacao();
@@ -6694,6 +6696,5 @@ public class ExBL extends CpBL {
 
 		return jsonOutput;
 	}
-
 
 }

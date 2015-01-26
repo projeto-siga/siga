@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.swing.text.MaskFormatter;
 
 import org.xml.sax.InputSource;
@@ -41,6 +42,7 @@ import org.xml.sax.InputSource;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
+import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -69,6 +71,9 @@ import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoES;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoTRF2;
 import br.gov.jfrj.siga.ex.bl.BIE.NodoMenor;
 import br.gov.jfrj.siga.hibernate.ExDao;
+
+import com.opensymphony.webwork.WebWorkStatics;
+
 import freemarker.ext.dom.NodeModel;
 
 public class FuncoesEL {
@@ -1024,8 +1029,9 @@ public class FuncoesEL {
 	public static String webservice(String url, String corpo, Integer timeout) {
 		HashMap<String,String> headers = new HashMap<String, String>();
 		headers.put("Content-Type", "text/xml;charset=UTF-8");
-		String s = "";
-		//String s = ConexaoHTTP.get(url, headers, timeout, corpo); //TODO Reescrever para utilizar o SigaHTTP Commit: f405c51011d663e5865351ddcf1147b495fb69f5
+		//String s = ConexaoHTTP.get(url, headers, timeout, corpo); //Reescrito para utilizar o SigaTTP
+		SigaHTTP sigaHTTP = new SigaHTTP();
+		String s = sigaHTTP.getNaWeb(url, headers, timeout, corpo);
 		return s;
 	}
 	

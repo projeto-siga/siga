@@ -1,6 +1,10 @@
 package models;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,10 +14,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -23,10 +29,15 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 @Entity
 @Table(name = "SR_DISPONIBILIDADE", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class SrDisponibilidade extends HistoricoSuporte {
+public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 
 	private static final long serialVersionUID = 7243562288736225097L;
 
@@ -40,7 +51,7 @@ public class SrDisponibilidade extends HistoricoSuporte {
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private SrItemConfiguracao itemConfiguracao;
 
-	@JoinColumn(name = "ID_ORGAO_USU NUMBER")
+	@JoinColumn(name = "ID_ORGAO_USU")
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private CpOrgaoUsuario orgao;
 	
@@ -61,7 +72,21 @@ public class SrDisponibilidade extends HistoricoSuporte {
 
 	@Column(name = "DET_TECNICO", length = 50)
 	private String detalhamentoTecnico;
+	
+	@Transient
+	private transient JsonArray disponibilidadesAtualizadas;
 
+	public SrDisponibilidade() {
+		this.disponibilidadesAtualizadas = new JsonArray();
+	}
+	
+	public SrDisponibilidade(SrItemConfiguracao itemConfiguracao, CpOrgaoUsuario orgao) {
+		this();
+		this.tipo = SrTipoDisponibilidade.NENHUM;
+		this.itemConfiguracao = itemConfiguracao;
+		this.orgao = orgao;
+	}
+	
 	@Override
 	public Long getId() {
 		return idDisponibilidade;
@@ -140,49 +165,157 @@ public class SrDisponibilidade extends HistoricoSuporte {
 	public void setDetalhamentoTecnico(String detalhamentoTecnico) {
 		this.detalhamentoTecnico = detalhamentoTecnico;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime
-				* result
-				+ ((idDisponibilidade == null) ? 0 : idDisponibilidade
-						.hashCode());
-		result = prime
-				* result
-				+ ((itemConfiguracao == null) ? 0 : itemConfiguracao.hashCode());
-		result = prime * result + ((orgao == null) ? 0 : orgao.hashCode());
-		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
-		return result;
+	
+	public String getIcone() {
+		return this.tipo.getCaminhoIcone();
 	}
 
+	public JsonObject toJsonObject() {
+		Gson gson = new GsonBuilder()
+			.setDateFormat("dd/MM/yyyy HH:mm")
+			.create();
+
+		JsonObject object = new JsonObject();
+		object.add("siglaOrgao", gson.toJsonTree(orgao.getSiglaOrgaoUsu()));
+		object.add("orgaoId", gson.toJsonTree(orgao.getId()));
+		object.add("idItemConfiguracao", gson.toJsonTree(itemConfiguracao.getId()));
+		object.add("hisIdIniItemConfiguracao", gson.toJsonTree(itemConfiguracao.getHisIdIni()));
+		object.add("idDisponibilidade", gson.toJsonTree(idDisponibilidade));
+		object.add("hisIdIni", gson.toJsonTree(getHisIdIni()));
+		object.add("tipo", gson.toJsonTree(tipo));
+		object.add("caminhoIcone", gson.toJsonTree(tipo.getCaminhoIcone()));
+		object.add("mensagem", gson.toJsonTree(mensagem));
+		object.add("detalhamentoTecnico", gson.toJsonTree(detalhamentoTecnico));
+		object.add("dataHoraInicio", gson.toJsonTree(dataHoraInicio));
+		object.add("dataHoraTermino", gson.toJsonTree(dataHoraTermino));
+		object.add("disponibilidadesAtualizadas", gson.toJsonTree(disponibilidadesAtualizadas));
+
+		return object;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SrDisponibilidade> buscarTodos(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
+		return em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni = :hisIdIni AND d.orgao IN (:orgaos) AND d.hisDtFim is null ")
+				.setParameter("hisIdIni", itemConfiguracao.getHisIdIni())
+				.setParameter("orgaos", orgaos)
+				.getResultList();
+	}
+	
+	public static SrDisponibilidade buscarPara(SrItemConfiguracao itemConfiguracao, CpOrgaoUsuario orgao) {
+		try {
+			return (SrDisponibilidade) em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni = :hisIdIni AND d.orgao = :orgao AND d.hisDtFim is null ")
+						.setParameter("hisIdIni", itemConfiguracao.getHisIdIni())
+						.setParameter("orgao", orgao)
+						.getSingleResult();
+		} catch (NoResultException nre) {
+			return null;
+		}
+	}
+	
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SrDisponibilidade other = (SrDisponibilidade) obj;
-		if (idDisponibilidade == null) {
-			if (other.idDisponibilidade != null)
-				return false;
-		} else if (!idDisponibilidade.equals(other.idDisponibilidade))
-			return false;
-		if (itemConfiguracao == null) {
-			if (other.itemConfiguracao != null)
-				return false;
-		} else if (!itemConfiguracao.equals(other.itemConfiguracao))
-			return false;
-		if (orgao == null) {
-			if (other.orgao != null)
-				return false;
-		} else if (!orgao.equals(other.orgao))
-			return false;
-		if (tipo != other.tipo)
-			return false;
-		return true;
+	public void salvar() throws Exception {
+		super.salvar();
+		this.configurarAtualizacaoDisponibilidades(itemConfiguracao, Arrays.asList(orgao));
+	}
+
+	private void configurarAtualizacaoDisponibilidades(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
+		this.disponibilidadesAtualizadas.addAll(itemConfiguracao.criarDisponibilidadesJSON(itemConfiguracao, orgaos));
+		
+		for (SrItemConfiguracao filho : itemConfiguracao.filhoSet) {
+			if(filho.getHisDtFim() == null) {
+				configurarAtualizacaoDisponibilidades(filho, orgaos);
+			}
+		}
+	}
+
+//	private SrDisponibilidade encontraDisponibilidadePrioritariaNosPais(SrItemConfiguracao itemConfiguracao, SrDisponibilidade disponibilidade) {
+//		/**
+//		 * Se a disponibilidade atual eh nenhuma, vai ateh o pai
+//		 */
+//		if (disponibilidade.isNenhuma()) {
+//			/**
+//			 * Se existe o pai para a configuracao atual
+//			 */
+//			if (itemConfiguracao.pai != null) {
+//				/**
+//				 * Busca a disponibilidade para o pai
+//				 */
+//				SrDisponibilidade disponibilidadePai = SrDisponibilidade.buscarPara(itemConfiguracao.pai, disponibilidade.orgao);
+//				/**
+//				 * Se existe a disponibilidade para o pai, tenta encontrar uma disponibilidade prioritaria do que essa.
+//				 */
+//				if (disponibilidadePai != null) {
+//					return encontraDisponibilidadePrioritariaNosPais(itemConfiguracao.pai, disponibilidadePai);
+//				}
+//				/**
+//				 * Caso contrario, tenta encontrar uma prioritaria com a atual
+//				 */
+//				return encontraDisponibilidadePrioritariaNosPais(itemConfiguracao.pai, disponibilidade);
+//			} else {
+//				return new SrDisponibilidade(disponibilidade.itemConfiguracao, orgao);
+//			}
+//		}
+//		return disponibilidade;
+//	}
+
+	public boolean isNenhuma() {
+		return SrTipoDisponibilidade.NENHUM.equals(tipo);
+	}
+
+	private SrDisponibilidade clonar() {
+		try {
+			return (SrDisponibilidade) this.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public SrDisponibilidade atualizarCamposPreenchidos(SrDisponibilidade novaDisponibilidade) {
+		this.setTipo(novaDisponibilidade.getTipo());
+		this.setDataHoraInicio(novaDisponibilidade.getDataHoraInicio());
+		this.setDataHoraTermino(novaDisponibilidade.getDataHoraTermino());
+		this.setDetalhamentoTecnico(novaDisponibilidade.getDetalhamentoTecnico());
+		this.setMensagem(novaDisponibilidade.getMensagem());
+		
+		return this;
+	}
+	
+	public void setDataHoraInicioString(String dataInicioString) {
+		try {
+			this.dataHoraInicio = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(dataInicioString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void setDataHoraTerminoString(String dataTerminoString) {
+		try {
+			this.dataHoraTermino = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(dataTerminoString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean pertenceA(SrItemConfiguracao srItemConfiguracao) {
+		return this.itemConfiguracao.getId().equals(srItemConfiguracao.getId());
+	}
+
+	public SrDisponibilidade clonarParaCriarNovo(SrItemConfiguracao filho) {
+		SrDisponibilidade clone = clonar();
+		clone.setId(null);
+		clone.setItemConfiguracao(filho);
+		clone.setOrgao(orgao);
+		return clone;
+	}
+
+	public SrDisponibilidade clonarParaAtualizar(SrDisponibilidade disponibilidadePai) {
+		SrDisponibilidade clone = clonar();
+		clone.setTipo(disponibilidadePai.getTipo());
+		clone.setDataHoraInicio(disponibilidadePai.getDataHoraInicio());
+		clone.setDataHoraTermino(disponibilidadePai.getDataHoraTermino());
+		clone.setDetalhamentoTecnico(disponibilidadePai.getDetalhamentoTecnico());
+		clone.setMensagem(disponibilidadePai.getMensagem());
+		
+		return clone;
 	}
 }

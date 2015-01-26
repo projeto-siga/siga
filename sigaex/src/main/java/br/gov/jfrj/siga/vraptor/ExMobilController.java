@@ -698,7 +698,7 @@ public class ExMobilController extends
 		result.include("itens", this.getItens());
 		result.include("classificacaoSel", this.getClassificacaoSel());
 		result.include("ultMovLotaRespSel", this.getUltMovLotaRespSel());
-		result.include("ultMovEstadoDoc", this.getUltMovIdEstadoDoc());
+		result.include("ultMovIdEstadoDoc", this.getUltMovIdEstadoDoc());
 		result.include("p.offset", offset);
 	}
 

@@ -1,5 +1,8 @@
 package models.vo;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public abstract class AbstractSelecionavel implements ISelecionavel {
 	private Long id;
 	private String sigla;
@@ -38,6 +41,17 @@ public abstract class AbstractSelecionavel implements ISelecionavel {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+	
+	/**
+	 * Converte o objeto para Json.
+	 */
+	public String toJson() {
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting().serializeNulls();
+		Gson gson = builder.create();
+
+		return gson.toJson(this);
 	}
 	
 }

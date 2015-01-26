@@ -1,9 +1,7 @@
 package models;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -16,6 +14,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import models.vo.SrAtributoAcordoVO;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -23,6 +22,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Entity
 @Table(name = "SR_ATRIBUTO_ACORDO", schema = "SIGASR")
 public class SrAtributoAcordo extends HistoricoSuporte {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_ACORDO_SEQ", name = "SrAtributoAcordoSeq")
@@ -104,6 +108,10 @@ public class SrAtributoAcordo extends HistoricoSuporte {
 	
 	public Integer getValorEmSegundos(){
 		return getValorEUnidade().getValorEmSegundos();
+	}
+	
+	public SrAtributoAcordoVO toVO() {
+		return SrAtributoAcordoVO.createFrom(this);
 	}
 
 }

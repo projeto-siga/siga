@@ -63,14 +63,12 @@ import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.sinc.lib.ItemComparator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -878,18 +876,12 @@ public class Application extends SigaApplication {
 		return designacao.getId();
 	}
 
-	public static void editarAcordo(Long id) throws Exception {
-		assertAcesso("ADM:Administrar");
+	public static String buscarAbrangenciasAcordo(Long id) throws Exception {
 		SrAcordo acordo = new SrAcordo();
 		if (id != null)
 			acordo = SrAcordo.findById(id);
-		List<SrAtributo> parametros = SrAtributo.listarParaAcordo(false);
-		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
 		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
-		List<CpOrgaoUsuario> orgaos = JPA.em()
-				.createQuery("from CpOrgaoUsuario").getResultList();
-		List<CpComplexo> locais = CpComplexo.all().fetch();
-		render(acordo, parametros, unidadesMedida, abrangencias, orgaos, locais);
+		return SrConfiguracao.convertToJSon(abrangencias);
 	}
 
 	public static void gravarAcordo(SrAcordo acordo) throws Exception {
@@ -921,14 +913,12 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao abrangencia = JPA.em().find(SrConfiguracao.class, idAssociacao);
 		abrangencia.finalizar();
-		editarAcordo(idAcordo);
 	}
 
 	public static void reativarAbrangencia(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, id);
 		associacao.salvar();
-		//listarAssociacao(mostrarDesativados);
 	}
 
 	public static Long reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
@@ -945,10 +935,17 @@ public class Application extends SigaApplication {
 		render("@selecionar", sel);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void buscarAcordo(String nome, boolean popup, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
+		
+		List<SrAtributo> parametros = SrAtributo.listarParaAcordo(false);
+		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
 		List<SrAcordo> acordos = SrAcordo.listar(mostrarDesativados);
-		render(acordos, nome, popup, mostrarDesativados);
+		render(acordos, nome, popup, mostrarDesativados, parametros, unidadesMedida, orgaos, locais);
 	}
 	
 	public static void buscarAcordoDesativadas() throws Exception {

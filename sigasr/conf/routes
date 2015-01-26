@@ -30,8 +30,6 @@ GET     /public/                            staticDir:public
 *		/item/buscar						Application.buscarItem
 *		/item/desativar/{id}				Application.desativarItem
 
-*		/acordo/editar/{id}					Application.editarAcordo
-*		/acordo/editar						Application.editarAcordo
 *		/acordo/gravar						Application.gravarAcordo
 *		/acordo/buscar						Application.buscarAcordo
 *		/acordo/selecionar					Application.selecionarAcordo

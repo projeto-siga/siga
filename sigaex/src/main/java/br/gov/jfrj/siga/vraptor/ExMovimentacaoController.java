@@ -1716,7 +1716,9 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aCancelarUltimaMovimentacao() throws Exception {
+	@Get("/app/expediente/mov/cancelarMovimentacao")
+	public void aCancelarUltimaMovimentacao(String sigla) throws Exception {
+		setSigla(sigla);
 		buscarDocumento(true);
 
 		final ExMovimentacao exUltMovNaoCanc = mob
@@ -1746,7 +1748,7 @@ public class ExMovimentacaoController extends ExController {
 			throw e;
 		}
 
-		return Action.SUCCESS;
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
 	public String aCancelar() throws Exception {
@@ -1963,7 +1965,10 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aGerarProtocoloUnitario() throws Exception {
+	@Get("app/expediente/mov/protocolo_unitario")
+	public void protocolo(String sigla, Long id) throws Exception {
+		setId(id);
+		setSigla(sigla);
 		buscarDocumento(true);
 
 		mov = dao().consultar(getId(), ExMovimentacao.class, false);
@@ -1972,7 +1977,10 @@ public class ExMovimentacaoController extends ExController {
 		final Object[] ao = { doc, mov };
 		lista.add(ao);
 		setItens(lista);
-		return Action.SUCCESS;
+		result.include("cadastrante", getCadastrante());
+		result.include("mov", getMov());
+		result.include("itens", getItens());
+		result.include("lotaTitular", getLotaTitular());
 	}
 
 	public String aGerarProtocoloArq() throws Exception {
@@ -2964,7 +2972,9 @@ public class ExMovimentacaoController extends ExController {
 		result.include("subscritorSel", this.getSubscritorSel());
 	}
 
-	public String aPrever() throws Exception {
+	@Post("app/expediente/mov/prever")
+	public void preve(String sigla) throws Exception {
+		this.setSigla(sigla);
 		buscarDocumento(true);
 
 		if (getId() != null) {
@@ -2977,9 +2987,21 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		if (param("processar_modelo") != null)
-			return "processa_modelo";
-		return Action.SUCCESS;
+			result.forwardTo(this).processa_modelo();
+		else{
+			result.include("par", getRequest().getParameterMap());
+			result.include("modelo", getModelo());
+			result.include("nmArqMod", getModelo().getNmArqMod());
+			result.include("mov", mov);
+		}
 	}
+	
+	public void processa_modelo() throws Exception {
+		result.include("par", getRequest().getParameterMap());
+		result.include("modelo", getModelo());
+		result.include("nmArqMod", getModelo().getNmArqMod());
+		result.include("mov", mov);
+	}	
 
 	@Post("/app/expediente/mov/referenciar_gravar")
 	public void aReferenciarGravar(String sigla, String dtMovString, boolean substituicao, DpPessoaSelecao titularSel, 
@@ -3088,7 +3110,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/transferir_gravar")
-	public String transferir_gravar(int postback, String sigla,
+	public void transferir_gravar(int postback, String sigla,
 			String dtMovString, DpPessoaSelecao subscritorSel,
 			boolean substituicao, DpPessoaSelecao titularSel,
 			String nmFuncaoSubscritor, long idTpDespacho, long idResp,
@@ -3170,10 +3192,30 @@ public class ExMovimentacaoController extends ExController {
 			throw e;
 		}
 		setMov(mob.getUltimaMovimentacao());
+		
+				
+		
 		if (protocolo != null && protocolo.equals("mostrar"))
-			return "protocolo";
-		return Action.SUCCESS;
+			result.forwardTo(this).transferido();
+		
+		
+		result.redirectTo(this).fechar_popup();
+				
+		
 	}
+	
+	@Get("/app/expediente/mov/fechar_popup")
+	public void fechar_popup()throws Exception {
+		System.out.println("popup fechado.");
+	}
+	
+	@Get("/app/expediente/mov/transferido")
+	public void transferido()throws Exception {
+		result.include("doc", getDoc());		
+		result.include("mov", getMov());		
+		result.include("id", getId());		
+	}
+	
 
 	@Get("app/expediente/mov/encerrar_volume")
 	public void encerrarVolumeGravar(String sigla) throws Exception {

@@ -486,7 +486,7 @@ public class ExMobilVO extends ExVO {
 			addAcao("arrow_undo",
 					"Desfazer "
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"cancelarMovimentacao",
 					Ex.getInstance()
 							.getComp()

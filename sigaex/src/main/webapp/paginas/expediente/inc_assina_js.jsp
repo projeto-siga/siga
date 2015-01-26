@@ -276,6 +276,32 @@ function AssinarDocumento(conteudo){
 	return ret;
 }
 
+function naoEhLocalHost(url){
+	return (url.indexOf("localhost") == -1 && url.indexOf("127.0.0.1") == -1);
+}
+
+function removerPortaSeNaoForLocalhost(urlCompleta){
+	var urlArray = urlCompleta.split("/");
+	var url = urlArray[2];
+	var urlFinal = "";
+
+	if (naoEhLocalHost(url)){
+	    for (var i=0; i<urlArray.length; i++){
+			if (i == 2){
+				urlFinal += urlArray[i].split(":")[0];		   
+			}else{
+				urlFinal += urlArray[i];		   
+			}
+			if (i < urlArray.length -1){
+				urlFinal += "/";
+			}
+		   
+		}
+	}
+
+	return urlFinal;
+}
+
 function AssinarDocumentos(Copia, oElm){
 	TestarAssinaturaDigital();
 	process.reset();
@@ -315,7 +341,10 @@ function AssinarDocumentos(Copia, oElm){
     if(oUrlPath == null){
         alert("element urlpath does not exist");
         return;
-    }
+    }    
+
+    oUrlPost.value = removerPortaSeNaoForLocalhost(oUrlPost.value);
+	oUrlNext.value = removerPortaSeNaoForLocalhost(oUrlNext.value);
 
     var Codigo;
     var NodeList = document.getElementsByTagName("INPUT");
@@ -343,7 +372,7 @@ function AssinarDocumentos(Copia, oElm){
       		process.push("Copia=" + Copia + ";");
 		    if(b){
 				process.push("gNome='" + oNome.value + "'; gUrlDocumento = '" + oUrlBase.value + oUrlPath.value + oUrl.value + "&semmarcas=1'; if (gPolitica){gUrlDocumento = gUrlDocumento + '&certificadoB64=' + encodeURIComponent(gCertificadoB64);};");
-	      		process.push(function(){Log(gNome + ": Buscando no servidor...")});
+	      		process.push(function(){Log(gNome + ": Buscando no servidor...")});	      		
 	      		process.push(function(){gDocumento = Conteudo(gUrlDocumento); if (typeof gDocumento == "string" && gDocumento.indexOf("Não") == 0) return gDocumento;});
 	
 	            var ret;

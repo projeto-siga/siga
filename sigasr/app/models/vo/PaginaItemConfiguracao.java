@@ -1,0 +1,68 @@
+package models.vo;
+
+import java.util.List;
+
+import models.SrItemConfiguracao;
+import util.JsonUtil;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+public class PaginaItemConfiguracao extends Pagina {
+
+	private JsonArray orgaos;
+
+	public PaginaItemConfiguracao() {
+		this.orgaos = new JsonArray();
+	}
+
+	public JsonArray getOrgaos() {
+		return orgaos;
+	}
+
+	public String toJson() {
+		return JsonUtil
+				.toJson(this)
+				.toString();
+	}
+
+	public PaginaItemConfiguracao atualizar(List<CpOrgaoUsuario> orgaos) {
+		return buscarItens(orgaos)
+				.adicionarOrgaos(orgaos);
+	}
+	
+	public PaginaItemConfiguracao adicionarOrgaos(List<CpOrgaoUsuario> orgaos) {
+		for (CpOrgaoUsuario cpOrgaoUsuario : orgaos) {
+			this.orgaos.add(JsonUtil.toJson(new OrgaoVO(cpOrgaoUsuario)));
+		}
+		return this;
+	}
+	
+	private PaginaItemConfiguracao buscarItens(List<CpOrgaoUsuario> orgaos) {
+		for (SrItemConfiguracao itemConfiguracao : SrItemConfiguracao.listar(this)) {
+			JsonObject jsonObject = (JsonObject) JsonUtil.toJson(itemConfiguracao.toVO());
+			jsonObject.add("disponibilidades", itemConfiguracao.criarDisponibilidadesJSON(itemConfiguracao, orgaos));
+			this.addRegistro(jsonObject);
+		}
+		return this;
+	}
+
+	class OrgaoVO {
+		private String sigla;
+		private Long idOrgaoUsu;
+
+		public OrgaoVO(CpOrgaoUsuario cpOrgaoUsuario) {
+			this.sigla = cpOrgaoUsuario.getSigla();
+			this.idOrgaoUsu = cpOrgaoUsuario.getIdOrgaoUsu();
+		}
+
+		public String getSigla() {
+			return sigla;
+		}
+
+		public Long getIdOrgaoUsu() {
+			return idOrgaoUsu;
+		}
+	}
+}

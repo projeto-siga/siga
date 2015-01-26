@@ -22,6 +22,7 @@ import models.SrAtributo;
 import models.SrAtributoSolicitacao;
 import models.SrConfiguracao;
 import models.SrConfiguracaoBL;
+import models.SrDisponibilidade;
 import models.SrEquipe;
 import models.SrGravidade;
 import models.SrItemConfiguracao;
@@ -38,6 +39,7 @@ import models.SrTipoMovimentacao;
 import models.SrTipoPergunta;
 import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
+import models.vo.PaginaItemConfiguracao;
 
 import org.joda.time.LocalDate;
 
@@ -1255,6 +1257,24 @@ public class Application extends SigaApplication {
 		SrItemConfiguracao item = idItem != null ? (SrItemConfiguracao)SrItemConfiguracao.findById(idItem) : null;
 		SrAcao acao = idAcao != null ? (SrAcao)SrAcao.findById(idAcao) : null;			
 		render("@listarConhecimento" + (ajax ? "Ajax" : ""), item, acao);
+	}
+	
+	public static void listarDisponibilidadeItens() {
+		render();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static String listarPaginaDisponibilidade(PaginaItemConfiguracao pagina) {
+		List<CpOrgaoUsuario> orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
+		
+		return pagina
+				.atualizar(orgaos)
+				.toJson();
+	}
+	
+	public static String gravarDisponibilidade(SrDisponibilidade disponibilidade) throws Exception {
+		disponibilidade.salvar();
+		return disponibilidade.toJsonObject().toString();
 	}
 	
 	public static void listarEquipe(boolean mostrarDesativados) throws Exception {

@@ -54,6 +54,7 @@
 	};
 	
 	function carregarLocalRamalEMeioContato() {
+		jQuery.blockUI(objBlock);
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
@@ -79,9 +80,11 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 			   eval(scripts[i].text); 
+		jQuery.unblockUI();
 	}
 	
 	function carregarItem(){
+		jQuery.blockUI(objBlock);
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
@@ -97,9 +100,11 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
+		jQuery.unblockUI();
 	}
 
 	function carregarConhecimentosRelacionados(){
+		jQuery.blockUI(objBlock);
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
@@ -115,6 +120,7 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
+		jQuery.unblockUI();
 	}
 
 	function carregarPrioridade() {
@@ -247,6 +253,7 @@
 			if(existeFiltroSelecionavel()) {
 				var params = construirParametrosDoFiltro($('#formSolicitacao'));
 				iniciarCarregarSolicitacoesRelacionadas();
+				jQuery.blockUI(objBlock);
 				PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
 			}
 		}
@@ -276,6 +283,7 @@
 		}
 		$('#filtro input').attr('disabled', false);
 		$('#bodySolRelacionadas').attr('requesting', false);
+		jQuery.unblockUI();
 	}
 
 	function iniciarCarregarSolicitacoesRelacionadas() {

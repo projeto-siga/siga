@@ -120,7 +120,7 @@
 	
 	<servlet-mapping>		
         <servlet-name>WfService</servlet-name>		
-        <url-pattern>/servicos/*</url-pattern>		
+        <url-pattern>/servicos/WfService</url-pattern>		
     </servlet-mapping>
 
 	<security-constraint>

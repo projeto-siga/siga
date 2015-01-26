@@ -77,7 +77,7 @@
 		
 	<servlet-mapping>		
 		<servlet-name>GiService</servlet-name>		
-		<url-pattern>/servicos/*</url-pattern>		
+		<url-pattern>/servicos/GiService</url-pattern>		
 	</servlet-mapping>
 
 	<security-constraint>

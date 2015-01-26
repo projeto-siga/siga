@@ -23,7 +23,7 @@
     
 	<servlet-mapping>
 		<servlet-name>CDService</servlet-name>
-		<url-pattern>/servicos/*</url-pattern>
+		<url-pattern>/servicos/CdService</url-pattern>
 	</servlet-mapping>
 	
 </web-app>

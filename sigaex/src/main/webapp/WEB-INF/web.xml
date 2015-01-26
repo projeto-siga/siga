@@ -159,7 +159,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ExService</servlet-name>
-		<url-pattern>/servicos/*</url-pattern>
+		<url-pattern>/servicos/ExService</url-pattern>
 	</servlet-mapping>
 
 	<security-constraint>

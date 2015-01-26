@@ -882,14 +882,16 @@ public class Application extends SigaApplication {
 		SrAcordo acordo = new SrAcordo();
 		if (id != null)
 			acordo = SrAcordo.findById(id);
-		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
-		return SrConfiguracao.convertToJSon(abrangencias);
+//		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
+		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo();
+		return SrConfiguracao.convertToAssociacaoJSon(abrangencias);
 	}
 
-	public static void gravarAcordo(SrAcordo acordo) throws Exception {
+	public static String gravarAcordo(SrAcordo acordo) throws Exception {
 		assertAcesso("ADM:Administrar");
 		acordo.salvar();
-		buscarAcordo(null, false, false);
+		
+		return acordo.toJson();
 	}
 
 	public static void desativarAcordo(Long id, boolean mostrarDesativados) throws Exception {

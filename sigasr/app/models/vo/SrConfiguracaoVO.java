@@ -25,7 +25,6 @@ public class SrConfiguracaoVO {
 	public boolean atributoObrigatorio;
 	public boolean ativo;
 	public String descrConfiguracao;
-	public String solicitante;
 	
 	public List<SrListaVO> listaVO; 
 	public List<SrItemConfiguracaoVO> listaItemConfiguracaoVO;
@@ -45,6 +44,7 @@ public class SrConfiguracaoVO {
 	public SelecionavelVO cargo;
 	public SelecionavelVO funcaoConfianca;
 	public SelecionavelVO grupo;
+	public SelecionavelVO solicitante;
 	
 	public SrConfiguracaoVO(SrConfiguracao configuracao) {
 		idConfiguracao = configuracao.getId();
@@ -99,7 +99,7 @@ public class SrConfiguracaoVO {
 		funcaoConfianca = SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante());
 		grupo = SelecionavelVO.createFrom(configuracao.getCpGrupo(), configuracao.getTipoSolicitante());
 		
-		solicitante = configuracao.getSolicitante() != null ? configuracao.getSolicitante().getSigla() : "";
+		solicitante = SelecionavelVO.createFrom(configuracao.getSolicitante());
 	}
 	
 	public SrConfiguracaoVO(SrConfiguracao configuracao, boolean atributoObrigatorio) {

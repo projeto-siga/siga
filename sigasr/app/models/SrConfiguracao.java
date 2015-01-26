@@ -300,6 +300,17 @@ public class SrConfiguracao extends CpConfiguracao {
 				.createQuery(sb.toString()).getResultList();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAbrangenciasAcordo() {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
+		sb.append(" and conf.hisDtFim is null");
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
 	public void salvarComoAbrangenciaAcordo() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
@@ -562,6 +573,21 @@ public class SrConfiguracao extends CpConfiguracao {
 		
 		return gson.toJson(listaVO);
 	}
+	
+	public static String convertToAssociacaoJSon(List<SrConfiguracao> lista) {
+		List<SrConfiguracaoAssociacaoVO> listaVO = new ArrayList<SrConfiguracaoAssociacaoVO>();
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting().serializeNulls();
+		Gson gson = builder.create();
+
+		if (lista != null) {
+			for (SrConfiguracao conf : lista) {
+				listaVO.add(conf.toAssociacaoVO());
+			}
+		}
+		
+		return gson.toJson(listaVO);
+	}
 
 	public int getNivelItemParaComparar() {
 		int soma = 0;
@@ -645,7 +671,8 @@ public class SrConfiguracao extends CpConfiguracao {
 		SrItemConfiguracaoVO itemVO = (this.getItemConfiguracaoUnitario() != null? this.getItemConfiguracaoUnitario().getAtual().toVO() : null);
 		SrAcaoVO acaoVO = (this.getAcaoUnitaria() != null? this.getAcaoUnitaria().getAtual().toVO() : null);
 		
-		return new SrConfiguracaoAssociacaoVO(this.getIdConfiguracao(), itemVO, acaoVO, this.atributoObrigatorio);
+		return new SrConfiguracaoAssociacaoVO(this.getIdConfiguracao(), itemVO, acaoVO, this.atributoObrigatorio, 
+				this.getTipoSolicitante(), this.getOrgaoUsuario(), this.getComplexo(), this.getSolicitante(), this.atendente, this.prioridade);
 	}
 	
 	public String toJson() {

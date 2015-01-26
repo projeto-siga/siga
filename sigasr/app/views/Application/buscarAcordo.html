@@ -30,7 +30,7 @@
 					#{list items:acordos, as:'acordo'}
 					<tr
 						#{if popup}
-							onclick="javascript:opener.retorna_acordo${nome}('${acordo.idAcordo}','${acordo.idAcordo}','${acordo.nomeAcordo}');window.close()"
+							onclick="javascript:opener.retorna_acordo${nome}('${acordo.id}','${acordo.id}','${acordo.nomeAcordo}');window.close()"
 						#{/if}
 						#{else}
 							data-json-id="${acordo.id}" data-json="${acordo.toJson()}" onclick="acordoService.editar($(this).data('json'), 'Alterar Acordo')"
@@ -39,7 +39,7 @@
 						<td >${acordo.nomeAcordo}</td>
 						<td>${acordo.descrAcordo}</td>
 						<td class="acoes">
-							#{desativarReativar id:acordo.idAcordo, 
+							#{desativarReativar id:acordo.id, 
 												onDesativar :'desativarAcordo',
 												onReativar :'reativarAcordo',
 												isAtivo:acordo.isAtivo() }
@@ -186,11 +186,11 @@
 
 		// carrega a Abrangências do Acordo
 		carregarAbrangenciasAcordo(obj.id);
-		
-		//atualizarModalAcordo(obj);
 	}
 
 	function carregarAbrangenciasAcordo(id) {
+		tableAssociacao.api().clear().draw();
+		
         $.ajax({
         	type: "GET",
         	url: "@{Application.buscarAbrangenciasAcordo()}?id=" + id,
@@ -208,42 +208,42 @@
 	acordoService.populateFromJSonList = function(listaJSon, dataTable) {
 		for (var i = 0; i < listaJSon.length; i++) {
 			var abrangencia = listaJSon[i];
-// 				row = [
-// 						'',                                                                    // colunas.botaoExpandir
-// 						jOrgaoUsuario.value,
-// 		          		jOrgaoUsuario.text, 
-// 		          		jComplexo.value,
-// 		          		jComplexo.text,
-// 		          		jPessoaLotaFuncCargo.value,
-// 	          			getIdFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
-// 	          			getDescricaoFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
-// 	          			getSiglaFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
-// 		          		$("#atendente").val(),
-// 	          			$("#atendente_descricao").val(),
-// 	          			$("#atendente_sigla").val(),
-// 	          			jPrioridade.value,
-// 		          		jPrioridade.text,
-// 						$("#itemConfiguracaoUnitario").val(),                                  // colunas.idItemConfiguracao
-// 						formatDescricaoLonga($("#itemConfiguracaoUnitario_descricao").val()),  // colunas.tituloItemConfiguracao
-// 						$("#itemConfiguracaoUnitario_sigla").val(),                            // colunas.siglaItemConfiguracao
-// 						$("#acaoUnitaria").val(),											   // colunas.idAcao
-// 						formatDescricaoLonga($("#acaoUnitaria_descricao").val()),              // colunas.tituloAcao
-// 						$("#acaoUnitaria_sigla").val(),                        
-// 						idAssociacao,														   // colunas.idAssociacao
-// 						''                                                                     // colunas.botaoExcluir
-// 		   			];
+				row = [
+						'',                                                                    // colunas.botaoExpandir
+						abrangencia.orgaoUsuario ? abrangencia.orgaoUsuario.id : '',
+		          		abrangencia.orgaoUsuario ? abrangencia.orgaoUsuario.descricao : '', 
+		          		abrangencia.complexo ? abrangencia.complexo.id : '',
+		        		abrangencia.complexo ? abrangencia.complexo.descricao : '', 
+		          		abrangencia.solicitante ? abrangencia.solicitante.sigla : '',
+	          			abrangencia.solicitante ? abrangencia.solicitante.id : '',
+	          			abrangencia.solicitante ? abrangencia.solicitante.descricao : '',
+	    	          	abrangencia.solicitante ? abrangencia.solicitante.sigla : '',
+   	          			abrangencia.atendente ? abrangencia.atendente.id : '',
+   	    	          	abrangencia.atendente ? abrangencia.atendente.descricao : '',
+   	    	    	    abrangencia.atendente ? abrangencia.atendente.sigla : '',
+	          			abrangencia.prioridade ? abrangencia.prioridade : '',
+		          		abrangencia.descPrioridade ? abrangencia.descPrioridade : '',
+		          		abrangencia.itemConfiguracaoUnitario ? abrangencia.itemConfiguracaoUnitario.id : '',								// colunas.idItemConfiguracao
+						abrangencia.itemConfiguracaoUnitario ? formatDescricaoLonga(abrangencia.itemConfiguracaoUnitario.descricao) : '',	// colunas.tituloItemConfiguracao
+						abrangencia.itemConfiguracaoUnitario ? abrangencia.itemConfiguracaoUnitario.sigla : '',								// colunas.siglaItemConfiguracao
+						abrangencia.acaoUnitaria ? abrangencia.acaoUnitaria.id : '',														// colunas.idAcao
+						abrangencia.acaoUnitaria ? formatDescricaoLonga(abrangencia.acaoUnitaria.descricao) : '',							// colunas.tituloAcao
+						abrangencia.acaoUnitaria ? abrangencia.acaoUnitaria.sigla : '',                      
+						abrangencia.idConfiguracao,																							// colunas.idAssociacao
+						''																													// colunas.botaoExcluir
+		   			];
 
-// 			var html = 
-// 			'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-// 				'<a class="once desassociar" onclick="desassociar(event, ${assoc?.idConfiguracao})" title="Remover permissão">' +
-// 					'<input class="idAssociacao" type="hidden" value="${assoc?.idConfiguracao}"/>' +
-// 					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-// 				'</a>' +
-// 			'</td>';
+			var html = 
+			'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
+				'<a class="once desassociar" onclick="desassociar(event, ' + abrangencia.idConfiguracao + ')" title="Remover permissão">' +
+					'<input class="idAssociacao" type="hidden" value="'+abrangencia.idConfiguracao+'"/>' +
+					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+				'</a>' +
+			'</td>';
 					         
-// 	        row[colunasAssociacao.botaoExcluir] = html;
-// 	    	tableAssociacao.api().row.add(row).draw();
-// 			$('.desassociar').bind('click', desassociar);
+	        row[colunasAssociacao.botaoExcluir] = html;
+	    	tableAssociacao.api().row.add(row).draw();
+			$('.desassociar').bind('click', desassociar);
 		}
 	}
 

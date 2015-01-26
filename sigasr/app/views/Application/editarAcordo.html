@@ -7,7 +7,7 @@
 <div class="gt-form gt-content-box">
 	<div>
 		<form id="acordoForm">
-			<input type="hidden" name="idAcordo" id="idAcordo"> 
+			<input type="hidden" name="id" id="id"> 
 			<input type="hidden" name="hisIdIni" id="hisIdIni">
 			<div class="gt-form-row gt-width-66">
 				<label>Nome <span>*</span></label>
@@ -516,8 +516,8 @@
         	// atualiza o solicitante
 			params += getDadosSolicitante(row, i);
 
-			if ($("#idAcordo").val() != undefined && $("#idAcordo").val() != '')
-			params += '&associacao.acordo.idAcordo=' + $("#idAcordo").val();
+			if ($("#id").val() != undefined && $("#id").val() != '')
+			params += '&associacao.acordo.idAcordo=' + $("#id").val();
 
 		return params;
 	};
@@ -666,7 +666,7 @@
 			tr = $(event.currentTarget).parent().parent()[0],
 			row = associacaoTable.api().row(tr).data(),
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunasAssociacao.idAssociacao];
-			idAcordo = $("#idAcordo").val();
+			idAcordo = $("#id").val();
 			
 			location.href='@{Application.desativarAbrangenciaEdicao()}?' + jQuery.param({idAcordo : idAcordo, idAssociacao : idAssociacao});
 	}

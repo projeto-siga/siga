@@ -98,9 +98,9 @@ public class SigaApplication extends Controller {
 			RenderArgs.current().put("currentTimeMillis", new Date().getTime());
 
 		} catch (ArrayIndexOutOfBoundsException aioob) {
-			// Edson: Quando as informações não puderam ser obtidas do Siga,
-			// manda para a página de login. Se não for esse o erro, joga
-			// exceção pra cima.
+			// Edson: Quando as informaï¿½ï¿½es nï¿½o puderam ser obtidas do Siga,
+			// manda para a pï¿½gina de login. Se nï¿½o for esse o erro, joga
+			// exceï¿½ï¿½o pra cima.
 			redirect("/siga/redirect.action?uri=" + JavaExtensions.urlEncode(request.url));
 		}
 
@@ -112,13 +112,13 @@ public class SigaApplication extends Controller {
 	}
 
 	protected static void assertAcesso(String pathServico) throws Exception {
-		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
+		String servico = "SIGA:Sistema Integrado de GestÃ£o Administrativa;"
 				+ pathServico;
 		if (servico.endsWith(";"))
 			servico = servico.substring(0, servico.length()-1);
 		if (!podeUtilizarServico(servico))
-			throw new Exception("Acesso negado. Serviço: '" + servico
-					+ "' usuário: " + titular().getSigla() + " lotação: "
+			throw new Exception("Acesso negado. ServiÃ§o: '" + servico
+					+ "' usuÃ¡rio: " + titular().getSigla() + " lotaÃ§Ã£o: "
 					+ lotaTitular().getSiglaCompleta());
 	}
 	
@@ -126,7 +126,7 @@ public class SigaApplication extends Controller {
 		// MailUtils.sendErrorMail(e);
 		if (cadastrante() != null)
 			Logger.error("Erro Siga-SR; Pessoa: " + cadastrante().getSigla()
-					+ "; Lotação: " + lotaTitular().getSigla(), e);
+					+ "; LotaÃ§Ã£o: " + lotaTitular().getSigla(), e);
 		e.printStackTrace();
 		error(e.getMessage());
 	}
@@ -171,7 +171,7 @@ public class SigaApplication extends Controller {
 		String stackTrace = sw.toString();
 		String message = throwable.getMessage();
 		if (message == null)
-			message = "Nenhuma informação disponível.";
+			message = "Nenhuma informaÃ§Ã£o disponÃ­vel.";
 		erro(message, stackTrace);
 	}
 	

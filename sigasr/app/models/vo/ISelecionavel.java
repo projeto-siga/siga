@@ -9,5 +9,5 @@ public interface ISelecionavel {
 	void setSigla(String sigla);
 	
 	public String getDescricao();
-	void setDescricao(String Descricao);
+	void setDescricao(String descricao);
 }

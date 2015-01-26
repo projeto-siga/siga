@@ -42,10 +42,10 @@
 							style="cursor: pointer;">
 							<td>${att.nomeAtributo}</td>
 							<td>${att.descrAtributo}</td>
-							<td>${att.objetivoAtributo.descrObjetivo}</td>
+							<td>${att.objetivoAtributo.descricao}</td>
 							<td>${att.codigoAtributo}</td>
 							<td>${att.tipoAtributo?.descrTipoAtributo}</td>
-							<td>
+							<td class="acoes">
 								#{desativarReativar id:att.idAtributo,
 													onReativar:'atributoService.reativar',
 													onDesativar :'atributoService.desativar',
@@ -194,9 +194,9 @@
 		spanHTML = spanHTML.replace('{descricao}', atributo.tituloAtributo);
 		return [atributo.nomeAtributo, 
 				atributo.descrAtributo, 
-				atributo.objetivoAtributo ? atributo.objetivoAtributo.descrObjetivo : '', 
+				atributo.objetivoAtributo ? atributo.objetivoAtributo.descricao : '', 
 				atributo.codigoAtributo, 
-				atributo.tipoAtributo ? atributo.tipoAtributo.descrTipoAtributo : '',
+				atributo.descrTipoAtributo,
 				'COLUNA_ACOES',
 				atributo];		
 	}

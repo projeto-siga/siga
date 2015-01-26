@@ -37,7 +37,7 @@
 						#{/else}
 						
 						<td>${item.lotaCadastrante.nomeLotacao}</td>
-						<td>
+						<td class="acoes">
 							#{if item.podeEditar(lotaTitular, cadastrante)}
 							#{desativarReativar id:item.idLista, 
 												onReativar:'listaService.reativar',

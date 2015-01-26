@@ -1057,7 +1057,7 @@ public class Application extends SigaApplication {
 	/**
 	 * Recupera as {@link SrConfiguracao permissoes} de uma {@link SrLista lista}.
 	 * 
-	 * @param id - ID da lista
+	 * @param idObjetivo - ID da lista
 	 * @return - String contendo a lista no formato jSon
 	 */
 	public static String buscarPermissoesLista(Long idLista) throws Exception {

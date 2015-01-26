@@ -6,6 +6,7 @@ $(document).ready(function() {
 });
 
 function carregarAtributos(){
+	jQuery.blockUI(objBlock);
 	var frm = document.getElementById('formSolicitacao'),
 		params = '';
 	//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
@@ -40,6 +41,7 @@ function carregouAtributos(response, param){
 			addFiltro(divFiltro, selector, innerHTML, optionVl)
 		}
 	});
+	jQuery.unblockUI();
 }
 </script>
 

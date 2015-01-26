@@ -20,6 +20,7 @@ function carregarAcao(){
 	var inputIdSolicitacao = document.getElementById('id');
 	var inputIdItem = document.getElementById('itemConfiguracao');
 	var params = 'id='+ inputIdSolicitacao.value + '&itemConfiguracao='+inputIdItem.value;
+	jQuery.blockUI(objBlock);
 	PassAjaxResponseToFunction('@{Application.exibirAcaoEscalonar}?' + params , 'carregouAcao', null, false, null);
 }
 
@@ -29,6 +30,7 @@ function carregouAcao(response, param){
 	var scripts = div.getElementsByTagName("script");
 	for(var i=0;i<scripts.length;i++)  
 	   eval(scripts[i].text);
+	jQuery.unblockUI();
 }
 </script>
 <div class="gt-content-box gt-form">

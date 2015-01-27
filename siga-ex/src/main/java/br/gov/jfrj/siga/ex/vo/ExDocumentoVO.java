@@ -339,7 +339,7 @@ public class ExDocumentoVO extends ExVO {
 		
 		ExMobil mob = doc.getMobilGeral();
 		
-		vo.addAcao("folder_magnify", "Visualizar Dossiê", "/app/expediente/doc", "exibeProcesso", Ex.getInstance().getComp()
+		vo.addAcao("folder_magnify", "Visualizar Dossiê", "/app/expediente/doc", "exibirProcesso", Ex.getInstance().getComp()
 				.podeVisualizarImpressao(titular, lotaTitular, mob));
 		
 		vo.addAcao("printer", "Visualizar Impressão", "/app/arquivo", "exibir", Ex.getInstance().getComp()

@@ -299,8 +299,12 @@ function gravarAplicar(baseService, isAplicar) {
 				baseService.onGravar(obj, JSON.parse(objSalvo));
 			}
 			
-			if (isAplicar)
+			if (isAplicar) {
+				baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
+				
 				alert("Cadastro salvo com sucesso.");
+			}
+				
 			else
 				baseService.opts.dialogCadastro.dialog("close");
 		}

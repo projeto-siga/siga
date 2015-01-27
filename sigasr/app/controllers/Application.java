@@ -882,8 +882,7 @@ public class Application extends SigaApplication {
 		SrAcordo acordo = new SrAcordo();
 		if (id != null)
 			acordo = SrAcordo.findById(id);
-//		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
-		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo();
+		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
 		return SrConfiguracao.convertToAssociacaoJSon(abrangencias);
 	}
 
@@ -894,16 +893,19 @@ public class Application extends SigaApplication {
 		return acordo.toJson();
 	}
 
-	public static void desativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
+	public static Long desativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcordo acordo = SrAcordo.findById(id);
 		acordo.finalizar();
+		
+		return acordo.getId();
 	}
 	
 	public static Long reativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcordo acordo = SrAcordo.findById(id);
 		acordo.salvar();
+		
 		return acordo.getId();
 	}
 	

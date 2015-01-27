@@ -412,6 +412,7 @@ altura:'200', largura:'450'}
 				afterGravarDesignacao(tr, designacao);  
 			}
 
+			service.formularioHelper.populateFromJson(JSON.parse(objSalvo));
 			alert("Cadastro salvo com sucesso.");
 		}
 		wrapper[this.opts.objectName] = obj;

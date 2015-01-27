@@ -9,7 +9,10 @@ public class SrObjetivoAtributoVO extends AbstractSelecionavel {
 	}
 	
 	public static SrObjetivoAtributoVO createFrom(SrObjetivoAtributo objetivoAtributo) {
-		return new SrObjetivoAtributoVO(objetivoAtributo.idObjetivo, objetivoAtributo.descrObjetivo);
+		if (objetivoAtributo != null)
+			return new SrObjetivoAtributoVO(objetivoAtributo.idObjetivo, objetivoAtributo.descrObjetivo);
+		else
+			return null;
 	}
 
 }

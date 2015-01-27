@@ -8,20 +8,26 @@ public class SrAtributoAcordoVO {
 	
 	public Long idAtributoAcordo;
 	public SrOperador operador;
+	public String operadorNome;
 	public Integer valor;
 	public CpUnidadeMedida unidadeMedida;
+	public String unidadeMedidaPlural;
 	public SrAtributoVO atributo;
 	
-	public SrAtributoAcordoVO(Long idAtributoAcordo, SrOperador operador, Integer valor, CpUnidadeMedida unidadeMedida, SrAtributoVO atributo) {
-		this.idAtributoAcordo = idAtributoAcordo; 
-		this.operador = operador;
-		this.valor = valor;
-		this.unidadeMedida = unidadeMedida;
-		this.atributo = atributo;
+	public SrAtributoAcordoVO(SrAtributoAcordo atributoAcordo) {
+		this.idAtributoAcordo = atributoAcordo.idAtributoAcordo; 
+		this.operador = atributoAcordo.operador;
+		this.operadorNome = atributoAcordo.operador != null ? atributoAcordo.operador.nome : "";
+		this.valor = atributoAcordo.valor;
+		this.unidadeMedida = atributoAcordo.unidadeMedida;
+		this.unidadeMedidaPlural = atributoAcordo.unidadeMedida != null ? atributoAcordo.unidadeMedida.getPlural() : "";
+		this.atributo = SrAtributoVO.createFrom(atributoAcordo.atributo);
 	}
 	
 	public static SrAtributoAcordoVO createFrom(SrAtributoAcordo atributoAcordo) {
-		return new SrAtributoAcordoVO(atributoAcordo.idAtributoAcordo, atributoAcordo.operador, 
-				atributoAcordo.valor, atributoAcordo.unidadeMedida, SrAtributoVO.createFrom(atributoAcordo.atributo));
+		if (atributoAcordo != null)
+			return new SrAtributoAcordoVO(atributoAcordo);
+		else
+			return null;
 	}
 }

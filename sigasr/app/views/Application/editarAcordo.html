@@ -660,7 +660,7 @@
 	}
 
 	function desassociar(event, idAssociacaoDesativar) {
-		event.stopPropagation()
+		event.stopPropagation();
 		
 		var me = $(this),
 			tr = $(event.currentTarget).parent().parent()[0],
@@ -668,7 +668,20 @@
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunasAssociacao.idAssociacao];
 			idAcordo = $("#id").val();
 			
-			location.href='@{Application.desativarAbrangenciaEdicao()}?' + jQuery.param({idAcordo : idAcordo, idAssociacao : idAssociacao});
+			$.ajax({
+			     type: "POST",
+			     url: '@{Application.desativarAbrangenciaEdicao()}?',
+			     data: {idAcordo : idAcordo, idAssociacao : idAssociacao},
+			     dataType: "text",
+			     success: function(response) {
+					associacaoTable.api().row(tr).remove().draw();
+			     },
+			     error: function(response) {
+			    	var modalErro = $('#modal-error');
+			    	modalErro.find("h3").html(response.responseText);
+			    	modalErro.show(); 
+			     }
+			});
 	}
 
 	function serializeParametrosAcordo() {

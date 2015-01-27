@@ -40,8 +40,8 @@
 						<td>${acordo.descrAcordo}</td>
 						<td class="acoes">
 							#{desativarReativar id:acordo.id, 
-												onDesativar :'desativarAcordo',
-												onReativar :'reativarAcordo',
+												onDesativar :'acordoService.desativar',
+												onReativar :'acordoService.reativar',
 												isAtivo:acordo.isAtivo() }
 							#{/desativarReativar}
 						</td>
@@ -141,6 +141,8 @@
 				"sortable" : false
 			}]
 		});
+
+		optsAcordo.dataTable = optsAcordo.acordoTable;
 	});
 
 	var optsAcordo = {
@@ -204,8 +206,11 @@
 					baseService.onGravar(obj, JSON.parse(objSalvo));
 				}
 				
-				if (isAplicar)
+				if (isAplicar) {
+					baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
+					
 					alert("Cadastro salvo com sucesso.");
+				}
 				else
 					baseService.opts.dialogCadastro.dialog("close");
 			}
@@ -238,19 +243,21 @@
 
 	function carregarAbrangenciasAcordo(id) {
 		tableAssociacao.api().clear().draw();
-		
-        $.ajax({
-        	type: "GET",
-        	url: "@{Application.buscarAbrangenciasAcordo()}?id=" + id,
-        	dataType: "text",
-        	success: function(lista) {
-        		var listaJSon = JSON.parse(lista);
-        		acordoService.populateFromJSonList(listaJSon, associacaoTable);
-        	},
-        	error: function(error) {
-            	alert("Não foi possível carregar as Abrangências deste Acordo.");
-        	}
-       	});
+
+		if (id) {
+			$.ajax({
+	        	type: "GET",
+	        	url: "@{Application.buscarAbrangenciasAcordo()}?id=" + id,
+	        	dataType: "text",
+	        	success: function(lista) {
+	        		var listaJSon = JSON.parse(lista);
+	        		acordoService.populateFromJSonList(listaJSon, associacaoTable);
+	        	},
+	        	error: function(error) {
+	            	alert("Não foi possível carregar as Abrangências deste Acordo.");
+	        	}
+	       	});
+		}
     }
 
 	acordoService.populateFromJSonList = function(listaJSon, dataTable) {
@@ -259,7 +266,7 @@
 				row = [
 						'',                                                                    // colunas.botaoExpandir
 						abrangencia.orgaoUsuario ? abrangencia.orgaoUsuario.id : '',
-		          		abrangencia.orgaoUsuario ? abrangencia.orgaoUsuario.descricao : '', 
+		          		abrangencia.orgaoUsuario ? abrangencia.orgaoUsuario.sigla : '', 
 		          		abrangencia.complexo ? abrangencia.complexo.id : '',
 		        		abrangencia.complexo ? abrangencia.complexo.descricao : '', 
 		          		abrangencia.solicitante ? abrangencia.solicitante.sigla : '',
@@ -298,11 +305,13 @@
 	// Atualizando lista de Parâmetros de Acordo
 	function atualizarParametrosAcordo(acordo) {
 		removerItensLista('parametrosAcordo');
-		
-		for (var i = 0; i < acordo.atributoAcordoSet.length; i++) {
-			var item = acordo.atributoAcordoSet[i];
 
-			$("#parametrosAcordo")[0].incluirItem(item.atributo.idAtributo, item.atributo.nomeAtributo, item.operador, item.operador.nome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedida.plural, item.idAcordoAtributo);
+		if (acordo) {
+			for (var i = 0; i < acordo.atributoAcordoSet.length; i++) {
+				var item = acordo.atributoAcordoSet[i];
+
+				$("#parametrosAcordo")[0].incluirItem(item.atributo.idAtributo, item.atributo.nomeAtributo, item.operador, item.operadorNome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedidaPlural, item.idAcordoAtributo);
+			}
 		}
 	}
 
@@ -317,6 +326,12 @@
 	 * Sobescreve o metodo cadastrar para limpar a tela.
 	 */
 	acordoService.cadastrar = function(title) {
+		// Atualiza a lista de parâmetros
+		atualizarParametrosAcordo();
+
+		// carrega a Abrangências do Acordo
+		carregarAbrangenciasAcordo();
+		
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
 	}
 	

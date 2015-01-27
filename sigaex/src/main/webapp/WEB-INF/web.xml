@@ -131,11 +131,15 @@
 		</init-param>
 	</servlet>
 
-	<!-- Standard Action Servlet Configuration -->
-	<servlet>
-		<servlet-name>dwr</servlet-name>
-		<servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
-	</servlet>
+    <!-- Standard Action Servlet Configuration -->
+    <servlet>
+        <servlet-name>dwr</servlet-name>
+        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExService</servlet-name>
+        <servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
+    </servlet>
 
 	<servlet-mapping>
 		<servlet-name>AudioCaptcha</servlet-name>
@@ -149,10 +153,13 @@
 		<servlet-name>StickyCaptcha</servlet-name>
 		<url-pattern>/autenticar.stickycaptcha.png</url-pattern>
 	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>dwr</servlet-name>
 		<url-pattern>/dwr/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ExService</servlet-name>
+		<url-pattern>/servicos/ExService</url-pattern>
 	</servlet-mapping>
 
 	<security-constraint>
@@ -183,10 +190,14 @@
 			<web-resource-name>freemarker</web-resource-name>
 			<url-pattern>/freemarker/*</url-pattern>
 		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>ExService</web-resource-name>
-			<url-pattern>/ExService?wsdl</url-pattern>
-		</web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>servicos</web-resource-name>
+            <url-pattern>/servicos/*</url-pattern>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>externo</web-resource-name>
+            <url-pattern>/externo/*</url-pattern>
+        </web-resource-collection>        
 		<web-resource-collection>
 			<web-resource-name>externo</web-resource-name>
 			<url-pattern>/externo/*</url-pattern>

@@ -64,9 +64,9 @@
 		<filter-name>WorkFlowFilter</filter-name>
 		<url-pattern>*.action</url-pattern>
 		<url-pattern>/loadPhoto</url-pattern>
-		<url-pattern>/upload</url-pattern>
-<!-- 		<url-pattern>wsdl</url-pattern>
- -->	</filter-mapping>
+		<url-pattern>/upload</url-pattern>		
+		<url-pattern>/servicos/*</url-pattern>		
+	</filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>WebWork</filter-name>
@@ -103,6 +103,10 @@
 		<servlet-name>loadPhoto</servlet-name>
 		<servlet-class>br.gov.jfrj.siga.wf.servlet.SingleImageServlet</servlet-class>
 	</servlet>
+    <servlet>		
+        <servlet-name>WfService</servlet-name>		
+        <servlet-class>br.gov.jfrj.siga.wf.service.impl.WfServiceImpl</servlet-class>		
+    </servlet>
 
 	<servlet-mapping>
 		<servlet-name>UploadServlet</servlet-name>
@@ -113,6 +117,11 @@
 		<servlet-name>loadPhoto</servlet-name>
 		<url-pattern>/loadPhoto</url-pattern>
 	</servlet-mapping>
+	
+	<servlet-mapping>		
+        <servlet-name>WfService</servlet-name>		
+        <url-pattern>/servicos/WfService</url-pattern>		
+    </servlet-mapping>
 
 	<security-constraint>
 		<web-resource-collection>
@@ -156,8 +165,8 @@
 	
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>WFService</web-resource-name>
-			<url-pattern>/WfService?wsdl</url-pattern>
+			<web-resource-name>servicos</web-resource-name>
+			<url-pattern>/servicos/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 

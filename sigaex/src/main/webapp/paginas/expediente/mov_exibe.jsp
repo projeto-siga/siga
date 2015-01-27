@@ -289,11 +289,11 @@ function visualizarImpressao(via) {
 					<ww:hidden name="urlchk_${mov.idMov}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
 
 					<c:set var="jspServer"
-						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
+						value="${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 					<c:set var="jspServerSenha" 
-					    value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_login_senha_gravar.action" />
+					    value="${request.contextPath}/expediente/mov/assinar_mov_login_senha_gravar.action" />
 					<c:set var="nextURL"
-						value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
+						value="${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
 					
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
@@ -365,7 +365,7 @@ function visualizarImpressao(via) {
 
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-	    			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
+	    			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 			    </c:if>
 			</div>
 		</div>

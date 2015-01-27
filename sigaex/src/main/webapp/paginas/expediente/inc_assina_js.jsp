@@ -343,8 +343,8 @@ function AssinarDocumentos(Copia, oElm){
         return;
     }    
 
-    oUrlPost.value = removerPortaSeNaoForLocalhost(oUrlPost.value);
-	oUrlNext.value = removerPortaSeNaoForLocalhost(oUrlNext.value);
+  //oUrlPost.value = removerPortaSeNaoForLocalhost(oUrlPost.value);
+  //oUrlNext.value = removerPortaSeNaoForLocalhost(oUrlNext.value);
 
     var Codigo;
     var NodeList = document.getElementsByTagName("INPUT");

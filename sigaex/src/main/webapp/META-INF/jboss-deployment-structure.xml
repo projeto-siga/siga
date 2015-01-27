@@ -5,6 +5,12 @@
 		<module-alias name="sigaex" />
 
 		<dependencies>
+			<system export="true">
+				<paths>
+					<path name="com/sun/org/apache/xml/internal/" />
+				</paths>
+			</system>
+					
 			<module name="org.hibernate" export="true" />
 
 			<module name="org.picketlink" />
@@ -21,12 +27,7 @@
 			<module name="org.javassist" />
 			<module name="javax.api" />
 			
-			<system>
-			
-				<paths>
-					<path name="com/sun/org/apache/xml/internal/" />
-				</paths>
-			</system>
+
 		</dependencies>
 	</deployment>
 

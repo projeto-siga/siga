@@ -96,10 +96,6 @@
 			<groupId>javax.xml</groupId>
 			<artifactId>jaxrpc-api</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>org.ccil.cowan.tagsoup</groupId>

@@ -146,10 +146,6 @@
             <groupId>org.apache.axis</groupId>
             <artifactId>axis</artifactId>
         </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

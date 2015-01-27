@@ -65,9 +65,9 @@
 			<tr class="button">
 			<td>
 				<div id="dados-assinatura" style="visible: hidden">
-				    <c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_gravar.action" />
-				    <c:set var="jspServerSenha" value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_senha_gravar.action" />
-		   	 	    <c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}/siga/principal.action"  />
+				    <c:set var="jspServer" value="${request.contextPath}/expediente/mov/assinar_gravar.action" />
+				    <c:set var="jspServerSenha" value="${request.contextPath}/expediente/mov/assinar_senha_gravar.action" />
+		   	 	    <c:set var="nextURL" value="/siga/principal.action"  />
 		    	    <c:set var="urlPath" value="${request.contextPath}" />
 		
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
@@ -102,7 +102,7 @@
 				</c:if>
 			
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
-			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
+			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
 	         	</c:if>
 	         	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
 	         		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>  

@@ -14,7 +14,10 @@
 					 classec250,
 					 classef,
 					 siga-webserver,
-					 siga-appserver					 
+					 siga-appserver,
+					 axor,
+					 siga-beta,
+					 siga			 
 			</Domains>
 		</Trust>
 	</PicketLinkIDP>

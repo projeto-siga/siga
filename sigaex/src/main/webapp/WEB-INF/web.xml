@@ -1,96 +1,96 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 	<display-name>SIGA - Gestão Documental</display-name>
 
-    <listener>
-        <listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
-    </listener>
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
+	</listener>
 
-    <listener>
-        <listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
-    </listener>
+	<listener>
+		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
+	</listener>
 
-    <filter>
-        <filter-name>ExFilter</filter-name>
-        <filter-class>br.gov.jfrj.siga.hibernate.ExThreadFilter</filter-class>
-    </filter>
+	<filter>
+		<filter-name>ExFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.hibernate.ExThreadFilter</filter-class>
+	</filter>
 
-    <filter>
-        <filter-name>SigaLogFilter</filter-name>
-        <filter-class>br.gov.jfrj.siga.ex.util.LogThreadFilter</filter-class>
-    </filter>
+	<filter>
+		<filter-name>SigaLogFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.ex.util.LogThreadFilter</filter-class>
+	</filter>
 
-    <filter>
-        <filter-name>SalvamentoAutomaticoFilter</filter-name>
-        <filter-class>br.gov.jfrj.webwork.action.SalvamentoAutomaticoThreadFilter</filter-class>
-    </filter>
+	<filter>
+		<filter-name>SalvamentoAutomaticoFilter</filter-name>
+		<filter-class>br.gov.jfrj.webwork.action.SalvamentoAutomaticoThreadFilter</filter-class>
+	</filter>
 
-    <filter>
-        <filter-name>webwork</filter-name>
-        <filter-class>com.opensymphony.webwork.dispatcher.FilterDispatcher</filter-class>
-    </filter>
+	<filter>
+		<filter-name>webwork</filter-name>
+		<filter-class>com.opensymphony.webwork.dispatcher.FilterDispatcher</filter-class>
+	</filter>
 
-    <filter>
-        <filter-name>ResponseHeaderFilterNoCache</filter-name>
-        <filter-class>br.gov.jfrj.siga.libs.util.ResponseHeaderFilter</filter-class>
-        <init-param>
-            <param-name>Cache-Control</param-name>
-            <param-value>no-cache</param-value>
-        </init-param>
-    </filter>
+	<filter>
+		<filter-name>ResponseHeaderFilterNoCache</filter-name>
+		<filter-class>br.gov.jfrj.siga.libs.util.ResponseHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>no-cache</param-value>
+		</init-param>
+	</filter>
 
-    <filter>
-        <filter-name>ResponseHeaderFilter</filter-name>
-        <filter-class>br.gov.jfrj.siga.libs.util.ResponseHeaderFilter</filter-class>
-        <init-param>
-            <param-name>Cache-Control</param-name>
-            <param-value>max-age=3600, public</param-value>
-        </init-param>
-    </filter>
+	<filter>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.libs.util.ResponseHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>max-age=3600, public</param-value>
+		</init-param>
+	</filter>
 
-    <filter-mapping>
-        <filter-name>SigaLogFilter</filter-name>
-        <url-pattern>*.action</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>SigaLogFilter</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
 
-    <filter-mapping>
-        <filter-name>ExFilter</filter-name>
-        <url-pattern>*.pdf</url-pattern>
-        <url-pattern>*.html</url-pattern>
-        <url-pattern>*.action</url-pattern>
-        <url-pattern>/dwr/*</url-pattern>
-        <url-pattern>/anexo/*</url-pattern>
-        <url-pattern>/servicos/*</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>ExFilter</filter-name>
+		<url-pattern>*.pdf</url-pattern>
+		<url-pattern>*.html</url-pattern>
+		<url-pattern>*.action</url-pattern>
+		<url-pattern>/dwr/*</url-pattern>
+		<url-pattern>/anexo/*</url-pattern>
+		<url-pattern>/servicos/*</url-pattern>
+	</filter-mapping>
 
-    <filter-mapping>
-        <filter-name>SalvamentoAutomaticoFilter</filter-name>
-        <url-pattern>/expediente/doc/gravar_ajax.action</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>SalvamentoAutomaticoFilter</filter-name>
+		<url-pattern>/expediente/doc/gravar_ajax.action</url-pattern>
+	</filter-mapping>
 
-    <filter-mapping>
-        <filter-name>webwork</filter-name>
-        <url-pattern>*.action</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>webwork</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
 
-    <filter-mapping>
-        <filter-name>ResponseHeaderFilterNoCache</filter-name>
-        <url-pattern>*.action</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>ResponseHeaderFilter</filter-name>
-        <url-pattern>/imagens/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>ResponseHeaderFilter</filter-name>
-        <url-pattern>/recursos/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>ResponseHeaderFilter</filter-name>
-        <url-pattern>/sigalibs/*</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilterNoCache</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/imagens/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/recursos/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/sigalibs/*</url-pattern>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>AudioCaptcha</servlet-name>
@@ -171,9 +171,9 @@
 			<role-name>sigausuario</role-name>
 		</auth-constraint>
 	</security-constraint>
-	
+
 	<!-- Libera acesso aos seguintes diretorios -->
- 	<security-constraint>
+	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>arquivos</web-resource-name>
 			<url-pattern>/arquivos/*</url-pattern>
@@ -198,6 +198,14 @@
             <web-resource-name>externo</web-resource-name>
             <url-pattern>/externo/*</url-pattern>
         </web-resource-collection>        
+		<web-resource-collection>
+			<web-resource-name>externo</web-resource-name>
+			<url-pattern>/externo/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>staticJavascript</web-resource-name>
+			<url-pattern>/staticJavascript.jf</url-pattern>
+		</web-resource-collection>
 	</security-constraint>
 
 	<login-config>
@@ -209,18 +217,18 @@
 		</form-login-config>
 	</login-config>
 
-    <security-role>
-        <role-name>sigausuario</role-name>
-    </security-role>
-    <security-role>
-        <role-name>sigaadministrador</role-name>
-    </security-role>
-    <security-role>
-        <role-name>sigadesenvolvimento</role-name>
-    </security-role>
-    <security-role>
-        <role-name>superusuario</role-name>
-    </security-role>
+	<security-role>
+		<role-name>sigausuario</role-name>
+	</security-role>
+	<security-role>
+		<role-name>sigaadministrador</role-name>
+	</security-role>
+	<security-role>
+		<role-name>sigadesenvolvimento</role-name>
+	</security-role>
+	<security-role>
+		<role-name>superusuario</role-name>
+	</security-role>
 
 	<error-page>
 		<error-code>403</error-code>

@@ -24,16 +24,11 @@ import javax.persistence.Table;
 
 import models.vo.SrListaVO;
 import play.db.jpa.JPA;
-import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
@@ -282,22 +277,11 @@ public class SrLista extends HistoricoSuporte {
 	}
 	
 	public String toJson() {
-		Gson gson = createGson("meuListaHistoricoSet", "listaInicial", "meuMovimentacaoSet", "lotaCadastrante");
-		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
-		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
-		
-		return jsonObject.toString();
-	}
-
-	private Gson createGson(String... exclusions) {
-		return new GsonBuilder()
-			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
-			.create();
+		return this.toVO().toJson();
 	}
 
 	public SrListaVO toVO() {
-		return new SrListaVO(this.idLista, this.nomeLista, this.descrAbrangencia, this.descrJustificativa, 
-				this.descrPriorizacao);
+		return new SrListaVO(this);
 	}
 	
 	public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {

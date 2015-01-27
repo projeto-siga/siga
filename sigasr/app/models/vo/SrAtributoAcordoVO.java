@@ -13,6 +13,7 @@ public class SrAtributoAcordoVO {
 	public CpUnidadeMedida unidadeMedida;
 	public String unidadeMedidaPlural;
 	public SrAtributoVO atributo;
+	public boolean ativo;
 	
 	public SrAtributoAcordoVO(SrAtributoAcordo atributoAcordo) {
 		this.idAtributoAcordo = atributoAcordo.idAtributoAcordo; 
@@ -22,6 +23,7 @@ public class SrAtributoAcordoVO {
 		this.unidadeMedida = atributoAcordo.unidadeMedida;
 		this.unidadeMedidaPlural = atributoAcordo.unidadeMedida != null ? atributoAcordo.unidadeMedida.getPlural() : "";
 		this.atributo = SrAtributoVO.createFrom(atributoAcordo.atributo);
+		this.ativo = atributoAcordo.isAtivo();
 	}
 	
 	public static SrAtributoAcordoVO createFrom(SrAtributoAcordo atributoAcordo) {

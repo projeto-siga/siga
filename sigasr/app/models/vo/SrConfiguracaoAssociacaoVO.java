@@ -4,8 +4,6 @@ import models.SrAcao;
 import models.SrAcao.SrAcaoVO;
 import models.SrConfiguracao;
 import models.SrPrioridade;
-import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.model.Selecionavel;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,24 +28,22 @@ public class SrConfiguracaoAssociacaoVO {
 	public SelecionavelVO atendente;
 	public SrPrioridade prioridade;
 	public String descPrioridade;
+	public boolean ativo;
 	
-	public SrConfiguracaoAssociacaoVO(Long idConfiguracao, 
-			SrItemConfiguracaoVO itemConfiguracaoVO, SrAcaoVO acaoVO,
-			boolean atributoObrigatorio, int tipoSolicitante, 
-			Selecionavel orgaoUsuario, CpComplexo complexo, Selecionavel solicitante, 
-			Selecionavel atendente, SrPrioridade prioridade) {
-		this.idConfiguracao = idConfiguracao;
+	public SrConfiguracaoAssociacaoVO(SrConfiguracao configuracao, SrItemConfiguracaoVO itemConfiguracaoVO, SrAcaoVO acaoVO) {
+		this.idConfiguracao = configuracao.getIdConfiguracao();
 		this.itemConfiguracaoUnitario = itemConfiguracaoVO;
 		this.acaoUnitaria = acaoVO;
-		this.atributoObrigatorio = atributoObrigatorio;
+		this.atributoObrigatorio = configuracao.atributoObrigatorio;
 		
-		this.tipoSolicitante = tipoSolicitante;
-		this.orgaoUsuario = SelecionavelVO.createFrom(orgaoUsuario);
-		this.complexo = CpComplexoVO.createFrom(complexo);
-		this.solicitante = SelecionavelVO.createFrom(solicitante);
-		this.atendente = SelecionavelVO.createFrom(atendente);
-		this.prioridade = prioridade;
-		this.descPrioridade = prioridade != null ? prioridade.descPrioridade : "";
+		this.tipoSolicitante = configuracao.getTipoSolicitante();
+		this.orgaoUsuario = SelecionavelVO.createFrom(configuracao.getOrgaoUsuario());
+		this.complexo = CpComplexoVO.createFrom(configuracao.getComplexo());
+		this.solicitante = SelecionavelVO.createFrom(configuracao.getSolicitante());
+		this.atendente = SelecionavelVO.createFrom(configuracao.atendente);
+		this.prioridade = configuracao.prioridade;
+		this.descPrioridade = configuracao.prioridade != null ? configuracao.prioridade.descPrioridade : "";
+		this.ativo = configuracao.isAtivo();
 	}
 
 	/**

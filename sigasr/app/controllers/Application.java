@@ -1434,28 +1434,10 @@ public class Application extends SigaApplication {
 		listarLista(Boolean.TRUE);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void editarLista(Long id) throws Exception {
-		List<CpOrgaoUsuario> orgaos = JPA.em()
-				.createQuery("from CpOrgaoUsuario").getResultList();
-		List<CpComplexo> locais = CpComplexo.all().fetch();
-		
-		SrLista lista = new SrLista();
-		if (id != null)
-			lista = SrLista.findById(id);
-		
-		lista = lista.getListaAtual();
-		
-		List<SrConfiguracao> permissoes = SrConfiguracao
-				.listarPermissoesUsoLista(lista, false);
-		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
-		
-		render(lista, orgaos, locais, tiposPermissao, permissoes);
-	}
-
-	public static Long gravarLista(SrLista lista) throws Exception {
+	public static String gravarLista(SrLista lista) throws Exception {
+		lista.lotaCadastrante = lotaTitular();
 		lista.salvar();
-		return lista.idLista;
+		return lista.toJson();
 	}
 
 	public static void desativarLista(Long id, boolean mostrarDesativados) throws Exception {

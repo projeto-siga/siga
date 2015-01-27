@@ -369,8 +369,8 @@ altura:'200', largura:'450'}
 	designacaoService.duplicarButton = '<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>';
 	
 	designacaoService.gravar = function() {
-		if (!isValidForm())
-			return false;
+		if (!this.isValidForm())
+			return;
 		
 		var service = this,
 		obj = this.getObjetoParaGravar(),
@@ -395,6 +395,53 @@ altura:'200', largura:'450'}
 	    	success: success,
 	    	error: this.errorHandler
 	   	});
+	}
+
+	designacaoService.aplicar = function() {
+		if (!this.isValidForm())
+			return;
+		
+		var service = this,
+		obj = this.getObjetoParaGravar(),
+		url = this.opts.urlGravar,
+		wrapper = {},
+		success = function(objSalvo) {
+			if(service.onGravar) {
+				var designacao = JSON.parse(objSalvo),
+					tr = service.onGravar(obj, designacao);
+				afterGravarDesignacao(tr, designacao);  
+			}
+
+			alert("Cadastro salvo com sucesso.");
+		}
+		wrapper[this.opts.objectName] = obj;
+		var params = jQuery.param(wrapper) + "&" + getListasAsString();
+		
+		$.ajax({
+	    	type: "POST",
+	    	url: url,
+	    	data: params,
+	    	dataType: "text",
+	    	success: success,
+	    	error: this.errorHandler
+	   	});
+	}
+
+	designacaoService.isValidForm = function() {
+	    return jQuery(this.opts.formCadastro).valid() && camposObrigatoriosPreenchidos();
+	}
+
+	function camposObrigatoriosPreenchidos() {
+		if (hasValue($("#atendente")) || hasValue($("#preAtendente")) || hasValue($("#posAtendente")) || hasValue($("#equipeQualidade")))
+			return true;
+		else {
+			alert("Por favor preencha pelo menos um dos seguintes campos: Atendente, Pré-Atendente, Pós-Atendente ou Equipe de Qualidade.")
+			return false;
+		}
+	}
+
+	function hasValue(inputField) {
+		return inputField.val() != '' && inputField.val() != undefined;
 	}
 
 	function carregarDesignacoes(id) {

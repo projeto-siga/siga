@@ -671,6 +671,24 @@
 			location.href='@{Application.desativarAbrangenciaEdicao()}?' + jQuery.param({idAcordo : idAcordo, idAssociacao : idAssociacao});
 	}
 
+	function serializeParametrosAcordo() {
+		var params = '';
+		
+		$("#parametrosAcordo").find("li").each(function(i) {
+			var jDivs=$(this).find("span");
+
+			params += '&acordo.atributoAcordoSet[' + i + '].valor=' + jDivs[2].innerHTML;
+		    params += '&acordo.atributoAcordoSet[' + i + '].atributo.idAtributo=' + jDivs[0].id;
+		    params += '&acordo.atributoAcordoSet[' + i + '].unidadeMedida=' + jDivs[3].id;
+		    params += '&acordo.atributoAcordoSet[' + i + '].operador=' + jDivs[1].id;
+
+		    if (this.id.indexOf("novo_") < 1)
+		    	params += '&acordo.atributoAcordoSet[' + i + '].idAtributoAcordo=' + this.id;
+		});
+		
+		return params;
+	}
+
 	$(function() {
 		var jParametrosAcordo = $("#parametrosAcordo"),
 		parametrosAcordo = jParametrosAcordo[0],
@@ -772,22 +790,5 @@
 // 		#{list items:acordo.atributoAcordoSet, as:'parametroAcordo'}
 // 		        parametrosAcordo.incluirItem('${parametroAcordo.atributo.idAtributo}', '${parametroAcordo.atributo.nomeAtributo}', '${parametroAcordo.operador}', '${parametroAcordo.operador?.nome}', '${parametroAcordo.valor}', '${parametroAcordo.unidadeMedida?.idUnidadeMedida}', '${parametroAcordo.unidadeMedida?.plural}', ${parametroAcordo.idAtributoAcordo});
 // 		#{/list}
-		
-		$("[value='Gravar']").click(function(){
-		    	if (!jQuery("#acordoForm").valid() || !block())
-		        	return false;
-		        var jForm = $("form"),
-		                params = jForm.serialize();
-		        jParametrosAcordo.find("li").each(function(i){
-		                var jDivs=$(this).find("span");
-		                params += '&acordo.atributoAcordoSet[' + i + '].valor=' + jDivs[2].innerHTML;
-		                params += '&acordo.atributoAcordoSet[' + i + '].atributo.idAtributo=' + jDivs[0].id;
-		                params += '&acordo.atributoAcordoSet[' + i + '].unidadeMedida=' + jDivs[3].id;
-		                params += '&acordo.atributoAcordoSet[' + i + '].operador=' + jDivs[1].id;
-		                if (this.id.indexOf("novo_") < 1)
-		                        params += '&acordo.atributoAcordoSet[' + i + '].idAtributoAcordo=' + this.id;
-		        });
-		        location.href = '@{Application.gravarAcordo()}?' + params;
-		});
 	});
 </script>

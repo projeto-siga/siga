@@ -177,12 +177,60 @@
 	acordoService.onRowClick = function(acordo) {
 		acordoService.editar(acordo, 'Alterar Acordo');
 	}
+
+	/**
+	* Sobrescreve o método gravar para tratar a lista de parâmetros.
+	*/
+	acordoService.gravar = function() {
+		gravarAplicar(this, false);
+	}
+
+	/**
+	* Sobrescreve o método aplicar para tratar a lista de parâmetros.
+	*/
+	acordoService.aplicar = function() {
+		gravarAplicar(this, true);
+	}
+
+	function gravarAplicar(baseService, isAplicar) {
+		if (!baseService.isValidForm())
+			return;
+		
+		var obj = baseService.getObjetoParaGravar(),
+			url = baseService.opts.urlGravar,
+			wrapper = {},
+			success = function(objSalvo) {
+				if(baseService.onGravar) {
+					baseService.onGravar(obj, JSON.parse(objSalvo));
+				}
+				
+				if (isAplicar)
+					alert("Cadastro salvo com sucesso.");
+				else
+					baseService.opts.dialogCadastro.dialog("close");
+			}
+			
+		wrapper[baseService.opts.objectName] = obj;
+		var params = jQuery.param(wrapper) + "&" + serializeParametrosAcordo();
+		
+		$.ajax({
+	    	type: "POST",
+	    	url: url,
+	    	data: params,
+	    	dataType: "text",
+	    	success: success,
+	    	error: baseService.errorHandler
+	   	});
+	}
 	
 	/**
 	 * Customiza o metodo editar
 	 */
 	acordoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+
+		// Atualiza a lista de parâmetros
+		atualizarParametrosAcordo(obj);
 
 		// carrega a Abrangências do Acordo
 		carregarAbrangenciasAcordo(obj.id);
@@ -248,22 +296,22 @@
 	}
 
 	// Atualizando lista de Parâmetros de Acordo
-// 	function atualizarParametrosAcordo(acordo) {
-// 		removerItensLista('parametrosAcordo');
+	function atualizarParametrosAcordo(acordo) {
+		removerItensLista('parametrosAcordo');
 		
-// 		for (var i = 0; i < acordo.atributoAcordoSet.length; i++) {
-// 			var item = acordo.atributoAcordoSet[i];
+		for (var i = 0; i < acordo.atributoAcordoSet.length; i++) {
+			var item = acordo.atributoAcordoSet[i];
 
-// 			$("#parametrosAcordo")[0].incluirItem(item.atributo.idAtributo, item.atributo.nomeAtributo, item.operador, item.operador.nome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedida.plural, item.idAcordoAtributo);
-// 		}
-// 	}
+			$("#parametrosAcordo")[0].incluirItem(item.atributo.idAtributo, item.atributo.nomeAtributo, item.operador, item.operador.nome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedida.plural, item.idAcordoAtributo);
+		}
+	}
 
-// 	function removerItensLista(nomeLista) {
-// 		$("#"+nomeLista).find("li").each(function(i){
-//             this.remove();
-//             $("#"+nomeLista)[0]["index"]--;
-//         });
-//     }
+	function removerItensLista(nomeLista) {
+		$("#"+nomeLista).find("li").each(function(i){
+            this.remove();
+            $("#"+nomeLista)[0]["index"]--;
+        });
+    }
 
 	/**
 	 * Sobescreve o metodo cadastrar para limpar a tela.

@@ -700,6 +700,7 @@ public class ExMobilController extends
 		result.include("ultMovLotaRespSel", this.getUltMovLotaRespSel());
 		result.include("ultMovIdEstadoDoc", this.getUltMovIdEstadoDoc());
 		result.include("p.offset", offset);
+		result.include("fullText", this.getFullText());
 	}
 
 	@Override

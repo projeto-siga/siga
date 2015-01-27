@@ -128,8 +128,8 @@ function popitup_movimentacao() {
 								Nota
 							</td>
 							<td>
-								<input type="text" name="descrMov" value="${descrMov}" cols="60" rows="5" onkeydown="corrige();tamanho();" maxlength="255" onblur="tamanho();"
-								onclick="tamanho();" />
+								<textarea name="descrMov" value="${descrMov}" cols="60" rows="5" onkeydown="corrige();tamanho();" maxlength="255" onblur="tamanho();"
+								onclick="tamanho();"></textarea>
 								<div id="Qtd">
 									Restam&nbsp;255&nbsp;Caracteres
 								</div>

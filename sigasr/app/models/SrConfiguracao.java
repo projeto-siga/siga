@@ -671,8 +671,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		SrItemConfiguracaoVO itemVO = (this.getItemConfiguracaoUnitario() != null? this.getItemConfiguracaoUnitario().getAtual().toVO() : null);
 		SrAcaoVO acaoVO = (this.getAcaoUnitaria() != null? this.getAcaoUnitaria().getAtual().toVO() : null);
 		
-		return new SrConfiguracaoAssociacaoVO(this.getIdConfiguracao(), itemVO, acaoVO, this.atributoObrigatorio, 
-				this.getTipoSolicitante(), this.getOrgaoUsuario(), this.getComplexo(), this.getSolicitante(), this.atendente, this.prioridade);
+		return new SrConfiguracaoAssociacaoVO(this, itemVO, acaoVO);
 	}
 	
 	public String toJson() {

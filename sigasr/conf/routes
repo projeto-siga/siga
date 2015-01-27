@@ -84,7 +84,6 @@ GET     /public/                            staticDir:public
 *		/solicitacao/incluirEmLista/{id}				Application.incluirEmLista
 *		/solicitacao/incluirEmListaGravar/{id}			Application.incluirEmListaGravar
 *		/solicitacao/retirarDeLista						Application.retirarDeLista
-*		/solicitacao/editarLista/{id}					Application.editarLista
 *		/solicitacao/selecionar							Application.selecionarSolicitacao
 *		/solicitacao/buscar								Application.buscarSolicitacao
 *		/solicitacao/{action}							Application.{action}

@@ -68,7 +68,7 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-			<a href="javascript: listaModalAbrir(false)" class="gt-btn-medium gt-btn-left">Cadastrar</a>
+			<a onclick="listaService.cadastrar('Incluir Lista')" class="gt-btn-medium gt-btn-left">Incluir</a>
 		<div class="gt-table-buttons">
 	</div>
 </div>
@@ -209,8 +209,8 @@
 	}
 	
 	listaService.gravar = function() {
-		if (!isValidForm())
-			return false;
+		if (!this.isValidForm())
+			return;
 		
 		var service = this,
 		obj = this.getObjetoParaGravar(),

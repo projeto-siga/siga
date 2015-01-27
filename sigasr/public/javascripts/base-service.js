@@ -3,6 +3,7 @@
  */
 function Formulario(form) {
 	this.populateFromJson = function(obj) {
+		this.reset();
 		form.find('input[type=hidden]').val(''); // WA
 		
 		prepareObjectToForm(obj);
@@ -14,6 +15,13 @@ function Formulario(form) {
 	
 	this.toJson = function() {
 		return form.serializeJSON();
+	}
+	
+	this.reset = function() {
+		if(form.resetForm) {
+			form.resetForm();
+		}
+		form.find('.error').removeClass('error'); // Ao entrar no cadastro, remove classe de erro
 	}
 }
 

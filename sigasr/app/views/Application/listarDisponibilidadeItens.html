@@ -178,6 +178,9 @@
 		}
 
 		this.alterarDisponibilidade = function(sigla, hisIdIni) {
+			if(this.validator) {
+				this.validator.resetForm();
+			}
 			this.esconderValidacaoHorario();
 			
 			$('#disponibilidadeItem_dialog').dialog('open');
@@ -291,8 +294,10 @@
 				span.append(novaImg);
 
 				var itemConfiguracaoSelecionado = me.buscarItem(atualizacao.hisIdIniItemConfiguracao);
-				var indice = me.buscarIndiceDisponibilidade(itemConfiguracaoSelecionado, atualizacao.siglaOrgao);
-				itemConfiguracaoSelecionado.disponibilidades[indice] = atualizacao;
+				if(itemConfiguracaoSelecionado) {
+					var indice = me.buscarIndiceDisponibilidade(itemConfiguracaoSelecionado, atualizacao.siglaOrgao);
+					itemConfiguracaoSelecionado.disponibilidades[indice] = atualizacao;
+				}
 			});
 		}
 		
@@ -435,7 +440,7 @@
 			        },
 			        "A data/hora de início deve ser menor que a data/hora término"
 			);
-			jQuery("form").validate();
+			this.validator = jQuery("form").validate();
 			$("#dataHoraInicio").rules("add", {dataHora: ""});
 			$("#dataHoraFim").rules("add", {dataHora: ""});
 			$("#dataHoraInicio").rules("add", {periodo: ""});

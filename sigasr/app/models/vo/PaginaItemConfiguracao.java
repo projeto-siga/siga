@@ -2,6 +2,7 @@ package models.vo;
 
 import java.util.List;
 
+import models.SrDisponibilidade;
 import models.SrItemConfiguracao;
 import util.JsonUtil;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -29,7 +30,13 @@ public class PaginaItemConfiguracao extends Pagina {
 
 	public PaginaItemConfiguracao atualizar(List<CpOrgaoUsuario> orgaos) {
 		return buscarItens(orgaos)
-				.adicionarOrgaos(orgaos);
+				.adicionarOrgaos(orgaos)
+				.invalidarCache();
+	}
+	
+	public PaginaItemConfiguracao invalidarCache() {
+		DisponibilidadesPorOrgaoCacheHolder.remove();
+		return this;
 	}
 	
 	public PaginaItemConfiguracao adicionarOrgaos(List<CpOrgaoUsuario> orgaos) {
@@ -39,8 +46,11 @@ public class PaginaItemConfiguracao extends Pagina {
 		return this;
 	}
 	
-	private PaginaItemConfiguracao buscarItens(List<CpOrgaoUsuario> orgaos) {
-		for (SrItemConfiguracao itemConfiguracao : SrItemConfiguracao.listar(this)) {
+	public PaginaItemConfiguracao buscarItens(List<CpOrgaoUsuario> orgaos) {
+		List<SrItemConfiguracao> itensConfiguracao = SrItemConfiguracao.listar(this);
+		DisponibilidadesPorOrgaoCacheHolder.put(SrDisponibilidade.agruparDisponibilidades(itensConfiguracao, orgaos));
+		
+		for (SrItemConfiguracao itemConfiguracao : itensConfiguracao) {
 			JsonObject jsonObject = (JsonObject) JsonUtil.toJson(itemConfiguracao.toVO());
 			jsonObject.add("disponibilidades", itemConfiguracao.criarDisponibilidadesJSON(itemConfiguracao, orgaos));
 			this.addRegistro(jsonObject);

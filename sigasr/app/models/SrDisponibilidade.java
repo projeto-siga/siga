@@ -4,7 +4,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,12 +17,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NoResultException;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import models.vo.DisponibilidadesPorOrgaoCache;
+import models.vo.DisponibilidadesPorOrgaoCacheHolder;
+import models.vo.PaginaItemConfiguracao;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -193,35 +199,39 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 		return object;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static List<SrDisponibilidade> buscarTodos(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
-		return em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni = :hisIdIni AND d.orgao IN (:orgaos) AND d.hisDtFim is null ")
-				.setParameter("hisIdIni", itemConfiguracao.getHisIdIni())
-				.setParameter("orgaos", orgaos)
-				.getResultList();
+	public static Map<String, SrDisponibilidade> buscarTodos(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
+//		return em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni = :hisIdIni AND d.orgao IN (:orgaos) AND d.hisDtFim is null ")
+//				.setParameter("hisIdIni", itemConfiguracao.getHisIdIni())
+//				.setParameter("orgaos", orgaos)
+//				.getResultList();
+		
+		return DisponibilidadesPorOrgaoCacheHolder.get().buscarTodos(itemConfiguracao, orgaos);
 	}
 	
 	public static SrDisponibilidade buscarPara(SrItemConfiguracao itemConfiguracao, CpOrgaoUsuario orgao) {
-		try {
-			return (SrDisponibilidade) em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni = :hisIdIni AND d.orgao = :orgao AND d.hisDtFim is null ")
-						.setParameter("hisIdIni", itemConfiguracao.getHisIdIni())
-						.setParameter("orgao", orgao)
-						.getSingleResult();
-		} catch (NoResultException nre) {
-			return null;
-		}
+//		try {
+//			return (SrDisponibilidade) em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni = :hisIdIni AND d.orgao = :orgao AND d.hisDtFim is null ")
+//						.setParameter("hisIdIni", itemConfiguracao.getHisIdIni())
+//						.setParameter("orgao", orgao)
+//						.getSingleResult();
+//		} catch (NoResultException nre) {
+//			return null;
+//		}
+		return DisponibilidadesPorOrgaoCacheHolder.get().buscar(itemConfiguracao, orgao);
 	}
 	
-	@Override
-	public void salvar() throws Exception {
-		super.salvar();
-		this.configurarAtualizacaoDisponibilidades(itemConfiguracao, Arrays.asList(orgao));
+	public void salvar(PaginaItemConfiguracao pagina) throws Exception {
+		this.salvar();
+		
+		pagina.buscarItens(Arrays.asList(orgao));
+		configurarAtualizacaoDisponibilidades(itemConfiguracao, Arrays.asList(orgao));
+		pagina.invalidarCache();
 	}
 
 	private void configurarAtualizacaoDisponibilidades(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
 		this.disponibilidadesAtualizadas.addAll(itemConfiguracao.criarDisponibilidadesJSON(itemConfiguracao, orgaos));
 		
-		for (SrItemConfiguracao filho : itemConfiguracao.filhoSet) {
+		for (SrItemConfiguracao filho : itemConfiguracao.getFilhoSet()) {
 			if(filho.getHisDtFim() == null) {
 				configurarAtualizacaoDisponibilidades(filho, orgaos);
 			}
@@ -287,5 +297,33 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 		clone.setMensagem(disponibilidadePai.getMensagem());
 		
 		return clone;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static DisponibilidadesPorOrgaoCache agruparDisponibilidades(
+			List<SrItemConfiguracao> itensConfiguracao,
+			List<CpOrgaoUsuario> orgaos) {
+		
+		return new DisponibilidadesPorOrgaoCache (
+				em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni IN (:hisIdInis) AND d.orgao IN (:orgaos) AND d.hisDtFim is null ")
+				.setParameter("hisIdInis", obterIds(itensConfiguracao))
+				.setParameter("orgaos", orgaos)
+				.getResultList()
+			);
+	}
+
+	private static Set<Long> obterIds(List<SrItemConfiguracao> itensConfiguracao) {
+		Set<Long> ids = new HashSet<Long>();
+		
+		for (SrItemConfiguracao itemConfiguracao : itensConfiguracao) {
+			ids.add(itemConfiguracao.getHisIdIni());
+			
+			SrItemConfiguracao pai = itemConfiguracao.getPai();
+			while (pai != null) {
+				ids.add(pai.getHisIdIni());
+				pai = pai.getPai();
+			}
+		}
+		return ids;
 	}
 }

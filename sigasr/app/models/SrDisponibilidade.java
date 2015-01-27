@@ -227,37 +227,7 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 			}
 		}
 	}
-
-//	private SrDisponibilidade encontraDisponibilidadePrioritariaNosPais(SrItemConfiguracao itemConfiguracao, SrDisponibilidade disponibilidade) {
-//		/**
-//		 * Se a disponibilidade atual eh nenhuma, vai ateh o pai
-//		 */
-//		if (disponibilidade.isNenhuma()) {
-//			/**
-//			 * Se existe o pai para a configuracao atual
-//			 */
-//			if (itemConfiguracao.pai != null) {
-//				/**
-//				 * Busca a disponibilidade para o pai
-//				 */
-//				SrDisponibilidade disponibilidadePai = SrDisponibilidade.buscarPara(itemConfiguracao.pai, disponibilidade.orgao);
-//				/**
-//				 * Se existe a disponibilidade para o pai, tenta encontrar uma disponibilidade prioritaria do que essa.
-//				 */
-//				if (disponibilidadePai != null) {
-//					return encontraDisponibilidadePrioritariaNosPais(itemConfiguracao.pai, disponibilidadePai);
-//				}
-//				/**
-//				 * Caso contrario, tenta encontrar uma prioritaria com a atual
-//				 */
-//				return encontraDisponibilidadePrioritariaNosPais(itemConfiguracao.pai, disponibilidade);
-//			} else {
-//				return new SrDisponibilidade(disponibilidade.itemConfiguracao, orgao);
-//			}
-//		}
-//		return disponibilidade;
-//	}
-
+	
 	public boolean isNenhuma() {
 		return SrTipoDisponibilidade.NENHUM.equals(tipo);
 	}

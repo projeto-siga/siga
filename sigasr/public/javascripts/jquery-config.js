@@ -12,9 +12,11 @@ var objBlock = { css: {
 }, message: '<h2 style="color : #fff;"> Carregando... </h2>' };
 
 $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
-	jQuery.blockUI(objBlock);
-	
-	jqXHR.complete(function() {
-		jQuery.unblockUI();
-	});
+	if(originalOptions.blockUI == undefined || originalOptions.blockUI == true) {
+		jQuery.blockUI(objBlock);
+		
+		jqXHR.complete(function() {
+			jQuery.unblockUI();
+		});
+	}
 });

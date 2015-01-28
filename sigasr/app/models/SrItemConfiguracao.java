@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -484,16 +484,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	}
 	
 	public SrItemConfiguracao getPai() {
-		String sigla = getSiglaSemZeros();
-		sigla = sigla.substring(0, sigla.length() - 1);
-		if (sigla.lastIndexOf(".") == -1)
-			return null;
-		sigla = sigla.substring(0, sigla.lastIndexOf("."));
-		for (int i = 0; i < 3 - (getNivel() - 1); i++) {
-			sigla += ".00";
-		}
-		return SrItemConfiguracao.find(
-				"byHisDtFimIsNullAndSiglaItemConfiguracao", sigla).first();
+		return pai;
 	}
 	
 	/**
@@ -598,11 +589,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	
 	public Map<String, SrDisponibilidade> buscarDisponibilidadesPorOrgao(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
 		if(itemConfiguracao != null) {
-			Map<String, SrDisponibilidade> disponibilidadesPorOrgao = new HashMap<String, SrDisponibilidade>();
-			for (SrDisponibilidade disponibilidade : SrDisponibilidade.buscarTodos(itemConfiguracao, orgaos)) {
-				disponibilidadesPorOrgao.put(disponibilidade.getOrgao().getSigla(), disponibilidade);
-			}
-			return disponibilidadesPorOrgao;
+			return SrDisponibilidade.buscarTodos(itemConfiguracao, orgaos);
 		}
 		return new HashMap<String, SrDisponibilidade>();
 	}
@@ -674,5 +661,9 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 			array.add(disponibilidade.toJsonObject());
 		}
 		return array;
+	}
+	
+	public List<SrItemConfiguracao> getFilhoSet() {
+		return filhoSet;
 	}
 }

@@ -36,7 +36,7 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Itens de Configuração</h2>
+		<h2>Disponibilidades de Itens de Configuração</h2>
 		
 		<div class="gt-content-box dataTables_div">
 			<table id="itens_configuracao_table" border="0" class="gt-table display"></table>
@@ -178,6 +178,9 @@
 		}
 
 		this.alterarDisponibilidade = function(sigla, hisIdIni) {
+			if(this.validator) {
+				this.validator.resetForm();
+			}
 			this.esconderValidacaoHorario();
 			
 			$('#disponibilidadeItem_dialog').dialog('open');
@@ -291,8 +294,10 @@
 				span.append(novaImg);
 
 				var itemConfiguracaoSelecionado = me.buscarItem(atualizacao.hisIdIniItemConfiguracao);
-				var indice = me.buscarIndiceDisponibilidade(itemConfiguracaoSelecionado, atualizacao.siglaOrgao);
-				itemConfiguracaoSelecionado.disponibilidades[indice] = atualizacao;
+				if(itemConfiguracaoSelecionado) {
+					var indice = me.buscarIndiceDisponibilidade(itemConfiguracaoSelecionado, atualizacao.siglaOrgao);
+					itemConfiguracaoSelecionado.disponibilidades[indice] = atualizacao;
+				}
 			});
 		}
 		
@@ -313,6 +318,19 @@
 				delete disponibilidade.dataHoraTermino;
 			}
 			return disponibilidade;
+		}
+
+		this.post = function(opts) {
+			this.removerErros();
+			opts.obj.pagina = this.pagina;
+			
+			return $.ajax({
+		    	type: "POST",
+		    	url: opts.url,
+		    	data: jQuery.param(opts.obj),
+		    	dataType: "text",
+		    	error: BaseService.prototype.errorHandler
+		   	});
 		}
 		
 		this.iniciarDataTable = function() {
@@ -345,6 +363,7 @@
 				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
+				"aLengthMenu": [5, 10, 15, 20],
 				"fnServerData" : function(sSource, aoData, fnCallback, oSettings) {
 					var order = me.orderBy[oSettings.aaSorting[0][0]],
 						orderDirection = oSettings.aaSorting[0][1];
@@ -359,6 +378,7 @@
 				        dataType: 'json',
 				        url: sSource,
 				        accepts: "application/json",
+				        blockUI : false,
 				        success: function (pagina) {
 					        var config = {};
 					        config.aaData = me.jsonToRowData(pagina);
@@ -420,7 +440,7 @@
 			        },
 			        "A data/hora de início deve ser menor que a data/hora término"
 			);
-			jQuery("form").validate();
+			this.validator = jQuery("form").validate();
 			$("#dataHoraInicio").rules("add", {dataHora: ""});
 			$("#dataHoraFim").rules("add", {dataHora: ""});
 			$("#dataHoraInicio").rules("add", {periodo: ""});

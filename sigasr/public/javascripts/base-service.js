@@ -3,6 +3,7 @@
  */
 function Formulario(form) {
 	this.populateFromJson = function(obj) {
+		this.reset();
 		form.find('input[type=hidden]').val(''); // WA
 		
 		prepareObjectToForm(obj);
@@ -14,6 +15,13 @@ function Formulario(form) {
 	
 	this.toJson = function() {
 		return form.serializeJSON();
+	}
+	
+	this.reset = function() {
+		if(form.resetForm) {
+			form.resetForm();
+		}
+		form.find('.error').removeClass('error'); // Ao entrar no cadastro, remove classe de erro
 	}
 }
 
@@ -343,7 +351,7 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	var idAntigo = this.getId(obj),
 		idNovo = this.getId(objSalvo),
 		tr = null;
-
+	
 	// Se foi uma edicao
 	if(idAntigo) {
 		tr = this.opts.tabelaRegistros.find("tr[data-json-id=" + idAntigo + "]");
@@ -363,12 +371,12 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 				row = this.opts.dataTable
 				.api()
 				.row
-				.add(data),
-				indice = this.indiceAcoes(data);
+				.add(data);
 			
 			row.draw();
 			tr = $(row.node());
 			
+			var indice = this.indiceAcoes(tr);
 			if(indice > -1) {
 				tr.find('td:nth(' + indice + ')').addClass('acoes');
 			}
@@ -396,9 +404,11 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	return tr;
 }
 
-BaseService.prototype.indiceAcoes = function(data) {
-	for(var i = 0; i < data.length; i++) {
-		if(data[i] == 'COLUNA_ACOES') 
+BaseService.prototype.indiceAcoes = function(tr) {
+	var tds = tr.find('td');
+	for(var i = 0; i < tds.length; i++) {
+		var td = $(tds[i]);
+		if(td.html().trim() == 'COLUNA_ACOES') 
 			return i;
 	}
 	return -1;

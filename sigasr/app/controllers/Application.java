@@ -1276,8 +1276,8 @@ public class Application extends SigaApplication {
 				.toJson();
 	}
 	
-	public static String gravarDisponibilidade(SrDisponibilidade disponibilidade) throws Exception {
-		disponibilidade.salvar();
+	public static String gravarDisponibilidade(SrDisponibilidade disponibilidade, PaginaItemConfiguracao pagina) throws Exception {
+		disponibilidade.salvar(pagina);
 		return disponibilidade.toJsonObject().toString();
 	}
 	

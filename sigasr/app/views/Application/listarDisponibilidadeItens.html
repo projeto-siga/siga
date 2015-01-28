@@ -322,7 +322,9 @@
 
 		this.post = function(opts) {
 			this.removerErros();
-			opts.obj.pagina = this.pagina;
+			opts.obj.pagina = Object.create(this.pagina);
+			opts.obj.pagina.registros = {};
+			opts.obj.pagina.orgaos = {};
 			
 			return $.ajax({
 		    	type: "POST",
@@ -363,7 +365,6 @@
 				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
-				"aLengthMenu": [5, 10, 15, 20],
 				"fnServerData" : function(sSource, aoData, fnCallback, oSettings) {
 					var order = me.orderBy[oSettings.aaSorting[0][0]],
 						orderDirection = oSettings.aaSorting[0][1];

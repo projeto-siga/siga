@@ -465,6 +465,8 @@ public class ExDocumentoController extends ExController {
 		result.include("lotacaoDestinatarioSel", exDocumentoDTO.getLotacaoDestinatarioSel());
 		result.include("orgaoExternoDestinatarioSel", exDocumentoDTO.getOrgaoExternoDestinatarioSel());
 		result.include("classificacaoSel", exDocumentoDTO.getClassificacaoSel());
+		result.include("tipoDestinatario", exDocumentoDTO.getTipoDestinatario());
+		
 		return exDocumentoDTO;
 	}
 	

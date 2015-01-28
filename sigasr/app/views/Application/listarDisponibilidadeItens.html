@@ -106,6 +106,7 @@
 			<div class="gt-form-row">
 				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="disponibilidadeService.gravar()"/>
 				<a class="gt-btn-medium gt-btn-left" onclick="disponibilidadeService.cancelarGravacao()">Cancelar</a>
+				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="disponibilidadeService.aplicar()"/>
 			</div>
 		</form>
 	</div>
@@ -376,7 +377,8 @@
 		    		sSource += '&pagina.count=' + oSettings.iTotalRecords;
 		    		sSource += '&pagina.orderBy=' + order;
 		    		sSource += '&pagina.direcaoOrdenacao=' + orderDirection;
-		    		
+		    		sSource += '&pagina.tituloOuCodigo=' + oSettings.oPreviousSearch.sSearch;
+
 				    oSettings.jqXHR = $.ajax({
 				        dataType: 'json',
 				        url: sSource,

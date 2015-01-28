@@ -200,23 +200,10 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 	}
 	
 	public static Map<String, SrDisponibilidade> buscarTodos(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
-//		return em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni = :hisIdIni AND d.orgao IN (:orgaos) AND d.hisDtFim is null ")
-//				.setParameter("hisIdIni", itemConfiguracao.getHisIdIni())
-//				.setParameter("orgaos", orgaos)
-//				.getResultList();
-		
 		return DisponibilidadesPorOrgaoCacheHolder.get().buscarTodos(itemConfiguracao, orgaos);
 	}
 	
 	public static SrDisponibilidade buscarPara(SrItemConfiguracao itemConfiguracao, CpOrgaoUsuario orgao) {
-//		try {
-//			return (SrDisponibilidade) em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni = :hisIdIni AND d.orgao = :orgao AND d.hisDtFim is null ")
-//						.setParameter("hisIdIni", itemConfiguracao.getHisIdIni())
-//						.setParameter("orgao", orgao)
-//						.getSingleResult();
-//		} catch (NoResultException nre) {
-//			return null;
-//		}
 		return DisponibilidadesPorOrgaoCacheHolder.get().buscar(itemConfiguracao, orgao);
 	}
 	
@@ -303,6 +290,10 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 	public static DisponibilidadesPorOrgaoCache agruparDisponibilidades(
 			List<SrItemConfiguracao> itensConfiguracao,
 			List<CpOrgaoUsuario> orgaos) {
+		
+		if(itensConfiguracao.isEmpty()) {
+			return new DisponibilidadesPorOrgaoCache();
+		}
 		
 		return new DisponibilidadesPorOrgaoCache (
 				em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni IN (:hisIdInis) AND d.orgao IN (:orgaos) AND d.hisDtFim is null ")

@@ -19,6 +19,10 @@ public class DisponibilidadesPorOrgaoCache {
 		}
 	}
 	
+	public DisponibilidadesPorOrgaoCache() {
+		this.disponibilidadesAgrupadas = new HashMap<DisponibilidadesPorOrgaoCache.DisponibilidadesPorOrgaoKey, SrDisponibilidade>();
+	}
+
 	public SrDisponibilidade buscar(SrItemConfiguracao itemConfiguracao, CpOrgaoUsuario orgao) {
 		return disponibilidadesAgrupadas.get(new DisponibilidadesPorOrgaoKey(itemConfiguracao, orgao));
 	}

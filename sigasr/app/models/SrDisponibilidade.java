@@ -73,10 +73,10 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 	@Column(name = "DT_HR_FIM")
 	private Date dataHoraTermino;
 
-	@Column(name = "MSG", length = 50)
+	@Column(name = "MSG")
 	private String mensagem;
 
-	@Column(name = "DET_TECNICO", length = 50)
+	@Column(name = "DET_TECNICO")
 	private String detalhamentoTecnico;
 	
 	@Transient

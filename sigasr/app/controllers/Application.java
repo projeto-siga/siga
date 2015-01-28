@@ -862,11 +862,10 @@ public class Application extends SigaApplication {
 		listarDesignacao(Boolean.TRUE);
 	}
 
-	public static String gravarDesignacao(SrConfiguracao designacao)
-			throws Exception {
+	public static String gravarDesignacao(SrConfiguracao designacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		designacao.salvarComoDesignacao();
-		
+		designacao.refresh();
 		return designacao.getSrConfiguracaoJson();
 	}
 

@@ -5,8 +5,7 @@ function Formulario(form) {
 	this.populateFromJson = function(obj) {
 		this.reset();
 		form.find('input[type=hidden]').val(''); // WA
-		
-		prepareObjectToForm(obj);
+		this.prepareObjectToForm(obj);
 		
 		form.populate(obj, {
 			resetForm:true
@@ -23,54 +22,54 @@ function Formulario(form) {
 		}
 		form.find('.error').removeClass('error'); // Ao entrar no cadastro, remove classe de erro
 	}
-}
-
-/**
- * Faz a preparação do objeto para conter os campos necessários para popular os componentes do TRF. 
- */
-function prepareObjectToForm(obj) {
-	for (var x in obj) {
-	    if (typeof obj[x] == 'object') {
-	    	var component = document.getElementsByName(x)[0],	    		
-	    		className = component != null ? component.className : null,
-	        	objeto = obj[x];
-	        
-	    	// Caso o atributo seja um objeto, verifica qual seu tipo e preenche os valores necessários
-	        if (className && objeto) {
-	        	if (className == 'selecao') {
-	        		prepareForSelecaoComponent(x, obj, objeto);
-	        	}
-		        else if (className == 'pessoaLotaSelecao') {
-		        	var combo = component.closestPreviousElement("select");
-		        	prepareForSelecaoComponent(x, obj, objeto);
-		        	obj[combo.id] = obj[x].tipo;
+	
+	/**
+	 * Faz a preparação do objeto para conter os campos necessários para popular os componentes do TRF. 
+	 */
+	this.prepareObjectToForm = function(obj) {
+		for (var x in obj) {
+		    if (typeof obj[x] == 'object') {
+		    	var component = document.getElementsByName(x)[0],	    		
+		    		className = component != null ? component.className : null,
+		        	objeto = obj[x];
+		    	
+		    	// Caso o atributo seja um objeto, verifica qual seu tipo e preenche os valores necessários
+		        if (className && objeto) {
+		        	if (className == 'selecao') {
+		        		this.prepareForSelecaoComponent(x, obj, objeto);
+		        	}
+			        else if (className == 'pessoaLotaSelecao') {
+			        	var combo = component.closestPreviousElement("select");
+			        	this.prepareForSelecaoComponent(x, obj, objeto);
+			        	obj[combo.id] = obj[x].tipo;
+			        }
+			        else if (className == 'lotaSelecao')
+			        	this.prepareForSelecaoComponent(x, obj, objeto);
+			        else if (className == 'pessoaLotaFuncCargoSelecao') {
+			        	var select = jQuery(component).parent().parent().parent().find('select')[0];
+			        	obj[select.id] = objeto.tipo;
+			        	select.onchange();
+			        	this.prepareForSelecaoComponent(x, obj, objeto);
+			        }
+			        else if (className == 'select-siga') {
+			        	obj[x] = objeto ? objeto.id : '';
+			        }
 		        }
-		        else if (className == 'lotaSelecao')
-		        	prepareForSelecaoComponent(x, obj, objeto);
-		        else if (className == 'pessoaLotaFuncCargoSelecao') {
-		        	var select = jQuery(component).parent().parent().parent().find('select')[0];
-		        	obj[select.id] = objeto.tipo;
-		        	select.onchange();
-		        	prepareForSelecaoComponent(x, obj, objeto);
-		        }
-		        	
-		        else if (className == 'select-siga') {
-		        	obj[x] = objeto ? objeto.id : '';
-		        }
-	        }
-	    }
+		    }
+		}
+	}
+	
+	/**
+	 * Cria os atributos esperados pelo componente selecao.html
+	 */
+	this.prepareForSelecaoComponent = function(atributo, obj, objeto) {
+		obj[atributo] = objeto ? objeto.id : '';
+		obj[atributo+"_sigla"] = objeto ? objeto.sigla : '';
+		obj[atributo+"_descricao"] = objeto ? objeto.descricao : '';
+		obj[atributo+"Span"] = objeto ? objeto.descricao : '';
 	}
 }
 
-/**
- * Cria os atributos esperados pelo componente selecao.html
- */
-function prepareForSelecaoComponent(atributo, obj, objeto) {
-	obj[atributo] = objeto ? objeto.id : '';
-	obj[atributo+"_sigla"] = objeto ? objeto.sigla : '';
-	obj[atributo+"_descricao"] = objeto ? objeto.descricao : '';
-	obj[atributo+"Span"] = objeto ? objeto.descricao : '';
-}
 
 /**
  * Utilitatio para desenhar o HTML correto do botao de desativar/reativar
@@ -131,7 +130,6 @@ function DesativarReativar(service) {
 function BaseService(opts) {
 	this.opts = opts;
 	this.formularioHelper = new Formulario(opts.formCadastro);
-	
 	this.opts.validatorForm = opts.formCadastro.validate({
 		onfocusout: false
 	});
@@ -402,6 +400,11 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	}
 	
 	return tr;
+}
+
+BaseService.prototype.row = function(obj) {
+	var id = this.getId(obj);
+	return this.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
 }
 
 BaseService.prototype.indiceAcoes = function(tr) {

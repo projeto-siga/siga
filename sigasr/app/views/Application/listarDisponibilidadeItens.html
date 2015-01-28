@@ -18,8 +18,11 @@
 	}
 	.orgao {
 		width: 15px;
+		height: 15px;
 		display: inline-block;
 		padding-right: 5px;
+		line-height: 0px;
+		vertical-align: middle !important;
 	}
 	.item-pai {
 		padding-left: 0em !important;
@@ -50,7 +53,7 @@
 <div id="templateDisponibilidadeItem" style="display:none">
 	{for orgao in orgaos}
 		<div class='orgao' data-sigla-orgao="!{orgao.sigla}" data-item-configuracao-id="!{itemConfiguracao.id}" onclick="disponibilidadeService.alterarDisponibilidade('!{orgao.sigla}', !{itemConfiguracao.hisIdIni})">
-			<img src="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}">
+			<img src="" src-original="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}">
 			<img>
 		</div>
   	{/for}
@@ -394,6 +397,13 @@
 
 					        me.pagina = pagina;
 				            fnCallback(config);
+
+				            // WA para evitar requisicao para URL errada da imagem
+				            $('img[src-original]').each(function() { 
+					            var me = $(this);
+					            me.attr('src',me.attr('src-original'));
+					            me.removeAttr('src-original');
+				            });
 				        }
 				    });
 				},

@@ -960,7 +960,7 @@ function limpaCampos()
 										<siga:selecao titulo="Classificação:" propriedade="classificacao" modulo="sigaex"/>
 										<tr>
 											<td>
-												Descrição
+												Descrição:
 											</td>
 											<td>
 												<input type="text" name="descrDocumento" value="${descrDocumento}" size="80" />

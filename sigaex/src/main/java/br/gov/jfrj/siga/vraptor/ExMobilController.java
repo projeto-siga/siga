@@ -1273,7 +1273,7 @@ public class ExMobilController extends
 
 	public Map<Integer, String> getListaOrdem() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(0, "Data do Documento");
+		map.put(0, "Data do documento");
 		map.put(1, "Data da situação");
 		map.put(2, "Ano e número");
 		map.put(3, "Data de finalização");

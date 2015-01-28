@@ -26,12 +26,8 @@ var detalheHelper = function($table, formatFunction, dataTable) {
 					// Se alguma linha já está com os detalhes abertos, fecha-o
 					if ( detail.is(':visible') ) {
 			    		detail.hide();
+			    		$(detail).remove();
 			    		tr.removeClass('shown');
-			    	}
-			    	else {
-			    		// Abre a linha
-			    		detail.show();
-			    		tr.addClass('shown');
 			    	}
 				}
 		    });

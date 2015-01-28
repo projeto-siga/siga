@@ -92,9 +92,9 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	    	elements.each(function() {
 	      		var tr = jQuery(this).closest('tr'),
 	      			detail = tr.next('tr.detail');
-	    		
-	    		detail.hide();
-	    		tr.removeClass('shown');
+	      		
+	      		detail.remove();
+				tr.removeClass('shown');
 	       	});
 	    }
 	}

@@ -184,7 +184,7 @@ BaseService.prototype.desativar = function(event, id) {
 		row = this.opts.dataTable.api().row(tr).data(),
 		service = this;
 	
-	$.ajax({
+	return $.ajax({
 	     type: "POST",
 	     url: this.opts.urlDesativar,
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
@@ -214,7 +214,7 @@ BaseService.prototype.reativar = function(event, id) {
 		row = this.opts.dataTable.api().row(tr).data(),
 		service = this;
 
-	$.ajax({
+	return $.ajax({
 	     type: "POST",
 	     url: this.opts.urlReativar,
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},

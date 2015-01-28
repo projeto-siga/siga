@@ -9,7 +9,7 @@
 		#{/else}
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarAssociacao()} #{if
+			#{form @Application.gravarAssociacao(), enctype:'multipart/form-data'} #{if
 			associacao?.idConfiguracao} <input type="hidden"
 				name="associacao.idConfiguracao"
 				value="${associacao.idConfiguracao}"> #{/if}
@@ -25,9 +25,9 @@
 				nome:'associacao.acaoUnitaria', value:associacao.acaoUnitaria?.atual /}
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Tipo de atributo</label> #{select 'associacao.tipoAtributo',
-				items:models.SrTipoAtributo.listar(), labelProperty:'nomeTipoAtributo',
-				value:associacao.tipoAtributo?.atual?.idTipoAtributo, valueProperty:'idTipoAtributo'}
+				<label>Tipo de atributo</label> #{select 'associacao.atributo',
+				items:models.SrAtributo.listar(false), labelProperty:'nomeAtributo',
+				value:associacao.atributo?.atual?.idAtributo, valueProperty:'idAtributo'}
 				#{/select}
 				
 			</div>
@@ -37,17 +37,11 @@
 			</div>
 			<div class="gt-form-row">
 				#{if associacao.hisDtFim}
-					<input type="submit" value="Reativar"
-						class="gt-btn-medium gt-btn-left" />
 				#{/if}
 				#{else}
 					<input type="submit" value="Gravar"
 						class="gt-btn-medium gt-btn-left" />
 					<a href="@{Application.listarAssociacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-					#{if associacao?.idConfiguracao} <input type="button" value="Desativar"
-						class="gt-btn-medium gt-btn-left"
-						onclick="location.href='@{Application.desativarAssociacao()}?id=${associacao.idConfiguracao}'" />
-				#{/if}
 				#{/else}
 			</div>
 			#{/form}

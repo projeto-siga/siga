@@ -1,6 +1,29 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
-
 <siga:pagina titulo="Edição de Tópico de Informação">
+
+<script>			
+function postback(){
+	var frm = document.getElementById('frm');
+	frm.action = '@{Application.editar}';
+	frm.submit();
+}
+function ocultaGrupo(){
+	if ($("#informacaoVisualizacao").val() == 7
+			|| $("#informacaoEdicao").val() == 7){
+		$("#informacaoGrupo").show();
+	} else {
+		$("#informacaoGrupo").hide();
+		$("#informacaogrupo").val("");
+		$("#informacaogrupo_sigla").val("");
+		$("#informacaogrupo_descricao").val("");
+		$("#informacaogrupoSpan").text("");
+	}
+}
+$(document).ready(function() {
+	ocultaGrupo();
+	//$("#informacaoGrupo").left($("#informacaoVisualizacao").left());
+});
+</script>
 
 <div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
@@ -13,7 +36,6 @@
 				<c:if test="${informacao.id != 0}">
 				</c:if>
 				<input type="hidden" id="infoId" name="informacao.id" value="${informacao.id}" />
-				
 				<input type="hidden" name="origem" value="${origem}" /> 
 				<input type="hidden" id="siglaId" name="sigla" value="${informacao.sigla}" /> 
 				<div class="gt-form-row gt-width-100">
@@ -22,12 +44,19 @@
 					</div>
 					<c:if test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<siga:select label="Visualizacão" name="visualizacao.id" list="acessos" listKey="id" listValue="nome"/>
+						<siga:select label="Visualizacão" name="visualizacao.id" list="acessos" listKey="id" listValue="nome"
+							onchange="javascript:ocultaGrupo();"/>
 					</div> 
 					<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-						<siga:select label="Edicão" name="edicao.id" list="acessos" listKey="id" listValue="nome"/>
+						<siga:select label="Edicão" name="edicao.id" list="acessos" listKey="id" listValue="nome"
+							onchange="javascript:ocultaGrupo();"/>
 					</div>
 					</c:if>
+				</div>
+				<div class="gt-form-row gt-width-100" id="informacaoGrupo" style="display: none">
+					<label>Grupo</label> #{selecao tipo:'perfil', prefixo:'gi',
+					nome:'informacao.grupo', value:informacao.grupo /}<span style="color: red">#{error
+						'informacao.grupo' /}</span>
 				</div>
 
 				<div class="gt-form-row gt-width-100">
@@ -45,7 +74,10 @@
 				<div class="gt-form-row gt-width-100">
 					<label>Classificação</label>
 					<c:if test="${not empty classificacao}">
-						<textarea name="classificacao" class="gt-form-text" readonly>${classificacao}</textarea> 
+						<c:if test="${not editarClassificacao}">
+							<c:set var="somenteLeitura" value="readonly" />
+						</c:if>
+						<textarea name="classificacao" class="gt-form-text" ${somenteLeitura}>${classificacao}</textarea> 
 					</c:if>
 					<c:if test="${empty classificacao}">
 						<p>Esse conhecimento ainda não possui uma classificação</p>
@@ -226,7 +258,10 @@
 	//CKEDITOR.config.autoGrow_maxHeight = 400;
 	CKEDITOR.config.removePlugins = 'elementspath'; 
 	CKEDITOR.config.image_previewText = ' ';
-	CKEDITOR.replace( 'conteudo', {
+	CKEDITOR.config.height = 270;
+	CKEDITOR.config.removeDialogTabs = 'link:advanced;link:upload;image:advanced;image:Link';
+	CKEDITOR.replace('conteudo', {
+		filebrowserUploadUrl: '@{Application.gravarArquivo}?origem=editar',
 		toolbar: [
 		    	{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
 		    	{ name: 'editing', groups: [ 'find', 'selection'], items: [ 'Find', 'Replace', '-', 'SelectAll'] },

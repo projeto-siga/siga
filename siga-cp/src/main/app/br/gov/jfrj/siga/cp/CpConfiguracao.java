@@ -34,6 +34,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -64,6 +65,17 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 	private static final long serialVersionUID = 3624557793773660738L;
 
 	public CpConfiguracao() {
+	}
+	
+	@Transient
+	private boolean buscarPorPerfis = false;
+
+	public boolean isBuscarPorPerfis() {
+		return buscarPorPerfis;
+	}
+
+	public void setBuscarPorPerfis(boolean buscarPorPerfis) {
+		this.buscarPorPerfis = buscarPorPerfis;
 	}
 
 	public boolean isEspecifica(CpConfiguracao filtro) {

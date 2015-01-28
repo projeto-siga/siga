@@ -65,17 +65,23 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [2],
-				"visible": false,
-				"searchable": false
+				"targets" : [2],
+				"searchable": false,
+				"sortable" : false
 			}],
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (aData[2] == 'false')
-					$('td', nRow).addClass('item-desativado');
-			},
 			"iDisplayLength": 25
 		});
 	});
+
+	function desativarLista(event, idLista) {
+		event.stopPropagation();
+		window.location = '@{Application.desativarLista()}?' + queryDesativarReativar(idLista, QueryString.mostrarDesativados);
+	}
+
+	function reativarLista(event, idLista) {
+		event.stopPropagation();
+		window.location = '@{Application.reativarLista()}?'  + queryDesativarReativar(idLista, QueryString.mostrarDesativados);
+	}
 </script>
 
 <div class="gt-bd clearfix">
@@ -91,17 +97,30 @@
 					<tr>
 						<th>Nome</th>
 						<th>Lotação</th>
-						<th>Item Ativado?</th>
+						<th>Ações</th>
 					</tr>
 				</thead>
 
 				<tbody>
 					#{list items:lista, as:'lista'}
 					<tr>
-						<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'"
-						style="cursor: pointer;"> ${lista.nomeLista}</td>
+						#{if lista.podeConsultar(lotaTitular, cadastrante)}
+							<td onclick="javascript:window.location='@{Application.exibirLista(lista.idLista)}'" style="cursor: pointer;">${lista.nomeLista}</td>
+						#{/if}
+						#{else}							
+							<td>${lista.nomeLista}</td>
+						#{/else}
+						
 						<td>${lista.lotaCadastrante.nomeLotacao}</td>
-						<td>${lista.isAtivo()}</td>
+						<td>
+							#{if lista.podeEditar(lotaTitular, cadastrante)}
+							#{desativarReativar id:lista.idLista, 
+												onReativar:'reativarLista',
+												onDesativar :'desativarLista',
+												isAtivo:lista.isAtivo() }
+							#{/desativarReativar}
+							#{/if}
+						</td>
 					</tr>
 					</a> #{/list}
 				</tbody>
@@ -109,10 +128,10 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-		<a href="@{Application.editarLista}" class="gt-btn-medium gt-btn-left">Cadastrar</a>
-		<div class="gt-table-buttons">
+			<a href="@{Application.editarLista}" class="gt-btn-medium gt-btn-left">Cadastrar</a>
+			<div class="gt-table-buttons">
+			</div>
 		</div>
-</div>
 
 <br />
 <br />

@@ -54,10 +54,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -76,6 +74,7 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.util.SetUtils;
@@ -145,7 +144,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.apache.axis.encoding.Base64;
 
 public class ExBL extends CpBL {
 	private final String SHA1 = "1.3.14.3.2.26";
@@ -697,8 +696,7 @@ public class ExBL extends CpBL {
 				} else {
 
 					Long mDje = null;
-					ExMovimentacao movDje = null;
-
+					ExMovimentacao movDje = null;					
 					for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 						if (mov.isCancelada())
 							continue;
@@ -710,6 +708,7 @@ public class ExBL extends CpBL {
 									mov.getCadastrante(),
 									mov.getLotaCadastrante());
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+							DpLotacao lotaPerfil = null;
 							switch ((int) (long) mov.getExPapel().getIdPapel()) {
 							case (int) ExPapel.PAPEL_GESTOR:
 								m = CpMarcador.MARCADOR_COMO_GESTOR;
@@ -719,10 +718,15 @@ public class ExBL extends CpBL {
 								break;
 							}
 							if (m != null && !mob.doc().isEliminado()
-									&& !mob.doc().isArquivadoPermanente())
+									&& !mob.doc().isArquivadoPermanente()) {								
+								if (mov.getSubscritor() != null) /* perfil foi cadastrado para a pessoa */
+									lotaPerfil = null;
+								else
+									lotaPerfil = mov.getLotaSubscritor();
 								acrescentarMarca(set, mob, m,
-										mov.getDtIniMov(), mov.getSubscritor(),
-										mov.getLotaSubscritor());
+										mov.getDtIniMov(), mov.getSubscritor(), lotaPerfil);
+							}
+								
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
 							mDje = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
 							movDje = mov;
@@ -746,7 +750,9 @@ public class ExBL extends CpBL {
 									.getExMovimentacaoSet()) {
 								if ((movAss.getExTipoMovimentacao()
 										.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
-										.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+										.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO || movAss
+										.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA || movAss
+										.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 										&& movAss.getExMovimentacaoRef()
 												.getIdMov() == mov.getIdMov()) {
 									m = null;
@@ -781,6 +787,18 @@ public class ExBL extends CpBL {
 											mov.getDtIniMov(),
 											mov.getSubscritor(), null);
 							}
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) {
+							boolean jaAutenticado = false;
+							for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
+								if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO || 
+										movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
+									jaAutenticado = true;
+									break;
+								}
+							}	
+							
+							if(!jaAutenticado)
+								acrescentarMarca(set, mob, CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA, mov.getDtIniMov(), mov.getSubscritor(), null);
 						}
 					}
 					if (mDje != null && !mob.doc().isEliminado()) {
@@ -858,7 +876,8 @@ public class ExBL extends CpBL {
 						&& mob.doc().isEletronico()) {
 					m = CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA;
 					for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
-						if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+						if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO ||
+								movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
 								&& movAss.getExMovimentacaoRef().getIdMov() == mov
 										.getIdMov()) {
 							m = mAnterior;
@@ -870,6 +889,7 @@ public class ExBL extends CpBL {
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
 					if (mob.doc().isAssinado()
@@ -898,7 +918,9 @@ public class ExBL extends CpBL {
 					 */
 					for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
 						if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
-								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO || movAss
+								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA || movAss
+								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 								&& movAss.getExMovimentacaoRef().getIdMov() == mov
 										.getIdMov()) {
 							m = mAnterior;
@@ -906,7 +928,15 @@ public class ExBL extends CpBL {
 						}
 					}
 				}
+				
+				if(t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
+					acrescentarMarca(set, mob, CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA, dt, mov.getSubscritor(), null);
+				}
 
+				if(t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) {
+						acrescentarMarca(set, mob, CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA, dt, mov.getSubscritor(), null);
+				}
+				
 				if (m != mAnterior) {
 					dt = mov.getDtIniMov();
 					mAnterior = m;
@@ -1996,7 +2026,7 @@ public class ExBL extends CpBL {
 
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
-			final Date dtMov, final byte[] pkcs7, final byte[] certificado)
+			final Date dtMov, final byte[] pkcs7, final byte[] certificado, long tpMovAssinatura)
 			throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
@@ -2118,6 +2148,10 @@ public class ExBL extends CpBL {
 							continue;
 						}
 					}
+				
+				if(!fValido && tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
+					fValido = true;
+				}
 			}
 
 			if (!fValido && lCPF != null) {
@@ -2141,6 +2175,10 @@ public class ExBL extends CpBL {
 							continue;
 						}
 					}
+				
+				if(!fValido && tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
+					fValido = true;
+				}
 			}
 
 			if (lMatricula == null && lCPF == null)
@@ -2163,7 +2201,7 @@ public class ExBL extends CpBL {
 				usuarioDoToken = cadastrante;
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
+					tpMovAssinatura,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					usuarioDoToken, null, null, null, null);
 
@@ -2220,6 +2258,236 @@ public class ExBL extends CpBL {
 
 		return s;
 	}
+
+	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc,
+			final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor, final DpPessoa titular)
+			throws Exception {
+		
+		DpPessoa subscritor = null;
+		boolean fValido = false;
+		
+		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
+			throw new AplicacaoException(
+					"Matrícula do Subscritor não foi informada.");
+
+		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
+			throw new AplicacaoException(
+					"Senha do Subscritor não foi informada.");
+
+		final String hashAtual = GeraMessageDigest.executaHash(
+				senhaSubscritor.getBytes(), "MD5");
+
+		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
+				matriculaSubscritor, true);
+		// se o usuário não existir
+		if (id == null)
+			throw new AplicacaoException("O usuário não está cadastrado.");
+		
+		subscritor = id.getDpPessoa().getPessoaAtual();
+
+		boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+		
+		if (!senhaValida) {
+			throw new AplicacaoException("Senha do subscritor inválida.");
+		}
+		
+		
+		boolean fPreviamenteAssinado = doc.isAssinado();
+
+		if (!doc.isFinalizado())
+			throw new AplicacaoException(
+					"Não é possível registrar assinatura de um documento não finalizado");
+
+		if (doc.isCancelado())
+			throw new AplicacaoException(
+					"Não é possível assinar um documento cancelado.");
+		
+		if (!getComp().podeAssinarComSenha(subscritor, subscritor.getLotacao(), doc.getMobilGeral()))
+			throw new AplicacaoException("Usuário não tem permissão de assinar documento com senha.");
+		
+		
+		// Verifica se a matrícula confere com o subscritor titular ou com um
+		// cossignatario
+		try {
+			if (subscritor != null) {
+				if (doc.getSubscritor() != null
+						&& subscritor.equivale(doc.getSubscritor())) {
+					fValido = true;
+				}
+				if (!fValido) {
+					fValido = (subscritor.equivale(doc.getCadastrante()))
+							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO);
+				}
+				if (!fValido)
+					for (ExMovimentacao m : doc.getMobilGeral()
+							.getExMovimentacaoSet()) {
+						if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+								&& m.getExMovimentacaoCanceladora() == null
+								&& subscritor.equivale(m.getSubscritor())) {
+							fValido = true;
+							continue;
+						}
+					}
+			}
+
+			if (fValido == false)
+				throw new AplicacaoException(
+						"Assinante não é subscritor nem cossignatario");
+		} catch (final Exception e) {
+			throw new AplicacaoException(
+					"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento",
+					0, e);
+		}
+		
+
+		String s = null;
+		try {
+			iniciarAlteracao();
+
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
+					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
+					subscritor, null, null, null, null);
+			
+			mov.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc);
+
+			// Verifica se o documento possui documento pai e faz a juntada
+			// automática.
+			if (doc.getExMobilPai() != null) {
+				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
+						subscritor, titular, mov);
+			}
+
+			if (!fPreviamenteAssinado && doc.isAssinado())
+				s = processarComandosEmTag(doc, "assinatura");
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
+		}
+
+		alimentaFilaIndexacao(doc, true);
+		return s;
+
+	}
+	
+	public void assinarMovimentacaoComSenha(DpPessoa cadastrante,
+			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
+			final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor,
+			long tpMovAssinatura) throws Exception {
+		
+        DpPessoa subscritor = null;
+    	boolean fValido = false;
+    	
+        if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
+			throw new AplicacaoException(
+					"Matrícula do Subscritor não foi informada.");
+
+		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
+			throw new AplicacaoException(
+					"Senha do Subscritor não foi informada.");
+        
+		final String hashAtual = GeraMessageDigest.executaHash(
+				senhaSubscritor.getBytes(), "MD5");
+
+		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
+				matriculaSubscritor, true);
+		// se o usuário não existir
+		if (id == null)
+			throw new AplicacaoException("O usuário não está cadastrado.");
+		
+		subscritor = id.getDpPessoa().getPessoaAtual();
+
+		boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+		
+		if (!senhaValida) {
+			throw new AplicacaoException("Senha do subscritor inválida.");
+		}		
+		
+		if (movAlvo != null) {
+			log.info("Assinando movimentacao: " + movAlvo.toString()
+					+ " Id da movimentação: " + movAlvo.getIdMov());
+		} else {
+			log.warn("A movimentacao a ser assinada nao pode ser nula");
+			throw new AplicacaoException(
+					"Não é possível assinar uma movimentação cancelada.");
+		}
+
+		if (movAlvo.isCancelada()) {
+			log.warn("A movimentacao a ser assinada está cancelada");
+			throw new AplicacaoException(
+					"Não é possível assinar uma movimentação cancelada.");
+		}
+		
+		
+		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA &&
+				!getComp().podeConferirCopiaMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
+			throw new AplicacaoException("Usuário não tem permissão de autenticar documento com senha.");
+		
+		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA &&
+				!getComp().podeAssinarMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
+			throw new AplicacaoException("Usuário não tem permissão de assinar com senha.");
+
+		
+		// Verifica se a matrícula confere com o subscritor do Despacho ou
+		// do
+		// desentranhamento
+		try {
+		
+			if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
+				|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+				|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
+				|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+
+				fValido = movAlvo.getSubscritor() != null
+							&& subscritor.equivale(movAlvo.getSubscritor());
+	
+				if (fValido == false
+						&& movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+					log.warn("Assinante não é subscritor do desentranhamento");
+					throw new AplicacaoException(
+						"Assinante não é subscritor do desentranhamento");
+				}
+
+				if (fValido == false) {
+					log.warn("Assinante não é subscritor do despacho");
+					throw new AplicacaoException(
+							"Assinante não é subscritor do despacho");
+				}
+			}
+	
+			log.info("Iniciando alteração da movimentação "
+				+ movAlvo.toString() + " Id da movimentação: "
+				+ movAlvo.getIdMov());
+			
+			iniciarAlteracao();
+
+			// Nato: isso esta errado. Deveriamos estar recebendo o cadastrante
+			//e sua lotacao.
+			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura,
+				cadastrante, lotaCadastrante, movAlvo.getExMobil(), null,
+				null, null, null, null, null);
+
+			mov.setDescrMov(subscritor.getNomePessoa() +  ":" + subscritor.getSigla());
+
+			mov.setExMovimentacaoRef(movAlvo);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(mov.getExDocumento());
+			
+		} catch (final AplicacaoException e) {
+			cancelarAlteracao();
+			throw e;
+		} catch (final Exception e) {
+			log.error("Erro ao assinar movimentação.", e);
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao assinar movimentação.", 0, e);
+		}
+	}
+	
 
 	/**
 	 * @param doc
@@ -2349,11 +2617,11 @@ public class ExBL extends CpBL {
 
 			// Verifica se a matrícula confere com o subscritor do Despacho ou
 			// do
-			// desentranhamento
-			if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
+			// desentranhamento no caso de assinatura de despacho
+			if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO && (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
 					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)) {
 
 				try {
 					if (lMatricula != null) {

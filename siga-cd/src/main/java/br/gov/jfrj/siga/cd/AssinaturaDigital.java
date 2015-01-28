@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.commons.io.output.NullOutputStream;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -65,6 +66,7 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.CertificateList;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerId;
@@ -72,8 +74,6 @@ import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.X509CRLObject;
-import org.bouncycastle.operator.ContentVerifierProvider;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.Store;
 
@@ -86,7 +86,6 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfString;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 /**
  * Links uteis:
@@ -186,7 +185,7 @@ public class AssinaturaDigital {
 	// return s;
 	// }
 	private static X509Certificate[] montarCadeiaOrdenadaECompleta(
-			Collection<X509Certificate> certs) throws Exception {
+			Collection<X509CertificateHolder> certs) throws Exception {
 		return FachadaDeCertificadosAC.montarCadeiaOrdenadaECompleta(certs);
 	}
 
@@ -315,24 +314,25 @@ public class AssinaturaDigital {
 		//		CertStore certs = signedData.getCertificatesAndCRLs("Collection", "BC");
 		Store certs = signedData.getCertificates();
 		SignerInformationStore signers = signedData.getSignerInfos();
-		Collection c = signers.getSigners();
-		Iterator it = c.iterator();
+		Collection<SignerInformation> c = signers.getSigners();
+		Iterator<SignerInformation> it = c.iterator();
 
 		@SuppressWarnings("unused")
 		String sCN = "";
 
 		while (it.hasNext()) {
-			SignerInformation signer = (SignerInformation) it.next();
+			SignerInformation signer = it.next();
 			//			Collection certCollection = certs.getCertificates(signer.getSID());
-			Collection certCollection = certs.getMatches(signer.getSID());
+			Collection<X509CertificateHolder> certCollection = certs.getMatches(signer.getSID());
 
 			@SuppressWarnings("unused")
 			String ss = signer.getDigestAlgOID();
 			@SuppressWarnings("unused")
 			String sss = signer.getDigestAlgorithmID().getObjectId().getId();
 
-			Iterator certIt = certCollection.iterator();
-			X509Certificate cert = (X509Certificate) certIt.next();
+			Iterator<X509CertificateHolder> certIt = certCollection.iterator();
+			X509CertificateHolder certHolder = certIt.next();
+			X509Certificate cert = AssinaturaDigital.getX509Certificate(certHolder);
 
 			/*
 			 *  *** código comentado movido para
@@ -466,16 +466,13 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static Store buscarCrlParaCadaCertificado(Store certs)
-			throws CertStoreException, Exception {
-		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta((Collection<X509Certificate>) (certs
-				.getMatches(null)));
+	protected static Store buscarCrlParaCadaCertificado(Store certs)throws CertStoreException, Exception {
+		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta(certs.getMatches(null));
 
 		List certList = new ArrayList();
 		for (X509Certificate cert : cadeiaTotal)
 			certList.add(cert);
-		for (X509CRLObject crl : (Collection<X509CRLObject>) X509ChainValidator
-				.getCRLs(cadeiaTotal))
+		for (X509CRLObject crl : (Collection<X509CRLObject>) X509ChainValidator.getCRLs(cadeiaTotal))
 			certList.add(crl);
 		// certList.add(ASN1Object.fromByteArray(crl.getEncoded()));
 
@@ -681,20 +678,18 @@ public class AssinaturaDigital {
 
 		Store certs = s.getCertificates();
 		SignerInformationStore signers = s.getSignerInfos();
-		Collection c = signers.getSigners();
-		Iterator it = c.iterator();
+		Collection<SignerInformation> c = signers.getSigners();
+		Iterator<SignerInformation> it = c.iterator();
 		X509CertificateHolder firstSignerCert = null;
 
 		while (it.hasNext()) {
-			SignerInformation signer = (SignerInformation) it.next();
-			Collection certCollection = certs.getMatches(signer.getSID());
+			SignerInformation signer = it.next();
+			Collection<X509CertificateHolder> certCollection = certs.getMatches(signer.getSID());
 
-			Iterator certIt = certCollection.iterator();
-			X509CertificateHolder cert = (X509CertificateHolder)certIt.next();
+			Iterator<X509CertificateHolder> certIt = certCollection.iterator();
+			X509CertificateHolder cert = certIt.next();
 			if (firstSignerCert == null)
 				firstSignerCert = cert;
-
-			ContentVerifierProvider contentVerifierProvider = new JcaContentVerifierProviderBuilder().setProvider("BC").build(cert);
 
 			if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert)))
 				throw new Exception("Assinatura inválida!");
@@ -710,7 +705,7 @@ public class AssinaturaDigital {
 		}
 
 		//		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta((Collection<X509Certificate>) (certs.getCertificates(null)));
-		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta((Collection<X509Certificate>) (certs.getMatches(null)));
+		X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta(certs.getMatches(null));
 
 		List<X509CRLObject> crls = new ArrayList<>();
 		if (certs.getMatches(null) != null){
@@ -819,8 +814,7 @@ public class AssinaturaDigital {
 	}
 
 	@SuppressWarnings("unchecked")
-	public
-	static String validarAssinaturaPKCS7(final byte[] digest,
+	public static String validarAssinaturaPKCS7(final byte[] digest,
 			final String digestAlgorithm, final byte[] assinatura,
 			Date dtAssinatura, boolean verificarLCRs)
 					throws InvalidKeyException, SecurityException, CRLException,
@@ -834,24 +828,25 @@ public class AssinaturaDigital {
 
 		Store certs = signedData.getCertificates();
 		SignerInformationStore signers = signedData.getSignerInfos();
-		Collection c = signers.getSigners();
-		Iterator it = c.iterator();
+		Collection<SignerInformation> c = signers.getSigners();
+		Iterator<SignerInformation> it = c.iterator();
 
 		String sCN = "";
 
 		while (it.hasNext()) {
-			SignerInformation signer = (SignerInformation) it.next();
-			Collection certCollection = certs.getMatches(signer.getSID());
+			SignerInformation signer = it.next();
+			Collection<X509CertificateHolder> certCollection = certs.getMatches(signer.getSID());
 
 			@SuppressWarnings("unused")
 			String ss = signer.getDigestAlgOID();
 			@SuppressWarnings("unused")
 			String sss = signer.getDigestAlgorithmID().getObjectId().getId();
 
-			Iterator certIt = certCollection.iterator();
-			X509Certificate cert = (X509Certificate) certIt.next();
+			Iterator<X509CertificateHolder> certIt = certCollection.iterator();
+			X509CertificateHolder certHolder = certIt.next();
+			X509Certificate cert = AssinaturaDigital.getX509Certificate(certHolder);
 
-			if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert)))
+			if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(certHolder)))
 				throw new Exception("Assinatura inválida!");
 
 			X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta(certCollection);
@@ -903,8 +898,7 @@ public class AssinaturaDigital {
 					ChainValidationException, IOException, Exception {
 
 		return validarAssinaturaCMSeCarimboDeTempo(
-				MessageDigest.getInstance("SHA1").digest(conteudo),
-				"1.3.14.3.2.26", assinatura, dtAssinatura);
+				MessageDigest.getInstance("SHA1").digest(conteudo),"1.3.14.3.2.26", assinatura, dtAssinatura);
 	}
 
 	@SuppressWarnings("unused")
@@ -944,8 +938,7 @@ public class AssinaturaDigital {
 
 	public static String recuperarCPF(final byte[] assinatura) throws Exception {
 		try {
-			Properties props = AssinaturaDigital
-					.recuperaNomesAlternativos(assinatura);
+			Properties props = AssinaturaDigital.recuperaNomesAlternativos(assinatura);
 			String sCPF = props.getProperty("2.16.76.1.3.1").substring(8, 19);
 			@SuppressWarnings("unused")
 			long lCPF = Long.valueOf(sCPF);
@@ -954,6 +947,10 @@ public class AssinaturaDigital {
 			throw new AplicacaoException(
 					"Não foi possível obter o CPF do assinante", 0, e);
 		}
+	}
+	
+	public static X509Certificate getX509Certificate(X509CertificateHolder holder) throws CertificateException{
+		return new JcaX509CertificateConverter().setProvider( "BC" ).getCertificate( holder );
 	}
 
 }

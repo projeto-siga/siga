@@ -34,7 +34,11 @@ import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
+
+import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpPerfil;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -50,8 +54,8 @@ import br.gov.jfrj.siga.vraptor.SigaLogicResult;
 @Table(name = "GC_INFORMACAO", schema = "SIGAGC")
 @NamedQueries({
 		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc"),
-		@NamedQuery(name = "buscarConhecimentoTudoIgual", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where (select count(*) from GcTag t2 where t2 in t and t2 not in (:tags)) = 0 and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
-		@NamedQuery(name = "buscarConhecimentoAlgumIgualNenhumDiferente", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i not in (select i2 from GcInformacao i2 inner join i2.tags t2 where t2 not in (:tags)) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
+		@NamedQuery(name = "buscarConhecimentoTudoIgual", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where (select count(*) from GcTag t2 where t2 in t and t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) = 0 and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
+		@NamedQuery(name = "buscarConhecimentoAlgumIgualNenhumDiferente", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i not in (select i2 from GcInformacao i2 inner join i2.tags t2 where t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "maisRecentes", query = "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null order by i.hisDtIni desc"),
 		// @NamedQuery(name = "maisRecentesLotacao", query =
 		// "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null and i.lotacao.idLotacao = :idLotacao order by i.hisDtIni desc"),
@@ -77,7 +81,8 @@ import br.gov.jfrj.siga.vraptor.SigaLogicResult;
 		// @NamedQuery(name = "evolucaoVisitadosLotacao", query =
 		// "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.lotacao.idLotacaoIni = :idlotacaoInicial and (year(inf.elaboracaoFim) * 12 + month(inf.elaboracaoFim) < year(mov.hisDtIni) * 12 + month(mov.hisDtIni)) group by month(mov.hisDtIni), year(mov.hisDtIni)"),
 		@NamedQuery(name = "evolucaoVisitadosLotacao", query = "select month(mov.hisDtIni) as mes, year(mov.hisDtIni) as ano, count(distinct inf.id) as visitadas from GcInformacao inf join inf.movs mov where mov.tipo = 11 and inf.elaboracaoFim is not null and inf.elaboracaoFim < mov.hisDtIni and inf.lotacao.idLotacaoIni = :idlotacaoInicial group by month(mov.hisDtIni), year(mov.hisDtIni)"),
-		@NamedQuery(name = "dadosParaRecuperacaoDeInformacao", query = "select inf, arq,  mov.hisDtIni, mov.id, (mov.tipo.id) as ativo from GcInformacao as inf join inf.arq as arq join inf.movs mov where ((mov.tipo in (1, 10) and mov.arq = inf.arq) or (mov.tipo = 3)) and inf.elaboracaoFim is not null and ((mov.hisDtIni > :dt) or (mov.hisDtIni = :dt and mov.id > :desempate)) order by mov.hisDtIni, mov.id") })
+		@NamedQuery(name = "dadosParaRecuperacaoDeInformacao", query = "select inf, arq,  mov.hisDtIni, mov.id, (mov.tipo.id) as ativo from GcInformacao as inf join inf.arq as arq join inf.movs mov where ((mov.tipo in (1, 10) and mov.arq = inf.arq) or (mov.tipo = 3)) and inf.elaboracaoFim is not null and ((mov.hisDtIni > :dt) or (mov.hisDtIni = :dt and mov.id > :desempate)) order by mov.hisDtIni, mov.id"),
+		@NamedQuery(name = "pontosDeEntrada", query = "select inf, arq from GcInformacao as inf join inf.arq as arq where inf.tipo.id = 4 and inf.elaboracaoFim is not null and inf.hisDtFim is null and arq.titulo like :texto order by arq.titulo") })
 // select GcInformacao as i, i.arq as a, mov.hisDtIni as dt from GcInformacao
 // inf join inf.movs mov where ((mov.tipo in {1, 10} and mov.arq = inf.arq) or
 // (mov.tipo = 3)) and inf.elaboracaoFim is not null
@@ -120,6 +125,10 @@ public class GcInformacao extends Objeto {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_LOTACAO_TITULAR")
 	public DpLotacao lotacao;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_GRUPO")
+	public CpGrupo grupo;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
@@ -578,6 +587,22 @@ public class GcInformacao extends Objeto {
 			return lotacao.equivale(lotaTitular);
 		case (int) GcAcesso.ACESSO_PESSOAL:
 			return autor.equivale(titular);
+		case (int) GcAcesso.ACESSO_LOTACAO_E_GRUPO:
+			if (lotacao.equivale(lotaTitular))
+				return true;
+			try {
+				for (CpPerfil perfil : Cp
+						.getInstance()
+						.getConf()
+						.consultarPerfisPorPessoaELotacao(titular, lotaTitular,
+								new Date())) {
+					if (perfil.equivale(grupo))
+						return true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return false;
 		}
 		return false;
 	}

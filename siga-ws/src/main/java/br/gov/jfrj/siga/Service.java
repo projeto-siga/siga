@@ -18,6 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.namespace.QName;
+
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gi.service.GiService;

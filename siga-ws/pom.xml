@@ -37,7 +37,6 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
 		</dependency>
-
 		<!-- Siga -->
 		<dependency>
 			<groupId>siga</groupId>

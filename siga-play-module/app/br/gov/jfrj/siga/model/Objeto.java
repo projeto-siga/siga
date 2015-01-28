@@ -417,5 +417,4 @@ public class Objeto extends ObjetoBase{
 			return best;
 		}
 	}
-
 }

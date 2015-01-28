@@ -19,6 +19,10 @@
 package br.gov.jfrj.siga.base;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -188,6 +192,50 @@ public class SigaHTTP {
 		this.idp = idp;
 	}
 	
+	public String getNaWeb(String URL, HashMap<String, String> header, Integer timeout, String payload)
+			throws AplicacaoException {
+
+		try {
+
+			HttpURLConnection conn = (HttpURLConnection) new URL(URL).openConnection();
+			
+			if (timeout != null) {
+				conn.setConnectTimeout(timeout);
+				conn.setReadTimeout(timeout);
+			}
+			
+			//conn.setInstanceFollowRedirects(true);
+
+			if (header != null) {
+				for (String s : header.keySet()) {
+						conn.setRequestProperty(s, header.get(s));
+				}
+			}	
+
+			System.setProperty("http.keepAlive", "false");
+			
+			if (payload != null) {
+				byte ab[] = payload.getBytes("UTF-8");
+				conn.setRequestMethod("POST");
+				// Send post request
+				conn.setDoOutput(true);
+				OutputStream os = conn.getOutputStream();
+				os.write(ab);
+				os.flush();
+				os.close();
+			}
+
+			//StringWriter writer = new StringWriter();
+			//IOUtils.copy(conn.getInputStream(), writer, "UTF-8");
+			//return writer.toString();
+			return IOUtils.toString(conn.getInputStream(), "UTF-8");
+			
+		} catch (IOException ioe) {
+			throw new AplicacaoException("Não foi possível abrir conexão", 1, ioe);
+		}
+
+	}
+
 	
 	// TODO: commit f405c51011d663e5865351ddcf1147b495fb69f5
 //	public static String get(String URL, HashMap<String, String> header, Integer timeout, String payload) throws AplicacaoException {

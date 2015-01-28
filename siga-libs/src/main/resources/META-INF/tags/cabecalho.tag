@@ -270,7 +270,7 @@ ${meta}
 														fld.onblur();
 													} else {
 														window.alert("1");
-														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
+														window.location.href = '${request.scheme}://${request.serverName}:${request.serverPort}/sigaex/expediente/doc/exibir.action?sigla='
 																+ fld.value;
 													}
 													return false;

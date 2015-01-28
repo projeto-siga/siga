@@ -7,8 +7,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.EntityManager;
@@ -26,6 +28,7 @@ import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -66,7 +69,6 @@ public class AppController extends GcController {
 		super(request, result, so, em);
 		this.bl = bl;
 		this.correio = correio;
-
 	}
 
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
@@ -80,38 +82,100 @@ public class AppController extends GcController {
 		result.include("contagens", contagens);
 	}
 
+	/*private static List<GcLabelValue> lCachePontoDeEntrada = null;
+	private static Date dtCachePontoDeEntrada = null;
+
+	public static void pontoDeEntrada(String texto) {
+		pontosDeEntradaAtualizarCache();
+		
+		List<GcLabelValue> l = new ArrayList<GcLabelValue>();
+
+		if (texto != null && texto.trim().length() > 0) {
+			texto = GcLabelValue.removeAcento(texto).trim().toLowerCase();
+			texto = texto.replace("  ", " ");
+			String[] palavras = texto.split(" ");
+			for (GcLabelValue lv : lCachePontoDeEntrada) {
+				if (lv.fts(palavras))
+					l.add(lv);
+			}
+		}
+		
+		if (l.size() == 0)
+			renderJSON("[]");
+		
+		renderJSON(l);
+	}
+
+	public void pontosDeEntrada(String texto) {
+		pontosDeEntradaAtualizarCache();
+		
+		Map<String,SortedSet<GcLabelValue>> map = new TreeMap<String,SortedSet<GcLabelValue>>();
+		for (GcLabelValue lv : lCachePontoDeEntrada) {
+			String[] a = lv.getLabel().split(": ");
+			if (a.length == 2) {
+				if (!map.containsKey(a[0]))
+					map.put(a[0], new TreeSet<GcLabelValue>());
+				map.get(a[0]).add(lv);
+			} else if (a.length == 1) {
+				if (!map.containsKey(CATEGORIA_OUTRAS))
+					map.put(CATEGORIA_OUTRAS, new TreeSet<GcLabelValue>());
+				map.get(CATEGORIA_OUTRAS).add(lv);
+			}
+		}		
+		render(map);
+	}
+
+	private void pontosDeEntradaAtualizarCache() {
+		if (lCachePontoDeEntrada == null || dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new Date())) {
+			synchronized (GcLabelValue.class) {
+				if (lCachePontoDeEntrada == null || dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new Date())) {
+					lCachePontoDeEntrada = new ArrayList<GcLabelValue>();
+					Query q = JPA.em().createNamedQuery("pontosDeEntrada");
+					q.setParameter("texto", "%");
+					List<Object[]> lista = q.getResultList();
+					for (Object[] ao : lista) {
+						GcInformacao i = (GcInformacao) ao[0];
+						GcArquivo a = (GcArquivo) ao[1];
+						lCachePontoDeEntrada.add(new GcLabelValue(a.titulo, i.getSigla()));
+					}
+					dtCachePontoDeEntrada = new Date(new Date().getTime() + 60000);
+				}
+			}
+		}
+	}*/
+	
 	@Path("/public/app/knowledge")
 	public void publicKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo, boolean popup,
-			String estiloBusca) throws Exception {
+			String estiloBusca, Boolean podeCriar) throws Exception {
 		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, true,
-				popup, estiloBusca);
+				popup, estiloBusca, podeCriar);
 	}
 
 	public void knowledge(Long id, String[] tags, String msgvazio,
-			String urlvazio, String titulo, boolean popup, String estiloBusca)
-			throws Exception {
+			String urlvazio, String titulo, boolean popup, String estiloBusca, 
+			Boolean podeCriar) throws Exception {
 		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo, false,
-				popup, estiloBusca);
+				popup, estiloBusca, podeCriar);
 	}
 
 	public void knowledge_inplace(Long id, String[] tags, String msgvazio,
-			String urlvazio, String titulo, boolean popup, String estiloBusca)
-			throws Exception {
+			String urlvazio, String titulo, boolean popup, String estiloBusca,
+			Boolean podeCriar) throws Exception {
 		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo, false,
-				popup, estiloBusca);
+				popup, estiloBusca, podeCriar);
 	}
 
 	public void knowledge_sidebar(Long id, String[] tags, String msgvazio,
-			String urlvazio, String titulo, boolean popup, String estiloBusca)
-			throws Exception {
+			String urlvazio, String titulo, boolean popup, String estiloBusca,
+			Boolean podeCriar) throws Exception {
 		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo, false,
-				popup, estiloBusca);
+				popup, estiloBusca, podeCriar);
 	}
 
 	private void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
-			boolean testarAcessoPublico, boolean popup, String estiloBusca)
+			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar)
 			throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
@@ -132,8 +196,9 @@ public class AppController extends GcController {
 
 			info = GcInformacao.AR.findById(idOutroConhecimento);
 
-			if (testarAcessoPublico
-					&& (info.visualizacao.id != GcAcesso.ACESSO_PUBLICO))
+			if (testarAcesso
+					&& !info.acessoPermitido(getTitular(), getLotaTitular(),
+							info.visualizacao.id))
 				continue;
 
 			// o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
@@ -180,6 +245,9 @@ public class AppController extends GcController {
 		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
 		// "\">aqui</a>");
 		// }
+		
+		if (podeCriar == null)
+			podeCriar = true;
 
 		result.include("conhecimentos", conhecimentos);
 		result.include("classificacao", classificacao);
@@ -188,6 +256,7 @@ public class AppController extends GcController {
 		result.include("titulo", titulo);
 		result.include("referer", referer);
 		result.include("popup", popup);
+		result.include("podeCriar", podeCriar);
 	}
 
 	public void updateTag(String before, String after) {
@@ -531,6 +600,27 @@ public class AppController extends GcController {
 							+ informacao.visualizacao.nome
 							+ ") : O usu·rio n„o tem permiss„o para visualizar o conhecimento solicitado.");
 	}
+	 
+	/*public static void exibirPontoDeEntrada(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		DpPessoa titular = titular();
+		DpLotacao lotaTitular = lotaTitular();
+		CpIdentidade idc = idc();
+
+		if (informacao.acessoPermitido(titular, lotaTitular,
+				informacao.visualizacao.id)) {
+			String conteudo = Util.marcarLinkNoConteudo(informacao.arq
+					.getConteudoTXT());
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+			GcBL.logarVisita(informacao, idc, titular, lotaTitular);
+			render(informacao);
+		} else
+			throw new AplicacaoException(
+					"Restri√ß√£o de Acesso ("
+							+ informacao.visualizacao.nome
+							+ ") : O usu√°rio n√£o tem permiss√£o para visualizar o conhecimento solicitado.");
+	}*/
 
 	@Path({"/app/editar/{sigla}", "/app/editar/"})
 	public void editar(String sigla, String classificacao, String inftitulo,
@@ -554,8 +644,7 @@ public class AppController extends GcController {
 					.fetch();
 			List<GcAcesso> acessos = GcAcesso.AR.all().fetch();
 			if (inftitulo == null)
-				inftitulo = (informacao.arq != null) ? informacao.arq.titulo
-						: null;
+				inftitulo = (informacao.arq != null) ? informacao.arq.titulo : null;
 
 			if (conteudo == null)
 				conteudo = (informacao.arq != null) ? informacao.arq
@@ -597,6 +686,14 @@ public class AppController extends GcController {
 			if (informacao.lotacao == null) {
 				informacao.lotacao = lotaTitular;
 			}
+			
+			boolean editarClassificacao = false;
+			try {
+				assertAcesso("EDTCLASS:Editar classifica√ß√£o");
+				editarClassificacao = true;
+			} catch (Exception e) {
+				//
+			}
 
 			result.include("informacao", informacao);
 			result.include("tiposInformacao", tiposInformacao);
@@ -606,6 +703,7 @@ public class AppController extends GcController {
 			result.include("classificacao", classificacao);
 			result.include("origem", origem);
 			result.include("tipo", tipo);
+			result.include("editarClassificacao", editarClassificacao);
 		} else
 			throw new AplicacaoException(
 					"RestriÁ„o de Acesso ("
@@ -805,6 +903,11 @@ public class AppController extends GcController {
 		// Atualiza a classificaÁ„o com as hashTags encontradas
 		classificacao = bl.findHashTag(conteudo, classificacao,
 				CONTROLE_HASH_TAG);
+		
+		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
+				&& informacao.grupo == null)
+			throw new Exception(
+					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restriÁ„o.");
 
 		if (informacao.id != 0)
 			bl.movimentar(informacao,
@@ -905,33 +1008,32 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
-	public void anexarGravar(GcInformacao informacao, String titulo,
-			UploadedFile file) throws Exception {
-		DpPessoa titular = getTitular();
-		DpLotacao lotaTitular = getLotaTitular();
-		CpIdentidade idc = getIdentidadeCadastrante();
+	public void gravarArquivo(GcInformacao informacao, String titulo,
+			UploadedFile file, String CKEditorFuncNum, String origem) throws Exception {
 		if (file != null)
 			if (file.getSize() > 2097152)
 				throw new AplicacaoException(
 						"O tamanho do arquivo È maior que o "
 								+ "m·ximo permitido (2MB)");
-		if (file.getSize() > 0) {
-			/*
-			 * ----N„o pode ser usado porque o "plupload" retorna um mime type
-			 * padr„o "octet stream" String mimeType =
-			 * file.getContentType().toLowerCase();
-			 */
-			byte anexo[] = IOUtils.toByteArray(file.getFile());
-			if (titulo == null || titulo.trim().length() == 0)
-				titulo = file.getFileName();
-			bl.movimentar(informacao,
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO, null,
-					null, null, titulo, null, null, null, null, anexo);
-			bl.gravar(informacao, idc, titular, lotaTitular);
-			result.use(Results.http()).body("success");
-		} else
-			throw new AplicacaoException(
-					"Nao e permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
+			if (!(file.getSize() > 0)) 
+				throw new AplicacaoException(
+						"Nao È permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
+			byte arquivo[] = IOUtils.toByteArray(file.getFile());
+			String tituloArquivo = file.getFileName();
+			if (origem.equals("editar")) {
+				long id = bl.gravarArquivoSemMovimentacao(arquivo, tituloArquivo, file.getContentType().toLowerCase());
+				String url = "/sigagc/app/baixar?id=" + id;
+				String js = "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('"
+						+ CKEditorFuncNum + "','" + url + "');</script>";
+				result.use(Results.http()).body(js);  
+			}
+			else {
+				if (titulo != null && titulo.trim().length() > 0)
+					tituloArquivo = titulo;
+				bl.gravarArquivoComMovimentacao(informacao, getIdentidadeCadastrante(), getTitular(), 
+						getLotaTitular(), tituloArquivo, arquivo);
+				result.use(Results.http()).body("success");
+			}
 	}
 
 	@Path("/app/removerAnexo/{sigla}/{idArq}/{idMov}")

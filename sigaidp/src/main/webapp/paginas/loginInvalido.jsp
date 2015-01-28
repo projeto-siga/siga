@@ -69,10 +69,10 @@
 					<!-- /form row -->
 
 					<p class="gt-forgot-password">
-						<a href="/siga/incluir_usuario.action">Sou um novo usuário</a>
+						<a href="/siga/usuario/incluir_usuario.action">Sou um novo usuário</a>
 					</p>
 					<p class="gt-forgot-password">
-						<a href="/siga/esqueci_senha.action">Esqueci minha senha</a>
+						<a href="/siga/usuario/esqueci_senha.action">Esqueci minha senha</a>
 					</p>
 				</form>
 				<!-- /login form -->

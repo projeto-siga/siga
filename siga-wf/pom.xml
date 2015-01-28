@@ -61,34 +61,6 @@
     
 	<profiles>
 		<profile>
-			<id>docker-flyway</id>
-	
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jolokia</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.9.9</version>
-	
-						<!-- Connect start/stop to pre- and post-integration-test phase, respectively -->
-						<executions>
-							<!-- <execution> <id>start</id> <phase>pre-integration-test</phase> 
-								<goals> <goal>start</goal> </goals> </execution> -->
-							<execution>
-								<id>stop</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-	
-		</profile>
-	
-		<profile>
 			<id>flyway</id>
 			
 			<properties>

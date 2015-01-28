@@ -1,6 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	buffer="32kb"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
@@ -139,6 +138,9 @@ function sbmt() {
 						<c:when test="${campoFixo && not empty config.exModelo}">
 							${config.exModelo.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc} - ${config.exModelo.exFormaDocumento.descrFormaDoc}
 						</c:when>
+						<c:when test="${campoFixo && not empty config.exFormaDocumento}">
+							${config.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc} - ${config.exFormaDocumento.descrFormaDoc}
+						</c:when>
 						<c:otherwise>
 							<ww:select name="idTpFormaDoc" list="tiposFormaDoc"
 					                       listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
@@ -161,6 +163,9 @@ function sbmt() {
 						<c:when test="${campoFixo && not empty config.exModelo}">
 							<ww:hidden name="idMod" />
 							${config.exModelo.descMod}
+						</c:when>
+						<c:when test="${campoFixo && not empty config.exFormaDocumento}">
+							<ww:hidden name="idFormaDoc" />
 						</c:when>
 						<c:otherwise>
 							<div style="display: inline" id="comboModeloDiv">

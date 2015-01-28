@@ -7,53 +7,6 @@
 	
 	<display-name>sigacd</display-name>
 	
-	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
-	<!--distributable/-->
-
-	<!--jsp-config>
-		<taglib>
-			<taglib-uri>/core</taglib-uri>
-			<taglib-location>/META-INF/c.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>/fmt</taglib-uri>
-			<taglib-location>/META-INF/fmt.tld</taglib-location>
-		</taglib>		
-		<taglib>
-			<taglib-uri>/tags</taglib-uri>
-			<taglib-location>/META-INF/tags.tld</taglib-location>
-		</taglib>
-	</jsp-config-->
-	
-
-	<welcome-file-list>
-		<welcome-file>inbox.action</welcome-file>
-	</welcome-file-list>
-
-	<!-- Inicio de WebServer -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>WEB-INF/applicationContext.xml</param-value>
-	</context-param>
-	<listener>
-		<listener-class>
-			org.springframework.web.context.ContextLoaderListener
-		</listener-class>
-	</listener>
-
-	<servlet>
-		<display-name>CXF Servlet</display-name>
-		<servlet-name>CXFServlet</servlet-name>
-		<servlet-class>
-			br.gov.jfrj.siga.cd.servlet.CdWsServlet
-		</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>CXFServlet</servlet-name>
-		<url-pattern>/servicos/*</url-pattern>
-	</servlet-mapping>
 
 	<servlet>
 		<display-name>testes</display-name>
@@ -63,11 +16,14 @@
 		</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	<servlet>
+        <servlet-name>CDService</servlet-name>
+        <servlet-class>br.gov.jfrj.siga.cd.service.impl.CdServiceImpl</servlet-class>
+    </servlet>
+    
 	<servlet-mapping>
-		<servlet-name>testes</servlet-name>
-		<url-pattern>/testes/testes.action</url-pattern>
+		<servlet-name>CDService</servlet-name>
+		<url-pattern>/servicos/CdService</url-pattern>
 	</servlet-mapping>
-
-	<!-- Fim de WebServer -->
 	
 </web-app>

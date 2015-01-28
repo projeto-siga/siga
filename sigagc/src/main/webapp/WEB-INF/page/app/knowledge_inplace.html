@@ -12,7 +12,7 @@
 	<p style="font-weight: bold">${conhecimento[1]}</p>
 	${conhecimento[2].raw()}
 <!--  -->
-#{/list} #{/if} #{else}
+#{/list} #{/if} #{elseif podeCriar}
 	#{set "url"}*{@{Application.editar(0, classificacao, titulo, referer)}}*
 		@{Application.editar(null, classificacao, titulo, referer)}
 	#{/set} 
@@ -25,4 +25,4 @@
 	Nenhum conhecimento relacionado registrado. Clique <a href="${url}" target="<c:if test="${popup}_blank#{/if}">aqui</a>
 	para registrar um novo conhecimento.
 	#{/else}
-#{/else}
+#{/elseif}

@@ -101,6 +101,9 @@
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas')}">
 	<li><a href="#">Ferramentas</a>
 		<ul>
+		    <li><ww:url id="url" action="listar" namespace="/forma" /> <ww:a
+					href="%{url}">Cadastro de Formas</ww:a>
+			</li>
 			<li><ww:url id="url" action="listar" namespace="/modelo" /> <ww:a
 					href="%{url}">Cadastro de modelos</ww:a>
 			</li>

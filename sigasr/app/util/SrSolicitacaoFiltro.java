@@ -2,9 +2,14 @@ package util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import models.SrAcordo;
 import models.SrAtributo;
+import models.SrAtributoSolicitacao;
 import models.SrSolicitacao;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -18,6 +23,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static final String AND = " AND ";
+
 	public boolean pesquisar = false;
 
 	public String dtIni;
@@ -27,29 +34,43 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public CpMarcador situacao;
 
 	public DpPessoa atendente;
+	
+	public SrAcordo acordo;
 
 	public DpLotacao lotaAtendente;
 
 	public boolean naoDesignados;
 	
+	public boolean naoSatisfatorios;
+	
 	public boolean apenasFechados;
 
+	public Long idNovoAtributo;
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SrSolicitacao> buscar() throws Exception {
-		String query = montarBusca(" from SrSolicitacao sol where ");
-
-		List listaRetorno = JPA
+		String query = montarBusca("select sol from SrSolicitacao sol ");
+		
+		List<SrSolicitacao> lista = JPA
 				.em()
 				.createQuery( query )
 				.getResultList();
+		
+		List<SrSolicitacao> listaFinal = new ArrayList<SrSolicitacao>();
+		
+		if (naoSatisfatorios){
+			for (SrSolicitacao sol : lista)
+				if (!sol.isAcordosSatisfeitos())
+					listaFinal.add(sol);
+		} else listaFinal.addAll(lista);
 
-		return listaRetorno;
+		return listaFinal;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Object[]> buscarSimplificado() throws Exception{
 		String query = montarBusca("select sol.idSolicitacao, sol.descrSolicitacao, sol.codigo, item.tituloItemConfiguracao"
-				+ " from SrSolicitacao sol inner join sol.itemConfiguracao as item where ");
+				+ " from SrSolicitacao sol inner join sol.itemConfiguracao as item ");
 		
 		List<Object[]> listaRetorno =  JPA
 				.em()
@@ -63,6 +84,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private String montarBusca(String queryString) {
 		
 		StringBuffer query = new StringBuffer(queryString);
+		
+		if (acordo != null && acordo.idAcordo > 0L)
+			query.append(" inner join sol.acordos acordo where acordo.hisIdIni = "
+					+ acordo.getHisIdIni() + " and ");
+		else query.append(" where ");
+		
 		query.append(" sol.hisDtFim is null ");
 		
 		if (cadastrante != null)
@@ -74,6 +101,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (solicitante != null)
 			query.append(" and sol.solicitante.idPessoaIni = "
 					+ solicitante.getIdInicial());
+		if (lotaSolicitante != null)
+			query.append(" and sol.lotaSolicitante.idLotacaoIni = "
+					+ lotaSolicitante.getIdInicial());
 		if (itemConfiguracao != null
 				&& itemConfiguracao.idItemConfiguracao > 0L)
 			query.append(" and sol.itemConfiguracao.itemInicial.idItemConfiguracao = "
@@ -140,26 +170,72 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(subquery);
 		}
 		
-		StringBuffer subqueryAtributo = new StringBuffer();
-		if (meuAtributoSet != null && meuAtributoSet.size() > 0) {
-			SrAtributo att = meuAtributoSet.get(0);
-			subqueryAtributo.append(" and att.tipoAtributo.idTipoAtributo = "
-					+ att.tipoAtributo.idTipoAtributo);
-			if (att.valorAtributo != null && !att.valorAtributo.equals(""))
-				subqueryAtributo.append(" and att.valorAtributo = '"
-						+ att.valorAtributo + "' ");
-		}
-		
-		if (subqueryAtributo.length() > 0) {
-			subqueryAtributo.insert(0, " and exists (from SrAtributo att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
-			subqueryAtributo.append(" )");
-			query.append(subqueryAtributo);
-		}
+		montarQueryAtributos(query);
 		
 		if (apenasFechados) {
 			query.append(" and not exists (from SrMovimentacao where tipoMov in (7,8) and solicitacao = sol.hisIdIni)");
 		}
 		
 		return query.append(" order by sol.idSolicitacao desc").toString();
+	}
+
+	private void montarQueryAtributos(StringBuffer query) {
+		Boolean existeFiltroPreenchido = Boolean.FALSE; // Indica se foi preenchido algum dos atributos informados na requisicao
+		
+		StringBuffer subqueryAtributo = new StringBuffer();
+		if (meuAtributoSolicitacaoSet != null && meuAtributoSolicitacaoSet.size() > 0) {
+			subqueryAtributo.append(" and (");
+
+			for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
+				if (att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.trim().isEmpty()) {
+					subqueryAtributo.append("(");
+						subqueryAtributo.append(" att.atributo.idAtributo = " + att.atributo.idAtributo);
+						subqueryAtributo.append(" and att.valorAtributoSolicitacao = '" + att.valorAtributoSolicitacao + "' ");
+					
+					subqueryAtributo.append(")");
+					subqueryAtributo.append(AND);
+					
+					existeFiltroPreenchido = Boolean.TRUE;
+				}
+			}
+			subqueryAtributo.setLength(subqueryAtributo.length() - AND.length()); // remove o ultimo AND
+			subqueryAtributo.append(" )");
+		}
+		if (existeFiltroPreenchido) {
+			subqueryAtributo.insert(0, " and exists (from SrAtributoSolicitacao att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
+			subqueryAtributo.append(" )");
+			query.append(subqueryAtributo);
+		}
+	}
+	
+	public List<SrAtributo> getTiposAtributosConsulta() {
+		List<SrAtributo> tiposAtributosConsulta = new ArrayList<SrAtributo>();
+		
+		if (meuAtributoSolicitacaoSet != null) {
+			for (SrAtributoSolicitacao srAtributo : meuAtributoSolicitacaoSet) {
+				tiposAtributosConsulta.add(srAtributo.atributo);
+			}
+		}
+		return tiposAtributosConsulta;
+	}
+	
+	public List<SrAtributo> itensDisponiveis(List<SrAtributo> atributosDisponiveis, SrAtributo atributo) {
+		ArrayList<SrAtributo> arrayList = new ArrayList<SrAtributo>(atributosDisponiveis);
+		arrayList.add(atributo);
+		
+		Collections.sort(arrayList, new Comparator<SrAtributo>() {
+			@Override
+			public int compare(SrAtributo s0, SrAtributo s1) {
+				if (s0.nomeAtributo == null && s1.nomeAtributo == null) {
+					return 0;
+				} else if (s0.nomeAtributo == null) {
+					return 1;
+				} else if (s1.nomeAtributo == null) {
+					return -1;
+				}
+				return s0.nomeAtributo.compareTo(s1.nomeAtributo);
+			}
+		});
+		return arrayList;
 	}
 }

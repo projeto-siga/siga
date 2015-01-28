@@ -184,6 +184,10 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private List itens;
 
 	private List<ExDocumento> itensSolicitados;
+	
+	private List<ExDocumento> documentosQuePodemSerAssinadosComSenha;
+	
+	private List<ExMovimentacao> movimentacoesQuePodemSerAssinadasComSenha;
 
 	private DpLotacaoSelecao lotaDestinoFinalSel;
 
@@ -250,6 +254,14 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private Integer tamMaxDescr;
 
 	private Long idLotDefault;
+	
+	private String nomeUsuarioSubscritor;
+
+	private String senhaUsuarioSubscritor;
+	
+	private String tipoAssinaturaMov;
+	
+	private boolean autenticando;
 
 	public String getAtributoAssinavelDataHora() {
 		return atributoAssinavelDataHora;
@@ -1217,6 +1229,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
+	
+	public String aAutenticarDocumento() throws Exception {
+		setAutenticando(true);
+		return aAssinar();
+	}
 
 	public String aConferirCopia() throws Exception {
 		buscarDocumento(true);
@@ -1347,11 +1364,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// }
 
 		try {
+			long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
+			
+			if(getCopia() || (getTipoAssinaturaMov() != null && getTipoAssinaturaMov().equals("C")))
+				tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
+			
 			setMsg(Ex
 					.getInstance()
 					.getBL()
 					.assinarDocumento(getCadastrante(), getLotaTitular(), doc,
-							dt, assinatura, certificado));
+							dt, assinatura, certificado, tpMovAssinatura));
 		} catch (final Exception e) {
 			if (fApplet) {
 				getRequest().setAttribute("err", e.getMessage());
@@ -1367,6 +1389,49 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 		return Action.SUCCESS;
 	}
+	
+	public String aAssinarSenhaGravar() throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+		
+		try {
+			setMsg(Ex
+					.getInstance()
+					.getBL()
+					.assinarDocumentoComSenha(getCadastrante(), getLotaTitular(),
+							doc, mov.getDtMov(), getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(),
+							mov.getTitular()));
+		} catch (final Exception e) {
+
+			throw e;
+		}
+
+		return Action.SUCCESS;
+	}
+	
+	public String aAssinarMovSenhaGravar() throws Exception {
+		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
+		
+		buscarDocumento(true);
+		
+
+		mov = dao().consultar(getId(), ExMovimentacao.class, false);
+		
+		if(getCopia() || (getTipoAssinaturaMov() != null && getTipoAssinaturaMov().equals("C")))
+			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
+		
+		try {
+			Ex.getInstance()
+					.getBL()
+					.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), 
+							getNomeUsuarioSubscritor(), getSenhaUsuarioSubscritor(), tpMovAssinatura);
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		return Action.SUCCESS;
+	}
+
 
 	private static byte[] hexStringToByteArray(String s) {
 		int len = s.length();
@@ -1854,6 +1919,11 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		setEnderecoAutenticacao(SigaExProperties.getEnderecoAutenticidadeDocs());
 
 		return Action.SUCCESS;
+	}
+
+	public String aAutenticarMovimentacao() throws Exception {
+		setAutenticando(true);
+		return aExibir();
 	}
 
 	public String aGerarProtocolo() throws Exception {
@@ -2600,6 +2670,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				itensFinalizados.add(doc);
 		}
 		setItensSolicitados(itensFinalizados);
+		
+		setDocumentosQuePodemSerAssinadosComSenha(new ArrayList<ExDocumento>());
+		
+		for (ExDocumento exDocumento : itensSolicitados) {
+			if(Ex.getInstance()
+				.getComp().podeAssinarComSenha(getTitular(), getLotaTitular(), exDocumento.getMobilGeral())) {
+				getDocumentosQuePodemSerAssinadosComSenha().add(exDocumento);
+			}
+		}
+		
 		return Action.SUCCESS;
 	}
 	
@@ -2608,9 +2688,16 @@ public class ExMovimentacaoAction extends ExActionSupport {
 					listarDespachoPendenteAssinatura(getTitular());
 
 		setItens(new ArrayList<ExMovimentacao>());
+		
+		setMovimentacoesQuePodemSerAssinadasComSenha(new ArrayList<ExMovimentacao>());
 		for (ExMovimentacao mov : itensComoSubscritor) {
-				if(!mov.isAssinada() && !mov.isCancelada())
+				if(!mov.isAssinada() && !mov.isCancelada()) {
 					getItens().add(mov);
+					
+					if(Ex.getInstance().getComp().podeAssinarMovimentacaoComSenha(getTitular(), getLotaTitular(), mov))
+						getMovimentacoesQuePodemSerAssinadasComSenha().add(mov);
+				}
+				
 		}
 		return Action.SUCCESS;
 	}
@@ -4297,5 +4384,55 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		this.setIdLotDefault(lotSubscritor.getId());
 
 		return lotacoes;
+	}
+
+	public String getNomeUsuarioSubscritor() {
+		return nomeUsuarioSubscritor;
+	}
+
+	public void setNomeUsuarioSubscritor(String nomeUsuarioSubscritor) {
+		this.nomeUsuarioSubscritor = nomeUsuarioSubscritor;
+	}
+
+	public String getSenhaUsuarioSubscritor() {
+		return senhaUsuarioSubscritor;
+	}
+
+	public void setSenhaUsuarioSubscritor(String senhaUsuarioSubscritor) {
+		this.senhaUsuarioSubscritor = senhaUsuarioSubscritor;
+	}
+
+	public String getTipoAssinaturaMov() {
+		return tipoAssinaturaMov;
+	}
+
+	public void setTipoAssinaturaMov(String tipoAssinaturaMov) {
+		this.tipoAssinaturaMov = tipoAssinaturaMov;
+	}
+
+	public List<ExDocumento> getDocumentosQuePodemSerAssinadosComSenha() {
+		return documentosQuePodemSerAssinadosComSenha;
+	}
+
+	public void setDocumentosQuePodemSerAssinadosComSenha(
+			List<ExDocumento> documentosQuePodemSerAssinadosComSenha) {
+		this.documentosQuePodemSerAssinadosComSenha = documentosQuePodemSerAssinadosComSenha;
+	}
+
+	public List<ExMovimentacao> getMovimentacoesQuePodemSerAssinadasComSenha() {
+		return movimentacoesQuePodemSerAssinadasComSenha;
+	}
+
+	public void setMovimentacoesQuePodemSerAssinadasComSenha(
+			List<ExMovimentacao> movimentacoesQuePodemSerAssinadasComSenha) {
+		this.movimentacoesQuePodemSerAssinadasComSenha = movimentacoesQuePodemSerAssinadasComSenha;
+	}
+
+	public boolean isAutenticando() {
+		return autenticando;
+	}
+
+	public void setAutenticando(boolean autenticando) {
+		this.autenticando = autenticando;
 	}
 }

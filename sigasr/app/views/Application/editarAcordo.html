@@ -327,6 +327,12 @@
 	});
 
 	function inserirAssociacao() {
+		var idAcordo = $("#id").val();
+		if (idAcordo == ''){
+			if (acordoService.aplicar() == false)
+				return; 
+		}
+		
 		limparDadosAssociacaoModal();
 		associacaoModalAbrir(false);
 	};

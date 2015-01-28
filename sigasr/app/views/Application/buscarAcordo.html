@@ -191,12 +191,12 @@
 	* Sobrescreve o método aplicar para tratar a lista de parâmetros.
 	*/
 	acordoService.aplicar = function() {
-		gravarAplicar(this, true);
+		return gravarAplicar(this, true);
 	}
 
 	function gravarAplicar(baseService, isAplicar) {
 		if (!baseService.isValidForm())
-			return;
+			return false;
 		
 		var obj = baseService.getObjetoParaGravar(),
 			url = baseService.opts.urlGravar,

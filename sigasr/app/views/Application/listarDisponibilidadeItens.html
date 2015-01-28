@@ -17,7 +17,9 @@
 		margin-left: 10px;
 	}
 	.orgao {
-		margin-right: 10px;
+		width: 15px;
+		display: inline-block;
+		padding-right: 5px;
 	}
 	.item-pai {
 		padding-left: 0em !important;
@@ -47,17 +49,17 @@
 <!-- template utilizado para adicionar os orgaos -->
 <div id="templateDisponibilidadeItem" style="display:none">
 	{for orgao in orgaos}
-		<span class='orgao' data-sigla-orgao="!{orgao.sigla}" data-item-configuracao-id="!{itemConfiguracao.id}" onclick="disponibilidadeService.alterarDisponibilidade('!{orgao.sigla}', !{itemConfiguracao.hisIdIni})">
+		<div class='orgao' data-sigla-orgao="!{orgao.sigla}" data-item-configuracao-id="!{itemConfiguracao.id}" onclick="disponibilidadeService.alterarDisponibilidade('!{orgao.sigla}', !{itemConfiguracao.hisIdIni})">
 			<img src="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}">
 			<img>
-		</span>
+		</div>
   	{/for}
 </div>
 
 <!-- template utilizado para mostrar as siglas dos orgaos no titulo da tabela -->
 <div id="templateSiglasOrgaos" style="display:none">
 	{for orgao in orgaos}
-		<span class="orgao">!{orgao.sigla}</span>
+		<div class="orgao">!{orgao.sigla}</div>
   	{/for}
 </div>
 
@@ -285,13 +287,13 @@
 			var me = this;
 			
 			objSalvo.disponibilidadesAtualizadas.elements.forEach(function(atualizacao) {
-				var span = $('span[data-sigla-orgao=' + atualizacao.siglaOrgao + '][data-item-configuracao-id=' + atualizacao.idItemConfiguracao + ']'), 
-					img = span.find('img'),
+				var div = $('div[data-sigla-orgao=' + atualizacao.siglaOrgao + '][data-item-configuracao-id=' + atualizacao.idItemConfiguracao + ']'), 
+					img = div.find('img'),
 					novaImg = $('<img>');
 				
 				img.remove();
 				novaImg.attr('src', atualizacao.caminhoIcone);
-				span.append(novaImg);
+				div.append(novaImg);
 
 				var itemConfiguracaoSelecionado = me.buscarItem(atualizacao.hisIdIniItemConfiguracao);
 				if(itemConfiguracaoSelecionado) {

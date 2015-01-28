@@ -162,6 +162,7 @@ function SigaTable (tableSelector) {
 			helper = this.table.data('detalheHelper');
 		
 		helper.atualizar(tr);
+		return this;
 	}
 }
 

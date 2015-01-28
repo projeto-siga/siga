@@ -110,25 +110,24 @@ altura:'200', largura:'450'}
 	colunasDesignacao.herdado= 						11;
 	colunasDesignacao.utilizarHerdado= 				12;
 	
-
 	var designacaoTable = new SigaTable('#designacoes_table')
-	.configurar("columnDefs", [{
-			"targets": [colunasDesignacao.checkBoxHeranca, 
-						colunasDesignacao.jSonDesignacao,  
-						colunasDesignacao.herdado, 
-						colunasDesignacao.utilizarHerdado],
-			"visible": false,
-			"searchable": false
-		},
-		{
-			"targets": [0],
-			"sortable": false,
-			"searchable" : false
-		}])
-	.configurar("fnRowCallback", designacaoRowCallback)
-	.configurar("iDisplayLength", 100)
-	.criar()
-	.detalhes(detalhesDesignacao),
+		.configurar("columnDefs", [{
+				"targets": [colunasDesignacao.checkBoxHeranca, 
+							colunasDesignacao.jSonDesignacao,  
+							colunasDesignacao.herdado, 
+							colunasDesignacao.utilizarHerdado],
+				"visible": false,
+				"searchable": false
+			},
+			{
+				"targets": [0],
+				"sortable": false,
+				"searchable" : false
+			}])
+		.configurar("fnRowCallback", designacaoRowCallback)
+		.configurar("iDisplayLength", 100)
+		.criar()
+		.detalhes(detalhesDesignacao),
 	
 	mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false,
 			

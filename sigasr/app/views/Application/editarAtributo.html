@@ -108,7 +108,7 @@
 			</table>
 		</div>
 		<div class="gt-table-buttons">
-			<a id="btnIncluirAtributo" class="gt-btn-small gt-btn-left" onclick="inserirAssociacao()">Incluir</a>
+            <a href="javascript: inserirAssociacao()" class="gt-btn-small gt-btn-left">Incluir</a>
 		</div>
 	</div>
 	<div class="gt-form-row" style="padding-top: 10px;">
@@ -274,6 +274,11 @@
 	});
 
 	function inserirAssociacao() {
+		var atributoId = $("#idAtributo");
+		if ((atributoId == undefined || atributoId.val() == "") 
+			&& atributoService.aplicar() == false) 
+			return;
+			
 		limparDadosAssociacaoModal();
 		associacaoModalAbrir(false);
 	};

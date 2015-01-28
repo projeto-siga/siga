@@ -26,17 +26,16 @@
 		<module>sigaex</module>
 		<module>siga-ext</module>
 		<module>siga-ex</module>
-		<module>siga-play-module</module>
 		<module>sigagc</module>
+		<!--<module>siga-play-module</module>
  		<module>sigasr</module>
  		<module>sigapp</module>
+		<module>sigari</module>
  		<module>sigacd</module>
  		<module>siga-cd</module>
- 		<!--
  		<module>siga-cd-aut</module>
- 		-->
  		<module>siga-cp-sinc</module> 
- 		<module>siga-dump</module>
+ 		<module>siga-dump</module> -->
 	</modules>
 
 

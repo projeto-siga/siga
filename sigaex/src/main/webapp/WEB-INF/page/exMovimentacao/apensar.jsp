@@ -28,12 +28,14 @@
 
 						<!-- Checa se o documento é eletronico ou não. Caso seja, seu valor default para Data é o atual e o Responsável é quem fez o Login. -->
 						<c:choose>
-							<c:when test="${doc.eletronico}">
+							<c:when test="${!doc.eletronico}">
 								<!-- Documento Eletronico -->
 								<tr>
-									<td>Data:</td>
 									<td>
-										<input name="dtMovString" onblur="javascript:verifica_data(this, true);" />
+										Data:
+									</td>
+									<td>
+										<input name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this, true);" />
 									</td>
 								</tr>
 								<tr>
@@ -56,11 +58,13 @@
 								<tr id="tr_titular" style="">
 							</c:otherwise>
 						</c:choose>
-							<td>Titular:</td>
-							<input type="hidden" name="campos" value="titularSel.id" />
-							<td colspan="3">
-								<siga:selecao propriedade="titular" tema="simple" modulo="siga"/>
-							</td>
+						<td>
+							Titular:
+						</td>
+						<input type="hidden" name="campos" value="titularSel.id" />
+						<td colspan="3">
+							<siga:selecao propriedade="titular" tema="simple" modulo="siga"/>
+						</td>
 						</tr>
 						<!-- fim do TR -->
 						<tr>

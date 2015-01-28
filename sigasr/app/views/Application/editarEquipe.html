@@ -193,6 +193,11 @@
 						<input type="text" name="calendario" id="dataEspecifica" value="${dataEspecifica}">
 						<span style="display:none;color: red" id="dataEspecificaError">Data Específica não informada</span>
 					</div>
+					
+					<div id="erroHorarioInvalido" style="display:none;width:300px" class="gt-form-row gt-width-100">
+						<span style="color: red">O período informado está inválido. A data de início deve ser menor que a data de término e o período de intervalo deve estar contido no período de expediente</span>
+					</div>
+					
 					<div class="gt-form-row gt-width-100">
 						<label>Início Expediente <span>*</span></label>
 						<input type="text" name="horaIni" id="horaIni" value="${horaIni}" class="hora" required>
@@ -455,14 +460,14 @@
 		return data;
 	}
 
-	function isValidForm() {
-		esconderValidacaoHorario();
+// 	function isValidForm() {
+// 		esconderValidacaoHorario();
 		
-		if(jQuery("#excecaoHorarioForm").valid()) {
-			return horarioEstaValido();
-		}
-		return false;
-	}
+// 		if(jQuery("#excecaoHorarioForm").valid()) {
+// 			return horarioEstaValido();
+// 		}
+// 		return false;
+// 	}
 
 	function horarioEstaValido() {
 		var horaInicio = moment($("#horaIni").val(), 'hh:mm'),
@@ -514,6 +519,10 @@
 	}
 	
 	function isValidFormExc() {
-		return jQuery("#excecaoHorarioForm").valid();
+		if(jQuery("#excecaoHorarioForm").valid()) {
+			return horarioEstaValido();
+		}
+		else
+			return false;
 	}
 </script>

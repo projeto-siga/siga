@@ -17,7 +17,6 @@
 							<span id="iconeBotaoExpandirTodos">+</span>
 						</button>
 					</th>
-					<th></th>
 					<th>Orgão</th>
 					<th>Local</th>
 					<th>Solicitante</th>
@@ -25,10 +24,11 @@
 					<th>Atendente</th>
 					<th>Pré</th>
 					<th>Pós</th>
+					<th>Ações</th>
 					<th>JSon - Designação</th>
+					<th>Checkbox Herança</th>
 					<th>Herdado</th>
 					<th>Utilizar Herdado</th>
-					<th></th>
 				</tr>
 			</thead>
 
@@ -37,11 +37,6 @@
 				<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
 					style="cursor: pointer;">
 					<td class="details-control"></td>
-					<td class="checkbox-hidden"
-						style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
-						<input type="checkbox" checked="${design.utilizarItemHerdado}"
-						id="check${design.id}" />
-					</td>
 					<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
 					<td>${design.complexo?.nomeComplexo}</td>
 					<td>${design.solicitante?.sigla}</td>
@@ -49,9 +44,6 @@
 					<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td>
 					<td>${design.preAtendente?.lotacaoAtual?.siglaLotacao }</td>
 					<td>${design.posAtendente?.lotacaoAtual?.siglaLotacao }</td>
-					<td>${design.getSrConfiguracaoJson()}</td>
-					<th>${design.isHerdado}</th>
-					<th>${design.utilizarItemHerdado}</th>
 					<td class="acoes"> 
 						#{desativarReativar id:design.id, 
 											onReativar:'designacaoService.reativar',
@@ -62,6 +54,14 @@
 							<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
 						</a>
 					</td>
+					<td>${design.getSrConfiguracaoJson()}</td>
+					<td class="checkbox-hidden"
+						style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
+						<input type="checkbox" checked="${design.utilizarItemHerdado}"
+						id="check${design.id}" />
+					</td>
+					<th>${design.isHerdado}</th>
+					<th>${design.utilizarItemHerdado}</th>
 				</tr>
 				#{/list}
 			</tbody>
@@ -94,60 +94,24 @@ altura:'200', largura:'450'}
 
 <script type="text/javascript">
 	var parametroTela = '${_modoExibicao}';
-
+	
 	var colunasDesignacao = {};
 	colunasDesignacao.acaoExpandir=					0 ;
-	colunasDesignacao.checkBoxHeranca = 			1 ;
-	colunasDesignacao.orgao=						2 ;
-	colunasDesignacao.local=						3 ;
-	colunasDesignacao.solicitante=					4 ;
-	colunasDesignacao.descrConfiguracao = 			5 ;
-	colunasDesignacao.atendente=					6 ;
-	colunasDesignacao.pre=							7 ;
-	colunasDesignacao.pos=							8 ;
+	colunasDesignacao.orgao=						1 ;
+	colunasDesignacao.local=						2 ;
+	colunasDesignacao.solicitante=					3 ;
+	colunasDesignacao.descrConfiguracao = 			4 ;
+	colunasDesignacao.atendente=					5 ;
+	colunasDesignacao.pre=							6 ;
+	colunasDesignacao.pos=							7 ;
+	colunasDesignacao.acoes=						8 ;
 	colunasDesignacao.jSonDesignacao= 				9 ;
-	colunasDesignacao.herdado= 						10;
-	colunasDesignacao.utilizarHerdado= 				11;
-	colunasDesignacao.acoes=						12;
+	colunasDesignacao.checkBoxHeranca = 			10;
+	colunasDesignacao.herdado= 						11;
+	colunasDesignacao.utilizarHerdado= 				12;
 	
-	jQuery( document ).ready(function($) {
-		/* Table initialization */
-		opts.designacoesDataTable = $('#designacoes_table')
-			.on('draw.dt', function() {
-					if(opts.designacoesDataTable) {
-						var btn = $('.bt-expandir'),
-							expandir = btn.hasClass('expandido');
-
-						$('#designacoes_table').mostrarDetalhes(detalhesDesignacao, opts.designacoesDataTable);
-						$('#designacoes_table').expandirContrairLinhas(expandir);
-					}
-				})
-			.dataTable({
-			"language": {
-				"emptyTable":     "Não existem resultados",
-			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-			    "infoPostFix":    "",
-			    "thousands":      ".",
-			    "lengthMenu":     "Mostrar _MENU_ registros",
-			    "loadingRecords": "Carregando...",
-			    "processing":     "Processando...",
-			    "search":         "Filtrar:",
-			    "zeroRecords":    "Nenhum registro encontrado",
-			    "paginate": {
-			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
-			        "previous":   "Anterior"
-			    },
-			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
-			    }
-			},
-			"columnDefs": [{
-
+	var designacaoTable = new SigaTable('#designacoes_table')
+		.configurar("columnDefs", [{
 				"targets": [colunasDesignacao.checkBoxHeranca, 
 							colunasDesignacao.jSonDesignacao,  
 							colunasDesignacao.herdado, 
@@ -159,34 +123,236 @@ altura:'200', largura:'450'}
 				"targets": [0],
 				"sortable": false,
 				"searchable" : false
-			}],
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				$('td:eq('+colunasDesignacao.acaoExpandir+')', nRow).addClass('details-control');
-			},
-			"iDisplayLength": 100
-		});
+			}])
+		.configurar("fnRowCallback", designacaoRowCallback)
+		.configurar("iDisplayLength", 100)
+		.criar()
+		.detalhes(detalhesDesignacao),
+	
+	mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false,
+			
+	opts = {
+		 urlDesativar : '@{Application.desativarDesignacao()}?',
+		 urlReativar : '@{Application.reativarDesignacao()}?',
+		 urlGravar : '@{Application.gravarDesignacao()}?',
+		 dialogCadastro : jQuery('#designacao_dialog'),
+		 tabelaRegistros : jQuery('#designacoes_table'),
+		 objectName : 'designacao',
+		 formCadastro : jQuery('#formDesignacao'),
+		 mostrarDesativados : mostrarDesativados,
+		 colunas : colunasDesignacao.acoes,
+		 dataTable : designacaoTable.dataTable
+	};	
+	
+	// Define a "classe" designacaoService
+	function DesignacaoService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
+	}
+	// designacaoService extends BaseService
+	DesignacaoService.prototype = Object.create(BaseService.prototype);
 
-		$('#designacoes_table').mostrarDetalhes(detalhesDesignacao, opts.designacoesDataTable);
+	var designacaoService = new DesignacaoService(opts);
+	// Sobescreve o metodo cadastrar para limpar a tela
+	designacaoService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title);
+
+		// atualiza as listas
+		atualizarListasDesignacaoEdicao();
+	}
+
+	designacaoService.getId = function(designacao) {
+		if (designacao)
+			return designacao.idConfiguracao;
+		else
+			return;
+	}
+	
+	designacaoService.getRow = function(designacao) {
+		return ['',
+				designacao.orgaoUsuario != null ? designacao.orgaoUsuario.sigla : '',
+				designacao.complexo != null ? designacao.complexo.descricao : '',
+				designacao.solicitante != null ? designacao.solicitante.sigla : '',
+				designacao.descrConfiguracao,
+				designacao.atendente != null ? designacao.atendente.sigla : '',
+				designacao.preAtendente != null ? designacao.preAtendente.sigla : '',
+				designacao.posAtendente != null ? designacao.posAtendente.sigla : '',
+				'COLUNA_ACOES',
+				designacao,
+				'',
+				designacao.isHerdado,
+				designacao.utilizarItemHerdado];
+	}
+	
+	designacaoService.onRowClick = function(designacao) {
+		designacaoService.editar(designacao, 'Alterar designacao');
+	}
+	/**
+	 * Customiza o metodo editar
+	 */
+	designacaoService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+
+		// atualiza as listas
+		atualizarListasDesignacaoEdicao(obj);
+	}
+
+	designacaoService.duplicarButton = '<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>';
+	
+	designacaoService.gravar = function() {
+		if (!this.isValidForm())
+			return;
 		
-		opts.dataTable = opts.designacoesDataTable;
-	});
+		var service = this,
+		obj = this.getObjetoParaGravar(),
+		url = this.opts.urlGravar,
+		wrapper = {},
+		success = function(objSalvo) {
+			if(service.onGravar) {
+				var designacao = JSON.parse(objSalvo),
+					tr = service.onGravar(obj, designacao);
+				afterGravarDesignacao(tr, designacao);  
+			}
+			opts.dialogCadastro.dialog("close");
+		}
+		wrapper[this.opts.objectName] = obj;
+		var params = jQuery.param(wrapper) + "&" + getListasAsString();
+		
+		$.ajax({
+	    	type: "POST",
+	    	url: url,
+	    	data: params,
+	    	dataType: "text",
+	    	success: success,
+	    	error: this.errorHandler
+	   	});
+	}
 
-	var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false,
-		opts = {
-			 urlDesativar : '@{Application.desativarDesignacao()}?',
-			 urlReativar : '@{Application.reativarDesignacao()}?',
-			 urlGravar : '@{Application.gravarDesignacao()}?',
-			 dialogCadastro : jQuery('#designacao_dialog'),
-			 tabelaRegistros : jQuery('#designacoes_table'),
-			 objectName : 'designacao',
-			 formCadastro : jQuery('#formDesignacao'),
-			 mostrarDesativados : mostrarDesativados,
-			 colunas : colunasDesignacao.acoes
-		};	
+	designacaoService.aplicar = function() {
+		if (!this.isValidForm())
+			return;
+		
+		var service = this,
+		obj = this.getObjetoParaGravar(),
+		url = this.opts.urlGravar,
+		wrapper = {},
+		success = function(objSalvo) {
+			if(service.onGravar) {
+				var designacao = JSON.parse(objSalvo),
+					tr = service.onGravar(obj, designacao);
+				afterGravarDesignacao(tr, designacao);  
+			}
 
-	function detalhesDesignacao(d) {
-		var designacao = typeof d[colunasDesignacao.jSonDesignacao] == 'string' ? JSON.parse(d[colunasDesignacao.jSonDesignacao]) : d[colunasDesignacao.jSonDesignacao],
-			tr = $('<tr class="detail">'),
+			service.formularioHelper.populateFromJson(JSON.parse(objSalvo));
+			alert("Cadastro salvo com sucesso.");
+		}
+		wrapper[this.opts.objectName] = obj;
+		var params = jQuery.param(wrapper) + "&" + getListasAsString();
+		
+		$.ajax({
+	    	type: "POST",
+	    	url: url,
+	    	data: params,
+	    	dataType: "text",
+	    	success: success,
+	    	error: this.errorHandler
+	   	});
+	}
+	
+	designacaoService.onGravar = function(obj, objSalvo) {
+		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
+		designacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
+		return tr;
+	}
+
+	designacaoService.isValidForm = function() {
+	    return jQuery(this.opts.formCadastro).valid() && camposObrigatoriosPreenchidos();
+	}
+
+	designacaoService.desativar = function(event, id) {
+		var ajax = BaseService.prototype.desativar.call(this, event, id);
+
+		ajax.success().done(function() {
+			var tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
+			afterGravarDesignacao(tr, null);
+		});
+	}
+
+	designacaoService.reativar = function(event, id) {
+		var ajax = BaseService.prototype.reativar.call(this, event, id);
+
+		ajax.success().done(function() {
+			var tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
+ 			afterGravarDesignacao(tr, null);
+		});
+	}
+
+	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+		$('td:eq(' + colunasDesignacao.acaoExpandir + ')', nRow).addClass('details-control');
+	}
+	
+	function camposObrigatoriosPreenchidos() {
+		if (hasValue($("#atendente")) || hasValue($("#preAtendente")) || hasValue($("#posAtendente")) || hasValue($("#equipeQualidade")))
+			return true;
+		else {
+			alert("Por favor preencha pelo menos um dos seguintes campos: Atendente, Pré-Atendente, Pós-Atendente ou Equipe de Qualidade.")
+			return false;
+		}
+	}
+
+	function hasValue(inputField) {
+		return inputField.val() != '' && inputField.val() != undefined;
+	}
+
+	function carregarDesignacoes(id) {
+        $.ajax({
+        	type: "GET",
+        	url: "@{Application.buscarDesignacoesItem()}?id=" + id,
+        	dataType: "text",
+        	success: function(lista) {
+        		var listaJSon = JSON.parse(lista);
+        		designacaoService.populateFromJSonList(listaJSon, opts.designacoesDataTable);
+        	},
+        	error: function(error) {
+            	alert("Não foi possível carregar as Designações deste item.");
+        	}
+       	});
+    }
+
+	designacaoService.populateFromJSonList = function(listaJSon, dataTable) {
+		for (var i = 0; i < listaJSon.length; i++) {
+			var design = listaJSon[i]; 			
+
+			if(designacaoService.onGravar) {
+				var tr = designacaoService.onGravar(undefined, design);
+				afterGravarDesignacao(tr, design);
+			}
+		}
+	}
+
+	function afterGravarDesignacao(tr, designacao) {
+		var acoes = tr.find('td.acoes');
+
+		// tratamentos de herança e botão duplicar
+		if (designacao && (designacao.isHerdado == 'true' || designacao.isHerdado == true))
+			$('td', tr).addClass('configuracaoHerdada');
+		else
+			acoes = acoes.append(designacaoService.duplicarButton);
+	}
+
+	function duplicarDesignacao(event) {
+		var tr = $(event.currentTarget).parent().parent();
+		event.stopPropagation();
+		designacaoService.editar(tr.data('json'), 'Duplicar Designação');
+		resetId();
+	}
+
+	function resetId() {
+		$("#idConfiguracao").val('');
+	}
+	
+	function detalhesDesignacao(d, designacao) {
+		var tr = $('<tr class="detail">'),
 			td = $('<td colspan="10">'),
 			table  = $('<table>'),
 			trDescricao = $('<tr>'),
@@ -194,7 +360,7 @@ altura:'200', largura:'450'}
 			trItens = $('<tr>'),
 			trAcoes = $('<tr>'),
 			descricao = designacao.descrConfiguracao != undefined ? designacao.descrConfiguracao : '';
-
+		
 		detalheLista("<b>Itens de configuração:</b>", designacao.listaItemConfiguracaoVO, trItens);
 		detalheLista("<b>Ações:</b>", designacao.listaAcaoVO, trAcoes);
 
@@ -288,7 +454,7 @@ altura:'200', largura:'450'}
 	function fecharModalErroAoSalvar() {
 		$("#erroAoSalvar_dialog").dialog("close");
 	}
-
+	
 	function getListasAsString() {
 		var params = '';
 	
@@ -312,184 +478,4 @@ altura:'200', largura:'450'}
 		
 		return params;
     };
-	
-	// Define a "classe" designacaoService
-	function DesignacaoService(opts) {
-		// super(opts)
-		BaseService.call(this, opts);
-	}
-	// designacaoService extends BaseService
-	DesignacaoService.prototype = Object.create(BaseService.prototype);
-
-	var designacaoService = new DesignacaoService(opts);
-	// Sobescreve o metodo cadastrar para limpar a tela
-	designacaoService.cadastrar = function(title) {
-		BaseService.prototype.cadastrar.call(this, title);
-
-		// atualiza as listas
-		atualizarListasDesignacaoEdicao();
-	}
-
-	designacaoService.getId = function(designacao) {
-		if (designacao)
-			return designacao.idConfiguracao;
-		else
-			return;
-	}
-	
-	designacaoService.getRow = function(designacao) {
-		return ['',
-				'',
-				designacao.orgaoUsuario != null ? designacao.orgaoUsuario.descricao : '',
-				designacao.complexo != null ? designacao.complexo.descricao : '',
-				designacao.solicitante != null ? designacao.solicitante.sigla : '',
-				designacao.descrConfiguracao,
-				designacao.atendente != null ? designacao.atendente.sigla : '',
-				designacao.preAtendente != null ? designacao.preAtendente.sigla : '',
-				designacao.posAtendente != null ? designacao.posAtendente.sigla : '',
-				designacao,
-				designacao.isHerdado,
-				designacao.utilizarItemHerdado,
-				'COLUNA_ACOES'];
-	}
-	
-	designacaoService.onRowClick = function(designacao) {
-		designacaoService.editar(designacao, 'Alterar designacao');
-	}
-	/**
-	 * Customiza o metodo editar
-	 */
-	designacaoService.editar = function(obj, title) {
-		BaseService.prototype.editar.call(this, obj, title); // super.editar();
-
-		// atualiza as listas
-		atualizarListasDesignacaoEdicao(obj);
-	}
-
-	designacaoService.duplicarButton = '<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>';
-	
-	designacaoService.gravar = function() {
-		if (!this.isValidForm())
-			return;
-		
-		var service = this,
-		obj = this.getObjetoParaGravar(),
-		url = this.opts.urlGravar,
-		wrapper = {},
-		success = function(objSalvo) {
-			if(service.onGravar) {
-				var designacao = JSON.parse(objSalvo),
-					tr = service.onGravar(obj, designacao);
-				afterGravarDesignacao(tr, designacao);  
-			}
-			opts.dialogCadastro.dialog("close");
-		}
-		wrapper[this.opts.objectName] = obj;
-		var params = jQuery.param(wrapper) + "&" + getListasAsString();
-		
-		$.ajax({
-	    	type: "POST",
-	    	url: url,
-	    	data: params,
-	    	dataType: "text",
-	    	success: success,
-	    	error: this.errorHandler
-	   	});
-	}
-
-	designacaoService.aplicar = function() {
-		if (!this.isValidForm())
-			return;
-		
-		var service = this,
-		obj = this.getObjetoParaGravar(),
-		url = this.opts.urlGravar,
-		wrapper = {},
-		success = function(objSalvo) {
-			if(service.onGravar) {
-				var designacao = JSON.parse(objSalvo),
-					tr = service.onGravar(obj, designacao);
-				afterGravarDesignacao(tr, designacao);  
-			}
-
-			service.formularioHelper.populateFromJson(JSON.parse(objSalvo));
-			alert("Cadastro salvo com sucesso.");
-		}
-		wrapper[this.opts.objectName] = obj;
-		var params = jQuery.param(wrapper) + "&" + getListasAsString();
-		
-		$.ajax({
-	    	type: "POST",
-	    	url: url,
-	    	data: params,
-	    	dataType: "text",
-	    	success: success,
-	    	error: this.errorHandler
-	   	});
-	}
-
-	designacaoService.isValidForm = function() {
-	    return jQuery(this.opts.formCadastro).valid() && camposObrigatoriosPreenchidos();
-	}
-
-	function camposObrigatoriosPreenchidos() {
-		if (hasValue($("#atendente")) || hasValue($("#preAtendente")) || hasValue($("#posAtendente")) || hasValue($("#equipeQualidade")))
-			return true;
-		else {
-			alert("Por favor preencha pelo menos um dos seguintes campos: Atendente, Pré-Atendente, Pós-Atendente ou Equipe de Qualidade.")
-			return false;
-		}
-	}
-
-	function hasValue(inputField) {
-		return inputField.val() != '' && inputField.val() != undefined;
-	}
-
-	function carregarDesignacoes(id) {
-        $.ajax({
-        	type: "GET",
-        	url: "@{Application.buscarDesignacoesItem()}?id=" + id,
-        	dataType: "text",
-        	success: function(lista) {
-        		var listaJSon = JSON.parse(lista);
-        		designacaoService.populateFromJSonList(listaJSon, opts.designacoesDataTable);
-        	},
-        	error: function(error) {
-            	alert("Não foi possível carregar as Designações deste item.");
-        	}
-       	});
-    }
-
-	designacaoService.populateFromJSonList = function(listaJSon, dataTable) {
-		for (var i = 0; i < listaJSon.length; i++) {
-			var design = listaJSon[i]; 			
-
-			if(designacaoService.onGravar) {
-				var tr = designacaoService.onGravar(undefined, design);
-				afterGravarDesignacao(tr, design);
-			}
-		}
-	}
-
-	function afterGravarDesignacao(tr, designacao) {
-		var acoes = tr.find('td.acoes');
-
-		// tratamentos de herança e botão duplicar
-		if (designacao.isHerdado == 'true' || designacao.isHerdado == true)
-			$('td', tr).addClass('configuracaoHerdada');
-		else
-			acoes = acoes.append(designacaoService.duplicarButton);
-	}
-
-	function duplicarDesignacao(event) {
-		var tr = $(event.currentTarget).parent().parent();
-		event.stopPropagation();
-		designacaoService.editar(tr.data('json'), 'Duplicar Designação');
-		resetId();
-	}
-
-	function resetId() {
-		$("#idConfiguracao").val('');
-	}
-	
 </script>

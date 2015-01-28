@@ -87,7 +87,11 @@ public class SrConfiguracaoVO {
 		if (configuracao.preAtendente != null)
 			preAtendente = SelecionavelVO.createFrom(configuracao.preAtendente.getLotacaoAtual());
 		
-		orgaoUsuario = SelecionavelVO.createFrom(configuracao.getOrgaoUsuario());
+		if (configuracao.getOrgaoUsuario() != null)
+			orgaoUsuario = SelecionavelVO.createFrom(configuracao.getOrgaoUsuario().getId(), 
+					configuracao.getOrgaoUsuario().getDescricao(), 
+					configuracao.getOrgaoUsuario().getAcronimoOrgaoUsu());
+		
 		complexo = CpComplexoVO.createFrom(configuracao.getComplexo());
 		equipeQualidade = SelecionavelVO.createFrom(configuracao.equipeQualidade);
 		pesquisaSatisfacao = SrPesquisaVO.createFrom(configuracao.pesquisaSatisfacao);

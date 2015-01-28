@@ -3,9 +3,9 @@
  */
 function Formulario(form) {
 	this.populateFromJson = function(obj) {
+		this.reset();
 		form.find('input[type=hidden]').val(''); // WA
-		
-		prepareObjectToForm(obj);
+		this.prepareObjectToForm(obj);
 		
 		form.populate(obj, {
 			resetForm:true
@@ -15,54 +15,61 @@ function Formulario(form) {
 	this.toJson = function() {
 		return form.serializeJSON();
 	}
-}
-
-/**
- * Faz a preparação do objeto para conter os campos necessários para popular os componentes do TRF. 
- */
-function prepareObjectToForm(obj) {
-	for (var x in obj) {
-	    if (typeof obj[x] == 'object') {
-	    	var component = document.getElementsByName(x)[0],	    		
-	    		className = component != null ? component.className : null,
-	        	objeto = obj[x];
-	        
-	    	// Caso o atributo seja um objeto, verifica qual seu tipo e preenche os valores necessários
-	        if (className && objeto) {
-	        	if (className == 'selecao') {
-	        		prepareForSelecaoComponent(x, obj, objeto);
-	        	}
-		        else if (className == 'pessoaLotaSelecao') {
-		        	var combo = component.closestPreviousElement("select");
-		        	prepareForSelecaoComponent(x, obj, objeto);
-		        	obj[combo.id] = obj[x].tipo;
+	
+	this.reset = function() {
+		if(form.resetForm) {
+			form.resetForm();
+		}
+		form.find('.error').removeClass('error'); // Ao entrar no cadastro, remove classe de erro
+	}
+	
+	/**
+	 * Faz a preparação do objeto para conter os campos necessários para popular os componentes do TRF. 
+	 */
+	this.prepareObjectToForm = function(obj) {
+		for (var x in obj) {
+		    if (typeof obj[x] == 'object') {
+		    	var component = document.getElementsByName(x)[0],	    		
+		    		className = component != null ? component.className : null,
+		        	objeto = obj[x];
+		    	
+		    	// Caso o atributo seja um objeto, verifica qual seu tipo e preenche os valores necessários
+		        if (className && objeto) {
+		        	if (className == 'selecao') {
+		        		this.prepareForSelecaoComponent(x, obj, objeto);
+		        	}
+			        else if (className == 'pessoaLotaSelecao') {
+			        	var combo = component.closestPreviousElement("select");
+			        	this.prepareForSelecaoComponent(x, obj, objeto);
+			        	obj[combo.id] = obj[x].tipo;
+			        }
+			        else if (className == 'lotaSelecao')
+			        	this.prepareForSelecaoComponent(x, obj, objeto);
+			        else if (className == 'pessoaLotaFuncCargoSelecao') {
+			        	var select = jQuery(component).parent().parent().parent().find('select')[0];
+			        	obj[select.id] = objeto.tipo;
+			        	select.onchange();
+			        	this.prepareForSelecaoComponent(x, obj, objeto);
+			        }
+			        else if (className == 'select-siga') {
+			        	obj[x] = objeto ? objeto.id : '';
+			        }
 		        }
-		        else if (className == 'lotaSelecao')
-		        	prepareForSelecaoComponent(x, obj, objeto);
-		        else if (className == 'pessoaLotaFuncCargoSelecao') {
-		        	var select = jQuery(component).parent().parent().parent().find('select')[0];
-		        	obj[select.id] = objeto.tipo;
-		        	select.onchange();
-		        	prepareForSelecaoComponent(x, obj, objeto);
-		        }
-		        	
-		        else if (className == 'select-siga') {
-		        	obj[x] = objeto ? objeto.id : '';
-		        }
-	        }
-	    }
+		    }
+		}
+	}
+	
+	/**
+	 * Cria os atributos esperados pelo componente selecao.html
+	 */
+	this.prepareForSelecaoComponent = function(atributo, obj, objeto) {
+		obj[atributo] = objeto ? objeto.id : '';
+		obj[atributo+"_sigla"] = objeto ? objeto.sigla : '';
+		obj[atributo+"_descricao"] = objeto ? objeto.descricao : '';
+		obj[atributo+"Span"] = objeto ? objeto.descricao : '';
 	}
 }
 
-/**
- * Cria os atributos esperados pelo componente selecao.html
- */
-function prepareForSelecaoComponent(atributo, obj, objeto) {
-	obj[atributo] = objeto ? objeto.id : '';
-	obj[atributo+"_sigla"] = objeto ? objeto.sigla : '';
-	obj[atributo+"_descricao"] = objeto ? objeto.descricao : '';
-	obj[atributo+"Span"] = objeto ? objeto.descricao : '';
-}
 
 /**
  * Utilitatio para desenhar o HTML correto do botao de desativar/reativar
@@ -123,7 +130,6 @@ function DesativarReativar(service) {
 function BaseService(opts) {
 	this.opts = opts;
 	this.formularioHelper = new Formulario(opts.formCadastro);
-	
 	this.opts.validatorForm = opts.formCadastro.validate({
 		onfocusout: false
 	});
@@ -178,7 +184,7 @@ BaseService.prototype.desativar = function(event, id) {
 		row = this.opts.dataTable.api().row(tr).data(),
 		service = this;
 	
-	$.ajax({
+	return $.ajax({
 	     type: "POST",
 	     url: this.opts.urlDesativar,
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
@@ -208,7 +214,7 @@ BaseService.prototype.reativar = function(event, id) {
 		row = this.opts.dataTable.api().row(tr).data(),
 		service = this;
 
-	$.ajax({
+	return $.ajax({
 	     type: "POST",
 	     url: this.opts.urlReativar,
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
@@ -343,7 +349,7 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	var idAntigo = this.getId(obj),
 		idNovo = this.getId(objSalvo),
 		tr = null;
-
+	
 	// Se foi uma edicao
 	if(idAntigo) {
 		tr = this.opts.tabelaRegistros.find("tr[data-json-id=" + idAntigo + "]");
@@ -363,12 +369,12 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 				row = this.opts.dataTable
 				.api()
 				.row
-				.add(data),
-				indice = this.indiceAcoes(data);
+				.add(data);
 			
 			row.draw();
 			tr = $(row.node());
 			
+			var indice = this.indiceAcoes(tr);
 			if(indice > -1) {
 				tr.find('td:nth(' + indice + ')').addClass('acoes');
 			}
@@ -396,9 +402,16 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	return tr;
 }
 
-BaseService.prototype.indiceAcoes = function(data) {
-	for(var i = 0; i < data.length; i++) {
-		if(data[i] == 'COLUNA_ACOES') 
+BaseService.prototype.row = function(obj) {
+	var id = this.getId(obj);
+	return this.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
+}
+
+BaseService.prototype.indiceAcoes = function(tr) {
+	var tds = tr.find('td');
+	for(var i = 0; i < tds.length; i++) {
+		var td = $(tds[i]);
+		if(td.html().trim() == 'COLUNA_ACOES') 
 			return i;
 	}
 	return -1;

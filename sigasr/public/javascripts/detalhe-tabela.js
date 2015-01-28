@@ -1,7 +1,7 @@
 /**
  * Helper que auxilia na manipulacao dos detalhes da tabela.
  */
-var detalheHelper = function($table, formatFunction, dataTable) {
+function DetalheHelper($table, formatFunction, dataTable) {
 	/**
 	 * Adiciona o evento de expandir contrair linha
 	 */
@@ -18,21 +18,16 @@ var detalheHelper = function($table, formatFunction, dataTable) {
 					detail = tr.next('tr.detail');
 				
 				if(detail.size() == 0) {
-					var data = tr.find('td');
+					var data = tr.find('td'),
+						obj = tr.data('json');
 					tr.addClass('shown');
-					formatFunction(dataTable.api().row(tr).data()).insertAfter(tr);
+					
+					formatFunction(dataTable.api().row(tr).data(), obj)
+						.insertAfter(tr);
 				}
 				else {
-					// Se alguma linha já está com os detalhes abertos, fecha-o
-					if ( detail.is(':visible') ) {
-			    		detail.hide();
-			    		tr.removeClass('shown');
-			    	}
-			    	else {
-			    		// Abre a linha
-			    		detail.show();
-			    		tr.addClass('shown');
-			    	}
+					detail.remove();
+					tr.removeClass('shown');
 				}
 		    });
 		}
@@ -56,51 +51,124 @@ var detalheHelper = function($table, formatFunction, dataTable) {
 		}
 	});
 	
-	return {
-		expandirContrairLinhas : function(expandir) {
-			var elements = $table.find('tbody td.details-control'),
-				btn = $table.find('.bt-expandir');
+	this.atualizar = function(tr) {
+		var detail = tr.next('tr.detail');
+		
+		if(detail.size() > 0 && tr.hasClass('shown')) {
+			detail.remove();
+			var data = tr.find('td'),
+				obj = tr.data('json');
 			
-			if(expandir) {
-		    	btn.addClass('expandido');
-		    	
-		    	elements.each(function() {
-		        	var tr = jQuery(this).closest('tr'),
-		        		detail = tr.next('tr.detail');
-		 		
-		    		if(detail.size() == 0) {
-		        		var data = tr.find('td');
-		        		tr.addClass('shown');
-		        		
-		        		formatFunction(dataTable.api().row(tr).data()).insertAfter(tr);
-		       		}
-		       		detail.show();
-		       		tr.addClass('shown');
-		       	});
-		    } else {
-		    	btn.removeClass('expandido');
-		    	
-		    	elements.each(function() {
-		      		var tr = jQuery(this).closest('tr'),
-		      			detail = tr.next('tr.detail');
-		    		
-		    		detail.hide();
-		    		tr.removeClass('shown');
-		       	});
-		    }
+			formatFunction(dataTable.api().row(tr).data(), obj)
+				.insertAfter(tr);
 		}
+	}
+	
+	this.expandirContrairLinhas = function(expandir) {
+		var elements = $table.find('tbody td.details-control'),
+			btn = $table.find('.bt-expandir');
+		
+		if(expandir) {
+	    	btn.addClass('expandido');
+	    	
+	    	elements.each(function() {
+	        	var tr = jQuery(this).closest('tr'),
+	        		detail = tr.next('tr.detail');
+	 		
+	    		if(detail.size() == 0) {
+	        		var data = tr.find('td'),
+	        			obj = tr.data('json');
+	        		tr.addClass('shown');
+	        		
+	        		formatFunction(dataTable.api().row(tr).data(), obj)
+	        			.insertAfter(tr);
+	       		}
+	       		detail.show();
+	       		tr.addClass('shown');
+	       	});
+	    } else {
+	    	btn.removeClass('expandido');
+	    	
+	    	elements.each(function() {
+	      		var tr = jQuery(this).closest('tr'),
+	      			detail = tr.next('tr.detail');
+	    		
+	    		detail.hide();
+	    		tr.removeClass('shown');
+	       	});
+	    }
 	}
 }
 
-/**
- * Adiciona a funcionalidade de mostrar detalhes em um DataTable
- * formatFuncion: A function a ser utilizada para a cricao do detalhe.
- * dataTable: A tabela onde a funcionalidade deve ser adicionada.
- */
+function SigaTable (tableSelector) {
+	this.table = jQuery(tableSelector);
+	this.dataTable = null;
+	this.formatFunction = null;
+	
+	this.dataTableConfig = {
+			"language": {
+			"emptyTable":     "Não existem resultados",
+		    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+		    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+		    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+		    "infoPostFix":    "",
+		    "thousands":      ".",
+		    "lengthMenu":     "Mostrar _MENU_ registros",
+		    "loadingRecords": "Carregando...",
+		    "processing":     "Processando...",
+		    "search":         "Filtrar:",
+		    "zeroRecords":    "Nenhum registro encontrado",
+		    "paginate": {
+		        "first":      "Primeiro",
+		        "last":       "Último",
+		        "next":       "Próximo",
+		        "previous":   "Anterior"
+		    },
+		    "aria": {
+		        "sortAscending":  ": clique para ordenação crescente",
+		        "sortDescending": ": clique para ordenação decrescente"
+		    }
+		}
+	};
+	
+	this.configurar = function(attr, config) {
+		this.dataTableConfig[attr] = config;
+		return this;
+	}
+	
+	this.criar = function() {
+		this.dataTable = this.table.dataTable(this.dataTableConfig);
+		return this;
+	}
+	
+	this.detalhes = function(formatFunction) {
+		var table = this.table,
+			dataTable = this.dataTable;
+		
+		this.formatFunction = formatFunction;
+		this.table.mostrarDetalhes(formatFunction, this.dataTable);
+		this.table.on('draw.dt', function() {
+			var btn = jQuery('.bt-expandir'),
+				expandir = btn.hasClass('expandido');
+			
+				table.mostrarDetalhes(formatFunction, dataTable);
+				table.expandirContrairLinhas(expandir);
+		});
+		return this;
+	}
+	
+	this.atualizarDetalhes = function(id) {
+		var tr = this.table.find("tr[data-json-id=" + id + "]"),
+			helper = this.table.data('detalheHelper');
+		
+		helper.atualizar(tr);
+		return this;
+	}
+}
 
 jQuery.fn.mostrarDetalhes = function(formatFunction, dataTable) {
 	var $table = jQuery(this),
-		helper = detalheHelper($table, formatFunction, dataTable);
+		helper = new DetalheHelper($table, formatFunction, dataTable);
 	
 	$table.data('detalheHelper', helper);
 };

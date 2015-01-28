@@ -118,97 +118,47 @@
 		return query_string;
 	}();
 
-	var table = null;
-	jQuery(document).ready(function($) {
-		if (QueryString.mostrarDesativados != undefined) {
-			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
-			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
-		}
-			
-		$("#checkmostrarDesativado").click(function() {
-			jQuery.blockUI(objBlock);
-			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = '@{Application.listarItemDesativados()}';
-			else
-				location.href = '@{Application.listarItem()}';	
-		});
+	if (QueryString.mostrarDesativados != undefined) {
+		document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
+		document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+	}
 		
-		/* Table initialization */
-		optsLista.dataTable = $('#itens_configuracao_table')
-			.on('draw.dt', function() {
-				if(optsLista.dataTable) {
-					var btn = $('.bt-expandir'),
-						expandir = btn.hasClass('expandido');
-						
-					$('#itens_configuracao_table').mostrarDetalhes(format, optsLista.dataTable);
-					$('#itens_configuracao_table').expandirContrairLinhas(expandir);
-				}
-			})
-			.dataTable({
-				"language": {
-					"emptyTable":     "Não existem resultados",
-				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-				    "infoPostFix":    "",
-				    "thousands":      ".",
-				    "lengthMenu":     "Mostrar _MENU_ registros",
-				    "loadingRecords": "Carregando...",
-				    "processing":     "Processando...",
-				    "search":         "Filtrar:",
-				    "zeroRecords":    "Nenhum registro encontrado",
-				    "paginate": {
-				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
-				        "previous":   "Anterior"
-				    },
-				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
-				    }
-				},
-				// Define que a ordenacao deve comecar na segunda coluna (para evitar coluna com acoes de expandir)
-				"aaSorting" : [[colunasLista.codigo, 'asc']],
-				"columnDefs": [
-					// Coluna com expandir da grid, coluna de acoes e JSon
-					{
-						"targets": [colunasLista.expandir, colunasLista.acoes, colunasLista.jSon],
-						"searchable": false,
-						"sortable": false
-					},
-					// Coluna similaridade e JSon 
-					{
-						"targets": [colunasLista.similaridade, colunasLista.jSon],
-						"visible": false
-					}
-				],
-				"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-					var jSonItem = getJsonByString(aData[colunasLista.jSon]);
-					$('td:eq('+colunasLista.expandir+')', nRow).addClass('details-control');
-
-					if (jSonItem.nivel == 1)
-						$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-pai');
-					else if (jSonItem.nivel == 2)
-						$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-filho');
-					else if (jSonItem.nivel == 3)
-						$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-neto');
-				}
-			});
-			$('#itens_configuracao_table').mostrarDetalhes(format, optsLista.dataTable);
+	$("#checkmostrarDesativado").click(function() {
+		jQuery.blockUI(objBlock);
+		if (document.getElementById('checkmostrarDesativado').checked)
+			location.href = '@{Application.listarItemDesativados()}';
+		else
+			location.href = '@{Application.listarItem()}';	
 	});
 
-	function format( d ) {
-		var tr = $('<tr class="detail">'),
-			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-			'<tr>'+
-				'<td><b>Similaridade:</b></td>'+
-					'<td>' + d[colunasLista.similaridade] + '</td>'+
-		        '</tr>'+
-		    '</table><td>';
-		    
-	    return tr.append(detailHTML);
-	}
+	var itemTable = new SigaTable('#itens_configuracao_table')
+		.configurar("aaSorting", [[colunasLista.codigo, 'asc']])
+		.configurar("columnDefs",  [
+     		// Coluna com expandir da grid, coluna de acoes e JSon
+        	{
+        		"targets": [colunasLista.expandir, colunasLista.acoes, colunasLista.jSon],
+        		"searchable": false,
+        		"sortable": false
+        	},
+        	// Coluna similaridade e JSon 
+        	{
+        		"targets": [colunasLista.similaridade, colunasLista.jSon],
+        		"visible": false
+        	}
+        ])
+        .configurar("fnRowCallback", function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				var jSonItem = getJsonByString(aData[colunasLista.jSon]);
+				$('td:eq('+colunasLista.expandir+')', nRow).addClass('details-control');
+	
+				if (jSonItem.nivel == 1)
+					$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-pai');
+				else if (jSonItem.nivel == 2)
+					$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-filho');
+				else if (jSonItem.nivel == 3)
+					$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-neto');
+		})
+		.criar()
+		.detalhes(detalhesItemConfiguracaoFormat);
 	
 	var optsLista = {
 			 urlDesativar : '@{Application.desativarItem()}?',
@@ -219,7 +169,8 @@
 			 objectName : 'itemConfiguracao',
 			 formCadastro : jQuery('#formItemConfiguracao'),
 			 mostrarDesativados : QueryString.mostrarDesativados,
-			 colunas : colunasLista.acoes
+			 colunas : colunasLista.acoes,
+			 dataTable : itemTable.dataTable
 	};
 	
 	// Define a "classe" ItemConfiguracaoService
@@ -245,15 +196,19 @@
 	itemConfiguracaoService.onRowClick = function(itemConfiguracao) {
 		itemConfiguracaoService.editar(itemConfiguracao, 'Alterar Item de Configuração');
 	}
+
+	itemConfiguracaoService.onGravar = function(obj, objSalvo) {
+		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
+		itemTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
+		return tr;
+	}
 	
 	/**
 	 * Customiza o metodo editar
 	 */
 	itemConfiguracaoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
-
 		atualizarModalItem(obj);
-
 		// carrega as designações do item
 		carregarDesignacoes(obj.id);
 	}
@@ -263,8 +218,19 @@
 	 */
 	itemConfiguracaoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
-
 		atualizarModalItem();
+	}
+
+	function detalhesItemConfiguracaoFormat( d, obj) {
+		var tr = $('<tr class="detail">'),
+			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+			'<tr>'+
+				'<td><b>Similaridade:</b></td>'+
+					'<td>' + (obj.descricaoSimilaridade || "") + '</td>'+
+		        '</tr>'+
+		    '</table><td>';
+		    
+	    return tr.append(detailHTML);
 	}
 
 	function atualizaItemConfiguracaoJson() {

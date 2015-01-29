@@ -13,7 +13,8 @@ import com.google.gson.JsonObject;
 public class PaginaItemConfiguracao extends Pagina {
 
 	private JsonArray orgaos;
-
+	private String tituloOuCodigo;
+	
 	public PaginaItemConfiguracao() {
 		this.orgaos = new JsonArray();
 	}
@@ -58,6 +59,18 @@ public class PaginaItemConfiguracao extends Pagina {
 		return this;
 	}
 
+	public String getTituloOuCodigo() {
+		return tituloOuCodigo;
+	}
+
+	public void setTituloOuCodigo(String tituloOuCodigo) {
+		this.tituloOuCodigo = tituloOuCodigo;
+	}
+	
+	public boolean possuiParametroConsulta() {
+		return tituloOuCodigo != null && !tituloOuCodigo.isEmpty();
+	}
+	
 	class OrgaoVO {
 		private String sigla;
 		private Long idOrgaoUsu;

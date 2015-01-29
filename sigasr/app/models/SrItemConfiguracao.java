@@ -31,7 +31,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import models.vo.Pagina;
+import models.vo.PaginaItemConfiguracao;
 import models.vo.SrItemConfiguracaoVO;
 
 import org.hibernate.annotations.Cache;
@@ -339,12 +339,12 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<SrItemConfiguracao> listar(Pagina configuracao) {
+	public static List<SrItemConfiguracao> listar(PaginaItemConfiguracao configuracao) {
 		if (configuracao.precisaExecutarCount()) {
-			configuracao.setCount(countAtivos());
+			configuracao.setCount(countAtivos(configuracao));
 		}
 
-		StringBuilder sb = querySelecionarAtivos("i");
+		StringBuilder sb = querySelecionarAtivos("i", configuracao);
 		if (configuracao.getOrderBy() != null) {
 			sb.append(MessageFormat.format(" order by i.{0} ", configuracao.getOrderBy()));
 		}
@@ -355,23 +355,30 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		Query query = em().createQuery(sb.toString());
 		query.setFirstResult(configuracao.getFistResult());
 		query.setMaxResults(configuracao.getTamanho());
-		
+
+		if(configuracao.possuiParametroConsulta()) {
+			query.setParameter("tituloOuCodigo", "%" + configuracao.getTituloOuCodigo() + "%");
+		}
 		return query.getResultList();
 	}
 
-	private static Integer countAtivos() {
-		StringBuilder sb = querySelecionarAtivos("count(i)");
+	private static Integer countAtivos(PaginaItemConfiguracao pagina) {
+		StringBuilder sb = querySelecionarAtivos("count(i)", pagina);
+		Query query = em().createQuery(sb.toString());
 		
-		Long count = (Long) em()
-				.createQuery(sb.toString())
-				.getSingleResult();
-		
-		return count.intValue();
+		if(pagina.possuiParametroConsulta()) {
+			query.setParameter("tituloOuCodigo", "%" + pagina.getTituloOuCodigo() + "%");
+		}
+		return ((Long) query.getSingleResult()).intValue();
 	}
 	
-	private static StringBuilder querySelecionarAtivos(String clause) {
+	private static StringBuilder querySelecionarAtivos(String clause, PaginaItemConfiguracao pagina) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(MessageFormat.format("SELECT {0} FROM SrItemConfiguracao i WHERE hisDtFim is null ", clause));
+		
+		if(pagina.possuiParametroConsulta()) {
+			sb.append(" AND (UPPER(i.tituloItemConfiguracao) LIKE UPPER(:tituloOuCodigo) OR UPPER(i.siglaItemConfiguracao) LIKE UPPER(:tituloOuCodigo)) ");
+		}
 		sb.append(" AND idItemConfiguracao in (");
 		sb.append(" SELECT max(idItemConfiguracao) as idItemConfiguracao FROM ");
 		sb.append(" SrItemConfiguracao GROUP BY hisIdIni) ");
@@ -511,16 +518,12 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
 		
 		for (SrItemConfiguracao pai : this.getListaPai()) {
-			try {
-				for (SrConfiguracao confPai : pai.designacoesSet) {
-					confPai.isHerdado = true;
-					confPai.utilizarItemHerdado = true;
-					
-					listasDesignacoesPai.add(confPai);
-				}
-			} catch (Exception e) {
+			for (SrConfiguracao confPai : pai.getDesignacoesAtivas()) {
+				confPai.isHerdado = true;
+				confPai.utilizarItemHerdado = true;
+				
+				listasDesignacoesPai.add(confPai);
 			}
-			
 		}
 		
 		return listasDesignacoesPai;
@@ -665,5 +668,18 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	
 	public List<SrItemConfiguracao> getFilhoSet() {
 		return filhoSet;
+	}
+	
+	public List<SrConfiguracao> getDesignacoesAtivas() {
+		List<SrConfiguracao> designacoesAtivas = new ArrayList<SrConfiguracao>();
+		
+		if (this.designacoesSet != null) {
+			for (SrConfiguracao d : this.designacoesSet) {
+				if (d.isAtivo())
+					designacoesAtivas.add(d);
+			}
+		}
+		
+		return designacoesAtivas;
 	}
 }

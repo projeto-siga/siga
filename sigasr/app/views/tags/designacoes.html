@@ -293,7 +293,7 @@ altura:'200', largura:'450'}
         	dataType: "text",
         	success: function(lista) {
         		var listaJSon = JSON.parse(lista);
-        		designacaoService.populateFromJSonList(listaJSon, opts.designacoesDataTable);
+        		designacaoService.populateFromJSonList(listaJSon, designacaoTable.dataTable);
         	},
         	error: function(error) {
             	alert("Não foi possível carregar as Designações deste item.");

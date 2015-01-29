@@ -306,9 +306,9 @@
 	function limparDadosItemModal() {
 		removerItensLista('gestoresUl');
 		removerItensLista('fatoresUl');
-
+		
 		// limpa as designações
-		opts.designacoesDataTable.api().clear().draw();
+		designacaoTable.dataTable.api().clear().draw();
 	}
 
 	function removerItensLista(nomeLista) {

@@ -173,17 +173,11 @@
 					</tr>
 				</table>
 				
-				<div class="gt-form-row">
-					#{designacoes designacoes:designacoesItem, 
-						modoExibicao:'item', 
-						orgaos:orgaos, 
-						locais:locais, 
-						unidadesMedida:unidadesMedida, 
-						pesquisaSatisfacao:pesquisaSatisfacao, 
-						listasPrioridade:listasPrioridade /}
+				<div id="divDesignacoes" class="gt-form-row">
+					
 				</div>
 				
- 				<table class="gt-form-table">
+				<table class="gt-form-table">
 					<tr>
 						<tr>
 							<td>
@@ -254,6 +248,16 @@
 	</div>
 </div>
 
+<div id="designacaoComponent">
+	#{designacoes designacoes:designacoesItem, 
+			modoExibicao:'item', 
+			orgaos:orgaos, 
+			locais:locais, 
+			unidadesMedida:unidadesMedida, 
+			pesquisaSatisfacao:pesquisaSatisfacao, 
+			listasPrioridade:listasPrioridade /}
+</div>
+
 <script>
 	var jGestores = null,
 		gestores = null,
@@ -271,6 +275,10 @@
 		validatorFormFator = null;
 
 	jQuery(document).ready(function($) {
+		// DB1: adiciona as designações no local correto programaticamente, pois
+		// por problemas de inicialização precisamos mudar o local do componente no html
+		jQuery("#divDesignacoes").append(jQuery("#designacaoComponent"));
+		
 		$("#siglaItemConfiguracao").mask("99.99.99");
 		
 		validatorFormItem = $("#formItemConfiguracao").validate({

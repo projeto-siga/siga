@@ -119,7 +119,8 @@
 				requiredValue:'required' /}
 			</div>
 			<div class="gt-form-row">
-				<label>#{checkbox name:'atributoObrigatorio',
+				<label>#{checkbox 
+					name:'atributoObrigatorio',
 					value:atributoObrigatorio /} Obrigatório</label>
 			</div>
 			<div class="gt-form-row">
@@ -210,9 +211,13 @@
 	
 	associacaoService.onGravar = function(obj, objSalvo) {
 		var td = BaseService.prototype.onGravar.call(this, obj, objSalvo),
-			atributo =  this.atributoPorId(obj.atributo.idAtributo);
-		
-		atributo.associacoesVO.push(objSalvo);
+			atributo =  this.atributoPorId(obj.atributo.idAtributo),
+			id = this.row(obj);
+
+		// Se eh criacao de novo objeto, entao adiciona na lista
+		if(!id) {
+			atributo.associacoesVO.push(objSalvo);
+		}
 		associacaoService.adicionarFuncionalidadesNaLinha(this.row(objSalvo), objSalvo);
 		associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
 		return td;
@@ -224,6 +229,7 @@
 		node.attr('data-json-id', assoc.idConfiguracao);
 		node.on('click', function() {
 			associacaoService.editar(assoc, 'Alterar Associação');
+			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
 			$('#associacaoForm input').removeAttr('onblur'); // WA
 		});
 		associacaoTable.table.mostrarDetalhes(detalhesListaAssociacao, associacaoTable.dataTable);
@@ -356,11 +362,10 @@
 	}
 
 	function formatDescricaoLonga(descricao) {
-		if (descricao) {
-			return descricao + " ...";
+		if (descricao && descricao.length > 10) {
+			return descricao.substr(0, 10) + " ...";
 		}
-		else
-			return ' ';
+		else return (descricao || ' ');
 	}
 
 	function getAtributoObrigatorioString() {

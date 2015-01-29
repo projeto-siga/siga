@@ -221,6 +221,56 @@
 		atualizarModalItem();
 	}
 
+	/**
+	* Sobrescreve o método gravar para tratar a lista de Gestor e Fator de Multiplicação.
+	*/
+	itemConfiguracaoService.gravar = function() {
+		gravarAplicar(this, false);
+	}
+
+	/**
+	* Sobrescreve o método aplicar para tratar a lista de Gestor e Fator de Multiplicação.
+	*/
+	itemConfiguracaoService.aplicar = function() {
+		return gravarAplicar(this, true);
+	}
+
+	function gravarAplicar(baseService, isAplicar) {
+		if (!baseService.isValidForm())
+			return false;
+		
+		var obj = baseService.getObjetoParaGravar(),
+			url = baseService.opts.urlGravar,
+			wrapper = {},
+			success = function(objSalvo) {
+				if(baseService.onGravar) {
+					baseService.onGravar(obj, JSON.parse(objSalvo));
+				}
+				
+				if (isAplicar) {
+					baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
+					
+					alert("Cadastro salvo com sucesso.");
+				}
+					
+				else
+					baseService.opts.dialogCadastro.dialog("close");
+
+			}
+			
+		wrapper[baseService.opts.objectName] = obj;
+		var params = jQuery.param(wrapper) + "&" + getListasAsString();
+		
+		$.ajax({
+	    	type: "POST",
+	    	url: url,
+	    	data: params,
+	    	dataType: "text",
+	    	success: success,
+	    	error: baseService.errorHandler
+	   	});
+	}
+
 	function detalhesItemConfiguracaoFormat( d, obj) {
 		var tr = $('<tr class="detail">'),
 			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+

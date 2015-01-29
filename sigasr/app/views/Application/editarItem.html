@@ -478,10 +478,8 @@
         validatorFormFator.resetForm();
     });
 
-	function serializarItemConfiguracao() {
-		// UTILIZADO TANTO PARA GESTORES QUANTO PARA FATORES DE MULTIPLICAÇÃO
-        var jForm = $("#formItemConfiguracao"),
-            params = jForm.serialize();
+	function getListasAsString() {
+        var params = '';
 
         $("#gestoresUl").find("li").each(function(i){
             var jDivs=$(this).find("span"),
@@ -506,8 +504,6 @@
             params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].numFatorMultiplicacao=' + parseInt(jDivsF[1].innerHTML.replace(" / Fator: ", ""));
    	 	});
 
-        console.log(params);
-        
         return params;
     }
 </script>

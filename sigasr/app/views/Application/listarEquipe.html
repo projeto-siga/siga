@@ -26,9 +26,8 @@
 
 				<tbody>
 					#{list items:listaEquipe, as:'eq'}
-					<tr style="cursor: pointer;"
-						#{if eq.podeEditar(lotaTitular, cadastrante)}
-						onclick="equipeService.editar($(this).data('json'), 'Alterar Equipe')"#{/if}
+					<tr #{if eq.podeEditar(lotaTitular, cadastrante)}
+							onclick="equipeService.editar($(this).data('json'), 'Alterar Equipe')" style="cursor: pointer;"#{/if}
 						data-json-id="${eq.idEquipe}" data-json="${eq.toJson()}">
 						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 							${eq.lotacao?.sigla}
@@ -113,36 +112,50 @@
 		equipeService.editar(equipe, 'Alterar Equipe');
 	}
 
-	function inserirEditarEquipe() {
-		limparDadosEquipeModal();
-		equipeModalAbrir(false);
+	/**
+	 * Customiza o metodo editar
+	 */
+	 equipeService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+		atualizarModalEquipe(obj);
+	}
+
+	/**
+	 * Sobescreve o metodo cadastrar para limpar a tela.
+	 */
+	 equipeService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title); // super.editar();
+		atualizarModalEquipe();
 	}
 	
-	function equipeModalAbrir(isEdicao) {
-		isEditing = isEdicao;
-		
-		if (isEdicao)
-			$("#editarEquipe_dialog").dialog('option', 'title', 'Alterar Equipe');
-		else
-			$("#editarEquipe_dialog").dialog('option', 'title', 'Incluir Equipe');
+	function atualizarModalEquipe(equipe) {
+		limparDadosEquipe();
 
-		$("#editarEquipe_dialog").dialog('open');
+		if (equipe) {
+			if (equipe.excecaoHorarioSet) {
+				// cria a lista de Exceções de horário, e adiciona na tela
+				for (i = 0; i < equipe.excecaoHorarioSet.length; i++) {
+					var item = equipe.excecaoHorarioSet[i];
+// 						row = [
+// 					           diaSemana,
+// 					           dataEspecifica,
+// 					           diaText,
+// 					           document.getElementById("horaIni").value,
+// 					           document.getElementById("horaFim").value,
+// 					           document.getElementById("interIni").value,
+// 					           document.getElementById("interFim").value,
+// 					           "<a class=\"excecao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+					
+// 					// Adiciona na tabela de Exceções de horário
+// 					excecoesTable.api().row.add(rowItem).draw();
+				}
+			}
+		}
 	}
-
-	function equipeModalFechar() {
-		$("#editarEquipe_dialog").dialog('close');
-		limparDadosEquipeModal();
-	}
-
-	function limparDadosEquipeModal() {
-// 		$("#idEquipe").val('');
-// 		$("#idEquipeIni").val('');
-		$("#lotacao").val('');
-
-// 		removerItensLista('gestoresUl');
-// 		removerItensLista('fatoresUl');
-
-// 		resetAllErrorMessage();
+	
+	function limparDadosEquipe() {
+		// limpa as exceções de horário
+		excecoesTable.api().clear().draw();
 	}
 	
 </script>

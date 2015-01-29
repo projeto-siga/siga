@@ -116,10 +116,12 @@ public class SrEquipe extends HistoricoSuporte {
 	private JsonArray excecaoHorarioArray() {
 		Gson gson = createGson("equipe");
 		JsonArray jsonArray = new JsonArray();
-
-		for (SrExcecaoHorario srExcecaoHorario : this.excecaoHorarioSet) {
-			jsonArray.add(gson.toJsonTree(srExcecaoHorario));
-		}
+		
+		if (this.excecaoHorarioSet != null)
+			for (SrExcecaoHorario srExcecaoHorario : this.excecaoHorarioSet) {
+				jsonArray.add(gson.toJsonTree(srExcecaoHorario));
+			}
+		
 		return jsonArray;
 	}
 	

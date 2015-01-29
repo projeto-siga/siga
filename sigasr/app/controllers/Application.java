@@ -295,6 +295,13 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditarItem(
 			SrItemConfiguracao itemConfiguracao) throws Exception {
+		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
+			Validation.addError("siglaAcao", "Código não informado");
+		}
+		if (Validation.hasErrors()) {
+			enviarErroValidacao();
+		}
+		
 	}
 
 	private static void validarFormEditarAcao(SrAcao acao) {
@@ -1315,6 +1322,10 @@ public class Application extends SigaApplication {
 	
 	public static String gravarEquipe(SrEquipe equipe) throws Exception {
 		assertAcesso("ADM:Administrar");
+		
+		if (equipe.lotacao == null)
+			equipe.lotacao = lotaTitular();
+		
 		equipe.salvar();
 		return equipe.toJson();
 	}

@@ -275,10 +275,8 @@
 
 	function inserirAssociacao() {
 		var atributoId = $("#idAtributo");
-		if ((atributoId == undefined || atributoId.val() == "") 
-			&& atributoService.aplicar() == false) 
+		if ((atributoId == undefined || atributoId.val() == "")  && atributoService.aplicar() == false) 
 			return;
-			
 		limparDadosAssociacaoModal();
 		associacaoModalAbrir(false);
 	};
@@ -455,6 +453,15 @@
 
 	          	if (isEditingAssociacao) {
 	          		tableAssociacao.api().row('.selected').data(row);
+	          		var tr = $('tr.selected'),
+	          			detail = tr.next('.detail'),
+	          			shown = tr.hasClass('shown');
+
+	          		if(shown) {
+	          			detail.remove();
+		          		detalhesListaAssociacao(row)
+		          			.insertAfter(tr);
+           			}
 			    }
 			    else {
 			    	var tr = tableAssociacao.api().row.add(row).draw();

@@ -109,6 +109,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>com.ckeditor</groupId>
 			<artifactId>ckeditor-java-core</artifactId>
 		</dependency>

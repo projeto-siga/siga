@@ -29,7 +29,7 @@ function Formulario(form) {
 	this.prepareObjectToForm = function(obj) {
 		for (var x in obj) {
 		    if (typeof obj[x] == 'object') {
-		    	var component = document.getElementsByName(x)[0],	    		
+		    	var component = document.getElementsByName(x)[0],		
 		    		className = component != null ? component.className : null,
 		        	objeto = obj[x];
 		    	

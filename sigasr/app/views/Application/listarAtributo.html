@@ -263,7 +263,7 @@
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 
 		// alimenta a lista de Associações
-		atualizarListaAssociacoes(obj);
+		associacaoService.atualizarListaAssociacoes(obj);
 	}
 
 	/**
@@ -273,6 +273,6 @@
 		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
 
 		// alimenta a lista de Associações
-		atualizarListaAssociacoes();
+		associacaoService.atualizarListaAssociacoes();
 	}
 </script>

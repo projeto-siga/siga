@@ -52,20 +52,8 @@ window.Siga = {
     	DELETE: "DELETE",
     	UPDATE: "UPDATE"
     },
-    
-    _display: function(model, content){
-    	var self = this;
-    	var target = $("#"+model.viewId); // Local onde o conteúdo será renderizado
-    	
-        if (self._isUnauthenticated(content)){        
-        	target.html("M&oacute;dulo indispon&iacute;vel");
-        }else{
-            target.append(content);
-            $(target.find(".loading")).hide();
-        }
-    },
-
-    _isUnauthenticated: function(text){
+     
+    isUnauthenticated: function(text){
     	// essa primeira verificacao é pra verificar se é do picketlink
     	// a segunda eh pra ver se veio a pagina completa do siga ou soh o que interessa
     	return (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1)
@@ -145,21 +133,7 @@ window.Siga = {
             	callback(textResponse);
             }
         });
-    },
-    
-    loadModules: function(){
-        var self = this;
-        
-        // Itera sobre o objeto modules definido no inicio desse script.
-        $.each(self.modules, function(){
-        	var model = this;
-        	// Efetua a requisicao e retorna o conteudo 
-            var content = self.ajax(model.url, model.params, "GET", function(content){  
-	        	// Renderiza o conteudo onde o viewId do modulo esta posicionado
-	            self._display(model, content);
-            });
-        });
-    }
+    }    
 }
 
 var Siga = window.Siga;

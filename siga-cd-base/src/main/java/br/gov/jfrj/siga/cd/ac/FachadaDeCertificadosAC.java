@@ -18,15 +18,16 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cd.ac;
 
-import java.io.ByteArrayInputStream;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 
 /**
  * Fachada para acesso aos Certificados
@@ -44,16 +45,17 @@ public class FachadaDeCertificadosAC {
 	 * @return
 	 * @throws Exception
 	 */
-	public static X509Certificate[] montarCadeiaOrdenadaECompleta(
-			Collection<X509Certificate> certs) throws Exception {
-		final ArrayList<X509Certificate> certsList = new ArrayList<X509Certificate>();
+	public static X509Certificate[] montarCadeiaOrdenadaECompleta(Collection<X509CertificateHolder> certs) throws Exception {
+		List<X509Certificate> certsList = new ArrayList<X509Certificate>();
 		// adiciona os certificados recebidos (parâmetro) à lista de
 		// certificados
-		for (final Certificate cert : certs) {
-			final ByteArrayInputStream bais = new ByteArrayInputStream(cert
-					.getEncoded());
-			final X509Certificate x509 = (X509Certificate) (CertificateFactory
-					.getInstance("X.509")).generateCertificate(bais);
+		for (X509CertificateHolder cert : certs) {
+//			final ByteArrayInputStream bais = new ByteArrayInputStream(cert
+//					.getEncoded());
+//			final X509Certificate x509 = (X509Certificate) (CertificateFactory
+//					.getInstance("X.509")).generateCertificate(bais);
+//			
+			X509Certificate x509 = new JcaX509CertificateConverter().setProvider( "BC" ).getCertificate( cert );
 			certsList.add(0, x509);
 		}
 		// Acrescenta os certificados faltantes para completar a cadeia

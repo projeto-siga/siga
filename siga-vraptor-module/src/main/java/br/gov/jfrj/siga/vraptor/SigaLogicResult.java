@@ -17,9 +17,11 @@ package br.gov.jfrj.siga.vraptor;
  * limitations under the License.
  */
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.nio.charset.Charset;
 
 import javax.inject.Inject;
@@ -154,6 +156,30 @@ public class SigaLogicResult implements LogicResult {
 				}
 			}
 
+		});
+	}
+
+	public <T> T getRedirectURL(final StringBuilder sb, final Class<T> type) {
+		return proxifier.proxify(type, new MethodInvocation<T>() {
+			public Object intercept(T proxy, Method method, Object[] args, SuperMethod superMethod) {
+				if (!acceptsHttpGet(method)) {
+					throw new IllegalArgumentException(
+							"Your logic method must accept HTTP GET method if you want to redirect to it");
+				}
+				String path = request.getContextPath();
+				String url = router.urlFor(type, method, args);
+				includeParametersInFlash(type, method, args);
+
+				path = path + url;
+
+				//Nato: inseri essas duas linhas para corrigir um problema de codepage no redirecionamento
+				response.setContentType("text/html; charset=UTF-8");
+//				path = new String(Charset.forName("UTF-8").encode(path).array());
+				
+				sb.setLength(0);
+				sb.append(path);
+				return null;
+			}
 		});
 	}
 

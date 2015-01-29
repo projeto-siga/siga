@@ -37,7 +37,7 @@ $(document).ready(function(){
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form id="grelLocal" action="@{Application.grelLocal}" method="GET" target="relLocal">
+		<form id="grelLocal" action="@{Application.grelLocal}" method="GET" target="relLocal" enctype="multipart/form-data">
 		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 		
 			<table class="gt-form-table">

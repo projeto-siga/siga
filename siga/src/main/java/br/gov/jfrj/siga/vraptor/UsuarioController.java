@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
@@ -24,8 +25,8 @@ public class UsuarioController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
 
-	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

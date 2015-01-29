@@ -522,6 +522,9 @@ public class ExMobilVO extends ExVO {
 		for (ExMarca mar : getMarcasAtivas()) {
 			if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
 					&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
+					&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
+					&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
+					&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA
 					&& ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
 							.equals(mar.getDpLotacaoIni().getIdInicial())) || mar
 							.getDpLotacaoIni() == null)
@@ -538,7 +541,10 @@ public class ExMobilVO extends ExVO {
 		if (sb.length() == 0) {
 			for (ExMarca mar : getMarcasAtivas()) {
 				if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO) {
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA) {
 					if (sb.length() > 0)
 						sb.append(", ");
 					if ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
@@ -562,7 +568,10 @@ public class ExMobilVO extends ExVO {
 		if (sb.length() == 0) {
 			for (ExMarca mar : getMarcasAtivas()) {
 				if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
-						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO) {
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
+						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA) {
 					if (sb.length() > 0)
 						sb.append(", ");
 					sb.append(mar.getCpMarcador().getDescrMarcador());

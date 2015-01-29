@@ -44,6 +44,7 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte 
 
 	private String codificacao;
 	private String descrClassificacao;
+	private String descrClassificacaoSemAcento;
 	private Set<ExVia> exViaSet;
 	private String obs;
 
@@ -230,5 +231,15 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte 
 			Set<ExClassificacao> classificacoesPosteriores) {
 		this.classificacoesPosteriores = classificacoesPosteriores;
 	}
+
+	public String getDescrClassificacaoSemAcento() {
+		return descrClassificacaoSemAcento;
+	}
+
+	public void setDescrClassificacaoSemAcento(
+			String descrClassificacaoSemAcento) {
+		this.descrClassificacaoSemAcento = descrClassificacaoSemAcento;
+	}
+	
 
 }

@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
@@ -31,75 +32,70 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Resource
 public class PerfilController extends GrupoController {
 
-	public PerfilController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
-		
+	public PerfilController(HttpServletRequest request, Result result,
+			SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
+
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-		
+
 		prepare();
 	}
 
 	public int getIdTipoGrupo() {
 		return CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO;
 	}
-	
+
 	@Get("/app/gi/perfil/listar")
 	public void lista() throws Exception {
 		assertAcesso("PERFIL:Gerenciar grupos de email");
 		super.aListar();
-		
+
 		result.include("itens", getItens());
 		result.include("cpTipoGrupo", getCpTipoGrupo());
 		result.include("tamanho", getTamanho());
 		result.include("titular", getTitular());
 		result.include("lotaTitular", getLotaTitular());
 	}
-	
 
 	@Get("/app/gi/perfil/editar")
 	public void edita(Long idCpGrupo) throws Exception {
 		assertAcesso("PERFIL:Gerenciar grupos de email");
 		super.aEditar(idCpGrupo);
-		//Tipo Grupo = Perfil
-		result.include("idCpTipoGrupo", getIdTipoGrupo());		
+		// Tipo Grupo = Perfil
+		result.include("idCpTipoGrupo", getIdTipoGrupo());
 		result.include("cpTipoGrupo", getCpTipoGrupo());
-		//Dados do Grupo Perfil
+		// Dados do Grupo Perfil
 		result.include("idCpGrupo", getIdCpGrupo());
 		result.include("siglaGrupo", getSiglaGrupo());
 		result.include("dscGrupo", getDscGrupo());
 		result.include("grupoPaiSel", getGrupoPaiSel());
-		//Dados utilizados para montar a tela				
+		// Dados utilizados para montar a tela
 		result.include("titular", getTitular());
-		result.include("lotaTitular", getLotaTitular());		
-		result.include("lotacaoGestoraSel", getLotacaoGestoraSel());		
+		result.include("lotaTitular", getLotaTitular());
+		result.include("lotacaoGestoraSel", getLotacaoGestoraSel());
 		result.include("confGestores", getConfGestores(idCpGrupo));
-		result.include("configuracoesGrupo",getConfiguracoesGrupo());
-		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",getTiposConfiguracaoGrupoParaTipoDeGrupo());
+		result.include("configuracoesGrupo", getConfiguracoesGrupo());
+		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",
+				getTiposConfiguracaoGrupoParaTipoDeGrupo());
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 		result.include("idConfiguracao", getIdConfiguracao());
-		
+
 	}
-	
+
 	@Post("/app/gi/perfil/gravar")
-	public void gravar(Long idCpGrupo
-			          ,String siglaGrupo
-					  ,String dscGrupo			          
-			          ,CpGrupoDeEmailSelecao grupoPaiSel
-			          ,Integer codigoTipoConfiguracaoNova
-			          ,String conteudoConfiguracaoNova) throws Exception {
-		
+	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
+			CpGrupoDeEmailSelecao grupoPaiSel,
+			Integer codigoTipoConfiguracaoNova, String conteudoConfiguracaoNova)
+			throws Exception {
+
 		assertAcesso("PERFIL:Gerenciar grupos de email");
-		
-		super.aGravar(idCpGrupo
-				     ,siglaGrupo
-					 ,dscGrupo
-					 ,grupoPaiSel
-					 ,codigoTipoConfiguracaoNova
-					 ,conteudoConfiguracaoNova);
-		
+
+		super.aGravar(idCpGrupo, siglaGrupo, dscGrupo, grupoPaiSel,
+				codigoTipoConfiguracaoNova, conteudoConfiguracaoNova);
+
 		result.redirectTo(this).lista();
-	}	
+	}
 
 	@Post("/app/gi/perfil/excluir")
 	public void excluir(Long idCpGrupo) throws Exception {

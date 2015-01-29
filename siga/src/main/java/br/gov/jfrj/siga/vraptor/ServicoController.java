@@ -26,6 +26,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Query;
@@ -81,8 +82,8 @@ public class ServicoController 	extends SigaController {
 	//
 	
 	
-	public ServicoController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+	public ServicoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

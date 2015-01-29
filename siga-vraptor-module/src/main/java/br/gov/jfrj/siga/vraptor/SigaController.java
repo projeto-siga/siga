@@ -8,36 +8,34 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Map.Entry;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.util.Paginador;
 
 public class SigaController {
 	public SigaObjects so;
 
 	public Result result;
 
-	public CpDao dao;
+	private HttpServletRequest request;
 
-	private HttpServletRequest request;	
-	
+	private EntityManager em;
+	protected CpDao dao;
+
 	private Paginador p = new Paginador();
 		
 	private Integer postback;
@@ -83,18 +81,20 @@ public class SigaController {
 	protected CpDao dao() {
 		return CpDao.getInstance();
 	}
-	
+
 	public Integer getPostback() {
 		return postback;
 	}
 	
-	public SigaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so) {
+	public SigaController(HttpServletRequest request, Result result, CpDao dao,
+			SigaObjects so, EntityManager em) {
 		super();
 		this.setRequest(request);
-		this.so = so;
-		this.result = result;
 		this.dao = dao;
-		
+		this.result = result;
+		this.so = so;
+		this.em = em;
+
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 
@@ -210,6 +210,10 @@ public class SigaController {
 
 	protected CpOrgaoUsuario daoOU(String sigla) {
 		return so.daoOU(sigla);
+	}
+
+	public EntityManager em() {
+		return this.em;
 	}
 
 	protected int redirectToHome() {

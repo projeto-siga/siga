@@ -50,6 +50,7 @@ import org.hibernate.annotations.Formula;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -69,6 +70,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	 * 
 	 */
 	private static final long serialVersionUID = -5743631829922578717L;
+	public static ActiveRecord<DpPessoa> AR = new ActiveRecord<>(DpPessoa.class);
 
 	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
 	@Desconsiderar

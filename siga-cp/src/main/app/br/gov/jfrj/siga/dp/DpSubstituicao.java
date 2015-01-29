@@ -37,7 +37,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpSubstituicao extends AbstractDpSubstituicao implements Serializable{
 
 	/**

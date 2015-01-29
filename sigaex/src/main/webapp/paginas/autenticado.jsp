@@ -40,9 +40,9 @@
 						<ww:hidden name="urlchk_${mov.idMov}" value="/${pdf}" />
 
 						<c:set var="jspServer"
-							value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/autenticar.action?n=${n}&ass=1&answer=${answer}" />
+							value="${request.contextPath}/autenticar.action?n=${n}&ass=1&answer=${answer}" />
 						<c:set var="nextURL"
-							value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/autenticar.action?n=${n}&answer=${answer}" />
+							value="${request.contextPath}/autenticar.action?n=${n}&answer=${answer}" />
 						<c:set var="urlPath" value="${request.contextPath}" />
 					
 						<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />

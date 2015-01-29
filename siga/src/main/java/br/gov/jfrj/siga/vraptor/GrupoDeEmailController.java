@@ -18,8 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
-
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -33,24 +33,31 @@ import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 
 @Resource
 public class GrupoDeEmailController extends GrupoController {
-	
-	public GrupoDeEmailController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+
+	public GrupoDeEmailController(HttpServletRequest request, Result result,
+			SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 		prepare();
 	}
-	
+
 	public int getIdTipoGrupo() {
 		return CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO;
 	}
-	
+
 	@Get("app/gi/grupoDeEmail/editar")
 	public void edita(Long idCpGrupo) throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf();
-		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+		if (conf.podeUtilizarServicoPorConfiguracao(
+				getTitular(),
+				getLotaTitular(),
 				"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição")
-				|| conf.podeGerirGrupo(getTitular(), getLotaTitular(), getIdCpGrupo(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
+				|| conf.podeGerirGrupo(
+						getTitular(),
+						getLotaTitular(),
+						getIdCpGrupo(),
+						Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
 			super.aEditar(idCpGrupo);
 			// Tipo Grupo = Perfil
 			result.include("idCpTipoGrupo", getIdTipoGrupo());
@@ -66,43 +73,60 @@ public class GrupoDeEmailController extends GrupoController {
 			result.include("lotacaoGestoraSel", getLotacaoGestoraSel());
 			result.include("confGestores", getConfGestores(idCpGrupo));
 			result.include("configuracoesGrupo", getConfiguracoesGrupo());
-			result.include("tiposConfiguracaoGrupoParaTipoDeGrupo", getTiposConfiguracaoGrupoParaTipoDeGrupo());
+			result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",
+					getTiposConfiguracaoGrupoParaTipoDeGrupo());
 			result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 			result.include("idConfiguracao", getIdConfiguracao());
-			
+
 		} else {
-			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+			throw new AplicacaoException(
+					"Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 		}
 	}
-	
+
 	@Post("app/gi/grupoDeEmail/excluir")
 	public void excluir(Long idCpGrupo) throws Exception {
 		assertAcesso("GDISTR:Gerenciar grupos de distribuição;EXC:Excluir");
 		super.aExcluir(idCpGrupo);
 		result.redirectTo(this).lista();
 	}
-	
+
 	@Post("app/gi/grupoDeEmail/gravar")
-	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo, CpGrupoDeEmailSelecao grupoPaiSel, Integer codigoTipoConfiguracaoNova,
-			String conteudoConfiguracaoNova) throws Exception {
+	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
+			CpGrupoDeEmailSelecao grupoPaiSel,
+			Integer codigoTipoConfiguracaoNova, String conteudoConfiguracaoNova)
+			throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf();
-		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+		if (conf.podeUtilizarServicoPorConfiguracao(
+				getTitular(),
+				getLotaTitular(),
 				"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição")
-				|| conf.podeGerirGrupo(getTitular(), getLotaTitular(), getIdCpGrupo(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
-			super.aGravar(idCpGrupo, siglaGrupo, dscGrupo, grupoPaiSel, codigoTipoConfiguracaoNova, conteudoConfiguracaoNova);
+				|| conf.podeGerirGrupo(
+						getTitular(),
+						getLotaTitular(),
+						getIdCpGrupo(),
+						Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
+			super.aGravar(idCpGrupo, siglaGrupo, dscGrupo, grupoPaiSel,
+					codigoTipoConfiguracaoNova, conteudoConfiguracaoNova);
 			result.redirectTo(this).lista();
 		} else {
-			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+			throw new AplicacaoException(
+					"Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 		}
-		
+
 	}
-	
+
 	@Get("app/gi/grupoDeEmail/listar")
 	public void lista() throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf();
-		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+		if (conf.podeUtilizarServicoPorConfiguracao(
+				getTitular(),
+				getLotaTitular(),
 				"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição")
-				|| conf.podeGerirAlgumGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
+				|| conf.podeGerirAlgumGrupo(
+						getTitular(),
+						getLotaTitular(),
+						Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
 			super.aListar();
 			result.include("itens", getItens());
 			result.include("cpTipoGrupo", getCpTipoGrupo());
@@ -110,35 +134,50 @@ public class GrupoDeEmailController extends GrupoController {
 			result.include("titular", getTitular());
 			result.include("lotaTitular", getLotaTitular());
 		} else {
-			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+			throw new AplicacaoException(
+					"Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 		}
-		
+
 	}
-	
+
 	@Get("app/gi/grupoDeEmail/excluirGestorGrupo")
-	public void excluirGestorGrupo(Long idCpGrupo, Long idConfGestor) throws Exception {
+	public void excluirGestorGrupo(Long idCpGrupo, Long idConfGestor)
+			throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf();
-		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+		if (conf.podeUtilizarServicoPorConfiguracao(
+				getTitular(),
+				getLotaTitular(),
 				"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição")
-				|| conf.podeGerirAlgumGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
+				|| conf.podeGerirAlgumGrupo(
+						getTitular(),
+						getLotaTitular(),
+						Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
 			super.aExcluirGestorGrupo(idCpGrupo, idConfGestor);
 		} else {
-			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+			throw new AplicacaoException(
+					"Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 		}
-		result.redirectTo("editar?idCpGrupo="+idCpGrupo);
+		result.redirectTo("editar?idCpGrupo=" + idCpGrupo);
 	}
-	
+
 	@Post("app/gi/grupoDeEmail/gravarGestorGrupo")
-	public void gravarGestorGrupo(Long idCpGrupo, DpLotacaoSelecao lotacaoGestoraSel) throws Exception {
+	public void gravarGestorGrupo(Long idCpGrupo,
+			DpLotacaoSelecao lotacaoGestoraSel) throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf();
-		if (conf.podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+		if (conf.podeUtilizarServicoPorConfiguracao(
+				getTitular(),
+				getLotaTitular(),
 				"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;GDISTR:Gerenciar grupos de distribuição")
-				|| conf.podeGerirAlgumGrupo(getTitular(), getLotaTitular(), Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
-			
+				|| conf.podeGerirAlgumGrupo(
+						getTitular(),
+						getLotaTitular(),
+						Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
+
 			super.aGravarGestorGrupo(idCpGrupo, lotacaoGestoraSel);
 		} else {
-			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+			throw new AplicacaoException(
+					"Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 		}
-		result.redirectTo("editar?idCpGrupo="+idCpGrupo);
+		result.redirectTo("editar?idCpGrupo=" + idCpGrupo);
 	}
 }

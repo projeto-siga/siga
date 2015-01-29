@@ -28,12 +28,15 @@ import java.util.Set;
 import org.hibernate.LockMode;
 
 import sun.security.action.GetLongAction;
+import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
@@ -53,6 +56,7 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.dao.DaoFiltro;
 
 public class ExCompetenciaBL extends CpCompetenciaBL {
 
@@ -1139,6 +1143,157 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
+	/*
+	 * Retorna se é possível assinar um documento com senha:
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAssinarComSenha(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
+				ExTipoMovimentacao.class, false);
+
+		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
+	/*
+	 * Retorna se pode autenticar um documento que só foi assinado com senha.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAutenticarDocumento(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExDocumento doc) throws Exception {
+		
+		if (doc.isEletronico() &&  !doc.isAutenticado() && doc.temAssinaturasComSenha()) {
+			 return true;
+		}
+
+		return false;
+	}
+	
+	/*
+	 * Retorna se pode autenticar uma movimentação que só foi assinada com senha.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAutenticarMovimentacao(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+		
+		//Não é necessário autenticar movimentação de anexação pois o link para assinar/autenticar sempre está disponível. 
+		if(mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
+			return false;
+		
+		if (mov.getExDocumento().isEletronico() &&  !mov.isAutenticada() && mov.temAssinaturasComSenha()) {
+			 return true;
+		}
+
+		return false;
+	}
+	
+	/*
+	 * Retorna se é possível assinar uma movimentação com senha:
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAssinarMovimentacaoComSenha(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA,
+				ExTipoMovimentacao.class, false);
+
+		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
+	/*
+	 * Retorna se é possível assinar movimentações do mobil com senha:
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAssinarMovimentacaoComSenha(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA,
+				ExTipoMovimentacao.class, false);
+
+		return getConf().podePorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
+	/*
+	 * Retorna se é possível assinar uma movimentação com senha:
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeConferirCopiaMovimentacaoComSenha(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+		
+		if(mov == null)
+			return false;
+		
+		if(!mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
+			return false;
+
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
+				ExTipoMovimentacao.class, false);
+
+		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}	
+	
+	/*
+	 * Retorna se é possível cópia de um movimentações do mobil com senha:
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeConferirCopiaMovimentacaoComSenha(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+		
+		if(mob == null)
+			return false;
+
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
+				ExTipoMovimentacao.class, false);
+
+		return getConf().podePorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}	
+
 	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {
 		
 		if(doc.getExTipoDocumento().getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO))
@@ -1481,8 +1636,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		// Não deixa cancelar assinatura
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+						|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
-				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 			return false;
 
 		// Não deixa cancelar a atualização (por enquanto, só ser resultar
@@ -2114,7 +2272,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		if (mob.doc().isCancelado() || mob.doc().isSemEfeito())
 			return false;
-		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital())
+		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() ||  mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha())
 			return false;
 		if (!mob.doc().getLotaCadastrante().equivale(lotaTitular)
 				&& (mob.doc().getSubscritor() != null && !mob.doc()
@@ -2456,7 +2614,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
 			return false;
 
-		if(mov.getExDocumento().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital())
+		if(mov.getExDocumento().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha())
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
@@ -2591,7 +2749,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		for (ExMovimentacao movAssinatura : mov.getExMobil()
 				.getExMovimentacaoSet()) {
 			if (!movAssinatura.isCancelada()
-					&& movAssinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+					&& (movAssinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO 
+					     || movAssinatura.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
 					&& movAssinatura.getExMovimentacaoRef().getIdMov() == mov
 							.getIdMov())
 				return false;
@@ -2789,7 +2948,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		if (mob.doc().isFinalizado() && !mob.doc().isEletronico())
 			return false;
-		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital())
+		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha())
 			return false;
 		if (!mob.doc().getLotaCadastrante().equivale(lotaTitular))
 			return false;

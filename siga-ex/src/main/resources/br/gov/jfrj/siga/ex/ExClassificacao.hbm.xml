@@ -22,6 +22,7 @@
 		<many-to-one name="hisIdcFim" column="HIS_IDC_FIM" class="br.gov.jfrj.siga.cp.CpIdentidade" />
 	 	<property name="hisAtivo" column="HIS_ATIVO" type="java.lang.Integer" /> 
 
+		<property name="descrClassificacaoSemAcento" formula="REMOVE_ACENTO(DESCR_CLASSIFICACAO)" type="string" />
 		<property name="codificacao" column="CODIFICACAO" type="java.lang.String"
 			not-null="true" />
 		<property name="descrClassificacao" column="DESCR_CLASSIFICACAO"
@@ -73,7 +74,7 @@
 		<![CDATA[select distinct(cla) from ExClassificacao cla ,ExVia v 
 		where 	(
 			(upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%')) or
-			(upper(cla.descrClassificacao) like upper('%' || :descrClassificacaoSemAcento || '%')) or 
+			(upper(cla.descrClassificacaoSemAcento) like upper('%' || :descrClassificacaoSemAcento || '%')) or 
 			(cla.codificacao = :descrClassificacao)
 		)
 			and cla.codificacao like :mascara

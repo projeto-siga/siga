@@ -18,11 +18,20 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gi.service.impl;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+
+import javax.jws.WebService;
+
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -31,12 +40,6 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.service.GiService;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import javax.jws.WebService;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 /**
  * Esta classe implementa os métodos de gestão de identidade O acesso à esta
@@ -153,7 +156,7 @@ public class GiServiceImpl implements GiService {
 				lot = (DpLotacao) dao.consultarPorSigla(fltLot);
 			}
 
-//			boolean pode = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(p, lot, servico);
+			boolean pode = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(p, lot, servico);
 
 			CpServico srv = dao.consultarCpServicoPorChave(servico);
 

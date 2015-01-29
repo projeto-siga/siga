@@ -97,3 +97,18 @@ td.padding-table {
 .checkbox-hidden {
 	visibility: hidden;
 }
+
+.bt-expandir {
+    background: url("/siga/css/famfamfam/icons/bullet_toggle_plus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+    height: 25px;
+    width: 30px;
+    cursor: pointer;
+}
+		
+.bt-expandir.expandido {
+    background: url("/siga/css/famfamfam/icons/bullet_toggle_minus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+}
+
+.details-control {
+	width: 2%  !important;
+}

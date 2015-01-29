@@ -8,7 +8,7 @@ function sbmt(nivel){
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">
-			<form action="@{Application.buscarItem}" id="frm">
+			<form action="@{Application.buscarItem}" id="frm" enctype="multipart/form-data">
 				<input type="hidden" name="popup" value="true" />
 				<table class="gt-form-table">
 					<tr class="header">
@@ -27,8 +27,9 @@ function sbmt(nivel){
 					</tr>
 					<tr>
 						<td><input type="hidden" name="nome" value="${nome}" />
-							<input type="hidden" name="sol.solicitante" value="${sol.solicitante}" />
-							<input type="hidden" name="sol.local" value="${sol.local}" />
+							<input type="hidden" name="sol.solicitante" value="${sol.solicitante?.idPessoa}" />
+							<input type="hidden" name="sol.cadastrante" value="${sol.cadastrante?.idPessoa}" />
+							<input type="hidden" name="sol.local" value="${sol.local?.idComplexo}" />
 							<input
 							type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" />
 						</td>
@@ -42,10 +43,10 @@ function sbmt(nivel){
 	
 	<div class="gt-content-box gt-for-table">
 		<table class="gt-table gt-table-nowrap display" id="tabela">
-			<col width="25%">
+			<col width="40%">
 	  		<col width="10%">
-	  		<col width="35%">
-	  		<col width="30%">
+	  		<col width="25%">
+	  		<col width="25%">
 	  		<thead>
 				<tr id="plim">
 					<th>Título
@@ -72,8 +73,8 @@ function sbmt(nivel){
 						#{else}<span>${item.tituloItemConfiguracao}</span>#{/else}
 					</td>
 					<td class="gt-celula-nowrap">${item.siglaItemConfiguracao}</td>
-					<td class="gt-celula-nowrap">${item.descrItemConfiguracao}</td>
-					<td class="gt-celula-nowrap">${item.descricaoSimilaridade}</td>
+					<td class="gt-celula-nowrap">#{selecionado sigla:item.descrItemConfiguracao,descricao:item.descrItemConfiguracao /}</td>
+					<td class="gt-celula-nowrap">#{selecionado sigla:item.descricaoSimilaridade,descricao:item.descricaoSimilaridade /}</td>
 				</tr>
 				#{/list}
 			</tbody>

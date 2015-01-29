@@ -30,6 +30,7 @@ package br.gov.jfrj.siga.base;
  import java.util.ResourceBundle;
  */
 import java.util.HashMap;
+import java.util.List;
 
 import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
 
@@ -87,5 +88,14 @@ public class SigaBaseProperties extends ModeloPropriedade {
 	public static HashMap<String, String> obterTodas() throws Exception{
 		return instance.obterTodas("");
 	}
+	
+	public static List<String> getListaServidoresEmail() throws AplicacaoException{
+		try {
+			return instance.obterPropriedadeLista("servidor.smtp");
+		} catch (Exception e) {
+			throw new AplicacaoException("Não foi possível encontrar servidores de e-mail no arquivo siga.properties. Ex: servidor.smtp.0 = nome_servidor_email");
+		}
+	}
+
 
 }

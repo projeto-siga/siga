@@ -391,7 +391,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("script_edit", "Registrar Assinatura Manual", "/app/expediente/mov", "registrar_assinatura", Ex.getInstance()
 				.getComp().podeRegistrarAssinatura(titular, lotaTitular, mob));
 		
-		vo.addAcao("script_key", "Assinar Digitalmente", "/expediente/mov", "assinar",
+		vo.addAcao("script_key", "Assinar Digitalmente", "/app/expediente/mov", "assinar",
 				Ex.getInstance().getComp().podeAssinar(titular, lotaTitular, mob));
 		
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {

@@ -518,16 +518,12 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
 		
 		for (SrItemConfiguracao pai : this.getListaPai()) {
-			try {
-				for (SrConfiguracao confPai : pai.designacoesSet) {
-					confPai.isHerdado = true;
-					confPai.utilizarItemHerdado = true;
-					
-					listasDesignacoesPai.add(confPai);
-				}
-			} catch (Exception e) {
+			for (SrConfiguracao confPai : pai.getDesignacoesAtivas()) {
+				confPai.isHerdado = true;
+				confPai.utilizarItemHerdado = true;
+				
+				listasDesignacoesPai.add(confPai);
 			}
-			
 		}
 		
 		return listasDesignacoesPai;
@@ -672,5 +668,18 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	
 	public List<SrItemConfiguracao> getFilhoSet() {
 		return filhoSet;
+	}
+	
+	public List<SrConfiguracao> getDesignacoesAtivas() {
+		List<SrConfiguracao> designacoesAtivas = new ArrayList<SrConfiguracao>();
+		
+		if (this.designacoesSet != null) {
+			for (SrConfiguracao d : this.designacoesSet) {
+				if (d.isAtivo())
+					designacoesAtivas.add(d);
+			}
+		}
+		
+		return designacoesAtivas;
 	}
 }

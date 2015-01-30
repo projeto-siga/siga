@@ -1006,10 +1006,10 @@ public class Application extends SigaApplication {
 		render(associacao);
 	}
 
-	public static Long gravarAssociacao(SrConfiguracao associacao) throws Exception {
+	public static String gravarAssociacao(SrConfiguracao associacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		associacao.salvarComoAssociacaoAtributo();
-		return associacao.getId();		
+		return associacao.toVO().toJson();
 	}
 	
 	public static void desativarAssociacaoEdicao(Long idAtributo, Long idAssociacao) throws Exception {

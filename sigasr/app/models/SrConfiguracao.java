@@ -556,7 +556,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 	
 	public SrConfiguracaoVO toVO() {
-		return new SrConfiguracaoVO(this);
+		return new SrConfiguracaoVO(this, this.atributoObrigatorio);
 	}
 	
 	public static String convertToJSon(List<SrConfiguracao> lista) {

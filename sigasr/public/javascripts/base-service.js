@@ -3,11 +3,12 @@
  */
 function Formulario(form) {
 	this.populateFromJson = function(obj) {
+		var clone = Object.create(obj);
 		this.reset();
 		form.find('input[type=hidden]').val(''); // WA
-		this.prepareObjectToForm(obj);
+		this.prepareObjectToForm(clone);
 		
-		form.populate(obj, {
+		form.populate(clone, {
 			resetForm:true
 		});
 	}
@@ -29,7 +30,7 @@ function Formulario(form) {
 	this.prepareObjectToForm = function(obj) {
 		for (var x in obj) {
 		    if (typeof obj[x] == 'object') {
-		    	var component = document.getElementsByName(x)[0],	    		
+		    	var component = document.getElementsByName(x)[0],		
 		    		className = component != null ? component.className : null,
 		        	objeto = obj[x];
 		    	

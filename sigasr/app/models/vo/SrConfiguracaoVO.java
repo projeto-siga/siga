@@ -10,6 +10,7 @@ import models.SrTipoPermissaoLista;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 /**
  * Classe que representa um {@link SrConfiguracaoVO VO} da classe
@@ -118,7 +119,15 @@ public class SrConfiguracaoVO {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting().serializeNulls();
 		Gson gson = builder.create();
-
-		return gson.toJson(this);
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		
+		if (this.listaItemConfiguracaoVO.size() == 1) {
+			jsonObject.add("itemConfiguracaoUnitario", gson.toJsonTree(this.listaItemConfiguracaoVO.get(0)));
+		}
+		
+		if (this.listaAcaoVO.size() == 1) {
+			jsonObject.add("acaoUnitaria", gson.toJsonTree(this.listaAcaoVO.get(0)));
+		}
+		return jsonObject.toString();
 	}
 }

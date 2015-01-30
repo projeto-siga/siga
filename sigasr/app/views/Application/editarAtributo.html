@@ -84,31 +84,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					#{list items:associacoes, as:'assoc'}
-					<tr>
-						<td class="details-control"></td>
-						<td>${assoc.itemConfiguracaoUnitario?.atual?.idItemConfiguracao}</td>
-						<td>${assoc.itemConfiguracaoUnitario?.atual?.tituloItemConfiguracao}</td>
-						<td>${assoc.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>
-						<td>${assoc.acaoUnitaria?.atual?.idAcao}</td>
-						<td>${assoc.acaoUnitaria?.atual?.tituloAcao}</td>
-						<td>${assoc.acaoUnitaria?.atual?.siglaAcao}</td>
-						<td>${assoc.atributoObrigatorio}</td>
-						<td>${assoc.atributoObrigatorioString}</td>
-						<td>${assoc.idConfiguracao}</td>
-						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<a class="once desassociar" onclick="desassociar(event, ${assoc?.idConfiguracao})" title="Remover permissão">
-								<input class="idAssociacao" type="hidden" value="${assoc?.idConfiguracao}"/>
-								<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> 
-							</a>
-						</td>
-					</tr>
-					#{/list}
 				</tbody>
 			</table>
 		</div>
 		<div class="gt-table-buttons">
-            <a href="javascript: inserirAssociacao()" class="gt-btn-small gt-btn-left">Incluir</a>
+            <a href="javascript: associacaoService.cadastrar('Cadastrar Associação')" class="gt-btn-small gt-btn-left">Incluir</a>
 		</div>
 	</div>
 	<div class="gt-form-row" style="padding-top: 10px;">
@@ -139,12 +119,13 @@
 				requiredValue:'required' /}
 			</div>
 			<div class="gt-form-row">
-				<label>#{checkbox name:'atributoObrigatorio',
+				<label>#{checkbox 
+					name:'atributoObrigatorio',
 					value:atributoObrigatorio /} Obrigatório</label>
 			</div>
 			<div class="gt-form-row">
-				<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
-				<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				<a href="javascript: associacaoService.gravar()" class="gt-btn-medium gt-btn-left">Gravar</a>
+				<a href="javascript: associacaoService.cancelarGravacao()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
 			</form>
 	</div>
@@ -166,18 +147,14 @@
 #{/modal}
 
 <script type="text/javascript">
-
-	function ocultaAssociacoes(){
-		if ($("#objetivo").val() == 1){
-			$("#associacoes").show();
-		} else {
-			$("#associacoes").hide();
-		}
+	function AssociacaoService(opts) {
+		BaseService.call(this, opts);
 	}
+	AssociacaoService.prototype = Object.create(BaseService.prototype);
 
-	var tableAssociacao,
-		colunas = {},
-		validatorAtributoForm;
+	
+	var colunas = {},
+	validatorAtributoForm;
 	colunas.botaoExpandir =               0;
 	colunas.idItemConfiguracao =          1;
 	colunas.tituloItemConfiguracao =      2;
@@ -188,53 +165,11 @@
 	colunas.atributoObrigatorio =  		  7;
 	colunas.atributoObrigatorioString =   8;
 	colunas.idAssociacao =                9;
-	colunas.botaoExcluir =                10;
+	colunas.botaoExcluir =                10,
 
-	var table = null,
-		isEditingAssociacao = false;
 	
-	jQuery( document ).ready(function( $ ) {
-
-		if ( $.fn.dataTable.isDataTable( '#associacao_table' ) ) {
-			table = $('#associacao_table').dataTable();
-		}
-		else {
-			/* Table initialization */
-			table = $('#associacao_table')
-				.on('draw.dt', function() {
-							if(table) {
-								var btn = $('.bt-expandir'),
-									expandir = btn.hasClass('expandido');
-								
-								$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
-								$('#associacao_table').expandirContrairLinhas(expandir);
-							}
-						})
-				.dataTable({
-				"language": {
-					"emptyTable":     "Não existem resultados",
-				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-				    "infoPostFix":    "",
-				    "thousands":      ".",
-				    "lengthMenu":     "Mostrar _MENU_ registros",
-				    "loadingRecords": "Carregando...",
-				    "processing":     "Processando...",
-				    "search":         "Filtrar:",
-				    "zeroRecords":    "Nenhum registro encontrado",
-				    "paginate": {
-				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
-				        "previous":   "Anterior"
-				    },
-				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
-				    }
-				},
-				"columnDefs": [{
+	associacaoTable = new SigaTable('#associacao_table')
+		.configurar("columnDefs", [{
 					"targets": [4],
 					"searchable": false,
 					"sortable" : false
@@ -247,23 +182,88 @@
 								colunas.atributoObrigatorio,
 								colunas.idAssociacao],
 					"visible": false
-				}],
-				"aaSorting" : [[colunas.siglaItemConfiguracao, 'asc']],
-			});
+				}])
+		.configurar("aaSorting",  [[colunas.siglaItemConfiguracao, 'asc']])
+		.criar()
+		.detalhes(detalhesListaAssociacao),
+
+		table = null,
+		isEditingAssociacao = false,
+		associacaoServiceConfig = {
+				urlGravar : '@{Application.gravarAssociacao()}?',
+				dialogCadastro : jQuery('#associacao_dialog'),
+				tabelaRegistros : jQuery('#associacao_table'),
+				objectName : 'associacao',
+				formCadastro : jQuery('#associacaoForm'),
+				dataTable : associacaoTable.dataTable
+		},		
+		associacaoService = new AssociacaoService(associacaoServiceConfig);
+
+	associacaoService.getId = function(obj) {
+		return obj.idConfiguracao;
+	}
 	
-			$('#associacao_table tbody').on('click', 'tr', function () {
-				var itemSelecionado = table.api().row(this).data();
-				
-				if (itemSelecionado != undefined) {
-					table.$('tr.selected').removeClass('selected');
-		            $(this).addClass('selected');
-		            
-				    associacaoModalAbrir(true);
-				}
-			});
-			$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
-			tableAssociacao = table;
+	associacaoService.getObjetoParaGravar = function() {
+		var obj = BaseService.prototype.getObjetoParaGravar.call(this);
+		obj.atributo = { idAtributo : $('#idAtributo').val() };
+		return obj;
+	}
+	
+	associacaoService.onGravar = function(obj, objSalvo) {
+		var td = BaseService.prototype.onGravar.call(this, obj, objSalvo),
+			atributo =  this.atributoPorId(obj.atributo.idAtributo),
+			id = this.row(obj);
+
+		// Se eh criacao de novo objeto, entao adiciona na lista
+		if(!id) {
+			atributo.associacoesVO.push(objSalvo);
 		}
+		associacaoService.adicionarFuncionalidadesNaLinha(this.row(objSalvo), objSalvo);
+		associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
+		return td;
+	}
+	
+	associacaoService.adicionarFuncionalidadesNaLinha = function(node, assoc) {
+		node.find('td:first').addClass('details-control');
+		node.data('json', assoc);
+		node.attr('data-json-id', assoc.idConfiguracao);
+		node.on('click', function() {
+			associacaoService.editar(assoc, 'Alterar Associação');
+			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
+			$('#associacaoForm input').removeAttr('onblur'); // WA
+		});
+		associacaoTable.table.mostrarDetalhes(detalhesListaAssociacao, associacaoTable.dataTable);
+	}
+	
+	associacaoService.atributoPorId = function (idAtributo) {
+		return $("#atributo_table tr[data-json-id=" + idAtributo + "]").data('json');
+	}
+	
+	associacaoService.getRow = function(assoc) {
+		var html = 
+			'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
+				'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
+					'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
+					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+				'</a>' +
+			'</td>';
+			
+		return [
+					' ',
+					assoc.itemConfiguracaoUnitario ? assoc.itemConfiguracaoUnitario.id : ' ',
+					assoc.itemConfiguracaoUnitario ? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
+					assoc.itemConfiguracaoUnitario ? assoc.itemConfiguracaoUnitario.sigla : ' ',
+					assoc.acaoUnitaria ? assoc.acaoUnitaria.id : ' ',
+					assoc.acaoUnitaria ? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
+					assoc.acaoUnitaria ? assoc.acaoUnitaria.sigla : ' ',
+					$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
+					getAtributoObrigatorioString(),
+					assoc.idConfiguracao,
+					html
+   				];
+	}
+
+	jQuery( document ).ready(function( $ ) {
 		validatorAtributoForm = $("#atributoForm").validate({
 			onfocusout: false
 		});
@@ -273,40 +273,21 @@
 		});
 	});
 
-	function inserirAssociacao() {
-		var atributoId = $("#idAtributo");
-		if ((atributoId == undefined || atributoId.val() == "")  && atributoService.aplicar() == false) 
-			return;
-		limparDadosAssociacaoModal();
-		associacaoModalAbrir(false);
-	};
+	function ocultaAssociacoes(){
+		if ($("#objetivo").val() == 1){
+			$("#associacoes").show();
+		} else {
+			$("#associacoes").hide();
+		}
+	}
 
-	function associacaoModalAbrir(isEdicao) {
-		var tituloModal = 'Incluir Associação';
-		isEditingAssociacao = isEdicao;
-		
-		if (isEdicao)
-			tituloModal = 'Alterar Associação';
-		
-		$("#associacao_dialog").dialog('option', 'title', tituloModal);
-		$("#associacao_dialog").dialog('open');
-	};
-
-	$("#associacao_dialog").dialog({
-	    autoOpen: false,
-	    height: 'auto',
-	    width: 'auto',
-	    modal: true,
-	    resizable: false
-	});
-
-	function detalhesListaAssociacao(d) {
+	function detalhesListaAssociacao(d, associacao) {
 		var tr = $('<tr class="detail">'),
 			td = $('<td colspan="6">'),
 			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
 			
-		table.append(htmlConteudo(d, "Item de configuração:", colunas.siglaItemConfiguracao, colunas.tituloItemConfiguracao));
-		table.append(htmlConteudo(d, "Ação:", colunas.siglaAcao, colunas.tituloAcao));
+		table.append(htmlConteudo(d, "Item de configuração:", associacao.itemConfiguracaoUnitario.siglaItemConfiguracao, associacao.itemConfiguracaoUnitario.tituloItemConfiguracao, table));
+		table.append(htmlConteudo(d, "Ação:", associacao.acaoUnitaria.sigla, associacao.acaoUnitaria.descricao, table));
 		
 		td.append(table);
 		tr.append(td);
@@ -314,14 +295,14 @@
 	    return tr;
 	};
 
-	function htmlConteudo(d, titulo, indiceSigla, indiceDescricao) {
+	function htmlConteudo(d, titulo, sigla, descricao, table) {
 		var trItem = $('<tr>'),
 			tdTitulo = $('<td><b>' + titulo + '</b></td'),
 			tdConteudo = $('<td>'),
 			table = $('<table>'),
 			trDetalhe = $('<tr>'),
-			tdSigla = $('<td>' + d[indiceSigla] + "</td>"),
-			tdDescricao = $('<td>' +  d[indiceDescricao] + '</td>');
+			tdSigla = $('<td>' + sigla + "</td>"),
+			tdDescricao = $('<td>' +  descricao + '</td>');
 		
 		trDetalhe.append(tdSigla);
 		trDetalhe.append(tdDescricao);
@@ -331,21 +312,8 @@
 		return trItem.append(tdConteudo);
 	};
 
-	// Limpa os dados da tela.
-	function limparDadosAssociacaoModal() {
-		$("#itemConfiguracaoUnitario").val('');
-		$("#itemConfiguracaoUnitario_descricao").val('');
-		$("#itemConfiguracaoUnitario_sigla").val('');
-		$("#itemConfiguracaoUnitarioSpan").html('');
-		$("#acaoUnitaria").val('');
-		$("#acaoUnitaria_descricao").val('');
-		$("#acaoUnitaria_sigla").val('');
-		$("#acaoUnitariaSpan").html('');
-		$("#checkatributoObrigatorio")[0].checked = false;
-	}
-	
-	function atualizarListaAssociacoes(jSon) {
-		tableAssociacao.api().clear().draw();
+	associacaoService.atualizarListaAssociacoes = function(jSon) {
+		associacaoTable.dataTable.api().clear().draw();
 		
 		if (jSon && jSon.associacoesVO) {
 			// cria a lista de associacoes, e adiciona na tela
@@ -358,15 +326,15 @@
 							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
 						'</a>' +
 					'</td>',
-							         
+
 					rowAssoc = [
-								'',
-								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.id : '',
-								assoc.itemConfiguracaoUnitario? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.titulo) : '',
-								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.sigla : '',
-								assoc.acaoUnitaria? assoc.acaoUnitaria.id : '',
-								assoc.acaoUnitaria? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : '',
-								assoc.acaoUnitaria? assoc.acaoUnitaria.sigla : '',
+								' ',
+								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.id : ' ',
+								assoc.itemConfiguracaoUnitario? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
+								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.sigla : ' ',
+								assoc.acaoUnitaria? assoc.acaoUnitaria.id : ' ',
+								assoc.acaoUnitaria? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
+								assoc.acaoUnitaria? assoc.acaoUnitaria.sigla : ' ',
 								$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
 								getAtributoObrigatorioString(),
 								assoc.idConfiguracao,
@@ -374,13 +342,14 @@
 			   				];
 	   				
 				// Adiciona na tabela de Associações
-				var newRow = tableAssociacao
+				var newRow = associacaoTable.dataTable
 					.api()
 					.row
-					.add(rowAssoc);
-
-				$(newRow.node()).find('td:first').addClass('details-control');
+					.add(rowAssoc),
+					node = $(newRow.node());
+				
 				newRow.draw();
+				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
 			}
 		}
 	}
@@ -392,108 +361,11 @@
 			return value;
 	}
 
-	function serializeAssociacao(row) {
-		var params = "";
-		
-		// caso exista algum item na tabela
-		//if (row[colunas.idItemConfiguracao] != '' && row[colunas.idItemConfiguracao] > 0)
-			params += '&associacao.itemConfiguracaoUnitario=' + row[colunas.idItemConfiguracao];
-		
-		//if (row[colunas.idAcao] != '' && row[colunas.idAcao] > 0)
-        	params += '&associacao.acaoUnitaria=' + row[colunas.idAcao];
-		
-		if (row[colunas.atributoObrigatorio] != '')
-        	params += '&associacao.atributoObrigatorio=' + row[colunas.atributoObrigatorio];
-		
-		if (row[colunas.idAssociacao] != '')
-        	params += '&associacao.idConfiguracao=' + row[colunas.idAssociacao];
-
-		if ($("#idAtributo").val() != undefined && $("#idAtributo").val() != '')
-			params += '&associacao.atributo.idAtributo=' + $("#idAtributo").val();
-
-		return params;
-	};
-
-	function gravarAssociacao() {
-		if (!jQuery("#associacaoForm").valid())
-			return;
-		
-		var idAssociacao = $("#idConfiguracao").val() != undefined ? $("#idConfiguracao").val() : '';
-		
-		var row = [
-					'',                                                                    // colunas.botaoExpandir
-					$("#itemConfiguracaoUnitario").val(),                                  // colunas.idItemConfiguracao
-					formatDescricaoLonga($("#itemConfiguracaoUnitario_descricao").val()),  // colunas.tituloItemConfiguracao
-					$("#itemConfiguracaoUnitario_sigla").val(),                            // colunas.siglaItemConfiguracao
-					$("#acaoUnitaria").val(),											   // colunas.idAcao
-					formatDescricaoLonga($("#acaoUnitaria_descricao").val()),              // colunas.tituloAcao
-					$("#acaoUnitaria_sigla").val(),                                        // colunas.siglaAcao
-					$("#checkatributoObrigatorio")[0].checked,							   // colunas.atributoObrigatorio
-					getAtributoObrigatorioString(),										   // colunas.atributoObrigatorioString
-					idAssociacao,														   // colunas.idAssociacao
-					''                                                                     // colunas.botaoExcluir
-	   			];
-
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.gravarAssociacao()}",
-	         data: serializeAssociacao(row),
-	         dataType: "text",
-	         success: function(response) {
-		        row[colunas.idAssociacao] = response;
-				var html = 
-				'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-					'<a class="once desassociar" onclick="desassociar(event,' + response + ')" title="Remover permissão">' +
-						'<input class="idAssociacao" type="hidden" value="' + response + '"/>' +
-						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-					'</a>' +
-				'</td>';
-
-		        row[colunas.botaoExcluir] = html;
-
-	          	if (isEditingAssociacao) {
-	          		tableAssociacao.api().row('.selected').data(row);
-	          		var tr = $('tr.selected'),
-	          			detail = tr.next('.detail'),
-	          			shown = tr.hasClass('shown');
-
-	          		if(shown) {
-	          			detail.remove();
-		          		detalhesListaAssociacao(row)
-		          			.insertAfter(tr);
-           			}
-			    }
-			    else {
-			    	var tr = tableAssociacao.api().row.add(row).draw();
-			    	$(tr.node()).find('td:first').addClass('details-control');
-			    	jQuery('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, table);
-			    }
-	          	associacaoModalFechar();
-				$('.desassociar').bind('click', desassociar);
-	         },
-	         error: function(response) {
-	        	$('#modal-associacao').hide(); 
-
-	        	var modalErro = $('#"modal-associacao-error"');
-	        	modalErro.find("h3").html(response.responseText);
-	        	modalErro.show(); 
-	         }
-       });
-
-	}
-
-	function associacaoModalFechar() {
-		isEditingAssociacao = false;
-		$("#associacao_dialog").dialog("close");
-		limparDadosAssociacaoModal();
-	}
-
 	function formatDescricaoLonga(descricao) {
-		if (descricao) {
-			return descricao + " ...";
+		if (descricao && descricao.length > 10) {
+			return descricao.substr(0, 10) + " ...";
 		}
-		else
-			return '';
+		else return (descricao || ' ');
 	}
 
 	function getAtributoObrigatorioString() {
@@ -506,7 +378,7 @@
 		
 		var me = $(this),
 			tr = $(event.currentTarget).parent().parent()[0],
-			row = table.api().row(tr).data(),
+			row = associacaoTable.dataTable.api().row(tr).data(),
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunas.idAssociacao];
 			idAtributo = $("#idAtributo").val();
 			
@@ -516,7 +388,7 @@
 		         data: {idAtributo : idAtributo, idAssociacao : idAssociacao},
 		         dataType: "text",
 		         success: function(response) {
-		        	 table.api().row(tr).remove().draw();
+		        	 associacaoTable.dataTable.api().row(tr).remove().draw();
 		         },
 		         error: function(response) {
 		        	$('#modal-associacao').hide(); 

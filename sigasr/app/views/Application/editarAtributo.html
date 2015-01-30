@@ -275,7 +275,7 @@
 
 	function inserirAssociacao() {
 		var atributoId = $("#idAtributo");
-		if ((atributoId == undefined || atributoId.val() == "")  && atributoService.aplicar() == false) 
+		if ((atributoId == undefined || atributoId.val() == "")  && atributoService.aplicarInsertFilho() == false) 
 			return;
 		limparDadosAssociacaoModal();
 		associacaoModalAbrir(false);

@@ -210,17 +210,21 @@
 	* Sobrescreve o método gravar para tratar a lista de parâmetros.
 	*/
 	atributoService.gravar = function() {
-		gravarAplicar(this, false);
+		gravarAplicar(this, false, false);
 	}
 
 	/**
 	* Sobrescreve o método aplicar para tratar a lista de parâmetros.
 	*/
 	atributoService.aplicar = function() {
-		return gravarAplicar(this, true);
+		return gravarAplicar(this, true, false);
 	}
 
-	function gravarAplicar(baseService, isAplicar) {
+	atributoService.aplicarInsertFilho = function() {
+		return gravarAplicar(this, true, true);
+	}
+
+	function gravarAplicar(baseService, isAplicar, isInsertFilho) {
 		if (!baseService.isValidForm())
 			return false;
 		
@@ -234,8 +238,8 @@
 				
 				if (isAplicar) {
 					baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
-					
-					alert("Cadastro salvo com sucesso.");
+					if (!isInsertFilho)
+						alert("Cadastro salvo com sucesso.");
 				}
 					
 				else

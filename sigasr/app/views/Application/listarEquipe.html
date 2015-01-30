@@ -210,6 +210,9 @@
 	function limparDadosEquipe() {
 		// limpa as exceções de horário
 		excecoesTable.api().clear().draw();
+
+		// limpa as designações
+		designacaoTable.dataTable.api().clear().draw();
 	}
 
 	function carregarDesignacoes(id) {

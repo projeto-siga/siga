@@ -82,7 +82,7 @@
 				
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
+					<c:import url="/WEB-INF/page/exMovimentacao/inc_assina_js.jsp" />
 					<div id="capicom-div">
 						<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);"
 							class="gt-btn-alternate-large gt-btn-left">Assinar Documento</a>

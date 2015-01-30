@@ -66,7 +66,7 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 	private SrTipoDisponibilidade tipo;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "DT_HR_INI", nullable = false)
+	@Column(name = "DT_HR_INI")
 	private Date dataHoraInicio;
 
 	@Temporal(TemporalType.TIMESTAMP)

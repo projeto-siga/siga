@@ -271,6 +271,21 @@
 	   	});
 	}
 
+	function carregarDesignacoes(id) {
+        $.ajax({
+        	type: "GET",
+        	url: "@{Application.buscarDesignacoesItem()}?id=" + id,
+        	dataType: "text",
+        	success: function(lista) {
+        		var listaJSon = JSON.parse(lista);
+        		designacaoService.populateFromJSonList(listaJSon, designacaoTable.dataTable);
+        	},
+        	error: function(error) {
+            	alert("Não foi possível carregar as Designações deste item.");
+        	}
+       	});
+    }
+
 	function detalhesItemConfiguracaoFormat( d, obj) {
 		var tr = $('<tr class="detail">'),
 			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+

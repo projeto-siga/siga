@@ -248,6 +248,33 @@ public class SrConfiguracao extends CpConfiguracao {
 				.createQuery(sb.toString()).getResultList();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarDesignacoes(SrEquipe equipe) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		
+		if (equipe != null) {
+			sb.append(" and ( ");
+			
+			sb.append(" conf.atendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());
+			
+			sb.append(" or conf.preAtendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());
+			
+			sb.append(" or conf.posAtendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());
+			
+			sb.append(" ) ");
+		}
+		
+		sb.append(" and conf.hisDtFim is null");
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
 	public static List<SrConfiguracao> listarDesignacoes(SrConfiguracao conf,
 			int[] atributosDesconsideradosFiltro) throws Exception {
 		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
@@ -255,27 +282,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		return listar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro,
 				new int[] {}));
 	}
-	
-//	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, Long idItemConfiguracao) {
-//		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf left outer join conf.itemConfiguracao as item where conf.cpTipoConfiguracao.idTpConfiguracao = ");
-//		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
-//		
-//		if (idItemConfiguracao != null) {
-//			sb.append(" and itemConfiguracaoFiltro.idItemConfiguracao = ");
-//			sb.append(idItemConfiguracao);
-//		}
-//		
-//		if (!mostrarDesativados)
-//			sb.append(" and conf.hisDtFim is null");
-//		
-//		sb.append(" order by item.siglaItemConfiguracao, conf.orgaoUsuario ");
-//		
-//		return JPA
-//				.em()
-//				.createQuery(
-//						sb.toString(), 
-//						SrConfiguracao.class).getResultList();
-//	}
 	
 	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarAbrangenciasAcordo(boolean mostrarDesativados, SrAcordo acordo) {

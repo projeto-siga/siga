@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.ning.http.util.DateUtil;
 
 @Entity
 @Table(name = "SR_EQUIPE", schema = "SIGASR")
@@ -81,7 +80,7 @@ public class SrEquipe extends HistoricoSuporte {
 		if (lotacao == null)
 			return null;
 		else
-			return SrConfiguracao.listarDesignacoes(false, lotacao);
+			return SrConfiguracao.listarDesignacoes(this);
 	}
 
 	public static List<SrEquipe> listar(boolean mostrarDesativados) {

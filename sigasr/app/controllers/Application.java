@@ -1056,8 +1056,19 @@ public class Application extends SigaApplication {
 			SrItemConfiguracao itemConfiguracao = SrItemConfiguracao.findById(id);
 			designacoes = new ArrayList<SrConfiguracao>(itemConfiguracao.getDesignacoesAtivas());
 			designacoes.addAll(itemConfiguracao.getDesignacoesPai());
-			
-			
+		}
+		else
+			designacoes = new ArrayList<SrConfiguracao>();
+		
+		return SrConfiguracao.convertToJSon(designacoes);
+	}
+	
+	public static String buscarDesignacoesEquipe(Long id) throws Exception {
+		List<SrConfiguracao> designacoes;
+		
+		if (id != null) {
+			SrEquipe equipe = SrEquipe.findById(id);
+			designacoes = new ArrayList<SrConfiguracao>(equipe.getDesignacoes());
 		}
 		else
 			designacoes = new ArrayList<SrConfiguracao>();

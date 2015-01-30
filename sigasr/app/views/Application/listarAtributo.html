@@ -210,21 +210,17 @@
 	* Sobrescreve o método gravar para tratar a lista de parâmetros.
 	*/
 	atributoService.gravar = function() {
-		gravarAplicar(this, false, false);
+		gravarAplicar(this, false);
 	}
 
 	/**
 	* Sobrescreve o método aplicar para tratar a lista de parâmetros.
 	*/
 	atributoService.aplicar = function() {
-		return gravarAplicar(this, true, false);
+		return gravarAplicar(this, true);
 	}
 
-	atributoService.aplicarInsertFilho = function() {
-		return gravarAplicar(this, true, true);
-	}
-
-	function gravarAplicar(baseService, isAplicar, isInsertFilho) {
+	function gravarAplicar(baseService, isAplicar) {
 		if (!baseService.isValidForm())
 			return false;
 		
@@ -235,16 +231,12 @@
 				if(baseService.onGravar) {
 					baseService.onGravar(obj, JSON.parse(objSalvo));
 				}
-				
 				if (isAplicar) {
 					baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
-					if (!isInsertFilho)
-						alert("Cadastro salvo com sucesso.");
+					alert("Cadastro salvo com sucesso.");
 				}
-					
 				else
 					baseService.opts.dialogCadastro.dialog("close");
-
 			}
 			
 		wrapper[baseService.opts.objectName] = obj;
@@ -267,7 +259,7 @@
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 
 		// alimenta a lista de Associações
-		atualizarListaAssociacoes(obj);
+		associacaoService.atualizarListaAssociacoes(obj);
 	}
 
 	/**
@@ -277,6 +269,6 @@
 		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
 
 		// alimenta a lista de Associações
-		atualizarListaAssociacoes();
+		associacaoService.atualizarListaAssociacoes();
 	}
 </script>

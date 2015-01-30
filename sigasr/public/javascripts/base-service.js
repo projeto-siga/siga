@@ -352,7 +352,7 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	
 	// Se foi uma edicao
 	if(idAntigo) {
-		tr = this.opts.tabelaRegistros.find("tr[data-json-id=" + idAntigo + "]");
+		tr = this.opts.dataTable.$('tr[data-json-id=' + idAntigo + ']');
 		
 		if(this.opts.dataTable) {
 			this.opts.dataTable

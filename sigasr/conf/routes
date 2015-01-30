@@ -56,8 +56,6 @@ GET     /public/                            staticDir:public
 *		/acao/desativar/{id}				Application.desativarAcao
 
 *		/equipe/listar						Application.listarEquipe
-*		/equipe/editar						Application.editarEquipe
-*		/equipe/editar/{id}					Application.editarEquipe
 *		/equipe/gravar						Application.gravarEquipe
 
 *		/solicitacao/desfazer_ultimo/{id}				Application.desfazerUltimaMovimentacao

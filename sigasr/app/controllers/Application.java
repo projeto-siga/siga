@@ -1303,12 +1303,7 @@ public class Application extends SigaApplication {
 	public static void listarEquipe(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrEquipe> listaEquipe = SrEquipe.listar(mostrarDesativados);
-		render(listaEquipe);
-	}
-	
-	public static void editarEquipe(Long id) throws Exception {
-		assertAcesso("ADM:Administrar");
-		SrEquipe equipe = null;
+		
 		List<CpOrgaoUsuario> orgaos = JPA.em()
 				.createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
@@ -1316,19 +1311,8 @@ public class Application extends SigaApplication {
 				.listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
-		List<SrLista> listasPrioridade = SrLista.listar(false);
-
-		if (id != null)
-			equipe = SrEquipe.findById(id);
-		else {
-			equipe = new SrEquipe();
-			equipe.lotacao = lotaTitular();
-		}
-
-		List<SrConfiguracao> designacoesEquipe = equipe.getDesignacoes();
-
-		render(equipe, designacoesEquipe, orgaos, locais, unidadesMedida,
-				pesquisaSatisfacao, listasPrioridade);
+		
+		render(listaEquipe, orgaos, locais, unidadesMedida, pesquisaSatisfacao);
 	}
 	
 	public static String gravarEquipe(SrEquipe equipe) throws Exception {

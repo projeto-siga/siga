@@ -300,7 +300,6 @@ BaseService.prototype.gravar = function() {
 }
 
 function gravarAplicar(baseService, isAplicar) {
-	
 	if (!baseService.isValidForm())
 		return;
 	

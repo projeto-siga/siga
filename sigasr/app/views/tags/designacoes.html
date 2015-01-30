@@ -19,21 +19,13 @@
 		colunas.idAtendente = 					13;
 		colunas.descricaoAtendente = 			14;
 		colunas.atendente=						15;
-		colunas.idPreAtendente = 				16;
-		colunas.descricaoPreAtendente = 		17;
-		colunas.pre=							18;
-		colunas.idPosAtendente = 				19;
-		colunas.descricaoPosAtendente = 		20;
-		colunas.pos=							21;
-		colunas.idPesquisaSatisfacao = 			22;
-		colunas.descricaoPesquisaSatisfacao = 	23;
-		colunas.jSonDesignacao= 				24;
-		colunas.idDesignacao= 					25;
-		colunas.herdado= 						26;
-		colunas.utilizarHerdado= 				27;
-		colunas.listasSerializadas= 			28;
-		colunas.reativarDesativar=				29;
-		colunas.ativo=							30;
+		colunas.jSonDesignacao= 				16;
+		colunas.idDesignacao= 					17;
+		colunas.herdado= 						18;
+		colunas.utilizarHerdado= 				19;
+		colunas.listasSerializadas= 			20;
+		colunas.reativarDesativar=				21;
+		colunas.ativo=							22;
 
 	var designacoesTable = null;
 	$( document ).ready(function() {
@@ -83,12 +75,6 @@
 							colunas.siglaAcao, 
 							colunas.idAtendente, 
 							colunas.descricaoAtendente, 
-							colunas.idPreAtendente, 
-							colunas.descricaoPreAtendente, 
-							colunas.idPosAtendente, 
-							colunas.descricaoPosAtendente, 
-							colunas.idPesquisaSatisfacao, 
-							colunas.descricaoPesquisaSatisfacao, 
 							colunas.jSonDesignacao,  
 							colunas.idDesignacao, 
 							colunas.herdado, 
@@ -254,13 +240,11 @@
 		// recupera as comboboxes
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0],
-		jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
 		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
 		
 		// resetando os valores das combos
 		jOrgaoUsuarioCbb.selectedIndex = 0;
 		jComplexoCbb.selectedIndex = 0;
-		jPesquisaSatisfacaoCbb.selectedIndex = 0;
 		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
 		
 		// limpando campos do componente pessoaLotaFuncCargoSelecao
@@ -294,14 +278,6 @@
 		$("#atendente_descricao").val('');
 		$("#atendente_sigla").val('');
 		$("#atendenteSpan").html('');
-		$("#preAtendente").val('');
-		$("#preAtendente_descricao").val('');
-		$("#preAtendente_sigla").val('');
-		$("#preAtendenteSpan").html('');
-		$("#posAtendente").val('');
-		$("#posAtendente_descricao").val('');
-		$("#posAtendente_sigla").val('');
-		$("#posAtendenteSpan").html('');
 		$("#idConfiguracao").val('');
 		
 		itemConfiguracaoTable.api().clear().draw();
@@ -314,10 +290,6 @@
 		if (parametroTela == 'equipe') {
 			document.getElementById("atendente_sigla").disabled = false;
 			document.getElementById("atendenteButton").disabled = false;
-			document.getElementById("preAtendente_sigla").disabled = false;
-			document.getElementById("preAtendenteButton").disabled = false;
-			document.getElementById("posAtendente_sigla").disabled = false;
-			document.getElementById("posAtendenteButton").disabled = false;
 		}
 	}
 	
@@ -328,14 +300,12 @@
 		// recupera as comboboxes
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0],
-		jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
 		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0];
 		
 		// atualiza os valores das combos
 		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
 		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
 		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[colunas.tipoSolicitante]);
-		jPesquisaSatisfacaoCbb.selectedIndex = findSelectedIndexByValue(jPesquisaSatisfacaoCbb, itemArray[colunas.idPesquisaSatisfacao]);
 		
 		// atualiza os valores dos demais campos
 		$("#acao").val(itemArray[colunas.itemConfiguracao]);
@@ -346,14 +316,6 @@
 		$("#atendente_descricao").val(itemArray[colunas.descricaoAtendente]);
 		$("#atendente_sigla").val(itemArray[colunas.atendente]);
 		$("#atendenteSpan").html(itemArray[colunas.descricaoAtendente]);
-		$("#preAtendente").val(itemArray[colunas.idPreAtendente]);
-		$("#preAtendente_descricao").val(itemArray[colunas.descricaoPreAtendente]);
-		$("#preAtendente_sigla").val(itemArray[colunas.pre]);
-		$("#preAtendenteSpan").html(itemArray[colunas.descricaoPreAtendente]);
-		$("#posAtendente").val(itemArray[colunas.idPosAtendente]);
-		$("#posAtendente_descricao").val(itemArray[colunas.descricaoPosAtendente]);
-		$("#posAtendente_sigla").val(itemArray[colunas.pos]);
-		$("#posAtendenteSpan").html(itemArray[colunas.descricaoPosAtendente]);
 		$("#idConfiguracao").val(itemArray[colunas.idDesignacao]);
 		
 		atualizarListasDesignacaoEdicao(itemArray);
@@ -374,24 +336,12 @@
 	function validarCamposTela() {
 		var idEquipeLotacao = $("#equipelotacao").val(),
 			idEquipe = $("#idEquipe").val(),
-			idAtendente = $("#atendente").val(),
-			idPreAtendente = $("#preAtendente").val(),
-			idPosAtendente = $("#posAtendente").val();
+			idAtendente = $("#atendente").val();
 		
 		if (parametroTela == 'equipe' && idEquipe != '') {
 			if (idEquipeLotacao != idAtendente) {
 				document.getElementById("atendente_sigla").disabled = true;
 				document.getElementById("atendenteButton").disabled = true;
-			}
-			
-			if (idEquipeLotacao != idPreAtendente) {
-				document.getElementById("preAtendente_sigla").disabled = true;
-				document.getElementById("preAtendenteButton").disabled = true;
-			}
-			
-			if (idEquipeLotacao != idPosAtendente) {
-				document.getElementById("posAtendente_sigla").disabled = true;
-				document.getElementById("posAtendenteButton").disabled = true;
 			}
 		}
 	}
@@ -433,8 +383,6 @@
 			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
 			jComplexoCbb = document.getElementsByName("complexo")[0],
 			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex],
-			jPesquisaSatisfacaoCbb = document.getElementsByName("pesquisaSatisfacao")[0],
-			jPesquisaSatisfacao = jPesquisaSatisfacaoCbb.options[jPesquisaSatisfacaoCbb.selectedIndex],
 			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0],
 			jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
 		
@@ -468,14 +416,6 @@
           			$("#atendente").val(),
           			$("#atendente_descricao").val(),
           			$("#atendente_sigla").val(),
-          			$("#preAtendente").val(),
-          			$("#preAtendente_descricao").val(),
-          			$("#preAtendente_sigla").val(),
-          			$("#posAtendente").val(),
-          			$("#posAtendente_descricao").val(),
-          			$("#posAtendente_sigla").val(),
-          			jPesquisaSatisfacao.value,
-          			jPesquisaSatisfacao.text,
           			atualizaDesignacaoJson(),
           			$("#idConfiguracao").val(),
           			// estas duas colunas só devem ser 'true' quando uma designação é herdada (informação vem do java apenas) 
@@ -490,15 +430,11 @@
 		// Realiza validação específica caso seja aberto a partir da tela de equipe
 		if (parametroTela == 'equipe') {
 			var idEquipeLotacao = $("#equipelotacao").val(),
-				idAtendente = $("#atendente").val(),
-				idPreAtendente = $("#preAtendente").val(),
-				idPosAtendente = $("#posAtendente").val();
+				idAtendente = $("#atendente").val();
 			
 			// só continua caso tenha selecionado um atendente, pré ou pós
 			// igual ao da lotação selecionada.
-			if (idEquipeLotacao != idAtendente
-					&& idEquipeLotacao != idPreAtendente
-					&& idEquipeLotacao != idPosAtendente) {
+			if (idEquipeLotacao != idAtendente) {
 				$("#erroAoSalvar_dialog").dialog("open");
 				return;
 			}
@@ -590,9 +526,6 @@
 		document.getElementById("designacao.itemConfiguracao").style.display="none";
 		document.getElementById("designacao.acao").style.display="none";
 		document.getElementById("designacao.atendente").style.display="none";
-		document.getElementById("designacao.preAtendente").style.display="none";
-		document.getElementById("designacao.posAtendente").style.display="none";
-		document.getElementById("designacao.equipeQualidade").style.display="none";
 	}
 	
 	function atualizaDesignacaoJson() {
@@ -733,15 +666,6 @@
 			
 			//if (rowValues[colunas.idAtendente] != '')
 	            params += '&designacao.atendente=' + rowValues[colunas.idAtendente];
-			
-			//if (rowValues[colunas.idPreAtendente] != '')
-	            params += '&designacao.preAtendente=' + rowValues[colunas.idPreAtendente];
-			
-			//if (rowValues[colunas.idPosAtendente] != '')
-	            params += '&designacao.posAtendente=' + rowValues[colunas.idPosAtendente];
-			
-			//if (rowValues[colunas.idPesquisaSatisfacao] != '' && rowValues[colunas.idPesquisaSatisfacao] > 0)
-				params += '&designacao.pesquisaSatisfacao=' + rowValues[colunas.idPesquisaSatisfacao];
 			
 			if (rowValues[colunas.idDesignacao] != '' && rowValues[colunas.idDesignacao] != undefined)
 				params += '&designacao.idConfiguracao=' + rowValues[colunas.idDesignacao];
@@ -956,14 +880,6 @@
 					<th>ID Atendente</th>
 					<th>Descr. Atendente</th>
 					<th>Atendente</th>
-					<th>ID Pré-Atendente</th>
-					<th>Descr. Pré-Atendente</th>
-					<th>Pré</th>
-					<th>ID Pós-Atendente</th>
-					<th>Descr. Pós-Atendente</th>
-					<th>Pós</th>
-					<th>ID Pesq. Satisfação</th>
-					<th>Descr. Pesq. Satisfação</th>
 					<th>JSon - Designação</th>
 					<th>ID Designação</th>
 					<th>Herdado</th>
@@ -995,14 +911,6 @@
 					<td>${design.atendente?.lotacaoAtual?.id }</td>
 					<td>${design.atendente?.lotacaoAtual?.nomeLotacao }</td>
 					<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td>
-					<td>${design.preAtendente?.lotacaoAtual?.id }</td>
-					<td>${design.preAtendente?.lotacaoAtual?.nomeLotacao }</td>
-					<td>${design.preAtendente?.lotacaoAtual?.siglaLotacao }</td>
-					<td>${design.posAtendente?.lotacaoAtual?.id}</td>
-					<td>${design.posAtendente?.lotacaoAtual?.nomeLotacao }</td>
-					<td>${design.posAtendente?.lotacaoAtual?.siglaLotacao }</td>
-					<td>${design.pesquisaSatisfacao?.id}</td>
-					<td>${design.pesquisaSatisfacao?.descrPesquisa}</td>
 					<td>${design.getSrConfiguracaoJson()}</td>
 					<td>${design.idConfiguracao}</td>
 					<th>${design.isHerdado}</th>
@@ -1035,7 +943,7 @@
 
 #{modal nome:'erroAoSalvar', titulo:'Problemas ao Salvar', altura:'200', largura:'450'}
 	<div id="divProblemaAoSalvar" class="gt-form gt-content-box" style="text-align: justify;">
-		<label style="padding-top: 5px;">Pelo menos um dos campos "Atendente", "Pré-Atendente" ou "Pós-Atendente" precisa necessáriamente ser a mesma lotação que foi selecionada na tela de equipe. Por favor verifique e tente novamente.</label>
+		<label style="padding-top: 5px;">Campo "Atendente" precisa necessáriamente ser a mesma lotação que foi selecionada na tela de equipe. Por favor verifique e tente novamente.</label>
 	</div>
 	<div class="gt-form-row" style="margin-left: 297px;">
 		<a href="javascript: fecharModalErroAoSalvar()" class="gt-btn-medium gt-btn-left">OK</a>

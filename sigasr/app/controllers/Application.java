@@ -227,12 +227,12 @@ public class Application extends SigaApplication {
 
 		DpPessoa cadastrante = solicitacao.cadastrante;
 		DpLotacao lotaTitular = solicitacao.lotaCadastrante;
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes, cadastrante, lotaTitular);
 	}
 
 	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
 	
@@ -240,7 +240,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		solicitacao.cadastrante = cadastrante();
 		solicitacao.lotaCadastrante = lotaTitular();
-		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = new TreeMap<SrAcao, SrConfiguracao>();
 		if (itemConfiguracao != null){
 			solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			acoesEAtendentes = solicitacao.getAcoesEAtendentes();
@@ -259,7 +259,7 @@ public class Application extends SigaApplication {
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 		
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 
@@ -348,9 +348,7 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {
 		StringBuffer sb = new StringBuffer();
 		
-		if ((designacao.atendente == null) && (designacao.preAtendente == null)
-				&& (designacao.posAtendente == null)
-				&& (designacao.equipeQualidade == null)
+		if ((designacao.atendente == null) 
 				&& (designacao.pesquisaSatisfacao == null)) {
 			validation.addError("designacao.atendente",
 					"Atendente n�o informado.");
@@ -740,26 +738,20 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void responderPesquisa(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
+		/*SrSolicitacao sol = SrSolicitacao.findById(id);
 		SrPesquisa pesquisa = sol.getPesquisaDesignada();
 		if (pesquisa == null)
 			throw new Exception(
 					"N�o foi encontrada nenhuma pesquisa designada para esta solicita��o.");
 		pesquisa = SrPesquisa.findById(pesquisa.idPesquisa);
 		pesquisa = pesquisa.getPesquisaAtual();
-		render(id, pesquisa);
+		render(id, pesquisa);*/
 	}
 	
 	public static void responderPesquisaGravar(Long id,
 			Map<Long, String> respostaMap) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.responderPesquisa(lotaTitular(), cadastrante(), respostaMap);
-		exibir(id, todoOContexto(), ocultas());
-	}
-
-	public static void retornarAoAtendimento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.retornarAoAtendimento(lotaTitular(), cadastrante());
 		exibir(id, todoOContexto(), ocultas());
 	}
 
@@ -772,18 +764,6 @@ public class Application extends SigaApplication {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.cancelar(lotaTitular(), cadastrante());
 		exibir(id, todoOContexto(), ocultas());
-	}
-
-	public static void finalizarPreAtendimento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.finalizarPreAtendimento(lotaTitular(), cadastrante());
-		exibir(sol.idSolicitacao, todoOContexto(), ocultas());
-	}
-
-	public static void retornarAoPreAtendimento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.retornarAoPreAtendimento(lotaTitular(), cadastrante());
-		exibir(sol.idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void deixarPendente(Long id, SrTipoMotivoPendencia motivo,String calendario,
@@ -825,12 +805,12 @@ public class Application extends SigaApplication {
 		solicitacao.cadastrante = cadastrante();
 		solicitacao.lotaCadastrante = lotaTitular();
 		solicitacao = solicitacao.getSolicitacaoAtual();
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
 	
 	public static void escalonarGravar(Long id, Long itemConfiguracao,
-				SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, 
+				SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao,
 				SrTipoMotivoEscalonamento motivo, String descricao,
 				Boolean criaFilha, Boolean fechadoAuto) throws Exception {
 		if(itemConfiguracao == null || acao == null)
@@ -849,6 +829,7 @@ public class Application extends SigaApplication {
 				filha = solicitacao.criarFilhaSemSalvar();
 			filha.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			filha.acao = SrAcao.findById(acao.idAcao);
+			filha.designacao = SrConfiguracao.findById(idDesignacao);
 			filha.descrSolicitacao = descricao;
 			if (idAtendenteNaoDesignado != null)
 				filha.atendenteNaoDesignado = JPA.em().find(DpLotacao.class, idAtendenteNaoDesignado);
@@ -862,6 +843,7 @@ public class Application extends SigaApplication {
 			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			mov.acao = SrAcao.findById(acao.idAcao);
 			mov.lotaAtendente = JPA.em().find(DpLotacao.class, idAtendente);
+			mov.designacao = SrConfiguracao.findById(idDesignacao);
 			mov.descrMovimentacao = "Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
 					+ "; Ação: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();
 			mov.motivoEscalonamento = motivo;

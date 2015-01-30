@@ -134,7 +134,7 @@
 	<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
 	<div>
 		<div class="gt-form-row box-wrapper">
-			<div id="divSolicitante" class="box box-left gt-width-50">
+			<div id="divSolicitante" class="box box-left gt-width-60">
 				<label>Solicitante</label>
 				#{pessoaLotaFuncCargoSelecao
 					nomeSelLotacao:'lotacao',
@@ -176,48 +176,12 @@
 					#{option 0}Nenhum#{/option} 
 				#{/select}
 			</div>
-			<div class="box gt-width-50">
+			<div class="box gt-width-60">
 				<label>Atendente</label>#{selecao
 					tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual /}
 				<span style="display:none;color: red" id="designacao.atendente">Atendente não informado;</span>
 			</div>
 		</div>	
-			
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left gt-width-50">
-				<label>Pré-atendente</label>#{selecao
-					tipo:'lotacao', nome:'preAtendente',
-					value:preAtendente?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.preAtendente">Pré-Atendente não informado.</span>
-			</div>
-
-			<div class="box gt-width-50">
-				<label>Pós-atendente</label> #{selecao
-					tipo:'lotacao', nome:'posAtendente',
-					value:posAtendente?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.posAtendente">Pós-Atendente não informado.</span>
-			</div>
-		</div>
-		<div class="gt-form-row box-wrapper">
-			<div class="box box-left gt-width-50">
-				<label>Equipe de Qualidade</label> #{selecao
-					tipo:'lotacao', nome:'equipeQualidade',
-					value:equipeQualidade?.lotacaoAtual /}
-				<span style="display:none;color: red" id="designacao.equipeQualidade">Equipe de qualidade não informada.</span>
-			</div>
-			<div class="box gt-width-50">
-				<label>Pesquisa de satisfação</label> 
-					#{select name:'pesquisaSatisfacao', 
-						items:_pesquisaSatisfacao, 
-						valueProperty:'idPesquisa',
-						labelProperty:'nomePesquisa', 
-						value:pesquisaSatisfacao?.idPesquisa,
-						class:'select-siga',
-						style:'width: 100%;'}
-						#{option 0}Nenhuma#{/option} 
-					#{/select}
-			</div>
-		</div>
 
 		<hr/>
 		<div class="gt-content">

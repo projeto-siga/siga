@@ -80,18 +80,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	public DpLotacao atendente;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_POS_ATENDENTE")
-	public DpLotacao posAtendente;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_EQUIPE_QUALIDADE")
-	public DpLotacao equipeQualidade;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_PRE_ATENDENTE")
-	public DpLotacao preAtendente;
-
-	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_ATRIBUTO")
 	public SrAtributo atributo;
 
@@ -121,61 +109,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
 	public boolean atributoObrigatorio;
-
-	@Column(name = "SLA_PRE_ATENDIMENTO_QUANT")
-	public Integer slaPreAtendimentoQuantidade;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_UNIDADE_PRE_ATENDIMENTO")
-	public CpUnidadeMedida unidadeMedidaPreAtendimento;
-
-	@Column(name = "SLA_ATENDIMENTO_QUANT")
-	public Integer slaAtendimentoQuantidade;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_UNIDADE_ATENDIMENTO")
-	public CpUnidadeMedida unidadeMedidaAtendimento;
-
-	@Column(name = "SLA_POS_ATENDIMENTO_QUANT")
-	public Integer slaPosAtendimentoQuantidade;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_UNIDADE_POS_ATENDIMENTO")
-	public CpUnidadeMedida unidadeMedidaPosAtendimento;
-
-	@Column(name = "MARGEM_SEGURANCA")
-	public Integer margemSeguranca;
-
-	@Lob
-	@Column(name = "OBSERVACAO_SLA", length = 8192)
-	public String observacaoSLA;
-
-	@Column(name = "FG_DIVULGAR_SLA")
-	@Type(type = "yes_no")
-	public Boolean divulgarSLA;
-
-	@Column(name = "FG_NOTIFICAR_GESTOR")
-	@Type(type = "yes_no")
-	public Boolean notificarGestor;
-
-	@Column(name = "FG_NOTIFICAR_SOLICITANTE")
-	@Type(type = "yes_no")
-	public Boolean notificarSolicitante;
-
-	@Column(name = "FG_NOTIFICAR_CADASTRANTE")
-	@Type(type = "yes_no")
-	public Boolean notificarCadastrante;
-
-	@Column(name = "FG_NOTIFICAR_INTERLOCUTOR")
-	@Type(type = "yes_no")
-	public Boolean notificarInterlocutor;
-
-	@Column(name = "FG_NOTIFICAR_ATENDENTE")
-	@Type(type = "yes_no")
-	public Boolean notificarAtendente;
-
-	@Transient
-	public SrSubTipoConfiguracao subTipoConfig;
 
 	@Transient
 	public boolean isHerdado;

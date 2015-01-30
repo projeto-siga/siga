@@ -231,16 +231,12 @@
 				if(baseService.onGravar) {
 					baseService.onGravar(obj, JSON.parse(objSalvo));
 				}
-				
 				if (isAplicar) {
 					baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
-					
 					alert("Cadastro salvo com sucesso.");
 				}
-					
 				else
 					baseService.opts.dialogCadastro.dialog("close");
-
 			}
 			
 		wrapper[baseService.opts.objectName] = obj;

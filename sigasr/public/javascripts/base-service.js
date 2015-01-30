@@ -146,11 +146,16 @@ BaseService.prototype.post = function(opts) {
 	return $.ajax({
     	type: "POST",
     	url: opts.url,
-    	data: jQuery.param(opts.obj),
+    	data: this.serializar(opts.obj),
     	dataType: "text",
     	error: BaseService.prototype.errorHandler
    	});
 }
+
+BaseService.prototype.serializar = function(obj) {
+	return  jQuery.param(obj);
+}
+
 BaseService.prototype.errorHandler = function(error) {
 	console.error(error);
 	
@@ -295,6 +300,7 @@ BaseService.prototype.gravar = function() {
 }
 
 function gravarAplicar(baseService, isAplicar) {
+	
 	if (!baseService.isValidForm())
 		return;
 	
@@ -308,7 +314,6 @@ function gravarAplicar(baseService, isAplicar) {
 			
 			if (isAplicar) {
 				baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
-				
 				alert("Cadastro salvo com sucesso.");
 			}
 				
@@ -360,6 +365,8 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 				.api()
 				.row(tr)
 				.data(this.getRow(objSalvo));
+			
+			this.bindRowClick(tr, objSalvo);
 		}
 	} 
 	// Senao, eh um novo registro a ser inserido na GRID
@@ -379,14 +386,7 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 			if(indice > -1) {
 				tr.find('td:nth(' + indice + ')').addClass('acoes');
 			}
-			
-			var onRowClick = this.onRowClick;
-			if(onRowClick) {
-				tr.css('cursor', 'pointer');
-				tr.on('click', function() {
-					onRowClick(objSalvo);
-				});
-			}
+			this.bindRowClick(tr, objSalvo);
 		}
 	}
 	
@@ -401,6 +401,17 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	}
 	
 	return tr;
+}
+
+BaseService.prototype.bindRowClick = function(tr, objSalvo) {
+	var onRowClick = this.onRowClick;
+	if(onRowClick) {
+		tr.unbind('click');
+		tr.css('cursor', 'pointer');
+		tr.on('click', function() {
+			onRowClick(objSalvo);
+		});
+	}
 }
 
 BaseService.prototype.row = function(obj) {

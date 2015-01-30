@@ -27,7 +27,7 @@ jQuery(document).ready(function($) {
         $( "#perguntas" ).sortable({placeholder: "ui-state-highlight"});
         $( "#perguntas" ).disableSelection();
        
-        $("#botaoIncluir").click(function(){
+        $("#botaoIncluir").click(function() {
                 jDialog.data('acao',perguntas.incluirItem).dialog('open');
         });
        
@@ -121,7 +121,8 @@ jQuery(document).ready(function($) {
 
 <div class="gt-form gt-content-box">
 	<form id="pesquisaForm">
-		<input type="hidden" name="idPesquisa">
+		<input type="hidden" name="idPesquisa" />
+		
 		<div class="gt-form-row gt-width-66">
 			<label>Nome <span>*</span></label> <input type="text"
 				name="nomePesquisa" size="60" maxlength="255" required />

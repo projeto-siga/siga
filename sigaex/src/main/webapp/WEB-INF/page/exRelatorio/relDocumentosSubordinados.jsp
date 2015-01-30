@@ -26,12 +26,10 @@ function sbmt() {
 	<td>
 		<select name="tipoRel" id="tipoRel">
 			<c:forEach var="item" items="${listaTipoRel}" >
-				<option value="${item.key}" selected="${item.key eq tipoRel ? 'selected' : ''}">
+				<option value="${item.key}">
 					${item.value}
 				</option>
 			</c:forEach>
-			<option>
-			</option>
 		</select>
 	</td>
 </tr>

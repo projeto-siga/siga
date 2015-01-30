@@ -125,7 +125,7 @@ public class ExRelatorioController extends ExController implements IUsaMascara{
 			fazerResultsParaRelConsultaDocEntreDatas();
 		} else if (nomeArquivoRel.equals("relCrDocSubordinados.jsp")) {
 			fazerResultsParaRelCrDocSubordinados();
-		}	else if (nomeArquivoRel.equals("relDocClassificados.jsp")) {
+		}	else if (nomeArquivoRel.equals("relDocsClassificados.jsp")) { 
 			fazerResultsParaRelDocClassificados();
 		} else if (nomeArquivoRel.equals("relDocumentosSubordinados.jsp")) {
 			fazerResultsParaRelDocumentosSubordinados();
@@ -182,6 +182,7 @@ public class ExRelatorioController extends ExController implements IUsaMascara{
 		result.include("mascaraEntrada", this.getMascaraEntrada());
 		result.include("mascaraSaida", this.getMascaraSaida());
 		result.include("mascaraJavascript", this.getMascaraJavascript());
+		result.include("lotacaoDestinatarioSel", this.getLotacaoDestinatarioSel());
 	}
 	
 	public void fazerResultsParaRelDocumentosSubordinados() {

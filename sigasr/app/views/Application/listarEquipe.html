@@ -10,6 +10,7 @@
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
+<script src="/sigasr/public/javascripts/moment.js"></script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
@@ -108,6 +109,57 @@
 	equipeService.getRow = function(equipe) {
 		return [equipe.lotacao.sigla, equipe.lotacao.descricao];
 	}
+
+	/**
+	* Sobrescreve o método gravar para tratar a lista de Exceções de horário.
+	*/
+	equipeService.gravar = function() {
+		gravarAplicar(this, false);
+	}
+
+	/**
+	* Sobrescreve o método aplicar para tratar a lista de Exceções de horário.
+	*/
+	equipeService.aplicar = function() {
+		return gravarAplicar(this, true);
+	}
+
+	function gravarAplicar(baseService, isAplicar) {
+		if (!baseService.isValidForm())
+			return false;
+		
+		var obj = baseService.getObjetoParaGravar(),
+			url = baseService.opts.urlGravar,
+			wrapper = {},
+			success = function(objSalvo) {
+				if(baseService.onGravar) {
+					baseService.onGravar(obj, JSON.parse(objSalvo));
+				}
+				
+				if (isAplicar) {
+					baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
+					
+					alert("Cadastro salvo com sucesso.");
+				}
+					
+				else
+					baseService.opts.dialogCadastro.dialog("close");
+
+			}
+			
+		wrapper[baseService.opts.objectName] = obj;
+		var params = jQuery.param(wrapper) + "&" + getListasAsString();
+		
+		$.ajax({
+	    	type: "POST",
+	    	url: url,
+	    	data: params,
+	    	dataType: "text",
+	    	success: success,
+	    	error: baseService.errorHandler
+	   	});
+	}
+	
 	equipeService.onRowClick = function(equipe) {
 		equipeService.editar(equipe, 'Alterar Equipe');
 	}
@@ -136,18 +188,18 @@
 				// cria a lista de Exceções de horário, e adiciona na tela
 				for (i = 0; i < equipe.excecaoHorarioSet.length; i++) {
 					var item = equipe.excecaoHorarioSet[i];
-// 						row = [
-// 					           diaSemana,
-// 					           dataEspecifica,
-// 					           diaText,
-// 					           document.getElementById("horaIni").value,
-// 					           document.getElementById("horaFim").value,
-// 					           document.getElementById("interIni").value,
-// 					           document.getElementById("interFim").value,
-// 					           "<a class=\"excecao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+						row = [
+								item.diaSemana ? item.diaSemana : 0,
+								item.diaSemana ? '' : item.dataEspecifica,
+								item.descrDiaSemana ? item.descrDiaSemana : moment(new Date(item.dataEspecifica).toISOString()).format("DD/MM/YYYY"),
+								item.horaIni ? moment(new Date(item.horaIni).toISOString()).format("HH:mm") : '', 
+								item.horaFim ? moment(new Date(item.horaFim).toISOString()).format("HH:mm") : '', 
+								item.interIni ? moment(new Date(item.interIni).toISOString()).format("HH:mm") : '',
+								item.interFim ? moment(new Date(item.interFim).toISOString()).format("HH:mm") : '',
+					           "<a class=\"excecao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 					
-// 					// Adiciona na tabela de Exceções de horário
-// 					excecoesTable.api().row.add(rowItem).draw();
+					// Adiciona na tabela de Exceções de horário
+					excecoesTable.api().row.add(row).draw();
 				}
 			}
 		}

@@ -1,7 +1,5 @@
 #{extends 'main.html' /} #{set title:'Edição de Equipes' /}
 
-<script src="/sigasr/public/javascripts/moment.js"></script>
-
 <style>
 .inline {
 	display: inline-flex !important;
@@ -361,7 +359,7 @@
         document.getElementById("dataEspecifica").value = '';
 	}
 	
-	function getExcecoesTableAsString() {
+	function getListasAsString() {
 		var params = '',
 			dataAux = new Date();
 		

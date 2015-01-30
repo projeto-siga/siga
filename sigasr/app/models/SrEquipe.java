@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.ning.http.util.DateUtil;
 
 @Entity
 @Table(name = "SR_EQUIPE", schema = "SIGASR")
@@ -119,7 +120,12 @@ public class SrEquipe extends HistoricoSuporte {
 		
 		if (this.excecaoHorarioSet != null)
 			for (SrExcecaoHorario srExcecaoHorario : this.excecaoHorarioSet) {
-				jsonArray.add(gson.toJsonTree(srExcecaoHorario));
+				JsonObject jsonObjectExcecao = (JsonObject) gson.toJsonTree(srExcecaoHorario);
+				
+				if (srExcecaoHorario.diaSemana != null)
+					jsonObjectExcecao.add("descrDiaSemana", gson.toJsonTree(srExcecaoHorario.diaSemana.descrDiaSemana));
+				
+				jsonArray.add(jsonObjectExcecao);
 			}
 		
 		return jsonArray;

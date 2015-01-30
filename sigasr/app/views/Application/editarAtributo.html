@@ -202,6 +202,14 @@
 	associacaoService.getId = function(obj) {
 		return obj.idConfiguracao;
 	}
+
+	associacaoService.cadastrar = function(title) {
+        var atributoId = $("#idAtributo");
+        if ((atributoId == undefined || atributoId.val() == "")  && atributoService.aplicar() == false) 
+            return;
+
+		BaseService.prototype.cadastrar.call(this, title);	
+	}
 	
 	associacaoService.getObjetoParaGravar = function() {
 		var obj = BaseService.prototype.getObjetoParaGravar.call(this);

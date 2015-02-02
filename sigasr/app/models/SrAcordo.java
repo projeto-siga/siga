@@ -15,11 +15,12 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import models.vo.SrAcordoVO;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import play.db.jpa.JPA;
-import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -98,6 +99,7 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 		return SrAcordo.find("byHisDtFimIsNullAndNomeAcordo", sigla).fetch();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<SrAcordo> listar(boolean mostrarDesativados) {
 		if (!mostrarDesativados) {
 			return SrAcordo.find("byHisDtFimIsNull").fetch();
@@ -161,13 +163,20 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 
 	@Override
 	public void setSigla(String sigla) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public String getDescricao() {
 		return nomeAcordo;
+	}
+	
+	public SrAcordoVO toVO() {
+		return SrAcordoVO.createFrom(this);
+	}
+	
+	public String toJson() {
+		return this.toVO().toJson();
 	}
 
 }

@@ -33,6 +33,7 @@
 		}
 			
 		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
 			var filtro = window.location.search.substring(1);
 			
 			if (filtro.indexOf('mostrarDesativados') < 0)

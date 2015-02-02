@@ -14,16 +14,18 @@ import com.google.gson.GsonBuilder;
 /**
  * Classe que representa um V.O. de {@link SrItemConfiguracao}.
  */
-public class SrItemConfiguracaoVO {
+public class SrItemConfiguracaoVO implements ISelecionavel {
 	
-	public Long id;
-	public String descricao;
-	public String titulo;
-	public String sigla;
+	private Long id;
+	private String sigla;
+	private String descricao;
+	public String descrItemConfiguracao;
+	public String tituloItemConfiguracao;
+	public String siglaItemConfiguracao;
 	public Long hisIdIni;
 	public String descricaoSimilaridade;
 	public int numFatorMultiplicacaoGeral;
-	public boolean isAtivo;
+	public boolean ativo;
 	public int nivel;
 	public List<SrGestorItemVO> gestorSetVO;
 	public List<SrFatorMultiplicacaoVO> fatorMultiplicacaoSetVO;
@@ -31,12 +33,14 @@ public class SrItemConfiguracaoVO {
 	public SrItemConfiguracaoVO(Long id, String descricao, String titulo, String sigla, Long hisIdIni, String descricaoSimilaridade, 
 			int numFatorMultiplicacaoGeral, boolean isAtivo, int nivel, Set<SrGestorItem> gestorSet, Set<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
 		this.id = id;
-		this.descricao = descricao;
-		this.titulo = titulo;
+		this.descrItemConfiguracao = descricao;
+		this.tituloItemConfiguracao = titulo;
+		this.descricao = titulo;
+		this.siglaItemConfiguracao = sigla;
 		this.sigla = sigla;
 		this.hisIdIni = hisIdIni;
 		this.descricaoSimilaridade = descricaoSimilaridade;
-		this.isAtivo = isAtivo;
+		this.ativo = isAtivo;
 		this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
 		this.nivel = nivel;
 		this.gestorSetVO = new ArrayList<SrGestorItemVO>();
@@ -69,5 +73,35 @@ public class SrItemConfiguracaoVO {
 			return new SrItemConfiguracaoVO(item.idItemConfiguracao, item.descrItemConfiguracao, item.tituloItemConfiguracao, item.siglaItemConfiguracao, item.getHisIdIni(), item.descricaoSimilaridade, item.numFatorMultiplicacaoGeral, item.isAtivo(), item.getNivel(), item.gestorSet, item.fatorMultiplicacaoSet);
 		else
 			return null;
+	}
+
+	@Override
+	public Long getId() {
+		return this.id;
+	}
+
+	@Override
+	public String getSigla() {
+		return this.sigla;
+	}
+
+	@Override
+	public String getDescricao() {
+		return this.descricao;
+	}
+	
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Override
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
+	}
+
+	@Override
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 }

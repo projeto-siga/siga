@@ -31,6 +31,10 @@
 								<input type="text" name="filtro.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${filtro.atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}"/>
 								<span style="color: red">#{error 'filtro.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
 							#{/if}
+							#{if atributo.tipoAtributo.name() == "TEXT_AREA"}
+								<textarea cols="85" rows="10" name="filtro.atributoSolicitacaoMap[${atributo.idAtributo}]" class="${atributo.idAtributo}" maxlength="255">${filtro.atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
+								<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
+							#{/if}	
 							#{if atributo.tipoAtributo.name() == "DATA"}
 								<input type="text" name="filtro.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${filtro.atributoSolicitacaoMap[atributo.idAtributo]}" id="calendarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"/>
 								<span style="color: red">#{error 'filtro.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
@@ -143,6 +147,7 @@
 
     // Carrega o template que representa os atributos quando o usuario seleciona uma novo atributo
     function carregarCampoParaAtributo(select) {
+		jQuery.blockUI(objBlock);
     	var params = '';
 		if(select) {
 			select.attr('disabled', true);
@@ -154,6 +159,7 @@
 
     // Carrega o template que representa os atributos quando o usuario altera um atributo jah presenta na tela
     function alterarCampoParaAtributo(select) {
+        jQuery.blockUI(objBlock);
     	select.attr('disabled', true);
     	
     	removerFiltroAtributoDaTela(select);
@@ -177,6 +183,7 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)
 			eval(scripts[i].text);
+		jQuery.unblockUI();
 	}
 </script>
 

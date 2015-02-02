@@ -2,6 +2,84 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Pesquisa de Listas</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box gt-for-table dataTables_div">
+			<div class="gt-form-row dataTables_length">
+				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
+			</div>
+			<table id="listas_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Lotação</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:listas, as:'item'}
+					<tr 
+						data-json-id="${item.idLista}" data-json="${item.toJson()}" 
+						#{if item.podeConsultar(lotaTitular, cadastrante)} onclick="listaService.editar($(this).data('json'), 'Alterar lista')"#{/if}>
+						
+						#{if item.podeConsultar(lotaTitular, cadastrante)}
+							<td style="cursor: pointer;">${item.nomeLista}</td>
+						#{/if}
+						#{else}							
+							<td>${item.nomeLista}</td>
+						#{/else}
+						
+						<td>${item.lotaCadastrante.nomeLotacao}</td>
+						<td class="acoes">
+							#{if item.podeEditar(lotaTitular, cadastrante)}
+							#{desativarReativar id:item.idLista, 
+												onReativar:'listaService.reativar',
+												onDesativar :'listaService.desativar',
+												isAtivo:item?.isAtivo() }
+							#{/desativarReativar}
+							#{/if}
+						</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+			<div class="gt-content-box" id="modal-error" style="display: none;">
+				<table width="100%">
+					<tr>
+						<td align="center" valign="middle">
+							<table class="form" width="50%">
+								<tr>
+									<td style="text-align: center; padding-top: 10px;">
+										<h3></h3>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+			<a onclick="listaService.cadastrar('Incluir Lista')" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<div class="gt-table-buttons">
+	</div>
+</div>
+
+#{modal nome:'editarLista', titulo:'Inserir Lista'}
+	<div id="divEditarLista">#{include
+				'Application/editarLista.html' /}</div>
+#{/modal}
+<br />
+<br />
+<br />
 
 <script type="text/javascript">
 	var listaTable,
@@ -33,6 +111,18 @@
 		}
 		return query_string;
 	}();
+
+	var opts = {
+			 urlDesativar : '@{Application.desativarLista()}?',
+			 urlReativar : '@{Application.reativarLista()}?',
+			 urlGravar : '@{Application.gravarLista()}?',
+ 			 dialogCadastro : $('#editarLista_dialog'),
+			 tabelaRegistros : $('#listas_table'),
+			 objectName : 'lista',
+			 formCadastro : $('#formLista'),
+			 mostrarDesativados : QueryString.mostrarDesativados,
+			 colunas : colunasLista.acoes
+		};	
 	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
@@ -41,6 +131,7 @@
 		}
 			
 		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
 				location.href = '@{Application.listarListaDesativados()}';
 			else
@@ -48,7 +139,7 @@
 		});
 		
 		/* Table initialization */
-		listaTable = $('#listas_table').dataTable({
+		opts.dataTable= $('#listas_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -81,136 +172,87 @@
 		});
 	});
 
-	function desativarLista(event, idLista) {
-		event.stopPropagation();
+	// Define a "classe" listaService
+	function ListaService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
+	}
+	// listaService extends BaseService
+	ListaService.prototype = Object.create(BaseService.prototype);
 
-		var tr = $(event.currentTarget).parent().parent()[0],
-			row = listaTable.api().row(tr).data();
-
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.desativarLista()}",
-	         data: {id : idLista, mostrarDesativados : QueryString.mostrarDesativados},
-	         dataType: "text",
-	         success: function(response) {
-				if (QueryString.mostrarDesativados) {
-					row[colunasLista.acoes] = gerarColunaDesativar(idLista);
-		        	listaTable.api().row(tr).data(row);
-				}
-				else {
-					listaTable.api().row(tr).remove().draw();
-				}
-	         },
-	         error: function(response) {
-	        	var modalErro = $('#modal-error');
-	        	modalErro.find("h3").html(response.responseText);
-	        	modalErro.show(); 
-	         }
-	   });
+	var listaService = new ListaService(opts);
+	// Sobescreve o metodo cadastrar para limpara tela
+	listaService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title);
 	}
 
-	function reativarLista(event, idLista) {
-		event.stopPropagation();
-
-		var tr = $(event.currentTarget).parent().parent()[0],
-			row = listaTable.api().row(tr).data();
-
-		$.ajax({
-	         type: "POST",
-	         url: "@{Application.reativarLista()}",
-	         data: {id : idLista, mostrarDesativados : QueryString.mostrarDesativados},
-	         dataType: "text",
-	         success: function(idLista) {
-		         row[colunasLista.acoes] = gerarColunaAtivar(idLista);
-		         listaTable.api().row(tr).data(row);
-	         },
-	         error: function(response) {
-	        	var modalErro = $('#modal-error');
-	        	modalErro.find("h3").html(response.responseText);
-	        	modalErro.show(); 
-	         }
-	   });
+	listaService.getId = function(lista) {
+		return lista.idLista;
 	}
 
-	function gerarColunaAtivar(idLista) {
-		var column = '<a class="once gt-btn-ativar" onclick="desativarLista(event, ' + idLista + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
-   		return column;
-     }
-    
-	function gerarColunaDesativar(idLista) {
-		var column = '<a class="once gt-btn-desativar" onclick="reativarLista(event, ' + idLista + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
-   		return column;
-     }	        
+	listaService.getRow = function(lista) {
+		return [lista.nomeLista, lista.nomeLotacao, 'COLUNA_ACOES'];
+	}
+	
+	/**
+	 * Customiza o metodo editar
+	 */
+	listaService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+
+		limparDadosListaModal();
+
+		// carrega as permissões da lista
+		carregarPermissoes(obj.idLista);
+	}
+	
+	function limparDadosListaModal() {
+		// limpa as permissões
+		permissoesTable.api().clear().draw();
+	}
+
+	function carregarPermissoes(id) {
+        $.ajax({
+        	type: "GET",
+        	url: "@{Application.buscarPermissoesLista()}?idLista=" + id,
+        	dataType: "text",
+        	success: function(lista) {
+        		var permissoesJSon = JSON.parse(lista);
+        		populatePermissoesFromJSonList(permissoesJSon);
+        	},
+        	error: function(error) {
+            	alert("Não foi possível carregar as Permissões desta Lista.");
+        	}
+       	});
+    }
+
+	function populatePermissoesFromJSonList(permissoesJSon) {
+		for (var i = 0; i < permissoesJSon.length; i++) {
+			var permissao = permissoesJSon[i],
+				row = [ permissao.orgaoUsuario ? permissao.orgaoUsuario.id : '',
+						permissao.orgaoUsuario ? permissao.orgaoUsuario.sigla : '', 
+						permissao.complexo ? permissao.complexo.id : '',
+						permissao.complexo ? permissao.complexo.descricao : '', 
+						permissao.lotacao ? permissao.lotacao.id : '',
+						permissao.lotacao ? permissao.lotacao.descricao : '', 
+						permissao.lotacao ? permissao.lotacao.sigla : '', 
+						permissao.pessoa ? permissao.pessoa.id : '',
+						permissao.pessoa ? permissao.pessoa.descricao : '', 
+						permissao.pessoa ? permissao.pessoa.sigla : '', 
+						permissao.cargo ? permissao.cargo.id : '',
+						permissao.cargo ? permissao.cargo.descricao : '', 
+						permissao.cargo ? permissao.cargo.sigla : '',
+						permissao.funcaoConfianca ? permissao.funcaoConfianca.id : '',
+						permissao.funcaoConfianca ? permissao.funcaoConfianca.descricao : '', 
+						permissao.funcaoConfianca ? permissao.funcaoConfianca.sigla : '',  
+	          			permissao.listaTipoPermissaoListaVO,			//16
+	          			permissao.idConfiguracao,						//17    
+	          			'',												//18
+	          			getDescricaoTipoPermissao(),					//19
+	          			''												//20
+	          			];
+			
+			permissoesTable.api().row.add(row).draw();
+		}
+	}
 </script>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-		<h2>Pesquisa de Listas</h2>
-		<!-- content bomex -->
-		<div class="gt-content-box gt-for-table dataTables_div">
-			<div class="gt-form-row dataTables_length">
-				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
-			</div>
-			<table id="listas_table" border="0" class="gt-table display">
-				<thead>
-					<tr>
-						<th>Nome</th>
-						<th>Lotação</th>
-						<th>Ações</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					#{list items:listas, as:'item'}
-					<tr>
-						#{if item.podeConsultar(lotaTitular, cadastrante)}
-							<td onclick="javascript:window.location='@{Application.exibirLista(item.idLista)}'" style="cursor: pointer;">${item.nomeLista}</td>
-						#{/if}
-						#{else}							
-							<td>${item.nomeLista}</td>
-						#{/else}
-						
-						<td>${item.lotaCadastrante.nomeLotacao}</td>
-						<td>
-							#{if item.podeEditar(lotaTitular, cadastrante)}
-							#{desativarReativar id:item.idLista, 
-												onReativar:'reativarLista',
-												onDesativar :'desativarLista',
-												isAtivo:item?.isAtivo() }
-							#{/desativarReativar}
-							#{/if}
-						</td>
-					</tr>
-					</a> #{/list}
-				</tbody>
-			</table>
-			<div class="gt-content-box" id="modal-error" style="display: none;">
-				<table width="100%">
-					<tr>
-						<td align="center" valign="middle">
-							<table class="form" width="50%">
-								<tr>
-									<td style="text-align: center; padding-top: 10px;">
-										<h3></h3>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-		<!-- /content box -->
-		<div class="gt-table-buttons">
-			<a href="javascript: listaModalAbrir(false)" class="gt-btn-medium gt-btn-left">Cadastrar</a>
-		<div class="gt-table-buttons">
-	</div>
-</div>
-
-#{modal nome:'editarLista', titulo:'Inserir Lista'}
-	<div id="divEditarLista">#{include
-				'Application/editarLista.html' /}</div>
-#{/modal}
-<br />
-<br />
-<br />

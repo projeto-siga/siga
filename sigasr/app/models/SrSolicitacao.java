@@ -1546,10 +1546,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			
 			List<SrConfiguracao> confs = SrConfiguracao.listar(confFiltro);
 			for (SrConfiguracao conf : confs) {
-				SrAcordo acordoAtual = ((SrAcordo) SrAcordo
-						.findById(conf.acordo.idAcordo)).getAcordoAtual();
-				if (acordoAtual != null && !acordos.contains(acordoAtual))
-					acordos.add(acordoAtual);
+				if (conf.acordo != null) {
+					SrAcordo acordoAtual = ((SrAcordo) SrAcordo
+							.findById(conf.acordo.idAcordo)).getAcordoAtual();
+					if (acordoAtual != null && !acordos.contains(acordoAtual))
+						acordos.add(acordoAtual);
+				}
 			}
 		}
 	}

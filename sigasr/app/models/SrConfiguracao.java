@@ -26,6 +26,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
+import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -33,6 +34,10 @@ import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Selecionavel;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
@@ -244,6 +249,41 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarDesignacoes(SrEquipe equipe) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		
+		if (equipe != null) {
+			sb.append(" and ( ");
+			
+			sb.append(" conf.atendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());
+			
+			sb.append(" or conf.preAtendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());
+			
+			sb.append(" or conf.posAtendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());
+			
+			sb.append(" ) ");
+		}
+		
+		sb.append(" and conf.hisDtFim is null");
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
+	public static List<SrConfiguracao> listarDesignacoes(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		return listar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro,
+				new int[] {}));
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarAbrangenciasAcordo(boolean mostrarDesativados, SrAcordo acordo) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
@@ -266,6 +306,17 @@ public class SrConfiguracao extends CpConfiguracao {
 				.createQuery(sb.toString()).getResultList();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAbrangenciasAcordo() {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
+		sb.append(" and conf.hisDtFim is null");
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
 	public void salvarComoAbrangenciaAcordo() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
@@ -278,8 +329,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 		salvar();
-		
-		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -509,11 +558,41 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public String getSrConfiguracaoTipoPermissaoJson() {
-		return new SrConfiguracaoVO(null, null, null, tipoPermissaoSet, getDescrConfiguracao()).toJson();
+		return new SrConfiguracaoVO(this).toJson();
 	}
 	
 	public SrConfiguracaoVO toVO() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null, getDescrConfiguracao());
+		return new SrConfiguracaoVO(this, this.atributoObrigatorio);
+	}
+	
+	public static String convertToJSon(List<SrConfiguracao> lista) {
+		List<SrConfiguracaoVO> listaVO = new ArrayList<SrConfiguracaoVO>();
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting().serializeNulls();
+		Gson gson = builder.create();
+
+		if (lista != null) {
+			for (SrConfiguracao conf : lista) {
+				listaVO.add(conf.toVO());
+			}
+		}
+		
+		return gson.toJson(listaVO);
+	}
+	
+	public static String convertToAssociacaoJSon(List<SrConfiguracao> lista) {
+		List<SrConfiguracaoAssociacaoVO> listaVO = new ArrayList<SrConfiguracaoAssociacaoVO>();
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting().serializeNulls();
+		Gson gson = builder.create();
+
+		if (lista != null) {
+			for (SrConfiguracao conf : lista) {
+				listaVO.add(conf.toAssociacaoVO());
+			}
+		}
+		
+		return gson.toJson(listaVO);
 	}
 
 	public int getNivelItemParaComparar() {
@@ -598,6 +677,34 @@ public class SrConfiguracao extends CpConfiguracao {
 		SrItemConfiguracaoVO itemVO = (this.getItemConfiguracaoUnitario() != null? this.getItemConfiguracaoUnitario().getAtual().toVO() : null);
 		SrAcaoVO acaoVO = (this.getAcaoUnitaria() != null? this.getAcaoUnitaria().getAtual().toVO() : null);
 		
-		return new SrConfiguracaoAssociacaoVO(this.getIdConfiguracao(), itemVO, acaoVO, this.atributoObrigatorio);
+		return new SrConfiguracaoAssociacaoVO(this, itemVO, acaoVO);
 	}
+	
+	public String toJson() {
+		Gson gson = createGson("");
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		
+		return jsonObject.toString();
+	}
+
+	private Gson createGson(String... exclusions) {
+		return new GsonBuilder()
+			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.in(exclusions))
+			.create();
+	}
+	
+	public static List<SrConfiguracao> listarPorItem(SrItemConfiguracao itemConfiguracao)  throws Exception{
+		List<SrConfiguracao> lista = new ArrayList<SrConfiguracao>();
+		
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setBuscarPorPerfis(true);
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		
+		lista.addAll(SrItemConfiguracao.marcarComoHerdadas(SrConfiguracao.listarDesignacoes(
+					confFiltro, new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO}), itemConfiguracao));
+		
+		return lista;
+	}
+	
 }

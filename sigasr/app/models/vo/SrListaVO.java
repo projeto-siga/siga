@@ -11,18 +11,23 @@ import com.google.gson.GsonBuilder;
 public class SrListaVO {
 
 	public Long idLista;
+	public Long hisIdIni;
 	public String nomeLista;
+	public String nomeLotacao;
 	public String descrAbrangencia;
 	public String descrJustificativa;
 	public String descrPriorizacao;
+	public boolean ativo;
 
-	public SrListaVO(Long idLista, String nomeLista, String descrAbrangencia, String descrJustificativa,
-			String descrPriorizacao) {
-		this.idLista = idLista;
-		this.nomeLista = nomeLista;
-		this.descrAbrangencia = descrAbrangencia;
-		this.descrJustificativa = descrJustificativa;
-		this.descrPriorizacao = descrPriorizacao;
+	public SrListaVO(SrLista lista) {
+		this.idLista = lista.idLista;
+		this.hisIdIni = lista.getHisIdIni();
+		this.nomeLista = lista.nomeLista;
+		this.nomeLotacao = lista.lotaCadastrante != null ? lista.lotaCadastrante.getDescricao() : "";
+		this.descrAbrangencia = lista.descrAbrangencia;
+		this.descrJustificativa = lista.descrJustificativa;
+		this.descrPriorizacao = lista.descrPriorizacao;
+		this.ativo = lista.isAtivo();
 	}
 	
 	/**

@@ -109,6 +109,7 @@
 		}
 			
 		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
 				location.href = '@{Application.listarAcaoDesativados()}';
 			else
@@ -157,9 +158,11 @@
 	AcaoService.prototype = Object.create(BaseService.prototype);
 	
 	var acaoService = new AcaoService(opts);
+	
 	acaoService.getId = function(acao) {
 		return acao.idAcao;
 	}
+
 	acaoService.getRow = function(acao) {
 		var marginLeft = (acao.nivel-1) * 2,
 			fontWeight = (acao.nivel == 1) ? 'bold' : 'normal',

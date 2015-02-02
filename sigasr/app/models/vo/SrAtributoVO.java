@@ -6,7 +6,6 @@ import java.util.List;
 import models.SrAtributo;
 import models.SrConfiguracao;
 import models.SrGestorItem;
-import models.SrObjetivoAtributo;
 import models.SrTipoAtributo;
 
 import com.google.gson.Gson;
@@ -17,29 +16,27 @@ import com.google.gson.JsonObject;
  * Classe que representa um V.O. de {@link SrGestorItem}.
  */
 public class SrAtributoVO {
+	public boolean ativo;
 	public Long idAtributo;
 	public String nomeAtributo;
 	public String descrAtributo;
 	public String codigoAtributo;
 	public SrTipoAtributo tipoAtributo;
-	public SrObjetivoAtributo objetivoAtributo;
+	public SrObjetivoAtributoVO objetivoAtributo;
 	public String descrPreDefinido;
 	public Long hisIdIni;
 	public List<SrConfiguracaoAssociacaoVO> associacoesVO;
-
-	public SrAtributoVO(Long idAtributo, String nomeAtributo,
-			String descrAtributo, String codigoAtributo,
-			SrTipoAtributo tipoAtributo, SrObjetivoAtributo objetivoAtributo,
-			String descrPreDefinido, Long hisIdIni,
-			List<SrConfiguracao> associacoes) {
-		this.idAtributo = idAtributo;
-		this.nomeAtributo = nomeAtributo;
-		this.descrAtributo = descrAtributo;
-		this.codigoAtributo = codigoAtributo;
-		this.tipoAtributo = tipoAtributo;
-		this.objetivoAtributo = objetivoAtributo;
-		this.descrPreDefinido = descrPreDefinido;
-		this.hisIdIni = hisIdIni;
+	
+	public SrAtributoVO(SrAtributo atributo, List<SrConfiguracao> associacoes) {
+		this.ativo = atributo.isAtivo();
+		this.idAtributo = atributo.idAtributo;
+		this.nomeAtributo = atributo.nomeAtributo;
+		this.descrAtributo = atributo.descrAtributo;
+		this.codigoAtributo = atributo.codigoAtributo;
+		this.tipoAtributo = atributo.tipoAtributo;
+		this.objetivoAtributo = SrObjetivoAtributoVO.createFrom(atributo.objetivoAtributo);
+		this.descrPreDefinido = atributo.descrPreDefinido;
+		this.hisIdIni = atributo.getHisIdIni();
 		this.associacoesVO = new ArrayList<SrConfiguracaoAssociacaoVO>();
 
 		if (associacoes != null)
@@ -64,7 +61,7 @@ public class SrAtributoVO {
 		}
 		if (this.objetivoAtributo != null) {
 			jsonTree.add("descrObjetivoAtributo",
-					gson.toJsonTree(this.objetivoAtributo.descrObjetivo));
+					gson.toJsonTree(this.objetivoAtributo.getDescricao()));
 		}
 		return jsonTree.toString();
 	}
@@ -73,11 +70,7 @@ public class SrAtributoVO {
 		if (atributo != null) {
 			List<SrConfiguracao> associacoes = SrConfiguracao
 					.listarAssociacoesAtributo(atributo, Boolean.FALSE);
-			return new SrAtributoVO(atributo.idAtributo, atributo.nomeAtributo,
-					atributo.descrAtributo, atributo.codigoAtributo,
-					atributo.tipoAtributo, atributo.objetivoAtributo,
-					atributo.descrPreDefinido, atributo.getHisIdIni(),
-					associacoes);
+			return new SrAtributoVO(atributo, associacoes);
 		}
 		return null;
 	}

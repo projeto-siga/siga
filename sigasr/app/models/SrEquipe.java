@@ -13,10 +13,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import models.vo.SelecionavelVO;
+import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_EQUIPE", schema = "SIGASR")
@@ -73,7 +80,7 @@ public class SrEquipe extends HistoricoSuporte {
 		if (lotacao == null)
 			return null;
 		else
-			return SrConfiguracao.listarDesignacoes(false, lotacao);
+			return SrConfiguracao.listarDesignacoes(this);
 	}
 
 	public static List<SrEquipe> listar(boolean mostrarDesativados) {
@@ -95,4 +102,38 @@ public class SrEquipe extends HistoricoSuporte {
 		return lotaTitular.equivale(this.lotacao);
 	}
 
+	public String toJson() {
+		Gson gson = createGson("lotacao", "excecaoHorarioSet");
+		
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		jsonObject.add("excecaoHorarioSet", excecaoHorarioArray());
+		jsonObject.add("lotacao", gson.toJsonTree(SelecionavelVO.createFrom(this.lotacao)));
+		
+		return jsonObject.toString();
+	}
+	
+	private JsonArray excecaoHorarioArray() {
+		Gson gson = createGson("equipe");
+		JsonArray jsonArray = new JsonArray();
+		
+		if (this.excecaoHorarioSet != null)
+			for (SrExcecaoHorario srExcecaoHorario : this.excecaoHorarioSet) {
+				JsonObject jsonObjectExcecao = (JsonObject) gson.toJsonTree(srExcecaoHorario);
+				
+				if (srExcecaoHorario.diaSemana != null)
+					jsonObjectExcecao.add("descrDiaSemana", gson.toJsonTree(srExcecaoHorario.diaSemana.descrDiaSemana));
+				
+				jsonArray.add(jsonObjectExcecao);
+			}
+		
+		return jsonArray;
+	}
+	
+	// TODO: colocar esse metodo na classe base
+	private Gson createGson(String... exclusions) {
+		return new GsonBuilder()
+			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
+			.create();
+	}	
 }

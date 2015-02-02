@@ -27,7 +27,7 @@ jQuery(document).ready(function($) {
         $( "#perguntas" ).sortable({placeholder: "ui-state-highlight"});
         $( "#perguntas" ).disableSelection();
        
-        $("#botaoIncluir").click(function(){
+        $("#botaoIncluir").click(function() {
                 jDialog.data('acao',perguntas.incluirItem).dialog('open');
         });
        
@@ -121,7 +121,8 @@ jQuery(document).ready(function($) {
 
 <div class="gt-form gt-content-box">
 	<form id="pesquisaForm">
-		<input type="hidden" name="idPesquisa">
+		<input type="hidden" name="idPesquisa" />
+		
 		<div class="gt-form-row gt-width-66">
 			<label>Nome <span>*</span></label> <input type="text"
 				name="nomePesquisa" size="60" maxlength="255" required />
@@ -138,10 +139,9 @@ jQuery(document).ready(function($) {
 				class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
 		</div>
 		<div class="gt-form-row">
-			<input type="button" value="Gravar"
-				onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
-			<a class="gt-btn-medium gt-btn-left"
-				onclick="pesquisaService.cancelarGravacao()">Cancelar</a>
+			<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
+			<a class="gt-btn-medium gt-btn-left" onclick="pesquisaService.cancelarGravacao()">Cancelar</a>
+			<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="pesquisaService.aplicar()"/>
 		</div>
 	</form>
 </div>
@@ -160,9 +160,8 @@ jQuery(document).ready(function($) {
 					${tipo.nomeTipoPergunta} #{/option} #{/list} #{/select}
 				</div>
 				<div class="gt-form-row">
-					<input type="button" id="modalOk" value="Ok"
-						class="gt-btn-medium gt-btn-left" /> <input type="button"
-						value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+					<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" />
+					<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
 				</div>
 			</form>
 		</div>

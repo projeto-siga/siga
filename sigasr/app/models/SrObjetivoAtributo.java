@@ -29,5 +29,13 @@ public class SrObjetivoAtributo extends GenericModel {
 
 	@Column(name = "DESCR_OBJETIVO", nullable = false)
 	public String descrObjetivo;
+	
+	public Long getId() {
+		return this.idObjetivo;
+	}
+	
+	public String getDescricao() {
+		return this.descrObjetivo;
+	}
 
 }

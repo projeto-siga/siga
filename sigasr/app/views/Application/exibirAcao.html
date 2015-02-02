@@ -6,6 +6,7 @@ $(document).ready(function() {
 });
 
 function carregarAtributos(){
+	jQuery.blockUI(objBlock);
 	var frm = document.getElementById('formSolicitacao'),
 		params = '';
 	//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
@@ -40,6 +41,7 @@ function carregouAtributos(response, param){
 			addFiltro(divFiltro, selector, innerHTML, optionVl)
 		}
 	});
+	jQuery.unblockUI();
 }
 </script>
 
@@ -56,7 +58,7 @@ function carregouAtributos(response, param){
 #{if solicitacao.itemConfiguracao && acoesEAtendentes} 
 	<div class="gt-form-row gt-width-66">
 	<label>Ação</label>
-		#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
+		#{select name:'solicitacao.acao', style:"width: 100%;",  value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
 			#{option}#{/option}	
 			#{list items:acoesEAtendentes.keySet(), as:'acao' }
 				#{option acao.idAcao} ${acao.tituloAcao} #{/option}					 

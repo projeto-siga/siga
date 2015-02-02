@@ -3,8 +3,12 @@
  */
 function Formulario(form) {
 	this.populateFromJson = function(obj) {
+		var clone = Object.create(obj);
+		this.reset();
 		form.find('input[type=hidden]').val(''); // WA
-		form.populate(obj, {
+		this.prepareObjectToForm(clone);
+		
+		form.populate(clone, {
 			resetForm:true
 		});
 	}
@@ -12,7 +16,62 @@ function Formulario(form) {
 	this.toJson = function() {
 		return form.serializeJSON();
 	}
+	
+	this.reset = function() {
+		if(form.resetForm) {
+			form.resetForm();
+		}
+		form.find('.error').removeClass('error'); // Ao entrar no cadastro, remove classe de erro
+	}
+	
+	/**
+	 * Faz a preparação do objeto para conter os campos necessários para popular os componentes do TRF. 
+	 */
+	this.prepareObjectToForm = function(obj) {
+		for (var x in obj) {
+		    if (typeof obj[x] == 'object') {
+		    	var component = document.getElementsByName(x)[0],		
+		    		className = component != null ? component.className : null,
+		        	objeto = obj[x];
+		    	
+		    	// Caso o atributo seja um objeto, verifica qual seu tipo e preenche os valores necessários
+		        if (className && objeto) {
+		        	if (className == 'selecao') {
+		        		this.prepareForSelecaoComponent(x, obj, objeto);
+		        	}
+			        else if (className == 'pessoaLotaSelecao') {
+			        	var combo = component.closestPreviousElement("select");
+			        	this.prepareForSelecaoComponent(x, obj, objeto);
+			        	obj[combo.id] = obj[x].tipo;
+			        }
+			        else if (className == 'lotaSelecao')
+			        	this.prepareForSelecaoComponent(x, obj, objeto);
+			        else if (className == 'pessoaLotaFuncCargoSelecao') {
+			        	var select = jQuery(component).parent().parent().parent().find('select')[0];
+			        	obj[select.id] = objeto.tipo;
+			        	select.onchange();
+			        	this.prepareForSelecaoComponent(x, obj, objeto);
+			        }
+			        else if (className == 'select-siga') {
+			        	obj[x] = objeto ? objeto.id : '';
+			        }
+		        }
+		    }
+		}
+	}
+	
+	/**
+	 * Cria os atributos esperados pelo componente selecao.html
+	 */
+	this.prepareForSelecaoComponent = function(atributo, obj, objeto) {
+		obj[atributo] = objeto ? objeto.id : '';
+		obj[atributo+"_sigla"] = objeto ? objeto.sigla : '';
+		obj[atributo+"_descricao"] = objeto ? objeto.descricao : '';
+		obj[atributo+"Span"] = objeto ? objeto.descricao : '';
+	}
 }
+
+
 /**
  * Utilitatio para desenhar o HTML correto do botao de desativar/reativar
  */
@@ -72,7 +131,6 @@ function DesativarReativar(service) {
 function BaseService(opts) {
 	this.opts = opts;
 	this.formularioHelper = new Formulario(opts.formCadastro);
-	
 	this.opts.validatorForm = opts.formCadastro.validate({
 		onfocusout: false
 	});
@@ -88,11 +146,16 @@ BaseService.prototype.post = function(opts) {
 	return $.ajax({
     	type: "POST",
     	url: opts.url,
-    	data: jQuery.param(opts.obj),
+    	data: this.serializar(opts.obj),
     	dataType: "text",
     	error: BaseService.prototype.errorHandler
    	});
 }
+
+BaseService.prototype.serializar = function(obj) {
+	return  jQuery.param(obj);
+}
+
 BaseService.prototype.errorHandler = function(error) {
 	console.error(error);
 	
@@ -127,7 +190,7 @@ BaseService.prototype.desativar = function(event, id) {
 		row = this.opts.dataTable.api().row(tr).data(),
 		service = this;
 	
-	$.ajax({
+	return $.ajax({
 	     type: "POST",
 	     url: this.opts.urlDesativar,
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
@@ -157,7 +220,7 @@ BaseService.prototype.reativar = function(event, id) {
 		row = this.opts.dataTable.api().row(tr).data(),
 		service = this;
 
-	$.ajax({
+	return $.ajax({
 	     type: "POST",
 	     url: this.opts.urlReativar,
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
@@ -178,14 +241,14 @@ BaseService.prototype.reativar = function(event, id) {
  * Gerar a Coluna Ativar
  */
 BaseService.prototype.gerarColunaAtivar = function(id) {
-	var column = '<a class="once gt-btn-ativar" onclick="' + opts.objectName + 'Service.desativar(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+	var column = '<a class="once gt-btn-ativar" onclick="' + this.opts.objectName + 'Service.desativar(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
 		return column;
 }
 /**
  * Gerar a Coluna Desativar
  */
 BaseService.prototype.gerarColunaDesativar = function(id) {
-	var column = '<a class="once gt-btn-desativar" onclick="' + opts.objectName + 'Service.reativar(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
+	var column = '<a class="once gt-btn-desativar" onclick="' + this.opts.objectName + 'Service.reativar(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
 		return column;
  }
 /**
@@ -193,6 +256,7 @@ BaseService.prototype.gerarColunaDesativar = function(id) {
  */
 BaseService.prototype.editar = function(obj, title) {
 	this.removerErros();
+	this.limparSpanComponentes();
 	this.formularioHelper.populateFromJson(obj);
 	
 	if(this.opts.dialogCadastro.size() == 0) {
@@ -207,18 +271,39 @@ BaseService.prototype.editar = function(obj, title) {
  */
 BaseService.prototype.cadastrar = function(title) {
 	this.removerErros();
+	this.limparSpanComponentes();
 	this.formularioHelper.populateFromJson({});
 	this.opts.dialogCadastro.dialog('option', 'title', title);
 	this.opts.dialogCadastro.dialog('open');
 }
+
+/**
+ * Limpa o valor dos Spans dos seguintes componentes:
+ * 
+ * selecao.html
+ * pessoaLotaSelecao.html
+ * lotaSelecao.html
+ * pessoaLotaFuncCargoSelecao.html
+ */
+BaseService.prototype.limparSpanComponentes = function() {
+	$('span.selecao').html('');
+	$('span.pessoaLotaSelecao').html('');
+	$('span.lotaSelecao').html('');
+	$('span.pessoaLotaFuncCargoSelecao').html('');
+}
+
 /**
  * Executa a acao de gravar o registro
  */
 BaseService.prototype.gravar = function() {
+	this.gravarAplicar(false);
+}
+
+BaseService.prototype.gravarAplicar = function(isAplicar) {
 	if (!this.isValidForm())
-		return false;
+		return;
 	
-	var service = this,
+	var service = this, 
 		obj = this.getObjetoParaGravar(),
 		url = this.opts.urlGravar,
 		wrapper = {},
@@ -226,7 +311,14 @@ BaseService.prototype.gravar = function() {
 			if(service.onGravar) {
 				service.onGravar(obj, JSON.parse(objSalvo));
 			}
-			opts.dialogCadastro.dialog("close");
+			
+			if (isAplicar) {
+				service.formularioHelper.populateFromJson(JSON.parse(objSalvo));
+				alert("Cadastro salvo com sucesso.");
+			}
+				
+			else
+				service.opts.dialogCadastro.dialog("close");
 		}
 		
 	wrapper[this.opts.objectName] = obj;
@@ -235,6 +327,13 @@ BaseService.prototype.gravar = function() {
 		'url' : url, 
 		'obj' : wrapper
 	}).success(success);
+}
+
+/**
+ * Executa a acao de aplicar o registro
+ */
+BaseService.prototype.aplicar = function() {
+	this.gravarAplicar(true);
 }
 /**
  * Metodo que implementa a forma padrao de pegar o objeto para gravar no servidor
@@ -256,16 +355,18 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	var idAntigo = this.getId(obj),
 		idNovo = this.getId(objSalvo),
 		tr = null;
-
+	
 	// Se foi uma edicao
 	if(idAntigo) {
-		tr = this.opts.tabelaRegistros.find("tr[data-json-id=" + idAntigo + "]");
+		tr = this.opts.dataTable.$('tr[data-json-id=' + idAntigo + ']');
 		
 		if(this.opts.dataTable) {
 			this.opts.dataTable
 				.api()
 				.row(tr)
 				.data(this.getRow(objSalvo));
+			
+			this.bindRowClick(tr, objSalvo);
 		}
 	} 
 	// Senao, eh um novo registro a ser inserido na GRID
@@ -276,23 +377,16 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 				row = this.opts.dataTable
 				.api()
 				.row
-				.add(data),
-				indice = this.indiceAcoes(data);
+				.add(data);
 			
 			row.draw();
 			tr = $(row.node());
 			
+			var indice = this.indiceAcoes(tr);
 			if(indice > -1) {
 				tr.find('td:nth(' + indice + ')').addClass('acoes');
 			}
-			
-			var onRowClick = this.onRowClick;
-			if(onRowClick) {
-				tr.css('cursor', 'pointer');
-				tr.on('click', function() {
-					onRowClick(objSalvo);
-				});
-			}
+			this.bindRowClick(tr, objSalvo);
 		}
 	}
 	
@@ -305,20 +399,41 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 			.ativo(objSalvo.ativo)
 			.innerHTML(tdAcoes, idNovo);
 	}
+	
+	return tr;
 }
 
-BaseService.prototype.indiceAcoes = function(data) {
-	for(var i = 0; i < data.length; i++) {
-		if(data[i] == 'COLUNA_ACOES') 
+BaseService.prototype.bindRowClick = function(tr, objSalvo) {
+	var onRowClick = this.onRowClick;
+	if(onRowClick) {
+		tr.unbind('click');
+		tr.css('cursor', 'pointer');
+		tr.on('click', function() {
+			onRowClick(objSalvo);
+		});
+	}
+}
+
+BaseService.prototype.row = function(obj) {
+	var id = this.getId(obj);
+	return this.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
+}
+
+BaseService.prototype.indiceAcoes = function(tr) {
+	var tds = tr.find('td');
+	for(var i = 0; i < tds.length; i++) {
+		var td = $(tds[i]);
+		if(td.html().trim() == 'COLUNA_ACOES') 
 			return i;
 	}
 	return -1;
 }
 
 BaseService.prototype.isValidForm = function() {
-    return jQuery(opts.formCadastro).valid();
+    return jQuery(this.opts.formCadastro).valid();
 }
 
 BaseService.prototype.resetErrosForm = function() {
-	opts.validatorForm.resetForm();
+	if (this.opts.validatorForm)
+		this.opts.validatorForm.resetForm();
 }

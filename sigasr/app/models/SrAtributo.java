@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import models.vo.SrAtributoVO;
 
@@ -202,7 +201,7 @@ public class SrAtributo extends HistoricoSuporte {
 	/**
 	 * Retorna um Json de {@link SrAtributo}.
 	 */
-	public String getSrAtributoJson() {
+	public String toJson() {
 		return this.toVO().toJson();
 	}
 }

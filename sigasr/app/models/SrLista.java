@@ -275,10 +275,13 @@ public class SrLista extends HistoricoSuporte {
 				s.priorizar(this, i, pessoa, lota);
 		}
 	}
+	
+	public String toJson() {
+		return this.toVO().toJson();
+	}
 
 	public SrListaVO toVO() {
-		return new SrListaVO(this.idLista, this.nomeLista, this.descrAbrangencia, this.descrJustificativa, 
-				this.descrPriorizacao);
+		return new SrListaVO(this);
 	}
 	
 	public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {

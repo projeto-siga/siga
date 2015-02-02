@@ -104,6 +104,7 @@
 		}
 			
 		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
 				location.href = '@{Application.listarPesquisaDesativadas()}';
 			else
@@ -160,6 +161,7 @@
 	pesquisaService.getId = function(pesquisa) {
 		return pesquisa.idPesquisa;
 	}
+
 	pesquisaService.getRow = function(pesquisa) {
 		return [pesquisa.nomePesquisa, pesquisa.descrPesquisa, 'COLUNA_ACOES'];
 	}
@@ -179,34 +181,11 @@
 			perguntas.incluirItem(pergunta.descrPergunta, pergunta.tipoPergunta.idTipoPergunta, pergunta.tipoPergunta.nomeTipoPergunta, pergunta.idPergunta);
 		}
 	}
-
-	pesquisaService.gravar = function() {
-		if (!isValidForm())
-			return;
-		
-		var service = this,
-		obj = this.getObjetoParaGravar(),
-		url = this.opts.urlGravar,
-		wrapper = {},
-		success = function(objSalvo) {
-			if(service.onGravar) {
-				service.onGravar(obj, JSON.parse(objSalvo));
-			}
-			opts.dialogCadastro.dialog("close");
-		}
-		wrapper[this.opts.objectName] = obj;
-		var params = jQuery.param(wrapper) + "&" + this.paramsPerguntas();
-		
-		$.ajax({
-	    	type: "POST",
-	    	url: url,
-	    	data: params,
-	    	dataType: "text",
-	    	success: success,
-	    	error: this.errorHandler
-	   	});
+	
+	pesquisaService.serializar = function(obj) {
+		return BaseService.prototype.serializar.call(this, obj)  + "&" + paramsPerguntas();
 	}
-
+	
 	pesquisaService.paramsPerguntas = function() {
 	    var jForm = $("form"),
 	    	params = new String();

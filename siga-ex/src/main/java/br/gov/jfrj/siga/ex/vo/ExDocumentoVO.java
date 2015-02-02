@@ -363,7 +363,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp().podeExcluir(titular, lotaTitular, mob), "Confirma a exclusão do documento?", null,
 				null, null, "once");
 		
-		vo.addAcao("user_add", "Incluir Cossignatário", "/app/expediente", "incluir_cosignatario", Ex.getInstance().getComp()
+		vo.addAcao("user_add", "Incluir Cossignatário", "/app/expediente/mov", "incluir_cosignatario", Ex.getInstance().getComp()
 				.podeIncluirCosignatario(titular, lotaTitular, mob), null, "sigla=" + doc.getSigla(), null, null, null);
 		
 		vo.addAcao("attach", "Anexar Arquivo", "/app/expediente/mov", "anexar",
@@ -423,11 +423,11 @@ public class ExDocumentoVO extends ExVO {
 				"Esta operação criará um expediente com os mesmos dados do atual. Prosseguir?", null, null, null, "once");
 		
 		// test="${exibirCompleto != true}" />
-		vo.addAcao("eye", "Exibir Informações Completas", "/expediente/doc", "exibirAntigo", Ex.getInstance().getComp()
+		vo.addAcao("eye", "Exibir Informações Completas", "/app/expediente/doc", "exibirAntigo", Ex.getInstance().getComp()
 				.podeExibirInformacoesCompletas(titular, lotaTitular, mob)
 				&& !exibirAntigo, null, null, null, null, null);
 		
-		vo.addAcao("eye", "Exibir Informações Completas", "/expediente/doc", "exibirAntigo", Ex.getInstance().getComp()
+		vo.addAcao("eye", "Exibir Informações Completas", "/app/expediente/doc", "exibirAntigo", Ex.getInstance().getComp()
 				.podeExibirInformacoesCompletas(titular, lotaTitular, mob)
 				&& exibirAntigo, null, "&exibirCompleto=true", null, null, null);
 		

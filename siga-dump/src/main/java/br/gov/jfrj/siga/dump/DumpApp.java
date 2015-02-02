@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.dump;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,6 +14,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Extrai dados do banco de dados em formato SQL.
@@ -49,6 +52,8 @@ public class DumpApp {
 	private static final String PARAM_UPDATES = "-updates=";
 	private static final String PARAM_INSERTS = "-inserts=";
 	private static final String PARAM_ARQUIVO_SAIDA = "-arquivoSaida=";
+	private static final String PARAM_CHARSET_IN = "-charSetIn=";
+	private static final String PARAM_CHARSET_OUT= "-charSetOut=";
 	private static final String PARAM_TABELAS = "-tabelas=";
 	private final static List<String> _tabs = new ArrayList<String>();
 	private final static List<String> _tabs_opts = new ArrayList<String>();
@@ -59,7 +64,8 @@ public class DumpApp {
 	private static String _url_db = null;
 	private static String _usr_db = null;
 	private static String _pwd_db = null;
-
+	private static String _charset_in = "UTF-8";
+	private static String _charset_out = "UTF-8";
 	private List<String> tabelas;
 	private List<String> tabelasOpcoes;
 	private String arquivoSaida;
@@ -68,17 +74,23 @@ public class DumpApp {
 	private String urlDB;
 	private String userDB;
 	private String passDB;
-
+	private String charSetIn;
+	private String charSetOut;
+	
 	private Connection connection;
 
 	private List<String> inicioScript = new ArrayList<String>();
 	private List<String> inserts = new ArrayList<String>();
 	private List<String> updates = new ArrayList<String>();
 	private List<String> fimScript = new ArrayList<String>();
-
+	
+	
+	private static final int dbms_output_limit = 2 ^ 32 * 1024; // 32kB
+	private static final int literal_string_limit = 4000; // 32kB
+	
 	public DumpApp(List<String> tabelas, List<String> tabelasOpcoes,
 			String arquivoSaida, Boolean processarInserts,
-			Boolean processarUpdates, String urlDB, String userDB, String passDB) {
+			Boolean processarUpdates, String urlDB, String userDB, String passDB, String charSetIn,String charSetOut) {
 		this.tabelas = tabelas;
 		this.tabelasOpcoes = tabelasOpcoes;
 		this.arquivoSaida = arquivoSaida;
@@ -87,6 +99,8 @@ public class DumpApp {
 		this.urlDB = urlDB;
 		this.userDB = userDB;
 		this.passDB = passDB;
+		this.charSetIn = charSetIn;
+		this.charSetOut = charSetOut;
 	}
 
 	public static void main(String[] args) throws SQLException, IOException {
@@ -94,7 +108,7 @@ public class DumpApp {
 		processarArgumentos(args);
 		try {
 			DumpApp app = new DumpApp(_tabs, _tabs_opts, _arq, _ins, _upt, _url_db,
-					_usr_db, _pwd_db);
+					_usr_db, _pwd_db,_charset_in, _charset_out);
 			app.dump();
 		} catch (Exception e) {
 			exibirMensagemErro();
@@ -128,16 +142,22 @@ public class DumpApp {
 		FileWriter fw = new FileWriter(file);
 
 		for (String linha : inicioScript) {
-			fw.write(linha + "\n");
+			escreverLinha(fw, linha);
 		}
+		
 		for (String linha : resultadoDump) {
-			fw.write(linha + "\n");
+			escreverLinha(fw, linha);
 		}
 		for (String linha : fimScript) {
-			fw.write(linha + "\n");
+			escreverLinha(fw, linha);
 		}
 
 		fw.close();
+	}
+
+	private void escreverLinha(FileWriter fw, String linha) throws IOException,
+			UnsupportedEncodingException {
+		fw.write(new String(linha.getBytes(),charSetOut) + "\n");
 	}
 
 	private List<String> dump(String nomeTabela, String optTabela)
@@ -167,6 +187,7 @@ public class DumpApp {
 			boolean contemBlob = false;
 			String campoBlob = null;
 			String blobValue = null;
+			String blobValueArray[] = null;
 
 			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
 				// pk
@@ -200,7 +221,10 @@ public class DumpApp {
 					valores.add(null);
 					try {
 						blobValue = rs.getBytes(i) == null ? null
-								: blobToString(rs.getBytes(i));
+								: blobToString(rs.getBytes(i),charSetIn);
+						if (blobValue.length() > literal_string_limit){
+							blobValueArray = getChunks(blobValue);
+						}
 					} catch (Exception e) {
 						System.out.println(nomeTabela + "." + campoBlob
 								+ " com tamanho excedido (>32k)." + pk + "="
@@ -223,9 +247,9 @@ public class DumpApp {
 
 			inserts.add(getInsertCmd(nomeTabela, colunas, valores));
 			if (contemBlob && blobValue != null) {
-				inserts.add(getUpdateBlobCmd(nomeTabela, campoBlob, blobValue,
+				inserts.add(getUpdateBlobCmd(nomeTabela, campoBlob, blobValue, blobValueArray, 
 						pk, pkValue));
-				updates.add(getUpdateBlobCmd(nomeTabela, campoBlob, blobValue,
+				updates.add(getUpdateBlobCmd(nomeTabela, campoBlob, blobValue, blobValueArray,
 						pk, pkValue));
 			} else {
 				updates.add(getUpdateCmd(nomeTabela, pk, colunas, valores));
@@ -243,6 +267,29 @@ public class DumpApp {
 		}
 
 		return result;
+	}
+
+	private String[] getChunks(String blobValue) {
+		int totalChunks = getTotalChunks(blobValue);
+		String blobValueArray[] = null;
+		blobValueArray = new String[totalChunks+1];
+		int beginNextChunk = 0;
+		for (int i = 0; i <= totalChunks; i++) {
+			beginNextChunk = i * literal_string_limit;
+			int endChunk = getEndOfThisChunk(beginNextChunk,blobValue);
+			blobValueArray[i] = blobValue.substring(beginNextChunk, endChunk);
+		}
+
+		return blobValueArray;
+	}
+
+	private int getEndOfThisChunk(int beginNextChunk, String blobValue) {
+		int endChunk = beginNextChunk+literal_string_limit;
+		return endChunk>blobValue.length()?blobValue.length():endChunk;
+	}
+
+	private int getTotalChunks(String blobValue) {
+		return blobValue.length()/literal_string_limit;
 	}
 
 	private String campoComValorDefinido(String nomeColuna, String optTabela) {
@@ -300,7 +347,7 @@ public class DumpApp {
 	}
 
 	private String getUpdateBlobCmd(String nomeTabela, String campoBlob,
-			String blobValue, String pk, String pkValue) {
+			String blobValue, String[] blobValueArray, String pk, String pkValue) {
 		StringBuffer sb = new StringBuffer();
 		getInicioScript();
 		sb.append("\n");
@@ -310,12 +357,24 @@ public class DumpApp {
 		sb.append("\tSELECT " + campoBlob + " INTO dest_blob FROM "
 				+ nomeTabela + " WHERE " + pk + " = " + pkValue
 				+ " FOR UPDATE;\n");
+		
+		if (blobValueArray!=null){
+			for (String blob : blobValueArray) {
+				appendBlob(blob, sb);
+			}
+		}else{
+			appendBlob(blobValue, sb);
+		}
+		
+		getFimScript();
+		return sb.toString();
+	}
+
+	private void appendBlob(String blobValue, StringBuffer sb) {
 		sb.append("\tsrc_blob := utl_raw.cast_to_raw(convert('");
 		sb.append(blobValue);
 		sb.append("','AL32UTF8'));\n");
 		sb.append("\tdbms_lob.append(dest_blob, src_blob);\n");
-		getFimScript();
-		return sb.toString();
 	}
 
 	private String getFimScript() {
@@ -355,6 +414,9 @@ public class DumpApp {
 	}
 
 	private String detectarPK(String nomeTabela) throws SQLException {
+		if (nomeTabela.contains(".")){
+			nomeTabela = nomeTabela.split("\\.")[1];
+		}
 		ResultSet rsPK = connection.getMetaData().getPrimaryKeys(null, null,
 				nomeTabela);
 		rsPK.next();
@@ -365,13 +427,12 @@ public class DumpApp {
 		}
 	}
 
-	private String blobToString(byte[] bytes) throws Exception {
-		int dbms_output_limit = 2 ^ 32 * 1000; // 32kB
-		if (bytes.length <= dbms_output_limit) {
-			return new String(bytes).replaceAll("'", "''");
-		} else {
-			throw new Exception("Um blob é maior que 32k!" + bytes.length);
-		}
+	private String blobToString(byte[] bytes,String charset) throws Exception {
+//		if (bytes.length <= dbms_output_limit) {
+			return new String(bytes,charset).replaceAll("'", "''");
+//		} else {
+//			throw new Exception("Um blob é maior que 32k!" + bytes.length);
+//		}
 
 	}
 
@@ -449,6 +510,15 @@ public class DumpApp {
 				String a = param.split("=")[1];
 				_pwd_db = a;
 			}
+			if (param.startsWith(PARAM_CHARSET_IN)) {
+				String a = param.split("=")[1];
+				_charset_in = a;
+			}
+			if (param.startsWith(PARAM_CHARSET_OUT)) {
+				String a = param.split("=")[1];
+				_charset_out = a;
+			}
+			
 
 		}
 
@@ -464,6 +534,8 @@ public class DumpApp {
 		System.err.println(PARAM_URL_DB);
 		System.err.println(PARAM_USR_DB);
 		System.err.println(PARAM_PWD_DB);
+		System.err.println(PARAM_CHARSET_IN);
+		System.err.println(PARAM_CHARSET_OUT);
 		System.err.println("\n\n --- Exemplos de uso: --- \n\n");
 		System.err.println("--- exemplo 1:\n\n");
 		System.err.println("java -jar target\\siga-dump.one-jar.jar -urlDB=jdbc:oracle:thin:@192.168.59.103:49161:xe -usrDB=corporativo  -pwdDB=corporativo -arquivoSaida=c:/windows/temp/out.txt -tabelas=DP_PESSOA  -inserts=true -updates=false\n\n");

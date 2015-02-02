@@ -45,9 +45,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	 */
 	private static final long serialVersionUID = 4959384444345462871L;
 
-	@Column(name = "FORMA_ACOMPANHAMENTO")
-	public SrFormaAcompanhamento formaAcompanhamento;
-
 	//@ManyToOne
 	//@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
 	@Transient
@@ -65,15 +62,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_ACAO", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
 	public List<SrAcao> acoesSet;
-
-	@Column(name = "GRAVIDADE")
-	public SrGravidade gravidade;
-
-	@Column(name = "TENDENCIA")
-	public SrTendencia tendencia;
-
-	@Column(name = "URGENCIA")
-	public SrUrgencia urgencia;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_ATENDENTE")

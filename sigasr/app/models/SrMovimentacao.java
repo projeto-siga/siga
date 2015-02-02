@@ -79,6 +79,14 @@ public class SrMovimentacao extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE")
 	public DpLotacao lotaCadastrante;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_CADASTRANTE")
+	public DpPessoa titular;
+
+	@ManyToOne
+	@JoinColumn(name = "ID_LOTA_TITULAR")
+	public DpLotacao lotaTitular;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_SOLICITACAO")
@@ -258,10 +266,13 @@ public class SrMovimentacao extends GenericModel {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
 	
-	public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
+	public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante, 
+			DpPessoa titular, DpLotacao lotaTitular)
 			throws Exception {
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
+		this.titular = titular;
+		this.lotaTitular = lotaTitular;
 		return salvar();
 	}
 
@@ -289,7 +300,7 @@ public class SrMovimentacao extends GenericModel {
 		return this;
 	}
 
-	public void desfazer(DpPessoa pessoa, DpLotacao lota) throws Exception {
+	public void desfazer(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 		SrMovimentacao movCanceladora = new SrMovimentacao(this.solicitacao);
 		movCanceladora.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
@@ -299,7 +310,7 @@ public class SrMovimentacao extends GenericModel {
 		SrMovimentacao ultimaValida = getAnterior();
 		movCanceladora.atendente = ultimaValida.atendente;
 		movCanceladora.lotaAtendente = ultimaValida.lotaAtendente;
-		movCanceladora.salvar(pessoa, lota);
+		movCanceladora.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 		
 		this.movCanceladora = movCanceladora;
 		

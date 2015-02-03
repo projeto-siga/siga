@@ -23,10 +23,7 @@
  */
 package br.gov.jfrj.webwork.action;
 
-import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.beanutils.BeanUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpModelo;

@@ -15,7 +15,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 						<li><a
-							href="/sigaex/expediente/doc/listar.action?primeiraVez=sim">Documentos</a>
+							href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Documentos</a>
 						</li>
 					</c:if>
 

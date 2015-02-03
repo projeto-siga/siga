@@ -16,6 +16,36 @@
 
 window.Siga = {
 
+    modules: {
+        sigawf: {
+            url: "/sigawf/app/inbox",
+            params: {},
+            viewId: "right"
+        },
+        sigaex: {
+            url: "/sigaex/app/expediente/gadget",
+            params: {
+                idTpFormaDoc: 1
+            },
+            viewId: "left"            
+        },
+        sigasr: {
+            url: "/sigasr/solicitacao/gadget",
+            viewId: "rightbottom"
+        },
+        sigagc: {
+            url: "/sigagc/app/gadget",
+            viewId: "rightbottom2"
+        },
+        processos: {
+            url: "/sigaex/app/expediente/gadget",
+            params: {
+                idTpFormaDoc: 2
+            },
+            viewId: "leftbottom"
+        }
+    },
+    
     httpMethod: {
     	GET: "GET",
     	POST: "POST",

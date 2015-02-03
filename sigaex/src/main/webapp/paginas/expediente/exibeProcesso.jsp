@@ -122,7 +122,7 @@
 
 		<p class="gt-table-action-list">
 			<siga:links inline="${true}">
-				<ww:url id="url" action="exibir" namespace="/expediente/doc">
+				<ww:url id="url" action="exibir" namespace="/app/expediente/doc">
 					<ww:param name="sigla" value="%{sigla}" />
 				</ww:url>
 				<a name="inicio" style="float: right; padding-right: 5pt;"

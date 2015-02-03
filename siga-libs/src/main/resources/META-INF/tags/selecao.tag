@@ -17,6 +17,8 @@
 <%@ attribute name="idInicial" required="false"%>
 <%@ attribute name="siglaInicial" required="false"%>
 <%@ attribute name="descricaoInicial" required="false"%>
+<%@ attribute name="inputName" required="false"%>
+<%@ attribute name="urlAcao" required="false"%>
 <!-- A lista de par -->
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
@@ -40,6 +42,23 @@
 </c:choose>
 
 <c:set var="propriedadeTipoSel" value="${propriedade}${tipoSel}Sel" />
+<c:choose>
+	<c:when test="${empty inputName}">
+		<c:set var="inputNameTipoSel" value="${propriedadeTipoSel}" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="inputNameTipoSel" value="${inputName}${tipoSel}Sel" />
+	</c:otherwise>
+</c:choose>
+
+<c:choose>
+	<c:when test="${empty urlAcao}">
+		<c:set var="urlBuscar" value="${acaoBusca}/buscar.action" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="urlBuscar" value="/app${acaoBusca}/${urlAcao}" />
+	</c:otherwise>
+</c:choose>
 
 <c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
 
@@ -56,20 +75,20 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
     } finally {
     }
     
-	document.getElementsByName('${propriedade}${tipoSel}Sel.id')[0].value = id;
+	document.getElementsByName('${inputNameTipoSel}.id')[0].value = id;
 	
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
-			document.getElementsByName('${propriedade}${tipoSel}Sel.descricao')[0].value = descricao;
+			document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = descricao;
 			document.getElementById('${propriedade}${tipoSel}SelSpan').innerHTML = descricao;
 		} catch (E) {
 		}
 	</c:if>
 	
-	document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value = sigla;
+	document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = sigla;
 	
 	<c:if test="${reler == 'sim'}">
-		document.getElementsByName('req${propriedade}${tipoSel}Sel')[0].value = "sim";
+		document.getElementsByName('req${inputNameTipoSel}')[0].value = "sim";
 		document.getElementById('alterouSel').value='${propriedade}';
 		sbmt();
 	</c:if>
@@ -92,8 +111,8 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	var url = '/${urlPrefix}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
-	
+	var url = '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+		
 	if (!newwindow_${propriedade}.closed && newwindow_${propriedade}.location) {
 		newwindow_${propriedade}.location.href = url;
 	} else {
@@ -125,7 +144,7 @@ self.popitup_${propriedade}${tipoSel} = function(sigla) {
 }
 
 self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
-	var sigla = document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value;
+	var sigla = document.getElementsByName('${inputNameTipoSel}.sigla')[0].value;
     var data = response.split(';');
     if (data[0] == '1')
 	    return retorna_${propriedade}${tipoSel}(data[1], data[2], data[3]);
@@ -142,7 +161,7 @@ self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 }
 
 self.ajax_${propriedade}${tipoSel} = function() {
-	var sigla = document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value;
+	var sigla = document.getElementsByName('${inputNameTipoSel}.sigla')[0].value;
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
@@ -165,16 +184,15 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:when>
 </c:choose>
 
-
-<input type="hidden" name="req${propriedade}${tipoSel}Sel"  />
+<input type="hidden" name="req${inputNameTipoSel}"  />
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
-<input type="hidden" name="${propriedade}${tipoSel}Sel.id"        value="<c:out value="${requestScope[propriedadeTipoSel].id}" />"/>
-<input type="hidden" name="${propriedade}${tipoSel}Sel.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}" />"/>
-<input type="hidden" name="${propriedade}${tipoSel}Sel.buscar"    value="<c:out value="${requestScope[propriedadeTipoSel].buscar}" />"/>
-<input type="text"   name="${propriedade}${tipoSel}Sel.sigla"     value="<c:out value="${requestScope[propriedadeTipoSel].sigla}" />"
+<input type="hidden" name="${inputNameTipoSel}.id"        value="<c:out value="${requestScope[propriedadeTipoSel].id}" />"/>
+<input type="hidden" name="${inputNameTipoSel}.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}" />"/>
+<input type="hidden" name="${inputNameTipoSel}.buscar"    value="<c:out value="${requestScope[propriedadeTipoSel].buscar}" />"/>
+<input type="text"   name="${inputNameTipoSel}.sigla"     value="<c:out value="${requestScope[propriedadeTipoSel].sigla}" />"
 	onkeypress="return handleEnter(this, event)"
 	onblur="javascript: ajax_${propriedade}${tipoSel}();" size="25"
-	"${disabledTxt}" />
+	"${disabledTxt}" />	
 	
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."
@@ -214,9 +232,9 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		</c:otherwise>
 	</c:choose>
 	<script type="text/javascript">
-		document.getElementsByName('${propriedade}${tipoSel}Sel.id')[0].value = '${idSubst}';
-		document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value = '${siglaSubst}';
-		document.getElementsByName('${propriedade}${tipoSel}Sel.descricao')[0].value = "${descricaoSubst}";
+		document.getElementsByName('${inputNameTipoSel}.id')[0].value = '${idSubst}';
+		document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = '${siglaSubst}';
+		document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = "${descricaoSubst}";
 		<c:if test="${ocultardescricao != 'sim'}">
 			document.getElementById('${propriedade}${tipoSel}SelSpan').innerHTML = "${descricaoSubst}";
 		</c:if>

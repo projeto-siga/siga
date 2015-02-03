@@ -138,28 +138,6 @@ public class AcessoController extends GiControllerSupport {
 			for (CpServico srv : l) {
 				ConfiguracaoAcesso ac = ConfiguracaoAcesso.gerar(perfil, pessoa, lotacao, orgao, srv, null);
 
-				// ConfiguracaoAcesso ac = new ConfiguracaoAcesso();
-				// ac.setServico(srv);
-				// ac.setPessoa(pessoa);
-				// ac.setLotacao(lotacao);
-				// ac.setOrgao(orgao);
-				// CpConfiguracao cfgFiltro = new CpConfiguracao();
-				// cfgFiltro.setDpPessoa(pessoa);
-				// cfgFiltro.setLotacao(lotacao);
-				// cfgFiltro.setOrgaoUsuario(orgao);
-				// cfgFiltro.setCpServico(srv);
-				// CpTipoConfiguracao tipo = dao().consultar(
-				// CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO,
-				// CpTipoConfiguracao.class, false);
-				// cfgFiltro.setCpTipoConfiguracao(tipo);
-				// CpConfiguracao cfg = Cp.getInstance().getConf()
-				// .buscaConfiguracao(cfgFiltro, new int[0]);
-				// ac.setDefault(cfg == null);
-				// if (ac.isDefault()) {
-				// ac.setSituacao(tipo.getSituacaoDefault());
-				// } else {
-				// ac.setSituacao(cfg.getCpSituacaoConfiguracao());
-				// }
 				System.out.print(ac.getSituacao().getDscSitConfiguracao());
 				achm.put(ac.getServico(), ac);
 			}

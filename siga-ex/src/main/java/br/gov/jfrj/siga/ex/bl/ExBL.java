@@ -6963,5 +6963,4 @@ public class ExBL extends CpBL {
 		return jsonOutput;
 	}
 
-
 }

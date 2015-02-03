@@ -4,12 +4,11 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <li><a href="#">Documentos</a>
 	<ul>
-		<li><ww:url id="url" action="editar" namespace="/expediente/doc" />
-			<ww:a href="%{url}">Novo</ww:a>
+		<li>
+			<a href="/sigaex/app/expediente/doc/editar">Novo</a>
 		</li>
-		<li><ww:url id="url" action="listar" namespace="/expediente/doc">
-				<ww:param name="primeiraVez">sim</ww:param>
-			</ww:url> <ww:a href="%{url}">Pesquisar</ww:a>
+		<li>
+			<a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a>
 		</li>
 
 		<c:if test="${f:resource('siga.lucene.ativo')}">

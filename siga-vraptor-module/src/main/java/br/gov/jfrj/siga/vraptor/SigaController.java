@@ -2,9 +2,16 @@ package br.gov.jfrj.siga.vraptor;
 
 import static br.com.caelum.vraptor.view.Results.http;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -30,12 +37,55 @@ public class SigaController {
 	protected CpDao dao;
 
 	private Paginador p = new Paginador();
+		
+	private Integer postback;
+	
+	
+	private String mensagemAguarde = null;
+	
+	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
+	private Map<String, String[]> par = new HashMap<>();
+	
+	public Map<String, String[]> getPar() {
+		return par;
+	}
+	
+	public void setParam(final String parameterName, final String parameterValue) {
+		final String as[] = { parameterValue };
+		getPar().put(parameterName, as);
+		return;
+	}	
+	
+	public String getUrlEncodedParameters()
+			throws UnsupportedEncodingException, IOException {
+		if (getPar() != null) {
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			for (final String key : getPar().keySet()) {
+				final String as[] = getPar().get(key);
+				for (final String val : as) {
+					if (baos.size() > 0)
+						baos.write('&');
+					baos.write(URLEncoder.encode(key, "utf-8").getBytes());
+					baos.write('=');
+					baos.write(URLEncoder.encode(val, "utf-8").getBytes());
+				}
+			}
+			return new String(baos.toByteArray());
+		}
+		return null;
+	}
+	
+	
 	
 	
 	protected CpDao dao() {
 		return CpDao.getInstance();
 	}
 
+	public Integer getPostback() {
+		return postback;
+	}
+	
 	public SigaController(HttpServletRequest request, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
 		super();
@@ -88,8 +138,11 @@ public class SigaController {
 	
 
 	protected DpPessoa getCadastrante() {
-		// TODO Auto-generated method stub
 		return so.getCadastrante();
+	}
+	
+	protected void setCadastrante(DpPessoa cadastrante) {
+		so.setCadastrante(cadastrante);		
 	}
 
 	protected CpIdentidade getIdentidadeCadastrante() {
@@ -183,10 +236,29 @@ public class SigaController {
 	public void assertAcesso(String pathServico) throws AplicacaoException,Exception {
 		so.assertAcesso(pathServico);
 	}	
-
 	
 	public void setP(Paginador p) {
 		this.p = p;
+	}
+	
+	public void setPar(final Map par) {
+		this.par = par;
+	}
+
+	public void setPostback(final Integer postback) {
+		this.postback = postback;
+	}
+	
+	public String getMensagemAguarde() {
+		return mensagemAguarde;
+	}
+	
+	public void setMensagemAguarde(String mensagemAguarde) {
+		this.mensagemAguarde = mensagemAguarde;
+	}
+
+	public List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
+		return dao().listarOrgaosUsuarios();
 	}
 	
 	public Paginador getP() {

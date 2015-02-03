@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Date;
 
+import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -55,8 +56,8 @@ import com.lowagie.text.pdf.codec.Base64;
 @Resource
 public class ExArquivoController extends ExController {
 	
-	public ExArquivoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so) {
-		super(request, response, context, result, ExDao.getInstance(), so);
+	public ExArquivoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
+		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 	
 	private InputStream inputStream;

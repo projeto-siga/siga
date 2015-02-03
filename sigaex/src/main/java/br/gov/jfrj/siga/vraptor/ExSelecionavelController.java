@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,8 +44,8 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 
 
 	public ExSelecionavelController(HttpServletRequest request, Result result,
-			CpDao dao, SigaObjects so) {
-		super(request, result, dao, so);
+			CpDao dao, SigaObjects so, EntityManager em) {
+		super(request, result, dao, so, em);
 	}
 
 	public ExDao dao() {

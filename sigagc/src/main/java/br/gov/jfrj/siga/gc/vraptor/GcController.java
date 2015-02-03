@@ -18,7 +18,7 @@ public class GcController extends SigaController {
 		// result.include("processDefinitions", getProcessDefinitions());
 	}
 
-	protected void assertAcesso(String pathServico) throws AplicacaoException,
+	public void assertAcesso(String pathServico) throws AplicacaoException,
 			Exception {
 		so.assertAcesso("GC:Módulo de Gestão de Conhecimento;" + pathServico);
 	}

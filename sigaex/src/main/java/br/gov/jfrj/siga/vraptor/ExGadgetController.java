@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,8 +44,8 @@ public class ExGadgetController extends ExController {
 	
 	public ExGadgetController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
-			Result result, SigaObjects so) {
-		super(request, response, context, result, ExDao.getInstance(), so);;
+			Result result, SigaObjects so, EntityManager em) {
+		super(request, response, context, result, ExDao.getInstance(), so, em);;
 	}
 
 	/**

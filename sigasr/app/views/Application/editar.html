@@ -427,8 +427,9 @@
 					<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
 						type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
 						value="${cadastrante.sigla}" />
-						<input type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante.idPessoa" value="${cadastrante.idPessoa}" />
-						<input type="hidden" name="solicitacao.lotaCadastrante.idLotacao" value="${lotaTitular?.idLotacao}" />
+						<input type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante" value="${cadastrante.idPessoa}" />
+						<input type="hidden" name="solicitacao.lotaTitular" value="${lotaTitular?.idLotacao}" />
+						<input type="hidden" name="solicitacao.titular" value="${titular?.idPessoa}" />
 				</div>
 			</div>	 
 
@@ -509,7 +510,7 @@
 			</div>
 
 
-			#{if solicitacao.podeAbrirJaFechando(lotaTitular,cadastrante)}
+			#{if solicitacao.podeAbrirJaFechando(titular, lotaTitular)}
 			<div class="gt-form-row gt-width-66">
 				<label>#{checkbox name:'solicitacao.fecharAoAbrir',
 					value:solicitacao.fecharAoAbrir, depende:'motivoFechamento',

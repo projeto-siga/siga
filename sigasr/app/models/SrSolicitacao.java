@@ -125,7 +125,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public DpLotacao lotaCadastrante;
 	
 	@ManyToOne
-	@JoinColumn(name = "ID_CADASTRANTE")
+	@JoinColumn(name = "ID_TITULAR")
 	public DpPessoa titular;
 
 	@ManyToOne
@@ -908,7 +908,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (isFilha())
 			 ultMovDoPai = this.solicitacaoPai.getUltimaMovimentacao();
 		if (isRascunho())
-			return foiCadastradaPor(titular, lotaTitular) || foiSolicitadaPor(titular, lotaTitular);
+			return foiCadastradaPor(pess, lota) || foiSolicitadaPor(pess, lota);
 		return (ultMov != null && ((ultMov.atendente != null && pess != null && ultMov.atendente.equivale(pess)) 
 					|| (ultMov.lotaAtendente != null && ultMov.lotaAtendente.equivale(lota))))
 
@@ -922,7 +922,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean foiCadastradaPor(DpPessoa pess, DpLotacao lota) {
-		return (cadastrante.equivale(pess) || lotaTitular.equivale(lota));
+		return (cadastrante.equivale(pess) || (lotaTitular != null && lotaTitular.equivale(lota)));
 	}
 
 	public boolean isParteDeArvore() {
@@ -958,16 +958,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeEscalonar(DpPessoa pess, DpLotacao lota) {
-		return estaCom(titular, lotaTitular) && isEmAtendimento();
+		return estaCom(pess, lota) && isEmAtendimento();
 	}
 
 	public boolean podeJuntar(DpPessoa pess, DpLotacao lota) {
-		return estaCom(titular, lotaTitular) && (isEmAtendimento() || isPendente())
+		return estaCom(pess, lota) && (isEmAtendimento() || isPendente())
 				&& !isJuntada();
 	}
 
 	public boolean podeDesentranhar(DpPessoa pess, DpLotacao lota) {
-		return estaCom(titular, lotaTitular) && isJuntada();
+		return estaCom(pess, lota) && isJuntada();
 	}
 
 	public boolean podeVincular(DpPessoa titular, DpLotacao lotaTitular) {
@@ -982,7 +982,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeEditar(DpPessoa pess, DpLotacao lota) {
-		return (estaCom(titular, lotaTitular) || isEmListaPertencenteA(lota))
+		return (estaCom(pess, lota) || isEmListaPertencenteA(lota))
 				&& isRascunho()
 				&& (!jaFoiDesignada());
 	}
@@ -996,36 +996,36 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeFechar(DpPessoa pess, DpLotacao lota) {
-		return estaCom(titular, lotaTitular)
+		return estaCom(pess, lota)
 				&& (isEmAtendimento());
 	}
 
 	public boolean podeExcluir(DpPessoa pess, DpLotacao lota) {
-		return foiCadastradaPor(titular, lotaTitular) && isRascunho();
+		return foiCadastradaPor(pess, lota) && isRascunho();
 	}
 
 	public boolean podeCancelar(DpPessoa pess, DpLotacao lota) {
-		return estaCom(titular, lotaTitular)
+		return estaCom(pess, lota)
 				&& isEmAtendimento();
 	}
 
 	public boolean podeDeixarPendente(DpPessoa pess, DpLotacao lota) {
 		return isRascunho()
-				|| ((isEmAtendimento() || isPendente()) && estaCom(titular, lotaTitular));
+				|| ((isEmAtendimento() || isPendente()) && estaCom(pess, lota));
 	}
 
 	public boolean podeAlterarPrazo(DpPessoa pess, DpLotacao lota) {
-		return !isRascunho() && !isFechado() && estaCom(titular, lotaTitular);
+		return !isRascunho() && !isFechado() && estaCom(pess, lota);
 	}
 
 	public boolean podeTerminarPendencia(DpPessoa pess, DpLotacao lota) {
-		return isPendente() && estaCom(titular, lotaTitular);
+		return isPendente() && estaCom(pess, lota);
 	}
 
 	public boolean podeReabrir(DpPessoa pess, DpLotacao lota) {
 		return isFechado()
-				&& (estaCom(titular, lotaTitular) || foiCadastradaPor(titular, lotaTitular) || foiSolicitadaPor(
-					titular, lotaTitular));
+				&& (estaCom(pess, lota) || foiCadastradaPor(pess, lota) || foiSolicitadaPor(
+					pess, lota));
 	}
 
 	public boolean podeAnexarArquivo(DpPessoa pess, DpLotacao lota) {
@@ -1033,7 +1033,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeImprimirTermoAtendimento(DpPessoa pess, DpLotacao lota) {
-		return isEmAtendimento() && estaCom(titular, lotaTitular);
+		return isEmAtendimento() && estaCom(pess, lota);
 	}
 
 	public boolean podeIncluirEmLista(DpPessoa pess, DpLotacao lota) {
@@ -1041,13 +1041,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean podeTrocarAtendente(DpPessoa pess, DpLotacao lota) {
-		return estaCom(titular, lotaTitular) && isEmAtendimento();
+		return estaCom(pess, lota) && isEmAtendimento();
 	}
 
 	public boolean podeResponderPesquisa(DpPessoa pess, DpLotacao lota)
 			throws Exception {
 
-		if (!isFechado() || !foiSolicitadaPor(titular, lotaTitular)
+		if (!isFechado() || !foiSolicitadaPor(pess, lota)
 				/*|| !temPesquisaSatisfacao()*/)
 			return false;
 
@@ -1250,8 +1250,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	@SuppressWarnings("serial")
-	public SortedSet<SrOperacao> operacoes(final DpLotacao lotaTitular,
-			final DpPessoa titular)
+	public SortedSet<SrOperacao> operacoes(final DpPessoa pess, final DpLotacao lota)
 					throws Exception {
 		SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
 			@Override
@@ -1271,60 +1270,60 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		};
 
 		operacoes.add(new SrOperacao("pencil", "Editar", podeEditar(
-				titular, lotaTitular), "Application.editar"));
+				pess, lota), "Application.editar"));
 
 		operacoes.add(new SrOperacao("table_relationship", "Vincular",
-				podeVincular(titular, lotaTitular),
+				podeVincular(pess, lota),
 				"vincular", "modal=true"));
 
 		operacoes.add(new SrOperacao("arrow_divide",
-				"Escalonar", podeEscalonar(titular, lotaTitular), 
+				"Escalonar", podeEscalonar(pess, lota), 
 				"escalonar", "modal=true")); 
 
 		operacoes.add(new SrOperacao("arrow_join", "Juntar",
-				podeJuntar(titular, lotaTitular),
+				podeJuntar(pess, lota),
 				"juntar", "modal=true"));
 		
 		operacoes.add(new SrOperacao("arrow_out", "Desentranhar",
-				podeDesentranhar(titular, lotaTitular), "desentranhar", "modal=true"));
+				podeDesentranhar(pess, lota), "desentranhar", "modal=true"));
 		
 		operacoes.add(new SrOperacao("text_list_numbers", "Incluir em Lista",
-				podeIncluirEmLista(titular, lotaTitular), "incluirEmLista",
+				podeIncluirEmLista(pess, lota), "incluirEmLista",
 				"modal=true"));
 		
-		operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(titular, lotaTitular
+		operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(pess, lota
 				), "fechar", "modal=true"));
 
 		operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa",
-				podeResponderPesquisa(titular, lotaTitular),
+				podeResponderPesquisa(pess, lota),
 				"responderPesquisa", "modal=true"));
 
 		operacoes.add(new SrOperacao("cross", "Cancelar Solicitação",
-				podeCancelar(titular, lotaTitular), "Application.cancelar"));
+				podeCancelar(pess, lota), "Application.cancelar"));
 
 		operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(
-				titular, lotaTitular), "Application.reabrir"));
+				pess, lota), "Application.reabrir"));
 
 		operacoes.add(new SrOperacao("clock_pause", "Incluir Pendência",
-				podeDeixarPendente(titular, lotaTitular), "pendencia",
+				podeDeixarPendente(pess, lota), "pendencia",
 				"modal=true"));
 
 		operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir",
-				podeExcluir(titular, lotaTitular),
+				podeExcluir(pess, lota),
 				"Deseja realmente excluir esta solicitação?", null, "", ""));
 
 		operacoes.add(new SrOperacao("attach", "Anexar Arquivo",
-				podeAnexarArquivo(titular, lotaTitular), "anexarArquivo",
+				podeAnexarArquivo(pess, lota), "anexarArquivo",
 				"modal=true"));
 
 		operacoes.add(new SrOperacao("printer", "Termo de Atendimento",
-				podeImprimirTermoAtendimento(titular, lotaTitular),
+				podeImprimirTermoAtendimento(pess, lota),
 				"Application.termoAtendimento", "popup=true"));
 
 		SrMovimentacao ultCancelavel = getUltimaMovimentacaoCancelavel();
 		operacoes.add(new SrOperacao("cancel", "Desfazer "
 				+ (ultCancelavel != null ? ultCancelavel.tipoMov.nome : ""),
-				podeDesfazerMovimentacao(titular, lotaTitular),
+				podeDesfazerMovimentacao(pess, lota),
 				"Application.desfazerUltimaMovimentacao"));
 
 		return operacoes;
@@ -2506,7 +2505,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		
 		List<SrConfiguracao> pessoasAConsiderar = new ArrayList<SrConfiguracao>();
 		
-		if (cadastrante == null)
+		if (titular == null)
 			return pessoasAConsiderar;
 		
 		SrConfiguracao confSolicitante = new SrConfiguracao();
@@ -2516,7 +2515,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		confSolicitante.setBuscarPorPerfis(true);
 		pessoasAConsiderar.add(confSolicitante);
 		
-		if (isFilha()){
+		if (jaFoiDesignada()){
 			SrConfiguracao confTitular = new SrConfiguracao();
 			confTitular.setDpPessoa(titular);
 			confTitular.setLotacao(lotaTitular);

@@ -29,7 +29,7 @@ function carregouAcao(response, param){
 	nome:'solicitacao.itemConfiguracao',
 	value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')",
 	params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo+
-				'&sol.titular.idPessoa='+titular?.idPessoa+'&sol.lotaTitular.idLotacao='+lotaTitular?.idLotacao /} <span style="color: red">#{error
+				'&sol.titular='+titular?.idPessoa+'&sol.lotaTitular='+lotaTitular?.idLotacao /} <span style="color: red">#{error
 		'solicitacao.itemConfiguracao' /}</span>
 </div>
 <div id="divAcao">#{include 'Application/exibirAcao.html' /}</div>

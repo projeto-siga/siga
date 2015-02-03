@@ -81,7 +81,7 @@ public class SrMovimentacao extends GenericModel {
 	public DpLotacao lotaCadastrante;
 	
 	@ManyToOne
-	@JoinColumn(name = "ID_CADASTRANTE")
+	@JoinColumn(name = "ID_TITULAR")
 	public DpPessoa titular;
 
 	@ManyToOne

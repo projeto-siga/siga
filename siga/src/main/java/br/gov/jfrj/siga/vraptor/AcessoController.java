@@ -28,8 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;

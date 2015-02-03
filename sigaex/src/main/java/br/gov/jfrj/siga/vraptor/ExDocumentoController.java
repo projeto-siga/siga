@@ -658,7 +658,11 @@ public class ExDocumentoController extends ExController {
 		}
 	}
 	
-	public String aExibirAntigo(ExDocumentoDTO exDocumentoDTO) throws Exception {
+	@Get("app/expediente/doc/exibirAntigo")
+	public void aExibirAntigo(String sigla, boolean popup) throws Exception {
+		ExDocumentoDTO exDocumentoDTO  = new ExDocumentoDTO();
+		
+		exDocumentoDTO.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDTO);
 		
 		assertAcesso(exDocumentoDTO);
@@ -669,18 +673,18 @@ public class ExDocumentoController extends ExController {
 		ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(), exDocumentoDTO.getMob(), getTitular(),
 				getLotaTitular(), true, true);
 
-		super.getRequest().setAttribute("docVO", docVO);
-		
-		// logStatistics();
-
 		if (exDocumentoDTO.getMob().isEliminado())
 			throw new AplicacaoException("Documento "
 					+ exDocumentoDTO.getMob().getSigla()
 					+ " eliminado, conforme o termo "
 					+ exDocumentoDTO.getMob().getUltimaMovimentacaoNaoCancelada(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
 							.getExMobilRef());
-		
-		return "success";
+		result.include("msg", exDocumentoDTO.getMsg());
+		result.include("docVO", docVO);
+		result.include("mob", exDocumentoDTO.getMob());
+		result.include("exibirCompleto", exDocumentoDTO.isExibirCompleto());
+		result.include("currentTimeMillis", System.currentTimeMillis());
+		result.include("popup", popup);
 	}
 	
 	@Get("/app/expediente/doc/exibir")

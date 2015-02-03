@@ -76,6 +76,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 3768576909382652437L;
 	private ArrayList<String> codigoTipoConfiguracao; // 0- Pessoa, 1 -
 	// Lotação,

@@ -1217,7 +1217,11 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
-	public String aAssinar() throws Exception {
+	
+	@Get("app/expediente/mov/assinar")
+	public void aAssinar(String sigla) throws Exception {
+		this.setSigla(sigla);
+		
 		buscarDocumento(true);
 
 		boolean fPreviamenteAssinado = doc.isAssinado();
@@ -1229,7 +1233,11 @@ public class ExMovimentacaoController extends ExController {
 					.processarComandosEmTag(doc, "pre_assinatura");
 		}
 
-		return Action.SUCCESS;
+		result.include("sigla", this.getSigla());
+		result.include("doc", this.getDoc());
+		result.include("titular", this.getTitular());
+		result.include("lotaTitular", this.getLotaTitular());
+		
 	}
 
 	public String aConferirCopia() throws Exception {

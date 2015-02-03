@@ -52,8 +52,9 @@ public class DumpApp {
 	private static final String PARAM_UPDATES = "-updates=";
 	private static final String PARAM_INSERTS = "-inserts=";
 	private static final String PARAM_ARQUIVO_SAIDA = "-arquivoSaida=";
-	private static final String PARAM_CHARSET_IN = "-charSetIn=";
-	private static final String PARAM_CHARSET_OUT= "-charSetOut=";
+	private static final String PARAM_CHARSET_IN = "-charSetIn="; //charset de entrada
+	private static final String PARAM_CHARSET_OUT= "-charSetOut="; //charset de saída
+	private static final String PARAM_BLOB_CHARSET= "-blobCharSet="; //charset de conversão de macro no SQL 
 	private static final String PARAM_TABELAS = "-tabelas=";
 	private final static List<String> _tabs = new ArrayList<String>();
 	private final static List<String> _tabs_opts = new ArrayList<String>();
@@ -66,6 +67,7 @@ public class DumpApp {
 	private static String _pwd_db = null;
 	private static String _charset_in = "UTF-8";
 	private static String _charset_out = "UTF-8";
+	private static String _blob_charset = "WE8ISO8859P1"; //AL32UTF8?
 	private List<String> tabelas;
 	private List<String> tabelasOpcoes;
 	private String arquivoSaida;
@@ -76,6 +78,7 @@ public class DumpApp {
 	private String passDB;
 	private String charSetIn;
 	private String charSetOut;
+	private String blobCharSet;
 	
 	private Connection connection;
 
@@ -90,7 +93,7 @@ public class DumpApp {
 	
 	public DumpApp(List<String> tabelas, List<String> tabelasOpcoes,
 			String arquivoSaida, Boolean processarInserts,
-			Boolean processarUpdates, String urlDB, String userDB, String passDB, String charSetIn,String charSetOut) {
+			Boolean processarUpdates, String urlDB, String userDB, String passDB, String charSetIn,String charSetOut, String blobCharSet) {
 		this.tabelas = tabelas;
 		this.tabelasOpcoes = tabelasOpcoes;
 		this.arquivoSaida = arquivoSaida;
@@ -101,6 +104,7 @@ public class DumpApp {
 		this.passDB = passDB;
 		this.charSetIn = charSetIn;
 		this.charSetOut = charSetOut;
+		this.blobCharSet = blobCharSet;
 	}
 
 	public static void main(String[] args) throws SQLException, IOException {
@@ -108,7 +112,7 @@ public class DumpApp {
 		processarArgumentos(args);
 		try {
 			DumpApp app = new DumpApp(_tabs, _tabs_opts, _arq, _ins, _upt, _url_db,
-					_usr_db, _pwd_db,_charset_in, _charset_out);
+					_usr_db, _pwd_db,_charset_in, _charset_out, _blob_charset);
 			app.dump();
 		} catch (Exception e) {
 			exibirMensagemErro();
@@ -373,7 +377,7 @@ public class DumpApp {
 	private void appendBlob(String blobValue, StringBuffer sb) {
 		sb.append("\tsrc_blob := utl_raw.cast_to_raw(convert('");
 		sb.append(blobValue);
-		sb.append("','AL32UTF8'));\n");
+		sb.append("','"+ blobCharSet + "'));\n");
 		sb.append("\tdbms_lob.append(dest_blob, src_blob);\n");
 	}
 
@@ -518,6 +522,11 @@ public class DumpApp {
 				String a = param.split("=")[1];
 				_charset_out = a;
 			}
+			if (param.startsWith(PARAM_BLOB_CHARSET)) {
+				String a = param.split("=")[1];
+				_blob_charset = a;
+			}
+			
 			
 
 		}
@@ -536,6 +545,7 @@ public class DumpApp {
 		System.err.println(PARAM_PWD_DB);
 		System.err.println(PARAM_CHARSET_IN);
 		System.err.println(PARAM_CHARSET_OUT);
+		System.err.println(PARAM_BLOB_CHARSET);
 		System.err.println("\n\n --- Exemplos de uso: --- \n\n");
 		System.err.println("--- exemplo 1:\n\n");
 		System.err.println("java -jar target\\siga-dump.one-jar.jar -urlDB=jdbc:oracle:thin:@192.168.59.103:49161:xe -usrDB=corporativo  -pwdDB=corporativo -arquivoSaida=c:/windows/temp/out.txt -tabelas=DP_PESSOA  -inserts=true -updates=false\n\n");

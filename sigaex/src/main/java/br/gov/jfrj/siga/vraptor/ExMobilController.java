@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.search.FullTextSession;
@@ -73,8 +74,8 @@ public class ExMobilController extends
 	// private static Log log = LogFactory.getLog(ExDocumentoAction.class);
 
 	public ExMobilController(HttpServletRequest request, Result result,
-			SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+			SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
 		classificacaoSel = new ExClassificacaoSelecao();
 		destinatarioSel = new DpPessoaSelecao();
 		documentoSel = new ExDocumentoSelecao();

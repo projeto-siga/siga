@@ -23,6 +23,7 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
@@ -39,8 +40,8 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 @Resource
 public class ModeloController extends SigaController {
 
-	public ModeloController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+	public ModeloController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

@@ -51,6 +51,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -107,9 +108,9 @@ public class ExDocumentoController extends ExController {
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	
 	
-	public ExDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so) {
+	public ExDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
 
-		super(request, response, context, result, CpDao.getInstance(), so);
+		super(request, response, context, result, CpDao.getInstance(), so, em);
 		CurrentRequest.set(new RequestInfo(context, request, response));
 		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();

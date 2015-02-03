@@ -6,18 +6,19 @@
 			<Domains>
 					 localhost,
 					 dev-siga,
+					 dev-siga.corp.jfrj.gov.br,
 					 siga-dev,
+					 siga-dev.corp.jfrj.gov.br
 					 siga-hmg,
-					 siga,
-					 volvofh16,
-					 volvov60,
+					 siga-hmg.corp.jfrj.gov.br
+					 siga.corp.jfrj.gov.br,
+					 siga,					 
 					 classec250,
+					 classec250.corp.jfrj.gov.br
 					 classef,
-					 siga-webserver,
-					 siga-appserver,
-					 axor,
+					 classef.corp.jfrj.gov.br,				 					 
 					 siga-beta,
-					 siga			 
+					 siga-beta.corp.jfrj.gov.br					 
 			</Domains>
 		</Trust>
 	</PicketLinkIDP>

@@ -209,7 +209,7 @@ public class Application extends SigaApplication {
 		if (solicitacao.solicitante == null)
 			render(solicitacao);
 		
-		if (solicitacao.getItensDisponiveis().contains(
+		if (!solicitacao.getItensDisponiveis().contains(
 				solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 

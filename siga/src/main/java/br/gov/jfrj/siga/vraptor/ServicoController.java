@@ -24,10 +24,12 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Query;
 
@@ -35,6 +37,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -46,6 +49,8 @@ import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.libs.rpc.FaultMethodResponseRPC;
+import br.gov.jfrj.siga.libs.rpc.SimpleMethodResponseRPC;
 import br.gov.jfrj.siga.vraptor.suporte.ConfiguracaoConfManual;
 
 //MIGRAÇÃO VRAPTOR DA CLASSE WEB-WORK "package br.gov.jfrj.webwork.action.SelfConfigAction"
@@ -350,6 +355,72 @@ public class ServicoController 	extends SigaController {
 		
 		result.redirectTo(this).edita();
 	}
-
 	
+	@Get("/app/gi/servico/gravar")
+	public void gravar(String idPessoaConfiguracao, 
+					String idServicoConfiguracao, 
+					String idSituacaoConfiguracao, 
+					Long idTipoConfiguracao,
+					HttpServletResponse response) throws Exception {
+		this.idPessoaConfiguracao = idPessoaConfiguracao;
+		this.idServicoConfiguracao = idServicoConfiguracao;
+		this.idSituacaoConfiguracao = idSituacaoConfiguracao;
+		this.idTipoConfiguracao = idTipoConfiguracao;
+		
+		if (seUsuarioPodeExecutar()) {
+			try {
+				DpLotacao t_dplLotacao = obterLotacaoEfetiva();
+				Long t_lngIdPessoa = Long.parseLong(idPessoaConfiguracao);
+				DpPessoa t_dppPessoa = dao().consultar(t_lngIdPessoa,DpPessoa.class,false);
+				Long t_lngIdServico = Long.parseLong(idServicoConfiguracao);
+                CpServico t_cpsServico = dao().consultar(t_lngIdServico, CpServico.class, false);
+                Long t_lngIdSituacao = Long.parseLong(idSituacaoConfiguracao);
+                CpSituacaoConfiguracao t_cstSituacao = dao().consultar(t_lngIdSituacao,CpSituacaoConfiguracao.class, false);
+                Cp.getInstance().getBL().configurarAcesso(null,t_dplLotacao.getOrgaoUsuario()
+                											  ,t_dplLotacao
+                											  ,t_dppPessoa
+                											  ,t_cpsServico
+                											  ,t_cstSituacao
+                											  ,obterCpTipoConfiguracaoAConfigurar(idTipoConfiguracao)
+                											  ,getIdentidadeCadastrante());
+                // pesquisa novamente o item gravado
+                CpConfiguracao t_cfgConfigGravada = obterConfiguracao(	t_dplLotacao,
+																	  	t_dppPessoa,
+																	  	obterCpTipoConfiguracaoAConfigurar(idTipoConfiguracao),
+																		t_cpsServico);
+                
+                t_cfgConfigGravada.toString();
+                // devolve os ids como confirmação
+				HashMap<String, String> t_hmpRetorno = new HashMap<String, String>();
+				t_hmpRetorno.put("idpessoa", /*idPessoaConfiguracao*/ String.valueOf(t_cfgConfigGravada.getDpPessoa().getIdPessoa()));
+				t_hmpRetorno.put("idservico", /*idServicoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpServico().getIdServico()));
+				t_hmpRetorno.put("idsituacao", /*idSituacaoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpSituacaoConfiguracao().getIdSitConfiguracao()) );
+				SimpleMethodResponseRPC t_smrResposta = new SimpleMethodResponseRPC();
+				t_smrResposta.setMembersFrom(t_hmpRetorno);
+				setRespostaXMLStringRPC(t_smrResposta.toXMLString());	
+			} catch (Exception e) {
+				CpDao.rollbackTransacao();
+				FaultMethodResponseRPC t_fmrRetorno = new FaultMethodResponseRPC();
+				t_fmrRetorno.set(0, e.getMessage());
+				setRespostaXMLStringRPC(t_fmrRetorno.toXMLString());
+			}
+		} else {
+			FaultMethodResponseRPC t_fmrRetorno = new FaultMethodResponseRPC();
+			t_fmrRetorno.set(0, "Acesso não permitido !");
+			setRespostaXMLStringRPC(t_fmrRetorno.toXMLString());
+		}
+	    result
+	    	.use(Results.http())
+	    	.body(getRespostaXMLStringRPC());  
+   }
+
+
+	public String getRespostaXMLStringRPC() {
+		return respostaXMLStringRPC;
+	}
+
+
+	public void setRespostaXMLStringRPC(String respostaXMLStringRPC) {
+		this.respostaXMLStringRPC = respostaXMLStringRPC;
+	}
 }

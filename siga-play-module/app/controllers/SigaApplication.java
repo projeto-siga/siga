@@ -1,8 +1,13 @@
 package controllers;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.ReusableAnalyzerBase;
 import org.hibernate.Session;
 import org.jboss.security.SecurityContextAssociation;
@@ -19,6 +24,7 @@ import play.mvc.Scope.Params;
 import play.mvc.Scope.RenderArgs;
 import play.templates.JavaExtensions;
 import br.gov.jfrj.siga.acesso.UsuarioAutenticado;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -81,6 +87,43 @@ public class SigaApplication extends Controller {
 				RenderArgs.current().put("_cabecalho_pos", cabecalhoPos);
 				RenderArgs.current().put("_rodape", rodape);
 			}
+	
+			if (play.Play.mode.isDev()) {
+				// Obter usuário logado
+				Logger.info("Play executando em modo DEV ..");
+				url = getBaseSiga().replace(":null", "");
+				url = url + "/usuario_autenticado.action?popup=" + popup + atributos;
+				String paginaAutenticada = SigaApplication.getUrl(url, atributos,null,null);
+				String[] IDs = paginaAutenticada.split(";");
+
+				DpPessoa dpPessoa = JPA.em().find(DpPessoa.class, Long.parseLong(IDs[0]));
+				RenderArgs.current().put("cadastrante",dpPessoa);
+
+				if (IDs[1] != null && !IDs[1].equals("")) {
+					DpLotacao dpLotacao = JPA.em().find(DpLotacao.class, Long.parseLong(IDs[1]));
+					RenderArgs.current().put("lotaCadastrante",dpLotacao);
+				}
+
+				if (IDs[2] != null && !IDs[2].equals("")) {
+					DpPessoa dpPessoaTitular = JPA.em().find(DpPessoa.class, Long.parseLong(IDs[2]));
+					RenderArgs.current().put("titular",dpPessoaTitular);
+				}
+
+
+				if (IDs[3] != null && !IDs[3].equals("")) {
+					DpLotacao dpLotacaoTitular = JPA.em().find(DpLotacao.class, Long.parseLong(IDs[3]));
+					RenderArgs.current().put("lotaTitular", dpLotacaoTitular);
+				}
+
+				if (IDs[4] != null && !IDs[4].equals("")) {
+					CpIdentidade identidadeCadastrante = JPA.em().find(CpIdentidade.class, Long.parseLong(IDs[4]));
+					RenderArgs.current().put("identidadeCadastrante", identidadeCadastrante);
+				}
+
+				renderArgs.put("currentTimeMillis", new Date().getTime());
+			} else {
+				
+			//	Logger.info("Play executando em modo PROD ..");	
 			
 			// Obter usuario logado
 			String user = SecurityContextAssociation.getPrincipal().getName();
@@ -96,11 +139,12 @@ public class SigaApplication extends Controller {
 			RenderArgs.current().put("identidadeCadastrante", usuario.getIdentidadeCadastrante());
 
 			RenderArgs.current().put("currentTimeMillis", new Date().getTime());
+			}
 
 		} catch (ArrayIndexOutOfBoundsException aioob) {
-			// Edson: Quando as informaï¿½ï¿½es nï¿½o puderam ser obtidas do Siga,
-			// manda para a pï¿½gina de login. Se nï¿½o for esse o erro, joga
-			// exceï¿½ï¿½o pra cima.
+			// Edson: Quando as informações não puderam ser obtidas do Siga,
+			// manda para a página de login. Se não for esse o erro, joga
+			// exceção pra cima.
 			redirect("/siga/redirect.action?uri=" + JavaExtensions.urlEncode(request.url));
 		}
 
@@ -112,13 +156,13 @@ public class SigaApplication extends Controller {
 	}
 
 	protected static void assertAcesso(String pathServico) throws Exception {
-		String servico = "SIGA:Sistema Integrado de GestÃ£o Administrativa;"
+		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
 				+ pathServico;
 		if (servico.endsWith(";"))
 			servico = servico.substring(0, servico.length()-1);
 		if (!podeUtilizarServico(servico))
-			throw new Exception("Acesso negado. ServiÃ§o: '" + servico
-					+ "' usuÃ¡rio: " + titular().getSigla() + " lotaÃ§Ã£o: "
+			throw new Exception("Acesso negado. Serviço: '" + servico
+					+ "' usuário: " + titular().getSigla() + " lotação: "
 					+ lotaTitular().getSiglaCompleta());
 	}
 	
@@ -126,7 +170,7 @@ public class SigaApplication extends Controller {
 		// MailUtils.sendErrorMail(e);
 		if (cadastrante() != null)
 			Logger.error("Erro Siga-SR; Pessoa: " + cadastrante().getSigla()
-					+ "; LotaÃ§Ã£o: " + lotaTitular().getSigla(), e);
+					+ "; Lotação: " + lotaTitular().getSigla(), e);
 		e.printStackTrace();
 		error(e.getMessage());
 	}
@@ -171,11 +215,57 @@ public class SigaApplication extends Controller {
 		String stackTrace = sw.toString();
 		String message = throwable.getMessage();
 		if (message == null)
-			message = "Nenhuma informaÃ§Ã£o disponÃ­vel.";
+			message = "Nenhuma informação disponível.";
 		erro(message, stackTrace);
 	}
 	
 	public static void erro(String message, String stackTrace) {
 		render(message, stackTrace);
+	}
+	
+	private static String getUrl(String URL, HashMap<String, String> header, Integer timeout, String payload)
+			throws AplicacaoException {
+
+		try {
+
+			HttpURLConnection conn = (HttpURLConnection) new URL(URL)
+					.openConnection();
+			
+			if (timeout != null) {
+				conn.setConnectTimeout(timeout);
+				conn.setReadTimeout(timeout);
+			}
+			
+			//conn.setInstanceFollowRedirects(true);
+
+			if (header != null) {
+				for (String s : header.keySet()) {
+						conn.setRequestProperty(s, header.get(s));
+				}
+			}	
+
+			System.setProperty("http.keepAlive", "false");
+			
+			if (payload != null) {
+				byte ab[] = payload.getBytes("UTF-8");
+				conn.setRequestMethod("POST");
+				// Send post request
+				conn.setDoOutput(true);
+				OutputStream os = conn.getOutputStream();
+				os.write(ab);
+				os.flush();
+				os.close();
+			}
+
+			//StringWriter writer = new StringWriter();
+			//IOUtils.copy(conn.getInputStream(), writer, "UTF-8");
+			//return writer.toString();
+			return IOUtils.toString(conn.getInputStream(), "UTF-8");
+			
+		} catch (IOException ioe) {
+			throw new AplicacaoException("Não foi possível abrir conexão", 1,
+					ioe);
+		}
+
 	}
 }

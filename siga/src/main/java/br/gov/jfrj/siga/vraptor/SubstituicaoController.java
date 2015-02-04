@@ -303,6 +303,7 @@ public class SubstituicaoController extends SigaController {
 		}
 	}	
 	
+	@Get("/app/substituicao/substituirGravar")
 	public void substituirGravar(Long idTitular, Long idLotaTitular) throws Exception {
 		finalizar();
 		if (idTitular != null) {
@@ -330,6 +331,7 @@ public class SubstituicaoController extends SigaController {
 		} catch (Exception e) {
 			dao().rollbackTransacao();
 		}
+		result.redirectTo("/");
 	}	
 	
 	public void exclui(Long id) throws Exception {

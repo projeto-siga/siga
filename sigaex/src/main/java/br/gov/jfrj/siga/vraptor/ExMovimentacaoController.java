@@ -3503,18 +3503,16 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla="+this.getSigla());
 		
 	}
-
-	public String aTransferirLote() throws Exception {
-		Iterator<ExMobil> provItens = dao().consultarParaTransferirEmLote(
-				getLotaTitular());
+	
+	@Get("/app/expediente/mov/transferir_lote")
+	public void transferirLote() throws Exception {
+		Iterator<ExMobil> provItens = dao().consultarParaTransferirEmLote(getLotaTitular());
 		setItens(new ArrayList<ExMobil>());
 
 		while (provItens.hasNext()) {
 			ExMobil m = provItens.next();
 			getItens().add(m);
 		}
-
-		return Action.SUCCESS;
 	}
 
 	public String aTransferirLote_new() throws Exception {

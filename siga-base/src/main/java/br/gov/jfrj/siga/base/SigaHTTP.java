@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,11 @@ public class SigaHTTP {
 				}catch(ElementNotFoundException elnf){
 					log.info("Nao encontrou o set-cookie");
 					log.info("retornando string vazia");
-					setCookie = getCookie(request, cookieValue);
+					if(cookieValue != null){
+						setCookie = getCookie(request, cookieValue);
+					}else{
+	                    // Caso não tenha encontrado o setCookie
+					}
 				}
 				
 				// Atribui o valor do SAMLRequest contido no html retornado no GET efetuado.

@@ -228,8 +228,9 @@ public class Application extends SigaApplication {
 			solicitacao.itemConfiguracao = null;
 
 		DpPessoa cadastrante = solicitacao.cadastrante;
+		DpLotacao lotaTitular = solicitacao.lotaCadastrante;
 		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-		render(solicitacao, acoesEAtendentes, cadastrante);
+		render(solicitacao, acoesEAtendentes, cadastrante, lotaTitular);
 	}
 
 	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {
@@ -240,6 +241,7 @@ public class Application extends SigaApplication {
 	public static void exibirAcaoEscalonar(Long id, Long itemConfiguracao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		solicitacao.cadastrante = cadastrante();
+		solicitacao.lotaCadastrante = lotaTitular();
 		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
 		if (itemConfiguracao != null){
 			solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
@@ -672,6 +674,7 @@ public class Application extends SigaApplication {
 	public static void selecionarSolicitacao(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
 		sel.cadastrante = cadastrante();
+		sel.lotaCadastrante = lotaTitular();
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
 	}
@@ -822,6 +825,7 @@ public class Application extends SigaApplication {
 	public static void escalonar(Long id) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		solicitacao.cadastrante = cadastrante();
+		solicitacao.lotaCadastrante = lotaTitular();
 		solicitacao = solicitacao.getSolicitacaoAtual();
 		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);

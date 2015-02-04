@@ -46,17 +46,17 @@ public class SigaController {
 	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
 	private Map<String, String[]> par = new HashMap<>();
 	
-	public Map<String, String[]> getPar() {
+	protected Map<String, String[]> getPar() {
 		return par;
 	}
 	
-	public void setParam(final String parameterName, final String parameterValue) {
+	protected void setParam(final String parameterName, final String parameterValue) {
 		final String as[] = { parameterValue };
 		getPar().put(parameterName, as);
 		return;
 	}	
 	
-	public String getUrlEncodedParameters()
+	protected String getUrlEncodedParameters()
 			throws UnsupportedEncodingException, IOException {
 		if (getPar() != null) {
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -75,14 +75,11 @@ public class SigaController {
 		return null;
 	}
 	
-	
-	
-	
 	protected CpDao dao() {
 		return CpDao.getInstance();
 	}
 
-	public Integer getPostback() {
+	protected Integer getPostback() {
 		return postback;
 	}
 	
@@ -233,35 +230,35 @@ public class SigaController {
 		this.request = request;
 	}
 	
-	public void assertAcesso(String pathServico) throws AplicacaoException,Exception {
+	protected void assertAcesso(String pathServico) throws AplicacaoException,Exception {
 		so.assertAcesso(pathServico);
 	}	
 	
-	public void setP(Paginador p) {
+	protected void setP(Paginador p) {
 		this.p = p;
 	}
 	
-	public void setPar(final Map par) {
+	protected void setPar(final Map par) {
 		this.par = par;
 	}
 
-	public void setPostback(final Integer postback) {
+	protected void setPostback(final Integer postback) {
 		this.postback = postback;
 	}
 	
-	public String getMensagemAguarde() {
+	protected String getMensagemAguarde() {
 		return mensagemAguarde;
 	}
 	
-	public void setMensagemAguarde(String mensagemAguarde) {
+	protected void setMensagemAguarde(String mensagemAguarde) {
 		this.mensagemAguarde = mensagemAguarde;
 	}
 
-	public List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
+	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
 		return dao().listarOrgaosUsuarios();
 	}
 	
-	public Paginador getP() {
+	protected Paginador getP() {
 		return p;
 	}
 

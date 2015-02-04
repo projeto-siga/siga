@@ -1,7 +1,10 @@
-import models.*;
+
+package model;
+
+import play.test.UnitTest;
 
 public class SrSolicitacaoTest extends UnitTest {
-
+/*
 	@BeforeClass
 	public static void antesDeTudo() throws Exception {
 //		criarDadosBasicos();
@@ -438,5 +441,5 @@ public class SrSolicitacaoTest extends UnitTest {
 		// Fechar definitivamente
 		// ...
 	}
-
+*/
 }

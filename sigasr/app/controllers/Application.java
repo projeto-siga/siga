@@ -1,7 +1,6 @@
 package controllers;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,14 +52,6 @@ import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
-import reports.SrRelAgendado;
-import reports.SrRelLocal;
-import reports.SrRelPesquisa;
-import reports.SrRelPrazo;
-import reports.SrRelPrazoDetail;
-import reports.SrRelPrazoTRF;
-import reports.SrRelSolicitacoes;
-import reports.SrRelTransferencias;
 import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
@@ -227,24 +218,26 @@ public class Application extends SigaApplication {
 		if (solicitacao.solicitante == null)
 			render(solicitacao);
 		
-		if (solicitacao.getItensDisponiveis().contains(
+		if (!solicitacao.getItensDisponiveis().contains(
 				solicitacao.itemConfiguracao))
 			solicitacao.itemConfiguracao = null;
 
-		DpPessoa cadastrante = solicitacao.cadastrante;
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-		render(solicitacao, acoesEAtendentes, cadastrante);
+		DpPessoa titular = solicitacao.titular;
+		DpLotacao lotaTitular = solicitacao.lotaTitular;
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		render(solicitacao, acoesEAtendentes, titular, lotaTitular);
 	}
 
 	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
 	
 	public static void exibirAcaoEscalonar(Long id, Long itemConfiguracao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		solicitacao.cadastrante = cadastrante();
-		Map<SrAcao, DpLotacao> acoesEAtendentes = new TreeMap<SrAcao, DpLotacao>();
+		solicitacao.titular = titular();
+		solicitacao.lotaTitular = lotaTitular();
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = new TreeMap<SrAcao, SrConfiguracao>();
 		if (itemConfiguracao != null){
 			solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			acoesEAtendentes = solicitacao.getAcoesEAtendentes();
@@ -263,7 +256,7 @@ public class Application extends SigaApplication {
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 		
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 
@@ -362,7 +355,8 @@ public class Application extends SigaApplication {
         if(!solicitacao.isRascunho())
         	validarFormEditar(solicitacao);
         
-		solicitacao.salvar(cadastrante(), lotaTitular());
+		solicitacao.salvar(cadastrante(), cadastrante().getLotacao(), 
+				titular(), lotaTitular());
 		Long id = solicitacao.idSolicitacao;
 		exibir(id, todoOContexto(), ocultas());
 	}
@@ -370,50 +364,21 @@ public class Application extends SigaApplication {
 	public static void juntar(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAJuntar);
 		SrSolicitacao solRecebeJuntada = SrSolicitacao.findById(idSolicitacaoRecebeJuntada);
-		sol.juntar(lotaTitular(), cadastrante(), solRecebeJuntada, justificativa);
+		sol.juntar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), solRecebeJuntada, justificativa);
 		exibir(idSolicitacaoAJuntar, todoOContexto(), ocultas());
 	}
 	
     public static void vincular(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.findById(idSolicitacaoAVincular);
         SrSolicitacao solRecebeVinculo = SrSolicitacao.findById(idSolicitacaoRecebeVinculo);
-        sol.vincular(lotaTitular(), cadastrante(), solRecebeVinculo, justificativa);
+        sol.vincular(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), solRecebeVinculo, justificativa);
         exibir(idSolicitacaoAVincular, todoOContexto(), ocultas());
     }
     
     public static void desentranhar(Long id, String justificativa) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.desentranhar(lotaTitular(), cadastrante(), justificativa);
+		sol.desentranhar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), justificativa);
 		exibir(id, todoOContexto(), ocultas());
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static void listar(SrSolicitacaoFiltro filtro) throws Exception {
-		List<SrSolicitacao> list;
-		
-		if (filtro.pesquisar) {
-			list = filtro.buscar();
-		} else {
-			list = new ArrayList<SrSolicitacao>();
-		}
-		
-		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lota��o" };
-		List<CpMarcador> marcadores = JPA.em()
-				.createQuery("select distinct cpMarcador from SrMarca")
-				.getResultList();
-		
-		// DB1: Trecho de código que garante que só sejam exibidos as solicitações para a lotação cadastrante
-		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
-		for (SrSolicitacao sol : list) 
-			if (!sol.isMarcada(CpMarcador.MARCADOR_SOLICITACAO_EM_ELABORACAO))
-					listaSolicitacao.add(sol);
-			else
-				if (sol.lotaCadastrante == lotaTitular())
-					listaSolicitacao.add(sol);
-		
-		List<SrAtributo> tiposAtributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
-		render(listaSolicitacao, tipos, marcadores, filtro, tiposAtributosDisponiveisAdicao);
 	}
 	
 	public static void estatistica() throws Exception {
@@ -637,7 +602,7 @@ public class Application extends SigaApplication {
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular());
+		solicitacao.incluirEmLista(lista, cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 		exibir(idSolicitacao, todoOContexto(), ocultas());
 	}
 
@@ -645,7 +610,7 @@ public class Application extends SigaApplication {
 			throws Exception {
 			SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 			SrLista lista = SrLista.findById(idLista);
-			solicitacao.retirarDeLista(lista, cadastrante(), lotaTitular());
+			solicitacao.retirarDeLista(lista, cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 			exibirLista(idLista);
 	}
 	
@@ -662,13 +627,13 @@ public class Application extends SigaApplication {
 			sols.add((SrSolicitacao) SrSolicitacao.findById(l));
 
 		SrLista lista = SrLista.findById(id);
-		lista.priorizar(cadastrante(), lotaTitular(), sols);
+		lista.priorizar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), sols);
 		exibirLista(id);
 	}
 
 	public static void selecionarSolicitacao(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
-		sel.cadastrante = cadastrante();
+		sel.lotaTitular = lotaTitular();
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
 	}
@@ -713,19 +678,19 @@ public class Application extends SigaApplication {
 			throws Exception {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
-		movimentacao.salvar(cadastrante(), lotaTitular());
+		movimentacao.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 		exibir(movimentacao.solicitacao.idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void anexarArquivo(SrMovimentacao movimentacao)
 			throws Exception {
-		movimentacao.salvar(cadastrante(), lotaTitular());
+		movimentacao.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 		exibir(movimentacao.solicitacao.idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void fechar(Long id, String motivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.fechar(lotaTitular(), cadastrante(), motivo);
+		sol.fechar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), motivo);
 		exibir(sol.idSolicitacao, todoOContexto(), ocultas());
 	}
 
@@ -736,26 +701,20 @@ public class Application extends SigaApplication {
 	}
 	
 	public static void responderPesquisa(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
+		/*SrSolicitacao sol = SrSolicitacao.findById(id);
 		SrPesquisa pesquisa = sol.getPesquisaDesignada();
 		if (pesquisa == null)
 			throw new Exception(
 					"N�o foi encontrada nenhuma pesquisa designada para esta solicita��o.");
 		pesquisa = SrPesquisa.findById(pesquisa.idPesquisa);
 		pesquisa = pesquisa.getPesquisaAtual();
-		render(id, pesquisa);
+		render(id, pesquisa);*/
 	}
 	
 	public static void responderPesquisaGravar(Long id,
 			Map<Long, String> respostaMap) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.responderPesquisa(lotaTitular(), cadastrante(), respostaMap);
-		exibir(id, todoOContexto(), ocultas());
-	}
-
-	public static void retornarAoAtendimento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.retornarAoAtendimento(lotaTitular(), cadastrante());
+		sol.responderPesquisa(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), respostaMap);
 		exibir(id, todoOContexto(), ocultas());
 	}
 
@@ -766,26 +725,14 @@ public class Application extends SigaApplication {
 
 	public static void cancelar(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.cancelar(lotaTitular(), cadastrante());
+		sol.cancelar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 		exibir(id, todoOContexto(), ocultas());
-	}
-
-	public static void finalizarPreAtendimento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.finalizarPreAtendimento(lotaTitular(), cadastrante());
-		exibir(sol.idSolicitacao, todoOContexto(), ocultas());
-	}
-
-	public static void retornarAoPreAtendimento(Long id) throws Exception {
-		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.retornarAoPreAtendimento(lotaTitular(), cadastrante());
-		exibir(sol.idSolicitacao, todoOContexto(), ocultas());
 	}
 
 	public static void deixarPendente(Long id, SrTipoMotivoPendencia motivo,String calendario,
 			String horario, String detalheMotivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.deixarPendente(lotaTitular(), cadastrante(), motivo, calendario,
+		sol.deixarPendente(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), motivo, calendario,
 				horario, detalheMotivo);
 		exibir(id, todoOContexto(), ocultas());
 	}
@@ -793,39 +740,40 @@ public class Application extends SigaApplication {
 	public static void alterarPrazo(Long id, String motivo,
 			String calendario, String horario) throws Exception {
 			SrSolicitacao sol = SrSolicitacao.findById(id);
-			sol.alterarPrazo(lotaTitular(), cadastrante(), motivo, calendario,
+			sol.alterarPrazo(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), motivo, calendario,
 					horario);
 			exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void terminarPendencia(Long id, String descricao, Long idMovimentacao) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.terminarPendencia(lotaTitular(), cadastrante(), descricao, idMovimentacao);
+		sol.terminarPendencia(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), descricao, idMovimentacao);
 		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void reabrir(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.reabrir(lotaTitular(), cadastrante());
+		sol.reabrir(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void desfazerUltimaMovimentacao(Long id) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
-		sol.desfazerUltimaMovimentacao(cadastrante(), lotaTitular());
+		sol.desfazerUltimaMovimentacao(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 		exibir(id, todoOContexto(), ocultas());
 	}
 
 	public static void escalonar(Long id) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		solicitacao.cadastrante = cadastrante();
+		solicitacao.titular = titular();
+		solicitacao.lotaTitular = lotaTitular();
 		solicitacao = solicitacao.getSolicitacaoAtual();
-		Map<SrAcao, DpLotacao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
 	
 	public static void escalonarGravar(Long id, Long itemConfiguracao,
-				SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, 
+				SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao,
 				SrTipoMotivoEscalonamento motivo, String descricao,
 				Boolean criaFilha, Boolean fechadoAuto) throws Exception {
 		if(itemConfiguracao == null || acao == null)
@@ -844,10 +792,11 @@ public class Application extends SigaApplication {
 				filha = solicitacao.criarFilhaSemSalvar();
 			filha.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			filha.acao = SrAcao.findById(acao.idAcao);
+			filha.designacao = SrConfiguracao.findById(idDesignacao);
 			filha.descrSolicitacao = descricao;
 			if (idAtendenteNaoDesignado != null)
 				filha.atendenteNaoDesignado = JPA.em().find(DpLotacao.class, idAtendenteNaoDesignado);
-			filha.salvar(cadastrante(), lotaTitular());
+			filha.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 			exibir(filha.idSolicitacao, todoOContexto(), ocultas());
 		}
 		else {
@@ -857,10 +806,11 @@ public class Application extends SigaApplication {
 			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			mov.acao = SrAcao.findById(acao.idAcao);
 			mov.lotaAtendente = JPA.em().find(DpLotacao.class, idAtendente);
+			mov.designacao = SrConfiguracao.findById(idDesignacao);
 			mov.descrMovimentacao = "Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
 					+ "; Ação: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();
 			mov.motivoEscalonamento = motivo;
-			mov.salvar(cadastrante(), lotaTitular());
+			mov.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 			exibir(solicitacao.idSolicitacao, todoOContexto(), ocultas());
 		}
 			
@@ -1472,354 +1422,9 @@ public class Application extends SigaApplication {
 		lista.salvar();
 		return lista.getId();
 	}
-
-	public static void relSolicitacoes(SrSolicitacaoFiltro filtro)
-			throws Exception {
-		assertAcesso("REL:Relatorio");
-		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lota��o" };
-		List<CpMarcador> marcadores = JPA.em()
-				.createQuery("select distinct cpMarcador from SrMarca")
-				.getResultList();
-		render(tipos, marcadores, filtro);
-	}
-
-	public static void relTransferencias(SrSolicitacao solicitacao)
-			throws Exception {
-		assertAcesso("REL:Relatorio");
-		render();
-	}
-
-	public static void relLocal(Long orgao) throws Exception {
-		assertAcesso("REL:Relatorio");
-		List<CpComplexo> orgaos = new ArrayList<CpComplexo>();
-		orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		locais = JPA
-				.em()
-				.createQuery(
-						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-								+ lotaTitular().getOrgaoUsuario()
-										.getIdOrgaoUsu()).getResultList();
-		List<CpComplexo> locOrgaos = new ArrayList<CpComplexo>();
-		if (orgao != null) {
-			locOrgaos = JPA
-					.em()
-					.createQuery(
-							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-									+ orgao).getResultList();
-			render("app/views/Application/locais.html", locOrgaos);
-		}
-		render(locais, orgaos);
-	}
-
-	public static void relPrazo() throws Exception {
-		assertAcesso("REL:Relatorio");
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		locais = JPA
-				.em()
-				.createQuery(
-						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-								+ lotaTitular().getOrgaoUsuario()
-										.getIdOrgaoUsu()).getResultList();
-		render(locais);
-	}
-
-	public static void relPrazoTRF() throws Exception {
-		assertAcesso("REL:Relatorio");
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		locais = JPA
-				.em()
-				.createQuery(
-						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-								+ lotaTitular().getOrgaoUsuario()
-										.getIdOrgaoUsu()).getResultList();
-		render(locais);
-	}
-
-	public static void relPrazoDetail() throws Exception {
-		assertAcesso("REL:Relatorio");
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		locais = JPA
-				.em()
-				.createQuery(
-						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-								+ lotaTitular().getOrgaoUsuario()
-										.getIdOrgaoUsu()).getResultList();
-		render(locais);
-	}
-
-	public static void relPesquisa() throws Exception {
-		assertAcesso("REL:Relatorio");
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		locais = JPA
-				.em()
-				.createQuery(
-						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-								+ lotaTitular().getOrgaoUsuario()
-										.getIdOrgaoUsu()).getResultList();
-		render(locais);
-	}
-
-	public static void relAgendado() throws Exception {
-		assertAcesso("REL:Relatorio");
-		List<CpComplexo> orgaos = new ArrayList<CpComplexo>();
-		orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
-		List<CpComplexo> locais = new ArrayList<CpComplexo>();
-		locais = JPA
-				.em()
-				.createQuery(
-						"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-								+ lotaTitular().getOrgaoUsuario()
-										.getIdOrgaoUsu()).getResultList();
-		render(locais);
-	}
-
-	public static void grelSolicitacoes(String secaoUsuario, String lotacao,
-			String situacao, String dtIni, String dtFim) throws Exception {
-
-		assertAcesso("REL:Relatorio");
-
-		Map<String, String> parametros = new HashMap<String, String>();
-
-		if (!lotacao.equals(""))
-			parametros.put("lotacao", lotacao);
-		parametros.put("secaoUsuario", secaoUsuario);
-		parametros.put("situacao", situacao);
-		parametros.put("dtIni", dtIni);
-		parametros.put("dtFim", dtFim);
-
-		SrRelSolicitacoes rel = new SrRelSolicitacoes(parametros);
-
-		rel.gerar();
-
-		byte[] pdf = rel.getRelatorioPDF();
-		InputStream is = new ByteArrayInputStream(pdf);
-
-		renderBinary(is, "Relat�rio de Solicita��es", pdf.length,
-				"application/pdf", true);
-	}
-
-	public static void grelTransferencias(String secaoUsuario, String lotacao,
-			String dtIni, String dtFim) throws Exception {
-
-		assertAcesso("REL:Relatorio");
-
-		Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("secaoUsuario", secaoUsuario);
-		if (!lotacao.equals(""))
-			parametros.put("lotacao", lotacao);
-		parametros.put("dtIni", dtIni);
-		parametros.put("dtFim", dtFim);
-
-		SrRelTransferencias rel = new SrRelTransferencias(parametros);
-
-		rel.gerar();
-
-		byte[] pdf = rel.getRelatorioPDF();
-		InputStream is = new ByteArrayInputStream(pdf);
-
-		renderBinary(is, "Relat�rio de Transferêªncias", pdf.length,
-				"application/pdf", true);
-	}
-
-	public static void grelLocal(String secaoUsuario, String orgao,
-			String lotacao, String locOrgao, String dtIni, String dtFim,
-			String atendente) throws Exception {
-
-		assertAcesso("REL:Relatorio");
-
-		Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("secaoUsuario", secaoUsuario);
-		parametros.put("orgao", orgao);
-		parametros.put("lotacao", lotacao);
-		parametros.put("local", locOrgao);
-		parametros.put("atendente", atendente);
-		parametros.put("dtIni", dtIni);
-		parametros.put("dtFim", dtFim);
-
-		SrRelLocal rel = new SrRelLocal(parametros);
-
-		rel.gerar();
-
-		byte[] pdf = rel.getRelatorioPDF();
-		InputStream is = new ByteArrayInputStream(pdf);
-
-		renderBinary(is, "Relat�rio de Solicita��es por Localidade",
-				pdf.length, "application/pdf", true);
-	}
-
-	public static void grelPrazo(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim, String atendente)
-			throws Exception {
-
-		assertAcesso("REL:Relatorio");
-
-		Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("secaoUsuario", secaoUsuario);
-		// if (!lotacao.equals("")) parametros.put("lotacao", lotacao);
-		parametros.put("atendente", atendente);
-		parametros.put("lotacao", lotacao);
-		parametros.put("local", local);
-		parametros.put("dtIni", dtIni);
-		parametros.put("dtFim", dtFim);
-
-		SrRelPrazo rel = new SrRelPrazo(parametros);
-
-		rel.gerar();
-
-		byte[] pdf = rel.getRelatorioPDF();
-		InputStream is = new ByteArrayInputStream(pdf);
-
-		renderBinary(is, "Relat�rio de Prazos", pdf.length, "application/pdf",
-				true);
-	}
-
-	public static void grelPrazoTRF(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim, String atendente)
-			throws Exception {
-
-		assertAcesso("REL:Relatorio");
-
-		Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("secaoUsuario", secaoUsuario);
-		parametros.put("atendente", atendente);
-		parametros.put("lotacao", lotacao);
-		parametros.put("local", local);
-		parametros.put("dtIni", dtIni);
-		parametros.put("dtFim", dtFim);
-
-		SrRelPrazoTRF rel = new SrRelPrazoTRF(parametros);
-
-		rel.gerar();
-
-		byte[] pdf = rel.getRelatorioPDF();
-		InputStream is = new ByteArrayInputStream(pdf);
-
-		renderBinary(is, "Relat�rio de Prazos - TRF", pdf.length,
-				"application/pdf", true);
-	}
-
-	public static void grelPrazoDetail(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim) throws Exception {
-
-		assertAcesso("REL:Relatorio");
-
-		Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("secaoUsuario", secaoUsuario);
-		// parametros.put("lotacao", lotacao);
-		if (!lotacao.equals(""))
-			parametros.put("lotacao", lotacao);
-		parametros.put("local", local);
-		parametros.put("dtIni", dtIni);
-		parametros.put("dtFim", dtFim);
-
-		SrRelPrazoDetail rel = new SrRelPrazoDetail(parametros);
-
-		rel.gerar();
-
-		byte[] pdf = rel.getRelatorioPDF();
-		InputStream is = new ByteArrayInputStream(pdf);
-
-		renderBinary(is, "Relat�rio Detalhado de Prazos", pdf.length,
-				"application/pdf", true);
-	}
-
-	public static void grelPesquisa(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim) throws Exception {
-
-		assertAcesso("REL:Relatorio");
-
-		Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("secaoUsuario", secaoUsuario);
-		parametros.put("lotacao", lotacao);
-		parametros.put("local", local);
-		parametros.put("dtIni", dtIni);
-		parametros.put("dtFim", dtFim);
-
-		SrRelPesquisa rel = new SrRelPesquisa(parametros);
-
-		rel.gerar();
-
-		byte[] pdf = rel.getRelatorioPDF();
-		InputStream is = new ByteArrayInputStream(pdf);
-
-		renderBinary(is, "Relat�rio de Indíces de Satisfa��o", pdf.length,
-				"application/pdf", true);
-	}
-
-	public static void grelAgendado(String secaoUsuario, String lotacao,
-			String local, String dtIni, String dtFim, String atendente)
-			throws Exception {
-
-		assertAcesso("REL:Relatorio");
-
-		Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("secaoUsuario", secaoUsuario);
-		parametros.put("lotacao", lotacao);
-		parametros.put("local", local);
-		parametros.put("atendente", atendente);
-		parametros.put("dtIni", dtIni);
-		parametros.put("dtFim", dtFim);
-
-		SrRelAgendado rel = new SrRelAgendado(parametros);
-
-		rel.gerar();
-
-		byte[] pdf = rel.getRelatorioPDF();
-		InputStream is = new ByteArrayInputStream(pdf);
-
-		renderBinary(is, "Relat�rio de Solicita��es por Localidade",
-				pdf.length, "application/pdf", true);
-	}
-
-	public static void concluirAutomatico() throws Exception {
-
-		List<SrMovimentacao> movs = SrMovimentacao
-				.find("select mov from SrMovimentacao mov "
-						+ "where mov.tipoMov = 15 and exists (select 1 from SrMovimentacao movfc  "
-						+ "where movfc.solicitacao = mov.solicitacao and movfc.tipoMov = 15 "
-						+ "and movfc.dtIniMov = (select max(movm.dtIniMov) from SrMovimentacao movm "
-						+ "where movm.solicitacao = movfc.solicitacao and movm.tipoMov = 15)) "
-						+ "and not exists (select 1 from SrMovimentacao movrev where movrev.solicitacao = mov.solicitacao "
-						+ "and movrev.tipoMov in (7,14,16) and movrev.dtIniMov > mov.dtIniMov)")
-				.fetch();
-
-		Set<SrSolicitacao> solsnaoconcluidas = new HashSet<SrSolicitacao>();
-		for (int k = 0; k < movs.size(); k++) {
-			solsnaoconcluidas.add(movs.get(k).solicitacao);
-			System.out.println(movs.get(k).solicitacao.idSolicitacao);
-		}
-
-		Iterator it = solsnaoconcluidas.iterator();
-		while (it.hasNext()) {
-			SrSolicitacao sol = (SrSolicitacao) it.next();
-			sol.fechar(null, null, "Conclus�o Autom�tica");
-		}
-
-		render(solsnaoconcluidas);
-	}
 	
 	public static void exibirPrioridade(SrSolicitacao solicitacao) {
 		solicitacao.associarPrioridadePeloGUT();
 		render(solicitacao);
-	}
-	
-	public static void atualizarFechamentoAutomatico() throws Exception {
-		List<SrSolicitacao> todasSolicitacoes = SrSolicitacao.findAll();
-		for (SrSolicitacao sol : todasSolicitacoes) {
-			if (sol.isPai()) {
-				sol.setFechadoAutomaticamente(false);
-				sol.salvar(cadastrante(), lotaTitular());
-			}
-		}
-		renderText("Atualização realizada com sucesso");
 	}
 }

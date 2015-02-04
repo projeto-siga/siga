@@ -13,6 +13,8 @@ function carregarAtributos(){
 	var idAcao = $("#selectAcao option:selected").val();
 	var lotacaoDaAcao = $("#lotacao-" + idAcao).html();
 	$("#atendentePadrao").html(lotacaoDaAcao);
+	var idDesignacaoDaAcao = $("#idDesignacao-" + idAcao).html();
+	$("#solicitacaoDesignacao").html(idDesignacaoDaAcao);
 
 	for (i = 0; i < frm.length; i++){
 		if (frm[i].name && frm[i].value)
@@ -61,7 +63,7 @@ function carregouAtributos(response, param){
 		#{select name:'solicitacao.acao', style:"width: 100%;",  value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
 			#{option}#{/option}	
 			#{list items:acoesEAtendentes.keySet(), as:'acao' }
-				#{option acao.idAcao} ${acao.tituloAcao} #{/option}					 
+				#{option acao.idAcao} ${acao.tituloAcao} (${acoesEAtendentes.get(acao).atendente.sigla})#{/option}					 
 			#{/list}
 		#{/select}  
 	 <span style="color: red">#{error 'solicitacao.acao' /}</span>
@@ -70,11 +72,13 @@ function carregouAtributos(response, param){
 		<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
 				ja que acima no select nao tem como "esconder" essa informacao -->
 		#{list items:acoesEAtendentes.keySet(), as:'acaoAtend' }
-			<span id="lotacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).sigla} 
-								- ${acoesEAtendentes.get(acaoAtend).descricao.raw()}</span>
+			<span id="idDesignacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).idConfiguracao}</span>
+			<span id="lotacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).atendente.siglaCompleta} 
+								- ${acoesEAtendentes.get(acaoAtend).atendente.descricao.raw()}</span>
 			
 			#{if acaoAtend_isFirst} 
-				#{set lotacaoDesignada : acoesEAtendentes.get(acaoAtend).sigla + ' - ' + acoesEAtendentes.get(acaoAtend).descricao /} 
+				#{set lotacaoDesignada : acoesEAtendentes.get(acaoAtend).atendente.siglaCompleta + ' - ' + acoesEAtendentes.get(acaoAtend).atendente.descricao /} 
+				#{set idDesignacao : acoesEAtendentes.get(acaoAtend).idConfiguracao /}
 			#{/if}
 		#{/list}
 
@@ -83,9 +87,10 @@ function carregouAtributos(response, param){
 			<!-- Para solicitacoes cadastradas, pegar o atendente da ultima movimentacao -->
 			 <!-- Para solicitacoes que estao sendo cadastradas, pegar o atendente da designacao -->
 			#{if solicitacao.idSolicitacao != null && !solicitacao.isRascunho()}
-						${solicitacao.lotaAtendente?.sigla} - ${solicitacao.lotaAtendente?.descricao.raw()}#{/if}
+						${solicitacao.lotaAtendente?.siglaCompleta} - ${solicitacao.lotaAtendente?.descricao.raw()}#{/if}
 			#{else}${lotacaoDesignada.raw()}#{/else}
 		</span>
+		<input type="hidden" id="solicitacaoDesignacao" name="solicitacao.designacao" value="${idDesignacao}" />
 	</div>
 #{/if}
 

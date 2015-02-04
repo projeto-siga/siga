@@ -242,6 +242,7 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	public void priorizar(DpPessoa cadastrante, DpLotacao lotaCadastrante,
+			DpPessoa titular, DpLotacao lotaTitular,
 			List<SrSolicitacao> sols) throws Exception {
 
 		if (sols.size() != getSolicitacaoSet().size())
@@ -257,22 +258,24 @@ public class SrLista extends HistoricoSuporte {
 						+ sol.getCodigo() + " não faz parte da lista");
 		}
 
-		this.recalcularPrioridade(cadastrante, lotaCadastrante, sols);
+		this.recalcularPrioridade(cadastrante, lotaCadastrante, titular, lotaTitular, sols);
 		this.refresh();
 	}
 
-	protected void recalcularPrioridade(DpPessoa pessoa, DpLotacao lota)
+	protected void recalcularPrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante,
+			DpPessoa titular, DpLotacao lotaTitular)
 			throws Exception {
-		recalcularPrioridade(pessoa, lota, this.getSolicitacaoSet());
+		recalcularPrioridade(cadastrante, lotaCadastrante, titular, lotaTitular, this.getSolicitacaoSet());
 	}
 
-	private void recalcularPrioridade(DpPessoa pessoa, DpLotacao lota,
+	private void recalcularPrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante,
+			DpPessoa titular, DpLotacao lotaTitular,
 			Collection<SrSolicitacao> sols) throws Exception {
 		long i = 0;
 		for (SrSolicitacao s : sols) {
 			i++;
 			if (s.getPrioridadeNaLista(this) != i)
-				s.priorizar(this, i, pessoa, lota);
+				s.priorizar(this, i, cadastrante, lotaCadastrante, titular, lotaTitular);
 		}
 	}
 	

@@ -48,7 +48,7 @@ function carregouAcao(response, param){
 			nome:'itemConfiguracao',
 			value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();",
 			params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo+
-						'&sol.cadastrante.idPessoa='+cadastrante?.idPessoa /} <span style="color: red">#{error
+						'&sol.titular='+cadastrante?.idPessoa+'&sol.lotaTitular='+lotaTitular?.idLotacao /} <span style="color: red">#{error
 				'solicitacao.itemConfiguracao' /}</span>
 		</div>
 		<div id="divAcaoEscalonar">#{include 'Application/exibirAcaoEscalonar.html' /}</div>

@@ -263,6 +263,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	}
 
+	public class SrTarefa {
+		public SrAcao acao;
+		public SrConfiguracao conf;
+		
+		public SrTarefa() {
+			
+		}
+		public SrAcao getAcao() {
+			return acao;
+		}
+		public void setAcao(SrAcao acao) {
+			this.acao = acao;
+		}
+		public SrConfiguracao getConf() {
+			return conf;
+		}
+		public void setConf(SrConfiguracao conf) {
+			this.conf = conf;
+		}	
+		
+	}
+	
 	@Override
 	public Long getId() {
 		return idSolicitacao;
@@ -1164,11 +1186,101 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
-		Map<SrAcao, SrConfiguracao> acoesEAtendentes = getAcoesDisponiveisComAtendente();
-		return acoesEAtendentes != null ? new ArrayList<SrAcao>(acoesEAtendentes.keySet()) : null;
+		//Map<SrAcao, SrConfiguracao> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		//return acoesEAtendentes != null ? new ArrayList<SrAcao>(acoesEAtendentes.keySet()) : null;
+		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		List<SrAcao> acoes = new ArrayList<SrAcao>();
+		
+		if(acoesEAtendentes == null)
+			return null;
+		for (SrTarefa t: acoesEAtendentes) 
+			acoes.add(t.acao);
+		return acoes;
 	}
 
-	public Map<SrAcao, SrConfiguracao> getAcoesDisponiveisComAtendente()
+	public List<SrTarefa> getAcoesDisponiveisComAtendente()
+			throws Exception {
+
+		if (solicitante == null || itemConfiguracao == null)
+			return null;
+
+		List<SrTarefa> listaFinal = new ArrayList<SrTarefa>();	
+		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarConfiguracoes();
+		SrTarefa tarefa = null;
+
+		for (SrAcao a : SrAcao.listar(false)) {
+			if (!a.isEspecifico() || a.idAcao != 543)
+				continue;
+			for (SrConfiguracao c : listaPessoasAConsiderar) {
+				c.itemConfiguracaoFiltro = itemConfiguracao;
+				c.acaoFiltro = a;
+				
+				SrConfiguracao conf = SrConfiguracao.buscarDesignacao(c);
+				if (conf != null) {
+					tarefa = this.new SrTarefa();
+					tarefa.acao = a;
+					tarefa.conf = conf;
+					listaFinal.add(tarefa);
+				}
+			}
+		}
+
+		return listaFinal;
+	}
+	
+	public List<SrTarefa> getAcoesDisponiveisComAtendenteOrdemSigla()
+			throws Exception {
+		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		if (acoesEAtendentes != null) {
+			Collections.sort(acoesEAtendentes , new Comparator<SrTarefa>() {
+		        @Override
+		        public int compare(SrTarefa  o1, SrTarefa o2) {
+					if (o1 != null && o2 != null && o1.acao.idAcao == o2.acao.idAcao)
+						return 0;
+					return o1.acao.siglaAcao.compareTo(o2.acao.siglaAcao);
+		        }
+		    });
+		
+			return acoesEAtendentes;
+		}
+		return null;
+	}
+	
+	public List<SrTarefa> getAcoesDisponiveisComAtendenteOrdemTitulo()
+			throws Exception {
+		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		if (acoesEAtendentes != null) {
+			Collections.sort(acoesEAtendentes , new Comparator<SrTarefa>() {
+		        @Override
+		        public int compare(SrTarefa  o1, SrTarefa o2) {
+					int i = o1.acao.tituloAcao.compareTo(o2.acao.tituloAcao);
+					if (i != 0)
+						return i;
+					return o1.acao.idAcao.compareTo(o2.acao.idAcao);
+		        }
+		    });
+			
+			return acoesEAtendentes;
+		}
+		return null;
+	}
+	
+	public List<SrTarefa> getAcoesEAtendentes() throws Exception {
+		List<SrTarefa> acoesEAtendentesFinal = this
+				.getAcoesDisponiveisComAtendenteOrdemTitulo();
+		if (acoesEAtendentesFinal != null && this.itemConfiguracao != null){
+			if (this.acao == null
+					|| !acoesEAtendentesFinal.contains(this.acao)) {
+				if (acoesEAtendentesFinal.size() > 0)
+					this.acao = acoesEAtendentesFinal.iterator().next().acao;
+				else
+					this.acao = null;
+			}
+		}
+		return acoesEAtendentesFinal;
+	}
+	
+/*	public Map<SrAcao, SrConfiguracao> getAcoesDisponiveisComAtendente()
 			throws Exception {
 
 		if (solicitante == null || itemConfiguracao == null)
@@ -1234,6 +1346,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return null;
 	}
 	
+	
 	public Map<SrAcao, SrConfiguracao> getAcoesEAtendentes() throws Exception {
 		Map<SrAcao, SrConfiguracao> acoesEAtendentesFinal = this
 				.getAcoesDisponiveisComAtendenteOrdemTitulo();
@@ -1248,7 +1361,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return acoesEAtendentesFinal;
 	}
-
+*/
 	@SuppressWarnings("serial")
 	public SortedSet<SrOperacao> operacoes(final DpPessoa pess, final DpLotacao lota)
 					throws Exception {

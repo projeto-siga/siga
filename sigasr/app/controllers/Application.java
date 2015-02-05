@@ -29,6 +29,7 @@ import models.SrMovimentacao;
 import models.SrObjetivoAtributo;
 import models.SrPesquisa;
 import models.SrSolicitacao;
+import models.SrSolicitacao.SrTarefa;
 import models.SrTipoAtributo;
 import models.SrTipoMotivoEscalonamento;
 import models.SrTipoMotivoPendencia;
@@ -215,12 +216,12 @@ public class Application extends SigaApplication {
 
 		DpPessoa titular = solicitacao.titular;
 		DpLotacao lotaTitular = solicitacao.lotaTitular;
-		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		List<SrTarefa> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes, titular, lotaTitular);
 	}
 
 	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {
-		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		List<SrTarefa> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
 	
@@ -228,7 +229,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		solicitacao.titular = titular();
 		solicitacao.lotaTitular = lotaTitular();
-		Map<SrAcao, SrConfiguracao> acoesEAtendentes = new TreeMap<SrAcao, SrConfiguracao>();
+		List<SrTarefa> acoesEAtendentes = new ArrayList<SrTarefa>();
 		if (itemConfiguracao != null){
 			solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			acoesEAtendentes = solicitacao.getAcoesEAtendentes();
@@ -247,7 +248,7 @@ public class Application extends SigaApplication {
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 		
-		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		List<SrTarefa> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 
@@ -764,7 +765,7 @@ public class Application extends SigaApplication {
 		solicitacao.titular = titular();
 		solicitacao.lotaTitular = lotaTitular();
 		solicitacao = solicitacao.getSolicitacaoAtual();
-		Map<SrAcao, SrConfiguracao> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		List<SrTarefa> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
 	

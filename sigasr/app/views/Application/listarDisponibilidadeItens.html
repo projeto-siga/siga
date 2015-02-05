@@ -400,9 +400,13 @@
 
 				            // WA para evitar requisicao para URL errada da imagem
 				            $('img[src-original]').each(function() { 
-					            var me = $(this);
-					            me.attr('src',me.attr('src-original'));
-					            me.removeAttr('src-original');
+					            var me = $(this),
+					            	src = me.attr('src-original');
+				            	
+					            if(src.indexOf('.png') >= 0) {
+						            me.attr('src',me.attr('src-original'));
+						            me.removeAttr('src-original');
+					            }
 				            });
 				        }
 				    });

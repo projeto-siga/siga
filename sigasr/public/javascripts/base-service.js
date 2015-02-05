@@ -296,33 +296,34 @@ BaseService.prototype.limparSpanComponentes = function() {
  * Executa a acao de gravar o registro
  */
 BaseService.prototype.gravar = function() {
-	gravarAplicar(this, false);
+	this.gravarAplicar(false);
 }
 
-function gravarAplicar(baseService, isAplicar) {
-	if (!baseService.isValidForm())
+BaseService.prototype.gravarAplicar = function(isAplicar) {
+	if (!this.isValidForm())
 		return;
 	
-	var obj = baseService.getObjetoParaGravar(),
-		url = baseService.opts.urlGravar,
+	var service = this, 
+		obj = this.getObjetoParaGravar(),
+		url = this.opts.urlGravar,
 		wrapper = {},
 		success = function(objSalvo) {
-			if(baseService.onGravar) {
-				baseService.onGravar(obj, JSON.parse(objSalvo));
+			if(service.onGravar) {
+				service.onGravar(obj, JSON.parse(objSalvo));
 			}
 			
 			if (isAplicar) {
-				baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
+				service.formularioHelper.populateFromJson(JSON.parse(objSalvo));
 				alert("Cadastro salvo com sucesso.");
 			}
 				
 			else
-				baseService.opts.dialogCadastro.dialog("close");
+				service.opts.dialogCadastro.dialog("close");
 		}
 		
-	wrapper[baseService.opts.objectName] = obj;
+	wrapper[this.opts.objectName] = obj;
 	
-	baseService.post({
+	this.post({
 		'url' : url, 
 		'obj' : wrapper
 	}).success(success);
@@ -332,7 +333,7 @@ function gravarAplicar(baseService, isAplicar) {
  * Executa a acao de aplicar o registro
  */
 BaseService.prototype.aplicar = function() {
-	gravarAplicar(this, true);
+	this.gravarAplicar(true);
 }
 /**
  * Metodo que implementa a forma padrao de pegar o objeto para gravar no servidor

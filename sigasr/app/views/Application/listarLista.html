@@ -193,9 +193,7 @@
 	listaService.getRow = function(lista) {
 		return [lista.nomeLista, lista.nomeLotacao, 'COLUNA_ACOES'];
 	}
-	listaService.onRowClick = function(lista) {
-		listaService.editar(lista, 'Alterar lista');
-	}
+	
 	/**
 	 * Customiza o metodo editar
 	 */
@@ -208,33 +206,6 @@
 		carregarPermissoes(obj.idLista);
 	}
 	
-	listaService.gravar = function() {
-		if (!this.isValidForm())
-			return;
-		
-		var service = this,
-		obj = this.getObjetoParaGravar(),
-		url = this.opts.urlGravar,
-		wrapper = {},
-		success = function(objSalvo) {
-			if(service.onGravar) {
-				service.onGravar(obj, JSON.parse(objSalvo));
-			}
-			opts.dialogCadastro.dialog("close");
-		}
-		wrapper[this.opts.objectName] = obj;
-		var params = jQuery.param(wrapper);
-		
-		$.ajax({
-	    	type: "POST",
-	    	url: url,
-	    	data: params,
-	    	dataType: "text",
-	    	success: success,
-	    	error: this.errorHandler
-	   	});
-	}
-
 	function limparDadosListaModal() {
 		// limpa as permissões
 		permissoesTable.api().clear().draw();

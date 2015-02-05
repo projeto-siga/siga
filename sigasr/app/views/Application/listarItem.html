@@ -193,10 +193,6 @@
 				itemConfiguracao.descrItemConfiguracao, itemConfiguracao.descricaoSimilaridade, 'COLUNA_ACOES', ''];
 	}
 	
-	itemConfiguracaoService.onRowClick = function(itemConfiguracao) {
-		itemConfiguracaoService.editar(itemConfiguracao, 'Alterar Item de Configuração');
-	}
-
 	itemConfiguracaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
 		itemTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
@@ -221,54 +217,8 @@
 		atualizarModalItem();
 	}
 
-	/**
-	* Sobrescreve o método gravar para tratar a lista de Gestor e Fator de Multiplicação.
-	*/
-	itemConfiguracaoService.gravar = function() {
-		gravarAplicar(this, false);
-	}
-
-	/**
-	* Sobrescreve o método aplicar para tratar a lista de Gestor e Fator de Multiplicação.
-	*/
-	itemConfiguracaoService.aplicar = function() {
-		return gravarAplicar(this, true);
-	}
-
-	function gravarAplicar(baseService, isAplicar) {
-		if (!baseService.isValidForm())
-			return false;
-		
-		var obj = baseService.getObjetoParaGravar(),
-			url = baseService.opts.urlGravar,
-			wrapper = {},
-			success = function(objSalvo) {
-				if(baseService.onGravar) {
-					baseService.onGravar(obj, JSON.parse(objSalvo));
-				}
-				
-				if (isAplicar) {
-					baseService.formularioHelper.populateFromJson(JSON.parse(objSalvo));
-					
-					alert("Cadastro salvo com sucesso.");
-				}
-					
-				else
-					baseService.opts.dialogCadastro.dialog("close");
-
-			}
-			
-		wrapper[baseService.opts.objectName] = obj;
-		var params = jQuery.param(wrapper) + "&" + getListasAsString();
-		
-		$.ajax({
-	    	type: "POST",
-	    	url: url,
-	    	data: params,
-	    	dataType: "text",
-	    	success: success,
-	    	error: baseService.errorHandler
-	   	});
+	itemConfiguracaoService.serializar = function(obj) {
+		return BaseService.prototype.serializar.call(this, obj)  + "&" + getListasAsString();
 	}
 
 	function carregarDesignacoes(id) {

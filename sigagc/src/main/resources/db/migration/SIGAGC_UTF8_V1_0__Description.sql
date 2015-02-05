@@ -134,7 +134,7 @@ exception
 		null;
 			
 end;
- 
+/ 
 
 --------------------------------------------------------
 --  DDL for Table GC_ACESSO

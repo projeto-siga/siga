@@ -224,17 +224,18 @@
 								<!-- specific configuration for this execution -->
 								<configuration>
 									<!-- specify your SQL commands, can be all of the following configurations -->
-									<sqlCommand>CREATE USER corporativo IDENTIFIED BY corporativo
-										default tablespace USERS;
-										CREATE USER siga IDENTIFIED BY siga
-										default tablespace USERS;
-										CREATE USER sigawf IDENTIFIED BY
-										sigawf default tablespace USERS;
-										grant connect,resource to
-										SIGA;
+									<sqlCommand>
+										CREATE USER corporativo IDENTIFIED BY corporativo default tablespace USERS;
+										CREATE USER siga IDENTIFIED BY siga default tablespace USERS;
+										CREATE USER sigawf IDENTIFIED BY sigawf default tablespace USERS;
+										CREATE USER sigagc IDENTIFIED BY sigagc default tablespace USERS;
+										CREATE USER sigasr IDENTIFIED BY sigasr default tablespace USERS;
+										grant connect,resource to CORPORATIVO;
+										grant connect,resource to SIGA;
 										grant connect,resource to SIGAWF;
-										Grant connect,resource
-										to CORPORATIVO</sqlCommand>
+										grant connect,resource to SIGAGC;
+										grant connect,resource to SIGASR;
+									</sqlCommand>
 									<autocommit>true</autocommit>
 								</configuration>
 							</execution>

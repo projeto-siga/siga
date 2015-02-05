@@ -211,10 +211,11 @@ public class SrLista extends HistoricoSuporte {
 			SrConfiguracao confFiltro = new SrConfiguracao();
 			confFiltro.setLotacao(lotaTitular);
 			confFiltro.setDpPessoa(pess);
+			confFiltro.listaPrioridade = this;
 			confFiltro.setCpTipoConfiguracao(JPA.em().find(
 					CpTipoConfiguracao.class,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
-			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
+			return SrConfiguracao.listar(confFiltro);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

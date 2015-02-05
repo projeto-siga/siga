@@ -180,12 +180,6 @@ public class SrConfiguracao extends CpConfiguracao {
 			sb.append(" conf.atendente.idLotacaoIni = ");
 			sb.append(equipe.lotacao.getIdLotacaoIni());
 			
-			sb.append(" or conf.preAtendente.idLotacaoIni = ");
-			sb.append(equipe.lotacao.getIdLotacaoIni());
-			
-			sb.append(" or conf.posAtendente.idLotacaoIni = ");
-			sb.append(equipe.lotacao.getIdLotacaoIni());
-			
 			sb.append(" ) ");
 		}
 		

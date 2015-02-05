@@ -5,8 +5,7 @@
 </ul>
 <li><a href="@{Application.listarLista}">Priorização</a>
 <ul>
-<li><a href="@{Application.editarLista}">Cadastrar Lista</a></li>
-<li><a href="@{Application.listarLista}">Pesquisar Lista</a></li>
+<li><a href="@{Application.listarLista}">Lista de Prioridade</a></li>
 </ul>
 #{if exibirMenuAdministrar || exibirMenuConhecimentos}
 <li><a href="#">Administra&ccedil;&atilde;o</a>
@@ -25,6 +24,7 @@
 <li><a href="@{Application.listarConhecimento}">Conhecimento</a></li>
 </ul>
 </li>
+#{/if}
 #{/if}
 
 #{if exibirMenuRelatorios}

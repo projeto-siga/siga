@@ -181,7 +181,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			}
 			
 			if (srConf.listaPrioridade != null) {
-				srConf.listaPrioridade.getHisIdIni();
+				srConf.listaPrioridade.getListaAtual();
 			}
 			
 			if (srConf.pesquisaSatisfacao != null)

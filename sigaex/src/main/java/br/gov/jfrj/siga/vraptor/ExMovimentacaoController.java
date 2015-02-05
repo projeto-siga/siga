@@ -2388,8 +2388,8 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla="+this.getSigla());
 		
 	}
-
-	@Get("/app/expediente/incluir_cosignatario")
+	
+	@Get("/app/expediente/mov/incluir_cosignatario")
 	public void incluirCosignatario(String sigla) throws Exception {
 		this.setSigla(sigla);
 		buscarDocumento(true);
@@ -2402,8 +2402,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", mob);
 		result.include("cosignatarioSel", cosignatarioSel);
 	}
-
-	@Post("/app/expediente/incluir_cosignatario_gravar")
+	
+	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(String sigla, DpPessoaSelecao cosignatarioSel, String funcaoCosignatario, Integer postback)
 			throws Exception {
 		this.setPostback(postback);

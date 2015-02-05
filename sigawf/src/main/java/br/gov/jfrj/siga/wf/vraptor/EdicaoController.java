@@ -51,6 +51,13 @@ public class EdicaoController extends WfController {
 		result.use(Results.http()).body(res);
 	}
 
+	@Post
+	@Path("/app/edicao/xml_gravar")
+	public void xmlGravar(String xml) throws Exception {
+		String res = doDeployment(xml);
+		result.use(Results.http()).body(res);
+	}
+
 	@SuppressWarnings("unchecked")
 	private String doDeployment(String xml) {
 		ProcessDefinition processDefinition = ProcessDefinition

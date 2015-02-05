@@ -4,6 +4,26 @@
 	<div class="gt-bd gt-cols clearfix" ng-app="wfDesignApp"
 		ng-controller="wfDesignCtrl" ng-init="carregar('${procedimento}')">
 		<div class="gt-content clearfix">
+		
+			<h2 class="gt-form-head">Submeter XML</h2>
+
+			<form action="/sigawf/app/edicao/xml_gravar" method="post">
+			<div class="gt-form gt-content-box"
+				style="margin-bottom: 10px !important;">
+				
+				<div class="gt-form-row gt-width-100">
+					<div class="gt-left-col gt-width-33">
+						<label>Nome do procedimento</label> <textarea
+							name="xml" class="gt-form-text"></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="gt-form-row">
+				<input type="submit" class="gt-btn-medium" value="Salvar" />
+			</div>
+			</form>
+		
+		
 
 			<h2 class="gt-form-head">Definição de Procedimento</h2>
 			

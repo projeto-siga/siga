@@ -99,13 +99,12 @@
         <servlet-name>WfService</servlet-name>
         <url-pattern>/servicos/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+		<servlet-name>UploadServlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.wf.servlet.UploadServlet</servlet-class>
+	</servlet>
 	
-	<!-- Inicio de WorkFlow -->
-    <servlet>		
-        <servlet-name>WfService</servlet-name>		
-        <servlet-class>br.gov.jfrj.siga.wf.service.impl.WfServiceImpl</servlet-class>		
-    </servlet>
-
 	<servlet-mapping>
 		<servlet-name>UploadServlet</servlet-name>
 		<url-pattern>/upload</url-pattern>

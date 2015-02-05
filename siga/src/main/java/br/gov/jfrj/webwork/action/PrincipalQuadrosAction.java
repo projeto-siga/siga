@@ -28,7 +28,7 @@ public class PrincipalQuadrosAction extends SigaActionSupport {
 		this.modulos = new HashMap<String, String>();
 		this.modulos.put("sigaex", "/sigaex/expediente/doc/gadget.action?idTpFormaDoc=1&apenasQuadro=true");
 		this.modulos.put("processos", "/sigaex/expediente/doc/gadget.action?idTpFormaDoc=2");
-		this.modulos.put("sigawf", "/sigawf/inbox.action");
+		this.modulos.put("sigawf", "/sigawf/app/inbox");
 		this.modulos.put("sigasr", "/sigasr/solicitacao/gadget");
 		this.modulos.put("sigagc", "/sigagc/app/gadget");
 	}

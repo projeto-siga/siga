@@ -670,16 +670,15 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		return filhoSet;
 	}
 	
-	public List<SrConfiguracao> getDesignacoesAtivas() {
-		List<SrConfiguracao> designacoesAtivas = new ArrayList<SrConfiguracao>();
+	public Collection<SrConfiguracao> getDesignacoesAtivas() {
+		Map<Long, SrConfiguracao> listaCompleta = new HashMap<Long, SrConfiguracao>();
+		if (this.itemInicial != null)
+			for (SrItemConfiguracao itenConf : getHistoricoItemConfiguracao())
+				if (itenConf.designacoesSet != null)
+					for (SrConfiguracao d : itenConf.designacoesSet)
+						if (d.isAtivo() && d.isDesignacao())
+							listaCompleta.put(d.getId(), d);
 		
-		if (this.designacoesSet != null) {
-			for (SrConfiguracao d : this.designacoesSet) {
-				if (d.isAtivo())
-					designacoesAtivas.add(d);
-			}
-		}
-		
-		return designacoesAtivas;
+		return listaCompleta.values();
 	}
 }

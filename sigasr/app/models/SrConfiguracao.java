@@ -217,6 +217,13 @@ public class SrConfiguracao extends CpConfiguracao {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		salvar();
 	}
+	
+	public boolean isDesignacao() {
+		if (this.getCpTipoConfiguracao() != null && this.getCpTipoConfiguracao().getIdTpConfiguracao() != null)
+			return this.getCpTipoConfiguracao().getIdTpConfiguracao().equals(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		else
+			return false;
+	}
 
 	public void salvarComoInclusaoAutomaticaLista(SrLista srLista) throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
@@ -253,7 +260,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
 		
-		if (equipe != null) {
+		if (equipe != null && equipe.lotacao != null && equipe.lotacao.getIdLotacaoIni() != null) {
 			sb.append(" and ( ");
 			
 			sb.append(" conf.atendente.idLotacaoIni = ");

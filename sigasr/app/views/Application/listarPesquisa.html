@@ -183,7 +183,7 @@
 	}
 	
 	pesquisaService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + paramsPerguntas();
+		return BaseService.prototype.serializar.call(this, obj)  + "&" + pesquisaService.paramsPerguntas();
 	}
 	
 	pesquisaService.paramsPerguntas = function() {

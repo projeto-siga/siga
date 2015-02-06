@@ -111,7 +111,32 @@
 	}
 
 	equipeService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + getListasAsString();
+		return BaseService.prototype.serializar.call(this, obj)  + "&" + equipeService.getListasAsString();
+	}
+
+	equipeService.getListasAsString = function() {
+		var params = '',
+		dataAux = new Date();
+	
+		// Percorre lista de Exceções
+		excecoesTable.api().rows().indexes().each(function (i) {
+			var rowValues = excecoesTable.api().row(i).data();
+			
+			// Atualiza a string serializada
+			if (rowValues) {
+				if (rowValues[0] == 0)
+					params += '&equipe.excecaoHorarioSet[' + i + '].dataEspecifica=' + rowValues[1];
+				else
+					params += '&equipe.excecaoHorarioSet[' + i + '].diaSemana=' + rowValues[0];
+				
+				params += '&equipe.excecaoHorarioSet[' + i + '].strHoraIni=' + atualizaHora(dataAux, rowValues[3]).toJSON();
+				params += '&equipe.excecaoHorarioSet[' + i + '].strHoraFim=' + atualizaHora(dataAux, rowValues[4]).toJSON();
+				params += '&equipe.excecaoHorarioSet[' + i + '].strInterIni=' + atualizaHora(dataAux, rowValues[5]).toJSON();
+				params += '&equipe.excecaoHorarioSet[' + i + '].strInterFim=' + atualizaHora(dataAux, rowValues[6]).toJSON();
+			}
+		});
+		
+		return params;
 	}
 
 	/**

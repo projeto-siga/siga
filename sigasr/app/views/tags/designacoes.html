@@ -200,7 +200,7 @@ altura:'200', largura:'450'}
 	designacaoService.duplicarButton = '<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>';
 
 	designacaoService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + getListasAsString();
+		return BaseService.prototype.serializar.call(this, obj)  + "&" + designacaoService.getListasAsString();
 	}
 	
 	designacaoService.onGravar = function(obj, objSalvo) {
@@ -258,6 +258,30 @@ altura:'200', largura:'450'}
 			}
 		}
 	}
+
+	designacaoService.getListasAsString = function () {
+		var params = '';
+	
+		// Percorre lista de Itens de Configuração
+		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
+			var rowValues = itemConfiguracaoTable.api().row(i).data();
+			
+			// Atualiza a string serializada
+			if (rowValues)
+	        	params += '&designacao.itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0];
+		});
+		
+		// Percorre lista de Ações
+		acaoTable.api().rows().indexes().each(function (i) {
+			var rowValues = acaoTable.api().row(i).data();
+			
+			// Atualiza a string serializada
+			if (rowValues)
+				params += '&designacao.acoesSet[' + i + '].idAcao=' + rowValues[0];
+		});
+		
+		return params;
+    }
 
 	function afterGravarDesignacao(tr, designacao) {
 		var acoes = tr.find('td.acoes');
@@ -383,28 +407,4 @@ altura:'200', largura:'450'}
 	function fecharModalErroAoSalvar() {
 		$("#erroAoSalvar_dialog").dialog("close");
 	}
-	
-	function getListasAsString() {
-		var params = '';
-	
-		// Percorre lista de Itens de Configuração
-		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = itemConfiguracaoTable.api().row(i).data();
-			
-			// Atualiza a string serializada
-			if (rowValues)
-	        	params += '&designacao.itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0];
-		});
-		
-		// Percorre lista de Ações
-		acaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = acaoTable.api().row(i).data();
-			
-			// Atualiza a string serializada
-			if (rowValues)
-				params += '&designacao.acoesSet[' + i + '].idAcao=' + rowValues[0];
-		});
-		
-		return params;
-    };
 </script>

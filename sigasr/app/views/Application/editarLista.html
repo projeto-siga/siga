@@ -455,7 +455,7 @@
           			$("#funcaoConfianca_descricao").val(),
           			atualizaTipoPermissaoJson(),			//16
           			$("#idConfiguracao").val(),				//17    
-          			getListasAsString(),					//18
+          			getListasPermissaoAsString(),			//18
           			getDescricaoTipoPermissao(),			//19
           			''										//20
           			];
@@ -557,7 +557,7 @@
    		return tipoPermissaoJson;
    	}
 
-    function getListasAsString() {
+    function getListasPermissaoAsString() {
 		var params = '';
 	
 		// Percorre listas de TipoPermissao

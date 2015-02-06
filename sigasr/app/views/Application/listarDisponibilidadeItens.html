@@ -53,8 +53,7 @@
 <div id="templateDisponibilidadeItem" style="display:none">
 	{for orgao in orgaos}
 		<div class='orgao' data-sigla-orgao="!{orgao.sigla}" data-item-configuracao-id="!{itemConfiguracao.id}" onclick="disponibilidadeService.alterarDisponibilidade('!{orgao.sigla}', !{itemConfiguracao.hisIdIni})">
-			<img src="" src-original="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}">
-			<img>
+			<img src="" src-original="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}"/>
 		</div>
   	{/for}
 </div>

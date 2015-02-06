@@ -144,10 +144,10 @@
 					</div>
 								<c:set var="primeiroMobil" value="${false}" />
 							</c:if>
-						<c:if test="%{(not #attr.m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
-						<div id="${m.sigla}" depende=";wf;" />
-						<!--ajax:${doc.codigo}-${i}-->
-						<!--/ajax:${doc.codigo}-${i}-->
+						<c:if test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
+							<div id="${m.sigla}" depende=";wf;" />
+							<!--ajax:${doc.codigo}-${i}-->
+							<!--/ajax:${doc.codigo}-${i}-->
 				</div>
 					</c:if>
 
@@ -694,9 +694,8 @@
 					<b>${docVO.nmNivelAcesso}</b>
 					<c:if test="${not empty docVO.listaDeAcessos}">
 						<c:choose>
-							<c:when test="%{#attr.docVO.listaDeAcessos.size() eq 1}">
-								<c:forEach var="acesso" items="${docVO.listaDeAcessos}"
-									varStatus="loop">
+							<c:when test="${docVO.listaDeAcessos.size() eq 1}">
+								<c:forEach var="acesso" items="${docVO.listaDeAcessos}" varStatus="loop">
 									<c:choose>
 										<c:when test="${acesso eq 'PUBLICO'}">
 										(Público)
@@ -709,8 +708,7 @@
 							</c:when>
 							<c:otherwise>
 								<ul>
-									<c:forEach var="acesso" items="${docVO.listaDeAcessos}"
-										varStatus="loop">
+									<c:forEach var="acesso" items="${docVO.listaDeAcessos}" varStatus="loop">
 										<li>${acesso.sigla}</li>
 									</c:forEach>
 								</ul>

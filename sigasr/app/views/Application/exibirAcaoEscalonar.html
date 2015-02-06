@@ -15,26 +15,26 @@ function carregarLotacaoDaAcao(){
 
 #{if solicitacao.itemConfiguracao && acoesEAtendentes} 
 	<div class="gt-form-row gt-width-66">
-	<label>Ação</label>
+	<label>Ação</label>	
 		#{select name:'acao.idAcao', value:solicitacao.acao?.idAcao, onchange:"carregarLotacaoDaAcao();", id:'selectAcao'}
-			#{list items:acoesEAtendentes.keySet(), as:'acao' }
-				#{option acao.idAcao} ${acao.tituloAcao} (${acoesEAtendentes.get(acao).atendente.sigla}) #{/option}					 
+			#{list items:acoesEAtendentes, as:'tarefa' }
+				#{option tarefa.acao.idAcao} ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})#{/option}					 
 			#{/list}
-		#{/select}  
+		#{/select} 
 	 <span style="color: red">#{error 'solicitacao.acao' /}</span>
 	</div>
 	<div>
 		<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
 				ja que acima no select nao tem como "esconder" essa informacao -->
-		#{list items:acoesEAtendentes.keySet(), as:'acaoAtend' }
-			<span id="idDesignacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).idConfiguracao}</span>
-			<span id="lotacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).atendente.siglaCompleta} 
-								- ${acoesEAtendentes.get(acaoAtend).atendente.descricao.raw()}</span>
-			<span id="idLotacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).atendente.idLotacao}</span>
-			#{if acaoAtend_isFirst} 
-				#{set lotacaoDesignada : acoesEAtendentes.get(acaoAtend).atendente.siglaCompleta + ' - ' + acoesEAtendentes.get(acaoAtend).atendente.descricao /} 
-				#{set idLotaAtendente : acoesEAtendentes.get(acaoAtend).atendente.idLotacao /}
-				#{set idDesignacao : acoesEAtendentes.get(acaoAtend).idConfiguracao /}
+		#{list items:acoesEAtendentes, as:'t' }
+			<span id="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
+			<span id="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
+								- ${t.conf.atendente.descricao.raw()}</span>
+			<span id="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.idLotacao}</span>
+			#{if t_isFirst} 
+				#{set lotacaoDesignada : t.conf.atendente.siglaCompleta + ' - ' + t.conf.atendente.descricao /}  
+				#{set idLotaAtendente : t.conf.atendente.idLotacao /}
+				#{set idDesignacao : t.conf.idConfiguracao /}
 			#{/if}
 		#{/list}
 

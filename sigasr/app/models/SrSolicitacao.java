@@ -281,8 +281,42 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		public void setConf(SrConfiguracao conf) {
 			this.conf = conf;
+		}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((acao == null) ? 0 : acao.hashCode());
+			result = prime * result + ((conf == null) ? 0 : conf.atendente.hashCode());
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			SrTarefa other = (SrTarefa) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (acao == null) {
+				if (other.acao != null)
+					return false;
+			} else if (!acao.equals(other.acao))
+				return false;
+			if (conf == null) {
+				if (other.conf != null)
+					return false;
+			} else if (!conf.atendente.equals(other.conf.atendente))
+				return false;
+			return true;
+		}
+		private SrSolicitacao getOuterType() {
+			return SrSolicitacao.this;
 		}	
-		
 	}
 	
 	@Override
@@ -1205,26 +1239,30 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return null;
 
 		List<SrTarefa> listaFinal = new ArrayList<SrTarefa>();	
+		Set<SrTarefa> setTerafa = new HashSet<SrTarefa>();
 		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarConfiguracoes();
 		SrTarefa tarefa = null;
 
 		for (SrAcao a : SrAcao.listar(false)) {
-			if (!a.isEspecifico() || a.idAcao != 543)
+			if (!a.isEspecifico())
 				continue;
 			for (SrConfiguracao c : listaPessoasAConsiderar) {
 				c.itemConfiguracaoFiltro = itemConfiguracao;
 				c.acaoFiltro = a;
-				
-				SrConfiguracao conf = SrConfiguracao.buscarDesignacao(c);
-				if (conf != null) {
-					tarefa = this.new SrTarefa();
-					tarefa.acao = a;
-					tarefa.conf = conf;
-					listaFinal.add(tarefa);
-				}
+				c.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+
+				List<SrConfiguracao> confs = SrConfiguracao.listar(c, new int[] { SrConfiguracaoBL.ATENDENTE});
+				if (confs.size() > 0) 
+					for (SrConfiguracao conf : confs) {
+						tarefa = this.new SrTarefa();
+						tarefa.acao = a;
+						tarefa.conf = conf;
+						setTerafa.add(tarefa);
+					}
 			}
 		}
-
+		listaFinal.addAll(setTerafa);
 		return listaFinal;
 	}
 	

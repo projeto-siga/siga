@@ -18,8 +18,8 @@
 			</li>
 		</c:if>
 
-		<li><ww:url id="url" action="transferir_lote"
-				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+		<li>
+			<siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/transferir_lote"
 				texto="Transferir em lote" />
 		</li>
 		<li><ww:url id="url" action="receber_lote"

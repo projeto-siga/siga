@@ -1882,7 +1882,9 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, doc.toString());
 	}
 
-	public String aExibir() throws Exception {
+	@Get("app/expediente/mov/exibir")
+	public void aExibir(boolean popup, Long id) throws Exception {
+		this.setId(id);
 		buscarDocumento(true);
 
 		if (getId() == null)
@@ -1891,36 +1893,24 @@ public class ExMovimentacaoController extends ExController {
 		mov = dao().consultar(getId(), ExMovimentacao.class, false);
 
 		setEnderecoAutenticacao(SigaExProperties.getEnderecoAutenticidadeDocs());
-
-		return Action.SUCCESS;
+		
+		result.include("id", this.getId());
+		result.include("doc", this.getDoc());
+		result.include("mov", this.getMov());
+		result.include("enderecoAutenticacao", this.getEnderecoAutenticacao());
 	}
 
-	public String aGerarProtocolo() throws Exception {
+	
+	@Post("app/expediente/mov/protocolo_transf")
+	public void aGerarProtocolo(String movId, Long pessoa, String dt, List<String> itens, String campoData, String campoPara, String campoDe) throws Exception {
+		this.setDtMovString(dt);
+//		this.setItens(itens);
+		this.setMov(mov);
 		// buscarDocumento(true);
 		lerForm(mov);
-
 		final Pattern p = Pattern.compile("chk_([0-9]+)");
-
-		final ArrayList al = new ArrayList();
-
-		try {
-			for (final String s : getPar().keySet()) {
-				if (s.startsWith("chk_") && param(s).equals("true")) {
-					final Matcher m = p.matcher(s);
-					if (!m.find())
-						throw new AplicacaoException(
-								"Não foi possível ler a Id do documento e o número da via.");
-					final ExMobil mob = dao().consultar(
-							Long.valueOf(m.group(1)), ExMobil.class, false);
-					final Object[] ao = { mob.doc(),
-							mob.getUltimaMovimentacaoNaoCancelada() };
-					al.add(ao);
-				}
-			}
-		} catch (final Exception e) {
-			throw e;
-		}
-
+		ArrayList al = criarListaDocumentos(itens);
+		this.setMov(criarMov(movId));
 		Object[] arr = al.toArray();
 
 		Arrays.sort(arr, new Comparator() {
@@ -1970,9 +1960,43 @@ public class ExMovimentacaoController extends ExController {
 			al.add(arr[k]);
 		setItens(al);
 
-		return Action.SUCCESS;
+		
+		result.include("campoDe", campoDe);
+		result.include("campoPara", campoPara);
+		result.include("campoData", campoData);
+		
+		result.include("itens", this.getItens());
+		result.include("cadastrante", this.getCadastrante());
+		result.include("mov", this.getMov());
+		result.include("lotaTitular", this.getLotaTitular());
 	}
 
+	private ArrayList criarListaDocumentos(List<String> itens) {
+		ArrayList listarDocumentos = new ArrayList();
+
+		for (String idMubString : itens) {
+			try {
+				Long idMob = Long.parseLong(idMubString);
+				final ExMobil mob = dao().consultar(idMob, ExMobil.class, false);
+				final Object[] ao = { mob.doc(),  mob.getUltimaMovimentacaoNaoCancelada() };
+				listarDocumentos.add(ao);
+			} catch (NumberFormatException nfe) {
+				System.out.println(MessageFormat.format("{0} nao pode ser convertido para Long", idMubString));
+			}
+		}
+		return listarDocumentos;
+	}
+	
+	private ExMovimentacao criarMov(String movIdString) {
+			try {
+				Long idMov = Long.parseLong(movIdString);
+				final ExMovimentacao mov = dao.consultar(idMov, ExMovimentacao.class, false);
+			} catch (NumberFormatException nfe) {
+				System.out.println(MessageFormat.format("{0} nao pode ser convertido para Long", movIdString));
+			}
+		return mov;
+	}
+	
 	@Get("app/expediente/mov/protocolo_unitario")
 	public void protocolo(String sigla, Long id) throws Exception {
 		setId(id);
@@ -1991,8 +2015,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaTitular", getLotaTitular());
 	}
 
-	public String aGerarProtocoloArq() throws Exception {
-		// buscarDocumento(true);
+	public void aGerarProtocoloArq() throws Exception {
 		mov = null;
 
 		final DpPessoa pes;
@@ -2075,13 +2098,8 @@ public class ExMovimentacaoController extends ExController {
 		for (int k = 0; k < arr.length; k++)
 			al.add(arr[k]);
 		setItens(al);
-
-		return Action.SUCCESS;
 	}
-
-	// public String getViaChar() {
-	// return "" + (Character.toChars(getNumVia().intValue() + 64))[0];
-	// }
+	
 	@Get("app/expediente/mov/juntar")
 	public void juntar(String sigla) throws Exception {
 		this.sigla = sigla;
@@ -2341,7 +2359,7 @@ public class ExMovimentacaoController extends ExController {
 		
 	}
 
-	@Get("/app/expediente/incluir_cosignatario")
+	@Get("/app/expediente/mov/incluir_cosignatario")
 	public void incluirCosignatario(String sigla) throws Exception {
 		this.setSigla(sigla);
 		buscarDocumento(true);
@@ -2355,7 +2373,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("cosignatarioSel", cosignatarioSel);
 	}
 
-	@Post("/app/expediente/incluir_cosignatario_gravar")
+	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(String sigla, DpPessoaSelecao cosignatarioSel, String funcaoCosignatario, Integer postback)
 			throws Exception {
 		this.setPostback(postback);
@@ -3455,8 +3473,9 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla="+this.getSigla());
 		
 	}
-
-	public String aTransferirLote() throws Exception {
+	
+	@Get("app/expediente/mov/transferir_lote")
+	public void aTransferirLote() throws Exception {
 		Iterator<ExMobil> provItens = dao().consultarParaTransferirEmLote(
 				getLotaTitular());
 		setItens(new ArrayList<ExMobil>());
@@ -3465,47 +3484,40 @@ public class ExMovimentacaoController extends ExController {
 			ExMobil m = provItens.next();
 			getItens().add(m);
 		}
-
-		return Action.SUCCESS;
+		
+		result.include("listaTipoResp", this.getListaTipoResp());
+		result.include("titular", this.getTitular());
+		result.include("subscritorSel", this.getSubscritorSel());
+		result.include("titularSel", this.getTitularSel());
+		result.include("nmFuncaoSubscritor", this.getNmFuncaoSubscritor());
+		result.include("lotaResponsavelSel", this.getLotaResponsavelSel());
+		result.include("cpOrgaoSel", this.getCpOrgaoSel());
+		result.include("responsavelSel", this.getResponsavelSel());
+		result.include("tiposDespacho", this.getTiposDespacho());
+		result.include("itens", this.getItens());
 	}
 
-	public String aTransferirLote_new() throws Exception {
-		final ExDocumentoDaoFiltro flt = new ExDocumentoDaoFiltro();
-		DpLotacao lotaFiltro = new DpLotacao();
-		lotaFiltro.setIdLotacaoIni(getLotaTitular().getIdLotacaoIni());
-		List<DpLotacao> lotacoesEquivalentes = dao()
-				.consultar(lotaFiltro, null);
-
-		LinkedList provItens = new LinkedList();
-		List provList;
-
-		for (DpLotacao lota : lotacoesEquivalentes) {
-			flt.setUltMovLotaRespSelId(lota.getId());
-			// flt.setUltMovRespSelId(getCadastrante().getIdPessoa());
-			flt.setUltMovIdEstadoDoc(ExEstadoDoc.ESTADO_DOC_EM_ANDAMENTO);
-
-			// setTamanho(docDao.consultarQuantidadePorFiltro(flt));
-
-			provList = dao().consultarPorFiltro(flt);
-			if (provList != null)
-				provItens.addAll(provList);
-
-			flt.setUltMovIdEstadoDoc(ExEstadoDoc.ESTADO_DOC_PENDENTE_DE_ASSINATURA);
-
-			provList = dao().consultarPorFiltro(flt);
-			if (provList != null)
-				provItens.addAll(provList);
-		}
-
-		setItens(provItens);
-
-		return Action.SUCCESS;
-	}
-
-	public String aTransferirLoteGravar() throws Exception {
-
+	@Post("app/expediente/mov/transferir_lote_gravar")
+	public void aTransferirLoteGravar(String dtMovString, DpPessoaSelecao subscritorSel, boolean substituicao, DpPessoaSelecao titularSel, String nmFuncaoSubscritor, 
+			int tipoResponsavel, DpLotacaoSelecao lotaResponsavelSel, DpPessoaSelecao lotaResponsavel, CpOrgaoSelecao cpOrgaoSel,
+			String obsOrgao, Long tpdall, String txtall, boolean checkall, String campoDe, String campoPara, String campoData) throws Exception {
+		this.setDtMovString(dtMovString);
+		this.setSubscritorSel(subscritorSel);
+		this.setSubstituicao(substituicao);
+		this.setTitularSel(titularSel);
+		this.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+		this.setTipoResponsavel(tipoResponsavel);
+		this.setLotaResponsavelSel(lotaResponsavelSel);
+		this.setResponsavelSel(lotaResponsavel);
+		this.setCpOrgaoSel(cpOrgaoSel);
+		this.setObsOrgao(obsOrgao);
+		if (this.getLotaResponsavelSel() == null)
+			this.setLotaResponsavelSel(new DpLotacaoSelecao());
+		if (this.getResponsavelSel() == null)
+				this.setResponsavelSel(new DpPessoaSelecao());
+		if (this.getLotaResponsavelSel() == null)
+				this.setCpOrgaoSel(new CpOrgaoSelecao());
 		lerForm(mov);
-
 		final Pattern p = Pattern.compile("chk_([0-9]+)");
 		boolean despaUnico = false;
 		final Date dt = dao().dt();
@@ -3518,11 +3530,11 @@ public class ExMovimentacaoController extends ExController {
 		if (mov.getResp() == null && mov.getLotaResp() == null)
 			throw new AplicacaoException(
 					"Não foi definido o destino da transferência.");
-		if (param("tpdall") != null && paramLong("tpdall") != 0)
+		if (tpdall != null && tpdall != 0)
 			despaUnico = true;
 
 		AplicacaoException msgErroNivelAcessoso = null;
-
+		
 		for (final String s : getPar().keySet()) {
 			try {
 				if (s.startsWith("chk_") && param(s).equals("true")) {
@@ -3531,7 +3543,7 @@ public class ExMovimentacaoController extends ExController {
 						idTpDespacho = Long.valueOf(param(s.replace("chk_",
 								"tpd_")));
 					else
-						idTpDespacho = Long.valueOf(param("tpdall"));
+						idTpDespacho = tpdall;
 
 					ExTipoDespacho tpd = null;
 					if (idTpDespacho != null && idTpDespacho > 0)
@@ -3560,7 +3572,7 @@ public class ExMovimentacaoController extends ExController {
 						if (!despaUnico)
 							txt = param(s.replace("chk_", "txt_"));
 						else
-							txt = param("txtall");
+							txt = txtall;
 						if (txt.equals(""))
 							txt = null;
 
@@ -3635,6 +3647,43 @@ public class ExMovimentacaoController extends ExController {
 		arrays.add(check);
 
 		setItens(arrays);
+		
+		
+		result.include("cadastrante", this.getCadastrante());
+		result.include("mov", this.getMov());
+		result.include("itens", this.getItens());
+		result.include("lotaTitular", this.getLotaTitular());
+	}
+	
+	public String aTransferirLote_new() throws Exception {
+		final ExDocumentoDaoFiltro flt = new ExDocumentoDaoFiltro();
+		DpLotacao lotaFiltro = new DpLotacao();
+		lotaFiltro.setIdLotacaoIni(getLotaTitular().getIdLotacaoIni());
+		List<DpLotacao> lotacoesEquivalentes = dao()
+				.consultar(lotaFiltro, null);
+
+		LinkedList provItens = new LinkedList();
+		List provList;
+
+		for (DpLotacao lota : lotacoesEquivalentes) {
+			flt.setUltMovLotaRespSelId(lota.getId());
+			// flt.setUltMovRespSelId(getCadastrante().getIdPessoa());
+			flt.setUltMovIdEstadoDoc(ExEstadoDoc.ESTADO_DOC_EM_ANDAMENTO);
+
+			// setTamanho(docDao.consultarQuantidadePorFiltro(flt));
+
+			provList = dao().consultarPorFiltro(flt);
+			if (provList != null)
+				provItens.addAll(provList);
+
+			flt.setUltMovIdEstadoDoc(ExEstadoDoc.ESTADO_DOC_PENDENTE_DE_ASSINATURA);
+
+			provList = dao().consultarPorFiltro(flt);
+			if (provList != null)
+				provItens.addAll(provList);
+		}
+
+		setItens(provItens);
 
 		return Action.SUCCESS;
 	}

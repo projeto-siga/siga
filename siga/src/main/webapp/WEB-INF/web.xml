@@ -165,7 +165,7 @@
 		</web-resource-collection>
         <web-resource-collection>
             <web-resource-name>usuario</web-resource-name>
-            <url-pattern>/usuario/*</url-pattern>
+            <url-pattern>/app/usuario/*</url-pattern>
         </web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>pagina_vazia</web-resource-name>

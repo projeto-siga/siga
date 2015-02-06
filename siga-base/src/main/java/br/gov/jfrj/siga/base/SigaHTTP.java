@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,19 +58,26 @@ public class SigaHTTP {
 	private final String JSESSIONID_PREFIX = "JSESSIONID=";
 	private final String SET_COOKIE = "set-cookie";
 	private final String HTTP_POST_BINDING_REQUEST = "HTTP Post Binding (Request)";
+	private final String doubleQuotes = "\"";
+	private static final int MAX_RETRY = 2; 
+	private int retryCount = 0;
 	private String idp;
 
 	/**
-	 * @param URL
+	 * @param URL pode ser a url completa ou relativa.
 	 * @param request (se for modulo play, setar pra null)
 	 * @param cookieValue (necessario apenas nos modulos play)
 	 */
 	public String get(String URL, HttpServletRequest request, String cookieValue) {
-		String html = "";
-		
 		if (URL.startsWith("/"))
 			URL = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + URL;
 		
+		return handleAuthentication(URL, request, cookieValue);
+	}
+
+
+	private String handleAuthentication(String URL, HttpServletRequest request, String cookieValue) {
+		String html = "";
 		try{
 			 // Efetua o request para o Service Provider (módulo)
 			 Request req = Request.Get(URL);
@@ -105,7 +111,7 @@ public class SigaHTTP {
 				String idpURL = getAttributeActionFromHtml(html);
 
 				// Faz um novo POST para o IDP com o SAMLRequest como parametro e utilizando o sessionID do IDP
-				html = Request.Post(idpURL).addHeader(COOKIE, JSESSIONID_PREFIX+getIdp(request)).bodyForm(Form.form().add(SAMLRequest, SAMLRequestValue).build()).execute().returnContent().toString();
+				html = Request.Post(idpURL).addHeader(COOKIE, JSESSIONID_PREFIX+doubleQuotes+getIdp(request)+doubleQuotes).bodyForm(Form.form().add(SAMLRequest, SAMLRequestValue).build()).execute().returnContent().toString();
 
 				// Extrai o valor do SAMLResponse
 				// Caso o SAMLResponse não esteja disponível aqui, é porque o JSESSIONID utilizado não foi o do IDP.
@@ -113,19 +119,23 @@ public class SigaHTTP {
 				
 				// Faz um POST para o SP com o atributo SAMLResponse utilizando o sessionid do primeiro GET
 				// O retorno é discartado pois o resultado é um 302.
-				Request.Post(URL).addHeader(COOKIE, JSESSIONID_PREFIX+setCookie).
+				Request.Post(URL).addHeader(COOKIE, JSESSIONID_PREFIX+doubleQuotes+setCookie+doubleQuotes).
 						bodyForm(Form.form().add(SAMLResponse, SAMLResponseValue).build()).execute().discardContent();
 				
 				// Agora que estamos autenticado efetua o GET para página desejada.
-				html = Request.Get(URL).addHeader(COOKIE, JSESSIONID_PREFIX+setCookie).execute().returnContent().toString();
+				html = Request.Get(URL).addHeader(COOKIE, JSESSIONID_PREFIX+doubleQuotes+setCookie+doubleQuotes).execute().returnContent().toString();
 				if (html.contains(HTTP_POST_BINDING_REQUEST)){
-					log.info("Alguma coisa falhou na autenticação!: "+idpURL);
+					log.info("Alguma coisa falhou na autenticacao.");
+					if (retryCount <= MAX_RETRY){
+						log.info("tentando novamente o processo de autenticacao...");
+						this.retryCount ++;
+						handleAuthentication(URL, request, cookieValue);
+					}
 				}
 			}
 		}catch(Exception io){
 			io.printStackTrace();
 		}
-
 		return html;
 	}
 
@@ -238,40 +248,4 @@ public class SigaHTTP {
 		}
 
 	}
-
-	
-	// TODO: commit f405c51011d663e5865351ddcf1147b495fb69f5
-//	public static String get(String URL, HashMap<String, String> header, Integer timeout, String payload) throws AplicacaoException {
-//	 
-//	 		try {
-//	 
-//	 			HttpURLConnection conn = (HttpURLConnection) new URL(URL)
-//	 					.openConnection();
-//				
-//				if (timeout != null) {
-//					conn.setConnectTimeout(timeout);
-//					conn.setReadTimeout(timeout);
-//				}
-//				
-//	 			//conn.setInstanceFollowRedirects(true);
-//	 
-//				if (header != null) {
-//					for (String s : header.keySet()) {
-//							conn.setRequestProperty(s, header.get(s));
-//			}
-//				}	
-//	 
-//	 			System.setProperty("http.keepAlive", "false");
-//				
-//				if (payload != null) {
-//					byte ab[] = payload.getBytes("UTF-8");
-//					conn.setRequestMethod("POST");
-//					// Send post request
-//					conn.setDoOutput(true);
-//					OutputStream os = conn.getOutputStream();
-//					os.write(ab);
-//					os.flush();
-//					os.close();
-//				}
-	 
 }

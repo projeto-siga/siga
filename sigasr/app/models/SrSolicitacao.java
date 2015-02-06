@@ -1568,9 +1568,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			Long marcador = 0L;
 			SrMovimentacao movMarca = null;
 
-			int pendencias = 0;
-			Date dtFimPendenciaMaisLonge = null;
-			SrMovimentacao movPendencia = null;
+			List<SrMovimentacao> pendencias = new ArrayList<SrMovimentacao>();
 
 			for (SrMovimentacao mov : movs) {
 				Long t = mov.tipoMov.idTipoMov;
@@ -1601,14 +1599,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					movMarca = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
-					pendencias++;
-					if (mov.dtAgenda != null && (dtFimPendenciaMaisLonge == null || mov.dtAgenda.after(dtFimPendenciaMaisLonge)))
-						dtFimPendenciaMaisLonge = mov.dtAgenda;
-					movPendencia = mov;
+					if (mov.getDtFimMov() == null || mov.getDtFimMov().after(new Date()))
+						pendencias.add(mov);
 				}
-				if (t == TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
-					pendencias--;
-				}
+
 				if (t == TIPO_MOVIMENTACAO_ANDAMENTO || t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO) {
 					movMarca = mov;
 				}
@@ -1627,31 +1621,31 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL, movMarca.dtIniMov,
 						null, movMarca.atendente, movMarca.lotaAtendente);
 			
-			if (pendencias > 0){
-				if (isRascunho())
-					acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
-							cadastrante, lotaCadastrante);
-				else acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
-						movPendencia.atendente, movPendencia.lotaAtendente);
-			}
-
 			if (marcador != 0L)
 				acrescentarMarca(set, marcador, movMarca.dtIniMov, null,
 						movMarca.atendente, movMarca.lotaAtendente);
 
-			if (pendencias > 0) {
+			
+			if (pendencias.size() > 0) {
+				SrMovimentacao ultimaPendencia = pendencias.get(pendencias.size()-1);
+				Date dtFimPendenciaMaisLonge = null;
+				for (SrMovimentacao pendencia : pendencias){
+					if (pendencia.dtAgenda != null && (dtFimPendenciaMaisLonge == null || pendencia.dtAgenda.after(dtFimPendenciaMaisLonge)))
+						dtFimPendenciaMaisLonge = pendencia.dtAgenda;
+				}
 				if (isRascunho())
 					acrescentarMarca(set,
 							CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
-							movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
+							ultimaPendencia.dtIniMov, dtFimPendenciaMaisLonge,
 							cadastrante, lotaCadastrante);
 				else
 					acrescentarMarca(set,
 							CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
-							movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
-							movPendencia.atendente, movPendencia.lotaAtendente);
+							ultimaPendencia.dtIniMov, dtFimPendenciaMaisLonge,
+							ultimaPendencia.atendente, ultimaPendencia.lotaAtendente);
 			}
 
+			
 			if (!isFechado() && !isCancelado()) {
 				acrescentarMarca(set,
 						CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
@@ -2079,8 +2073,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
-		movimentacao.descrMovimentacao = detalheMotivo;
 		movimentacao.motivoPendencia = motivo;
+		movimentacao.descrMovimentacao = motivo.descrTipoMotivoPendencia;
+		if (detalheMotivo != null && !detalheMotivo.trim().equals(""))
+			movimentacao.descrMovimentacao += " | " + detalheMotivo;
+		if (movimentacao.dtAgenda != null)
+			movimentacao.descrMovimentacao += " | Fim previsto: " + movimentacao.getDtAgendaDDMMYYHHMM();
 		movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 	}
 
@@ -2112,7 +2110,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
-		movimentacao.descrMovimentacao = descricao;
 		
 		// Edson: eh necessario setar a finalizadora na finalizada antes de 
 		// salvar() a finalizadora, pq se não, ao atualizarMarcas(), vai 
@@ -2121,6 +2118,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrMovimentacao movFinalizada = SrMovimentacao.findById(idMovimentacao);
 		movFinalizada.movFinalizadora = movimentacao;
 		
+		movimentacao.descrMovimentacao = descricao;
+		movimentacao.descrMovimentacao += " | Terminando pendencia iniciada em " + movFinalizada.getDtIniMovDDMMYYHHMM();
 		movimentacao = movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 		movFinalizada.save();
 	}

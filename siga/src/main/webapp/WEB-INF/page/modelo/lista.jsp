@@ -115,7 +115,7 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 						<div class="gt-form-row">
 							<input name="salvar_conteudo" type="submit" id="but_gravar${i}"
 								value="Salvar"
-								onclick="javascript: this.form.action='/siga/modelo/editar_gravar.action'; "
+								onclick="javascript: this.form.action='/siga/app/modelo/gravar'; "
 								class="gt-btn-medium gt-btn-left" />
 						</div>
 						<!-- 				

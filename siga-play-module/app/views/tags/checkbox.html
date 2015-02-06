@@ -17,5 +17,5 @@
 
 </script>
 <input type="hidden" name="${_name}" id="${_name}" value="${_value ? 'true':'false'}" />
-<input id="check${_name}" ${_disabled ? disabled="disabled" : "" } type="checkbox" value="true" ${_value ? 'checked':''} onchange="javascript:change${_name.replace('.', '')}(); show${_name.replace('.', '')}(this.checked, '${_depende}');" />
+<input id="check${_name}" ${_disabled ? disabled="disabled" : "" } type="checkbox" value="true" ${_value ? 'checked':''} onchange="javascript:change${_name.replace('.', '')}(); show${_name.replace('.', '')}(this.checked, '${_depende}');${_onchange}" />
  

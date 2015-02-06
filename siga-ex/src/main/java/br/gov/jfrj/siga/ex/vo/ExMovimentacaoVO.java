@@ -48,6 +48,8 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERE
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.hasDespacho;
 
 import java.util.Map;
@@ -141,7 +143,7 @@ public class ExMovimentacaoVO extends ExVO {
 					null, null, null);
 		}
 
-		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
+		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
 			descricao = Texto.maiusculasEMinusculas(mov.getObs());
 		}
 
@@ -220,8 +222,17 @@ public class ExMovimentacaoVO extends ExVO {
 									.getComp()
 									.podeCancelarAnexo(titular, lotaTitular,
 											mov.mob(), mov));
-					addAcao(null, "Assinar/Conferir cópia", "/app/expediente/mov",
+					addAcao(null, "Assinar/Autenticar", "/app/expediente/mov",
 							"exibir", true, null, "&popup=true", null, null, null);
+					
+					addAcao(
+							"script_key",
+							"Autenticar",
+							"/expediente/mov",
+							"autenticar_mov",
+							Ex.getInstance().getComp()
+									.podeAutenticarMovimentacao(titular, lotaTitular, mov),
+							null, "&popup=true", null, null, null);
 				}
 			}
 
@@ -249,7 +260,7 @@ public class ExMovimentacaoVO extends ExVO {
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
 							|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
-							&& mov.isAssinada())
+							&& mov.isAssinada()) {
 						
 						addAcao(
 								"printer",
@@ -259,8 +270,17 @@ public class ExMovimentacaoVO extends ExVO {
 								Ex.getInstance().getComp()
 										.podeVisualizarImpressao(titular, lotaTitular, mov.mob()),
 								null, "&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
+						
+						addAcao(
+								"script_key",
+								"Autenticar",
+								"/expediente/mov",
+								"autenticar_mov",
+								Ex.getInstance().getComp()
+										.podeAutenticarMovimentacao(titular, lotaTitular, mov),
+								null, "&popup=true", null, null, null);
 
-					else if(!(mov.isAssinada() && mov.mob().isEmTransito())) {
+					} else if(!(mov.isAssinada() && mov.mob().isEmTransito())) {
 						addAcao(null, "Ver/Assinar", "/app/expediente/mov", "exibir",
 								true, null, "&popup=true", null, null, null);
 					}
@@ -273,11 +293,13 @@ public class ExMovimentacaoVO extends ExVO {
 
 				for (ExMovimentacao movRef : mov
 						.getExMovimentacaoReferenciadoraSet()) {
-					if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO) {
+					if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO ||
+							movRef.getIdTpMov() == TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
 						complemento += (complemento.length() > 0 ? ", " : "")
 								+ Texto.maiusculasEMinusculas(movRef.getObs());
 						fAssinaturas = true;
-					} else if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
+					} else if (movRef.getIdTpMov() == TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+							|| movRef.getIdTpMov() == TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) {
 						complementoConferencias += (complementoConferencias
 								.length() > 0 ? ", " : "")
 								+ Texto.maiusculasEMinusculas(movRef.getObs());
@@ -289,7 +311,7 @@ public class ExMovimentacaoVO extends ExVO {
 					complemento = " | Assinado por: " + complemento;
 
 				if (fConferencias)
-					complemento += " | Cópia conferida por: "
+					complemento += " | Autenticado por: "
 							+ complementoConferencias;
 			}
 		}
@@ -504,6 +526,8 @@ public class ExMovimentacaoVO extends ExVO {
 
 			switch (mov.getExTipoMovimentacao().getIdTpMov().intValue()) {
 			case (int) TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO:
+			case (int) TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA:
+			case (int) TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA:
 			case (int) TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO:
 				classe = "assinaturaMov";
 				break;

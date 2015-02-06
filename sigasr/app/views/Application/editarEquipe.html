@@ -1,14 +1,32 @@
 #{extends 'main.html' /} #{set title:'Edição de Equipes' /}
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 
+<style>
+.barra-subtitulo-top {
+	border-radius: 5px 5px 0 0;
+	margin: -16px 0 0 -16px;
+}
+
+.barra-subtitulo {
+	color: #365b6d !important;
+	border-bottom: 1px solid #ccc;
+	border-radius: 0 !important;
+	margin: 0 -15px 10px -15px;
+}
+
+.gt-content-box {
+	padding-top: 0px !important;
+}
+</style>
 <script type="text/javascript">
-	//removendo a referencia de '$' para o jQuery
-	$.noConflict();
-	
-	jQuery(document).ready(function($) {
+
+	$(document).ready(function() {
 		/* Table initialization */
-		var excecoesTable = $('#excecoes_table').dataTable({
+		excecoesTable = $('#excecoes_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -32,13 +50,34 @@
 			        "sortDescending": ": clique para ordenação decrescente"
 			    }
 			},
+			"columnDefs": [{"targets": [0, 1], "visible": false, "searchable": false}],
 			"iDisplayLength": 25
 		});
+		
+		// Remover exceções
+		$('#excecoes_table tbody').on('click', 'a.excecao_remove', function () {
+			excecoesTable.api().row($(this).closest('tr')).remove().draw(false);
+		});
+		
+		$("#dataEspecifica").mask("99/99/9999");
+		$("#horaIni").mask("99:99");
+		$("#horaFim").mask("99:99");
+		$("#interIni").mask("99:99");
+		$("#interFim").mask("99:99");
 	});
 	
 	function modalExcecaoAbrir() {
 		// limpa as mensagens de erros
 		resetMensagensErro();
+		
+		resetCamposTela();
+		
+		$("#dataEspecifica").datepicker({
+		    showOn: "button",
+		    buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+		    buttonImageOnly: true,
+		    dateFormat: 'dd/mm/yy'
+		});
 		
 		$("#excecaoHorario_dialog").dialog('open');
 	}
@@ -47,19 +86,32 @@
 		if (!camposObrigatoriosExcecaoPreenchidos()) {
 			// recupera as comboboxes
 			var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0],
-				jDiaSemana = jDiaSemanaCbb.options[jDiaSemanaCbb.selectedIndex];
+				jDiaSemana = jDiaSemanaCbb.options[jDiaSemanaCbb.selectedIndex],
+				dataSelecionada = $("#dataEspecifica").datepicker("getDate"),
+				diaSemanaValue = '',
+				dataToISOString = '',
+				diaText = '';
+			
+			if (document.getElementById("dataEspecifica").value == "") {
+				diaSemanaValue = jDiaSemana.value;
+				diaText = jDiaSemana.text;
+			}
+			else {
+				dataToISOString = dataSelecionada.toISOString();
+				diaText = document.getElementById("dataEspecifica").value;
+			}
 			
 			var row = [
-// 				<th>Dia</th>
-// 				<th>Início Expediente</th>
-// 				<th>Final Expediente</th>
-// 				<th>Início Intervalo</th>
-// 				<th>Final Intervalo</th>
-// 				<th></th>
-			];
+			           diaSemanaValue,
+			           dataToISOString,
+			           diaText,
+			           document.getElementById("horaIni").value,
+			           document.getElementById("horaFim").value,
+			           document.getElementById("interIni").value,
+			           document.getElementById("interFim").value,
+			           "<a class=\"excecao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 			
 			excecoesTable.api().row.add(row).draw();
-		
 			modalExcecaoFechar();
 		}
 	}
@@ -114,7 +166,76 @@
 		document.getElementById("interFimError").style.display = "none";
 	}
 	
+	function resetCamposTela() {
+		var jDiaSemanaCbb = document.getElementsByName("diaSemana")[0];
+		
+		jDiaSemanaCbb.selectedIndex = 0;
+		document.getElementById("horaIni").value = '';
+        document.getElementById("horaFim").value = '';
+        document.getElementById("interIni").value = '';
+        document.getElementById("interFim").value = '';
+        document.getElementById("dataEspecifica").value = '';
+	}
+	
 	function inserirEquipe() {
+		if (block())
+			$.ajax({
+	        	type: "POST",
+        		url: "@{Application.gravarEquipe()}",
+        		data: serializeEquipe(),
+        		dataType: "text",
+        		success: function() {
+	        		location.href = "@{Application.listarEquipe()}";
+        		}
+       		});
+	}
+	
+	function serializeEquipe() {
+		var jForm = $("form"),
+			params = jForm.serialize(),
+			idEquipe = $("#idEquipe").val();
+		
+		params += getExcecoesTableAsString(idEquipe);
+		
+		return params;
+	}
+	
+	function getExcecoesTableAsString(idEquipe) {
+		var params = '',
+			dataAux = new Date();
+		
+		// Percorre lista de Exceções
+		excecoesTable.api().rows().indexes().each(function (i) {
+			var rowValues = excecoesTable.api().row(i).data();
+			
+			// Atualiza a string serializada
+			if (rowValues) {
+				if (rowValues[0] == 0)
+					params += '&equipe.excecaoHorarioSet[' + i + '].dataEspecifica=' + rowValues[1];
+				else
+					params += '&equipe.excecaoHorarioSet[' + i + '].diaSemana=' + rowValues[0];
+				
+				params += '&equipe.excecaoHorarioSet[' + i + '].strHoraIni=' + atualizaHora(dataAux, rowValues[3]).toJSON();
+				params += '&equipe.excecaoHorarioSet[' + i + '].strHoraFim=' + atualizaHora(dataAux, rowValues[4]).toJSON();
+				params += '&equipe.excecaoHorarioSet[' + i + '].strInterIni=' + atualizaHora(dataAux, rowValues[5]).toJSON();
+				params += '&equipe.excecaoHorarioSet[' + i + '].strInterFim=' + atualizaHora(dataAux, rowValues[6]).toJSON();
+				
+				//params += '&equipe.excecaoHorarioSet[' + i + '].equipe.idEquipe=' + idEquipe;
+			}
+		});
+		
+		return params;
+	}
+	
+	function atualizaHora(data, horaString) {
+		var horaMinuto = horaString.split(":"),
+			hora = horaMinuto[0],
+			minuto = horaMinuto[1];
+		
+		data.setHours(hora);
+		data.setMinutes(minuto);
+		
+		return data;
 	}
 </script>
 
@@ -123,75 +244,94 @@
 		<h2>Cadastro de Equipe</h2>
 
 		<div class="gt-form gt-content-box">
-			#{form @Application.gravarEquipe()} #{if
-			equipe?.idEquipe} <input type="hidden"
-				name="equipe.idEquipe" value="${equipe.idEquipe}">
-			#{/if}
-			#{ifErrors}
-			<p class="gt-error">Alguns campos obrigatórios não foram
-				preenchidos ${error}</p>
-			#{/ifErrors}
-			<div class="gt-form-table">
-				<div class="barra-subtitulo barra-subtitulo-top header"
-					align="center" valign="top">Dados básicos</div>
-			</div>
-			<div class="gt-form-row gt-width-100">
-				<label>Lotação</label>#{selecao
-					tipo:'lotacao', nome:'equipe.lotacao',
-					value:equipe.lotacao?.lotacaoAtual /}
-				<span style="display:none;color: red" id="equipe.lotacao">Lotação não informada.</span>
-			</div>
-			
-			<div class="gt-form-table">
-				<div class="barra-subtitulo barra-subtitulo-top header"
-					align="center" valign="top">Horário de Trabalho</div>
-			</div>
-			
-			<div class="gt-form-row">
-			<label>Exceções ao calendário padrão:</label>
-			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
-				<table id="excecoes_table" border="0" class="gt-table display">
-					<thead>
-						<tr>
-							<th>Dia</th>
-							<th>Início Expediente</th>
-							<th>Final Expediente</th>
-							<th>Início Intervalo</th>
-							<th>Final Intervalo</th>
-							<th></th>
-						</tr>
-					</thead>
-					
-					<tbody>
-						#{list items:equipe.excecaoHorarioSet, as:'excecao'}
-						<tr>
-							#{if excecao?.diaSemana}
-								<td>${excecao?.diaSemana.descrDiaSemana }</td>
-							#{/if}
-							#{else}
-								<td>${excecao?.dataEspecifica.format('dd/MM/yyyy') }</td>
-							#{/else}
+			<form id="form" class="formEditarEquipe" enctype="multipart/form-data">
+				<input type="hidden" id="idEquipe" name="equipe.idEquipe" value="${equipe.idEquipe}">
+				<input type="hidden" id="idEquipeIni" name="equipe.hisIdIni" value="${equipe.hisIdIni}">
+				#{ifErrors}
+				<p class="gt-error">Alguns campos obrigatórios não foram
+					preenchidos ${error}</p>
+				#{/ifErrors}
+				<div class="gt-form-table">
+					<div class="barra-subtitulo barra-subtitulo-top header"
+						align="center" valign="top">Dados básicos</div>
+				</div>
+				<div class="gt-form-row gt-width-100">
+					<label>Lotação</label>#{selecao
+						tipo:'lotacao', nome:'equipe.lotacao',
+						value:equipe.lotacao?.lotacaoAtual, disabled:"true" /}
+					<span style="display:none;color: red" id="equipe.lotacao">Lotação não informada.</span>
+				</div>
+				
+				<div class="gt-form-table">
+					<div class="barra-subtitulo barra-subtitulo-top header"
+						align="center" valign="top">Horário de Trabalho</div>
+				</div>
+				
+				<div class="gt-form-row">
+					<h2>Exceções ao calendário padrão</h2>
+					<!-- content bomex -->
+					<div class="gt-content-box dataTables_div">
+						<table id="excecoes_table" border="0" class="gt-table display">
+							<thead>
+								<tr>
+									<th>Dia Semana</th>
+									<th>Data (String)</th>
+									<th>Dia</th>
+									<th>Início Expediente</th>
+									<th>Final Expediente</th>
+									<th>Início Intervalo</th>
+									<th>Final Intervalo</th>
+									<th></th>
+								</tr>
+							</thead>
 							
-							<td>${excecao?.horaIni.format('hh:mm') } horas</td>
-							<td>${excecao?.horaFim.format('hh:mm') } horas</td>
-							<td>${excecao?.interIni.format('hh:mm') } horas</td>
-							<td>${excecao?.interFim.format('hh:mm') } horas</td>
-							<td></td>
-						</tr>
-						#{/list}
-					</tbody>
-				</table>
-			</div>
-			<div class="gt-table-buttons">
-				<a href="javascript: modalExcecaoAbrir()" class="gt-btn-medium gt-btn-left">Incluir</a>
-			</div>
-		</div>
-			<div class="gt-form-row">
-				<a href="javascript: inserirEquipe()" class="gt-btn-medium gt-btn-left">Gravar</a>
-				<a href="@{Application.listarEquipe}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-			</div>
-			#{/form}
+							<tbody>
+								#{list items:equipe.excecaoHorarioSet, as:'excecao'}
+								<tr>
+									#{if excecao?.diaSemana}
+										<td>${excecao?.diaSemana }</td>
+										<td></td>
+										<td>${excecao?.diaSemana.descrDiaSemana }</td>
+									#{/if}
+									#{else}
+										<td>0</td>
+										<td>${excecao?.dataEspecifica.format('yyyy-MM-dd HH:mm:ss.SSSZ') }</td>
+										<td>${excecao?.dataEspecifica.format('dd/MM/yyyy') }</td>
+									#{/else}
+									
+									<td>${excecao?.horaIni.format('HH:mm') }</td>
+									<td>${excecao?.horaFim.format('HH:mm') }</td>
+									<td>${excecao?.interIni.format('HH:mm') }</td>
+									<td>${excecao?.interFim.format('HH:mm') }</td>
+									<td><a class="excecao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
+								</tr>
+								#{/list}
+							</tbody>
+						</table>
+					</div>
+					<div class="gt-table-buttons">
+						<a href="javascript: modalExcecaoAbrir()" class="gt-btn-medium gt-btn-left">Incluir</a>
+					</div>
+				</div>
+				
+				<div class="gt-form-table">
+					<div class="barra-subtitulo barra-subtitulo-top header"
+						align="center" valign="top">Designações</div>
+				</div>
+				<div class="gt-form-row">
+					#{designacoes designacoes:designacoesEquipe, 
+						modoExibicao:'equipe', 
+						orgaos:orgaos, 
+						locais:locais, 
+						unidadesMedida:unidadesMedida, 
+						pesquisaSatisfacao:pesquisaSatisfacao, 
+						listasPrioridade:listasPrioridade /}
+				</div>
+				<div class="gt-form-row">
+					<a href="javascript: inserirEquipe()" class="gt-btn-medium gt-btn-left">Gravar</a>
+					<a href="@{Application.listarEquipe}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
@@ -215,7 +355,7 @@
 				</div>
 				<div class="gt-form-row gt-width-100">
 					<label>Data Específica</label>
-					<input type="text" name="dataEspecifica" id="dataEspecifica" value="${dataEspecifica}">
+					<input type="text" name="calendario" id="dataEspecifica" value="${dataEspecifica}">
 					<span style="display:none;color: red" id="dataEspecificaError">Data Específica não informada</span>
 				</div>
 				<div class="gt-form-row gt-width-100">

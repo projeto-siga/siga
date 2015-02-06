@@ -115,8 +115,7 @@ function passwordStrength(password) {
 			<h2>${mensagem}</h2>
 			<h2 class="gt-form-head">Trocar senha</h2>
 			<div class="gt-form gt-content-box tabela-senha">
-				<ww:form action="trocar_senha_gravar"
-					onsubmit="return validateUsuarioForm(this);" method="post">
+				<ww:form action="trocar_senha_gravar" onsubmit="return validateUsuarioForm(this);" method="post" namespace="/usuario">
 					<ww:hidden name="page" value="1" />
 					<h1>${mensagem }</h1>
 

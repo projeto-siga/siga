@@ -116,7 +116,7 @@ public class PrincipalAction extends SigaActionSupport {
 			}
 
 			// TODO não precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
-			String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ ":8080";
+			String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ getRequest().getServerPort();
 
 			String URLSelecionar = "";
 			String uRLExibir = "";

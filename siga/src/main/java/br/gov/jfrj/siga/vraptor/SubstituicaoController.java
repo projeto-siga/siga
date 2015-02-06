@@ -8,7 +8,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -45,8 +48,8 @@ public class SubstituicaoController extends SigaController {
 	}	
 		
 
-	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
@@ -300,6 +303,7 @@ public class SubstituicaoController extends SigaController {
 		}
 	}	
 	
+	@Get("/app/substituicao/substituirGravar")
 	public void substituirGravar(Long idTitular, Long idLotaTitular) throws Exception {
 		finalizar();
 		if (idTitular != null) {
@@ -327,6 +331,7 @@ public class SubstituicaoController extends SigaController {
 		} catch (Exception e) {
 			dao().rollbackTransacao();
 		}
+		result.redirectTo("/");
 	}	
 	
 	public void exclui(Long id) throws Exception {

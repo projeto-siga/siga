@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -86,8 +87,8 @@ import com.opensymphony.xwork.ActionInvocation;
 @Resource
 public class ExRelatorioController extends ExController implements IUsaMascara{
 
-	public ExRelatorioController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so) {
-		super(request, response, context, result, CpDao.getInstance(), so);
+	public ExRelatorioController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
+		super(request, response, context, result, CpDao.getInstance(), so, em);
 		lotacaoDestinatarioSel = new DpLotacaoSelecao();
 		
 	}

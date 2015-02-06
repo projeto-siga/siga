@@ -91,7 +91,7 @@ $(function(){
     		<col width="5%" />
     		<thead>
 				<tr class="gt-celula-nowrap">
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Prior</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">#</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Teor</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Solicitante</th>
@@ -99,7 +99,7 @@ $(function(){
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Lotação</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Última Movimentação</th>
 					#{if podeRemover}
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Excluir</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;"></th>
 					#{/if}
 				</tr>
 			</thead>
@@ -138,7 +138,7 @@ $(function(){
 					<input type="hidden" name="idLista" value="${lista.idLista}">
 					<input type="hidden" name="idSolicitacao" value="${sol.idSolicitacao}">
 					<a onclick="javascript: return block();" href="@{Application.retirarDeLista(sol.idSolicitacao,lista.idLista)}" title="Remover da Lista" name="idSolicitacao" value="${sol.idSolicitacao}">
-					<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"> </a>
+					<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> </a>
 				</td>
 				#{/if}
 				</tr>		

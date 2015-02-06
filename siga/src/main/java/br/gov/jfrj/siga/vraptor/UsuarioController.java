@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
@@ -24,19 +25,19 @@ public class UsuarioController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
 
-	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so) {
-		super(request, result, CpDao.getInstance(), so);
+	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
+		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
-	@Get("/app/trocar_senha")
+	@Get("/app/usuario/trocar_senha")
 	public void trocaSenha() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 	}
 
-	@Post("/app/trocar_senha_gravar")
+	@Post("/app/usuario/trocar_senha_gravar")
 	public void gravarTrocaSenha(UsuarioAction usuario) throws Exception {
 		String msgAD = "";
 		String senhaAtual = usuario.getSenhaAtual();
@@ -65,10 +66,10 @@ public class UsuarioController extends SigaController {
 		result.include("mensagem", "A senha foi alterada com sucesso" + msgAD);	
 		result.include("volta", "troca");
 		result.include("titulo", "Troca de Senha");
-		result.redirectTo("/principal.action");
+		result.redirectTo("/app/principal");
 	}
 
-	@Get("/app/incluir_usuario")
+	@Get("/app/usuario/incluir_usuario")
 	public void incluirUsuario() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 		result.include("titulo", "Novo Usuário");
@@ -77,7 +78,7 @@ public class UsuarioController extends SigaController {
 		
 	}
 	
-	@Post("/app/incluir_usuario_gravar")
+	@Post("/app/usuario/incluir_usuario_gravar")
 	public void gravarIncluirUsuario(UsuarioAction usuario) throws Exception {
 		String msgComplemento = "";
 		String[] senhaGerada = new String[1];
@@ -102,7 +103,7 @@ public class UsuarioController extends SigaController {
 								  "2) Verifique se as matrículas e senhas foram informadas corretamente;<br/>" +
 								  "3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>";
 				result.include("mensagem", mensagem);
-				result.redirectTo("/app/incluir_usuario");
+				result.redirectTo("/app/usuario/incluir_usuario");
 			}else{
 				idNova = Cp.getInstance().getBL().criarIdentidade(usuario.getMatricula(), usuario.getCpf(),
 						getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada,
@@ -111,7 +112,7 @@ public class UsuarioController extends SigaController {
 			break;
 		default:
 			result.include("mensagem", "Método inválido!");
-			result.redirectTo("/app/incluir_usuario");
+			result.redirectTo("/app/usuario/incluir_usuario");
 		}
 		
 		if (isIntegradoAoAD){
@@ -130,17 +131,17 @@ public class UsuarioController extends SigaController {
 		result.include("mensagem", "Usuário cadastrado com sucesso." + msgComplemento);
 		result.include("titulo", "Novo Usuário");
 		result.include("volta", "incluir");
-		result.redirectTo("/app/incluir_usuario");
+		result.redirectTo("/app/usuario/incluir_usuario");
 	}
 	
-	@Get("/app/esqueci_senha")
+	@Get("/app/usuario/esqueci_senha")
 	public void esqueciSenha() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 		result.include("titulo", "Esqueci Minha Senha");
 		result.include("proxima_acao", "esqueci_senha_gravar");
 	}
 	
-	@Post("/app/esqueci_senha_gravar")
+	@Post("/app/usuario/esqueci_senha_gravar")
 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
 		String msgAD = "";
 		boolean senhaTrocadaAD = false;
@@ -161,7 +162,7 @@ public class UsuarioController extends SigaController {
 						"2) Verifique se as matrículas e senhas foram informadas corretamente;<br/>" +
 						"3) Verifique se as pessoas são da mesma lotação ou da lotação imediatamente superior em relação à matrícula que terá a senha alterada;<br/>";
 				result.include("mensagem", mensagem);
-				result.redirectTo("/app/esqueci_senha");
+				result.redirectTo("/app/usuario/esqueci_senha");
 				return;
 			}
 		
@@ -192,7 +193,7 @@ public class UsuarioController extends SigaController {
 	}
 
 	
-	@Get("/app/integracao_ldap")
+	@Get("/app/usuario/integracao_ldap")
 	public void isIntegradoLdap(String matricula) throws AplicacaoException {
 		try{
 			String retorno = isIntegradoAD(matricula) ? "" : "0";
@@ -221,7 +222,7 @@ public class UsuarioController extends SigaController {
 		return result;
 	}
 	
-	@Get("/app/check_email_valido")
+	@Get("/app/usuario/check_email_valido")
 	public void checkEmailValido(String matricula) throws AplicacaoException {
 		try{
 			isEmailValido(matricula);

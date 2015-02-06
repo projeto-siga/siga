@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
 
+	<modelVersion>4.0.0</modelVersion>
 	<groupId>siga</groupId>
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
 	<version>1.1</version>
 
 	<modules>
+		<module>siga-integration-test</module>
 		<module>siga-base</module>
 		<module>siga-ws</module>
 		<module>siga-rel</module>
@@ -25,19 +26,21 @@
 		<module>sigaex</module>
 		<module>siga-ext</module>
 		<module>siga-ex</module>
-		<!-- <module>siga-play-module</module>
 		<module>sigagc</module>
+		<!--<module>siga-play-module</module>
  		<module>sigasr</module>
- 		<module>sigapp</module> -->
-		<!-- <module>sigari</module> <module>siga-cd</module> <module>sigacd</module> 
-			 <module>siga-autenticidade</module> <module>siga-cd-aut</module> 
-			<module>siga-cp-sinc</module> 
-			<module>siga-assinador</module> <module>siga-dump</module> -->
+ 		<module>sigapp</module>
+		<module>sigari</module>
+ 		<module>sigacd</module>
+ 		<module>siga-cd</module>
+ 		<module>siga-cd-aut</module>
+ 		<module>siga-cp-sinc</module> 
+ 		<module>siga-dump</module> -->
 	</modules>
 
 
 	<properties>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+ 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding> 
 		<siga.version>${project.version}</siga.version>
 		<picketlink.version>2.6.0.Final</picketlink.version>
 		<hibernate.version>4.2.0.Final</hibernate.version>
@@ -296,6 +299,7 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.11</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.jettison</groupId>
@@ -367,7 +371,6 @@
 				<groupId>org.apache.axis</groupId>
 				<artifactId>axis</artifactId>
 				<version>1.4</version>
-				<scope>provided</scope>
 			</dependency>
 
 			<dependency>
@@ -383,13 +386,13 @@
 				<version>3.5.1</version>
 				<exclusions>
 					<exclusion>
-						<groupId>bouncycastle</groupId>
+						<groupId>org.bouncycastle</groupId>
 						<artifactId>bcmail-jdk14</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>bouncycastle</groupId>
+						<groupId>org.bouncycastle</groupId>
 						<artifactId>bcprov-jdk14</artifactId>
-					</exclusion>
+					</exclusion>					
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -419,7 +422,7 @@
 				<version>2.2.6</version>
 				<exclusions>
 					<exclusion>
-						<groupId>org.freemarker</groupId>
+						<groupId>freemarker</groupId>
 						<artifactId>freemarker</artifactId>
 					</exclusion>
 				</exclusions>
@@ -434,7 +437,6 @@
 				<groupId>xerces</groupId>
 				<artifactId>xercesImpl</artifactId>
 				<version>2.9.1</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>net.sourceforge.htmlcleaner</groupId>
@@ -486,6 +488,16 @@
 				<groupId>com.lowagie</groupId>
 				<artifactId>itext-rtf</artifactId>
 				<version>2.1.7</version>
+				<exclusions>
+					<exclusion>
+						<groupId>bouncycastle</groupId>
+						<artifactId>bcmail-jdk14</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>bouncycastle</groupId>
+						<artifactId>bcprov-jdk14</artifactId>
+					</exclusion>					
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.lowagie</groupId>
@@ -664,13 +676,18 @@
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
+			<artifactId>hibernate-validator</artifactId>			
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>				
 		</dependency>
 
 		<dependency>

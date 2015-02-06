@@ -16,10 +16,11 @@
 	<script type="text/javascript" language="Javascript1.1">
 		<ww:url id="url" action="transferir_lote" namespace="/expediente/mov"/>
 		function sbmt(offset) {
+			debugger;
 			frm.action = '${url}';
 			frm.submit();
 		}
-
+		
 		function enableDisableItem(coreName, enable) {
 			var estiloCombo, estiloLabel;
 			if (!document.getElementById('chk_' + coreName).checked) {

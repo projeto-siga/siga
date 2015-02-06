@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @Table(name = "CP_UF", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpUF extends AbstractCpUF implements Serializable,
 		Selecionavel {
 

@@ -30,16 +30,6 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.picketbox</groupId>
-            <artifactId>jbosssx-bare</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jbossall-client</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>siga</groupId>

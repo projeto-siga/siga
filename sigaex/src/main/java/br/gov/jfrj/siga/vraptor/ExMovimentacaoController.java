@@ -27,6 +27,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -235,8 +236,8 @@ public class ExMovimentacaoController extends ExController {
 
 	public ExMovimentacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
-			Result result, SigaObjects so) {
-		super(request, response, context, result, ExDao.getInstance(), so);
+			Result result, SigaObjects so, EntityManager em) {
+		super(request, response, context, result, ExDao.getInstance(), so, em);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 		subscritorSel = new DpPessoaSelecao();
@@ -1340,7 +1341,7 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aAssinarGravar() throws Exception {
+	public String aAssinarGravar(String tipoAssinaturaMov) throws Exception {
 		boolean fApplet = getRequest().getParameter("QTYDATA") != null;
 		String b64Applet = null;
 		if (fApplet) {
@@ -1369,11 +1370,16 @@ public class ExMovimentacaoController extends ExController {
 		// }
 
 		try {
+			long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
+			
+			if(getCopia() || (tipoAssinaturaMov != null && tipoAssinaturaMov.equals("C")))
+				tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
+			
 			setMsg(Ex
 					.getInstance()
 					.getBL()
 					.assinarDocumento(getCadastrante(), getLotaTitular(), doc,
-							dt, assinatura, certificado));
+							dt, assinatura, certificado, tpMovAssinatura));
 		} catch (final Exception e) {
 			if (fApplet) {
 				getRequest().setAttribute("err", e.getMessage());
@@ -1577,6 +1583,48 @@ public class ExMovimentacaoController extends ExController {
 
 		if (fApplet) {
 			return "OK";
+		}
+
+		return Action.SUCCESS;
+	}
+	
+	public String aAssinarSenhaGravar(String nomeUsuarioSubscritor, String senhaUsuarioSubscritor) throws Exception {
+		buscarDocumento(true);
+		lerForm(mov);
+		
+		try {
+			setMsg(Ex
+					.getInstance()
+					.getBL()
+					.assinarDocumentoComSenha(getCadastrante(), getLotaTitular(),
+							doc, mov.getDtMov(), nomeUsuarioSubscritor, senhaUsuarioSubscritor,
+							mov.getTitular()));
+		} catch (final Exception e) {
+
+			throw e;
+		}
+
+		return Action.SUCCESS;
+	}
+	
+	public String aAssinarMovSenhaGravar(String tipoAssinaturaMov, String nomeUsuarioSubscritor, String senhaUsuarioSubscritor) throws Exception {
+		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
+		
+		buscarDocumento(true);
+		
+
+		mov = dao().consultar(getId(), ExMovimentacao.class, false);
+		
+		if(getCopia() || (tipoAssinaturaMov != null && tipoAssinaturaMov.equals("C")))
+			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
+		
+		try {
+			Ex.getInstance()
+					.getBL()
+					.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), 
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, tpMovAssinatura);
+		} catch (final Exception e) {
+			throw e;
 		}
 
 		return Action.SUCCESS;

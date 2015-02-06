@@ -13,27 +13,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.util.Paginador;
 
 public class SigaController {
 	public SigaObjects so;
 
 	public Result result;
 
-	public CpDao dao;
+	private HttpServletRequest request;
 
-	private HttpServletRequest request;	
-	
+	private EntityManager em;
+	protected CpDao dao;
+
 	private Paginador p = new Paginador();
 		
 	private Integer postback;
@@ -44,17 +46,17 @@ public class SigaController {
 	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
 	private Map<String, String[]> par;
 	
-	public Map<String, String[]> getPar() {
+	protected Map<String, String[]> getPar() {
 		return par;
 	}
 	
-	public void setParam(final String parameterName, final String parameterValue) {
+	protected void setParam(final String parameterName, final String parameterValue) {
 		final String as[] = { parameterValue };
 		getPar().put(parameterName, as);
 		return;
 	}	
 	
-	public String getUrlEncodedParameters()
+	protected String getUrlEncodedParameters()
 			throws UnsupportedEncodingException, IOException {
 		if (getPar() != null) {
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -73,25 +75,23 @@ public class SigaController {
 		return null;
 	}
 	
-	
-	
-	
 	protected CpDao dao() {
 		return CpDao.getInstance();
 	}
-	
-	public Integer getPostback() {
+
+	protected Integer getPostback() {
 		return postback;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public SigaController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so) {
+	public SigaController(HttpServletRequest request, Result result, CpDao dao,
+			SigaObjects so, EntityManager em) {
 		super();
 		this.setRequest(request);
-		this.so = so;
-		this.result = result;
 		this.dao = dao;
 		this.setPar(new HashMap<>( getRequest().getParameterMap()));
+		this.result = result;
+		this.so = so;
+		this.em = em;
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
@@ -210,6 +210,10 @@ public class SigaController {
 		return so.daoOU(sigla);
 	}
 
+	public EntityManager em() {
+		return this.em;
+	}
+
 	protected int redirectToHome() {
 		result.redirectTo("/../siga/principal.action");
 		return 0;
@@ -227,35 +231,35 @@ public class SigaController {
 		this.request = request;
 	}
 	
-	public void assertAcesso(String pathServico) throws AplicacaoException,Exception {
+	protected void assertAcesso(String pathServico) throws AplicacaoException,Exception {
 		so.assertAcesso(pathServico);
 	}	
 	
-	public void setP(Paginador p) {
+	protected void setP(Paginador p) {
 		this.p = p;
 	}
 	
-	public void setPar(final Map par) {
+	protected void setPar(final Map par) {
 		this.par = par;
 	}
 
-	public void setPostback(final Integer postback) {
+	protected void setPostback(final Integer postback) {
 		this.postback = postback;
 	}
 	
-	public String getMensagemAguarde() {
+	protected String getMensagemAguarde() {
 		return mensagemAguarde;
 	}
 	
-	public void setMensagemAguarde(String mensagemAguarde) {
+	protected void setMensagemAguarde(String mensagemAguarde) {
 		this.mensagemAguarde = mensagemAguarde;
 	}
 
-	public List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
+	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
 		return dao().listarOrgaosUsuarios();
 	}
 	
-	public Paginador getP() {
+	protected Paginador getP() {
 		return p;
 	}
 

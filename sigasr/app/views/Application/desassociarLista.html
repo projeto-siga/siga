@@ -42,7 +42,7 @@ $(function() {
 			</thead>
 			<tbody>
 			#{list items:sols, as:'sols'}
-			<form action="@{Application.desassociarLista()}">	
+			<form action="@{Application.desassociarLista()}" enctype="multipart/form-data">	
 			<tr id="${sols.idSolicitacao}">
 			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 			<img id="imgCancelar" src="/siga/css/famfamfam/icons/arrow_switch.png" style="margin-right: 5px;"> 

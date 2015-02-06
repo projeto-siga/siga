@@ -160,7 +160,7 @@ public class SigaObjects implements ConheceUsuario {
 		// flt.setSiglaCompleta(sigla);
 		return (DpLotacao) dao().consultarPorSigla(flt);
 	}
-	
+
 	public CpOrgaoUsuario daoOU(String sigla) {
 		CpOrgaoUsuarioDaoFiltro fltOrgao = new CpOrgaoUsuarioDaoFiltro();
 		fltOrgao.setSigla(sigla);
@@ -169,7 +169,7 @@ public class SigaObjects implements ConheceUsuario {
 		return orgaoUsuario;
 	}
 
-	private CpDao dao() {
+	public CpDao dao() {
 		// TODO Auto-generated method stub
 		return CpDao.getInstance();
 	}

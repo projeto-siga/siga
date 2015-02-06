@@ -150,35 +150,35 @@
 											${mov.descrTipoMovimentacao}
 										</td>
 										<td align="left">
-											<siga:selecionado sigla="${mov.parte.lotaCadastrante.sigla}"
+											<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaCadastrante.sigla}"
 												descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}"
 												lotacaoParam="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}" />
 										</td>
 										<td align="left">
-											<siga:selecionado sigla="${mov.parte.cadastrante.nomeAbreviado}"
+											<siga:selecionado isVraptor="true" sigla="${mov.parte.cadastrante.nomeAbreviado}"
 												descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}"
 												pessoaParam="${mov.parte.cadastrante.sigla}" />
 										</td>
 										<c:if test="${ (exibirCompleto == 'true')}">
 											<td align="left">
-												<siga:selecionado sigla="${mov.parte.lotaSubscritor.sigla}" 
+												<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaSubscritor.sigla}" 
 													descricao="${mov.parte.lotaSubscritor.descricaoAmpliada}" 
 													lotacaoParam="${mov.parte.lotaSubscritor.siglaOrgao}${mov.parte.lotaSubscritor.sigla}" />
 											</td>
 											<td align="left">
-												<siga:selecionado
+												<siga:selecionado isVraptor="true"
 													sigla="${mov.parte.subscritor.nomeAbreviado}"
 													descricao="${mov.parte.subscritor.descricao} - ${mov.parte.subscritor.sigla}" 
 													pessoaParam="${mov.parte.subscritor.sigla}" />
 											</td>
 										</c:if>
 										<td align="left">
-											<siga:selecionado sigla="${mov.parte.lotaResp.sigla}"
+											<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaResp.sigla}"
 												descricao="${mov.parte.lotaResp.descricaoAmpliada}" 
 												lotacaoParam="${mov.parte.lotaResp.siglaOrgao}${mov.parte.lotaResp.sigla}" />
 										</td>
 										<td align="left">
-											<siga:selecionado sigla="${mov.parte.resp.nomeAbreviado}"
+											<siga:selecionado isVraptor="true" sigla="${mov.parte.resp.nomeAbreviado}"
 												descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" 
 												pessoaParam="${mov.parte.resp.sigla}"/>
 										</td>

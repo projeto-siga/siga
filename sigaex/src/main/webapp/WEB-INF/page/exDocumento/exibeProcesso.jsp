@@ -108,7 +108,7 @@
 						Ir para o Final
 					</a>
 				<siga:link icon="application_view_list" classe="once" title="Visualizar&nbsp;Movimentações" url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" test="${true}" />
-				<siga:link icon="wrench" title="Preferência:" test="${true}" />
+				<siga:link icon="wrench" title="Preferência:" test="${true}" url="#"/>
 				<input type="radio" id="radioHTML" name="formato" value="html" checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">
 					&nbsp;HTML
 				</input>

@@ -15,7 +15,7 @@
 	</c:if>
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-		<c:import url="/paginas/expediente/inc_assina_js.jsp" />
+		<c:import url="/WEB-INF/page/exMovimentacao/inc_assina_js.jsp" />
 	</c:if>
 
 	<script type="text/javascript" language="Javascript1.1">
@@ -271,7 +271,7 @@
 															    </c:url>
 														    </c:otherwise>
 														</c:choose>
-														<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" url="${url}"
+														<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" url="${pageContext.request.contextPath}${acao.url}"
 															test="${true}" popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
 															ajax="${acao.ajax}" idAjax="${mov.idMov}" />
 														<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
@@ -283,7 +283,7 @@
 												test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 													<input type="hidden" name="pdf${x}" value="${mov.mov.referencia}" />
 													<input type="hidden" name="url${x}"
-														value="/arquivo/exibir.action?arquivo=${mov.mov.nmPdf}" />
+														value="/app/arquivo/exibir?arquivo=${mov.mov.nmPdf}" />
 												</c:if>
 											</td>
 										</tr>
@@ -295,9 +295,9 @@
 					<br />
 					<div id="dados-assinatura" style="visible: hidden">
 						<c:set var="jspServer"
-							value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
+							value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
 						<c:set var="nextURL"
-							value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
+							value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
 						<c:set var="urlPath" value="/${request.contextPath}" />
 		
 						<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" /> <input

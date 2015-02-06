@@ -152,7 +152,7 @@
 		}
 		//
 		var t_smrRequisicao = new SimpleMethodRequestRPCGet();
-		var t_strUrl = '${urlGravar}';
+		var t_strUrl = 'gravar';
 		t_smrRequisicao.setUrl(t_strUrl);
 		t_smrRequisicao.addUrlParam("idPessoaConfiguracao", p_strIdPessoa);
 		t_smrRequisicao.addUrlParam("idServicoConfiguracao", p_strIdServico);

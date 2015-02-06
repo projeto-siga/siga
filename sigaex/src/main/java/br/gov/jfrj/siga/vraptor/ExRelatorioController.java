@@ -334,7 +334,7 @@ public class ExRelatorioController extends ExController implements IUsaMascara{
 	public void gerarRelatorio(String arquivo) throws JRException, Exception {
 
 		final String cam = (String) getRequest().getRealPath(
-				"/paginas/expediente/relatorios/");
+				"/WEB-INF/page/exRelatorio/");
 
 		setConnection(JDBCUtilOracle.getConnection());
 
@@ -406,7 +406,7 @@ public class ExRelatorioController extends ExController implements IUsaMascara{
 
 	private void aGeraRelatorio(Map parameters) throws JRException {
 
-		String cam = (String) getContext().getRealPath("/paginas/expediente/relatorios/");
+		String cam = (String) getContext().getRealPath("/WEB-INF/page/exRelatorio/");
 		JasperDesign design = JRXmlLoader.load(cam + "/"+ (String) parameters.get("tipoRelatorio"));
 		JasperReport jr = JasperCompileManager.compileReport(design);
 		JasperPrint relGerado = JasperFillManager.fillReport(jr, parameters, connection);
@@ -737,8 +737,7 @@ public class ExRelatorioController extends ExController implements IUsaMascara{
 		Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("secaoUsuario", getRequest()
-				.getParameter("secaoUsuario"));
+		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
 		parametros.put("link_siga", "http://" + getRequest().getServerName()
@@ -748,8 +747,7 @@ public class ExRelatorioController extends ExController implements IUsaMascara{
 		
 		if (!getRequest().getParameter("orgaoUsu").isEmpty())
 			parametros.put("orgao", getRequest().getParameter("orgaoUsu"));
-		parametros.put("lotacaoTitular",
-				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 
 		RelOrgao rel = new RelOrgao(parametros);
@@ -853,7 +851,7 @@ public class ExRelatorioController extends ExController implements IUsaMascara{
 		assertAcesso("CLSD:Classificação Documental;DOCS:Relação de documentos classificados");
 
 		Map<String, String> parametros = new HashMap<String, String>();
-		String codificacao = getRequest().getParameter("codificacao");
+		String codificacao = 	getRequest().getParameter("codificacao");
 		String idLotacao = getRequest().getParameter("lotacaoDestinatarioSel.id");
 		String idOrgaoUsu = getRequest().getParameter("orgaoUsuario");
 		String secaoUsuario = getRequest().getParameter("secaoUsuario");

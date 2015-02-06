@@ -1108,7 +1108,7 @@ public class ExDocumentoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		ExDocumentoController.redirecionarParaExibir(result, exDocumentoDTO.getDoc().getSigla());
 	}
 	
 	public String aAtualizarMarcasDoc(ExDocumentoDTO exDocumentoDTO) throws Exception {

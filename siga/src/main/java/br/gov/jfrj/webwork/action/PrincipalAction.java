@@ -23,20 +23,20 @@
 
 package br.gov.jfrj.webwork.action;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import java.io.DataInputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
-import com.opensymphony.xwork.Action;
 
-import java.io.DataInputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.opensymphony.xwork.Action;
 
 public class PrincipalAction extends SigaActionSupport {
 
@@ -101,7 +101,7 @@ public class PrincipalAction extends SigaActionSupport {
 		
 		return Action.SUCCESS;
 	}
-
+	
 	public String aSelecionar() throws Exception {
 		try {
 			DpPessoa pes = getTitular();
@@ -116,7 +116,9 @@ public class PrincipalAction extends SigaActionSupport {
 			}
 
 			// TODO não precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
-			String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ getRequest().getServerPort();
+			
+			//String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ getRequest().getServerPort();
+			String urlBase = getRequest().getScheme() + "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
 
 			String URLSelecionar = "";
 			String uRLExibir = "";

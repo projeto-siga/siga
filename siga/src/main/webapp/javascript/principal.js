@@ -1,66 +1,40 @@
 Siga.principal = {
 
-	modules: {
-		sigaex: {
-            url: "/sigaex/expediente/doc/gadget.action",
-            params: {
-                idTpFormaDoc: 1,
-                apenasQuadro: true
-            },
-            viewId: "left"            
+    modules: {
+        sigaex: {
+        	name: "sigaex",
+            viewId: "left"
         },
         sigawf: {
-            url: "/sigawf/inbox.action",
-            params: {},
+        	name: "sigawf",
             viewId: "right"
         },        
         sigasr: {
-            url: "/sigasr/solicitacao/gadget",
+        	name: "sigasr",
             viewId: "rightbottom"
         },
         sigagc: {
-            url: "/sigagc/app/gadget",
+        	name: "sigagc",
             viewId: "rightbottom2"
         },
         processos: {
-            url: "/sigaex/expediente/doc/gadget.action",
-            params: {
-                idTpFormaDoc: 2
-            },
+        	name: "processos",
             viewId: "leftbottom"
         }
-    },
-
-    loadModules: function(){
-        var self = this;
-        
-        // Itera sobre o objeto modules definido no inicio desse script.
-        $.each(self.modules, function(){
-        	var model = this;
-        	// Efetua a requisicao e retorna o conteudo 
-            var content = Siga.ajax(model.url, model.params, "GET", function(content){  
-	        	// Renderiza o conteudo onde o viewId do modulo esta posicionado
-	            self.display(model, content);
-            });
-        });
-    },
-
-    display: function(model, content){
-    	var self = this;
-    	var target = $("#"+model.viewId); // Local onde o conteúdo será renderizado
-    	
-        if (Siga.isUnauthenticated(content)){        
-        	target.html("M&oacute;dulo indispon&iacute;vel");
-        }else{
-            target.append(content);
-            $(target.find(".loading")).hide();
-        }
     }
+
 }
 
 // Funcao principal que sera chamada apos o load da pagina
 $(function() {
-	// Cache false pois o I.E tem serios problemas com cache de chamadas assincronas.
-    $.ajaxSetup({ cache: false });
-    Siga.principal.loadModules();
+       
+    $.each(Siga.principal.modules, function(){ 
+    	var model = this;     
+    	var target = $("#"+model.viewId);
+    	$(target.find(".loading")).show();
+    	
+        Siga.ajax("/siga/principalQuadros/carregaModulo.action?modulo="+model.name, {}, "GET", function(response){ 
+        	target.html(response);
+        });
+    });
 });

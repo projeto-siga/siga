@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
@@ -13,35 +13,20 @@
 <script type="text/javascript">
 <ww:url id="url" action="editar" namespace="/expediente/doc">
 </ww:url>
-function presskeySelect(event, id, parameter) {
-    if (event.type == 'keypress') {
-        if(event.keyCode == '13'){
-        	sbmt(parameter);
-        }
-    } 
-}
-function mouseSelect(event, id, parameter) {	
-	if (event.type == 'change') {
-        var click = document.getElementById('clickSelect').value;
-        if(click){
-			sbmt(parameter);
-        }
-    }
-}
 function sbmt(id) {
 	
 	var frm = document.getElementById('frm');
 	
-	//Dispara a funÁ„o onSave() do editor, caso exista
+	//Dispara a fun√ß√£o onSave() do editor, caso exista
     if (typeof(onSave) == "function"){
     	onSave();
     } 
 	
-	if (id != null || IsRunningAjaxRequest()) {
+	if (id == null || IsRunningAjaxRequest()) {
 		frm.action='<ww:property value="%{url}"/>';
-		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
-	} else {
 		frm.submit();
+	} else {
+		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
 	}
 	return;
 	
@@ -71,7 +56,7 @@ function gravarDoc() {
 	if (typeof(frm.submitsave) != "undefined")
 		frm.submit = frm.submitsave;
 	
-	//Dispara a funÁ„o onSave() do editor, caso exista
+	//Dispara a fun√ß√£o onSave() do editor, caso exista
    	if (typeof(onSave) == "function")
    		onSave();
 	
@@ -83,18 +68,19 @@ function validar(silencioso){
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
 	var eletro2 = document.getElementById('eletronicoCheck2');
-	if (descr==null || descr=="") {
-		aviso("Preencha o campo DescriÁ„o antes de gravar o documento.", silencioso);
+	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
+	if (descricaoAutomatica == null && (descr==null || descr=="")) {
+		aviso("Preencha o campo Descri√ß√£o antes de gravar o documento.", silencioso);
 		return false;
 	}
 	
 	if (eletroHidden == null && !eletro1.checked && !eletro2.checked) {
-		aviso("… necess·rio informar se o documento ser· digital ou fÌsico, na parte superior da tela.", silencioso);
+		aviso("√â necess√°rio informar se o documento ser√° digital ou f√≠sico, na parte superior da tela.", silencioso);
 		return false;
 	}
 	var limite = ${tamanhoMaximoDescricao};
 	if (document.getElementsByName('descrDocumento')[0].value.length >= limite) {
-		aviso('O tamanho m·ximo da descriÁ„o È de ' + limite + ' caracteres', silencioso);
+		aviso('O tamanho m√°ximo da descri√ß√£o √© de ' + limite + ' caracteres', silencioso);
 		return false;
 	}
 	
@@ -103,13 +89,13 @@ function validar(silencioso){
 }
 function aviso(msg, silencioso){
 	if (silencioso)
-		avisoVermelho('O documento n„o pÙde ser salvo: ' + msg);
+		avisoVermelho('O documento n√£o p√¥de ser salvo: ' + msg);
 	else alert(msg);
 }
 	
 <ww:url id="url" action="excluirpreench" namespace="/expediente/doc"></ww:url>
 function removePreench(){
-			//Dispara a funÁ„o onSave() do editor, caso exista
+			//Dispara a fun√ß√£o onSave() do editor, caso exista
     		if (typeof(onSave) == "function"){
     			onSave();
     		} 
@@ -118,7 +104,7 @@ frm.submit();
 }
 <ww:url id="url" action="alterarpreench" namespace="/expediente/doc"></ww:url>
 function alteraPreench(){
-			//Dispara a funÁ„o onSave() do editor, caso exista
+			//Dispara a fun√ß√£o onSave() do editor, caso exista
     		if (typeof(onSave) == "function"){
     			onSave();
     		} 
@@ -132,7 +118,7 @@ if (frm.preenchimento.value==0){
 	frm.btnAlterar.disabled="true";
 }
 else {
-	//Dispara a funÁ„o onSave() do editor, caso exista
+	//Dispara a fun√ß√£o onSave() do editor, caso exista
     		if (typeof(onSave) == "function"){
     			onSave();
     		} 
@@ -146,11 +132,11 @@ else {
 function adicionaPreench(){
 var result='';
 while((result=='') && (result!=null)){
-	result=prompt('Digite o nome do padr„o de preenchimento a ser criado para esse modelo:', '');
+	result=prompt('Digite o nome do padr√£o de preenchimento a ser criado para esse modelo:', '');
 	if (result=='')
- 		alert('O nome do padr„o de preenchimento n„o pode ser vazio');
+ 		alert('O nome do padr√£o de preenchimento n√£o pode ser vazio');
  	else if (result!=null){
- 			//Dispara a funÁ„o onSave() do editor, caso exista
+ 			//Dispara a fun√ß√£o onSave() do editor, caso exista
     		if (typeof(onSave) == "function"){
     			onSave();
     		} 
@@ -186,7 +172,7 @@ function popitup_documento(pdf) {
 	else
 		frm.action='<ww:property value="%{url}"/>';
 //	alert(frm.action);
-	//Dispara a funÁ„o onSave() do editor, caso exista
+	//Dispara a fun√ß√£o onSave() do editor, caso exista
     if (typeof(onSave) == "function"){
     	onSave();
     } 
@@ -200,7 +186,7 @@ function popitup_documento(pdf) {
 	return false;
 }			
 function checkBoxMsg() {
-   window.alert('AtenÁ„o: essa opÁ„o sÛ deve ser selecionada quando o subscritor possui certificado digital, pois ser· exigida a assinatura digital do documento.');   
+   window.alert('Aten√ß√£o: essa op√ß√£o s√≥ deve ser selecionada quando o subscritor possui certificado digital, pois ser√° exigida a assinatura digital do documento.');   
 }
 var saveTimer;
 function triggerAutoSave(){
@@ -242,7 +228,7 @@ function doneAutoSave(response){
 }
 function failAutoSave(response){
 	tryAgainAutoSave(); 
-	avisoVermelho('AtenÁ„o: Ocorreu um erro ao salvar o documento.');
+	avisoVermelho('Aten√ß√£o: Ocorreu um erro ao salvar o documento.');
 	stillSaving = false;
 }
 function tryAgainAutoSave(){
@@ -272,7 +258,6 @@ function tryAgainAutoSave(){
 				namespace="/expediente/doc" theme="simple" method="POST">
 				<ww:token />
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
-				<input type="hidden" id="clickSelect" name="clickSelect" />
 				<ww:hidden name="postback" value="1" />
 				<ww:hidden id="sigla" name="sigla" value="%{sigla}" />
 				<ww:hidden name="nomePreenchimento" value="" />
@@ -292,7 +277,7 @@ function tryAgainAutoSave(){
 								<td colspan="4">Novo Documento</td>
 							</c:when>
 							<c:otherwise>
-								<td colspan="4">Dados b·sicos:</td>
+								<td colspan="4">Dados b√°sicos:</td>
 							</c:otherwise>
 						</c:choose>
 					</tr>
@@ -316,8 +301,7 @@ function tryAgainAutoSave(){
 						<td width="10%"><ww:select name="idTpDoc"
 							list="tiposDocumento" listKey="idTpDoc"
 							listValue="descrTipoDocumento"
-							onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
-							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)"
+							onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();"
 							cssStyle="${estiloTipo}" /> <span style="${estiloTipoSpan}">${doc.exTipoDocumento.descrTipoDocumento}</span>
 						</td>
 						<td width="5%" align="right">Data:</td>
@@ -337,7 +321,7 @@ function tryAgainAutoSave(){
 								</c:if>
 							</c:when>
 							<c:otherwise>
-								<ww:radio list="%{#{1:'Digital',2:'FÌsico'}}" name="eletronico"
+								<ww:radio list="%{#{1:'Digital',2:'F√≠sico'}}" name="eletronico"
 									id="eletronicoCheck" label="" value="${eletronico}"
 									disabled="${eletronicoFixo}" onchange="setFisico();"/>
 								<script type="text/javascript">function setFisico() {if ($('input[name=eletronico]:checked').val() == 2) $('html').addClass('fisico'); else $('html').removeClass('fisico');}; setFisico();</script>									
@@ -346,16 +330,16 @@ function tryAgainAutoSave(){
 					</tr>
 					<c:if test='${tipoDocumento == "antigo"}'>
 						<tr>
-							<td>N∫ original:</td>
+							<td>N¬∫ original:</td>
 							<input type="hidden" name="campos" value="numExtDoc" />
 							<td colspan="3"><ww:textfield name="numExtDoc" size="16"
 								maxLength="32" /></td>
 						</tr>
 						<tr style="font-weight: bold">
-							<td>N∫ antigo:</td>
+							<td>N¬∫ antigo:</td>
 							<input type="hidden" name="campos" value="numAntigoDoc" />
 							<td colspan="3"><ww:textfield name="numAntigoDoc" size="16"
-								maxLength="32" /> (informar o n˙mero do documento no antigo
+								maxLength="32" /> (informar o n√∫mero do documento no antigo
 							sistema de controle de expedientes ou de processos
 							administrativos [SISAPA] ou [PROT])</td>
 						</tr>
@@ -368,24 +352,24 @@ function tryAgainAutoSave(){
 							onblur="javascript:verifica_data(this, true);" /></td>
 						</tr>
 						<tr>
-							<td>N∫ original:</td>
+							<td>N¬∫ original:</td>
 							<input type="hidden" name="campos" value="numExtDoc" />
 							<td><ww:textfield name="numExtDoc" size="32" maxLength="32" /></td>
-							<td align="right">”rg„o:</td>
+							<td align="right">√ìrg√£o:</td>
 							<input type="hidden" name="campos" value="cpOrgaoSel.id" />
 							<td><siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"/></td>
 						</tr>
 						<tr>
-							<td>Obs. sobre o ”rg„o Externo:</td>
+							<td>Obs. sobre o √ìrg√£o Externo:</td>
 							<input type="hidden" name="campos" value="obsOrgao" />
 							<td colspan="3"><ww:textfield size="120" name="obsOrgao"
 								maxLength="256" /></td>
 						</tr>
 						<tr>
-							<td>N∫ antigo:</td>
+							<td>N¬∫ antigo:</td>
 							<input type="hidden" name="campos" value="numAntigoDoc" />
 							<td colspan="3"><ww:textfield name="numAntigoDoc" size="32"
-								maxLength="34" /> (informar o n˙mero do documento no antigo
+								maxLength="34" /> (informar o n√∫mero do documento no antigo
 							sistema de controle de expedientes, caso tenha sido cadastrado)</td>
 						</tr>
 					</c:if>
@@ -410,7 +394,7 @@ function tryAgainAutoSave(){
 								<input type="hidden" name="campos" value="subscritorSel.id" />
 								<input type="hidden" name="campos" value="substituicao" />
 								<td colspan="3"><siga:selecao propriedade="subscritor" modulo="siga"
-									tema="simple" idAjax="subscritor"/>&nbsp;&nbsp;<ww:checkbox name="substituicao"
+									tema="simple" />&nbsp;&nbsp;<ww:checkbox name="substituicao"
 									onclick="javascript:displayTitular(this);" />Substituto</td>
 							</c:otherwise>
 						</c:choose>
@@ -430,16 +414,16 @@ function tryAgainAutoSave(){
 						tema="simple" modulo="siga"/></td>
 					</tr>
 					<tr>
-						<td>FunÁ„o;<wbr/>LotaÁ„o;<wbr/>Localidade:</td>
+						<td>Fun√ß√£o;<wbr/>Lota√ß√£o;<wbr/>Localidade:</td>
 						<td colspan="3"><input type="hidden" name="campos"
 							value="nmFuncaoSubscritor" /> <ww:textfield
 							name="nmFuncaoSubscritor" size="50" maxLength="128" />
-						(Opcionalmente informe a funÁ„o e a lotaÁ„o na forma:
-						FunÁ„o;LotaÁ„o;Localidade)</td>
+						(Opcionalmente informe a fun√ß√£o e a lota√ß√£o na forma:
+						Fun√ß√£o;Lota√ß√£o;Localidade)</td>
 					</tr>
 					<%--
 					<tr>
-					<td>FunÁ„o:</td>
+					<td>Fun√ß√£o:</td>
 					<input type="hidden" name="campos" value="nmSubscritorFuncao" />
 					<td colspan="3"><ww:if test="${empty doc.nmSubscritorFuncao}">
 						<c:set var="style_subs_func_editar" value="display:none" />
@@ -459,36 +443,34 @@ function tryAgainAutoSave(){
 --%>
 					<%--<c:if test='${tipoDocumento != "externo"}'>--%>
 					<tr>
-						<td>Destinat·rio:</td>
+						<td>Destinat√°rio:</td>
 						<input type="hidden" name="campos" value="tipoDestinatario" />
 						<td colspan="3"><ww:select name="tipoDestinatario"
-							onkeypress="presskeySelect(event, this, 'tipoDestinatario')" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
-							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, 'tipoDestinatario')"
-							list="listaTipoDest" /> <!-- sbmt('tipoDestinatario') -->
-						<siga:span id="destinatario" depende="tipoDestinatario"> 
+							onchange="javascript:sbmt();" list="listaTipoDest" /> <!-- sbmt('tipoDestinatario') -->
+						<siga:span id="destinatario" depende="tipoDestinatario">
 
 							<c:choose>
 								<c:when test='${tipoDestinatario == 1}'>
-									<input type="hidden" name="campos" value="destinatario" />
+									<input type="hidden" name="campos" value="destinatarioSel.id" />
 									<siga:selecao propriedade="destinatario" tema="simple"
-                                          idAjax="destinatario" reler="ajax" modulo="siga"/>
-                                    <!--  reler="sim"  -->
+                                        reler="sim" modulo="siga" />
+                                    <!--  idAjax="destinatario"  -->
 									    
 								</c:when>
 								<c:when test='${tipoDestinatario == 2}'>
 									<input type="hidden" name="campos"
 										value="lotacaoDestinatarioSel.id" />
 									<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
-                                         idAjax="destinatario2" reler="ajax" modulo="siga" /></td>
-                        			<!--  reler="sim" -->
+                                        reler="sim" modulo="siga" /></td>
+                        			<!--  idAjax="destinatario" -->
 						   
 						</c:when>
 						<c:when test='${tipoDestinatario == 3}'>
 							<input type="hidden" name="campos"
 								value="orgaoExternoDestinatarioSel.id" />
 							<siga:selecao propriedade="orgaoExternoDestinatario"
-                            idAjax="destinatario3" tema="simple" reler="ajax" modulo="siga" />
-                            <!-- reler="sim"-->
+                                tema="simple" reler="sim" modulo="siga" />
+                            <!-- idAjax="destinatario" -->
 							<br>
 							<ww:textfield name="nmOrgaoExterno" size="120" maxLength="256" />
 							<input type="hidden" name="campos" value="nmOrgaoExterno" />
@@ -511,8 +493,7 @@ function tryAgainAutoSave(){
 						<tr>
 							<td>Tipo:</td>
 							<td colspan="3"><ww:select name="idFormaDoc"
-								onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
-								onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)"
+								onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();"
 								list="formasDocPorTipo" listKey="idFormaDoc"
 								listValue="descrFormaDoc" cssStyle="${estiloTipo}" /><!-- sbmt('forma') -->
 							<c:if test="${not empty doc.exFormaDocumento}">
@@ -525,8 +506,7 @@ function tryAgainAutoSave(){
 								<td>Modelo:</td>
 								<td colspan="3"><siga:div id="modelo" depende="forma">
 										<ww:select name="idMod"
-											onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
-											onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)"
+											onchange="document.getElementById('alterouModelo').value='true';sbmt();"
 											list="modelos" listKey="idMod" listValue="nmMod" 
 											cssStyle="${estiloTipo}" />
 										<c:if test="${not empty doc.exModelo}">
@@ -542,7 +522,7 @@ function tryAgainAutoSave(){
 						</ww:else>
 						
 						<tr>
-							<td>Preenchimento Autom·tico:</td>
+							<td>Preenchimento Autom√°tico:</td>
 							<input type="hidden" name="campos" value="preenchimento" />
 							<td colspan="3"><ww:select name="preenchimento"
 								list="preenchimentos" listKey="idPreenchimento"
@@ -560,7 +540,7 @@ function tryAgainAutoSave(){
 
 						<%--
 					<tr>
-						<td>ProtÛtipo:</td>
+						<td>Prot√≥tipo:</td>
 						<td colspan="3"><ww:select name="idPrototipo"
 							onchange="javascript:sbmt();" list="prototipos" listKey="idPro"
 							listValue="nmPro" /><input type="button" name="" value="Novo" />
@@ -592,7 +572,7 @@ function tryAgainAutoSave(){
 
 						
 					<tr style="display:<ww:if test="%{modelo.exClassificacao!=null}">none</ww:if><ww:else>visible</ww:else>">
-						<td>ClassificaÁ„o:</td>
+						<td>Classifica√ß√£o:</td>
 						<c:if test="${modelo.exClassificacao!=null}">
 							<c:set var="desativarClassif" value="sim" />
 						</c:if>
@@ -600,14 +580,14 @@ function tryAgainAutoSave(){
 						<td colspan="3"><siga:span id="classificacao"
 							depende="forma;modelo">
 							<siga:selecao desativar="${desativarClassif}" modulo="sigaex"
-							idAjax="classificacao" propriedade="classificacao" tema="simple" reler="ajax" />
-							<!-- reler="sim"-->
+							propriedade="classificacao" tema="simple" reler="sim" />
+							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>
 					<c:if
 						test="${classificacaoSel.id!=null && classificacaoIntermediaria}">
 						<tr>
-							<td>DescriÁ„o da ClassificaÁ„o:</td>
+							<td>Descri√ß√£o da Classifica√ß√£o:</td>
 							<td colspan="3"><siga:span id="descrClassifNovo"
 								depende="forma;modelo;classificacao">
 								<ww:textfield name="descrClassifNovo" size="80"
@@ -615,13 +595,16 @@ function tryAgainAutoSave(){
 							</siga:span></td>
 						</tr>
 					</c:if>
-					<tr>
+					<tr style="display:<ww:if test="%{modelo.descricaoAutomatica}">none</ww:if><ww:else>visible</ww:else>">
+					    <c:if test="${modelo.descricaoAutomatica}">
+							<input type="hidden" id="descricaoAutomatica" value="sim" />
+						</c:if>
 						<input type="hidden" name="campos" value="descrDocumento" />
-						<td>DescriÁ„o:</td>
+						<td>Descri√ß√£o:</td>
 						<td colspan="3"><ww:textarea name="descrDocumento" cols="80"
 							rows="2" id="descrDocumento" cssClass="gt-form-textarea"/> <br>
 						<span><b>(preencher o campo acima com palavras-chave,
-						sempre usando substantivos, gÍnero masculino e singular)</b></span></td>
+						sempre usando substantivos, g√™nero masculino e singular)</b></span></td>
 					</tr>
 					<%--
 				<c:if
@@ -678,7 +661,7 @@ function tryAgainAutoSave(){
 									onclick="javascript: popitup_documento(false);" class="gt-btn-large gt-btn-left"/>
 								<input type="button" 
 									name="ver_doc_pdf"
-									onclick="javascript: popitup_documento(true);" value="Visualizar a Impress„o" class="gt-btn-large gt-btn-left"/>
+									onclick="javascript: popitup_documento(true);" value="Visualizar a Impress√£o" class="gt-btn-large gt-btn-left"/>
 							</c:if>
 						</c:if></td>
 					</tr>
@@ -689,7 +672,7 @@ function tryAgainAutoSave(){
 	</div>
 </div>
 
-	<!--  tabela do rodapÈ -->
+	<!--  tabela do rodap√© -->
 </siga:pagina>
 
 <script type="text/javascript">

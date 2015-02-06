@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/page/include.jsp"%><!--  -->
 
 <!-- Tabela com a lista de Tarefas -->
+<div id="sigawf"></div>
 <div class="gt-content-box gt-for-table">
 	<table border="0" class="gt-table">
 		<thead>

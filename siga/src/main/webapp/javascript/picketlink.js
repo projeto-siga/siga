@@ -4,59 +4,12 @@
  *         
  */
 
-/**
- * Os modulos definidos na variavel modules abaixo, serao carregados
- * na pagina principal do siga. A variavel params corresponde
- * ao parametros que serao passados na requisicao GET ou POST.
- * O viewID corresponde ao local onde sera renderizado na tela o resultado
- * da consulta
- * 
- * Os metodos que comecam com underline sao privados.
- */
-
 window.Siga = {
-
-    modules: {
-        sigawf: {
-            url: "/sigawf/app/inbox",
-            params: {},
-            viewId: "right"
-        },
-        sigaex: {
-            url: "/sigaex/app/expediente/gadget",
-            params: {
-                idTpFormaDoc: 1
-            },
-            viewId: "left"            
-        },
-        sigasr: {
-            url: "/sigasr/solicitacao/gadget",
-            viewId: "rightbottom"
-        },
-        sigagc: {
-            url: "/sigagc/app/gadget",
-            viewId: "rightbottom2"
-        },
-        processos: {
-            url: "/sigaex/app/expediente/gadget",
-            params: {
-                idTpFormaDoc: 2
-            },
-            viewId: "leftbottom"
-        }
-    },
-    
-    httpMethod: {
-    	GET: "GET",
-    	POST: "POST",
-    	DELETE: "DELETE",
-    	UPDATE: "UPDATE"
-    },
-     
+      
     isUnauthenticated: function(text){
-    	// essa primeira verificacao é pra verificar se é do picketlink
-    	// a segunda eh pra ver se veio a pagina completa do siga ou soh o que interessa
-    	return (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1)
+        // essa primeira verificacao é pra verificar se é do picketlink
+        // a segunda eh pra ver se veio a pagina completa do siga ou soh o que interessa
+        return (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1)
     },
     
     _picketlinkResponse: function(textResponse){
@@ -72,37 +25,20 @@ window.Siga = {
         return {url: action, params: samlJson};
     },
 
-    _ajaxCall: function(ajax, doneCallback){
-        var self = this;
-        var fields = (ajax.type == "POST") ? { withCredentials: true } : {};
+    _ajaxCall: function(ajax, doneCallback){    
+        var cacheValue = true;
+        if ($.browser.msie)
+            cacheValue = false;   
+
         $.ajax({
             url: ajax.url,
             type: ajax.type,
             data: ajax.params,
-            // Necessário para cross domain
-            xhrFields: fields,
-            statusCode: {
-                404: function() {
-                    if (ajax.target != null)
-                        ajax.target.html("M&oacute;dulo indispon&iacute;vel");
-                },
-                500: function() {
-                    if (ajax.target != null)
-                        ajax.target.html("Erro interno do servidor. Por favor, entre em contato com um administrador.");
-                }
-            },
-            beforeSend: function(){
-                if (ajax.target != null)
-                    $(ajax.target.find(".loading")).show();
-            }
-        }).fail(function(jqXHR, textStatus, errorThrown){
-            if (ajax.target != null)
-                ajax.target.html("M&oacute;dulo indispon&iacute;vel");
+            cache: cacheValue            
+        }).fail(function(jqXHR, textStatus, errorThrown){            
+            doneCallback(jqXHR.statusText);
         }).done(function(response){
             doneCallback(response);
-        }).always(function(){
-            if (ajax.target != null)
-                $(ajax.target.find(".loading")).hide();
         });
     },
 
@@ -113,24 +49,23 @@ window.Siga = {
      * callback: funcao que sera chamada passando o conteudo pego
      */
     ajax: function(url, params, httpMethod, callback){
-        var self = this;
-        
-        self._ajaxCall({url: url, type: httpMethod, params: params}, function(textResponse) {
+        var self = this;        
+
+         self._ajaxCall({url: url, type: httpMethod, params: params}, function(textResponse) {
             // Verifica se o SP foi previamente inicializado, caso nao tenha sido apenas renderiza.
             if (textResponse.indexOf("SAMLRequest") > -1){
-                var params = self._picketlinkResponse(textResponse);
+                var plparams = self._picketlinkResponse(textResponse);
 
                 // Envia um POST para o IDP com o atributo SAMLRequest da ultima requisicao
-                self._ajaxCall({url: params.url, type: "POST", params: params.params}, function(textResponse){
-                    var params = self._picketlinkResponse(textResponse);
-
+                self._ajaxCall({url: plparams.url, type: "POST", params: plparams.params}, function(textResponse){                    
+                    var plparams = self._picketlinkResponse(textResponse);
                     // Envia um POST para o SP com o atributo SAMLResponse da ultima requisicao
-                    self._ajaxCall({url: params.url, type: "POST", params: params.params}, function(textResponse){
-                        callback(textResponse);
+                    self._ajaxCall({url: plparams.url, type: "POST", params: plparams.params}, function(textResponse){
+                        callback(textResponse);                                                
                     });
                 });
-            }else{
-            	callback(textResponse);
+            }else{ // Quando nao precisa de passar pelo fluxo do SAML.
+                callback(textResponse);
             }
         });
     }    

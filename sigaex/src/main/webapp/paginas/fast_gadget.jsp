@@ -18,6 +18,12 @@ submitOk = function() {
 }
 </script>
 
+<c:if test="${idTpFormaDoc == 1}">
+	<div id="sigaex"></div>
+</c:if>
+<c:if test="${idTpFormaDoc == 2}">
+	<div id="processos"></div>
+</c:if>
 <div class="gt-content-box gt-for-table">
 	<table border="0" class="gt-table">
 		<thead>

@@ -68,6 +68,9 @@ public class SigaHTTP {
 	public String get(String URL, HttpServletRequest request, String cookieValue) {
 		String html = "";
 		
+		if (URL.startsWith("/"))
+			URL = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + URL;
+		
 		try{
 			 // Efetua o request para o Service Provider (módulo)
 			 Request req = Request.Get(URL);
@@ -91,8 +94,7 @@ public class SigaHTTP {
 				try{
 					setCookie = extractCookieFromHeader(getHeader(SET_COOKIE));
 				}catch(ElementNotFoundException elnf){
-					log.info("Nao encontrou o set-cookie");
-					log.info("retornando string vazia");
+					log.warning("Nao encontrou o set-cookie");
 					setCookie = getCookie(request, cookieValue);
 				}
 				

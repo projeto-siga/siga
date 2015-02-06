@@ -75,7 +75,8 @@ ${meta}
 
 <link rel="shortcut icon" href="/siga/sigalibs/siga.ico" />
 
-<script src="/siga/javascript/jquery/1.6/jquery-1.6.4.min.js" type="text/javascript"></script>
+<script src="/siga/javascript/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
+<script src="/siga/javascript/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
 <script src="/siga/javascript/json2.js" type="text/javascript"></script>
 <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen, projection">

@@ -38,6 +38,7 @@
 		<action name="principal" class="br.gov.jfrj.webwork.action.PrincipalAction">
 			<result>/paginas/principal.jsp</result>
 		</action>
+		
 
 		<action name="pagina_vazia" class="br.gov.jfrj.webwork.action.PlayAction">
 			<result>/paginas/play_pagina_vazia.jsp</result>
@@ -72,6 +73,12 @@
 		</action>
 		-->
 
+	</package>
+	
+	<package name="principalQuadros" extends="default" namespace="/principalQuadros">
+		<action name="carregaModulo" class="br.gov.jfrj.webwork.action.PrincipalQuadrosAction" method="aCarregaModulo">
+			<result>/paginas/principal_quadro.jsp</result>
+		</action>
 	</package>
 	
 	<package name="usuario" extends="default" namespace="/usuario">

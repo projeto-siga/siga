@@ -48,7 +48,7 @@
 </div>
 
 
-#{modal nome:'equipe', titulo:'Cadastrar Equipe'}
+#{modal nome:'equipe2', titulo:'Cadastrar Equipe'}
 	<div id="divEditarForm">#{include
 				'Application/editarEquipe.html' /}</div>
 #{/modal}
@@ -56,7 +56,7 @@
 <script type="text/javascript">
 	var opts = {
 			 urlGravar : '@{Application.gravarEquipe()}',
-			 dialogCadastro : $('#equipe_dialog'),
+			 dialogCadastro : $('#equipe2_dialog'),
 			 tabelaRegistros : $('#equipes_table'),
 			 objectName : 'equipe',
 			 formCadastro : $('#form')
@@ -180,6 +180,20 @@
 			}
 
 			carregarDesignacoes(equipe.idEquipe);
+		}
+
+		// Caso seja cadastro, atualiza os dados da Lotação
+		else {
+			var lota = JSON.parse($("#lotacaoUsuario").val())
+				equipeEdicao = {
+					lotacao : lota.id,
+					lotacao_sigla : lota.descricao,
+					lotacaoSpan : lota.descricao,
+					lotacao_sigla : lota.sigla
+				};
+
+			// chama o editar para popular o campo da lotação
+			equipeService.formularioHelper.populateFromJson(equipeEdicao);			
 		}
 	}
 	

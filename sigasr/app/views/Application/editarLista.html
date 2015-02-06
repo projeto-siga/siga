@@ -293,7 +293,8 @@
 				if (permissoesTable.api().row(this).data() != undefined) {
 		        	permissoesTable.$('tr.selected').removeClass('selected');
 		            $(this).addClass('selected');
-		
+
+		            atualizarControleAcessoModal(permissoesTable.api().row(this).data());
 				    controleAcessoModalAbrir(true);
 				}
 			});
@@ -351,6 +352,32 @@
 		return 0;
 	};
 	
+	function atualizarControleAcessoModal(itemArray) {
+		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
+		jComplexoCbb = document.getElementsByName("complexo")[0];
+		
+		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
+		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
+		$("#lotacao").val(itemArray[colunas.idLotacao]);
+		$("#lotacao_descricao").val(itemArray[colunas.nomeLotacao]);
+		$("#lotacaoSpan").html(itemArray[colunas.nomeLotacao]);
+		$("#lotacao_sigla").val(itemArray[colunas.lotacao]);
+		$("#dpPessoa").val(itemArray[colunas.idPessoa]);
+		$("#dpPessoa_descricao").val(itemArray[colunas.nomePessoa]);
+		$("#dpPessoaSpan").html(itemArray[colunas.nomePessoa]);
+		$("#dpPessoa_sigla").val(itemArray[colunas.pessoa]);
+		$("#cargo").val(itemArray[colunas.idCargo]);
+		$("#cargo_descricao").val(itemArray[colunas.siglaCargo]);
+		$("#cargoSpan").html(itemArray[colunas.siglaCargo]);
+		$("#cargo_sigla").val(itemArray[colunas.descrCargo]);
+		$("#funcaoConfianca").val(itemArray[colunas.idfuncao]);
+		$("#funcaoConfianca_descricao").val(itemArray[colunas.siglaFuncao]);
+		$("#funcaoConfiancaSpan").html(itemArray[colunas.siglaFuncao]);
+		$("#funcaoConfianca_sigla").val(itemArray[colunas.descrFuncao]);
+		atualizarListasTipoPermissaoEdicao(itemArray);
+		$("#idConfiguracao").val(itemArray[colunas.idTipoPerm]);
+	};
+	
 	function controleAcessoModalAbrir(isEdicao){
 		isEditingContr = isEdicao;
 		itemTipoPermissaoOptions = $("#itemTipoPermissao").clone();
@@ -360,7 +387,9 @@
 		else
 			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permissão');
 
-		if ($("#idLista").val() != undefined && $("#idLista").val() != "")
+		if (($("#idLista").val() == undefined || $("#idLista").val() == "") && listaService.aplicar() == false)
+			return;
+		else
 			$("#controleAcesso_dialog").dialog('open');
 	}
 	

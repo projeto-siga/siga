@@ -206,6 +206,7 @@ altura:'200', largura:'450'}
 	designacaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
 		designacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
+		afterGravarDesignacao(tr, objSalvo);
 		return tr;
 	}
 
@@ -254,7 +255,6 @@ altura:'200', largura:'450'}
 
 			if(designacaoService.onGravar) {
 				var tr = designacaoService.onGravar(undefined, design);
-				afterGravarDesignacao(tr, design);
 			}
 		}
 	}
@@ -290,7 +290,7 @@ altura:'200', largura:'450'}
 		if (designacao && (designacao.isHerdado == 'true' || designacao.isHerdado == true))
 			$('td', tr).addClass('configuracaoHerdada');
 		else
-			acoes = acoes.append(designacaoService.duplicarButton);
+			acoes = acoes.append(" " + designacaoService.duplicarButton);
 	}
 
 	function duplicarDesignacao(event) {

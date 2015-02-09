@@ -68,8 +68,10 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.http.VRaptorResponse;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -109,7 +111,6 @@ public class ExDocumentoController extends ExController {
 	
 	
 	public ExDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
-
 		super(request, response, context, result, CpDao.getInstance(), so, em);
 		CurrentRequest.set(new RequestInfo(context, request, response));
 		
@@ -607,7 +608,7 @@ public class ExDocumentoController extends ExController {
 			dao().excluir(doc);
 			ExDao.commitTransacao();
 			result.include("sigla", sigla);
-			result.forwardTo("/app/expediente/doc/listar");
+			result.redirectTo("/app/expediente/doc/listar");
 		} catch (final AplicacaoException e) {
 			ExDao.rollbackTransacao();
 			throw e;
@@ -893,8 +894,11 @@ public class ExDocumentoController extends ExController {
 		aFinalizar(sigla);
 	}
 	
-	@Post("app/expediente/doc/gravar")
-	public String gravar(ExDocumentoDTO exDocumentoDTO, String[] vars, String[] campos) throws Exception {
+	@Post("/app/expediente/doc/gravar")
+	public void gravar(ExDocumentoDTO exDocumentoDTO, String[] vars, String[] campos) throws Exception {
+		Ex ex = Ex.getInstance();
+		ExBL exBL = ex.getBL();
+		
 		try {
 			buscarDocumentoOuNovo(true, exDocumentoDTO);
 			if (exDocumentoDTO.getDoc() == null){
@@ -907,18 +911,27 @@ public class ExDocumentoController extends ExController {
 				edita(exDocumentoDTO, null, vars, exDocumentoDTO.getMobilPaiSel(), exDocumentoDTO.isCriandoAnexo());
 				getPar().put("alerta", new String[] { "Sim" });
 				exDocumentoDTO.setAlerta("Sim");
-				return "form_incompleto";
+				
+				String url = null;
+				if(exDocumentoDTO.getMobilPaiSel().getSigla() != null) {
+					url = MessageFormat.format("editar?mobilPaiSel.sigla={0}&criandoAnexo={1}", exDocumentoDTO.getMobilPaiSel().getSigla(), exDocumentoDTO.isCriandoAnexo());
+				} else {
+					url = MessageFormat.format("editar?sigla={0}&criandoAnexo={1}", exDocumentoDTO.getSigla(), exDocumentoDTO.isCriandoAnexo());
+				}
+				
+				result.redirectTo(url);
+				return;
 			}
 			
 			lerForm(exDocumentoDTO, vars);
 			
-			if (!Ex.getInstance()
+			if (!ex
 					.getConf()
 					.podePorConfiguracao(getTitular(), getLotaTitular(), exDocumentoDTO.getDoc().getExTipoDocumento(), exDocumentoDTO.getDoc().getExFormaDocumento() 
 							,exDocumentoDTO.getDoc().getExModelo(), exDocumentoDTO.getDoc().getExClassificacaoAtual(), exDocumentoDTO.getDoc().getExNivelAcesso()
 							,CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
 				
-				if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(), null, null, null,
+				if (!ex.getConf().podePorConfiguracao(getTitular(), getLotaTitular(), null, null, null,
 						exDocumentoDTO.getDoc().getExClassificacao(), null, CpTipoConfiguracao.TIPO_CONFIG_CRIAR))
 					throw new AplicacaoException("Usuário não possui permissão de criar documento da classificação "
 							+ exDocumentoDTO.getDoc().getExClassificacao().getCodificacao());
@@ -974,30 +987,31 @@ public class ExDocumentoController extends ExController {
 			}
 			
 			String realPath = getContext().getRealPath("");
-			Ex.getInstance().getBL()
-				.gravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc(), realPath);
+			exBL.gravar(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc(), realPath);
 			
 			lerEntrevista(exDocumentoDTO);
 			
 			if (exDocumentoDTO.getDesativarDocPai().equals("sim"))
-				exDocumentoDTO.setDesativ("&desativarDocPai=sim");
+				exDocumentoDTO.setDesativ("&exDocumentoDTO.desativarDocPai=sim");
 			
 			try {				
-				Ex.getInstance().getBL().incluirCosignatariosAutomaticamente(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());				
+				exBL.incluirCosignatariosAutomaticamente(getCadastrante(), getLotaTitular(), exDocumentoDTO.getDoc());				
 			} catch (Exception e) {				
 				throw new AplicacaoException("Erro ao tentar incluir os cosignatários deste documento", 0, e);				
 			}
 			
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro na gravação", 0, e);
-		} finally {
 		}
 		
-		if (param("ajax") != null && param("ajax").equals("true"))
-			return "ajax";
-		else{
-			result.redirectTo("/app/expediente/doc/exibir?sigla="+exDocumentoDTO.getDoc().getSigla());
-			return "edita";
+		if (param("ajax") != null && param("ajax").equals("true")) {
+			String body = MessageFormat.format("OK_{0}_{1}", exDocumentoDTO.getDoc().getSigla(), exDocumentoDTO.getDoc().getDtRegDocDDMMYY());
+			result
+				.use(Results.http())
+				.body(body);
+		} else {
+			String url = MessageFormat.format("exibir?sigla={0}{1}", exDocumentoDTO.getDoc().getSigla(), exDocumentoDTO.getDesativ());
+			result.redirectTo(url);
 		}
 	}
 	

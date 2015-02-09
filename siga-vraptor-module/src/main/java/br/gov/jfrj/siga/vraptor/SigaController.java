@@ -83,6 +83,7 @@ public class SigaController {
 		return postback;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public SigaController(HttpServletRequest request, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
 		super();

@@ -23,8 +23,7 @@
 		</h2>
 				
 		<div class="gt-content-box gt-for-table">
-
-			<form id="frm" name="frm" action="editar" namespace="/expediente/doc" theme="simple" method="POST">
+			<form id="frm" name="frm" theme="simple" method="post">
 				<!-- <ww:token /> -->
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" />
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
@@ -501,10 +500,10 @@
 </siga:pagina>
 
 <script type="text/javascript">
-window.customOnsubmit = function() {return true;};
-{
+// window.customOnsubmit = function() {return true;};
+// {
 //	var frm = document.getElementById('frm');
 //	if (typeof(frm.submitsave) == "undefined")
 //		frm.submitsave = frm.submit;
-}
+// }
 </script>

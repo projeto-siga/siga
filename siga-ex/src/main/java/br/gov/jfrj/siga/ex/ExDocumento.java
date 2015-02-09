@@ -2258,6 +2258,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 		return set;
 	}
+	
+	/**
+	 * Retorna se um documento possui alguma assinatura.
+	 */
+	public boolean possuiAlgumaAssinatura() {
+		if(getTodasAsAssinaturas() != null && getTodasAsAssinaturas().size() > 0)
+			return true;
+		
+		return false;
+	}
 
 	/**
 	 * Verifica se um documento foi assinado pelo subscritor e por todos os

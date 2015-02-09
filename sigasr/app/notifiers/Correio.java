@@ -41,19 +41,25 @@ public class Correio extends Mailer {
 		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
 		List<String> recipients = new ArrayList<String>();
-
+		String email = null;
+		
 		DpPessoa atendenteSolPai = sol.solicitacaoPai.getAtendente();
-		if (atendenteSolPai != null && atendenteSolPai.getEmailPessoa() != null)
-			recipients.add(atendenteSolPai.getEmailPessoa());
+		if (atendenteSolPai != null) {
+			email = atendenteSolPai.getPessoaAtual().getEmailPessoa();
+			if (email != null)
+				recipients.add(email);
+		} 
 		else {
 			DpLotacao lotaAtendenteSolPai = sol.solicitacaoPai
 					.getLotaAtendente();
 			if (lotaAtendenteSolPai != null)
 				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai
 						.getDpPessoaLotadosSet())
-					if (pessoaDaLotacao.getDataFim() == null
-							&& pessoaDaLotacao.getEmailPessoa() != null)
-						recipients.add(pessoaDaLotacao.getEmailPessoa());
+					if (pessoaDaLotacao.getDataFim() == null && pessoaDaLotacao.getMatricula() == 14723) {
+						email = pessoaDaLotacao.getPessoaAtual().getEmailPessoa();
+						if (email != null)
+							recipients.add(email);
+					}
 		}
 
 		if (recipients.size() > 0)

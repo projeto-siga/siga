@@ -62,6 +62,7 @@
 			<form id="form" class="formEditarEquipe">
 				<input type="hidden" id="idEquipe" name="idEquipe">
 				<input type="hidden" id="idEquipeIni" name="hisIdIni">
+				<input type="text" style="visibility: hidden;" id="lotacaoUsuario" name="lotacaoUsuario" value="${lotacaoUsuario.toJson()}"/>
 				<p class="gt-error" style="display:none;" id="erroEquipeCamposObrigatorios">Alguns campos obrigatórios não foram
 					preenchidos</p>
 				<div class="gt-form-table">
@@ -71,7 +72,8 @@
 				<div class="gt-form-row gt-width-100">
 					<label>Lotação</label>#{selecao
 						tipo:'lotacao', nome:'lotacao',
-						disabled:"true" /}
+						value:lotacaoUsuario,
+						disabled:'true' /}
 				</div>
 				
 				<div class="gt-form-table">
@@ -356,31 +358,6 @@
         document.getElementById("interIni").value = '';
         document.getElementById("interFim").value = '';
         document.getElementById("dataEspecifica").value = '';
-	}
-	
-	function getListasAsString() {
-		var params = '',
-			dataAux = new Date();
-		
-		// Percorre lista de Exceções
-		excecoesTable.api().rows().indexes().each(function (i) {
-			var rowValues = excecoesTable.api().row(i).data();
-			
-			// Atualiza a string serializada
-			if (rowValues) {
-				if (rowValues[0] == 0)
-					params += '&equipe.excecaoHorarioSet[' + i + '].dataEspecifica=' + rowValues[1];
-				else
-					params += '&equipe.excecaoHorarioSet[' + i + '].diaSemana=' + rowValues[0];
-				
-				params += '&equipe.excecaoHorarioSet[' + i + '].strHoraIni=' + atualizaHora(dataAux, rowValues[3]).toJSON();
-				params += '&equipe.excecaoHorarioSet[' + i + '].strHoraFim=' + atualizaHora(dataAux, rowValues[4]).toJSON();
-				params += '&equipe.excecaoHorarioSet[' + i + '].strInterIni=' + atualizaHora(dataAux, rowValues[5]).toJSON();
-				params += '&equipe.excecaoHorarioSet[' + i + '].strInterFim=' + atualizaHora(dataAux, rowValues[6]).toJSON();
-			}
-		});
-		
-		return params;
 	}
 	
 	function atualizaHora(data, horaString) {

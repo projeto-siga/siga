@@ -98,12 +98,6 @@
 	});
 	
 	function modalAbrir(componentId) {
-		var designacaoItemId = $("#idConfiguracao").val();
-		if (designacaoItemId == undefined || designacaoItemId == "") {
-			if (designacaoService.aplicar() == false) 
-				return;
-		}
-		
 		$("#" + componentId + "_dialog").dialog('open');
 	}
 	

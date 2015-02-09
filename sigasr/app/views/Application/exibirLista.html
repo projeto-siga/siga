@@ -2,6 +2,9 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
 
 <style>
 #sortable table { height: 1.5em; line-height: 1.2em; }
@@ -14,10 +17,10 @@
 
 #{if podePriorizar}
 <script>
-$(function() {
-	$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
-	$( "#sortable" ).disableSelection();
-});
+	$(function() {
+		$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
+		$( "#sortable" ).disableSelection();
+	});
 </script>
 #{/if} 
 
@@ -26,9 +29,10 @@ $(function() {
 	<h2 id="tituloPagina"> ${lista.nomeLista}</h2>
 	
 		<p class="gt-table-action-list">
-			#{if podeEditar} <a href="javascript: listaModalAbrir(true)"> <img
-				src="/siga/css/famfamfam/icons/pencil.png"
-				style="margin-right: 5px;">Editar</a>&nbsp;&nbsp;&nbsp; #{/if}
+			#{if podeEditar} 
+				<a href="#" onclick="javascript: editarLista(event, ${lista.toJson()})"> 
+					<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">Editar
+				</a>&nbsp;&nbsp;&nbsp; #{/if}
 		</p>
  	
  	<div class="gt-content-box gt-for-table dataTables_div">
@@ -115,7 +119,8 @@ $(function() {
 #{/modal}
 
 <script type="text/javascript">
-	var solicitacaoTable;
+	var solicitacaoTable,
+		listaJson;
 	
 	/* Table initialization */
 	$(document).ready(function() {
@@ -153,23 +158,134 @@ $(function() {
 			});
 		}
 	});
-</script>
+	
+	$(function(){
+	    $('#btn').click(function() {
+	        if (!block())
+	            return false;
+	        var ids=[];
+	    	$("#sortable > tr").each(function() {
+				var id = $(this).attr('id');
+	
+				if (id != undefined && id != '')
+	        		ids.push(id);
+	 	    });
+	
+	 	    if (ids.length > 0)
+	    		window.location.href = "@{Application.priorizarLista}?id=${lista.idLista}&ids="+ids;
+	    });
+	});
 
-<script>
-$(function(){
-    $('#btn').click(function() {
-        if (!block())
-            return false;
-        var ids=[];
-    	$("#sortable > tr").each(function() {
-			var id = $(this).attr('id');
+	var opts = {
+			 urlGravar : '@{Application.gravarLista()}?',
+			 dialogCadastro : $('#editarLista_dialog'),
+			 objectName : 'lista',
+			 formCadastro : $('#formLista')
+		};	
 
-			if (id != undefined && id != '')
-        		ids.push(id);
- 	    });
+	// Não existe no BASE-SERVICE
+// 			 urlDesativar : '@{Application.desativarLista()}?',
+// 			 urlReativar : '@{Application.reativarLista()}?',
+// 			 tabelaRegistros : $('#listas_table'),
+// 			 mostrarDesativados : QueryString.mostrarDesativados,
+// 			 colunas : colunasLista.acoes
 
- 	    if (ids.length > 0)
-    		window.location.href = "@{Application.priorizarLista}?id=${lista.idLista}&ids="+ids;
-    });
-});
+	// Define a "classe" listaService
+	function ListaService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
+	}
+	// listaService extends BaseService
+	ListaService.prototype = Object.create(BaseService.prototype);
+
+	var listaService = new ListaService(opts);
+	// Sobescreve o metodo cadastrar para limpara tela
+	listaService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title);
+	}
+
+	listaService.getId = function(lista) {
+		return lista.idLista;
+	}
+
+	/**
+	 * Customiza o metodo editar
+	 */
+	listaService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+
+		limparDadosListaModal();
+
+		// carrega as permissões da lista
+		carregarPermissoes(obj.idLista);
+	}
+
+	/**
+	* Customiza o método onGravar()
+	*/
+	listaService.onGravar = function(obj, objSalvo) {
+		listaJson = objSalvo;
+
+		if (listaJson)
+			$("#tituloPagina").html(listaJson.nomeLista);
+	}
+
+	function editarLista(event, jSon) {
+		event.stopPropagation();
+
+		if (!listaJson)
+			listaJson = jSon;
+
+		listaService.editar(listaJson, 'Alterar Lista');
+	}
+	
+	function limparDadosListaModal() {
+		// limpa as permissões
+		permissoesTable.api().clear().draw();
+	}
+
+	function carregarPermissoes(id) {
+        $.ajax({
+        	type: "GET",
+        	url: "@{Application.buscarPermissoesLista()}?idLista=" + id,
+        	dataType: "text",
+        	success: function(lista) {
+        		var permissoesJSon = JSON.parse(lista);
+        		populatePermissoesFromJSonList(permissoesJSon);
+        	},
+        	error: function(error) {
+            	alert("Não foi possível carregar as Permissões desta Lista.");
+        	}
+       	});
+    }
+
+	function populatePermissoesFromJSonList(permissoesJSon) {
+		for (var i = 0; i < permissoesJSon.length; i++) {
+			var permissao = permissoesJSon[i],
+				row = [ permissao.orgaoUsuario ? permissao.orgaoUsuario.id : '',
+						permissao.orgaoUsuario ? permissao.orgaoUsuario.sigla : '', 
+						permissao.complexo ? permissao.complexo.id : '',
+						permissao.complexo ? permissao.complexo.descricao : '', 
+						permissao.lotacao ? permissao.lotacao.id : '',
+						permissao.lotacao ? permissao.lotacao.descricao : '', 
+						permissao.lotacao ? permissao.lotacao.sigla : '', 
+						permissao.pessoa ? permissao.pessoa.id : '',
+						permissao.pessoa ? permissao.pessoa.descricao : '', 
+						permissao.pessoa ? permissao.pessoa.sigla : '', 
+						permissao.cargo ? permissao.cargo.id : '',
+						permissao.cargo ? permissao.cargo.descricao : '', 
+						permissao.cargo ? permissao.cargo.sigla : '',
+						permissao.funcaoConfianca ? permissao.funcaoConfianca.id : '',
+						permissao.funcaoConfianca ? permissao.funcaoConfianca.descricao : '', 
+						permissao.funcaoConfianca ? permissao.funcaoConfianca.sigla : '',  
+	          			permissao.listaTipoPermissaoListaVO,			//16
+	          			permissao.idConfiguracao,						//17    
+	          			'',												//18
+	          			getDescricaoTipoPermissao(),					//19
+	          			''												//20
+	          			];
+			
+			permissoesTable.api().row.add(row).draw();
+		}
+	}
 </script>

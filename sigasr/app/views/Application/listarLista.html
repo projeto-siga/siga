@@ -25,12 +25,10 @@
 
 				<tbody>
 					#{list items:listas, as:'item'}
-					<tr 
-						data-json-id="${item.idLista}" data-json="${item.toJson()}" 
-						#{if item.podeConsultar(lotaTitular, cadastrante)} onclick="listaService.editar($(this).data('json'), 'Alterar lista')"#{/if}>
-						
+					<tr data-json-id="${item.idLista}" data-json="${item.toJson()}">
 						#{if item.podeConsultar(lotaTitular, cadastrante)}
-							<td style="cursor: pointer;">${item.nomeLista}</td>
+							<td onclick="javascript:window.location='@{Application.exibirLista(item.idLista)}'" 
+								style="cursor: pointer;">${item.nomeLista}</td>
 						#{/if}
 						#{else}							
 							<td>${item.nomeLista}</td>
@@ -44,6 +42,9 @@
 												onDesativar :'listaService.desativar',
 												isAtivo:item?.isAtivo() }
 							#{/desativarReativar}
+							<a onclick="javascript: editarLista(event, $(this).parent().parent().data('json'))"> 
+								<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">
+							</a>
 							#{/if}
 						</td>
 					</tr>
@@ -194,6 +195,8 @@
 		return [lista.nomeLista, lista.nomeLotacao, 'COLUNA_ACOES'];
 	}
 	
+	listaService.editarButton = '<a onclick="javascript: editarLista(event, $(this).parent().parent().data(\'json\'))"><img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;"></a>';
+	
 	/**
 	 * Customiza o metodo editar
 	 */
@@ -204,6 +207,18 @@
 
 		// carrega as permissões da lista
 		carregarPermissoes(obj.idLista);
+	}
+
+	listaService.onGravar = function(obj, objSalvo) {
+		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
+		afterGravarLista(tr, objSalvo);
+		return tr;
+	}
+
+	function editarLista(event, jSonItem) {
+		event.stopPropagation();
+
+		listaService.editar(jSonItem, 'Alterar Lista');
 	}
 	
 	function limparDadosListaModal() {
@@ -254,5 +269,12 @@
 			
 			permissoesTable.api().row.add(row).draw();
 		}
+	}
+
+	function afterGravarLista(tr, designacao) {
+		var acoes = tr.find('td.acoes');
+
+		if (acoes)
+			acoes = acoes.append(" " + listaService.editarButton);
 	}
 </script>

@@ -40,6 +40,7 @@ import models.SrTipoPergunta;
 import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 import models.vo.PaginaItemConfiguracao;
+import models.vo.SelecionavelVO;
 
 import org.joda.time.LocalDate;
 
@@ -1276,16 +1277,13 @@ public class Application extends SigaApplication {
 				.listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find(
 				"hisDtFim is null").fetch();
+		SelecionavelVO lotacaoUsuario = SelecionavelVO.createFrom(lotaTitular());
 		
-		render(listaEquipe, orgaos, locais, unidadesMedida, pesquisaSatisfacao);
+		render(listaEquipe, orgaos, locais, unidadesMedida, pesquisaSatisfacao, lotacaoUsuario);
 	}
 	
 	public static String gravarEquipe(SrEquipe equipe) throws Exception {
 		assertAcesso("ADM:Administrar");
-		
-		if (equipe.lotacao == null)
-			equipe.lotacao = lotaTitular();
-		
 		equipe.salvar();
 		return equipe.toJson();
 	}

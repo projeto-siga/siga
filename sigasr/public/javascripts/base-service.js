@@ -296,12 +296,12 @@ BaseService.prototype.limparSpanComponentes = function() {
  * Executa a acao de gravar o registro
  */
 BaseService.prototype.gravar = function() {
-	this.gravarAplicar(false);
+	return this.gravarAplicar(false);
 }
 
 BaseService.prototype.gravarAplicar = function(isAplicar) {
 	if (!this.isValidForm())
-		return;
+		return false;
 	
 	var service = this, 
 		obj = this.getObjetoParaGravar(),
@@ -333,7 +333,7 @@ BaseService.prototype.gravarAplicar = function(isAplicar) {
  * Executa a acao de aplicar o registro
  */
 BaseService.prototype.aplicar = function() {
-	this.gravarAplicar(true);
+	return this.gravarAplicar(true);
 }
 /**
  * Metodo que implementa a forma padrao de pegar o objeto para gravar no servidor

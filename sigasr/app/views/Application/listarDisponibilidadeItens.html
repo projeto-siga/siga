@@ -53,8 +53,7 @@
 <div id="templateDisponibilidadeItem" style="display:none">
 	{for orgao in orgaos}
 		<div class='orgao' data-sigla-orgao="!{orgao.sigla}" data-item-configuracao-id="!{itemConfiguracao.id}" onclick="disponibilidadeService.alterarDisponibilidade('!{orgao.sigla}', !{itemConfiguracao.hisIdIni})">
-			<img src="" src-original="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}">
-			<img>
+			<img src="" src-original="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}"/>
 		</div>
   	{/for}
 </div>
@@ -400,9 +399,13 @@
 
 				            // WA para evitar requisicao para URL errada da imagem
 				            $('img[src-original]').each(function() { 
-					            var me = $(this);
-					            me.attr('src',me.attr('src-original'));
-					            me.removeAttr('src-original');
+					            var me = $(this),
+					            	src = me.attr('src-original');
+				            	
+					            if(src.indexOf('.png') >= 0) {
+						            me.attr('src',me.attr('src-original'));
+						            me.removeAttr('src-original');
+					            }
 				            });
 				        }
 				    });

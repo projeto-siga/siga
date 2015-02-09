@@ -124,10 +124,12 @@
 								    
 									<script type="text/javascript">
 										function setFisico() {
-											if ($('input[name=exDocumentoDTO.eletronico]:checked').val() == 2) 
+											if ($('input[name=exDocumentoDTO\\.eletronico]:checked').val() == 2)
 												$('html').addClass('fisico'); 
 											else 
-												$('html').removeClass('fisico');}; setFisico();
+												$('html').removeClass('fisico');
+										}; 
+										setFisico();
 									</script>									
 								</c:otherwise>
 							</c:choose>

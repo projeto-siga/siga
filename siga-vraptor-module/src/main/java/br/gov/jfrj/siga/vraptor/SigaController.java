@@ -44,7 +44,7 @@ public class SigaController {
 	private String mensagemAguarde = null;
 	
 	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
-	private Map<String, String[]> par = new HashMap<>();
+	private Map<String, String[]> par;
 	
 	protected Map<String, String[]> getPar() {
 		return par;
@@ -88,6 +88,7 @@ public class SigaController {
 		super();
 		this.setRequest(request);
 		this.dao = dao;
+		this.setPar(new HashMap<>( getRequest().getParameterMap()));
 		this.result = result;
 		this.so = so;
 		this.em = em;

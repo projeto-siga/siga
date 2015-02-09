@@ -20,7 +20,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
-
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;

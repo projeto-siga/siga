@@ -10,17 +10,16 @@
 
 <siga:pagina titulo="Transferência em Lote">
 
-	<script type="text/javascript" language="Javascript1.1"
-		src="<c:url value="/staticJavascript.action"/>"></script>
+	<script type="text/javascript" language="Javascript1.1" src="
+		<c:url value="/staticJavascript.action"/>">
+	</script>
 
 	<script type="text/javascript" language="Javascript1.1">
-		<ww:url id="url" action="transferir_lote" namespace="/expediente/mov"/>
 		function sbmt(offset) {
-			debugger;
-			frm.action = '${url}';
+			frm.action = '/expediente/mov/transferir_lote';
 			frm.submit();
 		}
-		
+
 		function enableDisableItem(coreName, enable) {
 			var estiloCombo, estiloLabel;
 			if (!document.getElementById('chk_' + coreName).checked) {
@@ -107,26 +106,30 @@
 			<h2>Transferência em Lote</h2>
 
 			<div class="gt-content-box gt-for-table">
-
-				<ww:form name="frm" action="transferir_lote_gravar"
-					namespace="/expediente/mov" method="POST" theme="simple">
+			
+				<form name="frm" action="transferir_lote_gravar" namespace="/expediente/mov" method="POST" theme="simple">
 					<ww:token />
-					<ww:hidden name="postback" value="1" />
+					
+					<input type="hidden" name="postback" value="1" />
+					
 					<table class="gt-form-table">
 						<tr class="header">
 							<td colspan="2">Transferência</td>
 						</tr>
 						<tr>
 							<td>Data:</td>
-							<td><ww:textfield name="dtMovString"
-									onblur="javascript:verifica_data(this,0);" /></td>
+							<td>
+								<input type="text" name="dtMovString" onblur="javascript:verifica_data(this,0);" />
+							</td>
 						</tr>
 						<tr>
 							<td>Responsável:</td>
-							<td><siga:selecao tema="simple" propriedade="subscritor"
-									modulo="siga" /> &nbsp;&nbsp;<ww:checkbox theme="simple"
-									name="substituicao" onclick="javascript:displayTitular(this);" />Substituto</td>
+							<td>
+								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" /> &nbsp;&nbsp;
+								<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" />Substituto
+							</td>
 						</tr>
+						
 						<c:choose>
 							<c:when test="${!substituicao}">
 								<tr id="tr_titular" style="display: none">
@@ -136,22 +139,28 @@
 							</c:otherwise>
 						</c:choose>
 
-						<td>Titular:</td>
-						<input type="hidden" name="campos" value="titularSel.id" />
-						<td colspan="1"><siga:selecao propriedade="titular"
-								tema="simple" modulo="siga" /></td>
+							<td>Titular:</td>
+								<input type="hidden" name="campos" value="titularSel.id" />
+							<td colspan="1">
+								<siga:selecao propriedade="titular" tema="simple" modulo="siga" />
+							</td>
 						</tr>
 						<tr>
 							<td>Função do Responsável:</td>
-							<td colspan="1"><input type="hidden" name="campos"
-								value="nmFuncaoSubscritor" /> <ww:textfield
-									name="nmFuncaoSubscritor" size="50" maxLength="128" />
-								(opcional)</td>
+							<td colspan="1">
+								<input type="hidden" name="campos" value="nmFuncaoSubscritor" /> 
+								<input type="text" name="nmFuncaoSubscritor" size="50" maxLength="128" /> (opcional)
+							</td>
 						</tr>
 						<tr>
 							<td>Atendente</td>
-							<td><ww:select name="tipoResponsavel" list="listaTipoResp"
-									onchange="javascript:sbmt();" /> <c:choose>
+							<td>
+								<ww:select  list="listaTipoResp" /> 
+								
+								<select name="tipoResponsavel" onchange="javascript:sbmt();">
+								</select>
+								
+								<c:choose>
 									<c:when test="${tipoResponsavel == 1}">
 										<siga:selecao propriedade="lotaResponsavel" tema="simple"
 											modulo="siga" />
@@ -329,7 +338,7 @@
 							</div>
 						</c:if>
 				</c:forEach>
-				</ww:form>
+				</form>
 		</div>
 	</div>
 </siga:pagina>

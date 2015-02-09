@@ -105,7 +105,7 @@
 			</li>
 			<li><a href="#">Administração</a>
 				<ul>
-					<li><ww:a href="/siga/usuario/trocar_senha.action" >Trocar senha</ww:a>
+					<li><ww:a href="/siga/app/usuario/trocar_senha" >Trocar senha</ww:a>
 					</li>
 					<%--
 					<li><a href="/siga/substituicao/substituir.action">Entrar
@@ -205,7 +205,7 @@
 				<ul>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
-						<li><ww:a href="/siga/modelo/listar.action">Cadastro de modelos</ww:a>
+						<li><ww:a href="/siga/app/modelo/listar">Cadastro de modelos</ww:a>
 						</li>
 					</c:if>
 					<c:if
@@ -220,7 +220,7 @@
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_FERIADO:Cadastrar Feriados')}">
-						<li><ww:a href="/siga/feriado/listar.action">Cadastro de Feriados</ww:a></li>
+						<li><ww:a href="/siga/app/feriado/listar">Cadastro de Feriados</ww:a></li>
 					</c:if>	
 				</ul></li>
 		</c:if>

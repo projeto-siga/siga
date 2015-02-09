@@ -221,42 +221,6 @@
 					<span style="display:none;color: red" id="designacao.atendente">Atendente não informado;</span>
 				</div>
 			</div>	
-				
-			<div class="gt-form-row box-wrapper">
-				<div class="box box-left gt-width-50">
-					<label>Pré-atendente <span>*</span></label>#{selecao
-						tipo:'lotacao', nome:'preAtendente',
-						value:preAtendente?.lotacaoAtual /}
-					<span style="display:none;color: red" id="designacao.preAtendente">Pré-Atendente não informado.</span>
-				</div>
-	
-				<div class="box gt-width-50">
-					<label>Pós-atendente <span>*</span></label> #{selecao
-						tipo:'lotacao', nome:'posAtendente',
-						value:posAtendente?.lotacaoAtual /}
-					<span style="display:none;color: red" id="designacao.posAtendente">Pós-Atendente não informado.</span>
-				</div>
-			</div>
-			<div class="gt-form-row box-wrapper">
-				<div class="box box-left gt-width-50">
-					<label>Equipe de Qualidade <span>*</span></label> #{selecao
-						tipo:'lotacao', nome:'equipeQualidade',
-						value:equipeQualidade?.lotacaoAtual /}
-					<span style="display:none;color: red" id="designacao.equipeQualidade">Equipe de qualidade não informada.</span>
-				</div>
-				<div class="box gt-width-50">
-					<label>Pesquisa de satisfação</label> 
-						#{select name:'pesquisaSatisfacao', 
-							items:_pesquisaSatisfacao, 
-							valueProperty:'idPesquisa',
-							labelProperty:'nomePesquisa', 
-							value:pesquisaSatisfacao?.idPesquisa,
-							class:'select-siga',
-							style:'width: 100%;'}
-							#{option 0}Nenhuma#{/option} 
-						#{/select}
-				</div>
-			</div>
 	
 			<hr/>
 			<div class="gt-content">

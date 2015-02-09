@@ -64,7 +64,7 @@
 							</c:if>
 							<script type="text/javascript">
 								SetInnerHTMLFromAjaxResponse(
-										"/sigawf/app/inbox?ts=${currentTimeMillis}",
+										"/sigawf/inbox.action?ts=${currentTimeMillis}",
 										document.getElementById('right'));
 							</script>
 							<!-- 

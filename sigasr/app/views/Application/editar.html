@@ -104,7 +104,7 @@
 	}
 
 	function carregarConhecimentosRelacionados(){
-		jQuery.blockUI(objBlock);
+		//jQuery.blockUI(objBlock);
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
@@ -120,7 +120,7 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
-		jQuery.unblockUI();
+		//jQuery.unblockUI();
 	}
 
 	function carregarPrioridade() {
@@ -253,7 +253,7 @@
 			if(existeFiltroSelecionavel()) {
 				var params = construirParametrosDoFiltro($('#formSolicitacao'));
 				iniciarCarregarSolicitacoesRelacionadas();
-				jQuery.blockUI(objBlock);
+				//jQuery.blockUI(objBlock);
 				PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas', null, false, null);
 			}
 		}
@@ -283,7 +283,7 @@
 		}
 		$('#filtro input').attr('disabled', false);
 		$('#bodySolRelacionadas').attr('requesting', false);
-		jQuery.unblockUI();
+		//jQuery.unblockUI();
 	}
 
 	function iniciarCarregarSolicitacoesRelacionadas() {
@@ -435,7 +435,9 @@
 					<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
 						type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
 						value="${cadastrante.sigla}" />
-						<input type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante.idPessoa" value="${cadastrante.idPessoa}" />
+						<input type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante" value="${cadastrante.idPessoa}" />
+						<input type="hidden" name="solicitacao.lotaTitular" value="${lotaTitular?.idLotacao}" />
+						<input type="hidden" name="solicitacao.titular" value="${titular?.idPessoa}" />
 				</div>
 			</div>	 
 
@@ -458,7 +460,7 @@
 				'Application/exibirLocalRamalEMeioContato.html' /}</div>
 
 			<div class="gt-form-row gt-width-66">
-				<label>Quando deseja receber notifica&ccedil;&atilde;o de movimenta&ccedil;&atilde;o?</label>
+				<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>
 				#{select name:'solicitacao.formaAcompanhamento',
 				items:models.SrFormaAcompanhamento.values(),
 				labelProperty:'descrFormaAcompanhamento',
@@ -516,7 +518,7 @@
 			</div>
 
 
-			#{if solicitacao.podeAbrirJaFechando(lotaTitular,cadastrante)}
+			#{if solicitacao.podeAbrirJaFechando(titular, lotaTitular)}
 			<div class="gt-form-row gt-width-66">
 				<label>#{checkbox name:'solicitacao.fecharAoAbrir',
 					value:solicitacao.fecharAoAbrir, depende:'motivoFechamento',

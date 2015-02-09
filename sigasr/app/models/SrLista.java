@@ -86,7 +86,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
 	@OrderBy("dtIniMov DESC")
 	protected Set<SrMovimentacao> meuMovimentacaoSet;
 
@@ -211,10 +211,11 @@ public class SrLista extends HistoricoSuporte {
 			SrConfiguracao confFiltro = new SrConfiguracao();
 			confFiltro.setLotacao(lotaTitular);
 			confFiltro.setDpPessoa(pess);
+			confFiltro.listaPrioridade = this;
 			confFiltro.setCpTipoConfiguracao(JPA.em().find(
 					CpTipoConfiguracao.class,
 					CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
-			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.LISTA_PRIORIDADE });
+			return SrConfiguracao.listar(confFiltro);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -242,6 +243,7 @@ public class SrLista extends HistoricoSuporte {
 	}
 
 	public void priorizar(DpPessoa cadastrante, DpLotacao lotaCadastrante,
+			DpPessoa titular, DpLotacao lotaTitular,
 			List<SrSolicitacao> sols) throws Exception {
 
 		if (sols.size() != getSolicitacaoSet().size())
@@ -257,22 +259,24 @@ public class SrLista extends HistoricoSuporte {
 						+ sol.getCodigo() + " não faz parte da lista");
 		}
 
-		this.recalcularPrioridade(cadastrante, lotaCadastrante, sols);
+		this.recalcularPrioridade(cadastrante, lotaCadastrante, titular, lotaTitular, sols);
 		this.refresh();
 	}
 
-	protected void recalcularPrioridade(DpPessoa pessoa, DpLotacao lota)
+	protected void recalcularPrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante,
+			DpPessoa titular, DpLotacao lotaTitular)
 			throws Exception {
-		recalcularPrioridade(pessoa, lota, this.getSolicitacaoSet());
+		recalcularPrioridade(cadastrante, lotaCadastrante, titular, lotaTitular, this.getSolicitacaoSet());
 	}
 
-	private void recalcularPrioridade(DpPessoa pessoa, DpLotacao lota,
+	private void recalcularPrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante,
+			DpPessoa titular, DpLotacao lotaTitular,
 			Collection<SrSolicitacao> sols) throws Exception {
 		long i = 0;
 		for (SrSolicitacao s : sols) {
 			i++;
 			if (s.getPrioridadeNaLista(this) != i)
-				s.priorizar(this, i, pessoa, lota);
+				s.priorizar(this, i, cadastrante, lotaCadastrante, titular, lotaTitular);
 		}
 	}
 	

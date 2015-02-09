@@ -47,28 +47,6 @@
 
     <dependencies>
 
-	<dependency>
-		<groupId>br.com.caelum</groupId>
-		<artifactId>vraptor</artifactId>
-		<version>3.5.4</version> <!--or the latest version -->
-		  <exclusions>
-        <exclusion>  <!-- declare the exclusion here -->
-          <groupId>javassist</groupId>
-          <artifactId>javassist</artifactId>
-        </exclusion>
-        <exclusion>  <!-- declare the exclusion here -->
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-core</artifactId>
-        </exclusion>
-      </exclusions> 
-	</dependency>
-
-	<dependency>
-		<groupId>org.picocontainer</groupId>
-		<artifactId>picocontainer</artifactId>
-		<version>2.13.6</version>
-	</dependency>
-	
     	<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
@@ -296,7 +274,6 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
         </dependency>
-        <!-- 
         <dependency>
             <groupId>opensymphony</groupId>
             <artifactId>webwork</artifactId>
@@ -315,7 +292,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-         -->
         <dependency>
             <groupId>ys.wikiparser</groupId>
             <artifactId>WikiParser-siga</artifactId>
@@ -409,10 +385,6 @@
         <dependency>
             <groupId>projeto-siga</groupId>
             <artifactId>siga-libs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>projeto-siga</groupId>
-            <artifactId>siga-vraptor-module</artifactId>
         </dependency>
         <dependency>
             <groupId>projeto-siga</groupId>

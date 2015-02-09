@@ -22,8 +22,6 @@
 					<th>Solicitante</th>
 					<th>Descrição</th>
 					<th>Atendente</th>
-					<th>Pré</th>
-					<th>Pós</th>
 					<th>Ações</th>
 					<th>JSon - Designação</th>
 					<th>Checkbox Herança</th>
@@ -42,8 +40,6 @@
 					<td>${design.solicitante?.sigla}</td>
 					<td>${design.descrConfiguracao}</td>
 					<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td>
-					<td>${design.preAtendente?.lotacaoAtual?.siglaLotacao }</td>
-					<td>${design.posAtendente?.lotacaoAtual?.siglaLotacao }</td>
 					<td class="acoes"> 
 						#{desativarReativar id:design.id, 
 											onReativar:'designacaoService.reativar',
@@ -66,7 +62,6 @@
 				#{/list}
 			</tbody>
 		</table>
-
 	</div>
 	<!-- /content box -->
 	<div class="gt-table-buttons">
@@ -102,13 +97,11 @@ altura:'200', largura:'450'}
 	colunasDesignacao.solicitante=					3 ;
 	colunasDesignacao.descrConfiguracao = 			4 ;
 	colunasDesignacao.atendente=					5 ;
-	colunasDesignacao.pre=							6 ;
-	colunasDesignacao.pos=							7 ;
-	colunasDesignacao.acoes=						8 ;
-	colunasDesignacao.jSonDesignacao= 				9 ;
-	colunasDesignacao.checkBoxHeranca = 			10;
-	colunasDesignacao.herdado= 						11;
-	colunasDesignacao.utilizarHerdado= 				12;
+	colunasDesignacao.acoes=						6 ;
+	colunasDesignacao.jSonDesignacao= 				7 ;
+	colunasDesignacao.checkBoxHeranca = 			8;
+	colunasDesignacao.herdado= 						9;
+	colunasDesignacao.utilizarHerdado= 				10;
 	
 	var designacaoTable = new SigaTable('#designacoes_table')
 		.configurar("columnDefs", [{
@@ -175,8 +168,6 @@ altura:'200', largura:'450'}
 				designacao.solicitante != null ? designacao.solicitante.sigla : '',
 				designacao.descrConfiguracao,
 				designacao.atendente != null ? designacao.atendente.sigla : '',
-				designacao.preAtendente != null ? designacao.preAtendente.sigla : '',
-				designacao.posAtendente != null ? designacao.posAtendente.sigla : '',
 				'COLUNA_ACOES',
 				designacao,
 				'',
@@ -237,10 +228,10 @@ altura:'200', largura:'450'}
 	}
 	
 	function camposObrigatoriosPreenchidos() {
-		if (hasValue($("#atendente")) || hasValue($("#preAtendente")) || hasValue($("#posAtendente")) || hasValue($("#equipeQualidade")))
+		if (hasValue($("#atendente")))
 			return true;
 		else {
-			alert("Por favor preencha pelo menos um dos seguintes campos: Atendente, Pré-Atendente, Pós-Atendente ou Equipe de Qualidade.")
+			alert("Por favor preencha pelo menos um dos seguintes campos: Atendente")
 			return false;
 		}
 	}
@@ -341,7 +332,7 @@ altura:'200', largura:'450'}
 		    	tdDescricao = $('<td>');
 		
 			tdCodigo.html(item.sigla);
-			tdDescricao.html('Descricao ' + item.descricao);
+			tdDescricao.html(item.descricao);
 								  
 			trItem.append(tdCodigo);
 			trItem.append(tdDescricao);

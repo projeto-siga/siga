@@ -3,8 +3,8 @@ package models;
 
 public enum SrFormaAcompanhamento {
 
-	ANDAMENTO(1, "A cada andamento"), FECHAMENTO(2,
-			"Quando o chamado for fechado"), NUNCA(3, "Não quero acompanhar");
+	ABERTURA_ANDAMENTO(1, "Na abertura e a cada andamento"), ABERTURA_FECHAMENTO(2,
+			"Na abertura e no fechamento"), ABERTURA(3, "Somente na abertura");
 
 	public long idFormaAcompanhamento;
 	public String descrFormaAcompanhamento;

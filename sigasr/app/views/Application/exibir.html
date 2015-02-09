@@ -31,7 +31,7 @@ function postback(){
 		<h2>${solicitacao.codigo}</h2>
 		<p></p>
 		<h3>
-			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)} #{if
+			${solicitacao.getMarcadoresEmHtml(titular, lotaTitular)} #{if
 			solicitacao.solicitacaoPrincipal} - <a style="text-decoration: none"
 				href="@{Application.exibir(solicitacao.solicitacaoPrincipal.idSolicitacao)}">
 				${solicitacao.solicitacaoPrincipal.codigo} </a> #{/if}
@@ -44,7 +44,7 @@ function postback(){
 				style="margin-right: 1px;"> O atendente atual n&atilde;o &eacute; o
 			atendente designado.
 		</div>
-		#{/if}}* #{links acoes:solicitacao.operacoes(lotaTitular, titular), base:_base /}
+		#{/if}}* #{links acoes:solicitacao.operacoes(titular, lotaTitular), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
 				${solicitacao.descrItem} -
@@ -72,7 +72,7 @@ function postback(){
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 					value="${movimentacao.solicitacao.idSolicitacao}">*{ #{if
-				solicitacao.podeTrocarAtendente(lotaTitular, cadastrante)}
+				solicitacao.podeTrocarAtendente(titular, lotaTitular)}
 				<div class="gt-form-row">
 					<label>Atendente</label>
 					<div id="divAtendente">#{pessoaLotaSelecao
@@ -314,7 +314,7 @@ function postback(){
 	</div>
 	#{/if} 
 	
-	#{if solicitacao.estaCom(lotaTitular, cadastrante) || exibirMenuAdministrar}
+	#{if solicitacao.estaCom(titular, lotaTitular) || exibirMenuAdministrar}
 		#{include 'Application/exibirAcordos.html' /}
 	#{/if}
 	
@@ -526,7 +526,7 @@ function postback(){
 
 #{modal nome:'terminarPendenciaModal', titulo:'Terminar Pendencia'}
 	<form action="@{Application.terminarPendencia()}" method="post"
-		enctype="multipart/form-data">
+		enctype="multipart/form-data" onsubmit="javascript: return block();">
 		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div style="display: inline" class="gt-form-row gt-width-66">

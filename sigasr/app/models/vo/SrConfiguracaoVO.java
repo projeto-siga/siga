@@ -32,12 +32,8 @@ public class SrConfiguracaoVO {
 	public List<SrAcao.SrAcaoVO> listaAcaoVO;
 	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
 	public SelecionavelVO atendente;
-	public SelecionavelVO posAtendente;
-	public SelecionavelVO equipeQualidade;
-	public SelecionavelVO preAtendente;
 	public SelecionavelVO orgaoUsuario;
 	public SelecionavelVO complexo;
-	public SrPesquisaVO pesquisaSatisfacao;
 	
 	// Solicitante
 	public SelecionavelVO dpPessoa;
@@ -82,20 +78,12 @@ public class SrConfiguracaoVO {
 		if (configuracao.atendente != null)
 			atendente = SelecionavelVO.createFrom(configuracao.atendente.getLotacaoAtual());
 		
-		if (configuracao.posAtendente != null)
-			posAtendente = SelecionavelVO.createFrom(configuracao.posAtendente.getLotacaoAtual());
-		
-		if (configuracao.preAtendente != null)
-			preAtendente = SelecionavelVO.createFrom(configuracao.preAtendente.getLotacaoAtual());
-		
 		if (configuracao.getOrgaoUsuario() != null)
 			orgaoUsuario = SelecionavelVO.createFrom(configuracao.getOrgaoUsuario().getId(), 
 					configuracao.getOrgaoUsuario().getDescricao(), 
 					configuracao.getOrgaoUsuario().getAcronimoOrgaoUsu());
 		
 		complexo = CpComplexoVO.createFrom(configuracao.getComplexo());
-		equipeQualidade = SelecionavelVO.createFrom(configuracao.equipeQualidade);
-		pesquisaSatisfacao = SrPesquisaVO.createFrom(configuracao.pesquisaSatisfacao);
 		
 		// Dados do Solicitante
 		dpPessoa = SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante());

@@ -237,9 +237,12 @@ public class ExMovimentacaoController extends ExController {
 	public ExMovimentacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
+		
 		super(request, response, context, result, ExDao.getInstance(), so, em);
+		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
+		
 		subscritorSel = new DpPessoaSelecao();
 		documentoViaSel = new ExMobilSelecao();
 		documentoRefSel = new ExMobilSelecao();
@@ -2454,15 +2457,11 @@ public class ExMovimentacaoController extends ExController {
 				.podeIncluirCosignatario(getTitular(), getLotaTitular(), this.mob))
 			throw new AplicacaoException("Não é possível incluir cossignatário");
 
-		try {
-			Ex.getInstance()
-					.getBL()
-					.incluirCosignatario(getCadastrante(), getLotaTitular(),
-							doc, mov.getDtMov(), mov.getSubscritor(),
-							mov.getDescrMov());
-		} catch (final Exception e) {
-			throw e;
-		}
+		Ex.getInstance()
+				.getBL()
+				.incluirCosignatario(getCadastrante(), getLotaTitular(),
+						doc, mov.getDtMov(), mov.getSubscritor(),
+						mov.getDescrMov());
 		
 		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
 		

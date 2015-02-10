@@ -602,8 +602,7 @@ public class ExDocumentoController extends ExController {
 			
 			dao().excluir(doc);
 			ExDao.commitTransacao();
-			result.include("sigla", sigla);
-			result.redirectTo("/app/expediente/doc/listar");
+			result.redirectTo("/");
 		} catch (final AplicacaoException e) {
 			ExDao.rollbackTransacao();
 			throw e;

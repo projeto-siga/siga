@@ -6,7 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -107,17 +106,20 @@ public class SigaController {
 	}
 
 	public List<DpSubstituicao> getMeusTitulares() {
-		if (getCadastrante() == null)
-			return null;
-
 		try {
-			DpSubstituicao dpSubstituicao = new DpSubstituicao();
-			dpSubstituicao.setSubstituto(getCadastrante());
-			dpSubstituicao.setLotaSubstituto(getCadastrante().getLotacao());
-			List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
-			return itens;
-		}catch(SQLException sqle) {
-			throw new RuntimeException(sqle);
+			List<DpSubstituicao> substituicoes = so.getMeusTitulares();
+			for (DpSubstituicao dpSubstituicao : substituicoes) {
+				if (dpSubstituicao.getTitular() != null) {
+					dpSubstituicao.getTitular().getId();
+				}
+				
+				if (dpSubstituicao.getLotaTitular() != null) {
+					dpSubstituicao.getLotaTitular().getId();
+				}
+			}
+			return substituicoes;
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro", 500, e);
 		}
 	}
 	

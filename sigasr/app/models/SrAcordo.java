@@ -26,7 +26,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @Table(name = "SR_ACORDO", schema = "SIGASR")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 
 	/**

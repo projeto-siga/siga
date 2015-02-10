@@ -26,7 +26,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(schema="CORPORATIVO", name="CP_TIPO_IDENTIDADE")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpTipoIdentidade extends AbstractCpTipoIdentidade {
 	public static final Integer FORMULARIO = new Integer(1);
 	public static final Integer CERTIFICADO = new Integer(2);

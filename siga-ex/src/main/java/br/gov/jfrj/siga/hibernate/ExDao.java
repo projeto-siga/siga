@@ -1804,11 +1804,11 @@ public class ExDao extends CpDao {
 				"read-only", CACHE_EX);
 
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoMarca",
-				"nonstrict-read-write", "corporativo");
+				"transactional", "corporativo");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoMarcador",
-				"nonstrict-read-write", "corporativo");
+				"transactional", "corporativo");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpMarcador",
-				"nonstrict-read-write", "corporativo");
+				"transactional", "corporativo");
 
 		CacheManager manager = CacheManager.getInstance();
 		Cache cache;
@@ -1830,9 +1830,9 @@ public class ExDao extends CpDao {
 		// cfg.setCollectionCacheConcurrencyStrategy(
 		// "br.gov.jfrj.siga.ex.ExFormaDocumento.exModeloSet",
 
-		// "nonstrict-read-write", "ex");
+		// "transactional", "ex");
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExModelo",
-		// "nonstrict-read-write", "ex");
+		// "transactional", "ex");
 
 		// Hibernate search configuration
 		//

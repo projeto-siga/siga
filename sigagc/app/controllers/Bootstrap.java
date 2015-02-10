@@ -1,3 +1,4 @@
+package controllers;
 import models.GcAcesso;
 import models.GcTipoInformacao;
 import models.GcTipoMovimentacao;
@@ -15,6 +16,8 @@ import play.vfs.VirtualFile;
 public class Bootstrap extends Job {
 
 	public void doJob() throws Exception {
+		// Necessário devido a erro do Play que não consegue utilizar a biblioteca correta do javassist.
+		javassist.runtime.Desc.useContextClassLoader = true;
 
 		if (false && !Play.classes.hasClass("br.gov.jfrj.siga.dp.DpPessoa")) {
 			System.out.println("\n\n\n*********************** INICIALIZANDO CLASSES *****************************");

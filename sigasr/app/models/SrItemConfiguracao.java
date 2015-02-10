@@ -32,7 +32,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrItemConfiguracao extends HistoricoSuporte implements
 		SrSelecionavel {
 

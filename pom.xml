@@ -31,6 +31,8 @@
  		<module>sigapp</module>
  		<module>sigacd</module>
  		<module>siga-cd</module>
+ 		<module>siga-infinispan</module>
+
  		<!--
  		<module>siga-cd-aut</module>
  		-->

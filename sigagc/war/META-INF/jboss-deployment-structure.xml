@@ -7,8 +7,10 @@
 		<dependencies>			
 			<module name="org.picketlink" />
 			<module name="asm.asm" />
-			<module name="sigadoc.play" export="true" slot="sigagc"/>
-			<module name="org.hibernate" export="true"/>
+			<module name="org.hibernate"/>
+			<module name="org.infinispan" />
+			<module name="org.hibernate.commons-annotations" />
+			<!--   module name="sigadoc.play" export="true" slot="sigagc"/-->
 		</dependencies>
 
 	</deployment>

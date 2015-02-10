@@ -31,7 +31,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
 @Table(name = "SR_ATRIBUTO", schema = "SIGASR")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAtributo extends HistoricoSuporte {
 
 	/**

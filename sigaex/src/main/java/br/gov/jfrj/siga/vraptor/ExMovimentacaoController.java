@@ -942,8 +942,7 @@ public class ExMovimentacaoController extends ExController {
             String descrMov
 			) throws Exception {
 		
-		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
-		Date dataMov = new Date(formatter.parse(dtMovString).getTime()); 
+		Date dataMov = parseData(dtMovString); 
 		mov.setDtMov(dataMov);
 		setArquivoContentType(arquivo.getContentType());
 		setArquivoFileName(arquivo.getFileName());
@@ -1026,6 +1025,15 @@ public class ExMovimentacaoController extends ExController {
 
 		setDoc(mov.getExDocumento());
 		result.redirectTo(MessageFormat.format("anexar?sigla={0}", sigla));
+	}
+
+	private Date parseData(String dtMovString) throws ParseException {
+		if(dtMovString != null) {
+			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
+			Date dataMov = new Date(formatter.parse(dtMovString).getTime());
+			return dataMov;
+		}
+		return null;
 	}
 
     public String aAssinarAnexosGeral() throws Exception {
@@ -1927,7 +1935,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		ExDocumentoController.redirecionarParaExibir(result, doc.toString());
+		result.redirectTo(MessageFormat.format("anexar?sigla={0}", getDoc().getSigla()));
 	}
 
 	@Get("app/expediente/mov/exibir")

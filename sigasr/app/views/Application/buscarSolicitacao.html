@@ -67,9 +67,23 @@
 					'<td>' + d[2] + '</td>'+
 		        '</tr>'+
 		        '<tr>'+
-		            '<td><b>Último Andamento:</b></td>'+
-		            '<td>' + d[6] + '</td>'+
-		        '</tr>'+
+	            	'<td><b>Solicitante:</b></td>'+
+	            	'<td>' + d[3] + '</td>'+
+	        	'</tr>'+
+	        	'<tr>'+
+            		'<td><b>Prioridade:</b></td>'+
+            		'<td>' + d[7] + '</td>'+
+        		'</tr>'+
+	        	'<tr>'+
+	        		'<td><b>Situação:</b></td>'+
+	        		'<td>' + d[5] + '</td>'+
+	        		'<td><b>desde</b></td>'+
+	        		'<td>' + d[8] + '</td>'+
+    			'</tr>'+
+		        '<tr>'+
+	            	'<td><b>Última Movimentação:</b></td>'+
+	            	'<td>' + d[6] + '</td>'+
+        		'</tr>'+    			
 		    '</table><td>';
 
 	    return tr.append(detailHTML);
@@ -99,14 +113,15 @@
  		#{if listaSolicitacao}
 			<div class="gt-content-box gt-for-table dataTables_div">
 				<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
-					<col width="7%" />
-					<col width="15%" />
-		    		<col width="26%" />
-		    		<col width="10%" />
-		    		<col width="10%" />
-		    		<col width="14%" />
-		    		<col width="14%" />
-		    		<col width="0%" />
+					<col width="5%" />
+					<col width="13%" />
+		    		<col width="69%" />
+		    		<col hidden width="0px" />
+		    		<col width="13%" />
+		    		<col hidden width="0px" />
+		    		<col hidden width="0px" />
+		    		<col hidden width="0px" />
+		    		<col hidden width="0px" />
 		    		<thead>
 						<tr>
 							<th style="color: #333;" class="hide-sort-arrow">
@@ -116,11 +131,12 @@
 							</th>
 							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
 							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
+							<th hidden style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
 							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Aberto</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Situação</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Último Andamento</th>
-							<th >Item Ativado?</th>
+							<th hidden style="color: #333; font-weight: bold; padding: 7px 0px;">Situação</th>
+							<th hidden style="color: #333; font-weight: bold; padding: 7px 0px;">Último Andamento</th>
+							<th hidden >Prioridade</th>
+							<th hidden >Ult.Mov</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -142,19 +158,19 @@
 									#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
 								</td>
 							
-								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
+								<td hidden class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
 									#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
 									#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
 									#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
 								</td>
-								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+								<td hidden class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
 									<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
-								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+								<td hidden class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
 									#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}</td>
-								<td>${sol.isAtivo()}</td>
-									
+								<td hidden >#{selecionado sigla:sol.prioridade?.descPrioridade,descricao:sol.prioridade?.descPrioridade /}</td>
+								<td hidden >#{selecionado sigla:sol.ultimaMovimentacao?.dtIniMovDDMMYYYYHHMM,descricao:sol.ultimaMovimentacao?.dtIniMovDDMMYYYYHHMM /}</td>
 							</tr>
 						#{/list}
 					</tbody>

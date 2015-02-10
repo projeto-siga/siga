@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,6 +25,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class SigaController {
@@ -101,8 +103,24 @@ public class SigaController {
 		result.include("lotaCadastrante", getLotaTitular());
 		result.include("titular", getTitular());
 		result.include("lotaTitular", getLotaTitular());
+		result.include("meusTitulares", getMeusTitulares());
 	}
 
+	public List<DpSubstituicao> getMeusTitulares() {
+		if (getCadastrante() == null)
+			return null;
+
+		try {
+			DpSubstituicao dpSubstituicao = new DpSubstituicao();
+			dpSubstituicao.setSubstituto(getCadastrante());
+			dpSubstituicao.setLotaSubstituto(getCadastrante().getLotacao());
+			List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
+			return itens;
+		}catch(SQLException sqle) {
+			throw new RuntimeException(sqle);
+		}
+	}
+	
 	public void appexception() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(400);

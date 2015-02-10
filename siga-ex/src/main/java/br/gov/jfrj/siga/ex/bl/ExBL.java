@@ -3314,8 +3314,9 @@ public class ExBL extends CpBL {
 			// ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
 			// movDao.excluir(mov);
 			excluirMovimentacao(mov);
-			if ((!mob.doc().isAssinado())
-					&& (!mob.doc().isAssinadoDigitalmente()))
+			if(!mob.doc().isAssinado() &&
+					((mob.doc().isFisico() && !mob.doc().isFinalizado())
+					|| (mob.doc().isEletronico() && !mob.doc().possuiAlgumaAssinatura())))
 				processar(mob.getExDocumento(), true, false, null);
 			concluirAlteracao(mov.getExDocumento());
 

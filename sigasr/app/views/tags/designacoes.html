@@ -232,6 +232,10 @@ altura:'200', largura:'450'}
 		});
 	}
 
+	designacaoService.opts.formCadastro.resetForm = function(form) {
+		jQuery("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
+	}
+
 	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		$('td:eq(' + colunasDesignacao.acaoExpandir + ')', nRow).addClass('details-control');
 	}

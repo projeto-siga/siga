@@ -102,7 +102,7 @@
 		
 		<table border="1" bgcolor="#FFFFFF" cellpadding="1" width="100%" align="left" >
 	  		   <tr>
-  				   <td colspan="2" style="font-size:9" align="justify" ><b>NOTA DE AUDITORIA N&ordm; ${doc.codigo} - ${divis}/${subdivis} DE ${doc.dtExtensoMaiusculasSemLocalidade}</b</td>
+  				   <td colspan="2" style="font-size:9" align="justify" ><b>NOTA DE AUDITORIA N&ordm; ${doc.codigo} - ${divis}/${subdivis} DE ${doc.dtExtensoMaiusculasSemLocalidade}</b></td>
   			   </tr>
   			   <tr>
   				   <td colspan="2" style="font-size:9" align="justify" ><b>UNIDADE GESTORA AUDITADA : ${uniges}</b></td>

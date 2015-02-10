@@ -667,7 +667,15 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	}
 	
 	public List<SrItemConfiguracao> getFilhoSet() {
-		return filhoSet;
+		List<SrItemConfiguracao> c = new ArrayList<SrItemConfiguracao>();
+		
+		if (this.filhoSet != null)
+			c.addAll(filhoSet);
+		
+		if (this.itemInicial != null && !this.itemInicial.getId().equals(this.getId()))
+			c.addAll(itemInicial.getFilhoSet());
+		
+		return c;
 	}
 	
 	public Collection<SrConfiguracao> getDesignacoesAtivas() {

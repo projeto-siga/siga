@@ -1132,6 +1132,7 @@ public class Application extends SigaApplication {
 			e.printStackTrace();
 		}
 		
+		itemConfiguracao.refresh();
 		return itemConfiguracao.getSrItemConfiguracaoJson();
 	}
 

@@ -99,30 +99,6 @@
 								</tr>
 							</thead>
 							
-							<tbody>
-							*{
-								#{list items:equipe.excecaoHorarioSet, as:'excecao'}
-								<tr>
-									#{if excecao?.diaSemana}
-										<td>${excecao?.diaSemana }</td>
-										<td></td>
-										<td>${excecao?.diaSemana.descrDiaSemana }</td>
-									#{/if}
-									#{else}
-										<td>0</td>
-										<td>${excecao?.dataEspecifica.format('yyyy-MM-dd HH:mm:ss.SSSZ') }</td>
-										<td>${excecao?.dataEspecifica.format('dd/MM/yyyy') }</td>
-									#{/else}
-									
-									<td>${excecao?.horaIni.format('HH:mm') }</td>
-									<td>${excecao?.horaFim.format('HH:mm') }</td>
-									<td>${excecao?.interIni.format('HH:mm') }</td>
-									<td>${excecao?.interFim.format('HH:mm') }</td>
-									<td><a class="excecao_remove"><img src="/siga/css/famfamfam/icons/delete.png" style="visibility: inline; cursor: pointer" /></a></td>
-								</tr>
-								#{/list}
-								}*
-							</tbody>
 						</table>
 					</div>
 					<div class="gt-form-row">

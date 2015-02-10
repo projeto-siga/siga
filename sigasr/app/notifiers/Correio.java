@@ -55,7 +55,7 @@ public class Correio extends Mailer {
 			if (lotaAtendenteSolPai != null)
 				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai
 						.getDpPessoaLotadosSet())
-					if (pessoaDaLotacao.getDataFim() == null && pessoaDaLotacao.getMatricula() == 14723) {
+					if (pessoaDaLotacao.getDataFim() == null) {
 						email = pessoaDaLotacao.getPessoaAtual().getEmailPessoa();
 						if (email != null)
 							recipients.add(email);

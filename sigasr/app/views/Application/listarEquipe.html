@@ -30,10 +30,10 @@
 					<tr #{if eq.podeEditar(lotaTitular, cadastrante)}
 							onclick="equipeService.editar($(this).data('json'), 'Alterar Equipe')" style="cursor: pointer;"#{/if}
 						data-json-id="${eq.idEquipe}" data-json="${eq.toJson()}">
-						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+						<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 							${eq.lotacao?.sigla}
 						</td>
-						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+						<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 							${eq.lotacao?.descricao}
 						</td>
 					</tr>
@@ -108,6 +108,10 @@
 
 	equipeService.getRow = function(equipe) {
 		return [equipe.lotacao.sigla, equipe.lotacao.descricao];
+	}
+
+	equipeService.onRowClick = function(equipe) {
+		equipeService.editar(equipe, 'Alterar Equipe');
 	}
 
 	equipeService.serializar = function(obj) {

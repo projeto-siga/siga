@@ -365,8 +365,6 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 				.api()
 				.row(tr)
 				.data(this.getRow(objSalvo));
-			
-			this.bindRowClick(tr, objSalvo);
 		}
 	} 
 	// Senao, eh um novo registro a ser inserido na GRID

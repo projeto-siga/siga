@@ -27,7 +27,9 @@ Siga.principal = {
 
 // Funcao principal que sera chamada apos o load da pagina
 $(function() {
-    $.ajaxSetup({ cache: false });
+	if ($.browser.msie){
+		$.ajaxSetup({ cache: false });
+	}
     
     $.each(Siga.principal.modules, function(){ 
     	var model = this;     

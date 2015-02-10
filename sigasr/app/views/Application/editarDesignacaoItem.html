@@ -186,7 +186,7 @@
 						valueFuncao:funcaoConfianca,
 						valueCargo:cargo,
 						valueGrupo:cpGrupo,
-						disabled:disabled /}
+						disabled:disabled/}
 				</div>
 				<div class="box gt-width-50">
 					<label>Órgão</label> 
@@ -217,7 +217,8 @@
 				</div>
 				<div class="box gt-width-50">
 					<label>Atendente <span>*</span></label>#{selecao
-						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual /}
+						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual,
+						disabled:_modoExibicao == 'equipe' ? 'true' : disabled /}
 					<span style="display:none;color: red" id="designacao.atendente">Atendente não informado;</span>
 				</div>
 			</div>	

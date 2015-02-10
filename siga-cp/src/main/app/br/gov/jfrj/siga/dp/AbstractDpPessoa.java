@@ -38,6 +38,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -162,9 +163,10 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	private CpTipoPessoa cpTipoPessoa;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pessoaInicial")
+	@OrderBy("idPessoa DESC")
 	@Desconsiderar
 	//private Set<DpPessoa> pessoasPosteriores = new HashSet<DpPessoa>(0);
-	private Set<DpPessoa> pessoasPosteriores = new TreeSet<DpPessoa>();
+	private Set<DpPessoa> pessoasPosteriores;
 
 	/**
 	 * @return the cpTipoPessoa

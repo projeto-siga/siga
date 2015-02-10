@@ -2,6 +2,7 @@ package br.gov.jfrj.webwork.action;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
@@ -36,11 +37,24 @@ public class PrincipalQuadrosAction extends SigaActionSupport {
 	
 	public String aCarregaModulo(){
 		String url = this.modulos.get(this.getModulo());
+//		url = addCache(url);
 		this.html = this.http.get(url, getRequest(), null);
 		
 		tratarErro();
 		
 		return SUCCESS;
+	}
+
+
+	private String addCache(String url) {
+		int random = new Random().nextInt(10000);
+		if (url.contains("?")){
+			url += "&_="+random;
+		}else{
+			url += "?_=" + random;
+		}
+		
+		return url;
 	}
 
 
@@ -51,7 +65,7 @@ public class PrincipalQuadrosAction extends SigaActionSupport {
 			this.html = "<span style='color:red' class='error'> 500 - Módulo indisponível. </span>";
 		}else if (this.html.contains("HTTP Status")){
 			this.html = "<span style='color:red' class='error'> Módulo indisponível. </span>";
-		}else if (this.html.contains("<HTML") || (this.html.contains("<title>"))){
+		}else if (this.html.contains("<title>")){
 			this.html = "<span style='color:red' class='error'> Erro no carregamento do módulo. </span>";
 		}
 	}

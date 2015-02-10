@@ -196,6 +196,10 @@
 	itemConfiguracaoService.onRowClick = function(item) {
 		itemConfiguracaoService.editar(item, 'Alterar Item');
 	}
+
+	itemConfiguracaoService.onRowClick = function(item) {
+		itemConfiguracaoService.editar(item, 'Alterar Item');
+	}
 	
 	itemConfiguracaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);

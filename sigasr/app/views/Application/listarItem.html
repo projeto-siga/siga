@@ -192,6 +192,10 @@
 		return ['', itemConfiguracao.siglaItemConfiguracao, itemConfiguracao.tituloItemConfiguracao,
 				itemConfiguracao.descrItemConfiguracao, itemConfiguracao.descricaoSimilaridade, 'COLUNA_ACOES', ''];
 	}
+
+	itemConfiguracaoService.onRowClick = function(item) {
+		itemConfiguracaoService.editar(item, 'Alterar Item');
+	}
 	
 	itemConfiguracaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);

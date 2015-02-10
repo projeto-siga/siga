@@ -184,6 +184,10 @@
 		return atributo.idAtributo;
 	}
 
+	atributoService.onRowClick = function(atributo) {
+		atributoService.editar(atributo, 'Alterar Atributo');
+	}
+
 	atributoService.getRow = function(atributo) {
 		var marginLeft = (atributo.nivel-1) * 2,
 			fontWeight = (atributo.nivel == 1) ? 'bold' : 'normal',

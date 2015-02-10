@@ -6,26 +6,16 @@
 
 <div class="gt-form gt-content-box">
 	<form id="atributoForm" action="#">
-	#{if att?.idAtributo} <input
-		type="hidden" name="idAtributo"
-		id="idAtributo"
-		value="${idAtributo}"> #{/if}
-		<input
-		type="hidden" name="hisIdIni"
-		id="hisIdIni"
-		value="${hisIdIni}">
-	#{ifErrors}
-	<p class="gt-error">Alguns campos obrigatórios não foram
-		preenchidos ${error}</p>
-	#{/ifErrors}	
+		<input type="hidden" name="idAtributo"
+		id="idAtributo" value="${idAtributo}">
+		<input type="hidden" name="hisIdIni"
+		id="hisIdIni" value="${hisIdIni}">
 	<div class="gt-form-row box-wrapper">
 		<div class="box box-left gt-width-50">
 			<label>Nome <span>*</span></label> <input type="text"
 				name="nomeAtributo"
 				id="nomeAtributo"
 				value="${nomeAtributo}" size="50" maxlength="255" required/>
-				<span style="color: red">#{error
-				'nomeAtributo' /}</span>
 		</div>
 		<div class="box gt-width-50">
 			<label>Descrição</label> <input maxlength="255" type="text"
@@ -57,8 +47,6 @@
 			name="descrPreDefinido"
 			id="descrPreDefinido"
 			value="${descrPreDefinido}" size="60" />
-			<span style="color: red" id="erroDescrPreDefinido">#{error
-			'descrPreDefinido' /}</span>
 	</div>
 	<div class="gt-content" style="padding-top: 10px;">
 		<h3>Associações</h3>
@@ -108,15 +96,13 @@
 				<label>Item <span>*</span></label> 
 				#{selecao tipo:'item',
 					nome:'itemConfiguracaoUnitario',
-					value:itemConfiguracaoUnitario?.atual,
-					requiredValue:'required' /}
+					value:itemConfiguracaoUnitario?.atual /}
 			</div>
 		
 			<div class="gt-form-row gt-width-100">
 				<label>Serviço <span>*</span></label> 
 				#{selecao tipo:'acao',
-				nome:'acaoUnitaria', value:acaoUnitaria?.atual,
-				requiredValue:'required' /}
+				nome:'acaoUnitaria', value:acaoUnitaria?.atual /}
 			</div>
 			<div class="gt-form-row">
 				<label>#{checkbox 

@@ -1,9 +1,14 @@
+#{set nomeclean : _nome.cut('.') /}
 #{if _disabled == "true"}
 	#{set 'selecaoDisabled'}
 		disabled="disabled" 
 	#{/set}
 #{/if}
-#{set nomeclean : _nome.cut('.') /}
+#{else}
+	#{set 'selecaoDisabled'}
+		 
+	#{/set}
+#{/else}
 
 #{if _currentClass == undefined}
 	#{set _currentClass: 'selecao'/}

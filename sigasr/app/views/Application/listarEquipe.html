@@ -48,7 +48,7 @@
 </div>
 
 
-#{modal nome:'equipe2', titulo:'Cadastrar Equipe'}
+#{modal nome:'equipe', titulo:'Cadastrar Equipe'}
 	<div id="divEditarForm">#{include
 				'Application/editarEquipe.html' /}</div>
 #{/modal}
@@ -56,7 +56,7 @@
 <script type="text/javascript">
 	var opts = {
 			 urlGravar : '@{Application.gravarEquipe()}',
-			 dialogCadastro : $('#equipe2_dialog'),
+			 dialogCadastro : $('#equipe_dialog'),
 			 tabelaRegistros : $('#equipes_table'),
 			 objectName : 'equipe',
 			 formCadastro : $('#form')

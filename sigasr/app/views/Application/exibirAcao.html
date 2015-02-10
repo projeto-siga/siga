@@ -3,16 +3,15 @@
 
 $(document).ready(function() {
 	notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
+
+	removeSelectedDuplicado();
 });
 
 function carregarAtributos(){
 	var frm = document.getElementById('formSolicitacao'),
 		params = '';
-	//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
-	var idAcao = $("#selectAcao option:selected").val();
-	var lotacaoDaAcao = $("#lotacao-" + idAcao).html();
-	$("#atendentePadrao").html(lotacaoDaAcao);
-
+	carregarLotacaoDaAcao();
+	
 	for (i = 0; i < frm.length; i++){
 		if (frm[i].name && frm[i].value)
 			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
@@ -41,6 +40,30 @@ function carregouAtributos(response, param){
 		}
 	});
 }
+
+function removeSelectedDuplicado() {
+	//solucao de contorno temporaria para op��es no select com mesmo value.
+	var primeiro = $("#selectAcao option:eq(0)");
+	var segundo = $("#selectAcao option:eq(1)");
+	if (primeiro.val() == segundo.val()) {
+		segundo.prop("selected", false);
+		primeiro.prop("selected", true);
+	}
+}
+
+function carregarLotacaoDaAcao(){
+	//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
+	var opcaoSelecionada = $("#selectAcao option:selected");
+	var idAcao = opcaoSelecionada.val();
+	var siglaLotacao = opcaoSelecionada.html().split("(")[1].slice(0,-2);
+
+	var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
+	var descLotacao = spanLotacao.html();
+	var idDesignacaoDaAcao = spanLotacao.prev().html();
+
+	$("#solicitacaoDesignacao").val(idDesignacaoDaAcao);
+	$("#atendentePadrao").html(descLotacao);
+}
 </script>
 
 #{if solicitacao.itemConfiguracao && controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
@@ -55,24 +78,25 @@ function carregouAtributos(response, param){
 
 #{if solicitacao.itemConfiguracao && acoesEAtendentes} 
 	<div class="gt-form-row gt-width-66">
-	<label>Ação</label>
+	<label>Ação</label>	
 		#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
-			#{option}#{/option}	
-			#{list items:acoesEAtendentes.keySet(), as:'acao' }
-				#{option acao.idAcao} ${acao.tituloAcao} (${acoesEAtendentes.get(acao).sigla})#{/option}					 
+			#{list items:acoesEAtendentes, as:'tarefa' }
+				#{option tarefa.acao.idAcao} ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})#{/option}					 
 			#{/list}
-		#{/select}  
+		#{/select} 
 	 <span style="color: red">#{error 'solicitacao.acao' /}</span>
 	</div>
 	<div>
 		<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
 				ja que acima no select nao tem como "esconder" essa informacao -->
-		#{list items:acoesEAtendentes.keySet(), as:'acaoAtend' }
-			<span id="lotacao-${acaoAtend.idAcao}" style="display:none;">${acoesEAtendentes.get(acaoAtend).sigla} 
-								- ${acoesEAtendentes.get(acaoAtend).descricao.raw()}</span>
+		#{list items:acoesEAtendentes, as:'t' }
+			<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
+			<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
+								- ${t.conf.atendente.descricao.raw()}</span>
 			
-			#{if acaoAtend_isFirst} 
-				#{set lotacaoDesignada : acoesEAtendentes.get(acaoAtend).sigla + ' - ' + acoesEAtendentes.get(acaoAtend).descricao /} 
+			#{if t_isFirst} 
+				#{set lotacaoDesignada : t.conf.atendente.siglaCompleta + ' - ' + t.conf.atendente.descricao /} 
+				#{set idDesignacao : t.conf.idConfiguracao /}
 			#{/if}
 		#{/list}
 
@@ -81,9 +105,10 @@ function carregouAtributos(response, param){
 			<!-- Para solicitacoes cadastradas, pegar o atendente da ultima movimentacao -->
 			 <!-- Para solicitacoes que estao sendo cadastradas, pegar o atendente da designacao -->
 			#{if solicitacao.idSolicitacao != null && !solicitacao.isRascunho()}
-						${solicitacao.lotaAtendente?.sigla} - ${solicitacao.lotaAtendente?.descricao.raw()}#{/if}
+						${solicitacao.lotaAtendente?.siglaCompleta} - ${solicitacao.lotaAtendente?.descricao.raw()}#{/if}
 			#{else}${lotacaoDesignada.raw()}#{/else}
 		</span>
+		<input type="hidden" id="solicitacaoDesignacao" name="solicitacao.designacao" value="${idDesignacao}" />
 	</div>
 #{/if}
 

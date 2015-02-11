@@ -72,5 +72,5 @@ modify (id_pesquisa number (19,0));
 
 
 insert into sigasr.sr_tipo_pergunta values (1, 'Texto Livre', null);
-insert into sigasr.sr_tipo_pergunta values (1, 'Nota de 1 a 5', null);
+insert into sigasr.sr_tipo_pergunta values (2, 'Nota de 1 a 5', null);
 commit;

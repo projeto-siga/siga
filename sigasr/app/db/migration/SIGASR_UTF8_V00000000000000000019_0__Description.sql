@@ -1,8 +1,8 @@
-alter session set current schema = corporativo;
+alter session set current_schema = corporativo;
 
 insert into corporativo.cp_servico(id_servico, sigla_servico, desc_servico, id_servico_pai, id_tp_servico) values (corporativo.cp_servico_seq.nextval, 'SIGA-SR-EDTCONH', 'Criar Conhecimentos', (select id_servico from corporativo.cp_servico where sigla_servico = 'SIGA-SR'), 2);
 commit;
-alter session set current schema = sigasr;
+alter session set current_schema = sigasr;
 
 alter table SR_SOLICITACAO ADD (
   "ID_DESIGNACAO" NUMBER(19,0),
@@ -15,12 +15,12 @@ alter table SR_MOVIMENTACAO ADD (
 	  REFERENCES "SIGASR"."SR_CONFIGURACAO" ("ID_CONFIGURACAO_SR") ENABLE
 );
 
-alter session set current schema = corporativo;
+alter session set current_schema = corporativo;
 grant references on dp_pessoa to sigasr;
 grant references on dp_lotacao to sigasr;
 grant references on cp_complexo to sigasr;
 grant references on cp_orgao_usuario to sigasr;
-alter session set current schema = sigasr;
+alter session set current_schema = sigasr;
 
 alter table sr_solicitacao add(
 	"ID_TITULAR" NUMBER(19,0), 
@@ -71,7 +71,7 @@ alter table sr_movimentacao add(
 
 
 alter table sigasr.sr_movimentacao drop (
-  DT_MOV_CANCELADORA, ESTADO, ID_CANCELADOR, ID_MOV_REVERSORA, DT_INI_AGENDAMENTO, HOR_INI_AGENDAMENTO
+  DT_INI_AGENDAMENTO, HOR_INI_AGENDAMENTO
 );
 alter table sigasr.sr_configuracao drop (
   FORMA_ACOMPANHAMENTO, GRAVIDADE, TENDENCIA, URGENCIA, SLA_PRE_ATENDIMENTO_QUANT, ID_UNIDADE_PRE_ATENDIMENTO, SLA_ATENDIMENTO_QUANT, ID_UNIDADE_ATENDIMENTO, SLA_POS_ATENDIMENTO_QUANT, ID_UNIDADE_POS_ATENDIMENTO, MARGEM_SEGURANCA, OBSERVACAO_SLA, FG_DIVULGAR_SLA, FG_NOTIFICAR_GESTOR, FG_NOTIFICAR_SOLICITANTE, FG_NOTIFICAR_CADASTRANTE, FG_NOTIFICAR_INTERLOCUTOR, FG_NOTIFICAR_ATENDENTE

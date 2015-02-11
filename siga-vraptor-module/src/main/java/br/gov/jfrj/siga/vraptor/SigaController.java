@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class SigaController {
@@ -101,8 +102,27 @@ public class SigaController {
 		result.include("lotaCadastrante", getLotaTitular());
 		result.include("titular", getTitular());
 		result.include("lotaTitular", getLotaTitular());
+		result.include("meusTitulares", getMeusTitulares());
 	}
 
+	public List<DpSubstituicao> getMeusTitulares() {
+		try {
+			List<DpSubstituicao> substituicoes = so.getMeusTitulares();
+			for (DpSubstituicao dpSubstituicao : substituicoes) {
+				if (dpSubstituicao.getTitular() != null) {
+					dpSubstituicao.getTitular().getId();
+				}
+				
+				if (dpSubstituicao.getLotaTitular() != null) {
+					dpSubstituicao.getLotaTitular().getId();
+				}
+			}
+			return substituicoes;
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro", 500, e);
+		}
+	}
+	
 	public void appexception() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(400);

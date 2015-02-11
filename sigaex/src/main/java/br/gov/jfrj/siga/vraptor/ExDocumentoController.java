@@ -68,7 +68,6 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.http.VRaptorResponse;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
@@ -91,10 +90,8 @@ import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
@@ -112,8 +109,6 @@ public class ExDocumentoController extends ExController {
 	
 	public ExDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
-		CurrentRequest.set(new RequestInfo(context, request, response));
-		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();	
 	}
@@ -607,8 +602,7 @@ public class ExDocumentoController extends ExController {
 			
 			dao().excluir(doc);
 			ExDao.commitTransacao();
-			result.include("sigla", sigla);
-			result.redirectTo("/app/expediente/doc/listar");
+			result.redirectTo("/");
 		} catch (final AplicacaoException e) {
 			ExDao.rollbackTransacao();
 			throw e;

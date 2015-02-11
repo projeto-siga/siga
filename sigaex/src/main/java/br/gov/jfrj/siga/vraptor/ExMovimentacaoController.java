@@ -239,9 +239,12 @@ public class ExMovimentacaoController extends ExController {
 	public ExMovimentacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
+		
 		super(request, response, context, result, ExDao.getInstance(), so, em);
+		
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
+		
 		subscritorSel = new DpPessoaSelecao();
 		documentoViaSel = new ExMobilSelecao();
 		documentoRefSel = new ExMobilSelecao();
@@ -944,8 +947,7 @@ public class ExMovimentacaoController extends ExController {
             String descrMov
 			) throws Exception {
 		
-		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
-		Date dataMov = new Date(formatter.parse(dtMovString).getTime()); 
+		Date dataMov = parseData(dtMovString); 
 		mov.setDtMov(dataMov);
 		setArquivoContentType(arquivo.getContentType());
 		setArquivoFileName(arquivo.getFileName());
@@ -1028,6 +1030,15 @@ public class ExMovimentacaoController extends ExController {
 
 		setDoc(mov.getExDocumento());
 		result.redirectTo(MessageFormat.format("anexar?sigla={0}", sigla));
+	}
+
+	private Date parseData(String dtMovString) throws ParseException {
+		if(dtMovString != null) {
+			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
+			Date dataMov = new Date(formatter.parse(dtMovString).getTime());
+			return dataMov;
+		}
+		return null;
 	}
 
     public String aAssinarAnexosGeral() throws Exception {
@@ -1929,7 +1940,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
-		ExDocumentoController.redirecionarParaExibir(result, doc.toString());
+		result.redirectTo(MessageFormat.format("anexar?sigla={0}", getDoc().getSigla()));
 	}
 
 	@Get("app/expediente/mov/exibir")
@@ -2448,15 +2459,11 @@ public class ExMovimentacaoController extends ExController {
 				.podeIncluirCosignatario(getTitular(), getLotaTitular(), this.mob))
 			throw new AplicacaoException("Não é possível incluir cossignatário");
 
-		try {
-			Ex.getInstance()
-					.getBL()
-					.incluirCosignatario(getCadastrante(), getLotaTitular(),
-							doc, mov.getDtMov(), mov.getSubscritor(),
-							mov.getDescrMov());
-		} catch (final Exception e) {
-			throw e;
-		}
+		Ex.getInstance()
+				.getBL()
+				.incluirCosignatario(getCadastrante(), getLotaTitular(),
+						doc, mov.getDtMov(), mov.getSubscritor(),
+						mov.getDescrMov());
 		
 		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
 		

@@ -49,7 +49,7 @@ function Formulario(form) {
 			        else if (className == 'pessoaLotaFuncCargoSelecao') {
 			        	var select = jQuery(component).parent().parent().parent().find('select')[0];
 			        	obj[select.id] = objeto.tipo;
-			        	select.onchange();
+			        	select.changeValue(objeto.tipo);
 			        	this.prepareForSelecaoComponent(x, obj, objeto);
 			        }
 			        else if (className == 'select-siga') {
@@ -296,7 +296,7 @@ BaseService.prototype.limparSpanComponentes = function() {
  * Executa a acao de gravar o registro
  */
 BaseService.prototype.gravar = function() {
-	return this.gravarAplicar(false);
+	this.gravarAplicar(false);
 }
 
 BaseService.prototype.gravarAplicar = function(isAplicar) {
@@ -365,8 +365,6 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 				.api()
 				.row(tr)
 				.data(this.getRow(objSalvo));
-			
-			this.bindRowClick(tr, objSalvo);
 		}
 	} 
 	// Senao, eh um novo registro a ser inserido na GRID

@@ -150,8 +150,8 @@ altura:'200', largura:'450'}
 	designacaoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title);
 
-		// atualiza as listas
-		atualizarListasDesignacaoEdicao();
+		// atualiza os dados da Designação
+		atualizarDesignacaoEdicao();
 	}
 
 	designacaoService.getId = function(designacao) {
@@ -185,7 +185,7 @@ altura:'200', largura:'450'}
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 
 		// atualiza as listas
-		atualizarListasDesignacaoEdicao(obj);
+		atualizarDesignacaoEdicao(obj);
 	}
 
 	designacaoService.duplicarButton = '<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>';
@@ -221,6 +221,10 @@ altura:'200', largura:'450'}
 			var tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
  			afterGravarDesignacao(tr, null);
 		});
+	}
+
+	designacaoService.opts.formCadastro.resetForm = function(form) {
+		jQuery("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
 	}
 
 	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
@@ -346,7 +350,7 @@ altura:'200', largura:'450'}
 		tr.append(tdDadosItens);
 	}
 	
-	function atualizarListasDesignacaoEdicao(designacaoJson) {
+	function atualizarDesignacaoEdicao(designacaoJson) {
 		// limpar a lista
 		limparDadosDesignacaoModal();
 		
@@ -381,6 +385,22 @@ altura:'200', largura:'450'}
 				}
 			}
 		}
+
+		#{if _modoExibicao == 'equipe'}
+		// Caso seja cadastro a partir da tela de equipe, atualiza os dados da Lotação atendente
+		else {
+			var lota = JSON.parse($("#lotacaoUsuario").val())
+				designacaoJson = {
+					atendente : lota.id,
+					atendente_descricao : lota.descricao,
+					atendenteSpan : lota.descricao,
+					atendente_sigla : lota.sigla
+				};
+
+			// chama o editar para popular o campo da lotação
+			designacaoService.formularioHelper.populateFromJson(designacaoJson);			
+		}
+		#{/if}
 	}
 	
 	// Limpa os dados da tela.

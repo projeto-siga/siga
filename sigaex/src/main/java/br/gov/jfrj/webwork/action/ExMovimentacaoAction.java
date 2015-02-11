@@ -445,7 +445,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 						0, e);
 			}
 		}
-
 		return mobil;
 	}
 

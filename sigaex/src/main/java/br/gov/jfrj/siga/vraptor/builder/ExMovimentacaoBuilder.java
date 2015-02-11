@@ -43,9 +43,19 @@ public final class ExMovimentacaoBuilder {
 	private DpPessoaSelecao titularSel;
 	private DpPessoaSelecao subscritorSel;
 	private Long idPapel;
+	private int tipoResponsavel;
 
 	private ExMovimentacaoBuilder() {
 		substituicao = false;
+		cpOrgaoSel = new CpOrgaoSelecao();
+		titularSel = new DpPessoaSelecao();
+		subscritorSel = new DpPessoaSelecao();
+		documentoRefSel = new ExMobilSelecao();
+		responsavelSel = new DpPessoaSelecao();
+		destinoFinalSel = new DpPessoaSelecao();
+		lotaResponsavelSel = new DpLotacaoSelecao();
+		lotaDestinoFinalSel = new DpLotacaoSelecao();
+		classificacaoSel = new ExClassificacaoSelecao();
 	}
 
 	public static ExMovimentacaoBuilder novaInstancia() {
@@ -375,5 +385,27 @@ public final class ExMovimentacaoBuilder {
 		this.idPapel = idPapel;
 		return this;
 	}
+	
+	public ExMovimentacaoBuilder processarTipoResponsavel() {
+		if (mob == null) {
+			throw new IllegalArgumentException("Mob nao preenchido!");
+		}
+		ExMovimentacao ultMov = mob.getUltimaMovimentacao();
 
+		if (ultMov.getLotaDestinoFinal() != null) {
+			this.setTipoResponsavel(1);
+		} else if (ultMov.getDestinoFinal() != null) {
+			this.setTipoResponsavel(2);
+		}
+		return this;
+	}
+
+	public int getTipoResponsavel() {
+		return tipoResponsavel;
+	}
+
+	public ExMovimentacaoBuilder setTipoResponsavel(int tipoResponsavel) {
+		this.tipoResponsavel = tipoResponsavel;
+		return this;
+	}
 }

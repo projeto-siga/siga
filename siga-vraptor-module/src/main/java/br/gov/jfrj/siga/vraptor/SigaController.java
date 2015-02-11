@@ -27,6 +27,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
+import com.google.common.collect.Lists;
+
 public class SigaController {
 	public SigaObjects so;
 
@@ -108,18 +110,25 @@ public class SigaController {
 	public List<DpSubstituicao> getMeusTitulares() {
 		try {
 			List<DpSubstituicao> substituicoes = so.getMeusTitulares();
-			for (DpSubstituicao dpSubstituicao : substituicoes) {
-				if (dpSubstituicao.getTitular() != null) {
-					dpSubstituicao.getTitular().getId();
-				}
-				
-				if (dpSubstituicao.getLotaTitular() != null) {
-					dpSubstituicao.getLotaTitular().getId();
-				}
+			if (substituicoes == null) {
+				return Lists.newArrayList();
 			}
+			resolveLazy(substituicoes);
 			return substituicoes;
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro", 500, e);
+		}
+	}
+
+	private void resolveLazy(List<DpSubstituicao> substituicoes) {
+		for (DpSubstituicao dpSubstituicao : substituicoes) {
+			if (dpSubstituicao.getTitular() != null) {
+				dpSubstituicao.getTitular().getId();
+			}
+			
+			if (dpSubstituicao.getLotaTitular() != null) {
+				dpSubstituicao.getLotaTitular().getId();
+			}
 		}
 	}
 	

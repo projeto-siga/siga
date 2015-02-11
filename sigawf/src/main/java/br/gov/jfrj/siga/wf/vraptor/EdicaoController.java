@@ -1,6 +1,12 @@
 package br.gov.jfrj.siga.wf.vraptor;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,7 +53,7 @@ public class EdicaoController extends WfController {
 	@Post
 	@Path("/app/edicao/processdefinition/{procedimento}")
 	public void gravar(String procedimento, String xml) throws Exception {
-		String res = "OK";//doDeployment(xml);
+		String res = "OK";// doDeployment(xml);
 		result.use(Results.http()).body(res);
 	}
 
@@ -59,9 +65,24 @@ public class EdicaoController extends WfController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private String doDeployment(String xml) {
+	private String doDeployment(String xml) throws IOException {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("Test String");
+
+		final ByteArrayOutputStream ba = new ByteArrayOutputStream();
+		final ZipOutputStream out = new ZipOutputStream(ba);
+		ZipEntry e = new ZipEntry("processdefinition.xml");
+		out.putNextEntry(e);
+
+		byte[] data = xml.getBytes();
+		out.write(data, 0, data.length);
+		out.closeEntry();
+
+		out.close();
+
 		ProcessDefinition processDefinition = ProcessDefinition
-				.parseXmlString(xml);
+				.parseParZipInputStream(new ZipInputStream(
+						new ByteArrayInputStream(ba.toByteArray())));
 		WfContextBuilder.getJbpmContext().getJbpmContext()
 				.deployProcessDefinition(processDefinition);
 		long id = processDefinition.getId();
@@ -90,5 +111,4 @@ public class EdicaoController extends WfController {
 
 		return sReturn;
 	}
-
 }

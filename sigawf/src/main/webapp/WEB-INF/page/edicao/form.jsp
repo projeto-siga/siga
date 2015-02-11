@@ -1,37 +1,67 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <siga:pagina titulo="Edição de Procedimento">
+
+	<style type="text/css">
+		table {
+			border-collapse: collapse;
+			margin-top: 10px;
+			width: 100%;
+			font-family: 'Bitstream Vera Sans Mono', Courier, monospace;
+			border: 1px solid #CCC;
+		}
+		
+		thead tr {
+			font-weight: normal;
+			text-aling: left;
+			height: 2em;
+			border-bottom: 1px solid #DDD;
+			background-color: #ECECEC;
+			background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA),
+				to(#ECECEC));
+			background: -moz-linear-gradient(top, #FAFAFA, #ECECEC);
+			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA',
+				endColorstr='#ECECEC');
+		}
+		
+		td {
+			padding: 1px 2px;
+			white-space: pre;
+		}
+		
+		td.bredecode {
+			width: 100%;
+			padding-left: 4px;
+		}
+		
+		td.codekolom {
+			text-align: right;
+			min-width: 3em;
+			background-color: #ECECEC;
+			border-right: 1px solid #DDD;
+			color: #AAA;
+		}
+		
+		tr.add {
+			background: #DFD;
+		}
+		
+		tr.del {
+			background: #FDD;
+		}
+	</style>
+
 	<div class="gt-bd gt-cols clearfix" ng-app="wfDesignApp"
 		ng-controller="wfDesignCtrl" ng-init="carregar('${procedimento}')">
-		<div class="gt-content clearfix">
-		
-			<h2 class="gt-form-head">Submeter XML</h2>
-
-			<form action="/sigawf/app/edicao/xml_gravar" method="post">
-			<div class="gt-form gt-content-box"
-				style="margin-bottom: 10px !important;">
-				
-				<div class="gt-form-row gt-width-100">
-					<div class="gt-left-col gt-width-33">
-						<label>Nome do procedimento</label> <textarea
-							name="xml" class="gt-form-text"></textarea>
-					</div>
-				</div>
-			</div>
-			<div class="gt-form-row">
-				<input type="submit" class="gt-btn-medium" value="Salvar" />
-			</div>
-			</form>
-		
-		
+		<div class="gt-content clearfix" ng-hide="exibirXml">
 
 			<h2 class="gt-form-head">Definição de Procedimento</h2>
-			
-			
+
+
 
 			<div class="gt-form gt-content-box"
 				style="margin-bottom: 10px !important;">
-				
+
 				<div class="gt-form-row gt-width-100">
 					<div class="gt-left-col gt-width-33">
 						<label>Nome do procedimento</label> <input type="text"
@@ -41,11 +71,13 @@
 				</div>
 			</div>
 			<div class="gt-form-row">
-				<input type="button" class="gt-btn-medium" value="Salvar"
-					ng-click="salvar('${procedimento}')" />
+				<input type="button" class="gt-btn-medium gt-btn-left"
+					value="Salvar" ng-click="salvar('${procedimento}')" /> <input
+					type="button" class="gt-btn-medium" value="Editar XML"
+					ng-click="editarXml('${procedimento}')" />
 			</div>
 
-<%--
+			<%--
 
 			<h2 class="gt-form-head"
 				style="margin-top: 20px !important; clear: both">Xml</h2>
@@ -55,7 +87,7 @@
 				style="margin-top: 20px !important; clear: both">Xml</h2>
 			<pre>{{xml}}</pre>
  --%>
- 
+
 			<!-- Raias -->
 			<h2 class="gt-form-head"
 				style="margin-top: 20px !important; clear: both">Raias</h2>
@@ -65,7 +97,8 @@
 				ng-repeat="raia in pd.swimlane">
 				<div ng-hide="editando === raia">
 					<label style="float: right; margin-left: 1em;"><a
-						ng-click="editar(raia)"><img src="/siga/css/famfamfam/icons/pencil.png"
+						ng-click="editar(raia)"><img
+							src="/siga/css/famfamfam/icons/pencil.png"
 							style="margin-right: 5px;"><span
 							style="vertical-align: top;">Editar</span></a></label>
 
@@ -78,7 +111,8 @@
 					</div>
 					<div class="gt-right-col gt-width-33">
 						<label style="float: right;"><a ng-click="delRaia($index)">
-								<img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"><span
+								<img src="/siga/css/famfamfam/icons/delete.png"
+								style="margin-right: 5px;"><span
 								style="vertical-align: top;">Raia</span>
 						</a></label>
 					</div>
@@ -108,7 +142,8 @@
 				ng-repeat="node in pd.task_node">
 				<div ng-hide="editando === node">
 					<label style="float: right; margin-left: 1em;"><a
-						ng-click="editar(node)"><img src="/siga/css/famfamfam/icons/pencil.png"
+						ng-click="editar(node)"><img
+							src="/siga/css/famfamfam/icons/pencil.png"
 							style="margin-right: 5px;"><span
 							style="vertical-align: top;">Editar</span></a></label>
 
@@ -132,19 +167,23 @@
 						</div>
 						<div class="gt-right-col gt-width-25">
 							<label style="float: right; margin-left: 1em;"><a
-								ng-click="delTarefa($index)"><img src="/siga/css/famfamfam/icons/delete.png"
+								ng-click="delTarefa($index)"><img
+									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Tarefa</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addTransicao(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addTransicao(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Transição</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addEvento(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addEvento(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Evento</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addVariavel(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addVariavel(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Variável</span></a></label>
 						</div>
@@ -180,7 +219,8 @@
 									<div class="gt-left-col gt-width-25">
 										<label style="float: right; margin-left: 1em;"><a
 											ng-click="delVariavel(node, $index)"><img
-												src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"><span
+												src="/siga/css/famfamfam/icons/delete.png"
+												style="margin-right: 5px;"><span
 												style="vertical-align: top;">Variável</span></a></label>
 									</div>
 								</div>
@@ -206,14 +246,15 @@
 									<div class="gt-right-col gt-width-25">
 										<label style="float: right; margin-left: 1em;"><a
 											ng-click="delEvento(node, $index)"><img
-												src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"><span
+												src="/siga/css/famfamfam/icons/delete.png"
+												style="margin-right: 5px;"><span
 												style="vertical-align: top;">Evento</span></a></label>
 									</div>
 									<div class="gt-left-col gt-width-100">
 										<label>Action</label> <input type="text"
 											ng-model="evento.action._name" class="gt-form-text">
-										 <input type="text"
-											ng-model="evento.action._class" class="gt-form-text">
+										<input type="text" ng-model="evento.action._class"
+											class="gt-form-text">
 									</div>
 									<div class="gt-left-col gt-width-100">
 										<label>Script</label> <input type="text"
@@ -252,11 +293,13 @@
 									<div class="gt-right-col gt-width-25">
 										<label style="float: right; margin-left: 1em;"><a
 											ng-click="delTransicao(node, $index)"><img
-												src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"><span
+												src="/siga/css/famfamfam/icons/delete.png"
+												style="margin-right: 5px;"><span
 												style="vertical-align: top;">Transição</span></a></label> <label
 											style="float: right; margin-left: 1em;"><a
 											ng-click="addTransicaoEmail(transicao)"><img
-												src="/siga/css/famfamfam/icons/add.png" style="margin-right: 5px;"><span
+												src="/siga/css/famfamfam/icons/add.png"
+												style="margin-right: 5px;"><span
 												style="vertical-align: top;">Email</span></a></label>
 									</div>
 								</div>
@@ -285,7 +328,8 @@
 												<div class="gt-right-col gt-width-25">
 													<label style="float: right; margin-left: 1em;"><a
 														ng-click="delTransicaoEmail(transicao, $index)"><img
-															src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"><span
+															src="/siga/css/famfamfam/icons/delete.png"
+															style="margin-right: 5px;"><span
 															style="vertical-align: top;">Email</span></a></label>
 												</div>
 											</div>
@@ -319,7 +363,8 @@
 				style="margin-bottom: 10px !important;" ng-repeat="node in pd.node">
 				<div ng-hide="editando === node">
 					<label style="float: right; margin-left: 1em;"><a
-						ng-click="editar(node)"><img src="/siga/css/famfamfam/icons/pencil.png"
+						ng-click="editar(node)"><img
+							src="/siga/css/famfamfam/icons/pencil.png"
 							style="margin-right: 5px;"><span
 							style="vertical-align: top;">Editar</span></a></label>
 					<p>{{node._name}}</p>
@@ -332,15 +377,18 @@
 						</div>
 						<div class="gt-right-col gt-width-75">
 							<label style="float: right; margin-left: 1em;"><a
-								ng-click="delNode($index)"><img src="/siga/css/famfamfam/icons/delete.png"
+								ng-click="delNode($index)"><img
+									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Nó</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addEvento(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addEvento(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Evento</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addTransicao(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addTransicao(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Transição</span></a></label>
 						</div>
@@ -370,7 +418,8 @@
 				ng-repeat="node in pd.mail_node">
 				<div ng-hide="editando === node">
 					<label style="float: right; margin-left: 1em;"><a
-						ng-click="editar(node)"><img src="/siga/css/famfamfam/icons/pencil.png"
+						ng-click="editar(node)"><img
+							src="/siga/css/famfamfam/icons/pencil.png"
 							style="margin-right: 5px;"><span
 							style="vertical-align: top;">Editar</span></a></label>
 					<p>{{node._name}}</p>
@@ -383,15 +432,18 @@
 						</div>
 						<div class="gt-right-col gt-width-75">
 							<label style="float: right; margin-left: 1em;"><a
-								ng-click="delMailNode($index)"><img src="/siga/css/famfamfam/icons/delete.png"
+								ng-click="delMailNode($index)"><img
+									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Nó</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addEvento(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addEvento(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Evento</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addTransicao(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addTransicao(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Transição</span></a></label>
 						</div>
@@ -421,7 +473,8 @@
 				style="margin-bottom: 10px !important;" ng-repeat="node in pd.fork">
 				<div ng-hide="editando === node">
 					<label style="float: right; margin-left: 1em;"><a
-						ng-click="editar(node)"><img src="/siga/css/famfamfam/icons/pencil.png"
+						ng-click="editar(node)"><img
+							src="/siga/css/famfamfam/icons/pencil.png"
 							style="margin-right: 5px;"><span
 							style="vertical-align: top;">Editar</span></a></label>
 					<p>{{node._name}}</p>
@@ -434,15 +487,18 @@
 						</div>
 						<div class="gt-right-col gt-width-75">
 							<label style="float: right; margin-left: 1em;"><a
-								ng-click="delFork($index)"><img src="/siga/css/famfamfam/icons/delete.png"
+								ng-click="delFork($index)"><img
+									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Nó</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addEvento(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addEvento(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Evento</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addTransicao(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addTransicao(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Transição</span></a></label>
 						</div>
@@ -471,7 +527,8 @@
 				style="margin-bottom: 10px !important;" ng-repeat="node in pd.join">
 				<div ng-hide="editando === node">
 					<label style="float: right; margin-left: 1em;"><a
-						ng-click="editar(node)"><img src="/siga/css/famfamfam/icons/pencil.png"
+						ng-click="editar(node)"><img
+							src="/siga/css/famfamfam/icons/pencil.png"
 							style="margin-right: 5px;"><span
 							style="vertical-align: top;">Editar</span></a></label>
 					<p>{{node._name}}</p>
@@ -484,15 +541,18 @@
 						</div>
 						<div class="gt-right-col gt-width-75">
 							<label style="float: right; margin-left: 1em;"><a
-								ng-click="delJoin($index)"><img src="/siga/css/famfamfam/icons/delete.png"
+								ng-click="delJoin($index)"><img
+									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Nó</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addEvento(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addEvento(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Evento</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addTransicao(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addTransicao(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Transição</span></a></label>
 						</div>
@@ -522,7 +582,8 @@
 				ng-repeat="node in pd.end_state">
 				<div ng-hide="editando === node">
 					<label style="float: right; margin-left: 1em;"><a
-						ng-click="editar(node)"><img src="/siga/css/famfamfam/icons/pencil.png"
+						ng-click="editar(node)"><img
+							src="/siga/css/famfamfam/icons/pencil.png"
 							style="margin-right: 5px;"><span
 							style="vertical-align: top;">Editar</span></a></label>
 					<p>{{node._name}}</p>
@@ -535,11 +596,13 @@
 						</div>
 						<div class="gt-right-col gt-width-75">
 							<label style="float: right; margin-left: 1em;"><a
-								ng-click="delEndState($index)"> <img src="/siga/css/famfamfam/icons/delete.png"
+								ng-click="delEndState($index)"> <img
+									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Fim</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
-								ng-click="addEvento(node)"><img src="/siga/css/famfamfam/icons/add.png"
+								ng-click="addEvento(node)"><img
+									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
 									style="vertical-align: top;">Evento</span></a></label>
 						</div>
@@ -555,8 +618,54 @@
 					value="Adicionar Fim" />
 			</div>
 
-<div><pre>{{getSmallGraphSource()}}</pre></div>
+			<div>
+				<pre>{{getSmallGraphSource()}}</pre>
+			</div>
+		</div>
 
+		<div class="gt-content clearfix" ng-show="exibirXml">
+
+			<h2 class="gt-form-head">Editar XML</h2>
+
+			<form action="/sigawf/app/edicao/xml_gravar" method="post">
+				<div class="gt-form gt-content-box"
+					style="margin-bottom: 10px !important;">
+
+					<div class="gt-form-row gt-width-100">
+						<div class="gt-left-col gt-width-100" style="display: none;">
+							<label>Procedimento original</label>
+							<textarea id="een" name="xml" class="gt-form-text" rows="20"
+								ng-bind="xmlOriginal"></textarea>
+						</div>
+						<div class="gt-left-col gt-width-100">
+							<label>Procedimento alterado</label>
+							<textarea id="twee" name="xml" class="gt-form-text" rows="20"
+								ng-bind="xml"></textarea>
+						</div>
+					</div>
+					<div class="gt-form-row">
+						<input type="submit" class="gt-btn-medium gt-btn-left"
+							value="Salvar" /> <input type="button" id="diffButton"
+							class="gt-btn-medium gt-btn-left" value="Diff" />
+					</div>
+				</div>
+
+			</form>
+
+			<h2>Diff</h2>
+			<div class="gt-sidebar-list-content" id="diff" ng-bind-html="diff">
+				<span ng-bind-html="diff"></span>
+			</div>
+			<div class="gt-sidebar-list-content">
+				<table>
+					<thead>
+						<tr>
+							<th colspan="3">Output</th>
+						</tr>
+					</thead>
+					<tbody id="res"></tbody>
+				</table>
+			</div>
 		</div>
 
 		<div class="gt-sidebar">
@@ -565,7 +674,8 @@
 			<div class="gt-sidebar-list">
 				<h3>
 					Mapa do Procedimento <label style="float: right; margin-left: 1em;"><a
-						ng-click="atualizarSmallGraph()"><img src="/siga/css/famfamfam/icons/add.png"
+						ng-click="atualizarSmallGraph()"><img
+							src="/siga/css/famfamfam/icons/add.png"
 							style="margin-right: 5px;"><span
 							style="vertical-align: top;">Atualizar</span></a></label>
 
@@ -614,12 +724,15 @@
 
 	<script
 		src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
-	<script src="../../js/xmlutils.js" type="text/javascript" language="javascript"></script>
-	<script src="../../js/wf-design.js"></script>
+	<script src="../../../js/xmlutils.js" type="text/javascript"
+		language="javascript"></script>
+	<script src="../../../js/wf-design.js"></script>
 
+	<script src="../../../js/diff.js"></script>
 
-	<script src="/siga/javascript/viz.js" language="JavaScript1.1" type="text/javascript"></script> 
-	
+	<script src="/siga/javascript/viz.js" language="JavaScript1.1"
+		type="text/javascript"></script>
+
 	<script>
 		$(document).ready(function() {
 			updateContainer();
@@ -639,6 +752,7 @@
 				smallsvg.attr('width', smallwidth);
 				smallsvg.attr('height', smallwidth * a[3] / a[2]);
 			}
+
 		}
 	</script>
 </siga:pagina>

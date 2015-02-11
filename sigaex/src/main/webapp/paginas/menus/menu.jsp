@@ -22,12 +22,10 @@
 			<siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/transferir_lote"
 				texto="Transferir em lote" />
 		</li>
-		<li><ww:url id="url" action="receber_lote"
-				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+		<li> <siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/receber_lote"
 				texto="Receber em lote" />
 		</li>
-		<li><ww:url id="url" action="anotar_lote"
-				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+		<li><siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/anotar_lote"
 				texto="Anotar em lote" />
 		</li>
 		<c:catch>
@@ -42,14 +40,12 @@
 		<c:catch>
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-				<li><ww:url id="url" action="assinar_despacho_lote"
-						namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+				<li> <siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/assinar_despacho_lote"
 						texto="Assinar Despacho em lote" />
 				</li>
 			</c:if>
 		</c:catch>
-		<li><ww:url id="url" action="arquivar_corrente_lote"
-				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+		<li> <siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_corrente_lote"
 				texto="Arquivar em lote" />
 		</li>
 		<c:catch>

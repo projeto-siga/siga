@@ -147,7 +147,7 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 		return getAtributo(att);
 	}
 
-	public Integer getAtributoEmSegundos(String codigo) {
+	public Long getAtributoEmSegundos(String codigo) {
 		SrAtributoAcordo pa = getAtributo(codigo);
 		if (pa == null)
 			return null;

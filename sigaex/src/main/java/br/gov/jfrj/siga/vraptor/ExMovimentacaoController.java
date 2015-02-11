@@ -233,6 +233,8 @@ public class ExMovimentacaoController extends ExController {
 	private Integer tamMaxDescr;
 
 	private Long idLotDefault;
+	
+	private List<ExMovimentacao> movimentacoesQuePodemSerAssinadasComSenha;
 
 	public ExMovimentacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
@@ -2542,7 +2544,8 @@ public class ExMovimentacaoController extends ExController {
 
 	// Nato: Temos que substituir por uma tela que mostre os itens marcados como
 	// "em transito"
-	public String aReceberLote() throws Exception {
+	@Get("/app/expediente/mov/receber_lote")
+	public void aReceberLote() throws Exception {
 		List<ExMobil> provItens = dao().consultarParaReceberEmLote(
 				getLotaTitular());
 
@@ -2557,10 +2560,13 @@ public class ExMovimentacaoController extends ExController {
 				getItens().add(m);
 		}
 
-		return Action.SUCCESS;
+		result.include("itens", this.getItens());
 	}
 
-	public String aReceberLoteGravar() throws Exception {
+	@Post("/app/expediente/mov/receber_lote_gravar")
+	public void aReceberLoteGravar(Integer postback) throws Exception {
+		this.setPostback(postback);
+		
 		final ExMovimentacao mov = new ExMovimentacao();
 		lerForm(mov);
 
@@ -2592,13 +2598,15 @@ public class ExMovimentacaoController extends ExController {
 
 				}
 			}
+			
+			result.redirectTo("/app/expediente/mov/receber_lote");
 		} catch (final Exception e) {
 			throw e;
-		}
-		return Action.SUCCESS;
+		}		
 	}
 
-	public String aArquivarCorrenteLote() throws Exception {
+	@Get("/app/expediente/mov/arquivar_corrente_lote")
+	public void aArquivarCorrenteLote() throws Exception {
 		List<ExMobil> provItens = dao().consultarParaArquivarCorrenteEmLote(
 				getLotaTitular());
 
@@ -2613,10 +2621,13 @@ public class ExMovimentacaoController extends ExController {
 				getItens().add(m.isVolume() ? m.doc().getMobilGeral() : m);
 		}
 
-		return Action.SUCCESS;
+		result.include("itens", this.getItens());
 	}
 
-	public String aArquivarCorrenteLoteGravar() throws Exception {
+	@Post("/app/expediente/mov/arquivar_corrente_lote_gravar")
+	public void aArquivarCorrenteLoteGravar(Integer postback) throws Exception {
+		this.setPostback(postback);
+		
 		final ExMovimentacao mov = new ExMovimentacao();
 		lerForm(mov);
 
@@ -2641,10 +2652,11 @@ public class ExMovimentacaoController extends ExController {
 									mov.getSubscritor(), false);
 				}
 			}
+			
+			result.redirectTo("/app/expediente/mov/arquivar_corrente_lote");
 		} catch (final Exception e) {
 			throw e;
-		}
-		return Action.SUCCESS;
+		}		
 	}
 
 	public String aArquivarIntermediarioLote() throws Exception {
@@ -2813,16 +2825,26 @@ public class ExMovimentacaoController extends ExController {
 		return Action.SUCCESS;
 	}
 
-	public String aAssinarDespachoLote() throws Exception {
+	@Get("/app/expediente/mov/assinar_despacho_lote")
+	public void aAssinarDespachoLote() throws Exception {
 		List<ExMovimentacao> itensComoSubscritor = dao()
 				.listarDespachoPendenteAssinatura(getTitular());
-
-		setItens(new ArrayList<ExMovimentacao>());
+		
+		setItens(new ArrayList<ExMobil>());
+		this.movimentacoesQuePodemSerAssinadasComSenha = new ArrayList<ExMovimentacao>();
+		
 		for (ExMovimentacao mov : itensComoSubscritor) {
-			if (!mov.isAssinada() && !mov.isCancelada())
-				getItens().add(mov);
+				if (!mov.isAssinada() && !mov.isCancelada()) {
+					getItens().add(mov);
+					
+					if (Ex.getInstance().getComp().podeAssinarMovimentacaoComSenha(getTitular(), getLotaTitular(), mov))
+						getMovimentacoesQuePodemSerAssinadasComSenha().add(mov);
+				}
+				
 		}
-		return Action.SUCCESS;
+
+		result.include("itens", this.getItens());
+		result.include("movimentacoesQuePodemSerAssinadasComSenha", this.getMovimentacoesQuePodemSerAssinadasComSenha());
 	}
 
 	public String aReverterIndicacaoPermanente() throws Exception {
@@ -3392,7 +3414,8 @@ public class ExMovimentacaoController extends ExController {
 
 	}
 
-	public String aAnotarLote() throws Exception {
+	@Get("/app/expediente/mov/anotar_lote")
+	public void aAnotarLote() throws Exception {
 		List<ExMobil> provItens = dao().consultarParaAnotarEmLote(
 				getLotaTitular());
 
@@ -3406,18 +3429,37 @@ public class ExMovimentacaoController extends ExController {
 									getLotaTitular(), m))
 				getItens().add(m);
 		}
-
-		return Action.SUCCESS;
+		
+		result.include("dtMovString", this.getDtMovString());
+		result.include("substituicao", this.isSubstituicao());
+		result.include("nmFuncaoSubscritor", this.getNmFuncaoSubscritor());
+		result.include("descrMov", this.getDescrMov());
+		result.include("tipoResponsavel", this.getTipoResponsavel());
+		result.include("obsOrgao", this.getObsOrgao());
+		result.include("subscritorSel", this.getSubscritorSel());
+		result.include("titularSel", this.getTitularSel());
+		result.include("itens", this.getItens());
 	}
 
-	public String aAnotarLoteGravar() throws Exception {
+	@Post("/app/expediente/mov/anotar_lote_gravar")
+	public void aAnotarLoteGravar(Integer postback,
+			String dtMovString, DpPessoaSelecao subscritorSel,
+			boolean substituicao, DpPessoaSelecao titularSel,
+			String nmFuncaoSubscritor, String descrMov, String obsOrgao,
+			String[] campos) throws Exception {
+		this.setPostback(postback);
+		this.setDtMovString(dtMovString);
+		this.setSubscritorSel(subscritorSel);
+		this.setSubstituicao(substituicao);
+		this.setTitularSel(titularSel);
+		this.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+		this.setDescrMov(descrMov);
+		this.setObsOrgao(obsOrgao);
 
 		final ExMovimentacao mov = new ExMovimentacao();
 		lerForm(mov);
 
 		final Pattern p = Pattern.compile("chk_([0-9]+)");
-
-		final Date dt = dao().dt();
 
 		try {
 			for (final String s : getPar().keySet()) {
@@ -3438,10 +3480,11 @@ public class ExMovimentacaoController extends ExController {
 									mov.getNmFuncaoSubscritor());
 				}
 			}
+			
+			result.redirectTo("/app/expediente/mov/anotar_lote");
 		} catch (final Exception e) {
 			throw e;
 		}
-		return Action.SUCCESS;
 	}
 
 	
@@ -4681,6 +4724,10 @@ public class ExMovimentacaoController extends ExController {
 
 	public ExModelo getModelo() {
 		return dao().consultarExModelo(null, "Despacho Automático");
+	}
+
+	public List<ExMovimentacao> getMovimentacoesQuePodemSerAssinadasComSenha() {
+		return movimentacoesQuePodemSerAssinadasComSenha;
 	}
 
 	public Set<DpLotacao> getListaLotPubl() throws Exception {

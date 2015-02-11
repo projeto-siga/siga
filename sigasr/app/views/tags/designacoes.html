@@ -311,7 +311,7 @@ altura:'200', largura:'450'}
 	function detalhesDesignacao(d, designacao) {
 		var tr = $('<tr class="detail">'),
 			td = $('<td colspan="10">'),
-			table  = $('<table>'),
+			table  = $('<table style="margin-left: 60px;">'),
 			trDescricao = $('<tr>'),
 			tdDescricao = $('<td>'),
 			trItens = $('<tr>'),
@@ -320,9 +320,7 @@ altura:'200', largura:'450'}
 		
 		detalheLista("<b>Itens de configuração:</b>", designacao.listaItemConfiguracaoVO, trItens);
 		detalheLista("<b>Ações:</b>", designacao.listaAcaoVO, trAcoes);
-
-		tdDescricao.html('<b>Descrição:</b> ' + descricao);
-		trDescricao.append(tdDescricao);
+		detalheDescricaoLista("<b>Descrição:</b>", descricao, trDescricao);
 
 		table.append(trDescricao);
 		table.append(trItens);
@@ -331,6 +329,25 @@ altura:'200', largura:'450'}
 		td.append(table);
 		tr.append(td);
 		return tr;
+	}
+
+	function detalheDescricaoLista(label, descricao, tr) {
+		var tdTituloItem = $('<td colspan="2">' + label + '</td>'),
+		    tdDadosItem = $('<td colspan="5">'),
+		    table = $('<table>');
+
+	    var item = descricao,
+	    	trItem = $('<tr>'),
+	    	tdDescricao = $('<td>');
+	
+		tdDescricao.html(item);
+		trItem.append(tdDescricao);
+		table.append(trItem);
+		
+		tdDadosItem.append(table);
+		
+		tr.append(tdTituloItem);
+		tr.append(tdDadosItem);
 	}
 
 	function detalheLista(label, listaVO, tr) {

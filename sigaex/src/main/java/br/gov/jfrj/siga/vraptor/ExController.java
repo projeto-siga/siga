@@ -73,7 +73,7 @@ public class ExController extends SigaController {
 		CurrentRequest.set(new RequestInfo(context, request, response));
 	}
 
-	protected void verificaNivelAcesso(ExMobil mob) throws Exception {
+	protected void verificaNivelAcesso(ExMobil mob) {
 		if (!Ex.getInstance().getComp()
 				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
 			throw new AplicacaoException("Acesso ao documento "

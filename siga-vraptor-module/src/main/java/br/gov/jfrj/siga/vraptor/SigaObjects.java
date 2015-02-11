@@ -111,8 +111,7 @@ public class SigaObjects implements ConheceUsuario {
 		DpSubstituicao dpSubstituicao = new DpSubstituicao();
 		dpSubstituicao.setSubstituto(getCadastrante());
 		dpSubstituicao.setLotaSubstituto(getCadastrante().getLotacao());
-		List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(
-				dpSubstituicao);
+		List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
 		return itens;
 	}
 

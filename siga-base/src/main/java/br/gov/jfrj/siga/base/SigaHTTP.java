@@ -217,7 +217,7 @@ public class SigaHTTP {
 				idp = "";
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			idp = "";
 		}
 		return idp;
 	}

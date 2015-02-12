@@ -325,17 +325,22 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (m.group(4) != null)
 				numSolicitacao = Long.valueOf(m.group(4));
 
-			if (m.group(5) != null)
-				numSequencia = Long.valueOf(m.group(5));
+			if (m.group(6) != null)
+				numSequencia = Long.valueOf(m.group(6));
 		}
 
 	}
 
 	@Override
 	public String getDescricao() {
-		if (descrSolicitacao == null || descrSolicitacao.length() == 0)
-			return "DescriÃ§Ã£o nÃ£o informada";
-		return descrSolicitacao;
+		if (descrSolicitacao == null || descrSolicitacao.length() == 0) {
+			if (isFilha())
+				return solicitacaoPai.getDescricao();
+			else
+				return "DescriÃ§Ã£o nÃ£o informada";
+		}
+		else
+			return descrSolicitacao;
 	}
 
 	public String getDescrItem() {
@@ -442,7 +447,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	public List<SrAtributoSolicitacao> getAtributoSolicitacaoSet() {
-		return meuAtributoSolicitacaoSet != null ? meuAtributoSolicitacaoSet : new ArrayList<SrAtributoSolicitacao>();
+		if (meuAtributoSolicitacaoSet == null) {
+			if (isFilha())
+				return solicitacaoPai.getAtributoSolicitacaoSet();
+			else
+				return new ArrayList<SrAtributoSolicitacao>();
+		}
+		else
+			return meuAtributoSolicitacaoSet;
 	}
 
 	public String getDtRegString() {
@@ -461,7 +473,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return s;
 	}
 
-	// Edson: Necessário porque nao há binder para arquivo
+	// Edson: Necessï¿½rio porque nao hï¿½ binder para arquivo
 	public void setArquivo(File file) {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
@@ -1255,7 +1267,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
 			@Override
 			public boolean add(SrOperacao e) {
-				// Edson: será que essas coisas poderiam estar dentro do
+				// Edson: serï¿½ que essas coisas poderiam estar dentro do
 				// SrOperacao?
 				if (e.params == null)
 					e.params = new HashMap<String, Object>();
@@ -1342,7 +1354,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void salvar() throws Exception {
 
 		checarEPreencherCampos();
-		//Edson: Ver por que isto está sendo necessário. Sem isso, após o salvar(),
+		//Edson: Ver por que isto estï¿½ sendo necessï¿½rio. Sem isso, apï¿½s o salvar(),
 		//ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's
 		if (solicitacaoInicial != null)
 			for (SrSolicitacao s : solicitacaoInicial.meuSolicitacaoHistoricoSet){
@@ -1447,7 +1459,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			orgaoUsuario = lotaSolicitante.getOrgaoUsuario();
 
 		if (numSolicitacao == null)
-			if (!isRascunho()){
+			// DB1: Verifica se Ã© uma SolicitaÃ§Ã£o Filha, pois caso seja nÃ£o 
+			// deve atualizar o nÃºmero da solicitaÃ§Ã£o, caso contrÃ¡rio nÃ£o 
+			// funcionarÃ¡ o filtro por cÃ³digo para essa filha
+			if (!isRascunho() && !isFilha()){
 				numSolicitacao = getProximoNumero();
 				atualizarCodigo();
 			}
@@ -1467,6 +1482,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					"NÃ£o foi encontrado nenhum atendente designado "
 							+ "para esta solicitaÃ§Ã£o. SugestÃ£o: alterar item de "
 							+ "configuraÃ§Ã£o e/ou aÃ§Ã£o");
+		
+		
+		if (isFilha()) {
+			// DB1: Valida se Ã© uma solicitaÃ§Ã£o filha, e se a descriÃ§Ã£o dela
+			// Ã© exatamente a mesma que da solicitaÃ§Ã£o pai
+			if (descrSolicitacao.equals(solicitacaoPai.descrSolicitacao))
+				descrSolicitacao = null;
+			
+			// Valida se possui atributos, que deverÃ£o ser herdados do pai neste caso.
+			if (this.meuAtributoSolicitacaoSet != null)
+				this.meuAtributoSolicitacaoSet = null;
+		}
 		
 		atualizarAcordos();
 	}
@@ -1853,13 +1880,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public Set<SrSolicitacao> getSolicitacoesVinculadas() {
 		Set<SrSolicitacao> solVinculadas = new HashSet<SrSolicitacao>();
 		
-		//vinculações partindo desta solicitação
+		//vinculaï¿½ï¿½es partindo desta solicitaï¿½ï¿½o
 		for (SrMovimentacao mov : getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
 			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_VINCULACAO)
 				if(mov.solicitacaoReferencia != null)
 					solVinculadas.add(mov.solicitacaoReferencia);
 
-		//vinculações partindo de outra solicitação referenciando esta
+		//vinculaï¿½ï¿½es partindo de outra solicitaï¿½ï¿½o referenciando esta
 		for (SrMovimentacao mov : getMovimentacaoReferenciaSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
 			if (this.equals(mov.solicitacaoReferencia))
 				solVinculadas.add(mov.solicitacao);
@@ -1951,7 +1978,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	// Edson: este mÃ©todo Ã© protected porque nao pode ser chamado pelo
-	// usuário,
+	// usuï¿½rio,
 	// mas sim pela SrLista, passando a posicao correta a ser colocada a
 	// solicitacao
 	protected void priorizar(SrLista lista, long prioridade, DpPessoa cadastrante,
@@ -2124,7 +2151,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.descrMovimentacao = descricao;
 		
 		// Edson: eh necessario setar a finalizadora na finalizada antes de 
-		// salvar() a finalizadora, pq se não, ao atualizarMarcas(), vai 
+		// salvar() a finalizadora, pq se nï¿½o, ao atualizarMarcas(), vai 
 		// parecer que a pendencia nao foi finalizada, atrapalhando calculos 
 		// de prazo
 		SrMovimentacao movFinalizada = SrMovimentacao.findById(idMovimentacao);
@@ -2192,7 +2219,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if ((cadastrante != null) && !podeVincular(titular, lotaTitular))
 			throw new Exception("OperaÃ§Ã£o nÃ£o permitida");
 		if (solRecebeVinculo.equivale(this))
-	        throw new Exception("NÃ£o e possivel vincular uma solicitaçao a si mesma.");
+	        throw new Exception("NÃ£o e possivel vincular uma solicitaï¿½ao a si mesma.");
 		
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
@@ -2409,8 +2436,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	// Edson: retorna o tempo decorrido entre duas datas, descontando
-	// os períodos de pendência (blocos).
-	// PPP, abaixo, é o bloco pendente. I é dtIni e F é dtFim
+	// os perï¿½odos de pendï¿½ncia (blocos).
+	// PPP, abaixo, ï¿½ o bloco pendente. I ï¿½ dtIni e F ï¿½ dtFim
 	public SrValor getTempoDecorrido(Date dtIni, Date dtFim) {
 		Map<Date, Date> pendencias = getTrechosPendentes();
 		Integer decorrido = 0;

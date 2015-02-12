@@ -109,7 +109,7 @@
 										${line.separator}
 										${line.separator}
 									</message>
-									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d)?)</regex>
+									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d{1,})?)</regex>
 									<regexMessage>
 										${line.separator}
 										${line.separator}

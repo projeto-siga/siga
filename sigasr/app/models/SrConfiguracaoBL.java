@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 
 public class SrConfiguracaoBL extends CpConfiguracaoBL {
@@ -62,30 +63,6 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				&& cfgFiltro instanceof SrConfiguracao) {
 			SrConfiguracao conf = (SrConfiguracao) cfg;
 			SrConfiguracao filtro = (SrConfiguracao) cfgFiltro;
-
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PRE_ATENDENTE
-					&& conf.preAtendente == null)
-				return false;
-
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_ATENDENTE
-					&& conf.atendente == null)
-				return false;
-
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_POS_ATENDENTE
-					&& conf.posAtendente == null)
-				return false;
-			
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.DESIGNACAO_PESQUISA_SATISFACAO
-					&& conf.pesquisaSatisfacao == null)
-				return false;
-			
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.ACORDO_PRAZO_ATENDENTE
-					&& conf.slaAtendimentoQuantidade == null)
-				return false;
-			
-			if (filtro.subTipoConfig == SrSubTipoConfiguracao.ACORDO_PRAZO_PRE_ATENDENTE
-					&& conf.slaPreAtendimentoQuantidade == null)
-				return false;
 
 			if (!atributosDesconsiderados.contains(ACAO)
 					&& conf.acoesSet != null && conf.acoesSet.size() > 0) {
@@ -155,6 +132,13 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		for (int i = 0; i < atributoDesconsideradoFiltro.length; i++) {
 			atributosDesconsiderados.add(atributoDesconsideradoFiltro[i]);
 		}
+		
+		SortedSet<CpPerfil> perfis = null;
+		if (confFiltro.isBuscarPorPerfis()) {
+			perfis = consultarPerfisPorPessoaELotacao(
+					confFiltro.getDpPessoa(),
+					confFiltro.getLotacao(), null);
+		}
 
 		List<SrConfiguracao> listaFinal = new ArrayList<SrConfiguracao>();
 		TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro
@@ -163,7 +147,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if (cpConfiguracao.getHisDtFim() == null
 					&& atendeExigencias(confFiltro, atributosDesconsiderados,
-							(SrConfiguracao) cpConfiguracao, null)) {
+							(SrConfiguracao) cpConfiguracao, perfis)) {
 				listaFinal.add((SrConfiguracao) cpConfiguracao);
 			}
 			
@@ -180,14 +164,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				continue;
 			
 			SrConfiguracao srConf = (SrConfiguracao) conf;
-			if (srConf.preAtendente != null)
-				srConf.preAtendente.getLotacaoAtual();
 			
 			if (srConf.atendente != null)
 				srConf.atendente.getLotacaoAtual();
-			
-			if (srConf.posAtendente != null)
-				srConf.posAtendente.getLotacaoAtual();
 			
 			if (srConf.itemConfiguracaoSet != null)
 				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet)

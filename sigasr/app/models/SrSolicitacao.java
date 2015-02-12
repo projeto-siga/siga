@@ -1241,7 +1241,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		List<SrTarefa> listaFinal = new ArrayList<SrTarefa>();	
 		Set<SrTarefa> setTerafa = new HashSet<SrTarefa>();
-		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarConfiguracoes();
+		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarDesignacoes();
 		SrTarefa tarefa = null;
 
 		for (SrAcao a : SrAcao.listar(false)) {
@@ -1972,6 +1972,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		 * listaFinal.add(listaAtual); } }
 		 */
 		return new ArrayList<SrLista>(listaFinal);
+	}
+	
+	public List<DpPessoa> getPessoasAtendentesDisponiveis(){
+		List<DpPessoa> listaFinal = new ArrayList<DpPessoa>();
+		DpLotacao atendente = getLotaAtendente();
+		if (atendente != null){
+			for (DpPessoa p : atendente.getDpPessoaLotadosSet()){
+				if (p.getHisDtFim() == null)
+					listaFinal.add(p);
+			}
+		}
+		return listaFinal;
 	}
 
 	public List<SrLista> getListasDisponiveisParaInclusao(

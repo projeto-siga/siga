@@ -39,6 +39,9 @@ self.popitup_${nomeclean} = function(sigla) {
 		url = "/siga/lotacao/buscar.action?propriedade=lotacaofiltrolotaResponsavel&sigla="+sigla;
 	}else if(url.indexOf("sigagc/app/pessoa/buscar") != -1){
 		url = "/siga/pessoa/buscar.action?propriedade=pessoafiltroresponsavel&sigla="+sigla;
+	}else if (url.indexOf("/sigasr/perfil/buscar") != -1){
+		var nome = "${nomeclean}";
+		url = "/siga/gi/perfil/buscar.action?propriedade=perfil"+nome+"&sigla="+sigla;
 	}
 	//var url = '@@{Application.index()}${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
 	

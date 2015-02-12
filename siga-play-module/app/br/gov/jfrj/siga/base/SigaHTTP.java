@@ -62,8 +62,8 @@ public class SigaHTTP {
 	private final String SET_COOKIE = "set-cookie";
 	private final String HTTP_POST_BINDING_REQUEST = "HTTP Post Binding (Request)";
 	private final String doubleQuotes = "\"";
-//	private static final int MAX_RETRY = 2; 
-//	private int retryCount = 0;
+	private static final int MAX_RETRY = 2; 
+	private int retryCount = 0;
 	private String idp;
 
 	/**
@@ -72,6 +72,8 @@ public class SigaHTTP {
 	 * @param cookieValue (necessario apenas nos modulos play)
 	 */
 	public String get(String URL, HttpServletRequest request, String cookieValue) {
+		this.retryCount = 0;
+		
 		if (URL.startsWith("/"))
 			URL = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + URL;
 
@@ -80,7 +82,7 @@ public class SigaHTTP {
 
 	private String handleAuthentication(String URL, HttpServletRequest request, String cookieValue) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("---- MODULO que deu erro no carregamento ------ \n");
+		sb.append("---- MODULO que deu erro no carregamento ------ \n"); // Prepara informacoes para printar em caso de erro
 		
 		String html = "";
 		Executor exec = Executor.newInstance(HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build());
@@ -88,10 +90,10 @@ public class SigaHTTP {
 		String idpCookie = JSESSIONID_PREFIX+doubleQuotes+getIdp(request)+doubleQuotes;
 
 		try{
-			// Efetua o request para o Service Provider (módulo)
+			// Efetua o request para o Service Provider (modulo)
 			// Atribui o html retornado e pega o header do Response
-			// Se a aplicação já efetuou a autenticação entre o módulo da URL o conteúdo será trago nesse primeiro GET
-			// Caso contrário passará pelo processo de autenticação (if abaixo)
+			// Se a aplicaçao ja efetuou a autenticação entre o modulo da URL o conteudo sera trago nesse primeiro GET
+			// Caso contrario passara pelo processo de autenticação (if abaixo)
 			sb.append("-----------------------------------------------------------");
 			sb.append("GET url: "+URL + "\n");
 			sb.append("COOKIE: "+currentCookie + "\n");
@@ -101,7 +103,7 @@ public class SigaHTTP {
 					handleResponse(new ResponseHandler<String>() {
 						@Override            
 						public String handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
-							// O atributo que importa nesse header é o set-cookie que será utilizado posteriormente
+							// O atributo que importa nesse header e o set-cookie que será utilizado posteriormente
 							headers = httpResponse.getAllHeaders();
 							return IOUtils.toString(httpResponse.getEntity().getContent(), "UTF-8");
 						}
@@ -149,23 +151,26 @@ public class SigaHTTP {
 							addHeader(COOKIE, setCookie).
 							bodyForm(Form.form().add(SAMLResponse, SAMLResponseValue).build())).returnContent().asString();
 				}else{
-					System.out.println(sb);
+					log.info(sb.toString());
 				}
-//				if (html.contains(HTTP_POST_BINDING_REQUEST)){
-//					log.info("Alguma coisa falhou na autenticacao.");
-//					if (retryCount <= MAX_RETRY){
-//						log.info("tentando novamente o processo de autenticacao...");
-//						this.retryCount ++;
-//						//						handleAuthentication(URL, request, cookieValue);
-//					}
-//				}
-
 			}
 		}catch(Exception io){
 			io.printStackTrace();
 		}
 		
+		tryAgain(URL, request, cookieValue, html);
+		
 		return html;
+	}
+
+	private void tryAgain(String URL, HttpServletRequest request,
+			String cookieValue, String html) {
+		if (html.contains("<title>") && (html.contains("Não Foi Possível Completar a Operação") || (html.contains("Senha")))){
+			if (retryCount < MAX_RETRY){
+				handleAuthentication(URL, request, cookieValue);
+			}
+			retryCount++;
+		}
 	}
 
 
@@ -225,7 +230,7 @@ public class SigaHTTP {
 				idp = "";
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			idp = "";
 		}
 		return idp;
 	}

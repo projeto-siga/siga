@@ -65,8 +65,8 @@ public class PrincipalQuadrosAction extends SigaActionSupport {
 			this.html = "<span style='color:red' class='error'> 500 - Módulo indisponível. </span>";
 		}else if (this.html.contains("HTTP Status")){
 			this.html = "<span style='color:red' class='error'> Módulo indisponível. </span>";
-		}else if (this.html.contains("<title>")){
-			this.html = "<span style='color:red' class='error'> Erro no carregamento do módulo. </span>";
+		}else if (this.html.contains("<title>") && (this.html.contains("Não Foi Possível Completar a Operação") || (this.html.contains("Senha")))){
+			this.html = "<span style='color:red' class='error'> Erro no carregamento do módulo. Por favor, atualize a página (F5). Caso o erro persista entre em contato com o suporte.</span>";
 		}
 	}
 

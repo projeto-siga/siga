@@ -25,7 +25,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,8 +62,8 @@ public class SigaHTTP {
 	private final String SET_COOKIE = "set-cookie";
 	private final String HTTP_POST_BINDING_REQUEST = "HTTP Post Binding (Request)";
 	private final String doubleQuotes = "\"";
-//	private static final int MAX_RETRY = 2; 
-//	private int retryCount = 0;
+	private static final int MAX_RETRY = 2; 
+	private int retryCount = 0;
 	private String idp;
 
 	/**
@@ -73,6 +72,8 @@ public class SigaHTTP {
 	 * @param cookieValue (necessario apenas nos modulos play)
 	 */
 	public String get(String URL, HttpServletRequest request, String cookieValue) {
+		this.retryCount = 0;
+		
 		if (URL.startsWith("/"))
 			URL = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + URL;
 
@@ -157,7 +158,19 @@ public class SigaHTTP {
 			io.printStackTrace();
 		}
 		
+		tryAgain(URL, request, cookieValue, html);
+		
 		return html;
+	}
+
+	private void tryAgain(String URL, HttpServletRequest request,
+			String cookieValue, String html) {
+		if (html.contains("<title>") && (html.contains("Não Foi Possível Completar a Operação") || (html.contains("Senha")))){
+			if (retryCount < MAX_RETRY){
+				handleAuthentication(URL, request, cookieValue);
+			}
+			retryCount++;
+		}
 	}
 
 
@@ -217,7 +230,7 @@ public class SigaHTTP {
 				idp = "";
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			idp = "";
 		}
 		return idp;
 	}

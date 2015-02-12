@@ -249,7 +249,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @throws InstantiationException
 	 * @throws InvocationTargetException
 	 */
-	public String aGravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
+	public Long aGravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
 			CpGrupoDeEmailSelecao grupoPaiSel,
 			Integer codigoTipoConfiguracaoNova, String conteudoConfiguracaoNova)
 			throws Exception {
@@ -413,12 +413,10 @@ public abstract class GrupoController<T extends CpGrupo> extends
 							dao().consultar(
 									CpTipoConfiguracao.TIPO_CONFIG_PERTENCER,
 									CpTipoConfiguracao.class, false));
+			return idCpGrupo;
 		} catch (Exception e) {
-			throw new AplicacaoException("Id do grupo: " + idCpGrupo
-					+ " erro ao gravar grupo e configurações.", 0, e);
+			throw new AplicacaoException("Id do grupo: " + idCpGrupo + " erro ao gravar grupo e configurações.", 0, e);
 		}
-
-		return "edita";
 	}
 
 	private boolean isConfiguracaoAvancada(ConfiguracaoGrupo cfgGrupo) {

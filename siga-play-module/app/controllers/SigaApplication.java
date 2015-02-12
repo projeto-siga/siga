@@ -89,7 +89,7 @@ public class SigaApplication extends Controller {
 			}
 	
 			if (play.Play.mode.isDev()) {
-				// Obter usuário logado
+				// Obter usuï¿½rio logado
 				Logger.info("Play executando em modo DEV ..");
 				url = getBaseSiga().replace(":null", "");
 				url = url + "/usuario_autenticado.action?popup=" + popup + atributos;
@@ -142,9 +142,9 @@ public class SigaApplication extends Controller {
 			}
 
 		} catch (ArrayIndexOutOfBoundsException aioob) {
-			// Edson: Quando as informações não puderam ser obtidas do Siga,
-			// manda para a página de login. Se não for esse o erro, joga
-			// exceção pra cima.
+			// Edson: Quando as informaÃ§Ãµes nÃ£o puderam ser obtidas do Siga,
+			// manda para a pï¿½gina de login. Se nÃ£o for esse o erro, joga
+			// excecao pra cima.
 			redirect("/siga/redirect.action?uri=" + JavaExtensions.urlEncode(request.url));
 		}
 
@@ -156,13 +156,13 @@ public class SigaApplication extends Controller {
 	}
 
 	protected static void assertAcesso(String pathServico) throws Exception {
-		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
+		String servico = "SIGA:Sistema Integrado de Gestï¿½o Administrativa;"
 				+ pathServico;
 		if (servico.endsWith(";"))
 			servico = servico.substring(0, servico.length()-1);
 		if (!podeUtilizarServico(servico))
-			throw new Exception("Acesso negado. Serviço: '" + servico
-					+ "' usuário: " + titular().getSigla() + " lotação: "
+			throw new Exception("Acesso negado. Serviï¿½o: '" + servico
+					+ "' usuï¿½rio: " + titular().getSigla() + " lotaï¿½ï¿½o: "
 					+ lotaTitular().getSiglaCompleta());
 	}
 	
@@ -170,7 +170,7 @@ public class SigaApplication extends Controller {
 		// MailUtils.sendErrorMail(e);
 		if (cadastrante() != null)
 			Logger.error("Erro Siga-SR; Pessoa: " + cadastrante().getSigla()
-					+ "; Lotação: " + lotaTitular().getSigla(), e);
+					+ "; Lotaï¿½ï¿½o: " + lotaTitular().getSigla(), e);
 		e.printStackTrace();
 		error(e.getMessage());
 	}
@@ -215,7 +215,7 @@ public class SigaApplication extends Controller {
 		String stackTrace = sw.toString();
 		String message = throwable.getMessage();
 		if (message == null)
-			message = "Nenhuma informação disponível.";
+			message = "Nenhuma informaï¿½ï¿½o disponï¿½vel.";
 		erro(message, stackTrace);
 	}
 	
@@ -263,7 +263,7 @@ public class SigaApplication extends Controller {
 			return IOUtils.toString(conn.getInputStream(), "UTF-8");
 			
 		} catch (IOException ioe) {
-			throw new AplicacaoException("Não foi possível abrir conexão", 1,
+			throw new AplicacaoException("Nï¿½o foi possï¿½vel abrir conexï¿½o", 1,
 					ioe);
 		}
 

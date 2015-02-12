@@ -30,6 +30,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -38,6 +40,19 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@NamedQueries({
+	@NamedQuery(name = "consultarSubstituicoesPermitidas", query = "from DpSubstituicao dps "+
+			" where (dps.dtIniSubst < sysdate or dps.dtIniSubst = null) "+
+			" and (dps.dtFimSubst > sysdate or dps.dtFimSubst = null) "+
+			" and ((dps.substituto = null and dps.lotaSubstituto.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaSubstitutoIni)) or "+
+			" dps.substituto.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idSubstitutoIni)) "+
+			" and dps.dtFimRegistro = null"),
+	@NamedQuery(name = "consultarOrdemData", query = "from DpSubstituicao as dps "+
+			" where ((dps.titular = null and dps.lotaTitular.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaTitularIni)) or "+
+			" dps.titular.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idTitularIni)) "+
+			" and dps.dtFimRegistro = null "+
+			" order by dps.dtIniSubst, dps.dtFimSubst ")
+})
 public class DpSubstituicao extends AbstractDpSubstituicao implements Serializable{
 
 	/**
@@ -46,7 +61,7 @@ public class DpSubstituicao extends AbstractDpSubstituicao implements Serializab
 	public DpSubstituicao() {
 		super();
 	}
-	
+
 	public String getDtFimSubstDDMMYY() {
 		if (getDtFimSubst() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat(
@@ -55,7 +70,7 @@ public class DpSubstituicao extends AbstractDpSubstituicao implements Serializab
 		}
 		return "";
 	}
-	
+
 	public String getDtIniSubstDDMMYY() {
 		if (getDtIniSubst() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat(
@@ -64,7 +79,7 @@ public class DpSubstituicao extends AbstractDpSubstituicao implements Serializab
 		}
 		return "";
 	}
-	
+
 	public boolean isEmVoga(){
 		Calendar dtFim = Calendar.getInstance();
 		Calendar dtIni = Calendar.getInstance();
@@ -82,7 +97,7 @@ public class DpSubstituicao extends AbstractDpSubstituicao implements Serializab
 		}
 		return true;
 	}
-	
+
 	public boolean isFutura(){		
 		Calendar dtIni = Calendar.getInstance();
 		Calendar now = Calendar.getInstance();
@@ -94,7 +109,7 @@ public class DpSubstituicao extends AbstractDpSubstituicao implements Serializab
 		}		
 		return false;
 	}
-	
+
 	public boolean isTerminada(){
 		if (getDtFimSubst()==null)
 			return false;

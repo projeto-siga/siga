@@ -61,9 +61,9 @@
 	function format( d ) {
 		var tr = $('<tr class="detail">'),
 		// 'd' é o objeto contendo os dados da linha
-		detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+		detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:60px;">'+
 			'<tr>'+
-				'<td><b>Teor:</b></td>'+
+				'<td style="min-width: 157px;"><b>Teor:</b></td>'+
 					'<td>' + d[2] + '</td>'+
 		        '</tr>'+
 		        '<tr>'+
@@ -92,19 +92,25 @@
 
 	<style>
 		.bt-expandir {
-		    background: url("/siga/css/famfamfam/icons/bullet_toggle_plus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
-		    height: 25px;
-		    width: 30px;
-		    cursor: pointer;
+            background: none !important;
+            cursor: pointer;
 		}
 				
 		.bt-expandir.expandido {
-		    background: url("/siga/css/famfamfam/icons/bullet_toggle_minus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+            background: none !important;
 		}
 		
 		.hide-sort-arrow.sorting_asc, .hide-sort-arrow.sorting_desc {
 			background: none !important;
 		}
+		
+   		td.details-control {
+   		    background: none !important;
+   		    cursor: pointer;
+   		}
+   		tr.shown td.details-control {
+   		    background: none !important;
+   		}
 	</style>
 
 	<div class="gt-bd clearfix">
@@ -125,7 +131,7 @@
 		    		<thead>
 						<tr>
 							<th style="color: #333;" class="hide-sort-arrow">
-								<button class="gt-btn-medium gt-btn-left bt-expandir">
+								<button class="bt-expandir">
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
@@ -142,7 +148,8 @@
 					<tbody>
 						#{list items:listaSolicitacao, as:'sol'}
 							<tr>
-								<td class="gt-celula-nowrap details-control"></td>
+								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
+								
 								<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 									#{if popup}
 										<a href="javascript:opener.retorna_solicitacao${nome}('${sol.idSolicitacao}','${sol.codigo}','${sol.codigo}');window.close()">${sol.codigo}</a>

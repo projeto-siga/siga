@@ -216,7 +216,7 @@ public class ProcessadorReferencias {
 		return sHtml;
 	}
 
-	public String marcarReferencias(final String sHtml) throws Exception {
+	public String marcarReferencias(final String sHtml) {
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);

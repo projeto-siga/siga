@@ -87,7 +87,7 @@ public class ExMovimentacaoVO extends ExVO {
 	}
 
 	public ExMovimentacaoVO(ExMobilVO mobVO, ExMovimentacao mov,
-			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular) {
 		this.mov = mov;
 		this.mobVO = mobVO;
 		originadaAqui = (this.mov.getExMobil().getId().equals(getMobVO().mob
@@ -132,7 +132,7 @@ public class ExMovimentacaoVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExMovimentacao mov, DpPessoa titular,
-			DpLotacao lotaTitular) throws Exception {
+			DpLotacao lotaTitular) {
 		if (complemento == null)
 			complemento = "";
 

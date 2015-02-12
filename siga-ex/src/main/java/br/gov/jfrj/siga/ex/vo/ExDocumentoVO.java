@@ -80,7 +80,7 @@ public class ExDocumentoVO extends ExVO {
 	private List<Object> listaDeAcessos;
 	
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular, DpLotacao lotaTitular, boolean completo,
-			boolean exibirAntigo) throws Exception {
+			boolean exibirAntigo) {
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 		this.doc = doc;
@@ -205,7 +205,7 @@ public class ExDocumentoVO extends ExVO {
 		return listaDeAcessos;
 	}
 	
-	public ExDocumentoVO(ExDocumento doc) throws Exception {
+	public ExDocumentoVO(ExDocumento doc) {
 		this.doc = doc;
 		this.sigla = doc.getSigla();
 		this.nomeCompleto = doc.getNomeCompleto();
@@ -330,7 +330,7 @@ public class ExDocumentoVO extends ExVO {
 	 * @param lotaTitular
 	 * @throws Exception
 	 */
-	private void addAcoes(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular, boolean exibirAntigo) throws Exception {
+	private void addAcoes(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular, boolean exibirAntigo) {
 		ExVO vo = this;
 		for (ExMobilVO mobvo : mobs) {
 			if (mobvo.getMob().isGeral())
@@ -461,7 +461,7 @@ public class ExDocumentoVO extends ExVO {
 				"Esta operação tornará esse documento sem efeito. Prosseguir?", null, null, null, "once");
 	}
 	
-	public void addDadosComplementares() throws Exception {
+	public void addDadosComplementares() {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
 		Map attrs = new HashMap();
 		attrs.put("nmMod", "macro dadosComplementares");

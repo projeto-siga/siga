@@ -52,6 +52,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
@@ -144,7 +145,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.apache.axis.encoding.Base64;
 
 public class ExBL extends CpBL {
 	private final String SHA1 = "1.3.14.3.2.26";
@@ -1701,7 +1701,7 @@ public class ExBL extends CpBL {
 
 	public void arquivarCorrente(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
-			Date dtMovIni, DpPessoa subscritor, boolean automatico) throws Exception {
+			Date dtMovIni, DpPessoa subscritor, boolean automatico) {
 
 		permitirOuNaoMovimentarDestinacao(mob);
 
@@ -2951,7 +2951,7 @@ public class ExBL extends CpBL {
 
 	public void cancelarMovimentacao(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob)
-			throws Exception {
+			{
 		try {
 			boolean indexar = false;
 			SortedSet<ExMobil> set = null;
@@ -3304,8 +3304,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void excluirMovimentacao(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExMobil mob, Long idMov)
-			throws AplicacaoException {
+			final DpLotacao lotaCadastrante, ExMobil mob, Long idMov) {
 		try {
 			iniciarAlteracao();
 
@@ -4127,7 +4126,7 @@ public class ExBL extends CpBL {
 			final DpPessoa docTitular, final DpLotacao lotaCadastrante,
 			final String idDocExterno, final ExMobil mob, final ExMobil mobPai,
 			final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular, final String idDocEscolha) throws Exception {
+			final DpPessoa titular, final String idDocEscolha) {
 
 		if (idDocEscolha.equals("1")) {
 
@@ -4640,7 +4639,7 @@ public class ExBL extends CpBL {
 			final DpPessoa subscritor, final DpPessoa titular,
 			final ExTipoDespacho tpDespacho, final boolean fInterno,
 			final String descrMov, final String conteudo,
-			String nmFuncaoSubscritor, boolean forcarTransferencia, boolean automatico) throws AplicacaoException, Exception {
+			String nmFuncaoSubscritor, boolean forcarTransferencia, boolean automatico) {
 
 
 		boolean fDespacho = tpDespacho != null || descrMov != null
@@ -5952,7 +5951,7 @@ public class ExBL extends CpBL {
 	public void apensarDocumento(final DpPessoa cadastrante,
 			final DpPessoa docTitular, final DpLotacao lotaCadastrante,
 			final ExMobil mob, final ExMobil mobMestre, final Date dtMov,
-			final DpPessoa subscritor, final DpPessoa titular) throws Exception {
+			final DpPessoa subscritor, final DpPessoa titular) {
 
 		if (mobMestre == null)
 			throw new AplicacaoException(
@@ -5975,7 +5974,7 @@ public class ExBL extends CpBL {
 					"Não é possível apensar a um documento não finalizado");
 
 		if (mobMestre.isGeral())
-			throw new Exception(
+			throw new AplicacaoException(
 					"[E necessário definir a via ou volume do documento ao qual se quer apensar");
 
 		if (!mobMestre.doc().isAssinado())
@@ -6141,7 +6140,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, String nmFuncaoSubscritor,
-			boolean automatico) throws AplicacaoException, Exception {
+			boolean automatico) {
 
 		if (mob.isVolumeEncerrado())
 			throw new AplicacaoException(

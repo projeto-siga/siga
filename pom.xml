@@ -8,8 +8,7 @@
 	<packaging>pom</packaging>
 	<version>1.1</version>
 
-	<modules>
-		<module>siga-integration-test</module>
+	<modules>		
 		<module>siga-base</module>
 		<module>siga-ws</module>
 		<module>siga-rel</module>

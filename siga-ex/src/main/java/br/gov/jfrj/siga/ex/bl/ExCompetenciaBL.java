@@ -555,7 +555,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAnexarArquivo(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (mob.doc().isFinalizado())
 			return !mob.isEmTransito()
@@ -594,7 +594,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			long tipoConfig, long tipoMov, ExTipoDocumento exTipoDocumento,
 			ExTipoFormaDoc exTipoFormaDoc, ExFormaDocumento exFormaDocumento,
 			ExModelo exModelo, ExClassificacao exClassificacao, ExVia exVia,
-			ExNivelAcesso exNivelAcesso, ExPapel exPapel, CpOrgaoUsuario orgaoObjeto) throws Exception {
+			ExNivelAcesso exNivelAcesso, ExPapel exPapel, CpOrgaoUsuario orgaoObjeto) {
 		ExConfiguracao cfgFiltro = new ExConfiguracao();
 
 		cfgFiltro.setCargo(titularIniciador.getCargo());
@@ -605,7 +605,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(
 				tipoConfig, CpTipoConfiguracao.class, false));
 		if (cfgFiltro.getCpTipoConfiguracao() == null)
-			throw new Exception(
+			throw new RuntimeException(
 					"Não é permitido buscar uma configuração sem definir seu tipo.");
 		if (tipoMov != 0)
 			cfgFiltro.setExTipoMovimentacao(CpDao.getInstance().consultar(
@@ -648,8 +648,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	private Boolean podePorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, long tipoMov, long tipoConfig, CpOrgaoUsuario orgaoObjeto)
-			throws Exception {
+			DpLotacao lotaTitular, long tipoMov, long tipoConfig, CpOrgaoUsuario orgaoObjeto) {
 		CpSituacaoConfiguracao situacao;
 		ExConfiguracao cfg = preencherFiltroEBuscarConfiguracao(titular,
 				lotaTitular, tipoConfig, tipoMov, null, null, null, null, null,
@@ -670,7 +669,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	private Boolean podePorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, long tipoConfig) throws Exception {
+			DpLotacao lotaTitular, long tipoConfig) {
 		return podePorConfiguracao(titular, lotaTitular, 0L, tipoConfig, null);
 	}
 	
@@ -701,7 +700,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeArquivarCorrente(final DpPessoa titular,
-			final DpLotacao lotaTitular, ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, ExMobil mob) {
 
 		if (!(mob.isVia() || mob.isGeralDeProcesso())
 				|| mob.doc().isSemEfeito())
@@ -749,7 +748,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeSobrestar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if(!mob.doc().isAssinado())
 			return false;
@@ -794,7 +793,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeTornarDocumentoSemEfeito(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		final ExMovimentacao ultMovNaoCancelada = mob
 				.getUltimaMovimentacaoNaoCancelada();
 		
@@ -866,7 +865,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeCriarSubprocesso(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		if (!mob.doc().isProcesso())
 			return false;
 		if (!mob.isGeral())
@@ -903,7 +902,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeCriarDocFilho(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		return !mob.doc().isCancelado()
 				&& !mob.doc().isSemEfeito()
@@ -952,7 +951,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 
 	public boolean podeBotaoArquivarIntermediario(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (!(mob.isVia() || mob.isGeralDeProcesso())
 				|| mob.doc().isSemEfeito() || mob.isEliminado())
@@ -1015,7 +1014,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeBotaoArquivarPermanente(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (!(mob.isVia() || mob.isGeralDeProcesso())
 				|| mob.doc().isSemEfeito() || mob.isEliminado())
@@ -1077,7 +1076,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAssinar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (mob.getDoc().isEletronico() && mob.getDoc().isAssinado())
 			return false;
@@ -1166,7 +1165,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAutenticarDocumento(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExDocumento doc) throws Exception {
+			final DpLotacao lotaTitular, final ExDocumento doc) {
 		
 		if (doc.isEletronico() &&  !doc.isAutenticado() && doc.temAssinaturasComSenha()) {
 			 return true;
@@ -1185,7 +1184,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAutenticarMovimentacao(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+			final DpLotacao lotaTitular, final ExMovimentacao mov) {
 		
 		//Não é necessário autenticar movimentação de anexação pois o link para assinar/autenticar sempre está disponível. 
 		if(mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
@@ -1208,7 +1207,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAssinarMovimentacaoComSenha(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+			final DpLotacao lotaTitular, final ExMovimentacao mov) {
 
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA,
 				ExTipoMovimentacao.class, false);
@@ -1504,7 +1503,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeCancelarJuntada(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		final ExMovimentacao ultMovNaoCancelada = mob
 				.getUltimaMovimentacaoNaoCancelada();
@@ -1586,7 +1585,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeCancelarMovimentacao(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		//Não deixa cancelar movimentação de um mobil diferente de geral quando um documento está sem efeito.
 
@@ -1822,7 +1821,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeCancelarVia(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		if (!mob.isVia())
 			return false;
 		if (mob.getExDocumento().isAssinado())
@@ -1890,7 +1889,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception 
 	 */
 	public boolean podeCriarVia(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if(mob.doc().isSemEfeito())
 			return false;
@@ -1939,7 +1938,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 */
 	public boolean podeCriarVolume(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (!mob.doc().isProcesso())
 			return false;
@@ -1990,7 +1989,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeEncerrarVolume(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (!mob.isVolume())
 			return false;
@@ -2040,7 +2039,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeDesarquivarCorrente(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (!mob.isVia() && !mob.isGeralDeProcesso())
 			return false;
@@ -2076,7 +2075,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeBotaoDesarquivarIntermediario(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (!mob.isVia() && !mob.isGeralDeProcesso())
 			return false;
@@ -2132,7 +2131,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeDesobrestar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
@@ -2169,7 +2168,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeDespachar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		return (mob.isVia() || mob.isVolume())
 				&& !mob.isEmTransito()
@@ -2216,7 +2215,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeDuplicar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (podeAcessarDocumento(titular, lotaTitular, mob))
 			return true;
@@ -2237,7 +2236,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeExibirInformacoesCompletas(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		return true;
 	}
 
@@ -2259,7 +2258,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeEditar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (mob.doc().isFinalizado() && !mob.doc().isEletronico())
 			return false;
@@ -2308,7 +2307,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAgendarPublicacao(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (!mob.doc().isFinalizado()
 				|| !mob.doc().isAssinado() 
@@ -2383,7 +2382,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podePedirPublicacao(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (podeAgendarPublicacao(titular, lotaTitular, mob)){		
 			return false;
@@ -2425,7 +2424,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAnexarArquivoAlternativo(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (!mob.isGeral() && !mob.doc().isAssinado())
 			return false;
@@ -2496,7 +2495,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAtenderPedidoPublicacao(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO);
 	}
@@ -2518,7 +2517,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeExcluir(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (mob.doc().isFinalizado())
 			return false;
@@ -2552,7 +2551,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeExcluirAnexo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob,
-			final ExMovimentacao mov) throws Exception {
+			final ExMovimentacao mov) {
 
 		if (mov.isCancelada())
 			return false;
@@ -2592,7 +2591,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeExcluirCosignatario(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob,
-			final ExMovimentacao mov) throws Exception {
+			final ExMovimentacao mov) {
 		
 		if (mov.isCancelada())
 			return false;
@@ -2638,7 +2637,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeCancelarAnexo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob,
-			final ExMovimentacao mov) throws Exception {
+			final ExMovimentacao mov) {
 
 		if (mov.isCancelada())
 			return false;
@@ -2691,7 +2690,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeCancelarVinculacaoPapel(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob,
-			final ExMovimentacao mov) throws Exception {
+			final ExMovimentacao mov) {
 
 		if (mov.isCancelada())
 			return false;
@@ -2728,7 +2727,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeCancelarDespacho(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob,
-			final ExMovimentacao mov) throws Exception {
+			final ExMovimentacao mov) {
 
 		if (mov.isCancelada())
 			return false;
@@ -2775,7 +2774,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeExcluirAnotacao(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob,
-			final ExMovimentacao mov) throws Exception {
+			final ExMovimentacao mov) {
 
 		if (mov.isCancelada())
 			return false;
@@ -2821,7 +2820,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeFazerAnotacao(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		return (!mob.isEmTransitoInterno() && !mob.isEliminado() && !mob
 				.isGeral())
@@ -2843,7 +2842,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeFazerVinculacaoPapel(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 
 		if (mob.doc().isCancelado() || mob.doc().isSemEfeito()
@@ -2877,7 +2876,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeFinalizar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (mob.doc().isFinalizado())
 			return false;
@@ -2935,7 +2934,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeIncluirCosignatario(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (mob.doc().isCancelado())
 			return false;
@@ -3020,7 +3019,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeJuntar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (!mob.isVia())
 			return false;
@@ -3066,7 +3065,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeApensar(DpPessoa titular, DpLotacao lotaTitular,
-			ExMobil mob) throws Exception {
+			ExMobil mob) {
 
 		if (!mob.isVia() && !mob.isVolume())
 			return false;
@@ -3108,7 +3107,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeDesapensar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		final ExMovimentacao ultMovNaoCancelada = mob
 				.getUltimaMovimentacaoNaoCancelada();
@@ -3149,7 +3148,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * </ul>
 	 */
 	public boolean podeMovimentar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 
 		if (!podeSerMovimentado(mob))
@@ -3185,7 +3184,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 
-	public boolean podeSerMovimentado(final ExMobil mob) throws Exception {
+	public boolean podeSerMovimentado(final ExMobil mob) {
 		if (mob.doc().isSemEfeito())
 			return false;
 
@@ -3303,7 +3302,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeRefazer(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		return (mob.doc().isFinalizado())
 				&& ((mob.doc().getLotaCadastrante().equivale(lotaTitular)
 						|| (mob.doc().getSubscritor() != null && mob.doc()
@@ -3340,7 +3339,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeIndicarPermanente(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (mob.isPendenteDeAnexacao())
 			return false;
@@ -3376,7 +3375,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeReclassificar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		return (mob.doc().isAssinado() && mob.isGeral() && !mob.isCancelada()
 				&& !mob.isEliminado() && getConf().podePorConfiguracao(titular,
@@ -3402,7 +3401,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAvaliar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		return (mob.doc().isAssinado() && mob.isGeral() && !mob.isCancelada()
 				&& !mob.isEliminado() && getConf().podePorConfiguracao(titular,
@@ -3429,7 +3428,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeReverterIndicacaoPermanente(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		return (mob.isindicadoGuardaPermanente()
 				&& (mob.isVia() || mob.isGeralDeProcesso()) && !mob.isJuntado()
@@ -3460,7 +3459,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeRetirarDeEditalEliminacao(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (mob.isEliminado())
 			return false;
@@ -3495,7 +3494,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeReceberPorConfiguracao(final DpPessoa pessoa,
-			final DpLotacao lotacao) throws Exception {
+			final DpLotacao lotacao) {
 		
 		return getConf().podePorConfiguracao(pessoa, lotacao,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
@@ -3526,7 +3525,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeReceber(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
@@ -3636,7 +3635,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeReferenciar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
@@ -3678,7 +3677,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeRegistrarAssinatura(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		if (!mob.isGeral())
 			return false;
 		if (mob.isArquivado() || mob.isEliminado())
@@ -3756,7 +3755,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeBotaoAgendarPublicacaoBoletim(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		if (!mob.isGeral())
 			return false;
 
@@ -3798,7 +3797,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeRedefinirNivelAcesso(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if(mob.doc().isBoletimPublicado() || mob.doc().isDJEPublicado()) {
 			if(podeAtenderPedidoPublicacao(titular, lotaTitular, mob) || podeGerenciarPublicacaoBoletimPorConfiguracao(titular, lotaTitular, mob))
@@ -3838,7 +3837,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeSerJuntado(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		return !mob.isCancelada() && !mob.isVolumeEncerrado()
 				&& mob.doc().isAssinado() && !mob.isJuntado()
@@ -3858,7 +3857,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeReceberDocumentoSemAssinatura(final DpPessoa pessoa,
-			final DpLotacao lotacao, final ExMobil mob) throws Exception {
+			final DpLotacao lotacao, final ExMobil mob) {
 		return getConf().podePorConfiguracao(pessoa, lotacao,
 				CpTipoConfiguracao.TIPO_CONFIG_RECEBER_DOC_NAO_ASSINADO);
 	}
@@ -3878,7 +3877,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeTransferir(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		if(!podeSerTransferido(mob))
 			return false;
@@ -3889,7 +3888,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
-	public boolean podeSerTransferido(final ExMobil mob) throws Exception {
+	public boolean podeSerTransferido(final ExMobil mob) {
 		if (mob.isPendenteDeAnexacao())
 			return false;
 
@@ -3942,7 +3941,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 	public boolean podeCancelarVinculacaoDocumento(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob,
-			final ExMovimentacao mov) throws Exception {
+			final ExMovimentacao mov) {
 
 		if (mov.isCancelada())
 			return false;
@@ -4052,8 +4051,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeGerenciarPublicacaoBoletimPorConfiguracao(
-			DpPessoa titular, DpLotacao lotaTitular, final ExMobil mob)
-			throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, final ExMobil mob) {
 		if (lotaTitular == null)
 			return false;
 		return getConf().podePorConfiguracao(titular, lotaTitular,
@@ -4133,7 +4131,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * 
 	 */
 	public boolean podeDesfazerCancelamentoDocumento(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 
 		ExDocumento documento = mob.getDoc();
@@ -4189,7 +4187,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAutuar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (mob.isPendenteDeAnexacao())
 			return false;

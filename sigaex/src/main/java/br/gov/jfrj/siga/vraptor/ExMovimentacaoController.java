@@ -1185,7 +1185,7 @@ public class ExMovimentacaoController extends ExController {
 						if (msgErroNivelAcessoso == null) {
 							msgErroNivelAcessoso = new AplicacaoException("O documento não pode ser transferido por estar inacessível ao usuário.");
 						}
-						if (!(msgErroNivelAcessoso.equals(null))) {
+						if (!(msgErroNivelAcessoso == null)) {
 							MapMensagens.put(mobil, msgErroNivelAcessoso);
 						}
 					} else {

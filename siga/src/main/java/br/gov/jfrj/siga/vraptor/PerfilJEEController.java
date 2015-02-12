@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import java.text.MessageFormat;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -89,13 +91,14 @@ public class PerfilJEEController extends GrupoController {
 			          ,String conteudoConfiguracaoNova) throws Exception {
 		
 		assertAcesso("PERFILJEE:Gerenciar grupos de email");
-		super.aGravar(idCpGrupo
+		Long novoIdCpGrupo = super.aGravar(idCpGrupo
 				     ,siglaGrupo
 					 ,dscGrupo
 					 ,grupoPaiSel
 					 ,codigoTipoConfiguracaoNova
 					 ,conteudoConfiguracaoNova);
-		result.redirectTo(this).lista();
+		
+		result.redirectTo(MessageFormat.format("/app/gi/perfilJEE/editar?idCpGrupo={0}", novoIdCpGrupo));
 	}	
 
 	@Post("/app/gi/perfilJEE/excluir")

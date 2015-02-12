@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import java.text.MessageFormat;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -91,10 +93,10 @@ public class PerfilController extends GrupoController {
 
 		assertAcesso("PERFIL:Gerenciar grupos de email");
 
-		super.aGravar(idCpGrupo, siglaGrupo, dscGrupo, grupoPaiSel,
+		Long novoIdCpGrupo = super.aGravar(idCpGrupo, siglaGrupo, dscGrupo, grupoPaiSel,
 				codigoTipoConfiguracaoNova, conteudoConfiguracaoNova);
-
-		result.redirectTo(this).lista();
+		
+		result.redirectTo(MessageFormat.format("/app/gi/perfil/editar?idCpGrupo={0}", novoIdCpGrupo));
 	}
 
 	@Post("/app/gi/perfil/excluir")

@@ -25,7 +25,7 @@
         <module>sigacd</module>
         <module>siga-wf</module>
         <!--<module>sigawf</module>-->
-        <module>siga-autenticidade</module>
+        <!--<module>siga-autenticidade</module>-->
         <module>siga-cd-aut</module>
         <module>siga-cp-sinc</module>
         <module>siga-play-module</module>

@@ -3136,11 +3136,13 @@ public class ExMovimentacaoController extends ExController {
 		
 	}
 
+	@Post("/app/expediente/mov/transferir")
 	@Get("/app/expediente/mov/transferir")
-	public void aTransferir(String sigla) throws Exception {
+	public void aTransferir(String sigla, Long idTpDespacho) throws Exception {
 		this.sigla = sigla;
-		buscarDocumento(true);
-		lerForm(mov);
+		this.idTpDespacho = idTpDespacho;
+		this.buscarDocumento(true);
+		this.lerForm(mov);
 
 		final ExMovimentacao ultMov = mob.getUltimaMovimentacao();
 		if (getRequest().getAttribute("postback") == null) {
@@ -3197,9 +3199,11 @@ public class ExMovimentacaoController extends ExController {
 			String nmFuncaoSubscritor, long idTpDespacho, long idResp,
 			List<ExTipoDespacho> tiposDespacho, String descrMov,
 			List<Map<Integer, String>> listaTipoResp, int tipoResponsavel,
-			DpLotacaoSelecao lotaResponsavel, DpPessoaSelecao responsavelSel,
+			DpLotacaoSelecao lotaResponsavelSel, DpPessoaSelecao responsavelSel,
 			CpOrgaoSelecao cpOrgacaoSel, String obsOrgao, String protocolo)
 			throws Exception {
+		
+		this.setLotaResponsavelSel(lotaResponsavelSel);
 		this.setId(id);
 		this.setSigla(sigla);
 		// this.setDoc(doc);
@@ -4735,5 +4739,4 @@ public class ExMovimentacaoController extends ExController {
 
 		return lotacoes;
 	}
-
 }

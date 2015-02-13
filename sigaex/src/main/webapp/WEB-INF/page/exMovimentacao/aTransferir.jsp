@@ -19,7 +19,7 @@
 function tamanho() {
 	var i = tamanho2();
 	if (i<0) {i=0};
-	document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
+	$("#Qtd").html('Restam ' + i + ' Caracteres');
 }
 
 function tamanho2() {
@@ -50,9 +50,11 @@ function sbmt() {
 			document.getElementById('transferir_gravar_sigla').value= '${mob.sigla}';
 			document.getElementById('transferir_gravar_pai').value= '';
 			document.getElementById('transferir_gravar_despachando').value= 'false';
-			frm.action='${pageContext.request.contextPath}/app/expediente/mov/tranferir';
+
+			frm.action='transferir?sigla=VALOR_SIGLA&popup=true&idTpDespacho=VALOR_ID_DESPACHO'
+					.replace('VALOR_SIGLA', document.getElementById('transferir_gravar_sigla').value)
+					.replace('VALOR_ID_DESPACHO', document.getElementById('transferir_gravar_idTpDespacho').value);
 		}
-		
 	frm.submit();
 }
 
@@ -147,7 +149,7 @@ function popitup_movimentacao() {
 							Despacho
 						</td>
 						<td>
-							<select  name="idTpDespacho" onchange="javascript:sbmt();">
+							<select  id="transferir_gravar_idTpDespacho" name="idTpDespacho" onchange="javascript:sbmt();">
 								<c:forEach items="${tiposDespacho}" var="item">
 									<option value="${item.idTpDespacho}" ${item.idTpDespacho == idTpDespacho ? 'selected' : ''}>
 										${item.descTpDespacho}
@@ -164,8 +166,8 @@ function popitup_movimentacao() {
 									Texto
 								</td>
                                 <td>
-	                                <input type="text"  rows="3" cols="50"  name="descrMov"  onkeyup="corrige();tamanho();" onblur="tamanho();"
-										onclick="tamanho();" value="${descrMov}"/>
+	                                <textarea rows="3" cols="50"  name="descrMov" onkeyup="corrige();tamanho();" onblur="tamanho();" onclick="tamanho();" value="${descrMov}"></textarea>
+                                	
 									<div id="Qtd">
 										Restam&nbsp;400&nbsp;Caracteres
 									</div>
@@ -173,6 +175,7 @@ function popitup_movimentacao() {
 							</tr>
 						</c:when>
 					</c:choose>
+					
 					<tr class="header">
 						<td colspan="2">Transferência</td>
 					</tr>

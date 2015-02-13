@@ -302,6 +302,7 @@ public class ExDocumentoController extends ExController {
 		return exDocumentoDTO;
 	}
 	
+	@Post("app/expediente/doc/editar")
 	@Get("app/expediente/doc/editar")
 	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO, String sigla, String[] vars, ExMobilSelecao mobilPaiSel, Boolean criandoAnexo) throws Exception {
 		boolean isDocNovo = (exDocumentoDTO == null);

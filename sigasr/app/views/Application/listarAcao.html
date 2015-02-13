@@ -28,7 +28,8 @@
 				</thead>
 				<tbody>
 					#{list items:acoes, as:'acao'}
-						<tr data-json-id="${acao.idAcao}" data-json="${acao.toJson()}"
+						<tr #{if !acao.ativo}class="configuracaoHerdada"#{/if}
+							data-json-id="${acao.idAcao}" data-json="${acao.toJson()}"
 							onclick="acaoService.editar($(this).data('json'), 'Alterar Ação')"
 							style="cursor: pointer;">
 							<td>${acao.siglaAcao}</td>

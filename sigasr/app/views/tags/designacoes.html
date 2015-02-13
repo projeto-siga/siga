@@ -34,7 +34,8 @@
 
 			<tbody>
 				#{list items:_designacoes, as:'design'}
-				<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
+				<tr #{if !design.ativo}class="configuracaoHerdada"#{/if}
+					data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
 					style="cursor: pointer;">
 					<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 					<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
@@ -309,7 +310,7 @@ altura:'200', largura:'450'}
 	}
 	
 	function detalhesDesignacao(d, designacao) {
-		var tr = $('<tr class="detail">'),
+		var tr = designacao.ativo == true ? $('<tr class="detail">') : $('<tr class="detail configuracaoHerdada">'),
 			td = $('<td colspan="10">'),
 			table  = $('<table style="margin-left: 60px;">'),
 			trDescricao = $('<tr>'),

@@ -25,7 +25,8 @@
 
 				<tbody>
 					#{list items:listas, as:'item'}
-					<tr data-json-id="${item.idLista}" data-json="${item.toJson()}">
+					<tr #{if !item.ativo}class="configuracaoHerdada"#{/if}
+						data-json-id="${item.idLista}" data-json="${item.toJson()}">
 						#{if item.podeConsultar(lotaTitular, cadastrante)}
 							<td onclick="javascript:window.location='@{Application.exibirLista(item.idLista)}'" 
 								style="cursor: pointer;">${item.nomeLista}</td>

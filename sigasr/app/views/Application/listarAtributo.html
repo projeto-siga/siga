@@ -61,7 +61,8 @@
 
 				<tbody>
 					#{list items:atts, as:'att'}
-						<tr data-json-id="${att.idAtributo}" data-json="${att.toJson()}" onclick="atributoService.editar($(this).data('json'), 'Alterar atributo')" 
+						<tr #{if !att.ativo}class="configuracaoHerdada"#{/if}
+							data-json-id="${att.idAtributo}" data-json="${att.toJson()}" onclick="atributoService.editar($(this).data('json'), 'Alterar atributo')" 
 							style="cursor: pointer;">
 							<td>${att.nomeAtributo}</td>
 							<td>${att.descrAtributo}</td>

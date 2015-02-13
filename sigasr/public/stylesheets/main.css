@@ -121,7 +121,7 @@ td.padding-table {
 	cursor: pointer;
 }
 
-.configuracaoHerdada {
+.configuracaoHerdada td {
 	color: gray !important;
 }
 

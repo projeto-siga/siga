@@ -20,7 +20,8 @@
 
 				<tbody>
 					#{list items:pesquisas, as:'pesq'}
-					<tr
+					<tr 
+						#{if !pesq.ativo}class="configuracaoHerdada"#{/if}
 						data-json-id="${pesq.idPesquisa}" data-json="${pesq.toJson()}" onclick="pesquisaService.editar($(this).data('json'), 'Alterar pesquisa')"
 						style="cursor: pointer;">
 						<td >${pesq.nomePesquisa}</td>

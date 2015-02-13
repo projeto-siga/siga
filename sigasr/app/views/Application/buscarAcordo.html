@@ -29,6 +29,7 @@
 				<tbody>
 					#{list items:acordos, as:'acordo'}
 					<tr
+						#{if !acordo.ativo}class="configuracaoHerdada"#{/if}
 						#{if popup}
 							onclick="javascript:opener.retorna_acordo${nome}('${acordo.id}','${acordo.id}','${acordo.nomeAcordo}');window.close()"
 						#{/if}

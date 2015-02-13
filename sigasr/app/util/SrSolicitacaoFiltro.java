@@ -116,9 +116,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and sol.gravidade = " + gravidade.ordinal());
 		
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
-			for (String s : descrSolicitacao.split(" "))
-				query.append(" and lower(sol.descrSolicitacao) like '%"
+			for (String s : descrSolicitacao.split(" ")) {
+				query.append(" ( and lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ");
+				query.append(" or sol.idSolicitacao in (SELECT mov.idMovimentacao FROM SrMovimentacao mov WHERE mov.descrMovimentacao LIKE '%");
+				query.append(s.toLowerCase() + "%' )) ");
+			}
 		}
 		
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");

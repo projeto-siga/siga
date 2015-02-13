@@ -19,12 +19,12 @@
         <module>siga-ldap</module>
         <module>siga</module>
         <module>siga-ext</module>
-        <module>siga-ex</module>
+        <!--<module>siga-ex</module>-->
         <module>sigaex</module>
         <module>siga-cd</module>
         <module>sigacd</module>
         <module>siga-wf</module>
-        <module>sigawf</module>
+        <!--<module>sigawf</module>-->
         <module>siga-autenticidade</module>
         <module>siga-cd-aut</module>
         <module>siga-cp-sinc</module>

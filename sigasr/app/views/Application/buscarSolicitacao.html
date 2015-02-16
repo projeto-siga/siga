@@ -232,10 +232,10 @@
 								valueLotacao:filtro.lotaSolicitante /}</td>
 						</tr>
 						<tr>
-							<td>Data de abertura</td>
+							<td>Data de criação</td>
 							<td>
-								<input type="text" name="filtro.dtIni" onblur="javascript:verifica_data(this,true)" value="${filtro.dtIni}" id="filtro.dtIni" /> a 
-								<input type="text" name="filtro.dtFim" onblur="javascript:verifica_data(this,true)" value="${filtro.dtFim}" id="filtro.dtFim" />
+								#{dataCalendar nome:'filtro.dtIni', value:filtro.dtIni /} a
+								#{dataCalendar nome:'filtro.dtFim', value:filtro.dtFim /}
 							</td>
 						
 						</tr>

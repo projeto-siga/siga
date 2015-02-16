@@ -104,8 +104,7 @@
 			</li>
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
-				<li><ww:url id="url" action="listar"
-						namespace="app/despacho/tipodespacho" /> <ww:a href="%{url}">Cadastro de tipos de despacho</ww:a>
+				<li><a href="/sigaex/app/despacho/tipodespacho/listar">Cadastro de tipos de despacho</a>
 				</li>
 			</c:if>
 			<c:if
@@ -124,8 +123,7 @@
 			
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação')}">
-				<li><ww:url id="url" action="listar"
-						namespace="/expediente/classificacao" /> <ww:a href="%{url}">Classificação Documental</ww:a>
+				<a href="/sigaex/app/expediente/classificacao/listar">Classificação Documental</a>
 				</li>
 			</c:if>
 			<c:if

@@ -1,6 +1,9 @@
 #{set nomeclean : _nome.cut('.') /}
+#{if _id != null}
+	#{set nomeclean : _id /}
+#{/if}
 
-<input type="text" name="${_nome}" id="${nomeclean}" value="${_value}" onchange="${_onchange}">
+<input type="text" name="${_nome}" id="${nomeclean}" value="${_value}" onchange="${_onchange}" class="${_class}">
 <script>
 	$(function() {
 		$("#${nomeclean}").datepicker({

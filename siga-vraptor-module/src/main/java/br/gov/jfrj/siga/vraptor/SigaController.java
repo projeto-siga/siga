@@ -261,7 +261,7 @@ public class SigaController {
 		this.request = request;
 	}
 	
-	protected void assertAcesso(String pathServico) throws AplicacaoException,Exception {
+	protected void assertAcesso(String pathServico) throws AplicacaoException {
 		so.assertAcesso(pathServico);
 	}	
 	

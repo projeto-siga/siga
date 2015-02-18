@@ -51,8 +51,7 @@
 		<c:catch>
 			<c:if
 				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
-				<li><ww:url id="url" action="arquivar_intermediario_lote"
-					namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+				<li> <siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_intermediario_lote"
 					texto="Arquivar Intermediário em lote" />
 				</li>
 			</c:if>
@@ -60,8 +59,7 @@
 		<c:catch>
 			<c:if
 				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
-				<li><ww:url id="url" action="arquivar_permanente_lote"
-					namespace="/expediente/mov" /> <siga:monolink href="%{url}"
+				<li> <siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_permanente_lote"
 					texto="Arquivar Permanente em lote" />
 				</li>
 			</c:if>
@@ -96,8 +94,8 @@
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas')}">
 	<li><a href="#">Ferramentas</a>
 		<ul>
-		    <li><ww:url id="url" action="listar" namespace="/forma" /> <ww:a
-					href="%{url}">Cadastro de Formas</ww:a>
+		    <li><siga:monolink href="${pageContext.request.contextPath}/app/forma/listar"
+					texto="Cadastro de Formas" />
 			</li>
 			<li><ww:url id="url" action="listar" namespace="/modelo" /> <ww:a
 					href="%{url}">Cadastro de modelos</ww:a>

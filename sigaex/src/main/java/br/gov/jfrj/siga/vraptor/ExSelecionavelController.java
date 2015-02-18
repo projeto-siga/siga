@@ -76,8 +76,7 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 		return dao().listarExTiposDocumento();
 	}
 
-	public void assertAcesso(String pathServico) throws AplicacaoException,
-			Exception {
+	public void assertAcesso(String pathServico) throws AplicacaoException {
 		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
 	}
 }

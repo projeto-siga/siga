@@ -50,8 +50,7 @@ public class SigaObjects implements ConheceUsuario {
 		carregaPerfil();
 	}
 
-	public void assertAcesso(String pathServico) throws AplicacaoException,
-			Exception {
+	public void assertAcesso(String pathServico) throws AplicacaoException {
 		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
 				+ pathServico;
 		if (!Cp.getInstance()

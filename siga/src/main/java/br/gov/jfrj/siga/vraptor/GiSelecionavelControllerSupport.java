@@ -36,8 +36,7 @@ public abstract class GiSelecionavelControllerSupport<T extends Selecionavel, Da
 		// TODO Auto-generated constructor stub
 	}
 
-	public void assertAcesso(String pathServico) throws AplicacaoException,
-			Exception {
+	public void assertAcesso(String pathServico) throws AplicacaoException {
 		super.assertAcesso("GI:Módulo de Gestão de Identidade;" + pathServico);
 	}
 

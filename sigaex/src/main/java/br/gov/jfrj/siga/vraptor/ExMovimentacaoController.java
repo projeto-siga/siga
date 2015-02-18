@@ -36,6 +36,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
+import br.gov.jfrj.siga.ex.ExItemDestinacao;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -44,6 +45,7 @@ import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -1262,6 +1264,137 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mov", mov);
 		result.include("itens", arrays);
 		result.include("lotaTitular", mov.getLotaTitular());
+	}
+
+	@Get("app/expediente/mov/arquivar_intermediario_lote")
+	public void aArquivarIntermediarioLote(final Integer paramOffset) {
+		getP().setOffset(paramOffset);
+		final int offset = getP().getOffset() != null ? getP().getOffset() : 0;
+		final List<ExItemDestinacao> listaProv = dao().consultarParaArquivarIntermediarioEmLote(getLotaTitular(), offset);
+
+		final ExTopicoDestinacao digitais = new ExTopicoDestinacao("Digitais", true);
+		final ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos", true);
+		final ExTopicoDestinacao indisponiveis = new ExTopicoDestinacao("Não disponíveis", false);
+
+		for (ExItemDestinacao item : listaProv) {
+			final boolean pode = Ex.getInstance().getComp().podeArquivarIntermediario(getTitular(), getLotaTitular(), item.getMob());
+			if (pode) {
+				if (item.getMob().doc().isEletronico()) {
+					digitais.adicionar(item);
+				} else {
+					fisicos.adicionar(item);
+				}
+			} else {
+				indisponiveis.adicionar(item);
+			}
+		}
+
+		final List<ExTopicoDestinacao> listaFinal = new ArrayList<ExTopicoDestinacao>();
+		listaFinal.add(digitais);
+		listaFinal.add(fisicos);
+		listaFinal.add(indisponiveis);
+
+		result.include("tamanho", dao().consultarQuantidadeParaArquivarIntermediarioEmLote(getLotaTitular()));
+		result.include("itens", listaFinal);
+	}
+
+	@Get("app/expediente/mov/arquivar_intermediario_lote_gravar")
+	public void aArquivarIntermediarioLoteGravar(final Integer postback, final Integer paramOffset, final String dtMovString, final DpPessoaSelecao subscritorSel, final boolean substituicao,
+			final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final String descrMov, final String[] campos) {
+		this.setPostback(postback);
+		getP().setOffset(paramOffset);
+		
+		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
+		
+		builder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao).setTitularSel(titularSel).setNmFuncaoSubscritor(nmFuncaoSubscritor).setDescrMov(descrMov);
+		
+		final ExMovimentacao mov = builder.construir(dao());
+
+		final Pattern p = Pattern.compile("chk_([0-9]+)");
+
+		for (final String s : getPar().keySet()) {
+			if (s.startsWith("chk_") && param(s).equals("true")) {
+				final Matcher m = p.matcher(s);
+				if (!m.find()) {
+					throw new AplicacaoException("Não foi possível ler a Id do documento e o número da via.");
+				}
+				final ExMobil mob = dao().consultar(Long.valueOf(m.group(1)), ExMobil.class, false);
+
+				Ex.getInstance().getBL().arquivarIntermediario(getCadastrante(), getLotaTitular(), mob, mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
+			}
+		}
+		
+		result.redirectTo("/app/expediente/mov/arquivar_intermediario_lote");
+	}
+
+	@Get("app/expediente/mov/arquivar_permanente_lote")
+	public void aArquivarPermanenteLote(final Integer paramOffset) {
+		getP().setOffset(paramOffset);
+		final int offset = getP().getOffset() != null ? getP().getOffset() : 0;		
+		final List<ExItemDestinacao> listaProv = dao().consultarParaArquivarPermanenteEmLote(getLotaTitular(), offset);
+
+		final ExTopicoDestinacao digitais = new ExTopicoDestinacao("Digitais", true);
+		final ExTopicoDestinacao fisicos = new ExTopicoDestinacao("Físicos", true);
+		final ExTopicoDestinacao indisponiveis = new ExTopicoDestinacao("Não disponíveis", false);
+
+		for (final ExItemDestinacao item : listaProv) {
+			boolean pode = Ex.getInstance().getComp().podeArquivarPermanente(getTitular(), getLotaTitular(), item.getMob());
+			if (pode) {
+				if (item.getMob().doc().isEletronico()) {
+					digitais.adicionar(item);
+				} else {
+					fisicos.adicionar(item);
+				}
+			} else {
+				indisponiveis.adicionar(item);
+			}
+		}
+
+		final List<ExTopicoDestinacao> listaFinal = new ArrayList<ExTopicoDestinacao>();
+		listaFinal.add(digitais);
+		listaFinal.add(fisicos);
+		listaFinal.add(indisponiveis);
+		
+		result.include("tamanho", dao().consultarQuantidadeParaArquivarPermanenteEmLote(getLotaTitular()));
+		result.include("itens", listaFinal);
+	}
+
+	@Get("app/expediente/mov/arquivar_permanente_lote_gravar")
+	public void aArquivarPermanenteLoteGravar(final Integer postback, final Integer paramOffset, final String dtMovString, final DpPessoaSelecao subscritorSel, final boolean substituicao,
+			final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final String[] campos) {
+		this.setPostback(postback);
+		getP().setOffset(paramOffset);
+		
+		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
+		
+		builder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao).setTitularSel(titularSel).setNmFuncaoSubscritor(nmFuncaoSubscritor);
+		
+		final ExMovimentacao mov = builder.construir(dao());
+
+		final Pattern p = Pattern.compile("chk_([0-9]+)");
+
+		String erro = "";
+
+		try {
+			for (final String s : getPar().keySet()) {
+				if (s.startsWith("chk_") && param(s).equals("true")) {
+					final Matcher m = p.matcher(s);
+					if (!m.find()) {
+						throw new AplicacaoException("Não foi possível ler a Id do documento e o número da via.");
+					}
+
+					final ExMobil mob = dao().consultar(Long.valueOf(m.group(1)), ExMobil.class, false);
+
+					erro = mob.getSigla();
+
+					Ex.getInstance().getBL().arquivarPermanente(getCadastrante(), getLotaTitular(), mob, mov.getDtMov(), mov.getSubscritor());
+				}
+			}
+		} catch (final Exception e) {
+			throw new AplicacaoException("Ocorreu um erro no arquivamento do documento" + erro + ". ", 0, e);
+		}
+		
+		result.redirectTo("/app/expediente/mov/arquivar_permanente_lote");
 	}
 
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {

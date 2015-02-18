@@ -872,8 +872,7 @@ public class ExRelatorioController extends ExController implements IUsaMascara{
 		return new InputStreamDownload(this.getInputStream(), "application/pdf","emiteRelClassDocDocumentos");
 	}
 
-	public void assertAcesso(String pathServico) throws AplicacaoException,
-	Exception {
+	public void assertAcesso(String pathServico) throws AplicacaoException {
 		super.assertAcesso("REL:Gerar relatórios;" + pathServico);
 	}
 

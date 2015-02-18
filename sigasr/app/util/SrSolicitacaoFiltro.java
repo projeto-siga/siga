@@ -117,9 +117,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
 			for (String s : descrSolicitacao.split(" ")) {
-				query.append(" ( and lower(sol.descrSolicitacao) like '%"
+				query.append(" and ( lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ");
-				query.append(" or sol.idSolicitacao in (SELECT mov.idMovimentacao FROM SrMovimentacao mov WHERE mov.descrMovimentacao LIKE '%");
+				query.append(" or sol.idSolicitacao in (SELECT mov.idMovimentacao FROM SrMovimentacao mov WHERE lower(mov.descrMovimentacao) LIKE '%");
 				query.append(s.toLowerCase() + "%' )) ");
 			}
 		}

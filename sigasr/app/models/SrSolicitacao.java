@@ -331,6 +331,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		else
 			return descrSolicitacao;
 	}
+	
+	public List<SrAtributoSolicitacao> getMeuAtributoSolicitacaoSet() {
+		if (meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.size() == 0) {
+			if (isFilha())
+				return solicitacaoPai.getMeuAtributoSolicitacaoSet();
+		}
+		
+		return meuAtributoSolicitacaoSet;
+		
+	}
+
+	public void setMeuAtributoSolicitacaoSet(
+			List<SrAtributoSolicitacao> meuAtributoSolicitacaoSet) {
+		this.meuAtributoSolicitacaoSet = meuAtributoSolicitacaoSet;
+	}
 
 	public String getDescrItem() {
 		return itemConfiguracao != null ? itemConfiguracao.tituloItemConfiguracao
@@ -1626,14 +1641,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 							+ "para esta solicitação. Sugestão: alterar item de "
 							+ "configuração e/ou ação");
 		
-		
 		if (isFilha()) {
-			// DB1: Valida se é uma solicitação filha, e se a descrição dela
-			// é exatamente a mesma que da solicitação pai
-			if (descrSolicitacao.equals(solicitacaoPai.descrSolicitacao))
+			if (descrSolicitacao.equals(solicitacaoPai.descrSolicitacao) || descrSolicitacao.trim().isEmpty())
 				descrSolicitacao = null;
 			
-			// Valida se possui atributos, que deverão ser herdados do pai neste caso.
 			if (this.meuAtributoSolicitacaoSet != null)
 				this.meuAtributoSolicitacaoSet = null;
 		}

@@ -35,11 +35,6 @@
 			<div class="title-table">
 				<h3 style="padding-top: 25px;">Permissões</h3>
 			</div>
-			<div class="button-table">
-				<a href="javascript: controleAcessoModalAbrir(false)" title="Adicionar Permissão">
-					<img src="/siga/css/famfamfam/icons/add.png">
-				</a>
-			</div>
 		</div>
 		<div class="gt-content-box gt-for-table dataTables_div">
 			<table id="permissoes_table" border="0" class="gt-table display">
@@ -103,7 +98,9 @@
 				</tbody>
 			</table>
 		</div>
-		
+		<div class="gt-table-buttons">
+            <a href="javascript: controleAcessoModalAbrir(false)" class="gt-btn-small gt-btn-left">Incluir</a>
+		</div>		
 		<div class="gt-form-row">
 			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="listaService.gravar()"/>
 			<a class="gt-btn-medium gt-btn-left" onclick="listaService.cancelarGravacao()">Cancelar</a>

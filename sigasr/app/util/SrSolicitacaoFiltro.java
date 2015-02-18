@@ -49,7 +49,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SrSolicitacao> buscar() throws Exception {
-		String query = montarBusca("select sol from SrSolicitacao sol ");
+		String query = montarBusca("select distinct(sol) from SrSolicitacao sol ");
 		
 		List<SrSolicitacao> lista = JPA
 				.em()
@@ -88,7 +88,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (acordo != null && acordo.idAcordo > 0L)
 			query.append(" inner join sol.acordos acordo where acordo.hisIdIni = "
 					+ acordo.getHisIdIni() + " and ");
-		else query.append(" where ");
+		else
+			query.append(" where ");
 		
 		query.append(" sol.hisDtFim is null ");
 		
@@ -119,8 +120,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			for (String s : descrSolicitacao.split(" ")) {
 				query.append(" and ( lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ");
-				query.append(" or sol.idSolicitacao in (SELECT mov.idMovimentacao FROM SrMovimentacao mov WHERE lower(mov.descrMovimentacao) LIKE '%");
-				query.append(s.toLowerCase() + "%' )) ");
+				query.append(" or sol in (select mov.solicitacao from SrMovimentacao mov");
+				query.append(" where lower(mov.descrMovimentacao) like '%" + s.toLowerCase() + "%' )) ");
 			}
 		}
 		

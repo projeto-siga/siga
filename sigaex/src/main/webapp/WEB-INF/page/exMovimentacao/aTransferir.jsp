@@ -43,7 +43,6 @@ function sbmt() {
 			document.getElementById('transferir_gravar_sigla').value= '';
 			document.getElementById('transferir_gravar_pai').value= '${mob.sigla}';
 			document.getElementById('transferir_gravar_despachando').value= 'true';
-			debugger;
 			frm["exDocumentoDTO.postback"].value=0;
 			frm.action='${pageContext.request.contextPath}/app/expediente/doc/editar';
   		}	

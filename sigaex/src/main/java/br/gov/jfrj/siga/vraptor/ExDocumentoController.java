@@ -321,7 +321,7 @@ public class ExDocumentoController extends ExController {
 		
 		buscarDocumentoOuNovo(true, exDocumentoDTO);
 		
-		if ((isDocNovo) || (param("docFilho") != null)) {
+		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
 			exDocumentoDTO.setTipoDestinatario(2);
 			exDocumentoDTO.setIdFormaDoc(2);
 			exDocumentoDTO.setIdTpDoc(1L);

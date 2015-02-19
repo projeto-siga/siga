@@ -97,20 +97,16 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 						<div class="gt-form-row">
 							<input type="hidden" name="id" value="${modelo.id}" />
 							<input type="hidden" name="idOrgUsu" value="${modelo.cpOrgaoUsuario.id}" />
-
-							<textarea id="conteudo${i}" style="width: 100%;" cols="1" rows="1" name="conteudo">
-								<c:if test="${not empty modelo.conteudoBlobString}">
-									<c:out value="${modelo.conteudoBlobString}" escapeXml="true" default="" />
-								</c:if>
-							</textarea>
-<script>
-	var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true,
-		onCursorActivity: function() {
-			editor${i}.setLineClass(hlLine, null);
-			hlLine = editor${i}.setLineClass(editor${i}.getCursor().line, "activeline");
-		}});
-	var hlLine = editor${i}.setLineClass(0, "activeline");
-</script>
+							
+							<textarea id="conteudo${i}" style="width: 100%;" cols="1" rows="1" name="conteudo"><c:if test="${not empty modelo.conteudoBlobString}"><c:out value="${modelo.conteudoBlobString}" escapeXml="true" default=""/></c:if></textarea>
+						<script>
+							var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true,
+								onCursorActivity: function() {
+									editor${i}.setLineClass(hlLine, null);
+									hlLine = editor${i}.setLineClass(editor${i}.getCursor().line, "activeline");
+								}});
+							var hlLine = editor${i}.setLineClass(0, "activeline");
+						</script>
 						</div>
 						<div class="gt-form-row">
 							<input name="salvar_conteudo" type="submit" id="but_gravar${i}"

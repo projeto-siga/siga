@@ -1180,11 +1180,15 @@ public class Application extends SigaApplication {
 		listarAtributo(Boolean.TRUE);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void listarAtributo(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrAtributo> atts = SrAtributo.listar(null, mostrarDesativados);
 		List<SrObjetivoAtributo> objetivos = SrObjetivoAtributo.all().fetch();
-		render(atts, objetivos);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		render(atts, objetivos, orgaos, locais);
 	}
 
 	public static void editarAtributo(Long id) throws Exception {

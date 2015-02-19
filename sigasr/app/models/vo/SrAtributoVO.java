@@ -25,7 +25,7 @@ public class SrAtributoVO {
 	public SrObjetivoAtributoVO objetivoAtributo;
 	public String descrPreDefinido;
 	public Long hisIdIni;
-	public List<SrConfiguracaoAssociacaoVO> associacoesVO;
+	public List<SrConfiguracaoVO> associacoesVO;
 	
 	public SrAtributoVO(SrAtributo atributo, List<SrConfiguracao> associacoes) {
 		this.ativo = atributo.isAtivo();
@@ -37,11 +37,11 @@ public class SrAtributoVO {
 		this.objetivoAtributo = SrObjetivoAtributoVO.createFrom(atributo.objetivoAtributo);
 		this.descrPreDefinido = atributo.descrPreDefinido;
 		this.hisIdIni = atributo.getHisIdIni();
-		this.associacoesVO = new ArrayList<SrConfiguracaoAssociacaoVO>();
+		this.associacoesVO = new ArrayList<SrConfiguracaoVO>();
 
 		if (associacoes != null)
 			for (SrConfiguracao associacao : associacoes) {
-				associacoesVO.add(associacao.toAssociacaoVO());
+				associacoesVO.add(associacao.toVO());
 			}
 	}
 

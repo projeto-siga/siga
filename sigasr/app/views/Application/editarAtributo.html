@@ -59,16 +59,14 @@
 								<span id="iconeBotaoExpandirTodos">+</span>
 							</span>
 						</th>
-						<th>idItemConfiguracao</th>
-						<th><i>Item &darr;</i></th>
-						<th>siglaItemConfiguracao</th>
-						<th>idAcao</th>
-						<th>Ação</th>
-						<th>siglaAcao</th>
-						<th>Obrigatório</th>
-						<th>Obrigatório</th>
 						<th>idAssociacao</th>
-						<th>Ações</th>
+						<th>Orgão</th>
+						<th>Local</th>
+						<th>Solicitante</th>
+						<th><i>Item &darr;</i></th>
+						<th>Ação</th>
+						<th>Obrigatório</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -87,10 +85,33 @@
 	</form>
 </div>
 
-#{modal nome:'associacao', titulo:'cadastrar associação'}
+#{modal nome:'associacao', titulo:'Cadastrar associação'}
 	<div class="gt-form gt-content-box">
 		<form id="associacaoForm">
-			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
+			<input id="idConfiguracao" type="hidden" name="idConfiguracao">
+			
+			<div id="divSolicitante" class="gt-form-row gt-width-100">
+				<label>Solicitante</label> #{pessoaLotaFuncCargoSelecao
+				nomeSelLotacao:'lotacao', nomeSelPessoa:'dpPessoa',
+				nomeSelFuncao:'funcaoConfianca', nomeSelCargo:'cargo',
+				nomeSelGrupo:'cpGrupo', valuePessoa:dpPessoa?.pessoaAtual,
+				valueLotacao:lotacao?.lotacaoAtual, valueFuncao:funcaoConfianca,
+				valueCargo:cargo, valueGrupo:cpGrupo, disabled:disabled /}
+			</div>
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Órgão</label> #{select name:'orgaoUsuario', items:orgaos,
+				valueProperty:'idOrgaoUsu', labelProperty:'nmOrgaoUsu',
+				value:orgaoUsuario?.idOrgaoUsu, class:'select-siga', style:'width:
+				100%;'} #{option 0}Nenhum#{/option} #{/select}
+			</div>
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Local</label> #{select name:'complexo', items:locais,
+				valueProperty:'idComplexo', labelProperty:'nomeComplexo',
+				value:complexo?.idComplexo, class:'select-siga', style:'width: 100%'}
+				#{option 0}Nenhum#{/option} #{/select}
+			</div>
 		
 			<div class="gt-form-row gt-width-100">
 				<label>Item <span>*</span></label> 
@@ -100,7 +121,7 @@
 			</div>
 		
 			<div class="gt-form-row gt-width-100">
-				<label>Serviço <span>*</span></label> 
+				<label>Ação <span>*</span></label> 
 				#{selecao tipo:'acao',
 				nome:'acaoUnitaria', value:acaoUnitaria?.atual /}
 			</div>
@@ -138,38 +159,30 @@
 	}
 	AssociacaoService.prototype = Object.create(BaseService.prototype);
 
-	
 	var colunas = {},
 	validatorAtributoForm;
 	colunas.botaoExpandir =               0;
-	colunas.idItemConfiguracao =          1;
-	colunas.tituloItemConfiguracao =      2;
-	colunas.siglaItemConfiguracao =       3;
-	colunas.idAcao =                      4;
-	colunas.tituloAcao =                  5;
-	colunas.siglaAcao =                   6;
-	colunas.atributoObrigatorio =  		  7;
-	colunas.atributoObrigatorioString =   8;
-	colunas.idAssociacao =                9;
-	colunas.botaoExcluir =                10,
+	colunas.idAssociacao = 				  1;
+	colunas.orgao =				          2;
+	colunas.local =					      3;
+	colunas.solicitante =			      4;
+	colunas.itemConfiguracao =            5;
+	colunas.acao =		                  6;
+	colunas.atributoObrigatorioString =   7;
+	colunas.botaoExcluir =                8;
 
 	
 	associacaoTable = new SigaTable('#associacao_table')
 		.configurar("columnDefs", [{
-					"targets": [4],
+					"targets": [colunas.idAssociacao, colunas.botaoExpandir, colunas.botaoExcluir],
 					"searchable": false,
 					"sortable" : false
 				},
 				{
-					"targets": [colunas.idItemConfiguracao, 
-								colunas.siglaItemConfiguracao, 
-								colunas.idAcao, 
-								colunas.siglaAcao,
-								colunas.atributoObrigatorio,
-								colunas.idAssociacao],
+					"targets": [colunas.idAssociacao],
 					"visible": false
 				}])
-		.configurar("aaSorting",  [[colunas.siglaItemConfiguracao, 'asc']])
+		.configurar("aaSorting",  [[colunas.itemConfiguracao, 'asc']])
 		.criar()
 		.detalhes(detalhesListaAssociacao),
 
@@ -224,7 +237,7 @@
 		node.on('click', function() {
 			associacaoService.editar(assoc, 'Alterar Associação');
 			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
-			$('#associacaoForm input').removeAttr('onblur'); // WA
+// 			$('#associacaoForm input').removeAttr('onblur'); // WA
 		});
 		associacaoTable.table.mostrarDetalhes(detalhesListaAssociacao, associacaoTable.dataTable);
 	}
@@ -244,15 +257,13 @@
 			
 		return [
 					' ',
-					assoc.itemConfiguracaoUnitario ? assoc.itemConfiguracaoUnitario.id : ' ',
-					assoc.itemConfiguracaoUnitario ? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
-					assoc.itemConfiguracaoUnitario ? assoc.itemConfiguracaoUnitario.sigla : ' ',
-					assoc.acaoUnitaria ? assoc.acaoUnitaria.id : ' ',
-					assoc.acaoUnitaria ? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
-					assoc.acaoUnitaria ? assoc.acaoUnitaria.sigla : ' ',
-					$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
-					getAtributoObrigatorioString(),
 					assoc.idConfiguracao,
+					assoc.orgaoUsuario ? assoc.orgaoUsuario.sigla : ' ',
+					assoc.complexo ? assoc.complexo.descricao : ' ',
+					assoc.solicitante ? assoc.solicitante.sigla : ' ',
+					assoc.itemConfiguracaoUnitario ? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
+					assoc.acaoUnitaria ? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
+					getAtributoObrigatorioString(assoc.atributoObrigatorio),
 					html
    				];
 	}
@@ -323,17 +334,15 @@
 
 					rowAssoc = [
 								' ',
-								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.id : ' ',
-								assoc.itemConfiguracaoUnitario? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
-								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.sigla : ' ',
-								assoc.acaoUnitaria? assoc.acaoUnitaria.id : ' ',
-								assoc.acaoUnitaria? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
-								assoc.acaoUnitaria? assoc.acaoUnitaria.sigla : ' ',
-								$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
-								getAtributoObrigatorioString(),
 								assoc.idConfiguracao,
+								assoc.orgaoUsuario ? assoc.orgaoUsuario.sigla : ' ',
+								assoc.complexo ? assoc.complexo.descricao : ' ',
+								assoc.solicitante ? assoc.solicitante.sigla: ' ',
+								assoc.itemConfiguracaoUnitario ? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
+								assoc.acaoUnitaria ? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
+								getAtributoObrigatorioString(assoc.atributoObrigatorio),
 								html
-			   				];
+							];
 	   				
 				// Adiciona na tabela de Associações
 				var newRow = associacaoTable.dataTable
@@ -362,9 +371,8 @@
 		else return (descricao || ' ');
 	}
 
-	function getAtributoObrigatorioString() {
-		var isChecked = $("#checkatributoObrigatorio")[0].checked;
-		return isChecked ? "Sim": "Não";
+	function getAtributoObrigatorioString(value) {
+		return value ? 'Sim': 'Não';
 	}
 
 	function desassociar(event, idAssociacaoDesativar) {

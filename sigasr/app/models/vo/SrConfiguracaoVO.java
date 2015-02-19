@@ -7,6 +7,7 @@ import models.SrAcao;
 import models.SrConfiguracao;
 import models.SrItemConfiguracao;
 import models.SrTipoPermissaoLista;
+import models.SrAcao.SrAcaoVO;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -38,6 +39,8 @@ public class SrConfiguracaoVO {
 	public SelecionavelVO orgaoUsuario;
 	public SelecionavelVO complexo;
 	public SrPesquisaVO pesquisaSatisfacao;
+	public SrItemConfiguracaoVO itemConfiguracaoUnitario;
+	public SrAcao.SrAcaoVO acaoUnitaria;
 	
 	// Solicitante
 	public SelecionavelVO dpPessoa;
@@ -54,6 +57,8 @@ public class SrConfiguracaoVO {
 		utilizarItemHerdado = configuracao.utilizarItemHerdado;
 		ativo = configuracao.isAtivo();
 		descrConfiguracao = configuracao.getDescrConfiguracao();
+		itemConfiguracaoUnitario = (configuracao.getItemConfiguracaoUnitario() != null? configuracao.getItemConfiguracaoUnitario().getAtual().toVO() : null);
+		acaoUnitaria = (configuracao.getAcaoUnitaria() != null? configuracao.getAcaoUnitaria().getAtual().toVO() : null);
 		
 		if(configuracao.itemConfiguracaoSet != null) {
 			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();

@@ -588,14 +588,14 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 	
 	public static String convertToAssociacaoJSon(List<SrConfiguracao> lista) {
-		List<SrConfiguracaoAssociacaoVO> listaVO = new ArrayList<SrConfiguracaoAssociacaoVO>();
+		List<SrConfiguracaoVO> listaVO = new ArrayList<SrConfiguracaoVO>();
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting().serializeNulls();
 		Gson gson = builder.create();
 
 		if (lista != null) {
 			for (SrConfiguracao conf : lista) {
-				listaVO.add(conf.toAssociacaoVO());
+				listaVO.add(conf.toVO());
 			}
 		}
 		

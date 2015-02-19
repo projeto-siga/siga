@@ -123,13 +123,13 @@ public class ExGadgetController extends ExController {
 	}
 
 	@Get("/app/testes/gadgetTest")
-	public void test(String matricula) throws Exception {
+	public void test(String matricula, Integer idTpFormaDoc) throws Exception {
 		DpPessoa pes = daoPes(matricula);
-		if (getIdTpFormaDoc() == null || getIdTpFormaDoc() == 0)
-			setIdTpFormaDoc(1);
+		if (idTpFormaDoc == null || idTpFormaDoc == 0)
+			idTpFormaDoc = 1;
 		setTitular(pes);
 		setLotaTitular(pes.getLotacao());
-		execute(null, null);
+		this.execute(null, idTpFormaDoc);
 	}
 
 	public List getListEstados() {
@@ -139,5 +139,4 @@ public class ExGadgetController extends ExController {
 	public void setListEstados(final List listEstados) {
 		this.listEstados = listEstados;
 	}
-
 }

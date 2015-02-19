@@ -265,27 +265,7 @@ altura:'200', largura:'450'}
 	}
 
 	designacaoService.getListasAsString = function () {
-		var params = '';
-	
-		// Percorre lista de Itens de Configuração
-		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = itemConfiguracaoTable.api().row(i).data();
-			
-			// Atualiza a string serializada
-			if (rowValues)
-	        	params += '&designacao.itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0];
-		});
-		
-		// Percorre lista de Ações
-		acaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = acaoTable.api().row(i).data();
-			
-			// Atualiza a string serializada
-			if (rowValues)
-				params += '&designacao.acoesSet[' + i + '].idAcao=' + rowValues[0];
-		});
-		
-		return params;
+		return getItemAcaoAsString(designacaoService.opts.objectName);
     }
 
 	function afterGravarDesignacao(tr, designacao) {
@@ -351,66 +331,12 @@ altura:'200', largura:'450'}
 		tr.append(tdDadosItem);
 	}
 
-	function detalheLista(label, listaVO, tr) {
-		var tdTituloItens = $('<td colspan="2">' + label + '</td>'),
-		    tdDadosItens = $('<td colspan="5">'),
-		    table = $('<table>');
-
-	    for(var i = 0; i < listaVO.length; i++) {
-		    var item = listaVO[i],
-		    	trItem = $('<tr>'),
-		    	tdCodigo = $('<td>'),
-		    	tdDescricao = $('<td>');
-		
-			tdCodigo.html(item.sigla);
-			tdDescricao.html('Descricao ' + item.descricao);
-								  
-			trItem.append(tdCodigo);
-			trItem.append(tdDescricao);
-								  
-			table.append(trItem);
-		}
-		
-		tdDadosItens.append(table);
-		
-		tr.append(tdTituloItens);
-		tr.append(tdDadosItens);
-	}
-	
 	function atualizarDesignacaoEdicao(designacaoJson) {
 		// limpar a lista
 		limparDadosDesignacaoModal();
 		
 		if (designacaoJson) {
-			if (designacaoJson.listaItemConfiguracaoVO) {
-				// cria a lista de Itens de Configuração, e adiciona na tela
-				for (i = 0; i < designacaoJson.listaItemConfiguracaoVO.length; i++) {
-					var item = designacaoJson.listaItemConfiguracaoVO[i],
-						rowItem = [item.id, 
-						           item.siglaItemConfiguracao,
-						           item.tituloItemConfiguracao,
-						           item.descrItemConfiguracao, 
-						           item.descricaoSimilaridade,
-						           "<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-					
-					// Adiciona na tabela de Itens de Configuração
-					itemConfiguracaoTable.api().row.add(rowItem).draw();
-				}
-			}
-			
-			if (designacaoJson.listaAcaoVO) {
-				// cria a lista de ações, e adiciona na tela
-				for (i = 0; i < designacaoJson.listaAcaoVO.length; i++) {
-					var acao = designacaoJson.listaAcaoVO[i],
-						rowAcao = [acao.id,
-								   acao.sigla,
-						           acao.titulo,
-						           "<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-					
-					// Adiciona na tabela de Ações
-					acaoTable.api().row.add(rowAcao).draw();
-				}
-			}
+			atualizaDadosTabelaItemAcao(designacaoJson);
 		}
 
 		#{if _modoExibicao == 'equipe'}

@@ -237,7 +237,6 @@
 		node.on('click', function() {
 			associacaoService.editar(assoc, 'Alterar Associação');
 			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
-// 			$('#associacaoForm input').removeAttr('onblur'); // WA
 		});
 		associacaoTable.table.mostrarDetalhes(detalhesListaAssociacao, associacaoTable.dataTable);
 	}

@@ -17,6 +17,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 public class PrincipalQuadrosController extends SigaController {
 
 	private static Map<String, String> modulos;
+	private SigaHTTP http;
 	
 	static {
 		PrincipalQuadrosController.modulos = new HashMap<String, String>();
@@ -26,9 +27,10 @@ public class PrincipalQuadrosController extends SigaController {
 		PrincipalQuadrosController.modulos.put("sigasr", "/sigasr/solicitacao/gadget");
 		PrincipalQuadrosController.modulos.put("sigagc", "/sigagc/app/gadget");
 	}
-	
+
 	public PrincipalQuadrosController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
+		this.http = new SigaHTTP();
 	}
 	
 	@Get("app/principalQuadros/carregaModulo")
@@ -44,7 +46,6 @@ public class PrincipalQuadrosController extends SigaController {
 	}
 	
 	private String invocar(String url) {
-		SigaHTTP http = new SigaHTTP();
 		String html = http.get(url, getRequest(), null);
 		
 		if (html.contains("HTTP Status 404")) {

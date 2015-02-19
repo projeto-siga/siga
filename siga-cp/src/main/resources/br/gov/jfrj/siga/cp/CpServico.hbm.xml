@@ -11,6 +11,7 @@
 		</id>
 		<property name="siglaServico" column="SIGLA_SERVICO" type="java.lang.String" />
 		<property name="dscServico" column="DESC_SERVICO" type="java.lang.String" />
+		<property name="labelServico" column="LABEL_SERVICO" type="java.lang.String" />
 		<!-- Identidade Drive k e grupo de email -->
 		<many-to-one name="cpServicoPai" column="ID_SERVICO_PAI"
 			class="CpServico" />

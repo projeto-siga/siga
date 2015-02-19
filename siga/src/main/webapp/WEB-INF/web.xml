@@ -172,6 +172,10 @@
 			<url-pattern>/pagina_vazia.action</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
+			<web-resource-name>pagina_vazia</web-resource-name>
+			<url-pattern>/app/pagina_vazia</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
 			<web-resource-name>codemirror</web-resource-name>
 			<url-pattern>/codemirror/*</url-pattern>
 		</web-resource-collection>		

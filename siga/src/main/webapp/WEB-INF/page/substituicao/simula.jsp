@@ -55,4 +55,4 @@ function sbmt() {
 <body>
 <br />
 <!--  tabela do rodapé -->
-<c:import url="/paginas/rodape.jsp" />
+<c:import url="/WEB-INF/page/principal/rodape.jsp" />

@@ -33,7 +33,7 @@ $(function() {
     	var target = $("#"+model.viewId);
     	$(target.find(".loading")).show();
     	
-        Siga.ajax("/siga/principalQuadros/carregaModulo.action?modulo="+model.name, {}, "GET", function(response){ 
+        Siga.ajax("/siga/app/principalQuadros/carregaModulo?modulo="+model.name, {}, "GET", function(response){ 
         	target.html(response);
         });
     });

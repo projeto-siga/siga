@@ -8,7 +8,7 @@
 	<table width="90%"  height="90%" border="1" cellspacing="0" cellpadding="0"
 			 bgcolor="#FFFFFF" align="center">
 			<tr align="left">
-				<td>Acesso n&atilde;o autorizado &acrase; p&aacute;gina.</td>
+				<td>Acesso n&atilde;o autorizado &agrave; p&aacute;gina.</td>
 			</tr>
 			<tr align="left">
 				<td width="100%"><%--<%= request.getRequestURL() %>&nbsp; <br>--%></td>

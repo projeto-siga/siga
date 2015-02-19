@@ -122,8 +122,9 @@ public class ExGadgetController extends ExController {
 		result.include("idTpFormaDoc", this.getIdTpFormaDoc());
 	}
 
-	public void test() throws Exception {
-		DpPessoa pes = daoPes(param("matricula"));
+	@Get("/app/testes/gadgetTest")
+	public void test(String matricula) throws Exception {
+		DpPessoa pes = daoPes(matricula);
 		if (getIdTpFormaDoc() == null || getIdTpFormaDoc() == 0)
 			setIdTpFormaDoc(1);
 		setTitular(pes);

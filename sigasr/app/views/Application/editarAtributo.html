@@ -117,13 +117,15 @@
 				<label>Item <span>*</span></label> 
 				#{selecao tipo:'item',
 					nome:'itemConfiguracaoUnitario',
-					value:itemConfiguracaoUnitario?.atual /}
+					value:itemConfiguracaoUnitario?.atual,
+					requiredValue:'required' /}
 			</div>
 		
 			<div class="gt-form-row gt-width-100">
 				<label>Ação <span>*</span></label> 
 				#{selecao tipo:'acao',
-				nome:'acaoUnitaria', value:acaoUnitaria?.atual /}
+					nome:'acaoUnitaria', value:acaoUnitaria?.atual,
+					requiredValue:'required' /}
 			</div>
 			<div class="gt-form-row">
 				<label>#{checkbox 

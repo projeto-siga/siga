@@ -95,8 +95,7 @@
 		    <li><siga:monolink href="${pageContext.request.contextPath}/app/forma/listar"
 					texto="Cadastro de Formas" />
 			</li>
-			<li><ww:url id="url" action="listar" namespace="/modelo" /> <ww:a
-					href="%{url}">Cadastro de modelos</ww:a>
+			<li><a href="/sigaex/app/modelo/listar">Cadastro de modelos</a>
 			</li>
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">

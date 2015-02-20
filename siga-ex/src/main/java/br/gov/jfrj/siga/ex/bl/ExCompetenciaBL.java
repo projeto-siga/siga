@@ -3589,7 +3589,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeReceberEletronico(DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, final ExMobil mob) throws Exception {
+			DpLotacao lotaCadastrante, final ExMobil mob) {
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
 		ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();

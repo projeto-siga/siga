@@ -3173,15 +3173,14 @@ public class ExBL extends CpBL {
 	}
 
 	public void criarVia(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExDocumento doc)
-			throws Exception {
+			final DpLotacao lotaCadastrante, final ExDocumento doc) {
 		criarVia(cadastrante, lotaCadastrante, doc, null);
 		return;
 	}
 
 	public void criarVia(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
-			Integer numVia) throws Exception {
+			Integer numVia) {
 		try {
 			iniciarAlteracao();
 
@@ -4224,7 +4223,7 @@ public class ExBL extends CpBL {
 	}
 
 	public ExDocumento refazer(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		// As alterações devem ser feitas em cancelardocumento.
 		try {
@@ -4248,7 +4247,7 @@ public class ExBL extends CpBL {
 
 	// Nato: removi: HttpServletRequest request
 	public ExDocumento duplicar(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		try {
 			iniciarAlteracao();
@@ -5067,7 +5066,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void processar(final ExDocumento doc, final boolean gravar,
-			final boolean transacao, String realPath) throws Exception {
+			final boolean transacao, String realPath) {
 		try {
 			if (doc != null
 					&& (doc.isAssinado() || doc.isAssinadoDigitalmente()))
@@ -5604,9 +5603,7 @@ public class ExBL extends CpBL {
 	 */
 	public SortedSet<ExFormaDocumento> obterFormasDocumento(
 			List<ExModelo> modelos, ExTipoDocumento tipoDoc,
-			ExTipoFormaDoc tipoForma)
-
-	throws Exception {
+			ExTipoFormaDoc tipoForma) {
 		SortedSet<ExFormaDocumento> formasSet = new TreeSet<ExFormaDocumento>();
 		SortedSet<ExFormaDocumento> formasFinal = new TreeSet<ExFormaDocumento>();
 		// Por enquanto, os parâmetros tipoForma e tipoDoc não podem ser
@@ -5635,8 +5632,7 @@ public class ExBL extends CpBL {
 
 	public List<ExModelo> obterListaModelos(ExFormaDocumento forma,
 			boolean despachando, String headerValue, boolean protegido,
-			DpPessoa titular, DpLotacao lotaTitular, boolean autuando)
-			throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
 		ArrayList<ExModelo> provSet;
 		if (forma != null)

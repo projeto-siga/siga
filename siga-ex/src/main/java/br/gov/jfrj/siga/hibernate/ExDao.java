@@ -27,6 +27,7 @@ package br.gov.jfrj.siga.hibernate;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -1663,19 +1664,24 @@ public class ExDao extends CpDao {
 		return null;
 	}
 
-	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script)
-			throws Exception {
+	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script) {
 		final Query q = getSessao()
 				.createQuery(
 						"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
 								+ "order by f.descrFormaDoc, m.nmMod");
-		List<ExModelo> l = new ArrayList<ExModelo>();
+		List<ExModelo> l = new ArrayList<ExModelo>();		
 		for (ExModelo mod : (List<ExModelo>) q.list())
 			if (script != null && script.trim().length() != 0) {
+				String conteudo;
+				try {
+					conteudo = new String(mod.getConteudoBlobMod2(), "utf-8");
+				} catch (UnsupportedEncodingException e) {
+					conteudo = new String(mod.getConteudoBlobMod2());
+				}
 				if ("template/freemarker".equals(mod.getConteudoTpBlob())
 						&& mod.getConteudoBlobMod2() != null
-						&& (new String(mod.getConteudoBlobMod2(), "utf-8"))
-						.contains(script))
+						&& (conteudo
+						.contains(script)))
 					l.add(mod);
 			} else
 				l.add(mod);

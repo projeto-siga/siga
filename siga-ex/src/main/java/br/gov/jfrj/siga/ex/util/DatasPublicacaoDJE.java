@@ -62,12 +62,12 @@ public class DatasPublicacaoDJE {
 		
 		Date proximaDataDisponivel = consultarProximaDataDisponivel();
 		
-		if(getDataDisponibilizacao().before(proximaDataDisponivel)) {
+		if(proximaDataDisponivel != null && getDataDisponibilizacao().before(proximaDataDisponivel)) {
 			SimpleDateFormat formatBra = new SimpleDateFormat("dd/MM/yyyy");  
 			return "Data de disponibilização inferior a próxima data disponível. Próxima data para disponibilização é " + formatBra.format(proximaDataDisponivel) + ".";
 		}
 		
-		if(getDataDisponibilizacao().after(proximaDataDisponivel)) {
+		if(proximaDataDisponivel == null || getDataDisponibilizacao().after(proximaDataDisponivel)) {
 		
 			if (isDisponibilizacaoDMais30())
 				return "Data de disponibilização está além do limite: mais de 31 dias a partir de hoje";
@@ -106,7 +106,7 @@ public class DatasPublicacaoDJE {
 			corpo.append("</soapenv:Body>");
 			corpo.append("</soapenv:Envelope>");
 			
-			String retorno = FuncoesEL.webservice("http://vmwebaih2012.trf.net/WebServiceDataDisponivel/wsDataDisponivel.asmx", corpo.toString(), 6000);
+			String retorno = FuncoesEL.webservice(SigaExProperties.getServidorDJEDataDisponivel(), corpo.toString(), 6000);
 			String tagDataInicial = "<ProximaDataDisponivelResult>";
 			String tagDataFinal = "</ProximaDataDisponivelResult>";
 			String proximaDataDisponibilizacaoString = null; 

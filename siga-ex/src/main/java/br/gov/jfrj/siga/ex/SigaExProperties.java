@@ -87,6 +87,10 @@ public class SigaExProperties extends ModeloPropriedade {
 		return getStringComAmbiente("dje.servidor");
 	}
 	
+	public static String getServidorDJEDataDisponivel(){
+		return getStringComAmbiente("dje.servidor.dataDisponivel");
+	}
+	
 	public static String getConversorHTMLFactory(){
 		return getString("conversor.html.factory");
 	}

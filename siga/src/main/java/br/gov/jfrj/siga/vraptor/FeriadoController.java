@@ -131,7 +131,7 @@ public class FeriadoController extends SigaController {
 				dao().commitTransacao();				
 			} catch (final Exception e) {
 				dao().rollbackTransacao();
-				throw new AplicacaoException("Erro na exclusão de ocorrencia de feriado");
+				throw new AplicacaoException("Erro na exclusão de ocorrencia de feriado", 0, e);
 			}
 		} else {
 			throw new AplicacaoException("ID da ocorrencia não informada");

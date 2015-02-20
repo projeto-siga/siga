@@ -43,7 +43,8 @@ public final class ExMovimentacaoBuilder {
 	private DpPessoaSelecao titularSel;
 	private DpPessoaSelecao subscritorSel;
 	private Long idPapel;
-	private int tipoResponsavel;
+	private String contentType;
+	private String fileName;
 
 	private ExMovimentacaoBuilder() {
 		substituicao = false;
@@ -90,7 +91,7 @@ public final class ExMovimentacaoBuilder {
 			mov.setCadastrante(cadastrante);
 		}
 		mov.setLotaCadastrante(lotaTitular);
-		if (mov.getLotaCadastrante() == null) {
+		if (mov.getLotaCadastrante() == null && mov.getCadastrante() != null) {
 			mov.setLotaCadastrante(mov.getCadastrante().getLotacao());
 		}
 
@@ -168,14 +169,17 @@ public final class ExMovimentacaoBuilder {
 			mov.setDtDispPublicacao(df.parse(dtDispon));
 		} catch (final Exception e) {
 		}
+		
+		mov.setConteudoTpMov(contentType);
+		mov.setNmArqMov(fileName);
 
 		if ((mov.getTitular() != null && mov.getSubscritor() == null) || (mov.getLotaTitular() != null && mov.getLotaSubscritor() == null))
 			throw new AplicacaoException("Não foi selecionado o substituto para o titular");
-		
+
 		return mov;
 	}
 
-	private String getConteudo() {
+	public String getConteudo() {
 		if (conteudo == null)
 			return null;
 		if (conteudo.trim().length() == 0)
@@ -269,6 +273,14 @@ public final class ExMovimentacaoBuilder {
 
 	public Long getIdPapel() {
 		return idPapel;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public String getFileName() {
+		return fileName;
 	}
 
 	public ExMovimentacaoBuilder setLotaTitular(DpLotacao lotaTitular) {
@@ -385,27 +397,15 @@ public final class ExMovimentacaoBuilder {
 		this.idPapel = idPapel;
 		return this;
 	}
-	
-	public ExMovimentacaoBuilder processarTipoResponsavel() {
-		if (mob == null) {
-			throw new IllegalArgumentException("Mob nao preenchido!");
-		}
-		ExMovimentacao ultMov = mob.getUltimaMovimentacao();
 
-		if (ultMov.getLotaDestinoFinal() != null) {
-			this.setTipoResponsavel(1);
-		} else if (ultMov.getDestinoFinal() != null) {
-			this.setTipoResponsavel(2);
-		}
+	public ExMovimentacaoBuilder setContentType(String contentType) {
+		this.contentType = contentType;
 		return this;
 	}
 
-	public int getTipoResponsavel() {
-		return tipoResponsavel;
-	}
-
-	public ExMovimentacaoBuilder setTipoResponsavel(int tipoResponsavel) {
-		this.tipoResponsavel = tipoResponsavel;
+	public ExMovimentacaoBuilder setFileName(String fileName) {
+		this.fileName = fileName;
 		return this;
 	}
+
 }

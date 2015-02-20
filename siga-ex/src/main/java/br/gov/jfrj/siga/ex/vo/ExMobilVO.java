@@ -83,12 +83,12 @@ public class ExMobilVO extends ExVO {
 	}
 
 	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
-			boolean completo) throws Exception {
+			boolean completo) {
 		this(mob, titular, lotaTitular, completo, null, false);
 	}
 
 	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
-			boolean completo, Long tpMov, boolean movAssinada) throws Exception {
+			boolean completo, Long tpMov, boolean movAssinada) {
 		this.mob = mob;
 		this.sigla = mob.getSigla();
 
@@ -302,8 +302,7 @@ public class ExMobilVO extends ExVO {
 	 * @param lotaTitular
 	 * @throws Exception
 	 */
-	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular)
-			throws Exception {
+	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		if (!mob.isGeral()) {
 			addAcao("application_side_tree",
 					"Visualizar Dossiê",

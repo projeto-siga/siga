@@ -7,7 +7,7 @@
 
 <li><a id="menu_siga" class="" href="#">SIGA</a>
 	<ul>
-		<li><a href="/siga/principal.action">Página Inicial</a>
+		<li><a href="/siga/app/principal">Página Inicial</a>
 		</li>
 		<c:if test="${empty pagina_de_erro}">
 			<li><a href="#">Módulos</a>

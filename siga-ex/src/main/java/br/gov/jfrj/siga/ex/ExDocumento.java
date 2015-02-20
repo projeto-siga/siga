@@ -434,7 +434,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * 
 	 * @throws Exception
 	 */
-	public String getConteudoBlobHtmlStringComReferencias() throws Exception {
+	public String getConteudoBlobHtmlStringComReferencias() {
 		String sHtml = getConteudoBlobHtmlString();
 		ProcessadorReferencias pr = new ProcessadorReferencias();
 		pr.ignorar(getSigla());

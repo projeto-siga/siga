@@ -95,8 +95,7 @@ public class ExController extends SigaController {
 	}
 
 	public List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc,
-			ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif)
-			throws Exception {
+			ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif) {
 		List<ExNivelAcesso> listaNiveis = ExDao.getInstance()
 				.listarOrdemNivel();
 		ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();

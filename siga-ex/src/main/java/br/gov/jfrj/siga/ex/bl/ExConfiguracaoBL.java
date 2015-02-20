@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.logging.Logger;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
@@ -274,7 +273,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExTipoMovimentacao exTpMov, DpCargo cargo,
 			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso,
-			long idTpConf) throws Exception {
+			long idTpConf) {
 
 		
 		try {
@@ -327,7 +326,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			long idTpConf) throws Exception {
+			long idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, dpLotacao, dpPessoa, null,
 				idTpConf);
@@ -345,7 +344,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			long idTpMov, long idTpConf) throws Exception {
+			long idTpMov, long idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, null, null, null,
@@ -378,8 +377,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				null, null, null, null, null, null, null, null, idTpConf);
 	}
 
-	public boolean podePorConfiguracao(ExModelo mod, long idTpMov, long idTpConf)
-			throws Exception {
+	public boolean podePorConfiguracao(ExModelo mod, long idTpMov, long idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
@@ -433,7 +431,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExFormaDocumento forma, long idTpConf) throws Exception {
+			ExFormaDocumento forma, long idTpConf) {
 		return podePorConfiguracao(null, null, null, null, forma, null, null,
 				null, null, null, null, null, dpLotacao, dpPessoa, null,
 				idTpConf);
@@ -451,7 +449,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExModelo mod, long idTpConf) throws Exception {
+			ExModelo mod, long idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
 				null, null, null, null, null, dpLotacao, dpPessoa, null,
 				idTpConf);
@@ -482,7 +480,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExModelo mod, long idTpMov, long idTpConf) throws Exception {
+			ExModelo mod, long idTpMov, long idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, null, mod, null,

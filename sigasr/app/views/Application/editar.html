@@ -54,7 +54,7 @@
 	};
 	
 	function carregarLocalRamalEMeioContato() {
-		jQuery.blockUI(objBlock);
+		//jQuery.blockUI(objBlock);
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
@@ -80,7 +80,7 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 			   eval(scripts[i].text); 
-		jQuery.unblockUI();
+		//jQuery.unblockUI();
 	}
 	
 	function carregarItem(){

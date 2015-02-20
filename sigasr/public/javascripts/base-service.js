@@ -95,7 +95,7 @@ function DesativarReativar(service) {
 	}
 	
 	function innerHTMLAtivar(td, id, service) {
-		var a = $('<a class="once gt-btn-ativar" title="Reativar"/>'),
+		var a = $('<a class="once gt-btn-ativar item-desativado" title="Reativar"/>'),
    		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
    		
    		a.bind('click', function(event) {
@@ -198,7 +198,11 @@ BaseService.prototype.desativar = function(event, id) {
 	     success: function(response) {
 			if(service.opts.mostrarDesativados == "true") {
 				row[service.opts.colunas] = service.gerarColunaDesativar(id);
-				service.opts.dataTable.api().row(tr).data(row);
+//				row.data('json', response);
+//				service.opts.dataTable.api().row(tr).data('json', response);
+//				service.opts.dataTable.api().row(tr).data(row);
+				service.opts.dataTable.api().row().data('json', response);
+				service.opts.dataTable.api().row(tr).draw();
 			}
 			else {
 				service.opts.dataTable.api().row(tr).remove().draw();
@@ -241,7 +245,7 @@ BaseService.prototype.reativar = function(event, id) {
  * Gerar a Coluna Ativar
  */
 BaseService.prototype.gerarColunaAtivar = function(id) {
-	var column = '<a class="once gt-btn-ativar" onclick="' + this.opts.objectName + 'Service.desativar(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+	var column = '<a class="once gt-btn-ativar item-desativado" onclick="' + this.opts.objectName + 'Service.desativar(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
 		return column;
 }
 /**

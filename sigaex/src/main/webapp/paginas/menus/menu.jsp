@@ -29,38 +29,36 @@
 				texto="Anotar em lote" />
 		</li>
 		<c:catch>
-			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-				<li><ww:url id="url" action="assinar_lote"
-						namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-						texto="Assinar em lote" />
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+				<li>
+					<siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/assinar_lote" texto="Assinar em lote" />
 				</li>
 			</c:if>
 		</c:catch>
 		<c:catch>
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-				<li> <siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/assinar_despacho_lote"
-						texto="Assinar Despacho em lote" />
+				<li> 
+					<siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/assinar_despacho_lote" texto="Assinar Despacho em lote" />
 				</li>
 			</c:if>
 		</c:catch>
-		<li> <siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_corrente_lote"
-				texto="Arquivar em lote" />
+		<li> 
+			<siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_corrente_lote" texto="Arquivar em lote" />
 		</li>
 		<c:catch>
 			<c:if
 				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
-				<li> <siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_intermediario_lote"
-					texto="Arquivar Intermediário em lote" />
+				<li> 
+					<siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_intermediario_lote" texto="Arquivar Intermediário em lote" />
 				</li>
 			</c:if>
 		</c:catch>
 		<c:catch>
 			<c:if
 				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
-				<li> <siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_permanente_lote"
-					texto="Arquivar Permanente em lote" />
+				<li> 
+					<siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_permanente_lote" texto="Arquivar Permanente em lote" />
 				</li>
 			</c:if>
 		</c:catch>

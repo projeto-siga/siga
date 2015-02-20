@@ -146,9 +146,15 @@ public class PrincipalAction extends SigaActionSupport {
 					URLSelecionar = urlBase + "/sigasr" + testes
 							+ "/solicitacao/selecionar?sigla=" + getSigla()
 							+ incluirMatricula;
-			} else if (copiaSigla.startsWith("MTP")
-					|| copiaSigla.startsWith("RTP")
-					|| copiaSigla.startsWith("STP")) {
+			}
+ 			//alterado formato da sigla de requisições, missões e serviços
+			//else if (copiaSigla.startsWith("MTP")
+			//		|| copiaSigla.startsWith("RTP")
+			//		|| copiaSigla.startsWith("STP")) {
+			else if (copiaSigla.startsWith("TP") && 
+					(copiaSigla.endsWith("M") ||
+					 copiaSigla.endsWith("S") ||
+					 copiaSigla.endsWith("R"))) {
 				if (Cp.getInstance()
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;TP")) {
@@ -197,9 +203,14 @@ public class PrincipalAction extends SigaActionSupport {
 				if (copiaSigla.startsWith("SR"))
 //					if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
 						uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
-				else if (copiaSigla.startsWith("MTP")
-						|| copiaSigla.startsWith("STP")
-						|| copiaSigla.startsWith("RTP"))
+				//alterado formato da sigla de requisições, missões e serviços
+				//else if (copiaSigla.startsWith("MTP")
+				//		|| copiaSigla.startsWith("STP")
+				//		|| copiaSigla.startsWith("RTP"))
+				else if (copiaSigla.startsWith("TP") && 
+						(copiaSigla.endsWith("M") ||
+						 copiaSigla.endsWith("S") ||
+						 copiaSigla.endsWith("R")))
 					uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
 				else
 					uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="

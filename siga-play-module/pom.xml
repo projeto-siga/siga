@@ -135,7 +135,13 @@
 			<artifactId>picketbox</artifactId>
 			<version>4.0.21.Beta3</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.picketlink</groupId>
+			<artifactId>picketlink-api</artifactId>
+			<scope>compile</scope>
+			<version>2.6.0.Final</version>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

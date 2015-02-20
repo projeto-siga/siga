@@ -900,20 +900,20 @@ public class Application extends SigaApplication {
 		return acordo.toJson();
 	}
 
-	public static Long desativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
+	public static String desativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcordo acordo = SrAcordo.findById(id);
 		acordo.finalizar();
 		
-		return acordo.getId();
+		return acordo.toJson();
 	}
 	
-	public static Long reativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
+	public static String reativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcordo acordo = SrAcordo.findById(id);
 		acordo.salvar();
 		
-		return acordo.getId();
+		return acordo.toJson();
 	}
 	
 	public static Long gravarAbrangencia(SrConfiguracao associacao) throws Exception {

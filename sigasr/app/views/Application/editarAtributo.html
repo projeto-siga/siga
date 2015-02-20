@@ -86,7 +86,7 @@
 </div>
 
 #{modal nome:'associacao', titulo:'Cadastrar associação'}
-	<div class="gt-form gt-content-box">
+	<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 		<form id="associacaoForm">
 			<input id="idConfiguracao" type="hidden" name="idConfiguracao">
 			
@@ -113,20 +113,9 @@
 				#{option 0}Nenhum#{/option} #{/select}
 			</div>
 		
-			<div class="gt-form-row gt-width-100">
-				<label>Item <span>*</span></label> 
-				#{selecao tipo:'item',
-					nome:'itemConfiguracaoUnitario',
-					value:itemConfiguracaoUnitario?.atual,
-					requiredValue:'required' /}
-			</div>
-		
-			<div class="gt-form-row gt-width-100">
-				<label>Ação <span>*</span></label> 
-				#{selecao tipo:'acao',
-					nome:'acaoUnitaria', value:acaoUnitaria?.atual,
-					requiredValue:'required' /}
-			</div>
+			#{configuracaoItemAcao itemConfiguracaoSet:itemConfiguracaoSet,
+							 acoesSet:acoesSet}#{/configuracaoItemAcao}
+							 
 			<div class="gt-form-row">
 				<label>#{checkbox 
 					name:'atributoObrigatorio',
@@ -209,6 +198,7 @@
         if ((atributoId == undefined || atributoId.val() == "")  && atributoService.aplicar() == false) 
             return;
 
+        atualizaDadosTabelaItemAcao();
 		BaseService.prototype.cadastrar.call(this, title);	
 	}
 	
@@ -238,6 +228,7 @@
 		node.attr('data-json-id', assoc.idConfiguracao);
 		node.on('click', function() {
 			associacaoService.editar(assoc, 'Alterar Associação');
+			atualizaDadosTabelaItemAcao(assoc);
 			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
 		});
 		associacaoTable.table.mostrarDetalhes(detalhesListaAssociacao, associacaoTable.dataTable);
@@ -245,6 +236,14 @@
 	
 	associacaoService.atributoPorId = function (idAtributo) {
 		return $("#atributo_table tr[data-json-id=" + idAtributo + "]").data('json');
+	}
+
+	associacaoService.getListasAsString = function () {
+		return getItemAcaoAsString(associacaoService.opts.objectName);
+    }
+
+	associacaoService.serializar = function(obj) {
+		return BaseService.prototype.serializar.call(this, obj)  + "&" + associacaoService.getListasAsString();
 	}
 	
 	associacaoService.getRow = function(assoc) {

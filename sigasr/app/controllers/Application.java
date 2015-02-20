@@ -890,7 +890,7 @@ public class Application extends SigaApplication {
 		if (id != null)
 			acordo = SrAcordo.findById(id);
 		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
-		return SrConfiguracao.convertToAssociacaoJSon(abrangencias);
+		return SrConfiguracao.convertToJSon(abrangencias);
 	}
 
 	public static String gravarAcordo(SrAcordo acordo) throws Exception {
@@ -916,10 +916,11 @@ public class Application extends SigaApplication {
 		return acordo.getId();
 	}
 	
-	public static Long gravarAbrangencia(SrConfiguracao associacao) throws Exception {
+	public static String gravarAbrangencia(SrConfiguracao associacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		associacao.salvarComoAbrangenciaAcordo();
-		return associacao.getId();		
+		associacao.refresh();
+		return associacao.getSrConfiguracaoJson();		
 	}
 	
 	public static void desativarAbrangenciaEdicao(Long idAcordo, Long idAssociacao) throws Exception {
@@ -1010,6 +1011,7 @@ public class Application extends SigaApplication {
 	public static String gravarAssociacao(SrConfiguracao associacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		associacao.salvarComoAssociacaoAtributo();
+		associacao.refresh();
 		return associacao.toVO().toJson();
 	}
 	

@@ -7,7 +7,6 @@ import models.SrAcao;
 import models.SrConfiguracao;
 import models.SrItemConfiguracao;
 import models.SrTipoPermissaoLista;
-import models.SrAcao.SrAcaoVO;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

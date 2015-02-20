@@ -327,34 +327,44 @@
 	}
 
 	function atualizaDadosTabelaItemAcao(jSon) {
-		if (jSon.listaItemConfiguracaoVO) {
-			// cria a lista de Itens de Configuração, e adiciona na tela
-			for (i = 0; i < jSon.listaItemConfiguracaoVO.length; i++) {
-				var item = jSon.listaItemConfiguracaoVO[i],
-					rowItem = [item.id, 
-					           item.siglaItemConfiguracao,
-					           item.tituloItemConfiguracao,
-					           item.descrItemConfiguracao, 
-					           item.descricaoSimilaridade,
-					           "<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-				
-				// Adiciona na tabela de Itens de Configuração
-				itemConfiguracaoTable.api().row.add(rowItem).draw();
+		limparDadosTabelaItemAcao();
+
+		if (jSon) {
+			if (jSon.listaItemConfiguracaoVO) {
+				// cria a lista de Itens de Configuração, e adiciona na tela
+				for (i = 0; i < jSon.listaItemConfiguracaoVO.length; i++) {
+					var item = jSon.listaItemConfiguracaoVO[i],
+						rowItem = [item.id, 
+						           item.siglaItemConfiguracao,
+						           item.tituloItemConfiguracao,
+						           item.descrItemConfiguracao, 
+						           item.descricaoSimilaridade,
+						           "<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+					
+					// Adiciona na tabela de Itens de Configuração
+					itemConfiguracaoTable.api().row.add(rowItem).draw();
+				}
+			}
+			
+			if (jSon.listaAcaoVO) {
+				// cria a lista de ações, e adiciona na tela
+				for (i = 0; i < jSon.listaAcaoVO.length; i++) {
+					var acao = jSon.listaAcaoVO[i],
+						rowAcao = [acao.id,
+								   acao.sigla,
+						           acao.titulo,
+						           "<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+					
+					// Adiciona na tabela de Ações
+					acaoTable.api().row.add(rowAcao).draw();
+				}
 			}
 		}
-		
-		if (jSon.listaAcaoVO) {
-			// cria a lista de ações, e adiciona na tela
-			for (i = 0; i < jSon.listaAcaoVO.length; i++) {
-				var acao = jSon.listaAcaoVO[i],
-					rowAcao = [acao.id,
-							   acao.sigla,
-					           acao.titulo,
-					           "<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-				
-				// Adiciona na tabela de Ações
-				acaoTable.api().row.add(rowAcao).draw();
-			}
-		}
+	}
+
+	// Limpa os dados das tabelas.
+	function limparDadosTabelaItemAcao() {
+		itemConfiguracaoTable.api().clear().draw();
+		acaoTable.api().clear().draw();
 	}
 </script>

@@ -332,12 +332,7 @@ altura:'200', largura:'450'}
 	}
 
 	function atualizarDesignacaoEdicao(designacaoJson) {
-		// limpar a lista
-		limparDadosDesignacaoModal();
-		
-		if (designacaoJson) {
-			atualizaDadosTabelaItemAcao(designacaoJson);
-		}
+		atualizaDadosTabelaItemAcao(designacaoJson);
 
 		#{if _modoExibicao == 'equipe'}
 		// Caso seja cadastro a partir da tela de equipe, atualiza os dados da Lotação atendente
@@ -356,44 +351,12 @@ altura:'200', largura:'450'}
 		#{/if}
 	}
 	
-	// Limpa os dados da tela.
-	function limparDadosDesignacaoModal() {
-		itemConfiguracaoTable.api().clear().draw();
-		acaoTable.api().clear().draw();
-	}
-	
 	function designacaoModalFechar() {
 		isEditing = false;
 		$("#designacao_dialog").dialog("close");
-		limparDadosDesignacaoModal();
 	};
 	
 	function fecharModalErroAoSalvar() {
 		$("#erroAoSalvar_dialog").dialog("close");
 	}
 </script>
-
-<style>
-	.bt-expandir {
-		background: none !important;
-    	cursor: pointer;
-	}
-			
-	.bt-expandir.expandido {
-    	background: none !important;
-	}
-	
-	.hide-sort-arrow.sorting_asc, .hide-sort-arrow.sorting_desc {
-		background: none !important;
-	}
-	
- 	td.details-control {
- 		background: none !important;
- 		cursor: pointer;
- 	}
- 	
- 	tr.shown td.details-control {
- 		background: none !important;
- 	}
- 	
-</style>

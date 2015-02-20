@@ -115,7 +115,7 @@ public class PrincipalAction extends SigaActionSupport {
 				incluirMatricula = "&matricula=" + matricula;
 			}
 
-			// TODO não precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
+			// TODO nï¿½o precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
 			
 			//String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ getRequest().getServerPort();
 			String urlBase = getRequest().getScheme() + "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
@@ -137,9 +137,9 @@ public class PrincipalAction extends SigaActionSupport {
 			if (copiaSigla.startsWith("-"))
 				copiaSigla = copiaSigla.substring(1);
 
-			//alterada a condição que verifica se é uma solicitação do siga-sr
-			//dessa forma a regex verifica se a sigla começa com SR ou sr e termina com números
-			//necessário para não dar conflito caso exista uma lotação que inicie com SR
+			//alterada a condiï¿½ï¿½o que verifica se ï¿½ uma solicitaï¿½ï¿½o do siga-sr
+			//dessa forma a regex verifica se a sigla comeï¿½a com SR ou sr e termina com nï¿½meros
+			//necessï¿½rio para nï¿½o dar conflito caso exista uma lotaï¿½ï¿½o que inicie com SR
 			if (copiaSigla.startsWith("SR")) {
 //			if (copiaSigla.matches("^[SR|sr].*[0-9]+$")) {
 				if (Cp.getInstance()
@@ -169,16 +169,16 @@ public class PrincipalAction extends SigaActionSupport {
 			String[] response = http.get(URLSelecionar, getRequest(), null).split(";");
 
 			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
-				//verificar se após a retirada dos prefixos referente 
-				//ao orgão (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e não achar resultado com as opções anteriores 
-				//a string copiaSigla somente possui números
+				//verificar se apï¿½s a retirada dos prefixos referente 
+				//ao orgï¿½o (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e nï¿½o achar resultado com as opï¿½ï¿½es anteriores 
+				//a string copiaSigla somente possui nï¿½meros
 				if (copiaSigla.matches("(^[0-9]+$)")) {
 					URLSelecionar = urlBase + "/siga"
 							+ (testes.length() > 0 ? testes : "/pessoa")
 							+ "/selecionar.action?sigla=" + getSigla()
 							+ incluirMatricula;
 				}
-				//encontrar lotações
+				//encontrar lotaï¿½ï¿½es
 				else {
 					URLSelecionar = urlBase + "/siga"
 						+ (testes.length() > 0 ? testes : "/lotacao")

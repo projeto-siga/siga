@@ -374,11 +374,11 @@
 								<td valign="top">
 									<select id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracao" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">
 									  <option value="-1">[Remover]</option>									              
-							          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
-							           <option value="${item.codigo}" >${value == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
-							            ${item.descricao}
-							           </option>  
-							          </c:forEach>
+								          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
+									           <option value="${item.codigo}" ${item.codigo == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
+									            	${item.descricao}
+									           </option>  
+								          </c:forEach>
 							         </select>
 							         
 									<input type="hidden" name="conteudoConfiguracao"

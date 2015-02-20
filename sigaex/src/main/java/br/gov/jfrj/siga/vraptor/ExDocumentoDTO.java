@@ -591,7 +591,7 @@ public class ExDocumentoDTO {
 		return substituicao;
 	}
 	
-	public ExFormaDocumento getFormaDocPorTipo() throws Exception {
+	public ExFormaDocumento getFormaDocPorTipo() {
 		return getFormasDoc().get(0);
 	}
 

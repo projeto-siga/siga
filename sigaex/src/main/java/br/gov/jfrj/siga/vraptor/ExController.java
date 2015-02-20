@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.ioc.spring.VRaptorRequestHolder;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -137,43 +136,35 @@ public class ExController extends SigaController {
 		return niveisFinal;
 	}
 	
-	public ExNivelAcesso getNivelAcessoDefault(ExTipoDocumento exTpDoc,
-			ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif)
-			throws Exception {
-		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
-		
-		ExConfiguracao config = new ExConfiguracao();
-		CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
-		CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
+	public ExNivelAcesso getNivelAcessoDefault(final ExTipoDocumento exTpDoc, final ExFormaDocumento forma, final ExModelo exMod, final ExClassificacao classif) {
+		final Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+
+		final ExConfiguracao config = new ExConfiguracao();
+		final CpTipoConfiguracao exTpConfig = new CpTipoConfiguracao();
+		final CpSituacaoConfiguracao exStConfig = new CpSituacaoConfiguracao();
 		config.setDpPessoa(getTitular());
 		config.setLotacao(getLotaTitular());
 		config.setExTipoDocumento(exTpDoc);
 		config.setExFormaDocumento(forma);
 		config.setExModelo(exMod);
 		config.setExClassificacao(classif);
-		exTpConfig
-				.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
+		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVELACESSO);
 		config.setCpTipoConfiguracao(exTpConfig);
-		exStConfig
-			.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
+		exStConfig.setIdSitConfiguracao(CpSituacaoConfiguracao.SITUACAO_DEFAULT);
 		config.setCpSituacaoConfiguracao(exStConfig);
 		ExConfiguracao exConfig;
 
-/*		exConfig = ((ExConfiguracao) Ex
-				.getInstance()
-				.getConf()
-				.buscaConfiguracao(config,
-						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));*/
-		
 		try {
-			exConfig = criarExConfiguracaoPorCpConfiguracao(Ex.getInstance().getConf().buscaConfiguracao(config, new int[] {ExConfiguracaoBL.NIVEL_ACESSO}, dt));
+			exConfig = criarExConfiguracaoPorCpConfiguracao(Ex.getInstance().getConf()
+					.buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt));
 		} catch (Exception e) {
 			exConfig = null;
 		}
-		
-		if(exConfig != null)
+
+		if (exConfig != null) {
 			return exConfig.getExNivelAcesso();
-		
+		}
+
 		return null;
 	}
 	

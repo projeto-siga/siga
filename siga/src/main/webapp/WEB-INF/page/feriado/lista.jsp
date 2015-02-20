@@ -71,7 +71,9 @@
 									<a href="${url}">${feriado.dscFeriado}</a>
 								</td>
 								<td align="center" rowspan="${feriado.quantidadeOcorrencias+1}">
-									<siga:link title="Incluir" url="${urlI}" />
+									<siga:links inline="${true}" separator="${false}">
+										<siga:link title="Incluir" url="${urlI}" />
+									</siga:links>
 								</td>
 								<c:choose>									
 									<c:when test="${(not empty feriado.cpOcorrenciaFeriadoSet)}">
@@ -84,7 +86,9 @@
 													<c:param name="idOcorrencia">${ocorrencia.idOcorrencia}</c:param>
 													<c:param name="id">${feriado.id}</c:param>
 												</c:url>
-												<siga:link title="Alterar" url="${url}" />					
+												<siga:links inline="${true}" separator="${false}">
+													<siga:link title="Alterar" url="${url}" />
+												</siga:links>					
 											</td>
 											<td align="center" width="10%">									
 		 			 							<a href="javascript:if (confirm('Deseja excluir a ocorrência do feriado?')) location.href='/siga/app/feriado/excluir-ocorrencia?idOcorrencia=${ocorrencia.idOcorrencia}';">

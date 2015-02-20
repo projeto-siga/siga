@@ -31,19 +31,33 @@ self.retorna_${_tipo}${nomeclean} = function(id, sigla, descricao) {
 
 self.newwindow_${nomeclean} = '';
 self.popitup_${nomeclean} = function(sigla) {
-	sigla = encodeURIComponent(sigla);
 	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w|\.|-]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
-	var url = base+'${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
+	var url = base+'${_tipo}/buscar?sigla=' + encodeURIComponent(sigla) + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
 
-	if (url.indexOf("sigagc/app/lotacao/buscar") != -1){
-		url = "/siga/lotacao/buscar.action?propriedade=lotacaofiltrolotaResponsavel&sigla="+sigla;
-	}else if(url.indexOf("sigagc/app/pessoa/buscar") != -1){
-		url = "/siga/pessoa/buscar.action?propriedade=pessoafiltroresponsavel&sigla="+sigla;
-	}else if (url.indexOf("/sigasr/perfil/buscar") != -1){
-		var nome = "${nomeclean}";
-		url = "/siga/gi/perfil/buscar.action?propriedade=perfil"+nome+"&sigla="+sigla;
+	// Se a rota estiver na variavel abaixo a mesma nao sera direcionada pro siga
+	var modulosNaoSiga = {
+			"/sigasr/": [ "/item", "/acordo", "/acao", "/solicitacao" ],
+			"/sigagc/": [ "/app/tag" ],
+			"/sigari/": [ "/tag" ]	
+	};			
+
+	var moduloAtual = modulosNaoSiga[base];
+	var redirecionaProSiga = true;
+	for (i=0; i<moduloAtual.length; i ++){
+		if (url.indexOf(moduloAtual[i]) > -1){
+			redirecionaProSiga = false;
+			break;
+		}	
 	}
-	//var url = '@@{Application.index()}${_tipo}/buscar?sigla=' + sigla + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
+	
+	if (redirecionaProSiga){
+		url = "/siga/${_tipo}/buscar.action";
+		if (url == "/siga/perfil/buscar.action") { 
+			url = "/siga/gi/perfil/buscar.action";
+		}
+		var parametros = "?propriedade=${_tipo}${nomeclean}&sigla="+sigla+ '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
+		url += parametros;
+	}
 	
 	if (!newwindow_${nomeclean}.closed && newwindow_${nomeclean}.location) {
 		newwindow_${nomeclean}.location.href = url;
@@ -84,20 +98,40 @@ self.ajax_${nomeclean} = function() {
 	if (sigla == '') {
 		return retorna_${_tipo}${nomeclean}('', '', '');
 	}
-	sigla = encodeURIComponent(sigla);
 	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w|\.|-]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
+	var url = base+'${_tipo}/selecionar?sigla=' + encodeURIComponent(sigla) + '&nome=${nomeclean}&'+'${_params?.raw()}';
 	
-	var params = {
-		url: "/siga/${_tipo}/selecionar.action",
-		propriedade: "${_tipo}${nomeclean}",
-		sigla: sigla
+	// Se a rota estiver na variavel abaixo a mesma nao sera direcionada pro siga
+	var modulosNaoSiga = {
+			"/sigasr/": [ "/item", "/acordo", "/acao", "/solicitacao" ],
+			"/sigagc/": [ "/app/tag" ],
+			"/sigari/": [ "/tag" ]	
+	};			
+
+	var moduloAtual = modulosNaoSiga[base];
+	var redirecionaProSiga = true;
+	for (i=0; i<moduloAtual.length; i ++){
+		if (url.indexOf(moduloAtual[i]) > -1){
+			redirecionaProSiga = false;
+			break;
+		}	
 	}
 
-	if (params.url == "/siga/perfil/selecionar.action") { 
-		params.url = "/siga/gi/perfil/selecionar.action";
+	var params = {};
+	if (redirecionaProSiga){
+		url = "/siga/${_tipo}/selecionar.action";
+
+		params = {			
+			propriedade: "${_tipo}${nomeclean}",
+			sigla: sigla
+		}
+	
+		if (params.url == "/siga/perfil/selecionar.action") { 
+			params.url = "/siga/gi/perfil/selecionar.action";
+		}
 	}
 
-	Siga.ajax(params.url, params, "GET", function(response){
+	Siga.ajax(url, params, "GET", function(response){
 	    var data = response.split(';');
 	    if (data[0] == '1')
 		    return retorna_${_tipo}${nomeclean}(data[1], data[2], data[3]);

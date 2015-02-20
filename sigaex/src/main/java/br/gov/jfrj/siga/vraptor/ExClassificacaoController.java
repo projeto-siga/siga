@@ -24,7 +24,6 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -50,22 +50,40 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 
 @Resource
-public class ExClassificacaoController extends SigaSelecionavelControllerSupport<ExClassificacao, ExClassificacaoDaoFiltro> implements IUsaMascara {
+public class ExClassificacaoController extends SigaSelecionavelControllerSupport<ExClassificacao, ExClassificacaoDaoFiltro> {
+	
+	// classificacao
+	private String[] listaNiveis;
+	private String[] nivelSelecionado;
+	private String[] nomeNivel;
+	private Integer nivelAlterado;		
 
 	public ExClassificacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, ExDao.getInstance(), so, em);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();	
+		
+		int totalItens = getTotalDeNiveis();
+		listaNiveis = new String[totalItens];
+		nivelSelecionado = new String[totalItens];
+		for (int i = 0; i < listaNiveis.length; i++) {
+			listaNiveis[i] = String.valueOf(i);
+		}
+
+		nomeNivel = new String[getTotalDeNiveis()];
+		List<String> listaNomes = SigaExProperties.getExClassificacaoNomesNiveis();
+		for (int i = 0; i < nomeNivel.length; i++) {
+			nomeNivel[i] = listaNomes.get(i + 1);
+		}		
 	}
 
 	@Override
 	public ExClassificacaoDaoFiltro createDaoFiltro() {
-/*		final ExClassificacaoDaoFiltro flt = new ExClassificacaoDaoFiltro();
+		final ExClassificacaoDaoFiltro flt = new ExClassificacaoDaoFiltro();
 
 		if (nivelAlterado != null) {
 			for (int i = nivelAlterado; i < nivelSelecionado.length - 1; i++) {
-				nivelSelecionado[i + 1] = null;
-			}
+				nivelSelecionado[i + 1] = null;			}
 
 		}
 
@@ -82,9 +100,8 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			flt.setSigla(codigoSelecionado);
 		}
 
-		flt.setDescricao(nome);
-		return flt;*/
-		return null;
+		flt.setDescricao(getNome());
+		return flt;
 	}
 
 	@Get("app/expediente/classificacao/listar")
@@ -93,226 +110,209 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 		result.include("classificacaoVigente", getClassificacaoVigente());
 	}
 
-	public String aEditar(String codificacao, String acao) throws Exception {
+	@Get("app/expediente/classificacao/editar")
+	public ExClassificacao edita(ExClassificacao exClassificacao, String codificacao, String acao) throws Exception {
 		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		ExClassificacao exClass = null;
-		if (codificacao != null) {
+		if (codificacao != null && exClassificacao == null) {
 			exClass = buscarExClassificacao(codificacao);
+		}else{
+			exClass = exClassificacao;
 		}
+		
 		if (exClass == null && !acao.equals("nova_classificacao")) {
 			throw new AplicacaoException(
 					"A classificação documental não está disponível: "+ codificacao);
 		}
-		return "success";
+		
+		result.include("listaExTipoDestinacao", getListaExTipoDestinacao());
+		result.include("listaExTemporalidade", getListaExTemporalidade());
+		result.include("idTpDestinacao", -1);
+		result.include("idTemporalidadeArqCorr", -1);
+		result.include("idTemporalidadeArqInterm", -1);
+		result.include("idTpDestinacaoFinal", -1);
+		result.include("exibirAdicaoDeVia", exibirAdicaoDeVia(codificacao));
+		result.include("acao", acao);
+		result.include("mascaraEntrada", MascaraUtil.getInstance().getMascaraEntrada());
+		result.include("mascaraSaida", MascaraUtil.getInstance().getMascaraSaida());
+		result.include("mascaraJavascript", SigaExProperties.getExClassificacaoMascaraJavascript());
+		return exClass;
 	}
-
-	private ExClassificacao buscarExClassificacao(String codificacao) {
-		return ExDao.getInstance().consultarExClassificacao(codificacao);
-	}
-
-/*	public String aGravar() throws Exception {
+	@Post("app/expediente/classificacao/gravar")
+	public void gravar(ExClassificacao exClassificacao, String codificacaoAntiga, String acao) throws Exception {
 		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
-		ExClassificacao exClass;
 		dao().iniciarTransacao();
+		try{
 
-		if (getCodificacao().length() == 0
-				|| getDescrClassificacao().length() == 0) {
-			throw new AplicacaoException(
-					"Preencha o código da classificação e a descrição!");
-		}
-
-		if (getAcao().equals("nova_classificacao")) {
-			ExClassificacao exClassExistente = buscarExClassificacao(getCodificacao());
-			if (exClassExistente != null) {
-				throw new AplicacaoException(
-						"A classificação documental já existe: "
-								+ exClassExistente.getCodificacao());
+			if (exClassificacao.getCodificacao().length() == 0 || exClassificacao.getDescrClassificacao().length() == 0) {
+				throw new AplicacaoException("Preencha o código da classificação e a descrição!");
+			}
+	
+			if (acao.equals("nova_classificacao")) {
+				ExClassificacao exClassExistente = buscarExClassificacao(exClassificacao.getCodificacao());
+				if (exClassExistente != null) {
+					throw new AplicacaoException("A classificação documental já existe: "+ exClassExistente.getCodificacao());
+				} else {
+					Ex.getInstance().getBL().incluirExClassificacao(exClassificacao, getIdentidadeCadastrante());
+				}
 			} else {
-				exClass = new ExClassificacao();
-				lerForm(exClass);
-				Ex.getInstance()
-						.getBL()
-						.incluirExClassificacao(exClass,
-								getIdentidadeCadastrante());
+				ExClassificacao exClassAntiga = buscarExClassificacao(codificacaoAntiga);
+				if (exClassAntiga != null && !exClassAntiga.getCodificacao().equals(exClassificacao.getCodificacao())) {
+					ExClassificacao exClass = new ExClassificacao();
+					exClass.setCodificacao(exClassificacao.getCodificacao());
+					exClass.setDescrClassificacao(exClassificacao.getDescrClassificacao());
+					exClass.setObs(exClassificacao.getObs());
+					Ex.getInstance().getBL().moverClassificacao(exClass, exClassAntiga,getIdentidadeCadastrante());
+				} else {
+					ExClassificacao exClassNovo = Ex.getInstance().getBL().getCopia(exClassAntiga);
+					exClassNovo.setCodificacao(exClassificacao.getCodificacao());
+					exClassNovo.setDescrClassificacao(exClassificacao.getDescrClassificacao());
+					exClassNovo.setObs(exClassificacao.getObs());
+					Ex.getInstance().getBL().alterarExClassificacao(exClassNovo, exClassAntiga,dao().consultarDataEHoraDoServidor(),
+							getIdentidadeCadastrante());
+					System.out.println(exClassNovo);
+					System.out.println(exClassAntiga);
+					System.out.println(exClassificacao);
+				}
+	
 			}
-		} else {
-			ExClassificacao exClassAntiga = buscarExClassificacao(getCodificacaoAntiga());
-			if (exClassAntiga != null
-					&& !exClassAntiga.getCodificacao().equals(getCodificacao())) {
-				exClass = new ExClassificacao();
-				lerForm(exClass);
-				Ex.getInstance()
-						.getBL()
-						.moverClassificacao(exClass, exClassAntiga,
-								getIdentidadeCadastrante());
-			} else {
-				ExClassificacao exClassNovo = Ex.getInstance().getBL()
-						.getCopia(exClassAntiga);
-				lerForm(exClassNovo);
-				Ex.getInstance()
-						.getBL()
-						.alterarExClassificacao(exClassNovo, exClassAntiga,
-								dao().consultarDataEHoraDoServidor(),
-								getIdentidadeCadastrante());
-			}
-
-		}
-
-		dao().commitTransacao();
-
-		setMensagem("Classificação salva!");
-		return "success";
-	}
-
-	public String aExcluir(String codificacao) throws Exception {
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
-		ExClassificacao exClass;
-		dao().iniciarTransacao();
-		exClass = buscarExClassificacao(codificacao);
-		Ex.getInstance().getBL()
-				.excluirExClassificacao(exClass, getIdentidadeCadastrante());
-		dao().commitTransacao();
-		return "success";
-	}
-
-	public String aGravarVia() throws Exception {
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
-		verificarParamsVia();
-		dao().iniciarTransacao();
-
-		Date dt = dao().consultarDataEHoraDoServidor();
-
-		ExClassificacao exClassAntiga = buscarExClassificacao(getCodificacao());
-		if (exClassAntiga == null)
-			throw new AplicacaoException("Erro ao obter a classificação");
-		ExClassificacao exClassNovo = Ex.getInstance().getBL()
-				.getCopia(exClassAntiga);
-		dao().gravarComHistorico(exClassNovo, exClassAntiga, dt,
-				getIdentidadeCadastrante());
-
-		ExVia exVia = null;
-		setExClass(exClassNovo);
-		if (getIdVia() == null) {
-			// nova via
-
-			exVia = new ExVia();
-			lerFormVia(exVia);
-			exVia.setCodVia(String
-					.valueOf(exClassAntiga.getExViaSet().size() + 1));
-			dao().gravarComHistorico(exVia, null, null,
-					getIdentidadeCadastrante());
-			exClassNovo.getExViaSet().add(exVia);
-		} else {
-			// alterar via existente
-			exVia = dao().consultar(getIdVia(), ExVia.class, false);
-			ExVia exViaNova = new ExVia();
-			try {
-				PropertyUtils.copyProperties(exViaNova, exVia);
-				// novo id
-				exViaNova.setId(null);
-
-				lerFormVia(exViaNova);
-
-				dao().gravarComHistorico(exViaNova, exVia, dt,
-						getIdentidadeCadastrante());
-
-				exClassNovo.getExViaSet().add(exViaNova);
-				exClassAntiga.getExViaSet().remove(exVia);
-
-			} catch (Exception e) {
-				throw new AplicacaoException(
-						"Erro ao copiar as propriedades da via anterior.");
-			}
-
-		}
-		Ex.getInstance()
-				.getBL()
-				.copiarReferencias(exClassNovo, exClassAntiga, dt,
-						getIdentidadeCadastrante());
-		dao().commitTransacao();
-		return "success";
-	}
-
-	private void verificarParamsVia() throws AplicacaoException {
-		if (getIdDestino() == null || getIdDestino() <= 0) {
-			throw new AplicacaoException(
-					"A destinação da via deve ser definida!");
-		}
-	}
-
-	public String aExcluirVia() throws Exception {
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
-		dao().iniciarTransacao();
-
-		ExVia exVia = dao().consultar(getIdVia(), ExVia.class, false);
-		dao().excluirComHistorico(exVia, null, getIdentidadeCadastrante());
-
-		ExClassificacao exClassAntiga = buscarExClassificacao(getCodificacao());
-		if (exClassAntiga == null)
-			throw new AplicacaoException("Erro ao obter a classificação");
-		ExClassificacao exClassNovo = Ex.getInstance().getBL()
-				.getCopia(exClassAntiga);
-		Ex.getInstance()
-				.getBL()
-				.alterarExClassificacao(exClassNovo, exClassAntiga,
-						dao().consultarDataEHoraDoServidor(),
-						getIdentidadeCadastrante());
-		setExClass(exClassNovo);
-
-		dao().commitTransacao();
-		return "success";
-	}
-
-	private void lerForm(ExClassificacao c) {
-		c.setCodificacao(getCodificacao());
-		c.setDescrClassificacao(getDescrClassificacao());
-		c.setObs(getObs());
-	}
-
-	private void lerFormVia(ExVia exVia) {
-
-		ExTipoDestinacao destino = !getIdDestino().equals(-1L) ? dao()
-				.consultar(getIdDestino(), ExTipoDestinacao.class, false)
-				: null;
-		ExTipoDestinacao destFinal = !getIdDestinacaoFinal().equals(-1L) ? dao()
-				.consultar(getIdDestinacaoFinal(), ExTipoDestinacao.class,
-						false) : null;
-		ExTemporalidade tempCorrente = !getIdTemporalidadeArqCorr().equals(-1L) ? dao()
-				.consultar(getIdTemporalidadeArqCorr(), ExTemporalidade.class,
-						false) : null;
-		ExTemporalidade tempInterm = !getIdTemporalidadeArqInterm().equals(-1L) ? dao()
-				.consultar(getIdTemporalidadeArqInterm(),
-						ExTemporalidade.class, false) : null;
-
-		exVia.setExClassificacao(getExClass());
-		exVia.setExTipoDestinacao(destino);
-		exVia.setExDestinacaoFinal(destFinal);
-		exVia.setTemporalidadeCorrente(tempCorrente);
-		exVia.setTemporalidadeIntermediario(tempInterm);
-		exVia.setCodVia(getCodigoVia());
-		exVia.setObs(getObs());
-
+	
+			dao().commitTransacao();
+			setMensagem("Classificação salva!");
+			result.redirectTo("editar?codificacao="+exClassificacao.getCodificacao()+"&acao="+acao);
+		} catch (Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Não foi possível gravar classificação no banco de dados."+e.getMessage());			
+		}			
 	}
 	
-	public List<ExClassificacao> getClassificacoesDoNivel(Integer nivel) {
-		List<ExClassificacao> result = new ArrayList<ExClassificacao>();
-
-		// se primeira lista, carrega incondicionalmente
-		if (nivel == 0) {
-			return ExDao.getInstance().listarExClassificacaoPorNivel(
-					MascaraUtil.getInstance().getMscTodosDoNivel(1));
+	@Get("app/expediente/classificacao/excluir")
+	public void excluir(String codificacao) throws Exception {
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		dao().iniciarTransacao();
+		try{		
+			ExClassificacao exClass;
+			exClass = buscarExClassificacao(codificacao);
+			Ex.getInstance().getBL().excluirExClassificacao(exClass, getIdentidadeCadastrante());
+			dao().commitTransacao();
+			result.redirectTo(this).lista();
+		} catch (Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Não foi possível excluir classificação do banco de dados."+e.getMessage());			
+		}			
+	}
+	
+	
+	@Post("app/expediente/classificacao/gravarVia")
+	public void gravarVia(String acao, String codificacao, ExVia via, Long idDestino, Long idTemporalidadeArqCorr,
+			Long idTemporalidadeArqInterm, Long idDestinacaoFinal) throws Exception {
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		if (idDestino == null || idDestino <= 0) {
+			throw new AplicacaoException("A destinação da via deve ser definida!");
 		}
+		dao().iniciarTransacao();
+		try{
 
-		// se lista do nível anterior está definido, carrega lista baseando-se
-		// na anterior
-		String nivelListaAnterior = nivelSelecionado[nivel - 1];
-		if (nivelListaAnterior != null && !nivelListaAnterior.equals("-1")) {
-			return ExDao.getInstance().listarExClassificacaoPorNivel(
-					MascaraUtil.getInstance().getMscFilho(nivelListaAnterior,
-							false), nivelListaAnterior);
-		}
+			Date dt = dao().consultarDataEHoraDoServidor();
+	
+			ExClassificacao exClassAntiga = buscarExClassificacao(codificacao);
+			if (exClassAntiga == null){
+				throw new AplicacaoException("Erro ao obter a classificação");
+			}
+			ExClassificacao exClassNovo = Ex.getInstance().getBL().getCopia(exClassAntiga);
+			dao().gravarComHistorico(exClassNovo, exClassAntiga, dt,getIdentidadeCadastrante());
+	
+			ExVia exVia = null;
+			ExVia exViaGravar = null;
+			Date dtHist = null;
+			Boolean removerViaAntiga = false;
+			if (via.getId() == null) {
+				// nova via
+	
+				exVia = new ExVia();
+				exVia.setCodVia(String.valueOf(exClassAntiga.getExViaSet().size() + 1));
+				exViaGravar = exVia;
+				exVia = null;
+				dtHist = null;
+			} else {
+				// alterar via existente
+				exVia = dao().consultar(via.getId(), ExVia.class, false);
+				ExVia exViaNova = new ExVia();
+				try {
+					PropertyUtils.copyProperties(exViaNova, exVia);
+					// novo id
+					exViaNova.setId(null);
+					exViaNova.setCodVia(exVia.getCodVia());
+					exViaGravar = exViaNova;
+					dtHist = dt;
+					removerViaAntiga = true;
+	
+				} catch (Exception e) {
+					throw new AplicacaoException("Erro ao copiar as propriedades da via anterior.");
+				}
+	
+			}
+			ExTipoDestinacao destino = !idDestino.equals(-1L) ? dao()
+					.consultar(idDestino, ExTipoDestinacao.class, false): null;
+					
+			ExTipoDestinacao destFinal = !idDestinacaoFinal.equals(-1L) ? dao()
+					.consultar(idDestinacaoFinal, ExTipoDestinacao.class,false) : null;
+					
+			ExTemporalidade tempCorrente = !idTemporalidadeArqCorr.equals(-1L) ? dao()
+					.consultar(idTemporalidadeArqCorr, ExTemporalidade.class,false) : null;
+					
+			ExTemporalidade tempInterm = !idTemporalidadeArqInterm.equals(-1L) ? dao()
+					.consultar(idTemporalidadeArqInterm,ExTemporalidade.class, false) : null;
+	
+			exViaGravar.setExClassificacao(exClassNovo);
+			exViaGravar.setExTipoDestinacao(destino);
+			exViaGravar.setExDestinacaoFinal(destFinal);
+			exViaGravar.setTemporalidadeCorrente(tempCorrente);
+			exViaGravar.setTemporalidadeIntermediario(tempInterm);
+			exViaGravar.setObs(via.getObs());		
+	
+			dao().gravarComHistorico(exViaGravar, exVia, dtHist, getIdentidadeCadastrante());
+	
+			exClassNovo.getExViaSet().add(exViaGravar);		
+			
+			if (removerViaAntiga) {
+				exClassAntiga.getExViaSet().remove(exVia);
+			}
+			
+			Ex.getInstance().getBL().copiarReferencias(exClassNovo, exClassAntiga, dt,getIdentidadeCadastrante());
+			dao().commitTransacao();
+			//result.redirectTo("editar?codificacao="+codificacao+"&acao="+acao);
+			result.forwardTo(this).edita(exClassNovo, codificacao, acao);
+		} catch (Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Não foi possível gravar via no banco de dados."+e.getMessage());			
+		}				
+	}
 
-		return result;
+	@Get("app/expediente/classificacao/excluirVia")
+	public void excluirVia(Long idVia, String codificacao, String acao) throws Exception {
+		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		dao().iniciarTransacao();
+		try {
+			ExVia exVia = dao().consultar(idVia, ExVia.class, false);
+			dao().excluirComHistorico(exVia, null, getIdentidadeCadastrante());
+	
+			ExClassificacao exClassAntiga = buscarExClassificacao(codificacao);
+			if (exClassAntiga == null){
+				throw new AplicacaoException("Erro ao obter a classificação");
+			}
+			
+			ExClassificacao exClassNovo = Ex.getInstance().getBL().getCopia(exClassAntiga);
+			Ex.getInstance().getBL().alterarExClassificacao(exClassNovo, exClassAntiga, dao().consultarDataEHoraDoServidor(),
+							getIdentidadeCadastrante());
+	
+			dao().commitTransacao();
+		
+		} catch (Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Não foi possível excluir via do banco de dados."+e.getMessage());			
+		}		
+		result.redirectTo("editar?codificacao="+codificacao+"&acao="+acao);
 	}	
 
 	@Override
@@ -327,8 +327,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			if (l.size() == 1)
 				return (ExClassificacao) l.get(0);
 		return null;
-	}
-*/
+	}	
 
 	@Override
 	public Selecionavel selecionarVerificar(Selecionavel sel)
@@ -337,28 +336,36 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 				: sel;
 	}
 
-	public List<ExClassificacao> getClassificacaoVigente() {
+	private List<ExClassificacao> getClassificacaoVigente() {
 		return ExDao.getInstance().consultarExClassificacaoVigente();
 	}
 
-	public List<ExTipoDestinacao> getListaExTipoDestinacao() {
+	private List<ExTipoDestinacao> getListaExTipoDestinacao() {
 		return ExDao.getInstance().listarExTiposDestinacao();
 	}
 
-	public List<ExTemporalidade> getListaExTemporalidade() {
+	private List<ExTemporalidade> getListaExTemporalidade() {
 		return ExDao.getInstance().listarAtivos(ExTemporalidade.class, "descTemporalidade");
 	}
+	
+	private ExClassificacao buscarExClassificacao(String codificacao) {
+		return ExDao.getInstance().consultarExClassificacao(codificacao);
+	}	
+	
+	private Integer getTotalDeNiveis() {
+		return MascaraUtil.getInstance().getTotalDeNiveisDaMascara();
+	}	
+	
+	private boolean exibirAdicaoDeVia(String codificacao) {
+		Integer i = SigaExProperties.getExClassificacaoNivelMinimoDeEnquadramento();
+		if (codificacao != null) {
+			if (i != null)
+				return MascaraUtil.getInstance().calcularNivel(codificacao) >= i;
+			else
+				return MascaraUtil.getInstance().isUltimoNivel(codificacao);
+		}
 
-	public String getMascaraEntrada() {
-		return MascaraUtil.getInstance().getMascaraEntrada();
-	}
-
-	public String getMascaraSaida() {
-		return MascaraUtil.getInstance().getMascaraSaida();
-	}
-
-	public String getMascaraJavascript() {
-		return SigaExProperties.getExClassificacaoMascaraJavascript();
-	}
+		return false;
+	}	
 
 }

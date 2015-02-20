@@ -25,7 +25,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,6 +41,7 @@ import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.picketlink.common.util.StringUtil;
 
 /**
  * 
@@ -53,7 +53,6 @@ import org.jsoup.nodes.Element;
  */
 public class SigaHTTP {
 
-	private static final Logger log = Logger.getLogger(SigaHTTP.class.getName());
 	private Header[] headers;
 	private final String COOKIE = "cookie";
 	private final String SAMLRequest = "SAMLRequest";
@@ -73,7 +72,7 @@ public class SigaHTTP {
 	 */
 	public String get(String URL, HttpServletRequest request, String cookieValue) {
 		this.retryCount = 0;
-		
+
 		if (URL.startsWith("/"))
 			URL = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + URL;
 
@@ -81,23 +80,22 @@ public class SigaHTTP {
 	}
 
 	private String handleAuthentication(String URL, HttpServletRequest request, String cookieValue) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("---- MODULO que deu erro no carregamento ------ \n"); // Prepara informacoes para printar em caso de erro
-		
 		String html = "";
 		Executor exec = Executor.newInstance(HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build());
 		String currentCookie = JSESSIONID_PREFIX+doubleQuotes+getCookie(request, cookieValue)+doubleQuotes;
-		String idpCookie = JSESSIONID_PREFIX+doubleQuotes+getIdp(request)+doubleQuotes;
+		String cValue = getIdp(request);
+
+		if (StringUtil.isNullOrEmpty(cValue) && StringUtil.isNullOrEmpty(cookieValue)){
+			return "";
+		}
+
+		String idpCookie = JSESSIONID_PREFIX+doubleQuotes+cValue+doubleQuotes;
 
 		try{
 			// Efetua o request para o Service Provider (modulo)
 			// Atribui o html retornado e pega o header do Response
 			// Se a aplicaçao ja efetuou a autenticação entre o modulo da URL o conteudo sera trago nesse primeiro GET
 			// Caso contrario passara pelo processo de autenticação (if abaixo)
-			sb.append("-----------------------------------------------------------");
-			sb.append("GET url: "+URL + "\n");
-			sb.append("COOKIE: "+currentCookie + "\n");
-			sb.append("-----------------------------------------------------------");
 			html = exec.execute(Request.Get(URL).useExpectContinue().
 					addHeader(COOKIE, currentCookie)).
 					handleResponse(new ResponseHandler<String>() {
@@ -124,11 +122,6 @@ public class SigaHTTP {
 				// Atribui a URL do IDP (sigaidp)
 				String idpURL = getAttributeActionFromHtml(html);
 				// Faz um novo POST para o IDP com o SAMLRequest como parametro e utilizando o sessionID do IDP
-				sb.append("-----------------------------------------------------------");
-				sb.append("POST url: "+idpURL + "\n");
-				sb.append("COOKIE: "+idpCookie + "\n");
-				sb.append("SAMLRequest: "+SAMLRequestValue + "\n");
-				sb.append("-----------------------------------------------------------");
 				html = exec.execute(Request.Post(idpURL).useExpectContinue().
 						addHeader("content-type", "application/x-www-form-urlencoded").
 						addHeader(COOKIE, idpCookie).
@@ -141,25 +134,18 @@ public class SigaHTTP {
 					String SAMLResponseValue = getAttributeValueFromHtml(html, SAMLResponse);
 					String spURL = getAttributeActionFromHtml(html);
 
-					sb.append("-----------------------------------------------------------");
-					sb.append("POST url: "+spURL + "\n");
-					sb.append("COOKIE: "+setCookie + "\n");
-					sb.append("SAMLResponse: "+SAMLResponseValue + "\n");
-					sb.append("-----------------------------------------------------------");
 					html = exec.execute(Request.Post(spURL).useExpectContinue().
 							addHeader("content-type", "application/x-www-form-urlencoded").
 							addHeader(COOKIE, setCookie).
 							bodyForm(Form.form().add(SAMLResponse, SAMLResponseValue).build())).returnContent().asString();
-				}else{
-					log.info(sb.toString());
 				}
 			}
 		}catch(Exception io){
 			io.printStackTrace();
 		}
-		
+
 		tryAgain(URL, request, cookieValue, html);
-		
+
 		return html;
 	}
 
@@ -220,16 +206,27 @@ public class SigaHTTP {
 	@SuppressWarnings("unchecked")
 	public String getIdp(HttpServletRequest request) {
 		try{
-			if (idp == null || idp.isEmpty()){
-				Map<String, Object> map = (Map<String, Object>) request.getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
-				String idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
-				if (idpSessionID != null){
-					idp = idpSessionID;
+			if (StringUtil.isNullOrEmpty(idp)){
+				String idpSessionID = "";
+				try{
+					Map<String, Object> map = (Map<String, Object>) request.getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
+					idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
+				}catch(NullPointerException npe){
+					// relax.
 				}
-			}else{
-				idp = "";
+
+				if (StringUtil.isNotNull(idpSessionID)){
+					idp = idpSessionID;
+				}else{
+					if (request != null && request.getAttribute("idp") != null){
+						String idpFromRequest = (String) request.getAttribute("idp");
+						if (StringUtil.isNotNull(idpFromRequest))
+							idp = idpFromRequest;
+					}
+				}
 			}
 		}catch(Exception e){
+			e.printStackTrace();
 			idp = "";
 		}
 		return idp;

@@ -26,19 +26,14 @@ window.Siga = {
     },
 
     _ajaxCall: function(ajax, doneCallback){    
-//        var cacheValue = true;
-//        if ($.browser.msie)
-//            cacheValue = false;   
-
         $.ajax({
             url: ajax.url,
             type: ajax.type,
             data: ajax.params
- //           cache: cacheValue            
         }).fail(function(jqXHR, textStatus, errorThrown){            
             doneCallback(jqXHR.statusText);
-        }).done(function(response){
-            doneCallback(response);
+        }).done(function(data, textStatus, jqXHR ){
+            doneCallback(data);
         });
     },
 

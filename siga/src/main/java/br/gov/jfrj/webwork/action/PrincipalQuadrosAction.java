@@ -13,6 +13,7 @@ public class PrincipalQuadrosAction extends SigaActionSupport {
 	private SigaHTTP http;
 	private String html;
 	private String modulo;
+	private String idp;
 	
 	public String getModulo() {
 		return modulo;
@@ -37,9 +38,7 @@ public class PrincipalQuadrosAction extends SigaActionSupport {
 	
 	public String aCarregaModulo(){
 		String url = this.modulos.get(this.getModulo());
-//		url = addCache(url);
 		this.html = this.http.get(url, getRequest(), null);
-		
 		tratarErro();
 		
 		return SUCCESS;
@@ -65,8 +64,12 @@ public class PrincipalQuadrosAction extends SigaActionSupport {
 			this.html = "<span style='color:red' class='error'> 500 - Módulo indisponível. </span>";
 		}else if (this.html.contains("HTTP Status")){
 			this.html = "<span style='color:red' class='error'> Módulo indisponível. </span>";
+		}else if (this.html.contains("Service Unavailable")){
+			this.html = "<span style='color:red' class='error'> Módulo indisponível. </span>";
 		}else if (this.html.contains("<title>") && (this.html.contains("Não Foi Possível Completar a Operação") || (this.html.contains("Senha")))){
-			this.html = "<span style='color:red' class='error'> Erro no carregamento do módulo. Por favor, atualize a página (F5). Caso o erro persista entre em contato com o suporte.</span>";
+			this.html = "<span style='color:red' class='error'> Erro no carregamento do módulo. Por favor, tente atualizar a página (F5). Caso o erro persista entre em contato com o suporte.</span>";
+		}else if (this.html.equals("")){
+			this.html = "<span style='color:red' class='error'> Erro no carregamento do módulo. Por favor, tente autenticar novamente no sistema. Caso o erro persista entre em contato com o suporte.</span>";
 		}
 	}
 
@@ -79,5 +82,12 @@ public class PrincipalQuadrosAction extends SigaActionSupport {
 	public void setHtml(String html) {
 		this.html = html;
 	}
-	
+	public String getIdp() {
+		return idp;
+	}
+
+
+	public void setIdp(String idp) {
+		this.idp = idp;
+	}
 }

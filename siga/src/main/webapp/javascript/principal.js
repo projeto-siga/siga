@@ -31,13 +31,20 @@ $(function() {
 		$.ajaxSetup({ cache: false });
 	}
     
-    $.each(Siga.principal.modules, function(){ 
-    	var model = this;     
-    	var target = $("#"+model.viewId);
-    	$(target.find(".loading")).show();
-    	
-        Siga.ajax("/siga/principalQuadros/carregaModulo.action?modulo="+model.name, {}, "GET", function(response){ 
-        	target.html(response);
-        });
-    });
+	Siga.ajax("/sigaidp/IDPServlet", {}, "GET", function(idpID){
+		if (idpID.indexOf("<html") > -1 || idpID.trim() == "error"){
+			window.location.href = "/sigaidp";
+		}else{
+			$.each(Siga.principal.modules, function(){ 
+		    	var model = this;     
+		    	var target = $("#"+model.viewId);
+		    	$(target.find(".loading")).show();
+		    	
+		        Siga.ajax("/siga/principalQuadros/carregaModulo.action", {modulo: model.name, idp: idpID.trim()}, "GET", function(response){ 
+		        	target.html(response);
+		        });
+		    });
+		}
+	});
+    
 });

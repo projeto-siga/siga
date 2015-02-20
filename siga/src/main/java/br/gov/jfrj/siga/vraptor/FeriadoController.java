@@ -55,9 +55,6 @@ public class FeriadoController extends SigaController {
 	
 	public FeriadoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
 	@Get("/app/feriado/listar")
@@ -69,7 +66,6 @@ public class FeriadoController extends SigaController {
 			result.include("id", feriado.getId());
 			result.include("dscFeriado", feriado.getDescricao());
 		}			
-		
 		result.include("itens", CpDao.getInstance().listarCpFeriadoPorDescricao());
 	}
 	
@@ -95,7 +91,6 @@ public class FeriadoController extends SigaController {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
-		
 		result.redirectTo(this).lista(null);
 	}
 	

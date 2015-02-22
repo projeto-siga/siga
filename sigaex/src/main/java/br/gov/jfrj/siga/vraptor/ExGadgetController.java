@@ -120,6 +120,7 @@ public class ExGadgetController extends ExController {
 		result.include("titular", this.getTitular());
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("idTpFormaDoc", this.getIdTpFormaDoc());
+		result.include("documentoVia", new ExMobilSelecao());
 	}
 
 	@Get("/app/testes/gadgetTest")

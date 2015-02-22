@@ -26,7 +26,7 @@ public class TestesController extends SigaController {
 	
 	private static final String OK = "<span style=\"color: green;\">OK</span>";
 	private static final String ERRO = "<span style=\"color: red;\">ERRO</span>";
-	private static final String SIGA_TESTES_ACTION = "/siga/app/testes";
+	private static final String SIGA_TESTES_ACTION = "/siga/app/testes/testes";
 
 	public TestesController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

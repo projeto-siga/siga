@@ -22,9 +22,11 @@ import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Get;
@@ -32,6 +34,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -1396,6 +1399,134 @@ public class ExMovimentacaoController extends ExController {
 		
 		result.redirectTo("/app/expediente/mov/arquivar_permanente_lote");
 	}
+	
+	@Get("/app/expediente/mov/assinar_lote")
+	public void assina_lote() throws Exception {
+		final List<ExDocumento> itensComoSubscritor = dao().listarDocPendenteAssinatura(getTitular());
+		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
+
+		for (final ExDocumento doc : itensComoSubscritor) {
+
+			if (doc.isFinalizado())
+				itensFinalizados.add(doc);
+		}
+		final List<ExDocumento> documentosQuePodemSerAssinadosComSenha = new ArrayList<ExDocumento>();
+		
+		for (final ExDocumento exDocumento : itensFinalizados) {
+			if(Ex.getInstance()
+				.getComp().podeAssinarComSenha(getTitular(), getLotaTitular(), exDocumento.getMobilGeral())) {
+				documentosQuePodemSerAssinadosComSenha.add(exDocumento);
+			}
+		}
+		
+		result.include("documentosQuePodemSerAssinadosComSenha", documentosQuePodemSerAssinadosComSenha);
+		result.include("itensSolicitados", itensFinalizados);
+	}	
+	
+	@Post("/app/expediente/mov/assinar_gravar")
+	public void aAssinarGravar(final String sigla, final Boolean copia, final String tipoAssinaturaMov, final ExDocumento doc, 
+			final String atributoAssinavelDataHora, String assinaturaB64, final String certificadoB64) throws AplicacaoException, ServletException {
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia();
+		final boolean fApplet = getRequest().getParameter("QTYDATA") != null;
+		String b64Applet = null;
+		
+		if (fApplet) {
+			b64Applet = recuperarAssinaturaAppletB64(builder);
+		}else{
+			builder.setSigla(sigla);
+		}
+		
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia().setMob(mob);
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		
+		if (b64Applet != null){
+			assinaturaB64 = b64Applet;
+		}
+
+		byte[] assinatura = Base64.decode(assinaturaB64);
+		Date dt = mov.getDtMov();
+
+		byte[] certificado = Base64.decode(certificadoB64);
+		
+		if (certificado != null && certificado.length != 0){
+			dt = new Date(Long.valueOf(atributoAssinavelDataHora));
+		}else{
+			certificado = null;
+		}
+
+		try {
+			long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
+			
+			if(copia || (tipoAssinaturaMov != null && tipoAssinaturaMov.equals("C"))){
+				tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
+			}
+			
+			result.include("msg", Ex
+					.getInstance()
+					.getBL()
+					.assinarDocumento(getCadastrante(), getLotaTitular(), doc, dt, assinatura, certificado, tpMovAssinatura));
+			
+		} catch (final Exception e) {
+			if (fApplet) {
+				result.include("err", e.getMessage());
+				result.use(Results.page()).forwardTo("/paginas/erro.jsp");				
+			}
+
+			throw e;
+		}
+
+		if (fApplet) {
+			result.use(Results.page()).forwardTo("/paginas/ok.jsp");
+		}
+	}
+	
+	@Post("/app/expediente/mov/assinar_senha_gravar")
+	public void aAssinarSenhaGravar(String sigla, String nomeUsuarioSubscritor, String senhaUsuarioSubscritor, ExDocumento doc) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia().setMob(mob);
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		
+		try {
+			result.include("msg", Ex
+					.getInstance()
+					.getBL()
+					.assinarDocumentoComSenha(getCadastrante(), getLotaTitular(),
+							doc, mov.getDtMov(), nomeUsuarioSubscritor, senhaUsuarioSubscritor,
+							mov.getTitular()));
+		} catch (final Exception e) {
+
+			throw e;
+		}
+	}
+	
+	@Post("/app/expediente/mov/assinar_mov_login_senha_gravar")
+	public void aAssinarMovSenhaGravar(Long id, String sigla, String tipoAssinaturaMov, String nomeUsuarioSubscritor, String senhaUsuarioSubscritor, Boolean copia) throws Exception {
+		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder, true);
+		
+
+		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
+		
+		if(copia || (tipoAssinaturaMov != null && tipoAssinaturaMov.equals("C")))
+			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
+		
+		try {
+			Ex.getInstance()
+					.getBL()
+					.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), 
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, tpMovAssinatura);
+		} catch (final Exception e) {
+			throw e;
+		}
+	}
+	
 
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {
 		ExFormaDocumento exForma = doc.getExFormaDocumento();
@@ -1486,5 +1617,60 @@ public class ExMovimentacaoController extends ExController {
 		}
 		return -1;
 	}
+	
+	private String recuperarAssinaturaAppletB64(final BuscaDocumentoBuilder builder) throws ServletException,AplicacaoException {
+		HttpServletRequest request = getRequest();
+		// Recupera a quantidade de pacotes enviados
+		String QTYDATA = request.getParameter("QTYDATA");
+		if (QTYDATA == null)
+			throw new ServletException("campo QTYDATA faltando");
+		
+		// Recupera o identificador do documento
+		String IDDATA = request.getParameter("IDDATA");
+		if (IDDATA == null)
+			throw new ServletException("campo IDDATA faltando");
+		
+		// Recupera o conteudo do pacote
+		String ENCDATA = "ENCDATA." + IDDATA;
+		String hexEncoded = request.getParameter(ENCDATA).toString();
+		
+		// Recupera nome do arquivo
+		String ALIAS_NOME = "#arquivo." + IDDATA;
+		String ARQUIVO = request.getParameter(ALIAS_NOME);
+		if (ARQUIVO == null || ARQUIVO.equals("")) {
+			ARQUIVO = "texto.txt";
+		}
+		
+		// Recupera o Id da movimentacao
+		// #arquivo é alimentado com ExMovimentacao.nmPdf. Se existir ":" é uma
+		// assinatura de movimentação
+		// caso contrário, é uma assinatura de documento
+		
+		if (ARQUIVO.contains(":")) {
+			String[] partesArq = ARQUIVO.split(":");
+			builder.setId(Long.parseLong(partesArq[1]));
+		} else
+			builder.setSigla(ARQUIVO);
+		
+		byte[] decoded = null;
+		try {
+			decoded = hexStringToByteArray(hexEncoded);
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
+		}
+		
+		return Base64.encode(decoded);
+	}	
+	
+	private static byte[] hexStringToByteArray(String s) {
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character
+					.digit(s.charAt(i + 1), 16));
+		}
+		return data;
+	}	
+	
 
 }

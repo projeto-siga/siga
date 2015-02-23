@@ -147,7 +147,7 @@
 
     // Carrega o template que representa os atributos quando o usuario seleciona uma novo atributo
     function carregarCampoParaAtributo(select) {
-		jQuery.blockUI(objBlock);
+		//jQuery.blockUI(objBlock);
     	var params = '';
 		if(select) {
 			select.attr('disabled', true);
@@ -159,7 +159,7 @@
 
     // Carrega o template que representa os atributos quando o usuario altera um atributo jah presenta na tela
     function alterarCampoParaAtributo(select) {
-        jQuery.blockUI(objBlock);
+        //jQuery.blockUI(objBlock);
     	select.attr('disabled', true);
     	
     	removerFiltroAtributoDaTela(select);
@@ -183,7 +183,7 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)
 			eval(scripts[i].text);
-		jQuery.unblockUI();
+		//jQuery.unblockUI();
 	}
 </script>
 

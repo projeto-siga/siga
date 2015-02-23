@@ -9,7 +9,7 @@ public class SrAtributoAcordoVO {
 	public Long idAtributoAcordo;
 	public SrOperador operador;
 	public String operadorNome;
-	public Integer valor;
+	public Long valor;
 	public CpUnidadeMedida unidadeMedida;
 	public String unidadeMedidaPlural;
 	public SrAtributoVO atributo;

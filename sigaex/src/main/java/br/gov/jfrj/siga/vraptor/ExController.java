@@ -249,7 +249,7 @@ public class ExController extends SigaController {
 		return lst;
 	}
 
-	public void assertAcesso(String pathServico) throws AplicacaoException {
+	protected void assertAcesso(String pathServico) throws AplicacaoException {
 		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
 	}
 	

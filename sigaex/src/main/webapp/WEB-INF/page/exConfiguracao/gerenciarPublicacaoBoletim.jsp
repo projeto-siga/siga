@@ -170,10 +170,21 @@
 	</c:forEach>
 	
 	<script>
-		$('[name=idFormaDoc]').val('${idFormaDoc}');
-		$('[name=tipoPublicador]').val('${tipoPublicador}');
-		$('[name=idMod]').val('${idMod}');
-		$('[name=idSituacao]').val('${idSituacao}');
+		var idFormaDoc = '${idFormaDoc}',
+			tipoPublicador = '${tipoPublicador}',
+			idMod = '${idMod}',
+			idSituacao = '${idSituacao}';
+
+		select('[name=idFormaDoc]', idFormaDoc);
+		select('[name=tipoPublicador]', tipoPublicador);
+		select('[name=idMod]', idMod);
+		select('[name=idSituacao]', idSituacao);
+
+		function select(selector, value) {
+			if(value) {
+				$(selector).val(value);
+			}
+		}
 	</script>
 	
 </siga:pagina>

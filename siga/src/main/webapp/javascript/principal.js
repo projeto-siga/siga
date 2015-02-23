@@ -32,7 +32,7 @@ $(function() {
 	}
     
 	Siga.ajax("/sigaidp/IDPServlet", {}, "GET", function(idpID){
-		if (idpID.indexOf("<html") > -1 || idpID.trim() == "error"){
+		if (idpID.indexOf("<html") > -1 || $.trim(idpID) == "error"){
 			window.location.href = "/sigaidp";
 		}else{
 			$.each(Siga.principal.modules, function(){ 
@@ -40,7 +40,7 @@ $(function() {
 		    	var target = $("#"+model.viewId);
 		    	$(target.find(".loading")).show();
 		    	
-		        Siga.ajax("/siga/principalQuadros/carregaModulo.action", {modulo: model.name, idp: idpID.trim()}, "GET", function(response){ 
+		        Siga.ajax("/siga/principalQuadros/carregaModulo.action", {modulo: model.name, idp: $.trim(idpID)}, "GET", function(response){ 
 		        	target.html(response);
 		        });
 		    });

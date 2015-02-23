@@ -1,14 +1,23 @@
+#{set nomeclean : _nome.cut('.') /}
 #{if _disabled == "true"}
 	#{set 'selecaoDisabled'}
 		disabled="disabled" 
 	#{/set}
 #{/if}
-#{set nomeclean : _nome.cut('.') /}
+#{else}
+	#{set 'selecaoDisabled'}
+		 
+	#{/set}
+#{/else}
+
+#{if _currentClass == undefined}
+	#{set _currentClass: 'selecao'/}
+#{/if}
 <span id="${_idAjax}" depende=";tipo${_nome};"> <!--ajax:${_idAjax}-->
 
 	<script type="text/javascript">
 	
-//O $tipo foi deixado aqui porque o seleção do Siga precisa enxergar este método
+//O $tipo foi deixado aqui porque o seleï¿½ï¿½o do Siga precisa enxergar este mï¿½todo
 self.retorna_${_tipo}${nomeclean} = function(id, sigla, descricao) {
     try {
 		newwindow_${nomeclean}.close();
@@ -81,17 +90,17 @@ self.ajax_${nomeclean} = function() {
 }
 
 </script><input type="hidden" name="${_nome}"
-	value="${_value?.id}" id="${nomeclean}" /> <input type="hidden"
-	value="${_value?.descricao}" id="${nomeclean}_descricao" /> <input
+	value="${_value?.id}" id="${nomeclean}" class="${_currentClass}"/> <input type="hidden"
+	value="${_value?.descricao}" id="${nomeclean}_descricao" class="${currentClass}"/> <input
 	type="hidden" name="${nomeclean}_buscar" value=""
-	id="${nomeclean}_buscar" /> <input type="hidden"
-	name="req${nomeclean}" value="" id="req${nomeclean}" /> <input
-	type="hidden" name="alterouSel" value="" id="alterouSel" /> <input
+	id="${nomeclean}_buscar" class="${_currentClass}"/> <input type="hidden"
+	name="req${nomeclean}" value="" id="req${nomeclean}" class="${_currentClass}"/> <input
+	type="hidden" name="alterouSel" value="" id="alterouSel" class="${_currentClass}"/> <input
 	type="text" size="25" name="${nomeclean}_sigla"
 	value="${_value?.sigla}" id="${nomeclean}_sigla"
 	onblur="javascript: ajax_${nomeclean}();"
-	onkeypress="return handleEnter(this, event)" ${selecaoDisabled} /> <input type="button"
+	onkeypress="return handleEnter(this, event)" ${selecaoDisabled} ${_requiredValue} class="${_currentClass}"/> <input type="button"
 	id="${nomeclean}Button" value="..."
-	onclick="javascript: popitup_${nomeclean}('');" theme="simple" ${selecaoDisabled} >
-	<span id="${nomeclean}Span">${_value?.descricao}</span> <!--  idAjax="${_idAjax}" -->
+	onclick="javascript: popitup_${nomeclean}('');" theme="simple" ${selecaoDisabled} class="${_currentClass}">
+	<span id="${nomeclean}Span" class="${_currentClass}">${_value?.descricao}</span> <!--  idAjax="${_idAjax}" -->
 	<!--/ajax:${_idAjax}--> </span>

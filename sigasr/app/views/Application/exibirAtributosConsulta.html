@@ -1,5 +1,11 @@
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
+<style>
+	#atributos select{
+		max-width: 600px;
+	}
+</style>
+
 <tr id="atributos">
 	<td>Atributos</td>
 	<td style="padding-left:0px">
@@ -7,7 +13,10 @@
 			#{list items:filtro.tiposAtributosConsulta, as:'atributo'}
 				<tr>
 					<td>
-						#{select name:'name_['+atributo.idAtributo+']', value:atributo.idAtributo, onchange : 'alterarCampoParaAtributo($(this))' }
+						#{select name:'name_['+atributo.idAtributo+']', 
+								 value:atributo.idAtributo, 
+								 onchange : 'alterarCampoParaAtributo($(this))',
+								 style:'max-width: 300px;' }
 							#{list items:filtro.itensDisponiveis(atributosDisponiveisAdicao, atributo), as: 'atributoDisponivel' }
 								#{option atributoDisponivel.idAtributo}
 									${atributoDisponivel.nomeAtributo}
@@ -22,6 +31,10 @@
 								<input type="text" name="filtro.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${filtro.atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}"/>
 								<span style="color: red">#{error 'filtro.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
 							#{/if}
+							#{if atributo.tipoAtributo.name() == "TEXT_AREA"}
+								<textarea cols="85" rows="10" name="filtro.atributoSolicitacaoMap[${atributo.idAtributo}]" class="${atributo.idAtributo}" maxlength="255">${filtro.atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
+								<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
+							#{/if}	
 							#{if atributo.tipoAtributo.name() == "DATA"}
 								<input type="text" name="filtro.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${filtro.atributoSolicitacaoMap[atributo.idAtributo]}" id="calendarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"/>
 								<span style="color: red">#{error 'filtro.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
@@ -87,7 +100,9 @@
 			<tr id="ddlNovoAtributoContainer">
 				<td>
 					<div>
-						#{select name:'adicionar_novo_atributo', onchange : 'carregarCampoParaAtributo($(this))' }
+						#{select name:'adicionar_novo_atributo', 
+								 onchange : 'carregarCampoParaAtributo($(this))',
+								 style:'max-width: 300px;' }
 							#{option ""}#{/option}
 							#{list items:atributosDisponiveisAdicao, as: 'atributoDisponivel' }
 								#{option atributoDisponivel.idAtributo}
@@ -114,8 +129,6 @@
 	$("#ddlNovoAtributoContainer select option:nth(0)").attr('selected', 'selected');
 
 	function adicionarFiltroAtributo() {
-		console.log('foi');
-		
 		if($("#ddlNovoAtributoContainer select option").size() > 1) {
 			$("#ddlNovoAtributoContainer").show();
 		}
@@ -134,6 +147,7 @@
 
     // Carrega o template que representa os atributos quando o usuario seleciona uma novo atributo
     function carregarCampoParaAtributo(select) {
+		//jQuery.blockUI(objBlock);
     	var params = '';
 		if(select) {
 			select.attr('disabled', true);
@@ -145,6 +159,7 @@
 
     // Carrega o template que representa os atributos quando o usuario altera um atributo jah presenta na tela
     function alterarCampoParaAtributo(select) {
+        //jQuery.blockUI(objBlock);
     	select.attr('disabled', true);
     	
     	removerFiltroAtributoDaTela(select);
@@ -168,6 +183,7 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)
 			eval(scripts[i].text);
+		//jQuery.unblockUI();
 	}
 </script>
 

@@ -7,8 +7,8 @@
 	#{/set}
 #{/if}
 
-<span id="spanLotacao${_nomeSelLotacaoClean}">#{selecao
-	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao, disabled:_disabled /}</span>
+<span id="spanLotacao${_nomeSelLotacaoClean}" class="lotacaoSelecao">#{selecao
+	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao, disabled:_disabled, currentClass:'lotacaoSelecao' /}</span>
 <script language="javascript">
 		document.getElementById('spanLotacao${_nomeSelLotacaoClean}').style.display = 'none';
 		document.getElementById('spanLotacao${_nomeSelLotacaoClean}').style.display = 'inline';

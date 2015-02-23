@@ -24,16 +24,12 @@ GET     /public/                            staticDir:public
 *		/pesquisa/gravar					Application.gravarPesquisa
 *		/pesquisa/listar					Application.listarPesquisa
 
-*		/item/editar/{id}					Application.editarItem
-*		/item/editar						Application.editarItem
 *		/item/gravar						Application.gravarItem
 *		/item/listar						Application.listarItem
 *		/item/selecionar					Application.selecionarItem
 *		/item/buscar						Application.buscarItem
 *		/item/desativar/{id}				Application.desativarItem
 
-*		/acordo/editar/{id}					Application.editarAcordo
-*		/acordo/editar						Application.editarAcordo
 *		/acordo/gravar						Application.gravarAcordo
 *		/acordo/buscar						Application.buscarAcordo
 *		/acordo/selecionar					Application.selecionarAcordo
@@ -60,8 +56,6 @@ GET     /public/                            staticDir:public
 *		/acao/desativar/{id}				Application.desativarAcao
 
 *		/equipe/listar						Application.listarEquipe
-*		/equipe/editar						Application.editarEquipe
-*		/equipe/editar/{id}					Application.editarEquipe
 *		/equipe/gravar						Application.gravarEquipe
 
 *		/solicitacao/desfazer_ultimo/{id}				Application.desfazerUltimaMovimentacao
@@ -88,7 +82,6 @@ GET     /public/                            staticDir:public
 *		/solicitacao/incluirEmLista/{id}				Application.incluirEmLista
 *		/solicitacao/incluirEmListaGravar/{id}			Application.incluirEmListaGravar
 *		/solicitacao/retirarDeLista						Application.retirarDeLista
-*		/solicitacao/editarLista/{id}					Application.editarLista
 *		/solicitacao/selecionar							Application.selecionarSolicitacao
 *		/solicitacao/buscar								Application.buscarSolicitacao
 *		/solicitacao/{action}							Application.{action}

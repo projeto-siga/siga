@@ -141,17 +141,21 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		}
 
 		List<SrConfiguracao> listaFinal = new ArrayList<SrConfiguracao>();
-		TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro
-				.getCpTipoConfiguracao().getIdTpConfiguracao());
 
-		for (CpConfiguracao cpConfiguracao : lista) {
-			if (cpConfiguracao.getHisDtFim() == null
-					&& atendeExigencias(confFiltro, atributosDesconsiderados,
-							(SrConfiguracao) cpConfiguracao, perfis)) {
-				listaFinal.add((SrConfiguracao) cpConfiguracao);
+		if (confFiltro.getCpTipoConfiguracao() != null) {
+			TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro
+					.getCpTipoConfiguracao().getIdTpConfiguracao());
+
+			for (CpConfiguracao cpConfiguracao : lista) {
+				if (cpConfiguracao.getHisDtFim() == null
+						&& atendeExigencias(confFiltro,
+								atributosDesconsiderados,
+								(SrConfiguracao) cpConfiguracao, perfis)) {
+					listaFinal.add((SrConfiguracao) cpConfiguracao);
+				}
 			}
-			
 		}
+		
 		return listaFinal;
 	}
 
@@ -184,8 +188,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				}
 			}
 			
-			if (srConf.listaPrioridade != null)
-				srConf.listaPrioridade.getHisIdIni();
+			if (srConf.listaPrioridade != null) {
+				srConf.listaPrioridade.getListaAtual();
+			}
 			
 			if (srConf.pesquisaSatisfacao != null)
 				srConf.pesquisaSatisfacao.getHisIdIni();
@@ -199,7 +204,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					listaConf.getId();
 				}
 			}
-			
+
 			if (srConf.tipoPermissaoSet != null) {
 				for (SrTipoPermissaoLista perm : srConf.tipoPermissaoSet){
 					//

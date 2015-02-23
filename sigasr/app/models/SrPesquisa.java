@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,8 +18,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.JPA;
+import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_PESQUISA", schema = "SIGASR")
@@ -144,5 +149,39 @@ public class SrPesquisa extends HistoricoSuporte {
 			for (SrPergunta pergunta : perguntaSet) {
 				pergunta.finalizar();
 			}
+	}
+	
+	public String toJson() {
+		Gson gson = createGson("meuPesquisaHistoricoSet", "perguntaSet", "pesquisaInicial");
+		
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		jsonObject.add("perguntasSet", perguntasArray());
+		
+		return jsonObject.toString();
+	}
+	
+	private JsonArray perguntasArray() {
+		Gson gson = createGson("pesquisa", "perguntaInicial", "meuPerguntaHistoricoSet");
+		JsonArray jsonArray = new JsonArray();
+
+		for (SrPergunta srPergunta : this.perguntaSet) {
+			jsonArray.add(gson.toJsonTree(srPergunta));
+		}
+		return jsonArray;
+	}
+	
+	// TODO: colocar esse metodo na classe base
+	private Gson createGson(String... exclusions) {
+		return new GsonBuilder()
+			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
+			.create();
+	}
+	
+	public SrPesquisa atualizarTiposPerguntas() {
+		for (SrPergunta srPergunta : this.perguntaSet) {
+			srPergunta.tipoPergunta = SrTipoPergunta.findById(srPergunta.tipoPergunta.idTipoPergunta);
+		}
+		return this;
 	}
 }

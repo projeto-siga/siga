@@ -19,7 +19,12 @@ public class Correio extends Mailer {
 	public static void notificarAbertura(SrSolicitacao sol) {
 		if (sol.solicitante.getEmailPessoa() == null)
 			return;
-		setSubject("Abertura da solicitação " + sol.getCodigo());
+		
+		if (sol.isFilha())
+			setSubject("Escalonamento da solicitação " + sol.solicitacaoPai.getCodigo());
+		else
+			setSubject("Abertura da solicitação " + sol.getCodigo());
+		
 		addRecipient(sol.solicitante.getEmailPessoa());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(sol);

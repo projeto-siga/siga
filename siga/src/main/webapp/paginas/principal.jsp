@@ -78,16 +78,19 @@
                                 <jsp:include page="loading.jsp" />
 							</div>
 						</c:if>
+						<br />
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
 							<h2 class="gt-table-head">Transportes</h2>
 							<!-- content box -->
-							<div id='rightbottom3'></div>
-							<script type="text/javascript">
+							<div id='rightbottom3'>
+                                <jsp:include page="loading.jsp" />
+							</div>
+							<!-- script type="text/javascript">
 								SetInnerHTMLFromAjaxResponse(
-								"/sigatp/gadget?ts=${currentTimeMillis}",
+								"/sigatp/gadget",
 								document.getElementById('rightbottom3'));
-							</script>
+							</script> -->
 						</c:if>
 						<br />
 					</div>

@@ -17,6 +17,10 @@ Siga.principal = {
         	name: "sigagc",
             viewId: "rightbottom2"
         },
+        sigatp: {
+        	name: "sigatp",
+            viewId: "rightbottom3"
+        },        
         processos: {
         	name: "processos",
             viewId: "leftbottom"

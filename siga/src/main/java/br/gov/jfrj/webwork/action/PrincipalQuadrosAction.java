@@ -33,6 +33,7 @@ public class PrincipalQuadrosAction extends SigaActionSupport {
 		this.modulos.put("sigawf", "/sigawf/inbox.action");
 		this.modulos.put("sigasr", "/sigasr/solicitacao/gadget");
 		this.modulos.put("sigagc", "/sigagc/app/gadget");
+		this.modulos.put("sigatp", "/sigatp/gadget");
 	}
 
 	

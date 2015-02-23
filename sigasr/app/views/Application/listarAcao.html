@@ -146,7 +146,17 @@
 				"targets": [colunasAcao.acoes],
 				"searchable": false,
 				"sortable" : false
-			}]
+			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				if (nRow.dataset && nRow.dataset.json) {
+					var acao = JSON.parse(nRow.dataset.json);
+
+					if (acao.ativo == false)
+						$('td', nRow).addClass('item-desativado');
+					else
+						$('td', nRow).removeClass('item-desativado');
+				}
+			}
 		});
 	});
 

@@ -34,8 +34,7 @@
 
 			<tbody>
 				#{list items:_designacoes, as:'design'}
-				<tr #{if !design.ativo}class="configuracaoHerdada"#{/if}
-					data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
+				<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
 					style="cursor: pointer;">
 					<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 					<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
@@ -211,24 +210,45 @@ altura:'200', largura:'450'}
 		return tr;
 	}
 
+// 	/**
+// 	 * Sobrescreve o método para adicionar também o botão duplicar.
+// 	 */
+// 	 designacaoService.gerarColunaAtivar = function(id) {
+// 		var column = BaseService.prototype.gerarColunaAtivar.call(this, id);
+// 		column = column + " " + designacaoService.duplicarButton;
+// 		return column;
+// 	}
+// 	/**
+// 	 * Sobrescreve o método para adicionar também o botão duplicar.
+// 	 */
+// 	 designacaoService.gerarColunaDesativar = function(id) {
+// 		var column = BaseService.prototype.gerarColunaDesativar.call(this, id);
+// 		column = column + " " + designacaoService.duplicarButton;
+// 		return column;
+// 	 }
+
 	designacaoService.isValidForm = function() {
 	    return jQuery(this.opts.formCadastro).valid() && camposObrigatoriosPreenchidos();
 	}
 
 	designacaoService.desativar = function(event, id) {
-		var ajax = BaseService.prototype.desativar.call(this, event, id);
+		var ajax = BaseService.prototype.desativar.call(this, event, id),
+			service = this;
 
-		ajax.success().done(function() {
-			var tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
+		ajax.success().done(function(jSonDesignacao) {
+			var design = JSON.parse(jSonDesignacao),
+				tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + service.getId(design) + "]");
 			afterGravarDesignacao(tr, null);
 		});
 	}
 
 	designacaoService.reativar = function(event, id) {
-		var ajax = BaseService.prototype.reativar.call(this, event, id);
+		var ajax = BaseService.prototype.reativar.call(this, event, id),
+			service = this;
 
-		ajax.success().done(function() {
-			var tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
+		ajax.success().done(function(jSonDesignacao) {
+			var design = JSON.parse(jSonDesignacao),
+				tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + service.getId(design) + "]");
  			afterGravarDesignacao(tr, null);
 		});
 	}
@@ -239,6 +259,15 @@ altura:'200', largura:'450'}
 
 	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		$('td:eq(' + colunasDesignacao.acaoExpandir + ')', nRow).addClass('details-control');
+
+		if (nRow.dataset && nRow.dataset.json) {
+			var desig = JSON.parse(nRow.dataset.json);
+
+			if (desig.ativo == false)
+				$('td', nRow).addClass('item-desativado');
+			else
+				$('td', nRow).removeClass('item-desativado');
+		}
 	}
 	
 	function camposObrigatoriosPreenchidos() {

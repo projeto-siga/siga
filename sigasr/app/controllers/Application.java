@@ -877,12 +877,12 @@ public class Application extends SigaApplication {
 		return designacao.getSrConfiguracaoJson();
 	}
 
-	public static Long desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
+	public static String desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.finalizar();
 		
-		return designacao.getId();
+		return designacao.getSrConfiguracaoJson();
 	}
 
 	public static String buscarAbrangenciasAcordo(Long id) throws Exception {
@@ -935,12 +935,12 @@ public class Application extends SigaApplication {
 		associacao.salvar();
 	}
 
-	public static Long reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
+	public static String reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 		designacao.salvar();
 		
-		return designacao.getId();
+		return designacao.getSrConfiguracaoJson();
 	}
 	
 	public static void selecionarAcordo(String sigla)
@@ -1138,17 +1138,19 @@ public class Application extends SigaApplication {
 		return itemConfiguracao.getSrItemConfiguracaoJson();
 	}
 
-	public static void desativarItem(Long id, boolean mostrarDesativados) throws Exception {
+	public static String desativarItem(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
 		item.finalizar();
+		
+		return item.getSrItemConfiguracaoJson();
 	}
 	
-	public static Long reativarItem(Long id, boolean mostrarDesativados) throws Exception {
+	public static String reativarItem(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrItemConfiguracao item = SrItemConfiguracao.findById(id);
 		item.salvar();
-		return item.getId();
+		return item.getSrItemConfiguracaoJson();
 	}
 
 
@@ -1229,17 +1231,19 @@ public class Application extends SigaApplication {
 		}
 	}
 
-	public static void desativarAtributo(Long id, boolean mostrarDesativados) throws Exception {
+	public static String desativarAtributo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAtributo item = SrAtributo.findById(id);
 		item.finalizar();
+		
+		return item.toJson();
 	}
 
-	public static Long reativarAtributo(Long id, boolean mostrarDesativados) throws Exception {
+	public static String reativarAtributo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAtributo item = SrAtributo.findById(id);
 		item.salvar();
-		return item.getId();
+		return item.toJson();
 	}
 
 	public static void listarPesquisa(boolean mostrarDesativados) throws Exception {
@@ -1270,17 +1274,20 @@ public class Application extends SigaApplication {
 		return pesquisa.atualizarTiposPerguntas().toJson();
 	}
 
-	public static void desativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {
+	public static String desativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrPesquisa pesq = SrPesquisa.findById(id);
 		pesq.finalizar();
+		
+		return pesq.toJson();
 	}
 	
-	public static Long reativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {
+	public static String reativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrPesquisa pesq = SrPesquisa.findById(id);
 		pesq.salvar();
-		return pesq.getId();
+		
+		return pesq.toJson();
 	}
 	
 	public static void listarConhecimento(Long idItem, Long idAcao, boolean ajax) throws Exception {
@@ -1381,17 +1388,19 @@ public class Application extends SigaApplication {
 		return acao.toJson();
 	}
 
-	public static void desativarAcao(Long id, boolean mostrarDesativados) throws Exception {
+	public static String desativarAcao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcao acao = SrAcao.findById(id);
 		acao.finalizar();
+		
+		return acao.toJson();
 	}
 	
-	public static Long reativarAcao(Long id, boolean mostrarDesativados) throws Exception {
+	public static String reativarAcao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAcao acao = SrAcao.findById(id);
 		acao.salvar();
-		return acao.getId();
+		return acao.toJson();
 	}
 
 	public static void selecionarAcao(String sigla, SrSolicitacao sol)
@@ -1452,15 +1461,17 @@ public class Application extends SigaApplication {
 		return lista.toJson();
 	}
 
-	public static void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
+	public static String desativarLista(Long id, boolean mostrarDesativados) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		lista.finalizar();
+		
+		return lista.toJson();
 	}
 	
-	public static Long reativarLista(Long id, boolean mostrarDesativados) throws Exception {
+	public static String reativarLista(Long id, boolean mostrarDesativados) throws Exception {
 		SrLista lista = SrLista.findById(id);
 		lista.salvar();
-		return lista.getId();
+		return lista.toJson();
 	}
 
 	public static void relSolicitacoes(SrSolicitacaoFiltro filtro)

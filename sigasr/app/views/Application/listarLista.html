@@ -25,8 +25,7 @@
 
 				<tbody>
 					#{list items:listas, as:'item'}
-					<tr #{if !item.ativo}class="configuracaoHerdada"#{/if}
-                        data-json-id="${item.idLista}" data-json="${item.toJson()}"
+					<tr data-json-id="${item.idLista}" data-json="${item.toJson()}"
 						#{if item.podeConsultar(lotaTitular, cadastrante)}
 							onclick="javascript:window.location='@{Application.exibirLista(item.idLista)}'" style="cursor: pointer;" 
 						#{/if}>
@@ -167,6 +166,16 @@
 				"searchable": false,
 				"sortable" : false
 			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				if (nRow.dataset && nRow.dataset.json) {
+					var lista = JSON.parse(nRow.dataset.json);
+
+					if (lista.ativo == false)
+						$('td', nRow).addClass('item-desativado');
+					else
+						$('td', nRow).removeClass('item-desativado');
+				}
+			},
 			"iDisplayLength": 25
 		});
 	});
@@ -212,6 +221,30 @@
 		afterGravarLista(tr, objSalvo);
 		return tr;
 	}
+
+	function afterGravarLista(tr, designacao) {
+		var acoes = tr.find('td.acoes');
+
+		if (acoes)
+			acoes = acoes.append(" " + listaService.editarButton);
+	}
+
+	/**
+	 * Sobrescreve o método para adicionar também o botão editar.
+	 */
+	listaService.gerarColunaAtivar = function(id) {
+		var column = BaseService.prototype.gerarColunaAtivar.call(this, id);
+		column = column + " " + listaService.editarButton;
+		return column;
+	}
+	/**
+	 * Sobrescreve o método para adicionar também o botão editar.
+	 */
+	listaService.gerarColunaDesativar = function(id) {
+		var column = BaseService.prototype.gerarColunaDesativar.call(this, id);
+		column = column + " " + listaService.editarButton;
+		return column;
+	 }
 
 	function editarLista(event, jSonItem) {
 		event.stopPropagation();
@@ -267,12 +300,5 @@
 			
 			permissoesTable.api().row.add(row).draw();
 		}
-	}
-
-	function afterGravarLista(tr, designacao) {
-		var acoes = tr.find('td.acoes');
-
-		if (acoes)
-			acoes = acoes.append(" " + listaService.editarButton);
 	}
 </script>

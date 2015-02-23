@@ -74,9 +74,8 @@ tr.shown td.details-control {
 
 				<tbody>
 					#{list items:itens, as:'item'}
-						<tr 
-							#{if !item.ativo}class="configuracaoHerdada"#{/if}
-							data-json-id="${item.idItemConfiguracao}" data-json="${item.toVO().toJson()}" onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
+						<tr data-json-id="${item.idItemConfiguracao}" data-json="${item.toVO().toJson()}" 
+							onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
 							style="cursor: pointer;">
 							<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 							<td>${item.siglaItemConfiguracao}</td>
@@ -171,15 +170,22 @@ tr.shown td.details-control {
         	}
         ])
         .configurar("fnRowCallback", function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				var jSonItem = getJsonByString(aData[colunasLista.jSon]);
+        	if (nRow.dataset && nRow.dataset.json) {
+				var jSonItem = getJsonByString(nRow.dataset.json);
 				$('td:eq('+colunasLista.expandir+')', nRow).addClass('details-control');
-	
+
 				if (jSonItem.nivel == 1)
 					$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-pai');
 				else if (jSonItem.nivel == 2)
 					$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-filho');
 				else if (jSonItem.nivel == 3)
 					$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-neto');
+
+				if (jSonItem.ativo == false)
+					$('td', nRow).addClass('item-desativado');
+				else
+					$('td', nRow).removeClass('item-desativado');
+       		}
 		})
 		.criar()
 		.detalhes(detalhesItemConfiguracaoFormat);

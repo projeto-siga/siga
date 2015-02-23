@@ -23,14 +23,12 @@
 						<th>Nome</th>
 						<th>Descrição</th>
 						<th></th>
-						<th></th>
 					</tr>
 				</thead>
 
 				<tbody>
 					#{list items:acordos, as:'acordo'}
 					<tr
-						#{if !acordo.ativo}class="configuracaoHerdada"#{/if}
 						#{if popup}
 							onclick="javascript:opener.retorna_acordo${nome}('${acordo.id}','${acordo.id}','${acordo.nomeAcordo}');window.close()"
 						#{/if}
@@ -47,7 +45,6 @@
 												isAtivo:acordo.isAtivo() }
 							#{/desativarReativar}
 						</td>
-						<td>${acordo.isAtivo()}</td>
 					</tr>
 					 #{/list}
 				</tbody>
@@ -77,7 +74,6 @@
 	colunasAcordo.nome =	0;
 	colunasAcordo.lotacao = 1;
 	colunasAcordo.acoes = 	2;
-	colunasAcordo.ativo = 	3;
 	
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
@@ -145,8 +141,13 @@
 				"sortable" : false
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (aData[3] == 'false') {
-					$('td', nRow).addClass('item-desativado');
+				if (nRow.dataset && nRow.dataset.json) {
+					var acordo = JSON.parse(nRow.dataset.json);
+
+					if (acordo.ativo == false)
+						$('td', nRow).addClass('item-desativado');
+					else
+						$('td', nRow).removeClass('item-desativado');
 				}
 			}
 		});

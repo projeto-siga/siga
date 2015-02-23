@@ -8,8 +8,9 @@
 <siga:pagina titulo="Gerência de Publicação Boletim Interno">
 	<script type="text/javascript">
 		function hideShowSel(combo){
-			var sel1Span = document.getElementById('span'+combo.name.substring(4));
-			var sel2Span = document.getElementById('spanLota'+combo.name.substring(4));
+			var sel1Span = document.getElementById('span' + combo.name.substring(4));
+			var sel2Span = document.getElementById('spanLota' + combo.name.substring(4));
+
 			if (combo.selectedIndex==0){
 				sel1Span.style.display="";
 				sel2Span.style.display="none";
@@ -21,7 +22,7 @@
 		
 		function sbmt(id) {
 			var frm = document.getElementById('frm');
-			frm.action='app/expediente/configuracao/gerenciar_publicacao_boletim?id=${doc.idDoc}';
+			frm.action='${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim?id=${doc.idDoc}';
 			frm.submit();
 		}
 	</script>
@@ -29,12 +30,11 @@
 	<h1>Gerenciamento de permissões para solicitação de publicação no BI:</h1>
 	<br />
 	
-	<form name="frm" action="${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim_gravar" method="POST">
+	<form id="frm" name="frm" action="${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim_gravar" method="POST">
 		<input type="hidden" name="postback" value="1" />
-		<input type="hidden" name="gerencia_publicacao" value="sim" />
+		<input type="hidden" name="gerenciaPublicacao" value="sim" />
 		<input type="hidden" name="idTpMov" value="36" />
 		<input type="hidden" name="idTpConfiguracao" value="1" />
-		<input type="hidden" name="" value="" />
 		
 		<table class="form">
 			<tr class="header">
@@ -54,7 +54,7 @@
 			<tr>
 				<td>Modelo:</td>
 				<td>
-					<select value="${idMod}" name="idMod">
+					<select name="idMod">
 						<option value="0">[Todos]</option>
 						<c:forEach var="modelo" items="${listaModelosPorForma}">
 							<option value="${modelo.idMod}">${modelo.nmMod}</option>
@@ -170,7 +170,10 @@
 	</c:forEach>
 	
 	<script>
-		$('[name=idFormaDoc]').val(${idFormaDoc});
-		$('[name=tipoPublicador]').val(${tipoPublicador});
+		$('[name=idFormaDoc]').val('${idFormaDoc}');
+		$('[name=tipoPublicador]').val('${tipoPublicador}');
+		$('[name=idMod]').val('${idMod}');
+		$('[name=idSituacao]').val('${idSituacao}');
 	</script>
+	
 </siga:pagina>

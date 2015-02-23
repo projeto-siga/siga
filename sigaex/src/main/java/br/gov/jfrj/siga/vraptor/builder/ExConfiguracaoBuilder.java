@@ -27,6 +27,8 @@ import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 
 public final class ExConfiguracaoBuilder {
 
+	public static final Integer ORGAO_INTEGRADO = 2;
+	public static final Integer MATRICULA = 1;
 	private Long idOrgaoUsu;
 	private Long idTpMov;
 	private Long idTpDoc;
@@ -43,6 +45,7 @@ public final class ExConfiguracaoBuilder {
 	private ExClassificacaoSelecao classificacaoSel;
 	private Long idOrgaoObjeto;
 	private Long id;
+	private Integer tipoPublicador;
 
 	private ExConfiguracaoBuilder() {
 		this.pessoaSel = new DpPessoaSelecao(); 
@@ -50,6 +53,7 @@ public final class ExConfiguracaoBuilder {
 		this.cargoSel = new DpCargoSelecao(); 
 		this.funcaoSel = new DpFuncaoConfiancaSelecao(); 
 		this.classificacaoSel = new ExClassificacaoSelecao();
+		this.tipoPublicador = ORGAO_INTEGRADO;
 	}
 
 	public static ExConfiguracaoBuilder novaInstancia() {
@@ -115,28 +119,28 @@ public final class ExConfiguracaoBuilder {
 		} else
 			config.setCpTipoConfiguracao(null);
 
-		if (pessoaSel != null && pessoaSel.getId() != 0) {
+		if (pessoaSel != null && pessoaSel.getId() != null && ExConfiguracaoBuilder.isTipoMatricula(tipoPublicador)) {
 			config.setDpPessoa(dao.consultar(pessoaSel.getId(), DpPessoa.class, false));
 		} else
 			config.setDpPessoa(null);
 
-		if (lotacaoSel != null && lotacaoSel.getId() != 0) {
+		if (lotacaoSel != null && lotacaoSel.getId() != null && ExConfiguracaoBuilder.isTipoOrgaoIntegrado(tipoPublicador)) {
 			config.setLotacao(dao.consultar(lotacaoSel.getId(), DpLotacao.class, false));
 		} else
 			config.setLotacao(null);
 
-		if (cargoSel != null && cargoSel.getId() != 0) {
+		if (cargoSel != null && cargoSel.getId() != null) {
 			config.setCargo(dao.consultar(cargoSel.getId(), DpCargo.class, false));
 		} else
 			config.setCargo(null);
 
-		if (funcaoSel != null && funcaoSel.getId() != 0) {
+		if (funcaoSel != null && funcaoSel.getId() != null) {
 			config.setFuncaoConfianca(dao.consultar(funcaoSel.getId(),
 					DpFuncaoConfianca.class, false));
 		} else
 			config.setFuncaoConfianca(null);
 
-		if (classificacaoSel != null && classificacaoSel.getId() != 0) {
+		if (classificacaoSel != null && classificacaoSel.getId() != null) {
 			config.setExClassificacao(dao.consultar(classificacaoSel.getId(),
 					ExClassificacao.class, false));
 		} else
@@ -296,5 +300,18 @@ public final class ExConfiguracaoBuilder {
 	public ExConfiguracaoBuilder setId(Long id) {
 		this.id = id;
 		return this;
+	}
+
+	public ExConfiguracaoBuilder setTipoPublicador(Integer tipoPublicador) {
+		this.tipoPublicador = tipoPublicador;
+		return this;
+	}
+	
+	public static boolean isTipoMatricula(Integer tipo) {
+		return MATRICULA.equals(tipo);
+	}
+	
+	public static boolean isTipoOrgaoIntegrado(Integer tipo) {
+		return ORGAO_INTEGRADO.equals(tipo);
 	}
 }

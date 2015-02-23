@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -42,6 +43,8 @@ import br.gov.jfrj.siga.libs.webwork.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
+
+import com.google.common.base.Optional;
 
 @Resource
 public class ExConfiguracaoController extends ExController {
@@ -111,14 +114,6 @@ public class ExConfiguracaoController extends ExController {
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
 			Long idOrgaoObjeto, String nmTipoRetorno) throws Exception {
 
-		assertAcesso(VERIFICADOR_ACESSO);
-
-		if(idTpConfiguracao == null || idTpConfiguracao == 0)
-			throw new AplicacaoException("Tipo de configuracao não informado");
-
-		if(idSituacao == null || idSituacao == 0)
-			throw new AplicacaoException("Situação de Configuracao não informada");
-
 		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia()
 				.setId(id)
 				.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc)
@@ -127,7 +122,47 @@ public class ExConfiguracaoController extends ExController {
 				.setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel).setCargoSel(cargoSel)
 				.setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto);
 		
-		ExConfiguracao config = configuracaoBuilder.construir(dao());
+		gravarConfiguracao(idTpConfiguracao, idSituacao, configuracaoBuilder.construir(dao()));
+		escreveFormRetorno(nmTipoRetorno, configuracaoBuilder);
+	}
+
+	@Post("app/expediente/configuracao/gerenciar_publicacao_boletim_gravar")
+	public void gerenciarPublicacaoBoletimGravar(
+			Integer postback, 
+			String gerenciaPublicacao, 
+			Long idTpMov, 
+			Long idTpConfiguracao,
+			Long idFormaDoc,
+			Long idMod,
+			Integer tipoPublicador,
+			Long idSituacao,
+			DpPessoaSelecao pessoaSel,
+			DpLotacaoSelecao lotacaoSel) throws Exception {
+
+		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia()
+				.setIdTpMov(idTpMov)
+				.setIdMod(idMod)
+				.setIdFormaDoc(idFormaDoc)
+				.setIdSituacao(idSituacao)
+				.setIdTpConfiguracao(idTpConfiguracao)
+				.setTipoPublicador(tipoPublicador)
+				.setPessoaSel(pessoaSel)
+				.setLotacaoSel(lotacaoSel);
+		
+		
+		ExConfiguracao exConfiguracao = configuracaoBuilder.construir(dao());
+		gravarConfiguracao(idTpConfiguracao, idSituacao, exConfiguracao);
+		result.redirectTo("/app/expediente/configuracao/gerenciar_publicacao_boletim?" + getUrlEncodedParameters());
+	}
+	
+	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final ExConfiguracao config) {
+		assertAcesso(VERIFICADOR_ACESSO);
+
+		if (idTpConfiguracao == null || idTpConfiguracao == 0)
+			throw new AplicacaoException("Tipo de configuracao não informado");
+
+		if (idSituacao == null || idSituacao == 0)
+			throw new AplicacaoException("Situação de Configuracao não informada");
 
 		try {
 			dao().iniciarTransacao();
@@ -138,7 +173,6 @@ public class ExConfiguracaoController extends ExController {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
-		escreveFormRetorno(nmTipoRetorno, configuracaoBuilder);
 	}
 
 	private void escreveFormRetorno(String nmTipoRetorno, ExConfiguracaoBuilder builder) throws Exception {
@@ -207,8 +241,21 @@ public class ExConfiguracaoController extends ExController {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Post("app/expediente/configuracao/gerenciar_publicacao_boletim")
 	@Get("app/expediente/configuracao/gerenciar_publicacao_boletim")
-	public void gerenciarPublicacaoBoletim() throws Exception {
+	public void gerenciarPublicacaoBoletim(
+			Long idMod,
+			Integer idFormaDoc,
+			Long idTpMov,
+			Long idSituacao,
+			DpLotacaoSelecao lotacaoSel,
+			Integer postback,
+			DpPessoaSelecao pessoaSel,
+			String gerenciaPublicacao,
+			Long idTpConfiguracao,
+			boolean alterouSel,
+			Integer tipoPublicador) throws Exception {
+		
 		List<Object[]> itens = new ArrayList<>();
 		this.validarPodeGerenciarBoletim();
 
@@ -238,15 +285,31 @@ public class ExConfiguracaoController extends ExController {
 		 * ArrayList<ExConfiguracao>()); getConfigsPorModelo().get(mod).add(c);
 		 * }
 		 */
+		
+		result.include("idMod", idMod);
+		result.include("idFormaDoc", idFormaDoc);
+		result.include("idTpMov", idTpMov);
+		result.include("idSituacao", idSituacao);
+		result.include("postback", postback);
+		result.include("gerenciaPublicacao", gerenciaPublicacao);
+		result.include("idTpConfiguracao", idTpConfiguracao);
+		result.include("alterouSel", alterouSel);
+		result.include("tipoPublicador", tipoPublicador);
 		result.include("listaFormas", getListaFormas());
-		result.include("listaModelosPorForma", getListaModelosPorForma(null));
+		result.include("listaModelosPorForma", getListaModelosPorForma(idFormaDoc));
 		result.include("listaTipoPublicador", getListaTipoPublicador());
 		result.include("listaSituacaoPodeNaoPode", getListaSituacaoPodeNaoPode());
-		result.include("tipoPublicador", ORGAO_INTEGRADO);
-		result.include("pessoaSel", new DpPessoaSelecao());
-		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("tipoPublicador", tipoPublicador);
 		result.include("itens", itens);
 		result.include("request", getRequest());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("pessoaSel", new DpPessoaSelecao());
+		
+		if (ExConfiguracaoBuilder.isTipoMatricula(tipoPublicador)) {
+			result.include("pessoaSel", Optional.fromNullable(pessoaSel).or(new DpPessoaSelecao()));
+		} else {
+			result.include("lotacaoSel",Optional.fromNullable(lotacaoSel).or(new DpLotacaoSelecao()));
+		}
 	}
 	
 	private Object[] buscarEntradaPorNomeMod(List<Object[]> itens, String nomeMod) {
@@ -311,7 +374,7 @@ public class ExConfiguracaoController extends ExController {
 		return bl.obterFormasDocumento(bl.obterListaModelos(null, false, null, false, null, null, false), null, null);
 	}
 	
-	private Set<ExModelo> getListaModelosPorForma(Long idFormaDoc) throws Exception {
+	private Set<ExModelo> getListaModelosPorForma(Integer idFormaDoc) throws Exception {
 		if (idFormaDoc != null && idFormaDoc != 0) {
 			ExFormaDocumento forma = ExDao.getInstance().consultar(idFormaDoc, ExFormaDocumento.class, false);
 			return forma.getExModeloSet();

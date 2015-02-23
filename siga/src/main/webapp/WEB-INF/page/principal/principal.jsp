@@ -6,73 +6,75 @@
 
 <siga:pagina titulo="P&aacute;gina Inicial" incluirJs="principal.js">
 
-	<div class="gt-bd">
-		<div class="gt-content">
-			<div style="width: 100%; display: block;">
-				<c:if test="${not empty mensagem}">
-					<div id="mensagem" class="gt-success">
-						${mensagem}
-					</div>
-					<script>
-						setTimeout(function() {
-							$('#mensagem').fadeTo(1000, 0, function() {
-								$('#mensagem').slideUp(1000);
-							});
-						}, 5000);
-					</script>
-				</c:if>
-				<div
-					style="width: 49%; float: left; clear: both; padding: 0; margin: 0;">
-					<div style="width: 100%; padding: 0; margin: 0;">
-						<h2 class="gt-table-head">
-							Expedientes
-						</h2>
-						<div id='left'>
-                            <jsp:include page="loading.jsp" />
-						</div>
-						<br />
-						<h2 class="gt-table-head">
-							Processos Administrativos
-						</h2>
-						<div id='leftbottom'>
-                            <jsp:include page="loading.jsp" />
-						</div>
-					</div>
-				</div>
-				<div style="width: 49%; float: right; padding: 0; margin: 0;">
-					<div style="width: 100%; padding: 0; margin: 0;">
-						<c:if
-							test="${f:resource('isWorkflowEnabled') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Gestão de Conhecimento')}">
-							<h2 class="gt-table-head">
-								Tarefas
-							</h2>
-							<span id='right' style="margin: 0; padding: 0;">
-                                <jsp:include page="loading.jsp" />
-							</span>
-						</c:if>
-						<br />
-						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
-                            <h2 class="gt-table-head">
-                            	Solicitações
-                            </h2>
-                            <span id='rightbottom' style="margin:0;padding:0;">
-                                 <jsp:include page="loading.jsp" />
-                            </span>
-                            </c:if>
-                            <br />
-						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
-							<h2 class="gt-table-head">
-								Gestão de Conhecimento
-							</h2>
-							<div id='rightbottom2'>
-                                <jsp:include page="loading.jsp" />
-							</div>
-						</c:if>
-						<br />
-					</div>
-				</div>
+	<c:if test="${not empty mensagem}">
+		<div id="mensagem" class="gt-success">${mensagem}</div>
+		<script>
+			setTimeout(function() {
+				$('#mensagem').fadeTo(1000, 0, function() {
+					$('#mensagem').slideUp(1000);
+				});
+			}, 5000);
+		</script>
+	</c:if>
+
+	<div class="row">
+		<!-- main content -->
+
+		<!-- Expedientes -->
+		<div class="col-xs-12 col-sm-6 col-lg-4 gadget">
+			<!-- Files Table -->
+			<!-- This table can be used for listing things like files, pictures, documents, etc -->
+			<h3>Expedientes</h3>
+			<!-- content box -->
+			<div id='left'>
+				<jsp:include page="loading.jsp" />
 			</div>
-            <input type="hidden" id="idp" name="idp" value="${idp}">
+			<!-- Expedientes -->
+			<!-- Processos -->
+			<h3>Processos Administrativos</h3>
+			<!-- content box -->
+			<div id='leftbottom'>
+				<jsp:include page="loading.jsp" />
+			</div>
+			<!-- Processos -->
 		</div>
-	</div>
+		<div class="col-xs-12 col-sm-6 col-lg-8">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-lg-6 gadget">
+					<c:if
+						test="${f:resource('isWorkflowEnabled') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Gestão de Conhecimento')}">
+						<h3>Tarefas</h3>
+						<!-- content box -->
+						<span id='right' style="margin: 0; padding: 0;"> <jsp:include
+								page="loading.jsp" />
+						</span>
+						<!-- 
+									<div class="gt-table-buttons">
+										<a href="" class="gt-btn-green-large gt-btn-right">Iniciar
+											Procedimento</a>
+									 -->
+						<!-- segunda metade da tela -->
+					</c:if>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-lg-6 gadget">
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
+						<h3>Solicitações</h3>
+						<!-- content box -->
+						<span id='rightbottom' style="margin: 0; padding: 0;"> <jsp:include
+								page="loading.jsp" />
+						</span>
+					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
+						<h3>Gestão de Conhecimento</h3>
+						<!-- content box -->
+						<div id='rightbottom2'>
+							<jsp:include page="loading.jsp" />
+						</div>
+					</c:if>
+				</div>
+ 				<input type="hidden" id="idp" name="idp" value="${idp}">
+			</div>
+		</div>
 </siga:pagina>

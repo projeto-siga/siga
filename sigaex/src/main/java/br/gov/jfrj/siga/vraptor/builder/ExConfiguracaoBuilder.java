@@ -26,7 +26,7 @@ import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 
 public final class ExConfiguracaoBuilder {
-	
+
 	private Long idOrgaoUsu;
 	private Long idTpMov;
 	private Long idTpDoc;

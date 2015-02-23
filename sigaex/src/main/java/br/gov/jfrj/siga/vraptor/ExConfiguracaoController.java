@@ -16,11 +16,15 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExTipoDocumento;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoComparator;
@@ -34,7 +38,7 @@ import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
 @Resource
 public class ExConfiguracaoController extends ExController {
 
-	private static final String VERIFICADOR_ACESSO = "DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações";
+	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
 	
 	public ExConfiguracaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em) {
@@ -78,6 +82,78 @@ public class ExConfiguracaoController extends ExController {
 		}
 		escreverForm(config);
 
+		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
+		result.include("listaSituacao", getListaSituacao());
+		result.include("listaNivelAcesso", getListaNivelAcesso());
+		result.include("orgaosUsu", getOrgaosUsu());
+		result.include("listaTiposMovimentacao", getListaTiposMovimentacao());
+		result.include("tiposFormaDoc", getTiposFormaDoc());
+		result.include("listaTiposDocumento", getListaTiposDocumento());
+
+	}
+
+	@SuppressWarnings("all")
+	@Get("app/expediente/configuracao/editar_gravar")
+	public void editarGravar(Long id,
+			Long idOrgaoUsu, Long idTpMov, Long idTpDoc,
+			Long idMod, Long idFormaDoc,
+			Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao,
+			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, 
+			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
+			Long idOrgaoObjeto, String nmTipoRetorno) throws Exception {
+
+		assertAcesso(VERIFICADOR_ACESSO);
+
+		if(idTpConfiguracao == null || idTpConfiguracao == 0)
+			throw new AplicacaoException("Tipo de configuracao não informado");
+
+		if(idSituacao == null || idSituacao == 0)
+			throw new AplicacaoException("Situação de Configuracao não informada");
+
+		ExConfiguracao config;
+		if (id == null)
+			config = new ExConfiguracao();
+		else
+			config = daoCon(id);
+
+		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia()
+				.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc)
+				.setIdMod(idMod).setIdFormaDoc(idFormaDoc).setIdNivelAcesso(idNivelAcesso)
+				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao)
+				.setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel).setCargoSel(cargoSel)
+				.setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto);
+
+		config = configuracaoBuilder.construir(dao());
+
+		try {
+			dao().iniciarTransacao();
+			config.setHisDtIni(dao().consultarDataEHoraDoServidor());
+			dao().gravarComHistorico(config, getIdentidadeCadastrante());
+			dao().commitTransacao();
+		} catch (final Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Erro na gravação", 0, e);
+		}
+		escreveFormRetorno(nmTipoRetorno, configuracaoBuilder);
+
+	}
+
+	private void escreveFormRetorno(String nmTipoRetorno, ExConfiguracaoBuilder builder) throws Exception {
+
+		if("ajax".equals(nmTipoRetorno)) {
+			Integer idFormaDoc = builder.getIdFormaDoc() != null ? builder.getIdFormaDoc().intValue() : null;
+
+			result.redirectTo(this).listaCadastradas(builder.getIdTpConfiguracao(), null, builder.getIdTpMov(), idFormaDoc, builder.getIdMod());
+		}
+		else if("modelo".equals(nmTipoRetorno)) {
+			result.redirectTo(ExModeloController.class).edita(builder.getIdMod(), 1);;
+			
+		}else if("forma".equals(nmTipoRetorno)) {
+			Integer idFormaDoc = builder.getIdFormaDoc() != null ? builder.getIdFormaDoc().intValue() : null;
+			result.redirectTo(ExFormaDocumentoController.class).editarForma(idFormaDoc);
+		} else {
+			result.redirectTo(this).lista();
+		}
 	}
 
 	@Get("app/expediente/configuracao/listar_cadastradas")
@@ -127,14 +203,19 @@ public class ExConfiguracaoController extends ExController {
 
 		this.getRequest().setAttribute("listConfig", listConfig);
 		this.getRequest().setAttribute("tpConfiguracao", config.getCpTipoConfiguracao());
-
 	}
 
 	private ExConfiguracao daoCon(long id) {
 		return dao().consultar(id, ExConfiguracao.class, false);
 	}
-	
+
 	private void escreverForm(ExConfiguracao c) throws Exception {
+		DpPessoaSelecao pessoaSelecao = new DpPessoaSelecao();
+		DpLotacaoSelecao lotacaoSelecao = new DpLotacaoSelecao();
+		DpFuncaoConfiancaSelecao funcaoConfiancaSelecao = new DpFuncaoConfiancaSelecao();
+		DpCargoSelecao cargoSelecao = new DpCargoSelecao();
+		ExClassificacaoSelecao classificacaoSelecao = new ExClassificacaoSelecao();
+
 		if (c.getOrgaoUsuario() != null)
 			result.include("idOrgaoUsu", c.getOrgaoUsuario().getIdOrgaoUsu());
 
@@ -162,38 +243,30 @@ public class ExConfiguracaoController extends ExController {
 		if (c.getCpTipoConfiguracao() != null)
 			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getIdTpConfiguracao());
 
-		if (c.getDpPessoa() != null) {
-			DpPessoaSelecao pessoaSelecao = new DpPessoaSelecao();
+		if (c.getDpPessoa() != null)
 			pessoaSelecao.buscarPorObjeto(c.getDpPessoa());
-			result.include("pessoaSel", pessoaSelecao);
-		}
 
-		if (c.getLotacao() != null) {
-			DpLotacaoSelecao lotacaoSelecao = new DpLotacaoSelecao();
+		if (c.getLotacao() != null)
 			lotacaoSelecao.buscarPorObjeto(c.getLotacao());
-			result.include("lotacaoSel", lotacaoSelecao );
-		}
-
-		if (c.getCargo() != null) {
-			DpCargoSelecao cargoSelecao = new DpCargoSelecao();
+		
+		if (c.getCargo() != null)
 			cargoSelecao.buscarPorObjeto(c.getCargo());
-			result.include("cargoSel", cargoSelecao);
-		}
 
-		if (c.getFuncaoConfianca() != null) {
-			DpFuncaoConfiancaSelecao funcaoConfiancaSelecao = new DpFuncaoConfiancaSelecao();
+		if (c.getFuncaoConfianca() != null) 
 			funcaoConfiancaSelecao.buscarPorObjeto(c.getFuncaoConfianca());
-			result.include("funcaoSel", funcaoConfiancaSelecao);
-		}
 
-		if (c.getExClassificacao() != null) {
-			ExClassificacaoSelecao classificacaoSelecao = new ExClassificacaoSelecao();
+		if (c.getExClassificacao() != null)
 			classificacaoSelecao.buscarPorObjeto(c.getExClassificacao());
-			result.include("classificacaoSel", classificacaoSelecao);
-		}
 
 		if (c.getOrgaoObjeto() != null)
 			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
+
+		result.include("pessoaSel", pessoaSelecao);
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("cargoSel", cargoSelecao);
+		result.include("funcaoSel", funcaoConfiancaSelecao);
+		result.include("classificacaoSel", classificacaoSelecao);
+
 	}
 
 	@SuppressWarnings("all")
@@ -212,5 +285,55 @@ public class ExConfiguracaoController extends ExController {
 		s.addAll(dao().listarTiposConfiguracao());
 
 		return s;
+	}
+
+	@SuppressWarnings("all")
+	private Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
+		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(
+				new Comparator() {
+
+					public int compare(Object o1, Object o2) {
+						return ((CpSituacaoConfiguracao) o1)
+								.getDscSitConfiguracao().compareTo(
+										((CpSituacaoConfiguracao) o2)
+												.getDscSitConfiguracao());
+					}
+
+				});
+
+		s.addAll(dao().listarSituacoesConfiguracao());
+
+		return s;
+	}
+	
+	@SuppressWarnings("all")
+	private Set<ExTipoMovimentacao> getListaTiposMovimentacao() throws Exception {
+		TreeSet<ExTipoMovimentacao> s = new TreeSet<ExTipoMovimentacao>(
+				new Comparator() {
+
+					public int compare(Object o1, Object o2) {
+						return ((ExTipoMovimentacao) o1)
+								.getDescrTipoMovimentacao().compareTo(
+										((ExTipoMovimentacao) o2)
+												.getDescrTipoMovimentacao());
+					}
+
+				});
+
+		s.addAll(dao().listarExTiposMovimentacao());
+
+		return s;
+	}
+	
+	private List<ExTipoFormaDoc> getTiposFormaDoc() throws Exception {
+		return dao().listarExTiposFormaDoc();
+	}
+	
+	private List<ExNivelAcesso> getListaNivelAcesso() throws Exception {
+		return dao().listarOrdemNivel();
+	}
+	
+	private List<ExTipoDocumento> getListaTiposDocumento() throws Exception {
+		return dao().listarExTiposDocumento();
 	}
 }

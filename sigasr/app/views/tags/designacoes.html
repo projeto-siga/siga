@@ -205,27 +205,9 @@ altura:'200', largura:'450'}
 	
 	designacaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
-		designacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
-		afterGravarDesignacao(tr, objSalvo);
+		afterGravarDesignacao(tr, objSalvo, this);
 		return tr;
 	}
-
-// 	/**
-// 	 * Sobrescreve o método para adicionar também o botão duplicar.
-// 	 */
-// 	 designacaoService.gerarColunaAtivar = function(id) {
-// 		var column = BaseService.prototype.gerarColunaAtivar.call(this, id);
-// 		column = column + " " + designacaoService.duplicarButton;
-// 		return column;
-// 	}
-// 	/**
-// 	 * Sobrescreve o método para adicionar também o botão duplicar.
-// 	 */
-// 	 designacaoService.gerarColunaDesativar = function(id) {
-// 		var column = BaseService.prototype.gerarColunaDesativar.call(this, id);
-// 		column = column + " " + designacaoService.duplicarButton;
-// 		return column;
-// 	 }
 
 	designacaoService.isValidForm = function() {
 	    return jQuery(this.opts.formCadastro).valid() && camposObrigatoriosPreenchidos();
@@ -238,7 +220,7 @@ altura:'200', largura:'450'}
 		ajax.success().done(function(jSonDesignacao) {
 			var design = JSON.parse(jSonDesignacao),
 				tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + service.getId(design) + "]");
-			afterGravarDesignacao(tr, null);
+			afterGravarDesignacao(tr, design, service);
 		});
 	}
 
@@ -249,7 +231,7 @@ altura:'200', largura:'450'}
 		ajax.success().done(function(jSonDesignacao) {
 			var design = JSON.parse(jSonDesignacao),
 				tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + service.getId(design) + "]");
- 			afterGravarDesignacao(tr, null);
+ 			afterGravarDesignacao(tr, design, service);
 		});
 	}
 
@@ -297,7 +279,7 @@ altura:'200', largura:'450'}
 		return getItemAcaoAsString(designacaoService.opts.objectName);
     }
 
-	function afterGravarDesignacao(tr, designacao) {
+	function afterGravarDesignacao(tr, designacao, service) {
 		var acoes = tr.find('td.acoes');
 
 		// tratamentos de herança e botão duplicar
@@ -305,6 +287,9 @@ altura:'200', largura:'450'}
 			$('td', tr).addClass('configuracaoHerdada');
 		else
 			acoes = acoes.append(" " + designacaoService.duplicarButton);
+
+		// Para atualizar o detalhe caso esteja aberto
+		designacaoTable.atualizarDetalhes(service.getId(designacao));
 	}
 
 	function duplicarDesignacao(event) {
@@ -332,6 +317,12 @@ altura:'200', largura:'450'}
 		detalheLista("<b>Ações:</b>", designacao.listaAcaoVO, trAcoes);
 		detalheDescricaoLista("<b>Descrição:</b>", descricao, trDescricao);
 
+		if (designacao.ativo == false) {
+			$('td', trDescricao).addClass('item-desativado');
+			$('td', trItens).addClass('item-desativado');
+			$('td', trAcoes).addClass('item-desativado');
+		}
+				
 		table.append(trDescricao);
 		table.append(trItens);
 		table.append(trAcoes);

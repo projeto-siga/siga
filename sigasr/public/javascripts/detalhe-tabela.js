@@ -66,7 +66,7 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	this.atualizar = function(tr) {
 		var detail = tr.next('tr.detail');
 		
-		if(detail.size() > 0 && tr.hasClass('shown')) {
+		if(detail.size() > 0) {
 			detail.remove();
 			var data = tr.find('td'),
 				obj = tr.data('json');

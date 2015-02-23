@@ -204,6 +204,7 @@ BaseService.prototype.desativar = function(event, id) {
 				row[service.opts.colunas] = service.gerarColunaDesativar(service.getId(obj));
 				tableTr.attr('data-json-id', service.getId(obj));
 				tableTr.attr('data-json', response);
+				tableTr.data('json', obj);
 				service.opts.dataTable.api().row(tr).data(row).draw();
 			}
 			else {
@@ -241,6 +242,8 @@ BaseService.prototype.reativar = function(event, id) {
 	         row[service.opts.colunas] = service.gerarColunaAtivar(service.getId(obj));
 	         tableTr.attr('data-json-id', service.getId(obj));
 	         tableTr.attr('data-json', response);
+	         tableTr.data('json', obj);
+				
 	         service.opts.dataTable.api().row(tr).data(row).draw();
 	     },
 	     error: function(response) {

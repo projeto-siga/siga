@@ -115,28 +115,28 @@ public final class ExConfiguracaoBuilder {
 		} else
 			config.setCpTipoConfiguracao(null);
 
-		if (pessoaSel != null && pessoaSel.getId() != 0) {
+		if (pessoaSel != null && pessoaSel.getId() != null) {
 			config.setDpPessoa(dao.consultar(pessoaSel.getId(), DpPessoa.class, false));
 		} else
 			config.setDpPessoa(null);
 
-		if (lotacaoSel != null && lotacaoSel.getId() != 0) {
+		if (lotacaoSel != null && lotacaoSel.getId() != null) {
 			config.setLotacao(dao.consultar(lotacaoSel.getId(), DpLotacao.class, false));
 		} else
 			config.setLotacao(null);
 
-		if (cargoSel != null && cargoSel.getId() != 0) {
+		if (cargoSel != null && cargoSel.getId() != null) {
 			config.setCargo(dao.consultar(cargoSel.getId(), DpCargo.class, false));
 		} else
 			config.setCargo(null);
 
-		if (funcaoSel != null && funcaoSel.getId() != 0) {
+		if (funcaoSel != null && funcaoSel.getId() != null) {
 			config.setFuncaoConfianca(dao.consultar(funcaoSel.getId(),
 					DpFuncaoConfianca.class, false));
 		} else
 			config.setFuncaoConfianca(null);
 
-		if (classificacaoSel != null && classificacaoSel.getId() != 0) {
+		if (classificacaoSel != null && classificacaoSel.getId() != null) {
 			config.setExClassificacao(dao.consultar(classificacaoSel.getId(),
 					ExClassificacao.class, false));
 		} else

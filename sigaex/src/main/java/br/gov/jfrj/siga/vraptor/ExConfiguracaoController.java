@@ -91,6 +91,7 @@ public class ExConfiguracaoController extends ExController {
 		}
 		escreverForm(config);
 
+		result.include("id", id);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
 		result.include("listaSituacao", getListaSituacao());
 		result.include("listaNivelAcesso", getListaNivelAcesso());
@@ -101,6 +102,30 @@ public class ExConfiguracaoController extends ExController {
 
 	}
 
+	@SuppressWarnings("all")
+	@Get("app/expediente/configuracao/excluir")
+	public void excluir(Long id, String nmTipoRetorno, Long idMod, Long idFormaDoc) throws Exception {
+
+		assertAcesso(VERIFICADOR_ACESSO);
+
+		if (id != null) {
+			try {
+				dao().iniciarTransacao();
+				ExConfiguracao config = daoCon(id);
+				config.setHisDtFim(dao().consultarDataEHoraDoServidor());
+				dao().gravarComHistorico(config, getIdentidadeCadastrante());
+				dao().commitTransacao();
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		} else
+			throw new AplicacaoException("ID não informada");
+		
+		escreveFormRetornoExclusao(nmTipoRetorno, idMod, idFormaDoc);
+		
+	}
+	
 	@SuppressWarnings("all")
 	@Get("app/expediente/configuracao/editar_gravar")
 	public void editarGravar(Long id,
@@ -145,11 +170,10 @@ public class ExConfiguracaoController extends ExController {
 		if("ajax".equals(nmTipoRetorno)) {
 			Integer idFormaDoc = builder.getIdFormaDoc() != null ? builder.getIdFormaDoc().intValue() : null;
 			result.redirectTo(this).listaCadastradas(builder.getIdTpConfiguracao(), null, builder.getIdTpMov(), idFormaDoc, builder.getIdMod());
-		}
-		else if("modelo".equals(nmTipoRetorno)) {
-			result.redirectTo(ExModeloController.class).edita(builder.getIdMod(), 1);;
+		} else if("modelo".equals(nmTipoRetorno)) {
+			result.redirectTo(ExModeloController.class).edita(builder.getIdMod(), 1);
 			
-		}else if("forma".equals(nmTipoRetorno)) {
+		} else if("forma".equals(nmTipoRetorno)) {
 			Integer idFormaDoc = builder.getIdFormaDoc() != null ? builder.getIdFormaDoc().intValue() : null;
 			result.redirectTo(ExFormaDocumentoController.class).editarForma(idFormaDoc);
 		} else {
@@ -351,6 +375,19 @@ public class ExConfiguracaoController extends ExController {
 		return dao().consultar(id, ExConfiguracao.class, false);
 	}
 
+	private void escreveFormRetornoExclusao(String nmTipoRetorno, Long idMod,
+			Long idFormaDoc) throws Exception {
+
+		if("modelo".equals(nmTipoRetorno)) {
+			result.redirectTo(ExModeloController.class).edita(idMod, 1);
+		} else if("forma".equals(nmTipoRetorno)) {
+			Integer formaDoc = idFormaDoc != null ? idFormaDoc.intValue() : null;
+			result.redirectTo(ExFormaDocumentoController.class).editarForma(formaDoc);
+		} else {
+			result.redirectTo(this).lista();
+		}
+	}
+
 	private void escreverForm(ExConfiguracao c) throws Exception {
 		DpPessoaSelecao pessoaSelecao = new DpPessoaSelecao();
 		DpLotacaoSelecao lotacaoSelecao = new DpLotacaoSelecao();
@@ -404,7 +441,7 @@ public class ExConfiguracaoController extends ExController {
 			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
 
 		result.include("pessoaSel", pessoaSelecao);
-		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("lotacaoSel", lotacaoSelecao);
 		result.include("cargoSel", cargoSelecao);
 		result.include("funcaoSel", funcaoConfiancaSelecao);
 		result.include("classificacaoSel", classificacaoSelecao);

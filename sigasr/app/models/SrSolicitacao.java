@@ -1926,7 +1926,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				sb.append(", ");
 			}
 			if (mar.getDpLotacaoIni() != null) {
-				sb.append(mar.getDpLotacaoIni().getSigla());
+				DpLotacao atual = mar.getDpLotacaoIni().getLotacaoAtual();
+				if (atual == null)
+					atual = mar.getDpLotacaoIni();
+				sb.append(atual.getSigla());
 			}
 			sb.append(")");
 		}

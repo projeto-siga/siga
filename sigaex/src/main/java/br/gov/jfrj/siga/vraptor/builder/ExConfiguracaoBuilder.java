@@ -26,7 +26,7 @@ import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 
 public final class ExConfiguracaoBuilder {
-	
+
 	private Long idOrgaoUsu;
 	private Long idTpMov;
 	private Long idTpDoc;
@@ -42,6 +42,7 @@ public final class ExConfiguracaoBuilder {
 	private DpFuncaoConfiancaSelecao funcaoSel; 
 	private ExClassificacaoSelecao classificacaoSel;
 	private Long idOrgaoObjeto;
+	private Long id;
 
 	private ExConfiguracaoBuilder() {
 		this.pessoaSel = new DpPessoaSelecao(); 
@@ -56,8 +57,8 @@ public final class ExConfiguracaoBuilder {
 	}
 
 	public ExConfiguracao construir(final ExDao dao) {
-		final ExConfiguracao config = new ExConfiguracao();
-
+		ExConfiguracao config = instanciarExConfiguracao(dao);
+		
 		if (idOrgaoUsu != null && idOrgaoUsu != 0) {
 			config.setOrgaoUsuario(dao.consultar(idOrgaoUsu,
 					CpOrgaoUsuario.class, false));
@@ -149,7 +150,13 @@ public final class ExConfiguracaoBuilder {
 		
 		return config;
 	}
-
+	
+	private ExConfiguracao instanciarExConfiguracao(final ExDao dao) {
+		if (id == null)
+			return new ExConfiguracao();
+		return dao.consultar(id, ExConfiguracao.class, false);
+	}
+	
 	public Long getIdOrgaoUsu() {
 		return idOrgaoUsu;
 	}
@@ -286,4 +293,8 @@ public final class ExConfiguracaoBuilder {
 		return this;
 	}
 
+	public ExConfiguracaoBuilder setId(Long id) {
+		this.id = id;
+		return this;
+	}
 }

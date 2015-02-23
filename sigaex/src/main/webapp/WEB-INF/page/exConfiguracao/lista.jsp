@@ -9,7 +9,7 @@
 <script type="text/javascript">
 	function sbmt(id, action) {
 		var frm = document.getElementById(id);
-		frm.action=action;
+		frm=action;
 		frm.submit();
 		return;
 	}
@@ -53,11 +53,11 @@
 					</tr>
 					<tr>
 						<td><input type="button" value="Pesquisar"
-								class="gt-btn-medium gt-btn-left"
-								onclick="javascript:montaTableCadastradas();" /> 
-							<input type="button" value="Incluir Configuração"
-								class="gt-btn-large gt-btn-left"
-								onclick="javascript:window.location.href=editar"></td>
+							class="gt-btn-medium gt-btn-left"
+							onclick="javascript:montaTableCadastradas();" /> <input
+							type="button" value="Incluir Configuração"
+							class="gt-btn-large gt-btn-left"
+							onclick="javascript:window.location.href='editar'"></td>
 					</tr>
 				</table>
 			</div>
@@ -66,5 +66,4 @@
 			</div>
 		</div>
 	</div>
-
 </siga:pagina>

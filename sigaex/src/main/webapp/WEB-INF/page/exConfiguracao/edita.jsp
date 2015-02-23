@@ -7,41 +7,32 @@
 
 <siga:pagina titulo="Cadastro de configuração">
 
-
-<c:url var="url" value="/configuracao/editar" />
-
 <script type="text/javascript" language="Javascript1.1">
 
-<c:url var="urlForma" value="/expediente/doc/carregar_lista_formas" />
 function alteraTipoDaForma(){
-	ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{urlForma}"/>'+'?tipoForma='+document.getElementById('tipoForma').value+'&idFormaDoc='+'${idFormaDoc}', null, document.getElementById('comboFormaDiv'))
+	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='+document.getElementById('tipoForma').value+'&idFormaDoc='+'${idFormaDoc}', null, document.getElementById('comboFormaDiv'))
 }
 
-<ww:url id="urlModelo" action="carregar_lista_modelos" namespace="/expediente/doc">
-</ww:url>
 function alteraForma(){
-	ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{urlModelo}"/>'+'?forma='+document.getElementById('forma').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
+	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos'+'?forma='+document.getElementById('forma').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
 }
 
 function sbmt() {
-	editar_gravar.action='<ww:property value="%{url}"/>';
+	editar_gravar='${pageContext.request.contextPath}/app/expediente/configuracao/editar';
 	editar_gravar.submit();
 }
 
 </script>
-
-
 
 <body onload="aviso()">
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">		
 
-
-		<form action="editar_gravar.action">
+		<form action="editar_gravar">
 		<input type="hidden" name="postback" value="1" />
 		<input type="hidden" name="nmTipoRetorno" value="${nmTipoRetorno}" />
-		<ww:hidden name="id" /> 
+		<input type="hidden" name="id" value="${id}" /> 
 		<c:set var="dataFim" value="" />
 		
 		<h1>Cadastro de configuração <c:if
@@ -62,23 +53,23 @@ function sbmt() {
 							${config.cpTipoConfiguracao.dscTpConfiguracao}
 						</c:when>
 						<c:otherwise>
-							<ww:select name="idTpConfiguracao"
-							   list="listaTiposConfiguracao" listKey="idTpConfiguracao"
-							   listValue="dscTpConfiguracao" theme="simple"
-							   headerValue="[Indefinido]" headerKey="0" />
+							<siga:select name="idTpConfiguracao"
+								list="listaTiposConfiguracao" listKey="idTpConfiguracao"
+								id="idTpConfiguracao" headerValue="[Indefinido]" headerKey="0"
+								listValue="dscTpConfiguracao" theme="simple" />
 						</c:otherwise>
 					</c:choose>
 				</td>
 			</tr>
 			<tr>
 				<td><b>Situação</b></td>
-				<td><ww:select name="idSituacao" list="listaSituacao"
+				<td><siga:select name="idSituacao" list="listaSituacao"
 					listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
 					theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
 			</tr>
 			<tr>
 				<td>Nível de acesso</td>
-				<td><ww:select name="idNivelAcesso" list="listaNivelAcesso"
+				<td><siga:select name="idNivelAcesso" list="listaNivelAcesso"
 					theme="simple" listKey="idNivelAcesso" listValue="nmNivelAcesso"
 					headerValue="[Indefinido]" headerKey="0" /></td>
 			</tr>
@@ -100,36 +91,25 @@ function sbmt() {
 			</tr>
 			<tr>
 				<td>Órgão</td>
-				<td><ww:select name="idOrgaoUsu" list="orgaosUsu"
+				<td><siga:select name="idOrgaoUsu" list="orgaosUsu"
 					listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
 					headerValue="[Indefinido]" headerKey="0" /></td>
 			</tr>
-			<%--<tr>
-				<td>Cargo</td>
-				<td><siga:selecao propriedade="cargo" tema="simple" /></td>
-			</tr>--%>
 			<tr>
 				<td>Tipo de Movimentação</td>
 				<td>
 					<c:choose>
 						<c:when test="${campoFixo && not empty config.exTipoMovimentacao}">
-							<ww:hidden name="idTpMov" />
-							${config.exTipoMovimentacao.descrTipoMovimentacao}
+							<input type="hidden" name="idTpMov" value="${config.exTipoMovimentacao.descrTipoMovimentacao}" />
 						</c:when>
 						<c:otherwise>
-							<ww:select name="idTpMov" list="listaTiposMovimentacao"
+							<siga:select name="idTpMov" list="listaTiposMovimentacao"
 								listKey="idTpMov" listValue="descrTipoMovimentacao" theme="simple"
 								headerValue="[Indefinido]" headerKey="0" />
 						</c:otherwise>
 					</c:choose>
 				</td>
 			</tr>
-			<%--<tr>
-				<td>Via</td>
-				<td><ww:select name="idVia" list="listaVias" listKey="idVia"
-					listValue="destinacao" theme="simple" headerValue="[Indefinido]"
-					headerKey="0" /></td>
-			</tr> --%>
 			<tr>
 				<td>Tipo:</td>
 				<td>
@@ -141,7 +121,7 @@ function sbmt() {
 							${config.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc} - ${config.exFormaDocumento.descrFormaDoc}
 						</c:when>
 						<c:otherwise>
-							<ww:select name="idTpFormaDoc" list="tiposFormaDoc"
+							<siga:select name="idTpFormaDoc" list="tiposFormaDoc"
 					                       listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
 							      		   theme="simple" headerKey="0" headerValue="[Indefinido]"
 										   onchange="javascript:alteraTipoDaForma();" id="tipoForma" />&nbsp;&nbsp;&nbsp;
@@ -160,11 +140,10 @@ function sbmt() {
 				<td>
 					<c:choose>
 						<c:when test="${campoFixo && not empty config.exModelo}">
-							<ww:hidden name="idMod" />
-							${config.exModelo.descMod}
+							<input type="hidden" name="idMod" value="${config.exModelo.descMod}" />
 						</c:when>
 						<c:when test="${campoFixo && not empty config.exFormaDocumento}">
-							<ww:hidden name="idFormaDoc" />
+							<input type="hidden" name="idFormaDoc"  />
 						</c:when>
 						<c:otherwise>
 							<div style="display: inline" id="comboModeloDiv">
@@ -180,13 +159,13 @@ function sbmt() {
 			</tr>			
 			<tr>
 				<td>Origem</td>
-				<td><ww:select name="idTpDoc" list="listaTiposDocumento"
+				<td><siga:select name="idTpDoc" list="listaTiposDocumento"
 					listKey="idTpDoc" listValue="descrTipoDocumento" theme="simple"
 					headerValue="[Indefinido]" headerKey="0" /></td>
 			</tr>
 			<tr>
 				<td>Órgão Objeto</td>
-				<td><ww:select name="idOrgaoObjeto" list="orgaosUsu"
+				<td><siga:select name="idOrgaoObjeto" list="orgaosUsu"
 					listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
 					headerValue="[Indefinido]" headerKey="0" /></td>
 			</tr>
@@ -202,5 +181,4 @@ function sbmt() {
 <br />
 </div></div>
 </body>
-
 </siga:pagina>

@@ -16,20 +16,22 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.opensymphony.xwork.Action;
-
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
+import br.gov.jfrj.siga.ex.ExTipoDocumento;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
@@ -45,7 +47,7 @@ import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
 public class ExConfiguracaoController extends ExController {
 
 	private static final int ORGAO_INTEGRADO = 2;
-	private static final String VERIFICADOR_ACESSO = "DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações";
+	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
 	
 	public ExConfiguracaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em) {
@@ -89,6 +91,70 @@ public class ExConfiguracaoController extends ExController {
 		}
 		escreverForm(config);
 
+		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
+		result.include("listaSituacao", getListaSituacao());
+		result.include("listaNivelAcesso", getListaNivelAcesso());
+		result.include("orgaosUsu", getOrgaosUsu());
+		result.include("listaTiposMovimentacao", getListaTiposMovimentacao());
+		result.include("tiposFormaDoc", getTiposFormaDoc());
+		result.include("listaTiposDocumento", getListaTiposDocumento());
+
+	}
+
+	@SuppressWarnings("all")
+	@Get("app/expediente/configuracao/editar_gravar")
+	public void editarGravar(Long id,
+			Long idOrgaoUsu, Long idTpMov, Long idTpDoc,
+			Long idMod, Long idFormaDoc,
+			Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao,
+			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, 
+			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
+			Long idOrgaoObjeto, String nmTipoRetorno) throws Exception {
+
+		assertAcesso(VERIFICADOR_ACESSO);
+
+		if(idTpConfiguracao == null || idTpConfiguracao == 0)
+			throw new AplicacaoException("Tipo de configuracao não informado");
+
+		if(idSituacao == null || idSituacao == 0)
+			throw new AplicacaoException("Situação de Configuracao não informada");
+
+		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia()
+				.setId(id)
+				.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc)
+				.setIdMod(idMod).setIdFormaDoc(idFormaDoc).setIdNivelAcesso(idNivelAcesso)
+				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao)
+				.setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel).setCargoSel(cargoSel)
+				.setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto);
+		
+		ExConfiguracao config = configuracaoBuilder.construir(dao());
+
+		try {
+			dao().iniciarTransacao();
+			config.setHisDtIni(dao().consultarDataEHoraDoServidor());
+			dao().gravarComHistorico(config, getIdentidadeCadastrante());
+			dao().commitTransacao();
+		} catch (final Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Erro na gravação", 0, e);
+		}
+		escreveFormRetorno(nmTipoRetorno, configuracaoBuilder);
+	}
+
+	private void escreveFormRetorno(String nmTipoRetorno, ExConfiguracaoBuilder builder) throws Exception {
+		if("ajax".equals(nmTipoRetorno)) {
+			Integer idFormaDoc = builder.getIdFormaDoc() != null ? builder.getIdFormaDoc().intValue() : null;
+			result.redirectTo(this).listaCadastradas(builder.getIdTpConfiguracao(), null, builder.getIdTpMov(), idFormaDoc, builder.getIdMod());
+		}
+		else if("modelo".equals(nmTipoRetorno)) {
+			result.redirectTo(ExModeloController.class).edita(builder.getIdMod(), 1);;
+			
+		}else if("forma".equals(nmTipoRetorno)) {
+			Integer idFormaDoc = builder.getIdFormaDoc() != null ? builder.getIdFormaDoc().intValue() : null;
+			result.redirectTo(ExFormaDocumentoController.class).editarForma(idFormaDoc);
+		} else {
+			result.redirectTo(this).lista();
+		}
 	}
 
 	@Get("app/expediente/configuracao/listar_cadastradas")
@@ -138,93 +204,8 @@ public class ExConfiguracaoController extends ExController {
 
 		this.getRequest().setAttribute("listConfig", listConfig);
 		this.getRequest().setAttribute("tpConfiguracao", config.getCpTipoConfiguracao());
-
 	}
 
-	private ExConfiguracao daoCon(long id) {
-		return dao().consultar(id, ExConfiguracao.class, false);
-	}
-	
-	private void escreverForm(ExConfiguracao c) throws Exception {
-		if (c.getOrgaoUsuario() != null)
-			result.include("idOrgaoUsu", c.getOrgaoUsuario().getIdOrgaoUsu());
-
-		if (c.getExTipoMovimentacao() != null)
-			result.include("idTpMov", c.getExTipoMovimentacao().getIdTpMov());
-
-		if (c.getExTipoDocumento() != null)
-			result.include("idTpDoc", c.getExTipoDocumento().getIdTpDoc());
-
-		if (c.getExTipoFormaDoc() != null)
-			result.include("idTpFormaDoc", c.getExTipoFormaDoc().getIdTipoFormaDoc());
-
-		if (c.getExFormaDocumento() != null)
-			result.include("idFormaDoc", c.getExFormaDocumento().getIdFormaDoc());
-
-		if (c.getExModelo() != null)
-			result.include("idMod", c.getExModelo().getIdMod());
-
-		if (c.getExNivelAcesso() != null)
-			result.include("idNivelAcesso", c.getExNivelAcesso().getIdNivelAcesso());
-
-		if (c.getCpSituacaoConfiguracao() != null)
-			result.include("idSituacao", c.getCpSituacaoConfiguracao().getIdSitConfiguracao());
-
-		if (c.getCpTipoConfiguracao() != null)
-			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getIdTpConfiguracao());
-
-		if (c.getDpPessoa() != null) {
-			DpPessoaSelecao pessoaSelecao = new DpPessoaSelecao();
-			pessoaSelecao.buscarPorObjeto(c.getDpPessoa());
-			result.include("pessoaSel", pessoaSelecao);
-		}
-
-		if (c.getLotacao() != null) {
-			DpLotacaoSelecao lotacaoSelecao = new DpLotacaoSelecao();
-			lotacaoSelecao.buscarPorObjeto(c.getLotacao());
-			result.include("lotacaoSel", lotacaoSelecao );
-		}
-
-		if (c.getCargo() != null) {
-			DpCargoSelecao cargoSelecao = new DpCargoSelecao();
-			cargoSelecao.buscarPorObjeto(c.getCargo());
-			result.include("cargoSel", cargoSelecao);
-		}
-
-		if (c.getFuncaoConfianca() != null) {
-			DpFuncaoConfiancaSelecao funcaoConfiancaSelecao = new DpFuncaoConfiancaSelecao();
-			funcaoConfiancaSelecao.buscarPorObjeto(c.getFuncaoConfianca());
-			result.include("funcaoSel", funcaoConfiancaSelecao);
-		}
-
-		if (c.getExClassificacao() != null) {
-			ExClassificacaoSelecao classificacaoSelecao = new ExClassificacaoSelecao();
-			classificacaoSelecao.buscarPorObjeto(c.getExClassificacao());
-			result.include("classificacaoSel", classificacaoSelecao);
-		}
-
-		if (c.getOrgaoObjeto() != null)
-			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
-	}
-
-	@SuppressWarnings("all")
-	private Set<CpTipoConfiguracao> getListaTiposConfiguracao() throws Exception {
-		TreeSet<CpTipoConfiguracao> s = new TreeSet<CpTipoConfiguracao>(
-				new Comparator() {
-
-					public int compare(Object o1, Object o2) {
-						return ((CpTipoConfiguracao) o1).getDscTpConfiguracao()
-								.compareTo(
-										((CpTipoConfiguracao) o2)
-												.getDscTpConfiguracao());
-					}
-				});
-
-		s.addAll(dao().listarTiposConfiguracao());
-
-		return s;
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Get("app/expediente/configuracao/gerenciar_publicacao_boletim")
 	public void gerenciarPublicacaoBoletim() throws Exception {
@@ -265,6 +246,7 @@ public class ExConfiguracaoController extends ExController {
 		result.include("pessoaSel", new DpPessoaSelecao());
 		result.include("lotacaoSel", new DpLotacaoSelecao());
 		result.include("itens", itens);
+		result.include("request", getRequest());
 	}
 	
 	private Object[] buscarEntradaPorNomeMod(List<Object[]> itens, String nomeMod) {
@@ -363,5 +345,137 @@ public class ExConfiguracaoController extends ExController {
 		s.add(ExDao.getInstance().consultar(1L, ExSituacaoConfiguracao.class, false));
 		s.add(ExDao.getInstance().consultar(2L, ExSituacaoConfiguracao.class, false));
 		return s;
+	}
+	
+	private ExConfiguracao daoCon(long id) {
+		return dao().consultar(id, ExConfiguracao.class, false);
+	}
+
+	private void escreverForm(ExConfiguracao c) throws Exception {
+		DpPessoaSelecao pessoaSelecao = new DpPessoaSelecao();
+		DpLotacaoSelecao lotacaoSelecao = new DpLotacaoSelecao();
+		DpFuncaoConfiancaSelecao funcaoConfiancaSelecao = new DpFuncaoConfiancaSelecao();
+		DpCargoSelecao cargoSelecao = new DpCargoSelecao();
+		ExClassificacaoSelecao classificacaoSelecao = new ExClassificacaoSelecao();
+
+		if (c.getOrgaoUsuario() != null)
+			result.include("idOrgaoUsu", c.getOrgaoUsuario().getIdOrgaoUsu());
+
+		if (c.getExTipoMovimentacao() != null)
+			result.include("idTpMov", c.getExTipoMovimentacao().getIdTpMov());
+
+		if (c.getExTipoDocumento() != null)
+			result.include("idTpDoc", c.getExTipoDocumento().getIdTpDoc());
+
+		if (c.getExTipoFormaDoc() != null)
+			result.include("idTpFormaDoc", c.getExTipoFormaDoc().getIdTipoFormaDoc());
+
+		if (c.getExFormaDocumento() != null)
+			result.include("idFormaDoc", c.getExFormaDocumento().getIdFormaDoc());
+
+		if (c.getExModelo() != null)
+			result.include("idMod", c.getExModelo().getIdMod());
+
+		if (c.getExNivelAcesso() != null)
+			result.include("idNivelAcesso", c.getExNivelAcesso().getIdNivelAcesso());
+
+		if (c.getCpSituacaoConfiguracao() != null)
+			result.include("idSituacao", c.getCpSituacaoConfiguracao().getIdSitConfiguracao());
+
+		if (c.getCpTipoConfiguracao() != null)
+			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getIdTpConfiguracao());
+
+		if (c.getDpPessoa() != null)
+			pessoaSelecao.buscarPorObjeto(c.getDpPessoa());
+
+		if (c.getLotacao() != null)
+			lotacaoSelecao.buscarPorObjeto(c.getLotacao());
+		
+		if (c.getCargo() != null)
+			cargoSelecao.buscarPorObjeto(c.getCargo());
+
+		if (c.getFuncaoConfianca() != null) 
+			funcaoConfiancaSelecao.buscarPorObjeto(c.getFuncaoConfianca());
+
+		if (c.getExClassificacao() != null)
+			classificacaoSelecao.buscarPorObjeto(c.getExClassificacao());
+
+		if (c.getOrgaoObjeto() != null)
+			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
+
+		result.include("pessoaSel", pessoaSelecao);
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("cargoSel", cargoSelecao);
+		result.include("funcaoSel", funcaoConfiancaSelecao);
+		result.include("classificacaoSel", classificacaoSelecao);
+
+	}
+
+	@SuppressWarnings("all")
+	private Set<CpTipoConfiguracao> getListaTiposConfiguracao() throws Exception {
+		TreeSet<CpTipoConfiguracao> s = new TreeSet<CpTipoConfiguracao>(
+				new Comparator() {
+
+					public int compare(Object o1, Object o2) {
+						return ((CpTipoConfiguracao) o1).getDscTpConfiguracao()
+								.compareTo(
+										((CpTipoConfiguracao) o2)
+												.getDscTpConfiguracao());
+					}
+				});
+
+		s.addAll(dao().listarTiposConfiguracao());
+
+		return s;
+	}
+
+	@SuppressWarnings("all")
+	private Set<CpSituacaoConfiguracao> getListaSituacao() throws Exception {
+		TreeSet<CpSituacaoConfiguracao> s = new TreeSet<CpSituacaoConfiguracao>(
+				new Comparator() {
+
+					public int compare(Object o1, Object o2) {
+						return ((CpSituacaoConfiguracao) o1)
+								.getDscSitConfiguracao().compareTo(
+										((CpSituacaoConfiguracao) o2)
+												.getDscSitConfiguracao());
+					}
+
+				});
+
+		s.addAll(dao().listarSituacoesConfiguracao());
+
+		return s;
+	}
+	
+	@SuppressWarnings("all")
+	private Set<ExTipoMovimentacao> getListaTiposMovimentacao() throws Exception {
+		TreeSet<ExTipoMovimentacao> s = new TreeSet<ExTipoMovimentacao>(
+				new Comparator() {
+
+					public int compare(Object o1, Object o2) {
+						return ((ExTipoMovimentacao) o1)
+								.getDescrTipoMovimentacao().compareTo(
+										((ExTipoMovimentacao) o2)
+												.getDescrTipoMovimentacao());
+					}
+
+				});
+
+		s.addAll(dao().listarExTiposMovimentacao());
+
+		return s;
+	}
+	
+	private List<ExTipoFormaDoc> getTiposFormaDoc() throws Exception {
+		return dao().listarExTiposFormaDoc();
+	}
+	
+	private List<ExNivelAcesso> getListaNivelAcesso() throws Exception {
+		return dao().listarOrdemNivel();
+	}
+	
+	private List<ExTipoDocumento> getListaTiposDocumento() throws Exception {
+		return dao().listarExTiposDocumento();
 	}
 }

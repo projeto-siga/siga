@@ -121,6 +121,7 @@
 			<!-- <interceptor-ref name="token-session" /> <interceptor-ref name="basicStack" 
 				/> -->
 			<result type="redirect-action">listar</result>
+			
 			<result name="ajax" type="redirect-action">
 				<param name="actionName">
 					listar_cadastradas

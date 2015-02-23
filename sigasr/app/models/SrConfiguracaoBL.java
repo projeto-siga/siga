@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 
 public class SrConfiguracaoBL extends CpConfiguracaoBL {
@@ -131,20 +132,27 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		for (int i = 0; i < atributoDesconsideradoFiltro.length; i++) {
 			atributosDesconsiderados.add(atributoDesconsideradoFiltro[i]);
 		}
+		
+		SortedSet<CpPerfil> perfis = null;
+		if (confFiltro.isBuscarPorPerfis()) {
+			perfis = consultarPerfisPorPessoaELotacao(
+					confFiltro.getDpPessoa(),
+					confFiltro.getLotacao(), null);
+		}
 
 		List<SrConfiguracao> listaFinal = new ArrayList<SrConfiguracao>();
-		
+
 		if (confFiltro.getCpTipoConfiguracao() != null) {
 			TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro
 					.getCpTipoConfiguracao().getIdTpConfiguracao());
 
 			for (CpConfiguracao cpConfiguracao : lista) {
 				if (cpConfiguracao.getHisDtFim() == null
-						&& atendeExigencias(confFiltro, atributosDesconsiderados,
-								(SrConfiguracao) cpConfiguracao, null)) {
+						&& atendeExigencias(confFiltro,
+								atributosDesconsiderados,
+								(SrConfiguracao) cpConfiguracao, perfis)) {
 					listaFinal.add((SrConfiguracao) cpConfiguracao);
 				}
-				
 			}
 		}
 		

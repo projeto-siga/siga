@@ -2,7 +2,7 @@
 <script>
 $(document).ready(function() {
 	$('#outrasInformacoesDaFilha').hide();
-	$("#escalonar_dialog").dialog('option', 'width', 580);
+	$("#escalonar_dialog").dialog('option', 'width', 700);
 	onchangeCheckCriaFilha();
 });
 function onchangeCheckCriaFilha(){
@@ -57,7 +57,7 @@ function carregouAcao(response, param){
 			<input type="hidden" name="idAtendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
 			<br />
 			<label>Descrição</label>
-			<textarea name="descricao" cols="70" rows="4">${solicitacao.descrSolicitacao}</textarea>
+			<textarea name="descricao" cols="85" rows="7">${solicitacao.descrSolicitacao}</textarea>
 			<br /><br />	
 			#{if !solicitacao.isPai() && !solicitacao.isFilha()}
 				#{checkbox name:'fechadoAuto',
@@ -107,7 +107,7 @@ function carregouAcao(response, param){
 <script>	
 	function modalAbrir(componentId) {
 		limparCampos();
-		$("#" + componentId + "_dialog").dialog('option', 'width', 560);
+		$("#" + componentId + "_dialog").dialog('option', 'width', 580);
 		$("#" + componentId + "_dialog").dialog('open');
 	}
 	

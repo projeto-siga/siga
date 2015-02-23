@@ -71,17 +71,24 @@ function postback(){
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-					value="${movimentacao.solicitacao.idSolicitacao}">*{ #{if
+					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
 				solicitacao.podeTrocarAtendente(titular, lotaTitular)}
+				#{set atendentes: solicitacao.pessoasAtendentesDisponiveis /}
+				
+				#{if atendentes.size >= 1}
 				<div class="gt-form-row">
 					<label>Atendente</label>
-					<div id="divAtendente">#{pessoaLotaSelecao
-						nomeSelLotacao:'movimentacao.lotaAtendente',
-						nomeSelPessoa:'movimentacao.atendente',
-						valuePessoa:movimentacao.atendente,
-						valueLotacao:movimentacao.lotaAtendente, disabled:disabled /}</div>
+					<div id="divAtendente">
+					#{select name:'movimentacao.atendente',
+						items:atendentes,
+						labelProperty:'descricaoIniciaisMaiusculas',
+						value:solicitacao.atendente?.pessoaAtual?.idPessoa}
+					#{option 0}#{/option} 
+					#{/select}
+					</div>
 				</div>
-				#{/if}}*
+				#{/if}
+				#{/if}
 
 				<div style="display: inline" class="gt-form-row gt-width-66">
 					<label>Pr&oacute;ximo Andamento</label>

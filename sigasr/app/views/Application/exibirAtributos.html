@@ -34,7 +34,7 @@
 				#{if atributo.tipoAtributo != null}
 					#{if atributo.tipoAtributo.name() == "TEXTO"}
 					<input type="text" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}"
-						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" maxlength="255"/>
+						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" size="70" maxlength="255" />
 					<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
 				#{/if}
 				#{if atributo.tipoAtributo.name() == "TEXT_AREA"}

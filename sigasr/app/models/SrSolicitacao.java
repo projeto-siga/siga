@@ -263,6 +263,62 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	}
 
+	public class SrTarefa {
+		public SrAcao acao;
+		public SrConfiguracao conf;
+		
+		public SrTarefa() {
+			
+		}
+		public SrAcao getAcao() {
+			return acao;
+		}
+		public void setAcao(SrAcao acao) {
+			this.acao = acao;
+		}
+		public SrConfiguracao getConf() {
+			return conf;
+		}
+		public void setConf(SrConfiguracao conf) {
+			this.conf = conf;
+		}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((acao == null) ? 0 : acao.hashCode());
+			result = prime * result + ((conf == null) ? 0 : conf.atendente.hashCode());
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			SrTarefa other = (SrTarefa) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (acao == null) {
+				if (other.acao != null)
+					return false;
+			} else if (!acao.equals(other.acao))
+				return false;
+			if (conf == null) {
+				if (other.conf != null)
+					return false;
+			} else if (!conf.atendente.equals(other.conf.atendente))
+				return false;
+			return true;
+		}
+		private SrSolicitacao getOuterType() {
+			return SrSolicitacao.this;
+		}	
+	}
+	
 	@Override
 	public Long getId() {
 		return idSolicitacao;
@@ -361,8 +417,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		this.descrSolicitacao = descricao;
 	}
 	
-	public Boolean getFechadoAutomaticamente() {
-		return fechadoAutomaticamente;
+	public Boolean isFechadoAutomaticamente() {
+		return fechadoAutomaticamente != null ? fechadoAutomaticamente : false;
 	}
 
 	public void setFechadoAutomaticamente(Boolean fechadoAutomaticamente) {
@@ -1062,8 +1118,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	public boolean podeFecharPaiAutomatico() {
-		return isFilha() && solicitacaoPai.getSolicitacaoAtual().fechadoAutomaticamente 
-							&& solicitacaoPai.isAFechar();
+		return isFilha()
+				&& solicitacaoPai.getSolicitacaoAtual().isFechadoAutomaticamente()
+				&& solicitacaoPai.isAFechar();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1133,7 +1190,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrItemConfiguracao> listaTodosItens = new ArrayList<SrItemConfiguracao>();
 		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
 		
-		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarConfiguracoes();
+		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarDesignacoes();
 		
 		listaTodosItens = SrItemConfiguracao.listar(false);
 		
@@ -1164,11 +1221,105 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrAcao> getAcoesDisponiveis() throws Exception {
-		Map<SrAcao, SrConfiguracao> acoesEAtendentes = getAcoesDisponiveisComAtendente();
-		return acoesEAtendentes != null ? new ArrayList<SrAcao>(acoesEAtendentes.keySet()) : null;
+		//Map<SrAcao, SrConfiguracao> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		//return acoesEAtendentes != null ? new ArrayList<SrAcao>(acoesEAtendentes.keySet()) : null;
+		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		List<SrAcao> acoes = new ArrayList<SrAcao>();
+		
+		if(acoesEAtendentes == null)
+			return null;
+		for (SrTarefa t: acoesEAtendentes) 
+			acoes.add(t.acao);
+		return acoes;
 	}
 
-	public Map<SrAcao, SrConfiguracao> getAcoesDisponiveisComAtendente()
+	public List<SrTarefa> getAcoesDisponiveisComAtendente()
+			throws Exception {
+
+		if (solicitante == null || itemConfiguracao == null)
+			return null;
+
+		List<SrTarefa> listaFinal = new ArrayList<SrTarefa>();	
+		Set<SrTarefa> setTerafa = new HashSet<SrTarefa>();
+		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarDesignacoes();
+		SrTarefa tarefa = null;
+
+		for (SrAcao a : SrAcao.listar(false)) {
+			if (!a.isEspecifico())
+				continue;
+			for (SrConfiguracao c : listaPessoasAConsiderar) {
+				c.itemConfiguracaoFiltro = itemConfiguracao;
+				c.acaoFiltro = a;
+				c.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+						CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+
+				List<SrConfiguracao> confs = SrConfiguracao.listar(c, new int[] { SrConfiguracaoBL.ATENDENTE});
+				if (confs.size() > 0) 
+					for (SrConfiguracao conf : confs) {
+						tarefa = this.new SrTarefa();
+						tarefa.acao = a;
+						tarefa.conf = conf;
+						setTerafa.add(tarefa);
+					}
+			}
+		}
+		listaFinal.addAll(setTerafa);
+		return listaFinal;
+	}
+	
+	public List<SrTarefa> getAcoesDisponiveisComAtendenteOrdemSigla()
+			throws Exception {
+		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		if (acoesEAtendentes != null) {
+			Collections.sort(acoesEAtendentes , new Comparator<SrTarefa>() {
+		        @Override
+		        public int compare(SrTarefa  o1, SrTarefa o2) {
+					if (o1 != null && o2 != null && o1.acao.idAcao == o2.acao.idAcao)
+						return 0;
+					return o1.acao.siglaAcao.compareTo(o2.acao.siglaAcao);
+		        }
+		    });
+		
+			return acoesEAtendentes;
+		}
+		return null;
+	}
+	
+	public List<SrTarefa> getAcoesDisponiveisComAtendenteOrdemTitulo()
+			throws Exception {
+		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
+		if (acoesEAtendentes != null) {
+			Collections.sort(acoesEAtendentes , new Comparator<SrTarefa>() {
+		        @Override
+		        public int compare(SrTarefa  o1, SrTarefa o2) {
+					int i = o1.acao.tituloAcao.compareTo(o2.acao.tituloAcao);
+					if (i != 0)
+						return i;
+					return o1.acao.idAcao.compareTo(o2.acao.idAcao);
+		        }
+		    });
+			
+			return acoesEAtendentes;
+		}
+		return null;
+	}
+	
+	public List<SrTarefa> getAcoesEAtendentes() throws Exception {
+		List<SrTarefa> acoesEAtendentesFinal = this
+				.getAcoesDisponiveisComAtendenteOrdemTitulo();
+		if (acoesEAtendentesFinal != null && this.itemConfiguracao != null){
+			if (this.acao == null
+					|| !acoesEAtendentesFinal.contains(this.acao)) {
+				if (acoesEAtendentesFinal.size() > 0)
+					this.acao = acoesEAtendentesFinal.iterator().next().acao;
+				else
+					this.acao = null;
+			}
+		}
+		return acoesEAtendentesFinal;
+	}
+	
+/*	public Map<SrAcao, SrConfiguracao> getAcoesDisponiveisComAtendente()
 			throws Exception {
 
 		if (solicitante == null || itemConfiguracao == null)
@@ -1176,7 +1327,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 		Map<SrAcao, SrConfiguracao> listaFinal = new HashMap<SrAcao, SrConfiguracao>();
 		
-		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarConfiguracoes();
+		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarDesignacoes();
 
 		for (SrAcao a : SrAcao.listar(false)) {
 			if (!a.isEspecifico())
@@ -1234,6 +1385,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return null;
 	}
 	
+	
 	public Map<SrAcao, SrConfiguracao> getAcoesEAtendentes() throws Exception {
 		Map<SrAcao, SrConfiguracao> acoesEAtendentesFinal = this
 				.getAcoesDisponiveisComAtendenteOrdemTitulo();
@@ -1248,7 +1400,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return acoesEAtendentesFinal;
 	}
-
+*/
 	@SuppressWarnings("serial")
 	public SortedSet<SrOperacao> operacoes(final DpPessoa pess, final DpLotacao lota)
 					throws Exception {
@@ -1385,7 +1537,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void atualizarAcordos() throws Exception{
 		acordos = new ArrayList<SrAcordo>();
 				
-		for (SrConfiguracao c : getFiltrosParaConsultarConfiguracoes()) {
+		List<SrConfiguracao> filtrosConf = new ArrayList<SrConfiguracao>();
+		
+		SrConfiguracao confSolicitante = new SrConfiguracao();
+		confSolicitante.setDpPessoa(solicitante);
+		confSolicitante.setLotacao(lotaSolicitante);
+		confSolicitante.setComplexo(local);
+		confSolicitante.setBuscarPorPerfis(true);
+		filtrosConf.add(confSolicitante);
+				
+		if (titular != null){		
+			SrConfiguracao confTitular = new SrConfiguracao();
+			confTitular.setDpPessoa(titular);
+			confTitular.setLotacao(lotaTitular);
+			confTitular.setComplexo(local);
+			confTitular.setBuscarPorPerfis(true);
+			filtrosConf.add(confTitular);
+		}
+
+		for (SrConfiguracao c : filtrosConf) {
 			
 			c.itemConfiguracaoFiltro = itemConfiguracao;
 			c.acaoFiltro = acao;
@@ -1570,9 +1740,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			Long marcador = 0L;
 			SrMovimentacao movMarca = null;
 
-			int pendencias = 0;
-			Date dtFimPendenciaMaisLonge = null;
-			SrMovimentacao movPendencia = null;
+			List<SrMovimentacao> pendencias = new ArrayList<SrMovimentacao>();
 
 			for (SrMovimentacao mov : movs) {
 				Long t = mov.tipoMov.idTipoMov;
@@ -1603,14 +1771,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					movMarca = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
-					pendencias++;
-					if (mov.dtAgenda != null && (dtFimPendenciaMaisLonge == null || mov.dtAgenda.after(dtFimPendenciaMaisLonge)))
-						dtFimPendenciaMaisLonge = mov.dtAgenda;
-					movPendencia = mov;
+					if (mov.getDtFimMov() == null || mov.getDtFimMov().after(new Date()))
+						pendencias.add(mov);
 				}
-				if (t == TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
-					pendencias--;
-				}
+
 				if (t == TIPO_MOVIMENTACAO_ANDAMENTO || t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO) {
 					movMarca = mov;
 				}
@@ -1629,31 +1793,31 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL, movMarca.dtIniMov,
 						null, movMarca.atendente, movMarca.lotaAtendente);
 			
-			if (pendencias > 0){
-				if (isRascunho())
-					acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
-							cadastrante, lotaCadastrante);
-				else acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
-						movPendencia.atendente, movPendencia.lotaAtendente);
-			}
-
 			if (marcador != 0L)
 				acrescentarMarca(set, marcador, movMarca.dtIniMov, null,
 						movMarca.atendente, movMarca.lotaAtendente);
 
-			if (pendencias > 0) {
+			
+			if (pendencias.size() > 0) {
+				SrMovimentacao ultimaPendencia = pendencias.get(pendencias.size()-1);
+				Date dtFimPendenciaMaisLonge = null;
+				for (SrMovimentacao pendencia : pendencias){
+					if (pendencia.dtAgenda != null && (dtFimPendenciaMaisLonge == null || pendencia.dtAgenda.after(dtFimPendenciaMaisLonge)))
+						dtFimPendenciaMaisLonge = pendencia.dtAgenda;
+				}
 				if (isRascunho())
 					acrescentarMarca(set,
 							CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
-							movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
+							ultimaPendencia.dtIniMov, dtFimPendenciaMaisLonge,
 							cadastrante, lotaCadastrante);
 				else
 					acrescentarMarca(set,
 							CpMarcador.MARCADOR_SOLICITACAO_PENDENTE,
-							movPendencia.dtIniMov, dtFimPendenciaMaisLonge,
-							movPendencia.atendente, movPendencia.lotaAtendente);
+							ultimaPendencia.dtIniMov, dtFimPendenciaMaisLonge,
+							ultimaPendencia.atendente, ultimaPendencia.lotaAtendente);
 			}
 
+			
 			if (!isFechado() && !isCancelado()) {
 				acrescentarMarca(set,
 						CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null,
@@ -1817,6 +1981,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 	*/
 		return new ArrayList<SrLista>(listaFinal);
+	}
+	
+	public List<DpPessoa> getPessoasAtendentesDisponiveis(){
+		List<DpPessoa> listaFinal = new ArrayList<DpPessoa>();
+		DpLotacao atendente = getLotaAtendente();
+		if (atendente != null){
+			for (DpPessoa p : atendente.getDpPessoaLotadosSet()){
+				if (p.getHisDtFim() == null)
+					listaFinal.add(p);
+			}
+		}
+		return listaFinal;
 	}
 
 	public List<SrLista> getListasDisponiveisParaInclusao(
@@ -2088,8 +2264,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA);
-		movimentacao.descrMovimentacao = detalheMotivo;
 		movimentacao.motivoPendencia = motivo;
+		movimentacao.descrMovimentacao = motivo.descrTipoMotivoPendencia;
+		if (detalheMotivo != null && !detalheMotivo.trim().equals(""))
+			movimentacao.descrMovimentacao += " | " + detalheMotivo;
+		if (movimentacao.dtAgenda != null)
+			movimentacao.descrMovimentacao += " | Fim previsto: " + movimentacao.getDtAgendaDDMMYYHHMM();
 		movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 	}
 
@@ -2121,7 +2301,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA);
-		movimentacao.descrMovimentacao = descricao;
 		
 		// Edson: eh necessario setar a finalizadora na finalizada antes de 
 		// salvar() a finalizadora, pq se não, ao atualizarMarcas(), vai 
@@ -2130,6 +2309,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrMovimentacao movFinalizada = SrMovimentacao.findById(idMovimentacao);
 		movFinalizada.movFinalizadora = movimentacao;
 		
+		movimentacao.descrMovimentacao = descricao;
+		movimentacao.descrMovimentacao += " | Terminando pendencia iniciada em " + movFinalizada.getDtIniMovDDMMYYHHMM();
 		movimentacao = movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 		movFinalizada.save();
 	}
@@ -2312,6 +2493,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return fechamento.dtIniMov;
 	}
 	
+	public Date getDtCancelamento() {
+		SrMovimentacao cancelamento = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO);
+		if (cancelamento == null)
+			return null;
+		return cancelamento.dtIniMov;
+	}
+	
 	// Edson: retorna os periodos de pendencia de forma linear, ou seja, 
 	// colapsando as sobreposicoes, para facilitar os calculos:
 	// Transforma: -------
@@ -2343,7 +2531,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return pendencias;
 	}
 	
-	public Date getDataAPartirDe(Date dtBase, Integer segundosAdiante){
+	public Date getDataAPartirDe(Date dtBase, Long segundosAdiante){
 		Map<Date, Date> pendencias = getTrechosPendentes();
 		for (Date dtIniPendencia : pendencias.keySet()){
 			if (dtIniPendencia.before(dtBase))
@@ -2364,9 +2552,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	private Date getDtPrazoCadastramentoAcordado() {
 		if(acordos == null || acordos.size() == 0 || isCancelado())
 			return null;
-		Integer menorTempoAcordado = null;
+		Long menorTempoAcordado = null;
 		for (SrAcordo a : acordos){
-			Integer acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoDecorridoCadastramento");
+			Long acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoDecorridoCadastramento");
 			if (menorTempoAcordado == null || (acordado != null && acordado < menorTempoAcordado))
 				menorTempoAcordado = acordado;
 		}
@@ -2378,9 +2566,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	private Date getDtPrazoAtendimentoAcordado() {
 		if (acordos == null || acordos.size() == 0 || isCancelado())
 			return null;
-		Integer menorTempoAcordado = null;
+		Long menorTempoAcordado = null;
 		for (SrAcordo a : acordos){
-			Integer acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoDecorridoAtendimento");
+			Long acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoDecorridoAtendimento");
 			if (menorTempoAcordado == null || (acordado != null && acordado < menorTempoAcordado))
 				menorTempoAcordado = acordado;
 		}
@@ -2391,20 +2579,35 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	public Cronometro getCronometro() throws Exception {
 		if (cron == null) {
-			if (jaFoiDesignada()){
-				cron = new Cronometro().setDescricao("Atendimento")
-						.setInicio(getDtInicioAtendimento());
-				if (isFechado()){
-					cron.setFim(getDtEfetivoFechamento()).setLigado(false);
-				} else {
-					cron.setFim(getDtPrazoAtendimentoAcordado()).setLigado(true);
-				}
+			cron = new Cronometro();
+			boolean fechado = isFechado(), cancelado = isCancelado(), 
+					pendente = isPendente();
+			if (jaFoiDesignada()) {
+				cron.setDescricao("Atendimento");
+				cron.setInicio(getDtInicioAtendimento());
+				cron.setFim(fechado ? getDtEfetivoFechamento()
+						: cancelado ? getDtCancelamento()
+								: getDtPrazoAtendimentoAcordado());
+				if (cron.getFim() == null || fechado || cancelado)
+					cron.setDecorrido(getTempoDecorridoAtendimento().getValor()*1000);
+				else
+					cron.setRestante(cron.getFim().getTime() - new Date()
+							.getTime());
 			} else {
-				cron = new Cronometro().setDescricao("Cadastro")
-						.setInicio(getDtInicioPrimeiraEdicao());
-					cron.setFim(getDtPrazoCadastramentoAcordado()).setLigado(true);
+				cron.setDescricao("Cadastro");
+				cron.setInicio(getDtInicioPrimeiraEdicao());
+				cron.setFim(getDtPrazoCadastramentoAcordado());
+				if (cron.getFim() == null || fechado || cancelado)
+					cron.setDecorrido(getTempoDecorridoCadastramento()
+							.getValor()*1000);
+				else
+					cron.setRestante(cron.getFim().getTime() - new Date()
+							.getTime());
 			}
+			cron.setLigado(!fechado && !cancelado
+					&& (cron.getFim() != null || !pendente));
 		}
+
 		return cron;
 	}
 	
@@ -2413,7 +2616,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	// PPP, abaixo, é o bloco pendente. I é dtIni e F é dtFim
 	public SrValor getTempoDecorrido(Date dtIni, Date dtFim) {
 		Map<Date, Date> pendencias = getTrechosPendentes();
-		Integer decorrido = 0;
+		Long decorrido = 0L;
 		for (Date dtIniBlocoPendencia : pendencias.keySet()) {
 			Date dtFimBlocoPendencia = pendencias.get(dtIniBlocoPendencia);
 
@@ -2422,39 +2625,42 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				break;
 
 			// ---PPPP---I----------F----------
-			if (dtFimBlocoPendencia.before(dtIni))
+			if (dtFimBlocoPendencia != null && dtFimBlocoPendencia.before(dtIni))
 				continue;
 
-			// ---------PIPP--------F----------
+			// ----------I---PPPP---F----------
 			if (dtIniBlocoPendencia.after(dtIni))
-				decorrido += (int) (dtIniBlocoPendencia.getTime() - dtIni
-						.getTime()) / 1000;
+				decorrido += (int) ((dtIniBlocoPendencia.getTime() - dtIni
+						.getTime()) / 1000);
 
 			dtIni = dtFimBlocoPendencia;
 
-			// ----------I---------PPFP---------
-			if (dtFimBlocoPendencia.after(dtFim))
+			// ----------I---------PPFP--------- ou 
+			// ----------I---------PPFPPPPPPPPPP...
+			if (dtFimBlocoPendencia == null || dtFimBlocoPendencia.after(dtFim))
 				return new SrValor(decorrido, CpUnidadeMedida.SEGUNDO);
 		}
-		decorrido += (int) (dtFim.getTime() - dtIni.getTime()) / 1000;
+		decorrido += (int) ((dtFim.getTime() - dtIni.getTime()) / 1000);
 		return new SrValor(decorrido, CpUnidadeMedida.SEGUNDO);
 	}
 	
 	public SrValor getTempoDecorridoCadastramento(){
-		Date dtInicioAtendimento = getDtInicioAtendimento();
-		if (dtInicioAtendimento == null)
-			dtInicioAtendimento = new Date();
-		return getTempoDecorrido(getDtInicioPrimeiraEdicao(), dtInicioAtendimento);
+		Date dtFimCadastro = isFechado() ? getDtEfetivoFechamento()
+				: isCancelado() ? getDtCancelamento() : getDtInicioAtendimento();
+		if (dtFimCadastro == null)
+			dtFimCadastro = new Date();
+		return getTempoDecorrido(getDtInicioPrimeiraEdicao(), dtFimCadastro);
 	}
 	
-	public SrValor getTempoDecorridoAtendimento(){
-		Date dtFechamento = isFechado() ? getDtEfetivoFechamento() : new Date();
+	public SrValor getTempoDecorridoAtendimento() {
+		Date dtFechamento = isFechado() ? getDtEfetivoFechamento()
+				: isCancelado() ? getDtCancelamento() : new Date();
 		return getTempoDecorrido(getDtInicioAtendimento(), dtFechamento);
 	}
 	
 	//Edson: implementar no futuro
-	public Integer getResultadoPesquisaSatisfacao(){
-		return 0;
+	public Long getResultadoPesquisaSatisfacao(){
+		return 0L;
 	}
 	
 	public boolean isAcordosSatisfeitos() {
@@ -2510,7 +2716,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	 * No caso de solicitacoes filhas, deve ser considerado o solicitante e o cadastrante para fins de exibicao 
 	 * de itens de configuracao e acoes disponiveis, alem do atendente designado da solicitacao.
 	 */
-	private List<SrConfiguracao> getFiltrosParaConsultarConfiguracoes() {
+	private List<SrConfiguracao> getFiltrosParaConsultarDesignacoes() {
 		
 		List<SrConfiguracao> pessoasAConsiderar = new ArrayList<SrConfiguracao>();
 		

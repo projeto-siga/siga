@@ -42,7 +42,7 @@ public class SrAtributoAcordo extends HistoricoSuporte {
 	public SrOperador operador;
 
 	@Column(name = "VALOR")
-	public Integer valor;
+	public Long valor;
 
 	@ManyToOne
 	@JoinColumn(name = "UNIDADE_MEDIDA")
@@ -106,7 +106,7 @@ public class SrAtributoAcordo extends HistoricoSuporte {
 				.getIdUnidadeMedida().intValue() : null);
 	}
 	
-	public Integer getValorEmSegundos(){
+	public Long getValorEmSegundos(){
 		return getValorEUnidade().getValorEmSegundos();
 	}
 	

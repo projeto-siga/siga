@@ -350,9 +350,8 @@ public class SrMovimentacao extends GenericModel {
 		} else {
 			SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
 
-			if (atendente == null && lotaAtendente == null) {
+			if (lotaAtendente == null) {
 				lotaAtendente = anterior.lotaAtendente;
-				atendente = anterior.atendente;
 			}
 
 			if (numSequencia == null)

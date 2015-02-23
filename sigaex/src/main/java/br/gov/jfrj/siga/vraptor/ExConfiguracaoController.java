@@ -1,9 +1,14 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.EntityManager;
@@ -11,18 +16,23 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.opensymphony.xwork.Action;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.DpCargoSelecao;
@@ -34,6 +44,7 @@ import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
 @Resource
 public class ExConfiguracaoController extends ExController {
 
+	private static final int ORGAO_INTEGRADO = 2;
 	private static final String VERIFICADOR_ACESSO = "DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações";
 	
 	public ExConfiguracaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
@@ -211,6 +222,146 @@ public class ExConfiguracaoController extends ExController {
 
 		s.addAll(dao().listarTiposConfiguracao());
 
+		return s;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Get("app/expediente/configuracao/gerenciar_publicacao_boletim")
+	public void gerenciarPublicacaoBoletim() throws Exception {
+		List<Object[]> itens = new ArrayList<>();
+		this.validarPodeGerenciarBoletim();
+
+		for (ExConfiguracao c : gerarPublicadores()) {
+			String nomeMod = gerarNomeModelo(c);
+			Object[] entrada = buscarEntradaPorNomeMod(itens, nomeMod);
+
+			if (entrada == null) {
+				entrada = new Object[2];
+				entrada[0] = nomeMod;
+				entrada[1] = new ArrayList<ExConfiguracao>();
+				itens.add(entrada);
+			}
+			((ArrayList<ExConfiguracao>) entrada[1]).add(c);
+		}
+
+		/*
+		 * 
+		 * 
+		 * setIdFormaDoc(3);
+		 * 
+		 * setConfigsPorModelo(new HashMap<String, List<ExConfiguracao>>());
+		 * 
+		 * for (ExConfiguracao c : getPublicadores()){ ExModelo mod =
+		 * c.getExModelo(); if (!getConfigsPorModelo().containsKey(mod))
+		 * getConfigsPorModelo().put(mod.getNmMod(), new
+		 * ArrayList<ExConfiguracao>()); getConfigsPorModelo().get(mod).add(c);
+		 * }
+		 */
+		result.include("listaFormas", getListaFormas());
+		result.include("listaModelosPorForma", getListaModelosPorForma(null));
+		result.include("listaTipoPublicador", getListaTipoPublicador());
+		result.include("listaSituacaoPodeNaoPode", getListaSituacaoPodeNaoPode());
+		result.include("tipoPublicador", ORGAO_INTEGRADO);
+		result.include("pessoaSel", new DpPessoaSelecao());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("itens", itens);
+	}
+	
+	private Object[] buscarEntradaPorNomeMod(List<Object[]> itens, String nomeMod) {
+		for (Object[] obj : itens) {
+			if (obj[0].equals(nomeMod))
+				return obj;
+		}
+		return null;
+	}
+
+	private String gerarNomeModelo(ExConfiguracao c) {
+		if (c.getExModelo() != null) {
+			String nomeMod = c.getExModelo().getNmMod();
+			if (!c.getExModelo().getExFormaDocumento().getDescrFormaDoc().equals(nomeMod))
+				nomeMod = MessageFormat.format("{0} -> {1}", 
+					c.getExModelo()
+					.getExFormaDocumento()
+					.getDescrFormaDoc(), nomeMod);
+			
+			return nomeMod;
+		} else if(c.getExFormaDocumento() != null)
+			return c.getExFormaDocumento().getDescrFormaDoc();
+		return "[Todos os modelos]";
+	}
+
+	private Set<ExConfiguracao> gerarPublicadores() {
+		Set<ExConfiguracao> publicadores = new HashSet<ExConfiguracao>();
+		TreeSet<CpConfiguracao> listaConfigs = getListaConfiguracao();
+		
+		for (CpConfiguracao cfg : listaConfigs) {
+			if (cfg instanceof ExConfiguracao) {
+				ExConfiguracao config = (ExConfiguracao) cfg;
+				
+				if (config.isAgendamentoPublicacaoBoletim() && config.podeAdicionarComoPublicador(getTitular(), getLotaTitular())) {
+					publicadores.add(config);
+				}
+			}
+		}
+		return publicadores;
+	}
+
+	private TreeSet<CpConfiguracao> getListaConfiguracao() {
+		TreeSet<CpConfiguracao> listaConfigs = Ex
+				.getInstance()
+				.getConf()
+				.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+		
+		if (listaConfigs == null)
+			return new TreeSet<CpConfiguracao>();
+		return listaConfigs;
+	}
+
+	private void validarPodeGerenciarBoletim() {
+		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(),
+				getLotaTitular(),
+				CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_PUBLICACAO_BOLETIM))
+			throw new AplicacaoException("Operação restrita");
+	}
+	
+	private Set<ExFormaDocumento> getListaFormas() throws Exception {
+		ExBL bl = Ex.getInstance().getBL();
+		return bl.obterFormasDocumento(bl.obterListaModelos(null, false, null, false, null, null, false), null, null);
+	}
+	
+	private Set<ExModelo> getListaModelosPorForma(Long idFormaDoc) throws Exception {
+		if (idFormaDoc != null && idFormaDoc != 0) {
+			ExFormaDocumento forma = ExDao.getInstance().consultar(idFormaDoc, ExFormaDocumento.class, false);
+			return forma.getExModeloSet();
+		}
+		return getListaModelos();
+	}
+	
+	private Set<ExModelo> getListaModelos() throws Exception {
+		TreeSet<ExModelo> s = new TreeSet<ExModelo>(getExModeloComparator());
+		s.addAll(dao().listarExModelos());
+		return s;
+	}
+
+	private Comparator<ExModelo> getExModeloComparator() {
+		return new Comparator<ExModelo>() {
+			public int compare(ExModelo o1, ExModelo o2) {
+				return o1.getNmMod().compareTo(o2.getNmMod());
+			}
+		};
+	}
+	
+	private Map<Integer, String> getListaTipoPublicador() {
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
+		map.put(1, "Matrícula");
+		map.put(2, "Órgão Integrado");
+		return map;
+	}
+	
+	private Set<ExSituacaoConfiguracao> getListaSituacaoPodeNaoPode() throws Exception {
+		HashSet<ExSituacaoConfiguracao> s = new HashSet<ExSituacaoConfiguracao>();
+		s.add(ExDao.getInstance().consultar(1L, ExSituacaoConfiguracao.class, false));
+		s.add(ExDao.getInstance().consultar(2L, ExSituacaoConfiguracao.class, false));
 		return s;
 	}
 }

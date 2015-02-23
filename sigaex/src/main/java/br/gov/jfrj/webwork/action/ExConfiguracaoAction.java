@@ -515,7 +515,6 @@ public class ExConfiguracaoAction extends ExActionSupport {
 			}
 
 		for (ExConfiguracao c : getPublicadores()) {
-
 			String nomeMod = "";
 			if (c.getExModelo() != null) {
 				nomeMod = c.getExModelo().getNmMod();

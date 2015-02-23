@@ -365,18 +365,16 @@ altura:'200', largura:'450'}
 
 		#{if _modoExibicao == 'equipe'}
 		// Caso seja cadastro a partir da tela de equipe, atualiza os dados da Lotação atendente
-		else {
-			var lota = JSON.parse($("#lotacaoUsuario").val())
-				designacaoJson = {
-					atendente : lota.id,
-					atendente_descricao : lota.descricao,
-					atendenteSpan : lota.descricao,
-					atendente_sigla : lota.sigla
-				};
-
-			// chama o editar para popular o campo da lotação
-			designacaoService.formularioHelper.populateFromJson(designacaoJson);			
-		}
+		var lota = JSON.parse($("#lotacaoUsuario").val())
+			designacaoJson = {
+				atendente : lota.id,
+				atendente_descricao : lota.descricao,
+				atendenteSpan : lota.descricao,
+				atendente_sigla : lota.sigla
+			};
+		
+		// chama o editar para popular o campo da lotação
+		designacaoService.formularioHelper.populateFromJson(designacaoJson);
 		#{/if}
 	}
 	

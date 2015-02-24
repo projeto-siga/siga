@@ -41,15 +41,19 @@
 
 			<c:forEach var="configuracao" items="${listConfig}">
 				<tr class="${evenorodd}">
-					<td><c:if test="${not empty configuracao.exNivelAcesso}">${configuracao.exNivelAcesso.nmNivelAcesso}(${configuracao.exNivelAcesso.grauNivelAcesso})</c:if></td>
-					<td><c:if test="${not empty configuracao.dpPessoa}">
-							<siga:selecionado sigla="${configuracao.dpPessoa.iniciais}"
-								descricao="${configuracao.dpPessoa.descricao}" />
-						</c:if></td>
-					<td><c:if test="${not empty configuracao.lotacao}">
-							<siga:selecionado sigla="${configuracao.lotacao.sigla}"
-								descricao="${configuracao.lotacao.descricao}" />
-						</c:if></td>
+					<td>
+						<c:if test="${not empty configuracao.exNivelAcesso}">${configuracao.exNivelAcesso.nmNivelAcesso}(${configuracao.exNivelAcesso.grauNivelAcesso})</c:if>
+					</td>
+					<td>
+						<c:if test="${not empty configuracao.dpPessoa}">
+							<siga:selecionado sigla="${configuracao.dpPessoa.iniciais}" descricao="${configuracao.dpPessoa.descricao}" />
+						</c:if>
+					</td>
+					<td>
+						<c:if test="${not empty configuracao.lotacao}">
+							<siga:selecionado sigla="${configuracao.lotacao.sigla}" descricao="${configuracao.lotacao.descricao}" />
+						</c:if>
+					</td>
 					<td><c:if test="${not empty configuracao.funcaoConfianca}">${configuracao.funcaoConfianca.nomeFuncao}</c:if></td>
 					<td><c:if test="${not empty configuracao.orgaoUsuario}">${configuracao.orgaoUsuario.acronimoOrgaoUsu}</c:if></td>
 					<td><c:if test="${not empty configuracao.orgaoObjeto}">${configuracao.orgaoObjeto.acronimoOrgaoUsu}</c:if></td>
@@ -63,22 +67,23 @@
 					<td><c:if test="${not empty configuracao.exTipoDocumento}">${configuracao.exTipoDocumento.descrTipoDocumento}</c:if></td>
 					<td><c:if test="${not empty configuracao.exPapel}">${configuracao.exPapel.descPapel}</c:if></td>
 					<td><c:if test="${not empty configuracao.cpServico}">${configuracao.cpServico.dscServico}</c:if></td>
-					<td><c:if
-							test="${not empty configuracao.cpSituacaoConfiguracao}">${configuracao.cpSituacaoConfiguracao.dscSitConfiguracao}</c:if></td>
-					<td><c:if test="${not empty nmTipoRetorno}">
+					<td><c:if test="${not empty configuracao.cpSituacaoConfiguracao}">${configuracao.cpSituacaoConfiguracao.dscSitConfiguracao}</c:if></td>
+					<td>
+						<c:if test="${not empty nmTipoRetorno}">
 							<c:url var="url" value="/app/expediente/configuracao/editar">
 								<c:param name="id" value="${configuracao.idConfiguracao}" />
 								<c:param name="idMod" value="${idMod}" />
 								<c:param name="nmTipoRetorno" value="${nmTipoRetorno}" />
 								<c:param name="campoFixo" value="${campoFixo}" />
 							</c:url>
-						</c:if> <c:if test="${empty nmTipoRetorno}">
+						</c:if> 
+						<c:if test="${empty nmTipoRetorno}">
 							<c:url var="url" value="/app/expediente/configuracao/editar">
 								<c:param name="id" value="${configuracao.idConfiguracao}" />
 							</c:url>
-						</c:if> <siga:links estilo="margin-bottom: 0; text-align: center;">
-							<siga:link icon="pencil" titleImg="Alterar" url="${url}"
-								estilo="margin-bottom: 0; text-align: center; padding: 2px;" />
+						</c:if> 
+							<siga:links estilo="margin-bottom: 0; text-align: center;">
+							<siga:link icon="pencil" titleImg="Alterar" url="${url}" estilo="margin-bottom: 0; text-align: center; padding: 2px;" />
 
 							<c:if test="${not empty nmTipoRetorno}">
 								<c:url var="urlExcluir" value="/app/expediente/configuracao/excluir">
@@ -93,9 +98,9 @@
 								</c:url>
 							</c:if>
 
-							<siga:link icon="delete" titleImg="Excluir" url="${urlExcluir}"
-								popup="excluir" confirm="Deseja excluir configuração?" />
-						</siga:links></td>
+							<siga:link icon="delete" titleImg="Excluir" url="${urlExcluir}" popup="excluir" confirm="Deseja excluir configuração?" />
+						</siga:links>
+					</td>
 				</tr>
 				<c:choose>
 					<c:when test='${evenorodd == "even"}'>

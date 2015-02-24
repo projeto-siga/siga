@@ -33,7 +33,7 @@ public final class ExConfiguracaoBuilder {
 	private Long idTpMov;
 	private Long idTpDoc;
 	private Long idMod;
-	private Long idFormaDoc; 
+	private Integer idFormaDoc; 
 	private Long idTpFormaDoc;
 	private Long idNivelAcesso; 
 	private Long idSituacao; 
@@ -177,7 +177,7 @@ public final class ExConfiguracaoBuilder {
 		return idMod;
 	}
 
-	public Long getIdFormaDoc() {
+	public Integer getIdFormaDoc() {
 		return idFormaDoc;
 	}
 
@@ -242,7 +242,7 @@ public final class ExConfiguracaoBuilder {
 		return this;
 	}
 
-	public ExConfiguracaoBuilder setIdFormaDoc(Long idFormaDoc) {
+	public ExConfiguracaoBuilder setIdFormaDoc(Integer idFormaDoc) {
 		this.idFormaDoc = idFormaDoc;
 		return this;
 	}

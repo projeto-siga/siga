@@ -10,11 +10,17 @@
 <script type="text/javascript" language="Javascript1.1">
 
 function alteraTipoDaForma(){
-	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='+document.getElementById('tipoForma').value+'&idFormaDoc='+'${idFormaDoc}', null, document.getElementById('comboFormaDiv'))
+	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='+document.getElementById('tipoForma').value+'&idFormaDoc='+'${idFormaDoc}', null, document.getElementById('comboFormaDiv'));
 }
 
 function alteraForma(){
 	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos'+'?forma='+document.getElementById('forma').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
+		.success(function() {
+			var idMod = '${idMod}';
+			if(idMod) {
+				$("[name=idMod]").val(idMod);
+			}
+		});
 }
 
 function sbmt() {

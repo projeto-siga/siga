@@ -141,6 +141,7 @@ public class ExConfiguracaoController extends ExController {
 
 		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia()
 				.setId(id)
+				.setTipoPublicador(null)
 				.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc)
 				.setIdMod(idMod).setIdFormaDoc(idFormaDoc).setIdNivelAcesso(idNivelAcesso)
 				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao)

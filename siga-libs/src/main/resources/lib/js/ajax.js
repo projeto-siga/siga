@@ -158,7 +158,7 @@ function SetInnerHTMLFromAjaxResponse(url, obj_id)
 	}
   
 	// Caso seja necessario acrescentar algum script na pagina, ficou convencionado que
-	// o script deverá ser marcado com <script type="text/javascript" > e < /script>
+	// o script deverï¿½ ser marcado com <script type="text/javascript" > e < /script>
 	if (s.indexOf('<script type="text/javascript">') != -1) {
 		var j = 0;
 		var len = 0;
@@ -208,7 +208,7 @@ function SetInnerHTMLFromAjaxResponse(url, obj_id)
                   		}
 	                  
 						// Caso seja necessario acrescentar algum script na pagina, ficou convencionado que
-		            	// o script deverá ser marcado com <script type="text/javascript" > e < /script>
+		            	// o script deverï¿½ ser marcado com <script type="text/javascript" > e < /script>
 	               		if (s.indexOf('<script type="text/javascript">') != -1) {
 							var j = 0;
 							var len = 0;
@@ -316,7 +316,7 @@ function MixWithNewPage(aElements, sPage, sIdObj) {
 						e.innerHTML = s;
 //alert(s);							
 		              	// Caso seja necessario acrescentar algum script na pagina, ficou convencionado que
-		              	// o script deverá ser marcado com <script type="text/javascript" > e < /script>
+		              	// o script deverï¿½ ser marcado com <script type="text/javascript" > e < /script>
 		               	if (s.indexOf('<script type="text/javascript">') != -1) {
 							var j = 0;
 							var len = 0;
@@ -339,55 +339,71 @@ function MixWithNewPage(aElements, sPage, sIdObj) {
 	}					
 }
 
-function ReplaceInnerHTMLFromAjaxResponse(url, frm, obj_id)
-{
- mostraCarregando();
-  var xmlhttp = new GetXmlHttp();
-  //now we got the XmlHttpRequest object, send the request.
-  if (xmlhttp)
-  {
-    xmlhttp.onreadystatechange = 
-            function ()
-            {
-              if (xmlhttp && xmlhttp.readyState==4)
-              {//we got something back..
-                active--;
-                if (xmlhttp.status==200)
-                {
-                                  if(debug)
-                                  {
-                    alert(xmlhttp.responseText);
-                  }
-                  if(typeof obj_id == 'object')
-                  {
-                    obj_id.innerHTML = xmlhttp.responseText;
-                  } else {
-					var r = xmlhttp.responseText;
-					MixWithNewPage(document.getElementsByTagName('span'), r, obj_id);				
-					MixWithNewPage(document.getElementsByTagName('div'), r, obj_id);				
-                   }
-                } else if(debug){
-                  document.Write(xmlhttp.responseText);
-                }
-			  ocultaCarregando();
-              }
-            }
-//	alert(ajax.serialize(frm));
-	if ( frm == null )
-	{
-    	xmlhttp.open("GET",url,true);
-   		xmlhttp.send(null);
-    } else
-    {
-    	xmlhttp.open("POST",url,true);
-    	xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
-    	xmlhttp.send(ajax.serialize(frm));
-    }
-    active++;
-  }
+function ReplaceInnerHTMLFromAjaxResponse(url, frm, obj_id) {
+	var res = new RespostaAjax();
+	mostraCarregando();
+	var xmlhttp = new GetXmlHttp();
+	//now we got the XmlHttpRequest object, send the request.
+	if (xmlhttp) {
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp && xmlhttp.readyState == 4) {//we got something back..
+				active--;
+				if (xmlhttp.status == 200) {
+					if (debug) {
+						alert(xmlhttp.responseText);
+					}
+					if (typeof obj_id == 'object') {
+						obj_id.innerHTML = xmlhttp.responseText;
+					} else {
+						var r = xmlhttp.responseText;
+						MixWithNewPage(document.getElementsByTagName('span'), r, obj_id);
+						MixWithNewPage(document.getElementsByTagName('div'), r, obj_id);
+					}
+					res.invokeSuccess(xmlhttp.responseText);
+				} else if (debug) {
+					document.Write(xmlhttp.responseText);
+					res.invokeError(xmlhttp.responseText);
+				}
+				ocultaCarregando();
+			}
+		}
+		//	alert(ajax.serialize(frm));
+		if (frm == null) {
+			xmlhttp.open("GET", url, true);
+			xmlhttp.send(null);
+		} else {
+			xmlhttp.open("POST", url, true);
+			xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xmlhttp.send(ajax.serialize(frm));
+		}
+		active++;
+	}
+	return res;
 }
 
 function IsRunningAjaxRequest() {
 	//window.alert(document.getElementById("carregando").style.display != 'none');
 	return document.getElementById("carregando").style.display != 'none';
+}
+
+function RespostaAjax() {
+	var successCallback = errorCallback = null;
+	
+	this.success = function(successCallback0) {
+		successCallback = successCallback0;
+	}
+	
+	this.error = function(errorCallback0) {
+		errorCallback = errorCallback0;
+	}
+	
+	this.invokeSuccess = function(responseText) {
+		if(successCallback) 
+			successCallback(responseText);
+	}
+	
+	this.invokeError = function(responseText) {
+		if(errorCallback)
+			errorCallback(responseText);
+	}
 }

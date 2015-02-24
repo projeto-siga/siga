@@ -119,12 +119,12 @@ public final class ExConfiguracaoBuilder {
 		} else
 			config.setCpTipoConfiguracao(null);
 
-		if (pessoaSel != null && pessoaSel.getId() != null && ExConfiguracaoBuilder.isTipoMatricula(tipoPublicador)) {
+		if (pessoaSel != null && pessoaSel.getId() != null && (tipoPublicador == null || ExConfiguracaoBuilder.isTipoMatricula(tipoPublicador))) {
 			config.setDpPessoa(dao.consultar(pessoaSel.getId(), DpPessoa.class, false));
 		} else
 			config.setDpPessoa(null);
 
-		if (lotacaoSel != null && lotacaoSel.getId() != null && ExConfiguracaoBuilder.isTipoOrgaoIntegrado(tipoPublicador)) {
+		if (lotacaoSel != null && lotacaoSel.getId() != null && (tipoPublicador == null || ExConfiguracaoBuilder.isTipoOrgaoIntegrado(tipoPublicador))) {
 			config.setLotacao(dao.consultar(lotacaoSel.getId(), DpLotacao.class, false));
 		} else
 			config.setLotacao(null);

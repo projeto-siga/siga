@@ -147,7 +147,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 	}
 
 	@Get("app/expediente/doc/carregar_lista_formas")
-	public void aCarregarListaFormas(Long tipoForma, int idFormaDoc) {
+	public void aCarregarListaFormas(Long tipoForma, Integer idFormaDoc) {
 		result.include("todasFormasDocPorTipoForma", this.getTodasFormasDocPorTipoForma(tipoForma));
 	}
 
@@ -381,7 +381,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 	private List<ExFormaDocumento> getTodasFormasDocPorTipoForma(final Long idTipoFormaDoc) {
 		final ExBL bl = Ex.getInstance().getBL();
 		ExTipoFormaDoc tipoForma = null;
-		if (idTipoFormaDoc != null && !idTipoFormaDoc.equals(0)) {
+		if (idTipoFormaDoc != null && !idTipoFormaDoc.equals(0L)) {
 			tipoForma = dao().consultar(idTipoFormaDoc, ExTipoFormaDoc.class, false);
 		}
 

@@ -657,6 +657,14 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 					cfg.getExTipoMovimentacao().getDescrTipoMovimentacao();
 				if (cfg.getExVia() != null)
 					cfg.getExVia().getObs();
+				
+				if (cfg.getExModelo() != null) {
+					cfg.getExModelo().getId();
+					
+					if (cfg.getExModelo().getExFormaDocumento() != null) {
+						cfg.getExModelo().getExFormaDocumento().getId();
+					}
+				}
 
 			}
 		}

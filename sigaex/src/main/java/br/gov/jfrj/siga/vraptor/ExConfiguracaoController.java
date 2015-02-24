@@ -359,7 +359,6 @@ public class ExConfiguracaoController extends ExController {
 	private String gerarNomeModelo(ExConfiguracao c) {
 		if (c.getExModelo() != null) {
 			String nomeMod = c.getExModelo().getNmMod();
-			Hibernate.initialize(c.getExModelo().getExFormaDocumento());
 			
 			if (!c.getExModelo().getExFormaDocumento().getDescrFormaDoc().equals(nomeMod))
 				nomeMod = MessageFormat.format("{0} -> {1}", 

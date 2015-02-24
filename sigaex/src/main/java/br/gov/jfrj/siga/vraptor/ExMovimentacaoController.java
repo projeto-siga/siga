@@ -1422,6 +1422,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		result.include("documentosQuePodemSerAssinadosComSenha", documentosQuePodemSerAssinadosComSenha);
 		result.include("itensSolicitados", itensFinalizados);
+		result.include("request", getRequest());
 	}	
 	
 	@Post("/app/expediente/mov/assinar_gravar")

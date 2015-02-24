@@ -101,6 +101,9 @@ public class ExConfiguracaoController extends ExController {
 		result.include("tiposFormaDoc", getTiposFormaDoc());
 		result.include("listaTiposDocumento", getListaTiposDocumento());
 		result.include("nmTipoRetorno", nmTipoRetorno);
+		result.include("config", config);
+		result.include("campoFixo", campoFixo);
+		result.include("configuracao", config);
 	}
 
 	@SuppressWarnings("all")
@@ -227,6 +230,7 @@ public class ExConfiguracaoController extends ExController {
 		result.include("nmTipoRetorno", nmTipoRetorno);
 		result.include("campoFixo", campoFixo);
 		result.include("configuracao", config);
+		result.include("idFormaDoc", idFormaDoc);
 		
 		this.getRequest().setAttribute("listConfig", listConfig);
 		this.getRequest().setAttribute("tpConfiguracao", config.getCpTipoConfiguracao());

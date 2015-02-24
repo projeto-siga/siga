@@ -92,32 +92,32 @@
         <c:if test="${not empty id}">
         		<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasEletronico"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 				
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasCriar"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=2&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=2&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasAssinar"></div>
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
+				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasAcessar"></div>
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=forma" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
+				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=forma" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasNivelAcessoMaximo"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=18&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=18&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasNivelAcessoMinimo"></div>	
-				<div><a href="/sigaex/expediente/configuracao/editar.action?idFormaDoc=${id}&idTpConfiguracao=19&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=19&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
 				</div>
 			</div>
 		</c:if>
@@ -146,7 +146,7 @@
 			function montaTableCadastradas(tabelaAlvo, idTpConfiguracao, idTpMov, idFormaDoc){	
 				$('#' + tabelaAlvo).html('Carregando...');			
 				$.ajax({				     				  
-					  url:'/sigaex/expediente/configuracao/listar_cadastradas.action',
+					  url:'/sigaex/app/expediente/configuracao/listar_cadastradas',
 					  type: "GET",
 					  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idFormaDoc : idFormaDoc, nmTipoRetorno : "forma", campoFixo : "True"},					    					   					 
 					  success: function(data) {

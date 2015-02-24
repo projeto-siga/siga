@@ -75,6 +75,7 @@
 								<c:param name="idMod" value="${idMod}" />
 								<c:param name="nmTipoRetorno" value="${nmTipoRetorno}" />
 								<c:param name="campoFixo" value="${campoFixo}" />
+								<c:param name="idFormaDoc" value="${idFormaDoc}" />
 							</c:url>
 						</c:if> 
 						<c:if test="${empty nmTipoRetorno}">
@@ -90,6 +91,7 @@
 									<c:param name="id" value="${configuracao.idConfiguracao}" />
 									<c:param name="idMod" value="${idMod}" />
 									<c:param name="nmTipoRetorno" value="${nmTipoRetorno}" />
+									<c:param name="idFormaDoc" value="${idFormaDoc}" />
 								</c:url>
 							</c:if>
 							<c:if test="${empty nmTipoRetorno}">

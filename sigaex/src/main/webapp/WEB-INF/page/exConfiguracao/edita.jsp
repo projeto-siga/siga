@@ -55,7 +55,7 @@ function sbmt() {
 				<td>
 					<c:choose>
 						<c:when test="${campoFixo && not empty config.cpTipoConfiguracao}">
-							<input type="hidden" name="idTpConfiguracao"  />
+							<input type="hidden" name="idTpConfiguracao"  value="${config.cpTipoConfiguracao.idTpConfiguracao}"/> 
 							${config.cpTipoConfiguracao.dscTpConfiguracao}
 						</c:when>
 						<c:otherwise>
@@ -146,10 +146,11 @@ function sbmt() {
 				<td>
 					<c:choose>
 						<c:when test="${campoFixo && not empty config.exModelo}">
-							<input type="hidden" name="idMod" value="${config.exModelo.descMod}" />
+							<input type="hidden" name="idMod" value="${config.exModelo.id}" />
+							${config.exModelo.descMod}
 						</c:when>
 						<c:when test="${campoFixo && not empty config.exFormaDocumento}">
-							<input type="hidden" name="idFormaDoc"  />
+							<input type="hidden" name="idFormaDoc" value="${idFormaDoc}"/>
 						</c:when>
 						<c:otherwise>
 							<div style="display: inline" id="comboModeloDiv">

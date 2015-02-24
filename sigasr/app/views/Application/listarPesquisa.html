@@ -46,6 +46,7 @@
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.populate.js"></script>
@@ -164,6 +165,10 @@
 	// Sobescreve o metodo cadastrar para limar as perguntas da tela
 	pesquisaService.cadastrar = function(title) {
 		perguntas.limpar();
+
+		// limpa a lista de Associações
+		associacaoService.atualizarListaAssociacoes();
+		
 		BaseService.prototype.cadastrar.call(this, title);
 	}
 
@@ -189,6 +194,9 @@
 			var pergunta = obj.perguntasSet[i];
 			perguntas.incluirItem(pergunta.descrPergunta, pergunta.tipoPergunta.idTipoPergunta, pergunta.tipoPergunta.nomeTipoPergunta, pergunta.idPergunta);
 		}
+
+		// alimenta a lista de Associações
+		associacaoService.atualizarListaAssociacoes(obj);
 	}
 	
 	pesquisaService.serializar = function(obj) {

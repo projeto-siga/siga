@@ -1015,7 +1015,20 @@ public class Application extends SigaApplication {
 		return associacao.toVO().toJson();
 	}
 	
+	public static String gravarAssociacaoPesquisa(SrConfiguracao associacao) throws Exception {
+		assertAcesso("ADM:Administrar");
+		associacao.salvarComoAssociacaoPesquisa();
+		associacao.refresh();
+		return associacao.toVO().toJson();
+	}
+	
 	public static void desativarAssociacaoEdicao(Long idAtributo, Long idAssociacao) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, idAssociacao);
+		associacao.finalizar();
+	}
+	
+	public static void desativarAssociacaoPesquisaEdicao(Long idPesquisa, Long idAssociacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = JPA.em().find(SrConfiguracao.class, idAssociacao);
 		associacao.finalizar();
@@ -1246,11 +1259,15 @@ public class Application extends SigaApplication {
 		return item.toJson();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void listarPesquisa(boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		List<SrPesquisa> pesquisas = SrPesquisa.listar(mostrarDesativados);
 		List<SrTipoPergunta> tipos = SrTipoPergunta.buscarTodos();
-		render(pesquisas, tipos);
+		List<CpOrgaoUsuario> orgaos = JPA.em()
+				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+		render(pesquisas, tipos, orgaos, locais);
 	}
 	
 	public static void listarPesquisaDesativadas() throws Exception {

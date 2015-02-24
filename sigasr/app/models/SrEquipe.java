@@ -14,14 +14,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import models.vo.SelecionavelVO;
-import util.FieldNameExclusionEstrategy;
+import util.Util;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -103,7 +102,7 @@ public class SrEquipe extends HistoricoSuporte {
 	}
 
 	public String toJson() {
-		Gson gson = createGson("lotacao", "excecaoHorarioSet");
+		Gson gson = Util.createGson("lotacao", "excecaoHorarioSet");
 		
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
@@ -114,7 +113,7 @@ public class SrEquipe extends HistoricoSuporte {
 	}
 	
 	private JsonArray excecaoHorarioArray() {
-		Gson gson = createGson("equipe");
+		Gson gson = Util.createGson("equipe");
 		JsonArray jsonArray = new JsonArray();
 		
 		if (this.excecaoHorarioSet != null)
@@ -129,11 +128,4 @@ public class SrEquipe extends HistoricoSuporte {
 		
 		return jsonArray;
 	}
-	
-	// TODO: colocar esse metodo na classe base
-	private Gson createGson(String... exclusions) {
-		return new GsonBuilder()
-			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
-			.create();
-	}	
 }

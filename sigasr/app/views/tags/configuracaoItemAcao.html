@@ -334,11 +334,11 @@
 				// cria a lista de Itens de Configuração, e adiciona na tela
 				for (i = 0; i < jSon.listaItemConfiguracaoVO.length; i++) {
 					var item = jSon.listaItemConfiguracaoVO[i],
-						rowItem = [item.id, 
-						           item.siglaItemConfiguracao,
-						           item.tituloItemConfiguracao,
-						           item.descrItemConfiguracao, 
-						           item.descricaoSimilaridade,
+						rowItem = [item.id ? item.id : '', 
+						           item.siglaItemConfiguracao ? item.siglaItemConfiguracao : '',
+						           item.tituloItemConfiguracao ? item.tituloItemConfiguracao : '',
+						           item.descrItemConfiguracao ? item.descrItemConfiguracao : '', 
+						           item.descricaoSimilaridade ? item.descricaoSimilaridade : '',
 						           "<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 					
 					// Adiciona na tabela de Itens de Configuração
@@ -350,9 +350,9 @@
 				// cria a lista de ações, e adiciona na tela
 				for (i = 0; i < jSon.listaAcaoVO.length; i++) {
 					var acao = jSon.listaAcaoVO[i],
-						rowAcao = [acao.id,
-								   acao.sigla,
-						           acao.titulo,
+						rowAcao = [acao.id ? acao.id : '',
+								   acao.sigla ? acao.sigla : '',
+						           acao.titulo ? acao.titulo : '',
 						           "<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 					
 					// Adiciona na tabela de Ações

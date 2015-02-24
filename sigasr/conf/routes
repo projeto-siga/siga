@@ -45,6 +45,7 @@ GET     /public/                            staticDir:public
 *		/associacao/editar/{id}				Application.editarAssociacao
 *		/associacao/editar					Application.editarAssociacao
 *		/associacao/gravar					Application.gravarAssociacao
+* 		/associacao/gravarPesquisa			Application.gravarAssociacaoPesquisa
 *		/associacao/listar					Application.listarAssociacao
 
 *		/acao/editar/{id}					Application.editarAcao

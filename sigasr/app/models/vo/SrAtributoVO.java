@@ -59,10 +59,12 @@ public class SrAtributoVO {
 			jsonTree.add("descrTipoAtributo",
 					gson.toJsonTree(this.tipoAtributo.descrTipoAtributo));
 		}
+		
 		if (this.objetivoAtributo != null) {
 			jsonTree.add("descrObjetivoAtributo",
 					gson.toJsonTree(this.objetivoAtributo.getDescricao()));
 		}
+		
 		return jsonTree.toString();
 	}
 

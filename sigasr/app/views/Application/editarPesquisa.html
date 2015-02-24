@@ -14,9 +14,66 @@
 	}
 </style>
 
-<script>
-jQuery(document).ready(function($) {
+<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+	<form id="pesquisaForm">
+		<input type="hidden" name="idPesquisa" id="idPesquisa" />
+		<input type="hidden" name="hisIdIni" id="hisIdIni"/>
+		
+		<div class="gt-form-row gt-width-66">
+			<label>Nome <span>*</span></label> <input type="text"
+				name="nomePesquisa" id="nomePesquisa" size="60" maxlength="255" required />
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Descrição</label> <input type="text" name="descrPesquisa" id="descrPesquisa"
+				size="60" maxlength="255" />
+		</div>
 
+		<div class="gt-form-row">
+			<label>Perguntas</label>
+			<ul id="perguntas" style="color: #365b6d"></ul>
+			<input type="button" value="Incluir" id="botaoIncluir"
+				class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+		</div>
+	</form>
+		
+	#{configuracaoAssociacao orgaos:orgaos,
+		locais:locais, 
+		itemConfiguracaoSet:itemConfiguracaoSet,
+		acoesSet:acoesSet,
+		modoExibicao:'pesquisa',
+		urlGravar:@Application.gravarAssociacaoPesquisa() }#{/configuracaoAssociacao}
+	
+	<div class="gt-form-row">
+		<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
+		<a class="gt-btn-medium gt-btn-left" onclick="pesquisaService.cancelarGravacao()">Cancelar</a>
+		<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="pesquisaService.aplicar()"/>
+	</div>
+</div>
+
+<div id="dialog">
+	<div class="gt-content">
+		<div class="gt-form gt-content-box">
+			<form id="perguntaForm">
+				<div class="gt-form-row">
+					<label>Pergunta <span>*</span></label> <input type="text" id="descrPergunta"
+						name="descrPergunta" value="" size="60" maxlength="255" required/>
+				</div>
+				<div class="gt-form-row">
+					<label>Tipo</label> #{select name:'tipoPergunta', id:'tipoPergunta'}
+					#{list items:tipos, as:'tipo'} #{option tipo.idTipoPergunta}
+					${tipo.nomeTipoPergunta} #{/option} #{/list} #{/select}
+				</div>
+				<div class="gt-form-row">
+					<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" />
+					<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+	jQuery(document).ready(function($) {
     	var jPerguntas = $("#perguntas"),
 	        perguntas = jPerguntas[0],
 	        jDialog = $("#dialog"),
@@ -117,53 +174,12 @@ jQuery(document).ready(function($) {
 		pesquisaFormValidator.reset();
 		perguntaFormValidator.reset();
 	}
+
+	function podeCadastrarAssociacao() {
+		var pesquisaId = $("#idPesquisa");
+        if ((pesquisaId == undefined || pesquisaId.val() == "")  && pesquisaService.aplicar() == false) 
+            return false;
+        else
+            return true;
+    }
 </script>
-
-<div class="gt-form gt-content-box">
-	<form id="pesquisaForm">
-		<input type="hidden" name="idPesquisa" />
-		
-		<div class="gt-form-row gt-width-66">
-			<label>Nome <span>*</span></label> <input type="text"
-				name="nomePesquisa" size="60" maxlength="255" required />
-		</div>
-		<div class="gt-form-row gt-width-66">
-			<label>Descrição</label> <input type="text" name="descrPesquisa"
-				size="60" maxlength="255" />
-		</div>
-
-		<div class="gt-form-row">
-			<label>Perguntas</label>
-			<ul id="perguntas" style="color: #365b6d"></ul>
-			<input type="button" value="Incluir" id="botaoIncluir"
-				class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
-		</div>
-		<div class="gt-form-row">
-			<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
-			<a class="gt-btn-medium gt-btn-left" onclick="pesquisaService.cancelarGravacao()">Cancelar</a>
-			<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="pesquisaService.aplicar()"/>
-		</div>
-	</form>
-</div>
-
-<div id="dialog">
-	<div class="gt-content">
-		<div class="gt-form gt-content-box">
-			<form id="perguntaForm">
-				<div class="gt-form-row">
-					<label>Pergunta <span>*</span></label> <input type="text" id="descrPergunta"
-						name="descrPergunta" value="" size="60" maxlength="255" required/>
-				</div>
-				<div class="gt-form-row">
-					<label>Tipo</label> #{select name:'tipoPergunta', id:'tipoPergunta'}
-					#{list items:tipos, as:'tipo'} #{option tipo.idTipoPergunta}
-					${tipo.nomeTipoPergunta} #{/option} #{/list} #{/select}
-				</div>
-				<div class="gt-form-row">
-					<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" />
-					<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
-				</div>
-			</form>
-		</div>
-	</div>
-</div>

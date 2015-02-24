@@ -250,16 +250,10 @@
 								value:filtro.acao /}</td>
 						</tr>
 						<tr>
-							<td>Prioridade</td>
-							<td colspan="3">#{select 'filtro.urgencia', items:models.SrUrgencia.values(),
-								labelProperty:'descrUrgencia', value:filtro.urgencia } #{option
-								0}Todas#{/option}#{/select} #{select 'filtro.gravidade',
-								items:models.SrGravidade.values(), labelProperty:'descrGravidade',
-								value:filtro.gravidade }#{option
-								0}Todas#{/option}#{/select} #{select 'filtro.tendencia',
-								items:models.SrTendencia.values(), labelProperty:'descrTendencia',
-								value:filtro.tendencia}#{option
-								0}Todas#{/option}#{/select}</td>
+							<td>Prioridade Mínima</td>
+							<td>#{select 'filtro.prioridade', items:models.SrPrioridade.values(), 
+								labelProperty:'descPrioridade', value:filtro.prioridade, style:'width:164px;' } 
+								#{option 0}Todas#{/option} #{/select}</td>
 						</tr>
 						<tr>
 							<td>Descrição</td>

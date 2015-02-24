@@ -109,12 +109,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (acao != null && acao.idAcao > 0L)
 			query.append(" and sol.acao.acaoInicial.idAcao = "
 					+ acao.acaoInicial.idAcao);
-		if (urgencia != null && urgencia.nivelUrgencia > 0)
-			query.append(" and sol.urgencia = " + urgencia.ordinal());
-		if (tendencia != null && tendencia.nivelTendencia > 0)
-			query.append(" and sol.tendencia = " + tendencia.ordinal());
-		if (gravidade != null && gravidade.nivelGravidade > 0)
-			query.append(" and sol.gravidade = " + gravidade.ordinal());
+		if (prioridade != null && prioridade.idPrioridade > 0L)
+			query.append(" and sol.prioridade <= " + prioridade.ordinal());
 		
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
 			for (String s : descrSolicitacao.split(" ")) {

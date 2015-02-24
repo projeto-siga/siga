@@ -28,7 +28,7 @@ submitOk = function() {
 			<c:when test="${listEstado[0]==-4}">
 				<tr>
 					<td>
-						<c:url var="url" value="/app/expediente/doc/listar">
+					<c:url var="url" value="/app/expediente/doc/listar">
 						<c:param name="ultMovIdEstadoDoc">15</c:param>			
 						<c:param name="orgaoUsu">0</c:param>
 						<c:param name="subscritorSel.id">${titular.idPessoa}</c:param>

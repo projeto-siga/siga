@@ -66,14 +66,14 @@
 					<td><c:if
 							test="${not empty configuracao.cpSituacaoConfiguracao}">${configuracao.cpSituacaoConfiguracao.dscSitConfiguracao}</c:if></td>
 					<td><c:if test="${not empty nmTipoRetorno}">
-							<c:url var="url" value="/expediente/configuracao/editar">
+							<c:url var="url" value="/app/expediente/configuracao/editar">
 								<c:param name="id" value="${configuracao.idConfiguracao}" />
 								<c:param name="idMod" value="${idMod}" />
 								<c:param name="nmTipoRetorno" value="${nmTipoRetorno}" />
 								<c:param name="campoFixo" value="${campoFixo}" />
 							</c:url>
 						</c:if> <c:if test="${empty nmTipoRetorno}">
-							<c:url var="url" value="/expediente/configuracao/editar">
+							<c:url var="url" value="/app/expediente/configuracao/editar">
 								<c:param name="id" value="${configuracao.idConfiguracao}" />
 							</c:url>
 						</c:if> <siga:links estilo="margin-bottom: 0; text-align: center;">
@@ -81,14 +81,14 @@
 								estilo="margin-bottom: 0; text-align: center; padding: 2px;" />
 
 							<c:if test="${not empty nmTipoRetorno}">
-								<c:url var="urlExcluir" value="/expediente/configuracao/excluir">
+								<c:url var="urlExcluir" value="/app/expediente/configuracao/excluir">
 									<c:param name="id" value="${configuracao.idConfiguracao}" />
 									<c:param name="idMod" value="${idMod}" />
 									<c:param name="nmTipoRetorno" value="${nmTipoRetorno}" />
 								</c:url>
 							</c:if>
 							<c:if test="${empty nmTipoRetorno}">
-								<c:url var="urlExcluir" value="/expediente/configuracao/excluir">
+								<c:url var="urlExcluir" value="/app/expediente/configuracao/excluir">
 									<c:param name="id" value="${configuracao.idConfiguracao}" />
 								</c:url>
 							</c:if>

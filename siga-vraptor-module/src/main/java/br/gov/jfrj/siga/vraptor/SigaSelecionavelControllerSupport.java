@@ -85,7 +85,7 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 		return "busca";
 	}
 
-	public String aSelecionar(String sigla) throws Exception {
+	public String aSelecionar(String sigla) {
 		final DaoFiltroT flt = createDaoFiltro();
 		
 		try {
@@ -130,7 +130,7 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 		return "ajax_retorno";
 	}
 
-	abstract public DaoFiltroT createDaoFiltro() throws Exception;
+	protected abstract DaoFiltroT createDaoFiltro();
 
 	public Integer getItemPagina() {
 		return itemPagina;

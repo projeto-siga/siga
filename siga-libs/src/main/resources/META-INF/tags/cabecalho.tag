@@ -388,12 +388,14 @@ ${meta}
 
 									<li class="dropdown"><a href="#"
 										class="dropdown-toggle account" data-toggle="dropdown">
+										<%--
 											<div class="avatar">
 												<img src="/siga/public/devoops/img/avatar.jpg"
-													class="img-circle" alt="avatar" />
-											</div> <i class="fa fa-angle-down pull-right"></i>
+													class="img-circle" alt="avatar" />													
+											</div>--%>
+											<i class="fa fa-angle-down pull-right"></i>
 											<div class="user-mini pull-right">
-												<span class="welcome">Ol·,</span> <span><c:catch>
+												<span class="welcome">Olá,</span> <span><c:catch>
 														<c:out default="Convidado"
 															value="${cadastrante.primeiroNomeEIniciais}" />
 														<c:choose>
@@ -401,58 +403,42 @@ ${meta}
 						 - ${cadastrante.lotacao.sigla}</c:when>
 														</c:choose>
 													</c:catch></span>
-												<c:catch>
-													<c:choose>
-														<c:when
-															test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
-															<span class="gt-util-separator">|</span>
-															<a href="/siga/substituicao/finalizar.action">finalizar</a>
-														</c:when>
-														<c:when
-															test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
-															<span class="gt-util-separator">|</span>
-															<a href="/siga/substituicao/finalizar.action">finalizar</a>
-														</c:when>
-														<c:otherwise></c:otherwise>
-													</c:choose>
-												</c:catch>
 											</div>
 									</a>
 										<ul class="dropdown-menu">
-											<li><a href="/siga/trocar_senha.action"> <i
-													class="fa fa-user"></i> <span>Trocar senha</span></a></li>
 
-											<li><a href="/siga/substituicao/substituir.action">
-													<i class="fa fa-user"></i> <span>Entrar como
-														substituto</span>
-											</a></li>
-
-											<li class="dropdown"><a href="#" class="dropdown-toggle">
-													<i class="fa fa-dashboard"></i> <span class="hidden-xs">Substituir</span>
+											<li><a href="/siga/app/substituicao/finalizar"> <i
+													class="fa fa-times"></i> <span>Finalizar substituição</span></a></li>
+									
+											<li><a href="#">
+													<i class="fa fa-users"></i> <span class="hidden-xs">Substituir</span>
 											</a>
-												<ul class="dropdown-menu">
+												<ul>
 													<c:forEach var="substituicao" items="${meusTitulares}">
-														<li><a
-															style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
-															href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/substituicao/excluir.action?id=${substituicao.idSubstituicao}&porMenu=true';">
-																<img style="display: inline;"
-																src="/siga/css/famfamfam/icons/cancel_gray.png"
-																title="Excluir"
-																onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
-																onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
-														</a> <a
-															href="/siga/substituicao/substituir_gravar.action?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
+														<li>
+														<a href="/siga/app/substituicao/substituirGravar?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
+															 <i class="fa fa-times-circle" onclick="javascript:event.preventDefault(); if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/excluir?id=${substituicao.idSubstituicao}&porMenu=true';"></i>
+															 <span>
 																<c:choose>
 																	<c:when test="${not empty substituicao.titular}">
-						${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}
-					</c:when>
+																		${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}
+																	</c:when>
 																	<c:otherwise>
-						${f:maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
-					</c:otherwise>
+																		${f:maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
+																	</c:otherwise>
 																</c:choose>
-														</a></li>
+																</span></a>
+														<%--
+														<a style="float: right; clear: none;" href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/excluir?id=${substituicao.idSubstituicao}&porMenu=true';">
+														<i class="fa fa-cog" style="color: red;"></i>
+														</a> 
+														 --%>
+														</li>
 													</c:forEach>
 												</ul></li>
+
+											<li><a href="/siga/trocar_senha.action"> <i
+													class="fa fa-key"></i> <span>Trocar senha</span></a></li>
 
 											<li><a href="#"> <i class="fa fa-cog"></i> <span>Configurações</span>
 											</a></li>
@@ -460,7 +446,9 @@ ${meta}
 												href="${pageContext.request.contextPath}/?GLO=true"> <i
 													class="fa fa-power-off"></i> <span>Sair</span>
 											</a></li>
-										</ul></li>
+										</ul>
+									</li>
+								</div>
 							</div>
 						</c:if>
 					</div>

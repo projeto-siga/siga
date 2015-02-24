@@ -1,3 +1,41 @@
+div.top-panel-right ul li ul {
+ 	padding-left: 35px;
+ }
+
+div.top-panel-right ul li ul li {
+	white-space: nowrap;
+	clear: both; 
+	line-height: 30px;
+}
+
+div.top-panel-right ul li ul li {
+	border-left: 0px; 
+	line-height: 30px; 
+/*	float: left; 
+	clear: none;*/
+}
+ 
+div.top-panel-right ul li ul li a {
+ 	padding-right: 10px;
+}
+
+div.top-panel-right ul li ul li a i {
+ 	color: #e2eaee;
+ 	font-size: 14px; 
+ 	padding: 0px;
+}
+
+div.top-panel-right ul li ul li a i:hover {
+ 	color: red;
+}
+
+div.top-panel-right ul li ul li a span {
+ 	color: #e2eaee;
+ 	font-size: 14px; 
+}
+
+
+
 .gadget h3 {
 	padding-top: 1em;
 }
@@ -1121,7 +1159,7 @@ tr.fisicoeven:hover td {
 	display: inline;
 }
 
-/* Formularios que são organizados na forma de tabelas */
+/* Formularios que sï¿½o organizados na forma de tabelas */
 .gt-form-table {
 	width: 100%;
 }

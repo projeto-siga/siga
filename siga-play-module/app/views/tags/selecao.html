@@ -52,11 +52,13 @@ self.popitup_${nomeclean} = function(sigla) {
 
 	var moduloAtual = modulosNaoSiga[base];
 	var redirecionaProSiga = true;
-	for (i=0; i<moduloAtual.length; i ++){
-		if (url.indexOf(moduloAtual[i]) > -1){
-			redirecionaProSiga = false;
-			break;
-		}	
+	if(typeof moduloAtual != "undefined") {
+		for (i=0; i<moduloAtual.length; i ++){
+			if (url.indexOf(moduloAtual[i]) > -1){
+				redirecionaProSiga = false;
+				break;
+			}	
+		}
 	}
 	
 	if (redirecionaProSiga){
@@ -119,13 +121,14 @@ self.ajax_${nomeclean} = function() {
 
 	var moduloAtual = modulosNaoSiga[base];
 	var redirecionaProSiga = true;
-	for (i=0; i<moduloAtual.length; i ++){
-		if (url.indexOf(moduloAtual[i]) > -1){
-			redirecionaProSiga = false;
-			break;
-		}	
+	if(typeof moduloAtual != "undefined") {
+		for (i=0; i<moduloAtual.length; i ++){
+			if (url.indexOf(moduloAtual[i]) > -1){
+				redirecionaProSiga = false;
+				break;
+			}	
+		}
 	}
-
 	var params = {};
 	if (redirecionaProSiga){
 		url = "/siga/${_tipo}/selecionar.action";

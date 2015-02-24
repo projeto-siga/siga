@@ -17,6 +17,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Hibernate;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -357,6 +359,8 @@ public class ExConfiguracaoController extends ExController {
 	private String gerarNomeModelo(ExConfiguracao c) {
 		if (c.getExModelo() != null) {
 			String nomeMod = c.getExModelo().getNmMod();
+			Hibernate.initialize(c.getExModelo().getExFormaDocumento());
+			
 			if (!c.getExModelo().getExFormaDocumento().getDescrFormaDoc().equals(nomeMod))
 				nomeMod = MessageFormat.format("{0} -> {1}", 
 					c.getExModelo()

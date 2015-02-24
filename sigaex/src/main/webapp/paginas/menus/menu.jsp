@@ -80,8 +80,8 @@
 		<c:catch>
 			<c:if
 				test="${f:testaCompetencia('gerenciarPublicacaoBoletimPorConfiguracao',titular,lotaTitular,null)}">
-				<li><ww:url id="url" action="gerenciar_publicacao_boletim"
-						namespace="/expediente/configuracao" /> <ww:a href="%{url}">Definir Publicadores Boletim</ww:a>
+				<li>
+					<a href="${pageContext.request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim">Definir Publicadores Boletim</a>
 				</li>
 			</c:if>
 		</c:catch>

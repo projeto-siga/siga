@@ -8,6 +8,7 @@ $(document).ready(function() {
 });
 
 function carregarAtributos(){
+	//jQuery.blockUI(objBlock);
 	var frm = document.getElementById('formSolicitacao'),
 		params = '';
 	carregarLotacaoDaAcao();
@@ -39,6 +40,7 @@ function carregouAtributos(response, param){
 			addFiltro(divFiltro, selector, innerHTML, optionVl)
 		}
 	});
+	//jQuery.unblockUI();
 }
 
 function removeSelectedDuplicado() {

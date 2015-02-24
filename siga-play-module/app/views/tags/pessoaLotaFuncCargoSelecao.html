@@ -11,8 +11,12 @@
 		disabled="disabled" 
 	#{/set}
 #{/if}
+#{else}
+	#{set 'pessoaLotaFuncCargoSelecaoDisabled'}
+	#{/set}
+#{/else}
 
-<select id="${_nomeSelPessoaClean}${_nomeSelLotacaoClean}${_nomeSelFuncaoClean}${_nomeSelCargoClean}${_nomeSelGrupoClean}" onchange="" ${pessoaLotaFuncCargoSelecaoDisabled} >
+<select id="${_nomeSelPessoaClean}${_nomeSelLotacaoClean}${_nomeSelFuncaoClean}${_nomeSelCargoClean}${_nomeSelGrupoClean}" onchange="" ${pessoaLotaFuncCargoSelecaoDisabled} class="pessoaLotaFuncCargoSelecao">
   <option value="1">Pessoa</option>
   <option value="2">Lotação</option>
   <option value="3">Função</option>
@@ -20,15 +24,15 @@
   <option value="5">Grupo</option>
 </select>
 <span id="spanPessoa${_nomeSelPessoaClean}">#{selecao
-	tipo:'pessoa', nome:_nomeSelPessoa, value:_valuePessoa, disabled:_disabled /}</span>
+	tipo:'pessoa', nome:_nomeSelPessoa, value:_valuePessoa, disabled:_disabled, currentClass:'pessoaLotaFuncCargoSelecao' /}</span>
 <span id="spanLotacao${_nomeSelLotacaoClean}">#{selecao
-	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao, disabled:_disabled /}</span>
+	tipo:'lotacao', nome:_nomeSelLotacao, value:_valueLotacao, disabled:_disabled, currentClass:'pessoaLotaFuncCargoSelecao' /}</span>
 <span id="spanFuncao${_nomeSelFuncaoClean}">#{selecao
-	tipo:'funcao', nome:_nomeSelFuncao, value:_valueFuncao, disabled:_disabled /}</span>
+	tipo:'funcao', nome:_nomeSelFuncao, value:_valueFuncao, disabled:_disabled, currentClass:'pessoaLotaFuncCargoSelecao' /}</span>
 <span id="spanCargo${_nomeSelCargoClean}">#{selecao
-	tipo:'cargo', nome:_nomeSelCargo, value:_valueCargo, disabled:_disabled /}</span>
+	tipo:'cargo', nome:_nomeSelCargo, value:_valueCargo, disabled:_disabled, currentClass:'pessoaLotaFuncCargoSelecao' /}</span>
 <span id="spanGrupo${_nomeSelGrupoClean}">#{selecao
-	tipo:'perfil', prefixo:'gi', nome:_nomeSelGrupo, value:_valueGrupo, disabled:_disabled /}</span>
+	tipo:'perfil', prefixo:'gi', nome:_nomeSelGrupo, value:_valueGrupo, disabled:_disabled, currentClass:'pessoaLotaFuncCargoSelecao'/}</span>
 <script language="javascript">
 var select = document.getElementById('${_nomeSelPessoaClean}${_nomeSelLotacaoClean}${_nomeSelFuncaoClean}${_nomeSelCargoClean}${_nomeSelGrupoClean}');
 if (document.getElementById('${_nomeSelPessoaClean}').value)
@@ -185,5 +189,9 @@ select.onchange = function(){
 	}
 }
 
+select.changeValue = function(newValue) {
+	select.value = newValue;
+	select.onchange();
+}
 select.onchange();
 </script>

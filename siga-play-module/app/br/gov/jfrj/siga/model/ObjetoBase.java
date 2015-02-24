@@ -10,6 +10,11 @@ import play.db.jpa.JPA;
 @MappedSuperclass
 public abstract class ObjetoBase extends GenericModel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public void salvar() throws Exception {
 		try {
 			Historico thisHistorico = (Historico) this;

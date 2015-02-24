@@ -35,6 +35,7 @@
 		}
 		
 		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
 				location.href = '@{Application.listarAssociacaoDesativadas()}';
 			else
@@ -174,7 +175,7 @@
 						<td>${assoc.atributoObrigatorioString}</td>
 						<td>${assoc.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>
 						<td>${assoc.acaoUnitaria?.atual?.siglaAcao}</td>
-						<td>
+						<td class="acoes">
 							#{desativarReativar id:assoc.idConfiguracao, 
 												onReativar:'reativarAssociacao',
 												onDesativar :'desativarAssociacao',

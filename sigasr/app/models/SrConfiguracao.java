@@ -18,12 +18,15 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import models.SrAcao.SrAcaoVO;
-import models.SrItemConfiguracao.SrItemConfiguracaoVO;
+import models.vo.SrConfiguracaoAssociacaoVO;
+import models.vo.SrConfiguracaoVO;
+import models.vo.SrItemConfiguracaoVO;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
+import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -34,6 +37,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
@@ -45,8 +49,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	 */
 	private static final long serialVersionUID = 4959384444345462871L;
 
-	//@ManyToOne
-	//@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
 	@Transient
 	public SrItemConfiguracao itemConfiguracaoFiltro;
 
@@ -54,8 +56,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
 	public List<SrItemConfiguracao> itemConfiguracaoSet;
 	
-	//@ManyToOne
-	//@JoinColumn(name = "ID_ACAO")
 	@Transient
 	public SrAcao acaoFiltro;
 	
@@ -138,6 +138,13 @@ public class SrConfiguracao extends CpConfiguracao {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		salvar();
 	}
+	
+	public boolean isDesignacao() {
+		if (this.getCpTipoConfiguracao() != null && this.getCpTipoConfiguracao().getIdTpConfiguracao() != null)
+			return this.getCpTipoConfiguracao().getIdTpConfiguracao().equals(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		else
+			return false;
+	}
 
 	public void salvarComoInclusaoAutomaticaLista(SrLista srLista) throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
@@ -170,6 +177,35 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarDesignacoes(SrEquipe equipe) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		
+		if (equipe != null && equipe.lotacao != null && equipe.lotacao.getIdLotacaoIni() != null) {
+			sb.append(" and ( ");
+			
+			sb.append(" conf.atendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());
+			
+			sb.append(" ) ");
+		}
+		
+		sb.append(" and conf.hisDtFim is null");
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
+	public static List<SrConfiguracao> listarDesignacoes(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		return listar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro,
+				new int[] {}));
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarAbrangenciasAcordo(boolean mostrarDesativados, SrAcordo acordo) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
@@ -192,6 +228,17 @@ public class SrConfiguracao extends CpConfiguracao {
 				.createQuery(sb.toString()).getResultList();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAbrangenciasAcordo() {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
+		sb.append(" and conf.hisDtFim is null");
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
 	public void salvarComoAbrangenciaAcordo() throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
@@ -204,8 +251,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
 		salvar();
-		
-		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -424,7 +469,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	/**
-
 	 * Retorna um Json de {@link SrConfiguracaoVO} que contém:
 	 * <li> {@link SrListaConfiguracaoVO}</li>
 	 * <li> {@link SrItemConfiguracaoVO}</li>
@@ -432,62 +476,45 @@ public class SrConfiguracao extends CpConfiguracao {
 	 * 
 	 */
 	public String getSrConfiguracaoJson() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null).toJson();
+		return this.toVO().toJson();
 	}
 
 	public String getSrConfiguracaoTipoPermissaoJson() {
-		return new SrConfiguracaoVO(null, null, null, tipoPermissaoSet).toJson();
+		return new SrConfiguracaoVO(this).toJson();
 	}
+	
+	public SrConfiguracaoVO toVO() {
+		return new SrConfiguracaoVO(this, this.atributoObrigatorio);
+	}
+	
+	public static String convertToJSon(List<SrConfiguracao> lista) {
+		List<SrConfiguracaoVO> listaVO = new ArrayList<SrConfiguracaoVO>();
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting().serializeNulls();
+		Gson gson = builder.create();
 
-	/**
-	 * Classe que representa um {@link SrConfiguracaoVO VO} da classe
-	 * {@link SrConfiguracao}.
-	 * 
-	 * @author DB1
-	 */
-	public class SrConfiguracaoVO {
-		public List<SrLista.SrListaVO> listaVO; 
-		public List<SrItemConfiguracao.SrItemConfiguracaoVO> listaItemConfiguracaoVO;
-		public List<SrAcao.SrAcaoVO> listaAcaoVO;
-		public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
-
-		public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet) {
-			listaVO = new ArrayList<SrLista.SrListaVO>();
-			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracao.SrItemConfiguracaoVO>();
-			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
-			listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
-			
-			if(listaConfiguracaoSet != null)
-				for (SrLista item : listaConfiguracaoSet) {
-					listaVO.add(item.toVO());
-				}
-			
-			if(itemConfiguracaoSet != null)
-				for (SrItemConfiguracao item : itemConfiguracaoSet) {
-					listaItemConfiguracaoVO.add(item.toVO());
-				}
-			
-			if(acoesSet != null)
-				for (SrAcao item : acoesSet) {
-					listaAcaoVO.add(item.toVO());
-				}
-
-			if(tipoPermissaoSet != null)
-				for (SrTipoPermissaoLista item : tipoPermissaoSet) {
-					listaTipoPermissaoListaVO.add(item.toVO());
-				}
+		if (lista != null) {
+			for (SrConfiguracao conf : lista) {
+				listaVO.add(conf.toVO());
+			}
 		}
+		
+		return gson.toJson(listaVO);
+	}
+	
+	public static String convertToAssociacaoJSon(List<SrConfiguracao> lista) {
+		List<SrConfiguracaoAssociacaoVO> listaVO = new ArrayList<SrConfiguracaoAssociacaoVO>();
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting().serializeNulls();
+		Gson gson = builder.create();
 
-		/**
-		 * Converte o objeto para Json.
-		 */
-		public String toJson() {
-			GsonBuilder builder = new GsonBuilder();
-			builder.setPrettyPrinting().serializeNulls();
-			Gson gson = builder.create();
-
-			return gson.toJson(this);
+		if (lista != null) {
+			for (SrConfiguracao conf : lista) {
+				listaVO.add(conf.toAssociacaoVO());
+			}
 		}
+		
+		return gson.toJson(listaVO);
 	}
 
 	public int getNivelItemParaComparar() {
@@ -567,6 +594,39 @@ public class SrConfiguracao extends CpConfiguracao {
 			this.listaConfiguracaoSet.add(srLista);
 		}
 	}
+
+	public SrConfiguracaoAssociacaoVO toAssociacaoVO() {
+		SrItemConfiguracaoVO itemVO = (this.getItemConfiguracaoUnitario() != null? this.getItemConfiguracaoUnitario().getAtual().toVO() : null);
+		SrAcaoVO acaoVO = (this.getAcaoUnitaria() != null? this.getAcaoUnitaria().getAtual().toVO() : null);
+		
+		return new SrConfiguracaoAssociacaoVO(this, itemVO, acaoVO);
+	}
 	
+	public String toJson() {
+		Gson gson = createGson("");
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		
+		return jsonObject.toString();
+	}
+
+	private Gson createGson(String... exclusions) {
+		return new GsonBuilder()
+			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.in(exclusions))
+			.create();
+	}
+	
+	public static List<SrConfiguracao> listarPorItem(SrItemConfiguracao itemConfiguracao)  throws Exception{
+		List<SrConfiguracao> lista = new ArrayList<SrConfiguracao>();
+		
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setBuscarPorPerfis(true);
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		
+		lista.addAll(SrItemConfiguracao.marcarComoHerdadas(SrConfiguracao.listarDesignacoes(
+					confFiltro, new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO}), itemConfiguracao));
+		
+		return lista;
+	}
 	
 }

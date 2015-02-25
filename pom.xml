@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-    	<!-- <module>siga-integration-test</module> -->
+    	<module>siga-integration-test</module>
         <module>siga-base</module>
         <module>siga-ws</module>
         <module>siga-rel</module>
@@ -19,13 +19,13 @@
         <module>siga-ldap</module>
         <module>siga</module>
         <module>siga-ext</module>
-        <!--<module>siga-ex</module>-->
-        <!--<module>sigaex</module>-->
+        <module>siga-ex</module>
+        <module>sigaex</module>
         <module>siga-cd</module>
         <module>sigacd</module>
         <module>siga-wf</module>
-        <!--<module>sigawf</module>-->
-        <!--<module>siga-autenticidade</module>-->
+        <module>sigawf</module>
+        <module>siga-autenticidade</module>
         <module>siga-cd-aut</module>
         <module>siga-cp-sinc</module>
         <module>siga-play-module</module>

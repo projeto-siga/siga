@@ -24,6 +24,7 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExClassificacao;
@@ -53,10 +55,8 @@ import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 public class ExClassificacaoController extends SigaSelecionavelControllerSupport<ExClassificacao, ExClassificacaoDaoFiltro> {
 	
 	// classificacao
-	private String[] listaNiveis;
-	private String[] nivelSelecionado;
-	private String[] nomeNivel;
-	private Integer nivelAlterado;		
+	private String[] nivelSelecionado;	
+	private Integer nivelAlterado;
 
 	public ExClassificacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, ExDao.getInstance(), so, em);
@@ -64,26 +64,18 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 		result.on(Exception.class).forwardTo(this).exception();	
 		
 		int totalItens = getTotalDeNiveis();
-		listaNiveis = new String[totalItens];
-		nivelSelecionado = new String[totalItens];
-		for (int i = 0; i < listaNiveis.length; i++) {
-			listaNiveis[i] = String.valueOf(i);
-		}
-
-		nomeNivel = new String[getTotalDeNiveis()];
-		List<String> listaNomes = SigaExProperties.getExClassificacaoNomesNiveis();
-		for (int i = 0; i < nomeNivel.length; i++) {
-			nomeNivel[i] = listaNomes.get(i + 1);
-		}		
+		nivelSelecionado = new String[totalItens];	
+		
 	}
-
+	
 	@Override
 	public ExClassificacaoDaoFiltro createDaoFiltro() {
 		final ExClassificacaoDaoFiltro flt = new ExClassificacaoDaoFiltro();
 
 		if (nivelAlterado != null) {
 			for (int i = nivelAlterado; i < nivelSelecionado.length - 1; i++) {
-				nivelSelecionado[i + 1] = null;			}
+				nivelSelecionado[i + 1] = null;			
+			}
 
 		}
 
@@ -105,9 +97,49 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 	}
 
 	@Get("app/expediente/classificacao/listar")
-	public void lista() throws AplicacaoException, Exception {
+	public void lista() {
 		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		result.include("classificacaoVigente", getClassificacaoVigente());
+	}
+	
+	
+	@Get("app/classificacao/buscar")
+	public void busca(final String sigla, final String postback, final Integer paramoffset, final String nome, 
+			final String[] nivelSelecionado, final Integer nivelAlterado, final Boolean discriminarVias) throws Exception {
+		setNome(nome);
+		this.nivelAlterado = nivelAlterado;
+        this.nivelSelecionado = nivelSelecionado != null?nivelSelecionado:this.nivelSelecionado;		
+		getP().setOffset(paramoffset);
+		aBuscar(sigla, postback);
+		final String[] listaNiveis = new String[getTotalDeNiveis()];
+		final String[] nomeNivel = new String[getTotalDeNiveis()];
+		final List<String> listaNomes = SigaExProperties.getExClassificacaoNomesNiveis();
+		final List<ExClassificacao>[] classificacoesDoNivel = new List[getTotalDeNiveis()];
+		for (int i = 0; i < listaNiveis.length; i++) {
+			listaNiveis[i] = String.valueOf(i);
+			nomeNivel[i] = listaNomes.get(i + 1);
+			classificacoesDoNivel[i] = getClassificacoesDoNivel(i);			
+		}		
+
+		result.include("listaNiveis", listaNiveis);
+		result.include("nomeDoNivel", nomeNivel);
+		result.include("classificacoesDoNivel", classificacoesDoNivel);
+		result.include("nivelSelecionado", nivelSelecionado);
+		result.include("discriminarVias", discriminarVias);
+		result.include("itens", getItens());
+		result.include("tamanho", getTamanho());
+		result.include("nome", getNome());
+	}	
+	
+	@Get("app/classificacao/selecionar")
+	public void selecionar(String sigla) throws Exception {
+		String resultado =  aSelecionar(sigla);
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
+		}
 	}
 
 	@Get("app/expediente/classificacao/editar")
@@ -366,6 +398,25 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 		}
 
 		return false;
+	}	
+	
+	private List<ExClassificacao> getClassificacoesDoNivel(Integer nivel) {
+		List<ExClassificacao> result = new ArrayList<ExClassificacao>();
+
+		// se primeira lista, carrega incondicionalmente
+		if (nivel == 0) {
+			return ExDao.getInstance().listarExClassificacaoPorNivel(MascaraUtil.getInstance().getMscTodosDoNivel(1));
+		}
+
+		// se lista do nível anterior está definido, carrega lista baseando-se
+		// na anterior
+		String nivelListaAnterior = nivelSelecionado[nivel - 1];
+		if (nivelListaAnterior != null && !nivelListaAnterior.equals("-1")) {
+			return ExDao.getInstance().listarExClassificacaoPorNivel(
+					MascaraUtil.getInstance().getMscFilho(nivelListaAnterior, false), nivelListaAnterior);
+		}
+
+		return result;
 	}	
 
 }

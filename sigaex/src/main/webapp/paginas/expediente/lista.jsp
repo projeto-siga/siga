@@ -926,8 +926,7 @@ function limpaCampos()
 											</td>
 										</tr>
 
-										<siga:selecao titulo="Classificação:"
-											propriedade="classificacao" modulo="sigaex"/>
+										<siga:selecao titulo="Classificação:" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
 
 										<ww:textfield label="Descrição" name="descrDocumento"
 											size="80" />

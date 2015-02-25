@@ -162,7 +162,7 @@ function sbmt() {
 			</tr>		
 			<tr>
 				<td>Classificação</td>
-				<td><siga:selecao propriedade="classificacao" tema="simple" modulo="sigaex"/></td>
+				<td><siga:selecao propriedade="classificacao" tema="simple" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/></td>
 			</tr>			
 			<tr>
 				<td>Origem</td>

@@ -19,6 +19,7 @@
 <%@ attribute name="descricaoInicial" required="false"%>
 <%@ attribute name="inputName" required="false"%>
 <%@ attribute name="urlAcao" required="false"%>
+<%@ attribute name="urlSelecionar" required="false"%>
 <!-- A lista de par -->
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
@@ -165,7 +166,14 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
-	var url = '/${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+	<c:choose>
+		<c:when test="${empty urlSelecionar}">
+			var url = '/${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+		</c:when>
+		<c:otherwise>
+			var url = '/${urlPrefix}/app${acaoBusca}/${urlSelecionar}?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+		</c:otherwise>
+	</c:choose>
 	url = url + '&sigla=' + sigla;
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 }

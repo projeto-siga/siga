@@ -65,7 +65,7 @@ function sbmt() {
 				<td colspan="3"><siga:selecao propriedade="titular"
 							tema="simple" modulo="siga" /></td>
 				</tr>
-				<siga:selecao titulo="Nova Classificação:" propriedade="classificacao" modulo="sigaex" />
+				<siga:selecao titulo="Nova Classificação:" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
 				<tr>
 					<td>Motivo</td>
 					<td><ww:textfield

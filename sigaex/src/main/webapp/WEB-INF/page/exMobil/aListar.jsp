@@ -957,7 +957,7 @@ function limpaCampos()
 												</c:choose>
 											</td>
 										</tr>
-										<siga:selecao titulo="Classificação:" propriedade="classificacao" modulo="sigaex"/>
+										<siga:selecao titulo="Classificação:" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
 										<tr>
 											<td>
 												Descrição:

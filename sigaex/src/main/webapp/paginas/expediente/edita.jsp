@@ -580,7 +580,7 @@ function tryAgainAutoSave(){
 						<td colspan="3"><siga:span id="classificacao"
 							depende="forma;modelo">
 							<siga:selecao desativar="${desativarClassif}" modulo="sigaex"
-							propriedade="classificacao" tema="simple" reler="sim" />
+							propriedade="classificacao" tema="simple" reler="sim" urlAcao="buscar" urlSelecionar="selecionar"/>
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>

@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -49,11 +50,46 @@ import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
+import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
+import br.gov.jfrj.webwork.action.ExMobilAction.GenericoSelecao;
 
 @Resource
 public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
+	public class GenericoSelecao implements Selecionavel {
+
+		private Long id;
+
+		private String sigla;
+
+		private String descricao;
+
+		public String getDescricao() {
+			return descricao;
+		}
+
+		public void setDescricao(String descricao) {
+			this.descricao = descricao;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public String getSigla() {
+			return sigla;
+		}
+
+		public void setSigla(String sigla) {
+			this.sigla = sigla;
+		}
+	}
+	
 
 	public ExMobilController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
@@ -402,5 +438,23 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 		return Ex.getInstance().getBL().obterListaModelos(forma, false, "Todos", false, getTitular(), getLotaTitular(), false);
 	}
+	
+	@Get("app/expediente/selecionar")
+	public void selecionar(final String sigla, final String matricula) throws Exception {
+		final String resultado =  super.aSelecionar(sigla);		
+		if (getSel() != null && matricula != null) {
+			GenericoSelecao sel = new GenericoSelecao();
+			sel.setId(getSel().getId());
+			sel.setSigla(getSel().getSigla());
+			sel.setDescricao("/sigaex/app/expediente/doc/exibir?sigla="+sel.getSigla());
+			setSel(sel);
+		}
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
+		}
+	}	
 
 }

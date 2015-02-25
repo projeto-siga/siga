@@ -133,7 +133,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 	
 	@Get("app/classificacao/selecionar")
 	public void selecionar(String sigla) throws Exception {
-		String resultado =  aSelecionar(sigla);
+		String resultado =  super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno"){
 			result.include("sel", getSel());
 			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");

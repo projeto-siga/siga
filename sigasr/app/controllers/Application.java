@@ -975,6 +975,7 @@ public class Application extends SigaApplication {
 	public static String gravarAssociacao(SrConfiguracao associacao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		associacao.salvarComoAssociacaoAtributo();
+		associacao.refresh();
 		return associacao.toVO().toJson();
 	}
 	

@@ -38,8 +38,6 @@ public class SrConfiguracaoVO {
 	public SelecionavelVO orgaoUsuario;
 	public SelecionavelVO complexo;
 	public SrPesquisaVO pesquisaSatisfacao;
-	public SrItemConfiguracaoVO itemConfiguracaoUnitario;
-	public SrAcao.SrAcaoVO acaoUnitaria;
 	
 	// Solicitante
 	public SelecionavelVO dpPessoa;
@@ -56,8 +54,6 @@ public class SrConfiguracaoVO {
 		utilizarItemHerdado = configuracao.utilizarItemHerdado;
 		ativo = configuracao.isAtivo();
 		descrConfiguracao = configuracao.getDescrConfiguracao();
-		itemConfiguracaoUnitario = (configuracao.getItemConfiguracaoUnitario() != null? configuracao.getItemConfiguracaoUnitario().getAtual().toVO() : null);
-		acaoUnitaria = (configuracao.getAcaoUnitaria() != null? configuracao.getAcaoUnitaria().getAtual().toVO() : null);
 		
 		if(configuracao.itemConfiguracaoSet != null) {
 			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
@@ -125,13 +121,6 @@ public class SrConfiguracaoVO {
 		Gson gson = builder.create();
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		
-		if (this.listaItemConfiguracaoVO.size() == 1) {
-			jsonObject.add("itemConfiguracaoUnitario", gson.toJsonTree(this.listaItemConfiguracaoVO.get(0)));
-		}
-		
-		if (this.listaAcaoVO.size() == 1) {
-			jsonObject.add("acaoUnitaria", gson.toJsonTree(this.listaAcaoVO.get(0)));
-		}
 		return jsonObject.toString();
 	}
 }

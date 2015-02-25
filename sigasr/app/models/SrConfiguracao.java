@@ -654,28 +654,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		return 0;
 	}
 
-	public SrItemConfiguracao getItemConfiguracaoUnitario() {
-		if (itemConfiguracaoSet == null || itemConfiguracaoSet.size() == 0)
-			return null;
-		return itemConfiguracaoSet.get(0);
-	}
-
-	public void setItemConfiguracaoUnitario(SrItemConfiguracao itemConfiguracao) {
-		itemConfiguracaoSet = new ArrayList<SrItemConfiguracao>();
-		itemConfiguracaoSet.add(itemConfiguracao);
-	}
-
-	public SrAcao getAcaoUnitaria() {
-		if (acoesSet == null || acoesSet.size() == 0)
-			return null;
-		return acoesSet.get(0);
-	}
-
-	public void setAcaoUnitaria(SrAcao acao) {
-		acoesSet = new ArrayList<SrAcao>();
-		acoesSet.add(acao);
-	}
-
 	@Override
 	public CpConfiguracao getConfiguracaoAtual() {
 		return super.getConfiguracaoAtual();
@@ -707,10 +685,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public SrConfiguracaoAssociacaoVO toAssociacaoVO() {
-		SrItemConfiguracaoVO itemVO = (this.getItemConfiguracaoUnitario() != null? this.getItemConfiguracaoUnitario().getAtual().toVO() : null);
-		SrAcaoVO acaoVO = (this.getAcaoUnitaria() != null? this.getAcaoUnitaria().getAtual().toVO() : null);
-		
-		return new SrConfiguracaoAssociacaoVO(this, itemVO, acaoVO);
+		return new SrConfiguracaoAssociacaoVO(this);
 	}
 	
 	public String toJson() {

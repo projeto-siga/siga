@@ -226,8 +226,8 @@
 					assoc.orgaoUsuario ? assoc.orgaoUsuario.sigla : ' ',
 					assoc.complexo ? assoc.complexo.descricao : ' ',
 					assoc.solicitante ? assoc.solicitante.sigla : ' ',
-					assoc.itemConfiguracaoUnitario ? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
-					assoc.acaoUnitaria ? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
+					formatDescricaoLonga(assoc.listaItemConfiguracaoVO),
+					formatDescricaoLonga(assoc.listaAcaoVO),
 					getAtributoObrigatorioString(assoc.atributoObrigatorio),
 					html
    				];
@@ -254,8 +254,8 @@
 								assoc.orgaoUsuario ? assoc.orgaoUsuario.sigla : ' ',
 								assoc.complexo ? assoc.complexo.descricao : ' ',
 								assoc.solicitante ? assoc.solicitante.sigla: ' ',
-								assoc.itemConfiguracaoUnitario ? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
-								assoc.acaoUnitaria ? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
+								formatDescricaoLonga(assoc.listaItemConfiguracaoVO),
+								formatDescricaoLonga(assoc.listaAcaoVO),
 								getAtributoObrigatorioString(assoc.atributoObrigatorio),
 								html
 							];
@@ -306,11 +306,25 @@
 			return value;
 	}
 
-	function formatDescricaoLonga(descricao) {
-		if (descricao && descricao.length > 10) {
-			return descricao.substr(0, 10) + " ...";
+	function formatDescricaoLonga(lista) {
+		var str = ' ';
+		if (lista) {
+			for (var i = 0; i < lista.length; i++) {
+				var obj = lista[i];
+
+				if (str.length > 10) {
+					str = str + '...';
+					break;
+				}
+				
+				if (i > 0)
+					str = str + '; ';
+
+				str = str + obj.descricao;
+			}
 		}
-		else return (descricao || ' ');
+		
+		return str;
 	}
 
 	function getAtributoObrigatorioString(value) {

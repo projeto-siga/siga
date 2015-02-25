@@ -992,20 +992,12 @@ public class Application extends SigaApplication {
 		designacao.finalizar();
 	}
 	
-	public static void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
+	public static String desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao configuracao = JPA.em().find(SrConfiguracao.class, idPermissao);
 		configuracao.finalizar();
-		//editarLista(idLista);
-	}
-
-	public static void editarAssociacao(Long id) throws Exception {
-		assertAcesso("ADM:Administrar");
-		SrConfiguracao associacao = new SrConfiguracao();
-		if (id != null)
-			associacao = (SrConfiguracao) JPA.em()
-					.find(SrConfiguracao.class, id);
-		render(associacao);
+		
+		return configuracao.getSrConfiguracaoJson();
 	}
 
 	public static String gravarAssociacao(SrConfiguracao associacao) throws Exception {

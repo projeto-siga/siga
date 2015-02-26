@@ -151,16 +151,16 @@
 
 	<div class="gt-form-row gt-width-100">
 		<label>Órgão</label> #{select name:'orgaoUsuario', items:orgaos,
-		valueProperty:'idOrgaoUsu', labelProperty:'nmOrgaoUsu',
+		valueProperty:'idOrgaoUsu', labelProperty:'acronimoOrgaoUsu',
 		value:orgaoUsuario?.idOrgaoUsu, class:'select-siga', style:'width:
-		100%;'} #{option 0}Nenhum#{/option} #{/select}
+		100%;'} #{option 0}#{/option} #{/select}
 	</div>
 
 	<div class="gt-form-row gt-width-100">
 		<label>Local</label> #{select name:'complexo', items:locais,
 		valueProperty:'idComplexo', labelProperty:'nomeComplexo',
 		value:complexo?.idComplexo, class:'select-siga', style:'width: 100%'}
-		#{option 0}Nenhum#{/option} #{/select}
+		#{option 0}#{/option} #{/select}
 	</div>
 	<div class="gt-form-row gt-width-100">
 		<label>Atendente</label>#{selecao tipo:'lotacao', nome:'atendente',

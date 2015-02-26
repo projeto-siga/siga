@@ -120,8 +120,8 @@
 				<div class="gt-form-row div-modal-table">
 					<label>Órgão</label> 
 					#{select name:'orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
-					labelProperty:'nmOrgaoUsu', value:orgaoUsuario?.idOrgaoUsu}
-					#{option 0}Nenhum#{/option} 
+					labelProperty:'acronimoOrgaoUsu', value:orgaoUsuario?.idOrgaoUsu}
+					#{option 0}#{/option} 
 					#{/select}
 				</div>
 				<span style="color: red">#{error
@@ -130,7 +130,7 @@
 					<label>Local</label> 
 					#{select name:'complexo', items:locais, valueProperty:'idComplexo',
 					labelProperty:'nomeComplexo', value:complexo?.idComplexo}
-					#{option 0}Nenhum#{/option} 
+					#{option 0}#{/option} 
 					#{/select}
 				</div>		
 				<div class="gt-form-row div-modal-table">

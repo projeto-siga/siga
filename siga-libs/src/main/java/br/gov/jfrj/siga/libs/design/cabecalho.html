@@ -86,8 +86,7 @@
 	});
 </script>
 
-@if{titular != null} @{f.getComplementoHead(cadastrante.orgaoUsuario)}
-@end{}
+@if{head_complemento != null} @{head_complemento} @end{}
 </head>
 
 <body onload="@{on_load}">
@@ -130,7 +129,7 @@
 									class="fa fa-search"></i>
 							</div>
 						</div>
-						@if{cadastrante != null}
+						@if{cadastrante_nome != null}
 						<div class="col-xs-4 col-sm-8 top-panel-right">
 							<ul class="nav navbar-nav pull-right panel-menu">
 								<li class="hidden-xs"><a href="index.html"
@@ -152,8 +151,8 @@
 										class="fa fa-angle-down pull-right"></i>
 										<div class="user-mini pull-right">
 											<span class="welcome">Olá,</span> <span>
-												@{cadastrante.primeiroNomeEIniciais} @if{cadastrante.lotacao
-												!= null} - @{cadastrante.lotacao.sigla} @end{}</span>
+												@{cadastrante_nome} @if{cadastrante_lotacao_sigla
+												!= null} - @{cadastrante_lotacao_sigla} @end{}</span>
 										</div>
 								</a>
 									<ul class="dropdown-menu">
@@ -165,15 +164,15 @@
 												class="hidden-xs">Substituir</span>
 										</a>
 											<ul>
-												@foreach{substituicao : meus_titulares}
+												@foreach{substituicao : substituicoes}
 												<li><a
-													href="/siga/app/substituicao/substituirGravar?idTitular=@{substituicao.titular.idPessoa}&idLotaTitular=@{substituicao.lotaTitular.idLotacao}">
+													href="/siga/app/substituicao/substituirGravar?idTitular=@{substituicao.idTitular}&idLotaTitular=@{substituicao.idLotaTitular}">
 														<i class="fa fa-times-circle"
-														onclick="javascript:event.preventDefault(); if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/excluir?id=@{substituicao.idSubstituicao}&porMenu=true';"></i>
-														<span> @if{substituicao.titular != null}
-															@{f.maiusculasEMinusculas(substituicao.titular.nomePessoa)}
+														onclick="javascript:event.preventDefault(); if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/excluir?id=@{substituicao.id}&porMenu=true';"></i>
+														<span> @if{substituicao.tipo == 1}
+																@{substituicao.nomeTitular}
 															@else{}
-															@{f.maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
+																@{substituicao.siglaLotaTitular}
 															@end{} </span>
 												</a></li> @end{}
 											</ul></li>

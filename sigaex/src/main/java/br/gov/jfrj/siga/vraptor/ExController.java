@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.ioc.spring.VRaptorRequestHolder;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -52,6 +51,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.libs.design.Menu;
 import br.gov.jfrj.siga.util.ExProcessadorModelo;
 
 public class ExController extends SigaController {
@@ -70,7 +70,17 @@ public class ExController extends SigaController {
 		this.response = response;
 		this.context = context;
 		
+		incluirAtributosComuns(result);
+		
 		CurrentRequest.set(new RequestInfo(context, request, response));
+	}
+
+	protected static void incluirAtributosComuns(Result result) {
+		List<Menu> menus = new Menu.MenuBuilder()
+		.menu("cube", "Documentos", null, true)
+		.item("cube", "Novo", null, true)
+		.build();
+		result.include("menus", menus);
 	}
 
 	protected void verificaNivelAcesso(ExMobil mob) {

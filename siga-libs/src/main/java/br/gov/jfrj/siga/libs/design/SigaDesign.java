@@ -1,7 +1,11 @@
 package br.gov.jfrj.siga.libs.design;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +15,6 @@ import org.mvel2.templates.CompiledTemplate;
 import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
 
-import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.libs.util.SigaLibsEL;
 
 public class SigaDesign {
@@ -27,7 +29,7 @@ public class SigaDesign {
 			InputStream stream = SigaDesign.class
 					.getClassLoader()
 					.getResourceAsStream("br/gov/jfrj/siga/libs/design/" + file);
-			template = IOUtils.toString(stream);
+			template = IOUtils.toString(stream, "UTF-8");
 			CompiledTemplate compiled = TemplateCompiler
 					.compileTemplate(template);
 			return compiled;
@@ -51,13 +53,34 @@ public class SigaDesign {
 		// <c:set var="env" scope="request">${ambiente}</c:set>
 		// </c:if>
 
-		cabecalho("titulo", null, null, null, null, false, false, false);
+		Map<String, Boolean> permissoes = new HashMap<>();
+		List<Menu> menu = new ArrayList<>();
+		List<Substituicao> substituicoes = new ArrayList<>();
+
+		cabecalho("titulo", null, null, null, null, false, false, false,
+				"RENATO DO AMARAL CRIVANO MACHADO", "RJSESIA",
+				"RENATO DO AMARAL CRIVANO MACHADO", "RJSESIA", permissoes,
+				menu, substituicoes, null);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static String cabecalho(String titulo, String ambiente, String meta,
 			String js, String onLoad, boolean popup, boolean desabilitarBusca,
-			boolean desabilitarMenu) {
+			boolean desabilitarMenu, String nomeCadastrante,
+			String siglaLotaCadastrante, String nomeTitular,
+			String siglaLotaTitular, Map<String, Boolean> permissoes,
+			List<Menu> menu, List<Substituicao> substituicoes,
+			String complementoHead) {
+
+		if (nomeTitular != null && nomeTitular.equals(nomeCadastrante))
+			nomeTitular = null;
+		if (siglaLotaTitular != null
+				&& siglaLotaTitular.equals(siglaLotaCadastrante))
+			siglaLotaTitular = null;
+
+		List<Menu> menus = menuPrincipal();
+		if (menu != null)
+			menus.addAll(menu);
 
 		Map vars = new HashMap();
 		vars.put("titulo_pagina", titulo);
@@ -69,16 +92,19 @@ public class SigaDesign {
 		vars.put("desabilitar_busca", desabilitarBusca);
 		vars.put("desabilitar_menu", desabilitarMenu);
 
-		vars.put("cadastrante", null);
-		vars.put("titular", null);
-		vars.put("meus_titulares", null);
-		vars.put("f", sigalibsel);
+		vars.put("cadastrante_nome", primeiroNomeEIniciais(nomeCadastrante));
+		vars.put("cadastrante_lotacao_sigla", siglaLotaCadastrante);
+		vars.put("titular_nome", primeiroNomeEIniciais(nomeTitular));
+		vars.put("titular_lotacao_sigla", siglaLotaTitular);
+		vars.put("substituicoes", substituicoes);
 
 		vars.put("pagina_de_erro", false);
-		vars.put("menu_principal", menuPrincipal());
+		vars.put("menu_principal", menus);
+		vars.put("head_complemento", complementoHead);
 
+		tCabecalho = reler("cabecalho.html");
 		String output = (String) TemplateRuntime.execute(tCabecalho, vars);
-		System.out.println(output);
+		//System.out.println(output);
 		return output;
 	}
 
@@ -91,7 +117,7 @@ public class SigaDesign {
 		vars.put("f", sigalibsel);
 
 		String output = (String) TemplateRuntime.execute(tRodape, vars);
-		System.out.println(output);
+		// System.out.println(output);
 
 		return output;
 	}
@@ -112,27 +138,22 @@ public class SigaDesign {
 
 				.item("plus-square", "Pessoas", null, true)
 
-				.subitem("cube", "AQ", SigaLibsEL.getURLSistema("siga.sgp.aq"),
+				.subitem("cube", "AQ", "/sigaaq/", // SigaLibsEL.getURLSistema("siga.sgp.aq"),
 						"SIGA;AQ: Módulo de Adicional de Qualificação")
 
-				.subitem("cube", "Benefícios",
-						SigaLibsEL.getURLSistema("siga.sgp.bnf"),
+				.subitem("cube", "Benefícios", "/sigabnf/", // SigaLibsEL.getURLSistema("siga.sgp.bnf"),
 						"SIGA;BNF: Módulo de Benefícios")
 
-				.subitem("cube", "Cadastro",
-						SigaLibsEL.getURLSistema("siga.sgp.cad"),
+				.subitem("cube", "Cadastro", "/sigacad/", // SigaLibsEL.getURLSistema("siga.sgp.cad"),
 						"SIGA;CAD: Módulo de Cadastro")
 
-				.subitem("cube", "Consultas",
-						SigaLibsEL.getURLSistema("siga.sgp.cst"),
+				.subitem("cube", "Consultas", "/sigacst/", // SigaLibsEL.getURLSistema("siga.sgp.cst"),
 						"SIGA;CST: Módulo de Consultas")
 
-				.subitem("cube", "Lotação",
-						SigaLibsEL.getURLSistema("siga.sgp.lot"),
+				.subitem("cube", "Lotação", "/sigalot/", // SigaLibsEL.getURLSistema("siga.sgp.lot"),
 						"SIGA;LOT: Módulo de Lotação")
 
-				.subitem("cube", "Treinamento",
-						SigaLibsEL.getURLSistema("siga.sgp.trn"),
+				.subitem("cube", "Treinamento", "/sigatrn/", // SigaLibsEL.getURLSistema("siga.sgp.trn"),
 						"SIGA;TRN: Módulo de Treinamento")
 
 				.item("cube", "Agenda de Perícias Médicas", "/sigapp/",
@@ -165,8 +186,7 @@ public class SigaDesign {
 						"/siga/gi/servico/acesso.action",
 						"SIGA;GI;SELFSERVICE:Gerenciar serviços da própria lotação")
 
-				.item("dashboard", "Relatórios",
-						null,
+				.item("dashboard", "Relatórios", null,
 						"SIGA;GI;REL:Gerar relatórios")
 				.subitem("cube", "Acesso aos Serviços",
 						"/siga/gi/relatorio/selecionar_acesso_servico.action",
@@ -203,6 +223,42 @@ public class SigaDesign {
 						"SIGA;FE;CAD_FERIADO:Cadastrar Feriados")
 
 				.build();
+	}
+
+	public static String primeiroNomeEIniciais(String nome) {
+		if (nome == null)
+			return "";
+		String a[] = nome.split(" ");
+
+		String nomeAbreviado = "";
+		for (String n : a) {
+			if (nomeAbreviado.length() == 0)
+				nomeAbreviado = n.substring(0, 1).toUpperCase()
+						+ n.substring(1).toLowerCase();
+			else if (!"|DA|DE|DO|DAS|DOS|E|".contains("|" + n + "|"))
+				nomeAbreviado += " " + n.substring(0, 1) + ".";
+		}
+		return nomeAbreviado;
+	}
+
+	// Ativar apenas para fins de debug, pois os templates são empacotados no
+	// JAR e não são relidos a menos que o JAR seja recompilado. Durante as
+	// alterações, convém chamar essa função antes de processar o template. É
+	// necessário ajustar o path para o diretório onde os templates estão sendo
+	// editados na máquina do desenvolvedor.
+	protected static CompiledTemplate reler(String template) {
+		byte[] encoded;
+		try {
+			encoded = Files
+					.readAllBytes(Paths
+							.get("/Users/nato/Repositories/projeto-siga/siga/siga-libs/src/main/java/br/gov/jfrj/siga/libs/design/"
+									+ template));
+			return TemplateCompiler
+					.compileTemplate(new String(encoded, "UTF-8"));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

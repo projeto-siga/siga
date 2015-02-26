@@ -1,4 +1,4 @@
-<%@ tag body-content="empty" import="br.gov.jfrj.siga.libs.design.SigaDesign,java.lang.String,java.lang.Boolean" %>
+<%@ tag body-content="empty" import="br.gov.jfrj.siga.dp.DpPessoa,br.gov.jfrj.siga.dp.DpLotacao,br.gov.jfrj.siga.dp.DpSubstituicao,br.gov.jfrj.siga.libs.design.SigaDesign,br.gov.jfrj.siga.libs.design.Menu,br.gov.jfrj.siga.libs.design.Substituicao,java.lang.String,java.lang.Boolean,java.util.ArrayList,java.util.HashMap,java.util.List,java.util.Map" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
@@ -48,6 +48,7 @@
 </c:if>
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
+<c:set var="complementoHead" scope="request">${f.getComplementoHead()}</c:set>
 
 <%
 	System.out.println("RENATO");
@@ -55,9 +56,32 @@
 	System.out.println("CRIVANO");
 	
 	String titulo = (String) jspContext.getAttribute("titulo");
-	System.out.println(titulo.getClass());
+	
+	String complementoHead = (String)jspContext.getAttribute("complementoHead");
+	System.out.println(complementoHead);
+	
+	Map<String, Boolean> permissoes = new HashMap();
+	//List<Menu> menus = (List<Menu>) new ArrayList();
+	List<Menu> menus = (List<Menu>)request.getAttribute("menus");
+	List<Substituicao> substituicoes = new ArrayList();
+	
+	DpPessoa cadastrante = (DpPessoa) request.getAttribute("cadastrante");
+	DpPessoa titular = (DpPessoa) request.getAttribute("titular");
+	DpLotacao lotaTitular = (DpLotacao) request.getAttribute("lotaTitular");
+	
+	List<DpSubstituicao> meusTitulares = (List<DpSubstituicao>) request.getAttribute("meusTitulares");
+	if (meusTitulares != null) {
+		for (DpSubstituicao s : meusTitulares) {
+			Substituicao substituicao = new Substituicao(s.getIdSubstituicao(), s.getTitular() != null ? 1 : 2, 
+					s.getTitular() == null ? null : s.getTitular().getId(), 
+					s.getTitular() == null ? null : s.getTitular().getNomePessoa(),
+					s.getLotaTitular() == null ? null : s.getLotaTitular().getId(),  
+					s.getLotaTitular() == null ? null : s.getLotaTitular().getSigla());
+			substituicoes.add(substituicao);
+		}
+	}
+	
 %>
-
 <%= SigaDesign.cabecalho(
 		(String) jspContext.getAttribute("titulo"),  
 		(String) jspContext.getAttribute("ambiente"), 
@@ -66,5 +90,11 @@
 		(String) jspContext.getAttribute("onLoad"),
 		"true".equals(jspContext.getAttribute("popup")),
 		"Sim".equals(jspContext.getAttribute("desabilitarbusca")),
-		"Sim".equals(jspContext.getAttribute("desabilitarmenu")))
+		"Sim".equals(jspContext.getAttribute("desabilitarmenu")),
+		cadastrante != null ? cadastrante.getNomePessoa() : null, 
+		cadastrante != null ? cadastrante.getLotacao().getSigla() : null, 
+		titular != null ? titular.getNomePessoa() : null, 
+		lotaTitular != null ? lotaTitular.getSigla() : null, 
+		permissoes,
+		menus, substituicoes, complementoHead)
 %>

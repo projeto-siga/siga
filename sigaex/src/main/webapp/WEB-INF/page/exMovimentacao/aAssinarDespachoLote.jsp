@@ -66,7 +66,7 @@
 				    <c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
 				    <c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
 				    
-		   	 	    <c:set var="nextURL" value="siga/principal.action"  />
+		   	 	    <c:set var="nextURL" value="siga/app/principal"  />
 		    	    <c:set var="urlPath" value="${request.contextPath}" />
 		
 					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
@@ -165,7 +165,7 @@
 			            <td width="40%"align="left">${mov.obs}</td> 	            				    
 			        </tr>			         		         
 					<input type="hidden" name="pdf${x}" value="${mov.referencia}" />
-					<input type="hidden" name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
+					<input type="hidden" name="url${x}" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
 				</c:forEach>   
 			 </table>
 	         </div>
@@ -174,7 +174,7 @@
 	</div></div>
 	<c:if test="${(not empty movimentacoesQuePodemSerAssinadasComSenha)}">
 		<div id="dialog-form" title="Assinar com Senha">
- 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" >
+ 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" >
  				<input type="hidden" id="id" name="id" value="${mov.idMov}" />
  				<input type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
     			<fieldset>

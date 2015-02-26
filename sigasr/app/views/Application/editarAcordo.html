@@ -36,7 +36,7 @@
 					<thead>
 						<tr>
 							<th style="color: #333">
-								<button class="bt-expandir">
+								<button type="button" class="bt-expandir" id="btnExpandirAssociacoes">
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
@@ -230,81 +230,53 @@
 	colunasAssociacao.botaoExcluir =                16;
 	colunasAssociacao.jSon = 						17;
 
-	var associacaoTable = null;
+	var associacaoTable = new SigaTable('#associacao_table')
+		.configurar("columnDefs", [{
+			"targets": [colunasAssociacao.idOrgao, 
+						colunasAssociacao.idLocal, 
+						colunasAssociacao.tipoSolicitante, 
+						colunasAssociacao.idSolicitante, 
+						colunasAssociacao.descricaoSolicitante, 
+						colunasAssociacao.idAtendente, 
+						colunasAssociacao.idPrioridade, 
+						colunasAssociacao.descricaoAtendente, 
+						colunasAssociacao.idAssociacao,
+						colunasAssociacao.hisIdIni,
+						colunasAssociacao.jSon],
+			"visible": false,
+			"searchable": false
+		},
+		{
+			"targets": [colunasAssociacao.botaoExpandir],
+			"sortable": false,
+			"searchable" : false
+		}])
+	.configurar("fnRowCallback", associacaoRowCallback)
+	.configurar("iDisplayLength", 25)
+	.criar()
+	.detalhes(detalhesListaAssociacao);
+	
 	jQuery( document ).ready(function( $ ) {
-		/* Table initialization */
-		associacaoTable = $('#associacao_table')
-			.on('draw.dt', function() {
-						if(associacaoTable) {
-							var btn = $('.bt-expandir'),
-								expandir = btn.hasClass('expandido');
-							
-							$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, associacaoTable);
-							$('#associacao_table').expandirContrairLinhas(expandir);
-						}
-					})
-			.dataTable({
-			"language": {
-				"emptyTable":     "Não existem resultados",
-			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-			    "infoPostFix":    "",
-			    "thousands":      ".",
-			    "lengthMenu":     "Mostrar _MENU_ registros",
-			    "loadingRecords": "Carregando...",
-			    "processing":     "Processando...",
-			    "search":         "Filtrar:",
-			    "zeroRecords":    "Nenhum registro encontrado",
-			    "paginate": {
-			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
-			        "previous":   "Anterior"
-			    },
-			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
-			    }
-			},
-			"columnDefs": [{
-				"targets": [colunasAssociacao.botaoExpandir],
-				"searchable": false,
-				"sortable" : false
-			},
-			{
-				"targets": [colunasAssociacao.idOrgao, 
-							colunasAssociacao.idLocal, 
-							colunasAssociacao.tipoSolicitante, 
-							colunasAssociacao.idSolicitante, 
-							colunasAssociacao.descricaoSolicitante, 
-							colunasAssociacao.idAtendente, 
-							colunasAssociacao.idPrioridade, 
-							colunasAssociacao.descricaoAtendente, 
-							colunasAssociacao.idAssociacao,
-							colunasAssociacao.hisIdIni,
-							colunasAssociacao.jSon],
-				"visible": false
-			}]
-		});
-
 		$('#associacao_table tbody').on('click', 'tr', function () {
-			var itemSelecionado = associacaoTable.api().row(this).data();
+			var itemSelecionado = associacaoTable.dataTable.api().row(this).data();
 			
 			if (itemSelecionado != undefined) {
-				associacaoTable.$('tr.selected').removeClass('selected');
+				associacaoTable.dataTable.$('tr.selected').removeClass('selected');
 	            $(this).addClass('selected');
 	            
 				atualizarAssociacaoModal(itemSelecionado);
 			    associacaoModalAbrir(true);
 			}
 		});
-		$('#associacao_table').mostrarDetalhes(detalhesListaAssociacao, associacaoTable);
-
-		tableAssociacao = associacaoTable;
+		
+		tableAssociacao = associacaoTable.dataTable;
 		$("#acordoForm").validate();
 		$("#parametroForm").validate();
 	});
+
+	function associacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+		$('td:eq(' + colunasAssociacao.botaoExpandir + ')', nRow).addClass('details-control');
+	}
 
 	function inserirAssociacao() {
 		var idAcordo = $("#id").val();
@@ -328,44 +300,28 @@
 		jQuery("#associacao_dialog").dialog('open');
 	};
 
-	function detalhesListaAssociacao(d) {
+	function detalhesListaAssociacao(itemArray) {
 		var tr = $('<tr class="detail">'),
 			td = $('<td colspan="6">'),
 			trItens = $('<tr>'),
 			trAcoes = $('<tr>'),
 			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
-			
-		//table.append(htmlConteudo(d, "Item de configuração:");
-		//table.append(htmlConteudo(d, "Ação:");
-		
-		detalheLista("<b>Itens de configuração:</b>", d.listaItemConfiguracaoVO, trItens);
-		detalheLista("<b>Ações:</b>", d.listaAcaoVO, trAcoes);
 
-		table.append(trItens);
-		table.append(trAcoes);
-		
+		if (itemArray && itemArray[colunasAssociacao.jSon]) {
+			var associacao = itemArray[colunasAssociacao.jSon];
+			
+			detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
+			detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
+
+			table.append(trItens);
+			table.append(trAcoes);
+		}
+			
 		td.append(table);
 		tr.append(td);
 	    
 	    return tr;
 	};
-
-// 	function htmlConteudo(d, titulo, indiceSigla, indiceDescricao) {
-// 		var trItem = $('<tr>'),
-// 			tdTitulo = $('<td><b>' + titulo + '</b></td'),
-// 			tdConteudo = $('<td>'),
-// 			table = $('<table>'),
-// 			trDetalhe = $('<tr>'),
-// 			tdSigla = $('<td>' + d[indiceSigla] + "</td>"),
-// 			tdDescricao = $('<td>' +  d[indiceDescricao] + '</td>');
-		
-// 		trDetalhe.append(tdSigla);
-// 		trDetalhe.append(tdDescricao);
-// 		table.append(trDetalhe);
-// 		tdConteudo.append(table);
-// 		trItem.append(tdTitulo);
-// 		return trItem.append(tdConteudo);
-// 	};
 
 	// Limpa os dados da tela.
 	function limparDadosAssociacaoModal() {
@@ -650,7 +606,7 @@
 		
 		var me = $(this),
 			tr = $(event.currentTarget).parent().parent()[0],
-			row = associacaoTable.api().row(tr).data(),
+			row = associacaoTable.dataTable.api().row(tr).data(),
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunasAssociacao.idAssociacao];
 			idAcordo = $("#id").val();
 			
@@ -660,7 +616,7 @@
 			     data: {idAcordo : idAcordo, idAssociacao : idAssociacao},
 			     dataType: "text",
 			     success: function(response) {
-					associacaoTable.api().row(tr).remove().draw();
+					associacaoTable.dataTable.api().row(tr).remove().draw();
 			     },
 			     error: function(response) {
 			    	var modalErro = $('#modal-error');

@@ -32,6 +32,9 @@
 			</div>
 
 			<div class="gt-content-box dataTables_div">
+		        <div class="gt-form-row dataTables_length">
+		            <label>#{checkbox name:'mostrarAssocDesativada', value:mostrarAssocDesativada/} <b>Incluir Inativas</b></label>
+		        </div>        
 				<table id="associacao_table" border="0" class="gt-table display">
 					<thead>
 						<tr>
@@ -200,6 +203,18 @@
 #{/modal}
 
 <script type="text/javascript">
+	function getUrlDesativarReativar(desativados) {
+	    
+	    var url = '@{Application.buscarAbrangenciasAcordo()}',
+	        idAcordo = $("[name=id]").val();
+	
+	    if(desativados)
+	        url = '@{Application.buscarAbrangenciasAcordoDesativados()}';
+	        
+	    return url + "?id=" + idAcordo;
+	}
+
+
 	function findSelectedIndexByValue(comboBox, value) {
 		for (var i = 0; i < comboBox.options.length; i++) {
 			if (comboBox.options[i].value == value)
@@ -228,10 +243,34 @@
 	colunasAssociacao.idAssociacao =                14;
 	colunasAssociacao.hisIdIni = 					15;
 	colunasAssociacao.botaoExcluir =                16;
-	colunasAssociacao.jSon = 						17;
+	colunasAssociacao.jSon = 						17,
+	
+    jQuery("#checkmostrarAssocDesativada").click(function() {
+        $.ajax({
+                type: "POST",
+                url: getUrlDesativarReativar(document.getElementById('checkmostrarAssocDesativada').checked),
+                dataType: "text",
+                success: function(response) {
+                	atualizarAssociacaoModal({ 
+                        associacoesVO : JSON.parse(response)
+                   });
+                },
+                error: function(response) {
+                   $('#modal-associacao').hide(); 
 
+                   var modalErro = $('#"modal-associacao-error"');
+                   modalErro.find("h3").html(response.responseText);
+                   modalErro.show(); 
+                }
+       });
+    });
 	var associacaoTable = null;
 	jQuery( document ).ready(function( $ ) {
+        if (QueryString.mostrarDesativados != undefined) {
+            document.getElementById('checkmostrarAssocDesativada').checked = QueryString.mostrarDesativados == 'true';
+            document.getElementById('checkmostrarAssocDesativada').value = QueryString.mostrarDesativados == 'true';
+        }
+		
 		/* Table initialization */
 		associacaoTable = $('#associacao_table')
 			.on('draw.dt', function() {

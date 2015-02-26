@@ -64,9 +64,25 @@
 </div>
 
 <script>
+	associacaoService.getUrlDesativarReativar = function(desativados) {
+		
+		var url = '@{Application.listarAssociacaoAtributo()}',
+			idAtributo = $("[name=idAtributo]").val();
+
+		if(desativados)
+			url = '@{Application.listarAssociacaoAtributoDesativados()}';
+			
+		return url + "?idAtributo=" + idAtributo;
+	}
+
 	var validatorAtributoForm;
 
 	jQuery( document ).ready(function( $ ) {
+        if (QueryString.mostrarDesativados != undefined) {
+            document.getElementById('checkmostrarAssocDesativada').checked = QueryString.mostrarDesativados == 'true';
+            document.getElementById('checkmostrarAssocDesativada').value = QueryString.mostrarDesativados == 'true';
+        }
+		
 		validatorAtributoForm = $("#atributoForm").validate({
 			onfocusout: false
 		});

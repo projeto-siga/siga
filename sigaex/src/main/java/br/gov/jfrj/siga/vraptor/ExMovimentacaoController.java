@@ -1057,6 +1057,13 @@ public class ExMovimentacaoController extends ExController {
 			}
 		}
 
+		result.include("dtMovString", dtMovString);
+		result.include("subscritorSel", subscritorSel);
+		result.include("titularSel", titularSel);
+		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
+		result.include("descrMov", descrMov);
+		result.include("obsOrgao", obsOrgao);
+		result.include("substituicao", substituicao);
 		result.redirectTo("/app/expediente/mov/anotar_lote");
 	}
 
@@ -1268,6 +1275,21 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mov", mov);
 		result.include("itens", arrays);
 		result.include("lotaTitular", mov.getLotaTitular());
+		result.include("dtMovString", dtMovString);
+		result.include("subscritorSel", subscritorSel);
+		result.include("titularSel", titularSel);
+		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
+		result.include("tipoResponsavel", tipoResponsavel);
+		result.include("lotaResponsavelSel", lotaResponsavelSel);
+		result.include("lotaResponsavel", lotaResponsavel);
+		result.include("cpOrgaoSel", cpOrgaoSel);
+		result.include("tpdall", tpdall);
+		result.include("txtall", txtall);
+		result.include("checkall", checkall);
+		result.include("campoDe", campoDe);
+		result.include("campoPara", campoPara);
+		result.include("campoData", campoData);
+		result.include("substituicao", substituicao);
 	}
 
 	@Get("app/expediente/mov/arquivar_intermediario_lote")
@@ -1328,6 +1350,12 @@ public class ExMovimentacaoController extends ExController {
 			}
 		}
 		
+		result.include("dtMovString", dtMovString);
+		result.include("subscritorSel", subscritorSel);
+		result.include("titularSel", titularSel);
+		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
+		result.include("descrMov", descrMov);
+		result.include("substituicao", substituicao);
 		result.redirectTo("/app/expediente/mov/arquivar_intermediario_lote");
 	}
 
@@ -1398,6 +1426,11 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Ocorreu um erro no arquivamento do documento" + erro + ". ", 0, e);
 		}
 		
+		result.include("dtMovString", dtMovString);
+		result.include("subscritorSel", subscritorSel);
+		result.include("titularSel", titularSel);
+		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
+		result.include("substituicao", substituicao);
 		result.redirectTo("/app/expediente/mov/arquivar_permanente_lote");
 	}
 	

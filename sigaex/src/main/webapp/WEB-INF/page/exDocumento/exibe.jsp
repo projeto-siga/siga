@@ -636,7 +636,7 @@
 				<b>Para:</b> ${docVO.destinatarioString}
 			</p>
 			<p>
-				<b>Cadastrante:</b> ${docVO.cadastranteString}${docVO.lotaCadastranteString}
+				<b>Cadastrante:</b> ${docVO.cadastranteString} ${docVO.lotaCadastranteString}
 			</p>
 			<p>
 				<b>Tipo:</b> ${docVO.forma}

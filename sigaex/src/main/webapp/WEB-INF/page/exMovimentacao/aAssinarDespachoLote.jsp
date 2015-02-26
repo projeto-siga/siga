@@ -63,8 +63,8 @@
 			<tr class="button">
 			<td>
 				<div id="dados-assinatura" style="visible: hidden">
-				    <c:set var="jspServer" value="${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
-				    <c:set var="jspServerSenha" value="${request.contextPath}/expediente/mov/assinar_mov_login_senha_gravar.action" />
+				    <c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
+				    <c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
 				    
 		   	 	    <c:set var="nextURL" value="siga/principal.action"  />
 		    	    <c:set var="urlPath" value="${request.contextPath}" />
@@ -82,7 +82,7 @@
 				</div>			
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
+					<c:import url="inc_assina_js.jsp" />
 						<div id="capicom-div">
 							<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
 						</div> 

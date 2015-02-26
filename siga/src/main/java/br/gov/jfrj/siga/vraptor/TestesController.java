@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -43,7 +44,7 @@ public class TestesController extends SigaController {
 	}
 
 	@Get("app/testes/selecionar")
-	public String selecionar(String matricula, String sigla, GenericoSelecao sel) throws Exception {
+	public void selecionar(String matricula, String sigla, GenericoSelecao sel) throws Exception {
 		try {
 			DpPessoa pes = getTitular();
 			DpLotacao lot = getLotaTitular();
@@ -98,8 +99,8 @@ public class TestesController extends SigaController {
 			} 
 			else
 				URLSelecionar = urlBase + "/sigaex"
-						+ (testes.length() > 0 ? testes : "/expediente")
-						+ "/selecionar.action?sigla=" + sigla
+						+ (testes.length() > 0 ? testes : "/app/expediente")
+						+ "/selecionar?sigla=" + sigla
 						+ incluirMatricula;
 
 			SigaHTTP http = new SigaHTTP();
@@ -138,15 +139,18 @@ public class TestesController extends SigaController {
 					
 					uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
 				else
-					uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla=" + response[2];
+					uRLExibir = "/sigaex/app/expediente/doc/exibir?sigla=" + response[2];
 			}
 			sel.setId(Long.valueOf(response[1]));
 			sel.setSigla(response[2]);
 			sel.setDescricao(uRLExibir);
-
-			return "ajax_retorno";
+			
+			
+			result.include("sel", sel);
+			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
+			
 		} catch (Exception e) {
-			return "ajax_vazio";
+			result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
 		}
 	}
 

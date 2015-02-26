@@ -40,7 +40,6 @@
 			</p>
 		</c:if>
 		<form name="frm" action="exibir" theme="simple" method="POST">
-			<%-- <ww:token /> --%>
 		</form>
 		<h2>
 			<c:if test="${empty ocultarCodigo}">

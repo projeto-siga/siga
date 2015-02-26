@@ -35,7 +35,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink titulo="Documentos pendentes de assinatura cujo subscritor é o usuário logado" texto="${listEstado[1]}" href="${url}" />
-					<%--<ww:a href="${url}" title="Documentos pendentes de assinatura cujo subscritor é o usuário logado.">${listEstado[1]}</ww:a>--%></td>
 					
 
 					<td align="right" class="count">
@@ -46,7 +45,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink texto="${listEstado[2]}" titulo="Documentos pendentes de assinatura cujo subscritor é o usuário logado" href="${url}" />
-					<%--<ww:a href="${url}" title="Documentos pendentes de assinatura cujo subscritor é o usuário logado.">${listEstado[2]}</ww:a>--%></td>
 
 					<td align="right" class="count">---</td>
 				</tr>
@@ -61,7 +59,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink titulo="Documentos eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos" texto="${listEstado[1]}" href="${url}" />
-					<%--<ww:a href="${url}" title="Documentos eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos.">${listEstado[1]}</ww:a>--%></td>
 
 					<td align="right" class="count">
 						<c:url var="url" value="/app/expediente/doc/listar">
@@ -71,7 +68,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink titulo="Documentos eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos" texto="${listEstado[2]}" href="${url}" />
-					<%--<ww:a href="${url}" title="Documentos eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos.">${listEstado[2]}</ww:a>--%></td>
 
 					<td align="right" class="count">
 						<c:url var="url" value="/app/expediente/doc/listar">
@@ -81,7 +77,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink titulo="Documentos eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos" texto="${listEstado[3]}" href="${url}" />
-					<%--<ww:a href="${url}" title="Documentos eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos">${listEstado[3]}</ww:a>--%></td>
 				</tr>
 			</c:when>
 			<c:when test="${listEstado[0]==-2}">
@@ -93,7 +88,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink texto="${listEstado[1]}" href="${url}" />
-					<%--<ww:a href="${url}">${listEstado[1]}</ww:a>--%></td>
 
 					<td align="right" class="count">
 						<c:url var="url" value="/app/expediente/doc/listar">
@@ -103,7 +97,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink texto="${listEstado[2]}" href="${url}" />
-					<%--<ww:a href="${url}">${listEstado[2]}</ww:a>--%></td>
 
 					<td align="right" class="count">
 						<c:url var="url" value="/app/expediente/doc/listar">
@@ -113,7 +106,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink texto="${listEstado[3]}" href="${url}" />
-					<%--<ww:a href="${url}">${listEstado[3]}</ww:a>--%></td>
 				</tr>
 			</c:when>
 			<c:when test="${listEstado[0]==1}">
@@ -143,7 +135,6 @@ submitOk = function() {
 						<c:param name="orgaoUsu">0</c:param>
 					</c:url>
 					<siga:monolink titulo="Documentos que estão em estado temporário(rascunho) e ainda podem ser editados." texto="${listEstado[3]}" href="${url}" />
-					<%--<ww:a href="${url}" title="${titulo}">${listEstado[3]}</ww:a>--%></td>
 				</tr>
 			</c:when>		
 				
@@ -186,8 +177,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url><siga:monolink titulo="${titulo}" texto="${listEstado[1]}" href="${url}" />
 					
-					 <%--<ww:a href="${url}" title="${titulo}">${listEstado[1]}</ww:a>--%></td>
-
 					<td align="right" class="count">
 						<c:url var="url" value="/app/expediente/doc/listar">
 						<c:param name="ultMovIdEstadoDoc">${listEstado[0]}</c:param>
@@ -203,7 +192,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink titulo="${titulo}" texto="${listEstado[2]}" href="${url}" />
-					<%--<ww:a href="${url}" title="${titulo}">${listEstado[2]}</ww:a>--%></td>
 
 					<td align="right" class="count">
 						<c:url var="url" value="/app/expediente/doc/listar">
@@ -220,7 +208,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url>
 					<siga:monolink titulo="${titulo}" texto="${listEstado[3]}" href="${url}" />
-					<%--<ww:a href="${url}" title="${titulo}">${listEstado[3]}</ww:a>--%></td>
 				</tr>
 			</c:when>
 			<c:when test="${listEstado[0]==-1}">
@@ -233,7 +220,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink titulo="Documentos não eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos" texto="${listEstado[1]}" href="${url}" />		
-					<%--<ww:a href="${url}" title="Documentos não eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos.">${listEstado[1]}</ww:a>--%></td>
 
 					<td align="right" class="count">
 					<c:url var="url" value="/app/expediente/doc/listar">
@@ -243,7 +229,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink titulo="Documentos não eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos" texto="${listEstado[2]}" href="${url}" />
-					<%--<ww:a href="${url}" title="Documentos não eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos.">${listEstado[2]}</ww:a>--%></td>
 
 					<td align="right" class="count">
 					<c:url var="url" value="/app/expediente/doc/listar">
@@ -253,7 +238,6 @@ submitOk = function() {
 						<c:param name="idTipoFormaDoc">${idTpMarca}</c:param>
 					</c:url> 
 					<siga:monolink titulo="Documentos não eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos" texto="${listEstado[3]}" href="${url}" />
-					<%--<ww:a href="${url}" title="Documentos não eletrônicos que foram transferidos, pelo usuário, para outra lotação/pessoa mas ainda não foram recebidos.">${listEstado[3]}</ww:a>--%></td>
 				</tr>
 			</c:when>
 		</c:choose>
@@ -268,15 +252,10 @@ submitOk = function() {
 				<c:url var="url1" value="/app/expediente/doc/exibir"/>
 				<c:url var="url2" value="/app/expediente/mov/receber"/>
 				<c:url var="url3" value="/app/expediente/doc/encerrar"/> 
-					<%--<c:if
-						test="${f:podeRemeterPorConfiguracao(titular,lotaTitular)}">
-						<ww:url id="url7" action="remeter_para_publicacao"
-							namespace="/expediente/mov" />
-						<c:set var="itemRemeter">'07':'Gerenciar Publicação',</c:set>
-					</c:if> --%>
+					
 				<c:url var="url4" value="/app/expediente/mov/transferir_lote"/>
 				<c:url var="url5" value="/app/expediente/mov/receber_lote"/>
-				<c:url var="url6" value="/app/expediente/mov" /> <%-- <ww:select name="docAcao" list="#{%{url1}:'Exibir', %{url2}:'Receber', %{url3}:'Encerrar'}/via_protocolo"/> --%>
+				<c:url var="url6" value="/app/expediente/mov" /> 
 			
 				<select name="docAcao" onchange="onChangeAcao(this.value)">
 					<option value="/sigaex/app/expediente/doc/exibir">Exibir</option>

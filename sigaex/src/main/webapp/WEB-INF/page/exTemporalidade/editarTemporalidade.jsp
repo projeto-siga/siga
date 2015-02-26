@@ -101,7 +101,7 @@
 							<p class="gt-cancel">
 							<c:choose>
 								<c:when test="${acao == 'editar_temporalidade'}">
-										ou <a href="excluir?idTemporalidade=${exTemporal.idTemporalidade}">excluir</ww:a>
+										ou <a href="excluir?idTemporalidade=${exTemporal.idTemporalidade}">excluir</a>
 								</c:when>
 								<c:otherwise>
 										ou <a href="${pageContext.request.contextPath}/app/expediente/temporalidade">cancelar</a>

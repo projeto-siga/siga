@@ -54,8 +54,6 @@
 						<tr>
 							<td>Nível de Acesso</td>
 							<td>
-								<ww:select name="nivelAcesso" list="listaNivelAcesso" theme="simple" listKey="idNivelAcesso" listValue="nmNivelAcesso" />
-								
 								<select name="nivelAcesso" theme="simple" value="1">
 							      <c:forEach var="item" items="${listaNivelAcesso}">
 							        <option value="${item.idNivelAcesso}" <c:if test="${item.idNivelAcesso == nivelAcesso}">selected</c:if> >

@@ -153,14 +153,19 @@ public class ExEmailNotificacaoController extends SigaController{
 			final DpPessoaSelecao pessEmailSel, final Integer tipoEmail,
 			final String emailTela, final ExEmailNotificacao exEmail) {
 		
-		if(pessEmailSel.buscarObjeto() == null && lotaEmailSel.buscarObjeto() == null) {
-			throw new AplicacaoException("Preencha Tipo de interessado na movimentação"); 
-		}
 		switch (tipoEmail) {
-			case 2 : DpPessoa pessoaEmail = pessEmailSel.buscarObjeto();
-				exEmail.setPessoaEmail(pessoaEmail.getPessoaInicial()); 
+			case 2 :
+				if (pessEmailSel.buscarObjeto() == null) {
+					throw new AplicacaoException("Preencha Tipo de interessado na movimentação"); 
+				}
+				DpPessoa pessoaEmail = pessEmailSel.buscarObjeto();
+				exEmail.setPessoaEmail(pessoaEmail.getPessoaInicial());
 				break;
-			case 3 : DpLotacao lotacaoEmail = lotaEmailSel.buscarObjeto();
+			case 3 :
+				if (lotaEmailSel.buscarObjeto() == null) {
+					throw new AplicacaoException("Preencha Tipo de interessado na movimentação"); 
+				}
+				DpLotacao lotacaoEmail = lotaEmailSel.buscarObjeto();
 				exEmail.setLotacaoEmail(lotacaoEmail.getLotacaoInicial()); 
 				break;
 			case 4 : exEmail.setEmail(emailTela);

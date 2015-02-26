@@ -41,10 +41,7 @@ function sbmt() {
 		<input type="hidden" name="id" value="${id}" /> 
 		<c:set var="dataFim" value="" />
 		
-		<h1>Cadastro de configuração <c:if
-			test="${not empty configuracao}">
-			para ${configuracao.cpTipoConfiguracao.dscTpConfiguracao}
-		</c:if></h1>
+		<h1>Cadastro de configuração</h1>
 		<div class="gt-content-box gt-for-table">
 		<table class="gt-form-table" width="100%">
 			<tr class="header">

@@ -54,7 +54,7 @@ function visualizarImpressao(via) {
 	else
 		v = ''; 
 	frm.target='_blank'; 
-	frm.action='<c:url value="/arquivo/exibir.action?arquivo="/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
+	frm.action='<c:url value="/app/arquivo/exibir?arquivo="/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
 	frm.submit();
 	frm.target=t;
 	frm.action=a;
@@ -124,7 +124,7 @@ function visualizarImpressao(via) {
 															<b>Responsável:</b> ${mov.subscritor.descricao}
 														</td>
 														<c:if test="${exibemov == 'anexacao'}">
-															<c:url var='anexo' value='/arquivo/exibir.action?arquivo=${mov.nmPdf}' />
+															<c:url var='anexo' value='/app/arquivo/exibir?arquivo=${mov.nmPdf}' />
 															<td>
 																<b>Arquivo:</b> 
 																<a class="attached" href="${anexo}" target="_blank">
@@ -145,7 +145,7 @@ function visualizarImpressao(via) {
 														<c:if test="${exibemov == 'vinculo'}">
 															<td>
 																<b>Ver também:</b> 
-																<c:url var="url" value="${pageContext.request.contextPath}/expediente/doc/exibir">
+																<c:url var="url" value="${pageContext.request.contextPath}/app/expediente/doc/exibir">
 																	<c:choose>
 																		<c:when test="${exibemovvariante == 'vinculoOriginadoAqui'}">
 																			<c:param name="id">
@@ -180,7 +180,7 @@ function visualizarImpressao(via) {
 														<c:if test="${exibemov == 'anexacao'}">
 															<tr>
 																<td colspan=2>
-																	<c:url var="anexo" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" /> 
+																	<c:url var="anexo" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" /> 
 																	<iframe src="${anexo}" width="100%" height="600" align="center" style="margin-top: 10px;">
 																	</iframe>
 																</td>
@@ -285,10 +285,10 @@ function visualizarImpressao(via) {
 			<div style="padding-left: 10;">
 				<div id="dados-assinatura" style="visible: hidden">
 					<input type="hidden" name="pdfchk_${mov.idMov}" id="pdfchk_${mov.idMov}" value="${mov.referencia}" />
-					<input type="hidden" name="urlchk_${mov.idMov}" id="urlchk_${mov.idMov}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
+					<input type="hidden" name="urlchk_${mov.idMov}" id="urlchk_${mov.idMov}" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
 
-					<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
-					<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
+					<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
+					<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
 					
 					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
@@ -310,7 +310,7 @@ function visualizarImpressao(via) {
 				</p>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="/WEB-INF/page/exMovimentacao/inc_assina_js.jsp" />
+					<c:import url="inc_assina_js.jsp" />
 					<div id="capicom-div">
 						<c:choose>
 							<c:when

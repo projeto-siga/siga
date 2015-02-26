@@ -54,32 +54,29 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.util.ExProcessadorModelo;
 
 public class ExController extends SigaController {
-	
+
 	HttpServletResponse response;
 	ServletContext context;
-	
+
 	static {
 		if (Ex.getInstance().getBL().getProcessadorModeloJsp() == null) {
 			Ex.getInstance().getBL().setProcessadorModeloJsp(new ExProcessadorModelo());
 		}
 	}
-	
-	public ExController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, CpDao dao, SigaObjects so, EntityManager em) {
+
+	public ExController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, CpDao dao, SigaObjects so,
+			EntityManager em) {
 		super(request, result, dao, so, em);
 		this.response = response;
 		this.context = context;
-		
+
 		CurrentRequest.set(new RequestInfo(context, request, response));
 	}
 
 	protected void verificaNivelAcesso(ExMobil mob) {
-		if (!Ex.getInstance().getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-			throw new AplicacaoException("Acesso ao documento "
-					+ mob.getSigla()
-					+ " permitido somente a usuários autorizados. ("
-					+ getTitular().getSigla() + "/"
-					+ getLotaTitular().getSiglaCompleta() + ")");
+		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Acesso ao documento " + mob.getSigla() + " permitido somente a usuários autorizados. (" + getTitular().getSigla()
+					+ "/" + getLotaTitular().getSiglaCompleta() + ")");
 		}
 	}
 
@@ -89,14 +86,12 @@ public class ExController extends SigaController {
 
 	public String getNomeServidorComPorta() {
 		if (getRequest().getServerPort() > 0)
-			return getRequest().getServerName() + ":"+ getRequest().getServerPort();
+			return getRequest().getServerName() + ":" + getRequest().getServerPort();
 		return getRequest().getServerName();
 	}
 
-	public List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc,
-			ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif) {
-		List<ExNivelAcesso> listaNiveis = ExDao.getInstance()
-				.listarOrdemNivel();
+	public List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc, ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif) {
+		List<ExNivelAcesso> listaNiveis = ExDao.getInstance().listarOrdemNivel();
 		ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
@@ -108,34 +103,40 @@ public class ExController extends SigaController {
 		config.setExFormaDocumento(forma);
 		config.setExModelo(exMod);
 		config.setExClassificacao(classif);
-		exTpConfig
-				.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		int nivelMinimo = ((ExConfiguracao) Ex
-				.getInstance()
-				.getConf()
-				.buscaConfiguracao(config,
-						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt))
-				.getExNivelAcesso().getGrauNivelAcesso();
-		exTpConfig
-				.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
-		config.setCpTipoConfiguracao(exTpConfig);
-		int nivelMaximo = ((ExConfiguracao) Ex
-				.getInstance()
-				.getConf()
-				.buscaConfiguracao(config,
-						new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt))
-				.getExNivelAcesso().getGrauNivelAcesso();
 
-		for (ExNivelAcesso nivelAcesso : listaNiveis) {
-			if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo
-					&& nivelAcesso.getGrauNivelAcesso() <= nivelMaximo)
-				niveisFinal.add(nivelAcesso);
+		ExConfiguracao exConfiguracaoMin;
+		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MINIMO);
+		config.setCpTipoConfiguracao(exTpConfig);
+		try {
+			exConfiguracaoMin = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
+		} catch (Exception e) {
+			exConfiguracaoMin = null;
+		}
+
+		ExConfiguracao exConfiguracaoMax;
+		exTpConfig.setIdTpConfiguracao(CpTipoConfiguracao.TIPO_CONFIG_NIVEL_ACESSO_MAXIMO);
+		config.setCpTipoConfiguracao(exTpConfig);
+		try {
+			exConfiguracaoMax = (ExConfiguracao) Ex.getInstance().getConf().buscaConfiguracao(config, new int[] { ExConfiguracaoBL.NIVEL_ACESSO }, dt);
+		} catch (Exception e) {
+			exConfiguracaoMax = null;
+		}
+
+		if (exConfiguracaoMin != null && exConfiguracaoMax != null && exConfiguracaoMin.getExNivelAcesso() != null
+				&& exConfiguracaoMax.getExNivelAcesso() != null) {
+			int nivelMinimo = exConfiguracaoMin.getExNivelAcesso().getGrauNivelAcesso();
+			int nivelMaximo = exConfiguracaoMax.getExNivelAcesso().getGrauNivelAcesso();
+
+			for (ExNivelAcesso nivelAcesso : listaNiveis) {
+				if (nivelAcesso.getGrauNivelAcesso() >= nivelMinimo && nivelAcesso.getGrauNivelAcesso() <= nivelMaximo) {
+					niveisFinal.add(nivelAcesso);
+				}
+			}
 		}
 
 		return niveisFinal;
 	}
-	
+
 	public ExNivelAcesso getNivelAcessoDefault(final ExTipoDocumento exTpDoc, final ExFormaDocumento forma, final ExModelo exMod, final ExClassificacao classif) {
 		final Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
@@ -167,10 +168,10 @@ public class ExController extends SigaController {
 
 		return null;
 	}
-	
-	public ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao){
+
+	public ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao) {
 		ExConfiguracao exConfiguracao = new ExConfiguracao();
-		
+
 		if (configuracaoBaseParaExConfiguracao.isAtivo())
 			exConfiguracao.setAtivo();
 		exConfiguracao.setCargo(configuracaoBaseParaExConfiguracao.getCargo());
@@ -201,10 +202,9 @@ public class ExController extends SigaController {
 		exConfiguracao.setOrgaoObjeto(configuracaoBaseParaExConfiguracao.getOrgaoObjeto());
 		exConfiguracao.setOrgaoUsuario(configuracaoBaseParaExConfiguracao.getOrgaoUsuario());
 		return exConfiguracao;
-		
-		
+
 	}
-	
+
 	public String getDescrDocConfidencial(ExDocumento doc) {
 		return Ex.getInstance().getBL().descricaoSePuderAcessar(doc, getTitular(), getLotaTitular());
 	}
@@ -252,17 +252,13 @@ public class ExController extends SigaController {
 	protected void assertAcesso(String pathServico) throws AplicacaoException {
 		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
 	}
-	
-	
+
 	public HttpServletResponse getResponse() {
 		return response;
 	}
-	
-	
+
 	public ServletContext getContext() {
 		return context;
 	}
-	
-
 
 }

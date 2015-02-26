@@ -37,40 +37,42 @@ import br.gov.jfrj.siga.vraptor.builder.ExTipoDespachoBuilder;
 @Resource
 public class ExTipoDespachoController extends ExController {
 
-	public ExTipoDespachoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
+	private static final String CAMINHO_ACESSO = "FE:Ferramentas;DESP:Tipos de despacho";
+
+	public ExTipoDespachoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
+			EntityManager em) {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();	
-	}	
-	
-	
-	@Get("app/despacho/tipodespacho/listar")
-	public void lista() throws Exception {
-		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
+		result.on(Exception.class).forwardTo(this).exception();
+	}
 
-		List<ExTipoDespacho>tiposDespacho = dao().listarExTiposDespacho();
-		
+	@Get("app/despacho/tipodespacho/listar")
+	public void lista() {
+		assertAcesso(CAMINHO_ACESSO);
+
+		List<ExTipoDespacho> tiposDespacho = dao().listarExTiposDespacho();
+
 		result.include("tiposDespacho", tiposDespacho);
-	}	
+	}
 
 	@Get("app/despacho/tipodespacho/editar")
-	public ExTipoDespacho edita(Long id) throws Exception {
-		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
-		List<ExTipoDespacho>tiposDespacho = dao().listarExTiposDespacho();
+	public ExTipoDespacho edita(final Long id) {
+		assertAcesso(CAMINHO_ACESSO);
+		List<ExTipoDespacho> tiposDespacho = dao().listarExTiposDespacho();
 		result.include("tiposDespacho", tiposDespacho);
 		if (id != null) {
-			return dao().consultar(id,ExTipoDespacho.class, false);
-		}else{
+			return dao().consultar(id, ExTipoDespacho.class, false);
+		} else {
 			final ExTipoDespachoBuilder builder = ExTipoDespachoBuilder.novaInstancia();
 			return builder.construir(dao());
 		}
 	}
-	
+
 	@Get("app/despacho/tipodespacho/apagar")
-	public void exclui(Long id) throws Exception {
-		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
+	public void exclui(final Long id) {
+		assertAcesso(CAMINHO_ACESSO);
 		if (id != null) {
-			ExTipoDespacho tipo = dao().consultar(id,ExTipoDespacho.class, false);
+			ExTipoDespacho tipo = dao().consultar(id, ExTipoDespacho.class, false);
 			try {
 				dao().iniciarTransacao();
 				dao().excluir(tipo);
@@ -79,13 +81,13 @@ public class ExTipoDespachoController extends ExController {
 			} catch (Exception e) {
 				dao().rollbackTransacao();
 				throw new AplicacaoException("Ocorreu um Erro durante a remoção.", 0, e);
-			}			
-		}				
+			}
+		}
 	}
 
 	@Post("app/despacho/tipodespacho/gravar")
-	public void gravar(ExTipoDespacho exTipoDespacho) throws Exception {
-		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
+	public void gravar(final ExTipoDespacho exTipoDespacho) {
+		assertAcesso(CAMINHO_ACESSO);
 		final ExTipoDespachoBuilder builder = ExTipoDespachoBuilder.novaInstancia();
 		builder.setIdTpDespacho(exTipoDespacho.getIdTpDespacho());
 		builder.setDescTpDespacho(exTipoDespacho.getDescTpDespacho());

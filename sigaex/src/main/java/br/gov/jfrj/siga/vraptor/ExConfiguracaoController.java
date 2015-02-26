@@ -133,20 +133,17 @@ public class ExConfiguracaoController extends ExController {
 	@Get("app/expediente/configuracao/editar_gravar")
 	public void editarGravar(Long id,
 			Long idOrgaoUsu, Long idTpMov, Long idTpDoc,
-			Long idMod, Integer idFormaDoc,
+			Long idTpFormaDoc, Long idMod, Integer forma,
 			Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, 
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
 			Long idOrgaoObjeto, String nmTipoRetorno, boolean campoFixo) throws Exception {
 
-		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia()
-				.setId(id)
-				.setTipoPublicador(null)
-				.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc)
-				.setIdMod(idMod).setIdFormaDoc(idFormaDoc).setIdNivelAcesso(idNivelAcesso)
-				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao)
-				.setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel).setCargoSel(cargoSel)
-				.setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto);
+		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(id).setTipoPublicador(null)
+				.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod).setIdFormaDoc(forma).setIdTpFormaDoc(idTpFormaDoc)
+				.setIdNivelAcesso(idNivelAcesso).setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
+				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
+				.setIdOrgaoUsu(idOrgaoUsu);
 		
 		gravarConfiguracao(idTpConfiguracao, idSituacao, configuracaoBuilder.construir(dao()));
 		escreveFormRetorno(nmTipoRetorno, campoFixo, configuracaoBuilder);

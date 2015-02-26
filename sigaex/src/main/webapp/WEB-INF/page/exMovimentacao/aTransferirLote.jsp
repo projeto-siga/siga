@@ -145,10 +145,7 @@
 								Responsável:
 							</td>
 							<td>
-								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
-								&nbsp;&nbsp;
-								<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" />
-								Substituto
+								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />&nbsp;&nbsp;<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" />&nbsp;Substituto
 							</td>
 						</tr>
 						<c:choose>
@@ -218,7 +215,7 @@
 								<div id="div_tpdall">
 									<select name="tpdall" id="tpdall" onchange="javascript:enableDisableAll(this);">
 										<c:forEach var="item" items="${tiposDespacho}">
-											<option value="${item}">
+											<option value="${item.idTpDespacho}">
 												${item.descTpDespacho}
 											</option>
 										</c:forEach>

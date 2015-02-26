@@ -20,7 +20,6 @@ package br.gov.jfrj.siga.vraptor.builder;
 
 import java.util.List;
 
-import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -31,21 +30,19 @@ public final class ExTipoDespachoBuilder {
 	private Long id;
 	private Long idTpDespacho;
 	private List<ExTipoDespacho> tiposDespacho;
-	
+
 	private ExTipoDespachoBuilder() {
-		
+
 	}
-	
-	
+
 	public static ExTipoDespachoBuilder novaInstancia() {
 		return new ExTipoDespachoBuilder();
-	}	
-	
-	
+	}
+
 	public ExTipoDespacho construir(ExDao dao) {
 		ExTipoDespacho tipoDespacho;
 		if (idTpDespacho != null) {
-			tipoDespacho = dao.consultar(idTpDespacho,ExTipoDespacho.class, false);
+			tipoDespacho = dao.consultar(idTpDespacho, ExTipoDespacho.class, false);
 		} else {
 			tipoDespacho = new ExTipoDespacho();
 
@@ -57,20 +54,18 @@ public final class ExTipoDespachoBuilder {
 		if (idTpDespacho != null && idTpDespacho == 0)
 			tipoDespacho.setIdTpDespacho(null);
 		else
-			tipoDespacho.setIdTpDespacho(idTpDespacho);		
-		
+			tipoDespacho.setIdTpDespacho(idTpDespacho);
+
 		return tipoDespacho;
 	}
-	
+
 	public String getDescTpDespacho() {
 		return descTpDespacho;
 	}
 
-
 	public Long getId() {
 		return id;
 	}
-
 
 	public Long getIdTpDespacho() {
 		return idTpDespacho;
@@ -80,16 +75,15 @@ public final class ExTipoDespachoBuilder {
 		return tiposDespacho;
 	}
 
-
 	public boolean isAtivo() {
 		if (fgAtivo == null) {
 			return false;
 		}
-		return fgAtivo.equals("S") ? true : false;
+		return "S".equals(fgAtivo);
 	}
 
 	public ExTipoDespachoBuilder setAtivo(final String ativo) {
-		fgAtivo = (ativo == null?false:ativo.equals("on")||ativo.equals("S"))? "S" : "N";
+		fgAtivo = (ativo == null ? false : "on".equals(ativo) || "S".equals(ativo)) ? "S" : "N";
 		return this;
 	}
 

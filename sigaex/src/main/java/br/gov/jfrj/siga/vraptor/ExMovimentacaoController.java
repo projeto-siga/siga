@@ -33,6 +33,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -59,7 +60,6 @@ import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
-import br.gov.jfrj.webwork.action.ExClassificacaoSelecao;
 
 @Resource
 public class ExMovimentacaoController extends ExController {
@@ -67,7 +67,7 @@ public class ExMovimentacaoController extends ExController {
 	private static final Logger LOGGER = Logger.getLogger(ExMovimentacaoController.class);
 
 	public ExMovimentacaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
-			EntityManager em) {
+			EntityManager em, Validator validator) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -1155,9 +1155,8 @@ public class ExMovimentacaoController extends ExController {
 
 	@Post("app/expediente/mov/transferir_lote_gravar")
 	public void aTransferirLoteGravar(final String dtMovString, final DpPessoaSelecao subscritorSel, final boolean substituicao,
-			final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final int tipoResponsavel, final DpLotacaoSelecao lotaResponsavelSel,
-			final DpPessoaSelecao lotaResponsavel, final CpOrgaoSelecao cpOrgaoSel, final String obsOrgao, final Long tpdall, final String txtall,
-			final boolean checkall, final String campoDe, final String campoPara, final String campoData) {
+			final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final DpLotacaoSelecao lotaResponsavelSel,
+			final CpOrgaoSelecao cpOrgaoSel, final String obsOrgao, final Long tpdall, final String txtall) {
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
 		builder.setDtMovString(dtMovString)
 				.setSubscritorSel(subscritorSel)
@@ -1224,7 +1223,7 @@ public class ExMovimentacaoController extends ExController {
 						} else {
 							txt = txtall;
 						}
-						if (txt.equals("")) {
+						if (txt != null && txt.equals("")) {
 							txt = null;
 						}
 
@@ -1256,6 +1255,7 @@ public class ExMovimentacaoController extends ExController {
 				System.out.println("Falha: " + excep.getKey().doc().getSigla());
 				System.out.println("Mensagem de erro: " + excep.getValue().getMessage());
 				al.add(ao);
+				throw new AplicacaoException(excep.getValue().getMessage());
 			}
 		}
 
@@ -1287,7 +1287,6 @@ public class ExMovimentacaoController extends ExController {
 		arrays.add(al);
 		arrays.add(check);
 
-		result.include("cadastrante", mov.getCadastrante());
 		result.include("mov", mov);
 		result.include("itens", arrays);
 		result.include("lotaTitular", mov.getLotaTitular());
@@ -1295,16 +1294,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("subscritorSel", subscritorSel);
 		result.include("titularSel", titularSel);
 		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor);
-		result.include("tipoResponsavel", tipoResponsavel);
 		result.include("lotaResponsavelSel", lotaResponsavelSel);
-		result.include("lotaResponsavel", lotaResponsavel);
 		result.include("cpOrgaoSel", cpOrgaoSel);
-		result.include("tpdall", tpdall);
-		result.include("txtall", txtall);
-		result.include("checkall", checkall);
-		result.include("campoDe", campoDe);
-		result.include("campoPara", campoPara);
-		result.include("campoData", campoData);
 		result.include("substituicao", substituicao);
 	}
 
@@ -1578,7 +1569,6 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {
 		ExFormaDocumento exForma = doc.getExFormaDocumento();
 		ExClassificacao exClassif = doc.getExClassificacaoAtual();

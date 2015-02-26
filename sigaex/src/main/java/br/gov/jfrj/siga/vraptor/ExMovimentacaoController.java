@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
+import br.gov.jfrj.webwork.action.ExClassificacaoSelecao;
 
 @Resource
 public class ExMovimentacaoController extends ExController {
@@ -1024,7 +1025,6 @@ public class ExMovimentacaoController extends ExController {
 				itens.add(m);
 			}
 		}
-
 		result.include("itens", itens);
 	}
 
@@ -1136,11 +1136,21 @@ public class ExMovimentacaoController extends ExController {
 		while (provItens.hasNext()) {
 			itens.add(provItens.next());
 		}
+		
+		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
+		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+		final DpLotacaoSelecao lotaResponsavelSel = new DpLotacaoSelecao();
+		final DpPessoaSelecao responsavelSel = new DpPessoaSelecao();
+		final CpOrgaoSelecao cpOrgaoSel = new CpOrgaoSelecao();
 
 		result.include("listaTipoResp", this.getListaTipoResp());
-		result.include("titular", this.getTitular());
 		result.include("tiposDespacho", this.getTiposDespacho(null));
 		result.include("itens", itens);
+		result.include("titularSel", titularSel);
+		result.include("subscritorSel", subscritorSel);
+		result.include("lotaResponsavelSel", lotaResponsavelSel);
+		result.include("responsavelSel", responsavelSel);
+		result.include("cpOrgaoSel", cpOrgaoSel);
 	}
 
 	@Post("app/expediente/mov/transferir_lote_gravar")
@@ -1149,8 +1159,14 @@ public class ExMovimentacaoController extends ExController {
 			final DpPessoaSelecao lotaResponsavel, final CpOrgaoSelecao cpOrgaoSel, final String obsOrgao, final Long tpdall, final String txtall,
 			final boolean checkall, final String campoDe, final String campoPara, final String campoData) {
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
-		builder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao).setTitularSel(titularSel)
-				.setNmFuncaoSubscritor(nmFuncaoSubscritor).setLotaResponsavelSel(lotaResponsavelSel).setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao);
+		builder.setDtMovString(dtMovString)
+				.setSubscritorSel(subscritorSel)
+				.setSubstituicao(substituicao)
+				.setTitularSel(titularSel)
+				.setNmFuncaoSubscritor(nmFuncaoSubscritor)
+				.setLotaResponsavelSel(lotaResponsavelSel)
+				.setCpOrgaoSel(cpOrgaoSel)
+				.setObsOrgao(obsOrgao);
 
 		final ExMovimentacao mov = builder.construir(dao());
 

@@ -1119,7 +1119,8 @@ public class Application extends SigaApplication {
 		if (idLista != null) {
 			SrLista lista = SrLista.findById(idLista);
 			
-			permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(lotaTitular(), cadastrante()));
+			//permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(lotaTitular(), cadastrante()));
+			permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
 		}
 		else
 			permissoes = new ArrayList<SrConfiguracao>();

@@ -194,8 +194,13 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				srConf.posAtendente.getLotacaoAtual();
 			
 			if (srConf.itemConfiguracaoSet != null)
-				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet)
+				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet) {
 					i.getAtual();
+					
+					for (SrItemConfiguracao hist : i.meuItemHistoricoSet) {
+						hist.getAtual();
+					}
+				}
 			
 			if (srConf.acoesSet != null)
 				for (SrAcao i : srConf.acoesSet)

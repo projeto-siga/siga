@@ -296,8 +296,8 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 			CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getIdOcorrencia());	
 			this.setId(ocorrencia.getCpFeriado().getIdFeriado());
 			this.setDscFeriado(ocorrencia.getCpFeriado().getDescricao());		
-			this.setDtIniFeriado(stringToDate(ocorrencia.getDtRegIniDDMMYY()));
-			this.setDtFimFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYY()));			
+			this.setDtIniFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYYYY()));
+			this.setDtFimFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYYYY()));	
 		} else {
 			if (getId() != null) {
 				CpFeriado feriado = daoFeriado(getId());		

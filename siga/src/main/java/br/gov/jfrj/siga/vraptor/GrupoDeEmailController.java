@@ -18,8 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -34,8 +38,7 @@ import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 @Resource
 public class GrupoDeEmailController extends GrupoController {
 
-	public GrupoDeEmailController(HttpServletRequest request, Result result,
-			SigaObjects so, EntityManager em) {
+	public GrupoDeEmailController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
@@ -49,6 +52,7 @@ public class GrupoDeEmailController extends GrupoController {
 	@Get("app/gi/grupoDeEmail/editar")
 	public void edita(Long idCpGrupo) throws Exception {
 		CpConfiguracaoBL conf = Cp.getInstance().getConf();
+		
 		if (conf.podeUtilizarServicoPorConfiguracao(
 				getTitular(),
 				getLotaTitular(),
@@ -58,6 +62,7 @@ public class GrupoDeEmailController extends GrupoController {
 						getLotaTitular(),
 						getIdCpGrupo(),
 						Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
+			
 			super.aEditar(idCpGrupo);
 			// Tipo Grupo = Perfil
 			result.include("idCpTipoGrupo", getIdTipoGrupo());
@@ -73,14 +78,10 @@ public class GrupoDeEmailController extends GrupoController {
 			result.include("lotacaoGestoraSel", getLotacaoGestoraSel());
 			result.include("confGestores", getConfGestores(idCpGrupo));
 			result.include("configuracoesGrupo", getConfiguracoesGrupo());
-			result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",
-					getTiposConfiguracaoGrupoParaTipoDeGrupo());
+			result.include("tiposConfiguracaoGrupoParaTipoDeGrupo", getTiposConfiguracaoGrupoParaTipoDeGrupo());
 			result.include("idConfiguracaoNova", getIdConfiguracaoNova());
-			result.include("idConfiguracao", getIdConfiguracao());
-
 		} else {
-			throw new AplicacaoException(
-					"Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 		}
 	}
 
@@ -91,11 +92,17 @@ public class GrupoDeEmailController extends GrupoController {
 		result.redirectTo(this).lista();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Post("app/gi/grupoDeEmail/gravar")
 	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
 			CpGrupoDeEmailSelecao grupoPaiSel,
-			Integer codigoTipoConfiguracaoNova, String conteudoConfiguracaoNova)
+			Integer codigoTipoConfiguracaoNova, 
+			String conteudoConfiguracaoNova,
+			List<String> idConfiguracao,
+			List<String> codigoTipoConfiguracaoSelecionada,
+			List<String> conteudoConfiguracaoSelecionada)
 			throws Exception {
+		
 		CpConfiguracaoBL conf = Cp.getInstance().getConf();
 		if (conf.podeUtilizarServicoPorConfiguracao(
 				getTitular(),
@@ -106,14 +113,21 @@ public class GrupoDeEmailController extends GrupoController {
 						getLotaTitular(),
 						getIdCpGrupo(),
 						Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
-			super.aGravar(idCpGrupo, siglaGrupo, dscGrupo, grupoPaiSel,
-					codigoTipoConfiguracaoNova, conteudoConfiguracaoNova);
-			result.redirectTo(this).lista();
-		} else {
-			throw new AplicacaoException(
-					"Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
-		}
+			
+			Long novoIdGrupo = super.aGravar(idCpGrupo, 
+					siglaGrupo, 
+					dscGrupo, 
+					grupoPaiSel,
+					codigoTipoConfiguracaoNova, 
+					conteudoConfiguracaoNova, 
+					idConfiguracao, 
+					codigoTipoConfiguracaoSelecionada, 
+					conteudoConfiguracaoSelecionada);
 
+			result.redirectTo(MessageFormat.format("/app/gi/grupoDeEmail/editar?idCpGrupo=208", novoIdGrupo));
+		} else {
+			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
+		}
 	}
 
 	@Get("app/gi/grupoDeEmail/listar")

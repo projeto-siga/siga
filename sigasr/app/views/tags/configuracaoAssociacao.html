@@ -183,6 +183,7 @@
 		}
 		associacaoService.adicionarFuncionalidadesNaLinha(this.row(objSalvo), objSalvo);
 		associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
+		td.find('td:first-child').html("+");
 		return td;
 	}
 	
@@ -249,7 +250,7 @@
 					'</td>',
 
 					rowAssoc = [
-								' ',
+								'+',
 								assoc.idConfiguracao,
 								assoc.orgaoUsuario ? assoc.orgaoUsuario.sigla : ' ',
 								assoc.complexo ? assoc.complexo.descricao : ' ',
@@ -266,7 +267,7 @@
 					.row
 					.add(rowAssoc),
 					node = $(newRow.node());
-				
+
 				newRow.draw();
 				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
 			}

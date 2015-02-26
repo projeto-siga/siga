@@ -406,9 +406,9 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 			if(indice > -1) {
 				tr.find('td:nth(' + indice + ')').addClass('acoes');
 			}
-			this.bindRowClick(tr, objSalvo);
 		}
 	}
+	this.bindRowClick(tr, objSalvo);
 	
 	var tdAcoes = tr.find('td.acoes');
 	if(tdAcoes) {

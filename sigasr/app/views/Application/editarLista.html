@@ -37,6 +37,9 @@
 			</div>
 		</div>
 		<div class="gt-content-box gt-for-table dataTables_div">
+	        <div class="gt-form-row dataTables_length">
+	            <label>#{checkbox name:'mostrarAssocDesativada', value:mostrarAssocDesativada/} <b>Incluir Inativas</b></label>
+	        </div>        
 			<table id="permissoes_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
@@ -212,6 +215,17 @@
 #{/modal}
 
 <script language="javascript">
+	function getUrlDesativarReativar(desativados) {
+	    
+	    var url = '@{Application.listarPermissaoUsoLista()}',
+	        idLista = $("[name=idLista]").val();
+	
+	    if(desativados)
+	        url = '@{Application.listarPermissaoUsoListaDesativados()}';
+	        
+	    return url + "?idLista=" + idLista;
+	}
+
 	var permissoesTable, 
 		isEditingLista = false,
 		isEditingContr = false,
@@ -240,9 +254,33 @@
 	colunas.idTipoPerm = 	17;
 	colunas.tipoPerm = 		18;
 	colunas.descrTipoPerm = 19;
-	colunas.acoes = 		20;
-	
+	colunas.acoes = 		20,
+
+    jQuery("#checkmostrarAssocDesativada").click(function() {
+        $.ajax({
+                type: "POST",
+                url: getUrlDesativarReativar(document.getElementById('checkmostrarAssocDesativada').checked),
+                dataType: "text",
+                success: function(response) {
+                	atualizarListasTipoPermissaoEdicao({ 
+                        associacoesVO : JSON.parse(response)
+                   });
+                },
+                error: function(response) {
+                   $('#modal-associacao').hide(); 
+
+                   var modalErro = $('#"modal-associacao-error"');
+                   modalErro.find("h3").html(response.responseText);
+                   modalErro.show(); 
+                }
+       });
+    });
 	$( document ).ready(function( ) {
+        if (QueryString.mostrarDesativados != undefined) {
+            document.getElementById('checkmostrarAssocDesativada').checked = QueryString.mostrarDesativados == 'true';
+            document.getElementById('checkmostrarAssocDesativada').value = QueryString.mostrarDesativados == 'true';
+        }
+		
 		/* Table initialization */
 		if ( $.fn.dataTable.isDataTable( '#permissoes_table' ) ) {
 			permissoesTable = $('#permissoes_table').dataTable();
@@ -352,7 +390,9 @@
 	function atualizarControleAcessoModal(itemArray) {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
-		
+
+		limparDadosAcessoModal();
+
 		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
 		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
 		$("#lotacao").val(itemArray[colunas.idLotacao]);
@@ -381,8 +421,10 @@
 		
 		if (isEdicao)
 			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permissão');
-		else
+		else {
+			limparDadosAcessoModal();
 			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permissão');
+		}
 
 		if (($("#idLista").val() == undefined || $("#idLista").val() == "") && listaService.aplicar() == false)
 			return;
@@ -394,6 +436,10 @@
 		isEditingContr = false;
 		$("#controleAcesso_dialog").dialog("close");
 		
+		limparDadosAcessoModal();
+	};
+
+	function limparDadosAcessoModal() {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
 		
@@ -420,7 +466,7 @@
 
 		$('#modal-permissao-error').css('display', 'none');
 		$('#modal-permissao').css('display', 'block');
-	};
+	}
 
 	function serializePermissao(row) {
 		var params = "";
@@ -463,10 +509,10 @@
 			jComplexoCbb = document.getElementsByName("complexo")[0],
 			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex];
 			
-		var row = [ jOrgaoUsuario.value,
-          			jOrgaoUsuario.text, 
-          			jComplexo.value,
-          			jComplexo.text,
+		var row = [ jOrgaoUsuario.value > 0 ? jOrgaoUsuario.value : '',
+					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.text : '',
+          			jComplexo.value > 0 ? jComplexo.value : '',
+          			jComplexo.value > 0 ? jComplexo.text : '',
           			$("#lotacao").val(),
           			$("#lotacao_descricao").val(),
           			$("#lotacao_sigla").val(),
@@ -534,16 +580,31 @@
 		}
 		
 		if (tipoPermissaoJson) {
-			
-			if (tipoPermissaoJson.listaTipoPermissaoListaVO) {
-				// cria os itens da lista de TipoPermissao, e adiciona na tela
-				for (i = 0; i < tipoPermissaoJson.listaTipoPermissaoListaVO.length; i++) {
-					var lista = tipoPermissaoJson.listaTipoPermissaoListaVO[i];
-					$("#ulPermissoes")[0].incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
-				}
+			// cria os itens da lista de TipoPermissao, e adiciona na tela
+			for (i = 0; i < tipoPermissaoJson.length; i++) {
+				var lista = tipoPermissaoJson[i];
+				$("#ulPermissoes")[0].incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
 			}
 		}
-	};
+	}
+
+	function getDescricaoTipoPermissaoByLista(listaTipoPermissaoListaVO) {
+		var descricao = '';
+
+		if (listaTipoPermissaoListaVO) {
+			// cria os itens da lista de TipoPermissao, e adiciona na tela
+			for (i = 0; i < listaTipoPermissaoListaVO.length; i++) {
+				var lista = listaTipoPermissaoListaVO[i];
+
+				if (i > 0)
+					descricao += '; ';
+				
+				descricao += lista.descrTipoPermissaoLista;
+			}
+		}
+
+		return descricao;
+	}
 
 	function getDescricaoTipoPermissao() {
 		var descricao = $('#ulPermissoes').find("li:first-child").find("span:eq(0)").html();

@@ -261,18 +261,8 @@ public class SrConfiguracao extends CpConfiguracao {
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
 		
 		if (equipe != null && equipe.lotacao != null && equipe.lotacao.getIdLotacaoIni() != null) {
-			sb.append(" and ( ");
-			
-			sb.append(" conf.atendente.idLotacaoIni = ");
-			sb.append(equipe.lotacao.getIdLotacaoIni());
-			
-			sb.append(" or conf.preAtendente.idLotacaoIni = ");
-			sb.append(equipe.lotacao.getIdLotacaoIni());
-			
-			sb.append(" or conf.posAtendente.idLotacaoIni = ");
-			sb.append(equipe.lotacao.getIdLotacaoIni());
-			
-			sb.append(" ) ");
+			sb.append(" and conf.atendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());			
 		}
 		
 		sb.append(" and conf.hisDtFim is null");

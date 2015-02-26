@@ -575,10 +575,10 @@
 		
 		var row = [
 					'',                                                                    // colunasAssociacao.botaoExpandir
-					jOrgaoUsuario.value,
-	          		jOrgaoUsuario.text, 
-	          		jComplexo.value,
-	          		jComplexo.text,
+					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.value : '',
+					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.text : '', 
+	          		jComplexo.value > 0 ? jComplexo.value : '',
+	          		jComplexo.value > 0 ? jComplexo.text : '',
 	          		jPessoaLotaFuncCargo.value,
           			getIdFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
           			getDescricaoFieldSolicitante(jPessoaLotaFuncCargo.value).val(),

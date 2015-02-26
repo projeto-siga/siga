@@ -154,10 +154,11 @@ public class DpLotacaoAction extends
 				 * */
 				DpLotacao lotacao = new DpLotacao();
 				lotacao = (DpLotacao) dao().consultar(getSel().getId(), DpLotacao.class, false);
-				GenericoSelecao sel = new GenericoSelecao();
-				sel.setId(getSel().getId());
-				sel.setSigla(lotacao.getSiglaCompleta());
-				sel.setDescricao(getSel().getDescricao());
+				GenericoSelecao gs = new GenericoSelecao();
+				gs.setId(getSel().getId());
+				gs.setSigla(lotacao.getSiglaCompleta());
+				gs.setDescricao(getSel().getDescricao());
+				setSel(gs);
 			} catch (final Exception ex) {
 				setSel(null);
 			}

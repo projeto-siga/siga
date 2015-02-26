@@ -151,8 +151,8 @@ public class FeriadoController extends SigaController {
 			result.include("id", ocorrencia.getCpFeriado().getIdFeriado());
 			result.include("idOcorrencia", idOcorrencia);
 			result.include("dscFeriado", ocorrencia.getCpFeriado().getDescricao());
-			result.include("dtIniFeriado", ocorrencia.getDtRegIniDDMMYY());
-			result.include("dtFimFeriado", ocorrencia.getDtRegFimDDMMYY());
+			result.include("dtIniFeriado", ocorrencia.getDtRegIniDDMMYYYY());
+			result.include("dtFimFeriado", ocorrencia.getDtRegFimDDMMYYYY());
 			result.include("listaAplicacoes", getListaAplicacoes(idOcorrencia));
 		} else {
 			if (id != null) {

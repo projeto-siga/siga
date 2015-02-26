@@ -79,8 +79,8 @@
 									<c:when test="${(not empty feriado.cpOcorrenciaFeriadoSet)}">
 										<c:forEach var="ocorrencia" items="${feriado.cpOcorrenciaFeriadoSet}">	
 										<tr>											
-											<td align="left">${ocorrencia.dtRegIniDDMMYY}</td>
-											<td align="left">${ocorrencia.dtRegFimDDMMYY}</td>
+											<td align="left">${ocorrencia.dtRegIniDDMMYYYY}</td>
+											<td align="left">${ocorrencia.dtRegFimDDMMYYYY}</td>
 											<td align="left">
 												<c:url var="url" value="/app/feriado/editar-ocorrencia">
 													<c:param name="idOcorrencia">${ocorrencia.idOcorrencia}</c:param>

@@ -27,7 +27,6 @@ package br.gov.jfrj.siga.libs.webwork;
 import java.util.List;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 

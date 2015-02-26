@@ -848,6 +848,8 @@ public class ExMovimentacaoController extends ExController {
 
 		final DpLotacaoSelecao lot = new DpLotacaoSelecao();
 		final DpPessoaSelecao pes = new DpPessoaSelecao();
+		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+		final DpPessoaSelecao titutalarSel = new DpPessoaSelecao();
 		int tipoResponsavel = -1;
 
 		final ExMovimentacao ultMov = builder.getMob().getUltimaMovimentacao();
@@ -874,7 +876,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("tiposDespacho", this.getTiposDespacho(builder.getMob()));
 		result.include("listaTipoResp", this.getListaTipoResp());
 		result.include("tipoResponsavel", tipoResponsavel);
-
+		result.include("subscritorSel", subscritorSel);
+		result.include("titularSel", titutalarSel);
 		result.include("lotaResponsavelSel", lot);
 		result.include("responsavelSel", pes);
 	}

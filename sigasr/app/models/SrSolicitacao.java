@@ -1988,12 +1988,22 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	public List<DpPessoa> getPessoasAtendentesDisponiveis(){
 		List<DpPessoa> listaFinal = new ArrayList<DpPessoa>();
-		DpLotacao atendente = getLotaAtendente();
-		if (atendente != null){
+		if (getLotaAtendente() != null){
+			DpLotacao atendente = getLotaAtendente().getLotacaoAtual();
+			if (atendente == null)
+				atendente = getLotaAtendente();
 			for (DpPessoa p : atendente.getDpPessoaLotadosSet()){
 				if (p.getHisDtFim() == null)
 					listaFinal.add(p);
 			}
+			Collections.sort(listaFinal, new Comparator<DpPessoa>() {
+		        @Override
+		        public int compare(DpPessoa  o1, DpPessoa o2) {
+					if (o1 != null && o2 != null && o1.getId().equals(o2.getId()))
+						return 0;
+					return o1.getNomePessoa().compareTo(o2.getNomePessoa());
+		        }
+		    });
 		}
 		return listaFinal;
 	}

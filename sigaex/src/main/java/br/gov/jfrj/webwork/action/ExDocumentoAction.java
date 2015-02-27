@@ -926,7 +926,7 @@ public class ExDocumentoAction extends ExActionSupport {
 				else
 					lotaDest = getLotaTitular();				
 			
-				if (getLotaTitular().equals(lotaDest)  /* a pessoa que está tentando acessar está na mesma lotação onde se encontra o doc*/ 
+				if (getLotaTitular().equivale(lotaDest)  /* a pessoa que está tentando acessar está na mesma lotação onde se encontra o doc*/ 
 						&& (mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA					
 							|| mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
 				

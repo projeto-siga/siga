@@ -153,7 +153,7 @@ tablespace USERS
 alter table SR_CONFIGURACAO_IGNORADA
   add constraint PK_SR_CONFIG_IGNORADA primary key (ID_CONFIGURACAO_IGNORADA)
   using index 
-  tablespace KDB1
+  tablespace USERS
   pctfree 10
   initrans 2
   maxtrans 255;

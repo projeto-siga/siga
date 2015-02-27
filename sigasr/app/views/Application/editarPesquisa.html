@@ -73,7 +73,23 @@
 </div>
 
 <script>
+	associacaoService.getUrlDesativarReativar = function(desativados) {
+	    
+	    var url = '@{Application.listarAssociacaoPesquisa()}',
+	        idPesquisa = $("[name=idPesquisa]").val();
+	
+	    if(desativados)
+	        url = '@{Application.listarAssociacaoPesquisaDesativados()}';
+	        
+	    return url + "?idPesquisa=" + idPesquisa;
+	}
+
 	jQuery(document).ready(function($) {
+        if (QueryString.mostrarDesativados != undefined) {
+            document.getElementById('checkmostrarAssocDesativada').checked = QueryString.mostrarDesativados == 'true';
+            document.getElementById('checkmostrarAssocDesativada').value = QueryString.mostrarDesativados == 'true';
+        }
+		
     	var jPerguntas = $("#perguntas"),
 	        perguntas = jPerguntas[0],
 	        jDialog = $("#dialog"),

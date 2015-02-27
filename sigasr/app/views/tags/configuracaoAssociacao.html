@@ -1,6 +1,9 @@
 <div class="gt-content" style="padding-top: 10px;">
 	<h3>Associações</h3>
 	<div class="gt-content-box dataTables_div">
+        <div class="gt-form-row dataTables_length">
+            <label>#{checkbox name:'mostrarAssocDesativada', value:mostrarAssocDesativada/} <b>Incluir Inativas</b></label>
+        </div>        
 		<table id="associacao_table" border="0" class="gt-table display">
 			<thead>
 				<tr>
@@ -106,8 +109,27 @@
 			'acao': 						6,
 			'atributoObrigatorioString': 	7,
 			'botaoExcluir': 				8
-			},
-		
+			};
+
+	    jQuery("#checkmostrarAssocDesativada").click(function() {
+			$.ajax({
+	   	         type: "POST",
+	   	         url: associacaoService.getUrlDesativarReativar(document.getElementById('checkmostrarAssocDesativada').checked),
+	   	         dataType: "text",
+	   	         success: function(response) {
+		   	    	 associacaoService.atualizarListaAssociacoes({ 
+			   	    	 associacoesVO : JSON.parse(response)
+			   	    });
+	   	         },
+	   	         error: function(response) {
+	   	        	$('#modal-associacao').hide(); 
+	
+	   	        	var modalErro = $('#"modal-associacao-error"');
+	   	        	modalErro.find("h3").html(response.responseText);
+	   	        	modalErro.show(); 
+	   	         }
+	       });
+	    });
 		associacaoTable = new SigaTable('#associacao_table')
 			.configurar("columnDefs", [{
 						"targets": [colunas.idAssociacao, colunas.botaoExpandir, colunas.botaoExcluir],
@@ -119,6 +141,7 @@
 						"visible": false
 					}])
 			.configurar("aaSorting",  [[colunas.itemConfiguracao, 'asc']])
+			.configurar("fnRowCallback", associacaoRowCallback)
 			.criar()
 			.detalhes(detalhesListaAssociacao),
 		table = null,
@@ -166,23 +189,32 @@
 		
 		return obj;
 	}
-	
+
 	associacaoService.onGravar = function(obj, objSalvo) {
 		var td = BaseService.prototype.onGravar.call(this, obj, objSalvo),
 			#{if _modoExibicao == 'atributo'}
-				item =  this.getItemPaiPorId(obj.atributo.idAtributo),
+			item =  this.getItemPaiPorId(obj.atributo.idAtributo),
 			#{/if}
 			#{elseif _modoExibicao == 'pesquisa'}
-				item = this.getItemPaiPorId(obj.pesquisaSatisfacao.idPesquisa),
+			item = this.getItemPaiPorId(obj.pesquisaSatisfacao.idPesquisa),
 			#{/elseif}
-			id = this.row(obj);
 
-		// Se eh criacao de novo objeto, entao adiciona na lista
-		if(!id) {
-			item.associacoesVO.push(objSalvo);
+		// Se eh edicao mantem o json atualizado
+		if(obj.idConfiguracao != "") {
+			var linha = this.row(obj);
+			linha.remove();
+			item.associacoesVO.forEach(function(associacao) {
+				if(associacao.idConfiguracao == obj.idConfiguracao) {
+					var index = item.associacoesVO.indexOf(associacao);
+					item.associacoesVO.splice(index, 1);
+				}
+			});
 		}
+
+		item.associacoesVO.push(objSalvo);
 		associacaoService.adicionarFuncionalidadesNaLinha(this.row(objSalvo), objSalvo);
 		associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
+		td.find('td:first-child').html("+");
 		return td;
 	}
 	
@@ -249,7 +281,7 @@
 					'</td>',
 
 					rowAssoc = [
-								' ',
+								'+',
 								assoc.idConfiguracao,
 								assoc.orgaoUsuario ? assoc.orgaoUsuario.sigla : ' ',
 								assoc.complexo ? assoc.complexo.descricao : ' ',
@@ -266,13 +298,27 @@
 					.row
 					.add(rowAssoc),
 					node = $(newRow.node());
-				
-				newRow.draw();
+
 				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
+				newRow.draw();
 			}
 		}
 	}
 
+	function associacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+		$('td:eq(' + colunas.acaoExpandir + ')', nRow).addClass('details-control');
+
+		if (nRow.dataset && nRow.dataset.json) {
+			var assoc = JSON.parse(nRow.dataset.json);
+
+			if (assoc.ativo == false)
+				$('td', nRow).addClass('item-desativado');
+			else
+				$('td', nRow).removeClass('item-desativado');
+		}
+	}
+
+	
 	function ocultaAssociacoes(){
 		if ($("#objetivo").val() == 1){
 			$("#associacoes").show();

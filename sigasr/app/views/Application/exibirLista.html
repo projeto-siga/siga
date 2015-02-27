@@ -278,13 +278,16 @@
 						permissao.funcaoConfianca ? permissao.funcaoConfianca.id : '',
 						permissao.funcaoConfianca ? permissao.funcaoConfianca.descricao : '', 
 						permissao.funcaoConfianca ? permissao.funcaoConfianca.sigla : '',  
-	          			permissao.listaTipoPermissaoListaVO,			//16
-	          			permissao.idConfiguracao,						//17    
-	          			'',												//18
-	          			getDescricaoTipoPermissao(),					//19
-	          			''												//20
+	          			permissao.listaTipoPermissaoListaVO,									//16
+	          			permissao.idConfiguracao,												//17    
+	          			'',																		//18
+	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
+	          			'<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
+						'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
+						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
+						'</a>'																	//20
 	          			];
-			
+
 			permissoesTable.api().row.add(row).draw();
 		}
 	}

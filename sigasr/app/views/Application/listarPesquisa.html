@@ -177,7 +177,7 @@
 	}
 
 	pesquisaService.getRow = function(pesquisa) {
-		return [pesquisa.nomePesquisa, pesquisa.descrPesquisa, 'COLUNA_ACOES'];
+		return [pesquisa.nomePesquisa || ' ', pesquisa.descrPesquisa || ' ', 'COLUNA_ACOES'];
 	}
 	pesquisaService.onRowClick = function(pesquisa) {
 		pesquisaService.editar(pesquisa, 'Alterar pesquisa');

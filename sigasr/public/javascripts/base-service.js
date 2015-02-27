@@ -178,7 +178,7 @@ BaseService.prototype.errorHandler = function(error) {
  * Remove as mensagens de erro na tela
  */
 BaseService.prototype.removerErros = function() {
-	$('span.error').remove();
+	this.opts.formCadastro.find('span.error').remove();
 	this.resetErrosForm();
 }
 /**
@@ -303,10 +303,10 @@ BaseService.prototype.cadastrar = function(title) {
  * pessoaLotaFuncCargoSelecao.html
  */
 BaseService.prototype.limparSpanComponentes = function() {
-	$('span.selecao').html('');
-	$('span.pessoaLotaSelecao').html('');
-	$('span.lotaSelecao').html('');
-	$('span.pessoaLotaFuncCargoSelecao').html('');
+	this.opts.formCadastro.find('span.selecao').html('');
+	this.opts.formCadastro.find('span.pessoaLotaSelecao').html('');
+	this.opts.formCadastro.find('span.lotaSelecao').html('');
+	this.opts.formCadastro.find('span.pessoaLotaFuncCargoSelecao').html('');
 }
 
 /**
@@ -406,9 +406,9 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 			if(indice > -1) {
 				tr.find('td:nth(' + indice + ')').addClass('acoes');
 			}
-			this.bindRowClick(tr, objSalvo);
 		}
 	}
+	this.bindRowClick(tr, objSalvo);
 	
 	var tdAcoes = tr.find('td.acoes');
 	if(tdAcoes) {

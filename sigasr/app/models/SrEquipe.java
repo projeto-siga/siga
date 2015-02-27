@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import models.vo.SelecionavelVO;
 import util.Util;
@@ -45,6 +46,9 @@ public class SrEquipe extends HistoricoSuporte {
 	
 	@OneToMany(targetEntity = SrExcecaoHorario.class, mappedBy = "equipe", fetch = FetchType.LAZY)
 	public List<SrExcecaoHorario> excecaoHorarioSet;
+	
+	@Transient
+	private DpLotacao lotacaoEquipe;
 
 	@Override
 	public Long getId() {
@@ -102,12 +106,12 @@ public class SrEquipe extends HistoricoSuporte {
 	}
 
 	public String toJson() {
-		Gson gson = Util.createGson("lotacao", "excecaoHorarioSet");
+		Gson gson = Util.createGson("lotacao", "lotacaoEquipe", "excecaoHorarioSet");
 		
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		jsonObject.add("excecaoHorarioSet", excecaoHorarioArray());
-		jsonObject.add("lotacao", gson.toJsonTree(SelecionavelVO.createFrom(this.lotacao)));
+		jsonObject.add("lotacaoEquipe", gson.toJsonTree(SelecionavelVO.createFrom(this.lotacao)));
 		
 		return jsonObject.toString();
 	}
@@ -127,5 +131,14 @@ public class SrEquipe extends HistoricoSuporte {
 			}
 		
 		return jsonArray;
+	}
+	
+	public DpLotacao getLotacaoEquipe() {
+		return this.lotacaoEquipe != null ? this.lotacaoEquipe : this.lotacao;
+	}
+
+	public void setLotacaoEquipe(DpLotacao lotacaoEquipe) {
+		this.lotacaoEquipe = lotacaoEquipe;
+		this.lotacao = lotacaoEquipe;
 	}
 }

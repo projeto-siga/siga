@@ -6,6 +6,7 @@ import java.util.List;
 import models.SrAcao;
 import models.SrConfiguracao;
 import models.SrItemConfiguracao;
+import models.SrPrioridade;
 import models.SrTipoPermissaoLista;
 
 import com.google.gson.Gson;
@@ -38,6 +39,8 @@ public class SrConfiguracaoVO {
 	public SelecionavelVO orgaoUsuario;
 	public SelecionavelVO complexo;
 	public SrPesquisaVO pesquisaSatisfacao;
+	public SrPrioridade prioridade;
+	public String descPrioridade;
 	
 	// Solicitante
 	public SelecionavelVO dpPessoa;
@@ -54,6 +57,8 @@ public class SrConfiguracaoVO {
 		utilizarItemHerdado = configuracao.utilizarItemHerdado;
 		ativo = configuracao.isAtivo();
 		descrConfiguracao = configuracao.getDescrConfiguracao();
+		prioridade = configuracao.prioridade;
+		descPrioridade = configuracao.prioridade != null ? configuracao.prioridade.descPrioridade : "";
 		
 		if(configuracao.itemConfiguracaoSet != null) {
 			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();

@@ -72,6 +72,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.Objeto;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -889,9 +890,17 @@ public class Application extends SigaApplication {
 		SrAcordo acordo = new SrAcordo();
 		if (id != null)
 			acordo = SrAcordo.findById(id);
-		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(false, acordo);
+		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(Boolean.FALSE, acordo);
 		return SrConfiguracao.convertToJSon(abrangencias);
 	}
+	
+	public static String buscarAbrangenciasAcordoDesativados(Long id) throws Exception {
+		SrAcordo acordo = new SrAcordo();
+		if (id != null)
+			acordo = SrAcordo.findById(id);
+		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(Boolean.TRUE, acordo);
+		return SrConfiguracao.convertToJSon(abrangencias);
+	}	
 
 	public static String gravarAcordo(SrAcordo acordo) throws Exception {
 		assertAcesso("ADM:Administrar");
@@ -979,6 +988,21 @@ public class Application extends SigaApplication {
 		render(permissao, orgaos, locais, listasPrioridade);
 	}
 
+    public static String listarPermissaoUsoListaDesativados(Long idLista) throws Exception {
+        SrLista lista = SrLista.findById(idLista);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.TRUE);
+        return SrConfiguracao.convertToJSon(associacoes);
+    }
+    
+    public static String listarPermissaoUsoLista(Long idLista) throws Exception {
+        assertAcesso("ADM:Administrar");
+        
+        SrLista lista = SrLista.findById(idLista);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.FALSE);
+        return SrConfiguracao.convertToJSon(associacoes);
+    }       
+	
+	
 	public static Long gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarPermissaoUsoLista(permissao);
@@ -1096,7 +1120,8 @@ public class Application extends SigaApplication {
 		if (idLista != null) {
 			SrLista lista = SrLista.findById(idLista);
 			
-			permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(lotaTitular(), cadastrante()));
+			//permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(lotaTitular(), cadastrante()));
+			permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
 		}
 		else
 			permissoes = new ArrayList<SrConfiguracao>();
@@ -1217,6 +1242,22 @@ public class Application extends SigaApplication {
 		render(att, tipoAtributoAnterior, associacoes, objetivos);
 	}
 
+    @SuppressWarnings("unchecked")
+    public static String listarAssociacaoAtributoDesativados(Long idAtributo) throws Exception {
+    	SrAtributo att = SrAtributo.findById(idAtributo);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.TRUE);
+        return SrConfiguracao.convertToJSon(associacoes);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static String listarAssociacaoAtributo(Long idAtributo) throws Exception {
+        assertAcesso("ADM:Administrar");
+        
+        SrAtributo att = SrAtributo.findById(idAtributo);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.FALSE);
+        return SrConfiguracao.convertToJSon(associacoes);
+    }   	
+	
 	public static String gravarAtributo(SrAtributo atributo) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarAtributo(atributo);
@@ -1274,9 +1315,25 @@ public class Application extends SigaApplication {
 		List<SrTipoPergunta> tipos = SrTipoPergunta.all().fetch();
 		render(pesq, tipos);
 	}
+	
+    public static String listarAssociacaoPesquisaDesativados(Long idPesquisa) throws Exception {
+        SrPesquisa pesquisa = SrPesquisa.findById(idPesquisa);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesPesquisa(pesquisa, Boolean.TRUE);
+        return SrConfiguracao.convertToJSon(associacoes);
+    }
+    
+    public static String listarAssociacaoPesquisa(Long idPesquisa) throws Exception {
+        assertAcesso("ADM:Administrar");
+        
+        SrPesquisa pesquisa = SrPesquisa.findById(idPesquisa);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesPesquisa(pesquisa, Boolean.FALSE);
+        return SrConfiguracao.convertToJSon(associacoes);
+    }       
+	
 
 	public static String gravarPesquisa(SrPesquisa pesquisa, Set<SrPergunta> perguntaSet) throws Exception {
 		assertAcesso("ADM:Administrar");
+		pesquisa = (SrPesquisa) Objeto.getImplementation(pesquisa);
 		pesquisa.perguntaSet = (perguntaSet != null) ? perguntaSet : new HashSet<SrPergunta>();
 		pesquisa.salvar();
 		

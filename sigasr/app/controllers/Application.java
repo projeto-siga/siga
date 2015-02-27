@@ -72,6 +72,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.Objeto;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -1332,6 +1333,7 @@ public class Application extends SigaApplication {
 
 	public static String gravarPesquisa(SrPesquisa pesquisa, Set<SrPergunta> perguntaSet) throws Exception {
 		assertAcesso("ADM:Administrar");
+		pesquisa = (SrPesquisa) Objeto.getImplementation(pesquisa);
 		pesquisa.perguntaSet = (perguntaSet != null) ? perguntaSet : new HashSet<SrPergunta>();
 		pesquisa.salvar();
 		

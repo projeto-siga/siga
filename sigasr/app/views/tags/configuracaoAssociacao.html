@@ -189,7 +189,7 @@
 		
 		return obj;
 	}
-	
+
 	associacaoService.onGravar = function(obj, objSalvo) {
 		var td = BaseService.prototype.onGravar.call(this, obj, objSalvo),
 			#{if _modoExibicao == 'atributo'}
@@ -198,12 +198,20 @@
 			#{elseif _modoExibicao == 'pesquisa'}
 			item = this.getItemPaiPorId(obj.pesquisaSatisfacao.idPesquisa),
 			#{/elseif}
-			id = this.row(obj);
 
-		// Se eh criacao de novo objeto, entao adiciona na lista
-		if(!id) {
-			item.associacoesVO.push(objSalvo);
+		// Se eh edicao mantem o json atualizado
+		if(obj.idConfiguracao != "") {
+			var linha = this.row(obj);
+			linha.remove();
+			item.associacoesVO.forEach(function(associacao) {
+				if(associacao.idConfiguracao == obj.idConfiguracao) {
+					var index = item.associacoesVO.indexOf(associacao);
+					item.associacoesVO.splice(index, 1);
+				}
+			});
 		}
+
+		item.associacoesVO.push(objSalvo);
 		associacaoService.adicionarFuncionalidadesNaLinha(this.row(objSalvo), objSalvo);
 		associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
 		td.find('td:first-child').html("+");

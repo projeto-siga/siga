@@ -105,10 +105,6 @@
 	</servlet-mapping>
 
 	<security-constraint>
-		<web-resource-collection>
- 			<web-resource-name>public</web-resource-name>
- 			<url-pattern>/public/*</url-pattern>
- 		</web-resource-collection>		
  		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>
 			<url-pattern>/*</url-pattern>
@@ -147,7 +143,11 @@
 	
 	<!-- Libera acesso aos seguintes diretorios -->
  	<security-constraint>
-		<web-resource-collection>
+ 		<web-resource-collection>
+ 			<web-resource-name>public</web-resource-name>
+ 			<url-pattern>/public/*</url-pattern>
+ 		</web-resource-collection>		
+ 		<web-resource-collection>
 			<web-resource-name>css</web-resource-name>
 			<url-pattern>/css/*</url-pattern>
 		</web-resource-collection>

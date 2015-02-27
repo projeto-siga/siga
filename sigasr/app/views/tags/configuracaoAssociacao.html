@@ -141,6 +141,7 @@
 						"visible": false
 					}])
 			.configurar("aaSorting",  [[colunas.itemConfiguracao, 'asc']])
+			.configurar("fnRowCallback", associacaoRowCallback)
 			.criar()
 			.detalhes(detalhesListaAssociacao),
 		table = null,
@@ -298,12 +299,26 @@
 					.add(rowAssoc),
 					node = $(newRow.node());
 
-				newRow.draw();
 				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
+				newRow.draw();
 			}
 		}
 	}
 
+	function associacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+		$('td:eq(' + colunas.acaoExpandir + ')', nRow).addClass('details-control');
+
+		if (nRow.dataset && nRow.dataset.json) {
+			var assoc = JSON.parse(nRow.dataset.json);
+
+			if (assoc.ativo == false)
+				$('td', nRow).addClass('item-desativado');
+			else
+				$('td', nRow).removeClass('item-desativado');
+		}
+	}
+
+	
 	function ocultaAssociacoes(){
 		if ($("#objetivo").val() == 1){
 			$("#associacoes").show();

@@ -104,7 +104,7 @@
 										ou <a href="excluir?idTemporalidade=${exTemporal.idTemporalidade}">excluir</a>
 								</c:when>
 								<c:otherwise>
-										ou <a href="${pageContext.request.contextPath}/app/expediente/temporalidade">cancelar</a>
+										ou <a href="${pageContext.request.contextPath}/app/expediente/temporalidade/listar">cancelar</a>
 								</c:otherwise>
 							</c:choose>
 							</p>

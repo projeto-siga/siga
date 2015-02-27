@@ -63,18 +63,18 @@
 			<tr class="button">
 			<td>
 				<div id="dados-assinatura" style="visible: hidden">
-				    <c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
-				    <c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
+				    <c:set var="jspServer" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
+				    <c:set var="jspServerSenha" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
 				    
 		   	 	    <c:set var="nextURL" value="siga/app/principal"  />
-		    	    <c:set var="urlPath" value="${request.contextPath}" />
+		    	    <c:set var="urlPath" value="${pageContext.request.contextPath}" />
 		
 					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
 					<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 					<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 					<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
 					<c:set var="urlBase"
-						value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+						value="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}" />
 					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />   		    
 		
 					<c:set var="botao" value=""/>
@@ -101,7 +101,7 @@
 				</c:if>
 			
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
-			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
+			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,pageContext.request.scheme,pageContext.request.serverName,pageContext.request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
 	         	</c:if>
 	         	
 	         	<c:if test="${(not empty movimentacoesQuePodemSerAssinadasComSenha)}">

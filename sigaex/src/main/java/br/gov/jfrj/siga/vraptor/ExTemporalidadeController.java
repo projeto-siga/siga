@@ -31,7 +31,7 @@ public class ExTemporalidadeController extends ExController {
 		result.on(Exception.class).forwardTo(this).exception();
 	}
 
-	@Get("app/expediente/temporalidade")
+	@Get("app/expediente/temporalidade/listar")
 	public void listarTemporalidade() {
 		assertAcesso("FE:Ferramentas;TT:Tabela de Temporalidade");
 
@@ -73,8 +73,6 @@ public class ExTemporalidadeController extends ExController {
 
 		ModeloDao.iniciarTransacao();
 
-		final Long novoId;
-
 		ExTemporalidade exTemporal = buscarExTemporalidade(idTemporalidade);
 		if ("nova_temporalidade".equals(acao)) {
 			if (exTemporal != null) {
@@ -83,19 +81,17 @@ public class ExTemporalidadeController extends ExController {
 				exTemporal = new ExTemporalidade();
 				fillEntity(descTemporalidade, valorTemporalidade, idCpUnidade, exTemporal);
 				Ex.getInstance().getBL().incluirExTemporalidade(exTemporal, getIdentidadeCadastrante());
-				novoId = exTemporal.getIdTemporalidade();
 			}
 		} else {
 			ExTemporalidade exTempNovo = Ex.getInstance().getBL().getCopia(exTemporal);
 			fillEntity(descTemporalidade, valorTemporalidade, idCpUnidade, exTempNovo);
 
 			Ex.getInstance().getBL().alterarExTemporalidade(exTempNovo, exTemporal, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());
-			novoId = idTemporalidade;
 		}
 
 		ModeloDao.commitTransacao();
 
-		result.redirectTo("/app/expediente/temporalidade");
+		result.redirectTo("/app/expediente/temporalidade/listar");
 	}
 
 	private void fillEntity(final String descTemporalidade, final Integer valorTemporalidade, final Long idCpUnidade, final ExTemporalidade exTemporal) {
@@ -156,7 +152,7 @@ public class ExTemporalidadeController extends ExController {
 		dao().excluirComHistorico(exTemporal, dt, getIdentidadeCadastrante());
 		ModeloDao.commitTransacao();
 
-		result.redirectTo("/app/expediente/temporalidade");
+		result.redirectTo("/app/expediente/temporalidade/listar");
 	}
 
 	private ExTemporalidade buscarExTemporalidade(final Long id) {

@@ -121,7 +121,7 @@
 			</c:if>
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade')}">
-				<li> <a href="${pageContext.request.contextPath}/app/expediente/temporalidade">Temporalidade Documental</a>
+				<li> <a href="${pageContext.request.contextPath}/app/expediente/temporalidade/listar">Temporalidade Documental</a>
 				</li>
 			</c:if>
 			

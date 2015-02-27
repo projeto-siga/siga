@@ -1303,9 +1303,14 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/arquivar_intermediario_lote")
-	public void aArquivarIntermediarioLote(final Integer paramOffset) {
-		getP().setOffset(paramOffset);
-		final int offset = getP().getOffset() != null ? getP().getOffset() : 0;
+	public void aArquivarIntermediarioLote(final String paramOffset) {
+		int offset;
+		try {
+			offset = Integer.valueOf(paramOffset);
+		} catch (Exception e) {
+			offset = 0;
+		}
+		getP().setOffset(offset);
 		final List<ExItemDestinacao> listaProv = dao().consultarParaArquivarIntermediarioEmLote(getLotaTitular(), offset);
 
 		final ExTopicoDestinacao digitais = new ExTopicoDestinacao("Digitais", true);
@@ -1370,9 +1375,14 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/arquivar_permanente_lote")
-	public void aArquivarPermanenteLote(final Integer paramOffset) {
-		getP().setOffset(paramOffset);
-		final int offset = getP().getOffset() != null ? getP().getOffset() : 0;		
+	public void aArquivarPermanenteLote(final String paramOffset) {
+		int offset;
+		try {
+			offset = Integer.valueOf(paramOffset);
+		} catch (Exception e) {
+			offset = 0;
+		}
+		getP().setOffset(offset);
 		final List<ExItemDestinacao> listaProv = dao().consultarParaArquivarPermanenteEmLote(getLotaTitular(), offset);
 
 		final ExTopicoDestinacao digitais = new ExTopicoDestinacao("Digitais", true);

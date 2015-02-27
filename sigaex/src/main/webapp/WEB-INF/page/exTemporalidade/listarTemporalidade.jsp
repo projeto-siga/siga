@@ -31,7 +31,7 @@
 				<tbody>
 					<c:forEach items="${temporalidadeVigente}" var="t">
 						<tr>
-							<td><a href="temporalidade/editar?idTemporalidade=${t.idTemporalidade}&acao=editar_temporalidade">${t.descTemporalidade}</a></td>
+							<td><a href="editar?idTemporalidade=${t.idTemporalidade}&acao=editar_temporalidade">${t.descTemporalidade}</a></td>
 							<td>
 								${t.valorTemporalidade}
 							</td>
@@ -43,7 +43,7 @@
 				</tbody>
 			</table>
 		</div>
-		<form id="frmNovaTemporalidade" action="temporalidade/editar" method="get">
+		<form id="frmNovaTemporalidade" action="editar" method="get">
 			<div class="gt-table-buttons">
 				<a id="btNovaTemporalidade" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:novaTemporalidade()">Nova Temporalidade</a>
 			</div>

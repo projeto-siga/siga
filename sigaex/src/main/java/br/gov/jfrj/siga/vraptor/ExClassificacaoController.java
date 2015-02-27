@@ -211,7 +211,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 	
 			dao().commitTransacao();
 			setMensagem("Classificação salva!");
-			result.redirectTo("editar?codificacao="+exClassificacao.getCodificacao()+"&acao="+acao);
+			result.redirectTo("editar?codificacao="+exClassificacao.getCodificacao()+"&acao=editar_classificacao");
 		} catch (Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Não foi possível gravar classificação no banco de dados."+e.getMessage());			

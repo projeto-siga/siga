@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
@@ -20,6 +18,7 @@
 			offset=0;
 		}
 		$("[name='paramOffset']").val(offset);
+		$("[name='p\\.offset']").val(offset);
 		frm.action = '${pageContext.request.contextPath}/app/expediente/mov/arquivar_permanente_lote';
 		frm.submit();
 	}
@@ -44,6 +43,7 @@
 		method="GET" theme="simple">		
 		<input type="hidden" name="postback" value="1" />
 		<input type="hidden" name="paramOffset" value="${paramOffset}" />
+		<input type="hidden" name="p.offset" value="${p.offset}" />
 		<table class="gt-form-table">
 			<tr class="header">
 				<td colspan="2">Arquivamento Permanente</td>

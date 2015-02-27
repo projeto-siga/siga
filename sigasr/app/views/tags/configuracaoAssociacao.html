@@ -232,7 +232,10 @@
 	}
 	
 	associacaoService.getItemPaiPorId = function (id) {
-		return $("#${_modoExibicao}_table tr[data-json-id=" + id + "]").data('json');
+		return $("#${_modoExibicao}_table")
+					.dataTable()
+					.$("tr[data-json-id=" + id + "]")
+					.data('json');
 	}
 
 	associacaoService.getListasAsString = function () {

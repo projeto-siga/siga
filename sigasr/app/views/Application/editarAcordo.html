@@ -177,7 +177,7 @@
 	</div>
 
 	#{configuracaoItemAcao itemConfiguracaoSet:itemConfiguracaoSet,
-							 acoesSet:acoesSet}#{/configuracaoItemAcao}
+						   acoesSet:acoesSet}#{/configuracaoItemAcao}
 							 
 	<div class="gt-form-row">
 		<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
@@ -340,7 +340,6 @@
 
 	// Limpa os dados da tela.
 	function limparDadosAssociacaoModal() {
-
 		unblock();
 
 		$("#atendente").val('');
@@ -484,49 +483,48 @@
 	function getDadosSolicitante(rowValues, i) {
     	var params = '';
  
-			if (rowValues[colunasAssociacao.tipoSolicitante] == 1){
-              	params += '&associacao.dpPessoa=' + rowValues[colunasAssociacao.idSolicitante];
-              	params += '&associacao.lotacao=';
-              	params += '&associacao.funcaoConfianca=';
-              	params += '&associacao.cargo=';
-              	params += '&associacao.cpGrupo=';
+		if (rowValues[colunasAssociacao.tipoSolicitante] == 1){
+             	params += '&associacao.dpPessoa=' + rowValues[colunasAssociacao.idSolicitante];
+             	params += '&associacao.lotacao=';
+             	params += '&associacao.funcaoConfianca=';
+             	params += '&associacao.cargo=';
+             	params += '&associacao.cpGrupo=';
 
-			
-			// caso seja lotação
-			} else if (rowValues[colunasAssociacao.tipoSolicitante] == 2){
-				params += '&associacao.lotacao=' + rowValues[colunasAssociacao.idSolicitante];
-				params += '&associacao.dpPessoa=';
-              	params += '&associacao.funcaoConfianca=';
-              	params += '&associacao.cargo=';
-              	params += '&associacao.cpGrupo=';
+		
+		// caso seja lotação
+		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 2){
+			params += '&associacao.lotacao=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacao.dpPessoa=';
+             	params += '&associacao.funcaoConfianca=';
+             	params += '&associacao.cargo=';
+             	params += '&associacao.cpGrupo=';
 
-			
-			// caso seja função
-			} else if (rowValues[colunasAssociacao.tipoSolicitante] == 3){
-				params += '&associacao.funcaoConfianca=' + rowValues[colunasAssociacao.idSolicitante];
-				params += '&associacao.dpPessoa=';
-              	params += '&associacao.lotacao=';
-              	params += '&associacao.cargo=';
-              	params += '&associacao.cpGrupo=';
+		
+		// caso seja função
+		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 3){
+			params += '&associacao.funcaoConfianca=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacao.dpPessoa=';
+             	params += '&associacao.lotacao=';
+             	params += '&associacao.cargo=';
+             	params += '&associacao.cpGrupo=';
 
-			
-			// caso seja cargo
-			} else if (rowValues[colunasAssociacao.tipoSolicitante] == 4){
-				params += '&associacao.cargo=' + rowValues[colunasAssociacao.idSolicitante];
-				params += '&associacao.dpPessoa=';
-              	params += '&associacao.funcaoConfianca=';
-              	params += '&associacao.lotacao=';
-              	params += '&associacao.cpGrupo=';
+		
+		// caso seja cargo
+		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 4){
+			params += '&associacao.cargo=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacao.dpPessoa=';
+             	params += '&associacao.funcaoConfianca=';
+             	params += '&associacao.lotacao=';
+             	params += '&associacao.cpGrupo=';
 
-			// caso seja grupo
-			} else if (rowValues[colunasAssociacao.tipoSolicitante] == 5){
-				params += '&associacao.cpGrupo=' + rowValues[colunasAssociacao.idSolicitante];
-				params += '&associacao.dpPessoa=';
-      			params += '&associacao.funcaoConfianca=';
-      			params += '&associacao.lotacao=';
-      			params += '&associacao.cargo=';
-			}
-    	//}
+		// caso seja grupo
+		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 5){
+			params += '&associacao.cpGrupo=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacao.dpPessoa=';
+     			params += '&associacao.funcaoConfianca=';
+     			params += '&associacao.lotacao=';
+     			params += '&associacao.cargo=';
+		}
     	
     	return params;
     }
@@ -536,13 +534,13 @@
 			hisIdIniAssociacao = $("#hisIdIni").val() != undefined ? $("#hisIdIni").val() : '';
 
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-		jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
-		jComplexoCbb = document.getElementsByName("complexo")[0],
-		jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex];
-		jPrioridadeCbb = document.getElementsByName("prioridade")[0],
-		jPrioridade = jPrioridadeCbb.options[jPrioridadeCbb.selectedIndex];
-		jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0],
-		jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
+			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
+			jComplexoCbb = document.getElementsByName("complexo")[0],
+			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex];
+			jPrioridadeCbb = document.getElementsByName("prioridade")[0],
+			jPrioridade = jPrioridadeCbb.options[jPrioridadeCbb.selectedIndex];
+			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0],
+			jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
 		
 		var row = [
 					'',                                                                    // colunasAssociacao.botaoExpandir
@@ -590,8 +588,8 @@
 			    else {
 			    	tableAssociacao.api().row.add(row).draw();
 			    }
+			    
 	          	associacaoModalFechar();
-				$('.desassociar').bind('click', desassociar);
 	         },
 	         error: function(response) {
 	        	$('#modal-associacao').hide(); 
@@ -688,9 +686,10 @@
 		        },
 		        open: function(){
 	                if (jDialog.data("valor"))
-	                        jDialog.dialog('option', 'title', 'Alterar Parametro');
+		                jDialog.dialog('option', 'title', 'Alterar Parametro');
 	                else
-	                        jDialog.dialog('option', 'title', 'Incluir Parametro');                  
+		                jDialog.dialog('option', 'title', 'Incluir Parametro');
+	                
 	                jValor.val(jDialog.data("valor"));
 	                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
 	                jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);

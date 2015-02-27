@@ -192,10 +192,10 @@
 	associacaoService.onGravar = function(obj, objSalvo) {
 		var td = BaseService.prototype.onGravar.call(this, obj, objSalvo),
 			#{if _modoExibicao == 'atributo'}
-				item =  this.getItemPaiPorId(obj.atributo.idAtributo),
+			item =  this.getItemPaiPorId(obj.atributo.idAtributo),
 			#{/if}
 			#{elseif _modoExibicao == 'pesquisa'}
-				item = this.getItemPaiPorId(obj.pesquisaSatisfacao.idPesquisa),
+			item = this.getItemPaiPorId(obj.pesquisaSatisfacao.idPesquisa),
 			#{/elseif}
 			id = this.row(obj);
 

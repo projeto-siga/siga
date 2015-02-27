@@ -372,6 +372,9 @@
 		$("#atendente_descricao").val(itemArray[colunasAssociacao.descricaoAtendente]);
 		$("#atendente_sigla").val(itemArray[colunasAssociacao.atendente]);
 		$("#atendenteSpan").html(itemArray[colunasAssociacao.descricaoAtendente]);
+		$("#dpPessoa").val(itemArray[colunasAssociacao.idSolicitante]);
+		$("#dpPessoa_sigla").val(itemArray[colunasAssociacao.solicitante]);
+		$("#dpPessoaSpan").html(itemArray[colunasAssociacao.descricaoSolicitante]);
 		$("#idConfiguracao").val(itemArray[colunasAssociacao.idAssociacao]);
 		$("#hisIdIni").val(itemArray[colunasAssociacao.hisIdIni]);
 
@@ -548,17 +551,17 @@
 					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.text : '', 
 	          		jComplexo.value > 0 ? jComplexo.value : '',
 	          		jComplexo.value > 0 ? jComplexo.text : '',
-	          		jPessoaLotaFuncCargo.value,
-          			getIdFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
+	          		jPessoaLotaFuncCargo.value > 0 ? jPessoaLotaFuncCargo.value : '',
+          			getIdFieldSolicitante(jPessoaLotaFuncCargo.value).val() > 0 ? getIdFieldSolicitante(jPessoaLotaFuncCargo.value).val() : '',
           			getDescricaoFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
           			getSiglaFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
-	          		$("#atendente").val(),
+	          		$("#atendente").val() > 0 ? $("#atendente").val() : '',
           			$("#atendente_descricao").val(),
           			$("#atendente_sigla").val(),
-          			jPrioridade.value,
-	          		jPrioridade.text,
-					idAssociacao,															// colunasAssociacao.idAssociacao
-					hisIdIniAssociacao, 													// colunasAssociacao.hisIdIni
+          			jPrioridade.value != '' ? jPrioridade.value : '',
+	          		jPrioridade.value != '' ? jPrioridade.text : '',
+					idAssociacao > 0 ? idAssociacao : '',															// colunasAssociacao.idAssociacao
+					hisIdIniAssociacao > 0 ? hisIdIniAssociacao : '', 													// colunasAssociacao.hisIdIni
 					'',                                                                     // colunasAssociacao.botaoExcluir
 					''
 	   			];

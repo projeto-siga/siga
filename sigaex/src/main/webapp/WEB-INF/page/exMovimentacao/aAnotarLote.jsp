@@ -91,7 +91,7 @@
 							<td>Responsável:</td>
 							<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 							&nbsp;&nbsp;<input type="checkbox" theme="simple" name="substituicao" value="${substituicao}"
-								onclick="javascript:displayTitular(this);" />Substituto</td>
+								onclick="javascript:displayTitular(this);" />&nbsp;Substituto</td>
 						</tr>
 						<c:choose>
 							<c:when test="${!substituicao}">

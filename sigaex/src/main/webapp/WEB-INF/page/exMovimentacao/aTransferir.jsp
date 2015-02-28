@@ -19,7 +19,7 @@
 function tamanho() {
 	var i = tamanho2();
 	if (i<0) {i=0};
-	document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
+	$("#Qtd").html('Restam ' + i + ' Caracteres');
 }
 
 function tamanho2() {
@@ -43,16 +43,18 @@ function sbmt() {
 			document.getElementById('transferir_gravar_sigla').value= '';
 			document.getElementById('transferir_gravar_pai').value= '${mob.sigla}';
 			document.getElementById('transferir_gravar_despachando').value= 'true';
-			frm.postback.value=0;
+			frm["exDocumentoDTO.postback"].value=0;
 			frm.action='${pageContext.request.contextPath}/app/expediente/doc/editar';
   		}	
   		else {
 			document.getElementById('transferir_gravar_sigla').value= '${mob.sigla}';
 			document.getElementById('transferir_gravar_pai').value= '';
 			document.getElementById('transferir_gravar_despachando').value= 'false';
-			frm.action='${pageContext.request.contextPath}/app/expediente/mov/tranferir';
+
+			frm.action='transferir?sigla=VALOR_SIGLA&popup=true&idTpDespacho=VALOR_ID_DESPACHO'
+					.replace('VALOR_SIGLA', document.getElementById('transferir_gravar_sigla').value)
+					.replace('VALOR_ID_DESPACHO', document.getElementById('transferir_gravar_idTpDespacho').value);
 		}
-		
 	frm.submit();
 }
 
@@ -94,12 +96,12 @@ function popitup_movimentacao() {
 			<div class="gt-content-box gt-for-table">
 			
 			<form name="frm" action="transferir_gravar" method="post">
-				<input type="hidden" name="id" value="${id}" />
-				<input type="hidden" name="postback" value="1" />
-				<input type="hidden" name="docFilho" value="true" />
-				<input type="hidden" name="sigla" value="${sigla}" id="transferir_gravar_sigla" />
-				<input type="hidden" name="mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
-				<input type="hidden" name="despachando" value="" id="transferir_gravar_despachando" />
+				<input type="hidden" name="exDocumentoDTO.id" value="${id}" />
+				<input type="hidden" name="exDocumentoDTO.postback" value="1" />
+				<input type="hidden" name="exDocumentoDTO.docFilho" value="true" />
+				<input type="hidden" name="exDocumentoDTO.sigla" value="${sigla}" id="transferir_gravar_sigla" />
+				<input type="hidden" name="exDocumentoDTO.mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
+				<input type="hidden" name="exDocumentoDTO.despachando" value="" id="transferir_gravar_despachando" />
 				<table class="gt-form-table">
 					<tr class="header">
 						<td colspan="2">Despacho</td>
@@ -147,7 +149,7 @@ function popitup_movimentacao() {
 							Despacho
 						</td>
 						<td>
-							<select  name="idTpDespacho" onchange="javascript:sbmt();">
+							<select  id="transferir_gravar_idTpDespacho" name="idTpDespacho" onchange="javascript:sbmt();">
 								<c:forEach items="${tiposDespacho}" var="item">
 									<option value="${item.idTpDespacho}" ${item.idTpDespacho == idTpDespacho ? 'selected' : ''}>
 										${item.descTpDespacho}
@@ -164,8 +166,8 @@ function popitup_movimentacao() {
 									Texto
 								</td>
                                 <td>
-	                                <input type="text"  rows="3" cols="50"  name="descrMov"  onkeyup="corrige();tamanho();" onblur="tamanho();"
-										onclick="tamanho();" value="${descrMov}"/>
+	                                <textarea rows="3" cols="50"  name="descrMov" onkeyup="corrige();tamanho();" onblur="tamanho();" onclick="tamanho();" value="${descrMov}"></textarea>
+                                	
 									<div id="Qtd">
 										Restam&nbsp;400&nbsp;Caracteres
 									</div>
@@ -173,6 +175,7 @@ function popitup_movimentacao() {
 							</tr>
 						</c:when>
 					</c:choose>
+					
 					<tr class="header">
 						<td colspan="2">Transferência</td>
 					</tr>

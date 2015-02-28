@@ -323,7 +323,7 @@ public class ExMobilVO extends ExVO {
 
 			addAcao("link_add",
 					"Criar Anexo",
-					"/expediente/doc",
+					"/app/expediente/doc",
 					"editar",
 					Ex.getInstance()
 							.getComp()

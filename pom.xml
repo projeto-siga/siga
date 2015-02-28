@@ -382,7 +382,7 @@
 			<dependency>
 				<groupId>jasperreports</groupId>
 				<artifactId>jasperreports</artifactId>
-				<version>3.5.1</version>
+				<version>3.5.3</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.bouncycastle</groupId>
@@ -402,7 +402,7 @@
 			<dependency>
 				<groupId>ar.com.fdvs</groupId>
 				<artifactId>DynamicJasper</artifactId>
-				<version>3.0.6</version>
+				<version>3.0.13</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>

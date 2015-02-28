@@ -18,6 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -80,22 +83,30 @@ public class PerfilJEEController extends GrupoController {
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Post("/app/gi/perfilJEE/gravar")
 	public void gravar(Long idCpGrupo
 			          ,String siglaGrupo
 					  ,String dscGrupo			          
 			          ,CpGrupoDeEmailSelecao grupoPaiSel
 			          ,Integer codigoTipoConfiguracaoNova
-			          ,String conteudoConfiguracaoNova) throws Exception {
+			          ,String conteudoConfiguracaoNova
+			          ,List<String> idConfiguracao
+			          ,List<String> codigoTipoConfiguracaoSelecionada
+			          ,List<String> conteudoConfiguracaoSelecionada) throws Exception {
 		
 		assertAcesso("PERFILJEE:Gerenciar grupos de email");
-		super.aGravar(idCpGrupo
+		Long novoIdCpGrupo = super.aGravar(idCpGrupo
 				     ,siglaGrupo
 					 ,dscGrupo
 					 ,grupoPaiSel
 					 ,codigoTipoConfiguracaoNova
-					 ,conteudoConfiguracaoNova);
-		result.redirectTo(this).lista();
+					 ,conteudoConfiguracaoNova
+					 ,idConfiguracao
+					 ,codigoTipoConfiguracaoSelecionada
+					 ,conteudoConfiguracaoSelecionada);
+		
+		result.redirectTo(MessageFormat.format("/app/gi/perfilJEE/editar?idCpGrupo={0}", novoIdCpGrupo.toString()));
 	}	
 
 	@Post("/app/gi/perfilJEE/excluir")

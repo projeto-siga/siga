@@ -250,7 +250,8 @@ public class ExDocumentoController extends ExController {
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars, exDocumentoDTO.getMobilPaiSel(), exDocumentoDTO.isCriandoAnexo());
 		return exDocumentoDTO;
 	}
-
+	
+	@Post("app/expediente/doc/editar")
 	@Get("app/expediente/doc/editar")
 	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO, final String sigla, String[] vars, final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo)
 			throws IOException, IllegalAccessException, InvocationTargetException {
@@ -269,8 +270,8 @@ public class ExDocumentoController extends ExController {
 		}
 
 		buscarDocumentoOuNovo(true, exDocumentoDTO);
-
-		if ((isDocNovo) || (param("docFilho") != null)) {
+		
+		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
 			exDocumentoDTO.setTipoDestinatario(2);
 			exDocumentoDTO.setIdFormaDoc(2);
 			exDocumentoDTO.setIdTpDoc(1L);

@@ -145,13 +145,23 @@ public class DpLotacaoAction extends
 	public String aSelecionar() throws Exception {
 		String s = super.aSelecionar();
 		if (getSel() != null) {
-			GenericoSelecao sel = new GenericoSelecao();
-			sel.setId(getSel().getId());
-			sel.setSigla(getSigla());
-			sel.setDescricao(getSel().getDescricao());
-/*			sel.setDescricao("/siga/lotacao/exibir.action?sigla="
-					+ sel.getSigla());*/
-			setSel(sel);
+			try {
+				/*
+				 * Essa condição é necessário porque o retorno do método getSigla para o ExMobil e DpPessoa
+				 * são as siglas completas, ex: JFRJ-MEM-2014/00003 e RJ14723. No caso da lotação o getSigla
+				 * somente retorna SESIA. No entanto é necessário que o método selecionar retorne a sigla completa, ex:
+				 * RJSESIA, pois esse retorno é o parametro de entrada para o método aExibir, que necessita da sigla completa.
+				 * */
+				DpLotacao lotacao = new DpLotacao();
+				lotacao = (DpLotacao) dao().consultar(getSel().getId(), DpLotacao.class, false);
+				GenericoSelecao gs = new GenericoSelecao();
+				gs.setId(getSel().getId());
+				gs.setSigla(lotacao.getSiglaCompleta());
+				gs.setDescricao(getSel().getDescricao());
+				setSel(gs);
+			} catch (final Exception ex) {
+				setSel(null);
+			}
 		}
 		return s;
 	}

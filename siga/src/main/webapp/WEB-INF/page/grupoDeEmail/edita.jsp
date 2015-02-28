@@ -371,16 +371,16 @@
 						<c:forEach var="configuracaoGrupo" items="${configuracoesGrupo}">
 							<tr class="">
 								<td valign="top">
-									<select id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracao" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">
+									<select id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracaoSelecionada" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">
 									  <option value="-1">[Remover]</option>									              
 							          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
-							           <option value="${item.codigo}" >${value == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
+							           <option value="${item.codigo}" ${item.codigo == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
 							            ${item.descricao}
 							           </option>  
 							          </c:forEach>
 							         </select>
 							         
-									<input type="hidden" name="conteudoConfiguracao"
+									<input type="hidden" name="conteudoConfiguracaoSelecionada"
 										id="conteudo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
 										value="" /> 
 									
@@ -499,7 +499,7 @@
 
 								<div style="display: none;" id="matricula_${idConfiguracaoNova}">
 									<siga:selecao tipo="pessoa" tema="simple"
-										propriedade="matricula_${idConfiguracaoNova}" modulo="siga"/>
+										propriedade="matricula_${idConfiguracaoNova}"modulo="siga"/>
 								</div>
 								<div style="display: none;" id="lotacao_${idConfiguracaoNova}">
 									<siga:selecao tipo="lotacao" tema="simple"

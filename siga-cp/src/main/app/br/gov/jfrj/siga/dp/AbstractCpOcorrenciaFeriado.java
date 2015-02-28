@@ -109,17 +109,17 @@ public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Seri
 	 *         exemplo, 01/02/10.
 	 * 
 	 */
-	public String getDtRegIniDDMMYY() {
+	public String getDtRegIniDDMMYYYY() {
 		if (getDtIniFeriado() != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 			return df.format(getDtIniFeriado());
 		}
 		return "";
 	}
 	
-	public String getDtRegFimDDMMYY() {
+	public String getDtRegFimDDMMYYYY() {
 		if (getDtFimFeriado() != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 			return df.format(getDtFimFeriado());
 		}
 		return "";

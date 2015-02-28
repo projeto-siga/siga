@@ -80,8 +80,8 @@ public class ExMovimentacaoController extends ExController {
 
 	private ExDocumento buscarDocumento(final BuscaDocumentoBuilder builder, final boolean verificarAcesso) {
 		ExDocumento doc = builder.buscarDocumento(dao());
-
 		if (verificarAcesso && builder.getMob() != null) {
+
 			verificaNivelAcesso(builder.getMob());
 		}
 
@@ -476,6 +476,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
 		result.include("doc", doc);
+		result.include("subscritorSel", new DpPessoaSelecao());
 	}
 
 	@Post("app/expediente/mov/juntar_gravar")
@@ -489,7 +490,7 @@ public class ExMovimentacaoController extends ExController {
 		buscarDocumento(builder);
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia().setDtMovString(dtMovString).setSubstituicao(substituicao)
-				.setSubscritorSel(subscritorSel).setTitularSel(titularSel).setDocumentoRefSel(documentoRefSel);
+				.setSubscritorSel(subscritorSel).setTitularSel(titularSel).setDocumentoRefSel(documentoRefSel).setMob(builder.getMob());
 
 		if (movimentacaoBuilder.getDocumentoRefSel() == null) {
 			movimentacaoBuilder.setDocumentoRefSel(new ExMobilSelecao());

@@ -123,8 +123,8 @@ public class GrupoDeEmailController extends GrupoController {
 					idConfiguracao, 
 					codigoTipoConfiguracaoSelecionada, 
 					conteudoConfiguracaoSelecionada);
-
-			result.redirectTo(MessageFormat.format("/app/gi/grupoDeEmail/editar?idCpGrupo=208", novoIdGrupo));
+			
+			result.redirectTo(MessageFormat.format("/app/gi/grupoDeEmail/editar?idCpGrupo={0}", novoIdGrupo.toString()));
 		} else {
 			throw new AplicacaoException("Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 		}

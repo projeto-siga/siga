@@ -108,7 +108,7 @@ public class PerfilController extends GrupoController {
 				, codigoTipoConfiguracaoSelecionado
 				, conteudoConfiguracaoSelecionada);
 		
-		result.redirectTo(MessageFormat.format("/app/gi/perfil/editar?idCpGrupo={0}", novoIdCpGrupo));
+		result.redirectTo(MessageFormat.format("/app/gi/perfil/editar?idCpGrupo={0}", novoIdCpGrupo.toString()));
 	}
 
 	@Post("/app/gi/perfil/excluir")

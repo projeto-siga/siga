@@ -106,7 +106,7 @@ public class PerfilJEEController extends GrupoController {
 					 ,codigoTipoConfiguracaoSelecionada
 					 ,conteudoConfiguracaoSelecionada);
 		
-		result.redirectTo(MessageFormat.format("/app/gi/perfilJEE/editar?idCpGrupo={0}", novoIdCpGrupo));
+		result.redirectTo(MessageFormat.format("/app/gi/perfilJEE/editar?idCpGrupo={0}", novoIdCpGrupo.toString()));
 	}	
 
 	@Post("/app/gi/perfilJEE/excluir")

@@ -423,8 +423,10 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 BaseService.prototype.bindRowClick = function(tr, objSalvo) {
 	var onRowClick = this.onRowClick;
 	if(onRowClick) {
-		tr.unbind('click');
+		tr.attr('onclick','').unbind('click');
+		tr.off('click');
 		tr.css('cursor', 'pointer');
+		
 		tr.on('click', function() {
 			onRowClick(objSalvo);
 		});

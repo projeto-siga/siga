@@ -78,10 +78,6 @@
 	var validatorAtributoForm;
 
 	jQuery( document ).ready(function( $ ) {
-        if (QueryString.mostrarDesativados != undefined) {
-            document.getElementById('checkmostrarAssocDesativada').checked = QueryString.mostrarDesativados == 'true';
-            document.getElementById('checkmostrarAssocDesativada').value = QueryString.mostrarDesativados == 'true';
-        }
 		
 		validatorAtributoForm = $("#atributoForm").validate({
 			onfocusout: false

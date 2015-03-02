@@ -108,7 +108,8 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			final DpPessoaSelecao subscritorSel, final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel,
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
-			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc, final Integer offset) {
+			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc, final Integer paramoffset) {
+		getP().setOffset(paramoffset);		
 		this.setSigla(sigla);
 		this.setPostback(postback);
 
@@ -118,7 +119,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 				.setOrgaoUsu(orgaoUsu).setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel).setSubscritorSel(subscritorSel).setTipoCadastrante(tipoCadastrante)
 				.setCadastranteSel(cadastranteSel).setLotaCadastranteSel(lotaCadastranteSel).setTipoDestinatario(tipoDestinatario)
 				.setDestinatarioSel(destinatarioSel).setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
-				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(offset);
+				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
 
 		builder.processar(getLotaTitular());
 
@@ -177,7 +178,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("classificacaoSel", builder.getClassificacaoSel());
 		result.include("ultMovLotaRespSel", builder.getUltMovLotaRespSel());
 		result.include("ultMovEstadoDoc", ultMovIdEstadoDoc);
-		result.include("p.offset", builder.getOffset());
+		result.include("paramoffset", builder.getOffset());
 		result.include("sigla", this.getSigla());
 		result.include("propriedade", propriedade);
 	}
@@ -196,7 +197,8 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText,
-			final Long ultMovEstadoDoc, final Integer offset) {
+			final Long ultMovEstadoDoc, final Integer paramoffset) {
+		getP().setOffset(paramoffset);
 		this.setPostback(postback);
 
 		final ExMobilBuilder builder = ExMobilBuilder.novaInstancia();
@@ -205,7 +207,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 				.setOrgaoUsu(orgaoUsu).setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel).setSubscritorSel(subscritorSel).setTipoCadastrante(tipoCadastrante)
 				.setCadastranteSel(cadastranteSel).setLotaCadastranteSel(lotaCadastranteSel).setTipoDestinatario(tipoDestinatario)
 				.setDestinatarioSel(destinatarioSel).setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
-				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(offset);
+				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
 
 		builder.processar(getLotaTitular());
 
@@ -263,7 +265,6 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("classificacaoSel", builder.getClassificacaoSel());
 		result.include("ultMovLotaRespSel", builder.getUltMovLotaRespSel());
 		result.include("ultMovIdEstadoDoc", ultMovIdEstadoDoc);
-		result.include("p.offset", builder.getOffset());
 		result.include("fullText", fullText);
 	}
 

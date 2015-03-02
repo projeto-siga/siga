@@ -72,8 +72,8 @@ function postback(){
 		#{/if}}* #{links acoes:solicitacao.operacoes(lotaTitular, titular), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-				#{descricaoItem itemConfiguracao: solicitacao.itemConfiguracao /} -
-				#{descricaoAcao acao: solicitacao.acao /}</p>
+				#{descricaoItem itemConfiguracao: solicitacao.itemAtual /} -
+				#{descricaoAcao acao: solicitacao.acaoAtual /}</p>
 			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 			<script language="javascript">
 				var descricao = document.getElementById('descrSolicitacao');
@@ -244,8 +244,8 @@ function postback(){
 				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>}*
 			#{if solicitacao.isEscalonada()}
-				#{set itemEscalonar : solicitacao.getItemAposEscalonar().toString().raw() /}
-				#{set acaoEscalonar : solicitacao.getAcaoAposEscalonar().toString().raw() /}
+				#{set itemEscalonar : solicitacao.getItemAtual().toString().raw() /}
+				#{set acaoEscalonar : solicitacao.getAcaoAtual().toString().raw() /}
 			#{/if}
 			<p>
 				<span class="historico-label">Item de Configuração:</span>
@@ -658,6 +658,10 @@ function postback(){
 					.prev('p')
 					.find('.historico-label')
 					.css('float', 'left');
+			} else if(container.find('ul li span').size() > 1) {
+				container
+					.find('.lista-historico')
+					.css('margin-top', '-20px');
 			}
 		}
 	}

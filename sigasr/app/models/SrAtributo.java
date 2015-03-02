@@ -194,14 +194,21 @@ public class SrAtributo extends HistoricoSuporte {
 		return this.idAtributo.equals(((SrAtributo)obj).idAtributo);
 	}
 	
-	public SrAtributoVO toVO() {
-		return SrAtributoVO.createFrom(this);
+	public SrAtributoVO toVO(boolean listarAssociacoes) {
+		return SrAtributoVO.createFrom(this, listarAssociacoes);
+	}
+	
+	/**
+	 * Retorna um Json de {@link SrAtributo}.
+	 */
+	public String toJson(boolean listarAssociacoes) {
+		return this.toVO(listarAssociacoes).toJson();
 	}
 	
 	/**
 	 * Retorna um Json de {@link SrAtributo}.
 	 */
 	public String toJson() {
-		return this.toVO().toJson();
+		return this.toVO(false).toJson();
 	}
 }

@@ -700,10 +700,10 @@ function limpaCampos()
 														</option>  
 													</c:forEach>
 												</select>
-												&nbsp;&nbsp;&nbsp;&nbsp;
+												&nbsp;&nbsp;&nbsp;
 												Data Inicial: 
 												<input type="text" name="dtDocString" value="${dtDocString}" onblur="javascript:verifica_data(this,0);" />
-												&nbsp;&nbsp;
+												&nbsp;
 												Data Final: 
 												<input type="text" name="dtDocFinalString" value="${dtDocString}" onblur="javascript:verifica_data(this,0);"/>
 											</td>
@@ -770,7 +770,7 @@ function limpaCampos()
 														</option>
 													</c:forEach>
 												</select>
-												&nbsp;&nbsp;&nbsp;&nbsp;
+												&nbsp;&nbsp;&nbsp;
 												Número:
 												<input type="text"size="7" name="numExpediente" value="${numExpediente}" maxlength="6"/>
 											</td>

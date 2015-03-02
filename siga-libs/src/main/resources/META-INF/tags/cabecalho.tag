@@ -261,7 +261,7 @@ ${meta}
 												var fid = document
 														.getElementById("buscar_genericoSel_id");
 
-												event = (event) ? event batik all 1.7
+												event = (event) ? event
 														: window.event
 												var keyCode = (event.which) ? event.which
 														: event.keyCode;

@@ -248,14 +248,6 @@
 	}
 	
 	associacaoService.getRow = function(assoc) {
-		var html = 
-			'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-				'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
-					'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
-					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-				'</a>' +
-			'</td>';
-			
 		return [
 					' ',
 					assoc.idConfiguracao,
@@ -265,10 +257,21 @@
 					formatDescricaoLonga(assoc.listaItemConfiguracaoVO),
 					formatDescricaoLonga(assoc.listaAcaoVO),
 					getAtributoObrigatorioString(assoc.atributoObrigatorio),
-					html
+					associacaoService.conteudoColunaAcao(assoc)
    				];
 	}
 
+	associacaoService.conteudoColunaAcao = function(assoc) {
+		if(assoc.ativo) {
+			return '<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
+						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover associação">' +
+							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
+							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+						'</a>' +
+					'</td>';
+		}
+		return ' ';
+	}
 	associacaoService.atualizarListaAssociacoes = function(jSon, clickCheck) {
 		associacaoTable.dataTable.api().clear().draw();
 		
@@ -280,27 +283,20 @@
 		if (jSon && jSon.associacoesVO) {
 			// cria a lista de associacoes, e adiciona na tela
 			for (i = 0; i < jSon.associacoesVO.length; i++) {
-				var assoc = jSon.associacoesVO[i],
-					html = 
-					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
-							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
-							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-						'</a>' +
-					'</td>',
-
-					rowAssoc = [
-								'+',
-								assoc.idConfiguracao,
-								assoc.orgaoUsuario ? assoc.orgaoUsuario.sigla : ' ',
-								assoc.complexo ? assoc.complexo.descricao : ' ',
-								assoc.solicitante ? assoc.solicitante.sigla: ' ',
-								formatDescricaoLonga(assoc.listaItemConfiguracaoVO),
-								formatDescricaoLonga(assoc.listaAcaoVO),
-								getAtributoObrigatorioString(assoc.atributoObrigatorio),
-								html
-							];
-	   				
+				var assoc = jSon.associacoesVO[i];
+			
+				rowAssoc = [
+							'+',
+							assoc.idConfiguracao,
+							assoc.orgaoUsuario ? assoc.orgaoUsuario.sigla : ' ',
+							assoc.complexo ? assoc.complexo.descricao : ' ',
+							assoc.solicitante ? assoc.solicitante.sigla: ' ',
+							formatDescricaoLonga(assoc.listaItemConfiguracaoVO),
+							formatDescricaoLonga(assoc.listaAcaoVO),
+							getAtributoObrigatorioString(assoc.atributoObrigatorio),
+							associacaoService.conteudoColunaAcao(assoc)
+						];
+   				
 				// Adiciona na tabela de Associações
 				var newRow = associacaoTable.dataTable
 					.api()

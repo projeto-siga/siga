@@ -64,6 +64,7 @@ import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 @Resource
 public class ExMovimentacaoController extends ExController {
 
+	private static final int DEFAULT_POSTBACK = 1;
 	private static final Logger LOGGER = Logger.getLogger(ExMovimentacaoController.class);
 
 	public ExMovimentacaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
@@ -1619,6 +1620,76 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
+	}
+	
+	@Get("app/expediente/mov/cancelar_juntada")
+	public void cancelarJuntada(String sigla) throws Exception {
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+					.novaInstancia()
+					.setSigla(sigla);
+		
+		buscarDocumento(builder, true);
+		ExMobil mob = builder.getMob();
+
+		validarCancelamentoJuntada(mob);
+		
+		ExMobil mobilJuntado = mob.getExMobilPai();
+		if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
+			cancelarJuntadaGravar(DEFAULT_POSTBACK, sigla, null, null, null, null, Boolean.FALSE);
+			return;
+		}
+		result.include("mob", mob);
+		result.include("request", getRequest());
+		result.include("sigla", sigla);
+		result.include("substituicao", Boolean.FALSE);
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("titularSel", new DpPessoaSelecao());
+	}
+
+	private void validarCancelamentoJuntada(ExMobil mob) {
+		if (!Ex.getInstance().getComp()
+				.podeCancelarJuntada(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível cancelar juntada");
+	}
+
+	@Post("/app/expediente/mov/cancelar_juntada_gravar")
+	public void cancelarJuntadaGravar(
+			Integer postback
+			, String sigla
+			, String dtMovString
+			, String descrMov
+			, DpPessoaSelecao subscritorSel
+			, DpPessoaSelecao titularSel
+			, boolean substituicao) throws Exception {
+		
+		this.setPostback(postback);
+		
+		ExMovimentacao mov = ExMovimentacaoBuilder
+				.novaInstancia()
+				.setDtMovString(dtMovString)
+				.setSubstituicao(substituicao)
+				.setSubscritorSel(subscritorSel)
+				.setTitularSel(titularSel)
+				.construir(dao());
+		
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+
+		buscarDocumento(builder, true);
+		
+		validarCancelamentoJuntada(builder.getMob());
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.cancelarJuntada(getCadastrante(), getLotaTitular(), builder.getMob(),
+							mov.getDtMov(), mov.getSubscritor(),
+							mov.getTitular(), descrMov);
+		} catch (final Exception e) {
+			throw e;
+		}
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {

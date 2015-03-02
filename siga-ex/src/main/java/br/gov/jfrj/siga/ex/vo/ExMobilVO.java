@@ -332,7 +332,7 @@ public class ExMobilVO extends ExVO {
 					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
 					null, null);
 		}
-		addAcao("link_break", "Desentranhar", "/expediente/mov",
+		addAcao("link_break", "Desentranhar", "/app/expediente/mov",
 				"cancelar_juntada", Ex.getInstance().getComp()
 						.podeCancelarJuntada(titular, lotaTitular, mob), null,
 				null, null, null, "once");

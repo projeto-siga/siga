@@ -152,12 +152,16 @@ public class SrPesquisa extends HistoricoSuporte {
 	}
 	
 	public String toJson() {
+		return toJson(false);
+	}
+	
+	public String toJson(boolean listarAssociacoes) {
 		Gson gson = Util.createGson("meuPesquisaHistoricoSet", "perguntaSet", "pesquisaInicial");
 		
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		jsonObject.add("perguntasSet", perguntasArray());
-		jsonObject.add("associacoesVO", getAssociacoesJson());
+		jsonObject.add("associacoesVO", getAssociacoesJson(listarAssociacoes));
 		
 		return jsonObject.toString();
 	}
@@ -179,14 +183,17 @@ public class SrPesquisa extends HistoricoSuporte {
 		return this;
 	}
 	
-	private JsonArray getAssociacoesJson() {
+	private JsonArray getAssociacoesJson(boolean listarAssociacoes) {
 		Gson gson = Util.createGson("");
 		JsonArray jsonArray = new JsonArray();
-		List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesPesquisa(this, Boolean.FALSE);
 		
-		if (associacoes != null) {
-			for (SrConfiguracao conf : associacoes) {
-				jsonArray.add(gson.toJsonTree(conf.toVO()));
+		if (listarAssociacoes) {
+			List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesPesquisa(this, Boolean.FALSE);
+			
+			if (associacoes != null) {
+				for (SrConfiguracao conf : associacoes) {
+					jsonArray.add(gson.toJsonTree(conf.toVO()));
+				}
 			}
 		}
 		

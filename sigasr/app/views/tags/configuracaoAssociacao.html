@@ -272,8 +272,13 @@
 		}
 		return ' ';
 	}
-	associacaoService.atualizarListaAssociacoes = function(jSon, clickCheck) {
+
+	associacaoService.limparDadosAssociacoes = function() {
 		associacaoTable.dataTable.api().clear().draw();
+	}
+	
+	associacaoService.atualizarListaAssociacoes = function(jSon, clickCheck) {
+		this.limparDadosAssociacoes();
 		
 		if (!clickCheck) {
 	        document.getElementById('checkmostrarAssocDesativada').checked = false;

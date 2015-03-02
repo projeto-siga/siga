@@ -1214,6 +1214,15 @@ public class Application extends SigaApplication {
 		render(itens, filtro, nome, sol);
 	}
 	
+	public static String buscarAssociacaoPesquisa(Long idPesquisa) {
+		SrPesquisa pesq = SrPesquisa.findById(idPesquisa);
+		
+		if (pesq != null)
+			return pesq.toJson(true);
+		else
+			return "";
+	}
+	
 	public static String buscarAssociacaoAtributo(Long idAtributo) {
 		SrAtributo attr = SrAtributo.findById(idAtributo);
 		

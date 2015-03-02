@@ -255,15 +255,17 @@
 	 atributoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
 
-		// atualiza a lista de Associações
-		this.buscarAssociacoes();
+		// limpa a lista de Associações
+		associacaoService.limparDadosAssociacoes();
 	}
 
 	atributoService.buscarAssociacoes = function(assoc) {
+		associacaoService.limparDadosAssociacoes();
+		
 		if (assoc && this.getId(assoc)) {
 			$.ajax({
 	        	type: "GET",
-	        	url: "@{Application.buscarAssociacaoAtributo()}?id=" + this.getId(assoc),
+	        	url: "@{Application.buscarAssociacaoAtributo()}?idAtributo=" + this.getId(assoc),
 	        	dataType: "text",
 	        	success: function(obj) {
 	        		var associacaoJson = JSON.parse(obj);
@@ -275,10 +277,6 @@
 	            	alert("Não foi possível carregar as Associações deste Atributo.");
 	        	}
 	       	});
-		}
-		else {
-			// limpa a lista de Associações
-			associacaoService.atualizarListaAssociacoes();
 		}
 	}
 </script>

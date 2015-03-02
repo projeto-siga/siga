@@ -184,6 +184,4 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	public void setExTipoFormaDoc(ExTipoFormaDoc exTipoFormaDoc) {
 		this.exTipoFormaDoc = exTipoFormaDoc;
 	}
-	
-	
 }

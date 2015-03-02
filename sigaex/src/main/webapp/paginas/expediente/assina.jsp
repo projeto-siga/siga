@@ -61,22 +61,17 @@
 			<c:set var="acao" value="assinar_gravar" />
 			<div class="gt-form-row gt-width-100" style="padding-top: 10px;">
 				<div id="dados-assinatura" style="visible: hidden">
-					<ww:hidden id="pdfchk_0" name="pdfchk_${doc.idDoc}"
-						value="${sigla}" />
-					<ww:hidden id="urlchk_0" name="urlchk_${doc.idDoc}"
-						value="/arquivo/exibir.action?arquivo=${doc.codigoCompacto}.pdf" />
+					<ww:hidden id="pdfchk_0" name="pdfchk_${doc.idDoc}" value="${sigla}" />
+					<ww:hidden id="urlchk_0" name="urlchk_${doc.idDoc}" value="/arquivo/exibir.action?arquivo=${doc.codigoCompacto}.pdf" />
 				
-					<c:set var="jspServer"
-						value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/mov/assinar_gravar.action" />
-					<c:set var="nextURL"
-						value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}" />
+					<c:set var="jspServer" value="${request.contextPath}/expediente/mov/assinar_gravar.action" />
+					<c:set var="nextURL" value="${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
 
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 					<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
-					<c:set var="urlBase"
-						value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+					<c:set var="urlBase" value="${request.scheme}://${request.serverName}:${request.serverPort}" />
 					<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
 
 					<c:set var="botao" value="" />
@@ -114,7 +109,7 @@
 				 
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
+					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
 				</c:if>
 			</div>
 		</div>

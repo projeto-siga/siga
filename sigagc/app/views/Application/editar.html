@@ -31,7 +31,7 @@ $(document).ready(function() {
 		</h2>
 
 		<div class="gt-form gt-content-box">
-			<form id="frm" action="@{Application.gravar}" method="POST">
+			<form id="frm" action="@{Application.gravar}" method="POST" enctype="multipart/form-data">
 				<input type="hidden" id="infoId" name="informacao.id" value="${informacao?.id}" />
 				<input type="hidden" name="origem" value="${origem}" /> 
 				<input type="hidden" id="siglaId" name="sigla" value="${informacao?.sigla}" /> 

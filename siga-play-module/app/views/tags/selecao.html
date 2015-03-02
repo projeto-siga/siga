@@ -17,7 +17,7 @@
 
 	<script type="text/javascript">
 	
-//O $tipo foi deixado aqui porque o sele��o do Siga precisa enxergar este m�todo
+//O $tipo foi deixado aqui porque o seleção do Siga precisa enxergar este método
 self.retorna_${_tipo}${nomeclean} = function(id, sigla, descricao) {
     try {
 		newwindow_${nomeclean}.close();
@@ -40,8 +40,35 @@ self.retorna_${_tipo}${nomeclean} = function(id, sigla, descricao) {
 
 self.newwindow_${nomeclean} = '';
 self.popitup_${nomeclean} = function(sigla) {
-	sigla = encodeURIComponent(sigla);
-	var url = '@@{Application.index()}${_tipo}/buscar?sigla=' + sigla + '&prefixo=${_prefixo}&popup=true&nome=${nomeclean}&${_params?.raw()}';
+	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w|\.|-]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
+	var url = base+'${_tipo}/buscar?sigla=' + encodeURIComponent(sigla) + '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
+
+	// Se a rota estiver na variavel abaixo a mesma nao sera direcionada pro siga
+	var modulosNaoSiga = {
+			"/sigasr/": [ "/item", "/acordo", "/acao", "/solicitacao" ],
+			"/sigagc/": [ "/app/tag" ],
+			"/sigari/": [ "/tag" ]	
+	};			
+
+	var moduloAtual = modulosNaoSiga[base];
+	var redirecionaProSiga = true;
+	if(typeof moduloAtual != "undefined") {
+		for (i=0; i<moduloAtual.length; i ++){
+			if (url.indexOf(moduloAtual[i]) > -1){
+				redirecionaProSiga = false;
+				break;
+			}	
+		}
+	}
+	
+	if (redirecionaProSiga){
+		url = "/siga/${_tipo}/buscar.action";
+		if (url == "/siga/perfil/buscar.action") { 
+			url = "/siga/gi/perfil/buscar.action";
+		}
+		var parametros = "?propriedade=${_tipo}${nomeclean}&sigla="+sigla+ '&popup=true&nome=${nomeclean}&'+'${_params?.raw()}';
+		url += parametros;
+	}
 	
 	if (!newwindow_${nomeclean}.closed && newwindow_${nomeclean}.location) {
 		newwindow_${nomeclean}.location.href = url;
@@ -78,15 +105,51 @@ self.resposta_ajax_${nomeclean} = function(response, d1, d2, d3) {
 }
 
 self.ajax_${nomeclean} = function() {
-	${_onblur};
 	var sigla = document.getElementById('${nomeclean}_sigla').value;
 	if (sigla == '') {
 		return retorna_${_tipo}${nomeclean}('', '', '');
 	}
-	sigla = encodeURIComponent(sigla);
-	var url = '@@{Application.index()}${_tipo}/selecionar?sigla=' + sigla + '&prefixo=${_prefixo}&nome=${nomeclean}&${_params?.raw()}';
+	var base = '@@{Application.index()}'.replace(/.*\/\/[\d|\w|\.|-]*(:[0-9]*)*/g, ""); //Retorna apenas o contexto da aplicação p. ex. ao inves de http://localhost:8080/sigagc, vai retornar apenas /sigagc
+	var url = base+'${_tipo}/selecionar?sigla=' + encodeURIComponent(sigla) + '&nome=${nomeclean}&'+'${_params?.raw()}';
+	
+	// Se a rota estiver na variavel abaixo a mesma nao sera direcionada pro siga
+	var modulosNaoSiga = {
+			"/sigasr/": [ "/item", "/acordo", "/acao", "/solicitacao" ],
+			"/sigagc/": [ "/app/tag" ],
+			"/sigari/": [ "/tag" ]	
+	};			
 
-	PassAjaxResponseToFunction(url, 'resposta_ajax_${nomeclean}', false);
+	var moduloAtual = modulosNaoSiga[base];
+	var redirecionaProSiga = true;
+	if(typeof moduloAtual != "undefined") {
+		for (i=0; i<moduloAtual.length; i ++){
+			if (url.indexOf(moduloAtual[i]) > -1){
+				redirecionaProSiga = false;
+				break;
+			}	
+		}
+	}
+	var params = {};
+	if (redirecionaProSiga){
+		url = "/siga/${_tipo}/selecionar.action";
+
+		params = {			
+			propriedade: "${_tipo}${nomeclean}",
+			sigla: sigla
+		}
+	
+		if (params.url == "/siga/perfil/selecionar.action") { 
+			params.url = "/siga/gi/perfil/selecionar.action";
+		}
+	}
+
+	Siga.ajax(url, params, "GET", function(response){
+	    var data = response.split(';');
+	    if (data[0] == '1')
+		    return retorna_${_tipo}${nomeclean}(data[1], data[2], data[3]);
+	    retorna_${_tipo}${nomeclean}('', '', '');
+		return popitup_${nomeclean}(sigla);
+	});
 }
 
 </script><input type="hidden" name="${_nome}"

@@ -2109,7 +2109,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.lotaTitular = lotaTitular;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "InclusÃƒÂ£o na lista " + lista.nomeLista
+		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista
 				+ " com a prioridade " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = this;
@@ -2130,7 +2130,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.lotaTitular = lotaTitular;
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA);
-		mov.descrMovimentacao = "Cancelamento de InclusÃƒÂ£o em Lista";
+		mov.descrMovimentacao = "Cancelamento de Inclusão em Lista";
 		mov.solicitacao = this;
 		mov.lista = lista;
 		mov.salvar();
@@ -2289,7 +2289,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void alterarPrazo(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo,
 			String calendario, String horario) throws Exception {
 		if (!podeAlterarPrazo(titular, lotaTitular))
-			throw new Exception("OperaÃ§Ã£o nÃƒÂ£o permitida");
+			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		DateTime datetime = new DateTime();
 		DateTimeFormatter formatter = DateTimeFormat

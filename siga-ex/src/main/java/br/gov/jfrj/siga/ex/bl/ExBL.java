@@ -34,7 +34,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -54,16 +53,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.proxy.HibernateProxy;
+import org.jboss.logging.Logger;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -84,7 +82,6 @@ import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -147,10 +144,9 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.apache.axis.encoding.Base64;
 
 public class ExBL extends CpBL {
-
 	private final String SHA1 = "1.3.14.3.2.26";
 
 	private final boolean BUSCAR_CARIMBO_DE_TEMPO = false;
@@ -371,8 +367,8 @@ public class ExBL extends CpBL {
 
 	public static void main(String args[]) throws Exception {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.PRODUCAO;
-		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
-		HibernateUtil.configurarHibernate(cfg, "");
+		Configuration cfg = ExDao.criarHibernateCfg(ambiente);
+		HibernateUtil.configurarHibernate(cfg);
 		Ex.getInstance().getBL()
 				.corrigirArquivamentosEmVolume(300000, 400000, false);
 	}
@@ -3318,8 +3314,9 @@ public class ExBL extends CpBL {
 			// ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
 			// movDao.excluir(mov);
 			excluirMovimentacao(mov);
-			if ((!mob.doc().isAssinado())
-					&& (!mob.doc().isAssinadoDigitalmente()))
+			if(!mob.doc().isAssinado() &&
+					((mob.doc().isFisico() && !mob.doc().isFinalizado())
+					|| (mob.doc().isEletronico() && !mob.doc().possuiAlgumaAssinatura())))
 				processar(mob.getExDocumento(), true, false, null);
 			concluirAlteracao(mov.getExDocumento());
 
@@ -6791,7 +6788,7 @@ public class ExBL extends CpBL {
 			String s = json.getAsString();
 			if (s != null) {
 				byte ab[] = Base64.decode(s);
-				return Hibernate.createBlob(ab);
+				return HibernateUtil.getSessao().getLobHelper().createBlob(ab);
 			}
 			return null;
 		}
@@ -6966,5 +6963,6 @@ public class ExBL extends CpBL {
 
 		return jsonOutput;
 	}
+
 
 }

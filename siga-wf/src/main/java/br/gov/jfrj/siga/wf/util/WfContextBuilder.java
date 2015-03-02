@@ -18,11 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
-import org.hibernate.SessionFactory;
 import org.jbpm.JbpmConfiguration;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
  * Classe que representa um construtor de contexto do sistema de workflow.
@@ -33,12 +29,7 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 public class WfContextBuilder {
 
 	private static final ThreadLocal<WfJbpmContext> localContext = new ThreadLocal<WfJbpmContext>();
-
 	private static JbpmConfiguration configuration = null;
-
-	private static boolean fConfigured = false;
-
-	private static final Object classLock = WfContextBuilder.class;
 
 	/**
 	 * Retorna uma configuração do JBPM.
@@ -46,46 +37,12 @@ public class WfContextBuilder {
 	 * @return
 	 */
 	public static JbpmConfiguration getConfiguration() {
-		// if (configuration == null) {
-		// try {
-		// HibernateUtil
-		// .configurarHibernate("/br/gov/jfrj/siga/wf/dao/hibernate.cfg.xml");
-		// configuration = JbpmConfiguration.getInstance("jbpm.cfg.xml");
-		// // configuration.startJobExecutor();
-		// return configuration;
-		// } catch (Exception ex) {
-		// throw new RuntimeException(ex.getMessage());
-		// }
-		// } else
-		// return configuration;
-
-		if (!fConfigured) {
-			synchronized (classLock) {
-				if (!fConfigured) {
-					try {
-						configuration = JbpmConfiguration
-								.getInstance("jbpm.cfg.xml");
-						SessionFactory fabricaDeSessao = WfDao.getInstance()
-								.getFabricaDeSessao();
-						if (fabricaDeSessao == null)
-							throw new AplicacaoException(
-									"Não foi possivel obter uma configuração do Jbpm pois a sessionFactory do Hibernate não estava criada.");
-						configuration.getInstance().createJbpmContext()
-								.setSessionFactory(fabricaDeSessao);
-						configuration.startJobExecutor();
-						fConfigured = true;
-						return configuration;
-					} catch (final Throwable ex) {
-						// Make sure you log the exception, as it might be
-						// swallowed
-						// log.error("Não foi possível configurar o hibernate.",
-						// ex);
-						throw new RuntimeException(ex.getMessage());
-					}
-				}
-			}
-		}
 		return configuration;
+	}
+	
+	public static void setConfiguration(JbpmConfiguration config){
+		if (configuration == null)
+			configuration = config;
 	}
 
 	/**

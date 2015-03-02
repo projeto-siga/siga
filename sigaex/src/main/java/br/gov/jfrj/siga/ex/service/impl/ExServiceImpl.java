@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
+import javax.jws.WebService;
 import javax.servlet.ServletContext;
-import javax.ws.rs.Path;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
@@ -60,8 +60,8 @@ import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.webwork.action.ExMobilSelecao;
 
-//@WebService(endpointInterface = "br.gov.jfrj.siga.ex.service.ExService")
-@Path("/servicos")
+
+@WebService(serviceName = "ExService", endpointInterface = "br.gov.jfrj.siga.ex.service.ExService", targetNamespace = "http://impl.service.ex.siga.jfrj.gov.br/")
 public class ExServiceImpl implements ExService {
 
 	private boolean hideStackTrace = false;
@@ -278,8 +278,7 @@ public class ExServiceImpl implements ExService {
 	public String getAtendente(String codigoDocumento, String siglaTitular)
 			throws Exception {
 		try {
-			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
-					siglaTitular);
+			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular);
 			ExMobil mob = buscarMobil(codigoDocumento);
 			DpResponsavel resp = ExCompetenciaBL.getAtendente(mob);
 			if (resp == null)

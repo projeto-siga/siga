@@ -12,11 +12,10 @@ public class SigaPlugin extends PlayPlugin {
 	@Override
 	public void onConfigurationRead() {
 		super.onConfigurationRead();
-		String applicationName = Play.configuration
-				.getProperty("application.name");
+		String applicationName = Play.configuration.getProperty("application.name");
 
 		String applicationMode = "";
-		if ("test".equals(Play.id))
+		if ("test".equals(Play.id)) 
 			applicationMode = "test";
 		else
 			applicationMode = SigaBaseProperties.getAmbiente();
@@ -24,12 +23,8 @@ public class SigaPlugin extends PlayPlugin {
 		try {
 			HashMap<String, String> propsPlay = SigaBaseProperties.obterTodas();
 			for (String s : propsPlay.keySet()) {
-				if (s.startsWith(applicationName + "." + applicationMode
-						+ ".play.")
-						|| s.startsWith(applicationMode + ".play.")) {
-					Play.configuration.put(
-							s.substring(s.indexOf(".play.") + 6),
-							propsPlay.get(s));
+				if (s.startsWith(applicationName + "." + applicationMode+ ".play.")	|| s.startsWith(applicationMode + ".play.")) {
+					Play.configuration.put(s.substring(s.indexOf(".play.") + 6),propsPlay.get(s));
 				}
 			}
 
@@ -41,8 +36,7 @@ public class SigaPlugin extends PlayPlugin {
 				Play.configuration.put("servidor.principal", servidor);
 
 		} catch (Exception e) {
-			Logger.error("Ocorreu um erro ao configurar o Play: "
-					+ e.getMessage());
+			Logger.error("Ocorreu um erro ao configurar o Play: "+ e.getMessage());
 			e.printStackTrace();
 		}
 

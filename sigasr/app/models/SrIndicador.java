@@ -23,8 +23,8 @@ public class SrIndicador {
 		Map<String, Object> attrs = new HashMap<String, Object>();
 		attrs.put("codigo", getConteudoBlobString());
 		attrs.put("lista",
-				Arrays.asList(new String[] { "manga", "pï¿½ssego", "abacaxi" }));
-		List<String> lista = Arrays.asList(new String[] { "manga", "pï¿½ssego",
+				Arrays.asList(new String[] { "manga", "pêssego", "abacaxi" }));
+		List<String> lista = Arrays.asList(new String[] { "manga", "pêssego",
 				"abacaxi" });
 		return s.executar(attrs);
 	}

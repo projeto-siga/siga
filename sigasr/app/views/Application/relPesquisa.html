@@ -3,7 +3,7 @@
 	<div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-		<form id="grelprazo" action="@{Application.grelPesquisa}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100" target="relPesquisa">
+		<form id="grelprazo" action="@{Application.grelPesquisa}" onsubmit="javascript: return limpaCampos()" method="GET" class="form100" target="relPesquisa" enctype="multipart/form-data">
 		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 		
 			<table class="gt-form-table">

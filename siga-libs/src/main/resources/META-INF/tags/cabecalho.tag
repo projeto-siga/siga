@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ attribute name="titulo"%>
 <%@ attribute name="menu"%>
 <%@ attribute name="idpagina"%>
@@ -14,6 +13,7 @@
 <%@ attribute name="onLoad"%>
 <%@ attribute name="desabilitarbusca"%>
 <%@ attribute name="desabilitarmenu"%>
+<%@ attribute name="incluirJs"%>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -59,36 +59,32 @@ ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
 
-<link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css"
-	type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css"
-	type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css"
-	type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css" type="text/css" media="screen, projection">
 
 <!-- <link rel="StyleSheet" href="/sigalibs/siga.css" type="text/css"	title="SIGA Estilos" media="screen"> -->
 
-<script src="/siga/sigalibs/ajax.js" language="JavaScript1.1"
-	type="text/javascript"></script>
-<script src="/siga/sigalibs/static_javascript.js"
-	language="JavaScript1.1" type="text/javascript" charset="utf-8"></script>
+<script src="/siga/sigalibs/ajax.js" type="text/javascript"></script>
+<script src="/siga/sigalibs/static_javascript.js" type="text/javascript" charset="utf-8"></script>
+<script src="/siga/javascript/picketlink.js" type="text/javascript" charset="utf-8"></script>
+
 
 <!-- <link href="${pageContext.request.contextPath}/sigalibs/menu.css"
 	rel="stylesheet" type="text/css" /> -->
 
 <link rel="shortcut icon" href="/siga/sigalibs/siga.ico" />
 
-<script language="JavaScript"
-	src="/siga/javascript/jquery/1.6/jquery-1.6.4.min.js" type="text/javascript"></script>
-<script language="JavaScript"
-	src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
-<link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css"
-	type="text/css" media="screen, projection">
-<script language="JavaScript"
-	src="/siga/javascript/datepicker-pt-BR.js" type="text/javascript"></script>
+<script src="/siga/javascript/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
+<script src="/siga/javascript/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+<script src="/siga/javascript/json2.js" type="text/javascript"></script>
+<link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen, projection">
 <!-- <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/development-bundle/themes/base/jquery.ui.all.css"
 	type="text/css" media="screen, projection"> -->
-	
+<c:if test="${not empty incluirJs}">
+    <script src="/siga/javascript/${incluirJs}" type="text/javascript"></script>
+</c:if>
 		
 <%-- Desabilitado porque requer o jquery 1.7 ou maior. 	
 <script language="JavaScript"
@@ -96,7 +92,7 @@ ${meta}
 --%>	
 <!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	$(document).ready(function() {
 		$('.links li code').hide();
 		$('.links li p').click(function() {
@@ -138,7 +134,7 @@ ${meta}
 						 - ${cadastrante.lotacao.sigla}</c:when>
 												</c:choose>
 											</c:catch> </strong> <span class="gt-util-separator">|</span> <a
-											href="/siga/logoff.action">sair</a>
+											href="${pageContext.request.contextPath}/?GLO=true">sair</a>
 									</p>
 									<p style="text-align: right; padding-top: 10px;">
 										<c:catch>
@@ -162,25 +158,28 @@ ${meta}
 						</c:if>
 						<!-- / utility box -->
 						<!-- logo -->
-						<div class="gt-logo" style="padding: 0;">
-							<img style="margin-top: 3px; margin-bottom: -13px;"
-								src="/siga/imagens/logo.png">
-						</div>
-						<div class="gt-company">
-							<strong>${f:resource('siga.cabecalho.titulo')} <c:catch>
-									<c:if test="${not empty titular.orgaoUsuario.descricao}">
-- ${titular.orgaoUsuario.descricao}
-</c:if>
-								</c:catch> </strong>
-						</div>
-						<div class="gt-version">
-							Sistema Integrado de Gest&atilde;o Administrativa
-							<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
-							</c:if>
-						</div>
-						<!-- / logo -->
+						<a href="/siga" title="Página inicial" class="link-sem-estilo">
+							<div class="gt-logo" style="padding: 0;">
+								<img style="margin-top: 3px; margin-bottom: -13px;"
+									src="/siga/imagens/logo.png">
+							</div>
+							<div class="gt-company">
+								<strong>${f:resource('siga.cabecalho.titulo')} 
+									<c:catch>
+										<c:if test="${not empty titular.orgaoUsuario.descricao}">- ${titular.orgaoUsuario.descricao}</c:if>
+									</c:catch> 
+								</strong>
+							</div>
+							<div class="gt-version">
+								Sistema Integrado de Gest&atilde;o Administrativa
+								<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
+								</c:if>
+							</div>
+							<!-- / logo -->
+						</a>
 					</div>
 				</div>
+				
 				<!-- /head top -->
 				<!-- navbar -->
 				<c:if test="${desabilitarmenu != 'sim'}">
@@ -272,7 +271,7 @@ ${meta}
 														fld.onblur();
 													} else {
 														window.alert("1");
-														window.location.href = '${request.scheme}://${request.serverName}:${request.localPort}/sigaex/expediente/doc/exibir.action?sigla='
+														window.location.href = '${request.scheme}://${request.serverName}:${request.serverPort}/sigaex/expediente/doc/exibir.action?sigla='
 																+ fld.value;
 													}
 													return false;
@@ -304,33 +303,6 @@ ${meta}
 												return;
 
 											}
-
-
-											var options, a;
-											jQuery(function(){
-												a = $('#buscar_genericoSel_sigla').autocomplete({
-												    source: function (request, response) {
-												        $.getJSON("/sigagc/app/pontoDeEntrada", {
-												            texto: request.term
-												        }, function(data) {
-												        	response(data);
-												        })
-												    },
-												    select: function (event, ui) {
-												      var label = ui.item.label;
-												      var value = ui.item.value;
-												      window.location.href = "/sigagc/app/exibirPontoDeEntrada?sigla=" + value; 
-												    },
-												    minLength: 3
-												});
-											}); 
-
-											// Create autocomplete:
-											//jQuery(function(){
-											//	$('#buscar_genericoSel_sigla').autocomplete({
-											//		serviceUrl:'/sigagc/app/entryPoint'});
-											//}); 
-																						
 										</script>
 									</div>
 							</c:if>

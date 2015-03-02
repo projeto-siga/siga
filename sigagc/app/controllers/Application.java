@@ -40,6 +40,7 @@ import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
+import play.mvc.Scope.RenderArgs;
 import utils.GcArvore;
 import utils.GcBL;
 import utils.GcCloud;
@@ -52,7 +53,6 @@ import utils.diff_match_patch.Diff;
 import utils.diff_match_patch.Operation;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -61,49 +61,42 @@ import br.gov.jfrj.siga.model.DadosRI;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.jamonapi.utils.Logger;
 
-//Obtaining Hibernate objects programmatically
-//
-//You can always get access to a Hibernate Session object from an EntityManager instance through the standard EntityManager.getDelegate() method. This is a JPA specification feature.
-//
-//  @PersistenceContext EntityManager manager;
-//  ...
-//{      org.hibernate.Session session = (Session)manager.getDelegate();  }
-//The specification, however, does not provide a way to get at the underlying implementation of a Query. Hibernate should provide most of its extended functionality through JPA query hints. For example, lets say you wanted to enable a query cache:
-//
-//  javax.persistence.Query query = manager.createQuery(...);
-//  query.setHint("org.hibernate.cacheable", true);
-
-public class Application extends SigaApplication {
+public class Application extends SigaApplication{
 
 	private static final String CATEGORIA_OUTRAS = "[Outros]";
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 	private static final int CONTROLE_HASH_TAG = 1;
 
-	@Before(unless = {"pontoDeEntrada"})
+	@Before(priority = 1, unless = {"pontoDeEntrada"})
 	public static void addDefaultsAlways() throws Exception {
 		prepararSessao();
-		Cp.getInstance().getConf().limparCacheSeNecessario();
+	//	Cp.getInstance().getConf().limparCacheSeNecessario();
 	}
 
-	@Before(unless = { "publicKnowledge", "dadosRI", "pontoDeEntrada"})
+	@Before(priority = 2,unless = {"publicKnowledge", "dadosRI", "pontoDeEntrada"})
 	public static void addDefaults() throws Exception {
-
 		try {
-			obterCabecalhoEUsuario("#f1f4e2");
+			SigaApplication.obterCabecalhoEUsuario("#f1f4e2");
 			assertAcesso("");
 		} catch (Exception e) {
 			tratarExcecoes(e);
 		}
+
+		try {
+			assertAcesso("ADM:Administrar");
+			
+			RenderArgs.current().put("exibirMenuAdministrar", true);
+		} catch (Exception e) {
+			RenderArgs.current().put("exibirMenuAdministrar", false);
+		}
 	}
+
 
 	public static void gadget() {
 		Query query = JPA.em().createNamedQuery("contarGcMarcas");
-		query.setParameter("idPessoaIni",
-				((DpPessoa) renderArgs.get("cadastrante")).getIdInicial());
-		query.setParameter("idLotacaoIni",
-				((DpLotacao) renderArgs.get("lotaTitular")).getIdInicial());
+		query.setParameter("idPessoaIni", ((DpPessoa) RenderArgs.current().get("cadastrante")).getIdInicial());
+		query.setParameter("idLotacaoIni", ((DpLotacao) RenderArgs.current().get("lotaTitular")).getIdInicial());
 		List contagens = query.getResultList();
 		render(contagens);
 	}
@@ -169,6 +162,7 @@ public class Application extends SigaApplication {
 			}
 		}
 	}
+
 	public static void publicKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo, boolean popup,
 			String estiloBusca, Boolean podeCriar) throws Exception {
@@ -247,11 +241,9 @@ public class Application extends SigaApplication {
 				classificacao += s;
 			}
 		}
-		// Necessário pq para criar um novo conhecimento a partir de um já
-		// existente, a classificação
-		// é passada como queryString. Sem fazer isso, as hashTags não são
-		// passadas.
-		// classificacao = URLEncoder.encode(classificacao, "UTF-8");
+		//Necessário pq para criar um novo conhecimento a partir de um já existente, a classificação
+		//é passada como queryString. Sem fazer isso, as hashTags não são passadas.
+		//classificacao = URLEncoder.encode(classificacao, "UTF-8");
 		// if (msgvazio != null) {
 		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
 		// "\">aqui</a>");
@@ -454,7 +446,7 @@ public class Application extends SigaApplication {
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from GcMarca")
 				.getResultList();
-
+		 JPA.em().createQuery("select cp from CpOrgaoUsuario cp").getResultList();
 		List<CpOrgaoUsuario> orgaosusuarios = CpOrgaoUsuario.all().fetch();
 
 		List<GcTipoInformacao> tiposinformacao = GcTipoInformacao.all().fetch();
@@ -623,7 +615,7 @@ public class Application extends SigaApplication {
 		DpPessoa titular = titular();
 		DpLotacao lotaTitular = lotaTitular();
 
-		// Edson: est� estranho referenciar o TMPGC-0. Ver solu��o melhor.
+		// Edson: esta estranho referenciar o TMPGC-0. Ver solucao melhor.
 		if (sigla != null && !sigla.equals("TMPGC-0"))
 			informacao = GcInformacao.findBySigla(sigla);
 		else
@@ -691,23 +683,22 @@ public class Application extends SigaApplication {
 					classificacao, origem, tipo, editarClassificacao);
 		} else
 			throw new AplicacaoException(
-					"Restrição de Acesso ("
+					"Restri��o de Acesso ("
 							+ informacao.edicao.nome
-							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
+							+ ") : O usu�rio n�o tem permiss�o para editar o conhecimento solicitado.");
 	}
 
 	public static void historico(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 
-		if (informacao.podeRevisar(titular(), lotaTitular())
-				|| informacao.acessoPermitido(titular(), lotaTitular(),
-						informacao.visualizacao.id)) {
+		if (informacao.podeRevisar(titular(), lotaTitular()) ||
+				informacao.acessoPermitido(titular(), lotaTitular(), informacao.visualizacao.id)) {
 
 			diff_match_patch diff = new diff_match_patch();
-
+	
 			String txtAnterior = "";
 			String tituloAnterior = "";
-
+	
 			SortedSet<GcMovimentacao> list = new TreeSet<GcMovimentacao>();
 			HashMap<GcMovimentacao, String> mapTitulo = new HashMap<GcMovimentacao, String>();
 			HashMap<GcMovimentacao, String> mapTxt = new HashMap<GcMovimentacao, String>();
@@ -717,23 +708,22 @@ public class Application extends SigaApplication {
 				ArrayUtils.reverse(array);
 				for (GcMovimentacao mov : array) {
 					Long t = mov.tipo.id;
-
+	
 					if (mov.isCancelada())
 						continue;
-
-					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO
-							|| t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
+	
+					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO || 
+						t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
 						// Titulo
 						String titulo = mov.arq.titulo;
 						LinkedList<Diff> tituloDiffs = diff.diff_main(
 								tituloAnterior, titulo, true);
-						String tituloDiffHtml = diff
-								.diff_prettyHtml(tituloDiffs);
+						String tituloDiffHtml = diff.diff_prettyHtml(tituloDiffs);
 						boolean tituloAlterado = tituloDiffs == null
 								|| tituloDiffs.size() != 1
 								|| tituloDiffs.size() == 1
 								&& tituloDiffs.get(0).operation != Operation.EQUAL;
-
+	
 						// Texto
 						String txt = mov.arq.getConteudoTXT();
 						LinkedList<Diff> txtDiffs = diff.diff_main(txtAnterior,
@@ -742,7 +732,7 @@ public class Application extends SigaApplication {
 						boolean txtAlterado = txtDiffs == null
 								|| txtDiffs.size() != 1 || txtDiffs.size() == 1
 								&& txtDiffs.get(0).operation != Operation.EQUAL;
-
+	
 						if (tituloAlterado || txtAlterado) {
 							list.add(mov);
 							if (tituloAlterado)
@@ -755,59 +745,50 @@ public class Application extends SigaApplication {
 					}
 				}
 			}
-
-			String conteudo = Util.marcarLinkNoConteudo(informacao.arq
-					.getConteudoTXT());
+			
+			String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
 			if (conteudo != null)
 				informacao.arq.setConteudoTXT(conteudo);
-
+			
 			render(informacao, list, mapTitulo, mapTxt);
-		} else
+		} 
+		else
 			throw new AplicacaoException(
-					"Restrição de Acesso ("
-							+ informacao.visualizacao.nome
-							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
+					"Restrição de Acesso (" + informacao.visualizacao.nome + ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 
 	}
 
 	public static void movimentacoes(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		if (informacao.podeRevisar(titular(), lotaTitular())
-				|| informacao.acessoPermitido(titular(), lotaTitular(),
-						informacao.visualizacao.id)) {
-			String conteudo = Util.marcarLinkNoConteudo(informacao.arq
-					.getConteudoTXT());
+		if (informacao.podeRevisar(titular(), lotaTitular()) ||
+				informacao.acessoPermitido(titular(), lotaTitular(), informacao.visualizacao.id)) {		
+			String conteudo = Util.marcarLinkNoConteudo(informacao.arq.getConteudoTXT());
 			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
+					informacao.arq.setConteudoTXT(conteudo);
 			render(informacao);
-		} else
+		}
+		else
 			throw new AplicacaoException(
-					"Restrição de Acesso ("
-							+ informacao.visualizacao.nome
-							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
+					"Restrição de Acesso (" + informacao.visualizacao.nome + ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 	}
 
 	public static void fechar(String sigla) throws Exception {
 		GcInformacao inf = GcInformacao.findBySigla(sigla);
 		if (inf.acessoPermitido(titular(), lotaTitular(), inf.edicao.id)) {
-			GcBL.movimentar(inf,
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,
-					null, null, null, null, null, null, null, null);
+			GcBL.movimentar(inf, GcTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO, null,	null, null, null, null, null, null, null, null);
 			GcBL.gravar(inf, idc(), titular(), lotaTitular());
 			exibir(inf.getSigla());
 		} else
 			throw new AplicacaoException(
-					"Restrição de Acesso ("
+					"Restri��o de Acesso ("
 							+ inf.edicao.nome
-							+ ") : O usuário não tem permissão para finalizar o conhecimento solicitado.");
+							+ ") : O usu�rio n�o tem permiss�o para finalizar o conhecimento solicitado.");
 	}
-
+	
 	public static void duplicar(String sigla) throws Exception {
 		GcInformacao infDuplicada = GcInformacao.findBySigla(sigla);
 
-		GcMovimentacao movLocalizada = GcBL.movimentar(infDuplicada,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, null, null,
-				null, null, null, null, null, null, null);
+		GcMovimentacao movLocalizada = GcBL.movimentar(infDuplicada, GcTipoMovimentacao.TIPO_MOVIMENTACAO_DUPLICAR, null, null, null, null, null, null, null, null, null);
 		GcBL.gravar(infDuplicada, idc(), titular(), lotaTitular());
 
 		GcInformacao inf = new GcInformacao();
@@ -871,14 +852,14 @@ public class Application extends SigaApplication {
 
 		informacao.tipo = tipo;
 
-		// Atualiza a classificação com as hashTags encontradas
+		// Atualiza a classifica��o com as hashTags encontradas
 		classificacao = Util.findHashTag(conteudo, classificacao,
 				CONTROLE_HASH_TAG);
 		
 		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
 				&& informacao.grupo == null)
 			throw new Exception(
-					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restrição.");
+					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restri��o.");
 
 		if (informacao.id != 0)
 			GcBL.movimentar(informacao,
@@ -907,7 +888,7 @@ public class Application extends SigaApplication {
 
 		if (informacao.elaboracaoFim != null)
 			throw new AplicacaoException(
-					"Não é permitido remover informações que já foram finalizadas.");
+					"N�o � permitido remover informa��es que j� foram finalizadas.");
 		JPA.em().createQuery("delete from GcMarca where inf.id = :id")
 				.setParameter("id", informacao.id).executeUpdate();
 		JPA.em().createQuery("delete from GcMovimentacao where inf.id = :id")
@@ -934,12 +915,13 @@ public class Application extends SigaApplication {
 					null, null, null);
 			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
 			Correio.notificar(informacao, pesResponsavel, lotResponsavel, email);
-			flash.success("Notificação realizada com sucesso!");
+			flash.success("Notificacao realizada com sucesso!");
 			exibir(informacao.getSigla());
 		} else
 			throw new AplicacaoException(
-					"Para notificar é necessário selecionar uma Pessoa ou Lotação.");
+					"Para notificar so e necessario selecionar uma Pessoa ou Lotacao.");
 	}
+
 
 	public static void solicitarRevisao(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
@@ -958,11 +940,11 @@ public class Application extends SigaApplication {
 					pesResponsavel, lotResponsavel, null, null, null, null,
 					null, null, null);
 			GcBL.gravar(informacao, idc(), titular(), lotaTitular());
-			flash.success("Solicitação de revisão realizada com sucesso!");
+			flash.success("Solicita��o de revis�o realizada com sucesso!");
 			exibir(informacao.getSigla());
 		} else
 			throw new AplicacaoException(
-					"Para solicitar revisão é necessário selecionar uma Pessoa ou Lotação.");
+					"Para solicitar revis�o � necess�rio selecionar uma Pessoa ou Lota��o.");
 	}
 
 	public static void anexar(String sigla) throws Exception {
@@ -981,7 +963,7 @@ public class Application extends SigaApplication {
 									+ "m�ximo permitido (2MB)");
 				if (!(file.getSize() > 0)) 
 					throw new AplicacaoException(
-							"Não é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
+							"Nao e permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
 				if (origem.equals("editar")) {
 					long id = GcBL.gravarArquivoSemMovimentacao(file);
 					String url = "/sigagc/app/baixar?id=" + id;
@@ -1057,7 +1039,7 @@ public class Application extends SigaApplication {
 			}
 		}
 		throw new AplicacaoException(
-				"Não há pedido de revisão pendente para "
+				"N�o h� pedido de revis�o pendente para "
 						+ idc().getDpPessoa().getSigla());
 	}
 
@@ -1197,7 +1179,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("GC:Módulo de Gestão de Conhecimento;"
+		SigaApplication.assertAcesso("GC:M�dulo de Gest�o de Conhecimento"
 				+ path);
 	}
 
@@ -1226,7 +1208,7 @@ public class Application extends SigaApplication {
 		String stackTrace = sw.toString();
 		String message = throwable.getMessage();
 		if (message == null)
-			message = "Nenhuma informação disponível.";
+			message = "Nenhuma informa��o dispon�vel.";
 		erro(message, stackTrace);
 	}
 
@@ -1237,5 +1219,4 @@ public class Application extends SigaApplication {
 		GcBL.cancelarMovimentacao(info, mov, idc(), titular(), lotaTitular());
 		movimentacoes(sigla);
 	}
-
 }

@@ -35,7 +35,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.view.JasperViewer;
 
 import org.hibernate.SQLQuery;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.type.CalendarType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
@@ -46,7 +46,6 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
@@ -306,9 +305,9 @@ public class RelTempoDoc extends RelatorioTemplate {
 		try {
 			CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 			Wf.getInstance().getProp().setPrefixo(ambiente.getSigla());
-			AnnotationConfiguration cfg = WfDao.criarHibernateCfg(ambiente);
-			CpDao.configurarHibernateParaDebug(cfg);
-			HibernateUtil.configurarHibernate(cfg, "");
+			Configuration cfg = WfDao.criarHibernateCfg(ambiente);
+//			CpDao.configurarHibernateParaDebug(cfg);
+			HibernateUtil.configurarHibernate(cfg);
 
 			RelTempoDoc rep = new RelTempoDoc(parametros);
 			rep.gerar();

@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.base.auditoria.filter;
 
 import static junit.framework.Assert.*;
 
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +88,7 @@ public class ThreadFilterTest {
 	@Test
 	public void naoDeveAdicionarTransactionFactoryClassSeAClasseNaoForDeclaradaNoSigaProperties() throws Exception {
 		
-		Configuration cfg = new AnnotationConfiguration();
+		Configuration cfg = new Configuration();
 		ThreadFilter tf = new ThreadFilter(){};
 		tf.registerTransactionClasses( cfg );
 		
@@ -101,7 +100,7 @@ public class ThreadFilterTest {
 		
 		System.setProperty( "hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory" );
 		
-		Configuration cfg = new AnnotationConfiguration();
+		Configuration cfg = new Configuration();
 		ThreadFilter tf = new ThreadFilter(){};
 		tf.registerTransactionClasses( cfg );
 		
@@ -111,7 +110,7 @@ public class ThreadFilterTest {
 	@Test
 	public void naoDeveAdicionarTransactionManagerLookupClassSeAClasseNaoForDeclaradaNoSigaProperties() throws Exception {
 		
-		Configuration cfg = new AnnotationConfiguration();
+		Configuration cfg = new Configuration();
 		ThreadFilter tf = new ThreadFilter(){};
 		tf.registerTransactionClasses( cfg );
 		
@@ -123,7 +122,7 @@ public class ThreadFilterTest {
 		
 		System.setProperty( "hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup" );
 		
-		Configuration cfg = new AnnotationConfiguration();
+		Configuration cfg = new Configuration();
 		ThreadFilter tf = new ThreadFilter(){};
 		tf.registerTransactionClasses( cfg );
 		

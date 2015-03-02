@@ -11,7 +11,8 @@ import play.jobs.OnApplicationStart;
 public class Bootstrap extends Job {
 
 	public void doJob() throws Exception {
-
+		javassist.runtime.Desc.useContextClassLoader = true;
+		
 		System.out
 				.println("\n\n\n*********************** INICIALIZANDO CLASSES *****************************");
 		//

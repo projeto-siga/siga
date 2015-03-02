@@ -639,8 +639,7 @@ public class ExMobilAction extends
 	}
 
 	public String aOtimizarIndices() {
-		FullTextSession fullTextSession = Search.createFullTextSession(ExDao
-				.getInstance().getSessao());
+		FullTextSession fullTextSession = Search.getFullTextSession(ExDao.getInstance().getSessao());
 		SearchFactory searchFactory = fullTextSession.getSearchFactory();
 		searchFactory.optimize();
 		return Action.SUCCESS;

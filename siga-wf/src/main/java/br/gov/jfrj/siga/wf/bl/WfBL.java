@@ -432,15 +432,7 @@ public class WfBL extends CpBL {
 	 */
 	public void encerrarProcessInstanceDaTarefa(Long idTI, Date dtFim) throws AplicacaoException {
 		TaskInstance ti = WfContextBuilder.getJbpmContext().getJbpmContext().getTaskInstance(idTI);
-		if (ti==null){
-			throw new AplicacaoException("Tarefa não encontrada!");
-		}
-		if (dtFim==null){
-			throw new AplicacaoException("Data inválida!");
-		}
-		
 		encerrarProcessInstance(ti.getProcessInstance().getId(), dtFim);
-		
 	}
 	
 	public String gravarProcessDefinition(String xml) {

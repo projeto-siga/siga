@@ -24,13 +24,6 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
-
-
-
-
-
-import org.springframework.context.support.AbstractApplicationContext;
-
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gi.service.GiService;
@@ -39,8 +32,6 @@ import br.gov.jfrj.siga.wf.service.WfService;
 public abstract class Service {
 
 	public static final String ERRO = "ERRO: ";
-
-	protected static AbstractApplicationContext context = null;
 
 	static WfService wf = null;
 	static ExService ex = null;
@@ -59,30 +50,6 @@ public abstract class Service {
 		return wf;
 	}
 	
-	/* Refactoring do GetExService já que o método getExService com argumentos só era chamado pelo getExService sem argumentos
-	 * bruno.lacerda@avantiprima.com.br
-	 */	 
-	/*
-	public static ExService getExService() {
-		return getExService("evasion", "80");
-	}
-	public static ExService getExService(String remoteHost, String remotePort) {
-		if (remoteHost == null)
-			remoteHost = "localhost";
-		if (remotePort != null)
-			remotePort = ":" + remotePort;
-		if (ex == null)
-			ex = getService(ExService.class, "http://" + remoteHost
-					+ remotePort + "/sigaex/servicos/ExService?wsdl",
-					"http://impl.service.ex.siga.jfrj.gov.br/",
-					"ExServiceImplService");
-		return ex;
-	}
-	*/
-	
-	/* Externalização das informacoes dos servicos
-	 * bruno.lacerda@avantiprima.com.br
-	 */
 	public static ExService getExService() {
 		if (ex == null)
 			ex = getService(ExService.class, 
@@ -92,9 +59,6 @@ public abstract class Service {
 		return ex;
 	}
 
-	/* Externalização das informacoes dos servicos
-	 * bruno.lacerda@avantiprima.com.br
-	 */
 	public static CdService getCdService() {
 		if (cd == null)
 			cd = getService(CdService.class,
@@ -104,9 +68,6 @@ public abstract class Service {
 		return cd;
 	}
 	
-	/* Externalização das informacoes dos servicos
-	 * 
-	 */
 	public static GiService getGiService() {
 		if (gi == null)
 			gi = getService(GiService.class,
@@ -117,18 +78,16 @@ public abstract class Service {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <E extends Remote> E getService(Class<E> remoteClass,
-			String wsdl, String qname, String serviceName) {
-
+	private static <E extends Remote> E getService(Class<E> remoteClass, String wsdl, String qname, String serviceName) {
 		URL wsdlURL;
 		try {
 			wsdlURL = new URL(wsdl);
 		} catch (MalformedURLException e) {
 			throw new Error(e);
 		}
+
 		QName SERVICE_NAME = new QName(qname, serviceName);
-		javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlURL,
-				SERVICE_NAME);
+		javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlURL, SERVICE_NAME);
 		E e = service.getPort(remoteClass);
 		
 //		Client client = ClientProxy.getClient(e);

@@ -3,7 +3,7 @@
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
 <div class="gt-form gt-content-box">
-	<form id="formLista"> 
+	<form id="formLista" enctype="multipart/form-data">
 		<input type="hidden" id="idLista" name="idLista" value="${lista?.idLista}">
 		<input type="hidden" id="hisIdIni" name="hisIdIni" value="${lista?.hisIdIni}">
 		<div class="gt-form-row gt-width-66">
@@ -116,7 +116,7 @@
 </div>
 
 #{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}
-	<form id="formControleAcesso">
+	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
 				<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 

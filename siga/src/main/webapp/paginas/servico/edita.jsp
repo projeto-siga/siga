@@ -1,6 +1,6 @@
-<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	buffer="64kb"%>
+	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
@@ -25,7 +25,7 @@
 					<theader>
 					<th>Matrícula</th>
 					<th>Nome</th>
-					<c:forEach var="servico" items="${cpServicosDisponiveis}">
+					<c:forEach var="servico" items="${cpServicosDisponiveis}">						
 						<th><a href="#" alt="${servico.descricao}"
 							title="${servico.descricao}">
 							<c:choose>
@@ -45,7 +45,7 @@
 						<tr class="">
 							<td>${pessoa.sesbPessoa}${pessoa.matricula}</td>
 							<td>${pessoa.nomePessoa}</td>
-							<c:forEach var="servico" items="${cpServicosDisponiveis}">
+							<c:forEach var="servico" items="${cpServicosDisponiveis}">								
 								<c:forEach var="config" items="${cpConfiguracoesAdotadas}">
 									<%--${config.dpPessoa.matricula} --- ${pessoa.matricula} :::: ${config.cpServico.idServico} --- ${servico.idServico}<br/> --%>
 									<c:if

@@ -116,10 +116,10 @@
     </div>
 	<div id="dados-assinatura" style="visible: hidden">
     	<c:set var="jspServer"
-		       value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
+		       value="${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
 		<c:set var="nextURL"
-			   value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
-	    <c:set var="urlPath" value="/${request.contextPath}" />
+			   value="${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
+	    <c:set var="urlPath" value="${request.contextPath}" />
 	    
    		<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 		<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
@@ -151,7 +151,7 @@
 	</c:if>
     
 	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-	    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}						
+	    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}						
 	</c:if>
 </ww:if>
 <ww:else>

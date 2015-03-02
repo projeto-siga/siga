@@ -18,7 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
-import ys.wikiparser.WikiParser;
+import info.bliki.wiki.model.WikiModel;
+
 
 /**
  * Classe que possibilita a utilização das marcações de wiki na definição dos processos.
@@ -38,7 +39,9 @@ public class WfWikiParser {
 				"\n### ").replace(" #### ", "\n#### ").replace(" * ", "\n* ")
 				.replace(" ** ", "\n** ").replace(" *** ", "\n*** ").replace(
 						" **** ", "\n**** ").replace(" ==", "\n==");
-		String fragment = WikiParser.renderXHTML(s);
+		
+	//	String fragment = WikiParser.renderXHTML(s);
+		String fragment = WikiModel.toHtml(s);
 		return fragment;
 	}
 }

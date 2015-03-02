@@ -22,24 +22,16 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Set;
 
-import org.hibernate.Hibernate;
-
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
  * A class that represents a row in the 'EX_MODELO' table. This class may be
  * customized as it is never re-generated after being created.
  */
 public class ExModelo extends AbstractExModelo {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8115532259775923158L;
-
 	private byte[] cacheConteudoBlobMod;
 
 	/**
@@ -60,7 +52,7 @@ public class ExModelo extends AbstractExModelo {
 	/* Add customized code below */
 	public void setConteudoBlobMod2(final byte[] blob) {
 		if (blob != null)
-			setConteudoBlobMod(Hibernate.createBlob(blob));
+			setConteudoBlobMod(HibernateUtil.getSessao().getLobHelper().createBlob(blob));
 		cacheConteudoBlobMod = blob;
 	}
 
@@ -116,5 +108,4 @@ public class ExModelo extends AbstractExModelo {
 		
 		return false;
 	}
-	
 }

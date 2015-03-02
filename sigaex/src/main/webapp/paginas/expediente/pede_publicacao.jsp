@@ -69,10 +69,6 @@
 <%--<c:set var="titulo_pagina" scope="request">Movimentação</c:set>
 <c:import context="/siga" url="/paginas/cabecalho.jsp" />--%>
 
-<!-- A linha abaixo é temporária, pois está presente num dos cabeçalhos  -->
-<div id="carregando" style="position:absolute;top:0px;right:0px;background-color:red;font-weight:bold;padding:4px;color:white;display:none">Carregando...</div>
-
-
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Solicitação de Publicação - ${doc.codigo}</h2>

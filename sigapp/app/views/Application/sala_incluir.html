@@ -9,7 +9,7 @@ function formata(){
 	document.getElementById('cod_local01').value = aux;	
  }
  </script>
-<form name="" action="/sigapp/sala_insert" onsubmit="formata()" method="POST" ><br>
+<form name="" action="/sigapp/sala_insert" onsubmit="formata()" method="POST"  enctype="multipart/form-data"><br>
 	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Código da sala: </font> <input id="cod_local01" type="text"  class="ui-widget" style="position:absolute;left:25%;" name="formLocal.cod_local" maxlength="3" size="3" /> <!-- String --><br>
 	<br> 
 	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Descrição: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.local" maxlength="30" size="50" /> <!-- String --><br>

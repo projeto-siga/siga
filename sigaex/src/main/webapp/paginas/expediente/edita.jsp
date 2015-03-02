@@ -11,7 +11,6 @@
 <script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
 	
 <script type="text/javascript">
-
 <ww:url id="url" action="editar" namespace="/expediente/doc">
 </ww:url>
 function sbmt(id) {
@@ -44,7 +43,6 @@ function sbmt(id) {
 		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
 	}
 }
-
 <ww:url id="url" action="gravar" namespace="/expediente/doc">
 </ww:url>
 function gravarDoc() {
@@ -64,7 +62,6 @@ function gravarDoc() {
 	
 	frm.submit();
 }
-
 function validar(silencioso){
 	
 	var descr = document.getElementsByName('descrDocumento')[0].value;
@@ -72,7 +69,6 @@ function validar(silencioso){
 	var eletro1 = document.getElementById('eletronicoCheck1');
 	var eletro2 = document.getElementById('eletronicoCheck2');
 	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
-
 	if (descricaoAutomatica == null && (descr==null || descr=="")) {
 		aviso("Preencha o campo Descrição antes de gravar o documento.", silencioso);
 		return false;
@@ -82,7 +78,6 @@ function validar(silencioso){
 		aviso("É necessário informar se o documento será digital ou físico, na parte superior da tela.", silencioso);
 		return false;
 	}
-
 	var limite = ${tamanhoMaximoDescricao};
 	if (document.getElementsByName('descrDocumento')[0].value.length >= limite) {
 		aviso('O tamanho máximo da descrição é de ' + limite + ' caracteres', silencioso);
@@ -92,7 +87,6 @@ function validar(silencioso){
 	return true;
 	
 }
-
 function aviso(msg, silencioso){
 	if (silencioso)
 		avisoVermelho('O documento não pôde ser salvo: ' + msg);
@@ -108,7 +102,6 @@ function removePreench(){
 frm.action='<ww:property value="%{url}"/>';
 frm.submit();
 }
-
 <ww:url id="url" action="alterarpreench" namespace="/expediente/doc"></ww:url>
 function alteraPreench(){
 			//Dispara a função onSave() do editor, caso exista
@@ -118,7 +111,6 @@ function alteraPreench(){
 frm.action='<ww:property value="%{url}"/>';
 frm.submit();
 }
-
 <ww:url id="url" action="carregarpreench" namespace="/expediente/doc"></ww:url>
 function carregaPreench(){
 if (frm.preenchimento.value==0){
@@ -136,7 +128,6 @@ else {
 	frm.submit();
 	}
 }
-
 <ww:url id="url" action="gravarpreench" namespace="/expediente/doc"></ww:url>
 function adicionaPreench(){
 var result='';
@@ -154,9 +145,7 @@ while((result=='') && (result!=null)){
 			frm.submit();
  	}
 }
-
 }
-
 <ww:url id="urlPdf" action="preverPdf" namespace="/expediente/doc">
 </ww:url>
 <ww:url id="url" action="prever" namespace="/expediente/doc">
@@ -196,19 +185,15 @@ function popitup_documento(pdf) {
 	}
 	return false;
 }			
-
 function checkBoxMsg() {
    window.alert('Atenção: essa opção só deve ser selecionada quando o subscritor possui certificado digital, pois será exigida a assinatura digital do documento.');   
 }
-
 var saveTimer;
 function triggerAutoSave(){
 	clearTimeout(saveTimer);
 	saveTimer=setTimeout('autoSave()',60000 * 2);
 }
-
 triggerAutoSave();
-
 var stillSaving = false;
 <ww:url id="url" action="gravar" namespace="/expediente/doc">
 </ww:url>
@@ -231,7 +216,6 @@ function autoSave(){
 	   	error: failAutoSave
 	});
 }
-
 function doneAutoSave(response){
 	var data = response.split('_');
     if (data[0] == 'OK'){
@@ -242,18 +226,15 @@ function doneAutoSave(response){
     	triggerAutoSave();
     } else failAutoSave();
 }
-
 function failAutoSave(response){
 	tryAgainAutoSave(); 
 	avisoVermelho('Atenção: Ocorreu um erro ao salvar o documento.');
 	stillSaving = false;
 }
-
 function tryAgainAutoSave(){
 	clearTimeout(saveTimer);
 	saveTimer=setTimeout('autoSave()',60000 * 2);
 }
-
 </script>
 
 <div class="gt-bd clearfix">

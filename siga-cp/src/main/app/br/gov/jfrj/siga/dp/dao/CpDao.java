@@ -45,19 +45,19 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
-import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultNamingStrategy;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.jdbc.Work;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
@@ -149,7 +149,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> consultarCpOrgaoOrdenadoPorNome() {
 		try {
@@ -161,7 +161,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpFeriado> listarCpFeriadoPorDescricao() {
 		try {
@@ -194,7 +194,7 @@ public class CpDao extends ModeloDao {
 		query.setLong("idServicoPai", o.getCpServicoPai() == null ? 0 : o
 				.getCpServicoPai().getIdServico());
 
-		// Renato: Comentei a linha abaixo pois não entendi porque foi feito
+		// Renato: Comentei a linha abaixo pois  nao entendi porque foi feito
 		// dessa forma.
 		// query.setFlushMode(FlushMode.MANUAL);
 
@@ -209,8 +209,8 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public CpServico consultarCpServicoPorChave(String chave) {
-		// Cria uma cache region específica da classe para garantir que os
-		// objetos armazenados por uma aplicação não seja recuperados por outra.
+		// Cria uma cache region especifica da classe para garantir que os
+		// objetos armazenados por uma aplicacacao seja recuperados por outra.
 		// Isso causa ClassCastException.
 		final String cRegion = CACHE_CORPORATIVO + "_"
 				+ this.getClass().getSimpleName();
@@ -260,7 +260,7 @@ public class CpDao extends ModeloDao {
 		if (l.size() != 1)
 			return null;
 
-		// Força a carga de algums campos para garantir o lazy load.
+		// Forca a carga de algums campos para garantir o lazy load.
 		CpServico srv = (CpServico) l.get(0).getImplementation();
 		Object o1 = srv.getCpServicoPai().getDescricao();
 		Object o2 = srv.getCpTipoServico().getDscTpServico();
@@ -292,16 +292,16 @@ public class CpDao extends ModeloDao {
 	// }
 
 	public int consultarQuantidade(final DaoFiltro o) throws Exception,
-			SecurityException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	SecurityException, IllegalAccessException,
+	InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
 		return (Integer) this.getClass()
 				.getMethod("consultarQuantidade", argType).invoke(this, o);
 	}
 
 	public Selecionavel consultarPorSigla(final DaoFiltro o) throws Exception,
-			SecurityException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	SecurityException, IllegalAccessException,
+	InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
 		return (Selecionavel) this.getClass()
 				.getMethod("consultarPorSigla", argType).invoke(this, o);
@@ -516,7 +516,7 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpAplicacaoFeriado> listarAplicacoesFeriado(final CpAplicacaoFeriado apl) {
 		final Query query = getSessao().getNamedQuery(
@@ -529,7 +529,7 @@ public class CpDao extends ModeloDao {
 		final List<CpAplicacaoFeriado> l = query.list();
 		return l;
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	public DpFuncaoConfianca consultarPorSigla(final DpFuncaoConfianca o) {
@@ -603,7 +603,7 @@ public class CpDao extends ModeloDao {
 
 			if (!o.isBuscarFechadas())
 				query = getSessao()
-						.getNamedQuery("consultarPorFiltroDpLotacao");
+				.getNamedQuery("consultarPorFiltroDpLotacao");
 			else
 				query = getSessao().getNamedQuery(
 						"consultarPorFiltroDpLotacaoInclusiveFechadas");
@@ -688,9 +688,9 @@ public class CpDao extends ModeloDao {
 			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);
 			o.setOrgaoUsuario(cpOrgaoUsu);
 		}
-		
-		
-/*		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
+
+
+		/*		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 		cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu());
 		o.setOrgaoUsuario(cpOrgao);*/
 		return consultarPorSigla(o);
@@ -915,7 +915,7 @@ public class CpDao extends ModeloDao {
 		List l = query.list();
 		return l;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidadesPorUF(final CpUF cpuf) {
 
@@ -935,7 +935,7 @@ public class CpDao extends ModeloDao {
 		List l = query.list();
 		return l;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidades() {
 
@@ -1037,7 +1037,7 @@ public class CpDao extends ModeloDao {
 
 			if (!flt.isBuscarFechadas())
 				query = getSessao()
-						.getNamedQuery("consultarQuantidadeDpPessoa");
+				.getNamedQuery("consultarQuantidadeDpPessoa");
 			else
 				query = getSessao().getNamedQuery(
 						"consultarQuantidadeDpPessoaInclusiveFechadas");
@@ -1120,14 +1120,14 @@ public class CpDao extends ModeloDao {
 			boolean fAtiva) throws AplicacaoException {
 		List<CpIdentidade> lista = consultaIdentidadesCadastrante(nmUsuario,
 				fAtiva);
-		// obtém preferencialmente identidade de formulário - único formato que
+		// obtem preferencialmente identidade de formulario - unico formato que
 		// existia anteriormente
 		for (CpIdentidade idLista : lista) {
 			if (idLista.getCpTipoIdentidade().isTipoFormulario()) {
 				return idLista;
 			}
 		}
-		// se não encontrar, retorna o primeiro, como era antes.
+		// se nao encontrar, retorna o primeiro, como era antes.
 		final CpIdentidade id = lista.get(0);
 		return id;
 	}
@@ -1140,11 +1140,11 @@ public class CpDao extends ModeloDao {
 					fAtiva ? "consultarIdentidadeCadastranteAtiva"
 							: "consultarIdentidadeCadastrante");
 			qry.setString("nmUsuario", nmUsuario);
-			// Verifica se existe numeros no login do usuário
+			// Verifica se existe numeros no login do usuario
 			if (nmUsuario.substring(2).matches("^[0-9]*$"))
 				qry.setString("sesbPessoa", nmUsuario.substring(0, 2));
 			else
-				qry.setString("sesbPessoa", "RJ"); // se não há números atribui
+				qry.setString("sesbPessoa", "RJ"); // se nnao ha numeros atribui
 			// RJ
 			// por default
 
@@ -1155,13 +1155,13 @@ public class CpDao extends ModeloDao {
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
 			if (lista.size() == 0) {
 				throw new AplicacaoException(
-						"Não foi possível localizar a identidade do usuário '"
+						"Nao foi possivel localizar a identidade do usuario '"
 								+ nmUsuario + "'.");
 			}
 			return lista;
 		} catch (Throwable e) {
 			throw new AplicacaoException(
-					"Ocorreu um erro tentando localizar a identidade do usuário '"
+					"Ocorreu um erro tentando localizar a identidade do usuario '"
 							+ nmUsuario + "'.", 0, e);
 		}
 	}
@@ -1180,14 +1180,14 @@ public class CpDao extends ModeloDao {
 	 * consultaUsuarioCadastrante(final String nmUsuario) { try { final Query
 	 * qry = getSessao().getNamedQuery( "consultarUsuarioCadastrante");
 	 * qry.setString("nmUsuario", nmUsuario); // Verifica se existe numeros no
-	 * login do usuário if (nmUsuario.substring(2).matches("^[0-9]*$"))
+	 * login do usuario if (nmUsuario.substring(2).matches("^[0-9]*$"))
 	 * qry.setString("sesbPessoa", nmUsuario.substring(0, 2)); else
-	 * qry.setString("sesbPessoa", "RJ"); // se não há números atribui // RJ //
+	 * qry.setString("sesbPessoa", "RJ"); // se nnao ha numeros atribui // RJ //
 	 * por default
 	 * 
 	 * qry.setCacheable(true); qry.setCacheRegion("query.UsuarioCadastrante");
 	 * final List<Object[]> lista = qry.list(); if (lista.size() == 0) { throw
-	 * new AplicacaoException( "Não foi possível localizar o usuário '" +
+	 * new AplicacaoException( "Nao foi possivel localizar o usuario '" +
 	 * nmUsuario + "'."); } final Object[] par = lista.get(0); final Usuario usu
 	 * = (Usuario) par[0]; final DpPessoa pess = (DpPessoa) par[1];
 	 * usu.setPessoa(pess); return usu; } catch (Throwable e) { Auto-generated
@@ -1198,15 +1198,15 @@ public class CpDao extends ModeloDao {
 	 * debugar erros de banco // de dados quando as excecoes nao sao lancadas
 	 * aqui. // try { final Query qry = getSessao().getNamedQuery(
 	 * "consultarUsuarioCadastranteAtivo"); qry.setString("nmUsuario",
-	 * nmUsuario); // Verifica se existe numeros no login do usuário if
+	 * nmUsuario); // Verifica se existe numeros no login do usuario if
 	 * (nmUsuario.substring(2).matches("^[0-9]*$")) qry.setString("sesbPessoa",
 	 * nmUsuario.substring(0, 2)); else qry.setString("sesbPessoa", "RJ"); // se
-	 * não há números atribui // RJ // por default
+	 * nao ha numeros atribui // RJ // por default
 	 * 
 	 * qry.setCacheable(true);
 	 * qry.setCacheRegion("query.UsuarioCadastranteAtivo"); final List<Object[]>
 	 * lista = qry.list(); if (lista.size() == 0) { throw new
-	 * AplicacaoException( "Não foi possível localizar o usuário '" + nmUsuario
+	 * AplicacaoException( "Nao foi possivel localizar o usuario '" + nmUsuario
 	 * + "'."); } final Object[] par = lista.get(0); final Usuario usu =
 	 * (Usuario) par[0]; final DpPessoa pess = (DpPessoa) par[1];
 	 * usu.setPessoa(pess); return usu; // Nato: comentei porque estava muito
@@ -1217,7 +1217,7 @@ public class CpDao extends ModeloDao {
 	public List<DpPessoa> pessoasPorLotacao(Long id,
 			Boolean incluirSublotacoes, Boolean somenteServidor,
 			SituacaoFuncionalEnum situacoesFuncionais)
-			throws AplicacaoException {
+					throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
 
@@ -1254,7 +1254,7 @@ public class CpDao extends ModeloDao {
 			if (somenteServidor) {
 				c.add(Restrictions.not(Restrictions.in("c.nomeCargo",
 						new String[] { "ESTAGIARIO", "JUIZ SUBSTITUTO",
-								"JUIZ FEDERAL" })));
+				"JUIZ FEDERAL" })));
 			}
 
 			c.add(Restrictions.in("situacaoFuncionalPessoa",
@@ -1292,21 +1292,28 @@ public class CpDao extends ModeloDao {
 		List result = sql.list();
 		if (result.size() != 1)
 			throw new AplicacaoException(
-					"Não foi possível obter a data e a hora atuais do servidor.");
+					"Nao foi possivel obter a data e a hora atuais do servidor.");
 
 		return (Date) ((result.get(0)));
 	}
 
-	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
-		Query sql = getSessaoStateless().getNamedQuery(
-				"consultarDataUltimaAtualizacao");
+	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
+		Criteria c = HibernateUtil.getSessao().createCriteria(CpConfiguracao.class);
+		LogicalExpression confsAtivas = Restrictions.and(Restrictions.ge("hisDtIni", desde),Restrictions.isNull("hisDtFim"));
+		LogicalExpression confsInativas = Restrictions.and(Restrictions.ge("hisDtFim", desde),Restrictions.isNotNull("hisDtFim"));
+		c.add(Restrictions.or(confsAtivas,confsInativas));
+		return c.list();
+	}
 
+	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
+	//	Query sql = (Query) getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
+		Query sql = (Query) HibernateUtil.getSessionFactory().openStatelessSession().getNamedQuery("consultarDataUltimaAtualizacao");
 		
 		sql.setCacheable(false);
 		List result = sql.list();
 		if (result.size() != 1)
 			throw new AplicacaoException(
-					"Não foi possível obter a data e a hora de atualização das configurações.");
+					"Nao foi possivel obter a data e a hora de atualizacao das configuracoes.");
 
 		Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
 		Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
@@ -1349,8 +1356,8 @@ public class CpDao extends ModeloDao {
 		query.setLong("idTpConfiguracao", exemplo.getCpTipoConfiguracao()
 				.getIdTpConfiguracao());
 		query.setLong("idServico", exemplo.getCpServico().getIdServico());
-		// kpf: com o cache true, as configurações são exibidas de forma forma
-		// errada após a primeira
+		// kpf: com o cache true, as configuracoes sao exibidas de forma forma
+		// errada apos a primeira
 		query.setCacheable(false);
 		// query.setCacheRegion(CACHE_QUERY_CONFIGURACAO);
 		return query.list();
@@ -1413,73 +1420,83 @@ public class CpDao extends ModeloDao {
 	 * @throws AplicacaoException
 	 */
 	public void importarAcessoTomcat() throws SQLException,
-			InvalidKeyException, NoSuchAlgorithmException,
-			NoSuchPaddingException, IllegalBlockSizeException,
-			BadPaddingException, AplicacaoException {
+	InvalidKeyException, NoSuchAlgorithmException,
+	NoSuchPaddingException, IllegalBlockSizeException,
+	BadPaddingException, AplicacaoException {
 		final Date dt = consultarDataEHoraDoServidor();
-		String s = "SELECT * FROM ACESSO_TOMCAT.USUARIO";
+		final String s = "SELECT * FROM ACESSO_TOMCAT.USUARIO";
 
-		final Connection conn = getSessao().connection();
-		final PreparedStatement ps = conn.prepareStatement(s);
-		final String j = ps.toString();
+		getSessao().doWork(
+				new Work() {
+					public void execute(Connection conn) throws SQLException 
+					{ 
+						final PreparedStatement ps = conn.prepareStatement(s);
+						try{
+							final ResultSet rset = ps.executeQuery();
+							CpTipoIdentidade tid = consultar(1, CpTipoIdentidade.class, false);
+							while (rset.next()) {
+								final String login = (String) rset.getObject(1);
+								final String senha = (String) rset.getObject(2);
+								Long cpf;
+								try {
+									cpf = ((BigDecimal) rset.getObject(4)).longValue();
+								} catch (NullPointerException e1) {
+									System.out.println("CPF nulo:" + login);
+									continue;
+								}
+								if (!Character.isDigit(login.charAt(2))) {
+									System.out.println("Login sem matricula:" + login);
+									continue;
+								}
+								final long longmatricula = Long.parseLong(login.substring(2));
 
-		final ResultSet rset = ps.executeQuery();
+								DpPessoa pessoa;
+								try {
+									pessoa = consultarPorCpfMatricula(cpf, longmatricula);
+								} catch (org.hibernate.NonUniqueResultException e) {
+									System.out.println("Mais de um registro retornado:" + login);
+									continue;
+								}
+								if (pessoa == null) {
+									System.out.println("Pessoa nao localizada:" + login);
+									continue;
+								}
 
-		CpTipoIdentidade tid = consultar(1, CpTipoIdentidade.class, false);
-		while (rset.next()) {
-			final String login = (String) rset.getObject(1);
-			final String senha = (String) rset.getObject(2);
-			Long cpf;
-			try {
-				cpf = ((BigDecimal) rset.getObject(4)).longValue();
-			} catch (NullPointerException e1) {
-				System.out.println("CPF nulo:" + login);
-				continue;
-			}
-			if (!Character.isDigit(login.charAt(2))) {
-				System.out.println("Login sem matrícula:" + login);
-				continue;
-			}
-			final long longmatricula = Long.parseLong(login.substring(2));
+								CpIdentidade id = new CpIdentidade();
+								id.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
+								id.setCpTipoIdentidade(tid);
+								id.setDpPessoa(pessoa);
+								id.setDscSenhaIdentidade(senha);
 
-			DpPessoa pessoa;
-			try {
-				pessoa = consultarPorCpfMatricula(cpf, longmatricula);
-			} catch (org.hibernate.NonUniqueResultException e) {
-				System.out.println("Mais de um registro retornado:" + login);
-				continue;
-			}
-			if (pessoa == null) {
-				System.out.println("Pessoa não localizada:" + login);
-				continue;
-			}
+								// BASE64Encoder encoderBase64 = new BASE64Encoder();
+								// String chave =
+								// encoderBase64.encode(id.getDpPessoa().getIdInicial()
+								// .toString().getBytes());
+								// String senhaCripto = encoderBase64.encode(Criptografia
+								// .criptografar(senha, chave));
+								// id.setDscSenhaIdentidadeCripto(senhaCripto);
+								// id.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
 
-			CpIdentidade id = new CpIdentidade();
-			id.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
-			id.setCpTipoIdentidade(tid);
-			id.setDpPessoa(pessoa);
-			id.setDscSenhaIdentidade(senha);
+								id.setDtCancelamentoIdentidade(null);
+								id.setDtCriacaoIdentidade(dt);
+								id.setDtExpiracaoIdentidade(null);
+								id.setHisDtFim(null);
+								id.setHisDtIni(dt);
+								// id.setIdCpIdentidade(null);
+								id.setNmLoginIdentidade(login);
+								gravar(id);
+								id.setHisIdIni(id.getIdIdentidade());
+								gravar(id);
+							} 
+						}catch(Exception ex){
+							ex.printStackTrace();
+						}finally{
+							ps.close();
+						}
+					}
+				});
 
-			// BASE64Encoder encoderBase64 = new BASE64Encoder();
-			// String chave =
-			// encoderBase64.encode(id.getDpPessoa().getIdInicial()
-			// .toString().getBytes());
-			// String senhaCripto = encoderBase64.encode(Criptografia
-			// .criptografar(senha, chave));
-			// id.setDscSenhaIdentidadeCripto(senhaCripto);
-			// id.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
 
-			id.setDtCancelamentoIdentidade(null);
-			id.setDtCriacaoIdentidade(dt);
-			id.setDtExpiracaoIdentidade(null);
-			id.setHisDtFim(null);
-			id.setHisDtIni(dt);
-			// id.setIdCpIdentidade(null);
-			id.setNmLoginIdentidade(login);
-			gravar(id);
-			id.setHisIdIni(id.getIdIdentidade());
-			gravar(id);
-		}
 	}
 
 	public HistoricoAuditavel gravarComHistorico(HistoricoAuditavel oNovo,
@@ -1518,7 +1535,7 @@ public class CpDao extends ModeloDao {
 			invalidarCache(entidade);
 			Cp.getInstance().getConf().limparCacheSeNecessario();
 		} catch (Exception e) {
-			throw new AplicacaoException("Não foi possível limpar o cache.", 0,
+			throw new AplicacaoException("Nao foi possivel limpar o cache.", 0,
 					e);
 		}
 		return entidade;
@@ -1533,29 +1550,24 @@ public class CpDao extends ModeloDao {
 	public void invalidarCache(Object entidade) {
 		if (entidade == null)
 			return;
-		SessionFactory sfCpDao = CpDao.getInstance().getSessao()
-				.getSessionFactory();
+		SessionFactory sfCpDao = CpDao.getInstance().getSessao().getSessionFactory();
 		if (entidade instanceof DpSubstituicao) {
 			sfCpDao.evict(DpSubstituicao.class);
 			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
 		}
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(String datasource)
-			throws Exception {
+	static public Configuration criarHibernateCfg(String datasource) throws Exception {
 
-		AnnotationConfiguration cfg = new AnnotationConfiguration();
-
+		Configuration cfg = new Configuration();
 		cfg.setProperty("hibernate.connection.datasource", datasource);
-		configurarHibernate(cfg);
 
-		return cfg;
+		return configurarHibernate(cfg);
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(
-			String connectionUrl, String username, String password)
-			throws Exception {
-		AnnotationConfiguration cfg = new AnnotationConfiguration();
+	static public Configuration criarHibernateCfg(String connectionUrl,
+			String username, String password) throws Exception {
+		Configuration cfg = new Configuration();
 		cfg.setProperty("hibernate.connection.url", connectionUrl);
 		cfg.setProperty("hibernate.connection.username", username);
 		cfg.setProperty("hibernate.connection.password", password);
@@ -1565,31 +1577,27 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("c3p0.max_size", "20");
 		cfg.setProperty("c3p0.timeout", "300");
 		cfg.setProperty("c3p0.max_statements", "50");
-		configurarHibernate(cfg);
-		return cfg;
+
+		return configurarHibernate(cfg);
 	}
-	
-	static public AnnotationConfiguration criarHibernateCfg(
+
+	static public Configuration criarHibernateCfg(
 			CpAmbienteEnumBL ambiente) throws Exception {
 		CpPropriedadeBL prop = Cp.getInstance().getProp();
 		prop.setPrefixo(ambiente.getSigla());
 		return criarHibernateCfg(ambiente, prop);
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(
-			CpAmbienteEnumBL ambiente, CpPropriedadeBL prop) throws Exception {
-		
-		AnnotationConfiguration cfg = new AnnotationConfiguration();
+	static public Configuration criarHibernateCfg(CpAmbienteEnumBL ambiente, CpPropriedadeBL prop) throws Exception {
 
-		// Isto é para manter o naming strategy do hibernate 3.5 na versão 3.6
+		Configuration cfg = new Configuration();
+
+		// Isto e para manter o naming strategy do hibernate 3.5 na versao 3.6
 		cfg.setNamingStrategy(DefaultNamingStrategy.INSTANCE);
 		cfg.setProperty("hibernate.connection.url", prop.urlConexao());
-		cfg.setProperty("hibernate.connection.username",
-				prop.usuario());
-		cfg.setProperty("hibernate.connection.password",
-				prop.senha());
-		cfg.setProperty("hibernate.connection.driver_class",
-				prop.driverConexao());
+		cfg.setProperty("hibernate.connection.username", prop.usuario());
+		cfg.setProperty("hibernate.connection.password", prop.senha());
+		cfg.setProperty("hibernate.connection.driver_class", prop.driverConexao());
 		cfg.setProperty("c3p0.min_size", prop.c3poMinSize());
 		cfg.setProperty("c3p0.max_size", prop.c3poMaxSize());
 		cfg.setProperty("c3p0.timeout", prop.c3poTimeout());
@@ -1601,29 +1609,24 @@ public class CpDao extends ModeloDao {
 		return cfg;
 	}
 
-	static private void configurarHibernate(AnnotationConfiguration cfg)
-			throws Exception {
-		cfg.setProperty("hibernate.dialect",
-				"org.hibernate.dialect.Oracle10gDialect");
+	static private Configuration configurarHibernate(Configuration cfg) throws Exception {
+		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
 
-		cfg.setProperty("hibernate.transaction.factory_class",
-				"org.hibernate.transaction.JDBCTransactionFactory");
 		cfg.setProperty("hibernate.current_session_context_class", "thread");
 		cfg.setProperty("hibernate.query.substitutions", "true 1, false 0");
 
-		// Alterado para compatibilizar com hibernate 3.61
-		cfg.setProperty("hibernate.cache.provider_class",
-				"org.hibernate.cache.SingletonEhCacheProvider");
-		// cfg.setProperty("hibernate.cache.region.factory_class",
-		// "net.sf.ehcache.hibernate.EhCacheRegionFactory");
-		// "net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory");
+		//cfg.setProperty("hibernate.cache.region.factory_class", "org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory");
 
-		cfg.setProperty("hibernate.cache.use_second_level_cache", "true");
-		cfg.setProperty("hibernate.cache.use_query_cache", "true");
+		cfg.setProperty("hibernate.cache.use_second_level_cache", "false");
+//		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
+		cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
+
+		cfg.setProperty("hibernate.cache.use_query_cache", "false");
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
 		cfg.setProperty("hibernate.default_batch_fetch_size", "1000");
-		// cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
+	//	cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
+		cfg.setProperty("hibernate.show_sql", "false");
 
 		// descomentar para inpecionar o SQL
 		// cfg.setProperty("hibernate.show_sql", "true");
@@ -1733,50 +1736,28 @@ public class CpDao extends ModeloDao {
 			config.setMaxElementsOnDisk(0);
 		}
 
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpLotacao",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoPessoa",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpPessoa",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.dp.DpFuncaoConfianca",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgaoUsuario",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpCargo",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgao",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpLocalidade",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpUF",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpFeriado",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoServico",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpServico",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.cp.CpTipoConfiguracao",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoIdentidade",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoPapel",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoGrupo",
-				"nonstrict-read-write", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade",
-				"nonstrict-read-write", CACHE_SECONDS);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao",
-				"nonstrict-read-write", CACHE_QUERY_SUBSTITUICAO);
 
-		// Desabilitado pois o hibernate não permite cache de blobs.
-		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpModelo",
-		// "nonstrict-read-write", CACHE_SECONDS);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao","transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpLotacao", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoPessoa","transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpPessoa", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpFuncaoConfianca", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgaoUsuario", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpCargo", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgao", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpLocalidade",	"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpUF", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpFeriado", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoServico", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpServico", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoConfiguracao", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoIdentidade", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoPapel", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoGrupo", "transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade", "transactional", CACHE_SECONDS);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao", "transactional", CACHE_QUERY_SUBSTITUICAO);
+
+		return cfg;
 	}
 
 	public DpPessoa getPessoaFromSigla(String sigla) {
@@ -1797,11 +1778,11 @@ public class CpDao extends ModeloDao {
 		o.setSigla(sigla);
 		return consultarPorSigla(o);
 	}
-	
+
 	public CpOrgao getOrgaoFromSiglaExata(String sigla) {
 		CpOrgao o = new CpOrgao();
 		o.setSigla(sigla);
-		
+
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaExataCpOrgao");
 		query.setString("siglaOrgao", o.getSiglaOrgao());
@@ -1809,14 +1790,14 @@ public class CpDao extends ModeloDao {
 		final List<CpOrgao> l = query.list();
 		if (l.size() > 0)
 			return l.get(0);
-		
+
 		return null;
 	}
-	
+
 	public List<CpOrgaoUsuario> consultaCpOrgaoUsuario() {
 		final Query qry = getSessao().getNamedQuery("consultarCpOrgaoUsuario");
 
-		// Renato: Alterei para fazer cache. Não vejo porque não possamos fazer
+		// Renato: Alterei para fazer cache. Nao vejo porque nao possamos fazer
 		// cache dessa consulta.
 		qry.setCacheable(true);
 		qry.setCacheRegion(CACHE_QUERY_HOURS);
@@ -1841,8 +1822,8 @@ public class CpDao extends ModeloDao {
 			for (CpModelo mod : lista) {
 				if ((mod.getCpOrgaoUsuario() == null && orgUsu == null)
 						|| (mod.getCpOrgaoUsuario() != null && orgUsu != null && mod
-								.getCpOrgaoUsuario().getId()
-								.equals(orgUsu.getId()))) {
+						.getCpOrgaoUsuario().getId()
+						.equals(orgUsu.getId()))) {
 					listaFinal.add(mod);
 					fFound = true;
 				}
@@ -1890,7 +1871,7 @@ public class CpDao extends ModeloDao {
 	public List<CpOrgaoUsuario> listarOrgaosUsuarios() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpOrgaoUsuario.class);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> listarOrgaos() {
 		return findByCriteria(CpOrgao.class);
@@ -2000,11 +1981,11 @@ public class CpDao extends ModeloDao {
 			final Query qry = getSessao()
 					.getNamedQuery("consultarDadosBasicos");
 			qry.setString("nmUsuario", nmUsuario);
-			// Verifica se existe numeros no login do usuário
+			// Verifica se existe numeros no login do usuario
 			if (nmUsuario.substring(2).matches("^[0-9]*$"))
 				qry.setString("sesbPessoa", nmUsuario.substring(0, 2));
 			else
-				// se não há números atribui RJ por default
+				// se nao ha numeros atribui RJ por default
 				qry.setString("sesbPessoa", "RJ");
 
 			// Cache was disabled because it would interfere with the
@@ -2016,7 +1997,7 @@ public class CpDao extends ModeloDao {
 			return obj;
 		} catch (Throwable e) {
 			throw new AplicacaoException(
-					"Ocorreu um erro tentando carregar os dados básicos para o usuário '"
+					"Ocorreu um erro tentando carregar os dados basicos para o usuario '"
 							+ nmUsuario + "'.", 0, e);
 		}
 	}
@@ -2075,15 +2056,6 @@ public class CpDao extends ModeloDao {
 		}
 
 		return null;
-	}
-
-	public List<CpConfiguracao> consultarConfiguracoesDesde(
-			Date desde) {
-		Criteria c = HibernateUtil.getSessao().createCriteria(CpConfiguracao.class);
-		LogicalExpression confsAtivas = Restrictions.and(Restrictions.ge("hisDtIni", desde),Restrictions.isNull("hisDtFim"));
-		LogicalExpression confsInativas = Restrictions.and(Restrictions.ge("hisDtFim", desde),Restrictions.isNotNull("hisDtFim"));
-		c.add(Restrictions.or(confsAtivas,confsInativas));
-		return c.list();
 	}
 
 }

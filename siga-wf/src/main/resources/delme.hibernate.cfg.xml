@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
           "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+          "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 	<session-factory>
 		<!-- hibernate dialect -->
@@ -370,122 +370,122 @@
 
 		<!-- ################################### -->
 		<!-- # cache settings                  # -->
-		<!-- # strategy="nonstrict-read-write" # -->
+		<!-- # strategy="transactional" # -->
 		<!-- # can be used with hibernate.cache.provider_class=org.hibernate.cache.HashtableCacheProvider # -->
 		<!-- ################################### -->
 
 		<class-cache class="org.jbpm.context.def.VariableAccess"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<collection-cache
 			collection="org.jbpm.file.def.FileDefinition.processFiles"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<collection-cache
 			collection="org.jbpm.graph.action.Script.variableAccesses"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.graph.def.Action"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.graph.def.Event"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache collection="org.jbpm.graph.def.Event.actions"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.graph.def.ExceptionHandler"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.ExceptionHandler.actions"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.graph.def.Node"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache collection="org.jbpm.graph.def.Node.events"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.Node.exceptionHandlers"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.Node.leavingTransitions"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.Node.arrivingTransitions"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.graph.def.ProcessDefinition"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.ProcessDefinition.events"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.ProcessDefinition.exceptionHandlers"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.ProcessDefinition.nodes"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.ProcessDefinition.actions"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.ProcessDefinition.definitions"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<collection-cache
 			collection="org.jbpm.graph.def.SuperState.nodes"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.graph.def.Transition"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.Transition.events"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.graph.def.Transition.exceptionHandlers"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<collection-cache
 			collection="org.jbpm.graph.node.Decision.decisionConditions"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<collection-cache
 			collection="org.jbpm.graph.node.ProcessState.variableAccesses"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<collection-cache
 			collection="org.jbpm.graph.node.TaskNode.tasks"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.instantiation.Delegation"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.module.def.ModuleDefinition"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<collection-cache
 			collection="org.jbpm.taskmgmt.def.Swimlane.tasks"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.taskmgmt.def.TaskController"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.taskmgmt.def.TaskController.variableAccesses"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<class-cache class="org.jbpm.taskmgmt.def.Task"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache collection="org.jbpm.taskmgmt.def.Task.events"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.taskmgmt.def.Task.exceptionHandlers"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 		<collection-cache
 			collection="org.jbpm.taskmgmt.def.TaskMgmtDefinition.swimlanes"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 		<collection-cache
 			collection="org.jbpm.taskmgmt.def.TaskMgmtDefinition.tasks"
-			usage="nonstrict-read-write" />
+			usage="transactional" />
 
 
 

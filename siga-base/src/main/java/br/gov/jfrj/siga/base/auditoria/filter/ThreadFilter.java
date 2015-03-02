@@ -13,8 +13,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.cfg.Configuration;
+import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -184,17 +184,9 @@ public abstract class ThreadFilter implements Filter {
 				+ principalName, ex);
 	}
 
-	public void init(FilterConfig arg0) throws ServletException {
-		log.info("INIT THREAD FILTER");
-	}
-
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 
-	}
-
-	public void destroy() {
-		log.info("DESTROY THREAD FILTER");
 	}
 
 	protected String montaMensagemErroExcecoes(Exception ex) {
@@ -211,10 +203,8 @@ public abstract class ThreadFilter implements Filter {
 
 	public void registerTransactionClasses(Configuration cfg) {
 		// bruno.lacerda@avantiprima.com.br
-		this.registerTransactionClass("hibernate.transaction.factory_class",
-				cfg);
-		this.registerTransactionClass(
-				"hibernate.transaction.manager_lookup_class", cfg);
+//		this.registerTransactionClass("hibernate.transaction.factory_class",cfg);
+		this.registerTransactionClass("hibernate.transaction.manager_lookup_class", cfg);
 	}
 
 	private void registerTransactionClass(String propertyName, Configuration cfg) {
@@ -223,5 +213,11 @@ public abstract class ThreadFilter implements Filter {
 			cfg.setProperty(propertyName, transactionFactoryClassName);
 		}
 	}
+
+	@Override
+	public void destroy() {}
+
+	@Override
+	public void init(FilterConfig arg0) throws ServletException {}
 
 }

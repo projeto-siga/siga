@@ -120,7 +120,6 @@ jQuery(document).ready(function($) {
 </script>
 
 <div class="gt-form gt-content-box">
-	<form id="pesquisaForm">
 		<input type="hidden" name="idPesquisa" />
 		
 		<div class="gt-form-row gt-width-66">
@@ -149,7 +148,7 @@ jQuery(document).ready(function($) {
 <div id="dialog">
 	<div class="gt-content">
 		<div class="gt-form gt-content-box">
-			<form id="perguntaForm">
+			<form id="perguntaForm" enctype="multipart/form-data">
 				<div class="gt-form-row">
 					<label>Pergunta <span>*</span></label> <input type="text" id="descrPergunta"
 						name="descrPergunta" value="" size="60" maxlength="255" required/>

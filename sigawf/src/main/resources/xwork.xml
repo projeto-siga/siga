@@ -39,8 +39,7 @@
 			<result type="redirect">/../siga/principal.action</result>
 		</action>
 
-		<action name="resumo" method='loadInbox'
-			class="br.gov.jfrj.siga.wf.webwork.action.WfInboxAction">
+		<action name="resumo" method='loadInbox' class="br.gov.jfrj.siga.wf.webwork.action.WfInboxAction">
 			<result>/WEB-INF/page/workflow/resumo.jsp</result>
 		</action>
 
@@ -188,19 +187,10 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
-		
-		<action name="editar" method="aEditar"
-			class='br.gov.jfrj.siga.wf.webwork.action.WfEditarAction'>
-			<result name="SUCESS">
-				/WEB-INF/page/workflow/editar.jsp
-			</result>
-		</action>
-
 	</package>
 
 	<package name="testes" extends="default" namespace="/testes">
-		<action name="gadgetTest" class="br.gov.jfrj.siga.wf.webwork.action.WfInboxAction"
-			method="test">
+		<action name="gadgetTest" class="br.gov.jfrj.siga.wf.webwork.action.WfInboxAction" method="test">
 			<result>/WEB-INF/page/workflow/inbox.jsp</result>
 		</action>
 	</package>

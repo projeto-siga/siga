@@ -27,11 +27,9 @@ import java.io.DataInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
-import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -46,11 +44,8 @@ public class PrincipalAction extends SigaActionSupport {
 	public class GenericoSelecao {
 
 		private Long id;
-
 		private String sigla;
-
 		private String matricula;
-
 		private String descricao;
 
 		public String getDescricao() {
@@ -60,8 +55,8 @@ public class PrincipalAction extends SigaActionSupport {
 		public void setDescricao(String descricao) {
 			this.descricao = descricao;
 		}
-
-		public Long getId() {
+		
+		public Long getId(){
 			return id;
 		}
 
@@ -89,47 +84,24 @@ public class PrincipalAction extends SigaActionSupport {
 	private static final String OK = "<span style=\"color: green;\">OK</span>";
 	private static final String ERRO = "<span style=\"color: red;\">ERRO</span>";
 	private static final String SIGA_TESTES_ACTION = "/siga/testes/testes.action";
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1630775520737927455L;
-
 	private List listEstados;
-
 	private String sigla;
-
 	private String matricula;
-
 	private GenericoSelecao sel;
+	private String idp;
 
-	public String getSigla() {
-		return sigla;
-	}
-
-	public void setSigla(String sigla) {
-		this.sigla = sigla;
-	}
-
-	public GenericoSelecao getSel() {
-		return sel;
-	}
-
-	public void setSel(GenericoSelecao sel) {
-		this.sel = sel;
-	}
-
-	public PrincipalAction() {
-		sel = new GenericoSelecao();
-	}
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public String execute() throws Exception {
-		// super.getRequest ().setAttribute ( "_cadastrante" , super.getTitular
-		// ().getSigla () + "@" + super.getLotaTitular ().getOrgaoUsuario
-		// ().getSiglaOrgaoUsu ()+ super.getLotaTitular ().getSigla () );
+		try{
+			Map<String, Object> map = (Map<String, Object>) getRequest().getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
+			String idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
+			setIdp(idpSessionID);
+		}catch(NullPointerException e){}
+		
 		return Action.SUCCESS;
 	}
-
+	
 	public String aSelecionar() throws Exception {
 		try {
 			DpPessoa pes = getTitular();
@@ -143,10 +115,10 @@ public class PrincipalAction extends SigaActionSupport {
 				incluirMatricula = "&matricula=" + matricula;
 			}
 
-			String urlBase = "http://"
-					+ SigaBaseProperties.getString(SigaBaseProperties
-							.getString("ambiente") + ".servidor.principal")
-					+ ":8080";
+			// TODO n�o precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
+			
+			//String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ getRequest().getServerPort();
+			String urlBase = getRequest().getScheme() + "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
 
 			String URLSelecionar = "";
 			String uRLExibir = "";
@@ -176,9 +148,15 @@ public class PrincipalAction extends SigaActionSupport {
 					URLSelecionar = urlBase + "/sigasr" + testes
 							+ "/solicitacao/selecionar?sigla=" + getSigla()
 							+ incluirMatricula;
-			} else if (copiaSigla.startsWith("MTP")
-					|| copiaSigla.startsWith("RTP")
-					|| copiaSigla.startsWith("STP")) {
+			}
+ 			//alterado formato da sigla de requisições, missões e serviços
+			//else if (copiaSigla.startsWith("MTP")
+			//		|| copiaSigla.startsWith("RTP")
+			//		|| copiaSigla.startsWith("STP")) {
+			else if (copiaSigla.startsWith("TP") && 
+					(copiaSigla.endsWith("M") ||
+					 copiaSigla.endsWith("S") ||
+					 copiaSigla.endsWith("R"))) {
 				if (Cp.getInstance()
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;TP")) {
@@ -193,8 +171,8 @@ public class PrincipalAction extends SigaActionSupport {
 						+ "/selecionar.action?sigla=" + getSigla()
 						+ incluirMatricula;
 
-			String[] response = ConexaoHTTP.get(URLSelecionar, getHeaders())
-					.split(";");
+			SigaHTTP http = new SigaHTTP();
+			String[] response = http.get(URLSelecionar, getRequest(), null).split(";");
 
 			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
 				//verificar se ap�s a retirada dos prefixos referente 
@@ -214,8 +192,7 @@ public class PrincipalAction extends SigaActionSupport {
 						+ incluirMatricula;
 				}
 				
-				response = ConexaoHTTP.get(URLSelecionar, getHeaders())
-						.split(";");
+				response = http.get(URLSelecionar, getRequest(), null).split(";");
 				
 				if (copiaSigla.matches("(^[0-9]+$)")) 
 					uRLExibir = "/siga/pessoa/exibir.action?sigla="
@@ -228,9 +205,14 @@ public class PrincipalAction extends SigaActionSupport {
 				if (copiaSigla.startsWith("SR"))
 //					if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
 						uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
-				else if (copiaSigla.startsWith("MTP")
-						|| copiaSigla.startsWith("STP")
-						|| copiaSigla.startsWith("RTP"))
+				//alterado formato da sigla de requisições, missões e serviços
+				//else if (copiaSigla.startsWith("MTP")
+				//		|| copiaSigla.startsWith("STP")
+				//		|| copiaSigla.startsWith("RTP"))
+				else if (copiaSigla.startsWith("TP") && 
+						(copiaSigla.endsWith("M") ||
+						 copiaSigla.endsWith("S") ||
+						 copiaSigla.endsWith("R")))
 					uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
 				else
 					uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="
@@ -308,6 +290,34 @@ public class PrincipalAction extends SigaActionSupport {
 
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
+	}
+
+	public String getSigla() {
+		return sigla;
+	}
+
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
+	}
+
+	public GenericoSelecao getSel() {
+		return sel;
+	}
+
+	public void setSel(GenericoSelecao sel) {
+		this.sel = sel;
+	}
+
+	public PrincipalAction() {
+		sel = new GenericoSelecao();
+	}
+
+	public String getIdp() {
+		return idp;
+	}
+
+	public void setIdp(String idp) {
+		this.idp = idp;
 	}
 
 }

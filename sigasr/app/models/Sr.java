@@ -19,6 +19,7 @@
 package models;
 
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 
 /**
  * Classe que fornece uma instância do workflow.
@@ -46,10 +47,9 @@ public class Sr extends Cp /*
 					Sr instance = new Sr();
 					setInstance(instance);
 					instance.setConf(new SrConfiguracaoBL());
-					instance.getConf().setComparator(
-							new SrConfiguracaoComparator());
-					// instance.setComp(new ExCompetenciaBL());
-					// instance.getComp().setConfiguracaoBL(instance.getConf());
+					instance.getConf().setComparator(new SrConfiguracaoComparator());
+					instance.setComp(new CpCompetenciaBL());
+					instance.getComp().setConfiguracaoBL(instance.getConf());
 					// instance.setBL(new ExBL());
 					// instance.getBL().setComp(instance.getComp());
 					// instance.setProp(new ExPropriedadeBL());

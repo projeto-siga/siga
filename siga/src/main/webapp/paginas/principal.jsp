@@ -5,7 +5,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<siga:pagina titulo="P&aacute;gina Inicial">
+<siga:pagina titulo="P&aacute;gina Inicial" incluirJs="principal.js">
 	<ww:token />
 
 	<div class="gt-bd">
@@ -32,24 +32,17 @@
 						<!-- This table can be used for listing things like files, pictures, documents, etc -->
 						<h2 class="gt-table-head">Expedientes</h2>
 						<!-- content box -->
-						<div id='left'></div>
-						<script type="text/javascript">
-							SetInnerHTMLFromAjaxResponse(
-									"/sigaex/expediente/doc/gadget.action?apenasQuadro=true&ts=${currentTimeMillis}&idTpFormaDoc=1",
-									document.getElementById('left'));
-						</script>
+						<div id='left'>
+                            <jsp:include page="loading.jsp" />
+						</div>
 						<!-- Expedientes -->
 						<br />
 						<!-- Processos -->
 						<h2 class="gt-table-head">Processos Administrativos</h2>
 						<!-- content box -->
-						<div id='leftbottom'></div>
-
-						<script type="text/javascript">
-							SetInnerHTMLFromAjaxResponse(
-									"/sigaex/expediente/doc/gadget.action?ts=${currentTimeMillis}&idTpFormaDoc=2",
-									document.getElementById('leftbottom'));
-						</script>
+						<div id='leftbottom'>
+                            <jsp:include page="loading.jsp" />
+						</div>
 						<!-- Processos -->
 					</div>
 				</div>
@@ -59,14 +52,9 @@
 							test="${f:resource('isWorkflowEnabled') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;WF:Módulo de Gestão de Conhecimento')}">
 							<h2 class="gt-table-head">Tarefas</h2>
 							<!-- content box -->
-							<span id='right' style="margin: 0; padding: 0;"></span>
-							<c:if test="${f:resource('siga.sr.')}">
-							</c:if>
-							<script type="text/javascript">
-								SetInnerHTMLFromAjaxResponse(
-										"/sigawf/inbox.action?ts=${currentTimeMillis}",
-										document.getElementById('right'));
-							</script>
+							<span id='right' style="margin: 0; padding: 0;">
+                                <jsp:include page="loading.jsp" />
+							</span>
 							<!-- 
 							<div class="gt-table-buttons">
 								<a href="" class="gt-btn-green-large gt-btn-right">Iniciar
@@ -75,108 +63,43 @@
 							<!-- segunda metade da tela -->
 						</c:if>
 						<br />
-						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
-						<h2 class="gt-table-head">Solicitações</h2>
-						<!-- content box -->
-						<span id='rightbottom' style="margin:0;padding:0;"></span>
-						<script type="text/javascript">
-							SetInnerHTMLFromAjaxResponse(
-									"/sigasr/solicitacao/gadget?ts=${currentTimeMillis}",
-									document.getElementById('rightbottom'));
-						</script>
-						</c:if>
-						<br />
-						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
+						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
+                            <h2 class="gt-table-head">Solicitações</h2>
+                            <!-- content box -->
+                            <span id='rightbottom' style="margin:0;padding:0;">
+                                 <jsp:include page="loading.jsp" />
+                            </span>
+                            </c:if>
+                            <br />
+						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
 							<h2 class="gt-table-head">Gestão de Conhecimento</h2>
 							<!-- content box -->
-							<div id='rightbottom2'></div>
-							<script type="text/javascript">
+							<div id='rightbottom2'>
+                                <jsp:include page="loading.jsp" />
+							</div>
+						</c:if>
+						<br />
+						<c:if
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
+							<h2 class="gt-table-head">Transportes</h2>
+							<!-- content box -->
+							<div id='rightbottom3'>
+                                <jsp:include page="loading.jsp" />
+							</div>
+							<!-- script type="text/javascript">
 								SetInnerHTMLFromAjaxResponse(
-										"/sigagc/app/gadget?ts=${currentTimeMillis}",
-										document.getElementById('rightbottom2'));
-							</script>
+								"/sigatp/gadget",
+								document.getElementById('rightbottom3'));
+							</script> -->
 						</c:if>
 						<br />
 					</div>
 				</div>
 			</div>
 
-
-
-
-			<input type="hidden" name="webwork.token.name" value="webwork.token"><input
-				type="hidden" name="webwork.token"
-				value="4V5NHN4JMVPK6WUKD6O5BS3S64ADKB9D">
-			<%--
-			<!-- dois quadros do siga-doc -->
-			<div style="display: block; overflow: auto;">
-				<!-- Expedientes -->
-				<div style="width: 49%; float: left; clear: both;">
-					<div style="width: 100%; float: left; clear: both;">
-
-						<!-- Files Table -->
-						<!-- This table can be used for listing things like files, pictures, documents, etc -->
-						<h2 class="gt-table-head">Quadro de Expedientes</h2>
-						<!-- content box -->
-						<span id='left'></span>
-
-						<script type="text/javascript">
-							SetInnerHTMLFromAjaxResponse(
-									"/sigaex/expediente/doc/gadget.action?apenasQuadro=true&ts=${currentTimeMillis}&idTpFormaDoc=1",
-									document.getElementById('left'));
-						</script>
-						<!-- Expedientes -->
-						<br>
-						<!-- Processos -->
-						<h2 class="gt-table-head">Quadro de Processos Administrativos</h2>
-						<!-- content box -->
-						<span id='leftbottom'></span>
-
-						<script type="text/javascript">
-							SetInnerHTMLFromAjaxResponse(
-									"/sigaex/expediente/doc/gadget.action?ts=${currentTimeMillis}&idTpFormaDoc=2",
-									document.getElementById('leftbottom'));
-						</script>
-						<!-- Processos -->
-					</div>
-				</div>
-				<c:if
-					test="${f:resource('isWorkflowEnabled') and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF')}">
-					<div style="width: 49%; float: right;">
-						<h2 class="gt-table-head">Quadro de Tarefas</h2>
-						<!-- content box -->
-						<span id='right'></span>
-						<script type="text/javascript">
-							SetInnerHTMLFromAjaxResponse(
-									"/sigawf/inbox.action?ts=${currentTimeMillis}",
-									document.getElementById('right'));
-						</script>
-						<!-- 
-							<div class="gt-table-buttons">
-								<a href="" class="gt-btn-green-large gt-btn-right">Iniciar
-									Procedimento</a>
-							</div>
-							 -->
-						<!-- segunda metade da tela -->
-				</c:if>
-				<!-- Dois quadros do siga-doc -->
-			</div>
-			 --%>
-
-			<!-- / main content -->
+			<input type="hidden" name="webwork.token.name" value="webwork.token">
+            <input type="hidden" name="webwork.token" value="4V5NHN4JMVPK6WUKD6O5BS3S64ADKB9D">
+            <input type="hidden" id="idp" name="idp" value="${idp}">
 		</div>
-		<!-- / body -->
-		<!-- footer -->
-		<!--
-      <div class="gt-footer">
-        <div class="gt-footer-inner">
-          <p>
-            RENATO DO AMARAL CRIVANO MACHADO - Seção de Sistemas Especializados
-          </p>
-        </div>
-      </div> -->
-		<!-- /footer -->
 	</div>
 </siga:pagina>

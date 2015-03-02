@@ -18,14 +18,13 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jws.WebService;
-
 import br.gov.jfrj.siga.Remote;
 
-@WebService
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import java.util.ArrayList;
+
+@WebService(targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
 public interface WfService extends Remote {
 
 	/**
@@ -41,6 +40,7 @@ public interface WfService extends Remote {
 	 * @return Retorna 'true' se tudo ocorrer corretamente.
 	 * @throws Exception
 	 */
+    @WebMethod
 	Boolean criarInstanciaDeProcesso(String nomeProcesso,
 			String siglaCadastrante, String siglaTitular,
 			ArrayList<String> keys, ArrayList<String> values) throws Exception;
@@ -57,6 +57,7 @@ public interface WfService extends Remote {
 	 * @return Retorna Action.SUCCESS se tudo ocorrer corretamente.
 	 * @throws Exception
 	 */
+    @WebMethod
 	Boolean atualizarWorkflowsDeDocumento(String codigoDocumento)
 			throws Exception;
 
@@ -71,6 +72,7 @@ public interface WfService extends Remote {
 	 * @return
 	 * @throws Exception
 	 */
+    @WebMethod
 	Object variavelPorDocumento(String codigoDocumento, String nomeDaVariavel)
 			throws Exception;
 

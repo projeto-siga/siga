@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 
 import models.RiAtualizacao;
@@ -40,9 +41,11 @@ import play.Play;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
+import play.mvc.Scope.RenderArgs;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.model.DadosRI;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -154,11 +157,25 @@ public class Application extends SigaApplication {
 
 		List<RiAtualizacao> l = RiAtualizacao.findAll();
 
+		ConexaoHTTP http = new ConexaoHTTP();
+		ModeloDao.freeInstance();
+		
+		if (request.url.contains("proxy"))
+			return;
+		RenderArgs.current().put("_base", HTTP_LOCALHOST_8080);
+		HashMap<String, String> atributos = new HashMap<String, String>();
+		
+		for (Http.Header h : request.headers.values())
+			if (!h.name.equals("content-type"))
+				atributos.put(h.name, h.value());
+
+		String IDPSessionID = params.get("idp");
+		
 		for (RiAtualizacao atu : l) {
-			String json = ConexaoHTTP.get(atu.uri + "?ultimaAtualizacao=" + (atu.ultimaAtualizacao == null ? "null" : atu.ultimaAtualizacao.getTime())  + "&desempate=" + (atu.idDesempate == null ? "null" : atu.idDesempate));
-			List<DadosRI> dris = (List<DadosRI>) gson.fromJson(json,
-					new TypeToken<List<DadosRI>>() {
-					}.getType());
+			String json = http.get(atu.uri + "?ultimaAtualizacao=" + (atu.ultimaAtualizacao == null ? "null" : atu.ultimaAtualizacao.getTime())  + "&desempate=" + (atu.idDesempate == null ? "null" : atu.idDesempate), IDPSessionID);
+
+			//String json = ConexaoHTTP.get(atu.uri + "?ultimaAtualizacao=" + (atu.ultimaAtualizacao == null ? "null" : atu.ultimaAtualizacao.getTime())  + "&desempate=" + (atu.idDesempate == null ? "null" : atu.idDesempate));
+			List<DadosRI> dris = (List<DadosRI>) gson.fromJson(json, new TypeToken<List<DadosRI>>() {}.getType());
 
 			IndexWriter w = new IndexWriter(index, config);
 			for (DadosRI dri : dris) {

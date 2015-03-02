@@ -42,7 +42,7 @@ import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_DISPONIBILIDADE", schema = "SIGASR")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 
 	private static final long serialVersionUID = 7243562288736225097L;

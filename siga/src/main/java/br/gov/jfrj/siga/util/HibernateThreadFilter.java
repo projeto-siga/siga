@@ -21,18 +21,14 @@ package br.gov.jfrj.siga.util;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.log4j.Logger;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
-import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaAuditor;
-import br.gov.jfrj.siga.base.auditoria.hibernate.auditor.SigaHibernateChamadaAuditor;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -40,12 +36,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class HibernateThreadFilter extends ThreadFilter {
 
-	private static boolean fConfigured = false;
-
-	private static final Object classLock = HibernateThreadFilter.class;
-
-	private static final Logger log = Logger
-			.getLogger(HibernateThreadFilter.class);
+	private static final Logger log = Logger.getLogger(HibernateThreadFilter.class);
 
 	// static {
 	// try {
@@ -63,7 +54,7 @@ public class HibernateThreadFilter extends ThreadFilter {
 
 		final StringBuilder csv = super.iniciaAuditoria(request);
 
-		this.configuraHibernate();
+	//	this.configuraHibernate();
 
 		try {
 
@@ -84,43 +75,39 @@ public class HibernateThreadFilter extends ThreadFilter {
 		super.terminaAuditoria(csv);
 	}
 
-	private void configuraHibernate() throws ExceptionInInitializerError {
-		// Nato: usei um padrao de instanciacao de singleton para configurar a
-		// sessionFactory do Hibernate
-		// na primeira chamada ao filtro.
-		if (!fConfigured) {
-			synchronized (classLock) {
-				if (!fConfigured) {
-					try {
-						// TODO: _LAGS - Trocar para obter os parametros do
-						// "web.xml"
-						AnnotationConfiguration cfg = CpDao
-								.criarHibernateCfg("java:/SigaCpDS");
-
-						// bruno.lacerda@avantiprima.com.br
-						// Configura listeners de auditoria de acordo com os
-						// parametros definidos no arquivo
-						// siga.auditoria.properties
-						SigaAuditor
-								.configuraAuditoria(new SigaHibernateChamadaAuditor(
-										cfg));
-
-						registerTransactionClasses(cfg);
-
-						HibernateUtil.configurarHibernate(cfg, "");
-						fConfigured = true;
-					} catch (final Throwable ex) {
-						// Make sure you log the exception, as it might be
-						// swallowed
-						log.error("Não foi possível configurar o hibernate. ",
-								ex);
-						// ex.printStackTrace();
-						throw new ExceptionInInitializerError(ex);
-					}
-				}
-			}
-		}
-	}
+//	private void configuraHibernate() throws ExceptionInInitializerError {
+//		// Nato: usei um padrao de instanciacao de singleton para configurar a
+//		// sessionFactory do Hibernate
+//		// na primeira chamada ao filtro.
+//		if (!fConfigured) {
+//			synchronized (classLock) {
+//				if (!fConfigured) {
+//					try {
+//						// TODO: _LAGS - Trocar para obter os parametros do
+//						// "web.xml"
+//						Configuration cfg = CpDao.criarHibernateCfg("java:/jboss/datasources/SigaCpDS");
+//
+//						// bruno.lacerda@avantiprima.com.br
+//						// Configura listeners de auditoria de acordo com os
+//						// parametros definidos no arquivo
+//						// siga.auditoria.properties
+//						SigaAuditor.configuraAuditoria(new SigaHibernateChamadaAuditor(cfg));
+//
+//						registerTransactionClasses(cfg);
+//
+//						HibernateUtil.configurarHibernate(cfg, "");
+//						fConfigured = true;
+//					} catch (final Throwable ex) {
+//						// Make sure you log the exception, as it might be swallowed
+//						log.error("Não foi possível configurar o hibernate. ",
+//								ex);
+//						// ex.printStackTrace();
+//						throw new ExceptionInInitializerError(ex);
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	private void executaFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
@@ -169,15 +156,6 @@ public class HibernateThreadFilter extends ThreadFilter {
 			log.error(ex.getMessage(), ex);
 			// ex.printStackTrace();
 		}
-	}
-
-	public void init(final FilterConfig filterConfig) throws ServletException {
-		HibernateThreadFilter.log
-				.debug("Initializing filter, obtaining Hibernate SessionFactory from HibernateUtil");
-		// sf = HibernateUtil.getSessionFactory();
-	}
-
-	public void destroy() {
 	}
 
 }

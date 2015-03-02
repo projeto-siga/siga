@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<info primitiveTypes='attribute'>
+	<element name='pessoa'>
+		<attribute name='id' property='idPessoa' />
+		<attribute name='sesb' property='sesbPessoa' />
+		<attribute name='matricula' property='matricula' />
+		<attribute name='nome' property='nomePessoa' />
+		<attribute name='cpf' property='cpfPessoa' />
+		<attribute name='dataNascimento' property='dataNascimento' />
+		<attribute name='email' property='emailPessoa' />
+		<attribute name='idLotacao' property='idLotacao' />
+		<attribute name='idCargo' property='idCargo' />
+		<attribute name='idFuncaoConfianca' property='idFuncaoConfianca' />
+	</element>
+</info>

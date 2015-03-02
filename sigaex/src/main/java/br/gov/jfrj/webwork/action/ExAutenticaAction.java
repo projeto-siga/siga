@@ -26,10 +26,11 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
-import org.apache.xerces.impl.dv.util.Base64;
-
 import nl.captcha.Captcha;
 import nl.captcha.noise.StraightLineNoiseProducer;
+
+import org.apache.xerces.impl.dv.util.Base64;
+
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;

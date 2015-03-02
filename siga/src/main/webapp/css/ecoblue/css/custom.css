@@ -21,9 +21,6 @@ tr.fisicoeven:hover td {
 	background-color: #faf7e7;
 }
 
-
-
-
 /* Left Sidebar, 2 Column */
 .gt-cols-2 .gt-sidebar {
 	width: 35% !important;
@@ -267,7 +264,7 @@ tr.fisicoeven:hover td {
 	padding: 7px 10px;
 }
 
-TABLE.mov TR.disabled TD {
+table.mov TR.disabled td {
 	color: #bbb;
 }
 
@@ -416,13 +413,13 @@ ul#navmenu-h li:hover ul,ul#navmenu-h ul li:hover ul,ul#navmenu-h ul ul li:hover
 .gt-content-box ol, ul, li {margin-left:1em; margin-bottom:0;padding-left:0em;}
 
 
-TABLE.entrevista {
+table.entrevista {
 	padding: 0px;
 	background-color: #fff;
 	border-radius: 0px;
 }
 
-TABLE.entrevista TR.header {
+table.entrevista TR.header {
 	font-weight: bold;
 	font-size: 100%;
 	padding: 0px;
@@ -432,7 +429,7 @@ TABLE.entrevista TR.header {
 	border-radius: 0px;
 }
 
-TABLE.entrevista TR TD{
+table.entrevista tr TD{
 	padding-left: 0px;
 	padding-right: 0px;
 	padding-top: 0.1em;
@@ -440,16 +437,16 @@ TABLE.entrevista TR TD{
 }
 
 
-TABLE.side-bar-light-table {
+table.side-bar-light-table {
 	width: 100%;
 	font-size: 85%;
 }
 
-TABLE.side-bar-light-table  TBODY TH {
+table.side-bar-light-table  tbody TH {
 	border: 1px solid gray;
 }
 
-TABLE.side-bar-light-table TBODY TR TD {
+table.side-bar-light-table tbody tr td {
 	backgroud: black;
 	padding-left: 0.2em;
 	padding-right: 0.2em;
@@ -457,18 +454,44 @@ TABLE.side-bar-light-table TBODY TR TD {
 	padding-bottom: 0.5em;
 }
 
-DIV.gt-tag-cloud {
+div.gt-tag-cloud {
 	padding: 10px !important;
 }
 
-DIV.gt-tag-cloud a {
+div.gt-tag-cloud a {
 	text-decoration: none !important;
 }
 
-DIV.gt-tag-cloud a:hover {
+div.gt-tag-cloud a:hover {
 	text-decoration: underline !important;
 }
 
 del {
 	text-decoration: line-through !important;
 }
+
+a.link-sem-estilo {
+	text-decoration: none;
+}
+
+div.login-invalido p {
+	color: red;
+}
+
+div#carregando {
+	position:absolute;
+	top:35px;
+	right:0px;
+	background-color:red;
+	font-weight:bold;
+	padding:4px;
+	color:white;
+	display:none;
+}
+
+.escondido {
+    display: none;
+}
+
+input, textarea { color: #000; }
+.placeholder { color: #aaa; }

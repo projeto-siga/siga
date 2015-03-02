@@ -57,7 +57,6 @@ import java.util.Set;
 
 import javax.security.auth.x500.X500Principal;
 
-import sun.security.provider.certpath.CertPathHelper;
 import sun.security.util.Debug;
 import sun.security.x509.CRLReasonCodeExtension;
 import sun.security.x509.KeyUsageExtension;
@@ -297,16 +296,15 @@ public class SigaCrlRevocationChecker extends PKIXCertPathChecker {
 			sel.setDateAndTime(mCurrentTime);
 
 			// add the default issuer string
-			CertPathHelper.addIssuer(sel, certIssuer);
+			// TODO quando altero pra JDK 6 parou de funcionar
+//			CertPathHelper.addIssuer(sel, certIssuer);
 
 			for (CertStore mStore : mStores) {
 				mPossibleCRLs.addAll((Collection<X509CRL>) mStore.getCRLs(sel));
 			}
-			DistributionPointFetcher store = DistributionPointFetcher
-					.getInstance();
+//			DistributionPointFetcher store = DistributionPointFetcher.getInstance();
 			boolean[] reasonsMask = new boolean[9];
-			mPossibleCRLs.addAll(store.getCRLs(sel, prevKey, mSigProvider,
-					mStores, reasonsMask));
+//			mPossibleCRLs.addAll(store.getCRLs(sel, prevKey, mSigProvider,mStores, reasonsMask));
 		} catch (Exception e) {
 			if (debug != null) {
 				debug.println("CrlRevocationChecker.verifyRevocationStatus() "

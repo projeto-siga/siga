@@ -1,23 +1,16 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.util.Formatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.mvel2.MVEL;
-
-import com.uwyn.rife.continuations.util.StringUtils;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 
 public class MascaraUtil {
 
 	private static String MASK_IN;
 	private static String MASK_OUT;
-	private static String MASK_SHOW;
 
 //	MASCARA ATUAL
 //	private static String MASK_IN = "([0-9]{0,2})\\.?([0-9]{2})?\\.?([0-9]{2})?\\.?([0-9]{2})?([A-Z])?";
@@ -38,7 +31,6 @@ public class MascaraUtil {
 		if (instancia == null){
 			MASK_IN = SigaExProperties.getExClassificacaoMascaraEntrada();
 			MASK_OUT = SigaExProperties.getExClassificacaoMascaraSaida();
-			MASK_SHOW = SigaExProperties.getExClassificacaoMascaraExibicao();
 			instancia = new MascaraUtil();
 		}
 		return instancia;
@@ -60,24 +52,12 @@ public class MascaraUtil {
 		return MASK_OUT;
 	} 
 	
-	/**
-	 * Retorna o formato da máscara a ser produzida para exibição (vide Formatter.java)
-	 * @return - máscara de exibição
-	 */
-	public String getMascaraExibicao() {
-		return MASK_SHOW;
-	} 
-	
 	public void setMascaraEntrada(String regex){
 		MASK_IN = regex;
 	}
 
 	public void setMascaraSaida(String formatter){
 		MASK_OUT = formatter;
-	}
-
-	public void setMascaraExibicao(String formatter){
-		MASK_SHOW = formatter;
 	}
 
 	
@@ -87,35 +67,12 @@ public class MascaraUtil {
 	 * @return - codificacao formatado de acordo com mascaraSaida. <br/> Retorna null em caso de problemas com entrada ou saída.
 	 */
 	public String formatar(String texto){
-		final String mascara = getMascaraSaida();
-		return formatar(texto, mascara);
-	}
-
-	/**
-	 * Formata um texto que esteja de acordo com a mascara de exibição 
-	 * @param texto - texto a ser formatado como codificacao de classificação documental
-	 * @return - codificacao formatado de acordo com mascaraExibicao. <br/> Retorna null em caso de problemas com entrada ou saída.
-	 */
-	public String formatarParaExibicao(String texto){
-		String mascara = getMascaraExibicao();
-		if (mascara == null || mascara.length() == 0)
-			mascara = getMascaraSaida();
-		return formatar(texto, mascara);
-	}
-	
-	/**
-	 * Formata um texto que esteja de acordo com a mascara informada 
-	 * @param texto - texto a ser formatado como codificacao de classificação documental
-	 * @param mascara - string representando a máscara a ser utilizada. Se a máscara começar com "(", então será considerada uma expressão MVEL, caso o contrário, será utilizada em uma chamada ao Formatter.
-	 * @return - codificacao formatado de acordo com a máscara. <br/> Retorna null em caso de problemas com entrada ou saída.
-	 */
-	private String formatar(String texto, final String mascara) {
-		if (getMascaraEntrada()==null || mascara== null || texto == null){
+		if (getMascaraEntrada()==null || getMascaraSaida()== null || texto == null){
 			return null;
 		}
 		Pattern pe = Pattern.compile(getMascaraEntrada());
 		Matcher me = pe.matcher(texto);
-		if(me.find()){
+		if(me.matches()){
 			Object[] grupos = new Object[me.groupCount()] ;
 			for (int i = 0; i < me.groupCount(); i++) {
 				if(me.group(i+1)==null || me.group(i+1).length()==0){
@@ -129,25 +86,9 @@ public class MascaraUtil {
 				}
 			}
 			
-			if (mascara != null && mascara.startsWith("(")) {
-				try {
-					 Map<String,Object> vars = new HashMap<String,Object>();
-	                 vars.put("grupos", grupos);
-
-					String eval = (String)MVEL.eval(mascara, vars);
-					if (eval == null) {
-						throw new AplicacaoException("Problema na expressão: "
-								+ mascara);
-					}
-					return eval;
-				} catch (Exception e) {
-					throw new AplicacaoException("Problema na expressão: "
-							+ mascara);
-				}
-			}			
 			
 			Formatter f = new java.util.Formatter();	
-			return f.format(mascara,grupos).toString();
+			return f.format(getMascaraSaida(),grupos).toString();
 		}
 		
 		return null;
@@ -271,8 +212,6 @@ public class MascaraUtil {
 		Matcher me = pe.matcher(txt);
 		
 		if(me.matches()){
-			if (me.groupCount() < nivel)
-				return null;
 			StringBuffer sb = new StringBuffer(txt);
 //			nivel++;
 			int inicio = me.start(nivel);
@@ -388,18 +327,14 @@ public class MascaraUtil {
 	}
 	
 	/**
-	 * Retorna a quantidade de níveis da mascara definida. Por exemplo:
-	 * "00.00.00.00" retorna 4. "11-2222", retorna 2 níveis; Foram inseridos
-	 * vários caractéres "1" para tentar cobrir o caso das máscareas de tamanho
-	 * variável.
-	 * 
+	 * Retorna a quantidade de níveis da mascara definida. Por exemplo: "00.00.00.00" retorna 4. "11-2222", retorna 2 níveis;  
 	 * @return - número de níveis da máscara;
 	 */
 	public int getTotalDeNiveisDaMascara(){
 		Pattern pe = Pattern.compile(getMascaraEntrada());
-		Matcher me = pe.matcher(formatar(StringUtils.repeat("1", getMascaraEntrada().length())));
+		Matcher me = pe.matcher(formatar("0"));
 		int result = 0;
-		if(me.find()){
+		if(me.matches()){
 			for (int i = 1; i<=me.groupCount(); i++) {
 				if (me.group(i)!=null){
 					result++;

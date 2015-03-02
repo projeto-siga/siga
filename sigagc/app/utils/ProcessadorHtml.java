@@ -212,8 +212,8 @@ public class ProcessadorHtml {
 	    tidy.setSmartIndent(true);
 	    tidy.setIndentContent(true);
 	    tidy.setTidyMark(false);
-	    tidy.setOutputEncoding("ISO-8859-1");
-	    tidy.setPrintBodyOnly(true);
+	//    tidy.setOutputEncoding("ISO-8859-1");
+	 //   tidy.setPrintBodyOnly(true);
 		tidy.setRawOut(true);
 		tidy.setIndentAttributes(false);
 		tidy.setWord2000(true);

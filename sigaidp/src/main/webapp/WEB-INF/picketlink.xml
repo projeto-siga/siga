@@ -1,0 +1,54 @@
+<PicketLink xmlns="urn:picketlink:identity-federation:config:2.1">
+
+	<PicketLinkIDP xmlns="urn:picketlink:identity-federation:config:2.1" HostedURI="/" >
+		<IdentityURL>${idp.url::http://localhost:8080/sigaidp/}</IdentityURL>
+		<Trust>
+			<Domains>
+					 localhost,
+					 dev-siga,
+					 dev-siga.corp.jfrj.gov.br,
+					 siga-dev,
+					 siga-dev.corp.jfrj.gov.br
+					 siga-hmg,
+					 siga-hmg.corp.jfrj.gov.br
+					 siga.corp.jfrj.gov.br,
+					 siga,					 
+					 classec250,
+					 classec250.corp.jfrj.gov.br
+					 classef,
+					 classef.corp.jfrj.gov.br,				 					 
+					 siga-beta,
+					 siga-beta.corp.jfrj.gov.br					 
+			</Domains>
+		</Trust>
+	</PicketLinkIDP>
+	
+	<Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1">
+		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AttributeHandler">
+			<Option Key="ATTRIBUTE_MANAGER" Value="br.gov.jfrj.siga.picketlink.SAMLAttributeManager"></Option>
+			<Option Key="ATTRIBUTE_KEYS" Value="IDPsessionID" />
+		</Handler>
+		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2IssuerTrustHandler" />
+		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler" />
+		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AuthenticationHandler" />
+		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.RolesGenerationHandler" />
+	</Handlers>
+	
+	<!-- 
+		The configuration bellow defines a token timeout and a clock skew. Both configurations will be used during the SAML Assertion creation.
+		This configuration is optional. It is defined only to show you how to set the token timeout and clock skew configuration. 
+	 -->
+	<PicketLinkSTS xmlns="urn:picketlink:identity-federation:config:2.1" TokenTimeout="5000" ClockSkew="0">
+		<TokenProviders>
+			<TokenProvider
+				ProviderClass="org.picketlink.identity.federation.core.saml.v1.providers.SAML11AssertionTokenProvider"
+				TokenType="urn:oasis:names:tc:SAML:1.0:assertion"
+				TokenElement="Assertion" TokenElementNS="urn:oasis:names:tc:SAML:1.0:assertion" />
+			<TokenProvider
+				ProviderClass="org.picketlink.identity.federation.core.saml.v2.providers.SAML20AssertionTokenProvider"
+				TokenType="urn:oasis:names:tc:SAML:2.0:assertion"
+				TokenElement="Assertion" TokenElementNS="urn:oasis:names:tc:SAML:2.0:assertion" />
+		</TokenProviders>
+	</PicketLinkSTS>
+
+</PicketLink>

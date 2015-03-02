@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding='UTF-8'?>
 <!DOCTYPE hibernate-mapping PUBLIC
                             "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                            "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+                            "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 
 <!-- Created Mon Nov 14 13:36:50 GMT-03:00 2005                         -->
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
@@ -22,6 +22,7 @@
 		<many-to-one name="hisIdcFim" column="HIS_IDC_FIM" class="br.gov.jfrj.siga.cp.CpIdentidade" />
 	 	<property name="hisAtivo" column="HIS_ATIVO" type="java.lang.Integer" /> 
 
+		<property name="descrClassificacaoSemAcento" formula="REMOVE_ACENTO(DESCR_CLASSIFICACAO)" type="string" />
 		<property name="codificacao" column="CODIFICACAO" type="java.lang.String"
 			not-null="true" />
 		<property name="descrClassificacao" column="DESCR_CLASSIFICACAO"
@@ -73,7 +74,7 @@
 		<![CDATA[select distinct(cla) from ExClassificacao cla ,ExVia v 
 		where 	(
 			(upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%')) or
-			(upper(cla.descrClassificacao) like upper('%' || :descrClassificacaoSemAcento || '%')) or 
+			(upper(cla.descrClassificacaoSemAcento) like upper('%' || :descrClassificacaoSemAcento || '%')) or 
 			(cla.codificacao = :descrClassificacao)
 		)
 			and cla.codificacao like :mascara

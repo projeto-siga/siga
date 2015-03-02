@@ -1,9 +1,12 @@
 package util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import bsh.EvalError;
 import bsh.Interpreter;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class SrProcessadorScript {
 

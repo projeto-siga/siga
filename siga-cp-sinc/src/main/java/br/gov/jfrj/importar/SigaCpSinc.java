@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -450,7 +450,7 @@ public class SigaCpSinc {
 
 	public void run() throws Exception, NamingException,
 			AplicacaoException {
-		AnnotationConfiguration cfg;
+		Configuration cfg;
 		if (servidor.equals("prod"))
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.PRODUCAO);
 		else if (servidor.equals("homolo"))
@@ -462,7 +462,7 @@ public class SigaCpSinc {
 		else
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
 
-		HibernateUtil.configurarHibernate(cfg, "");
+		HibernateUtil.configurarHibernate(cfg);
 
 		verificarOrigemDeDados();
 

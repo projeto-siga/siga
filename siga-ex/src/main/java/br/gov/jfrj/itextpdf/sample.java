@@ -18,13 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.itextpdf;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Graphics;
-
-import com.lowagie.text.Image;
-import com.lowagie.text.pdf.codec.CCITTG4Encoder;
 import com.swetake.util.Qrcode;
+
+import java.awt.*;
 
 /**
  * QRcodeクラスライブラリ用sample
@@ -36,7 +32,7 @@ class Sample {
 
 		Qrcode x = new Qrcode();
 		x.setQrcodeErrorCorrect('M'); // エラー訂正レベルM
-		x.setQrcodeEncodeMode('A'); // 8bit byte モード
+		x.setQrcodeEncodeMode('A'); // http://itrc.jju.edu.cn/nexus-2.0.6/content/repositories/thirdparty/8bit byte モード
 		boolean[][] matrix = x.calQrcode(args[0].getBytes());
 
 		for (int i = 0; i < matrix.length; i++) {

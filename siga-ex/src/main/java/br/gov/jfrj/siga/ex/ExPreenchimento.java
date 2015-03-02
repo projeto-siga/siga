@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.sql.Blob;
 import java.sql.SQLException;
 
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import org.hibernate.Hibernate;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -71,7 +72,7 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
 
 	public void setPreenchimentoBA(byte[] blob) {
 		if (blob != null)
-			setPreenchimentoBlob(Hibernate.createBlob(blob));
+			setPreenchimentoBlob(HibernateUtil.getSessao().getLobHelper().createBlob(blob));
 	}
 
 	public ExPreenchimento() {

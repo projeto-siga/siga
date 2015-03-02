@@ -18,35 +18,28 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import org.jfree.util.Log;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.ex.ExConfiguracao;
-import br.gov.jfrj.siga.ex.ExModelo;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.ex.ExPapel;
-import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
-import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.*;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.ex.ExEmailNotificacao;
+import org.jboss.logging.Logger;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class Notificador {
 
 	public static int TIPO_NOTIFICACAO_GRAVACAO = 1;
 	public static int TIPO_NOTIFICACAO_CANCELAMENTO = 2;
 	public static int TIPO_NOTIFICACAO_EXCLUSAO = 3;
+
+    private static final Logger log = Logger.getLogger(Notificador.class);
 
 	// private static String servidor = "localhost:8080"; // teste
 
@@ -584,7 +577,7 @@ public class Notificador {
 				}
 					
 			} catch (Exception e) {
-				Log.error(e);
+				log.error(e);
 			}
 		}
 	}

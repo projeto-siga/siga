@@ -18,29 +18,15 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
+import org.jboss.logging.Logger;
+
+import javax.servlet.*;
 import java.io.IOException;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
-import org.apache.log4j.Appender;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.jfree.util.Log;
-
-import br.gov.jfrj.siga.ex.SigaExProperties;
-
 public class LogThreadFilter implements Filter {
-	/*
 	private static final Logger logger = Logger.getLogger(LogThreadFilter.class);
 
+	/*
 	static {
 		try {
 			BasicConfigurator.configure();
@@ -62,7 +48,7 @@ public class LogThreadFilter implements Filter {
 		try {
 			chain.doFilter(request, response);
 		} catch (RuntimeException rte) {
-			Log.error( "Ocorreu um erro ao executar o filtro. ", rte );
+            logger.error( "Ocorreu um erro ao executar o filtro. ", rte );
 			rte.printStackTrace();
 			throw new ServletException( rte );
 		}

@@ -36,11 +36,9 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class UsuarioAutenticado {
 	@SuppressWarnings("static-access")
-	public static void carregarUsuarioAutenticadoClientCert(String principal,
-			ConheceUsuario ioc) throws Exception {
+	public static void carregarUsuarioAutenticadoClientCert(String principal,ConheceUsuario ioc) throws Exception {
 
-		List<CpIdentidade> ids = dao().consultaIdentidadesCadastrante(
-				principal, true);
+		List<CpIdentidade> ids = dao().consultaIdentidadesCadastrante(principal, true);
 		CpIdentidade idCertEncontrada = null;
 		for (CpIdentidade idCert : ids) {
 			if (idCert.getCpTipoIdentidade().isTipoCertificado()) {
@@ -57,16 +55,11 @@ public class UsuarioAutenticado {
 				DpPessoa pessoa = CpDao.getInstance().getPessoaPorPrincipal(
 						principal);
 				if (pessoa == null)
-					throw new AplicacaoException(
-							"Pessoa não identificada para a matrícula '"
-									+ principal + "'.");
+					throw new AplicacaoException("Pessoa não identificada para a matrícula '"+ principal + "'.");
 				CpTipoIdentidade tpId = CpDao.getInstance().consultar(
-						CpTipoIdentidade.CERTIFICADO, CpTipoIdentidade.class,
-						false);
+						CpTipoIdentidade.CERTIFICADO, CpTipoIdentidade.class, false);
 				if (tpId == null)
-					throw new AplicacaoException(
-							"Tipo de identidade não encontrado para o id '"
-									+ CpTipoIdentidade.CERTIFICADO + "'.");
+					throw new AplicacaoException("Tipo de identidade não encontrado para o id '"+ CpTipoIdentidade.CERTIFICADO + "'.");
 				idCertNova = new CpIdentidade();
 				idCertNova.setDpPessoa(pessoa);
 				idCertNova.setCpTipoIdentidade(tpId);
@@ -93,26 +86,23 @@ public class UsuarioAutenticado {
 			carregarUsuario(idCertEncontrada, ioc);
 		}
 	}
+	
 
 	@SuppressWarnings("static-access")
 	public static void carregarUsuario(CpIdentidade id, ConheceUsuario ioc)
 			throws AplicacaoException, SQLException {
 		Date dt = dao().consultarDataEHoraDoServidor();
 		if (!id.ativaNaData(dt)) {
-			throw new AplicacaoException(
-					"O acesso não será permitido porque identidade está inativa desde '"
-							+ id.getDtExpiracaoDDMMYYYY() + "'.");
+			throw new AplicacaoException("O acesso não será permitido porque identidade está inativa desde '"+ id.getDtExpiracaoDDMMYYYY() + "'.");
 		}
 		if (id.isBloqueada()) {
-			throw new AplicacaoException(
-					"O acesso não será permitido porque esta identidade está bloqueada.");
+			throw new AplicacaoException("O acesso não será permitido porque esta identidade está bloqueada.");
 		}
 
 		ioc.setIdentidadeCadastrante(id);
 		ioc.setCadastrante(id.getPessoaAtual());
 
-		CpPersonalizacao per = dao().consultarPersonalizacao(
-				ioc.getCadastrante());
+		CpPersonalizacao per = dao().consultarPersonalizacao(ioc.getCadastrante());
 
 		// // Verifica se o usuário está simulando alguém.
 		// if (per != null && per.getUsuarioSimulando() != null) {
@@ -173,8 +163,7 @@ public class UsuarioAutenticado {
 	 * @param principal
 	 * @throws SQLException
 	 */
-	public static void carregarUsuarioAutenticado(String principal,
-			ConheceUsuario ioc) throws Exception {
+	public static void carregarUsuarioAutenticado(String principal,	ConheceUsuario ioc) throws Exception {
 
 		CpIdentidade id = dao().consultaIdentidadeCadastrante(principal, true);
 		carregarUsuario(id, ioc);
@@ -238,18 +227,14 @@ public class UsuarioAutenticado {
 	 * @throws SQLException
 	 *             ,NullPointerException
 	 */
-	public static void carregarUsuarioAutenticadoRequest(
-			HttpServletRequest request, ConheceUsuario ioc)
-			throws SQLException, NullPointerException,
-			CertificateParsingException, Exception {
+	public static void carregarUsuarioAutenticadoRequest(HttpServletRequest request, ConheceUsuario ioc) throws SQLException, NullPointerException,	CertificateParsingException, Exception {
 		if (isClientCertAuth(request)) {
 			// login por certificado digital
 			String principal = obterSesbMatriculaUsuarioComCertificado(request);
 			carregarUsuarioAutenticadoClientCert(principal, ioc);
 		} else {
 			// login por formulario
-			carregarUsuarioAutenticado(request.getUserPrincipal().getName(),
-					ioc);
+			carregarUsuarioAutenticado(request.getUserPrincipal().getName(),ioc);
 		}
 	}
 
@@ -275,11 +260,10 @@ public class UsuarioAutenticado {
 	 * @param request
 	 * @throws Exception
 	 */
-	public static String obterSesbMatriculaUsuarioComCertificado(
-			HttpServletRequest request) throws Exception {
+	public static String obterSesbMatriculaUsuarioComCertificado(HttpServletRequest request) throws Exception {
 		String cpf = CertificadoUtil.recuperarCPF(request);
-		DpPessoa pessoa = CpDao.getInstance().consultarPorCpf(
-				Long.parseLong(cpf));
+		DpPessoa pessoa = CpDao.getInstance().consultarPorCpf(Long.parseLong(cpf));
+		
 		return pessoa.getSesbPessoa() + pessoa.getMatricula().toString();
 	}
 

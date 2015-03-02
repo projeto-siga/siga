@@ -166,7 +166,7 @@
 		#{/elseif }
 		
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-			<form action="@{Application.buscarSolicitacao}" onsubmit="javascript: return block();">
+			<form action="@{Application.buscarSolicitacao}" onsubmit="javascript: return block();" enctype="multipart/form-data">
 				<input type="hidden" name="filtro.pesquisar" value="true" />
 				<input type="hidden" name="nome" value="${nome}" />
 				<input type="hidden" name="popup" value="${popup}" />

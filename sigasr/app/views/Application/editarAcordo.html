@@ -6,7 +6,7 @@
 
 <div class="gt-form gt-content-box">
 	<div>
-		<form id="acordoForm">
+		<form id="acordoForm" enctype="multipart/form-data">
 			<input type="hidden" name="id" id="id"> 
 			<input type="hidden" name="hisIdIni" id="hisIdIni">
 			<div class="gt-form-row gt-width-66">
@@ -117,7 +117,7 @@
 <div id="dialog">
 	<div class="gt-content">
 		<div class="gt-form gt-content-box">
-			<form id="parametroForm">
+			<form id="parametroForm" enctype="multipart/form-data">
 				<div class="gt-form-row">
 					<label>Par&acirc;metro</label> #{select name:'parametro',
 					id:'parametro'} #{list items:parametros, as:'parametro'} #{option

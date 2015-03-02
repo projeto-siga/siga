@@ -33,11 +33,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  */
 public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		Serializable, Selecionavel, Comparable<ExFormaDocumento> {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8863713030171351063L;
-
+	
 	/**
 	 * Simple constructor of ExFormaDocumento instances.
 	 */
@@ -117,4 +113,5 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		
 		return false;
 	}
+	
 }

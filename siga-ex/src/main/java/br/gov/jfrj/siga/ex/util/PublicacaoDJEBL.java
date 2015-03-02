@@ -39,6 +39,9 @@ import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
+import org.jboss.logging.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -57,10 +60,10 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class PublicacaoDJEBL {
+
+    private static final Logger log = Logger.getLogger(PublicacaoDJEBL.class);
 
 	public static int MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR = 526;
 
@@ -101,10 +104,8 @@ public class PublicacaoDJEBL {
 		while (i.hasNext()) {
 			try {
 				Element elemento = (Element) i.next();
-				String numeroDoDocumento = elemento
-						.getAttributeValue("NUMDOCUMENTO");
-				String paginaDaPublicacao = elemento
-						.getAttributeValue("PAGPUBLICACAO");
+				String numeroDoDocumento = elemento.getAttributeValue("NUMDOCUMENTO");
+				String paginaDaPublicacao = elemento.getAttributeValue("PAGPUBLICACAO");
 
 				final ExMobilDaoFiltro daoViaFiltro = new ExMobilDaoFiltro();
 				daoViaFiltro.setSigla(numeroDoDocumento);
@@ -115,12 +116,9 @@ public class PublicacaoDJEBL {
 				docVia = exDao.consultarPorSigla(daoViaFiltro);
 
 				if (docVia != null)
-					Ex.getInstance().getBL()
-							.registrarDisponibilizacaoPublicacao(docVia, data,
-									paginaDaPublicacao);
+					Ex.getInstance().getBL().registrarDisponibilizacaoPublicacao(docVia, data, paginaDaPublicacao);
 			} catch (Exception e) {
-				int a = 0;
-
+				e.printStackTrace();
 			}
 		}
 	}
@@ -145,39 +143,32 @@ public class PublicacaoDJEBL {
 				"http://www.w3.org/2001/XMLSchema", "dateTime"), Date.class,
 				ParameterDesc.IN, false, false);
 		// define o tipo de retorno
-		oper.setReturnType(new QName("http://www.w3.org/2001/XMLSchema",
-				"base64Binary"));
+		oper.setReturnType(new QName("http://www.w3.org/2001/XMLSchema","base64Binary"));
 		oper.setReturnClass(byte[].class);
-		oper.setReturnQName(new QName("http://tempuri.org/",
-				"GerarRespostaStatusPublicacoesResult"));
+		oper.setReturnQName(new QName("http://tempuri.org/","GerarRespostaStatusPublicacoesResult"));
 		oper.setStyle(Style.WRAPPED);
 		oper.setUse(Use.LITERAL);
 
 		// call--------------------------------------------------
 
 		Call call = (Call) service.createCall();
+
 		call.setOperation(oper);
-		call
-				.setTargetEndpointAddress(new URL(SigaExProperties
-						.getServidorDJE()));
-		call.setOperationName(new QName("http://tempuri.org/",
-				"GerarRespostaStatusPublicacoes"));
+		call.setTargetEndpointAddress(new URL(SigaExProperties.getServidorDJE()));
+		call.setOperationName(new QName("http://tempuri.org/", "GerarRespostaStatusPublicacoes"));
 		call.setProperty(Call.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
-		call.setProperty(Call.SOAPACTION_URI_PROPERTY,
-				"http://tempuri.org/GerarRespostaStatusPublicacoes");
+		call.setProperty(Call.SOAPACTION_URI_PROPERTY, "http://tempuri.org/GerarRespostaStatusPublicacoes");
 
 		String xmlRetorno;
 
 		if (tipoCaderno.equals("J"))
-			xmlRetorno = new String((byte[]) call.invoke(new Object[] { secao,
-					"Judicial", data }));
+			xmlRetorno = new String((byte[]) call.invoke(new Object[] { secao, "Judicial", data }));
 		else
-			xmlRetorno = new String((byte[]) call.invoke(new Object[] { secao,
-					"Administrativo", data }));
+			xmlRetorno = new String((byte[]) call.invoke(new Object[] { secao, "Administrativo", data }));
 
-		System.out.println("DJE Busca Publicacoes "
-				+ new SimpleDateFormat("dd/MM/yyyy").format(data) + ":"
-				+ xmlRetorno);
+		log.info("DJE Busca Publicacoes "
+                + new SimpleDateFormat("dd/MM/yyyy").format(data) + ":"
+                + xmlRetorno);
 
 		setXmlRetornado(xmlRetorno);
 
@@ -195,17 +186,15 @@ public class PublicacaoDJEBL {
 		 * .encode(mov.getConteudoBlobMov2()) });
 		 */
 
-		System.out.println("DJE: prestes a chamarrrr serviço");
+		log.info("DJE: prestes a chamarrrr serviço");
 		try {
-			AxisClientAlternativo cliente = new AxisClientAlternativo(
-					SigaExProperties.getServidorDJE(), "RecebeDocumentos", true);
+			AxisClientAlternativo cliente = new AxisClientAlternativo(SigaExProperties.getServidorDJE(), "RecebeDocumentos", true);
 
 			cliente.setParam(new Object[] { mov.getConteudoBlobMov2() });
 			Object o = cliente.call();
 			return new String((byte[]) o);
 		} catch (Throwable t) {
-			System.out.print("DJE erro: " + t.getMessage() + " "
-					+ t.getCause().getMessage() + " ");
+			System.out.print("DJE erro: " + t.getMessage() + " " + t.getCause().getMessage() + " ");
 			throw new Exception(t);
 		}
 	}
@@ -214,8 +203,7 @@ public class PublicacaoDJEBL {
 
 		String conteudoXML = enviarTRF(mov);
 
-		System.out.println("\n\n DJE envio " + mov.getExDocumento().getCodigo()
-				+ ", retorno: " + conteudoXML);
+		System.out.println("\n\n DJE envio " + mov.getExDocumento().getCodigo() + ", retorno: " + conteudoXML);
 
 		verificaRetornoErrosTRF(conteudoXML);
 	}
@@ -320,14 +308,11 @@ public class PublicacaoDJEBL {
 		attIdentificacao.addAttribute("", "", "CADERNO", "String", tipoMateria);
 		
 		if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFRJ"))
-			attIdentificacao.addAttribute("", "", "SECAO", "String", String
-					.valueOf("SJRJ"));
+			attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJRJ"));
 		else if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFES"))
-			attIdentificacao.addAttribute("", "", "SECAO", "String", String
-					.valueOf("SJES"));
+			attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJES"));
 		else
-			attIdentificacao.addAttribute("", "", "SECAO", "String", String
-				.valueOf(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu()));
+			attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu()));
 
 //		String auxStr = obterUnidadeDocumento(mov.getExDocumento());
 
@@ -335,20 +320,16 @@ public class PublicacaoDJEBL {
 
 		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-		attIdentificacao.addAttribute("", "", "DATADISPONIBILIZACAO", "Date",
-				df.format(mov.getDtDispPublicacao()));
+		attIdentificacao.addAttribute("", "", "DATADISPONIBILIZACAO", "Date",df.format(mov.getDtDispPublicacao()));
 
 		long idMod = mov.getExDocumento().getExModelo().getHisIdIni();
 		if (idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR
 				|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS
 				|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R)
-			attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", docForm
-					.get("idTipoMateria"));
+			attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", docForm.get("idTipoMateria"));
 		else {
-			ExTpDocPublicacao tpDocPubl = ExDao.getInstance()
-					.consultarPorModelo(movDoc.getExModelo());
-			attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", String
-					.valueOf(tpDocPubl.getIdDocPublicacao().longValue()));
+			ExTpDocPublicacao tpDocPubl = ExDao.getInstance().consultarPorModelo(movDoc.getExModelo());
+			attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", String.valueOf(tpDocPubl.getIdDocPublicacao().longValue()));
 		}
 
 		String sMatricula;
@@ -373,15 +354,12 @@ public class PublicacaoDJEBL {
 		handler.endElement("", "", "IDENTIFICACAO");
 
 		AttributesImpl attsExpediente = new AttributesImpl();
-		attsExpediente.addAttribute("", "", "NUMEXPEDIENTE", "String", movDoc
-				.getCodigo());
+		attsExpediente.addAttribute("", "", "NUMEXPEDIENTE", "String", movDoc.getCodigo());
 
 		if (docForm.containsKey("tituloMateria"))
-			attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",
-					docForm.get("tituloMateria"));
+			attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",docForm.get("tituloMateria"));
 		else
-			attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",
-					descrPublicacao);
+			attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",descrPublicacao);
 		handler.startElement("", "", "EXPEDIENTE", attsExpediente);
 		handler.endElement("", "", "EXPEDIENTE");
 		handler.endElement("", "", "PUBLICACAODJE");
@@ -389,8 +367,7 @@ public class PublicacaoDJEBL {
 
 		byte[] retorno = baos.toByteArray();
 
-		System.out.println("DJE envio " + mov.getExDocumento().getCodigo()
-				+ ", xml gerado: " + new String(retorno));
+		System.out.println("DJE envio " + mov.getExDocumento().getCodigo() + ", xml gerado: " + new String(retorno));
 
 		baos.close();
 
@@ -399,13 +376,11 @@ public class PublicacaoDJEBL {
 	}
 
 	private static String obterSiglaAlternativa(DpPessoa pess) {
-		return (pess.getOrgaoUsuario().getIdOrgaoUsu() == 3 ? "TR" : pess
-				.getOrgaoUsuario().getSigla())
-				+ pess.getMatricula().toString();
+		return (pess.getOrgaoUsuario().getIdOrgaoUsu() == 3 ? "TR" : 
+			pess.getOrgaoUsuario().getSigla()) + pess.getMatricula().toString();
 	}
 
-	public static String obterUnidadeDocumento(ExDocumento doc)
-			throws Exception {
+	public static String obterUnidadeDocumento(ExDocumento doc) throws Exception {
 		String nomeLota, nomeLotaFinal = "";
 //		ExDocumento movDoc = mov.getExDocumento();
 		Map<String, String> docForm = doc.getForm();
@@ -424,8 +399,7 @@ public class PublicacaoDJEBL {
 			String funcaoLower = doc.getNmFuncaoSubscritor();
 			if (funcaoLower != null) {
 				funcaoLower = funcaoLower.toLowerCase();
-				if (funcaoLower.contains("diretor")
-						&& funcaoLower.contains("foro"))
+				if (funcaoLower.contains("diretor") && funcaoLower.contains("foro"))
 					nomeLota = "DIRFO";
 			}
 		}
@@ -436,8 +410,7 @@ public class PublicacaoDJEBL {
 				|| doc.getExModelo().getHisIdIni() == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR) {
 			if (docForm.get("juizDistribuidor").equals("Sim")) {
 				nomeLota = "JD";
-				Matcher m = Pattern.compile("^.+(-[A-Z]{2,4})").matcher(
-						nomeLotaFinal);
+				Matcher m = Pattern.compile("^.+(-[A-Z]{2,4})").matcher(nomeLotaFinal);
 				if (m.find())
 					nomeLota += m.group(1);
 			}
@@ -548,29 +521,25 @@ public class PublicacaoDJEBL {
 
 		Call call = (Call) service.createCall();
 		call.setOperation(oper);
-		call
-				.setTargetEndpointAddress(new URL(SigaExProperties
-						.getServidorDJE()));
-		call.setOperationName(new QName("http://tempuri.org/",
-				"ExcluirDocumento"));
+		call.setTargetEndpointAddress(new URL(SigaExProperties.getServidorDJE()));
+		call.setOperationName(new QName("http://tempuri.org/", "ExcluirDocumento"));
 		call.setProperty(Call.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
-		call.setProperty(Call.SOAPACTION_URI_PROPERTY,
-				"http://tempuri.org/ExcluirDocumento");
+		call.setProperty(Call.SOAPACTION_URI_PROPERTY, "http://tempuri.org/ExcluirDocumento");
 
 		String siglaUnidade = mov.getLotaPublicacao();
 
-		System.out.println("\n\n DJE exclusao "
-				+ mov.getExDocumento().getCodigo()
-				+ ", envio: "
-				+ mov.getExDocumento().getCodigo()
-				+ ", Administrativo"
-				+ ", "
-				+ Boolean.TRUE
-				+ ", "
-				+ siglaUnidade
-				+ ", "
-				+ movCancelamento.getLotaCadastrante().getOrgaoUsuario()
-						.getAcronimoOrgaoUsu());
+		log.info("\n\n DJE exclusao "
+                + mov.getExDocumento().getCodigo()
+                + ", envio: "
+                + mov.getExDocumento().getCodigo()
+                + ", Administrativo"
+                + ", "
+                + Boolean.TRUE
+                + ", "
+                + siglaUnidade
+                + ", "
+                + movCancelamento.getLotaCadastrante().getOrgaoUsuario()
+                .getAcronimoOrgaoUsu());
 		
 		String sAcronimoOrgaoUsu = null;
 		
@@ -588,11 +557,10 @@ public class PublicacaoDJEBL {
 				Boolean.TRUE,
 				siglaUnidade, sAcronimoOrgaoUsu }))).substring(3);
 
-		System.out
-				.println("\n\n DJE exclusao "
-						+ mov.getExDocumento().getCodigo() + ", retorno: "
-						+ xmlRetorno);
-		int a = 1;
+		log.info("\n\n DJE exclusao "
+                + mov.getExDocumento().getCodigo() + ", retorno: "
+                + xmlRetorno);
+
 		verificaRetornoErrosTRF(xmlRetorno);
 	}
 }

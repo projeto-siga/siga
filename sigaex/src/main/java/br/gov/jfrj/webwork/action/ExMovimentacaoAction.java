@@ -28,7 +28,6 @@ package br.gov.jfrj.webwork.action;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -37,7 +36,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,10 +55,8 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.apache.xerces.impl.dv.util.Base64;
-import org.hibernate.ScrollableResults;
-import org.hibernate.Session;
+import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
@@ -89,7 +85,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
-import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
@@ -1528,7 +1523,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// SignerInformation sigInfo = pacoteAssinatura
 		// .getSignerInformation(i);
 		//
-		// // Busca o certificado do assinante atrav√©s do serialNumber e
+		// // Busca o certificado do assinante atravÈs do serialNumber e
 		// // issuer.
 		// BigInteger serialNumber = sigInfo.getSerialNumber();
 		// Principal issuer = sigInfo.getIssuer();
@@ -1537,7 +1532,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 		// signerCert = (X509CertificateImpl) pacoteAssinatura
 		// .getCertificates().getCertificate(issuer, serialNumber);
 		//
-		// // Se o certificado n√£o existir, lan√ßa erro.
+		// // Se o certificado n„o existir, lanÁa erro.
 		// if (signerCert == null) {
 		// throw new Exception(
 		// "O certificado do assinante n„o foi encontrado");

@@ -59,7 +59,7 @@
 </style>
 
 		<div class="gt-form gt-content-box div-editar-equipe">
-			<form id="form" class="formEditarEquipe">
+			<form id="form" class="formEditarEquipe" enctype="multipart/form-data">
 				<input type="hidden" id="idEquipe" name="idEquipe">
 				<input type="hidden" id="idEquipeIni" name="hisIdIni">
 				<input type="text" style="visibility: hidden;" id="lotacaoUsuario" name="lotacaoUsuario" value="${lotacaoUsuario.toJson()}"/>
@@ -132,7 +132,7 @@
 #{modal nome:'excecaoHorario', titulo:'Adicionar Exceção de Horário'}
 	<div id="dialogExcecaoHorario">
 		<div class="gt-content">
-			<form id="excecaoHorarioForm" method="get" action="">
+			<form id="excecaoHorarioForm" method="get" action="" enctype="multipart/form-data">
 				<div class="gt-form gt-content-box">
 					<div class="gt-form-row gt-width-100">
 						<label>Dia da Semana</label> 

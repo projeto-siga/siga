@@ -12,8 +12,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 public class DpPessoaBinder implements TypeBinder<DpPessoa> {
 
 	@Override
-	public Object bind(String name, Annotation[] anns, String value,
-			Class clazz, Type arg4) throws Exception {
+	public Object bind(String name, Annotation[] anns, String value, Class clazz, Type arg4) throws Exception {
+
 		if (value != null && !value.equals(""))
 			return JPA.em().find(DpPessoa.class, Long.valueOf(value));
 		return null;

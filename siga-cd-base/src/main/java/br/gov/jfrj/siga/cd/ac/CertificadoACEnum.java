@@ -18,13 +18,15 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cd.ac;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
-import java.security.cert.CertificateFactory;
+
+import org.apache.axis.encoding.Base64;
+
 
 /**
  * Enumerador de Certificados de Autoridades Certificadoras (AC)

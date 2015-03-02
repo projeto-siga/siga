@@ -196,14 +196,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAcessarDocumento(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		ExDocumento doc = mob.doc();
-		
-		if(doc.getOrgaoUsuario() != null  
-				&& doc.getOrgaoUsuario().getIdOrgaoUsu() != null) {
-			if(podePorConfiguracao(titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_ACESSAR, doc.getOrgaoUsuario())) {
-				return true;	
-			}
-		}		
-		
 		if (doc.getDnmAcesso() == null) {
 			Ex.getInstance().getBL().atualizarDnmAcesso(doc);
 		}

@@ -18,22 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jws.WebService;
-
-import org.hibernate.Query;
-import org.jbpm.JbpmContext;
-import org.jbpm.context.def.VariableAccess;
-import org.jbpm.context.exe.VariableInstance;
-import org.jbpm.context.exe.variableinstance.StringInstance;
-import org.jbpm.db.GraphSession;
-import org.jbpm.graph.def.ProcessDefinition;
-import org.jbpm.graph.exe.ExecutionContext;
-import org.jbpm.graph.exe.ProcessInstance;
-import org.jbpm.taskmgmt.exe.TaskInstance;
-
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
@@ -43,6 +27,19 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.service.WfService;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 import br.gov.jfrj.siga.wf.webwork.action.WfTaskAction;
+import org.hibernate.Query;
+import org.jbpm.JbpmContext;
+import org.jbpm.context.def.VariableAccess;
+import org.jbpm.context.exe.VariableInstance;
+import org.jbpm.db.GraphSession;
+import org.jbpm.graph.def.ProcessDefinition;
+import org.jbpm.graph.exe.ExecutionContext;
+import org.jbpm.graph.exe.ProcessInstance;
+import org.jbpm.taskmgmt.exe.TaskInstance;
+
+import javax.jws.WebService;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe que representa o webservice do workflow. O SIGA-DOC faz a chamada
@@ -52,7 +49,7 @@ import br.gov.jfrj.siga.wf.webwork.action.WfTaskAction;
  * @author kpf
  * 
  */
-@WebService(endpointInterface = "br.gov.jfrj.siga.wf.service.WfService")
+@WebService(serviceName ="WfService", endpointInterface = "br.gov.jfrj.siga.wf.service.WfService", targetNamespace = "http://impl.service.wf.siga.jfrj.gov.br/")
 public class WfServiceImpl implements WfService {
 
 	private boolean hideStackTrace = false;
@@ -75,10 +72,8 @@ public class WfServiceImpl implements WfService {
 			throws Exception {
 		try {
 			Boolean b = false;
-			GraphSession graph = WfContextBuilder.getJbpmContext()
-					.getGraphSession();
-			JbpmContext ctx = WfContextBuilder.getJbpmContext()
-					.getJbpmContext();
+			GraphSession graph = WfContextBuilder.getJbpmContext().getGraphSession();
+			JbpmContext ctx = WfContextBuilder.getJbpmContext().getJbpmContext();
 			// List<TaskInstance> tis = ctx.getTaskList();
 
 			Query q = WfDao

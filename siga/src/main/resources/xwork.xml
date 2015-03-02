@@ -38,6 +38,7 @@
 		<action name="principal" class="br.gov.jfrj.webwork.action.PrincipalAction">
 			<result>/paginas/principal.jsp</result>
 		</action>
+		
 
 		<action name="pagina_vazia" class="br.gov.jfrj.webwork.action.PlayAction">
 			<result>/paginas/play_pagina_vazia.jsp</result>
@@ -54,28 +55,38 @@
 			<result>/paginas/entradas/administracao.jsp</result> </action> <action name="simulacao" 
 			class="br.gov.jfrj.webwork.action.AdministracaoAction" method="aSimular"> 
 			<result>/paginas/principal.jsp</result> </action> -->
+		
+		<!-- 	
 		<action name="logoff" class="br.gov.jfrj.siga.libs.webwork.LogoffAction">
 			<result name="success" type="redirect-action">
 				<param name="actionName">principal</param>
 				<param name="namespace">/</param>
 			</result>
 			<result name="CLIENT_CERT_AUTH_LOGOFF">/sigalibs/client_cert_auth_logoff.jsp</result>
-
 		</action>
+		
 
 		<action name="redirect" class="br.gov.jfrj.siga.libs.webwork.LogoffAction"
 			method="redirect">
 			<result name="success" type="redirect">${request.scheme}://${request.serverName}:${request.serverPort}${uri}
 			</result>
 		</action>
+		-->
 
-		<action name="trocar_senha" class="br.gov.jfrj.webwork.action.UsuarioAction"
-			method="aTrocarSenha">
+	</package>
+	
+	<package name="principalQuadros" extends="default" namespace="/principalQuadros">
+		<action name="carregaModulo" class="br.gov.jfrj.webwork.action.PrincipalQuadrosAction" method="aCarregaModulo">
+			<result>/paginas/principal_quadro.jsp</result>
+		</action>
+	</package>
+	
+	<package name="usuario" extends="default" namespace="/usuario">
+		<action name="trocar_senha" class="br.gov.jfrj.webwork.action.UsuarioAction" method="aTrocarSenha">
 			<result>/paginas/entradas/trocasenha.jsp</result>
 		</action>
 
-		<action name="trocar_senha_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
-			method="aTrocarSenhaGravar">
+		<action name="trocar_senha_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction" method="aTrocarSenhaGravar">
 			<result type="redirect-action">
 				<param name="actionName">principal</param>
 				<param name="namespace">/</param>
@@ -86,14 +97,11 @@
 				</result> -->
 		</action>
 
-		<action name="esqueci_senha" class="br.gov.jfrj.webwork.action.UsuarioAction"
-			method="aEsqueciSenha">
-			<result>/paginas/entradas/esquecisenha.jsp?titulo=Esqueci Minha
-				Senha&amp;proxima_acao=esqueci_senha_gravar</result>
+		<action name="esqueci_senha" class="br.gov.jfrj.webwork.action.UsuarioAction" method="aEsqueciSenha">
+			<result>/paginas/entradas/esquecisenha.jsp?titulo=Esqueci Minha Senha&amp;proxima_acao=esqueci_senha_gravar</result>
 		</action>
 
-		<action name="esqueci_senha_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
-			method="aEsqueciSenhaGravar">
+		<action name="esqueci_senha_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction" method="aEsqueciSenhaGravar">
 			<result type="redirect-action">
 				<param name="actionName">esqueci_senha</param>
 				<param name="namespace">/</param>
@@ -103,14 +111,11 @@
 				</result> -->
 		</action>
 
-		<action name="incluir_usuario" class="br.gov.jfrj.webwork.action.UsuarioAction"
-			method="aIncluirUsuario">
-			<result>/paginas/entradas/esquecisenha.jsp?titulo=Novo
-				Usuário&amp;proxima_acao=incluir_usuario_gravar</result>
+		<action name="incluir_usuario" class="br.gov.jfrj.webwork.action.UsuarioAction" method="aIncluirUsuario">
+			<result>/paginas/entradas/esquecisenha.jsp?titulo=Novo Usuário&amp;proxima_acao=incluir_usuario_gravar</result>
 		</action>
 
-		<action name="incluir_usuario_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction"
-			method="aIncluirUsuarioGravar">
+		<action name="incluir_usuario_gravar" class="br.gov.jfrj.webwork.action.UsuarioAction" method="aIncluirUsuarioGravar">
 			<result type="redirect-action">
 				<param name="actionName">incluir_usuario</param>
 				<param name="namespace">/</param>
@@ -119,20 +124,16 @@
 			<!-- <result>/paginas/entradas/senhatrocada.jsp?titulo=Novo Usuário </result> -->
 		</action>
 
-		<action name="integracaoLdap" class="br.gov.jfrj.webwork.action.UsuarioAction"
-			method="isIntegradoLdap">
+		<action name="integracaoLdap" class="br.gov.jfrj.webwork.action.UsuarioAction" method="isIntegradoLdap">
 			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
 			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 		</action>
 		
-		<action name="checkEmailValido" class="br.gov.jfrj.webwork.action.UsuarioAction"
-			method="isEmailValido">
+		<action name="checkEmailValido" class="br.gov.jfrj.webwork.action.UsuarioAction" method="isEmailValido">
 			<result name="ajax_vazio">/sigalibs/ajax_vazio.jsp</result>
 			<result name="ajax_retorno">/sigalibs/ajax_retorno.jsp</result>
 			<result name="error">/sigalibs/ajax_msg_erro.jsp</result>
 		</action>
-		
-
 	</package>
 
 	<package name="generico" extends="default" namespace="/generico">

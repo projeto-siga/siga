@@ -99,13 +99,20 @@
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
                     	<li><a href="/sigatp/">Transportes</a>
                     </li>
+					
+					
                 </c:if>
+				
+				                	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos')}">
+						<li><a href="/sigase/">Dados Externos</a>
+						</li>
+					</c:if>
 					
 				</ul>
 			</li>
 			<li><a href="#">Administração</a>
 				<ul>
-					<li><ww:a href="/siga/trocar_senha.action">Trocar senha</ww:a>
+					<li><ww:a href="/siga/usuario/trocar_senha.action" >Trocar senha</ww:a>
 					</li>
 					<%--
 					<li><a href="/siga/substituicao/substituir.action">Entrar
@@ -206,11 +213,6 @@
 				<ul>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
-						<li><ww:a href="/siga/modelo/listar.action">Cadastro de Formas</ww:a>
-						</li>
-					</c:if>				
-					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
 						<li><ww:a href="/siga/modelo/listar.action">Cadastro de modelos</ww:a>
 						</li>
 					</c:if>
@@ -261,7 +263,7 @@
 		</li>
 
 
-		<li><ww:a href="/siga/logoff.action">Logoff</ww:a>
+		<li><ww:a href="/siga/?GLO=true">Logoff</ww:a>
 		</li>
 
 	</ul>

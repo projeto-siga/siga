@@ -22,5 +22,5 @@
 	alt="Bandeira do Brasil"></div>
 </div>
 
-<div id="carregando" style="position:absolute;top:0px;right:0px;background-color:red;font-weight:bold;padding:4px;color:white;display:none">Carregando...</div>
+<div id="carregando">Carregando...</div>
 

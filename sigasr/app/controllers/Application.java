@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,10 +55,10 @@ import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
+import play.mvc.Scope;
 import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
-import br.gov.jfrj.siga.base.ConexaoHTTP;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -119,7 +120,7 @@ public class Application extends SigaApplication {
 	}
 
 	protected static void assertAcesso(String path) throws Exception {
-		SigaApplication.assertAcesso("SR:M√≥dulo de Servi√ßos;" + path);
+		SigaApplication.assertAcesso("SR:MÛdulo de ServiÁos;" + path);
 	}
 
 	@Catch()
@@ -267,20 +268,20 @@ public class Application extends SigaApplication {
 			throws Exception {
 
 		if (solicitacao.solicitante == null) {
-			validation.addError("solicitacao.solicitante",
+			validation.current().addError("solicitacao.solicitante",
 					"Solicitante n&atilde;o informado");
 		}
 		if (solicitacao.itemConfiguracao == null) {
-			validation.addError("solicitacao.itemConfiguracao",
+			validation.current().addError("solicitacao.itemConfiguracao",
 					"Item n&atilde;o informado");
 		}
 		if (solicitacao.acao == null) {
-			validation.addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
+			validation.current().addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
 		}
 
 		if (solicitacao.descrSolicitacao == null
 				|| solicitacao.descrSolicitacao.trim().equals("")) {
-			validation.addError("solicitacao.descrSolicitacao",
+			validation.current().addError("solicitacao.descrSolicitacao",
 					"Descri&ccedil&atilde;o n&atilde;o informada");
 		}
 		
@@ -289,13 +290,13 @@ public class Application extends SigaApplication {
 			// Para evitar NullPointerExcetpion quando nao encontrar no Map
 			if(Boolean.TRUE.equals(obrigatorio.get(att.atributo.idAtributo))) {
 				if ((att.valorAtributoSolicitacao == null || att.valorAtributoSolicitacao.trim().equals("")))
-					validation.addError("solicitacao.atributoSolicitacaoMap["
+					validation.current().addError("solicitacao.atributoSolicitacaoMap["
 							+ att.atributo.idAtributo + "]",
 							att.atributo.nomeAtributo + " n&atilde;o informado");
 			}
 		}
 
-		if (validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			formEditar(solicitacao);
 		}
 	}
@@ -303,9 +304,9 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarItem(
 			SrItemConfiguracao itemConfiguracao) throws Exception {
 		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
-			Validation.addError("siglaAcao", "C√≥digo n√£o informado");
+			validation.current().addError("siglaAcao", "CÛdigo n„o informado");
 		}
-		if (Validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			enviarErroValidacao();
 		}
 		
@@ -313,12 +314,12 @@ public class Application extends SigaApplication {
 
 	private static void validarFormEditarAcao(SrAcao acao) {
 		if (acao.siglaAcao.equals("")) {
-			Validation.addError("siglaAcao", "C√≥digo n√£o informado");
+			validation.current().addError("siglaAcao", "CÛdigo n„o informado");
 		}
 		if (acao.tituloAcao.equals("")) {
-			Validation.addError("tituloAcao", "Titulo n√£o informado");
+			validation.current().addError("tituloAcao", "Titulo n„o informado");
 		}
-		if (Validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			enviarErroValidacao();
 		}
 	}
@@ -337,13 +338,13 @@ public class Application extends SigaApplication {
 		StringBuffer sb = new StringBuffer();
 		
 		if (designacao.getDescrConfiguracao() == null || designacao.getDescrConfiguracao().isEmpty())
-			validation.addError("designacao.descrConfiguracao", "Descri√ß√£o n√£o informada");
+			validation.current().addError("designacao.descrConfiguracao", "DescriÁ„o n„o informada");
 
-		for (play.data.validation.Error error : validation.errors()) {
+		for (play.data.validation.Error error: validation.current().errors()) {
 			sb.append(error.getKey() + ";");
 		}
 
-		if (validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			throw new Exception(sb.toString());
 		}
 	}
@@ -456,7 +457,7 @@ public class Application extends SigaApplication {
 
 		// Header
 		StringBuilder sbevol = new StringBuilder();
-		sbevol.append("['M√™s','Fechados','Abertos'],");
+		sbevol.append("['MÍs','Fechados','Abertos'],");
 
 		// Values
 		for (int i = -6; i <= 0; i++) {
@@ -525,7 +526,7 @@ public class Application extends SigaApplication {
 
 		// Header
 		StringBuilder sbGUT = new StringBuilder();
-		sbGUT.append("['Gravidade','Urg√™ncia','Total'],");
+		sbGUT.append("['Gravidade','UrgÍncia','Total'],");
 
 		// Values
 		for (Iterator<String[]> itgut = listaGUT.iterator(); itgut.hasNext();) {
@@ -550,12 +551,12 @@ public class Application extends SigaApplication {
 	public static void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		if (solicitacao == null)
-			throw new Exception("Solicita√ß√£o n√£o encontrada");
+			throw new Exception("SolicitaÁ„o n„o encontrada");
 		else
 			solicitacao = solicitacao.getSolicitacaoAtual();
 		
 		if (solicitacao == null)
-			throw new Exception("Esta solicita√ß√£o foi exclu√≠da");
+			throw new Exception("Esta solicitaÁ„o foi excluÌda");
 		
 		SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
@@ -588,7 +589,7 @@ public class Application extends SigaApplication {
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
 		
 		if (!lista.podeConsultar(lotaTitular(), cadastrante())) {
-			throw new Exception("Exibi√ß√£o n√£o permitida");
+			throw new Exception("ExibiÁ„o n„o permitida");
 		}
 		
 		render(lista, orgaos, locais, tiposPermissao);
@@ -640,10 +641,10 @@ public class Application extends SigaApplication {
 		render("@selecionar", sel);
 	}
 	
-	//	DB1: foi necess√°rio receber e passar o parametro "nome"(igual ao buscarItem())
+	//	DB1: foi necess·rio receber e passar o parametro "nome"(igual ao buscarItem())
 	//	para chamar a function javascript correta,
-	//	e o parametro "popup" porque este metodo √© usado tamb√©m na lista,
-	//	e n√£o foi poss√≠vel deixar default no template(igual ao buscarItem.html) 
+	//	e o parametro "popup" porque este metodo È usado tambÈm na lista,
+	//	e n„o foi possÌvel deixar default no template(igual ao buscarItem.html) 
 	@SuppressWarnings("unchecked")
 	public static void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) {
 
@@ -661,7 +662,7 @@ public class Application extends SigaApplication {
 		}
 		
 		// Montando o filtro...
-		String[] tipos = new String[] { "Pessoa", "Lota√ß√£o" };
+		String[] tipos = new String[] { "Pessoa", "LotaÁ„o" };
 		List<CpMarcador> marcadores = JPA.em()
 				.createQuery("select distinct cpMarcador from SrMarca")
 				.getResultList();
@@ -707,7 +708,7 @@ public class Application extends SigaApplication {
 		SrPesquisa pesquisa = sol.getPesquisaDesignada();
 		if (pesquisa == null)
 			throw new Exception(
-					"NÔøΩo foi encontrada nenhuma pesquisa designada para esta solicitaÔøΩÔøΩo.");
+					"Nao foi encontrada nenhuma pesquisa designada para esta solicitacao.");
 		pesquisa = SrPesquisa.findById(pesquisa.idPesquisa);
 		pesquisa = pesquisa.getPesquisaAtual();
 		render(id, pesquisa);*/
@@ -779,8 +780,8 @@ public class Application extends SigaApplication {
 				SrTipoMotivoEscalonamento motivo, String descricao,
 				Boolean criaFilha, Boolean fechadoAuto) throws Exception {
 		if(itemConfiguracao == null || acao == null)
-			throw new Exception("Opera√ß√£o n√£o permitida. Necess√°rio informar um item de configura√ß√£o " + 
-					"e uma a√ß√£o.");
+			throw new Exception("OperaÁ„o n„o permitida. Necess·rio informar um item de configuraÁ„o " + 
+					"e uma aÁ„o.");
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		
 		DpLotacao atendenteNaoDesignado = null;
@@ -818,7 +819,7 @@ public class Application extends SigaApplication {
 			mov.lotaAtendente = atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente;
 			mov.designacao = SrConfiguracao.findById(idDesignacao);
 			mov.descrMovimentacao = "Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
-					+ "; A√ß√£o: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();
+					+ "; AÁ„o: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();
 			mov.motivoEscalonamento = motivo;
 			mov.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 			exibir(solicitacao.idSolicitacao, todoOContexto(), ocultas());
@@ -1082,30 +1083,30 @@ public class Application extends SigaApplication {
 		// Edson: deveria ser feito por webservice. Nao estah sendo coberta
 		// a atualizacao da classificacao quando ocorre mudanca de posicao na
 		// hierarquia, pois isso eh mais complexo de acertar.
-		try {
-			HashMap<String, String> atributos = new HashMap<String, String>();
-			for (Http.Header h : request.headers.values())
-				if (!h.name.equals("content-type"))
-					atributos.put(h.name, h.value());
-
-			SrItemConfiguracao anterior = null;
-			List<SrItemConfiguracao> itens = itemConfiguracao.getHistoricoItemConfiguracao();
-			if(itens != null)
-				anterior = itens.get(0);
-			if (anterior != null
-					&& !itemConfiguracao.tituloItemConfiguracao
-							.equals(anterior.tituloItemConfiguracao))
-				ConexaoHTTP.get("http://"
-						+ Play.configuration.getProperty("servidor.principal")
-						+ ":8080/sigagc/app/updateTag?before="
-						+ anterior.getTituloSlugify() + "&after="
-						+ itemConfiguracao.getTituloSlugify(), atributos);
-		} catch (Exception e) {
-			Logger.error("Item " + itemConfiguracao.idItemConfiguracao
-					+ " salvo, mas nao foi possivel atualizar conhecimento");
-			e.printStackTrace();
-		}
-		
+//		try {
+//			HashMap<String, String> atributos = new HashMap<String, String>();
+//			for (Http.Header h : request.headers.values())
+//				if (!h.name.equals("content-type"))
+//					atributos.put(h.name, h.value());
+//
+//			SrItemConfiguracao anterior = null;
+//			List<SrItemConfiguracao> itens = itemConfiguracao.getHistoricoItemConfiguracao();
+//			if(itens != null)
+//				anterior = itens.get(0);
+//			if (anterior != null
+//					&& !itemConfiguracao.tituloItemConfiguracao
+//							.equals(anterior.tituloItemConfiguracao))
+//				ConexaoHTTP.get("http://"
+//						+ Play.configuration.getProperty("servidor.principal")
+//						+ ":8080/sigagc/app/updateTag?before="
+//						+ anterior.getTituloSlugify() + "&after="
+//						+ itemConfiguracao.getTituloSlugify(), atributos);
+//		} catch (Exception e) {
+//			Logger.error("Item " + itemConfiguracao.idItemConfiguracao
+//					+ " salvo, mas nao foi possivel atualizar conhecimento");
+//			e.printStackTrace();
+//		}
+//		
 		itemConfiguracao.refresh();
 		return itemConfiguracao.getSrItemConfiguracaoJson();
 	}
@@ -1188,11 +1189,11 @@ public class Application extends SigaApplication {
 	private static void validarFormEditarAtributo(SrAtributo atributo) {
 		if (atributo.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO 
 				&& atributo.descrPreDefinido.equals("")) {
-			Validation.addError("att.descrPreDefinido",
-					"Valores Pr√©-definido n√£o informados");
+			validation.current().addError("att.descrPreDefinido",
+					"Valores PrÈ-definido n„o informados");
 		}
 		
-		if (Validation.hasErrors()) {
+		if (validation.current().hasErrors()) {
 			enviarErroValidacao();
 		}
 	}
@@ -1325,27 +1326,29 @@ public class Application extends SigaApplication {
 		// Edson: deveria ser feito por webservice. Nao estah sendo coberta
 		// a atualizacao da classificacao quando ocorre mudanca de posicao na
 		// hierarquia, pois isso eh mais complexo de acertar.
-		try {
-			HashMap<String, String> atributos = new HashMap<String, String>();
-			for (Http.Header h : request.headers.values())
-				if (!h.name.equals("content-type"))
-					atributos.put(h.name, h.value());
-			
-			SrAcao anterior = acao
-					.getHistoricoAcao().get(0);
-			if (anterior != null
-					&& !acao.tituloAcao
-							.equals(anterior.tituloAcao))
-				ConexaoHTTP.get("http://"
-						+ Play.configuration.getProperty("servidor.principal")
-						+ ":8080/sigagc/app/updateTag?before="
-						+ anterior.getTituloSlugify() + "&after="
-						+ acao.getTituloSlugify(), atributos);
-		} catch (Exception e) {
-			Logger.error("Acao " + acao.idAcao
-					+ " salva, mas nao foi possivel atualizar conhecimento");
-			e.printStackTrace();
-		}
+		
+		// Karina: Comentado pois precisa ser refatorado devido ao uso do ConexaoHTTP que est· deprecated 
+//		try {
+//			HashMap<String, String> atributos = new HashMap<String, String>();
+//			for (Http.Header h : request.headers.values())
+//				if (!h.name.equals("content-type"))
+//					atributos.put(h.name, h.value());
+//			
+//			SrAcao anterior = acao
+//					.getHistoricoAcao().get(0);
+//			if (anterior != null
+//					&& !acao.tituloAcao
+//							.equals(anterior.tituloAcao))
+//				ConexaoHTTP.get("http://"
+//						+ Play.configuration.getProperty("servidor.principal")
+//						+ ":8080/sigagc/app/updateTag?before="
+//						+ anterior.getTituloSlugify() + "&after="
+//						+ acao.getTituloSlugify(), atributos);
+//		} catch (Exception e) {
+//			Logger.error("Acao " + acao.idAcao
+//					+ " salva, mas nao foi possivel atualizar conhecimento");
+//			e.printStackTrace();
+//		}
 		return acao.toJson();
 	}
 

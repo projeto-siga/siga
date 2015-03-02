@@ -23,28 +23,6 @@
 
 package br.gov.jfrj.webwork.action;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.codec.EncoderException;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.ConexaoHTTP;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
 import com.opensymphony.xwork.Action;

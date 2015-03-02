@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -22,7 +20,6 @@ import models.GcTipoTag;
 import play.data.Upload;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
@@ -46,7 +43,7 @@ public class GcBL {
 		mov.tipo = GcTipoMovimentacao.findById(id);
 		if (mov.tipo == null)
 			throw new Exception(
-					"N√£o foi poss√≠vel localizar um tipo de movimentac√£o com id="
+					"N„o foi possÌvel localizar um tipo de movimentac„o com id="
 							+ id);
 		mov.arq = arqDuplicado;
 		return movimentar(inf, mov);
@@ -62,7 +59,7 @@ public class GcBL {
 		mov.tipo = GcTipoMovimentacao.findById(idTipo);
 		if (mov.tipo == null)
 			throw new Exception(
-					"N√£o foi poss√≠vel localizar um tipo de movimentac√£o com id="
+					"N„o foi possÌvel localizar um tipo de movimentac„o com id="
 							+ idTipo);
 		mov.pessoaAtendente = pessoa;
 		mov.lotacaoAtendente = lotacao;
@@ -96,9 +93,9 @@ public class GcBL {
 			} else if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO
 					|| idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
 				// throw new
-				// Exception("N√£o √© permitido salvar uma informa√ß√£o com t√≠tulo, conte√∫do e classifica√ß√£o vazios.");
+				// Exception("N„o È permitido salvar uma informaÁ„o com tÌtulo, conte˙do e classificaÁ„o vazios.");
 				throw new AplicacaoException(
-						"N√£o √© permitido salvar uma informa√ß√£o com t√≠tulo ou conte√∫do vazios.");
+						"N„o È permitido salvar uma informaÁ„o com tÌtulo ou conte˙do vazios.");
 			}
 		}
 
@@ -140,7 +137,7 @@ public class GcBL {
 		// dao().iniciarTransacao();
 		// try {
 
-		// Atualiza o campo arq, pois este n√£o pode ser nulo
+		// Atualiza o campo arq, pois este n„o pode ser nulo
 		if (inf.movs != null) {
 			for (GcMovimentacao mov : inf.movs) {
 				if (inf.arq == null)
@@ -328,7 +325,7 @@ public class GcBL {
 	}
 
 	/**
-	 * Executa algoritmo de compara√ß√£o entre dois sets e preenche as listas:
+	 * Executa algoritmo de comparaÁ„o entre dois sets e preenche as listas:
 	 * inserir, excluir e atualizar.
 	 */
 	private static void encaixar(SortedSet<GcMarca> setA,
@@ -399,8 +396,8 @@ public class GcBL {
 	}
 
 	/**
-	 * Calcula quais as marcas cada informa√ß√£o ter√° com base nas
-	 * movimenta√ß√µes que foram feitas na informacao.
+	 * Calcula quais as marcas cada informaÁ„o ter· com base nas
+	 * movimentaÁıes que foram feitas na informacao.
 	 * 
 	 * @param inf
 	 */
@@ -641,7 +638,7 @@ public class GcBL {
 	/**
 	 * Metodo que grava arquivos no GcArquivo e atrela esse arquivo a um conhecimento atraves  
 	 * da movimentacao TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO.
-	 * Chamado pela p√°gina anexar.html
+	 * Chamado pela p·gina anexar.html
 	 */
 	public static void gravarArquivoComMovimentacao(GcInformacao info,
 			CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular,
@@ -657,7 +654,7 @@ public class GcBL {
 	
 	/**
 	 * Metodo que grava imagens no GcArquivo sem associa-las a um conhecimento.
-	 * Chamado pela p√°gina editar.html
+	 * Chamado pela p·gina editar.html
 	 */
 	public static long gravarArquivoSemMovimentacao(Upload file) {
 		GcArquivo arq = new GcArquivo();

@@ -43,30 +43,27 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 
-import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.util.Version;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.event.PostDeleteEventListener;
-import org.hibernate.event.PostInsertEventListener;
-import org.hibernate.event.PostUpdateEventListener;
+import org.hibernate.jdbc.Work;
 import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
-import org.hibernate.util.ReflectHelper;
+import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
@@ -112,6 +109,7 @@ import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
+@SuppressWarnings({"unchecked","rawtypes"})
 public class ExDao extends CpDao {
 
 	public static final String CACHE_EX = "ex";
@@ -126,18 +124,15 @@ public class ExDao extends CpDao {
 
 	public ExDao() {
 		try {
-			montadorQuery = (IMontadorQuery) Class.forName(
-					SigaExProperties.getMontadorQuery()).newInstance();
+			montadorQuery = (IMontadorQuery) Class.forName(SigaExProperties.getMontadorQuery()).newInstance();
 			montadorQuery.setMontadorPrincipal(new MontadorQuery());
 		} catch (Exception e) {
 			montadorQuery = new MontadorQuery();
 		}
 	}
 
-	public void reindexarVarios(List<ExDocumento> docs, boolean apenasExcluir)
-			throws Exception {
-		FullTextSession fullTextSession = Search
-				.createFullTextSession(getSessao());
+	public void reindexarVarios(List<ExDocumento> docs, boolean apenasExcluir) throws Exception {
+		FullTextSession fullTextSession = Search.getFullTextSession(getSessao());
 		Transaction tx = fullTextSession.beginTransaction();
 		for (ExDocumento doc : docs) {
 			fullTextSession.purge(ExDocumento.class, doc);
@@ -219,10 +214,7 @@ public class ExDao extends CpDao {
 		query.setProperties(flt);
 		query.setLong("titular",
 				titular.getIdPessoaIni() != null ? titular.getIdPessoaIni() : 0);
-		query.setLong(
-				"lotaTitular",
-				lotaTitular.getIdLotacaoIni() != null ? lotaTitular
-						.getIdLotacaoIni() : 0);
+		query.setLong("lotaTitular", lotaTitular.getIdLotacaoIni() != null ? lotaTitular.getIdLotacaoIni() : 0);
 		List l = query.list();
 		return l;
 	}
@@ -308,7 +300,7 @@ public class ExDao extends CpDao {
 
 		if (flt.getDtDocFinal() != null) {
 			query.setString("dtDocFinal", new SimpleDateFormat("dd/MM/yyyy")
-					.format(flt.getDtDocFinal()));
+			.format(flt.getDtDocFinal()));
 		}
 
 		if (flt.getNumAntigoDoc() != null
@@ -375,13 +367,8 @@ public class ExDao extends CpDao {
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
-		Query query = getSessao().createQuery(
-				montadorQuery.montaQueryConsultaporFiltro(flt, titular,
-						lotaTitular, false));
-
-
+		Query query = getSessao().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, titular, lotaTitular, false));
 		preencherParametros(flt, query);
-
 
 		if (offset > 0) {
 			query.setFirstResult(offset);
@@ -391,8 +378,7 @@ public class ExDao extends CpDao {
 		}
 		List l = query.list();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
-				/ 1000000 + " ms -> " + query + ", resultado: " + l);
+		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
 	}
 
@@ -518,7 +504,7 @@ public class ExDao extends CpDao {
 		crit.addOrder(Order.asc("descrFormaDoc"));
 		return crit.list();
 	}
-	
+
 	public List<ExFormaDocumento> listarTodosOrdenarPorSigla() {
 		final Criteria crit = getSessao()
 				.createCriteria(ExFormaDocumento.class);
@@ -553,13 +539,14 @@ public class ExDao extends CpDao {
 		// query = "+"+query.replaceAll("(\\s+)", " +");
 		// query = query.replaceAll("\\+\\-", "-");
 
-		QueryParser parser = new MultiFieldQueryParser(new String[] {
+		QueryParser parser = new MultiFieldQueryParser(Version.LUCENE_36, new String[] {
 				"conteudoBlobDocHtml", "nmMod", "descrDocumento",
 				"exMovimentacaoIndexacaoSet.descrMov",
 				"exMovimentacaoIndexacaoSet.descrTipoMovimentacao",
 				"exMovimentacaoIndexacaoSet.conteudoBlobMovHtml",
-				"exMovimentacaoIndexacaoSet.conteudoBlobMovPdf" },
-				new BrazilianAnalyzer());
+		"exMovimentacaoIndexacaoSet.conteudoBlobMovPdf" },
+		new BrazilianAnalyzer(Version.LUCENE_36));
+
 		parser.setDefaultOperator(QueryParser.AND_OPERATOR);
 
 		org.apache.lucene.search.Query luceneQuery = parser.parse(query);
@@ -567,10 +554,9 @@ public class ExDao extends CpDao {
 		// ------------------------------- hibernate search query:
 
 		FullTextSession fullTextSession = Search
-				.createFullTextSession(getSessao());
+				.getFullTextSession(getSessao());
 
-		FullTextQuery hbQuery = fullTextSession.createFullTextQuery(
-				luceneQuery, ExDocumento.class);
+		FullTextQuery hbQuery = fullTextSession.createFullTextQuery(luceneQuery, ExDocumento.class);
 
 		if (offset > 0) {
 			hbQuery.setFirstResult(offset);
@@ -592,12 +578,10 @@ public class ExDao extends CpDao {
 			throws Exception {
 
 		long tempoIni = System.currentTimeMillis();
-		FullTextSession fullTextSession = Search
-				.createFullTextSession(getSessao());
-		QueryParser parser = new QueryParser("idDoc", new StandardAnalyzer());
+		FullTextSession fullTextSession = Search.getFullTextSession(getSessao());
+		QueryParser parser = new QueryParser(Version.LUCENE_36, "idDoc", new StandardAnalyzer(Version.LUCENE_36));
 
-		final Criteria crit = getSessao().createCriteria(ExDocumento.class)
-				.add(Restrictions.gt("idDoc", new Long(aPartir)));
+		final Criteria crit = getSessao().createCriteria(ExDocumento.class).add(Restrictions.gt("idDoc", new Long(aPartir)));
 		crit.setMaxResults(300);
 		crit.addOrder(Order.asc("idDoc"));
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
@@ -611,7 +595,7 @@ public class ExDao extends CpDao {
 						&& (fullTextSession.createFullTextQuery(
 								new TermQuery(new Term("idDoc",
 										String.valueOf(doc.getIdDoc()))),
-								ExDocumento.class).getResultSize() == 0)) {
+										ExDocumento.class).getResultSize() == 0)) {
 
 					if (irIndexando) {
 						System.out.println("listarNaoIndexados - indexando "
@@ -623,8 +607,7 @@ public class ExDao extends CpDao {
 					}
 				}
 			}
-			System.out.println("listarNaoIndexados - " + firstResult
-					+ " varridos");
+			System.out.println("listarNaoIndexados - " + firstResult+ " varridos");
 			getSessao().clear();
 		} while (list.size() > 0);
 		System.out.println("listarNaoIndexados - FIM    "
@@ -636,7 +619,7 @@ public class ExDao extends CpDao {
 		String _path = path;
 		if (_path == null)
 			_path = SigaExProperties.getString("siga.lucene.index.path")
-					+ "/siga-ex-lucene-index-fila";
+			+ "/siga-ex-lucene-index-fila";
 		File dir = new File(_path);
 		ExDocumento doc = null;
 		List<ExDocumento> listaDocs = new ArrayList<ExDocumento>();
@@ -673,7 +656,7 @@ public class ExDao extends CpDao {
 
 		try {
 			FullTextSession fullTextSession = Search
-					.createFullTextSession(getSessao());
+					.getFullTextSession(getSessao());
 			Transaction deleteTx = fullTextSession.beginTransaction();
 			fullTextSession.purgeAll(ExDocumento.class);
 			deleteTx.commit();
@@ -688,7 +671,7 @@ public class ExDao extends CpDao {
 		int index = 0;
 
 		FullTextSession fullTextSession = Search
-				.createFullTextSession(getSessao());
+				.getFullTextSession(getSessao());
 		fullTextSession.setFlushMode(FlushMode.MANUAL);
 		fullTextSession.setCacheMode(CacheMode.IGNORE);
 		crit.setMaxResults(30);
@@ -741,7 +724,7 @@ public class ExDao extends CpDao {
 		Criteria crit = getSessao().createCriteria(ExDocumento.class);
 		crit.createCriteria("exMovimentacaoSet").add(
 				Restrictions.gt("dtIniMov", dtIni));
-		crit.setResultTransformer(crit.DISTINCT_ROOT_ENTITY);
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		/*
 		 * Query indexQuery = getSessao() .createQuery( "from ExDocumento as doc
@@ -750,7 +733,7 @@ public class ExDao extends CpDao {
 		 */
 
 		FullTextSession fullTextSession = Search
-				.createFullTextSession(getSessao());
+				.getFullTextSession(getSessao());
 		// List<ExDocumento> list = indexQuery.list();
 		List<ExDocumento> list = crit.list();
 		Transaction tx = fullTextSession.beginTransaction();
@@ -816,7 +799,7 @@ public class ExDao extends CpDao {
 
 	public List<ExEmailNotificacao> consultarEmailNotificacao(DpPessoa pess, DpLotacao lot) {
 		final Query query;
-		
+
 		if(pess != null){
 			query = getSessao().getNamedQuery("consultarEmailporPessoa");
 			query.setLong("idPessoaIni", pess.getIdPessoaIni());
@@ -832,7 +815,7 @@ public class ExDao extends CpDao {
 
 	public void indexar(ExDocumento entidade) {
 		FullTextSession fullTextSession = Search
-				.createFullTextSession(getSessao());
+				.getFullTextSession(getSessao());
 		Transaction tx = fullTextSession.beginTransaction();
 		fullTextSession.index(entidade);
 		tx.commit();
@@ -840,7 +823,7 @@ public class ExDao extends CpDao {
 
 	public void desindexar(ExDocumento entidade) {
 		FullTextSession fullTextSession = Search
-				.createFullTextSession(getSessao());
+				.getFullTextSession(getSessao());
 		try {
 			Transaction tx = fullTextSession.beginTransaction();
 			fullTextSession.purge(ExDocumento.class, entidade.getIdDoc());
@@ -853,7 +836,7 @@ public class ExDao extends CpDao {
 	public List consultarPorResponsavel(final DpPessoa o, final DpLotacao lot)
 			throws SQLException {
 		try {
-			String s = " SELECT ID, DESCR, ORDEM, SUM(C1) C1, SUM(C2) C2 FROM ( "
+			final String s = " SELECT ID, DESCR, ORDEM, SUM(C1) C1, SUM(C2) C2 FROM ( "
 					+
 					// " -- pes " +
 					" SELECT EST.ID_ESTADO_DOC ID, EST.DESC_ESTADO_DOC DESCR,  EST.ORDEM_ESTADO_DOC ORDEM, COUNT(1) C1, 0 C2 "
@@ -985,32 +968,46 @@ public class ExDao extends CpDao {
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " " + " ) GROUP BY ID, DESCR, ORDEM ORDER BY ORDEM";
 
-			final Connection conn = getSessao().connection();
-			final PreparedStatement psBlob = conn.prepareStatement(s);
-			psBlob.setLong(1, o.getIdPessoaIni());
-			psBlob.setLong(2, o.getIdPessoaIni());
-			psBlob.setLong(3, o.getIdPessoaIni());
-			psBlob.setLong(4, o.getIdPessoaIni());
-			psBlob.setLong(5, o.getIdPessoaIni());
-			psBlob.setLong(6, lot.getIdLotacaoIni());
-			psBlob.setLong(7, lot.getIdLotacaoIni());
-			psBlob.setLong(8, lot.getIdLotacaoIni());
-			psBlob.setLong(9, lot.getIdLotacaoIni());
-			psBlob.setLong(10, lot.getIdLotacaoIni());
-
-			final String j = psBlob.toString();
-
-			final ResultSet rset = psBlob.executeQuery();
-
 			final List result = new ArrayList<Object[]>();
-			while (rset.next()) {
-				final Object[] ao = new Object[4];
-				ao[0] = rset.getObject(1);
-				ao[1] = rset.getObject(2);
-				ao[2] = rset.getObject(4);
-				ao[3] = rset.getObject(5);
-				result.add(ao);
-			}
+			getSessao().doWork(new Work() {
+				@Override
+				public void execute(Connection conn) throws SQLException {
+					PreparedStatement psBlob = conn.prepareStatement(s);
+					ResultSet rset = null;
+
+					try {
+						psBlob.setLong(1, o.getIdPessoaIni());
+						psBlob.setLong(2, o.getIdPessoaIni());
+						psBlob.setLong(3, o.getIdPessoaIni());
+						psBlob.setLong(4, o.getIdPessoaIni());
+						psBlob.setLong(5, o.getIdPessoaIni());
+						psBlob.setLong(6, lot.getIdLotacaoIni());
+						psBlob.setLong(7, lot.getIdLotacaoIni());
+						psBlob.setLong(8, lot.getIdLotacaoIni());
+						psBlob.setLong(9, lot.getIdLotacaoIni());
+						psBlob.setLong(10, lot.getIdLotacaoIni());
+
+						final String j = psBlob.toString();
+						rset = psBlob.executeQuery();
+
+						while (rset.next()) {
+							final Object[] ao = new Object[4];
+							ao[0] = rset.getObject(1);
+							ao[1] = rset.getObject(2);
+							ao[2] = rset.getObject(4);
+							ao[3] = rset.getObject(5);
+							result.add(ao);
+						}
+					}catch (Exception e){
+						e.printStackTrace();
+					}finally {
+						if (!psBlob.isClosed())
+							psBlob.close();
+						if (!rset.isClosed())
+							rset.close();
+					}
+				}
+			});
 
 			return result;
 
@@ -1125,70 +1122,73 @@ public class ExDao extends CpDao {
 			throws SQLException, AplicacaoException {
 
 		getSessao().flush();
-		final Connection conn = getSessao().connection();
+		getSessao().doWork(new Work() {
+			@Override
+			public void execute(Connection conn) throws SQLException {
+				if (exPreenchimento.getPreenchimentoBlob() == null) {
+					final StringBuilder upd = new StringBuilder(
+							"UPDATE  EX_PREENCHIMENTO "
+									+ "SET PREENCHIMENTO_BLOB = NULL WHERE ID_PREENCHIMENTO = ?");
+					final PreparedStatement psBlob = conn.prepareStatement(upd.toString());
+					psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
+					try {
+						final int i = psBlob.executeUpdate();
+						if (i < 1)
+							throw new AplicacaoException("Ocorreu ao apagar Blob");
+					} finally {
+						psBlob.close();
+					}
+				} else {
+					final StringBuilder upd = new StringBuilder("UPDATE  EX_PREENCHIMENTO SET PREENCHIMENTO_BLOB = empty_blob() WHERE ID_PREENCHIMENTO = ?");
+					final StringBuilder cmd = new StringBuilder("SELECT PREENCHIMENTO_BLOB FROM ex_preenchimento WHERE ID_PREENCHIMENTO = ?  FOR UPDATE");
+					PreparedStatement psBlob = conn.prepareStatement(upd.toString());
+					psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
+					final int i = psBlob.executeUpdate();
+					if (i < 1)
+						throw new AplicacaoException("Ocorreu ao inserir Blob");
+					psBlob.close();
+					psBlob = conn.prepareStatement(cmd.toString());
+					psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
+					final ResultSet rset = psBlob.executeQuery();
+					boolean b = rset.next();
+					final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
+					final OutputStream blobOutputStream = blob.setBinaryStream(0);
+					try {
+						blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
+						blobOutputStream.close();
+					} catch (final IOException e) {
+						throw new AplicacaoException(
+								"Ocorreu um erro ao inserir o blob", 0, e);
+					} finally {
+						psBlob.close();
+					}
+				}
+			}
+		});
 
-		if (exPreenchimento.getPreenchimentoBlob() == null) {
-			final StringBuilder upd = new StringBuilder(
-					"UPDATE  EX_PREENCHIMENTO "
-							+ "SET PREENCHIMENTO_BLOB = NULL WHERE ID_PREENCHIMENTO = ?");
-			final PreparedStatement psBlob = conn.prepareStatement(upd
-					.toString());
-			psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
-			try {
-				final int i = psBlob.executeUpdate();
-				if (i < 1)
-					throw new AplicacaoException("Ocorreu ao apagar Blob");
-			} finally {
-				psBlob.close();
-			}
-		} else {
-			final StringBuilder upd = new StringBuilder(
-					"UPDATE  EX_PREENCHIMENTO "
-							+ "SET PREENCHIMENTO_BLOB = empty_blob() WHERE ID_PREENCHIMENTO = ?");
-			final StringBuilder cmd = new StringBuilder(
-					"SELECT PREENCHIMENTO_BLOB FROM ex_preenchimento "
-							+ "WHERE ID_PREENCHIMENTO = ?  FOR UPDATE");
-			PreparedStatement psBlob = conn.prepareStatement(upd.toString());
-			psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
-			final int i = psBlob.executeUpdate();
-			if (i < 1)
-				throw new AplicacaoException("Ocorreu ao inserir Blob");
-			psBlob.close();
-			psBlob = conn.prepareStatement(cmd.toString());
-			psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
-			final ResultSet rset = psBlob.executeQuery();
-			boolean b = rset.next();
-			final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
-			final OutputStream blobOutputStream = blob.setBinaryStream(0);
-			try {
-				blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
-				blobOutputStream.close();
-			} catch (final IOException e) {
-				throw new AplicacaoException(
-						"Ocorreu um erro ao inserir o blob", 0, e);
-			} finally {
-				psBlob.close();
-			}
-		}
+
 	}
 
-	public ExPreenchimento consultarPreenchimentoBlob(
-			ExPreenchimento exPreenchimento) throws SQLException {
-		final StringBuilder cmd = new StringBuilder(
-				"SELECT PREENCHIMENTO_BLOB FROM ex_preenchimento "
-						+ "WHERE ID_PREENCHIMENTO= ? ");
-		final Connection conn = getSessao().connection();
-		final PreparedStatement psBlob = conn.prepareStatement(cmd.toString());
-		psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
-		final ResultSet rset = psBlob.executeQuery();
-		rset.next();
-		final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
-		if (blob != null) {
-			final byte[] ba = blob.getBytes(1, (int) blob.length());
-			exPreenchimento.setPreenchimentoBA(ba);
-		} else {
-			exPreenchimento.setPreenchimentoBlob(null);
-		}
+	public ExPreenchimento consultarPreenchimentoBlob(final ExPreenchimento exPreenchimento) throws SQLException {
+		final StringBuilder cmd = new StringBuilder("SELECT PREENCHIMENTO_BLOB FROM ex_preenchimento WHERE ID_PREENCHIMENTO= ? ");
+		getSessao().doWork(new Work() {
+			@Override
+			public void execute(Connection conn) throws SQLException {
+				final PreparedStatement psBlob = conn.prepareStatement(cmd.toString());
+				psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
+				final ResultSet rset = psBlob.executeQuery();
+				rset.next();
+				final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
+				if (blob != null) {
+					final byte[] ba = blob.getBytes(1, (int) blob.length());
+					exPreenchimento.setPreenchimentoBA(ba);
+				} else {
+					exPreenchimento.setPreenchimentoBlob(null);
+				}
+			}
+		});
+
+
 		return exPreenchimento;
 	}
 
@@ -1226,37 +1226,40 @@ public class ExDao extends CpDao {
 	 * } }
 	 */
 
-	public void alterar(ExPreenchimento exPreenchimento) throws SQLException,
-			AplicacaoException {
+	public void alterar(final ExPreenchimento exPreenchimento) throws SQLException,AplicacaoException {
 		getSessao().flush();
-		final Connection conn = getSessao().connection();
-		final StringBuilder upd = new StringBuilder(
-				"UPDATE  EX_PREENCHIMENTO "
-						+ "SET PREENCHIMENTO_BLOB = empty_blob() WHERE ID_PREENCHIMENTO = ?");
-		final StringBuilder cmd = new StringBuilder(
-				"SELECT PREENCHIMENTO_BLOB FROM ex_preenchimento "
-						+ "WHERE ID_PREENCHIMENTO = ?  FOR UPDATE");
-		PreparedStatement psBlob = conn.prepareStatement(upd.toString());
-		psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
-		final int i = psBlob.executeUpdate();
-		if (i < 1)
-			throw new AplicacaoException("Ocorreu ao inserir Blob");
-		psBlob.close();
-		psBlob = conn.prepareStatement(cmd.toString());
-		psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
-		final ResultSet rset = psBlob.executeQuery();
-		boolean b = rset.next();
-		final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
-		final OutputStream blobOutputStream = blob.setBinaryStream(0);
-		try {
-			blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
-			blobOutputStream.close();
-		} catch (final IOException e) {
-			throw new AplicacaoException("Ocorreu um erro ao inserir o blob",
-					0, e);
-		} finally {
-			psBlob.close();
-		}
+		getSessao().doWork(new Work() {
+			@Override
+			public void execute(Connection conn) throws SQLException {
+				final StringBuilder upd = new StringBuilder(
+						"UPDATE  EX_PREENCHIMENTO "
+								+ "SET PREENCHIMENTO_BLOB = empty_blob() WHERE ID_PREENCHIMENTO = ?");
+				final StringBuilder cmd = new StringBuilder(
+						"SELECT PREENCHIMENTO_BLOB FROM ex_preenchimento "
+								+ "WHERE ID_PREENCHIMENTO = ?  FOR UPDATE");
+				PreparedStatement psBlob = conn.prepareStatement(upd.toString());
+				psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
+				final int i = psBlob.executeUpdate();
+				if (i < 1)
+					throw new AplicacaoException("Ocorreu ao inserir Blob");
+				psBlob.close();
+				psBlob = conn.prepareStatement(cmd.toString());
+				psBlob.setLong(1, exPreenchimento.getIdPreenchimento());
+				final ResultSet rset = psBlob.executeQuery();
+				boolean b = rset.next();
+				final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
+				final OutputStream blobOutputStream = blob.setBinaryStream(0);
+				try {
+					blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
+					blobOutputStream.close();
+				} catch (final IOException e) {
+					throw new AplicacaoException("Ocorreu um erro ao inserir o blob",
+							0, e);
+				} finally {
+					psBlob.close();
+				}
+			}
+		});
 
 	}
 
@@ -1280,34 +1283,34 @@ public class ExDao extends CpDao {
 			sbf.append(" and cp.id_tp_configuracao = ");
 			sbf.append(exemplo.getCpTipoConfiguracao().getIdTpConfiguracao());
 		}
-		
+
 		if (exemplo.getExTipoMovimentacao() != null && exemplo.getExTipoMovimentacao().getIdTpMov() != null
-                && exemplo.getExTipoMovimentacao().getIdTpMov() != 0) {
-	        sbf.append(" and ex.id_tp_mov = ");
-	        sbf.append(exemplo.getExTipoMovimentacao().getIdTpMov());
-        }
+				&& exemplo.getExTipoMovimentacao().getIdTpMov() != 0) {
+			sbf.append(" and ex.id_tp_mov = ");
+			sbf.append(exemplo.getExTipoMovimentacao().getIdTpMov());
+		}
 
 		if (exemplo.getExFormaDocumento() != null && exemplo.getExFormaDocumento().getIdFormaDoc() != null) {
-	        sbf.append(" and (ex.id_forma_doc = ");
-	        sbf.append(exemplo.getExFormaDocumento().getIdFormaDoc());
-	        sbf.append(" or (ex.id_mod is null and ex.id_forma_doc is null and ex.id_tp_forma_doc is null)");
-	        sbf.append(" or (ex.id_forma_doc is null and ex.id_tp_forma_doc = ");
-	        sbf.append(exemplo.getExFormaDocumento().getExTipoFormaDoc().getId());
-	        sbf.append(" ))");
-	   	}
+			sbf.append(" and (ex.id_forma_doc = ");
+			sbf.append(exemplo.getExFormaDocumento().getIdFormaDoc());
+			sbf.append(" or (ex.id_mod is null and ex.id_forma_doc is null and ex.id_tp_forma_doc is null)");
+			sbf.append(" or (ex.id_forma_doc is null and ex.id_tp_forma_doc = ");
+			sbf.append(exemplo.getExFormaDocumento().getExTipoFormaDoc().getId());
+			sbf.append(" ))");
+		}
 
 		if (exemplo.getExModelo() != null && exemplo.getExModelo().getIdMod() != null
-                && exemplo.getExModelo().getIdMod() != 0) {
-	        sbf.append(" and (ex.id_mod = ");
-	        sbf.append(exemplo.getExModelo().getIdMod());
-	        sbf.append(" or (ex.id_mod is null and ex.id_forma_doc is null and ex.id_tp_forma_doc is null)");
-	        sbf.append(" or (ex.id_mod is null and ex.id_forma_doc = ");
-	        sbf.append(exemplo.getExModelo().getExFormaDocumento().getId());
-	        sbf.append(")");
-	        sbf.append(" or (ex.id_mod is null and ex.id_forma_doc is null and ex.id_tp_forma_doc = ");
-	        sbf.append(exemplo.getExModelo().getExFormaDocumento().getExTipoFormaDoc().getId());
-	        sbf.append(" ))");
-	   	}
+				&& exemplo.getExModelo().getIdMod() != 0) {
+			sbf.append(" and (ex.id_mod = ");
+			sbf.append(exemplo.getExModelo().getIdMod());
+			sbf.append(" or (ex.id_mod is null and ex.id_forma_doc is null and ex.id_tp_forma_doc is null)");
+			sbf.append(" or (ex.id_mod is null and ex.id_forma_doc = ");
+			sbf.append(exemplo.getExModelo().getExFormaDocumento().getId());
+			sbf.append(")");
+			sbf.append(" or (ex.id_mod is null and ex.id_forma_doc is null and ex.id_tp_forma_doc = ");
+			sbf.append(exemplo.getExModelo().getExFormaDocumento().getExTipoFormaDoc().getId());
+			sbf.append(" ))");
+		}
 
 		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
 			sbf.append(" and (cp.id_orgao_usu = ");
@@ -1672,39 +1675,39 @@ public class ExDao extends CpDao {
 				if ("template/freemarker".equals(mod.getConteudoTpBlob())
 						&& mod.getConteudoBlobMod2() != null
 						&& (new String(mod.getConteudoBlobMod2(), "utf-8"))
-								.contains(script))
+						.contains(script))
 					l.add(mod);
 			} else
 				l.add(mod);
 		return l;
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(String datasource)
+	static public Configuration criarHibernateCfg(String datasource)
 			throws Exception {
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(datasource);
+		Configuration cfg = CpDao.criarHibernateCfg(datasource);
 		ExDao.configurarHibernate(cfg);
 		return cfg;
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(
+	static public Configuration criarHibernateCfg(
 			String connectionUrl, String username, String password)
-			throws Exception {
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(connectionUrl,
+					throws Exception {
+		Configuration cfg = CpDao.criarHibernateCfg(connectionUrl,
 				username, password);
 		ExDao.configurarHibernate(cfg);
 		return cfg;
 	}
 
-	static public AnnotationConfiguration criarHibernateCfg(
+	static public Configuration criarHibernateCfg(
 			CpAmbienteEnumBL ambiente) throws Exception {
 		CpPropriedadeBL prop = Ex.getInstance().getProp();
 		prop.setPrefixo("siga.ex." + ambiente.getSigla());
-		AnnotationConfiguration cfg = CpDao.criarHibernateCfg(ambiente, prop);
+		Configuration cfg = CpDao.criarHibernateCfg(ambiente, prop);
 		ExDao.configurarHibernate(cfg);
 		return cfg;
 	}
 
-	static private void configurarHibernate(AnnotationConfiguration cfg)
+	static private void configurarHibernate(Configuration cfg)
 			throws Exception {
 
 
@@ -1801,11 +1804,11 @@ public class ExDao extends CpDao {
 				"read-only", CACHE_EX);
 
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoMarca",
-				"nonstrict-read-write", "corporativo");
+				"transactional", "corporativo");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoMarcador",
-				"nonstrict-read-write", "corporativo");
+				"transactional", "corporativo");
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpMarcador",
-				"nonstrict-read-write", "corporativo");
+				"transactional", "corporativo");
 
 		CacheManager manager = CacheManager.getInstance();
 		Cache cache;
@@ -1827,42 +1830,37 @@ public class ExDao extends CpDao {
 		// cfg.setCollectionCacheConcurrencyStrategy(
 		// "br.gov.jfrj.siga.ex.ExFormaDocumento.exModeloSet",
 
-		// "nonstrict-read-write", "ex");
+		// "transactional", "ex");
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExModelo",
-		// "nonstrict-read-write", "ex");
+		// "transactional", "ex");
 
 		// Hibernate search configuration
 		//
 		if ("true".equals(SigaExProperties.getString("siga.lucene.ativo"))) {
-			cfg.setProperty("hibernate.search.default.directory_provider",
-					"org.hibernate.search.store.FSDirectoryProvider");
-			cfg.setProperty("hibernate.search.default.indexBase",
-					SigaExProperties.getString("siga.lucene.index.path")
-							+ "/siga-ex-lucene-index/");
-			cfg.setProperty(
-					"hibernate.search.default.optimizer.operation_limit.max",
-					"2000");
+			cfg.setProperty("hibernate.search.default.directory_provider", "org.hibernate.search.store.FSDirectoryProvider");
+			cfg.setProperty("hibernate.search.default.indexBase", SigaExProperties.getString("siga.lucene.index.path") + "/siga-ex-lucene-index/");
+			cfg.setProperty("hibernate.search.default.optimizer.operation_limit.max", "2000");
 			cfg.setProperty("org.hibernate.worker.execution", "sync");
 			cfg.setProperty("org.hibernate.worker.batch_size", "1000");
 			cfg.setProperty("hibernate.search.indexing_strategy", "manual");
-			cfg.getEventListeners()
-					.setPostUpdateEventListeners(
-							new PostUpdateEventListener[] { (PostUpdateEventListener) ReflectHelper
-									.classForName(
-											"org.hibernate.search.event.FullTextIndexEventListener")
-									.newInstance() });
-			cfg.getEventListeners()
-					.setPostInsertEventListeners(
-							new PostInsertEventListener[] { (PostInsertEventListener) ReflectHelper
-									.classForName(
-											"org.hibernate.search.event.FullTextIndexEventListener")
-									.newInstance() });
-			cfg.getEventListeners()
-					.setPostDeleteEventListeners(
-							new PostDeleteEventListener[] { (PostDeleteEventListener) ReflectHelper
-									.classForName(
-											"org.hibernate.search.event.FullTextIndexEventListener")
-									.newInstance() });
+			//				cfg.getEventListeners()
+			//				.setPostUpdateEventListeners(
+			//						new PostUpdateEventListener[] { (PostUpdateEventListener) ReflectHelper
+			//								.classForName(
+			//										"org.hibernate.search.event.FullTextIndexEventListener")
+			//										.newInstance() });
+			//				cfg.getEventListeners()
+			//				.setPostInsertEventListeners(
+			//						new PostInsertEventListener[] { (PostInsertEventListener) ReflectHelper
+			//								.classForName(
+			//										"org.hibernate.search.event.FullTextIndexEventListener")
+			//										.newInstance() });
+			//				cfg.getEventListeners()
+			//				.setPostDeleteEventListeners(
+			//						new PostDeleteEventListener[] { (PostDeleteEventListener) ReflectHelper
+			//								.classForName(
+			//										"org.hibernate.search.event.FullTextIndexEventListener")
+			//										.newInstance() });
 		} else {
 			cfg.setProperty("hibernate.search.autoregister_listeners", "false");
 		}
@@ -1926,8 +1924,7 @@ public class ExDao extends CpDao {
 		// pais = Arrays.copyOf(pais, pais.length+1);
 		// pais[pais.length-1]= exClass.getCodificacao();
 
-		Query q = getSessao()
-				.getNamedQuery("consultarDescricaoExClassificacao");
+		Query q = getSessao().getNamedQuery("consultarDescricaoExClassificacao");
 		q.setParameterList("listaCodificacao", pais);
 		List<String> result = q.list();
 		StringBuffer sb = new StringBuffer();
@@ -1947,8 +1944,7 @@ public class ExDao extends CpDao {
 
 	public List<ExClassificacao> consultarFilhos(ExClassificacao exClass,
 			boolean niveisAbaixo) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarFilhosExClassificacao");
+		final Query query = getSessao().getNamedQuery("consultarFilhosExClassificacao");
 		query.setString(
 				"mascara",
 				MascaraUtil.getInstance().getMscFilho(
@@ -1957,10 +1953,8 @@ public class ExDao extends CpDao {
 		return query.list().subList(1, query.list().size());
 	}
 
-	public List<ExClassificacao> consultarExClassificacao(String mascaraLike,
-			String descrClassificacao) {
-		Query q = getSessao().getNamedQuery(
-				"consultarExClassificacaoPorMascara");
+	public List<ExClassificacao> consultarExClassificacao(String mascaraLike, String descrClassificacao) {
+		Query q = getSessao().getNamedQuery("consultarExClassificacaoPorMascara");
 		q.setString("mascara", mascaraLike);
 		q.setString("descrClassificacao", descrClassificacao.toUpperCase());
 
@@ -1979,8 +1973,7 @@ public class ExDao extends CpDao {
 		if (lotacao == null) {
 			q = getSessao().getNamedQuery("consultarExDocumentoClassificados");
 		} else {
-			q = getSessao().getNamedQuery(
-					"consultarExDocumentoClassificadosPorLotacao");
+			q = getSessao().getNamedQuery("consultarExDocumentoClassificadosPorLotacao");
 			q.setLong("idLotacao", lotacao.getId());
 		}
 
@@ -1994,8 +1987,7 @@ public class ExDao extends CpDao {
 	}
 
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS,
-				ExTpDocPublicacao.class);
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS,ExTpDocPublicacao.class);
 	}
 
 	public List<ExConfiguracao> listarExConfiguracoes() {

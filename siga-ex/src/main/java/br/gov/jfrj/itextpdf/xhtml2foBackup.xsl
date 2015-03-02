@@ -31,7 +31,7 @@
 	<xsl:param name="page-margin-bottom">2.6cm</xsl:param>
 	<xsl:param name="first-page-margin-top">1cm</xsl:param>
 	<xsl:param name="first-page-margin-bottom">
-		<xsl:value-of select="substring-before(substring-after(/html:html/html:head/html:style/, $atributo-margem-inferior), $terminador-atributo)" />
+		<xsl:value-of select="substring-before(substring-after(/html:html/html:head/html:style, $atributo-margem-inferior), $terminador-atributo)" />
 	</xsl:param>
 	<xsl:param name="page-margin-left">3cm</xsl:param>
 	<xsl:param name="page-margin-right">2cm</xsl:param>
@@ -578,7 +578,7 @@
 
 
 			<fo:static-content flow-name="page-header-first">
-				<xsl:message>Teste2: <xsl:value-of select="substring-before(substring-after(/html:html/html:head/html:style/, $atributo-margem-inferior), $terminador-atributo)"/></xsl:message>
+				<xsl:message>Teste2: <xsl:value-of select="substring-before(substring-after(/html:html/html:head/html:style, $atributo-margem-inferior), $terminador-atributo)"/></xsl:message>
 				<xsl:apply-templates
 					select="html:div[@id='cabecalho-primeira-pagina']" />
 			</fo:static-content>

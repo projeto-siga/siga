@@ -3,7 +3,6 @@ package models;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -17,15 +16,13 @@ import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.commons.io.IOUtils;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
-import play.db.jpa.GenericModel;
 import utils.ProcessadorHtml;
+import play.db.jpa.GenericModel;
+import br.gov.jfrj.siga.base.AplicacaoException;
 
 @Entity
 @Table(name = "GC_ARQUIVO", schema = "SIGAGC")
-public class GcArquivo extends GenericModel implements Serializable{
+public class GcArquivo extends GenericModel implements Serializable {
 	@Id
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcArquivoSeq")
 	@GeneratedValue(generator = "gcArquivoSeq")
@@ -98,9 +95,9 @@ public class GcArquivo extends GenericModel implements Serializable{
 	}
 	
 	/**
-	 * Duplica o conte√∫do de um conhecimento atrav√©s de serializa√ß√£o.
-	 * Uma das formas de se fazer deep copying do conte√∫do, assim quando alterar
-	 * a c√≥pia n√£o modifica o original 
+	 * Duplica o conte˙do de um conhecimento atravÈs de serializaÁ„o.
+	 * Uma das formas de se fazer deep copying do conte˙do, assim quando alterar
+	 * a cÛpia n„o modifica o original 
 	 */
 	public GcArquivo duplicarConteudoInfo() {
 		try {
@@ -115,13 +112,13 @@ public class GcArquivo extends GenericModel implements Serializable{
 			GcArquivo cloneConteudoInfo = (GcArquivo) objEntrada.readObject();
 			return cloneConteudoInfo;
 		} catch (Exception e) {
-			throw new AplicacaoException("N√£o foi poss√≠vel duplicar esse conhecimento.");
+			throw new AplicacaoException("N„o foi possÌvel duplicar esse conhecimento.");
 		}
 	}
 
 	/**
-     * M√©todo criado pois a ferramenta plupload retornar um mime type padr√£o "octet stream".
-     * Ent√£o, √© necess√°rio que a aplica√ß√£o identifique pela extens√£o do arquivo qual o mime type
+     * MÈtodo criado pois a ferramenta plupload retornar um mime type padr„o "octet stream".
+     * Ent„o, È necess·rio que a aplicaÁ„o identifique pela extens„o do arquivo qual o mime type
      * do anexo. 
      * @return mimeType
      */
@@ -143,5 +140,4 @@ public class GcArquivo extends GenericModel implements Serializable{
         }
         return null;
     }
-	
 }

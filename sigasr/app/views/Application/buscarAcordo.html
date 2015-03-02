@@ -294,18 +294,28 @@
 				        abrangencia																// colunas.jSon
 		   			];
 
-			var html = 
-			'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-				'<a class="once desassociar" onclick="desassociar(event, ' + abrangencia.idConfiguracao + ')" title="Remover permissão">' +
-					'<input class="idAssociacao" type="hidden" value="'+abrangencia.idConfiguracao+'"/>' +
-					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-				'</a>' +
-			'</td>';
-					         
-	        row[colunasAssociacao.botaoExcluir] = html;
-	    	tableAssociacao.api().row.add(row).draw();
+				
+	        row[colunasAssociacao.botaoExcluir] = acordoService.conteudoColunaAcao(abrangencia);
+	        var tr = tableAssociacao.api().row.add(row).draw().node();
+            if (!abrangencia.ativo) {
+                $('td', $(tr)).addClass('item-desativado');
+                $('td:last', $(tr)).html(' ');
+            }    
+	    	
 		}
 	}
+
+	acordoService.conteudoColunaAcao = function(abrangencia){
+        if (abrangencia.ativo) {          
+            return '<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
+					'<a class="once desassociar" onclick="desassociar(event, ' + abrangencia.idConfiguracao + ')" title="Remover permissão">' +
+					'<input class="idAssociacao" type="hidden" value="'+abrangencia.idConfiguracao+'"/>' +
+					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+					'</a>' +	
+					'</td>';
+        }
+        return ' ';
+	}	
 
 	// Atualizando lista de Parâmetros de Acordo
 	function atualizarParametrosAcordo(acordo) {

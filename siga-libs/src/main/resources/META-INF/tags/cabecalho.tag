@@ -261,7 +261,7 @@ ${meta}
 												var fid = document
 														.getElementById("buscar_genericoSel_id");
 
-												event = (event) ? event
+												event = (event) ? event batik all 1.7
 														: window.event
 												var keyCode = (event.which) ? event.which
 														: event.keyCode;
@@ -270,7 +270,7 @@ ${meta}
 															|| fid.value == "") {
 														fld.onblur();
 													} else {
-														window.alert("1");
+													//	window.alert("1");
 														window.location.href = '${request.scheme}://${request.serverName}:${request.serverPort}/sigaex/expediente/doc/exibir.action?sigla='
 																+ fld.value;
 													}

@@ -119,7 +119,8 @@
 	   	         success: function(response) {
 		   	    	 associacaoService.atualizarListaAssociacoes({ 
 			   	    	 associacoesVO : JSON.parse(response)
-			   	    });
+			   	    },
+			   	    true);
 	   	         },
 	   	         error: function(response) {
 	   	        	$('#modal-associacao').hide(); 
@@ -268,9 +269,14 @@
    				];
 	}
 
-	associacaoService.atualizarListaAssociacoes = function(jSon) {
+	associacaoService.atualizarListaAssociacoes = function(jSon, clickCheck) {
 		associacaoTable.dataTable.api().clear().draw();
 		
+		if (!clickCheck) {
+	        document.getElementById('checkmostrarAssocDesativada').checked = false;
+	        document.getElementById('checkmostrarAssocDesativada').value = false;
+        }
+
 		if (jSon && jSon.associacoesVO) {
 			// cria a lista de associacoes, e adiciona na tela
 			for (i = 0; i < jSon.associacoesVO.length; i++) {

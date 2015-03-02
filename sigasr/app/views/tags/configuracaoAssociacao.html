@@ -404,8 +404,9 @@
 	         #{/elseif}
 	         dataType: "text",
 	         success: function(response) {
-		         if (mostrarDesativa == true) {
+		         if (mostrarDesativa == "true") {
 		        	 $('td', tr).addClass('item-desativado');
+		        	 $('td:last', tr).html(' ');
 		         } else {
 		        	 associacaoTable.dataTable.api().row(tr).remove().draw();
 		         }

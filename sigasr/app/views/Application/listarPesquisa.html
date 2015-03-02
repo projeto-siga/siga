@@ -167,7 +167,7 @@
 		perguntas.limpar();
 
 		// limpa a lista de Associações
-		associacaoService.atualizarListaAssociacoes();
+		associacaoService.limparDadosAssociacoes();
 		
 		BaseService.prototype.cadastrar.call(this, title);
 	}
@@ -195,8 +195,29 @@
 			perguntas.incluirItem(pergunta.descrPergunta, pergunta.tipoPergunta.idTipoPergunta, pergunta.tipoPergunta.nomeTipoPergunta, pergunta.idPergunta);
 		}
 
-		// alimenta a lista de Associações
-		associacaoService.atualizarListaAssociacoes(obj);
+		// atualiza a lista de Associações
+		pesquisaService.buscarAssociacoes(obj);
+	}
+
+	pesquisaService.buscarAssociacoes = function(pesq) {
+		associacaoService.limparDadosAssociacoes();
+		
+		if (pesq && this.getId(pesq)) {
+			$.ajax({
+	        	type: "GET",
+	        	url: "@{Application.buscarAssociacaoPesquisa()}?idPesquisa=" + this.getId(pesq),
+	        	dataType: "text",
+	        	success: function(obj) {
+	        		var pesquisaJson = JSON.parse(obj);
+	        		
+	        		// alimenta a lista de Associações
+	    			associacaoService.atualizarListaAssociacoes(pesquisaJson);
+	        	},
+	        	error: function(error) {
+	            	alert("Não foi possível carregar as Associações desta Pesquisa.");
+	        	}
+	       	});
+		}
 	}
 	
 	pesquisaService.serializar = function(obj) {

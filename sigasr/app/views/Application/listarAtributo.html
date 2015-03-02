@@ -245,8 +245,8 @@
 	atributoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 
-		// alimenta a lista de Associações
-		associacaoService.atualizarListaAssociacoes(obj);
+		// atualiza a lista de Associações
+		this.buscarAssociacoes(obj);
 	}
 
 	/**
@@ -255,7 +255,28 @@
 	 atributoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
 
-		// alimenta a lista de Associações
-		associacaoService.atualizarListaAssociacoes();
+		// limpa a lista de Associações
+		associacaoService.limparDadosAssociacoes();
+	}
+
+	atributoService.buscarAssociacoes = function(assoc) {
+		associacaoService.limparDadosAssociacoes();
+		
+		if (assoc && this.getId(assoc)) {
+			$.ajax({
+	        	type: "GET",
+	        	url: "@{Application.buscarAssociacaoAtributo()}?idAtributo=" + this.getId(assoc),
+	        	dataType: "text",
+	        	success: function(obj) {
+	        		var associacaoJson = JSON.parse(obj);
+	        		
+	        		// alimenta a lista de Associações
+	    			associacaoService.atualizarListaAssociacoes(associacaoJson);
+	        	},
+	        	error: function(error) {
+	            	alert("Não foi possível carregar as Associações deste Atributo.");
+	        	}
+	       	});
+		}
 	}
 </script>

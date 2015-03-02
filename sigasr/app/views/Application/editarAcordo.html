@@ -32,6 +32,9 @@
 			</div>
 
 			<div class="gt-content-box dataTables_div">
+                <div class="gt-form-row dataTables_length">
+                    <label>#{checkbox name:'mostrarAssocDesativada', value:mostrarAssocDesativada/} <b>Incluir Inativas</b></label>
+                </div>        
 				<table id="associacao_table" border="0" class="gt-table display">
 					<thead>
 						<tr>
@@ -242,6 +245,22 @@
 	colunasAssociacao.botaoExcluir =                16;
 	colunasAssociacao.jSon = 						17;
 
+    jQuery("#checkmostrarAssocDesativada").click(function() {
+    	tableAssociacao.api().clear().draw();
+        
+		$.ajax({
+   	         type: "POST",
+   	         url: getUrlDesativarReativar(document.getElementById('checkmostrarAssocDesativada').checked),
+   	         dataType: "text",
+	   	     success: function(response) {
+	      		var listaJSon = JSON.parse(response);
+	      		acordoService.populateFromJSonList(listaJSon, associacaoTable);
+	      	 },
+	      	 error: function(error) {
+	          	alert("Não foi possível carregar as Abrangências deste Acordo.");
+	      	 }
+       });
+    });
 	var associacaoTable = new SigaTable('#associacao_table')
 		.configurar("columnDefs", [{
 			"targets": [colunasAssociacao.idOrgao, 
@@ -269,7 +288,12 @@
 	.detalhes(detalhesListaAssociacao);
 	
 	jQuery( document ).ready(function( $ ) {
-		$('#associacao_table tbody').on('click', 'tr', function () {
+        if (QueryString.mostrarDesativados != undefined) {
+            document.getElementById('checkmostrarAssocDesativada').checked = QueryString.mostrarDesativados == 'true';
+            document.getElementById('checkmostrarAssocDesativada').value = QueryString.mostrarDesativados == 'true';
+        }
+
+        $('#associacao_table tbody').on('click', 'tr', function () {
 			var itemSelecionado = associacaoTable.dataTable.api().row(this).data();
 			
 			if (itemSelecionado != undefined) {
@@ -621,7 +645,8 @@
 			tr = $(event.currentTarget).parent().parent()[0],
 			row = associacaoTable.dataTable.api().row(tr).data(),
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunasAssociacao.idAssociacao];
-			idAcordo = $("#id").val();
+			idAcordo = $("#id").val(),
+            mostrarDesativa = $("#mostrarAssocDesativada").val();
 			
 			$.ajax({
 			     type: "POST",
@@ -629,7 +654,12 @@
 			     data: {idAcordo : idAcordo, idAssociacao : idAssociacao},
 			     dataType: "text",
 			     success: function(response) {
-					associacaoTable.dataTable.api().row(tr).remove().draw();
+	                 if (mostrarDesativa == "true") {
+	                     $('td', tr).addClass('item-desativado');
+	                     $('td:last', tr).html(' ');
+	                 } else {
+	                     associacaoTable.dataTable.api().row(tr).remove().draw();
+	                 }
 			     },
 			     error: function(response) {
 			    	var modalErro = $('#modal-error');

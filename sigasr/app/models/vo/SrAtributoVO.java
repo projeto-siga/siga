@@ -68,12 +68,17 @@ public class SrAtributoVO {
 		return jsonTree.toString();
 	}
 
-	public static SrAtributoVO createFrom(SrAtributo atributo) {
+	public static SrAtributoVO createFrom(SrAtributo atributo, boolean listarAssociacoes) {
 		if (atributo != null) {
-			List<SrConfiguracao> associacoes = SrConfiguracao
-					.listarAssociacoesAtributo(atributo, Boolean.FALSE);
+			List<SrConfiguracao> associacoes = new ArrayList<SrConfiguracao>();
+			
+			if (listarAssociacoes)
+				associacoes = SrConfiguracao
+						.listarAssociacoesAtributo(atributo, Boolean.FALSE);
+			
 			return new SrAtributoVO(atributo, associacoes);
 		}
+		
 		return null;
 	}
 }

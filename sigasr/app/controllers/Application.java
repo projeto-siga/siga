@@ -1213,6 +1213,24 @@ public class Application extends SigaApplication {
 
 		render(itens, filtro, nome, sol);
 	}
+	
+	public static String buscarAssociacaoPesquisa(Long idPesquisa) {
+		SrPesquisa pesq = SrPesquisa.findById(idPesquisa);
+		
+		if (pesq != null)
+			return pesq.toJson(true);
+		else
+			return "";
+	}
+	
+	public static String buscarAssociacaoAtributo(Long idAtributo) {
+		SrAtributo attr = SrAtributo.findById(idAtributo);
+		
+		if (attr != null)
+			return attr.toJson(true);
+		else
+			return "";
+	}
 
 	public static void listarAtributoDesativados() throws Exception {
 		listarAtributo(Boolean.TRUE);
@@ -1255,7 +1273,6 @@ public class Application extends SigaApplication {
         return SrConfiguracao.convertToJSon(associacoes);
     }
     
-    @SuppressWarnings("unchecked")
     public static String listarAssociacaoAtributo(Long idAtributo) throws Exception {
         assertAcesso("ADM:Administrar");
         
@@ -1270,7 +1287,7 @@ public class Application extends SigaApplication {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarAtributo(atributo);
 		atributo.salvar();
-		return atributo.toVO().toJson();
+		return atributo.toVO(false).toJson();
 	}
 
 	private static void validarFormEditarAtributo(SrAtributo atributo) {
@@ -1290,14 +1307,14 @@ public class Application extends SigaApplication {
 		SrAtributo item = SrAtributo.findById(id);
 		item.finalizar();
 		
-		return item.toJson();
+		return item.toJson(false);
 	}
 
 	public static String reativarAtributo(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrAtributo item = SrAtributo.findById(id);
 		item.salvar();
-		return item.toJson();
+		return item.toJson(false);
 	}
 
 	@SuppressWarnings("unchecked")

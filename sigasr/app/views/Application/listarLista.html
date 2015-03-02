@@ -295,13 +295,25 @@
 	          			permissao.idConfiguracao,												//17    
 	          			'',																		//18
 	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
-	          			'<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
-						'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
-						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
-						'</a>'																	//20
+	          			listaService.conteudoColunaAcao(permissao)
 	          			];
+			var tr = permissoesTable.api().row.add(row).draw().node();
 			
-			permissoesTable.api().row.add(row).draw();
+			if (!permissao.ativo) {
+				$('td', $(tr)).addClass('item-desativado');
+				$('td:last', $(tr)).html(' ');
+			}	
 		}
 	}
+
+	listaService.conteudoColunaAcao = function(permissao) {
+		if (permissao.ativo) { 		 
+			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
+			'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
+			'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
+			'</a>'																	//20
+		}
+		return ' ';
+	}
+	
 </script>

@@ -272,8 +272,13 @@
 		}
 		return ' ';
 	}
-	associacaoService.atualizarListaAssociacoes = function(jSon, clickCheck) {
+
+	associacaoService.limparDadosAssociacoes = function() {
 		associacaoTable.dataTable.api().clear().draw();
+	}
+	
+	associacaoService.atualizarListaAssociacoes = function(jSon, clickCheck) {
+		this.limparDadosAssociacoes();
 		
 		if (!clickCheck) {
 	        document.getElementById('checkmostrarAssocDesativada').checked = false;
@@ -389,7 +394,8 @@
 			tr = $(event.currentTarget).parent().parent()[0],
 			row = associacaoTable.dataTable.api().row(tr).data(),
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunas.idAssociacao],
-			idItem = $("#hisIdIni").val();
+			idItem = $("#hisIdIni").val(),
+			mostrarDesativa = $("#mostrarAssocDesativada").val();
 			
 		$.ajax({
 	         type: "POST",
@@ -403,7 +409,12 @@
 	         #{/elseif}
 	         dataType: "text",
 	         success: function(response) {
-	        	 associacaoTable.dataTable.api().row(tr).remove().draw();
+		         if (mostrarDesativa == "true") {
+		        	 $('td', tr).addClass('item-desativado');
+		        	 $('td:last', tr).html(' ');
+		         } else {
+		        	 associacaoTable.dataTable.api().row(tr).remove().draw();
+		         }
 	         },
 	         error: function(response) {
 	        	$('#modal-associacao').hide(); 

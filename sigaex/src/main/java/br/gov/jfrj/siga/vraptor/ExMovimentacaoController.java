@@ -743,6 +743,37 @@ public class ExMovimentacaoController extends ExController {
 
 		result.redirectTo("/app/expediente/mov/arquivar_corrente_lote");
 	}
+	
+	@Get("/app/expediente/mov/arquivar_corrente_gravar")
+	public void aArquivarCorrenteGravar(final String sigla) {
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+		
+		final ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder.novaInstancia();
+		final ExMovimentacao mov = movBuilder.construir(dao());
+
+		if (!Ex.getInstance().getComp()
+				.podeAcessarDocumento(getTitular(), getLotaTitular(), builder.getMob())) {
+			throw new AplicacaoException(
+					"Acesso permitido a usuários autorizados.");
+		}
+
+		if (!Ex.getInstance().getComp()
+				.podeArquivarCorrente(getTitular(), getLotaTitular(), builder.getMob()))
+			throw new AplicacaoException(
+					"Via ou processo não pode ser arquivado(a)");
+		try {
+			Ex.getInstance()
+					.getBL()
+					.arquivarCorrente(getCadastrante(), getLotaTitular(), builder.getMob(),
+							mov.getDtMov(), null, mov.getSubscritor(), false);
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
 
 	@Get("/app/expediente/mov/assinar_despacho_lote")
 	public void aAssinarDespachoLote() {

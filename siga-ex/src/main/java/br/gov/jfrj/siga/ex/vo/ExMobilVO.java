@@ -378,7 +378,7 @@ public class ExMobilVO extends ExVO {
 							.podeFazerAnotacao(titular, lotaTitular, mob));
 		}
 
-		addAcao("package", "Arq. Corrente", "/expediente/mov",
+		addAcao("package", "Arq. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
 				null, null, null, "once");

@@ -22,6 +22,7 @@ function sbmt(offset) {
 	if (offset==null) {d
 		offset=0;
 	}
+	listar["paramoffset"].value=offset;
 	listar["p.offset"].value=offset;
 	listar.submit();
 }
@@ -594,6 +595,7 @@ function limpaCampos()
 										<input type="hidden" name="propriedade" value="${propriedade}" />
 										<input type="hidden" name="postback" value="1" />
 										<input type="hidden" name="apenasRefresh" value="0" />
+										<input type="hidden" name="paramoffset" value="0" />
 										<input type="hidden" name="p.offset" value="0" />
 
 										<tr class="header">

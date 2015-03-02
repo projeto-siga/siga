@@ -1035,6 +1035,8 @@ public class ExMovimentacaoController extends ExController {
 			}
 		}
 		result.include("itens", itens);
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("titularSel", new DpPessoaSelecao());
 	}
 
 	@Post("/app/expediente/mov/anotar_lote_gravar")

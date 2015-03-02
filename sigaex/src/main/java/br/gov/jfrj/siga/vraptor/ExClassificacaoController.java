@@ -60,12 +60,8 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 
 	public ExClassificacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, ExDao.getInstance(), so, em);
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();	
-		
 		int totalItens = getTotalDeNiveis();
 		nivelSelecionado = new String[totalItens];	
-		
 	}
 	
 	@Override
@@ -170,9 +166,21 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 		result.include("mascaraJavascript", SigaExProperties.getExClassificacaoMascaraJavascript());
 		return exClass;
 	}
-	@Post("app/expediente/classificacao/gravar")
+	@Get("app/expediente/classificacao/gravar")
 	public void gravar(ExClassificacao exClassificacao, String codificacaoAntiga, String acao) throws Exception {
 		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		
+		if (exClassificacao.getCodificacao().length() == 0 || exClassificacao.getDescrClassificacao().length() == 0) {
+			throw new AplicacaoException("Preencha o código da classificação e a descrição!");
+		}
+
+		if (acao.equals("nova_classificacao")) {
+			ExClassificacao exClassExistente = buscarExClassificacao(exClassificacao.getCodificacao());
+			if (exClassExistente != null) {
+				throw new AplicacaoException("A classificação documental já existe: "+ exClassExistente.getCodificacao());
+			}
+		}
+		
 		dao().iniciarTransacao();
 		try{
 
@@ -181,12 +189,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			}
 	
 			if (acao.equals("nova_classificacao")) {
-				ExClassificacao exClassExistente = buscarExClassificacao(exClassificacao.getCodificacao());
-				if (exClassExistente != null) {
-					throw new AplicacaoException("A classificação documental já existe: "+ exClassExistente.getCodificacao());
-				} else {
-					Ex.getInstance().getBL().incluirExClassificacao(exClassificacao, getIdentidadeCadastrante());
-				}
+				Ex.getInstance().getBL().incluirExClassificacao(exClassificacao, getIdentidadeCadastrante());
 			} else {
 				ExClassificacao exClassAntiga = buscarExClassificacao(codificacaoAntiga);
 				if (exClassAntiga != null && !exClassAntiga.getCodificacao().equals(exClassificacao.getCodificacao())) {

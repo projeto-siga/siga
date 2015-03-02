@@ -257,14 +257,15 @@
 	colunas.acoes = 		20,
 
     jQuery("#checkmostrarAssocDesativada").click(function() {
+    	permissoesTable.api().clear().draw();
+        
         $.ajax({
                 type: "POST",
                 url: getUrlDesativarReativar(document.getElementById('checkmostrarAssocDesativada').checked),
                 dataType: "text",
                 success: function(response) {
-                	atualizarListasTipoPermissaoEdicao({ 
-                        associacoesVO : JSON.parse(response)
-                   });
+					var permissoesJSon = JSON.parse(response);
+        			populatePermissoesFromJSonList(permissoesJSon);
                 },
                 error: function(response) {
                    $('#modal-associacao').hide(); 
@@ -361,7 +362,8 @@
 			tr = $(event.currentTarget).parent().parent()[0],
 			row = permissoesTable.api().row(tr).data(),
 			idPermissao = idPermissaoDesativar ? idPermissaoDesativar : me.find('.idPermissao').val(),
-			idLista = $("#idLista").val();
+			idLista = $("#idLista").val(),
+			mostrarDesativa = $("#mostrarAssocDesativada").val();
 
 		$.ajax({
 	         type: "POST",
@@ -369,7 +371,12 @@
 	         data: {idLista : idLista, idPermissao : idPermissao},
 	         dataType: "text",
 	         success: function(response) {
-	        	 permissoesTable.api().row(tr).remove().draw();
+	        	 if (mostrarDesativa == "true") {
+                     $('td', tr).addClass('item-desativado');
+                     $('td:last', tr).html(' ');
+                 } else {
+                     permissoesTable.api().row(tr).remove().draw();
+                 }	        	 
 	         },
 	         error: function(response) {
 	        	alert("Não foi possível desativar esta permissão.");

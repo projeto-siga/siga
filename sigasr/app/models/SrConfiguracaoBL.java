@@ -169,8 +169,10 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			
 			SrConfiguracao srConf = (SrConfiguracao) conf;
 			
-			if (srConf.atendente != null)
+			if (srConf.atendente != null){
 				srConf.atendente.getLotacaoAtual();
+				srConf.atendente.getOrgaoUsuario();
+			}
 			
 			if (srConf.itemConfiguracaoSet != null)
 				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet)

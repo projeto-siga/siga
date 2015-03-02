@@ -783,6 +783,14 @@ public class Application extends SigaApplication {
 			throw new Exception("Operação não permitida. Necessário informar um item de configuração " + 
 					"e uma ação.");
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		
+		DpLotacao atendenteNaoDesignado = null;
+		DpLotacao atendente = null;
+		if (idAtendente != null)
+			atendente = JPA.em().find(DpLotacao.class, idAtendente);
+		if (idAtendenteNaoDesignado != null)
+			 atendenteNaoDesignado = JPA.em().find(DpLotacao.class, idAtendenteNaoDesignado);
+		
 		if (criaFilha) {
 			if (fechadoAuto != null) {
 				solicitacao.setFechadoAutomaticamente(fechadoAuto);
@@ -798,7 +806,7 @@ public class Application extends SigaApplication {
 			filha.designacao = SrConfiguracao.findById(idDesignacao);
 			filha.descrSolicitacao = descricao;
 			if (idAtendenteNaoDesignado != null)
-				filha.atendenteNaoDesignado = JPA.em().find(DpLotacao.class, idAtendenteNaoDesignado);
+				filha.atendenteNaoDesignado = atendenteNaoDesignado;
 			filha.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 			exibir(filha.idSolicitacao, todoOContexto(), ocultas());
 		}
@@ -808,7 +816,7 @@ public class Application extends SigaApplication {
 					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO);
 			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			mov.acao = SrAcao.findById(acao.idAcao);
-			mov.lotaAtendente = JPA.em().find(DpLotacao.class, idAtendente);
+			mov.lotaAtendente = atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente;
 			mov.designacao = SrConfiguracao.findById(idDesignacao);
 			mov.descrMovimentacao = "Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
 					+ "; Ação: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();

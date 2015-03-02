@@ -191,13 +191,13 @@
 	}
 
 	associacaoService.onGravar = function(obj, objSalvo) {
-		var td = BaseService.prototype.onGravar.call(this, obj, objSalvo);
-		#{if _modoExibicao == 'atributo'}
-		var item =  this.getItemPaiPorId(obj.atributo.idAtributo);
-		#{/if}
-		#{elseif _modoExibicao == 'pesquisa'}
-		var item = this.getItemPaiPorId(obj.pesquisaSatisfacao.idPesquisa);
-		#{/elseif}
+		var td = BaseService.prototype.onGravar.call(this, obj, objSalvo),
+			#{if _modoExibicao == 'atributo'}
+			item =  this.getItemPaiPorId(obj.atributo.idAtributo);
+			#{/if}
+			#{elseif _modoExibicao == 'pesquisa'}
+			item = this.getItemPaiPorId(obj.pesquisaSatisfacao.idPesquisa);
+			#{/elseif}
 
 		// Se eh edicao mantem o json atualizado
 		if(obj.idConfiguracao != "") {
@@ -232,7 +232,10 @@
 	}
 	
 	associacaoService.getItemPaiPorId = function (id) {
-		return $("#${_modoExibicao}_table tr[data-json-id=" + id + "]").data('json');
+		return $("#${_modoExibicao}_table")
+					.dataTable()
+					.$("tr[data-json-id=" + id + "]")
+					.data('json');
 	}
 
 	associacaoService.getListasAsString = function () {

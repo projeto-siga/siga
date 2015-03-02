@@ -989,7 +989,9 @@ public class Application extends SigaApplication {
 	}
 
     public static String listarPermissaoUsoListaDesativados(Long idLista) throws Exception {
-        SrLista lista = SrLista.findById(idLista);
+        SrLista lista = new SrLista();
+        if (idLista != null)
+        	lista = SrLista.findById(idLista);
         List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.TRUE);
         return SrConfiguracao.convertToJSon(associacoes);
     }
@@ -997,7 +999,9 @@ public class Application extends SigaApplication {
     public static String listarPermissaoUsoLista(Long idLista) throws Exception {
         assertAcesso("ADM:Administrar");
         
-        SrLista lista = SrLista.findById(idLista);
+        SrLista lista = new SrLista();
+        if (idLista != null)
+        	lista = SrLista.findById(idLista);
         List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.FALSE);
         return SrConfiguracao.convertToJSon(associacoes);
     }       
@@ -1244,7 +1248,9 @@ public class Application extends SigaApplication {
 
     @SuppressWarnings("unchecked")
     public static String listarAssociacaoAtributoDesativados(Long idAtributo) throws Exception {
-    	SrAtributo att = SrAtributo.findById(idAtributo);
+    	SrAtributo att = new SrAtributo();
+    	if (idAtributo != null)
+    		att = SrAtributo.findById(idAtributo);
         List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.TRUE);
         return SrConfiguracao.convertToJSon(associacoes);
     }
@@ -1253,7 +1259,9 @@ public class Application extends SigaApplication {
     public static String listarAssociacaoAtributo(Long idAtributo) throws Exception {
         assertAcesso("ADM:Administrar");
         
-        SrAtributo att = SrAtributo.findById(idAtributo);
+    	SrAtributo att = new SrAtributo();
+    	if (idAtributo != null)
+    		att = SrAtributo.findById(idAtributo);
         List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.FALSE);
         return SrConfiguracao.convertToJSon(associacoes);
     }   	
@@ -1317,7 +1325,9 @@ public class Application extends SigaApplication {
 	}
 	
     public static String listarAssociacaoPesquisaDesativados(Long idPesquisa) throws Exception {
-        SrPesquisa pesquisa = SrPesquisa.findById(idPesquisa);
+    	SrPesquisa pesquisa = new SrPesquisa();
+    	if (idPesquisa != null)
+    		pesquisa = SrPesquisa.findById(idPesquisa);
         List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesPesquisa(pesquisa, Boolean.TRUE);
         return SrConfiguracao.convertToJSon(associacoes);
     }
@@ -1325,7 +1335,10 @@ public class Application extends SigaApplication {
     public static String listarAssociacaoPesquisa(Long idPesquisa) throws Exception {
         assertAcesso("ADM:Administrar");
         
-        SrPesquisa pesquisa = SrPesquisa.findById(idPesquisa);
+    	SrPesquisa pesquisa = new SrPesquisa();
+    	if (idPesquisa != null)
+    		pesquisa = SrPesquisa.findById(idPesquisa);
+        
         List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesPesquisa(pesquisa, Boolean.FALSE);
         return SrConfiguracao.convertToJSon(associacoes);
     }       

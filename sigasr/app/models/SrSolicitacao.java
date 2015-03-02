@@ -347,24 +347,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		this.meuAtributoSolicitacaoSet = meuAtributoSolicitacaoSet;
 	}
 
-	public String getDescrItem() {
-		return itemConfiguracao != null ? itemConfiguracao.tituloItemConfiguracao
-				: "Item não informado";
-	}
-
-	public String getDescrAcao() {
-		return acao != null ? acao.tituloAcao : "Ação não informada";
-	}
-
-	public String getSiglaEDescrItem() {
-		return itemConfiguracao != null ? itemConfiguracao.toString()
-				: "Item não informado";
-	}
-
-	public String getSiglaEDescrAcao() {
-		return acao != null ? acao.toString() : "Ação não informada";
-	}
-
 	@Override
 	public void setDescricao(String descricao) {
 		this.descrSolicitacao = descricao;
@@ -641,13 +623,22 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public Set<SrMovimentacao> getMovimentacaoSet(
 			boolean considerarCanceladas, Long tipoMov, boolean ordemCrescente,
 			boolean todoOContexto, boolean apenasPrincipais, boolean inversoJPA) {
-		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
-				new SrMovimentacaoComparator(ordemCrescente));
-
+		
 		List<Long> tiposPrincipais = Arrays.asList(TIPO_MOVIMENTACAO_ANDAMENTO,
 				TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO,
 				TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO,
 				TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_AVALIACAO);
+
+		return getMovimentacaoSet(considerarCanceladas, 
+				tipoMov, ordemCrescente, todoOContexto, apenasPrincipais, inversoJPA, tiposPrincipais);
+	}
+
+	public Set<SrMovimentacao> getMovimentacaoSet(
+			boolean considerarCanceladas, Long tipoMov, boolean ordemCrescente,
+			boolean todoOContexto, boolean apenasPrincipais, boolean inversoJPA, List<Long> tiposPrincipais) {
+		
+		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
+				new SrMovimentacaoComparator(ordemCrescente));
 
 		Set<SrSolicitacao> solsAConsiderar = new LinkedHashSet<SrSolicitacao>();
 		if (todoOContexto) {
@@ -680,7 +671,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return listaCompleta;
 	}
-
+	
 	public boolean jaFoiDesignada() {
 		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
 			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO
@@ -1271,8 +1262,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (solicitante == null)
 			return null;
 
-		List<SrItemConfiguracao> listaTodosItens = new ArrayList<SrItemConfiguracao>();
-		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
+		List<SrItemConfiguracao> listaTodosItens = listarHistoricoItemInicial();
+		List<SrItemConfiguracao> listaFinal = listarHistoricoItemInicial();
 				
 		SrConfiguracao confFiltro = new SrConfiguracao();
 		confFiltro.setComplexo(local);
@@ -2751,5 +2742,47 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if(movEscalonar != null)
 			return movEscalonar.acao;
 		return null;
+	}
+	
+	public List<SrItemConfiguracao> getHistoricoItem() {
+		List<SrItemConfiguracao> historicoItens = listarHistoricoItemInicial();
+
+		for (SrMovimentacao movimentacao : getMovimentacaoSetOrdemCrescentePorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO)) {
+			if (movimentacao.getItemConfiguracao() != null) {
+				historicoItens.add(movimentacao.getItemConfiguracao());
+			}
+		}
+		return historicoItens;
+	}
+
+	public List<SrAcao> getHistoricoAcao() {
+		List<SrAcao> historicoAcoes = listaHistoricoAcaoInicial();
+		for (SrMovimentacao movimentacao : getMovimentacaoSetOrdemCrescentePorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO)) {
+			if (movimentacao.getAcao() != null) {
+				historicoAcoes.add(movimentacao.getAcao());
+			}
+		}
+		return historicoAcoes;
+	}
+	
+
+	private Set<SrMovimentacao> getMovimentacaoSetOrdemCrescentePorTipo(Long idTipoMovimentacao) {
+		return getMovimentacaoSet(false, null, true, false, false, false, Arrays.asList(idTipoMovimentacao));
+	}
+
+	private List<SrAcao> listaHistoricoAcaoInicial() {
+		List<SrAcao> acoes = new ArrayList<SrAcao>();
+		if (acao != null) {
+			acoes.add(acao);
+		}
+		return acoes;
+	}
+	
+	private List<SrItemConfiguracao> listarHistoricoItemInicial() {
+		List<SrItemConfiguracao> itensConfiguracao = new ArrayList<SrItemConfiguracao>();
+		if (itemConfiguracao != null) {
+			itensConfiguracao.add(itemConfiguracao);
+		}
+		return itensConfiguracao;
 	}
 }

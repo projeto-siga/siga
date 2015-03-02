@@ -277,25 +277,37 @@
 	}
 
 	function getItemAcaoAsString(objectName) {
-		var params = '';
+		var params = '',
+			hasItem = false,
+			hasAcao = false;
 		
 		// Percorre lista de Itens de Configuração
 		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
 			var rowValues = itemConfiguracaoTable.api().row(i).data();
 			
 			// Atualiza a string serializada
-			if (rowValues)
+			if (rowValues) {
 	        	params += '&' + objectName + '.itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0];
+	        	hasValue = true;
+			}
 		});
+
+		if (!hasItem)
+			params += '&' + objectName + '.itemConfiguracaoSet=';
 		
 		// Percorre lista de Ações
 		acaoTable.api().rows().indexes().each(function (i) {
 			var rowValues = acaoTable.api().row(i).data();
 			
 			// Atualiza a string serializada
-			if (rowValues)
+			if (rowValues) {
 				params += '&' + objectName + '.acoesSet[' + i + '].idAcao=' + rowValues[0];
+				hasAcao = true;
+			}
 		});
+
+		if (!hasAcao)
+			params += '&' + objectName + '.acoesSet=';
 		
 		return params;
 	}

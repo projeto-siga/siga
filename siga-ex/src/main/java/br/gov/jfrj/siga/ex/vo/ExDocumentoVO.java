@@ -423,7 +423,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("book_add", "Solicitar Publicação no Boletim", "/app/expediente/mov", "boletim_agendar", Ex.getInstance()
 				.getComp().podeBotaoAgendarPublicacaoBoletim(titular, lotaTitular, mob));
 		
-		vo.addAcao("book_link", "Registrar Publicação do BIE", "/expediente/mov", "boletim_publicar", Ex.getInstance().getComp()
+		vo.addAcao("book_link", "Registrar Publicação do BIE", "/app/expediente/mov", "boletim_publicar", Ex.getInstance().getComp()
 				.podeBotaoAgendarPublicacaoBoletim(titular, lotaTitular, mob), null, null, null, null, "once");
 		
 		vo.addAcao("error_go", "Refazer", "/app/expediente/doc",

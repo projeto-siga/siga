@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,8 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
-
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -53,6 +54,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
@@ -1862,6 +1864,23 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Get("/app/expediente/mov/prever_data")
+	public void aPreverData() throws Exception {
+		try {
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			Date provDtDispon = format.parse(param("data"));
+
+			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(provDtDispon);
+
+			String apenas = param("apenasSolicitacao");
+
+			result.include("dtPrevPubl", format.format(DJE.getDataPublicacao()));
+			result.include("descrFeriado", DJE.validarDataDeDisponibilizacao((apenas != null)
+					&& apenas.equals("true")));
+		} catch (Throwable t) {
+		}
+	}	
+	
 	private void validarRetirarEditalEliminacao(ExMobil mob) {
 		if (!Ex.getInstance()
 				.getComp()
@@ -1914,11 +1933,12 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException(
 					"Não é possível fazer arquivamento intermediário. Verifique se o documento não se encontra em lotação diferente de "
 							+ getLotaTitular().getSigla());
-		}
+		} 
 		
+		result.include("doc", doc);
 		result.include("mob", mob);
 		result.include("sigla", sigla);
-		result.include("doc", doc);
+		result.include("substituicao", false);
 		result.include("request", getRequest());
 		result.include("titularSel", new DpPessoaSelecao());
 		result.include("subscritorSel", new DpPessoaSelecao());
@@ -1928,7 +1948,9 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	@Get("/app/expediente/mov/arquivar_intermediario_gravar")
+	@Get
+	@Post
+	@Path("/app/expediente/mov/arquivar_intermediario_gravar")
 	public void aArquivarIntermediarioGravar(
 			final String sigla, 
 			final Integer postback, 
@@ -2228,5 +2250,45 @@ public class ExMovimentacaoController extends ExController {
 		
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}	
+	
+	@Get("/app/expediente/mov/boletim_publicar")
+	public void publica_boletim(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			result.include("dtPubl",df.format(new Date()));
+		} catch (final Exception e) {
+		}
+
+		if (!Ex.getInstance().getComp() .podePublicar(getTitular(), getLotaTitular(), mob)){
+			throw new AplicacaoException("Publicação não permitida");
+		}		
+		result.include("sigla",sigla);
+	}
+	
+	@Get("/app/expediente/mov/boletim_publicar_gravar")	
+	public void aBoletimPublicarGravar(final String sigla, final String dtPubl) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		buscarDocumento(builder, true);
+		
+		final ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder.novaInstancia();
+		movBuilder.setMob(builder.getMob());
+		movBuilder.setDtPubl(dtPubl);
+		final ExMovimentacao mov = movBuilder.construir(dao());		
+
+		if (!Ex.getInstance().getComp().podePublicar(getTitular(), getLotaTitular(), builder.getMob())){
+			throw new AplicacaoException("Nao foi possivel fazer a publicacao");
+		}
+
+		Ex.getInstance()
+				.getBL()
+				.publicarBoletim(getCadastrante(), getLotaTitular(),
+						mov.getExDocumento(), mov.getDtMov());
+
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}		
 
 }

@@ -1776,6 +1776,73 @@ public class ExMovimentacaoController extends ExController {
 		}
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	
+	@Get("app/expediente/mov/retirar_de_edital_eliminacao")
+	public void retirarDeEditalEliminacao(String sigla) throws Exception {
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+		
+		buscarDocumento(builder, true);
+		
+		validarRetirarEditalEliminacao(builder.getMob());
+		
+		result.include("request", getRequest());
+		result.include("mob", builder.getMob());
+		result.include("sigla", sigla);
+		result.include("substituicao", Boolean.FALSE);
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("titularSel", new DpPessoaSelecao());
+	}
+	
+	@Post("/app/expediente/mov/retirar_de_edital_eliminacao_gravar")
+	public void retirarDeEditalEliminacaoGravar(Integer postback
+			, String sigla
+			, String dtMovString
+			, boolean substituicao
+			, String descrMov
+			, DpPessoaSelecao subscritorSel
+			, DpPessoaSelecao titularSel) throws Exception {
+		
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+					.novaInstancia()
+					.setSigla(sigla);
+		
+		buscarDocumento(builder, true);
+		
+		ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder
+					.novaInstancia()
+					.setDtMovString(dtMovString)
+					.setSubstituicao(substituicao)
+					.setDescrMov(descrMov)
+					.setSubscritorSel(subscritorSel)
+					.setTitularSel(titularSel);
+					
+		ExMovimentacao mov = movBuilder.construir(dao());
+		ExMobil mob = builder.getMob();
+		
+		validarRetirarEditalEliminacao(mob);
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.retirarDeEditalEliminacao(mob, getCadastrante(),
+							getLotaTitular(), mov.getSubscritor(),
+							mov.getLotaSubscritor(), mov.getTitular(),
+							mov.getLotaTitular(), mov.getDescrMov());
+		} catch (final Exception e) {
+			throw e;
+		}
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+
+	private void validarRetirarEditalEliminacao(ExMobil mob) {
+		if (!Ex.getInstance()
+				.getComp()
+				.podeRetirarDeEditalEliminacao(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível retirar o documento de edital de eliminação");
+	}
+	
 	private void validarCancelar(ExMovimentacao mov, ExMobil mob) throws Exception {
 		if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
 			if (!Ex.getInstance()

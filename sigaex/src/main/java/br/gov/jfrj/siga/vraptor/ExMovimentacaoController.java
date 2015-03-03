@@ -2228,5 +2228,45 @@ public class ExMovimentacaoController extends ExController {
 		
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}	
+	
+	@Get("/app/expediente/mov/boletim_publicar")
+	public void publica_boletim(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			result.include("dtPubl",df.format(new Date()));
+		} catch (final Exception e) {
+		}
+
+		if (!Ex.getInstance().getComp() .podePublicar(getTitular(), getLotaTitular(), mob)){
+			throw new AplicacaoException("Publicação não permitida");
+		}		
+		result.include("sigla",sigla);
+	}
+	
+	@Get("/app/expediente/mov/boletim_publicar_gravar")	
+	public void aBoletimPublicarGravar(final String sigla, final String dtPubl) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		buscarDocumento(builder, true);
+		
+		final ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder.novaInstancia();
+		movBuilder.setMob(builder.getMob());
+		movBuilder.setDtPubl(dtPubl);
+		final ExMovimentacao mov = movBuilder.construir(dao());		
+
+		if (!Ex.getInstance().getComp().podePublicar(getTitular(), getLotaTitular(), builder.getMob())){
+			throw new AplicacaoException("Nao foi possivel fazer a publicacao");
+		}
+
+		Ex.getInstance()
+				.getBL()
+				.publicarBoletim(getCadastrante(), getLotaTitular(),
+						mov.getExDocumento(), mov.getDtMov());
+
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}		
 
 }

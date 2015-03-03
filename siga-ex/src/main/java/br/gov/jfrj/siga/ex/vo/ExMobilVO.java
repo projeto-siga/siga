@@ -434,7 +434,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("box",
 				"Arq. Intermediário",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"arquivar_intermediario",
 				Ex.getInstance()
 						.getComp()

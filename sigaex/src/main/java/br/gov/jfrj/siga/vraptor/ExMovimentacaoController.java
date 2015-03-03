@@ -1829,6 +1829,93 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
+	@Get("/app/expediente/mov/arquivar_intermediario")
+	public void aArquivarIntermediario(String sigla) {
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		
+		final ExDocumento doc = buscarDocumento(builder, true);
+		
+		final ExMobil mob = builder.getMob();
+		
+		if (!Ex.getInstance().getComp()
+				.podeArquivarIntermediario(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException(
+					"Não é possível fazer arquivamento intermediário. Verifique se o documento não se encontra em lotação diferente de "
+							+ getLotaTitular().getSigla());
+		}
+		
+		result.include("mob", mob);
+		result.include("sigla", sigla);
+		result.include("doc", doc);
+		result.include("request", getRequest());
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("subscritorSel", new DpPessoaSelecao());
+
+		if (doc.isEletronico()) {
+			result.redirectTo("arquivar_intermediario_gravar?sigla=" + mob.getSigla());
+		}
+	}
+	
+	@Get("/app/expediente/mov/arquivar_intermediario_gravar")
+	public void aArquivarIntermediarioGravar(
+			final String sigla, 
+			final Integer postback, 
+			final String dtMovString,
+			final DpPessoaSelecao subscritorSel, 
+			final DpPessoaSelecao titularSel, 
+			final boolean substituicao,
+			final String descrMov) {
+		
+		this.setPostback(postback);
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		
+		buscarDocumento(builder, true);
+		
+		final ExMobil mob = builder.getMob();
+		
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia()
+				.setMob(mob)
+				.setDescrMov(descrMov)
+				.setTitularSel(titularSel)
+				.setDtMovString(dtMovString)
+				.setSubstituicao(substituicao)
+				.setSubscritorSel(subscritorSel);
+		
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeArquivarIntermediario(
+						getTitular(),
+						getLotaTitular(),
+						mob)) {
+			
+			throw new AplicacaoException(
+					"Não é possível fazer arquivamento intermediário");
+		}
+		
+		try {
+			Ex.getInstance()
+					.getBL()
+					.arquivarIntermediario(
+							getCadastrante(), 
+							getLotaTitular(),
+							mob,
+							mov.getDtMov(),
+							mov.getSubscritor(),
+							mov.getDescrMov());
+			
+			result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+			
+		} catch (final Exception e) {
+			throw e;
+		}
+		
+	}
+	
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {
 		ExFormaDocumento exForma = doc.getExFormaDocumento();
 		ExClassificacao exClassif = doc.getExClassificacaoAtual();

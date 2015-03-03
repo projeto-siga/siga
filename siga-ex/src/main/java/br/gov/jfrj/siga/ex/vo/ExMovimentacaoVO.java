@@ -162,7 +162,7 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			addAcao(null,
 					"Cancelar",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"cancelar",
 					Ex.getInstance()
 							.getComp()
@@ -173,7 +173,7 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
 			addAcao(null,
 					"Cancelar",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"cancelar",
 					Ex.getInstance()
 							.getComp()
@@ -240,7 +240,7 @@ public class ExMovimentacaoVO extends ExVO {
 				if (!mov.mob().doc().isSemEfeito())
 					addAcao(null,
 							"Cancelar",
-							"/expediente/mov",
+							"/app/expediente/mov",
 							"cancelar",
 							Ex.getInstance()
 									.getComp()

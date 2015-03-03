@@ -73,7 +73,7 @@
 							</a>	
 				</td>
 				<td class="gt-celula-nowrap"  style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important; text-align:justify;" "id="descrSolicitacao">
-				<b>${sol.descrItem}:</b>&nbsp;
+				<b>#{descricaoItem itemConfiguracao: sol.itemAtual /}:</b>&nbsp;
 				#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
 				</td>
 					
@@ -114,13 +114,36 @@
 </div>
 
 #{modal nome:'editarLista', titulo:'Editar Lista'}
-	<div id="divEditarLista">#{include
+	<div id="divEditarLista" style="width: 800px !important; max-width: 800px !important;">#{include
 				'Application/editarLista.html' /}</div>
 #{/modal}
 
 <script type="text/javascript">
 	var solicitacaoTable,
 		listaJson;
+
+	var QueryString = function () {
+		// This function is anonymous, is executed immediately and
+		// the return value is assigned to QueryString!
+		var query_string = {};
+		var query = window.location.search.substring(1);
+		var vars = query.split("&");
+		for (var i=0;i<vars.length;i++) {
+			var pair = vars[i].split("=");
+	    	// If first entry with this name
+	    	if (typeof query_string[pair[0]] === "undefined") {
+				query_string[pair[0]] = pair[1];
+				// If second entry with this name
+			} else if (typeof query_string[pair[0]] === "string") {
+				var arr = [ query_string[pair[0]], pair[1] ];
+				query_string[pair[0]] = arr;
+				// If third or later entry with this name
+			} else {
+				query_string[pair[0]].push(pair[1]);
+			}
+		}
+		return query_string;
+	}();
 	
 	/* Table initialization */
 	$(document).ready(function() {
@@ -278,13 +301,16 @@
 						permissao.funcaoConfianca ? permissao.funcaoConfianca.id : '',
 						permissao.funcaoConfianca ? permissao.funcaoConfianca.descricao : '', 
 						permissao.funcaoConfianca ? permissao.funcaoConfianca.sigla : '',  
-	          			permissao.listaTipoPermissaoListaVO,			//16
-	          			permissao.idConfiguracao,						//17    
-	          			'',												//18
-	          			getDescricaoTipoPermissao(),					//19
-	          			''												//20
+	          			permissao.listaTipoPermissaoListaVO,									//16
+	          			permissao.idConfiguracao,												//17    
+	          			'',																		//18
+	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
+	          			'<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
+						'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
+						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
+						'</a>'																	//20
 	          			];
-			
+
 			permissoesTable.api().row.add(row).draw();
 		}
 	}

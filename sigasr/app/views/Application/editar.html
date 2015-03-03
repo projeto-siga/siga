@@ -44,7 +44,29 @@
 		});
 
 		carregarFiltrosAoIniciar();
+
+		// DB1: Sobrescreve o método onchange para que faça o tratamento das informações 
+		// do campo vinculado ao evento
+		jQuery("#checkmostrarInterlocutor")[0].onchange = function(event) {
+			changemostrarInterlocutor();
+			showInterlocutor(this.checked, 'interlocutor');
+		};
 	});
+
+	function showInterlocutor(checked, divName){
+		var div = document.getElementById(divName);
+		if (div) {
+			if (checked)
+				div.style.display = 'inline';
+			else {
+				div.style.display = 'none';
+				jQuery("#solicitacaointerlocutor").val("");
+				jQuery("#solicitacaointerlocutor_descricao").val("");
+				jQuery("#solicitacaointerlocutor_sigla").val("");
+				jQuery("#solicitacaointerlocutorSpan").html("");
+			}
+		}
+	}
 
 	function formatarValorTimer(num) {
 		if (num.toString().length == 1) 

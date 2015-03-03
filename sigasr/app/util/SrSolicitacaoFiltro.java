@@ -49,7 +49,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SrSolicitacao> buscar() throws Exception {
-		String query = montarBusca("select sol from SrSolicitacao sol ");
+		String query = montarBusca("select distinct(sol) from SrSolicitacao sol ");
 		
 		List<SrSolicitacao> lista = JPA
 				.em()
@@ -88,7 +88,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (acordo != null && acordo.idAcordo > 0L)
 			query.append(" inner join sol.acordos acordo where acordo.hisIdIni = "
 					+ acordo.getHisIdIni() + " and ");
-		else query.append(" where ");
+		else
+			query.append(" where ");
 		
 		query.append(" sol.hisDtFim is null ");
 		
@@ -111,17 +112,16 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (acao != null && acao.idAcao > 0L)
 			query.append(" and sol.acao.acaoInicial.idAcao = "
 					+ acao.acaoInicial.idAcao);
-		if (urgencia != null && urgencia.nivelUrgencia > 0)
-			query.append(" and sol.urgencia = " + urgencia.ordinal());
-		if (tendencia != null && tendencia.nivelTendencia > 0)
-			query.append(" and sol.tendencia = " + tendencia.ordinal());
-		if (gravidade != null && gravidade.nivelGravidade > 0)
-			query.append(" and sol.gravidade = " + gravidade.ordinal());
+		if (prioridade != null && prioridade.idPrioridade > 0L)
+			query.append(" and sol.prioridade <= " + prioridade.ordinal());
 		
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
-			for (String s : descrSolicitacao.split(" "))
-				query.append(" and lower(sol.descrSolicitacao) like '%"
+			for (String s : descrSolicitacao.split(" ")) {
+				query.append(" and ( lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ");
+				query.append(" or sol in (select mov.solicitacao from SrMovimentacao mov");
+				query.append(" where lower(mov.descrMovimentacao) like '%" + s.toLowerCase() + "%' )) ");
+			}
 		}
 		
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");

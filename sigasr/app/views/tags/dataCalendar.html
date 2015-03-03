@@ -1,0 +1,17 @@
+#{set nomeclean : _nome.cut('.') /}
+#{if _id != null}
+	#{set nomeclean : _id /}
+#{/if}
+
+<input type="text" name="${_nome}" id="${nomeclean}" value="${_value}" onchange="${_onchange}" class="${_class}">
+<script>
+	$(function() {
+		$("#${nomeclean}").datepicker({
+		    showOn: "button",
+		    buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+		    buttonImageOnly: true,
+		    dateFormat: 'dd/mm/yy'
+		});
+		$("#${nomeclean}").mask("99/99/9999");
+	});
+</script> 

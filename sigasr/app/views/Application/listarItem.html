@@ -22,6 +22,29 @@
 .item-neto {
 	padding-left: 4em !important;
 }
+
+.bt-expandir {
+	background: none !important;
+    cursor: pointer;
+}
+		
+.bt-expandir.expandido {
+	background: none !important;
+}
+
+.hide-sort-arrow.sorting_asc, .hide-sort-arrow.sorting_desc {
+	background: none !important;
+}
+
+td.details-control {
+	background: none !important;
+	cursor: pointer;
+}
+
+tr.shown td.details-control {
+    background: none !important;
+}
+
 </style>
 
 <div class="gt-bd clearfix">
@@ -35,8 +58,8 @@
 			<table id="itens_configuracao_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
-						<th style="color: #333">
-							<button class="gt-btn-medium gt-btn-left bt-expandir">
+						<th style="color: #333" class="hide-sort-arrow">
+							<button class="bt-expandir">
 								<span id="iconeBotaoExpandirTodos">+</span>
 							</button>
 						</th>
@@ -51,10 +74,10 @@
 
 				<tbody>
 					#{list items:itens, as:'item'}
-						<tr 
-							data-json-id="${item.idItemConfiguracao}" data-json="${item.toVO().toJson()}" onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
+						<tr data-json-id="${item.idItemConfiguracao}" data-json="${item.toVO().toJson()}" 
+							onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
 							style="cursor: pointer;">
-							<td class="details-control"></td>
+							<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 							<td>${item.siglaItemConfiguracao}</td>
 							<td>${item.tituloItemConfiguracao}</td>
 							<td>${item.descrItemConfiguracao}</td>
@@ -147,15 +170,22 @@
         	}
         ])
         .configurar("fnRowCallback", function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				var jSonItem = getJsonByString(aData[colunasLista.jSon]);
+        	if (nRow.dataset && nRow.dataset.json) {
+				var jSonItem = getJsonByString(nRow.dataset.json);
 				$('td:eq('+colunasLista.expandir+')', nRow).addClass('details-control');
-	
+
 				if (jSonItem.nivel == 1)
 					$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-pai');
 				else if (jSonItem.nivel == 2)
 					$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-filho');
 				else if (jSonItem.nivel == 3)
 					$('td:eq('+colunasLista.titulo+')', nRow).addClass('item-neto');
+
+				if (jSonItem.ativo == false)
+					$('td', nRow).addClass('item-desativado');
+				else
+					$('td', nRow).removeClass('item-desativado');
+       		}
 		})
 		.criar()
 		.detalhes(detalhesItemConfiguracaoFormat);
@@ -196,7 +226,7 @@
 	itemConfiguracaoService.onRowClick = function(item) {
 		itemConfiguracaoService.editar(item, 'Alterar Item');
 	}
-	
+
 	itemConfiguracaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
 		itemTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
@@ -270,11 +300,11 @@
     }
 
 	function detalhesItemConfiguracaoFormat( d, obj) {
-		var tr = $('<tr class="detail">'),
-			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+		var tr = obj.ativo == true ? $('<tr class="detail">') : $('<tr class="detail configuracaoHerdada">'),
+			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:56px;">'+
 			'<tr>'+
-				'<td><b>Similaridade:</b></td>'+
-					'<td>' + (obj.descricaoSimilaridade || "") + '</td>'+
+				'<td style="padding-right: 0px;"><b>Similaridade:</b></td>'+
+					'<td style="padding-left: 5px;">' + (obj.descricaoSimilaridade || "") + '</td>'+
 		        '</tr>'+
 		    '</table><td>';
 		    

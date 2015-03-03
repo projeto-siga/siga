@@ -9,7 +9,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -26,11 +25,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
 import play.db.jpa.JPA;
-import util.FieldNameExclusionEstrategy;
+import util.Util;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -182,12 +180,8 @@ public class SrConfiguracao extends CpConfiguracao {
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
 		
 		if (equipe != null && equipe.lotacao != null && equipe.lotacao.getIdLotacaoIni() != null) {
-			sb.append(" and ( ");
-			
-			sb.append(" conf.atendente.idLotacaoIni = ");
-			sb.append(equipe.lotacao.getIdLotacaoIni());
-			
-			sb.append(" ) ");
+			sb.append(" and conf.atendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());			
 		}
 		
 		sb.append(" and conf.hisDtFim is null");
@@ -292,6 +286,12 @@ public class SrConfiguracao extends CpConfiguracao {
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 		salvar();
 	}
+	
+	public void salvarComoAssociacaoPesquisa() throws Exception {
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA));
+		salvar();
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarAssociacoesAtributo(SrAtributo atributo, Boolean mostrarDesativados) {
@@ -300,6 +300,26 @@ public class SrConfiguracao extends CpConfiguracao {
 		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO);
 		queryBuilder.append(" and conf.atributo.hisIdIni = ");
 		queryBuilder.append(atributo.getHisIdIni());
+		
+		if (!mostrarDesativados) {
+			queryBuilder.append(" and conf.hisDtFim is null ");
+		} else {
+			queryBuilder.append(" and conf.idConfiguracao IN (");
+			queryBuilder.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			queryBuilder.append(" SrConfiguracao GROUP BY hisIdIni)) ");
+		}
+		queryBuilder.append(" order by conf.orgaoUsuario");
+		
+		return JPA.em().createQuery(queryBuilder.toString()).getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAssociacoesPesquisa(SrPesquisa pesquisa, Boolean mostrarDesativados) {
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA);
+		queryBuilder.append(" and conf.pesquisaSatisfacao.hisIdIni = ");
+		queryBuilder.append(pesquisa.getHisIdIni());
 		
 		if (!mostrarDesativados) {
 			queryBuilder.append(" and conf.hisDtFim is null ");
@@ -503,14 +523,14 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 	
 	public static String convertToAssociacaoJSon(List<SrConfiguracao> lista) {
-		List<SrConfiguracaoAssociacaoVO> listaVO = new ArrayList<SrConfiguracaoAssociacaoVO>();
+		List<SrConfiguracaoVO> listaVO = new ArrayList<SrConfiguracaoVO>();
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting().serializeNulls();
 		Gson gson = builder.create();
 
 		if (lista != null) {
 			for (SrConfiguracao conf : lista) {
-				listaVO.add(conf.toAssociacaoVO());
+				listaVO.add(conf.toVO());
 			}
 		}
 		
@@ -541,28 +561,6 @@ public class SrConfiguracao extends CpConfiguracao {
 			return soma / acoesSet.size();
 		}
 		return 0;
-	}
-
-	public SrItemConfiguracao getItemConfiguracaoUnitario() {
-		if (itemConfiguracaoSet == null || itemConfiguracaoSet.size() == 0)
-			return null;
-		return itemConfiguracaoSet.get(0);
-	}
-
-	public void setItemConfiguracaoUnitario(SrItemConfiguracao itemConfiguracao) {
-		itemConfiguracaoSet = new ArrayList<SrItemConfiguracao>();
-		itemConfiguracaoSet.add(itemConfiguracao);
-	}
-
-	public SrAcao getAcaoUnitaria() {
-		if (acoesSet == null || acoesSet.size() == 0)
-			return null;
-		return acoesSet.get(0);
-	}
-
-	public void setAcaoUnitaria(SrAcao acao) {
-		acoesSet = new ArrayList<SrAcao>();
-		acoesSet.add(acao);
 	}
 
 	@Override
@@ -596,26 +594,17 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public SrConfiguracaoAssociacaoVO toAssociacaoVO() {
-		SrItemConfiguracaoVO itemVO = (this.getItemConfiguracaoUnitario() != null? this.getItemConfiguracaoUnitario().getAtual().toVO() : null);
-		SrAcaoVO acaoVO = (this.getAcaoUnitaria() != null? this.getAcaoUnitaria().getAtual().toVO() : null);
-		
-		return new SrConfiguracaoAssociacaoVO(this, itemVO, acaoVO);
+		return new SrConfiguracaoAssociacaoVO(this);
 	}
 	
 	public String toJson() {
-		Gson gson = createGson("");
+		Gson gson = Util.createGson("");
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		
 		return jsonObject.toString();
 	}
 
-	private Gson createGson(String... exclusions) {
-		return new GsonBuilder()
-			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.in(exclusions))
-			.create();
-	}
-	
 	public static List<SrConfiguracao> listarPorItem(SrItemConfiguracao itemConfiguracao)  throws Exception{
 		List<SrConfiguracao> lista = new ArrayList<SrConfiguracao>();
 		

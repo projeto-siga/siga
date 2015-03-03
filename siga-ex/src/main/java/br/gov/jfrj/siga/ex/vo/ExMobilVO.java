@@ -408,7 +408,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("table_edit",
 				"Reclassificar",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"reclassificar",
 				Ex.getInstance().getComp()
 						.podeReclassificar(titular, lotaTitular, mob));

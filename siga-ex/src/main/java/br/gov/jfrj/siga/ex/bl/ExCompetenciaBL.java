@@ -2108,7 +2108,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeDesarquivarIntermediario(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		return podeBotaoDesarquivarIntermediario(titular, lotaTitular, mob)
 				&& (lotaTitular.equivale(mob
 						.getUltimaMovimentacaoNaoCancelada().getLotaResp()) || mob

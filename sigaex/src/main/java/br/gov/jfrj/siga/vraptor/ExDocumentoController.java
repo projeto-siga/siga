@@ -101,6 +101,19 @@ public class ExDocumentoController extends ExController {
 		result.on(Exception.class).forwardTo(this).exception();
 	}
 
+	@Get("app/expediente/doc/desfazerCancelamentoDocumento")
+	public void aDesfazerCancelamentoDocumento(final String sigla) {
+		final ExDocumentoDTO dto = new ExDocumentoDTO(sigla);
+		buscarDocumento(true, dto);
+		if (!Ex.getInstance().getComp().podeDesfazerCancelamentoDocumento(getTitular(), getLotaTitular(), dto.getMob())) {
+			throw new AplicacaoException("Não é possível desfazer o cancelamento deste documento");
+		}
+
+		Ex.getInstance().getBL().DesfazerCancelamentoDocumento(getCadastrante(), getLotaTitular(), dto.getDoc());
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
+
 	@Post("app/expediente/doc/alterarpreench")
 	public void aAlterarPreenchimento(final ExDocumentoDTO exDocumentoDTO, final String[] vars, final String[] campos) throws IOException,
 			IllegalAccessException, InvocationTargetException {
@@ -250,7 +263,7 @@ public class ExDocumentoController extends ExController {
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars, exDocumentoDTO.getMobilPaiSel(), exDocumentoDTO.isCriandoAnexo());
 		return exDocumentoDTO;
 	}
-	
+
 	@Post("app/expediente/doc/editar")
 	@Get("app/expediente/doc/editar")
 	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO, final String sigla, String[] vars, final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo)
@@ -270,7 +283,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		buscarDocumentoOuNovo(true, exDocumentoDTO);
-		
+
 		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
 			exDocumentoDTO.setTipoDestinatario(2);
 			exDocumentoDTO.setIdFormaDoc(2);

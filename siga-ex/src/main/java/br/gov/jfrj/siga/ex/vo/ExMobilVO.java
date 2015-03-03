@@ -20,9 +20,7 @@ package br.gov.jfrj.siga.ex.vo;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -347,7 +345,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("email_open",
 				"Receber",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"receber",
 				Ex.getInstance().getComp()
 						.podeReceber(titular, lotaTitular, mob), null, null,
@@ -401,7 +399,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("page_red",
 				"Retirar de Edital de Eliminação",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"retirar_de_edital_eliminacao",
 				Ex.getInstance()
 						.getComp()
@@ -428,7 +426,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("database",
 				"Recolher ao Arq. Permanente",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"arquivar_permanente_gravar",
 				Ex.getInstance().getComp()
 						.podeBotaoArquivarPermanente(titular, lotaTitular, mob),
@@ -436,21 +434,21 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("box",
 				"Arq. Intermediário",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"arquivar_intermediario",
 				Ex.getInstance()
 						.getComp()
 						.podeBotaoArquivarIntermediario(titular, lotaTitular,
 								mob), null, null, null, null, "once");
 
-		addAcao("package_go", "Desarq. Corrente", "/expediente/mov",
+		addAcao("package_go", "Desarq. Corrente", "/app/expediente/mov",
 				"reabrir_gravar", Ex.getInstance().getComp()
 						.podeDesarquivarCorrente(titular, lotaTitular, mob),
 				null, null, null, null, "once");
 
 		addAcao("box_go",
 				"Desarq. Intermediário",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"desarquivar_intermediario_gravar",
 				Ex.getInstance()
 						.getComp()

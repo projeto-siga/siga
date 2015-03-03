@@ -542,6 +542,10 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", builder.getMob());
 		result.include("doc", doc);
 		result.include("sigla", sigla);
+		result.include("subscritorSel",new DpPessoaSelecao());
+		result.include("titularSel",new DpPessoaSelecao());
+		result.include("documentoRefSel",new ExDocumentoSelecao());
+		
 	}
 
 	@Post("app/expediente/mov/apensar_gravar")
@@ -552,7 +556,7 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
 		movimentacaoBuilder.setDocumentoRefSel(documentoRefSel).setSubscritorSel(subscritorSel).setTitularSel(titularSel).setDtMovString(dtMovString)
-				.setSubstituicao(substituicao);
+				.setSubstituicao(substituicao).setMob(builder.getMob());
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 
@@ -1689,6 +1693,75 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	@Get("/app/expediente/mov/desapensar")
+	public void desapensar(String sigla, String dtMovString) throws Exception {
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+	
+		ExDocumento doc = buscarDocumento(builder, true);
+		ExMobil mob = builder.getMob();
+		
+
+		if (!Ex.getInstance().getComp()
+				.podeDesapensar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível desapensar");
+
+		if (doc.isEletronico()) {
+			aDesapensarGravar(1,sigla,dtMovString,Boolean.FALSE,null,null);
+			return;
+		}
+		result.include("mob", mob);
+		result.include("request", getRequest());
+		result.include("sigla", sigla);
+		result.include("substituicao", Boolean.FALSE);
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("titularSel", new DpPessoaSelecao());
+	}
+	
+	@Post("/app/expediente/mov/desapensar_gravar")
+	public void aDesapensarGravar(Integer postback, 
+			                        String sigla, 
+			                        String dtMovString,
+			                        boolean substituicao, 
+			                        DpPessoaSelecao titularSel,
+			                        DpPessoaSelecao subscritorSel) throws Exception {
+		this.setPostback(postback);
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder,true);
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
+		
+		movimentacaoBuilder.setSubscritorSel(subscritorSel)
+		    	.setTitularSel(titularSel).setDtMovString(dtMovString)
+				.setSubstituicao(substituicao).setMob(builder.getMob());
+		
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+
+		final ExMobil mob = builder.getMob();
+
+		if (!Ex.getInstance().getComp()
+				.podeDesapensar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível desapensar");
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.desapensarDocumento(getCadastrante(), getLotaTitular(),
+							mob, mov.getDtMov(), mov.getSubscritor(),
+							mov.getTitular());
+		} catch (final Exception e) {
+			throw e;
+		}
+		result.include("mob", mob);
+		result.include("request", getRequest());
+		result.include("sigla", sigla);
+		result.include("substituicao", Boolean.FALSE);
+
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	

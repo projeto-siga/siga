@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
@@ -1862,6 +1864,23 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Get("/app/expediente/mov/prever_data")
+	public void aPreverData() throws Exception {
+		try {
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			Date provDtDispon = format.parse(param("data"));
+
+			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(provDtDispon);
+
+			String apenas = param("apenasSolicitacao");
+
+			result.include("dtPrevPubl", format.format(DJE.getDataPublicacao()));
+			result.include("descrFeriado", DJE.validarDataDeDisponibilizacao((apenas != null)
+					&& apenas.equals("true")));
+		} catch (Throwable t) {
+		}
+	}	
+	
 	private void validarRetirarEditalEliminacao(ExMobil mob) {
 		if (!Ex.getInstance()
 				.getComp()

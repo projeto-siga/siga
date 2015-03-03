@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -271,11 +272,15 @@ public class ExMovimentacaoController extends ExController {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
+		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
 
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
 		result.include("listaNivelAcesso", getListaNivelAcesso(doc));
 		result.include("nivelAcesso", doc.getExNivelAcesso().getIdNivelAcesso());
+		result.include("subscritorSel", subscritorSel);
+		result.include("titularSel", titularSel);
 	}
 
 	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")
@@ -1805,5 +1810,34 @@ public class ExMovimentacaoController extends ExController {
 		return data;
 	}	
 	
+	@Get("/app/expediente/mov/boletim_agendar")
+	public void aBoletimAgendar(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		final ExDocumento doc = buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+
+			throw new AplicacaoException(
+					"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público.");
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeAgendarPublicacaoBoletim(getTitular(), getLotaTitular(),
+						mob))
+			throw new AplicacaoException(
+					"A solicitação de publicação no BIE apenas é permitida até as 17:00");
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.agendarPublicacaoBoletim(getCadastrante(),
+							getLotaTitular(), doc);
+		} catch (final Exception e) {
+			throw e;
+		}
+		
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}	
 
 }

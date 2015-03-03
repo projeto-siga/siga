@@ -420,7 +420,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("shield", "Redefinir Nível de Acesso", "/app/expediente/mov", "redefinir_nivel_acesso", Ex.getInstance().getComp()
 				.podeRedefinirNivelAcesso(titular, lotaTitular, mob));
 		
-		vo.addAcao("book_add", "Solicitar Publicação no Boletim", "/expediente/mov", "boletim_agendar", Ex.getInstance()
+		vo.addAcao("book_add", "Solicitar Publicação no Boletim", "/app/expediente/mov", "boletim_agendar", Ex.getInstance()
 				.getComp().podeBotaoAgendarPublicacaoBoletim(titular, lotaTitular, mob));
 		
 		vo.addAcao("book_link", "Registrar Publicação do BIE", "/expediente/mov", "boletim_publicar", Ex.getInstance().getComp()

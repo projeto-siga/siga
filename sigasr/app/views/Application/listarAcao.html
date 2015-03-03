@@ -29,7 +29,7 @@
 				<tbody>
 					#{list items:acoes, as:'acao'}
 						<tr data-json-id="${acao.idAcao}" data-json="${acao.toJson()}"
-							onclick="acaoService.editar($(this).data('json'), 'Alterar Ação')"
+							onclick="acaoService.editar($(this).data('json'), 'Alterar A&ccedil;&atilde;o')"
 							style="cursor: pointer;">
 							<td>${acao.siglaAcao}</td>
 							<td>
@@ -50,12 +50,12 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-			<a onclick="acaoService.cadastrar('Incluir Ação')" class="gt-btn-medium gt-btn-left">Incluir</a>
+			<a onclick="acaoService.cadastrar('Incluir A&ccedil;&atilde;o')" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 	</div>
 </div>
 
-#{modal nome:'acao', titulo:'Cadastrar Ação'}
+#{modal nome:'acao', titulo:'Cadastrar A&ccedil;&atilde;o'}
 	<div id="divEditarAcaoForm">#{include 'Application/editarAcao.html' /}</div>
 #{/modal}
 
@@ -176,6 +176,6 @@
 		return [acao.siglaAcao, spanHTML, acao.descrAcao, 'COLUNA_ACOES'];
 	}
 	acaoService.onRowClick = function(acao) {
-		acaoService.editar(acao, 'Alterar Ação');
+		acaoService.editar(acao, 'Alterar A&ccedil;&atilde;o');
 	}
 </script>

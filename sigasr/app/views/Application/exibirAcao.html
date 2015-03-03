@@ -1,6 +1,6 @@
 <script>
 $(document).ready(function() {
-	notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
+	notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');
 
 	removeSelectedDuplicado();
 });
@@ -86,8 +86,8 @@ function carregarLotacaoDaAcao(){
 
 #{if solicitacao.itemConfiguracao && acoesEAtendentes} 
 	<div class="gt-form-row gt-width-66">
-	<label>Ação</label>	
-		#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
+	<label>A&ccedil;&atilde;o</label>	
+		#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');", id:'selectAcao'}
 			#{list items:acoesEAtendentes, as:'tarefa' }
 				#{option tarefa.acao.idAcao} ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})#{/option}					 
 			#{/list}

@@ -345,7 +345,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("email_open",
 				"Receber",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"receber",
 				Ex.getInstance().getComp()
 						.podeReceber(titular, lotaTitular, mob), null, null,

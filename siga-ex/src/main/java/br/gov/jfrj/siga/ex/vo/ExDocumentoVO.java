@@ -451,7 +451,7 @@ public class ExDocumentoVO extends ExVO {
 				.podePedirPublicacao(titular, lotaTitular, mob));
 		
 		// <ww:param name="idFormaDoc">60</ww:param>
-		vo.addAcao("arrow_undo", "Desfazer Cancelamento", "/expediente/doc", "desfazerCancelamentoDocumento", Ex.getInstance()
+		vo.addAcao("arrow_undo", "Desfazer Cancelamento", "/app/expediente/doc", "desfazerCancelamentoDocumento", Ex.getInstance()
 				.getComp().podeDesfazerCancelamentoDocumento(titular, lotaTitular, mob),
 				"Esta operação anulará o cancelamento do documento e tornará o documento novamente editável. Prosseguir?", null,
 				null, null, "once");

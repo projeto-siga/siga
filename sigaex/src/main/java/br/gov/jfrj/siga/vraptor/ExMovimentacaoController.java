@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -271,11 +272,15 @@ public class ExMovimentacaoController extends ExController {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
+		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
 
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
 		result.include("listaNivelAcesso", getListaNivelAcesso(doc));
 		result.include("nivelAcesso", doc.getExNivelAcesso().getIdNivelAcesso());
+		result.include("subscritorSel", subscritorSel);
+		result.include("titularSel", titularSel);
 	}
 
 	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")
@@ -840,6 +845,23 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("itens", itens);
 		result.include("movimentacoesQuePodemSerAssinadasComSenha", movimentacoesQuePodemSerAssinadasComSenha);
+	}
+
+	@Get("/app/expediente/mov/receber")
+	public void aReceber(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+
+		final ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder.novaInstancia();
+		final ExMovimentacao mov = movBuilder.construir(dao());
+
+		if (!Ex.getInstance().getComp().podeReceber(getTitular(), getLotaTitular(), builder.getMob())) {
+			throw new AplicacaoException("Documento não pode ser recebido");
+		}
+
+		Ex.getInstance().getBL().receber(getCadastrante(), getLotaTitular(), builder.getMob(), mov.getDtMov());
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
 	@Get("/app/expediente/mov/referenciar")
@@ -2015,6 +2037,36 @@ public class ExMovimentacaoController extends ExController {
 			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
 		}
 		return data;
-	}
+	}	
+	
+	@Get("/app/expediente/mov/boletim_agendar")
+	public void aBoletimAgendar(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		final ExDocumento doc = buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+
+			throw new AplicacaoException(
+					"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público.");
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeAgendarPublicacaoBoletim(getTitular(), getLotaTitular(),
+						mob))
+			throw new AplicacaoException(
+					"A solicitação de publicação no BIE apenas é permitida até as 17:00");
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.agendarPublicacaoBoletim(getCadastrante(),
+							getLotaTitular(), doc);
+		} catch (final Exception e) {
+			throw e;
+		}
+		
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}	
 
 }

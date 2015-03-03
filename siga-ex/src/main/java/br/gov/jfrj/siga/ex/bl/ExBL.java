@@ -6262,7 +6262,7 @@ public class ExBL extends CpBL {
 	}	
 
 	public void DesfazerCancelamentoDocumento(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		try {
 			SortedSet<ExMobil> set = doc.getExMobilSet();

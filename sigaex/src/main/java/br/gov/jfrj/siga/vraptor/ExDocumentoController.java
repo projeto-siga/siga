@@ -85,6 +85,7 @@ import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.libs.webwork.Selecao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -964,6 +965,48 @@ public class ExDocumentoController extends ExController {
 		}
 		exDocumentoDto.setDoc(Ex.getInstance().getBL().duplicar(getCadastrante(), getLotaTitular(), exDocumentoDto.getDoc()));
 		result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
+	}
+
+	@Get("/app/expediente/doc/tornarDocumentoSemEfeito")
+	public void tornarDocumentoSemEfeito(final String sigla) throws Exception {
+		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDto);
+		
+		result.include("sigla", sigla);
+		result.include("id", exDocumentoDto.getId());
+		result.include("mob", exDocumentoDto.getMob());
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("descrMov",exDocumentoDto.getDescrMov());
+		result.include("doc",exDocumentoDto.getDoc());
+	}
+
+	@Post("/app/expediente/doc/tornarDocumentoSemEfeitoGravar")
+	public void tornarDocumentoSemEfeitoGravar(final String sigla, final Integer id, final DpPessoaSelecao titularSel, final String descrMov) throws Exception {
+		if (descrMov == null || descrMov.trim().length() == 0) {
+			throw new AplicacaoException("O preenchimento do campo MOTIVO é obrigatório!");
+		}
+		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
+		buscarDocumento(Boolean.TRUE, exDocumentoDto);
+		
+		ExMobil mob = exDocumentoDto.getMob();
+		ExDocumento doc = exDocumentoDto.getDoc();
+		
+		if (!Ex.getInstance()
+				.getComp()
+				.podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(),mob))
+			throw new AplicacaoException("Não é possível tornar documento sem efeito.");
+		try {
+			
+			Ex.getInstance()
+					.getBL()
+					.TornarDocumentoSemEfeito(getCadastrante(),
+							getLotaTitular(), doc, descrMov);
+		} catch (final Exception e) {
+			throw e;
+		}
+		ExDocumentoController.redirecionarParaExibir(result, sigla);		
 	}
 
 	private void carregarBeans(final ExDocumentoDTO exDocumentoDTO, final ExMobilSelecao mobilPaiSel) {

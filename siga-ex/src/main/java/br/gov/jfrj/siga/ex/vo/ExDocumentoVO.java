@@ -456,7 +456,7 @@ public class ExDocumentoVO extends ExVO {
 				"Esta operação anulará o cancelamento do documento e tornará o documento novamente editável. Prosseguir?", null,
 				null, null, "once");
 		
-		vo.addAcao("delete", "Cancelar Documento", "/expediente/doc", "tornarDocumentoSemEfeito", Ex.getInstance().getComp()
+		vo.addAcao("delete", "Cancelar Documento", "/app/expediente/doc", "tornarDocumentoSemEfeito", Ex.getInstance().getComp()
 				.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
 				"Esta operação tornará esse documento sem efeito. Prosseguir?", null, null, null, "once");
 	}

@@ -414,7 +414,7 @@ public class Notificador {
 			conteudo.append("' no documento ");
 			conteudo.append(mov.getExDocumento().getSigla());
 			conteudo.append(". Caso não deseje mais receber notificações desse documento, clique no link abaixo para se descadastrar:\n\n");
-			conteudo.append(servidor + "/expediente/mov/cancelar.action?id=");
+			conteudo.append(servidor + "/app/expediente/mov/cancelar?id=");
 			conteudo.append(dest.idMovPapel);
 		
 		
@@ -473,8 +473,7 @@ public class Notificador {
 			conteudoHTML.append(mov.getExDocumento().getSigla());
 			conteudoHTML
 					.append(". <br> Caso não deseje mais receber notificações desse documento, clique <a href=\"");
-			conteudoHTML.append(servidor
-					+ "/expediente/mov/cancelar.action?id=");
+			conteudoHTML.append(servidor + "/app/expediente/mov/cancelar?id=");
 			conteudoHTML.append(dest.idMovPapel);
 			conteudoHTML.append("\">aqui</a> para descadastrar.</p>");
 

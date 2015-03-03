@@ -1092,6 +1092,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", builder.getMob());
 		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
 		result.include("listaExPapel", this.getListaExPapel());
+		result.include("responsavelSel", new DpPessoaSelecao());
+		result.include("lotaResponsavelSel", new DpLotacaoSelecao());
 	}
 
 	@Post("/app/expediente/mov/vincularPapel_gravar")
@@ -1659,6 +1661,99 @@ public class ExMovimentacaoController extends ExController {
 			throw e;
 		}
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	@Get("/app/expediente/mov/cancelar")
+	public void cancelar(Long id) throws Exception {
+		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
+
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setId(id);
+		
+		ExDocumento doc = buscarDocumento(builder, true);
+		validarCancelar(mov, builder.getMob());
+		
+		result.include("mob", builder.getMob());
+		result.include("id", id);
+		result.include("sigla", doc.getSigla());
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("request", getRequest());
+	}
+
+	@Post("/app/expediente/mov/cancelar_movimentacao_gravar")
+	public void cancelarMovimentacaoGravar(
+			Integer postback
+			, Long id
+			, String sigla
+			, String dtMovString
+			, boolean substituicao
+			, String descrMov
+			, DpPessoaSelecao subscritorSel
+			, DpPessoaSelecao titularSel) throws Exception {
+		
+		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
+		
+		ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder
+					.novaInstancia()
+					.setDtMovString(dtMovString)
+					.setSubstituicao(substituicao)
+					.setDescrMov(descrMov)
+					.setSubscritorSel(subscritorSel)
+					.setTitularSel(titularSel);
+		
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+					.novaInstancia()
+					.setSigla(sigla);
+
+		buscarDocumento(builder, true);
+		
+		ExMobil mob = builder.getMob();
+		ExMovimentacao movForm =movBuilder.construir(dao());
+
+		validarCancelar(mov, mob);
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.cancelar(getCadastrante(), getLotaTitular(), mob, mov,
+							movForm.getDtMov(), movForm.getSubscritor(),
+							movForm.getTitular(), descrMov);
+		} catch (final Exception e) {
+			throw e;
+		}
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	private void validarCancelar(ExMovimentacao mov, ExMobil mob) throws Exception {
+		if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarAnexo(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar anexo");
+		} else if (ExTipoMovimentacao.hasDespacho(mov.getIdTpMov())) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarDespacho(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar anexo");
+
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarVinculacaoPapel(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar definição de perfil");
+
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarVinculacaoDocumento(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar o documento vinculado.");
+		} else {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é permitido cancelar esta movimentação.");
+		}
 	}
 	
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {

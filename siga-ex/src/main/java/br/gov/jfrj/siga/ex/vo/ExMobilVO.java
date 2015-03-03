@@ -399,7 +399,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("page_red",
 				"Retirar de Edital de Eliminação",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"retirar_de_edital_eliminacao",
 				Ex.getInstance()
 						.getComp()

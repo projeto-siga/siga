@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -271,11 +272,15 @@ public class ExMovimentacaoController extends ExController {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
+		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+		final DpPessoaSelecao titularSel = new DpPessoaSelecao();
 
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
 		result.include("listaNivelAcesso", getListaNivelAcesso(doc));
 		result.include("nivelAcesso", doc.getExNivelAcesso().getIdNivelAcesso());
+		result.include("subscritorSel", subscritorSel);
+		result.include("titularSel", titularSel);
 	}
 
 	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")
@@ -871,6 +876,9 @@ public class ExMovimentacaoController extends ExController {
 		result.include("sigla", sigla);
 		result.include("doc", doc);
 		result.include("mob", builder.getMob());
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("documentoRefSel", new ExDocumentoSelecao());
 	}
 
 	@Post("app/expediente/mov/prever")
@@ -912,7 +920,7 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
 		movimentacaoBuilder.setDtMovString(dtMovString).setSubstituicao(substituicao).setTitularSel(titularSel).setSubscritorSel(subscritorSel)
-				.setDocumentoRefSel(documentoRefSel);
+		.setMob(builder.getMob()).setDocumentoRefSel(documentoRefSel);
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 
@@ -1182,6 +1190,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", builder.getMob());
 		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
 		result.include("listaExPapel", this.getListaExPapel());
+		result.include("responsavelSel", new DpPessoaSelecao());
+		result.include("lotaResponsavelSel", new DpLotacaoSelecao());
 	}
 
 	@Post("/app/expediente/mov/vincularPapel_gravar")
@@ -1725,7 +1735,100 @@ public class ExMovimentacaoController extends ExController {
 		}
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	
+	@Get("/app/expediente/mov/cancelar")
+	public void cancelar(Long id) throws Exception {
+		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setId(id);
+		
+		ExDocumento doc = buscarDocumento(builder, true);
+		validarCancelar(mov, builder.getMob());
+		
+		result.include("mob", builder.getMob());
+		result.include("id", id);
+		result.include("sigla", doc.getSigla());
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("request", getRequest());
+	}
+
+	@Post("/app/expediente/mov/cancelar_movimentacao_gravar")
+	public void cancelarMovimentacaoGravar(
+			Integer postback
+			, Long id
+			, String sigla
+			, String dtMovString
+			, boolean substituicao
+			, String descrMov
+			, DpPessoaSelecao subscritorSel
+			, DpPessoaSelecao titularSel) throws Exception {
+		
+		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
+		
+		ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder
+					.novaInstancia()
+					.setDtMovString(dtMovString)
+					.setSubstituicao(substituicao)
+					.setDescrMov(descrMov)
+					.setSubscritorSel(subscritorSel)
+					.setTitularSel(titularSel);
+		
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+					.novaInstancia()
+					.setSigla(sigla);
+
+		buscarDocumento(builder, true);
+		
+		ExMobil mob = builder.getMob();
+		ExMovimentacao movForm =movBuilder.construir(dao());
+
+		validarCancelar(mov, mob);
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.cancelar(getCadastrante(), getLotaTitular(), mob, mov,
+							movForm.getDtMov(), movForm.getSubscritor(),
+							movForm.getTitular(), descrMov);
+		} catch (final Exception e) {
+			throw e;
+		}
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	private void validarCancelar(ExMovimentacao mov, ExMobil mob) throws Exception {
+		if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarAnexo(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar anexo");
+		} else if (ExTipoMovimentacao.hasDespacho(mov.getIdTpMov())) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarDespacho(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar anexo");
+
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarVinculacaoPapel(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar definição de perfil");
+
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarVinculacaoDocumento(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar o documento vinculado.");
+		} else {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelar(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é permitido cancelar esta movimentação.");
+		}
+	}
+	
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {
 		ExFormaDocumento exForma = doc.getExFormaDocumento();
 		ExClassificacao exClassif = doc.getExClassificacaoAtual();
@@ -1867,6 +1970,36 @@ public class ExMovimentacaoController extends ExController {
 			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
 		}
 		return data;
-	}
+	}	
+	
+	@Get("/app/expediente/mov/boletim_agendar")
+	public void aBoletimAgendar(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		final ExDocumento doc = buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+
+			throw new AplicacaoException(
+					"A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público.");
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeAgendarPublicacaoBoletim(getTitular(), getLotaTitular(),
+						mob))
+			throw new AplicacaoException(
+					"A solicitação de publicação no BIE apenas é permitida até as 17:00");
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.agendarPublicacaoBoletim(getCadastrante(),
+							getLotaTitular(), doc);
+		} catch (final Exception e) {
+			throw e;
+		}
+		
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}	
 
 }

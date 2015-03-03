@@ -171,7 +171,8 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			
 			if (srConf.atendente != null){
 				srConf.atendente.getLotacaoAtual();
-				srConf.atendente.getOrgaoUsuario();
+				if (srConf.atendente.getOrgaoUsuario() != null)
+					srConf.atendente.getOrgaoUsuario().getSiglaOrgaoUsu();
 			}
 			
 			if (srConf.itemConfiguracaoSet != null)

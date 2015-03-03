@@ -337,7 +337,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("link_delete",
 				"Desapensar",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"desapensar",
 				Ex.getInstance().getComp()
 						.podeDesapensar(titular, lotaTitular, mob), null, null,

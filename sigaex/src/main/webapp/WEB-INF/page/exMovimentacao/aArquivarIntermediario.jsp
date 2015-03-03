@@ -29,7 +29,7 @@ function sbmt() {
 
 			<form action="arquivar_intermediario_gravar"
 			enctype="multipart/form-data"
-			class="form" method="GET">
+			class="form" method="POST">
 			<input type="hidden" name="postback" value="1" />
 			<input type="hidden" name="sigla" value="${sigla}"/>
 			

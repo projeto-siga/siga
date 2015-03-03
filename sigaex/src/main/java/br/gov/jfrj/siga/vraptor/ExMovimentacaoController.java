@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
-
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -1910,11 +1910,12 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException(
 					"Não é possível fazer arquivamento intermediário. Verifique se o documento não se encontra em lotação diferente de "
 							+ getLotaTitular().getSigla());
-		}
+		} 
 		
+		result.include("doc", doc);
 		result.include("mob", mob);
 		result.include("sigla", sigla);
-		result.include("doc", doc);
+		result.include("substituicao", false);
 		result.include("request", getRequest());
 		result.include("titularSel", new DpPessoaSelecao());
 		result.include("subscritorSel", new DpPessoaSelecao());
@@ -1924,7 +1925,9 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	@Get("/app/expediente/mov/arquivar_intermediario_gravar")
+	@Get
+	@Post
+	@Path("/app/expediente/mov/arquivar_intermediario_gravar")
 	public void aArquivarIntermediarioGravar(
 			final String sigla, 
 			final Integer postback, 

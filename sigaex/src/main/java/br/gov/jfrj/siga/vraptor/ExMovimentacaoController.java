@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,8 @@ import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -56,6 +59,7 @@ import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
+import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
@@ -99,7 +103,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/anexar")
-	public void anexa(final String sigla) {
+	public void anexa(final String sigla, final boolean assinandoAnexosGeral) {
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		buscarDocumento(documentoBuilder);
@@ -123,6 +127,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("subscritorSel", movimentacaoBuilder.getSubscritorSel());
 		result.include("titularSel", movimentacaoBuilder.getTitularSel());
 		result.include("request", getRequest());
+		result.include("assinandoAnexosGeral", assinandoAnexosGeral);
 	}
 
 	@Post("app/expediente/mov/anexar_gravar")
@@ -2165,7 +2170,6 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", new DpPessoaSelecao());
 		result.include("subscritorSel", new DpPessoaSelecao());
 		result.include("classificacaoSel", new ExClassificacaoSelecao());
-		
 	}
 
 	@Post("/app/expediente/mov/avaliar_gravar")
@@ -2230,6 +2234,146 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
+	@Get("/app/expediente/mov/agendar_publicacao")
+	public void agendarPublicacao(String sigla, String descrPublicacao, String mensagem) throws Exception {
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+		
+		ExDocumento doc = buscarDocumento(builder, true);
+		Boolean podeAtenderPedidoPublicacao = Boolean.FALSE;
+		DpLotacaoSelecao lot = new DpLotacaoSelecao();
+		
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+			throw new AplicacaoException("O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público.");
+
+		if (!Ex.getInstance().getComp()
+				.podeAgendarPublicacao(getTitular(), getLotaTitular(), builder.getMob()))
+			throw new AplicacaoException("Não foi possível o agendamento de publicação no DJE.");
+
+		if (!Ex.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+						getTitular(),
+						getLotaTitular(),
+						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO)) {
+		} else {
+			lot.setId(doc.getSubscritor().getLotacao().getId());
+			lot.buscar();
+			podeAtenderPedidoPublicacao = Boolean.TRUE;
+		}
+		
+		ListaLotPubl listaLotPubl = getListaLotPubl(doc);
+		result.include("tipoMateria", PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
+		result.include("cadernoDJEObrigatorio", PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
+		result.include("descrPublicacao", descrPublicacao == null ? doc.getDescrDocumento() : descrPublicacao);
+		result.include("podeAtenderPedidoPubl", Boolean.TRUE);
+		result.include("lotaSubscritorSel", new DpLotacaoSelecao());
+		result.include("mob", builder.getMob());
+		result.include("request", getRequest());
+		result.include("mensagem", mensagem);
+		result.include("listaLotPubl", listaLotPubl.getLotacoes());
+		result.include("idLotDefault", listaLotPubl.getIdLotDefault());
+		result.include("tamMaxDescr", 255 - doc.getDescrDocumento().length());
+		result.include("request", getRequest());
+		result.include("sigla", sigla);
+	}
+
+	@Post("/app/expediente/mov/agendar_publicacao_gravar")
+	public void agendarPublicacaoGravar(Integer postback
+			, String sigla
+			, String tipoMateria
+			, String dtDispon
+			, Long idLotPublicacao
+			, String descrPublicacao
+			, DpLotacaoSelecao lotaSubscritorSel) throws Exception {
+		
+		BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+					.novaInstancia()
+					.setSigla(sigla);
+		
+		Long idPubl = null;
+		buscarDocumento(docBuilder, true);
+		
+		ExMovimentacao mov = ExMovimentacaoBuilder
+					.novaInstancia()
+					.setMob(docBuilder.getMob())
+					.setDtDispon(dtDispon)
+					.construir(dao());
+		
+		if (idLotPublicacao != null)
+			idPubl = idLotPublicacao;
+		else {
+			if (lotaSubscritorSel.getId() != null)
+				idPubl = lotaSubscritorSel.getId();
+		}
+
+		String lotPublicacao = dao().consultar(idPubl, DpLotacao.class, false).getSigla();
+
+		if (!Ex.getInstance().getComp().podeAgendarPublicacao(getTitular(), getLotaTitular(), docBuilder.getMob()))
+			throw new AplicacaoException("Não foi possível o agendamento de publicação no DJE.");
+		
+		if (descrPublicacao.length() > 256)
+			throw new AplicacaoException("O campo descrição possui mais do que 256 caracteres.");
+
+		validarDataGravacao(mov, false);
+		
+		Ex.getInstance()
+				.getBL()
+				.remeterParaPublicacao(getCadastrante(), getLotaTitular(), docBuilder.getMob(),
+						dao().dt(), mov.getSubscritor(), mov.getTitular(),
+						getLotaTitular(), mov.getDtDispPublicacao(),
+						tipoMateria.replaceAll("'", ""),
+						lotPublicacao, descrPublicacao);
+		
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	private void validarDataGravacao(ExMovimentacao mov, boolean apenasSolicitacao) throws AplicacaoException {
+		if (mov.getDtDispPublicacao() == null)
+			throw new AplicacaoException("A data desejada para a disponibilização precisa ser informada.");
+
+		DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(mov.getDtDispPublicacao());
+		String mensagemValidacao = DJE.validarDataDeDisponibilizacao(apenasSolicitacao);
+		if (mensagemValidacao != null)
+			throw new AplicacaoException(mensagemValidacao);
+	}
+	
+	private ListaLotPubl getListaLotPubl(ExDocumento doc) throws Exception {
+		Set<DpLotacao> lotacoes = new HashSet<DpLotacao>();
+		DpLotacao lotSubscritor, lotCadastrante, lotTitular, lotFiltro;
+		String siglaSubscritor, siglaCadastrante, siglaTitular;
+		Long idOrgaoUsuario = doc.getOrgaoUsuario().getId();
+		Long idOrgaoUsuarioCadastrante = getCadastrante().getOrgaoUsuario().getId();
+
+		siglaSubscritor = PublicacaoDJEBL.obterUnidadeDocumento(doc);
+		siglaCadastrante = getCadastrante().getLotacao().getSigla();
+		siglaTitular = getLotaTitular().getSigla();
+		lotFiltro = new DpLotacao();
+
+		lotFiltro.setOrgaoUsuario(doc.getOrgaoUsuario());
+		lotFiltro.setSigla(siglaSubscritor);
+		lotSubscritor = dao().consultarPorSigla(lotFiltro);
+
+		lotacoes.add(lotSubscritor);
+
+		
+		if (!siglaSubscritor.equals(siglaCadastrante) && idOrgaoUsuarioCadastrante.equals(idOrgaoUsuario)) {
+			lotFiltro.setSigla(siglaCadastrante);
+			lotCadastrante = dao().consultarPorSigla(lotFiltro);
+			lotacoes.add(lotCadastrante);
+		}
+
+		if (!siglaSubscritor.equals(siglaTitular) && !siglaCadastrante.equals(siglaTitular)
+				&& ((getTitular().getOrgaoUsuario().getId().equals(idOrgaoUsuario))
+				|| getLotaTitular().getOrgaoUsuario().getId() .equals(idOrgaoUsuario))) {
+			lotFiltro.setSigla(siglaTitular);
+			lotTitular = dao().consultarPorSigla(lotFiltro);
+			lotacoes.add(lotTitular);
+		}
+		return new ListaLotPubl(lotacoes, lotSubscritor.getId());
+	}
+	
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {
 		ExFormaDocumento exForma = doc.getExFormaDocumento();
 		ExClassificacao exClassif = doc.getExClassificacaoAtual();
@@ -2239,8 +2383,7 @@ public class ExMovimentacaoController extends ExController {
 		return getListaNivelAcesso(exTipo, exForma, exMod, exClassif);
 	}
 
-	@Override
-	public Map<Integer, String> getListaTipoResp() {
+	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Órgão Integrado");
 		map.put(2, "Matrícula");

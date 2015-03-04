@@ -444,7 +444,7 @@ public class ExDocumentoVO extends ExVO {
 				.podeExibirInformacoesCompletas(titular, lotaTitular, mob)
 				&& exibirAntigo, null, "&exibirCompleto=true", null, null, null);
 		
-		vo.addAcao("report_link", "Agendar Publicação no DJE", "/expediente/mov", "agendar_publicacao", Ex.getInstance()
+		vo.addAcao("report_link", "Agendar Publicação no DJE", "/app/expediente/mov", "agendar_publicacao", Ex.getInstance()
 				.getComp().podeAgendarPublicacao(titular, lotaTitular, mob));
 		
 		vo.addAcao("report_add", "Solicitar Publicação no DJE", "/expediente/mov", "pedir_publicacao", Ex.getInstance().getComp()

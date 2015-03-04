@@ -409,8 +409,10 @@ public class ExDocumentoVO extends ExVO {
 		
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados
-			if (mob.temAnexos())
-				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov", "assinar_anexos_geral", true);
+			if (mob.temAnexos()) {
+				vo.addAcao("script_key", "Assinar Anexos", "/app/expediente/mov", "anexar", true,
+						null, "assinandoAnexosGeral=true&sigla=" + getSigla(), null, null, null);
+			}
 			
 			vo.addAcao("link_add", "Criar Anexo", "/app/expediente/doc", "editar", Ex.getInstance().getComp()
 					.podeAnexarArquivoAlternativo(titular, lotaTitular, mob), null, "criandoAnexo=true&mobilPaiSel.sigla="
@@ -447,7 +449,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("report_link", "Agendar Publicação no DJE", "/app/expediente/mov", "agendar_publicacao", Ex.getInstance()
 				.getComp().podeAgendarPublicacao(titular, lotaTitular, mob));
 		
-		vo.addAcao("report_add", "Solicitar Publicação no DJE", "/expediente/mov", "pedir_publicacao", Ex.getInstance().getComp()
+		vo.addAcao("report_add", "Solicitar Publicação no DJE", "/app/expediente/mov", "pedir_publicacao", Ex.getInstance().getComp()
 				.podePedirPublicacao(titular, lotaTitular, mob));
 		
 		// <ww:param name="idFormaDoc">60</ww:param>

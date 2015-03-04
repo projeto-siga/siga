@@ -413,7 +413,7 @@ public class ExMobilVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeReclassificar(titular, lotaTitular, mob));
 
-		addAcao("table", "Avaliar", "/expediente/mov", "avaliar", Ex
+		addAcao("table", "Avaliar", "/app/expediente/mov", "avaliar", Ex
 				.getInstance().getComp().podeAvaliar(titular, lotaTitular, mob));
 
 		addAcao("hourglass_add",

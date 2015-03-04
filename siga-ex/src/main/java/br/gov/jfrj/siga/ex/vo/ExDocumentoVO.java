@@ -449,7 +449,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("report_link", "Agendar Publicação no DJE", "/app/expediente/mov", "agendar_publicacao", Ex.getInstance()
 				.getComp().podeAgendarPublicacao(titular, lotaTitular, mob));
 		
-		vo.addAcao("report_add", "Solicitar Publicação no DJE", "/expediente/mov", "pedir_publicacao", Ex.getInstance().getComp()
+		vo.addAcao("report_add", "Solicitar Publicação no DJE", "/app/expediente/mov", "pedir_publicacao", Ex.getInstance().getComp()
 				.podePedirPublicacao(titular, lotaTitular, mob));
 		
 		// <ww:param name="idFormaDoc">60</ww:param>

@@ -2580,6 +2580,96 @@ public class ExMovimentacaoController extends ExController {
 	public void aAutenticarDocumento(final String sigla) throws Exception  {
 		//setAutenticando(true);
 		result.forwardTo(this).aAssinar(sigla, true);
-	}	
+	}
+	
+	@Get("/app/expediente/mov/pedirPublicacao")
+	public void pedirPublicacao(final String sigla, 
+								final String descrPublicacao, 
+								final String mensagem) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		ExDocumento doc = buscarDocumento(builder, true);
+		ExMobil mob = builder.getMob();
+		
+		DpLotacaoSelecao lot = new DpLotacaoSelecao();
+
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+			throw new AplicacaoException(
+					"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público.");
+
+		if (!Ex.getInstance().getComp()
+				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Publicação não permitida");
+
+
+		lot.setId(doc.getSubscritor().getLotacao().getId());
+		lot.buscar();
+		ListaLotPubl listaLotPubl = getListaLotPubl(doc);		
+		
+		result.include("tipoMateria",PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
+		result.include("cadernoDJEObrigatorio",PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
+		result.include("descrPublicacao", descrPublicacao == null ? doc.getDescrDocumento() : descrPublicacao);
+		result.include("sigla",sigla);
+		result.include("request",getRequest());
+		result.include("mob", builder.getMob());
+		result.include("doc", builder.getMob().getDoc());
+		result.include("listaLotPubl", listaLotPubl.getLotacoes());
+		result.include("idLotDefault", listaLotPubl.getIdLotDefault());
+		result.include("tamMaxDescr", 255 - doc.getDescrDocumento().length());
+		result.include("mensagem",mensagem);
+	}
+	
+	@Post("/app/expediente/mov/pedirPublicacaoGravar")
+	public void pedirPublicacaoGravar(String sigla,
+			                          Integer postback,
+			                          String tipoMateria,
+			                          String dtDispon,
+			                          Long idLotPublicacao,
+			                          String descrPublicacao,
+			                          DpLotacaoSelecao lotaSubscritorSel) throws Exception {
+		
+		final BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+	
+		this.setPostback(postback);
+		Long idPubl = null;
+		buscarDocumento(docBuilder, true);
+		final ExMobil mob = docBuilder.getMob();
+		
+		final ExMovimentacao mov = ExMovimentacaoBuilder
+					.novaInstancia()
+					.setMob(docBuilder.getMob())
+					.setDtDispon(dtDispon)
+					.construir(dao());
+		
+		if (idLotPublicacao != null)
+			idPubl = idLotPublicacao;
+		else {
+			if (lotaSubscritorSel.getId() != null)
+				idPubl = lotaSubscritorSel.getId();
+		}
+	
+		final String lotPublicacao = dao().consultar(idPubl, DpLotacao.class, false).getSigla();
+
+		if (!Ex.getInstance().getComp()
+				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Publicação não permitida");
+
+		validarDataGravacao(mov, true);
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.pedirPublicacao(getCadastrante(), getLotaTitular(), mob,
+							mov.getDtMov(), mov.getSubscritor(),
+							mov.getTitular(), mov.getLotaTitular(),
+							mov.getDtDispPublicacao(), tipoMateria,
+							lotPublicacao, descrPublicacao);
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
 
 }

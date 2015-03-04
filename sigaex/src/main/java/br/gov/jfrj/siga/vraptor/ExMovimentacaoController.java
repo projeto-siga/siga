@@ -93,7 +93,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/anexar")
-	public void anexa(final String sigla) {
+	public void anexa(final String sigla, final boolean assinandoAnexosGeral) {
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		buscarDocumento(documentoBuilder);
@@ -117,6 +117,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("subscritorSel", movimentacaoBuilder.getSubscritorSel());
 		result.include("titularSel", movimentacaoBuilder.getTitularSel());
 		result.include("request", getRequest());
+		result.include("assinandoAnexosGeral", assinandoAnexosGeral);
 	}
 
 	@Post("app/expediente/mov/anexar_gravar")

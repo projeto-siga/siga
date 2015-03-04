@@ -18,7 +18,7 @@ import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
-import br.gov.jfrj.webwork.action.ExClassificacaoSelecao;
+import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 
 public final class ExMovimentacaoBuilder {
 

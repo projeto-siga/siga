@@ -2001,7 +2001,7 @@ public class ExMovimentacaoController extends ExController {
 							mov.getSubscritor(),
 							mov.getDescrMov());
 			
-			result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
 			
 		} catch (final Exception e) {
 			throw e;
@@ -2075,6 +2075,90 @@ public class ExMovimentacaoController extends ExController {
 		result.include("sigla", sigla);
 		result.include("substituicao", Boolean.FALSE);
 
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	@Get("/app/expediente/mov/reclassificar")
+	public void aReclassificar(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder,true);
+		final ExMobil mob = builder.getMob();
+
+		if (!Ex.getInstance().getComp()
+				.podeReclassificar(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Não é possível reclassificar");
+		}
+		
+		result.include("mob", mob);
+		result.include("doc", doc);
+		result.include("sigla", sigla);
+		result.include("tipoResponsavel", 1);
+		result.include("substituicao", Boolean.FALSE);
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("classificacaoSel", new ExClassificacaoSelecao());
+		
+	}
+	
+	@Post("/app/expediente/mov/reclassificar_gravar")
+	public void aReclassificarGravar(
+			final String sigla,
+			final String descrMov,
+			final String[] campos,
+			final Integer postback,
+			final String dtMovString,
+			final String obsOrgao,
+			final boolean substituicao,
+			final DpPessoaSelecao titularSel,
+			final DpPessoaSelecao subscritorSel,
+			final ExClassificacaoSelecao classificacaoSel) {
+		this.setPostback(postback);
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+		
+		final ExMovimentacao mov = ExMovimentacaoBuilder
+				.novaInstancia()
+				.setDescrMov(descrMov)
+				.setDtMovString(dtMovString)
+				.setObsOrgao(obsOrgao)
+				.setSubstituicao(substituicao)
+				.setTitularSel(titularSel)
+				.setSubscritorSel(subscritorSel)
+				.setClassificacaoSel(classificacaoSel)
+				.setMob(mob)
+				.construir(dao());
+
+		if (!Ex.getInstance().getComp()
+				.podeReclassificar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível reclassificar");
+
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			mov.setSubscritor(getTitular());
+			result.include("dtRegMov", sdf.format(new Date()).toString());
+		}
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.avaliarReclassificar(
+							getCadastrante(), 
+							getLotaTitular(),
+							mob, 
+							mov.getDtMov(), 
+							mov.getSubscritor(),
+							mov.getExClassificacao(),
+							mov.getDescrMov(), 
+							false);
+			
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		result.include("doc", mov.getExDocumento());
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	

@@ -17,8 +17,8 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
-import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
 import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
+import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
 
 public final class ExMovimentacaoBuilder {
 
@@ -67,6 +67,15 @@ public final class ExMovimentacaoBuilder {
 
 	public ExMovimentacao construir(final ExDao dao) {
 		final ExMovimentacao mov = new ExMovimentacao();
+		construir(mov, dao);
+		return mov;
+	}
+
+	public void construir(final ExMovimentacao mov, final ExDao dao) {
+		if (mov == null) {
+			throw new AplicacaoException("Informe a Movimentacao");
+		}
+
 		mov.setExMobil(mob);
 		mov.setDescrMov(descrMov);
 
@@ -174,14 +183,13 @@ public final class ExMovimentacaoBuilder {
 			mov.setDtDispPublicacao(df.parse(dtDispon));
 		} catch (final Exception e) {
 		}
-		
+
 		mov.setConteudoTpMov(contentType);
 		mov.setNmArqMov(fileName);
 
-		if ((mov.getTitular() != null && mov.getSubscritor() == null) || (mov.getLotaTitular() != null && mov.getLotaSubscritor() == null))
+		if ((mov.getTitular() != null && mov.getSubscritor() == null) || (mov.getLotaTitular() != null && mov.getLotaSubscritor() == null)) {
 			throw new AplicacaoException("Não foi selecionado o substituto para o titular");
-
-		return mov;
+		}
 	}
 
 	public String getConteudo() {

@@ -42,10 +42,8 @@ GET     /public/                            staticDir:public
 *		/atributo/desativar/{id}			Application.desativarAtributo	
 *		/atributo/reativar/{id}				Application.reativarAtributo	
 		
-*		/associacao/editar/{id}				Application.editarAssociacao
-*		/associacao/editar					Application.editarAssociacao
 *		/associacao/gravar					Application.gravarAssociacao
-*		/associacao/listar					Application.listarAssociacao
+* 		/associacao/gravarPesquisa			Application.gravarAssociacaoPesquisa
 
 *		/acao/editar/{id}					Application.editarAcao
 *		/acao/editar						Application.editarAcao

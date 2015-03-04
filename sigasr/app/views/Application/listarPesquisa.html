@@ -20,8 +20,7 @@
 
 				<tbody>
 					#{list items:pesquisas, as:'pesq'}
-					<tr
-						data-json-id="${pesq.idPesquisa}" data-json="${pesq.toJson()}" onclick="pesquisaService.editar($(this).data('json'), 'Alterar pesquisa')"
+					<tr data-json-id="${pesq.idPesquisa}" data-json="${pesq.toJson()}" onclick="pesquisaService.editar($(this).data('json'), 'Alterar pesquisa')"
 						style="cursor: pointer;">
 						<td >${pesq.nomePesquisa}</td>
 						<td>${pesq.descrPesquisa}</td>
@@ -47,6 +46,7 @@
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.populate.js"></script>
@@ -139,7 +139,17 @@
 				"targets": [colunasPesquisa.acoes],
 				"searchable": false,
 				"sortable" : false
-			}]
+			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				if (nRow.dataset && nRow.dataset.json) {
+					var pesquisa = JSON.parse(nRow.dataset.json);
+
+					if (pesquisa.ativo == false)
+						$('td', nRow).addClass('item-desativado');
+					else
+						$('td', nRow).removeClass('item-desativado');
+				}
+			}
 		});
 	});
 	
@@ -155,6 +165,10 @@
 	// Sobescreve o metodo cadastrar para limar as perguntas da tela
 	pesquisaService.cadastrar = function(title) {
 		perguntas.limpar();
+
+		// limpa a lista de Associações
+		associacaoService.limparDadosAssociacoes();
+		
 		BaseService.prototype.cadastrar.call(this, title);
 	}
 
@@ -163,7 +177,7 @@
 	}
 
 	pesquisaService.getRow = function(pesquisa) {
-		return [pesquisa.nomePesquisa, pesquisa.descrPesquisa, 'COLUNA_ACOES'];
+		return [pesquisa.nomePesquisa || ' ', pesquisa.descrPesquisa || ' ', 'COLUNA_ACOES'];
 	}
 	pesquisaService.onRowClick = function(pesquisa) {
 		pesquisaService.editar(pesquisa, 'Alterar pesquisa');
@@ -179,6 +193,30 @@
 		for(var i = 0; i < obj.perguntasSet.length; i++) {
 			var pergunta = obj.perguntasSet[i];
 			perguntas.incluirItem(pergunta.descrPergunta, pergunta.tipoPergunta.idTipoPergunta, pergunta.tipoPergunta.nomeTipoPergunta, pergunta.idPergunta);
+		}
+
+		// atualiza a lista de Associações
+		pesquisaService.buscarAssociacoes(obj);
+	}
+
+	pesquisaService.buscarAssociacoes = function(pesq) {
+		associacaoService.limparDadosAssociacoes();
+		
+		if (pesq && this.getId(pesq)) {
+			$.ajax({
+	        	type: "GET",
+	        	url: "@{Application.buscarAssociacaoPesquisa()}?idPesquisa=" + this.getId(pesq),
+	        	dataType: "text",
+	        	success: function(obj) {
+	        		var pesquisaJson = JSON.parse(obj);
+	        		
+	        		// alimenta a lista de Associações
+	    			associacaoService.atualizarListaAssociacoes(pesquisaJson);
+	        	},
+	        	error: function(error) {
+	            	alert("Não foi possível carregar as Associações desta Pesquisa.");
+	        	}
+	       	});
 		}
 	}
 	

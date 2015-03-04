@@ -12,16 +12,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import models.vo.SelecionavelVO;
-import util.FieldNameExclusionEstrategy;
+import util.Util;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -46,6 +46,9 @@ public class SrEquipe extends HistoricoSuporte {
 	
 	@OneToMany(targetEntity = SrExcecaoHorario.class, mappedBy = "equipe", fetch = FetchType.LAZY)
 	public List<SrExcecaoHorario> excecaoHorarioSet;
+	
+	@Transient
+	private DpLotacao lotacaoEquipe;
 
 	@Override
 	public Long getId() {
@@ -103,18 +106,18 @@ public class SrEquipe extends HistoricoSuporte {
 	}
 
 	public String toJson() {
-		Gson gson = createGson("lotacao", "excecaoHorarioSet");
+		Gson gson = Util.createGson("lotacao", "lotacaoEquipe", "excecaoHorarioSet");
 		
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		jsonObject.add("excecaoHorarioSet", excecaoHorarioArray());
-		jsonObject.add("lotacao", gson.toJsonTree(SelecionavelVO.createFrom(this.lotacao)));
+		jsonObject.add("lotacaoEquipe", gson.toJsonTree(SelecionavelVO.createFrom(this.lotacao)));
 		
 		return jsonObject.toString();
 	}
 	
 	private JsonArray excecaoHorarioArray() {
-		Gson gson = createGson("equipe");
+		Gson gson = Util.createGson("equipe");
 		JsonArray jsonArray = new JsonArray();
 		
 		if (this.excecaoHorarioSet != null)
@@ -130,10 +133,12 @@ public class SrEquipe extends HistoricoSuporte {
 		return jsonArray;
 	}
 	
-	// TODO: colocar esse metodo na classe base
-	private Gson createGson(String... exclusions) {
-		return new GsonBuilder()
-			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
-			.create();
-	}	
+	public DpLotacao getLotacaoEquipe() {
+		return this.lotacaoEquipe != null ? this.lotacaoEquipe : this.lotacao;
+	}
+
+	public void setLotacaoEquipe(DpLotacao lotacaoEquipe) {
+		this.lotacaoEquipe = lotacaoEquipe;
+		this.lotacao = lotacaoEquipe;
+	}
 }

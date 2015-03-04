@@ -2,397 +2,87 @@
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
-<!-- <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script> -->
-
 <div class="gt-form gt-content-box">
 	<form id="atributoForm" action="#">
-		<input type="hidden" name="idAtributo"
-		id="idAtributo" value="${idAtributo}">
-		<input type="hidden" name="hisIdIni"
-		id="hisIdIni" value="${hisIdIni}">
-	<div class="gt-form-row box-wrapper">
-		<div class="box box-left gt-width-50">
-			<label>Nome <span>*</span></label> <input type="text"
-				name="nomeAtributo"
-				id="nomeAtributo"
-				value="${nomeAtributo}" size="50" maxlength="255" required/>
+		<input type="hidden" name="idAtributo" id="idAtributo" value="${idAtributo}">
+		<input type="hidden" name="hisIdIni" id="hisIdIni" value="${hisIdIni}">
+		<div class="gt-form-row box-wrapper">
+			<div class="box box-left gt-width-50">
+				<label>Nome <span>*</span></label> <input type="text"
+					name="nomeAtributo"
+					id="nomeAtributo"
+					value="${nomeAtributo}" size="50" maxlength="255" required/>
+			</div>
+			<div class="box gt-width-50">
+				<label>Descrição</label> <input maxlength="255" type="text"
+					name="descrAtributo"
+					id="descrAtributo"
+					value="${descrAtributo}" 
+					style="width: 372px;" />
+			</div>
 		</div>
-		<div class="box gt-width-50">
-			<label>Descrição</label> <input maxlength="255" type="text"
-				name="descrAtributo"
-				id="descrAtributo"
-				value="${descrAtributo}" 
-				style="width: 372px;" />
+		<div class="gt-form-row gt-width-66">
+			<label>C&oacute;digo</label> 
+			<input type="text" name="codigoAtributo" id="codigoAtributo"
+				value="${codigoAtributo}" size="60" maxlength="255"/>
 		</div>
-	</div>
-	<div class="gt-form-row gt-width-66">
-				<label>C&oacute;digo</label> <input type="text"
-					name="codigoAtributo" id="codigoAtributo"
-					value="${codigoAtributo}" size="60" maxlength="255"/>
-	</div>
-	<div class="gt-form-row gt-width-66">
-				<label>Objetivo do atributo<span>*</span></label> #{select id:'objetivoAtributo', name:'objetivoAtributo', items:objetivos,
+		<div class="gt-form-row gt-width-66">
+			<label>Objetivo do atributo<span>*</span></label> 
+			#{select id:'objetivoAtributo', name:'objetivoAtributo', items:objetivos,
 				labelProperty:'descrObjetivo', value:idObjetivo, style:'width:393px;',
 				onchange:'javascript:ocultaAssociacoes();',
 				class:'select-siga'/}
-	</div>
-	<div class="gt-form-row gt-width-100">
-		<label>Tipo de atributo</label> #{select name:'tipoAtributo', items:models.SrTipoAtributo.values(),
-		labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:100%', id:'tipoAtributo',
-		class:'select-siga' /}
-	</div>
-	<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
-		<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
-		<input maxlength="255" type="text"
-			name="descrPreDefinido"
-			id="descrPreDefinido"
-			value="${descrPreDefinido}" size="60" />
-	</div>
-	<div class="gt-content" style="padding-top: 10px;">
-		<h3>Associações</h3>
-		<div class="gt-content-box dataTables_div">
-			<table id="associacao_table" border="0" class="gt-table display">
-				<thead>
-					<tr>
-						<th style="color: #333">
-							<span class="gt-btn-medium gt-btn-left bt-expandir">
-								<span id="iconeBotaoExpandirTodos">+</span>
-							</span>
-						</th>
-						<th>idItemConfiguracao</th>
-						<th><i>Item &darr;</i></th>
-						<th>siglaItemConfiguracao</th>
-						<th>idAcao</th>
-						<th>Ação</th>
-						<th>siglaAcao</th>
-						<th>Obrigatório</th>
-						<th>Obrigatório</th>
-						<th>idAssociacao</th>
-						<th>Ações</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
 		</div>
-		<div class="gt-table-buttons">
-            <a href="javascript: associacaoService.cadastrar('Cadastrar Associação')" class="gt-btn-small gt-btn-left">Incluir</a>
+		<div class="gt-form-row gt-width-100">
+			<label>Tipo de atributo</label> #{select name:'tipoAtributo', items:models.SrTipoAtributo.values(),
+			labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:100%', id:'tipoAtributo',
+			class:'select-siga' /}
 		</div>
-	</div>
+		<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
+			<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
+			<input maxlength="255" type="text"
+				name="descrPreDefinido"
+				id="descrPreDefinido"
+				value="${descrPreDefinido}" size="60" />
+		</div>
+	</form>
+	
+	#{configuracaoAssociacao orgaos:orgaos,
+		locais:locais, 
+		itemConfiguracaoSet:itemConfiguracaoSet,
+		acoesSet:acoesSet,
+		modoExibicao:'atributo',
+		urlGravar:@Application.gravarAssociacao(),
+		validarCadastrar:podeCadastrarAssociacaoAtributo}
+	#{/configuracaoAssociacao}
+		
 	<div class="gt-form-row" style="padding-top: 10px;">
 		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoService.gravar()"/>
 		<a class="gt-btn-medium gt-btn-left" onclick="atributoService.cancelarGravacao()">Cancelar</a>
 		<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="atributoService.aplicar()"/>
 	</div>
-	</form>
 </div>
 
-#{modal nome:'associacao', titulo:'cadastrar associação'}
-	<div class="gt-form gt-content-box">
-		<form id="associacaoForm">
-			<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
+<script>
+	associacaoService.getUrlDesativarReativar = function(desativados) {
 		
-			<div class="gt-form-row gt-width-100">
-				<label>Item <span>*</span></label> 
-				#{selecao tipo:'item',
-					nome:'itemConfiguracaoUnitario',
-					value:itemConfiguracaoUnitario?.atual /}
-			</div>
-		
-			<div class="gt-form-row gt-width-100">
-				<label>Serviço <span>*</span></label> 
-				#{selecao tipo:'acao',
-				nome:'acaoUnitaria', value:acaoUnitaria?.atual /}
-			</div>
-			<div class="gt-form-row">
-				<label>#{checkbox 
-					name:'atributoObrigatorio',
-					value:atributoObrigatorio /} Obrigatório</label>
-			</div>
-			<div class="gt-form-row">
-				<a href="javascript: associacaoService.gravar()" class="gt-btn-medium gt-btn-left">Gravar</a>
-				<a href="javascript: associacaoService.cancelarGravacao()" class="gt-btn-medium gt-btn-left">Cancelar</a>
-			</div>
-			</form>
-	</div>
-	<div class="gt-content-box" id="modal-associacao-error" style="display: none;">
-		<table width="100%">
-			<tr>
-				<td align="center" valign="middle">
-					<table class="form" width="50%">
-						<tr>
-							<td style="text-align: center; padding-top: 10px;">
-								<h3></h3>
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
-	</div>
-#{/modal}
+		var url = '@{Application.listarAssociacaoAtributo()}',
+			idAtributo = $("[name=idAtributo]").val();
 
-<script type="text/javascript">
-	function AssociacaoService(opts) {
-		BaseService.call(this, opts);
-	}
-	AssociacaoService.prototype = Object.create(BaseService.prototype);
-
-	
-	var colunas = {},
-	validatorAtributoForm;
-	colunas.botaoExpandir =               0;
-	colunas.idItemConfiguracao =          1;
-	colunas.tituloItemConfiguracao =      2;
-	colunas.siglaItemConfiguracao =       3;
-	colunas.idAcao =                      4;
-	colunas.tituloAcao =                  5;
-	colunas.siglaAcao =                   6;
-	colunas.atributoObrigatorio =  		  7;
-	colunas.atributoObrigatorioString =   8;
-	colunas.idAssociacao =                9;
-	colunas.botaoExcluir =                10,
-
-	
-	associacaoTable = new SigaTable('#associacao_table')
-		.configurar("columnDefs", [{
-					"targets": [4],
-					"searchable": false,
-					"sortable" : false
-				},
-				{
-					"targets": [colunas.idItemConfiguracao, 
-								colunas.siglaItemConfiguracao, 
-								colunas.idAcao, 
-								colunas.siglaAcao,
-								colunas.atributoObrigatorio,
-								colunas.idAssociacao],
-					"visible": false
-				}])
-		.configurar("aaSorting",  [[colunas.siglaItemConfiguracao, 'asc']])
-		.criar()
-		.detalhes(detalhesListaAssociacao),
-
-		table = null,
-		isEditingAssociacao = false,
-		associacaoServiceConfig = {
-				urlGravar : '@{Application.gravarAssociacao()}?',
-				dialogCadastro : jQuery('#associacao_dialog'),
-				tabelaRegistros : jQuery('#associacao_table'),
-				objectName : 'associacao',
-				formCadastro : jQuery('#associacaoForm'),
-				dataTable : associacaoTable.dataTable
-		},		
-		associacaoService = new AssociacaoService(associacaoServiceConfig);
-
-	associacaoService.getId = function(obj) {
-		return obj.idConfiguracao;
-	}
-
-	associacaoService.cadastrar = function(title) {
-        var atributoId = $("#idAtributo");
-        if ((atributoId == undefined || atributoId.val() == "")  && atributoService.aplicar() == false) 
-            return;
-
-		BaseService.prototype.cadastrar.call(this, title);	
-	}
-	
-	associacaoService.getObjetoParaGravar = function() {
-		var obj = BaseService.prototype.getObjetoParaGravar.call(this);
-		obj.atributo = { idAtributo : $('#idAtributo').val() };
-		return obj;
-	}
-	
-	associacaoService.onGravar = function(obj, objSalvo) {
-		var td = BaseService.prototype.onGravar.call(this, obj, objSalvo),
-			atributo =  this.atributoPorId(obj.atributo.idAtributo),
-			id = this.row(obj);
-
-		// Se eh criacao de novo objeto, entao adiciona na lista
-		if(!id) {
-			atributo.associacoesVO.push(objSalvo);
-		}
-		associacaoService.adicionarFuncionalidadesNaLinha(this.row(objSalvo), objSalvo);
-		associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
-		return td;
-	}
-	
-	associacaoService.adicionarFuncionalidadesNaLinha = function(node, assoc) {
-		node.find('td:first').addClass('details-control');
-		node.data('json', assoc);
-		node.attr('data-json-id', assoc.idConfiguracao);
-		node.on('click', function() {
-			associacaoService.editar(assoc, 'Alterar Associação');
-			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
-			$('#associacaoForm input').removeAttr('onblur'); // WA
-		});
-		associacaoTable.table.mostrarDetalhes(detalhesListaAssociacao, associacaoTable.dataTable);
-	}
-	
-	associacaoService.atributoPorId = function (idAtributo) {
-		return $("#atributo_table tr[data-json-id=" + idAtributo + "]").data('json');
-	}
-	
-	associacaoService.getRow = function(assoc) {
-		var html = 
-			'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-				'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
-					'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
-					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-				'</a>' +
-			'</td>';
+		if(desativados)
+			url = '@{Application.listarAssociacaoAtributoDesativados()}';
 			
-		return [
-					' ',
-					assoc.itemConfiguracaoUnitario ? assoc.itemConfiguracaoUnitario.id : ' ',
-					assoc.itemConfiguracaoUnitario ? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
-					assoc.itemConfiguracaoUnitario ? assoc.itemConfiguracaoUnitario.sigla : ' ',
-					assoc.acaoUnitaria ? assoc.acaoUnitaria.id : ' ',
-					assoc.acaoUnitaria ? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
-					assoc.acaoUnitaria ? assoc.acaoUnitaria.sigla : ' ',
-					$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
-					getAtributoObrigatorioString(),
-					assoc.idConfiguracao,
-					html
-   				];
+		return url + "?idAtributo=" + idAtributo;
 	}
+
+	var validatorAtributoForm;
 
 	jQuery( document ).ready(function( $ ) {
+		
 		validatorAtributoForm = $("#atributoForm").validate({
 			onfocusout: false
 		});
-		
-		$("#associacaoForm").validate({
-			onfocusout: false
-		});
 	});
-
-	function ocultaAssociacoes(){
-		if ($("#objetivo").val() == 1){
-			$("#associacoes").show();
-		} else {
-			$("#associacoes").hide();
-		}
-	}
-
-	function detalhesListaAssociacao(d, associacao) {
-		var tr = $('<tr class="detail">'),
-			td = $('<td colspan="6">'),
-			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
-			
-		table.append(htmlConteudo(d, "Item de configuração:", associacao.itemConfiguracaoUnitario.siglaItemConfiguracao, associacao.itemConfiguracaoUnitario.tituloItemConfiguracao, table));
-		table.append(htmlConteudo(d, "Ação:", associacao.acaoUnitaria.sigla, associacao.acaoUnitaria.descricao, table));
-		
-		td.append(table);
-		tr.append(td);
-	    
-	    return tr;
-	};
-
-	function htmlConteudo(d, titulo, sigla, descricao, table) {
-		var trItem = $('<tr>'),
-			tdTitulo = $('<td><b>' + titulo + '</b></td'),
-			tdConteudo = $('<td>'),
-			table = $('<table>'),
-			trDetalhe = $('<tr>'),
-			tdSigla = $('<td>' + sigla + "</td>"),
-			tdDescricao = $('<td>' +  descricao + '</td>');
-		
-		trDetalhe.append(tdSigla);
-		trDetalhe.append(tdDescricao);
-		table.append(trDetalhe);
-		tdConteudo.append(table);
-		trItem.append(tdTitulo);
-		return trItem.append(tdConteudo);
-	};
-
-	associacaoService.atualizarListaAssociacoes = function(jSon) {
-		associacaoTable.dataTable.api().clear().draw();
-		
-		if (jSon && jSon.associacoesVO) {
-			// cria a lista de associacoes, e adiciona na tela
-			for (i = 0; i < jSon.associacoesVO.length; i++) {
-				var assoc = jSon.associacoesVO[i],
-					html = 
-					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
-							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
-							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-						'</a>' +
-					'</td>',
-
-					rowAssoc = [
-								' ',
-								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.id : ' ',
-								assoc.itemConfiguracaoUnitario? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
-								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.sigla : ' ',
-								assoc.acaoUnitaria? assoc.acaoUnitaria.id : ' ',
-								assoc.acaoUnitaria? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
-								assoc.acaoUnitaria? assoc.acaoUnitaria.sigla : ' ',
-								$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
-								getAtributoObrigatorioString(),
-								assoc.idConfiguracao,
-								html
-			   				];
-	   				
-				// Adiciona na tabela de Associações
-				var newRow = associacaoTable.dataTable
-					.api()
-					.row
-					.add(rowAssoc),
-					node = $(newRow.node());
-				
-				newRow.draw();
-				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
-			}
-		}
-	}
-
-	function transformStringToBoolean(value) {
-		if (value.constructor.name == 'String')
-			return value == 'true';
-		else
-			return value;
-	}
-
-	function formatDescricaoLonga(descricao) {
-		if (descricao && descricao.length > 10) {
-			return descricao.substr(0, 10) + " ...";
-		}
-		else return (descricao || ' ');
-	}
-
-	function getAtributoObrigatorioString() {
-		var isChecked = $("#checkatributoObrigatorio")[0].checked;
-		return isChecked ? "Sim": "Não";
-	}
-
-	function desassociar(event, idAssociacaoDesativar) {
-		event.stopPropagation()
-		
-		var me = $(this),
-			tr = $(event.currentTarget).parent().parent()[0],
-			row = associacaoTable.dataTable.api().row(tr).data(),
-			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunas.idAssociacao];
-			idAtributo = $("#idAtributo").val();
-			
-			$.ajax({
-		         type: "POST",
-		         url: "@{Application.desativarAssociacaoEdicao()}",
-		         data: {idAtributo : idAtributo, idAssociacao : idAssociacao},
-		         dataType: "text",
-		         success: function(response) {
-		        	 associacaoTable.dataTable.api().row(tr).remove().draw();
-		         },
-		         error: function(response) {
-		        	$('#modal-associacao').hide(); 
-
-		        	var modalErro = $('#"modal-associacao-error"');
-		        	modalErro.find("h3").html(response.responseText);
-		        	modalErro.show(); 
-		         }
-	       });
-	}
 	
 	function verificarTipoAtributo() {
 		if($("select[name='att.tipoAtributo']").val() === 'VL_PRE_DEFINIDO') {
@@ -412,4 +102,12 @@
 		$("select[name='att.tipoAtributo']").val('VL_PRE_DEFINIDO');
 		$('#vlPreDefinidos').show();
 	};
+
+	function podeCadastrarAssociacao() {
+		var atributoId = $("#idAtributo");
+        if ((atributoId == undefined || atributoId.val() == "")  && atributoService.aplicar() == false) 
+            return false;
+        else
+            return true;
+    }
 </script>

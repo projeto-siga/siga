@@ -21,6 +21,7 @@ function DetalheHelper($table, formatFunction, dataTable) {
 					var data = tr.find('td'),
 						obj = tr.data('json');
 					tr.addClass('shown');
+					$me.html("-");
 					
 					formatFunction(dataTable.api().row(tr).data(), obj)
 						.insertAfter(tr);
@@ -28,6 +29,7 @@ function DetalheHelper($table, formatFunction, dataTable) {
 				else {
 					detail.remove();
 					tr.removeClass('shown');
+					$me.html("+");
 				}
 		    });
 		}
@@ -38,15 +40,25 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	 */
 	$table.find('.bt-expandir').each(function() {
 		var $btn = jQuery(this);
+
+		if ($btn.hasClass('expandido'))
+			$btn.html("-");
+		else 
+			$btn.html("+");
 		
 		if(!$btn.hasClass('has-event')) {
 			$btn.addClass('has-event');
-			
+
 			$btn.on('click', function(e) {
 				var btn = $table.find('.bt-expandir'),
 					expandir = !btn.hasClass('expandido');
 				
 				$table.expandirContrairLinhas(expandir);
+				if (expandir == true)
+					btn.html("-");
+				else 
+					btn.html("+");					
+				
 			});
 		}
 	});
@@ -54,7 +66,7 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	this.atualizar = function(tr) {
 		var detail = tr.next('tr.detail');
 		
-		if(detail.size() > 0 && tr.hasClass('shown')) {
+		if(detail.size() > 0) {
 			detail.remove();
 			var data = tr.find('td'),
 				obj = tr.data('json');
@@ -85,6 +97,7 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	       		}
 	       		detail.show();
 	       		tr.addClass('shown');
+	       		elements.html("-");
 	       	});
 	    } else {
 	    	btn.removeClass('expandido');
@@ -95,6 +108,7 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	      		
 	      		detail.remove();
 				tr.removeClass('shown');
+				elements.html("+");
 	       	});
 	    }
 	}

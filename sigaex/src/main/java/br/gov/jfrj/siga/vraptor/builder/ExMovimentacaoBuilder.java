@@ -1,6 +1,8 @@
 package br.gov.jfrj.siga.vraptor.builder;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -16,7 +18,7 @@ import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
-import br.gov.jfrj.webwork.action.ExClassificacaoSelecao;
+import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 
 public final class ExMovimentacaoBuilder {
 
@@ -162,7 +164,10 @@ public final class ExMovimentacaoBuilder {
 
 		try {
 			mov.setDtMov(df.parse(dtPubl));
-		} catch (final Exception e) {
+		} catch (final ParseException e) {
+			mov.setDtMov(new Date());
+		} catch (final NullPointerException e) {
+			mov.setDtMov(new Date());
 		}
 
 		try {

@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -252,7 +254,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/assinar")
-	public void aAssinar(String sigla) throws Exception {
+	public void aAssinar(String sigla, Boolean autenticando) throws Exception {
 		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		ExDocumento doc = buscarDocumento(builder);
@@ -265,6 +267,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("doc", doc);
 		result.include("titular", this.getTitular());
 		result.include("lotaTitular", this.getLotaTitular());
+		result.include("autenticando", autenticando);
 	}
 
 	private boolean devePreAssinar(ExDocumento doc, boolean fPreviamenteAssinado) {
@@ -1650,24 +1653,21 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/assinar_senha_gravar")
-	public void aAssinarSenhaGravar(String sigla, String nomeUsuarioSubscritor, String senhaUsuarioSubscritor, ExDocumento doc) throws Exception {
+	public void aAssinarSenhaGravar(String sigla, String nomeUsuarioSubscritor, String senhaUsuarioSubscritor) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-		buscarDocumento(builder, true);
+		ExDocumento doc = buscarDocumento(builder, true);
 		final ExMobil mob = builder.getMob();
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia().setMob(mob);
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 
-		try {
-			result.include(
-					"msg",
-					Ex.getInstance()
-							.getBL()
-							.assinarDocumentoComSenha(getCadastrante(), getLotaTitular(), doc, mov.getDtMov(), nomeUsuarioSubscritor, senhaUsuarioSubscritor,
-									mov.getTitular()));
-		} catch (final Exception e) {
-
-			throw e;
-		}
+		result.include(
+				"msg",
+				Ex.getInstance()
+						.getBL()
+						.assinarDocumentoComSenha(getCadastrante(), getLotaTitular(), doc, mov.getDtMov(), nomeUsuarioSubscritor, senhaUsuarioSubscritor,
+								mov.getTitular()));
+			
+		ExDocumentoController.redirecionarParaExibir(result, sigla);		
 	}
 
 	@Post("/app/expediente/mov/assinar_mov_login_senha_gravar")
@@ -1866,6 +1866,23 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
+	@Get("/app/expediente/mov/prever_data")
+	public void aPreverData() throws Exception {
+		try {
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			Date provDtDispon = format.parse(param("data"));
+
+			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(provDtDispon);
+
+			String apenas = param("apenasSolicitacao");
+
+			result.include("dtPrevPubl", format.format(DJE.getDataPublicacao()));
+			result.include("descrFeriado", DJE.validarDataDeDisponibilizacao((apenas != null)
+					&& apenas.equals("true")));
+		} catch (Throwable t) {
+		}
+	}	
+	
 	private void validarRetirarEditalEliminacao(ExMobil mob) {
 		if (!Ex.getInstance()
 				.getComp()
@@ -1918,11 +1935,12 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException(
 					"Não é possível fazer arquivamento intermediário. Verifique se o documento não se encontra em lotação diferente de "
 							+ getLotaTitular().getSigla());
-		}
+		} 
 		
+		result.include("doc", doc);
 		result.include("mob", mob);
 		result.include("sigla", sigla);
-		result.include("doc", doc);
+		result.include("substituicao", false);
 		result.include("request", getRequest());
 		result.include("titularSel", new DpPessoaSelecao());
 		result.include("subscritorSel", new DpPessoaSelecao());
@@ -1932,7 +1950,9 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	@Get("/app/expediente/mov/arquivar_intermediario_gravar")
+	@Get
+	@Post
+	@Path("/app/expediente/mov/arquivar_intermediario_gravar")
 	public void aArquivarIntermediarioGravar(
 			final String sigla, 
 			final Integer postback, 
@@ -1983,7 +2003,7 @@ public class ExMovimentacaoController extends ExController {
 							mov.getSubscritor(),
 							mov.getDescrMov());
 			
-			result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
 			
 		} catch (final Exception e) {
 			throw e;
@@ -2060,6 +2080,174 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
+	@Get("/app/expediente/mov/reclassificar")
+	public void aReclassificar(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder,true);
+		final ExMobil mob = builder.getMob();
+
+		if (!Ex.getInstance().getComp()
+				.podeReclassificar(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Não é possível reclassificar");
+		}
+		
+		result.include("mob", mob);
+		result.include("doc", doc);
+		result.include("sigla", sigla);
+		result.include("tipoResponsavel", 1);
+		result.include("substituicao", Boolean.FALSE);
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("classificacaoSel", new ExClassificacaoSelecao());
+		
+	}
+	
+	@Post("/app/expediente/mov/reclassificar_gravar")
+	public void aReclassificarGravar(
+			final String sigla,
+			final String descrMov,
+			final String[] campos,
+			final Integer postback,
+			final String dtMovString,
+			final String obsOrgao,
+			final boolean substituicao,
+			final DpPessoaSelecao titularSel,
+			final DpPessoaSelecao subscritorSel,
+			final ExClassificacaoSelecao classificacaoSel) {
+		this.setPostback(postback);
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+		
+		final ExMovimentacao mov = ExMovimentacaoBuilder
+				.novaInstancia()
+				.setDescrMov(descrMov)
+				.setDtMovString(dtMovString)
+				.setObsOrgao(obsOrgao)
+				.setSubstituicao(substituicao)
+				.setTitularSel(titularSel)
+				.setSubscritorSel(subscritorSel)
+				.setClassificacaoSel(classificacaoSel)
+				.setMob(mob)
+				.construir(dao());
+
+		if (!Ex.getInstance().getComp()
+				.podeReclassificar(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível reclassificar");
+
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			mov.setSubscritor(getTitular());
+			result.include("dtRegMov", sdf.format(new Date()).toString());
+		}
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.avaliarReclassificar(
+							getCadastrante(), 
+							getLotaTitular(),
+							mob, 
+							mov.getDtMov(), 
+							mov.getSubscritor(),
+							mov.getExClassificacao(),
+							mov.getDescrMov(), 
+							false);
+			
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		result.include("doc", mov.getExDocumento());
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	@Get("/app/expediente/mov/avaliar")
+	public void aAvaliar(String sigla) {
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder,true);
+		final ExMobil mob = builder.getMob();
+
+		if (!Ex.getInstance().getComp()
+				.podeAvaliar(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Não é possível avaliar");
+		}
+		
+		result.include("mob", mob);
+		result.include("doc", doc);
+		result.include("sigla", sigla);
+		result.include("tipoResponsavel", 1);
+		result.include("substituicao", Boolean.FALSE);
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("classificacaoSel", new ExClassificacaoSelecao());
+	}
+
+	@Post("/app/expediente/mov/avaliar_gravar")
+	public void aAvaliarGravar(
+			final String sigla,
+			final String descrMov,
+			final String obsOrgao,
+			final String[] campos,
+			final Integer postback,
+			final String dtMovString,
+			final boolean substituicao,
+			final DpPessoaSelecao titularSel,
+			final DpPessoaSelecao subscritorSel,
+			final ExClassificacaoSelecao classificacaoSel) {
+		
+		this.setPostback(postback);
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+		
+		final ExMovimentacao mov = ExMovimentacaoBuilder
+				.novaInstancia()
+				.setDescrMov(descrMov)
+				.setDtMovString(dtMovString)
+				.setObsOrgao(obsOrgao)
+				.setSubstituicao(substituicao)
+				.setTitularSel(titularSel)
+				.setSubscritorSel(subscritorSel)
+				.setClassificacaoSel(classificacaoSel)
+				.setMob(mob)
+				.construir(dao());
+
+		if (!Ex.getInstance().getComp()
+				.podeAvaliar(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Não é possível avaliar");
+		}
+
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			mov.setSubscritor(getTitular());
+			result.include("dtRegMov", sdf.format(new Date()).toString());
+		}
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.avaliarReclassificar(
+							getCadastrante(),
+							getLotaTitular(),
+							mob,
+							mov.getDtMov(),
+							mov.getSubscritor(),
+							mov.getExClassificacao(),
+							mov.getDescrMov(),
+							true);
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		result.include("doc", mov.getExDocumento());
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
 	@Get("/app/expediente/mov/agendar_publicacao")
 	public void agendarPublicacao(String sigla, String descrPublicacao, String mensagem) throws Exception {
 		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -2086,14 +2274,14 @@ public class ExMovimentacaoController extends ExController {
 		} else {
 			lot.setId(doc.getSubscritor().getLotacao().getId());
 			lot.buscar();
-			podeAtenderPedidoPublicacao = Boolean.FALSE;
+			podeAtenderPedidoPublicacao = Boolean.TRUE;
 		}
 		
 		ListaLotPubl listaLotPubl = getListaLotPubl(doc);
 		result.include("tipoMateria", PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		result.include("cadernoDJEObrigatorio", PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
 		result.include("descrPublicacao", descrPublicacao == null ? doc.getDescrDocumento() : descrPublicacao);
-		result.include("podeAtenderPedidoPubl", podeAtenderPedidoPublicacao);
+		result.include("podeAtenderPedidoPubl", Boolean.TRUE);
 		result.include("lotaSubscritorSel", new DpLotacaoSelecao());
 		result.include("mob", builder.getMob());
 		result.include("request", getRequest());
@@ -2371,6 +2559,52 @@ public class ExMovimentacaoController extends ExController {
 		}
 		
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}	
+	
+	@Get("/app/expediente/mov/boletim_publicar")
+	public void publica_boletim(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			result.include("dtPubl",df.format(new Date()));
+		} catch (final Exception e) {
+		}
+
+		if (!Ex.getInstance().getComp() .podePublicar(getTitular(), getLotaTitular(), mob)){
+			throw new AplicacaoException("Publicação não permitida");
+		}		
+		result.include("sigla",sigla);
+	}
+	
+	@Get("/app/expediente/mov/boletim_publicar_gravar")	
+	public void aBoletimPublicarGravar(final String sigla, final String dtPubl) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		buscarDocumento(builder, true);
+		
+		final ExMovimentacaoBuilder movBuilder = ExMovimentacaoBuilder.novaInstancia();
+		movBuilder.setMob(builder.getMob());
+		movBuilder.setDtPubl(dtPubl);
+		final ExMovimentacao mov = movBuilder.construir(dao());		
+
+		if (!Ex.getInstance().getComp().podePublicar(getTitular(), getLotaTitular(), builder.getMob())){
+			throw new AplicacaoException("Nao foi possivel fazer a publicacao");
+		}
+
+		Ex.getInstance()
+				.getBL()
+				.publicarBoletim(getCadastrante(), getLotaTitular(),
+						mov.getExDocumento(), mov.getDtMov());
+
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	@Get("/app/expediente/mov/autenticar_documento")
+	public void aAutenticarDocumento(final String sigla) throws Exception  {
+		//setAutenticando(true);
+		result.forwardTo(this).aAssinar(sigla, true);
 	}	
 
 }

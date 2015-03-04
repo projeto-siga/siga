@@ -1995,7 +1995,7 @@ public class ExBL extends CpBL {
 			mov.setExMovimentacaoRef(movAlvo);
 			
 			mov.setSubscritor(movAlvo.getSubscritor() != null ? movAlvo.getSubscritor() : movAlvo.getCadastrante());
-			mov.setDescrMov(movAlvo.getSubscritor().getNomePessoa());
+			mov.setDescrMov(movAlvo.getSubscritor() != null ? movAlvo.getSubscritor().getNomePessoa() : movAlvo.getDescrMov());
 			
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());

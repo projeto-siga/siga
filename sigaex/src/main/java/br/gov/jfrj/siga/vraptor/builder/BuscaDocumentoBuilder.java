@@ -19,6 +19,7 @@ public final class BuscaDocumentoBuilder {
 	private ExMobilSelecao documentoViaSel;
 	private Long idMob;
 	private ExMobil mob; 
+	private ExMovimentacao mov;
 	
 	private BuscaDocumentoBuilder() {
 	}
@@ -31,7 +32,7 @@ public final class BuscaDocumentoBuilder {
 		ExDocumento doc = null;
 
 		if (id != null) {
-			ExMovimentacao mov = dao.consultar(id, ExMovimentacao.class, false);
+			mov = dao.consultar(id, ExMovimentacao.class, false);
 			mob = getMov(mov);
 		}
 
@@ -46,13 +47,16 @@ public final class BuscaDocumentoBuilder {
 			mob = dao.consultar(idMob, ExMobil.class, false);
 		}
 
-		if (mob != null)
+		if (mob != null) {
 			doc = mob.doc();
-		if (doc != null && mob == null)
+		}
+		if (doc != null && mob == null) {
 			mob = doc.getMobilGeral();
-
-		if (doc == null)
+		}
+		
+		if (doc == null) {
 			throw new AplicacaoException("Documento não informado");
+		}
 
 		return doc;
 	}
@@ -114,5 +118,9 @@ public final class BuscaDocumentoBuilder {
 
 	public ExMobil getMob() {
 		return mob;
+	}
+
+	public ExMovimentacao getMov() {
+		return mov;
 	}
 }

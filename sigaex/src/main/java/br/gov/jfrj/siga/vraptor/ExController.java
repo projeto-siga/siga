@@ -80,17 +80,17 @@ public class ExController extends SigaController {
 		}
 	}
 
-	public String getNomeServidor() {
+	protected  String getNomeServidor() {
 		return getRequest().getServerName();
 	}
 
-	public String getNomeServidorComPorta() {
+	protected  String getNomeServidorComPorta() {
 		if (getRequest().getServerPort() > 0)
 			return getRequest().getServerName() + ":" + getRequest().getServerPort();
 		return getRequest().getServerName();
 	}
 
-	public List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc, ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif) {
+	protected  List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc, ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif) {
 		List<ExNivelAcesso> listaNiveis = ExDao.getInstance().listarOrdemNivel();
 		ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();
 		Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
@@ -137,7 +137,7 @@ public class ExController extends SigaController {
 		return niveisFinal;
 	}
 
-	public ExNivelAcesso getNivelAcessoDefault(final ExTipoDocumento exTpDoc, final ExFormaDocumento forma, final ExModelo exMod, final ExClassificacao classif) {
+	protected  ExNivelAcesso getNivelAcessoDefault(final ExTipoDocumento exTpDoc, final ExFormaDocumento forma, final ExModelo exMod, final ExClassificacao classif) {
 		final Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
 
 		final ExConfiguracao config = new ExConfiguracao();
@@ -205,42 +205,42 @@ public class ExController extends SigaController {
 
 	}
 
-	public String getDescrDocConfidencial(ExDocumento doc) {
+	protected  String getDescrDocConfidencial(ExDocumento doc) {
 		return Ex.getInstance().getBL().descricaoSePuderAcessar(doc, getTitular(), getLotaTitular());
 	}
 
-	public List<ExTipoDocumento> getTiposDocumento() throws AplicacaoException {
+	protected  List<ExTipoDocumento> getTiposDocumento() throws AplicacaoException {
 		return dao().listarExTiposDocumento();
 	}
 
-	public ExDao dao() {
+	protected  ExDao dao() {
 		return ExDao.getInstance();
 	}
 
-	public ExDocumento daoDoc(long id) {
+	protected  ExDocumento daoDoc(long id) {
 		return dao().consultar(id, ExDocumento.class, false);
 	}
 
-	public ExMovimentacao daoMov(long id) {
+	protected  ExMovimentacao daoMov(long id) {
 		return dao().consultar(id, ExMovimentacao.class, false);
 	}
 
-	public ExMobil daoMob(long id) {
+	protected  ExMobil daoMob(long id) {
 		return dao().consultar(id, ExMobil.class, false);
 	}
 
-	public List<ExEstadoDoc> getEstados() throws AplicacaoException {
+	protected  List<ExEstadoDoc> getEstados() throws AplicacaoException {
 		return ExDao.getInstance().listarExEstadosDoc();
 	}
 
-	public Map<Integer, String> getListaTipoResp() {
+	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
 		map.put(2, "Órgão Integrado");
 		return map;
 	}
 
-	public List<String> getListaAnos() {
+	protected List<String> getListaAnos() {
 		final ArrayList<String> lst = new ArrayList<String>();
 		// map.add("", "[Vazio]");
 		final Calendar cal = Calendar.getInstance();
@@ -253,12 +253,11 @@ public class ExController extends SigaController {
 		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
 	}
 
-	public HttpServletResponse getResponse() {
+	protected  HttpServletResponse getResponse() {
 		return response;
 	}
 
-	public ServletContext getContext() {
+	protected ServletContext getContext() {
 		return context;
 	}
-
 }

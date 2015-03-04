@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
 <siga:pagina titulo="Documento" onLoad="javascript: TestarAssinaturaDigital();">
-	<script type=text/javascript" language="Javascript1.1">
+	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
 			re = /^[a-zA-Z]{2}\d{3,6}$/;
@@ -129,7 +129,7 @@
 		        		
 			<div id="dialog-form" title="Assinar com Senha">
 	 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_senha_gravar" >
-	 				<ww:hidden id="sigla" name="sigla"	value="${sigla}" />
+	 				<input type="hidden" id="sigla" name="sigla"	value="${sigla}" />
 	    			<fieldset>
 	    			  <label>Matrícula</label> <br/>
 	    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>

@@ -183,7 +183,7 @@ public class IntegrationTestBase {
 		// Garantir que a descrição do documento apareça na tela (é a seção OBJETO, da capa do processo)
 		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//p[contains(., '" + textoBuscado + "')]")), "Texto '" + textoBuscado + " ' não encontrado!");
 			
-		// usar o link /sigaex/expediente/mov/simular_assinatura?sigla=<código do documento> para gerar uma movimentação de assinatura digital
+		// usar o link /sigaex/app/expediente/mov/simular_assinatura?sigla=<código do documento> para gerar uma movimentação de assinatura digital
 		AssinaturaDigitalPage assinaturaDigitalPage = PageFactory.initElements(driver, AssinaturaDigitalPage.class);
 		assinaturaDigitalPage.registrarAssinaturaDigital(baseURL, codigoDocumento);
 		

@@ -41,6 +41,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
@@ -53,7 +54,6 @@ import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
-import br.gov.jfrj.webwork.action.ExMobilAction.GenericoSelecao;
 
 @Resource
 public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
@@ -89,14 +89,48 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			this.sigla = sigla;
 		}
 	}
-	
 
 	public ExMobilController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		setItemPagina(50);
-		
+
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
+	}
+
+	@Get("app/expediente/doc/marcar_tudo")
+	public void aMarcarTudo() {
+		Ex.getInstance().getBL().marcarTudo();
+		result.redirectTo("/app/expediente/doc/finalizou_rotina");
+	}
+
+	@Get("app/expediente/doc/numerar_tudo")
+	public void aNumerarTudo() {
+		int aPartirDe = 0;
+		if (param("apartir") != null) {
+			aPartirDe = paramInteger("apartir");
+		}
+		Ex.getInstance().getBL().numerarTudo(aPartirDe);
+		result.redirectTo("/app/expediente/doc/finalizou_rotina");
+	}
+
+	@Get("app/expediente/doc/marcar")
+	public void aMarcar() {
+		String sigla = param("sigla");
+		String[] siglasSparadas = sigla.split(";");
+		for (String s : siglasSparadas) {
+			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+			filter.setSigla(s);
+			ExMobil mob = (ExMobil) dao().consultarPorSigla(filter);
+			ExDocumento doque = mob.getExDocumento();
+			Ex.getInstance().getBL().marcar(doque);
+		}
+		result.redirectTo("/app/expediente/doc/finalizou_rotina");
+	}
+	
+	@Get("app/expediente/doc/finalizou_rotina")
+	public void aFinalizouRotina() {
+		System.out.println("Finalizou rotina");
 	}
 
 	@Get("app/expediente/buscar")
@@ -108,8 +142,9 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			final DpPessoaSelecao subscritorSel, final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel,
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
-			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc, final Integer paramoffset) {
-		getP().setOffset(paramoffset);		
+			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc,
+			final Integer paramoffset) {
+		getP().setOffset(paramoffset);
 		this.setSigla(sigla);
 		this.setPostback(postback);
 
@@ -439,23 +474,23 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 		return Ex.getInstance().getBL().obterListaModelos(forma, false, "Todos", false, getTitular(), getLotaTitular(), false);
 	}
-	
+
 	@Get("app/expediente/selecionar")
 	public void selecionar(final String sigla, final String matricula) throws Exception {
-		final String resultado =  super.aSelecionar(sigla);		
+		final String resultado = super.aSelecionar(sigla);
 		if (getSel() != null && matricula != null) {
 			GenericoSelecao sel = new GenericoSelecao();
 			sel.setId(getSel().getId());
 			sel.setSigla(getSel().getSigla());
-			sel.setDescricao("/sigaex/app/expediente/doc/exibir?sigla="+sel.getSigla());
+			sel.setDescricao("/sigaex/app/expediente/doc/exibir?sigla=" + sel.getSigla());
 			setSel(sel);
 		}
-		if (resultado == "ajax_retorno"){
+		if (resultado == "ajax_retorno") {
 			result.include("sel", getSel());
 			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
-		}else{
+		} else {
 			result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
 		}
-	}	
+	}
 
 }

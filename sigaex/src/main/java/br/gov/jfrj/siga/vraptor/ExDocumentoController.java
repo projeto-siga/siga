@@ -1628,4 +1628,14 @@ public class ExDocumentoController extends ExController {
 	protected static void redirecionarParaExibir(final Result result, final String sigla) {
 		result.redirectTo(MessageFormat.format(URL_EXIBIR, sigla));
 	}
+
+	@Get("/app/expediente/doc/pdf")
+	public void aAcessar(final String sigla) {
+		final ExDocumentoDTO dto = new ExDocumentoDTO(sigla);
+		buscarDocumento(false, dto);
+
+		assertAcesso(dto);
+
+		result.redirectTo("/app/expediente/doc/".concat(dto.getMob().getCodigoCompacto()).concat(".pdf"));
+	}	
 }

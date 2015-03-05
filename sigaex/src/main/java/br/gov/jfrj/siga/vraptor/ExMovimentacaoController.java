@@ -2680,6 +2680,54 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
+    @Get("/app/expediente/mov/assinar_verificar")
+    public void aAssinarVerificar(Long id, boolean ajax) {
+        final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
+        final ExDocumento doc = buscarDocumento(builder, true);
+        
+        final ExMovimentacao mov = builder.getMov();    
+
+        try {
+            final String s = Ex
+                    .getInstance()
+                    .getBL()
+                    .verificarAssinatura(doc.getConteudoBlobPdf(),
+                            mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
+                            mov.getDtIniMov());
+            getRequest().setAttribute("assinante", s);
+
+            result.use(Results.page()).forwardTo("/paginas/assinatura_ok.jsp");
+        } catch (final Exception e) {
+            getRequest().setAttribute("err", e.getMessage());
+            result.use(Results.page()).forwardTo("/paginas/assinatura_erro.jsp");
+        }
+    }    
+    
+    @Get("/app/expediente/mov/assinar_mov_verificar")
+	public void aAssinarMovVerificar(Long id, boolean ajax) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
+        buscarDocumento(builder, true);		
+
+		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
+		final ExMovimentacao movRef = mov.getExMovimentacaoRef();
+
+		try {
+			final String s = Ex
+					.getInstance()
+					.getBL()
+					.verificarAssinatura(movRef.getConteudoBlobpdf(),
+							mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
+							mov.getDtIniMov());
+			getRequest().setAttribute("assinante", s);
+
+			result.use(Results.page()).forwardTo("/paginas/assinatura_ok.jsp");
+		} catch (final Exception e) {
+			getRequest().setAttribute("err", e.getMessage());
+			result.use(Results.page()).forwardTo("/paginas/assinatura_erro.jsp");
+		}
+	}
+	
+	
 	private void validarDataGravacao(ExMovimentacao mov, boolean apenasSolicitacao) throws AplicacaoException {
 		if (mov.getDtDispPublicacao() == null)
 			throw new AplicacaoException("A data desejada para a disponibilização precisa ser informada.");
@@ -3036,4 +3084,147 @@ public class ExMovimentacaoController extends ExController {
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	
+	@Get("/app/expediente/mov/indicar_permanente")
+	public void indicarPermanente(final String sigla) throws Exception {
+
+		final BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+		buscarDocumento(docBuilder, true);
+		final ExMobil mob = docBuilder.getMob();
+	
+		if (!Ex.getInstance().getComp()
+				.podeIndicarPermanente(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível fazer indicação para guarda permanente");
+		result.include("mob", mob);
+		result.include("sigla", sigla);
+		result.include("request", getRequest());
+		result.include("subscritorSel",new DpPessoaSelecao());
+		result.include("titularSel",new DpPessoaSelecao());
+	}
+
+	@Post("/app/expediente/mov/indicar_permanente_gravar")
+	public void indicarPermanenteGravar(final String sigla, 
+										final String dtMovString, 
+										final DpPessoaSelecao subscritorSel,
+										final DpPessoaSelecao titularSel,
+										final String descrMov) throws Exception {
+	
+		final BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+		buscarDocumento(docBuilder, true);
+		ExMobil mob = docBuilder.getMob();
+		
+		final ExMovimentacao mov = ExMovimentacaoBuilder
+				.novaInstancia()
+				.setMob(mob)
+				.setDtMovString(dtMovString)
+				.setSubscritorSel(subscritorSel)
+				.setTitularSel(titularSel)
+				.setDescrMov(descrMov)
+				.construir(dao());
+		
+		if (!Ex.getInstance().getComp()
+				.podeIndicarPermanente(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível fazer indicação para guarda permanente");
+	
+		String dtRegMov = null;
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			dtRegMov = (sdf.format(new Date()).toString());
+			mov.setSubscritor(getTitular());
+		}
+	
+		try {
+			Ex.getInstance()
+					.getBL()
+					.indicarPermanente(getCadastrante(), getLotaTitular(), mob,
+							mov.getDtMov(), mov.getSubscritor(),
+							mov.getTitular(), mov.getDescrMov());
+		} catch (final Exception e) {
+			throw e;
+		}
+	
+		result.include("dtRegMov",dtRegMov);
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	@Get("/app/expediente/mov/reverter_indicacao_permanente")
+	public void reverterIndicacaoPermanente(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+		buscarDocumento(docBuilder, true);
+		final ExMobil mob = docBuilder.getMob();
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeReverterIndicacaoPermanente(getTitular(),
+						getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível reverter indicação para guarda permanente");
+		
+		result.include("mob", mob);
+		result.include("sigla", sigla);
+		result.include("request", getRequest());
+		result.include("subscritorSel",new DpPessoaSelecao());
+		result.include("titularSel",new DpPessoaSelecao());
+	}
+
+	@Post("/app/expediente/mov/reverter_indicacao_permanente_gravar")
+	public void reverterIndicacaoPermanenteGravar(final String sigla,
+												  final String dtMovString,
+												  final DpPessoaSelecao subscritorSel,
+												  final DpPessoaSelecao titularSel,
+												  final String descrMov) throws Exception {
+		final BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+		buscarDocumento(docBuilder, true);
+		ExMobil mob = docBuilder.getMob();
+		
+		final ExMovimentacao mov = ExMovimentacaoBuilder
+				.novaInstancia()
+				.setMob(mob)
+				.setDtMovString(dtMovString)
+				.setSubscritorSel(subscritorSel)
+				.setTitularSel(titularSel)
+				.setDescrMov(descrMov)
+				.construir(dao());
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeReverterIndicacaoPermanente(getTitular(),
+						getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível reverter indicação para guarda permanente");
+
+		String dtRegMov = null;
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			dtRegMov = (sdf.format(new Date()).toString());
+			mov.setSubscritor(getTitular());
+		}
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.reverterIndicacaoPermanente(getCadastrante(),
+							getLotaTitular(), mob, mov.getDtMov(),
+							mov.getSubscritor(), mov.getTitular(),
+							mov.getDescrMov());
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		result.include("dtRegMov",dtRegMov);
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+
 }

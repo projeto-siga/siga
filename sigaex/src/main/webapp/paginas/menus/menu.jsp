@@ -10,7 +10,7 @@
 		<li>
 			<a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a>
 		</li>
-
+		
 		<c:if test="${f:resource('siga.lucene.ativo')}">
 			<li><ww:url id="url" action="full_search"
 					namespace="/expediente/doc">
@@ -65,8 +65,10 @@
 		<c:catch>
 			<c:if
 				test="${f:testaCompetencia('atenderPedidoPublicacao',titular,lotaTitular,null)}">
-				<li><ww:url id="url" action="atender_pedido_publicacao"
-						namespace="/expediente/mov" /> <ww:a href="%{url}">Gerenciar Publicação DJE</ww:a>
+				<li>
+					<siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/atender_pedido_publicacao" texto="Gerenciar Publicação DJE" />
+<%-- 					<ww:url id="url" action="atender_pedido_publicacao" --%>
+<%-- 						namespace="/expediente/mov" /> <ww:a href="%{url}">Gerenciar Publicação DJE</ww:a> --%>
 				</li>
 			</c:if>
 		</c:catch>

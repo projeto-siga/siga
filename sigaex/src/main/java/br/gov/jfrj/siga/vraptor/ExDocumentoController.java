@@ -85,9 +85,11 @@ import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.libs.webwork.Selecao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 
 @Resource
 public class ExDocumentoController extends ExController {
@@ -99,6 +101,49 @@ public class ExDocumentoController extends ExController {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
+	}
+
+	private ExDocumento buscarDocumento(final BuscaDocumentoBuilder builder, final boolean verificarAcesso) {
+		ExDocumento doc = builder.buscarDocumento(dao());
+		if (verificarAcesso && builder.getMob() != null) {
+
+			verificaNivelAcesso(builder.getMob());
+		}
+
+		return doc;
+	}
+
+	@Get("app/expediente/doc/atualizar_marcas")
+	public void aAtualizarMarcasDoc(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder, false);
+
+		Ex.getInstance().getBL().atualizarMarcas(doc);
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
+
+	@Get("app/expediente/doc/corrigirPDF")
+	public void aCorrigirPDF(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder, false);
+
+		Ex.getInstance().getBL().processar(doc, true, false, null);
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
+
+	@Get("app/expediente/doc/desfazerCancelamentoDocumento")
+	public void aDesfazerCancelamentoDocumento(final String sigla) {
+		final ExDocumentoDTO dto = new ExDocumentoDTO(sigla);
+		buscarDocumento(true, dto);
+		if (!Ex.getInstance().getComp().podeDesfazerCancelamentoDocumento(getTitular(), getLotaTitular(), dto.getMob())) {
+			throw new AplicacaoException("Não é possível desfazer o cancelamento deste documento");
+		}
+
+		Ex.getInstance().getBL().DesfazerCancelamentoDocumento(getCadastrante(), getLotaTitular(), dto.getDoc());
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
 	@Post("app/expediente/doc/alterarpreench")
@@ -250,7 +295,7 @@ public class ExDocumentoController extends ExController {
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars, exDocumentoDTO.getMobilPaiSel(), exDocumentoDTO.isCriandoAnexo());
 		return exDocumentoDTO;
 	}
-	
+
 	@Post("app/expediente/doc/editar")
 	@Get("app/expediente/doc/editar")
 	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO, final String sigla, String[] vars, final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo)
@@ -270,7 +315,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		buscarDocumentoOuNovo(true, exDocumentoDTO);
-		
+
 		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
 			exDocumentoDTO.setTipoDestinatario(2);
 			exDocumentoDTO.setIdFormaDoc(2);
@@ -953,6 +998,43 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
 	}
 
+	@Get("/app/expediente/doc/tornarDocumentoSemEfeito")
+	public void tornarDocumentoSemEfeito(final String sigla) throws Exception {
+		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDto);
+
+		result.include("sigla", sigla);
+		result.include("id", exDocumentoDto.getId());
+		result.include("mob", exDocumentoDto.getMob());
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("descrMov", exDocumentoDto.getDescrMov());
+		result.include("doc", exDocumentoDto.getDoc());
+	}
+
+	@Post("/app/expediente/doc/tornarDocumentoSemEfeitoGravar")
+	public void tornarDocumentoSemEfeitoGravar(final String sigla, final Integer id, final DpPessoaSelecao titularSel, final String descrMov) throws Exception {
+		if (descrMov == null || descrMov.trim().length() == 0) {
+			throw new AplicacaoException("O preenchimento do campo MOTIVO é obrigatório!");
+		}
+		final ExDocumentoDTO exDocumentoDto = new ExDocumentoDTO();
+		exDocumentoDto.setSigla(sigla);
+		buscarDocumento(Boolean.TRUE, exDocumentoDto);
+
+		ExMobil mob = exDocumentoDto.getMob();
+		ExDocumento doc = exDocumentoDto.getDoc();
+
+		if (!Ex.getInstance().getComp().podeTornarDocumentoSemEfeito(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Não é possível tornar documento sem efeito.");
+		try {
+
+			Ex.getInstance().getBL().TornarDocumentoSemEfeito(getCadastrante(), getLotaTitular(), doc, descrMov);
+		} catch (final Exception e) {
+			throw e;
+		}
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+
 	private void carregarBeans(final ExDocumentoDTO exDocumentoDTO, final ExMobilSelecao mobilPaiSel) {
 		setPar(getRequest().getParameterMap());
 		ExMobil mobPai = null;
@@ -1546,4 +1628,14 @@ public class ExDocumentoController extends ExController {
 	protected static void redirecionarParaExibir(final Result result, final String sigla) {
 		result.redirectTo(MessageFormat.format(URL_EXIBIR, sigla));
 	}
+
+	@Get("/app/expediente/doc/pdf")
+	public void aAcessar(final String sigla) {
+		final ExDocumentoDTO dto = new ExDocumentoDTO(sigla);
+		buscarDocumento(false, dto);
+
+		assertAcesso(dto);
+
+		result.redirectTo("/app/expediente/doc/".concat(dto.getMob().getCodigoCompacto()).concat(".pdf"));
+	}	
 }

@@ -425,7 +425,7 @@ public class ExBL extends CpBL {
 				+ (System.currentTimeMillis() - ini) + " ms");
 	}
 
-	public void marcar(ExDocumento doc) throws Exception {
+	public void marcar(ExDocumento doc) {
 		ExDao.iniciarTransacao();
 		atualizarMarcas(doc);
 		for (ExMovimentacao m : doc.getExMovimentacaoSet()) {
@@ -485,7 +485,7 @@ public class ExBL extends CpBL {
 		return numeroDePaginas;
 	}
 
-	public void numerarTudo(int aPartirDe) throws Exception {
+	public void numerarTudo(int aPartirDe) {
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
 		final Criteria countCrit = dao().getSessao()
@@ -538,7 +538,7 @@ public class ExBL extends CpBL {
 		//System.gc();
 	}
 
-	public void marcarTudo() throws Exception {
+	public void marcarTudo() {
 		marcarTudo(0, 0, true, false, new PrintWriter(System.out));
 	}
 
@@ -547,7 +547,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void marcarTudo(int primeiro, int ultimo, boolean efetivar,
-			boolean apenasTemporalidade, PrintWriter out) throws Exception {
+			boolean apenasTemporalidade, PrintWriter out) {
 
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
@@ -1995,7 +1995,7 @@ public class ExBL extends CpBL {
 			mov.setExMovimentacaoRef(movAlvo);
 			
 			mov.setSubscritor(movAlvo.getSubscritor() != null ? movAlvo.getSubscritor() : movAlvo.getCadastrante());
-			mov.setDescrMov(movAlvo.getSubscritor().getNomePessoa());
+			mov.setDescrMov(movAlvo.getSubscritor() != null ? movAlvo.getSubscritor().getNomePessoa() : movAlvo.getDescrMov());
 			
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
@@ -6262,7 +6262,7 @@ public class ExBL extends CpBL {
 	}	
 
 	public void DesfazerCancelamentoDocumento(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		try {
 			SortedSet<ExMobil> set = doc.getExMobilSet();

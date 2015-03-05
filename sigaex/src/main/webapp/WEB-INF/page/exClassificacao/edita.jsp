@@ -108,7 +108,7 @@
 			<div class="gt-form gt-content-box">
 				<div id="divClassificacao" class="clearfix">
 					<!-- left column -->
-					<form id="frmClassificacao" action="gravar" method="post">
+					<form id="frmClassificacao" action="gravar" method="get">
 						<input type="hidden" id="acao" name="acao" value="${acao}" />
 						<div class="gt-left-col">
 							<!-- form row -->

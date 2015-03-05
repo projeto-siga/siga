@@ -45,6 +45,9 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.vraptor.builder.ExDownloadRTF;
+import br.gov.jfrj.siga.vraptor.builder.ExDownloadZip;
+import br.gov.jfrj.siga.vraptor.builder.ExInputStreamDownload;
 
 import com.lowagie.text.pdf.codec.Base64;
 
@@ -164,6 +167,96 @@ public class ExArquivoController extends ExController {
 		}
 	}
 
+
+	@Get("/app/arquivo/download")
+	public Download download(String arquivo, String hash, HttpServletResponse response) throws Exception {
+		boolean isZip = arquivo.endsWith(".zip");
+		boolean somenteHash = hash != null || getPar().containsKey("HASH_ALGORITHM");
+		String algoritmoHash = getAlgoritmoHash(hash);
+		ExMobil mob = Documento.getMobil(arquivo);
+		ExMovimentacao mov = Documento.getMov(mob, arquivo);
+		
+		validarDownload(somenteHash, algoritmoHash, mob);
+
+		if (isZip) {
+			if (algoritmoHash != null) {
+				return new ExDownloadZip(mov, algoritmoHash);
+			}
+			return iniciarDownload(mob, new ExDownloadZip(mov, algoritmoHash, ExInputStreamDownload.MEDIA_TYPE_ZIP));
+		}
+		else {
+			if (algoritmoHash != null) {
+				return new ExDownloadRTF(mob, algoritmoHash);
+			}
+			return iniciarDownload(mob, new ExDownloadRTF(mob, algoritmoHash, ExInputStreamDownload.MEDIA_TYPE_RTF));
+		}
+	}
+
+	private Download iniciarDownload(ExMobil mob, ExInputStreamDownload exDownload) {
+		try {
+			// Calcula o hash do documento, mas não leva em consideração
+			// para fins de hash os últimos bytes do arquivos, pois lá
+			// fica armazanada a ID e as datas de criação e modificação
+			// e estas são sempre diferente de um pdf para o outro.
+			MessageDigest md = MessageDigest.getInstance("MD5");
+	
+			byte ab[] = exDownload.getBytes();
+			int m = match(ab);
+			if (m != -1)
+				md.update(ab, 0, m);
+			else
+				md.update(ab);
+	
+			String etag = Base64.encodeBytes(md.digest());
+			String ifNoneMatch = getRequest().getHeader("If-None-Match");
+			getResponse().setHeader("Cache-Control", "must-revalidate, " + getCacheControl(mob));
+			getResponse().setDateHeader("Expires", 0);
+			getResponse().setHeader("ETag", etag);
+			getResponse().setHeader("Pragma", "");
+			
+			if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+				getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
+				return null;
+			}
+			return exDownload;
+		}catch(Exception e) {
+			throw new AplicacaoException("erro na geração do documento.");
+		}
+	}
+
+	private String getAlgoritmoHash(String hash) {
+		String[] value = getPar().get("HASH_ALGORITHM");
+		if (value != null && value.length > 0) {
+			return value[0];
+		}
+		return hash;
+	}
+
+	private String getCacheControl(ExMobil mob) {
+		String cacheControl = "private";
+		final Integer grauNivelAcesso = mob.doc().getExNivelAcessoDoDocumento().getGrauNivelAcesso();
+		if (ExNivelAcesso.NIVEL_ACESSO_PUBLICO == grauNivelAcesso || ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS == grauNivelAcesso)
+			cacheControl = "public";
+		return cacheControl;
+	}
+
+	private void validarDownload(boolean somenteHash, String algoritmoHash, ExMobil mob) {
+		if (somenteHash) {
+			if (algoritmoHash != null) {
+				if (!(algoritmoHash.equals("SHA1") || algoritmoHash.equals("SHA-256") || algoritmoHash.equals("SHA-512") || algoritmoHash.equals("MD5")))
+					throw new AplicacaoException("Algoritmo de hash inválido. Os permitidos são: SHA1, SHA-256, SHA-512 e MD5.");
+			}
+		}
+
+		if (mob == null) {
+			throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
+		}
+
+		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário " + getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + ".");
+		}
+	}
+	
 	private ByteArrayInputStream makeByteArrayInputStream(final byte[] content, final boolean fB64) {
 		final byte[] conteudo = (fB64 ? Base64.encodeBytes(content).getBytes() : content);
 		return (new ByteArrayInputStream(conteudo));

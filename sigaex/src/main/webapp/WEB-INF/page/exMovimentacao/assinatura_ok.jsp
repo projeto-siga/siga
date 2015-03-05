@@ -1,0 +1,1 @@
+${assinante} - Ok

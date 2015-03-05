@@ -126,7 +126,7 @@
 						name="${x}" value="true" ${x_checked} /></td>
 				</c:if>
 				<td width="11.5%" align="right"><a href="javascript:void(0)"
-							onclick="javascript: window.open('/sigaex/expediente/doc/exibir.action?popup=true&id=${documento.idDoc}', '_new', 'width=700,height=500,scrollbars=yes,resizable')">${documento.codigo}</a>
+							onclick="javascript: window.open('/sigaex/app/expediente/doc/exibir?popup=true&sigla=${documento.sigla}', '_new', 'width=700,height=500,scrollbars=yes,resizable')">${documento.codigo}</a>
 				<c:choose>
 					<c:when test="${i == 1}">
 						<td width="11.5%" align="center">${documento.dtDispUltimoAgendamento}</td>

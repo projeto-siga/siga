@@ -36,7 +36,7 @@
 						<tr>
 							<td>
 								<label>
-									Data
+									Data:
 								</label>
 							</td>
 							<td>
@@ -49,9 +49,9 @@
 							</td>
 							<td>
 								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
-								&nbsp;&nbsp;
+								&nbsp;
 								<input type="checkbox" theme="simple" name="substituicao" value="${substituicao}" onclick="javascript:displayTitular(this);" />
-								&nbsp;&nbsp;Substituto
+								Substituto
 							</td>
 						</tr>
 					</c:when>
@@ -85,7 +85,7 @@
 								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" urlAcao="expediente/buscar" modulo="sigaex"/>
 							</siga:opcao>
 							<siga:opcao id='2' texto="Documento Externo ao SIGAEX" >
-								<input type="checkbox" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" />
+								<input type="text" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" />
 							</siga:opcao>
 						</siga:escolha>
 					</td>

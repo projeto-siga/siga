@@ -2568,7 +2568,6 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
-	@SuppressWarnings("unused")
 	@Get("/app/expediente/mov/agendar_publicacao")
 	public void agendarPublicacao(String sigla, String descrPublicacao, String mensagem) throws Exception {
 		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -2586,13 +2585,13 @@ public class ExMovimentacaoController extends ExController {
 				.podeAgendarPublicacao(getTitular(), getLotaTitular(), builder.getMob()))
 			throw new AplicacaoException("Não foi possível o agendamento de publicação no DJE.");
 
-		if (!Ex.getInstance()
+		if (Ex.getInstance()
 				.getConf()
 				.podePorConfiguracao(
 						getTitular(),
 						getLotaTitular(),
 						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO)) {
-		} else {
+			
 			lot.setId(doc.getSubscritor().getLotacao().getId());
 			lot.buscar();
 			podeAtenderPedidoPublicacao = Boolean.TRUE;
@@ -2603,7 +2602,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("cadernoDJEObrigatorio", PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
 		result.include("descrPublicacao", descrPublicacao == null ? doc.getDescrDocumento() : descrPublicacao);
 		result.include("podeAtenderPedidoPubl", podeAtenderPedidoPublicacao);
-		result.include("lotaSubscritorSel", new DpLotacaoSelecao());
+		result.include("lotaSubscritorSel", lot);
 		result.include("mob", builder.getMob());
 		result.include("request", getRequest());
 		result.include("mensagem", mensagem);

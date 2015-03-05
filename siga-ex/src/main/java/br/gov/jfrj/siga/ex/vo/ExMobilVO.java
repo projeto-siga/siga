@@ -390,7 +390,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("database_delete",
 				"Reverter Ind. Guarda Permanente",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"reverter_indicacao_permanente",
 				Ex.getInstance()
 						.getComp()

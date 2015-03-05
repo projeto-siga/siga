@@ -3044,7 +3044,6 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/indicar_permanente_gravar")
 	public void indicarPermanenteGravar(final String sigla, 
 										final String dtMovString, 
-										final String substituicao,
 										final DpPessoaSelecao subscritorSel,
 										final DpPessoaSelecao titularSel,
 										final String descrMov) throws Exception {
@@ -3061,6 +3060,7 @@ public class ExMovimentacaoController extends ExController {
 				.setDtMovString(dtMovString)
 				.setSubscritorSel(subscritorSel)
 				.setTitularSel(titularSel)
+				.setDescrMov(descrMov)
 				.construir(dao());
 		
 		if (!Ex.getInstance().getComp()
@@ -3086,6 +3086,79 @@ public class ExMovimentacaoController extends ExController {
 			throw e;
 		}
 	
+		result.include("dtRegMov",dtRegMov);
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	@Get("/app/expediente/mov/reverter_indicacao_permanente")
+	public void reverterIndicacaoPermanente(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+		buscarDocumento(docBuilder, true);
+		final ExMobil mob = docBuilder.getMob();
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeReverterIndicacaoPermanente(getTitular(),
+						getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível reverter indicação para guarda permanente");
+		
+		result.include("mob", mob);
+		result.include("sigla", sigla);
+		result.include("request", getRequest());
+		result.include("subscritorSel",new DpPessoaSelecao());
+		result.include("titularSel",new DpPessoaSelecao());
+	}
+
+	@Post("/app/expediente/mov/reverter_indicacao_permanente_gravar")
+	public void reverterIndicacaoPermanenteGravar(final String sigla,
+												  final String dtMovString,
+												  final DpPessoaSelecao subscritorSel,
+												  final DpPessoaSelecao titularSel,
+												  final String descrMov) throws Exception {
+		final BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+		buscarDocumento(docBuilder, true);
+		ExMobil mob = docBuilder.getMob();
+		
+		final ExMovimentacao mov = ExMovimentacaoBuilder
+				.novaInstancia()
+				.setMob(mob)
+				.setDtMovString(dtMovString)
+				.setSubscritorSel(subscritorSel)
+				.setTitularSel(titularSel)
+				.setDescrMov(descrMov)
+				.construir(dao());
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeReverterIndicacaoPermanente(getTitular(),
+						getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Não é possível reverter indicação para guarda permanente");
+
+		String dtRegMov = null;
+		if (mov.getExDocumento().isEletronico()) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.applyPattern("dd/MM/yyyy");
+			dtRegMov = (sdf.format(new Date()).toString());
+			mov.setSubscritor(getTitular());
+		}
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.reverterIndicacaoPermanente(getCadastrante(),
+							getLotaTitular(), mob, mov.getDtMov(),
+							mov.getSubscritor(), mov.getTitular(),
+							mov.getDescrMov());
+		} catch (final Exception e) {
+			throw e;
+		}
+
 		result.include("dtRegMov",dtRegMov);
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}

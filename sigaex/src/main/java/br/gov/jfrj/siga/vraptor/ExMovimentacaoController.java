@@ -45,8 +45,6 @@ import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -1744,7 +1742,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	@Get("/app/expediente/doc/a_cancelar_pedido_publicacao_boletim")
+	@Get("/app/expediente/mov/cancelar_pedido_publicacao_boletim")
 	public void aCancelarPedidoPublicacaoBoletim(final String sigla) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
@@ -1798,6 +1796,8 @@ public class ExMovimentacaoController extends ExController {
 									.getSiglaLotacao() + ") ", sb.toString(),
 					sbHtml.toString());
 		}
+		
+		result.redirectTo("/app/expediente/doc/editar?sigla=" + sigla);
 	}
 	
 	@Get("/app/expediente/mov/atender_pedido_publicacao")
@@ -1942,96 +1942,6 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		result.redirectTo("/app/expediente/mov/atender_pedido_publicacao");
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Get({"/app/expediente/mov/protocolo_arq", "/app/expediente/mov/via_protocolo_gravar"})
-	public void aGerarProtocoloArq() throws Exception {
-		//buscarDocumento(true);
-		ExMovimentacao mov = null;
-
-		final DpPessoa pes;
-		final ArrayList al = new ArrayList();
-		final DpPessoa oExemplo = new DpPessoa();
-
-		String siglaPessoa = param("pessoa");
-
-		if (siglaPessoa == null || siglaPessoa.trim() == "") {
-			LOGGER.warn("[aGerarProtocoloArq] - A sigla informada é nula ou inválida");
-			throw new AplicacaoException(
-					"A sigla informada é nula ou inválida.");
-		}
-
-		oExemplo.setSigla(siglaPessoa);
-		pes = CpDao.getInstance().consultarPorSigla(oExemplo);
-
-		if (pes == null) {
-			LOGGER.warn("[aGerarProtocoloArq] - Não foi possível localizar DpPessoa com a sigla "
-					+ oExemplo.getSigla());
-			throw new AplicacaoException(
-					"Não foi localizada pessoa com a sigla informada.");
-		}
-
-		Date dt = paramDate("dt");
-		final List<ExMovimentacao> movs = dao().consultarMovimentacoes(pes, dt);
-		for (ExMovimentacao m : movs) {
-			if (mov == null)
-				mov = m;
-			final Object[] ao = { m.getExMobil().doc(),
-					m.getExMobil().getUltimaMovimentacaoNaoCancelada() };
-			al.add(ao);
-		}
-
-		Object[] arr = al.toArray();
-
-		Arrays.sort(arr, new Comparator() {
-			public int compare(Object obj1, Object obj2) {
-				ExDocumento doc1 = (ExDocumento) ((Object[]) obj1)[0];
-				ExMovimentacao mov1 = (ExMovimentacao) ((Object[]) obj1)[1];
-				ExDocumento doc2 = (ExDocumento) ((Object[]) obj2)[0];
-				ExMovimentacao mov2 = (ExMovimentacao) ((Object[]) obj2)[1];
-
-				if (doc1.getAnoEmissao() > doc2.getAnoEmissao())
-					return 1;
-				else if (doc1.getAnoEmissao() < doc2.getAnoEmissao())
-					return -1;
-				else if (doc1.getExFormaDocumento().getIdFormaDoc() > doc2
-						.getExFormaDocumento().getIdFormaDoc())
-					return 1;
-				else if (doc1.getExFormaDocumento().getIdFormaDoc() < doc2
-						.getExFormaDocumento().getIdFormaDoc())
-					return -1;
-				else if (doc1.getNumExpediente() > doc2.getNumExpediente())
-					return 1;
-				else if (doc1.getNumExpediente() < doc2.getNumExpediente())
-					return -1;
-				else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() > mov2
-						.getExMobil().getExTipoMobil().getIdTipoMobil())
-					return 1;
-				else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() < mov2
-						.getExMobil().getExTipoMobil().getIdTipoMobil())
-					return -1;
-				else if (mov1.getExMobil().getNumSequencia() > mov2
-						.getExMobil().getNumSequencia())
-					return 1;
-				else if (mov1.getExMobil().getNumSequencia() < mov2
-						.getExMobil().getNumSequencia())
-					return -1;
-				else if (doc1.getIdDoc() > doc2.getIdDoc())
-					return 1;
-				else if (doc1.getIdDoc() < doc2.getIdDoc())
-					return -1;
-				else
-					return 0;
-			}
-		});
-
-		al.clear();
-		for (int k = 0; k < arr.length; k++)
-			al.add(arr[k]);
-		
-		result.include("itens", al);
-		result.include("mov", al);
 	}
 	
 	@Get("app/expediente/mov/cancelar_juntada")

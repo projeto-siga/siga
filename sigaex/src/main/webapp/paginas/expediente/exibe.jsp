@@ -800,9 +800,6 @@
 		var url = "/sigawf/doc.action?sigla=${doc.codigo}";
 		Siga.ajax(url, null, "GET", function(response){		
 			var div = $(".wf_div"); 
-			//if(div.length == 0){
-				//div = $(".wf_div".replace(/\//g, "\\\\/"));
-			//}
 			$(div).html(response);
 		});		
 	//	ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");
@@ -821,7 +818,6 @@
 	<script type="text/javascript">
 		var urlGc = "${url}";
 		Siga.ajax(urlGc, null, "GET", function(response){	
-			debugger;	
 			$("#gc").html(response);
 		});		
 	//	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));

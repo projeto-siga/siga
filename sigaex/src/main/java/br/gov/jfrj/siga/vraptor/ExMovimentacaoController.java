@@ -2508,11 +2508,11 @@ public class ExMovimentacaoController extends ExController {
 			podeAtenderPedidoPublicacao = Boolean.TRUE;
 		}
 		
-		ListaLotPubl listaLotPubl = getListaLotPubl(doc);
+		ListaLotPubl listaLotPubl = getListaLotacaoPublicacao(doc);
 		result.include("tipoMateria", PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		result.include("cadernoDJEObrigatorio", PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
 		result.include("descrPublicacao", descrPublicacao == null ? doc.getDescrDocumento() : descrPublicacao);
-		result.include("podeAtenderPedidoPubl", Boolean.TRUE);
+		result.include("podeAtenderPedidoPubl", podeAtenderPedidoPublicacao);
 		result.include("lotaSubscritorSel", new DpLotacaoSelecao());
 		result.include("mob", builder.getMob());
 		result.include("request", getRequest());
@@ -2584,7 +2584,9 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException(mensagemValidacao);
 	}
 	
-	private ListaLotPubl getListaLotPubl(ExDocumento doc) throws Exception {
+	private ListaLotPubl getListaLotacaoPublicacao(ExDocumento doc) throws Exception {
+		validarExisteLotacao(doc);
+
 		Set<DpLotacao> lotacoes = new HashSet<DpLotacao>();
 		DpLotacao lotSubscritor, lotCadastrante, lotTitular, lotFiltro;
 		String siglaSubscritor, siglaCadastrante, siglaTitular;
@@ -2617,6 +2619,18 @@ public class ExMovimentacaoController extends ExController {
 			lotacoes.add(lotTitular);
 		}
 		return new ListaLotPubl(lotacoes, lotSubscritor.getId());
+	}
+
+	private void validarExisteLotacao(ExDocumento doc) {
+		if (doc.getTitular() != null) {
+			if (doc.getLotaTitular() == null) {
+				throw new AplicacaoException("Não foi possível encontrar a lotação do documento");
+			}
+		} else {
+			if (doc.getLotaSubscritor() == null) {
+				throw new AplicacaoException("Não foi possível encontrar a lotação do documento");
+			}
+		}
 	}
 	
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {
@@ -2848,7 +2862,7 @@ public class ExMovimentacaoController extends ExController {
 
 		lot.setId(doc.getSubscritor().getLotacao().getId());
 		lot.buscar();
-		ListaLotPubl listaLotPubl = getListaLotPubl(doc);		
+		ListaLotPubl listaLotPubl = getListaLotacaoPublicacao(doc);		
 		
 		result.include("tipoMateria",PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		result.include("cadernoDJEObrigatorio",PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));

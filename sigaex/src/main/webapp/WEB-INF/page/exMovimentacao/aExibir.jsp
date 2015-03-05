@@ -298,7 +298,7 @@ function visualizarImpressao(via) {
 					<input type="hidden" name="urlchk_${mov.idMov}" id="urlchk_${mov.idMov}" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
 
 					<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
-					<c:set var="jspServerSenha" value="${request.contextPath}/expediente/mov/assinar_mov_login_senha_gravar.action" />
+					<c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
 					<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
 					

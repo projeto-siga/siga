@@ -2664,6 +2664,54 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
+    @Get("/app/expediente/mov/assinar_verificar")
+    public void aAssinarVerificar(Long id, boolean ajax) {
+        final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
+        final ExDocumento doc = buscarDocumento(builder, true);
+        
+        final ExMovimentacao mov = builder.getMov();    
+
+        try {
+            final String s = Ex
+                    .getInstance()
+                    .getBL()
+                    .verificarAssinatura(doc.getConteudoBlobPdf(),
+                            mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
+                            mov.getDtIniMov());
+            getRequest().setAttribute("assinante", s);
+
+            result.use(Results.page()).forwardTo("/paginas/assinatura_ok.jsp");
+        } catch (final Exception e) {
+            getRequest().setAttribute("err", e.getMessage());
+            result.use(Results.page()).forwardTo("/paginas/assinatura_erro.jsp");
+        }
+    }    
+    
+    @Get("/app/expediente/mov/assinar_mov_verificar")
+	public void aAssinarMovVerificar(Long id, boolean ajax) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
+        buscarDocumento(builder, true);		
+
+		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
+		final ExMovimentacao movRef = mov.getExMovimentacaoRef();
+
+		try {
+			final String s = Ex
+					.getInstance()
+					.getBL()
+					.verificarAssinatura(movRef.getConteudoBlobpdf(),
+							mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
+							mov.getDtIniMov());
+			getRequest().setAttribute("assinante", s);
+
+			result.use(Results.page()).forwardTo("/paginas/assinatura_ok.jsp");
+		} catch (final Exception e) {
+			getRequest().setAttribute("err", e.getMessage());
+			result.use(Results.page()).forwardTo("/paginas/assinatura_erro.jsp");
+		}
+	}
+	
+	
 	private void validarDataGravacao(ExMovimentacao mov, boolean apenasSolicitacao) throws AplicacaoException {
 		if (mov.getDtDispPublicacao() == null)
 			throw new AplicacaoException("A data desejada para a disponibilização precisa ser informada.");

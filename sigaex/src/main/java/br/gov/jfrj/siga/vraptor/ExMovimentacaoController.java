@@ -37,6 +37,11 @@ import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -52,6 +57,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
@@ -1586,6 +1592,312 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			throw e;
 		}
+	}
+	
+	@Get("/app/expediente/doc/a_cancelar_pedido_publicacao_boletim")
+	public void aCancelarPedidoPublicacaoBoletim(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+		
+		final ExMobil mob = builder.getMob();
+
+		ExMovimentacao movPedidoBI = mob
+				.getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM);
+
+		if (movPedidoBI != null && !movPedidoBI.isCancelada()) {
+			Ex.getInstance()
+					.getBL()
+					.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+							movPedidoBI, null, null, null,
+							"Pedido cancelado pela unidade gestora do BI");
+
+			// Verifica se está na base de teste
+			String mensagemTeste = null;
+			if (!SigaExProperties.isAmbienteProducao())
+				mensagemTeste = SigaExProperties.getString("email.baseTeste");
+
+			StringBuffer sb = new StringBuffer(
+					"Informamos que o pedido de publicação no Boletim Interno do documento "
+							+ mob.getExDocumento().getCodigo()
+							+ " foi cancelado pela unidade gestora do BI.\n ");
+
+			if (mensagemTeste != null)
+				sb.append("\n " + mensagemTeste + "\n");
+
+			StringBuffer sbHtml = new StringBuffer(
+					"<html><body><p>Informamos que o pedido de publicação no Boletim Interno do documento "
+							+ mob.getExDocumento().getCodigo()
+							+ " foi cancelado pela unidade gestora do BI.</p> ");
+
+			if (mensagemTeste != null)
+				sbHtml.append("<p><b>" + mensagemTeste + "</b></p>");
+
+			sbHtml.append("</body></html>");
+
+			// Envia email para o servidor que fez o pedido
+			ArrayList<String> emailsSolicitantes = new ArrayList<String>();
+			emailsSolicitantes.add(movPedidoBI.getCadastrante()
+					.getEmailPessoaAtual());
+
+			Correio.enviar(SigaBaseProperties
+					.getString("servidor.smtp.usuario.remetente"),
+					emailsSolicitantes.toArray(new String[emailsSolicitantes
+							.size()]),
+					"Cancelamento de pedido de publicação no DJE ("
+							+ movPedidoBI.getLotaCadastrante()
+									.getSiglaLotacao() + ") ", sb.toString(),
+					sbHtml.toString());
+		}
+	}
+	
+	@Get("/app/expediente/mov/atender_pedido_publicacao")
+	public void aAtenderPedidoPublicacao() throws Exception {
+		if (!Ex.getInstance()
+				.getConf()
+				.podePorConfiguracao(
+						getTitular(),
+						getLotaTitular(),
+						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO))
+			throw new AplicacaoException("Operação restrita");
+		
+		result.include("itensSolicitados", dao().listarSolicitados(getTitular().getOrgaoUsuario()));
+	}
+	
+	@Get("/app/expediente/mov/atender_pedido_publicacao_gravar")
+	public void aAtenderPedidoPublicacaoGravar() throws Exception {
+
+		final Pattern p = Pattern.compile("chk_([0-9]+)");
+
+		StringBuffer msgDocumentosErro = new StringBuffer();
+		int cont = 0;
+
+		ExDocumento doque = new ExDocumento();
+
+		// pra cada doc selecionado na lista e passado pela URL
+		for (final String s : getPar().keySet()) {
+			if (s.startsWith("chk_") && param(s).equals("true")) {
+				final Matcher m = p.matcher(s);
+				try {
+					// joga exceção se não é uma id válida
+					if (!m.find())
+						throw new AplicacaoException(
+								"Não foi possível ler a Id do documento.");
+
+					doque = daoDoc(Long.valueOf(m.group(1)));
+
+					final ExMovimentacao move = doque
+							.getMobilGeral()
+							.getUltimaMovimentacao(
+									ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO);
+
+					if (!Ex.getInstance()
+							.getComp()
+							.podeRemeterParaPublicacaoSolicitada(getTitular(),
+									getLotaTitular(), doque.getMobilGeral()))
+						throw new AplicacaoException(
+								"O documento não está nas condições de ser remetido");
+
+					validarDataGravacao(move, false);
+
+					String stipoMateria = param("tpm_" + m.group(1));
+					if (stipoMateria == null)
+						stipoMateria = "A";
+
+					// remete, o que pode gerar erros
+					Ex.getInstance()
+							.getBL()
+							.remeterParaPublicacao(getCadastrante(),
+									getLotaTitular(), doque.getMobilGeral(),
+									dao().dt(), getCadastrante(),
+									getCadastrante(), getLotaTitular(),
+									move.getDtDispPublicacao(), stipoMateria,
+									move.getLotaPublicacao(),
+									move.getDescrPublicacao());
+				} catch (final Throwable e) {
+					cont++;
+					msgDocumentosErro.append(cont + ")" + doque.getCodigo()
+							+ ": " + e.getMessage() + "                   ");
+				}
+			}
+		}
+
+		if (cont > 0)
+			throw new AplicacaoException(
+					"Alguns documentos não puderam ser remetidos ->  "
+							+ msgDocumentosErro);
+		
+		result.redirectTo("/app/expediente/mov/atender_pedido_publicacao");
+	}
+	
+	@Get("/app/expediente/mov/atender_pedido_publicacao_cancelar")
+	public void aAtenderPedidoPublicacaoCancelar(final String sigla) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+		
+		final ExMobil mob = builder.getMob();
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeAtenderPedidoPublicacao(getTitular(), getLotaTitular(),
+						mob))
+			throw new AplicacaoException(
+					"Usuário não tem permissão de cancelar pedido de publicação no DJE.");
+
+		ExMovimentacao movPedidoDJE = mob
+				.getUltimaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO);
+
+		if (movPedidoDJE != null && !movPedidoDJE.isCancelada()) {
+			Ex.getInstance()
+					.getBL()
+					.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+							movPedidoDJE, null, null, null,
+							"Pedido cancelado pela unidade gestora do DJE");
+
+			// Verifica se está na base de teste
+			String mensagemTeste = null;
+			if (!SigaExProperties.isAmbienteProducao())
+				mensagemTeste = SigaExProperties.getString("email.baseTeste");
+
+			StringBuffer sb = new StringBuffer(
+					"Informamos que o pedido de publicação no DJE do documento "
+							+ mob.getExDocumento().getCodigo()
+							+ " foi cancelado pela unidade gestora do DJE.\n ");
+
+			if (mensagemTeste != null)
+				sb.append("\n " + mensagemTeste + "\n");
+
+			StringBuffer sbHtml = new StringBuffer(
+					"<html><body><p>Informamos que o pedido de publicação no DJE do documento "
+							+ mob.getExDocumento().getCodigo()
+							+ " foi cancelado pela unidade gestora do DJE.</p> ");
+
+			if (mensagemTeste != null)
+				sbHtml.append("<p><b>" + mensagemTeste + "</b></p>");
+
+			sbHtml.append("</body></html>");
+
+			// Envia email para o servidor que fez o pedido
+			ArrayList<String> emailsSolicitantes = new ArrayList<String>();
+			emailsSolicitantes.add(movPedidoDJE.getCadastrante()
+					.getEmailPessoaAtual());
+
+			Correio.enviar(SigaBaseProperties
+					.getString("servidor.smtp.usuario.remetente"),
+					emailsSolicitantes.toArray(new String[emailsSolicitantes
+							.size()]),
+					"Cancelamento de pedido de publicação no DJE ("
+							+ movPedidoDJE.getLotaCadastrante()
+									.getSiglaLotacao() + ") ", sb.toString(),
+					sbHtml.toString());
+		}
+
+		result.redirectTo("/app/expediente/mov/atender_pedido_publicacao");
+	}
+	
+	private void validarDataGravacao(ExMovimentacao mov,
+			boolean apenasSolicitacao) throws AplicacaoException {
+		if (mov.getDtDispPublicacao() == null)
+			throw new AplicacaoException(
+					"A data desejada para a disponibilização precisa ser informada.");
+
+		DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(
+				mov.getDtDispPublicacao());
+
+		String mensagemValidacao = DJE
+				.validarDataDeDisponibilizacao(apenasSolicitacao);
+
+		if (mensagemValidacao != null)
+			throw new AplicacaoException(mensagemValidacao);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Get({"/app/expediente/mov/protocolo_arq", "/app/expediente/mov/via_protocolo_gravar"})
+	public void aGerarProtocoloArq() throws Exception {
+		//buscarDocumento(true);
+		ExMovimentacao mov = null;
+
+		final DpPessoa pes;
+		final ArrayList al = new ArrayList();
+		final DpPessoa oExemplo = new DpPessoa();
+
+		String siglaPessoa = param("pessoa");
+
+		if (siglaPessoa == null || siglaPessoa.trim() == "") {
+			LOGGER.warn("[aGerarProtocoloArq] - A sigla informada é nula ou inválida");
+			throw new AplicacaoException(
+					"A sigla informada é nula ou inválida.");
+		}
+
+		oExemplo.setSigla(siglaPessoa);
+		pes = CpDao.getInstance().consultarPorSigla(oExemplo);
+
+		if (pes == null) {
+			LOGGER.warn("[aGerarProtocoloArq] - Não foi possível localizar DpPessoa com a sigla "
+					+ oExemplo.getSigla());
+			throw new AplicacaoException(
+					"Não foi localizada pessoa com a sigla informada.");
+		}
+
+		Date dt = paramDate("dt");
+		final List<ExMovimentacao> movs = dao().consultarMovimentacoes(pes, dt);
+		for (ExMovimentacao m : movs) {
+			if (mov == null)
+				mov = m;
+			final Object[] ao = { m.getExMobil().doc(),
+					m.getExMobil().getUltimaMovimentacaoNaoCancelada() };
+			al.add(ao);
+		}
+
+		Object[] arr = al.toArray();
+
+		Arrays.sort(arr, new Comparator() {
+			public int compare(Object obj1, Object obj2) {
+				ExDocumento doc1 = (ExDocumento) ((Object[]) obj1)[0];
+				ExMovimentacao mov1 = (ExMovimentacao) ((Object[]) obj1)[1];
+				ExDocumento doc2 = (ExDocumento) ((Object[]) obj2)[0];
+				ExMovimentacao mov2 = (ExMovimentacao) ((Object[]) obj2)[1];
+
+				if (doc1.getAnoEmissao() > doc2.getAnoEmissao())
+					return 1;
+				else if (doc1.getAnoEmissao() < doc2.getAnoEmissao())
+					return -1;
+				else if (doc1.getExFormaDocumento().getIdFormaDoc() > doc2
+						.getExFormaDocumento().getIdFormaDoc())
+					return 1;
+				else if (doc1.getExFormaDocumento().getIdFormaDoc() < doc2
+						.getExFormaDocumento().getIdFormaDoc())
+					return -1;
+				else if (doc1.getNumExpediente() > doc2.getNumExpediente())
+					return 1;
+				else if (doc1.getNumExpediente() < doc2.getNumExpediente())
+					return -1;
+				else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() > mov2
+						.getExMobil().getExTipoMobil().getIdTipoMobil())
+					return 1;
+				else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() < mov2
+						.getExMobil().getExTipoMobil().getIdTipoMobil())
+					return -1;
+				else if (mov1.getExMobil().getNumSequencia() > mov2
+						.getExMobil().getNumSequencia())
+					return 1;
+				else if (mov1.getExMobil().getNumSequencia() < mov2
+						.getExMobil().getNumSequencia())
+					return -1;
+				else if (doc1.getIdDoc() > doc2.getIdDoc())
+					return 1;
+				else if (doc1.getIdDoc() < doc2.getIdDoc())
+					return -1;
+				else
+					return 0;
+			}
+		});
+
+		al.clear();
+		for (int k = 0; k < arr.length; k++)
+			al.add(arr[k]);
+		
+		result.include("itens", al);
+		result.include("mov", al);
 	}
 	
 	private List<ExNivelAcesso> getListaNivelAcesso(final ExDocumento doc) {

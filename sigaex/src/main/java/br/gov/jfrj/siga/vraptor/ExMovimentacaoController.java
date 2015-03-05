@@ -69,6 +69,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
+import com.google.common.base.Optional;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Paragraph;
@@ -77,6 +78,8 @@ import com.lowagie.text.pdf.PdfWriter;
 @Resource
 public class ExMovimentacaoController extends ExController {
 
+	private static final String OPCAO_MOSTRAR = "mostrar";
+	private static final int DEFAULT_TIPO_RESPONSAVEL = 1;
 	private static final int DEFAULT_POSTBACK = 1;
 	private static final Logger LOGGER = Logger.getLogger(ExMovimentacaoController.class);
 
@@ -468,11 +471,11 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/protocolo_unitario")
-	public void protocolo(final String sigla, final Long id) {
+	public void protocolo(boolean popup, final String sigla, final Long id) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
-
+		
 		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 
 		ArrayList<Object> lista = new ArrayList<Object>();
@@ -482,6 +485,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mov", mov);
 		result.include("itens", lista);
 		result.include("lotaTitular", getLotaTitular());
+		result.include("popup", popup);
 	}
 
 	@Get("app/expediente/mov/juntar")
@@ -915,7 +919,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		if (param("processar_modelo") != null) {
-			result.forwardTo(this).processa_modelo(mov);
+			result.forwardTo(this).processaModelo(mov);
 		} else {
 			result.include("par", getRequest().getParameterMap());
 			result.include("modelo", getModelo());
@@ -924,7 +928,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 
-	private void processa_modelo(final ExMovimentacao mov) {
+	private void processaModelo(final ExMovimentacao mov) {
 		result.include("par", getRequest().getParameterMap());
 		result.include("modelo", getModelo());
 		result.include("nmArqMod", getModelo().getNmArqMod());
@@ -964,26 +968,47 @@ public class ExMovimentacaoController extends ExController {
 
 	@Post("/app/expediente/mov/transferir")
 	@Get("/app/expediente/mov/transferir")
-	public void aTransferir(final String sigla, Long idTpDespacho) {
+	public void aTransferir(
+			final String sigla, 
+			final Long idTpDespacho, 
+			final Integer tipoResponsavel,
+			final int postback, 
+			final String dtMovString, 
+			final DpPessoaSelecao subscritorSel,
+			final boolean substituicao, 
+			final DpPessoaSelecao titularSel, 
+			final String nmFuncaoSubscritor, 
+			final long idResp,
+			final List<ExTipoDespacho> tiposDespacho, 
+			final String descrMov, 
+			final DpLotacaoSelecao lotaResponsavelSel, 
+			final DpPessoaSelecao responsavelSel, 
+			final CpOrgaoSelecao cpOrgaoSel, 
+			final String obsOrgao,
+			final String protocolo,
+			final String dtDevolucaoMovString) {
+		
+		this.setPostback(postback);
+		
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-
 		final ExDocumento doc = buscarDocumento(builder);
-
-		final DpLotacaoSelecao lot = new DpLotacaoSelecao();
-		final DpPessoaSelecao pes = new DpPessoaSelecao();
-		final DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
-		final DpPessoaSelecao titutalarSel = new DpPessoaSelecao();
-		int tipoResponsavel = -1;
-
+		final DpPessoaSelecao subscritorSelFinal = Optional.fromNullable(subscritorSel).or(new DpPessoaSelecao());
+		final DpLotacaoSelecao lotaResponsavelSelFinal = Optional.fromNullable(lotaResponsavelSel).or(new DpLotacaoSelecao());
+		final DpPessoaSelecao responsavelSelFinal = Optional.fromNullable(responsavelSel).or(new DpPessoaSelecao());
+		final DpPessoaSelecao titularSelFinal = Optional.fromNullable(titularSel).or(new DpPessoaSelecao());
+		final CpOrgaoSelecao cpOrgaoSelecaoFinal = Optional.fromNullable(cpOrgaoSel).or(new CpOrgaoSelecao());
 		final ExMovimentacao ultMov = builder.getMob().getUltimaMovimentacao();
+		
+		Integer tipoResponsavelFinal = Optional.fromNullable(tipoResponsavel).or(DEFAULT_TIPO_RESPONSAVEL);
+		
 		if (getRequest().getAttribute("postback") == null) {
 			if (ultMov.getLotaDestinoFinal() != null) {
-				lot.buscarPorObjeto(ultMov.getLotaDestinoFinal());
-				tipoResponsavel = 1;
+				lotaResponsavelSelFinal.buscarPorObjeto(ultMov.getLotaDestinoFinal());
+				tipoResponsavelFinal = 1;
 			}
 			if (ultMov.getDestinoFinal() != null) {
-				pes.buscarPorObjeto(ultMov.getDestinoFinal());
-				tipoResponsavel = 2;
+				responsavelSelFinal.buscarPorObjeto(ultMov.getDestinoFinal());
+				tipoResponsavelFinal = 2;
 			}
 		}
 
@@ -998,16 +1023,25 @@ public class ExMovimentacaoController extends ExController {
 		result.include("sigla", sigla);
 		result.include("tiposDespacho", this.getTiposDespacho(builder.getMob()));
 		result.include("listaTipoResp", this.getListaTipoResp());
-		result.include("tipoResponsavel", tipoResponsavel);
-		result.include("subscritorSel", subscritorSel);
-		result.include("titularSel", titutalarSel);
-		result.include("lotaResponsavelSel", lot);
-		result.include("responsavelSel", pes);
+		result.include("tipoResponsavel", tipoResponsavelFinal);
+		result.include("subscritorSel", subscritorSelFinal);
+		result.include("titularSel", titularSelFinal);
+		result.include("lotaResponsavelSel", lotaResponsavelSelFinal);
+		result.include("responsavelSel", responsavelSelFinal);
 		result.include("idTpDespacho", idTpDespacho);
+		result.include("cpOrgaoSel", cpOrgaoSelecaoFinal);
+		result.include("dtMovString", dtMovString); 
+		result.include("substituicao", substituicao); 
+		result.include("nmFuncaoSubscritor", nmFuncaoSubscritor); 
+		result.include("idResp", idResp);
+		result.include("descrMov", descrMov); 
+		result.include("obsOrgao", obsOrgao);
+		result.include("protocolo", OPCAO_MOSTRAR.equals(protocolo));
+		result.include("dtDevolucaoMovString", dtDevolucaoMovString);
 	}
 
 	@Post("/app/expediente/mov/transferir_gravar")
-	public void transferir_gravar(final int postback, final String sigla, final String dtMovString, final DpPessoaSelecao subscritorSel,
+	public void transferirGravar(final int postback, final String sigla, final String dtMovString, final DpPessoaSelecao subscritorSel,
 			final boolean substituicao, final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final long idTpDespacho, final long idResp,
 			final List<ExTipoDespacho> tiposDespacho, final String descrMov, final List<Map<Integer, String>> listaTipoResp, final int tipoResponsavel,
 			final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, final CpOrgaoSelecao cpOrgacaoSel, final String obsOrgao,
@@ -1018,7 +1052,8 @@ public class ExMovimentacaoController extends ExController {
 		buscarDocumento(builder);
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
-		movimentacaoBuilder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao).setTitularSel(titularSel)
+		movimentacaoBuilder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel)
+				.setMob(builder.getMob()).setSubstituicao(substituicao).setTitularSel(titularSel)
 				.setNmFuncaoSubscritor(nmFuncaoSubscritor).setIdTpDespacho(idTpDespacho).setDescrMov(descrMov).setLotaResponsavelSel(lotaResponsavelSel)
 				.setResponsavelSel(responsavelSel).setCpOrgaoSel(cpOrgacaoSel).setObsOrgao(obsOrgao);
 
@@ -1047,25 +1082,29 @@ public class ExMovimentacaoController extends ExController {
 						mov.getTitular(), mov.getExTipoDespacho(), false, mov.getDescrMov(), movimentacaoBuilder.getConteudo(), mov.getNmFuncaoSubscritor(),
 						false, false);
 
-		if (protocolo != null && protocolo.equals("mostrar")) {
-			result.forwardTo(this).transferido();
+		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
+			ExMovimentacao ultimaMovimentacao = builder.getMob().getUltimaMovimentacao();
+			result.redirectTo(MessageFormat.format("/app/expediente/mov/transferido?sigla={0}&idMov={1}", sigla, ultimaMovimentacao.getIdMov().toString()));
 		}
-
-		result.redirectTo(this).fechar_popup();
+		else {
+			result.redirectTo(this).fecharPopup();
+		}
 	}
 
 	@Get("/app/expediente/mov/fechar_popup")
-	public void fechar_popup() {
+	public void fecharPopup() {
 		System.out.println("popup fechado.");
 	}
 
 	@Get("/app/expediente/mov/transferido")
-	public void transferido() {
-		final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia().construir(dao());
-
-		result.include("mov", mov);
+	public void transferido(String sigla, Long idMov) {
+		final BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla).setId(idMov);
+		final ExDocumento doc = buscarDocumento(docBuilder, false);
+		
+		result.include("mov", docBuilder.getMov());
+		result.include("doc", doc);
 	}
-
+	
 	@Get("app/expediente/mov/encerrar_volume")
 	public void encerrarVolumeGravar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
@@ -2581,6 +2620,96 @@ public class ExMovimentacaoController extends ExController {
 	public void aAutenticarDocumento(final String sigla) throws Exception  {
 		//setAutenticando(true);
 		result.forwardTo(this).aAssinar(sigla, true);
-	}	
+	}
+	
+	@Get("/app/expediente/mov/pedirPublicacao")
+	public void pedirPublicacao(final String sigla, 
+								final String descrPublicacao, 
+								final String mensagem) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);	
+		ExDocumento doc = buscarDocumento(builder, true);
+		ExMobil mob = builder.getMob();
+		
+		DpLotacaoSelecao lot = new DpLotacaoSelecao();
+
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+			throw new AplicacaoException(
+					"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público.");
+
+		if (!Ex.getInstance().getComp()
+				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Publicação não permitida");
+
+
+		lot.setId(doc.getSubscritor().getLotacao().getId());
+		lot.buscar();
+		ListaLotPubl listaLotPubl = getListaLotPubl(doc);		
+		
+		result.include("tipoMateria",PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
+		result.include("cadernoDJEObrigatorio",PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
+		result.include("descrPublicacao", descrPublicacao == null ? doc.getDescrDocumento() : descrPublicacao);
+		result.include("sigla",sigla);
+		result.include("request",getRequest());
+		result.include("mob", builder.getMob());
+		result.include("doc", builder.getMob().getDoc());
+		result.include("listaLotPubl", listaLotPubl.getLotacoes());
+		result.include("idLotDefault", listaLotPubl.getIdLotDefault());
+		result.include("tamMaxDescr", 255 - doc.getDescrDocumento().length());
+		result.include("mensagem",mensagem);
+	}
+	
+	@Post("/app/expediente/mov/pedirPublicacaoGravar")
+	public void pedirPublicacaoGravar(String sigla,
+			                          Integer postback,
+			                          String tipoMateria,
+			                          String dtDispon,
+			                          Long idLotPublicacao,
+			                          String descrPublicacao,
+			                          DpLotacaoSelecao lotaSubscritorSel) throws Exception {
+		
+		final BuscaDocumentoBuilder docBuilder = BuscaDocumentoBuilder
+				.novaInstancia()
+				.setSigla(sigla);
+	
+		this.setPostback(postback);
+		Long idPubl = null;
+		buscarDocumento(docBuilder, true);
+		final ExMobil mob = docBuilder.getMob();
+		
+		final ExMovimentacao mov = ExMovimentacaoBuilder
+					.novaInstancia()
+					.setMob(docBuilder.getMob())
+					.setDtDispon(dtDispon)
+					.construir(dao());
+		
+		if (idLotPublicacao != null)
+			idPubl = idLotPublicacao;
+		else {
+			if (lotaSubscritorSel.getId() != null)
+				idPubl = lotaSubscritorSel.getId();
+		}
+	
+		final String lotPublicacao = dao().consultar(idPubl, DpLotacao.class, false).getSigla();
+
+		if (!Ex.getInstance().getComp()
+				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException("Publicação não permitida");
+
+		validarDataGravacao(mov, true);
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.pedirPublicacao(getCadastrante(), getLotaTitular(), mob,
+							mov.getDtMov(), mov.getSubscritor(),
+							mov.getTitular(), mov.getLotaTitular(),
+							mov.getDtDispPublicacao(), tipoMateria,
+							lotPublicacao, descrPublicacao);
+		} catch (final Exception e) {
+			throw e;
+		}
+
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
 
 }

@@ -1638,4 +1638,29 @@ public class ExDocumentoController extends ExController {
 
 		result.redirectTo("/app/expediente/doc/".concat(dto.getMob().getCodigoCompacto()).concat(".pdf"));
 	}	
+	
+	@Get("/app/expediente/doc/corrigir_arquivamentos_volume")
+	public void aCorrigirArquivamentosVolume(Integer de, Integer ate, Boolean efetivar) throws Exception {
+		int idPrimeiroDoc, idUltimoDoc;
+		Boolean efetivarDoc = false;
+		try {
+			idPrimeiroDoc = de;
+		} catch (Exception e) {
+			idPrimeiroDoc = 1;
+		}
+		try {
+			idUltimoDoc = ate;
+		} catch (Exception e) {
+			idUltimoDoc = 999999999;
+		}
+		try {
+			efetivarDoc = efetivar;
+		} catch (Exception e) {
+			efetivarDoc = false;
+		}		
+		Ex.getInstance()
+				.getBL()
+				.corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc, efetivarDoc);
+	}
+	
 }

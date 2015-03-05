@@ -383,7 +383,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("database_add",
 				"Indicar para Guarda Permanente",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"indicar_permanente",
 				Ex.getInstance().getComp()
 						.podeIndicarPermanente(titular, lotaTitular, mob));

@@ -81,7 +81,7 @@
 						</c:choose>
 						<tr class="${evenorodd}">
 							<td align="right">
-								<a href="/app/expediente/doc/exibir?sigla="${documento[1].exMobil.sigla}>${documento[1].exMobil.codigo}</a> 
+								<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].exMobil.sigla}">${documento[1].exMobil.codigo}</a> 
 								<c:if test="${not documento[1].exMobil.geral}">
 									<td align="center">${documento[0].dtDocDDMMYY}</td>
 									<td align="center"><siga:selecionado
@@ -136,7 +136,7 @@
 			<form name="frm" action="principal" namespace="/" method="get" theme="simple">
 				<input type="button" value="Imprimir" class="gt-btn-medium gt-btn-left"
 					onclick="javascript: document.body.offsetHeight; window.print();"/>
-				<c:if test="${param.popup != true}">
+				<c:if test="${popup != true}">
 					<input type="button" value="Voltar" class="gt-btn-medium gt-btn-left" 
 						onclick="javascript:history.back();" />
 				</c:if>

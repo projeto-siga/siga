@@ -14,7 +14,7 @@
 </c:if>
 
 
-	<script type="text/javascript" language="Javascript1.1">
+<script type="text/javascript" language="Javascript1.1">
 	
 function tamanho() {
 	var i = tamanho2();
@@ -43,7 +43,7 @@ function sbmt() {
 			document.getElementById('transferir_gravar_sigla').value= '';
 			document.getElementById('transferir_gravar_pai').value= '${mob.sigla}';
 			document.getElementById('transferir_gravar_despachando').value= 'true';
-			frm["exDocumentoDTO.postback"].value=0;
+			frm["postback"].value=0;
 			frm.action='${pageContext.request.contextPath}/app/expediente/doc/editar';
   		}	
   		else {
@@ -55,6 +55,7 @@ function sbmt() {
 					.replace('VALOR_SIGLA', document.getElementById('transferir_gravar_sigla').value)
 					.replace('VALOR_ID_DESPACHO', document.getElementById('transferir_gravar_idTpDespacho').value);
 		}
+	console.log('submetendo...');
 	frm.submit();
 }
 
@@ -96,12 +97,12 @@ function popitup_movimentacao() {
 			<div class="gt-content-box gt-for-table">
 			
 			<form name="frm" action="transferir_gravar" method="post">
-				<input type="hidden" name="exDocumentoDTO.id" value="${id}" />
-				<input type="hidden" name="exDocumentoDTO.postback" value="1" />
-				<input type="hidden" name="exDocumentoDTO.docFilho" value="true" />
-				<input type="hidden" name="exDocumentoDTO.sigla" value="${sigla}" id="transferir_gravar_sigla" />
-				<input type="hidden" name="exDocumentoDTO.mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
-				<input type="hidden" name="exDocumentoDTO.despachando" value="" id="transferir_gravar_despachando" />
+				<input type="hidden" name="id" value="${id}" />
+				<input type="hidden" name="postback" value="1" />
+				<input type="hidden" name="docFilho" value="true" />
+				<input type="hidden" name="sigla" value="${sigla}" id="transferir_gravar_sigla" />
+				<input type="hidden" name="mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
+				<input type="hidden" name="despachando" value="" id="transferir_gravar_despachando" />
 				<table class="gt-form-table">
 					<tr class="header">
 						<td colspan="2">Despacho</td>
@@ -115,8 +116,8 @@ function popitup_movimentacao() {
 						<td>Subscritor:</td>
 						<td>
 							<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
-							&nbsp;&nbsp;<input type="checkbox" theme="simple" name="substituicao"
-							onclick="javascript:displayTitular(this);" value="${substituicao}"/>
+							&nbsp;&nbsp;
+							<input type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);"  <c:if test="${substituicao}">checked</c:if> />
 							Substituto
 						</td>
 					</tr>
@@ -140,7 +141,7 @@ function popitup_movimentacao() {
 						</td>
 						<td colspan="3">
 							<input type="hidden" name="campos" value="${nmFuncaoSubscritor}" />
-							<input type="text" name="nmFuncaoSubscritor" size="50" maxLength="128" />
+							<input type="text" name="nmFuncaoSubscritor" size="50" maxLength="128" value="${nmFuncaoSubscritor}"/>
 						(Opcionalmente informe a função e a lotação na forma:
 						Função;Lotação;Localidade)</td>
 					</tr>
@@ -166,7 +167,7 @@ function popitup_movimentacao() {
 									Texto
 								</td>
                                 <td>
-	                                <textarea rows="3" cols="50"  name="descrMov" onkeyup="corrige();tamanho();" onblur="tamanho();" onclick="tamanho();" value="${descrMov}"></textarea>
+	                                <textarea rows="3" cols="50"  name="descrMov" onkeyup="corrige();tamanho();" onblur="tamanho();" onclick="tamanho();">${descrMov}</textarea>
                                 	
 									<div id="Qtd">
 										Restam&nbsp;400&nbsp;Caracteres
@@ -220,7 +221,7 @@ function popitup_movimentacao() {
 					</tr>
 					<tr>
 						<td colspan=2>
-							<input type="checkbox" name="protocolo" value="mostrar" />
+							<input type="checkbox" name="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
 							&nbsp;Mostrar protocolo ao concluir a transferência
 						</td>
 					</tr>

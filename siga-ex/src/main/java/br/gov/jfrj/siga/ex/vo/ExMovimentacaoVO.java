@@ -228,11 +228,11 @@ public class ExMovimentacaoVO extends ExVO {
 					addAcao(
 							"script_key",
 							"Autenticar",
-							"/expediente/mov",
-							"autenticar_mov",
+							"/app/expediente/mov",
+							"exibir",
 							Ex.getInstance().getComp()
 									.podeAutenticarMovimentacao(titular, lotaTitular, mov),
-							null, "&popup=true", null, null, null);
+							null, "&popup=true&autenticando=true", null, null, null);
 				}
 			}
 
@@ -274,11 +274,11 @@ public class ExMovimentacaoVO extends ExVO {
 						addAcao(
 								"script_key",
 								"Autenticar",
-								"/expediente/mov",
-								"autenticar_mov",
+								"/app/expediente/mov",
+								"exibir",
 								Ex.getInstance().getComp()
 										.podeAutenticarMovimentacao(titular, lotaTitular, mov),
-								null, "&popup=true", null, null, null);
+								null, "&popup=true&autenticando=true", null, null, null);
 
 					} else if(!(mov.isAssinada() && mov.mob().isEmTransito())) {
 						addAcao(null, "Ver/Assinar", "/app/expediente/mov", "exibir",

@@ -362,7 +362,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/exibir")
-	public void aExibir(final boolean popup, final Long id) {
+	public void aExibir(final boolean popup, final Long id, final boolean autenticando) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
 
 		final ExDocumento doc = buscarDocumento(builder);
@@ -376,6 +376,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("id", id);
 		result.include("doc", doc);
 		result.include("mov", mov);
+		result.include("autenticando", autenticando);
 		result.include("enderecoAutenticacao", SigaExProperties.getEnderecoAutenticidadeDocs());
 	}
 

@@ -45,6 +45,8 @@ import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -477,7 +479,7 @@ public class ExMovimentacaoController extends ExController {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
-		
+		 
 		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 
 		ArrayList<Object> lista = new ArrayList<Object>();
@@ -488,6 +490,111 @@ public class ExMovimentacaoController extends ExController {
 		result.include("itens", lista);
 		result.include("lotaTitular", getLotaTitular());
 		result.include("popup", popup);
+	}
+	
+	@Get("/app/expediente/mov/protocolo_arq")
+	public void aGerarProtocoloArq(final String sigla) throws Exception {
+		ExMovimentacao mov = aGerarProtocoloArqTransf(sigla);
+		
+		//result.forwardTo("/paginas/ok.jsp");
+		result.redirectTo("/app/expediente/mov/protocolo_unitario?popup=false&sigla="+sigla+"&id="+mov.getIdMov());
+		//boolean popup, final String sigla, final Long id
+	}
+
+	@Get("/app/expediente/mov/protocolo_transf")
+	public void aGerarProtocoloTransf(final String sigla) throws Exception {
+		aGerarProtocoloArqTransf(sigla);
+		
+		result.include("lotaTitular", getLotaTitular());
+		result.include("popup", false);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private ExMovimentacao aGerarProtocoloArqTransf(String sigla) throws Exception {
+		ExMovimentacao mov = null;
+
+		final DpPessoa pes;
+		final ArrayList al = new ArrayList();
+		final DpPessoa oExemplo = new DpPessoa();
+
+		if (sigla == null || sigla.trim() == "") {
+			LOGGER.warn("[aGerarProtocoloArq] - A sigla informada é nula ou inválida");
+			throw new AplicacaoException(
+					"A sigla informada é nula ou inválida.");
+		}
+
+		oExemplo.setSigla(sigla);
+		pes = CpDao.getInstance().consultarPorSigla(oExemplo);
+
+		if (pes == null) {
+			LOGGER.warn("[aGerarProtocoloArq] - Não foi possível localizar DpPessoa com a sigla "
+					+ oExemplo.getSigla());
+			throw new AplicacaoException(
+					"Não foi localizada pessoa com a sigla informada.");
+		}
+
+		Date dt = paramDate("dt");
+		final List<ExMovimentacao> movs = dao().consultarMovimentacoes(pes, dt);
+		for (ExMovimentacao m : movs) {
+			if (mov == null)
+				mov = m;
+			final Object[] ao = { m.getExMobil().doc(),
+					m.getExMobil().getUltimaMovimentacaoNaoCancelada() };
+			al.add(ao);
+		}
+
+		Object[] arr = al.toArray();
+
+		Arrays.sort(arr, new Comparator() {
+			public int compare(Object obj1, Object obj2) {
+				ExDocumento doc1 = (ExDocumento) ((Object[]) obj1)[0];
+				ExMovimentacao mov1 = (ExMovimentacao) ((Object[]) obj1)[1];
+				ExDocumento doc2 = (ExDocumento) ((Object[]) obj2)[0];
+				ExMovimentacao mov2 = (ExMovimentacao) ((Object[]) obj2)[1];
+
+				if (doc1.getAnoEmissao() > doc2.getAnoEmissao())
+					return 1;
+				else if (doc1.getAnoEmissao() < doc2.getAnoEmissao())
+					return -1;
+				else if (doc1.getExFormaDocumento().getIdFormaDoc() > doc2
+						.getExFormaDocumento().getIdFormaDoc())
+					return 1;
+				else if (doc1.getExFormaDocumento().getIdFormaDoc() < doc2
+						.getExFormaDocumento().getIdFormaDoc())
+					return -1;
+				else if (doc1.getNumExpediente() > doc2.getNumExpediente())
+					return 1;
+				else if (doc1.getNumExpediente() < doc2.getNumExpediente())
+					return -1;
+				else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() > mov2
+						.getExMobil().getExTipoMobil().getIdTipoMobil())
+					return 1;
+				else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() < mov2
+						.getExMobil().getExTipoMobil().getIdTipoMobil())
+					return -1;
+				else if (mov1.getExMobil().getNumSequencia() > mov2
+						.getExMobil().getNumSequencia())
+					return 1;
+				else if (mov1.getExMobil().getNumSequencia() < mov2
+						.getExMobil().getNumSequencia())
+					return -1;
+				else if (doc1.getIdDoc() > doc2.getIdDoc())
+					return 1;
+				else if (doc1.getIdDoc() < doc2.getIdDoc())
+					return -1;
+				else
+					return 0;
+			}
+		});
+
+		al.clear();
+		for (int k = 0; k < arr.length; k++)
+			al.add(arr[k]);
+		
+		result.include("itens", al);
+		result.include("mov", mov);
+		
+		return mov;
 	}
 
 	@Get("app/expediente/mov/juntar")
@@ -2478,7 +2585,6 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
-	@SuppressWarnings("unused")
 	@Get("/app/expediente/mov/agendar_publicacao")
 	public void agendarPublicacao(String sigla, String descrPublicacao, String mensagem) throws Exception {
 		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -2930,5 +3036,4 @@ public class ExMovimentacaoController extends ExController {
 
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
-
 }

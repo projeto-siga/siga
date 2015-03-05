@@ -147,7 +147,7 @@
 				<c:if test="${f:resource('isWorkflowEnabled')}">
 				<!-- Se for um processo administrativo, colocar a caixa do wf geral no último volume -->
 				<ww:if test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
-						<div id="${docVO.sigla}" depende=";wf;" />
+						<div id="${docVO.sigla}" depende=";wf;" class="wf_div" />
 						<!--ajax:${doc.codigo}-${i}-->
 						<!--/ajax:${doc.codigo}-${i}-->
 						</div>
@@ -155,7 +155,7 @@
 				</ww:if>
 				
 				<ww:if test="%{(not #attr.m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
-						<div id="${m.sigla}" depende=";wf;" />
+						<div id="${m.sigla}" depende=";wf;" class="wf_div" />
 						<!--ajax:${doc.codigo}-${i}-->
 						<!--/ajax:${doc.codigo}-${i}-->
 						</div>
@@ -796,7 +796,17 @@
 <!-- Somente quando o workflow está ativado -->
 
 <c:if test="${f:resource('isWorkflowEnabled')}">
-	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>
+	<script type="text/javascript">
+		var url = "/sigawf/doc.action?sigla=${doc.codigo}";
+		Siga.ajax(url, null, "GET", function(response){		
+			var div = $(".wf_div"); 
+			//if(div.length == 0){
+				//div = $(".wf_div".replace(/\//g, "\\\\/"));
+			//}
+			$(div).html(response);
+		});		
+	//	ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");
+	</script>
 </c:if>
 <c:if
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
@@ -809,7 +819,12 @@
 		<c:param name="ts">${currentTimeMillis}</c:param>
 	</c:url>
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
+		var urlGc = "${url}";
+		Siga.ajax(urlGc, null, "GET", function(response){	
+			debugger;	
+			$("#gc").html(response);
+		});		
+	//	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
 	</script>
 </c:if>
 

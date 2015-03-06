@@ -227,6 +227,11 @@ public class ExModeloAction extends ExSelecionavelActionSupport {
 
 	private void lerForm() throws AplicacaoException,
 			UnsupportedEncodingException {
+		try {
+			assertAcesso("");
+		} catch (Exception e) {
+			throw new AplicacaoException("Acesso negado");
+		}
 		if (id == null) {
 			mod = new ExModelo();
 		} else {

@@ -398,7 +398,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aAlterarPreenchimento() throws Exception {
-
+		assertAcesso("");
 		ExPreenchimento exPreenchimento = new ExPreenchimento();
 
 		dao().iniciarTransacao();
@@ -426,11 +426,13 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aAnexo() throws Exception {
+		assertAcesso("");
 		buscarDocumento(true);
 		return Action.SUCCESS;
 	}
 
 	public String aCancelarDocumento() throws Exception {
+		assertAcesso("");
 		buscarDocumento(true);
 
 		try {
@@ -476,6 +478,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aCarregarPreenchimento() throws Exception {
+		assertAcesso("");
 		ExPreenchimento exPreenchimento = new ExPreenchimento();
 
 		// Obtém arrStrBanco[], com os parâmetros vindos do banco
@@ -561,6 +564,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aCriarVia() throws Exception {
+		assertAcesso("");
 		buscarDocumento(true);
 
 		if (!Ex.getInstance().getComp()
@@ -578,6 +582,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aCriarVolume() throws Exception {
+		assertAcesso("");
 		buscarDocumento(true);
 
 		if (!Ex.getInstance().getComp()
@@ -595,7 +600,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aEditar() throws Exception {
-
+		assertAcesso("");
 		buscarDocumentoOuNovo(true);
 
 		if ((getPostback() == null) || (param("docFilho") != null)) {
@@ -736,6 +741,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aExcluir() throws Exception {
+		assertAcesso("");
 		ExDocumento documento = null;
 		final String sId = getRequest().getParameter("id");
 
@@ -820,6 +826,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aExcluirDocMovimentacoes() throws Exception {
+		assertAcesso("");
 		buscarDocumento(true);
 		try {
 			ExDao.iniciarTransacao();
@@ -892,6 +899,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aExcluirPreenchimento() throws Exception {
+		assertAcesso("");
 		dao().iniciarTransacao();
 		ExPreenchimento exemplo = dao().consultar(preenchimento,
 				ExPreenchimento.class, false);
@@ -907,6 +915,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aAcessar() throws Exception {
+		assertAcesso("");
 		buscarDocumento(false);
 
 		assertAcesso();
@@ -976,6 +985,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aExibirAntigo() throws Exception {
+		assertAcesso("");
 		buscarDocumento(false);
 		
 		assertAcesso();
@@ -1006,6 +1016,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	
 	
 	public String aExibir() throws Exception {
+		assertAcesso("");
 		buscarDocumento(false);
 
 		assertAcesso();
@@ -1040,6 +1051,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aCorrigirPDF() throws Exception {
+		assertAcesso("");
 		if (sigla != null) {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
@@ -1148,6 +1160,7 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	private void buscarDocumento(boolean fVerificarAcesso,
 			boolean fPodeNaoExistir) throws Exception {
+		assertAcesso("");
 		if (mob == null && sigla != null && sigla.length() != 0) {
 			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 			filter.setSigla(sigla);
@@ -1181,6 +1194,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aFinalizar() throws Exception {
+		assertAcesso("");
 		buscarDocumento(true);
 
 		verificaDocumento();
@@ -1209,6 +1223,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aFinalizarAssinar() throws Exception {
+		assertAcesso("");
 
 		aFinalizar();
 
@@ -1218,6 +1233,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aGravar() throws Exception {
+		assertAcesso("");
 		// if (isCancelled(request))
 		// return aListar(mapping, actionForm, request, response);
 
@@ -1345,6 +1361,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aGravarPreenchimento() throws Exception {
+		assertAcesso("");
 		dao().iniciarTransacao();
 		ExPreenchimento exPreenchimento = new ExPreenchimento();
 
@@ -1368,6 +1385,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aPrever() throws Exception {
+		assertAcesso("");
 		buscarDocumentoOuNovo(true);
 		if (doc != null) {
 			if (getPostback() == null) {
@@ -1393,6 +1411,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aPreverPdf() throws Exception {
+		assertAcesso("");
 		buscarDocumentoOuNovo(true);
 		if (doc != null) {
 			if (getPostback() == null) {
@@ -1420,6 +1439,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aRefazer() throws Exception {
+		assertAcesso("");
 		buscarDocumento(true);
 
 		if (!Ex.getInstance().getComp()
@@ -1435,6 +1455,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aAtualizarMarcasDoc() throws Exception {
+		assertAcesso("");
 
 		buscarDocumento(false);
 		Ex.getInstance().getBL().atualizarMarcas(getDoc());
@@ -1474,7 +1495,6 @@ public class ExDocumentoAction extends ExActionSupport {
 	// }
 
 	public String aTesteEnvioDJE() throws Exception {
-
 		try {
 			ExMovimentacao fakeMov = ExDao.getInstance().consultar(39468L,
 					ExMovimentacao.class, false);
@@ -1497,6 +1517,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aCorrigirArquivamentosVolume() throws Exception {
+		assertAcesso("");
 		int idPrimeiroDoc, idUltimoDoc;
 		boolean efetivar;
 		try {
@@ -1574,6 +1595,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aDuplicar() throws Exception {
+		assertAcesso("");
 		buscarDocumento(false);
 		if (!Ex.getInstance().getComp()
 				.podeDuplicar(getTitular(), getLotaTitular(), mob))
@@ -1603,6 +1625,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aDesfazerCancelamentoDocumento() throws Exception {
+		assertAcesso("");
 		buscarDocumento(true);
 		if (!Ex.getInstance()
 				.getComp()
@@ -1622,11 +1645,13 @@ public class ExDocumentoAction extends ExActionSupport {
 	}
 
 	public String aTornarDocumentoSemEfeito() throws Exception {
+		assertAcesso("");
 		buscarDocumento(true);
 		return Action.SUCCESS;
 	}
 
 	public String aTornarDocumentoSemEfeitoGravar() throws Exception {
+		assertAcesso("");
 		if (getDescrMov() == null || getDescrMov().trim().length() == 0) {
 			throw new AplicacaoException(
 					"O preenchimento do campo MOTIVO é obrigatório!");
@@ -1821,6 +1846,7 @@ public class ExDocumentoAction extends ExActionSupport {
 	private void escreverForm() throws IllegalAccessException,
 			NoSuchMethodException, AplicacaoException,
 			InvocationTargetException {
+
 		// Destino , Origem
 		DpLotacao backupLotaTitular = getLotaTitular();
 		DpPessoa backupTitular = getTitular();
@@ -2369,7 +2395,6 @@ public class ExDocumentoAction extends ExActionSupport {
 
 	private void lerForm() throws IllegalAccessException,
 			NoSuchMethodException, AplicacaoException {
-
 		if (getAnexar()) {
 			doc.setConteudoTpDoc(getConteudoTpDoc());
 			doc.setNmArqDoc(getNmArqDoc());

@@ -306,6 +306,7 @@ public class ExMobilAction extends
 
 	@Override
 	public String aSelecionar() throws Exception {
+		assertAcesso("");
 		String s = super.aSelecionar();
 		if (getSel() != null && getMatricula() != null) {
 			GenericoSelecao sel = new GenericoSelecao();
@@ -320,7 +321,7 @@ public class ExMobilAction extends
 
 	@Override
 	public String aBuscar() throws Exception {
-
+		assertAcesso("");
 		int offset = 0;
 		int itemPagina = 0;
 		if (param("p.offset") != null) {
@@ -374,6 +375,7 @@ public class ExMobilAction extends
 	}
 
 	public String aListar() throws Exception {
+		assertAcesso("");
 		if (getPostback() == null) {
 			if (getOrgaoUsu() == null)
 				setOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
@@ -646,7 +648,7 @@ public class ExMobilAction extends
 	}
 
 	public String aFullSearch() throws Exception {
-
+		assertAcesso("");
 		int offset = 0;
 		int itemPagina = 20;
 
@@ -872,6 +874,7 @@ public class ExMobilAction extends
 	}
 
 	public String aMarcarTudo() throws Exception {
+		assertAcesso("");
 		int aPartirDe = 0;
 
 
@@ -881,6 +884,7 @@ public class ExMobilAction extends
 	}
 
 	public String aNumerarTudo() throws Exception {
+		assertAcesso("");
 		int aPartirDe = 0;
 		if (param("apartir") != null)
 			aPartirDe = paramInteger("apartir");
@@ -890,6 +894,7 @@ public class ExMobilAction extends
 	}
 
 	public String aMarcar() throws Exception {
+		assertAcesso("");
 		String sigla = param("sigla");
 		String[] siglasSparadas = sigla.split(";");
 		for (String s : siglasSparadas) {
@@ -904,7 +909,7 @@ public class ExMobilAction extends
 	}
 
 	public String aIndexarTudo() throws Exception {
-
+		assertAcesso("");
 		dao().indexarTudo(new Aguarde() {
 			public void setMensagem(String s) {
 				setMensagemAguarde(s);
@@ -915,7 +920,7 @@ public class ExMobilAction extends
 	}
 
 	public String aIndexarUltimas() throws Exception {
-
+		assertAcesso("");
 		String sDesde = param("min");
 		int desde = 120; // De duas horas pra cá
 		if (sDesde != null)
@@ -926,7 +931,7 @@ public class ExMobilAction extends
 	}
 
 	public String aIndexar() throws Exception {
-
+		assertAcesso("");
 		String[] idDocs = getPar().get("id");
 		ExDocumento doque;
 		List<ExDocumento> listaDocs = new ArrayList<ExDocumento>();
@@ -941,7 +946,7 @@ public class ExMobilAction extends
 	}
 
 	public String aDesindexar() throws Exception {
-
+		assertAcesso("");
 		String[] idDocs = getPar().get("id");
 		ExDocumento doque;
 		List<ExDocumento> listaDocs = new ArrayList<ExDocumento>();
@@ -956,11 +961,13 @@ public class ExMobilAction extends
 	}
 
 	public String aIndexarFila() throws Exception {
+		assertAcesso("");
 		dao().indexarFila(null);
 		return Action.SUCCESS;
 	}
 
 	public String aListarNaoIndexados() throws Exception {
+		assertAcesso("");
 		int aPartirDe = 0;
 		boolean irIndexando = false;
 		if (param("apartir") != null)

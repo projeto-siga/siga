@@ -152,7 +152,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	private void lerForm(ExConfiguracao c) throws Exception {
-
+		assertAcesso("");
 		if (getIdOrgaoUsu() != null && getIdOrgaoUsu() != 0) {
 			c.setOrgaoUsuario(dao().consultar(getIdOrgaoUsu(),
 					CpOrgaoUsuario.class, false));
@@ -246,6 +246,7 @@ public class ExConfiguracaoAction extends ExActionSupport {
 	}
 
 	private void escreverForm(ExConfiguracao c) throws Exception {
+		assertAcesso("");
 		if (c.getOrgaoUsuario() != null)
 			setIdOrgaoUsu(c.getOrgaoUsuario().getIdOrgaoUsu());
 

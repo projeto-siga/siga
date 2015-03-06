@@ -12,8 +12,12 @@ window.Siga = {
         return (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1)
     },
     
+    isIE: function(){
+    	return (!!navigator.userAgent.match(/MSIE/));
+    },
+    
     _picketlinkResponse: function(textResponse){
-        var form = ($.browser.msie ? $(textResponse)[0] : $(textResponse)[1]);
+        var form = (Siga.isIE() ? $(textResponse)[0] : $(textResponse)[1]);
         var action = $(form).attr("action");
 
         // Pode ser o SAMLRequest ou SAMLResponse
@@ -26,15 +30,24 @@ window.Siga = {
     },
 
     _ajaxCall: function(ajax, doneCallback){    
-        $.ajax({
-            url: ajax.url,
-            type: ajax.type,
-            data: ajax.params
-        }).fail(function(jqXHR, textStatus, errorThrown){            
-            doneCallback(jqXHR.statusText);
-        }).done(function(data, textStatus, jqXHR ){
-            doneCallback(data);
-        });
+       var cacheValue = true;
+       if (Siga.isIE()){
+    	   cacheValue = false;
+       }
+       	
+	   $.ajax({
+	       url: ajax.url,
+	       type: ajax.type,
+	       data: ajax.params,
+	       cache: cacheValue
+	   }).fail(function(jqXHR, textStatus, errorThrown){            
+	       doneCallback(jqXHR.statusText);
+	   }).done(function(data, textStatus, jqXHR ){
+		   if (data.indexOf("Não Foi Possível Completar a Operação") > 1){
+			   data = "Não foi Possível completar a Operação.";
+		   }
+		   doneCallback(data);
+	   });
     },
 
     /**

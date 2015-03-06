@@ -31,7 +31,7 @@ Siga.principal = {
 
 // Funcao principal que sera chamada apos o load da pagina
 $(function() {
-	if ($.browser.msie){
+	if (Siga.isIE()){
 		$.ajaxSetup({ cache: false });
 	}
     

@@ -2,6 +2,8 @@
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 <li><a href="#">Documentos</a>
 	<ul>
 		<li><ww:url id="url" action="editar" namespace="/expediente/doc" />
@@ -276,4 +278,5 @@
 			
 
 		</ul></li>
+</c:if>
 </c:if>

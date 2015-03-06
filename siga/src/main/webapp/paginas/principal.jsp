@@ -26,25 +26,27 @@
 				<!-- Expedientes -->
 				<div
 					style="width: 49%; float: left; clear: both; padding: 0; margin: 0;">
-					<!-- Expedientes -->
-					<div style="width: 100%; padding: 0; margin: 0;">
-						<!-- Files Table -->
-						<!-- This table can be used for listing things like files, pictures, documents, etc -->
-						<h2 class="gt-table-head">Expedientes</h2>
-						<!-- content box -->
-						<div id='left'>
-                            <jsp:include page="loading.jsp" />
-						</div>
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 						<!-- Expedientes -->
-						<br />
-						<!-- Processos -->
-						<h2 class="gt-table-head">Processos Administrativos</h2>
-						<!-- content box -->
-						<div id='leftbottom'>
-                            <jsp:include page="loading.jsp" />
+						<div style="width: 100%; padding: 0; margin: 0;">
+							<!-- Files Table -->
+							<!-- This table can be used for listing things like files, pictures, documents, etc -->
+							<h2 class="gt-table-head">Expedientes</h2>
+							<!-- content box -->
+							<div id='left'>
+	                            <jsp:include page="loading.jsp" />
+							</div>
+							<!-- Expedientes -->
+							<br />
+							<!-- Processos -->
+							<h2 class="gt-table-head">Processos Administrativos</h2>
+							<!-- content box -->
+							<div id='leftbottom'>
+	                            <jsp:include page="loading.jsp" />
+							</div>
+							<!-- Processos -->
 						</div>
-						<!-- Processos -->
-					</div>
+					</c:if>
 				</div>
 				<div style="width: 49%; float: right; padding: 0; margin: 0;">
 					<div style="width: 100%; padding: 0; margin: 0;">

@@ -798,11 +798,11 @@
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">
 		var url = "/sigawf/doc.action?sigla=${doc.codigo}";
-		Siga.ajax(url, null, "GET", function(response){		
-			var div = $(".wf_div"); 
-			$(div).html(response);
-		});		
-	//	ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");
+	//	Siga.ajax(url, null, "GET", function(response){		
+	//		var div = $(".wf_div"); 
+	//		$(div).html(response);
+	//	});		
+		ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");
 	</script>
 </c:if>
 <c:if
@@ -816,11 +816,11 @@
 		<c:param name="ts">${currentTimeMillis}</c:param>
 	</c:url>
 	<script type="text/javascript">
-		var urlGc = "${url}";
-		Siga.ajax(urlGc, null, "GET", function(response){	
-			$("#gc").html(response);
-		});		
-	//	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
+	//	var urlGc = "${url}";
+	//	Siga.ajax(urlGc, null, "GET", function(response){	
+	//		$("#gc").html(response);
+	//	});		
+		SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
 	</script>
 </c:if>
 

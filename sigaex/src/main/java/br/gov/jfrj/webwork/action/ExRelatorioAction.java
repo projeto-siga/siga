@@ -218,7 +218,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 	}
 
 	public String aRelExpedientes() throws Exception {
-
+		assertAcesso("");
 		final String DataInicio = param("dataInicio");
 		final String DataFim = param("dataFim");
 
@@ -263,7 +263,7 @@ public class ExRelatorioAction extends ExActionSupport implements IUsaMascara{
 	}
 
 	public String aGeraRelatorio(final Map parameters) throws JRException, Exception {
-
+		assertAcesso("");
 		final String cam = (String) getContext().getRealPath("/paginas/expediente/relatorios/");
 
 		try {

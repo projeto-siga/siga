@@ -33,10 +33,8 @@
 		}
 	</script>
 
-	<c:url var="url"
-		value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=false" />
-	<c:url var="url2"
-		value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=true">
+	<c:url var="url" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=false" />
+	<c:url var="url2" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=true">
 	</c:url>
 	<c:choose>
 		<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
@@ -297,9 +295,9 @@ function visualizarImpressao(via) {
 					<input type="hidden" name="pdfchk_${mov.idMov}" id="pdfchk_${mov.idMov}" value="${mov.referencia}" />
 					<input type="hidden" name="urlchk_${mov.idMov}" id="urlchk_${mov.idMov}" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
 
-					<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
+					<c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
 					<c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
-					<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
+					<c:set var="nextURL" value="${request.contextPath}/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
 					
 					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
@@ -329,9 +327,8 @@ function visualizarImpressao(via) {
 					<b>Link para assinatura externa: </b>
 					${enderecoAutenticacao} (informar o código ${mov.siglaAssinaturaExterna})
 				</p>
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="inc_assina_js.jsp" />
+				<%-- <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}"> --%>
+					<c:import url="/javascript/inc_assina_js.jsp" />
 					<div id="capicom-div">
 						<c:if test="${not autenticando}">
 							<c:choose>
@@ -381,7 +378,7 @@ function visualizarImpressao(via) {
 						 document.getElementById("ie-missing").style.display = "block";
 					}
 				 </script>
-				</c:if>
+				<%-- </c:if> --%>
 
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 	    			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}

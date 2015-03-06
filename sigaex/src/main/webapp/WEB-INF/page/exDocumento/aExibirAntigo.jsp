@@ -202,7 +202,7 @@
 												</c:forEach>
 											</siga:links>
 										</td>
-										<c:if test="${exibirCompleto eq 'true' and mov.duracaoSpan gt 0}">
+										<c:if test="${exibirCompleto != 'true' and mov.duracaoSpan > 0}">
 											<td align="center" class="duracaoborderbottom" rowspan="${mov.duracaoSpan}">
 												${mov.duracao}
 											</td>

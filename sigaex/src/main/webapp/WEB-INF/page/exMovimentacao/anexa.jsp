@@ -352,8 +352,8 @@
 		  				     
 							<div id="dialog-form" title="Assinar com Senha">
 					 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" >
-					 				<ww:hidden id="id" name="id" value="${mov.idMov}" />
-					 				<ww:hidden id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
+					 				<input type=hidden" id="id" name="id" value="${mov.idMov}" />
+					 				<input type=hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
 					    			<fieldset>
 					    			  <label>Matrícula</label> <br/>
 					    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>

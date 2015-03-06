@@ -66,10 +66,7 @@
 						</c:otherwise>
 					</c:choose>
 					<tr class="${evenorodd}">
-						<td width="11.5%" align="right"><ww:url id="url"
-							action="exibir" namespace="/expediente/doc">
-							<ww:param name="sigla">${documento[1].exMobil.sigla}</ww:param>
-						</ww:url> <ww:a href="%{url}">${documento[1].exMobil.sigla}</ww:a> <c:if
+						<td width="11.5%" align="right"> <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].exMobil.sigla}">${documento[1].exMobil.sigla}</a> <c:if
 							test="${not documento[1].exMobil.geral}">
 							<td width="5%" align="center">${documento[0].dtDocDDMMYY}</td>
 							<td width="4%" align="center"><siga:selecionado

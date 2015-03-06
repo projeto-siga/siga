@@ -10,6 +10,10 @@
 		<param-value>war</param-value>
 	</context-param>
 
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
 	<listener>
 		<listener-class>play.server.ServletWrapper</listener-class>
 	</listener>

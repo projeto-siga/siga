@@ -3,6 +3,11 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 	<display-name>SIGA - Gestão Documental</display-name>
+	
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	
 
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>

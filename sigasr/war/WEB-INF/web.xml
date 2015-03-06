@@ -16,6 +16,10 @@
 		<listener-class>play.server.ServletWrapper</listener-class>
 	</listener>
 
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	
 	<servlet>
 		<servlet-name>play</servlet-name>
 		<servlet-class>play.server.ServletWrapper</servlet-class>

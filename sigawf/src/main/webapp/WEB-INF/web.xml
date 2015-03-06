@@ -7,6 +7,10 @@
 	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
 	<!--distributable/ -->
 
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
 	<jsp-config>
 		<taglib>
 			<taglib-uri>http://localhost/customtag</taglib-uri>

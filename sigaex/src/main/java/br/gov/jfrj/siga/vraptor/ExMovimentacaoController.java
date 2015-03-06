@@ -3231,5 +3231,64 @@ public class ExMovimentacaoController extends ExController {
 		result.include("dtRegMov",dtRegMov);
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	
+	@Get
+	@Post
+	@Path("/app/expediente/mov/assinar_mov_gravar")
+	public void aAssinarMovGravar(final Long id, final Boolean copia, final String atributoAssinavelDataHora, String assinaturaB64, final String certificadoB64) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
+		final boolean fApplet = getRequest().getParameter("QTYDATA") != null;
+		String b64Applet = null;
+		if (fApplet) {
+			b64Applet = recuperarAssinaturaAppletB64(builder);
+		}
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+		final ExMovimentacao mov = builder.getMov();
+		
+		if (b64Applet != null)
+			assinaturaB64 = b64Applet;
+
+		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
+		if (copia != null && copia)
+			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
+
+		byte[] assinatura = Base64.decode(assinaturaB64);
+		Date dt = mov.getDtMov();
+
+		byte[] certificado = Base64.decode(certificadoB64);
+		if (certificado != null && certificado.length != 0)
+			dt = new Date(Long.valueOf(atributoAssinavelDataHora));
+		else
+			certificado = null;
+
+		verificaNivelAcesso(mov.getExMobil());
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.assinarMovimentacao(getCadastrante(), getLotaTitular(), mov, dt, assinatura, certificado, tpMovAssinatura);
+		} catch (final Exception e) {
+			if (fApplet) {
+				result.include("err", e.getMessage());
+				result.use(Results.page()).forwardTo("/paginas/erro.jsp");
+				return;
+			}
+
+			throw e;
+		}
+
+		if (fApplet) {
+			result.use(Results.page()).forwardTo("/paginas/ok.jsp");
+			return;
+		}
+		
+		result.forwardTo(this).assinado(mob);		
+	}
+	
+	@Get("/app/expediente/mov/assinado")
+	public void assinado(final ExMobil mob){
+		result.include("mob", mob);
+	}		
 
 }

@@ -477,10 +477,13 @@ public class ExMovimentacaoController extends ExController {
 	@Get("app/expediente/mov/protocolo_unitario")
 	public void protocolo(boolean popup, final String sigla, final Long id) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-
 		final ExDocumento doc = buscarDocumento(builder);
-		 
-		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
+		ExMovimentacao mov = null;
+		
+		if (id != null)
+			mov = dao().consultar(id, ExMovimentacao.class, false);
+		else
+			mov = new ExMovimentacao();
 
 		ArrayList<Object> lista = new ArrayList<Object>();
 		final Object[] ao = { doc, mov };
@@ -493,24 +496,17 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 	@Get("/app/expediente/mov/protocolo_arq")
-	public void aGerarProtocoloArq(final String sigla) throws Exception {
-		ExMovimentacao mov = aGerarProtocoloArqTransf(sigla);
-		
-		//result.forwardTo("/paginas/ok.jsp");
-		result.redirectTo("/app/expediente/mov/protocolo_unitario?popup=false&sigla="+sigla+"&id="+mov.getIdMov());
-		//boolean popup, final String sigla, final Long id
+	public void aGerarProtocoloArq(final String pessoa, boolean popup) throws Exception {
+		aGerarProtocoloArqTransf(pessoa, popup, false);
 	}
 
 	@Get("/app/expediente/mov/protocolo_transf")
-	public void aGerarProtocoloTransf(final String sigla) throws Exception {
-		aGerarProtocoloArqTransf(sigla);
-		
-		result.include("lotaTitular", getLotaTitular());
-		result.include("popup", false);
+	public void aGerarProtocoloTransf(final String pessoa, boolean popup) throws Exception {
+		aGerarProtocoloArqTransf(pessoa, popup, true);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private ExMovimentacao aGerarProtocoloArqTransf(String sigla) throws Exception {
+	private void aGerarProtocoloArqTransf(String sigla, boolean popup, boolean isTransf) throws Exception {
 		ExMovimentacao mov = null;
 
 		final DpPessoa pes;
@@ -593,8 +589,19 @@ public class ExMovimentacaoController extends ExController {
 		
 		result.include("itens", al);
 		result.include("mov", mov);
+		result.include("popup", popup);
 		
-		return mov;
+		if (isTransf) {
+			result.include("campoDe", mov.getCadastrante().getLotacao().getDescricao());
+			result.include("campoPara", mov.getRespString());
+			result.include("campoData", mov.getDtRegMovDDMMYYHHMMSS());
+			result.include("cadastrante", this.getCadastrante());
+			result.include("lotaTitular", this.getLotaTitular());
+			
+			result.use(Results.page()).forwardTo("/WEB-INF/page/exMovimentacao/aGerarProtocolo.jsp");
+		}
+		else
+			result.redirectTo("/app/expediente/mov/protocolo_unitario?popup="+popup+"&sigla="+mov.getExMobil().getDoc().getSigla()+"&id="+mov.getIdMov());
 	}
 
 	@Get("app/expediente/mov/juntar")

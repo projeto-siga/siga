@@ -78,7 +78,7 @@
 						</td>
 					</tr>
 					<tr class="header">
-						<td align="center">]
+						<td align="center">
 							Data
 						</td>
 						<td align="center">

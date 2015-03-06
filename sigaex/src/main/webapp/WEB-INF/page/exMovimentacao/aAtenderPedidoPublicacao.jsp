@@ -174,7 +174,7 @@
 							onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
 					</a>
 	 			</td>
-	 			<td><a href="/sigaex/arquivo/download.action?arquivo=${documento.mobilGeral.referenciaRTF}">RTF</a>
+	 			<td><a href="/sigaex/app/arquivo/download?arquivo=${documento.mobilGeral.referenciaRTF}">RTF</a>
 	 			</td>				
 			</tr>
 		</c:forEach>

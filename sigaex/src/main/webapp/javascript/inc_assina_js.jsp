@@ -504,20 +504,14 @@ function GravarAssinatura(url, datatosend) {
 	objHTTP.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	objHTTP.send(datatosend); 
 	
-	if(objHTTP.Status == 200){
+	if((objHTTP.Status == 200)||(objHTTP.Status == 400)||(objHTTP.Status == 500)){
 		var Conteudo, Inicio, Fim, Texto;
 		//alert("OK, enviado");
 		Conteudo = objHTTP.responseText;
-
 		//Edson: adicionei a segunda sentença ao if abaixo porque, no caso da assinatura externa, a página
 		//de retorno é esta mesma, que obviamente já tem o texto gt-error-page-hd (na linha abaixo) sem
-		//significar que seja uma página de erro
-        if (Conteudo.indexOf("gt-error-page-hd") != -1 && Conteudo.indexOf("function GravarAssinatura") < 0) {
-			Inicio = Conteudo.indexOf("<h3>") + 4;
-			Fim = Conteudo.indexOf("</h3>",Inicio);
-			Texto = Conteudo.substr(Inicio, Fim - Inicio);
-			return Texto;
-        }
+		//significar que seja uma página de erro		
+		return TrataErro(Conteudo, "OK");
  	}
 	return "OK";
 }
@@ -531,18 +525,29 @@ function GravarAssinaturaSenha(url, datatosend) {
 		  data: datatosend,	
 		  async:  false,				    					   					 
 		  statusCode: {
-			200: function(Conteudo) {
-			if (Conteudo.indexOf("gt-error-page-hd") != -1 && Conteudo.indexOf("function GravarAssinatura") < 0) {
-				Inicio = Conteudo.indexOf("<h3>") + 4;
-				Fim = Conteudo.indexOf("</h3>",Inicio);
-				retorno = Conteudo.substr(Inicio, Fim - Inicio);
-				return retorno;
-		     }				    
-	 	 }}
+			200:function(Conteudo) {
+				retorno = TrataErro(Conteudo.responseText?Conteudo.responseText:Conteudo, retorno);
+			}
+		   ,400:function(Conteudo) {
+				retorno = TrataErro(Conteudo.responseText?Conteudo.responseText:Conteudo, retorno);
+			}
+		   ,500:function(Conteudo) {
+				retorno = TrataErro(Conteudo.responseText?Conteudo.responseText:Conteudo, retorno);
+			} 				    
+	 	 }
 	});	
 	
 	return retorno;
 }
+
+function TrataErro(Conteudo, retorno) {
+	if (Conteudo.indexOf("gt-error-page-hd") != -1 && Conteudo.indexOf("function GravarAssinatura") < 0) {
+		Inicio = Conteudo.indexOf("<h3>") + 4;
+		Fim = Conteudo.indexOf("</h3>",Inicio);
+		retorno = Conteudo.substr(Inicio, Fim - Inicio);
+     }
+	return retorno;
+}  
 
 
 //var intID 'a global variable

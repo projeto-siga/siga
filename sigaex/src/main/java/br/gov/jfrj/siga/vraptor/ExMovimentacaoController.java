@@ -385,6 +385,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mov", mov);
 		result.include("autenticando", autenticando);
 		result.include("enderecoAutenticacao", SigaExProperties.getEnderecoAutenticidadeDocs());
+		result.include("request", getRequest());
+		
 	}
 
 	@Post("app/expediente/mov/protocolo_transf")
@@ -1095,7 +1097,9 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 
-	@Get("/app/expediente/mov/fechar_popup")
+	@Get
+	@Post
+	@Path("/app/expediente/mov/fechar_popup")
 	public void fecharPopup() {
 		System.out.println("popup fechado.");
 	}
@@ -1721,27 +1725,28 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);		
 	}
 
-	@Post("/app/expediente/mov/assinar_mov_login_senha_gravar")
+	@Get
+	@Post
+	@Path("/app/expediente/mov/assinar_mov_login_senha_gravar")
 	public void aAssinarMovSenhaGravar(Long id, String sigla, String tipoAssinaturaMov, String nomeUsuarioSubscritor, String senhaUsuarioSubscritor,
-			Boolean copia) throws Exception {
+			Boolean copia) throws Exception{
 		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
 
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
 		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
 
 		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 
 		if (copia || (tipoAssinaturaMov != null && tipoAssinaturaMov.equals("C")))
 			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
-
-		try {
-			Ex.getInstance()
-					.getBL()
-					.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), nomeUsuarioSubscritor, senhaUsuarioSubscritor,
-							tpMovAssinatura);
-		} catch (final Exception e) {
-			throw e;
-		}
+	
+		Ex.getInstance()
+		.getBL()
+		.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), nomeUsuarioSubscritor, senhaUsuarioSubscritor,
+				tpMovAssinatura);
+		
+		result.forwardTo(this).assinado(mob);
 	}
 	
 	@Get("/app/expediente/doc/a_cancelar_pedido_publicacao_boletim")

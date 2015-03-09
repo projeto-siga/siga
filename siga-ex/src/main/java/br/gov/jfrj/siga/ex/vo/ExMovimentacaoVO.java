@@ -138,7 +138,7 @@ public class ExMovimentacaoVO extends ExVO {
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) {
 			descricao = "";
-			addAcao(null, "Verificar", "/expediente/mov", "assinar_verificar",
+			addAcao(null, "Verificar", "/app/expediente/mov", "assinar_verificar",
 					true, null, "&ajax=true&id=" + mov.getIdMov().toString(),
 					null, null, null);
 		}

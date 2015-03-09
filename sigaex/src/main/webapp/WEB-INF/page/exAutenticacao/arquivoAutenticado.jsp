@@ -48,7 +48,6 @@
 						<c:set var="lote" value="false" />
 					</div>		
 					<c:import url="/WEB-INF/page/exMovimentacao/inc_assina_js.jsp" />
-<%-- 					<c:import url="/paginas/expediente/inc_assina_js.jsp" /> --%>
 					<div id="capicom-div">
 						<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false');" class="gt-btn-alternate-large gt-btn-left">Assinar</a> 
 					</div>

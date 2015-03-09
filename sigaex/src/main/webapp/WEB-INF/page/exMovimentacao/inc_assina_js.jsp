@@ -236,6 +236,10 @@ function Conteudo(url){
 //		alert(gVBConteudoArray);
 
 //		alert(Conteudo);
+
+		if (Conteudo == undefined){
+			return "Não foi possível obter o conteúdo do documento a ser assinado."
+		}
 			
         if (Conteudo.indexOf("gt-error-page-hd") != -1) {
 			Inicio = Conteudo.indexOf("<h3>") + 4;
@@ -383,7 +387,6 @@ function GravarAssinatura(url, datatosend) {
 	objHTTP.send(datatosend); 
 	
 	if(objHTTP.Status == 200 || objHTTP.Status == 400){
-	if(objHTTP.Status == 200){
 		var Conteudo, Inicio, Fim, Texto;
 		//alert("OK, enviado");
 		Conteudo = objHTTP.responseText;
@@ -458,7 +461,7 @@ if((window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgen
 	'	Set objHTTP = CreateObject("MSXML2.XMLHTTP")\r\n'+
 	'	objHTTP.open "GET", url, False\r\n'+
 	'	objHTTP.send\r\n'+
-	'	If objHTTP.Status = 200 Then\r\n'+
+	'	If (objHTTP.Status = 200) or (objHTTP.Status = 400) Then\r\n'+
 	'	    gVBAtributoAssinavelDataHora = objHTTP.getResponseHeader("Atributo-Assinavel-Data-Hora")\r\n'+
 	'	    VBConteudo = objHTTP.responseText\r\n'+
 	'	    gVBConteudoArray = objHTTP.responseBody\r\n'+

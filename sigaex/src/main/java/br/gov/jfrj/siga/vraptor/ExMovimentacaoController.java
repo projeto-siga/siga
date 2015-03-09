@@ -359,13 +359,18 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/excluir")
-	public void excluir(final Long id) {
+	public void excluir(final Long id, boolean continuarTela) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
-
-		final ExDocumento doc = buscarDocumento(builder);
-
-		Ex.getInstance().getBL().excluirMovimentacao(getCadastrante(), getLotaTitular(), builder.getMob(), id);
-		result.redirectTo(MessageFormat.format("anexar?sigla={0}", doc.getSigla()));
+		buscarDocumento(builder);
+		final ExMobil mob = builder.getMob();
+		
+		Ex.getInstance().getBL().excluirMovimentacao(getCadastrante(), getLotaTitular(), mob, id);
+				
+		if (continuarTela) {			
+			result.redirectTo(MessageFormat.format("anexar?sigla={0}", mob.getSigla()));
+		} else {
+			ExDocumentoController.redirecionarParaExibir(result, mob.getSigla());
+		}
 	}
 
 	@Get("app/expediente/mov/exibir")

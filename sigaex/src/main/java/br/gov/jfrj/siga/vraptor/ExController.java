@@ -205,6 +205,7 @@ public class ExController extends SigaController {
 
 	}
 
+	@SuppressWarnings("static-access")
 	protected  String getDescrDocConfidencial(ExDocumento doc) {
 		return Ex.getInstance().getBL().descricaoSePuderAcessar(doc, getTitular(), getLotaTitular());
 	}

@@ -138,10 +138,12 @@ public class SigaHTTP {
 							addHeader("content-type", "application/x-www-form-urlencoded").
 							addHeader(COOKIE, setCookie).
 							bodyForm(Form.form().add(SAMLResponse, SAMLResponseValue).build())).returnContent().asString();
+					
+					html = exec.execute(Request.Get(URL).useExpectContinue().addHeader(COOKIE, setCookie)).returnContent().asString();
 				}
 			}
 		}catch(Exception io){
-			io.printStackTrace();
+//			io.printStackTrace();
 		}
 
 		tryAgain(URL, request, cookieValue, html);
@@ -151,11 +153,11 @@ public class SigaHTTP {
 
 	private void tryAgain(String URL, HttpServletRequest request,
 			String cookieValue, String html) {
-		if (html.contains("<title>") && (html.contains("Não Foi Possível Completar a Operação") || (html.contains("Senha")))){
+		if ( (html.contains("<title>") && html.contains("Não Foi Possível Completar a Operação")) || html.contains("Senha") || ( html.contains("siga-modules") && html.contains("siga-box")) ){
 			if (retryCount < MAX_RETRY){
+				retryCount++;
 				handleAuthentication(URL, request, cookieValue);
 			}
-			retryCount++;
 		}
 	}
 

@@ -153,7 +153,7 @@ public class SigaHTTP {
 
 	private void tryAgain(String URL, HttpServletRequest request,
 			String cookieValue, String html) {
-		if (html.contains("<title>") && (html.contains("Não Foi Possível Completar a Operação") || (html.contains("Senha")))){
+		if ( (html.contains("<title>") && html.contains("Não Foi Possível Completar a Operação")) || html.contains("Senha") || ( html.contains("siga-modules") && html.contains("siga-box")) ){
 			if (retryCount < MAX_RETRY){
 				retryCount++;
 				handleAuthentication(URL, request, cookieValue);

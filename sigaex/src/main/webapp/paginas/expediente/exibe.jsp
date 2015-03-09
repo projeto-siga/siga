@@ -615,7 +615,7 @@
 		function updateContainerTramitacao() {
 		    var smallwidth = $('#outputTramitacao').width(); 
 	    	var smallsvg = $('#outputTramitacao :first-child').first(); 
-	    	var smallviewbox = smallsvg.attr('viewBox');
+	    	var smallviewbox = document.getElementById('outputTramitacao').firstElementChild.getAttribute('viewBox');
 		      
 	    	if(typeof smallviewbox != 'undefined') {
 			    var a = smallviewbox.split(' ');  
@@ -798,29 +798,28 @@
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">
 		var url = "/sigawf/doc.action?sigla=${doc.codigo}";
-	//	Siga.ajax(url, null, "GET", function(response){		
-	//		var div = $(".wf_div"); 
-	//		$(div).html(response);
-	//	});		
-		ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");
+		Siga.ajax(url, null, "GET", function(response){		
+			var div = $(".wf_div"); 
+			$(div).html(response);
+		});		
+		//ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");
 	</script>
 </c:if>
 <c:if
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
-	<c:url var="url" value="/../sigagc/app/knowledge">
+	<c:url var="url" value="/sigagc/app/knowledge">
 		<c:param name="tags">@documento</c:param>
 		<c:forEach var="tag" items="${docVO.tags}">
 			<c:param name="tags">${tag}</c:param>
 		</c:forEach>
-		<c:param name="estilo">sidebar</c:param>
-		<c:param name="ts">${currentTimeMillis}</c:param>
+		<c:param name="estilo">sidebar</c:param>		
 	</c:url>
 	<script type="text/javascript">
-	//	var urlGc = "${url}";
-	//	Siga.ajax(urlGc, null, "GET", function(response){	
-	//		$("#gc").html(response);
-	//	});		
-		SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
+		var urlGc = "${url}";
+		Siga.ajax(urlGc.substring(7), null, "GET", function(response){	
+			$("#gc").html(response);
+		});		
+	//	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
 	</script>
 </c:if>
 

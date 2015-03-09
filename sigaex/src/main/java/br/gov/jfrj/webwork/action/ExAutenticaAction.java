@@ -291,9 +291,13 @@ public class ExAutenticaAction extends ExActionSupport {
 				contentType = mov.getConteudoTpMov();
 
 				bytes = mov.getConteudoBlobMov2();
-				contentLength = bytes.length;
-
-				setInputStream(new ByteArrayInputStream(bytes));
+				if (bytes == null){
+					contentLength = 0;
+					setInputStream(null);
+				}else{
+					contentLength = bytes.length;
+					setInputStream(new ByteArrayInputStream(bytes));
+				}
 
 				return "stream";
 			} else {

@@ -3296,6 +3296,28 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/assinado")
 	public void assinado(final ExMobil mob){
 		result.include("mob", mob);
-	}		
+	}	
+	
+	@Get("/app/expediente/mov/atualizar_publicacao")
+	public void atualizarPublicacao(final String data,
+									final String tipoCaderno,
+									final String secao,
+									final String soLerXml) throws Exception {
+		String sData = data;
+		Date dataBusca = null;
+		if (sData != null) {
+			dataBusca = new SimpleDateFormat("ddMMyyyy").parse(sData);
+		};
+
+		String sTipoCaderno = tipoCaderno;
+		String sSecao = secao;
+
+		String sSoLerXml = "nao";
+		if (soLerXml != null)
+			sSoLerXml = soLerXml;
+
+		PublicacaoDJEBL.segundoRetorno(dataBusca, sTipoCaderno, sSecao, sSoLerXml);
+		setMensagem(PublicacaoDJEBL.getXmlRetornado());
+	}
 
 }

@@ -382,6 +382,7 @@ function GravarAssinatura(url, datatosend) {
 	objHTTP.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	objHTTP.send(datatosend); 
 	
+	if(objHTTP.Status == 200 || objHTTP.Status == 400){
 	if(objHTTP.Status == 200){
 		var Conteudo, Inicio, Fim, Texto;
 		//alert("OK, enviado");

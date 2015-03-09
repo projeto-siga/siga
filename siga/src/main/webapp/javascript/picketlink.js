@@ -17,7 +17,8 @@ window.Siga = {
     },
     
     _picketlinkResponse: function(textResponse){
-        var form = (Siga.isIE() ? $(textResponse)[0] : $(textResponse)[1]);
+        //var form = (Siga.isIE() ? $(textResponse)[0] : $(textResponse)[1]);
+    	var form = $(textResponse)[1];
         var action = $(form).attr("action");
 
         // Pode ser o SAMLRequest ou SAMLResponse
@@ -43,8 +44,8 @@ window.Siga = {
 	   }).fail(function(jqXHR, textStatus, errorThrown){            
 	       doneCallback(jqXHR.statusText);
 	   }).done(function(data, textStatus, jqXHR ){
-		   if (data.indexOf("N„o Foi PossÌvel Completar a OperaÁ„o") > 1){
-			   data = "N„o foi PossÌvel completar a OperaÁ„o.";
+		   if (data.indexOf("N√£o foi Poss√≠vel completar a Opera√ß√£o.") > 1){
+			   data = "N√£o foi Poss√≠vel completar a Opera√ß√£o.";
 		   }
 		   doneCallback(data);
 	   });

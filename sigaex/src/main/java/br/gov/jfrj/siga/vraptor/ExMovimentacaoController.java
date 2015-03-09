@@ -385,6 +385,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mov", mov);
 		result.include("autenticando", autenticando);
 		result.include("enderecoAutenticacao", SigaExProperties.getEnderecoAutenticidadeDocs());
+		result.include("request", getRequest());
+		
 	}
 
 	@Post("app/expediente/mov/protocolo_transf")
@@ -477,10 +479,13 @@ public class ExMovimentacaoController extends ExController {
 	@Get("app/expediente/mov/protocolo_unitario")
 	public void protocolo(boolean popup, final String sigla, final Long id) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
-
 		final ExDocumento doc = buscarDocumento(builder);
-		 
-		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
+		ExMovimentacao mov = null;
+		
+		if (id != null)
+			mov = dao().consultar(id, ExMovimentacao.class, false);
+		else
+			mov = new ExMovimentacao();
 
 		ArrayList<Object> lista = new ArrayList<Object>();
 		final Object[] ao = { doc, mov };
@@ -493,24 +498,17 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 	@Get("/app/expediente/mov/protocolo_arq")
-	public void aGerarProtocoloArq(final String sigla) throws Exception {
-		ExMovimentacao mov = aGerarProtocoloArqTransf(sigla);
-		
-		//result.forwardTo("/paginas/ok.jsp");
-		result.redirectTo("/app/expediente/mov/protocolo_unitario?popup=false&sigla="+sigla+"&id="+mov.getIdMov());
-		//boolean popup, final String sigla, final Long id
+	public void aGerarProtocoloArq(final String pessoa, boolean popup) throws Exception {
+		aGerarProtocoloArqTransf(pessoa, popup, false);
 	}
 
 	@Get("/app/expediente/mov/protocolo_transf")
-	public void aGerarProtocoloTransf(final String sigla) throws Exception {
-		aGerarProtocoloArqTransf(sigla);
-		
-		result.include("lotaTitular", getLotaTitular());
-		result.include("popup", false);
+	public void aGerarProtocoloTransf(final String pessoa, boolean popup) throws Exception {
+		aGerarProtocoloArqTransf(pessoa, popup, true);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private ExMovimentacao aGerarProtocoloArqTransf(String sigla) throws Exception {
+	private void aGerarProtocoloArqTransf(String sigla, boolean popup, boolean isTransf) throws Exception {
 		ExMovimentacao mov = null;
 
 		final DpPessoa pes;
@@ -593,8 +591,19 @@ public class ExMovimentacaoController extends ExController {
 		
 		result.include("itens", al);
 		result.include("mov", mov);
+		result.include("popup", popup);
 		
-		return mov;
+		if (isTransf) {
+			result.include("campoDe", mov.getCadastrante().getLotacao().getDescricao());
+			result.include("campoPara", mov.getRespString());
+			result.include("campoData", mov.getDtRegMovDDMMYYHHMMSS());
+			result.include("cadastrante", this.getCadastrante());
+			result.include("lotaTitular", this.getLotaTitular());
+			
+			result.use(Results.page()).forwardTo("/WEB-INF/page/exMovimentacao/aGerarProtocolo.jsp");
+		}
+		else
+			result.redirectTo("/app/expediente/mov/protocolo_unitario?popup="+popup+"&sigla="+mov.getExMobil().getDoc().getSigla()+"&id="+mov.getIdMov());
 	}
 
 	@Get("app/expediente/mov/juntar")
@@ -1200,7 +1209,9 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 
-	@Get("/app/expediente/mov/fechar_popup")
+	@Get
+	@Post
+	@Path("/app/expediente/mov/fechar_popup")
 	public void fecharPopup() {
 		System.out.println("popup fechado.");
 	}
@@ -1826,27 +1837,28 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);		
 	}
 
-	@Post("/app/expediente/mov/assinar_mov_login_senha_gravar")
+	@Get
+	@Post
+	@Path("/app/expediente/mov/assinar_mov_login_senha_gravar")
 	public void aAssinarMovSenhaGravar(Long id, String sigla, String tipoAssinaturaMov, String nomeUsuarioSubscritor, String senhaUsuarioSubscritor,
-			Boolean copia) throws Exception {
+			Boolean copia) throws Exception{
 		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
 
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
 		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
 
 		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 
 		if (copia || (tipoAssinaturaMov != null && tipoAssinaturaMov.equals("C")))
 			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA;
-
-		try {
-			Ex.getInstance()
-					.getBL()
-					.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), nomeUsuarioSubscritor, senhaUsuarioSubscritor,
-							tpMovAssinatura);
-		} catch (final Exception e) {
-			throw e;
-		}
+	
+		Ex.getInstance()
+		.getBL()
+		.assinarMovimentacaoComSenha(getCadastrante(), getLotaTitular(), mov, mov.getDtMov(), nomeUsuarioSubscritor, senhaUsuarioSubscritor,
+				tpMovAssinatura);
+		
+		result.forwardTo(this).assinado(mob);
 	}
 	
 	@Get("/app/expediente/mov/cancelar_pedido_publicacao_boletim")
@@ -3226,5 +3238,64 @@ public class ExMovimentacaoController extends ExController {
 		result.include("dtRegMov",dtRegMov);
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
+	
+	@Get
+	@Post
+	@Path("/app/expediente/mov/assinar_mov_gravar")
+	public void aAssinarMovGravar(final Long id, final Boolean copia, final String atributoAssinavelDataHora, String assinaturaB64, final String certificadoB64) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setId(id);
+		final boolean fApplet = getRequest().getParameter("QTYDATA") != null;
+		String b64Applet = null;
+		if (fApplet) {
+			b64Applet = recuperarAssinaturaAppletB64(builder);
+		}
+		buscarDocumento(builder, true);
+		final ExMobil mob = builder.getMob();
+		final ExMovimentacao mov = builder.getMov();
+		
+		if (b64Applet != null)
+			assinaturaB64 = b64Applet;
+
+		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
+		if (copia != null && copia)
+			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
+
+		byte[] assinatura = Base64.decode(assinaturaB64);
+		Date dt = mov.getDtMov();
+
+		byte[] certificado = Base64.decode(certificadoB64);
+		if (certificado != null && certificado.length != 0)
+			dt = new Date(Long.valueOf(atributoAssinavelDataHora));
+		else
+			certificado = null;
+
+		verificaNivelAcesso(mov.getExMobil());
+
+		try {
+			Ex.getInstance()
+					.getBL()
+					.assinarMovimentacao(getCadastrante(), getLotaTitular(), mov, dt, assinatura, certificado, tpMovAssinatura);
+		} catch (final Exception e) {
+			if (fApplet) {
+				result.include("err", e.getMessage());
+				result.use(Results.page()).forwardTo("/paginas/erro.jsp");
+				return;
+			}
+
+			throw e;
+		}
+
+		if (fApplet) {
+			result.use(Results.page()).forwardTo("/paginas/ok.jsp");
+			return;
+		}
+		
+		result.forwardTo(this).assinado(mob);		
+	}
+	
+	@Get("/app/expediente/mov/assinado")
+	public void assinado(final ExMobil mob){
+		result.include("mob", mob);
+	}		
 
 }

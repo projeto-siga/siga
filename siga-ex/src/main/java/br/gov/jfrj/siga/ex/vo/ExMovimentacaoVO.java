@@ -466,7 +466,7 @@ public class ExMovimentacaoVO extends ExVO {
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/expediente/mov", "protocolo_arq",
+				addAcao(null, "Protocolo", "/app/expediente/mov", "protocolo_arq",
 						true, null, "pessoa="
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
@@ -485,7 +485,7 @@ public class ExMovimentacaoVO extends ExVO {
 				pre = "Devolver até " + mov.getDtFimMovDDMMYY() + " | ";
 			}
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/expediente/mov",
+				addAcao(null, "Protocolo", "/app/expediente/mov",
 						"protocolo_transf", true, null,
 						"pessoa="
 								+ (mov.getCadastrante() == null ? "null" : mov

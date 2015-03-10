@@ -72,7 +72,7 @@ public class ExAutenticacaoController extends ExController{
 
 		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(Captcha.NAME);
 
-		if (captcha == null || n == null || n.trim().length() == 0) {
+		if (captcha == null || n == null || n.trim().length() == 0 || answer == null) {
 			setDefaultResults();
 			return;
 		}
@@ -137,7 +137,7 @@ public class ExAutenticacaoController extends ExController{
 											  final Long idMov) throws Exception{
 		
 		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(Captcha.NAME);
-		if (captcha == null || n == null || n.trim().length() == 0) {
+		if (captcha == null || n == null || n.trim().length() == 0 || answer == null) {
 			result.redirectTo(URL_EXIBIR);
 			return null;
 		}
@@ -189,7 +189,7 @@ public class ExAutenticacaoController extends ExController{
 								   final String answer) throws Exception{
 		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(Captcha.NAME);
 
-		if (captcha == null || n == null || n.trim().length() == 0) {
+		if (captcha == null || n == null || n.trim().length() == 0 || answer == null) {
 			setDefaultResults();
 			result.redirectTo(URL_EXIBIR);
 			return;

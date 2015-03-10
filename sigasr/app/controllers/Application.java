@@ -1537,14 +1537,15 @@ public class Application extends SigaApplication {
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void listarLista(boolean mostrarDesativados) throws Exception {
-		List<CpOrgaoUsuario> orgaos = JPA.em()
-				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpOrgaoUsuario> orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
 		List<SrLista> listas = SrLista.listar(mostrarDesativados);
+		String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 		
-		render(listas, mostrarDesativados, orgaos, locais, tiposPermissao);
+		render(listas, mostrarDesativados, orgaos, locais, tiposPermissao, tiposPermissaoJson);
 	}
 	
 	public static void listarListaDesativados() throws Exception {

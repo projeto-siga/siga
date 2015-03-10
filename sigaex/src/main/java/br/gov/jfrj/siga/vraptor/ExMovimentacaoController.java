@@ -44,6 +44,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -394,12 +395,37 @@ public class ExMovimentacaoController extends ExController {
 		
 	}
 
-	@Post("app/expediente/mov/protocolo_transf")
-	public void aGerarProtocolo(final String movId, final Long pessoa, final String dt, final List<String> itens, final String campoData,
-			final String campoPara, final String campoDe) {
-		final ArrayList<Object> al = criarListaDocumentos(itens);
+	@Get("app/expediente/mov/protocolo")
+	public void aProtocolo(DpLotacaoSelecao lotaResponsavelSel, DpPessoaSelecao responsavelSel, CpOrgaoSelecao cpOrgaoSel, String obsOrgao) {
+		aGerarProtocolo(lotaResponsavelSel, responsavelSel, cpOrgaoSel, obsOrgao);
+	}
+	
+	@Get("app/expediente/mov/via_protocolo_gravar")
+	public void aGerarProtocolo(DpLotacaoSelecao lotaResponsavelSel, DpPessoaSelecao responsavelSel, CpOrgaoSelecao cpOrgaoSel, String obsOrgao) {
+		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
+		builder.setCadastrante(getCadastrante());
+		builder.setLotaResponsavelSel(lotaResponsavelSel);
+		builder.setResponsavelSel(responsavelSel);
+		builder.setCpOrgaoSel(cpOrgaoSel);
+		builder.setObsOrgao(obsOrgao);
+		final ExMovimentacao mov  = builder.construir(dao());
+		
+		final Pattern p = Pattern.compile("chk_([0-9]+)");
 
-		final ExMovimentacao mov = criarMov(movId);
+		final ArrayList al = new ArrayList();
+
+			for (final String s : getPar().keySet()) {
+				if (s.startsWith("chk_") && param(s).equals("true")) {
+					final Matcher m = p.matcher(s);
+					if (!m.find()){
+						throw new AplicacaoException("Não foi possível ler a Id do documento e o número da via.");
+					}
+					final ExMobil mob = dao().consultar(Long.valueOf(m.group(1)), ExMobil.class, false);
+					final Object[] ao = { mob.doc(),mob.getUltimaMovimentacaoNaoCancelada() };
+					al.add(ao);
+				}
+			}
+		
 		final Object[] arr = al.toArray();
 
 		Arrays.sort(arr, new Comparator<Object>() {
@@ -443,11 +469,7 @@ public class ExMovimentacaoController extends ExController {
 		for (int k = 0; k < arr.length; k++) {
 			al.add(arr[k]);
 		}
-
-		result.include("campoDe", campoDe);
-		result.include("campoPara", campoPara);
-		result.include("campoData", campoData);
-
+		
 		result.include("itens", al);
 		result.include("cadastrante", this.getCadastrante());
 		result.include("mov", mov);
@@ -2744,7 +2766,32 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	
+    @Get("/app/expediente/mov/via_protocolo")
+    public void aViaProtocolo(Integer tipoResponsavel, 
+        final CpOrgaoSelecao cpOrgaoSel,
+        final DpLotacaoSelecao lotaResponsavelSel, 
+        final DpPessoaSelecao responsavelSel) {
+        
+        final List<ExMobil> provItens = dao().consultarParaViaDeProtocolo(getLotaTitular());
+        final List<ExMobil> itens = new ArrayList<ExMobil>();        
+        final CpOrgaoSelecao cpOrgaoSelecaoFinal = Optional.fromNullable(cpOrgaoSel).or(new CpOrgaoSelecao());
+        final DpLotacaoSelecao lotaResponsavelSelFinal = Optional.fromNullable(lotaResponsavelSel).or(new DpLotacaoSelecao());
+        final DpPessoaSelecao responsavelSelFinal = Optional.fromNullable(responsavelSel).or(new DpPessoaSelecao());        
+        
+        for (ExMobil m : provItens) {
+            if (Ex.getInstance().getComp()
+                    .podeAcessarDocumento(getTitular(), getLotaTitular(), m))
+                itens.add(m);
+        }        
+
+        result.include("itens", itens);
+        result.include("listaTipoResp", this.getListaTipoResp());
+        result.include("tipoResponsavel", tipoResponsavel != null ? tipoResponsavel : 1);
+        result.include("cpOrgaoSel", cpOrgaoSelecaoFinal);
+        result.include("lotaResponsavelSel", lotaResponsavelSelFinal);
+        result.include("responsavelSel", responsavelSelFinal);        
+    }    
+    
 	private void validarDataGravacao(ExMovimentacao mov, boolean apenasSolicitacao) throws AplicacaoException {
 		if (mov.getDtDispPublicacao() == null)
 			throw new AplicacaoException("A data desejada para a disponibilização precisa ser informada.");

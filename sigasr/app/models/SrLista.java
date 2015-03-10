@@ -220,6 +220,10 @@ public class SrLista extends HistoricoSuporte {
 		}
 	}
 	
+	public List<SrConfiguracao> getPermissoes() {
+		return getPermissoes(null, null);
+	}
+		
 	public Set<SrSolicitacao> getSolicitacaoSet() throws Exception {
 		Set<SrSolicitacao> sols = new TreeSet<SrSolicitacao>(
 				new SrSolicitacaoListaComparator(this));

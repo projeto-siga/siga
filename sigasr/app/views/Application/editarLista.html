@@ -68,7 +68,7 @@
 				</thead>
 
 				<tbody>
-					#{list items:lista?.getPermissoes(lotaTitular, cadastrante), as:'perm'}
+					#{list items:lista?.getPermissoes(), as:'perm'}
 						<tr style="cursor: pointer !important;">
 							<td>${perm.orgaoUsuario?.id}</td>
 							<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>

@@ -2035,12 +2035,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public List<SrLista> getListasDisponiveisParaInclusao(
 			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
 		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
-
+		
 		for (SrLista l : SrLista.listar(false)) {
-			if (l.podeIncluir(lotaTitular, cadastrante))
-				listaFinal.add(l);
+			if (l.getListaAtual().podeIncluir(lotaTitular, cadastrante))
+				if(!listaFinal.contains(l.getListaAtual()))
+					listaFinal.add(l.getListaAtual());
 		}
-
 		listaFinal.removeAll(getListasAssociadas());
 		Collections.sort(listaFinal, new Comparator<SrLista>() {
 			@Override

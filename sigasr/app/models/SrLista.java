@@ -33,7 +33,6 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
 public class SrLista extends HistoricoSuporte {
-
 	/**
 	 * 
 	 */

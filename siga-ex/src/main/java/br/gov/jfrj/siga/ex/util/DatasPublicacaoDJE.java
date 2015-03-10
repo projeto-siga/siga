@@ -95,7 +95,7 @@ public class DatasPublicacaoDJE {
 		return null;
 	}
 	
-	public Date consultarProximaDataDisponivel() {
+	public static Date consultarProximaDataDisponivel() {
 		try {
 			
 			StringBuilder corpo = new StringBuilder();
@@ -130,6 +130,21 @@ public class DatasPublicacaoDJE {
 		}
 		
 		return null;
+	}
+	
+	public static String consultarProximaDataDisponivelString() {
+		try {
+			Date proximaDataDisponivel = consultarProximaDataDisponivel();
+				
+			if(proximaDataDisponivel != null) {
+				SimpleDateFormat formatBra = new SimpleDateFormat("dd/MM/yyyy");  
+				return formatBra.format(proximaDataDisponivel);
+			}
+		} catch (Exception e) {
+		   return "";
+		}
+	   
+	   return "";
 	}
 
 	private Date adicionaUmDia(Date data) {

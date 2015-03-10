@@ -1654,7 +1654,11 @@ public class ExDocumentoController extends ExController {
 			idUltimoDoc = 999999999;
 		}
 		try {
-			efetivarDoc = efetivar;
+			if (efetivar == null){
+				efetivarDoc = false;
+			}else{
+				efetivarDoc = efetivar;
+			}
 		} catch (Exception e) {
 			efetivarDoc = false;
 		}		

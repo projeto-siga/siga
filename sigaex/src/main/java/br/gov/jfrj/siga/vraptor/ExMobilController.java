@@ -45,6 +45,7 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
@@ -493,4 +494,70 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		}
 	}
 
+	@Override
+	public Selecionavel selecionarVerificar(Selecionavel sel) throws AplicacaoException {
+		
+		ExMobil mob = (ExMobil) sel;
+		
+		if (mob.doc() == null)
+			return null;
+		
+		//Edson: Se a via, volume ou documento inteiro tiver sido eliminado(a), não retorna nada.
+		if (mob.isEliminado())
+			return null;
+		
+		// Se for uma via ou volume, retornar
+		if (mob.isVia() || mob.isVolume())
+			return mob;
+
+		if (mob.isGeral() && mob.doc().isExpediente()) {
+			// Se o numero da via nao foi especificado, tentar encontrar a via
+			// de numero mais baixo que esteja com o titular.
+			//
+			for (ExMobil m : mob.doc().getExMobilSet()) {
+				if (m.isGeral() || m.isEliminado())
+					continue;
+				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
+				if (mov != null && mov.getResp() != null
+						&& mov.getResp().equivale(super.getTitular())) {
+					return m;
+				}
+			}
+
+			// Se nao encontrar, tentar encontrar uma na lotacao do titular
+			//
+			for (ExMobil m : mob.doc().getExMobilSet()) {
+				if (m.isGeral() || m.isEliminado())
+					continue;
+				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
+				if (mov != null && mov.getLotaResp() != null
+						&& mov.getLotaResp().equivale(super.getLotaTitular())) {
+					return m;
+				}
+			}
+		}
+
+		if (mob.isGeral() && mob.doc().isProcesso()) {
+			// Se o ultimo volume estiver na lotação do titular ou com ele,
+			// retornar o ultimo volume
+			//
+			ExMobil m = mob.doc().getUltimoVolume();
+			if (m != null) {
+				ExMovimentacao mov = m.getUltimaMovimentacaoNaoCancelada();
+				if (mov == null) {
+					return m;
+				}
+				if (mov.getLotaResp() != null
+						&& mov.getLotaResp().equivale(super.getLotaTitular())) {
+					return m;
+				}
+				if (mov.getResp() != null
+						&& mov.getResp().equivale(super.getTitular())) {
+					return m;
+				}
+			}
+		}
+
+		return sel;
+	}
 }

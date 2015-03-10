@@ -144,13 +144,12 @@ public class ExAutenticacaoController extends ExController{
 		
 		if (captcha.isCorrect(answer)) {
 			ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
-			ExMovimentacao mov = (ExMovimentacao) arq;
 						
 			byte[] bytes;
 			String fileName;
 			String contentType;
 			if (idMov != null && idMov != 0) {
-				mov = dao().consultar(mov.getIdMov(),ExMovimentacao.class, false);
+				ExMovimentacao mov = dao().consultar(idMov,ExMovimentacao.class, false);
 
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
 				contentType = mov.getConteudoTpMov();
@@ -203,9 +202,14 @@ public class ExAutenticacaoController extends ExController{
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 		
+		ExMovimentacao mov = null;
+		if (arq.isCodigoParaAssinaturaExterna(n)){
+			mov = (ExMovimentacao) arq;
+		}
+		
 		setDefaultResults();
 		result.include("assinaturas", assinaturas);
-		result.include("mov",(ExMovimentacao) arq);
+		result.include("mov",mov);
 		result.include("n",n);
 		result.include("answer",answer);
 	}

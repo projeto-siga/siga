@@ -478,17 +478,8 @@
 
 		$('#modal-permissao-error').css('display', 'none');
 		$('#modal-permissao').css('display', 'block');
-
 		
-		var tiposPermissao = $("#tiposPermissaoContainer").data('json'),
-			tiposPermissaoNode = $("#itemTipoPermissao");
-		tiposPermissaoNode.find('option').remove();
-		tiposPermissao.forEach(function(tipoPermissao) {
-			var option = $('<option>');
-			option.attr('value', tipoPermissao.idTipoPermissaoLista);
-			option.html(tipoPermissao.descrTipoPermissaoLista);
-			tiposPermissaoNode.append(option);
-		});
+		atualizarComboTipoPermissao();
 	}
 
 	function serializePermissao(row) {

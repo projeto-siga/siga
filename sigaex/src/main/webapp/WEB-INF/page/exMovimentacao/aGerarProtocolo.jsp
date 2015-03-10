@@ -23,7 +23,7 @@
 					<tr>
 						<tr>
 							<td>De:</td>
-							<td>${cadastrante.lotacao.descricao}-
+							<td>${cadastrante.lotacao.descricao} -
 								${cadastrante.descricao}</td>
 						</tr>
 						<tr>

@@ -1537,14 +1537,14 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			if (fApplet) {
 				result.include("err", e.getMessage());
-				result.use(Results.page()).forwardTo("/paginas/erro.jsp");				
+				result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");				
 			}
 
 			throw e;
 		}
 
 		if (fApplet) {
-			result.use(Results.page()).forwardTo("/paginas/ok.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
 		}
 	}
 	

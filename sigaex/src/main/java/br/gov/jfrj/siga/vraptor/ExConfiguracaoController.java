@@ -193,7 +193,7 @@ public class ExConfiguracaoController extends ExController {
 					CpTipoConfiguracao.class, false));
 		} else {
 			result.include("err", "Tipo de configuração não informado");
-			result.use(Results.page()).forwardTo("/paginas/erro.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");
 			return;
 		}
 

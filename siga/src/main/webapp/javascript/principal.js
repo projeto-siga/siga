@@ -3,26 +3,32 @@ Siga.principal = {
     modules: {
         sigaex: {
         	name: "sigaex",
+        	url: "/sigaex/expediente/doc/gadget.action?idTpFormaDoc=1&apenasQuadro=true",
             viewId: "left"
         },
         sigawf: {
         	name: "sigawf",
+        	url: "/sigawf/inbox.action",
             viewId: "right"
-        },        
+        },
         sigasr: {
         	name: "sigasr",
+        	url: "/sigasr/solicitacao/gadget",
             viewId: "rightbottom"
         },
         sigagc: {
         	name: "sigagc",
+        	url: "/sigagc/app/gadget",
             viewId: "rightbottom2"
         },
         sigatp: {
         	name: "sigatp",
+        	url: "/sigatp/gadget",
             viewId: "rightbottom3"
-        },        
+        },
         processos: {
         	name: "processos",
+        	url: "/sigaex/expediente/doc/gadget.action?idTpFormaDoc=2",
             viewId: "leftbottom"
         }
     }
@@ -34,20 +40,14 @@ $(function() {
 	if (Siga.isIE()){
 		$.ajaxSetup({ cache: false });
 	}
-    
-	$.each(Siga.principal.modules, function(){ 
-    	var model = this;     
+
+	$.each(Siga.principal.modules, function(){
+    	var model = this;
     	var target = $("#"+model.viewId);
     	$(target.find(".loading")).show();
-    	
-        Siga.ajax("/siga/principalQuadros/carregaModulo.action", {modulo: model.name}, "GET", function(response){
-        	if (response.indexOf("siga-modules") > -1 && response.indexOf("siga-box") > -1){
-        		Siga.ajax("/siga/principalQuadros/carregaModulo.action", {modulo: model.name}, "GET", function(sec){
-        			target.html(sec);
-        		});
-        	}else{
+
+        Siga.ajax(model.url, {}, "GET", function(response){
         		target.html(response);
-        	}
         });
     });
 });

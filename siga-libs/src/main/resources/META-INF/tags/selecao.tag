@@ -146,7 +146,10 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	}
 	var url = '${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 	url = url + '&sigla=' + sigla;
-	PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
+	Siga.ajax(url, null, "GET", function(response){		
+		resposta_ajax_${propriedade}${tipoSel}(response);
+	});	
+	//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 }
 
 </script>

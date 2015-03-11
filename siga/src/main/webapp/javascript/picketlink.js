@@ -35,6 +35,11 @@ window.Siga = {
        if (Siga.isIE()){
     	   cacheValue = false;
        }
+       
+       if (ajax.params == null || ajax.params == 'undefined'){
+    	   ajax.params = {};
+       }
+       ajax.params["idp"] = sessionStorage.getItem("idp");
        	
 	   $.ajax({
 	       url: ajax.url,

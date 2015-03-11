@@ -35,20 +35,19 @@ $(function() {
 		$.ajaxSetup({ cache: false });
 	}
     
-	Siga.ajax("/sigaidp/IDPServlet", {}, "GET", function(idpID){
-		if (idpID.indexOf("<html") > -1 || $.trim(idpID) == "error"){
-			window.location.href = "/sigaidp";
-		}else{
-			$.each(Siga.principal.modules, function(){ 
-		    	var model = this;     
-		    	var target = $("#"+model.viewId);
-		    	$(target.find(".loading")).show();
-		    	
-		        Siga.ajax("/siga/principalQuadros/carregaModulo.action", {modulo: model.name, idp: $.trim(idpID)}, "GET", function(response){ 
-		        	target.html(response);
-		        });
-		    });
-		}
-	});
-    
+	$.each(Siga.principal.modules, function(){ 
+    	var model = this;     
+    	var target = $("#"+model.viewId);
+    	$(target.find(".loading")).show();
+    	
+        Siga.ajax("/siga/principalQuadros/carregaModulo.action", {modulo: model.name}, "GET", function(response){
+        	if (response.indexOf("siga-modules") > -1 && response.indexOf("siga-box") > -1){
+        		Siga.ajax("/siga/principalQuadros/carregaModulo.action", {modulo: model.name}, "GET", function(sec){
+        			target.html(sec);
+        		});
+        	}else{
+        		target.html(response);
+        	}
+        });
+    });
 });

@@ -85,5 +85,8 @@
     <script type="text/javascript">
         $('input, textarea').placeholder();
         $("#j_username").focus();
+
+        var idp = document.cookie.substring(12, document.cookie.length-1);
+        sessionStorage.setItem("idp", idp);
     </script>
 </siga:pagina>

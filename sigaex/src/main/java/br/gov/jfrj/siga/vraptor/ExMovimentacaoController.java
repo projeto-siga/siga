@@ -1167,7 +1167,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("app/expediente/mov/transferir_lote_gravar")
 	public void aTransferirLoteGravar(final String dtMovString, final DpPessoaSelecao subscritorSel, final boolean substituicao,
 			final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final DpLotacaoSelecao lotaResponsavelSel,
-			final CpOrgaoSelecao cpOrgaoSel, final String obsOrgao, final Long tpdall, final String txtall) {
+			final CpOrgaoSelecao cpOrgaoSel, final String obsOrgao, final Long tpdall, final String txtall, final DpPessoaSelecao responsavelSel) {
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
 		builder.setDtMovString(dtMovString)
 				.setSubscritorSel(subscritorSel)
@@ -1176,7 +1176,8 @@ public class ExMovimentacaoController extends ExController {
 				.setNmFuncaoSubscritor(nmFuncaoSubscritor)
 				.setLotaResponsavelSel(lotaResponsavelSel)
 				.setCpOrgaoSel(cpOrgaoSel)
-				.setObsOrgao(obsOrgao);
+				.setObsOrgao(obsOrgao)
+				.setResponsavelSel(responsavelSel);
 
 		final ExMovimentacao mov = builder.construir(dao());
 
@@ -1244,7 +1245,7 @@ public class ExMovimentacaoController extends ExController {
 
 						Ex.getInstance()
 								.getBL()
-								.transferir(mov.getOrgaoExterno(), mov.getObsOrgao(), mov.getCadastrante(), mov.getLotaTitular(), mobil, mov.getDtMov(), dt,
+								.transferir(mov.getOrgaoExterno(), mov.getObsOrgao(), getCadastrante(), getLotaTitular(), mobil, mov.getDtMov(), dt,
 										mov.getDtFimMov(), mov.getLotaResp(), mov.getResp(), mov.getLotaDestinoFinal(), mov.getDestinoFinal(),
 										mov.getSubscritor(), mov.getTitular(), tpd, false, txt, null, mov.getNmFuncaoSubscritor(), false, false);
 
@@ -1308,6 +1309,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaResponsavelSel", lotaResponsavelSel);
 		result.include("cpOrgaoSel", cpOrgaoSel);
 		result.include("substituicao", substituicao);
+		result.include("responsavelSel",responsavelSel);
 	}
 
 	@Get("app/expediente/mov/arquivar_intermediario_lote")

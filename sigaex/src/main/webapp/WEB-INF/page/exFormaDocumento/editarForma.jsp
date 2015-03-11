@@ -56,7 +56,7 @@
 					<tr>
 						<td>Sigla:</td>
 						<td>
-							<input type="text" value="${sigla}" name="sigla" size="3" />
+							<input type="text" value="${sigla}" name="sigla" size="3" id="gravar_sigla" />
 							<span id="mensagem"></span>
 						</td>
 					</tr>
@@ -134,7 +134,7 @@
 			$.ajax({				     				  
 				  url:'${pageContext.request.contextPath}/app/forma/verificar_sigla',
 				  type: "GET",
-				  data: {sigla : sigla},					    					   					 
+				  data: {sigla : sigla, id : ${id} },					    					   					 
 				  success: function(data) {
 			    	$('#mensagem').html(data);				    
 			 	 }

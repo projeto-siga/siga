@@ -108,6 +108,7 @@ public final class ExMovimentacaoBuilder {
 
 		if (subscritorSel != null && subscritorSel.getId() != null) {
 			mov.setSubscritor(dao.consultar(subscritorSel.getId(), DpPessoa.class, false));
+			mov.setLotaSubscritor(mov.getSubscritor().getLotacao());
 		}
 
 		mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);

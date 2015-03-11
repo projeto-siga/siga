@@ -7,8 +7,75 @@
 <script src="/sigasr/public/javascripts/base-service.js"></script>
 
 <style>
-#sortable table { height: 1.5em; line-height: 1.2em; }
-.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+	#sortable table { height: 1.5em; line-height: 1.2em; }
+	.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+	
+	/** CSS do numero **/
+	.numero-solicitacao a {
+		color: black;
+	}
+	.PRIORIDADE-IMEDIATO .numero-solicitacao a {
+		color: red;
+		font-weight: bold;
+	}
+	.PRIORIDADE-ALTO .numero-solicitacao a {
+		color: #E0E000;
+		font-weight: bold;
+	}
+	.PRIORIDADE-MEDIO .numero-solicitacao a {
+		color: blue;
+		font-weight: bold;
+	}
+	.PRIORIDADE-BAIXO .numero-solicitacao a {
+		color: green;
+		font-weight: bold;
+	}
+	.PRIORIDADE-PLANEJADO .numero-solicitacao a {
+		color: gray;
+		font-weight: bold;
+	}
+	
+	.legenda-prioridade {
+		margin-top: 10px;
+	}
+	
+	/** CSS da leganda **/
+	.legenda-prioridade span{
+		display: inline-block;
+	}
+	.legenda-prioridade .cor {
+		height: 15px;
+		width: 15px;
+		display: inline-block;
+		-webkit-border-radius: 3px;
+		-moz-border-radius: 3px;
+		border-radius: 3px;
+	}
+	
+	.legenda-prioridade div {
+		display: inline-block;
+	}
+	.legenda-prioridade .descricao {
+		display: block;
+	    margin-left: 20px;
+	    margin-right: 15px;
+	    margin-top: -18px;
+	}
+	.legenda-prioridade .PRIORIDADE-IMEDIATO .cor {
+		background-color: red;
+	}
+	.legenda-prioridade .PRIORIDADE-ALTO .cor {
+		background-color: #E0E000;
+	}
+	.legenda-prioridade .PRIORIDADE-MEDIO .cor {
+		background-color: blue;
+	}
+	.legenda-prioridade .PRIORIDADE-BAIXO .cor {
+		background-color: green;
+	}
+	.legenda-prioridade .PRIORIDADE-PLANEJADO .cor {
+		background-color: gray;
+	}
 </style>
 
 #{set podeRemover:lista.podeRemover(lotaTitular, cadastrante) /}
@@ -16,14 +83,14 @@
 #{set podePriorizar:lista.podePriorizar(lotaTitular, cadastrante) /}
 
 #{if podePriorizar}
-<script>
-	QueryString = {};
-
-	$(function() {
-		$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
-		$( "#sortable" ).disableSelection();
-	});
-</script>
+	<script>
+		QueryString = {};
+	
+		$(function() {
+			$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
+			$( "#sortable" ).disableSelection();
+		});
+	</script>
 #{/if} 
 
 <div class="gt-bd clearfix">
@@ -34,7 +101,8 @@
 			#{if podeEditar} 
 				<a href="#" onclick="javascript: editarLista(event, ${lista.toJson()})"> 
 					<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">Editar
-				</a>&nbsp;&nbsp;&nbsp; #{/if}
+				</a>&nbsp;&nbsp;&nbsp; 
+			#{/if}
 		</p>
  	
  	<div class="gt-content-box gt-for-table dataTables_div">
@@ -57,54 +125,81 @@
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Lotação</th>
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Última Movimentação</th>
 					#{if podeRemover}
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;"></th>
+						<th style="color: #333; font-weight: bold; padding: 7px 10px;"></th>
 					#{/if}
 				</tr>
 			</thead>
 			<tbody id="sortable" >
 				#{list items:lista.solicitacaoSet, as:'sol'}
-				#{if sol}
-	
-				<tr id="${sol.idSolicitacao}">
-				<td class="gt-celula-nowrap" style="cursor:move; font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
-					${sol.getPrioridadeNaLista(lista)}
-				</td>
-				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+					#{if sol}
+					<tr id="${sol.idSolicitacao}" class="PRIORIDADE-${sol.prioridade}">
+						<td class="gt-celula-nowrap numero-solicitacao" style="cursor:move; font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
+							<a>${sol.getPrioridadeNaLista(lista)}</a>
+						</td>
+						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 							<a href="@{Application.exibir(sol.idSolicitacao)}">
 								${sol.codigo}
 							</a>	
-				</td>
-				<td class="gt-celula-nowrap"  style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important; text-align:justify;" "id="descrSolicitacao">
-				<b>#{descricaoItem itemConfiguracao: sol.itemAtual /}:</b>&nbsp;
-				#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
-				</td>
-					
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px; text-align:center;" >
-				#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
-				#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.siglaLotacao /}
-				</td>
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
-				</td>						
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					<b>${sol?.lotaAtendente.siglaLotacao}</b></td>
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}
-				</td>
-				#{if podeRemover} 
-				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					<input type="hidden" name="idLista" value="${lista.idLista}">
-					<input type="hidden" name="idSolicitacao" value="${sol.idSolicitacao}">
-					<a onclick="javascript: return block();" href="@{Application.retirarDeLista(sol.idSolicitacao,lista.idLista)}" title="Remover da Lista" name="idSolicitacao" value="${sol.idSolicitacao}">
-					<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> </a>
-				</td>
-				#{/if}
-				</tr>		
-				#{/if}		
+						</td>
+						<td class="gt-celula-nowrap"  style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important; text-align:justify;" "id="descrSolicitacao">
+						<b>#{descricaoItem itemConfiguracao: sol.itemAtual /}:</b>&nbsp;
+						#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
+						</td>
+							
+						<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px; text-align:center;" >
+						#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
+						#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.siglaLotacao /}
+						</td>
+						<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+						#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
+						</td>						
+						<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+							<b>${sol?.lotaAtendente.siglaLotacao}</b></td>
+						<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+							#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}
+						</td>
+						#{if podeRemover} 
+						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+							<input type="hidden" name="idLista" value="${lista.idLista}">
+							<input type="hidden" name="idSolicitacao" value="${sol.idSolicitacao}">
+							<a onclick="javascript: return block();" href="@{Application.retirarDeLista(sol.idSolicitacao,lista.idLista)}" title="Remover da Lista" name="idSolicitacao" value="${sol.idSolicitacao}">
+							<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> </a>
+						</td>
+						#{/if}
+					</tr>		
+					#{/if}		
 				#{/list}
 			</tbody>
 		</table>
 	</div>	
+</div>
+
+
+<div class="legenda-prioridade">
+	<div class="PRIORIDADE-IMEDIATO">
+		<span class="cor"></span>
+		<span class="descricao">Imediata</span>
+	</div>
+	
+	<div class="PRIORIDADE-ALTO">
+		<span class="cor"></span>
+		<span class="descricao">Alta</span>
+	</div>
+	
+	<div class=PRIORIDADE-MEDIO>
+		<span class="cor"></span>
+		<span class="descricao">Média</span>
+	</div>
+	
+	<div class="PRIORIDADE-BAIXO">
+		<span class="cor"></span>
+		<span class="descricao">Baixa</span>
+	</div>
+	
+	<div class="PRIORIDADE-PLANEJADO">
+		<span class="cor"></span>
+		<span class="descricao">Planejada</span>
+	</div>
 </div>
 
 <!-- /content box -->

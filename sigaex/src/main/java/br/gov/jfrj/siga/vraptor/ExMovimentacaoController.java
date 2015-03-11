@@ -90,6 +90,7 @@ public class ExMovimentacaoController extends ExController {
 
 	public ExMovimentacaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em, Validator validator) {
+		
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();

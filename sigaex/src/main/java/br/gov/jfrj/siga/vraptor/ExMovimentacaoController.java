@@ -3032,6 +3032,7 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Publicação não permitida");
 		}
 		result.include("sigla", sigla);
+		result.include("doc",mob.getDoc());
 	}
 
 	@Get("/app/expediente/mov/boletim_publicar_gravar")

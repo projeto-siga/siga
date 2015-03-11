@@ -2648,12 +2648,19 @@ public class ExMovimentacaoController extends ExController {
 						getLotaTitular(),
 						CpTipoConfiguracao.TIPO_CONFIG_ATENDER_PEDIDO_PUBLICACAO)) {
 			
-			lot.setId(doc.getSubscritor().getLotacao().getId());
-			lot.buscar();
+			if (doc.getSubscritor() != null && doc.getSubscritor().getLotacao() != null){
+				lot.setId(doc.getSubscritor().getLotacao().getId());
+				lot.buscar();
+			}
 			podeAtenderPedidoPublicacao = Boolean.TRUE;
 		}
 		
-		ListaLotPubl listaLotPubl = getListaLotacaoPublicacao(doc);
+		if (!podeAtenderPedidoPublicacao){
+			ListaLotPubl listaLotPubl = getListaLotacaoPublicacao(doc);
+			result.include("listaLotPubl", listaLotPubl.getLotacoes());
+			result.include("idLotDefault", listaLotPubl.getIdLotDefault());
+		}
+		
 		result.include("tipoMateria", PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		result.include("cadernoDJEObrigatorio", PublicacaoDJEBL.obterObrigatoriedadeTipoCaderno(doc));
 		result.include("descrPublicacao", descrPublicacao == null ? doc.getDescrDocumento() : descrPublicacao);
@@ -2662,8 +2669,6 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", builder.getMob());
 		result.include("request", getRequest());
 		result.include("mensagem", mensagem);
-		result.include("listaLotPubl", listaLotPubl.getLotacoes());
-		result.include("idLotDefault", listaLotPubl.getIdLotDefault());
 		result.include("tamMaxDescr", 255 - doc.getDescrDocumento().length());
 		result.include("request", getRequest());
 		result.include("sigla", sigla);

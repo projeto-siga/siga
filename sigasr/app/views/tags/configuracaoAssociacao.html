@@ -318,9 +318,8 @@
 	function associacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		$('td:eq(' + colunas.acaoExpandir + ')', nRow).addClass('details-control');
 
-		if (nRow.dataset && nRow.dataset.json) {
-			var assoc = JSON.parse(nRow.dataset.json);
-
+		var assoc = $(nRow).data('json');
+		if (assoc) {
 			if (assoc.ativo == false)
 				$('td', nRow).addClass('item-desativado');
 			else

@@ -58,13 +58,17 @@ public class ExTemporalidadeController extends ExController {
 	}
 
 	@Post("app/expediente/temporalidade/gravar")
-	public void gravar(final Long idTemporalidade, final String acao, final String descTemporalidade, final Integer valorTemporalidade, final Long idCpUnidade) {
+	public void gravar(final Long idTemporalidade, final String acao, final String descTemporalidade, Integer valorTemporalidade, final Long idCpUnidade) {
 		assertAcesso("FE:Ferramentas;TT:Tabela de Temporalidade");
+		
+		if (valorTemporalidade == -1){
+			valorTemporalidade = null;
+		}
 
 		if (descTemporalidade == null || descTemporalidade.trim().length() == 0) {
 			throw new AplicacaoException("Você deve especificar uma descrição!");
 		}
-		if (idCpUnidade != null && idCpUnidade <= 0) {
+		if ((valorTemporalidade != null && valorTemporalidade >= 0) && idCpUnidade <= 0) {
 			throw new AplicacaoException("Você deve especificar a unidade de medida do valor informado!");
 		}
 		if ((valorTemporalidade == null || valorTemporalidade <= 0) && idCpUnidade > 0) {

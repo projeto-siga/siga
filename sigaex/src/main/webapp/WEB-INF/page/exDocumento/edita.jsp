@@ -370,7 +370,7 @@
 						<input type="hidden" name="campos" value="classificacaoSel.id" />
 						<td colspan="3">
 							<siga:span id="classificacao" depende="forma;modelo">
-							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" tema="simple" />
+							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>

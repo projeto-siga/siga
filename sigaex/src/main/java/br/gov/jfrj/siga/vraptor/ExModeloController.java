@@ -40,10 +40,13 @@ public class ExModeloController extends ExSelecionavelController {
 
 	public ExModeloController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
+		
+		result.on(AplicacaoException.class).forwardTo(this).appexception();
+		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	@Get("app/modelo/listar")
-	public void lista(final String script) {
+	public void lista(final String script) throws Exception{
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
 			List<ExModelo> modelos = dao().listarTodosModelosOrdenarPorNome(script);
@@ -53,6 +56,7 @@ public class ExModeloController extends ExSelecionavelController {
 			throw new AplicacaoException(e.getMessage(), 0, e);
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
+			throw new AplicacaoException(ex.getMessage(), 0, ex);
 		}
 	}
 
@@ -100,7 +104,7 @@ public class ExModeloController extends ExSelecionavelController {
 	@Post("app/modelo/gravar")
 	public void editarGravar(final Long id, final String nome, final String tipoModelo, final String conteudo, final ExClassificacaoSelecao classificacaoSel,
 			final ExClassificacaoSelecao classificacaoCriacaoViasSel, final String descricao, final Integer forma, final Long nivel, final String arquivo,
-			final Integer postback) throws UnsupportedEncodingException {
+			final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		ExModelo modelo = buscarModelo(id);
 		if (postback != null) {
@@ -131,7 +135,7 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Get("app/modelo/desativar")
-	public void desativar(final Long id) {
+	public void desativar(final Long id) throws Exception {
 		ModeloDao.iniciarTransacao();
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (id == null) {

@@ -14,13 +14,7 @@ function alteraTipoDaForma(){
 }
 
 function alteraForma(){
-	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos'+'?forma='+document.getElementById('forma').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'))
-		.success(function() {
-			var idMod = '${idMod}';
-			if(idMod) {
-				$("[name=idMod]").val(idMod);
-			}
-		});
+	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='+document.getElementById('forma').value+'&idMod='+'${idMod}', null, document.getElementById('comboModeloDiv'));
 }
 
 function sbmt() {

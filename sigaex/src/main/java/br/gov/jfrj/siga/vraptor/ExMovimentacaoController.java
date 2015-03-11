@@ -44,7 +44,6 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -90,6 +89,7 @@ public class ExMovimentacaoController extends ExController {
 
 	public ExMovimentacaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em, Validator validator) {
+		
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -1473,10 +1473,10 @@ public class ExMovimentacaoController extends ExController {
 	@Post("app/expediente/mov/transferir_lote_gravar")
 	public void aTransferirLoteGravar(final String dtMovString, final DpPessoaSelecao subscritorSel, final boolean substituicao,
 			final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final DpLotacaoSelecao lotaResponsavelSel, final CpOrgaoSelecao cpOrgaoSel,
-			final String obsOrgao, final Long tpdall, final String txtall) {
+			final String obsOrgao, final Long tpdall, final String txtall, final DpPessoaSelecao responsavelSel) {
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
 		builder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel).setSubstituicao(substituicao).setTitularSel(titularSel)
-				.setNmFuncaoSubscritor(nmFuncaoSubscritor).setLotaResponsavelSel(lotaResponsavelSel).setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao);
+				.setNmFuncaoSubscritor(nmFuncaoSubscritor).setLotaResponsavelSel(lotaResponsavelSel).setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao).setResponsavelSel(responsavelSel);
 
 		final ExMovimentacao mov = builder.construir(dao());
 
@@ -1544,7 +1544,7 @@ public class ExMovimentacaoController extends ExController {
 
 						Ex.getInstance()
 								.getBL()
-								.transferir(mov.getOrgaoExterno(), mov.getObsOrgao(), mov.getCadastrante(), mov.getLotaTitular(), mobil, mov.getDtMov(), dt,
+								.transferir(mov.getOrgaoExterno(), mov.getObsOrgao(), getCadastrante(), getLotaTitular(), mobil, mov.getDtMov(), dt,
 										mov.getDtFimMov(), mov.getLotaResp(), mov.getResp(), mov.getLotaDestinoFinal(), mov.getDestinoFinal(),
 										mov.getSubscritor(), mov.getTitular(), tpd, false, txt, null, mov.getNmFuncaoSubscritor(), false, false);
 
@@ -1608,6 +1608,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaResponsavelSel", lotaResponsavelSel);
 		result.include("cpOrgaoSel", cpOrgaoSel);
 		result.include("substituicao", substituicao);
+		result.include("responsavelSel",responsavelSel);
 	}
 
 	@Get("app/expediente/mov/arquivar_intermediario_lote")
@@ -1835,14 +1836,14 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			if (fApplet) {
 				result.include("err", e.getMessage());
-				result.use(Results.page()).forwardTo("/paginas/erro.jsp");
+				result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");	
 			}
 
 			throw e;
 		}
 
 		if (fApplet) {
-			result.use(Results.page()).forwardTo("/paginas/ok.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
 		}
 	}
 

@@ -219,11 +219,6 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("propriedade", propriedade);
 	}
 
-	@Get("app/expediente/doc/carregar_lista_formas")
-	public void aCarregarListaFormas(Long tipoForma, Integer idFormaDoc) {
-		result.include("todasFormasDocPorTipoForma", this.getTodasFormasDocPorTipoForma(tipoForma));
-	}
-
 	@Get("app/expediente/doc/listar")
 	public void aListar(final String popup, final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
 			final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp, final DpPessoaSelecao ultMovRespSel,
@@ -410,6 +405,12 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 		return flt;
 	}
+	
+	@Get("app/expediente/doc/carregar_lista_formas")
+	public void aCarregarListaFormas(Long tipoForma, Integer idFormaDoc) {
+		result.include("todasFormasDocPorTipoForma", this.getTodasFormasDocPorTipoForma(tipoForma));
+	}
+	
 
 	@Get("app/expediente/doc/carregar_lista_modelos")
 	public void aCarregarListaModelos(final int forma, final Long idMod) {

@@ -95,7 +95,7 @@
 								</siga:opcao>
 								<siga:opcao id="template-file/jsp" texto="JSP">
 									&nbsp;&nbsp;&nbsp;&nbsp;Nome do arquivo:
-									<input type="text" name="arquivo" size="80" />
+									<input type="text" name="arquivo" size="80" value="${arquivo}" />
 								</siga:opcao>
 							</siga:escolha>
 						</td>

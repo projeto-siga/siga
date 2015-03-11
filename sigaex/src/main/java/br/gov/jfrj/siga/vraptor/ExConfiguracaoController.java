@@ -17,8 +17,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Hibernate;
-
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -193,7 +191,7 @@ public class ExConfiguracaoController extends ExController {
 					CpTipoConfiguracao.class, false));
 		} else {
 			result.include("err", "Tipo de configuração não informado");
-			result.use(Results.page()).forwardTo("/paginas/erro.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");
 			return;
 		}
 

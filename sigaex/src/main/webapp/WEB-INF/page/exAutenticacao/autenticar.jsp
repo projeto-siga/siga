@@ -19,7 +19,7 @@
 						</tr>
 						<tr>
 							<td>
-								<label>Número de referência</label>
+								<label>Número de referência:</label>
 							</td>
 							<td>
 								<input type="text" id="id_number" name="n" style="width:150px;" />

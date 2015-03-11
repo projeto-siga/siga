@@ -53,7 +53,6 @@ import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
-import br.gov.jfrj.webwork.action.ExMobilAction.GenericoSelecao;
 
 @Resource
 public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
@@ -181,11 +180,6 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("paramoffset", builder.getOffset());
 		result.include("sigla", this.getSigla());
 		result.include("propriedade", propriedade);
-	}
-
-	@Get("app/expediente/doc/carregar_lista_formas")
-	public void aCarregarListaFormas(Long tipoForma, Integer idFormaDoc) {
-		result.include("todasFormasDocPorTipoForma", this.getTodasFormasDocPorTipoForma(tipoForma));
 	}
 
 	@Get("app/expediente/doc/listar")
@@ -374,6 +368,12 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 		return flt;
 	}
+	
+	@Get("app/expediente/doc/carregar_lista_formas")
+	public void aCarregarListaFormas(Long tipoForma, Integer idFormaDoc) {
+		result.include("todasFormasDocPorTipoForma", this.getTodasFormasDocPorTipoForma(tipoForma));
+	}
+	
 
 	@Get("app/expediente/doc/carregar_lista_modelos")
 	public void aCarregarListaModelos(final int forma, final Long idMod) {

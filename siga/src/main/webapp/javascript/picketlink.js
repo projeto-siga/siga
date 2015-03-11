@@ -78,8 +78,8 @@ window.Siga = {
                     var SAMLResponse = self._picketlinkResponse(textResponse);
                     // Envia um POST para o SP com o atributo SAMLResponse da ultima requisicao
                     self._ajaxCall({url: SAMLResponse.url, type: "POST", params: SAMLResponse.params}, function(textResponse){
-                      self._ajaxCall({url: url, type: httpMethod, params: params}, function(textResponse){
-                          callback(textResponse);
+                      self._ajaxCall({url: url, type: httpMethod, params: params}, function(final){
+                          callback(final);
                       });
                     });
                 });

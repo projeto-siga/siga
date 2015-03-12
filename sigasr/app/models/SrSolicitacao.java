@@ -443,7 +443,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrAtributoSolicitacao> getAtributoSolicitacaoSet() {
-		if (meuAtributoSolicitacaoSet == null) {
+		if (meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.isEmpty()) {
 			if (isFilha())
 				return solicitacaoPai.getAtributoSolicitacaoSet();
 			else

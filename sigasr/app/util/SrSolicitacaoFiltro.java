@@ -10,7 +10,9 @@ import java.util.List;
 import models.SrAcordo;
 import models.SrAtributo;
 import models.SrAtributoSolicitacao;
+import models.SrLista;
 import models.SrSolicitacao;
+import models.SrTipoMovimentacao;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -18,11 +20,9 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
+	private static final Long QUALQUER_LISTA = -1L;
+	private static final Long NENHUMA_LISTA = 0L;
 	private static final String AND = " AND ";
 
 	public boolean pesquisar = false;
@@ -38,6 +38,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public SrAcordo acordo;
 
 	public DpLotacao lotaAtendente;
+	
+	public Long idListaPrioridade;
 
 	public boolean naoDesignados;
 	
@@ -47,7 +49,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public Long idNovoAtributo;
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	public List<SrSolicitacao> buscar() throws Exception {
 		String query = montarBusca("select distinct(sol) from SrSolicitacao sol ");
 		
@@ -111,6 +113,39 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 					+ acao.acaoInicial.idAcao);
 		if (prioridade != null && prioridade.idPrioridade > 0L)
 			query.append(" and sol.prioridade <= " + prioridade.ordinal());
+		
+		if (idListaPrioridade.equals(NENHUMA_LISTA)) {
+			query.append(" and ( ");
+			query.append(" ( select count(mov) from SrMovimentacao mov ");
+			query.append(" where mov.movCanceladora is null and ");
+			query.append(" ( mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
+			query.append(" or mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA + ") ) "); 
+			query.append(" = ( select count(mov) from SrMovimentacao mov ");
+			query.append(" where mov.movCanceladora is null and ");
+			query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ) ");
+		}
+		else if (idListaPrioridade.equals(QUALQUER_LISTA)) {
+			query.append(" and ( ");
+			query.append(" (select count(mov) from SrMovimentacao mov ");
+			query.append(" where mov.movCanceladora is null and ");
+			query.append(" ( mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
+			query.append(" or mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA + ") ) "); 
+			query.append(" > (select count(mov) from SrMovimentacao mov ");
+			query.append(" where mov.movCanceladora is null and ");
+			query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ) ");
+		}
+		else {
+			SrLista lista = SrLista.findById(idListaPrioridade);
+			query.append(" and ( sol in ( ");
+			query.append(" select mov.solicitacao from SrMovimentacao mov ");
+			query.append(" where mov.movCanceladora is null and ");
+			query.append(" mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista + " and ");
+			query.append(" ( mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
+			query.append(" or mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA + ") )"); 
+			query.append(" and sol not in ( select mov.solicitacao from SrMovimentacao mov ");
+			query.append(" where mov.movCanceladora is null and mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista);
+			query.append(" and mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ) ");
+		}
 		
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
 			for (String s : descrSolicitacao.split(" ")) {

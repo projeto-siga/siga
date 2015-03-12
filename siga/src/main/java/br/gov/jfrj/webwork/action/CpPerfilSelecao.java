@@ -21,7 +21,7 @@ package br.gov.jfrj.webwork.action;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.webwork.Selecao;
+import br.gov.jfrj.siga.model.Selecao;
 
 public class CpPerfilSelecao extends Selecao<CpPerfil> {
 

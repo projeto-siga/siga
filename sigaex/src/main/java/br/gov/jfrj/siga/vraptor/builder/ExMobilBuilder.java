@@ -1,9 +1,9 @@
 package br.gov.jfrj.siga.vraptor.builder;
 
+import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 
 public final class ExMobilBuilder {

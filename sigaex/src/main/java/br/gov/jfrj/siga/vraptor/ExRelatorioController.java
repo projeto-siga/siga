@@ -54,6 +54,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -71,7 +72,6 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 @Resource

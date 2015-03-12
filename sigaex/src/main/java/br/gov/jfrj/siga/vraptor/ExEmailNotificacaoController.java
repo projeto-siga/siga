@@ -37,13 +37,13 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 
 @Resource
 public class ExEmailNotificacaoController extends SigaController{

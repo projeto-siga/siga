@@ -36,6 +36,7 @@ import com.opensymphony.xwork.Action;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;

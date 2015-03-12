@@ -5,7 +5,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 
 <siga:pagina titulo="Transferência em Lote">

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -32,6 +33,7 @@ import java.util.logging.Logger;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.proxy.HibernateProxy;
+import org.mvel2.MVEL;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
@@ -355,7 +357,13 @@ public class CpConfiguracaoBL {
 						&& !cfg.getLotacao().getOrgaoUsuario()
 								.equivale(lotacao.getOrgaoUsuario()))
 					continue;
-
+				if (g instanceof CpPerfil && cfg.getDscFormula()!=null){
+					Map<String,DpPessoa> pessoaMap = new HashMap<String, DpPessoa>();
+					pessoaMap.put("pessoa", pessoa);
+					if (!(Boolean) MVEL.eval(cfg.getDscFormula(),pessoaMap)){
+						continue;
+					}
+				}
 				do {
 					perfis.add((CpPerfil) g);
 					g = ((CpPerfil) g).getCpGrupoPai();

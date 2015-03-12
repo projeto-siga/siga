@@ -183,13 +183,6 @@
 			 formCadastro : $('#formLista')
 		};	
 
-	// Não existe no BASE-SERVICE
-// 			 urlDesativar : '@{Application.desativarLista()}?',
-// 			 urlReativar : '@{Application.reativarLista()}?',
-// 			 tabelaRegistros : $('#listas_table'),
-// 			 mostrarDesativados : QueryString.mostrarDesativados,
-// 			 colunas : colunasLista.acoes
-
 	// Define a "classe" listaService
 	function ListaService(opts) {
 		// super(opts)
@@ -282,13 +275,23 @@
 	          			permissao.idConfiguracao,												//17    
 	          			'',																		//18
 	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
-	          			'<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
-						'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
-						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
-						'</a>'																	//20
+	          			getAcaoPermissao(permissao)
 	          			];
 
-			permissoesTable.api().row.add(row).draw();
+			var tr = permissoesTable.api().row.add(row).draw().node();
+			if(!permissao.ativo) {
+				$(tr).find('td').addClass('item-desativado');
+	  		}
+		}
+
+		function getAcaoPermissao(permissao) {
+			if(permissao.ativo) {
+	  			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
+							'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
+							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
+						'</a>';
+			}
+			return new String();
 		}
 	}
 </script>

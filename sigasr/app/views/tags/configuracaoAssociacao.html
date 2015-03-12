@@ -192,7 +192,7 @@
 	}
 
 	associacaoService.onGravar = function(obj, objSalvo) {
-		var td = BaseService.prototype.onGravar.call(this, obj, objSalvo),
+		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo),
 			#{if _modoExibicao == 'atributo'}
 			item =  this.getItemPaiPorId(obj.atributo.idAtributo);
 			#{/if}
@@ -211,12 +211,11 @@
 				}
 			});
 		}
-
 		item.associacoesVO.push(objSalvo);
-		associacaoService.adicionarFuncionalidadesNaLinha(this.row(objSalvo), objSalvo);
+		associacaoService.adicionarFuncionalidadesNaLinha(tr, objSalvo);
 		associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
-		td.find('td:first-child').html("+");
-		return td;
+		tr.find('td:first-child').html("+");
+		return tr;
 	}
 	
 	associacaoService.adicionarFuncionalidadesNaLinha = function(node, assoc) {
@@ -229,6 +228,7 @@
 			atualizaDadosTabelaItemAcao(assoc);
 			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
 		});
+		
 		associacaoTable.table.mostrarDetalhes(detalhesListaAssociacao, associacaoTable.dataTable);
 	}
 	
@@ -301,7 +301,7 @@
 							getAtributoObrigatorioString(assoc.atributoObrigatorio),
 							associacaoService.conteudoColunaAcao(assoc)
 						];
-   				
+
 				// Adiciona na tabela de Associações
 				var newRow = associacaoTable.dataTable
 					.api()
@@ -411,6 +411,7 @@
 		         if (mostrarDesativa == "true") {
 		        	 $('td', tr).addClass('item-desativado');
 		        	 $('td:last', tr).html(' ');
+		        	 associacaoTable.atualizarDetalheTr($(tr));
 		         } else {
 		        	 associacaoTable.dataTable.api().row(tr).remove().draw();
 		         }

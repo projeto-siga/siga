@@ -165,7 +165,6 @@ public class Application extends SigaApplication {
 		formEditar(solicitacao.deduzirLocalRamalEMeioContato());
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void exibirLocalRamalEMeioContato(SrSolicitacao solicitacao)
 			throws Exception {
 		render(solicitacao.deduzirLocalRamalEMeioContato());
@@ -667,7 +666,8 @@ public class Application extends SigaApplication {
 				.getResultList();
 
 		List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
-		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao);
+		List<SrLista> listasPrioridade = SrLista.listar(false);
+		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao, listasPrioridade);
 	}
 
 	public static void baixar(Long idArquivo) {

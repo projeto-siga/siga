@@ -31,8 +31,8 @@ import java.util.List;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 
 import com.opensymphony.xwork.Action;
 

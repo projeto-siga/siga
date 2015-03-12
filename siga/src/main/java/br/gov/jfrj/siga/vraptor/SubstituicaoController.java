@@ -20,13 +20,13 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 
 @Resource
 public class SubstituicaoController extends SigaController {

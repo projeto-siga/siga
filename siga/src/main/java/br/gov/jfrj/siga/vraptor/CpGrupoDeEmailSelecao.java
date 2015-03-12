@@ -22,7 +22,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.webwork.Selecao;
+import br.gov.jfrj.siga.model.Selecao;
 
 public class CpGrupoDeEmailSelecao extends Selecao<CpGrupo> {
 

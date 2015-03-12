@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -14,9 +17,6 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
 

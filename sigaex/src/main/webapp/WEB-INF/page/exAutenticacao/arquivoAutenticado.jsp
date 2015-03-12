@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Movimentação" desabilitarmenu="sim" onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
 	<div class="gt-bd clearfix">

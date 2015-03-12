@@ -5,6 +5,10 @@ package br.gov.jfrj.siga.vraptor.builder;
 
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -19,10 +23,6 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.libs.webwork.DpCargoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpFuncaoConfiancaSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 
 public final class ExConfiguracaoBuilder {

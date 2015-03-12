@@ -174,8 +174,21 @@
 		if (!podeCadastrarAssociacao())
             return;
 
+		// reset no componente de pessoaLotaFuncCargoSelecao
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
+		
         atualizaDadosTabelaItemAcao();
 		BaseService.prototype.cadastrar.call(this, title);	
+	}
+
+	/**
+	 * Customiza o metodo editar
+	 */
+	 associacaoService.editar = function(obj, title) {
+		// reset no componente de pessoaLotaFuncCargoSelecao
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
+		
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 	}
 	
 	associacaoService.getObjetoParaGravar = function() {

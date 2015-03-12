@@ -17,7 +17,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 public class Correio extends Mailer {
 
 	public static void notificarAbertura(SrSolicitacao sol) {
-		if (sol.solicitante.getEmailPessoa() == null)
+		DpPessoa pessoaAtual = sol.solicitante.getPessoaAtual();
+		if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
 			return;
 		
 		if (sol.isFilha())
@@ -25,7 +26,7 @@ public class Correio extends Mailer {
 		else
 			setSubject("Abertura da solicitação " + sol.getCodigo());
 		
-		addRecipient(sol.solicitante.getEmailPessoa());
+		addRecipient(pessoaAtual.getEmailPessoa());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 		send(sol);
 

@@ -1267,140 +1267,47 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaFinal;
 	}
 	
-	public List<SrTarefa> getAcoesDisponiveisComAtendenteOrdemSigla()
-			throws Exception {
+	public Map<SrAcao, List<SrTarefa>> getAcoesEAtendentes() throws Exception {
+		Map<SrAcao, List<SrTarefa>> acoesEAtendentesFinal = new HashMap<SrAcao, List<SrTarefa>>();
+
 		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
-		if (acoesEAtendentes != null) {
-			Collections.sort(acoesEAtendentes , new Comparator<SrTarefa>() {
-		        @Override
-		        public int compare(SrTarefa  o1, SrTarefa o2) {
-					if (o1 != null && o2 != null && o1.acao.idAcao == o2.acao.idAcao)
-						return 0;
-					return o1.acao.siglaAcao.compareTo(o2.acao.siglaAcao);
-		        }
-		    });
-		
-			return acoesEAtendentes;
-		}
-		return null;
-	}
-	
-	public List<SrTarefa> getAcoesDisponiveisComAtendenteOrdemTitulo()
-			throws Exception {
-		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
-		if (acoesEAtendentes != null) {
-			Collections.sort(acoesEAtendentes , new Comparator<SrTarefa>() {
-		        @Override
-		        public int compare(SrTarefa  o1, SrTarefa o2) {
-					int i = o1.acao.tituloAcao.compareTo(o2.acao.tituloAcao);
-					if (i != 0)
-						return i;
-					return o1.acao.idAcao.compareTo(o2.acao.idAcao);
-		        }
-		    });
+		if (acoesEAtendentes != null && this.itemConfiguracao != null){
 			
-			return acoesEAtendentes;
-		}
-		return null;
-	}
-	
-	public List<SrTarefa> getAcoesEAtendentes() throws Exception {
-		List<SrTarefa> acoesEAtendentesFinal = this
-				.getAcoesDisponiveisComAtendenteOrdemTitulo();
-		if (acoesEAtendentesFinal != null && this.itemConfiguracao != null){
-			if (this.acao == null
-					|| !acoesEAtendentesFinal.contains(this.acao)) {
-				if (acoesEAtendentesFinal.size() > 0)
-					this.acao = acoesEAtendentesFinal.iterator().next().acao;
-				else
+			boolean contemAcaoAtual = false;
+			for (SrTarefa tarefa : acoesEAtendentes)
+				if (tarefa.acao.equals(this.acao))
+					contemAcaoAtual = true;
+			if (!contemAcaoAtual)
 					this.acao = null;
+			if (this.acao == null && acoesEAtendentes.size() == 1)
+				this.acao = acoesEAtendentes.get(0).acao;
+			
+			for (SrTarefa t : acoesEAtendentes){
+				List<SrTarefa> tarefas = acoesEAtendentesFinal.get(t.getAcao().pai);
+				if (tarefas == null)
+					tarefas = new ArrayList<SrTarefa>();
+				tarefas.add(t);
+				acoesEAtendentesFinal.put(t.getAcao().pai, tarefas);
 			}
-		}
-		return acoesEAtendentesFinal;
-	}
-	
-/*	public Map<SrAcao, SrConfiguracao> getAcoesDisponiveisComAtendente()
-			throws Exception {
-
-		if (solicitante == null || itemConfiguracao == null)
-			return null;
-
-		Map<SrAcao, SrConfiguracao> listaFinal = new HashMap<SrAcao, SrConfiguracao>();
-		
-		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarDesignacoes();
-
-		for (SrAcao a : SrAcao.listar(false)) {
-			if (!a.isEspecifico())
-				continue;
-			for (SrConfiguracao c : listaPessoasAConsiderar) 
-				if (!listaFinal.containsKey(a)) {
-					
-					c.itemConfiguracaoFiltro = itemConfiguracao;
-					c.acaoFiltro = a;
-					
-					SrConfiguracao conf = SrConfiguracao.buscarDesignacao(c);
-					if (conf != null)
-						listaFinal.put(a, conf);
-				}
-		}
-
-		return listaFinal;
-	}
-
-	public Map<SrAcao, SrConfiguracao> getAcoesDisponiveisComAtendenteOrdemSigla()
-			throws Exception {
-		Map<SrAcao, SrConfiguracao> m = new TreeMap<SrAcao, SrConfiguracao>(
-				new Comparator<SrAcao>() {
-					@Override
-					public int compare(SrAcao o1, SrAcao o2) {
-						if (o1 != null && o2 != null && o1.idAcao == o2.idAcao)
-							return 0;
-						return o1.siglaAcao.compareTo(o2.siglaAcao);
-					}
-				});
-
-		m.putAll(getAcoesDisponiveisComAtendente());
-		return m;
-	}
-
-	public Map<SrAcao, SrConfiguracao> getAcoesDisponiveisComAtendenteOrdemTitulo()
-			throws Exception {
-		Map acoesEAtendentes = getAcoesDisponiveisComAtendente();
-
-		if (acoesEAtendentes != null){
-		Map<SrAcao, SrConfiguracao> m = new TreeMap<SrAcao, SrConfiguracao>(
-				new Comparator<SrAcao>() {
-					@Override
-					public int compare(SrAcao o1, SrAcao o2) {
-						int i = o1.tituloAcao.compareTo(o2.tituloAcao);
+			
+			//Edson: melhor se fosse um SortedSet
+			for (List<SrTarefa> tarefas : acoesEAtendentesFinal.values()){
+				Collections.sort(tarefas , new Comparator<SrTarefa>() {
+			        @Override
+			        public int compare(SrTarefa  o1, SrTarefa o2) {
+						int i = o1.acao.tituloAcao.compareTo(o2.acao.tituloAcao);
 						if (i != 0)
 							return i;
-						return o1.idAcao.compareTo(o2.idAcao);
-					}
-				});
-
-			m.putAll(acoesEAtendentes);
-			return m;
-		}
-		return null;
-	}
-	
-	
-	public Map<SrAcao, SrConfiguracao> getAcoesEAtendentes() throws Exception {
-		Map<SrAcao, SrConfiguracao> acoesEAtendentesFinal = this
-				.getAcoesDisponiveisComAtendenteOrdemTitulo();
-		if (acoesEAtendentesFinal != null && this.itemConfiguracao != null){
-			if (this.acao == null
-					|| !acoesEAtendentesFinal.containsKey(this.acao)) {
-				if (acoesEAtendentesFinal.size() > 0)
-					this.acao = acoesEAtendentesFinal.keySet().iterator().next();
-				else
-					this.acao = null;
+						return o1.acao.idAcao.compareTo(o2.acao.idAcao);
+			        }
+			    });
 			}
+						
 		}
+		
 		return acoesEAtendentesFinal;
 	}
-*/
+	
 	@SuppressWarnings("serial")
 	public SortedSet<SrOperacao> operacoes(final DpPessoa pess, final DpLotacao lota)
 					throws Exception {

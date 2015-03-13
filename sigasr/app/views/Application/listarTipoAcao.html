@@ -11,13 +11,13 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Ações</h2>
+		<h2>Tipos de A&ccedil;&atilde;o</h2>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
 			<div class="gt-form-row dataTables_length">
 				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
 			</div>
-			<table id="acoes_table" class="gt-table display">
+			<table id="tiposAcao_table" class="gt-table display">
 				<thead>
 					<tr>
 						<th>Código</th>
@@ -27,20 +27,20 @@
 					</tr>
 				</thead>
 				<tbody>
-					#{list items:acoes, as:'acao'}
-						<tr data-json-id="${acao.idAcao}" data-json="${acao.toJson()}"
-							onclick="acaoService.editar($(this).data('json'), 'Alterar Ação')"
+					#{list items:tiposAcao, as:'tipoAcao'}
+						<tr data-json-id="${tipoAcao.idTipoAcao}" data-json="${tipoAcao.toJson()}"
+							onclick="tipoAcaoService.editar($(this).data('json'), 'Alterar Tipo de Ação')"
 							style="cursor: pointer;">
-							<td>${acao.siglaAcao}</td>
+							<td>${tipoAcao.siglaTipoAcao}</td>
 							<td>
-								<span style="margin-left: ${(acao.nivel-1)*2}em; #{if acao.nivel == 1}font-weight: bold;#{/if}">#{selecionado sigla:acao.atual?.tituloAcao, 
-							descricao:acao.atual?.descricao /}</span></td>
-							<td>${acao.descrAcao}</td>
+								<span style="margin-left: ${(tipoAcao.nivel-1)*2}em; #{if tipoAcao.nivel == 1}font-weight: bold;#{/if}">#{selecionado sigla:tipoAcao.atual?.tituloTipoAcao, 
+							descricao:tipoAcao.atual?.descricao /}</span></td>
+							<td>${tipoAcao.descrTipoAcao}</td>
 							<td class="acoes">
-								#{desativarReativar id:acao.idAcao, 
-													onReativar:'acaoService.reativar',
-													onDesativar :'acaoService.desativar',
-													isAtivo:acao.isAtivo() }
+								#{desativarReativar id:tipoAcao.idTipoAcao, 
+													onReativar:'tipoAcaoService.reativar',
+													onDesativar :'tipoAcaoService.desativar',
+													isAtivo:tipoAcao.isAtivo() }
 								#{/desativarReativar}
 							</td>
 						</tr>
@@ -50,21 +50,21 @@
 		</div>
 		<!-- /content box -->
 		<div class="gt-table-buttons">
-			<a onclick="acaoService.cadastrar('Incluir Ação')" class="gt-btn-medium gt-btn-left">Incluir</a>
+			<a onclick="tipoAcaoService.cadastrar('Incluir Tipo de Ação')" class="gt-btn-medium gt-btn-left">Incluir</a>
 		</div>
 	</div>
 </div>
 
-#{modal nome:'acao', titulo:'Cadastrar Ação'}
-	<div id="divEditarAcaoForm">#{include 'Application/editarAcao.html' /}</div>
+#{modal nome:'tipoAcao', titulo:'Cadastrar Tipo de Ação'}
+	<div id="divEditarTipoAcaoForm">#{include 'Application/editarTipoAcao.html' /}</div>
 #{/modal}
 
 <script type="text/javascript">
-	var validatorAcaoForm;
-	var colunasAcao = {
+	var validatorTipoAcaoForm;
+	var colunasTipoAcao = {
 			codigo: 0,
 			titulo: 1,
-			descrAcao: 2,
+			decricao: 2,
 			acoes: 3
 		};
 	var QueryString = function () {
@@ -91,15 +91,15 @@
 	}();
 
 	var opts = {
-			 urlDesativar : '@{Application.desativarAcao()}?',
-			 urlReativar : '@{Application.reativarAcao()}?',
-			 urlGravar : '@{Application.gravarAcao()}',
-			 dialogCadastro : $('#acao_dialog'),
-			 tabelaRegistros : $('#acoes_table'),
-			 objectName : 'acao',
-			 formCadastro : $('#acaoForm'),
+			 urlDesativar : '@{Application.desativarTipoAcao()}?',
+			 urlReativar : '@{Application.reativarTipoAcao()}?',
+			 urlGravar : '@{Application.gravarTipoAcao()}',
+			 dialogCadastro : $('#tipoAcao_dialog'),
+			 tabelaRegistros : $('#tiposAcao_table'),
+			 objectName : 'tipoAcao',
+			 formCadastro : $('#tipoAcaoForm'),
 			 mostrarDesativados : QueryString.mostrarDesativados,
-			 colunas : colunasAcao.acoes
+			 colunas : colunasTipoAcao.acoes
 	};
 	
 	$(document).ready(function() {
@@ -111,13 +111,13 @@
 		$("#checkmostrarDesativado").click(function() {
 			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = '@{Application.listarAcaoDesativados()}';
+				location.href = '@{Application.listarTipoAcaoDesativados()}';
 			else
-				location.href = '@{Application.listarAcao()}';	
+				location.href = '@{Application.listarTipoAcao()}';	
 		});
 		
 		/* Table initialization */
-		opts.dataTable = $('#acoes_table').dataTable({
+		opts.dataTable = $('#tiposAcao_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -142,7 +142,7 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [colunasAcao.acoes],
+				"targets": [colunasTipoAcao.acoes],
 				"searchable": false,
 				"sortable" : false
 			}]
@@ -150,32 +150,32 @@
 	});
 
 	// Define a "classe" AcaoService
-	function AcaoService(opts) {
+	function TipoAcaoService(opts) {
 		// super(opts)
 		BaseService.call(this, opts);
 	}
 	// AcaoService extends BaseService
-	AcaoService.prototype = Object.create(BaseService.prototype);
+	TipoAcaoService.prototype = Object.create(BaseService.prototype);
 	
-	var acaoService = new AcaoService(opts);
+	var tipoAcaoService = new TipoAcaoService(opts);
 	
-	acaoService.getId = function(acao) {
-		return acao.id;
+	tipoAcaoService.getId = function(tipoAcao) {
+		return tipoAcao.idTipoAcao;
 	}
 
-	acaoService.getRow = function(acao) {
-		var marginLeft = (acao.nivel-1) * 2,
-			fontWeight = (acao.nivel == 1) ? 'bold' : 'normal',
+	tipoAcaoService.getRow = function(tipoAcao) {
+		var marginLeft = (tipoAcao.nivel-1) * 2,
+			fontWeight = (tipoAcao.nivel == 1) ? 'bold' : 'normal',
 			span = $('<span></span>');
 
 		var spanHTML = '<span style="margin-left:{margin-left};font-weight:{font-weight}">{descricao}</span>';
 		spanHTML = spanHTML.replace('{margin-left}', marginLeft + 'em');
 		spanHTML = spanHTML.replace('{font-weight}', fontWeight);
-		spanHTML = spanHTML.replace('{descricao}', acao.tituloAcao);
+		spanHTML = spanHTML.replace('{descricao}', tipoAcao.tituloTipoAcao);
 		
-		return [acao.sigla, spanHTML, acao.descrAcao, 'COLUNA_ACOES'];
+		return [tipoAcao.siglaTipoAcao, spanHTML, tipoAcao.descrTipoAcao, 'COLUNA_ACOES'];
 	}
-	acaoService.onRowClick = function(acao) {
-		acaoService.editar(acao, 'Alterar Ação');
+	tipoAcaoService.onRowClick = function(tipoAcao) {
+		tipoAcaoService.editar(tipoAcao, 'Alterar Tipo de Ação');
 	}
 </script>

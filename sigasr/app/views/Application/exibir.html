@@ -10,6 +10,10 @@
 		list-style: none;
 	}
 	
+	ul.lista-historico li.unico {
+		margin-left: 0px !important;
+	}
+	
 	button.button-historico {
 		padding-left: 2px;
 		padding-right: 2px;
@@ -665,6 +669,7 @@ function postback(){
 					.prev('p')
 					.find('.historico-label')
 					.css('float', 'left');
+				container.find('ul li').addClass('unico');
 			} else if(container.find('ul li span').size() > 2) {
 				container
 					.find('.lista-historico')

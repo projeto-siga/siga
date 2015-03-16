@@ -297,8 +297,8 @@
 	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
 	          			listaService.conteudoColunaAcao(permissao)
 	          			];
+
 			var tr = permissoesTable.api().row.add(row).draw().node();
-			
 			if (!permissao.ativo) {
 				$('td', $(tr)).addClass('item-desativado');
 				$('td:last', $(tr)).html(' ');

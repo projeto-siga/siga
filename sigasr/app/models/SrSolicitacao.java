@@ -499,7 +499,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public List<SrAtributoSolicitacao> getAtributoSolicitacaoSet() {
-		if (meuAtributoSolicitacaoSet == null) {
+		if (meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.isEmpty()) {
 			if (isFilha())
 				return solicitacaoPai.getAtributoSolicitacaoSet();
 			else
@@ -1534,9 +1534,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void salvar() throws Exception {
 
 		checarEPreencherCampos();
-		// Edson: Ver por que isto est� sendo necess�rio. Sem isso, ap�s o
-		// salvar(),
-		// ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's
+		//Edson: Ver por que isto est� sendo necess�rio. Sem isso, ap�s o salvar(),
+		//ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's
 		if (solicitacaoInicial != null)
 			for (SrSolicitacao s : solicitacaoInicial.meuSolicitacaoHistoricoSet) {
 				for (SrMovimentacao m : s.meuMovimentacaoSet) {
@@ -2088,7 +2087,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public Set<SrSolicitacao> getSolicitacoesVinculadas() {
 		Set<SrSolicitacao> solVinculadas = new HashSet<SrSolicitacao>();
-
+		
 		// vincula��es partindo desta solicita��o
 		for (SrMovimentacao mov : getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
 			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_VINCULACAO)
@@ -2434,9 +2433,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if ((cadastrante != null) && !podeVincular(titular, lotaTitular))
 			throw new Exception("Operação não permitida");
 		if (solRecebeVinculo.equivale(this))
-			throw new Exception(
-					"Não e possivel vincular uma solicita�ao a si mesma.");
-
+	        throw new Exception("Não e possivel vincular uma solicita�ao a si mesma.");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_VINCULACAO);

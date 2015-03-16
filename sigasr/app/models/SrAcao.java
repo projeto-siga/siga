@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,16 +17,17 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import models.SrTipoAcao.SrTipoAcaoVO;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import util.Util;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.GsonBuilder;
 
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
@@ -58,17 +58,9 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
 	public SrAcao acaoInicial;
 	
-	@Column(name = "TIPO_ACAO")
-	@Enumerated()
+	@ManyToOne
+	@JoinColumn(name = "TIPO_ACAO")
 	public SrTipoAcao tipoAcao;
-	
-	@Column(name = "TIPO_EXECUCAO")
-	@Enumerated()
-	public SrTipoExecucaoAcao tipoExecucao;
-	
-	@Column(name = "FORMA_ATENDIMENTO")
-	@Enumerated()
-	public SrFormaAtendimentoAcao formaAtendimento;
 
 	@OneToMany(targetEntity = SrAcao.class, mappedBy = "acaoInicial", fetch = FetchType.LAZY)
 	@OrderBy("hisDtIni desc")
@@ -327,33 +319,42 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 	public class SrAcaoVO {
 		
 		public Long id;
-		public String titulo;
+		public String tituloAcao;
 		public String sigla;
 		public Long hisIdIni;
 		public String descricao;
+		public String descrAcao;
+		public boolean ativo;
+		public int nivel;
+		public SrTipoAcaoVO tipoAcao;
 		
-		public SrAcaoVO(Long id, String titulo, String sigla, Long hisIdIni) {
+		public SrAcaoVO(Long id, String sigla, String descricao, String titulo, String descrAcao,  Long hisIdIni, int nivel, boolean ativo, SrTipoAcao tipoAcao) {
 			this.id = id;
-			this.titulo = titulo;
 			this.sigla = sigla;
-			this.hisIdIni = hisIdIni;
 			this.descricao = titulo;
+			this.tituloAcao = titulo;
+			this.descrAcao = descrAcao;
+			this.hisIdIni = hisIdIni;
+			this.ativo = ativo;
+			this.nivel = nivel;
+			if (tipoAcao != null)
+				this.tipoAcao = tipoAcao.toVO();
+		}
+		
+		public String toJson() {
+			GsonBuilder builder = new GsonBuilder();
+			builder.setPrettyPrinting().serializeNulls();
+			Gson gson = builder.create();
+
+			return gson.toJson(this);
 		}
 	}
 	
 	public SrAcaoVO toVO() {
-		return new SrAcaoVO(this.idAcao, this.tituloAcao, this.siglaAcao, this.getHisIdIni());
+		return new SrAcaoVO(this.idAcao,  this.siglaAcao, this.tituloAcao, this.tituloAcao, this.descrAcao, this.getHisIdIni(), this.getNivel(), this.isAtivo(), this.tipoAcao);
 	}
 	
 	public String toJson() {
-		Gson gson = Util.createGson("meuAcaoHistoricoSet", "filhoSet", "acaoInicial");
-		
-		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
-		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
-		jsonObject.add("nivel", gson.toJsonTree(getNivel()));
-		
-		return jsonObject.toString();
+		return toVO().toJson();
 	}
-	
-	
 }

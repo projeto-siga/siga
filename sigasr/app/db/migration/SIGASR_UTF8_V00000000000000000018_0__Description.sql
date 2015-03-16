@@ -1,24 +1,27 @@
 --adicionando prioridade a solicitacao
 alter table sigasr.sr_solicitacao add PRIORIDADE number(10,0);
 
-alter session set current schema = corporativo;
+alter session set current_schema = corporativo;
 update corporativo.cp_marcador set descr_marcador = 'A Fechar' where id_marcador = 53;
 
 INSERT INTO corporativo.cp_tipo_configuracao (id_tp_configuracao, dsc_tp_configuracao, id_sit_configuracao) 
-	VALUES (303, 'Inclusï¿½o automï¿½tica em lista', 1);
-  
-ALTER TABLE SR_ATRIBUTO RENAME TO SR_ATRIBUTO_SOLICITACAO;
-ALTER TABLE SR_TIPO_ATRIBUTO RENAME TO SR_ATRIBUTO;
+	VALUES (303, 'Inclusão automática em lista', 1);
+alter session set current_schema = SIGASR;
+ALTER TABLE SIGASR.SR_ATRIBUTO RENAME TO SR_ATRIBUTO_SOLICITACAO;
+ALTER TABLE SIGASR.SR_TIPO_ATRIBUTO RENAME TO SR_ATRIBUTO;
 
-ALTER TABLE SR_ATRIBUTO_SOLICITACAO RENAME COLUMN ID_ATRIBUTO TO ID_ATRIBUTO_SOLICITACAO;
-ALTER TABLE SR_ATRIBUTO_SOLICITACAO RENAME COLUMN VALOR_ATRIBUTO TO VALOR_ATRIBUTO_SOLICITACAO;
-ALTER TABLE SR_ATRIBUTO_SOLICITACAO RENAME COLUMN ID_TIPO_ATRIBUTO TO ID_ATRIBUTO;
+ALTER TABLE SIGASR.SR_ATRIBUTO_SOLICITACAO RENAME COLUMN ID_ATRIBUTO TO ID_ATRIBUTO_SOLICITACAO;
+ALTER TABLE SIGASR.SR_ATRIBUTO_SOLICITACAO RENAME COLUMN VALOR_ATRIBUTO TO VALOR_ATRIBUTO_SOLICITACAO;
+ALTER TABLE SIGASR.SR_ATRIBUTO_SOLICITACAO RENAME COLUMN ID_TIPO_ATRIBUTO TO ID_ATRIBUTO;
 
-ALTER TABLE SR_ATRIBUTO RENAME COLUMN ID_TIPO_ATRIBUTO TO ID_ATRIBUTO;
-ALTER TABLE SR_ATRIBUTO RENAME COLUMN FORMATOCAMPO TO TIPO_ATRIBUTO;
+ALTER TABLE SIGASR.SR_ATRIBUTO RENAME COLUMN ID_TIPO_ATRIBUTO TO ID_ATRIBUTO;
+ALTER TABLE SIGASR.SR_ATRIBUTO RENAME COLUMN FORMATOCAMPO TO TIPO_ATRIBUTO;
 
-rename SR_ATRIBUTO_SEQ to SR_ATRIBUTO_SOLICITACAO_SEQ;
-rename SR_TIPO_ATRIBUTO_SEQ to SR_ATRIBUTO_SEQ;
+CREATE SEQUENCE SR_ATRIBUTO_SOLICITACAO_SEQ;
+DROP SEQUENCE SR_ATRIBUTO_SEQ;
+CREATE SEQUENCE SR_ATRIBUTO_SEQ;
+DROP SEQUENCE SR_TIPO_ATRIBUTO_SEQ;
+
 
 --adicionando coluna para registro se a solicitacao pai deve ser fechada automaticamente quando todas as filhas forem fechadas
 alter table sigasr.sr_solicitacao add FECHADO_AUTOMATICAMENTE CHAR(1 CHAR);
@@ -105,7 +108,6 @@ alter table SR_SOLICITACAO_ACORDO
 
 update sigasr.sr_atributo set id_objetivo = 1 where id_objetivo is null;	
 	
-create sequence sigasr.sr_atributo_seq;
 insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Cadastramento', 'tempoDecorridoCadastramento', 2);
 insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Escalonamento', 'tempoDecorridoEscalonamento', 2);
 insert into sigasr.sr_ATRIBUTO(ID_ATRIBUTO, NOME, CODIGO_ATRIBUTO, ID_OBJETIVO) values (sr_atributo_seq.nextval, 'Tempo de Atendimento', 'tempoDecorridoAtendimento', 2);
@@ -115,11 +117,11 @@ INSERT INTO CORPORATIVO.CP_UNIDADE_MEDIDA (ID_UNIDADE_MEDIDA, DESCR_UNIDADE_MEDI
 INSERT INTO CORPORATIVO.CP_UNIDADE_MEDIDA (ID_UNIDADE_MEDIDA, DESCR_UNIDADE_MEDIDA) VALUES (6, 'Segundo');
 commit;
 
-alter session set current schema = corporativo;
+alter session set current_schema = corporativo;
 insert into cp_marcador(descr_marcador, id_marcador, id_tp_marcador) values ( 'Fora do Prazo', 65, 1);
 commit;
 
-alter session set current schema = sigasr;
+alter session set current_schema = sigasr;
 alter table SR_CONFIGURACAO add (ID_ACORDO number(19, 0),
 	CONSTRAINT "CONFIGURACAO_ACORDO_FK" 
 			FOREIGN KEY ("ID_ACORDO") 

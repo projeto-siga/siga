@@ -82,8 +82,13 @@ function carregarLotacaoDaAcao(){
 	<div class="gt-form-row gt-width-66">
 	<label>Ação</label>	
 		#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');", id:'selectAcao'}
-			#{list items:acoesEAtendentes, as:'tarefa' }
-				#{option tarefa.acao.idAcao} ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})#{/option}					 
+			#{option 0}#{/option}
+			#{list items:acoesEAtendentes.keySet(), as:'cat' }
+				<optgroup label="${cat.tituloAcao}">
+					#{list items:acoesEAtendentes.get(cat), as:'tarefa'}
+						#{option tarefa.acao.idAcao} ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})#{/option}
+					#{/list}
+				</optgroup>					 
 			#{/list}
 		#{/select} 
 	 <span style="color: red">#{error 'solicitacao.acao' /}</span>
@@ -91,7 +96,8 @@ function carregarLotacaoDaAcao(){
 	<div>
 		<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
 				ja que acima no select nao tem como "esconder" essa informacao -->
-		#{list items:acoesEAtendentes, as:'t' }
+		#{list items:acoesEAtendentes.keySet(), as:'cat' }
+		#{list items:acoesEAtendentes.get(cat), as:'t' }
 			<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
 			<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
 								- ${t.conf.atendente.descricao.raw()}</span>
@@ -101,7 +107,7 @@ function carregarLotacaoDaAcao(){
 				#{set idDesignacao : t.conf.idConfiguracao /}
 			#{/if}
 		#{/list}
-
+		#{/list}
 		<label>Atendente</label>
 		<span id="atendentePadrao" style="display:block;">
 			<!-- Para solicitacoes cadastradas, pegar o atendente da ultima movimentacao -->

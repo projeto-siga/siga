@@ -234,9 +234,11 @@
 										default tablespace USERS;
 										CREATE USER siga IDENTIFIED BY siga default tablespace USERS;
 										CREATE USER sigawf IDENTIFIED BY sigawf default tablespace USERS;
+										CREATE USER SIGASR IDENTIFIED BY sigasr;
 										grant connect,resource to SIGA;
 										grant connect,resource to SIGAWF;
-										Grant connect,resource to CORPORATIVO</sqlCommand>
+										Grant connect,resource to CORPORATIVO;
+										grant connect,resource to SIGASR</sqlCommand>
 									<autocommit>true</autocommit>
 								</configuration>
 							</execution>

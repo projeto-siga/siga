@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,6 +32,7 @@ import models.SrPergunta;
 import models.SrPesquisa;
 import models.SrSolicitacao;
 import models.SrSolicitacao.SrTarefa;
+import models.SrTipoAcao;
 import models.SrTipoAtributo;
 import models.SrTipoMotivoEscalonamento;
 import models.SrTipoMotivoPendencia;
@@ -226,12 +226,12 @@ public class Application extends SigaApplication {
 
 		DpPessoa titular = solicitacao.titular;
 		DpLotacao lotaTitular = solicitacao.lotaTitular;
-		List<SrTarefa> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-		render(solicitacao, acoesEAtendentes, titular, lotaTitular);
+		Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		render(solicitacao, titular, lotaTitular, acoesEAtendentes);
 	}
 
 	public static void exibirAcao(SrSolicitacao solicitacao) throws Exception {
-		List<SrTarefa> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
 	
@@ -239,7 +239,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		solicitacao.titular = titular();
 		solicitacao.lotaTitular = lotaTitular();
-		List<SrTarefa> acoesEAtendentes = new ArrayList<SrTarefa>();
+		Map<SrAcao, List<SrTarefa>> acoesEAtendentes = new HashMap<SrAcao, List<SrTarefa>>();
 		if (itemConfiguracao != null){
 			solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			acoesEAtendentes = solicitacao.getAcoesEAtendentes();
@@ -258,7 +258,7 @@ public class Application extends SigaApplication {
 		List<CpComplexo> locais = JPA.em().createQuery("from CpComplexo")
 				.getResultList();
 		
-		List<SrTarefa> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render("@editar", solicitacao, locais, acoesEAtendentes);
 	}
 
@@ -322,6 +322,20 @@ public class Application extends SigaApplication {
 			enviarErroValidacao();
 		}
 	}
+	
+	private static void validarFormEditarTipoAcao(SrTipoAcao acao) {
+		if (acao.siglaTipoAcao.equals("")) {
+			Validation.addError("siglaAcao", "Código não informado");
+		}
+		if (acao.tituloTipoAcao.equals("")) {
+			Validation.addError("tituloAcao", "Titulo não informado");
+		}
+		if (Validation.hasErrors()) {
+			enviarErroValidacao();
+		}
+	}
+	
+	
 	private static void enviarErroValidacao() {
 		JsonArray jsonArray = new JsonArray();
 		
@@ -771,7 +785,7 @@ public class Application extends SigaApplication {
 		solicitacao.titular = titular();
 		solicitacao.lotaTitular = lotaTitular();
 		solicitacao = solicitacao.getSolicitacaoAtual();
-		List<SrTarefa> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+		Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
 	}
 	
@@ -783,6 +797,14 @@ public class Application extends SigaApplication {
 			throw new Exception("Operação não permitida. Necessário informar um item de configuração " + 
 					"e uma ação.");
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
+		
+		DpLotacao atendenteNaoDesignado = null;
+		DpLotacao atendente = null;
+		if (idAtendente != null)
+			atendente = JPA.em().find(DpLotacao.class, idAtendente);
+		if (idAtendenteNaoDesignado != null)
+			 atendenteNaoDesignado = JPA.em().find(DpLotacao.class, idAtendenteNaoDesignado);
+		
 		if (criaFilha) {
 			if (fechadoAuto != null) {
 				solicitacao.setFechadoAutomaticamente(fechadoAuto);
@@ -798,7 +820,7 @@ public class Application extends SigaApplication {
 			filha.designacao = SrConfiguracao.findById(idDesignacao);
 			filha.descrSolicitacao = descricao;
 			if (idAtendenteNaoDesignado != null)
-				filha.atendenteNaoDesignado = JPA.em().find(DpLotacao.class, idAtendenteNaoDesignado);
+				filha.atendenteNaoDesignado = atendenteNaoDesignado;
 			filha.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 			exibir(filha.idSolicitacao, todoOContexto(), ocultas());
 		}
@@ -808,7 +830,7 @@ public class Application extends SigaApplication {
 					.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO);
 			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			mov.acao = SrAcao.findById(acao.idAcao);
-			mov.lotaAtendente = JPA.em().find(DpLotacao.class, idAtendente);
+			mov.lotaAtendente = atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente;
 			mov.designacao = SrConfiguracao.findById(idDesignacao);
 			mov.descrMovimentacao = "Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
 					+ "; Ação: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();
@@ -1490,6 +1512,67 @@ public class Application extends SigaApplication {
 		}
 
 		render(itens, filtro, nome, sol);
+	}
+	
+	public static void listarTipoAcao(boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		List<SrTipoAcao> tiposAcao = SrTipoAcao.listar(mostrarDesativados);
+		render(tiposAcao, mostrarDesativados);
+	}
+	
+	public static void listarTipoAcaoDesativados() throws Exception {
+		listarTipoAcao(Boolean.TRUE);
+	}
+
+	public static void editarTipoAcao(Long id) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrTipoAcao tipoAcao = new SrTipoAcao();
+		if (id != null)
+			tipoAcao = SrTipoAcao.findById(id);
+		render(tipoAcao);
+	}
+
+	public static String gravarTipoAcao(SrTipoAcao tipoAcao) throws Exception {
+		assertAcesso("ADM:Administrar");
+		validarFormEditarTipoAcao(tipoAcao);
+		tipoAcao.salvar();
+		return tipoAcao.toJson();
+	}
+
+	public static void desativarTipoAcao(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrTipoAcao tipoAcao = SrTipoAcao.findById(id);
+		tipoAcao.finalizar();
+	}
+	
+	public static Long reativarTipoAcao(Long id, boolean mostrarDesativados) throws Exception {
+		assertAcesso("ADM:Administrar");
+		SrTipoAcao tipoAcao = SrTipoAcao.findById(id);
+		tipoAcao.salvar();
+		return tipoAcao.getId();
+	}
+
+	public static void selecionarTipoAcao(String sigla, SrSolicitacao sol)
+			throws Exception {
+
+		SrTipoAcao sel = new SrTipoAcao().selecionar(sigla);
+		render("@selecionar", sel);
+	}
+
+	public static void buscarTipoAcao(String sigla, String nome, SrTipoAcao filtro) {
+		List<SrTipoAcao> itens = null;
+
+		try {
+			if (filtro == null)
+				filtro = new SrTipoAcao();
+			if (sigla != null && !sigla.trim().equals(""))
+				filtro.setSigla(sigla);
+			itens = filtro.buscar();
+		} catch (Exception e) {
+			itens = new ArrayList<SrTipoAcao>();
+		}
+
+		render(itens, filtro, nome);
 	}
 
 	public static void selecionarSiga(String sigla, String prefixo, String tipo, String nome)

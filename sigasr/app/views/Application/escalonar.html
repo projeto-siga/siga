@@ -39,7 +39,8 @@ function carregouAcao(response, param){
 			onsubmit="javascript: return block();" method="POST">
 		
 		<div class="gt-form-row" >
-			<label>#{checkbox name:'criaFilha', onchange:'onchangeCheckCriaFilha();', value:true /} 
+			<label>	#{set valueCheckbox : titular?.orgaoUsuario?.idOrgaoUsu == 1 ? false : true /}
+					#{checkbox name:'criaFilha', onchange:'onchangeCheckCriaFilha();', value: valueCheckbox /} 
 					#{if solicitacao.isFilha()} #{set codigo : solicitacao.solicitacaoPai.codigo /} #{/if}
 					#{else} #{set codigo : solicitacao.codigo /} #{/else}
 					Criar Solicitação filha de ${codigo}</label>
@@ -52,10 +53,10 @@ function carregouAcao(response, param){
 				'solicitacao.itemConfiguracao' /}</span>
 		</div>
 		<div id="divAcaoEscalonar">#{include 'Application/exibirAcaoEscalonar.html' /}</div>
+		<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin:5px 0 0 -3px;" >Alterar atendente</a>
+		<input type="hidden" name="idAtendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
+		<br />
 		<div id="outrasInformacoesDaFilha" class="gt-form-row">
-			<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin:5px 0 0 -3px;" >Alterar atendente</a>
-			<input type="hidden" name="idAtendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
-			<br />
 			<label>Descrição</label>
 			<textarea name="descricao" cols="85" rows="7">${solicitacao.descrSolicitacao}</textarea>
 			<br /><br />	

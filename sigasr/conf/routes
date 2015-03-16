@@ -53,6 +53,14 @@ GET     /public/                            staticDir:public
 *		/acao/buscar						Application.buscarAcao
 *		/acao/desativar/{id}				Application.desativarAcao
 
+*		/tipoAcao/editar/{id}					Application.editarTipoAcao
+*		/tipoAcao/editar						Application.editarTipoAcao
+*		/tipoAcao/gravar						Application.gravarTipoAcao
+*		/tipoAcao/listar						Application.listarTipoAcao
+*		/tipoAcao/selecionar					Application.selecionarTipoAcao
+*		/tipoAcao/buscar						Application.buscarTipoAcao
+*		/tipoAcao/desativar/{id}				Application.desativarTipoAcao
+
 *		/equipe/listar						Application.listarEquipe
 *		/equipe/gravar						Application.gravarEquipe
 

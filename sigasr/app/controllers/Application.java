@@ -839,6 +839,7 @@ public class Application extends SigaApplication {
 
 	public static String gravarDesignacao(SrConfiguracao designacao) throws Exception {
 		assertAcesso("ADM:Administrar");
+		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
 		designacao.refresh();
 		return designacao.getSrConfiguracaoJson();

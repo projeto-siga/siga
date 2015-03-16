@@ -2,6 +2,9 @@ package models.vo;
 
 import java.util.List;
 
+import models.SrSolicitacao;
+import util.SrSolicitacaoFiltro;
+
 public class SrSolicitacaoListaVO {
 
 	private boolean podeOrdenar;
@@ -25,6 +28,10 @@ public class SrSolicitacaoListaVO {
 		this.colunas = colunas;
 	}
 	
-	
+	public static SrSolicitacaoListaVO fromFiltro(SrSolicitacaoFiltro filtro) throws Exception {
+		List<SrSolicitacao> solicitacoes = filtro.buscar();
+		
+		return null;
+	}
 	
 }

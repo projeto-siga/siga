@@ -1547,7 +1547,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						atendenteNaoDesignado);
 
 			for (SrLista lista : getListasParaInclusaoAutomatica(lotaCadastrante)) {
-				incluirEmLista(lista, cadastrante, lotaCadastrante);
+				//TODO: Ajustar ao implementar item 11 da OSI_FS0018
+//				incluirEmLista(lista, cadastrante, lotaCadastrante);
 			}
 
 			if (!isEditado()
@@ -2108,34 +2109,27 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public long getPrioridadeNaLista(SrLista lista) throws Exception {
-		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.lista != null && mov.lista.equivale(lista))
-				return mov.prioridade != null ? mov.prioridade : -1;
-		}
-		return -1;
+		SrPrioridadeSolicitacao prioridadeSolicitacao = lista.getSrPrioridadeSolicitacao(this);
+		return prioridadeSolicitacao.numPosicao;
 	}
 
-	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota)
+	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, SrPrioridade prioridade, boolean naoReposicionarAutomatico)
 			throws Exception {
 		if (lista == null)
 			throw new IllegalArgumentException("Lista não informada");
 
 		if (isEmLista(lista))
-			throw new IllegalArgumentException("Lista " + lista.nomeLista
-					+ " já contém a solicitação " + getCodigo());
+			throw new IllegalArgumentException("Lista " + lista.nomeLista + " já contém a solicitação " + getCodigo());
 
 		SrMovimentacao mov = new SrMovimentacao();
-		mov.prioridade = (long) lista.getProximaPosicao();
 		mov.cadastrante = pess;
 		mov.lotaCadastrante = lota;
-		mov.tipoMov = SrTipoMovimentacao
-				.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "InclusÃ£o na lista " + lista.nomeLista
-				+ " com a prioridade " + mov.prioridade;
+		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
+		mov.descrMovimentacao = "InclusÃ£o na lista " + lista.nomeLista + " com a prioridade " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = this;
 		mov.salvar();
-		lista.refresh();
+		lista.incluir(this, prioridade, naoReposicionarAutomatico);
 	}
 
 	public void retirarDeLista(SrLista lista, DpPessoa pess, DpLotacao lota)
@@ -2146,35 +2140,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrMovimentacao mov = new SrMovimentacao();
 		mov.cadastrante = pess;
 		mov.lotaCadastrante = lota;
-		mov.tipoMov = SrTipoMovimentacao
-				.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA);
+		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA);
 		mov.descrMovimentacao = "Cancelamento de InclusÃ£o em Lista";
 		mov.solicitacao = this;
 		mov.lista = lista;
 		mov.salvar();
-		lista.refresh();
-
-		lista.recalcularPrioridade(pess, lota);
-	}
-
-	// Edson: este método é protected porque nao pode ser chamado pelo
-	// usu�rio,
-	// mas sim pela SrLista, passando a posicao correta a ser colocada a
-	// solicitacao
-	protected void priorizar(SrLista lista, long prioridade, DpPessoa pess,
-			DpLotacao lota) throws Exception {
-		SrMovimentacao mov = new SrMovimentacao();
-		mov.prioridade = prioridade;
-		mov.cadastrante = pess;
-		mov.lotaCadastrante = lota;
-		mov.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		mov.descrMovimentacao = "Alteração de prioridade na lista "
-				+ lista.nomeLista + ": " + mov.prioridade;
-		mov.lista = lista;
-		mov.solicitacao = this;
-		mov.salvar();
-		lista.refresh();
+		lista.retirar(this, pess, lota);
 	}
 
 	private void iniciarPreAtendimento(DpLotacao lota, DpPessoa pess)
@@ -2311,7 +2282,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				break;
 
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA)
-				incluirEmLista(mov.lista, pess, lota);
+				incluirEmLista(mov.lista, pess, lota, prioridade, false);
 
 		}
 	}

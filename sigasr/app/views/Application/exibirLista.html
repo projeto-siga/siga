@@ -62,40 +62,40 @@
 				</tr>
 			</thead>
 			<tbody id="sortable" >
-				#{list items:lista.solicitacaoSet, as:'sol'}
+				#{list items:lista.getPrioridadeSolicitacaoSet(), as:'sol'}
 				#{if sol}
 	
-				<tr id="${sol.idSolicitacao}">
+				<tr id="${sol.solicitacao.idSolicitacao}">
 				<td class="gt-celula-nowrap" style="cursor:move; font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
-					${sol.getPrioridadeNaLista(lista)}
+					${sol.numPosicao}
 				</td>
 				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<a href="@{Application.exibir(sol.idSolicitacao)}">
-								${sol.codigo}
+							<a href="@{Application.exibir(sol.solicitacao.idSolicitacao)}">
+								${sol.solicitacao.codigo}
 							</a>	
 				</td>
 				<td class="gt-celula-nowrap"  style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important; text-align:justify;" "id="descrSolicitacao">
-				<b>#{descricaoItem itemConfiguracao: sol.itemAtual /}:</b>&nbsp;
-				#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
+				<b>#{descricaoItem itemConfiguracao: sol.solicitacao.itemAtual /}:</b>&nbsp;
+				#{selecionado sigla:sol.solicitacao.descricao,descricao:sol.solicitacao.descricao /}
 				</td>
 					
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px; text-align:center;" >
-				#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
-				#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.siglaLotacao /}
+				#{selecionado sigla:sol.solicitacao.solicitante.nomeAbreviado, descricao:sol.solicitacao.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
+				#{selecionado sigla:sol.solicitacao.lotaSolicitante.siglaLotacao,descricao:sol.solicitacao.lotaSolicitante.siglaLotacao /}
 				</td>
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
+				#{selecionado sigla:sol.solicitacao.solicitacaoInicial.dtRegString,descricao:sol.solicitacao.solicitacaoInicial.dtRegString /}
 				</td>						
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					<b>${sol?.lotaAtendente.siglaLotacao}</b></td>
+					<b>${sol?.solicitacao.lotaAtendente.siglaLotacao}</b></td>
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}
+					#{selecionado sigla:sol.solicitacao.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.solicitacao.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}
 				</td>
 				#{if podeRemover} 
 				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 					<input type="hidden" name="idLista" value="${lista.idLista}">
-					<input type="hidden" name="idSolicitacao" value="${sol.idSolicitacao}">
-					<a onclick="javascript: return block();" href="@{Application.retirarDeLista(sol.idSolicitacao,lista.idLista)}" title="Remover da Lista" name="idSolicitacao" value="${sol.idSolicitacao}">
+					<input type="hidden" name="idSolicitacao" value="${sol.solicitacao.idSolicitacao}">
+					<a onclick="javascript: return block();" href="@{Application.retirarDeLista(sol.solicitacao.idSolicitacao,lista.idLista)}" title="Remover da Lista" name="idSolicitacao" value="${sol.solicitacao.idSolicitacao}">
 					<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> </a>
 				</td>
 				#{/if}

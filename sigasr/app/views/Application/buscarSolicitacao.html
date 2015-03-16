@@ -252,13 +252,20 @@
 						<tr>
 							<td>Prioridade Mínima</td>
 							<td>#{select 'filtro.prioridade', items:models.SrPrioridade.values(), 
-								labelProperty:'descPrioridade', value:filtro.prioridade, style:'width:164px;' } 
+								labelProperty:'descPrioridade', value:filtro.prioridade, style:'width:250px;' } 
 								#{option 0}Todas#{/option} #{/select}</td>
+						</tr>
+						<tr>
+							<td>Lista de Prioridade</td>
+							<td>#{select 'filtro.idListaPrioridade', items:listasPrioridade, 
+								labelProperty:'nomeLista', value:filtro.idListaPrioridade, style:'width:250px;' } 
+								#{option -1}Qualquer Uma#{/option}
+								#{option 0}Nenhuma#{/option}#{/select}</td>
 						</tr>
 						<tr>
 							<td>Descrição</td>
 							<td>
-								<input type="text" name="filtro.descrSolicitacao"
+								<input type="text" name="filtro.descrSolicitacao" style="width: 247px;"
 									id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}">
 								</input>
 							</td>

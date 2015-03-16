@@ -41,6 +41,8 @@ import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 import models.vo.PaginaItemConfiguracao;
 import models.vo.SelecionavelVO;
+import models.vo.SrSolicitacaoListaVO;
+import models.vo.SrSolicitacaoVO;
 
 import org.joda.time.LocalDate;
 
@@ -668,18 +670,17 @@ public class Application extends SigaApplication {
 	//	e não foi possível deixar default no template(igual ao buscarItem.html) 
 	@SuppressWarnings("unchecked")
 	public static void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) {
-
-		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
+		SrSolicitacaoListaVO solicitacaoListaVO;
 
 		try {
 			if (filtro.pesquisar) {
-				listaSolicitacao = filtro.buscar();
+				solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, lotaTitular(), cadastrante());
 			} else {
-				listaSolicitacao = new ArrayList<SrSolicitacao>();
+				solicitacaoListaVO = new SrSolicitacaoListaVO();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			listaSolicitacao = new ArrayList<SrSolicitacao>();
+			solicitacaoListaVO = new SrSolicitacaoListaVO();
 		}
 		
 		// Montando o filtro...
@@ -690,7 +691,7 @@ public class Application extends SigaApplication {
 
 		List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
 		List<SrLista> listasPrioridade = SrLista.listar(false);
-		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao, listasPrioridade);
+		render(solicitacaoListaVO, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao, listasPrioridade);
 	}
 
 	public static void baixar(Long idArquivo) {

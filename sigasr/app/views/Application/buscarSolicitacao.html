@@ -8,8 +8,8 @@
 	<div class="gt-content clearfix">
 	<h2>Pesquisa de Solicitações</h2>
 	
-	#{if listaSolicitacao}
-	#{listagemSolicitacao listaSolicitacao:listaSolicitacao, filtro:filtro, modoExibicao:'solicitacao' /}
+	#{if solicitacaoListaVO}
+	#{solicitacoes listaSolicitacao:solicitacaoListaVO.getItens(), filtro:filtro, modoExibicao:'solicitacao' /}
 	#{/if}
 	#{elseif filtro?.pesquisar} 
 		<div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>	

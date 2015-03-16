@@ -270,4 +270,5 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		});
 		return arrayList;
 	}
+	
 }

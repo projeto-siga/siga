@@ -15,23 +15,23 @@
 		color: black;
 	}
 	.PRIORIDADE-IMEDIATO .numero-solicitacao a {
-		color: red;
+		color: red !important;
 		font-weight: bold;
 	}
 	.PRIORIDADE-ALTO .numero-solicitacao a {
-		color: #E0E000;
+		color: #E0E000 !important;
 		font-weight: bold;
 	}
 	.PRIORIDADE-MEDIO .numero-solicitacao a {
-		color: blue;
+		color: blue !important;
 		font-weight: bold;
 	}
 	.PRIORIDADE-BAIXO .numero-solicitacao a {
-		color: green;
+		color: green !important;
 		font-weight: bold;
 	}
 	.PRIORIDADE-PLANEJADO .numero-solicitacao a {
-		color: gray;
+		color: gray !important;
 		font-weight: bold;
 	}
 	
@@ -134,7 +134,7 @@
 					#{if sol}
 					<tr id="${sol.solicitacao.idSolicitacao}"  class="PRIORIDADE-${sol.prioridade}">
 						<td class="gt-celula-nowrap numero-solicitacao" style="cursor:move; font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
-							${sol.numPosicao}
+							<a>${sol.numPosicao}</a>
 						</td>
 						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 							<a href="@{Application.exibir(sol.solicitacao.idSolicitacao)}">

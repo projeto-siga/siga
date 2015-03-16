@@ -76,9 +76,7 @@
         		'</tr>'+
 	        	'<tr>'+
 	        		'<td><b>Situação:</b></td>'+
-	        		'<td style="padding: 8px 5px 8px 10px !important">' + d[5] + '</td>'+
-	        		'<td style="padding: 0px !important"><b>desde</b></td>'+
-	        		'<td style="padding: 8px 4px !important;">' + d[8] + '</td>'+
+	        		'<td style="padding: 8px 5px 8px 10px !important">' + d[5] + ' desde ' + d[8] + '</td>'+
     			'</tr>'+
 		        '<tr>'+
 	            	'<td><b>Última Movimentação:</b></td>'+
@@ -250,7 +248,7 @@
 							<td>Lista de Prioridade</td>
 							<td>#{select 'filtro.idListaPrioridade', items:listasPrioridade, 
 								labelProperty:'nomeLista', value:filtro.idListaPrioridade, style:'width:250px;' } 
-								#{option -1}Qualquer Uma#{/option}
+								#{option -1}#{/option}
 								#{option 0}Nenhuma#{/option}#{/select}</td>
 						</tr>
 						<tr>

@@ -1,0 +1,181 @@
+<style>
+	.bt-expandir {
+		background: none !important;
+		cursor: pointer;
+	}
+	
+	.bt-expandir.expandido {
+		background: none !important;
+	}
+	
+	.hide-sort-arrow.sorting_asc, .hide-sort-arrow.sorting_desc {
+	background: none !important;
+	}
+	
+	td.details-control {
+		background: none !important;
+		cursor: pointer;
+	}
+	
+	tr.shown td.details-control {
+		background: none !important;
+	}
+</style>
+
+<div class="gt-content-box gt-for-table dataTables_div">
+	<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
+		<thead>
+			<tr>
+				#{if _modoExibicao == 'solicitacao'}
+				<th style="color: #333; width: 30px !important;" class="hide-sort-arrow">
+					<button class="bt-expandir">
+						<span id="iconeBotaoExpandirTodos">+</span>
+					</button>
+				</th>
+				#{/if}
+				#{elseif _modoExibicao == 'lista'}
+				<th style="color: #333; font-weight: bold; padding: 7px 10px;">#</th>
+				#{/elseif}
+				<th style="color: #333; font-weight: bold; padding: 7px 10px; width: 170px !important;;">Código</th>
+				<th style="color: #333; font-weight: bold; padding: 7px 0px; max-width: 90% !important;">Teor</th>
+				<th style="color: #333; font-weight: bold; padding: 7px 0px; width: 0% !important;">Solicitante</th>
+				<th style="color: #333; font-weight: bold; padding: 7px 0px; width: 120px !important;">Aberto</th>
+				<th style="color: #333; font-weight: bold; padding: 7px 0px;width: 0% !important;">Situação</th>
+				<th style="color: #333; font-weight: bold; padding: 7px 0px; width: 0% !important;">Último Andamento</th>
+				<th style="width: 0% !important;">Prioridade</th>
+				<th style="width: 0% !important;">Ult.Mov</th>
+				#{if _modoExibicao == 'lista' && _podeRemover}
+				<th style="color: #333; font-weight: bold; padding: 7px 10px;"></th>
+				#{/if}
+			</tr>
+		</thead>
+		<tbody>
+			#{list items:_listaSolicitacao, as:'sol'}
+			<tr>
+				#{if _modoExibicao == 'solicitacao'}
+				<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
+				#{/if}
+				#{elseif _modoExibicao == 'lista'}
+				<tr id="${sol.idSolicitacao}">
+				#{/elseif}
+				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+					#{if popup}
+						<a href="javascript:opener.retorna_solicitacao${nome}('${sol.idSolicitacao}','${sol.codigo}','${sol.codigo}');window.close()">${sol.codigo}</a>
+					#{/if}
+					#{else}
+							<a href="@{Application.exibir(sol.idSolicitacao)}">
+								${sol.codigo}
+							</a>
+					#{/else}
+				</td>
+				<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
+					<b>#{descricaoItem itemConfiguracao: sol.itemAtual /}:</b>&nbsp;
+					#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
+				</td>
+			
+				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
+					#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
+					#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
+				</td>
+				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+					#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
+				</td>
+				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+					<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
+				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+						#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}</td>
+				<td >#{selecionado sigla:sol.prioridade?.descPrioridade,descricao:sol.prioridade?.descPrioridade /}</td>
+				<td >#{selecionado sigla:sol.ultimaMovimentacao?.dtIniMovDDMMYYYYHHMM,descricao:sol.ultimaMovimentacao?.dtIniMovDDMMYYYYHHMM /}</td>
+			</tr>
+			#{/list}
+		</tbody>
+	</table>
+</div>
+
+
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		/* Table initialization */
+		var table = $('#solicitacoes_table')
+			.on('draw.dt', function() {
+				if(table) {
+					var btn = $('.bt-expandir'),
+						expandir = btn.hasClass('expandido');
+					
+					$('#solicitacoes_table').mostrarDetalhes(format, table);
+					$('#solicitacoes_table').expandirContrairLinhas(expandir);
+				}
+			})
+			.dataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			},
+			"columnDefs": [{
+				"targets": [3, 5, 6, 7, 8],
+				"visible": false,
+				"searchable": false
+			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				if (aData[7] == 'false')
+					$('td', nRow).addClass('item-desativado');
+			},
+			"iDisplayLength": 25
+		});
+		$('#solicitacoes_table').mostrarDetalhes(format, table);
+	});
+
+	/* Função de formatação para células de detalhes */
+	function format( d ) {
+		var tr = $('<tr class="detail">'),
+			// 'd' é o objeto contendo os dados da linha
+			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:60px;">'+
+				'<tr>'+
+					'<td style="min-width: 157px;"><b>Teor:</b></td>'+
+						'<td>' + d[2] + '</td>'+
+			        '</tr>'+
+			        '<tr>'+
+		            	'<td><b>Solicitante:</b></td>'+
+		            	'<td>' + d[3] + '</td>'+
+		        	'</tr>'+
+		        	'<tr>'+
+		        		'<td><b>Prioridade:</b></td>'+
+		        		'<td>' + d[7] + '</td>'+
+		    		'</tr>'+
+		        	'<tr>'+
+		        		'<td><b>Situação:</b></td>'+
+		        		'<td style="padding: 8px 5px 8px 10px !important">' + d[5] + '</td>'+
+		        		'<td style="padding: 0px !important"><b>desde</b></td>'+
+		        		'<td style="padding: 8px 4px !important;">' + d[8] + '</td>'+
+					'</tr>'+
+			        '<tr>'+
+		            	'<td><b>Última Movimentação:</b></td>'+
+		            	'<td>' + d[6] + '</td>'+
+		    		'</tr>'+    			
+			    '</table><td>';
+	
+	    return tr.append(detailHTML);
+	}
+</script>

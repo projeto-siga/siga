@@ -16,7 +16,9 @@
 				<table class="gt-table">
 					<thead>
 						<th align="right">Número</th>
-						<th colspan="3">Descrição</th>
+						<th>Descrição</th>
+						<th>Ativo</th>
+						<th></th>
 					</thead>
 					<c:forEach var="tipoDespacho" items="${tiposDespacho}">
 						<tr>
@@ -28,10 +30,15 @@
 										value="${tipoDespacho.idTpDespacho}" />
 								</ww:a></td>
 							<td>${tipoDespacho.descTpDespacho}</td>
-							<td><ww:url id="url" action="apagar"
-									namespace="/despacho/tipodespacho">
-									<ww:param name="id">${tipoDespacho.idTpDespacho}</ww:param>
-								</ww:url> <ww:a href="%{url}">apagar</ww:a></td>
+							<td>${tipoDespacho.fgAtivo}</td>
+							<td align="center" width="5%">									
+	 			 					<a href="javascript:if (confirm('Deseja excluir o tipo de despacho?')) location.href='/sigaex/despacho/tipodespacho/excluir.action?id=${tipoDespacho.idTpDespacho}';">
+											<img style="display: inline;"
+											src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir tipo de despacho"							
+											onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
+											onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
+									</a>															
+							</td>			
 						</tr>
 					</c:forEach>
 				</table>

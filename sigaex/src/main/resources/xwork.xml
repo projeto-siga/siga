@@ -1722,7 +1722,10 @@
 		<action name="gravar" class="br.gov.jfrj.webwork.action.ExTipoDespachoAction"
 			method="aGravar">
 			<result type="redirect-action">listar</result>
-
+		</action>
+		<action name="excluir" class="br.gov.jfrj.webwork.action.ExTipoDespachoAction"
+			method="aExcluir">
+			<result type="redirect-action">listar</result>
 		</action>
 
 	</package>

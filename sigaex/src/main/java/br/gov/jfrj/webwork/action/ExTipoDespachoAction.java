@@ -20,7 +20,10 @@ package br.gov.jfrj.webwork.action;
 
 import java.util.List;
 
+import com.opensymphony.xwork.Action;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.libs.webwork.SigaActionSupport;
 
@@ -28,7 +31,7 @@ public class ExTipoDespachoAction extends ExActionSupport {
 
 	private String descTpDespacho;
 
-	private String fgAtivo;
+	private String fgAtivo = "N";
 
 	private Long id;
 
@@ -92,6 +95,26 @@ public class ExTipoDespachoAction extends ExActionSupport {
 		tiposDespacho = dao().listarExTiposDespacho();
 		return SUCCESS;
 	}
+	
+	public String aExcluir() throws Exception {
+		assertAcesso("FE:Ferramentas;DESP:Tipos de despacho");
+		if (getId () != null) {
+			try {
+				dao().iniciarTransacao();				
+				ExTipoDespacho tipo = dao().consultar(getId(),
+						ExTipoDespacho.class, false);							
+				dao().excluir(tipo);				
+				dao().commitTransacao();				
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Erro na exclusão do tipo de despacho", 0, e);
+			}
+		} else
+			throw new AplicacaoException("ID não informada");
+
+		return Action.SUCCESS;
+	}
+	
 
 	public boolean getAtivo() {
 		return (fgAtivo == "S") ? true : false;

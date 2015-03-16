@@ -67,7 +67,7 @@ public class ExFormulariosReportController extends ExController {
 
 	public byte[] gerarRelatorio(String arquivo, SortedSet<ListItem> ll) throws JRException, Exception {
 		final Map<String, String> parametros = new HashMap<String, String>();
-		final String cam = getContext().getRealPath("/paginas/expediente/relatorios/");
+		final String cam = getContext().getRealPath("/WEB-INF/page/exRelatorio/");
 
 		/*
 		 * Here we compile our xml jasper template to a jasper file. Note: this

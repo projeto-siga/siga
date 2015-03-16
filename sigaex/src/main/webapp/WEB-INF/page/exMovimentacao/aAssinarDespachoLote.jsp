@@ -66,7 +66,7 @@
 				    <c:set var="jspServer" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
 				    <c:set var="jspServerSenha" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
 				    
-		   	 	    <c:set var="nextURL" value="siga/app/principal"  />
+		   	 	    <c:set var="nextURL" value="/siga/app/principal"  />
 		    	    <c:set var="urlPath" value="${pageContext.request.contextPath}" />
 		
 					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />

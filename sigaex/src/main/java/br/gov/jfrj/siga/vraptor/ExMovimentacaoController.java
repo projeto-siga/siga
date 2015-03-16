@@ -1790,7 +1790,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/assinar_gravar")
-	public void aAssinarGravar(final String sigla, final Boolean copia, final String tipoAssinaturaMov, final ExDocumento doc,
+	public void aAssinarGravar(final String sigla, final Boolean copia, final String tipoAssinaturaMov, 
 			final String atributoAssinavelDataHora, String assinaturaB64, final String certificadoB64) throws AplicacaoException, ServletException {
 
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia();
@@ -1831,7 +1831,7 @@ public class ExMovimentacaoController extends ExController {
 			}
 
 			result.include("msg",
-					Ex.getInstance().getBL().assinarDocumento(getCadastrante(), getLotaTitular(), doc, dt, assinatura, certificado, tpMovAssinatura));
+					Ex.getInstance().getBL().assinarDocumento(getCadastrante(), getLotaTitular(), mob.doc(), dt, assinatura, certificado, tpMovAssinatura));
 
 		} catch (final Exception e) {
 			if (fApplet) {
@@ -1839,7 +1839,7 @@ public class ExMovimentacaoController extends ExController {
 				result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");	
 			}
 
-			throw e;
+			//throw e;
 		}
 
 		if (fApplet) {
@@ -2741,10 +2741,10 @@ public class ExMovimentacaoController extends ExController {
                             mov.getDtIniMov());
             getRequest().setAttribute("assinante", s);
 
-            result.use(Results.page()).forwardTo("/paginas/assinatura_ok.jsp");
+            result.use(Results.page()).forwardTo("/WEB-INF/page/exMovimentacao/assinatura_ok.jsp");
         } catch (final Exception e) {
             getRequest().setAttribute("err", e.getMessage());
-            result.use(Results.page()).forwardTo("/paginas/assinatura_erro.jsp");
+            result.use(Results.page()).forwardTo("/WEB-INF/page/exMovimentacao/assinatura_erro.jsp");
         }
     }    
     
@@ -2765,10 +2765,10 @@ public class ExMovimentacaoController extends ExController {
 							mov.getDtIniMov());
 			getRequest().setAttribute("assinante", s);
 
-			result.use(Results.page()).forwardTo("/paginas/assinatura_ok.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/page/exMovimentacao/assinatura_ok.jsp");
 		} catch (final Exception e) {
 			getRequest().setAttribute("err", e.getMessage());
-			result.use(Results.page()).forwardTo("/paginas/assinatura_erro.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/page/exMovimentacao/assinatura_erro.jsp");
 		}
 	}
 	
@@ -3337,7 +3337,7 @@ public class ExMovimentacaoController extends ExController {
 		} catch (final Exception e) {
 			if (fApplet) {
 				result.include("err", e.getMessage());
-				result.use(Results.page()).forwardTo("/paginas/erro.jsp");
+				result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");
 				return;
 			}
 
@@ -3345,7 +3345,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		if (fApplet) {
-			result.use(Results.page()).forwardTo("/paginas/ok.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
 			return;
 		}
 		

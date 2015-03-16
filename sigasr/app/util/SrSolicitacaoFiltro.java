@@ -21,7 +21,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private static final long serialVersionUID = 1L;
-	private static final Long QUALQUER_LISTA = -1L;
+	private static final Long QUALQUER_LISTA_OU_NENHUMA = -1L;
 	private static final Long NENHUMA_LISTA = 0L;
 	private static final String AND = " AND ";
 
@@ -117,37 +117,33 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (prioridade != null && prioridade.idPrioridade > 0L)
 			query.append(" and sol.prioridade <= " + prioridade.ordinal());
 		
-		if (idListaPrioridade.equals(NENHUMA_LISTA)) {
-			query.append(" and ( ");
-			query.append(" ( select count(mov) from SrMovimentacao mov ");
-			query.append(" where mov.movCanceladora is null and ");
-			query.append(" ( mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-			query.append(" or mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA + ") ) "); 
-			query.append(" = ( select count(mov) from SrMovimentacao mov ");
-			query.append(" where mov.movCanceladora is null and ");
-			query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ) ");
-		}
-		else if (idListaPrioridade.equals(QUALQUER_LISTA)) {
-			query.append(" and ( ");
-			query.append(" (select count(mov) from SrMovimentacao mov ");
-			query.append(" where mov.movCanceladora is null and ");
-			query.append(" ( mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-			query.append(" or mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA + ") ) "); 
-			query.append(" > (select count(mov) from SrMovimentacao mov ");
-			query.append(" where mov.movCanceladora is null and ");
-			query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ) ");
-		}
-		else {
-			SrLista lista = SrLista.findById(idListaPrioridade);
-			query.append(" and ( sol in ( ");
-			query.append(" select mov.solicitacao from SrMovimentacao mov ");
-			query.append(" where mov.movCanceladora is null and ");
-			query.append(" mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista + " and ");
-			query.append(" ( mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-			query.append(" or mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA + ") )"); 
-			query.append(" and sol not in ( select mov.solicitacao from SrMovimentacao mov ");
-			query.append(" where mov.movCanceladora is null and mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista);
-			query.append(" and mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ) ");
+		if (idListaPrioridade != null && !idListaPrioridade.equals(QUALQUER_LISTA_OU_NENHUMA)){
+			if (idListaPrioridade.equals(NENHUMA_LISTA)) {
+				query.append(" and ");
+				query.append(" ( select count(mov) from SrMovimentacao mov ");
+				query.append(" where mov.movCanceladora is null and ");
+				query.append(" mov.solicitacao = sol and ");
+				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA+ " ) ");  
+				query.append(" = ( select count(mov) from SrMovimentacao mov ");
+				query.append(" where mov.movCanceladora is null and ");
+				query.append(" mov.solicitacao = sol and ");
+				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ");
+			}
+			else {
+				SrLista lista = SrLista.findById(idListaPrioridade);
+				
+				query.append(" and ");
+				query.append(" ( select count(mov) from SrMovimentacao mov ");
+				query.append(" where mov.movCanceladora is null and ");
+				query.append(" mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista + " and ");
+				query.append(" mov.solicitacao = sol and ");
+				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA+ " ) ");  
+				query.append(" > ( select count(mov) from SrMovimentacao mov ");
+				query.append(" where mov.movCanceladora is null and ");
+				query.append(" mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista + " and ");
+				query.append(" mov.solicitacao = sol and ");
+				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ");
+			}
 		}
 		
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {

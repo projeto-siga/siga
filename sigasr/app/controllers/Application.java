@@ -628,7 +628,7 @@ public class Application extends SigaApplication {
 			throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular());
+		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular(), solicitacao.prioridade, false);
 		exibir(idSolicitacao, todoOContexto(), ocultas());
 	}
 

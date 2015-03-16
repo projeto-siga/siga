@@ -298,7 +298,6 @@ public class SrLista extends HistoricoSuporte {
 		}
 		prioridadeSolicitacao.setNumPosicao(posicao);
 		meuPrioridadeSolicitacaoSet.add(prioridadeSolicitacao);
-    	
     	prioridadeSolicitacao.salvar();
     }
 	

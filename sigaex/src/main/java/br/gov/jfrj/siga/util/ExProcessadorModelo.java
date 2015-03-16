@@ -59,7 +59,7 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 		Writer w = new OutputStreamWriter(bout);
 		SwallowingHttpServletResponse responseToRead = new SwallowingHttpServletResponse(response, w, "iso-8859-1");
 		
-		javax.servlet.RequestDispatcher dispatcher = context.getRequestDispatcher("/paginas/expediente/processa_modelo.jsp");
+		javax.servlet.RequestDispatcher dispatcher = context.getRequestDispatcher("/WEB-INF/page/exDocumento/processa_modelo.jsp");
 		dispatcher.include(rw, responseToRead);
 		w.flush();
 		String s = bout.toString();

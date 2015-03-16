@@ -61,18 +61,10 @@
 				test="${f:testaCompetencia('atenderPedidoPublicacao',titular,lotaTitular,null)}">
 				<li>
 					<siga:monolink href="${pageContext.request.contextPath}/app/expediente/mov/atender_pedido_publicacao" texto="Gerenciar Publicação DJE" />
-<%-- 					<ww:url id="url" action="atender_pedido_publicacao" --%>
-<%-- 						namespace="/expediente/mov" /> <a href="%{url}">Gerenciar Publicação DJE</a> --%>
 				</li>
 			</c:if>
 		</c:catch>
-		<%--<c:catch>
-			<c:if
-				test="${f:testaCompetencia('definirPublicadoresPorConfiguracao',titular,lotaTitular,null)}">
-				<li><ww:url id="url" action="definir_publicadores"
-					namespace="/expediente/configuracao" /><a href="%{url}">Definir Publicadores DJE</a></li>
-			</c:if>
-		</c:catch>--%>
+		
 		<c:catch>
 			<c:if
 				test="${f:testaCompetencia('gerenciarPublicacaoBoletimPorConfiguracao',titular,lotaTitular,null)}">
@@ -139,13 +131,6 @@
 				</li>
 			</c:if>
 
-			<%-- Substituído pelo pelo "relConsultaDocEntreDatas"
-		<li><ww:url id="url" action="relRelatorios"
-				namespace="/expediente/rel">
-				<ww:param name="nomeArquivoRel">relExpedientes.jsp</ww:param>
-			</ww:url> <a href="%{url}">Relatório de Expedientes</a></li>  --%>
-
-
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;DATAS:Relação de documentos entre datas')}">
 				<li>
@@ -154,12 +139,7 @@
 					</a>
 				</li>
 			</c:if>
-			<!-- 
-			<li><ww:url id="url" action="relRelatorios"
-				namespace="/expediente/rel">
-				<ww:param name="nomeArquivoRel">relModelos.jsp</ww:param>
-			</ww:url> <a href="%{url}">Relatório de Modelos</a></li>
-	-->
+			
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;SUBORD:Relatório de documentos em setores subordinados')}">
 				<li>

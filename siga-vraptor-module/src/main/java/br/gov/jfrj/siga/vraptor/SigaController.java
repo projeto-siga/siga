@@ -135,13 +135,13 @@ public class SigaController {
 	public void appexception() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(400);
-		result.forwardTo("/sigalibs/erroGeral.jsp");
+		result.forwardTo("/WEB-INF/page/erroGeral.jsp");
 	}
 
 	public void exception() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(500);
-		result.forwardTo("/sigalibs/erroGeral.jsp");
+		result.forwardTo("/WEB-INF/page/erroGeral.jsp");
 	}
 
 	protected DpLotacao getLotaTitular() {

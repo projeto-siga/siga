@@ -2808,10 +2808,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	
 	public List<SrItemConfiguracao> getHistoricoItem() {
 		List<SrItemConfiguracao> historicoItens = listarHistoricoItemInicial();
+		SrItemConfiguracao anterior = itemConfiguracao;
 
 		for (SrMovimentacao movimentacao : getMovimentacaoSetOrdemCrescentePorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO)) {
-			if (movimentacao.getItemConfiguracao() != null) {
+			if (movimentacao.getItemConfiguracao() != null && anterior != null && !movimentacao.getItemConfiguracao().equivale(anterior)) {
 				historicoItens.add(movimentacao.getItemConfiguracao());
+				anterior = movimentacao.getItemConfiguracao();
 			}
 		}
 		return historicoItens;
@@ -2819,9 +2821,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public List<SrAcao> getHistoricoAcao() {
 		List<SrAcao> historicoAcoes = listaHistoricoAcaoInicial();
+		SrAcao acaoAnterior = acao;
 		for (SrMovimentacao movimentacao : getMovimentacaoSetOrdemCrescentePorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO)) {
-			if (movimentacao.getAcao() != null) {
+			if (movimentacao.getAcao() != null && acaoAnterior != null && !movimentacao.getAcao().equivale(acaoAnterior)) {
 				historicoAcoes.add(movimentacao.getAcao());
+				acaoAnterior = movimentacao.getAcao();
 			}
 		}
 		return historicoAcoes;

@@ -31,6 +31,7 @@ import models.SrMovimentacao;
 import models.SrObjetivoAtributo;
 import models.SrPergunta;
 import models.SrPesquisa;
+import models.SrPrioridade;
 import models.SrSolicitacao;
 import models.SrTipoAtributo;
 import models.SrTipoMotivoEscalonamento;
@@ -590,9 +591,7 @@ public class Application extends SigaApplication {
 		if (ocultas == null)
 			ocultas = false;
 	
-		Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas,
-				null, false, todoOContexto, !ocultas, false);
-
+		Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas,null, false, todoOContexto, !ocultas, false);
 		render(solicitacao, movimentacao, todoOContexto, ocultas, movs);
 	}
 
@@ -621,14 +620,17 @@ public class Application extends SigaApplication {
 	public static void incluirEmLista(Long idSolicitacao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		solicitacao = solicitacao.getSolicitacaoAtual();
-		render(solicitacao);
+		List<SrPrioridade> prioridades = SrPrioridade.getValoresEmOrdem();
+		render(solicitacao, prioridades);
 	}
 
-	public static void incluirEmListaGravar(Long idSolicitacao, Long idLista)
-			throws Exception {
+	public static void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, Boolean naoReposicionarAutomatico) throws Exception {
+		if(idLista == null) {
+			throw new Exception("Selecione a lista para inclusão da solicitação");
+		}
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular(), solicitacao.prioridade, false);
+		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular(), prioridade, naoReposicionarAutomatico);
 		exibir(idSolicitacao, todoOContexto(), ocultas());
 	}
 
@@ -730,8 +732,7 @@ public class Application extends SigaApplication {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		SrPesquisa pesquisa = sol.getPesquisaDesignada();
 		if (pesquisa == null)
-			throw new Exception(
-					"N�o foi encontrada nenhuma pesquisa designada para esta solicita��o.");
+			throw new Exception("Não foi encontrada nenhuma pesquisa designada para esta solicitação.");
 		pesquisa = SrPesquisa.findById(pesquisa.idPesquisa);
 		pesquisa = pesquisa.getPesquisaAtual();
 		render(id, pesquisa);
@@ -1695,7 +1696,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat�rio de Solicita��es", pdf.length,
+		renderBinary(is, "Relatório de Solicita��es", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1719,7 +1720,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat�rio de Transferêªncias", pdf.length,
+		renderBinary(is, "Relatório de Transferêªncias", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1746,7 +1747,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat�rio de Solicita��es por Localidade",
+		renderBinary(is, "Relatório de Solicita��es por Localidade",
 				pdf.length, "application/pdf", true);
 	}
 
@@ -1773,7 +1774,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat�rio de Prazos", pdf.length, "application/pdf",
+		renderBinary(is, "Relatório de Prazos", pdf.length, "application/pdf",
 				true);
 	}
 
@@ -1799,7 +1800,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat�rio de Prazos - TRF", pdf.length,
+		renderBinary(is, "Relatório de Prazos - TRF", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1825,7 +1826,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat�rio Detalhado de Prazos", pdf.length,
+		renderBinary(is, "Relatório Detalhado de Prazos", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1849,7 +1850,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat�rio de Indíces de Satisfa��o", pdf.length,
+		renderBinary(is, "Relatório de Indíces de Satisfação", pdf.length,
 				"application/pdf", true);
 	}
 
@@ -1875,7 +1876,7 @@ public class Application extends SigaApplication {
 		byte[] pdf = rel.getRelatorioPDF();
 		InputStream is = new ByteArrayInputStream(pdf);
 
-		renderBinary(is, "Relat�rio de Solicita��es por Localidade",
+		renderBinary(is, "Relatório de Solicita��es por Localidade",
 				pdf.length, "application/pdf", true);
 	}
 
@@ -1900,7 +1901,7 @@ public class Application extends SigaApplication {
 		Iterator it = solsnaoconcluidas.iterator();
 		while (it.hasNext()) {
 			SrSolicitacao sol = (SrSolicitacao) it.next();
-			sol.fechar(null, null, "Conclus�o Autom�tica");
+			sol.fechar(null, null, "Conclusão Automática");
 		}
 
 		render(solsnaoconcluidas);

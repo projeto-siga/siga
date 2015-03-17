@@ -244,6 +244,10 @@ function postback(){
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
 					<br /> ${solicitacao.GUTString}</span>
 			</p>
+			<p>
+				<b>Notificação:</b>
+				${solicitacao.formaAcompanhamento.descrFormaAcompanhamento.raw()}
+			</p>
 			#{if solicitacao.fechadoAutomaticamente != null && solicitacao.isPai()}
 			<p>
 				<b>Fechamento Automático:</b> ${solicitacao.fechadoAutomaticamente.yesno('Sim', 'Não')  }

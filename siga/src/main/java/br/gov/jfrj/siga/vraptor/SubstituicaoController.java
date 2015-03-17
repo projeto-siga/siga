@@ -40,7 +40,7 @@ public class SubstituicaoController extends SigaController {
 	private DpPessoaSelecao substitutoSel;
 	private DpLotacaoSelecao lotaSubstitutoSel;	
 	
-	public Map<Integer, String> getListaTipo() {
+	private Map<Integer, String> getListaTipo() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
 		map.put(2, "Órgão Integrado");
@@ -294,7 +294,7 @@ public class SubstituicaoController extends SigaController {
 		result.redirectTo("/");
 	}	
 	
-	public void gravarFinalizar() {
+	private void gravarFinalizar() {
 		CpPersonalizacao per = dao().consultarPersonalizacao(getCadastrante());
 
 		if (per == null) {

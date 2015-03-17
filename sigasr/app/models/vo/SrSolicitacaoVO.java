@@ -3,6 +3,7 @@ package models.vo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import models.SrLista;
+import models.SrPrioridade;
 import models.SrSolicitacao;
 
 public class SrSolicitacaoVO {
@@ -18,7 +19,9 @@ public class SrSolicitacaoVO {
 	public SelecionavelVO lotaSolicitante;
 	public SelecionavelVO lotaAtendente;
 	public String ultimaMovimentacao;
+	public String dtUltimaMovimentacaoString;
 	public String marcadoresEmHtml;
+	public SrPrioridade prioridade;
 	
 	
 	public SrSolicitacaoVO(SrSolicitacao sol) {
@@ -32,6 +35,8 @@ public class SrSolicitacaoVO {
 		this.dtRegString = sol.solicitacaoInicial.getDtRegString();
 		this.lotaAtendente = sol.getLotaAtendente() != null ? SelecionavelVO.createFrom(sol.getLotaAtendente()) : null;
 		this.ultimaMovimentacao = sol.getUltimaMovimentacaoQuePossuaDescricao() != null ? sol.getUltimaMovimentacaoQuePossuaDescricao().descrMovimentacao : "";
+		this.dtUltimaMovimentacaoString = sol.getUltimaMovimentacao() != null ? sol.getUltimaMovimentacao().getDtIniMovDDMMYYYYHHMM() : "";
+		this.prioridade = sol.prioridade;
 	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista) throws Exception {

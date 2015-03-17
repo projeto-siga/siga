@@ -7,6 +7,17 @@ public class ColunasVO {
 	private boolean exibir;
 	private boolean alteravel;
 	
+	public ColunasVO(String titulo, String nome) {
+		this.titulo = titulo;
+		this.nome = nome;
+	}
+	public ColunasVO(String titulo, String nome, boolean exibir, boolean alteravel) {
+		this(titulo, nome);
+		
+		this.exibir = exibir;
+		this.alteravel = alteravel;
+	}
+	
 	public String getTitulo() {
 		return titulo;
 	}

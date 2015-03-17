@@ -69,23 +69,23 @@
 					#{/else}
 				</td>
 				<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
-					<b>#{descricaoItem itemConfiguracao: sol.itemAtual /}:</b>&nbsp;
+					<b>#{descricaoItem itemConfiguracao: sol.itemConfiguracao /}:</b>&nbsp;
 					#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
 				</td>
 			
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
-					#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
-					#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
+					#{selecionado sigla:sol.nomeSolicitante, descricao:sol.descricaoSolicitante /}&nbsp;
+					#{selecionado sigla:sol.lotaSolicitante.sigla,descricao:sol.lotaSolicitante.descricao /}
 				</td>
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-					#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
+					#{selecionado sigla:sol.dtRegString,descricao:sol.dtRegString /}
 				</td>
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-					<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
+					<b>${sol.marcadoresEmHtml}</b></td>
 				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-						#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}</td>
+					#{selecionado sigla:sol.ultimaMovimentacao,descricao:sol.ultimaMovimentacao /}</td>
 				<td >#{selecionado sigla:sol.prioridade?.descPrioridade,descricao:sol.prioridade?.descPrioridade /}</td>
-				<td >#{selecionado sigla:sol.ultimaMovimentacao?.dtIniMovDDMMYYYYHHMM,descricao:sol.ultimaMovimentacao?.dtIniMovDDMMYYYYHHMM /}</td>
+				<td >#{selecionado sigla:sol.dtUltimaMovimentacaoString,descricao:sol.dtUltimaMovimentacaoString /}</td>
 			</tr>
 			#{/list}
 		</tbody>

@@ -8,7 +8,7 @@
 	<div class="gt-content clearfix">
 	<h2>Pesquisa de Solicitações</h2>
 	
-	#{if solicitacaoListaVO}
+	#{if solicitacaoListaVO?.getItens()}
 	#{solicitacoes listaSolicitacao:solicitacaoListaVO.getItens(), filtro:filtro, modoExibicao:'solicitacao' /}
 	#{/if}
 	#{elseif filtro?.pesquisar} 
@@ -46,9 +46,9 @@
 					<tr>
 						<td>Cadastrante</td>
 						<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.cadastrante',
-							nomeSelLotacao:'filtro.lotaTitular',
+							nomeSelLotacao:'filtro.lotaCadastrante',
 							valuePessoa:filtro.cadastrante,
-							valueLotacao:filtro.lotaTitular /}</span>
+							valueLotacao:filtro.lotaCadastrante /}</span>
 						</td>
 					</tr>
 					<tr>

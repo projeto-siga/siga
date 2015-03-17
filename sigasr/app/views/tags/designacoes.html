@@ -232,10 +232,16 @@ altura:'200', largura:'450'}
 
 	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		$('td:eq(' + colunasDesignacao.acaoExpandir + ')', nRow).addClass('details-control');
-
-		if (nRow.dataset && nRow.dataset.json) {
-			var desig = JSON.parse(nRow.dataset.json);
-
+		var desig = undefined;
+		
+		try {
+			desig = JSON.parse($(nRow).data('json'));
+		}
+		catch(err) {
+			desig = $(nRow).data('json');
+		}
+		
+		if (desig) {
 			if (desig.ativo == false)
 				$('td', nRow).addClass('item-desativado');
 			else
@@ -275,7 +281,7 @@ altura:'200', largura:'450'}
 
 		// tratamentos de herança e botão duplicar
 		if (designacao && (designacao.isHerdado == 'true' || designacao.isHerdado == true))
-			$('td', tr).addClass('configuracaoHerdada');
+			$('td', tr).addClass('configuracao-herdada');
 		else
 			acoes = acoes.append(" " + designacaoService.duplicarButton);
 
@@ -295,7 +301,7 @@ altura:'200', largura:'450'}
 	}
 	
 	function detalhesDesignacao(d, designacao) {
-		var tr = designacao.ativo == true ? $('<tr class="detail">') : $('<tr class="detail configuracaoHerdada">'),
+		var tr = designacao.ativo == true ? $('<tr class="detail">') : $('<tr class="detail item-desativado">'),
 			td = $('<td colspan="10">'),
 			table  = $('<table style="margin-left: 60px;">'),
 			trDescricao = $('<tr>'),

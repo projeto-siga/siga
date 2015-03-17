@@ -170,8 +170,9 @@ tr.shown td.details-control {
         	}
         ])
         .configurar("fnRowCallback", function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-        	if (nRow.dataset && nRow.dataset.json) {
-				var jSonItem = getJsonByString(nRow.dataset.json);
+        	var jSonItem = getJsonByString($(nRow).data('json'));
+    		
+        	if (jSonItem) {
 				$('td:eq('+colunasLista.expandir+')', nRow).addClass('details-control');
 
 				if (jSonItem.nivel == 1)
@@ -300,7 +301,7 @@ tr.shown td.details-control {
     }
 
 	function detalhesItemConfiguracaoFormat( d, obj) {
-		var tr = obj.ativo == true ? $('<tr class="detail">') : $('<tr class="detail configuracaoHerdada">'),
+		var tr = obj.ativo == true ? $('<tr class="detail">') : $('<tr class="detail configuracao-herdada">'),
 			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:56px;">'+
 			'<tr>'+
 				'<td style="padding-right: 0px;"><b>Similaridade:</b></td>'+

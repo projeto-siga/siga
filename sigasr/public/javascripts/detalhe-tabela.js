@@ -18,16 +18,12 @@ function DetalheHelper($table, formatFunction, dataTable) {
 					detail = tr.next('tr.detail');
 				
 				if(detail.size() == 0) {
-					var data = tr.find('td'),
-						obj = tr.data('json');
-					tr.addClass('shown');
-					
-					formatFunction(dataTable.api().row(tr).data(), obj)
-						.insertAfter(tr);
+					DetalheHelper.mostrarDetalhe(tr, dataTable, formatFunction);
 				}
 				else {
 					detail.remove();
 					tr.removeClass('shown');
+					$me.html("+");
 				}
 		    });
 		}
@@ -38,15 +34,25 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	 */
 	$table.find('.bt-expandir').each(function() {
 		var $btn = jQuery(this);
+
+		if ($btn.hasClass('expandido'))
+			$btn.html("-");
+		else 
+			$btn.html("+");
 		
 		if(!$btn.hasClass('has-event')) {
 			$btn.addClass('has-event');
-			
+
 			$btn.on('click', function(e) {
 				var btn = $table.find('.bt-expandir'),
 					expandir = !btn.hasClass('expandido');
 				
 				$table.expandirContrairLinhas(expandir);
+				if (expandir == true)
+					btn.html("-");
+				else 
+					btn.html("+");					
+				
 			});
 		}
 	});
@@ -54,15 +60,20 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	this.atualizar = function(tr) {
 		var detail = tr.next('tr.detail');
 		
-		if(detail.size() > 0 && tr.hasClass('shown')) {
+		if(detail.size() > 0) {
 			detail.remove();
 			var data = tr.find('td'),
 				obj = tr.data('json');
 			
 			formatFunction(dataTable.api().row(tr).data(), obj)
 				.insertAfter(tr);
+			
+			detail = tr.next('tr.detail');
+			
+			DetalheHelper.atualizarEstiloLinha(tr, detail);
 		}
 	}
+	
 	
 	this.expandirContrairLinhas = function(expandir) {
 		var elements = $table.find('tbody td.details-control'),
@@ -76,15 +87,11 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	        		detail = tr.next('tr.detail');
 	 		
 	    		if(detail.size() == 0) {
-	        		var data = tr.find('td'),
-	        			obj = tr.data('json');
-	        		tr.addClass('shown');
-	        		
-	        		formatFunction(dataTable.api().row(tr).data(), obj)
-	        			.insertAfter(tr);
+	    			DetalheHelper.mostrarDetalhe(tr, dataTable, formatFunction);
 	       		}
 	       		detail.show();
 	       		tr.addClass('shown');
+	       		elements.html("-");
 	       	});
 	    } else {
 	    	btn.removeClass('expandido');
@@ -95,8 +102,31 @@ function DetalheHelper($table, formatFunction, dataTable) {
 	      		
 	      		detail.remove();
 				tr.removeClass('shown');
+				elements.html("+");
 	       	});
 	    }
+	}
+}
+
+DetalheHelper.mostrarDetalhe = function(tr, dataTable, formatFunction) {
+	var data = tr.find('td'), obj = tr.data('json');
+	
+	tr.addClass('shown');
+	
+	formatFunction(dataTable.api().row(tr).data(), obj)
+		.insertAfter(tr);
+
+	var detail = tr.next('tr.detail');
+	DetalheHelper.atualizarEstiloLinha(tr, detail);
+	detail.show();
+	tr.addClass('shown');
+	return detail;
+}
+
+DetalheHelper.atualizarEstiloLinha = function(tr, detail) {
+	var inativo = tr.find('td.item-desativado').size() > 0;
+	if(inativo) {
+		tr.next('tr.detail').find('td').addClass('item-desativado');
 	}
 }
 
@@ -158,9 +188,13 @@ function SigaTable (tableSelector) {
 	}
 	
 	this.atualizarDetalhes = function(id) {
-		var tr = this.table.find("tr[data-json-id=" + id + "]"),
-			helper = this.table.data('detalheHelper');
-		
+		var tr = this.table.find("tr[data-json-id=" + id + "]");
+		return this.atualizarDetalheTr(tr);
+	}
+	
+	this.atualizarDetalheTr = function(tr) {
+		helper = this.table.data('detalheHelper');
+	
 		helper.atualizar(tr);
 		return this;
 	}

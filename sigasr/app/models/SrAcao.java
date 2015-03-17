@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,19 +18,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import models.SrTipoAcao.SrTipoAcaoVO;
-import models.vo.SelecionavelVO;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")

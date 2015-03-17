@@ -13,7 +13,7 @@
 			<thead>
 				<tr>
 					<th style="color: #333">
-						<button class="gt-btn-medium gt-btn-left bt-expandir">
+						<button class="bt-expandir" type="button">
 							<span id="iconeBotaoExpandirTodos">+</span>
 						</button>
 					</th>
@@ -34,7 +34,7 @@
 				#{list items:_designacoes, as:'design'}
 				<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
 					style="cursor: pointer;">
-					<td class="details-control"></td>
+					<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 					<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td>
 					<td>${design.complexo?.nomeComplexo}</td>
 					<td>${design.solicitante?.sigla}</td>
@@ -196,8 +196,7 @@ altura:'200', largura:'450'}
 	
 	designacaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
-		designacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
-		afterGravarDesignacao(tr, objSalvo);
+		afterGravarDesignacao(tr, objSalvo, this);
 		return tr;
 	}
 
@@ -206,20 +205,24 @@ altura:'200', largura:'450'}
 	}
 
 	designacaoService.desativar = function(event, id) {
-		var ajax = BaseService.prototype.desativar.call(this, event, id);
+		var ajax = BaseService.prototype.desativar.call(this, event, id),
+			service = this;
 
-		ajax.success().done(function() {
-			var tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
-			afterGravarDesignacao(tr, null);
+		ajax.success().done(function(jSonDesignacao) {
+			var design = JSON.parse(jSonDesignacao),
+				tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + service.getId(design) + "]");
+			afterGravarDesignacao(tr, design, service);
 		});
 	}
 
 	designacaoService.reativar = function(event, id) {
-		var ajax = BaseService.prototype.reativar.call(this, event, id);
+		var ajax = BaseService.prototype.reativar.call(this, event, id),
+			service = this;
 
-		ajax.success().done(function() {
-			var tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + id + "]");
- 			afterGravarDesignacao(tr, null);
+		ajax.success().done(function(jSonDesignacao) {
+			var design = JSON.parse(jSonDesignacao),
+				tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + service.getId(design) + "]");
+ 			afterGravarDesignacao(tr, design, service);
 		});
 	}
 
@@ -229,6 +232,15 @@ altura:'200', largura:'450'}
 
 	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		$('td:eq(' + colunasDesignacao.acaoExpandir + ')', nRow).addClass('details-control');
+
+		if (nRow.dataset && nRow.dataset.json) {
+			var desig = JSON.parse(nRow.dataset.json);
+
+			if (desig.ativo == false)
+				$('td', nRow).addClass('item-desativado');
+			else
+				$('td', nRow).removeClass('item-desativado');
+		}
 	}
 	
 	function camposObrigatoriosPreenchidos() {
@@ -255,30 +267,10 @@ altura:'200', largura:'450'}
 	}
 
 	designacaoService.getListasAsString = function () {
-		var params = '';
-	
-		// Percorre lista de Itens de Configuração
-		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = itemConfiguracaoTable.api().row(i).data();
-			
-			// Atualiza a string serializada
-			if (rowValues)
-	        	params += '&designacao.itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0];
-		});
-		
-		// Percorre lista de Ações
-		acaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = acaoTable.api().row(i).data();
-			
-			// Atualiza a string serializada
-			if (rowValues)
-				params += '&designacao.acoesSet[' + i + '].idAcao=' + rowValues[0];
-		});
-		
-		return params;
+		return getItemAcaoAsString(designacaoService.opts.objectName);
     }
 
-	function afterGravarDesignacao(tr, designacao) {
+	function afterGravarDesignacao(tr, designacao, service) {
 		var acoes = tr.find('td.acoes');
 
 		// tratamentos de herança e botão duplicar
@@ -286,6 +278,9 @@ altura:'200', largura:'450'}
 			$('td', tr).addClass('configuracaoHerdada');
 		else
 			acoes = acoes.append(" " + designacaoService.duplicarButton);
+
+		// Para atualizar o detalhe caso esteja aberto
+		designacaoTable.atualizarDetalhes(service.getId(designacao));
 	}
 
 	function duplicarDesignacao(event) {
@@ -300,9 +295,9 @@ altura:'200', largura:'450'}
 	}
 	
 	function detalhesDesignacao(d, designacao) {
-		var tr = $('<tr class="detail">'),
+		var tr = designacao.ativo == true ? $('<tr class="detail">') : $('<tr class="detail configuracaoHerdada">'),
 			td = $('<td colspan="10">'),
-			table  = $('<table>'),
+			table  = $('<table style="margin-left: 60px;">'),
 			trDescricao = $('<tr>'),
 			tdDescricao = $('<td>'),
 			trItens = $('<tr>'),
@@ -311,10 +306,14 @@ altura:'200', largura:'450'}
 		
 		detalheLista("<b>Itens de configuração:</b>", designacao.listaItemConfiguracaoVO, trItens);
 		detalheLista("<b>Ações:</b>", designacao.listaAcaoVO, trAcoes);
+		detalheDescricaoLista("<b>Descrição:</b>", descricao, trDescricao);
 
-		tdDescricao.html('<b>Descrição:</b> ' + descricao);
-		trDescricao.append(tdDescricao);
-
+		if (designacao.ativo == false) {
+			$('td', trDescricao).addClass('item-desativado');
+			$('td', trItens).addClass('item-desativado');
+			$('td', trAcoes).addClass('item-desativado');
+		}
+				
 		table.append(trDescricao);
 		table.append(trItens);
 		table.append(trAcoes);
@@ -324,95 +323,45 @@ altura:'200', largura:'450'}
 		return tr;
 	}
 
-	function detalheLista(label, listaVO, tr) {
-		var tdTituloItens = $('<td colspan="2">' + label + '</td>'),
-		    tdDadosItens = $('<td colspan="5">'),
-		    table = $('<table>');
-
-	    for(var i = 0; i < listaVO.length; i++) {
-		    var item = listaVO[i],
-		    	trItem = $('<tr>'),
-		    	tdCodigo = $('<td>'),
-		    	tdDescricao = $('<td>');
-		
-			tdCodigo.html(item.sigla);
-			tdDescricao.html(item.descricao);
-								  
-			trItem.append(tdCodigo);
-			trItem.append(tdDescricao);
-								  
-			table.append(trItem);
-		}
-		
-		tdDadosItens.append(table);
-		
-		tr.append(tdTituloItens);
-		tr.append(tdDadosItens);
-	}
+	function detalheDescricaoLista(label, descricao, tr) {
+		var tdTituloItem = $('<td colspan="2">' + label + '</td>'),
+		    tdDadosItem = $('<td colspan="5">'),
+		    table = $('<table>'),
+		    item = descricao,
+	    	trItem = $('<tr>'),
+	    	tdDescricao = $('<td>');
 	
-	function atualizarDesignacaoEdicao(designacaoJson) {
-		// limpar a lista
-		limparDadosDesignacaoModal();
+		tdDescricao.html(item);
+		trItem.append(tdDescricao);
+		table.append(trItem);
 		
-		if (designacaoJson) {
-			if (designacaoJson.listaItemConfiguracaoVO) {
-				// cria a lista de Itens de Configuração, e adiciona na tela
-				for (i = 0; i < designacaoJson.listaItemConfiguracaoVO.length; i++) {
-					var item = designacaoJson.listaItemConfiguracaoVO[i],
-						rowItem = [item.id, 
-						           item.siglaItemConfiguracao,
-						           item.tituloItemConfiguracao,
-						           item.descrItemConfiguracao, 
-						           item.descricaoSimilaridade,
-						           "<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-					
-					// Adiciona na tabela de Itens de Configuração
-					itemConfiguracaoTable.api().row.add(rowItem).draw();
-				}
-			}
-			
-			if (designacaoJson.listaAcaoVO) {
-				// cria a lista de ações, e adiciona na tela
-				for (i = 0; i < designacaoJson.listaAcaoVO.length; i++) {
-					var acao = designacaoJson.listaAcaoVO[i],
-						rowAcao = [acao.id,
-								   acao.sigla,
-						           acao.descricao,
-						           "<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-					
-					// Adiciona na tabela de Ações
-					acaoTable.api().row.add(rowAcao).draw();
-				}
-			}
-		}
+		tdDadosItem.append(table);
+		
+		tr.append(tdTituloItem);
+		tr.append(tdDadosItem);
+	}
+
+	function atualizarDesignacaoEdicao(designacaoJson) {
+		atualizaDadosTabelaItemAcao(designacaoJson);
 
 		#{if _modoExibicao == 'equipe'}
 		// Caso seja cadastro a partir da tela de equipe, atualiza os dados da Lotação atendente
-		else {
-			var lota = JSON.parse($("#lotacaoUsuario").val())
-				designacaoJson = {
-					atendente : lota.id,
-					atendente_descricao : lota.descricao,
-					atendenteSpan : lota.descricao,
-					atendente_sigla : lota.sigla
-				};
-
-			// chama o editar para popular o campo da lotação
-			designacaoService.formularioHelper.populateFromJson(designacaoJson);			
-		}
+		var lota = JSON.parse($("#lotacaoUsuario").val())
+			designacaoJson = {
+				atendente : lota.id,
+				atendente_descricao : lota.descricao,
+				atendenteSpan : lota.descricao,
+				atendente_sigla : lota.sigla
+			};
+		
+		// chama o editar para popular o campo da lotação
+		designacaoService.formularioHelper.populateFromJson(designacaoJson);
 		#{/if}
-	}
-	
-	// Limpa os dados da tela.
-	function limparDadosDesignacaoModal() {
-		itemConfiguracaoTable.api().clear().draw();
-		acaoTable.api().clear().draw();
 	}
 	
 	function designacaoModalFechar() {
 		isEditing = false;
 		$("#designacao_dialog").dialog("close");
-		limparDadosDesignacaoModal();
 	};
 	
 	function fecharModalErroAoSalvar() {

@@ -44,7 +44,7 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [7],
+				"targets": [6, 7, 8],
 				"visible": false,
 				"searchable": false
 			}],
@@ -61,15 +61,27 @@
 	function format( d ) {
 		var tr = $('<tr class="detail">'),
 		// 'd' é o objeto contendo os dados da linha
-		detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+		detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:60px;">'+
 			'<tr>'+
-				'<td><b>Teor:</b></td>'+
+				'<td style="min-width: 157px;"><b>Teor:</b></td>'+
 					'<td>' + d[2] + '</td>'+
 		        '</tr>'+
 		        '<tr>'+
-		            '<td><b>Último Andamento:</b></td>'+
-		            '<td>' + d[6] + '</td>'+
-		        '</tr>'+
+	            	'<td><b>Solicitante:</b></td>'+
+	            	'<td>' + d[3] + '</td>'+
+	        	'</tr>'+
+	        	'<tr>'+
+            		'<td><b>Prioridade:</b></td>'+
+            		'<td>' + d[7] + '</td>'+
+        		'</tr>'+
+	        	'<tr>'+
+	        		'<td><b>Situação:</b></td>'+
+	        		'<td style="padding: 8px 5px 8px 10px !important">' + d[5] + ' desde ' + d[8] + '</td>'+
+    			'</tr>'+
+		        '<tr>'+
+	            	'<td><b>Última Movimentação:</b></td>'+
+	            	'<td>' + d[6] + '</td>'+
+        		'</tr>'+    			
 		    '</table><td>';
 
 	    return tr.append(detailHTML);
@@ -78,19 +90,25 @@
 
 	<style>
 		.bt-expandir {
-		    background: url("/siga/css/famfamfam/icons/bullet_toggle_plus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
-		    height: 25px;
-		    width: 30px;
-		    cursor: pointer;
+            background: none !important;
+            cursor: pointer;
 		}
 				
 		.bt-expandir.expandido {
-		    background: url("/siga/css/famfamfam/icons/bullet_toggle_minus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+            background: none !important;
 		}
 		
 		.hide-sort-arrow.sorting_asc, .hide-sort-arrow.sorting_desc {
 			background: none !important;
 		}
+		
+   		td.details-control {
+   		    background: none !important;
+   		    cursor: pointer;
+   		}
+   		tr.shown td.details-control {
+   		    background: none !important;
+   		}
 	</style>
 
 	<div class="gt-bd clearfix">
@@ -99,34 +117,28 @@
  		#{if listaSolicitacao}
 			<div class="gt-content-box gt-for-table dataTables_div">
 				<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
-					<col width="7%" />
-					<col width="15%" />
-		    		<col width="26%" />
-		    		<col width="10%" />
-		    		<col width="10%" />
-		    		<col width="14%" />
-		    		<col width="14%" />
-		    		<col width="0%" />
-		    		<thead>
+					<thead>
 						<tr>
-							<th style="color: #333;" class="hide-sort-arrow">
-								<button class="gt-btn-medium gt-btn-left bt-expandir">
+							<th style="color: #333; width: 30px !important;" class="hide-sort-arrow">
+								<button class="bt-expandir">
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Aberto</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Situação</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 0px;">Último Andamento</th>
-							<th >Item Ativado?</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 10px; width: 15% !important;;">Código</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px; max-width: 45% !important;">Teor</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px; width: 15%% !important;">Solicitante</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px; width: 10% !important;">Aberto</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px;width: 15% !important;">Situação</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 0px; width: 0% !important;">Último Andamento</th>
+							<th style="width: 0% !important;">Prioridade</th>
+							<th style="width: 0% !important;">Ult.Mov</th>
 						</tr>
 					</thead>
 					<tbody>
 						#{list items:listaSolicitacao, as:'sol'}
 							<tr>
-								<td class="gt-celula-nowrap details-control"></td>
+								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
+								
 								<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 									#{if popup}
 										<a href="javascript:opener.retorna_solicitacao${nome}('${sol.idSolicitacao}','${sol.codigo}','${sol.codigo}');window.close()">${sol.codigo}</a>
@@ -138,7 +150,7 @@
 									#{/else}
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
-									<b>${sol.descrItem}:</b>&nbsp;
+									<b>#{descricaoItem itemConfiguracao: sol.itemAtual /}:</b>&nbsp;
 									#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
 								</td>
 							
@@ -153,8 +165,8 @@
 									<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
 								<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
 									#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}</td>
-								<td>${sol.isAtivo()}</td>
-									
+								<td >#{selecionado sigla:sol.prioridade?.descPrioridade,descricao:sol.prioridade?.descPrioridade /}</td>
+								<td >#{selecionado sigla:sol.ultimaMovimentacao?.dtIniMovDDMMYYYYHHMM,descricao:sol.ultimaMovimentacao?.dtIniMovDDMMYYYYHHMM /}</td>
 							</tr>
 						#{/list}
 					</tbody>
@@ -209,10 +221,10 @@
 								valueLotacao:filtro.lotaSolicitante /}</td>
 						</tr>
 						<tr>
-							<td>Data de abertura</td>
+							<td>Data de criação</td>
 							<td>
-								<input type="text" name="filtro.dtIni" onblur="javascript:verifica_data(this,true)" value="${filtro.dtIni}" id="filtro.dtIni" /> a 
-								<input type="text" name="filtro.dtFim" onblur="javascript:verifica_data(this,true)" value="${filtro.dtFim}" id="filtro.dtFim" />
+								#{dataCalendar nome:'filtro.dtIni', value:filtro.dtIni /} a
+								#{dataCalendar nome:'filtro.dtFim', value:filtro.dtFim /}
 							</td>
 						
 						</tr>
@@ -227,21 +239,22 @@
 								value:filtro.acao /}</td>
 						</tr>
 						<tr>
-							<td>Prioridade</td>
-							<td colspan="3">#{select 'filtro.urgencia', items:models.SrUrgencia.values(),
-								labelProperty:'descrUrgencia', value:filtro.urgencia } #{option
-								0}Todas#{/option}#{/select} #{select 'filtro.gravidade',
-								items:models.SrGravidade.values(), labelProperty:'descrGravidade',
-								value:filtro.gravidade }#{option
-								0}Todas#{/option}#{/select} #{select 'filtro.tendencia',
-								items:models.SrTendencia.values(), labelProperty:'descrTendencia',
-								value:filtro.tendencia}#{option
-								0}Todas#{/option}#{/select}</td>
+							<td>Prioridade Mínima</td>
+							<td>#{select 'filtro.prioridade', items:models.SrPrioridade.values(), 
+								labelProperty:'descPrioridade', value:filtro.prioridade, style:'width:250px;' } 
+								#{option 0}Todas#{/option} #{/select}</td>
+						</tr>
+						<tr>
+							<td>Lista de Prioridade</td>
+							<td>#{select 'filtro.idListaPrioridade', items:listasPrioridade, 
+								labelProperty:'nomeLista', value:filtro.idListaPrioridade, style:'width:250px;' } 
+								#{option -1}#{/option}
+								#{option 0}Nenhuma#{/option}#{/select}</td>
 						</tr>
 						<tr>
 							<td>Descrição</td>
 							<td>
-								<input type="text" name="filtro.descrSolicitacao"
+								<input type="text" name="filtro.descrSolicitacao" style="width: 247px;"
 									id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}">
 								</input>
 							</td>

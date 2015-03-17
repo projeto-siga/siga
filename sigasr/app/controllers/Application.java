@@ -817,6 +817,8 @@ public class Application extends SigaApplication {
 			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			mov.acao = SrAcao.findById(acao.idAcao);
 			mov.lotaAtendente = atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente;
+			if(solicitacao.getAtendente() != null && !mov.lotaAtendente.equivale(solicitacao.getAtendente().getLotacao()))
+				mov.atendente = null;
 			mov.designacao = SrConfiguracao.findById(idDesignacao);
 			mov.descrMovimentacao = "Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
 					+ "; Ação: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();

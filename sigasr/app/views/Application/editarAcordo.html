@@ -567,7 +567,7 @@
 			jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
 		
 		var row = [
-					'',                                                                    // colunasAssociacao.botaoExpandir
+					'+',                                                                    // colunasAssociacao.botaoExpandir
 					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.value : '',
 					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.text : '', 
 	          		jComplexo.value > 0 ? jComplexo.value : '',
@@ -605,14 +605,11 @@
 				row[colunasAssociacao.idAssociacao] = associacao.idConfiguracao;
 		        row[colunasAssociacao.jSon] = associacao;						         
 		        row[colunasAssociacao.botaoExcluir] = html;
-
-	          	if (isEditing) {
-	          		tableAssociacao.api().row('.selected').data(row);
-			    }
-			    else {
-			    	tableAssociacao.api().row.add(row).draw();
-			    }
+		        
+		        var trObject = isEditing ? tableAssociacao.api().row('.selected').data(row) : tableAssociacao.api().row.add(row).draw(),
+				    tr = $(trObject.node());
 			    
+	          	atualizarComponenteDetalhes(tr);
 	          	associacaoModalFechar();
 	         },
 	         error: function(response) {
@@ -624,7 +621,12 @@
 	         }
        });
 	}
-	
+
+	function atualizarComponenteDetalhes(tr) {
+		tr.find('td').removeClass('item-desativado')
+		tr.find('td:first').addClass('detail-control');
+      	associacaoTable.detalhes(detalhesListaAssociacao);
+	}
 	function associacaoModalFechar() {
 		isEditing = false;
 		$("#associacao_dialog").dialog("close");
@@ -657,6 +659,8 @@
 	                 if (mostrarDesativa == "true") {
 	                     $('td', tr).addClass('item-desativado');
 	                     $('td:last', tr).html(' ');
+
+	                     $(tr).next('tr.detail').find('td').addClass('item-desativado');
 	                 } else {
 	                     associacaoTable.dataTable.api().row(tr).remove().draw();
 	                 }

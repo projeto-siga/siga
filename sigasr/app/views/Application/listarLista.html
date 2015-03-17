@@ -167,9 +167,16 @@
 				"sortable" : false
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (nRow.dataset && nRow.dataset.json) {
-					var lista = JSON.parse(nRow.dataset.json);
-
+				var lista = undefined;
+				
+				try {
+					lista = JSON.parse($(nRow).data('json'));
+				}
+				catch(err) {
+					lista = $(nRow).data('json');
+				}
+				
+				if (lista) {
 					if (lista.ativo == false)
 						$('td', nRow).addClass('item-desativado');
 					else
@@ -297,8 +304,8 @@
 	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
 	          			listaService.conteudoColunaAcao(permissao)
 	          			];
+
 			var tr = permissoesTable.api().row.add(row).draw().node();
-			
 			if (!permissao.ativo) {
 				$('td', $(tr)).addClass('item-desativado');
 				$('td:last', $(tr)).html(' ');

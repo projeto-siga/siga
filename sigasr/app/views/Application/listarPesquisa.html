@@ -141,9 +141,16 @@
 				"sortable" : false
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (nRow.dataset && nRow.dataset.json) {
-					var pesquisa = JSON.parse(nRow.dataset.json);
-
+				var pesquisa = undefined;
+				
+				try {
+					pesquisa = JSON.parse($(nRow).data('json'));
+				}
+				catch(err) {
+					pesquisa = $(nRow).data('json');
+				}
+				
+				if (pesquisa) {
 					if (pesquisa.ativo == false)
 						$('td', nRow).addClass('item-desativado');
 					else

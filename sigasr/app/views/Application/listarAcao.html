@@ -28,7 +28,7 @@
 				</thead>
 				<tbody>
 					#{list items:acoes, as:'acao'}
-						<tr #{if !acao.ativo}class="configuracaoHerdada"#{/if}
+						<tr #{if !acao.ativo}class="configuracao-herdada"#{/if}
 							data-json-id="${acao.idAcao}" data-json="${acao.toJson()}"
 							onclick="acaoService.editar($(this).data('json'), 'Alterar Ação')"
 							style="cursor: pointer;">
@@ -148,9 +148,16 @@
 				"sortable" : false
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (nRow.dataset && nRow.dataset.json) {
-					var acao = JSON.parse(nRow.dataset.json);
-
+				var acao = undefined;
+				
+				try {
+					acao = JSON.parse($(nRow).data('json'));
+				}
+				catch(err) {
+					acao = $(nRow).data('json');
+				}
+				
+				if (acao) {
 					if (acao.ativo == false)
 						$('td', nRow).addClass('item-desativado');
 					else

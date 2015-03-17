@@ -178,9 +178,16 @@
 				"visible": false
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (nRow.dataset && nRow.dataset.json) {
-					var atributo = JSON.parse(nRow.dataset.json);
-
+				var atributo = undefined;
+				
+				try {
+					atributo = JSON.parse($(nRow).data('json'));
+				}
+				catch(err) {
+					atributo = $(nRow).data('json');
+				}
+				
+				if (atributo) {
 					if (atributo.ativo == false)
 						$('td', nRow).addClass('item-desativado');
 					else

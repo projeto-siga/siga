@@ -1301,14 +1301,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
 		if (acoesEAtendentes != null && this.itemConfiguracao != null){
 			
-			boolean contemAcaoAtual = false;
-			for (SrTarefa tarefa : acoesEAtendentes)
-				if (tarefa.acao.equals(this.acao))
-					contemAcaoAtual = true;
-			if (!contemAcaoAtual)
-					this.acao = null;
-			if (this.acao == null && acoesEAtendentes.size() == 1)
+			if (acoesEAtendentes.size() == 1)
 				this.acao = acoesEAtendentes.get(0).acao;
+			else this.acao = null;
 			
 			for (SrTarefa t : acoesEAtendentes){
 				List<SrTarefa> tarefas = acoesEAtendentesFinal.get(t.getAcao().pai);

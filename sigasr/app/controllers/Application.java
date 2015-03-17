@@ -1603,8 +1603,20 @@ public class Application extends SigaApplication {
 
 	public static String gravarLista(SrLista lista) throws Exception {
 		lista.lotaCadastrante = lotaTitular();
+		validarFormEditarLista(lista);
 		lista.salvar();
 		return lista.toJson();
+	}
+	
+	private static void validarFormEditarLista(SrLista lista) {
+		if (lista.nomeLista == null || lista.nomeLista.trim().equals("")) {
+			Validation.addError("lista.nomeLista",
+					"Nome da Lista não informados");
+		}
+		
+		if (Validation.hasErrors()) {
+			enviarErroValidacao();
+		}
 	}
 
 	public static String desativarLista(Long id, boolean mostrarDesativados) throws Exception {

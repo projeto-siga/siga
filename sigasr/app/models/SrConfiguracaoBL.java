@@ -146,12 +146,13 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			TreeSet<CpConfiguracao> lista = getListaPorTipo(confFiltro
 					.getCpTipoConfiguracao().getIdTpConfiguracao());
 
-			for (CpConfiguracao cpConfiguracao : lista) {
-				if (cpConfiguracao.getHisDtFim() == null
-						&& atendeExigencias(confFiltro,
-								atributosDesconsiderados,
-								(SrConfiguracao) cpConfiguracao, perfis)) {
-					listaFinal.add((SrConfiguracao) cpConfiguracao);
+			if (lista != null) {
+				for (CpConfiguracao cpConfiguracao : lista) {
+					if (cpConfiguracao.getHisDtFim() == null
+							&& atendeExigencias(confFiltro, atributosDesconsiderados,
+									(SrConfiguracao) cpConfiguracao, perfis)) {
+						listaFinal.add((SrConfiguracao) cpConfiguracao);
+					}
 				}
 			}
 		}
@@ -173,8 +174,13 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				srConf.atendente.getLotacaoAtual();
 			
 			if (srConf.itemConfiguracaoSet != null)
-				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet)
+				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet) {
 					i.getAtual();
+					
+					for (SrItemConfiguracao hist : i.meuItemHistoricoSet) {
+						hist.getAtual();
+					}
+				}
 			
 			if (srConf.acoesSet != null)
 				for (SrAcao i : srConf.acoesSet)

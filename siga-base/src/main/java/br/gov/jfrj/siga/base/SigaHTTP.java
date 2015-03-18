@@ -99,7 +99,8 @@ public class SigaHTTP {
 			// Caso contrario passara pelo processo de autenticação (if abaixo)
 			HttpResponse response = exec.execute(Request.Get(URL).addHeader(COOKIE, currentCookie)).returnResponse();
 			html = handleResponse(html, response);
-			
+			currentCookie = extractSetCookie(currentCookie, response);
+
 			// Verifica se retornou o form de autenticação do picketlink 
 			if (html.contains(HTTP_POST_BINDING_REQUEST)){
 				// Atribui o valor do SAMLRequest contido no html retornado no GET efetuado.
@@ -112,7 +113,7 @@ public class SigaHTTP {
 						addHeader(COOKIE, idpCookie).
 						bodyForm(Form.form().add(SAMLRequest, SAMLRequestValue).build())).
 						returnResponse();
-				
+
 				html = handleResponse(html, response);
 
 				if (html.contains(SAMLResponse)){
@@ -125,7 +126,7 @@ public class SigaHTTP {
 							addHeader("content-type", "application/x-www-form-urlencoded").
 							addHeader(COOKIE, currentCookie).
 							bodyForm(Form.form().add(SAMLResponse, SAMLResponseValue).build())).returnResponse();
-					
+
 					html = handleResponse(html, response);
 					if (isAuthPage(html)){
 						html = exec.execute(Request.Post(spURL).useExpectContinue().
@@ -139,9 +140,26 @@ public class SigaHTTP {
 			throw new HTTPException(httpE.getStatusCode());
 		}catch (IOException io) {}
 
-//		tryAgain(URL, request, cookieValue, html);
+		//		tryAgain(URL, request, cookieValue, html);
 
 		return html;
+	}
+
+	private String extractSetCookie(String currentCookie, HttpResponse response) {
+		for (Header header : response.getAllHeaders()){
+			if (header.getName().equals("Set-Cookie")){
+				if (header.getValue().contains(";")){
+					String headers[] = header.getValue().split(";");
+					for (String h : headers){
+						if (h.contains(JSESSIONID_PREFIX)){
+							currentCookie = h;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return currentCookie;
 	}
 
 	private String handleResponse(String html, HttpResponse response) throws HTTPException, IllegalStateException, IOException{
@@ -249,9 +267,9 @@ public class SigaHTTP {
 			String idpFromRequest = (String) request.getAttribute("idp");
 			if (StringUtil.isNotNull(idpFromRequest))
 				return idpFromRequest;
-			
+
 		}
-		
+
 		return "";
 	}
 

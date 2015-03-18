@@ -347,7 +347,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		final Pattern p = Pattern
 				.compile("^([A-Za-z0-9]{2}"
 						+ acronimos
-						+ ")?-?(SR{1})-?(2{1}[0-9]{3})?/?([0-9]{1,5})?([.]{1})?([0-9]{1,2})?$");
+						+ ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
 		final Matcher m = p.matcher(sigla);
 
 		if (m.find()) {
@@ -368,19 +368,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				}
 			}
 
-			if (m.group(3) != null) {
+			if (m.group(2) != null) {
 				Calendar c1 = Calendar.getInstance();
-				c1.set(Calendar.YEAR, Integer.valueOf(m.group(3)));
+				c1.set(Calendar.YEAR, Integer.valueOf(m.group(2)));
 				c1.set(Calendar.DAY_OF_YEAR, 1);
 				this.dtReg = c1.getTime();
 			} else
 				this.dtReg = new Date();
 
-			if (m.group(4) != null)
-				numSolicitacao = Long.valueOf(m.group(4));
+			if (m.group(3) != null)
+				numSolicitacao = Long.valueOf(m.group(3));
 
-			if (m.group(6) != null)
-				numSequencia = Long.valueOf(m.group(6));
+			if (m.group(4) != null)
+				numSequencia = Long.valueOf(m.group(4));
 		}
 
 	}

@@ -86,7 +86,20 @@
         $('input, textarea').placeholder();
         $("#j_username").focus();
 
-        var idp = document.cookie.substring(12, document.cookie.length-1);
-        sessionStorage.setItem("idp", idp);
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+            }
+            return "";
+        }
+        
+        var idp = getCookie("JSESSIONID").replace(/"/g,"");
+        if (idp != null && idp != "undefined")
+        	sessionStorage.setItem("idp", idp);
+    	
     </script>
 </siga:pagina>

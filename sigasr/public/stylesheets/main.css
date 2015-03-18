@@ -55,11 +55,11 @@ div.right {
 }
 
 td.details-control {
-    background: url('/siga/css/famfamfam/icons/bullet_toggle_plus.png') no-repeat center center;
+    background: none !important;
     cursor: pointer;
 }
 tr.shown td.details-control {
-    background: url('/siga/css/famfamfam/icons/bullet_toggle_minus.png') no-repeat center center;
+    background: none !important;
 }
 
 td.padding-table {
@@ -99,14 +99,14 @@ td.padding-table {
 }
 
 .bt-expandir {
-    background: url("/siga/css/famfamfam/icons/bullet_toggle_plus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+    background: none !important;
     height: 25px;
     width: 30px;
     cursor: pointer;
 }
 		
 .bt-expandir.expandido {
-    background: url("/siga/css/famfamfam/icons/bullet_toggle_minus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+    background: none !important;
 }
 
 .details-control {
@@ -121,7 +121,7 @@ td.padding-table {
 	cursor: pointer;
 }
 
-.configuracaoHerdada {
+.configuracao-herdada td {
 	color: gray !important;
 }
 

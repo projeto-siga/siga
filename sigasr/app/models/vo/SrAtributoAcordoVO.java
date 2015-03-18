@@ -22,7 +22,7 @@ public class SrAtributoAcordoVO {
 		this.valor = atributoAcordo.valor;
 		this.unidadeMedida = atributoAcordo.unidadeMedida;
 		this.unidadeMedidaPlural = atributoAcordo.unidadeMedida != null ? atributoAcordo.unidadeMedida.getPlural() : "";
-		this.atributo = SrAtributoVO.createFrom(atributoAcordo.atributo);
+		this.atributo = SrAtributoVO.createFrom(atributoAcordo.atributo, false);
 		this.ativo = atributoAcordo.isAtivo();
 	}
 	

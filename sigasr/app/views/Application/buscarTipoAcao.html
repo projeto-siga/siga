@@ -2,22 +2,22 @@
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">
-			<form action="@{Application.buscarAcao}" enctype="multipart/form-data">
+			<form action="@{Application.buscarTipoAcao}">
 				<input type="hidden" name="popup" value="true" />
 				<table class="gt-form-table">
 					<tr class="header">
-						<td align="center" valign="top" colspan="4">Dados da a&ccedil;&atilde;o</td>
+						<td align="center" valign="top" colspan="4">Dados do Tipo de ação</td>
 					</tr>
 					<tr>
 						<td>Código:</td>
-						<td><input type="text" name="filtro.siglaAcao"
-							value="${filtro?.siglaAcao}" />
+						<td><input type="text" name="filtro.siglaTipoAcao"
+							value="${filtro?.siglaTipoAcao}" />
 						</td>
 					</tr>
 					<tr>
 						<td>Título</td>
-						<td><input type="text" name="filtro.tituloAcao"
-							value="${filtro?.tituloAcao}" />  <input type="hidden" name="nome"
+						<td><input type="text" name="filtro.tituloTipoAcao"
+							value="${filtro?.tituloTipoAcao}" />  <input type="hidden" name="nome"
 							value="${nome}" />
 						</td>
 					</tr>
@@ -38,14 +38,14 @@
 			<tr>
 				<th>Código
 				</td>
-				<th>Descri&ccedil;&atilde;o
+				<th>Descrição
 				</td>
 			</tr>
-			#{list items:itens, as:'acao'}
+			#{list items:itens, as:'tipoAcao'}
 			<tr>
-				<td><a href="javascript:opener.retorna_acao${nome}('${acao.id}','${acao.sigla}','${acao.descricao}');window.close()">${acao.sigla}</a>
+				<td><a href="javascript:opener.retorna_tipoAcao${nome}('${tipoAcao.id}','${tipoAcao.sigla}','${tipoAcao.descricao}');window.close()">${tipoAcao.sigla}</a>
 				</td>
-				<td style="padding-left: ${acao.nivel*13}px;">${acao.descricao}</td>
+				<td style="padding-left: ${tipoAcao.nivel*13}px;">${tipoAcao.descricao}</td>
 			</tr>
 			#{/list}
 		</table>

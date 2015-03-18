@@ -31,10 +31,10 @@
 							onclick="equipeService.editar($(this).data('json'), 'Alterar Equipe')" style="cursor: pointer;"#{/if}
 						data-json-id="${eq.idEquipe}" data-json="${eq.toJson()}">
 						<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							${eq.lotacao?.sigla}
+							${eq.lotacaoEquipe?.sigla}
 						</td>
 						<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							${eq.lotacao?.descricao}
+							${eq.lotacaoEquipe?.descricao}
 						</td>
 					</tr>
 					#{/list}
@@ -107,7 +107,7 @@
 	}
 
 	equipeService.getRow = function(equipe) {
-		return [equipe.lotacao.sigla, equipe.lotacao.descricao];
+		return [equipe.lotacaoEquipe.sigla, equipe.lotacaoEquipe.descricao];
 	}
 
 	equipeService.onRowClick = function(equipe) {
@@ -190,10 +190,10 @@
 		else {
 			var lota = JSON.parse($("#lotacaoUsuario").val())
 				equipeEdicao = {
-					lotacao : lota.id,
-					lotacao_sigla : lota.descricao,
-					lotacaoSpan : lota.descricao,
-					lotacao_sigla : lota.sigla
+					lotacaoEquipe : lota.id,
+					lotacaoEquipe_sigla : lota.descricao,
+					lotacaoEquipeSpan : lota.descricao,
+					lotacaoEquipe_sigla : lota.sigla
 				};
 
 			// chama o editar para popular o campo da lotação

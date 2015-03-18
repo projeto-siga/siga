@@ -3,12 +3,13 @@ package models.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.SrLista;
+import models.SrSolicitacao;
+import util.JsonUtil;
+import util.SigaPlayUtil;
+import util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import models.SrLista;
-import models.SrPrioridade;
-import models.SrSolicitacao;
-import util.SrSolicitacaoFiltro;
 
 public class SrSolicitacaoListaVO {
 
@@ -23,7 +24,7 @@ public class SrSolicitacaoListaVO {
 		this.itens = new ArrayList<SrSolicitacaoVO>();
 	}
 	
-	public static SrSolicitacaoListaVO fromFiltro(SrSolicitacaoFiltro filtro, boolean telaDeListas, DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
+	public static SrSolicitacaoListaVO fromFiltro(SrSolicitacaoFiltro filtro, boolean telaDeListas, String nome, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
 		List<SrSolicitacao> solicitacoes = filtro.buscar();
 		SrSolicitacaoListaVO solicitacoesVO = new SrSolicitacaoListaVO();
 		SrLista lista = null;
@@ -39,7 +40,7 @@ public class SrSolicitacaoListaVO {
 			solicitacoesVO.podeOrdenar = true;
 		
 		for (SrSolicitacao sol : solicitacoes)
-			solicitacoesVO.itens.add(new SrSolicitacaoVO(sol, lista, lotaTitular, cadastrante));
+			solicitacoesVO.itens.add(new SrSolicitacaoVO(sol, lista, nome, isPopup, lotaTitular, cadastrante));
 		
 		return solicitacoesVO;
 	}
@@ -49,26 +50,23 @@ public class SrSolicitacaoListaVO {
 		
 		if (telaDeListas) {
 			colunasVO.add(new ColunasVO("#", "prioridadeLista"));
-			colunasVO.add(new ColunasVO("Código", "codigo"));
 		}
-		return null;
+		else {
+			colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control", Long.valueOf(30), Long.valueOf(0), true, true));
+			colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo"));
+			colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Aberto", "dtUltimaMovimentacaoFormatada", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", "", null, null, false, true));
+		}
 		
-		/**
-		 *  public Long idSolicitacao;
-			public String codigo;
-			public String descricao;
-			public Long prioridadeLista;
-			public SrItemConfiguracaoVO itemConfiguracao;
-			public String nomeSolicitante;
-			public String descricaoSolicitante;
-			public String dtRegString;
-			public SelecionavelVO lotaSolicitante;
-			public SelecionavelVO lotaAtendente;
-			public String ultimaMovimentacao;
-			public String dtUltimaMovimentacaoString;
-			public String marcadoresEmHtml;
-			public SrPrioridade prioridade;
-		 */
+		return colunasVO;		
+	}
+	
+	public String toJson() {
+		return JsonUtil.toJson(this).toString();
 	}
 	
 }

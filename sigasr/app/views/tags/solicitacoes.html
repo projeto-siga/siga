@@ -23,72 +23,7 @@
 </style>
 
 <div class="gt-content-box gt-for-table dataTables_div">
-	<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
-		<thead>
-			<tr>
-				#{if _modoExibicao == 'solicitacao'}
-				<th style="color: #333; width: 30px !important;" class="hide-sort-arrow">
-					<button class="bt-expandir">
-						<span id="iconeBotaoExpandirTodos">+</span>
-					</button>
-				</th>
-				#{/if}
-				#{elseif _modoExibicao == 'lista'}
-				<th style="color: #333; font-weight: bold; padding: 7px 10px;">#</th>
-				#{/elseif}
-				<th style="color: #333; font-weight: bold; padding: 7px 10px; width: 170px !important;;">Código</th>
-				<th style="color: #333; font-weight: bold; padding: 7px 0px; max-width: 90% !important;">Teor</th>
-				<th style="color: #333; font-weight: bold; padding: 7px 0px; width: 0% !important;">Solicitante</th>
-				<th style="color: #333; font-weight: bold; padding: 7px 0px; width: 120px !important;">Aberto</th>
-				<th style="color: #333; font-weight: bold; padding: 7px 0px;width: 0% !important;">Situação</th>
-				<th style="color: #333; font-weight: bold; padding: 7px 0px; width: 0% !important;">Último Andamento</th>
-				<th style="width: 0% !important;">Prioridade</th>
-				<th style="width: 0% !important;">Ult.Mov</th>
-				#{if _modoExibicao == 'lista' && _podeRemover}
-				<th style="color: #333; font-weight: bold; padding: 7px 10px;"></th>
-				#{/if}
-			</tr>
-		</thead>
-		<tbody>
-			#{list items:_listaSolicitacao, as:'sol'}
-			<tr>
-				#{if _modoExibicao == 'solicitacao'}
-				<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
-				#{/if}
-				#{elseif _modoExibicao == 'lista'}
-				<tr id="${sol.idSolicitacao}">
-				#{/elseif}
-				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					#{if popup}
-						<a href="javascript:opener.retorna_solicitacao${nome}('${sol.idSolicitacao}','${sol.codigo}','${sol.codigo}');window.close()">${sol.codigo}</a>
-					#{/if}
-					#{else}
-							<a href="@{Application.exibir(sol.idSolicitacao)}">
-								${sol.codigo}
-							</a>
-					#{/else}
-				</td>
-				<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
-					<b>#{descricaoItem itemConfiguracao: sol.itemConfiguracao /}:</b>&nbsp;
-					#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
-				</td>
-			
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
-					#{selecionado sigla:sol.nomeSolicitante, descricao:sol.descricaoSolicitante /}&nbsp;
-					#{selecionado sigla:sol.lotaSolicitante.sigla,descricao:sol.lotaSolicitante.descricao /}
-				</td>
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-					#{selecionado sigla:sol.dtRegString,descricao:sol.dtRegString /}
-				</td>
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-					<b>${sol.marcadoresEmHtml}</b></td>
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
-					#{selecionado sigla:sol.ultimaMovimentacao,descricao:sol.ultimaMovimentacao /}</td>
-				<td >#{selecionado sigla:sol.prioridade?.descPrioridade,descricao:sol.prioridade?.descPrioridade /}</td>
-				<td >#{selecionado sigla:sol.dtUltimaMovimentacaoString,descricao:sol.dtUltimaMovimentacaoString /}</td>
-			</tr>
-			#{/list}
-		</tbody>
+	<table id="solicitacoes_table" border="0" class="gt-table-nowrap display" data-json="${_solicitacaoListaVO.toJson()}">
 	</table>
 </div>
 
@@ -97,55 +32,52 @@
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 
 <script type="text/javascript">
+	var jSon = $("#solicitacoes_table").data("json"),
+		objetoTabela = preparaDadosTabela(jSon);
+
 	$(document).ready(function() {
 		/* Table initialization */
-		var table = $('#solicitacoes_table')
-			.on('draw.dt', function() {
-				if(table) {
-					var btn = $('.bt-expandir'),
-						expandir = btn.hasClass('expandido');
-					
-					$('#solicitacoes_table').mostrarDetalhes(format, table);
-					$('#solicitacoes_table').expandirContrairLinhas(expandir);
-				}
-			})
-			.dataTable({
-			"language": {
-				"emptyTable":     "Não existem resultados",
-			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-			    "infoPostFix":    "",
-			    "thousands":      ".",
-			    "lengthMenu":     "Mostrar _MENU_ registros",
-			    "loadingRecords": "Carregando...",
-			    "processing":     "Processando...",
-			    "search":         "Filtrar:",
-			    "zeroRecords":    "Nenhum registro encontrado",
-			    "paginate": {
-			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
-			        "previous":   "Anterior"
-			    },
-			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
-			    }
-			},
-			"columnDefs": [{
-				"targets": [3, 5, 6, 7, 8],
-				"visible": false,
-				"searchable": false
-			}],
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				if (aData[7] == 'false')
-					$('td', nRow).addClass('item-desativado');
-			},
-			"iDisplayLength": 25
-		});
-		$('#solicitacoes_table').mostrarDetalhes(format, table);
+		var table = new SigaTable('#solicitacoes_table')
+			.configurar("fnRowCallback", solicitacoesRowCallback)
+			.configurar("aoColumns", objetoTabela.estrutura)
+			.configurar("data", objetoTabela.dados)
+			.configurar("iDisplayLength", 25)
+			.criar()
+			.detalhes(format);
 	});
+
+	function solicitacoesRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+		$('td:eq(' + objetoTabela.colunaAcaoExpandir + ')', nRow).addClass('details-control');
+	}
+
+	function preparaDadosTabela(jSon) {
+		var objetoTabela = new Object();
+		objetoTabela.colunaAcaoExpandir = -1,
+		objetoTabela.estrutura = [];
+		objetoTabela.dados = [];
+
+		if (jSon) {
+			if (jSon.colunaAcaoExpandir)
+				objetoTabela.colunaAcaoExpandir = jSon.colunaAcaoExpandir;
+
+			if (jSon.itens)
+				objetoTabela.dados = jSon.itens;
+			
+			if (jSon.colunas)
+				for (var i = 0; i < jSon.colunas.length; i++) {
+					var coluna = jSon.colunas[i],
+						estruturaColuna = { 
+							"sTitle" : coluna.titulo, 
+							"mDataProp" : coluna.nome,
+							"sClass": coluna.classe,
+							"bVisible": coluna.exibir};
+					 
+					objetoTabela.estrutura.push(estruturaColuna);
+				}
+		}
+
+		return objetoTabela;
+	}
 
 	/* Função de formatação para células de detalhes */
 	function format( d ) {

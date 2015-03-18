@@ -120,8 +120,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			
 			if (!atributosDesconsiderados.contains(LISTA_PRIORIDADE)
 					&& conf.listaPrioridade != null
-					&& (filtro.listaPrioridade == null || (filtro.listaPrioridade != null && !conf.listaPrioridade
-							.getListaAtual().equivale(filtro.listaPrioridade))))
+					&& (filtro.listaPrioridade == null || (filtro.listaPrioridade != null && !conf.listaPrioridade.getListaAtual().equivale(filtro.listaPrioridade))))
 				return false;
 
 			if (!atributosDesconsiderados.contains(TIPO_ATRIBUTO)
@@ -197,6 +196,14 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (srConf.itemConfiguracaoSet != null)
 				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet) {
 					i.getAtual();
+					
+					if(i.gestorSet != null) {
+						i.gestorSet.size();
+					}
+					
+					if(i.fatorMultiplicacaoSet != null) {
+						i.fatorMultiplicacaoSet.size();
+					}
 					
 					for (SrItemConfiguracao hist : i.meuItemHistoricoSet) {
 						hist.getAtual();

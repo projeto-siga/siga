@@ -1921,4 +1921,28 @@ public class Application extends SigaApplication {
 		}
 		renderText("Atualização realizada com sucesso");
 	}
+	
+	public static String configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
+		SrLista lista = SrLista.findById(idLista);
+		return SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados);
+	}
+	
+	public static String configuracaoAutomaticaGravar(SrConfiguracao configuracaoInclusaoAutomatica) throws Exception {
+		configuracaoInclusaoAutomatica.salvarComoInclusaoAutomaticaLista(configuracaoInclusaoAutomatica.listaPrioridade); 
+		configuracaoInclusaoAutomatica.refresh();
+		return configuracaoInclusaoAutomatica.toVO().toJson();
+	}
+	
+	
+	public static String desativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
+		SrConfiguracao configuracao = JPA.em().find(SrConfiguracao.class, id);
+		configuracao.finalizar();
+		return configuracao.toVO().toJson();
+	}
+	
+	public static String reativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
+		SrConfiguracao configuracao = JPA.em().find(SrConfiguracao.class, id);
+		configuracao.salvar();
+		return configuracao.toVO().toJson();
+	}
 }

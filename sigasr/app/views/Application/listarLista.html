@@ -192,6 +192,8 @@
 	// Sobescreve o metodo cadastrar para limpara tela
 	listaService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title);
+		limparDadosListaModal();
+		configuracaoInclusaoAutomaticaTable.clear();
 	}
 
 	listaService.getId = function(lista) {
@@ -207,13 +209,12 @@
 	/**
 	 * Customiza o metodo editar
 	 */
-	listaService.editar = function(obj, title) {
-		BaseService.prototype.editar.call(this, obj, title); // super.editar();
-
+	listaService.editar = function(lista, title) {
+		BaseService.prototype.editar.call(this, lista, title); // super.editar();
 		limparDadosListaModal();
-
 		// carrega as permissões da lista
-		carregarPermissoes(obj.idLista);
+		carregarPermissoes(lista.idLista);
+		configuracaoInclusaoAutomaticaService.carregarParaLista(lista.idLista);
 	}
 
 	listaService.onGravar = function(obj, objSalvo) {
@@ -248,7 +249,6 @@
 
 	function editarLista(event, jSonItem) {
 		event.stopPropagation();
-
 		listaService.editar(jSonItem, 'Alterar Lista');
 	}
 	

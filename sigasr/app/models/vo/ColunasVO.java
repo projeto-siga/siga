@@ -1,46 +1,43 @@
 package models.vo;
 
-public class ColunasVO {
 
-	private String titulo;
-	private String nome;
-	private boolean exibir;
-	private boolean alteravel;
+public class ColunasVO {
+	public String titulo;
+	public String nome;
+	public String classe;
+	public Long largura;
+	public boolean temDetalheFormatado;
+	public boolean exibir;
+	public boolean alteravel;
 	
 	public ColunasVO(String titulo, String nome) {
+		super();
 		this.titulo = titulo;
 		this.nome = nome;
+		this.exibir = true;
+		this.alteravel = true;
 	}
-	public ColunasVO(String titulo, String nome, boolean exibir, boolean alteravel) {
+
+	public ColunasVO(String titulo, String nome, String classe) {
 		this(titulo, nome);
-		
+		this.classe = classe;
+	}
+
+	public ColunasVO(String titulo, String nome, String classe, boolean temDetalheFormatado) {
+		this(titulo, nome, classe);
+		this.temDetalheFormatado = temDetalheFormatado;
+	}
+	
+	public ColunasVO(String titulo, String nome, String classe, Long largura) {
+		this(titulo, nome, classe);
+		this.largura = largura;
+	}
+
+	public ColunasVO(String titulo, String nome, String classe, boolean temDetalheFormatado, boolean exibir,
+			boolean alteravel) {
+		this(titulo, nome, classe, temDetalheFormatado);
 		this.exibir = exibir;
 		this.alteravel = alteravel;
 	}
-	
-	public String getTitulo() {
-		return titulo;
-	}
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	public boolean getExibir() {
-		return exibir;
-	}
-	public void setExibir(boolean exibir) {
-		this.exibir = exibir;
-	}
-	public boolean isAlteravel() {
-		return alteravel;
-	}
-	public void setAlteravel(boolean alteravel) {
-		this.alteravel = alteravel;
-	}
-	
+
 }

@@ -676,7 +676,7 @@ public class Application extends SigaApplication {
 
 		try {
 			if (filtro.pesquisar) {
-				solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, lotaTitular(), cadastrante());
+				solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, nome, popup, lotaTitular(), cadastrante());
 			} else {
 				solicitacaoListaVO = new SrSolicitacaoListaVO();
 			}

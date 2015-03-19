@@ -106,7 +106,7 @@ public class AcessoController extends GiControllerSupport {
 		result.include("idSituacao", this.idSituacao);		
 	}
 	
-	public void listar(int idAbrangencia
+	private void listar(int idAbrangencia
 					  ,DpPessoaSelecao pessoaSel
 					  ,DpLotacaoSelecao lotacaoSel
 					  ,CpPerfilSelecao perfilSel

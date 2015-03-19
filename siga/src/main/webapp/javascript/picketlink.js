@@ -1,23 +1,27 @@
 /**
  * @author Rodrigo Ramalho da Silva
  *         hodrigohamalho@gmail.com
- *         
+ *
  */
 
 window.Siga = {
-      
+
     isUnauthenticated: function(text){
         // essa primeira verificacao Ã© pra verificar se Ã© do picketlink
         // a segunda eh pra ver se veio a pagina completa do siga ou soh o que interessa
         return (text.indexOf("<HTML") > -1 || text.indexOf("<title>") > -1)
     },
-    
+
     isIE: function(){
     	return (!!navigator.userAgent.match(/MSIE/));
     },
-    
+
     _picketlinkResponse: function(textResponse){
-        var form = (Siga.isIE() ? $(textResponse)[0] : $(textResponse)[1]);
+        var form = $(textResponse)[0];
+        if ($(form).attr("action") == null || $(form).attr("action") == 'undefined'){
+          form = $(textResponse)[1];
+        }
+
         var action = $(form).attr("action");
 
         // Pode ser o SAMLRequest ou SAMLResponse
@@ -29,25 +33,30 @@ window.Siga = {
         return {url: action, params: samlJson};
     },
 
-    _ajaxCall: function(ajax, doneCallback){    
-       var cacheValue = true;
-       if (Siga.isIE()){
-    	   cacheValue = false;
+    _ajaxCall: function(ajax, doneCallback){
+      var cacheValue = true;
+      if (Siga.isIE()){
+       cacheValue = false;
+      }
+
+      if (ajax.params == null || ajax.params == 'undefined'){
+       ajax.params = {};
+      }
+      ajax.params["idp"] = sessionStorage.getItem("idp");
+
+      $.ajax({
+         url: ajax.url,
+         type: ajax.type,
+         data: ajax.params,
+         cache: cacheValue
+      }).fail(function(jqXHR, textStatus, errorThrown){
+         doneCallback(jqXHR.statusText);
+      }).done(function(data, textStatus, jqXHR ){
+       if (data.indexOf("NÃ£o foi PossÃ­vel completar a OperaÃ§Ã£o.") > 1){
+         data = "NÃ£o foi PossÃ­vel completar a OperaÃ§Ã£o.";
        }
-       	
-	   $.ajax({
-	       url: ajax.url,
-	       type: ajax.type,
-	       data: ajax.params,
-	       cache: cacheValue
-	   }).fail(function(jqXHR, textStatus, errorThrown){            
-	       doneCallback(jqXHR.statusText);
-	   }).done(function(data, textStatus, jqXHR ){
-		   if (data.indexOf("Não Foi Possível Completar a Operação") > 1){
-			   data = "Não foi Possível completar a Operação.";
-		   }
-		   doneCallback(data);
-	   });
+       doneCallback(data);
+      });
     },
 
     /**
@@ -57,26 +66,28 @@ window.Siga = {
      * callback: funcao que sera chamada passando o conteudo pego
      */
     ajax: function(url, params, httpMethod, callback){
-        var self = this;        
+        var self = this;
 
          self._ajaxCall({url: url, type: httpMethod, params: params}, function(textResponse) {
             // Verifica se o SP foi previamente inicializado, caso nao tenha sido apenas renderiza.
             if (textResponse.indexOf("SAMLRequest") > -1){
-                var plparams = self._picketlinkResponse(textResponse);
+                var SAMLRequest = self._picketlinkResponse(textResponse);
 
                 // Envia um POST para o IDP com o atributo SAMLRequest da ultima requisicao
-                self._ajaxCall({url: plparams.url, type: "POST", params: plparams.params}, function(textResponse){                    
-                    var plparams = self._picketlinkResponse(textResponse);
+                self._ajaxCall({url: SAMLRequest.url, type: "POST", params: SAMLRequest.params}, function(textResponse){
+                    var SAMLResponse = self._picketlinkResponse(textResponse);
                     // Envia um POST para o SP com o atributo SAMLResponse da ultima requisicao
-                    self._ajaxCall({url: plparams.url, type: "POST", params: plparams.params}, function(textResponse){
-                        callback(textResponse);                                                
+                    self._ajaxCall({url: SAMLResponse.url, type: "POST", params: SAMLResponse.params}, function(textResponse){
+                      self._ajaxCall({url: url, type: httpMethod, params: params}, function(final){
+                          callback(final);
+                      });
                     });
                 });
             }else{ // Quando nao precisa de passar pelo fluxo do SAML.
                 callback(textResponse);
             }
         });
-    }    
+    }
 }
 
 var Siga = window.Siga;

@@ -53,6 +53,7 @@ PrincipalAware, ConheceUsuario {
 	private DpLotacao lotaTitular;
 
 	private CpIdentidade identidadeCadastrante;
+	private String idp;
 
 	public static Log getLog() {
 		return SigaActionSupport.log;
@@ -205,5 +206,14 @@ PrincipalAware, ConheceUsuario {
 	public void setIdentidadeCadastrante(CpIdentidade identidadeCadastrante) {
 		this.identidadeCadastrante = identidadeCadastrante;
 	}
+	
+	public String getIdp() {
+		return idp;
+	}
+
+	public void setIdp(String idp) {
+		this.idp = idp;
+	}
+
 
 }

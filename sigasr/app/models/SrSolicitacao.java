@@ -2113,7 +2113,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public long getPrioridadeNaLista(SrLista lista) throws Exception {
 		SrPrioridadeSolicitacao prioridadeSolicitacao = lista.getSrPrioridadeSolicitacao(this);
-		return prioridadeSolicitacao.numPosicao;
+		return prioridadeSolicitacao != null ? prioridadeSolicitacao.numPosicao : -1;
 	}
 
 	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, SrPrioridade prioridade, boolean naoReposicionarAutomatico)

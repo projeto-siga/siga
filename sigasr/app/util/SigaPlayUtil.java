@@ -31,4 +31,15 @@ public class SigaPlayUtil {
 		
 		return sb.toString();
 	}
+	
+	public static String botaoRemoverSolicitacao(Long idSolicitacao, Long idLista) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<a onclick=\"javascript: return block();\" href=\"/sigasr/solicitacao/retirarDeLista?");
+		sb.append("idSolicitacao=" + idSolicitacao + "&idLista=" + idLista);
+		sb.append("\" title=\"Remover da Lista\" name=\"idSolicitacao\" value=\"" + idSolicitacao + "\">");
+		sb.append("<img id=\"imgCancelar\" src=\"/siga/css/famfamfam/icons/delete.png\" style=\"margin-right: 5px;\"> </a>");
+		sb.append("</td>");
+		
+		return sb.toString();
+	}
 }

@@ -12,6 +12,10 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class SrSolicitacaoListaVO {
+	
+	private static Long LARGURA_COLUNA_CODIGO = 130L;
+	private static Long LARGURA_COLUNA_REMOVER = 20L;
+	private static Long LARGURA_COLUNA_PRIORIDADE = 20L;
 
 	public boolean podeOrdenar;
 	public boolean podePriorizar;
@@ -30,8 +34,6 @@ public class SrSolicitacaoListaVO {
 		List<SrSolicitacao> solicitacoes = filtro.buscar();
 		SrSolicitacaoListaVO solicitacoesVO = new SrSolicitacaoListaVO();
 		SrLista lista = null;
-		solicitacoesVO.colunas = solicitacoesVO.gerarColunasSolicitacao(telaDeListas);
-		solicitacoesVO.colunasDetalhamento = solicitacoesVO.gerarColunasDetalhamentoSolicitacao(telaDeListas);
 		
 		if (telaDeListas && filtro.idListaPrioridade != null) {
 			lista = SrLista.findById(filtro.idListaPrioridade);
@@ -42,21 +44,33 @@ public class SrSolicitacaoListaVO {
 		else
 			solicitacoesVO.podeOrdenar = true;
 		
+		solicitacoesVO.colunas = solicitacoesVO.gerarColunasSolicitacao(telaDeListas, solicitacoesVO.podeRemover);
+		solicitacoesVO.colunasDetalhamento = solicitacoesVO.gerarColunasDetalhamentoSolicitacao(telaDeListas);
+		
 		for (SrSolicitacao sol : solicitacoes)
 			solicitacoesVO.itens.add(new SrSolicitacaoVO(sol, lista, nome, isPopup, lotaTitular, cadastrante));
 		
 		return solicitacoesVO;
 	}
 	
-	public List<ColunasVO> gerarColunasSolicitacao(boolean telaDeListas) {
+	public List<ColunasVO> gerarColunasSolicitacao(boolean telaDeListas, boolean podeRemover) {
 		List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
 		
 		if (telaDeListas) {
-			colunasVO.add(new ColunasVO("#", "prioridadeLista"));
+			colunasVO.add(new ColunasVO("#", "prioridadeLista", "gt-celula-nowrap", LARGURA_COLUNA_PRIORIDADE));
+			colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
+			colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Aberto", "dtUltimaMovimentacaoFormatada", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Lotação", "lotaAtendenteFormatada", "gt-celula-nowrap solicitacao-dados"));
+			
+			if (podeRemover)
+				colunasVO.add(new ColunasVO("", "botaoRemover", "gt-celula-nowrap solicitacao-dados solicitacao-remover", LARGURA_COLUNA_REMOVER));
 		}
 		else {
 			colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control", false,  true, true));
-			colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", Long.valueOf(130)));
+			colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
 			colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
 			colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados"));
 			colunasVO.add(new ColunasVO("Aberto", "dtUltimaMovimentacaoFormatada", "gt-celula-nowrap solicitacao-dados"));

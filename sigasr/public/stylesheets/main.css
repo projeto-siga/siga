@@ -148,3 +148,9 @@ td.padding-table {
 	border-bottom: 1px solid #ccc !important; 
 	text-align:justify;
 }
+
+.solicitacao-remover {
+	color: #333;
+	font-weight: bold;
+	padding: 7px 10px;
+}

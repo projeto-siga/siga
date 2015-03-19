@@ -7,9 +7,16 @@ function TabelaDinamica (tableSelector) {
 		var objetoTabela = new Object();
 		objetoTabela.estrutura = [];
 		objetoTabela.dados = [],
-		objetoTabela.detalhes = [];
+		objetoTabela.detalhes = [],
+		objetoTabela.podePriorizar = false,
+		objetoTabela.podeOrdenar = false,
+		objetoTabela.podeRemover = false;
 
 		if (jSon) {
+			objetoTabela.podePriorizar = jSon.podePriorizar;
+			objetoTabela.podeOrdenar = jSon.podeOrdenar;
+			objetoTabela.podeRemover = jSon.podeRemover;
+			
 			if (jSon.itens)
 				objetoTabela.dados = jSon.itens;
 			
@@ -36,6 +43,8 @@ function TabelaDinamica (tableSelector) {
 
 					objetoTabela.detalhes.push(detalhe);
 				}
+			
+			
 		}
 
 		return objetoTabela;

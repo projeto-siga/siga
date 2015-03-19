@@ -22,6 +22,8 @@ public class SrSolicitacaoVO {
 	public String prioridadeFormatada;
 	public String botaoExpandir = "+";
 	public String marcadoresEmHtmlDetalhes;
+	public String lotaAtendenteFormatada;
+	public String botaoRemover;
 	
 	public String dtUltimaMovimentacaoString;
 	public Long prioridadeLista;
@@ -33,12 +35,6 @@ public class SrSolicitacaoVO {
 	public String ultimaMovimentacao;
 	public String marcadoresEmHtml;
 	public SrPrioridade prioridade;
-	
-	
-	public SrSolicitacaoVO(SrSolicitacao sol, String nome, boolean isPopup) {
-		this(sol);
-		this.codigoFormatado = getCodigoFormatado(sol.getId(), sol.getCodigo(), nome, isPopup);
-	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol) {
 		this.idSolicitacao = sol.getId();
@@ -59,13 +55,16 @@ public class SrSolicitacaoVO {
 		this.dtUltimaMovimentacaoFormatada = getDtUltimaMovimentacaoFormatado(this.dtUltimaMovimentacaoString);
 		this.ultimaMovimentacaoformatada = SigaPlayUtil.selecionado(this.ultimaMovimentacao, this.ultimaMovimentacao);
 		this.prioridadeFormatada = this.prioridade != null ? SigaPlayUtil.selecionado(this.prioridade.descPrioridade, this.prioridade.descPrioridade) : "";
+		this.lotaAtendenteFormatada = getLotacaoFormatada(this.lotaAtendente);
 	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista) throws Exception {
 		this(sol);
 		
-		if (lista != null)
+		if (lista != null) {
 			this.prioridadeLista = sol.getPrioridadeNaLista(lista);
+			this.botaoRemover = SigaPlayUtil.botaoRemoverSolicitacao(this.idSolicitacao, lista.idLista);
+		}
 	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
@@ -74,7 +73,8 @@ public class SrSolicitacaoVO {
 	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, String nome, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
-		this(sol, nome, isPopup);
+		this(sol, lista);
+		this.codigoFormatado = getCodigoFormatado(sol.getId(), sol.getCodigo(), nome, isPopup);
 		this.marcadoresEmHtml = sol.getMarcadoresEmHtml(cadastrante, lotaTitular);
 		this.marcadoresEmHtmlDetalhes = getMarcadoresEmHTMLDetalhes(this.marcadoresEmHtml, this.dtUltimaMovimentacaoString);
 	} 
@@ -117,6 +117,10 @@ public class SrSolicitacaoVO {
 			sb.append(SigaPlayUtil.selecionado(lotaSolicitante.getSigla() , lotaSolicitante.getDescricao()));
 		
 		return sb.toString();
+	}
+	
+	private String getLotacaoFormatada(SelecionavelVO lotacao) {
+		return new String("<b>" + lotacao.getSigla() + "</b>");
 	}
 	
 	private String getDtUltimaMovimentacaoFormatado(String dtUltimaMovimentacao) {

@@ -595,26 +595,31 @@ public class Application extends SigaApplication {
 		render(solicitacao, movimentacao, todoOContexto, ocultas, movs);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
-		lista = lista.getListaAtual();
-		List<CpOrgaoUsuario> orgaos = JPA.em()
-				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpOrgaoUsuario> orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		
-		try {
-			assertAcesso("ADM:Administrar");
-			List<SrConfiguracao> permissoes = SrConfiguracao
-					.listarPermissoesUsoLista(lista, false);
-		} catch (Exception e) { }
-		
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
+		SrSolicitacaoFiltro filtro = new SrSolicitacaoFiltro();
+		SrSolicitacaoListaVO solicitacaoListaVO;
+		
+		filtro.idListaPrioridade = id;
+		lista = lista.getListaAtual();
 		
 		if (!lista.podeConsultar(lotaTitular(), cadastrante())) {
 			throw new Exception("Exibição não permitida");
 		}
 		
-		render(lista, orgaos, locais, tiposPermissao);
+		try {
+			solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, true, "", false, lotaTitular(), cadastrante());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			solicitacaoListaVO = new SrSolicitacaoListaVO();
+		}
+		
+		render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO);
 	}
 	
 	public static void incluirEmLista(Long idSolicitacao) throws Exception {

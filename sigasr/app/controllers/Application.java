@@ -834,10 +834,10 @@ public class Application extends SigaApplication {
 			mov.lotaAtendente = atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente;
 			if(solicitacao.getAtendente() != null && !mov.lotaAtendente.equivale(solicitacao.getAtendente().getLotacao()))
 				mov.atendente = null;
-			mov.designacao = SrConfiguracao.findById(idDesignacao);
-			mov.descrMovimentacao = "Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
-					+ "; Ação: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();
 			mov.motivoEscalonamento = motivo;
+			mov.designacao = SrConfiguracao.findById(idDesignacao);
+			mov.descrMovimentacao = "Motivo: " + mov.motivoEscalonamento + "; Item: " + mov.itemConfiguracao.tituloItemConfiguracao 
+					+ "; Ação: " + mov.acao.tituloAcao + "; Atendente: " + mov.lotaAtendente.getSigla();
 			mov.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 			exibir(solicitacao.idSolicitacao, todoOContexto(), ocultas());
 		}

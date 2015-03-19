@@ -90,7 +90,7 @@ self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
 	//var url = '${request.scheme}://${request.serverName}:${request.localPort}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
-	var url = '${urlPrefix}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+	var url = '${urlPrefix}${acaoBusca}/buscar.action?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
 	
 	if (!newwindow_${propriedade}.closed && newwindow_${propriedade}.location) {
 		newwindow_${propriedade}.location.href = url;
@@ -140,7 +140,8 @@ self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 }
 
 self.ajax_${propriedade}${tipoSel} = function() {
-	var sigla = document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value;
+	var sigla = $.trim(document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value);
+	
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}

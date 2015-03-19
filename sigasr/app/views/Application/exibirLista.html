@@ -213,8 +213,7 @@
 </div>
 
 #{modal nome:'editarLista', titulo:'Editar Lista'}
-	<div id="divEditarLista">#{include
-				'Application/editarLista.html' /}</div>
+	<div id="divEditarLista">#{include 'Application/editarLista.html' /}</div>
 #{/modal}
 
 <script type="text/javascript">
@@ -303,13 +302,13 @@
 	/**
 	 * Customiza o metodo editar
 	 */
-	listaService.editar = function(obj, title) {
-		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+	listaService.editar = function(lista, title) {
+		BaseService.prototype.editar.call(this, lista, title); // super.editar();
 
 		limparDadosListaModal();
-
 		// carrega as permissões da lista
-		carregarPermissoes(obj.idLista);
+		carregarPermissoes(lista.idLista);
+		configuracaoInclusaoAutomaticaService.carregarParaLista(lista.idLista);
 	}
 
 	/**

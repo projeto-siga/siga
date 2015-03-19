@@ -132,9 +132,9 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 		String resultado =  super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno"){
 			result.include("sel", getSel());
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
 		}else{
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
 

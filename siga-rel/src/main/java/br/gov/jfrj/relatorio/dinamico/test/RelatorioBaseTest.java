@@ -46,13 +46,13 @@ public class RelatorioBaseTest {
 			dados.add("Modelo_bbbbb" + i);
 			dados.add("Class Documental_ccccc"+ i);
 			dados.add("Class Criação_ddddd"+ i);
-			dados.add("siga/sigaex/expediente/exibir.action?sigla=\"000000 " + i + "-A\"");
+			dados.add("siga/sigaex/app/expediente/exibir?sigla=\"000000 " + i + "-A\"");
 		}
 		dados.add("Forma_aaaaa" + 1);
 		dados.add("Modelo_bbbbb" + 1);
 		dados.add("Class Documental_ccccc"+ 1);
 		dados.add("Class Criação_ddddd"+ 1);
-		dados.add("siga/sigaex/expediente/exibir.action?sigla=\"000000 " + 1 + "-A\"");
+		dados.add("siga/sigaex/app/expediente/exibir?sigla=\"000000 " + 1 + "-A\"");
 
 		rel.setDados(dados);
 		

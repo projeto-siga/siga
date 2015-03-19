@@ -147,10 +147,10 @@ public class TestesController extends SigaController {
 			
 			
 			result.include("sel", sel);
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
 			
 		} catch (Exception e) {
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
 

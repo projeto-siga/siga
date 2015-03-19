@@ -280,7 +280,7 @@ public class AppController extends WfController {
 		// Apresenta a pagina do documento quando a sigla for fornecida
 		//
 		if (sigla != null) {
-			result.redirectTo("/../sigaex/expediente/doc/exibir.action?sigla="
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla="
 					+ sigla);
 			return;
 		}
@@ -317,7 +317,7 @@ public class AppController extends WfController {
 		}
 
 		if (sigla != null) {
-			result.redirectTo("/../sigaex/expediente/doc/exibir.action?sigla="
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla="
 					+ sigla);
 			return;
 		}

@@ -224,6 +224,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			
 			if (srConf.listaPrioridade != null) {
 				srConf.listaPrioridade.getHisIdIni();
+				
+				if(srConf.listaPrioridade.meuListaHistoricoSet != null)
+					srConf.listaPrioridade.meuListaHistoricoSet.size();
 			}
 			
 			if (srConf.pesquisaSatisfacao != null)

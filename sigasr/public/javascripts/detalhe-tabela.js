@@ -184,10 +184,6 @@ function SigaTable (tableSelector) {
 		return tr;
 	}
 	
-	this.limparLinhas = function() {
-		this.dataTable.api().clear().draw();
-	}
-	
 	this.onRowClick = function(rowClick) {
 		this.table.find("tbody tr").each(function() {
 			var me = $(this);

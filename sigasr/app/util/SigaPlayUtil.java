@@ -42,4 +42,8 @@ public class SigaPlayUtil {
 		
 		return sb.toString();
 	}
+	
+	public static String tagA(String descricao) {
+		return new String("<a>" + descricao + "</a>");
+	}
 }

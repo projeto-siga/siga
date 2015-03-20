@@ -4,6 +4,7 @@ import util.SigaPlayUtil;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrPrioridade;
+import models.SrPrioridadeSolicitacao;
 import models.SrSolicitacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -24,9 +25,9 @@ public class SrSolicitacaoVO {
 	public String marcadoresEmHtmlDetalhes;
 	public String lotaAtendenteFormatada;
 	public String botaoRemover;
+	public String prioridadeListaFormatada;
 	
 	public String dtUltimaMovimentacaoString;
-	public Long prioridadeLista;
 	public String nomeSolicitante;
 	public String descricaoSolicitante;
 	public String dtRegString;
@@ -48,7 +49,6 @@ public class SrSolicitacaoVO {
 		this.lotaAtendente = sol.getLotaAtendente() != null ? SelecionavelVO.createFrom(sol.getLotaAtendente()) : null;
 		this.ultimaMovimentacao = sol.getUltimaMovimentacaoQuePossuaDescricao() != null ? sol.getUltimaMovimentacaoQuePossuaDescricao().descrMovimentacao : "";
 		this.dtUltimaMovimentacaoString = sol.getUltimaMovimentacao() != null ? sol.getUltimaMovimentacao().getDtIniMovDDMMYYYYHHMM() : "";
-		this.prioridade = sol.prioridade;
 		
 		this.teorFormatado = getTeorFormatado(sol.getItemAtual(), this.descricao);
 		this.solicitanteFormatado = getSolicitanteFormatado(this.nomeSolicitante, this.descricaoSolicitante, this.lotaSolicitante);
@@ -62,8 +62,10 @@ public class SrSolicitacaoVO {
 		this(sol);
 		
 		if (lista != null) {
-			this.prioridadeLista = sol.getPrioridadeNaLista(lista);
+			SrPrioridadeSolicitacao prioridade = lista.getSrPrioridadeSolicitacao(sol);
+			this.prioridadeListaFormatada = SigaPlayUtil.tagA(String.valueOf(sol.getPrioridadeNaLista(lista)));
 			this.botaoRemover = SigaPlayUtil.botaoRemoverSolicitacao(this.idSolicitacao, lista.idLista);
+			this.prioridade = prioridade != null ? prioridade.getPrioridade() : null;
 		}
 	}
 	

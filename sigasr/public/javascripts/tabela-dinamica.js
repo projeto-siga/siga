@@ -10,12 +10,16 @@ function TabelaDinamica (tableSelector) {
 		objetoTabela.detalhes = [],
 		objetoTabela.podePriorizar = false,
 		objetoTabela.podeOrdenar = false,
-		objetoTabela.podeRemover = false;
+		objetoTabela.podeRemover = false,
+		objetoTabela.podeFiltrar = false,
+		objetoTabela.podePaginar = false;
 
 		if (jSon) {
 			objetoTabela.podePriorizar = jSon.podePriorizar;
 			objetoTabela.podeOrdenar = jSon.podeOrdenar;
 			objetoTabela.podeRemover = jSon.podeRemover;
+			objetoTabela.podeFiltrar = jSon.podeFiltrar;
+			objetoTabela.podePaginar = jSon.podePaginar;
 			
 			if (jSon.itens)
 				objetoTabela.dados = jSon.itens;
@@ -43,38 +47,9 @@ function TabelaDinamica (tableSelector) {
 
 					objetoTabela.detalhes.push(detalhe);
 				}
-			
-			
 		}
 
 		return objetoTabela;
-	}
-	
-	/* Função de formatação para células de detalhes */
-	this.formatarDetalhes = function( d ) {
-		var tr = $('<tr class="detail">'),
-			// 'd' é o objeto contendo os dados da linha
-			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:60px;">'+
-				'<tr>';
-
-		if (this.objetoTabela && this.objetoTabela.detalhes) {
-			for (var i = 0; i < this.objetoTabela.detalhes.length; i++) {
-				var detalhe = this.objetoTabela.detalhes[i];
-				
-				detailHTML += '<tr><td style="min-width: 140px;"><b>' + detalhe.sTitle + ':</b></td>';
-
-				if (detalhe.mDetalheFormatado)
-					 detailHTML += d[detalhe.mDataProp];
-				else
-					detailHTML += '<td>' + d[detalhe.mDataProp] + '</td>';
-
-				detailHTML += '</tr>';
-			}
-		}
-
-		detailHTML += '</tr></table></td>';
-
-	    return tr.append(detailHTML);
 	}
 	
 	this.criar = function() {
@@ -82,4 +57,31 @@ function TabelaDinamica (tableSelector) {
 		this.objetoTabela = this.prepararDadosTabela(this.jSon);
 		return this;
 	}
+}
+
+/* Função de formatação para células de detalhes */
+TabelaDinamica.prototype.formatarDetalhes = function( d, objetoTabela ) {
+	var tr = $('<tr class="detail">'),
+		// 'd' é o objeto contendo os dados da linha
+		detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:60px;">'+
+			'<tr>';
+
+	if (objetoTabela && objetoTabela.detalhes) {
+		for (var i = 0; i < objetoTabela.detalhes.length; i++) {
+			var detalhe = objetoTabela.detalhes[i];
+			
+			detailHTML += '<tr><td style="min-width: 140px;"><b>' + detalhe.sTitle + ':</b></td>';
+
+			if (detalhe.mDetalheFormatado)
+				 detailHTML += d[detalhe.mDataProp];
+			else
+				detailHTML += '<td>' + d[detalhe.mDataProp] + '</td>';
+
+			detailHTML += '</tr>';
+		}
+	}
+
+	detailHTML += '</tr></table></td>';
+
+    return tr.append(detailHTML);
 }

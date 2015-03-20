@@ -15,11 +15,13 @@ public class SrSolicitacaoListaVO {
 	
 	private static Long LARGURA_COLUNA_CODIGO = 130L;
 	private static Long LARGURA_COLUNA_REMOVER = 20L;
-	private static Long LARGURA_COLUNA_PRIORIDADE = 20L;
+	private static Long LARGURA_COLUNA_PRIORIDADE = 45L;
 
 	public boolean podeOrdenar;
 	public boolean podePriorizar;
-	public boolean podeRemover;	
+	public boolean podeRemover;
+	public boolean podeFiltrar;
+	public boolean podePaginar;
 	public List<SrSolicitacaoVO> itens;
 	public List<ColunasVO> colunas;
 	public List<ColunasVO> colunasDetalhamento;
@@ -40,9 +42,14 @@ public class SrSolicitacaoListaVO {
 			solicitacoesVO.podePriorizar = lista.podePriorizar(lotaTitular, cadastrante);
 			solicitacoesVO.podeOrdenar = false;
 			solicitacoesVO.podeRemover = lista.podeRemover(lotaTitular, cadastrante);
+			solicitacoesVO.podeFiltrar = false;
+			solicitacoesVO.podePaginar = false;
 		}
-		else
+		else {
 			solicitacoesVO.podeOrdenar = true;
+			solicitacoesVO.podeFiltrar = true;
+			solicitacoesVO.podePaginar = true;
+		}
 		
 		solicitacoesVO.colunas = solicitacoesVO.gerarColunasSolicitacao(telaDeListas, solicitacoesVO.podeRemover);
 		solicitacoesVO.colunasDetalhamento = solicitacoesVO.gerarColunasDetalhamentoSolicitacao(telaDeListas);
@@ -57,13 +64,13 @@ public class SrSolicitacaoListaVO {
 		List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
 		
 		if (telaDeListas) {
-			colunasVO.add(new ColunasVO("#", "prioridadeLista", "gt-celula-nowrap", LARGURA_COLUNA_PRIORIDADE));
+			colunasVO.add(new ColunasVO("#", "prioridadeListaFormatada", "gt-celula-nowrap solicitacao-dados solicitacao-prioridade numero-solicitacao", LARGURA_COLUNA_PRIORIDADE));
 			colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
 			colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
 			colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados"));
 			colunasVO.add(new ColunasVO("Aberto", "dtUltimaMovimentacaoFormatada", "gt-celula-nowrap solicitacao-dados"));
-			colunasVO.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
 			colunasVO.add(new ColunasVO("Lotação", "lotaAtendenteFormatada", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
 			
 			if (podeRemover)
 				colunasVO.add(new ColunasVO("", "botaoRemover", "gt-celula-nowrap solicitacao-dados solicitacao-remover", LARGURA_COLUNA_REMOVER));

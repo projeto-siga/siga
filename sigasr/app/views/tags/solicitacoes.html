@@ -25,10 +25,9 @@
 <div class="gt-content-box gt-for-table dataTables_div">
 	<table id="solicitacoes_table" border="0" class="gt-table-nowrap display" data-json="${_solicitacaoListaVO.toJson()}">
 		<thead></thead>
-		<tbody id="sortable"></tbody>
+		<tbody id="sortable" class="ui-sortable"></tbody>
 	</table>
 </div>
-
 
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
@@ -49,7 +48,20 @@
 			.configurar("data", tabelaDinamica.objetoTabela.dados)
 			.configurar("iDisplayLength", 25)
 			.configurar("bSort", tabelaDinamica.objetoTabela.podeOrdenar)
+			.configurar("bFilter", tabelaDinamica.objetoTabela.podeFiltrar)
+			.configurar("bPaginate", tabelaDinamica.objetoTabela.podePaginar)
+			.configurar("fnRowCallback", solicitacoesRowCallback)
 			.criar()
-			.detalhes(tabelaDinamica.formatarDetalhes);
+			.detalhes(formatarDetalhes);
 	});
+
+	function formatarDetalhes(data) {
+		return tabelaDinamica.formatarDetalhes(data, tabelaDinamica.objetoTabela);
+	}
+
+	function solicitacoesRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+		$(nRow).addClass('PRIORIDADE-' + aData.prioridade);
+		$(nRow).attr('id', aData.idSolicitacao);		
+	}
+	
 </script>

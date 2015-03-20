@@ -144,7 +144,7 @@ td.padding-table {
 
 .solicitacao-dados {
 	font-size: 9pt;
-	padding: 7px 0px; 
+	padding: 7px 10px !important; 
 	border-bottom: 1px solid #ccc !important; 
 	text-align:justify;
 }
@@ -152,5 +152,9 @@ td.padding-table {
 .solicitacao-remover {
 	color: #333;
 	font-weight: bold;
-	padding: 7px 10px;
+	padding: 7px 10px !important;
+}
+
+.solicitacao-prioridade {
+	cursor:move;
 }

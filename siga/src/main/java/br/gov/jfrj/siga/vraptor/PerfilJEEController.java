@@ -25,12 +25,15 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpPerfilJEE;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.webwork.action.CpPerfilSelecao;
 
 @Resource
 public class PerfilJEEController extends GrupoController {
@@ -114,6 +117,18 @@ public class PerfilJEEController extends GrupoController {
 		assertAcesso("PERFILJEE:Gerenciar grupos de email");
 		super.aExcluir(idCpGrupo);
 		result.redirectTo(this).lista();
+	}
+	
+	@Get
+	@Post
+	@Path("/app/gi/perfilJEE/buscar")
+	public void busca(String sigla, String postback, String nome) throws Exception{
+		setNome(nome);
+		super.aBuscar(sigla, postback);
+		result.include("param", getRequest().getParameterMap());
+		result.include("tamanho", getTamanho());
+		result.include("itens", getItens());
+		result.include("nome", getNome());
 	}
 
 }

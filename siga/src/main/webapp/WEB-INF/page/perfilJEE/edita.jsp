@@ -5,7 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <script type="text/javascript" language="Javascript1.1">
 	function gravarGestorGrupo() {
@@ -322,6 +321,7 @@
 						<tr class="header">
 							<td colspan=2>Dados de ${cpTipoGrupo.dscTpGrupo}</td>
 						</tr>
+						<siga:selecao modulo="siga" propriedade="perfiljee"  urlAcao="gi/perfilJEE/buscar" urlSelecionar="selecionar" tema="simple" />
 						<input type="hidden" name="idCpTipoGrupo" value="${idCpTipoGrupo}" />
 						<input type="hidden" name="idCpGrupo" value="${idCpGrupo}" />
 						<tr>

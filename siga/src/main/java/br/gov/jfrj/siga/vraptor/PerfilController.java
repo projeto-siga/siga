@@ -141,8 +141,6 @@ public class PerfilController extends GrupoController {
 	
 	@Get("/app/gi/perfil/selecionar")
 	public void selecionar(String sigla){
-		this.aSelecionar(sigla);
-		
 		String resultado =  super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno"){
 			result.include("sel", getSel());

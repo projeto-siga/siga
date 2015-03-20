@@ -2,8 +2,10 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,6 +24,7 @@ import javax.persistence.Table;
 
 import models.vo.SrListaVO;
 import play.db.jpa.JPA;
+import util.AtualizacaoLista;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -239,17 +242,30 @@ public class SrLista extends HistoricoSuporte {
 		return prioridades.get(prioridades.size() - 1).getNumPosicao();
 	}
 
-	public void priorizar(DpPessoa cadastrante, DpLotacao lotaCadastrante,
-			List<SrSolicitacao> sols) throws Exception {
+	public void priorizar(DpPessoa cadastrante, DpLotacao lotaCadastrante, List<AtualizacaoLista> listaPrioridadeSolicitacao) throws Exception {
+		Map<Long, AtualizacaoLista> atualizacoesAgrupadas = agruparAtualizacoes(listaPrioridadeSolicitacao);
+		
+		for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
+			AtualizacaoLista atualizacaoLista = atualizacoesAgrupadas.get(prioridadeSolicitacao.getId());
+			
+			if (!prioridadeSolicitacao.getSolicitacao().isEmLista(this))
+				throw new IllegalArgumentException("A solicitação " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " não faz parte da lista");
 
-		for (SrSolicitacao sol : sols) {
-			if (!sol.isEmLista(this))
-				throw new IllegalArgumentException("A solicitação "
-						+ sol.getCodigo() + " não faz parte da lista");
+			if(atualizacaoLista != null) {
+				prioridadeSolicitacao.setPrioridade(atualizacaoLista.getPrioridade());
+				prioridadeSolicitacao.setNumPosicao(atualizacaoLista.getNumPosicao());
+				prioridadeSolicitacao.salvar();
+			}
 		}
-
-		this.recalcularPrioridade(cadastrante, lotaCadastrante);
 		this.refresh();
+	}
+
+	private Map<Long, AtualizacaoLista> agruparAtualizacoes(List<AtualizacaoLista> listaPrioridadeSolicitacao) {
+		Map<Long, AtualizacaoLista> atualizacoesAgrupadas = new HashMap <Long, AtualizacaoLista>();
+		for (AtualizacaoLista atualizacaoLista : listaPrioridadeSolicitacao) {
+			atualizacoesAgrupadas.put(atualizacaoLista.getIdPrioridadeSolicitacao(), atualizacaoLista);
+		}
+		return atualizacoesAgrupadas;
 	}
 
 	protected void recalcularPrioridade(DpPessoa pessoa, DpLotacao lota) throws Exception {

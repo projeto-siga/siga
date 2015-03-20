@@ -167,7 +167,7 @@
 								<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></img></a>
 							#{/if}
 							#{if podePriorizar}
-								<a class="once gt-btn-ativar" onclick="listaService.alterarPosicao(event, ${sol.toJson()})" title="Alterar posição"> 
+								<a class="once gt-btn-ativar" onclick="listaService.alterarPosicao(this)" title="Alterar posição"> 
 								<img src="/siga/css/famfamfam/icons/arrow_refresh_small_up_down.png" style="margin-right: 5px;"></img> </a>
 								<a class="once gt-btn-ativar" onclick="listaService.alterarPrioridade(this)" title="Alterar prioridade"> 
 								<img src="/siga/css/famfamfam/icons/arrow_switch.png" style="margin-right: 5px;"></img></a>
@@ -236,6 +236,7 @@
 			<div class="gt-form-row">
 				<input type="button" value="Ok" class="gt-btn-medium gt-btn-left" 
 					onclick="reposicionar()" />
+				<a class="gt-btn-medium gt-btn-left" onclick="modalPosicaoFechar()">Cancelar</a>
 			</div>
 		</form>
 	</div>
@@ -262,6 +263,7 @@
 			<div class="gt-form-row">
 				<input type="button" value="Ok" class="gt-btn-medium gt-btn-left" 
 					onclick="gravarPrioridade()" />
+				<a class="gt-btn-medium gt-btn-left" onclick="modalPrioridadeFechar()">Cancelar</a>					
 			</div>
 		</form>
 	</div>
@@ -379,7 +381,10 @@
 			$("#tituloPagina").html(listaJson.nomeLista);
 	}
 
-	listaService.alterarPosicao = function(event, obj) {
+	listaService.alterarPosicao = function(a) {
+		var tr = $(a).parent().parent(),
+		obj = JSON.parse(tr.attr('data-json'));
+
 		$('#posicao_dialog').dialog('open');
 		new Formulario($('#posicaoForm')).populateFromJson(obj);
 	}
@@ -453,7 +458,7 @@
 			permissoesTable.api().row.add(row).draw();
 		}
 	}
-
+	
 	function reposicionar() {
 		var novaPosicao = $('[name=numPosicao]').val(),
 			lista = $("#sortable > tr"),
@@ -476,9 +481,13 @@
 			else tr.insertBefore($(lista[novaPosicao-1]));
 		}
 		recalcularPosicao();
-		$('#posicao_dialog').dialog('close');
+		modalPosicaoFechar()
 	}
 
+	function modalPosicaoFechar() {
+		$("#posicao_dialog").dialog("close");
+	}
+	
 	function recalcularPosicao() {
 		var posicao = 0;
 		$("#sortable > tr").each(function() {
@@ -513,9 +522,13 @@
 			reposicionarPorPrioridade(obj, tr);
 		}
 		recalcularPosicao();
-		$('#prioridade_dialog').dialog('close');
+		modalPrioridadeFechar()
 	}
 
+	function modalPrioridadeFechar() {
+		$("#prioridade_dialog").dialog("close");
+	}
+	
 	function reposicionarPorPrioridade(obj, tr) {
 		var posicao = 0,
 			lista = $("#sortable > tr");

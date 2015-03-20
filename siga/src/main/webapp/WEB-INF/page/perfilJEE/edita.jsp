@@ -321,7 +321,6 @@
 						<tr class="header">
 							<td colspan=2>Dados de ${cpTipoGrupo.dscTpGrupo}</td>
 						</tr>
-						<siga:selecao modulo="siga" propriedade="perfiljee"  urlAcao="gi/perfilJEE/buscar" urlSelecionar="selecionar" tema="simple" />
 						<input type="hidden" name="idCpTipoGrupo" value="${idCpTipoGrupo}" />
 						<input type="hidden" name="idCpGrupo" value="${idCpGrupo}" />
 						<tr>

@@ -28,6 +28,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -193,5 +194,13 @@ public class GrupoDeEmailController extends GrupoController {
 					"Acesso negado!<br/> Você precisa ser um administrador ou gestor de grupo.");
 		}
 		result.redirectTo("editar?idCpGrupo=" + idCpGrupo);
+	}
+	
+	@Get("app/gi/grupoDeEmail/selecionar")
+	public void selecionar(String sigla) throws Exception {
+		String fileRedirect = "../../../sigalibs/" + super.aSelecionar(sigla) + ".jsp";
+
+		result.include("sel", this.getSel());
+		result.use(Results.page()).forwardTo(fileRedirect);
 	}
 }

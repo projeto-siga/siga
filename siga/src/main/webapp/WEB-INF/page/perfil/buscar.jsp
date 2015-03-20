@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <siga:pagina titulo="Busca de Grupo" popup="true">
@@ -10,28 +9,37 @@ function sbmt(offset) {
 	if (offset==null) {
 		offset=0;
 	}
-	frm.elements['p.offset'].value=offset;
+	frm.elements['offset'].value=offset;
 	frm.submit();
 }
 </script>
 
-<ww:form name="frm" action="buscar" cssClass="form" method="POST">
+<form name="frm" action="${request.contextPath}/app/gi/perfil/buscar" class="form" method="POST">
 	<table class="form" width="100%">
 		<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
 		<input type="hidden" name="propriedade" value="${param.propriedade}" />
 		<input type="hidden" name="postback" value="1" />
-		<input type="hidden" name="p.offset" value="0" />
+		<input type="hidden" name="offset" value="0" />
 		<tr class="header">
 			<td align="center" valign="top" colspan="4">Dados do Grupo</td>
 		</tr>
-		<ww:textfield label="Nome ou Sigla" name="nome" />
-		<%--<ww:hidden name="postback" value="true" />--%>
-		<%--<ww:select name="orgaoUsu" list="orgaosUsu" listKey="idOrgaoUsu"
-			listValue="nmOrgaoUsu" label="Órgão" headerKey="0"
-			headerValue="[Todos]" />--%>
-		<ww:submit value="Pesquisar" />
+		<tr>
+			<td>
+				<label for="busca_nome" class="label">Nome ou Sigla:</label>
+			</td>
+			<td>
+				<input type="text" name="sigla" id="busca_nome" value="${sigla}"/>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div align="right">
+					<input type="submit" align="right" value="Pesquisar" />
+				</div>
+			</td>
+		</tr>
 	</table>
-</ww:form>
+</form>
 
 <br>
 

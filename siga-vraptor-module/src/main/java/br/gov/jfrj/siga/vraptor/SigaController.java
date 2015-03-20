@@ -99,12 +99,13 @@ public class SigaController {
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-
+		
 		result.include("cadastrante", getCadastrante());
-		result.include("lotaCadastrante", getLotaTitular());
+		result.include("lotaCadastrante", getLotaCadastrante());
 		result.include("titular", getTitular());
 		result.include("lotaTitular", getLotaTitular());
 		result.include("meusTitulares", getMeusTitulares());
+		result.include("identidadeCadastrante",getIdentidadeCadastrante());
 	}
 
 	public List<DpSubstituicao> getMeusTitulares() {
@@ -164,6 +165,9 @@ public class SigaController {
 		so.setTitular(titular);
 	}
 	
+	protected DpLotacao getLotaCadastrante(){
+		return so.getCadastrante().getLotacao();
+	}
 
 	protected DpPessoa getCadastrante() {
 		return so.getCadastrante();

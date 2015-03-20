@@ -86,7 +86,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "lista", fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
 	@OrderBy("numPosicao")
 	protected Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet = new HashSet<SrPrioridadeSolicitacao>();
 
@@ -232,13 +232,21 @@ public class SrLista extends HistoricoSuporte {
 				}
 			}				
 		}
-		return buscarUltimaPosicao(prioridades) + 1;
+		return buscarPosicaoPorPrioridade(prioridades, prioridadeSolicitacao);
 	}	
 
-	private Long buscarUltimaPosicao(List<SrPrioridadeSolicitacao> prioridades) {
+	private Long buscarPosicaoPorPrioridade(List<SrPrioridadeSolicitacao> prioridades, SrPrioridadeSolicitacao prioridadeSolicitacao) {
 		if (prioridades.get(prioridades.size() - 1).getNumPosicao() == null) {
 			return 0L;
 		}
+		
+		for (int i = 0; i <= prioridades.size() - 1; i++) {	
+			SrPrioridadeSolicitacao prioridadeSolic = prioridades.get(i);
+			if (prioridadeSolicitacao.getPrioridade().idPrioridade > prioridadeSolic.getPrioridade().idPrioridade) {
+				return prioridadeSolic.getNumPosicao();
+			}
+		}
+
 		return prioridades.get(prioridades.size() - 1).getNumPosicao();
 	}
 

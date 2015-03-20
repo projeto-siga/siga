@@ -177,6 +177,7 @@
 			<div class="gt-form-row">
 				<input type="button" value="Ok" class="gt-btn-medium gt-btn-left" 
 					onclick="gravarPrioridade()" />
+				<a class="gt-btn-medium gt-btn-left" onclick="modalPrioridadeFechar()">Cancelar</a>					
 			</div>
 		</form>
 	</div>
@@ -345,7 +346,7 @@
 			return new String();
 		}
 	}
-
+	
 	function reposicionar() {
 		var novaPosicao = $('[name=numPosicao]').val(),
 			lista = $("#sortable > tr"),
@@ -375,6 +376,10 @@
 		$("#posicao_dialog").dialog("close");
 	}
 
+	function modalPosicaoFechar() {
+		$("#posicao_dialog").dialog("close");
+	}
+	
 	function recalcularPosicao() {
 		var posicao = 0;
 		$("#sortable > tr").each(function() {
@@ -409,9 +414,13 @@
 			reposicionarPorPrioridade(obj, tr);
 		}
 		recalcularPosicao();
-		$('#prioridade_dialog').dialog('close');
+		modalPrioridadeFechar()
 	}
 
+	function modalPrioridadeFechar() {
+		$("#prioridade_dialog").dialog("close");
+	}
+	
 	function reposicionarPorPrioridade(obj, tr) {
 		var posicao = 0,
 			lista = $("#sortable > tr");

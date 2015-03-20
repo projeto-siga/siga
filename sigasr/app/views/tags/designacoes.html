@@ -254,26 +254,29 @@ altura:'200', largura:'450'}
 		for (var i = 0; i < listaJSon.length; i++) {
 			designacaoService.adicionarLinha(table, listaJSon[i]);
 		}
-		
+		designacaoService.configurarDataTable();
+	}
+
+	designacaoService.configurarDataTable = function() {
 		this.designacaoTable = new SigaTable('#designacoes_table')
-			.configurar("columnDefs", [{
-					"targets": [colunasDesignacao.checkBoxHeranca, 
-								colunasDesignacao.jSonDesignacao,  
-								colunasDesignacao.herdado, 
-								colunasDesignacao.utilizarHerdado],
-					"visible": false,
-					"searchable": false
-				},
-				{
-					"targets": [0],
-					"sortable": false,
-					"searchable" : false
-				}])
-			.configurar("fnRowCallback", designacaoRowCallback)
-			.configurar("iDisplayLength", 100)
-			.criar()
-			.detalhes(detalhesDesignacao);
-		
+		.configurar("columnDefs", [{
+				"targets": [colunasDesignacao.checkBoxHeranca, 
+							colunasDesignacao.jSonDesignacao,  
+							colunasDesignacao.herdado, 
+							colunasDesignacao.utilizarHerdado],
+				"visible": false,
+				"searchable": false
+			},
+			{
+				"targets": [0],
+				"sortable": false,
+				"searchable" : false
+			}])
+		.configurar("fnRowCallback", designacaoRowCallback)
+		.configurar("iDisplayLength", 100)
+		.criar()
+		.detalhes(detalhesDesignacao);
+	
 		this.opts.dataTable = designacaoService.designacaoTable.dataTable;
 	}
 	

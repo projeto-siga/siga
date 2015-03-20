@@ -257,6 +257,7 @@
 
 		// limpa a lista de Associações
 		associacaoService.limparDadosAssociacoes();
+		associacaoService.atualizarListaAssociacoes({});
 	}
 
 	atributoService.buscarAssociacoes = function(assoc) {
@@ -269,7 +270,6 @@
 	        	dataType: "text",
 	        	success: function(obj) {
 	        		var associacaoJson = JSON.parse(obj);
-	        		
 	        		// alimenta a lista de Associações
 	    			associacaoService.atualizarListaAssociacoes(associacaoJson);
 	        	},

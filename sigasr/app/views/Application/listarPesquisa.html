@@ -165,10 +165,8 @@
 	// Sobescreve o metodo cadastrar para limar as perguntas da tela
 	pesquisaService.cadastrar = function(title) {
 		perguntas.limpar();
-
 		// limpa a lista de Associações
 		associacaoService.limparDadosAssociacoes();
-		
 		BaseService.prototype.cadastrar.call(this, title);
 	}
 
@@ -209,7 +207,6 @@
 	        	dataType: "text",
 	        	success: function(obj) {
 	        		var pesquisaJson = JSON.parse(obj);
-	        		
 	        		// alimenta a lista de Associações
 	    			associacaoService.atualizarListaAssociacoes(pesquisaJson);
 	        	},

@@ -69,8 +69,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		super.aBuscar(sigla, postback);
 	}
 	
-	 public void aExibir() {
-
+	@Get("/app/pessoa/exibir")
+	public void exibi(String sigla) {
+		 if(sigla != null) {
+			 result.include("pessoa", dao().getPessoaPorPrincipal(sigla));
+		 }
 	 }
 
 	@Override

@@ -39,6 +39,7 @@
 	if (tabelaDinamica && tabelaDinamica.objetoTabela && tabelaDinamica.objetoTabela.podePriorizar) {
 		$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
 		$( "#sortable" ).disableSelection();
+		$( "#sortable" ).sortable({update: function( event, ui ) {recalcularPosicao()}});
 	}
 	
 	$(document).ready(function() {

@@ -29,10 +29,11 @@ function Formulario(form) {
 	 */
 	this.prepareObjectToForm = function(obj) {
 		for (var x in obj) {
+			var component = document.getElementsByName(x)[0],		
+	    		className = component != null ? component.className : null,
+	        	objeto = obj[x];
+			
 		    if (typeof obj[x] == 'object') {
-		    	var component = document.getElementsByName(x)[0],		
-		    		className = component != null ? component.className : null,
-		        	objeto = obj[x];
 		    	
 		    	// Caso o atributo seja um objeto, verifica qual seu tipo e preenche os valores necessários
 		        if (className && objeto) {
@@ -56,6 +57,11 @@ function Formulario(form) {
 			        	obj[x] = objeto ? objeto.id : '';
 			        }
 		        }
+		    }
+		    else if (typeof obj[x] == 'boolean') { 
+		    	if (objeto) {
+			    	obj['check' + x] = obj[x];
+		    	}
 		    }
 		}
 	}

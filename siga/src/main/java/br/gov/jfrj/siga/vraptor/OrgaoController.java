@@ -4,9 +4,11 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -113,6 +115,36 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 	
 	public CpOrgao daoOrgao(long id) {
 		return dao().consultar(id, CpOrgao.class, false);
+	}
+	
+	@Get
+	@Post
+	@Path("/app/orgao/buscar")
+	public void busca(final String sigla,
+			     	  final Integer offset,
+			     	  final String postback,
+			     	  final String propriedade) throws Exception {
+		this.getP().setOffset(offset);
+		this.aBuscar(sigla, postback);
+		
+		result.include("itens",this.getItens());
+		result.include("tamanho",this.getTamanho());
+		result.include("request",getRequest());
+		result.include("sigla",sigla);
+		result.include("offset",offset);
+		result.include("postback",postback);
+		result.include("propriedade",propriedade);
+	}
+	
+	@Get("/app/orgao/selecionar")
+	public void selecionar(final String sigla){
+		String resultado =  super.aSelecionar(sigla);
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
 	}
 	
 }

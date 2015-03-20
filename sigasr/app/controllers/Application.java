@@ -49,7 +49,6 @@ import org.joda.time.LocalDate;
 
 import play.Logger;
 import play.Play;
-import play.data.binding.As;
 import play.data.validation.Error;
 import play.data.validation.Validation;
 import play.db.jpa.JPA;
@@ -64,6 +63,7 @@ import reports.SrRelPrazoDetail;
 import reports.SrRelPrazoTRF;
 import reports.SrRelSolicitacoes;
 import reports.SrRelTransferencias;
+import util.AtualizacaoLista;
 import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
@@ -647,20 +647,9 @@ public class Application extends SigaApplication {
 			exibirLista(idLista);
 	}
 	
-	public static void priorizarLista(@As(",") List<Long> ids, Long id)
-			throws Exception {
-
-		// Edson: as 3 linhas abaixo nao deveriam estar sendo necessarias, mas o
-		// Play
-		// nao estah fazendo o binding direito caso o parametro seja
-		// List<SrSolicitacao>
-		// em vez de List<Long>. Ver o que estah havendo.
-		List<SrSolicitacao> sols = new ArrayList<SrSolicitacao>();
-		for (Long l : ids)
-			sols.add((SrSolicitacao) SrSolicitacao.findById(l));
-
+	public static void priorizarLista(List <AtualizacaoLista> listaPrioridadeSolicitacao, Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
-		lista.priorizar(cadastrante(), lotaTitular(), sols);
+		lista.priorizar(cadastrante(), lotaTitular(), listaPrioridadeSolicitacao);
 		exibirLista(id);
 	}
 

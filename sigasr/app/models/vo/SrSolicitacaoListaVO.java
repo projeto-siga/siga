@@ -14,8 +14,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 public class SrSolicitacaoListaVO {
 	
 	private static Long LARGURA_COLUNA_CODIGO = 130L;
-	private static Long LARGURA_COLUNA_REMOVER = 20L;
-	private static Long LARGURA_COLUNA_PRIORIDADE = 45L;
+	private static Long LARGURA_COLUNA_REMOVER_PRIORIZAR = 55L;
+	private static Long LARGURA_COLUNA_PRIORIDADE = 20L;
 
 	public boolean podeOrdenar;
 	public boolean podePriorizar;
@@ -51,16 +51,16 @@ public class SrSolicitacaoListaVO {
 			solicitacoesVO.podePaginar = true;
 		}
 		
-		solicitacoesVO.colunas = solicitacoesVO.gerarColunasSolicitacao(telaDeListas, solicitacoesVO.podeRemover);
+		solicitacoesVO.colunas = solicitacoesVO.gerarColunasSolicitacao(telaDeListas, solicitacoesVO.podeRemover, solicitacoesVO.podePriorizar);
 		solicitacoesVO.colunasDetalhamento = solicitacoesVO.gerarColunasDetalhamentoSolicitacao(telaDeListas);
 		
 		for (SrSolicitacao sol : solicitacoes)
-			solicitacoesVO.itens.add(new SrSolicitacaoVO(sol, lista, nome, isPopup, lotaTitular, cadastrante));
+			solicitacoesVO.itens.add(new SrSolicitacaoVO(sol, lista, nome, isPopup, lotaTitular, cadastrante, solicitacoesVO.podeRemover, solicitacoesVO.podePriorizar));
 		
 		return solicitacoesVO;
 	}
 	
-	public List<ColunasVO> gerarColunasSolicitacao(boolean telaDeListas, boolean podeRemover) {
+	public List<ColunasVO> gerarColunasSolicitacao(boolean telaDeListas, boolean podeRemover, boolean podePriorizar) {
 		List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
 		
 		if (telaDeListas) {
@@ -72,8 +72,8 @@ public class SrSolicitacaoListaVO {
 			colunasVO.add(new ColunasVO("Lotação", "lotaAtendenteFormatada", "gt-celula-nowrap solicitacao-dados"));
 			colunasVO.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
 			
-			if (podeRemover)
-				colunasVO.add(new ColunasVO("", "botaoRemover", "gt-celula-nowrap solicitacao-dados solicitacao-remover", LARGURA_COLUNA_REMOVER));
+			if (podeRemover || podePriorizar)
+				colunasVO.add(new ColunasVO("", "botaoRemoverPriorizar", "gt-celula-nowrap solicitacao-dados solicitacao-remover", LARGURA_COLUNA_REMOVER_PRIORIZAR));
 		}
 		else {
 			colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control", false,  true, true));

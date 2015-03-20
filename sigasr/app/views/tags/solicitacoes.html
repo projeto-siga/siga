@@ -9,7 +9,7 @@
 	}
 	
 	.hide-sort-arrow.sorting_asc, .hide-sort-arrow.sorting_desc {
-	background: none !important;
+		background: none !important;
 	}
 	
 	td.details-control {
@@ -39,6 +39,7 @@
 	if (tabelaDinamica && tabelaDinamica.objetoTabela && tabelaDinamica.objetoTabela.podePriorizar) {
 		$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
 		$( "#sortable" ).disableSelection();
+		$( "#sortable" ).sortable({update: function( event, ui ) {recalcularPosicao()}});
 	}
 	
 	$(document).ready(function() {
@@ -61,7 +62,8 @@
 
 	function solicitacoesRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		$(nRow).addClass('PRIORIDADE-' + aData.prioridade);
-		$(nRow).attr('id', aData.idSolicitacao);		
+		$(nRow).attr('id', aData.idSolicitacao);
+		$(nRow).attr('data-json', JSON.stringify(aData));
 	}
 	
 </script>

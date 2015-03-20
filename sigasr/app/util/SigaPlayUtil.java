@@ -43,6 +43,16 @@ public class SigaPlayUtil {
 		return sb.toString();
 	}
 	
+	public static String botaoPriorizarSolicitacao() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPosicao(event)\" title=\"Alterar posição\">");
+		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_refresh_small_up_down.png\" style=\"margin-right: 5px;\"></img></a>");
+		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPrioridade(event)\" title=\"Alterar prioridade\">");
+		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_switch.png\" style=\"margin-right: 5px;\"></img></a>");
+		
+		return sb.toString();
+	}
+	
 	public static String tagA(String descricao) {
 		return new String("<a>" + descricao + "</a>");
 	}

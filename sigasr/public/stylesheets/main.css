@@ -155,6 +155,6 @@ td.padding-table {
 	padding: 7px 10px !important;
 }
 
-.solicitacao-prioridade {
+td.solicitacao-prioridade {
 	cursor:move;
 }

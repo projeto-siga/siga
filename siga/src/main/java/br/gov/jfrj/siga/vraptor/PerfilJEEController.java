@@ -25,9 +25,11 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -114,6 +116,29 @@ public class PerfilJEEController extends GrupoController {
 		assertAcesso("PERFILJEE:Gerenciar grupos de email");
 		super.aExcluir(idCpGrupo);
 		result.redirectTo(this).lista();
+	}
+	
+	@Get
+	@Post
+	@Path("/app/gi/perfilJEE/buscar")
+	public void busca(String sigla, String postback, String nome) throws Exception{
+		setNome(nome);
+		super.aBuscar(sigla, postback);
+		result.include("param", getRequest().getParameterMap());
+		result.include("tamanho", getTamanho());
+		result.include("itens", getItens());
+		result.include("nome", getNome());
+	}
+	
+	@Get("/app/gi/perfilJEE/selecionar")
+	public void selecionar(String sigla) {
+		String resultado =  super.aSelecionar(sigla);
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
 	}
 
 }

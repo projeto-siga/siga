@@ -120,6 +120,7 @@ function SigaTable (tableSelector) {
 	this.formatFunction = null;
 	
 	this.dataTableConfig = {
+			stateSave : true,
 			"language": {
 			"emptyTable":     "Não existem resultados",
 		    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -195,6 +196,11 @@ function SigaTable (tableSelector) {
 	
 	this.clear = function() {
 		this.dataTable.api().clear().draw();
+	}
+	
+	this.destruir = function() {
+		this.dataTable.fnDestroy()
+		this.table.find('tbody tr').remove();
 	}
 }
 

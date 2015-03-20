@@ -254,7 +254,7 @@
 	
 	function limparDadosListaModal() {
 		// limpa as permissões
-		permissoesTable.api().clear().draw();
+		$('#permissoes_table').find('tbody tr').remove();
 	}
 
 	function carregarPermissoes(id) {
@@ -273,6 +273,8 @@
     }
 
 	function populatePermissoesFromJSonList(permissoesJSon) {
+		var table = $('#permissoes_table');
+		
 		for (var i = 0; i < permissoesJSon.length; i++) {
 			var permissao = permissoesJSon[i],
 				row = [ permissao.orgaoUsuario ? permissao.orgaoUsuario.id : '',
@@ -297,12 +299,83 @@
 	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
 	          			listaService.conteudoColunaAcao(permissao)
 	          			];
-			var tr = permissoesTable.api().row.add(row).draw().node();
+  			
+			adicionarLinhaPermissao(table, row, permissao);
 			
 			if (!permissao.ativo) {
 				$('td', $(tr)).addClass('item-desativado');
 				$('td:last', $(tr)).html(' ');
 			}	
+		}
+		iniciarPermissaoDataTable();
+	}
+
+	function adicionarLinhaPermissao(table, row, permissao) {
+		var tr = $('<tr>');
+		
+		for(var j = 0; j < row.length; j++) {
+			tr.append('<td>' + row[j] + '</td>');
+		}
+		tr.data('json', permissao);
+		table.append(tr);
+	}
+	
+	function iniciarPermissaoDataTable() {
+		if(permissoesTable) {
+			permissoesTable.fnDestroy();
+		}
+		/* Table initialization */
+		if ( $.fn.dataTable.isDataTable( '#permissoes_table' ) ) {
+			permissoesTable = $('#permissoes_table').dataTable();
+		}
+		else {
+			permissoesTable = permissoesTable = $('#permissoes_table').dataTable({
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				"columnDefs": [{
+					"targets": [colunas.idOrgao, colunas.idLocal, colunas.idLotacao, colunas.nomeLotacao, colunas.idPessoa, 
+					            colunas.nomePessoa, colunas.idCargo, colunas.descrCargo, colunas.idFuncao, colunas.descrFuncao,
+					            colunas.jSonTipoPerm, colunas.idTipoPerm, colunas.tipoPerm],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [colunas.acoes],
+					"sortable" : false,
+					"searchable": false
+				}]
+			});
+
+			$('#permissoes_table tbody').on('click', 'tr', function () {
+				if (permissoesTable.api().row(this).data() != undefined) {
+		        	permissoesTable.$('tr.selected').removeClass('selected');
+		            $(this).addClass('selected');
+
+		            atualizarControleAcessoModal(permissoesTable.api().row(this).data());
+				    controleAcessoModalAbrir(true);
+				}
+			});
 		}
 	}
 

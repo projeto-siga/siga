@@ -198,9 +198,9 @@ public class GrupoDeEmailController extends GrupoController {
 	
 	@Get("app/gi/grupoDeEmail/selecionar")
 	public void selecionar(String sigla) throws Exception {
-		String fileRedirect = super.aSelecionar(sigla) == null ? "sigalibs/ajax_vazio.jsp" : "sigalibs/ajax_retorno.jsp" ;
+		String fileRedirect = "../../../sigalibs/" + super.aSelecionar(sigla) + ".jsp";
 
 		result.include("sel", this.getSel());
-		result.use(Results.page()).forwardTo("../../../"+ fileRedirect);
+		result.use(Results.page()).forwardTo(fileRedirect);
 	}
 }

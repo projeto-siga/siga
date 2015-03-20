@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 
@@ -28,38 +27,69 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">		
-		<form name="frm" action="editar_gravar.action">
-		<input type="hidden" name="postback" value="1" /> 
-		<ww:hidden name="id" /> 
-		<h1>Cadastro de Órgão Externo</h1>
-		<div class="gt-content-box gt-for-table">
-		<table class="gt-form-table" width="100%">
-			<tr class="header">
-				<td colspan="2">Dados do Orgão Externo</td>
-			</tr>
-			<tr>				
-				<td><ww:textfield  name="nmOrgao" id="nmOrgao" label="Nome" maxlength="80" size="80" /></td>
-			</tr>
-			<tr>		
-				<td><ww:textfield name="siglaOrgao" id="siglaOrgao" label="Sigla" maxlength="30" size="30" /></td>
-			</tr>
-			<tr>
-				<ww:select name="ativo" label="Ativo" headerKey="-1" list="#{'S':'Sim', 'N':'Não'}" /> 
-			</tr>
-			<tr>		
-				<td>Órgão Solicitante:</td>
-				<td><ww:select name="idOrgaoUsu" list="orgaosUsu"
-					listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple" /></td>
-			</tr>			
-			<tr class="button">
-				<td><input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> <input type="button"
-					value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" /></td>
-				<td></td>
-			</tr>
-		</table>
-		</div>
-<br />
-</div></div>
+		<form name="frm" action="${request.contextPath}/app/orgao/gravar" method="POST">
+			<input type="hidden" name="postback" value="1" /> 
+			<input type="hidden" name="id" value="${id}" /> 
+			<h1>Cadastro de Órgão Externo</h1>
+			<div class="gt-content-box gt-for-table">
+				<table class="gt-form-table" width="100%">
+					<tr class="header">
+						<td colspan="2">Dados do Orgão Externo</td>
+					</tr>
+					<tr><td></td></tr>
+					<tr>				
+						<td>
+							<label>Nome:</label>
+						</td>
+						<td>
+							<input type="text" id="nmOrgao" name="nmOrgao" value="${nmOrgao}" maxlength="80" size="80" />
+						</td>
+					</tr>
+					<tr><td></td></tr>
+					<tr>
+						<td>
+							<label>Sigla:</label>
+						</td>
+						<td>
+							<input type="text" name="siglaOrgao" id="siglaOrgao" value="${siglaOrgao}" maxlength="30" size="30" />
+						</td>	
+					</tr>
+					<tr>
+						<td>
+							<label>Ativo:</label>
+						</td>
+						<td>
+							<select name="ativo" value="${ativo}">
+								<option value="S">Sim</option>  
+								<option value="N">Não</option>
+							</select>
+						</td>
+					</tr>
+					<tr>		
+						<td>Órgão Solicitante:</td>
+						<td>
+							<select name="idOrgaoUsu" value="${idOrgaoUsu}">
+								<c:forEach items="${orgaosUsu}" var="item">
+									<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
+										${item.nmOrgaoUsu}
+									</option>  
+								</c:forEach>
+							</select>	
+						</td>
+					</tr>			
+					<tr class="button">
+						<td>
+							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
+						</td>
+					</tr>
+				</table>
+			</div>
+			<br />
+		</form>
+	</div>
+</div>
+
 </body>
 
 </siga:pagina>

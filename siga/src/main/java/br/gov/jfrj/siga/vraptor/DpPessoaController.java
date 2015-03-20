@@ -30,6 +30,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -41,6 +42,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
 
+@Resource
 public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPessoa, DpPessoaDaoFiltro> {
 	
 	private Long orgaoUsu;
@@ -56,13 +58,15 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		setItemPagina(10);
 	}
 
-	public void aBuscar() {
-		DpLotacao lotacaoTitular = getLotaTitular();
-		if ( param("postback") == null 
+	@Get({"/app/pessoa/buscar","/app/cosignatario/buscar"})
+	public void buscar(String sigla, String postback) throws Exception {
+		final DpLotacao lotacaoTitular = getLotaTitular();
+		if ( postback == null 
 				&& lotacaoTitular != null ) {
 			orgaoUsu = lotacaoTitular.getIdOrgaoUsuario();
 		}
-//		return super.aBuscar();
+		
+		super.aBuscar(sigla, postback);
 	}
 	
 	 public void aExibir() {

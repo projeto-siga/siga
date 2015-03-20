@@ -32,8 +32,10 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		return flt;
 	}
 	
-	public void aListar(){
-		
+	@Get("app/gi/orgao/listar")
+	public void lista() throws Exception {
+		setItens(CpDao.getInstance().consultarCpOrgaoOrdenadoPorNome());
+		result.include("itens", getItens());
 	}
 	
 	public void selecionarPorNome(){

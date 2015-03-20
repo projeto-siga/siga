@@ -29,11 +29,10 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpPerfilJEE;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.webwork.action.CpPerfilSelecao;
 
 @Resource
 public class PerfilJEEController extends GrupoController {
@@ -129,6 +128,17 @@ public class PerfilJEEController extends GrupoController {
 		result.include("tamanho", getTamanho());
 		result.include("itens", getItens());
 		result.include("nome", getNome());
+	}
+	
+	@Get("/app/gi/perfilJEE/selecionar")
+	public void selecionar(String sigla) {
+		String resultado =  super.aSelecionar(sigla);
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
 	}
 
 }

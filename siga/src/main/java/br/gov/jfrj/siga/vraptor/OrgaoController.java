@@ -42,7 +42,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		
 	}
 	
-	public void excluir(final Long id){
+	public void excluir(final Long id) throws Exception{
 		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
 		if (id != null) {
 			try {
@@ -56,7 +56,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 			}
 		} else
 			throw new AplicacaoException("ID não informada");
-//		this.result.redirectTo(this).aListar();
+		this.result.redirectTo(this).lista();
 	}
 	
 	@Get("/app/orgao/editar")
@@ -78,7 +78,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 							 final String nmOrgao,
 							 final String siglaOrgao, 
 							 final Long idOrgaoUsu, 
-							 final String ativo){
+							 final String ativo) throws Exception{
 		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
 		
 		if(nmOrgao == null)
@@ -112,7 +112,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
-//		this.result.redirectTo(this).aListar();
+		this.result.redirectTo(this).lista();
 	}
 	
 	public CpOrgao daoOrgao(long id) {

@@ -104,10 +104,10 @@
 #{modal nome:'acao', titulo:'Adicionar Ação'}
 	<script>
 	//Edson: esta funcao evita que o usuario de ok sem a busca por ajax ter terminado
-	function bloqueiaAcaoOk(){
+	function bloqueiaAcaoOk() {
 		$("#modalAcaoOk").attr("disabled", "disabled");
 	}
-	function bloqueiaAcaoOkSeVazio(){
+	function bloqueiaAcaoOkSeVazio() {
 		if ($("#acao").val() && $("#acao_sigla").val() && $("#acaoSpan").text())
 			$("#modalAcaoOk").removeAttr('disabled');
 		else 
@@ -165,7 +165,8 @@
 				},
 				"columnDefs": [{"targets": [0], "visible": false, "searchable": false},
 				               { "width": "5px", "targets": 3 }],
-				"iDisplayLength": 3
+				"iDisplayLength": 3,
+				"aLengthMenu": [3, 10, 25, 50, 100]
 		    } );
 		}
 
@@ -202,7 +203,8 @@
 				               { "width": "100px", targets: [2,3]},
 				               { "width": "320px", targets: [4]},
 				               { "width": "5px", targets: [5]}],
-				"iDisplayLength": 3
+				"iDisplayLength": 3,
+				"aLengthMenu": [3, 10, 25, 50, 100]
 			});
 		}
 		
@@ -312,6 +314,41 @@
 		return params;
 	}
 
+	function getItensArray() {
+		var itens = [];
+		
+		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
+			var rowValues = itemConfiguracaoTable.api().row(i).data();
+			if (rowValues) {
+	        	itens.push({
+	        		idItemConfiguracao : rowValues[0]
+	        	});
+			}
+		});
+
+		if(itens.length == 0) {
+			itens.push(null);
+		}
+		return itens;
+	}
+
+	function getAcoesArray() {
+		var acoes = [];
+		
+		acaoTable.api().rows().indexes().each(function (i) {
+			var rowValues = acaoTable.api().row(i).data();
+			if (rowValues) {
+				acoes.push({
+					idAcao : rowValues[0]
+				});
+			}
+		});
+		if(acoes.length == 0) {
+			acoes.push(null);
+		}
+		return acoes;
+	}
+	
 	function detalheLista(label, listaVO, tr) {
 		var tdTituloItens = $('<td colspan="2">' + label + '</td>'),
 		    tdDadosItens = $('<td colspan="5">'),

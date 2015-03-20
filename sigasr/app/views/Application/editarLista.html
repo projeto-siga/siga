@@ -1,6 +1,7 @@
 #{extends 'main.html' /} #{set title:'Edição de Lista' /}
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
+<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 
 <div class="gt-form gt-content-box">
 	<form id="formLista"> 
@@ -103,12 +104,53 @@
 		</div>
 		<div class="gt-table-buttons">
             <a href="javascript: controleAcessoModalAbrir(false)" class="gt-btn-small gt-btn-left">Incluir</a>
-		</div>		
+		</div>
+		
+		<div class="container">
+			<div class="title-table">
+				<h3 style="padding-top: 25px;">Configurações de inclusão automática</h3>
+			</div>
+		</div>
+		<div class="gt-content-box gt-for-table dataTables_div">
+	        <div class="gt-form-row dataTables_length">
+	            <label>
+	            	<input id="incluirConfiguracaoInclusaoAutomaticaInativas" type="checkbox" onchange="configuracaoInclusaoAutomaticaService.incluirInativas()" /><b>&nbspIncluir Inativas</b>
+	            </label>
+	        </div>
+			<table id="configuracao_inclusao_automatica_table" class="gt-table display">
+				<thead>
+					<tr>
+						<th style="color: #333" class="hide-sort-arrow">
+							<button class="bt-expandir" type="button">
+								<span id="iconeBotaoExpandirTodos">+</span>
+							</button>
+						</th>
+						<th>Solicitante</th>
+						<th>Orgão</th>
+						<th>Item</th>
+						<th>Ação</th>
+						<th>Lotação atendente</th>
+						<th>Prioridade</th>
+						<th>Prioridade na lista</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="gt-table-buttons">
+            <a href="javascript: configuracaoInclusaoAutomaticaService.cadastrar('Cadastro de configuração de inclusão automática')" class="gt-btn-small gt-btn-left">Incluir</a>
+		</div>	
+		
 		<div class="gt-form-row">
 			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="listaService.gravar()"/>
 			<a class="gt-btn-medium gt-btn-left" onclick="listaService.cancelarGravacao()">Cancelar</a>
 			<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="listaService.aplicar()"/>
 		</div>
+
 		<div class="gt-form-row gt-width-100">
 			<p class="gt-error" style="display:none;" id="erroAoSalvar">Não foi possível salvar o registro.</p>
 		</div>
@@ -217,9 +259,245 @@
 	</form>
 #{/modal}
 
+#{modal nome:'configuracao_inclusao_automatica', titulo:'Configuração para inclusão automática'}
+	<form id="formConfiguracaoInclusaoAutomatica">
+		<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+			<input id="idConfiguracao" type="hidden" name="idConfiguracao">
+			<input id="hisIdIni" type="hidden" name="hisIdIni">
+		
+			<div id="divSolicitante" class="gt-form-row gt-width-100">
+				<label>Solicitante</label> 
+				#{selecao tipo:'pessoa', nome:'dpPessoaParaInclusaoAutomatica',
+				/}
+			</div>
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Órgão</label> 
+				#{select name:'orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu', labelProperty:'acronimoOrgaoUsu', class:'select-siga', style:'width: 100%;'} 
+					#{option 0}#{/option} 
+				#{/select}
+			</div>
+		
+			<div class="gt-form-row gt-width-100">
+				<label>Lotação</label>
+				#{selecao tipo:'lotacao', nome:'lotacaoParaInclusaoAutomatica'/}
+			</div>
+			
+			<div class="gt-form-row gt-width-100">
+				<label>Prioridade</label> 
+				#{select name:'prioridade', items:models.SrPrioridade.values(), labelProperty:'descPrioridade', style:'width:235px;' } 
+					#{option ''}Nenhuma#{/option} 
+				#{/select}
+			</div>
+			
+			<div class="gt-form-row gt-width-100">
+				<label>Prioridade na lista</label>
+				#{select name:'prioridadeNaLista', items:models.SrPrioridade.values(), labelProperty:'descPrioridade', style:'width:235px;' } 
+					#{option ''}Nenhuma#{/option} 
+				#{/select}
+			</div>
+			
+			#{configuracaoItemAcao itemConfiguracaoSet:itemConfiguracaoSet, acoesSet:acoesSet}
+			#{/configuracaoItemAcao}
+			
+			<div class="gt-form-row">
+				<a href="javascript: configuracaoInclusaoAutomaticaService.gravar()" class="gt-btn-medium gt-btn-left">Gravar</a>
+				<a href="javascript: configuracaoInclusaoAutomaticaService.cancelarGravacao()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+			</div>
+		</div>
+	</form>
+#{/modal}
+
 <script language="javascript">
+
+	function ConfiguracaoInclusaoAutomaticaDecorator(configuracaoInclusaoAutomatica, service) {
+		/**
+		 * Configura o objeto da forma em o mesmo deve ser gravado.
+		 */
+		this.getObjetoParaGravar = function() {
+			var configuracao = Object.create(configuracaoInclusaoAutomatica);
+			configuracao.listaPrioridade = service.getIdLista();
+			configuracao.dpPessoa = configuracao.dpPessoaParaInclusaoAutomatica;
+			configuracao.lotacao = configuracao.lotacaoParaInclusaoAutomatica;
+			configuracao.itemConfiguracaoSet = getItensArray();
+			configuracao.acoesSet = getAcoesArray();
+	
+			delete configuracao.solicitante;
+			delete configuracao.lotacaoParaInclusaoAutomatica;
+			
+			return configuracao;
+		}
+		this.getColunaPessoa = function() {
+			var descricao = configuracaoInclusaoAutomatica.dpPessoa ? configuracaoInclusaoAutomatica.dpPessoa.descricao : ' ';
+			return nullSafe(descricao);
+		}
+		this.getColunaOrgao = function() {
+			var descricao = configuracaoInclusaoAutomatica.orgaoUsuario ? configuracaoInclusaoAutomatica.orgaoUsuario.sigla : ' ';
+			return nullSafe(descricao);
+		}
+		this.getColunaLotacao = function() {
+			var descricao = configuracaoInclusaoAutomatica.lotacao ? configuracaoInclusaoAutomatica.lotacao.sigla : ' ';
+			return nullSafe(descricao);
+		}
+		this.getColunaPrioridade = function() {
+			var descricao = configuracaoInclusaoAutomatica.descPrioridade ? configuracaoInclusaoAutomatica.descPrioridade : ' ';
+			return nullSafe(descricao);
+		}
+		this.getColunaPrioridadeNaLista = function() {
+			var descricao = configuracaoInclusaoAutomatica.descPrioridadeNaLista ? configuracaoInclusaoAutomatica.descPrioridadeNaLista : ' ';
+			return nullSafe(descricao);
+		}
+		this.getDescricaoItem = function() {
+			var descricao = null,
+				items = configuracaoInclusaoAutomatica.listaItemConfiguracaoVO;
+					
+			if(items && items.length > 0) {
+				var item = items[0];
+				descricao = item.siglaItemConfiguracao + " - " + item.tituloItemConfiguracao;
+				
+				if(items.length > 1)
+					descricao += " ...";
+			}
+			return nullSafe(descricao);
+		}
+		this.getDescricaoAcao = function() {
+			var descricao = " ",
+				acoes = configuracaoInclusaoAutomatica.listaAcaoVO;
+			
+			if(acoes && acoes.length > 0) {
+				var acao = acoes[0];
+				descricao = acao.sigla + " - " + acao.titulo;
+				
+				if(acoes.length > 1)
+					descricao += " ...";
+			}
+			return nullSafe(descricao);
+		}
+	}
+
+	var configuracaoInclusaoAutomaticaTable = new SigaTable('#configuracao_inclusao_automatica_table')
+		.configurar("iDisplayLength", 10)
+		.configurar("columnDefs", [{
+			"targets": [0, 8],
+			"searchable": false,
+			"sortable" : false
+		}])
+		.configurar("order", [[ 1, "asc" ]])
+		.criar();
+
+	var COLUNA_ACAO = 8,
+		optsConfiguracaoInclusao = {
+			urlGravar : '@{Application.configuracaoAutomaticaGravar()}',
+			urlDesativar : '@{Application.desativarConfiguracaoAutomaticaGravar()}',
+			urlReativar : '@{Application.reativarConfiguracaoAutomaticaGravar()}',
+			dialogCadastro : $('#configuracao_inclusao_automatica_dialog'),
+			tabelaRegistros : $('#configuracao_inclusao_automatica_table'),
+			dataTable : configuracaoInclusaoAutomaticaTable.dataTable,
+			mostrarDesativados : false,
+			colunas : COLUNA_ACAO,
+			objectName : 'configuracaoInclusaoAutomatica',
+			formCadastro : $('#formConfiguracaoInclusaoAutomatica')
+	};
+	
+	var configuracaoInclusaoAutomaticaService = BaseService.criar(optsConfiguracaoInclusao, function ConfiguracaoInclusaoAutomaticaService(optsConfiguracaoInclusao) {
+		BaseService.call(this, optsConfiguracaoInclusao);
+	});
+
+	configuracaoInclusaoAutomaticaService.cadastrar = function(title) {
+		// Se eh novo, entao salva
+		if(!$("#idLista").val() && listaService.aplicar() == false) {
+			return;
+		}
+		BaseService.prototype.cadastrar.call(this, title);
+		atualizaDadosTabelaItemAcao({});
+	}
+	
+	configuracaoInclusaoAutomaticaService.onGravar = function(obj, objSalvo) {
+		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
+		tr.find('td:first').addClass('details-control');
+		configuracaoInclusaoAutomaticaTable.table.mostrarDetalhes(DetalheConfiguracao.detalhes, configuracaoInclusaoAutomaticaTable.dataTable);
+		return tr;
+	}
+	
+	configuracaoInclusaoAutomaticaService.getId = function(configuracaoInclusaoAutomatica) {
+		return configuracaoInclusaoAutomatica.idConfiguracao;
+	}
+	configuracaoInclusaoAutomaticaService.getObjetoParaGravar = function() {
+		var configuracao = BaseService.prototype.getObjetoParaGravar.call(this);
+		return new ConfiguracaoInclusaoAutomaticaDecorator(configuracao, this).getObjetoParaGravar();
+	}
+	configuracaoInclusaoAutomaticaService.getIdLista = function() {
+		return $('[name=idLista]').val();
+	}
+	configuracaoInclusaoAutomaticaService.getRow = function(configuracaoInclusaoAutomatica) {
+		var configuracao = new ConfiguracaoInclusaoAutomaticaDecorator(configuracaoInclusaoAutomatica, this);
+		
+		return [
+				"+",
+				configuracao.getColunaPessoa(),  
+				configuracao.getColunaOrgao(), 
+				configuracao.getDescricaoItem(), 
+				configuracao.getDescricaoAcao(),
+				configuracao.getColunaLotacao(),
+				configuracao.getColunaPrioridade(),
+				configuracao.getColunaPrioridadeNaLista(),
+				'COLUNA_ACOES' ];
+	}
+	configuracaoInclusaoAutomaticaService.carregarParaLista = function(idLista) {
+		if(idLista) {
+			var mostrarDesativados = $("#incluirConfiguracaoInclusaoAutomaticaInativas").is(':checked'),
+				urlConsulta = '@{Application.configuracoesParaInclusaoAutomatica()}?idLista=' + idLista + '&mostrarDesativados=' + mostrarDesativados;
+	
+			optsConfiguracaoInclusao.mostrarDesativados = mostrarDesativados;
+			$.get(urlConsulta, function(configuracoes) {
+				configuracaoInclusaoAutomaticaService.adicionarLista(JSON.parse(configuracoes));
+			});
+		}
+	}
+	
+	configuracaoInclusaoAutomaticaService.adicionarLista = function(configuracoes) {
+		configuracaoInclusaoAutomaticaTable.clear();
+		
+		for(var i = 0; i < configuracoes.length; i++) {
+			var configuracao = configuracoes[i],
+				trNode = configuracaoInclusaoAutomaticaTable.adicionarLinha(this.getRow(configuracao)).node(),
+				tr = $(trNode),
+				indice = this.indiceAcoes(tr),
+				tdAcoes = tr.find('td:nth(' + indice + ')'),
+				detailControl = tr.find('td:nth(' + 0 + ')');
+			
+			detailControl.addClass('details-control');
+			tdAcoes.addClass('acoes');
+			tr.data('json', configuracao);
+			tr.data('json-id', configuracao.idConfiguracao);
+			tr.attr('data-json', configuracao);
+			tr.attr('data-json-id', configuracao.idConfiguracao);
+			
+			new DesativarReativar(configuracaoInclusaoAutomaticaService)
+				.ativo(configuracao.ativo)
+				.innerHTML(tdAcoes, configuracao.idConfiguracao);
+		}
+
+		configuracaoInclusaoAutomaticaTable.onRowClick(function(tr) {
+			configuracaoInclusaoAutomaticaService.onRowClick(tr.data('json'));
+		});
+		
+		configuracaoInclusaoAutomaticaTable.detalhes(DetalheConfiguracao.detalhes);
+	}
+	configuracaoInclusaoAutomaticaService.onRowClick = function(configuracao) {
+		atualizaDadosTabelaItemAcao(configuracao);
+		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configuração para inclusão automática');
+	}
+
+	configuracaoInclusaoAutomaticaService.incluirInativas = function() {
+		configuracaoInclusaoAutomaticaService.carregarParaLista($('[name=idLista]').val());
+	}
+	
+	function nullSafe(value) {
+		return value || " ";
+	}
+	
 	function getUrlDesativarReativar(desativados) {
-	    
 	    var url = '@{Application.listarPermissaoUsoLista()}',
 	        idLista = $("[name=idLista]").val();
 	

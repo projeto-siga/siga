@@ -64,6 +64,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import models.vo.ListaInclusaoAutomatica;
 import notifiers.Correio;
 
 import org.hibernate.annotations.Type;
@@ -1546,10 +1547,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				iniciarAtendimento(lotaCadastrante, cadastrante,
 						atendenteNaoDesignado);
 
-			for (SrLista lista : getListasParaInclusaoAutomatica(lotaCadastrante)) {
-				//TODO: Ajustar ao implementar item 11 da OSI_FS0018
-//				incluirEmLista(lista, cadastrante, lotaCadastrante);
-			}
+			incluirEmListasAutomaticas();
 
 			if (!isEditado()
 					&& formaAcompanhamento != SrFormaAcompanhamento.NUNCA
@@ -1557,6 +1555,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				Correio.notificarAbertura(this);
 		} else
 			atualizarMarcas();
+	}
+
+	private void incluirEmListasAutomaticas() throws Exception {
+		for (ListaInclusaoAutomatica dadosInclusao : getListasParaInclusaoAutomatica(lotaCadastrante)) {
+			incluirEmLista(dadosInclusao.getLista(), cadastrante, lotaCadastrante, dadosInclusao.getPrioridadeNaLista(), Boolean.FALSE);
+		}
 	}
 
 	public void excluir() throws Exception {
@@ -2009,28 +2013,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
-	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular)
-			throws Exception {
-		List<SrLista> listaFinal = new ArrayList<SrLista>();
-
-		/*
-		 * SrConfiguracao filtro = new SrConfiguracao();
-		 * filtro.setDpPessoa(solicitante); filtro.setComplexo(local);
-		 * filtro.itemConfiguracaoFiltro = itemConfiguracao; filtro.acaoFiltro =
-		 * acao; filtro.setCpTipoConfiguracao(JPA.em().find(
-		 * CpTipoConfiguracao.class,
-		 * CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
-		 * 
-		 * filtro.subTipoConfig =
-		 * SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE;
-		 * 
-		 * for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] {
-		 * SrConfiguracaoBL.ATENDENTE })) { for (SrLista lista :
-		 * conf.getListaConfiguracaoSet()) { SrLista listaAtual =
-		 * lista.getListaAtual(); if (!listaFinal.contains(listaAtual))
-		 * listaFinal.add(listaAtual); } }
-		 */
-		return new ArrayList<SrLista>(listaFinal);
+	public List<ListaInclusaoAutomatica> getListasParaInclusaoAutomatica(DpLotacao lotaTitular) throws Exception {
+		SrConfiguracao filtro = new SrConfiguracao();
+		filtro.setDpPessoa(solicitante);
+		filtro.setOrgaoUsuario(orgaoUsuario);
+		filtro.setLotacao(lotaTitular);
+		filtro.prioridade = prioridade;
+		filtro.itemConfiguracaoFiltro = itemConfiguracao;
+		filtro.acaoFiltro = acao;
+		filtro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+		
+		List<ListaInclusaoAutomatica> listaFinal = new ArrayList<ListaInclusaoAutomatica>();
+		for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] { SrConfiguracaoBL.ATENDENTE, SrConfiguracaoBL.LISTA_PRIORIDADE })) {
+			if (conf.listaPrioridade != null) {
+				SrLista listaAtual = conf.listaPrioridade.getListaAtual();
+				if (!listaFinal.contains(listaAtual))
+					listaFinal.add(new ListaInclusaoAutomatica(listaAtual, conf.prioridadeNaLista));
+			}
+		}
+		return listaFinal;
 	}
 
 	public List<SrLista> getListasDisponiveisParaInclusao(
@@ -2113,8 +2114,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return prioridadeSolicitacao.numPosicao;
 	}
 
-	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, SrPrioridade prioridade, boolean naoReposicionarAutomatico)
-			throws Exception {
+	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
 		if (lista == null)
 			throw new IllegalArgumentException("Lista não informada");
 
@@ -2125,10 +2125,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.cadastrante = pess;
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "InclusÃ£o na lista " + lista.nomeLista + " com a prioridade " + mov.prioridade;
+		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista + " com a prioridade " + mov.prioridade;
 		mov.lista = lista;
 		mov.solicitacao = this;
 		mov.salvar();
+		
 		lista.incluir(this, prioridade, naoReposicionarAutomatico);
 	}
 

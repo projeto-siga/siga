@@ -37,6 +37,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Entity
@@ -105,6 +106,10 @@ public class SrConfiguracao extends CpConfiguracao {
 	
 	@Enumerated
 	public SrPrioridade prioridade;
+	
+	@Column(name = "PRIORIDADE_LISTA")
+	@Enumerated
+	public SrPrioridade prioridadeNaLista;
 	
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "SR_LISTA_CONFIGURACAO", schema="SIGASR", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
@@ -226,8 +231,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public void salvarComoInclusaoAutomaticaLista(SrLista srLista) throws Exception {
-		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
 		adicionarListaConfiguracoes(srLista);
 		salvar();
 	}
@@ -599,7 +603,6 @@ public class SrConfiguracao extends CpConfiguracao {
 				listaVO.add(conf.toVO());
 			}
 		}
-		
 		return gson.toJson(listaVO);
 	}
 	
@@ -649,22 +652,27 @@ public class SrConfiguracao extends CpConfiguracao {
 		return super.getConfiguracaoAtual();
 	}
 	
-	public static SrConfiguracao buscarConfiguracaoInsercaoAutomaticaLista(SrLista lista) throws Exception {
-		SrLista listaAtual = lista.getListaAtual();
-		
-		for (CpConfiguracao cpConfiguracao : SrConfiguracaoBL.get().getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA)) {
-			SrConfiguracao srConfiguracao = (SrConfiguracao) cpConfiguracao;
-			// DB: Nao implementei utilizando "contains" na lista por que implementacao do super.equals esta comparando instancias e nao iria funcionar nesse caso
-			for (SrLista listaEncontrada : srConfiguracao.getListaConfiguracaoSet()) {
-				// DB1: Conversamos com o Edson e por enquanto sera apenas uma configuracao para cada lista.
-				if (srConfiguracao.getListaConfiguracaoSet() != null && listaEncontrada.getId().equals(listaAtual.getId())) {
-					return srConfiguracao;
-				}
-			}
-		}
-		return new SrConfiguracao();
-	}
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> buscaParaConfiguracaoInsercaoAutomaticaLista(SrLista lista, boolean mostrarDesativados) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		sb.append("select conf from SrConfiguracao as conf ");
+		sb.append("where conf.cpTipoConfiguracao.idTpConfiguracao = :tipoConfiguracao ");
+		sb.append("and conf.listaPrioridade.hisIdIni = :idIniLista ");
 
+		if (!mostrarDesativados)
+			sb.append(" and conf.hisDtFim is null");
+		else {
+			sb.append(" and conf.idConfiguracao in (");
+			sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
+		}
+		return em()
+				.createQuery(sb.toString())
+				.setParameter("tipoConfiguracao", CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA)
+				.setParameter("idIniLista", lista.getIdInicial())
+				.getResultList();
+	}
+	
 	public void adicionarListaConfiguracoes(SrLista srLista) {
 		if (this.listaConfiguracaoSet == null) {
 			this.listaConfiguracaoSet = new ArrayList<SrLista>();
@@ -698,5 +706,13 @@ public class SrConfiguracao extends CpConfiguracao {
 		
 		return lista;
 	}
-	
+
+	public static String buscaParaConfiguracaoInsercaoAutomaticaListaJSON(SrLista lista, boolean mostrarDesativados) throws Exception {
+		JsonArray jsonArray = new JsonArray();
+		
+		for (SrConfiguracao configuracao : SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaLista(lista, mostrarDesativados)) {
+			jsonArray.add(configuracao.toVO().toJsonObject());
+		}
+		return jsonArray.toString();
+	}
 }

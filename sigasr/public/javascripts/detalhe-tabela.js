@@ -273,3 +273,16 @@ DetalheConfiguracao.detalheDescricaoLista = function(label, descricao, tr) {
 	tr.append(tdTituloItem);
 	tr.append(tdDadosItem);
 }
+
+
+TableHelper = {};
+TableHelper.limpar = function(table) {
+	table.find('tbody tr').remove();
+}
+TableHelper.criarTd = function(row) {
+	var tr = $('<tr>');
+	for(var i = 0; i < row.length; i++) {
+		tr.append('<td>' + row[i] + '</td>');
+	}
+	return tr;
+}

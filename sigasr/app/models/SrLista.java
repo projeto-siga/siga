@@ -86,7 +86,7 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "lista", fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
 	@OrderBy("numPosicao")
 	protected Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet = new HashSet<SrPrioridadeSolicitacao>();
 

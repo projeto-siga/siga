@@ -1,11 +1,18 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
@@ -227,6 +234,9 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				
 				if(srConf.listaPrioridade.meuListaHistoricoSet != null)
 					srConf.listaPrioridade.meuListaHistoricoSet.size();
+				
+				if(srConf.listaPrioridade.meuPrioridadeSolicitacaoSet != null)
+					srConf.listaPrioridade.meuPrioridadeSolicitacaoSet.size();
 			}
 			
 			if (srConf.pesquisaSatisfacao != null)

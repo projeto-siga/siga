@@ -191,24 +191,46 @@
 			alert("Por favor, selecione um item de configuração antes de continuar, ou clique em Cancelar.");
 			return;
 		}
-		var row = [	$("#itemConfiguracao").val(),
-		           	$("#itemConfiguracao_sigla").val(),
-		           	$("#itemConfiguracao_descricao").val(),
-		           	$("#itemConfiguracao_descricao").val(),
-		           	"",
-		           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-		
-		this.itemConfiguracaoTable.api().row.add(row).draw();
-        			
-		// limpando campos do componente de busca
-		$("#itemConfiguracao").val('');
-		$("#itemConfiguracao_descricao").val('');
-		$("#itemConfiguracao_sigla").val('');
-		$("#itemConfiguracaoSpan").html('');
-		
-		configuracaoItemAcaoService.modalFechar('itemConfiguracao');
+		if(configuracaoItemAcaoService.podeAdicionarItem(idSelecionado)) {
+			var row = [	$("#itemConfiguracao").val(),
+			           	$("#itemConfiguracao_sigla").val(),
+			           	$("#itemConfiguracao_descricao").val(),
+			           	$("#itemConfiguracao_descricao").val(),
+			           	"",
+			           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+			
+			this.itemConfiguracaoTable.api().row.add(row).draw();
+	        			
+			// limpando campos do componente de busca
+			$("#itemConfiguracao").val('');
+			$("#itemConfiguracao_descricao").val('');
+			$("#itemConfiguracao_sigla").val('');
+			$("#itemConfiguracaoSpan").html('');
+			
+			configuracaoItemAcaoService.modalFechar('itemConfiguracao');
+		} 
+		else alert('O item selecionado já foi adicionado');
 	}
-
+	configuracaoItemAcaoService.podeAdicionarItem = function(idConfiguracao) {
+		var itensAdicionados = configuracaoItemAcaoService.getItensArray();
+		for(var i = 0; i < itensAdicionados.length; i++) {
+			var itemConfiguracao = itensAdicionados[i];
+			
+			if(itemConfiguracao != null && idConfiguracao == itemConfiguracao.idItemConfiguracao) 
+				return false;
+		}
+		return true;
+	}
+	configuracaoItemAcaoService.podeAdicionarAcao = function(idAcao) {
+		var acoesAdicionadas = configuracaoItemAcaoService.getAcoesArray();
+		for(var i = 0; i < acoesAdicionadas.length; i++) {
+			var acao = acoesAdicionadas[i];
+			
+			if(acao != null && idAcao == acao.idAcao) 
+				return false;
+		}
+		return true;
+	}
 	configuracaoItemAcaoService.configurarAcaoDataTable = function() {
 		console.log('configuracaoItemAcaoService.configurarAcaoDataTable');
 		this.acaoTable = $('#acao_table').dataTable( {
@@ -248,21 +270,23 @@
 			alert("Por favor, selecione uma ação antes de continuar, ou clique em Cancelar.");
 			return;
 		}
-		
-		var row = [	$("#acao").val(),
-        			$("#acao_sigla").val(),
-        			$("#acao_descricao").val(),
-        			"<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-		
-		this.acaoTable.api().row.add(row).draw();
-		
-		// limpando campos do componente de busca
-		$("#acao").val('');
-		$("#acao_descricao").val('');
-		$("#acao_sigla").val('');
-		$("#acaoSpan").html('');
-		
-		configuracaoItemAcaoService.modalFechar('acao');
+		if(configuracaoItemAcaoService.podeAdicionarAcao(idSelecionado)) {
+			var row = [	$("#acao").val(),
+	        			$("#acao_sigla").val(),
+	        			$("#acao_descricao").val(),
+	        			"<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+			
+			this.acaoTable.api().row.add(row).draw();
+			
+			// limpando campos do componente de busca
+			$("#acao").val('');
+			$("#acao_descricao").val('');
+			$("#acao_sigla").val('');
+			$("#acaoSpan").html('');
+			
+			configuracaoItemAcaoService.modalFechar('acao');
+		}
+		else alert('A ação selecionada já foi adicionada');
 	}
     
 	configuracaoItemAcaoService.modalAbrir = function(componentId) {

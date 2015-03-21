@@ -318,8 +318,8 @@
 			configuracao.listaPrioridade = service.getIdLista();
 			configuracao.dpPessoa = configuracao.dpPessoaParaInclusaoAutomatica;
 			configuracao.lotacao = configuracao.lotacaoParaInclusaoAutomatica;
-			configuracao.itemConfiguracaoSet = getItensArray();
-			configuracao.acoesSet = getAcoesArray();
+			configuracao.itemConfiguracaoSet = configuracaoItemAcaoService.getItensArray();
+			configuracao.acoesSet = configuracaoItemAcaoService.getAcoesArray();
 	
 			delete configuracao.solicitante;
 			delete configuracao.lotacaoParaInclusaoAutomatica;

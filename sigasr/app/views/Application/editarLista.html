@@ -407,7 +407,7 @@
 			return;
 		}
 		BaseService.prototype.cadastrar.call(this, title);
-		atualizaDadosTabelaItemAcao({});
+		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
 	}
 	configuracaoInclusaoAutomaticaService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
@@ -489,7 +489,7 @@
 		this.configuracaoInclusaoAutomaticaTable.detalhes(DetalheConfiguracao.detalhes);
 	}
 	configuracaoInclusaoAutomaticaService.onRowClick = function(configuracao) {
-		atualizaDadosTabelaItemAcao(configuracao);
+		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
 		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configuração para inclusão automática');
 	}
 	configuracaoInclusaoAutomaticaService.incluirInativas = function() {

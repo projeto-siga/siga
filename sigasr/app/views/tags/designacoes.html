@@ -13,7 +13,7 @@
 			<thead>
 				<tr>
 					<th style="color: #333">
-						<button class="bt-expandir">
+						<button class="bt-expandir" type="button">
 							<span id="iconeBotaoExpandirTodos">+</span>
 						</button>
 					</th>
@@ -122,7 +122,6 @@ altura:'200', largura:'450'}
 		 formCadastro : jQuery('#formDesignacao'),
 		 mostrarDesativados : mostrarDesativados,
 		 colunas : colunasDesignacao.acoes,
-// 		 dataTable : designacaoTable.dataTable
 	};	
 	
 	// Define a "classe" designacaoService
@@ -281,18 +280,10 @@ altura:'200', largura:'450'}
 	}
 	
 	designacaoService.adicionarLinha = function(table, design) {
-		var row = this.getRow(design),
-			tr = $('<tr>');
-		
-		for(var j = 0; j < row.length; j++) {
-			tr.append('<td>' + row[j] + '</td>');
-		}
+		var tr = TableHelper.criarTd(this.getRow(design));
 		var tdAcoes = tr.find('td:nth(' + this.indiceAcoes(tr) + ')');
 		tdAcoes.addClass('acoes');
 		tr.find('td:first').addClass('details-control');
-
-		table.append(tr);
-		
 		tr.data('json', design);
 		tr.data('json-id', design.idConfiguracao);
 		tr.attr('data-json', JSON.stringify(design));
@@ -302,16 +293,18 @@ altura:'200', largura:'450'}
 			var json = $(this).data('json');
 			designacaoService.editar(json, 'Alterar designacao');
 		});
-		
+
 		new DesativarReativar(this)
 			.ativo(design.ativo)
 			.innerHTML(tdAcoes, design.idConfiguracao);
 		
 		afterGravarDesignacao(tr, design, this);
+
+		table.append(tr);
 	}
 
 	designacaoService.getListasAsString = function () {
-		return getItemAcaoAsString(designacaoService.opts.objectName);
+		return configuracaoItemAcaoService.getItemAcaoAsString(designacaoService.opts.objectName);
     }
 
 	function afterGravarDesignacao(tr, designacao, service) {
@@ -349,8 +342,8 @@ altura:'200', largura:'450'}
 			trAcoes = $('<tr>'),
 			descricao = designacao.descrConfiguracao != undefined ? designacao.descrConfiguracao : '';
 		
-		detalheLista("<b>Itens de configuração:</b>", designacao.listaItemConfiguracaoVO, trItens);
-		detalheLista("<b>Ações:</b>", designacao.listaAcaoVO, trAcoes);
+		TableHelper.detalheLista("<b>Itens de configuração:</b>", designacao.listaItemConfiguracaoVO, trItens);
+		TableHelper.detalheLista("<b>Ações:</b>", designacao.listaAcaoVO, trAcoes);
 		detalheDescricaoLista("<b>Descrição:</b>", descricao, trDescricao);
 
 		if (designacao.ativo == false) {
@@ -388,12 +381,15 @@ altura:'200', largura:'450'}
 	}
 
 	function atualizarDesignacaoEdicao(designacaoJson) {
-		atualizaDadosTabelaItemAcao(designacaoJson);
+		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(designacaoJson);
 
 		#{if _modoExibicao == 'equipe'}
 			// Caso seja cadastro a partir da tela de equipe, atualiza os dados da Lotação atendente
 			var lota = JSON.parse($("#lotacaoUsuario").val());
-			
+
+			if(!designacaoJson) {
+				designacaoJson = {};
+			}
 			designacaoJson.atendente = lota.id,
 			designacaoJson.atendente_descricao = lota.descricao,
 			designacaoJson.atendenteSpan = lota.descricao,

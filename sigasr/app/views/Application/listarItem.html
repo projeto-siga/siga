@@ -249,6 +249,7 @@ tr.shown td.details-control {
 	itemConfiguracaoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
 		atualizarModalItem();
+		designacaoService.populateFromJSonList({});
 	}
 
 	itemConfiguracaoService.serializar = function(obj) {
@@ -384,9 +385,6 @@ tr.shown td.details-control {
 	function limparDadosItemModal() {
 		removerItensLista('gestoresUl');
 		removerItensLista('fatoresUl');
-		
-		// limpa as designações
-		designacaoService.populateFromJSonList({})
 	}
 
 	function removerItensLista(nomeLista) {

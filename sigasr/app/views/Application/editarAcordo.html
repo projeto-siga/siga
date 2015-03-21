@@ -346,8 +346,8 @@
 		if (itemArray && itemArray[colunasAssociacao.jSon]) {
 			var associacao = itemArray[colunasAssociacao.jSon];
 			
-			detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
-			detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
+			TableHelper.detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
+			TableHelper.detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
 
 			table.append(trItens);
 			table.append(trAcoes);
@@ -381,7 +381,7 @@
 		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 
-		atualizaDadosTabelaItemAcao();
+		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao();
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.
@@ -418,7 +418,7 @@
         $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 
         // atualiza os dados da lista de Itens e Ações
-        atualizaDadosTabelaItemAcao(itemArray[colunasAssociacao.jSon]);
+        configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(itemArray[colunasAssociacao.jSon]);
 	}
 
 	function transformStringToBoolean(value) {
@@ -493,7 +493,7 @@
         params += '&associacao.atendente=' + row[colunasAssociacao.idAtendente];
         params += '&associacao.idConfiguracao=' + row[colunasAssociacao.idAssociacao];
         params += '&associacao.hisIdIni=' + row[colunasAssociacao.hisIdIni];
-       	params += getItemAcaoAsString('associacao');
+       	params += configuracaoItemAcaoService.getItemAcaoAsString('associacao');
 
        	// atualiza o solicitante
 		params += getDadosSolicitante(row, i);

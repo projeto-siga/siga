@@ -234,8 +234,8 @@ DetalheConfiguracao.detalhes = function(d, configuracao, mostrarDescricao) {
 		trAcoes = $('<tr>'),
 		descricao = configuracao.descrConfiguracao != undefined ? configuracao.descrConfiguracao : '';
 	
-	detalheLista("<b>Itens de configuração:</b>", configuracao.listaItemConfiguracaoVO, trItens);
-	detalheLista("<b>Ações:</b>", configuracao.listaAcaoVO, trAcoes);
+	TableHelper.detalheLista("<b>Itens de configuração:</b>", configuracao.listaItemConfiguracaoVO, trItens);
+	TableHelper.detalheLista("<b>Ações:</b>", configuracao.listaAcaoVO, trAcoes);
 	DetalheConfiguracao.detalheDescricaoLista("<b>Descrição:</b>", descricao, trDescricao);
 
 	if (configuracao.ativo == false) {
@@ -285,4 +285,30 @@ TableHelper.criarTd = function(row) {
 		tr.append('<td>' + row[i] + '</td>');
 	}
 	return tr;
+}
+
+TableHelper.detalheLista = function(label, listaVO, tr) {
+	var tdTituloItens = $('<td colspan="2">' + label + '</td>'),
+	    tdDadosItens = $('<td colspan="5">'),
+	    table = $('<table>');
+
+    for(var i = 0; i < listaVO.length; i++) {
+	    var item = listaVO[i],
+	    	trItem = $('<tr>'),
+	    	tdCodigo = $('<td>'),
+	    	tdDescricao = $('<td>');
+	
+		tdCodigo.html(item.sigla);
+		tdDescricao.html(item.descricao);
+							  
+		trItem.append(tdCodigo);
+		trItem.append(tdDescricao);
+							  
+		table.append(trItem);
+	}
+	
+	tdDadosItens.append(table);
+	
+	tr.append(tdTituloItens);
+	tr.append(tdDadosItens);
 }

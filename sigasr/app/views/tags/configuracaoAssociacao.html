@@ -159,7 +159,7 @@
 		if (!podeCadastrarAssociacao())
             return;
 
-        atualizaDadosTabelaItemAcao();
+        configuracaoItemAcaoService.atualizaDadosTabelaItemAcao();
 		BaseService.prototype.cadastrar.call(this, title);	
 	}
 	
@@ -213,7 +213,7 @@
 		node.attr('data-json', JSON.stringify(assoc));
 		node.on('click', function() {
 			associacaoService.editar(assoc, 'Alterar Associação');
-			atualizaDadosTabelaItemAcao(assoc);
+			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(assoc);
 			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
 		});
 	}
@@ -226,7 +226,7 @@
 	}
 
 	associacaoService.getListasAsString = function () {
-		return getItemAcaoAsString(associacaoService.opts.objectName);
+		return configuracaoItemAcaoService.getItemAcaoAsString(associacaoService.opts.objectName);
     }
 
 	associacaoService.serializar = function(obj) {
@@ -354,8 +354,8 @@
 			trItens = $('<tr>'),
 			trAcoes = $('<tr>');
 
-		detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
-		detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
+		TableHelper.detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
+		TableHelper.detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
 			
 		table.append(trItens);
 		table.append(trAcoes);

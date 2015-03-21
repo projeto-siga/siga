@@ -159,7 +159,7 @@
 		if (!podeCadastrarAssociacao())
             return;
 
-        configuracaoItemAcaoService.atualizaDadosTabelaItemAcao();
+		configuracaoItemAcaoService.iniciarDataTables();
 		BaseService.prototype.cadastrar.call(this, title);	
 	}
 	

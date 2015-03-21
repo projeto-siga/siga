@@ -330,9 +330,10 @@
 		
 		if (isEdicao)
 			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangencia');
-		else
+		else {
+			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
 			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangencia');
-		
+		}
 		jQuery("#associacao_dialog").dialog('open');
 	};
 
@@ -380,8 +381,6 @@
 		jPrioridadeCbb.selectedIndex = 0;
 		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
-
-		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao();
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.

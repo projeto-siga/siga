@@ -150,39 +150,40 @@
 	 *  Item configuracao service
 	 **/
 	var configuracaoItemAcaoService = {};
-	configuracaoItemAcaoService.itemConfiguracaoTable = $('#itemConfiguracao_table').dataTable({
-		"language": {
-			"emptyTable":     "Não existem resultados",
-		    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-		    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-		    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-		    "infoPostFix":    "",
-		    "thousands":      ".",
-		    "lengthMenu":     "Mostrar _MENU_ registros",
-		    "loadingRecords": "Carregando...",
-		    "processing":     "Processando...",
-		    "search":         "Filtrar:",
-		    "zeroRecords":    "Nenhum registro encontrado",
-		    "paginate": {
-		        "first":      "Primeiro",
-		        "last":       "Último",
-		        "next":       "Próximo",
-		        "previous":   "Anterior"
-		    },
-		    "aria": {
-		        "sortAscending":  ": clique para ordenação crescente",
-		        "sortDescending": ": clique para ordenação decrescente"
-		    }
-		},
-		"columnDefs": [{ "targets": [0], "visible": false, "searchable": false},
-		               { "width": "80px", "targets": 1 },
-		               { "width": "100px", targets: [2,3]},
-		               { "width": "320px", targets: [4]},
-		               { "width": "5px", targets: [5]}],
-		"iDisplayLength": 3,
-		"aLengthMenu": [3, 10, 25, 50, 100]
-	});
-
+	configuracaoItemAcaoService.configurarItemConfiguracaoDataTable = function() {
+		this.itemConfiguracaoTable = $('#itemConfiguracao_table').dataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			},
+			"columnDefs": [{ "targets": [0], "visible": false, "searchable": false},
+			               { "width": "80px", "targets": 1 },
+			               { "width": "100px", targets: [2,3]},
+			               { "width": "320px", targets: [4]},
+			               { "width": "5px", targets: [5]}],
+			"iDisplayLength": 3,
+			"aLengthMenu": [3, 10, 25, 50, 100]
+		});
+	}
 	configuracaoItemAcaoService.inserirItemConfiguracao = function() {
 		var idSelecionado = $("#itemConfiguracao").val();
 		
@@ -197,7 +198,7 @@
 		           	"",
 		           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 		
-		configuracaoItemAcaoService.itemConfiguracaoTable.api().row.add(row).draw();
+		this.itemConfiguracaoTable.api().row.add(row).draw();
         			
 		// limpando campos do componente de busca
 		$("#itemConfiguracao").val('');
@@ -207,35 +208,39 @@
 		
 		configuracaoItemAcaoService.modalFechar('itemConfiguracao');
 	}
-	configuracaoItemAcaoService.acaoTable = $('#acao_table').dataTable( {
-		"language": {
-			"emptyTable":     "Não existem resultados",
-		    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-		    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-		    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-		    "infoPostFix":    "",
-		    "thousands":      ".",
-		    "lengthMenu":     "Mostrar _MENU_ registros",
-		    "loadingRecords": "Carregando...",
-		    "processing":     "Processando...",
-		    "search":         "Filtrar:",
-		    "zeroRecords":    "Nenhum registro encontrado",
-		    "paginate": {
-		        "first":      "Primeiro",
-		        "last":       "Último",
-		        "next":       "Próximo",
-		        "previous":   "Anterior"
-		    },
-		    "aria": {
-		        "sortAscending":  ": clique para ordenação crescente",
-		        "sortDescending": ": clique para ordenação decrescente"
-		    }
-		},
-		"columnDefs": [{"targets": [0], "visible": false, "searchable": false},
-		               { "width": "5px", "targets": 3 }],
-		"iDisplayLength": 3,
-		"aLengthMenu": [3, 10, 25, 50, 100]
-    } );
+
+	configuracaoItemAcaoService.configurarAcaoDataTable = function() {
+		console.log('configuracaoItemAcaoService.configurarAcaoDataTable');
+		this.acaoTable = $('#acao_table').dataTable( {
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			},
+			"columnDefs": [{"targets": [0], "visible": false, "searchable": false},
+			               { "width": "5px", "targets": 3 }],
+			"iDisplayLength": 3,
+			"aLengthMenu": [3, 10, 25, 50, 100]
+	    } );
+	}
 	configuracaoItemAcaoService.inserirAcao = function() {
 		var idSelecionado = $("#acao").val();
 		
@@ -340,9 +345,11 @@
 	}
 	
 	configuracaoItemAcaoService.atualizaDadosTabelaItemAcao = function(jSon) {
-		this.limparDadosTabelaItemAcao();
-
+		var tableItem = $('#itemConfiguracao_table'), tableAcao = $('#acao_table');
+		
 		if (jSon) {
+			this.limparDadosTabelaItemAcao();
+			
 			if (jSon.listaItemConfiguracaoVO) {
 				// cria a lista de Itens de Configuração, e adiciona na tela
 				for (i = 0; i < jSon.listaItemConfiguracaoVO.length; i++) {
@@ -353,9 +360,9 @@
 						           item.descrItemConfiguracao ? item.descrItemConfiguracao : '', 
 						           item.descricaoSimilaridade ? item.descricaoSimilaridade : '',
 						           "<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-					
-					// Adiciona na tabela de Itens de Configuração
-					this.itemConfiguracaoTable.api().row.add(rowItem).draw();
+
+					var tr = TableHelper.criarTd(rowItem);
+					tableItem.append(tr);
 				}
 			}
 			
@@ -367,17 +374,33 @@
 								   acao.sigla ? acao.sigla : '',
 						           acao.titulo ? acao.titulo : '',
 						           "<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-					
-					// Adiciona na tabela de Ações
-					this.acaoTable.api().row.add(rowAcao).draw();
+
+					var tr = TableHelper.criarTd(rowAcao);
+					tableAcao.append(tr);
 				}
 			}
 		}
+		this.configurarItemConfiguracaoDataTable();
+		this.configurarAcaoDataTable();
 	}
 
 	// Limpa os dados das tabelas.
 	configuracaoItemAcaoService.limparDadosTabelaItemAcao = function() {
-		this.itemConfiguracaoTable.api().clear().draw();
-		this.acaoTable.api().clear().draw();
+		if(this.itemConfiguracaoTable) {
+			this.itemConfiguracaoTable.fnDestroy();
+			this.itemConfiguracaoTable.find('tbody tr').remove();
+			this.itemConfiguracaoTable = null;
+		}
+		if(this.acaoTable) {
+			this.acaoTable.fnDestroy();
+			this.acaoTable.find('tbody tr').remove();
+			this.acaoTable = null;
+		}
+	}
+	
+	configuracaoItemAcaoService.iniciarDataTables = function() {
+		configuracaoItemAcaoService.limparDadosTabelaItemAcao();
+		configuracaoItemAcaoService.configurarAcaoDataTable();
+		configuracaoItemAcaoService.configurarItemConfiguracaoDataTable();
 	}
 </script>

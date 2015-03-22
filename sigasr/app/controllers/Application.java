@@ -997,12 +997,12 @@ public class Application extends SigaApplication {
         return SrConfiguracao.convertToJSon(associacoes);
     }       
 	
-	
-	public static Long gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
+	public static String gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarPermissaoUsoLista(permissao);
 		permissao.salvarComoPermissaoUsoLista();
-		return permissao.getId();
+		permissao.refresh();
+		return permissao.toVO().toJson();
 	}
 
 	public static void desativarPermissaoUsoLista(Long id) throws Exception {

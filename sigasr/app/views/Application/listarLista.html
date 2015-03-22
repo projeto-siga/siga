@@ -199,8 +199,8 @@
 	// Sobescreve o metodo cadastrar para limpara tela
 	listaService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title);
-		limparDadosListaModal();
-		configuracaoInclusaoAutomaticaTable.clear();
+		populatePermissoesFromJSonList({});
+		configuracaoInclusaoAutomaticaService.adicionarLista({});
 	}
 
 	listaService.getId = function(lista) {
@@ -260,8 +260,10 @@
 	}
 	
 	function limparDadosListaModal() {
-		// limpa as permissões
-		permissoesTable.api().clear().draw();
+		if(permissoesTable) {
+			permissoesTable.fnDestroy();
+		}
+		$('#permissoes_table').find('tbody tr').remove();
 	}
 
 	function carregarPermissoes(id) {
@@ -280,36 +282,108 @@
     }
 
 	function populatePermissoesFromJSonList(permissoesJSon) {
+		limparDadosListaModal();
+		
+		var table = $('#permissoes_table');
+		
 		for (var i = 0; i < permissoesJSon.length; i++) {
 			var permissao = permissoesJSon[i],
-				row = [ permissao.orgaoUsuario ? permissao.orgaoUsuario.id : '',
-						permissao.orgaoUsuario ? permissao.orgaoUsuario.sigla : '', 
-						permissao.complexo ? permissao.complexo.id : '',
-						permissao.complexo ? permissao.complexo.descricao : '', 
-						permissao.lotacao ? permissao.lotacao.id : '',
-						permissao.lotacao ? permissao.lotacao.descricao : '', 
-						permissao.lotacao ? permissao.lotacao.sigla : '', 
-						permissao.pessoa ? permissao.pessoa.id : '',
-						permissao.pessoa ? permissao.pessoa.descricao : '', 
-						permissao.pessoa ? permissao.pessoa.sigla : '', 
-						permissao.cargo ? permissao.cargo.id : '',
-						permissao.cargo ? permissao.cargo.descricao : '', 
-						permissao.cargo ? permissao.cargo.sigla : '',
-						permissao.funcaoConfianca ? permissao.funcaoConfianca.id : '',
-						permissao.funcaoConfianca ? permissao.funcaoConfianca.descricao : '', 
-						permissao.funcaoConfianca ? permissao.funcaoConfianca.sigla : '',  
-	          			permissao.listaTipoPermissaoListaVO,									//16
+				row = [ permissao.orgaoUsuario ? permissao.orgaoUsuario.id : ' ',
+						permissao.orgaoUsuario ? permissao.orgaoUsuario.sigla : ' ', 
+						permissao.complexo ? permissao.complexo.id : ' ',
+						permissao.complexo ? permissao.complexo.descricao : ' ', 
+						permissao.lotacao ? permissao.lotacao.id : ' ',
+						permissao.lotacao ? permissao.lotacao.descricao : ' ', 
+						permissao.lotacao ? permissao.lotacao.sigla : ' ', 
+						permissao.dpPessoa ? permissao.dpPessoa.id : ' ',
+						permissao.dpPessoa ? permissao.dpPessoa.descricao : ' ', 
+						permissao.dpPessoa ? permissao.dpPessoa.sigla : ' ', 
+						permissao.cargo ? permissao.cargo.id : ' ',
+						permissao.cargo ? permissao.cargo.descricao : ' ', 
+						permissao.cargo ? permissao.cargo.sigla : ' ',
+						permissao.funcaoConfianca ? permissao.funcaoConfianca.id : ' ',
+						permissao.funcaoConfianca ? permissao.funcaoConfianca.descricao : ' ', 
+						permissao.funcaoConfianca ? permissao.funcaoConfianca.sigla : ' ',  
+	          			JSON.stringify(permissao.listaTipoPermissaoListaVO),					//16
 	          			permissao.idConfiguracao,												//17    
-	          			'',																		//18
+	          			' ',																	//18
 	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
 	          			listaService.conteudoColunaAcao(permissao)
-	          			];
+          			];
+  			
+			adicionarLinhaPermissao(table, row, permissao);
+		}
+		iniciarPermissaoDataTable();
+	}
 
-			var tr = permissoesTable.api().row.add(row).draw().node();
-			if (!permissao.ativo) {
-				$('td', $(tr)).addClass('item-desativado');
-				$('td:last', $(tr)).html(' ');
-			}	
+	function adicionarLinhaPermissao(table, row, permissao) {
+		var tr = $('<tr>');
+		
+		for(var j = 0; j < row.length; j++) {
+			tr.append('<td>' + row[j] + '</td>');
+		}
+		tr.data('json', permissao);
+		table.append(tr);
+
+		if (!permissao.ativo) {
+			$('td', tr).addClass('item-desativado');
+			$('td:last', tr).html(' ');
+		}
+	}
+	
+	function iniciarPermissaoDataTable() {
+		/* Table initialization */
+		if ( $.fn.dataTable.isDataTable( '#permissoes_table' ) ) {
+			permissoesTable = $('#permissoes_table').dataTable();
+		}
+		else {
+			permissoesTable = permissoesTable = $('#permissoes_table').dataTable({
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				"columnDefs": [{
+					"targets": [colunas.idOrgao, colunas.idLocal, colunas.idLotacao, colunas.nomeLotacao, colunas.idPessoa, 
+					            colunas.nomePessoa, colunas.idCargo, colunas.descrCargo, colunas.idFuncao, colunas.descrFuncao,
+					            colunas.jSonTipoPerm, colunas.idTipoPerm, colunas.tipoPerm],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [colunas.acoes],
+					"sortable" : false,
+					"searchable": false
+				}]
+			});
+
+			$('#permissoes_table tbody').on('click', 'tr', function () {
+				if (permissoesTable.api().row(this).data() != undefined) {
+		        	permissoesTable.$('tr.selected').removeClass('selected');
+		            $(this).addClass('selected');
+		            
+		            atualizarControleAcessoModal(permissoesTable.api().row(this).data(), $(this));
+				    controleAcessoModalAbrir(true);
+				}
+			});
 		}
 	}
 

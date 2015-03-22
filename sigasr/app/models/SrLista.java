@@ -247,7 +247,7 @@ public class SrLista extends HistoricoSuporte {
 			}
 		}
 
-		return prioridades.get(prioridades.size() - 1).getNumPosicao();
+		return prioridades.get(prioridades.size() - 1).getNumPosicao() + 1;
 	}
 
 	public void priorizar(DpPessoa cadastrante, DpLotacao lotaCadastrante, List<AtualizacaoLista> listaPrioridadeSolicitacao) throws Exception {

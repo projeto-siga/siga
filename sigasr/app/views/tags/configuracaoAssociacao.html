@@ -131,20 +131,6 @@
 	   	         }
 	       });
 	    });
-		associacaoTable = new SigaTable('#associacao_table')
-			.configurar("columnDefs", [{
-						"targets": [colunas.idAssociacao, colunas.botaoExpandir, colunas.botaoExcluir],
-						"searchable": false,
-						"sortable" : false
-					},
-					{
-						"targets": [colunas.idAssociacao],
-						"visible": false
-					}])
-			.configurar("aaSorting",  [[colunas.itemConfiguracao, 'asc']])
-			.configurar("fnRowCallback", associacaoRowCallback)
-			.criar()
-			.detalhes(detalhesListaAssociacao),
 		table = null,
 		isEditingAssociacao = false,
 		associacaoService = null;
@@ -160,8 +146,7 @@
 		dialogCadastro : jQuery('#associacao_dialog'),
 		tabelaRegistros : jQuery('#associacao_table'),
 		objectName : 'associacao',
-		formCadastro : jQuery('#associacaoForm'),
-		dataTable : associacaoTable.dataTable
+		formCadastro : jQuery('#associacaoForm')
 	};
 
 	associacaoService = new AssociacaoService(associacaoServiceConfig);
@@ -176,8 +161,7 @@
 
 		// reset no componente de pessoaLotaFuncCargoSelecao
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
-		
-        atualizaDadosTabelaItemAcao();
+		configuracaoItemAcaoService.iniciarDataTables();
 		BaseService.prototype.cadastrar.call(this, title);	
 	}
 
@@ -225,9 +209,17 @@
 			});
 		}
 		item.associacoesVO.push(objSalvo);
+<<<<<<< HEAD
 		associacaoService.adicionarFuncionalidadesNaLinha(tr, objSalvo);
 		associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
 		tr.find('td:first-child').html("+");
+=======
+		associacaoService.adicionarFuncionalidadesNaLinha(this.row(objSalvo), objSalvo);
+		associacaoService.associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
+		associacaoService.associacaoTable.detalhes(detalhesListaAssociacao);
+		tr.find('td:first-child').html("+");
+		tr.find('td.acoes').html(associacaoService.conteudoColunaAcao(objSalvo));
+>>>>>>> 82f7922af8e86766e324a00069cc1908625acbde
 		return tr;
 	}
 	
@@ -238,11 +230,14 @@
 		node.attr('data-json', JSON.stringify(assoc));
 		node.on('click', function() {
 			associacaoService.editar(assoc, 'Alterar Associação');
-			atualizaDadosTabelaItemAcao(assoc);
+			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(assoc);
 			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
 		});
+<<<<<<< HEAD
 		
 		associacaoTable.table.mostrarDetalhes(detalhesListaAssociacao, associacaoTable.dataTable);
+=======
+>>>>>>> 82f7922af8e86766e324a00069cc1908625acbde
 	}
 	
 	associacaoService.getItemPaiPorId = function (id) {
@@ -253,7 +248,7 @@
 	}
 
 	associacaoService.getListasAsString = function () {
-		return getItemAcaoAsString(associacaoService.opts.objectName);
+		return configuracaoItemAcaoService.getItemAcaoAsString(associacaoService.opts.objectName);
     }
 
 	associacaoService.serializar = function(obj) {
@@ -276,18 +271,37 @@
 
 	associacaoService.conteudoColunaAcao = function(assoc) {
 		if(assoc.ativo) {
-			return '<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover associação">' +
+			return 		'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover associação">' +
 							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
-							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-						'</a>' +
-					'</td>';
+							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"/>' + 
+						'</a>';
 		}
 		return ' ';
 	}
 
+	associacaoService.configurarDataTable = function() {
+		this.associacaoTable = new SigaTable('#associacao_table')
+			.configurar("columnDefs", [{
+					"targets": [colunas.idAssociacao, colunas.botaoExpandir, colunas.botaoExcluir],
+					"searchable": false,
+					"sortable" : false
+				},
+				{
+					"targets": [colunas.idAssociacao],
+					"visible": false
+				}])
+			.configurar("aaSorting",  [[colunas.itemConfiguracao, 'asc']])
+			.configurar("fnRowCallback", associacaoRowCallback)
+			.criar()
+			.detalhes(detalhesListaAssociacao);
+
+		this.opts.dataTable = this.associacaoTable.dataTable;
+	}
+	
 	associacaoService.limparDadosAssociacoes = function() {
-		associacaoTable.dataTable.api().clear().draw();
+		if(this.associacaoTable) {
+			this.associacaoTable.destruir();
+		}
 	}
 	
 	associacaoService.atualizarListaAssociacoes = function(jSon, clickCheck) {
@@ -298,12 +312,13 @@
 	        document.getElementById('checkmostrarAssocDesativada').value = false;
         }
 
+		var table = associacaoServiceConfig.tabelaRegistros;
+
 		if (jSon && jSon.associacoesVO) {
 			// cria a lista de associacoes, e adiciona na tela
 			for (i = 0; i < jSon.associacoesVO.length; i++) {
-				var assoc = jSon.associacoesVO[i];
-			
-				rowAssoc = [
+				var assoc = jSon.associacoesVO[i],
+					rowAssoc = [
 							'+',
 							assoc.idConfiguracao,
 							assoc.orgaoUsuario ? assoc.orgaoUsuario.sigla : ' ',
@@ -312,8 +327,9 @@
 							formatDescricaoLonga(assoc.listaItemConfiguracaoVO),
 							formatDescricaoLonga(assoc.listaAcaoVO),
 							getAtributoObrigatorioString(assoc.atributoObrigatorio),
-							associacaoService.conteudoColunaAcao(assoc)
+							' '
 						];
+<<<<<<< HEAD
 
 				// Adiciona na tabela de Associações
 				var newRow = associacaoTable.dataTable
@@ -324,8 +340,24 @@
 
 				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
 				newRow.draw();
+=======
+				var tr = TableHelper.criarTd(rowAssoc),
+					indiceAcoes = this.indiceAcoes(tr),
+					tdAcoes = tr.find('td:nth(' + indiceAcoes + ')').addClass('acoes');
+
+				tr.data('json', assoc);
+				tr.data('json-id', assoc.idConfiguracao);
+				tr.attr('data-json', JSON.stringify(assoc));
+				tr.attr('data-json-id', assoc.idConfiguracao);
+				
+				tdAcoes.html(associacaoService.conteudoColunaAcao(assoc));
+				
+				table.append(tr);
+				associacaoService.adicionarFuncionalidadesNaLinha(tr, assoc);
+>>>>>>> 82f7922af8e86766e324a00069cc1908625acbde
 			}
 		}
+		associacaoService.configurarDataTable();
 	}
 
 	function associacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
@@ -341,7 +373,7 @@
 	}
 
 	
-	function ocultaAssociacoes(){
+	function ocultaAssociacoes() {
 		if ($("#objetivo").val() == 1){
 			$("#associacoes").show();
 		} else {
@@ -356,8 +388,8 @@
 			trItens = $('<tr>'),
 			trAcoes = $('<tr>');
 
-		detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
-		detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
+		TableHelper.detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
+		TableHelper.detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
 			
 		table.append(trItens);
 		table.append(trAcoes);
@@ -404,11 +436,11 @@
 		
 		var me = $(this),
 			tr = $(event.currentTarget).parent().parent()[0],
-			row = associacaoTable.dataTable.api().row(tr).data(),
+			row = associacaoService.associacaoTable.dataTable.api().row(tr).data(),
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunas.idAssociacao],
 			idItem = $("#hisIdIni").val(),
-			mostrarDesativa = $("#mostrarAssocDesativada").val();
-			
+			mostrarDesativa = $('#checkmostrarAssocDesativada').is(':checked');
+		
 		$.ajax({
 	         type: "POST",
 	         #{if _modoExibicao == 'atributo'}
@@ -426,7 +458,7 @@
 		        	 $('td:last', tr).html(' ');
 		        	 associacaoTable.atualizarDetalheTr($(tr));
 		         } else {
-		        	 associacaoTable.dataTable.api().row(tr).remove().draw();
+		        	 associacaoService.associacaoTable.dataTable.api().row(tr).remove().draw();
 		         }
 	         },
 	         error: function(response) {

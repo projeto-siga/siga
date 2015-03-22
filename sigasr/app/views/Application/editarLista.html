@@ -309,7 +309,6 @@
 #{/modal}
 
 <script language="javascript">
-
 	function ConfiguracaoInclusaoAutomaticaDecorator(configuracaoInclusaoAutomatica, service) {
 		/**
 		 * Configura o objeto da forma em o mesmo deve ser gravado.
@@ -319,8 +318,8 @@
 			configuracao.listaPrioridade = service.getIdLista();
 			configuracao.dpPessoa = configuracao.dpPessoaParaInclusaoAutomatica;
 			configuracao.lotacao = configuracao.lotacaoParaInclusaoAutomatica;
-			configuracao.itemConfiguracaoSet = getItensArray();
-			configuracao.acoesSet = getAcoesArray();
+			configuracao.itemConfiguracaoSet = configuracaoItemAcaoService.getItensArray();
+			configuracao.acoesSet = configuracaoItemAcaoService.getAcoesArray();
 	
 			delete configuracao.solicitante;
 			delete configuracao.lotacaoParaInclusaoAutomatica;
@@ -374,17 +373,6 @@
 			return nullSafe(descricao);
 		}
 	}
-
-	var configuracaoInclusaoAutomaticaTable = new SigaTable('#configuracao_inclusao_automatica_table')
-		.configurar("iDisplayLength", 10)
-		.configurar("columnDefs", [{
-			"targets": [0, 8],
-			"searchable": false,
-			"sortable" : false
-		}])
-		.configurar("order", [[ 1, "asc" ]])
-		.criar();
-
 	var COLUNA_ACAO = 8,
 		optsConfiguracaoInclusao = {
 			urlGravar : '@{Application.configuracaoAutomaticaGravar()}',
@@ -392,33 +380,41 @@
 			urlReativar : '@{Application.reativarConfiguracaoAutomaticaGravar()}',
 			dialogCadastro : $('#configuracao_inclusao_automatica_dialog'),
 			tabelaRegistros : $('#configuracao_inclusao_automatica_table'),
-			dataTable : configuracaoInclusaoAutomaticaTable.dataTable,
 			mostrarDesativados : false,
 			colunas : COLUNA_ACAO,
 			objectName : 'configuracaoInclusaoAutomatica',
 			formCadastro : $('#formConfiguracaoInclusaoAutomatica')
 	};
-	
 	var configuracaoInclusaoAutomaticaService = BaseService.criar(optsConfiguracaoInclusao, function ConfiguracaoInclusaoAutomaticaService(optsConfiguracaoInclusao) {
 		BaseService.call(this, optsConfiguracaoInclusao);
 	});
-
+	configuracaoInclusaoAutomaticaService.configurarDataTable = function() {
+		this.configuracaoInclusaoAutomaticaTable = new SigaTable('#configuracao_inclusao_automatica_table')
+			.configurar("iDisplayLength", 10)
+			.configurar("columnDefs", [{
+				"targets": [0, 8],
+				"searchable": false,
+				"sortable" : false
+			}])
+			.configurar("order", [[ 1, "asc" ]])
+			.criar();
+		
+		this.opts.dataTable = this.configuracaoInclusaoAutomaticaTable.dataTable;
+	}
 	configuracaoInclusaoAutomaticaService.cadastrar = function(title) {
 		// Se eh novo, entao salva
 		if(!$("#idLista").val() && listaService.aplicar() == false) {
 			return;
 		}
 		BaseService.prototype.cadastrar.call(this, title);
-		atualizaDadosTabelaItemAcao({});
+		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
 	}
-	
 	configuracaoInclusaoAutomaticaService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
 		tr.find('td:first').addClass('details-control');
-		configuracaoInclusaoAutomaticaTable.table.mostrarDetalhes(DetalheConfiguracao.detalhes, configuracaoInclusaoAutomaticaTable.dataTable);
+		this.configuracaoInclusaoAutomaticaTable.table.mostrarDetalhes(DetalheConfiguracao.detalhes, this.configuracaoInclusaoAutomaticaTable.dataTable);
 		return tr;
 	}
-	
 	configuracaoInclusaoAutomaticaService.getId = function(configuracaoInclusaoAutomatica) {
 		return configuracaoInclusaoAutomatica.idConfiguracao;
 	}
@@ -454,15 +450,24 @@
 			});
 		}
 	}
-	
 	configuracaoInclusaoAutomaticaService.adicionarLista = function(configuracoes) {
-		configuracaoInclusaoAutomaticaTable.clear();
+		var table = $('#configuracao_inclusao_automatica_table');
+
+		if(this.configuracaoInclusaoAutomaticaTable) {
+			this.configuracaoInclusaoAutomaticaTable.destruir();
+		}
 		
 		for(var i = 0; i < configuracoes.length; i++) {
-			var configuracao = configuracoes[i],
-				trNode = configuracaoInclusaoAutomaticaTable.adicionarLinha(this.getRow(configuracao)).node(),
-				tr = $(trNode),
-				indice = this.indiceAcoes(tr),
+			var configuracao = configuracoes[i];
+				tr = $('<tr>'), 
+				data = this.getRow(configuracao);
+				
+			for(var j = 0; j < data.length; j++) {
+				tr.append('<td>' + data[j] + '</td>');
+			}
+			table.append(tr);
+
+			var indice = this.indiceAcoes(tr),
 				tdAcoes = tr.find('td:nth(' + indice + ')'),
 				detailControl = tr.find('td:nth(' + 0 + ')');
 			
@@ -477,26 +482,22 @@
 				.ativo(configuracao.ativo)
 				.innerHTML(tdAcoes, configuracao.idConfiguracao);
 		}
-
-		configuracaoInclusaoAutomaticaTable.onRowClick(function(tr) {
+		this.configurarDataTable();
+		this.configuracaoInclusaoAutomaticaTable.onRowClick(function(tr) {
 			configuracaoInclusaoAutomaticaService.onRowClick(tr.data('json'));
 		});
-		
-		configuracaoInclusaoAutomaticaTable.detalhes(DetalheConfiguracao.detalhes);
+		this.configuracaoInclusaoAutomaticaTable.detalhes(DetalheConfiguracao.detalhes);
 	}
 	configuracaoInclusaoAutomaticaService.onRowClick = function(configuracao) {
-		atualizaDadosTabelaItemAcao(configuracao);
+		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
 		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configuração para inclusão automática');
 	}
-
 	configuracaoInclusaoAutomaticaService.incluirInativas = function() {
 		configuracaoInclusaoAutomaticaService.carregarParaLista($('[name=idLista]').val());
 	}
-	
 	function nullSafe(value) {
 		return value || " ";
 	}
-	
 	function getUrlDesativarReativar(desativados) {
 	    var url = '@{Application.listarPermissaoUsoLista()}',
 	        idLista = $("[name=idLista]").val();
@@ -538,8 +539,6 @@
 	colunas.acoes = 		20,
 
     jQuery("#checkmostrarAssocDesativada").click(function() {
-    	permissoesTable.api().clear().draw();
-        
         $.ajax({
                 type: "POST",
                 url: getUrlDesativarReativar(document.getElementById('checkmostrarAssocDesativada').checked),
@@ -564,61 +563,6 @@
             document.getElementById('checkmostrarAssocDesativada').checked = QueryString.mostrarDesativados == 'true';
             document.getElementById('checkmostrarAssocDesativada').value = QueryString.mostrarDesativados == 'true';
         }
-		
-		/* Table initialization */
-		if ( $.fn.dataTable.isDataTable( '#permissoes_table' ) ) {
-			permissoesTable = $('#permissoes_table').dataTable();
-		}
-		else {
-			permissoesTable = permissoesTable = $('#permissoes_table').dataTable({
-				"language": {
-					"emptyTable":     "Não existem resultados",
-				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-				    "infoPostFix":    "",
-				    "thousands":      ".",
-				    "lengthMenu":     "Mostrar _MENU_ registros",
-				    "loadingRecords": "Carregando...",
-				    "processing":     "Processando...",
-				    "search":         "Filtrar:",
-				    "zeroRecords":    "Nenhum registro encontrado",
-				    "paginate": {
-				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
-				        "previous":   "Anterior"
-				    },
-				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
-				    }
-				},
-				"columnDefs": [{
-					"targets": [colunas.idOrgao, colunas.idLocal, colunas.idLotacao, colunas.nomeLotacao, colunas.idPessoa, 
-					            colunas.nomePessoa, colunas.idCargo, colunas.descrCargo, colunas.idFuncao, colunas.descrFuncao,
-					            colunas.jSonTipoPerm, colunas.idTipoPerm, colunas.tipoPerm],
-					"visible": false,
-					"searchable": false
-				},
-				{
-					"targets": [colunas.acoes],
-					"sortable" : false,
-					"searchable": false
-				}]
-			});
-
-			$('#permissoes_table tbody').on('click', 'tr', function () {
-				if (permissoesTable.api().row(this).data() != undefined) {
-		        	permissoesTable.$('tr.selected').removeClass('selected');
-		            $(this).addClass('selected');
-
-		            atualizarControleAcessoModal(permissoesTable.api().row(this).data());
-				    controleAcessoModalAbrir(true);
-				}
-			});
-		}
-
 		validatorFormLista = $("#formLista").validate();
 		validatorPermissao = $("#formControleAcesso").validate({
 			rules: {
@@ -677,32 +621,46 @@
 		return 0;
 	};
 	
-	function atualizarControleAcessoModal(itemArray) {
+	function atualizarControleAcessoModal(itemArray, tr) {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
-		jComplexoCbb = document.getElementsByName("complexo")[0];
+			jComplexoCbb = document.getElementsByName("complexo")[0],
+			permissao = tr.data('json');
 
+		console.log(permissao);
 		limparDadosAcessoModal();
 
-		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
-		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
-		$("#lotacao").val(itemArray[colunas.idLotacao]);
-		$("#lotacao_descricao").val(itemArray[colunas.nomeLotacao]);
-		$("#lotacaoSpan").html(itemArray[colunas.nomeLotacao]);
-		$("#lotacao_sigla").val(itemArray[colunas.lotacao]);
-		$("#dpPessoa").val(itemArray[colunas.idPessoa]);
-		$("#dpPessoa_descricao").val(itemArray[colunas.nomePessoa]);
-		$("#dpPessoaSpan").html(itemArray[colunas.nomePessoa]);
-		$("#dpPessoa_sigla").val(itemArray[colunas.pessoa]);
-		$("#cargo").val(itemArray[colunas.idCargo]);
-		$("#cargo_descricao").val(itemArray[colunas.siglaCargo]);
-		$("#cargoSpan").html(itemArray[colunas.siglaCargo]);
-		$("#cargo_sigla").val(itemArray[colunas.descrCargo]);
-		$("#funcaoConfianca").val(itemArray[colunas.idfuncao]);
-		$("#funcaoConfianca_descricao").val(itemArray[colunas.siglaFuncao]);
-		$("#funcaoConfiancaSpan").html(itemArray[colunas.siglaFuncao]);
-		$("#funcaoConfianca_sigla").val(itemArray[colunas.descrFuncao]);
-		atualizarListasTipoPermissaoEdicao(itemArray);
-		$("#idConfiguracao").val(itemArray[colunas.idTipoPerm]);
+		if(permissao.orgaoUsuario)
+			jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, permissao.orgaoUsuario.id);
+		
+		if(permissao.complexo)
+			jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, permissao.complexo.id);
+
+		if(permissao.lotacao) {
+			$("#lotacao").val(permissao.lotacao.id);
+			$("#lotacao_descricao").val(permissao.lotacao.descricao);
+			$("#lotacaoSpan").html(permissao.lotacao.descricao);
+			$("#lotacao_sigla").val(permissao.lotacao.sigla);
+		}
+		if(permissao.dpPessoa) {
+			$("#dpPessoa").val(permissao.dpPessoa.id);
+			$("#dpPessoa_descricao").val(permissao.dpPessoa.descricao);
+			$("#dpPessoaSpan").html(permissao.dpPessoa.descricao);
+			$("#dpPessoa_sigla").val(permissao.dpPessoa.sigla);
+		}
+		if(permissao.cargo) {
+			$("#cargo").val(permissao.cargo.id);
+			$("#cargo_descricao").val(permissao.cargo.descricao);
+			$("#cargoSpan").html(permissao.cargo.descricao);
+			$("#cargo_sigla").val(permissao.cargo.sigla);
+		}
+		if(permissao.funcaoConfianca) { 
+			$("#funcaoConfianca").val(permissao.funcaoConfianca.id);
+			$("#funcaoConfianca_descricao").val(permissao.funcaoConfianca.descricao);
+			$("#funcaoConfiancaSpan").html(permissao.funcaoConfianca.descricao);
+			$("#funcaoConfianca_sigla").val(permissao.funcaoConfianca.sigla);
+		}
+		$("#idConfiguracao").val(permissao.idConfiguracao);
+		atualizarListasTipoPermissaoEdicao(permissao);
 	};
 	
 	function controleAcessoModalAbrir(isEdicao){
@@ -801,8 +759,9 @@
 			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
 			jComplexoCbb = document.getElementsByName("complexo")[0],
 			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex];
-			
-		var row = [ jOrgaoUsuario.value > 0 ? jOrgaoUsuario.value : '',
+
+		var row = [ 
+		   			jOrgaoUsuario.value > 0 ? jOrgaoUsuario.value : '',
 					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.text : '',
           			jComplexo.value > 0 ? jComplexo.value : '',
           			jComplexo.value > 0 ? jComplexo.text : '',
@@ -815,43 +774,26 @@
           			$("#cargo").val(),
           			$("#cargo_descricao").val(),
           			$("#cargo_sigla").val(),
-          			$("#funcaoConfianca").val(),
           			$("#funcaoConfianca_sigla").val(),
           			$("#funcaoConfianca_descricao").val(),
+          			$("#funcaoConfianca").val(),
           			atualizaTipoPermissaoJson(),			//16
           			$("#idConfiguracao").val(),				//17    
           			getListasPermissaoAsString(),			//18
           			getDescricaoTipoPermissao(),			//19
           			''										//20
           			];
-
+			
 		$.ajax({
 	         type: "POST",
 	         url: "@{Application.gravarPermissaoUsoLista()}",
 	         data: serializePermissao(row),
 	         dataType: "text",
 	         success: function(response) {
-		        row[colunas.idTipoPerm] = response;
-				var html = 
-					'<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
-						'<a class="once desassociarPermissao" title="Remover permissão">' + 
-							'<input class="idPermissao" type="hidden" value="' + response + '"/>' + 
-							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
-						'</a>' + 
-					'</td>';
-		        var tr = null;
-						         
-		        row[colunas.acoes] = html;
-		        
-	          	if (isEditingContr ) {
-	          		tr = permissoesTable.api().row('.selected').data(row);
-			    }
-			    else {
-			    	tr = permissoesTable.api().row.add(row).draw();
-			    }
-	          	$('td', $(tr.node())).removeClass('item-desativado');
-				controleAcessoModalFechar();
-				$('.desassociarPermissao').bind('click', desativarPermissaoUsoListaEdicao);
+		         var permissao = JSON.parse(response),
+		         	tr = atualizarTr(row, permissao);
+		         atualizarRegistro(tr, permissao);
+		         controleAcessoModalFechar();
 	         },
 	         error: function(response) {
 	        	$('#modal-permissao').hide(); 
@@ -862,29 +804,45 @@
 	         }
         });
 	};
+	function atualizarTr(row, permissao) {
+	  	var tr = null;
 
-	function atualizarListasTipoPermissaoEdicao(itemArray) {
-		
-		var tipoPermissaoJson;
+        row[colunas.idTipoPerm] = permissao.idConfiguracao;
+        row[colunas.acoes] = getColunaAtivarDesativar(permissao);
 
-		// transforma o valor String em objeto, caso necessário
-		// Edson: comentando, pois nao funciona no IE
-		try{
-			tipoPermissaoJson = JSON.parse(itemArray[colunas.jSonTipoPerm]);
-		} catch(e){
-			var vo = itemArray[colunas.jSonTipoPerm];
-			tipoPermissaoJson = vo.listaTipoPermissaoListaVO ? vo.listaTipoPermissaoListaVO : vo;
-		}
-		
-		if (tipoPermissaoJson) {
-			// cria os itens da lista de TipoPermissao, e adiciona na tela
-			for (i = 0; i < tipoPermissaoJson.length; i++) {
-				var lista = tipoPermissaoJson[i];
-				$("#ulPermissoes")[0].incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
+        if (isEditingContr) {
+	         var editedRow = permissoesTable.api().row('.selected');
+	         editedRow.data(row);
+	         tr = $(editedRow.node());
+        }
+        else {
+	         var newRow = permissoesTable.api().row.add(row).draw();
+	         tr = $(newRow.node());
+        }
+        $('.desassociarPermissao').bind('click', desativarPermissaoUsoListaEdicao);
+        tr.find('td').removeClass('item-desativado');
+        return tr;
+	}
+	function atualizarRegistro(tr, permissao) {
+		 $(tr).data('json', permissao);
+	}
+	function getColunaAtivarDesativar (permissao) {
+		return '<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
+					'<a class="once desassociarPermissao" title="Remover permissão">' + 
+						'<input class="idPermissao" type="hidden" value="' + permissao.idConfiguracao + '"/>' + 
+						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
+					'</a>' + 
+				'</td>';
+	}
+	function atualizarListasTipoPermissaoEdicao(permissao) {
+		if (permissao.listaTipoPermissaoListaVO) {
+			var ul = $("#ulPermissoes")[0];
+			for (i = 0; i < permissao.listaTipoPermissaoListaVO.length; i++) {
+				var lista = permissao.listaTipoPermissaoListaVO[i];
+				ul.incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
 			}
 		}
 	}
-
 	function getDescricaoTipoPermissaoByLista(listaTipoPermissaoListaVO) {
 		var descricao = '';
 
@@ -901,7 +859,6 @@
 		}
 		return descricao;
 	}
-
 	function getDescricaoTipoPermissao() {
 		var descricao = $('#ulPermissoes').find("li:first-child").find("span:eq(0)").html();
 		
@@ -936,7 +893,6 @@
     	var tipoPermissaoJson = {
    			"listaTipoPermissaoListaVO": listaTipoPermissaoListaVO
    		};
-   		
    		return tipoPermissaoJson;
    	}
 

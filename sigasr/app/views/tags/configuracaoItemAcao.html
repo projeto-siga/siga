@@ -31,7 +31,7 @@
 			</table>
 		</div>
 		<div class="gt-table-buttons">
-			<a href="javascript: modalAbrir('itemConfiguracao')" class="gt-btn-small gt-btn-left">Incluir</a>
+			<a href="javascript: configuracaoItemAcaoService.modalAbrir('itemConfiguracao')" class="gt-btn-small gt-btn-left">Incluir</a>
 		</div>
 	</div>
 	
@@ -63,7 +63,7 @@
 			</table>
 		</div>
 		<div class="gt-table-buttons">
-			<a href="javascript: modalAbrir('acao')" class="gt-btn-small gt-btn-left">Incluir</a>
+			<a href="javascript: configuracaoItemAcaoService.modalAbrir('acao')" class="gt-btn-small gt-btn-left">Incluir</a>
 		</div>
 	</div>
 </div>
@@ -92,8 +92,8 @@
 						<span style="display:none;color: red" id="designacao.itemConfiguracao">Item de Configuração não informado.</span>
 					</div>
 					<div class="gt-form-row">
-						<button id="modalItemOk" onclick="javascript: inserirItemConfiguracao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>
-						<a href="javascript: modalFechar('itemConfiguracao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
+						<button id="modalItemOk" onclick="javascript: configuracaoItemAcaoService.inserirItemConfiguracao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>
+						<a href="javascript: configuracaoItemAcaoService.modalFechar('itemConfiguracao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
 					</div>
 				</div>
 			</div>
@@ -124,8 +124,8 @@
 						<span style="display:none;color: red" id="designacao.acao">Ação não informada.</span>
 					</div>
 					<div class="gt-form-row">
-						<button id="modalAcaoOk" onclick="javascript: inserirAcao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>
-						<a href="javascript: modalFechar('acao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
+						<button id="modalAcaoOk" onclick="javascript: configuracaoItemAcaoService.inserirAcao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>
+						<a href="javascript: configuracaoItemAcaoService.modalFechar('acao')" class="gt-btn-medium gt-btn-left">Cancelar</a>
 					</div>
 				</div>
 			</div>
@@ -135,157 +135,176 @@
 
 <script>
 	jQuery( document ).ready(function($) {
-		if ( $.fn.dataTable.isDataTable( '#acao_table' ) ) {
-			acaoTable = $('#acao_table').dataTable();
-		}
-		else {
-			acaoTable = $('#acao_table').dataTable( {
-				"language": {
-					"emptyTable":     "Não existem resultados",
-				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-				    "infoPostFix":    "",
-				    "thousands":      ".",
-				    "lengthMenu":     "Mostrar _MENU_ registros",
-				    "loadingRecords": "Carregando...",
-				    "processing":     "Processando...",
-				    "search":         "Filtrar:",
-				    "zeroRecords":    "Nenhum registro encontrado",
-				    "paginate": {
-				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
-				        "previous":   "Anterior"
-				    },
-				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
-				    }
-				},
-				"columnDefs": [{"targets": [0], "visible": false, "searchable": false},
-				               { "width": "5px", "targets": 3 }],
-				"iDisplayLength": 3,
-				"aLengthMenu": [3, 10, 25, 50, 100]
-		    } );
-		}
-
-		if ( $.fn.dataTable.isDataTable( '#itemConfiguracao_table' ) ) {
-			itemConfiguracaoTable = $('#itemConfiguracao_table').dataTable();
-		}
-		else {
-			itemConfiguracaoTable = $('#itemConfiguracao_table').dataTable({
-				"language": {
-					"emptyTable":     "Não existem resultados",
-				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-				    "infoPostFix":    "",
-				    "thousands":      ".",
-				    "lengthMenu":     "Mostrar _MENU_ registros",
-				    "loadingRecords": "Carregando...",
-				    "processing":     "Processando...",
-				    "search":         "Filtrar:",
-				    "zeroRecords":    "Nenhum registro encontrado",
-				    "paginate": {
-				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
-				        "previous":   "Anterior"
-				    },
-				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
-				    }
-				},
-				"columnDefs": [{ "targets": [0], "visible": false, "searchable": false},
-				               { "width": "80px", "targets": 1 },
-				               { "width": "100px", targets: [2,3]},
-				               { "width": "320px", targets: [4]},
-				               { "width": "5px", targets: [5]}],
-				"iDisplayLength": 3,
-				"aLengthMenu": [3, 10, 25, 50, 100]
-			});
-		}
-		
 		// Delete Item Configuração
 		$('#itemConfiguracao_table tbody').on('click', 'a.itemConfiguracao_remove', function () {
-			itemConfiguracaoTable.api().row($(this).closest('tr')).remove().draw(false);
+			configuracaoItemAcaoService.itemConfiguracaoTable.api().row($(this).closest('tr')).remove().draw(false);
 		});
-		
 	 	// Delete Ação
 	    $('#acao_table tbody').on( 'click', 'a.acao_remove', function () {
-	    	acaoTable.api().row($(this).closest('tr')).remove().draw(false);
+	    	configuracaoItemAcaoService.acaoTable.api().row($(this).closest('tr')).remove().draw(false);
 	    } );
-
+	
 	});
-	
-	function modalAbrir(componentId) {
-		$("#" + componentId + "_dialog").dialog('open');
+
+	/**
+	 *  Item configuracao service
+	 **/
+	var configuracaoItemAcaoService = {};
+	configuracaoItemAcaoService.configurarItemConfiguracaoDataTable = function() {
+		this.itemConfiguracaoTable = $('#itemConfiguracao_table').dataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			},
+			"columnDefs": [{ "targets": [0], "visible": false, "searchable": false},
+			               { "width": "80px", "targets": 1 },
+			               { "width": "100px", targets: [2,3]},
+			               { "width": "320px", targets: [4]},
+			               { "width": "5px", targets: [5]}],
+			"iDisplayLength": 3,
+			"aLengthMenu": [3, 10, 25, 50, 100]
+		});
 	}
-	
-	function modalFechar(componentId) {
-		$("#" + componentId + "_dialog").dialog('close');
-	}
-	
-	function inserirItemConfiguracao() {
+	configuracaoItemAcaoService.inserirItemConfiguracao = function() {
 		var idSelecionado = $("#itemConfiguracao").val();
 		
 		if (idSelecionado == undefined || idSelecionado == '') {
 			alert("Por favor, selecione um item de configuração antes de continuar, ou clique em Cancelar.");
 			return;
 		}
-		
-		var row = [	$("#itemConfiguracao").val(),
-		           	$("#itemConfiguracao_sigla").val(),
-		           	$("#itemConfiguracao_descricao").val(),
-		           	$("#itemConfiguracao_descricao").val(),
-		           	"",
-		           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-		
-		itemConfiguracaoTable.api().row.add(row).draw();
-        			
-		// limpando campos do componente de busca
-		$("#itemConfiguracao").val('');
-		$("#itemConfiguracao_descricao").val('');
-		$("#itemConfiguracao_sigla").val('');
-		$("#itemConfiguracaoSpan").html('');
-		
-		modalFechar('itemConfiguracao');
+		if(configuracaoItemAcaoService.podeAdicionarItem(idSelecionado)) {
+			var row = [	$("#itemConfiguracao").val(),
+			           	$("#itemConfiguracao_sigla").val(),
+			           	$("#itemConfiguracao_descricao").val(),
+			           	$("#itemConfiguracao_descricao").val(),
+			           	"",
+			           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+			
+			this.itemConfiguracaoTable.api().row.add(row).draw();
+	        			
+			// limpando campos do componente de busca
+			$("#itemConfiguracao").val('');
+			$("#itemConfiguracao_descricao").val('');
+			$("#itemConfiguracao_sigla").val('');
+			$("#itemConfiguracaoSpan").html('');
+			
+			configuracaoItemAcaoService.modalFechar('itemConfiguracao');
+		} 
+		else alert('O item selecionado já foi adicionado');
 	}
-	
-	function inserirAcao() {
+	configuracaoItemAcaoService.podeAdicionarItem = function(idConfiguracao) {
+		var itensAdicionados = configuracaoItemAcaoService.getItensArray();
+		for(var i = 0; i < itensAdicionados.length; i++) {
+			var itemConfiguracao = itensAdicionados[i];
+			
+			if(itemConfiguracao != null && idConfiguracao == itemConfiguracao.idItemConfiguracao) 
+				return false;
+		}
+		return true;
+	}
+	configuracaoItemAcaoService.podeAdicionarAcao = function(idAcao) {
+		var acoesAdicionadas = configuracaoItemAcaoService.getAcoesArray();
+		for(var i = 0; i < acoesAdicionadas.length; i++) {
+			var acao = acoesAdicionadas[i];
+			
+			if(acao != null && idAcao == acao.idAcao) 
+				return false;
+		}
+		return true;
+	}
+	configuracaoItemAcaoService.configurarAcaoDataTable = function() {
+		console.log('configuracaoItemAcaoService.configurarAcaoDataTable');
+		this.acaoTable = $('#acao_table').dataTable( {
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			},
+			"columnDefs": [{"targets": [0], "visible": false, "searchable": false},
+			               { "width": "5px", "targets": 3 }],
+			"iDisplayLength": 3,
+			"aLengthMenu": [3, 10, 25, 50, 100]
+	    } );
+	}
+	configuracaoItemAcaoService.inserirAcao = function() {
 		var idSelecionado = $("#acao").val();
 		
 		if (idSelecionado == undefined || idSelecionado == '') {
 			alert("Por favor, selecione uma ação antes de continuar, ou clique em Cancelar.");
 			return;
 		}
-		
-		var row = [	$("#acao").val(),
-        			$("#acao_sigla").val(),
-        			$("#acao_descricao").val(),
-        			"<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-		
-		acaoTable.api().row.add(row).draw();
-		
-		// limpando campos do componente de busca
-		$("#acao").val('');
-		$("#acao_descricao").val('');
-		$("#acao_sigla").val('');
-		$("#acaoSpan").html('');
-		
-		modalFechar('acao');
+		if(configuracaoItemAcaoService.podeAdicionarAcao(idSelecionado)) {
+			var row = [	$("#acao").val(),
+	        			$("#acao_sigla").val(),
+	        			$("#acao_descricao").val(),
+	        			"<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
+			
+			this.acaoTable.api().row.add(row).draw();
+			
+			// limpando campos do componente de busca
+			$("#acao").val('');
+			$("#acao_descricao").val('');
+			$("#acao_sigla").val('');
+			$("#acaoSpan").html('');
+			
+			configuracaoItemAcaoService.modalFechar('acao');
+		}
+		else alert('A ação selecionada já foi adicionada');
 	}
-
-	function getItemAcaoAsString(objectName) {
+    
+	configuracaoItemAcaoService.modalAbrir = function(componentId) {
+		$("#" + componentId + "_dialog").dialog('open');
+	}
+	
+	configuracaoItemAcaoService.modalFechar = function(componentId) {
+		$("#" + componentId + "_dialog").dialog('close');
+	}
+	
+	configuracaoItemAcaoService.getItemAcaoAsString = function(objectName) {
 		var params = '',
 			hasItem = false,
 			hasAcao = false;
 		
 		// Percorre lista de Itens de Configuração
-		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = itemConfiguracaoTable.api().row(i).data();
+		this.itemConfiguracaoTable.api().rows().indexes().each(function (i) {
+			var rowValues = configuracaoItemAcaoService.itemConfiguracaoTable.api().row(i).data();
 			
 			// Atualiza a string serializada
 			if (rowValues) {
@@ -298,8 +317,8 @@
 			params += '&' + objectName + '.itemConfiguracaoSet=';
 		
 		// Percorre lista de Ações
-		acaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = acaoTable.api().row(i).data();
+		this.acaoTable.api().rows().indexes().each(function (i) {
+			var rowValues = configuracaoItemAcaoService.acaoTable.api().row(i).data();
 			
 			// Atualiza a string serializada
 			if (rowValues) {
@@ -314,11 +333,11 @@
 		return params;
 	}
 
-	function getItensArray() {
+	configuracaoItemAcaoService.getItensArray = function() {
 		var itens = [];
 		
-		itemConfiguracaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = itemConfiguracaoTable.api().row(i).data();
+		this.itemConfiguracaoTable.api().rows().indexes().each(function (i) {
+			var rowValues = configuracaoItemAcaoService.itemConfiguracaoTable.api().row(i).data();
 			if (rowValues) {
 	        	itens.push({
 	        		idItemConfiguracao : rowValues[0]
@@ -332,11 +351,11 @@
 		return itens;
 	}
 
-	function getAcoesArray() {
+	configuracaoItemAcaoService.getAcoesArray = function() {
 		var acoes = [];
 		
-		acaoTable.api().rows().indexes().each(function (i) {
-			var rowValues = acaoTable.api().row(i).data();
+		this.acaoTable.api().rows().indexes().each(function (i) {
+			var rowValues = configuracaoItemAcaoService.acaoTable.api().row(i).data();
 			if (rowValues) {
 				acoes.push({
 					idAcao : rowValues[0]
@@ -349,36 +368,12 @@
 		return acoes;
 	}
 	
-	function detalheLista(label, listaVO, tr) {
-		var tdTituloItens = $('<td colspan="2">' + label + '</td>'),
-		    tdDadosItens = $('<td colspan="5">'),
-		    table = $('<table>');
-
-	    for(var i = 0; i < listaVO.length; i++) {
-		    var item = listaVO[i],
-		    	trItem = $('<tr>'),
-		    	tdCodigo = $('<td>'),
-		    	tdDescricao = $('<td>');
+	configuracaoItemAcaoService.atualizaDadosTabelaItemAcao = function(jSon) {
+		var tableItem = $('#itemConfiguracao_table'), tableAcao = $('#acao_table');
 		
-			tdCodigo.html(item.sigla);
-			tdDescricao.html(item.descricao);
-								  
-			trItem.append(tdCodigo);
-			trItem.append(tdDescricao);
-								  
-			table.append(trItem);
-		}
-		
-		tdDadosItens.append(table);
-		
-		tr.append(tdTituloItens);
-		tr.append(tdDadosItens);
-	}
-
-	function atualizaDadosTabelaItemAcao(jSon) {
-		limparDadosTabelaItemAcao();
-
 		if (jSon) {
+			this.limparDadosTabelaItemAcao();
+			
 			if (jSon.listaItemConfiguracaoVO) {
 				// cria a lista de Itens de Configuração, e adiciona na tela
 				for (i = 0; i < jSon.listaItemConfiguracaoVO.length; i++) {
@@ -389,9 +384,9 @@
 						           item.descrItemConfiguracao ? item.descrItemConfiguracao : '', 
 						           item.descricaoSimilaridade ? item.descricaoSimilaridade : '',
 						           "<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-					
-					// Adiciona na tabela de Itens de Configuração
-					itemConfiguracaoTable.api().row.add(rowItem).draw();
+
+					var tr = TableHelper.criarTd(rowItem);
+					tableItem.append(tr);
 				}
 			}
 			
@@ -403,17 +398,33 @@
 								   acao.sigla ? acao.sigla : '',
 						           acao.titulo ? acao.titulo : '',
 						           "<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
-					
-					// Adiciona na tabela de Ações
-					acaoTable.api().row.add(rowAcao).draw();
+
+					var tr = TableHelper.criarTd(rowAcao);
+					tableAcao.append(tr);
 				}
 			}
 		}
+		this.configurarItemConfiguracaoDataTable();
+		this.configurarAcaoDataTable();
 	}
 
 	// Limpa os dados das tabelas.
-	function limparDadosTabelaItemAcao() {
-		itemConfiguracaoTable.api().clear().draw();
-		acaoTable.api().clear().draw();
+	configuracaoItemAcaoService.limparDadosTabelaItemAcao = function() {
+		if(this.itemConfiguracaoTable) {
+			this.itemConfiguracaoTable.fnDestroy();
+			this.itemConfiguracaoTable.find('tbody tr').remove();
+			this.itemConfiguracaoTable = null;
+		}
+		if(this.acaoTable) {
+			this.acaoTable.fnDestroy();
+			this.acaoTable.find('tbody tr').remove();
+			this.acaoTable = null;
+		}
+	}
+	
+	configuracaoItemAcaoService.iniciarDataTables = function() {
+		configuracaoItemAcaoService.limparDadosTabelaItemAcao();
+		configuracaoItemAcaoService.configurarAcaoDataTable();
+		configuracaoItemAcaoService.configurarItemConfiguracaoDataTable();
 	}
 </script>

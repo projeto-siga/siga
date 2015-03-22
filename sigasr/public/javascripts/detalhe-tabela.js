@@ -136,6 +136,7 @@ function SigaTable (tableSelector) {
 	this.formatFunction = null;
 	
 	this.dataTableConfig = {
+			stateSave : true,
 			"language": {
 			"emptyTable":     "Não existem resultados",
 		    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -216,6 +217,11 @@ function SigaTable (tableSelector) {
 	this.clear = function() {
 		this.dataTable.api().clear().draw();
 	}
+	
+	this.destruir = function() {
+		this.dataTable.fnDestroy()
+		this.table.find('tbody tr').remove();
+	}
 }
 
 jQuery.fn.mostrarDetalhes = function(formatFunction, dataTable) {
@@ -248,8 +254,8 @@ DetalheConfiguracao.detalhes = function(d, configuracao, mostrarDescricao) {
 		trAcoes = $('<tr>'),
 		descricao = configuracao.descrConfiguracao != undefined ? configuracao.descrConfiguracao : '';
 	
-	detalheLista("<b>Itens de configuração:</b>", configuracao.listaItemConfiguracaoVO, trItens);
-	detalheLista("<b>Ações:</b>", configuracao.listaAcaoVO, trAcoes);
+	TableHelper.detalheLista("<b>Itens de configuração:</b>", configuracao.listaItemConfiguracaoVO, trItens);
+	TableHelper.detalheLista("<b>Ações:</b>", configuracao.listaAcaoVO, trAcoes);
 	DetalheConfiguracao.detalheDescricaoLista("<b>Descrição:</b>", descricao, trDescricao);
 
 	if (configuracao.ativo == false) {
@@ -286,4 +292,43 @@ DetalheConfiguracao.detalheDescricaoLista = function(label, descricao, tr) {
 	
 	tr.append(tdTituloItem);
 	tr.append(tdDadosItem);
+}
+
+
+TableHelper = {};
+TableHelper.limpar = function(table) {
+	table.find('tbody tr').remove();
+}
+TableHelper.criarTd = function(row) {
+	var tr = $('<tr>');
+	for(var i = 0; i < row.length; i++) {
+		tr.append('<td>' + row[i] + '</td>');
+	}
+	return tr;
+}
+
+TableHelper.detalheLista = function(label, listaVO, tr) {
+	var tdTituloItens = $('<td colspan="2">' + label + '</td>'),
+	    tdDadosItens = $('<td colspan="5">'),
+	    table = $('<table>');
+
+    for(var i = 0; i < listaVO.length; i++) {
+	    var item = listaVO[i],
+	    	trItem = $('<tr>'),
+	    	tdCodigo = $('<td>'),
+	    	tdDescricao = $('<td>');
+	
+		tdCodigo.html(item.sigla);
+		tdDescricao.html(item.descricao);
+							  
+		trItem.append(tdCodigo);
+		trItem.append(tdDescricao);
+							  
+		table.append(trItem);
+	}
+	
+	tdDadosItens.append(table);
+	
+	tr.append(tdTituloItens);
+	tr.append(tdDadosItens);
 }

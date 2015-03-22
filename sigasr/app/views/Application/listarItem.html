@@ -250,6 +250,7 @@ tr.shown td.details-control {
 	itemConfiguracaoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
 		atualizarModalItem();
+		designacaoService.populateFromJSonList({});
 	}
 
 	itemConfiguracaoService.serializar = function(obj) {
@@ -292,7 +293,7 @@ tr.shown td.details-control {
         	dataType: "text",
         	success: function(lista) {
         		var listaJSon = JSON.parse(lista);
-        		designacaoService.populateFromJSonList(listaJSon, designacaoTable.dataTable);
+        		designacaoService.populateFromJSonList(listaJSon);
         	},
         	error: function(error) {
             	alert("Não foi possível carregar as Designações deste item.");
@@ -385,9 +386,6 @@ tr.shown td.details-control {
 	function limparDadosItemModal() {
 		removerItensLista('gestoresUl');
 		removerItensLista('fatoresUl');
-		
-		// limpa as designações
-		designacaoTable.dataTable.api().clear().draw();
 	}
 
 	function removerItensLista(nomeLista) {

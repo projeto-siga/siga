@@ -61,9 +61,12 @@
 	}
 
 	function solicitacoesRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-		$(nRow).addClass('PRIORIDADE-' + aData.prioridade);
+		if (aData && aData.prioridadeSolicitacaoVO)
+			$(nRow).addClass('PRIORIDADE-' + aData.prioridadeSolicitacaoVO.prioridade);
+		
 		$(nRow).attr('id', aData.idSolicitacao);
 		$(nRow).attr('data-json', JSON.stringify(aData));
+		$(nRow).attr('data-json-id', aData.idSolicitacao);
 	}
 	
 </script>

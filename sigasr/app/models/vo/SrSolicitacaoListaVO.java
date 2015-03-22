@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.SrLista;
+import models.SrPrioridadeSolicitacao;
 import models.SrSolicitacao;
 import util.JsonUtil;
 import util.SigaPlayUtil;
@@ -54,8 +55,20 @@ public class SrSolicitacaoListaVO {
 		solicitacoesVO.colunas = solicitacoesVO.gerarColunasSolicitacao(telaDeListas, solicitacoesVO.podeRemover, solicitacoesVO.podePriorizar);
 		solicitacoesVO.colunasDetalhamento = solicitacoesVO.gerarColunasDetalhamentoSolicitacao(telaDeListas);
 		
-		for (SrSolicitacao sol : solicitacoes)
-			solicitacoesVO.itens.add(new SrSolicitacaoVO(sol, lista, nome, isPopup, lotaTitular, cadastrante, solicitacoesVO.podeRemover, solicitacoesVO.podePriorizar));
+		for (SrSolicitacao sol : solicitacoes) {
+			
+			if (lista != null) {
+				SrPrioridadeSolicitacao prioridade = lista.getSrPrioridadeSolicitacao(sol);
+				
+				// só adiciona caso exista o vínculo entre a lista e a Solicitação
+				if (prioridade != null)
+					solicitacoesVO.itens.add(new SrSolicitacaoVO(sol, lista, prioridade, nome, isPopup, lotaTitular, 
+							cadastrante, solicitacoesVO.podeRemover, solicitacoesVO.podePriorizar));
+			}
+			else
+				solicitacoesVO.itens.add(new SrSolicitacaoVO(sol, nome, isPopup, lotaTitular, cadastrante));
+		}
+			
 		
 		return solicitacoesVO;
 	}

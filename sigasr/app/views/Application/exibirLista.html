@@ -140,7 +140,7 @@
 #{modal nome:'posicao', titulo:'Posição da Solicitação na Lista'}
 	<div class="gt-form gt-content-box" style="width: 280px; height: 100px;">
 		<form id="posicaoForm">
-			<input id="idPrioridadePosicao" type="hidden" name="idPrioridadeSolicitacao" />
+			<input id="idPrioridadePosicao" type="hidden" name="idSolicitacao" />
 			
 			<div id="numPosicao" class="gt-form-row gt-width-66">
 				<label>Mover Para</label> 
@@ -160,11 +160,11 @@
 #{modal nome:'prioridade', titulo:'Alterar Prioridade'}
 	<div class="gt-form gt-content-box">
 		<form id="prioridadeForm">
-			<input id="idPrioridadePrior" type="hidden" name="idPrioridadeSolicitacao" />
+			<input id="idPrioridadePrior" type="hidden" name="idSolicitacao" />
 			
 			<div id="prioridade" class="gt-form-row gt-width-66">
 				<label>Prioridade</label> 
-				<td>#{select 'prioridade', items:models.SrPrioridade.values(), 
+				<td>#{select name:'prioridade', id:'selectPrioridade', items:models.SrPrioridade.values(), 
 						labelProperty:'descPrioridade', value:prioridade, style:'width:250px;' } 
 						#{option 0}#{/option} #{/select}
 				</td>					
@@ -195,9 +195,11 @@
 	            return false;
 	        var prioridades=[];
 	    	$("#sortable > tr").each(function() {
-	    		var prioridadeString = $(this).attr('data-json'),
-	    			prioridade = JSON.parse(prioridadeString);
-    			prioridades.push(prioridade);
+	    		var solicitacaoString = $(this).attr('data-json'),
+	    			solicitacao = JSON.parse(solicitacaoString);
+
+    			if (solicitacao)
+    				prioridades.push(solicitacao.prioridadeSolicitacaoVO);
 	 	    });
 	
 	 	    if (prioridades.length > 0) {
@@ -262,17 +264,21 @@
 	listaService.alterarPosicao = function(event) {
 		var tr = $(event.target).parent().parent().parent(),
 			obj = JSON.parse(tr.attr('data-json'));
-		
-		$('#posicao_dialog').dialog('open');
-		new Formulario($('#posicaoForm')).populateFromJson(obj);
+
+		if (obj) {
+			$('#posicao_dialog').dialog('open');
+			new Formulario($('#posicaoForm')).populateFromJson(obj.prioridadeSolicitacaoVO);
+		}
 	}
 
 	listaService.alterarPrioridade = function(event) {
 		var tr = $(event.target).parent().parent().parent(),
 			obj = JSON.parse(tr.attr('data-json'));
-		
-		$('#prioridade_dialog').dialog('open');
-		new Formulario($('#prioridadeForm')).populateFromJson(obj);
+
+		if (obj) {
+			$('#prioridade_dialog').dialog('open');
+			new Formulario($('#prioridadeForm')).populateFromJson(obj.prioridadeSolicitacaoVO);
+		}
 	}
 	
 	function editarLista(event, jSon) {
@@ -350,11 +356,11 @@
 	function reposicionar() {
 		var novaPosicao = $('[name=numPosicao]').val(),
 			lista = $("#sortable > tr"),
-			idPrioridadeSolicitacao = $('#idPrioridadePosicao').val(),
-			tr = $('[data-json-id= '+ idPrioridadeSolicitacao + ']'),
+			idSolicitacao = $('#idPrioridadePosicao').val(),
+			tr = $('[data-json-id= '+ idSolicitacao + ']'),
 			size = lista.size(),
-			stringPrioridadeSolicitacao = $(tr).attr('data-json'),
-			prioridadeSolicitacao = JSON.parse(stringPrioridadeSolicitacao);
+			stringSolicitacao = $(tr).attr('data-json'),
+			solicitacao = JSON.parse(stringSolicitacao);
 
 		if (novaPosicao <= 0) {
 			tr.insertBefore($(lista[0]));
@@ -363,7 +369,7 @@
 			tr.insertAfter($(lista[size-1]));
 		}
 		else {
-			if (prioridadeSolicitacao.numPosicao < novaPosicao) {
+			if (solicitacao && solicitacao.prioridadeSolicitacaoVO && solicitacao.prioridadeSolicitacaoVO.numPosicao < novaPosicao) {
 				tr.insertBefore($(lista[novaPosicao]));
 			}
 			else tr.insertBefore($(lista[novaPosicao-1]));
@@ -386,11 +392,14 @@
 			var me = $(this),
 				objString = me.attr('data-json'),
 				obj = JSON.parse(objString),
-				numPosicaoAntiga = obj.numPosicao;
+				numPosicaoAntiga = -1;
 
-			posicao++;
+			if (obj && obj.prioridadeSolicitacaoVO) {
+				numPosicaoAntiga = obj.prioridadeSolicitacaoVO.numPosicao;
+				posicao++;
+				obj.prioridadeSolicitacaoVO.numPosicao = posicao;
+			}
 			
-			obj.numPosicao = posicao;
 			me.attr('data-json', JSON.stringify(obj));
 			me.find('td:first').find('a').html(posicao);
 		});		
@@ -398,23 +407,26 @@
 	}
 	
 	function gravarPrioridade() {
-		var novaPrioridade = $('[name=prioridade]').val(),
-			idPrioridadeSolicitacao = $('#idPrioridadePrior').val(),
-			tr = $('[data-json-id= '+ idPrioridadeSolicitacao + ']'),
+		var novaPrioridade = $('#selectPrioridade').val(),
+			idSolicitacao = $('#idPrioridadePrior').val(),
+			tr = $('[data-json-id= '+ idSolicitacao + ']'),
 			jsonString = $(tr).attr('data-json'),
 			objString = jsonString,
 			obj = JSON.parse(objString);
 
-		tr.removeClass('PRIORIDADE-' + obj.prioridade);
-		tr.addClass('PRIORIDADE-' + novaPrioridade);
-		obj.prioridade = novaPrioridade;
-		tr.attr('data-json', JSON.stringify(obj));
+		if (obj && obj.prioridadeSolicitacaoVO) {
+			tr.removeClass('PRIORIDADE-' + obj.prioridadeSolicitacaoVO.prioridade);
+			tr.addClass('PRIORIDADE-' + novaPrioridade);
+			obj.prioridadeSolicitacaoVO.prioridade = novaPrioridade;
+			tr.attr('data-json', JSON.stringify(obj));
+		}
 
-		if (!obj.naoReposicionarAutomatico) {
+		if (!obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico) {
 			reposicionarPorPrioridade(obj, tr);
 		}
+		
 		recalcularPosicao();
-		modalPrioridadeFechar()
+		modalPrioridadeFechar();
 	}
 
 	function modalPrioridadeFechar() {
@@ -430,9 +442,10 @@
 				objStringLista = me.attr('data-json'),
 				objLista = JSON.parse(objStringLista);
 			
-			if (obj.prioridade == objLista.prioridade) {
+			if (obj && obj.prioridadeSolicitacaoVO && obj.prioridadeSolicitacaoVO.prioridade == objLista.prioridadeSolicitacaoVO.prioridade) {
 				tr.insertAfter($(lista[posicao]));
 			}
+			
 			posicao++;
 		});
 	}

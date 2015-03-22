@@ -1,11 +1,10 @@
 package models.vo;
 
-import util.SigaPlayUtil;
 import models.SrItemConfiguracao;
 import models.SrLista;
-import models.SrPrioridade;
 import models.SrPrioridadeSolicitacao;
 import models.SrSolicitacao;
+import util.SigaPlayUtil;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -19,7 +18,7 @@ public class SrSolicitacaoVO {
 	public String codigoFormatado;
 	public String descricao;
 	public String teorFormatado;
-	public SrItemConfiguracaoVO itemConfiguracao;
+	
 	public String solicitanteFormatado;
 	public String dtUltimaMovimentacaoFormatada;
 	public String ultimaMovimentacaoformatada;
@@ -37,8 +36,9 @@ public class SrSolicitacaoVO {
 	public SelecionavelVO lotaAtendente;
 	public String ultimaMovimentacao;
 	public String marcadoresEmHtml;
-	public SrPrioridade prioridade;
-	public Long numPosicao;
+	
+	public SrItemConfiguracaoVO itemConfiguracao;
+	public SrPrioridadeSolicitacaoVO prioridadeSolicitacaoVO;
 	
 	public SrSolicitacaoVO(SrSolicitacao sol) {
 		this.idSolicitacao = sol.getId();
@@ -57,33 +57,38 @@ public class SrSolicitacaoVO {
 		this.solicitanteFormatado = getSolicitanteFormatado(this.nomeSolicitante, this.descricaoSolicitante, this.lotaSolicitante);
 		this.dtUltimaMovimentacaoFormatada = getDtUltimaMovimentacaoFormatado(this.dtUltimaMovimentacaoString);
 		this.ultimaMovimentacaoformatada = SigaPlayUtil.selecionado(this.ultimaMovimentacao, this.ultimaMovimentacao);
-		this.prioridadeFormatada = this.prioridade != null ? SigaPlayUtil.selecionado(this.prioridade.descPrioridade, this.prioridade.descPrioridade) : "";
+		
 		this.lotaAtendenteFormatada = getLotacaoFormatada(this.lotaAtendente);
 	}
 	
-	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, boolean podeRemover, boolean podePriorizar) throws Exception {
+	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, boolean podeRemover, boolean podePriorizar) throws Exception {
 		this(sol);
 		
-		if (lista != null) {
-			SrPrioridadeSolicitacao prioridade = lista.getSrPrioridadeSolicitacao(sol);
-			this.numPosicao = sol.getPrioridadeNaLista(lista);
-			this.prioridadeListaFormatada = SigaPlayUtil.tagA(String.valueOf(this.numPosicao));
-			this.prioridade = prioridade != null ? prioridade.getPrioridade() : null;
+		this.prioridadeSolicitacaoVO = prioridadeSolicitacao.toVO();
+		this.prioridadeListaFormatada = SigaPlayUtil.tagA(String.valueOf(prioridadeSolicitacao.numPosicao));
+		this.prioridadeFormatada = prioridadeSolicitacao.prioridade != null ? 
+				SigaPlayUtil.selecionado(prioridadeSolicitacao.prioridade.descPrioridade, prioridadeSolicitacao.prioridade.descPrioridade) : "";
 			
-			if (podeRemover)
-				this.botaoRemover = SigaPlayUtil.botaoRemoverSolicitacao(this.idSolicitacao, lista.idLista);
-			
-			if (podePriorizar)
-				this.botaoPriorizar = SigaPlayUtil.botaoPriorizarSolicitacao();
-			
-			if (podeRemover || podePriorizar)
-				this.botaoRemoverPriorizar = this.botaoRemover + this.botaoPriorizar;
-		}
+		if (podeRemover)
+			this.botaoRemover = SigaPlayUtil.botaoRemoverSolicitacao(this.idSolicitacao, lista.idLista);
+		
+		if (podePriorizar)
+			this.botaoPriorizar = SigaPlayUtil.botaoPriorizarSolicitacao();
+		
+		if (podeRemover || podePriorizar)
+			this.botaoRemoverPriorizar = this.botaoRemover + this.botaoPriorizar;
 	}
 	
-	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, String nome, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante, 
+	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, String nome, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante, 
 			boolean podeRemover, boolean podePriorizar) throws Exception {
-		this(sol, lista, podeRemover, podePriorizar);
+		this(sol, lista, prioridadeSolicitacao, podeRemover, podePriorizar);
+		this.codigoFormatado = getCodigoFormatado(sol.getId(), sol.getCodigo(), nome, isPopup);
+		this.marcadoresEmHtml = sol.getMarcadoresEmHtml(cadastrante, lotaTitular);
+		this.marcadoresEmHtmlDetalhes = getMarcadoresEmHTMLDetalhes(this.marcadoresEmHtml, this.dtUltimaMovimentacaoString);
+	} 
+	
+	public SrSolicitacaoVO(SrSolicitacao sol, String nome, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
+		this(sol);
 		this.codigoFormatado = getCodigoFormatado(sol.getId(), sol.getCodigo(), nome, isPopup);
 		this.marcadoresEmHtml = sol.getMarcadoresEmHtml(cadastrante, lotaTitular);
 		this.marcadoresEmHtmlDetalhes = getMarcadoresEmHTMLDetalhes(this.marcadoresEmHtml, this.dtUltimaMovimentacaoString);

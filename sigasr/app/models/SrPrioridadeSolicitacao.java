@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import models.vo.SrPrioridadeSolicitacaoVO;
+
 import org.hibernate.annotations.Type;
 
 import util.Util;
@@ -51,7 +53,12 @@ public class SrPrioridadeSolicitacao extends Objeto {
 	
 	@Column(name = "NAO_REPOSICIONAR_AUTOMATICO")
 	@Type(type = "yes_no")
-	public Boolean naoReposicionarAutomatico;	
+	public Boolean naoReposicionarAutomatico;
+	
+	public SrPrioridadeSolicitacao(SrLista lista, SrSolicitacao solicitacao) {
+		this.lista = lista;
+		this.solicitacao = solicitacao;
+	}
 
 	public SrPrioridadeSolicitacao(SrLista lista, SrSolicitacao solicitacao, SrPrioridade prioridade, boolean naoReposicionarAutomatico) {
 		this.lista = lista;
@@ -143,5 +150,9 @@ public class SrPrioridadeSolicitacao extends Objeto {
 		solicitacao.add("idSolicitacao", gson.toJsonTree(getSolicitacao().idSolicitacao));
 		solicitacao.add("hisIdIni", gson.toJsonTree(getSolicitacao().getIdInicial()));
 		return solicitacao;
+	}
+
+	public SrPrioridadeSolicitacaoVO toVO() {
+		return SrPrioridadeSolicitacaoVO.createFrom(this);
 	}
 }

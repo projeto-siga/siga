@@ -409,8 +409,10 @@ public class ExDocumentoVO extends ExVO {
 		
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados
-			if (mob.temAnexos())
-				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov", "assinar_anexos_geral", true);
+			if (mob.temAnexos()) {
+				vo.addAcao("script_key", "Assinar Anexos", "/app/expediente/mov", "anexar", true,
+						null, "assinandoAnexosGeral=true&sigla=" + getSigla(), null, null, null);
+			}
 			
 			vo.addAcao("link_add", "Criar Anexo", "/app/expediente/doc", "editar", Ex.getInstance().getComp()
 					.podeAnexarArquivoAlternativo(titular, lotaTitular, mob), null, "criandoAnexo=true&mobilPaiSel.sigla="
@@ -420,10 +422,10 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao("shield", "Redefinir Nível de Acesso", "/app/expediente/mov", "redefinir_nivel_acesso", Ex.getInstance().getComp()
 				.podeRedefinirNivelAcesso(titular, lotaTitular, mob));
 		
-		vo.addAcao("book_add", "Solicitar Publicação no Boletim", "/expediente/mov", "boletim_agendar", Ex.getInstance()
+		vo.addAcao("book_add", "Solicitar Publicação no Boletim", "/app/expediente/mov", "boletim_agendar", Ex.getInstance()
 				.getComp().podeBotaoAgendarPublicacaoBoletim(titular, lotaTitular, mob));
 		
-		vo.addAcao("book_link", "Registrar Publicação do BIE", "/expediente/mov", "boletim_publicar", Ex.getInstance().getComp()
+		vo.addAcao("book_link", "Registrar Publicação do BIE", "/app/expediente/mov", "boletim_publicar", Ex.getInstance().getComp()
 				.podeBotaoAgendarPublicacaoBoletim(titular, lotaTitular, mob), null, null, null, null, "once");
 		
 		vo.addAcao("error_go", "Refazer", "/app/expediente/doc",
@@ -444,19 +446,19 @@ public class ExDocumentoVO extends ExVO {
 				.podeExibirInformacoesCompletas(titular, lotaTitular, mob)
 				&& exibirAntigo, null, "&exibirCompleto=true", null, null, null);
 		
-		vo.addAcao("report_link", "Agendar Publicação no DJE", "/expediente/mov", "agendar_publicacao", Ex.getInstance()
+		vo.addAcao("report_link", "Agendar Publicação no DJE", "/app/expediente/mov", "agendar_publicacao", Ex.getInstance()
 				.getComp().podeAgendarPublicacao(titular, lotaTitular, mob));
 		
-		vo.addAcao("report_add", "Solicitar Publicação no DJE", "/expediente/mov", "pedir_publicacao", Ex.getInstance().getComp()
+		vo.addAcao("report_add", "Solicitar Publicação no DJE", "/app/expediente/mov", "pedirPublicacao", Ex.getInstance().getComp()
 				.podePedirPublicacao(titular, lotaTitular, mob));
 		
 		// <ww:param name="idFormaDoc">60</ww:param>
-		vo.addAcao("arrow_undo", "Desfazer Cancelamento", "/expediente/doc", "desfazerCancelamentoDocumento", Ex.getInstance()
+		vo.addAcao("arrow_undo", "Desfazer Cancelamento", "/app/expediente/doc", "desfazerCancelamentoDocumento", Ex.getInstance()
 				.getComp().podeDesfazerCancelamentoDocumento(titular, lotaTitular, mob),
 				"Esta operação anulará o cancelamento do documento e tornará o documento novamente editável. Prosseguir?", null,
 				null, null, "once");
 		
-		vo.addAcao("delete", "Cancelar Documento", "/expediente/doc", "tornarDocumentoSemEfeito", Ex.getInstance().getComp()
+		vo.addAcao("delete", "Cancelar Documento", "/app/expediente/doc", "tornarDocumentoSemEfeito", Ex.getInstance().getComp()
 				.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
 				"Esta operação tornará esse documento sem efeito. Prosseguir?", null, null, null, "once");
 	}

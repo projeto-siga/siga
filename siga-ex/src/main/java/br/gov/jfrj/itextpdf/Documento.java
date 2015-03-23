@@ -1308,7 +1308,7 @@ public class Documento {
 						//+ "http://"
 						//+ servernameport
 						+ contextpath
-						+ "/arquivo/exibir.action?arquivo="
+						+ "/app/arquivo/exibir?arquivo="
 						+ an.getArquivo().getReferenciaPDF()
 						+ "\" target=\"_blank\">");
 				sb.append(an.getNome());

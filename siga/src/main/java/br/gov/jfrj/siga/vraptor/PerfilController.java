@@ -18,6 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,8 +35,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Resource
 public class PerfilController extends GrupoController {
 
-	public PerfilController(HttpServletRequest request, Result result,
-			SigaObjects so, EntityManager em) {
+	public PerfilController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -60,8 +62,10 @@ public class PerfilController extends GrupoController {
 
 	@Get("/app/gi/perfil/editar")
 	public void edita(Long idCpGrupo) throws Exception {
+		
 		assertAcesso("PERFIL:Gerenciar grupos de email");
 		super.aEditar(idCpGrupo);
+		
 		// Tipo Grupo = Perfil
 		result.include("idCpTipoGrupo", getIdTipoGrupo());
 		result.include("cpTipoGrupo", getCpTipoGrupo());
@@ -76,25 +80,35 @@ public class PerfilController extends GrupoController {
 		result.include("lotacaoGestoraSel", getLotacaoGestoraSel());
 		result.include("confGestores", getConfGestores(idCpGrupo));
 		result.include("configuracoesGrupo", getConfiguracoesGrupo());
-		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",
-				getTiposConfiguracaoGrupoParaTipoDeGrupo());
+		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo", getTiposConfiguracaoGrupoParaTipoDeGrupo());
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
-		result.include("idConfiguracao", getIdConfiguracao());
-
 	}
 
+	@SuppressWarnings("unchecked")
 	@Post("/app/gi/perfil/gravar")
 	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
 			CpGrupoDeEmailSelecao grupoPaiSel,
-			Integer codigoTipoConfiguracaoNova, String conteudoConfiguracaoNova)
+			List<String> codigoTipoConfiguracaoSelecionado,
+			Integer codigoTipoConfiguracaoNova, 
+			String conteudoConfiguracaoNova,
+			List<String> idConfiguracao,
+			List<String> conteudoConfiguracaoSelecionada)
 			throws Exception {
 
 		assertAcesso("PERFIL:Gerenciar grupos de email");
 
-		super.aGravar(idCpGrupo, siglaGrupo, dscGrupo, grupoPaiSel,
-				codigoTipoConfiguracaoNova, conteudoConfiguracaoNova);
-
-		result.redirectTo(this).lista();
+		Long novoIdCpGrupo = super.aGravar(
+				idCpGrupo
+				, siglaGrupo
+				, dscGrupo
+				, grupoPaiSel
+				, codigoTipoConfiguracaoNova
+				, conteudoConfiguracaoNova
+				, idConfiguracao
+				, codigoTipoConfiguracaoSelecionado
+				, conteudoConfiguracaoSelecionada);
+		
+		result.redirectTo(MessageFormat.format("/app/gi/perfil/editar?idCpGrupo={0}", novoIdCpGrupo.toString()));
 	}
 
 	@Post("/app/gi/perfil/excluir")

@@ -984,7 +984,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeArquivarIntermediario(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		return podeBotaoArquivarIntermediario(titular, lotaTitular, mob)
 				&& (lotaTitular.equivale(mob
 						.getUltimaMovimentacaoNaoCancelada().getLotaResp()) || mob
@@ -1048,7 +1048,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeArquivarPermanente(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		return podeBotaoArquivarPermanente(titular, lotaTitular, mob)
 				&& (lotaTitular.equivale(mob
 						.getUltimaMovimentacaoNaoCancelada().getLotaResp()) || mob
@@ -2108,7 +2108,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeDesarquivarIntermediario(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		return podeBotaoDesarquivarIntermediario(titular, lotaTitular, mob)
 				&& (lotaTitular.equivale(mob
 						.getUltimaMovimentacaoNaoCancelada().getLotaResp()) || mob
@@ -3589,7 +3589,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeReceberEletronico(DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, final ExMobil mob) throws Exception {
+			DpLotacao lotaCadastrante, final ExMobil mob) {
 		if (!(mob.isVia() || mob.isVolume()))
 			return false;
 		ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();

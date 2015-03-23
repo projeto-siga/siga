@@ -2,13 +2,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Documento" popup="true" onLoad="javascript: TestarAssinaturaDigital();">
-
+	<script type="text/javascript" language="Javascript1.1">
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
+		}
+	</script>
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">
 			$("html").addClass("fisico");
@@ -24,10 +33,8 @@
 		}
 	</script>
 
-	<c:url var="url"
-		value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=false" />
-	<c:url var="url2"
-		value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=true">
+	<c:url var="url" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=false" />
+	<c:url var="url2" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar?id=${mov.idMov}&copia=true">
 	</c:url>
 	<c:choose>
 		<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
@@ -55,7 +62,7 @@ function visualizarImpressao(via) {
 	else
 		v = ''; 
 	frm.target='_blank'; 
-	frm.action='<c:url value="/arquivo/exibir.action?arquivo="/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
+	frm.action='<c:url value="/app/arquivo/exibir?arquivo="/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
 	frm.submit();
 	frm.target=t;
 	frm.action=a;
@@ -125,7 +132,7 @@ function visualizarImpressao(via) {
 															<b>Responsável:</b> ${mov.subscritor.descricao}
 														</td>
 														<c:if test="${exibemov == 'anexacao'}">
-															<c:url var='anexo' value='/arquivo/exibir.action?arquivo=${mov.nmPdf}' />
+															<c:url var='anexo' value='/app/arquivo/exibir?arquivo=${mov.nmPdf}' />
 															<td>
 																<b>Arquivo:</b> 
 																<a class="attached" href="${anexo}" target="_blank">
@@ -146,7 +153,7 @@ function visualizarImpressao(via) {
 														<c:if test="${exibemov == 'vinculo'}">
 															<td>
 																<b>Ver também:</b> 
-																<c:url var="url" value="${pageContext.request.contextPath}/expediente/doc/exibir">
+																<c:url var="url" value="${pageContext.request.contextPath}/app/expediente/doc/exibir">
 																	<c:choose>
 																		<c:when test="${exibemovvariante == 'vinculoOriginadoAqui'}">
 																			<c:param name="id">
@@ -181,7 +188,7 @@ function visualizarImpressao(via) {
 														<c:if test="${exibemov == 'anexacao'}">
 															<tr>
 																<td colspan=2>
-																	<c:url var="anexo" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" /> 
+																	<c:url var="anexo" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" /> 
 																	<iframe src="${anexo}" width="100%" height="600" align="center" style="margin-top: 10px;">
 																	</iframe>
 																</td>
@@ -286,64 +293,79 @@ function visualizarImpressao(via) {
 			<div style="padding-left: 10;">
 				<div id="dados-assinatura" style="visible: hidden">
 					<input type="hidden" name="pdfchk_${mov.idMov}" id="pdfchk_${mov.idMov}" value="${mov.referencia}" />
-					<input type="hidden" name="urlchk_${mov.idMov}" id="urlchk_${mov.idMov}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
+					<input type="hidden" name="urlchk_${mov.idMov}" id="urlchk_${mov.idMov}" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
 
-					<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
-					<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
+					<c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
+					<c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
+					<c:set var="nextURL" value="${request.contextPath}/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
 					
 					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
+					<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 					<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 					<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
 					<c:set var="urlBase" value="${request.scheme}://${request.serverName}:${request.serverPort}" />
 					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
-					<c:if test="${mov.exTipoMovimentacao.idTpMov == 2}">
-						<c:set var="botao" value="ambos" />
+					
+					<c:if test="${not autenticando}">
+						<c:choose>
+							<c:when test="${mov.exTipoMovimentacao.idTpMov == 2}">
+								<c:set var="botao" value="ambos" />
+							</c:when>
+							<c:otherwise>
+								<c:set var="botao" value="" />
+							</c:otherwise>
+						</c:choose>
 					</c:if>
-					<c:if test="${mov.exTipoMovimentacao.idTpMov != 2}">
-						<c:set var="botao" value="" />
+					<c:if test="${autenticando}">
+						<c:set var="botao" value="autenticando" />
 					</c:if>
+						
 					<c:set var="lote" value="false" />
 				</div>		
 				<p>
 					<b>Link para assinatura externa: </b>
 					${enderecoAutenticacao} (informar o código ${mov.siglaAssinaturaExterna})
 				</p>
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="/WEB-INF/page/exMovimentacao/inc_assina_js.jsp" />
+				<%-- <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}"> --%>
+					<c:import url="/javascript/inc_assina_js.jsp" />
 					<div id="capicom-div">
-						<c:choose>
-							<c:when
-								test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-									Assinar Despacho
-								</a> 
-							</c:when>
-							<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-									Assinar Transferir
-								</a> 
-							</c:when>
-							<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-									Assinar Desentranhamento
-								</a> 
-							</c:when>
-							<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-									Assinar Encerramento
-								</a> 
-							</c:when>
-							<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
-								<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">
-									Conferir Cópia
-								</a> 
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-									Assinar Anexo
-								</a> 
-							</c:when>
-						</c:choose>
+						<c:if test="${not autenticando}">
+							<c:choose>
+								<c:when
+									test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
+										Assinar Despacho
+									</a> 
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
+										Assinar Transferir
+									</a> 
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
+										Assinar Desentranhamento
+									</a> 
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
+										Assinar Encerramento
+									</a> 
+								</c:when>
+								<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
+									<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">
+										Conferir Cópia
+									</a> 
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
+										Assinar Anexo
+									</a> 
+								</c:when>
+							</c:choose>
+						</c:if>
+						<c:if test="${autenticando}">
+							<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar Documento</a>
+						</c:if>
 					</div>
 					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
 					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
@@ -356,7 +378,7 @@ function visualizarImpressao(via) {
 						 document.getElementById("ie-missing").style.display = "block";
 					}
 				 </script>
-				</c:if>
+				<%-- </c:if> --%>
 
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 	    			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
@@ -364,4 +386,60 @@ function visualizarImpressao(via) {
 			</div>
 		</div>
 	</div>
+	<c:if test="${not autenticando}">
+		<c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+		<c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" />
+		
+		<c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
+			<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
+	        		
+			<div id="dialog-form" title="Assinar com Senha">
+	 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" >
+	 				<input type="hidden" id="id" name="id" value="${mov.idMov}" />
+	 				<input type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
+	    			<fieldset>
+	    			  <label>Matrícula</label> <br/>
+	    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+	    			  <label>Senha</label> <br/>
+	    			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>
+	    			</fieldset>
+	  			</form>
+			</div>
+	
+			 <script> 
+			    dialog = $("#dialog-form").dialog({
+			      autoOpen: false,
+			      height: 210,
+			      width: 350,
+			      modal: true,
+			      buttons: {
+			    	  <c:if test="${podeAssinarMovimentacaoComSenha}">
+			          	"Assinar": assinarGravar,
+			          </c:if>	
+			    	  <c:if test="${podeConferirCopiaMovimentacaoComSenha}">
+				          "Autenticar": conferirCopiaGravar,
+			          </c:if>	
+			          "Cancelar": function() {
+			            dialog.dialog( "close" );
+			          }
+			      },
+			      close: function() {
+			        
+			      }
+			    });
+			
+			    function assinarComSenha() {
+			       dialog.dialog( "open" );
+			    }
+	
+			    function assinarGravar() {
+			    	AssinarDocumentosSenha('false', this);
+				}
+	
+			    function conferirCopiaGravar() {
+			    	AssinarDocumentosSenha('true', this);
+				}
+			  </script>
+		</c:if>	
+	</c:if>
 </siga:pagina>

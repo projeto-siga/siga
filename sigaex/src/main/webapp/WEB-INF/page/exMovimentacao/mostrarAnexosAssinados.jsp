@@ -2,9 +2,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <c:choose>
@@ -120,9 +119,9 @@
 	    </div>
 		<div id="dados-assinatura" style="visible: hidden">
 	    	<c:set var="jspServer"
-			       value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
+			       value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
 			<c:set var="nextURL"
-				   value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
+				   value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
 		    <c:set var="urlPath" value="/${request.contextPath}" />
 		    
 	   		<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />

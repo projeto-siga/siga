@@ -27,7 +27,6 @@ package br.gov.jfrj.siga.libs.webwork;
 import java.util.List;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
@@ -81,29 +80,12 @@ public abstract class SigaSelecionavelActionSupport<T extends Selecionavel, DaoF
 		
 		try {
 			flt.setSigla(param("sigla"));
+			sel = dao().consultarPorSigla(flt);
 		} catch (final Exception ex) {
 			sel = null;
 		}
 		
-		try {
-			/*
-			 * Essa condição é necessário porque o retorno do método getSigla para o ExMobil e DpPessoa
-			 * são as siglas completas, ex: JFRJ-MEM-2014/00003 e RJ14723. No caso da lotação o getSigla
-			 * somente retorna SESIA. No entanto é necessário que o método selecionar retorne a sigla completa, ex:
-			 * RJSESIA, pois esse retorno é o parametro de entrada para o método aExibir, que necessita da sigla completa.
-			 * */
-			if (this instanceof DpLotacaoAction) {
-				DpLotacao lotacao = new DpLotacao();
-				lotacao = (DpLotacao) dao().consultarPorSigla(flt);
-				setSigla(lotacao.getSiglaCompleta());
-				sel = (Selecionavel) lotacao;
-			}
-			else
-				sel = dao().consultarPorSigla(flt);
-		} catch (final Exception ex) {
-			sel = null;
-		}
-
+		
 		if (sel == null) {
 			try {
 				sel = selecionarPorNome(flt);

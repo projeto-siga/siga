@@ -312,7 +312,7 @@
  </function>
  <function>
   <name>podeUtilizarServicoPorConfiguracao</name>
-  <function-class>br.gov.jfrj.siga.libs.util.SigaLibsEL</function-class>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.Boolean podeUtilizarServicoPorConfiguracao(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao, java.lang.String)</function-signature>
  </function>
  <function>

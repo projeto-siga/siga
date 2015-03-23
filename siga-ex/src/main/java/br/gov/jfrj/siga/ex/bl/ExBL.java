@@ -425,7 +425,7 @@ public class ExBL extends CpBL {
 				+ (System.currentTimeMillis() - ini) + " ms");
 	}
 
-	public void marcar(ExDocumento doc) throws Exception {
+	public void marcar(ExDocumento doc) {
 		ExDao.iniciarTransacao();
 		atualizarMarcas(doc);
 		for (ExMovimentacao m : doc.getExMovimentacaoSet()) {
@@ -485,7 +485,7 @@ public class ExBL extends CpBL {
 		return numeroDePaginas;
 	}
 
-	public void numerarTudo(int aPartirDe) throws Exception {
+	public void numerarTudo(int aPartirDe) {
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
 		final Criteria countCrit = dao().getSessao()
@@ -538,7 +538,7 @@ public class ExBL extends CpBL {
 		//System.gc();
 	}
 
-	public void marcarTudo() throws Exception {
+	public void marcarTudo() {
 		marcarTudo(0, 0, true, false, new PrintWriter(System.out));
 	}
 
@@ -547,7 +547,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void marcarTudo(int primeiro, int ultimo, boolean efetivar,
-			boolean apenasTemporalidade, PrintWriter out) throws Exception {
+			boolean apenasTemporalidade, PrintWriter out) {
 
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
@@ -1995,7 +1995,7 @@ public class ExBL extends CpBL {
 			mov.setExMovimentacaoRef(movAlvo);
 			
 			mov.setSubscritor(movAlvo.getSubscritor() != null ? movAlvo.getSubscritor() : movAlvo.getCadastrante());
-			mov.setDescrMov(movAlvo.getSubscritor().getNomePessoa());
+			mov.setDescrMov(movAlvo.getSubscritor() != null ? movAlvo.getSubscritor().getNomePessoa() : movAlvo.getDescrMov());
 			
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
@@ -3173,15 +3173,14 @@ public class ExBL extends CpBL {
 	}
 
 	public void criarVia(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExDocumento doc)
-			throws Exception {
+			final DpLotacao lotaCadastrante, final ExDocumento doc) {
 		criarVia(cadastrante, lotaCadastrante, doc, null);
 		return;
 	}
 
 	public void criarVia(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
-			Integer numVia) throws Exception {
+			Integer numVia) {
 		try {
 			iniciarAlteracao();
 
@@ -4224,7 +4223,7 @@ public class ExBL extends CpBL {
 	}
 
 	public ExDocumento refazer(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		// As alterações devem ser feitas em cancelardocumento.
 		try {
@@ -4248,7 +4247,7 @@ public class ExBL extends CpBL {
 
 	// Nato: removi: HttpServletRequest request
 	public ExDocumento duplicar(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		try {
 			iniciarAlteracao();
@@ -5067,7 +5066,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void processar(final ExDocumento doc, final boolean gravar,
-			final boolean transacao, String realPath) throws Exception {
+			final boolean transacao, String realPath) {
 		try {
 			if (doc != null
 					&& (doc.isAssinado() || doc.isAssinadoDigitalmente()))
@@ -5604,9 +5603,7 @@ public class ExBL extends CpBL {
 	 */
 	public SortedSet<ExFormaDocumento> obterFormasDocumento(
 			List<ExModelo> modelos, ExTipoDocumento tipoDoc,
-			ExTipoFormaDoc tipoForma)
-
-	throws Exception {
+			ExTipoFormaDoc tipoForma) {
 		SortedSet<ExFormaDocumento> formasSet = new TreeSet<ExFormaDocumento>();
 		SortedSet<ExFormaDocumento> formasFinal = new TreeSet<ExFormaDocumento>();
 		// Por enquanto, os parâmetros tipoForma e tipoDoc não podem ser
@@ -5635,8 +5632,7 @@ public class ExBL extends CpBL {
 
 	public List<ExModelo> obterListaModelos(ExFormaDocumento forma,
 			boolean despachando, String headerValue, boolean protegido,
-			DpPessoa titular, DpLotacao lotaTitular, boolean autuando)
-			throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
 		ArrayList<ExModelo> provSet;
 		if (forma != null)
@@ -6266,7 +6262,7 @@ public class ExBL extends CpBL {
 	}	
 
 	public void DesfazerCancelamentoDocumento(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		try {
 			SortedSet<ExMobil> set = doc.getExMobilSet();

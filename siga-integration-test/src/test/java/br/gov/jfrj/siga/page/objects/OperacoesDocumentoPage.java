@@ -352,7 +352,7 @@ public class OperacoesDocumentoPage {
 			util.closePopup(driver);
 		}
 
-		driver.get(baseURL + "/sigaex/expediente/mov/simular_assinatura_mov.action?sigla="+ codigoDocumento + "&id="+codigoDespacho);				
+		driver.get(baseURL + "/sigaex/app/expediente/mov/simular_assinatura_mov?sigla="+ codigoDocumento + "&id="+codigoDespacho);				
 		System.out.println("URL: " + driver.getCurrentUrl());
 	}
 	

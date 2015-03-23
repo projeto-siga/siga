@@ -30,15 +30,11 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 public abstract class GiSelecionavelControllerSupport<T extends Selecionavel, DaoFiltroT extends DaoFiltroSelecionavel>
 	extends SigaSelecionavelControllerSupport<T, DaoFiltroT>{
 
-	public GiSelecionavelControllerSupport(HttpServletRequest request,
-			Result result, CpDao dao, SigaObjects so, EntityManager em) {
+	public GiSelecionavelControllerSupport(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
-		// TODO Auto-generated constructor stub
 	}
 
-	public void assertAcesso(String pathServico) throws AplicacaoException,
-			Exception {
+	public void assertAcesso(String pathServico) throws AplicacaoException {
 		super.assertAcesso("GI:Módulo de Gestão de Identidade;" + pathServico);
 	}
-
 }

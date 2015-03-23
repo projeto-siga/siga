@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
@@ -91,7 +91,7 @@
 							<td>Responsável:</td>
 							<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 							&nbsp;&nbsp;<input type="checkbox" theme="simple" name="substituicao" value="${substituicao}"
-								onclick="javascript:displayTitular(this);" />Substituto</td>
+								onclick="javascript:displayTitular(this);" />&nbsp;Substituto</td>
 						</tr>
 						<c:choose>
 							<c:when test="${!substituicao}">

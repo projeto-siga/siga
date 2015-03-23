@@ -159,48 +159,50 @@ public class CpBL {
 	public void bloquearPessoa(DpPessoa pes,
 			CpIdentidade identidadeCadastrante, boolean fBloquear)
 			throws AplicacaoException {
-		CpTipoConfiguracao tpConf = dao().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
-				CpTipoConfiguracao.class, false);
-		Date dt = dao().consultarDataEHoraDoServidor();
-
-		CpConfiguracao confOld = null;
+		
 		try {
-			CpConfiguracao confFiltro = new CpConfiguracao();
-			confFiltro.setDpPessoa(pes);
-			confFiltro.setCpTipoConfiguracao(tpConf);
-			confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro,
-					new int[] { 0 }, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		CpConfiguracao conf = new CpConfiguracao();
-		conf.setDpPessoa(pes);
-		conf.setCpSituacaoConfiguracao(dao()
-				.consultar(
-						fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
-								: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
-						CpSituacaoConfiguracao.class, false));
-		conf.setCpTipoConfiguracao(tpConf);
-		conf.setHisDtIni(dt);
-
-		dao().iniciarTransacao();
-		if (confOld != null) {
-			confOld.setHisDtFim(dt);
-			dao().gravarComHistorico(confOld, identidadeCadastrante);
-		}
-		dao().gravarComHistorico(conf, identidadeCadastrante);
-		dao().commitTransacao();
-
-		for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
-			if (fBloquear && ident.isBloqueada() == false)
-				bloquearIdentidade(ident, identidadeCadastrante, true);
-		}
-
-		try {
+			dao().iniciarTransacao();
+			
+			CpTipoConfiguracao tpConf = dao().consultar(
+					CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
+					CpTipoConfiguracao.class, false);
+			Date dt = dao().consultarDataEHoraDoServidor();
+	
+			CpConfiguracao confOld = null;
+			try {
+				CpConfiguracao confFiltro = new CpConfiguracao();
+				confFiltro.setDpPessoa(pes);
+				confFiltro.setCpTipoConfiguracao(tpConf);
+				confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro,
+						new int[] { 0 }, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	
+			CpConfiguracao conf = new CpConfiguracao();
+			conf.setDpPessoa(pes);
+			conf.setCpSituacaoConfiguracao(dao()
+					.consultar(
+							fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
+									: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
+							CpSituacaoConfiguracao.class, false));
+			conf.setCpTipoConfiguracao(tpConf);
+			conf.setHisDtIni(dt);
+	
+			if (confOld != null) {
+				confOld.setHisDtFim(dt);
+				dao().gravarComHistorico(confOld, identidadeCadastrante);
+			}
+			dao().gravarComHistorico(conf, identidadeCadastrante);
+	
+			for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
+				if (fBloquear && ident.isBloqueada() == false)
+					bloquearIdentidade(ident, identidadeCadastrante, true);
+			}
 			comp.getConfiguracaoBL().limparCache(tpConf);
+			dao().commitTransacao();
 		} catch (Exception e) {
+			dao().rollbackTransacao();
 			e.printStackTrace();
 		}
 	}

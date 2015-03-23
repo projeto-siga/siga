@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
 <siga:pagina titulo="Transferência">
@@ -14,12 +14,12 @@
 </c:if>
 
 
-	<script type="text/javascript" language="Javascript1.1">
+<script type="text/javascript" language="Javascript1.1">
 	
 function tamanho() {
 	var i = tamanho2();
 	if (i<0) {i=0};
-	document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
+	$("#Qtd").html('Restam ' + i + ' Caracteres');
 }
 
 function tamanho2() {
@@ -43,16 +43,19 @@ function sbmt() {
 			document.getElementById('transferir_gravar_sigla').value= '';
 			document.getElementById('transferir_gravar_pai').value= '${mob.sigla}';
 			document.getElementById('transferir_gravar_despachando').value= 'true';
-			frm.postback.value=0;
+			frm["postback"].value=0;
 			frm.action='${pageContext.request.contextPath}/app/expediente/doc/editar';
   		}	
   		else {
 			document.getElementById('transferir_gravar_sigla').value= '${mob.sigla}';
 			document.getElementById('transferir_gravar_pai').value= '';
 			document.getElementById('transferir_gravar_despachando').value= 'false';
-			frm.action='${pageContext.request.contextPath}/app/expediente/mov/tranferir';
+
+			frm.action='transferir?sigla=VALOR_SIGLA&popup=true&idTpDespacho=VALOR_ID_DESPACHO'
+					.replace('VALOR_SIGLA', document.getElementById('transferir_gravar_sigla').value)
+					.replace('VALOR_ID_DESPACHO', document.getElementById('transferir_gravar_idTpDespacho').value);
 		}
-		
+	console.log('submetendo...');
 	frm.submit();
 }
 
@@ -113,8 +116,8 @@ function popitup_movimentacao() {
 						<td>Subscritor:</td>
 						<td>
 							<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
-							&nbsp;&nbsp;<input type="checkbox" theme="simple" name="substituicao"
-							onclick="javascript:displayTitular(this);" value="${substituicao}"/>
+							&nbsp;&nbsp;
+							<input type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);"  <c:if test="${substituicao}">checked</c:if> />
 							Substituto
 						</td>
 					</tr>
@@ -138,7 +141,7 @@ function popitup_movimentacao() {
 						</td>
 						<td colspan="3">
 							<input type="hidden" name="campos" value="${nmFuncaoSubscritor}" />
-							<input type="text" name="nmFuncaoSubscritor" size="50" maxLength="128" />
+							<input type="text" name="nmFuncaoSubscritor" size="50" maxLength="128" value="${nmFuncaoSubscritor}"/>
 						(Opcionalmente informe a função e a lotação na forma:
 						Função;Lotação;Localidade)</td>
 					</tr>
@@ -147,7 +150,7 @@ function popitup_movimentacao() {
 							Despacho
 						</td>
 						<td>
-							<select  name="idTpDespacho" onchange="javascript:sbmt();">
+							<select  id="transferir_gravar_idTpDespacho" name="idTpDespacho" onchange="javascript:sbmt();">
 								<c:forEach items="${tiposDespacho}" var="item">
 									<option value="${item.idTpDespacho}" ${item.idTpDespacho == idTpDespacho ? 'selected' : ''}>
 										${item.descTpDespacho}
@@ -164,8 +167,8 @@ function popitup_movimentacao() {
 									Texto
 								</td>
                                 <td>
-	                                <input type="text"  rows="3" cols="50"  name="descrMov"  onkeyup="corrige();tamanho();" onblur="tamanho();"
-										onclick="tamanho();" value="${descrMov}"/>
+	                                <textarea rows="3" cols="50"  name="descrMov" onkeyup="corrige();tamanho();" onblur="tamanho();" onclick="tamanho();">${descrMov}</textarea>
+                                	
 									<div id="Qtd">
 										Restam&nbsp;400&nbsp;Caracteres
 									</div>
@@ -173,6 +176,7 @@ function popitup_movimentacao() {
 							</tr>
 						</c:when>
 					</c:choose>
+					
 					<tr class="header">
 						<td colspan="2">Transferência</td>
 					</tr>
@@ -217,7 +221,7 @@ function popitup_movimentacao() {
 					</tr>
 					<tr>
 						<td colspan=2>
-							<input type="checkbox" name="protocolo" value="mostrar" />
+							<input type="checkbox" name="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
 							&nbsp;Mostrar protocolo ao concluir a transferência
 						</td>
 					</tr>

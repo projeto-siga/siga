@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
@@ -145,10 +145,7 @@
 								Responsável:
 							</td>
 							<td>
-								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
-								&nbsp;&nbsp;
-								<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" />
-								Substituto
+								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />&nbsp;&nbsp;<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" />&nbsp;Substituto
 							</td>
 						</tr>
 						<c:choose>
@@ -218,7 +215,7 @@
 								<div id="div_tpdall">
 									<select name="tpdall" id="tpdall" onchange="javascript:enableDisableAll(this);">
 										<c:forEach var="item" items="${tiposDespacho}">
-											<option value="${item}">
+											<option value="${item.idTpDespacho}">
 												${item.descTpDespacho}
 											</option>
 										</c:forEach>

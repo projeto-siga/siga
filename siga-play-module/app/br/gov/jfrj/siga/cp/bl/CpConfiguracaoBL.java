@@ -120,8 +120,7 @@ public class CpConfiguracaoBL {
 	// return cpConfiguracao.getCpTipoConfiguracao().getSituacaoDefault();
 	// }
 
-	public TreeSet<CpConfiguracao> getListaPorTipo(Long idTipoConfig)
-			throws Exception {
+	public TreeSet<CpConfiguracao> getListaPorTipo(Long idTipoConfig) {
 			return getHashListas().get(idTipoConfig);
 	}
 
@@ -250,7 +249,7 @@ public class CpConfiguracaoBL {
 	 */
 	public CpConfiguracao buscaConfiguracao(
 			CpConfiguracao cpConfiguracaoFiltro,
-			int atributoDesconsideradoFiltro[], Date dtEvn) throws Exception {
+			int atributoDesconsideradoFiltro[], Date dtEvn) {
 		deduzFiltro(cpConfiguracaoFiltro);
 
 		Set<Integer> atributosDesconsiderados = new LinkedHashSet<Integer>();
@@ -315,7 +314,7 @@ public class CpConfiguracaoBL {
 	}
 
 	public SortedSet<CpPerfil> consultarPerfisPorPessoaELotacao(
-			DpPessoa pessoa, DpLotacao lotacao, Date dtEvn) throws Exception {
+			DpPessoa pessoa, DpLotacao lotacao, Date dtEvn) {
 		if (pessoa == null && lotacao == null)
 			return null;
 		TreeSet<CpConfiguracao> lista = getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER);
@@ -557,6 +556,7 @@ public class CpConfiguracaoBL {
 				new int[] { 0 }, null);
 
 		CpSituacaoConfiguracao situacao;
+		
 		if (cfg != null) {
 			situacao = cfg.getCpSituacaoConfiguracao();
 		} else {
@@ -659,7 +659,7 @@ public class CpConfiguracaoBL {
 
 	@SuppressWarnings("static-access")
 	public Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, String servicoPath) throws Exception {
+			DpLotacao lotaTitular, String servicoPath) {
 		try {
 			if (titular == null || lotaTitular == null)
 				return false;

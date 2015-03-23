@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
@@ -63,18 +63,18 @@
 			<tr class="button">
 			<td>
 				<div id="dados-assinatura" style="visible: hidden">
-				    <c:set var="jspServer" value="${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
-				    <c:set var="jspServerSenha" value="${request.contextPath}/expediente/mov/assinar_mov_login_senha_gravar.action" />
+				    <c:set var="jspServer" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
+				    <c:set var="jspServerSenha" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
 				    
-		   	 	    <c:set var="nextURL" value="siga/principal.action"  />
-		    	    <c:set var="urlPath" value="${request.contextPath}" />
+		   	 	    <c:set var="nextURL" value="/siga/app/principal"  />
+		    	    <c:set var="urlPath" value="${pageContext.request.contextPath}" />
 		
 					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
 					<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 					<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 					<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
 					<c:set var="urlBase"
-						value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+						value="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}" />
 					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />   		    
 		
 					<c:set var="botao" value=""/>
@@ -82,7 +82,7 @@
 				</div>			
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
+					<c:import url="/javascript/inc_assina_js.jsp" />
 						<div id="capicom-div">
 							<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
 						</div> 
@@ -101,7 +101,7 @@
 				</c:if>
 			
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
-			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
+			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,pageContext.request.scheme,pageContext.request.serverName,pageContext.request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
 	         	</c:if>
 	         	
 	         	<c:if test="${(not empty movimentacoesQuePodemSerAssinadasComSenha)}">
@@ -165,7 +165,7 @@
 			            <td width="40%"align="left">${mov.obs}</td> 	            				    
 			        </tr>			         		         
 					<input type="hidden" name="pdf${x}" value="${mov.referencia}" />
-					<input type="hidden" name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.nmPdf}" />
+					<input type="hidden" name="url${x}" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
 				</c:forEach>   
 			 </table>
 	         </div>
@@ -174,7 +174,7 @@
 	</div></div>
 	<c:if test="${(not empty movimentacoesQuePodemSerAssinadasComSenha)}">
 		<div id="dialog-form" title="Assinar com Senha">
- 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" >
+ 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" >
  				<input type="hidden" id="id" name="id" value="${mov.idMov}" />
  				<input type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
     			<fieldset>

@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Referência">
 
@@ -75,7 +75,7 @@ function sbmt() {
 						<td colspan="3">
 							<siga:selecao propriedade="titular"tema="simple" modulo="siga"/></td>
 						</tr>
-						<siga:selecao titulo="Documento:" propriedade="documentoRef" urlAcao="buscar" modulo="sigaex"/>
+						<siga:selecao titulo="Documento:" propriedade="documentoRef" urlAcao="expediente/buscar" modulo="sigaex"/>
 						<tr class="button">
 							<td colspan="2">
 							<input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"/>

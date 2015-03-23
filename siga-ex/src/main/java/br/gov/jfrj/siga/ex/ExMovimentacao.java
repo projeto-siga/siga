@@ -30,10 +30,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.Entity;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
@@ -52,6 +50,7 @@ import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
  * A class that represents a row in the 'EX_MOVIMENTACAO' table. This class may
@@ -1047,8 +1046,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	@Override
 	public String toString() {
-		return getExMobil().getSigla() + ": "
-				+ getExTipoMovimentacao().getDescricao() + ": " + getDescrMov();
+		return (getExMobil() != null ? getExMobil().getSigla(): "") + ": "
+				+ (getExTipoMovimentacao() != null ? getExTipoMovimentacao().getDescricao() : "") + ": " + getDescrMov();
 	}
 
 	/**

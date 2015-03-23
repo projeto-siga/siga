@@ -158,3 +158,13 @@ td.padding-table {
 td.solicitacao-prioridade {
 	cursor:move;
 }
+
+.siga-multiple-select {
+	padding: 0px 5px 5px 5px;
+}
+
+div > ul > li {
+	list-style-type: none !important;
+	margin-left: 1em !important;
+	margin-bottom: 2px !important;
+}

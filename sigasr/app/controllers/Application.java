@@ -43,7 +43,6 @@ import models.SrUrgencia;
 import models.vo.PaginaItemConfiguracao;
 import models.vo.SelecionavelVO;
 import models.vo.SrSolicitacaoListaVO;
-import models.vo.SrSolicitacaoVO;
 
 import org.joda.time.LocalDate;
 
@@ -604,7 +603,7 @@ public class Application extends SigaApplication {
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
 		SrSolicitacaoFiltro filtro = new SrSolicitacaoFiltro();
 		SrSolicitacaoListaVO solicitacaoListaVO;
-		
+		String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 		filtro.idListaPrioridade = id;
 		lista = lista.getListaAtual();
 		
@@ -620,7 +619,7 @@ public class Application extends SigaApplication {
 			solicitacaoListaVO = new SrSolicitacaoListaVO();
 		}
 		
-		render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO);
+		render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO, tiposPermissaoJson);
 	}
 	
 	public static void incluirEmLista(Long idSolicitacao) throws Exception {
@@ -690,7 +689,7 @@ public class Application extends SigaApplication {
 		List<SrLista> listasPrioridade = SrLista.listar(false);
 		render(solicitacaoListaVO, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao, listasPrioridade);
 	}
-
+	
 	public static void baixar(Long idArquivo) {
 		SrArquivo arq = SrArquivo.findById(idArquivo);
 		if (arq != null)

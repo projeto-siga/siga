@@ -79,6 +79,7 @@ import br.gov.jfrj.siga.model.Objeto;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 public class Application extends SigaApplication {
 
@@ -689,7 +690,7 @@ public class Application extends SigaApplication {
 		List<SrLista> listasPrioridade = SrLista.listar(false);
 		render(solicitacaoListaVO, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao, listasPrioridade);
 	}
-
+	
 	public static void baixar(Long idArquivo) {
 		SrArquivo arq = SrArquivo.findById(idArquivo);
 		if (arq != null)

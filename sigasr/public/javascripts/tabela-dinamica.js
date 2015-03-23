@@ -8,6 +8,9 @@ function TabelaDinamica (tableSelector) {
 		objetoTabela.estrutura = [];
 		objetoTabela.dados = [],
 		objetoTabela.detalhes = [],
+		objetoTabela.detalhesSelecionados = [],
+		objetoTabela.colunasTabelaJson = [],
+		objetoTabela.colunasDetalhamentoJson = [],
 		objetoTabela.podePriorizar = false,
 		objetoTabela.podeOrdenar = false,
 		objetoTabela.podeRemover = false,
@@ -24,29 +27,48 @@ function TabelaDinamica (tableSelector) {
 			if (jSon.itens)
 				objetoTabela.dados = jSon.itens;
 			
-			if (jSon.colunas)
+			if (jSon.colunas) {
 				for (var i = 0; i < jSon.colunas.length; i++) {
 					var coluna = jSon.colunas[i],
 						estruturaColuna = { 
 							"sTitle" : coluna.titulo, 
 							"mDataProp" : coluna.nome,
-							"sClass": coluna.classe,
-							"bVisible": coluna.exibir,
+							"sName" : coluna.nome,
+							"sClass" : coluna.classe,
+							"bVisible" : coluna.exibir,
 							"sWidth" : coluna.largura};
 					 
 					objetoTabela.estrutura.push(estruturaColuna);
 				}
+				
+				try {
+					objetoTabela.colunasTabelaJson = JSON.parse(jSon.colunasTabelaJson);
+				}
+				catch(error) {
+				}
+			}
 
-			if (jSon.colunasDetalhamento)
+			if (jSon.colunasDetalhamento) {
 				for (var j = 0; j < jSon.colunasDetalhamento.length; j++) {
 					var colDetalhe = jSon.colunasDetalhamento[j],
 						detalhe = {
 							"sTitle" : colDetalhe.titulo,
 							"mDataProp" : colDetalhe.nome,
-							"mDetalheFormatado" : colDetalhe.temDetalheFormatado};
+							"bVisible" : coluna.exibir,
+							"sName" : colDetalhe.nome
+						};
 
 					objetoTabela.detalhes.push(detalhe);
 				}
+				
+				objetoTabela.detalhesSelecionados = objetoTabela.detalhes;
+				
+				try {
+					objetoTabela.colunasDetalhamentoJson = JSON.parse(jSon.colunasDetalhamentoJson);
+				}
+				catch (error) {
+				}
+			}
 		}
 
 		return objetoTabela;
@@ -57,6 +79,112 @@ function TabelaDinamica (tableSelector) {
 		this.objetoTabela = this.prepararDadosTabela(this.jSon);
 		return this;
 	}
+	
+	this.alterarColunasTabela = function(colunas, selecionadas) {
+		jQuery(colunas).each(function(index) {
+			var showColumn = (jQuery.inArray(this, selecionadas) >= 0);
+			tabelaDinamica.table.dataTable.api().column(this.value + ':name').visible(showColumn);
+			
+			var coluna = tabelaDinamica.getColunaPorNome(tabelaDinamica.objetoTabela.estrutura, this.value);
+			
+			if (coluna) {
+				coluna.bVisible = showColumn;
+				tabelaDinamica.atualizarCookieColuna(coluna, 'tabela');
+			}
+		});	
+	}
+	
+	this.alterarColunasDetalhamento = function(selecionadas) {
+		this.objetoTabela.detalhesSelecionados = [];
+		
+		if (selecionadas) {
+			for (var i = 0; i < this.objetoTabela.detalhes.length; i++) {
+				var colunaDetalhes = this.objetoTabela.detalhes[i];
+				
+				for (var j = 0; j < selecionadas.length; j++) {
+					var colunaSelecionada = selecionadas[j];
+					
+					if (colunaDetalhes.sName == colunaSelecionada.value) {
+						this.objetoTabela.detalhesSelecionados.push(colunaDetalhes);
+						break;
+					}
+				}
+			}
+		}
+		
+		jQuery(this.objetoTabela.detalhes).each(function(index) {
+			var showColumn = (jQuery.inArray(this, tabelaDinamica.objetoTabela.detalhesSelecionados) >= 0);
+			
+			var coluna = tabelaDinamica.getColunaPorNome(tabelaDinamica.objetoTabela.detalhes, this.sName);
+			
+			if (coluna) {
+				coluna.bVisible = showColumn;
+				tabelaDinamica.atualizarCookieColuna(coluna, 'detalhe');
+			}
+		});	
+	}
+	
+	this.atualizarColunasSelecionadas = function(select, colunas, tipo) {
+		this.updateColumnValuesFromCookies(colunas, tipo);
+		this.addOptions(select, colunas);
+		
+		if (tipo == 'tabela')
+			this.alterarColunasTabela(select[0].options, select[0].selectedOptions);
+		else if (tipo == 'detalhe')
+			this.alterarColunasDetalhamento(select[0].selectedOptions);
+	}
+	
+	this.addOptions = function(select, colunas) {
+		if (colunas) {
+			for (var i = 0; i < colunas.length; i++) {
+				var coluna = colunas[i],
+					opt = $('<option />', {
+					value: coluna.nome,
+					text: coluna.titulo,
+					selected: coluna.exibir,
+					disabled: colunas.alteravel
+				});
+
+				opt.appendTo(select);
+			}
+		}
+
+		select.multiselect('refresh');
+	}
+	
+	this.updateColumnValuesFromCookies = function(colunas, tipo) {
+		if (colunas) {
+			for (var i = 0; i < colunas.length; i++) {
+				var coluna = colunas[i],
+					colunaInCookie = jQuery.cookie(tipo + coluna.nome);
+				
+				try {
+					colunaInCookie = JSON.parse(colunaInCookie);
+				}
+				catch(error) {
+				}
+				
+				// caso já exista no cookie, atualiza
+				if (colunaInCookie)
+					coluna.exibir = colunaInCookie.bVisible;
+			}
+		}
+	}
+	
+	this.atualizarCookieColuna = function(coluna, tipo) {
+		jQuery.cookie(tipo + coluna.sName, JSON.stringify(coluna));
+	}
+	
+	this.getColunaPorNome = function(listaColunas, nome) {
+		for (var i = 0; i < listaColunas.length; i++) {
+			var coluna = listaColunas[i];
+			
+			if (coluna.sName == nome)
+				return coluna;
+		}
+		
+		return null;
+	}
 }
 
 /* Função de formatação para células de detalhes */
@@ -66,9 +194,9 @@ TabelaDinamica.prototype.formatarDetalhes = function( d, objetoTabela ) {
 		detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:60px;">'+
 			'<tr>';
 
-	if (objetoTabela && objetoTabela.detalhes) {
-		for (var i = 0; i < objetoTabela.detalhes.length; i++) {
-			var detalhe = objetoTabela.detalhes[i];
+	if (objetoTabela && objetoTabela.detalhesSelecionados) {
+		for (var i = 0; i < objetoTabela.detalhesSelecionados.length; i++) {
+			var detalhe = objetoTabela.detalhesSelecionados[i];
 			
 			detailHTML += '<tr><td style="min-width: 140px;"><b>' + detalhe.sTitle + ':</b></td>';
 

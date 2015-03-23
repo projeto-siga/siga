@@ -135,7 +135,7 @@ public class PerfilController extends GrupoController {
 		this.result.include("sigla",sigla);
 		this.result.include("postback",postback);
 		this.result.include("offset",offset);
-		this.result.include("param",getPar());
+		this.result.include("param",getRequest().getParameterMap());
 		this.result.include("propriedade",propriedade);
 	}
 	

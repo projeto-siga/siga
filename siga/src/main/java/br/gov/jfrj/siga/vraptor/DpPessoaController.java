@@ -30,6 +30,8 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -45,6 +47,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPessoa, DpPessoaDaoFiltro> {
 	
 	private Long orgaoUsu;
+	private DpLotacaoSelecao lotacaoSel;
 	
 	public DpPessoaController(HttpServletRequest request, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
@@ -57,15 +60,37 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		setItemPagina(10);
 	}
 
-	@Get({"/app/pessoa/buscar","/app/cosignatario/buscar"})
-	public void buscar(String sigla, String postback) throws Exception {
+	@Get
+	@Post
+	@Path({"/app/pessoa/buscar","/app/cosignatario/buscar"})
+	public void buscar(String nome, String postback, Integer offset, Long idOrgaoUsu, DpLotacaoSelecao lotacaoSel) throws Exception {
 		final DpLotacao lotacaoTitular = getLotaTitular();
-		if ( postback == null 
-				&& lotacaoTitular != null ) {
+		if ( postback == null && lotacaoTitular != null ) {
 			orgaoUsu = lotacaoTitular.getIdOrgaoUsuario();
+		}else{
+			orgaoUsu = idOrgaoUsu;
+		}
+		if (lotacaoSel != null && lotacaoSel.getId() != null && lotacaoSel.getId() > 0){
+			this.lotacaoSel = lotacaoSel;
+		}
+		this.getP().setOffset(offset);
+		
+		if (nome == null){
+			nome = "";
 		}
 		
-		super.aBuscar(sigla, postback);
+		super.aBuscar(nome, postback);
+		
+		result.include("param", getRequest().getParameterMap());
+		result.include("request",getRequest());
+		result.include("itens",getItens());
+		result.include("tamanho",getTamanho());
+		result.include("orgaosUsu",getOrgaosUsu());
+		result.include("lotacaoSel",lotacaoSel == null ? new DpLotacaoSelecao() : lotacaoSel);
+		result.include("idOrgaoUsu",idOrgaoUsu);
+		result.include("nome",nome);
+		result.include("postbak",postback);
+		result.include("offset",offset);
 	}
 	
 	 public void aExibir() {
@@ -74,10 +99,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 	@Override
 	public DpPessoaDaoFiltro createDaoFiltro() {
-		final DpLotacaoSelecao lotacaoSel = new DpLotacaoSelecao();
 		final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
-		flt.setLotacao(lotacaoSel.buscarObjeto());
+		if (lotacaoSel != null){
+			flt.setLotacao(lotacaoSel.buscarObjeto());
+		}
 		flt.setIdOrgaoUsu(orgaoUsu);
 		
 		String buscarFechadas = param("buscarFechadas");

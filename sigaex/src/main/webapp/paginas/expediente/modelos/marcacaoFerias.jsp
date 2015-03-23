@@ -42,8 +42,8 @@
 				</mod:grupo>
 
 			</c:when>
-			<c:when test="${opcao eq 'Alteracao'}">
-				<mod:grupo titulo="Alteracao de Férias">
+			<c:when test="${opcao eq 'Alteração'}">
+				<mod:grupo titulo="Alteração de Férias">
 					<mod:selecao titulo="Número de alterações" var="alteracoes"
 						opcoes="1;2;3" reler="ajax" idAjax="alteracoesAjax" />
 					<mod:grupo depende="alteracoesAjax">

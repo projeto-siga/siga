@@ -281,7 +281,7 @@
 			new Formulario($('#prioridadeForm')).populateFromJson(obj.prioridadeSolicitacaoVO);
 		}
 	}
-	
+
 	function editarLista(event, jSon) {
 		event.stopPropagation();
 
@@ -291,11 +291,6 @@
 		listaService.editar(listaJson, 'Alterar Lista');
 	}
 	
-	function limparDadosListaModal() {
-		// limpa as permissões
-		permissoesTable.api().clear().draw();
-	}
-
 	function carregarPermissoes(id) {
         $.ajax({
         	type: "GET",
@@ -311,47 +306,14 @@
        	});
     }
 
-	function populatePermissoesFromJSonList(permissoesJSon) {
-		for (var i = 0; i < permissoesJSon.length; i++) {
-			var permissao = permissoesJSon[i],
-				row = [ permissao.orgaoUsuario ? permissao.orgaoUsuario.id : '',
-						permissao.orgaoUsuario ? permissao.orgaoUsuario.sigla : '', 
-						permissao.complexo ? permissao.complexo.id : '',
-						permissao.complexo ? permissao.complexo.descricao : '', 
-						permissao.lotacao ? permissao.lotacao.id : '',
-						permissao.lotacao ? permissao.lotacao.descricao : '', 
-						permissao.lotacao ? permissao.lotacao.sigla : '', 
-						permissao.pessoa ? permissao.pessoa.id : '',
-						permissao.pessoa ? permissao.pessoa.descricao : '', 
-						permissao.pessoa ? permissao.pessoa.sigla : '', 
-						permissao.cargo ? permissao.cargo.id : '',
-						permissao.cargo ? permissao.cargo.descricao : '', 
-						permissao.cargo ? permissao.cargo.sigla : '',
-						permissao.funcaoConfianca ? permissao.funcaoConfianca.id : '',
-						permissao.funcaoConfianca ? permissao.funcaoConfianca.descricao : '', 
-						permissao.funcaoConfianca ? permissao.funcaoConfianca.sigla : '',  
-	          			permissao.listaTipoPermissaoListaVO,									//16
-	          			permissao.idConfiguracao,												//17    
-	          			'',																		//18
-	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
-	          			getAcaoPermissao(permissao)
-	          			];
-
-			var tr = permissoesTable.api().row.add(row).draw().node();
-			if(!permissao.ativo) {
-				$(tr).find('td').addClass('item-desativado');
-	  		}
+	function getAcaoPermissao(permissao) {
+		if(permissao.ativo) {
+	 			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
+						'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
+						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
+					'</a>';
 		}
-
-		function getAcaoPermissao(permissao) {
-			if(permissao.ativo) {
-	  			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
-							'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
-							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
-						'</a>';
-			}
-			return new String();
-		}
+		return new String();
 	}
 	
 	function reposicionar() {

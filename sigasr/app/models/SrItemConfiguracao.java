@@ -129,10 +129,26 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		this.tituloItemConfiguracao = descricao;
 		this.siglaItemConfiguracao = sigla;
 	}
-	public static void main(String[] args) {
-		System.out.println(Integer.MAX_VALUE);
+
+	public void adicionarDesignacao(SrConfiguracao designacao) throws Exception {
+		if (designacoesSet == null) {
+			designacoesSet = new ArrayList<SrConfiguracao>();
+		}
+		if (podeAdicionar(designacao)) {
+			designacoesSet.add(designacao);
+			salvar();
+		}
 	}
 
+	private boolean podeAdicionar(SrConfiguracao designacao) {
+		for (SrConfiguracao designacaoSalva : designacoesSet) {
+			if (designacaoSalva.getId().equals(designacao.getId())) {
+				return Boolean.FALSE;
+			}
+		}
+		return Boolean.TRUE;
+	}
+	
 	@Override
 	public Long getId() {
 		return idItemConfiguracao;

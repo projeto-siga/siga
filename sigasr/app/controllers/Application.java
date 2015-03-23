@@ -52,6 +52,7 @@ import play.Play;
 import play.data.validation.Error;
 import play.data.validation.Validation;
 import play.db.jpa.JPA;
+import play.db.jpa.JPABase;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
@@ -873,7 +874,18 @@ public class Application extends SigaApplication {
 		designacao.refresh();
 		return designacao.getSrConfiguracaoJson();
 	}
-
+	
+	public static String gravarDesignacaoItem(SrConfiguracao designacao, Long idItemConfiguracao) throws Exception {
+		assertAcesso("ADM:Administrar");
+		designacao.salvarComoDesignacao();
+		designacao.refresh();
+		
+		SrItemConfiguracao itemConfiguracao = SrItemConfiguracao.findById(idItemConfiguracao);
+		itemConfiguracao.adicionarDesignacao(designacao);
+		return designacao.getSrConfiguracaoJson(itemConfiguracao);
+	}
+	
+	
 	public static String desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);

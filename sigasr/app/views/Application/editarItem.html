@@ -477,4 +477,32 @@
         jDialogFator.dialog('close');
         validatorFormFator.resetForm();
     });
+
+    designacaoService.gravar = function() {
+    	var id = $('#idItemConfiguracao').val();
+    	
+		designacaoOpts.urlGravar = '@{Application.gravarDesignacaoItem()}';
+		BaseService.prototype.gravar.call(this);
+    }
+
+    designacaoService.onGravar = function(obj, objSalvo) {
+        debugger;
+		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo),
+			trItem = itemConfiguracaoService.row({
+				id : $('#idItemConfiguracao').val()
+			}),
+			itemConfiguracaoAntivo : trItem.attr('data-json');
+		
+		afterGravarDesignacao(tr, objSalvo, this);
+		itemConfiguracaoService.onGravar(itemConfiguracaoAntivo, objSalvo.itemConfiguracao);
+		return tr;
+    }
+
+    designacaoService.cadastrar = function(titulo) {
+		if (itemConfiguracaoService.aplicar() == false) {
+			return;
+		}
+    	BaseService.prototype.cadastrar.call(this, titulo);
+    	atualizarDesignacaoEdicao();
+    }    
 </script>

@@ -583,6 +583,14 @@ public class SrConfiguracao extends CpConfiguracao {
 	public String getSrConfiguracaoJson() {
 		return this.toVO().toJson();
 	}
+	
+	public String getSrConfiguracaoJson(SrItemConfiguracao itemConfiguracao) {
+		JsonObject jsonObject = this.toVO().toJsonObject();
+		jsonObject.add("itemConfiguracao", itemConfiguracao.toVO().toJsonObject());
+		
+		return jsonObject.toString();
+	}
+
 
 	public String getSrConfiguracaoTipoPermissaoJson() {
 		return new SrConfiguracaoVO(this).toJson();

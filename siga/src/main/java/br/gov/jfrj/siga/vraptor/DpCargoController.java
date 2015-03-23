@@ -8,6 +8,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -57,9 +58,21 @@ public class DpCargoController extends
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
 		flt.setIdOrgaoUsu(paramLong("orgaoUsu"));
 		if (flt.getIdOrgaoUsu() == null)
-			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario()
-					.getIdOrgaoUsu());
+			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
 		return flt;
 	}
 
+	@Get
+	@Post
+	@Path({"/app/cargo/selecionar"})
+	public void selecionar(String sigla) {
+		String resultado =  super.aSelecionar(sigla);
+		
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
+	}
 }

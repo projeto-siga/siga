@@ -60,26 +60,20 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 	private Integer tamanho;
 
 	public String aBuscar(String sigla, String postback) throws Exception {
-		if (postback == null) {
-
-		}
-		if (sigla != null) {
+		if (sigla != null) 
 			setNome(sigla.toUpperCase());
-		}
 
 		int offset = 0;
 		int itemPagina = 0;
-		if (getP().getOffset() != null) {
+		if (getP().getOffset() != null) 
 			offset = getP().getOffset();
-		}
-		if (getItemPagina() != null) {
+
+		if (getItemPagina() != null) 
 			itemPagina = getItemPagina();
-		}
 
 		final DaoFiltroT flt = createDaoFiltro();
 
 		tamanho = dao().consultarQuantidade(flt);
-
 		itens = dao().consultarPorFiltro(flt, offset, itemPagina);
 
 		return "busca";

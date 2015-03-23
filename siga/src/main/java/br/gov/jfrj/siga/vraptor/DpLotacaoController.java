@@ -29,15 +29,31 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	
 	@Get
 	@Post
-	@Path("app/lotacao/buscar")
-	public void busca(String sigla, String postback) throws Exception{
-//		setNome(nome);
-		super.aBuscar(sigla, postback);
+	@Path("/app/lotacao/buscar")
+	public void busca(String nome,Long idOrgaoUsu, Integer offset, String postback) throws Exception{
+		Long orgaoUsu;
+		
+		if (param("postback") == null)
+			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+		else
+			orgaoUsu = idOrgaoUsu;
+		
+		this.getP().setOffset(offset);
+		
+		if (nome == null)
+			nome = "";
+		
+		super.aBuscar(nome, postback);
+		
 		result.include("param", getRequest().getParameterMap());
-		result.include("tamanho", getTamanho());
-		result.include("itens", getItens());
-		result.include("nmOrgaoUsu", getOrgaosUsu());
-//		result.include("nome", getNome());
+		result.include("request",getRequest());
+		result.include("itens",getItens());
+		result.include("tamanho",getTamanho());
+		result.include("orgaosUsu", getOrgaosUsu());
+		result.include("idOrgaoUsu",orgaoUsu);
+		result.include("nome",nome);
+		result.include("postbak",postback);
+		result.include("offset",offset);
 	}
 
 	@Override

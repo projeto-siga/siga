@@ -10,11 +10,13 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
+import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Resource
@@ -75,5 +77,37 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		return null;
 	}
 
-
+	@Get 
+	@Post
+	@Path("app/lotacao/selecionar")
+	public String selecionar(String sigla) {
+		String resultado = super.aSelecionar(sigla);
+		if (getSel() != null) {
+			try {
+				/*
+				 * Essa condição é necessário porque o retorno do método getSigla para o ExMobil e DpPessoa
+				 * são as siglas completas, ex: JFRJ-MEM-2014/00003 e RJ14723. No caso da lotação o getSigla
+				 * somente retorna SESIA. No entanto é necessário que o método selecionar retorne a sigla completa, ex:
+				 * RJSESIA, pois esse retorno é o parametro de entrada para o método aExibir, que necessita da sigla completa.
+				 * */
+				DpLotacao lotacao = new DpLotacao();
+				lotacao = (DpLotacao) dao().consultar(getSel().getId(), DpLotacao.class, false);
+				GenericoSelecao gs = new GenericoSelecao();
+				gs.setId(getSel().getId());
+				gs.setSigla(lotacao.getSiglaCompleta());
+				gs.setDescricao(getSel().getDescricao());
+				setSel(gs);
+			} catch (final Exception ex) {
+				setSel(null);
+			}
+		}
+		
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
+		return resultado;
+	}
 }

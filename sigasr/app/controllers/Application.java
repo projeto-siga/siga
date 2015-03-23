@@ -43,7 +43,6 @@ import models.SrUrgencia;
 import models.vo.PaginaItemConfiguracao;
 import models.vo.SelecionavelVO;
 import models.vo.SrSolicitacaoListaVO;
-import models.vo.SrSolicitacaoVO;
 
 import org.joda.time.LocalDate;
 
@@ -79,7 +78,6 @@ import br.gov.jfrj.siga.model.Objeto;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 public class Application extends SigaApplication {
 
@@ -604,7 +602,7 @@ public class Application extends SigaApplication {
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
 		SrSolicitacaoFiltro filtro = new SrSolicitacaoFiltro();
 		SrSolicitacaoListaVO solicitacaoListaVO;
-		
+		String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 		filtro.idListaPrioridade = id;
 		lista = lista.getListaAtual();
 		
@@ -620,7 +618,7 @@ public class Application extends SigaApplication {
 			solicitacaoListaVO = new SrSolicitacaoListaVO();
 		}
 		
-		render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO);
+		render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO, tiposPermissaoJson);
 	}
 	
 	public static void incluirEmLista(Long idSolicitacao) throws Exception {

@@ -14,28 +14,28 @@ public class SrSolicitacaoVO {
 	private String botaoPriorizar;
 	
 	public Long idSolicitacao;
-	public String codigo;
-	public String codigoFormatado;
-	public String descricao;
-	public String teorFormatado;
+	public String codigo = "";
+	public String codigoFormatado = "";
+	public String descricao = "";
+	public String teorFormatado = "";
 	
-	public String solicitanteFormatado;
-	public String dtUltimaMovimentacaoFormatada;
-	public String ultimaMovimentacaoformatada;
-	public String prioridadeFormatada;
+	public String solicitanteFormatado = "";
+	public String dtUltimaMovimentacaoFormatada = "";
+	public String ultimaMovimentacaoformatada = "";
+	public String prioridadeFormatada = "";
 	public String botaoExpandir = "+";
-	public String marcadoresEmHtmlDetalhes;
-	public String lotaAtendenteFormatada;
-	public String prioridadeListaFormatada;
-	public String botaoRemoverPriorizar;
-	public String dtUltimaMovimentacaoString;
-	public String nomeSolicitante;
-	public String descricaoSolicitante;
-	public String dtRegString;
+	public String marcadoresEmHtmlDetalhes = "";
+	public String lotaAtendenteFormatada = "";
+	public String prioridadeListaFormatada = "";
+	public String botaoRemoverPriorizar = "";
+	public String dtUltimaMovimentacaoString = "";
+	public String nomeSolicitante = "";
+	public String descricaoSolicitante = "";
+	public String dtRegString = "";
 	public SelecionavelVO lotaSolicitante;
 	public SelecionavelVO lotaAtendente;
-	public String ultimaMovimentacao;
-	public String marcadoresEmHtml;
+	public String ultimaMovimentacao = "";
+	public String marcadoresEmHtml = "";
 	
 	public SrItemConfiguracaoVO itemConfiguracao;
 	public SrPrioridadeSolicitacaoVO prioridadeSolicitacaoVO;
@@ -58,7 +58,7 @@ public class SrSolicitacaoVO {
 		this.dtUltimaMovimentacaoFormatada = getDtUltimaMovimentacaoFormatado(this.dtUltimaMovimentacaoString);
 		this.ultimaMovimentacaoformatada = SigaPlayUtil.selecionado(this.ultimaMovimentacao, this.ultimaMovimentacao);
 		
-		this.lotaAtendenteFormatada = getLotacaoFormatada(this.lotaAtendente);
+		this.lotaAtendenteFormatada = this.lotaAtendente != null ? getLotacaoFormatada(this.lotaAtendente) : "";
 	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, boolean podeRemover, boolean podePriorizar) throws Exception {
@@ -83,14 +83,14 @@ public class SrSolicitacaoVO {
 			boolean podeRemover, boolean podePriorizar) throws Exception {
 		this(sol, lista, prioridadeSolicitacao, podeRemover, podePriorizar);
 		this.codigoFormatado = getCodigoFormatado(sol.getId(), sol.getCodigo(), nome, isPopup);
-		this.marcadoresEmHtml = sol.getMarcadoresEmHtml(cadastrante, lotaTitular);
+		this.setMarcadoresEmHtml(sol.getMarcadoresEmHtml(cadastrante, lotaTitular));
 		this.marcadoresEmHtmlDetalhes = getMarcadoresEmHTMLDetalhes(this.marcadoresEmHtml, this.dtUltimaMovimentacaoString);
 	} 
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, String nome, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
 		this(sol);
 		this.codigoFormatado = getCodigoFormatado(sol.getId(), sol.getCodigo(), nome, isPopup);
-		this.marcadoresEmHtml = sol.getMarcadoresEmHtml(cadastrante, lotaTitular);
+		this.setMarcadoresEmHtml(sol.getMarcadoresEmHtml(cadastrante, lotaTitular));
 		this.marcadoresEmHtmlDetalhes = getMarcadoresEmHTMLDetalhes(this.marcadoresEmHtml, this.dtUltimaMovimentacaoString);
 	} 
 	
@@ -151,6 +151,13 @@ public class SrSolicitacaoVO {
 		sb.append("</td>");
 		
 		return sb.toString();
+	}
+	
+	public void setMarcadoresEmHtml(String valor) {
+		if (valor != null)
+			this.marcadoresEmHtml = valor;
+		else
+			this.marcadoresEmHtml = "";
 	}
 	
 }

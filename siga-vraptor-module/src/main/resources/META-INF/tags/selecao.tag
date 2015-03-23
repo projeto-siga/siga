@@ -54,7 +54,7 @@
 
 <c:choose>
 	<c:when test="${empty urlAcao}">
-		<c:set var="urlBuscar" value="${acaoBusca}/buscar.action" />
+		<c:set var="urlBuscar" value="/app${acaoBusca}/buscar" />
 	</c:when>
 	<c:otherwise>
 		<c:set var="urlBuscar" value="/app${acaoBusca}/${urlAcao}" />
@@ -168,7 +168,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	}
 	<c:choose>
 		<c:when test="${empty urlSelecionar}">
-			var url = '/${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+			var url = '/${urlPrefix}/app${acaoBusca}/selecionar?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 		</c:when>
 		<c:otherwise>
 			var url = '/${urlPrefix}/app${acaoBusca}/${urlSelecionar}?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';

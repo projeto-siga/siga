@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -201,6 +202,22 @@ public class GrupoDeEmailController extends GrupoController {
 		String fileRedirect = "/WEB-INF/jsp/" + super.aSelecionar(sigla) + ".jsp";
 
 		result.include("sel", this.getSel());
-		result.use(Results.page()).forwardTo(fileRedirect);
+		result.use(Results.page()).forwardTo(fileRedirect);	
 	}
+	
+	@Get
+	@Post
+	@Path("app/gi/grupoDeEmail/buscar")
+	public void busca(String sigla, String postback, String nome) throws Exception{
+		setNome(nome);
+		super.aBuscar(sigla, postback);
+		result.include("param", getRequest().getParameterMap());
+		result.include("tamanho", getTamanho());
+		result.include("itens", getItens());
+		result.include("nome", getNome());
+	}
+	
+	
+	
+	
 }

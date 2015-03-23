@@ -99,6 +99,7 @@ function sbmt() {
 					<c:choose>
 						<c:when test="${campoFixo && not empty config.exTipoMovimentacao}">
 							<input type="hidden" name="idTpMov" value="${config.exTipoMovimentacao.idTpMov}" />
+							${config.exTipoMovimentacao.descrTipoMovimentacao}
 						</c:when>
 						<c:otherwise>
 							<siga:select name="idTpMov" list="listaTiposMovimentacao"
@@ -143,6 +144,7 @@ function sbmt() {
 						</c:when>
 						<c:when test="${campoFixo && not empty config.exFormaDocumento}">
 							<input type="hidden" name="idFormaDoc" value="${idFormaDoc}"/>
+							${config.exFormaDocumento.descrFormaDoc}
 						</c:when>
 						<c:otherwise>
 							<div style="display: inline" id="comboModeloDiv">

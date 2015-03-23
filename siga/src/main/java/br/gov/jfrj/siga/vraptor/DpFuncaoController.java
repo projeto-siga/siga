@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,12 +10,13 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpFuncaoConfiancaDaoFiltro;
+import br.gov.jfrj.siga.model.Selecionavel;
 
 @Resource
 public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFuncaoConfianca, DpFuncaoConfiancaDaoFiltro>{
@@ -41,6 +44,19 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		return flt;
 	}
 	
+	@Override
+	public Selecionavel selecionarPorNome(final DpFuncaoConfiancaDaoFiltro flt)
+			throws AplicacaoException {
+		// Procura por nome
+		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
+		flt.setSigla(null);
+		final List<DpFuncaoConfianca> l = dao().consultarPorFiltro(flt);
+		if (l != null)
+			if (l.size() == 1)
+				return (DpFuncaoConfianca) l.get(0);
+		return null;
+	}
+	
 	@Get
 	@Post
 	@Path("/app/funcao/buscar")
@@ -64,4 +80,14 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		result.include("offset",offset);
 	}
 
+	@Get("/app/funcao/selecionar")
+	public void selecionar(String sigla) {
+		String resultado =  super.aSelecionar(sigla);
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
+	}
 }

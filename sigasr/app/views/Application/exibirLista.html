@@ -373,21 +373,23 @@
 		var novaPrioridade = $('#selectPrioridade').val(),
 			idSolicitacao = $('#idPrioridadePrior').val(),
 			tr = $('[data-json-id= '+ idSolicitacao + ']'),
-			jsonString = $(tr).attr('data-json'),
-			objString = jsonString,
+			objString = $(tr).attr('data-json'),
 			obj = JSON.parse(objString);
-
+		
 		if (obj && obj.prioridadeSolicitacaoVO) {
 			tr.removeClass('PRIORIDADE-' + obj.prioridadeSolicitacaoVO.prioridade);
 			tr.addClass('PRIORIDADE-' + novaPrioridade);
 			obj.prioridadeSolicitacaoVO.prioridade = novaPrioridade;
+			obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico = $('#checknaoReposicionarAutomatico').is(':checked');
+			
 			tr.attr('data-json', JSON.stringify(obj));
-		}
 
-		if (!obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico) {
-			reposicionarPorPrioridade(obj, tr);
+			if(obj.prioridadeSolicitacaoVO.prioridade != novaPrioridade) {
+				if (!obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico) {
+					reposicionarPorPrioridade(obj, tr);
+				}
+			}
 		}
-		
 		recalcularPosicao();
 		modalPrioridadeFechar();
 	}
@@ -408,7 +410,6 @@
 			if (obj && obj.prioridadeSolicitacaoVO && obj.prioridadeSolicitacaoVO.prioridade == objLista.prioridadeSolicitacaoVO.prioridade) {
 				tr.insertAfter($(lista[posicao]));
 			}
-			
 			posicao++;
 		});
 	}

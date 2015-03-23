@@ -34,6 +34,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -93,8 +94,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("offset",offset);
 	}
 	
-	 public void aExibir() {
-
+	@Get("/app/pessoa/exibir")
+	public void exibi(String sigla) {
+		 if(sigla != null) {
+			 result.include("pessoa", dao().getPessoaPorPrincipal(sigla));
+		 }
 	 }
 
 	@Override
@@ -138,4 +142,14 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		return null;
 	}
 	
+	@Get("/app/pessoa/selecionar")
+	public void selecionar(String sigla) {
+		String resultado =  super.aSelecionar(sigla);
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
+	}
 }

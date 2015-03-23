@@ -33,6 +33,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.util.CpGrupoDeEmailSelecao;
 
 @Resource
 public class PerfilJEEController extends GrupoController {

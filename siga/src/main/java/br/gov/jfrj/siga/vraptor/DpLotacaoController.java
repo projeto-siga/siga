@@ -130,7 +130,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 	
 	@Get("app/lotacao/exibir")
-	public String exibir(String sigla) throws Exception {
+	public String exibi(String sigla) throws Exception {
         if(sigla != null){
         	result.include("lotacao", dao().getLotacaoFromSigla(sigla));
         }

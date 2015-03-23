@@ -142,7 +142,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		return null;
 	}
 	
-	@Get("/app/pessoa/selecionar")
+	@Get
+	@Post
+	@Path({"/app/pessoa/selecionar","/app/cosignatario/selecionar"})
 	public void selecionar(String sigla) {
 		String resultado =  super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno"){

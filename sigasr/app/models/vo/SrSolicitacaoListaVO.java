@@ -62,7 +62,7 @@ public class SrSolicitacaoListaVO {
 		
 		solicitacoesVO.colunas = solicitacoesVO.gerarColunasSolicitacao(telaDeListas, solicitacoesVO.podeRemover, solicitacoesVO.podePriorizar);
 		solicitacoesVO.colunasDetalhamento = solicitacoesVO.gerarColunasDetalhamentoSolicitacao(telaDeListas);
-		solicitacoesVO.colunasTabelaJson = createColunasTabelaJson(solicitacoesVO.colunas);
+		solicitacoesVO.colunasTabelaJson = createColunasTabelaJson(solicitacoesVO.colunas, telaDeListas);
 		solicitacoesVO.colunasDetalhamentoJson = createColunasDetalhamentoJson(solicitacoesVO.colunasDetalhamento);
 		
 		for (SrSolicitacao sol : solicitacoes) {
@@ -132,15 +132,19 @@ public class SrSolicitacaoListaVO {
 		return JsonUtil.toJson(this).toString();
 	}
 	
-	private static String createColunasTabelaJson(List<ColunasVO> colunas) {
+	private static String createColunasTabelaJson(List<ColunasVO> colunas, boolean telaDeListas) {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting().serializeNulls();
 		List<ColunasVO> colunasResult = null;
 		Gson gson = builder.create();
 		
 		// remove a primeira coluna, que será sempre o detalhamento ou posição na lista		
-		if (colunas.size() > 0)
-			colunasResult = colunas.subList(1,  colunas.size());
+		if (colunas.size() > 0) {
+			if (telaDeListas)
+				colunasResult = colunas.subList(1,  colunas.size() -1);
+			else
+				colunasResult = colunas.subList(1,  colunas.size());
+		}
 		
 		return gson.toJson(colunasResult);
 	}

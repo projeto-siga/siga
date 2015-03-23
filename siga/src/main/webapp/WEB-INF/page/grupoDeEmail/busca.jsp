@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 <siga:pagina titulo="Busca de Grupo" popup="true">
@@ -15,7 +14,7 @@ function sbmt(offset) {
 }
 </script>
 
-<ww:form name="frm" action="buscar" cssClass="form" method="POST">
+<form name="frm" action="buscar" cssClass="form" method="POST">
 	<table class="form" width="100%">
 		<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
 		<input type="hidden" name="propriedade" value="${param.propriedade}" />
@@ -24,14 +23,23 @@ function sbmt(offset) {
 		<tr class="header">
 			<td align="center" valign="top" colspan="4">Dados do Grupo</td>
 		</tr>
-		<ww:textfield label="Nome ou Sigla" name="nome" />
-		<%--<ww:hidden name="postback" value="true" />--%>
-		<%--<ww:select name="orgaoUsu" list="orgaosUsu" listKey="idOrgaoUsu"
-			listValue="nmOrgaoUsu" label="Órgão" headerKey="0"
-			headerValue="[Todos]" />--%>
-		<ww:submit value="Pesquisar" />
+		<tr>
+			<td class="tdLabel">
+				<label class="label" for="buscar_nome">Nome ou Sigla</label>
+			</td>
+			<td>
+				<input type="text" name="nome" id="buscar_nome" value="${nome}" />
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div align="right">
+					<input type="submit" value="Pesquisar" />
+				</div>
+			</td>
+		</tr>
 	</table>
-</ww:form>
+</form>
 
 <br>
 
@@ -44,8 +52,9 @@ function sbmt(offset) {
 	<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
 		itens="${itens}" var="item">
 		<tr class="${evenorodd}">
-			<td width="10%" align="center"><a
-				href="javascript: opener.retorna_${param.propriedade}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
+			<td width="10%" align="center">
+				<a href="javascript: opener.retorna_${param.propriedade}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a>
+			</td>
 			<td width="70%" align="left">${item.descricao}</td>
 			<td align="left" width="20%">${item.hisDtFim}</td>
 		</tr>

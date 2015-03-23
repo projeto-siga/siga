@@ -2029,9 +2029,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<ListaInclusaoAutomatica> listaFinal = new ArrayList<ListaInclusaoAutomatica>();
 		for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] { SrConfiguracaoBL.ATENDENTE, SrConfiguracaoBL.LISTA_PRIORIDADE })) {
 			if (conf.listaPrioridade != null) {
-				SrLista listaAtual = conf.listaPrioridade.getListaAtual();
-				if (!listaFinal.contains(listaAtual))
-					listaFinal.add(new ListaInclusaoAutomatica(listaAtual, conf.prioridadeNaLista));
+				ListaInclusaoAutomatica listaInclusaoAutomatica = new ListaInclusaoAutomatica(conf.listaPrioridade.getListaAtual(), conf.prioridadeNaLista);
+				
+				if (!listaFinal.contains(listaInclusaoAutomatica))
+					listaFinal.add(listaInclusaoAutomatica);
 			}
 		}
 		return listaFinal;

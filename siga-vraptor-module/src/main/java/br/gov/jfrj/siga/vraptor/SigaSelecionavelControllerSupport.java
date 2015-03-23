@@ -65,6 +65,8 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 		}
 		if (sigla != null) {
 			setNome(sigla.toUpperCase());
+		}else{
+			setNome("");
 		}
 
 		int offset = 0;

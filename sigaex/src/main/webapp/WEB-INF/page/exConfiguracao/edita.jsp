@@ -32,7 +32,8 @@ function sbmt() {
 		<form action="editar_gravar">
 		<input type="hidden" name="postback" value="1" />
 		<input type="hidden" name="nmTipoRetorno" value="${nmTipoRetorno}" />
-		<input type="hidden" name="id" value="${id}" /> 
+		<input type="hidden" name="id" value="${id}" />
+		<input type="hidden" name="idFormaDoc" value="${idFormaDoc}"/> 
 		<c:set var="dataFim" value="" />
 		
 		<h1>Cadastro de configuração</h1>
@@ -97,7 +98,7 @@ function sbmt() {
 				<td>
 					<c:choose>
 						<c:when test="${campoFixo && not empty config.exTipoMovimentacao}">
-							<input type="hidden" name="idTpMov" value="${config.exTipoMovimentacao.descrTipoMovimentacao}" />
+							<input type="hidden" name="idTpMov" value="${config.exTipoMovimentacao.idTpMov}" />
 						</c:when>
 						<c:otherwise>
 							<siga:select name="idTpMov" list="listaTiposMovimentacao"

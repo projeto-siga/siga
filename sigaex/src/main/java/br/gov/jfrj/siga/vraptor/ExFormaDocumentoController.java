@@ -1,8 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.TreeSet;
-
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -120,7 +119,7 @@ public class ExFormaDocumentoController extends ExController {
 		forma.setExTipoFormaDoc(dao().consultar(idTipoFormaDoc, ExTipoFormaDoc.class, false));
 
 		if (forma.getExTipoDocumentoSet() == null) {
-			forma.setExTipoDocumentoSet(new TreeSet<ExTipoDocumento>());
+			forma.setExTipoDocumentoSet(new HashSet<ExTipoDocumento>());
 		} else {
 			forma.getExTipoDocumentoSet().clear();
 		}

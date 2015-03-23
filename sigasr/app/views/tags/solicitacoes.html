@@ -27,24 +27,20 @@
 	
 	tr.shown td.details-control {
 		background: none !important;
-	}
-	
-	ul li {
-		list-style-type: none !important;
-		margin-left: 1em !important;
-		margin-bottom: 2px !important;
-	}
+	}	
 </style>
 
 <div class="gt-content-box gt-for-table dataTables_div">
-	<div style="padding: 0px 5px 5px 5px;">
+	<div class="siga-multiple-select">
 		<label><b>Colunas: </b></label>
 		<select id="selectColunasTabela" name="colunasTabela" multiple="multiple">
 		</select>
 		
+		#{if _modoExibicao == 'solicitacao'}
 		<label><b>Detalhes: </b></label>
 		<select id="selectColunasDetalhamento" name="colunasDetalhamento" multiple="multiple">
 		</select>
+		#{/if}
 	</div>
 	<div>
 	</div>
@@ -55,7 +51,7 @@
 </div>
 
 <script type="text/javascript">
-	var tabelaDinamica = new TabelaDinamica('#solicitacoes_table').criar();
+	var tabelaDinamica = new TabelaDinamica('#solicitacoes_table', '${_modoExibicao}').criar();
 
 	if (tabelaDinamica && tabelaDinamica.objetoTabela && tabelaDinamica.objetoTabela.podePriorizar) {
 		$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
@@ -84,7 +80,10 @@
 				tabelaDinamica.alterarColunasTabela(event.target.options, event.target.selectedOptions);
 			}
 		});
-		
+
+		tabelaDinamica.atualizarColunasSelecionadas(selectColunasTabela, tabelaDinamica.objetoTabela.colunasTabelaJson, tabelaDinamica.TIPO_COLUNA_TABELA);
+
+		#{if _modoExibicao == 'solicitacao'}
 		var selectColunasDetalhamento = $("#selectColunasDetalhamento").multiselect({
 			header: false,
 			noneSelectedText: "Selecione",
@@ -93,9 +92,9 @@
 				tabelaDinamica.alterarColunasDetalhamento(event.target.selectedOptions);
 			}
 		});
-
-		tabelaDinamica.atualizarColunasSelecionadas(selectColunasTabela, tabelaDinamica.objetoTabela.colunasTabelaJson, 'tabela');
-		tabelaDinamica.atualizarColunasSelecionadas(selectColunasDetalhamento, tabelaDinamica.objetoTabela.colunasDetalhamentoJson, 'detalhe');
+		
+		tabelaDinamica.atualizarColunasSelecionadas(selectColunasDetalhamento, tabelaDinamica.objetoTabela.colunasDetalhamentoJson, tabelaDinamica.TIPO_COLUNA_DETALHE);
+		#{/if}
 	});
 
 	function formatarDetalhes(data) {

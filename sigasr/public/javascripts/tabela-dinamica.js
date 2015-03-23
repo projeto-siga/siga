@@ -1,7 +1,9 @@
-function TabelaDinamica (tableSelector) {
+function TabelaDinamica (tableSelector, modoExibicao) {
 	this.table = jQuery(tableSelector);
 	this.jSon = null;
 	this.objetoTabela = null;
+	this.TIPO_COLUNA_TABELA = 't_' + modoExibicao;
+	this.TIPO_COLUNA_DETALHE = 'd_' + modoExibicao;
 	
 	this.prepararDadosTabela = function(jSon) {
 		var objetoTabela = new Object();
@@ -74,6 +76,11 @@ function TabelaDinamica (tableSelector) {
 		return objetoTabela;
 	}
 	
+	this.configurar = function(attr, config) {
+		this.config[attr] = config;
+		return this;
+	}
+	
 	this.criar = function() {
 		this.jSon = this.table.data("json");
 		this.objetoTabela = this.prepararDadosTabela(this.jSon);
@@ -89,7 +96,7 @@ function TabelaDinamica (tableSelector) {
 			
 			if (coluna) {
 				coluna.bVisible = showColumn;
-				tabelaDinamica.atualizarCookieColuna(coluna, 'tabela');
+				tabelaDinamica.atualizarCookieColuna(coluna, tabelaDinamica.TIPO_COLUNA_TABELA);
 			}
 		});	
 	}
@@ -119,7 +126,7 @@ function TabelaDinamica (tableSelector) {
 			
 			if (coluna) {
 				coluna.bVisible = showColumn;
-				tabelaDinamica.atualizarCookieColuna(coluna, 'detalhe');
+				tabelaDinamica.atualizarCookieColuna(coluna, tabelaDinamica.TIPO_COLUNA_DETALHE);
 			}
 		});	
 	}
@@ -128,9 +135,9 @@ function TabelaDinamica (tableSelector) {
 		this.updateColumnValuesFromCookies(colunas, tipo);
 		this.addOptions(select, colunas);
 		
-		if (tipo == 'tabela')
+		if (tipo == this.TIPO_COLUNA_TABELA && select)
 			this.alterarColunasTabela(select[0].options, select[0].selectedOptions);
-		else if (tipo == 'detalhe')
+		else if (tipo == this.TIPO_COLUNA_DETALHE)
 			this.alterarColunasDetalhamento(select[0].selectedOptions);
 	}
 	

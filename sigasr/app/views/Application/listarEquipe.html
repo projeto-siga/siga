@@ -63,33 +63,38 @@
 	};
 
 	$(document).ready(function() {
-		/* Table initialization */
-		opts.dataTable = $('#equipes_table').dataTable({
-			"language": {
-				"emptyTable":     "Não existem resultados",
-			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-			    "infoPostFix":    "",
-			    "thousands":      ".",
-			    "lengthMenu":     "Mostrar _MENU_ registros",
-			    "loadingRecords": "Carregando...",
-			    "processing":     "Processando...",
-			    "search":         "Filtrar:",
-			    "zeroRecords":    "Nenhum registro encontrado",
-			    "paginate": {
-			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
-			        "previous":   "Anterior"
-			    },
-			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
-			    }
-			},
-			"iDisplayLength": 25
-		});
+		if ( $.fn.dataTable.isDataTable( '#equipes_table' ) ) {
+			opts.dataTable = $('#equipes_table').dataTable();
+		}
+		else {
+			/* Table initialization */
+			opts.dataTable = $('#equipes_table').dataTable({
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				"iDisplayLength": 25
+			});
+		}
 	});
 
 	function EquipeService(opts) {
@@ -158,33 +163,38 @@
 	 * Constroi a datatable de excessoes de horario
 	 */
 	equipeService.construirExcessoesDataTable = function() {
-		this.excecoesTable = $('#excecoes_table').dataTable({
-			"language": {
-				"emptyTable":     "Não existem resultados",
-			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-			    "infoPostFix":    "",
-			    "thousands":      ".",
-			    "lengthMenu":     "Mostrar _MENU_ registros",
-			    "loadingRecords": "Carregando...",
-			    "processing":     "Processando...",
-			    "search":         "Filtrar:",
-			    "zeroRecords":    "Nenhum registro encontrado",
-			    "paginate": {
-			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
-			        "previous":   "Anterior"
-			    },
-			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
-			    }
-			},
-			"columnDefs": [{"targets": [0, 1], "visible": false, "searchable": false}],
-			"iDisplayLength": 25
-		});
+		if ( $.fn.dataTable.isDataTable( '#excecoes_table' ) ) {
+			this.excecoesTable = $('#excecoes_table').dataTable();
+		}
+		else {
+			this.excecoesTable = $('#excecoes_table').dataTable({
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				"columnDefs": [{"targets": [0, 1], "visible": false, "searchable": false}],
+				"iDisplayLength": 25
+			});
+		}
 		
 		// Remover exceções
 		$('#excecoes_table tbody').on('click', 'a.excecao_remove', function () {

@@ -59,6 +59,7 @@ public class SrSolicitacaoVO {
 		this.ultimaMovimentacaoformatada = SigaPlayUtil.selecionado(this.ultimaMovimentacao, this.ultimaMovimentacao);
 		
 		this.lotaAtendenteFormatada = this.lotaAtendente != null ? getLotacaoFormatada(this.lotaAtendente) : "";
+		this.prioridadeFormatada = sol.prioridade != null ? SigaPlayUtil.selecionado(sol.prioridade.descPrioridade, sol.prioridade.descPrioridade) : "";
 	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, boolean podeRemover, boolean podePriorizar) throws Exception {

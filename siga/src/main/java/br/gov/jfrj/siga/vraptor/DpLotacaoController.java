@@ -24,6 +24,8 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Resource
 public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLotacao, DpLotacaoDaoFiltro> {
 
+	private Long orgaoUsu;
+
 	public DpLotacaoController(HttpServletRequest request, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
@@ -33,9 +35,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	@Post
 	@Path("/app/lotacao/buscar")
 	public void busca(String nome,Long idOrgaoUsu, Integer offset, String postback) throws Exception{
-		Long orgaoUsu;
-		
-		if (param("postback") == null)
+		if (postback == null)
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 		else
 			orgaoUsu = idOrgaoUsu;
@@ -67,7 +67,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		 * flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
 		 * else flt.setIdOrgaoUsu(paramInteger("orgaoUsu"));
 		 */
-		flt.setIdOrgaoUsu(paramLong("orgaoUsu"));
+		flt.setIdOrgaoUsu(orgaoUsu);
 		if (flt.getIdOrgaoUsu() == null) {
 			if (getLotaTitular() == null)
 				throw new AplicacaoException("Usuário não está logado.");

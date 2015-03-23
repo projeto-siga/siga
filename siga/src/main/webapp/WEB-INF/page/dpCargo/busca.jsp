@@ -1,7 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	buffer="64kb"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" buffer="64kb"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <siga:pagina titulo="Buscar Cargo" popup="true">
 
@@ -14,7 +13,6 @@ function sbmt(offset) {
 	frm.submit();
 }
 </script>
-
 <form name="frm" action="buscar" class="form" method="POST>
 		<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
 		<input type="hidden" name="propriedade" value="${param.propriedade}" />

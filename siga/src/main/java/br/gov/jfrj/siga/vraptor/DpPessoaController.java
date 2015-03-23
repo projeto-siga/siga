@@ -88,7 +88,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("tamanho",getTamanho());
 		result.include("orgaosUsu",getOrgaosUsu());
 		result.include("lotacaoSel",lotacaoSel == null ? new DpLotacaoSelecao() : lotacaoSel);
-		result.include("idOrgaoUsu",idOrgaoUsu);
+		result.include("idOrgaoUsu",orgaoUsu);
 		result.include("nome",nome);
 		result.include("postbak",postback);
 		result.include("offset",offset);

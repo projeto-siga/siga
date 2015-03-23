@@ -90,6 +90,6 @@ public class CpGrupoDeEmailSelecao extends Selecao<CpGrupo> {
 
 	@Override
 	public String getAcaoBusca() {
-		return "/gi/email";
+		return "/gi/grupoDeEmail";
 	}
 }

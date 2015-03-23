@@ -18,8 +18,9 @@ import br.gov.jfrj.siga.dp.dao.DpCargoDaoFiltro;
 public class DpCargoController extends
 		SigaSelecionavelControllerSupport<DpCargo, DpCargoDaoFiltro> {
 	
-	public DpCargoController(HttpServletRequest request, Result result,
-			CpDao dao, SigaObjects so, EntityManager em) {
+	private Long orgaoUsu;
+
+	public DpCargoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 	}
 	
@@ -27,9 +28,7 @@ public class DpCargoController extends
 	@Post
 	@Path("/app/cargo/buscar")
 	public void busca(String nome,Long idOrgaoUsu, Integer offset, String postback) throws Exception{
-		Long orgaoUsu;
-		
-		if (param("postback") == null)
+		if (postback == null)
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 		else
 			orgaoUsu = idOrgaoUsu;
@@ -56,7 +55,7 @@ public class DpCargoController extends
 	public DpCargoDaoFiltro createDaoFiltro() {
 		final DpCargoDaoFiltro flt = new DpCargoDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
-		flt.setIdOrgaoUsu(paramLong("orgaoUsu"));
+		flt.setIdOrgaoUsu(orgaoUsu);
 		if (flt.getIdOrgaoUsu() == null)
 			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
 		return flt;

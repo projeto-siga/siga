@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Resource
 public class ExAutenticacaoController extends ExController{
-	private static final String URL_EXIBIR = "/app/configuracao/autenticar";
+	private static final String URL_EXIBIR = "/app/externo/autenticar";
 
 	public ExAutenticacaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
@@ -40,7 +40,7 @@ public class ExAutenticacaoController extends ExController{
 		result.include("request", getRequest());
 	}
 	
-	@Get("/app/configuracao/captcha")
+	@Get("/app/externo/captcha")
 	public Download captcha(final String sc, 
 							final String ts) throws Exception{
 		
@@ -62,7 +62,7 @@ public class ExAutenticacaoController extends ExController{
 //	antigo metodo exec()
 	@Get
 	@Post
-	@Path("/app/configuracao/autenticar")
+	@Path("/app/externo/autenticar")
 	public void autenticar(final String n, 
 						   final String answer,
 						   final String ass,
@@ -130,7 +130,7 @@ public class ExAutenticacaoController extends ExController{
 		setDefaultResults();
 	}
 	
-	@Get("/app/configuracao/arquivoAutenticado_stream")
+	@Get("/app/externo/arquivoAutenticado_stream")
 	public Download arquivoAutenticado_stream(final String n, 
 											  final String answer, 
 											  final boolean assinado, 
@@ -184,7 +184,7 @@ public class ExAutenticacaoController extends ExController{
 	}
 	
 //	antigo metodo arquivo();
-	@Get("/app/configuracao/arquivoAutenticado")
+	@Get("/app/externo/arquivoAutenticado")
 	public void arquivoAutenticado(final String n, 
 								   final String answer) throws Exception{
 		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(Captcha.NAME);

@@ -12,7 +12,7 @@
 			<h2>Autenticação de Documentos</h2>
 			<div class="gt-content-box gt-for-table">
 
-				<form action="${request.contextPath}/app/configuracao/autenticar" method="GET" class="form">
+				<form action="${request.contextPath}/app/externo/autenticar" method="GET" class="form">
 					<table class="gt-form-table">
 						<tr class="header">
 							<td colspan="2">Dados do Documento</td>
@@ -29,7 +29,7 @@
 							<td width="30%" valign="top">Digite os caracteres conforme são mostrados na imagem ao lado:</td>
 							<td>
 								<jsp:useBean id="now" class="java.util.Date" /> 
-								<img src="<c:url value="/app/configuracao/captcha?sc=1" />&ts=${now.time}">
+								<img src="<c:url value="/app/externo/captcha?sc=1" />&ts=${now.time}">
 								<br />
 								<input id="id_captcha" type="text" name="answer" style="width: 150px; margin-top: 15px;" />
 							</td>

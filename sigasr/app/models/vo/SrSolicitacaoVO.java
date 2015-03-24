@@ -1,5 +1,8 @@
 package models.vo;
 
+import java.util.List;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 import models.SrItemConfiguracao;
 import models.SrLista;
 import models.SrPrioridadeSolicitacao;
@@ -161,4 +164,8 @@ public class SrSolicitacaoVO {
 			this.marcadoresEmHtml = "";
 	}
 	
+	public static void ordenarPorPrioridade(List<SrSolicitacaoVO> lista) {
+		SrSolicitacaoVOComparator comparator = new SrSolicitacaoVOComparator();
+		Collections.sort(lista, comparator);
+	}
 }

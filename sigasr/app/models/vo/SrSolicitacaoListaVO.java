@@ -78,7 +78,9 @@ public class SrSolicitacaoListaVO {
 			else
 				solicitacoesVO.itens.add(new SrSolicitacaoVO(sol, nome, isPopup, lotaTitular, cadastrante));
 		}
-			
+		
+		if (lista != null) 
+			SrSolicitacaoVO.ordenarPorPrioridade(solicitacoesVO.itens);
 		
 		return solicitacoesVO;
 	}

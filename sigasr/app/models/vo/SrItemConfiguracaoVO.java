@@ -10,6 +10,7 @@ import models.SrItemConfiguracao;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 
 /**
  * Classe que representa um V.O. de {@link SrItemConfiguracao}.
@@ -61,11 +62,15 @@ public class SrItemConfiguracaoVO implements ISelecionavel {
 	 * Converte o objeto para Json.
 	 */
 	public String toJson() {
+		return toJsonObject().toString();
+	}
+	
+	public JsonElement toJsonObject() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting().serializeNulls();
 		Gson gson = builder.create();
 
-		return gson.toJson(this);
+		return gson.toJsonTree(this);
 	}
 	
 	public static SrItemConfiguracaoVO createFrom(SrItemConfiguracao item) {

@@ -1,11 +1,11 @@
 package models;
 
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA;
-import static models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA;
-
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -24,6 +24,7 @@ import javax.persistence.Table;
 
 import models.vo.SrListaVO;
 import play.db.jpa.JPA;
+import util.AtualizacaoLista;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -33,12 +34,12 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
 public class SrLista extends HistoricoSuporte {
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@SuppressWarnings("unused")
 	private class SrSolicitacaoListaComparator implements
 	Comparator<SrSolicitacao> {
 
@@ -86,9 +87,9 @@ public class SrLista extends HistoricoSuporte {
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	public DpLotacao lotaCadastrante;
 
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
-	@OrderBy("dtIniMov DESC")
-	protected Set<SrMovimentacao> meuMovimentacaoSet;
+	@OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
+	@OrderBy("numPosicao")
+	protected Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet = new HashSet<SrPrioridadeSolicitacao>();
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
@@ -148,31 +149,23 @@ public class SrLista extends HistoricoSuporte {
 		return listas.get(0);
 	}
 
-	public Set<SrMovimentacao> getMovimentacaoSet() {
-		return getMovimentacaoSet(false);
+	public Set<SrPrioridadeSolicitacao> getPrioridadeSolicitacaoSet() {
+		return getPrioridadeSolicitacaoSet(true);
 	}
 
-	public Set<SrMovimentacao> getMovimentacaoSetOrdemCrescente() {
-		return getMovimentacaoSet(true);
+	public Set<SrPrioridadeSolicitacao> getPrioridadeSolicitacaoSetOrdemCrescente() {
+		return getPrioridadeSolicitacaoSet(true);
 	}
-
-	public Set<SrMovimentacao> getMovimentacaoSet(boolean ordemCrescente) {
-		TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(
-				new SrMovimentacaoComparator(ordemCrescente));
+	
+	public Set<SrPrioridadeSolicitacao> getPrioridadeSolicitacaoSet(boolean ordemCrescente) {
+		TreeSet<SrPrioridadeSolicitacao> listaCompleta = new TreeSet<SrPrioridadeSolicitacao>(new SrPrioridadeSolicitacaoComparator(ordemCrescente));
 		if (listaInicial != null)
 			for (SrLista lista : getHistoricoLista())
-				if (lista.meuMovimentacaoSet != null)
-					for (SrMovimentacao movimentacao : lista.meuMovimentacaoSet)
-						if ((!movimentacao.isCanceladoOuCancelador()))
-							listaCompleta.add(movimentacao);
+				if (lista.meuPrioridadeSolicitacaoSet != null)
+					for (SrPrioridadeSolicitacao prioridadeSolicitacao : lista.meuPrioridadeSolicitacaoSet)
+							listaCompleta.add(prioridadeSolicitacao);
 		return listaCompleta;
-	}
-
-	public SrMovimentacao getUltimaMovimentacao() {
-		for (SrMovimentacao movimentacao : getMovimentacaoSet())
-			return movimentacao;
-		return null;
-	}
+	}	
 	
 	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa pess) {
 		return (lotaTitular.equivale(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
@@ -221,62 +214,77 @@ public class SrLista extends HistoricoSuporte {
 		}
 	}
 	
-	public Set<SrSolicitacao> getSolicitacaoSet() throws Exception {
-		Set<SrSolicitacao> sols = new TreeSet<SrSolicitacao>(
-				new SrSolicitacaoListaComparator(this));
-		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
-			if (mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_INCLUSAO_LISTA
-					|| mov.tipoMov.idTipoMov == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA)
-				sols.add(mov.solicitacao);
-			else
-				sols.remove(mov.solicitacao);
+	public List<SrConfiguracao> getPermissoes() {
+		return getPermissoes(null, null);
+	}
+		
+	protected long getPosicaoParaEncaixe(SrPrioridadeSolicitacao prioridadeSolicitacao) throws Exception {
+		List <SrPrioridadeSolicitacao> prioridades = new ArrayList<SrPrioridadeSolicitacao>(getPrioridadeSolicitacaoSet());
+		
+		if (prioridades.isEmpty()) {
+			return 1;
 		}
-		return sols;
-	}
+		
+		if (prioridadeSolicitacao.getPrioridade() != null) {
+			
+			for (int i = prioridades.size() - 1; i >= 0; i--) {
+				SrPrioridadeSolicitacao prioridadeSolic = prioridades.get(i);
+				if (prioridadeSolicitacao.getPrioridade().equals(prioridadeSolic.getPrioridade())) {
+					return prioridadeSolic.getNumPosicao() + 1;
+				}
+			}				
+		}
+		return buscarPosicaoPorPrioridade(prioridades, prioridadeSolicitacao);
+	}	
 
-	public boolean isEmpty() throws Exception {
-		return getSolicitacaoSet().size() > 0;
-	}
-
-	protected int getProximaPosicao() throws Exception {
-		return getSolicitacaoSet().size() + 1;
-	}
-
-	public void priorizar(DpPessoa cadastrante, DpLotacao lotaCadastrante,
-			DpPessoa titular, DpLotacao lotaTitular,
-			List<SrSolicitacao> sols) throws Exception {
-
-		if (sols.size() != getSolicitacaoSet().size())
-			throw new IllegalArgumentException(
-					"O nímero de elementos passados ("
-							+ sols.size()
-							+ ") é diferente do número de solicitações existentes na lista ("
-							+ getSolicitacaoSet().size() + ")");
-
-		for (SrSolicitacao sol : sols) {
-			if (!sol.isEmLista(this))
-				throw new IllegalArgumentException("A solicitação "
-						+ sol.getCodigo() + " não faz parte da lista");
+	private Long buscarPosicaoPorPrioridade(List<SrPrioridadeSolicitacao> prioridades, SrPrioridadeSolicitacao prioridadeSolicitacao) {
+		if (prioridades.get(prioridades.size() - 1).getNumPosicao() == null) {
+			return 0L;
+		}
+		
+		for (int i = 0; i <= prioridades.size() - 1; i++) {	
+			SrPrioridadeSolicitacao prioridadeSolic = prioridades.get(i);
+			if(prioridadeSolicitacao.getPrioridade() != null && prioridadeSolic.getPrioridade() != null) {
+				if (prioridadeSolicitacao.getPrioridade().idPrioridade > prioridadeSolic.getPrioridade().idPrioridade) {
+					return prioridadeSolic.getNumPosicao();
+				}
+			}
 		}
 
-		this.recalcularPrioridade(cadastrante, lotaCadastrante, titular, lotaTitular, sols);
+		return prioridades.get(prioridades.size() - 1).getNumPosicao() + 1;
+	}
+
+	public void priorizar(DpPessoa cadastrante, DpLotacao lotaCadastrante, List<AtualizacaoLista> listaPrioridadeSolicitacao) throws Exception {
+		Map<Long, AtualizacaoLista> atualizacoesAgrupadas = agruparAtualizacoes(listaPrioridadeSolicitacao);
+		
+		for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
+			if (!prioridadeSolicitacao.getSolicitacao().isEmLista(this))
+				throw new IllegalArgumentException("A solicitação " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " não faz parte da lista");
+
+			AtualizacaoLista atualizacaoLista = atualizacoesAgrupadas.get(prioridadeSolicitacao.getId());
+			if (atualizacaoLista != null) {
+				prioridadeSolicitacao.atualizar(atualizacaoLista);
+			}
+		}
 		this.refresh();
 	}
 
-	protected void recalcularPrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante,
-			DpPessoa titular, DpLotacao lotaTitular)
-			throws Exception {
-		recalcularPrioridade(cadastrante, lotaCadastrante, titular, lotaTitular, this.getSolicitacaoSet());
+	private Map<Long, AtualizacaoLista> agruparAtualizacoes(List<AtualizacaoLista> listaPrioridadeSolicitacao) {
+		Map<Long, AtualizacaoLista> atualizacoesAgrupadas = new HashMap <Long, AtualizacaoLista>();
+		for (AtualizacaoLista atualizacaoLista : listaPrioridadeSolicitacao) {
+			atualizacoesAgrupadas.put(atualizacaoLista.getIdPrioridadeSolicitacao(), atualizacaoLista);
+		}
+		return atualizacoesAgrupadas;
 	}
 
-	private void recalcularPrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante,
-			DpPessoa titular, DpLotacao lotaTitular,
-			Collection<SrSolicitacao> sols) throws Exception {
-		long i = 0;
-		for (SrSolicitacao s : sols) {
-			i++;
-			if (s.getPrioridadeNaLista(this) != i)
-				s.priorizar(this, i, cadastrante, lotaCadastrante, titular, lotaTitular);
+	protected void recalcularPrioridade(DpPessoa pessoa, DpLotacao lota) throws Exception {
+		Long posicao = 0L;
+		for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
+			posicao++;
+			if (!posicao.equals(prioridadeSolicitacao.numPosicao)){
+				prioridadeSolicitacao.setNumPosicao(posicao);
+				prioridadeSolicitacao.salvar();
+			}
 		}
 	}
 	
@@ -294,10 +302,56 @@ public class SrLista extends HistoricoSuporte {
 		}
 	}
 	
+    public SrPrioridadeSolicitacao getSrPrioridadeSolicitacao(SrSolicitacao solicitacao) {
+        for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
+        	if (solicitacao.getIdInicial().equals(prioridadeSolicitacao.getSolicitacao().getIdInicial())) {
+        		return prioridadeSolicitacao;
+        	}
+        }
+    	return null;
+    }	
+    
+    public void incluir(SrSolicitacao solicitacao, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
+    	SrPrioridadeSolicitacao prioridadeSolicitacao = new SrPrioridadeSolicitacao(this, solicitacao, prioridade, naoReposicionarAutomatico);
+		long posicao = getPosicaoParaEncaixe(prioridadeSolicitacao);
+
+		for (SrPrioridadeSolicitacao prioridadeSolic : getPrioridadeSolicitacaoSet()) {
+			if (prioridadeSolic.getNumPosicao() >= posicao) {
+				prioridadeSolic.incrementarPosicao();
+				prioridadeSolic.salvar();
+			}
+		}
+		prioridadeSolicitacao.setNumPosicao(posicao);
+		meuPrioridadeSolicitacaoSet.add(prioridadeSolicitacao);
+    	prioridadeSolicitacao.salvar();
+    }
+	
 	/**
 	 * Retorna um Json de {@link SrLista}.
 	 */
 	public String getSrListaJson() {
 		return this.toVO().toJson();
+	}
+
+	public void retirar(SrSolicitacao solicitacao, DpPessoa pessoa, DpLotacao lotacao) throws Exception {
+		for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
+			if (prioridadeSolicitacao.getSolicitacao().getId().equals(solicitacao.getId())) {
+				prioridadeSolicitacao.delete();
+				excluir(prioridadeSolicitacao);
+				break;
+			}
+		}
+		salvar();
+		recalcularPrioridade(pessoa, lotacao);
+	}
+
+	private void excluir(SrPrioridadeSolicitacao prioridadeSolicitacao) {
+		for (SrLista listaHistorico : getHistoricoLista()) {
+			boolean removido = listaHistorico.meuPrioridadeSolicitacaoSet.remove(prioridadeSolicitacao);
+			
+			if(removido) {
+				break;
+			}
+		}
 	}
 }

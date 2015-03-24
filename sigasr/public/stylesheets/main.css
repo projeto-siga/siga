@@ -113,6 +113,12 @@ td.padding-table {
 	width: 2%  !important;
 }
 
+.bt-expandir-tabela {
+	color: #333;
+	text-align: center;
+	width: 30px !important;
+}
+
 .error {
    color: red !important;
 }
@@ -127,4 +133,38 @@ td.padding-table {
 
 .checkbox-hidden {
 	visibility: hidden;
+}
+
+.solicitacao-codigo {
+	font-size: 13px;
+	font-weight: bold; 
+	border-bottom: 1px solid #ccc !important; 
+	padding: 7px 10px;
+}
+
+.solicitacao-dados {
+	font-size: 9pt;
+	padding: 7px 10px !important; 
+	border-bottom: 1px solid #ccc !important; 
+	text-align:justify;
+}
+
+.solicitacao-remover {
+	color: #333;
+	font-weight: bold;
+	padding: 7px 10px !important;
+}
+
+td.solicitacao-prioridade {
+	cursor:move;
+}
+
+.siga-multiple-select {
+	padding: 0px 5px 5px 5px;
+}
+
+div > ul > li {
+	list-style-type: none !important;
+	margin-left: 1em !important;
+	margin-bottom: 2px !important;
 }

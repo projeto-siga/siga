@@ -529,7 +529,9 @@ public class ExMovimentacaoController extends ExController {
 		aGerarProtocoloArqTransf(pessoa, popup, false);
 	}
 
-	@Get("/app/expediente/mov/protocolo_transf")
+	@Get
+	@Post
+	@Path("/app/expediente/mov/protocolo_transf")
 	public void aGerarProtocoloTransf(final String pessoa, boolean popup) throws Exception {
 		aGerarProtocoloArqTransf(pessoa, popup, true);
 	}

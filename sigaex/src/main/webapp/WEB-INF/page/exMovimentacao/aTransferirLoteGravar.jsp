@@ -27,7 +27,7 @@
 						<td>
 							${cadastrante.lotacao.descricao} - ${cadastrante.descricao}
 						</td>
-						<input type="hidden" name="pessoa" id="pessoa" value="${cadastrante.id}" />
+						<input type="hidden" name="pessoa" id="pessoa" value="${cadastrante.sigla}" />
 					</tr>
 					<td>
 						Para:

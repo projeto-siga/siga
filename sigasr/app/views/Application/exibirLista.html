@@ -133,8 +133,7 @@
 </div>
 
 #{modal nome:'editarLista', titulo:'Editar Lista'}
-	<div id="divEditarLista">#{include
-				'Application/editarLista.html' /}</div>
+	<div id="divEditarLista">#{include 'Application/editarLista.html' /}</div>
 #{/modal}
 
 <!-- modal de posicao -->
@@ -193,8 +192,6 @@
 
 	$(function(){
 	    $('#btn').click(function() {
-	        if (!block())
-	            return false;
 	        var prioridades=[];
 	    	$("#sortable > tr").each(function() {
 	    		var solicitacaoString = $(this).attr('data-json'),
@@ -203,28 +200,21 @@
     			if (solicitacao)
     				prioridades.push(solicitacao.prioridadeSolicitacaoVO);
 	 	    });
-	
 	 	    if (prioridades.length > 0) {
-		 	    var idLista = $('[name=idLista]').val(),
-	 	    		location = '@{Application.exibirLista()}?id=' + idLista;
-	 	    		
 	 	    	$.post('@{Application.priorizarLista()}', {
-		 	    	listaPrioridadeSolicitacao:prioridades,
-		 	    	id: $('[name=idLista]').val(),
-		 	    	success : function() {
-		 	    		window.location = location;
-	 	    		}
+		 	    	listaPrioridadeSolicitacao : prioridades,
+		 	    	id : $('[name=idLista]').val()
 	 	    	});
 		 	}
 	    });
 	});
 
 	var opts = {
-			 urlGravar : '@{Application.gravarLista()}?',
-			 dialogCadastro : $('#editarLista_dialog'),
-			 objectName : 'lista',
-			 formCadastro : $('#formLista')
-		};	
+			urlGravar : '@{Application.gravarLista()}?',
+			dialogCadastro : $('#editarLista_dialog'),
+			objectName : 'lista',
+			formCadastro : $('#formLista')
+	};	
 
 	// Define a "classe" listaService
 	function ListaService(opts) {
@@ -243,7 +233,6 @@
 	listaService.getId = function(lista) {
 		return lista.idLista;
 	}
-
 	/**
 	 * Customiza o metodo editar
 	 */
@@ -255,7 +244,6 @@
 		carregarPermissoes(lista.idLista);
 		configuracaoInclusaoAutomaticaService.carregarParaLista(lista.idLista);
 	}
-
 	/**
 	* Customiza o método onGravar()
 	*/
@@ -381,6 +369,7 @@
 			obj = JSON.parse(objString);
 		
 		if (obj && obj.prioridadeSolicitacaoVO) {
+			var prioridadeAntiga = obj.prioridadeSolicitacaoVO.prioridade;
 			tr.removeClass('PRIORIDADE-' + obj.prioridadeSolicitacaoVO.prioridade);
 			tr.addClass('PRIORIDADE-' + novaPrioridade);
 
@@ -388,8 +377,8 @@
 			obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico = $('#checknaoReposicionarAutomatico').is(':checked');
 			
 			tr.attr('data-json', JSON.stringify(obj));
-
-			if(obj.prioridadeSolicitacaoVO.prioridade != novaPrioridade) {
+			
+			if(prioridadeAntiga != novaPrioridade) {
 				if (!obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico) {
 					reposicionarPorPrioridade(obj, tr);
 				}
@@ -408,19 +397,11 @@
 			lista = $("#sortable > tr"),
 			ultimaPosicao = lista.size() - 1;
 
-		for(var i = ultimaPosicao; i >= 0; i--) {
-			var prioridadeString = $(lista[i]).attr('data-json'),
-				prioridade = JSON.parse(prioridadeString);
-
-			
-			
-		}
-		
 		$("#sortable > tr").each(function() {
 			var me = $(this),
 				objStringLista = me.attr('data-json'),
 				objLista = JSON.parse(objStringLista);
-			
+
 			if (obj && obj.prioridadeSolicitacaoVO && obj.prioridadeSolicitacaoVO.prioridade == objLista.prioridadeSolicitacaoVO.prioridade) {
 				tr.insertAfter($(lista[posicao]));
 			}

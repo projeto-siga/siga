@@ -136,7 +136,6 @@ altura:'200', largura:'450'}
 	// Sobescreve o metodo cadastrar para limpar a tela
 	designacaoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title);
-
 		// atualiza os dados da Designação
 		atualizarDesignacaoEdicao();
 	}
@@ -387,7 +386,9 @@ altura:'200', largura:'450'}
 	}
 
 	function atualizarDesignacaoEdicao(designacaoJson) {
-		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(designacaoJson);
+		if(!designacaoJson) {
+			configuracaoItemAcaoService.iniciarDataTables();
+		}else configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(designacaoJson);
 
 		#{if _modoExibicao == 'equipe'}
 			// Caso seja cadastro a partir da tela de equipe, atualiza os dados da Lotação atendente

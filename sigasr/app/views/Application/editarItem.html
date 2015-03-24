@@ -486,11 +486,9 @@
 
     designacaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo),
-			trItem = itemConfiguracaoService.row({
+			itemConfiguracaoAntivo = {
 				id : itemConfiguracaoService.getIdEdicao()
-			}),
-			itemConfiguracaoAntivo = trItem.data('json');
-		
+			};
 		afterGravarDesignacao(tr, objSalvo, this);
 		itemConfiguracaoService.onGravar(itemConfiguracaoAntivo, objSalvo.itemConfiguracao);
 		$('#idItemConfiguracao').val(objSalvo.itemConfiguracao.id);

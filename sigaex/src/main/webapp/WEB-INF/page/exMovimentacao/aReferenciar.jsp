@@ -17,7 +17,7 @@
 <script type="text/javascript" language="Javascript1.1">
 function sbmt() {
 	ExMovimentacaoForm.page.value='';
-	ExMovimentacaoForm.acao.value='${request.contextPath}/app/expediente/mov/referenciar&sigla=${sigla}';
+	ExMovimentacaoForm.acao.value='${request.contextPath}/app/expediente/mov/referenciar?sigla=${sigla}';
 	ExMovimentacaoForm.submit();
 }
 

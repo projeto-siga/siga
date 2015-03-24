@@ -1046,6 +1046,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("sigla", sigla);
 		result.include("doc", doc);
 		result.include("mob", builder.getMob());
+		result.include("request",getRequest());
 		result.include("titularSel", new DpPessoaSelecao());
 		result.include("subscritorSel", new DpPessoaSelecao());
 		result.include("documentoRefSel", new ExDocumentoSelecao());

@@ -57,15 +57,6 @@ function Formulario(form) {
 			        }
 		        }
 		    }
-		    else if (typeof obj[x] == 'boolean') { 
-		    	var component = form.find('[id=check' + x + ']'),
-	    		className = component.size() > 0 ? component[0].className : null;
-	    		
-	    		if (className == 'checkbox') {
-	    			var checkbox = component[0];
-	    			checkbox.checked = obj[x];
-		    	}
-		    }
 		}
 	}
 	

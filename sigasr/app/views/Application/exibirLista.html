@@ -167,7 +167,8 @@
 				<label>Prioridade</label> 
 				<td>#{select name:'prioridade', id:'selectPrioridade', items:models.SrPrioridade.values(), 
 						labelProperty:'descPrioridade', value:prioridade, style:'width:250px;' } 
-						#{option 0}#{/option} #{/select}
+						#{option 0}Nenhuma#{/option} 
+						#{/select}
 				</td>					
 			</div>
 			<div id="naoReposicionarAutomatico" class="gt-width-250">
@@ -204,11 +205,14 @@
 	 	    });
 	
 	 	    if (prioridades.length > 0) {
-	 	    	$.post('/sigasr/solicitacao/priorizarLista', {
+		 	    var idLista = $('[name=idLista]').val(),
+	 	    		location = '@{Application.exibirLista()}?id=' + idLista;
+	 	    		
+	 	    	$.post('@{Application.priorizarLista()}', {
 		 	    	listaPrioridadeSolicitacao:prioridades,
-		 	    	id:$('[name=idLista]').val(),
+		 	    	id: $('[name=idLista]').val(),
 		 	    	success : function() {
-		 	    		window.location.reload();
+		 	    		window.location = location;
 	 	    		}
 	 	    	});
 		 	}
@@ -278,6 +282,7 @@
 
 		if (obj) {
 			$('#prioridade_dialog').dialog('open');
+			obj.prioridadeSolicitacaoVO.checknaoReposicionarAutomatico = obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico;
 			new Formulario($('#prioridadeForm')).populateFromJson(obj.prioridadeSolicitacaoVO);
 		}
 	}
@@ -362,7 +367,6 @@
 				posicao++;
 				obj.prioridadeSolicitacaoVO.numPosicao = posicao;
 			}
-			
 			me.attr('data-json', JSON.stringify(obj));
 			me.find('td:first').find('a').html(posicao);
 		});		
@@ -379,6 +383,7 @@
 		if (obj && obj.prioridadeSolicitacaoVO) {
 			tr.removeClass('PRIORIDADE-' + obj.prioridadeSolicitacaoVO.prioridade);
 			tr.addClass('PRIORIDADE-' + novaPrioridade);
+
 			obj.prioridadeSolicitacaoVO.prioridade = novaPrioridade;
 			obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico = $('#checknaoReposicionarAutomatico').is(':checked');
 			
@@ -400,8 +405,17 @@
 	
 	function reposicionarPorPrioridade(obj, tr) {
 		var posicao = 0,
-			lista = $("#sortable > tr");
+			lista = $("#sortable > tr"),
+			ultimaPosicao = lista.size() - 1;
 
+		for(var i = ultimaPosicao; i >= 0; i--) {
+			var prioridadeString = $(lista[i]).attr('data-json'),
+				prioridade = JSON.parse(prioridadeString);
+
+			
+			
+		}
+		
 		$("#sortable > tr").each(function() {
 			var me = $(this),
 				objStringLista = me.attr('data-json'),

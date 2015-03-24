@@ -7,6 +7,7 @@ public class AtualizacaoLista {
 	private Long idPrioridadeSolicitacao;
 	private SrPrioridade prioridade;
 	private Long numPosicao;
+	private boolean naoReposicionarAutomatico;
 
 	public Long getIdPrioridadeSolicitacao() {
 		return idPrioridadeSolicitacao;
@@ -31,4 +32,12 @@ public class AtualizacaoLista {
 	public void setNumPosicao(Long numPosicao) {
 		this.numPosicao = numPosicao;
 	}
-}
+
+	public boolean isNaoReposicionarAutomatico() {
+		return naoReposicionarAutomatico;
+	}
+
+	public void setNaoReposicionarAutomatico(boolean naoReposicionarAutomatico) {
+		this.naoReposicionarAutomatico = naoReposicionarAutomatico;
+	}
+}	

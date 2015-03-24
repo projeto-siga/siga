@@ -256,15 +256,12 @@ public class SrLista extends HistoricoSuporte {
 		Map<Long, AtualizacaoLista> atualizacoesAgrupadas = agruparAtualizacoes(listaPrioridadeSolicitacao);
 		
 		for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
-			AtualizacaoLista atualizacaoLista = atualizacoesAgrupadas.get(prioridadeSolicitacao.getId());
-			
 			if (!prioridadeSolicitacao.getSolicitacao().isEmLista(this))
 				throw new IllegalArgumentException("A solicitação " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " não faz parte da lista");
 
-			if(atualizacaoLista != null) {
-				prioridadeSolicitacao.setPrioridade(atualizacaoLista.getPrioridade());
-				prioridadeSolicitacao.setNumPosicao(atualizacaoLista.getNumPosicao());
-				prioridadeSolicitacao.salvar();
+			AtualizacaoLista atualizacaoLista = atualizacoesAgrupadas.get(prioridadeSolicitacao.getId());
+			if (atualizacaoLista != null) {
+				prioridadeSolicitacao.atualizar(atualizacaoLista);
 			}
 		}
 		this.refresh();

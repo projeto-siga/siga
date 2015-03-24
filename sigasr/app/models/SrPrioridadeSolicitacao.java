@@ -15,6 +15,7 @@ import models.vo.SrPrioridadeSolicitacaoVO;
 
 import org.hibernate.annotations.Type;
 
+import util.AtualizacaoLista;
 import util.Util;
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -155,4 +156,11 @@ public class SrPrioridadeSolicitacao extends Objeto {
 	public SrPrioridadeSolicitacaoVO toVO() {
 		return SrPrioridadeSolicitacaoVO.createFrom(this);
 	}
-}
+
+	public void atualizar(AtualizacaoLista atualizacaoLista) throws Exception {
+		this.setPrioridade(atualizacaoLista.getPrioridade());
+		this.setNumPosicao(atualizacaoLista.getNumPosicao());
+		this.setNaoReposicionarAutomatico(atualizacaoLista.isNaoReposicionarAutomatico());
+		this.salvar();
+	}
+}	

@@ -218,7 +218,9 @@ tr.shown td.details-control {
 	itemConfiguracaoService.getId = function(itemConfiguracao) {
 		return itemConfiguracao.id;
 	}
-
+	itemConfiguracaoService.getIdEdicao = function() {
+		return $('#idItemConfiguracao').val();
+	}
 	itemConfiguracaoService.getRow = function(itemConfiguracao) {
 		return ['', itemConfiguracao.siglaItemConfiguracao, itemConfiguracao.tituloItemConfiguracao,
 				itemConfiguracao.descrItemConfiguracao, itemConfiguracao.descricaoSimilaridade, 'COLUNA_ACOES', itemConfiguracao];

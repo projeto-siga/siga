@@ -479,27 +479,26 @@
     });
 
     designacaoService.gravar = function() {
-    	var id = $('#idItemConfiguracao').val();
-    	
-		designacaoOpts.urlGravar = '@{Application.gravarDesignacaoItem()}';
+    	var id = itemConfiguracaoService.getIdEdicao();
+		designacaoOpts.urlGravar = '@{Application.gravarDesignacaoItem()}?idItemConfiguracao=' + id;
 		BaseService.prototype.gravar.call(this);
     }
 
     designacaoService.onGravar = function(obj, objSalvo) {
-        debugger;
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo),
 			trItem = itemConfiguracaoService.row({
-				id : $('#idItemConfiguracao').val()
+				id : itemConfiguracaoService.getIdEdicao()
 			}),
-			itemConfiguracaoAntivo : trItem.attr('data-json');
+			itemConfiguracaoAntivo = trItem.data('json');
 		
 		afterGravarDesignacao(tr, objSalvo, this);
 		itemConfiguracaoService.onGravar(itemConfiguracaoAntivo, objSalvo.itemConfiguracao);
+		$('#idItemConfiguracao').val(objSalvo.itemConfiguracao.id);
 		return tr;
     }
 
     designacaoService.cadastrar = function(titulo) {
-		if (itemConfiguracaoService.aplicar() == false) {
+		if (!itemConfiguracaoService.getIdEdicao() && itemConfiguracaoService.aplicar() == false) {
 			return;
 		}
     	BaseService.prototype.cadastrar.call(this, titulo);

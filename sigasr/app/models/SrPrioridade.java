@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 public enum SrPrioridade {
 
 	IMEDIATO(5, "Imediata"), ALTO(4, "Alta"), MEDIO(3, "Média"), 
@@ -27,5 +30,16 @@ public enum SrPrioridade {
 			}
 		});
 		return prioridades;
+	}
+
+	public static JsonObject getJSON() {
+		Gson gson = new Gson();
+		
+		JsonObject obj = new JsonObject();
+
+		for (SrPrioridade srPrioridade : values()) {
+			obj.add(srPrioridade.name(), gson.toJsonTree(srPrioridade.idPrioridade));
+		}
+		return obj;
 	}
 }

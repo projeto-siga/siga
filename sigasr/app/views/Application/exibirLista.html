@@ -182,6 +182,8 @@
 			</div>
 		</form>
 	</div>
+	
+	<div id="jsonPrioridades" data-json="${jsonPrioridades}"></div>
 #{/modal}
 
 
@@ -392,20 +394,55 @@
 		$("#prioridade_dialog").dialog("close");
 	}
 	
-	function reposicionarPorPrioridade(obj, tr) {
-		var posicao = 0,
-			lista = $("#sortable > tr"),
-			ultimaPosicao = lista.size() - 1;
+	function reposicionarPorPrioridade(listaVO, tr) {
+		var lista = $("#sortable > tr"),
+			reposicionou = reposicionarAposIgual(lista, tr, listaVO);
+		
+		if (!reposicionou) {
+			reposicionou = reposicionarPorPrecedenciaPrioridade(lista, tr, listaVO);
+		}
 
-		$("#sortable > tr").each(function() {
-			var me = $(this),
-				objStringLista = me.attr('data-json'),
-				objLista = JSON.parse(objStringLista);
+		if (!reposicionou) {
+			// Insere no final
+			tr.insertAfter($(lista[lista.size() - 1]));
+		}		
+	}
 
-			if (obj && obj.prioridadeSolicitacaoVO && obj.prioridadeSolicitacaoVO.prioridade == objLista.prioridadeSolicitacaoVO.prioridade) {
-				tr.insertAfter($(lista[posicao]));
+	function reposicionarAposIgual(lista, tr, listaVO) {
+		for (var i = lista.size() - 1; i >= 0; i--) {
+			var trAdicionado = $(lista[i]), 
+				listaVOAdicionado = JSON.parse(trAdicionado.attr('data-json'));
+
+			if (registrosPrioridadesDiferentes(listaVO, listaVOAdicionado)) {
+				if (listaVO && listaVO.prioridadeSolicitacaoVO && listaVO.prioridadeSolicitacaoVO.prioridade == listaVOAdicionado.prioridadeSolicitacaoVO.prioridade) {
+					tr.insertAfter(trAdicionado);
+					return true;
+				}
 			}
-			posicao++;
-		});
+		}
+		return false;
+	}
+
+	function reposicionarPorPrecedenciaPrioridade(lista, tr, listaVO) {
+		var jsonPrioridades = $('#jsonPrioridades').data('json');
+		
+		for (var i = 0; i <= lista.size() - 1; i++) {
+			if(listaVO && listaVO.prioridadeSolicitacaoVO) {
+				var trAdicionado = $(lista[i]),
+					listaVOAdicionado = JSON.parse(trAdicionado.attr('data-json')),
+					idPrioridadeNovo = jsonPrioridades[listaVO.prioridadeSolicitacaoVO.prioridade],
+					idPrioridadeAntigo = jsonPrioridades[listaVOAdicionado.prioridadeSolicitacaoVO.prioridade];
+				
+				if (idPrioridadeNovo > idPrioridadeAntigo) {
+					tr.insertBefore(trAdicionado);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	function registrosPrioridadesDiferentes(listaVO, listaVOAdicionado) {
+		return listaVO.prioridadeSolicitacaoVO.idPrioridadeSolicitacao != listaVOAdicionado.prioridadeSolicitacaoVO.idPrioridadeSolicitacao;
 	}
 </script>

@@ -29,7 +29,7 @@ function sbmt() {
 				Vinculação de Documento - ${mob.siglaEDescricaoCompleta}
 			</h2>
 			<div class="gt-content-box gt-for-table">
-				<form action="referenciar_gravar" enctype="multipart/form-data" method="post">
+				<form action="${request.contextPath}/app/expediente/mov/referenciar_gravar" enctype="multipart/form-data" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
 					<table class="gt-form-table">

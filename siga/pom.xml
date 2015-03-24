@@ -49,7 +49,7 @@
 					</packagingExcludes>
 					<webResources>
 						<resource>
-							<directory>/src/main/webapp/paginas/entradas</directory>
+							<directory>src/main/webapp/paginas/entradas</directory>
 							<filtering>true</filtering>
 							<includes>
 								<include>login.jsp</include>

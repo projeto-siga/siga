@@ -36,13 +36,13 @@
  		<!--
  		<module>siga-cd-aut</module>
  		-->
- 		<module>siga-cp-sinc</module> 
+ 		<module>siga-cp-sinc</module>
  		<module>siga-dump</module>
 	</modules>
 
 
 	<properties>
- 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding> 
+ 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<siga.version>${project.version}</siga.version>
 		<picketlink.version>2.6.0.Final</picketlink.version>
 		<hibernate.version>4.2.0.Final</hibernate.version>
@@ -115,7 +115,7 @@
 										${line.separator}
 	FORMATO INVALIDO DO PARAMETRO siga.versao.
 										${line.separator}
-	Exemplos: 3.10.0, 3.11.1.5, release-1.0.0, hotfix-1.2.3.4, develop										
+	Exemplos: 3.10.0, 3.11.1.5, release-1.0.0, hotfix-1.2.3.4, develop
 										${line.separator}
 										${line.separator}
 									</regexMessage>
@@ -389,7 +389,7 @@
 					<exclusion>
 						<groupId>org.bouncycastle</groupId>
 						<artifactId>bcprov-jdk14</artifactId>
-					</exclusion>					
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -471,8 +471,8 @@
 				<version>0.7.3</version>
 			</dependency>
 
-			<!-- <dependency> <groupId>org.zefer.pd4ml</groupId> <artifactId>pd4ml</artifactId> 
-				<version>3.2.3fx5</version> </dependency> <dependency> <groupId>org.zefer.pd4ml</groupId> 
+			<!-- <dependency> <groupId>org.zefer.pd4ml</groupId> <artifactId>pd4ml</artifactId>
+				<version>3.2.3fx5</version> </dependency> <dependency> <groupId>org.zefer.pd4ml</groupId>
 				<artifactId>pd4ml-taglib</artifactId> <version>3.2.3fx5</version> </dependency> -->
 
 			<dependency>
@@ -493,7 +493,7 @@
 					<exclusion>
 						<groupId>bouncycastle</groupId>
 						<artifactId>bcprov-jdk14</artifactId>
-					</exclusion>					
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -513,7 +513,7 @@
 			</dependency>
 			<dependency>
 				<groupId>nl.captcha</groupId>
-				<artifactId>simpleCaptcha</artifactId>
+				<artifactId>simplecaptcha</artifactId>
 				<version>1.2.1</version>
 			</dependency>
 			<dependency>
@@ -704,7 +704,7 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
@@ -730,7 +730,7 @@
 			<artifactId>bcpkix-jdk15on</artifactId>
 		</dependency>
 
-			
+
 
 		<!-- Picketlink -->
 		<dependency>

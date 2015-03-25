@@ -5,8 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import com.opensymphony.xwork.Action;
-
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -137,11 +135,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 	
 	@Get("app/lotacao/exibir")
-	public String exibi(String sigla) throws Exception {
+	public void exibi(String sigla) throws Exception {
         if(sigla != null){
         	result.include("lotacao", dao().getLotacaoFromSigla(sigla));
         }
-        
-        return Action.SUCCESS;
 	}
 }

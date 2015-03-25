@@ -34,7 +34,7 @@ function sbmt(offset) {
 		</tr>
 		<tr>
 			<td>
-				<siga:selecao titulo="Lotação" propriedade="lotacao" modulo="siga"/>
+				<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
 			</td>
 		</tr>
 		<tr>

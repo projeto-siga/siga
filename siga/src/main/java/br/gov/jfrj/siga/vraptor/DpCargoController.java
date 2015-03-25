@@ -27,7 +27,7 @@ public class DpCargoController extends
 	@Get
 	@Post
 	@Path("/app/cargo/buscar")
-	public void busca(String nome,Long idOrgaoUsu, Integer offset, String postback) throws Exception{
+	public void busca(String nome, Long idOrgaoUsu, Integer offset, String postback) throws Exception{
 		if (postback == null)
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 		else

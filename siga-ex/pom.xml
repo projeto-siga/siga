@@ -31,21 +31,28 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>			
-			<plugin>
-            	<groupId>org.hibernate.orm.tooling</groupId>
-            	<artifactId>hibernate-enhance-maven-plugin</artifactId>
-            	<executions>
+			</plugin>
+		<!--	<plugin>
+				<groupId>org.hibernate.orm.tooling</groupId>
+				<artifactId>hibernate-enhance-maven-plugin</artifactId>
+				<executions>
 					<execution>
 						<phase>compile</phase>
 						<goals>
-						    <goal>enhance</goal>
+							<goal>enhance</goal>
 						</goals>
-                 	</execution>
-             	</executions>
-        	</plugin>
-        <!-- 
-			<plugin>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>siga</groupId>
+						<artifactId>siga-ex</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>		
+			</plugin> -->
+
+		<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
@@ -72,19 +79,24 @@
 				</configuration>
 				<dependencies>
 					<dependency>
-	                    <groupId>org.hibernate</groupId>
-	                    <artifactId>hibernate-core</artifactId>
-	                    <version>${hibernate.version}</version>
-	                </dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-core</artifactId>
+						<version>${hibernate.version}</version>
+					</dependency>
 					<dependency>
 						<groupId>org.javassist</groupId>
 						<artifactId>javassist</artifactId>
-						<version>3.18.1.GA</version>
+						<version>3.18.1.GA-redhat-1</version>
 						<scope>compile</scope>
 					</dependency>
+					<dependency>
+						<groupId>siga</groupId>
+						<artifactId>siga-ex</artifactId>
+						<version>${project.version}</version>
+					</dependency>					
 				</dependencies>
 			</plugin>
-			 -->
+
 		</plugins>
 		<pluginManagement>
 			<plugins>

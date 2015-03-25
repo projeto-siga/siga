@@ -22,6 +22,11 @@ import br.gov.jfrj.siga.base.Texto;
 
 public class ExPapel extends AbstractExPapel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2096492527289909346L;
+
 	final static public long PAPEL_GESTOR = 1;
 
 	final static public long PAPEL_INTERESSADO = 2;

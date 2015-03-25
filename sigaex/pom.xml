@@ -165,6 +165,10 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-ext</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-ext-busca-textual</artifactId>			
+		</dependency>
 
 		<!-- Teste -->
 		<dependency>

@@ -254,6 +254,11 @@
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
+				<artifactId>siga-ext-busca-textual</artifactId>
+				<version>${siga.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>siga</groupId>
 				<artifactId>siga-libs</artifactId>
 				<version>${siga.version}</version>
 			</dependency>

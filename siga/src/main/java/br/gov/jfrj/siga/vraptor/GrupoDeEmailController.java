@@ -209,8 +209,9 @@ public class GrupoDeEmailController extends GrupoController {
 	@Get
 	@Post
 	@Path("app/gi/grupoDeEmail/buscar")
-	public void busca(String sigla, String postback, String nome) throws Exception{
+	public void busca(String sigla, String postback, String nome, Integer offset) throws Exception{
 		setNome(nome);
+		getP().setOffset(offset);
 		super.aBuscar(sigla, postback);
 		result.include("param", getRequest().getParameterMap());
 		result.include("tamanho", getTamanho());

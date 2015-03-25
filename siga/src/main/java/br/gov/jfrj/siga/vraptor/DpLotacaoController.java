@@ -34,7 +34,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	@Get
 	@Post
 	@Path("/app/lotacao/buscar")
-	public void busca(String nome,Long idOrgaoUsu, Integer offset, String postback) throws Exception{
+	public void busca(String nome, Long idOrgaoUsu, Integer offset, String postback) throws Exception{
 		if (postback == null)
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 		else

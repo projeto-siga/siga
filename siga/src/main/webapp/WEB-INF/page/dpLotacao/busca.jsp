@@ -10,7 +10,7 @@
 			if (offset == null) {
 				offset = 0;
 			}
-			frm.elements['p.offset'].value = offset;
+			frm.elements['offset'].value = offset;
 			frm.submit();
 		}
 	</script>
@@ -19,7 +19,7 @@
 			value="${param['buscarFechadas']}" /> <input type="hidden"
 			name="propriedade" value="${param.propriedade}" /> <input
 			type="hidden" name="postback" value="1" /> <input type="hidden"
-			name="p.offset" value="0" />
+			name="offset" value="0" />
 		<table class="form" width="100%">
 			<tr class="header">
 				<td align="center" valign="top" colspan="4">Dados da Lotação</td>
@@ -31,7 +31,7 @@
 			<tr>
 				<td><label>Órgão:</label></td>
 				<td><select name="idOrgaoUsu" value="${idOrgaoUsu}">
-						<option>[Todos]</option>
+						<option value="${item.idOrgaoUsu}" >[Todos]</option>
 						<c:forEach items="${orgaosUsu}" var="item">
 							<option value="${item.idOrgaoUsu}"
 								${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>

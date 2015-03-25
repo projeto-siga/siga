@@ -56,6 +56,7 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 						detalhe = {
 							"sTitle" : colDetalhe.titulo,
 							"mDataProp" : colDetalhe.nome,
+							"mDetalheFormatado" : colDetalhe.detalheFormatado,
 							"bVisible" : coluna.exibir,
 							"sName" : colDetalhe.nome
 						};

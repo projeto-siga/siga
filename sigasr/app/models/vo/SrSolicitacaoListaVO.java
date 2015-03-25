@@ -120,7 +120,7 @@ public class SrSolicitacaoListaVO {
 		List<ColunasVO> colunasDetalhamento = new ArrayList<ColunasVO>();
 		
 		colunasDetalhamento.add(new ColunasVO("Teor", "teorFormatado"));
-		colunasDetalhamento.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes"));
+		colunasDetalhamento.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes", "", true, true, true));
 		colunasDetalhamento.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada"));
 		
 		return colunasDetalhamento;

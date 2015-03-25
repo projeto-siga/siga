@@ -122,9 +122,10 @@ public class PerfilJEEController extends GrupoController {
 	@Get
 	@Post
 	@Path("/app/gi/perfilJEE/buscar")
-	public void busca(String sigla, String postback, String nome) throws Exception{
+	public void busca(String postback, String nome, Integer offset) throws Exception{
 		setNome(nome);
-		super.aBuscar(sigla, postback);
+		getP().setOffset(offset);		
+		super.aBuscar(nome, postback);
 		result.include("param", getRequest().getParameterMap());
 		result.include("tamanho", getTamanho());
 		result.include("itens", getItens());

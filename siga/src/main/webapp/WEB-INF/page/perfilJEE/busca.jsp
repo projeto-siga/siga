@@ -9,17 +9,17 @@ function sbmt(offset) {
 	if (offset==null) {
 		offset=0;
 	}
-	frm.elements['p.offset'].value=offset;
+	frm.elements['offset'].value=offset;
 	frm.submit();
 }
 </script>
 
-<form name="frm" action="buscar" cssClass="form" method="POST">
+<form name="frm" action="buscar" class="form" method="POST">
 	<table class="form" width="100%">
 		<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
 		<input type="hidden" name="propriedade" value="${param.propriedade}" />
 		<input type="hidden" name="postback" value="1" />
-		<input type="hidden" name="p.offset" value="0" />
+		<input type="hidden" name="offset" value="0" />
 		<tr class="header">
 			<td align="center" valign="top" colspan="4">Dados do Grupo</td>
 		</tr>

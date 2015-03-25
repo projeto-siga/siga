@@ -212,7 +212,7 @@ public class GrupoDeEmailController extends GrupoController {
 	public void busca(String sigla, String postback, String nome, Integer offset) throws Exception{
 		setNome(nome);
 		getP().setOffset(offset);
-		super.aBuscar(sigla, postback);
+		super.aBuscar(nome, postback);
 		result.include("param", getRequest().getParameterMap());
 		result.include("tamanho", getTamanho());
 		result.include("itens", getItens());

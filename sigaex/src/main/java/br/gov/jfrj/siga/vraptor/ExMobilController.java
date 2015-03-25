@@ -52,45 +52,13 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 
 @Resource
 public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
-	public class GenericoSelecao implements Selecionavel {
-
-		private Long id;
-
-		private String sigla;
-
-		private String descricao;
-
-		public String getDescricao() {
-			return descricao;
-		}
-
-		public void setDescricao(String descricao) {
-			this.descricao = descricao;
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
-		}
-
-		public String getSigla() {
-			return sigla;
-		}
-
-		public void setSigla(String sigla) {
-			this.sigla = sigla;
-		}
-	}
-
 	public ExMobilController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		setItemPagina(50);

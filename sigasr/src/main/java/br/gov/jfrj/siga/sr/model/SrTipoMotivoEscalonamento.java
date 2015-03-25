@@ -1,0 +1,33 @@
+package br.gov.jfrj.siga.sr.model;
+
+
+public enum SrTipoMotivoEscalonamento {
+
+	ERRO_ESCALONAMENTO(1, "Erro de escalonamento"),
+	NOVO_ATENDENTE(2, "Escalonar solicitação para novo atendente");
+
+	private int nivelTipoMotivoEscalonamento;
+	private String descrTipoMotivoEscalonamento;
+
+	SrTipoMotivoEscalonamento(int nivel, String descricao) {
+		this.nivelTipoMotivoEscalonamento = nivel;
+		this.descrTipoMotivoEscalonamento = descricao;
+	}
+
+	public int getNivelTipoMotivoEscalonamento() {
+		return nivelTipoMotivoEscalonamento;
+	}
+
+	public void setNivelTipoMotivoEscalonamento(int nivelTipoMotivoEscalonamento) {
+		this.nivelTipoMotivoEscalonamento = nivelTipoMotivoEscalonamento;
+	}
+
+	public String getDescrTipoMotivoEscalonamento() {
+		return descrTipoMotivoEscalonamento;
+	}
+
+	public void setDescrTipoMotivoEscalonamento(String descrTipoMotivoEscalonamento) {
+		this.descrTipoMotivoEscalonamento = descrTipoMotivoEscalonamento;
+	}
+
+}

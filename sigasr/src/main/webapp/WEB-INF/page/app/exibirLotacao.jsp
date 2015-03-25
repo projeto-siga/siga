@@ -1,0 +1,4 @@
+<sigasr:lotacaoSelecao nomeSelLotacao="movimentacao.lotaAtendente"
+	valueLotacao="${movimentacao.lotaAtendente}"
+	disabled="${disabled}" />	
+	

@@ -124,4 +124,27 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 			return true;
 		return false;
 	}
+	
+	public void salvarComHistorico() throws Exception {
+		setHisDtIni(new Date());
+		setHisDtFim(null);
+		if (getId() == null) {
+			this.save();
+			setHisIdIni(getId());
+		} else {
+			em().detach(this);
+			HistoricoSuporte thisAntigo = em().find(this.getClass(), getId());
+			thisAntigo.finalizar();
+			setHisIdIni(((Historico) thisAntigo).getHisIdIni());
+			setId(null);
+		}
+		this.save();
+		//this.refresh();
+	}
+
+	public void finalizar() throws Exception {
+		setHisDtFim(new Date());
+		this.save();
+	}
+	
 }

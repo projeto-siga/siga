@@ -133,6 +133,10 @@ public class Objeto extends ObjetoBase{
 			avoidCascadeSaveLoops.get().clear();
 		}
 	}
+	
+	public void refresh() {
+		em().refresh(this);
+	}
 
 	public void delete() {
 		try {

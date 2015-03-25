@@ -34,7 +34,7 @@ public class SigaController {
 
 	public Result result;
 
-	private HttpServletRequest request;
+	protected HttpServletRequest request;
 
 	private EntityManager em;
 	protected CpDao dao;

@@ -56,7 +56,7 @@
 				</table>				
 			</div>	
 			<div class="gt-table-buttons">
-					<c:url var="url" value="/orgao/editar"></c:url>
+					<c:url var="url" value="/app/orgao/editar"></c:url>
 					<input type="button" value="Incluir"
 						onclick="javascript:window.location.href='${url}'"
 						class="gt-btn-medium gt-btn-left">

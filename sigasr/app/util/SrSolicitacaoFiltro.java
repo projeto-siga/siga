@@ -116,10 +116,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (idListaPrioridade.equals(NENHUMA_LISTA)) {
 			query.append(" and not exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.solicitacaoInicial = sol.solicitacaoInicial) ");
 		}
-		else if (idListaPrioridade.equals(QUALQUER_LISTA)) {
-			query.append(" and exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.solicitacaoInicial = sol.solicitacaoInicial) ");
-		}
-		else {
+		else if (!idListaPrioridade.equals(QUALQUER_LISTA)) {
 			SrLista lista = SrLista.findById(idListaPrioridade);
 			
 			query.append(" and exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.solicitacaoInicial.idSolicitacao = sol.solicitacaoInicial.idSolicitacao ");

@@ -209,17 +209,11 @@
 			});
 		}
 		item.associacoesVO.push(objSalvo);
-<<<<<<< HEAD
-		associacaoService.adicionarFuncionalidadesNaLinha(tr, objSalvo);
-		associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
-		tr.find('td:first-child').html("+");
-=======
 		associacaoService.adicionarFuncionalidadesNaLinha(this.row(objSalvo), objSalvo);
 		associacaoService.associacaoTable.atualizarDetalhes(this.getId(objSalvo));	// Para atualizar o detalhe caso esteja aberto
 		associacaoService.associacaoTable.detalhes(detalhesListaAssociacao);
 		tr.find('td:first-child').html("+");
 		tr.find('td.acoes').html(associacaoService.conteudoColunaAcao(objSalvo));
->>>>>>> 82f7922af8e86766e324a00069cc1908625acbde
 		return tr;
 	}
 	
@@ -233,11 +227,6 @@
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(assoc);
 			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
 		});
-<<<<<<< HEAD
-		
-		associacaoTable.table.mostrarDetalhes(detalhesListaAssociacao, associacaoTable.dataTable);
-=======
->>>>>>> 82f7922af8e86766e324a00069cc1908625acbde
 	}
 	
 	associacaoService.getItemPaiPorId = function (id) {
@@ -329,18 +318,6 @@
 							getAtributoObrigatorioString(assoc.atributoObrigatorio),
 							' '
 						];
-<<<<<<< HEAD
-
-				// Adiciona na tabela de Associações
-				var newRow = associacaoTable.dataTable
-					.api()
-					.row
-					.add(rowAssoc),
-					node = $(newRow.node());
-
-				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
-				newRow.draw();
-=======
 				var tr = TableHelper.criarTd(rowAssoc),
 					indiceAcoes = this.indiceAcoes(tr),
 					tdAcoes = tr.find('td:nth(' + indiceAcoes + ')').addClass('acoes');
@@ -354,7 +331,6 @@
 				
 				table.append(tr);
 				associacaoService.adicionarFuncionalidadesNaLinha(tr, assoc);
->>>>>>> 82f7922af8e86766e324a00069cc1908625acbde
 			}
 		}
 		associacaoService.configurarDataTable();

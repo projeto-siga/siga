@@ -345,7 +345,7 @@
 									<td colspan="2">Gestores do Grupo</td>
 								</tr>
 								<tr>
-									<td colspan="2"><siga:selecao titulo="Nova Lotação Gestora:" propriedade="lotacaoGestora" modulo="siga"/></td>
+									<td colspan="2"><siga:selecao titulo="Nova Lotação Gestora:" urlAcao="buscar" propriedade="lotacaoGestora" modulo="siga"/></td>
 								</tr>
 								<c:forEach var="conf" items="${confGestores}">
 									<tr>

@@ -166,7 +166,11 @@ public class SigaController {
 	}
 	
 	protected DpLotacao getLotaCadastrante(){
-		return so.getCadastrante().getLotacao();
+		if(null != so.getCadastrante()) {
+			return so.getCadastrante().getLotacao();
+		} else {
+			return null;
+		}
 	}
 
 	protected DpPessoa getCadastrante() {

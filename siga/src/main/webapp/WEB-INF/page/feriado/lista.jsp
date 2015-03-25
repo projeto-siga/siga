@@ -102,13 +102,11 @@
 										</c:forEach>										
 									</c:when>
 									<c:otherwise>										
-										<td></td><td></td>
-					<%--					<td align="left"><ww:url id="url" action="editar_ocorrencia" namespace="/feriado">
-														<ww:param name="id">${feriado.id}</ww:param>
-													</ww:url>
-												<siga:link title="Incluir" url="${url}" />	
-												 --%>				
-											</td><td></td><td></td>										
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>										
 									</c:otherwise>	
 								</c:choose>													 							
 							</tr>

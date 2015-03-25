@@ -40,7 +40,7 @@
 -->
   <fileSets>
    <fileSet>
-    <directory>/app</directory>
+    <directory>${basedir}/app</directory>
     <outputDirectory>/app</outputDirectory>
    </fileSet>
 <!--
@@ -50,7 +50,7 @@
    </fileSet>
 -->
    <fileSet>
-    <directory>/conf</directory>
+    <directory>${basedir}/conf</directory>
     <outputDirectory>/conf</outputDirectory>
    </fileSet>
 

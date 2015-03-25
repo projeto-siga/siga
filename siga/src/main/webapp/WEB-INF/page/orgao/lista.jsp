@@ -27,7 +27,7 @@
 								<td align="left">${orgao.sigla}</td>
 								<td align="left">${orgao.orgaoUsuario.descricao}</td>
 								<c:choose>
-							      	<c:when test="${orgao.ativo}">
+							      	<c:when test="${orgao.registroAtivo == 'S'}">
 							      		<td align="left">Sim</td>
 							      	</c:when>
 							      	<c:otherwise>

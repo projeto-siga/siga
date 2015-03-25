@@ -65,7 +65,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 			CpOrgao orgao = daoOrgao(id);
 			result.include("nmOrgao",orgao.getNmOrgao());
 			result.include("siglaOrgao",orgao.getSigla());
-			result.include("ativo",orgao.getAtivo() != null && !orgao.getAtivo().isEmpty() ? orgao.getAtivo().charAt(0) : 'N');
+			result.include("ativo",orgao.getRegistroAtivo() != null && !orgao.getRegistroAtivo().isEmpty() ? orgao.getRegistroAtivo() : "N");
 			result.include("idOrgaoUsu",orgao.getOrgaoUsuario() != null ? orgao.getOrgaoUsuario().getId() : null);
 		}
 		result.include("request",getRequest());

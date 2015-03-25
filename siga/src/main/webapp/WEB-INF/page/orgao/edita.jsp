@@ -60,8 +60,8 @@
 						</td>
 						<td>
 							<select name="ativo" value="${ativo}">
-								<option value="S">Sim</option>  
-								<option value="N">Não</option>
+								<option value="S"  ${ativo == 'S' ? 'selected' : ''}>Sim</option>  
+								<option value="N" ${ativo == 'N' ? 'selected' : ''}>Não</option>
 							</select>
 						</td>
 					</tr>

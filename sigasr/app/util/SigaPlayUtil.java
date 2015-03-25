@@ -37,7 +37,7 @@ public class SigaPlayUtil {
 		sb.append("<a onclick=\"javascript: return block();\" href=\"/sigasr/solicitacao/retirarDeLista?idSolicitacao=");
 		sb.append(idSolicitacao + "&idLista=" + idLista + "\" title=\"Remover da Lista\" name=\"idSolicitacao\" ");
 		sb.append("value=\"" + idSolicitacao + "\">");
-		sb.append("<img id=\"imgCancelar\" src=\"/siga/css/famfamfam/icons/delete.png\" style=\"margin-right: 5px;\"></a></td>");
+		sb.append("<img id=\"imgCancelar\" src=\"/siga/css/famfamfam/icons/delete.png\" style=\"margin-right: 3px;\"></a></td>");
 		
 		return sb.toString();
 	}
@@ -45,9 +45,9 @@ public class SigaPlayUtil {
 	public static String botaoPriorizarSolicitacao() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPosicao(event)\" title=\"Alterar posição\">");
-		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_refresh_small_up_down.png\" style=\"margin-right: 5px;\"></img></a>");
+		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_refresh_small_up_down.png\" style=\"margin-right: 3px;\"></img></a>");
 		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPrioridade(event)\" title=\"Alterar prioridade\">");
-		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_switch.png\"\"></img></a>");
+		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_switch.png\"></img></a>");
 		
 		return sb.toString();
 	}

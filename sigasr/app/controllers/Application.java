@@ -582,6 +582,7 @@ public class Application extends SigaApplication {
 		String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 		filtro.idListaPrioridade = id;
 		lista = lista.getListaAtual();
+		String jsonPrioridades = SrPrioridade.getJSON().toString();
 		
 		if (!lista.podeConsultar(lotaTitular(), cadastrante())) {
 			throw new Exception("Exibição não permitida");
@@ -595,7 +596,7 @@ public class Application extends SigaApplication {
 			solicitacaoListaVO = new SrSolicitacaoListaVO();
 		}
 		
-		render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO, tiposPermissaoJson);
+		render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO, tiposPermissaoJson, jsonPrioridades);
 	}
 	
 	public static void incluirEmLista(Long idSolicitacao) throws Exception {

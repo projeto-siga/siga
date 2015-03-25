@@ -244,8 +244,8 @@ public class SrLista extends HistoricoSuporte {
 		
 		for (int i = 0; i <= prioridades.size() - 1; i++) {	
 			SrPrioridadeSolicitacao prioridadeSolic = prioridades.get(i);
-			if(prioridadeSolicitacao.getPrioridade() != null && prioridadeSolic.getPrioridade() != null) {
-				if (prioridadeSolicitacao.getPrioridade().idPrioridade > prioridadeSolic.getPrioridade().idPrioridade) {
+			if(prioridadeSolicitacao.getPrioridade() != null) {
+				if (prioridadeSolic.getPrioridade() == null || prioridadeSolicitacao.getPrioridade().idPrioridade > prioridadeSolic.getPrioridade().idPrioridade) {
 					return prioridadeSolic.getNumPosicao();
 				}
 			}

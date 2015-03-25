@@ -87,18 +87,19 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 		return this;
 	}
 	
-	this.alterarColunasTabela = function(colunas, selecionadas) {
-		jQuery(colunas).each(function(index) {
-			var showColumn = (jQuery.inArray(this, selecionadas) >= 0);
-			tabelaDinamica.table.dataTable.api().column(this.value + ':name').visible(showColumn);
+	this.alterarColunasTabela = function(listaOpcoes, selecionadas) {
+		for (var i = 0; i < listaOpcoes.length; i++) {
+			var opcao = listaOpcoes[i],
+				showColumn = (jQuery.inArray(opcao, selecionadas) >= 0),
+				coluna = tabelaDinamica.getColunaPorNome(tabelaDinamica.objetoTabela.estrutura, opcao.value);
 			
-			var coluna = tabelaDinamica.getColunaPorNome(tabelaDinamica.objetoTabela.estrutura, this.value);
+			tabelaDinamica.table.dataTable.api().column(opcao.value + ':name').visible(showColumn);
 			
 			if (coluna) {
 				coluna.bVisible = showColumn;
 				tabelaDinamica.atualizarCookieColuna(coluna, tabelaDinamica.TIPO_COLUNA_TABELA);
 			}
-		});	
+		}
 	}
 	
 	this.alterarColunasDetalhamento = function(selecionadas) {
@@ -119,16 +120,16 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 			}
 		}
 		
-		jQuery(this.objetoTabela.detalhes).each(function(index) {
-			var showColumn = (jQuery.inArray(this, tabelaDinamica.objetoTabela.detalhesSelecionados) >= 0);
-			
-			var coluna = tabelaDinamica.getColunaPorNome(tabelaDinamica.objetoTabela.detalhes, this.sName);
+		for (var i = 0; i < this.objetoTabela.detalhes.length; i++) {
+			var opcao = this.objetoTabela.detalhes[i],
+				showColumn = (jQuery.inArray(opcao, tabelaDinamica.objetoTabela.detalhesSelecionados) >= 0),
+				coluna = tabelaDinamica.getColunaPorNome(tabelaDinamica.objetoTabela.detalhes, opcao.sName);
 			
 			if (coluna) {
 				coluna.bVisible = showColumn;
 				tabelaDinamica.atualizarCookieColuna(coluna, tabelaDinamica.TIPO_COLUNA_DETALHE);
 			}
-		});	
+		}
 	}
 	
 	this.atualizarColunasSelecionadas = function(select, colunas, tipo) {

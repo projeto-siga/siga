@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Busca de Grupo" popup="true">
 

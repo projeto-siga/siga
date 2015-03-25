@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-<%@ taglib uri="http://localhost/customtag" prefix="app"%>
 
 <li><a id="menu_siga" class="" href="#">SIGA</a>
 	<ul>
@@ -262,5 +261,4 @@
 	</ul>
 </li>
 <!-- insert menu -->
-<app:menu/>
-
+<c:import url="/paginas/menus/menu.jsp"></c:import>

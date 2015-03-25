@@ -1,6 +1,5 @@
 <%@ tag body-content="empty"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ attribute name="id" required="false"%>
 <%@ attribute name="label" required="false"%>
 <%@ attribute name="name" required="false"%>

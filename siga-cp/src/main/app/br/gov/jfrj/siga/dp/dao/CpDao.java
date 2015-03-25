@@ -458,6 +458,7 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final DpCargoDaoFiltro flt) {
 		final DpCargo o = new DpCargo();
 		o.setSigla(flt.getSigla());
+		o.setIdCargoIni(flt.getIdCargoIni());
 		return consultarPorSigla(o);
 	}
 

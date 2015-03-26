@@ -209,7 +209,7 @@
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO:Cadastrar Orgãos')}">
-						<li><a href="/siga/orgao/listar.action">Cadastro de Orgãos Externos</a>
+						<li><a href="/siga/app/orgao/listar">Cadastro de Orgãos Externos</a>
 						</li>
 					</c:if>
 					<c:if

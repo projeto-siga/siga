@@ -74,20 +74,28 @@ function postback(){
 					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
 				solicitacao.podeTrocarAtendente(titular, lotaTitular)}
 				#{set atendentes: solicitacao.pessoasAtendentesDisponiveis /}
-				
-				#{if atendentes.size >= 1}
+				#{set substitutos: solicitacao.substitutos /}
 				<div class="gt-form-row">
 					<label>Atendente</label>
 					<div id="divAtendente">
 					#{select name:'movimentacao.atendente',
-						items:atendentes,
-						labelProperty:'descricaoIniciaisMaiusculas',
 						value:solicitacao.atendente?.pessoaAtual?.idPessoa}
-					#{option 0}#{/option} 
+						#{option 0}#{/option} 
+					#{if atendentes.size >= 1}
+						#{list atendentes, as:'pessoa' }
+							#{option pessoa.pessoaAtual?.idPessoa} ${pessoa.pessoaAtual?.descricaoIniciaisMaiusculas} #{/option}					 
+						#{/list}
+					#{/if}
+					#{if substitutos.size >= 1}
+					<optgroup label="Subsititutos">
+           				#{list items:substitutos, as:'pessoaSubst' }
+							#{option pessoaSubst.substituto?.pessoaAtual?.idPessoa} ${pessoaSubst.substituto?.pessoaAtual?.descricaoIniciaisMaiusculas}#{/option}					 
+						#{/list}
+		            </optgroup>
+		           	#{/if}
 					#{/select}
 					</div>
 				</div>
-				#{/if}
 				#{/if}
 
 				<div style="display: inline" class="gt-form-row gt-width-66">

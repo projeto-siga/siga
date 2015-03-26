@@ -60,7 +60,10 @@ public class DatasPublicacaoDJE {
 			throw new AplicacaoException(
 					"Não foi informada uma data de disponibilização para cálculos");
 		
-		Date proximaDataDisponivel = consultarProximaDataDisponivel();
+		Date proximaDataDisponivel = null;
+				
+		if(!(sao17Horas() && apenasSolicitacao))
+			proximaDataDisponivel = consultarProximaDataDisponivel();
 		
 		if(proximaDataDisponivel != null && getDataDisponibilizacao().before(proximaDataDisponivel)) {
 			SimpleDateFormat formatBra = new SimpleDateFormat("dd/MM/yyyy");  

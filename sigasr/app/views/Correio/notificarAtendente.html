@@ -1,29 +1,28 @@
 <html>
 <body>
 	<p>
-		Informamos que a solicitação <b>${sol.codigo}</b>
-		recebeu a seguinte movimentacao em ${movimentacao.dtIniMovDDMMYYYYHHMM}:
+		Informamos que a solicitação <b>${movimentacao.solicitacao?.codigo}</b> 
+		recebeu a seguinte movimentação em ${movimentacao.dtIniMovDDMMYYYYHHMM}:
 	</p>
 	<blockquote>
 		<p>Tipo de movimentação: ${movimentacao.tipoMov.nome}</p>
-		<p>${movimentacao.descrMovimentacao}</p>
-		<p>
-			Por ${movimentacao.cadastrante?.descricaoIniciaisMaiusculas}
-				(${movimentacao.lotaCadastrante?.siglaLotacao})
-		</p>
+		<p>Atendente: ${movimentacao.atendente != null ? movimentacao.atendente?.descricaoIniciaisMaiusculas.raw() + ", " : ""}
+					${movimentacao.lotaCadastrante?.siglaLotacao}</p>
+		<p>Solicitante: ${sol.solicitante?.descricaoIniciaisMaiusculas.raw()}, ${sol.lotaSolicitante?.siglaLotacao} </p>
+		<p>${sol.descrSolicitacao}</p>
 	</blockquote>
+	#{if movimentacao.tipoMov.idTipoMov == models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO}
 	<p>
-		#{if sol.solicitacaoPai.atendente != null}
-			#{set descricao : sol.solicitacaoPai?.atendente?.descricaoIniciaisMaiusculas.raw() /}
+		#{if sol.atendente != null}
+			#{set descricao : sol.atendente?.descricaoIniciaisMaiusculas.raw() /}
 		#{/if}
-		#{else}
-			#{set descricao : sol.solicitacaoPai?.lotaAtendente?.descricao.raw() /} 
-		#{/else}	
-		Este email foi enviado porque <b>${descricao}</b> é atendente atual da solicitação <b>${sol.solicitacaoPai.codigo}</b>, 
+		#{else}#{set descricao : sol.lotaAtendente?.descricao.raw() /} #{/else}	
+		Este email foi enviado porque <b>${descricao}</b> é atendente atual da solicitação <b>${sol.codigo}</b>, 
 		que gerou a solicitação acima através da ação <b>Escalonar</b>.  	
 	</p>
+	#{/if}
 	<p>
-		Para acessar a solicitação, clique <a href="@@{Application.exibir(sol.idSolicitacao)}">aqui</a>.
+		Para acessar a solicitação, clique <a href="@@{Application.exibir(movimentacao.solicitacao?.solicitacaoAtual?.idSolicitacao)}">aqui</a>.
 	</p>
 </body>
 </html>

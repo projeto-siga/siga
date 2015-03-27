@@ -31,6 +31,7 @@ import org.joda.time.DateTime;
 
 import play.db.jpa.GenericModel;
 import util.SigaPlayCalendar;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -286,17 +287,15 @@ public class SrMovimentacao extends GenericModel {
 		solicitacao.refresh();
 
 		solicitacao.atualizarMarcas();
+		//notificaÁ„o usu·rio
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
 				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.ABERTURA
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.ABERTURA_FECHAMENTO
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
-		
-		//Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
-		if (solicitacao.isFilha() &&
-				tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
-			Correio.notificarAtendente(this); //notifica o atendente da solicitacao pai, caso a filha seja fechada
+		//notificaÁ„o atendente
+		notificarAtendente();
 		return this;
 	}
 
@@ -378,6 +377,22 @@ public class SrMovimentacao extends GenericModel {
 			Correio.notificarMovimentacao(this);
 		else
 			Correio.notificarCancelamentoMovimentacao(this);
+	}
+	
+	public void notificarAtendente() throws Exception {
+		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
+				|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
+					|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA) {
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
+					lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notifica√ß√£o Atendente"))
+				Correio.notificarAtendente(this, solicitacao);
+		}
+		else if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
+				&& solicitacao.isFilha()) {
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
+					solicitacao.solicitacaoPai.getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notifica√ß√£o Atendente"))
+				Correio.notificarAtendente(this, solicitacao.solicitacaoPai); 
+		}
 	}
 	
 	public String getMotivoPendenciaString() {

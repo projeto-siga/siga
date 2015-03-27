@@ -194,6 +194,8 @@ PrincipalAware, ConheceUsuario {
 				.getConf()
 				.podeUtilizarServicoPorConfiguracao(getTitular(),
 						getLotaTitular(), servico))
+			String siglaUsuario = getTitular()==null?"Indefinido":getTitular().getSigla();
+			String siglaLotacao = getLotaTitular()==null?"Indefinida":getLotaTitular().getSiglaCompleta();
 			throw new AplicacaoException("Acesso negado. Serviço: '" + servico
 					+ "' usuário: " + getTitular().getSigla() + " lotação: "
 					+ getLotaTitular().getSiglaCompleta());

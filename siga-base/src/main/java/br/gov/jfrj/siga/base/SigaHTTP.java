@@ -30,10 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.http.HTTPException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
@@ -107,6 +106,9 @@ public class SigaHTTP {
 				String SAMLRequestValue = getAttributeValueFromHtml(html, SAMLRequest);
 				// Atribui a URL do IDP (sigaidp)
 				String idpURL = getAttributeActionFromHtml(html);
+				if (!idpURL.contains("http"))
+					idpURL = completeURL(URL, idpURL);
+				
 				// Faz um novo POST para o IDP com o SAMLRequest como parametro e utilizando o sessionID do IDP
 				response =  exec.execute(Request.Post(idpURL).useExpectContinue().
 						addHeader("content-type", "application/x-www-form-urlencoded").
@@ -121,6 +123,8 @@ public class SigaHTTP {
 					// Caso o SAMLResponse não esteja disponível aqui, é porque o JSESSIONID utilizado não foi o do IDP.
 					String SAMLResponseValue = getAttributeValueFromHtml(html, SAMLResponse);
 					String spURL = getAttributeActionFromHtml(html);
+					if (!spURL.contains("http"))
+						spURL = completeURL(URL, spURL);
 
 					response = exec.execute(Request.Post(spURL).useExpectContinue().
 							addHeader("content-type", "application/x-www-form-urlencoded").
@@ -143,6 +147,10 @@ public class SigaHTTP {
 		//		tryAgain(URL, request, cookieValue, html);
 
 		return html;
+	}
+
+	private String completeURL(String URL, String idpURL) {
+		return URL.substring(0, StringUtils.ordinalIndexOf(URL, "/", 3)) + idpURL;
 	}
 
 	private String extractSetCookie(String currentCookie, HttpResponse response) {

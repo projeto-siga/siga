@@ -74,10 +74,10 @@ public class DatasPublicacaoDJE {
 		
 			if (isDisponibilizacaoDMais30())
 				return "Data de disponibilização está além do limite: mais de 31 dias a partir de hoje";
-			else if (isDisponibilizacaoAntesDeDMais2())
-				return "Data de disponibilização não permitida: menos de 2 dias a partir de hoje";
 			else if (sao17Horas() && apenasSolicitacao)
 				return "Data de disponibilização não permitida: Excedido Horário de Solicitação (17 Horas). Defina a disponibilização para um dia depois do escolhido";
+			else if (isDisponibilizacaoAntesDeDMais2())
+				return "Data de disponibilização não permitida: menos de 2 dias a partir de hoje";
 			else if (isDisponibilizacaoDomingo())
 				return "Data de disponibilização é domingo";
 			else if (isDisponibilizacaoSabado())

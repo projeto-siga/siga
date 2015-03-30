@@ -1297,7 +1297,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	public Map<SrAcao, List<SrTarefa>> getAcoesEAtendentes() throws Exception {
-		Map<SrAcao, List<SrTarefa>> acoesEAtendentesFinal = new HashMap<SrAcao, List<SrTarefa>>();
+		Map<SrAcao, List<SrTarefa>> acoesEAtendentesFinal = new TreeMap<SrAcao, List<SrTarefa>>(new Comparator<SrAcao>() {
+	        @Override
+	        public int compare(SrAcao  a1, SrAcao a2) {
+				int i = a1.tituloAcao.compareTo(a2.tituloAcao);
+				if (i != 0)
+					return i;
+				return a1.idAcao.compareTo(a2.idAcao);
+	        }
+	        });
 
 		List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
 		if (acoesEAtendentes != null && this.itemConfiguracao != null){

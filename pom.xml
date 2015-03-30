@@ -73,7 +73,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
+				<version>2.5.3</version>
 				<configuration>
 					<finalName>${project.artifactId}</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
@@ -153,6 +153,11 @@
 		<repository>
 			<id>simplecaptcha</id>
 			<url>http://maven.nfms4redd.org/</url>
+		</repository>
+
+		<repository>
+			<id>github</id>
+			<url>https://github.com/projeto-siga/siga-repo/tree/master/repo</url>
 		</repository>
 
 	</repositories>
@@ -251,6 +256,12 @@
 				<groupId>siga</groupId>
 				<artifactId>siga-cd-base</artifactId>
 				<version>${siga.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>siga</groupId>
+				<artifactId>siga-ext-busca-textual</artifactId>
+				<version>${siga.version}</version>
+				<optional>true</optional>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>

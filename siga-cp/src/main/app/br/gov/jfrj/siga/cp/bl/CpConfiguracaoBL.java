@@ -124,47 +124,52 @@ public class CpConfiguracaoBL {
 
 	public TreeSet<CpConfiguracao> getListaPorTipo(Long idTipoConfig)
 			throws Exception {
-			return getHashListas().get(idTipoConfig);
+		return getHashListas().get(idTipoConfig);
 	}
 
-	private synchronized void atualizarCache(Long idTipoConfig) {
-			if (!cacheInicializado){
-				inicializarCache();
-				return;
-			}
-			Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
+	private void atualizarCache(Long idTipoConfig) {
+		if (!cacheInicializado){
+			inicializarCache();
+			return;
+		}
+		Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
+
+		if (dtUltimaAtualizacaoCache == null || dt.after(dtUltimaAtualizacaoCache)) {
+			procederAtualizacaoDeCache(idTipoConfig, dt);
+		}
+	}
+
+	private synchronized void procederAtualizacaoDeCache(Long idTipoConfig, Date dt) {
+		if (dtUltimaAtualizacaoCache != null && !dt.after(dtUltimaAtualizacaoCache)) 
+			return;
+
+		SessionFactory sfCpDao = CpDao.getInstance().getSessao()
+				.getSessionFactory();
+
+		sfCpDao.evict(CpConfiguracao.class);
+
+
+		List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
 	
-			if (dtUltimaAtualizacaoCache == null || dt.after(dtUltimaAtualizacaoCache)) {
-	
-				SessionFactory sfCpDao = CpDao.getInstance().getSessao()
-						.getSessionFactory();
-				
-				sfCpDao.evict(CpConfiguracao.class);
-	
-	
-				List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
-				Logger.getLogger("siga.conf.cache").fine("N�mero de altera��es no cache: " + alteracoes.size());
-				if (alteracoes.size() > 0){
-					evitarLazy(alteracoes);
-					inicializarCache(idTipoConfig);
-					
-					for (CpConfiguracao cpConfiguracao : alteracoes) {
-						if (cpConfiguracao != null && cpConfiguracao.getCpTipoConfiguracao() != null) {
-							Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
-							inicializarCache(idTpConf);
-							if (cpConfiguracao.ativaNaData(dt)){
-								hashListas.get(idTpConf).add(cpConfiguracao);	
-							}else{
-								hashListas.get(idTpConf).remove(cpConfiguracao);
-							}
-						}
-					}
+		Logger.getLogger("siga.conf.cache").fine("Numero de alteracoes no cache: " + alteracoes.size());
+		if (alteracoes.size() > 0){
+			evitarLazy(alteracoes);
+			inicializarCache(idTipoConfig);
+
+			for (CpConfiguracao cpConfiguracao : alteracoes) {
+				Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
+				inicializarCache(idTpConf);
+				if (cpConfiguracao.ativaNaData(dt)){
+					hashListas.get(idTpConf).add(cpConfiguracao); 
+				}else{
+					hashListas.get(idTpConf).remove(cpConfiguracao);
 				}
-	
-				dtUltimaAtualizacaoCache = dt;
 			}
-	}
+		}
 
+		dtUltimaAtualizacaoCache = dt;
+	}
+	
 	protected void inicializarCache(Long idTipoConfig) {
 		if (idTipoConfig!= null && hashListas.get(idTipoConfig) == null){
 			TreeSet<CpConfiguracao> tree = new TreeSet<CpConfiguracao>(comparator);
@@ -199,7 +204,7 @@ public class CpConfiguracaoBL {
 				cfg.getFuncaoConfianca().getDescricao();
 			if (cfg.getDpPessoa() != null){
 				cfg.getDpPessoa().getDescricao();
-//				cfg.getDpPessoa().getPessoaAtual().getDescricao();
+				//				cfg.getDpPessoa().getPessoaAtual().getDescricao();
 			}
 			if (cfg.getCpTipoConfiguracao() != null)
 				cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
@@ -265,9 +270,9 @@ public class CpConfiguracaoBL {
 		SortedSet<CpPerfil> perfis = null;
 		if (cpConfiguracaoFiltro.isBuscarPorPerfis() || (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null
 				&& cpConfiguracaoFiltro
-						.getCpTipoConfiguracao()
-						.getIdTpConfiguracao()
-						.equals(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO))) {
+				.getCpTipoConfiguracao()
+				.getIdTpConfiguracao()
+				.equals(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO))) {
 			perfis = consultarPerfisPorPessoaELotacao(
 					cpConfiguracaoFiltro.getDpPessoa(),
 					cpConfiguracaoFiltro.getLotacao(), dtEvn);
@@ -307,9 +312,9 @@ public class CpConfiguracaoBL {
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn))
 					|| (cpConfiguracao.getCpSituacaoConfiguracao() != null && cpConfiguracao
-							.getCpSituacaoConfiguracao()
-							.getIdSitConfiguracao()
-							.equals(CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR))
+					.getCpSituacaoConfiguracao()
+					.getIdSitConfiguracao()
+					.equals(CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR))
 					|| !atendeExigencias(cpConfiguracaoFiltro,
 							atributosDesconsiderados, cpConfiguracao, perfis))
 				continue;
@@ -355,7 +360,7 @@ public class CpConfiguracaoBL {
 
 				if (cfg.getOrgaoUsuario() != null
 						&& !cfg.getLotacao().getOrgaoUsuario()
-								.equivale(lotacao.getOrgaoUsuario()))
+						.equivale(lotacao.getOrgaoUsuario()))
 					continue;
 				if (g instanceof CpPerfil && cfg.getDscFormula()!=null){
 					Map<String,DpPessoa> pessoaMap = new HashMap<String, DpPessoa>();
@@ -395,7 +400,7 @@ public class CpConfiguracaoBL {
 	public CpSituacaoConfiguracao buscaSituacao(
 			CpConfiguracao cpConfiguracaoFiltro,
 			int atributoDesconsideradoFiltro[], TreeSet<CpConfiguracao> lista)
-			throws Exception {
+					throws Exception {
 		CpConfiguracao cfg = buscaConfiguracao(cpConfiguracaoFiltro,
 				atributoDesconsideradoFiltro, null);
 		if (cfg != null) {
@@ -416,15 +421,15 @@ public class CpConfiguracaoBL {
 			SortedSet<CpPerfil> perfis) {
 		if (cfg.getCpServico() != null
 				&& ((cfgFiltro.getCpServico() != null
-						&& !cfgFiltro.getCpServico().equivale(
-								cfg.getCpServico()) || ((cfgFiltro
-						.getCpServico() == null) && !atributosDesconsiderados
-						.contains(SERVICO)))))
+				&& !cfgFiltro.getCpServico().equivale(
+						cfg.getCpServico()) || ((cfgFiltro
+								.getCpServico() == null) && !atributosDesconsiderados
+								.contains(SERVICO)))))
 			return false;
 
 		if (cfg.getCpGrupo() != null
 				&& (cfgFiltro.getCpGrupo() != null
-						&& !cfg.getCpGrupo().equivale(cfgFiltro.getCpGrupo()) || ((cfgFiltro
+				&& !cfg.getCpGrupo().equivale(cfgFiltro.getCpGrupo()) || ((cfgFiltro
 						.getCpGrupo() == null) && !atributosDesconsiderados
 						.contains(GRUPO))
 						&& (perfis != null && !perfisContemGrupo(cfg, perfis))))
@@ -432,68 +437,68 @@ public class CpConfiguracaoBL {
 
 		if (cfg.getCpIdentidade() != null
 				&& ((cfgFiltro.getCpIdentidade() != null
-						&& !cfg.getCpIdentidade().equivale(
-								cfgFiltro.getCpIdentidade()) || ((cfgFiltro
-						.getCpIdentidade() == null) && !atributosDesconsiderados
-						.contains(IDENTIDADE)))))
+				&& !cfg.getCpIdentidade().equivale(
+						cfgFiltro.getCpIdentidade()) || ((cfgFiltro
+								.getCpIdentidade() == null) && !atributosDesconsiderados
+								.contains(IDENTIDADE)))))
 			return false;
 
 		if (cfg.getDpPessoa() != null
 				&& ((cfgFiltro.getDpPessoa() != null
-						&& !cfg.getDpPessoa().equivale(cfgFiltro.getDpPessoa()) || ((cfgFiltro
+				&& !cfg.getDpPessoa().equivale(cfgFiltro.getDpPessoa()) || ((cfgFiltro
 						.getDpPessoa() == null) && !atributosDesconsiderados
 						.contains(PESSOA)))))
 			return false;
 
 		if (cfg.getLotacao() != null
 				&& ((cfgFiltro.getLotacao() != null
-						&& !cfg.getLotacao().equivale(cfgFiltro.getLotacao()) || ((cfgFiltro
+				&& !cfg.getLotacao().equivale(cfgFiltro.getLotacao()) || ((cfgFiltro
 						.getLotacao() == null) && !atributosDesconsiderados
 						.contains(LOTACAO)))))
 			return false;
 
 		if (cfg.getComplexo() != null
 				&& ((cfgFiltro.getComplexo() != null
-						&& !cfg.getComplexo().equals(cfgFiltro.getComplexo()) || ((cfgFiltro
+				&& !cfg.getComplexo().equals(cfgFiltro.getComplexo()) || ((cfgFiltro
 						.getComplexo() == null) && !atributosDesconsiderados
 						.contains(COMPLEXO)))))
 			return false;
 
 		if (cfg.getFuncaoConfianca() != null
 				&& ((cfgFiltro.getFuncaoConfianca() != null && !cfg
-						.getFuncaoConfianca().getIdFuncao()
-						.equals(cfgFiltro.getFuncaoConfianca().getIdFuncao())) || ((cfgFiltro
+				.getFuncaoConfianca().getIdFuncao()
+				.equals(cfgFiltro.getFuncaoConfianca().getIdFuncao())) || ((cfgFiltro
 						.getFuncaoConfianca() == null) && !atributosDesconsiderados
 						.contains(FUNCAO))))
 			return false;
 
 		if (cfg.getOrgaoUsuario() != null
 				&& ((cfgFiltro.getOrgaoUsuario() != null && !cfg
-						.getOrgaoUsuario().getIdOrgaoUsu()
-						.equals(cfgFiltro.getOrgaoUsuario().getIdOrgaoUsu())) || ((cfgFiltro
+				.getOrgaoUsuario().getIdOrgaoUsu()
+				.equals(cfgFiltro.getOrgaoUsuario().getIdOrgaoUsu())) || ((cfgFiltro
 						.getOrgaoUsuario() == null) && !atributosDesconsiderados
 						.contains(ORGAO))))
 			return false;
 
 		if (cfg.getCargo() != null
 				&& ((cfgFiltro.getCargo() != null && !cfg.getCargo()
-						.getIdCargo().equals(cfgFiltro.getCargo().getIdCargo())) || ((cfgFiltro
+				.getIdCargo().equals(cfgFiltro.getCargo().getIdCargo())) || ((cfgFiltro
 						.getCargo() == null) && !atributosDesconsiderados
 						.contains(CARGO))))
 			return false;
 
 		if (cfg.getCpTipoLotacao() != null
 				&& ((cfgFiltro.getCpTipoLotacao() != null && !cfg
-						.getCpTipoLotacao().getIdTpLotacao()
-						.equals(cfgFiltro.getCpTipoLotacao().getIdTpLotacao())) || ((cfgFiltro
+				.getCpTipoLotacao().getIdTpLotacao()
+				.equals(cfgFiltro.getCpTipoLotacao().getIdTpLotacao())) || ((cfgFiltro
 						.getCpTipoLotacao() == null) && !atributosDesconsiderados
 						.contains(TIPO_LOTACAO))))
 			return false;
-		
+
 		if (cfg.getOrgaoObjeto() != null
 				&& ((cfgFiltro.getOrgaoObjeto() != null && !cfg
-						.getOrgaoObjeto().getIdOrgaoUsu()
-						.equals(cfgFiltro.getOrgaoObjeto().getIdOrgaoUsu())) || ((cfgFiltro
+				.getOrgaoObjeto().getIdOrgaoUsu()
+				.equals(cfgFiltro.getOrgaoObjeto().getIdOrgaoUsu())) || ((cfgFiltro
 						.getOrgaoObjeto() == null) && !atributosDesconsiderados
 						.contains(ORGAO))))
 			return false;
@@ -650,7 +655,7 @@ public class CpConfiguracaoBL {
 						.getLotacao());
 			if (cpConfiguracao.getCargo() == null)
 				cpConfiguracao
-						.setCargo(cpConfiguracao.getDpPessoa().getCargo());
+				.setCargo(cpConfiguracao.getDpPessoa().getCargo());
 			if (cpConfiguracao.getFuncaoConfianca() == null)
 				cpConfiguracao.setFuncaoConfianca(cpConfiguracao.getDpPessoa()
 						.getFuncaoConfianca());
@@ -683,7 +688,7 @@ public class CpConfiguracaoBL {
 				// Constroi uma linha completa, tipo full path
 				for (String s : servicoPath.split(";")) {
 					String[] asParts = s.split(":"); // Separa a sigla da
-														// descri��o
+					// descri��o
 					String sSigla = asParts[0];
 					srv = new CpServico();
 					srv.setSiglaServico(srvPai != null ? srvPai.getSigla()
@@ -768,7 +773,7 @@ public class CpConfiguracaoBL {
 					if (c.getHisAtivo() == 1
 							&& pesAtual.getDataFim() == null
 							&& c.getLotacao().getIdInicial()
-									.equals(lot.getIdInicial())) {
+							.equals(lot.getIdInicial())) {
 						resultado.add(pesAtual);
 					}
 				}
@@ -796,7 +801,7 @@ public class CpConfiguracaoBL {
 				if (c.getHisAtivo() == 1
 						&& lotacaoAtual.getDataFim() == null
 						&& c.getDpPessoa().getIdInicial()
-								.equals(pes.getIdInicial())) {
+						.equals(pes.getIdInicial())) {
 					resultado.add(lotacaoAtual);
 				}
 			}
@@ -864,13 +869,13 @@ public class CpConfiguracaoBL {
 			List<CpTipoConfiguracao> tiposConfiguracao = CpDao.getInstance().listarTiposConfiguracao();
 			for (CpTipoConfiguracao cpTpConf : tiposConfiguracao) {
 				try{
-			        inicializarCache(cpTpConf.getIdTpConfiguracao());
+					inicializarCache(cpTpConf.getIdTpConfiguracao());
 				}catch(Exception e){
 					Logger.getLogger("siga.conf.cache").warning("N�o foi poss�vel inicializar o cache CP_TIPO_CONFIGURACAO [" + cpTpConf.getDscTpConfiguracao() + "] ID: [" + cpTpConf.getIdTpConfiguracao() + "]");
 				}
 			}
 			cacheInicializado = true;
-			
+
 			Logger.getLogger("siga.conf.cache").info("Cache de configura��es inicializado em ms: " + (System.currentTimeMillis() - inicio));
 		}
 	}

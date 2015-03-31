@@ -5,7 +5,8 @@ public enum SrTipoMotivoPendencia {
 
 	AGUARDANDO_PRIORIZACAO(1, "Aguardando priorização", false),
 	AGUARDANDO_RECURSO_EXTERNO(2, "Aguardando recurso externo", false),
-	USUARIO_INDISPONIVEL(3, "Usuário indisponível", false);
+	USUARIO_INDISPONIVEL(3, "Usuário indisponível", false),
+	AGUARDANDO_RESPOSTA(4, "Aguardando resposta do usuário", false);
 
 	public int nivelTipoMotivoPendencia;
 

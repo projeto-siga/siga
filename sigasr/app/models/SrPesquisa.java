@@ -18,12 +18,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.JPA;
-import util.FieldNameExclusionEstrategy;
+import util.Util;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -92,6 +91,7 @@ public class SrPesquisa extends HistoricoSuporte {
 		return pesquisas.get(0);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<SrPesquisa> listar(boolean mostrarDesativados) {
 		if (!mostrarDesativados) {
 			return SrPesquisa.find("byHisDtFimIsNull").fetch();
@@ -152,17 +152,22 @@ public class SrPesquisa extends HistoricoSuporte {
 	}
 	
 	public String toJson() {
-		Gson gson = createGson("meuPesquisaHistoricoSet", "perguntaSet", "pesquisaInicial");
+		return toJson(false);
+	}
+	
+	public String toJson(boolean listarAssociacoes) {
+		Gson gson = Util.createGson("meuPesquisaHistoricoSet", "perguntaSet", "pesquisaInicial");
 		
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		jsonObject.add("perguntasSet", perguntasArray());
+		jsonObject.add("associacoesVO", getAssociacoesJson(listarAssociacoes));
 		
 		return jsonObject.toString();
 	}
 	
 	private JsonArray perguntasArray() {
-		Gson gson = createGson("pesquisa", "perguntaInicial", "meuPerguntaHistoricoSet");
+		Gson gson = Util.createGson("pesquisa", "perguntaInicial", "meuPerguntaHistoricoSet");
 		JsonArray jsonArray = new JsonArray();
 
 		for (SrPergunta srPergunta : this.perguntaSet) {
@@ -171,17 +176,27 @@ public class SrPesquisa extends HistoricoSuporte {
 		return jsonArray;
 	}
 	
-	// TODO: colocar esse metodo na classe base
-	private Gson createGson(String... exclusions) {
-		return new GsonBuilder()
-			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
-			.create();
-	}
-	
 	public SrPesquisa atualizarTiposPerguntas() {
 		for (SrPergunta srPergunta : this.perguntaSet) {
 			srPergunta.tipoPergunta = SrTipoPergunta.findById(srPergunta.tipoPergunta.idTipoPergunta);
 		}
 		return this;
+	}
+	
+	private JsonArray getAssociacoesJson(boolean listarAssociacoes) {
+		Gson gson = Util.createGson("");
+		JsonArray jsonArray = new JsonArray();
+		
+		if (listarAssociacoes) {
+			List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesPesquisa(this, Boolean.FALSE);
+			
+			if (associacoes != null) {
+				for (SrConfiguracao conf : associacoes) {
+					jsonArray.add(gson.toJsonTree(conf.toVO()));
+				}
+			}
+		}
+		
+		return jsonArray;
 	}
 }

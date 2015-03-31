@@ -2,8 +2,8 @@
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
-<div class="gt-form gt-content-box">
-	<form id="formLista" enctype="multipart/form-data">
+<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+	<form id="formLista" enctype="multipart/form-data"> 
 		<input type="hidden" id="idLista" name="idLista" value="${lista?.idLista}">
 		<input type="hidden" id="hisIdIni" name="hisIdIni" value="${lista?.hisIdIni}">
 		<div class="gt-form-row gt-width-66">
@@ -35,13 +35,11 @@
 			<div class="title-table">
 				<h3 style="padding-top: 25px;">Permissões</h3>
 			</div>
-			<div class="button-table">
-				<a href="javascript: controleAcessoModalAbrir(false)" title="Adicionar Permissão">
-					<img src="/siga/css/famfamfam/icons/add.png">
-				</a>
-			</div>
 		</div>
 		<div class="gt-content-box gt-for-table dataTables_div">
+	        <div class="gt-form-row dataTables_length">
+	            <label>#{checkbox name:'mostrarAssocDesativada', value:mostrarAssocDesativada/} <b>Incluir Inativas</b></label>
+	        </div>        
 			<table id="permissoes_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
@@ -65,7 +63,7 @@
 						<th>ID Tipo Permissao</th>
 						<th>Tipo Permissão</th>	
 						<th>Tipo Permissão</th>	
-						<th>Ações</th>
+						<th></th>
 					</tr>
 				</thead>
 
@@ -103,7 +101,9 @@
 				</tbody>
 			</table>
 		</div>
-		
+		<div class="gt-table-buttons">
+            <a href="javascript: controleAcessoModalAbrir(false)" class="gt-btn-small gt-btn-left">Incluir</a>
+		</div>		
 		<div class="gt-form-row">
 			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="listaService.gravar()"/>
 			<a class="gt-btn-medium gt-btn-left" onclick="listaService.cancelarGravacao()">Cancelar</a>
@@ -123,8 +123,8 @@
 				<div class="gt-form-row div-modal-table">
 					<label>Órgão</label> 
 					#{select name:'orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
-					labelProperty:'nmOrgaoUsu', value:orgaoUsuario?.idOrgaoUsu}
-					#{option 0}Nenhum#{/option} 
+					labelProperty:'acronimoOrgaoUsu', value:orgaoUsuario?.idOrgaoUsu}
+					#{option 0}#{/option} 
 					#{/select}
 				</div>
 				<span style="color: red">#{error
@@ -133,7 +133,7 @@
 					<label>Local</label> 
 					#{select name:'complexo', items:locais, valueProperty:'idComplexo',
 					labelProperty:'nomeComplexo', value:complexo?.idComplexo}
-					#{option 0}Nenhum#{/option} 
+					#{option 0}#{/option} 
 					#{/select}
 				</div>		
 				<div class="gt-form-row div-modal-table">
@@ -215,6 +215,17 @@
 #{/modal}
 
 <script language="javascript">
+	function getUrlDesativarReativar(desativados) {
+	    
+	    var url = '@{Application.listarPermissaoUsoLista()}',
+	        idLista = $("[name=idLista]").val();
+	
+	    if(desativados)
+	        url = '@{Application.listarPermissaoUsoListaDesativados()}';
+	        
+	    return url + "?idLista=" + idLista;
+	}
+
 	var permissoesTable, 
 		isEditingLista = false,
 		isEditingContr = false,
@@ -243,9 +254,36 @@
 	colunas.idTipoPerm = 	17;
 	colunas.tipoPerm = 		18;
 	colunas.descrTipoPerm = 19;
-	colunas.acoes = 		20;
-	
+	colunas.acoes = 		20,
+
+    jQuery("#checkmostrarAssocDesativada").click(function() {
+    	permissoesTable.api().clear().draw();
+        
+        $.ajax({
+                type: "POST",
+                url: getUrlDesativarReativar(document.getElementById('checkmostrarAssocDesativada').checked),
+                dataType: "text",
+                success: function(response) {
+					var permissoesJSon = JSON.parse(response);
+        			populatePermissoesFromJSonList(permissoesJSon);
+                },
+                error: function(response) {
+                   $('#modal-associacao').hide(); 
+
+                   var modalErro = $('#"modal-associacao-error"');
+                   modalErro.find("h3").html(response.responseText);
+                   modalErro.show(); 
+                }
+       });
+    });
+    
+	QueryString = {};
 	$( document ).ready(function( ) {
+        if (QueryString.mostrarDesativados != undefined) {
+            document.getElementById('checkmostrarAssocDesativada').checked = QueryString.mostrarDesativados == 'true';
+            document.getElementById('checkmostrarAssocDesativada').value = QueryString.mostrarDesativados == 'true';
+        }
+		
 		/* Table initialization */
 		if ( $.fn.dataTable.isDataTable( '#permissoes_table' ) ) {
 			permissoesTable = $('#permissoes_table').dataTable();
@@ -326,7 +364,8 @@
 			tr = $(event.currentTarget).parent().parent()[0],
 			row = permissoesTable.api().row(tr).data(),
 			idPermissao = idPermissaoDesativar ? idPermissaoDesativar : me.find('.idPermissao').val(),
-			idLista = $("#idLista").val();
+			idLista = $("#idLista").val(),
+			mostrarDesativa = $("#mostrarAssocDesativada").val();
 
 		$.ajax({
 	         type: "POST",
@@ -334,7 +373,12 @@
 	         data: {idLista : idLista, idPermissao : idPermissao},
 	         dataType: "text",
 	         success: function(response) {
-	        	 permissoesTable.api().row(tr).remove().draw();
+	        	 if (mostrarDesativa == "true") {
+                     $('td', tr).addClass('item-desativado');
+                     $('td:last', tr).html(' ');
+                 } else {
+                     permissoesTable.api().row(tr).remove().draw();
+                 }	        	 
 	         },
 	         error: function(response) {
 	        	alert("Não foi possível desativar esta permissão.");
@@ -355,7 +399,9 @@
 	function atualizarControleAcessoModal(itemArray) {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
-		
+
+		limparDadosAcessoModal();
+
 		jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, itemArray[colunas.idOrgao]);
 		jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, itemArray[colunas.idLocal]);
 		$("#lotacao").val(itemArray[colunas.idLotacao]);
@@ -384,8 +430,10 @@
 		
 		if (isEdicao)
 			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permissão');
-		else
+		else {
+			limparDadosAcessoModal();
 			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permissão');
+		}
 
 		if (($("#idLista").val() == undefined || $("#idLista").val() == "") && listaService.aplicar() == false)
 			return;
@@ -397,6 +445,10 @@
 		isEditingContr = false;
 		$("#controleAcesso_dialog").dialog("close");
 		
+		limparDadosAcessoModal();
+	};
+
+	function limparDadosAcessoModal() {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
 		
@@ -423,7 +475,7 @@
 
 		$('#modal-permissao-error').css('display', 'none');
 		$('#modal-permissao').css('display', 'block');
-	};
+	}
 
 	function serializePermissao(row) {
 		var params = "";
@@ -460,16 +512,15 @@
 	};
 	
 	function inserirAcesso() {
-
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
 			jComplexoCbb = document.getElementsByName("complexo")[0],
 			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex];
 			
-		var row = [ jOrgaoUsuario.value,
-          			jOrgaoUsuario.text, 
-          			jComplexo.value,
-          			jComplexo.text,
+		var row = [ jOrgaoUsuario.value > 0 ? jOrgaoUsuario.value : '',
+					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.text : '',
+          			jComplexo.value > 0 ? jComplexo.value : '',
+          			jComplexo.value > 0 ? jComplexo.text : '',
           			$("#lotacao").val(),
           			$("#lotacao_descricao").val(),
           			$("#lotacao_sigla").val(),
@@ -497,21 +548,23 @@
 	         success: function(response) {
 		        row[colunas.idTipoPerm] = response;
 				var html = 
-				'<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
-					'<a class="once desassociarPermissao" title="Remover permissão">' + 
-						'<input class="idPermissao" type="hidden" value="' + response + '"/>' + 
-						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
-					'</a>' + 
-				'</td>';
+					'<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
+						'<a class="once desassociarPermissao" title="Remover permissão">' + 
+							'<input class="idPermissao" type="hidden" value="' + response + '"/>' + 
+							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
+						'</a>' + 
+					'</td>';
+		        var tr = null;
 						         
 		        row[colunas.acoes] = html;
-
+		        
 	          	if (isEditingContr ) {
-	          		permissoesTable.api().row('.selected').data(row);
+	          		tr = permissoesTable.api().row('.selected').data(row);
 			    }
 			    else {
-			    	permissoesTable.api().row.add(row).draw();
+			    	tr = permissoesTable.api().row.add(row).draw();
 			    }
+	          	$('td', $(tr.node())).removeClass('item-desativado');
 				controleAcessoModalFechar();
 				$('.desassociarPermissao').bind('click', desativarPermissaoUsoListaEdicao);
 	         },
@@ -537,16 +590,30 @@
 		}
 		
 		if (tipoPermissaoJson) {
-			
-			if (tipoPermissaoJson.listaTipoPermissaoListaVO) {
-				// cria os itens da lista de TipoPermissao, e adiciona na tela
-				for (i = 0; i < tipoPermissaoJson.listaTipoPermissaoListaVO.length; i++) {
-					var lista = tipoPermissaoJson.listaTipoPermissaoListaVO[i];
-					$("#ulPermissoes")[0].incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
-				}
+			// cria os itens da lista de TipoPermissao, e adiciona na tela
+			for (i = 0; i < tipoPermissaoJson.length; i++) {
+				var lista = tipoPermissaoJson[i];
+				$("#ulPermissoes")[0].incluirItem(lista.idTipoPermissaoLista, lista.descrTipoPermissaoLista, "");
 			}
 		}
-	};
+	}
+
+	function getDescricaoTipoPermissaoByLista(listaTipoPermissaoListaVO) {
+		var descricao = '';
+
+		if (listaTipoPermissaoListaVO) {
+			// cria os itens da lista de TipoPermissao, e adiciona na tela
+			for (i = 0; i < listaTipoPermissaoListaVO.length; i++) {
+				var lista = listaTipoPermissaoListaVO[i];
+
+				if (i > 0)
+					descricao += '; ';
+				
+				descricao += lista.descrTipoPermissaoLista;
+			}
+		}
+		return descricao;
+	}
 
 	function getDescricaoTipoPermissao() {
 		var descricao = $('#ulPermissoes').find("li:first-child").find("span:eq(0)").html();

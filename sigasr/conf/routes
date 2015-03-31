@@ -42,10 +42,8 @@ GET     /public/                            staticDir:public
 *		/atributo/desativar/{id}			Application.desativarAtributo	
 *		/atributo/reativar/{id}				Application.reativarAtributo	
 		
-*		/associacao/editar/{id}				Application.editarAssociacao
-*		/associacao/editar					Application.editarAssociacao
 *		/associacao/gravar					Application.gravarAssociacao
-*		/associacao/listar					Application.listarAssociacao
+* 		/associacao/gravarPesquisa			Application.gravarAssociacaoPesquisa
 
 *		/acao/editar/{id}					Application.editarAcao
 *		/acao/editar						Application.editarAcao
@@ -54,6 +52,14 @@ GET     /public/                            staticDir:public
 *		/acao/selecionar					Application.selecionarAcao
 *		/acao/buscar						Application.buscarAcao
 *		/acao/desativar/{id}				Application.desativarAcao
+
+*		/tipoAcao/editar/{id}					Application.editarTipoAcao
+*		/tipoAcao/editar						Application.editarTipoAcao
+*		/tipoAcao/gravar						Application.gravarTipoAcao
+*		/tipoAcao/listar						Application.listarTipoAcao
+*		/tipoAcao/selecionar					Application.selecionarTipoAcao
+*		/tipoAcao/buscar						Application.buscarTipoAcao
+*		/tipoAcao/desativar/{id}				Application.desativarTipoAcao
 
 *		/equipe/listar						Application.listarEquipe
 *		/equipe/gravar						Application.gravarEquipe

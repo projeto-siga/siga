@@ -95,7 +95,7 @@ function DesativarReativar(service) {
 	}
 	
 	function innerHTMLAtivar(td, id, service) {
-		var a = $('<a class="once gt-btn-ativar" title="Reativar"/>'),
+		var a = $('<a class="once gt-btn-ativar item-desativado" title="Reativar"/>'),
    		img = $('<img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;">');
    		
    		a.bind('click', function(event) {
@@ -178,7 +178,7 @@ BaseService.prototype.errorHandler = function(error) {
  * Remove as mensagens de erro na tela
  */
 BaseService.prototype.removerErros = function() {
-	$('span.error').remove();
+	this.opts.formCadastro.find('span.error').remove();
 	this.resetErrosForm();
 }
 /**
@@ -197,8 +197,15 @@ BaseService.prototype.desativar = function(event, id) {
 	     dataType: "text",
 	     success: function(response) {
 			if(service.opts.mostrarDesativados == "true") {
-				row[service.opts.colunas] = service.gerarColunaDesativar(id);
-				service.opts.dataTable.api().row(tr).data(row);
+				var obj = JSON.parse(response),
+					dataTableRow = service.opts.dataTable.api().row(tr),
+					tableTr = $(dataTableRow.node());
+				
+				row[service.opts.colunas] = service.gerarColunaDesativar(service.getId(obj));
+				tableTr.attr('data-json-id', service.getId(obj));
+				tableTr.attr('data-json', response);
+				tableTr.data('json', obj);
+				service.opts.dataTable.api().row(tr).data(row).draw();
 			}
 			else {
 				service.opts.dataTable.api().row(tr).remove().draw();
@@ -225,9 +232,19 @@ BaseService.prototype.reativar = function(event, id) {
 	     url: this.opts.urlReativar,
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
 	     dataType: "text",
-	     success: function(id) {
-	         row[service.opts.colunas] = service.gerarColunaAtivar(id);
-	         service.opts.dataTable.api().row(tr).data(row);
+	     success: function(response) {
+	    	 service.opts.dataTable.api().row(tr).data(row);
+	         
+	         var obj = JSON.parse(response),
+				dataTableRow = service.opts.dataTable.api().row(tr),
+				tableTr = $(dataTableRow.node());
+			
+	         row[service.opts.colunas] = service.gerarColunaAtivar(service.getId(obj));
+	         tableTr.attr('data-json-id', service.getId(obj));
+	         tableTr.attr('data-json', response);
+	         tableTr.data('json', obj);
+				
+	         service.opts.dataTable.api().row(tr).data(row).draw();
 	     },
 	     error: function(response) {
 	    	var modalErro = $('#modal-error');
@@ -241,15 +258,15 @@ BaseService.prototype.reativar = function(event, id) {
  * Gerar a Coluna Ativar
  */
 BaseService.prototype.gerarColunaAtivar = function(id) {
-	var column = '<a class="once gt-btn-ativar" onclick="' + this.opts.objectName + 'Service.desativar(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
-		return column;
+	var column = '<a class="once gt-btn-ativar item-desativado" onclick="' + this.opts.objectName + 'Service.desativar(event, ' + id + ')" title="Desativar"><img src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"></a>';
+	return column;
 }
 /**
  * Gerar a Coluna Desativar
  */
 BaseService.prototype.gerarColunaDesativar = function(id) {
 	var column = '<a class="once gt-btn-desativar" onclick="' + this.opts.objectName + 'Service.reativar(event, ' + id + ')" title="Reativar"><img src="/siga/css/famfamfam/icons/tick.png" style="margin-right: 5px;"></a>';
-		return column;
+	return column;
  }
 /**
  * Inicia o modal de edicao do registro
@@ -286,10 +303,10 @@ BaseService.prototype.cadastrar = function(title) {
  * pessoaLotaFuncCargoSelecao.html
  */
 BaseService.prototype.limparSpanComponentes = function() {
-	$('span.selecao').html('');
-	$('span.pessoaLotaSelecao').html('');
-	$('span.lotaSelecao').html('');
-	$('span.pessoaLotaFuncCargoSelecao').html('');
+	this.opts.formCadastro.find('span.selecao').html('');
+	this.opts.formCadastro.find('span.pessoaLotaSelecao').html('');
+	this.opts.formCadastro.find('span.lotaSelecao').html('');
+	this.opts.formCadastro.find('span.pessoaLotaFuncCargoSelecao').html('');
 }
 
 /**
@@ -358,38 +375,40 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	
 	// Se foi uma edicao
 	if(idAntigo) {
-		tr = this.opts.dataTable.$('tr[data-json-id=' + idAntigo + ']');
-		
 		if(this.opts.dataTable) {
+			tr = this.opts.dataTable.$('tr[data-json-id=' + idAntigo + ']');
+			tr.attr('data-json-id', idNovo);
+			tr.attr('data-json', JSON.stringify(objSalvo));
+			tr.data('json', objSalvo);
+		
 			this.opts.dataTable
 				.api()
 				.row(tr)
-				.data(this.getRow(objSalvo));
+				.data(this.getRow(objSalvo)).draw();
 		}
 	} 
 	// Senao, eh um novo registro a ser inserido na GRID
 	else {
 		if(this.opts.dataTable) {
-			
 			var data = this.getRow(objSalvo),
 				row = this.opts.dataTable
 				.api()
 				.row
 				.add(data);
 			
-			row.draw();
 			tr = $(row.node());
+			tr.attr('data-json-id', idNovo);
+			tr.attr('data-json', JSON.stringify(objSalvo));
+			tr.data('json', objSalvo);
+			row.draw();
 			
 			var indice = this.indiceAcoes(tr);
 			if(indice > -1) {
 				tr.find('td:nth(' + indice + ')').addClass('acoes');
 			}
-			this.bindRowClick(tr, objSalvo);
 		}
 	}
-	
-	tr.attr('data-json-id', idNovo);
-	tr.data('json', objSalvo);
+	this.bindRowClick(tr, objSalvo);
 	
 	var tdAcoes = tr.find('td.acoes');
 	if(tdAcoes) {
@@ -404,8 +423,10 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 BaseService.prototype.bindRowClick = function(tr, objSalvo) {
 	var onRowClick = this.onRowClick;
 	if(onRowClick) {
-		tr.unbind('click');
+		tr.attr('onclick','').unbind('click');
+		tr.off('click');
 		tr.css('cursor', 'pointer');
+		
 		tr.on('click', function() {
 			onRowClick(objSalvo);
 		});

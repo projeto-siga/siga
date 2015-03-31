@@ -10,7 +10,9 @@ import java.util.List;
 import models.SrAcordo;
 import models.SrAtributo;
 import models.SrAtributoSolicitacao;
+import models.SrLista;
 import models.SrSolicitacao;
+import models.SrTipoMovimentacao;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -18,11 +20,9 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
+	private static final Long QUALQUER_LISTA_OU_NENHUMA = -1L;
+	private static final Long NENHUMA_LISTA = 0L;
 	private static final String AND = " AND ";
 
 	public boolean pesquisar = false;
@@ -38,6 +38,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public SrAcordo acordo;
 
 	public DpLotacao lotaAtendente;
+	
+	public Long idListaPrioridade;
 
 	public boolean naoDesignados;
 	
@@ -47,9 +49,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public Long idNovoAtributo;
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	public List<SrSolicitacao> buscar() throws Exception {
-		String query = montarBusca("select sol from SrSolicitacao sol ");
+		String query = montarBusca("select distinct(sol) from SrSolicitacao sol ");
 		
 		List<SrSolicitacao> lista = JPA
 				.em()
@@ -88,7 +90,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (acordo != null && acordo.idAcordo > 0L)
 			query.append(" inner join sol.acordos acordo where acordo.hisIdIni = "
 					+ acordo.getHisIdIni() + " and ");
-		else query.append(" where ");
+		else
+			query.append(" where ");
 		
 		query.append(" sol.hisDtFim is null ");
 		
@@ -111,17 +114,45 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (acao != null && acao.idAcao > 0L)
 			query.append(" and sol.acao.acaoInicial.idAcao = "
 					+ acao.acaoInicial.idAcao);
-		if (urgencia != null && urgencia.nivelUrgencia > 0)
-			query.append(" and sol.urgencia = " + urgencia.ordinal());
-		if (tendencia != null && tendencia.nivelTendencia > 0)
-			query.append(" and sol.tendencia = " + tendencia.ordinal());
-		if (gravidade != null && gravidade.nivelGravidade > 0)
-			query.append(" and sol.gravidade = " + gravidade.ordinal());
+		if (prioridade != null && prioridade.idPrioridade > 0L)
+			query.append(" and sol.prioridade <= " + prioridade.ordinal());
+		
+		if (idListaPrioridade != null && !idListaPrioridade.equals(QUALQUER_LISTA_OU_NENHUMA)){
+			if (idListaPrioridade.equals(NENHUMA_LISTA)) {
+				query.append(" and ");
+				query.append(" ( select count(mov) from SrMovimentacao mov ");
+				query.append(" where mov.movCanceladora is null and ");
+				query.append(" mov.solicitacao = sol and ");
+				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA+ " ) ");  
+				query.append(" = ( select count(mov) from SrMovimentacao mov ");
+				query.append(" where mov.movCanceladora is null and ");
+				query.append(" mov.solicitacao = sol and ");
+				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ");
+			}
+			else {
+				SrLista lista = SrLista.findById(idListaPrioridade);
+				
+				query.append(" and ");
+				query.append(" ( select count(mov) from SrMovimentacao mov ");
+				query.append(" where mov.movCanceladora is null and ");
+				query.append(" mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista + " and ");
+				query.append(" mov.solicitacao = sol and ");
+				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA+ " ) ");  
+				query.append(" > ( select count(mov) from SrMovimentacao mov ");
+				query.append(" where mov.movCanceladora is null and ");
+				query.append(" mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista + " and ");
+				query.append(" mov.solicitacao = sol and ");
+				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ");
+			}
+		}
 		
 		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
-			for (String s : descrSolicitacao.split(" "))
-				query.append(" and lower(sol.descrSolicitacao) like '%"
+			for (String s : descrSolicitacao.split(" ")) {
+				query.append(" and ( lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ");
+				query.append(" or sol in (select mov.solicitacao from SrMovimentacao mov");
+				query.append(" where lower(mov.descrMovimentacao) like '%" + s.toLowerCase() + "%' )) ");
+			}
 		}
 		
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");

@@ -262,6 +262,8 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	private String tipoAssinaturaMov;
 	
 	private boolean autenticando;
+	
+	private String proximaDataDisponivelStr;
 
 	public String getAtributoAssinavelDataHora() {
 		return atributoAssinavelDataHora;
@@ -629,6 +631,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			throw new AplicacaoException(
 					"Não foi possível o agendamento de publicação no DJE.");
 
+		setProximaDataDisponivelStr(DatasPublicacaoDJE.consultarProximaDataDisponivelString());
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));
@@ -4531,5 +4534,13 @@ public class ExMovimentacaoAction extends ExActionSupport {
 
 	public void setAutenticando(boolean autenticando) {
 		this.autenticando = autenticando;
+	}
+
+	public String getProximaDataDisponivelStr() {
+		return proximaDataDisponivelStr;
+	}
+
+	public void setProximaDataDisponivelStr(String proximaDataDisponivelStr) {
+		this.proximaDataDisponivelStr = proximaDataDisponivelStr;
 	}
 }

@@ -9,7 +9,7 @@
 		#{/ifErrors}
 		<div class="gt-form-row gt-width-66">
 			<label>Código <span>*</span></label> 
-			<input type="text" name="siglaAcao" maxlength="255" required/>
+			<input type="text" name="sigla" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Título <span>*</span></label> <input type="text"
@@ -22,29 +22,7 @@
 		
 		<div class="gt-form-row gt-width-66">
 			<label>Tipo de ação</label>
-				#{select name:'tipoAcao',
-				items:models.SrTipoAcao.values(),
-				labelProperty:'descrTipoAcao',
-				value:acao.tipoAcao,
-				class:'select-siga' /}
-		</div>
-		
-		<div class="gt-form-row gt-width-66">
-			<label>Tipo de execução pelo Pré-atendimento</label>
-				#{select name:'tipoExecucao',
-				items:models.SrTipoExecucaoAcao.values(),
-				labelProperty:'descrTipoExecucaoAcao',
-				value:acao.tipoExecucao,
-				class:'select-siga' /}
-		</div>
-		
-		<div class="gt-form-row gt-width-66">
-			<label>Forma de atendimento</label>
-				#{select name:'formaAtendimento',
-				items:models.SrFormaAtendimentoAcao.values(),
-				labelProperty:'descFormaAtendimentoAcao',
-				value:acao.formaAtendimento,
-				class:'select-siga'/}
+				#{selecao tipo:'tipoAcao', nome:'tipoAcao', value:tipoAcao?.atual /}
 		</div>
 		
 		<div class="gt-form-row">

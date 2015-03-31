@@ -1,7 +1,5 @@
 package models.vo;
 
-import models.SrAcao;
-import models.SrAcao.SrAcaoVO;
 import models.SrConfiguracao;
 import models.SrPrioridade;
 
@@ -17,8 +15,6 @@ import com.google.gson.GsonBuilder;
  */
 public class SrConfiguracaoAssociacaoVO {
 	public Long idConfiguracao;
-	public SrItemConfiguracaoVO itemConfiguracaoUnitario;
-	public SrAcao.SrAcaoVO acaoUnitaria;
 	public boolean atributoObrigatorio;
 	
 	public int tipoSolicitante;
@@ -30,10 +26,8 @@ public class SrConfiguracaoAssociacaoVO {
 	public String descPrioridade;
 	public boolean ativo;
 	
-	public SrConfiguracaoAssociacaoVO(SrConfiguracao configuracao, SrItemConfiguracaoVO itemConfiguracaoVO, SrAcaoVO acaoVO) {
+	public SrConfiguracaoAssociacaoVO(SrConfiguracao configuracao) {
 		this.idConfiguracao = configuracao.getIdConfiguracao();
-		this.itemConfiguracaoUnitario = itemConfiguracaoVO;
-		this.acaoUnitaria = acaoVO;
 		this.atributoObrigatorio = configuracao.atributoObrigatorio;
 		
 		this.tipoSolicitante = configuracao.getTipoSolicitante();

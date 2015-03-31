@@ -32,7 +32,7 @@
 						</tr>
 						<tr>
 							<td width="10%">Ativo:</td>
-							<td><ww:checkbox name="ativo" fieldValue="false" /></td>
+							<td><ww:checkbox name="ativo"  /></td>
 						</tr>
 						<tr>
 							<td colspan="2"><ww:submit value="OK"

@@ -71,7 +71,7 @@
 				</div>
 				<div class="gt-form-row gt-width-100">
 					<label>Lotação</label>#{selecao
-						tipo:'lotacao', nome:'lotacao',
+						tipo:'lotacaoEquipe', nome:'lotacaoEquipe',
 						value:lotacaoUsuario,
 						disabled:'true' /}
 				</div>
@@ -149,7 +149,7 @@
 					</div>
 					<div class="gt-form-row gt-width-100">
 						<label>Data Específica</label>
-						<input type="text" name="calendario" id="dataEspecifica" value="${dataEspecifica}">
+						#{dataCalendar nome:'dataEspecifica', value:dataEspecifica /}
 						<span style="display:none;color: red" id="dataEspecificaError">Data Específica não informada</span>
 					</div>
 					

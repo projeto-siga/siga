@@ -117,6 +117,10 @@ namespace="/expediente/mov" cssClass="form" method="GET">
 						<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de Matéria"  value="${tipoMateria}" disabled="${disabledTpMat}" />
 					</c:otherwise>
 				</c:choose>
+				<tr>
+					<td>Próxima data para disponibilização:</td>
+					<td>${proximaDataDisponivelStr}</td>
+				</tr>
 				<ww:textfield name="dtDispon" id="dt_dispon"
 					onblur="javascript:verifica_data(this,true);prever_data();"
 					label="Data para disponibilização" />

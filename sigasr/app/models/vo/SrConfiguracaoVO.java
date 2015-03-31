@@ -41,10 +41,14 @@ public class SrConfiguracaoVO {
 	// Solicitante
 	public SelecionavelVO dpPessoa;
 	public SelecionavelVO lotacao;
+	public SelecionavelVO lotacaoParaInclusaoAutomatica;
 	public SelecionavelVO cargo;
 	public SelecionavelVO funcaoConfianca;
 	public SelecionavelVO cpGrupo;
 	public SelecionavelVO solicitante;
+	public SrPrioridade prioridadeNaLista;
+	public String descPrioridadeNaLista;
+	public SelecionavelVO dpPessoaParaInclusaoAutomatica;
 	
 	public SrConfiguracaoVO(SrConfiguracao configuracao) {
 		idConfiguracao = configuracao.getId();
@@ -54,7 +58,9 @@ public class SrConfiguracaoVO {
 		ativo = configuracao.isAtivo();
 		descrConfiguracao = configuracao.getDescrConfiguracao();
 		prioridade = configuracao.prioridade;
+		prioridadeNaLista = configuracao.prioridadeNaLista;
 		descPrioridade = configuracao.prioridade != null ? configuracao.prioridade.descPrioridade : "";
+		descPrioridadeNaLista = configuracao.prioridadeNaLista != null ? configuracao.prioridadeNaLista.descPrioridade : "";
 		
 		if(configuracao.itemConfiguracaoSet != null) {
 			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
@@ -92,7 +98,9 @@ public class SrConfiguracaoVO {
 		
 		// Dados do Solicitante
 		dpPessoa = SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante());
+		dpPessoaParaInclusaoAutomatica = dpPessoa;
 		lotacao = SelecionavelVO.createFrom(configuracao.getLotacao(), configuracao.getTipoSolicitante());
+		lotacaoParaInclusaoAutomatica = lotacao;
 		cargo = SelecionavelVO.createFrom(configuracao.getCargo(), configuracao.getTipoSolicitante());
 		funcaoConfianca = SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante());
 		cpGrupo = SelecionavelVO.createFrom(configuracao.getCpGrupo(), configuracao.getTipoSolicitante());
@@ -109,11 +117,13 @@ public class SrConfiguracaoVO {
 	 * Converte o objeto para Json.
 	 */
 	public String toJson() {
+		return toJsonObject().toString();
+	}
+	
+	public JsonObject toJsonObject() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting().serializeNulls();
 		Gson gson = builder.create();
-		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
-		
-		return jsonObject.toString();
+		return (JsonObject) gson.toJsonTree(this);
 	}
 }

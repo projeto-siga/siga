@@ -344,6 +344,7 @@
 			var me = this;
 			
 			$('#itens_configuracao_table').dataTable({
+				stateSave : true,
 				"bProcessing": true,
 		        "bServerSide": true,
 		        "sAjaxSource" : "@{Application.listarPaginaDisponibilidade()}",

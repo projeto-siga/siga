@@ -794,9 +794,9 @@ public class Application extends SigaApplication {
 				SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao,
 				SrTipoMotivoEscalonamento motivo, String descricao,
 				Boolean criaFilha, Boolean fechadoAuto) throws Exception {
-		if(itemConfiguracao == null || acao == null)
-			throw new Exception("Operação não permitida. Necessário informar um item de configuração " + 
-					"e uma ação.");
+		if(itemConfiguracao == null || acao == null || acao.idAcao == null || acao.idAcao.equals(0L))
+			throw new Exception("Operacao nao permitida. Necessario informar um item de configuracao " + 
+					"e uma acao.");
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
 		
 		DpLotacao atendenteNaoDesignado = null;

@@ -62,8 +62,6 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 	public String aBuscar(String sigla, String postback) throws Exception {
 		if (sigla != null) 
 			setNome(sigla.toUpperCase());
-		else
-			setNome("");
 
 		int offset = 0;
 		int itemPagina = 0;

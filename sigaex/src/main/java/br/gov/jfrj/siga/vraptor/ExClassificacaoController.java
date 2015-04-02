@@ -53,8 +53,6 @@ import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 
 @Resource
 public class ExClassificacaoController extends SigaSelecionavelControllerSupport<ExClassificacao, ExClassificacaoDaoFiltro> {
-	
-	// classificacao
 	private String[] nivelSelecionado;	
 	private Integer nivelAlterado;
 

@@ -126,7 +126,10 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 	}
 	
 	public Integer calculaPaginaAtual(Integer offset) {
-		return offset == null ? 1 : (offset / (getItemPagina()==null?1:getItemPagina())) + 1;
+		if(getItemPagina() == null)
+			setItemPagina(10);
+		
+		return offset == null ? 1 : (offset / getItemPagina()) + 1;
 	}
 
 	protected abstract DaoFiltroT createDaoFiltro();

@@ -129,15 +129,17 @@ public class PerfilController extends GrupoController {
 			           final Long idCpTipoGrupo,
 			           final Integer offset,
 			           final String propriedade) throws Exception{
-		this.getP().setOffset(offset);
+		
+		getP().setOffset(offset);
 		super.aBuscar(sigla, postback);
-		this.result.include("request",getRequest());
-		this.result.include("itens",this.getItens());
-		this.result.include("sigla",sigla);
-		this.result.include("postback",postback);
-		this.result.include("offset",offset);
-		this.result.include("param",getRequest().getParameterMap());
-		this.result.include("propriedade",propriedade);
+		result.include("tamanho", getTamanho());
+		result.include("request",getRequest());
+		result.include("itens",this.getItens());
+		result.include("sigla",sigla);
+		result.include("postback",postback);
+		result.include("offset",offset);
+		result.include("param",getRequest().getParameterMap());
+		result.include("propriedade",propriedade);
 	}
 	
 	@Get("/app/gi/perfil/selecionar")

@@ -9,7 +9,7 @@
 
 <pg:pager id="p" maxPageItems="${maxItens}"
 	maxIndexPages="${maxIndices}" scope="request" isOffset="true"
-	items="${totalItens}" export="offset,pageOffset;currentPageNumber=pageNumber">
+	items="${totalItens}" export="offset,pageOffset">
 	<c:set var="evenorodd" value="odd" />
 	<c:forEach var="item" items="${itens}" varStatus="statusTeste">
 		<pg:item>

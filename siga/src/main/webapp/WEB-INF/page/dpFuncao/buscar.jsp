@@ -51,7 +51,7 @@ function sbmt(offset) {
 			</td>
 		</tr>
 	</table>
-<form>
+</form>
 
 <br>
 

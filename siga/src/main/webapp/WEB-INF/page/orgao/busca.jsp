@@ -10,7 +10,7 @@ function sbmt(offset) {
 	if (offset==null) {
 		offset=0;
 	}
-	frm.elements['p.offset'].value=offset;
+	frm.elements['offset'].value=offset;
 	frm.submit();
 }
 </script>
@@ -40,7 +40,7 @@ function sbmt(offset) {
 			</td>
 		</tr>
 	</table>
-<form>
+</form>
 
 <br>
 

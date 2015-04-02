@@ -22,7 +22,7 @@ function sbmt(offset) {
 	if (offset==null) {d
 		offset=0;
 	}
-	buscar["p.offset"].value=offset;
+	buscar["offset"].value=offset;
 	buscar.submit();
 }
 
@@ -594,7 +594,7 @@ function limpaCampos()
 										<input type="hidden" name="propriedade" value="${propriedade}" />
 										<input type="hidden" name="postback" value="1" />
 										<input type="hidden" name="apenasRefresh" value="0" />
-										<input type="hidden" name="p.offset" value="0" />
+										<input type="hidden" name="offset" value="0" />
 
 										<tr class="header">
 											<td align="center" valign="top" colspan="4">

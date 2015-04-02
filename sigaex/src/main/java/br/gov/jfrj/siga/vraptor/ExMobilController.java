@@ -112,8 +112,8 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
 			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc,
-			final Integer paramoffset) {
-		getP().setOffset(paramoffset);
+			final Integer offset) {
+		getP().setOffset(offset);
 		this.setSigla(sigla);
 		this.setPostback(postback);
 
@@ -123,7 +123,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 				.setOrgaoUsu(orgaoUsu).setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel).setSubscritorSel(subscritorSel).setTipoCadastrante(tipoCadastrante)
 				.setCadastranteSel(cadastranteSel).setLotaCadastranteSel(lotaCadastranteSel).setTipoDestinatario(tipoDestinatario)
 				.setDestinatarioSel(destinatarioSel).setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
-				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
+				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(offset);
 
 		builder.processar(getLotaTitular());
 
@@ -185,6 +185,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("paramoffset", builder.getOffset());
 		result.include("sigla", this.getSigla());
 		result.include("propriedade", propriedade);
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 	}
 
 	@Get("app/expediente/doc/listar")
@@ -265,6 +266,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("ultMovLotaRespSel", builder.getUltMovLotaRespSel());
 		result.include("ultMovIdEstadoDoc", ultMovIdEstadoDoc);
 		result.include("fullText", fullText);
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 	}
 
 	@Override

@@ -75,7 +75,8 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 		tamanho = dao().consultarQuantidade(flt);
 		itens = dao().consultarPorFiltro(flt, offset, itemPagina);
-
+		
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		return "busca";
 	}
 
@@ -122,6 +123,10 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 			return "ajax_vazio";
 
 		return "ajax_retorno";
+	}
+	
+	public Integer calculaPaginaAtual(Integer offset) {
+		return offset == null ? 1 : (offset / getItemPagina()) + 1;
 	}
 
 	protected abstract DaoFiltroT createDaoFiltro();

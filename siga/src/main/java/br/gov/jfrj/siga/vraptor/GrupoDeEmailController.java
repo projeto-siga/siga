@@ -46,6 +46,8 @@ public class GrupoDeEmailController extends GrupoController {
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 		prepare();
+		
+		setItemPagina(10);
 	}
 
 	public int getIdTipoGrupo() {
@@ -218,8 +220,6 @@ public class GrupoDeEmailController extends GrupoController {
 		result.include("itens", getItens());
 		result.include("nome", getNome());
 	}
-	
-	
 	
 	
 }

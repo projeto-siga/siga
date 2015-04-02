@@ -75,6 +75,8 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		flt.setIdOrgaoUsu(orgaoUsu);
 		if (flt.getIdOrgaoUsu() == null && getLotaTitular() == null) 
 				throw new AplicacaoException("Usuário não está logado.");
+		else 
+			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());		
 		
 		String buscarFechadas = param("buscarFechadas");
 		flt.setBuscarFechadas(buscarFechadas != null ? Boolean

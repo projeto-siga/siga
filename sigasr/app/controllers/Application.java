@@ -660,12 +660,25 @@ public class Application extends SigaApplication {
 	//	e o parametro "popup" porque este metodo é usado também na lista,
 	//	e não foi possível deixar default no template(igual ao buscarItem.html) 
 	@SuppressWarnings("unchecked")
-	public static void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) {
+	public static void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception{
 
 		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
 
 		try {
 			if (filtro.pesquisar) {
+				if (filtro.idListaPrioridade != null
+						&& !filtro.idListaPrioridade
+								.equals(SrSolicitacaoFiltro.QUALQUER_LISTA_OU_NENHUMA)
+						&& filtro.lotaAtendente == null
+						&& filtro.atendente == null
+						&& filtro.itemConfiguracao == null
+						&& filtro.cadastrante == null
+						&& filtro.solicitante == null
+						&& filtro.lotaSolicitante == null
+						&& filtro.lotaCadastrante == null)
+					throw new Exception(
+							"Para realizar esse tipo de busca, informe tambem um dos seguintes "
+							+ "filtros: solicitante, cadastrante, situacao ou item");
 				listaSolicitacao = filtro.buscar();
 			} else {
 				listaSolicitacao = new ArrayList<SrSolicitacao>();

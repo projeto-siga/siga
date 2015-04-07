@@ -21,8 +21,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private static final long serialVersionUID = 1L;
-	private static final Long QUALQUER_LISTA_OU_NENHUMA = -1L;
-	private static final Long NENHUMA_LISTA = 0L;
+	public static final Long QUALQUER_LISTA_OU_NENHUMA = -1L;
+	public static final Long NENHUMA_LISTA = 0L;
 	private static final String AND = " AND ";
 
 	public boolean pesquisar = false;
@@ -51,7 +51,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	
 	@SuppressWarnings("unchecked")
 	public List<SrSolicitacao> buscar() throws Exception {
-		String query = montarBusca("select distinct(sol) from SrSolicitacao sol ");
+		//Edson: foi necessario separar em subquery porque o Oracle nao aceita 
+		//distinct em coluna CLOB em query contendo join
+		String query = montarBusca("from SrSolicitacao sol where idSolicitacao in "
+				+ "(select distinct sol.idSolicitacao from SrSolicitacao sol ");
 		
 		List<SrSolicitacao> lista = JPA
 				.em()
@@ -83,7 +86,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		return listaRetorno;
 	}
 	
-	private String montarBusca(String queryString) {
+	private String montarBusca(String queryString) throws Exception {
 		
 		StringBuffer query = new StringBuffer(queryString);
 		
@@ -207,7 +210,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and not exists (from SrMovimentacao where tipoMov in (7,8) and solicitacao = sol.hisIdIni)");
 		}
 		
-		return query.append(" order by sol.idSolicitacao desc").toString();
+		return query.append(") order by sol.idSolicitacao desc").toString();
 	}
 
 	private void montarQueryAtributos(StringBuffer query) {

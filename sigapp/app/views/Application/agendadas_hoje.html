@@ -2,8 +2,9 @@
 #{set title:'Agendadas Hoje' /}
 <title>Agendadas Hoje</title>
  <center class="ui-tabs">Perícias marcadas para hoje:#{if listAgendamentos!=null} ${listAgendamentos.data_ag.toString().substring(9,11)}-${listAgendamentos.data_ag.toString().substring(6,8)}-${listAgendamentos.data_ag.toString().substring(1,5)} #{/if}</center>
- <form action="agendadas_hoje_print" method="get">
- 	<input type="submit" value="imprime">
+ <form action="agendadas_hoje_print" method="get" style="position:relative;left:10%;">
+    <input type="hidden" name="frm_data_ag" #{if listAgendamentos==null} value="" #{/if}  #{if listAgendamentos!=null} value="${listAgendamentos.data_ag.toString().substring(9,11)}-${listAgendamentos.data_ag.toString().substring(6,8)}-${listAgendamentos.data_ag.toString().substring(1,5)}" #{/if} >
+ 	<input type="submit" value=" imprime ">
  </form>
  <table class="ui-tabs"  align="center" style="font-size:100%;">
  <tr bgcolor="Silver">
@@ -23,7 +24,15 @@
 	<td>&nbsp ${ag.periciado}</td>
 	<td>&nbsp ${ag.orgao}</td>
 	<td>&nbsp ${ag.processo}</td>
-	<td>&nbsp ${ag.perito_juizo}</td>
+	<td>
+	#{if ag.perito_juizo==null} Sem perito do ju&iacute;zo #{/if}
+	#{if ag.perito_juizo!=null}
+		#{if ag.perito_juizo.trim()==""} Sem perito do ju&iacute;zo. #{/if} 
+	 		#{list items:listPeritos , as:'prt'}
+				#{if ag.perito_juizo.trim()==prt.cpf_perito.trim()} ${prt.nome_perito} #{/if}
+	 		#{/list}
+	#{/if}
+	</td>
 	<td>&nbsp ${ag.localFk.local}</td>
 	
 	</tr>

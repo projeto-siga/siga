@@ -27,7 +27,9 @@
 	GET		/agendadas_hoje_print					Application.agendadas_hoje_print
 	GET		/usuario_atualiza						Application.usuario_atualiza
 	GET		/permissao_inclui						Application.permissao_inclui
-	GET		/permissao_exclui						Application.permissao_exclui					
+	GET		/permissao_exclui						Application.permissao_exclui
+	GET     /perito_incluir							Application.perito_incluir
+	POST	/perito_insert							Application.perito_insert					
 	GET 	/creditos								Application.creditos
 		
 # Ignore favicon requests

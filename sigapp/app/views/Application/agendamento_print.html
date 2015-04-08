@@ -32,7 +32,16 @@ Rio de Janeiro, <input id="data01" type="text" style="border: thin solid white;"
 	<td>${ag.hora_ag.substring(0,2)}:${ag.hora_ag.substring(2,4)} </td>
 	<td>${ag.localFk.local} &nbsp</td>
 	<td>${ag.orgao} &nbsp</td>
-	<td>${ag.perito_juizo} &nbsp</td>
+	<!-- <td>${ag.perito_juizo} &nbsp</td> -->
+	<td>
+	#{if ag.perito_juizo==null} Sem perito do ju&iacute;zo #{/if}
+	#{if ag.perito_juizo!=null}
+		#{if ag.perito_juizo.trim()==""} Sem perito do ju&iacute;zo. #{/if} 
+	 		#{list items:listPeritos , as:'prt'}
+				#{if ag.perito_juizo.trim()==prt.cpf_perito.trim()} ${prt.nome_perito} #{/if}
+	 		#{/list}
+	#{/if}
+	</td>
 	<td>${ag.perito_parte} &nbsp</td>
 </tr>
 #{/list}

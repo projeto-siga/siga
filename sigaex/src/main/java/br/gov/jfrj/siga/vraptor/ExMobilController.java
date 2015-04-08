@@ -409,12 +409,14 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 	@Get("app/expediente/doc/carregar_lista_formas")
 	public void aCarregarListaFormas(Long tipoForma, Integer idFormaDoc) {
 		result.include("todasFormasDocPorTipoForma", this.getTodasFormasDocPorTipoForma(tipoForma));
+		result.include("idFormaDoc", idFormaDoc);
 	}
 	
 
 	@Get("app/expediente/doc/carregar_lista_modelos")
 	public void aCarregarListaModelos(final int forma, final Long idMod) {
 		result.include("modelos", this.getModelos(forma));
+		result.include("idMod", idMod);
 	}
 
 	private List<String> getListaAnos() {

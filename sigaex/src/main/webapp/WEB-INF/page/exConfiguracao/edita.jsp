@@ -9,6 +9,10 @@
 
 <script type="text/javascript" language="Javascript1.1">
 
+$(document).ready(function() {
+	alteraTipoDaForma();
+});
+
 function alteraTipoDaForma(){
 	ReplaceInnerHTMLFromAjaxResponse('${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_formas?tipoForma='+document.getElementById('tipoForma').value+'&idFormaDoc='+'${idFormaDoc}', null, document.getElementById('comboFormaDiv'));
 }
@@ -54,7 +58,7 @@ function sbmt() {
 							<siga:select name="idTpConfiguracao"
 								list="listaTiposConfiguracao" listKey="idTpConfiguracao"
 								id="idTpConfiguracao" headerValue="[Indefinido]" headerKey="0"
-								listValue="dscTpConfiguracao" theme="simple" />
+								listValue="dscTpConfiguracao" theme="simple" value="${idTpConfiguracao}"/>
 						</c:otherwise>
 					</c:choose>
 				</td>
@@ -63,13 +67,13 @@ function sbmt() {
 				<td><b>Situação</b></td>
 				<td><siga:select name="idSituacao" list="listaSituacao"
 					listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
-					theme="simple" headerValue="[Indefinido]" headerKey="0" /></td>
+					theme="simple" headerValue="[Indefinido]" headerKey="0" value="${idSituacao}"/></td>
 			</tr>
 			<tr>
 				<td>Nível de acesso</td>
 				<td><siga:select name="idNivelAcesso" list="listaNivelAcesso"
 					theme="simple" listKey="idNivelAcesso" listValue="nmNivelAcesso"
-					headerValue="[Indefinido]" headerKey="0" /></td>
+					headerValue="[Indefinido]" headerKey="0" value="${idNivelAcesso}"/></td>
 			</tr>
 			<tr>
 				<td>Pessoa</td>
@@ -91,7 +95,7 @@ function sbmt() {
 				<td>Órgão</td>
 				<td><siga:select name="idOrgaoUsu" list="orgaosUsu"
 					listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
-					headerValue="[Indefinido]" headerKey="0" /></td>
+					headerValue="[Indefinido]" headerKey="0" value="${idOrgaoUsu}"/></td>
 			</tr>
 			<tr>
 				<td>Tipo de Movimentação</td>
@@ -104,7 +108,7 @@ function sbmt() {
 						<c:otherwise>
 							<siga:select name="idTpMov" list="listaTiposMovimentacao"
 								listKey="idTpMov" listValue="descrTipoMovimentacao" theme="simple"
-								headerValue="[Indefinido]" headerKey="0" />
+								headerValue="[Indefinido]" headerKey="0" value="${idTpMov}"/>
 						</c:otherwise>
 					</c:choose>
 				</td>
@@ -123,17 +127,16 @@ function sbmt() {
 							<siga:select name="idTpFormaDoc" list="tiposFormaDoc"
 					                       listKey="idTipoFormaDoc" listValue="descTipoFormaDoc"
 							      		   theme="simple" headerKey="0" headerValue="[Indefinido]"
-										   onchange="javascript:alteraTipoDaForma();" id="tipoForma" />&nbsp;&nbsp;&nbsp;
-									       <div style="display: inline" id="comboFormaDiv">
-										   		<script type="text/javascript">alteraTipoDaForma();</script>
-										   </div>
+										   onchange="javascript:alteraTipoDaForma();" id="tipoForma" value="${idTpFormaDoc}"/>&nbsp;&nbsp;&nbsp;
+										   
+					        <div style="display: inline" id="comboFormaDiv"> </div>
 						</c:otherwise>
 					</c:choose>
 				</td>
 			</tr>
 			<!-- Esse timeout no modelo está estranho. Está sendo necessário porque primeiro
       		 precisa ser executado o request ajax referente à FormaDocumento, da qual a lista 
-		     de modelos depende. Talvez seria bom tornar síncronos esses dois requests ajax -->
+		     de modelos depende. Talvez seria bom tornar síncronos esses dois requests ajax    -->
 			<tr>
 				<td>Modelo:</td>
 				<td>
@@ -162,13 +165,13 @@ function sbmt() {
 				<td>Origem</td>
 				<td><siga:select name="idTpDoc" list="listaTiposDocumento"
 					listKey="idTpDoc" listValue="descrTipoDocumento" theme="simple"
-					headerValue="[Indefinido]" headerKey="0" /></td>
+					headerValue="[Indefinido]" headerKey="0" value="${idTpDoc}"/></td>
 			</tr>
 			<tr>
 				<td>Órgão Objeto</td>
 				<td><siga:select name="idOrgaoObjeto" list="orgaosUsu"
 					listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
-					headerValue="[Indefinido]" headerKey="0" /></td>
+					headerValue="[Indefinido]" headerKey="0" value="${idOrgaoObjeto}"/></td>
 			</tr>
 			<tr>
 			</tr>

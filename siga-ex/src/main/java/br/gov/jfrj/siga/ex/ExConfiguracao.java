@@ -140,9 +140,9 @@ public class ExConfiguracao extends CpConfiguracao {
 	public boolean podeAdicionarComoPublicador(DpPessoa titular, DpLotacao lotacaoTitular) {
 		return (getDpPessoa() != null 
 					&& titular != null 
-					&& getDpPessoa().getOrgaoUsuario().getId() == titular.getOrgaoUsuario().getId())
+					&& getDpPessoa().getOrgaoUsuario().getId().equals(titular.getOrgaoUsuario().getId()))
 				|| (getLotacao() != null 
 						&& lotacaoTitular != null 
-						&& getLotacao().getOrgaoUsuario().getId() == lotacaoTitular.getOrgaoUsuario().getId());
+						&& getLotacao().getOrgaoUsuario().getId().equals(lotacaoTitular.getOrgaoUsuario().getId()));
 	}
 }

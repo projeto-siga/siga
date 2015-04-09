@@ -53,8 +53,6 @@ import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 
 @Resource
 public class ExClassificacaoController extends SigaSelecionavelControllerSupport<ExClassificacao, ExClassificacaoDaoFiltro> {
-	
-	// classificacao
 	private String[] nivelSelecionado;	
 	private Integer nivelAlterado;
 
@@ -104,8 +102,8 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			final String[] nivelSelecionado, final Integer nivelAlterado, final Boolean discriminarVias) throws Exception {
 		setNome(nome);
 		this.nivelAlterado = nivelAlterado;
-        this.nivelSelecionado = nivelSelecionado != null?nivelSelecionado:this.nivelSelecionado;		
-		getP().setOffset(paramoffset);
+        this.nivelSelecionado = nivelSelecionado != null?nivelSelecionado:this.nivelSelecionado;	
+        getP().setOffset(paramoffset);
 		aBuscar(sigla, postback);
 		final String[] listaNiveis = new String[getTotalDeNiveis()];
 		final String[] nomeNivel = new String[getTotalDeNiveis()];

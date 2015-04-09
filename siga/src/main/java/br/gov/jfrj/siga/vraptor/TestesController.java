@@ -20,7 +20,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.webwork.action.PrincipalAction.GenericoSelecao;
+import br.gov.jfrj.siga.model.GenericoSelecao;
 
 @Resource
 public class TestesController extends SigaController {

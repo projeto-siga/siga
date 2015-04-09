@@ -3,7 +3,7 @@
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <script type="text/javascript" language="Javascript1.1">
@@ -345,7 +345,7 @@
 									<td colspan="2">Gestores do Grupo</td>
 								</tr>
 								<tr>
-									<td colspan="2"><siga:selecao titulo="Nova Lotação Gestora:" propriedade="lotacaoGestora" modulo="siga"/></td>
+									<td colspan="2"><siga:selecao titulo="Nova Lotação Gestora:" urlAcao="buscar" propriedade="lotacaoGestora" modulo="siga"/></td>
 								</tr>
 								<c:forEach var="conf" items="${confGestores}">
 									<tr>

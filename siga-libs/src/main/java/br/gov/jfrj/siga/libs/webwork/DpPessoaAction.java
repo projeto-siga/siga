@@ -94,6 +94,9 @@ public class DpPessoaAction extends
 				&& lotacaoTitular != null ) {
 			setOrgaoUsu( lotacaoTitular.getIdOrgaoUsuario() );
 		}
+		if (getNome() == null){
+			setNome("");
+		}
 		return super.aBuscar();
 	}
 	

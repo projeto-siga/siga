@@ -49,7 +49,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.webwork.action.CpPerfilSelecao;
+import br.gov.jfrj.siga.util.CpPerfilSelecao;
 
 @Resource
 public class AcessoController extends GiControllerSupport {

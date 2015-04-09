@@ -16,6 +16,11 @@
 		</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	<servlet-mapping>
+		<servlet-name>testes</servlet-name>
+		<url-pattern>/app/teste</url-pattern>
+	</servlet-mapping>
+
 	<servlet>
         <servlet-name>CDService</servlet-name>
         <servlet-class>br.gov.jfrj.siga.cd.service.impl.CdServiceImpl</servlet-class>

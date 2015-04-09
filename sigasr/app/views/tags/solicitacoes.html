@@ -33,12 +33,10 @@
 
 <div class="gt-content-box gt-for-table dataTables_div">
 	<div class="siga-multiple-select">
-		<label><b>Colunas: </b></label>
 		<select id="selectColunasTabela" name="colunasTabela" multiple="multiple">
 		</select>
 		
 		#{if _modoExibicao == 'solicitacao'}
-		<label><b>Detalhes: </b></label>
 		<select id="selectColunasDetalhamento" name="colunasDetalhamento" multiple="multiple">
 		</select>
 		#{/if}
@@ -75,8 +73,8 @@
 
 		var selectColunasTabela = $("#selectColunasTabela").multiselect({
 			header: false,
-			noneSelectedText: "Selecione",
-			selectedText: getSelectedText,
+			//noneSelectedText: "Selecione",
+			selectedText: 'Exibir/Ocultar Colunas',
 			close: function(event) {
 				tabelaDinamica.alterarColunasTabela(event.target.options, event.target.selectedOptions);
 			}
@@ -87,8 +85,8 @@
 		#{if _modoExibicao == 'solicitacao'}
 		var selectColunasDetalhamento = $("#selectColunasDetalhamento").multiselect({
 			header: false,
-			noneSelectedText: "Selecione",
-			selectedText: getSelectedText,
+			//noneSelectedText: "Selecione",
+			selectedText: 'Detalhamento',
 			close: function(event) {
 				tabelaDinamica.alterarColunasDetalhamento(event.target.selectedOptions);
 			}
@@ -109,11 +107,5 @@
 		$(nRow).attr('id', aData.idSolicitacao);
 		$(nRow).attr('data-json', JSON.stringify(aData));
 		$(nRow).attr('data-json-id', aData.idSolicitacao);
-	}
-
-	function getSelectedText(numChecked, numTotal, checkedItems) {
-		if (numChecked > 1)
-			return numChecked + ' selecionados';
-		else return numChecked + ' selecionado';
 	}
 </script>

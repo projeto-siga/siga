@@ -161,6 +161,13 @@ td.solicitacao-prioridade {
 
 .siga-multiple-select {
 	padding: 0px 5px 5px 5px;
+	text-align: right;
+}
+
+.ui-multiselect {
+	font-family: Helvetica, sans-serif; 
+	font: 13px/1.231 arial,helvetica,clean,sans-serif;
+	color: #333333;
 }
 
 div > ul > li {

@@ -217,13 +217,6 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			
 			if (srConf.acordo != null)
 				srConf.acordo.getAcordoAtual();
-			
-			if (srConf.getListaConfiguracaoSet() != null) {
-				for (SrLista listaConf : srConf.getListaConfiguracaoSet()){
-					listaConf.getListaAtual();
-					listaConf.getId();
-				}
-			}
 
 			if (srConf.tipoPermissaoSet != null) {
 				for (SrTipoPermissaoLista perm : srConf.tipoPermissaoSet){

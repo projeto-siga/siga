@@ -1978,9 +1978,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
 		
 		for (SrLista l : SrLista.listar(false)) {
-			if (l.getListaAtual().podeIncluir(lotaTitular, cadastrante))
-				if(!listaFinal.contains(l.getListaAtual()))
-					listaFinal.add(l.getListaAtual());
+			SrLista atual = l.getListaAtual();
+			if (atual.podeIncluir(lotaTitular, cadastrante))
+				if(!listaFinal.contains(atual))
+					listaFinal.add(atual);
 		}
 		listaFinal.removeAll(getListasAssociadas());
 		Collections.sort(listaFinal, new Comparator<SrLista>() {
@@ -2064,7 +2065,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		mov.cadastrante = pess;
 		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista + " com a prioridade " + mov.prioridade;
+		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista;
 		mov.lista = lista;
 		mov.solicitacao = this;
 		mov.salvar();

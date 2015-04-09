@@ -46,7 +46,7 @@ public class ListaInclusaoAutomatica {
 		if (lista == null) {
 			if (other.lista != null)
 				return false;
-		} else if (!lista.equals(other.lista))
+		} else if (!lista.equivale(other.lista))
 			return false;
 		if (prioridadeNaLista != other.prioridadeNaLista)
 			return false;

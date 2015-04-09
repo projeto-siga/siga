@@ -144,7 +144,7 @@
 			
 			<div id="numPosicao" class="gt-form-row gt-width-66">
 				<label>Mover Para</label> 
-				<input type="number" name="numPosicao"/>
+				<input type="number" min="0" name="numPosicao"/>
 			</div>
 			
 			<div class="gt-form-row">
@@ -205,7 +205,10 @@
 	 	    if (prioridades.length > 0) {
 	 	    	$.post('@{Application.priorizarLista()}', {
 		 	    	listaPrioridadeSolicitacao : prioridades,
-		 	    	id : $('[name=idLista]').val()
+		 	    	id : $('[name=idLista]').val(),
+		 	    	success: function() {
+		 	    		alert('Lista gravada com sucesso');
+		 	    	}
 	 	    	});
 		 	}
 	    });

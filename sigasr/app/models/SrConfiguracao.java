@@ -84,10 +84,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	@Column(name = "PRIORIDADE_LISTA")
 	@Enumerated
 	public SrPrioridade prioridadeNaLista;
-	
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SR_LISTA_CONFIGURACAO", schema="SIGASR", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
-	private List<SrLista> listaConfiguracaoSet;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"), schema="SIGASR")
@@ -151,7 +147,6 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	public void salvarComoInclusaoAutomaticaLista(SrLista srLista) throws Exception {
 		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
-		adicionarListaConfiguracoes(srLista);
 		salvar();
 	}
 
@@ -412,14 +407,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	public void setId(Long id) {
 		setIdConfiguracao(id);
 	}
-
-	public List<SrLista> getListaConfiguracaoSet() {
-		return listaConfiguracaoSet;
-	}
-
-	public void setListaConfiguracaoSet(List<SrLista> listaConfiguracaoSet) {
-		this.listaConfiguracaoSet = listaConfiguracaoSet;
-	}
 	
 	public String getDescrItemConfiguracaoAtual() {
 		String descrItemConfiguracao = null;
@@ -598,15 +585,6 @@ public class SrConfiguracao extends CpConfiguracao {
 				.setParameter("tipoConfiguracao", CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA)
 				.setParameter("idIniLista", lista.getIdInicial())
 				.getResultList();
-	}
-	
-	public void adicionarListaConfiguracoes(SrLista srLista) {
-		if (this.listaConfiguracaoSet == null) {
-			this.listaConfiguracaoSet = new ArrayList<SrLista>();
-		}
-		if (!this.listaConfiguracaoSet.contains(srLista)) {
-			this.listaConfiguracaoSet.add(srLista);
-		}
 	}
 
 	public SrConfiguracaoAssociacaoVO toAssociacaoVO() {

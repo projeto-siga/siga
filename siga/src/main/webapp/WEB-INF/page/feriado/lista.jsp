@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 
 <siga:pagina titulo="Lista Feriados">
@@ -102,13 +102,11 @@
 										</c:forEach>										
 									</c:when>
 									<c:otherwise>										
-										<td></td><td></td>
-					<%--					<td align="left"><ww:url id="url" action="editar_ocorrencia" namespace="/feriado">
-														<ww:param name="id">${feriado.id}</ww:param>
-													</ww:url>
-												<siga:link title="Incluir" url="${url}" />	
-												 --%>				
-											</td><td></td><td></td>										
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>										
 									</c:otherwise>	
 								</c:choose>													 							
 							</tr>

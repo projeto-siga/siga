@@ -25,12 +25,15 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.util.CpGrupoDeEmailSelecao;
 
 @Resource
 public class PerfilController extends GrupoController {
@@ -116,6 +119,38 @@ public class PerfilController extends GrupoController {
 		assertAcesso("PERFIL:Gerenciar grupos de email");
 		super.aExcluir(idCpGrupo);
 		result.redirectTo(this).lista();
+	}
+	
+	@Post
+	@Get
+	@Path("/app/gi/perfil/buscar")
+	public void buscar(final String sigla,
+			           final String postback,
+			           final Long idCpTipoGrupo,
+			           final Integer offset,
+			           final String propriedade) throws Exception{
+		
+		getP().setOffset(offset);
+		super.aBuscar(sigla, postback);
+		result.include("tamanho", getTamanho());
+		result.include("request",getRequest());
+		result.include("itens",this.getItens());
+		result.include("sigla",sigla);
+		result.include("postback",postback);
+		result.include("offset",offset);
+		result.include("param",getRequest().getParameterMap());
+		result.include("propriedade",propriedade);
+	}
+	
+	@Get("/app/gi/perfil/selecionar")
+	public void selecionar(String sigla){
+		String resultado =  super.aSelecionar(sigla);
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
 	}
 
 }

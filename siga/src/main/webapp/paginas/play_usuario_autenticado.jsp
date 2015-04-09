@@ -1,1 +1,0 @@
-${cadastrante.idPessoa};${lotaCadastrante.idLotacao};${titular.idPessoa};${lotaTitular.idLotacao};${identidadeCadastrante.idIdentidade}

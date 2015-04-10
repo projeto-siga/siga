@@ -40,6 +40,48 @@ a.b.c.d
 * c = pequenas alterações ou correções
 * d= hotfix
 
+1) Ao iniciar um trabalho, crie um branch baseado no develop (ou outro se for o caso)
+```
+git fetch
+git checkout develop
+git pull delvelop
+git checkout –b meuProblema
+```
+
+2) Trabalhe e faça seus commits em seu branch
+```
+(git add, cherry-pick, etc.)
+git commit –m “meu commit”
+```
+
+3) Faça uma atualização do branch original
+
+```
+git checkout develop
+git pull develop
+```
+
+4) Faça um rebase do develop no branch de trabalho
+
+```
+git checkout meuProblema
+git rebase develop
+```
+
+5) Ao concluir o trabalho faça o merge do seu branch com o original
+
+```
+git checkout develop
+git merge meuProblema
+```
+
+6) Exclua seu branch e faça um push
+
+```
+git branch –d meuProblema
+git push origin develop
+```
+
 Todos os deploys em produção devem partir do ** branch master ** com sua respectiva tag (Obedecendo a nomenclatura acima).
 
 Qualquer alteração em uma tag gerada previamente é denominada como **hotfix**.

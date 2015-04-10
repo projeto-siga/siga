@@ -352,11 +352,9 @@ function postback(){
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Listas de Prioridade</h3>
-			<p>
 				<ul>
 				#{list items:solicitacao.listasAssociadas, as:'listas'}
-					<li class="gt-form-row gt-width-66"
-						style="font-size: 13px; font-weight: bold; ! important; padding: 7px 10px;">
+					<li>
 						&nbsp; <input type="hidden" name="idlista"
 						value="${listas?.idLista}"> <a
 						style="color: #365b6d; text-decoration: none"
@@ -365,7 +363,6 @@ function postback(){
 					</li>
 				#{/list}
 				</ul>
-			</p>
 		</div>
 	</div>
 	#{/if} 

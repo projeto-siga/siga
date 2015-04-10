@@ -12,7 +12,6 @@ import models.SrAtributo;
 import models.SrAtributoSolicitacao;
 import models.SrLista;
 import models.SrSolicitacao;
-import models.SrTipoMovimentacao;
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -122,30 +121,11 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		if (idListaPrioridade != null && !idListaPrioridade.equals(QUALQUER_LISTA_OU_NENHUMA)){
 			if (idListaPrioridade.equals(NENHUMA_LISTA)) {
-				query.append(" and ");
-				query.append(" ( select count(mov) from SrMovimentacao mov ");
-				query.append(" where mov.movCanceladora is null and ");
-				query.append(" mov.solicitacao = sol and ");
-				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA+ " ) ");  
-				query.append(" = ( select count(mov) from SrMovimentacao mov ");
-				query.append(" where mov.movCanceladora is null and ");
-				query.append(" mov.solicitacao = sol and ");
-				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ");
-			}
-			else {
+				query.append(" and not exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.solicitacaoInicial = sol.solicitacaoInicial) ");
+			} else {
 				SrLista lista = SrLista.findById(idListaPrioridade);
-				
-				query.append(" and ");
-				query.append(" ( select count(mov) from SrMovimentacao mov ");
-				query.append(" where mov.movCanceladora is null and ");
-				query.append(" mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista + " and ");
-				query.append(" mov.solicitacao = sol and ");
-				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA+ " ) ");  
-				query.append(" > ( select count(mov) from SrMovimentacao mov ");
-				query.append(" where mov.movCanceladora is null and ");
-				query.append(" mov.lista.listaInicial.idLista = " + lista.listaInicial.idLista + " and ");
-				query.append(" mov.solicitacao = sol and ");
-				query.append(" mov.tipoMov.idTipoMov = " + SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA + " ) ");
+				query.append(" and exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.solicitacaoInicial.idSolicitacao = sol.solicitacaoInicial.idSolicitacao ");
+				query.append(" and prio.lista.listaInicial.idLista = " + lista.listaInicial.getId() + ") ");
 			}
 		}
 		
@@ -272,4 +252,5 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		});
 		return arrayList;
 	}
+	
 }

@@ -63,6 +63,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import models.vo.ListaInclusaoAutomatica;
 import notifiers.Correio;
 
 import org.hibernate.annotations.Type;
@@ -512,7 +513,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getDtRegString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtReg);
-		return cal.getTempoTranscorridoString(false);
+		return "<!--" + dtReg.getTime() + "-->" + cal.getTempoTranscorridoString(false);
 	}
 
 	public String getAtributosString() {
@@ -749,7 +750,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public DpLotacao getLotaAtendente() {
-		return getUltimaMovimentacao().lotaAtendente;
+		if (getUltimaMovimentacao() != null)
+			return getUltimaMovimentacao().lotaAtendente;
+		else
+			return null;
 	}
 
 	public DpPessoa getAtendente() {
@@ -1463,13 +1467,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			else
 				iniciarAtendimento(cadastrante, lotaCadastrante, titular, lotaTitular);
 
-			for (SrLista lista : getListasParaInclusaoAutomatica(lotaTitular)) {
-				incluirEmLista(lista, cadastrante, lotaCadastrante, titular, lotaTitular);
-			}
-            if (!isEditado())
-            	Correio.notificarAbertura(this);
+			incluirEmListasAutomaticas();
+
+			if (!isEditado()
+					&& formaAcompanhamento != SrFormaAcompanhamento.ABERTURA_FECHAMENTO)
+				Correio.notificarAbertura(this);
 		} else
 			atualizarMarcas();
+	}
+
+	private void incluirEmListasAutomaticas() throws Exception {
+		for (ListaInclusaoAutomatica dadosInclusao : getListasParaInclusaoAutomatica(lotaCadastrante)) {
+			incluirEmLista(dadosInclusao.getLista(), cadastrante, lotaCadastrante, dadosInclusao.getPrioridadeNaLista(), Boolean.FALSE);
+		}
 	}
 
 	public void excluir() throws Exception {
@@ -1923,28 +1933,26 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return false;
 	}
 
-	public List<SrLista> getListasParaInclusaoAutomatica(DpLotacao lotaTitular)
-			throws Exception {
-		List<SrLista> listaFinal = new ArrayList<SrLista>();
-
-		/*
-		 * SrConfiguracao filtro = new SrConfiguracao();
-		 * filtro.setDpPessoa(solicitante); filtro.setComplexo(local);
-		 * filtro.itemConfiguracaoFiltro = itemConfiguracao; filtro.acaoFiltro =
-		 * acao; filtro.setCpTipoConfiguracao(JPA.em().find(
-		 * CpTipoConfiguracao.class,
-		 * CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
-		 * 
-		 * filtro.subTipoConfig =
-		 * SrSubTipoConfiguracao.DESIGNACAO_LISTAS_PRIORIDADE;
-		 * 
-		 * for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] {
-		 * SrConfiguracaoBL.ATENDENTE })) { for (SrLista lista :
-		 * conf.getListaConfiguracaoSet()) { SrLista listaAtual =
-		 * lista.getListaAtual(); if (!listaFinal.contains(listaAtual))
-		 * listaFinal.add(listaAtual); } }
-		 */
-		return new ArrayList<SrLista>(listaFinal);
+	public List<ListaInclusaoAutomatica> getListasParaInclusaoAutomatica(DpLotacao lotaTitular) throws Exception {
+		SrConfiguracao filtro = new SrConfiguracao();
+		filtro.setDpPessoa(solicitante);
+		filtro.setOrgaoUsuario(orgaoUsuario);
+		filtro.setLotacao(lotaTitular);
+		filtro.prioridade = prioridade;
+		filtro.itemConfiguracaoFiltro = itemConfiguracao;
+		filtro.acaoFiltro = acao;
+		filtro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+		
+		List<ListaInclusaoAutomatica> listaFinal = new ArrayList<ListaInclusaoAutomatica>();
+		for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] { SrConfiguracaoBL.ATENDENTE, SrConfiguracaoBL.LISTA_PRIORIDADE })) {
+			if (conf.listaPrioridade != null) {
+				ListaInclusaoAutomatica listaInclusaoAutomatica = new ListaInclusaoAutomatica(conf.listaPrioridade.getListaAtual(), conf.prioridadeNaLista);
+				
+				if (!listaFinal.contains(listaInclusaoAutomatica))
+					listaFinal.add(listaInclusaoAutomatica);
+			}
+		}
+		return listaFinal;
 	}
 	
 	public List<DpPessoa> getPessoasAtendentesDisponiveis(){
@@ -1972,12 +1980,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public List<SrLista> getListasDisponiveisParaInclusao(
 			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
 		List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
-
+		
 		for (SrLista l : SrLista.listar(false)) {
-			if (l.podeIncluir(lotaTitular, cadastrante))
-				listaFinal.add(l);
+			SrLista atual = l.getListaAtual();
+			if (atual.podeIncluir(lotaTitular, cadastrante))
+				if(!listaFinal.contains(atual))
+					listaFinal.add(atual);
 		}
-
 		listaFinal.removeAll(getListasAssociadas());
 		Collections.sort(listaFinal, new Comparator<SrLista>() {
 			@Override
@@ -2045,37 +2054,27 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public long getPrioridadeNaLista(SrLista lista) throws Exception {
-		for (SrMovimentacao mov : getMovimentacaoSet()) {
-			if (mov.lista != null && mov.lista.equivale(lista))
-				return mov.prioridade != null ? mov.prioridade : -1;
-		}
-		return -1;
+		SrPrioridadeSolicitacao prioridadeSolicitacao = lista.getSrPrioridadeSolicitacao(this);
+		return prioridadeSolicitacao != null ? prioridadeSolicitacao.numPosicao : -1;
 	}
 
-	public void incluirEmLista(SrLista lista, DpPessoa cadastrante, DpLotacao lotaCadastrante,
-			DpPessoa titular, DpLotacao lotaTitular)
-			throws Exception {
+	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
 		if (lista == null)
 			throw new IllegalArgumentException("Lista não informada");
 
 		if (isEmLista(lista))
-			throw new IllegalArgumentException("Lista " + lista.nomeLista
-					+ " já contém a solicitação " + getCodigo());
+			throw new IllegalArgumentException("Lista " + lista.nomeLista + " já contém a solicitação " + getCodigo());
 
 		SrMovimentacao mov = new SrMovimentacao();
-		mov.prioridade = (long) lista.getProximaPosicao();
-		mov.cadastrante = cadastrante;
-		mov.lotaCadastrante = lotaCadastrante;
-		mov.titular = titular;
-		mov.lotaTitular = lotaTitular;
-		mov.tipoMov = SrTipoMovimentacao
-				.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
-		mov.descrMovimentacao = "Inclus�o na lista " + lista.nomeLista
-				+ " com a prioridade " + mov.prioridade;
+		mov.cadastrante = pess;
+		mov.lotaCadastrante = lota;
+		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
+		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista;
 		mov.lista = lista;
 		mov.solicitacao = this;
 		mov.salvar();
-		lista.refresh();
+		
+		lista.incluir(this, prioridade, naoReposicionarAutomatico);
 	}
 
 	public void retirarDeLista(SrLista lista, DpPessoa cadastrante, DpLotacao lotaCadastrante,
@@ -2087,39 +2086,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		SrMovimentacao mov = new SrMovimentacao();
 		mov.cadastrante = cadastrante;
 		mov.lotaCadastrante = lotaCadastrante;
-		mov.titular = titular;
-		mov.lotaTitular = lotaTitular;
-		mov.tipoMov = SrTipoMovimentacao
-				.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA);
-		mov.descrMovimentacao = "Cancelamento de Inclus�o em Lista";
+		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA);
+		mov.descrMovimentacao = "Cancelamento de InclusÃ£o em Lista";
 		mov.solicitacao = this;
 		mov.lista = lista;
 		mov.salvar();
-		lista.refresh();
-
-		lista.recalcularPrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
-	}
-
-	// Edson: este método é protected porque nao pode ser chamado pelo
-	// usu�rio,
-	// mas sim pela SrLista, passando a posicao correta a ser colocada a
-	// solicitacao
-	protected void priorizar(SrLista lista, long prioridade, DpPessoa cadastrante,
-			DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		SrMovimentacao mov = new SrMovimentacao();
-		mov.prioridade = prioridade;
-		mov.cadastrante = cadastrante;
-		mov.lotaCadastrante = lotaCadastrante;
-		mov.titular = titular;
-		mov.lotaTitular = lotaTitular;
-		mov.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA);
-		mov.descrMovimentacao = "Alteração de prioridade na lista "
-				+ lista.nomeLista + ": " + mov.prioridade;
-		mov.lista = lista;
-		mov.solicitacao = this;
-		mov.salvar();
-		lista.refresh();
+		lista.retirar(this, cadastrante, lotaCadastrante);
 	}
 
 	private void iniciarAtendimento(DpPessoa cadastrante, DpLotacao lotaCadastrante,
@@ -2207,7 +2179,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				break;
 
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA)
-				incluirEmLista(mov.lista, cadastrante, lotaCadastrante, titular, lotaTitular);
+				incluirEmLista(mov.lista, cadastrante, lotaCadastrante, prioridade, false);
 
 		}
 	}

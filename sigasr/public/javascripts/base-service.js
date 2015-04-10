@@ -30,10 +30,10 @@ function Formulario(form) {
 	this.prepareObjectToForm = function(obj) {
 		for (var x in obj) {
 		    if (typeof obj[x] == 'object') {
-		    	var component = document.getElementsByName(x)[0],		
-		    		className = component != null ? component.className : null,
-		        	objeto = obj[x];
-		    	
+		    	var component = form.find('[name=' + x + ']'),
+	    		className = component.size() > 0 ? component[0].className : null,
+	        	objeto = obj[x];
+	    		
 		    	// Caso o atributo seja um objeto, verifica qual seu tipo e preenche os valores necessários
 		        if (className && objeto) {
 		        	if (className == 'selecao') {
@@ -104,6 +104,7 @@ function DesativarReativar(service) {
    		td.html('');
    		a.append(img);
      	td.append(a.wrap('<div>'));
+     	td.parent().find('td').addClass('item-desativado');
 	}
 
 	function innerHTMLDesativar(td, id, service) {
@@ -116,6 +117,7 @@ function DesativarReativar(service) {
    		td.html('');
    		a.append(img);
      	td.append(a);
+     	td.parent().find('td').removeClass('item-desativado');
 	}
 }
 
@@ -196,7 +198,7 @@ BaseService.prototype.desativar = function(event, id) {
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
 	     dataType: "text",
 	     success: function(response) {
-			if(service.opts.mostrarDesativados == "true") {
+			if(service.opts.mostrarDesativados == "true" || service.opts.mostrarDesativados == true) {
 				var obj = JSON.parse(response),
 					dataTableRow = service.opts.dataTable.api().row(tr),
 					tableTr = $(dataTableRow.node());
@@ -206,6 +208,8 @@ BaseService.prototype.desativar = function(event, id) {
 				tableTr.attr('data-json', response);
 				tableTr.data('json', obj);
 				service.opts.dataTable.api().row(tr).data(row).draw();
+				
+				 $(tr).find('td').addClass('item-desativado');
 			}
 			else {
 				service.opts.dataTable.api().row(tr).remove().draw();
@@ -243,7 +247,8 @@ BaseService.prototype.reativar = function(event, id) {
 	         tableTr.attr('data-json-id', service.getId(obj));
 	         tableTr.attr('data-json', response);
 	         tableTr.data('json', obj);
-				
+	         
+	         $(tr).find('td').removeClass('item-desativado');
 	         service.opts.dataTable.api().row(tr).data(row).draw();
 	     },
 	     error: function(response) {
@@ -411,12 +416,11 @@ BaseService.prototype.onGravar = function(obj, objSalvo) {
 	this.bindRowClick(tr, objSalvo);
 	
 	var tdAcoes = tr.find('td.acoes');
-	if(tdAcoes) {
+	if(tdAcoes.size() > 0) {
 		new DesativarReativar(this)
 			.ativo(objSalvo.ativo)
 			.innerHTML(tdAcoes, idNovo);
 	}
-	
 	return tr;
 }
 
@@ -455,4 +459,9 @@ BaseService.prototype.isValidForm = function() {
 BaseService.prototype.resetErrosForm = function() {
 	if (this.opts.validatorForm)
 		this.opts.validatorForm.resetForm();
+}
+
+BaseService.criar = function(opts, service) {
+	service.prototype = Object.create(BaseService.prototype);
+	return new service(opts);
 }

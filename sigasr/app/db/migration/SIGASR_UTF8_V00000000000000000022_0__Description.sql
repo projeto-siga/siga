@@ -61,3 +61,16 @@ update sigasr.sr_acao a set tipo_acao = (
 ) where his_dt_fim is not null;
 
 commit;
+
+CREATE TABLE SR_PRIORIDADE_SOLICITACAO(
+   ID_PRIORIDADE_SOLICITACAO NUMBER(19,0) primary key,
+   ID_LISTA NUMBER(19,0) references SR_LISTA(ID_LISTA) NOT NULL,
+   ID_SOLICITACAO NUMBER(19,0) references SR_SOLICITACAO(ID_SOLICITACAO) NOT NULL,
+   NUM_POSICAO NUMBER(19,0),
+   PRIORIDADE NUMBER(1),
+   NAO_REPOSICIONAR_AUTOMATICO CHAR(1)  
+  );
+  
+CREATE SEQUENCE SR_PRIORIDADE_SOLICITACAO_SEQ start with 1;
+
+ALTER TABLE sr_configuracao ADD (prioridade_lista NUMBER(1));

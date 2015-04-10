@@ -130,7 +130,7 @@ jQuery.fn.populate = function(obj, options) {
 
           var values = value.constructor == Array ? value : [value];
           for(var j = 0; j < values.length; j++) {
-            element.checked |= element.value == values[j];
+            element.checked |= ((element.value == values[j]) || (values[j] == true));
           }
 
           //element.checked = (element.value != '' && value.toString().toLowerCase() == element.value.toLowerCase());
@@ -216,7 +216,7 @@ jQuery.fn.populate = function(obj, options) {
     // variables
     var tagName	= this.tagName.toLowerCase();
     var method	= tagName == 'form' ? populateFormElement : populateElement;
-
+    
     // reset form?
     if(tagName == 'form' && options.resetForm) {
       this.reset();

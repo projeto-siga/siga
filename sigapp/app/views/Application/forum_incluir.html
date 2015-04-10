@@ -1,12 +1,13 @@
-#{extends 'main.html' /}
+﻿#{extends 'main.html' /}
 #{set title:'Incluir Forum' /}
 <script language="javascript" type="text/javascript">
  function chamada(novaURL){
 	 $(window.document.location).attr('href',novaURL);
  }
 </script>
+
 <form class= name="" action="@{forum_insert()}" onsubmit="" method="POST" enctype="multipart/form-data" ><br>
-  <font style="position: absolute;left:5%;right:77%;" class="ui-state-default" size="3px">Código do Forum:</font><input  name="cod_forum" type="text" style="position:absolute;left:25%;" class="ui-widget" size="5" maxlength="2" /> <!-- int --><br>
+<font style="position: absolute;left:5%;right:77%;" class="ui-state-default" size="3px">Código do Forum:</font><input  name="cod_forum" type="text" style="position:absolute;left:25%;" class="ui-widget" size="5" maxlength="2" /> <!-- int --><br>
   <br>
   <font style="position: absolute;left:5%;right:77%;" class="ui-state-default" size="3px" >Descrição:</font> <input  name="descricao" type="text" style="position:absolute;left:25%;" class="ui-widget" size="50" maxlength="50" /> <!-- String --><br>
   <br>

@@ -65,7 +65,6 @@
 
 <script>
 	associacaoService.getUrlDesativarReativar = function(desativados) {
-		
 		var url = '@{Application.listarAssociacaoAtributo()}',
 			idAtributo = $("[name=idAtributo]").val();
 
@@ -76,9 +75,7 @@
 	}
 
 	var validatorAtributoForm;
-
 	jQuery( document ).ready(function( $ ) {
-		
 		validatorAtributoForm = $("#atributoForm").validate({
 			onfocusout: false
 		});

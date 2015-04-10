@@ -22,3 +22,12 @@ $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
 		});
 	}
 });
+
+/**
+ * Configura o jquery datatable para salvar o estado em todas as tabelas (valor padrao)
+ */
+if($.fn.dataTable) {
+	$.extend( $.fn.dataTable.defaults, {
+		stateSave: true
+	});
+}

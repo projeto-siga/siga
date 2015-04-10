@@ -40,12 +40,17 @@ function TestarAssinaturaDigital() {
 // Inicia a operação de assinatura para todos os documentos referenciados na
 // pagina
 //
-function AssinarDocumentos(Copia) {
+function AssinarDocumentos(copia, politica) {
+	if (politica != undefined)
+		gPolitica = politica;
+	
 	if (!TestarAssinaturaDigital())
 		return;
 
-	if ("OK" == provider.inicializar())
-		ExecutarAssinarDocumentos(Copia);
+	if ("OK" == provider.inicializar(function() {
+		ExecutarAssinarDocumentos(copia);
+	}))
+		ExecutarAssinarDocumentos(copia);
 }
 
 //
@@ -127,10 +132,10 @@ var providerIttruP11 = {
 		return false;
 	},
 
-	inicializar : function() {
+	inicializar : function(cont) {
 		try {
 			this.dialog = $(
-					'<div id="dialog-form-pin" title="Assinar com token"><form id="form-pin"><fieldset><label>PIN</label> <br/><input type="password" name="pin" id="pin" class="text ui-widget-content ui-corner-all" autocomplete="off"/></fieldset></form></div>')
+					'<div id="dialog-form-pin" title="Assinar com token"><fieldset><label>PIN</label> <br/><input type="password" name="pin" id="pin" class="text ui-widget-content ui-corner-all" autocomplete="off"/></fieldset><fieldset><div id="certChoice"/></fieldset></div>')
 					.dialog(
 							{
 								title : "Assinatura Digital (" + this.nome
@@ -149,10 +154,9 @@ var providerIttruP11 = {
 								buttons : {
 									"Assinar" : function() {
 										if ("OK" == providerIttruP11
-												.escolherCertificado()) {
+												.escolherCertificado(this, cont)) {
 											$(this).dialog('destroy').remove();
-											ExecutarAssinarDocumentos(false,
-													null);
+											cont();
 										}
 									},
 									"Cancelar" : function() {
@@ -171,7 +175,7 @@ var providerIttruP11 = {
 		}
 	},
 
-	escolherCertificado : function() {
+	escolherCertificado : function(dlg, cont) {
 		var gPIN = $("#pin").val();
 		if (gPIN === '') {
 			return Erro({
@@ -179,27 +183,40 @@ var providerIttruP11 = {
 			});
 		}
 
-		data = ittruSignApplet.listCerts(gStore, gPIN);
+		gCertAlias = $('input[name=cert_alias]:checked').val();
 
-		var json = $.parseJSON(data);
+		if (gCertAlias == undefined || gCertAlias === '') {
+			data = ittruSignApplet.listCerts(gStore, gPIN);
 
-		if (json.length == 1) {
-			gCertAlias = json[0].alias;
-			return "OK";
-		}
-		if (json.length == 0)
-			return Erro({
-				message : "Nenhum certificado digital disponível."
-			});
+			var json = $.parseJSON(data);
 
-		if (json.length > 1) {
-			var html = 'Selecione o certificado que deseja usar:<br />';
-			for (var i = 0; i < json.length; i++) {
-				html += "<input type=\"radio\" name=\"cert_alias\" value=\""
-						+ json[i].alias + "\">" + json[i].subject + "<br>";
+			if (json.length == 1) {
+				gCertAlias = json[0].alias;
+			} else if (json.length == 0) {
+				return Erro({
+					message : "Nenhum certificado digital disponível."
+				});
+			} else if (json.length >= 1) {
+				var html = '<br /><label>Selecione o certificado que deseja usar:</label><br />';
+				for (var i = 0; i < json.length; i++) {
+					html += "<input type=\"radio\" name=\"cert_alias\" value=\""
+							+ json[i].alias + "\"> " + json[i].subject + "<br>";
+				}
+				$("#certChoice").html(html);
+
+				return "Selecione o certificado para prosseguir.";
 			}
-			$("#certChoice").html(html);
 		}
+
+		if (gCertAlias === '') {
+			return Erro({
+				message : "Certificado deve ser selecionado."
+			});
+		}
+
+		gCertificadoB64 = ittruSignApplet.getCertificate(gCertAlias);
+		return "OK";
+
 	},
 
 	assinar : function(conteudo) {
@@ -655,8 +672,7 @@ function GravarAssinatura(url, datatosend) {
 		data : datatosend,
 		async : false,
 		error : function(xhr) {
-			result = TrataErro(xhr.responseText ? xhr.responseText : xhr,
-					"");
+			result = TrataErro(xhr.responseText ? xhr.responseText : xhr, "");
 			result = "Erro na gravação da assinatura. " + result;
 		}
 	});

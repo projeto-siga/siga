@@ -183,7 +183,7 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 		var colunaCookie = {};
 		colunaCookie.bVisible = coluna.bVisible;
 		
-		jQuery.cookie(tipo + coluna.sName, JSON.stringify(colunaCookie));
+		jQuery.cookie(tipo + coluna.sName, JSON.stringify(colunaCookie), {expires:1000});
 	}
 	
 	this.getColunaPorNome = function(listaColunas, nome) {

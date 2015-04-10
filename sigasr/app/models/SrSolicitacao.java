@@ -512,7 +512,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getDtRegString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtReg);
-		return cal.getTempoTranscorridoString(false);
+		return "<!--" + dtReg.getTime() + "-->" + cal.getTempoTranscorridoString(false);
 	}
 
 	public String getAtributosString() {

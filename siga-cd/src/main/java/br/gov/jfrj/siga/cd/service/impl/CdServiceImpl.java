@@ -124,8 +124,8 @@ public class CdServiceImpl implements CdService {
 
 	public String recuperarCPF(byte[] cms) {
 		try {
-			return AssinaturaDigital.recuperarCPF(cms);
-			// return Cd.getInstance().getAssinaturaDigital().recuperarCPF(cms);
+			//return AssinaturaDigital.recuperarCPF(cms);
+			return Cd.getInstance().getAssinaturaDigital().recuperarCPF(cms);
 		} catch (Exception e) {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);

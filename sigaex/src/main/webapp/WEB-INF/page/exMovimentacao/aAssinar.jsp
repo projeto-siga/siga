@@ -184,7 +184,7 @@
 
 
 	<a id="bot-assinar" href="#"
-		onclick="javascript: AssinarDocumentos(false, null);"
+		onclick="javascript: AssinarDocumentos(false, true);"
 		class="gt-btn-large gt-btn-left">Assinar com Applet</a>
 
 	<Applet Code="bluecrystal.applet.sign.SignApplet.class"

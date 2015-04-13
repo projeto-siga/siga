@@ -989,19 +989,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean estaCom(DpPessoa pess, DpLotacao lota) {
-		SrMovimentacao ultMov = getUltimaMovimentacao();
-		SrMovimentacao ultMovDoPai = null;
 		if (isFilha())
-			ultMovDoPai = this.solicitacaoPai.getUltimaMovimentacao();
+			return solicitacaoPai.estaCom(pess, lota);
 		if (isRascunho())
 			return foiCadastradaPor(pess, lota) || foiSolicitadaPor(pess, lota);
-		return (ultMov != null && ((ultMov.atendente != null && pess != null && ultMov.atendente.equivale(pess) && 
-											ultMov.lotaTitular != null && ultMov.lotaTitular.equivale(lota)) 
-					|| (ultMov.lotaAtendente != null && ultMov.lotaAtendente.equivale(lota))))
-					
-					|| (ultMovDoPai != null && ((ultMovDoPai.atendente != null && ultMovDoPai.atendente.equivale(pess))
-										|| (ultMovDoPai.lotaAtendente != null && ultMovDoPai.lotaAtendente.equivale(lota))));
-
+		SrMovimentacao ultMov = getUltimaMovimentacao();
+		return (ultMov != null && ultMov.lotaAtendente != null
+				&& ultMov.lotaAtendente.equivale(lota));
 	}
 
 	public boolean foiSolicitadaPor(DpPessoa pess, DpLotacao lota) {

@@ -86,6 +86,7 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
@@ -994,12 +995,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			ultMovDoPai = this.solicitacaoPai.getUltimaMovimentacao();
 		if (isRascunho())
 			return foiCadastradaPor(pess, lota) || foiSolicitadaPor(pess, lota);
-		return (ultMov != null && ((ultMov.atendente != null && pess != null && ultMov.atendente.equivale(pess)) 
+		return (ultMov != null && ((ultMov.atendente != null && pess != null && ultMov.atendente.equivale(pess) && 
+											ultMov.lotaTitular != null && ultMov.lotaTitular.equivale(lota)) 
 					|| (ultMov.lotaAtendente != null && ultMov.lotaAtendente.equivale(lota))))
-
-				|| (ultMovDoPai != null && ((ultMovDoPai.atendente != null && ultMovDoPai.atendente
-						.equivale(pess)) || (ultMovDoPai.lotaAtendente != null && ultMovDoPai.lotaAtendente
-						.equivale(lota))));
+					
+					|| (ultMovDoPai != null && ((ultMovDoPai.atendente != null && ultMovDoPai.atendente.equivale(pess))
+										|| (ultMovDoPai.lotaAtendente != null && ultMovDoPai.lotaAtendente.equivale(lota))));
 
 	}
 
@@ -1205,11 +1206,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
 		if (solicitante != null)
 			locais = JPA
-					.em()
-					.createQuery(
-							"from CpComplexo where orgaoUsuario.idOrgaoUsu = "
-									+ solicitante.getOrgaoUsuario()
-											.getIdOrgaoUsu()).getResultList();
+			.em()
+			.createQuery(
+					"from CpComplexo where orgaoUsuario.idOrgaoUsu = :idOrgaoUsu order by nomeComplexo")
+					.setParameter("idOrgaoUsu", solicitante.getOrgaoUsuario().getIdOrgaoUsu())
+					.getResultList();
+				
 		return locais;
 	}
 
@@ -1960,6 +1962,30 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return listaFinal;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpSubstituicao> getSubstitutos(){
+		List<DpSubstituicao> listaSubstitutos = new ArrayList<DpSubstituicao>();
+		if (getLotaAtendente() != null && getLotaAtendente().getLotacaoAtual() != null){
+			DpLotacao lotaAtendente = getLotaAtendente().getLotacaoAtual();
+			
+			listaSubstitutos = JPA.em().createQuery("from DpSubstituicao dps where dps.titular = null and dps.lotaTitular.idLotacao in "
+						+ "	(select lot.idLotacao from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni) and "
+						+ "(dtFimSubst = null or dtFimSubst > sysdate) and dtFimRegistro = null")
+						.setParameter("idLotacaoIni", lotaAtendente.getIdInicial()).getResultList();
+			
+			Collections.sort(listaSubstitutos, new Comparator<DpSubstituicao>() {
+		        @Override
+		        public int compare(DpSubstituicao  o1, DpSubstituicao o2) {
+					if (o1 != null && o2 != null && o1.getIdSubstituicao().equals(o2.getIdSubstituicao()))
+						return 0;
+					return o1.getSubstituto().getNomePessoa().
+								compareTo(o2.getSubstituto().getNomePessoa());
+		        }
+		    });
+		}	
+		return listaSubstitutos;
+	} 
 
 	public List<SrLista> getListasDisponiveisParaInclusao(
 			DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {

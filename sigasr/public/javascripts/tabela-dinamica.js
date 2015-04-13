@@ -85,6 +85,11 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 	this.criar = function() {
 		this.jSon = this.table.data("json");
 		this.objetoTabela = this.prepararDadosTabela(this.jSon);
+		
+		var me = this;
+		$(window).on('resize', function() {
+			me.table.dataTable.api().columns.adjust();
+		});
 		return this;
 	}
 	
@@ -141,6 +146,8 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 			this.alterarColunasTabela(select[0].options, select[0].selectedOptions);
 		else if (tipo == this.TIPO_COLUNA_DETALHE)
 			this.alterarColunasDetalhamento(select[0].selectedOptions);
+		
+		this.table.dataTable.api().columns.adjust();
 	}
 	
 	this.addOptions = function(select, colunas) {

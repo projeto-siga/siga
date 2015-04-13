@@ -2772,51 +2772,6 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro editor_antigo_fck var titulo semBotaoSalvar=false]
-    [#if .vars[var]??]
-        [#local v = .vars[var]/]
-    [#else]
-        [#local v = ""/]
-    [/#if]
-    [#if v != ""]
-        [#local v = exbl.canonicalizarHtml(v, false, true, false, true)/]
-    [#else]
-        [#local v = ''<p style="text-indent:2cm; align: justify">&nbsp;</p>''/]
-    [/#if]
-
-        <div>
-        [#if titulo != ""]
-                        <b>${titulo}</b>
-        [/#if]
-
-        [#if !gerar_formulario!false]
-            <input type="hidden" name="vars" value="${var}" />
-            <input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${desconsiderarExtensao!''false''}" />
-            <script type="text/javascript">FCKeditorAPI = null;__FCKeditorNS = null;</script>   
-            <table class="entrevista" width="100%">
-                <tr>
-                    <td></td>
-                    <td colspan="3">
-                        <input type="hidden" id="${var}" name="${var}" value="${v?html}">
-                        <input type="hidden" id="${var}___Config" value="Default[#if semBotaoSalvar]SemSave[/#if]">
-                         
-                        [#if ( (func.podeUtilizarExtensaoEditor(lotaTitular, doc.exModelo.idMod?number)!false)
-                           && (!((desconsiderarExtensao == ''true'')!false)) )]
-                            [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
-                        [#else]
-                            <iframe id="${var}___Frame" src="/fckeditor/editor/fckeditor.html?InstanceName=${var}" width="100%" height="300" frameborder="no" scrolling="no" FCK="true"></iframe>
-                        [/#if]
-
-                    </td>
-                </tr>
-            </table>
-        [#else]
-            <br>${v}<br><br>
-        [/#if]
-    </div>
-[/#macro]
-
-
 [#macro editor var titulo="" default=""]
     [#if .vars[var]??]
         [#local v = .vars[var]/]

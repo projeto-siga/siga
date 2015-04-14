@@ -85,6 +85,8 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			root.put("gerar_assinatura", true);
 		if (attrs.containsKey("pre_assinatura"))
 			root.put("gerar_pre_assinatura", true);
+		if (attrs.containsKey("descricao"))
+			root.put("gerar_descricao", true);
 
 		String sTemplate = "[#compress]\n[#include \"GERAL\"]\n";
 		if (ou != null) {

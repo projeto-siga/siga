@@ -108,6 +108,10 @@
 						</c:otherwise>	
 					</c:choose>
 				</tr>
+				<tr>
+					<td>Próxima data para disponibilização:</td>
+					<td>${proximaDataDisponivelStr}</td>
+				</tr>
 				<tr>					
 					<td colspan="2"><ww:textfield name="dtDispon" id="dt_dispon"
 					onblur="javascript:verifica_data(this,true);prever_data();"

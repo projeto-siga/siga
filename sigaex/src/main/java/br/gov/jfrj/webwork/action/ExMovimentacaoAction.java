@@ -577,6 +577,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 				.podePedirPublicacao(getTitular(), getLotaTitular(), mob))
 			throw new AplicacaoException("Publicação não permitida");
 
+		setProximaDataDisponivelStr(DatasPublicacaoDJE.consultarProximaDataDisponivelString());
 		setTipoMateria(PublicacaoDJEBL.obterSugestaoTipoMateria(doc));
 		setCadernoDJEObrigatorio(PublicacaoDJEBL
 				.obterObrigatoriedadeTipoCaderno(doc));

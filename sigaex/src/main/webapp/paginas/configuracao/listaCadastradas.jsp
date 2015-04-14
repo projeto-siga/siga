@@ -89,6 +89,7 @@
 						<ww:url id="urlExcluir" action="excluir" namespace="/expediente/configuracao">
 							<ww:param name="id">${configuracao.idConfiguracao}</ww:param>
 							<ww:param name="idMod">${idMod}</ww:param>
+                                                        <ww:param name="idFormaDoc">${idFormaDoc}</ww:param>
 							<ww:param name="nmTipoRetorno">${nmTipoRetorno}</ww:param>
 		                </ww:url>	
 	                </c:if>				

@@ -6,13 +6,13 @@ import java.util.Set;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import models.SrGestorItem;
 import models.SrMovimentacao;
 import models.SrSolicitacao;
 import models.SrTipoMovimentacao;
 import play.Logger;
 import play.mvc.Mailer;
-import br.gov.jfrj.siga.dp.DpPessoa;
 
 public class Correio extends Mailer {
 
@@ -43,33 +43,40 @@ public class Correio extends Mailer {
 		send(movimentacao, sol);
 	}
 
-	public static void notificarAtendente(SrMovimentacao movimentacao) {
-		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
-		setSubject("Movimentação da solicitação " + sol.getCodigo());
+	public static void notificarAtendente(SrMovimentacao movimentacao, SrSolicitacao sol) {
 		List<String> recipients = new ArrayList<String>();
 		String email = null;
 		
-		DpPessoa atendenteSolPai = sol.solicitacaoPai.getAtendente();
-		if (atendenteSolPai != null) {
-			email = atendenteSolPai.getPessoaAtual().getEmailPessoa();
+		DpPessoa atendente = sol.getSolicitacaoAtual().getAtendente();
+		if (atendente != null) {
+			email = atendente.getPessoaAtual().getEmailPessoa();
 			if (email != null)
 				recipients.add(email);
 		} 
 		else {
-			DpLotacao lotaAtendenteSolPai = sol.solicitacaoPai
-					.getLotaAtendente();
-			if (lotaAtendenteSolPai != null)
-				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai
-						.getDpPessoaLotadosSet())
+			List<DpPessoa> listaPessoasAtendentes = sol.getSolicitacaoAtual().getPessoasAtendentesDisponiveis();
+			List<DpSubstituicao> listaSubstitutos = sol.getSolicitacaoAtual().getSubstitutos();
+			if (listaPessoasAtendentes.size() > 0)
+				for (DpPessoa pessoaDaLotacao : listaPessoasAtendentes)
 					if (pessoaDaLotacao.getDataFim() == null) {
 						email = pessoaDaLotacao.getPessoaAtual().getEmailPessoa();
 						if (email != null)
 							recipients.add(email);
 					}
+			if (listaSubstitutos.size() > 0)
+				for (DpSubstituicao pessoaSubstitutaDaLotacao : listaSubstitutos)
+					if (pessoaSubstitutaDaLotacao.getSubstituto().getDataFim() == null) {
+						email = pessoaSubstitutaDaLotacao.getSubstituto().getPessoaAtual().getEmailPessoa();
+						if (email != null)
+							recipients.add(email);
+					}
 		}
-
 		if (recipients.size() > 0)
 			try {
+				if (movimentacao.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+					setSubject("Fechamento de solicitação escalonada a partir de " + sol.getCodigo());
+				else
+					setSubject("Solicitação " + sol.getCodigo() + " aguarda atendimento");
 				addRecipient(recipients.toArray());
 				setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
 				send(movimentacao, sol);

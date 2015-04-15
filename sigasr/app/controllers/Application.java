@@ -30,6 +30,7 @@ import models.SrMovimentacao;
 import models.SrObjetivoAtributo;
 import models.SrPergunta;
 import models.SrPesquisa;
+import models.SrPrioridade;
 import models.SrSolicitacao;
 import models.SrSolicitacao.SrTarefa;
 import models.SrTipoAcao;
@@ -42,18 +43,19 @@ import models.SrTipoPermissaoLista;
 import models.SrUrgencia;
 import models.vo.PaginaItemConfiguracao;
 import models.vo.SelecionavelVO;
+import models.vo.SrSolicitacaoListaVO;
 
 import org.joda.time.LocalDate;
 
 import play.Logger;
 import play.Play;
-import play.data.binding.As;
 import play.data.validation.Error;
 import play.data.validation.Validation;
 import play.db.jpa.JPA;
 import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Http;
+import util.AtualizacaoLista;
 import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
@@ -580,45 +582,52 @@ public class Application extends SigaApplication {
 		if (ocultas == null)
 			ocultas = false;
 	
-		Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas,
-				null, false, todoOContexto, !ocultas, false);
-
+		Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas,null, false, todoOContexto, !ocultas, false);
 		render(solicitacao, movimentacao, todoOContexto, ocultas, movs);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void exibirLista(Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
-		lista = lista.getListaAtual();
-		List<CpOrgaoUsuario> orgaos = JPA.em()
-				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpOrgaoUsuario> orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
-		
-		try {
-			assertAcesso("ADM:Administrar");
-			List<SrConfiguracao> permissoes = SrConfiguracao
-					.listarPermissoesUsoLista(lista, false);
-		} catch (Exception e) { }
-		
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
+		SrSolicitacaoFiltro filtro = new SrSolicitacaoFiltro();
+		SrSolicitacaoListaVO solicitacaoListaVO;
+		String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
+		filtro.idListaPrioridade = id;
+		lista = lista.getListaAtual();
+		String jsonPrioridades = SrPrioridade.getJSON().toString();
 		
 		if (!lista.podeConsultar(lotaTitular(), cadastrante())) {
 			throw new Exception("Exibição não permitida");
 		}
 		
-		render(lista, orgaos, locais, tiposPermissao);
+		try {
+			solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, true, "", false, lotaTitular(), cadastrante());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			solicitacaoListaVO = new SrSolicitacaoListaVO();
+		}
+		
+		render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO, tiposPermissaoJson, jsonPrioridades);
 	}
 	
 	public static void incluirEmLista(Long idSolicitacao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		solicitacao = solicitacao.getSolicitacaoAtual();
-		render(solicitacao);
+		List<SrPrioridade> prioridades = SrPrioridade.getValoresEmOrdem();
+		render(solicitacao, prioridades);
 	}
 
-	public static void incluirEmListaGravar(Long idSolicitacao, Long idLista)
-			throws Exception {
+	public static void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, Boolean naoReposicionarAutomatico) throws Exception {
+		if(idLista == null) {
+			throw new Exception("Selecione a lista para inclusão da solicitação");
+		}
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.incluirEmLista(lista, cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
+		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular(), prioridade, naoReposicionarAutomatico);
 		exibir(idSolicitacao, todoOContexto(), ocultas());
 	}
 
@@ -630,20 +639,9 @@ public class Application extends SigaApplication {
 			exibirLista(idLista);
 	}
 	
-	public static void priorizarLista(@As(",") List<Long> ids, Long id)
-			throws Exception {
-
-		// Edson: as 3 linhas abaixo nao deveriam estar sendo necessarias, mas o
-		// Play
-		// nao estah fazendo o binding direito caso o parametro seja
-		// List<SrSolicitacao>
-		// em vez de List<Long>. Ver o que estah havendo.
-		List<SrSolicitacao> sols = new ArrayList<SrSolicitacao>();
-		for (Long l : ids)
-			sols.add((SrSolicitacao) SrSolicitacao.findById(l));
-
+	public static void priorizarLista(List <AtualizacaoLista> listaPrioridadeSolicitacao, Long id) throws Exception {
 		SrLista lista = SrLista.findById(id);
-		lista.priorizar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), sols);
+		lista.priorizar(cadastrante(), lotaTitular(), listaPrioridadeSolicitacao);
 		exibirLista(id);
 	}
 
@@ -660,18 +658,17 @@ public class Application extends SigaApplication {
 	//	e não foi possível deixar default no template(igual ao buscarItem.html) 
 	@SuppressWarnings("unchecked")
 	public static void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) {
-
-		List<SrSolicitacao> listaSolicitacao = new ArrayList<SrSolicitacao>();
+		SrSolicitacaoListaVO solicitacaoListaVO;
 
 		try {
 			if (filtro.pesquisar) {
-				listaSolicitacao = filtro.buscar();
+				solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, nome, popup, lotaTitular(), cadastrante());
 			} else {
-				listaSolicitacao = new ArrayList<SrSolicitacao>();
+				solicitacaoListaVO = new SrSolicitacaoListaVO();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			listaSolicitacao = new ArrayList<SrSolicitacao>();
+			solicitacaoListaVO = new SrSolicitacaoListaVO();
 		}
 		
 		// Montando o filtro...
@@ -682,9 +679,9 @@ public class Application extends SigaApplication {
 
 		List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
 		List<SrLista> listasPrioridade = SrLista.listar(false);
-		render(listaSolicitacao, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao, listasPrioridade);
+		render(solicitacaoListaVO, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao, listasPrioridade);
 	}
-
+	
 	public static void baixar(Long idArquivo) {
 		SrArquivo arq = SrArquivo.findById(idArquivo);
 		if (arq != null)
@@ -721,8 +718,7 @@ public class Application extends SigaApplication {
 		/*SrSolicitacao sol = SrSolicitacao.findById(id);
 		SrPesquisa pesquisa = sol.getPesquisaDesignada();
 		if (pesquisa == null)
-			throw new Exception(
-					"N�o foi encontrada nenhuma pesquisa designada para esta solicita��o.");
+			throw new Exception("Não foi encontrada nenhuma pesquisa designada para esta solicitação.");
 		pesquisa = SrPesquisa.findById(pesquisa.idPesquisa);
 		pesquisa = pesquisa.getPesquisaAtual();
 		render(id, pesquisa);*/
@@ -868,7 +864,18 @@ public class Application extends SigaApplication {
 		designacao.refresh();
 		return designacao.getSrConfiguracaoJson();
 	}
-
+	
+	public static String gravarDesignacaoItem(SrConfiguracao designacao, Long idItemConfiguracao) throws Exception {
+		assertAcesso("ADM:Administrar");
+		designacao.salvarComoDesignacao();
+		designacao.refresh();
+		
+		SrItemConfiguracao itemConfiguracao = SrItemConfiguracao.findById(idItemConfiguracao);
+		itemConfiguracao.adicionarDesignacao(designacao);
+		return designacao.getSrConfiguracaoJson(itemConfiguracao);
+	}
+	
+	
 	public static String desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
 		assertAcesso("ADM:Administrar");
 		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
@@ -997,12 +1004,12 @@ public class Application extends SigaApplication {
         return SrConfiguracao.convertToJSon(associacoes);
     }       
 	
-	
-	public static Long gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
+	public static String gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
 		assertAcesso("ADM:Administrar");
 		validarFormEditarPermissaoUsoLista(permissao);
 		permissao.salvarComoPermissaoUsoLista();
-		return permissao.getId();
+		permissao.refresh();
+		return permissao.toVO().toJson();
 	}
 
 	public static void desativarPermissaoUsoLista(Long id) throws Exception {
@@ -1589,14 +1596,15 @@ public class Application extends SigaApplication {
 				+ nome + "&sigla=" + URLEncoder.encode(sigla, "UTF-8"));
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void listarLista(boolean mostrarDesativados) throws Exception {
-		List<CpOrgaoUsuario> orgaos = JPA.em()
-				.createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpOrgaoUsuario> orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.all().fetch();
 		List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.all().fetch();
 		List<SrLista> listas = SrLista.listar(mostrarDesativados);
+		String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 		
-		render(listas, mostrarDesativados, orgaos, locais, tiposPermissao);
+		render(listas, mostrarDesativados, orgaos, locais, tiposPermissao, tiposPermissaoJson);
 	}
 	
 	public static void listarListaDesativados() throws Exception {
@@ -1637,5 +1645,40 @@ public class Application extends SigaApplication {
 	public static void exibirPrioridade(SrSolicitacao solicitacao) {
 		solicitacao.associarPrioridadePeloGUT();
 		render(solicitacao);
+	}
+	
+	public static void atualizarFechamentoAutomatico() throws Exception {
+		List<SrSolicitacao> todasSolicitacoes = SrSolicitacao.findAll();
+		for (SrSolicitacao sol : todasSolicitacoes) {
+			if (sol.isPai()) {
+				sol.setFechadoAutomaticamente(false);
+				sol.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
+			}
+		}
+		renderText("Atualização realizada com sucesso");
+	}
+	
+	public static String configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
+		SrLista lista = SrLista.findById(idLista);
+		return SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados);
+	}
+	
+	public static String configuracaoAutomaticaGravar(SrConfiguracao configuracaoInclusaoAutomatica) throws Exception {
+		configuracaoInclusaoAutomatica.salvarComoInclusaoAutomaticaLista(configuracaoInclusaoAutomatica.listaPrioridade); 
+		configuracaoInclusaoAutomatica.refresh();
+		return configuracaoInclusaoAutomatica.toVO().toJson();
+	}
+	
+	
+	public static String desativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
+		SrConfiguracao configuracao = JPA.em().find(SrConfiguracao.class, id);
+		configuracao.finalizar();
+		return configuracao.toVO().toJson();
+	}
+	
+	public static String reativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
+		SrConfiguracao configuracao = JPA.em().find(SrConfiguracao.class, id);
+		configuracao.salvar();
+		return configuracao.toVO().toJson();
 	}
 }

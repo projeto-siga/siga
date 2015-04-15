@@ -2772,51 +2772,6 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro editor_antigo_fck var titulo semBotaoSalvar=false]
-    [#if .vars[var]??]
-        [#local v = .vars[var]/]
-    [#else]
-        [#local v = ""/]
-    [/#if]
-    [#if v != ""]
-        [#local v = exbl.canonicalizarHtml(v, false, true, false, true)/]
-    [#else]
-        [#local v = ''<p style="text-indent:2cm; align: justify">&nbsp;</p>''/]
-    [/#if]
-
-        <div>
-        [#if titulo != ""]
-                        <b>${titulo}</b>
-        [/#if]
-
-        [#if !gerar_formulario!false]
-            <input type="hidden" name="vars" value="${var}" />
-            <input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${desconsiderarExtensao!''false''}" />
-            <script type="text/javascript">FCKeditorAPI = null;__FCKeditorNS = null;</script>   
-            <table class="entrevista" width="100%">
-                <tr>
-                    <td></td>
-                    <td colspan="3">
-                        <input type="hidden" id="${var}" name="${var}" value="${v?html}">
-                        <input type="hidden" id="${var}___Config" value="Default[#if semBotaoSalvar]SemSave[/#if]">
-                         
-                        [#if ( (func.podeUtilizarExtensaoEditor(lotaTitular, doc.exModelo.idMod?number)!false)
-                           && (!((desconsiderarExtensao == ''true'')!false)) )]
-                            [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
-                        [#else]
-                            <iframe id="${var}___Frame" src="/fckeditor/editor/fckeditor.html?InstanceName=${var}" width="100%" height="300" frameborder="no" scrolling="no" FCK="true"></iframe>
-                        [/#if]
-
-                    </td>
-                </tr>
-            </table>
-        [#else]
-            <br>${v}<br><br>
-        [/#if]
-    </div>
-[/#macro]
-
-
 [#macro editor var titulo="" default=""]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
@@ -2826,7 +2781,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [#if v != ""]
         [#local v = exbl.canonicalizarHtml(v, false, true, false, true)/]
     [#else]
-        [#local v = ''<p style="text-indent:2cm; text-align: justify">&nbsp;</p>''/]
+        [#local v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
     [/#if]
 
         <div>
@@ -2837,12 +2792,12 @@ LINHA  VARIÁVEL / CONTEÚDO
         [#if !gerar_formulario!false]
 
             <input type="hidden" name="vars" value="${var}" />
-            <input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${desconsiderarExtensao!''false''}" />
+            <input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${desconsiderarExtensao!'false'}" />
 
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
-                           && (!((desconsiderarExtensao == ''true'')!false)) )]
+                           && (!((desconsiderarExtensao == 'true')!false)) )]
 [#else]
-<textarea id="${var}" name="${var}">${default!}${v?html}</textarea>
+<textarea id="${var}" name="${var}" class="editor"> ${default!}${v?html}</textarea>
 [/#if]
             <table class="entrevista" width="100%">
                 <tr>
@@ -2852,7 +2807,7 @@ LINHA  VARIÁVEL / CONTEÚDO
                         
                          
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
-                           && (!((desconsiderarExtensao == ''true'')!false)) )]
+                           && (!((desconsiderarExtensao == 'true')!false)) )]
                              <input type="hidden" id="${var}" name="${var}" value="${v?html}">
                             [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
                         [#else]
@@ -2860,59 +2815,60 @@ LINHA  VARIÁVEL / CONTEÚDO
                             <script type="text/javascript">
 
 CKEDITOR.config.scayt_autoStartup = true;
-CKEDITOR.config.scayt_sLang = ''pt_BR'';
-CKEDITOR.config.height = ''400'';
-CKEDITOR.config.stylesSet = ''siga_ckeditor_styles'';
+CKEDITOR.config.scayt_sLang = 'pt_BR';
+
+CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
 
 
 
-CKEDITOR.stylesSet.add(''siga_ckeditor_styles'',[
+CKEDITOR.stylesSet.add('siga_ckeditor_styles',[
                                                {
-                                                 ','WE8ISO8859P1'));
-	dbms_lob.append(dest_blob, src_blob);
-	src_blob := utl_raw.cast_to_raw(convert('  name:''Título'',
-                                                   element:''h1'',
-                                                   styles:{
-                                                           ''text-align'':''justify'',
-                                                           ''text-indent'':''2cm''
-                                                                   }
+                                            	   name:'T�tulo',
+                                            	   element:'h1',
+                                            	   styles:{
+                                            		   'text-align':'justify',
+                                            		   'text-indent':'2cm'
+                                            			   }
                                                },
                                                {
-                                                   name:''Subtítulo'',
-                                                   element:''h2'',
-                                                   styles:{
-                                                           ''text-align'':''justify'',
-                                                           ''text-indent'':''2cm''
-                                                                   }
+                                            	   name:'Subt�tulo',
+                                            	   element:'h2',
+                                            	   styles:{
+                                            		   'text-align':'justify',
+                                            		   'text-indent':'2cm'
+                                            			   }
                                                },
                                                {
-                                                   name:''Com recuo'',
-                                                   element:''p'',
-                                                   styles:{
-                                                           ''text-align'':''justify'',
-                                                           ''text-indent'':''2cm''
-                                                                   }
+                                            	   name:'Com recuo',
+                                            	   element:'p',
+                                            	   styles:{
+                                            		   'text-align':'justify',
+                                            		   'text-indent':'2cm'
+                                            			   }
                                                }]);
-        CKEDITOR.config.toolbar = ''SigaToolbar'';
+	CKEDITOR.config.toolbar = 'SigaToolbar';
  
-        CKEDITOR.config.toolbar_SigaToolbar =
-        [
-                { name: ''styles'', items : [ ''Styles'' ] },
-                { name: ''clipboard'', items : [ ''Cut'',''Copy'',''Paste'',''PasteText'',''PasteFromWord'',''-'',''Undo'',''Redo'' ] },
-                { name: ''editing'', items : [ ''Find'',''Replace'',''-'',''SelectAll'',''-'',''Scayt'' ] },
-                ''/'',
-                { name: ''basicstyles'', items : [ ''Bold'',''Italic'',''Underline'',''Strike'',''-'',''RemoveFormat'' ] },
-                { name: ''paragraph'', items : [ ''NumberedList'',''BulletedList'',''-'',''Outdent'',''Indent'',''-'',''JustifyLeft'',''JustifyCenter'',''JustifyBlock'',''JustifyRight'' ] },
-                { name: ''insert'', items : [ ''Table'',''-'',''SpecialChar'',''-'',''PageBreak'' ] },
-                { name: ''document'', items : [ ''Source'' ] }
-        ];
+	CKEDITOR.config.toolbar_SigaToolbar =
+	[
+		{ name: 'styles', items : [ 'Styles' ] },
+		{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+		{ name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
+		'/',
+		{ name: 'basicstyles', items : [ 'Bold','Italic','Subscript','Underline','Strike','-','RemoveFormat' ] },
+		{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyBlock','JustifyRight' ] },
+		{ name: 'insert', items : [ 'Table','-','SpecialChar','-','PageBreak' ] },
+		{ name: 'document', items : [ 'Source' ] }
+	];
 
 window.onload = function(){
-CKEDITOR.replace( ''${var}'',
-        {
-                toolbar : ''SigaToolbar''
-        });
+     $( "textarea.editor" ).each(function( index ) {
+        CKEDITOR.replace( this,
+	{
+	   toolbar : 'SigaToolbar'
+	});
+     });
 }
+
                             </script>
                             
                         [/#if]

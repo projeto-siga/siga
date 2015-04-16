@@ -224,7 +224,8 @@ public class SrMovimentacao extends GenericModel {
 	public String getDtIniString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtIniMov);
-		return cal.getTempoTranscorridoString(false);
+		return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dtIniMov) 
+				+ "</span>" + cal.getTempoTranscorridoString(false);
 	}
 
 	public String getDtIniMovDDMMYYHHMM() {

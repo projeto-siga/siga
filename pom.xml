@@ -152,6 +152,11 @@
 			<url>http://maven.nfms4redd.org/</url>
 		</repository>
 
+		<repository>
+			<id>github</id>
+			<url>https://github.com/projeto-siga/siga-repo/tree/master/repo</url>
+		</repository>
+
 	</repositories>
 
 	<dependencyManagement>

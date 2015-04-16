@@ -260,7 +260,7 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public String getCadastranteString() {
-		return atendente.getSigla() + " (" + lotaAtendente.getSigla() + ")";
+		return cadastrante.getSigla() + " (" + lotaCadastrante.getSigla() + ")";
 	}
 
 	public void setArquivo(File file) {
@@ -382,7 +382,8 @@ public class SrMovimentacao extends GenericModel {
 	public void notificarAtendente() throws Exception {
 		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
 				|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
-					|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA) {
+					|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
+					|| (lotaAtendente != null && !lotaTitular.equivale(lotaAtendente))) {
 			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
 					lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificação Atendente"))
 				Correio.notificarAtendente(this, solicitacao);

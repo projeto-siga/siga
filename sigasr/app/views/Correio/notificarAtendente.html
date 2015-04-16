@@ -6,8 +6,8 @@
 	</p>
 	<blockquote>
 		<p>Tipo de movimentação: ${movimentacao.tipoMov.nome}</p>
-		<p>Atendente: ${movimentacao.atendente != null ? movimentacao.atendente?.descricaoIniciaisMaiusculas.raw() + ", " : ""}
-					${movimentacao.lotaCadastrante?.siglaLotacao}</p>
+		<p>Atendente: #{if movimentacao.atendente} movimentacao.atendente.descricaoIniciaisMaiusculas.raw(), #{/if}
+					${movimentacao.lotaAtendente?.siglaLotacao}</p>
 		<p>Solicitante: ${sol.solicitante?.descricaoIniciaisMaiusculas.raw()}, ${sol.lotaSolicitante?.siglaLotacao} </p>
 		<p>${sol.descrSolicitacao}</p>
 	</blockquote>

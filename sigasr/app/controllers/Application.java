@@ -829,6 +829,8 @@ public class Application extends SigaApplication {
 			mov.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
 			mov.acao = SrAcao.findById(acao.idAcao);
 			mov.lotaAtendente = atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente;
+			// Edson: isso abaixo talvez pudesse valer pra todas as movimentacoes e ficar la no 
+			// mov.checarCampos()
 			if(solicitacao.getAtendente() != null && !mov.lotaAtendente.equivale(solicitacao.getAtendente().getLotacao()))
 				mov.atendente = null;
 			mov.motivoEscalonamento = motivo;

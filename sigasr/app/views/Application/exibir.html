@@ -174,7 +174,7 @@ function postback(){
 						*{#{if ocultas}
 						<td>${movimentacao.numSequencia}</td> #{/if}}*  #{if ocultas}
 						<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>#{/if} #{else}
-						<td>${movimentacao.dtIniString}</td>#{/else} 
+						<td>${movimentacao.dtIniString.raw()}</td>#{/else} 
 						#{if todoOContexto}
 						<td><a style="color: #365b6d;" href="@{Application.exibir(movimentacao.solicitacao.idSolicitacao)}"
 	style="text-decoration: none"> ${movimentacao.solicitacao.numSequenciaString}</td> #{/if}

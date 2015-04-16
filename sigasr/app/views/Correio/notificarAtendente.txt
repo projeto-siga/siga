@@ -2,7 +2,7 @@ Informamos que a solicitação ${movimentacao.solicitacao?.codigo}
 recebeu a seguinte movimentação em ${movimentacao.dtIniMovDDMMYYYYHHMM}:
 
 Tipo de movimentação: ${movimentacao.tipoMov.nome}
-Atendente: ${movimentacao.atendente != null ? movimentacao.atendente?.descricaoIniciaisMaiusculas.raw() + ", " : ""}
+Atendente: #{if movimentacao.atendente} movimentacao.atendente.descricaoIniciaisMaiusculas.raw(), #{/if}
 			${movimentacao.lotaCadastrante?.siglaLotacao}
 Solicitante: ${sol.solicitante?.descricaoIniciaisMaiusculas.raw()}, ${sol.lotaSolicitante?.siglaLotacao}
 ${sol.descrSolicitacao}

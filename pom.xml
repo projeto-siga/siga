@@ -482,9 +482,9 @@
 				<artifactId>pd4ml-taglib</artifactId> <version>3.2.3fx5</version> </dependency> -->
 
 			<dependency>
-				<groupId>com.swetake.util</groupId>
-				<artifactId>Qrcode</artifactId>
-				<version>1.0.0</version>
+				<groupId>swetake</groupId>
+				<artifactId>qrcode</artifactId>
+				<version>0.1</version>
 			</dependency>
 
 			<dependency>

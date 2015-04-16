@@ -155,8 +155,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.swetake.util</groupId>
-			<artifactId>Qrcode</artifactId>
+			<groupId>swetake</groupId>
+			<artifactId>qrcode</artifactId>
 		</dependency>
 
 		<dependency>

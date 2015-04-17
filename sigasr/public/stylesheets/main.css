@@ -151,10 +151,6 @@ td.padding-table {
 	text-align:justify;
 }
 
-.gt-celula-nowrap.solicitacao-dados {
-	width: 100% !important;
-}
-
 .solicitacao-remover {
 	color: #333;
 	font-weight: bold;

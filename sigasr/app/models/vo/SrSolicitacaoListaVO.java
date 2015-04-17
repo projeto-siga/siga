@@ -99,8 +99,7 @@ public class SrSolicitacaoListaVO {
 			colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control"));
 			colunasVO.addAll(getColunasEmComum());
 			colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados"));
-			colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
-			colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
+			colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));	
 		}
 		
 		return colunasVO;		
@@ -109,10 +108,11 @@ public class SrSolicitacaoListaVO {
 	private List<ColunasVO> getColunasEmComum() {
 		List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
 		colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
-		colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados"));
-		colunasVO.add(new ColunasVO("Aberto", "dtRegString", "gt-celula-nowrap solicitacao-dados"));
-		colunasVO.add(new ColunasVO("Movimentado", "dtUltimaMovimentacaoString", "gt-celula-nowrap solicitacao-dados"));
-		colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada"));
+		colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
+		colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Aberto", "dtRegString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Movimentado", "dtUltimaMovimentacaoString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", "", LARGURA_COLUNA_CODIGO));
 		return colunasVO;
 	}
 	

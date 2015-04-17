@@ -268,20 +268,24 @@
 		
 			<div id="divSolicitante" class="gt-form-row gt-width-100">
 				<label>Solicitante</label> 
-				#{selecao tipo:'pessoa', nome:'dpPessoaParaInclusaoAutomatica',
-				/}
+				#{pessoaLotaFuncCargoSelecao nomeSelLotacao:'lotacaoParaInclusaoAutomatica', 
+					nomeSelPessoa:'dpPessoaParaInclusaoAutomatica',
+					nomeSelFuncao:'funcaoConfiancaParaInclusaoAutomatica',
+					nomeSelCargo:'cargoParaInclusaoAutomatica',
+					nomeSelGrupo:'cpGrupoParaInclusaoAutomatica',
+					valuePessoa:dpPessoaParaInclusaoAutomatica?.pessoaAtual,
+					valueLotacao:lotacaoParaInclusaoAutomatica?.lotacaoAtual,
+					valueFuncao:funcaoConfiancaParaInclusaoAutomatica,
+					valueCargo:cargoParaInclusaoAutomatica,
+					valueGrupo:cpGrupoParaInclusaoAutomatica,
+					disabled:disabled /}
 			</div>
-		
+			
 			<div class="gt-form-row gt-width-100">
 				<label>Órgão</label> 
 				#{select name:'orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu', labelProperty:'acronimoOrgaoUsu', class:'select-siga', style:'width: 100%;'} 
 					#{option 0}#{/option} 
 				#{/select}
-			</div>
-		
-			<div class="gt-form-row gt-width-100">
-				<label>Lotação</label>
-				#{selecao tipo:'lotacao', nome:'lotacaoParaInclusaoAutomatica'/}
 			</div>
 			
 			<div class="gt-form-row gt-width-100">
@@ -302,7 +306,7 @@
 			#{/configuracaoItemAcao}
 			
 			<div class="gt-form-row">
-				<a href="javascript: configuracaoInclusaoAutomaticaService.gravarXXX()" class="gt-btn-medium gt-btn-left">Gravar</a>
+				<a href="javascript: configuracaoInclusaoAutomaticaService.gravar()" class="gt-btn-medium gt-btn-left">Gravar</a>
 				<a href="javascript: configuracaoInclusaoAutomaticaService.cancelarGravacao()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
 		</div>
@@ -327,8 +331,8 @@
 			
 			return configuracao;
 		}
-		this.getColunaPessoa = function() {
-			var descricao = configuracaoInclusaoAutomatica.dpPessoa ? configuracaoInclusaoAutomatica.dpPessoa.descricao : ' ';
+		this.getColunaSolicitante = function() {
+			var descricao = configuracaoInclusaoAutomatica.solicitante ? configuracaoInclusaoAutomatica.solicitante.sigla : ' ';
 			return nullSafe(descricao);
 		}
 		this.getColunaOrgao = function() {
@@ -431,7 +435,7 @@
 		
 		return [
 				"+",
-				configuracao.getColunaPessoa(),  
+				configuracao.getColunaSolicitante(),  
 				configuracao.getColunaOrgao(), 
 				configuracao.getDescricaoItem(), 
 				configuracao.getDescricaoAcao(),
@@ -498,6 +502,9 @@
 	}
 	configuracaoInclusaoAutomaticaService.incluirInativas = function() {
 		configuracaoInclusaoAutomaticaService.carregarParaLista($('[name=idLista]').val());
+	}
+	configuracaoInclusaoAutomaticaService.opts.formCadastro.resetForm = function(form) {
+		jQuery("#dpPessoaParaInclusaoAutomaticalotacaoParaInclusaoAutomaticafuncaoConfiancaParaInclusaoAutomaticacargoParaInclusaoAutomaticacpGrupoParaInclusaoAutomatica")[0].changeValue(1);
 	}
 	function nullSafe(value) {
 		return value || " ";

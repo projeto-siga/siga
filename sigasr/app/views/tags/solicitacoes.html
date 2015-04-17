@@ -98,7 +98,8 @@
 	});
 
 	function formatarDetalhes(data) {
-		return tabelaDinamica.formatarDetalhes(data, tabelaDinamica.objetoTabela);
+		var quantidadeColunas = tabelaDinamica.table.table.find('th').size();
+		return tabelaDinamica.formatarDetalhes(data, tabelaDinamica.objetoTabela, quantidadeColunas);
 	}
 
 	function solicitacoesRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {

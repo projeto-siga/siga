@@ -1,5 +1,6 @@
 .dataTables_div {
     padding-top: 10px;
+    min-width: 400px;
 }
 
 .dataTables_length {	
@@ -140,6 +141,7 @@ td.padding-table {
 	font-weight: bold; 
 	border-bottom: 1px solid #ccc !important; 
 	padding: 7px 10px;
+	/*width: 100% !important;*/
 }
 
 .solicitacao-dados {

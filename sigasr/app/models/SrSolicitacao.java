@@ -1471,7 +1471,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	private void incluirEmListasAutomaticas() throws Exception {
 		for (ListaInclusaoAutomatica dadosInclusao : getListasParaInclusaoAutomatica(lotaCadastrante)) {
-			incluirEmLista(dadosInclusao.getLista(), cadastrante, lotaCadastrante, dadosInclusao.getPrioridadeNaLista(), Boolean.FALSE);
+			incluirEmLista(dadosInclusao.getLista(), cadastrante, lotaCadastrante, titular, lotaTitular, dadosInclusao.getPrioridadeNaLista(), Boolean.FALSE);
 		}
 	}
 
@@ -2075,7 +2075,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return prioridadeSolicitacao != null ? prioridadeSolicitacao.numPosicao : -1;
 	}
 
-	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
+	public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, DpPessoa pessTitular, DpLotacao lotaTitular, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
 		if (lista == null)
 			throw new IllegalArgumentException("Lista não informada");
 
@@ -2083,13 +2083,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			throw new IllegalArgumentException("Lista " + lista.nomeLista + " já contém a solicitação " + getCodigo());
 
 		SrMovimentacao mov = new SrMovimentacao();
-		mov.cadastrante = pess;
-		mov.lotaCadastrante = lota;
 		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA);
 		mov.descrMovimentacao = "Inclusão na lista " + lista.nomeLista;
 		mov.lista = lista;
 		mov.solicitacao = this;
-		mov.salvar();
+		mov.salvar(pess, lota, pessTitular, lotaTitular);
 		
 		lista.incluir(this, prioridade, naoReposicionarAutomatico);
 	}
@@ -2101,13 +2099,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			throw new IllegalArgumentException("Lista não informada");
 
 		SrMovimentacao mov = new SrMovimentacao();
-		mov.cadastrante = cadastrante;
-		mov.lotaCadastrante = lotaCadastrante;
 		mov.tipoMov = SrTipoMovimentacao.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA);
 		mov.descrMovimentacao = "Cancelamento de InclusÃ£o em Lista";
 		mov.solicitacao = this;
 		mov.lista = lista;
-		mov.salvar();
+		mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 		lista.retirar(this, cadastrante, lotaCadastrante);
 	}
 
@@ -2196,7 +2192,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				break;
 
 			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA)
-				incluirEmLista(mov.lista, cadastrante, lotaCadastrante, prioridade, false);
+				incluirEmLista(mov.lista, cadastrante, lotaCadastrante, titular, lotaTitular, prioridade, false);
 
 		}
 	}

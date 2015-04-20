@@ -627,7 +627,7 @@ public class Application extends SigaApplication {
 		}
 		SrSolicitacao solicitacao = SrSolicitacao.findById(idSolicitacao);
 		SrLista lista = SrLista.findById(idLista);
-		solicitacao.incluirEmLista(lista, cadastrante(), lotaTitular(), prioridade, naoReposicionarAutomatico);
+		solicitacao.incluirEmLista(lista, cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), prioridade, naoReposicionarAutomatico);
 		exibir(idSolicitacao, todoOContexto(), ocultas());
 	}
 

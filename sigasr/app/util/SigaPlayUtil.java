@@ -34,7 +34,7 @@ public class SigaPlayUtil {
 	
 	public static String botaoRemoverSolicitacao(Long idSolicitacao, Long idLista) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("<a onclick=\"javascript: return block();\" href=\"/sigasr/solicitacao/retirarDeLista?idSolicitacao=");
+		sb.append("<a onclick=\"jQuery.blockUI(objBlock);\" href=\"/sigasr/solicitacao/retirarDeLista?idSolicitacao=");
 		sb.append(idSolicitacao + "&idLista=" + idLista + "\" title=\"Remover da Lista\" name=\"idSolicitacao\" ");
 		sb.append("value=\"" + idSolicitacao + "\">");
 		sb.append("<img id=\"imgCancelar\" src=\"/siga/css/famfamfam/icons/delete.png\" style=\"margin-right: 3px;\"></a></td>");

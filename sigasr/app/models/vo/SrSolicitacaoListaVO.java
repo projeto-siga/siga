@@ -97,9 +97,7 @@ public class SrSolicitacaoListaVO {
 		}
 		else {
 			colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control"));
-			colunasVO.addAll(getColunasEmComum());
-			colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados"));
-			colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));	
+			colunasVO.addAll(getColunasEmComum());	
 		}
 		
 		return colunasVO;		
@@ -113,6 +111,8 @@ public class SrSolicitacaoListaVO {
 		colunasVO.add(new ColunasVO("Aberto", "dtRegString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
 		colunasVO.add(new ColunasVO("Movimentado", "dtUltimaMovimentacaoString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
 		colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", "", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados"));
+		colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
 		return colunasVO;
 	}
 	

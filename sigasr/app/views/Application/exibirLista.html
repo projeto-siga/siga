@@ -5,6 +5,7 @@
 <script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.populate.js"></script>
 <script src="/sigasr/public/javascripts/base-service.js"></script>
+<script src="/sigasr/public/javascripts/compatibilidade-jboss5.js"></script>
 
 <style>
 	#sortable table { height: 1.5em; line-height: 1.2em; }
@@ -202,7 +203,13 @@
     			if (solicitacao)
     				prioridades.push(solicitacao.prioridadeSolicitacaoVO);
 	 	    });
-	 	    if (prioridades.length > 0) {
+
+	    	jQuery.blockUI(objBlock);
+	    	$.form('@{Application.priorizarLista()}', 
+	    	    	{ listaPrioridadeSolicitacao : prioridades, id : $('[name=idLista]').val() }, 
+	    	    	'POST').submit();
+	    	
+	 	    /*if (prioridades.length > 0) {
 	 	    	$.post('@{Application.priorizarLista()}', {
 		 	    	listaPrioridadeSolicitacao : prioridades,
 		 	    	id : $('[name=idLista]').val(),
@@ -210,7 +217,7 @@
 		 	    		alert('Lista gravada com sucesso');
 		 	    	}
 	 	    	});
-		 	}
+		 	}*/
 	    });
 	});
 

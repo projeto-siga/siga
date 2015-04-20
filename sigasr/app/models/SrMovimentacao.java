@@ -278,7 +278,7 @@ public class SrMovimentacao extends GenericModel {
 		return salvar();
 	}
 
-	public SrMovimentacao salvar() throws Exception {
+	private SrMovimentacao salvar() throws Exception {
 
 		//Edson: considerar deixar esse codigo em SrSolicitacao.movimentar(),
 		//visto que sao chamadas muitas operacoes daquela classe
@@ -327,6 +327,15 @@ public class SrMovimentacao extends GenericModel {
 
 	private void checarCampos() throws Exception {
 
+		if (cadastrante == null)
+			throw new Exception("Cadastrante não pode ser nulo");
+		if (lotaCadastrante == null)
+			lotaCadastrante = cadastrante.getLotacao();
+		if (titular == null)
+			titular = cadastrante;
+		if (lotaTitular == null)
+			lotaTitular = titular.getLotacao();
+		
 		if (solicitacao == null)
 			throw new Exception(
 					"Movimenta��o precisa fazer parte de uma solicita��o");
@@ -384,7 +393,7 @@ public class SrMovimentacao extends GenericModel {
 		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
 				|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
 					|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
-					|| (lotaAtendente != null && !lotaTitular.equivale(lotaAtendente))) {
+					|| (lotaAtendente != null && lotaTitular != null && !lotaTitular.equivale(lotaAtendente))) {
 			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
 					lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificação Atendente"))
 				Correio.notificarAtendente(this, solicitacao);

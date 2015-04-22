@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -39,6 +40,7 @@ import org.jbpm.graph.exe.Token;
 import org.jbpm.instantiation.Delegation;
 import org.jbpm.taskmgmt.def.Swimlane;
 import org.jbpm.taskmgmt.def.Task;
+import org.jbpm.taskmgmt.exe.PooledActor;
 import org.jbpm.taskmgmt.exe.SwimlaneInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.jbpm.taskmgmt.exe.TaskMgmtInstance;
@@ -276,7 +278,15 @@ public class WfBL extends CpBL {
 				return true;
 			}
 		}
-
+		
+		Iterator pooledActors = ti.getPooledActors().iterator();
+		while(pooledActors.hasNext()){
+			PooledActor actor = (PooledActor)pooledActors.next();
+			if (actor.getActorId().equals(lotaTitular.getSiglaCompleta())){
+				return true;
+			}
+		}
+		
 		return false;
 	}
 

@@ -412,6 +412,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(0, "Normal");
 		map.put(1, "Última anotação");
+		map.put(2, "Tabela dinâmica");
 		return map;
 	}
 

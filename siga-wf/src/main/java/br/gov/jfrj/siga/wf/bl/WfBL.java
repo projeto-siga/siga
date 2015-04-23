@@ -49,6 +49,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
@@ -279,12 +280,11 @@ public class WfBL extends CpBL {
 			}
 		}
 		
-		Iterator pooledActors = ti.getPooledActors().iterator();
-		while(pooledActors.hasNext()){
-			PooledActor actor = (PooledActor)pooledActors.next();
-			if (actor.getActorId().equals(lotaTitular.getSiglaCompleta())){
-				return true;
-			}
+		DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+		flt.setSigla(ti.getActorId());
+		DpPessoa actor = (DpPessoa) WfDao.getInstance().consultarPorSigla(flt);
+		if (cadastrante.getLotacao().equivale(actor.getLotacao())){
+			return true;
 		}
 		
 		return false;

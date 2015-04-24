@@ -187,7 +187,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrUrgencia urgencia;
 
 	@Enumerated
-	public SrPrioridade prioridade;
+	private SrPrioridade prioridade;
 
 	@Column(name = "DT_REG")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -517,9 +517,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dtReg) 
 				+ "</span>" + cal.getTempoTranscorridoString(false);
 	}
+	
+	public SrPrioridade getPrioridade() {
+		return prioridade;
+	}
+
+	public void setPrioridade(SrPrioridade prioridade) {
+		this.prioridade = prioridade;
+	}
+
 	public String getPrioridadeString(){
 		return prioridade == null ? "" : "<span style=\"display: none\">" + prioridade.idPrioridade 
 				+ "</span>" + prioridade.descPrioridade;
+	}
+	
+	public SrPrioridade getPrioridadeTecnica(){
+		SrMovimentacao ultimaPriorizacao = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE);
+		return ultimaPriorizacao != null ? ultimaPriorizacao.prioridade : this.prioridade;
+	}
+	
+	public String getPrioridadeTecnicaString(){
+		return getPrioridadeTecnica() == null ? "" : "<span style=\"display: none\">" + getPrioridadeTecnica().idPrioridade 
+				+ "</span>" + getPrioridadeTecnica().descPrioridade;
 	}
 
 	public String getAtributosString() {
@@ -1104,7 +1123,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				|| ((isEmAtendimento() || isPendente()) && estaCom(pess, lota));
 	}
 
-	public boolean podeAlterarPrazo(DpPessoa pess, DpLotacao lota) {
+	public boolean podeAlterarPrioridade(DpPessoa pess, DpLotacao lota) {
 		return !isRascunho() && !isFechado() && estaCom(pess, lota);
 	}
 
@@ -1404,11 +1423,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				podeDeixarPendente(pess, lota), "pendencia",
 				"modal=true"));
 
-		/*
-		 * operacoes.add(new SrOperacao("clock_edit", "Alterar Prazo",
-		 * podeAlterarPrazo(lotaTitular, titular), "alterarPrazo",
-		 * "modal=true"));
-		 */
+		operacoes.add(new SrOperacao("clock_edit", "Alterar Prioridade",
+				podeAlterarPrioridade(titular, lotaTitular), "alterarPrioridade",
+				"modal=true"));
+		 
 		operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir",
 				podeExcluir(pess, lota),
 				"Deseja realmente excluir esta solicitaÃ§Ã£o?", null, "", ""));
@@ -2239,24 +2257,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 	}
 
-	public void alterarPrazo(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo,
-			String calendario, String horario) throws Exception {
-		if (!podeAlterarPrazo(titular, lotaTitular))
-			throw new Exception("Operação não permitida");
+	public void alterarPrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrPrioridade prioridade) throws Exception {
+		if (!podeAlterarPrioridade(titular, lotaTitular))
+			throw new Exception("Operaè¤¯ nä¯ permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
-		DateTime datetime = new DateTime();
-		DateTimeFormatter formatter = DateTimeFormat
-				.forPattern("dd/MM/yyyy HH:mm");
-		if (!calendario.equals("")) {
-			datetime = new DateTime(formatter.parseDateTime(calendario + " "
-					+ horario));
-			movimentacao.dtAgenda = datetime.toDate();
-		}
-
 		movimentacao.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO);
-		movimentacao.descrMovimentacao = "Prazo alterado para " + calendario + " " 
-				+ horario + " - " + motivo;
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE);
+		movimentacao.descrMovimentacao = "Prioridade tecnica: " + prioridade.descPrioridade;
+		movimentacao.prioridade = prioridade;
 		movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 	}
 

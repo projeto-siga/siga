@@ -6,15 +6,16 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 
 <ww:if test="${(not empty mobilVO.movs)}">
-    <h2>Anexos Assinados</h2> 	
+    <h2>Anexos Assinados</h2>
 	<div class="gt-content-box gt-for-table">
 	    <ww:form name="frm_anexo" id="frm_anexo" cssClass="form"
 		         theme="simple">
 			<ww:hidden name="popup" value="true" />
-			<ww:hidden name="copia" id="copia" value="false" />			
+			<ww:hidden name="copia" id="copia" value="false" />
 			<table class="gt-table mov">
 			    <thead>
 				    <tr>
@@ -29,7 +30,7 @@
 								<td align="center"><input type="checkbox" name="checkall"
 									onclick="checkUncheckAll(this)" /></td>
 							</ww:if>
-							<ww:else><td></td></ww:else>	
+							<ww:else><td></td></ww:else>
 							<th align="left">Lotação</th>
 							<th align="left">Pessoa</th>
 							<th align="left">Lotação</th>
@@ -56,7 +57,7 @@
 									<td align="center"><input type="checkbox" name="${x}"
 										value="true" ${x_checked} /></td>
 								</ww:if>
-								<ww:else><td></td></ww:else>		
+								<ww:else><td></td></ww:else>
 								<td align="center">${dt}</td>
 								<td align="left"><siga:selecionado
 										sigla="${mov.parte.lotaCadastrante.sigla}"
@@ -106,12 +107,12 @@
 									<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 										<ww:hidden name="pdf${x}" value="${mov.mov.referencia}" />
 										<ww:hidden name="url${x}" value="${mov.mov.nmPdf}" />
-									</c:if>	
+									</c:if>
 								</siga:links></td>
 							</tr>
 						</c:if>
      				</c:forEach>
-			</table>	
+			</table>
 		</ww:form>
     </div>
 	<div id="dados-assinatura" style="visible: hidden">
@@ -120,23 +121,25 @@
 		<c:set var="nextURL"
 			   value="${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
 	    <c:set var="urlPath" value="${request.contextPath}" />
-	    
+
    		<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 		<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 		<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
-		<c:set var="urlBase"
-			value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+		<c:set var="req" value="${pageContext.request}" />
+		<c:set var="url">${req.requestURL}</c:set>
+		<c:set var="uri" value="${req.requestURI}" />
+		<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 		<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
-	    						
+
 	    <c:set var="botao" value="ambos" />
-	    <c:set var="lote" value="true" />			
-	</div>    					
-	<c:if 
+	    <c:set var="lote" value="true" />
+	</div>
+	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 			<div id="capicom-div">
-				<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a> 
+				<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a>
 				<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
-			</div> 
+			</div>
 		<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
 		<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
 				<script type="text/javascript">
@@ -149,13 +152,11 @@
 					}
 				 </script>
 	</c:if>
-    
+
 	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-	    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}						
+	    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 	</c:if>
 </ww:if>
 <ww:else>
 		<b>Não há anexos assinados</b>
-</ww:else>			
-
-
+</ww:else>

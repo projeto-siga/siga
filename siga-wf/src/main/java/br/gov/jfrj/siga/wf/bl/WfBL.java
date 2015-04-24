@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -39,6 +40,7 @@ import org.jbpm.graph.exe.Token;
 import org.jbpm.instantiation.Delegation;
 import org.jbpm.taskmgmt.def.Swimlane;
 import org.jbpm.taskmgmt.def.Task;
+import org.jbpm.taskmgmt.exe.PooledActor;
 import org.jbpm.taskmgmt.exe.SwimlaneInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.jbpm.taskmgmt.exe.TaskMgmtInstance;
@@ -47,6 +49,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
@@ -276,7 +279,14 @@ public class WfBL extends CpBL {
 				return true;
 			}
 		}
-
+		
+		DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+		flt.setSigla(ti.getActorId());
+		DpPessoa actor = (DpPessoa) WfDao.getInstance().consultarPorSigla(flt);
+		if (cadastrante.getLotacao().equivale(actor.getLotacao())){
+			return true;
+		}
+		
 		return false;
 	}
 

@@ -219,7 +219,8 @@
 						</div>
 					</form>
 				</div>
-
+				</c:if>
+				
 				<h3>Comentários</h3>
 				<div class="gt-content-box">
 					<table class="gt-table">
@@ -244,21 +245,24 @@
 						</c:forEach>
 					</table>
 				</div>
-				<div class="gt-form gt-content-box">
-					<ww:url id="url" action="commentTask" />
-					<form method="POST" action="${url}">
-						<input name="tiId" type="hidden" value="${tiId}" /> <label>Comentário</label>
-						<div class="gt-form-row gt-width-100">
-							<input type="text" size="80" name="comentario"
-								class="gt-form-text" />
-						</div>
-						<div class="gt-form-row gt-width-100">
-							<input name="butc" type="submit" value="Adicionar"
-								class="gt-btn-medium gt-btn-left" />
-						</div>
-					</form>
-				</div>
-			</c:if>
+				<c:if test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance))}">
+				
+					<div class="gt-form gt-content-box">
+						<ww:url id="url" action="commentTask" />
+						<form method="POST" action="${url}">
+							<input name="tiId" type="hidden" value="${tiId}" /> <label>Comentário</label>
+							<div class="gt-form-row gt-width-100">
+								<input type="text" size="80" name="comentario"
+									class="gt-form-text" />
+							</div>
+							<div class="gt-form-row gt-width-100">
+								<input name="butc" type="submit" value="Adicionar"
+									class="gt-btn-medium gt-btn-left" />
+							</div>
+						</form>
+					</div>
+				
+				</c:if>
 		</div>
 
 		<div class="gt-sidebar">

@@ -113,8 +113,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (acao != null && acao.idAcao > 0L)
 			query.append(" and sol.acao.acaoInicial.idAcao = "
 					+ acao.acaoInicial.idAcao);
-		if (prioridade != null && prioridade.idPrioridade > 0L)
-			query.append(" and sol.prioridade <= " + prioridade.ordinal());
+		if (getPrioridade() != null && getPrioridade().idPrioridade > 0L)
+			query.append(" and sol.prioridade <= " + getPrioridade().ordinal());
 		
 		if (idListaPrioridade != null && !idListaPrioridade.equals(QUALQUER_LISTA_OU_NENHUMA)){
 			if (idListaPrioridade.equals(NENHUMA_LISTA)) {

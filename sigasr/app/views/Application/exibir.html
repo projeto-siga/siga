@@ -298,9 +298,13 @@ function postback(){
 			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
 			#{/elseif} #{else} #{set priorColor:'' /} #{/else}
 			<p>
-				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
-					<br /> ${solicitacao.GUTString}</span>
+				<b>Prioridade:</b> <span style="">${solicitacao.prioridade?.descPrioridade}</span>
 			</p>
+			#{if solicitacao.prioridadeTecnica != solicitacao.prioridade}
+			<p>
+				<b>Prioridade T&eacute;cnica:</b> <span style="">${solicitacao.prioridadeTecnica.descPrioridade}</span>
+			</p>
+			#{/if}
 			<p>
 				<b>Notificação:</b>
 				${solicitacao.formaAcompanhamento.descrFormaAcompanhamento.raw()}
@@ -477,8 +481,6 @@ function postback(){
 			</div>
 		</form>
 	#{/modal}
-	#{modal nome:'associarLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/associarLista?idSolicitacao='+solicitacao.idSolicitacao} 
-	#{/modal} 
 	#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa', url:'/sigasr/solicitacao/responderPesquisa?id='+solicitacao.idSolicitacao}
 	#{/modal}
 	#{modal nome:'pendencia', titulo:'Pendência'}
@@ -513,23 +515,15 @@ function postback(){
 	</form>
 	</div>
 	</div>
-	#{/modal} #{modal nome:'alterarPrazo', titulo:'Alterar Prazo'}
+	#{/modal} #{modal nome:'alterarPrioridade', titulo:'Alterar Prioridade'}
 		<div class="gt-form gt-content-box">
-		<form action="@{Application.alterarPrazo()}" method="post"
+		<form action="@{Application.alterarPrioridade()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
-				<div class="gt-form-row gt-width-66">
-					<label>Data</label>
-					<input type="text" name="calendario" id="calendarioReplanejar">
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Hora</label>
-					<input type="text" name="horario" id="horarioReplanejar">
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Motivo</label>
-					<textarea name="motivo" cols="50" rows="4"> </textarea> 
+				<div class="gt-form-row gt-width-33">
+					<label>Prioridade</label> #{select name:'prioridade', id:'prioridade', items:models.SrPrioridade.values(),
+					labelProperty:'descPrioridade', value:solicitacao.prioridadeTecnica, style:'width:235px;' /}
 				</div>
 				<input type="hidden" name="id" value="${solicitacao.id}" /> 
 				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />

@@ -750,11 +750,9 @@ public class Application extends SigaApplication {
 		exibir(id, todoOContexto(), ocultas());
 	}
 
-	public static void alterarPrazo(Long id, String motivo,
-			String calendario, String horario) throws Exception {
+	public static void alterarPrioridade(Long id, SrPrioridade prioridade) throws Exception {
 			SrSolicitacao sol = SrSolicitacao.findById(id);
-			sol.alterarPrazo(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), motivo, calendario,
-					horario);
+			sol.alterarPrioridade(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), prioridade);
 			exibir(id, todoOContexto(), ocultas());
 	}
 

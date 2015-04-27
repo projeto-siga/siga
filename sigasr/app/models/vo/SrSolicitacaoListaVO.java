@@ -109,10 +109,11 @@ public class SrSolicitacaoListaVO {
 		colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
 		colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
 		colunasVO.add(new ColunasVO("Aberto", "dtRegString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
-		colunasVO.add(new ColunasVO("Movimentado", "dtUltimaMovimentacaoString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Movimentado", "dtUltimaMovimentacaoString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO, false, false, true));
 		colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", "", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Prior. Tecnica", "prioridadeTecnicaFormatada", "", LARGURA_COLUNA_CODIGO, false, false, true));
 		colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados"));
-		colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
+		colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados", null, false, false, true));
 		return colunasVO;
 	}
 	
@@ -120,7 +121,7 @@ public class SrSolicitacaoListaVO {
 		List<ColunasVO> colunasDetalhamento = new ArrayList<ColunasVO>();
 		
 		colunasDetalhamento.add(new ColunasVO("Teor", "teorFormatado"));
-		colunasDetalhamento.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes", "", true, true, true));
+		colunasDetalhamento.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes", "", null, true, true, true));
 		colunasDetalhamento.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada"));
 		
 		return colunasDetalhamento;

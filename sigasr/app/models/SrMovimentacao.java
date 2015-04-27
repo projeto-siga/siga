@@ -108,8 +108,8 @@ public class SrMovimentacao extends GenericModel {
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
 
-	@Column(name = "ID_PRIORIDADE")
-	public Long prioridade;
+	@Enumerated
+	public SrPrioridade prioridade;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESQUISA")
@@ -381,7 +381,7 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public void notificar() {
-		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
+		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE)
 			Correio.notificarReplanejamentoMovimentacao(this);
 		else if (!isCancelada())
 			Correio.notificarMovimentacao(this);

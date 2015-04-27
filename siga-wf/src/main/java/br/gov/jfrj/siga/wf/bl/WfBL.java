@@ -283,7 +283,8 @@ public class WfBL extends CpBL {
 		DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
 		flt.setSigla(ti.getActorId());
 		DpPessoa actor = (DpPessoa) WfDao.getInstance().consultarPorSigla(flt);
-		if (cadastrante.getLotacao().equivale(actor.getLotacao())){
+		if (cadastrante.getLotacao().equivale(actor.getLotacao()) ||
+				(lotaTitular != null && lotaTitular.equivale(actor.getLotacao()))){
 			return true;
 		}
 		

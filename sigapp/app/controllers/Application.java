@@ -501,7 +501,7 @@ public class Application extends SigaApplication {
 					horaPretendida=hrAux+minAux;
 					agendamentoEmConflito = Agendamentos.find("perito_juizo like '"+perito_juizo.trim()+"%' and perito_juizo <> '-' and hora_ag='" +horaPretendida+ "' and data_ag=to_date('"+ frm_data_ag +"' , 'yy-mm-dd')"  ).first();
 					if (agendamentoEmConflito!=null){
-						Excecoes("Perito nao disponivel no horario de " + agendamentoEmConflito.hora_ag.substring(0,2)+ "h" + agendamentoEmConflito.hora_ag.substring(3,2) + "min" , null );
+						Excecoes("Perito nao disponivel no horario de " + agendamentoEmConflito.hora_ag.substring(0,2)+ "h" + agendamentoEmConflito.hora_ag.substring(2,4) + "min" , null );
 					}
 					minAux = String.valueOf(Integer.parseInt(minAux)
 							+ auxLocal.intervalo_atendimento);

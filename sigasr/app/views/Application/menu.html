@@ -1,0 +1,37 @@
+<li><a href="#">Servi&ccedil;o</a>
+<ul>
+<li><a href="@{Application.editar}">Cadastrar</a></li>
+<li><a href="@{Application.buscarSolicitacao}">Pesquisar</a></li>
+</ul>
+<li><a href="@{Application.listarLista}">Priorização</a>
+<ul>
+<li><a href="@{Application.listarLista}">Lista de Prioridade</a></li>
+</ul>
+#{if exibirMenuAdministrar || exibirMenuConhecimentos}
+<li><a href="#">Administra&ccedil;&atilde;o</a>
+<ul>
+#{if exibirMenuAdministrar}
+<li><a href="@{Application.listarItem}">Item de configuração</a></li>
+<li><a href="@{Application.listarAcao}">A&ccedil;&atilde;o</a></li>
+<li><a href="@{Application.listarTipoAcao}">Tipo de Ação</a></li>
+<li><a href="@{Application.listarDesignacao}">Designação</a></li>
+<li><a href="@{Application.buscarAcordo}">Acordo</a></li>
+<li><a href="@{Application.listarDisponibilidadeItens}">Disponibilidade</a></li>
+<li><a href="@{Application.listarEquipe}">Equipe</a></li>
+<li><a href="@{Application.listarAtributo}">Atributo</a></li>
+<li><a href="@{Application.listarPesquisa}">Pesquisa de Satisfa&ccedil;&atilde;o</a></li>
+#{/if}
+#{if exibirMenuConhecimentos}
+<li><a href="@{Application.listarConhecimento}">Conhecimento</a></li>
+</ul>
+</li>
+#{/if}
+#{/if}
+
+#{if exibirMenuRelatorios}
+<li><a href="#">Relat&oacute;rio</a>
+<ul>
+<li><a href="@{Application.estatistica}">Estat&iacute;sticas</a></li>
+</ul>
+</li>
+#{/if}

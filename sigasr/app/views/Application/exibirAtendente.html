@@ -1,0 +1,11 @@
+#{if movimentacao.proxAtendenteAlteravel}
+	#{set disabled:'false' /}
+#{/if}
+#{else}
+	#{set disabled:'true' /}
+#{/else}
+#{pessoaLotaSelecao nomeSelLotacao:'movimentacao.lotaAtendente',
+	nomeSelPessoa:'movimentacao.atendente',
+	valuePessoa:movimentacao.atendente,
+	valueLotacao:movimentacao.lotaAtendente,
+	disabled:disabled /}

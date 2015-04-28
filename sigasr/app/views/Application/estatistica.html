@@ -1,0 +1,77 @@
+#{extends 'main.html' /} #{set title:'Relatórios' /}
+#{set 'moreHead'}
+
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+	google.load('visualization', '1', {
+		packages : [ 'corechart', 'gauge' ]
+	});
+</script>
+<script type="text/javascript">
+function drawGraphs() {
+	drawEvolution();
+}
+
+function drawEvolution() {
+	// Some raw data (not necessarily accurate)
+	var data = google.visualization.arrayToDataTable([${evolucao.raw()}]);
+
+	// Create and draw the visualization.
+	var ac = new google.visualization.ComboChart(document
+			.getElementById('evolution'));
+	ac.draw(data, {
+		seriesType : "bars",
+		legend : {position: 'top', alignment : 'center'},
+		isStacked : true,
+		width : "100%",
+		height : "100%"		
+	});
+}
+
+	google.setOnLoadCallback(drawGraphs);
+
+function drawTop() {
+	drawTop10();
+}
+
+function drawTop10() {
+	// Some raw data (not necessarily accurate)
+	var data = google.visualization.arrayToDataTable([${top10.raw()}]);
+
+	// Create and draw the visualization.
+	var ac = new google.visualization.PieChart(document
+			.getElementById('top10'));
+	ac.draw(data, {
+		legend : {position: 'top', alignment : 'right'},
+		width : "100%",
+		height : "100%",	
+		colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
+		isStacked : true,
+		is3D: true
+	});
+}
+	google.setOnLoadCallback(drawTop);
+
+</script>
+
+#{/set}
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<div class="gt-left-col">
+			<h2>Solicitações Abertas/Atendidas</h2>
+				<div id="evolution" class="gt-content-box">
+				</div>
+		</div>
+		<div class="gt-right-col">
+			<h2>Top 10</h2>
+				<div id="top10" class="gt-content-box">
+				</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+

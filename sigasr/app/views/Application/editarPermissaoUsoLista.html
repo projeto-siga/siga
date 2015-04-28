@@ -1,0 +1,75 @@
+ #{extends 'main.html' /} #{set title:'Designação de solicitações' /}
+
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<h2 class="gt-form-head">Cadastro de Permissão para Uso de Lista de Prioridade</h2>
+
+		<div class="gt-form gt-content-box">
+			#{form @Application.gravarPermissaoUsoLista(), enctype:'multipart/form-data'} #{if
+			permissao?.idConfiguracao} <input type="hidden"
+				name="permissao.idConfiguracao"
+				value="${permissao.idConfiguracao}"> #{/if}
+			#{ifErrors}
+			<p class="gt-error">Alguns campos obrigatórios não foram
+				preenchidos ${error}</p>
+			#{/ifErrors}	
+			<div class="gt-form-row gt-width-66">
+				<label>Órgão</label> 
+				#{select name:'permissao.orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
+				labelProperty:'nmOrgaoUsu', value:permissao.orgaoUsuario?.idOrgaoUsu}
+				#{option 0}Nenhum#{/option} 
+				#{/select}
+			</div>
+			<span style="color: red">#{error
+					'permissao.orgaoUsuario' /}</span>
+			<div class="gt-form-row gt-width-66">		
+				<label>Local</label> 
+				#{select name:'permissao.complexo', items:locais, valueProperty:'idComplexo',
+				labelProperty:'nomeComplexo', value:permissao.complexo?.idComplexo}
+				#{option 0}Nenhum#{/option} 
+				#{/select}
+			</div>		
+			<div class="gt-form-row gt-width-66">
+				<label>Lotação</label>#{selecao
+					tipo:'lotacao', nome:'permissao.lotacao',
+					value:permissao.lotacao?.lotacaoAtual /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Pessoa</label>#{selecao
+					tipo:'pessoa', nome:'permissao.dpPessoa',
+					value:permissao.dpPessoa?.pessoaAtual /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Cargo</label>#{selecao
+					tipo:'cargo', nome:'permissao.cargo',
+					value:permissao.cargo /}
+			</div>
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Função</label>#{selecao
+					tipo:'funcao', nome:'permissao.funcaoConfianca',
+					value:permissao.funcaoConfianca /}
+			</div>
+				<div class="gt-form-row gt-width-66">
+				<label>Lista de Prioridade</label> 
+				#{select name:'permissao.listaPrioridade', items:listasPrioridade, valueProperty:'idLista',
+				labelProperty:'nomeLista', value:permissao.listaPrioridade?.idLista}
+				#{option 0}Nenhuma#{/option} 
+				#{/select}
+			</div>
+			<div class="gt-form-row">
+				<input type="submit" value="Gravar"
+					class="gt-btn-medium gt-btn-left" />
+				<a href="@{Application.listarPermissaoUsoLista}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+				#{if permissao?.idConfiguracao} <input type="button" value="Desativar"
+					class="gt-btn-medium gt-btn-left"
+					onclick="location.href='@{Application.desativarPermissaoUsoLista()}?id=${permissao.idConfiguracao}'" />
+				#{/if}
+			</div>
+			#{/form}
+		</div>
+	</div>
+</div>
+

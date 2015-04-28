@@ -1,0 +1,130 @@
+<script>
+$(document).ready(function() {
+	notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');
+
+	removeSelectedDuplicado();
+});
+
+function carregarAtributos(){
+	//jQuery.blockUI(objBlock);
+	var frm = document.getElementById('formSolicitacao'),
+		params = '';
+	carregarLotacaoDaAcao();
+	
+	for (i = 0; i < frm.length; i++){
+		if (frm[i].name && frm[i].value)
+			params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+	}
+
+	var url = '@{Application.exibirAtributos()}?' + params;
+	Siga.ajax(url, null, "GET", function(response){
+		carregouAtributos(response);
+	});
+}
+
+function carregouAtributos(response){
+	var div = document.getElementById('divAtributos');
+	div.innerHTML = response;
+	var scripts = div.getElementsByTagName("script");
+	for(var i=0;i<scripts.length;i++)  
+	   eval(scripts[i].text);  
+
+	// Para disparar o onchange e preencher os filtros
+	$("#atributos").find('input,select').each(function() {
+		var me = $(this);
+		if(me.val()) {
+			var label = me.prev('label').html().trim(),
+				innerHTML = label + ' - ' + me.val(),
+				divFiltro = $('#filtro'),
+				selector = "." + me.attr('class'),
+				optionVl = me.attr('name');
+			
+			addFiltro(divFiltro, selector, innerHTML, optionVl)
+		}
+	});
+	//jQuery.unblockUI();
+}
+
+function removeSelectedDuplicado() {
+	//solucao de contorno temporaria para op??es no select com mesmo value.
+	var primeiro = $("#selectAcao option:eq(0)");
+	var segundo = $("#selectAcao option:eq(1)");
+	if (primeiro.val() == segundo.val()) {
+		segundo.prop("selected", false);
+		primeiro.prop("selected", true);
+	}
+}
+
+function carregarLotacaoDaAcao(){
+	//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
+	var opcaoSelecionada = $("#selectAcao option:selected");
+	var idAcao = opcaoSelecionada.val();
+	try{
+		var siglaLotacao = opcaoSelecionada.html().split("(")[1].slice(0,-2);
+
+		var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
+		var descLotacao = spanLotacao.html();
+		var idDesignacaoDaAcao = spanLotacao.prev().html();
+
+		$("#solicitacaoDesignacao").val(idDesignacaoDaAcao);
+		$("#atendentePadrao").html(descLotacao);
+	} catch(err) {
+		$("#solicitacaoDesignacao").val('');
+		$("#atendentePadrao").html('');
+	}
+}
+</script>
+
+#{if solicitacao.itemConfiguracao && controllers.SigaApplication.podeUtilizarServico('SIGA;GC')}
+	<div style="display: inline-block" >
+		<div id="gc-ancora-item"></div>
+	</div>
+	<!-- CONHECIMENTOS RELACIONADOS -->
+	<script type="text/javascript">
+	var url = "/../sigagc/app/knowledge?tags=${solicitacao.itemConfiguracao.gcTagAbertura}&estilo=inplace&testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}";
+	Siga.ajax(url, null, "GET", function(response){
+		$("#gc-ancora-item").html(response);
+	});
+	</script>
+#{/if}
+
+
+#{if solicitacao.itemConfiguracao && acoesEAtendentes} 
+	<div class="gt-form-row gt-width-66">
+	<label>A&ccedil;&atilde;o</label>	
+		#{select name:'solicitacao.acao', value:solicitacao.acao?.idAcao, onchange:"carregarAtributos();notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');", id:'selectAcao'}
+			#{option 0}#{/option}
+			#{list items:acoesEAtendentes.keySet(), as:'cat' }
+				<optgroup label="${cat.tituloAcao}">
+					#{list items:acoesEAtendentes.get(cat), as:'tarefa'}
+						#{option tarefa.acao.idAcao} ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})#{/option}
+					#{/list}
+				</optgroup>					 
+			#{/list}
+		#{/select} 
+	 <span style="color: red">#{error 'solicitacao.acao' /}</span>
+	</div>
+	<div>
+		<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
+				ja que acima no select nao tem como "esconder" essa informacao -->
+		#{list items:acoesEAtendentes.keySet(), as:'cat' }
+		#{list items:acoesEAtendentes.get(cat), as:'t' }
+			<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
+			<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
+								- ${t.conf.atendente.descricao.raw()}</span>
+			
+			#{if cat_isFirst && cat_isLast && t_isFirst && t_isLast} 
+				#{set lotacaoDesignada : t.conf.atendente.siglaCompleta + ' - ' + t.conf.atendente.descricao /} 
+				#{set idDesignacao : t.conf.idConfiguracao /}
+			#{/if}
+		#{/list}
+		#{/list}
+		<label>Atendente</label>
+		<span id="atendentePadrao" style="display:block;">
+			${lotacaoDesignada?.raw()}
+		</span>
+		<input type="hidden" id="solicitacaoDesignacao" name="solicitacao.designacao" value="${idDesignacao}" />
+	</div>
+#{/if}
+
+<div id="divAtributos">#{include 'Application/exibirAtributos.html' /}</div>

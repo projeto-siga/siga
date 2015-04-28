@@ -1,0 +1,34 @@
+#{extends 'main.html' /} #{set title:'Erro Geral' /}
+
+<!--
+Unless this text is here, if your page is less than 513 bytes, Internet Explorer will display it's "Friendly HTTP Error Message",
+and your custom error will never be displayed.  This text is just used as filler.
+This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
+This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
+This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
+-->
+
+<div class="gt-bd clearfix" id="divPrincipal" style="margin-top: 200px">
+	<div class="gt-content clearfix">
+			<h2>Não Foi Possível Completar a Operação</h2>
+		</div>
+			<div class="gt-content-box">
+			<table width="100%">
+				<tr>
+					<td align="center" valign="middle">
+						<table class="form" width="50%">
+							<tr>
+								<td style="text-align: center; padding-top: 10px;">
+									<h3>${exception?.message}</h3>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+<script language="javascript">
+	document.getElementById('divPrincipal').style.marginTop = screen.height * 0.2 + 'px';
+</script>

@@ -1,0 +1,39 @@
+#{extends 'main.html' /} #{set title:'Relatórios' /}
+#{set 'moreHead'}
+
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+	google.load('visualization', '1', {
+		packages : [ 'corechart', 'gauge' ]
+	});
+</script>
+<script type="text/javascript">
+function drawGraphs() {
+	drawEvolution();
+}
+
+function drawEvolution() {
+	// Some raw data (not necessarily accurate)
+	var data = google.visualization.arrayToDataTable([${evolucao.raw()}]);
+
+	// Create and draw the visualization.
+	var ac = new google.visualization.ComboChart(document
+			.getElementById('evolution'));
+	ac.draw(data, {
+		seriesType : "bars",
+		legend : {position: 'top', alignment : 'center'},
+		isStacked : true,
+		width : "100%",
+		height : "100%"		
+	});
+}
+
+	google.setOnLoadCallback(drawGraphs);
+</script>
+
+#{/set}
+			<h2>Abertos/Atendidos</h2>
+				<div id="evolution" class="gt-content-box">
+				
+			</div> 
+	

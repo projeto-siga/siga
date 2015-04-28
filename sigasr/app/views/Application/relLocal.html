@@ -1,0 +1,95 @@
+#{extends 'main.html' /}
+
+<script src="/sigasr/public/javascripts/jquery-1.11.1.min.js"></script>
+
+<script>
+$(function(){
+	
+	var jAtendentes = $("#atendentes");
+	
+	$("#botaoIncluir").click(function(){
+		var lotacao = $("#lotacao_sigla").val();
+		var idlotacao = $("#lotacao").val();
+		jAtendentes.append("<li style=\"cursor: move\" id =\"" + lotacao + "\">" + lotacao +
+        		"<input type=\"hidden\" name=\"atendente\" value =\"" + idlotacao + "\"></li>" );
+     });
+});
+
+$(document).ready(function(){
+    $("#orgao").change(function(){
+       var orgao = $(this).val();
+       var datastring = 'orgao='+ orgao;
+       $.ajax({
+ 	  	   type: "GET",
+ 	  	   data: datastring,
+ 	  	   url: "/sigasr/solicitacao/relLocal",
+ 	  	   success: function(locOrgao){
+ 	 	  	   
+ 	  		$("#escolherLocal").html(locOrgao);}
+ 	  	});
+       
+    });
+});
+
+</script>
+  
+
+	<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
+		<form id="grelLocal" action="@{Application.grelLocal}" method="GET" target="relLocal" enctype="multipart/form-data">
+		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
+		
+			<table class="gt-form-table">
+				<tbody>
+					<tr class="header">
+						<td colspan="2">
+							Dados do Relatório
+						</td>
+					</tr>
+					<tr>
+						<td>Órgão</td>
+						<td> #{select name:'orgao', id:'orgao', items:orgaos, valueProperty:'idOrgaoUsu', labelProperty:'nmOrgaoUsu', 
+						value:orgao?.idOrgaoUsu, onchange:'carregarLocal()'} 
+						#{option 0}	#{/option}
+						#{/select}
+						</td>	
+					</tr>
+					<tr id="escolherLocal">
+					
+					</tr>
+					<tr>
+						<td>Atendente</td>
+						<td> #{selecao tipo:'lotacao',nome:'lotacao', value:lotacao /} 
+							<p>
+							<input type="button" value="Incluir" id="botaoIncluir"  
+										class="gt-btn-small" style="font-size: 10px;" />
+							<p>
+							<ul id="atendentes" style="color: #365b6d"></ul>
+						 </td>	
+					</tr>
+					<tr>
+						<td>Data Inicial</td>
+						<td>
+						<input type="text" name="dtIni" value="" onblur="javascript:verifica_data(this,true)"  />
+					</tr>
+					<tr>
+						<td>Data Final</td>
+						<td>
+							<input type="text" name="dtFim" onblur="javascript:verifica_data(this,true)" value="" />
+						</td>
+					</tr>
+					<tr>
+							<td colspan="2"><input type="submit"
+								class="gt-btn-medium gt-btn-left" value="Gerar"></td>
+    					
+					</tr>
+					</tbody>
+					
+				</table>
+		</form>
+		</div>
+	</div>
+	</div>
+
+	

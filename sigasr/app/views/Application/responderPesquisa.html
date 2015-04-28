@@ -1,0 +1,41 @@
+<script>
+$(function(){
+    $('#formSubmit').submit(function() {
+    	$.ajax({
+ 	  	   type: "POST",
+ 	  	   async: false,
+ 	  	   data:  $("#formSubmit").serialize(),
+ 	  	   url: "/sigasr/solicitacao/responderPesquisa"
+ 	  	});
+    });
+});
+</script>
+<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
+<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
+		#{form @Application.responderPesquisaGravar(), id:'formSubmit', enctype:'multipart/form-data', onSubmit:'javascript: return block();'}
+		 <input type="hidden" name="id" value="${id}" />
+		 <input type="hidden" name="completo" value="${completo}" />
+		#{list items:pesquisa.perguntaSet, as:'pergunta'}
+		#{if pergunta.tipoPergunta.idTipoPergunta == 1}
+			<div class="gt-form-row">
+				<label>${pergunta.descrPergunta}</label><p>
+				<textarea cols="50" rows="6" id="idPergunta"
+					name="respostaMap[${pergunta.idPergunta}]"></textarea>
+			</div> 
+		#{/if}
+		#{elseif pergunta.tipoPergunta.idTipoPergunta == 2}
+		<div class="gt-form-row">
+				<label>${pergunta.descrPergunta}</label>
+				#{list items:models.SrGrauSatisfacao.values(), as:'grau'}
+				<input type="radio" id="idGrauSatisfacao" name="respostaMap[${pergunta.idPergunta}]" value="${grau}">&nbsp;&nbsp;${grau.descrGrauSatisfacao}&nbsp;
+				#{/list}
+		</div>
+		#{/elseif}
+		#{/list}
+		<div class="gt-form-row">
+				<input type="submit" value="Enviar" class="gt-btn-medium gt-btn-left" 
+					  />
+		</div>
+		#{/form}
+</div>
+</div>

@@ -1,0 +1,5 @@
+# Application dependencies
+
+require:
+    - play
+    - siga-play-module -> siga-play-module 0.0.1 

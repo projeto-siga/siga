@@ -1,0 +1,261 @@
+#{extends 'main.html' /} #{set title:'Listas' /}
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Pesquisa de Listas</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box gt-for-table dataTables_div">
+			<div class="gt-form-row dataTables_length">
+				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
+			</div>
+			<table id="listas_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Lotação</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:listas, as:'item'}
+					<tr data-json-id="${item.idLista}" data-json="${item.toJson()}"
+						#{if item.podeConsultar(lotaTitular, cadastrante)}
+							onclick="javascript:window.location='@{Application.exibirLista(item.idLista)}'" style="cursor: pointer;" 
+						#{/if}>
+						<td >${item.nomeLista}</td>
+						
+						<td>${item.lotaCadastrante.nomeLotacao}</td>
+						<td class="acoes">
+							#{if item.podeEditar(lotaTitular, cadastrante)}
+							#{desativarReativar id:item.idLista, 
+												onReativar:'listaService.reativar',
+												onDesativar :'listaService.desativar',
+												isAtivo:item?.isAtivo() }
+							#{/desativarReativar}
+							<a onclick="javascript: editarLista(event, $(this).parent().parent().data('json'))"> 
+								<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">
+							</a>
+							#{/if}
+						</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+			<div class="gt-content-box" id="modal-error" style="display: none;">
+				<table width="100%">
+					<tr>
+						<td align="center" valign="middle">
+							<table class="form" width="50%">
+								<tr>
+									<td style="text-align: center; padding-top: 10px;">
+										<h3></h3>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+			<a onclick="listaService.cadastrar('Incluir Lista')" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<div class="gt-table-buttons">
+	</div>
+</div>
+
+#{modal nome:'editarLista', titulo:'Inserir Lista'}
+	<div id="divEditarLista">#{include
+				'Application/editarLista.html' /}</div>
+#{/modal}
+<br />
+<br />
+<br />
+
+<script type="text/javascript">
+	var listaTable,
+		colunasLista = {};
+
+	colunasLista.nome =		0;
+	colunasLista.lotacao = 	1;
+	colunasLista.acoes = 	2;
+	
+	var QueryString = function () {
+		// This function is anonymous, is executed immediately and
+		// the return value is assigned to QueryString!
+		var query_string = {};
+		var query = window.location.search.substring(1);
+		var vars = query.split("&");
+		for (var i=0;i<vars.length;i++) {
+			var pair = vars[i].split("=");
+	    	// If first entry with this name
+	    	if (typeof query_string[pair[0]] === "undefined") {
+				query_string[pair[0]] = pair[1];
+				// If second entry with this name
+			} else if (typeof query_string[pair[0]] === "string") {
+				var arr = [ query_string[pair[0]], pair[1] ];
+				query_string[pair[0]] = arr;
+				// If third or later entry with this name
+			} else {
+				query_string[pair[0]].push(pair[1]);
+			}
+		}
+		return query_string;
+	}();
+
+	var opts = {
+			 urlDesativar : '@{Application.desativarLista()}?',
+			 urlReativar : '@{Application.reativarLista()}?',
+			 urlGravar : '@{Application.gravarLista()}?',
+ 			 dialogCadastro : $('#editarLista_dialog'),
+			 tabelaRegistros : $('#listas_table'),
+			 objectName : 'lista',
+			 formCadastro : $('#formLista'),
+			 mostrarDesativados : QueryString.mostrarDesativados,
+			 colunas : colunasLista.acoes
+		};	
+	
+	$(document).ready(function() {
+		if (QueryString.mostrarDesativados != undefined) {
+			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+		}
+			
+		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
+			if (document.getElementById('checkmostrarDesativado').checked)
+				location.href = '@{Application.listarListaDesativados()}';
+			else
+				location.href = '@{Application.listarLista()}';	
+		});
+		
+		/* Table initialization */
+		opts.dataTable= $('#listas_table').dataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			},
+			"columnDefs": [{
+				"targets" : [colunasLista.acoes],
+				"searchable": false,
+				"sortable" : false
+			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				var lista = undefined;
+				
+				try {
+					lista = JSON.parse($(nRow).data('json'));
+				}
+				catch(err) {
+					lista = $(nRow).data('json');
+				}
+				
+				if (lista) {
+					if (lista.ativo == false)
+						$('td', nRow).addClass('item-desativado');
+					else
+						$('td', nRow).removeClass('item-desativado');
+				}
+			},
+			"iDisplayLength": 25
+		});
+	});
+
+	// Define a "classe" listaService
+	function ListaService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
+	}
+	// listaService extends BaseService
+	ListaService.prototype = Object.create(BaseService.prototype);
+
+	var listaService = new ListaService(opts);
+	// Sobescreve o metodo cadastrar para limpara tela
+	listaService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title);
+		populatePermissoesFromJSonList({});
+		configuracaoInclusaoAutomaticaService.adicionarLista({});
+	}
+
+	listaService.getId = function(lista) {
+		return lista.idLista;
+	}
+
+	listaService.getRow = function(lista) {
+		return [lista.nomeLista, lista.nomeLotacao, 'COLUNA_ACOES'];
+	}
+	
+	listaService.editarButton = '<a onclick="javascript: editarLista(event, $(this).parent().parent().data(\'json\'))"><img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;"></a>';
+	
+	/**
+	 * Customiza o metodo editar
+	 */
+	listaService.editar = function(lista, title) {
+		BaseService.prototype.editar.call(this, lista, title); // super.editar();
+		limparDadosListaModal();
+		// carrega as permissões da lista
+		carregarPermissoes(lista.idLista);
+		configuracaoInclusaoAutomaticaService.carregarParaLista(lista.idLista);
+	}
+
+	listaService.onGravar = function(obj, objSalvo) {
+		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
+		afterGravarLista(tr, objSalvo);
+		return tr;
+	}
+
+	function afterGravarLista(tr, designacao) {
+		var acoes = tr.find('td.acoes');
+
+		if (acoes)
+			acoes = acoes.append(" " + listaService.editarButton);
+	}
+
+	/**
+	 * Sobrescreve o método para adicionar também o botão editar.
+	 */
+	listaService.gerarColunaAtivar = function(id) {
+		var column = BaseService.prototype.gerarColunaAtivar.call(this, id);
+		column = column + " " + listaService.editarButton;
+		return column;
+	}
+	/**
+	 * Sobrescreve o método para adicionar também o botão editar.
+	 */
+	listaService.gerarColunaDesativar = function(id) {
+		var column = BaseService.prototype.gerarColunaDesativar.call(this, id);
+		column = column + " " + listaService.editarButton;
+		return column;
+	 }
+	 
+	function editarLista(event, jSonItem) {
+		event.stopPropagation();
+		listaService.editar(jSonItem, 'Alterar Lista');
+	}
+</script>

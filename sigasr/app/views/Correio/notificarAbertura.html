@@ -1,0 +1,24 @@
+<html>
+<body>
+	#{if sol.filha}
+		<p>Informamos que a solicitação <b>${sol.solicitacaoPai.codigo}</b> foi escalonada 
+		em ${sol.dtRegDDMMYYYYHHMM} por ${sol.cadastrante?.descricaoIniciaisMaiusculas}
+		(${sol.lotaCadastrante.siglaLotacao}), gerando a solicitação filha n&ordm 
+		<b>${sol.codigo}</b>.</p>
+	#{/if}
+	#{else}
+		<p>
+			Informamos que foi aberta por ${sol.cadastrante?.descricaoIniciaisMaiusculas} 
+			(${sol.lotaCadastrante?.siglaLotacao}), em ${sol.dtRegDDMMYYYYHHMM}, 
+			a solicitação <b>${sol.codigo}</b>, com a seguinte descrição:
+		</p>
+		<blockquote>
+			<p>${sol.descrSolicitacao}</p>
+		</blockquote>
+	#{/else}
+	
+	<p>
+		Para acessar a solicitação, clique <a href="@@{Application.exibir(sol.idSolicitacao)}">aqui</a>.
+	</p>
+</body>
+</html>

@@ -1,0 +1,53 @@
+#{extends 'main.html' /}
+
+	<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
+		<form id="grelprazodetail" action="@{Application.grelPrazoDetail}" method="GET" target="relPrazoDetail" enctype="multipart/form-data">
+		<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
+		
+			<table class="gt-form-table">
+				<tbody>
+					<tr class="header">
+						<td colspan="2">
+							Dados do Relatório
+						</td>
+					</tr>
+					<tr>
+						<td>Atendente</td>
+						<td> #{selecao tipo:'lotacao',nome:'lotacao', value:lotacao /}</td>	
+					</tr>
+					<tr>
+						<td>Local (Solicitante)</td>
+						<td>#{select name:'local', items:locais, labelProperty:'nomeComplexo', 
+						valueProperty:'idComplexo', 
+						value:filtro?.local?.idComplexo} 
+    					#{option 0}Todos#{/option}
+						#{/select}
+						</td> 	
+					</tr>
+		   			<tr>
+						<td>Data Inicial</td>
+						<td>
+						<input type="text" name="dtIni" value="" onblur="javascript:verifica_data(this,true)"  />
+					</tr>
+					<tr>
+						<td>Data Final</td>
+						<td>
+							<input type="text" name="dtFim" onblur="javascript:verifica_data(this,true)" value="" />
+						</td>
+					</tr>
+					<tr>
+							<td colspan="2"><input type="submit"
+								class="gt-btn-medium gt-btn-left" value="Gerar"></td>
+    					
+					</tr>
+					</tbody>
+					
+				</table>
+		</form>
+		</div>
+	</div>
+	</div>
+
+	

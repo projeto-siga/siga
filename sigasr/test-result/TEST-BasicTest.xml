@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<testsuite failures="0" time="0.24" errors="0" skipped="0" tests="3" name="BasicTest">
+  <testcase classname="BasicTest" name="aVeryImportantThingToTest" time="0">
+      </testcase>
+  <testcase classname="BasicTest" name="criarObjetosBasicos" time="0.021">
+      </testcase>
+  <testcase classname="BasicTest" name="fullTest" time="0.219">
+      </testcase>
+</testsuite>

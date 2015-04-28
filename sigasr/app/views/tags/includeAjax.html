@@ -1,0 +1,24 @@
+<script language="javascript">
+function carregar${_action}(){
+	jQuery.blockUI(objBlock);
+	frm = document.getElementById('div${_action}').parent;
+	params = '';
+	for (i = 0; i < frm.length; i++){
+		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+	}
+	PassAjaxResponseToFunction('@{_action()}', 'carregou${_action}', null, false, params);
+}
+
+function carregou${_action}(response, param){
+	var div = document.getElementById('div${_action}');
+	div.innerHTML = response;
+	jQuery.unblockUI();
+}
+
+document.getElementById('${_trigger}').onchange = 'carregar${_action}();' + 
+	document.getElementById('${_trigger}').onchange; 
+	
+}
+</script>
+
+<div id="div${_action}">#{include 'Application/'+_action+'.html' /}</div>

@@ -1,0 +1,53 @@
+#{extends 'main.html' /}
+<div class="gt-bd clearfix">
+	<div class="gt-content clearfix">
+		<div class="gt-content-box gt-for-table">
+			<form action="@{Application.buscarTipoAcao}">
+				<input type="hidden" name="popup" value="true" />
+				<table class="gt-form-table">
+					<tr class="header">
+						<td align="center" valign="top" colspan="4">Dados do Tipo de ação</td>
+					</tr>
+					<tr>
+						<td>Código:</td>
+						<td><input type="text" name="filtro.siglaTipoAcao"
+							value="${filtro?.siglaTipoAcao}" />
+						</td>
+					</tr>
+					<tr>
+						<td>Título</td>
+						<td><input type="text" name="filtro.tituloTipoAcao"
+							value="${filtro?.tituloTipoAcao}" />  <input type="hidden" name="nome"
+							value="${nome}" />
+						</td>
+					</tr>
+					<tr>
+						<input type="hidden" name="pessoa" value="${pessoa}" />
+						<input type="hidden" name="item" value="${item}" />
+						<td><input type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" /></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+
+	<br />
+	
+	<div class="gt-content-box gt-for-table">
+		<table class="gt-table">
+			<tr>
+				<th>Código
+				</td>
+				<th>Descrição
+				</td>
+			</tr>
+			#{list items:itens, as:'tipoAcao'}
+			<tr>
+				<td><a href="javascript:opener.retorna_tipoAcao${nome}('${tipoAcao.id}','${tipoAcao.sigla}','${tipoAcao.descricao}');window.close()">${tipoAcao.sigla}</a>
+				</td>
+				<td style="padding-left: ${tipoAcao.nivel*13}px;">${tipoAcao.descricao}</td>
+			</tr>
+			#{/list}
+		</table>
+	</div>
+</div>

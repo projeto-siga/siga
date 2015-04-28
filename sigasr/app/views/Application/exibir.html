@@ -1,0 +1,684 @@
+#{extends 'main.html' /} #{set title:'Movimentação de solicitação' /}
+<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
+
+<style>
+	ul.lista-historico li span {
+		text-decoration: line-through;
+	}
+	
+	ul.lista-historico li {
+		list-style: none;
+	}
+	
+	ul.lista-historico li.unico {
+		margin-left: 0px !important;
+	}
+	
+	button.button-historico {
+		padding-left: 2px;
+		padding-right: 2px;
+		width: 16px;
+	}
+	
+	.historico-label {
+		font-weight: bold;
+		margin-right: 4px;
+	}
+	
+	.hidden {
+		display: none;
+	}
+</style>
+
+<script>
+$(function() {
+    $( "#calendario" ).datepicker({
+        showOn: "button",
+        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+        buttonImageOnly: true,
+        dateFormat: 'dd/mm/yy'
+    });
+    $( "#calendarioReplanejar" ).datepicker({
+        showOn: "button",
+        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+        buttonImageOnly: true,
+        dateFormat: 'dd/mm/yy'
+    });
+});
+$(function(){
+	$("#horario").mask("99:99");
+	$("#horarioReplanejar").mask("99:99");
+});
+
+function postback(){
+	location.href="@{Application.exibir(solicitacao.idSolicitacao)}&todoOContexto="+$("#todoOContexto").val()+"&ocultas="+$("#ocultas").val();
+}
+</script>
+
+<div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
+	<div class="gt-content clearfix">
+		<h2>${solicitacao.codigo}</h2>
+		<p></p>
+		<h3>
+			${solicitacao.getMarcadoresEmHtml(titular, lotaTitular)} #{if
+			solicitacao.solicitacaoPrincipal} - <a style="text-decoration: none"
+				href="@{Application.exibir(solicitacao.solicitacaoPrincipal.idSolicitacao)}">
+				${solicitacao.solicitacaoPrincipal.codigo} </a> #{/if}
+		</h3>
+
+		*{#{if solicitacao.estaForaAtendenteDesignado()}
+		<div
+			style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
+			<img src="/siga/css/famfamfam/icons/error.png"
+				style="margin-right: 1px;"> O atendente atual n&atilde;o &eacute; o
+			atendente designado.
+		</div>
+		#{/if}}* #{links acoes:solicitacao.operacoes(titular, lotaTitular), base:_base /}
+		<div class="gt-content-box" style="padding: 10px">
+			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
+				#{descricaoItem itemConfiguracao: solicitacao.itemAtual /} -
+				#{descricaoAcao acao: solicitacao.acaoAtual /}</p>
+			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
+			<script language="javascript">
+				var descricao = document.getElementById('descrSolicitacao');
+				descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
+			</script>
+			#{list items:solicitacao.atributoSolicitacaoSet, as:'att'} #{if
+			att.valorAtributoSolicitacao}
+			<p style="font-size: 9pt; padding: 0px">
+				<b>${att.atributo.nomeAtributo}:</b> ${att.valorAtributoSolicitacao}
+			</p>
+			#{/if} #{/list}
+		</div>
+
+		<br/>
+		<br/>
+		<div class="gt-content-box gt-form"
+			style="margin-bottom: 0px !important">
+			<form action="@{Application.darAndamento()}" method="post"
+				enctype="multipart/form-data" onsubmit="javascript: return block();" enctype="multipart/form-data">
+				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+				<input type="hidden" name="ocultas" value="${ocultas}" />
+				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
+					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
+				solicitacao.podeTrocarAtendente(titular, lotaTitular)}
+				#{set atendentes: solicitacao.pessoasAtendentesDisponiveis /}
+				
+				#{if atendentes.size >= 1}
+				<div class="gt-form-row">
+					<label>Atendente</label>
+					<div id="divAtendente">
+					#{select name:'movimentacao.atendente',
+						items:atendentes,
+						labelProperty:'descricaoIniciaisMaiusculas',
+						value:solicitacao.atendente?.pessoaAtual?.idPessoa}
+					#{option 0}#{/option} 
+					#{/select}
+					</div>
+				</div>
+				#{/if}
+				#{/if}
+
+				<div style="display: inline" class="gt-form-row gt-width-66">
+					<label>Pr&oacute;ximo Andamento</label>
+					<textarea style="width: 100%" name="movimentacao.descrMovimentacao"
+						id="descrSolicitacao" cols="70" rows="4"
+						value="${movimentacao.descrMovimentacao}"></textarea>
+				</div>
+
+				<div class="gt-form-row">
+					<input type="submit" value="Gravar"
+						class="gt-btn-medium gt-btn-left" /> 
+				</div>
+			</form>
+		</div>
+
+		<p style="padding-top: 30px; font-weight: bold; color: #365b6d;" >
+		#{if solicitacao.parteDeArvore}
+		#{checkbox name:'todoOContexto',
+					value:todoOContexto, onchange:'postback();' /} Todo o Contexto
+		&nbsp;&nbsp;
+		#{/if}
+		#{checkbox name:'ocultas',
+					value:ocultas, onchange:'postback();' /} Mais Detalhes
+		</p>
+		
+		<div class="gt-content-box">
+			<table border="0" width="100%" class="gt-table mov">
+				<thead>
+					<tr>
+						*{#{if ocultas}
+						<th>#</th> #{/if}}*
+						<th>Momento</th>
+						#{if todoOContexto}
+						<th>Solicita&ccedil;&atilde;o</th> #{/if}
+						<th>Evento</th>
+						<th colspan="2">Cadastrante</th> #{if ocultas}
+						<th colspan="2">Atendente</th> #{/if}
+						<th>Descrição</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+				#{if movs}
+					#{list items:movs, as:'movimentacao'}
+					<tr #{if movimentacao.canceladoOuCancelador} class="disabled"#{/if}>
+						*{#{if ocultas}
+						<td>${movimentacao.numSequencia}</td> #{/if}}*  #{if ocultas}
+						<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>#{/if} #{else}
+						<td>${movimentacao.dtIniString}</td>#{/else} 
+						#{if todoOContexto}
+						<td><a style="color: #365b6d;" href="@{Application.exibir(movimentacao.solicitacao.idSolicitacao)}"
+	style="text-decoration: none"> ${movimentacao.solicitacao.numSequenciaString}</td> #{/if}
+						<td>${movimentacao.tipoMov.nome}</td>
+						<td>#{selecionado
+							sigla:movimentacao.lotaCadastrante?.siglaLotacao,
+							descricao:movimentacao.lotaCadastrante?.nomeLotacao /}</td>
+						<td>#{selecionado
+							sigla:movimentacao.cadastrante?.nomeAbreviado,
+							descricao:movimentacao.cadastrante?.descricaoIniciaisMaiusculas
+							/}</td> #{if ocultas}
+						<td>#{selecionado
+							sigla:movimentacao.lotaAtendente?.siglaLotacao,
+							descricao:movimentacao.lotaAtendente?.nomeLotacao /}</td>
+						<td>#{selecionado
+							sigla:movimentacao.atendente?.nomeAbreviado,
+							descricao:movimentacao.atendente?.descricaoIniciaisMaiusculas /}</td>
+						#{/if}
+						<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
+							#{if movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
+							arquivo:movimentacao.arquivo /}#{/if} 
+							#{if movimentacao.tipoMov.idTipoMov == 16}
+							#{list items:movimentacao.respostaSet, as:'resposta'}
+								#{if resposta.pergunta.tipoPergunta.idTipoPergunta == 1}<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.descrResposta}#{/if}
+								#{elseif resposta.pergunta.tipoPergunta.idTipoPergunta == 2}<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.grauSatisfacao}
+								#{/elseif}
+								</li>
+							#{/list}
+							#{/if}
+						</td>
+						<script language="javascript">
+							var descricao = document.getElementById('descrMovimentacao${movimentacao.idMovimentacao}');
+							descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
+						</script>
+					</tr>
+					#{/list}
+				
+				#{/if}
+				#{else}
+					<tr><td align="center" colspan="10">N&atilde;o h&aacute; movimenta&ccedil;&otilde;es nesse modo de exibi&ccedil;&atilde;o</td></tr>
+				#{/else}
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+	
+	#{include 'Application/exibirCronometro.html' /}
+	#{include 'Application/exibirPendencias.html' /}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Solicitação</h3>
+			<p>
+				<b>Solicitante:</b>
+				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
+				solicitacao.local} (${solicitacao.local.nomeComplexo}) #{/if}
+			</p>
+			#{if solicitacao.interlocutor}
+			<p>
+				<b>Interlocutor:</b>
+				${solicitacao.interlocutor.descricaoIniciaisMaiusculas}
+			</p>
+			#{/if}
+			#{if solicitacao.dtOrigem}
+			<p>
+				<b>Contato Inicial:</b>
+				${solicitacao.dtOrigemString}#{if solicitacao.meioComunicacao}, por ${solicitacao.meioComunicacao.descrMeioComunicacao}#{/if}
+			</p>
+			#{/if}
+			#{if solicitacao.meioComunicacao}
+			<p>
+				<b>Origem da Demanda:</b>
+				${solicitacao.meioComunicacao?.descrMeioComunicacao}
+			</p>
+			#{/if}
+			#{if solicitacao.telPrincipal}
+			<p>
+				<b>Telefone:</b> ${solicitacao.telPrincipal}
+			</p>
+			#{/if}
+			<p>
+				<b>Cadastrante:</b>
+				${solicitacao.cadastrante?.descricaoIniciaisMaiusculas}
+			</p>
+			*{<p>
+				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
+			</p>}*
+			#{if solicitacao.isEscalonada()}
+				#{set itemEscalonar : solicitacao.getItemAtual().toString().raw() /}
+				#{set acaoEscalonar : solicitacao.getAcaoAtual().toString().raw() /}
+			#{/if}
+			<p>
+				<span class="historico-label">Item de Configuração:</span>
+				<div class="historico-item-container hidden">
+					<button type="button" class="button-historico" title="Clique para abrir/fechar o histórico">+</button>
+				
+					<ul class="lista-historico historico-item">
+						#{list items:solicitacao.historicoItem, as:'item'}
+							<li>
+								<span>${item.sigla} - ${item.descricao}</span>
+							</li>
+						#{/list}
+					</ul>
+				</div>
+			</p>
+			<p>
+				<span class="historico-label">A&ccedil;&atilde;o:</span>
+				<div class="historico-acao-container hidden">
+					<button type="button" class="button-historico" title="Clique para abrir/fechar o histórico">+</button>
+					
+					<ul class="lista-historico historico-acao">
+						#{list items:solicitacao.historicoAcao, as:'acao'}
+							<li>
+								<span>${acao.siglaAcao} - ${acao.descricao}</span>
+							</li>
+						#{/list}
+					</ul>
+				</div>
+			</p>
+			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
+			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
+			#{/elseif} #{else} #{set priorColor:'' /} #{/else}
+			<p>
+				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
+					<br /> ${solicitacao.GUTString}</span>
+			</p>
+			<p>
+				<b>Notificação:</b>
+				${solicitacao.formaAcompanhamento.descrFormaAcompanhamento.raw()}
+			</p>
+			#{if solicitacao.fechadoAutomaticamente != null && solicitacao.isPai()}
+			<p>
+				<b>Fechamento Automático:</b> ${solicitacao.fechadoAutomaticamente.yesno('Sim', 'Não')  }
+			</p>
+			#{/if}
+		</div>
+	</div>
+
+	#{set vinculadas:solicitacao.solicitacoesVinculadas /}
+	#{if vinculadas}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Veja Tamb&eacute;m</h3>
+			<p>
+				#{list items:vinculadas, as:'vinculada'} <a
+					href="@{Application.exibir(vinculada?.idSolicitacao)}">
+					${vinculada?.codigo} </a> <br/> #{/list}
+			</p>
+		</div>
+	</div>
+	#{/if} 
+	#{if solicitacao.parteDeArvore}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Contexto</h3>
+			<p>#{listaArvore
+				solicitacao:solicitacao.paiDaArvore,visualizando:solicitacao /}</p>
+		</div>
+	</div>
+	#{/if} #{if solicitacao.temArquivosAnexos()}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Arquivos Anexos</h3>
+			<p>
+				#{arquivo arquivo:solicitacao.arquivoAnexoNaCriacao /} <br /> #{list
+				items:solicitacao.movimentacoesAnexacao, as:'anexacao'} #{arquivo
+				arquivo:anexacao.arquivo /} ${anexacao.descrMovimentacao}<br />
+				#{/list}
+			</p>
+		</div>
+	</div>
+	#{/if} 
+	#{set juntadas:solicitacao.solicitacoesJuntadas /}
+	#{if juntadas}
+		<div class="gt-sidebar">
+			<div class="gt-sidebar-content">
+				<h3>Solicita&ccedil;&otilde;es juntadas</h3>
+				<p>
+					#{list items:juntadas, as:'juntada'} <a
+						href="@{Application.exibir(juntada.idSolicitacao)}">
+						${juntada.codigo} </a> <br/> #{/list}
+				</p>
+			</div>
+		</div>
+	#{/if}
+	#{if solicitacao.emLista}
+	<div class="gt-sidebar">
+		<div class="gt-sidebar-content">
+			<h3>Listas de Prioridade</h3>
+				<ul>
+				#{list items:solicitacao.listasAssociadas, as:'listas'}
+					<li>
+						&nbsp; <input type="hidden" name="idlista"
+						value="${listas?.idLista}"> <a
+						style="color: #365b6d; text-decoration: none"
+						href="@{Application.exibirLista(listas?.idLista)}">
+							${listas?.listaAtual?.nomeLista} </a>
+					</li>
+				#{/list}
+				</ul>
+		</div>
+	</div>
+	#{/if} 
+	
+	#{if solicitacao.estaCom(titular, lotaTitular) || exibirMenuAdministrar}
+		#{include 'Application/exibirAcordos.html' /}
+	#{/if}
+	
+	
+	<div id="divConhecimentosRelacionados">#{include
+				'Application/exibirConhecimentosRelacionados.html' /}</div>
+	
+	#{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
+	<div class="gt-content-box gt-form">
+		<form action="@{Application.anexarArquivo()}" method="post"
+			enctype="multipart/form-data" onsubmit="javascript: return block();" enctype="multipart/form-data">
+			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+			<input type="hidden" name="ocultas" value="${ocultas}" />
+			<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
+				value="${movimentacao.solicitacao.idSolicitacao}"> <input
+				type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12">
+			<div class="gt-form-row">
+				<label>Arquivo</label> <input type="file"
+					name="movimentacao.arquivo">
+			</div>
+			<div style="display: inline" class="gt-form-row gt-width-66">
+				<label>Descrição</label>
+				<textarea style="width: 100%" name="movimentacao.descrMovimentacao"
+					id="descrSolicitacao" cols="70" rows="4"
+					value="${movimentacao.descrMovimentacao}"></textarea>
+			</div>
+			<div class="gt-form-row">
+				<input type="submit" value="Gravar"
+					class="gt-btn-medium gt-btn-left" />
+			</div>
+		</form>
+	</div>
+	#{/modal} #{modal nome:'fechar', titulo:'Fechar'}
+	<form action="@{Application.fechar()}" method="post"
+		enctype="multipart/form-data" onsubmit="javascript: return block();" enctype="multipart/form-data">
+		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+		<input type="hidden" name="ocultas" value="${ocultas}" />
+		<div style="display: inline" class="gt-form-row gt-width-66">
+			<label>Motivo</label>
+			<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
+		</div>
+		<input type="hidden" name="id" value="${solicitacao.idSolicitacao}" /> <input
+			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+	</form>
+	#{/modal}
+	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao}
+	#{/modal}
+		
+	#{modal nome:'escalonar', titulo:'Escalonar Solicitação', 
+				url:'/sigasr/solicitacao/escalonar?id='+solicitacao.idSolicitacao  /}
+
+	#{modal nome:'juntar', titulo:'Juntar'}
+		<form action="@{Application.juntar()}" method="post" enctype="multipart/form-data"
+			enctype="multipart/form-data" id="formGravarJuncao">
+			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+			<input type="hidden" name="ocultas" value="${ocultas}" />
+			<input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
+			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+				<label>Solicitação</label> <br />
+				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeJuntada',
+					value: idSolicitacaoRecebeJuntada, grande:true,
+					onchange: "validarAssociacao('Juncao');"  /}
+				<span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
+			</div>
+			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+				<label>Justificativa</label>
+				<textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaJuncao" maxlength="255" onkeyup="validarAssociacao('Juncao')"></textarea>
+				<span id="erroJustificativaJuncao" style="color: red; display: none;"><br />Justificativa não informada.</span>
+			</div>
+			<div style="display: inline" class="gt-form-row ">
+				<input type="button" onclick="gravarAssociacao('Juncao');" value="Gravar" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</form>
+	#{/modal}
+	#{modal nome:'vincular', titulo:'Vincular'}
+		<form action="@{Application.vincular()}" method="post" enctype="multipart/form-data"
+			enctype="multipart/form-data" id="formGravarVinculo">
+			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+			<input type="hidden" name="ocultas" value="${ocultas}" />
+			<input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
+			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+				<label>Solicitação</label> <br />
+				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeVinculo',
+					value: idSolicitacaoRecebeVinculo, grande:true,
+					onchange: "validarAssociacao('Vinculo');"  /}
+				<span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
+			</div>
+			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+				<label>Justificativa</label>
+				<textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaVinculo" maxlength="255" onkeyup="validarAssociacao('Vinculo')"></textarea>
+				<span id="erroJustificativaVinculo" style="color: red; display: none;"><br />Justificativa não informada.</span>
+			</div>
+			<div style="display: inline" class="gt-form-row ">
+				<input type="button" onclick="gravarAssociacao('Vinculo');" value="Gravar" class="gt-btn-medium gt-btn-left" />
+			</div>
+		</form>
+	#{/modal}
+	#{modal nome:'associarLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/associarLista?idSolicitacao='+solicitacao.idSolicitacao} 
+	#{/modal} 
+	#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa', url:'/sigasr/solicitacao/responderPesquisa?id='+solicitacao.idSolicitacao}
+	#{/modal}
+	#{modal nome:'pendencia', titulo:'Pendência'}
+	<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
+	<div class="gt-content-box gt-for-table gt-form">
+	<form action="@{Application.deixarPendente()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+		<input type="hidden" name="ocultas" value="${ocultas}" />
+		<div class="gt-form-row gt-width-66">
+			<label>Data de Término</label>
+			<input type="text" name="calendario" id="calendario">
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Horário de Término</label>
+			<input type="text" name="horario" id="horario">
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Motivo</label>
+			#{select
+								name:'motivo', items:models.SrTipoMotivoPendencia.values(),
+								labelProperty:'descrTipoMotivoPendencia', style:'width:235px;' /}
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Detalhamento do Motivo</label>
+			<textarea name="detalheMotivo" cols="50" rows="4"> </textarea>
+		</div>
+		<div class="gt-form-row">
+					<input type="hidden" name="id" value="${solicitacao.id}" /> <input
+						type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+				</div>
+	</form>
+	</div>
+	</div>
+	#{/modal} #{modal nome:'alterarPrazo', titulo:'Alterar Prazo'}
+		<div class="gt-form gt-content-box">
+		<form action="@{Application.alterarPrazo()}" method="post"
+			enctype="multipart/form-data" onsubmit="javascript: return block();">
+				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+				<input type="hidden" name="ocultas" value="${ocultas}" />
+				<div class="gt-form-row gt-width-66">
+					<label>Data</label>
+					<input type="text" name="calendario" id="calendarioReplanejar">
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Hora</label>
+					<input type="text" name="horario" id="horarioReplanejar">
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Motivo</label>
+					<textarea name="motivo" cols="50" rows="4"> </textarea> 
+				</div>
+				<input type="hidden" name="id" value="${solicitacao.id}" /> 
+				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+		</form>
+		</div>
+	#{/modal}
+	#{modal nome:'desentranhar', titulo:'Desentranhar'}
+		<form action="@{Application.desentranhar()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
+			<div style="display: inline" class="gt-form-row gt-width-66">
+				<label>Justificativa</label>
+				<textarea style="width: 100%" name="justificativa" cols="50" rows="4"> </textarea>
+			</div>
+			<input type="hidden" name="completo" value="${completo}" /> <input
+				type="hidden" name="id" value="${solicitacao.id}" /> <input
+				type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+		</form>
+	#{/modal}
+<script language="javascript">
+
+	function terminarPendencia(idMov){
+		$("#movimentacaoId").val(idMov);
+		$( "#terminarPendenciaModal_dialog" ).dialog( "open" );
+	}
+	
+	function validarAssociacao(tipo) 
+	{
+		$("#erroSolicitacao"+tipo).hide();
+		$("#erroJustificativa"+tipo).hide();
+	
+		if ((tipo == 'Juncao' && $("#idSolicitacaoRecebeJuntadaSpan").html() == "")
+				|| (tipo == 'Vinculo' && $("#idSolicitacaoRecebeVinculoSpan").html() == "")) {
+			$("#erroSolicitacao"+tipo).show();
+			return false;
+		}
+		if ($("#justificativa"+tipo).val() == "") {
+			$("#erroJustificativa"+tipo).show();
+			return false;
+		}
+		return true;
+	}
+	
+	function gravarAssociacao(tipo)
+	{
+		if (!block())
+			return false;
+		if (validarAssociacao(tipo)) {
+			document.getElementById("formGravar"+tipo).submit();
+		}
+	}
+	$('#checksolicitacao.fechadoAutomaticamente').change(function() {
+		if(this.checked) {
+			$('#checksolicitacao.fechadoAutomaticamente').prop('value', 'true');
+			return;
+		}
+		$('#checksolicitacao.fechadoAutomaticamente').prop('value', 'false');
+	});
+</script>
+
+#{modal nome:'terminarPendenciaModal', titulo:'Terminar Pendencia'}
+	<form action="@{Application.terminarPendencia()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+		<input type="hidden" name="ocultas" value="${ocultas}" />
+		<div style="display: inline" class="gt-form-row gt-width-66">
+			<label>Descrição</label>
+			<textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
+		</div>
+		<input
+			type="hidden" name="idMovimentacao" id="movimentacaoId" value="" /><input
+			type="hidden" name="motivo" id="motivoId" value="" /><input
+			type="hidden" name="id" value="${solicitacao.id}" /> <input
+			type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+	</form>
+#{/modal}
+
+<script>
+	$("#terminarPendenciaModal_dialog").dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: 'auto',
+	    modal: true,
+	    resizable: false
+	});
+
+	var MostradorHistorico = function(container, emptyMessage) {
+		var url = container.find('ul'),
+			intermediarios = url.find('li span:not(:first):not(:last)'),
+			button = container.find('button'),
+			me = this,
+			TAMANHO_MAXIMO_DESCRICAO = 50;
+		
+		button.bind('click', function() {
+			me.toogleItens();
+		});
+		
+		this.toogleItens = function() {
+			intermediarios.toggleClass('hidden');
+	 		if(intermediarios.hasClass('hidden'))
+	 			button.html('+');
+	 		else {
+	 			button.html('-');
+	 		}
+		}
+
+		this.init = function() {
+			this.adicionarMensagemSeVazio();
+			this.verificarIntermediarios();
+			this.formatarDescricoes();
+			this.formatarLabel();
+			container.removeClass('hidden');
+		}
+
+		this.verificarIntermediarios = function() {
+			if(intermediarios.size() > 0) {
+				this.toogleItens();
+			} else {
+				button.remove();
+			}
+		}
+
+		this.formatarDescricoes = function() {
+			url.find('li span').each(function() {
+				var me = $(this),
+					html = me.html();
+				
+				if(html.length > TAMANHO_MAXIMO_DESCRICAO) {
+					me.attr('title', html);
+					me.css('cursor', 'default');
+					me.html(html.substr(0, TAMANHO_MAXIMO_DESCRICAO) + "...");
+				}
+			});
+			url.find('li span:last').css('text-decoration', 'none');
+		}
+
+		this.adicionarMensagemSeVazio = function() {
+			var lis = url.find('li');
+			if(lis.size() == 0) {
+				url.append('<li><span>' + emptyMessage + '</li></span>')
+			}
+		}
+
+		this.formatarLabel = function() {
+			if(container.find('ul li span').size() == 1) {
+				container
+					.prev('p')
+					.find('.historico-label')
+					.css('float', 'left');
+				container.find('ul li').addClass('unico');
+			} else if(container.find('ul li span').size() > 2) {
+				container
+					.find('.lista-historico')
+					.css('margin-top', '-20px');
+			}
+		}
+	}
+
+	new MostradorHistorico($('.historico-item-container'), "Item não informado")
+		.init();
+
+	new MostradorHistorico($('.historico-acao-container'), "Ação não informada")
+		.init();
+</script>

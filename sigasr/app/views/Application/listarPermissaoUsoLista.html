@@ -1,0 +1,129 @@
+#{extends 'main.html' /} #{set title:'Permissões para Uso de Lista de Prioridade' /}
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+	var QueryString = function () {
+		// This function is anonymous, is executed immediately and
+		// the return value is assigned to QueryString!
+		var query_string = {};
+		var query = window.location.search.substring(1);
+		var vars = query.split("&");
+		for (var i=0;i<vars.length;i++) {
+			var pair = vars[i].split("=");
+	    	// If first entry with this name
+	    	if (typeof query_string[pair[0]] === "undefined") {
+				query_string[pair[0]] = pair[1];
+				// If second entry with this name
+			} else if (typeof query_string[pair[0]] === "string") {
+				var arr = [ query_string[pair[0]], pair[1] ];
+				query_string[pair[0]] = arr;
+				// If third or later entry with this name
+			} else {
+				query_string[pair[0]].push(pair[1]);
+			}
+		}
+		return query_string;
+	}();
+	
+	$(document).ready(function() {
+		if (QueryString.mostrarDesativados != undefined) {
+			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+		}
+			
+		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
+			var filtro = window.location.search.substring(1);
+			
+			if (filtro.indexOf('mostrarDesativados') < 0)
+				filtro = 'mostrarDesativados=true&' + filtro;
+			
+			if (document.getElementById('checkmostrarDesativado').checked) {
+				filtro = filtro.replace('mostrarDesativados=false', 'mostrarDesativados=true');
+				window.location='@{Application.listarPermissaoUsoLista}?' + filtro;
+			}
+			else {
+				filtro = filtro.replace('mostrarDesativados=true', 'mostrarDesativados=false');
+				window.location='@{Application.listarPermissaoUsoLista}?' + filtro;
+			}
+		});
+
+		/* Table initialization */
+		$('#prioridades_table').DataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			}
+		});
+	});
+</script>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Definir Permissões para Uso de Lista de Prioridade</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box gt-for-table dataTables_div">
+			<div class="gt-form-row dataTables_length">
+				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
+			</div>
+			<table id="prioridades_table" border="0" class="gt-table display">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Local</th>
+						<th>Lotação</th>
+						<th>Pessoa</th>
+						<th>Cargo</th>
+						<th>Função</th>
+						<th>Lista de Prioridade</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					#{list items:permissoes, as:'perm'}
+					<tr
+						onclick="javascript:window.location='@{Application.editarPermissaoUsoLista(perm.idConfiguracao)}'"
+						style="cursor: pointer;">
+						<td>${perm.orgaoUsuario?.acronimoOrgaoUsu}</td>
+						<td>${perm.complexo?.nomeComplexo}</td>
+						<td>${perm.lotacao?.lotacaoAtual?.siglaLotacao}</td>
+						<td>${perm.dpPessoa?.pessoaAtual?.nomeAbreviado}</td>
+						<td>${perm.cargo?.descricao}</td>
+						<td>${perm.funcaoConfianca?.descricao}</td>
+						<td>${perm.listaPrioridade?.nomeLista}</td>
+					</tr>
+					</a> #{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+		<a href="@{Application.editarPermissaoUsoLista}" class="gt-btn-medium gt-btn-left">Cadastrar</a>
+		</div>
+
+	</div>
+</div>
+
+<br />
+<br />
+<br />

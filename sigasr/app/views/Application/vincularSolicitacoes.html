@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+${_cabecalho_pre_head.raw()}
+
+<style>
+.ui-widget-header {
+	border: 1px solid #365b6d;
+	background: #365b6d;
+}
+</style>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="/sigasr/public/stylesheets/main.css">
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css">
+${moreHead?.raw()}
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+	var QueryString = function () {
+		// This function is anonymous, is executed immediately and
+		// the return value is assigned to QueryString!
+		var query_string = {};
+		var query = window.location.search.substring(1);
+		var vars = query.split("&");
+		for (var i=0;i<vars.length;i++) {
+			var pair = vars[i].split("=");
+	    	// If first entry with this name
+	    	if (typeof query_string[pair[0]] === "undefined") {
+				query_string[pair[0]] = pair[1];
+				// If second entry with this name
+			} else if (typeof query_string[pair[0]] === "string") {
+				var arr = [ query_string[pair[0]], pair[1] ];
+				query_string[pair[0]] = arr;
+				// If third or later entry with this name
+			} else {
+				query_string[pair[0]].push(pair[1]);
+			}
+		}
+		return query_string;
+	}();
+
+	var vincular = function (codigo, idSolicitacao) 
+	{
+		$("#codigoRecebe").html(codigo);
+		$("#idSolicitacaoRecebeVinculo").val(idSolicitacao);
+		$("#pesquisa").hide();
+		$("#vincularSolicitacao").show();
+	}
+	
+	$(document).ready(function() {
+		$("#vincularSolicitacao").hide();
+		
+		if (QueryString.mostrarDesativados != undefined) {
+			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+		}
+			
+		$("#checkmostrarDesativado").click(function() {
+			var filtro = window.location.search.substring(1);
+			
+			if (filtro.indexOf('mostrarDesativados') < 0)
+				filtro = 'mostrarDesativados=true&' + filtro;
+			
+			if (document.getElementById('checkmostrarDesativado').checked) {
+				filtro = filtro.replace('mostrarDesativados=false', 'mostrarDesativados=true');
+				window.location='@{Application.vincularSolicitacoes}?' + filtro;
+			}
+			else {
+				filtro = filtro.replace('mostrarDesativados=true', 'mostrarDesativados=false');
+				window.location='@{Application.vincularSolicitacoes}?' + filtro;
+			}
+		});
+		
+		/* Table initialization */
+		$('#solicitacoes_table').DataTable({
+			"language": {
+				"emptyTable":     "Não existem resultados",
+			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+			    "infoPostFix":    "",
+			    "thousands":      ".",
+			    "lengthMenu":     "Mostrar _MENU_ registros",
+			    "loadingRecords": "Carregando...",
+			    "processing":     "Processando...",
+			    "search":         "Filtrar:",
+			    "zeroRecords":    "Nenhum registro encontrado",
+			    "paginate": {
+			        "first":      "Primeiro",
+			        "last":       "Último",
+			        "next":       "Próximo",
+			        "previous":   "Anterior"
+			    },
+			    "aria": {
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
+			    }
+			}
+		});
+	});
+
+	function gravar()
+	{
+		var justificativa = $("#justificativa").val();
+		if(justificativa != "") {
+			document.getElementById("formGravarVinculo").submit();
+			setTimeout(function() {
+				opener.location.href = "@{Application.exibir(solicitacaoAVincular.idSolicitacao, false)}";
+				window.close();
+			}, 2000);
+		} else {
+			$("#erroJustificativa").show();
+		}
+	}
+</script>
+	<input type="hidden" name="id" value="${solicitacaoAVincular.idSolicitacao}"> 
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+		<h2>Vincular Solicitações</h2>
+ 		
+ 		<div class="gt-content-box gt-form" id="vincularSolicitacao">
+			<form action="@{Application.vincularSolicitacoesGravar()}" id="formGravarVinculo" enctype="multipart/form-data">
+				<input type="hidden" name="idSolicitacaoAVincular" value="${solicitacaoAVincular.idSolicitacao}"> 
+				<input type="hidden" name="idSolicitacaoRecebeVinculo" id="idSolicitacaoRecebeVinculo" value=""> 
+				<div style="display: inline;" class="gt-form-row gt-width-66">
+					<label style=" margin-bottom: 15px !important;">Vincular solicitação: ${solicitacaoAVincular.codigo} a <b id="codigoRecebe"></b></label>
+				</div>
+				<div style="display: inline" class="gt-form-row gt-width-66">
+					<label>Justificativa</label>
+					<textarea style="width: 60%" name="justificativa" id="justificativa" cols="70" rows="4" maxlength="255" value=""></textarea>
+				</div>
+				<div style="display: none" id="erroJustificativa" class="gt-form-row gt-width-66">
+					<span style="color: red;">Justificativa não informada.</span>
+				</div>
+				<div style="display: inline" class="gt-form-row ">
+					<input type="button" onclick="gravar();" value="Gravar" class="gt-btn-medium gt-btn-left" />
+				</div>
+			</form>
+		</div>
+		<div id="pesquisa">
+	 		#{if listaSolicitacao}
+				<div class="gt-content-box gt-for-table dataTables_div">
+					<div class="gt-form-row dataTables_length">
+						<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
+					</div>
+					<table id="solicitacoes_table" border="0" class="gt-table-nowrap display">
+						<col width="15%" />
+			    		<col width="35%" />
+			    		<col width="10%" />
+			    		<col width="15%" />
+			    		<col width="15%" />
+			    		<col width="15%" />
+			    		<thead>
+							<tr>
+								<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
+								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
+								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
+								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Aberto</th>
+								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Situação</th>
+								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Último Andamento</th>
+							</tr>
+						</thead>
+						<tbody>
+							#{list items:listaSolicitacao, as:'sol'}
+								<tr>
+									<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+										<a href="javascript:vincular('${sol.codigo}', '${sol.idSolicitacao}');">
+											${sol.codigo}
+										</a>	
+									</td>
+									<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 0px; border-bottom: 1px solid #ccc !important; text-align:justify;" id="descrSolicitacao">
+										<b style="color: #333">
+										${sol.itemConfiguracao?.descricao}:</b>&nbsp;
+										#{selecionado sigla:sol.descrSolicitacao,descricao:sol.descrSolicitacao /}
+									</td>
+								
+									<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;" >
+										#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
+										#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.descricao /}
+									</td>
+									<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+										#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
+									</td>
+									<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+										<b>${sol.getMarcadoresEmHtml(cadastrante, lotaTitular)}</b></td>
+									<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 0px;">
+										#{selecionado sigla:sol.ultimoAndamento?.descrMovimentacao,descricao:sol.ultimoAndamento?.descrMovimentacao /}
+								</tr>
+							#{/list}
+						</tbody>
+					</table>
+				</div>
+			#{/if}
+			#{elseif filtro?.pesquisar} 
+				<div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>	
+			#{/elseif }
+			
+			<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
+				<form action="@{Application.vincularSolicitacoes()}" enctype="multipart/form-data">
+				<input type="hidden" name="id" value="${solicitacaoAVincular.idSolicitacao}"> 
+					<input type="hidden" name="filtro.pesquisar" value="true" />
+					<table class="gt-form-table">
+						<tr class="header">
+						<td align="center" valign="top" colspan="4">Dados para busca</td>
+						</tr>
+							<tr>
+								<td>Situação</td>
+								<td>#{select name:'filtro.situacao', items:marcadores,
+									labelProperty:'descrMarcador', valueProperty:'idMarcador',
+									value:filtro.situacao?.idMarcador /} com #{pessoaLotaSelecao
+									nomeSelPessoa:'filtro.atendente',
+									nomeSelLotacao:'filtro.lotaAtendente',
+									valuePessoa:filtro.atendente, valueLotacao:filtro.lotaAtendente
+									/}
+									<div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
+										<label>#{checkbox name:'filtro.naoDesignados',
+										value:filtro.naoDesignados /} Apenas não designadas</label>
+									</div>
+									<script language="javascript">
+										$("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
+									</script>
+									</td>
+							</tr>
+							<tr>
+								<td>Cadastrante</td>
+								<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.cadastrante',
+									nomeSelLotacao:'filtro.lotaCadastrante',
+									valuePessoa:filtro.cadastrante,
+									valueLotacao:filtro.lotaCadastrante /}</span>
+								</td>
+							</tr>
+							<tr>
+								<td>Solicitante</td>
+								<td>#{pessoaLotaSelecao nomeSelPessoa:'filtro.solicitante',
+									nomeSelLotacao:'filtro.lotaSolicitante',
+									valuePessoa:filtro.solicitante,
+									valueLotacao:filtro.lotaSolicitante /}</td>
+							</tr>
+							<tr>
+								<td>Data de abertura</td>
+								<td>
+									<input type="text" name="filtro.dtIni" onblur="javascript:verifica_data(this,true)" value="${filtro.dtIni}" id="filtro.dtIni" /> a 
+									<input type="text" name="filtro.dtFim" onblur="javascript:verifica_data(this,true)" value="${filtro.dtFim}" id="filtro.dtFim" />
+								</td>
+							
+							</tr>
+							<tr>
+								<td>Item</td>
+								<td>#{selecao tipo:'item', grande:true, nome:'filtro.itemConfiguracao',
+									value:filtro.itemConfiguracao /}</td>
+							</tr>
+							<tr>
+								<td>A&ccedil;&atilde;o</td>
+								<td>#{selecao tipo:'acao', nome:'filtro.acao',
+									value:filtro.acao /}</td>
+							</tr>
+							<tr>
+								<td>Prioridade</td>
+								<td colspan="3">#{select 'filtro.urgencia', items:models.SrUrgencia.values(),
+									labelProperty:'descrUrgencia', value:filtro.urgencia } #{option
+									0}Todas#{/option}#{/select} #{select 'filtro.gravidade',
+									items:models.SrGravidade.values(), labelProperty:'descrGravidade',
+									value:filtro.gravidade }#{option
+									0}Todas#{/option}#{/select} #{select 'filtro.tendencia',
+									items:models.SrTendencia.values(), labelProperty:'descrTendencia',
+									value:filtro.tendencia}#{option
+									0}Todas#{/option}#{/select}</td>
+							</tr>
+							<tr>
+								<td>Descrição</td>
+								<td><input type="text" name="filtro.descrSolicitacao"
+									id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="60"></input>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2"><input type="submit" value="Buscar"
+									class="gt-btn-medium gt-btn-left" /></td>
+							</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	

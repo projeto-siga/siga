@@ -1,0 +1,33 @@
+		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
+		<form action="@{Application.associarListaGravar(solicitacao?.idSolicitacao, lista?.idLista)}" enctype="multipart/form-data">
+		<div style="max-height: 500px; max-width: 800px; overflow-y: scroll;">
+		<table border="0" class="gt-table">
+			<col width="20%" />
+    		<col width="20%" />
+     		<thead>
+				<tr class="gt-celula-nowrap">
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Incluir</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Descri&ccedil;&atilde;o da Lista</th>
+   				</tr>
+   			</thead>
+			<tbody>
+			#{list items:solicitacao.getListasDisponiveisParaInclusao(lotaTitular, cadastrante), as:'lista'}
+			<tr>
+			<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+				<input type="radio" name="idLista" value="${lista.idLista}">	
+			</td>
+			<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrLista">
+				${lista.nomeLista}
+			</td>
+			</tr>		
+			#{/list}
+			</tbody>
+		</table>	
+		</div>	
+		<div class="gt-table-button gt-width-66">
+			<input type="hidden" name="idSolicitacao" value="${solicitacao.idSolicitacao}">
+			<input type="submit" value="Selecionar Lista" class="gt-btn-medium gt-btn-left" />
+			<a href="@{Application.exibir(solicitacao.idSolicitacao)}" class="gt-btn-medium gt-btn-left">Voltar</a>
+		</div>
+		</form>
+		</div>

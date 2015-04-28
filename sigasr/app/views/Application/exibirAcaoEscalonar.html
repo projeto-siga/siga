@@ -1,0 +1,81 @@
+<script>
+
+$(document).ready(function() {
+	removeSelectedDuplicado();
+});
+
+function carregarLotacaoDaAcao(){
+	//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
+	var opcaoSelecionada = $("#selectAcao option:selected");
+	var idAcao = opcaoSelecionada.val();
+	try{
+		var siglaLotacao = opcaoSelecionada.html().split("(")[1].slice(0,-2);
+
+		var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
+		var descLotacao = spanLotacao.html();
+		var idLotacao = spanLotacao.next().html();
+		var idDesignacaoDaAcao = spanLotacao.prev().html();
+
+		$("#idDesignacao").val(idDesignacaoDaAcao);
+		$("#atendentePadrao").html(descLotacao);
+		$("#idAtendente").val(idLotacao);
+		//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
+		$("#atendenteNaoDesignado").val('');
+	} catch(err){
+		$("#idDesignacao").val('');
+		$("#atendentePadrao").html('');
+		$("#idAtendente").val('');
+		//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
+		$("#atendenteNaoDesignado").val('');
+	}
+}
+
+function removeSelectedDuplicado() {
+	//solucao de contorno temporaria para opções no select com mesmo value.
+	var primeiro = $("#selectAcao option:eq(0)");
+	var segundo = $("#selectAcao option:eq(1)");
+	if (primeiro.val() == segundo.val()) {
+		segundo.prop("selected", false);
+		primeiro.prop("selected", true);
+	}
+}
+</script>
+
+#{if solicitacao.itemConfiguracao && acoesEAtendentes} 
+	<div class="gt-form-row gt-width-66">
+	<label>AÃ§Ã£o</label>	
+		#{select name:'acao.idAcao', value:solicitacao.acao?.idAcao, onchange:"carregarLotacaoDaAcao();", id:'selectAcao'}
+			#{option 0}#{/option}
+			#{list items:acoesEAtendentes.keySet(), as:'cat' }
+				<optgroup  label="${cat.tituloAcao}">
+				#{list items:acoesEAtendentes.get(cat), as:'tarefa' }
+					#{option tarefa.acao.idAcao} ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})#{/option}					 
+				#{/list}
+				</optgroup>
+			#{/list}
+		#{/select} 
+	 <span style="color: red">#{error 'solicitacao.acao' /}</span>
+	</div>
+	<div>
+		<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
+				ja que acima no select nao tem como "esconder" essa informacao -->
+		#{list items:acoesEAtendentes.keySet(), as:'cat' }
+		#{list items:acoesEAtendentes.get(cat), as:'t' }
+			<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
+			<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
+								- ${t.conf.atendente.descricao.raw()}</span>
+			<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.idLotacao}</span>
+			#{if cat_isFirst && cat_isLast && t_isFirst && t_isLast} 
+				#{set lotacaoDesignada : t.conf.atendente.siglaCompleta + ' - ' + t.conf.atendente.descricao /}  
+				#{set idLotaAtendente : t.conf.atendente.idLotacao /}
+				#{set idDesignacao : t.conf.idConfiguracao /}
+			#{/if}
+		#{/list}
+		#{/list}
+
+		<label>Atendente</label>
+		<span id="atendentePadrao" style="display:block;">${lotacaoDesignada?.raw()}</span>
+		<input type="hidden" id="idDesignacao" name="idDesignacao" value="${idDesignacao}" />
+		<input type="hidden" name="idAtendente" id="idAtendente" value="${idLotaAtendente}" />
+	</div>
+#{/if}

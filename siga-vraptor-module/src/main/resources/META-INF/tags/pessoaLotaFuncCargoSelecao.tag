@@ -63,7 +63,7 @@
 </span>
 
 <span id="spanGrupo${nomeSelGrupoClean}">
-	<siga:selecao tipo="grupo" propriedade="grupo" tema="simple" modulo="siga" inputName="${nomeSelGrupoClean}" 
+	<siga:selecao tipo="perfil" propriedade="perfil" tema="simple" modulo="siga" prefix="gi" inputName="${nomeSelGrupoClean}" 
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueGrupo}"/>
 </span>
 
@@ -105,9 +105,9 @@ function limparCargo() {
 
 function limparGrupo() {
 	document.getElementById('spanGrupo${nomeSelGrupoClean}').style.display = 'none';
-	document.getElementById('formulario_${nomeSelGrupoClean}_grupoSel_sigla').value='';
-	document.getElementById('formulario_${nomeSelGrupoClean}_grupoSel_descricao').value='';
-	document.getElementById('grupo_grupoSelSpan').innerHTML='';
+	document.getElementById('formulario_${nomeSelGrupoClean}_perfilSel_sigla').value='';
+	document.getElementById('formulario_${nomeSelGrupoClean}_perfilSel_descricao').value='';
+	document.getElementById('perfil_perfilSelSpan').innerHTML='';
 }
 
 select.onchange = function(){

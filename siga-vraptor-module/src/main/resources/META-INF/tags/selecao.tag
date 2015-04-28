@@ -20,6 +20,7 @@
 <%@ attribute name="urlAcao" required="false"%>
 <%@ attribute name="urlSelecionar" required="false"%>
 <%@ attribute name="onchange" required="false"%>
+<%@ attribute name="prefix" required="false"%>
 <!-- A lista de par -->
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
@@ -53,11 +54,20 @@
 </c:choose>
 
 <c:choose>
-	<c:when test="${empty urlAcao}">
-		<c:set var="urlBuscar" value="/app${acaoBusca}/buscar" />
+	<c:when test="${empty prefix}">
+		<c:set var="prefixSel" value="" />
 	</c:when>
 	<c:otherwise>
-		<c:set var="urlBuscar" value="/app${acaoBusca}/${urlAcao}" />
+		<c:set var="prefixSel" value="/${prefix}" />
+	</c:otherwise>
+</c:choose>
+
+<c:choose>
+	<c:when test="${empty urlAcao}">
+		<c:set var="urlBuscar" value="/app${prefixSel}${acaoBusca}/buscar" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="urlBuscar" value="/app${prefixSel}${acaoBusca}/${urlAcao}" />
 	</c:otherwise>
 </c:choose>
 

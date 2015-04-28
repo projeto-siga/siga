@@ -110,9 +110,10 @@ public class SrSolicitacaoListaVO {
 		colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
 		colunasVO.add(new ColunasVO("Aberto", "dtRegString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
 		colunasVO.add(new ColunasVO("Movimentado", "dtUltimaMovimentacaoString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO, false, false, true));
-		colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", "", LARGURA_COLUNA_CODIGO));
-		colunasVO.add(new ColunasVO("Prior. Tecnica", "prioridadeTecnicaFormatada", "", LARGURA_COLUNA_CODIGO, false, false, true));
-		colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados"));
+		colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", "", LARGURA_COLUNA_CODIGO, false, false, true));
+		colunasVO.add(new ColunasVO("Prior. Tecnica", "prioridadeTecnicaFormatada", "", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Prazo", "prazo", "", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados", null, false, false, true));
 		colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados", null, false, false, true));
 		return colunasVO;
 	}

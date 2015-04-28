@@ -2527,7 +2527,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return new Date(dtBase.getTime() + segundosAdiante * 1000);
 	}
 
-	private Date getDtPrazoCadastramentoAcordado() {
+	public Date getDtPrazoCadastramentoAcordado() {
 		if (acordos == null || acordos.size() == 0 || isCancelado())
 			return null;
 		Long menorTempoAcordado = null;
@@ -2541,7 +2541,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return getDataAPartirDe(getDtInicioPrimeiraEdicao(), menorTempoAcordado);
 	}
 
-	private Date getDtPrazoAtendimentoAcordado() {
+	public Date getDtPrazoAtendimentoAcordado() {
 		if (acordos == null || acordos.size() == 0 || isCancelado())
 			return null;
 		Long menorTempoAcordado = null;
@@ -2553,6 +2553,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (menorTempoAcordado == null)
 			return null;
 		return getDataAPartirDe(getDtInicioAtendimento(), menorTempoAcordado);
+	}
+	
+	public String getDtPrazoAtendimentoAcordadoDDMMYYYYHHMM() {
+		Date dt = getDtPrazoAtendimentoAcordado();
+		if (dt != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dt) 
+					+ "</span>" + df.format(dt);
+		}
+		return "";
 	}
 
 	public Cronometro getCronometro() throws Exception {

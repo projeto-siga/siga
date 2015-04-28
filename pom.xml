@@ -26,9 +26,9 @@
 		<module>siga-ext</module>
 		<module>siga-ex</module>
 		<module>sigagc</module>
-		<!--<module>siga-play-module</module>
+		<module>siga-play-module</module>
  		<module>sigasr</module>
- 		<module>sigapp</module>
+ 		<!--<module>sigapp</module>
 		<module>sigari</module>
  		<module>sigacd</module>
  		<module>siga-cd</module>

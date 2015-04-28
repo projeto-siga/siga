@@ -43,7 +43,7 @@ public class ConfiguracaoController extends SrController {
 	}
 
 	@SuppressWarnings("static-access")
-	private void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {
+	private static void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {
 		StringBuffer sb = new StringBuffer();
 
 		if (designacao.getDescrConfiguracao() == null || designacao.getDescrConfiguracao().isEmpty())

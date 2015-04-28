@@ -103,20 +103,28 @@ function postback(){
 					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
 				solicitacao.podeTrocarAtendente(titular, lotaTitular)}
 				#{set atendentes: solicitacao.pessoasAtendentesDisponiveis /}
-				
-				#{if atendentes.size >= 1}
+				#{set substitutos: solicitacao.substitutos /}
 				<div class="gt-form-row">
 					<label>Atendente</label>
 					<div id="divAtendente">
 					#{select name:'movimentacao.atendente',
-						items:atendentes,
-						labelProperty:'descricaoIniciaisMaiusculas',
 						value:solicitacao.atendente?.pessoaAtual?.idPessoa}
-					#{option 0}#{/option} 
+						#{option 0}#{/option} 
+					#{if atendentes.size >= 1}
+						#{list atendentes, as:'pessoa' }
+							#{option pessoa.pessoaAtual?.idPessoa} ${pessoa.pessoaAtual?.descricaoIniciaisMaiusculas} #{/option}					 
+						#{/list}
+					#{/if}
+					#{if substitutos.size >= 1}
+					<optgroup label="Subsititutos">
+           				#{list items:substitutos, as:'pessoaSubst' }
+							#{option pessoaSubst.substituto?.pessoaAtual?.idPessoa} ${pessoaSubst.substituto?.pessoaAtual?.descricaoIniciaisMaiusculas}#{/option}					 
+						#{/list}
+		            </optgroup>
+		           	#{/if}
 					#{/select}
 					</div>
 				</div>
-				#{/if}
 				#{/if}
 
 				<div style="display: inline" class="gt-form-row gt-width-66">
@@ -153,8 +161,8 @@ function postback(){
 						#{if todoOContexto}
 						<th>Solicita&ccedil;&atilde;o</th> #{/if}
 						<th>Evento</th>
-						<th colspan="2">Cadastrante</th> #{if ocultas}
-						<th colspan="2">Atendente</th> #{/if}
+						<th colspan="2">Cadastrante</th> 
+						<th colspan="2">Atendente</th> 
 						<th>Descrição</th>
 					</tr>
 				</thead>
@@ -166,7 +174,7 @@ function postback(){
 						*{#{if ocultas}
 						<td>${movimentacao.numSequencia}</td> #{/if}}*  #{if ocultas}
 						<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>#{/if} #{else}
-						<td>${movimentacao.dtIniString}</td>#{/else} 
+						<td>${movimentacao.dtIniString.raw()}</td>#{/else} 
 						#{if todoOContexto}
 						<td><a style="color: #365b6d;" href="@{Application.exibir(movimentacao.solicitacao.idSolicitacao)}"
 	style="text-decoration: none"> ${movimentacao.solicitacao.numSequenciaString}</td> #{/if}
@@ -177,14 +185,13 @@ function postback(){
 						<td>#{selecionado
 							sigla:movimentacao.cadastrante?.nomeAbreviado,
 							descricao:movimentacao.cadastrante?.descricaoIniciaisMaiusculas
-							/}</td> #{if ocultas}
+							/}</td> 
 						<td>#{selecionado
 							sigla:movimentacao.lotaAtendente?.siglaLotacao,
 							descricao:movimentacao.lotaAtendente?.nomeLotacao /}</td>
 						<td>#{selecionado
 							sigla:movimentacao.atendente?.nomeAbreviado,
 							descricao:movimentacao.atendente?.descricaoIniciaisMaiusculas /}</td>
-						#{/if}
 						<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
 							#{if movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
 							arquivo:movimentacao.arquivo /}#{/if} 
@@ -286,13 +293,14 @@ function postback(){
 					</ul>
 				</div>
 			</p>
-			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
-			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
-			#{/elseif} #{else} #{set priorColor:'' /} #{/else}
 			<p>
-				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
-					<br /> ${solicitacao.GUTString}</span>
+				<b>Prioridade:</b> <span style="">${solicitacao.prioridade?.descPrioridade}</span>
 			</p>
+			#{if solicitacao.prioridadeTecnica != solicitacao.prioridade}
+			<p>
+				<b>Prioridade T&eacute;cnica:</b> <span style="">${solicitacao.prioridadeTecnica.descPrioridade}</span>
+			</p>
+			#{/if}
 			<p>
 				<b>Notificação:</b>
 				${solicitacao.formaAcompanhamento.descrFormaAcompanhamento.raw()}
@@ -356,20 +364,17 @@ function postback(){
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Listas de Prioridade</h3>
-			<p>
+				<ul>
 				#{list items:solicitacao.listasAssociadas, as:'listas'}
-				<tr>
-					<td class="gt-form-row gt-width-66"
-						style="font-size: 13px; font-weight: bold; ! important; padding: 7px 10px;">
+					<li>
 						&nbsp; <input type="hidden" name="idlista"
 						value="${listas?.idLista}"> <a
 						style="color: #365b6d; text-decoration: none"
 						href="@{Application.exibirLista(listas?.idLista)}">
 							${listas?.listaAtual?.nomeLista} </a>
-					</td>
-				</tr>
+					</li>
 				#{/list}
-			</p>
+				</ul>
 		</div>
 	</div>
 	#{/if} 
@@ -472,8 +477,6 @@ function postback(){
 			</div>
 		</form>
 	#{/modal}
-	#{modal nome:'associarLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/associarLista?idSolicitacao='+solicitacao.idSolicitacao} 
-	#{/modal} 
 	#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa', url:'/sigasr/solicitacao/responderPesquisa?id='+solicitacao.idSolicitacao}
 	#{/modal}
 	#{modal nome:'pendencia', titulo:'Pendência'}
@@ -507,23 +510,15 @@ function postback(){
 	</form>
 	</div>
 	</div>
-	#{/modal} #{modal nome:'alterarPrazo', titulo:'Alterar Prazo'}
+	#{/modal} #{modal nome:'alterarPrioridade', titulo:'Alterar Prioridade'}
 		<div class="gt-form gt-content-box">
-		<form action="@{Application.alterarPrazo()}" method="post"
+		<form action="@{Application.alterarPrioridade()}" method="post"
 			enctype="multipart/form-data" onsubmit="javascript: return block();">
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
-				<div class="gt-form-row gt-width-66">
-					<label>Data</label>
-					<input type="text" name="calendario" id="calendarioReplanejar">
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Hora</label>
-					<input type="text" name="horario" id="horarioReplanejar">
-				</div>
-				<div class="gt-form-row gt-width-66">
-					<label>Motivo</label>
-					<textarea name="motivo" cols="50" rows="4"> </textarea> 
+				<div class="gt-form-row gt-width-33">
+					<label>Prioridade</label> #{select name:'prioridade', id:'prioridade', items:models.SrPrioridade.values(),
+					labelProperty:'descPrioridade', value:solicitacao.prioridadeTecnica, style:'width:235px;' /}
 				</div>
 				<input type="hidden" name="id" value="${solicitacao.id}" /> 
 				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />

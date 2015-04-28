@@ -97,8 +97,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			
 			if (!atributosDesconsiderados.contains(LISTA_PRIORIDADE)
 					&& conf.listaPrioridade != null
-					&& (filtro.listaPrioridade == null || (filtro.listaPrioridade != null && !conf.listaPrioridade
-							.getListaAtual().equivale(filtro.listaPrioridade))))
+					&& (filtro.listaPrioridade == null || (filtro.listaPrioridade != null && !conf.listaPrioridade.getListaAtual().equivale(filtro.listaPrioridade))))
 				return false;
 
 			if (!atributosDesconsiderados.contains(TIPO_ATRIBUTO)
@@ -160,6 +159,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 		return listaFinal;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	protected void evitarLazy(List<CpConfiguracao> provResults) {
 		super.evitarLazy(provResults);
@@ -180,6 +180,14 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				for (SrItemConfiguracao i : srConf.itemConfiguracaoSet) {
 					i.getAtual();
 					
+					if(i.gestorSet != null) {
+						i.gestorSet.size();
+					}
+					
+					if(i.fatorMultiplicacaoSet != null) {
+						i.fatorMultiplicacaoSet.size();
+					}
+					
 					for (SrItemConfiguracao hist : i.meuItemHistoricoSet) {
 						hist.getAtual();
 					}
@@ -198,7 +206,14 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			}
 			
 			if (srConf.listaPrioridade != null) {
-				srConf.listaPrioridade.getListaAtual();
+				
+				if(srConf.listaPrioridade.meuListaHistoricoSet != null)
+					for (SrLista l : srConf.listaPrioridade.meuListaHistoricoSet)
+						l.getListaAtual();
+				
+				if(srConf.listaPrioridade.meuPrioridadeSolicitacaoSet != null)
+					for (SrPrioridadeSolicitacao l : srConf.listaPrioridade.meuPrioridadeSolicitacaoSet)
+						l.getPrioridade();
 			}
 			
 			if (srConf.pesquisaSatisfacao != null)
@@ -206,13 +221,6 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			
 			if (srConf.acordo != null)
 				srConf.acordo.getAcordoAtual();
-			
-			if (srConf.getListaConfiguracaoSet() != null) {
-				for (SrLista listaConf : srConf.getListaConfiguracaoSet()){
-					listaConf.getListaAtual();
-					listaConf.getId();
-				}
-			}
 
 			if (srConf.tipoPermissaoSet != null) {
 				for (SrTipoPermissaoLista perm : srConf.tipoPermissaoSet){

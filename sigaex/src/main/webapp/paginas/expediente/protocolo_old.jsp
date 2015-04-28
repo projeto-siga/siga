@@ -7,13 +7,19 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+
+<c:set var="req" value="${pageContext.request}" />
+<c:set var="url">${req.requestURL}</c:set>
+<c:set var="uri" value="${req.requestURI}" />
+<c:set var="baseURL" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 
 <c:set var="titulo_pagina" scope="request">Protocolo de Transferência</c:set>
 
 <script type="text/javascript" language="Javascript1.1"
 	src="<c:url value="/staticJavascript.action"/>"></script>
 
-<c:import context="/siga" url="/paginas/cabecalho_popup.jsp" />
+<c:import url="${baseURL}/siga/paginas/cabecalho_popup.jsp" />
 
 <ww:form name="frm" action="principal" namespace="/" method="GET"
 	theme="simple">
@@ -131,4 +137,4 @@
 		<p align="center">Assinatura do Servidor</p>
 		</ww:form>
 
-		<c:import context="/siga" url="/paginas/rodape_popup.jsp" />
+		<c:import url="${baseURL}/siga/paginas/rodape_popup.jsp" />

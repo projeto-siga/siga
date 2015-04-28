@@ -4,6 +4,12 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+
+<c:set var="req" value="${pageContext.request}" />
+<c:set var="url">${req.requestURL}</c:set>
+<c:set var="uri" value="${req.requestURI}" />
+<c:set var="baseURL" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 
 <c:set var="titulo_pagina" scope="request">
 	Visualizar
@@ -15,7 +21,7 @@
 	<c:set var="jsp" scope="request" value="${nmArqMod}" />
 </c:if>
 
-<c:import context="/siga" url="/paginas/cabecalho_popup.jsp" />
+<c:import url="${baseURL}/siga/paginas/cabecalho_popup.jsp" />
 
 <table width="100%" border="0">
 	<tr>
@@ -36,5 +42,5 @@
 		</tags:fixdocumenthtml></td>
 	</tr>
 </table>
-<c:import context="/siga" url="/paginas/rodape_popup.jsp" />
 
+<c:import url="${baseURL}/siga/paginas/rodape_popup.jsp" />

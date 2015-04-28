@@ -31,6 +31,7 @@ import org.joda.time.DateTime;
 
 import play.db.jpa.GenericModel;
 import util.SigaPlayCalendar;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -107,8 +108,8 @@ public class SrMovimentacao extends GenericModel {
 	@Column(name = "NUM_SEQUENCIA")
 	public Long numSequencia;
 
-	@Column(name = "ID_PRIORIDADE")
-	public Long prioridade;
+	@Enumerated
+	public SrPrioridade prioridade;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESQUISA")
@@ -223,7 +224,8 @@ public class SrMovimentacao extends GenericModel {
 	public String getDtIniString() {
 		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtIniMov);
-		return cal.getTempoTranscorridoString(false);
+		return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dtIniMov) 
+				+ "</span>" + cal.getTempoTranscorridoString(false);
 	}
 
 	public String getDtIniMovDDMMYYHHMM() {
@@ -259,7 +261,7 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public String getCadastranteString() {
-		return atendente.getSigla() + " (" + lotaAtendente.getSigla() + ")";
+		return cadastrante.getSigla() + " (" + lotaCadastrante.getSigla() + ")";
 	}
 
 	public void setArquivo(File file) {
@@ -276,7 +278,7 @@ public class SrMovimentacao extends GenericModel {
 		return salvar();
 	}
 
-	public SrMovimentacao salvar() throws Exception {
+	private SrMovimentacao salvar() throws Exception {
 
 		//Edson: considerar deixar esse codigo em SrSolicitacao.movimentar(),
 		//visto que sao chamadas muitas operacoes daquela classe
@@ -286,17 +288,15 @@ public class SrMovimentacao extends GenericModel {
 		solicitacao.refresh();
 
 		solicitacao.atualizarMarcas();
+		//notificação usuário
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
 				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.ABERTURA
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.ABERTURA_FECHAMENTO
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
-		
-		//Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
-		if (solicitacao.isFilha() &&
-				tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
-			Correio.notificarAtendente(this); //notifica o atendente da solicitacao pai, caso a filha seja fechada
+		//notificação atendente
+		notificarAtendente();
 		return this;
 	}
 
@@ -327,6 +327,15 @@ public class SrMovimentacao extends GenericModel {
 
 	private void checarCampos() throws Exception {
 
+		if (cadastrante == null)
+			throw new Exception("Cadastrante nÃ£o pode ser nulo");
+		if (lotaCadastrante == null)
+			lotaCadastrante = cadastrante.getLotacao();
+		if (titular == null)
+			titular = cadastrante;
+		if (lotaTitular == null)
+			lotaTitular = titular.getLotacao();
+		
 		if (solicitacao == null)
 			throw new Exception(
 					"Movimentaï¿½ï¿½o precisa fazer parte de uma solicitaï¿½ï¿½o");
@@ -372,12 +381,29 @@ public class SrMovimentacao extends GenericModel {
 	}
 
 	public void notificar() {
-		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
+		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE)
 			Correio.notificarReplanejamentoMovimentacao(this);
 		else if (!isCancelada())
 			Correio.notificarMovimentacao(this);
 		else
 			Correio.notificarCancelamentoMovimentacao(this);
+	}
+	
+	public void notificarAtendente() throws Exception {
+		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
+				|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
+					|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
+					|| (lotaAtendente != null && lotaTitular != null && !lotaTitular.equivale(lotaAtendente))) {
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
+					lotaAtendente, "SIGA;SR;EMAILATEND:Receber NotificaÃ§Ã£o Atendente"))
+				Correio.notificarAtendente(this, solicitacao);
+		}
+		else if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
+				&& solicitacao.isFilha()) {
+			if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
+					solicitacao.solicitacaoPai.getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber NotificaÃ§Ã£o Atendente"))
+				Correio.notificarAtendente(this, solicitacao.solicitacaoPai); 
+		}
 	}
 	
 	public String getMotivoPendenciaString() {

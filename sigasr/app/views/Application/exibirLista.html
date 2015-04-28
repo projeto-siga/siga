@@ -5,24 +5,11 @@
 <script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
 <script src="/sigasr/public/javascripts/jquery.populate.js"></script>
 <script src="/sigasr/public/javascripts/base-service.js"></script>
-
-<style>
-#sortable table { height: 1.5em; line-height: 1.2em; }
-.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
-</style>
+<script src="/sigasr/public/javascripts/compatibilidade-jboss5.js"></script>
 
 #{set podeRemover:lista.podeRemover(lotaTitular, cadastrante) /}
 #{set podeEditar:lista.podeEditar(lotaTitular, cadastrante) /}
 #{set podePriorizar:lista.podePriorizar(lotaTitular, cadastrante) /}
-
-#{if podePriorizar}
-<script>
-	$(function() {
-		$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
-		$( "#sortable" ).disableSelection();
-	});
-</script>
-#{/if} 
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
@@ -34,177 +21,113 @@
 					<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">Editar
 				</a>&nbsp;&nbsp;&nbsp; #{/if}
 		</p>
- 	
- 	<div class="gt-content-box gt-for-table dataTables_div">
-		<table id="solicitacao_table" class="display gt-table-nowrap">
-			<col width="5%" />
-			<col width="15%" />
-    		<col width="25%" />
-    		<col width="10%" />
-    		<col width="10%" />
-    		<col width="10%" />
-    		<col width="20%" />
-    		<col width="5%" />
-    		<thead>
-				<tr class="gt-celula-nowrap">
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">#</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Teor</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Solicitante</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Aberto</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Lotação</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Última Movimentação</th>
-					#{if podeRemover}
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;"></th>
-					#{/if}
-				</tr>
-			</thead>
-			<tbody id="sortable" >
-				#{list items:lista.solicitacaoSet, as:'sol'}
-				#{if sol}
+		
+		#{solicitacoes solicitacaoListaVO:solicitacaoListaVO, filtro:filtro, modoExibicao:'lista' /}
+	</div>
 	
-				<tr id="${sol.idSolicitacao}">
-				<td class="gt-celula-nowrap" style="cursor:move; font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="prioridade">
-					${sol.getPrioridadeNaLista(lista)}
-				</td>
-				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<a href="@{Application.exibir(sol.idSolicitacao)}">
-								${sol.codigo}
-							</a>	
-				</td>
-				<td class="gt-celula-nowrap"  style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important; text-align:justify;" "id="descrSolicitacao">
-				<b>#{descricaoItem itemConfiguracao: sol.itemAtual /}:</b>&nbsp;
-				#{selecionado sigla:sol.descricao,descricao:sol.descricao /}
-				</td>
-					
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px; text-align:center;" >
-				#{selecionado sigla:sol.solicitante.nomeAbreviado, descricao:sol.solicitante.descricaoIniciaisMaiusculas /}&nbsp;
-				#{selecionado sigla:sol.lotaSolicitante.siglaLotacao,descricao:sol.lotaSolicitante.siglaLotacao /}
-				</td>
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-				#{selecionado sigla:sol.solicitacaoInicial.dtRegString,descricao:sol.solicitacaoInicial.dtRegString /}
-				</td>						
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					<b>${sol?.lotaAtendente.siglaLotacao}</b></td>
-				<td class="gt-celula-nowrap" style="font-size: 9pt; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					#{selecionado sigla:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao,descricao:sol.ultimaMovimentacaoQuePossuaDescricao?.descrMovimentacao /}
-				</td>
-				#{if podeRemover} 
-				<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-					<input type="hidden" name="idLista" value="${lista.idLista}">
-					<input type="hidden" name="idSolicitacao" value="${sol.idSolicitacao}">
-					<a onclick="javascript: return block();" href="@{Application.retirarDeLista(sol.idSolicitacao,lista.idLista)}" title="Remover da Lista" name="idSolicitacao" value="${sol.idSolicitacao}">
-					<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> </a>
-				</td>
-				#{/if}
-				</tr>		
-				#{/if}		
-				#{/list}
-			</tbody>
-		</table>
-	</div>	
-</div>
-
-<!-- /content box -->
-<div class="gt-table-buttons">
-	<input type="hidden" name="idLista" value="${lista.idLista}">
-	#{if podePriorizar} 
-	<input type="button" id="btn" value="Gravar" class="gt-btn-medium gt-btn-left" />#{/if}
-	<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+	<!-- /content box -->
+	<div class="gt-table-buttons">
+		<input type="hidden" name="idLista" value="${lista.idLista}">
+		#{if podePriorizar} 
+		<input type="button" id="btn" value="Gravar" class="gt-btn-medium gt-btn-left" />#{/if}
+		<a href="@{Application.listarLista}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+	</div>
 </div>
 
 #{modal nome:'editarLista', titulo:'Editar Lista'}
-	<div id="divEditarLista" style="width: 800px !important; max-width: 800px !important;">#{include
-				'Application/editarLista.html' /}</div>
+	<div id="divEditarLista">#{include 'Application/editarLista.html' /}</div>
 #{/modal}
+
+<!-- modal de posicao -->
+#{modal nome:'posicao', titulo:'Posição da Solicitação na Lista'}
+	<div class="gt-form gt-content-box" style="width: 280px; height: 100px;">
+		<form id="posicaoForm">
+			<input id="idPrioridadePosicao" type="hidden" name="idSolicitacao" />
+			
+			<div id="numPosicao" class="gt-form-row gt-width-66">
+				<label>Mover Para</label> 
+				<input type="number" min="0" name="numPosicao"/>
+			</div>
+			
+			<div class="gt-form-row">
+				<input type="button" value="Ok" class="gt-btn-medium gt-btn-left" 
+					onclick="reposicionar()" />
+				<a class="gt-btn-medium gt-btn-left" onclick="modalPosicaoFechar()">Cancelar</a>
+			</div>
+		</form>
+	</div>
+#{/modal}
+
+<!-- modal de prioridade -->
+#{modal nome:'prioridade', titulo:'Alterar Prioridade'}
+	<div class="gt-form gt-content-box">
+		<form id="prioridadeForm">
+			<input id="idPrioridadePrior" type="hidden" name="idSolicitacao" />
+			
+			<div id="prioridade" class="gt-form-row gt-width-66">
+				<label>Prioridade</label> 
+				<td>#{select name:'prioridade', id:'selectPrioridade', items:models.SrPrioridade.values(), 
+						labelProperty:'descPrioridade', value:prioridade, style:'width:250px;' } 
+						#{option 0}Nenhuma#{/option} 
+						#{/select}
+				</td>					
+			</div>
+			<div id="naoReposicionarAutomatico" class="gt-width-250">
+				<label>#{checkbox name:'naoReposicionarAutomatico',
+					value:naoReposicionarAutomatico/} Não reposicionar automaticamente</label>
+			</div>				
+			
+			<div class="gt-form-row">
+				<input type="button" value="Ok" class="gt-btn-medium gt-btn-left" 
+					onclick="gravarPrioridade()" />
+				<a class="gt-btn-medium gt-btn-left" onclick="modalPrioridadeFechar()">Cancelar</a>					
+			</div>
+		</form>
+	</div>
+	
+	<div id="jsonPrioridades" data-json="${jsonPrioridades}"></div>
+#{/modal}
+
 
 <script type="text/javascript">
 	var solicitacaoTable,
-		listaJson;
+		listaJson,
+		QueryString = {};
 
-	var QueryString = function () {
-		// This function is anonymous, is executed immediately and
-		// the return value is assigned to QueryString!
-		var query_string = {};
-		var query = window.location.search.substring(1);
-		var vars = query.split("&");
-		for (var i=0;i<vars.length;i++) {
-			var pair = vars[i].split("=");
-	    	// If first entry with this name
-	    	if (typeof query_string[pair[0]] === "undefined") {
-				query_string[pair[0]] = pair[1];
-				// If second entry with this name
-			} else if (typeof query_string[pair[0]] === "string") {
-				var arr = [ query_string[pair[0]], pair[1] ];
-				query_string[pair[0]] = arr;
-				// If third or later entry with this name
-			} else {
-				query_string[pair[0]].push(pair[1]);
-			}
-		}
-		return query_string;
-	}();
-	
-	/* Table initialization */
-	$(document).ready(function() {
-		if ( $.fn.dataTable.isDataTable( '#solicitacao_table' ) ) {
-			solicitacaoTable = $('#solicitacao_table').dataTable();
-		}
-		else {
-			solicitacaoTable = $('#solicitacao_table').dataTable({
-				"language": {
-					"emptyTable":     "Não existem resultados",
-				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-				    "infoPostFix":    "",
-				    "thousands":      ".",
-				    "lengthMenu":     "Mostrar _MENU_ registros",
-				    "loadingRecords": "Carregando...",
-				    "processing":     "Processando...",
-				    "search":         "Filtrar:",
-				    "zeroRecords":    "Nenhum registro encontrado",
-				    "paginate": {
-				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
-				        "previous":   "Anterior"
-				    },
-				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
-				    }
-				},
-				"bSort" : false,
-				"bFilter": false,
-				"bPaginate": false
-			});
-		}
-	});
-	
 	$(function(){
 	    $('#btn').click(function() {
-	        if (!block())
-	            return false;
-	        var ids=[];
+	        var prioridades=[];
 	    	$("#sortable > tr").each(function() {
-				var id = $(this).attr('id');
-	
-				if (id != undefined && id != '')
-	        		ids.push(id);
+	    		var solicitacaoString = $(this).attr('data-json'),
+	    			solicitacao = JSON.parse(solicitacaoString);
+
+    			if (solicitacao)
+    				prioridades.push(solicitacao.prioridadeSolicitacaoVO);
 	 	    });
-	
-	 	    if (ids.length > 0)
-	    		window.location.href = "@{Application.priorizarLista}?id=${lista.idLista}&ids="+ids;
+
+	    	jQuery.blockUI(objBlock);
+	    	$.form('@{Application.priorizarLista()}', 
+	    	    	{ listaPrioridadeSolicitacao : prioridades, id : $('[name=idLista]').val() }, 
+	    	    	'POST').submit();
+	    	
+	 	    /*if (prioridades.length > 0) {
+	 	    	$.post('@{Application.priorizarLista()}', {
+		 	    	listaPrioridadeSolicitacao : prioridades,
+		 	    	id : $('[name=idLista]').val(),
+		 	    	success: function() {
+		 	    		alert('Lista gravada com sucesso');
+		 	    	}
+	 	    	});
+		 	}*/
 	    });
 	});
 
 	var opts = {
-			 urlGravar : '@{Application.gravarLista()}?',
-			 dialogCadastro : $('#editarLista_dialog'),
-			 objectName : 'lista',
-			 formCadastro : $('#formLista')
-		};	
+			urlGravar : '@{Application.gravarLista()}?',
+			dialogCadastro : $('#editarLista_dialog'),
+			objectName : 'lista',
+			formCadastro : $('#formLista')
+	};	
 
 	// Define a "classe" listaService
 	function ListaService(opts) {
@@ -223,19 +146,17 @@
 	listaService.getId = function(lista) {
 		return lista.idLista;
 	}
-
 	/**
 	 * Customiza o metodo editar
 	 */
-	listaService.editar = function(obj, title) {
-		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+	listaService.editar = function(lista, title) {
+		BaseService.prototype.editar.call(this, lista, title); // super.editar();
 
 		limparDadosListaModal();
-
 		// carrega as permissões da lista
-		carregarPermissoes(obj.idLista);
+		carregarPermissoes(lista.idLista);
+		configuracaoInclusaoAutomaticaService.carregarParaLista(lista.idLista);
 	}
-
 	/**
 	* Customiza o método onGravar()
 	*/
@@ -244,6 +165,27 @@
 
 		if (listaJson)
 			$("#tituloPagina").html(listaJson.nomeLista);
+	}
+
+	listaService.alterarPosicao = function(event) {
+		var tr = $(event.target).parent().parent().parent(),
+			obj = JSON.parse(tr.attr('data-json'));
+
+		if (obj) {
+			$('#posicao_dialog').dialog('open');
+			new Formulario($('#posicaoForm')).populateFromJson(obj.prioridadeSolicitacaoVO);
+		}
+	}
+
+	listaService.alterarPrioridade = function(event) {
+		var tr = $(event.target).parent().parent().parent(),
+			obj = JSON.parse(tr.attr('data-json'));
+
+		if (obj) {
+			$('#prioridade_dialog').dialog('open');
+			obj.prioridadeSolicitacaoVO.checknaoReposicionarAutomatico = obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico;
+			new Formulario($('#prioridadeForm')).populateFromJson(obj.prioridadeSolicitacaoVO);
+		}
 	}
 
 	function editarLista(event, jSon) {
@@ -255,11 +197,6 @@
 		listaService.editar(listaJson, 'Alterar Lista');
 	}
 	
-	function limparDadosListaModal() {
-		// limpa as permissões
-		permissoesTable.api().clear().draw();
-	}
-
 	function carregarPermissoes(id) {
         $.ajax({
         	type: "GET",
@@ -275,46 +212,148 @@
        	});
     }
 
-	function populatePermissoesFromJSonList(permissoesJSon) {
-		for (var i = 0; i < permissoesJSon.length; i++) {
-			var permissao = permissoesJSon[i],
-				row = [ permissao.orgaoUsuario ? permissao.orgaoUsuario.id : '',
-						permissao.orgaoUsuario ? permissao.orgaoUsuario.sigla : '', 
-						permissao.complexo ? permissao.complexo.id : '',
-						permissao.complexo ? permissao.complexo.descricao : '', 
-						permissao.lotacao ? permissao.lotacao.id : '',
-						permissao.lotacao ? permissao.lotacao.descricao : '', 
-						permissao.lotacao ? permissao.lotacao.sigla : '', 
-						permissao.pessoa ? permissao.pessoa.id : '',
-						permissao.pessoa ? permissao.pessoa.descricao : '', 
-						permissao.pessoa ? permissao.pessoa.sigla : '', 
-						permissao.cargo ? permissao.cargo.id : '',
-						permissao.cargo ? permissao.cargo.descricao : '', 
-						permissao.cargo ? permissao.cargo.sigla : '',
-						permissao.funcaoConfianca ? permissao.funcaoConfianca.id : '',
-						permissao.funcaoConfianca ? permissao.funcaoConfianca.descricao : '', 
-						permissao.funcaoConfianca ? permissao.funcaoConfianca.sigla : '',  
-	          			permissao.listaTipoPermissaoListaVO,									//16
-	          			permissao.idConfiguracao,												//17    
-	          			'',																		//18
-	          			getDescricaoTipoPermissaoByLista(permissao.listaTipoPermissaoListaVO),	//19
-	          			getAcaoPermissao(permissao)
-	          			];
-
-			var tr = permissoesTable.api().row.add(row).draw().node();
-			if(!permissao.ativo) {
-				$(tr).find('td').addClass('item-desativado');
-	  		}
+	function getAcaoPermissao(permissao) {
+		if(permissao.ativo) {
+	 			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
+						'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
+						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
+					'</a>';
 		}
+		return new String();
+	}
+	
+	function reposicionar() {
+		var novaPosicao = $('[name=numPosicao]').val(),
+			lista = $("#sortable > tr"),
+			idSolicitacao = $('#idPrioridadePosicao').val(),
+			tr = $('[data-json-id= '+ idSolicitacao + ']'),
+			size = lista.size(),
+			stringSolicitacao = $(tr).attr('data-json'),
+			solicitacao = JSON.parse(stringSolicitacao);
 
-		function getAcaoPermissao(permissao) {
-			if(permissao.ativo) {
-	  			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
-							'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
-							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
-						'</a>';
+		if (novaPosicao <= 0) {
+			tr.insertBefore($(lista[0]));
+		} 
+		else if (novaPosicao >= size) {
+			tr.insertAfter($(lista[size-1]));
+		}
+		else {
+			if (solicitacao && solicitacao.prioridadeSolicitacaoVO && solicitacao.prioridadeSolicitacaoVO.numPosicao < novaPosicao) {
+				tr.insertBefore($(lista[novaPosicao]));
 			}
-			return new String();
+			else tr.insertBefore($(lista[novaPosicao-1]));
 		}
+		recalcularPosicao();
+		modalPosicaoFechar();
+	}
+
+	function modalPosicaoFechar() {
+		$("#posicao_dialog").dialog("close");
+	}
+
+	function modalPosicaoFechar() {
+		$("#posicao_dialog").dialog("close");
+	}
+	
+	function recalcularPosicao() {
+		var posicao = 0;
+		$("#sortable > tr").each(function() {
+			var me = $(this),
+				objString = me.attr('data-json'),
+				obj = JSON.parse(objString),
+				numPosicaoAntiga = -1;
+
+			if (obj && obj.prioridadeSolicitacaoVO) {
+				numPosicaoAntiga = obj.prioridadeSolicitacaoVO.numPosicao;
+				posicao++;
+				obj.prioridadeSolicitacaoVO.numPosicao = posicao;
+			}
+			me.attr('data-json', JSON.stringify(obj));
+			me.find('td:first').find('a').html(posicao);
+		});		
+		
+	}
+	
+	function gravarPrioridade() {
+		var novaPrioridade = $('#selectPrioridade').val(),
+			idSolicitacao = $('#idPrioridadePrior').val(),
+			tr = $('[data-json-id= '+ idSolicitacao + ']'),
+			objString = $(tr).attr('data-json'),
+			obj = JSON.parse(objString);
+		
+		if (obj && obj.prioridadeSolicitacaoVO) {
+			var prioridadeAntiga = obj.prioridadeSolicitacaoVO.prioridade;
+			tr.removeClass('PRIORIDADE-' + obj.prioridadeSolicitacaoVO.prioridade);
+			tr.addClass('PRIORIDADE-' + novaPrioridade);
+
+			obj.prioridadeSolicitacaoVO.prioridade = novaPrioridade;
+			obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico = $('#checknaoReposicionarAutomatico').is(':checked');
+			
+			tr.attr('data-json', JSON.stringify(obj));
+			
+			if(prioridadeAntiga != novaPrioridade) {
+				if (!obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico) {
+					reposicionarPorPrioridade(obj, tr);
+				}
+			}
+		}
+		recalcularPosicao();
+		modalPrioridadeFechar();
+	}
+
+	function modalPrioridadeFechar() {
+		$("#prioridade_dialog").dialog("close");
+	}
+	
+	function reposicionarPorPrioridade(listaVO, tr) {
+		var lista = $("#sortable > tr"),
+			reposicionou = reposicionarAposIgual(lista, tr, listaVO);
+		
+		if (!reposicionou) {
+			reposicionou = reposicionarPorPrecedenciaPrioridade(lista, tr, listaVO);
+		}
+
+		if (!reposicionou) {
+			// Insere no final
+			tr.insertAfter($(lista[lista.size() - 1]));
+		}		
+	}
+
+	function reposicionarAposIgual(lista, tr, listaVO) {
+		for (var i = lista.size() - 1; i >= 0; i--) {
+			var trAdicionado = $(lista[i]), 
+				listaVOAdicionado = JSON.parse(trAdicionado.attr('data-json'));
+
+			if (registrosPrioridadesDiferentes(listaVO, listaVOAdicionado)) {
+				if (listaVO && listaVO.prioridadeSolicitacaoVO && listaVO.prioridadeSolicitacaoVO.prioridade == listaVOAdicionado.prioridadeSolicitacaoVO.prioridade) {
+					tr.insertAfter(trAdicionado);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	function reposicionarPorPrecedenciaPrioridade(lista, tr, listaVO) {
+		var jsonPrioridades = $('#jsonPrioridades').data('json');
+		
+		for (var i = 0; i <= lista.size() - 1; i++) {
+			if(listaVO && listaVO.prioridadeSolicitacaoVO) {
+				var trAdicionado = $(lista[i]),
+					listaVOAdicionado = JSON.parse(trAdicionado.attr('data-json')),
+					idPrioridadeNovo = jsonPrioridades[listaVO.prioridadeSolicitacaoVO.prioridade],
+					idPrioridadeAntigo = jsonPrioridades[listaVOAdicionado.prioridadeSolicitacaoVO.prioridade];
+				
+				if (idPrioridadeNovo > idPrioridadeAntigo) {
+					tr.insertBefore(trAdicionado);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	function registrosPrioridadesDiferentes(listaVO, listaVOAdicionado) {
+		return listaVO.prioridadeSolicitacaoVO.idPrioridadeSolicitacao != listaVOAdicionado.prioridadeSolicitacaoVO.idPrioridadeSolicitacao;
 	}
 </script>

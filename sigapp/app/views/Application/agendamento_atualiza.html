@@ -27,8 +27,16 @@
   <input class="ui-widget" name="periciado" type="text" style="position:absolute;left:40%;" size="50" maxlength="50" value="${periciado}" />
   <br><br>
   <font class="ui-state-default" size="3px" style="position:absolute;left:25%;">Perito juízo: </font>
-  
+  <!--  
   <input class="ui-widget" name="perito_juizo" type="text" style="position:absolute;left:40%;" size="50" maxlength="50" value="${perito_juizo}" />
+   -->
+   <select  name="perito_juizo" class="ui-widget" style="position:absolute;left:40%;" >
+  		#{if perito_juizo.trim()!="-"}<option value="${perito_juizo}">${nome_perito_juizo} </opton>#{/if}
+  		<option value="-">(escolha o perito)</option>
+  		#{list items:listPeritos, as:'perito'}
+  		<option value="${perito.cpf_perito.substring(0,12)}">${perito.nome_perito}</option>
+  		#{/list}
+  </select>
   <br><br>
   <font class="ui-state-default" size="3px" style="position:absolute;left:25%;">Perito parte: </font>
   

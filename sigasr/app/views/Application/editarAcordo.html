@@ -100,9 +100,9 @@
 			</div>
 
 			<div class="gt-form-row">
-				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="acordoService.gravar()" />
+				<input type="button" disabled value="Gravar" class="gt-btn-medium gt-btn-left" onclick="acordoService.gravar()" />
 				<a class="gt-btn-medium gt-btn-left" onclick="acordoService.cancelarGravacao()">Cancelar</a>
-				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="acordoService.aplicar()" />
+				<input type="button" disabled value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="acordoService.aplicar()" />
 			</div>
 		</form>
 	</div>
@@ -180,7 +180,7 @@
 						   acoesSet:acoesSet}#{/configuracaoItemAcao}
 							 
 	<div class="gt-form-row">
-		<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
+		<a href="javascript: gravarAssociacaoXXX()" class="gt-btn-medium gt-btn-left">Gravar</a>
 		<a href="javascript: associacaoModalFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
 	</div>
 </div>
@@ -330,9 +330,10 @@
 		
 		if (isEdicao)
 			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangencia');
-		else
+		else {
+			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
 			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangencia');
-		
+		}
 		jQuery("#associacao_dialog").dialog('open');
 	};
 
@@ -346,8 +347,8 @@
 		if (itemArray && itemArray[colunasAssociacao.jSon]) {
 			var associacao = itemArray[colunasAssociacao.jSon];
 			
-			detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
-			detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
+			TableHelper.detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
+			TableHelper.detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
 
 			table.append(trItens);
 			table.append(trAcoes);
@@ -380,8 +381,6 @@
 		jPrioridadeCbb.selectedIndex = 0;
 		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
-
-		atualizaDadosTabelaItemAcao();
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuário.
@@ -418,7 +417,7 @@
         $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 
         // atualiza os dados da lista de Itens e Ações
-        atualizaDadosTabelaItemAcao(itemArray[colunasAssociacao.jSon]);
+        configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(itemArray[colunasAssociacao.jSon]);
 	}
 
 	function transformStringToBoolean(value) {
@@ -493,7 +492,7 @@
         params += '&associacao.atendente=' + row[colunasAssociacao.idAtendente];
         params += '&associacao.idConfiguracao=' + row[colunasAssociacao.idAssociacao];
         params += '&associacao.hisIdIni=' + row[colunasAssociacao.hisIdIni];
-       	params += getItemAcaoAsString('associacao');
+       	params += configuracaoItemAcaoService.getItemAcaoAsString('associacao');
 
        	// atualiza o solicitante
 		params += getDadosSolicitante(row, i);

@@ -3,10 +3,10 @@ package models;
 
 public enum SrGravidade {
 
-	SEM_GRAVIDADE(1, "Sem gravidade.", "Sem gravidade"), NORMAL(2, "Gravidade normal.",
-			"Pouco grave"), GRAVE(3, "Grave.", "Grave"), MUITO_GRAVE(4,
-			"Muito grave.", "Muito grave"), EXTREMAMENTE_GRAVE(5,
-			"Extremamente grave.", "Extremamente grave");
+	SEM_GRAVIDADE(1, "Sem gravidade", ""), NORMAL(2, "Solicitante impossibilitado de realizar o trabalho",
+			""), GRAVE(3, "Serviço fora do ar", ""), MUITO_GRAVE(4,
+			"Evento em andamento (audiência, etc) ou solicitante prioritário", ""), EXTREMAMENTE_GRAVE(5,
+			"Extremamente grave", "");
 
 	public int nivelGravidade;
 

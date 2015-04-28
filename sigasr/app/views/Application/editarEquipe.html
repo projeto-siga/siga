@@ -123,9 +123,9 @@
 			
 			</div>
 			<div class="gt-form-row">
-				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="equipeService.gravar()"/>
+				<input type="button" disabled value="Gravar" class="gt-btn-medium gt-btn-left" onclick="equipeService.gravar()"/>
 				<a class="gt-btn-medium gt-btn-left" onclick="equipeService.cancelarGravacao()">Cancelar</a>
-				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="equipeService.aplicar()"/>
+				<input type="button" disabled value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="equipeService.aplicar()"/>
 			</div>
 		</div>
 
@@ -186,44 +186,9 @@
 
 <script type="text/javascript">
 	var validatorForm,
-		validatorFormExcessao = null,
-		excecoesTable;
+		validatorFormExcessao = null;
 	
 	jQuery(document).ready(function($) {
-		/* Table initialization */
-		excecoesTable = $('#excecoes_table').dataTable({
-			"language": {
-				"emptyTable":     "Não existem resultados",
-			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-			    "infoPostFix":    "",
-			    "thousands":      ".",
-			    "lengthMenu":     "Mostrar _MENU_ registros",
-			    "loadingRecords": "Carregando...",
-			    "processing":     "Processando...",
-			    "search":         "Filtrar:",
-			    "zeroRecords":    "Nenhum registro encontrado",
-			    "paginate": {
-			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
-			        "previous":   "Anterior"
-			    },
-			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
-			    }
-			},
-			"columnDefs": [{"targets": [0, 1], "visible": false, "searchable": false}],
-			"iDisplayLength": 25
-		});
-		
-		// Remover exceções
-		$('#excecoes_table tbody').on('click', 'a.excecao_remove', function () {
-			excecoesTable.api().row($(this).closest('tr')).remove().draw(false);
-		});
-
 		$.validator.addMethod(
 		        "hora",
 		        function(value, element, regexp) {
@@ -291,7 +256,7 @@
 			           document.getElementById("interFim").value,
 			           "<a class=\"excecao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 			
-			excecoesTable.api().row.add(row).draw();
+			equipeService.excecoesTable.api().row.add(row).draw();
 			modalExcecaoFechar();
 		}
 	}

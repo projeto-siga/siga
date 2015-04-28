@@ -147,12 +147,12 @@
 
 	function carregarPrioridade() {
 		gravidade 	= document.getElementById('gravidade');
-		urgencia 	= document.getElementById('urgencia');
-		tendencia 	= document.getElementById('tendencia'); 
+		//urgencia 	= document.getElementById('urgencia');
+		//tendencia 	= document.getElementById('tendencia'); 
 		params = '';
-		params = gravidade.name + '=' + escape(gravidade.value) + '&' + 
-					urgencia.name + '=' + escape(urgencia.value) + '&' +
-					tendencia.name + '=' + escape(tendencia.value) + '&';
+		params = gravidade.name + '=' + escape(gravidade.value) + '&';
+					//+ urgencia.name + '=' + escape(urgencia.value) + '&'
+					//+ tendencia.name + '=' + escape(tendencia.value) + '&';
 					
 		ReplaceInnerHTMLFromAjaxResponse('@{Application.exibirPrioridade()}?' + params,
 				null, document.getElementById('divPrioridade'));
@@ -516,10 +516,16 @@
 			</div>
 			<div class="gt-form-row box-wrapper">
 				<div class="gt-form-row gt-width-33">
-					<label>Gravidade</label> #{select name:'solicitacao.gravidade', id:'gravidade', items:models.SrGravidade.values(),
-					labelProperty:'respostaEnunciado', value:solicitacao.gravidade ?: 'NORMAL', style:'width:235px;', onchange:'carregarPrioridade()' /}
+					<label>Gravidade</label> #{select name:'solicitacao.gravidade', id:'gravidade',
+					 value:solicitacao.gravidade ?: 'SEM_GRAVIDADE', onchange:'carregarPrioridade()' }
+					 #{list models.SrGravidade.values(), as:'gravidade'}
+					 #{if gravidade.toString() != 'EXTREMAMENTE_GRAVE'}
+					 #{option gravidade.toString()}${gravidade.descrGravidade}#{/option}
+					 #{/if}
+					 #{/list}
+					 #{/select}
 				</div>
-				<div class="gt-form-row gt-width-33">
+				<!-- <div class="gt-form-row gt-width-33">
 					<label>Urg&ecirc;ncia</label> #{select
 					name:'solicitacao.urgencia', id:'urgencia', items:models.SrUrgencia.values(),
 					labelProperty:'respostaEnunciado', value:solicitacao.urgencia ?: 'NORMAL', style:'width:235px;', onchange:'carregarPrioridade()' /}
@@ -528,14 +534,14 @@
 					<label>Tend&ecirc;ncia</label> #{select
 					name:'solicitacao.tendencia', id:'tendencia', items:models.SrTendencia.values(),
 					labelProperty:'respostaEnunciado', value:solicitacao.tendencia ?: 'PIORA_MEDIO_PRAZO', style:'width:235px;', onchange:'carregarPrioridade()' /}
-				</div>
+				</div> -->
 			</div>
 			<div id="divPrioridade" class="gt-form-row gt-width-66">
 				<label style="float: left">Prioridade: &nbsp;</label>
-				<span>${solicitacao.prioridade?.descPrioridade ?: models.SrPrioridade.PLANEJADO.descPrioridade}</span>
+				<span>${solicitacao.prioridade?.descPrioridade ?: models.SrPrioridade.BAIXO.descPrioridade}</span>
 				#{select
 					name:'solicitacao.prioridade', id:'prioridade', items:models.SrPrioridade.values(), 
-					labelProperty:'descPrioridade', value:solicitacao.prioridade ?: 'PLANEJADO', style:'width:235px;border:none;display:none;'  /}
+					labelProperty:'descPrioridade', value:solicitacao.prioridade ?: 'BAIXO', style:'width:235px;border:none;display:none;'  /}
 					<br />
 			</div>
 

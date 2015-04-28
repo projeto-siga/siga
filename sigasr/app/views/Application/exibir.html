@@ -161,8 +161,8 @@ function postback(){
 						#{if todoOContexto}
 						<th>Solicita&ccedil;&atilde;o</th> #{/if}
 						<th>Evento</th>
-						<th colspan="2">Cadastrante</th> #{if ocultas}
-						<th colspan="2">Atendente</th> #{/if}
+						<th colspan="2">Cadastrante</th> 
+						<th colspan="2">Atendente</th> 
 						<th>Descrição</th>
 					</tr>
 				</thead>
@@ -185,14 +185,13 @@ function postback(){
 						<td>#{selecionado
 							sigla:movimentacao.cadastrante?.nomeAbreviado,
 							descricao:movimentacao.cadastrante?.descricaoIniciaisMaiusculas
-							/}</td> #{if ocultas}
+							/}</td> 
 						<td>#{selecionado
 							sigla:movimentacao.lotaAtendente?.siglaLotacao,
 							descricao:movimentacao.lotaAtendente?.nomeLotacao /}</td>
 						<td>#{selecionado
 							sigla:movimentacao.atendente?.nomeAbreviado,
 							descricao:movimentacao.atendente?.descricaoIniciaisMaiusculas /}</td>
-						#{/if}
 						<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
 							#{if movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
 							arquivo:movimentacao.arquivo /}#{/if} 
@@ -294,9 +293,6 @@ function postback(){
 					</ul>
 				</div>
 			</p>
-			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
-			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
-			#{/elseif} #{else} #{set priorColor:'' /} #{/else}
 			<p>
 				<b>Prioridade:</b> <span style="">${solicitacao.prioridade?.descPrioridade}</span>
 			</p>

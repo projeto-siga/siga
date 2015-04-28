@@ -571,7 +571,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public void associarPrioridadePeloGUT() {
-		int valorGUT = getGUT();
+		/*int valorGUT = getGUT();
 		if (Util.isbetween(1, 24, valorGUT))
 			prioridade = SrPrioridade.PLANEJADO;
 		else if (Util.isbetween(25, 49, valorGUT))
@@ -581,6 +581,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		else if (Util.isbetween(75, 99, valorGUT))
 			prioridade = SrPrioridade.ALTO;
 		else if (Util.isbetween(100, 125, valorGUT))
+			prioridade = SrPrioridade.IMEDIATO;*/
+		if (gravidade == SrGravidade.SEM_GRAVIDADE)
+			prioridade = SrPrioridade.BAIXO;
+		else if (gravidade == SrGravidade.NORMAL)
+			prioridade = SrPrioridade.MEDIO; 
+		else if (gravidade == SrGravidade.GRAVE)
+			prioridade = SrPrioridade.ALTO;
+		else if (gravidade == SrGravidade.MUITO_GRAVE)
 			prioridade = SrPrioridade.IMEDIATO;
 	}
 
@@ -1416,7 +1424,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				"modal=true"));
 
 		operacoes.add(new SrOperacao("clock_edit", "Alterar Prioridade",
-				podeAlterarPrioridade(titular, lotaTitular), "alterarPrioridade",
+				podeAlterarPrioridade(pess, lota), "alterarPrioridade",
 				"modal=true"));
 		 
 		operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir",

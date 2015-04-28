@@ -571,7 +571,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public void associarPrioridadePeloGUT() {
-		int valorGUT = getGUT();
+		/*int valorGUT = getGUT();
 		if (Util.isbetween(1, 24, valorGUT))
 			prioridade = SrPrioridade.PLANEJADO;
 		else if (Util.isbetween(25, 49, valorGUT))
@@ -581,6 +581,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		else if (Util.isbetween(75, 99, valorGUT))
 			prioridade = SrPrioridade.ALTO;
 		else if (Util.isbetween(100, 125, valorGUT))
+			prioridade = SrPrioridade.IMEDIATO;*/
+		if (gravidade == SrGravidade.SEM_GRAVIDADE)
+			prioridade = SrPrioridade.BAIXO;
+		else if (gravidade == SrGravidade.NORMAL)
+			prioridade = SrPrioridade.MEDIO; 
+		else if (gravidade == SrGravidade.GRAVE)
+			prioridade = SrPrioridade.ALTO;
+		else if (gravidade == SrGravidade.MUITO_GRAVE)
 			prioridade = SrPrioridade.IMEDIATO;
 	}
 
@@ -1424,7 +1432,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				"modal=true"));
 
 		operacoes.add(new SrOperacao("clock_edit", "Alterar Prioridade",
-				podeAlterarPrioridade(titular, lotaTitular), "alterarPrioridade",
+				podeAlterarPrioridade(pess, lota), "alterarPrioridade",
 				"modal=true"));
 		 
 		operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir",
@@ -2527,7 +2535,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return new Date(dtBase.getTime() + segundosAdiante * 1000);
 	}
 
-	private Date getDtPrazoCadastramentoAcordado() {
+	public Date getDtPrazoCadastramentoAcordado() {
 		if (acordos == null || acordos.size() == 0 || isCancelado())
 			return null;
 		Long menorTempoAcordado = null;
@@ -2541,7 +2549,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return getDataAPartirDe(getDtInicioPrimeiraEdicao(), menorTempoAcordado);
 	}
 
-	private Date getDtPrazoAtendimentoAcordado() {
+	public Date getDtPrazoAtendimentoAcordado() {
 		if (acordos == null || acordos.size() == 0 || isCancelado())
 			return null;
 		Long menorTempoAcordado = null;
@@ -2553,6 +2561,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (menorTempoAcordado == null)
 			return null;
 		return getDataAPartirDe(getDtInicioAtendimento(), menorTempoAcordado);
+	}
+	
+	public String getDtPrazoAtendimentoAcordadoDDMMYYYYHHMM() {
+		Date dt = getDtPrazoAtendimentoAcordado();
+		if (dt != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dt) 
+					+ "</span>" + df.format(dt);
+		}
+		return "";
 	}
 
 	public Cronometro getCronometro() throws Exception {

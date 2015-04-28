@@ -26,7 +26,9 @@ public class SrSolicitacaoVO {
 	public String dtUltimaMovimentacaoFormatada = "";
 	public String ultimaMovimentacaoformatada = "";
 	public String prioridadeFormatada = "";
+	public String prioridadeTecnica = "";
 	public String prioridadeTecnicaFormatada = "";
+	public String prazo = "";
 	public String botaoExpandir = "+";
 	public String marcadoresEmHtmlDetalhes = "";
 	public String lotaAtendenteFormatada = "";
@@ -64,7 +66,9 @@ public class SrSolicitacaoVO {
 		
 		this.lotaAtendenteFormatada = this.lotaAtendente != null ? getLotacaoFormatada(this.lotaAtendente) : "";
 		this.prioridadeFormatada = sol.getPrioridadeString();
+		this.prioridadeTecnica = sol.getPrioridadeTecnica() != null ? sol.getPrioridadeTecnica().toString() : "";
 		this.prioridadeTecnicaFormatada = sol.getPrioridadeTecnicaString();
+		this.prazo = sol.getDtPrazoAtendimentoAcordadoDDMMYYYYHHMM();
 	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, boolean podeRemover, boolean podePriorizar) throws Exception {

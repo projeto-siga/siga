@@ -1,6 +1,0 @@
-Informamos que foi aberta por ${sol.cadastrante.descricaoIniciaisMaiusculas} 
-		(${sol.lotaCadastrante.siglaLotacao}), em ${sol.dtRegDDMMYYYYHHMM}, 
-		a solicitação ${sol.codigo}, com a seguinte descrição:
-	${sol.descrSolicitacao}</p>
-Para acessar a solicitação, acesse @@{Application.exibir(sol.idSolicitacao)}.
-	

@@ -1,8 +1,0 @@
-Informamos que a solicitação ${sol.codigo} recebeu a seguinte movimentacao em ${movimentacao.dtIniMovDDMMYYYYHHMM}:
-
-	Tipo: ${movimentacao.tipoMov.nome}
-	${movimentacao.descrMovimentacao}
-	${movimentacao.cadastrante?.descricaoIniciaisMaiusculas} (${movimentacao.lotaCadastrante?.siglaLotacao})
-
-Para acessar a solicitação, acesse @@{Application.exibir(sol.idSolicitacao)}.
-	

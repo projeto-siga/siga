@@ -26,6 +26,7 @@ public class SrSolicitacaoVO {
 	public String dtUltimaMovimentacaoFormatada = "";
 	public String ultimaMovimentacaoformatada = "";
 	public String prioridadeFormatada = "";
+	public String prioridadeTecnica = "";
 	public String prioridadeTecnicaFormatada = "";
 	public String prazo = "";
 	public String botaoExpandir = "+";
@@ -65,6 +66,7 @@ public class SrSolicitacaoVO {
 		
 		this.lotaAtendenteFormatada = this.lotaAtendente != null ? getLotacaoFormatada(this.lotaAtendente) : "";
 		this.prioridadeFormatada = sol.getPrioridadeString();
+		this.prioridadeTecnica = sol.getPrioridadeTecnica() != null ? sol.getPrioridadeTecnica().toString() : "";
 		this.prioridadeTecnicaFormatada = sol.getPrioridadeTecnicaString();
 		this.prazo = sol.getDtPrazoAtendimentoAcordadoDDMMYYYYHHMM();
 	}

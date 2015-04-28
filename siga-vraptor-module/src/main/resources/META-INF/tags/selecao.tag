@@ -202,7 +202,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	onkeypress="return handleEnter(this, event)"
 	onblur="javascript: ajax_${propriedade}${tipoSel}();<c:if test="${not empty onchange}">${onchange};</c:if>" size="25"
 	<c:if test="${not empty onchange}">onchange="${onchange}"</c:if>
-	"${disabledTxt}" />	
+	${disabledTxt} />	
 	
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."

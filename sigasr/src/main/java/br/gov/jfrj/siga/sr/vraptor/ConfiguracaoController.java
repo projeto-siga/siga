@@ -8,7 +8,6 @@ import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.validator.SrError;
-import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class ConfiguracaoController extends SrController {
@@ -34,7 +33,7 @@ public class ConfiguracaoController extends SrController {
 		return designacao.getSrConfiguracaoJson();
 	}
 
-	public static String gravarDesignacao(SrConfiguracao designacao) throws Exception {
+	public String gravarDesignacao(SrConfiguracao designacao) throws Exception {
 //		assertAcesso("ADM:Administrar");
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
@@ -42,8 +41,7 @@ public class ConfiguracaoController extends SrController {
 		return designacao.getSrConfiguracaoJson();
 	}
 
-	@SuppressWarnings("static-access")
-	private static void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {
+	private void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {
 		StringBuffer sb = new StringBuffer();
 
 		if (designacao.getDescrConfiguracao() == null || designacao.getDescrConfiguracao().isEmpty())

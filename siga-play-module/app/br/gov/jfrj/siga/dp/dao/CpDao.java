@@ -447,7 +447,7 @@ public class CpDao extends ModeloDao {
 	public DpCargo consultarPorSigla(final DpCargo o) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpCargo");
-		query.setLong("idCargoIni", o.getIdCargoIni());
+		query.setString("siglaCargo", o.getSiglaCargo());
 
 		final List<DpCargo> l = query.list();
 		if (l.size() != 1)
@@ -458,6 +458,7 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final DpCargoDaoFiltro flt) {
 		final DpCargo o = new DpCargo();
 		o.setSigla(flt.getSigla());
+		o.setIdCargoIni(flt.getIdCargoIni());
 		return consultarPorSigla(o);
 	}
 
@@ -767,8 +768,14 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidade(final CpGrupoDaoFiltro o) {
 		try {
-			final Query query = getSessao().getNamedQuery(
-					"consultarQuantidadeCpGrupoPorCpTipoGrupoId");
+			final Query query;
+			if (o.getNome() != null){
+				query = getSessao().getNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome");
+				query.setString("siglaGrupo", o.getNome());
+			}else{
+				query = getSessao().getNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoId");
+			}
+				
 			if (o.getIdTpGrupo() != null) {
 				query.setLong("idTpGrupo", o.getIdTpGrupo());
 			} else {
@@ -785,8 +792,13 @@ public class CpDao extends ModeloDao {
 	public List<CpGrupo> consultarPorFiltro(final CpGrupoDaoFiltro o,
 			final int offset, final int itemPagina) {
 		try {
-			final Query query = getSessao().getNamedQuery(
-					"consultarCpGrupoPorCpTipoGrupoId");
+			final Query query;
+			if (o.getNome() != null){
+				query = getSessao().getNamedQuery("consultarCpGrupoPorCpTipoGrupoIdENome");
+				query.setString("siglaGrupo", o.getNome());
+			}else{
+				query = getSessao().getNamedQuery("consultarCpGrupoPorCpTipoGrupoId");
+			}
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}

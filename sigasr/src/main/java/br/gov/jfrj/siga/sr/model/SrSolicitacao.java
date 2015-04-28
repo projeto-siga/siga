@@ -1302,10 +1302,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		Map<SrAcao, List<SrTarefa>> acoesEAtendentesFinal = new TreeMap<SrAcao, List<SrTarefa>>(new Comparator<SrAcao>() {
 	        @Override
 	        public int compare(SrAcao  a1, SrAcao a2) {
-				int i = a1.tituloAcao.compareTo(a2.tituloAcao);
+				int i = a1.getTituloAcao().compareTo(a2.getTituloAcao());
 				if (i != 0)
 					return i;
-				return a1.idAcao.compareTo(a2.idAcao);
+				return a1.getIdAcao().compareTo(a2.getIdAcao());
 	        }
 	        });
 
@@ -1317,11 +1317,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			else this.acao = null;
 			
 			for (SrTarefa t : acoesEAtendentes){
-				List<SrTarefa> tarefas = acoesEAtendentesFinal.get(t.getAcao().pai);
+				List<SrTarefa> tarefas = acoesEAtendentesFinal.get(t.getAcao().getPai());
 				if (tarefas == null)
 					tarefas = new ArrayList<SrTarefa>();
 				tarefas.add(t);
-				acoesEAtendentesFinal.put(t.getAcao().pai, tarefas);
+				acoesEAtendentesFinal.put(t.getAcao().getPai(), tarefas);
 			}
 			
 			//Edson: melhor se fosse um SortedSet
@@ -1329,10 +1329,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				Collections.sort(tarefas , new Comparator<SrTarefa>() {
 			        @Override
 			        public int compare(SrTarefa  o1, SrTarefa o2) {
-						int i = o1.acao.tituloAcao.compareTo(o2.acao.tituloAcao);
+						int i = o1.acao.getTituloAcao().compareTo(o2.acao.getTituloAcao());
 						if (i != 0)
 							return i;
-						return o1.acao.idAcao.compareTo(o2.acao.idAcao);
+						return o1.acao.getIdAcao().compareTo(o2.acao.getIdAcao());
 			        }
 			    });
 			}
@@ -2339,7 +2339,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getGcTagAbertura() {
 		String s = "^sr:";
 		if (acao != null)
-			s += Texto.slugify(acao.tituloAcao, true, false);
+			s += Texto.slugify(acao.getTituloAcao(), true, false);
 		if (itemConfiguracao != null)
 			s += "-"
 					+ Texto.slugify(itemConfiguracao.tituloItemConfiguracao,
@@ -2350,7 +2350,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public String getGcTituloAbertura() {
 		String s = "";
 		if (acao != null)
-			s += acao.tituloAcao;
+			s += acao.getTituloAcao();
 		if (itemConfiguracao != null)
 			s += " - " + itemConfiguracao.tituloItemConfiguracao;
 		return s;

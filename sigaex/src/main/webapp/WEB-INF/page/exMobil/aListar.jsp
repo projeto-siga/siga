@@ -390,7 +390,7 @@
 				test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
 				<c:if test="${not empty tamanho and tamanho > 0}">
 					<c:choose>
-						<c:when test="${visualizacao == 2}">
+						<c:when test="${visualizacao == 2 or visualizacao == 4}">
 							<div id="pivot" style="margin: 30px;"></div>
 
 
@@ -423,6 +423,12 @@
 										"atendente nome": '<c:out value="${documento[2].dpPessoaIni.descricao}" />',
 										"atendente lotação sigla": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}" />',
 										"atendente lotação nome": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" />'
+										<c:if test="${visualizacao == 4}">
+											<c:forEach var="campo" items="${campos.keySet()}">
+												,"${campos.get(campo)}": '<c:out value="${documento[0].form[campo]}" />'
+											</c:forEach>
+											
+										</c:if>
 									},
 								</c:forEach>								
 							];
@@ -498,6 +504,11 @@
 											<c:if test="${visualizacao == 1}">
 												<th rowspan="3">Última Anotação</th>
 											</c:if>
+											<c:if test="${visualizacao == 3}">
+												<c:forEach var="campo" items="${campos.keySet()}">
+													<th rowspan="3" align="left">${campos.get(campo)}</th>
+												</c:forEach>
+											</c:if>
 										</tr>
 										<tr>
 											<th rowspan="2" align="center">Data</th>
@@ -512,6 +523,7 @@
 											<th align="center">Lotação</th>
 											<th align="center">Pessoa</th>
 										</tr>
+										
 									</thead>
 
 									<siga:paginador maxItens="${itemPagina}" maxIndices="10"
@@ -620,6 +632,11 @@
 													</c:if>
 												</c:otherwise>
 											</c:choose>
+											<c:if test="${visualizacao == 3}">
+												<c:forEach var="campo" items="${campos.keySet()}">
+													<td>${documento[0].form[campo]}</td>
+												</c:forEach>
+											</c:if>
 										</tr>
 									</siga:paginador>
 								</table>

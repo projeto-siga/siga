@@ -2888,7 +2888,7 @@ window.onload = function(){
     </div>
 [/#macro]
 
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick=""]
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":"]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
@@ -2898,11 +2898,11 @@ window.onload = function(){
                 [@inlineTemplate/]
         [/#if]
     
-        ${titulo!""}[#if titulo != ""]:[/#if]
+        ${titulo!""}[#if titulo != ""]${pontuacao!""}[/#if]
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]''${idAjax}''[/#if]);"[/#if] onclick="${onclick}">
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}">
                     [#list l as opcao]
                         <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
             [/#list]

@@ -4,26 +4,30 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<!-- chamadas são públicas: não necessárias as entradas de login-config para certificado -->
-	
+
 	<display-name>sigacd</display-name>
-	
+
 
 	<servlet>
 		<display-name>testes</display-name>
 		<servlet-name>testes</servlet-name>
-		<servlet-class>
-			br.gov.jfrj.siga.cd.servlet.CdTestesServlet
-		</servlet-class>
+		<servlet-class>br.gov.jfrj.siga.cd.servlet.CdTestesServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+
 	<servlet>
-        <servlet-name>CDService</servlet-name>
-        <servlet-class>br.gov.jfrj.siga.cd.service.impl.CdServiceImpl</servlet-class>
-    </servlet>
-    
+      <servlet-name>CDService</servlet-name>
+      <servlet-class>br.gov.jfrj.siga.cd.service.impl.CdServiceImpl</servlet-class>
+  </servlet>
+
 	<servlet-mapping>
 		<servlet-name>CDService</servlet-name>
 		<url-pattern>/servicos/CdService</url-pattern>
 	</servlet-mapping>
-	
+
+	<servlet-mapping>
+		<servlet-name>testes</servlet-name>
+		<url-pattern>/testes/CdTestesServlet</url-pattern>
+	</servlet-mapping>
+
 </web-app>

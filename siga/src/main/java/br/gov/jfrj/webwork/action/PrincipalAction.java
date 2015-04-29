@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
- * 
+ *
  *     This file is part of SIGA.
- * 
+ *
  *     SIGA is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
- * 
+ *
  *     SIGA is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -55,7 +55,7 @@ public class PrincipalAction extends SigaActionSupport {
 		public void setDescricao(String descricao) {
 			this.descricao = descricao;
 		}
-		
+
 		public Long getId(){
 			return id;
 		}
@@ -98,10 +98,10 @@ public class PrincipalAction extends SigaActionSupport {
 			String idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
 			setIdp(idpSessionID);
 		}catch(NullPointerException e){}
-		
+
 		return Action.SUCCESS;
 	}
-	
+
 	public String aSelecionar() throws Exception {
 		try {
 			DpPessoa pes = getTitular();
@@ -115,8 +115,8 @@ public class PrincipalAction extends SigaActionSupport {
 				incluirMatricula = "&matricula=" + matricula;
 			}
 
-			// TODO não precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
-			
+			// TODO nï¿½o precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
+
 			//String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ getRequest().getServerPort();
 			String urlBase = getRequest().getScheme() + "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
 
@@ -137,9 +137,9 @@ public class PrincipalAction extends SigaActionSupport {
 			if (copiaSigla.startsWith("-"))
 				copiaSigla = copiaSigla.substring(1);
 
-			//alterada a condição que verifica se é uma solicitação do siga-sr
-			//dessa forma a regex verifica se a sigla começa com SR ou sr e termina com números
-			//necessário para não dar conflito caso exista uma lotação que inicie com SR
+			//alterada a condiï¿½ï¿½o que verifica se ï¿½ uma solicitaï¿½ï¿½o do siga-sr
+			//dessa forma a regex verifica se a sigla comeï¿½a com SR ou sr e termina com nï¿½meros
+			//necessï¿½rio para nï¿½o dar conflito caso exista uma lotaï¿½ï¿½o que inicie com SR
 			if (copiaSigla.startsWith("SR")) {
 //			if (copiaSigla.matches("^[SR|sr].*[0-9]+$")) {
 				if (Cp.getInstance()
@@ -153,7 +153,7 @@ public class PrincipalAction extends SigaActionSupport {
 			//else if (copiaSigla.startsWith("MTP")
 			//		|| copiaSigla.startsWith("RTP")
 			//		|| copiaSigla.startsWith("STP")) {
-			else if (copiaSigla.startsWith("TP") && 
+			else if (copiaSigla.startsWith("TP") &&
 					(copiaSigla.endsWith("M") ||
 					 copiaSigla.endsWith("S") ||
 					 copiaSigla.endsWith("R"))) {
@@ -164,7 +164,7 @@ public class PrincipalAction extends SigaActionSupport {
 							+ "/selecionar.action?sigla=" + getSigla()
 							+ incluirMatricula;
 				}
-			} 
+			}
 			else
 				URLSelecionar = urlBase + "/sigaex"
 						+ (testes.length() > 0 ? testes : "/expediente")
@@ -175,26 +175,26 @@ public class PrincipalAction extends SigaActionSupport {
 			String[] response = http.get(URLSelecionar, getRequest(), null).split(";");
 
 			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
-				//verificar se após a retirada dos prefixos referente 
-				//ao orgão (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e não achar resultado com as opções anteriores 
-				//a string copiaSigla somente possui números
+				//verificar se apï¿½s a retirada dos prefixos referente
+				//ao orgï¿½o (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e nï¿½o achar resultado com as opï¿½ï¿½es anteriores
+				//a string copiaSigla somente possui nï¿½meros
 				if (copiaSigla.matches("(^[0-9]+$)")) {
 					URLSelecionar = urlBase + "/siga"
 							+ (testes.length() > 0 ? testes : "/pessoa")
 							+ "/selecionar.action?sigla=" + getSigla()
 							+ incluirMatricula;
 				}
-				//encontrar lotações
+				//encontrar lotaï¿½ï¿½es
 				else {
 					URLSelecionar = urlBase + "/siga"
 						+ (testes.length() > 0 ? testes : "/lotacao")
 						+ "/selecionar.action?sigla=" + getSigla()
 						+ incluirMatricula;
 				}
-				
+
 				response = http.get(URLSelecionar, getRequest(), null).split(";");
-				
-				if (copiaSigla.matches("(^[0-9]+$)")) 
+
+				if (copiaSigla.matches("(^[0-9]+$)"))
 					uRLExibir = "/siga/pessoa/exibir.action?sigla="
 							+ response[2];
 				else
@@ -209,7 +209,7 @@ public class PrincipalAction extends SigaActionSupport {
 				//else if (copiaSigla.startsWith("MTP")
 				//		|| copiaSigla.startsWith("STP")
 				//		|| copiaSigla.startsWith("RTP"))
-				else if (copiaSigla.startsWith("TP") && 
+				else if (copiaSigla.startsWith("TP") &&
 						(copiaSigla.endsWith("M") ||
 						 copiaSigla.endsWith("S") ||
 						 copiaSigla.endsWith("R")))
@@ -218,7 +218,7 @@ public class PrincipalAction extends SigaActionSupport {
 					uRLExibir = "/sigaex/expediente/doc/exibir.action?sigla="
 							+ response[2];
 			}
-			
+
 			sel.setId(Long.valueOf(response[1]));
 			sel.setSigla(response[2]);
 			sel.setDescricao(uRLExibir);
@@ -256,7 +256,7 @@ public class PrincipalAction extends SigaActionSupport {
 			super.getRequest().setAttribute("siga_wf_test", OK);
 
 		String siga_cd_test_url = url.replace(SIGA_TESTES_ACTION,
-				"/sigacd/testes/testes.action");
+				"/sigacd/testes/CdTestesServlet");
 		super.getRequest().setAttribute("siga_cd_test_url", siga_cd_test_url);
 		super.getRequest().setAttribute("siga_cd_test", ERRO);
 		if (httpTest(siga_ex_test_url, "OK!"))

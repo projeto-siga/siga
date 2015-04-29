@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 	<display-name>SIGA - Gestão Documental</display-name>
-	
+
 	<session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>
@@ -194,14 +194,14 @@
 			<web-resource-name>freemarker</web-resource-name>
 			<url-pattern>/freemarker/*</url-pattern>
 		</web-resource-collection>
-        <web-resource-collection>
-            <web-resource-name>servicos</web-resource-name>
-            <url-pattern>/servicos/*</url-pattern>
-        </web-resource-collection>
-        <web-resource-collection>
-            <web-resource-name>externo</web-resource-name>
-            <url-pattern>/externo/*</url-pattern>
-        </web-resource-collection>        
+    <web-resource-collection>
+      <web-resource-name>servicos</web-resource-name>
+      <url-pattern>/servicos/*</url-pattern>
+    </web-resource-collection>
+    <web-resource-collection>
+      <web-resource-name>externo</web-resource-name>
+      <url-pattern>/externo/*</url-pattern>
+    </web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>externo</web-resource-name>
 			<url-pattern>/externo/*</url-pattern>
@@ -210,6 +210,10 @@
 			<web-resource-name>staticJavascript</web-resource-name>
 			<url-pattern>/staticJavascript.jf</url-pattern>
 		</web-resource-collection>
+		<web-resource-collection>
+      <web-resource-name>testes</web-resource-name>
+      <url-pattern>/testes/*</url-pattern>
+    </web-resource-collection>
 	</security-constraint>
 
 	<login-config>

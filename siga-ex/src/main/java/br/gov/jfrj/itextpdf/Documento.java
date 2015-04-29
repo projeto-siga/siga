@@ -88,8 +88,6 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.codec.Base64;
-import com.opensymphony.webwork.ServletActionContext;
 import com.swetake.util.Qrcode;
 
 /**

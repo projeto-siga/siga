@@ -5239,6 +5239,11 @@ Pede deferimento.</span><br/><br/><br/>
   [@retornoTemplate /] 
 [/#macro]
 
+[#macro classificacao codigo]
+   <input type="hidden" name="vars" value="codigoClassificacao" />
+   <input type="hidden" id="codigoClassificacao" name="codigoClassificacao" value="${codigo}" />
+[/#macro]
+
 [#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
 [@selecaoX2 titulo=titulo var=var opcoes="Matrícula;Orgão Integrado" reler=true idAjax=idAjax/]   
     [#if buscarFechadas]

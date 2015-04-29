@@ -5239,6 +5239,14 @@ Pede deferimento.</span><br/><br/><br/>
   [@retornoTemplate /] 
 [/#macro]
 
+[#macro descricao]
+   [#if gerar_descricao!false]
+    <!-- descricao -->
+      [#nested]
+    <!-- /descricao -->
+   [/#if]
+[/#macro]
+
 [#macro classificacao codigo]
    <input type="hidden" name="vars" value="codigoClassificacao" />
    <input type="hidden" id="codigoClassificacao" name="codigoClassificacao" value="${codigo}" />

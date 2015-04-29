@@ -912,8 +912,9 @@ public class Documento {
 		// sHtml = sHtml.replace("contextpath", "http://" + req.getServerName()+
 		// ":" + req.getServerPort() + req.getContextPath());
 		if(realPath == null)
-			sHtml = sHtml.replace("contextpath", ServletActionContext
-				.getServletContext().getRealPath(""));
+//			sHtml = sHtml.replace("contextpath", ServletActionContext
+//				.getServletContext().getRealPath(""));
+			; //Nato: Precisamos testar uma solução para fazer essa substituição sem precisar da dependência do webwork.
 		else
 			sHtml = sHtml.replace("contextpath", realPath);
 

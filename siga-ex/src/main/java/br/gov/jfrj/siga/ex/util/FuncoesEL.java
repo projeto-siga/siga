@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.swing.text.MaskFormatter;
 
 import org.xml.sax.InputSource;
@@ -71,9 +70,6 @@ import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoES;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoTRF2;
 import br.gov.jfrj.siga.ex.bl.BIE.NodoMenor;
 import br.gov.jfrj.siga.hibernate.ExDao;
-
-import com.opensymphony.webwork.WebWorkStatics;
-
 import freemarker.ext.dom.NodeModel;
 
 public class FuncoesEL {

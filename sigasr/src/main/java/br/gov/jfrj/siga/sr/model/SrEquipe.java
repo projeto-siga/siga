@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.util.Util;
@@ -29,35 +30,34 @@ import com.google.gson.JsonObject;
 @Table(name = "SR_EQUIPE", schema = "SIGASR")
 public class SrEquipe extends HistoricoSuporte {
 
-	/**
-	 * 
-	 */
+	public static ActiveRecord<SrEquipe> AR = new ActiveRecord<>(SrEquipe.class);
+	
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_EQUIPE_SEQ", name = "srEquipeSeq")
 	@GeneratedValue(generator = "srEquipeSeq")
 	@Column(name = "ID_EQUIPE")
-	public Long idEquipe;
+	private Long idEquipe;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_EQUIPE")
-	public DpLotacao lotacao;
+	private DpLotacao lotacao;
 	
 	@OneToMany(targetEntity = SrExcecaoHorario.class, mappedBy = "equipe", fetch = FetchType.LAZY)
-	public List<SrExcecaoHorario> excecaoHorarioSet;
+	private List<SrExcecaoHorario> excecaoHorarioSet;
 	
 	@Transient
 	private DpLotacao lotacaoEquipe;
 
 	@Override
 	public Long getId() {
-		return this.idEquipe;
+		return this.getIdEquipe();
 	}
 
 	@Override
 	public void setId(Long id) {
-		this.idEquipe = id;
+		this.setIdEquipe(id);
 	}
 
 	@Override
@@ -72,15 +72,15 @@ public class SrEquipe extends HistoricoSuporte {
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
-		if (excecaoHorarioSet != null)
-			for (SrExcecaoHorario eh : excecaoHorarioSet) {
+		if (getExcecaoHorarioSet() != null)
+			for (SrExcecaoHorario eh : getExcecaoHorarioSet()) {
 				eh.equipe = this;
 				eh.salvar();
 			}
 	}
 
 	public List<SrConfiguracao> getDesignacoes() throws Exception {
-		if (lotacao == null)
+		if (getLotacao() == null)
 			return null;
 		else
 			return SrConfiguracao.listarDesignacoes(this);
@@ -97,12 +97,12 @@ public class SrEquipe extends HistoricoSuporte {
 			sb.append(" SrEquipe GROUP BY hisIdIni) ");
 		}
 		
-		return SrEquipe.find(sb.toString()).fetch();
+		return SrEquipe.AR.find(sb.toString()).fetch();
 		
 	}
 	
 	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa titular){
-		return lotaTitular.equivale(this.lotacao);
+		return lotaTitular.equivale(this.getLotacao());
 	}
 
 	public String toJson() {
@@ -111,8 +111,8 @@ public class SrEquipe extends HistoricoSuporte {
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		jsonObject.add("excecaoHorarioSet", excecaoHorarioArray());
-		jsonObject.add("lotacaoEquipe", gson.toJsonTree(SelecionavelVO.createFrom(this.lotacao)));
-		
+		jsonObject.add("lotacaoEquipe", gson.toJsonTree(SelecionavelVO.createFrom(this.getLotacao())));
+		System.out.println("JSON :: "+jsonObject.toString());
 		return jsonObject.toString();
 	}
 	
@@ -120,8 +120,8 @@ public class SrEquipe extends HistoricoSuporte {
 		Gson gson = Util.createGson("equipe");
 		JsonArray jsonArray = new JsonArray();
 		
-		if (this.excecaoHorarioSet != null)
-			for (SrExcecaoHorario srExcecaoHorario : this.excecaoHorarioSet) {
+		if (this.getExcecaoHorarioSet() != null)
+			for (SrExcecaoHorario srExcecaoHorario : this.getExcecaoHorarioSet()) {
 				JsonObject jsonObjectExcecao = (JsonObject) gson.toJsonTree(srExcecaoHorario);
 				
 				if (srExcecaoHorario.diaSemana != null)
@@ -134,11 +134,35 @@ public class SrEquipe extends HistoricoSuporte {
 	}
 	
 	public DpLotacao getLotacaoEquipe() {
-		return this.lotacaoEquipe != null ? this.lotacaoEquipe : this.lotacao;
+		return this.lotacaoEquipe != null ? this.lotacaoEquipe : this.getLotacao();
 	}
 
 	public void setLotacaoEquipe(DpLotacao lotacaoEquipe) {
 		this.lotacaoEquipe = lotacaoEquipe;
-		this.lotacao = lotacaoEquipe;
+		this.setLotacao(lotacaoEquipe);
+	}
+
+	public DpLotacao getLotacao() {
+		return lotacao;
+	}
+
+	public void setLotacao(DpLotacao lotacao) {
+		this.lotacao = lotacao;
+	}
+
+	public List<SrExcecaoHorario> getExcecaoHorarioSet() {
+		return excecaoHorarioSet;
+	}
+
+	public void setExcecaoHorarioSet(List<SrExcecaoHorario> excecaoHorarioSet) {
+		this.excecaoHorarioSet = excecaoHorarioSet;
+	}
+
+	public Long getIdEquipe() {
+		return idEquipe;
+	}
+
+	public void setIdEquipe(Long idEquipe) {
+		this.idEquipe = idEquipe;
 	}
 }

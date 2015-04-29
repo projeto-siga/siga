@@ -176,9 +176,9 @@ public class SrConfiguracao extends CpConfiguracao {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
 		
-		if (equipe != null && equipe.lotacao != null && equipe.lotacao.getIdLotacaoIni() != null) {
+		if (equipe != null && equipe.getLotacao() != null && equipe.getLotacao().getIdLotacaoIni() != null) {
 			sb.append(" and conf.atendente.idLotacaoIni = ");
-			sb.append(equipe.lotacao.getIdLotacaoIni());			
+			sb.append(equipe.getLotacao().getIdLotacaoIni());			
 		}
 		
 		sb.append(" and conf.hisDtFim is null");

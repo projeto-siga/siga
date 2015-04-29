@@ -13,12 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.Util;
 
@@ -29,10 +29,8 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_PESQUISA", schema = "SIGASR")
 public class SrPesquisa extends HistoricoSuporte {
-
-	/**
-	 * 
-	 */	
+	public static ActiveRecord<SrPesquisa> AR = new ActiveRecord<>(SrPesquisa.class);
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

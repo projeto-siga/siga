@@ -1,7 +1,26 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<jsp:include page="../main.jsp"></jsp:include>
+
+
 <siga:pagina titulo="Serviços">
+
+<!-- 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
+	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<!-- 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script> -->
+	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.populate.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
+	
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/moment.js"></script>
+	
+	
+	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
 			<h2>Pesquisa de Equipes</h2>
@@ -15,18 +34,18 @@
 						</tr>
 					</thead>	
 					<tbody>
-<%-- 						#{list items:listaEquipe, as:'eq'} --%>
-<%-- 						<tr #{if eq.podeEditar(lotaTitular, cadastrante)} --%>
-<%-- 								onclick="equipeService.editar($(this).data('json'), 'Alterar Equipe')" style="cursor: pointer;"#{/if} --%>
-<%-- 							data-json-id="${eq.idEquipe}" data-json="${eq.toJson()}"> --%>
-<!-- 							<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;"> -->
-<%-- 								${eq.lotacaoEquipe?.sigla} --%>
-<!-- 							</td> -->
-<!-- 							<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;"> -->
-<%-- 								${eq.lotacaoEquipe?.descricao} --%>
-<!-- 							</td> -->
-<!-- 						</tr> -->
-<%-- 						#{/list} --%>
+						<c:forEach items="${listaEquipe}" var="equipe">
+							<tr <c:if test="${equipe.podeEditar(lotaTitular, cadastrante)}">
+									onclick="equipeService.editar($(this).data('json'), 'Alterar Equipe')" style="cursor: pointer;"</c:if>
+								data-json-id="${equipe.idEquipe}" data-json='${equipe.toJson()}'>
+								<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+									${equipe.lotacaoEquipe.sigla}
+								</td>
+								<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
+									${equipe.lotacaoEquipe.descricao}
+								</td>
+							</tr>
+						</c:forEach>
 					</tbody>
 				</table>
 			</div>
@@ -36,9 +55,9 @@
 		</div>
 	</div>
 	
-<%-- 	<siga:modal nome="equipe" titulo="Cadastrar Equipe"> --%>
-<%-- 		<div id="divEditarEquipeForm"><jsp:include page="editar.jsp"></jsp:include></div> --%>
-<%-- 	</siga:modal> --%>
+	<siga:modal nome="equipe" titulo="Cadastrar Equipe">
+		<div id="divEditarEquipeForm"><jsp:include page="editar.jsp"></jsp:include></div>
+	</siga:modal>
 </siga:pagina>
 
 <script type="text/javascript">
@@ -266,12 +285,3 @@
        	});
     }
 </script>
-
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
-<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
-<script src="/sigasr/public/javascripts/base-service.js"></script>
-<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
-<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>

@@ -112,7 +112,6 @@ public class SrEquipe extends HistoricoSuporte {
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		jsonObject.add("excecaoHorarioSet", excecaoHorarioArray());
 		jsonObject.add("lotacaoEquipe", gson.toJsonTree(SelecionavelVO.createFrom(this.getLotacao())));
-		System.out.println("JSON :: "+jsonObject.toString());
 		return jsonObject.toString();
 	}
 	

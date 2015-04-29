@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.sr.dao.SrDao;
@@ -35,14 +37,15 @@ public class EquipeController extends SrController{
 //		assertAcesso("ADM:Administrar");
 		List<SrEquipe> listaEquipe = SrEquipe.listar(mostrarDesativados);
 		List<CpOrgaoUsuario> orgaos = dao.listarOrgaosUsuarios();
-//		List<CpComplexo> locais = CpComplexo.AR.all().fetch();
+
+		List<CpComplexo> locais = CpComplexo.AR.all().fetch();
 		List<CpUnidadeMedida> unidadesMedida = dao.listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.AR.find("hisDtFim is null").fetch();
 		SelecionavelVO lotacaoUsuario = SelecionavelVO.createFrom(getLotaTitular());
 
 		result.include("listaEquipe", listaEquipe);
 		result.include("orgaos",orgaos);
-//		result.include("locais",locais);
+		result.include("locais",locais);
 		result.include("unidadesMedida",unidadesMedida);
 		result.include("pesquisaSatisfacao",pesquisaSatisfacao);
 		result.include("lotacaoUsuario",lotacaoUsuario);
@@ -57,7 +60,7 @@ public class EquipeController extends SrController{
 	}
 	
 	@Path("/{id}/designacoes")
-	public String buscarDesignacoesEquipe(Long id) throws Exception {
+	public void buscarDesignacoesEquipe(Long id) throws Exception {
 		List<SrConfiguracao> designacoes;
 
 		if (id != null) {
@@ -67,7 +70,7 @@ public class EquipeController extends SrController{
 			designacoes = new ArrayList<SrConfiguracao>();
 		}
 
-		return SrConfiguracao.convertToJSon(designacoes);
+		result.use(Results.http()).body(SrConfiguracao.convertToJSon(designacoes));
 	}
 
 }

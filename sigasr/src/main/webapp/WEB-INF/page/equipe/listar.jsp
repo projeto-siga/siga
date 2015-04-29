@@ -4,11 +4,9 @@
 <jsp:include page="../main.jsp"></jsp:include>
 
 
-<siga:pagina titulo="Serviços">
+<siga:pagina titulo="Serviï¿½os">
 
-<!-- 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<!-- 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script> -->
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
@@ -30,7 +28,7 @@
 					<thead>
 						<tr>
 							<th style="font-weight: bold;">Sigla</th>
-							<th>Lotação</th>
+							<th>Lotaï¿½ï¿½o</th>
 						</tr>
 					</thead>	
 					<tbody>
@@ -62,7 +60,7 @@
 
 <script type="text/javascript">
 	var opts = {
-			 urlGravar : '@{Application.gravarEquipe()}',
+			 urlGravar : '${linkTo[EquipeController].gravarEquipe}',
 			 dialogCadastro : $('#equipe_dialog'),
 			 tabelaRegistros : $('#equipes_table'),
 			 objectName : 'equipe',
@@ -77,7 +75,7 @@
 			/* Table initialization */
 			opts.dataTable = $('#equipes_table').dataTable({
 				"language": {
-					"emptyTable":     "Não existem resultados",
+					"emptyTable":     "Nï¿½o existem resultados",
 				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -90,13 +88,13 @@
 				    "zeroRecords":    "Nenhum registro encontrado",
 				    "paginate": {
 				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
+				        "last":       "ï¿½ltimo",
+				        "next":       "Prï¿½ximo",
 				        "previous":   "Anterior"
 				    },
 				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
+				        "sortAscending":  ": clique para ordenaï¿½ï¿½o crescente",
+				        "sortDescending": ": clique para ordenaï¿½ï¿½o decrescente"
 				    }
 				},
 				"iDisplayLength": 25
@@ -130,7 +128,7 @@
 	equipeService.getListasAsString = function() {
 		var params = '', dataAux = new Date();
 	
-		// Percorre lista de Exceções
+		// Percorre lista de Exceï¿½ï¿½es
 		equipeService.excecoesTable.api().rows().indexes().each(function (i) {
 			var rowValues = equipeService.excecoesTable.api().row(i).data();
 			
@@ -176,7 +174,7 @@
 		else {
 			this.excecoesTable = $('#excecoes_table').dataTable({
 				"language": {
-					"emptyTable":     "Não existem resultados",
+					"emptyTable":     "Nï¿½o existem resultados",
 				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -189,13 +187,13 @@
 				    "zeroRecords":    "Nenhum registro encontrado",
 				    "paginate": {
 				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
+				        "last":       "ï¿½ltimo",
+				        "next":       "Prï¿½ximo",
 				        "previous":   "Anterior"
 				    },
 				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
+				        "sortAscending":  ": clique para ordenaï¿½ï¿½o crescente",
+				        "sortDescending": ": clique para ordenaï¿½ï¿½o decrescente"
 				    }
 				},
 				"columnDefs": [{"targets": [0, 1], "visible": false, "searchable": false}],
@@ -203,7 +201,7 @@
 			});
 		}
 		
-		// Remover exceções
+		// Remover exceï¿½ï¿½es
 		$('#excecoes_table tbody').on('click', 'a.excecao_remove', function () {
 			equipeService.excecoesTable.api().row($(this).closest('tr')).remove().draw(false);
 		});
@@ -218,7 +216,7 @@
 			equipeService.carregarExcecoes(equipe);
 			equipeService.carregarDesignacoes(equipe.idEquipe);
 		}
-		// Caso seja cadastro, atualiza os dados da Lotação
+		// Caso seja cadastro, atualiza os dados da Lotaï¿½ï¿½o
 		else {
 			var lota = JSON.parse($("#lotacaoUsuario").val())
 				equipeEdicao = {
@@ -227,7 +225,7 @@
 					lotacaoEquipeSpan : lota.descricao,
 					lotacaoEquipe_sigla : lota.sigla
 				};
-			// chama o editar para popular o campo da lotação
+			// chama o editar para popular o campo da lotaï¿½ï¿½o
 			equipeService.formularioHelper.populateFromJson(equipeEdicao);		
 			designacaoService.populateFromJSonList({});
 		}
@@ -250,7 +248,7 @@
 		var table = $('#excecoes_table');
 		
 		if (equipe.excecaoHorarioSet) {
-			// cria a lista de Exceções de horário, e adiciona na tela
+			// cria a lista de Exceï¿½ï¿½es de horï¿½rio, e adiciona na tela
 			for (i = 0; i < equipe.excecaoHorarioSet.length; i++) {
 				var item = equipe.excecaoHorarioSet[i];
 					row = [
@@ -273,14 +271,14 @@
 	equipeService.carregarDesignacoes = function(id) {
         $.ajax({
         	type: "GET",
-        	url: "@{Application.buscarDesignacoesEquipe()}?id=" + id,
+        	url: "/sigasr/app/equipe/"+id+"/designacoes",
         	dataType: "text",
         	success: function(lista) {
         		var listaJSon = JSON.parse(lista);
         		designacaoService.populateFromJSonList(listaJSon);
         	},
         	error: function(error) {
-            	alert("Não foi possível carregar as Designações desta Equipe.");
+            	alert("Nï¿½o foi possï¿½vel carregar as Designaï¿½ï¿½es desta Equipe.");
         	}
        	});
     }

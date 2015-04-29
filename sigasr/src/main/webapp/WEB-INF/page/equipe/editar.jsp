@@ -130,6 +130,7 @@
 				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="equipeService.aplicar()"/>
 			</div>
 		</div>
+		
 <siga:modal nome="excecaoHorario" titulo="Adicionar Exceção de Horário">
 	<div id="dialogExcecaoHorario">
 		<div class="gt-content">

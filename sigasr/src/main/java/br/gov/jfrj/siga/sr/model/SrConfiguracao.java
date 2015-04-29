@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.SrAcao.SrAcaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoAssociacaoVO;
@@ -41,9 +42,8 @@ import com.google.gson.JsonObject;
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
 
-	/**
-	 * 
-	 */
+	public static ActiveRecord<SrConfiguracao> AR = new ActiveRecord<>(SrConfiguracao.class);
+	
 	private static final long serialVersionUID = 4959384444345462871L;
 
 	@Transient
@@ -148,7 +148,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		salvar();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, DpLotacao atendente) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
@@ -166,12 +165,9 @@ public class SrConfiguracao extends CpConfiguracao {
 			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
 		}
 		
-		return JPA
-				.em()
-				.createQuery(sb.toString()).getResultList();
+		return AR.find(sb.toString()).fetch();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarDesignacoes(SrEquipe equipe) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
@@ -183,9 +179,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		
 		sb.append(" and conf.hisDtFim is null");
 		
-		return JPA
-				.em()
-				.createQuery(sb.toString()).getResultList();
+		return AR.find(sb.toString()).fetch();
 	}
 	
 	public static List<SrConfiguracao> listarDesignacoes(SrConfiguracao conf,

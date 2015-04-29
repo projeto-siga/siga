@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,10 +10,10 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.sr.dao.SrDao;
+import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrEquipe;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
@@ -46,6 +47,27 @@ public class EquipeController extends SrController{
 		result.include("pesquisaSatisfacao",pesquisaSatisfacao);
 		result.include("lotacaoUsuario",lotacaoUsuario);
 		
+	}
+	
+	@Path("/gravar")
+	public void gravarEquipe(SrEquipe equipe) {
+		assertAcesso("ADM:Administrar");
+//		equipe.salvar();
+		result.include("equipe", equipe);
+	}
+	
+	@Path("/{id}/designacoes")
+	public String buscarDesignacoesEquipe(Long id) throws Exception {
+		List<SrConfiguracao> designacoes;
+
+		if (id != null) {
+			SrEquipe equipe = SrEquipe.AR.findById(id);
+			designacoes = new ArrayList<SrConfiguracao>(equipe.getDesignacoes());
+		}else{
+			designacoes = new ArrayList<SrConfiguracao>();
+		}
+
+		return SrConfiguracao.convertToJSon(designacoes);
 	}
 
 }

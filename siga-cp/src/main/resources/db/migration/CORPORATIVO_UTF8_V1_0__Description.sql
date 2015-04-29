@@ -5258,6 +5258,27 @@ Pede deferimento.</span><br/><br/><br/>
    <input type="hidden" id="codigoClassificacao" name="codigoClassificacao" value="${codigo}" />
 [/#macro]
 
+[#macro solicitacao tamanhoLetra="Normal" _tipo="FORMUL�RIO" assunto=""]
+    [#if tamanhoLetra! == "Normal"]
+        [#assign tl = "11pt" /]
+    [#elseif tamanhoLetra! == "Pequeno"]
+        [#assign tl = "9pt" /]
+    [#elseif tamanhoLetra! == "Grande"]
+        [#assign tl = "13pt" /]
+    [#else]     
+        [#assign tl = "11pt"]
+    [/#if]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false numeracaoCentralizada=false incluirMioloDJE=false]
+              <table style="float:none;" width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
+                  <tr>
+                     <td align="left" style="text-align: justify; font-family: Arial; font-size: ${tl};"><br/>Assunto: ${assunto}</td>
+                  </tr>
+              </table>
+            <br/>
+            [#nested] 
+     [/@estiloBrasaoCentralizado]
+[/#macro]
+
 [#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
 [@selecaoX2 titulo=titulo var=var opcoes="Matrícula;Orgão Integrado" reler=true idAjax=idAjax/]   
     [#if buscarFechadas]

@@ -65,11 +65,10 @@
 				<input type="hidden" id="idEquipe" name="idEquipe">
 				<input type="hidden" id="idEquipeIni" name="hisIdIni">
 				<input type="text" style="visibility: hidden;" id="lotacaoUsuario" name="lotacaoUsuario" value="${lotacaoUsuario.toJson()}"/>
-				<p class="gt-error" style="display:none;" id="erroEquipeCamposObrigatorios">Alguns campos obrigat√≥rios n√£o foram
-					preenchidos</p>
+				<p class="gt-error" style="display:none;" id="erroEquipeCamposObrigatorios">Alguns campos obrigatÛrios n„o foram preenchidos</p>
 				<div class="gt-form-table">
 					<div class="barra-subtitulo barra-subtitulo-top header"
-						align="center" valign="top">Dados b√°sicos</div>
+						align="center" valign="top">Dados b·sicos</div>
 				</div>
 				<div class="gt-form-row gt-width-100">
 <%-- 					<label>Lota√ß√£o</label>#{selecao --%>
@@ -80,11 +79,11 @@
 				
 				<div class="gt-form-table">
 					<div class="barra-subtitulo barra-subtitulo-top header"
-						align="center" valign="top">Hor√°rio de Trabalho</div>
+						align="center" valign="top">Hor·rio de Trabalho</div>
 				</div>
 				
 				<div class="gt-form-row">
-					<h2>Exce√ß√µes ao calend√°rio padr√£o</h2>
+					<h2>ExceÁıes ao calend·rio padr„o</h2>
 					<!-- content bomex -->
 					<div class="gt-content-box dataTables_div">
 						<table id="excecoes_table" border="0" class="gt-table display">
@@ -93,9 +92,9 @@
 									<th>Dia Semana</th>
 									<th>Data (String)</th>
 									<th>Dia</th>
-									<th>In√≠cio Expediente</th>
+									<th>InÌcio Expediente</th>
 									<th>Final Expediente</th>
-									<th>In√≠cio Intervalo</th>
+									<th>InÌcio Intervalo</th>
 									<th>Final Intervalo</th>
 									<th></th>
 								</tr>
@@ -110,7 +109,7 @@
 				
 				<div class="gt-form-table">
 					<div class="barra-subtitulo barra-subtitulo-top header"
-						align="center" valign="top">Designa√ß√µes</div>
+						align="center" valign="top">DesignaÁıes</div>
 				</div>
 			</form>
 			
@@ -131,7 +130,7 @@
 			</div>
 		</div>
 		
-<siga:modal nome="excecaoHorario" titulo="Adicionar Exce√ß√£o de Hor√°rio">
+<siga:modal nome="excecaoHorario" titulo="Adicionar ExceÁ„o de Hor·rio">
 	<div id="dialogExcecaoHorario">
 		<div class="gt-content">
 			<form id="excecaoHorarioForm" method="get" action="" enctype="multipart/form-data">
@@ -147,20 +146,20 @@
 <%--  							style:'width: 100%;'} --%> 
 <%-- 							#{option 0}Nenhuma#{/option}  --%>
 <%-- 						#{/select} --%>
-						<span style="display:none;color: red" id="diaSemanaError">Dia da Semana n√£o informado</span>
+						<span style="display:none;color: red" id="diaSemanaError">Dia da Semana n„o informado</span>
 					</div>
 					<div class="gt-form-row gt-width-100">
-						<label>Data Espec√≠fica</label>
+						<label>Data EspecÌfica</label>
 						<siga:dataCalendar nome="dataEspecifica" value="${dataEspecifica}"></siga:dataCalendar>
-						<span style="display:none;color: red" id="dataEspecificaError">Data Espec√≠fica n√£o informada</span>
+						<span style="display:none;color: red" id="dataEspecificaError">Data EspecÌfica n„o informada</span>
 					</div>
 					
 					<div id="erroHorarioInvalido" style="display:none;width:300px" class="gt-form-row gt-width-100">
-						<span style="color: red">O per√≠odo informado est√° inv√°lido. A data de in√≠cio deve ser menor que a data de t√©rmino e o per√≠odo de intervalo deve estar contido no per√≠odo de expediente</span>
+						<span style="color: red">O perÌodo informado est· inv·lido. A data de inÌcio deve ser menor que a data de tÈrmino e o perÌodo de intervalo deve estar contido no perÌodo de expediente</span>
 					</div>
 					
 					<div class="gt-form-row gt-width-100">
-						<label>In√≠cio Expediente <span>*</span></label>
+						<label>InÌcio Expediente <span>*</span></label>
 						<input type="text" name="horaIni" id="horaIni" value="${horaIni}" class="hora" required>
 					</div>
 					<div class="gt-form-row gt-width-100">
@@ -168,7 +167,7 @@
 						<input type="text" name="horaFim" id="horaFim" value="${horaFim}" class="hora" required>
 					</div>
 					<div class="gt-form-row gt-width-100">
-						<label>In√≠cio Intervalo <span>*</span></label>
+						<label>InÌcio Intervalo <span>*</span></label>
 						<input type="text" name="interIni" id="interIni" value="${interIni}" class="hora" required>
 					</div>
 					<div class="gt-form-row gt-width-100">
@@ -198,7 +197,7 @@
 		            var re = new RegExp('^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$');
 		            return this.optional(element) || re.test(value);
 		        },
-		        "Hora inv√°lida."
+		        "Hora inv·lida."
 		);
 
 		validatorForm = jQuery("#form").validate();
@@ -276,12 +275,12 @@
 		resetMensagensErro();
 		esconderValidacaoHorario();
 		
-		// Mostra a mensagem de campos obrigat√≥rios
+		// Mostra a mensagem de campos obrigatÛrios
 		if (document.getElementById("dataEspecifica").value == "" && jDiaSemanaCbb.selectedIndex == 0) {
 			document.getElementById("diaSemanaError").style.display = "inline";
 			document.getElementById("dataEspecificaError").style.display = "inline";
 			isValid = false;
-			alert("Por favor, preencha o Dia da Semana ou a Data Espec√≠fica.");
+			alert("Por favor, preencha o Dia da Semana ou a Data EspecÌfica.");
 		}
 		
 		return isValid;
@@ -324,19 +323,19 @@
 		  mensagem = null;
 		  
 		if(!estaAntes(horaInicio, horaTermino)) {
-			mensagem = "A hora de in√≠cio de expediente deve ser menor que a de t√©mino"
+			mensagem = "A hora de inÌcio de expediente deve ser menor que a de tÈrmino."
 			valido = false;
 		}
 		else if(!estaAntes(inicioIntervalo, terminoIntervalo)) {
-			mensagem = "A hora de in√≠cio do intervalo deve ser menor que a de t√©rmino"
+			mensagem = "A hora de inÌcio do intervalo deve ser menor que a de tÈrmino."
 			valido = false;
 		}
 		else if(!estaNoIntervalo(inicioIntervalo, horaInicio, horaTermino)) {
-			mensagem = "A hora de in√≠cio do intervalo est√° fora do periodo do expediente"
+			mensagem = "A hora de inÌcio do intervalo est· fora do periodo do expediente."
 			valido = false;
 		} 
 		else if(!estaNoIntervalo(terminoIntervalo, horaInicio, horaTermino)) {
-			mensagem = "A hora de t√©rmino do intervalo est√° fora do periodo do expediente"
+			mensagem = "A hora de tÈrmino do intervalo est· fora do periodo do expediente."
 			valido = false;
 		}
 		mostrarValidacaoHorario(mensagem);

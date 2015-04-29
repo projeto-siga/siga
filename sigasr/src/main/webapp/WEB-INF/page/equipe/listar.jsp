@@ -4,7 +4,7 @@
 <jsp:include page="../main.jsp"></jsp:include>
 
 
-<siga:pagina titulo="Serviï¿½os">
+<siga:pagina titulo="Serviços">
 
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
@@ -28,7 +28,7 @@
 					<thead>
 						<tr>
 							<th style="font-weight: bold;">Sigla</th>
-							<th>Lotaï¿½ï¿½o</th>
+							<th>Lotação</th>
 						</tr>
 					</thead>	
 					<tbody>
@@ -75,7 +75,7 @@
 			/* Table initialization */
 			opts.dataTable = $('#equipes_table').dataTable({
 				"language": {
-					"emptyTable":     "Nï¿½o existem resultados",
+					"emptyTable":     "Não existem resultados",
 				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -88,13 +88,13 @@
 				    "zeroRecords":    "Nenhum registro encontrado",
 				    "paginate": {
 				        "first":      "Primeiro",
-				        "last":       "ï¿½ltimo",
-				        "next":       "Prï¿½ximo",
+				        "last":       "Último",
+				        "next":       "Próximo",
 				        "previous":   "Anterior"
 				    },
 				    "aria": {
-				        "sortAscending":  ": clique para ordenaï¿½ï¿½o crescente",
-				        "sortDescending": ": clique para ordenaï¿½ï¿½o decrescente"
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
 				"iDisplayLength": 25
@@ -128,7 +128,7 @@
 	equipeService.getListasAsString = function() {
 		var params = '', dataAux = new Date();
 	
-		// Percorre lista de Exceï¿½ï¿½es
+		// Percorre lista de Exceções
 		equipeService.excecoesTable.api().rows().indexes().each(function (i) {
 			var rowValues = equipeService.excecoesTable.api().row(i).data();
 			
@@ -174,7 +174,7 @@
 		else {
 			this.excecoesTable = $('#excecoes_table').dataTable({
 				"language": {
-					"emptyTable":     "Nï¿½o existem resultados",
+					"emptyTable":     "Não existem resultados",
 				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -187,13 +187,13 @@
 				    "zeroRecords":    "Nenhum registro encontrado",
 				    "paginate": {
 				        "first":      "Primeiro",
-				        "last":       "ï¿½ltimo",
-				        "next":       "Prï¿½ximo",
+				        "last":       "Último",
+				        "next":       "Próximo",
 				        "previous":   "Anterior"
 				    },
 				    "aria": {
-				        "sortAscending":  ": clique para ordenaï¿½ï¿½o crescente",
-				        "sortDescending": ": clique para ordenaï¿½ï¿½o decrescente"
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
 				"columnDefs": [{"targets": [0, 1], "visible": false, "searchable": false}],
@@ -201,7 +201,7 @@
 			});
 		}
 		
-		// Remover exceï¿½ï¿½es
+		// Remover exceções
 		$('#excecoes_table tbody').on('click', 'a.excecao_remove', function () {
 			equipeService.excecoesTable.api().row($(this).closest('tr')).remove().draw(false);
 		});
@@ -216,7 +216,7 @@
 			equipeService.carregarExcecoes(equipe);
 			equipeService.carregarDesignacoes(equipe.idEquipe);
 		}
-		// Caso seja cadastro, atualiza os dados da Lotaï¿½ï¿½o
+		// Caso seja cadastro, atualiza os dados da Lotação
 		else {
 			var lota = JSON.parse($("#lotacaoUsuario").val())
 				equipeEdicao = {
@@ -225,7 +225,7 @@
 					lotacaoEquipeSpan : lota.descricao,
 					lotacaoEquipe_sigla : lota.sigla
 				};
-			// chama o editar para popular o campo da lotaï¿½ï¿½o
+			// chama o editar para popular o campo da lotação
 			equipeService.formularioHelper.populateFromJson(equipeEdicao);		
 			designacaoService.populateFromJSonList({});
 		}
@@ -248,7 +248,7 @@
 		var table = $('#excecoes_table');
 		
 		if (equipe.excecaoHorarioSet) {
-			// cria a lista de Exceï¿½ï¿½es de horï¿½rio, e adiciona na tela
+			// cria a lista de Exceções de horário, e adiciona na tela
 			for (i = 0; i < equipe.excecaoHorarioSet.length; i++) {
 				var item = equipe.excecaoHorarioSet[i];
 					row = [
@@ -278,7 +278,7 @@
         		designacaoService.populateFromJSonList(listaJSon);
         	},
         	error: function(error) {
-            	alert("Nï¿½o foi possï¿½vel carregar as Designaï¿½ï¿½es desta Equipe.");
+            	alert("Não foi possível carregar as Designações desta Equipe.");
         	}
        	});
     }

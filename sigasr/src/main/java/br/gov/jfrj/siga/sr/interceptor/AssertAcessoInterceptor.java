@@ -25,12 +25,14 @@ public class AssertAcessoInterceptor implements Interceptor {
 
 	@Override
 	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
-		try {
-			sigaObj.assertAcesso(new Perfil(method).getValor());
-			stack.next(method, resourceInstance);
-		} catch (Exception e) {
-			tratarExcecoes(e);
-		}
+		if (method.containsAnnotation(AssertAcesso.class))
+			try {
+				sigaObj.assertAcesso(new Perfil(method).getValor());
+			} catch (Exception e) {
+				tratarExcecoes(e);
+			}
+
+		stack.next(method, resourceInstance);
 	}
 
 	@Override
@@ -58,8 +60,7 @@ public class AssertAcessoInterceptor implements Interceptor {
 		private String valor;
 
 		public Perfil(ResourceMethod method) {
-			if (method.containsAnnotation(AssertAcesso.class))
-				this.valor = method.getMethod().getAnnotation(AssertAcesso.class).value();
+			this.valor = method.getMethod().getAnnotation(AssertAcesso.class).value();
 		}
 
 		public String getValor() {

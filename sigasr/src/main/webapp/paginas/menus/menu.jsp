@@ -5,6 +5,7 @@
 	<ul>
 		<li><a href="@{Application.editar}">Cadastrar</a></li>
 		<li><a href="@{Application.buscarSolicitacao}">Pesquisar</a></li>
+		<li><a href="/sigasr/app/equipe/listar">Equipe</a></li>
 	</ul>
 	
 	<li><a href="@{Application.listarLista}">Prioriza&ccedil;&atilde;o</a>

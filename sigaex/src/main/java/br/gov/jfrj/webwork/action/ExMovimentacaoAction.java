@@ -525,7 +525,6 @@ public class ExMovimentacaoAction extends ExActionSupport {
 	}
 
 	public String aAtualizarPublicacao() throws Exception {
-		assertAcesso("");
 		String sData = param("data");
 		Date data = null;
 		if (sData != null) {

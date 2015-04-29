@@ -346,7 +346,7 @@ public class ExDocumentoDTO {
 	}
 
 	/*
-	 * como usamos <ww:file name="arquivo" .../> o content Type do arquivo será
+	 * como usamos <file name="arquivo" .../> o content Type do arquivo será
 	 * obtido através getter/setter de <file-tag-name>ContentType
 	 */
 	public String getArquivoContentType() {
@@ -354,7 +354,7 @@ public class ExDocumentoDTO {
 	}
 
 	/*
-	 * como usamos <ww:file name="arquivo" .../> o nome do arquivo será obtido
+	 * como usamos <file name="arquivo" .../> o nome do arquivo será obtido
 	 * através getter/setter de <file-tag-name>FileName
 	 */
 	public String getArquivoFileName() {

@@ -106,7 +106,7 @@
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasAcessar"></div>
-				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=forma" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
+				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
@@ -134,7 +134,7 @@
 			$.ajax({				     				  
 				  url:'${pageContext.request.contextPath}/app/forma/verificar_sigla',
 				  type: "GET",
-				  data: {sigla : sigla, id : ${id} },					    					   					 
+				  data: {sigla : sigla, id : ${id} },
 				  success: function(data) {
 			    	$('#mensagem').html(data);				    
 			 	 }

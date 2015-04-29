@@ -218,7 +218,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		final String winProp = "'width=" + popW + ",height=" + popH
 				+ ",left='+" + winleft + "+',top='+" + winUp
 				+ "+',scrollbars=yes,resizable'";
-		String s = "<a href=\"javascript:void(0)\" onclick=\"window.open('/sigaex/expediente/doc/exibir.action?popup=true&idmob="
+		String s = "<a href=\"javascript:void(0)\" onclick=\"window.open('/sigaex/app/expediente/doc/exibir?popup=true&idmob="
 				+ getIdMobil();
 
 		String descricaoCurta = null;

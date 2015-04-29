@@ -608,13 +608,15 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Get("/app/expediente/doc/exibir")
-	public void exibe(final boolean conviteEletronico, final String sigla, final ExDocumentoDTO exDocumentoDTO) {
+	public void exibe(final boolean conviteEletronico, final String sigla, final ExDocumentoDTO exDocumentoDTO, final Long idmob) {
 		ExDocumentoDTO exDocumentoDto;
 		if (exDocumentoDTO == null) {
 			exDocumentoDto = new ExDocumentoDTO();
 		} else {
 			exDocumentoDto = exDocumentoDTO;
 		}
+		
+		exDocumentoDto.setIdMob(idmob);
 
 		exDocumentoDto.setSigla(sigla);
 		buscarDocumento(false, exDocumentoDto);
@@ -638,9 +640,14 @@ public class ExDocumentoController extends ExController {
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(), exDocumentoDto.getMob(), getTitular(), getLotaTitular(), true, false);
 
 		docVO.exibe();
+		
+		String Sigla = "";
+		if (exDocumentoDto.getSigla()!= null) {
+			Sigla = exDocumentoDto.getSigla().replace("/", "");
+		}		
 
 		result.include("docVO", docVO);
-		result.include("sigla", exDocumentoDto.getSigla().replace("/", ""));
+		result.include("sigla", Sigla);
 		result.include("id", exDocumentoDto.getId());
 		result.include("mob", exDocumentoDto.getMob());
 		result.include("lota", this.getLotaTitular());
@@ -649,12 +656,12 @@ public class ExDocumentoController extends ExController {
 
 	@Get("app/expediente/doc/exibirProcesso")
 	public void exibeProcesso(final String sigla, final boolean podeExibir) {
-		exibe(false, sigla, null);
+		exibe(false, sigla, null, null);
 	}
 
 	@Get("/app/expediente/doc/exibirResumoProcesso")
 	public void exibeResumoProcesso(final String sigla, final boolean podeExibir) {
-		exibe(false, sigla, null);
+		exibe(false, sigla, null, null);
 	}
 
 	private void verificaDocumento(final ExDocumento doc) {

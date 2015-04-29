@@ -64,13 +64,12 @@ import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.util.CpGrupoDeEmailSelecao;
 
 import com.google.common.base.Optional;
-import com.opensymphony.xwork.Preparable;
 
 public abstract class GrupoController<T extends CpGrupo> extends
-		GiSelecionavelControllerSupport<T, CpGrupoDaoFiltro> implements
-		Preparable {
+		GiSelecionavelControllerSupport<T, CpGrupoDaoFiltro> {
 
 	public GrupoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

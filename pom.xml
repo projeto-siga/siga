@@ -128,6 +128,11 @@
 
 	<repositories>
 		<repository>
+			<id>github</id>
+			<url>https://raw.githubusercontent.com/projeto-siga/siga-repo/master/repo</url>
+		</repository>
+
+		<repository>
 			<id>JBoss Thirdparty Releases</id>
 			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
 		</repository>
@@ -151,7 +156,6 @@
 			<id>simplecaptcha</id>
 			<url>http://maven.nfms4redd.org/</url>
 		</repository>
-
 	</repositories>
 
 	<dependencyManagement>
@@ -382,7 +386,7 @@
 			<dependency>
 				<groupId>jasperreports</groupId>
 				<artifactId>jasperreports</artifactId>
-				<version>3.5.3</version>
+				<version>3.5.1</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.bouncycastle</groupId>
@@ -402,7 +406,7 @@
 			<dependency>
 				<groupId>ar.com.fdvs</groupId>
 				<artifactId>DynamicJasper</artifactId>
-				<version>3.0.13</version>
+				<version>3.0.6</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>

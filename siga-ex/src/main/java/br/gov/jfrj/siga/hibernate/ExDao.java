@@ -1670,21 +1670,21 @@ public class ExDao extends CpDao {
 						"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
 								+ "order by f.descrFormaDoc, m.nmMod");
 		List<ExModelo> l = new ArrayList<ExModelo>();		
-		for (ExModelo mod : (List<ExModelo>) q.list())
+		for (ExModelo mod : (List<ExModelo>) q.list()) {
 			if (script != null && script.trim().length() != 0) {
-				String conteudo;
-				try {
-					conteudo = new String(mod.getConteudoBlobMod2(), "utf-8");
-				} catch (UnsupportedEncodingException e) {
-					conteudo = new String(mod.getConteudoBlobMod2());
+				if(mod.getConteudoBlobMod2() != null) {
+					String conteudo;
+					try {
+						conteudo = new String(mod.getConteudoBlobMod2(), "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						conteudo = new String(mod.getConteudoBlobMod2());
+					}
+					if ("template/freemarker".equals(mod.getConteudoTpBlob())&& (conteudo.contains(script)))
+						l.add(mod);
 				}
-				if ("template/freemarker".equals(mod.getConteudoTpBlob())
-						&& mod.getConteudoBlobMod2() != null
-						&& (conteudo
-						.contains(script)))
-					l.add(mod);
 			} else
 				l.add(mod);
+		}
 		return l;
 	}
 

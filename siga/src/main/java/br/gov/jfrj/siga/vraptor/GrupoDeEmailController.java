@@ -25,15 +25,18 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.util.CpGrupoDeEmailSelecao;
 
 @Resource
 public class GrupoDeEmailController extends GrupoController {
@@ -43,6 +46,8 @@ public class GrupoDeEmailController extends GrupoController {
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 		prepare();
+		
+		setItemPagina(10);
 	}
 
 	public int getIdTipoGrupo() {
@@ -194,4 +199,27 @@ public class GrupoDeEmailController extends GrupoController {
 		}
 		result.redirectTo("editar?idCpGrupo=" + idCpGrupo);
 	}
+	
+	@Get("app/gi/grupoDeEmail/selecionar")
+	public void selecionar(String sigla) throws Exception {
+		String fileRedirect = "/WEB-INF/jsp/" + super.aSelecionar(sigla) + ".jsp";
+
+		result.include("sel", this.getSel());
+		result.use(Results.page()).forwardTo(fileRedirect);	
+	}
+	
+	@Get
+	@Post
+	@Path("app/gi/grupoDeEmail/buscar")
+	public void busca(String sigla, String postback, String nome, Integer offset) throws Exception{
+		setNome(nome);
+		getP().setOffset(offset);
+		super.aBuscar(nome, postback);
+		result.include("param", getRequest().getParameterMap());
+		result.include("tamanho", getTamanho());
+		result.include("itens", getItens());
+		result.include("nome", getNome());
+	}
+	
+	
 }

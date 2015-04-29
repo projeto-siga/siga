@@ -20,7 +20,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.webwork.action.PrincipalAction.GenericoSelecao;
+import br.gov.jfrj.siga.model.GenericoSelecao;
 
 @Resource
 public class TestesController extends SigaController {
@@ -147,10 +147,10 @@ public class TestesController extends SigaController {
 			
 			
 			result.include("sel", sel);
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
 			
 		} catch (Exception e) {
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
 

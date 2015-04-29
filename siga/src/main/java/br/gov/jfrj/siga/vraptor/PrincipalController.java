@@ -16,51 +16,10 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.GenericoSelecao;
 
 @Resource
 public class PrincipalController extends SigaController {
-	
-	// Nem será necessário herdar de Selecao
-	public class GenericoSelecao {
-
-		private Long id;
-		private String sigla;
-		private String matricula;
-		private String descricao;
-
-		public String getDescricao() {
-			return descricao;
-		}
-
-		public void setDescricao(String descricao) {
-			this.descricao = descricao;
-		}
-		
-		public Long getId(){
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
-		}
-
-		public String getSigla() {
-			return sigla;
-		}
-
-		public void setSigla(String sigla) {
-			this.sigla = sigla;
-		}
-
-		public String getMatricula() {
-			return matricula;
-		}
-
-		public void setMatricula(String matricula) {
-			this.matricula = matricula;
-		}
-	}
-	
 	
 	public PrincipalController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
@@ -180,10 +139,10 @@ public class PrincipalController extends SigaController {
 
 			result.include("sel", sel);
 			result.include("request", getRequest());
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
 
 		} catch (Exception e) {
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
 	

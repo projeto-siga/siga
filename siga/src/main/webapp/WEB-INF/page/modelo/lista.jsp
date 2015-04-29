@@ -3,7 +3,7 @@
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%-- pageContext.setAttribute("sysdate", new java.util.Date()); --%>
 
 <link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css">
@@ -114,29 +114,6 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 								onclick="javascript: this.form.action='/siga/app/modelo/gravar'; "
 								class="gt-btn-medium gt-btn-left" />
 						</div>
-						<!-- 				
-				<td><span id="desc_ver${i}">
-					<c:if test="${not empty modelo.conteudoBlobString}">
-						<pre><ww:property  value="#attr.modelo.conteudoBlobString" escape="true" default=""/></pre>
-					</c:if>
-				</span> 
-				<c:if test="${true}">
-					<span id="desc_editar${i}" style="display: none"><textarea
-						cols="80" rows="40" name="conteudo"><c:if test="${not empty modelo.conteudoBlobString}"><ww:property  value="#attr.modelo.conteudoBlobString" escape="true" default=""/></c:if></textarea></span>
-				</c:if>
- 				</td>
-			</tr>
-			<c:if test="${true}">
-				<tr>
-					<td><input name="editar_conteudo" type="button" value="Editar"
-						id="but_editar${i}"
-						onclick="javascript: document.getElementById('desc_ver'+${i}).style.display='none'; document.getElementById('desc_editar'+${i}).style.display=''; document.getElementById('but_editar'+${i}).style.display='none'; document.getElementById('but_gravar'+${i}).style.display=''; " />
-					<input name="salvar_conteudo" type="submit" id="but_gravar${i}"
-						value="Salvar" style="display: none"
-						onclick="javascript: this.form.action='/siga/modelo/editar_gravar.action'; " /></td>
-				</tr>
-			</c:if>
--->
 					</form>
 				</div>
 			</c:forEach>

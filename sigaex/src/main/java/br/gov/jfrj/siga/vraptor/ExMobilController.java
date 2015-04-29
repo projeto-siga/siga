@@ -52,45 +52,13 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 
 @Resource
 public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
-	public class GenericoSelecao implements Selecionavel {
-
-		private Long id;
-
-		private String sigla;
-
-		private String descricao;
-
-		public String getDescricao() {
-			return descricao;
-		}
-
-		public void setDescricao(String descricao) {
-			this.descricao = descricao;
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
-		}
-
-		public String getSigla() {
-			return sigla;
-		}
-
-		public void setSigla(String sigla) {
-			this.sigla = sigla;
-		}
-	}
-
 	public ExMobilController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		setItemPagina(50);
@@ -144,8 +112,8 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
 			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc,
-			final Integer paramoffset) {
-		getP().setOffset(paramoffset);
+			final Integer offset) {
+		getP().setOffset(offset);
 		this.setSigla(sigla);
 		this.setPostback(postback);
 
@@ -155,7 +123,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 				.setOrgaoUsu(orgaoUsu).setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel).setSubscritorSel(subscritorSel).setTipoCadastrante(tipoCadastrante)
 				.setCadastranteSel(cadastranteSel).setLotaCadastranteSel(lotaCadastranteSel).setTipoDestinatario(tipoDestinatario)
 				.setDestinatarioSel(destinatarioSel).setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
-				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
+				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(offset);
 
 		builder.processar(getLotaTitular());
 
@@ -217,6 +185,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("paramoffset", builder.getOffset());
 		result.include("sigla", this.getSigla());
 		result.include("propriedade", propriedade);
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 	}
 
 	@Get("app/expediente/doc/listar")
@@ -297,6 +266,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("ultMovLotaRespSel", builder.getUltMovLotaRespSel());
 		result.include("ultMovIdEstadoDoc", ultMovIdEstadoDoc);
 		result.include("fullText", fullText);
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 	}
 
 	@Override
@@ -409,12 +379,14 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 	@Get("app/expediente/doc/carregar_lista_formas")
 	public void aCarregarListaFormas(Long tipoForma, Integer idFormaDoc) {
 		result.include("todasFormasDocPorTipoForma", this.getTodasFormasDocPorTipoForma(tipoForma));
+		result.include("idFormaDoc", idFormaDoc);
 	}
 	
 
 	@Get("app/expediente/doc/carregar_lista_modelos")
 	public void aCarregarListaModelos(final int forma, final Long idMod) {
 		result.include("modelos", this.getModelos(forma));
+		result.include("idMod", idMod);
 	}
 
 	private List<String> getListaAnos() {
@@ -489,9 +461,9 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		}
 		if (resultado == "ajax_retorno") {
 			result.include("sel", getSel());
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
 		} else {
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
 

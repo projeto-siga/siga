@@ -90,7 +90,7 @@ public class ExConfiguracaoController extends ExController {
 
 			config = configuracaoBuilder.construir(dao());
 		}
-		escreverForm(config);
+		escreverForm(config); 
 
 		result.include("id", id);
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());

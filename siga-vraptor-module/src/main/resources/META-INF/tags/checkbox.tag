@@ -5,6 +5,7 @@
 <%@ attribute name="value" required="false"%>
 <%@ attribute name="onchange" required="false"%>
 <%@ attribute name="depende" required="false"%>
+<%@ attribute name="disabled" required="false"%>
 
  <script language="javascript">
 	function show${name.replace('.', '')}(checked, divName){
@@ -24,6 +25,7 @@
 	}
 
 </script>
+
 <input type="hidden" name="${name}" id="${name}" value="${value ? 'true':'false'}" />
-<input id="check${name}" ${disabled ? disabled="disabled" : "" } type="checkbox" value="true" ${value ? 'checked':''} onchange="javascript:change${name.replace('.', '')}(); show${name.replace('.', '')}(this.checked, '${depende}');${onchange}" />
- 
+<input id="check${name}" type="checkbox" ${null != disabled ? "disabled='disabled'" : '' } value="true" ${value ? 'checked':''} 
+	onchange="javascript:change${name.replace('.', '')}(); show${name.replace('.', '')}(this.checked, '${depende}');${onchange}" />  

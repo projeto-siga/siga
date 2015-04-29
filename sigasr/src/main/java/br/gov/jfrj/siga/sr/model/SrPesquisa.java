@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -31,9 +30,6 @@ import com.google.gson.JsonObject;
 @Table(name = "SR_PESQUISA", schema = "SIGASR")
 public class SrPesquisa extends HistoricoSuporte {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public static ActiveRecord<SrPesquisa> AR = new ActiveRecord<>(SrPesquisa.class);

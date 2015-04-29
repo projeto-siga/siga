@@ -132,61 +132,61 @@
 				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="equipeService.aplicar()"/>
 			</div>
 		</div>
-
-<%-- #{modal nome:'excecaoHorario', titulo:'Adicionar Exceção de Horário'} --%>
-<!-- 	<div id="dialogExcecaoHorario"> -->
-<!-- 		<div class="gt-content"> -->
-<!-- 			<form id="excecaoHorarioForm" method="get" action="" enctype="multipart/form-data"> -->
-<!-- 				<div class="gt-form gt-content-box"> -->
-<!-- 					<div class="gt-form-row gt-width-100"> -->
-<!-- 						<label>Dia da Semana</label>  -->
+<siga:modal nome="excecaoHorario" titulo="Adicionar Exceção de Horário">
+	<div id="dialogExcecaoHorario">
+		<div class="gt-content">
+			<form id="excecaoHorarioForm" method="get" action="" enctype="multipart/form-data">
+				<div class="gt-form gt-content-box">
+					<div class="gt-form-row gt-width-100">
+						<label>Dia da Semana</label> 
 <%-- 						#{select name:'diaSemana',  --%>
-<%-- 							items:models.SrSemana.values(),  --%>
-<%-- 							valueProperty:'idSemana', --%>
-<%-- 							labelProperty:'descrDiaSemana',  --%>
-<%-- 							value:diaSemana?.idSemana, --%>
-<%-- 							class:'select-siga', --%>
-<%-- 							style:'width: 100%;'} --%>
+<%-- 							items:models.SrSemana.values(),  --%> 
+<%--							valueProperty:'idSemana', --%> 
+<%-- 							labelProperty:'descrDiaSemana',  --%> 
+<%--  							value:diaSemana?.idSemana, --%> 
+<%--  							class:'select-siga', --%> 
+<%--  							style:'width: 100%;'} --%> 
 <%-- 							#{option 0}Nenhuma#{/option}  --%>
 <%-- 						#{/select} --%>
-<!-- 						<span style="display:none;color: red" id="diaSemanaError">Dia da Semana não informado</span> -->
-<!-- 					</div> -->
-<!-- 					<div class="gt-form-row gt-width-100"> -->
-<!-- 						<label>Data Específica</label> -->
-<%-- 						#{dataCalendar nome:'dataEspecifica', value:dataEspecifica /} --%>
-<!-- 						<span style="display:none;color: red" id="dataEspecificaError">Data Específica não informada</span> -->
-<!-- 					</div> -->
+						<span style="display:none;color: red" id="diaSemanaError">Dia da Semana não informado</span>
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Data Específica</label>
+						<siga:dataCalendar nome="dataEspecifica" value="${dataEspecifica}"></siga:dataCalendar>
+						<span style="display:none;color: red" id="dataEspecificaError">Data Específica não informada</span>
+					</div>
 					
-<!-- 					<div id="erroHorarioInvalido" style="display:none;width:300px" class="gt-form-row gt-width-100"> -->
-<!-- 						<span style="color: red">O período informado está inválido. A data de início deve ser menor que a data de término e o período de intervalo deve estar contido no período de expediente</span> -->
-<!-- 					</div> -->
+					<div id="erroHorarioInvalido" style="display:none;width:300px" class="gt-form-row gt-width-100">
+						<span style="color: red">O período informado está inválido. A data de início deve ser menor que a data de término e o período de intervalo deve estar contido no período de expediente</span>
+					</div>
 					
-<!-- 					<div class="gt-form-row gt-width-100"> -->
-<!-- 						<label>Início Expediente <span>*</span></label> -->
-<%-- 						<input type="text" name="horaIni" id="horaIni" value="${horaIni}" class="hora" required> --%>
-<!-- 					</div> -->
-<!-- 					<div class="gt-form-row gt-width-100"> -->
-<!-- 						<label>Fim Expediente <span>*</span></label> -->
-<%-- 						<input type="text" name="horaFim" id="horaFim" value="${horaFim}" class="hora" required> --%>
-<!-- 					</div> -->
-<!-- 					<div class="gt-form-row gt-width-100"> -->
-<!-- 						<label>Início Intervalo <span>*</span></label> -->
-<%-- 						<input type="text" name="interIni" id="interIni" value="${interIni}" class="hora" required> --%>
-<!-- 					</div> -->
-<!-- 					<div class="gt-form-row gt-width-100"> -->
-<!-- 						<label>Fim Intervalo <span>*</span></label> -->
-<%-- 						<input type="text" name="interFim" id="interFim" value="${interFim}" class="hora" required> --%>
-<!-- 					</div> -->
+					<div class="gt-form-row gt-width-100">
+						<label>Início Expediente <span>*</span></label>
+						<input type="text" name="horaIni" id="horaIni" value="${horaIni}" class="hora" required>
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Fim Expediente <span>*</span></label>
+						<input type="text" name="horaFim" id="horaFim" value="${horaFim}" class="hora" required>
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Início Intervalo <span>*</span></label>
+						<input type="text" name="interIni" id="interIni" value="${interIni}" class="hora" required>
+					</div>
+					<div class="gt-form-row gt-width-100">
+						<label>Fim Intervalo <span>*</span></label>
+						<input type="text" name="interFim" id="interFim" value="${interFim}" class="hora" required>
+					</div>
 					
-<!-- 					<div class="gt-form-row"> -->
-<!-- 						<a href="javascript: inserirExcecaoHorario()" class="gt-btn-medium gt-btn-left">Ok</a> -->
-<!-- 						<a href="javascript: modalExcecaoFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a> -->
-<!-- 					</div> -->
-<!-- 				</div> -->
-<!-- 			</form> -->
-<!-- 		</div> -->
-<!-- 	</div> -->
-<%-- #{/modal} --%>
+					<div class="gt-form-row">
+						<a href="javascript: inserirExcecaoHorario()" class="gt-btn-medium gt-btn-left">Ok</a>
+						<a href="javascript: modalExcecaoFechar()" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</siga:modal>
+
 
 <script type="text/javascript">
 	var validatorForm,

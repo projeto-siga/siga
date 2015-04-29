@@ -1025,8 +1025,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public boolean estaCom(DpPessoa pess, DpLotacao lota) {
-		if (isFilha())
-			return solicitacaoPai.estaCom(pess, lota);
+		if (isFilha() && solicitacaoPai.estaCom(pess, lota))
+				return true;
 		if (isRascunho())
 			return foiCadastradaPor(pess, lota) || foiSolicitadaPor(pess, lota);
 		SrMovimentacao ultMov = getUltimaMovimentacao();

@@ -1,6 +1,8 @@
 <%@ tag body-content="scriptless"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ attribute name="nome" required="false"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+
 <%@ attribute name="nomeSelPessoa" required="false"%>
 <%@ attribute name="nomeSelLotacao" required="false"%>
 <%@ attribute name="valuePessoa" required="false"%>
@@ -8,15 +10,13 @@
 <%@ attribute name="disabled" required="false"%>
 <%@ attribute name="requiredValue" required="false"%>
 
-<%
-	String _nomeSelPessoaClean = ((String)jspContext.getAttribute("nomeSelPessoa")).replaceAll("\\.","");
-	String _nomeSelLotacaoClean = nomeSelLotacao.replaceAll("\\.","");
-	
-	request.setAttribute("_nomeSelPessoaClean", _nomeSelPessoaClean);
-	request.setAttribute("_nomeSelLotacaoClean", _nomeSelLotacaoClean);
-%>
+<c:set var="nomeSelPessoaClean" value="${fn:replace(nomeSelPessoa,'.','')}" />
+<c:set var="nomeSelLotacaoClean" value="${fn:replace(nomeSelLotacao,'.','')}" />
+
+<c:set var="desativar" value="nao"></c:set>
 <c:if test="${disabled == 'sim'}">
-	<c:set var="pessoaLotaSelecaoDisabled" value="disabled" scope="request"/>
+	<c:set var="pessoaLotaSelecaoDisabled" value="disabled='disabled'" scope="request"/>
+	<c:set var="desativar" value="sim"></c:set>
 </c:if>
 
 <select id="${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}" onchange="" ${pessoaLotaSelecaoDisabled} >
@@ -25,15 +25,13 @@
 </select>
 
 <span id="spanPessoa${requestScope._nomeSelPessoaClean}">
-	<siga:selecao tipo="pessoa" propriedade="pessoa" tema="simple" modulo="siga" inputName="${nomeSelPessoa}" 
-		 urlAcao="buscar" desativar="${disabled}" siglaInicial="${valuePessoa}" idInicial="${valuePessoa.id}" 
-		 descricaoInicial="${valuePessoa.descricao}"/>
+	<siga:selecao tipo="pessoa" propriedade="pessoa" tema="simple" modulo="siga" inputName="${nomeSelPessoaClean}" 
+		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
 </span>
 
 <span id="spanLotacao${requestScope._nomeSelLotacaoClean}">
-	<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" inputName="${nomeSelLotacao}" 
-		 urlAcao="buscar" desativar="${disabled}" siglaInicial="${valueLotacao}" idInicial="${valuevalueLotacaoPessoa.id}" 
-		 descricaoInicial="${valueLotacao.descricao}"/>
+	<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" inputName="${nomeSelLotacaoClean}" 
+		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
 </span>
 <script language="javascript">
 var select = document.getElementById('${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}');

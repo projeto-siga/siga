@@ -2556,6 +2556,12 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
+[#macro gravacao]
+    [#if gerar_gravacao!false]
+        [#nested]
+    [/#if]
+[/#macro]
+
 [#macro finalizacao]
     [#if gerar_finalizacao!false]
         [#nested]

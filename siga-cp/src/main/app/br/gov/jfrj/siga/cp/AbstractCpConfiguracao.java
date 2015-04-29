@@ -70,6 +70,9 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;
+	
+	@Column(name = "DESCR_CONFIGURACAO")
+	private String descrConfiguracao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
@@ -378,6 +381,14 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	public void setOrgaoObjeto(CpOrgaoUsuario orgaoObjeto) {
 		this.orgaoObjeto = orgaoObjeto;
+	}
+
+	public String getDescrConfiguracao() {
+		return descrConfiguracao;
+	}
+
+	public void setDescrConfiguracao(String descrConfiguracao) {
+		this.descrConfiguracao = descrConfiguracao;
 	}
 
 }

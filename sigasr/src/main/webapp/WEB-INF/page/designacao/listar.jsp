@@ -1,98 +1,103 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<div class="gt-content">
-	<!-- content bomex -->
-	<div class="gt-content-box dataTables_div">
-		<c:if test="${modoExibicao == 'designacao'}">
-		<div class="gt-form-row dataTables_length">
-			<label>
-<%-- 				<siga:checkbox name="mostrarDesativado" value="${mostrarDesativado}"></siga:checkbox> --%>
-<%-- 				#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b> --%>
-			</label>
+<siga:pagina>
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<div class="gt-content">
+				<!-- content bomex -->
+				<div class="gt-content-box dataTables_div">
+					<c:if test="${modoExibicao == 'designacao'}">
+					<div class="gt-form-row dataTables_length">
+						<label>
+			<%-- 				<siga:checkbox name="mostrarDesativado" value="${mostrarDesativado}"></siga:checkbox> --%>
+			<%-- 				#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b> --%>
+						</label>
+					</div>
+					</c:if>
+			
+					<table id="designacoes_table" border="0" class="gt-table display">
+						<thead>
+							<tr>
+								<th style="color: #333">
+									<button class="bt-expandir" type="button">
+										<span id="iconeBotaoExpandirTodos">+</span>
+									</button>
+								</th>
+								<th>Org&atilde;</th>
+								<th>Local</th>
+								<th>Solicitante</th>
+								<th>Descri&ccedil;&atilde;o</th>
+								<th>Atendente</th>
+								<th>A&ccedil;&otilde;es</th>
+								<th>JSon - Designa&ccedil;&atilde;o</th>
+								<th>Checkbox Heran&ccedil;a</th>
+								<th>Herdado</th>
+								<th>Utilizar Herdado</th>
+							</tr>
+						</thead>
+			
+			<!-- 			<tbody> -->
+			<%-- 				#{list items:_designacoes, as:'design'} --%>
+			<%-- 				<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')"  --%>
+			<!-- 					style="cursor: pointer;"> -->
+			<!-- 					<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td> -->
+			<%-- 					<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td> --%>
+			<%-- 					<td>${design.complexo?.nomeComplexo}</td> --%>
+			<%-- 					<td>${design.solicitante?.sigla}</td> --%>
+			<%-- 					<td>${design.descrConfiguracao}</td> --%>
+			<%-- 					<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td> --%>
+			<!-- 					<td class="acoes">  -->
+			<%-- 						#{desativarReativar id:design.id,  --%>
+			<%-- 											onReativar:'designacaoService.reativar', --%>
+			<%-- 											onDesativar :'designacaoService.desativar', --%>
+			<%-- 											isAtivo:design.isAtivo() } --%>
+			<%-- 						#{/desativarReativar} --%>
+			<!-- 						<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar"> -->
+			<!-- 							<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;">  -->
+			<!-- 						</a> -->
+			<!-- 					</td> -->
+			<%-- 					<td>${design.getSrConfiguracaoJson()}</td> --%>
+			<!-- 					<td class="checkbox-hidden" -->
+			<!-- 						style="width: 25px !important; padding-left: 5px; padding-right: 5px;"> -->
+			<%-- 						<input type="checkbox" checked="${design.utilizarItemHerdado}" --%>
+			<%-- 						id="check${design.id}" /> --%>
+			<!-- 					</td> -->
+			<%-- 					<th>${design.isHerdado}</th> --%>
+			<%-- 					<th>${design.utilizarItemHerdado}</th> --%>
+			<!-- 				</tr> -->
+			<%-- 				#{/list} --%>
+			<!-- 			</tbody> -->
+					</table>
+				</div>
+				<!-- /content box -->
+				<div class="gt-table-buttons">
+					<a onclick="designacaoService.cadastrar('Incluir Designação')" class="gt-btn-medium gt-btn-left">Incluir</a>
+				</div>
+			</div>
+			
+			<siga:modal nome="designacao" titulo="Cadastrar Designacao">
+				<div id="divEditarDesignacaoItem">
+			<%-- 		#{include 'Application/editarDesignacaoItem.html' /} --%>
+				</div>
+			</siga:modal>
+			
+			<siga:modal nome="erroAoSalvar" titulo="Problemas ao Salvar" altura="200" largura="450">
+				<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
+					style="text-align: justify;">
+					<label style="padding-top: 5px;">Pelo menos um dos campos
+						"Atendente", "Pr&eacute;-Atendente" ou "P&oacute;s-Atendente" precisa
+						necess&aacute;riamente ser a mesma lota&cccedil;&atilde;o que foi selecionada na tela de
+						equipe. Por favor verifique e tente novamente.</label>
+				</div>
+				<div class="gt-form-row" style="margin-left: 297px;">
+					<a href="javascript: fecharModalErroAoSalvar()"
+						class="gt-btn-medium gt-btn-left">OK</a>
+				</div>
+			</siga:modal>
 		</div>
-		</c:if>
-
-		<table id="designacoes_table" border="0" class="gt-table display">
-			<thead>
-				<tr>
-					<th style="color: #333">
-						<button class="bt-expandir" type="button">
-							<span id="iconeBotaoExpandirTodos">+</span>
-						</button>
-					</th>
-					<th>Orgão</th>
-					<th>Local</th>
-					<th>Solicitante</th>
-					<th>Descrição</th>
-					<th>Atendente</th>
-					<th>Ações</th>
-					<th>JSon - Designação</th>
-					<th>Checkbox Herança</th>
-					<th>Herdado</th>
-					<th>Utilizar Herdado</th>
-				</tr>
-			</thead>
-
-<!-- 			<tbody> -->
-<%-- 				#{list items:_designacoes, as:'design'} --%>
-<%-- 				<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')"  --%>
-<!-- 					style="cursor: pointer;"> -->
-<!-- 					<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td> -->
-<%-- 					<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td> --%>
-<%-- 					<td>${design.complexo?.nomeComplexo}</td> --%>
-<%-- 					<td>${design.solicitante?.sigla}</td> --%>
-<%-- 					<td>${design.descrConfiguracao}</td> --%>
-<%-- 					<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td> --%>
-<!-- 					<td class="acoes">  -->
-<%-- 						#{desativarReativar id:design.id,  --%>
-<%-- 											onReativar:'designacaoService.reativar', --%>
-<%-- 											onDesativar :'designacaoService.desativar', --%>
-<%-- 											isAtivo:design.isAtivo() } --%>
-<%-- 						#{/desativarReativar} --%>
-<!-- 						<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar"> -->
-<!-- 							<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;">  -->
-<!-- 						</a> -->
-<!-- 					</td> -->
-<%-- 					<td>${design.getSrConfiguracaoJson()}</td> --%>
-<!-- 					<td class="checkbox-hidden" -->
-<!-- 						style="width: 25px !important; padding-left: 5px; padding-right: 5px;"> -->
-<%-- 						<input type="checkbox" checked="${design.utilizarItemHerdado}" --%>
-<%-- 						id="check${design.id}" /> --%>
-<!-- 					</td> -->
-<%-- 					<th>${design.isHerdado}</th> --%>
-<%-- 					<th>${design.utilizarItemHerdado}</th> --%>
-<!-- 				</tr> -->
-<%-- 				#{/list} --%>
-<!-- 			</tbody> -->
-		</table>
 	</div>
-	<!-- /content box -->
-	<div class="gt-table-buttons">
-		<a onclick="designacaoService.cadastrar('Incluir Designação')" class="gt-btn-medium gt-btn-left">Incluir</a>
-	</div>
-</div>
-
-<siga:modal nome="designacao" titulo="Cadastrar Designacao">
-	<div id="divEditarDesignacaoItem">
-<%-- 		#{include 'Application/editarDesignacaoItem.html' /} --%>
-	</div>
-</siga:modal>
-
-<siga:modal nome="erroAoSalvar" titulo="Problemas ao Salvar" altura="200" largura="450">
-	<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
-		style="text-align: justify;">
-		<label style="padding-top: 5px;">Pelo menos um dos campos
-			"Atendente", "Pré-Atendente" ou "Pós-Atendente" precisa
-			necessáriamente ser a mesma lotação que foi selecionada na tela de
-			equipe. Por favor verifique e tente novamente.</label>
-	</div>
-	<div class="gt-form-row" style="margin-left: 297px;">
-		<a href="javascript: fecharModalErroAoSalvar()"
-			class="gt-btn-medium gt-btn-left">OK</a>
-	</div>
-</siga:modal>
-
+</siga:pagina>
 <script type="text/javascript">
 	var parametroTela = '${modoExibicao}';
 	
@@ -386,7 +391,7 @@
 			configuracaoItemAcaoService.iniciarDataTables();
 		}else configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(designacaoJson);
 
-		#{if _modoExibicao == 'equipe'}
+		if("${modoExibicao}" == "equipe") {
 			// Caso seja cadastro a partir da tela de equipe, atualiza os dados da Lotação atendente
 			var lota = JSON.parse($("#lotacaoUsuario").val());
 
@@ -400,7 +405,7 @@
 		
 			// chama o editar para popular o campo da lotação
 			designacaoService.formularioHelper.populateFromJson(designacaoJson);
-		#{/if}
+		}
 	}
 	
 	function designacaoModalFechar() {
@@ -412,3 +417,4 @@
 		$("#erroAoSalvar_dialog").dialog("close");
 	}
 </script>
+

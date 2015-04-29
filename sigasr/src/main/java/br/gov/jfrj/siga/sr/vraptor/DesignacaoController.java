@@ -1,14 +1,19 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import play.db.jpa.JPA;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
-import br.gov.jfrj.siga.sr.validator.SrError;
+import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 
@@ -20,9 +25,20 @@ public class DesignacaoController extends SrController {
 		super(request, result, dao, so, em);
 	}
 
-	@Path("/listar")
-	public void listar() {
+	@Path("/listar/{mostrarDesatuvados}")
+	public void listar(boolean mostrarDesativados) {
+//		assertAcesso("ADM:Administrar");
+//		List<SrConfiguracao> designacoes = new ArrayList<SrConfiguracao>();
+		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados, null);
+		List<CpOrgaoUsuario> orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpComplexo> locais = CpComplexo.all().fetch();
+
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find("hisDtFim is null").fetch();
+
 		result.include("modoExibicao", "designacao");
+		result.include("designacoes", designacoes);
+		result.include("locais", locais);
+		result.include("pesquisaSatisfacao", pesquisaSatisfacao);
 	}
 
 //	public static String desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {

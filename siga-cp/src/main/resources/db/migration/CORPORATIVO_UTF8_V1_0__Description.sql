@@ -5218,6 +5218,27 @@ Pede deferimento.</span><br/><br/><br/>
     [/#if]
 [/#macro]
 
+[#macro webservice var url timeout cache=""]
+  [#if cache?has_content]
+    <input type="hidden" name="vars" value="${cache}" />
+  [/#if]
+  [#if cache?has_content && .vars[cache]??]
+    [#local str=.vars[cache] /]
+    <input type="hidden" name="${cache}" value="${str}">
+  [#else]
+    [#local payload][#nested][/#local]
+    [#local str=func.webservice(url,payload,timeout) /]
+    <input type="hidden" name="${cache}" value="${str?url('UTF-8')}">
+  [/#if]
+  [#if str?has_content]
+     [#local retornoSource="[#assign " + var + "=func.parseXML(str) /]"/]
+  [#else]
+     [#local retornoSource="[#assign " + var + "=str /]"/]
+  [/#if]
+  [#local retornoTemplate = retornoSource?interpret]
+  [@retornoTemplate /] 
+[/#macro]
+
 [#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
 [@selecaoX2 titulo=titulo var=var opcoes="Matrícula;Orgão Integrado" reler=true idAjax=idAjax/]   
     [#if buscarFechadas]

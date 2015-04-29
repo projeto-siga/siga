@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.Util;
 
@@ -31,9 +32,11 @@ import com.google.gson.JsonObject;
 public class SrPesquisa extends HistoricoSuporte {
 
 	/**
-	 * 
-	 */	
+	 *
+	 */
 	private static final long serialVersionUID = 1L;
+
+	public static ActiveRecord<SrPesquisa> AR = new ActiveRecord<>(SrPesquisa.class);
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_PESQUISA_SEQ", name = "srPesquisaSeq")
@@ -90,7 +93,7 @@ public class SrPesquisa extends HistoricoSuporte {
 			return null;
 		return pesquisas.get(0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<SrPesquisa> listar(boolean mostrarDesativados) {
 		if (!mostrarDesativados) {
@@ -99,7 +102,7 @@ public class SrPesquisa extends HistoricoSuporte {
 			StringBuilder str = new StringBuilder();
 			str.append("SELECT p FROM SrPesquisa p where p.idPesquisa IN (");
 			str.append("SELECT MAX(idPesquisa) FROM SrPesquisa GROUP BY hisIdIni)");
-			
+
 			return JPA.em()
 					.createQuery(str.toString())
 					.getResultList();
@@ -150,22 +153,22 @@ public class SrPesquisa extends HistoricoSuporte {
 				pergunta.finalizar();
 			}
 	}
-	
+
 	public String toJson() {
 		return toJson(false);
 	}
-	
+
 	public String toJson(boolean listarAssociacoes) {
 		Gson gson = Util.createGson("meuPesquisaHistoricoSet", "perguntaSet", "pesquisaInicial");
-		
+
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		jsonObject.add("perguntasSet", perguntasArray());
 		jsonObject.add("associacoesVO", getAssociacoesJson(listarAssociacoes));
-		
+
 		return jsonObject.toString();
 	}
-	
+
 	private JsonArray perguntasArray() {
 		Gson gson = Util.createGson("pesquisa", "perguntaInicial", "meuPerguntaHistoricoSet");
 		JsonArray jsonArray = new JsonArray();
@@ -175,28 +178,28 @@ public class SrPesquisa extends HistoricoSuporte {
 		}
 		return jsonArray;
 	}
-	
+
 	public SrPesquisa atualizarTiposPerguntas() {
 		for (SrPergunta srPergunta : this.perguntaSet) {
 			srPergunta.tipoPergunta = SrTipoPergunta.findById(srPergunta.tipoPergunta.idTipoPergunta);
 		}
 		return this;
 	}
-	
+
 	private JsonArray getAssociacoesJson(boolean listarAssociacoes) {
 		Gson gson = Util.createGson("");
 		JsonArray jsonArray = new JsonArray();
-		
+
 		if (listarAssociacoes) {
 			List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesPesquisa(this, Boolean.FALSE);
-			
+
 			if (associacoes != null) {
 				for (SrConfiguracao conf : associacoes) {
 					jsonArray.add(gson.toJsonTree(conf.toVO()));
 				}
 			}
 		}
-		
+
 		return jsonArray;
 	}
 }

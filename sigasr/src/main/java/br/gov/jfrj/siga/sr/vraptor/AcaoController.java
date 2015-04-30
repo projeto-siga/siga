@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -27,7 +26,7 @@ public class AcaoController extends SrController {
 		super(request, result, dao, so, em);
 	}
 
-	@AssertAcesso(ADM_ADMINISTRAR)
+	//@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/listar/{mostrarDesativados}")
 	public void listar(boolean mostrarDesativados) throws Exception {
 		List<SrAcao> acoes = SrAcao.listar(mostrarDesativados);
@@ -36,7 +35,7 @@ public class AcaoController extends SrController {
 		result.include("mostrarDesativados", mostrarDesativados);
 	}
 
-	@AssertAcesso(ADM_ADMINISTRAR)
+	//@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/editar/{id}")
 	public void editar(Long id) throws Exception {
 		SrAcao acao = new SrAcao();
@@ -46,7 +45,7 @@ public class AcaoController extends SrController {
 		result.include(ACAO, acao);
 	}
 
-	@AssertAcesso(ADM_ADMINISTRAR)
+	//@AssertAcesso(ADM_ADMINISTRAR)
 	public String gravarAcao(SrAcao acao) throws Exception {
 		validarFormEditarAcao(acao);
 		acao.salvar();

@@ -2,14 +2,27 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Servi�os">
+
+	<jsp:include page="../main.jsp"></jsp:include>
+
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="../../../javascripts/jquery.serializejson.min.js"></script>
+	<script src="../../../javascripts/jquery.populate.js"></script>
+	<script src="../../../javascripts/base-service.js"></script>
+	<script src="../../../javascripts/jquery.validate.min.js"></script>
+	<script src="../../../javascripts/language/messages_pt_BR.min.js"></script>
+
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
 			<h2>A&ccedil;&otilde;es</h2>
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
+				<br/>
 					<label>
-						<siga:checkbox name="mostrarDesativado" value="${mostrarDesativado}"></siga:checkbox>
+						<siga:checkbox name="mostrarDesativado" value="${mostrarDesativado}" depende="dataTables_div"></siga:checkbox>
 						<b>Incluir Inativas</b>
 					</label>
 				</div>
@@ -104,15 +117,15 @@
 		$("#checkmostrarDesativado").click(function() {
 			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = "${linkTo[AcaoController].listarAcaoDesativados}";
+				location.href = "${linkTo[AcaoController].listarDesativados}";
 			else
-				location.href = "${linkTo[AcaoController].listarAcao}";
+				location.href = "${linkTo[AcaoController].listar}";
 		});
 		
 		/* Table initialization */
 		opts.dataTable = $('#acoes_table').dataTable({
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "N&aacute;o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -125,13 +138,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
+			        "last":       "&Uacute;timo",
+			        "next":       "Pr&oacute;ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordena&ccedil;&atilde;o crescente",
+			        "sortDescending": ": clique para ordena&ccedil;&atilde;o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -188,13 +201,5 @@
 	acaoService.onRowClick = function(acao) {
 		acaoService.editar(acao, 'Alterar A&ccedil;&atilde;o');
 	}
-</script>
 
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
-<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
-<script src="/sigasr/public/javascripts/base-service.js"></script>
-<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
-<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
+</script>

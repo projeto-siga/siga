@@ -6,26 +6,26 @@
 	<form id="acaoForm" enctype="multipart/form-data">
 		<input type="hidden" name="idAcao">
 		
-		#{ifErrors}
-		<p class="gt-error">Alguns campos obrigatórios não foram
-			preenchidos ${error}</p>
-		#{/ifErrors}
+<%-- 		#{ifErrors} --%>
+<!-- 		<p class="gt-error">Alguns campos obrigatórios não foram -->
+<%-- 			preenchidos ${error}</p> --%>
+<%-- 		#{/ifErrors} --%>
 		<div class="gt-form-row gt-width-66">
-			<label>Código <span>*</span></label> 
+			<label>C&oacute;digo <span>*</span></label> 
 			<input type="text" name="sigla" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Título <span>*</span></label> <input type="text"
+			<label>T&iacute;tulo <span>*</span></label> <input type="text"
 				name="tituloAcao" size="100" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Descrição</label> <input type="text"
+			<label>Descri&ccedil;&atilde;o</label> <input type="text"
 				name="descrAcao" size="100" maxlength="255"/>
 		</div>
 		
 		<div class="gt-form-row gt-width-66">
-			<label>Tipo de ação</label>
-				#{selecao tipo:'tipoAcao', nome:'tipoAcao', value:tipoAcao?.atual /}
+			<label>Tipo de a&ccedil;&atilde;o</label>
+			<siga:selecao tipo="tipoAcao" inputName="tipoAcao" idInicial="${tipoAcao.atual}"></siga:selecao>
 		</div>
 		
 		<div class="gt-form-row">

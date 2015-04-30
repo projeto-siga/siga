@@ -58,23 +58,30 @@
 .gt-content-box {
 	padding-top: 0px !important;
 }
+
+.ui-widget-header {
+	border: 1px solid #365b6d;
+	background: #365b6d;
+}
+
+#equipe_dialog, #excecaoHorario_dialog {
+	height:auto !important;
+}
 </style>
 
 		<div class="gt-form gt-content-box div-editar-equipe">
 			<form id="form" class="formEditarEquipe" enctype="multipart/form-data">
 				<input type="hidden" id="idEquipe" name="idEquipe">
 				<input type="hidden" id="idEquipeIni" name="hisIdIni">
-				<input type="text" style="visibility: hidden;" id="lotacaoUsuario" name="lotacaoUsuario" value="${lotacaoUsuario.toJson()}"/>
+				<input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario" value="${lotacaoUsuario.toJson()}"/>
 				<p class="gt-error" style="display:none;" id="erroEquipeCamposObrigatorios">Alguns campos obrigatórios não foram preenchidos</p>
 				<div class="gt-form-table">
 					<div class="barra-subtitulo barra-subtitulo-top header"
 						align="center" valign="top">Dados básicos</div>
 				</div>
 				<div class="gt-form-row gt-width-100">
-<%-- 					<label>LotaÃ§Ã£o</label>#{selecao --%>
-<%-- 						tipo:'lotacaoEquipe', nome:'lotacaoEquipe', --%>
-<%-- 						value:lotacaoUsuario, --%>
-<%-- 						disabled:'true' /} --%>
+					<label>Lotação</label>
+					<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" desativar="sim"/>
 				</div>
 				
 				<div class="gt-form-table">
@@ -136,7 +143,13 @@
 			<form id="excecaoHorarioForm" method="get" action="" enctype="multipart/form-data">
 				<div class="gt-form gt-content-box">
 					<div class="gt-form-row gt-width-100">
-						<label>Dia da Semana</label> 
+						<label>Dia da Semana</label>
+						<select name="diaSemana" class="select-siga" style="{width:100%;}">
+							<option value=0>Nenhuma</optgroup>
+							<c:forEach items="${diasSemana}" var="dia">
+								<option value="${dia.idDiaSemana}">${dia.descrDiaSemana}</option>
+							</c:forEach>						
+						</select> 
 <%-- 						#{select name:'diaSemana',  --%>
 <%-- 							items:models.SrSemana.values(),  --%> 
 <%--							valueProperty:'idSemana', --%> 
@@ -191,6 +204,7 @@
 		validatorFormExcessao = null;
 	
 	jQuery(document).ready(function($) {
+		$("#equipe_dialog").css("height","auto");
 		$.validator.addMethod(
 		        "hora",
 		        function(value, element, regexp) {

@@ -3,9 +3,15 @@
 
 <jsp:include page="../main.jsp"></jsp:include>
 
-
 <siga:pagina titulo="Serviços">
-
+	
+	<style>
+	.ui-widget-header {
+		border: 1px solid #365b6d;
+		background: #365b6d;
+	}
+	</style>
+	
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>

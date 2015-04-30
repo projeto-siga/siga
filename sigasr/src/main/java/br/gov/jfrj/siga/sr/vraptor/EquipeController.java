@@ -13,11 +13,14 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrEquipe;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
+import br.gov.jfrj.siga.sr.model.SrSemana;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -41,15 +44,21 @@ public class EquipeController extends SrController{
 		List<CpComplexo> locais = CpComplexo.AR.all().fetch();
 		List<CpUnidadeMedida> unidadesMedida = dao.listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.AR.find("hisDtFim is null").fetch();
-		SelecionavelVO lotacaoUsuario = SelecionavelVO.createFrom(getLotaTitular());
+		DpLotacao lotaTitular = getLotaTitular();
+		SelecionavelVO lotacaoUsuario = SelecionavelVO.createFrom(lotaTitular);
 
+		DpLotacaoSelecao lotacaoSel = new DpLotacaoSelecao();
+		lotacaoSel.setId(lotaTitular.getId());
+		lotacaoSel.buscar();
+		
 		result.include("listaEquipe", listaEquipe);
 		result.include("orgaos",orgaos);
 		result.include("locais",locais);
 		result.include("unidadesMedida",unidadesMedida);
 		result.include("pesquisaSatisfacao",pesquisaSatisfacao);
 		result.include("lotacaoUsuario",lotacaoUsuario);
-		
+		result.include("lotacaoSel",lotacaoSel);
+		result.include("diasSemana", SrSemana.values());
 	}
 	
 	@Path("/gravar")

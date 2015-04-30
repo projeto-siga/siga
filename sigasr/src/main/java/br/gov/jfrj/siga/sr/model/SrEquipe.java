@@ -124,7 +124,7 @@ public class SrEquipe extends HistoricoSuporte {
 				JsonObject jsonObjectExcecao = (JsonObject) gson.toJsonTree(srExcecaoHorario);
 				
 				if (srExcecaoHorario.diaSemana != null)
-					jsonObjectExcecao.add("descrDiaSemana", gson.toJsonTree(srExcecaoHorario.diaSemana.descrDiaSemana));
+					jsonObjectExcecao.add("descrDiaSemana", gson.toJsonTree(srExcecaoHorario.diaSemana.getDescrDiaSemana()));
 				
 				jsonArray.add(jsonObjectExcecao);
 			}

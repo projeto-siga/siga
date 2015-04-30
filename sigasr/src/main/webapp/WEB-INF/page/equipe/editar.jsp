@@ -121,14 +121,9 @@
 			</form>
 			
 			<div class="gt-form-row">
-			
-<%-- 				#{designacoes modoExibicao:'equipe',  --%>
-<%-- 					orgaos:orgaos,  --%>
-<%-- 					locais:locais,  --%>
-<%-- 					unidadesMedida:unidadesMedida,  --%>
-<%-- 					pesquisaSatisfacao:pesquisaSatisfacao,  --%>
-<%-- 					listasPrioridade:listasPrioridade /} --%>
-			
+				<siga:designacao modoExibicao="equipe" designacoes="${designacoes}" mostrarDesativado="mostrarDesativado"
+					unidadesMedida="${unidadesMedida}" orgaos="${orgaos}" locais="${locais}" 
+					pesquisaSatisfacao="${pesquisaSatisfacao}" listasPrioridade="${listasPrioridade}" /> 
 			</div>
 			<div class="gt-form-row">
 				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="equipeService.gravar()"/>
@@ -150,15 +145,6 @@
 								<option value="${dia.idDiaSemana}">${dia.descrDiaSemana}</option>
 							</c:forEach>						
 						</select> 
-<%-- 						#{select name:'diaSemana',  --%>
-<%-- 							items:models.SrSemana.values(),  --%> 
-<%--							valueProperty:'idSemana', --%> 
-<%-- 							labelProperty:'descrDiaSemana',  --%> 
-<%--  							value:diaSemana?.idSemana, --%> 
-<%--  							class:'select-siga', --%> 
-<%--  							style:'width: 100%;'} --%> 
-<%-- 							#{option 0}Nenhuma#{/option}  --%>
-<%-- 						#{/select} --%>
 						<span style="display:none;color: red" id="diaSemanaError">Dia da Semana não informado</span>
 					</div>
 					<div class="gt-form-row gt-width-100">
@@ -204,7 +190,6 @@
 		validatorFormExcessao = null;
 	
 	jQuery(document).ready(function($) {
-		$("#equipe_dialog").css("height","auto");
 		$.validator.addMethod(
 		        "hora",
 		        function(value, element, regexp) {

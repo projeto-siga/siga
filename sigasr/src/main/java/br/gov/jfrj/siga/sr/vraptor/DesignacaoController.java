@@ -1,11 +1,11 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import play.db.jpa.JPA;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -25,45 +25,49 @@ public class DesignacaoController extends SrController {
 		super(request, result, dao, so, em);
 	}
 
-	@Path("/listar/{mostrarDesatuvados}")
-	public void listar(boolean mostrarDesativados) {
+	@SuppressWarnings("unchecked")
+	@Path("/listar/{mostrarDesativado}")
+	public void listar(boolean mostrarDesativado) {
 //		assertAcesso("ADM:Administrar");
-//		List<SrConfiguracao> designacoes = new ArrayList<SrConfiguracao>();
-		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativados, null);
-		List<CpOrgaoUsuario> orgaos = JPA.em().createQuery("from CpOrgaoUsuario").getResultList();
-		List<CpComplexo> locais = CpComplexo.all().fetch();
-
-		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.find("hisDtFim is null").fetch();
+		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(mostrarDesativado, null);
+		List<CpOrgaoUsuario> orgaos = CpOrgaoUsuario.AR.findAll();
+		List<CpComplexo> locais =  CpComplexo.AR.all().fetch();
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.AR.find("hisDtFim is null").fetch();
 
 		result.include("modoExibicao", "designacao");
+		result.include("mostrarDesativado", mostrarDesativado);
 		result.include("designacoes", designacoes);
+		result.include("orgaos", orgaos);
 		result.include("locais", locais);
 		result.include("pesquisaSatisfacao", pesquisaSatisfacao);
 	}
 
-//	public static String desativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
-////		assertAcesso("ADM:Administrar");
+	@Path("/desativar")
+	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
+//		assertAcesso("ADM:Administrar");
 //		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 //		designacao.finalizar();
 //
 //		return designacao.getSrConfiguracaoJson();
-//	}
+	}
 
-//	public static String reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
-////		assertAcesso("ADM:Administrar");
+	@Path("/reativar")
+	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
+//		assertAcesso("ADM:Administrar");
 //		SrConfiguracao designacao = JPA.em().find(SrConfiguracao.class, id);
 //		designacao.salvar();
 //
 //		return designacao.getSrConfiguracaoJson();
-//	}
+	}
 
-//	public static String gravarDesignacao(SrConfiguracao designacao) throws Exception {
-////		assertAcesso("ADM:Administrar");
-////		validarFormEditarDesignacao(designacao);
+	@Path("/gravar")
+	public void gravar(SrConfiguracao designacao) throws Exception {
+//		assertAcesso("ADM:Administrar");
+//		validarFormEditarDesignacao(designacao);
 //		designacao.salvarComoDesignacao();
 //		designacao.refresh();
 //		return designacao.getSrConfiguracaoJson();
-//	}
+	}
 
 //	@SuppressWarnings("static-access")
 //	private void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {

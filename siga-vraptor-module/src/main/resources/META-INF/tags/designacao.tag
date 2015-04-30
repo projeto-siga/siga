@@ -1,5 +1,7 @@
 <%@ tag body-content="scriptless"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+
 <%@ attribute name="orgaos" required="false"%>
 <%@ attribute name="locais" required="false"%>
 <%@ attribute name="unidadesMedida" required="false"%>
@@ -7,6 +9,7 @@
 <%@ attribute name="listasPrioridade" required="false"%>
 <%@ attribute name="designacoes" required="false"%>
 <%@ attribute name="modoExibicao" required="false"%>
+<%@ attribute name="mostrarDesativado" required="false"%>
 
 
 <div class="gt-bd clearfix">
@@ -15,12 +18,11 @@
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
 				<c:if test="${requestScope[modoExibicao] == 'designacao'}">
-				<div class="gt-form-row dataTables_length">
-					<label>
-		<%-- 				<siga:checkbox name="mostrarDesativado" value="${mostrarDesativado}"></siga:checkbox> --%>
-		<%-- 				#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b> --%>
-					</label>
-				</div>
+					<div class="gt-form-row dataTables_length">
+						<label>
+							<siga:checkbox name="mostrarDesativado" value="${requestScope[mostrarDesativado]}"></siga:checkbox>
+						</label>
+					</div>
 				</c:if>
 		
 				<table id="designacoes_table" border="0" class="gt-table display">
@@ -31,7 +33,7 @@
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th>Org&atilde;</th>
+							<th>Org&atilde;o</th>
 							<th>Local</th>
 							<th>Solicitante</th>
 							<th>Descri&ccedil;&atilde;o</th>
@@ -48,12 +50,15 @@
 							<tr data-json-id="${design.id}" data-json="<%-- ${design.toVO().toJson()} --%>" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
 								style="cursor: pointer;">
 								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
-								<td><%--  ${design.orgaoUsuario != null ? design.orgaoUsuario.acronimoOrgaoUsu : ""} --%></td>
-								<td> <%-- ${design.complexo?.nomeComplexo} --%></td>
-								<td><%-- ${design.solicitante?.sigla} --%></td>
+								<td>${design.orgaoUsuario != null ? design.orgaoUsuario.acronimoOrgaoUsu : ""}</td>
+								<td>${design.complexo != null ? design.complexo.nomeComplexo : ""}</td>
+								<td>${design.solicitante != null ? design.solicitante.sigla : "" }</td>
 								<td><%-- ${design.descrConfiguracao} --%></td>
 								<td><%-- ${design.atendente?.lotacaoAtual?.siglaLotacao } --%></td>
 								<td class="acoes"> 
+<%-- 											<siga:desativarReativar id="${design.id}" onReativar=""  --%>
+<%-- 											onDesativar="" isAtivo="${design.isAtivo()}"> --%>
+<%-- 											</siga:desativarReativar> --%>
 <%-- 										#{desativarReativar id:design.id,  --%>
 <%-- 															onReativar:'designacaoService.reativar', --%>
 <%-- 															onDesativar :'designacaoService.desativar', --%>
@@ -63,7 +68,7 @@
 										<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
 									</a>
 								</td>
-								<td><%-- ${design.getSrConfiguracaoJson()} --%></td>
+								<td>${design.getSrConfiguracaoJson()}</td>
 								<td class="checkbox-hidden"
 									style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
 									<input type="checkbox" checked="${design.utilizarItemHerdado}"
@@ -130,9 +135,9 @@
 	var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false,
 			
 	designacaoOpts = {
-		 urlDesativar : '@{Application.desativarDesignacao()}?',
-		 urlReativar : '@{Application.reativarDesignacao()}?',
-		 urlGravar : '@{Application.gravarDesignacao()}?',
+		 urlDesativar : '${linkTo[DesignacaoController].desativar}',
+		 urlReativar : '${linkTo[DesignacaoController].reativar}',
+		 urlGravar : '${linkTo[DesignacaoController].gravar}',
 		 dialogCadastro : jQuery('#designacao_dialog'),
 		 tabelaRegistros : jQuery('#designacoes_table'),
 		 objectName : 'designacao',

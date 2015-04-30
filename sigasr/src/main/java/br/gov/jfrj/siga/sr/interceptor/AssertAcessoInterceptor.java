@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.core.InterceptorStack;
-import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
@@ -13,21 +12,18 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @RequestScoped
 @Intercepts(after = ContextInterceptor.class)
-public class AssertAcessoInterceptor implements Interceptor {
-
-	private SigaObjects sigaObj;
-	private HttpServletRequest request;
+public class AssertAcessoInterceptor extends AbstractExceptionHandler {
 
 	public AssertAcessoInterceptor(SigaObjects so, HttpServletRequest request) {
-		this.sigaObj = so;
-		this.request = request;
+		setSo(so);
+		setRequest(request);
 	}
 
 	@Override
 	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
 		if (method.containsAnnotation(AssertAcesso.class))
 			try {
-				sigaObj.assertAcesso(new Perfil(method).getValor());
+				getSo().assertAcesso(new Perfil(method).getValor());
 			} catch (Exception e) {
 				tratarExcecoes(e);
 			}
@@ -36,16 +32,13 @@ public class AssertAcessoInterceptor implements Interceptor {
 	}
 
 	@Override
-	public boolean accepts(ResourceMethod method) {
-		return Boolean.TRUE;
-	}
-
-	private void tratarExcecoes(Throwable e) {
+	protected void tratarExcecoes(Throwable e) {
 		redirecionarParaErro(e);
 	}
 
-	private void redirecionarParaErro(Throwable e) {
-		request.setAttribute("exception", criarExcecaoComMesmoStackTrace(e));
+	@Override
+	protected void redirecionarParaErro(Throwable e) {
+		getRequest().setAttribute("exception", criarExcecaoComMesmoStackTrace(e));
 		throw new InterceptionException(e);
 	}
 

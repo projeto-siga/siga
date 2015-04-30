@@ -12,85 +12,77 @@
 <%@ attribute name="mostrarDesativado" required="false"%>
 
 
-<div class="gt-bd clearfix">
-	<div class="gt-content clearfix">
-		<div class="gt-content">
-			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
-				<c:if test="${requestScope[modoExibicao] == 'designacao'}">
-					<div class="gt-form-row dataTables_length">
-						<label>
-							<siga:checkbox name="mostrarDesativado" value="${requestScope[mostrarDesativado]}"></siga:checkbox>
-						</label>
-					</div>
-				</c:if>
-		
-				<table id="designacoes_table" border="0" class="gt-table display">
-					<thead>
-						<tr>
-							<th style="color: #333">
-								<button class="bt-expandir" type="button">
-									<span id="iconeBotaoExpandirTodos">+</span>
-								</button>
-							</th>
-							<th>Org&atilde;o</th>
-							<th>Local</th>
-							<th>Solicitante</th>
-							<th>Descri&ccedil;&atilde;o</th>
-							<th>Atendente</th>
-							<th>A&ccedil;&otilde;es</th>
-							<th>JSon - Designa&ccedil;&atilde;o</th>
-							<th>Checkbox Heran&ccedil;a</th>
-							<th>Herdado</th>
-							<th>Utilizar Herdado</th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach items="${requestScope[designacoes]}" var="design">
-							<tr data-json-id="${design.id}" data-json="<%-- ${design.toVO().toJson()} --%>" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
-								style="cursor: pointer;">
-								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
-								<td>${design.orgaoUsuario != null ? design.orgaoUsuario.acronimoOrgaoUsu : ""}</td>
-								<td>${design.complexo != null ? design.complexo.nomeComplexo : ""}</td>
-								<td>${design.solicitante != null ? design.solicitante.sigla : "" }</td>
-								<td><%-- ${design.descrConfiguracao} --%></td>
-								<td><%-- ${design.atendente?.lotacaoAtual?.siglaLotacao } --%></td>
-								<td class="acoes"> 
-<%-- 											<siga:desativarReativar id="${design.id}" onReativar=""  --%>
-<%-- 											onDesativar="" isAtivo="${design.isAtivo()}"> --%>
-<%-- 											</siga:desativarReativar> --%>
-<%-- 										#{desativarReativar id:design.id,  --%>
-<%-- 															onReativar:'designacaoService.reativar', --%>
-<%-- 															onDesativar :'designacaoService.desativar', --%>
-<%-- 															isAtivo:design.isAtivo() } --%>
-<%-- 										#{/desativarReativar} --%>
-									<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar">
-										<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
-									</a>
-								</td>
-								<td>${design.getSrConfiguracaoJson()}</td>
-								<td class="checkbox-hidden"
-									style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
-									<input type="checkbox" checked="${design.utilizarItemHerdado}"
-									id="check${design.id}" />
-								</td>
-								<th><%-- ${design.isHerdado} --%></th>
-								<th><%-- ${design.utilizarItemHerdado} --%></th>
-							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
+<div class="gt-content">
+	<!-- content bomex -->
+	<div class="gt-content-box dataTables_div">
+		<c:if test="${requestScope[modoExibicao] == 'designacao'}">
+			<div class="gt-form-row dataTables_length">
+				<label>
+					<siga:checkbox name="mostrarDesativado" value="${requestScope[mostrarDesativado]}"></siga:checkbox>
+					<b>Incluir Inativas</b>
+				</label>
 			</div>
-			<!-- /content box -->
-			<div class="gt-table-buttons">
-				<a onclick="designacaoService.cadastrar('Incluir Designação')" class="gt-btn-medium gt-btn-left">Incluir</a>
-			</div>
-		</div>
-		
-		<siga:modal nome="designacao" titulo="Cadastrar Designacao" altura="200" largura="200">
-			<div id="divEditarDesignacaoItem">
-				<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
-					style="text-align: justify;">
+		</c:if>
+
+		<table id="designacoes_table" border="0" class="gt-table display">
+			<thead>
+				<tr>
+					<th style="color: #333">
+						<button class="bt-expandir" type="button">
+							<span id="iconeBotaoExpandirTodos">+</span>
+						</button>
+					</th>
+					<th>Org&atilde;o</th>
+					<th>Local</th>
+					<th>Solicitante</th>
+					<th>Descri&ccedil;&atilde;o</th>
+					<th>Atendente</th>
+					<th>A&ccedil;&otilde;es</th>
+					<th>JSon - Designa&ccedil;&atilde;o</th>
+					<th>Checkbox Heran&ccedil;a</th>
+					<th>Herdado</th>
+					<th>Utilizar Herdado</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach items="${requestScope[designacoes]}" var="design">
+					<tr data-json-id="${design.id}" data-json="<%-- ${design.toVO().toJson()} --%>" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
+						style="cursor: pointer;">
+						<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
+						<td>${design.orgaoUsuario != null ? design.orgaoUsuario.acronimoOrgaoUsu : ""}</td>
+						<td>${design.complexo != null ? design.complexo.nomeComplexo : ""}</td>
+						<td>${design.solicitante != null ? design.solicitante.sigla : "" }</td>
+						<td><%-- ${design.descrConfiguracao} --%></td>
+						<td><%-- ${design.atendente?.lotacaoAtual?.siglaLotacao } --%></td>
+						<td class="acoes"> 
+									<siga:desativarReativar id="${design.id}" onReativar="designacaoService.reativar" onDesativar="designacaoService.desativar" isAtivo="${design.isAtivo()}"></siga:desativarReativar>
+							<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar">
+								<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
+							</a>
+						</td>
+						<td>${design.getSrConfiguracaoJson()}</td>
+						<td class="checkbox-hidden"
+							style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
+							<input type="checkbox" checked="${design.utilizarItemHerdado}"
+							id="check${design.id}" />
+						</td>
+						<th><%-- ${design.isHerdado} --%></th>
+						<th><%-- ${design.utilizarItemHerdado} --%></th>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+	</div>
+	<!-- /content box -->
+	<div class="gt-table-buttons">
+		<a onclick="designacaoService.cadastrar('Incluir Designação')" class="gt-btn-medium gt-btn-left">Incluir</a>
+	</div>
+</div>
+
+<siga:modal nome="designacao" titulo="Cadastrar Designacao" altura="200" largura="200">
+	<div id="divEditarDesignacaoItem">
+		<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
+			style="text-align: justify;">
 					<label style="padding-top: 5px;">Pelo menos um dos campos
 						"Atendente", "Pr&eacute;-Atendente" ou "P&oacute;s-Atendente" precisa
 						necess&aacute;riamente ser a mesma lota&cccedil;&atilde;o que foi selecionada na tela de
@@ -113,8 +105,7 @@
 					class="gt-btn-medium gt-btn-left">OK</a>
 			</div>
 		</siga:modal>
-	</div>
-</div>
+
 
 <script type="text/javascript">
 	var parametroTela = '${requestScope[modoExibicao]}';

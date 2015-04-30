@@ -207,10 +207,6 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				if(srConf.listaPrioridade.meuListaHistoricoSet != null)
 					for (SrLista l : srConf.listaPrioridade.meuListaHistoricoSet)
 						l.getListaAtual();
-				
-				if(srConf.listaPrioridade.meuPrioridadeSolicitacaoSet != null)
-					for (SrPrioridadeSolicitacao l : srConf.listaPrioridade.meuPrioridadeSolicitacaoSet)
-						l.getPrioridade();
 			}
 			
 			if (srConf.pesquisaSatisfacao != null)

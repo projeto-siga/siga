@@ -5,7 +5,8 @@ jQuery(function($) { $.extend({
 
         var form = $('<form>').attr({
             method: method,
-            action: url
+            action: url,
+            enctype:'multipart/form-data'
          }).css({
             display: 'none'
          });

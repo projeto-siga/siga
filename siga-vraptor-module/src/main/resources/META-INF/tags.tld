@@ -98,4 +98,8 @@
 		<name>checkbox</name>
 		<path>/META-INF/tags/checkbox.tag</path>
 	</tag-file>
+		<tag-file>
+		<name>designacao</name>
+		<path>/META-INF/tags/designacao.tag</path>
+	</tag-file>
 </taglib>

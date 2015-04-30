@@ -53,7 +53,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	/**
 	 * Atribui o hisAtivo já que o mesmo é sempre calculado
 	 */
-	public void setAtivo() {
+	public void atribuirAtivo() {
 		this.hisAtivo = this.hisDtFim == null ? 1 : 0;
 	}
 
@@ -74,17 +74,17 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	}
 
 	public Date getHisDtFim() {
-		this.setAtivo();
+		this.atribuirAtivo();
 		return hisDtFim;
 	}
 
 	public void setHisDtFim(Date hisDtFim) {
 		this.hisDtFim = hisDtFim;
-		this.setAtivo();
+		this.atribuirAtivo();
 	}
 
 	public Integer getHisAtivo() {
-		this.setAtivo();
+		this.atribuirAtivo();
 		return hisAtivo;
 	}
 
@@ -93,7 +93,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	}
 
 	public void setHisAtivo(Integer hisAtivo) {
-		this.setAtivo();
+		this.atribuirAtivo();
 		// this.hisAtivo = hisAtivo;
 	}
 

@@ -14,6 +14,7 @@ function Formulario(form) {
 	}
 	
 	this.toJson = function() {
+		console.log(form);
 		return form.serializeJSON();
 	}
 	
@@ -137,29 +138,20 @@ function BaseService(opts) {
 		onfocusout: false
 	});
 }
-/**
- * Envia uma requisicao para o servidor utilizando o metodo post
- * opts.url = URL para onde a requisicao sera enviada
- * opts.obj = Objeto a ser enviado na requisicao
- */
-BaseService.prototype.post = function(opts) {
-	this.removerErros();
-	
-	return $.ajax({
-    	type: "POST",
-    	url: opts.url,
-    	data: this.serializar(opts.obj),
-    	dataType: "text",
-    	error: BaseService.prototype.errorHandler
-   	});
-}
 
 BaseService.prototype.serializar = function(obj) {
-	return  jQuery.param(obj);
+	var wrapper = {};
+	wrapper[this.opts.objectName] = obj;
+	var queryString = jQuery.param(wrapper);
+	
+	while(queryString.indexOf('%5B') > 1) {
+		queryString = queryString.replace('%5B', '.').replace('%5D', '');
+	}
+	return  queryString + "&" + this.opts.objectName + "=" + this.getId(obj);
 }
 
 BaseService.prototype.errorHandler = function(error) {
-	console.error(error);
+//	console.error(error);
 	
 	if(error.status == 400) {
 		var errors = JSON.parse(error.responseText);
@@ -328,7 +320,6 @@ BaseService.prototype.gravarAplicar = function(isAplicar) {
 	var service = this, 
 		obj = this.getObjetoParaGravar(),
 		url = this.opts.urlGravar,
-		wrapper = {},
 		success = function(objSalvo) {
 			if(service.onGravar) {
 				service.onGravar(obj, JSON.parse(objSalvo));
@@ -343,12 +334,22 @@ BaseService.prototype.gravarAplicar = function(isAplicar) {
 				service.opts.dialogCadastro.dialog("close");
 		}
 		
-	wrapper[this.opts.objectName] = obj;
+//	
+//	this.post({
+//		'url' : url,  
+//		'obj' : wrapper
+//	}).success(success);
+//	
+	this.removerErros();
 	
-	this.post({
-		'url' : url, 
-		'obj' : wrapper
-	}).success(success);
+	return $.ajax({
+    	type: "POST",
+    	url: url,
+    	data: this.serializar(obj),
+    	dataType: "text",
+    	error: BaseService.prototype.errorHandler
+    	
+   	}).success(success);
 }
 
 /**

@@ -173,7 +173,7 @@ public class ExController extends SigaController {
 		ExConfiguracao exConfiguracao = new ExConfiguracao();
 
 		if (configuracaoBaseParaExConfiguracao.isAtivo())
-			exConfiguracao.setAtivo();
+			exConfiguracao.atribuirAtivo();
 		exConfiguracao.setCargo(configuracaoBaseParaExConfiguracao.getCargo());
 		exConfiguracao.setComplexo(configuracaoBaseParaExConfiguracao.getComplexo());
 		exConfiguracao.setConfiguracaoInicial(configuracaoBaseParaExConfiguracao.getConfiguracaoInicial());

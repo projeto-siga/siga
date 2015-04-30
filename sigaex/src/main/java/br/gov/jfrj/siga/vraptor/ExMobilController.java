@@ -106,7 +106,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 	public void aBuscar(final String sigla, final String popup, final String primeiraVez, final String propriedade, final Integer postback,
 			final int apenasRefresh, final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp,
 			final DpPessoaSelecao ultMovRespSel, final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString,
-			final String dtDocFinalString, final Long idTipoFormaDoc, final Integer idFormaDoc, final Long idMod, final String anoEmissaoString,
+			final String dtDocFinalString, final Long idTipoFormaDoc, final Integer forma, final Long idMod, final String anoEmissaoString,
 			final String numExpediente, final String numExtDoc, final CpOrgaoSelecao cpOrgaoSel, final String numAntigoDoc,
 			final DpPessoaSelecao subscritorSel, final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel,
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
@@ -155,7 +155,6 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("dtDocString", dtDocString);
 		result.include("dtDocFinalString", dtDocFinalString);
 		result.include("tiposFormaDoc", this.getTiposFormaDoc());
-		result.include("idTipoFormaDoc", idFormaDoc);
 		result.include("anoEmissaoString", anoEmissaoString);
 		result.include("listaAnos", this.getListaAnos());
 		result.include("numExpediente", numExpediente);
@@ -186,13 +185,16 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("sigla", this.getSigla());
 		result.include("propriedade", propriedade);
 		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		result.include("idTipoFormaDoc", idTipoFormaDoc);
+		result.include("idFormaDoc", forma);
+		result.include("idMod", idMod);		
 	}
 
 	@Get("app/expediente/doc/listar")
 	public void aListar(final String popup, final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
 			final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp, final DpPessoaSelecao ultMovRespSel,
 			final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString, final String dtDocFinalString,
-			final Long idTipoFormaDoc, final Integer idFormaDoc, final Long idMod, final String anoEmissaoString, final String numExpediente,
+			final Long idTipoFormaDoc, final Integer forma, final Long idMod, final String anoEmissaoString, final String numExpediente,
 			final String numExtDoc, final CpOrgaoSelecao cpOrgaoSel, final String numAntigoDoc, final DpPessoaSelecao subscritorSel,
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
@@ -238,7 +240,6 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("dtDocString", dtDocString);
 		result.include("dtDocFinalString", dtDocFinalString);
 		result.include("tiposFormaDoc", this.getTiposFormaDoc());
-		result.include("idTipoFormaDoc", idFormaDoc);
 		result.include("anoEmissaoString", anoEmissaoString);
 		result.include("listaAnos", this.getListaAnos());
 		result.include("numExpediente", numExpediente);
@@ -267,6 +268,9 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("ultMovIdEstadoDoc", ultMovIdEstadoDoc);
 		result.include("fullText", fullText);
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
+		result.include("idTipoFormaDoc", idTipoFormaDoc);
+		result.include("idFormaDoc", forma);
+		result.include("idMod", idMod);		
 	}
 
 	@Override

@@ -13,10 +13,10 @@
 	<script src="../../../javascripts/base-service.js"></script>
 	<script src="../../../javascripts/jquery.validate.min.js"></script>
 	<script src="../../../javascripts/language/messages_pt_BR.min.js"></script>
-
+	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
-			<h2>A&ccedil;&otilde;es</h2>
+			<h2>Tipos de A&ccedil;&atilde;o</h2>
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
@@ -25,7 +25,7 @@
 						<b>Incluir Inativas</b>
 					</label>
 				</div>
-				<table id="acoes_table" class="gt-table display">
+				<table id="tiposAcao_table" class="gt-table display">
 					<thead>
 						<tr>
 							<th>C&oacute;digo</th>
@@ -35,17 +35,17 @@
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${acoes}" var="acao">
-							<tr <c:if test="${!acao.ativo}"> class="configuracao-herdada" </c:if> data-json-id="${acao.idAcao}" data-json="${acao.toJson()}" onclick="acaoService.editar($(this).data('json'), 'Alterar A&ccedil;&atilde;o')" style="cursor: pointer;">
-								<td>${acao.siglaAcao}</td>
+						<c:forEach items="${tiposAcao}" var="tipoAcao">
+							<tr data-json-id="${tipoAcao.id}" data-json="${tipoAcao.toJson()}" onclick="tipoAcaoService.editar($(this).data('json'), 'Alterar Tipo de A&ccedil;&atilde;o')" style="cursor: pointer;">
+								<td>${tipoAcao.siglaTipoAcao}</td>
 								<td>
-									<span style="margin-left: ${(acao.nivel-1)*2}em; <c:if test="${acao.nivel == 1}">font-weight: bold;</c:if>">
-										<siga:selecionado sigla="${acao.atual.tituloAcao}" descricao="${acao.atual.descricao}"></siga:selecionado>
+									<span style="margin-left: ${(tipoAcao.nivel-1)*2}em; ${tipoAcao.nivel == 1 ? 'font-weight: bold;' : ''}">
+										<siga:selecionado sigla="${tipoAcao.atual.tituloTipoAcao}" descricao="${tipoAcao.atual.descricao}"></siga:selecionado>
 									</span>
 								</td>
-								<td>${acao.descrAcao}</td>
+								<td>${tipoAcao.descrTipoAcao}</td>
 								<td class="acoes">
-									<siga:desativarReativar id="${acao.idAcao}" onReativar="acaoService.reativar" onDesativar="acaoService.desativar" isAtivo="${acao.isAtivo()}"></siga:desativarReativar>
+									<siga:desativarReativar id="${tipoAcao.idTipoAcao}" onReativar="tipoAcaoService.reativar" onDesativar="tipoAcaoService.desativar" isAtivo="${tipoAcao.isAtivo()}"></siga:desativarReativar>
 								</td>
 							</tr>
 						</c:forEach>
@@ -54,22 +54,23 @@
 			</div>
 			<!-- /content box -->
 			<div class="gt-table-buttons">
-				<a onclick="acaoService.cadastrar('Incluir A&ccedil;&atilde;o')" class="gt-btn-medium gt-btn-left">Incluir</a>
+				<a onclick="tipoAcaoService.cadastrar('Incluir Tipo de A&ccedil;&atilde;o')" class="gt-btn-medium gt-btn-left">Incluir</a>
 			</div>
 		</div>
 	</div>
-	<siga:modal nome="acao" titulo="Cadastrar A&ccedil;&atilde;o">
-		<div id="divEditarAcaoForm"><jsp:include page="editar.jsp"></jsp:include></div>
+	
+	<siga:modal nome="tipoAcao" titulo="Cadastrar Tipo de A&ccedil;&atilde;o">
+		<div id="divEditarTipoAcaoForm"><jsp:include page="editar.jsp"></jsp:include></div>
 	</siga:modal>
-
+	
 </siga:pagina>
-
+	
 <script type="text/javascript">
-	var validatorAcaoForm;
-	var colunasAcao = {
+	var validatorTipoAcaoForm;
+	var colunasTipoAcao = {
 			codigo: 0,
 			titulo: 1,
-			descrAcao: 2,
+			decricao: 2,
 			acoes: 3
 		};
 	var QueryString = function () {
@@ -96,15 +97,15 @@
 	}();
 
 	var opts = {
-			 urlDesativar : "${linkTo[AcaoController].desativarAcao}",
-			 urlReativar : "${linkTo[AcaoController].reativarAcao}",
-			 urlGravar : "${linkTo[AcaoController].gravarAcao}",
-			 dialogCadastro : $('#acao_dialog'),
-			 tabelaRegistros : $('#acoes_table'),
-			 objectName : 'acao',
-			 formCadastro : $('#acaoForm'),
+			 urlDesativar : '${linkTo[TipoAcaoController].desativar}',
+			 urlReativar : '${linkTo[TipoAcaoController].reativar}',
+			 urlGravar : '${linkTo[TipoAcaoController].gravar}',
+			 dialogCadastro : $('#tipoAcao_dialog'),
+			 tabelaRegistros : $('#tiposAcao_table'),
+			 objectName : 'tipoAcao',
+			 formCadastro : $('#tipoAcaoForm'),
 			 mostrarDesativados : QueryString.mostrarDesativados,
-			 colunas : colunasAcao.acoes
+			 colunas : colunasTipoAcao.acoes
 	};
 	
 	$(document).ready(function() {
@@ -116,15 +117,15 @@
 		$("#checkmostrarDesativado").click(function() {
 			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = "${linkTo[AcaoController].listarDesativados}";
+				location.href = '${linkTo[TipoAcaoController].listarDesativados}';
 			else
-				location.href = "${linkTo[AcaoController].listar}";
+				location.href = '${linkTo[TipoAcaoController].listar}';	
 		});
 		
 		/* Table initialization */
-		opts.dataTable = $('#acoes_table').dataTable({
+		opts.dataTable = $('#tiposAcao_table').dataTable({
 			"language": {
-				"emptyTable":     "N&aacute;o existem resultados",
+				"emptyTable":     "N&atilde;o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -137,7 +138,7 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "&Uacute;timo",
+			        "last":       "&Uacute;ltimo",
 			        "next":       "Pr&oacute;ximo",
 			        "previous":   "Anterior"
 			    },
@@ -147,58 +148,40 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [colunasAcao.acoes],
+				"targets": [colunasTipoAcao.acoes],
 				"searchable": false,
 				"sortable" : false
-			}],
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				var acao = undefined;
-				
-				try {
-					acao = JSON.parse($(nRow).data('json'));
-				}
-				catch(err) {
-					acao = $(nRow).data('json');
-				}
-				
-				if (acao) {
-					if (acao.ativo == false)
-						$('td', nRow).addClass('item-desativado');
-					else
-						$('td', nRow).removeClass('item-desativado');
-				}
-			}
+			}]
 		});
 	});
 
 	// Define a "classe" AcaoService
-	function AcaoService(opts) {
+	function TipoAcaoService(opts) {
 		// super(opts)
 		BaseService.call(this, opts);
 	}
 	// AcaoService extends BaseService
-	AcaoService.prototype = Object.create(BaseService.prototype);
+	TipoAcaoService.prototype = Object.create(BaseService.prototype);
 	
-	var acaoService = new AcaoService(opts);
+	var tipoAcaoService = new TipoAcaoService(opts);
 	
-	acaoService.getId = function(acao) {
-		return acao.id;
+	tipoAcaoService.getId = function(tipoAcao) {
+		return tipoAcao.idTipoAcao;
 	}
 
-	acaoService.getRow = function(acao) {
-		var marginLeft = (acao.nivel-1) * 2,
-			fontWeight = (acao.nivel == 1) ? 'bold' : 'normal',
+	tipoAcaoService.getRow = function(tipoAcao) {
+		var marginLeft = (tipoAcao.nivel-1) * 2,
+			fontWeight = (tipoAcao.nivel == 1) ? 'bold' : 'normal',
 			span = $('<span></span>');
 
 		var spanHTML = '<span style="margin-left:{margin-left};font-weight:{font-weight}">{descricao}</span>';
 		spanHTML = spanHTML.replace('{margin-left}', marginLeft + 'em');
 		spanHTML = spanHTML.replace('{font-weight}', fontWeight);
-		spanHTML = spanHTML.replace('{descricao}', acao.tituloAcao);
+		spanHTML = spanHTML.replace('{descricao}', tipoAcao.tituloTipoAcao);
 		
-		return [acao.sigla, spanHTML, acao.descrAcao, 'COLUNA_ACOES'];
+		return [tipoAcao.siglaTipoAcao, spanHTML, tipoAcao.descrTipoAcao, 'COLUNA_ACOES'];
 	}
-	acaoService.onRowClick = function(acao) {
-		acaoService.editar(acao, 'Alterar A&ccedil;&atilde;o');
+	tipoAcaoService.onRowClick = function(tipoAcao) {
+		tipoAcaoService.editar(tipoAcao, 'Alterar Tipo de A&ccedil;&atilde;o');
 	}
-
 </script>

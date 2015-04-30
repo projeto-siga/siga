@@ -326,10 +326,10 @@ public class Application extends SigaApplication {
 	}
 
 	private static void validarFormEditarTipoAcao(SrTipoAcao acao) {
-		if (acao.siglaTipoAcao.equals("")) {
+		if (acao.getSiglaTipoAcao().equals("")) {
 			Validation.addError("siglaAcao", "Código não informado");
 		}
-		if (acao.tituloTipoAcao.equals("")) {
+		if (acao.getTituloTipoAcao().equals("")) {
 			Validation.addError("tituloAcao", "Titulo não informado");
 		}
 		if (Validation.hasErrors()) {

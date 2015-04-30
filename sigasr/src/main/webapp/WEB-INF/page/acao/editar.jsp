@@ -15,17 +15,15 @@
 			<input type="text" name="sigla" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>T&iacute;tulo <span>*</span></label> <input type="text"
-				name="tituloAcao" size="100" maxlength="255" required/>
+			<label>T&iacute;tulo <span>*</span></label> <input type="text" name="tituloAcao" size="100" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Descri&ccedil;&atilde;o</label> <input type="text"
-				name="descrAcao" size="100" maxlength="255"/>
+			<label>Descri&ccedil;&atilde;o</label> <input type="text" name="descrAcao" size="100" maxlength="255"/>
 		</div>
 		
 		<div class="gt-form-row gt-width-66">
 			<label>Tipo de a&ccedil;&atilde;o</label>
-			<siga:selecao tipo="tipoAcao" inputName="tipoAcao" idInicial="${tipoAcao.atual}"></siga:selecao>
+			<siga:selecao inputName="tipoAcao" urlAcao="buscar"></siga:selecao>
 		</div>
 		
 		<div class="gt-form-row">

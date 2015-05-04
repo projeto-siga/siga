@@ -63,12 +63,17 @@ public class EquipeController extends SrController {
 	}
 
 	@Path("/gravar")
-	public void gravarEquipe(SrEquipe equipe, List<SrExcecaoHorario> excecaoHorarioSet) throws Exception {
-		equipe.setExcecaoHorarioSet(excecaoHorarioSet);
+	public void gravarEquipe(SrEquipe equipe, List<SrExcecaoHorario> excecaoHorarioSet, DpLotacaoSelecao lotacaoEquipeSel) throws Exception {
 		// assertAcesso("ADM:Administrar");
+		equipe.setExcecaoHorarioSet(excecaoHorarioSet);
+		if (equipe.getLotacaoEquipe() == null) {
+			if (lotacaoEquipeSel == null) {
+				equipe.setLotacaoEquipe(getLotaTitular());
+			} else {
+				equipe.setLotacaoEquipe(lotacaoEquipeSel.buscarObjeto());
+			}
+		}
 		equipe.salvar();
-		// System.out.println(equipes);
-		// result.include("equipe", equipe);
 		result.use(Results.http()).body(equipe.toJson());
 	}
 

@@ -140,14 +140,11 @@ function BaseService(opts) {
 }
 
 BaseService.prototype.serializar = function(obj) {
-	var wrapper = {};
-	wrapper[this.opts.objectName] = obj;
-	var queryString = jQuery.param(wrapper);
-	
+	var queryString = jQuery.param(obj);
 	while(queryString.indexOf('%5B') > 1) {
 		queryString = queryString.replace('%5B', '.').replace('%5D', '');
 	}
-	return  queryString + "&" + this.opts.objectName + "=" + this.getId(obj);
+	return  queryString;
 }
 
 BaseService.prototype.errorHandler = function(error) {

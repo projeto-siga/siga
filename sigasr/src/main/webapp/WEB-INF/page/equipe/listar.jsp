@@ -46,7 +46,7 @@
 									${equipe.lotacaoEquipe.sigla}
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-									${equipe.lotacaoEquipe.descricao}
+									(${equipe.idEquipe}) ${equipe.lotacaoEquipe.descricao}
 								</td>
 							</tr>
 						</c:forEach>
@@ -116,7 +116,7 @@
 	var equipeService = new EquipeService(opts);
 
 	equipeService.getId = function(equipe) {
-		return equipe.idEquipe;
+		return equipe.idEquipe || equipe['equipe.idEquipe'];
 	}
 
 	equipeService.getRow = function(equipe) {
@@ -172,6 +172,12 @@
 	equipeService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		equipeService.atualizarModalEquipe(obj);
+
+		document.getElementsByName('lotacaoEquipeSel.id')[0].value = obj.lotacaoEquipe.id;
+		document.getElementsByName('lotacaoEquipeSel.sigla')[0].value = obj.lotacaoEquipe.sigla;
+		document.getElementsByName('lotacaoEquipeSel.descricao')[0].value = obj.lotacaoEquipe.descricao;
+		document.getElementById('lotacaoSelSpan').innerHTML = obj.lotacaoEquipe.descricao;
+		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 
 	/**
@@ -180,6 +186,12 @@
 	equipeService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
 		equipeService.atualizarModalEquipe();
+
+		document.getElementsByName('lotacaoEquipeSel.id')[0].value = '${lotacaoSel.id}';
+		document.getElementsByName('lotacaoEquipeSel.sigla')[0].value = '${lotacaoSel.sigla}';
+		document.getElementsByName('lotacaoEquipeSel.descricao')[0].value = '${lotacaoSel.descricao}';
+		document.getElementById('lotacaoSelSpan').innerHTML = '${lotacaoSel.descricao}';
+		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 
 	/**
@@ -245,13 +257,18 @@
 		}
 		// Caso seja cadastro, atualiza os dados da Lotação
 		else {
-			var lota = JSON.parse($("#lotacaoUsuario").val())
-			equipeEdicao = {
-				lotacaoEquipe : lota.id,
-				lotacaoEquipe_sigla : lota.descricao,
-				lotacaoEquipeSpan : lota.descricao,
-				lotacaoEquipe_sigla : lota.sigla
-			};
+			var lotacaoUsuarioValue = $("#lotacaoUsuario").val();
+		    if (lotacaoUsuarioValue && lotacaoUsuarioValue != "") {
+				var lota = JSON.parse(lotacaoUsuarioValue);
+				equipeEdicao = {
+					lotacaoEquipe : lota.id,
+					lotacaoEquipe_sigla : lota.descricao,
+					lotacaoEquipeSpan : lota.descricao,
+					lotacaoEquipe_sigla : lota.sigla
+				};
+		    }else{
+		    	equipeEdicao = {};
+			}
 			// chama o editar para popular o campo da lotação
 			equipeService.formularioHelper.populateFromJson(equipeEdicao);
 			designacaoService.populateFromJSonList({});

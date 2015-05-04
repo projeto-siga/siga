@@ -71,8 +71,9 @@
 </style>
 		<div class="gt-form gt-content-box div-editar-equipe">
 			<form id="form" class="formEditarEquipe" enctype="multipart/form-data">
-				<input type="hidden" id="idEquipe" name="idEquipe">
-				<input type="hidden" id="idEquipeIni" name="hisIdIni">
+				<input type="hidden" id="equipeHidden" name="equipe">
+				<input type="hidden" id="idEquipe" name="equipe.idEquipe">
+				<input type="hidden" id="idEquipeIni" name="equipe.hisIdIni">
 				<input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario" value="${lotacaoUsuario.toJson()}"/>
 				<p class="gt-error" style="display:none;" id="erroEquipeCamposObrigatorios">Alguns campos obrigatórios não foram preenchidos</p>
 				<div class="gt-form-table">
@@ -81,7 +82,7 @@
 				</div>
 				<div class="gt-form-row gt-width-100">
 					<label>Lotação</label>
-					<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" desativar="sim"/>
+					<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" desativar="sim" inputName="lotacaoEquipe" />
 				</div>
 				
 				<div class="gt-form-table">

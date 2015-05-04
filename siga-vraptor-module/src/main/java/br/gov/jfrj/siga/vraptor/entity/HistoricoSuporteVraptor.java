@@ -1,16 +1,20 @@
-package br.gov.jfrj.siga.model;
+package br.gov.jfrj.siga.vraptor.entity;
 
 import java.util.Date;
 
-import javax.persistence.MappedSuperclass;
+import javax.persistence.EntityManager;
 
-import play.db.jpa.GenericModel;
-import play.db.jpa.JPA;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.Historico;
 
-@MappedSuperclass
-public abstract class ObjetoBase extends GenericModel {
+public abstract class HistoricoSuporteVraptor extends HistoricoSuporte {
+
+	private static final long serialVersionUID = 1340587106297071271L;
 
 	public void salvar() throws Exception {
+		EntityManager em = ContextoPersistencia.em();
+
 		try {
 			Historico thisHistorico = (Historico) this;
 			thisHistorico.setHisDtIni(new Date());
@@ -19,25 +23,23 @@ public abstract class ObjetoBase extends GenericModel {
 				this.save();
 				thisHistorico.setHisIdIni(thisHistorico.getId());
 			} else {
-				JPA.em().detach(this);
+				em.detach(this);
 				// Edson: Na linha abaixo, não funciona findById. Dá
 				// UnsupportedOpException.
 				// Isso porque ObjetoBase não está anotado com @Entity. No
 				// máximo, é @MappedSuperclass
 				// Veja
 				// https://groups.google.com/forum/?fromgroups=#!topic/play-framework/waYNFtLCH40
-				ObjetoBase thisAntigo = JPA.em().find(this.getClass(),
-						thisHistorico.getId());
+				HistoricoSuporteVraptor thisAntigo = em.find(this.getClass(), thisHistorico.getId());
 
 				if (((Historico) thisAntigo).getHisDtFim() == null) {
 					thisAntigo.finalizar();
 				}
-				thisHistorico.setHisIdIni(((Historico) thisAntigo)
-						.getHisIdIni());
+				thisHistorico.setHisIdIni(((Historico) thisAntigo).getHisIdIni());
 				thisHistorico.setId(null);
 			}
 			this.save();
-			// this.refresh();
+			// em.refresh(this);
 		} catch (ClassCastException cce) {
 			this.save();
 		}

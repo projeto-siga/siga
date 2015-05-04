@@ -30,8 +30,9 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
-public abstract class HistoricoSuporte extends Objeto implements Historico,
-		Assemelhavel {
+public abstract class HistoricoSuporte extends Objeto implements Historico, Assemelhavel {
+
+	private static final long serialVersionUID = 992555792295390723L;
 
 	@Column(name = "HIS_ID_INI")
 	@Desconsiderar
@@ -46,14 +47,14 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	private Date hisDtFim;
 
 	@Transient
-	//@Column(name = "HIS_ATIVO")
+	// @Column(name = "HIS_ATIVO")
 	@Desconsiderar
 	private Integer hisAtivo;
 
 	/**
 	 * Atribui o hisAtivo já que o mesmo é sempre calculado
 	 */
-	public void setAtivo() {
+	public void atribuirAtivo() {
 		this.hisAtivo = this.hisDtFim == null ? 1 : 0;
 	}
 
@@ -74,17 +75,17 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	}
 
 	public Date getHisDtFim() {
-		this.setAtivo();
+		this.atribuirAtivo();
 		return hisDtFim;
 	}
 
 	public void setHisDtFim(Date hisDtFim) {
 		this.hisDtFim = hisDtFim;
-		this.setAtivo();
+		this.atribuirAtivo();
 	}
 
 	public Integer getHisAtivo() {
-		this.setAtivo();
+		this.atribuirAtivo();
 		return hisAtivo;
 	}
 
@@ -93,7 +94,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	}
 
 	public void setHisAtivo(Integer hisAtivo) {
-		this.setAtivo();
+		this.atribuirAtivo();
 		// this.hisAtivo = hisAtivo;
 	}
 

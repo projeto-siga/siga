@@ -6477,7 +6477,7 @@ public class ExBL extends CpBL {
 			exClassCopia.setId(null);
 			exClassCopia.setHisDtFim(null);
 			exClassCopia.setHisDtIni(null);
-			exClassCopia.setAtivo();
+			exClassCopia.atribuirAtivo();
 			
 			// objeto collection deve ser diferente (mas com mesmos elementos),
 			// senão ocorre exception
@@ -6559,7 +6559,7 @@ public class ExBL extends CpBL {
 			exTempCopia.setId(null);
 			exTempCopia.setHisDtFim(null);
 			exTempCopia.setHisDtIni(null);
-			exTempCopia.setAtivo();
+			exTempCopia.atribuirAtivo();
 			// objeto collection deve ser diferente (mas com mesmos elementos),
 			// senão ocorre exception
 			// HibernateException:Found shared references to a collection
@@ -6641,7 +6641,7 @@ public class ExBL extends CpBL {
 			exModCopia.setId(null);
 			exModCopia.setHisDtFim(null);
 			exModCopia.setHisDtIni(null);
-			exModCopia.setAtivo();
+			exModCopia.atribuirAtivo();
 
 		} catch (Exception e) {
 			throw new AplicacaoException(

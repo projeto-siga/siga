@@ -3,76 +3,77 @@
 
 
 <style>
-.inline {
-	display: inline-flex !important;
-}
-
-.tabela {
-	margin-top: -10px;
-	min-width: 200px;
-}
-
-.tabela tr {
- 	border: solid;
- 	border-color: rgb(169, 169, 169);
- 	border-width: 1px;
- 	font-weight: bold;
-	line-height: 20px;
-}
-
-.tabela th {
- 	color: #365b6d;
- 	font-size: 100%;
- 	padding: 5px 10px;
- 	border: solid 1px rgb(169, 169, 169);
-}
-
-.tabela td {
-	color: #000;
- 	padding-right: 10px !important;
-}
-
-.gt-form-table td {
-	padding-right: 0px;
-}
-
-.barra-subtitulo-top {
-	border-radius: 5px 5px 0 0;
-}
-
-.barra-subtitulo {
-	background-color: #eee;
-	padding: 10px 15px;
-	border: 1px solid #ccc;
-	color: #365b6d !important;
-	border-bottom: 1px solid #ccc;
-	border-radius: 5px !important;
-	margin: 0 -16px 10px -16px;
-}
-
-.div-editar-equipe {
-	width: 800px !important;
-	max-width: 800px !important;
-}
-
-.gt-content-box {
-	padding-top: 0px !important;
-}
-
-.ui-widget-header {
-	border: 1px solid #365b6d;
-	background: #365b6d;
-}
-
-#equipe_dialog, #excecaoHorario_dialog {
-	height:auto !important;
-}
+	.inline {
+		display: inline-flex !important;
+	}
+	
+	.tabela {
+		margin-top: -10px;
+		min-width: 200px;
+	}
+	
+	.tabela tr {
+	 	border: solid;
+	 	border-color: rgb(169, 169, 169);
+	 	border-width: 1px;
+	 	font-weight: bold;
+		line-height: 20px;
+	}
+	
+	.tabela th {
+	 	color: #365b6d;
+	 	font-size: 100%;
+	 	padding: 5px 10px;
+	 	border: solid 1px rgb(169, 169, 169);
+	}
+	
+	.tabela td {
+		color: #000;
+	 	padding-right: 10px !important;
+	}
+	
+	.gt-form-table td {
+		padding-right: 0px;
+	}
+	
+	.barra-subtitulo-top {
+		border-radius: 5px 5px 0 0;
+	}
+	
+	.barra-subtitulo {
+		background-color: #eee;
+		padding: 10px 15px;
+		border: 1px solid #ccc;
+		color: #365b6d !important;
+		border-bottom: 1px solid #ccc;
+		border-radius: 5px !important;
+		margin: 0 -16px 10px -16px;
+	}
+	
+	.div-editar-equipe {
+		width: 800px !important;
+		max-width: 800px !important;
+	}
+	
+	.gt-content-box {
+		padding-top: 0px !important;
+	}
+	
+	.ui-widget-header {
+		border: 1px solid #365b6d;
+		background: #365b6d;
+	}
+	
+	#equipe_dialog, #excecaoHorario_dialog {
+		height:auto !important;
+	}
+	
 </style>
-
 		<div class="gt-form gt-content-box div-editar-equipe">
 			<form id="form" class="formEditarEquipe" enctype="multipart/form-data">
-				<input type="hidden" id="idEquipe" name="idEquipe">
-				<input type="hidden" id="idEquipeIni" name="hisIdIni">
+				<input type="hidden" id="equipeHidden" name="equipe">
+				<input type="hidden" id="idEquipe" name="equipe.idEquipe">
+				<input type="hidden" id="idEquipeIni" name="equipe.hisIdIni">
 				<input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario" value="${lotacaoUsuario.toJson()}"/>
 				<p class="gt-error" style="display:none;" id="erroEquipeCamposObrigatorios">Alguns campos obrigatórios não foram preenchidos</p>
 				<div class="gt-form-table">
@@ -81,7 +82,7 @@
 				</div>
 				<div class="gt-form-row gt-width-100">
 					<label>Lotação</label>
-					<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" desativar="sim"/>
+					<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" desativar="sim" inputName="lotacaoEquipe" />
 				</div>
 				
 				<div class="gt-form-table">

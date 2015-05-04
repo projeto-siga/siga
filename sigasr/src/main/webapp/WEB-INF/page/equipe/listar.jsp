@@ -46,7 +46,7 @@
 									${equipe.lotacaoEquipe.sigla}
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-									${equipe.lotacaoEquipe.descricao}
+									(${equipe.idEquipe}) ${equipe.lotacaoEquipe.descricao}
 								</td>
 							</tr>
 						</c:forEach>
@@ -116,7 +116,7 @@
 	var equipeService = new EquipeService(opts);
 
 	equipeService.getId = function(equipe) {
-		return equipe.idEquipe;
+		return equipe.idEquipe || equipe['equipe.idEquipe'];
 	}
 
 	equipeService.getRow = function(equipe) {
@@ -130,109 +130,147 @@
 	equipeService.serializar = function(obj) {
 		return BaseService.prototype.serializar.call(this, obj)  + "&" + equipeService.getListasAsString();
 	}
-
+	
 	equipeService.getListasAsString = function() {
 		var params = '', dataAux = new Date();
-	
+
 		// Percorre lista de Exceções
-		equipeService.excecoesTable.api().rows().indexes().each(function (i) {
-			var rowValues = equipeService.excecoesTable.api().row(i).data();
-			
-			// Atualiza a string serializada
-			if (rowValues) {
-				if (rowValues[0] == 0)
-					params += '&equipe.excecaoHorarioSet[' + i + '].dataEspecifica=' + rowValues[1];
-				else
-					params += '&equipe.excecaoHorarioSet[' + i + '].diaSemana=' + rowValues[0];
-				
-				params += '&equipe.excecaoHorarioSet[' + i + '].strHoraIni=' + atualizaHora(dataAux, rowValues[3]).toJSON();
-				params += '&equipe.excecaoHorarioSet[' + i + '].strHoraFim=' + atualizaHora(dataAux, rowValues[4]).toJSON();
-				params += '&equipe.excecaoHorarioSet[' + i + '].strInterIni=' + atualizaHora(dataAux, rowValues[5]).toJSON();
-				params += '&equipe.excecaoHorarioSet[' + i + '].strInterFim=' + atualizaHora(dataAux, rowValues[6]).toJSON();
-			}
-		});
+		equipeService.excecoesTable.api().rows().indexes().each(
+				function(i) {
+					var rowValues = equipeService.excecoesTable.api().row(i)
+							.data();
+
+					// Atualiza a string serializada
+					if (rowValues) {
+						if (rowValues[0] == 0)
+							params += '&excecaoHorarioSet[' + i
+									+ '].dataEspecifica=' + rowValues[1];
+						else
+							params += '&excecaoHorarioSet[' + i
+									+ '].diaSemana=' + rowValues[0];
+
+						params += '&excecaoHorarioSet[' + i
+								+ '].strHoraIni='
+								+ atualizaHora(dataAux, rowValues[3]).toJSON();
+						params += '&excecaoHorarioSet[' + i
+								+ '].strHoraFim='
+								+ atualizaHora(dataAux, rowValues[4]).toJSON();
+						params += '&excecaoHorarioSet[' + i
+								+ '].strInterIni='
+								+ atualizaHora(dataAux, rowValues[5]).toJSON();
+						params += '&excecaoHorarioSet[' + i
+								+ '].strInterFim='
+								+ atualizaHora(dataAux, rowValues[6]).toJSON();
+					}
+				});
 		return params;
 	}
 
 	/**
 	 * Customiza o metodo editar
 	 */
-	 equipeService.editar = function(obj, title) {
+	equipeService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		equipeService.atualizarModalEquipe(obj);
+
+		document.getElementsByName('lotacaoEquipeSel.id')[0].value = obj.lotacaoEquipe.id;
+		document.getElementsByName('lotacaoEquipeSel.sigla')[0].value = obj.lotacaoEquipe.sigla;
+		document.getElementsByName('lotacaoEquipeSel.descricao')[0].value = obj.lotacaoEquipe.descricao;
+		document.getElementById('lotacaoSelSpan').innerHTML = obj.lotacaoEquipe.descricao;
+		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 
 	/**
 	 * Sobescreve o metodo cadastrar para limpar a tela.
 	 */
-	 equipeService.cadastrar = function(title) {
+	equipeService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
 		equipeService.atualizarModalEquipe();
+
+		document.getElementsByName('lotacaoEquipeSel.id')[0].value = '${lotacaoSel.id}';
+		document.getElementsByName('lotacaoEquipeSel.sigla')[0].value = '${lotacaoSel.sigla}';
+		document.getElementsByName('lotacaoEquipeSel.descricao')[0].value = '${lotacaoSel.descricao}';
+		document.getElementById('lotacaoSelSpan').innerHTML = '${lotacaoSel.descricao}';
+		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 
 	/**
 	 * Constroi a datatable de excessoes de horario
 	 */
 	equipeService.construirExcessoesDataTable = function() {
-		if ( $.fn.dataTable.isDataTable( '#excecoes_table' ) ) {
+		if ($.fn.dataTable.isDataTable('#excecoes_table')) {
 			this.excecoesTable = $('#excecoes_table').dataTable();
+		} else {
+			this.excecoesTable = $('#excecoes_table')
+					.dataTable(
+							{
+								"language" : {
+									"emptyTable" : "Não existem resultados",
+									"info" : "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+									"infoEmpty" : "Mostrando de 0 a 0 do total de 0 registros",
+									"infoFiltered" : "(filtrando do total de _MAX_ registros)",
+									"infoPostFix" : "",
+									"thousands" : ".",
+									"lengthMenu" : "Mostrar _MENU_ registros",
+									"loadingRecords" : "Carregando...",
+									"processing" : "Processando...",
+									"search" : "Filtrar:",
+									"zeroRecords" : "Nenhum registro encontrado",
+									"paginate" : {
+										"first" : "Primeiro",
+										"last" : "Último",
+										"next" : "Próximo",
+										"previous" : "Anterior"
+									},
+									"aria" : {
+										"sortAscending" : ": clique para ordenação crescente",
+										"sortDescending" : ": clique para ordenação decrescente"
+									}
+								},
+								"columnDefs" : [ {
+									"targets" : [ 0, 1 ],
+									"visible" : false,
+									"searchable" : false
+								} ],
+								"iDisplayLength" : 25
+							});
 		}
-		else {
-			this.excecoesTable = $('#excecoes_table').dataTable({
-				"language": {
-					"emptyTable":     "Não existem resultados",
-				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
-				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
-				    "infoPostFix":    "",
-				    "thousands":      ".",
-				    "lengthMenu":     "Mostrar _MENU_ registros",
-				    "loadingRecords": "Carregando...",
-				    "processing":     "Processando...",
-				    "search":         "Filtrar:",
-				    "zeroRecords":    "Nenhum registro encontrado",
-				    "paginate": {
-				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
-				        "previous":   "Anterior"
-				    },
-				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
-				    }
-				},
-				"columnDefs": [{"targets": [0, 1], "visible": false, "searchable": false}],
-				"iDisplayLength": 25
-			});
-		}
-		
+
 		// Remover exceções
-		$('#excecoes_table tbody').on('click', 'a.excecao_remove', function () {
-			equipeService.excecoesTable.api().row($(this).closest('tr')).remove().draw(false);
-		});
+		$('#excecoes_table tbody').on(
+				'click',
+				'a.excecao_remove',
+				function() {
+					equipeService.excecoesTable.api()
+							.row($(this).closest('tr')).remove().draw(false);
+				});
 	}
 	/**
 	 * Atualiza a modal de cadastro 
 	 */
 	equipeService.atualizarModalEquipe = function(equipe) {
 		equipeService.finalizarExcessoesTable();
-		
+
 		if (equipe) {
 			equipeService.carregarExcecoes(equipe);
 			equipeService.carregarDesignacoes(equipe.idEquipe);
 		}
 		// Caso seja cadastro, atualiza os dados da Lotação
 		else {
-			var lota = JSON.parse($("#lotacaoUsuario").val())
+			var lotacaoUsuarioValue = $("#lotacaoUsuario").val();
+		    if (lotacaoUsuarioValue && lotacaoUsuarioValue != "") {
+				var lota = JSON.parse(lotacaoUsuarioValue);
 				equipeEdicao = {
 					lotacaoEquipe : lota.id,
 					lotacaoEquipe_sigla : lota.descricao,
 					lotacaoEquipeSpan : lota.descricao,
 					lotacaoEquipe_sigla : lota.sigla
 				};
+		    }else{
+		    	equipeEdicao = {};
+			}
 			// chama o editar para popular o campo da lotação
-			equipeService.formularioHelper.populateFromJson(equipeEdicao);		
+			equipeService.formularioHelper.populateFromJson(equipeEdicao);
 			designacaoService.populateFromJSonList({});
 		}
 		equipeService.construirExcessoesDataTable();
@@ -242,7 +280,7 @@
 	 * Finaliza a tabela de excessoes.
 	 */
 	equipeService.finalizarExcessoesTable = function() {
-		if(equipeService.excecoesTable) {
+		if (equipeService.excecoesTable) {
 			equipeService.excecoesTable.fnDestroy();
 		}
 		TableHelper.limpar($("#excecoes_table"));
@@ -252,21 +290,34 @@
 	 */
 	equipeService.carregarExcecoes = function(equipe) {
 		var table = $('#excecoes_table');
-		
+
 		if (equipe.excecaoHorarioSet) {
 			// cria a lista de Exceções de horário, e adiciona na tela
 			for (i = 0; i < equipe.excecaoHorarioSet.length; i++) {
 				var item = equipe.excecaoHorarioSet[i];
-					row = [
-							item.diaSemana ? item.diaSemana : 0,
-							item.diaSemana ? '' : (item.dataEspecifica ? item.dataEspecifica : ''),
-							item.descrDiaSemana ? item.descrDiaSemana :  (item.dataEspecifica ? moment(new Date(item.dataEspecifica).toISOString()).format("DD/MM/YYYY") : ''),
-							item.horaIni ? moment(new Date(item.horaIni).toISOString()).format("HH:mm") : '', 
-							item.horaFim ? moment(new Date(item.horaFim).toISOString()).format("HH:mm") : '', 
-							item.interIni ? moment(new Date(item.interIni).toISOString()).format("HH:mm") : '',
-							item.interFim ? moment(new Date(item.interFim).toISOString()).format("HH:mm") : '',
-				           "<a class=\"excecao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"
-					];
+				row = [
+						item.diaSemana ? item.diaSemana : 0,
+						item.diaSemana ? ''
+								: (item.dataEspecifica ? item.dataEspecifica
+										: ''),
+						item.descrDiaSemana ? item.descrDiaSemana
+								: (item.dataEspecifica ? moment(
+										new Date(item.dataEspecifica)
+												.toISOString()).format(
+										"DD/MM/YYYY") : ''),
+						item.horaIni ? moment(
+								new Date(item.horaIni).toISOString()).format(
+								"HH:mm") : '',
+						item.horaFim ? moment(
+								new Date(item.horaFim).toISOString()).format(
+								"HH:mm") : '',
+						item.interIni ? moment(
+								new Date(item.interIni).toISOString()).format(
+								"HH:mm") : '',
+						item.interFim ? moment(
+								new Date(item.interFim).toISOString()).format(
+								"HH:mm") : '',
+						"<a class=\"excecao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>" ];
 				table.append(TableHelper.criarTd(row));
 			}
 		}
@@ -275,17 +326,18 @@
 	 * Preenche a lista de designacoes. Executa uma chamada ajax ao servidor e recarrega a lista da tela.
 	 */
 	equipeService.carregarDesignacoes = function(id) {
-        $.ajax({
-        	type: "GET",
-        	url: "/sigasr/app/equipe/"+id+"/designacoes",
-        	dataType: "text",
-        	success: function(lista) {
-        		var listaJSon = JSON.parse(lista);
-        		designacaoService.populateFromJSonList(listaJSon);
-        	},
-        	error: function(error) {
-            	alert("Não foi possível carregar as Designações desta Equipe.");
-        	}
-       	});
-    }
+		$
+				.ajax({
+					type : "GET",
+					url : "/sigasr/app/equipe/" + id + "/designacoes",
+					dataType : "text",
+					success : function(lista) {
+						var listaJSon = JSON.parse(lista);
+						designacaoService.populateFromJSonList(listaJSon);
+					},
+					error : function(error) {
+						alert("Não foi possível carregar as Designações desta Equipe.");
+					}
+				});
+	}
 </script>

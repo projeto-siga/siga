@@ -14,13 +14,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.util.Util;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -28,25 +29,25 @@ import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_EQUIPE", schema = "SIGASR")
-public class SrEquipe extends HistoricoSuporte {
+public class SrEquipe extends HistoricoSuporteVraptor implements ConvertableEntity {
 
 	public static ActiveRecord<SrEquipe> AR = new ActiveRecord<>(SrEquipe.class);
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_EQUIPE_SEQ", name = "srEquipeSeq")
 	@GeneratedValue(generator = "srEquipeSeq")
 	@Column(name = "ID_EQUIPE")
 	private Long idEquipe;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_EQUIPE")
 	private DpLotacao lotacao;
-	
+
 	@OneToMany(targetEntity = SrExcecaoHorario.class, mappedBy = "equipe", fetch = FetchType.LAZY)
 	private List<SrExcecaoHorario> excecaoHorarioSet;
-	
+
 	@Transient
 	private DpLotacao lotacaoEquipe;
 
@@ -64,7 +65,11 @@ public class SrEquipe extends HistoricoSuporte {
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
-	
+
+	public SrEquipe() {
+		super();
+	}
+
 	// Edson: Nao foi possivel deixar cascade automatico.
 	// Isso porque, no primeiro salvamento, o formulario nao consegue
 	// fazer automaticamente a conexao abaixo, entre os horarios e a equipe,
@@ -74,7 +79,7 @@ public class SrEquipe extends HistoricoSuporte {
 		super.salvar();
 		if (getExcecaoHorarioSet() != null)
 			for (SrExcecaoHorario eh : getExcecaoHorarioSet()) {
-				eh.equipe = this;
+				eh.setEquipe(this);
 				eh.salvar();
 			}
 	}
@@ -88,7 +93,7 @@ public class SrEquipe extends HistoricoSuporte {
 
 	public static List<SrEquipe> listar(boolean mostrarDesativados) {
 		StringBuffer sb = new StringBuffer();
-		
+
 		if (!mostrarDesativados)
 			sb.append(" hisDtFim is null ");
 		else {
@@ -96,42 +101,42 @@ public class SrEquipe extends HistoricoSuporte {
 			sb.append(" SELECT max(idEquipe) as idEquipe FROM ");
 			sb.append(" SrEquipe GROUP BY hisIdIni) ");
 		}
-		
+
 		return SrEquipe.AR.find(sb.toString()).fetch();
-		
+
 	}
-	
-	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa titular){
+
+	public boolean podeEditar(DpLotacao lotaTitular, DpPessoa titular) {
 		return lotaTitular.equivale(this.getLotacao());
 	}
 
 	public String toJson() {
 		Gson gson = Util.createGson("lotacao", "lotacaoEquipe", "excecaoHorarioSet");
-		
+
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
 		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
 		jsonObject.add("excecaoHorarioSet", excecaoHorarioArray());
 		jsonObject.add("lotacaoEquipe", gson.toJsonTree(SelecionavelVO.createFrom(this.getLotacao())));
 		return jsonObject.toString();
 	}
-	
+
 	private JsonArray excecaoHorarioArray() {
 		Gson gson = Util.createGson("equipe");
 		JsonArray jsonArray = new JsonArray();
-		
+
 		if (this.getExcecaoHorarioSet() != null)
 			for (SrExcecaoHorario srExcecaoHorario : this.getExcecaoHorarioSet()) {
 				JsonObject jsonObjectExcecao = (JsonObject) gson.toJsonTree(srExcecaoHorario);
-				
-				if (srExcecaoHorario.diaSemana != null)
-					jsonObjectExcecao.add("descrDiaSemana", gson.toJsonTree(srExcecaoHorario.diaSemana.getDescrDiaSemana()));
-				
+
+				if (srExcecaoHorario.getDiaSemana() != null)
+					jsonObjectExcecao.add("descrDiaSemana", gson.toJsonTree(srExcecaoHorario.getDiaSemana().getDescrDiaSemana()));
+
 				jsonArray.add(jsonObjectExcecao);
 			}
-		
+
 		return jsonArray;
 	}
-	
+
 	public DpLotacao getLotacaoEquipe() {
 		return this.lotacaoEquipe != null ? this.lotacaoEquipe : this.getLotacao();
 	}

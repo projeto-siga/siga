@@ -64,7 +64,7 @@ public class UsuarioAutenticado {
 				idCertNova.setCpTipoIdentidade(tpId);
 				idCertNova.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
 				idCertNova.setNmLoginIdentidade(principal);
-				idCertNova.setAtivo();
+				idCertNova.atribuirAtivo();
 				idCertNova.setIdIdentidade(null);
 				Date dt = dao().consultarDataEHoraDoServidor();
 				idCertNova.setDtCriacaoIdentidade(dt);

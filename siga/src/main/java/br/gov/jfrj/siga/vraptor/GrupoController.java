@@ -111,27 +111,16 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	private List<CpTipoGrupo> tiposDeGrupo;
 
 	@Override
-	public String aBuscar(String sigla, String postback) throws Exception {
+	protected String aBuscar(String sigla, String postback) throws Exception {
 		if (postback == null)
 			setOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
 		return super.aBuscar(sigla, postback);
 	}
 
-	/**
-	 * Seleciona um procedimento que terá suas permissões configuradas.
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	public String aConfigurar() throws Exception {
-
-		return "SUCESS";
-	}
-
 	/*
 	 * Prepara a edição do grupo selecionado na lista
 	 */
-	public String aEditar(Long idCpGrupo) throws Exception {
+	protected String aEditar(Long idCpGrupo) throws Exception {
 		List<String> idConfiguracao = new ArrayList<String>();
 		List<String> codigoTipoConfiguracao = new ArrayList<String>();
 		List<String> conteudoConfiguracao = new ArrayList<String>();
@@ -199,7 +188,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * 
 	 * @throws AplicacaoException
 	 */
-	public String aExcluir(Long idCpGrupo) throws Exception {
+	protected String aExcluir(Long idCpGrupo) throws Exception {
 		try {
 			ModeloDao.iniciarTransacao();
 			Date dt = dao().consultarDataEHoraDoServidor();
@@ -223,7 +212,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		return "lista";
 	}
 
-	public CpGrupo daoGrupo(Long id) {
+	protected CpGrupo daoGrupo(Long id) {
 		if (id == null) {
 			return null;
 		} else {
@@ -240,7 +229,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @throws InstantiationException
 	 * @throws InvocationTargetException
 	 */
-	public Long aGravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
+	protected Long aGravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
 			CpGrupoDeEmailSelecao grupoPaiSel,
 			Integer codigoTipoConfiguracaoNova, 
 			String conteudoConfiguracaoNova, 
@@ -444,7 +433,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 						"SIGA;GI;GDISTR;CONF_AVANC:Configuracões Avançadas");
 	}
 
-	public void aGravarGestorGrupo(Long idCpGrupo,
+	protected void aGravarGestorGrupo(Long idCpGrupo,
 			DpLotacaoSelecao lotacaoGestoraSel) {
 		DpLotacao lot = lotacaoGestoraSel.getObjeto();
 		if (lot == null) {
@@ -471,7 +460,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 
 	}
 
-	public void aExcluirGestorGrupo(Long idCpGrupo, Long idConfGestor) {
+	protected void aExcluirGestorGrupo(Long idCpGrupo, Long idConfGestor) {
 		dao().iniciarTransacao();
 		CpConfiguracao conf = dao().consultar(idConfGestor,
 				CpConfiguracao.class, false);
@@ -482,7 +471,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		dao().commitTransacao();
 	}
 
-	public List<CpConfiguracao> getConfGestores(Long idCpGrupo) {
+	protected List<CpConfiguracao> getConfGestores(Long idCpGrupo) {
 		CpTipoConfiguracao tpConf = dao().consultar(
 				CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_GRUPO,
 				CpTipoConfiguracao.class, false);
@@ -517,7 +506,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	/*
 	 * Prepara a lista de grupos a exibir
 	 */
-	public String aListar() throws Exception {
+	protected String aListar() throws Exception {
 
 		int offset = 0;
 		int itemPagina = 0;
@@ -563,7 +552,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	public abstract int getIdTipoGrupo();
 
 	@Override
-	public CpGrupoDaoFiltro createDaoFiltro() {
+	protected CpGrupoDaoFiltro createDaoFiltro() {
 		final CpGrupoDaoFiltro flt = new CpGrupoDaoFiltro();
 		flt.setIdTpGrupo(getIdTipoGrupo());
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
@@ -573,43 +562,43 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	/**
 	 * @return the configuracoesGrupo
 	 */
-	public ArrayList<ConfiguracaoGrupo> getConfiguracoesGrupo() {
+	protected ArrayList<ConfiguracaoGrupo> getConfiguracoesGrupo() {
 		return configuracoesGrupo;
 	}
 
 	/**
 	 * @return the conteudoConfiguracaoNova
 	 */
-	public String getConteudoConfiguracaoNova() {
+	protected String getConteudoConfiguracaoNova() {
 		return conteudoConfiguracaoNova;
 	}
 
-	public CpTipoGrupo getCpTipoGrupo() {
+	protected CpTipoGrupo getCpTipoGrupo() {
 		return cpTipoGrupo;
 	}
 
 	/**
 	 * @return the dscCpTipoGrupo
 	 */
-	public String getDscCpTipoGrupo() {
+	protected String getDscCpTipoGrupo() {
 		return dscCpTipoGrupo;
 	}
 
 	/**
 	 * @return the dscGrupo
 	 */
-	public String getDscGrupo() {
+	protected String getDscGrupo() {
 		return dscGrupo;
 	}
 
 	/**
 	 * @return the exception
 	 */
-	public Exception getException() {
+	protected Exception getException() {
 		return exception;
 	}
 
-	public CpGrupoDeEmailSelecao getGrupoPaiSel() {
+	protected CpGrupoDeEmailSelecao getGrupoPaiSel() {
 		return grupoPaiSel;
 	}
 
@@ -620,7 +609,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	/**
 	 * @return the idConfiguracaoNova
 	 */
-	public String getIdConfiguracaoNova() {
+	protected String getIdConfiguracaoNova() {
 		idConfiguracaoNova = String.valueOf(Long.MAX_VALUE);
 		return idConfiguracaoNova;
 	}
@@ -628,36 +617,36 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	/**
 	 * @return the idCpGrupo
 	 */
-	public Long getIdCpGrupo() {
+	protected Long getIdCpGrupo() {
 		return idCpGrupo;
 	}
 
-	public Long getOrgaoUsu() {
+	protected Long getOrgaoUsu() {
 		return orgaoUsu;
 	}
 
 	/**
 	 * @return the siglaGrupo
 	 */
-	public String getSiglaGrupo() {
+	protected String getSiglaGrupo() {
 		return siglaGrupo;
 	}
 
 	/**
 	 * @return the tipoConfiguracao
 	 */
-	public CpTipoConfiguracao getTipoConfiguracao() {
+	protected CpTipoConfiguracao getTipoConfiguracao() {
 		return tipoConfiguracao;
 	}
 
 	/**
 	 * @return the tiposConfiguracaoGrupoParaTipoDeGrupo
 	 */
-	public List<TipoConfiguracaoGrupoEnum> getTiposConfiguracaoGrupoParaTipoDeGrupo() {
+	protected List<TipoConfiguracaoGrupoEnum> getTiposConfiguracaoGrupoParaTipoDeGrupo() {
 		return tiposConfiguracaoGrupoParaTipoDeGrupo;
 	}
 
-	public Map<Integer, String> getTiposConfiguracaoGrupoParaTipoDeGrupoMap() {
+	protected Map<Integer, String> getTiposConfiguracaoGrupoParaTipoDeGrupoMap() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 
 		for (TipoConfiguracaoGrupoEnum item : tiposConfiguracaoGrupoParaTipoDeGrupo) {
@@ -670,7 +659,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	/**
 	 * @return the tiposDeGrupo
 	 */
-	public List<CpTipoGrupo> getTiposDeGrupo() {
+	protected List<CpTipoGrupo> getTiposDeGrupo() {
 		return tiposDeGrupo;
 	}
 
@@ -691,7 +680,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * 
 	 * @return CpGrupo
 	 */
-	public CpTipoGrupo getTipoGrupo() {
+	protected CpTipoGrupo getTipoGrupo() {
 		return obterCpTipoGrupoPorId(getIdTipoGrupo());
 	}
 
@@ -726,7 +715,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * Prepara as listas de relação
 	 * 
 	 */
-	public void prepare() {
+	protected void prepare() {
 		lotacaoGestoraSel = new DpLotacaoSelecao();
 		grupoPaiSel = new CpGrupoDeEmailSelecao();
 		tiposDeGrupo = obterTiposGrupo();
@@ -737,7 +726,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Selecionavel selecionarPorNome(final CpGrupoDaoFiltro flt) {
+	protected Selecionavel selecionarPorNome(final CpGrupoDaoFiltro flt) {
 		// Procura por nome
 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
 		flt.setSigla(null);
@@ -757,7 +746,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param configuracoesGrupo
 	 *            the configuracoesGrupo to set
 	 */
-	public void setConfiguracoesGrupo(
+	protected void setConfiguracoesGrupo(
 			ArrayList<ConfiguracaoGrupo> configuracoesGrupo) {
 		this.configuracoesGrupo = configuracoesGrupo;
 	}
@@ -766,11 +755,11 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param conteudoConfiguracaoNova
 	 *            the conteudoConfiguracaoNova to set
 	 */
-	public void setConteudoConfiguracaoNova(String conteudoConfiguracaoNova) {
+	protected void setConteudoConfiguracaoNova(String conteudoConfiguracaoNova) {
 		this.conteudoConfiguracaoNova = conteudoConfiguracaoNova;
 	}
 
-	public void setCpTipoGrupo(CpTipoGrupo cpTipoGrupo) {
+	protected void setCpTipoGrupo(CpTipoGrupo cpTipoGrupo) {
 		this.cpTipoGrupo = cpTipoGrupo;
 	}
 
@@ -778,7 +767,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param dscCpTipoGrupo
 	 *            the dscCpTipoGrupo to set
 	 */
-	public void setDscCpTipoGrupo(String dscCpTipoGrupo) {
+	protected void setDscCpTipoGrupo(String dscCpTipoGrupo) {
 		this.dscCpTipoGrupo = dscCpTipoGrupo;
 	}
 
@@ -786,7 +775,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param dscGrupo
 	 *            the dscGrupo to set
 	 */
-	public void setDscGrupo(String dscGrupo) {
+	protected void setDscGrupo(String dscGrupo) {
 		this.dscGrupo = dscGrupo;
 	}
 
@@ -794,11 +783,11 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param exception
 	 *            the exception to set
 	 */
-	public void setException(Exception exception) {
+	protected void setException(Exception exception) {
 		this.exception = exception;
 	}
 
-	public void setGrupoPaiSel(CpGrupoDeEmailSelecao grupoPaiSel) {
+	protected void setGrupoPaiSel(CpGrupoDeEmailSelecao grupoPaiSel) {
 		this.grupoPaiSel = grupoPaiSel;
 	}
 
@@ -806,7 +795,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param idConfiguracaoNova
 	 *            the idConfiguracaoNova to set
 	 */
-	public void setIdConfiguracaoNova(String idConfiguracaoNova) {
+	protected void setIdConfiguracaoNova(String idConfiguracaoNova) {
 		this.idConfiguracaoNova = idConfiguracaoNova;
 	}
 
@@ -814,11 +803,11 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param idCpGrupo
 	 *            the idCpGrupo to set
 	 */
-	public void setIdCpGrupo(Long idCpGrupo) {
+	protected void setIdCpGrupo(Long idCpGrupo) {
 		this.idCpGrupo = idCpGrupo;
 	}
 
-	public void setOrgaoUsu(Long orgaoUsu) {
+	protected void setOrgaoUsu(Long orgaoUsu) {
 		this.orgaoUsu = orgaoUsu;
 	}
 
@@ -826,7 +815,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param siglaGrupo
 	 *            the siglaGrupo to set
 	 */
-	public void setSiglaGrupo(String siglaGrupo) {
+	protected void setSiglaGrupo(String siglaGrupo) {
 		this.siglaGrupo = siglaGrupo;
 	}
 
@@ -834,7 +823,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param tipoConfiguracao
 	 *            the tipoConfiguracao to set
 	 */
-	public void setTipoConfiguracao(CpTipoConfiguracao tipoConfiguracao) {
+	protected void setTipoConfiguracao(CpTipoConfiguracao tipoConfiguracao) {
 		this.tipoConfiguracao = tipoConfiguracao;
 	}
 
@@ -842,7 +831,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param tiposConfiguracaoGrupoParaTipoDeGrupo
 	 *            the tiposConfiguracaoGrupoParaTipoDeGrupo to set
 	 */
-	public void setTiposConfiguracaoGrupoParaTipoDeGrupo(
+	protected void setTiposConfiguracaoGrupoParaTipoDeGrupo(
 			ArrayList<TipoConfiguracaoGrupoEnum> tiposConfiguracaoGrupoParaTipoDeGrupo) {
 		this.tiposConfiguracaoGrupoParaTipoDeGrupo = tiposConfiguracaoGrupoParaTipoDeGrupo;
 	}
@@ -851,15 +840,15 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @param tiposDeGrupo
 	 *            the tiposDeGrupo to set
 	 */
-	public void setTiposDeGrupo(ArrayList<CpTipoGrupo> tiposDeGrupo) {
+	protected void setTiposDeGrupo(ArrayList<CpTipoGrupo> tiposDeGrupo) {
 		this.tiposDeGrupo = tiposDeGrupo;
 	}
 
-	public void setLotacaoGestoraSel(DpLotacaoSelecao lotacaoGestoraSel) {
+	protected void setLotacaoGestoraSel(DpLotacaoSelecao lotacaoGestoraSel) {
 		this.lotacaoGestoraSel = lotacaoGestoraSel;
 	}
 
-	public DpLotacaoSelecao getLotacaoGestoraSel() {
+	protected DpLotacaoSelecao getLotacaoGestoraSel() {
 		return lotacaoGestoraSel;
 	}
 }

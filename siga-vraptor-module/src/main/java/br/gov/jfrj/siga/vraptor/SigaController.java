@@ -108,7 +108,7 @@ public class SigaController {
 		result.include("identidadeCadastrante",getIdentidadeCadastrante());
 	}
 
-	public List<DpSubstituicao> getMeusTitulares() {
+	protected List<DpSubstituicao> getMeusTitulares() {
 		try {
 			List<DpSubstituicao> substituicoes = so.getMeusTitulares();
 			if (substituicoes == null) {
@@ -248,7 +248,7 @@ public class SigaController {
 		return so.daoOU(sigla);
 	}
 
-	public EntityManager em() {
+	protected EntityManager em() {
 		return this.em;
 	}
 

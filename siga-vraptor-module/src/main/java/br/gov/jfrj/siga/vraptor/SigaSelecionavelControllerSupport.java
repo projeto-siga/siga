@@ -59,7 +59,7 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 	private Integer tamanho;
 
-	public String aBuscar(String sigla, String postback) throws Exception {
+	protected String aBuscar(String sigla, String postback) throws Exception {
 		if (sigla != null) 
 			setNome(sigla.toUpperCase());
 
@@ -80,7 +80,7 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 		return "busca";
 	}
 
-	public String aSelecionar(String sigla) {
+	protected String aSelecionar(String sigla) {
 		final DaoFiltroT flt = createDaoFiltro();
 		
 		try {
@@ -125,7 +125,7 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 		return "ajax_retorno";
 	}
 	
-	public Integer calculaPaginaAtual(Integer offset) {
+	protected Integer calculaPaginaAtual(Integer offset) {
 		if(getItemPagina() == null)
 			setItemPagina(10);
 		
@@ -134,69 +134,69 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 	protected abstract DaoFiltroT createDaoFiltro();
 
-	public Integer getItemPagina() {
+	protected Integer getItemPagina() {
 		return itemPagina;
 	}
 
-	public List getItens() {
+	protected List getItens() {
 		return itens;
 	}
 
-	public String getNome() {
+	protected String getNome() {
 		return nome;
 	}
 
-	public String getPropriedade() {
+	protected String getPropriedade() {
 		return propriedade;
 	}
 
-	public Selecionavel getSel() {
+	protected Selecionavel getSel() {
 		return sel;
 	}
 
-	public String getSigla() {
+	protected String getSigla() {
 		return sigla;
 	}
 
-	public Integer getTamanho() {
+	protected Integer getTamanho() {
 		return tamanho;
 	}
 
-	public Selecionavel selecionarPorNome(final DaoFiltroT flt)
+	protected Selecionavel selecionarPorNome(final DaoFiltroT flt)
 			throws AplicacaoException {
 		return null;
 	}
 
-	public Selecionavel selecionarVerificar(final Selecionavel sel)
+	protected Selecionavel selecionarVerificar(final Selecionavel sel)
 			throws AplicacaoException {
 		return sel;
 	}
 
-	public void setItemPagina(final Integer itemPagina) {
+	protected void setItemPagina(final Integer itemPagina) {
 		this.itemPagina = itemPagina;
 	}
 
-	public void setItens(final List orgaos) {
+	protected void setItens(final List orgaos) {
 		this.itens = orgaos;
 	}
 
-	public void setNome(final String nome) {
+	protected void setNome(final String nome) {
 		this.nome = nome;
 	}
 
-	public void setPropriedade(final String propriedade) {
+	protected void setPropriedade(final String propriedade) {
 		this.propriedade = propriedade;
 	}
 
-	public void setSel(final Selecionavel sel) {
+	protected void setSel(final Selecionavel sel) {
 		this.sel = sel;
 	}
 
-	public void setSigla(final String sigla) {
+	protected void setSigla(final String sigla) {
 		this.sigla = sigla;
 	}
 
-	public void setTamanho(final Integer tamanho) {
+	protected void setTamanho(final Integer tamanho) {
 		this.tamanho = tamanho;
 	}
 

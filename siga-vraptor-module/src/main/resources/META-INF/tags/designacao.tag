@@ -46,16 +46,16 @@
 			</thead>
 			<tbody>
 				<c:forEach items="${requestScope[designacoes]}" var="design">
-					<tr data-json-id="${design.id}" data-json="<%-- ${design.toVO().toJson()} --%>" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
+					<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
 						style="cursor: pointer;">
 						<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 						<td>${design.orgaoUsuario != null ? design.orgaoUsuario.acronimoOrgaoUsu : ""}</td>
 						<td>${design.complexo != null ? design.complexo.nomeComplexo : ""}</td>
 						<td>${design.solicitante != null ? design.solicitante.sigla : "" }</td>
 						<td><%-- ${design.descrConfiguracao} --%></td>
-						<td><%-- ${design.atendente?.lotacaoAtual?.siglaLotacao } --%></td>
+						<td>${design.atendente != null && design.atendente.lotacaoAtual != null ? design.atendente.lotacaoAtual.siglaLotacao : "" }</td>
 						<td class="acoes"> 
-									<siga:desativarReativar id="${design.id}" onReativar="designacaoService.reativar" onDesativar="designacaoService.desativar" isAtivo="${design.isAtivo()}"></siga:desativarReativar>
+							<siga:desativarReativar id="${design.id}" onReativar="designacaoService.reativar" onDesativar="designacaoService.desativar" isAtivo="${design.isAtivo()}"></siga:desativarReativar>
 							<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar">
 								<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
 							</a>
@@ -75,36 +75,149 @@
 	</div>
 	<!-- /content box -->
 	<div class="gt-table-buttons">
-		<a onclick="designacaoService.cadastrar('Incluir Designação')" class="gt-btn-medium gt-btn-left">Incluir</a>
+		<a onclick="designacaoService.cadastrar('Incluir Designa&ccedil;&atilde;o')" class="gt-btn-medium gt-btn-left">Incluir</a>
 	</div>
 </div>
 
-<siga:modal nome="designacao" titulo="Cadastrar Designacao" altura="200" largura="200">
+<siga:modal nome="designacao" titulo="Cadastrar Designacao">
 	<div id="divEditarDesignacaoItem">
-		<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
-			style="text-align: justify;">
-					<label style="padding-top: 5px;">Pelo menos um dos campos
-						"Atendente", "Pr&eacute;-Atendente" ou "P&oacute;s-Atendente" precisa
-						necess&aacute;riamente ser a mesma lota&cccedil;&atilde;o que foi selecionada na tela de
-						equipe. Por favor verifique e tente novamente.</label>
+	
+	
+	
+	
+	
+	
+	
+	
+	<style>
+#sortable ul {
+        height: 1.5em;
+        line-height: 1.2em;
+}
+
+.ui-state-highlight {
+        height: 1.5em;
+        line-height: 1.2em;
+}
+</style>
+<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+	<form id="formDesignacao">
+		<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
+		<input type="hidden" id="hisIdIni" name="hisIdIni" value="${hisIdIni}" />
+		<div>
+			<div class="gt-form-row">
+				<label>Descri&ccedil;&atilde;o <span>*</span></label>
+				<input id="descrConfiguracao"
+					   type="text"
+					   name="descrConfiguracao"
+					   value="${descrConfiguracao}"
+					   maxlength="255"
+					   style="width: 791px;"
+					   required/>
+				<span style="display:none;color: red" id="designacao.descrConfiguracao">Descri&ccedil;&atilde;o n&atilde;£o informada.</span>
+			</div>
+			<div class="gt-form-row box-wrapper">
+				<div id="divSolicitante" class="box box-left gt-width-50">
+					<label>Solicitante</label>
+					<siga:pessoaLotaFuncCargoSelecao
+						nomeSelLotacao="lotacao"
+						nomeSelPessoa="dpPessoa"
+						nomeSelFuncao="funcaoConfianca"
+						nomeSelCargo="cargo"
+						nomeSelGrupo="cpGrupo"
+						valuePessoa="${dpPessoa != null ? dpPessoa.pessoaAtual :'' }"
+						valueLotacao="${lotacao != null ? lotacao.lotacaoAtual : '' }"
+						valueFuncao="${funcaoConfianca }"
+						valueCargo="${cargo}"
+						valueGrupo="${cpGrupo}"
+						disabled="disabled">
+					</siga:pessoaLotaFuncCargoSelecao>
+<%-- 					#{pessoaLotaFuncCargoSelecao --%>
+<%-- 						nomeSelLotacao:'lotacao', --%>
+<%-- 						nomeSelPessoa:'dpPessoa', --%>
+<%-- 						nomeSelFuncao:'funcaoConfianca', --%>
+<%-- 						nomeSelCargo:'cargo', --%>
+<%-- 						nomeSelGrupo:'cpGrupo', --%>
+<%-- 						valuePessoa:dpPessoa?.pessoaAtual, --%>
+<%-- 						valueLotacao:lotacao?.lotacaoAtual, --%>
+<%-- 						valueFuncao:funcaoConfianca, --%>
+<%-- 						valueCargo:cargo, --%>
+<%-- 						valueGrupo:cpGrupo, --%>
+<%-- 						disabled:disabled/} --%>
 				</div>
+				<div class="box gt-width-50">
+					<label>&Oacute;rg&atilde;o</label>
+					<siga:select name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="0" headerValue="Nenhum"/>
+				</div>
+			</div>
+
+			<div class="gt-form-row box-wrapper">
+				<div class="box box-left gt-width-50">
+					<label>Local</label>
+					<siga:select name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="0" headerValue="Nenhum"/>
+				</div>
+				<div class="box gt-width-50">
+					<label>Atendente <span>*</span></label>
+					
+					<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar"/>
+					
+<%-- 					#{selecao --%>
+<%-- 						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual, --%>
+<%-- 						disabled:_modoExibicao == 'equipe' ? 'true' : disabled /} --%>
+
+					<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
+				</div>
+			</div>
+
+<%-- 			#{configuracaoItemAcao itemConfiguracaoSet:itemConfiguracaoSet, --%>
+<%-- 							 acoesSet:acoesSet}#{/configuracaoItemAcao} --%>
+
+			<div class="gt-form-row">
+				<div class="gt-form-row">
+					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="designacaoService.gravar()"/>
+					<a class="gt-btn-medium gt-btn-left" onclick="designacaoService.cancelarGravacao()">Cancelar</a>
+					<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="designacaoService.aplicar()"/>
+				</div>
+			</div>
+
+			<div class="gt-form-row gt-width-100">
+				<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigat&oacute;rios n&atilde;o foram
+					preenchidos.</p>
+			</div>
+		</div>
+	</form>
+</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 		<%-- 		#{include 'Application/editarDesignacaoItem.html' /} --%>
-			</div>
-		</siga:modal>
+<%-- 		<jsp:include page="editarItem.jsp"></jsp:include> --%>
+	</div>
+</siga:modal>
 		
-		<siga:modal nome="erroAoSalvar" titulo="Problemas ao Salvar" altura="200" largura="450">
-			<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
-				style="text-align: justify;">
-				<label style="padding-top: 5px;">Pelo menos um dos campos
-					"Atendente", "Pr&eacute;-Atendente" ou "P&oacute;s-Atendente" precisa
-					necess&aacute;riamente ser a mesma lota&cccedil;&atilde;o que foi selecionada na tela de
-					equipe. Por favor verifique e tente novamente.</label>
-			</div>
-			<div class="gt-form-row" style="margin-left: 297px;">
-				<a href="javascript: fecharModalErroAoSalvar()"
-					class="gt-btn-medium gt-btn-left">OK</a>
-			</div>
-		</siga:modal>
+<siga:modal nome="erroAoSalvar" titulo="Problemas ao Salvar" altura="200" largura="450">
+	<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
+		style="text-align: justify;">
+		<label style="padding-top: 5px;">Pelo menos um dos campos
+			"Atendente", "Pr&eacute;-Atendente" ou "P&oacute;s-Atendente" precisa
+			necess&aacute;riamente ser a mesma lota&cccedil;&atilde;o que foi selecionada na tela de
+			equipe. Por favor verifique e tente novamente.</label>
+	</div>
+	<div class="gt-form-row" style="margin-left: 297px;">
+		<a href="javascript: fecharModalErroAoSalvar()"
+			class="gt-btn-medium gt-btn-left">OK</a>
+	</div>
+</siga:modal>
 
 
 <script type="text/javascript">
@@ -149,7 +262,7 @@
 	// Sobescreve o metodo cadastrar para limpar a tela
 	designacaoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title);
-		// atualiza os dados da Designação
+		// atualiza os dados da DesignaÃ§Ã£o
 		atualizarDesignacaoEdicao();
 	}
 
@@ -225,7 +338,7 @@
 	}
 
 	designacaoService.opts.formCadastro.resetForm = function(form) {
-// 		jQuery("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
 	}
 
 	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
@@ -326,7 +439,7 @@
 	function afterGravarDesignacao(tr, designacao, service) {
 		var acoes = tr.find('td.acoes');
 
-		// tratamentos de herança e botão duplicar
+		// tratamentos de heranÃ§a e botÃ£o duplicar
 		if (designacao && (designacao.isHerdado == 'true' || designacao.isHerdado == true))
 			$('td', tr).addClass('configuracao-herdada');
 		else
@@ -340,7 +453,7 @@
 	function duplicarDesignacao(event) {
 		var tr = $(event.currentTarget).parent().parent();
 		event.stopPropagation();
-		designacaoService.editar(tr.data('json'), 'Duplicar Designação');
+		designacaoService.editar(tr.data('json'), 'Duplicar DesignaÃ§Ã£o');
 		resetId();
 	}
 
@@ -358,9 +471,9 @@
 			trAcoes = $('<tr>'),
 			descricao = designacao.descrConfiguracao != undefined ? designacao.descrConfiguracao : '';
 		
-		TableHelper.detalheLista("<b>Itens de configuração:</b>", designacao.listaItemConfiguracaoVO, trItens);
-		TableHelper.detalheLista("<b>Ações:</b>", designacao.listaAcaoVO, trAcoes);
-		detalheDescricaoLista("<b>Descrição:</b>", descricao, trDescricao);
+		TableHelper.detalheLista("<b>Itens de configuraÃ§Ã£o:</b>", designacao.listaItemConfiguracaoVO, trItens);
+		TableHelper.detalheLista("<b>AÃ§Ãµes:</b>", designacao.listaAcaoVO, trAcoes);
+		detalheDescricaoLista("<b>DescriÃ§Ã£o:</b>", descricao, trDescricao);
 
 		if (designacao.ativo == false) {
 			$('td', trDescricao).addClass('item-desativado');
@@ -401,7 +514,7 @@
 		}else configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(designacaoJson);
 
 		if("${requestScope[modoExibicao]}" == "equipe") {
-			// Caso seja cadastro a partir da tela de equipe, atualiza os dados da Lotação atendente
+			// Caso seja cadastro a partir da tela de equipe, atualiza os dados da LotaÃ§Ã£o atendente
 			var lota = JSON.parse($("#lotacaoUsuario").val());
 
 			if(!designacaoJson) {
@@ -412,7 +525,7 @@
 			designacaoJson.atendenteSpan = lota.descricao,
 			designacaoJson.atendente_sigla = lota.sigla
 		
-			// chama o editar para popular o campo da lotação
+			// chama o editar para popular o campo da lotaÃ§Ã£o
 			designacaoService.formularioHelper.populateFromJson(designacaoJson);
 		}
 	}

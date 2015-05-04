@@ -1,38 +1,25 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<jsp:include page="../main.jsp"></jsp:include>
 
 <siga:pagina titulo="Seguran&ccedil;a">
+	<jsp:include page="../main.jsp"></jsp:include>
+
+	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.populate.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/moment.js"></script>
+	
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Designa&ccedil;&otilde;es</h2>
-	
-<!-- 	<script src="../../../javascripts/detalhe-tabela.js"></script> -->
-<!-- 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script> -->
-<!-- 	<script src="//cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"></script> -->
-<!-- 	<script src="../../../javascripts/jquery.serializejson.min.js"></script> -->
-<!-- 	<script src="../../../javascripts/jquery.populate.js"></script> -->
-<!-- 	<script src="../../../javascripts/base-service.js"></script> -->
-<!-- 	<script src="../../../javascripts/jquery.blockUI.js"></script> -->
-<!-- 	<script src="../../../javascripts/jquery-config.js"></script> -->
-<!-- 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
-<!-- 	<script src="//192.168.170.97/siga/javascript/jquery/1.6/jquery-1.6.4.min.js"></script> -->
-<!-- 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script> -->
-<!-- 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
 
-			<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-			<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-			<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
-			<script src="/sigasr/javascripts/jquery.populate.js"></script>
-			<script src="/sigasr/javascripts/base-service.js"></script>
-			
-			<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
-			<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
-			<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
-			<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
-			<script src="/sigasr/javascripts/moment.js"></script>
-		
 			<script type="text/javascript">
 				var telaOrigem = 'listarDesignacao';
 				
@@ -69,9 +56,9 @@
 					$("#checkmostrarDesativado").click(function() {
 						jQuery.blockUI(objBlock);
 						if (document.getElementById('checkmostrarDesativado').checked)
-							location.href = '@{Application.listarDesignacaoDesativados()}';
+							location.href = '${linkTo[DesignacaoController].listar[true]}';
 						else
-							location.href = '@{Application.listarDesignacao()}';	
+							location.href = '${linkTo[DesignacaoController].listar[false]}';
 					});
 				});
 			</script>

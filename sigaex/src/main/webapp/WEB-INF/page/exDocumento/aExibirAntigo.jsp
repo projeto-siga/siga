@@ -449,7 +449,7 @@
 	</div>
 </div>
 <c:if test="${f:resource('isWorkflowEnabled')}">
-	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>
+	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/app/doc?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>
 </c:if>
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 	<c:url var="url" value="/../sigagc/app/knowledge">

@@ -2,7 +2,7 @@
 <%@ page isErrorPage="true"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <c:catch var="catchException">
 	<siga:pagina titulo="Siga - Logout" desabilitarbusca="sim" meta="<META HTTP-EQUIV='refresh' CONTENT='1;URL='/siga/'>" >

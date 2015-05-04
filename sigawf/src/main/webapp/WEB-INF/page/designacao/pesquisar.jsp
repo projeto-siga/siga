@@ -6,19 +6,19 @@
 		var objSelecionado = document.getElementById('tipoResponsavel_'
 				+ tarefa);
 
-		document.getElementById('lotacao_' + tarefa
+		document.getElementById('formulario_lotacao_' + tarefa
 				+ '_lotacaoSel_id').value = "";
-		document.getElementById('matricula_' + tarefa
+		document.getElementById('formulario_matricula_' + tarefa
 				+ '_pessoaSel_id').value = "";
 
-		document.getElementById('lotacao_' + tarefa
+		document.getElementById('formulario_lotacao_' + tarefa
 				+ '_lotacaoSel_sigla').value = "";
-		document.getElementById('matricula_' + tarefa
+		document.getElementById('formulario_matricula_' + tarefa
 				+ '_pessoaSel_sigla').value = "";
 
-		document.getElementById('lotacao_' + tarefa
+		document.getElementById('formulario_lotacao_' + tarefa
 				+ '_lotacaoSel_descricao').value = "";
-		document.getElementById('matricula_' + tarefa
+		document.getElementById('formulario_matricula_' + tarefa
 				+ '_pessoaSel_descricao').value = "";
 
 		document.getElementById('lotacao_' + tarefa

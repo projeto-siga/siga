@@ -756,7 +756,7 @@
 
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">
-		ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}", null, "wf");
+		ReplaceInnerHTMLFromAjaxResponse("/sigawf/app/doc?sigla=${doc.codigo}&ts=${currentTimeMillis}", null, "wf");
 	</script>
 </c:if>
 <c:if

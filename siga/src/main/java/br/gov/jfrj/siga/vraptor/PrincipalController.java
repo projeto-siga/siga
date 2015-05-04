@@ -106,20 +106,20 @@ public class PrincipalController extends SigaController {
 				//a string copiaSigla somente possui n�meros
 				if (copiaSigla.matches("(^[0-9]+$)")) {
 					URLSelecionar = urlBase 
-							+ "/siga"+ (testes.length() > 0 ? testes : "/pessoa") + "/selecionar.action?sigla=" + sigla+ incluirMatricula;
+							+ "/siga/app"+ (testes.length() > 0 ? testes : "/pessoa") + "/selecionar?sigla=" + sigla+ incluirMatricula;
 				}
 				//encontrar lota��es
 				else {
 					URLSelecionar = urlBase 
-						+ "/siga"+ (testes.length() > 0 ? testes : "/lotacao")+ "/selecionar.action?sigla=" + sigla+ incluirMatricula;
+						+ "/siga/app"+ (testes.length() > 0 ? testes : "/lotacao")+ "/selecionar?sigla=" + sigla+ incluirMatricula;
 				}
 				
 				response = http.get(URLSelecionar, getRequest(), null).split(";");
 				
 				if (copiaSigla.matches("(^[0-9]+$)")) 
-					uRLExibir = "/siga/pessoa/exibir.action?sigla="+ response[2];
+					uRLExibir = "/siga/app/pessoa/exibir?sigla="+ response[2];
 				else
-					uRLExibir = "/siga/lotacao/exibir.action?sigla="+ response[2];
+					uRLExibir = "/siga/app/lotacao/exibir?sigla="+ response[2];
 			}
 			else {
 				if (copiaSigla.startsWith("SR"))

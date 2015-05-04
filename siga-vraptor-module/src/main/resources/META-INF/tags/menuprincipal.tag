@@ -19,7 +19,7 @@
 
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:Módulo de Workflow')}">
-						<li><a href="/sigawf/resumo.action">Workflow</a>
+						<li><a href="/sigawf/app/resumo">Workflow</a>
 						</li>
 					</c:if>
 
@@ -214,7 +214,7 @@
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;WF_ADMIN:Administrar SIGAWF')}">
-						<li><a href="/sigawf/administrar.action">Administrar SIGA WF</a>
+						<li><a href="/sigawf/app/admin/administrar">Administrar SIGA WF</a>
 						</li>
 					</c:if>
 					<c:if

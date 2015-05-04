@@ -4,7 +4,7 @@
 $( document ).ready(function() {
     // SEND GET Request to SP
     $.ajax({
-        url: "/sigawf/inbox.action",
+        url: "/sigawf/app/inbox",
         type: "GET"
     }).done(function(result) {
         var form = $(result)[1];

@@ -47,7 +47,7 @@
 									${equipe.lotacaoEquipe.sigla}
 								</td>
 								<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-									(${equipe.idEquipe}) ${equipe.lotacaoEquipe.descricao}
+									${equipe.lotacaoEquipe.descricao}
 								</td>
 							</tr>
 						</c:forEach>

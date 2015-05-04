@@ -29,13 +29,13 @@ public class SrAtributoVO {
 	
 	public SrAtributoVO(SrAtributo atributo, List<SrConfiguracao> associacoes) {
 		this.ativo = atributo.isAtivo();
-		this.idAtributo = atributo.idAtributo;
-		this.nomeAtributo = atributo.nomeAtributo;
-		this.descrAtributo = atributo.descrAtributo;
-		this.codigoAtributo = atributo.codigoAtributo;
-		this.tipoAtributo = atributo.tipoAtributo;
-		this.objetivoAtributo = SrObjetivoAtributoVO.createFrom(atributo.objetivoAtributo);
-		this.descrPreDefinido = atributo.descrPreDefinido;
+		this.idAtributo = atributo.getIdAtributo();
+		this.nomeAtributo = atributo.getNomeAtributo();
+		this.descrAtributo = atributo.getDescrAtributo();
+		this.codigoAtributo = atributo.getCodigoAtributo();
+		this.tipoAtributo = atributo.getTipoAtributo();
+		this.objetivoAtributo = SrObjetivoAtributoVO.createFrom(atributo.getObjetivoAtributo());
+		this.descrPreDefinido = atributo.getDescrPreDefinido();
 		this.hisIdIni = atributo.getHisIdIni();
 		this.associacoesVO = new ArrayList<SrConfiguracaoVO>();
 
@@ -57,7 +57,7 @@ public class SrAtributoVO {
 
 		if (this.tipoAtributo != null) {
 			jsonTree.add("descrTipoAtributo",
-					gson.toJsonTree(this.tipoAtributo.descrTipoAtributo));
+					gson.toJsonTree(this.tipoAtributo.getDescrTipoAtributo()));
 		}
 		
 		if (this.objetivoAtributo != null) {

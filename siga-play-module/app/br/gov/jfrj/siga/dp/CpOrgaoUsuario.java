@@ -41,8 +41,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @Table(name = "CP_ORGAO_USUARIO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
-		Serializable, Selecionavel, Assemelhavel {
+public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements Serializable, Selecionavel, Assemelhavel {
 	public static ActiveRecord<CpOrgaoUsuario> AR = new ActiveRecord<>(CpOrgaoUsuario.class);
 
 	/**
@@ -114,14 +113,13 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 	public boolean equivale(Object other) {
 		if (other == null)
 			return false;
-		return this.getIdOrgaoUsu().longValue() == ((CpOrgaoUsuario) other)
-				.getIdOrgaoUsu().longValue();
+		return this.getIdOrgaoUsu().longValue() == ((CpOrgaoUsuario) other).getIdOrgaoUsu().longValue();
 	}
 
 	public boolean semelhante(Assemelhavel obj, int nivel) {
 		return SincronizavelSuporte.semelhante(this, obj, nivel);
 	}
-	
+
 	@Override
 	public String toString() {
 		return getSigla();

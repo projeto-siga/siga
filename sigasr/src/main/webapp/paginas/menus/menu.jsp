@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<li><a href="#">Servi&ccedil;o</a>
+<li><a href="#">Servi&ccedil;os</a>
 	<ul>
 		<li><a href="@{Application.editar}">Cadastrar</a></li>
 		<li><a href="@{Application.buscarSolicitacao}">Pesquisar</a></li>
@@ -25,7 +25,7 @@
 						<li><a href="@{Application.buscarAcordo}">Acordo</a></li>
 						<li><a href="@{Application.listarDisponibilidadeItens}">Disponibilidade</a></li>
 						<li><a href="${linkTo[EquipeController].listar[false]}">Equipe</a></li>
-						<li><a href="@{Application.listarAtributo}">Atributo</a></li>
+						<li><a href="${linkTo[AtributoController].listar[false]}">Atributo</a></li>
 						<li><a href="@{Application.listarPesquisa}">Pesquisa de Satisfa&ccedil;&atilde;o</a></li> 
 					</c:if>
 					<c:if test="${exibirMenuConhecimentos}">

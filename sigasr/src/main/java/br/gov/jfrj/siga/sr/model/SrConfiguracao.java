@@ -268,6 +268,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		salvar();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, DpLotacao atendente) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
@@ -288,6 +289,7 @@ public class SrConfiguracao extends CpConfiguracao {
 		return AR.em().createQuery(sb.toString()).getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> listarDesignacoes(SrEquipe equipe) {
 		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
 		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);

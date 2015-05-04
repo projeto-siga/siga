@@ -200,7 +200,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 			if (srConf.atributo != null) {
 				srConf.atributo.getHisIdIni();
 				
-				for (SrAtributo att : srConf.atributo.meuAtributoHistoricoSet) {
+				for (SrAtributo att : srConf.atributo.getMeuAtributoHistoricoSet()) {
 					att.getAtual();
 				}
 			}

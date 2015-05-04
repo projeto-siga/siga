@@ -8,12 +8,15 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import play.db.jpa.GenericModel;
+import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_OBJETIVO_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class SrObjetivoAtributo extends GenericModel {
+public class SrObjetivoAtributo extends ObjetoVraptor {
+	
+	public static ActiveRecord<SrObjetivoAtributo> AR = new ActiveRecord<>(SrObjetivoAtributo.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,17 +28,33 @@ public class SrObjetivoAtributo extends GenericModel {
 	
 	@Id
 	@Column(name = "ID_OBJETIVO")
-	public long idObjetivo;
+	private long idObjetivo;
 
 	@Column(name = "DESCR_OBJETIVO", nullable = false)
-	public String descrObjetivo;
+	private String descrObjetivo;
 	
 	public Long getId() {
-		return this.idObjetivo;
+		return this.getIdObjetivo();
 	}
 	
 	public String getDescricao() {
-		return this.descrObjetivo;
+		return this.getDescrObjetivo();
+	}
+
+	public long getIdObjetivo() {
+		return idObjetivo;
+	}
+
+	public void setIdObjetivo(long idObjetivo) {
+		this.idObjetivo = idObjetivo;
+	}
+
+	public String getDescrObjetivo() {
+		return descrObjetivo;
+	}
+
+	public void setDescrObjetivo(String descrObjetivo) {
+		this.descrObjetivo = descrObjetivo;
 	}
 
 }

@@ -74,7 +74,7 @@
 				<input type="hidden" id="equipeHidden" name="equipe">
 				<input type="hidden" id="idEquipe" name="equipe.idEquipe">
 				<input type="hidden" id="idEquipeIni" name="equipe.hisIdIni">
-				<input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario" value="${lotacaoUsuario.toJson()}"/>
+				<input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario" value='${lotacaoUsuario.toJson()}'/>
 				<p class="gt-error" style="display:none;" id="erroEquipeCamposObrigatorios">Alguns campos obrigatórios não foram preenchidos</p>
 				<div class="gt-form-table">
 					<div class="barra-subtitulo barra-subtitulo-top header"

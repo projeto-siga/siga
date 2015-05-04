@@ -208,7 +208,7 @@ public class Application extends SigaApplication {
 		HashMap<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
 
 		for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
-			if (!atributoMap.containsKey(srAtributo.idAtributo)) {
+			if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
 				listaAtributosAdicao.add(srAtributo);
 			}
 		}
@@ -287,11 +287,11 @@ public class Application extends SigaApplication {
 		HashMap<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
 		for (SrAtributoSolicitacao att : solicitacao.getAtributoSolicitacaoSet()) {
 			// Para evitar NullPointerExcetpion quando nao encontrar no Map
-			if(Boolean.TRUE.equals(obrigatorio.get(att.atributo.idAtributo))) {
+			if(Boolean.TRUE.equals(obrigatorio.get(att.atributo.getIdAtributo()))) {
 				if ((att.valorAtributoSolicitacao == null || att.valorAtributoSolicitacao.trim().equals("")))
 					validation.current().addError("solicitacao.atributoSolicitacaoMap["
-							+ att.atributo.idAtributo + "]",
-							att.atributo.nomeAtributo + " n&atilde;o informado");
+							+ att.atributo.getIdAtributo() + "]",
+							att.atributo.getNomeAtributo() + " n&atilde;o informado");
 			}
 		}
 
@@ -1255,12 +1255,12 @@ public class Application extends SigaApplication {
 		SrAtributo att = new SrAtributo();
 		if (id != null) {
 			att = SrAtributo.findById(id);
-			if(att.tipoAtributo != null) {
-				tipoAtributoAnterior = att.tipoAtributo.name();
+			if(att.getTipoAtributo() != null) {
+				tipoAtributoAnterior = att.getTipoAtributo().name();
 			}
 		}
-		if (att.objetivoAtributo == null)
-			att.objetivoAtributo = SrObjetivoAtributo.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO);
+		if (att.getObjetivoAtributo() == null)
+			att.setObjetivoAtributo(SrObjetivoAtributo.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO));
 		List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.FALSE);
 		List<SrObjetivoAtributo> objetivos = SrObjetivoAtributo.all().fetch();
 		render(att, tipoAtributoAnterior, associacoes, objetivos);
@@ -1293,8 +1293,8 @@ public class Application extends SigaApplication {
 
 	@SuppressWarnings("static-access")
 	private static void validarFormEditarAtributo(SrAtributo atributo) {
-		if (atributo.tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO
-				&& atributo.descrPreDefinido.equals("")) {
+		if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO
+				&& atributo.getDescrPreDefinido().equals("")) {
 			validation.current().addError("att.descrPreDefinido",
 					"Valores Pré-definido não informados");
 		}

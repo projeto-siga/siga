@@ -203,7 +203,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
 				if (att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.trim().isEmpty()) {
 					subqueryAtributo.append("(");
-						subqueryAtributo.append(" att.atributo.idAtributo = " + att.atributo.idAtributo);
+						subqueryAtributo.append(" att.atributo.idAtributo = " + att.atributo.getIdAtributo());
 						subqueryAtributo.append(" and att.valorAtributoSolicitacao = '" + att.valorAtributoSolicitacao + "' ");
 					
 					subqueryAtributo.append(")");
@@ -240,14 +240,14 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		Collections.sort(arrayList, new Comparator<SrAtributo>() {
 			@Override
 			public int compare(SrAtributo s0, SrAtributo s1) {
-				if (s0.nomeAtributo == null && s1.nomeAtributo == null) {
+				if (s0.getNomeAtributo() == null && s1.getNomeAtributo() == null) {
 					return 0;
-				} else if (s0.nomeAtributo == null) {
+				} else if (s0.getNomeAtributo() == null) {
 					return 1;
-				} else if (s1.nomeAtributo == null) {
+				} else if (s1.getNomeAtributo() == null) {
 					return -1;
 				}
-				return s0.nomeAtributo.compareTo(s1.nomeAtributo);
+				return s0.getNomeAtributo().compareTo(s1.getNomeAtributo());
 			}
 		});
 		return arrayList;

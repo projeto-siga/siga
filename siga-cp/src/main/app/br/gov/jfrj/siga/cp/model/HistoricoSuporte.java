@@ -30,8 +30,9 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
-public abstract class HistoricoSuporte extends Objeto implements Historico,
-		Assemelhavel {
+public abstract class HistoricoSuporte extends Objeto implements Historico, Assemelhavel {
+
+	private static final long serialVersionUID = 992555792295390723L;
 
 	@Column(name = "HIS_ID_INI")
 	@Desconsiderar
@@ -46,7 +47,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	private Date hisDtFim;
 
 	@Transient
-	//@Column(name = "HIS_ATIVO")
+	// @Column(name = "HIS_ATIVO")
 	@Desconsiderar
 	private Integer hisAtivo;
 

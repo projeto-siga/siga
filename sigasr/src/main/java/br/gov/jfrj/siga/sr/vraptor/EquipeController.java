@@ -29,8 +29,7 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 @Path("app/equipe")
 public class EquipeController extends SrController {
 
-	public EquipeController(HttpServletRequest request, Result result,
-			SigaObjects so, EntityManager em) {
+	public EquipeController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, SrDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -45,8 +44,7 @@ public class EquipeController extends SrController {
 
 		List<CpComplexo> locais = CpComplexo.AR.all().fetch();
 		List<CpUnidadeMedida> unidadesMedida = dao.listarUnidadesMedida();
-		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.AR.find(
-				"hisDtFim is null").fetch();
+		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.AR.find("hisDtFim is null").fetch();
 		DpLotacao lotaTitular = getLotaTitular();
 		SelecionavelVO lotacaoUsuario = SelecionavelVO.createFrom(lotaTitular);
 
@@ -71,9 +69,7 @@ public class EquipeController extends SrController {
 		equipe.salvar();
 		// System.out.println(equipes);
 		// result.include("equipe", equipe);
-		result
-			.use(Results.http())
-			.body(equipe.toJson());
+		result.use(Results.http()).body(equipe.toJson());
 	}
 
 	@Path("/{id}/designacoes")
@@ -87,8 +83,7 @@ public class EquipeController extends SrController {
 			designacoes = new ArrayList<SrConfiguracao>();
 		}
 
-		result.use(Results.http()).body(
-				SrConfiguracao.convertToJSon(designacoes));
+		result.use(Results.http()).body(SrConfiguracao.convertToJSon(designacoes));
 	}
 
 }

@@ -37,8 +37,8 @@
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script src="../../../javascripts/jquery.blockUI.js"></script>
-<script src="../../../javascripts/jquery-config.js"></script>
+<script src="/sigasr/javascripts/jquery.blockUI.js"></script>
+<script src="/sigasr/javascripts/jquery-config.js"></script>
 
 <siga:modal nome="server_error" titulo="Erro interno no servidor">
 	<div id="erroInterno">

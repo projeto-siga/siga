@@ -195,18 +195,11 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 					i.getAtual();
 
 			if (srConf.atributo != null) {
-				srConf.atributo.getHisIdIni();
-				
-				for (SrAtributo att : srConf.atributo.meuAtributoHistoricoSet) {
-					att.getAtual();
-				}
+				srConf.atributo.getAtual();
 			}
 			
 			if (srConf.listaPrioridade != null) {
-				
-				if(srConf.listaPrioridade.meuListaHistoricoSet != null)
-					for (SrLista l : srConf.listaPrioridade.meuListaHistoricoSet)
-						l.getListaAtual();
+					srConf.listaPrioridade.getListaAtual();
 			}
 			
 			if (srConf.pesquisaSatisfacao != null)

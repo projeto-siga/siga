@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 
 import javax.inject.Inject;
@@ -139,14 +140,26 @@ public class SigaLogicResult implements LogicResult {
 				}
 				try {
 					String path = request.getContextPath();
-					String url = router.urlFor(type, method, args);
+					
+					//Nato: mudei o parâmetro que é passado para contemplar o encoding
+					//String url = router.urlFor(type, method, args);
+					Object[] encodedargs = new Object[args.length];
+					int i = 0;
+					for (Object o : args) {
+						if (o instanceof String)
+							o = URLEncoder.encode((String)o, "UTF-8");
+						encodedargs[i++] = o;
+					}
+					String url = router.urlFor(type, method, encodedargs);
+					
 					includeParametersInFlash(type, method, args);
 
 					path = path + url;
 
 					//Nato: inseri essas duas linhas para corrigir um problema de codepage no redirecionamento
-					response.setContentType("text/html; charset=UTF-8");
-			        path = new String(Charset.forName("UTF-8").encode(path).array());
+					//response.setContentType("text/html; charset=UTF-8");
+			        //path = new String(Charset.forName("UTF-8").encode(path).array());
+			        //path = URLEncoder.encode(path, "UTF-8");
 					
 			        logger.debug("redirecting to {}", path);
 					response.sendRedirect(path);

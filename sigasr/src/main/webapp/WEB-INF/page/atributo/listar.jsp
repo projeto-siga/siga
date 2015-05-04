@@ -13,6 +13,7 @@
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.blockUI.js"></script>
 	
 	<style>
 		.ui-widget-content a[disabled] {
@@ -50,7 +51,7 @@
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
 					<label>
-						<siga:checkbox name="mostrarDesativasdo" value="${mostrarDesativados}"></siga:checkbox>
+						<siga:checkbox name="mostrarDesativado" value="${mostrarDesativados}"></siga:checkbox>
 						<b>Incluir Inativas</b>
 					</label>
 				</div>
@@ -153,10 +154,11 @@
 	$("#checkmostrarDesativado").click(function() {
 		jQuery.blockUI(objBlock);
 		if (document.getElementById('checkmostrarDesativado').checked)
-			location.href = '@{Application.listarAtributoDesativados()}';
+			location.href = '${linkTo[AtributoController].listar}?mostrarDesativados=true';
 		else
-			location.href = '@{Application.listarAtributo()}';	
+			location.href = '${linkTo[AtributoController].listar}';
 	});
+	
 	opts.dataTable= $('#atributo_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
@@ -172,8 +174,8 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Ãšltimo",
-			        "next":       "PrÃ³ximo",
+			        "last":       "Úšltimo",
+			        "next":       "Próximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {

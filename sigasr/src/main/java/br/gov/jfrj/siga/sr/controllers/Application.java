@@ -203,7 +203,7 @@ public class Application extends SigaApplication {
 		render(filtro, atributosDisponiveisAdicao);
 	}
 
-	public static List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) {
+	public static List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
 		List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
 		HashMap<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
 
@@ -658,7 +658,7 @@ public class Application extends SigaApplication {
 	//	e não foi possível deixar default no template(igual ao buscarItem.html)
 	@SuppressWarnings("unchecked")
 
-	public static void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) {
+	public static void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception {
 		SrSolicitacaoListaVO solicitacaoListaVO;
 
 		try {
@@ -1260,7 +1260,7 @@ public class Application extends SigaApplication {
 			}
 		}
 		if (att.getObjetivoAtributo() == null)
-			att.setObjetivoAtributo(SrObjetivoAtributo.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO));
+			att.setObjetivoAtributo(SrObjetivoAtributo.AR.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO));
 		List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, Boolean.FALSE);
 		List<SrObjetivoAtributo> objetivos = SrObjetivoAtributo.all().fetch();
 		render(att, tipoAtributoAnterior, associacoes, objetivos);

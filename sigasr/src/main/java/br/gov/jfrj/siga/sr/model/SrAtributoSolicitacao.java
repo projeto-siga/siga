@@ -9,11 +9,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.model.Objeto;
+import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name="SR_ATRIBUTO_SOLICITACAO", schema="SIGASR")
-public class SrAtributoSolicitacao extends Objeto {
+public class SrAtributoSolicitacao extends GenericModel {
 	
 	/**
 	 * 
@@ -24,51 +24,19 @@ public class SrAtributoSolicitacao extends Objeto {
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SOLICITACAO_SEQ", name = "srAtributoSolicitacaoSeq")
 	@GeneratedValue(generator = "srAtributoSolicitacaoSeq")
 	@Column(name = "ID_ATRIBUTO_SOLICITACAO")
-	private long id;
+	public long id;
 	
 	@Column(name = "VALOR_ATRIBUTO_SOLICITACAO")
-	private String valorAtributoSolicitacao;
+	public String valorAtributoSolicitacao;
 	
 	@ManyToOne
 	@JoinColumn(name="ID_ATRIBUTO")
-	private SrAtributo atributo;
+	public SrAtributo atributo;
 	
 	@ManyToOne
 	@JoinColumn(name="ID_SOLICITACAO")
-	private SrSolicitacao solicitacao;
+	public SrSolicitacao solicitacao;
 	
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getValorAtributoSolicitacao() {
-		return valorAtributoSolicitacao;
-	}
-
-	public void setValorAtributoSolicitacao(String valorAtributoSolicitacao) {
-		this.valorAtributoSolicitacao = valorAtributoSolicitacao;
-	}
-
-	public SrAtributo getAtributo() {
-		return atributo;
-	}
-
-	public void setAtributo(SrAtributo atributo) {
-		this.atributo = atributo;
-	}
-
-	public SrSolicitacao getSolicitacao() {
-		return solicitacao;
-	}
-
-	public void setSolicitacao(SrSolicitacao solicitacao) {
-		this.solicitacao = solicitacao;
-	}
-
 	public SrAtributoSolicitacao(){
 	}
 	

@@ -5,14 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.model.Objeto;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import br.gov.jfrj.siga.sr.model.SrAcao.SrAcaoVO;
+import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name = "SR_TIPO_PERMISSAO_LISTA", schema = "SIGASR")
-public class SrTipoPermissaoLista extends Objeto{
-	
-	public static ActiveRecord<SrTipoPermissaoLista> AR = new ActiveRecord<>(SrTipoPermissaoLista.class);
+public class SrTipoPermissaoLista extends GenericModel{
 
 	final static public long GESTAO = 1; 
 
@@ -24,19 +25,11 @@ public class SrTipoPermissaoLista extends Objeto{
 
 	@Id
 	@Column(name = "ID_TIPO_PERMISSAO")
-	private Long idTipoPermissaoLista;
+	public Long idTipoPermissaoLista;
 	
 	@Column(name = "DESCR_TIPO_PERMISSAO", nullable = false)
-	private String descrTipoPermissaoLista;
+	public String descrTipoPermissaoLista;
 	
-	public void setIdTipoPermissaoLista(Long idTipoPermissaoLista) {
-		this.idTipoPermissaoLista = idTipoPermissaoLista;
-	}
-
-	public void setDescrTipoPermissaoLista(String descrTipoPermissaoLista) {
-		this.descrTipoPermissaoLista = descrTipoPermissaoLista;
-	}
-
 	public SrTipoPermissaoLista(int id, String descricao) {
 		super();
 		this.idTipoPermissaoLista = Long.valueOf(id);

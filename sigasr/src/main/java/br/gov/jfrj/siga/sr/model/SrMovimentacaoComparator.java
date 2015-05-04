@@ -12,7 +12,7 @@ public class SrMovimentacaoComparator implements Comparator<SrMovimentacao> {
 	
 	@Override
 	public int compare(SrMovimentacao a1, SrMovimentacao a2) {
-		return ordemCrescente ? a1.getDtIniMov().compareTo(a2.getDtIniMov())
-				: a2.getDtIniMov().compareTo(a1.getDtIniMov());
+		return ordemCrescente ? a1.dtIniMov.compareTo(a2.dtIniMov)
+				: a2.dtIniMov.compareTo(a1.dtIniMov);
 	}
 }

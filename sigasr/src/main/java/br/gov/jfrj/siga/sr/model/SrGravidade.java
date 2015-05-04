@@ -8,41 +8,11 @@ public enum SrGravidade {
 			"Muito grave.", "Muito grave"), EXTREMAMENTE_GRAVE(5,
 			"Extremamente grave.", "Extremamente grave");
 
-	private int nivelGravidade;
+	public int nivelGravidade;
 
-	private String descrGravidade;
+	public String descrGravidade;
 
-	private String respostaEnunciado;
-
-	public int getNivelGravidade() {
-		return nivelGravidade;
-	}
-
-
-	public void setNivelGravidade(int nivelGravidade) {
-		this.nivelGravidade = nivelGravidade;
-	}
-
-
-	public String getDescrGravidade() {
-		return descrGravidade;
-	}
-
-
-	public void setDescrGravidade(String descrGravidade) {
-		this.descrGravidade = descrGravidade;
-	}
-
-
-	public String getRespostaEnunciado() {
-		return respostaEnunciado;
-	}
-
-
-	public void setRespostaEnunciado(String respostaEnunciado) {
-		this.respostaEnunciado = respostaEnunciado;
-	}
-
+	public String respostaEnunciado;
 
 	SrGravidade(int nivel, String descricao) {
 		this(nivel, descricao, descricao);

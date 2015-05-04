@@ -7,31 +7,15 @@ public enum SrTipoAtributo {
 	NUM_INTEIRO(3, "Número Inteiro"), 
 	NUM_DECIMAL(4, "Número com duas casas decimais"), 
 	HORA(5, "Hora"), 
-	VL_PRE_DEFINIDO(6, "Valores pré-definidos");
+	VL_PRE_DEFINIDO(6, "Valores pré-definidos"),
+	TEXT_AREA(7, "TextArea");
 
-	private int idTipoAtributo;
+	public int idTipoAtributo;
 
-	private String descrTipoAtributo;
+	public String descrTipoAtributo;
 
 	private SrTipoAtributo(int idTipoAtributo, String descrTipoAtributo) {
 		this.idTipoAtributo = idTipoAtributo;
 		this.descrTipoAtributo = descrTipoAtributo;
 	}
-
-	public int getIdTipoAtributo() {
-		return idTipoAtributo;
-	}
-
-	public void setIdTipoAtributo(int idTipoAtributo) {
-		this.idTipoAtributo = idTipoAtributo;
-	}
-
-	public String getDescrTipoAtributo() {
-		return descrTipoAtributo;
-	}
-
-	public void setDescrTipoAtributo(String descrTipoAtributo) {
-		this.descrTipoAtributo = descrTipoAtributo;
-	}
 }
-

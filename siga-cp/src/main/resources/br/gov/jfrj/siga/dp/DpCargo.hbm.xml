@@ -25,7 +25,7 @@
 	</class>
 	<query name="consultarPorSiglaDpCargo">
 		<![CDATA[select cargo from DpCargo cargo where
-		cargo.idCargoIni = :idCargoIni]]>
+		cargo.siglaCargo = :siglaCargo]]>
 	</query>
 
 	<query name="consultarPorFiltroDpCargo">

@@ -74,4 +74,28 @@
 		<name>select</name>
 		<path>/META-INF/tags/select.tag</path>
 	</tag-file>
+	<tag-file>
+		<name>modal</name>
+		<path>/META-INF/tags/modal.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>desativarReativar</name>
+		<path>/META-INF/tags/desativarReativar.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>dataCalendar</name>
+		<path>/META-INF/tags/dataCalendar.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>pessoaLotaSelecao</name>
+		<path>/META-INF/tags/pessoaLotaSelecao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>pessoaLotaFuncCargoSelecao</name>
+		<path>/META-INF/tags/pessoaLotaFuncCargoSelecao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>checkbox</name>
+		<path>/META-INF/tags/checkbox.tag</path>
+	</tag-file>
 </taglib>

@@ -103,6 +103,10 @@ public class CpOrgao extends AbstractCpOrgao implements Serializable,
 	public String getDescricao() {
 		return getNmOrgao();
 	}
+	
+	public String getRegistroAtivo(){
+		return this.getAtivo();
+	}
 
 	public String getNmOrgaoAI() {
 		return nmOrgaoAI;

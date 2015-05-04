@@ -9,35 +9,11 @@ public enum SrUrgencia {
 			4, "Muito urgente.", "Com muita urgência"), AGIR_IMEDIATO(5,
 			"Extremamente urgente.", "Imediatamente");
 
-	private int nivelUrgencia;
+	public int nivelUrgencia;
 
-	private String descrUrgencia;
+	public String descrUrgencia;
 
-	private String respostaEnunciado;
-
-	public int getNivelUrgencia() {
-		return nivelUrgencia;
-	}
-
-	public void setNivelUrgencia(int nivelUrgencia) {
-		this.nivelUrgencia = nivelUrgencia;
-	}
-
-	public String getDescrUrgencia() {
-		return descrUrgencia;
-	}
-
-	public void setDescrUrgencia(String descrUrgencia) {
-		this.descrUrgencia = descrUrgencia;
-	}
-
-	public String getRespostaEnunciado() {
-		return respostaEnunciado;
-	}
-
-	public void setRespostaEnunciado(String respostaEnunciado) {
-		this.respostaEnunciado = respostaEnunciado;
-	}
+	public String respostaEnunciado;
 
 	private SrUrgencia(int nivelUrgencia, String descrUrgencia) {
 		this(nivelUrgencia, descrUrgencia, descrUrgencia);

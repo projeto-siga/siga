@@ -1,6 +1,4 @@
-<%@ include file="/WEB-INF/page/include.jsp"%>
-
-<siga:pagina titulo="Buscar Item">
+#{extends 'main.html' /} 
 <script language="javascript">
 function sbmt(nivel){
 	document.getElementById('alterou').value=nivel;
@@ -30,7 +28,8 @@ function sbmt(nivel){
 					<tr>
 						<td><input type="hidden" name="nome" value="${nome}" />
 							<input type="hidden" name="sol.solicitante" value="${sol.solicitante?.idPessoa}" />
-							<input type="hidden" name="sol.cadastrante" value="${sol.cadastrante?.idPessoa}" />
+							<input type="hidden" name="sol.titular" value="${sol.titular?.idPessoa}" />
+							<input type="hidden" name="sol.lotaTitular" value="${sol.lotaTitular?.idLotacao}" />
 							<input type="hidden" name="sol.local" value="${sol.local?.idComplexo}" />
 							<input
 							type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" />
@@ -60,31 +59,25 @@ function sbmt(nivel){
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="item" items="${itens}">
+				#{list items:itens, as:'item'}
 				<tr name="${item.nivel}" >
 					<td class="gt-celula-nowrap" style="padding-left: ${item.nivel*13}px;">
-						<c:choose>
-							<c:when test="${!item.especifico}">
-								<a href="" onclick="clica(this); return false;" style="text-decoration: none; font-size: 14pt" name="sinal">-</a>
-							</c:when>
-							<c:otherwise>
-								&nbsp;&nbsp;
-							</c:otherwise>
-						</c:choose>
-						<c:choose>
-							<c:when test="${item.especifico || (!sol.solicitante && !sol.local)}">
-								<a href="javascript:opener.retorna_item${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.tituloItemConfiguracao}</a>
-							</c:when>
-							<c:otherwise>
-								<span>${item.tituloItemConfiguracao}</span>
-							</c:otherwise>
-						</c:choose>
+						#{if !item.especifico}
+							<a href="" onclick="clica(this); return false;" style="text-decoration: none; font-size: 14pt" name="sinal">-</a>
+						#{/if}
+						#{else}
+							&nbsp;&nbsp;
+						#{/else}
+						#{if item.especifico || (!sol.solicitante && !sol.local)}<a
+						href="javascript:opener.retorna_item${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.tituloItemConfiguracao}</a>
+						#{/if}
+						#{else}<span>${item.tituloItemConfiguracao}</span>#{/else}
 					</td>
 					<td class="gt-celula-nowrap">${item.siglaItemConfiguracao}</td>
 					<td class="gt-celula-nowrap">#{selecionado sigla:item.descrItemConfiguracao,descricao:item.descrItemConfiguracao /}</td>
 					<td class="gt-celula-nowrap">#{selecionado sigla:item.descricaoSimilaridade,descricao:item.descricaoSimilaridade /}</td>
 				</tr>
-				</c:forEach>
+				#{/list}
 			</tbody>
 		</table>
 	</div>

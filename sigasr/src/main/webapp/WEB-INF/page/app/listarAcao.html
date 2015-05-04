@@ -2,8 +2,72 @@
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Ações</h2>
+		<!-- content bomex -->
+		<div class="gt-content-box dataTables_div">
+			<div class="gt-form-row dataTables_length">
+				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
+			</div>
+			<table id="acoes_table" class="gt-table display">
+				<thead>
+					<tr>
+						<th>Código</th>
+						<th>Título</th>
+						<th>Descrição</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					#{list items:acoes, as:'acao'}
+						<tr #{if !acao.ativo}class="configuracao-herdada"#{/if}
+							data-json-id="${acao.idAcao}" data-json="${acao.toJson()}"
+							onclick="acaoService.editar($(this).data('json'), 'Alterar A&ccedil;&atilde;o')"
+							style="cursor: pointer;">
+							<td>${acao.siglaAcao}</td>
+							<td>
+								<span style="margin-left: ${(acao.nivel-1)*2}em; #{if acao.nivel == 1}font-weight: bold;#{/if}">#{selecionado sigla:acao.atual?.tituloAcao, 
+							descricao:acao.atual?.descricao /}</span></td>
+							<td>${acao.descrAcao}</td>
+							<td class="acoes">
+								#{desativarReativar id:acao.idAcao, 
+													onReativar:'acaoService.reativar',
+													onDesativar :'acaoService.desativar',
+													isAtivo:acao.isAtivo() }
+								#{/desativarReativar}
+							</td>
+						</tr>
+					#{/list}
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+			<a onclick="acaoService.cadastrar('Incluir A&ccedil;&atilde;o')" class="gt-btn-medium gt-btn-left">Incluir</a>
+		</div>
+	</div>
+</div>
+
+#{modal nome:'acao', titulo:'Cadastrar A&ccedil;&atilde;o'}
+	<div id="divEditarAcaoForm">#{include 'Application/editarAcao.html' /}</div>
+#{/modal}
 
 <script type="text/javascript">
+	var validatorAcaoForm;
+	var colunasAcao = {
+			codigo: 0,
+			titulo: 1,
+			descrAcao: 2,
+			acoes: 3
+		};
 	var QueryString = function () {
 		// This function is anonymous, is executed immediately and
 		// the return value is assigned to QueryString!
@@ -26,6 +90,18 @@
 		}
 		return query_string;
 	}();
+
+	var opts = {
+			 urlDesativar : '@{Application.desativarAcao()}?',
+			 urlReativar : '@{Application.reativarAcao()}?',
+			 urlGravar : '@{Application.gravarAcao()}',
+			 dialogCadastro : $('#acao_dialog'),
+			 tabelaRegistros : $('#acoes_table'),
+			 objectName : 'acao',
+			 formCadastro : $('#acaoForm'),
+			 mostrarDesativados : QueryString.mostrarDesativados,
+			 colunas : colunasAcao.acoes
+	};
 	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
@@ -34,6 +110,7 @@
 		}
 			
 		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
 				location.href = '@{Application.listarAcaoDesativados()}';
 			else
@@ -41,7 +118,7 @@
 		});
 		
 		/* Table initialization */
-		$('#acoes_table').DataTable({
+		opts.dataTable = $('#acoes_table').dataTable({
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
@@ -66,71 +143,57 @@
 			    }
 			},
 			"columnDefs": [{
-				"targets": [3],
+				"targets": [colunasAcao.acoes],
 				"searchable": false,
 				"sortable" : false
-			}]
+			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				var acao = undefined;
+				
+				try {
+					acao = JSON.parse($(nRow).data('json'));
+				}
+				catch(err) {
+					acao = $(nRow).data('json');
+				}
+				
+				if (acao) {
+					if (acao.ativo == false)
+						$('td', nRow).addClass('item-desativado');
+					else
+						$('td', nRow).removeClass('item-desativado');
+				}
+			}
 		});
 	});
 
-	function desativarAcao(event, idAcao) {
-		event.stopPropagation();
-		window.location = '@{Application.desativarAcao()}?' + queryDesativarReativar(idAcao, QueryString.mostrarDesativados);
+	// Define a "classe" AcaoService
+	function AcaoService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
+	}
+	// AcaoService extends BaseService
+	AcaoService.prototype = Object.create(BaseService.prototype);
+	
+	var acaoService = new AcaoService(opts);
+	
+	acaoService.getId = function(acao) {
+		return acao.id;
 	}
 
-	function reativarAcao(event, idAcao) {
-		event.stopPropagation();
-		window.location = '@{Application.reativarAcao()}?' + queryDesativarReativar(idAcao, QueryString.mostrarDesativados);
+	acaoService.getRow = function(acao) {
+		var marginLeft = (acao.nivel-1) * 2,
+			fontWeight = (acao.nivel == 1) ? 'bold' : 'normal',
+			span = $('<span></span>');
+
+		var spanHTML = '<span style="margin-left:{margin-left};font-weight:{font-weight}">{descricao}</span>';
+		spanHTML = spanHTML.replace('{margin-left}', marginLeft + 'em');
+		spanHTML = spanHTML.replace('{font-weight}', fontWeight);
+		spanHTML = spanHTML.replace('{descricao}', acao.tituloAcao);
+		
+		return [acao.sigla, spanHTML, acao.descrAcao, 'COLUNA_ACOES'];
+	}
+	acaoService.onRowClick = function(acao) {
+		acaoService.editar(acao, 'Alterar A&ccedil;&atilde;o');
 	}
 </script>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-		<h2>Ações</h2>
-		<!-- content bomex -->
-		<div class="gt-content-box dataTables_div">
-			<div class="gt-form-row dataTables_length">
-				<label>#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b></label>
-			</div>
-			<table id="acoes_table" class="gt-table display">
-				<thead>
-					<tr>
-						<th>Código</th>
-						<th>Título</th>
-						<th>Descrição</th>
-						<th></th>
-					</tr>
-				</thead>
-
-				<tbody>
-					#{list items:acoes, as:'acao'}
-					<tr
-						onclick="javascript:window.location='@{Application.editarAcao(acao.idAcao)}'"
-						style="cursor: pointer;">
-						<td>${acao.siglaAcao}</td>
-						<td><span style="margin-left: ${(acao.nivel-1)*2}em; #{if acao.nivel == 1}font-weight: bold;#{/if}">#{selecionado sigla:acao.atual?.tituloAcao, 
-						descricao:acao.atual?.descricao /}</span></td>
-						<td>${acao.descrAcao}</td>
-						<td>
-							#{desativarReativar id:acao.idAcao, 
-												onReativar:'reativarAcao',
-												onDesativar :'desativarAcao',
-												isAtivo:acao.isAtivo() }
-							#{/desativarReativar}
-						</td>
-					</tr>
-					#{/list}
-				</tbody>
-			</table>
-		</div>
-		<!-- /content box -->
-		<div class="gt-table-buttons">
-			<a href="@{Application.editarAcao}" class="gt-btn-medium gt-btn-left">Incluir</a>
-		</div>
-
-	</div>
-</div>
-
-<br />
-<br />
-<br />

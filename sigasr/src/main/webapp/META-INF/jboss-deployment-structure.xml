@@ -1,23 +1,38 @@
 <?xml version="1.0"?>
-<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<deployment>
-		<module-alias name="sigagc" />
+		<module-alias name="sigasr" />
+		<exclusions>
+			<module name="org.apache.xalan" />
+			<module name="org.antlr"/>
+		</exclusions>
+		
+<!-- 		<dependencies> -->
+<!-- 			<module name="org.hibernate" export="true" /> -->
+<!-- 			<module name="org.picketlink" />  -->
+<!-- 			<module name="org.apache.commons.lang" /> -->
+<!-- 			<module name="org.apache.ws.xmlschema" /> -->
+<!-- 			<module name="org.apache.xerces" export="true" /> -->
+<!-- 			<module name="org.apache.commons.logging" /> -->
+<!-- 			<module name="javax.wsdl4j.api" /> -->
+<!-- 			<module name="asm.asm" /> -->
 
-		<dependencies>			
-			<module name="org.hibernate" export="true" />
+<!-- 			<module name="sigadoc.org.bouncycastle" export="true" /> -->
+
+<!-- 			<module name="org.javassist" /> -->
+<!-- 			<module name="javax.api" /> -->
+<!-- 		</dependencies> -->
+		
+		<dependencies>
+<!-- 			<module name="sigadoc.rel" export="true" /> -->
 			
 			<module name="org.picketlink" />
-
-			<module name="org.apache.commons.lang" />
-			<module name="org.apache.ws.xmlschema" />
-            <module name="javax.wsdl4j.api" />
-            <module name="org.apache.commons.logging" />
-            <module name="org.apache.xalan" />
-            <module name="asm.asm" />
-            <module name="org.javassist" />
-			
-			<module name="sigadoc.org.bouncycastle" export="true"/>
+			<module name="asm.asm" />
+			<module name="com.google.guava"/>
+			<module name="org.hibernate" />
+			<module name="org.infinispan" />
+			<module name="org.hibernate.commons-annotations" />
+			<module name="sigadoc.play" export="true" slot="sigasr" />
 		</dependencies>
 
 	</deployment>

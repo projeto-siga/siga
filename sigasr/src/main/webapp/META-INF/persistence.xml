@@ -5,7 +5,7 @@
 
 	<persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<non-jta-data-source>java:/jboss/datasources/SigaGcDS</non-jta-data-source>
+		<non-jta-data-source>java:/jboss/datasources/SigaServicosDS</non-jta-data-source>
 
 
 		<class>br.gov.jfrj.siga.dp.DpCargo</class>
@@ -41,17 +41,38 @@
 		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
+		
+<!-- 			colocar as classes do SigaSR -->
 
-		<class>br.gov.jfrj.siga.gc.model.GcAcesso</class>
-		<class>br.gov.jfrj.siga.gc.model.GcArquivo</class>
-		<class>br.gov.jfrj.siga.gc.model.GcConfiguracao</class>
-		<class>br.gov.jfrj.siga.gc.model.GcInformacao</class>
-		<class>br.gov.jfrj.siga.gc.model.GcMarca</class>
-		<class>br.gov.jfrj.siga.gc.model.GcMovimentacao</class>
-		<class>br.gov.jfrj.siga.gc.model.GcTag</class>
-		<class>br.gov.jfrj.siga.gc.model.GcTipoInformacao</class>
-		<class>br.gov.jfrj.siga.gc.model.GcTipoMovimentacao</class>
-		<class>br.gov.jfrj.siga.gc.model.GcTipoTag</class>
+		<class>br.gov.jfrj.siga.sr.model.DadosRH</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAcao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAcao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAcordo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrArquivo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAtributo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAtributoAcordo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrConfiguracao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrConfiguracaoIgnorada</class>
+		<class>br.gov.jfrj.siga.sr.model.SrDisponibilidade</class>
+		<class>br.gov.jfrj.siga.sr.model.SrEquipe</class>
+		<class>br.gov.jfrj.siga.sr.model.SrExcecaoHorario</class>
+		<class>br.gov.jfrj.siga.sr.model.SrFatorMultiplicacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrGestorItem</class>
+		<class>br.gov.jfrj.siga.sr.model.SrItemConfiguracao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrLista</class>
+		<class>br.gov.jfrj.siga.sr.model.SrMarca</class>
+		<class>br.gov.jfrj.siga.sr.model.SrMovimentacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrObjetivoAtributo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrPergunta</class>
+		<class>br.gov.jfrj.siga.sr.model.SrPesquisa</class>
+		<class>br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrResposta</class>
+		<class>br.gov.jfrj.siga.sr.model.SrSolicitacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrTipoAcao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrTipoMovimentacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrTipoPergunta</class>
+		<class>br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista</class>
 
 		<properties>
 			<property name="hibernate.current_session_context_class"

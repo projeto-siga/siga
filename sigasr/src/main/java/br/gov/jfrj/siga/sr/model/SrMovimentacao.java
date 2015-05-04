@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -26,19 +27,16 @@ import javax.persistence.TemporalType;
 
 import org.joda.time.DateTime;
 
-import br.gov.jfrj.siga.base.SigaCalendar;
+import play.db.jpa.GenericModel;
+import util.SigaPlayCalendar;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.model.Objeto;
-import br.gov.jfrj.siga.sr.SrCorreio;
+import br.gov.jfrj.siga.sr.notifiers.Correio;
 
 @Entity
 @Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
-public class SrMovimentacao extends Objeto {
+public class SrMovimentacao extends GenericModel {
 
-	public static ActiveRecord<SrMovimentacao> AR = new ActiveRecord<>(SrMovimentacao.class);
-	
 	/**
 	 * 
 	 */
@@ -48,60 +46,72 @@ public class SrMovimentacao extends Objeto {
 	@SequenceGenerator(sequenceName = "SIGASR.SR_MOVIMENTACAO_SEQ", name = "srMovimentacaoSeq")
 	@GeneratedValue(generator = "srMovimentacaoSeq")
 	@Column(name = "ID_MOVIMENTACAO")
-	private long idMovimentacao;
+	public long idMovimentacao;
 
 	@Column(name = "DESCR_MOVIMENTACAO")
-	private String descrMovimentacao;
+	public String descrMovimentacao;
 
 	@Column(name = "DT_INI_MOV")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dtIniMov;
+	public Date dtIniMov;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_ARQUIVO")
-	private SrArquivo arquivo;
+	public SrArquivo arquivo;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_ATENDENTE")
-	private DpPessoa atendente;
+	public DpPessoa atendente;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_ATENDENTE")
-	private DpLotacao lotaAtendente;
+	public DpLotacao lotaAtendente;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_DESIGNACAO")
+	public SrConfiguracao designacao;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_CADASTRANTE")
-	private DpPessoa cadastrante;
+	public DpPessoa cadastrante;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE")
-	private DpLotacao lotaCadastrante;
+	public DpLotacao lotaCadastrante;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_TITULAR")
+	public DpPessoa titular;
+
+	@ManyToOne
+	@JoinColumn(name = "ID_LOTA_TITULAR")
+	public DpLotacao lotaTitular;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_SOLICITACAO")
-	private SrSolicitacao solicitacao;
+	public SrSolicitacao solicitacao;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_LISTA")
-	private SrLista lista;
+	public SrLista lista;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_CANCELADORA")
-	private SrMovimentacao movCanceladora;
+	public SrMovimentacao movCanceladora;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
-	private SrTipoMovimentacao tipoMov;
+	public SrTipoMovimentacao tipoMov;
 
 	@Column(name = "NUM_SEQUENCIA")
-	private Long numSequencia;
+	public Long numSequencia;
 
 	@Column(name = "ID_PRIORIDADE")
-	private Long prioridade;
+	public Long prioridade;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESQUISA")
-	private SrPesquisa pesquisa;
+	public SrPesquisa pesquisa;
 
 	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
 	// @OrderBy("pergunta asc")
@@ -112,330 +122,29 @@ public class SrMovimentacao extends Objeto {
 
 	@Column(name = "DT_AGENDAMENTO")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dtAgenda;
+	public Date dtAgenda;
 
 	@Enumerated
-	private SrTipoMotivoPendencia motivoPendencia;
+	public SrTipoMotivoPendencia motivoPendencia;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_MOV_FINALIZADORA")
-	private SrMovimentacao movFinalizadora;
+	public SrMovimentacao movFinalizadora;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_SOLICITACAO_REFERENCIA")
-	private SrSolicitacao solicitacaoReferencia;
+	public SrSolicitacao solicitacaoReferencia;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
-	private SrItemConfiguracao itemConfiguracao;
+	public SrItemConfiguracao itemConfiguracao;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_ACAO")
-	private SrAcao acao;
+	public SrAcao acao;
 	
 	@Enumerated
-	private SrTipoMotivoEscalonamento motivoEscalonamento;
-
-	/**
-	 * @return the idMovimentacao
-	 */
-	public long getIdMovimentacao() {
-		return idMovimentacao;
-	}
-
-	/**
-	 * @param idMovimentacao the idMovimentacao to set
-	 */
-	public void setIdMovimentacao(long idMovimentacao) {
-		this.idMovimentacao = idMovimentacao;
-	}
-
-	/**
-	 * @return the descrMovimentacao
-	 */
-	public String getDescrMovimentacao() {
-		return descrMovimentacao;
-	}
-
-	/**
-	 * @param descrMovimentacao the descrMovimentacao to set
-	 */
-	public void setDescrMovimentacao(String descrMovimentacao) {
-		this.descrMovimentacao = descrMovimentacao;
-	}
-
-	/**
-	 * @return the dtIniMov
-	 */
-	public Date getDtIniMov() {
-		return dtIniMov;
-	}
-
-	/**
-	 * @param dtIniMov the dtIniMov to set
-	 */
-	public void setDtIniMov(Date dtIniMov) {
-		this.dtIniMov = dtIniMov;
-	}
-
-	/**
-	 * @return the arquivo
-	 */
-	public SrArquivo getArquivo() {
-		return arquivo;
-	}
-
-	/**
-	 * @param arquivo the arquivo to set
-	 */
-	public void setArquivo(SrArquivo arquivo) {
-		this.arquivo = arquivo;
-	}
-
-	/**
-	 * @return the atendente
-	 */
-	public DpPessoa getAtendente() {
-		return atendente;
-	}
-
-	/**
-	 * @param atendente the atendente to set
-	 */
-	public void setAtendente(DpPessoa atendente) {
-		this.atendente = atendente;
-	}
-
-	/**
-	 * @return the lotaAtendente
-	 */
-	public DpLotacao getLotaAtendente() {
-		return lotaAtendente;
-	}
-
-	/**
-	 * @param lotaAtendente the lotaAtendente to set
-	 */
-	public void setLotaAtendente(DpLotacao lotaAtendente) {
-		this.lotaAtendente = lotaAtendente;
-	}
-
-	/**
-	 * @return the cadastrante
-	 */
-	public DpPessoa getCadastrante() {
-		return cadastrante;
-	}
-
-	/**
-	 * @param cadastrante the cadastrante to set
-	 */
-	public void setCadastrante(DpPessoa cadastrante) {
-		this.cadastrante = cadastrante;
-	}
-
-	/**
-	 * @return the lotaCadastrante
-	 */
-	public DpLotacao getLotaCadastrante() {
-		return lotaCadastrante;
-	}
-
-	/**
-	 * @param lotaCadastrante the lotaCadastrante to set
-	 */
-	public void setLotaCadastrante(DpLotacao lotaCadastrante) {
-		this.lotaCadastrante = lotaCadastrante;
-	}
-
-	/**
-	 * @return the solicitacao
-	 */
-	public SrSolicitacao getSolicitacao() {
-		return solicitacao;
-	}
-
-	/**
-	 * @param solicitacao the solicitacao to set
-	 */
-	public void setSolicitacao(SrSolicitacao solicitacao) {
-		this.solicitacao = solicitacao;
-	}
-
-	/**
-	 * @return the lista
-	 */
-	public SrLista getLista() {
-		return lista;
-	}
-
-	/**
-	 * @param lista the lista to set
-	 */
-	public void setLista(SrLista lista) {
-		this.lista = lista;
-	}
-
-	/**
-	 * @return the movCanceladora
-	 */
-	public SrMovimentacao getMovCanceladora() {
-		return movCanceladora;
-	}
-
-	/**
-	 * @param movCanceladora the movCanceladora to set
-	 */
-	public void setMovCanceladora(SrMovimentacao movCanceladora) {
-		this.movCanceladora = movCanceladora;
-	}
-
-	/**
-	 * @return the tipoMov
-	 */
-	public SrTipoMovimentacao getTipoMov() {
-		return tipoMov;
-	}
-
-	/**
-	 * @param tipoMov the tipoMov to set
-	 */
-	public void setTipoMov(SrTipoMovimentacao tipoMov) {
-		this.tipoMov = tipoMov;
-	}
-
-	/**
-	 * @return the numSequencia
-	 */
-	public Long getNumSequencia() {
-		return numSequencia;
-	}
-
-	/**
-	 * @param numSequencia the numSequencia to set
-	 */
-	public void setNumSequencia(Long numSequencia) {
-		this.numSequencia = numSequencia;
-	}
-
-	/**
-	 * @return the prioridade
-	 */
-	public Long getPrioridade() {
-		return prioridade;
-	}
-
-	/**
-	 * @param prioridade the prioridade to set
-	 */
-	public void setPrioridade(Long prioridade) {
-		this.prioridade = prioridade;
-	}
-
-	/**
-	 * @return the pesquisa
-	 */
-	public SrPesquisa getPesquisa() {
-		return pesquisa;
-	}
-
-	/**
-	 * @param pesquisa the pesquisa to set
-	 */
-	public void setPesquisa(SrPesquisa pesquisa) {
-		this.pesquisa = pesquisa;
-	}
-
-	/**
-	 * @return the movFinalizadaSet
-	 */
-	public List<SrMovimentacao> getMovFinalizadaSet() {
-		return movFinalizadaSet;
-	}
-
-	/**
-	 * @param movFinalizadaSet the movFinalizadaSet to set
-	 */
-	public void setMovFinalizadaSet(List<SrMovimentacao> movFinalizadaSet) {
-		this.movFinalizadaSet = movFinalizadaSet;
-	}
-
-	/**
-	 * @return the dtAgenda
-	 */
-	public Date getDtAgenda() {
-		return dtAgenda;
-	}
-
-	/**
-	 * @param dtAgenda the dtAgenda to set
-	 */
-	public void setDtAgenda(Date dtAgenda) {
-		this.dtAgenda = dtAgenda;
-	}
-
-	/**
-	 * @return the motivoPendencia
-	 */
-	public SrTipoMotivoPendencia getMotivoPendencia() {
-		return motivoPendencia;
-	}
-
-	/**
-	 * @param motivoPendencia the motivoPendencia to set
-	 */
-	public void setMotivoPendencia(SrTipoMotivoPendencia motivoPendencia) {
-		this.motivoPendencia = motivoPendencia;
-	}
-
-	/**
-	 * @return the movFinalizadora
-	 */
-	public SrMovimentacao getMovFinalizadora() {
-		return movFinalizadora;
-	}
-
-	/**
-	 * @param movFinalizadora the movFinalizadora to set
-	 */
-	public void setMovFinalizadora(SrMovimentacao movFinalizadora) {
-		this.movFinalizadora = movFinalizadora;
-	}
-
-	/**
-	 * @return the solicitacaoReferencia
-	 */
-	public SrSolicitacao getSolicitacaoReferencia() {
-		return solicitacaoReferencia;
-	}
-
-	/**
-	 * @param solicitacaoReferencia the solicitacaoReferencia to set
-	 */
-	public void setSolicitacaoReferencia(SrSolicitacao solicitacaoReferencia) {
-		this.solicitacaoReferencia = solicitacaoReferencia;
-	}
-
-	/**
-	 * @return the motivoEscalonamento
-	 */
-	public SrTipoMotivoEscalonamento getMotivoEscalonamento() {
-		return motivoEscalonamento;
-	}
-
-	/**
-	 * @param motivoEscalonamento the motivoEscalonamento to set
-	 */
-	public void setMotivoEscalonamento(SrTipoMotivoEscalonamento motivoEscalonamento) {
-		this.motivoEscalonamento = motivoEscalonamento;
-	}
-
-	/**
-	 * @param respostaSet the respostaSet to set
-	 */
-	public void setRespostaSet(List<SrResposta> respostaSet) {
-		this.respostaSet = respostaSet;
-	}
+	public SrTipoMotivoEscalonamento motivoEscalonamento;
 
 	public SrMovimentacao() throws Exception {
 		this(null);
@@ -463,12 +172,12 @@ public class SrMovimentacao extends Objeto {
 		respostaSet = new ArrayList<SrResposta>();
 		for (Long idPergunta : respostaMap.keySet()){
 			SrResposta resp = new SrResposta();
-			resp.setMovimentacao(this);
-			resp.setPergunta(SrPergunta.AR.findById(idPergunta));
-			if (resp.getPergunta().getTipoPergunta().getIdTipoPergunta() == SrTipoPergunta.TIPO_PERGUNTA_TEXTO_LIVRE)
-				resp.setDescrResposta(respostaMap.get(idPergunta));
+			resp.movimentacao = this;
+			resp.pergunta = SrPergunta.findById(idPergunta);
+			if (resp.pergunta.tipoPergunta.idTipoPergunta == SrTipoPergunta.TIPO_PERGUNTA_TEXTO_LIVRE)
+				resp.descrResposta = respostaMap.get(idPergunta);
 			else
-				resp.setGrauSatisfacao(SrGrauSatisfacao.valueOf(respostaMap.get(idPergunta)));
+				resp.grauSatisfacao = SrGrauSatisfacao.valueOf(respostaMap.get(idPergunta));
 			respostaSet.add(resp);
 		}
 	}
@@ -477,11 +186,11 @@ public class SrMovimentacao extends Objeto {
 		HashMap<Long, String> map = new HashMap<Long, String>();
 		if (respostaSet != null)
 			for (SrResposta resp : respostaSet) {
-				if (!resp.getDescrResposta().equals(""))
-					map.put(resp.getPergunta().getIdPergunta(), resp.getDescrResposta());
+				if (!resp.descrResposta.equals(""))
+					map.put(resp.pergunta.idPergunta, resp.descrResposta);
 				else
-					map.put(resp.getPergunta().getIdPergunta(),
-							resp.getGrauSatisfacao());
+					map.put(resp.pergunta.idPergunta,
+							resp.grauSatisfacao.descrGrauSatisfacao);
 			}
 		return map;
 	}
@@ -496,7 +205,7 @@ public class SrMovimentacao extends Objeto {
 	
 	public boolean isCanceladoOuCancelador() {
 		return isCancelada()
-				|| tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
+				|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
 	}
 
 	public SrMovimentacao getAnterior() {
@@ -511,7 +220,7 @@ public class SrMovimentacao extends Objeto {
 	}
 
 	public String getDtIniString() {
-		SigaCalendar cal = new SigaCalendar();
+		SigaPlayCalendar cal = new SigaPlayCalendar();
 		cal.setTime(dtIniMov);
 		return cal.getTempoTranscorridoString(false);
 	}
@@ -556,10 +265,13 @@ public class SrMovimentacao extends Objeto {
 		this.arquivo = SrArquivo.newInstance(file);
 	}
 	
-	public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante)
+	public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante, 
+			DpPessoa titular, DpLotacao lotaTitular)
 			throws Exception {
 		this.cadastrante = cadastrante;
 		this.lotaCadastrante = lotaCadastrante;
+		this.titular = titular;
+		this.lotaTitular = lotaTitular;
 		return salvar();
 	}
 
@@ -574,30 +286,30 @@ public class SrMovimentacao extends Objeto {
 
 		solicitacao.atualizarMarcas();
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
-				&& tipoMov.getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
+				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
 				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.ABERTURA
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.ABERTURA_FECHAMENTO
-				&& tipoMov.getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
+				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
 		
 		//Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
 		if (solicitacao.isFilha() &&
-				tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
-			SrCorreio.notificarAtendente(this); //notifica o atendente da solicitacao pai, caso a filha seja fechada
+				tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+			Correio.notificarAtendente(this); //notifica o atendente da solicitacao pai, caso a filha seja fechada
 		return this;
 	}
 
-	public void desfazer(DpPessoa pessoa, DpLotacao lota) throws Exception {
+	public void desfazer(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 		SrMovimentacao movCanceladora = new SrMovimentacao(this.solicitacao);
 		movCanceladora.tipoMov = SrTipoMovimentacao
-				.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
+				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 		movCanceladora.descrMovimentacao = "Cancelando "
-				+ tipoMov.getNome().toLowerCase();
+				+ tipoMov.nome.toLowerCase();
 
 		SrMovimentacao ultimaValida = getAnterior();
 		movCanceladora.atendente = ultimaValida.atendente;
 		movCanceladora.lotaAtendente = ultimaValida.lotaAtendente;
-		movCanceladora.salvar(pessoa, lota);
+		movCanceladora.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 		
 		this.movCanceladora = movCanceladora;
 		
@@ -619,7 +331,7 @@ public class SrMovimentacao extends Objeto {
 					"Movimenta��o precisa fazer parte de uma solicita��o");
 
 		if (arquivo != null) {
-			double lenght = (double) arquivo.getBlob().length / 1024 / 1024;
+			double lenght = (double) arquivo.blob.length / 1024 / 1024;
 			if (lenght > 2)
 				throw new IllegalArgumentException("O tamanho do arquivo ("
 						+ new DecimalFormat("#.00").format(lenght)
@@ -637,9 +349,8 @@ public class SrMovimentacao extends Objeto {
 		} else {
 			SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
 
-			if (atendente == null && lotaAtendente == null) {
+			if (lotaAtendente == null) {
 				lotaAtendente = anterior.lotaAtendente;
-				atendente = anterior.atendente;
 			}
 
 			if (numSequencia == null)
@@ -648,7 +359,7 @@ public class SrMovimentacao extends Objeto {
 
 		if (tipoMov == null)
 			tipoMov = SrTipoMovimentacao
-			.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
+			.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
 
 		if (!solicitacao.isRascunho()) {
 			if (atendente == null && lotaAtendente == null)
@@ -659,17 +370,17 @@ public class SrMovimentacao extends Objeto {
 		}
 	}
 
-	public void notificar() throws Exception{
-		if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
-			SrCorreio.notificarReplanejamentoMovimentacao(this);
+	public void notificar() {
+		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
+			Correio.notificarReplanejamentoMovimentacao(this);
 		else if (!isCancelada())
-			SrCorreio.notificarMovimentacao(this);
+			Correio.notificarMovimentacao(this);
 		else
-			SrCorreio.notificarCancelamentoMovimentacao(this);
+			Correio.notificarCancelamentoMovimentacao(this);
 	}
 	
 	public String getMotivoPendenciaString() {
-		return this.motivoPendencia.getDescrTipoMotivoPendencia();
+		return this.motivoPendencia != null ? this.motivoPendencia.descrTipoMotivoPendencia : "";
 	}
 	
 	public SrMovimentacao getMovFinalizada(){
@@ -700,6 +411,6 @@ public class SrMovimentacao extends Objeto {
 	}
 	
 	public String getMotivoEscalonamentoString() {
-		return this.motivoEscalonamento.getDescrTipoMotivoEscalonamento();
+		return this.motivoEscalonamento.descrTipoMotivoEscalonamento;
 	}
 }

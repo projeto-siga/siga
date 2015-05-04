@@ -2,16 +2,16 @@
 <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<deployment>
-		<module-alias name="sigasr" />
-
+	   <module-alias name="sigasr" />		
 		<dependencies>
 			<module name="sigadoc.rel" export="true" />
-						
-			<module name="org.hibernate" export="true" />
 			<module name="org.picketlink" />
 			<module name="asm.asm" />
+			<module name="org.hibernate"/>
+			<module name="org.infinispan" />
+			<module name="org.hibernate.commons-annotations" />
 
-			<module name="sigadoc.play" slot="sigasr"/>
+			<!-- module name="sigadoc.play" slot="sigasr" export="true"/-->
 		</dependencies>
 
 	</deployment>

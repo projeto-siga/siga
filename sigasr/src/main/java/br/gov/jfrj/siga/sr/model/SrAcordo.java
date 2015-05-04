@@ -22,41 +22,38 @@ import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.sr.model.vo.SrAcordoVO;
 
 @Entity
 @Table(name = "SR_ACORDO", schema = "SIGASR")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAcordo extends HistoricoSuporte implements Selecionavel {
-
-	public static ActiveRecord<SrAcordo> AR = new ActiveRecord<>(SrAcordo.class);
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static ActiveRecord<SrAcordo> AR = new ActiveRecord<>(SrAcordo.class);	
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ACORDO_SEQ", name = "srAcordoSeq")
 	@GeneratedValue(generator = "srAcordoSeq")
 	@Column(name = "ID_ACORDO")
-	private Long idAcordo;
+	public Long idAcordo;
 
 	@Column(name = "NOME_ACORDO")
-	private String nomeAcordo;
+	public String nomeAcordo;
 
 	@Column(name = "DESCR_ACORDO")
-	private String descrAcordo;
+	public String descrAcordo;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	private SrAcordo acordoInicial;
+	public SrAcordo acordoInicial;
 
 	@OneToMany(targetEntity = SrAcordo.class, mappedBy = "acordoInicial", fetch = FetchType.LAZY)
-	@OrderBy("hisDtIni desc")
-	private List<SrAcordo> meuAcordoHistoricoSet;
+	//@OrderBy("hisDtIni desc")
+	public List<SrAcordo> meuAcordoHistoricoSet;
 
 	@OneToMany(targetEntity = SrAtributoAcordo.class, mappedBy = "acordo", fetch = FetchType.LAZY)
-	private Set<SrAtributoAcordo> atributoAcordoSet;
+	public Set<SrAtributoAcordo> atributoAcordoSet;
 
 	public SrAcordo() {
 
@@ -68,54 +65,6 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 
 	public void setId(Long id) {
 		idAcordo = id;
-	}
-
-	public Long getIdAcordo() {
-		return idAcordo;
-	}
-
-	public void setIdAcordo(Long idAcordo) {
-		this.idAcordo = idAcordo;
-	}
-
-	public String getNomeAcordo() {
-		return nomeAcordo;
-	}
-
-	public void setNomeAcordo(String nomeAcordo) {
-		this.nomeAcordo = nomeAcordo;
-	}
-
-	public String getDescrAcordo() {
-		return descrAcordo;
-	}
-
-	public void setDescrAcordo(String descrAcordo) {
-		this.descrAcordo = descrAcordo;
-	}
-
-	public SrAcordo getAcordoInicial() {
-		return acordoInicial;
-	}
-
-	public void setAcordoInicial(SrAcordo acordoInicial) {
-		this.acordoInicial = acordoInicial;
-	}
-
-	public List<SrAcordo> getMeuAcordoHistoricoSet() {
-		return meuAcordoHistoricoSet;
-	}
-
-	public void setMeuAcordoHistoricoSet(List<SrAcordo> meuAcordoHistoricoSet) {
-		this.meuAcordoHistoricoSet = meuAcordoHistoricoSet;
-	}
-
-	public Set<SrAtributoAcordo> getAtributoAcordoSet() {
-		return atributoAcordoSet;
-	}
-
-	public void setAtributoAcordoSet(Set<SrAtributoAcordo> atributoAcordoSet) {
-		this.atributoAcordoSet = atributoAcordoSet;
 	}
 
 	@Override
@@ -147,6 +96,7 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 		return SrAcordo.AR.find("byHisDtFimIsNullAndNomeAcordo", sigla).fetch();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<SrAcordo> listar(boolean mostrarDesativados) {
 		if (!mostrarDesativados) {
 			return SrAcordo.AR.find("byHisDtFimIsNull").fetch();
@@ -155,17 +105,18 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 			str.append("SELECT p FROM SrAcordo p where p.idAcordo IN (");
 			str.append("SELECT MAX(idAcordo) FROM SrAcordo GROUP BY hisIdIni)");
 
-			return em().createQuery(str.toString()).getResultList();
+			return AR.em().createQuery(str.toString()).getResultList();
 		}
 	}
 
 	// Edson: Não consegui fazer com que esse cascade fosse automático.
+	@Override
 	public void salvar() throws Exception {
-		super.salvarComHistorico();
+		super.salvar();
 		if (atributoAcordoSet != null)
 			for (SrAtributoAcordo atributoAcordo : atributoAcordoSet) {
-				atributoAcordo.setAcordo(this);
-				atributoAcordo.save();
+				atributoAcordo.acordo = this;
+				atributoAcordo.salvar();
 			}
 	}
 
@@ -181,7 +132,7 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 
 	public SrAtributoAcordo getAtributo(SrAtributo att) {
 		for (SrAtributoAcordo pa : atributoAcordoSet)
-			if (pa.getAtributo().equals(att))
+			if (pa.atributo.equals(att))
 				return pa;
 		return null;
 	}
@@ -195,7 +146,7 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 		return getAtributo(att);
 	}
 
-	public Integer getAtributoEmSegundos(String codigo) {
+	public Long getAtributoEmSegundos(String codigo) {
 		SrAtributoAcordo pa = getAtributo(codigo);
 		if (pa == null)
 			return null;
@@ -209,13 +160,20 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 
 	@Override
 	public void setSigla(String sigla) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public String getDescricao() {
 		return nomeAcordo;
+	}
+	
+	public SrAcordoVO toVO() {
+		return SrAcordoVO.createFrom(this);
+	}
+	
+	public String toJson() {
+		return this.toVO().toJson();
 	}
 
 }

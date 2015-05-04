@@ -14,11 +14,17 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
+import br.gov.jfrj.siga.sr.model.vo.SrFatorMultiplicacaoVO;
 
 @Entity
 @Table(name = "SR_FATOR_MULTIPLICACAO", schema = "SIGASR")
 public class SrFatorMultiplicacao extends Objeto{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_FATOR_MULTIPLICACAO_SEQ", name = "srFatorMultiplicacao")
 	@GeneratedValue(generator = "srFatorMultiplicacao")
@@ -80,6 +86,16 @@ public class SrFatorMultiplicacao extends Objeto{
 	
 	public void setDpLotacao(DpLotacao dpLotacao) {
 		this.dpLotacao = dpLotacao;
+	}
+	
+	public SrFatorMultiplicacaoVO toVO() {
+		if (this.dpPessoa != null && this.dpPessoa.getId() != null && (this.dpPessoa.getSigla() == null || this.dpPessoa.getDescricao() == null))
+			this.dpPessoa = DpPessoa.findById(this.dpPessoa.getId());
+		
+		if (this.dpLotacao != null && this.dpLotacao.getId() != null && (this.dpLotacao.getSigla() == null || this.dpLotacao.getDescricao() == null))
+			this.dpLotacao = DpLotacao.findById(this.dpLotacao.getId());
+		
+		return new SrFatorMultiplicacaoVO(this.idFatorMultiplicacao, this.numFatorMultiplicacao, this.dpPessoa, this.dpLotacao);
 	}
 
 }

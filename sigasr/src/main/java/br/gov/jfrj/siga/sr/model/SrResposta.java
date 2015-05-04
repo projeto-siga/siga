@@ -10,96 +10,33 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.model.Objeto;
+import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name = "SR_RESPOSTA", schema = "SIGASR")
-public class SrResposta extends Objeto {
+public class SrResposta extends GenericModel {
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_RESPOSTA_SEQ", name = "srRespostaSeq")
 	@GeneratedValue(generator = "srRespostaSeq")
 	@Column(name = "ID_RESPOSTA")
-	private Long idResposta;
+	public Long idResposta;
 
 	@Column(name = "DESCR_RESPOSTA")
-	private String descrResposta;
+	public String descrResposta;
 
 	
 	@Column(name = "VALOR_RESPOSTA")
 	@Enumerated()
-	private SrGrauSatisfacao grauSatisfacao;
+	public SrGrauSatisfacao grauSatisfacao;
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_PERGUNTA")
-	private SrPergunta pergunta;
+	public SrPergunta pergunta;
 	
 	@ManyToOne()
 	@JoinColumn(name = "ID_MOVIMENTACAO")
-	private SrMovimentacao movimentacao;	
-
-	/**
-	 * @return the idResposta
-	 */
-	public Long getIdResposta() {
-		return idResposta;
-	}
-
-	/**
-	 * @param idResposta the idResposta to set
-	 */
-	public void setIdResposta(Long idResposta) {
-		this.idResposta = idResposta;
-	}
-
-	/**
-	 * @return the descrResposta
-	 */
-	public String getDescrResposta() {
-		return descrResposta;
-	}
-
-	/**
-	 * @param descrResposta the descrResposta to set
-	 */
-	public void setDescrResposta(String descrResposta) {
-		this.descrResposta = descrResposta;
-	}
-
-	/**
-	 * @return the pergunta
-	 */
-	public SrPergunta getPergunta() {
-		return pergunta;
-	}
-
-	/**
-	 * @param pergunta the pergunta to set
-	 */
-	public void setPergunta(SrPergunta pergunta) {
-		this.pergunta = pergunta;
-	}
-
-	/**
-	 * @return the movimentacao
-	 */
-	public SrMovimentacao getMovimentacao() {
-		return movimentacao;
-	}
-
-	/**
-	 * @param movimentacao the movimentacao to set
-	 */
-	public void setMovimentacao(SrMovimentacao movimentacao) {
-		this.movimentacao = movimentacao;
-	}
-
-	/**
-	 * @param grauSatisfacao the grauSatisfacao to set
-	 */
-	public void setGrauSatisfacao(SrGrauSatisfacao grauSatisfacao) {
-		this.grauSatisfacao = grauSatisfacao;
-	}
+	public SrMovimentacao movimentacao;	
 
 	public SrResposta() {
 
@@ -114,7 +51,7 @@ public class SrResposta extends Objeto {
 	}
 	
 	public String getGrauSatisfacao() {
-		return grauSatisfacao.getDescrGrauSatisfacao();
+		return grauSatisfacao.descrGrauSatisfacao;
 	}
 	
 

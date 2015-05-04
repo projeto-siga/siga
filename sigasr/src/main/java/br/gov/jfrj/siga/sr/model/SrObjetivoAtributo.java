@@ -8,15 +8,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.model.Objeto;
+import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name = "SR_OBJETIVO_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class SrObjetivoAtributo extends Objeto {
-	
-	public static ActiveRecord<SrObjetivoAtributo> AR = new ActiveRecord<>(SrObjetivoAtributo.class);
+public class SrObjetivoAtributo extends GenericModel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -28,37 +25,17 @@ public class SrObjetivoAtributo extends Objeto {
 	
 	@Id
 	@Column(name = "ID_OBJETIVO")
-	private long idObjetivo;
+	public long idObjetivo;
 
 	@Column(name = "DESCR_OBJETIVO", nullable = false)
-	private String descrObjetivo;
-
-	/**
-	 * @return the idObjetivo
-	 */
-	public long getIdObjetivo() {
-		return idObjetivo;
+	public String descrObjetivo;
+	
+	public Long getId() {
+		return this.idObjetivo;
 	}
-
-	/**
-	 * @param idObjetivo the idObjetivo to set
-	 */
-	public void setIdObjetivo(long idObjetivo) {
-		this.idObjetivo = idObjetivo;
-	}
-
-	/**
-	 * @return the descrObjetivo
-	 */
-	public String getDescrObjetivo() {
-		return descrObjetivo;
-	}
-
-	/**
-	 * @param descrObjetivo the descrObjetivo to set
-	 */
-	public void setDescrObjetivo(String descrObjetivo) {
-		this.descrObjetivo = descrObjetivo;
+	
+	public String getDescricao() {
+		return this.descrObjetivo;
 	}
 
 }

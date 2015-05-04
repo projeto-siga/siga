@@ -14,10 +14,16 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
+import br.gov.jfrj.siga.sr.model.vo.SrGestorItemVO;
 
 @Entity
 @Table(name = "SR_GESTOR_ITEM", schema = "SIGASR")
 public class SrGestorItem extends Objeto{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_GESTOR_ITEM_SEQ", name = "srGestorItemSeq")
@@ -69,6 +75,16 @@ public class SrGestorItem extends Objeto{
 	
 	public void setDpLotacao(DpLotacao dpLotacao) {
 		this.dpLotacao = dpLotacao;
+	}
+	
+	public SrGestorItemVO toVO() {
+		if (this.dpPessoa != null && this.dpPessoa.getId() != null && (this.dpPessoa.getSigla() == null || this.dpPessoa.getDescricao() == null))
+			this.dpPessoa = DpPessoa.findById(this.dpPessoa.getId());
+		
+		if (this.dpLotacao != null && this.dpLotacao.getId() != null && (this.dpLotacao.getSigla() == null || this.dpLotacao.getDescricao() == null))
+			this.dpLotacao = DpLotacao.findById(this.dpLotacao.getId());
+		
+		return new SrGestorItemVO(this.idGestorItem, this.dpPessoa, this.dpLotacao);
 	}
 	
 }

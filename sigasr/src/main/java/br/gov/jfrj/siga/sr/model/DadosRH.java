@@ -6,14 +6,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.model.Objeto;
+import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name = "DADOS_RH", schema = "SIGARH")
-public class DadosRH extends Objeto {
-	
-	public static ActiveRecord<DadosRH> AR = new ActiveRecord<>(DadosRH.class);
+public class DadosRH  extends GenericModel {
+	private static final long serialVersionUID = -3610233962047379185L;
 	
 	@Id
 	public Long pessoa_id;

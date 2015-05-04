@@ -21,58 +21,56 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
 
 @Entity
 @Table(name = "SR_ATRIBUTO", schema = "SIGASR")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAtributo extends HistoricoSuporte {
-
-	public static ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
+	
+	public static ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);	
+	
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
 	@GeneratedValue(generator = "srAtributoSeq")
 	@Column(name = "ID_ATRIBUTO")
-	private Long idAtributo;
+	public Long idAtributo;
 
 	@Column(name = "NOME")
-	private String nomeAtributo;
+	public String nomeAtributo;
 
 	@Column(name = "DESCRICAO")
-	private String descrAtributo;
+	public String descrAtributo;
 
 	@Column(name = "TIPO_ATRIBUTO")
 	@Enumerated
-	private SrTipoAtributo tipoAtributo;
+	public SrTipoAtributo tipoAtributo;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_OBJETIVO")
-	private SrObjetivoAtributo objetivoAtributo;
+	public SrObjetivoAtributo objetivoAtributo;
 
 	@Column(name = "DESCR_PRE_DEFINIDO")
-	private String descrPreDefinido;
+	public String descrPreDefinido;
 
 	@Column(name = "CODIGO_ATRIBUTO")
-	private String codigoAtributo;
+	public String codigoAtributo;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	private SrAtributo atributoInicial;
+	public SrAtributo atributoInicial;
 
 	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "atributoInicial", fetch = FetchType.LAZY)
-	@OrderBy("hisDtIni desc")
-	private List<SrAtributo> meuAtributoHistoricoSet;
+	//@OrderBy("hisDtIni desc")
+	public List<SrAtributo> meuAtributoHistoricoSet;
 
 	@Override
 	public Long getId() {
@@ -84,95 +82,23 @@ public class SrAtributo extends HistoricoSuporte {
 		idAtributo = id;
 	}
 
-	public Long getIdAtributo() {
-		return idAtributo;
-	}
-
-	public void setIdAtributo(Long idAtributo) {
-		this.idAtributo = idAtributo;
-	}
-
-	public String getNomeAtributo() {
-		return nomeAtributo;
-	}
-
-	public void setNomeAtributo(String nomeAtributo) {
-		this.nomeAtributo = nomeAtributo;
-	}
-
-	public String getDescrAtributo() {
-		return descrAtributo;
-	}
-
-	public void setDescrAtributo(String descrAtributo) {
-		this.descrAtributo = descrAtributo;
-	}
-
-	public SrTipoAtributo getTipoAtributo() {
-		return tipoAtributo;
-	}
-
-	public void setTipoAtributo(SrTipoAtributo tipoAtributo) {
-		this.tipoAtributo = tipoAtributo;
-	}
-
-	public SrObjetivoAtributo getObjetivoAtributo() {
-		return objetivoAtributo;
-	}
-
-	public void setObjetivoAtributo(SrObjetivoAtributo objetivoAtributo) {
-		this.objetivoAtributo = objetivoAtributo;
-	}
-
-	public String getDescrPreDefinido() {
-		return descrPreDefinido;
-	}
-
-	public void setDescrPreDefinido(String descrPreDefinido) {
-		this.descrPreDefinido = descrPreDefinido;
-	}
-
-	public String getCodigoAtributo() {
-		return codigoAtributo;
-	}
-
-	public void setCodigoAtributo(String codigoAtributo) {
-		this.codigoAtributo = codigoAtributo;
-	}
-
-	public SrAtributo getAtributoInicial() {
-		return atributoInicial;
-	}
-
-	public void setAtributoInicial(SrAtributo atributoInicial) {
-		this.atributoInicial = atributoInicial;
-	}
-
-	public List<SrAtributo> getMeuAtributoHistoricoSet() {
-		return meuAtributoHistoricoSet;
-	}
-
-	public void setMeuAtributoHistoricoSet(List<SrAtributo> meuAtributoHistoricoSet) {
-		this.meuAtributoHistoricoSet = meuAtributoHistoricoSet;
-	}
-
 	public static List<SrAtributo> listarParaSolicitacao(
-			boolean mostrarDesativados) throws Exception{
+			boolean mostrarDesativados) {
 		SrObjetivoAtributo obj = SrObjetivoAtributo
-				.AR.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO);
+				.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO);
 		return listar(obj, mostrarDesativados);
 	}
 
-	public static List<SrAtributo> listarParaAcordo(boolean mostrarDesativados) throws Exception {
+	public static List<SrAtributo> listarParaAcordo(boolean mostrarDesativados) {
 		SrObjetivoAtributo obj = SrObjetivoAtributo
-				.AR.findById(SrObjetivoAtributo.OBJETIVO_ACORDO);
+				.findById(SrObjetivoAtributo.OBJETIVO_ACORDO);
 		return listar(obj, mostrarDesativados);
 	}
 
 	public static List<SrAtributo> listarParaIndicador(
-			boolean mostrarDesativados) throws Exception {
+			boolean mostrarDesativados) {
 		SrObjetivoAtributo obj = SrObjetivoAtributo
-				.AR.findById(SrObjetivoAtributo.OBJETIVO_INDICADOR);
+				.findById(SrObjetivoAtributo.OBJETIVO_INDICADOR);
 		return listar(obj, mostrarDesativados);
 	}
 
@@ -190,9 +116,9 @@ public class SrAtributo extends HistoricoSuporte {
 
 		if (objetivo != null)
 			queryBuilder.append(" and objetivoAtributo.idObjetivo = "
-					+ objetivo.getIdObjetivo());
+					+ objetivo.idObjetivo);
 
-		return SrAtributo.AR.find(queryBuilder.toString()).fetch();
+		return SrAtributo.find(queryBuilder.toString()).fetch();
 	}
 
 	public List<SrAtributo> getHistoricoAtributo() {
@@ -230,8 +156,8 @@ public class SrAtributo extends HistoricoSuporte {
 			confFiltro.setLotacao(lotaTitular);
 			confFiltro.setDpPessoa(pess);
 			confFiltro
-					.setCpTipoConfiguracao(
-							em()
+					.setCpTipoConfiguracao(JPA
+							.em()
 							.find(CpTipoConfiguracao.class,
 									CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 			return SrConfiguracao.listar(confFiltro,
@@ -242,16 +168,16 @@ public class SrAtributo extends HistoricoSuporte {
 	}
 
 	public static SrAtributo get(String codigo) {
-		return SrAtributo.AR.find("byCodigoAtributo", codigo).first();
+		return SrAtributo.find("byCodigoAtributo", codigo).first();
 	}
 
 	@Override
-	public void salvarComHistorico() throws Exception {
+	public void salvar() throws Exception {
 
 		if (objetivoAtributo == null)
 			throw new IllegalStateException("Objetivo nao informado");
 
-		super.salvarComHistorico();
+		super.salvar();
 	}
 
 	public String asGetter() {
@@ -264,5 +190,23 @@ public class SrAtributo extends HistoricoSuporte {
 	@Override
 	public boolean equals(Object obj) {
 		return this.idAtributo.equals(((SrAtributo)obj).idAtributo);
+	}
+	
+	public SrAtributoVO toVO(boolean listarAssociacoes) {
+		return SrAtributoVO.createFrom(this, listarAssociacoes);
+	}
+	
+	/**
+	 * Retorna um Json de {@link SrAtributo}.
+	 */
+	public String toJson(boolean listarAssociacoes) {
+		return this.toVO(listarAssociacoes).toJson();
+	}
+	
+	/**
+	 * Retorna um Json de {@link SrAtributo}.
+	 */
+	public String toJson() {
+		return this.toVO(false).toJson();
 	}
 }

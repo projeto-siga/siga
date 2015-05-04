@@ -1,5 +1,11 @@
 package br.gov.jfrj.siga.sr.model;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import br.gov.jfrj.siga.sr.util.SrProcessadorScript;
 
 public class SrIndicador {
 
@@ -12,7 +18,7 @@ public class SrIndicador {
 
 	private String nomeIndicador;
 
-	/*public String calcular() throws Exception{
+	public String calcular() throws Exception{
 		SrProcessadorScript s = new SrProcessadorScript();
 		Map<String, Object> attrs = new HashMap<String, Object>();
 		attrs.put("codigo", getConteudoBlobString());
@@ -21,14 +27,10 @@ public class SrIndicador {
 		List<String> lista = Arrays.asList(new String[] { "manga", "pêssego",
 				"abacaxi" });
 		return s.executar(attrs);
-	}*/
+	}
 
 	public String getConteudoBlobString() {
 		return "String concat = \"\"; for (String s : lista) concat += (concat.length() > 0 ? \", \" : \"\") + s; return concat;";
-	}
-
-	public void setNomeIndicador(String nomeIndicador) {
-		this.nomeIndicador = nomeIndicador;
 	}
 
 	public String getNomeIndicador() {

@@ -1,6 +1,4 @@
-<%@ include file="/WEB-INF/page/include.jsp"%>
-
-<siga:pagina titulo="Buscar A&cedil;&atilde;o">
+#{extends 'main.html' /}
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">
@@ -8,7 +6,7 @@
 				<input type="hidden" name="popup" value="true" />
 				<table class="gt-form-table">
 					<tr class="header">
-						<td align="center" valign="top" colspan="4">Dados da ação</td>
+						<td align="center" valign="top" colspan="4">Dados da a&ccedil;&atilde;o</td>
 					</tr>
 					<tr>
 						<td>Código:</td>
@@ -40,17 +38,16 @@
 			<tr>
 				<th>Código
 				</td>
-				<th>Descrição
+				<th>Descri&ccedil;&atilde;o
 				</td>
 			</tr>
-			<c:forEach var="acao" items="${itens}">
+			#{list items:itens, as:'acao'}
 			<tr>
 				<td><a href="javascript:opener.retorna_acao${nome}('${acao.id}','${acao.sigla}','${acao.descricao}');window.close()">${acao.sigla}</a>
 				</td>
 				<td style="padding-left: ${acao.nivel*13}px;">${acao.descricao}</td>
 			</tr>
-			</c:forEach>
+			#{/list}
 		</table>
 	</div>
 </div>
-</siga:pagina>

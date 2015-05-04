@@ -19,6 +19,8 @@
 <%@ attribute name="inputName" required="false"%>
 <%@ attribute name="urlAcao" required="false"%>
 <%@ attribute name="urlSelecionar" required="false"%>
+<%@ attribute name="onchange" required="false"%>
+<%@ attribute name="prefix" required="false"%>
 <!-- A lista de par -->
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
@@ -52,11 +54,20 @@
 </c:choose>
 
 <c:choose>
-	<c:when test="${empty urlAcao}">
-		<c:set var="urlBuscar" value="/app${acaoBusca}/buscar" />
+	<c:when test="${empty prefix}">
+		<c:set var="prefixSel" value="" />
 	</c:when>
 	<c:otherwise>
-		<c:set var="urlBuscar" value="/app${acaoBusca}/${urlAcao}" />
+		<c:set var="prefixSel" value="/${prefix}" />
+	</c:otherwise>
+</c:choose>
+
+<c:choose>
+	<c:when test="${empty urlAcao}">
+		<c:set var="urlBuscar" value="/app${prefixSel}${acaoBusca}/buscar" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="urlBuscar" value="/app${prefixSel}${acaoBusca}/${urlAcao}" />
 	</c:otherwise>
 </c:choose>
 
@@ -175,6 +186,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:choose>
 	url = url + '&sigla=' + sigla;
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
+	
 }
 
 </script>
@@ -198,12 +210,14 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <input type="hidden" name="${inputNameTipoSel}.buscar" value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>" id="formulario_${inputNameTipoSel}_buscar"/>
 <input type="text" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
 	onkeypress="return handleEnter(this, event)"
-	onblur="javascript: ajax_${propriedade}${tipoSel}();" size="25"
-	"${disabledTxt}" />	
+	onblur="javascript: ajax_${propriedade}${tipoSel}();<c:if test="${not empty onchange}">${onchange};</c:if>" size="25"
+	<c:if test="${not empty onchange}">onchange="${onchange}"</c:if>
+	${disabledTxt} />	
 	
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."
 		onclick="javascript: popitup_${propriedade}${tipoSel}('');"
+		onblur="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
 		${disabledBtn} theme="simple">
 </c:if>
 

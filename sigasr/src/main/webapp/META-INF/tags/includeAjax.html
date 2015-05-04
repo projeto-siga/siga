@@ -1,5 +1,6 @@
 <script language="javascript">
 function carregar${_action}(){
+	jQuery.blockUI(objBlock);
 	frm = document.getElementById('div${_action}').parent;
 	params = '';
 	for (i = 0; i < frm.length; i++){
@@ -11,6 +12,7 @@ function carregar${_action}(){
 function carregou${_action}(response, param){
 	var div = document.getElementById('div${_action}');
 	div.innerHTML = response;
+	jQuery.unblockUI();
 }
 
 document.getElementById('${_trigger}').onchange = 'carregar${_action}();' + 

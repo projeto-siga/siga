@@ -1,13 +1,13 @@
 		<div class="gt-content-box gt-for-table" style="margin-top: 15px;">
 		<form action="@{Application.associarListaGravar(solicitacao?.idSolicitacao, lista?.idLista)}" enctype="multipart/form-data">
-		<div style="max-height: 500px; overflow-y: scroll;">
+		<div style="max-height: 500px; max-width: 800px; overflow-y: scroll;">
 		<table border="0" class="gt-table">
 			<col width="20%" />
     		<col width="20%" />
      		<thead>
 				<tr class="gt-celula-nowrap">
 					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Incluir</th>
-					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Descrição da Lista</th>
+					<th style="color: #333; font-weight: bold; padding: 7px 10px;">Descri&ccedil;&atilde;o da Lista</th>
    				</tr>
    			</thead>
 			<tbody>

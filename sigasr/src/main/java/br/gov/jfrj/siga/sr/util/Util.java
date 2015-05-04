@@ -2,10 +2,10 @@ package br.gov.jfrj.siga.sr.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Calendar;
 import java.util.Collection;
 
-import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class Util {
 
@@ -36,6 +36,12 @@ public class Util {
 
 	public static boolean isbetween(int low, int high, int n) {
 		return n >= low && n <= high;
+	}
+	
+	public static Gson createGson(String... exclusions) {
+		return new GsonBuilder()
+			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
+			.create();
 	}
 	
 }

@@ -1,0 +1,503 @@
+#{extends 'main.html' /} #{set title:'Disponibilidade de itens de configuração' /}
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
+<script src="/sigasr/public/javascripts/template.js"></script>
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
+<script src="/sigasr/public/javascripts/moment.js"></script>
+
+<style>
+	td .orgao:first-child {
+		margin-left: 10px;
+	}
+	.orgao {
+		width: 15px;
+		height: 15px;
+		display: inline-block;
+		padding-right: 5px;
+		line-height: 0px;
+		vertical-align: middle !important;
+	}
+	.item-pai {
+		padding-left: 0em !important;
+		font-weight: bold !important;
+	}
+	
+	.item-filho {
+		padding-left: 2em !important;
+		font-style: italic !important;
+	}
+	
+	.item-neto {
+		padding-left: 4em !important;
+	}
+</style>
+
+<div class="gt-bd clearfix">
+	<div class="gt-content">
+		<h2>Disponibilidades de Itens de Configuração</h2>
+		
+		<div class="gt-content-box dataTables_div">
+			<table id="itens_configuracao_table" border="0" class="gt-table display"></table>
+		</div>
+	</div>
+</div>
+
+<!-- template utilizado para adicionar os orgaos -->
+<div id="templateDisponibilidadeItem" style="display:none">
+	{for orgao in orgaos}
+		<div class='orgao' data-sigla-orgao="!{orgao.sigla}" data-item-configuracao-id="!{itemConfiguracao.id}" onclick="disponibilidadeService.alterarDisponibilidade('!{orgao.sigla}', !{itemConfiguracao.hisIdIni})">
+			<img src="" src-original="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}"/>
+		</div>
+  	{/for}
+</div>
+
+<!-- template utilizado para mostrar as siglas dos orgaos no titulo da tabela -->
+<div id="templateSiglasOrgaos" style="display:none">
+	{for orgao in orgaos}
+		<div class="orgao">!{orgao.sigla}</div>
+  	{/for}
+</div>
+
+<!-- modal de cadastro -->
+#{modal nome:'disponibilidadeItem', titulo:'Disponibilidade do item'}
+	<div class="gt-form gt-content-box">
+		<form id="disponibilidadeForm">
+			<input type="hidden" name="idDisponibilidade">
+			
+			<div class="gt-form-row gt-width-66">
+				<label>Tipo <span>*</span></label> 
+				
+				#{select name:'tipo',
+					id : 'ddlTipoDisponibilidade',
+					items: models.SrTipoDisponibilidade.values(),
+					labelProperty:'descricao',
+					class:'select-siga',
+					onchange:"disponibilidadeService.onChangeTipo()"
+				/}
+			</div>
+			<div id="camposDisponibilidade">
+				<div id="mensagem" class="gt-form-row gt-width-66">
+					<label>Mensagem<span>*</span></label> 
+					<textarea name="mensagem" cols="60" maxlength="255" required></textarea>
+				</div>
+				<div class="gt-form-row gt-width-66">
+					<label>Detalhamento técnico<span>*</span></label> 
+					<textarea name="detalhamentoTecnico" cols="60" maxlength="255" required></textarea>
+				</div>
+				
+				<div id="erroHorarioInvalido"></div>
+				
+				<div class="gt-form-row gt-width-66">
+					<label>Data/hora início</label> 
+					<input id="dataHoraInicio" class="dataHora" name="dataHoraInicio"/>
+				</div>
+				
+				<div class="gt-form-row gt-width-66">
+					<label>Data/hora término</label> 
+					<input id="dataHoraFim" class="dataHora" name="dataHoraTermino"/>
+				</div>
+			</div>
+			
+			<div class="gt-form-row">
+				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="disponibilidadeService.gravar()"/>
+				<a class="gt-btn-medium gt-btn-left" onclick="disponibilidadeService.cancelarGravacao()">Cancelar</a>
+				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="disponibilidadeService.aplicar()"/>
+			</div>
+		</form>
+	</div>
+#{/modal}
+
+<script>
+	var opts = {
+			 urlGravar : '@{Application.gravarDisponibilidade()}',
+			 formCadastro : $('#disponibilidadeForm'),
+			 dialogCadastro : $('#disponibilidadeItem_dialog'),
+			 objectName : 'disponibilidade'
+	};
+
+	// Define a "classe" DisponibilidadeService
+	function DisponibilidadeService(opts) {
+		// super(opts)
+		BaseService.call(this, opts);
+
+		this.niveis = {};
+		this.niveis[1] = 'item-pai';
+		this.niveis[2] = 'item-filho';
+		this.niveis[3] = 'item-neto';
+
+		this.orderBy = {};
+		this.orderBy[0] = 'siglaItemConfiguracao';
+		this.orderBy[1] = 'tituloItemConfiguracao';
+		this.tipos = {};
+
+		this.jsonToRowData = function(pagina) {
+			var dados = [],
+				construirOrgaos = this.construirOrgaos;
+			
+			pagina.registros.elements.forEach(function(itemConfiguracao) {
+				var context = { 
+						orgaos : pagina.orgaos.elements, 
+						itemConfiguracao : itemConfiguracao
+				},
+				row = [itemConfiguracao.siglaItemConfiguracao || " ", 
+							itemConfiguracao.tituloItemConfiguracao || " ", 
+							construirOrgaos(context)];
+				
+				dados.push(row);
+			});
+			this.colunaOrgaos()
+				.html(this.conteudoColunaOrgaos(pagina));
+
+			return dados;
+		}
+		
+		this.colunaOrgaos = function() {
+			return $('tr:nth(0) th:last');
+		}
+
+		this.conteudoColunaOrgaos = function(pagina) {
+			return $('#templateSiglasOrgaos').html().process({
+				orgaos : pagina.orgaos.elements,
+			});
+		}
+		
+		this.construirOrgaos = function(context) {
+			return $('#templateDisponibilidadeItem').html().process(context);
+		}
+		
+		this.construirIcone = function(siglaOrgao, itemConfiguracao) {
+			for(var i = 0; i < itemConfiguracao.disponibilidades.length; i++) {
+				var disponibilidade = itemConfiguracao.disponibilidades[i];
+				if(siglaOrgao == disponibilidade.siglaOrgao) {
+					return disponibilidade.caminhoIcone;
+				}
+			}
+			return "/sigasr/public/images/icons/disponibilidade/sem_disponibilidade.png";
+		}
+
+		this.alterarDisponibilidade = function(sigla, hisIdIni) {
+			if(this.validator) {
+				this.validator.resetForm();
+			}
+			this.esconderValidacaoHorario();
+			
+			$('#disponibilidadeItem_dialog').dialog('open');
+
+			this.orgaoSelecionado = this.buscarOgao(sigla);
+			this.itemConfiguracaoSelecionado = this.buscarItem(hisIdIni);
+			this.disponibilidadeSelecionada = this.buscarDisponibilidade(this.itemConfiguracaoSelecionado, sigla);
+			
+			new Formulario($('#disponibilidadeForm')).populateFromJson(this.disponibilidadeSelecionada);
+			$('#ddlTipoDisponibilidade').trigger('change');
+		}
+
+		this.buscarOgao = function(sigla) {
+			for(var i = 0; i < this.pagina.orgaos.elements.length; i++) {
+				var orgao = this.pagina.orgaos.elements[i];
+				if(orgao.sigla == sigla)
+					return orgao;
+			}
+			return null;
+		}
+		
+		this.buscarItem = function(hisIdIni) {
+			for(var i = 0; i < this.pagina.registros.elements.length; i++) {
+				var itemConfiguracao = this.pagina.registros.elements[i];
+				if(itemConfiguracao.hisIdIni == hisIdIni)
+					return itemConfiguracao;
+			}
+			return null;
+		}
+
+		this.buscarDisponibilidade = function(itemConfiguracaoSelecionado, sigla) {
+			if(itemConfiguracaoSelecionado) {
+				var indice = this.buscarIndiceDisponibilidade(itemConfiguracaoSelecionado, sigla);
+				return itemConfiguracaoSelecionado.disponibilidades[indice];
+			}
+			return {
+				siglaOrgao : sigla,
+				tipo : 'NENHUM'
+			};
+		}
+		
+		this.buscarIndiceDisponibilidade = function(itemConfiguracaoSelecionado, sigla) {
+			for(var i = 0; i < itemConfiguracaoSelecionado.disponibilidades.length; i++) {
+				var disponibilidade = itemConfiguracaoSelecionado.disponibilidades[i];
+				if(disponibilidade.siglaOrgao == sigla)
+					return i;
+			}
+			return -1;
+		}
+		
+		this.cancelarGravacao = function() {
+			$('#disponibilidadeItem_dialog').dialog('close');
+		}
+
+		this.onChangeTipo = function() {
+			var tipo = $('#ddlTipoDisponibilidade').val();
+			
+			if(this.deveEsconderTudo(tipo)) {
+				this.esconderCamposDisponibilidade();
+				
+			} else if(this.deveEsconderMensagem(tipo)) {
+				this
+					.mostrarCamposDisponibilidade()
+					.esconderCampoMensagem();
+				
+			} else {
+				this.mostrarCamposDisponibilidade();
+			}
+		}
+
+		this.esconderCampoMensagem = function() {
+			$('#mensagem').hide();
+			$('#mensagem textarea').val('');
+			return this;
+		}
+
+		this.esconderCamposDisponibilidade = function() {
+			$('#camposDisponibilidade').hide();
+			$('#camposDisponibilidade input, #camposDisponibilidade textarea').val('');
+			return this;
+		}
+		
+		this.mostrarCamposDisponibilidade = function() {
+			$('#mensagem').show();
+			$('#camposDisponibilidade').show();
+			return this;
+		}
+		
+		this.deveEsconderTudo = function(tipo) {
+			return ['DISPONIVEL', 'NENHUM'].indexOf(tipo) > -1;
+		}
+		
+		this.deveEsconderMensagem = function(tipo) {
+			return ['INDISPONIVEL_BLOQUEIO_SOLICITACOES', 'NAO_UTILIZADO'].indexOf(tipo) > -1;
+		}
+
+		this.getId = function(disponibilidade) {
+			return disponibilidade.idDisponibilidade;
+		}
+		
+		this.onGravar = function(obj, objSalvo) {
+			var me = this;
+			
+			objSalvo.disponibilidadesAtualizadas.elements.forEach(function(atualizacao) {
+				var div = $('div[data-sigla-orgao=' + atualizacao.siglaOrgao + '][data-item-configuracao-id=' + atualizacao.idItemConfiguracao + ']'), 
+					img = div.find('img'),
+					novaImg = $('<img>');
+				
+				img.remove();
+				novaImg.attr('src', atualizacao.caminhoIcone);
+				div.append(novaImg);
+
+				var itemConfiguracaoSelecionado = me.buscarItem(atualizacao.hisIdIniItemConfiguracao);
+				if(itemConfiguracaoSelecionado) {
+					var indice = me.buscarIndiceDisponibilidade(itemConfiguracaoSelecionado, atualizacao.siglaOrgao);
+					itemConfiguracaoSelecionado.disponibilidades[indice] = atualizacao;
+				}
+			});
+		}
+		
+		this.getObjetoParaGravar = function() {
+			var disponibilidade = BaseService.prototype.getObjetoParaGravar.call(this, opts);
+			// Precisa estar assim para recarregar o item de configuracao utilizando o SrItemConfiguracaoBinder.java
+			disponibilidade.itemConfiguracao = this.itemConfiguracaoSelecionado.id;
+			disponibilidade.orgao = this.orgaoSelecionado;
+			
+			// WA para a serializacao da data com horario que nao estava funcionando.
+			if(disponibilidade.dataHoraInicio) {
+				disponibilidade.dataHoraInicioString = disponibilidade.dataHoraInicio;
+				delete disponibilidade.dataHoraInicio;
+			}
+
+			if(disponibilidade.dataHoraTermino) {
+				disponibilidade.dataHoraTerminoString = disponibilidade.dataHoraTermino;
+				delete disponibilidade.dataHoraTermino;
+			}
+			return disponibilidade;
+		}
+
+		this.post = function(opts) {
+			this.removerErros();
+			opts.obj.pagina = Object.create(this.pagina);
+			opts.obj.pagina.registros = {};
+			opts.obj.pagina.orgaos = {};
+			
+			return $.ajax({
+		    	type: "POST",
+		    	url: opts.url,
+		    	data: jQuery.param(opts.obj),
+		    	dataType: "text",
+		    	error: BaseService.prototype.errorHandler
+		   	});
+		}
+		
+		this.iniciarDataTable = function() {
+			var me = this;
+			
+			$('#itens_configuracao_table').dataTable({
+				stateSave : true,
+				"bProcessing": true,
+		        "bServerSide": true,
+		        "sAjaxSource" : "@{Application.listarPaginaDisponibilidade()}",
+				"language": {
+					"emptyTable":     "Não existem resultados",
+				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
+				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
+				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+				    "infoPostFix":    "",
+				    "thousands":      ".",
+				    "lengthMenu":     "Mostrar _MENU_ registros",
+				    "loadingRecords": "Carregando...",
+				    "processing":     "Processando...",
+				    "search":         "Filtrar:",
+				    "zeroRecords":    "Nenhum registro encontrado",
+				    "paginate": {
+				        "first":      "Primeiro",
+				        "last":       "Último",
+				        "next":       "Próximo",
+				        "previous":   "Anterior"
+				    },
+				    "aria": {
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
+				    }
+				},
+				"fnServerData" : function(sSource, aoData, fnCallback, oSettings) {
+					var order = me.orderBy[oSettings.aaSorting[0][0]],
+						orderDirection = oSettings.aaSorting[0][1];
+
+		    		sSource += '?pagina.tamanho=' + oSettings._iDisplayLength;
+		    		sSource += '&pagina.numero=' + ((oSettings._iDisplayStart / oSettings._iDisplayLength) + 1);
+		    		sSource += '&pagina.count=' + oSettings.iTotalRecords;
+		    		sSource += '&pagina.orderBy=' + order;
+		    		sSource += '&pagina.direcaoOrdenacao=' + orderDirection;
+		    		sSource += '&pagina.tituloOuCodigo=' + oSettings.oPreviousSearch.sSearch;
+
+				    oSettings.jqXHR = $.ajax({
+				        dataType: 'json',
+				        url: sSource,
+				        accepts: "application/json",
+				        blockUI : false,
+				        success: function (pagina) {
+					        var config = {};
+					        config.aaData = me.jsonToRowData(pagina);
+					        config.iTotalRecords = pagina.count;
+					        config.iTotalDisplayRecords = (pagina.count / pagina.tamanho) * oSettings._iDisplayLength;
+					        config.sEcho = aoData[0].value;
+					        oSettings.iTotalRecords = pagina.count;
+
+					        me.pagina = pagina;
+				            fnCallback(config);
+
+				            // WA para evitar requisicao para URL errada da imagem
+				            $('img[src-original]').each(function() { 
+					            var me = $(this),
+					            	src = me.attr('src-original');
+				            	
+					            if(src.indexOf('.png') >= 0) {
+						            me.attr('src',me.attr('src-original'));
+						            me.removeAttr('src-original');
+					            }
+				            });
+				        }
+				    });
+				},
+				"aoColumns": 
+						[{
+					        "sTitle": "Código",
+					    }, {
+					        "sTitle": "Título",
+					    }, {
+					        "sTitle": "Orgãos",
+					        "sWidth" : "500px"
+					    }],
+				// Define que a ordenacao deve comecar na segunda coluna (para evitar coluna com acoes de expandir)
+				"aaSorting" : [[0, 'asc']],
+				"columnDefs": [
+					{
+						"targets": [2],
+						"searchable": false,
+						"sortable": false
+					},
+				],
+				"createdRow" : function(row, data, index) {
+					var itemConfiguracao = me.pagina.registros.elements[index],
+						td = $('td:eq(1)', row),
+						nivelClass = me.niveis[itemConfiguracao.nivel];
+					
+					td.addClass(nivelClass);
+				}
+			});
+			return this;
+		}
+
+		this.iniciarValidacoes = function() {
+			var me = this;
+			$(".dataHora").mask("99/99/9999 99:99");
+			$.validator.addMethod(
+			        "dataHora", function(value, element, regexp) {
+				        var re = new RegExp('^([0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]?[0-9]|2[0-3]):[0-5][0-9]$');
+				        var horaExtraida = value.match('(\\d\\d):'); // Para nao permitir hora 24:00
+				        var hora = horaExtraida ? horaExtraida[0].replace(':', '') : 0;
+				        
+				        return (this.optional(element) || (hora < 24 && re.test(value) && moment(value, 'DD/MM/YYYY HH:mm').isValid()));
+			        },
+			        "Data/Hora inválida."
+			);
+			$.validator.addMethod(
+			        "periodo", function(value, element, regexp) {
+			        	return me.horarioEstaValido();
+			        },
+			        "A data/hora de início deve ser menor que a data/hora término"
+			);
+			this.validator = jQuery("form").validate();
+			$("#dataHoraInicio").rules("add", {dataHora: ""});
+			$("#dataHoraFim").rules("add", {dataHora: ""});
+			$("#dataHoraInicio").rules("add", {periodo: ""});
+			$("#dataHoraFim").rules("add", {periodo: ""});
+			return this;
+		}
+
+		this.horarioEstaValido = function() {
+			var dataHoraInicioString = $("#dataHoraInicio").val(),
+				dataHoraFimString = $("#dataHoraFim").val();
+			
+			if(dataHoraInicioString && dataHoraFimString) {
+				var dataHoraInicio = moment(dataHoraInicioString, 'DD/MM/YYYY HH:mm'),
+					dataHoraTermino = moment(dataHoraFimString, 'DD/MM/YYYY HH:mm'),
+					valido = true,
+					mensagem = null;
+
+				return dataHoraInicio.isBefore(dataHoraTermino);
+			}
+			return true;
+		}
+			
+		this.mostrarValidacaoHorario = function(mensagem) {
+			if(mensagem) {
+				$('#erroHorarioInvalido').css('display', 'block');
+				$('#erroHorarioInvalido span').html(mensagem);
+			}
+		}
+
+		this.esconderValidacaoHorario = function() {
+			$('#erroHorarioInvalido').css('display', 'none');
+		}
+	}
+	
+	DisponibilidadeService.prototype = Object.create(BaseService.prototype);
+	var disponibilidadeService = new DisponibilidadeService(opts);
+	disponibilidadeService
+		.iniciarDataTable()
+		.iniciarValidacoes();
+
+</script>

@@ -1,9 +1,7 @@
 package br.gov.jfrj.siga.sr.model;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -19,42 +17,48 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.sr.model.vo.SrAtributoAcordoVO;
 
 @Entity
 @Table(name = "SR_ATRIBUTO_ACORDO", schema = "SIGASR")
 public class SrAtributoAcordo extends HistoricoSuporte {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_ACORDO_SEQ", name = "SrAtributoAcordoSeq")
 	@GeneratedValue(generator = "SrAtributoAcordoSeq")
 	@Column(name = "ID_ATRIBUTO_ACORDO")
-	private Long idAtributoAcordo;
+	public Long idAtributoAcordo;
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_ACORDO")
-	private SrAcordo acordo;
+	public SrAcordo acordo;
 
 	@Enumerated
-	private SrOperador operador;
+	public SrOperador operador;
 
 	@Column(name = "VALOR")
-	private Integer valor;
+	public Long valor;
 
 	@ManyToOne
 	@JoinColumn(name = "UNIDADE_MEDIDA")
-	private CpUnidadeMedida unidadeMedida;
+	public CpUnidadeMedida unidadeMedida;
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_ATRIBUTO")
-	private SrAtributo atributo;
+	public SrAtributo atributo;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	private SrAtributoAcordo atributoAcordoInicial;
+	public SrAtributoAcordo atributoAcordoInicial;
 
 	@OneToMany(targetEntity = SrAtributoAcordo.class, mappedBy = "atributoAcordoInicial")
-	@OrderBy("hisDtIni desc")
-	private List<SrAtributoAcordo> meuAtributoAcordoHistoricoSet;
+	//@OrderBy("hisDtIni desc")
+	public List<SrAtributoAcordo> meuAtributoAcordoHistoricoSet;
 
 	public Long getId() {
 		return this.idAtributoAcordo;
@@ -62,71 +66,6 @@ public class SrAtributoAcordo extends HistoricoSuporte {
 
 	public void setId(Long id) {
 		idAtributoAcordo = id;
-	}
-
-	public Long getIdAtributoAcordo() {
-		return idAtributoAcordo;
-	}
-
-	public void setIdAtributoAcordo(Long idAtributoAcordo) {
-		this.idAtributoAcordo = idAtributoAcordo;
-	}
-
-	public SrAcordo getAcordo() {
-		return acordo;
-	}
-
-	public void setAcordo(SrAcordo acordo) {
-		this.acordo = acordo;
-	}
-
-	public SrOperador getOperador() {
-		return operador;
-	}
-
-	public void setOperador(SrOperador operador) {
-		this.operador = operador;
-	}
-
-	public Integer getValor() {
-		return valor;
-	}
-
-	public void setValor(Integer valor) {
-		this.valor = valor;
-	}
-
-	public CpUnidadeMedida getUnidadeMedida() {
-		return unidadeMedida;
-	}
-
-	public void setUnidadeMedida(CpUnidadeMedida unidadeMedida) {
-		this.unidadeMedida = unidadeMedida;
-	}
-
-	public SrAtributo getAtributo() {
-		return atributo;
-	}
-
-	public void setAtributo(SrAtributo atributo) {
-		this.atributo = atributo;
-	}
-
-	public SrAtributoAcordo getAtributoAcordoInicial() {
-		return atributoAcordoInicial;
-	}
-
-	public void setAtributoAcordoInicial(SrAtributoAcordo atributoAcordoInicial) {
-		this.atributoAcordoInicial = atributoAcordoInicial;
-	}
-
-	public List<SrAtributoAcordo> getMeuAtributoAcordoHistoricoSet() {
-		return meuAtributoAcordoHistoricoSet;
-	}
-
-	public void setMeuAtributoAcordoHistoricoSet(
-			List<SrAtributoAcordo> meuAtributoAcordoHistoricoSet) {
-		this.meuAtributoAcordoHistoricoSet = meuAtributoAcordoHistoricoSet;
 	}
 
 	@Override
@@ -167,8 +106,12 @@ public class SrAtributoAcordo extends HistoricoSuporte {
 				.getIdUnidadeMedida().intValue() : null);
 	}
 	
-	public Integer getValorEmSegundos(){
+	public Long getValorEmSegundos(){
 		return getValorEUnidade().getValorEmSegundos();
+	}
+	
+	public SrAtributoAcordoVO toVO() {
+		return SrAtributoAcordoVO.createFrom(this);
 	}
 
 }

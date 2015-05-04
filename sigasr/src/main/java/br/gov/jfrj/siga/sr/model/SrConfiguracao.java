@@ -9,10 +9,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -20,459 +18,88 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.SrAcao.SrAcaoVO;
-import br.gov.jfrj.siga.sr.model.SrItemConfiguracao.SrItemConfiguracaoVO;
+import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoAssociacaoVO;
+import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoVO;
+import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
+import br.gov.jfrj.siga.sr.util.Util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends CpConfiguracao {
 
-	public static ActiveRecord<SrConfiguracao> AR = new ActiveRecord<>(SrConfiguracao.class);
-	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4959384444345462871L;
 
-	@Column(name = "FORMA_ACOMPANHAMENTO")
-	private SrFormaAcompanhamento formaAcompanhamento;
-
-	//@ManyToOne
-	//@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
 	@Transient
-	private SrItemConfiguracao itemConfiguracaoFiltro;
+	public SrItemConfiguracao itemConfiguracaoFiltro;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
-	private List<SrItemConfiguracao> itemConfiguracaoSet;
+	public List<SrItemConfiguracao> itemConfiguracaoSet;
 	
-	//@ManyToOne
-	//@JoinColumn(name = "ID_ACAO")
 	@Transient
-	private SrAcao acaoFiltro;
+	public SrAcao acaoFiltro;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_ACAO", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
-	private List<SrAcao> acoesSet;
-
-	@Column(name = "GRAVIDADE")
-	private SrGravidade gravidade;
-
-	@Column(name = "TENDENCIA")
-	private SrTendencia tendencia;
-
-	@Column(name = "URGENCIA")
-	private SrUrgencia urgencia;
+	public List<SrAcao> acoesSet;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_ATENDENTE")
-	private DpLotacao atendente;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_POS_ATENDENTE")
-	private DpLotacao posAtendente;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_EQUIPE_QUALIDADE")
-	private DpLotacao equipeQualidade;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_PRE_ATENDENTE")
-	private DpLotacao preAtendente;
+	public DpLotacao atendente;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_TIPO_ATRIBUTO")
-	private SrAtributo atributo;
+	public SrAtributo atributo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESQUISA")
-	private SrPesquisa pesquisaSatisfacao;
+	public SrPesquisa pesquisaSatisfacao;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_LISTA")
-	private SrLista listaPrioridade;
+	public SrLista listaPrioridade;
 	
 	@Enumerated
-	private SrPrioridade prioridade;
+	public SrPrioridade prioridade;
 	
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SR_LISTA_CONFIGURACAO", schema="SIGASR", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "ID_LISTA"))
-	private List<SrLista> listaConfiguracaoSet;
+	@Column(name = "PRIORIDADE_LISTA")
+	@Enumerated
+	public SrPrioridade prioridadeNaLista;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"), schema="SIGASR")
-	private List<SrTipoPermissaoLista> tipoPermissaoSet;
+	public List<SrTipoPermissaoLista> tipoPermissaoSet;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ACORDO")
-	private SrAcordo acordo;
+	public SrAcordo acordo;
 
 	@Column(name = "FG_ATRIBUTO_OBRIGATORIO")
 	@Type(type = "yes_no")
-	private boolean atributoObrigatorio;
-
-	@Column(name = "SLA_PRE_ATENDIMENTO_QUANT")
-	private Integer slaPreAtendimentoQuantidade;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_UNIDADE_PRE_ATENDIMENTO")
-	private CpUnidadeMedida unidadeMedidaPreAtendimento;
-
-	@Column(name = "SLA_ATENDIMENTO_QUANT")
-	private Integer slaAtendimentoQuantidade;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_UNIDADE_ATENDIMENTO")
-	private CpUnidadeMedida unidadeMedidaAtendimento;
-
-	@Column(name = "SLA_POS_ATENDIMENTO_QUANT")
-	private Integer slaPosAtendimentoQuantidade;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_UNIDADE_POS_ATENDIMENTO")
-	private CpUnidadeMedida unidadeMedidaPosAtendimento;
-
-	@Column(name = "MARGEM_SEGURANCA")
-	private Integer margemSeguranca;
-
-	@Lob
-	@Column(name = "OBSERVACAO_SLA", length = 8192)
-	private String observacaoSLA;
-
-	@Column(name = "FG_DIVULGAR_SLA")
-	@Type(type = "yes_no")
-	private Boolean divulgarSLA;
-
-	@Column(name = "FG_NOTIFICAR_GESTOR")
-	@Type(type = "yes_no")
-	private Boolean notificarGestor;
-
-	@Column(name = "FG_NOTIFICAR_SOLICITANTE")
-	@Type(type = "yes_no")
-	private Boolean notificarSolicitante;
-
-	@Column(name = "FG_NOTIFICAR_CADASTRANTE")
-	@Type(type = "yes_no")
-	private Boolean notificarCadastrante;
-
-	@Column(name = "FG_NOTIFICAR_INTERLOCUTOR")
-	@Type(type = "yes_no")
-	private Boolean notificarInterlocutor;
-
-	@Column(name = "FG_NOTIFICAR_ATENDENTE")
-	@Type(type = "yes_no")
-	private Boolean notificarAtendente;
+	public boolean atributoObrigatorio;
 
 	@Transient
-	private SrSubTipoConfiguracao subTipoConfig;
+	public boolean isHerdado;
 
 	@Transient
-	private boolean isHerdado;
-
-	@Transient
-	private boolean utilizarItemHerdado;
-
-	public SrFormaAcompanhamento getFormaAcompanhamento() {
-		return formaAcompanhamento;
-	}
-
-	public void setFormaAcompanhamento(SrFormaAcompanhamento formaAcompanhamento) {
-		this.formaAcompanhamento = formaAcompanhamento;
-	}
-
-	public SrItemConfiguracao getItemConfiguracaoFiltro() {
-		return itemConfiguracaoFiltro;
-	}
-
-	public void setItemConfiguracaoFiltro(SrItemConfiguracao itemConfiguracaoFiltro) {
-		this.itemConfiguracaoFiltro = itemConfiguracaoFiltro;
-	}
-
-	public List<SrItemConfiguracao> getItemConfiguracaoSet() {
-		return itemConfiguracaoSet;
-	}
-
-	public void setItemConfiguracaoSet(List<SrItemConfiguracao> itemConfiguracaoSet) {
-		this.itemConfiguracaoSet = itemConfiguracaoSet;
-	}
-
-	public SrAcao getAcaoFiltro() {
-		return acaoFiltro;
-	}
-
-	public void setAcaoFiltro(SrAcao acaoFiltro) {
-		this.acaoFiltro = acaoFiltro;
-	}
-
-	public List<SrAcao> getAcoesSet() {
-		return acoesSet;
-	}
-
-	public void setAcoesSet(List<SrAcao> acoesSet) {
-		this.acoesSet = acoesSet;
-	}
-
-	public SrGravidade getGravidade() {
-		return gravidade;
-	}
-
-	public void setGravidade(SrGravidade gravidade) {
-		this.gravidade = gravidade;
-	}
-
-	public SrTendencia getTendencia() {
-		return tendencia;
-	}
-
-	public void setTendencia(SrTendencia tendencia) {
-		this.tendencia = tendencia;
-	}
-
-	public SrUrgencia getUrgencia() {
-		return urgencia;
-	}
-
-	public void setUrgencia(SrUrgencia urgencia) {
-		this.urgencia = urgencia;
-	}
-
-	public DpLotacao getAtendente() {
-		return atendente;
-	}
-
-	public void setAtendente(DpLotacao atendente) {
-		this.atendente = atendente;
-	}
-
-	public DpLotacao getPosAtendente() {
-		return posAtendente;
-	}
-
-	public void setPosAtendente(DpLotacao posAtendente) {
-		this.posAtendente = posAtendente;
-	}
-
-	public DpLotacao getEquipeQualidade() {
-		return equipeQualidade;
-	}
-
-	public void setEquipeQualidade(DpLotacao equipeQualidade) {
-		this.equipeQualidade = equipeQualidade;
-	}
-
-	public DpLotacao getPreAtendente() {
-		return preAtendente;
-	}
-
-	public void setPreAtendente(DpLotacao preAtendente) {
-		this.preAtendente = preAtendente;
-	}
-
-	public SrAtributo getAtributo() {
-		return atributo;
-	}
-
-	public void setAtributo(SrAtributo atributo) {
-		this.atributo = atributo;
-	}
-
-	public SrPesquisa getPesquisaSatisfacao() {
-		return pesquisaSatisfacao;
-	}
-
-	public void setPesquisaSatisfacao(SrPesquisa pesquisaSatisfacao) {
-		this.pesquisaSatisfacao = pesquisaSatisfacao;
-	}
-
-	public SrLista getListaPrioridade() {
-		return listaPrioridade;
-	}
-
-	public void setListaPrioridade(SrLista listaPrioridade) {
-		this.listaPrioridade = listaPrioridade;
-	}
-
-	public SrPrioridade getPrioridade() {
-		return prioridade;
-	}
-
-	public void setPrioridade(SrPrioridade prioridade) {
-		this.prioridade = prioridade;
-	}
-
-	public List<SrTipoPermissaoLista> getTipoPermissaoSet() {
-		return tipoPermissaoSet;
-	}
-
-	public void setTipoPermissaoSet(List<SrTipoPermissaoLista> tipoPermissaoSet) {
-		this.tipoPermissaoSet = tipoPermissaoSet;
-	}
-
-	public SrAcordo getAcordo() {
-		return acordo;
-	}
-
-	public void setAcordo(SrAcordo acordo) {
-		this.acordo = acordo;
-	}
-
-	public boolean isAtributoObrigatorio() {
-		return atributoObrigatorio;
-	}
-
-	public void setAtributoObrigatorio(boolean atributoObrigatorio) {
-		this.atributoObrigatorio = atributoObrigatorio;
-	}
-
-	public Integer getSlaPreAtendimentoQuantidade() {
-		return slaPreAtendimentoQuantidade;
-	}
-
-	public void setSlaPreAtendimentoQuantidade(Integer slaPreAtendimentoQuantidade) {
-		this.slaPreAtendimentoQuantidade = slaPreAtendimentoQuantidade;
-	}
-
-	public CpUnidadeMedida getUnidadeMedidaPreAtendimento() {
-		return unidadeMedidaPreAtendimento;
-	}
-
-	public void setUnidadeMedidaPreAtendimento(
-			CpUnidadeMedida unidadeMedidaPreAtendimento) {
-		this.unidadeMedidaPreAtendimento = unidadeMedidaPreAtendimento;
-	}
-
-	public Integer getSlaAtendimentoQuantidade() {
-		return slaAtendimentoQuantidade;
-	}
-
-	public void setSlaAtendimentoQuantidade(Integer slaAtendimentoQuantidade) {
-		this.slaAtendimentoQuantidade = slaAtendimentoQuantidade;
-	}
-
-	public CpUnidadeMedida getUnidadeMedidaAtendimento() {
-		return unidadeMedidaAtendimento;
-	}
-
-	public void setUnidadeMedidaAtendimento(CpUnidadeMedida unidadeMedidaAtendimento) {
-		this.unidadeMedidaAtendimento = unidadeMedidaAtendimento;
-	}
-
-	public Integer getSlaPosAtendimentoQuantidade() {
-		return slaPosAtendimentoQuantidade;
-	}
-
-	public void setSlaPosAtendimentoQuantidade(Integer slaPosAtendimentoQuantidade) {
-		this.slaPosAtendimentoQuantidade = slaPosAtendimentoQuantidade;
-	}
-
-	public CpUnidadeMedida getUnidadeMedidaPosAtendimento() {
-		return unidadeMedidaPosAtendimento;
-	}
-
-	public void setUnidadeMedidaPosAtendimento(
-			CpUnidadeMedida unidadeMedidaPosAtendimento) {
-		this.unidadeMedidaPosAtendimento = unidadeMedidaPosAtendimento;
-	}
-
-	public Integer getMargemSeguranca() {
-		return margemSeguranca;
-	}
-
-	public void setMargemSeguranca(Integer margemSeguranca) {
-		this.margemSeguranca = margemSeguranca;
-	}
-
-	public String getObservacaoSLA() {
-		return observacaoSLA;
-	}
-
-	public void setObservacaoSLA(String observacaoSLA) {
-		this.observacaoSLA = observacaoSLA;
-	}
-
-	public Boolean getDivulgarSLA() {
-		return divulgarSLA;
-	}
-
-	public void setDivulgarSLA(Boolean divulgarSLA) {
-		this.divulgarSLA = divulgarSLA;
-	}
-
-	public Boolean getNotificarGestor() {
-		return notificarGestor;
-	}
-
-	public void setNotificarGestor(Boolean notificarGestor) {
-		this.notificarGestor = notificarGestor;
-	}
-
-	public Boolean getNotificarSolicitante() {
-		return notificarSolicitante;
-	}
-
-	public void setNotificarSolicitante(Boolean notificarSolicitante) {
-		this.notificarSolicitante = notificarSolicitante;
-	}
-
-	public Boolean getNotificarCadastrante() {
-		return notificarCadastrante;
-	}
-
-	public void setNotificarCadastrante(Boolean notificarCadastrante) {
-		this.notificarCadastrante = notificarCadastrante;
-	}
-
-	public Boolean getNotificarInterlocutor() {
-		return notificarInterlocutor;
-	}
-
-	public void setNotificarInterlocutor(Boolean notificarInterlocutor) {
-		this.notificarInterlocutor = notificarInterlocutor;
-	}
-
-	public Boolean getNotificarAtendente() {
-		return notificarAtendente;
-	}
-
-	public void setNotificarAtendente(Boolean notificarAtendente) {
-		this.notificarAtendente = notificarAtendente;
-	}
-
-	public SrSubTipoConfiguracao getSubTipoConfig() {
-		return subTipoConfig;
-	}
-
-	public void setSubTipoConfig(SrSubTipoConfiguracao subTipoConfig) {
-		this.subTipoConfig = subTipoConfig;
-	}
-
-	public boolean isHerdado() {
-		return isHerdado;
-	}
-
-	public void setHerdado(boolean isHerdado) {
-		this.isHerdado = isHerdado;
-	}
-
-	public boolean isUtilizarItemHerdado() {
-		return utilizarItemHerdado;
-	}
-
-	public void setUtilizarItemHerdado(boolean utilizarItemHerdado) {
-		this.utilizarItemHerdado = utilizarItemHerdado;
-	}
+	public boolean utilizarItemHerdado;
 
 	public SrConfiguracao() {
 	}
@@ -496,7 +123,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public String getPesquisaSatisfacaoString() {
-		return pesquisaSatisfacao.getNomePesquisa();
+		return pesquisaSatisfacao.nomePesquisa;
 	}
 
 	public String getAtributoObrigatorioString() {
@@ -504,16 +131,21 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	public void salvarComoDesignacao() throws Exception {
-		setCpTipoConfiguracao(em().find(CpTipoConfiguracao.class,
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
-		salvarComHistorico();
+		salvar();
+	}
+	
+	public boolean isDesignacao() {
+		if (this.getCpTipoConfiguracao() != null && this.getCpTipoConfiguracao().getIdTpConfiguracao() != null)
+			return this.getCpTipoConfiguracao().getIdTpConfiguracao().equals(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		else
+			return false;
 	}
 
 	public void salvarComoInclusaoAutomaticaLista(SrLista srLista) throws Exception {
-		setCpTipoConfiguracao(em().find(CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
-		adicionarListaConfiguracoes(srLista);
-		salvarComHistorico();
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
+		salvar();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -534,8 +166,34 @@ public class SrConfiguracao extends CpConfiguracao {
 			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
 		}
 		
-		return em()
+		return JPA
+				.em()
 				.createQuery(sb.toString()).getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarDesignacoes(SrEquipe equipe) {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
+		
+		if (equipe != null && equipe.lotacao != null && equipe.lotacao.getIdLotacaoIni() != null) {
+			sb.append(" and conf.atendente.idLotacaoIni = ");
+			sb.append(equipe.lotacao.getIdLotacaoIni());			
+		}
+		
+		sb.append(" and conf.hisDtFim is null");
+		
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
+	public static List<SrConfiguracao> listarDesignacoes(SrConfiguracao conf,
+			int[] atributosDesconsideradosFiltro) throws Exception {
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+		return listar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro,
+				new int[] {}));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -556,24 +214,34 @@ public class SrConfiguracao extends CpConfiguracao {
 			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
 		}
 		
-		return em()
+		return JPA
+				.em()
+				.createQuery(sb.toString()).getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAbrangenciasAcordo() {
+		StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
+		sb.append(" and conf.hisDtFim is null");
+		
+		return JPA
+				.em()
 				.createQuery(sb.toString()).getResultList();
 	}
 	
 	public void salvarComoAbrangenciaAcordo() throws Exception {
-		setCpTipoConfiguracao(em().find(CpTipoConfiguracao.class,
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
-		salvarComHistorico();
+		salvar();
 		
 		
 	}
 
 	public void salvarComoPermissaoUsoLista() throws Exception {
-		setCpTipoConfiguracao(em().find(CpTipoConfiguracao.class,
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
-		salvarComHistorico();
-		
-		
+		salvar();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -590,7 +258,7 @@ public class SrConfiguracao extends CpConfiguracao {
 
 		sb.append(" order by conf.orgaoUsuario");
 
-		return em().createQuery(sb.toString()).getResultList();
+		return JPA.em().createQuery(sb.toString()).getResultList();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -607,13 +275,19 @@ public class SrConfiguracao extends CpConfiguracao {
 
 		sb.append(" order by conf.orgaoUsuario");
 
-		return em().createQuery(sb.toString()).getResultList();
+		return JPA.em().createQuery(sb.toString()).getResultList();
 	}
 
 	public void salvarComoAssociacaoAtributo() throws Exception {
-		setCpTipoConfiguracao(em().find(CpTipoConfiguracao.class,
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
-		salvarComHistorico();
+		salvar();
+	}
+	
+	public void salvarComoAssociacaoPesquisa() throws Exception {
+		setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
+				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA));
+		salvar();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -633,7 +307,27 @@ public class SrConfiguracao extends CpConfiguracao {
 		}
 		queryBuilder.append(" order by conf.orgaoUsuario");
 		
-		return em().createQuery(queryBuilder.toString()).getResultList();
+		return JPA.em().createQuery(queryBuilder.toString()).getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> listarAssociacoesPesquisa(SrPesquisa pesquisa, Boolean mostrarDesativados) {
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+		queryBuilder.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA);
+		queryBuilder.append(" and conf.pesquisaSatisfacao.hisIdIni = ");
+		queryBuilder.append(pesquisa.getHisIdIni());
+		
+		if (!mostrarDesativados) {
+			queryBuilder.append(" and conf.hisDtFim is null ");
+		} else {
+			queryBuilder.append(" and conf.idConfiguracao IN (");
+			queryBuilder.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			queryBuilder.append(" SrConfiguracao GROUP BY hisIdIni)) ");
+		}
+		queryBuilder.append(" order by conf.orgaoUsuario");
+		
+		return JPA.em().createQuery(queryBuilder.toString()).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -651,7 +345,8 @@ public class SrConfiguracao extends CpConfiguracao {
 		}
 		queryBuilder.append(" order by conf.orgaoUsuario");
 		
-		return em()
+		return JPA
+				.em()
 				.createQuery(queryBuilder.toString())
 				.getResultList();
 	}
@@ -664,14 +359,14 @@ public class SrConfiguracao extends CpConfiguracao {
 	
 	public static SrConfiguracao buscarDesignacao(SrConfiguracao conf)
 			throws Exception {
-		conf.setCpTipoConfiguracao(em().find(CpTipoConfiguracao.class,
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		return buscar(conf, new int[] { SrConfiguracaoBL.ATENDENTE});
 	}
 	
 	public static SrConfiguracao buscarDesignacao(SrConfiguracao conf,
 			int[] atributosDesconsideradosFiltro) throws Exception {
-		conf.setCpTipoConfiguracao(em().find(CpTipoConfiguracao.class,
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 		return buscar(conf, ArrayUtils.addAll(atributosDesconsideradosFiltro,
 				new int[] { SrConfiguracaoBL.ATENDENTE }));
@@ -679,14 +374,14 @@ public class SrConfiguracao extends CpConfiguracao {
 	
 	public static SrConfiguracao buscarAssociacao(SrConfiguracao conf)
 			throws Exception {
-		conf.setCpTipoConfiguracao(em().find(CpTipoConfiguracao.class,
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 		return buscar(conf, new int[] {});
 	}
 	
 	public static SrConfiguracao buscarAbrangenciaAcordo(SrConfiguracao conf)
 			throws Exception {
-		conf.setCpTipoConfiguracao(em().find(CpTipoConfiguracao.class,
+		conf.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class,
 				CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
 		return buscar(conf, new int[] {});
 	}
@@ -710,14 +405,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	public void setId(Long id) {
 		setIdConfiguracao(id);
 	}
-
-	public List<SrLista> getListaConfiguracaoSet() {
-		return listaConfiguracaoSet;
-	}
-
-	public void setListaConfiguracaoSet(List<SrLista> listaConfiguracaoSet) {
-		this.listaConfiguracaoSet = listaConfiguracaoSet;
-	}
 	
 	public String getDescrItemConfiguracaoAtual() {
 		String descrItemConfiguracao = null;
@@ -725,7 +412,7 @@ public class SrConfiguracao extends CpConfiguracao {
 			SrItemConfiguracao conf = this.itemConfiguracaoSet.get(this.itemConfiguracaoSet.size() -1);
 			
 			if (conf != null) {
-				descrItemConfiguracao = conf.getAtual().getTituloItemConfiguracao();
+				descrItemConfiguracao = conf.getAtual().tituloItemConfiguracao;
 				
 				if (this.itemConfiguracaoSet.size() > 1)
 					if (descrItemConfiguracao != null)
@@ -742,7 +429,7 @@ public class SrConfiguracao extends CpConfiguracao {
 	public String getDescrTipoPermissao() {
 		if (this.tipoPermissaoSet != null && this.tipoPermissaoSet.size() > 0) {
 			SrTipoPermissaoLista tipoPermissao = this.tipoPermissaoSet.get(0);	
-			return tipoPermissao.getDescrTipoPermissaoLista().concat(" ...");
+			return tipoPermissao.descrTipoPermissaoLista.concat(" ...");
 		}
 		return "";
 	}
@@ -791,7 +478,6 @@ public class SrConfiguracao extends CpConfiguracao {
 	}
 
 	/**
-
 	 * Retorna um Json de {@link SrConfiguracaoVO} que contém:
 	 * <li> {@link SrListaConfiguracaoVO}</li>
 	 * <li> {@link SrItemConfiguracaoVO}</li>
@@ -799,62 +485,52 @@ public class SrConfiguracao extends CpConfiguracao {
 	 * 
 	 */
 	public String getSrConfiguracaoJson() {
-		return new SrConfiguracaoVO(listaConfiguracaoSet, itemConfiguracaoSet, acoesSet, null).toJson();
+		return this.toVO().toJson();
 	}
+	
+	public String getSrConfiguracaoJson(SrItemConfiguracao itemConfiguracao) {
+		JsonObject jsonObject = this.toVO().toJsonObject();
+		jsonObject.add("itemConfiguracao", itemConfiguracao.toVO().toJsonObject());
+		
+		return jsonObject.toString();
+	}
+
 
 	public String getSrConfiguracaoTipoPermissaoJson() {
-		return new SrConfiguracaoVO(null, null, null, tipoPermissaoSet).toJson();
+		return new SrConfiguracaoVO(this).toJson();
 	}
+	
+	public SrConfiguracaoVO toVO() {
+		return new SrConfiguracaoVO(this, this.atributoObrigatorio);
+	}
+	
+	public static String convertToJSon(List<SrConfiguracao> lista) {
+		List<SrConfiguracaoVO> listaVO = new ArrayList<SrConfiguracaoVO>();
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting().serializeNulls();
+		Gson gson = builder.create();
 
-	/**
-	 * Classe que representa um {@link SrConfiguracaoVO VO} da classe
-	 * {@link SrConfiguracao}.
-	 * 
-	 * @author DB1
-	 */
-	public class SrConfiguracaoVO {
-		public List<SrLista.SrListaVO> listaVO; 
-		public List<SrItemConfiguracao.SrItemConfiguracaoVO> listaItemConfiguracaoVO;
-		public List<SrAcao.SrAcaoVO> listaAcaoVO;
-		public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
-
-		public SrConfiguracaoVO(List<SrLista> listaConfiguracaoSet, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, List<SrTipoPermissaoLista> tipoPermissaoSet) {
-			listaVO = new ArrayList<SrLista.SrListaVO>();
-			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracao.SrItemConfiguracaoVO>();
-			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
-			listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
-			
-			if(listaConfiguracaoSet != null)
-				for (SrLista item : listaConfiguracaoSet) {
-					listaVO.add(item.toVO());
-				}
-			
-			if(itemConfiguracaoSet != null)
-				for (SrItemConfiguracao item : itemConfiguracaoSet) {
-					listaItemConfiguracaoVO.add(item.toVO());
-				}
-			
-			if(acoesSet != null)
-				for (SrAcao item : acoesSet) {
-					listaAcaoVO.add(item.toVO());
-				}
-
-			if(tipoPermissaoSet != null)
-				for (SrTipoPermissaoLista item : tipoPermissaoSet) {
-					listaTipoPermissaoListaVO.add(item.toVO());
-				}
+		if (lista != null) {
+			for (SrConfiguracao conf : lista) {
+				listaVO.add(conf.toVO());
+			}
 		}
+		return gson.toJson(listaVO);
+	}
+	
+	public static String convertToAssociacaoJSon(List<SrConfiguracao> lista) {
+		List<SrConfiguracaoVO> listaVO = new ArrayList<SrConfiguracaoVO>();
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting().serializeNulls();
+		Gson gson = builder.create();
 
-		/**
-		 * Converte o objeto para Json.
-		 */
-		public String toJson() {
-			GsonBuilder builder = new GsonBuilder();
-			builder.setPrettyPrinting().serializeNulls();
-			Gson gson = builder.create();
-
-			return gson.toJson(this);
+		if (lista != null) {
+			for (SrConfiguracao conf : lista) {
+				listaVO.add(conf.toVO());
+			}
 		}
+		
+		return gson.toJson(listaVO);
 	}
 
 	public int getNivelItemParaComparar() {
@@ -883,57 +559,63 @@ public class SrConfiguracao extends CpConfiguracao {
 		return 0;
 	}
 
-	public SrItemConfiguracao getItemConfiguracaoUnitario() {
-		if (itemConfiguracaoSet == null || itemConfiguracaoSet.size() == 0)
-			return null;
-		return itemConfiguracaoSet.get(0);
-	}
-
-	public void setItemConfiguracaoUnitario(SrItemConfiguracao itemConfiguracao) {
-		itemConfiguracaoSet = new ArrayList<SrItemConfiguracao>();
-		itemConfiguracaoSet.add(itemConfiguracao);
-	}
-
-	public SrAcao getAcaoUnitaria() {
-		if (acoesSet == null || acoesSet.size() == 0)
-			return null;
-		return acoesSet.get(0);
-	}
-
-	public void setAcaoUnitaria(SrAcao acao) {
-		acoesSet = new ArrayList<SrAcao>();
-		acoesSet.add(acao);
-	}
-
 	@Override
 	public CpConfiguracao getConfiguracaoAtual() {
 		return super.getConfiguracaoAtual();
 	}
 	
-	public static SrConfiguracao buscarConfiguracaoInsercaoAutomaticaLista(SrLista lista) throws Exception {
-		SrLista listaAtual = lista.getListaAtual();
-		
-		for (CpConfiguracao cpConfiguracao : SrConfiguracaoBL.get().getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA)) {
-			SrConfiguracao srConfiguracao = (SrConfiguracao) cpConfiguracao;
-			// DB: Nao implementei utilizando "contains" na lista por que implementacao do super.equals esta comparando instancias e nao iria funcionar nesse caso
-			for (SrLista listaEncontrada : srConfiguracao.getListaConfiguracaoSet()) {
-				// DB1: Conversamos com o Edson e por enquanto sera apenas uma configuracao para cada lista.
-				if (srConfiguracao.getListaConfiguracaoSet() != null && listaEncontrada.getId().equals(listaAtual.getId())) {
-					return srConfiguracao;
-				}
-			}
+	@SuppressWarnings("unchecked")
+	public static List<SrConfiguracao> buscaParaConfiguracaoInsercaoAutomaticaLista(SrLista lista, boolean mostrarDesativados) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		sb.append("select conf from SrConfiguracao as conf ");
+		sb.append("where conf.cpTipoConfiguracao.idTpConfiguracao = :tipoConfiguracao ");
+		sb.append("and conf.listaPrioridade.hisIdIni = :idIniLista ");
+
+		if (!mostrarDesativados)
+			sb.append(" and conf.hisDtFim is null");
+		else {
+			sb.append(" and conf.idConfiguracao in (");
+			sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+			sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
 		}
-		return new SrConfiguracao();
+		return em()
+				.createQuery(sb.toString())
+				.setParameter("tipoConfiguracao", CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA)
+				.setParameter("idIniLista", lista.getIdInicial())
+				.getResultList();
 	}
 
-	public void adicionarListaConfiguracoes(SrLista srLista) {
-		if (this.listaConfiguracaoSet == null) {
-			this.listaConfiguracaoSet = new ArrayList<SrLista>();
-		}
-		if (!this.listaConfiguracaoSet.contains(srLista)) {
-			this.listaConfiguracaoSet.add(srLista);
-		}
+	public SrConfiguracaoAssociacaoVO toAssociacaoVO() {
+		return new SrConfiguracaoAssociacaoVO(this);
 	}
 	
-	
+	public String toJson() {
+		Gson gson = Util.createGson("");
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		
+		return jsonObject.toString();
+	}
+
+	public static List<SrConfiguracao> listarPorItem(SrItemConfiguracao itemConfiguracao)  throws Exception{
+		List<SrConfiguracao> lista = new ArrayList<SrConfiguracao>();
+		
+		SrConfiguracao confFiltro = new SrConfiguracao();
+		confFiltro.setBuscarPorPerfis(true);
+		confFiltro.itemConfiguracaoFiltro = itemConfiguracao;
+		
+		lista.addAll(SrItemConfiguracao.marcarComoHerdadas(SrConfiguracao.listarDesignacoes(
+					confFiltro, new int[] { SrConfiguracaoBL.ITEM_CONFIGURACAO}), itemConfiguracao));
+		
+		return lista;
+	}
+
+	public static String buscaParaConfiguracaoInsercaoAutomaticaListaJSON(SrLista lista, boolean mostrarDesativados) throws Exception {
+		JsonArray jsonArray = new JsonArray();
+		
+		for (SrConfiguracao configuracao : SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaLista(lista, mostrarDesativados)) {
+			jsonArray.add(configuracao.toVO().toJsonObject());
+		}
+		return jsonArray.toString();
+	}
 }

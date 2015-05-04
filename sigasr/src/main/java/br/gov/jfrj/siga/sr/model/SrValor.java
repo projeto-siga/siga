@@ -7,40 +7,35 @@ import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 
 public class SrValor implements Comparable<SrValor> {
 	
-	private static Map<Integer, Integer> unidadesEmSegundos;
+	private static Map<Integer, Long> unidadesEmSegundos;
 	
-	private Map<Integer, Integer> getUnidadesEmSegundos(){
+	private Map<Integer, Long> getUnidadesEmSegundos(){
 		if (unidadesEmSegundos == null){
-			unidadesEmSegundos = new HashMap<Integer, Integer>();
-			unidadesEmSegundos.put(CpUnidadeMedida.ANO, 946080000);
-			unidadesEmSegundos.put(CpUnidadeMedida.MES, 2592000);
-			unidadesEmSegundos.put(CpUnidadeMedida.DIA, 86400);
-			unidadesEmSegundos.put(CpUnidadeMedida.HORA, 3600);
-			unidadesEmSegundos.put(CpUnidadeMedida.MINUTO, 60);
-			unidadesEmSegundos.put(CpUnidadeMedida.SEGUNDO, 1);
+			unidadesEmSegundos = new HashMap<Integer, Long>();
+			unidadesEmSegundos.put(CpUnidadeMedida.ANO, 946080000L);
+			unidadesEmSegundos.put(CpUnidadeMedida.MES, 2592000L);
+			unidadesEmSegundos.put(CpUnidadeMedida.DIA, 86400L);
+			unidadesEmSegundos.put(CpUnidadeMedida.HORA, 3600L);
+			unidadesEmSegundos.put(CpUnidadeMedida.MINUTO, 60L);
+			unidadesEmSegundos.put(CpUnidadeMedida.SEGUNDO, 1L);
 		}
 		return unidadesEmSegundos;
 	}
 
-	private Integer valor;
+	private Long valor;
 	
 	private Integer unidadeMedida;
 	
-	public static void setUnidadesEmSegundos(
-			Map<Integer, Integer> unidadesEmSegundos) {
-		SrValor.unidadesEmSegundos = unidadesEmSegundos;
-	}
-
-	public SrValor(Integer valor, Integer unidadeMedida) {
+	public SrValor(Long valor, Integer unidadeMedida) {
 		this.valor = valor;
 		this.unidadeMedida = unidadeMedida;
 	}
 
-	public Integer getValor() {
+	public Long getValor() {
 		return valor;
 	}
 
-	public void setValor(Integer valor) {
+	public void setValor(Long valor) {
 		this.valor = valor;
 	}
 
@@ -52,7 +47,7 @@ public class SrValor implements Comparable<SrValor> {
 		this.unidadeMedida = unidadeMedida;
 	}
 	
-	public Integer getValorEmSegundos(){
+	public Long getValorEmSegundos(){
 		return getUnidadesEmSegundos().get(unidadeMedida) * valor;
 	}
 

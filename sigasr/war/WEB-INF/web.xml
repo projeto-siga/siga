@@ -16,6 +16,10 @@
 		<listener-class>play.server.ServletWrapper</listener-class>
 	</listener>
 
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+	
 	<servlet>
 		<servlet-name>play</servlet-name>
 		<servlet-class>play.server.ServletWrapper</servlet-class>
@@ -41,6 +45,7 @@
 			<web-resource-name>Recursos Publicos</web-resource-name>
 			<url-pattern>/public/*</url-pattern>
 			<url-pattern>/errors/*</url-pattern>
+			<url-pattern>/corporativo/dadosrh</url-pattern >
 		</web-resource-collection>
 	</security-constraint>
 

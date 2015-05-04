@@ -1,6 +1,4 @@
-<%@ include file="/WEB-INF/page/include.jsp"%>
-
-<siga:pagina titulo="Cadastro de Solici&ccedil;&atilde;o">
+#{extends 'main.html' /} #{set title:'Cadastro de solicitação' /}
 <style>
 .barra-subtitulo {
 	color: #365b6d !important;
@@ -33,20 +31,42 @@
 		}); 
 
 		if($('#solicitacaointerlocutor').val() != "") {
-			$('#checkmostrarInterlocutor').prop('checked" true);	
+			$('#checkmostrarInterlocutor').prop('checked', true);	
 			$('#interlocutor').show();		
 		}
 
 		$('#checkRascunho').change(function() {
 			if(this.checked) {
-				$('#checkRascunho').prop('value" 'true');
+				$('#checkRascunho').prop('value', 'true');
 				return;
 			}
-			$('#checkRascunho').prop('value" 'false');
+			$('#checkRascunho').prop('value', 'false');
 		});
 
 		carregarFiltrosAoIniciar();
+
+		// DB1: Sobrescreve o método onchange para que faça o tratamento das informações 
+		// do campo vinculado ao evento
+		jQuery("#checkmostrarInterlocutor")[0].onchange = function(event) {
+			changemostrarInterlocutor();
+			showInterlocutor(this.checked, 'interlocutor');
+		};
 	});
+
+	function showInterlocutor(checked, divName){
+		var div = document.getElementById(divName);
+		if (div) {
+			if (checked)
+				div.style.display = 'inline';
+			else {
+				div.style.display = 'none';
+				jQuery("#solicitacaointerlocutor").val("");
+				jQuery("#solicitacaointerlocutor_descricao").val("");
+				jQuery("#solicitacaointerlocutor_sigla").val("");
+				jQuery("#solicitacaointerlocutorSpan").html("");
+			}
+		}
+	}
 
 	function formatarValorTimer(num) {
 		if (num.toString().length == 1) 
@@ -56,16 +76,22 @@
 	};
 	
 	function carregarLocalRamalEMeioContato() {
+		//jQuery.blockUI(objBlock);
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
 			if (frm[i].name && frm[i].value)
 				params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
 		}
-		PassAjaxResponseToFunction('@{Application.exibirLocalRamalEMeioContato()}?' + params, 'carregouLocalRamalEMeioContato" null, false, null);
+
+		var url = '@{Application.exibirLocalRamalEMeioContato()}?' + params;
+		Siga.ajax(url, null, "GET", function(response){
+			carregouLocalRamalEMeioContato(response);
+		});
+	//	PassAjaxResponseToFunction(, 'carregouLocalRamalEMeioContato', null, false, null);
 	}
 	
-	function carregouLocalRamalEMeioContato(response, param){
+	function carregouLocalRamalEMeioContato(response){
 		var div = document.getElementById('divLocalRamalEMeioContato');
 		div.innerHTML = response;
 				
@@ -81,42 +107,56 @@
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 			   eval(scripts[i].text); 
+		//jQuery.unblockUI();
 	}
 	
 	function carregarItem(){
+		jQuery.blockUI(objBlock);
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
 			if (frm[i].name && frm[i].value)
 				params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
 		}
-		PassAjaxResponseToFunction('@{Application.exibirItemConfiguracao()}?' + params, 'carregouItem" null, false, null);
+		var url = '@{Application.exibirItemConfiguracao()}?' + params;
+		Siga.ajax(url, null, "GET", function(response){		
+			carregouItem(response);
+		});
+		
+		//PassAjaxResponseToFunction( + params, 'carregouItem', null, false, null);
 	}
 	
-	function carregouItem(response, param){
+	function carregouItem(response){
 		var div = document.getElementById('divItem');
 		div.innerHTML = response;
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
+		jQuery.unblockUI();
 	}
 
 	function carregarConhecimentosRelacionados(){
+		//jQuery.blockUI(objBlock);
 		frm = document.getElementById('formSolicitacao');
 		params = '';
 		for (i = 0; i < frm.length; i++){
 			if (frm[i].name && frm[i].value)
 				params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
 		}
-		PassAjaxResponseToFunction('@{Application.exibirConhecimentosRelacionados()}?' + params, 'carregouConhecimentosRelacionados" null, false, null);
+		var url = '@{Application.exibirConhecimentosRelacionados()}?' + params;
+		Siga.ajax(url, null, "GET", function(response){		
+			carregouConhecimentosRelacionados(response);
+		});
+		//PassAjaxResponseToFunction('@{Application.exibirConhecimentosRelacionados()}?' + params, 'carregouConhecimentosRelacionados', null, false, null);
 	}
 	
-	function carregouConhecimentosRelacionados(response, param){
+	function carregouConhecimentosRelacionados(response){
 		var div = document.getElementById('divConhecimentosRelacionados');
 		div.innerHTML = response;
 		var scripts = div.getElementsByTagName("script");
 		for(var i=0;i<scripts.length;i++)  
 		   eval(scripts[i].text);  
+		//jQuery.unblockUI();
 	}
 
 	function carregarPrioridade() {
@@ -127,9 +167,11 @@
 		params = gravidade.name + '=' + escape(gravidade.value) + '&' + 
 					urgencia.name + '=' + escape(urgencia.value) + '&' +
 					tendencia.name + '=' + escape(tendencia.value) + '&';
-					
-		ReplaceInnerHTMLFromAjaxResponse('@{Application.exibirPrioridade()}?' + params,
-				null, document.getElementById('divPrioridade'));
+		
+		var url = '@{Application.exibirPrioridade()}?' + params;
+		Siga.ajax(url, null, "GET", function(response){		
+			$("#divPrioridade").html(response);
+		});					
  	}
 	
 	// funções usadas para solicitações relacionadas
@@ -147,20 +189,20 @@
 					checkbox = divFiltroExistente.find(':checkbox')
 				
 				span.html(optionHtml.trim());
-				checkbox.attr('checked" true);
+				checkbox.attr('checked', true);
 			}
 			/** 
 			 * Caso nao exista a div, entao cria uma nova checkbox
 			 */
 			else {
 				var div = $('<div style="clear:both">');
-				div.attr('identificadorFiltro" optionVl);
+				div.attr('identificadorFiltro', optionVl);
 				
 				var input = $('<input class="filtro-sol-relacionadas" type="checkbox">');
-				input.attr('name" optionVl);
-				input.bind('change" carregarSolRelacionadas);
-				input.attr('checked" true);
-				input.attr('disabled" $('#bodySolRelacionadas').attr('requesting'));
+				input.attr('name', optionVl);
+				input.bind('change', carregarSolRelacionadas);
+				input.attr('checked', true);
+				input.attr('disabled', $('#bodySolRelacionadas').attr('requesting'));
 
 				var label = $('<span style="margin-left:5px">');
 				label.html(optionHtml.trim());
@@ -249,7 +291,12 @@
 			if(existeFiltroSelecionavel()) {
 				var params = construirParametrosDoFiltro($('#formSolicitacao'));
 				iniciarCarregarSolicitacoesRelacionadas();
-				PassAjaxResponseToFunction('@{Application.listarSolicitacoesRelacionadas()}?' + params, 'carregouSolicitacoesRelacionadas" null, false, null);
+				//jQuery.blockUI(objBlock);
+				
+				var url = '@{Application.listarSolicitacoesRelacionadas()}?' + params;
+				Siga.ajax(url, null, "GET", function(response){
+					carregouSolicitacoesRelacionadas(response);
+				});				
 			}
 		}
 		// Senao, apenas mostra informacao
@@ -276,22 +323,23 @@
 		if($('#filtro input.filtro-sol-relacionadas:checked').size() > 0) {
 			$('#bodySolRelacionadas').html(response);
 		}
-		$('#filtro input').attr('disabled" false);
-		$('#bodySolRelacionadas').attr('requesting" false);
+		$('#filtro input').attr('disabled', false);
+		$('#bodySolRelacionadas').attr('requesting', false);
+		//jQuery.unblockUI();
 	}
 
 	function iniciarCarregarSolicitacoesRelacionadas() {
-		$('#filtro input').attr('disabled" true);
+		$('#filtro input').attr('disabled', true);
 		$('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Por favor aguarde. Carregando... </td></tr>");
-		$('#bodySolRelacionadas').attr('requesting" true);
+		$('#bodySolRelacionadas').attr('requesting', true);
 	}
 
 	function carregarFiltrosAoIniciar() {
 		var divFiltro = $('#filtro');
 		
-		addFiltroAoIniciar(divFiltro, '#solicitacaosolicitante" 'Solicitante" 'solicitacao.solicitante');
-		addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao" 'Item" 'solicitacao.itemConfiguracao');
-		addFiltroAoIniciar(divFiltro, '#selectAcao" 'Ação" 'solicitacao.acao');
+		addFiltroAoIniciar(divFiltro, '#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');
+		addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
+		addFiltroAoIniciar(divFiltro, '#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');
 
 		carregarFiltrosAtributos();
 		
@@ -392,25 +440,21 @@
 
 <div class="gt-bd gt-cols clearfix">
 	<div class="gt-content clearfix">
-		<h2>
-			<c:choose>
-				<c:when test="$solicitacao.idSolicitacao || solicitacao.solicitacaoPai}">${solicitacao.codigo}</c:when>
-				<c:otherwise>Cadastro de Solicita&ccedil;&atilde;o</c:otherwise>
-			</c:choose>
-		</h2>
+		<h2>#{if solicitacao.idSolicitacao || solicitacao.solicitacaoPai}${solicitacao.codigo}#{/if}
+			#{else}Cadastro de Solicita&ccedil;&atilde;o#{/else}</h2>
 		<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
 
-			<form action="@Application.gravar()"
-			enctype="multipart/form-data" id="formSolicitacao" onsubmit="javascript:return block();"> 
-				<c:if test="${solicitacao.solicitacaoPai}">
-					<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
-					value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
-				</c:if>
-				<c:if test="${if solicitacao.idSolicitacao}">
-					<input
-					type="hidden" name="solicitacao.idSolicitacao" id="idSol"
-					value="${solicitacao.idSolicitacao}" /> 
-				</c:if>
+			#{form @Application.gravar(),
+			enctype:'multipart/form-data',id:'formSolicitacao',onsubmit:'javascript:return block();' } 
+				#{if solicitacao.solicitacaoPai}
+				<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
+				value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
+				#{/if}
+				#{if solicitacao.idSolicitacao}
+				<input
+				type="hidden" name="solicitacao.idSolicitacao" id="idSol"
+				value="${solicitacao.idSolicitacao}" /> 
+				#{/if}
 				<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMMSS" 
 				value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
 				<input type="hidden"
@@ -424,43 +468,45 @@
 				</div>
 			</div>
 
-			<c:if test="${not empty errors}">
+			#{ifErrors}
 			<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram
 				preenchidos ${error}</p>
-			</c:if>
+			#{/ifErrors}
 			<div class="gt-form-row box-wrapper">
 				<div class="gt-form-row gt-width-66">
 					<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
 						type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
 						value="${cadastrante.sigla}" />
-						<input type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante.idPessoa" value="${cadastrante.idPessoa}" />
-						<input type="hidden" name="solicitacao.lotaCadastrante.idLotacao" value="${lotaTitular?.idLotacao}" />
+						<input type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante" value="${cadastrante.idPessoa}" />
+						<input type="hidden" name="solicitacao.lotaTitular" value="${lotaTitular?.idLotacao}" />
+						<input type="hidden" name="solicitacao.titular" value="${titular?.idPessoa}" />
 				</div>
 			</div>	 
 
 			<div class="gt-form-row gt-width-66">
-				<label>Solicitante</label> <sigasr:selecao tipo="pessoa"
-				nome="solicitacao.solicitante" value="${solicitacao.solicitante}"
-				onchange="carregarLocalRamalEMeioContato();carregarItem();
-				notificarCampoMudou('#solicitacaosolicitante','Solicitante', 'solicitacao.solicitante');" /> <span style="margin-left: 10px;"
-					id="spanInterlocutor"><siga:checkbox name="mostrarInterlocutor"
-					value="false" depende="interlocutor"/> Interlocutor</span>
-				<span style="color: red"><sigasr:error name="solicitacao.solicitante" /></span>
+				<label>Solicitante</label> #{selecao tipo:'pessoa',
+				nome:'solicitacao.solicitante', value:solicitacao.solicitante,
+				onchange:"carregarLocalRamalEMeioContato();carregarItem();
+				notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');" /} <span style="margin-left: 10px;"
+					id="spanInterlocutor">#{checkbox name:'mostrarInterlocutor',
+					value:false, depende:'interlocutor'/} Interlocutor</span>
+				<span style="color: red">#{error 'solicitacao.solicitante' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66" id="interlocutor"
 				style="display: none;">
-				<label>Interlocutor</label> <sigasr:selecao tipo="pessoa"
-				nome="solicitacao.interlocutor" value="${solicitacao.interlocutor}" />
+				<label>Interlocutor</label> #{selecao tipo:'pessoa',
+				nome:'solicitacao.interlocutor', value:solicitacao.interlocutor /}
 			</div>
 			
-			<div id="divLocalRamalEMeioContato"><jsp:include page="exibirLocalRamalEMeioContato.jsp"/></div>
+			<div id="divLocalRamalEMeioContato">#{include
+				'Application/exibirLocalRamalEMeioContato.html' /}</div>
 
 			<div class="gt-form-row gt-width-66">
 				<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>
-				<sigasr:select name="solicitacao.formaAcompanhamento"
-				items="${SrFormaAcompanhamento.values()}"
-				labelProperty="descrFormaAcompanhamento"
-				value="${solicitacao.formaAcompanhamento}" />
+				#{select name:'solicitacao.formaAcompanhamento',
+				items:models.SrFormaAcompanhamento.values(),
+				labelProperty:'descrFormaAcompanhamento',
+				value:solicitacao.formaAcompanhamento /}
 			</div>	
 				
 			<div class="gt-form-table">
@@ -469,14 +515,15 @@
 				</div>
 			</div>
 
-			<div id="divItem"><jsp:include page="exibirItemConfiguracao.jsp"/></div>
+			<div id="divItem">#{include
+				'Application/exibirItemConfiguracao.html' /}</div>
 
 			<div class="gt-form-row gt-width-66">
 				<label>Descrição</label>
 				<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
-					id="descrSolicitacao">${solicitacao.descrSolicitacao}</textarea>
-				<span style="color: red"><sigasr:error
-					name="solicitacao.descrSolicitacao" /></span>
+					id="descrSolicitacao" maxlength="8192">${solicitacao.descrSolicitacao}</textarea>
+				<span style="color: red">#{error
+					'solicitacao.descrSolicitacao' /}</span>
 			</div>
 			<div class="gt-form-row gt-width-66">
 				<label>Anexar arquivo</label> <input type="file"
@@ -489,37 +536,37 @@
 			</div>
 			<div class="gt-form-row box-wrapper">
 				<div class="gt-form-row gt-width-33">
-					<label>Gravidade</label> <sigasr:select name="solicitacao.gravidade" id="gravidade" items="${SrGravidade.values()}"
-					labelProperty="respostaEnunciado" value:solicitacao.gravidade ?: 'NORMAL" style="width:235px;" onchange="carregarPrioridade()' /}
+					<label>Gravidade</label> #{select name:'solicitacao.gravidade', id:'gravidade', items:models.SrGravidade.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.gravidade ?: 'NORMAL', style:'width:235px;', onchange:'carregarPrioridade()' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
-					<label>Urg&ecirc;ncia</label> <sigasr:select
-					name="solicitacao.urgencia" id="urgencia" items="${SrUrgencia.values()}"
-					labelProperty="respostaEnunciado" value="${solicitacao.urgencia ?: 'NORMAL'}" style="width:235px;" onchange="carregarPrioridade()" />
+					<label>Urg&ecirc;ncia</label> #{select
+					name:'solicitacao.urgencia', id:'urgencia', items:models.SrUrgencia.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.urgencia ?: 'NORMAL', style:'width:235px;', onchange:'carregarPrioridade()' /}
 				</div>
 				<div class="gt-form-row gt-width-33">
-					<label>Tend&ecirc;ncia</label> <sigasr:select
-					name="solicitacao.tendencia" id="tendencia" items="${SrTendencia.values()}",
-					labelProperty="respostaEnunciado" value="${solicitacao.tendencia ?: 'PIORA_MEDIO_PRAZO'}" style="width:235px;" onchange="carregarPrioridade()" />
+					<label>Tend&ecirc;ncia</label> #{select
+					name:'solicitacao.tendencia', id:'tendencia', items:models.SrTendencia.values(),
+					labelProperty:'respostaEnunciado', value:solicitacao.tendencia ?: 'PIORA_MEDIO_PRAZO', style:'width:235px;', onchange:'carregarPrioridade()' /}
 				</div>
 			</div>
 			<div id="divPrioridade" class="gt-form-row gt-width-66">
 				<label style="float: left">Prioridade: &nbsp;</label>
 				<span>${solicitacao.prioridade?.descPrioridade ?: models.SrPrioridade.PLANEJADO.descPrioridade}</span>
-				<sigasr:select
-					name="solicitacao.prioridade" id="prioridade" items="${SrPrioridade.values()}" 
-					labelProperty="descPrioridade" value:"${solicitacao.prioridade ?: 'PLANEJADO'}" style="width:235px;border:none;display:none;" />
+				#{select
+					name:'solicitacao.prioridade', id:'prioridade', items:models.SrPrioridade.values(), 
+					labelProperty:'descPrioridade', value:solicitacao.prioridade ?: 'PLANEJADO', style:'width:235px;border:none;display:none;'  /}
 					<br />
 			</div>
 
 
-			<c:if test="${solicitacao.podeAbrirJaFechando(lotaTitular,cadastrante)}">
+			#{if solicitacao.podeAbrirJaFechando(titular, lotaTitular)}
 			<div class="gt-form-row gt-width-66">
-				<label><siga:checkbox name="solicitacao.fecharAoAbrir"
-					value="${solicitacao.fecharAoAbrir}" depende="motivoFechamento"
-					disabled="${alterando}" /> Fechar o chamado logo ap&oacute;s a abertura</label>
+				<label>#{checkbox name:'solicitacao.fecharAoAbrir',
+					value:solicitacao.fecharAoAbrir, depende:'motivoFechamento',
+					disabled: alterando /} Fechar o chamado logo ap&oacute;s a abertura</label>
 			</div>
-			</c:if>
+			#{/if}
 
 			<div class="gt-form-row gt-width-66" id="motivoFechamento"
 				style="display: none">
@@ -527,35 +574,33 @@
 					name="solicitacao.motivoFechamentoAbertura"
 					id="motivoFechamentoAbertura" />
 			</div>
-			<c:choose>
-			<c:when test="${!solicitacao.jaFoiDesignada()}">
-					<br />
-				<div class="gt-form-row">
-					<label> <siga:checkbox name="solicitacao.rascunho"
-						value="${solicitacao.rascunho}" /> Rascunho </label>
-				</div>
-			</c:when>
-			<c:when test="${solicitacao.isPai() && solicitacao.idSolicitacao != null}">
-				<div class="gt-form-table">
-					<div class="barra-subtitulo header" align="center" valign="top"> Fechamento Automático</div>
-				</div>
-				<p> <siga:checkbox name="solicitacao.fechadoAutomaticamente"
-					value="${solicitacao.fechadoAutomaticamente}" />Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>.</p>
-				<br />
-			</c:when>
-			</c:choose>
+			#{if !solicitacao.jaFoiDesignada()}
+			<br />
+			<div class="gt-form-row">
+				<label> #{checkbox name:'solicitacao.rascunho',
+					value:solicitacao.rascunho /} Rascunho </label>
+			</div>
+			#{/if}
+			#{elseif solicitacao.isPai() && solicitacao.idSolicitacao != null}
+			<div class="gt-form-table">
+				<div class="barra-subtitulo header" align="center" valign="top"> Fechamento Automático</div>
+			</div>
+			<p> #{checkbox name:'solicitacao.fechadoAutomaticamente',
+				value:solicitacao.fechadoAutomaticamente /}Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>.</p>
+			<br />
+			#{/elseif}
 			<div class="gt-form-row">
 				<input type="submit" value="Gravar"
 					class="gt-btn-medium gt-btn-left" id="gravar" /> <a
 					href="@{Application.buscarSolicitacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
-			</form>
+			#{/form}
 		</div>
 	</div>
-	<jsp:include page="exibirCronometro.jsp"/>
-	<jsp:include page="exibirPendencias.jsp"/>
+	#{include 'Application/exibirCronometro.html' /}
+	#{include 'Application/exibirPendencias.html' /}
 	
-	<%--
+	*{
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content" id="solicitacoesRelacionadas">
 			<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
@@ -563,8 +608,8 @@
 				<label>Filtro</label>
 
 				<div id="filtro">
-					<span><siga:checkbox name="apenasFechados"
-					value="${apenasFechados}" /> Apenas Fechados</span>
+					<span>#{checkbox name:'apenasFechados',
+					value:apenasFechados /} Apenas Fechados</span>
 				</div>
 
 				<div class="gt-content-box "
@@ -588,7 +633,7 @@
 			</div>
 		</div>
 	</div>
-	-->
+	}*
 	
 	<div id="divConhecimentosRelacionados">
 	</div>

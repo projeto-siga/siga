@@ -8,6 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 
+import play.db.jpa.JPA;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -42,22 +43,8 @@ public class SrMarca extends CpMarca implements Comparable<SrMarca> {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_REF")
-	private SrSolicitacao solicitacao;
+	public SrSolicitacao solicitacao;
 	
-	/**
-	 * @return the solicitacao
-	 */
-	public SrSolicitacao getSolicitacao() {
-		return solicitacao;
-	}
-
-	/**
-	 * @param solicitacao the solicitacao to set
-	 */
-	public void setSolicitacao(SrSolicitacao solicitacao) {
-		this.solicitacao = solicitacao;
-	}
-
 	public SrMarca(){
 		
 	}
@@ -66,7 +53,7 @@ public class SrMarca extends CpMarca implements Comparable<SrMarca> {
 		if (pessoa != null)
 			setDpPessoaIni(pessoa.getPessoaInicial());
 		setDpLotacaoIni(lota.getLotacaoInicial());
-		setCpMarcador(em().find(CpMarcador.class, idMarcador));
+		setCpMarcador(JPA.em().find(CpMarcador.class, idMarcador));
 		solicitacao = sol;
 	}
 

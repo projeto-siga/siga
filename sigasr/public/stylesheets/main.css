@@ -55,11 +55,11 @@ div.right {
 }
 
 td.details-control {
-    background: url('/siga/css/famfamfam/icons/bullet_toggle_plus.png') no-repeat center center;
+    background: none !important;
     cursor: pointer;
 }
 tr.shown td.details-control {
-    background: url('/siga/css/famfamfam/icons/bullet_toggle_minus.png') no-repeat center center;
+    background: none !important;
 }
 
 td.padding-table {
@@ -99,16 +99,79 @@ td.padding-table {
 }
 
 .bt-expandir {
-    background: url("/siga/css/famfamfam/icons/bullet_toggle_plus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+    background: none !important;
     height: 25px;
     width: 30px;
     cursor: pointer;
 }
 		
 .bt-expandir.expandido {
-    background: url("/siga/css/famfamfam/icons/bullet_toggle_minus.png") no-repeat scroll center center rgba(0, 0, 0, 0) !important;
+    background: none !important;
 }
 
 .details-control {
 	width: 2%  !important;
+}
+
+.bt-expandir-tabela {
+	color: #333;
+	text-align: center;
+	width: 30px !important;
+}
+
+.error {
+   color: red !important;
+}
+
+.gt-btn-small, .gt-btn-medium, .gt-btn-large, .gt-btn-ativar {
+	cursor: pointer;
+}
+
+.configuracao-herdada td {
+	color: gray !important;
+}
+
+.checkbox-hidden {
+	visibility: hidden;
+}
+
+.solicitacao-codigo {
+	font-size: 13px;
+	font-weight: bold; 
+	border-bottom: 1px solid #ccc !important; 
+	padding: 7px 10px;
+}
+
+.solicitacao-dados {
+	font-size: 9pt;
+	padding: 7px 10px !important; 
+	border-bottom: 1px solid #ccc !important; 
+	text-align:justify;
+}
+
+.solicitacao-remover {
+	color: #333;
+	font-weight: bold;
+	padding: 7px 10px !important;
+}
+
+td.solicitacao-prioridade {
+	cursor:move;
+}
+
+.siga-multiple-select {
+	padding: 0px 5px 5px 5px;
+	text-align: right;
+}
+
+.ui-multiselect {
+	font-family: Helvetica, sans-serif; 
+	font: 13px/1.231 arial,helvetica,clean,sans-serif;
+	color: #333333;
+}
+
+div > ul > li {
+	list-style-type: none !important;
+	margin-left: 1em !important;
+	margin-bottom: 2px !important;
 }

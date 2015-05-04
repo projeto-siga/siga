@@ -447,7 +447,7 @@ public class CpDao extends ModeloDao {
 	public DpCargo consultarPorSigla(final DpCargo o) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpCargo");
-		query.setLong("idCargoIni", o.getIdCargoIni());
+		query.setString("siglaCargo", o.getSiglaCargo());
 
 		final List<DpCargo> l = query.list();
 		if (l.size() != 1)

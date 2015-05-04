@@ -1,7 +1,34 @@
-#<%@ include file="/WEB-INF/page/include.jsp"%>
-
-<siga:pagina titulo="Solicita&ccedil;&atilde;o">
+#{extends 'main.html' /} #{set title:'Movimentação de solicitação' /}
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
+
+<style>
+	ul.lista-historico li span {
+		text-decoration: line-through;
+	}
+	
+	ul.lista-historico li {
+		list-style: none;
+	}
+	
+	ul.lista-historico li.unico {
+		margin-left: 0px !important;
+	}
+	
+	button.button-historico {
+		padding-left: 2px;
+		padding-right: 2px;
+		width: 16px;
+	}
+	
+	.historico-label {
+		font-weight: bold;
+		margin-right: 4px;
+	}
+	
+	.hidden {
+		display: none;
+	}
+</style>
 
 <script>
 $(function() {
@@ -33,27 +60,35 @@ function postback(){
 		<h2>${solicitacao.codigo}</h2>
 		<p></p>
 		<h3>
-			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)} <c:if test="${solicitacao.solicitacaoPrincipal}"> - <a style="text-decoration: none"
+			${solicitacao.getMarcadoresEmHtml(titular, lotaTitular)} #{if
+			solicitacao.solicitacaoPrincipal} - <a style="text-decoration: none"
 				href="@{Application.exibir(solicitacao.solicitacaoPrincipal.idSolicitacao)}">
-				${solicitacao.solicitacaoPrincipal.codigo} </a> </c:if>
+				${solicitacao.solicitacaoPrincipal.codigo} </a> #{/if}
 		</h3>
 
-	    <sigasr:links acoes="${solicitacao.operacoes(lotaTitular, titular)}" base="${_base}" />
+		*{#{if solicitacao.estaForaAtendenteDesignado()}
+		<div
+			style="padding-bottom: 10px; vertical-align: top; color: #365b6d;">
+			<img src="/siga/css/famfamfam/icons/error.png"
+				style="margin-right: 1px;"> O atendente atual n&atilde;o &eacute; o
+			atendente designado.
+		</div>
+		#{/if}}* #{links acoes:solicitacao.operacoes(titular, lotaTitular), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-				${solicitacao.descrItem} -
-				${solicitacao.descrAcao}</p>
+				#{descricaoItem itemConfiguracao: solicitacao.itemAtual /} -
+				#{descricaoAcao acao: solicitacao.acaoAtual /}</p>
 			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 			<script language="javascript">
 				var descricao = document.getElementById('descrSolicitacao');
 				descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 			</script>
-			#{list items:solicitacao.atributoSolicitacaoSet, as:'att'} <c:if test="${
+			#{list items:solicitacao.atributoSolicitacaoSet, as:'att'} #{if
 			att.valorAtributoSolicitacao}
 			<p style="font-size: 9pt; padding: 0px">
 				<b>${att.atributo.nomeAtributo}:</b> ${att.valorAtributoSolicitacao}
 			</p>
-			</c:if> #{/list}
+			#{/if} #{/list}
 		</div>
 
 		<br/>
@@ -65,17 +100,24 @@ function postback(){
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-					value="${movimentacao.solicitacao.idSolicitacao}">*{ <c:if test="${
-				solicitacao.podeTrocarAtendente(lotaTitular, cadastrante)}
+					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
+				solicitacao.podeTrocarAtendente(titular, lotaTitular)}
+				#{set atendentes: solicitacao.pessoasAtendentesDisponiveis /}
+				
+				#{if atendentes.size >= 1}
 				<div class="gt-form-row">
 					<label>Atendente</label>
-					<div id="divAtendente">#{pessoaLotaSelecao
-						nomeSelLotacao:'movimentacao.lotaAtendente',
-						nomeSelPessoa:'movimentacao.atendente',
-						valuePessoa:movimentacao.atendente,
-						valueLotacao:movimentacao.lotaAtendente, disabled:disabled /></div>
+					<div id="divAtendente">
+					#{select name:'movimentacao.atendente',
+						items:atendentes,
+						labelProperty:'descricaoIniciaisMaiusculas',
+						value:solicitacao.atendente?.pessoaAtual?.idPessoa}
+					#{option 0}#{/option} 
+					#{/select}
+					</div>
 				</div>
-				</c:if>}*
+				#{/if}
+				#{/if}
 
 				<div style="display: inline" class="gt-form-row gt-width-66">
 					<label>Pr&oacute;ximo Andamento</label>
@@ -92,68 +134,68 @@ function postback(){
 		</div>
 
 		<p style="padding-top: 30px; font-weight: bold; color: #365b6d;" >
-		<c:if test="${ solicitacao.parteDeArvore}
+		#{if solicitacao.parteDeArvore}
 		#{checkbox name:'todoOContexto',
-					value:todoOContexto, onchange:'postback();' /> Todo o Contexto
+					value:todoOContexto, onchange:'postback();' /} Todo o Contexto
 		&nbsp;&nbsp;
-		</c:if>
+		#{/if}
 		#{checkbox name:'ocultas',
-					value:ocultas, onchange:'postback();' /> Mais Detalhes
+					value:ocultas, onchange:'postback();' /} Mais Detalhes
 		</p>
 		
 		<div class="gt-content-box">
 			<table border="0" width="100%" class="gt-table mov">
 				<thead>
 					<tr>
-						*{<c:if test="${ ocultas}
-						<th>#</th> </c:if>}*
+						*{#{if ocultas}
+						<th>#</th> #{/if}}*
 						<th>Momento</th>
-						<c:if test="${ todoOContexto}
-						<th>Solicita&ccedil;&atilde;o</th> </c:if>
+						#{if todoOContexto}
+						<th>Solicita&ccedil;&atilde;o</th> #{/if}
 						<th>Evento</th>
-						<th colspan="2">Cadastrante</th> <c:if test="${ ocultas}
-						<th colspan="2">Atendente</th> </c:if>
+						<th colspan="2">Cadastrante</th> #{if ocultas}
+						<th colspan="2">Atendente</th> #{/if}
 						<th>Descrição</th>
 					</tr>
 				</thead>
 				
 				<tbody>
-				<c:if test="${ movs}
+				#{if movs}
 					#{list items:movs, as:'movimentacao'}
-					<tr <c:if test="${ movimentacao.canceladoOuCancelador} class="disabled"</c:if>>
-						*{<c:if test="${ ocultas}
-						<td>${movimentacao.numSequencia}</td> </c:if>}*  <c:if test="${ ocultas}
-						<td>${movimentacao.dtIniMovDDMMYYHHMM}</td></c:if> #{else}
+					<tr #{if movimentacao.canceladoOuCancelador} class="disabled"#{/if}>
+						*{#{if ocultas}
+						<td>${movimentacao.numSequencia}</td> #{/if}}*  #{if ocultas}
+						<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>#{/if} #{else}
 						<td>${movimentacao.dtIniString}</td>#{/else} 
-						<c:if test="${ todoOContexto}
+						#{if todoOContexto}
 						<td><a style="color: #365b6d;" href="@{Application.exibir(movimentacao.solicitacao.idSolicitacao)}"
-	style="text-decoration: none"> ${movimentacao.solicitacao.numSequenciaString}</td> </c:if>
+	style="text-decoration: none"> ${movimentacao.solicitacao.numSequenciaString}</td> #{/if}
 						<td>${movimentacao.tipoMov.nome}</td>
 						<td>#{selecionado
 							sigla:movimentacao.lotaCadastrante?.siglaLotacao,
-							descricao:movimentacao.lotaCadastrante?.nomeLotacao /></td>
+							descricao:movimentacao.lotaCadastrante?.nomeLotacao /}</td>
 						<td>#{selecionado
 							sigla:movimentacao.cadastrante?.nomeAbreviado,
 							descricao:movimentacao.cadastrante?.descricaoIniciaisMaiusculas
-							/></td> <c:if test="${ ocultas}
+							/}</td> #{if ocultas}
 						<td>#{selecionado
 							sigla:movimentacao.lotaAtendente?.siglaLotacao,
-							descricao:movimentacao.lotaAtendente?.nomeLotacao /></td>
+							descricao:movimentacao.lotaAtendente?.nomeLotacao /}</td>
 						<td>#{selecionado
 							sigla:movimentacao.atendente?.nomeAbreviado,
-							descricao:movimentacao.atendente?.descricaoIniciaisMaiusculas /></td>
-						</c:if>
+							descricao:movimentacao.atendente?.descricaoIniciaisMaiusculas /}</td>
+						#{/if}
 						<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
-							<c:if test="${ movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
-							arquivo:movimentacao.arquivo /></c:if> 
-							<c:if test="${ movimentacao.tipoMov.idTipoMov == 16}
+							#{if movimentacao.arquivo}&nbsp;|&nbsp;#{arquivo
+							arquivo:movimentacao.arquivo /}#{/if} 
+							#{if movimentacao.tipoMov.idTipoMov == 16}
 							#{list items:movimentacao.respostaSet, as:'resposta'}
-								<c:if test="${ resposta.pergunta.tipoPergunta.idTipoPergunta == 1}<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.descrResposta}</c:if>
+								#{if resposta.pergunta.tipoPergunta.idTipoPergunta == 1}<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.descrResposta}#{/if}
 								#{elseif resposta.pergunta.tipoPergunta.idTipoPergunta == 2}<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.grauSatisfacao}
 								#{/elseif}
 								</li>
 							#{/list}
-							</c:if>
+							#{/if}
 						</td>
 						<script language="javascript">
 							var descricao = document.getElementById('descrMovimentacao${movimentacao.idMovimentacao}');
@@ -162,7 +204,7 @@ function postback(){
 					</tr>
 					#{/list}
 				
-				</c:if>
+				#{/if}
 				#{else}
 					<tr><td align="center" colspan="10">N&atilde;o h&aacute; movimenta&ccedil;&otilde;es nesse modo de exibi&ccedil;&atilde;o</td></tr>
 				#{/else}
@@ -172,39 +214,39 @@ function postback(){
 
 	</div>
 	
-	#{include 'Application/exibirCronometro.html' />
-	#{include 'Application/exibirPendencias.html' />
+	#{include 'Application/exibirCronometro.html' /}
+	#{include 'Application/exibirPendencias.html' /}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Solicitação</h3>
 			<p>
 				<b>Solicitante:</b>
-				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} <c:if test="${
-				solicitacao.local} (${solicitacao.local.nomeComplexo}) </c:if>
+				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
+				solicitacao.local} (${solicitacao.local.nomeComplexo}) #{/if}
 			</p>
-			<c:if test="${ solicitacao.interlocutor}
+			#{if solicitacao.interlocutor}
 			<p>
 				<b>Interlocutor:</b>
 				${solicitacao.interlocutor.descricaoIniciaisMaiusculas}
 			</p>
-			</c:if>
-			<c:if test="${ solicitacao.dtOrigem}
+			#{/if}
+			#{if solicitacao.dtOrigem}
 			<p>
 				<b>Contato Inicial:</b>
-				${solicitacao.dtOrigemString}<c:if test="${ solicitacao.meioComunicacao}, por ${solicitacao.meioComunicacao.descrMeioComunicacao}</c:if>
+				${solicitacao.dtOrigemString}#{if solicitacao.meioComunicacao}, por ${solicitacao.meioComunicacao.descrMeioComunicacao}#{/if}
 			</p>
-			</c:if>
-			<c:if test="${ solicitacao.meioComunicacao}
+			#{/if}
+			#{if solicitacao.meioComunicacao}
 			<p>
 				<b>Origem da Demanda:</b>
 				${solicitacao.meioComunicacao?.descrMeioComunicacao}
 			</p>
-			</c:if>
-			<c:if test="${ solicitacao.telPrincipal}
+			#{/if}
+			#{if solicitacao.telPrincipal}
 			<p>
 				<b>Telefone:</b> ${solicitacao.telPrincipal}
 			</p>
-			</c:if>
+			#{/if}
 			<p>
 				<b>Cadastrante:</b>
 				${solicitacao.cadastrante?.descricaoIniciaisMaiusculas}
@@ -212,35 +254,59 @@ function postback(){
 			*{<p>
 				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>}*
-			<c:if test="${ solicitacao.isEscalonada()}
-				#{set itemEscalonar : solicitacao.getItemAposEscalonar().toString().raw() />
-				#{set acaoEscalonar : solicitacao.getAcaoAposEscalonar().toString().raw() />
-			</c:if>
+			#{if solicitacao.isEscalonada()}
+				#{set itemEscalonar : solicitacao.getItemAtual().toString().raw() /}
+				#{set acaoEscalonar : solicitacao.getAcaoAtual().toString().raw() /}
+			#{/if}
 			<p>
-				<b>Item de Configuração:</b>
-				${itemEscalonar ?: solicitacao.siglaEDescrItem}
+				<span class="historico-label">Item de Configuração:</span>
+				<div class="historico-item-container hidden">
+					<button type="button" class="button-historico" title="Clique para abrir/fechar o histórico">+</button>
+				
+					<ul class="lista-historico historico-item">
+						#{list items:solicitacao.historicoItem, as:'item'}
+							<li>
+								<span>${item.sigla} - ${item.descricao}</span>
+							</li>
+						#{/list}
+					</ul>
+				</div>
 			</p>
 			<p>
-				<b>Ação:</b>
-				${acaoEscalonar ?: solicitacao.siglaEDescrAcao}
+				<span class="historico-label">A&ccedil;&atilde;o:</span>
+				<div class="historico-acao-container hidden">
+					<button type="button" class="button-historico" title="Clique para abrir/fechar o histórico">+</button>
+					
+					<ul class="lista-historico historico-acao">
+						#{list items:solicitacao.historicoAcao, as:'acao'}
+							<li>
+								<span>${acao.siglaAcao} - ${acao.descricao}</span>
+							</li>
+						#{/list}
+					</ul>
+				</div>
 			</p>
-			<c:if test="${ (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /> </c:if>
-			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' />
-			#{/elseif} #{else} #{set priorColor:'' /> #{/else}
+			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
+			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
+			#{/elseif} #{else} #{set priorColor:'' /} #{/else}
 			<p>
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
 					<br /> ${solicitacao.GUTString}</span>
 			</p>
-			<c:if test="${ solicitacao.fechadoAutomaticamente != null && solicitacao.isPai()}
+			<p>
+				<b>Notificação:</b>
+				${solicitacao.formaAcompanhamento.descrFormaAcompanhamento.raw()}
+			</p>
+			#{if solicitacao.fechadoAutomaticamente != null && solicitacao.isPai()}
 			<p>
 				<b>Fechamento Automático:</b> ${solicitacao.fechadoAutomaticamente.yesno('Sim', 'Não')  }
 			</p>
-			</c:if>
+			#{/if}
 		</div>
 	</div>
 
-	#{set vinculadas:solicitacao.solicitacoesVinculadas />
-	<c:if test="${ vinculadas}
+	#{set vinculadas:solicitacao.solicitacoesVinculadas /}
+	#{if vinculadas}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Veja Tamb&eacute;m</h3>
@@ -251,30 +317,30 @@ function postback(){
 			</p>
 		</div>
 	</div>
-	</c:if> 
-	<c:if test="${ solicitacao.parteDeArvore}
+	#{/if} 
+	#{if solicitacao.parteDeArvore}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Contexto</h3>
 			<p>#{listaArvore
-				solicitacao:solicitacao.paiDaArvore,visualizando:solicitacao /></p>
+				solicitacao:solicitacao.paiDaArvore,visualizando:solicitacao /}</p>
 		</div>
 	</div>
-	</c:if> <c:if test="${ solicitacao.temArquivosAnexos()}
+	#{/if} #{if solicitacao.temArquivosAnexos()}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Arquivos Anexos</h3>
 			<p>
-				#{arquivo arquivo:solicitacao.arquivoAnexoNaCriacao /> <br /> #{list
+				#{arquivo arquivo:solicitacao.arquivoAnexoNaCriacao /} <br /> #{list
 				items:solicitacao.movimentacoesAnexacao, as:'anexacao'} #{arquivo
-				arquivo:anexacao.arquivo /> ${anexacao.descrMovimentacao}<br />
+				arquivo:anexacao.arquivo /} ${anexacao.descrMovimentacao}<br />
 				#{/list}
 			</p>
 		</div>
 	</div>
-	</c:if> 
-	#{set juntadas:solicitacao.solicitacoesJuntadas />
-	<c:if test="${ juntadas}
+	#{/if} 
+	#{set juntadas:solicitacao.solicitacoesJuntadas /}
+	#{if juntadas}
 		<div class="gt-sidebar">
 			<div class="gt-sidebar-content">
 				<h3>Solicita&ccedil;&otilde;es juntadas</h3>
@@ -285,36 +351,33 @@ function postback(){
 				</p>
 			</div>
 		</div>
-	</c:if>
-	<c:if test="${ solicitacao.emLista}
+	#{/if}
+	#{if solicitacao.emLista}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Listas de Prioridade</h3>
-			<p>
+				<ul>
 				#{list items:solicitacao.listasAssociadas, as:'listas'}
-				<tr>
-					<td class="gt-form-row gt-width-66"
-						style="font-size: 13px; font-weight: bold; ! important; padding: 7px 10px;">
+					<li>
 						&nbsp; <input type="hidden" name="idlista"
 						value="${listas?.idLista}"> <a
 						style="color: #365b6d; text-decoration: none"
 						href="@{Application.exibirLista(listas?.idLista)}">
 							${listas?.listaAtual?.nomeLista} </a>
-					</td>
-				</tr>
+					</li>
 				#{/list}
-			</p>
+				</ul>
 		</div>
 	</div>
-	</c:if> 
+	#{/if} 
 	
-	<c:if test="${ solicitacao.estaCom(lotaTitular, cadastrante) || exibirMenuAdministrar}
-		#{include 'Application/exibirAcordos.html' />
-	</c:if>
+	#{if solicitacao.estaCom(titular, lotaTitular) || exibirMenuAdministrar}
+		#{include 'Application/exibirAcordos.html' /}
+	#{/if}
 	
 	
 	<div id="divConhecimentosRelacionados">#{include
-				'Application/exibirConhecimentosRelacionados.html' /></div>
+				'Application/exibirConhecimentosRelacionados.html' /}</div>
 	
 	#{modal nome:'anexarArquivo', titulo:'Anexar Arquivo'}
 	<div class="gt-content-box gt-form">
@@ -358,7 +421,7 @@ function postback(){
 	#{/modal}
 		
 	#{modal nome:'escalonar', titulo:'Escalonar Solicitação', 
-				url:'/sigasr/solicitacao/escalonar?id='+solicitacao.idSolicitacao  />
+				url:'/sigasr/solicitacao/escalonar?id='+solicitacao.idSolicitacao  /}
 
 	#{modal nome:'juntar', titulo:'Juntar'}
 		<form action="@{Application.juntar()}" method="post" enctype="multipart/form-data"
@@ -370,7 +433,7 @@ function postback(){
 				<label>Solicitação</label> <br />
 				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeJuntada',
 					value: idSolicitacaoRecebeJuntada, grande:true,
-					onchange: "validarAssociacao('Juncao');"  />
+					onchange: "validarAssociacao('Juncao');"  /}
 				<span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
 			</div>
 			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
@@ -393,7 +456,7 @@ function postback(){
 				<label>Solicitação</label> <br />
 				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeVinculo',
 					value: idSolicitacaoRecebeVinculo, grande:true,
-					onchange: "validarAssociacao('Vinculo');"  />
+					onchange: "validarAssociacao('Vinculo');"  /}
 				<span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
 			</div>
 			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
@@ -428,7 +491,7 @@ function postback(){
 			<label>Motivo</label>
 			#{select
 								name:'motivo', items:models.SrTipoMotivoPendencia.values(),
-								labelProperty:'descrTipoMotivoPendencia', style:'width:235px;' />
+								labelProperty:'descrTipoMotivoPendencia', style:'width:235px;' /}
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Detalhamento do Motivo</label>
@@ -533,11 +596,89 @@ function postback(){
 #{/modal}
 
 <script>
-$("#terminarPendenciaModal_dialog").dialog({
-    autoOpen: false,
-    height: 'auto',
-    width: 'auto',
-    modal: true,
-    resizable: false
-  });
+	$("#terminarPendenciaModal_dialog").dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: 'auto',
+	    modal: true,
+	    resizable: false
+	});
+
+	var MostradorHistorico = function(container, emptyMessage) {
+		var url = container.find('ul'),
+			intermediarios = url.find('li span:not(:first):not(:last)'),
+			button = container.find('button'),
+			me = this,
+			TAMANHO_MAXIMO_DESCRICAO = 50;
+		
+		button.bind('click', function() {
+			me.toogleItens();
+		});
+		
+		this.toogleItens = function() {
+			intermediarios.toggleClass('hidden');
+	 		if(intermediarios.hasClass('hidden'))
+	 			button.html('+');
+	 		else {
+	 			button.html('-');
+	 		}
+		}
+
+		this.init = function() {
+			this.adicionarMensagemSeVazio();
+			this.verificarIntermediarios();
+			this.formatarDescricoes();
+			this.formatarLabel();
+			container.removeClass('hidden');
+		}
+
+		this.verificarIntermediarios = function() {
+			if(intermediarios.size() > 0) {
+				this.toogleItens();
+			} else {
+				button.remove();
+			}
+		}
+
+		this.formatarDescricoes = function() {
+			url.find('li span').each(function() {
+				var me = $(this),
+					html = me.html();
+				
+				if(html.length > TAMANHO_MAXIMO_DESCRICAO) {
+					me.attr('title', html);
+					me.css('cursor', 'default');
+					me.html(html.substr(0, TAMANHO_MAXIMO_DESCRICAO) + "...");
+				}
+			});
+			url.find('li span:last').css('text-decoration', 'none');
+		}
+
+		this.adicionarMensagemSeVazio = function() {
+			var lis = url.find('li');
+			if(lis.size() == 0) {
+				url.append('<li><span>' + emptyMessage + '</li></span>')
+			}
+		}
+
+		this.formatarLabel = function() {
+			if(container.find('ul li span').size() == 1) {
+				container
+					.prev('p')
+					.find('.historico-label')
+					.css('float', 'left');
+				container.find('ul li').addClass('unico');
+			} else if(container.find('ul li span').size() > 2) {
+				container
+					.find('.lista-historico')
+					.css('margin-top', '-20px');
+			}
+		}
+	}
+
+	new MostradorHistorico($('.historico-item-container'), "Item não informado")
+		.init();
+
+	new MostradorHistorico($('.historico-acao-container'), "Ação não informada")
+		.init();
 </script>

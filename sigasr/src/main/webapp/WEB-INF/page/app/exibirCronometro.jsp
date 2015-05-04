@@ -1,31 +1,45 @@
-<c:set var="cron" value="${solicitacao.cronometro}" />
+#{set cron:solicitacao.cronometro /}
 
 
 <script type="text/javascript">
 
 	$(document).ready(function() {
-		atualizaRelogio(${cron.remanescente});
-	})
+		#{if cron.decorrido != null}
+		atualizaDecorrido(${cron.decorrido});
+		#{/if}
+
+		#{if cron.restante != null}	
+		atualizaRestante(${cron.restante});
+		#{/if}
+	});
 	
-	function atualizaRelogio(tempo) { 
-	   	$('#valorRemanescente').html(intervalo(tempo));
-	   
-	   	if (tempo >=0){
-	   		$('#descrRemanescente').html('Restante: ').css('color', 'black');
-	   		$('#valorRemanescente').css('color', 'black');
+	function atualizaDecorrido(tempo){
+		$('#valorDecorrido').html(toString(tempo));
+		#{if cron.ligado}
+	   	setTimeout(function() {
+	   		atualizaDecorrido(tempo + 1000);
+	   	}, 1000);
+	   	#{/if}
+	}
+	
+	function atualizaRestante(tempo) { 
+	   	$('#valorRestante').html(toString(tempo));
+
+		if (tempo > 0){
+	   		$('#descrRestante').html('Restante: ');
 		} else {
-			$('#descrRemanescente').html('Atraso: ').css('color', 'red');
-			$('#valorRemanescente').css('color', 'red');
+			$('#descrRestante').html('Atraso: ').css('color', 'red');
+			$('#valorRestante').css('color', 'red');
 		}
 	   	
-		<c:if test="${cron.ligado}">
+		#{if cron.ligado}
 	   	setTimeout(function() {
-	   		atualizaRelogio(tempo - 1000);
+	   		atualizaRestante(tempo - 1000);
 	   	}, 1000);
-	   	</c:if>
-	}; 
+	   	#{/if}
+	}
 
-	function intervalo(tempo) {
+	function toString(tempo) {
 
 		if (tempo < 0)
 			tempo *= -1;
@@ -95,14 +109,17 @@
 			<img src="/siga/css/famfamfam/icons/clock.png" width="15px;"
 				style="vertical-align: bottom;">&nbsp;${cron.descricao}
 		</h3>
-		<c:if test="${cron.inicio}">
-		<p><b>In&iacute;cio: </b>${cron.inicio}</p>
-		</c:if>
-		<c:if test="${cron.fim}">
-		<p><b>Fim #{if cron.ligado}previsto#{/if}: </b>${cron.fim}</p>
-		</c:if>
-		<c:if test="${cron.remanescente}">
-		<p><span style="font-weight: bold" id="descrRemanescente"></span><span id="valorRemanescente"></span></p>
-		</c:if>
+		#{if cron.inicio}
+		<p><b>In&iacute;cio: </b>${cron.inicioString}</p>
+		#{/if}
+		#{if cron.fim}
+		<p><b>Fim: </b>${cron.fimString}</p>
+		#{/if}
+		#{if cron.decorrido != null}
+		<p><span style="font-weight: bold; color: black;" id="descrDecorrido">Decorrido:&nbsp;</span><span id="valorDecorrido" style="color: black;" ></span></p>
+		#{/if}
+		#{if cron.restante != null}
+		<p><span style="font-weight: bold; color: black;" id="descrRestante">Restante:&nbsp;</span><span id="valorRestante" style="color: black;" ></span></p>
+		#{/if}
 	</div>
 </div>

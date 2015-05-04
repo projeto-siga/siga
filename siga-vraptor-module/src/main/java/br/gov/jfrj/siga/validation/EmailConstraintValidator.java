@@ -22,13 +22,13 @@ public class EmailConstraintValidator implements ConstraintValidator<Email, Stri
 	}
 
 	public boolean validarEmail(String valor, Boolean aceitaNulos) {
+		if (aceitaNulos && (valor == null || valor.equals(""))) {
+			return true;
+		}
 		Pattern p = Pattern.compile(EMAIL_PATTERN);
 		Matcher m = p.matcher(valor);
 		boolean matchFound = m.matches();
 
-		if (valor.equals("") && aceitaNulos) {
-			return true;
-		}
 
 		if (matchFound) {
 			return true;

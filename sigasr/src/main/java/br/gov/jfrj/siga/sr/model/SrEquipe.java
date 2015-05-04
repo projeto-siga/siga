@@ -12,19 +12,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
+import br.gov.jfrj.siga.sr.util.Util;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_EQUIPE", schema = "SIGASR")
 public class SrEquipe extends HistoricoSuporte {
 
-	public static ActiveRecord<SrEquipe> AR = new ActiveRecord<>(SrEquipe.class);
-	
 	/**
 	 * 
 	 */
@@ -34,14 +38,17 @@ public class SrEquipe extends HistoricoSuporte {
 	@SequenceGenerator(sequenceName = "SIGASR.SR_EQUIPE_SEQ", name = "srEquipeSeq")
 	@GeneratedValue(generator = "srEquipeSeq")
 	@Column(name = "ID_EQUIPE")
-	private Long idEquipe;
+	public Long idEquipe;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_LOTA_EQUIPE")
-	private DpLotacao lotacao;
+	public DpLotacao lotacao;
 	
 	@OneToMany(targetEntity = SrExcecaoHorario.class, mappedBy = "equipe", fetch = FetchType.LAZY)
-	private List<SrExcecaoHorario> excecaoHorarioSet;
+	public List<SrExcecaoHorario> excecaoHorarioSet;
+	
+	@Transient
+	private DpLotacao lotacaoEquipe;
 
 	@Override
 	public Long getId() {
@@ -51,30 +58,6 @@ public class SrEquipe extends HistoricoSuporte {
 	@Override
 	public void setId(Long id) {
 		this.idEquipe = id;
-	}
-
-	public Long getIdEquipe() {
-		return idEquipe;
-	}
-
-	public void setIdEquipe(Long idEquipe) {
-		this.idEquipe = idEquipe;
-	}
-
-	public DpLotacao getLotacao() {
-		return lotacao;
-	}
-
-	public void setLotacao(DpLotacao lotacao) {
-		this.lotacao = lotacao;
-	}
-
-	public List<SrExcecaoHorario> getExcecaoHorarioSet() {
-		return excecaoHorarioSet;
-	}
-
-	public void setExcecaoHorarioSet(List<SrExcecaoHorario> excecaoHorarioSet) {
-		this.excecaoHorarioSet = excecaoHorarioSet;
 	}
 
 	@Override
@@ -87,12 +70,12 @@ public class SrEquipe extends HistoricoSuporte {
 	// fazer automaticamente a conexao abaixo, entre os horarios e a equipe,
 	// visto que a equipe nao tem ID
 	@Override
-	public void salvarComHistorico() throws Exception {
-		super.salvarComHistorico();
+	public void salvar() throws Exception {
+		super.salvar();
 		if (excecaoHorarioSet != null)
 			for (SrExcecaoHorario eh : excecaoHorarioSet) {
-				eh.setEquipe(this);
-				eh.save();
+				eh.equipe = this;
+				eh.salvar();
 			}
 	}
 
@@ -100,7 +83,7 @@ public class SrEquipe extends HistoricoSuporte {
 		if (lotacao == null)
 			return null;
 		else
-			return SrConfiguracao.listarDesignacoes(false, lotacao);
+			return SrConfiguracao.listarDesignacoes(this);
 	}
 
 	public static List<SrEquipe> listar(boolean mostrarDesativados) {
@@ -114,7 +97,7 @@ public class SrEquipe extends HistoricoSuporte {
 			sb.append(" SrEquipe GROUP BY hisIdIni) ");
 		}
 		
-		return SrEquipe.AR.find(sb.toString()).fetch();
+		return SrEquipe.find(sb.toString()).fetch();
 		
 	}
 	
@@ -122,4 +105,40 @@ public class SrEquipe extends HistoricoSuporte {
 		return lotaTitular.equivale(this.lotacao);
 	}
 
+	public String toJson() {
+		Gson gson = Util.createGson("lotacao", "lotacaoEquipe", "excecaoHorarioSet");
+		
+		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
+		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+		jsonObject.add("excecaoHorarioSet", excecaoHorarioArray());
+		jsonObject.add("lotacaoEquipe", gson.toJsonTree(SelecionavelVO.createFrom(this.lotacao)));
+		
+		return jsonObject.toString();
+	}
+	
+	private JsonArray excecaoHorarioArray() {
+		Gson gson = Util.createGson("equipe");
+		JsonArray jsonArray = new JsonArray();
+		
+		if (this.excecaoHorarioSet != null)
+			for (SrExcecaoHorario srExcecaoHorario : this.excecaoHorarioSet) {
+				JsonObject jsonObjectExcecao = (JsonObject) gson.toJsonTree(srExcecaoHorario);
+				
+				if (srExcecaoHorario.diaSemana != null)
+					jsonObjectExcecao.add("descrDiaSemana", gson.toJsonTree(srExcecaoHorario.diaSemana.descrDiaSemana));
+				
+				jsonArray.add(jsonObjectExcecao);
+			}
+		
+		return jsonArray;
+	}
+	
+	public DpLotacao getLotacaoEquipe() {
+		return this.lotacaoEquipe != null ? this.lotacaoEquipe : this.lotacao;
+	}
+
+	public void setLotacaoEquipe(DpLotacao lotacaoEquipe) {
+		this.lotacaoEquipe = lotacaoEquipe;
+		this.lotacao = lotacaoEquipe;
+	}
 }

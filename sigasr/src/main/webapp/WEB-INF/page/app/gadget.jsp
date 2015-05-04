@@ -10,8 +10,8 @@
 			</tr>
 		</thead>
 		<tbody>
-			<c:set var="p" value="filtro.pesquisar=true" />
-			<c:forEach items="${contagens}" var="contagem">
+			#{set p:'filtro.pesquisar=true' /}
+			#{list items:contagens, as:'contagem'}
 			<tr>
 				<td><a
 					href="@{Application.buscarSolicitacao}?${p}&filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}">${contagem[1]}</a>
@@ -26,7 +26,7 @@
 					href="@{Application.buscarSolicitacao}?${p}&filtro.situacao=${contagem[0]}&filtro.lotaAtendente=${lotaTitular.idLotacao}&filtro.naoDesignados=true">${contagem[4]}</a>
 				</td>
 			</tr>
-			</c:otherwise>
+			#{/list}
 		</tbody>
 	</table>
 </div>

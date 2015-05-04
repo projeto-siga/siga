@@ -9,15 +9,13 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.model.Objeto;
+import play.db.jpa.GenericModel;
 
 @Entity
 @Table(name = "SR_TIPO_MOVIMENTACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class SrTipoMovimentacao extends Objeto {
+public class SrTipoMovimentacao extends GenericModel {
 
-	public static ActiveRecord<SrTipoMovimentacao> AR = new ActiveRecord<>(SrTipoMovimentacao.class);
-	
 	/**
 	 * 
 	 */
@@ -71,24 +69,14 @@ public class SrTipoMovimentacao extends Objeto {
 	
 	final static public long TIPO_MOVIMENTACAO_ESCALONAMENTO = 24;
 	
+//	public static ActiveRecord<SrTipoMovimentacao> AR = new ActiveRecord<>(SrTipoMovimentacao.class);
+	
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")
-	private long idTipoMov;
+	public long idTipoMov;
 
 	@Column(name = "NOME_TIPO_MOVIMENTACAO", nullable = false)
-	private String nome;
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public void setIdTipoMov(long idTipoMov) {
-		this.idTipoMov = idTipoMov;
-	}
+	public String nome;
 
 	public SrTipoMovimentacao(long idTipoMov, String nome) {
 		super();

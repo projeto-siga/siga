@@ -7,7 +7,7 @@
 		[Todos]
 	</option>
 	<c:forEach items="${todasFormasDocPorTipoForma}" var="item">
-		<option value="${item.idFormaDoc}" ${item.idFormaDoc == idFormaDocc ? 'selected' : ''}>
+		<option value="${item.idFormaDoc}" ${item.idFormaDoc == idFormaDoc ? 'selected' : ''}>
 			${item.descrFormaDoc}
 		</option>  
 	</c:forEach>

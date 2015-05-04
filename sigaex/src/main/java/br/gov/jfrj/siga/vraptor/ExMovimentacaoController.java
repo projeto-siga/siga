@@ -1947,7 +1947,7 @@ public class ExMovimentacaoController extends ExController {
 					sbHtml.toString());
 		}
 		
-		result.redirectTo("/app/expediente/doc/editar?sigla=" + sigla);
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
 	@Get("/app/expediente/mov/atender_pedido_publicacao")

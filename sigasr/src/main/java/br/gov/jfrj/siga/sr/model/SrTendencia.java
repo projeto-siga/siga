@@ -14,11 +14,11 @@ public enum SrTendencia {
 			"Piora imediata.",
 			"Vai piorar imediatamente");
 
-	private int nivelTendencia;
+	public int nivelTendencia;
 
-	private String descrTendencia;
+	public String descrTendencia;
 
-	private String respostaEnunciado;
+	public String respostaEnunciado;
 
 	SrTendencia(int nivel, String descricao) {
 		this(nivel, descricao, descricao);
@@ -28,30 +28,6 @@ public enum SrTendencia {
 			String respostaEnunciado) {
 		this.nivelTendencia = nivel;
 		this.descrTendencia = descrTendencia;
-		this.respostaEnunciado = respostaEnunciado;
-	}
-
-	public int getNivelTendencia() {
-		return nivelTendencia;
-	}
-
-	public void setNivelTendencia(int nivelTendencia) {
-		this.nivelTendencia = nivelTendencia;
-	}
-
-	public String getDescrTendencia() {
-		return descrTendencia;
-	}
-
-	public void setDescrTendencia(String descrTendencia) {
-		this.descrTendencia = descrTendencia;
-	}
-
-	public String getRespostaEnunciado() {
-		return respostaEnunciado;
-	}
-
-	public void setRespostaEnunciado(String respostaEnunciado) {
 		this.respostaEnunciado = respostaEnunciado;
 	}
 

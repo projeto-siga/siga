@@ -3,6 +3,9 @@
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
+<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
+<script src="/sigasr/public/javascripts/base-service.js"></script>
 
 <script type="text/javascript">
 	var telaOrigem = 'listarDesignacao';
@@ -38,6 +41,7 @@
 		}
 			
 		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
 				location.href = '@{Application.listarDesignacaoDesativados()}';
 			else
@@ -45,13 +49,22 @@
 		});
 	});
 </script>
-
+		
 <div class="gt-bd clearfix">
-	#{designacoes designacoes:designacoes, 
-		modoExibicao:'designacao', 
-		orgaos:orgaos, 
-		locais:locais, 
-		unidadesMedida:unidadesMedida, 
-		pesquisaSatisfacao:pesquisaSatisfacao, 
-		listasPrioridade:listasPrioridade /}
+	<div class="gt-content">
+		<h2>Designações</h2>
+		#{designacoes designacoes:designacoes, 
+			modoExibicao:'designacao', 
+			orgaos:orgaos, 
+			locais:locais, 
+			unidadesMedida:unidadesMedida, 
+			pesquisaSatisfacao:pesquisaSatisfacao, 
+			listasPrioridade:listasPrioridade /}
+	</div>
 </div>
+
+<script>
+	$(document).ready(function() {
+		designacaoService.configurarDataTable()
+	});
+</script>

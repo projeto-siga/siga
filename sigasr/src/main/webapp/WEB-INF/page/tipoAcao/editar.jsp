@@ -1,24 +1,16 @@
-<%-- #{extends 'main.html' /} #{set title:'Edição de Ação' /} --%>
-
 <div class="gt-form gt-content-box">
 	<form id="tipoAcaoForm">
 		<input type="hidden" name="idTipoAcao">
 
-<%-- 		#{ifErrors} --%>
-<!-- 		<p class="gt-error">Alguns campos obrigatórios não foram -->
-<%-- 			preenchidos ${error}</p> --%>
-<%-- 		#{/ifErrors} --%>
 		<div class="gt-form-row gt-width-66">
 			<label>C&oacute;digo<span>*</span></label>
-			<input type="text" name="siglaTipoAcao" maxlength="255" required/>
+			<input type="text" name="tipoAcao.siglaTipoAcao" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>T&iacute;tulo <span>*</span></label> <input type="text"
-				name="tituloTipoAcao" size="100" maxlength="255" required/>
+			<label>T&iacute;tulo <span>*</span></label> <input type="text" name="tipoAcao.tituloTipoAcao" size="100" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Descri&ccedil;&atilde;o</label> <input type="text"
-				name="descrTipoAcao" size="100" maxlength="255"/>
+			<label>Descri&ccedil;&atilde;o</label> <input type="text" name="tipoAcao.descrTipoAcao" size="100" maxlength="255"/>
 		</div>
 
 		<div class="gt-form-row">

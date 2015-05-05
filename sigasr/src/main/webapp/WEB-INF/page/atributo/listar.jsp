@@ -14,6 +14,7 @@
 	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.blockUI.js"></script>
+	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	
 	<style>
 		.ui-widget-content a[disabled] {
@@ -71,7 +72,7 @@
 	
 					<tbody>
 						<c:forEach items="${atts}" var="att">
-							<tr data-json-id="${att.idAtributo}" data-json="${att.toJson()}" onclick="atributoService.editar($(this).data('json'), 'Alterar atributo')" 
+							<tr data-json-id="${att.idAtributo}" data-json='${att.toJson()}' onclick="atributoService.editar($(this).data('json'), 'Alterar atributo')" 
 								style="cursor: pointer;">
 								<td>${att.nomeAtributo}</td>
 								<td>${att.descrAtributo}</td>
@@ -79,11 +80,10 @@
 								<td>${att.codigoAtributo}</td>
 								<td>${att.tipoAtributo.descrTipoAtributo}</td>
 								<td class="acoes">
-<%-- 									#{desativarReativar id:att.idAtributo, --%>
-<%-- 														onReativar:'atributoService.reativar', --%>
-<%-- 														onDesativar :'atributoService.desativar', --%>
-<%-- 														isAtivo:att.isAtivo() } --%>
-<%-- 									#{/desativarReativar} --%>
+									<siga:desativarReativar id="${att.idAtributo}"
+															onReativar="atributoService.reativar"
+															onDesativar="atributoService.desativar"
+															isAtivo="${att.isAtivo()}"></siga:desativarReativar>
 								</td>
 								<td>
 									${att.toJson()}
@@ -97,16 +97,12 @@
 			<div class="gt-table-buttons">
 				<a onclick="atributoService.cadastrar('Incluir Atributo')" class="gt-btn-medium gt-btn-left">Incluir</a>
 			</div>
-	
 		</div>
 	</div>
 	
-<%-- 	#{modal nome:'editarAtributo', titulo:'Cadastrar Atributo', largura: '820'}  --%>
-<%-- 		<div id="divEditarAtributoForm">#{include 'Application/editarAtributo.html' /}</div> --%>
-<%-- 	#{/modal} --%>
-	
-	
-	
+	<siga:modal nome="editarAtributo" titulo="Cadastrar Atributo" largura="820">
+		<div id="divEditarAtributoForm"><jsp:include page="editar.jsp"></jsp:include></div>
+	</siga:modal>
 	
 </siga:pagina>
 
@@ -214,9 +210,9 @@
 	});
 	
 	var opts = {
-		 urlDesativar : '@{Application.desativarAtributo()}?',
-		 urlReativar : '@{Application.reativarAtributo()}?',
-		 urlGravar : '@{Application.gravarAtributo()}',
+		 urlDesativar : '${linkTo[AtributoController].desativarAtributo}?',
+		 urlReativar : '${linkTo[AtributoController].reativarAtributo}?',
+		 urlGravar : '${linkTo[AtributoController].gravarAtributo}',
 		 dialogCadastro : $('#editarAtributo_dialog'),
 		 tabelaRegistros : $('#atributo_table'),
 		 objectName : 'atributo',
@@ -267,8 +263,7 @@
 	*/
 	atributoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
-		
-		// atualiza a lista de AssociaÃ§Ãµes
+// 		atualiza a lista de Associações
 		this.buscarAssociacoes(obj);
 	}
 	
@@ -285,11 +280,10 @@
 	
 	atributoService.buscarAssociacoes = function(assoc) {
 		associacaoService.limparDadosAssociacoes();
-		
 		if (assoc && this.getId(assoc)) {
 			$.ajax({
 		    	type: "GET",
-		    	url: "@{Application.buscarAssociacaoAtributo()}?idAtributo=" + this.getId(assoc),
+		    	url: "${linkTo[AtributoController].buscarAssociacaoAtributo}?idAtributo=" + this.getId(assoc),
 		    	dataType: "text",
 		    	success: function(obj) {
 		    		var associacaoJson = JSON.parse(obj);

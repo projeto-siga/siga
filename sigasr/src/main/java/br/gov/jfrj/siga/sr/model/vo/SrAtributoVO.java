@@ -26,7 +26,7 @@ public class SrAtributoVO {
 	public String descrPreDefinido;
 	public Long hisIdIni;
 	public List<SrConfiguracaoVO> associacoesVO;
-	
+
 	public SrAtributoVO(SrAtributo atributo, List<SrConfiguracao> associacoes) {
 		this.ativo = atributo.isAtivo();
 		this.idAtributo = atributo.getIdAtributo();
@@ -56,29 +56,26 @@ public class SrAtributoVO {
 		JsonObject jsonTree = (JsonObject) gson.toJsonTree(this);
 
 		if (this.tipoAtributo != null) {
-			jsonTree.add("descrTipoAtributo",
-					gson.toJsonTree(this.tipoAtributo.getDescrTipoAtributo()));
+			jsonTree.add("descrTipoAtributo", gson.toJsonTree(this.tipoAtributo.getDescrTipoAtributo()));
 		}
-		
+
 		if (this.objetivoAtributo != null) {
-			jsonTree.add("descrObjetivoAtributo",
-					gson.toJsonTree(this.objetivoAtributo.getDescricao()));
+			jsonTree.add("descrObjetivoAtributo", gson.toJsonTree(this.objetivoAtributo.getDescricao()));
 		}
-		
+
 		return jsonTree.toString();
 	}
 
 	public static SrAtributoVO createFrom(SrAtributo atributo, boolean listarAssociacoes) {
 		if (atributo != null) {
 			List<SrConfiguracao> associacoes = new ArrayList<SrConfiguracao>();
-			
+
 			if (listarAssociacoes)
-				associacoes = SrConfiguracao
-						.listarAssociacoesAtributo(atributo, Boolean.FALSE);
-			
+				associacoes = SrConfiguracao.listarAssociacoesAtributo(atributo, Boolean.FALSE);
+
 			return new SrAtributoVO(atributo, associacoes);
 		}
-		
+
 		return null;
 	}
 }

@@ -28,16 +28,19 @@
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Objetivo do atributo<span>*</span></label> 
-<%-- 			#{select id:'objetivoAtributo', name:'objetivoAtributo', items:objetivos, --%>
-<%-- 				labelProperty:'descrObjetivo', value:idObjetivo, style:'width:393px;', --%>
-<%-- 				onchange:'javascript:ocultaAssociacoes();', --%>
-<%-- 				class:'select-siga'/} --%>
+			<select id="objetivoAtributo" name="objetivoAtributo" class="select-siga" style="width:393px;" onchange="javascript:ocultaAssociacoes();">
+				<c:forEach items="${objetivos}" var="objetivo">
+					<option value="${objetivo.idObjetivo}">${objetivo.descrObjetivo}</option>
+				</c:forEach>
+			</select>
 		</div>
 		<div class="gt-form-row gt-width-100">
-			<label>Tipo de atributo</label> 
-<%-- 			#{select name:'tipoAtributo', items:models.SrTipoAtributo.values(), --%>
-<%-- 			labelProperty:'descrTipoAtributo', value:tipoAtributoAnterior, style:'width:100%', id:'tipoAtributo', --%>
-<%-- 			class:'select-siga' /} --%>
+			<label>Tipo de atributo</label>
+			<select id="tipoAtributo" name="tipoAtributo" class="select-siga" style="width:100%;">
+				<c:forEach items="${tiposAtributo}" var="tipoAtt">
+					<option value="${tipoAtt}">${tipoAtt.descrTipoAtributo}</option>
+				</c:forEach>
+			</select>
 		</div>
 		<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
 			<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
@@ -48,14 +51,12 @@
 		</div>
 	</form>
 	
-<%-- 	#{configuracaoAssociacao orgaos:orgaos, --%>
-<%-- 		locais:locais,  --%>
-<%-- 		itemConfiguracaoSet:itemConfiguracaoSet, --%>
-<%-- 		acoesSet:acoesSet, --%>
-<%-- 		modoExibicao:'atributo', --%>
-<%-- 		urlGravar:@Application.gravarAssociacao(), --%>
-<%-- 		validarCadastrar:podeCadastrarAssociacaoAtributo} --%>
-<%-- 	#{/configuracaoAssociacao} --%>
+	<siga:configuracaoAssociacao orgaos="${orgaos}"
+								 locais="${locais}"
+								 itemConfiguracaoSet="${itemConfiguracaoSet}"
+								 acoesSet="${acoesSet}"
+								 modoExibicao='atributo'
+								 urlGravar="${linkTo[AssociacaoController].gravar}"></siga:configuracaoAssociacao>
 		
 	<div class="gt-form-row" style="padding-top: 10px;">
 		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoService.gravar()"/>
@@ -122,47 +123,47 @@
 		return trItem.append(tdConteudo);
 	};
 
-	associacaoService.atualizarListaAssociacoes = function(jSon) {
-		associacaoTable.dataTable.api().clear().draw();
+// 	associacaoService.atualizarListaAssociacoes = function(jSon) {
+// 		associacaoTable.dataTable.api().clear().draw();
 		
-		if (jSon && jSon.associacoesVO) {
-			// cria a lista de associacoes, e adiciona na tela
-			for (i = 0; i < jSon.associacoesVO.length; i++) {
-				var assoc = jSon.associacoesVO[i],
-					html = 
-					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
-							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
-							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-						'</a>' +
-					'</td>',
+// 		if (jSon && jSon.associacoesVO) {
+// 			// cria a lista de associacoes, e adiciona na tela
+// 			for (i = 0; i < jSon.associacoesVO.length; i++) {
+// 				var assoc = jSon.associacoesVO[i],
+// 					html = 
+// 					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
+// 						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
+// 							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
+// 							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
+// 						'</a>' +
+// 					'</td>',
 
-					rowAssoc = [
-								' ',
-								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.id : ' ',
-								assoc.itemConfiguracaoUnitario? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
-								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.sigla : ' ',
-								assoc.acaoUnitaria? assoc.acaoUnitaria.id : ' ',
-								assoc.acaoUnitaria? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
-								assoc.acaoUnitaria? assoc.acaoUnitaria.sigla : ' ',
-								$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
-								getAtributoObrigatorioString(),
-								assoc.idConfiguracao,
-								html
-			   				];
+// 					rowAssoc = [
+// 								' ',
+// 								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.id : ' ',
+// 								assoc.itemConfiguracaoUnitario? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
+// 								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.sigla : ' ',
+// 								assoc.acaoUnitaria? assoc.acaoUnitaria.id : ' ',
+// 								assoc.acaoUnitaria? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
+// 								assoc.acaoUnitaria? assoc.acaoUnitaria.sigla : ' ',
+// 								$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
+// 								getAtributoObrigatorioString(),
+// 								assoc.idConfiguracao,
+// 								html
+// 			   				];
 	   				
-				// Adiciona na tabela de Associações
-				var newRow = associacaoTable.dataTable
-					.api()
-					.row
-					.add(rowAssoc),
-					node = $(newRow.node());
+// 				// Adiciona na tabela de Associações
+// 				var newRow = associacaoTable.dataTable
+// 					.api()
+// 					.row
+// 					.add(rowAssoc),
+// 					node = $(newRow.node());
 				
-				newRow.draw();
-				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
-			}
-		}
-	}
+// 				newRow.draw();
+// 				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
+// 			}
+// 		}
+// 	}
 
 	function transformStringToBoolean(value) {
 		if (value.constructor.name == 'String')

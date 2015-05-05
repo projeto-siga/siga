@@ -21,10 +21,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao.SrTipoAcaoVO;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,7 +32,7 @@ import com.google.gson.GsonBuilder;
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrAcao> {
+public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrAcao> {
 	private static final long serialVersionUID = 8387408543308440033L;
 
 	public static ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);

@@ -27,5 +27,5 @@
 </script>
 
 <input type="hidden" name="${name}" id="${name}" value="${value ? 'true':'false'}" />
-<input id="check${name}" type="checkbox" ${null != disabled ? "disabled='disabled'" : '' } value="true" ${value ? 'checked':''} 
+<input id="check${name}" type="checkbox" ${null != disabled ? "disabled='disabled'" : '' } ${value == true ? 'checked="checked"':''} 
 	onchange="javascript:change${name.replace('.', '')}(); show${name.replace('.', '')}(this.checked, '${depende}');${onchange}" />  

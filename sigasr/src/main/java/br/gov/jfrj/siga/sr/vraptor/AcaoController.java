@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
@@ -35,6 +36,10 @@ public class AcaoController extends SrController {
 		result.include("mostrarDesativados", mostrarDesativados);
 	}
 
+	public void listarDesativados() throws Exception {
+		listar(Boolean.TRUE);
+	}
+
 	//@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/editar/{id}")
 	public void editar(Long id) throws Exception {
@@ -46,15 +51,11 @@ public class AcaoController extends SrController {
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	public String gravarAcao(SrAcao acao) throws Exception {
+	public void gravarAcao(SrAcao acao) throws Exception {
 		validarFormEditarAcao(acao);
 		acao.salvar();
 
-		return acao.toJson();
-	}
-
-	public void listarDesativados() throws Exception {
-		listar(Boolean.TRUE);
+		result.use(Results.http()).body(acao.toJson());
 	}
 
 	/*
@@ -85,19 +86,20 @@ public class AcaoController extends SrController {
 	}
 	*/
 
-	public String desativarAcao(Long id, boolean mostrarDesativados) throws Exception {
+	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
 		//assertAcesso(ADM_ADMINISTRAR);
-		SrAcao acao = SrAcao.findById(id);
+		SrAcao acao = SrAcao.AR.findById(id);
 		acao.finalizar();
 
-		return acao.toJson();
+		result.use(Results.http()).body(acao.toJson());
 	}
 
-	public String reativarAcao(Long id, boolean mostrarDesativados) throws Exception {
+	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
 		//assertAcesso(ADM_ADMINISTRAR);
-		SrAcao acao = SrAcao.findById(id);
+		SrAcao acao = SrAcao.AR.findById(id);
 		acao.salvar();
-		return acao.toJson();
+
+		result.use(Results.http()).body(acao.toJson());
 	}
 
 

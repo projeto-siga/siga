@@ -51,7 +51,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 
 	private static final long serialVersionUID = 1L;
 //	private static final int NETO = 3;
-	
+
 	@SuppressWarnings("unused")
 	private static Comparator<SrItemConfiguracao> comparator = new Comparator<SrItemConfiguracao>() {
 		@Override
@@ -84,7 +84,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	@Lob
 	@Column(name = "DESCR_SIMILARIDADE", length = 8192)
 	public String descricaoSimilaridade;
-		
+
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ID_PAI")
 	public SrItemConfiguracao pai;
@@ -99,23 +99,23 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	//@OrderBy("hisDtIni desc")
 	public List<SrItemConfiguracao> meuItemHistoricoSet;
-   
+
 	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
     public Set<SrGestorItem> gestorSet;
 
 	@Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
 	public int numFatorMultiplicacaoGeral = 1;
-	
+
 	@OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
-	public Set<SrFatorMultiplicacao> fatorMultiplicacaoSet; 
-	
+	public Set<SrFatorMultiplicacao> fatorMultiplicacaoSet;
+
 	@Transient
 	public List<SrConfiguracao> designacoes;
-	
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_CONFIGURACAO")})
 	public List<SrConfiguracao> designacoesSet;
-	
+
 	public SrItemConfiguracao() {
 		this(null, null);
 	}
@@ -147,7 +147,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		}
 		return Boolean.TRUE;
 	}
-	
+
 	@Override
 	public Long getId() {
 		return idItemConfiguracao;
@@ -241,7 +241,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 									.toLowerCase().contains(s)))
 						naoAtende = true;
 				}
-				
+
 				if (naoAtende)
 					continue;
 			}
@@ -257,7 +257,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 			else
 				listaFinal.add(item);
 		}
-		
+
 		Collections.sort(listaFinal, new SrItemConfiguracaoComparator());
 		return listaFinal;
 	}
@@ -291,7 +291,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 			camposVazios++;
 			pos = getSigla().indexOf(".00", pos + 1);
 		}
-		
+
 		return 3 - camposVazios;
 	}
 
@@ -322,7 +322,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		return SrItemConfiguracao.find(
 				"byHisDtFimIsNullAndSiglaItemConfiguracao", sigla).first();
 	}
-	
+
 	public boolean isPaiDeOuIgualA(SrItemConfiguracao outroItem) {
 		if (outroItem == null || outroItem.getSigla() == null)
 			return false;
@@ -338,7 +338,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 
 	public static List<SrItemConfiguracao> listar(boolean mostrarDesativados) {
 		StringBuffer sb = new StringBuffer();
-		
+
 		if (!mostrarDesativados)
 			sb.append(" hisDtFim is null ");
 		else {
@@ -349,7 +349,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		sb.append(" order by siglaItemConfiguracao ");
 		return SrItemConfiguracao.find(sb.toString()).fetch();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<SrItemConfiguracao> listar(PaginaItemConfiguracao configuracao) {
 		if (configuracao.precisaExecutarCount()) {
@@ -363,7 +363,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		if (configuracao.getDirecaoOrdenacao() != null) {
 			sb.append(configuracao.getDirecaoOrdenacao());
 		}
-		
+
 		Query query = em().createQuery(sb.toString());
 		query.setFirstResult(configuracao.getFistResult());
 		query.setMaxResults(configuracao.getTamanho());
@@ -377,24 +377,24 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	private static Integer countAtivos(PaginaItemConfiguracao pagina) {
 		StringBuilder sb = querySelecionarAtivos("count(i)", pagina);
 		Query query = em().createQuery(sb.toString());
-		
+
 		if(pagina.possuiParametroConsulta()) {
 			query.setParameter("tituloOuCodigo", "%" + pagina.getTituloOuCodigo() + "%");
 		}
 		return ((Long) query.getSingleResult()).intValue();
 	}
-	
+
 	private static StringBuilder querySelecionarAtivos(String clause, PaginaItemConfiguracao pagina) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(MessageFormat.format("SELECT {0} FROM SrItemConfiguracao i WHERE hisDtFim is null ", clause));
-		
+
 		if(pagina.possuiParametroConsulta()) {
 			sb.append(" AND (UPPER(i.tituloItemConfiguracao) LIKE UPPER(:tituloOuCodigo) OR UPPER(i.siglaItemConfiguracao) LIKE UPPER(:tituloOuCodigo)) ");
 		}
 		sb.append(" AND idItemConfiguracao in (");
 		sb.append(" SELECT max(idItemConfiguracao) as idItemConfiguracao FROM ");
 		sb.append(" SrItemConfiguracao GROUP BY hisIdIni) ");
-		
+
 		return sb;
 	}
 
@@ -421,41 +421,41 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
     public String getTituloSlugify() {
 		return Texto.slugify(tituloItemConfiguracao, true, false);
 	}
-    
+
     @Override
     public void salvar() throws Exception {
     	if (getNivel() > 1 && pai == null) {
 			pai = getPaiPorSigla();
 		}
 		super.salvar();
-		
+
         if (gestorSet != null)
             for (SrGestorItem gestor : gestorSet){
                 gestor.itemConfiguracao = this;
                 gestor.salvar();
             }
-        
+
         if (fatorMultiplicacaoSet != null)
             for (SrFatorMultiplicacao fator : fatorMultiplicacaoSet){
                 fator.itemConfiguracao = this;
                 fator.salvar();
             }
-        
-        // DB1: precisa salvar item a item 
+
+        // DB1: precisa salvar item a item
       	if (this.designacoes != null) {
       		for (SrConfiguracao designacao : this.designacoes) {
       			// se for uma configuração herdada
-      			if (designacao.isHerdado) {
+      			if (designacao.isHerdado()) {
       				// se estiver marcada como "não Herdar"
-      				if (!designacao.utilizarItemHerdado) {
+      				if (!designacao.isUtilizarItemHerdado()) {
       					// cria uma nova entrada na tabela, para que seja ignorada nas próximas vezes
       					SrConfiguracaoIgnorada.createNew(this, designacao).salvar();
       				}
-      				
+
       				// verifica se existia entrada para "não Herdar", e remove (usuário marcou para usar herança)
       				else {
       					List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(designacao);
-      					
+
       					for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
       						// se a configuração for do Item ou de um de seus históricos, remove
       						if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
@@ -485,100 +485,100 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		}
 		return lista;
 	}
-	
+
 	@Override
 	public String toString() {
 		return siglaItemConfiguracao + " - " + tituloItemConfiguracao;
 	}
-	
+
 	public SrItemConfiguracaoVO toVO() {
 		return SrItemConfiguracaoVO.createFrom(this);
 	}
-	
+
 	/**
 	 * Retorna um Json de {@link SrItemConfiguracao}.
 	 */
 	public String getSrItemConfiguracaoJson() {
 		return this.toVO().toJson();
 	}
-	
+
 	public SrItemConfiguracao getPai() {
 		return pai;
 	}
-	
+
 	/**
 	 * Retorna a lista de {@link SrItemConfiguracao Pai} que este item possui.
 	 */
 	private List<SrItemConfiguracao> getListaPai() {
 		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
 		SrItemConfiguracao itemPai = this.getPai();
-		
+
 		while (itemPai != null) {
 			if (!lista.contains(itemPai))
 				lista.add(itemPai);
-				
+
 			itemPai = itemPai.getPai();
 		}
-		
+
 		return lista;
 	}
-	
+
 	/**
 	 * Lista as Designações que são vinculadas aos {@link SrItemConfiguracao Pai} deste item.
 	 */
 	public List<SrConfiguracao> getDesignacoesPai() {
 		List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
-		
+
 		for (SrItemConfiguracao pai : this.getListaPai()) {
 			for (SrConfiguracao confPai : pai.getDesignacoesAtivas()) {
-				confPai.isHerdado = true;
-				confPai.utilizarItemHerdado = true;
-				
+				confPai.setHerdado(true);
+				confPai.setUtilizarItemHerdado(true);
+
 				listasDesignacoesPai.add(confPai);
 			}
 		}
-		
+
 		return listasDesignacoesPai;
 	}
-	
-	
+
+
 	/**
 	 * Marca os itens como  herdados.
 	 */
 	public static List<SrConfiguracao> marcarComoHerdadas(List<SrConfiguracao> listasDesignacoesPai, SrItemConfiguracao item) {
 		Iterator<SrConfiguracao> i = listasDesignacoesPai.iterator();
-	
+
 		while (i.hasNext()) {
 			SrConfiguracao conf = i.next();
 			boolean encontrou = false;
-			
-			conf.isHerdado = true;
-			conf.utilizarItemHerdado = true;
-			
+
+			conf.setHerdado(true);
+			conf.setUtilizarItemHerdado(true);
+
 			List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(conf);
-			
+
 			for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
 				// Se a configuração for do Item, vai como desmarcado
 				if (item.getId().equals(igItem.itemConfiguracao.getId())) {
-					conf.utilizarItemHerdado = false;
+					conf.setUtilizarItemHerdado(false);
 				}
-				
+
 				// se a configuração for do Item (histórico), vai como desmarcado
 				else if (item.getHistoricoItemConfiguracao() != null && item.getHistoricoItemConfiguracao().size() > 0) {
 					for (SrItemConfiguracao itemHist : item.getHistoricoItemConfiguracao()) {
 						if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
-							conf.utilizarItemHerdado = false;
+							conf.setUtilizarItemHerdado(false);
 							encontrou = true;
 							break;
 						}
 					}
 				}
-				
+
 				else {
 					SrItemConfiguracao itemPai = item.getPai();
-					
+
 					while(itemPai != null) {
-						
+
 						// Se for configuração do pai, não aparece na tela caso esteja marcada para Ignorar no Pai
 						if (itemPai.getId().equals(igItem.itemConfiguracao.getId())) {
 							i.remove();
@@ -588,20 +588,20 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 							itemPai = itemPai.getPai();
 					}
 				}
-				
+
 				// Caso tenha encontrado a configuração correta, interrompe o loop
 				if (encontrou)
 					break;
 			}
 		}
-		
+
 		return listasDesignacoesPai;
 	}
-	
+
 	public Map<String, SrDisponibilidade> buscarDisponibilidadesPorOrgao(List<CpOrgaoUsuario> orgaos) {
 		return buscarDisponibilidadesPorOrgao(this, orgaos);
 	}
-	
+
 	public Map<String, SrDisponibilidade> buscarDisponibilidadesPorOrgao(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
 		if(itemConfiguracao != null) {
 			return SrDisponibilidade.buscarTodos(itemConfiguracao, orgaos);
@@ -612,11 +612,11 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	public Collection<SrDisponibilidade> encontrarDisponibilidades(List<CpOrgaoUsuario> orgaos) {
 		Map<String, SrDisponibilidade> disponibilidadesPai = buscarDisponibilidadesPaiPorOrgao(orgaos);
 		Map<String, SrDisponibilidade> disponibilidades = buscarDisponibilidadesPorOrgao(orgaos);
-		
+
 		Map<String, SrDisponibilidade> disponibilidadesSelecionadas = selecionarDisponibilidades(disponibilidadesPai, disponibilidades, orgaos);
 		return preencherDisponibilidadesVazias(disponibilidadesSelecionadas, orgaos);
 	}
-	
+
 	private Collection<SrDisponibilidade> preencherDisponibilidadesVazias(Map<String, SrDisponibilidade> disponibilidadesSelecionadas, List<CpOrgaoUsuario> orgaos) {
 		for (CpOrgaoUsuario cpOrgaoUsuario : orgaos) {
 			if (!disponibilidadesSelecionadas.containsKey(cpOrgaoUsuario.getSigla())) {
@@ -630,17 +630,17 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		if(this.pai != null) {
 			Map<String, SrDisponibilidade> disponibilidadesPai = buscarDisponibilidadesPorOrgao(this.pai, orgaos);
 			Map<String, SrDisponibilidade> disponibilidadesAvo = buscarDisponibilidadesPorOrgao(this.pai.pai, orgaos);
-			
+
 			return selecionarDisponibilidades(disponibilidadesAvo, disponibilidadesPai, orgaos);
 		}
 		return new HashMap<String, SrDisponibilidade>();
 	}
-	
+
 	private Map<String, SrDisponibilidade> selecionarDisponibilidades(Map<String, SrDisponibilidade> disponibilidades, Map<String, SrDisponibilidade> disponibilidadesPrioritarias, List<CpOrgaoUsuario> orgaos) {
 		Map<String, SrDisponibilidade> disponibilidadesPeriorizadas = new HashMap<String, SrDisponibilidade>();
 		for (CpOrgaoUsuario orgao : orgaos) {
 			SrDisponibilidade disponibilidade = selecionarDisponibilidadePrioritaria(disponibilidades, disponibilidadesPrioritarias, orgao);
-			
+
 			if(disponibilidade != null) {
 				SrDisponibilidade disponibilidadeSelecionada = disponibilidade.pertenceA(this) ? disponibilidade : disponibilidade.clonarParaCriarNovo(this);
 				disponibilidadesPeriorizadas.put(orgao.getSigla(), disponibilidadeSelecionada);
@@ -648,16 +648,16 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		}
 		return disponibilidadesPeriorizadas;
 	}
-	
+
 	private SrDisponibilidade selecionarDisponibilidadePrioritaria(Map<String, SrDisponibilidade> disponibilidades, Map<String, SrDisponibilidade> disponibilidadesPrioritarias, CpOrgaoUsuario orgao) {
 		SrDisponibilidade disponibilidade = disponibilidadesPrioritarias.get(orgao.getSigla());
-		
+
 		/**
 		 * Se o item nao tem disponibilidade para aquele orgao, entao retorna a disponibilidade do pai
 		 */
 		if (disponibilidade == null) {
 			return disponibilidades.get(orgao.getSigla());
-		} 
+		}
 		/**
 		 * Senao, se a disponibilidade do item eh nenhuma e o item pai possui disponibilidade, entao utiliza a disponibilidade do pai
 		 */
@@ -669,7 +669,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		}
 		return disponibilidade;
 	}
-	
+
 	public JsonArray criarDisponibilidadesJSON(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
 		JsonArray array = new JsonArray();
 		for (SrDisponibilidade disponibilidade : itemConfiguracao.encontrarDisponibilidades(orgaos)) {
@@ -677,19 +677,19 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		}
 		return array;
 	}
-	
+
 	public List<SrItemConfiguracao> getFilhoSet() {
 		List<SrItemConfiguracao> c = new ArrayList<SrItemConfiguracao>();
-		
+
 		if (this.filhoSet != null)
 			c.addAll(filhoSet);
-		
+
 		if (this.itemInicial != null && !this.itemInicial.getId().equals(this.getId()))
 			c.addAll(itemInicial.getFilhoSet());
-		
+
 		return c;
 	}
-	
+
 	public Collection<SrConfiguracao> getDesignacoesAtivas() {
 		Map<Long, SrConfiguracao> listaCompleta = new HashMap<Long, SrConfiguracao>();
 		if (this.itemInicial != null)
@@ -698,7 +698,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 					for (SrConfiguracao d : itenConf.designacoesSet)
 						if (d.isAtivo() && d.isDesignacao())
 							listaCompleta.put(d.getId(), d);
-		
+
 		return listaCompleta.values();
 	}
 }

@@ -10,13 +10,13 @@ import com.google.gson.GsonBuilder;
 /**
  * Classe que representa um {@link SrConfiguracaoAssociacaoVO VO} da classe
  * {@link SrConfiguracao}.
- * 
+ *
  * @author DB1
  */
 public class SrConfiguracaoAssociacaoVO {
 	public Long idConfiguracao;
 	public boolean atributoObrigatorio;
-	
+
 	public int tipoSolicitante;
 	public SelecionavelVO orgaoUsuario;
 	public SelecionavelVO complexo;
@@ -25,18 +25,18 @@ public class SrConfiguracaoAssociacaoVO {
 	public SrPrioridade prioridade;
 	public String descPrioridade;
 	public boolean ativo;
-	
+
 	public SrConfiguracaoAssociacaoVO(SrConfiguracao configuracao) {
 		this.idConfiguracao = configuracao.getIdConfiguracao();
-		this.atributoObrigatorio = configuracao.atributoObrigatorio;
-		
+		this.atributoObrigatorio = configuracao.isAtributoObrigatorio();
+
 		this.tipoSolicitante = configuracao.getTipoSolicitante();
 		this.orgaoUsuario = SelecionavelVO.createFrom(configuracao.getOrgaoUsuario());
 		this.complexo = CpComplexoVO.createFrom(configuracao.getComplexo());
 		this.solicitante = SelecionavelVO.createFrom(configuracao.getSolicitante());
-		this.atendente = SelecionavelVO.createFrom(configuracao.atendente);
-		this.prioridade = configuracao.prioridade;
-		this.descPrioridade = configuracao.prioridade != null ? configuracao.prioridade.descPrioridade : "";
+		this.atendente = SelecionavelVO.createFrom(configuracao.getAtendente());
+		this.prioridade = configuracao.getPrioridade();
+		this.descPrioridade = configuracao.getPrioridade() != null ? configuracao.getPrioridade().descPrioridade : "";
 		this.ativo = configuracao.isAtivo();
 	}
 

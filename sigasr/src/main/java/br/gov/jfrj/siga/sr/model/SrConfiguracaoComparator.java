@@ -17,11 +17,11 @@ public class SrConfiguracaoComparator extends CpConfiguracaoComparator {
 
 			// Quando c1 é mais abstrato, retorna 1.
 
-			if (srC1.itemConfiguracaoSet == null) {
-				if (srC2.itemConfiguracaoSet != null)
+			if (srC1.getItemConfiguracaoSet() == null) {
+				if (srC2.getItemConfiguracaoSet() != null)
 					return 1;
 			} else {
-				if (srC2.itemConfiguracaoSet == null)
+				if (srC2.getItemConfiguracaoSet() == null)
 					return -1;
 				else {
 					int nivelSrC1 = srC1.getNivelItemParaComparar();
@@ -33,11 +33,11 @@ public class SrConfiguracaoComparator extends CpConfiguracaoComparator {
 				}
 			}
 
-			if (srC1.acoesSet == null) {
-				if (srC2.acoesSet != null)
+			if (srC1.getAcoesSet() == null) {
+				if (srC2.getAcoesSet() != null)
 					return 1;
 			} else {
-				if (srC2.acoesSet == null)
+				if (srC2.getAcoesSet() == null)
 					return -1;
 				else {
 					int nivelSrC1 = srC1.getNivelAcaoParaComparar();
@@ -48,7 +48,7 @@ public class SrConfiguracaoComparator extends CpConfiguracaoComparator {
 						return -1;
 				}
 			}
-			
+
 		}
 
 		i = super.untieSelectedFields(c1, c2);

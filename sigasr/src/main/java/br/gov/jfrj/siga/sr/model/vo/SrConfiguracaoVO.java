@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 /**
  * Classe que representa um {@link SrConfiguracaoVO VO} da classe
  * {@link SrConfiguracao}.
- * 
+ *
  * @author DB1
  */
 public class SrConfiguracaoVO {
@@ -27,8 +27,8 @@ public class SrConfiguracaoVO {
 	public boolean atributoObrigatorio;
 	public boolean ativo;
 	public String descrConfiguracao;
-	
-	public List<SrListaVO> listaVO; 
+
+	public List<SrListaVO> listaVO;
 	public List<SrItemConfiguracaoVO> listaItemConfiguracaoVO;
 	public List<SrAcao.SrAcaoVO> listaAcaoVO;
 	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
@@ -37,7 +37,7 @@ public class SrConfiguracaoVO {
 	public SelecionavelVO complexo;
 	public SrPrioridade prioridade;
 	public String descPrioridade;
-	
+
 	// Solicitante
 	public SelecionavelVO dpPessoa;
 	public SelecionavelVO lotacao;
@@ -49,53 +49,53 @@ public class SrConfiguracaoVO {
 	public SrPrioridade prioridadeNaLista;
 	public String descPrioridadeNaLista;
 	public SelecionavelVO dpPessoaParaInclusaoAutomatica;
-	
+
 	public SrConfiguracaoVO(SrConfiguracao configuracao) {
 		idConfiguracao = configuracao.getId();
 		hisIdIni = configuracao.getHisIdIni();
-		isHerdado = configuracao.isHerdado;
-		utilizarItemHerdado = configuracao.utilizarItemHerdado;
+		isHerdado = configuracao.isHerdado();
+		utilizarItemHerdado = configuracao.isUtilizarItemHerdado();
 		ativo = configuracao.isAtivo();
 		descrConfiguracao = configuracao.getDescrConfiguracao();
-		prioridade = configuracao.prioridade;
-		prioridadeNaLista = configuracao.prioridadeNaLista;
-		descPrioridade = configuracao.prioridade != null ? configuracao.prioridade.descPrioridade : "";
-		descPrioridadeNaLista = configuracao.prioridadeNaLista != null ? configuracao.prioridadeNaLista.descPrioridade : "";
-		
-		if(configuracao.itemConfiguracaoSet != null) {
+		prioridade = configuracao.getPrioridade();
+		prioridadeNaLista = configuracao.getPrioridadeNaLista();
+		descPrioridade = configuracao.getPrioridade() != null ? configuracao.getPrioridade().descPrioridade : "";
+		descPrioridadeNaLista = configuracao.getPrioridadeNaLista() != null ? configuracao.getPrioridadeNaLista().descPrioridade : "";
+
+		if(configuracao.getItemConfiguracaoSet() != null) {
 			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
-		
-			for (SrItemConfiguracao item : configuracao.itemConfiguracaoSet) {
+
+			for (SrItemConfiguracao item : configuracao.getItemConfiguracaoSet()) {
 				listaItemConfiguracaoVO.add(item.toVO());
 			}
 		}
-		
-		if(configuracao.acoesSet != null) {
+
+		if(configuracao.getAcoesSet() != null) {
 			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
-		
-			for (SrAcao item : configuracao.acoesSet) {
+
+			for (SrAcao item : configuracao.getAcoesSet()) {
 				listaAcaoVO.add(item.toVO());
 			}
 		}
 
-		if(configuracao.tipoPermissaoSet != null) {
+		if(configuracao.getTipoPermissaoSet() != null) {
 			listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
-		
-			for (SrTipoPermissaoLista item : configuracao.tipoPermissaoSet) {
+
+			for (SrTipoPermissaoLista item : configuracao.getTipoPermissaoSet()) {
 				listaTipoPermissaoListaVO.add(item.toVO());
 			}
 		}
-		
-		if (configuracao.atendente != null)
-			atendente = SelecionavelVO.createFrom(configuracao.atendente.getLotacaoAtual());
-		
+
+		if (configuracao.getAtendente() != null)
+			atendente = SelecionavelVO.createFrom(configuracao.getAtendente().getLotacaoAtual());
+
 		if (configuracao.getOrgaoUsuario() != null)
-			orgaoUsuario = SelecionavelVO.createFrom(configuracao.getOrgaoUsuario().getId(), 
-					configuracao.getOrgaoUsuario().getDescricao(), 
+			orgaoUsuario = SelecionavelVO.createFrom(configuracao.getOrgaoUsuario().getId(),
+					configuracao.getOrgaoUsuario().getDescricao(),
 					configuracao.getOrgaoUsuario().getAcronimoOrgaoUsu());
-		
+
 		complexo = CpComplexoVO.createFrom(configuracao.getComplexo());
-		
+
 		// Dados do Solicitante
 		dpPessoa = SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante());
 		dpPessoaParaInclusaoAutomatica = dpPessoa;
@@ -104,10 +104,10 @@ public class SrConfiguracaoVO {
 		cargo = SelecionavelVO.createFrom(configuracao.getCargo(), configuracao.getTipoSolicitante());
 		funcaoConfianca = SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante());
 		cpGrupo = SelecionavelVO.createFrom(configuracao.getCpGrupo(), configuracao.getTipoSolicitante());
-		
+
 		solicitante = SelecionavelVO.createFrom(configuracao.getSolicitante());
 	}
-	
+
 	public SrConfiguracaoVO(SrConfiguracao configuracao, boolean atributoObrigatorio) {
 		this(configuracao);
 		this.atributoObrigatorio = atributoObrigatorio;
@@ -119,7 +119,7 @@ public class SrConfiguracaoVO {
 	public String toJson() {
 		return toJsonObject().toString();
 	}
-	
+
 	public JsonObject toJsonObject() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting().serializeNulls();

@@ -1671,7 +1671,7 @@ public class Application extends SigaApplication {
 	}
 
 	public static String configuracaoAutomaticaGravar(SrConfiguracao configuracaoInclusaoAutomatica) throws Exception {
-		configuracaoInclusaoAutomatica.salvarComoInclusaoAutomaticaLista(configuracaoInclusaoAutomatica.listaPrioridade);
+		configuracaoInclusaoAutomatica.salvarComoInclusaoAutomaticaLista(configuracaoInclusaoAutomatica.getListaPrioridade());
 		configuracaoInclusaoAutomatica.refresh();
 		return configuracaoInclusaoAutomatica.toVO().toJson();
 	}

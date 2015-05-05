@@ -1,0 +1,6 @@
+-------------------------------------------
+--	SCRIPT:INCLUSAO DO TIPO AGRUPAMENTO
+-------------------------------------------
+Insert into CORPORATIVO.CP_TIPO_LOTACAO (ID_TP_LOTACAO,SIGLA_TP_LOTACAO,DESC_TP_LOTACAO,ID_TP_LOTACAO_PAI) values (200,'AGR','Agrupamento',null);
+Insert into CORPORATIVO.CP_TIPO_LOTACAO (ID_TP_LOTACAO,SIGLA_TP_LOTACAO,DESC_TP_LOTACAO,ID_TP_LOTACAO_PAI) values (201,'AGFC','Agrupamento Formal',200);
+Insert into CORPORATIVO.CP_TIPO_LOTACAO (ID_TP_LOTACAO,SIGLA_TP_LOTACAO,DESC_TP_LOTACAO,ID_TP_LOTACAO_PAI) values (202,'AGOP','Agrupamento Operacional',200);

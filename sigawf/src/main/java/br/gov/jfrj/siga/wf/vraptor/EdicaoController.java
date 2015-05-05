@@ -53,7 +53,8 @@ public class EdicaoController extends WfController {
 	@Post
 	@Path("/app/edicao/processdefinition/{procedimento}")
 	public void gravar(String procedimento, String xml) throws Exception {
-		String res = "OK";// doDeployment(xml);
+		String res = "OK";
+		doDeployment(xml);
 		result.use(Results.http()).body(res);
 	}
 

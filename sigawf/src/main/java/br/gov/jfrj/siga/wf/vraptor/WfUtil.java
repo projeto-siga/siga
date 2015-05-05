@@ -195,7 +195,8 @@ public class WfUtil {
 							ah.assign(si, ctx);
 							designacao = designacao(si.getActorId(),
 									si.getPooledActors());
-							map.put(taskNode.getName(), designacao);
+							if (taskNode != null)
+								map.put(taskNode.getName(), designacao);
 						} catch (AplicacaoException e) {
 
 						}

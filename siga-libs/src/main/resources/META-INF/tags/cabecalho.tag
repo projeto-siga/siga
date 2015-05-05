@@ -108,7 +108,9 @@ ${meta}
 	});
 </script>
 <c:if test="${not empty titular}">
+	<c:catch>
 	${f:getComplementoHead(cadastrante.orgaoUsuario)}
+	</c:catch>
 </c:if>
 </head>
 

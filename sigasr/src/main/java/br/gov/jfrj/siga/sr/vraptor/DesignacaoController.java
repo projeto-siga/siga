@@ -15,6 +15,7 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
+import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.validator.SrError;
@@ -64,7 +65,6 @@ public class DesignacaoController extends SrController {
 		SrConfiguracao designacao = SrConfiguracao.AR.findById(id);
 		designacao.finalizar();
 
-//		result.use(Results.json()).from(designacao).serialize();
 		result.use(Results.http()).body(designacao.toJson());
 	}
 
@@ -74,19 +74,17 @@ public class DesignacaoController extends SrController {
 		SrConfiguracao designacao = SrConfiguracao.AR.em().find(SrConfiguracao.class, id);
 		designacao.salvar();
 //
-//		result.use(Results.json()).from(designacao).serialize();
 		result.use(Results.http()).body(designacao.toJson());
-//		return designacao.getSrConfiguracaoJson();
 	}
 
 //	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrConfiguracao designacao) throws Exception {
-//		assertAcesso("ADM:Administrar");
-//		validarFormEditarDesignacao(designacao);
-//		designacao.salvarComoDesignacao();
-//		designacao.refresh();
-//		return designacao.getSrConfiguracaoJson();
+		validarFormEditarDesignacao(designacao);
+		designacao.salvarComoDesignacao();
+		designacao.refresh();
+
+		result.use(Results.http()).body(designacao.toJson());
 	}
 
 	private void validarFormEditarDesignacao(SrConfiguracao designacao) throws Exception {

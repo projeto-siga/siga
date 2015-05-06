@@ -82,125 +82,90 @@
 <siga:modal nome="designacao" titulo="Cadastrar Designacao">
 	<div id="divEditarDesignacaoItem">
 	
-	
-	
-	
-	
-	
-	
-	
-	<style>
-#sortable ul {
-        height: 1.5em;
-        line-height: 1.2em;
-}
-
-.ui-state-highlight {
-        height: 1.5em;
-        line-height: 1.2em;
-}
-</style>
-<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
-	<form id="formDesignacao">
-		<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
-		<input type="hidden" id="hisIdIni" name="hisIdIni" value="${hisIdIni}" />
-		<div>
-			<div class="gt-form-row">
-				<label>Descri&ccedil;&atilde;o <span>*</span></label>
-				<input id="descrConfiguracao"
-					   type="text"
-					   name="descrConfiguracao"
-					   value="${descrConfiguracao}"
-					   maxlength="255"
-					   style="width: 791px;"
-					   required/>
-				<span style="display:none;color: red" id="designacao.descrConfiguracao">Descri&ccedil;&atilde;o n&atilde;£o informada.</span>
-			</div>
-			<div class="gt-form-row box-wrapper">
-				<div id="divSolicitante" class="box box-left gt-width-50">
-					<label>Solicitante</label>
-					<siga:pessoaLotaFuncCargoSelecao
-						nomeSelLotacao="lotacao"
-						nomeSelPessoa="dpPessoa"
-						nomeSelFuncao="funcaoConfianca"
-						nomeSelCargo="cargo"
-						nomeSelGrupo="cpGrupo"
-						valuePessoa="${dpPessoa != null ? dpPessoa.pessoaAtual :'' }"
-						valueLotacao="${lotacao != null ? lotacao.lotacaoAtual : '' }"
-						valueFuncao="${funcaoConfianca }"
-						valueCargo="${cargo}"
-						valueGrupo="${cpGrupo}"
-						disabled="disabled">
-					</siga:pessoaLotaFuncCargoSelecao>
-<%-- 					#{pessoaLotaFuncCargoSelecao --%>
-<%-- 						nomeSelLotacao:'lotacao', --%>
-<%-- 						nomeSelPessoa:'dpPessoa', --%>
-<%-- 						nomeSelFuncao:'funcaoConfianca', --%>
-<%-- 						nomeSelCargo:'cargo', --%>
-<%-- 						nomeSelGrupo:'cpGrupo', --%>
-<%-- 						valuePessoa:dpPessoa?.pessoaAtual, --%>
-<%-- 						valueLotacao:lotacao?.lotacaoAtual, --%>
-<%-- 						valueFuncao:funcaoConfianca, --%>
-<%-- 						valueCargo:cargo, --%>
-<%-- 						valueGrupo:cpGrupo, --%>
-<%-- 						disabled:disabled/} --%>
+		<style>
+		#sortable ul {
+		        height: 1.5em;
+		        line-height: 1.2em;
+		}
+		
+		.ui-state-highlight {
+		        height: 1.5em;
+		        line-height: 1.2em;
+		}
+		</style>
+		<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+			<form id="formDesignacao">
+				<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />
+				<input type="hidden" id="hisIdIni" name="hisIdIni" value="${hisIdIni}" />
+				<div>
+					<div class="gt-form-row">
+						<label>Descri&ccedil;&atilde;o <span>*</span></label>
+						<input id="descrConfiguracao"
+							   type="text"
+							   name="descrConfiguracao"
+							   value="${descrConfiguracao}"
+							   maxlength="255"
+							   style="width: 791px;"
+							   required/>
+						<span style="display:none;color: red" id="designacao.descrConfiguracao">Descri&ccedil;&atilde;o n&atilde;o informada.</span>
+					</div>
+					<div class="gt-form-row box-wrapper">
+						<div id="divSolicitante" class="box box-left gt-width-50">
+							<label>Solicitante</label>
+							<siga:pessoaLotaFuncCargoSelecao
+								nomeSelLotacao="lotacao"
+								nomeSelPessoa="dpPessoa"
+								nomeSelFuncao="funcaoConfianca"
+								nomeSelCargo="cargo"
+								nomeSelGrupo="cpGrupo"
+								valuePessoa="${dpPessoa != null ? dpPessoa.pessoaAtual :'' }"
+								valueLotacao="${lotacao != null ? lotacao.lotacaoAtual : '' }"
+								valueFuncao="${funcaoConfianca }"
+								valueCargo="${cargo}"
+								valueGrupo="${cpGrupo}"
+								disabled="disabled">
+							</siga:pessoaLotaFuncCargoSelecao>
+						</div>
+						<div class="box gt-width-50">
+							<label>&Oacute;rg&atilde;o</label>
+							<siga:select name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="0" headerValue="Nenhum"/>
+						</div>
+					</div>
+		
+					<div class="gt-form-row box-wrapper">
+						<div class="box box-left gt-width-50">
+							<label>Local</label>
+							<siga:select name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="0" headerValue="Nenhum"/>
+						</div>
+						<div class="box gt-width-50">
+							<label>Atendente <span>*</span></label>
+							
+							<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
+							
+		<%-- 					#{selecao --%>
+		<%-- 						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual, --%>
+		<%-- 						disabled:_modoExibicao == 'equipe' ? 'true' : disabled /} --%>
+		
+							<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
+						</div>
+					</div>
+					<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
+		
+					<div class="gt-form-row">
+						<div class="gt-form-row">
+							<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="designacaoService.gravar()"/>
+							<a class="gt-btn-medium gt-btn-left" onclick="designacaoService.cancelarGravacao()">Cancelar</a>
+							<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="designacaoService.aplicar()"/>
+						</div>
+					</div>
+		
+					<div class="gt-form-row gt-width-100">
+						<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigat&oacute;rios n&atilde;o foram
+							preenchidos.</p>
+					</div>
 				</div>
-				<div class="box gt-width-50">
-					<label>&Oacute;rg&atilde;o</label>
-					<siga:select name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="0" headerValue="Nenhum"/>
-				</div>
-			</div>
-
-			<div class="gt-form-row box-wrapper">
-				<div class="box box-left gt-width-50">
-					<label>Local</label>
-					<siga:select name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="0" headerValue="Nenhum"/>
-				</div>
-				<div class="box gt-width-50">
-					<label>Atendente <span>*</span></label>
-					
-					<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar"/>
-					
-<%-- 					#{selecao --%>
-<%-- 						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual, --%>
-<%-- 						disabled:_modoExibicao == 'equipe' ? 'true' : disabled /} --%>
-
-					<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
-				</div>
-			</div>
-
-<%-- 			#{configuracaoItemAcao itemConfiguracaoSet:itemConfiguracaoSet, --%>
-<%-- 							 acoesSet:acoesSet}#{/configuracaoItemAcao} --%>
-
-			<div class="gt-form-row">
-				<div class="gt-form-row">
-					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="designacaoService.gravar()"/>
-					<a class="gt-btn-medium gt-btn-left" onclick="designacaoService.cancelarGravacao()">Cancelar</a>
-					<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="designacaoService.aplicar()"/>
-				</div>
-			</div>
-
-			<div class="gt-form-row gt-width-100">
-				<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigat&oacute;rios n&atilde;o foram
-					preenchidos.</p>
-			</div>
+			</form>
 		</div>
-	</form>
-</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 	</div>
 </siga:modal>
 		
@@ -217,7 +182,6 @@
 			class="gt-btn-medium gt-btn-left">OK</a>
 	</div>
 </siga:modal>
-
 
 <script type="text/javascript">
 	var parametroTela = '${requestScope[modoExibicao]}';
@@ -364,7 +328,7 @@
 	}
 	
 	function camposObrigatoriosPreenchidos() {
-		if (possuiValor($("#atendente")))
+		if (possuiValor($("#formulario_atendente_lotacaoSel_id")))
 			return true;
 		else {
 			alert("Por favor preencha pelo menos um dos seguintes campos: Atendente")
@@ -470,9 +434,9 @@
 			trAcoes = $('<tr>'),
 			descricao = designacao.descrConfiguracao != undefined ? designacao.descrConfiguracao : '';
 
-		TableHelper.detalheLista("<b>Itens de configuraÃ§Ã£o:</b>", designacao.listaItemConfiguracaoVO, trItens);
-		TableHelper.detalheLista("<b>AÃ§Ãµes:</b>", designacao.listaAcaoVO, trAcoes);
-		detalheDescricaoLista("<b>DescriÃ§Ã£o:</b>", descricao, trDescricao);
+		TableHelper.detalheLista("<b>Itens de configura&ccedil;&atilde;o:</b>", designacao.listaItemConfiguracaoVO, trItens);
+		TableHelper.detalheLista("<b>A&ccedil;&otilde;es:</b>", designacao.listaAcaoVO, trAcoes);
+		detalheDescricaoLista("<b>Descri&ccedil;&atilde;o:</b>", descricao, trDescricao);
 
 		if (designacao.ativo == false) {
 			$('td', trDescricao).addClass('item-desativado');

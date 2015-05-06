@@ -4,7 +4,6 @@
 
 <div class="gt-form gt-content-box">
 	<form id="atributoForm" action="#" enctype="multipart/form-data">
-<%-- 		<input type="hidden" name="atributo" id="atributo" value="${idAtributo}"> --%>
 		<input type="hidden" name="atributo.idAtributo" id="idAtributo" value="${idAtributo}">
 		<input type="hidden" name="atributo.hisIdIni" id="hisIdIni" value="${hisIdIni}">
 		<div class="gt-form-row box-wrapper">

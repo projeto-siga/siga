@@ -63,7 +63,7 @@ public class AtributoController extends SrController {
 	@Path("/gravar")
 	public void gravarAtributo(SrAtributo atributo, Long idObjetivo) throws Exception {
 		// assertAcesso("ADM:Administrar");
-//		validarFormEditarAtributo(atributo);
+		validarFormEditarAtributo(atributo);
 		atributo.setObjetivoAtributo(SrObjetivoAtributo.AR.findById(idObjetivo));
 		atributo.salvar();
 		result.use(Results.http()).body(atributo.toVO(false).toJson());

@@ -12,7 +12,6 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
@@ -52,8 +51,10 @@ public class AssociacaoController extends SrController {
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel) throws Exception {
 		// assertAcesso("ADM:Administrar");
 		associacao.setAtributo(SrAtributo.AR.findById(atributo.getIdAtributo()));
-		associacao.setItemConfiguracaoSet(getListFromItemConfiguracaoSet(itemConfiguracaoSet));
-		associacao.setAcoesSet(getListFromAcaoSet(acoesSet));
+		
+		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
+		associacao.setAcoesSet(acoesSet);
+		
 		associacao.setComplexo(CpComplexo.AR.findById(complexo.getIdComplexo()));
 		associacao.setOrgaoUsuario(CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
 
@@ -77,31 +78,6 @@ public class AssociacaoController extends SrController {
 		// SrConfiguracao.AR.em().refresh(associacao);
 		SrConfiguracao refresh = SrConfiguracao.AR.findById(associacao.getId());
 		result.use(Results.http()).body(refresh.toVO().toJson());
-	}
-
-	private List<SrAcao> getListFromAcaoSet(List<SrAcao> acoesSet) throws Exception {
-		if (acoesSet == null) {
-			return null;
-		}
-		
-		List<SrAcao> acoes = new ArrayList<>();
-		for (SrAcao acao : acoesSet) {
-			acoes.add(SrAcao.AR.findById(acao.getIdAcao()));
-		}
-		return acoes;
-	}
-
-	private List<SrItemConfiguracao> getListFromItemConfiguracaoSet(List<SrItemConfiguracao> itemConfiguracaoSet) throws Exception {
-		if (itemConfiguracaoSet == null) {
-			return null;
-		}
-		
-		List<SrItemConfiguracao> configuracoes = new ArrayList<>();
-		for (SrItemConfiguracao conf : itemConfiguracaoSet) {
-			SrItemConfiguracao itemConfiguracao = SrItemConfiguracao.AR.findById(conf.getIdItemConfiguracao());
-			configuracoes.add(itemConfiguracao);
-		}
-		return configuracoes;
 	}
 
 	@Path("/gravarComoPesquisa")

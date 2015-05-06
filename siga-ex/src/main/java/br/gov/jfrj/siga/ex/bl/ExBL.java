@@ -335,6 +335,15 @@ public class ExBL extends CpBL {
 			}
 		}
 	}
+	
+	private void atualizaMarcasDocumentosJuntados(ExMobil mob){
+		Set<ExMobil> mobilJuntados = mob.getJuntados();
+		Iterator itJuntados = mobilJuntados.iterator();
+		while(itJuntados.hasNext()){
+			ExMobil mobilJuntado = (ExMobil) itJuntados.next();
+			atualizarMarcas(mobilJuntado.doc());
+		}
+	}
 
 	private void acrescentarMarca(SortedSet<ExMarca> set, ExMobil mob,
 			Long idMarcador, Date dt, DpPessoa pess, DpLotacao lota) {
@@ -860,7 +869,7 @@ public class ExBL extends CpBL {
 				}
 				if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA || t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
 						&& !apensadoAVolumeDoMesmoProcesso){
-					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
+					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;				
 				}
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 						&& mob.doc().isEletronico()) {

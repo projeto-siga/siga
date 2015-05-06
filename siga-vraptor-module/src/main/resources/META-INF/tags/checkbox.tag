@@ -26,8 +26,8 @@
 	}
  </script>
  
-<c:if test="${empty id}">
-	<c:set var="id" value="${name}"></c:set>
+<c:if test="${empty nameInput}">
+	<c:set var="nameInput" value="${name}"></c:set>
 </c:if>
 
 <input type="hidden" name="${nameInput}" id="${name}" value="${value ? 'true':'false'}" />

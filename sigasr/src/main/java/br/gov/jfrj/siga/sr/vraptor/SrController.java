@@ -1,7 +1,5 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,8 +20,9 @@ public class SrController extends SigaController {
 
 	protected SrValidator srValidator;
 
-	public SrController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
+	public SrController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
 		super(request, result, dao, so, em);
+		this.srValidator = srValidator;
 	}
 
 	@Override
@@ -38,8 +37,7 @@ public class SrController extends SigaController {
 	private JsonArray jsonErrors() {
 		JsonArray jsonArray = new JsonArray();
 
-		List<SrError> errors = srValidator.getErros();
-		for (SrError error : errors) {
+		for (SrError error : srValidator.getErros()) {
 			jsonArray.add(new Gson().toJsonTree(error));
 		}
 

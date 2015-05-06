@@ -18,26 +18,28 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.JPA;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
-public class SrLista extends HistoricoSuporte {
+public class SrLista extends HistoricoSuporteVraptor {
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static ActiveRecord<SrLista> AR = new ActiveRecord<>(SrLista.class);
 
 	@SuppressWarnings("unused")
 	private class SrSolicitacaoListaComparator implements

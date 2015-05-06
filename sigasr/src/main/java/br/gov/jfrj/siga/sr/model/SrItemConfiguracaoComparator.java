@@ -8,9 +8,9 @@ public class SrItemConfiguracaoComparator implements
 	@Override
 	public int compare(SrItemConfiguracao o1, SrItemConfiguracao o2) {
 		if (o1 != null && o2 != null
-				&& o1.idItemConfiguracao == o2.idItemConfiguracao)
+				&& o1.getId() == o2.getId())
 			return 0;
-		return o1.siglaItemConfiguracao.compareTo(o2.siglaItemConfiguracao);
+		return o1.getSigla().compareTo(o2.getSigla());
 	}
 
 }

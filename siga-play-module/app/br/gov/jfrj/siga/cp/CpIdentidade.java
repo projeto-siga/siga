@@ -52,7 +52,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 		+ "and (pes.situacaoFuncionalPessoa = '1' "
 		+ "or pes.situacaoFuncionalPessoa = '2' "
 		+ "or pes.situacaoFuncionalPessoa = '31') ") })
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpIdentidade extends AbstractCpIdentidade {
 	
 	public DpPessoa getPessoaAtual() {

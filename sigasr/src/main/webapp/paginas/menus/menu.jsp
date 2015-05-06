@@ -18,7 +18,7 @@
 				<ul>
 <%-- 				<c:if test="${exibirMenuAdministrar}"> --%>
 					<c:if test="${true}">
-						<li><a href="@{Application.listarItem}">Item de configura&ccedil;&atilde;o</a></li>
+						<li><a href="${linkTo[ItemConfiguracaoController].listar[false]}">Item de configura&ccedil;&atilde;o</a></li>
 						<li><a href="${linkTo[AcaoController].listar[false]}">A&ccedil;&atilde;o</a></li>
 						<li><a href="${linkTo[TipoAcaoController].listar[false]}">Tipo de A&ccedil;&atilde;o</a></li>
 						<li><a href="@{Application.listarDesignacao}">Designa&ccedil;&atilde;o</a></li>

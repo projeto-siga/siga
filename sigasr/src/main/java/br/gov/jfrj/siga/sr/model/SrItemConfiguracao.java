@@ -25,7 +25,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -35,19 +34,21 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.JsonArray;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionavel {
-
+public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSelecionavel {
+	
+	public static ActiveRecord<SrItemConfiguracao> AR = new ActiveRecord<>(SrItemConfiguracao.class);
 
 	private static final long serialVersionUID = 1L;
 //	private static final int NETO = 3;
@@ -70,51 +71,51 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 	@SequenceGenerator(sequenceName = "SIGASR.SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
 	@GeneratedValue(generator = "srItemSeq")
 	@Column(name = "ID_ITEM_CONFIGURACAO")
-	public Long idItemConfiguracao;
+	private Long idItemConfiguracao;
 
 	@Column(name = "SIGLA_ITEM_CONFIGURACAO")
-	public String siglaItemConfiguracao;
+	private String siglaItemConfiguracao;
 
 	@Column(name = "DESCR_ITEM_CONFIGURACAO")
-	public String descrItemConfiguracao;
+	private String descrItemConfiguracao;
 
 	@Column(name = "TITULO_ITEM_CONFIGURACAO")
-	public String tituloItemConfiguracao;
+	private String tituloItemConfiguracao;
 
 	@Lob
 	@Column(name = "DESCR_SIMILARIDADE", length = 8192)
-	public String descricaoSimilaridade;
+	private String descricaoSimilaridade;
 
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ID_PAI")
-	public SrItemConfiguracao pai;
+	private SrItemConfiguracao pai;
 
 	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "pai", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-	public List<SrItemConfiguracao> filhoSet;
+	private List<SrItemConfiguracao> filhoSet;
 
 	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrItemConfiguracao itemInicial;
+	private SrItemConfiguracao itemInicial;
 
 	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	//@OrderBy("hisDtIni desc")
-	public List<SrItemConfiguracao> meuItemHistoricoSet;
+	private List<SrItemConfiguracao> meuItemHistoricoSet;
 
 	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
-    public Set<SrGestorItem> gestorSet;
+    private Set<SrGestorItem> gestorSet;
 
 	@Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
-	public int numFatorMultiplicacaoGeral = 1;
+	private int numFatorMultiplicacaoGeral = 1;
 
 	@OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
-	public Set<SrFatorMultiplicacao> fatorMultiplicacaoSet;
+	private Set<SrFatorMultiplicacao> fatorMultiplicacaoSet;
 
 	@Transient
-	public List<SrConfiguracao> designacoes;
+	private List<SrConfiguracao> designacoes;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_CONFIGURACAO")})
-	public List<SrConfiguracao> designacoesSet;
+	private List<SrConfiguracao> designacoesSet;
 
 	public SrItemConfiguracao() {
 		this(null, null);
@@ -183,6 +184,111 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 		if (sols == null)
 			return null;
 		return sols.get(0);
+	}
+	
+	public Long getIdItemConfiguracao() {
+		return idItemConfiguracao;
+	}
+
+	public void setIdItemConfiguracao(Long idItemConfiguracao) {
+		this.idItemConfiguracao = idItemConfiguracao;
+	}
+
+	public String getSiglaItemConfiguracao() {
+		return siglaItemConfiguracao;
+	}
+
+	public void setSiglaItemConfiguracao(String siglaItemConfiguracao) {
+		this.siglaItemConfiguracao = siglaItemConfiguracao;
+	}
+
+	public String getDescrItemConfiguracao() {
+		return descrItemConfiguracao;
+	}
+
+	public void setDescrItemConfiguracao(String descrItemConfiguracao) {
+		this.descrItemConfiguracao = descrItemConfiguracao;
+	}
+
+	public String getTituloItemConfiguracao() {
+		return tituloItemConfiguracao;
+	}
+
+	public void setTituloItemConfiguracao(String tituloItemConfiguracao) {
+		this.tituloItemConfiguracao = tituloItemConfiguracao;
+	}
+
+	public String getDescricaoSimilaridade() {
+		return descricaoSimilaridade;
+	}
+
+	public void setDescricaoSimilaridade(String descricaoSimilaridade) {
+		this.descricaoSimilaridade = descricaoSimilaridade;
+	}
+
+	public SrItemConfiguracao getItemInicial() {
+		return itemInicial;
+	}
+
+	public void setItemInicial(SrItemConfiguracao itemInicial) {
+		this.itemInicial = itemInicial;
+	}
+
+	public List<SrItemConfiguracao> getMeuItemHistoricoSet() {
+		return meuItemHistoricoSet;
+	}
+
+	public void setMeuItemHistoricoSet(List<SrItemConfiguracao> meuItemHistoricoSet) {
+		this.meuItemHistoricoSet = meuItemHistoricoSet;
+	}
+
+	public Set<SrGestorItem> getGestorSet() {
+		return gestorSet;
+	}
+
+	public void setGestorSet(Set<SrGestorItem> gestorSet) {
+		this.gestorSet = gestorSet;
+	}
+
+	public int getNumFatorMultiplicacaoGeral() {
+		return numFatorMultiplicacaoGeral;
+	}
+
+	public void setNumFatorMultiplicacaoGeral(int numFatorMultiplicacaoGeral) {
+		this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
+	}
+
+	public Set<SrFatorMultiplicacao> getFatorMultiplicacaoSet() {
+		return fatorMultiplicacaoSet;
+	}
+
+	public void setFatorMultiplicacaoSet(
+			Set<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
+		this.fatorMultiplicacaoSet = fatorMultiplicacaoSet;
+	}
+
+	public List<SrConfiguracao> getDesignacoes() {
+		return designacoes;
+	}
+
+	public void setDesignacoes(List<SrConfiguracao> designacoes) {
+		this.designacoes = designacoes;
+	}
+
+	public List<SrConfiguracao> getDesignacoesSet() {
+		return designacoesSet;
+	}
+
+	public void setDesignacoesSet(List<SrConfiguracao> designacoesSet) {
+		this.designacoesSet = designacoesSet;
+	}
+
+	public void setPai(SrItemConfiguracao pai) {
+		this.pai = pai;
+	}
+
+	public void setFilhoSet(List<SrItemConfiguracao> filhoSet) {
+		this.filhoSet = filhoSet;
 	}
 
 	@Override
@@ -347,7 +453,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 			sb.append(" SrItemConfiguracao GROUP BY hisIdIni) ");
 		}
 		sb.append(" order by siglaItemConfiguracao ");
-		return SrItemConfiguracao.find(sb.toString()).fetch();
+
+		return SrItemConfiguracao.AR.find(sb.toString()).fetch();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -26,7 +26,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(schema="CORPORATIVO", name="CP_TIPO_LOTACAO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpTipoLotacao extends AbstractCpTipoLotacao {
 
 }

@@ -9,7 +9,6 @@ import java.util.TreeSet;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
-import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 
 public class SrConfiguracaoBL extends CpConfiguracaoBL {
@@ -180,15 +179,15 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
 				for (SrItemConfiguracao i : srConf.getItemConfiguracaoSet()) {
 					i.getAtual();
 
-					if(i.gestorSet != null) {
-						i.gestorSet.size();
+					if(i.getGestorSet() != null) {
+						i.getGestorSet().size();
 					}
 
-					if(i.fatorMultiplicacaoSet != null) {
-						i.fatorMultiplicacaoSet.size();
+					if(i.getFatorMultiplicacaoSet() != null) {
+						i.getFatorMultiplicacaoSet().size();
 					}
 
-					for (SrItemConfiguracao hist : i.meuItemHistoricoSet) {
+					for (SrItemConfiguracao hist : i.getMeuItemHistoricoSet()) {
 						hist.getAtual();
 					}
 				}

@@ -10,7 +10,7 @@ public class SigaPlayUtil {
 	 */
 	public static String descricaoItem(SrItemConfiguracao itemConfiguracao) {
 		if (itemConfiguracao != null)
-			return itemConfiguracao.tituloItemConfiguracao;
+			return itemConfiguracao.getTituloItemConfiguracao();
 		else
 			return new String("Item não informado");
 	}

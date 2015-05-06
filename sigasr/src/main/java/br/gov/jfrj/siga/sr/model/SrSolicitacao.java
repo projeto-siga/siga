@@ -8,7 +8,6 @@ import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CAN
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
-import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
@@ -56,7 +55,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -1236,11 +1234,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					if (SrConfiguracao.buscarDesignacao(c,
 							new int[] { SrConfiguracaoBL.ACAO}) != null){
 						listaFinal.add(i);
-						SrItemConfiguracao itemPai = i.pai;
+						SrItemConfiguracao itemPai = i.getPai();
 						while (itemPai != null) {
 							if (!listaFinal.contains(itemPai))
 								listaFinal.add(itemPai);
-							itemPai = itemPai.pai;
+							itemPai = itemPai.getPai();
 						}
 					}
 				}
@@ -2342,7 +2340,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			s += Texto.slugify(acao.getTituloAcao(), true, false);
 		if (itemConfiguracao != null)
 			s += "-"
-					+ Texto.slugify(itemConfiguracao.tituloItemConfiguracao,
+					+ Texto.slugify(itemConfiguracao.getTituloItemConfiguracao(),
 							true, false);
 		return s;
 	}
@@ -2352,7 +2350,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (acao != null)
 			s += acao.getTituloAcao();
 		if (itemConfiguracao != null)
-			s += " - " + itemConfiguracao.tituloItemConfiguracao;
+			s += " - " + itemConfiguracao.getTituloItemConfiguracao();
 		return s;
 	}
 

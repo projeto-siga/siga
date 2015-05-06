@@ -2,17 +2,14 @@ package br.gov.jfrj.siga.sr.notifiers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import play.Logger;
 import play.mvc.Mailer;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sr.model.SrGestorItem;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
-import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 
 public class Correio extends Mailer {
 
@@ -84,7 +81,7 @@ public class Correio extends Mailer {
 		List<String> recipients = new ArrayList<String>();
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		for (SrGestorItem gestor : sol.itemConfiguracao.gestorSet) {
+		for (SrGestorItem gestor : sol.itemConfiguracao.getGestorSet()) {
 			DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
 			if (pessoaGestorAtual != null
 					&& pessoaGestorAtual.getDataFim() == null)

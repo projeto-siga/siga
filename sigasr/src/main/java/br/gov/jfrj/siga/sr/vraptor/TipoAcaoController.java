@@ -7,9 +7,11 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import play.data.validation.Validation;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -31,9 +33,14 @@ public class TipoAcaoController extends SrController {
 		result.include("mostrarDesativados", mostrarDesativados);
 	}
 
+	@Get("/listar")
+	public void listar() throws Exception {
+		result.redirectTo(TipoAcaoController.class).listar(Boolean.FALSE);
+	}
+
 	@Path("/listarDesativados")
 	public void listarDesativados() throws Exception {
-		listar(Boolean.TRUE);
+		result.redirectTo(TipoAcaoController.class).listar(Boolean.TRUE);
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
@@ -41,34 +48,36 @@ public class TipoAcaoController extends SrController {
 	public void editar(Long id) throws Exception {
 		SrTipoAcao tipoAcao = new SrTipoAcao();
 		if (id != null)
-			tipoAcao = SrTipoAcao.findById(id);
+			tipoAcao = SrTipoAcao.AR.findById(id);
 
 		result.include("tipoAcao", tipoAcao);
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	@Path("/gravar/{tipoAcao}")
-	public String gravar(SrTipoAcao tipoAcao) throws Exception {
+	@Path("/gravar")
+	public void gravar(SrTipoAcao tipoAcao) throws Exception {
 		validarFormEditar(tipoAcao);
 		tipoAcao.salvar();
 
-		return tipoAcao.toJson();
+		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	@Path("/desativar/{id}/{mostrarDesativados}")
+	@Path("/desativar")
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
 		SrTipoAcao tipoAcao = SrTipoAcao.AR.findById(id);
 		tipoAcao.finalizar();
+
+		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	@Path("/reativar/{id}/{mostrarDesativados}")
-	public Long reativar(Long id, boolean mostrarDesativados) throws Exception {
-		SrTipoAcao tipoAcao = SrTipoAcao.findById(id);
+	@Path("/reativar")
+	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
+		SrTipoAcao tipoAcao = SrTipoAcao.AR.findById(id);
 		tipoAcao.salvar();
 
-		return tipoAcao.getId();
+		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
 	@Path("/selecionar/{sigla}")
@@ -79,20 +88,27 @@ public class TipoAcaoController extends SrController {
 	}
 
 	@Path("/buscar")
-	public void buscar(String propriedade, String sigla) {
- 		List<SrTipoAcao> itens = null;
- 		SrTipoAcao srTipoAcao = new SrTipoAcao();
+	public void buscar(String sigla, String nome) {
+		List<SrTipoAcao> itens = null;
 
+		SrTipoAcao filtro = null;
 		try {
-			if (null != sigla && !"".equals(sigla.trim()))
-				srTipoAcao.setSigla(sigla);
+			filtro = new SrTipoAcao();
+			if (temSigla(sigla))
+				filtro.setSigla(sigla);
 
-			itens = srTipoAcao.buscar();
+			itens = filtro.buscar();
 		} catch (Exception e) {
 			itens = new ArrayList<SrTipoAcao>();
 		}
 
 		result.include("itens", itens);
+		result.include("filtro", filtro);
+		result.include("nome", nome);
+	}
+
+	private boolean temSigla(String sigla) {
+		return null != sigla && !"".equals(sigla.trim());
 	}
 
 	private void validarFormEditar(SrTipoAcao acao) {

@@ -19,10 +19,10 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.FieldNameExclusionEstrategy;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,7 +31,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_TIPO_ACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrTipoAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrTipoAcao> {
+public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrTipoAcao> {
 
 	public static ActiveRecord<SrTipoAcao> AR = new ActiveRecord<>(SrTipoAcao.class);
 
@@ -106,8 +106,72 @@ public class SrTipoAcao extends HistoricoSuporte implements SrSelecionavel, Comp
 
 	public List<SrTipoAcao> getHistoricoTipoAcao() {
 		if (tipoAcaoInicial != null)
-			return tipoAcaoInicial.meuTipoAcaoHistoricoSet;
+			return tipoAcaoInicial.getMeuTipoAcaoHistoricoSet();
 		return null;
+	}
+
+	public Long getIdTipoAcao() {
+		return idTipoAcao;
+	}
+
+	public void setIdTipoAcao(Long idTipoAcao) {
+		this.idTipoAcao = idTipoAcao;
+	}
+
+	public String getSiglaTipoAcao() {
+		return siglaTipoAcao;
+	}
+
+	public void setSiglaTipoAcao(String siglaTipoAcao) {
+		this.siglaTipoAcao = siglaTipoAcao;
+	}
+
+	public String getDescrTipoAcao() {
+		return descrTipoAcao;
+	}
+
+	public void setDescrTipoAcao(String descrTipoAcao) {
+		this.descrTipoAcao = descrTipoAcao;
+	}
+
+	public String getTituloTipoAcao() {
+		return tituloTipoAcao;
+	}
+
+	public void setTituloTipoAcao(String tituloTipoAcao) {
+		this.tituloTipoAcao = tituloTipoAcao;
+	}
+
+	public SrTipoAcao getTipoAcaoInicial() {
+		return tipoAcaoInicial;
+	}
+
+	public void setTipoAcaoInicial(SrTipoAcao tipoAcaoInicial) {
+		this.tipoAcaoInicial = tipoAcaoInicial;
+	}
+
+	public List<SrTipoAcao> getMeuTipoAcaoHistoricoSet() {
+		return meuTipoAcaoHistoricoSet;
+	}
+
+	public void setMeuTipoAcaoHistoricoSet(List<SrTipoAcao> meuTipoAcaoHistoricoSet) {
+		this.meuTipoAcaoHistoricoSet = meuTipoAcaoHistoricoSet;
+	}
+
+	public SrTipoAcao getPai() {
+		return pai;
+	}
+
+	public void setPai(SrTipoAcao pai) {
+		this.pai = pai;
+	}
+
+	public List<SrTipoAcao> getFilhoSet() {
+		return filhoSet;
+	}
+
+	public void setFilhoSet(List<SrTipoAcao> filhoSet) {
+		this.filhoSet = filhoSet;
 	}
 
 	public SrTipoAcao getAtual() {
@@ -317,69 +381,5 @@ public class SrTipoAcao extends HistoricoSuporte implements SrSelecionavel, Comp
 		return new GsonBuilder()
 			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn("meuTipoAcaoHistoricoSet", "filhoSet", "tipoAcaoInicial"))
 			.create();
-	}
-
-	public Long getIdTipoAcao() {
-		return idTipoAcao;
-	}
-
-	public void setIdTipoAcao(Long idTipoAcao) {
-		this.idTipoAcao = idTipoAcao;
-	}
-
-	public String getSiglaTipoAcao() {
-		return siglaTipoAcao;
-	}
-
-	public void setSiglaTipoAcao(String siglaTipoAcao) {
-		this.siglaTipoAcao = siglaTipoAcao;
-	}
-
-	public String getDescrTipoAcao() {
-		return descrTipoAcao;
-	}
-
-	public void setDescrTipoAcao(String descrTipoAcao) {
-		this.descrTipoAcao = descrTipoAcao;
-	}
-
-	public String getTituloTipoAcao() {
-		return tituloTipoAcao;
-	}
-
-	public void setTituloTipoAcao(String tituloTipoAcao) {
-		this.tituloTipoAcao = tituloTipoAcao;
-	}
-
-	public SrTipoAcao getTipoAcaoInicial() {
-		return tipoAcaoInicial;
-	}
-
-	public void setTipoAcaoInicial(SrTipoAcao tipoAcaoInicial) {
-		this.tipoAcaoInicial = tipoAcaoInicial;
-	}
-
-	public List<SrTipoAcao> getMeuTipoAcaoHistoricoSet() {
-		return meuTipoAcaoHistoricoSet;
-	}
-
-	public void setMeuTipoAcaoHistoricoSet(List<SrTipoAcao> meuTipoAcaoHistoricoSet) {
-		this.meuTipoAcaoHistoricoSet = meuTipoAcaoHistoricoSet;
-	}
-
-	public SrTipoAcao getPai() {
-		return pai;
-	}
-
-	public void setPai(SrTipoAcao pai) {
-		this.pai = pai;
-	}
-
-	public List<SrTipoAcao> getFilhoSet() {
-		return filhoSet;
-	}
-
-	public void setFilhoSet(List<SrTipoAcao> filhoSet) {
-		this.filhoSet = filhoSet;
 	}
 }

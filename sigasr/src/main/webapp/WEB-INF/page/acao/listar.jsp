@@ -21,7 +21,7 @@
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
 					<label>
-						<siga:checkbox name="mostrarDesativado" value="${mostrarDesativado}"></siga:checkbox>
+						<siga:checkbox name="mostrarDesativados" value="${mostrarDesativados}"></siga:checkbox>
 						<b>Incluir Inativas</b>
 					</label>
 				</div>
@@ -109,13 +109,13 @@
 	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
-			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
-			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativados').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativados').value = QueryString.mostrarDesativados == 'true';
 		}
 			
-		$("#checkmostrarDesativado").click(function() {
+		$("#checkmostrarDesativados").click(function() {
 			jQuery.blockUI(objBlock);
-			if (document.getElementById('checkmostrarDesativado').checked)
+			if (document.getElementById('checkmostrarDesativados').checked)
 				location.href = "${linkTo[AcaoController].listarDesativados}";
 			else
 				location.href = "${linkTo[AcaoController].listar}";

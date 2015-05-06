@@ -19,7 +19,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -30,6 +29,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoAssociacaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
 import br.gov.jfrj.siga.sr.util.Util;
+import br.gov.jfrj.siga.vraptor.entity.ConfiguracaoVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -39,7 +39,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
-public class SrConfiguracao extends CpConfiguracao {
+public class SrConfiguracao extends ConfiguracaoVraptor {
 
 	public static ActiveRecord<SrConfiguracao> AR = new ActiveRecord<>(SrConfiguracao.class);
 
@@ -615,10 +615,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		return new SrConfiguracaoVO(this).toJson();
 	}
 
-	public SrConfiguracaoVO toVO() {
-		return new SrConfiguracaoVO(this, this.atributoObrigatorio);
-	}
-
 	public static String convertToJSon(List<SrConfiguracao> lista) {
 		List<SrConfiguracaoVO> listaVO = new ArrayList<SrConfiguracaoVO>();
 		GsonBuilder builder = new GsonBuilder();
@@ -674,11 +670,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		return 0;
 	}
 
-	@Override
-	public CpConfiguracao getConfiguracaoAtual() {
-		return super.getConfiguracaoAtual();
-	}
-
 	@SuppressWarnings("unchecked")
 	public static List<SrConfiguracao> buscaParaConfiguracaoInsercaoAutomaticaLista(SrLista lista, boolean mostrarDesativados) throws Exception {
 		StringBuffer sb = new StringBuffer();
@@ -704,12 +695,12 @@ public class SrConfiguracao extends CpConfiguracao {
 		return new SrConfiguracaoAssociacaoVO(this);
 	}
 
-	public String toJson() {
-		Gson gson = Util.createGson("");
-		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
-		jsonObject.add("ativo", gson.toJsonTree(isAtivo()));
+	public SrConfiguracaoVO toVO() {
+		return new SrConfiguracaoVO(this, isAtributoObrigatorio());
+	}
 
-		return jsonObject.toString();
+	public String toJson() {
+		return toVO().toJson();
 	}
 
 	public static List<SrConfiguracao> listarPorItem(SrItemConfiguracao itemConfiguracao)  throws Exception{
@@ -733,4 +724,6 @@ public class SrConfiguracao extends CpConfiguracao {
 		}
 		return jsonArray.toString();
 	}
+
+
 }

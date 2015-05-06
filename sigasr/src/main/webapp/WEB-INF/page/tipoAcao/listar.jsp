@@ -5,14 +5,17 @@
 
 	<jsp:include page="../main.jsp"></jsp:include>
 
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-	<script src="../../../javascripts/jquery.serializejson.min.js"></script>
-	<script src="../../../javascripts/jquery.populate.js"></script>
-	<script src="../../../javascripts/base-service.js"></script>
-	<script src="../../../javascripts/jquery.validate.min.js"></script>
-	<script src="../../../javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.populate.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
+	
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/moment.js"></script>
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
@@ -21,7 +24,7 @@
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
 					<label>
-						<siga:checkbox name="mostrarDesativado" value="${mostrarDesativado}"></siga:checkbox>
+						<siga:checkbox name="mostrarDesativados" value="${mostrarDesativados}"></siga:checkbox>
 						<b>Incluir Inativas</b>
 					</label>
 				</div>
@@ -36,7 +39,7 @@
 					</thead>
 					<tbody>
 						<c:forEach items="${tiposAcao}" var="tipoAcao">
-							<tr data-json-id="${tipoAcao.id}" data-json="${tipoAcao.toJson()}" onclick="tipoAcaoService.editar($(this).data('json'), 'Alterar Tipo de A&ccedil;&atilde;o')" style="cursor: pointer;">
+							<tr data-json-id="${tipoAcao.idTipoAcao}" data-json="${tipoAcao.toJson()}" onclick="tipoAcaoService.editar($(this).data('json'), 'Alterar Tipo de A&ccedil;&atilde;o')" style="cursor: pointer;">
 								<td>${tipoAcao.siglaTipoAcao}</td>
 								<td>
 									<span style="margin-left: ${(tipoAcao.nivel-1)*2}em; ${tipoAcao.nivel == 1 ? 'font-weight: bold;' : ''}">
@@ -104,19 +107,19 @@
 			 tabelaRegistros : $('#tiposAcao_table'),
 			 objectName : 'tipoAcao',
 			 formCadastro : $('#tipoAcaoForm'),
-			 mostrarDesativados : QueryString.mostrarDesativados,
+			 mostrarDesativados : $('#checkmostrarDesativados').attr('checked') ? true : false, //QueryString.mostrarDesativados,
 			 colunas : colunasTipoAcao.acoes
 	};
 	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
-			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
-			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativados').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativados').value = QueryString.mostrarDesativados == 'true';
 		}
 			
-		$("#checkmostrarDesativado").click(function() {
+		$("#checkmostrarDesativados").click(function() {
 			jQuery.blockUI(objBlock);
-			if (document.getElementById('checkmostrarDesativado').checked)
+			if (document.getElementById('checkmostrarDesativados').checked)
 				location.href = '${linkTo[TipoAcaoController].listarDesativados}';
 			else
 				location.href = '${linkTo[TipoAcaoController].listar}';	

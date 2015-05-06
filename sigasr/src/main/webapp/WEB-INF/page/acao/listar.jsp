@@ -96,9 +96,9 @@
 	}();
 
 	var opts = {
-			 urlDesativar : "${linkTo[AcaoController].desativarAcao}",
-			 urlReativar : "${linkTo[AcaoController].reativarAcao}",
-			 urlGravar : "${linkTo[AcaoController].gravarAcao}",
+			 urlDesativar : "${linkTo[AcaoController].desativar}",
+			 urlReativar : "${linkTo[AcaoController].reativar}",
+			 urlGravar : "${linkTo[AcaoController].gravar}",
 			 dialogCadastro : $('#acao_dialog'),
 			 tabelaRegistros : $('#acoes_table'),
 			 objectName : 'acao',

@@ -1,11 +1,14 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.com.caelum.vraptor.view.Results.http;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpStatus;
 
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.validator.SrError;
@@ -31,7 +34,10 @@ public class SrController extends SigaController {
 	}
 
 	public void enviarErroValidacao() {
-		result.use(Results.http()).sendError(HttpStatus.SC_BAD_REQUEST, jsonErrors().toString());
+		HttpResult res = this.result.use(http());
+		res.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+
+		result.use(Results.http()).body(jsonErrors().toString());
 	}
 
 	private JsonArray jsonErrors() {

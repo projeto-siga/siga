@@ -11,7 +11,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -20,8 +20,8 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 @Path("app/tipoAcao")
 public class TipoAcaoController extends SrController {
 
-	public TipoAcaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
-		super(request, result, dao, so, em, srValidator);
+	public TipoAcaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, SrDao.getInstance(), so, em, srValidator);
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
@@ -57,6 +57,7 @@ public class TipoAcaoController extends SrController {
 	@Path("/gravar")
 	public void gravar(SrTipoAcao tipoAcao) throws Exception {
 		validarFormEditar(tipoAcao);
+		if(srValidator.hasErrors()) return;
 		tipoAcao.salvar();
 
 		result.use(Results.http()).body(tipoAcao.toJson());

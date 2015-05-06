@@ -1236,11 +1236,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					if (SrConfiguracao.buscarDesignacao(c,
 							new int[] { SrConfiguracaoBL.ACAO}) != null){
 						listaFinal.add(i);
-						SrItemConfiguracao itemPai = i.pai;
+						SrItemConfiguracao itemPai = i.getPai();
 						while (itemPai != null) {
 							if (!listaFinal.contains(itemPai))
 								listaFinal.add(itemPai);
-							itemPai = itemPai.pai;
+							itemPai = itemPai.getPai();
 						}
 					}
 				}
@@ -2342,7 +2342,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			s += Texto.slugify(acao.getTituloAcao(), true, false);
 		if (itemConfiguracao != null)
 			s += "-"
-					+ Texto.slugify(itemConfiguracao.tituloItemConfiguracao,
+					+ Texto.slugify(itemConfiguracao.getTituloItemConfiguracao(),
 							true, false);
 		return s;
 	}
@@ -2352,7 +2352,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (acao != null)
 			s += acao.getTituloAcao();
 		if (itemConfiguracao != null)
-			s += " - " + itemConfiguracao.tituloItemConfiguracao;
+			s += " - " + itemConfiguracao.getTituloItemConfiguracao();
 		return s;
 	}
 

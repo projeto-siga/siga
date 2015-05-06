@@ -84,7 +84,7 @@ public class Correio extends Mailer {
 		List<String> recipients = new ArrayList<String>();
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		for (SrGestorItem gestor : sol.itemConfiguracao.gestorSet) {
+		for (SrGestorItem gestor : sol.itemConfiguracao.getGestorSet()) {
 			DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
 			if (pessoaGestorAtual != null
 					&& pessoaGestorAtual.getDataFim() == null)

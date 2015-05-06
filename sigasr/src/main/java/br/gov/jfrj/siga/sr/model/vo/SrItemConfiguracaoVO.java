@@ -75,7 +75,7 @@ public class SrItemConfiguracaoVO implements ISelecionavel {
 	
 	public static SrItemConfiguracaoVO createFrom(SrItemConfiguracao item) {
 		if (item != null)
-			return new SrItemConfiguracaoVO(item.idItemConfiguracao, item.descrItemConfiguracao, item.tituloItemConfiguracao, item.siglaItemConfiguracao, item.getHisIdIni(), item.descricaoSimilaridade, item.numFatorMultiplicacaoGeral, item.isAtivo(), item.getNivel(), item.gestorSet, item.fatorMultiplicacaoSet);
+			return new SrItemConfiguracaoVO(item.getIdItemConfiguracao(), item.getDescrItemConfiguracao(), item.getTituloItemConfiguracao(), item.getSiglaItemConfiguracao(), item.getHisIdIni(), item.getDescricaoSimilaridade(), item.getNumFatorMultiplicacaoGeral(), item.isAtivo(), item.getNivel(), item.getGestorSet(), item.getFatorMultiplicacaoSet());
 		else
 			return null;
 	}

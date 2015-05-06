@@ -57,7 +57,7 @@
 								 itemConfiguracaoSet="${itemConfiguracaoSet}"
 								 acoesSet="${acoesSet}"
 								 modoExibicao='atributo'
-								 urlGravar="${linkTo[AssociacaoController].gravar}"></siga:configuracaoAssociacao>
+								 urlGravar="${linkTo[AssociacaoController].gravarAssociacao}"></siga:configuracaoAssociacao>
 		
 	<div class="gt-form-row" style="padding-top: 10px;">
 		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoService.gravar()"/>
@@ -94,20 +94,6 @@
 		}
 	}
 
-// 	function detalhesListaAssociacao(d, associacao) {
-// 		var tr = $('<tr class="detail">'),
-// 			td = $('<td colspan="6">'),
-// 			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
-			
-// 		table.append(htmlConteudo(d, "Item de configuração:", associacao.itemConfiguracaoUnitario.siglaItemConfiguracao, associacao.itemConfiguracaoUnitario.tituloItemConfiguracao, table));
-// 		table.append(htmlConteudo(d, "A&ccedil;&atilde;o:", associacao.acaoUnitaria.sigla, associacao.acaoUnitaria.descricao, table));
-		
-// 		td.append(table);
-// 		tr.append(td);
-	    
-// 	    return tr;
-// 	};
-
 	function htmlConteudo(d, titulo, sigla, descricao, table) {
 		var trItem = $('<tr>'),
 			tdTitulo = $('<td><b>' + titulo + '</b></td'),
@@ -125,48 +111,6 @@
 		return trItem.append(tdConteudo);
 	};
 
-// 	associacaoService.atualizarListaAssociacoes = function(jSon) {
-// 		associacaoTable.dataTable.api().clear().draw();
-		
-// 		if (jSon && jSon.associacoesVO) {
-// 			// cria a lista de associacoes, e adiciona na tela
-// 			for (i = 0; i < jSon.associacoesVO.length; i++) {
-// 				var assoc = jSon.associacoesVO[i],
-// 					html = 
-// 					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-// 						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
-// 							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
-// 							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-// 						'</a>' +
-// 					'</td>',
-
-// 					rowAssoc = [
-// 								' ',
-// 								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.id : ' ',
-// 								assoc.itemConfiguracaoUnitario? formatDescricaoLonga(assoc.itemConfiguracaoUnitario.tituloItemConfiguracao) : ' ',
-// 								assoc.itemConfiguracaoUnitario? assoc.itemConfiguracaoUnitario.sigla : ' ',
-// 								assoc.acaoUnitaria? assoc.acaoUnitaria.id : ' ',
-// 								assoc.acaoUnitaria? formatDescricaoLonga(assoc.acaoUnitaria.titulo) : ' ',
-// 								assoc.acaoUnitaria? assoc.acaoUnitaria.sigla : ' ',
-// 								$("#checkatributoObrigatorio")[0].checked = assoc.atributoObrigatorio,
-// 								getAtributoObrigatorioString(),
-// 								assoc.idConfiguracao,
-// 								html
-// 			   				];
-	   				
-// 				// Adiciona na tabela de Associações
-// 				var newRow = associacaoTable.dataTable
-// 					.api()
-// 					.row
-// 					.add(rowAssoc),
-// 					node = $(newRow.node());
-				
-// 				newRow.draw();
-// 				associacaoService.adicionarFuncionalidadesNaLinha(node, assoc);
-// 			}
-// 		}
-// 	}
-
 	function transformStringToBoolean(value) {
 		if (value.constructor.name == 'String')
 			return value == 'true';
@@ -174,61 +118,27 @@
 			return value;
 	}
 
-// 	function formatDescricaoLonga(descricao) {
-// 		if (descricao && descricao.length > 10) {
-// 			return descricao.substr(0, 10) + " ...";
-// 		}
-// 		else return (descricao || ' ');
-// 	}
-
 	function getAtributoObrigatorioString() {
 		var isChecked = $("#checkatributoObrigatorio")[0].checked;
 		return isChecked ? "Sim": "Não";
 	}
-
-	function desassociar(event, idAssociacaoDesativar) {
-		event.stopPropagation()
-		
-		var me = $(this),
-			tr = $(event.currentTarget).parent().parent()[0],
-			row = associacaoTable.dataTable.api().row(tr).data(),
-			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunas.idAssociacao];
-			idAtributo = $("#idAtributo").val();
-			
-			$.ajax({
-		         type: "POST",
-		         url: "@{Application.desativarAssociacaoEdicao()}",
-		         data: {idAtributo : idAtributo, idAssociacao : idAssociacao},
-		         dataType: "text",
-		         success: function(response) {
-		        	 associacaoTable.dataTable.api().row(tr).remove().draw();
-		         },
-		         error: function(response) {
-		        	$('#modal-associacao').hide(); 
-
-		        	var modalErro = $("#modal-associacao-error");
-		        	modalErro.find("h3").html(response.responseText);
-		        	modalErro.show(); 
-		         }
-	       });
-	}
 	
-	function verificarTipoAtributo() {
-		if($("select[name='att.tipoAtributo']").val() === 'VL_PRE_DEFINIDO') {
+	associacaoService.verificarTipoAtributo = function() {
+		if($("select[id='tipoAtributo']").val() === 'VL_PRE_DEFINIDO') {
 			$('#vlPreDefinidos').show();
 			return;
 		}
 		$('#vlPreDefinidos').hide();
 	};
 	
-	verificarTipoAtributo();
+	associacaoService.verificarTipoAtributo();
 	
-	$("select[name='att.tipoAtributo']").change(function() {
-		verificarTipoAtributo(); 
+	$("select[id='tipoAtributo']").change(function() {
+		associacaoService.verificarTipoAtributo(); 
 	});
 	
 	if($('#erroDescrPreDefinido').html()) {
-		$("select[name='att.tipoAtributo']").val('VL_PRE_DEFINIDO');
+		$("select[id='tipoAtributo']").val('VL_PRE_DEFINIDO');
 		$('#vlPreDefinidos').show();
 	};
 

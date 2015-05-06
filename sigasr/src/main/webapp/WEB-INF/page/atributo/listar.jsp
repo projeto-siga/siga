@@ -265,6 +265,7 @@
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 // 		atualiza a lista de Associações
 		this.buscarAssociacoes(obj);
+		associacaoService.verificarTipoAtributo();
 	}
 	
 	/**
@@ -273,9 +274,10 @@
 	atributoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
 		
-		// limpa a lista de AssociaÃ§Ãµes
+		// limpa a lista de Associações
 		associacaoService.limparDadosAssociacoes();
 		associacaoService.atualizarListaAssociacoes({});
+		associacaoService.verificarTipoAtributo();
 	}
 
 	atributoService.serializar = function(obj) {

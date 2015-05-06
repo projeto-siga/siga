@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.sr.model.SrAcao.SrAcaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoAssociacaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
-import br.gov.jfrj.siga.sr.util.Util;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.ConfiguracaoVraptor;
 
 import com.google.gson.Gson;
@@ -39,7 +39,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
-public class SrConfiguracao extends ConfiguracaoVraptor {
+public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEntity {
 
 	public static ActiveRecord<SrConfiguracao> AR = new ActiveRecord<>(SrConfiguracao.class);
 
@@ -394,14 +394,12 @@ public class SrConfiguracao extends ConfiguracaoVraptor {
 	}
 
 	public void salvarComoAssociacaoAtributo() throws Exception {
-		setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+		setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class,CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 		salvar();
 	}
 
 	public void salvarComoAssociacaoPesquisa() throws Exception {
-		setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class,
-				CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA));
+		setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class,CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA));
 		salvar();
 	}
 

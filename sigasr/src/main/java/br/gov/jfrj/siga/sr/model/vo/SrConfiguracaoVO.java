@@ -20,97 +20,97 @@ import com.google.gson.JsonObject;
  * @author DB1
  */
 public class SrConfiguracaoVO {
-	public Long idConfiguracao;
-	public Long hisIdIni;
-	public boolean herdado;
-	public boolean utilizarItemHerdado;
-	public boolean atributoObrigatorio;
-	public boolean ativo;
-	public String descrConfiguracao;
+	private Long idConfiguracao;
+	private Long hisIdIni;
+	private boolean herdado;
+	private boolean utilizarItemHerdado;
+	private boolean atributoObrigatorio;
+	private boolean ativo;
+	private String descrConfiguracao;
 
-	public List<SrListaVO> listaVO;
-	public List<SrItemConfiguracaoVO> listaItemConfiguracaoVO;
-	public List<SrAcao.SrAcaoVO> listaAcaoVO;
-	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
-	public SelecionavelVO atendente;
-	public SelecionavelVO orgaoUsuario;
-	public SelecionavelVO complexo;
-	public SrPrioridade prioridade;
-	public String descPrioridade;
+	private List<SrListaVO> listaVO;
+	private List<SrItemConfiguracaoVO> listaItemConfiguracaoVO;
+	private List<SrAcao.SrAcaoVO> listaAcaoVO;
+	private List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO;
+	private SelecionavelVO atendente;
+	private SelecionavelVO orgaoUsuario;
+	private SelecionavelVO complexo;
+	private SrPrioridade prioridade;
+	private String descPrioridade;
 
 	// Solicitante
-	public SelecionavelVO pessoa;
-	public SelecionavelVO lotacao;
-	public SelecionavelVO lotacaoParaInclusaoAutomatica;
-	public SelecionavelVO cargo;
-	public SelecionavelVO funcao;
-	public SelecionavelVO cpGrupo;
-	public SelecionavelVO solicitante;
-	public SrPrioridade prioridadeNaLista;
-	public String descPrioridadeNaLista;
-	public SelecionavelVO dpPessoaParaInclusaoAutomatica;
+	private SelecionavelVO pessoa;
+	private SelecionavelVO lotacao;
+	private SelecionavelVO lotacaoParaInclusaoAutomatica;
+	private SelecionavelVO cargo;
+	private SelecionavelVO funcao;
+	private SelecionavelVO cpGrupo;
+	private SelecionavelVO solicitante;
+	private SrPrioridade prioridadeNaLista;
+	private String descPrioridadeNaLista;
+	private SelecionavelVO dpPessoaParaInclusaoAutomatica;
 
 	public SrConfiguracaoVO(SrConfiguracao configuracao) {
-		idConfiguracao = configuracao.getId();
-		hisIdIni = configuracao.getHisIdIni();
-		herdado = configuracao.isHerdado();
-		utilizarItemHerdado = configuracao.isUtilizarItemHerdado();
-		ativo = configuracao.isAtivo();
-		descrConfiguracao = configuracao.getDescrConfiguracao();
-		prioridade = configuracao.getPrioridade();
-		prioridadeNaLista = configuracao.getPrioridadeNaLista();
-		descPrioridade = configuracao.getPrioridade() != null ? configuracao.getPrioridade().descPrioridade : "";
-		descPrioridadeNaLista = configuracao.getPrioridadeNaLista() != null ? configuracao.getPrioridadeNaLista().descPrioridade : "";
+		setIdConfiguracao(configuracao.getId());
+		setHisIdIni(configuracao.getHisIdIni());
+		setHerdado(configuracao.isHerdado());
+		setUtilizarItemHerdado(configuracao.isUtilizarItemHerdado());
+		setAtivo(configuracao.isAtivo());
+		setDescrConfiguracao(configuracao.getDescrConfiguracao());
+		setPrioridade(configuracao.getPrioridade());
+		setPrioridadeNaLista(configuracao.getPrioridadeNaLista());
+		setDescPrioridade(configuracao.getPrioridade() != null ? configuracao.getPrioridade().descPrioridade : "");
+		setDescPrioridadeNaLista(configuracao.getPrioridadeNaLista() != null ? configuracao.getPrioridadeNaLista().descPrioridade : "");
 
 		if(configuracao.getItemConfiguracaoSet() != null) {
-			listaItemConfiguracaoVO = new ArrayList<SrItemConfiguracaoVO>();
+			setListaItemConfiguracaoVO(new ArrayList<SrItemConfiguracaoVO>());
 
 			for (SrItemConfiguracao item : configuracao.getItemConfiguracaoSet()) {
-				listaItemConfiguracaoVO.add(item.toVO());
+				getListaItemConfiguracaoVO().add(item.toVO());
 			}
 		}
 
 		if(configuracao.getAcoesSet() != null) {
-			listaAcaoVO = new ArrayList<SrAcao.SrAcaoVO>();
+			setListaAcaoVO(new ArrayList<SrAcao.SrAcaoVO>());
 
 			for (SrAcao item : configuracao.getAcoesSet()) {
-				listaAcaoVO.add(item.toVO());
+				getListaAcaoVO().add(item.toVO());
 			}
 		}
 
 		if(configuracao.getTipoPermissaoSet() != null) {
-			listaTipoPermissaoListaVO = new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>();
+			setListaTipoPermissaoListaVO(new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>());
 
 			for (SrTipoPermissaoLista item : configuracao.getTipoPermissaoSet()) {
-				listaTipoPermissaoListaVO.add(item.toVO());
+				getListaTipoPermissaoListaVO().add(item.toVO());
 			}
 		}
 
 		if (configuracao.getAtendente() != null)
-			atendente = SelecionavelVO.createFrom(configuracao.getAtendente().getLotacaoAtual());
+			setAtendente(SelecionavelVO.createFrom(configuracao.getAtendente().getLotacaoAtual()));
 
 		if (configuracao.getOrgaoUsuario() != null)
-			orgaoUsuario = SelecionavelVO.createFrom(configuracao.getOrgaoUsuario().getId(),
+			setOrgaoUsuario(SelecionavelVO.createFrom(configuracao.getOrgaoUsuario().getId(),
 					configuracao.getOrgaoUsuario().getDescricao(),
-					configuracao.getOrgaoUsuario().getAcronimoOrgaoUsu());
+					configuracao.getOrgaoUsuario().getAcronimoOrgaoUsu()));
 
-		complexo = CpComplexoVO.createFrom(configuracao.getComplexo());
+		setComplexo(CpComplexoVO.createFrom(configuracao.getComplexo()));
 
 		// Dados do Solicitante
-		pessoa = SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante());
-		dpPessoaParaInclusaoAutomatica = pessoa;
-		lotacao = SelecionavelVO.createFrom(configuracao.getLotacao(), configuracao.getTipoSolicitante());
-		lotacaoParaInclusaoAutomatica = lotacao;
-		cargo = SelecionavelVO.createFrom(configuracao.getCargo(), configuracao.getTipoSolicitante());
-		funcao = SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante());
-		cpGrupo = SelecionavelVO.createFrom(configuracao.getCpGrupo(), configuracao.getTipoSolicitante());
+		setPessoa(SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante()));
+		setDpPessoaParaInclusaoAutomatica(getPessoa());
+		setLotacao(SelecionavelVO.createFrom(configuracao.getLotacao(), configuracao.getTipoSolicitante()));
+		setLotacaoParaInclusaoAutomatica(getLotacao());
+		setCargo(SelecionavelVO.createFrom(configuracao.getCargo(), configuracao.getTipoSolicitante()));
+		setFuncao(SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante()));
+		setCpGrupo(SelecionavelVO.createFrom(configuracao.getCpGrupo(), configuracao.getTipoSolicitante()));
 
-		solicitante = SelecionavelVO.createFrom(configuracao.getSolicitante());
+		setSolicitante(SelecionavelVO.createFrom(configuracao.getSolicitante()));
 	}
 
 	public SrConfiguracaoVO(SrConfiguracao configuracao, boolean atributoObrigatorio) {
 		this(configuracao);
-		this.atributoObrigatorio = atributoObrigatorio;
+		this.setAtributoObrigatorio(atributoObrigatorio);
 	}
 
 	/**
@@ -125,5 +125,213 @@ public class SrConfiguracaoVO {
 		builder.setPrettyPrinting().serializeNulls();
 		Gson gson = builder.create();
 		return (JsonObject) gson.toJsonTree(this);
+	}
+
+	private Long getIdConfiguracao() {
+		return idConfiguracao;
+	}
+
+	private void setIdConfiguracao(Long idConfiguracao) {
+		this.idConfiguracao = idConfiguracao;
+	}
+
+	public Long getHisIdIni() {
+		return hisIdIni;
+	}
+
+	public void setHisIdIni(Long hisIdIni) {
+		this.hisIdIni = hisIdIni;
+	}
+
+	public boolean isHerdado() {
+		return herdado;
+	}
+
+	public void setHerdado(boolean herdado) {
+		this.herdado = herdado;
+	}
+
+	public boolean isUtilizarItemHerdado() {
+		return utilizarItemHerdado;
+	}
+
+	public void setUtilizarItemHerdado(boolean utilizarItemHerdado) {
+		this.utilizarItemHerdado = utilizarItemHerdado;
+	}
+
+	public boolean isAtributoObrigatorio() {
+		return atributoObrigatorio;
+	}
+
+	public void setAtributoObrigatorio(boolean atributoObrigatorio) {
+		this.atributoObrigatorio = atributoObrigatorio;
+	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	public String getDescrConfiguracao() {
+		return descrConfiguracao;
+	}
+
+	public void setDescrConfiguracao(String descrConfiguracao) {
+		this.descrConfiguracao = descrConfiguracao;
+	}
+
+	public List<SrListaVO> getListaVO() {
+		return listaVO;
+	}
+
+	public void setListaVO(List<SrListaVO> listaVO) {
+		this.listaVO = listaVO;
+	}
+
+	public List<SrItemConfiguracaoVO> getListaItemConfiguracaoVO() {
+		return listaItemConfiguracaoVO;
+	}
+
+	public void setListaItemConfiguracaoVO(List<SrItemConfiguracaoVO> listaItemConfiguracaoVO) {
+		this.listaItemConfiguracaoVO = listaItemConfiguracaoVO;
+	}
+
+	public List<SrAcao.SrAcaoVO> getListaAcaoVO() {
+		return listaAcaoVO;
+	}
+
+	public void setListaAcaoVO(List<SrAcao.SrAcaoVO> listaAcaoVO) {
+		this.listaAcaoVO = listaAcaoVO;
+	}
+
+	public List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> getListaTipoPermissaoListaVO() {
+		return listaTipoPermissaoListaVO;
+	}
+
+	public void setListaTipoPermissaoListaVO(List<SrTipoPermissaoLista.SrTipoPermissaoListaVO> listaTipoPermissaoListaVO) {
+		this.listaTipoPermissaoListaVO = listaTipoPermissaoListaVO;
+	}
+
+	public SelecionavelVO getAtendente() {
+		return atendente;
+	}
+
+	public void setAtendente(SelecionavelVO atendente) {
+		this.atendente = atendente;
+	}
+
+	public SelecionavelVO getOrgaoUsuario() {
+		return orgaoUsuario;
+	}
+
+	public void setOrgaoUsuario(SelecionavelVO orgaoUsuario) {
+		this.orgaoUsuario = orgaoUsuario;
+	}
+
+	public SelecionavelVO getComplexo() {
+		return complexo;
+	}
+
+	public void setComplexo(SelecionavelVO complexo) {
+		this.complexo = complexo;
+	}
+
+	public SrPrioridade getPrioridade() {
+		return prioridade;
+	}
+
+	public void setPrioridade(SrPrioridade prioridade) {
+		this.prioridade = prioridade;
+	}
+
+	public String getDescPrioridade() {
+		return descPrioridade;
+	}
+
+	public void setDescPrioridade(String descPrioridade) {
+		this.descPrioridade = descPrioridade;
+	}
+
+	public SelecionavelVO getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(SelecionavelVO pessoa) {
+		this.pessoa = pessoa;
+	}
+
+	public SelecionavelVO getLotacao() {
+		return lotacao;
+	}
+
+	public void setLotacao(SelecionavelVO lotacao) {
+		this.lotacao = lotacao;
+	}
+
+	public SelecionavelVO getLotacaoParaInclusaoAutomatica() {
+		return lotacaoParaInclusaoAutomatica;
+	}
+
+	public void setLotacaoParaInclusaoAutomatica(SelecionavelVO lotacaoParaInclusaoAutomatica) {
+		this.lotacaoParaInclusaoAutomatica = lotacaoParaInclusaoAutomatica;
+	}
+
+	public SelecionavelVO getCargo() {
+		return cargo;
+	}
+
+	public void setCargo(SelecionavelVO cargo) {
+		this.cargo = cargo;
+	}
+
+	public SelecionavelVO getFuncao() {
+		return funcao;
+	}
+
+	public void setFuncao(SelecionavelVO funcao) {
+		this.funcao = funcao;
+	}
+
+	public SelecionavelVO getCpGrupo() {
+		return cpGrupo;
+	}
+
+	public void setCpGrupo(SelecionavelVO cpGrupo) {
+		this.cpGrupo = cpGrupo;
+	}
+
+	public SelecionavelVO getSolicitante() {
+		return solicitante;
+	}
+
+	public void setSolicitante(SelecionavelVO solicitante) {
+		this.solicitante = solicitante;
+	}
+
+	public SrPrioridade getPrioridadeNaLista() {
+		return prioridadeNaLista;
+	}
+
+	public void setPrioridadeNaLista(SrPrioridade prioridadeNaLista) {
+		this.prioridadeNaLista = prioridadeNaLista;
+	}
+
+	public String getDescPrioridadeNaLista() {
+		return descPrioridadeNaLista;
+	}
+
+	public void setDescPrioridadeNaLista(String descPrioridadeNaLista) {
+		this.descPrioridadeNaLista = descPrioridadeNaLista;
+	}
+
+	public SelecionavelVO getDpPessoaParaInclusaoAutomatica() {
+		return dpPessoaParaInclusaoAutomatica;
+	}
+
+	public void setDpPessoaParaInclusaoAutomatica(SelecionavelVO dpPessoaParaInclusaoAutomatica) {
+		this.dpPessoaParaInclusaoAutomatica = dpPessoaParaInclusaoAutomatica;
 	}
 }

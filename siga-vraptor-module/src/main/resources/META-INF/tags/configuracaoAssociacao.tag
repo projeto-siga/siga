@@ -457,10 +457,10 @@
 		var modoExibicao = "${modoExibicao}";
 		var vUrl, vData = null;
 		if (modoExibicao == 'atributo'){
-			vUrl = "@{Application.desativarAssociacaoEdicao()}";
+			vUrl = "${linkTo[AssociacaoController].desativarAssociacao}";
 			vData = {idAtributo : idItem, idAssociacao : idAssociacao};
 		} else if (modoExibicao == 'pesquisa'){
-			vUrl = "@{Application.desativarAssociacaoPesquisaEdicao()}";
+			vUrl = "${linkTo[AssociacaoController].desativarAssociacao}";
 			vData = {idPesquisa : idItem, idAssociacao : idAssociacao};
 		}
 		

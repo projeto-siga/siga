@@ -55,7 +55,6 @@ public class AtributoController extends SrController {
 		result.include("lotacaoSel", new DpLotacaoSelecao());
 		result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
 		result.include("cargoSel", new DpCargoSelecao());
-//		SelecionavelVO createFrom = SelecionavelVO.createFrom(null,null,null);
 		result.include("perfilSel", new CpPerfilSelecao());
 	}
 
@@ -68,7 +67,7 @@ public class AtributoController extends SrController {
 		result.use(Results.http()).body(atributo.toVO(false).toJson());
 	}
 
-	@Path("/desativarAtributo")
+	@Path("/desativar")
 	public void desativarAtributo(Long id) throws Exception {
 		// assertAcesso("ADM:Administrar");
 		SrAtributo item = SrAtributo.AR.findById(id);
@@ -76,7 +75,7 @@ public class AtributoController extends SrController {
 		result.use(Results.http()).body(item.toJson());
 	}
 
-	@Path("/reativarAtributo")
+	@Path("/reativar")
 	public void reativarAtributo(Long id) throws Exception {
 		// assertAcesso("ADM:Administrar");
 		SrAtributo item = SrAtributo.AR.findById(id);
@@ -84,7 +83,7 @@ public class AtributoController extends SrController {
 		result.use(Results.http()).body(item.toJson(false));
 	}
 	
-	@Path("/associacaoAtributo")
+	@Path("/associacoes")
 	public void buscarAssociacaoAtributo(Long idAtributo) throws Exception {
 		SrAtributo attr = SrAtributo.AR.findById(idAtributo);
 		String ret = "";
@@ -105,7 +104,7 @@ public class AtributoController extends SrController {
         List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, exibirInativos);
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
-
+	
 	private void validarFormEditarAtributo(SrAtributo atributo) {
 		if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && atributo.getDescrPreDefinido().equals("")) {
 			srValidator.addError("att.descrPreDefinido", "Valores Pré-definido não informados");

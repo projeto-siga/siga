@@ -74,6 +74,7 @@ var select = document.getElementById('${nomeSelPessoa}${nomeSelLotacao}${nomeSel
 // http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined
 function limparPessoa() {
 	document.getElementById('spanPessoa${nomeSelPessoa}').style.display = 'none';
+	document.getElementById('formulario_pessoaSel_id').value='';
 	document.getElementById('formulario_pessoaSel_sigla').value='';
 	document.getElementById('formulario_pessoaSel_descricao').value='';
 	document.getElementById('pessoaSelSpan').innerHTML='';
@@ -81,6 +82,7 @@ function limparPessoa() {
 
 function limparLotacao() { 
 	document.getElementById('spanLotacao${nomeSelLotacao}').style.display = 'none';
+	document.getElementById('formulario_lotacaoSel_id').value='';
 	document.getElementById('formulario_lotacaoSel_sigla').value='';
 	document.getElementById('formulario_lotacaoSel_descricao').value='';
 	document.getElementById('lotacaoSelSpan').innerHTML='';
@@ -88,6 +90,7 @@ function limparLotacao() {
 
 function limparFuncao() {
 	document.getElementById('spanFuncao${nomeSelFuncao}').style.display = 'none';
+	document.getElementById('formulario_funcaoSel_id').value='';
 	document.getElementById('formulario_funcaoSel_sigla').value='';
 	document.getElementById('formulario_funcaoSel_descricao').value='';
 	document.getElementById('funcaoSelSpan').innerHTML='';
@@ -95,6 +98,7 @@ function limparFuncao() {
 
 function limparCargo() {
 	document.getElementById('spanCargo${nomeSelCargo}').style.display = 'none';
+	document.getElementById('formulario_cargoSel_id').value='';
 	document.getElementById('formulario_cargoSel_sigla').value='';
 	document.getElementById('formulario_cargoSel_descricao').value='';
 	document.getElementById('cargoSelSpan').innerHTML='';
@@ -102,6 +106,7 @@ function limparCargo() {
 
 function limparGrupo() {
 	document.getElementById('spanGrupo${nomeSelGrupo}').style.display = 'none';
+	document.getElementById('formulario_perfilSel_id').value='';
 	document.getElementById('formulario_perfilSel_sigla').value='';
 	document.getElementById('formulario_perfilSel_descricao').value='';
 	document.getElementById('perfilSelSpan').innerHTML='';

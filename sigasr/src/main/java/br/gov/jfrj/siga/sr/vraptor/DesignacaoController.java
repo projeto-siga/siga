@@ -19,6 +19,7 @@ import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.validator.SrError;
+import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 
@@ -26,8 +27,8 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 @Path("app/designacao")
 public class DesignacaoController extends SrController {
 
-	public DesignacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, SrDao.getInstance(), so, em);
+	public DesignacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, CpDao.getInstance(), so, em, srValidator);
 	}
 
 //	@AssertAcesso(ADM_ADMINISTRAR)

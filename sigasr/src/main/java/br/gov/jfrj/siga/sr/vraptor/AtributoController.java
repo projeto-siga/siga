@@ -11,9 +11,15 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
+import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrObjetivoAtributo;
 import br.gov.jfrj.siga.sr.model.SrTipoAtributo;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -32,7 +38,7 @@ public class AtributoController extends SrController {
 	@SuppressWarnings("unchecked")
 	@Path("/listar")
 	public void listar(boolean mostrarDesativados) {
-		// assertAcesso("ADM:Administrar");
+		// assertAcesso("ADM:Administrar"); 
 		List<SrAtributo> atts = SrAtributo.listar(null, mostrarDesativados);
 		List<SrObjetivoAtributo> objetivos = SrObjetivoAtributo.AR.all().fetch();
 		List<CpOrgaoUsuario> orgaos = em().createQuery("from CpOrgaoUsuario").getResultList();
@@ -44,12 +50,20 @@ public class AtributoController extends SrController {
 		result.include("locais", locais);
 		result.include("mostrarDesativados", mostrarDesativados);
 		result.include("tiposAtributo",SrTipoAtributo.values());
+		
+		result.include("pessoaSel", new DpPessoaSelecao());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
+		result.include("cargoSel", new DpCargoSelecao());
+//		SelecionavelVO createFrom = SelecionavelVO.createFrom(null,null,null);
+		result.include("perfilSel", new CpPerfilSelecao());
 	}
 
 	@Path("/gravar")
-	public void gravarAtributo(SrAtributo atributo) throws Exception {
+	public void gravarAtributo(SrAtributo atributo, Long idObjetivo) throws Exception {
 		// assertAcesso("ADM:Administrar");
-		validarFormEditarAtributo(atributo);
+//		validarFormEditarAtributo(atributo);
+		atributo.setObjetivoAtributo(SrObjetivoAtributo.AR.findById(idObjetivo));
 		atributo.salvar();
 		result.use(Results.http()).body(atributo.toVO(false).toJson());
 	}
@@ -81,6 +95,17 @@ public class AtributoController extends SrController {
 		result.use(Results.http()).body(ret);
 	}
 
+	@Path("/atributos")
+    public void listarAssociacaoAtributo(Long idAtributo, boolean exibirInativos) throws Exception {
+//        assertAcesso("ADM:Administrar");
+
+    	SrAtributo att = new SrAtributo();
+    	if (idAtributo != null)
+    		att = SrAtributo.AR.findById(idAtributo);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, exibirInativos);
+        result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
+    }
+
 	private void validarFormEditarAtributo(SrAtributo atributo) {
 		if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && atributo.getDescrPreDefinido().equals("")) {
 			srValidator.addError("att.descrPreDefinido", "Valores Pré-definido não informados");
@@ -92,3 +117,4 @@ public class AtributoController extends SrController {
 	}
 
 }
+

@@ -4,18 +4,19 @@
 
 <div class="gt-form gt-content-box">
 	<form id="atributoForm" action="#" enctype="multipart/form-data">
-		<input type="hidden" name="idAtributo" id="idAtributo" value="${idAtributo}">
-		<input type="hidden" name="hisIdIni" id="hisIdIni" value="${hisIdIni}">
+<%-- 		<input type="hidden" name="atributo" id="atributo" value="${idAtributo}"> --%>
+		<input type="hidden" name="atributo.idAtributo" id="idAtributo" value="${idAtributo}">
+		<input type="hidden" name="atributo.hisIdIni" id="hisIdIni" value="${hisIdIni}">
 		<div class="gt-form-row box-wrapper">
 			<div class="box box-left gt-width-50">
 				<label>Nome <span>*</span></label> <input type="text"
-					name="nomeAtributo"
+					name="atributo.nomeAtributo"
 					id="nomeAtributo"
 					value="${nomeAtributo}" size="50" maxlength="255" required/>
 			</div>
 			<div class="box gt-width-50">
 				<label>Descrição</label> <input maxlength="255" type="text"
-					name="descrAtributo"
+					name="atributo.descrAtributo"
 					id="descrAtributo"
 					value="${descrAtributo}" 
 					style="width: 372px;" />
@@ -23,12 +24,12 @@
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>C&oacute;digo</label> 
-			<input type="text" name="codigoAtributo" id="codigoAtributo"
+			<input type="text" name="atributo.codigoAtributo" id="codigoAtributo"
 				value="${codigoAtributo}" size="60" maxlength="255"/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Objetivo do atributo<span>*</span></label> 
-			<select id="objetivoAtributo" name="objetivoAtributo" class="select-siga" style="width:393px;" onchange="javascript:ocultaAssociacoes();">
+			<label>Objetivo do atributo<span>*</span></label>
+			<select id="objetivoAtributo" name="idObjetivo" class="select-siga" style="width:393px;" onchange="javascript:ocultaAssociacoes();">
 				<c:forEach items="${objetivos}" var="objetivo">
 					<option value="${objetivo.idObjetivo}">${objetivo.descrObjetivo}</option>
 				</c:forEach>
@@ -36,7 +37,7 @@
 		</div>
 		<div class="gt-form-row gt-width-100">
 			<label>Tipo de atributo</label>
-			<select id="tipoAtributo" name="tipoAtributo" class="select-siga" style="width:100%;">
+			<select id="tipoAtributo" name="atributo.tipoAtributo" class="select-siga" style="width:100%;">
 				<c:forEach items="${tiposAtributo}" var="tipoAtt">
 					<option value="${tipoAtt}">${tipoAtt.descrTipoAtributo}</option>
 				</c:forEach>
@@ -45,7 +46,7 @@
 		<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
 			<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
 			<input maxlength="255" type="text"
-				name="descrPreDefinido"
+				name="atributo.descrPreDefinido"
 				id="descrPreDefinido"
 				value="${descrPreDefinido}" size="60" />
 		</div>
@@ -68,13 +69,14 @@
 
 <script>
 	associacaoService.getUrlDesativarReativar = function(desativados) {
-		var url = '@{Application.listarAssociacaoAtributo()}',
-			idAtributo = $("[name=idAtributo]").val();
-
+		var url = '${linkTo[AtributoController].listarAssociacaoAtributo}';
+		var idAtributo = $("[id=idAtributo]").val();
+		var exibirInativo = "";
+		
 		if(desativados)
-			url = '@{Application.listarAssociacaoAtributoDesativados()}';
+			exibirInativo = "&exibirInativos=true";
 			
-		return url + "?idAtributo=" + idAtributo;
+		return url + "?idAtributo=" + idAtributo + exibirInativo;
 	}
 
 	var validatorAtributoForm;
@@ -92,19 +94,19 @@
 		}
 	}
 
-	function detalhesListaAssociacao(d, associacao) {
-		var tr = $('<tr class="detail">'),
-			td = $('<td colspan="6">'),
-			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
+// 	function detalhesListaAssociacao(d, associacao) {
+// 		var tr = $('<tr class="detail">'),
+// 			td = $('<td colspan="6">'),
+// 			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
 			
-		table.append(htmlConteudo(d, "Item de configuração:", associacao.itemConfiguracaoUnitario.siglaItemConfiguracao, associacao.itemConfiguracaoUnitario.tituloItemConfiguracao, table));
-		table.append(htmlConteudo(d, "A&ccedil;&atilde;o:", associacao.acaoUnitaria.sigla, associacao.acaoUnitaria.descricao, table));
+// 		table.append(htmlConteudo(d, "Item de configuração:", associacao.itemConfiguracaoUnitario.siglaItemConfiguracao, associacao.itemConfiguracaoUnitario.tituloItemConfiguracao, table));
+// 		table.append(htmlConteudo(d, "A&ccedil;&atilde;o:", associacao.acaoUnitaria.sigla, associacao.acaoUnitaria.descricao, table));
 		
-		td.append(table);
-		tr.append(td);
+// 		td.append(table);
+// 		tr.append(td);
 	    
-	    return tr;
-	};
+// 	    return tr;
+// 	};
 
 	function htmlConteudo(d, titulo, sigla, descricao, table) {
 		var trItem = $('<tr>'),
@@ -172,12 +174,12 @@
 			return value;
 	}
 
-	function formatDescricaoLonga(descricao) {
-		if (descricao && descricao.length > 10) {
-			return descricao.substr(0, 10) + " ...";
-		}
-		else return (descricao || ' ');
-	}
+// 	function formatDescricaoLonga(descricao) {
+// 		if (descricao && descricao.length > 10) {
+// 			return descricao.substr(0, 10) + " ...";
+// 		}
+// 		else return (descricao || ' ');
+// 	}
 
 	function getAtributoObrigatorioString() {
 		var isChecked = $("#checkatributoObrigatorio")[0].checked;
@@ -204,7 +206,7 @@
 		         error: function(response) {
 		        	$('#modal-associacao').hide(); 
 
-		        	var modalErro = $('#"modal-associacao-error"');
+		        	var modalErro = $("#modal-associacao-error");
 		        	modalErro.find("h3").html(response.responseText);
 		        	modalErro.show(); 
 		         }

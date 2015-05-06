@@ -66,7 +66,7 @@
 							<th>C�digo</th>
 							<th>Formato</th>
 							<th></th>
-							<th>jSon</th>
+							<th style="display: none;">jSon</th>
 						</tr>
 					</thead>
 	
@@ -85,7 +85,7 @@
 															onDesativar="atributoService.desativar"
 															isAtivo="${att.isAtivo()}"></siga:desativarReativar>
 								</td>
-								<td>
+								<td style="display: none;">
 									${att.toJson()}
 								</td>
 							</tr>
@@ -233,7 +233,7 @@
 	var atributoService = new AtributoService(opts);
 	
 	atributoService.getId = function(atributo) {
-		return atributo.idAtributo;
+		return atributo.idAtributo || atributo['atributo.idAtributo'];
 	}
 	
 	atributoService.onRowClick = function(atributo) {
@@ -276,6 +276,11 @@
 		// limpa a lista de Associações
 		associacaoService.limparDadosAssociacoes();
 		associacaoService.atualizarListaAssociacoes({});
+	}
+
+	atributoService.serializar = function(obj) {
+		var query = BaseService.prototype.serializar.call(this, obj);
+		return query + "&atributo=" + this.getId(obj);
 	}
 	
 	atributoService.buscarAssociacoes = function(assoc) {

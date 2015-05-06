@@ -39,11 +39,11 @@ public class SrConfiguracaoVO {
 	public String descPrioridade;
 
 	// Solicitante
-	public SelecionavelVO dpPessoa;
+	public SelecionavelVO pessoa;
 	public SelecionavelVO lotacao;
 	public SelecionavelVO lotacaoParaInclusaoAutomatica;
 	public SelecionavelVO cargo;
-	public SelecionavelVO funcaoConfianca;
+	public SelecionavelVO funcao;
 	public SelecionavelVO cpGrupo;
 	public SelecionavelVO solicitante;
 	public SrPrioridade prioridadeNaLista;
@@ -97,12 +97,12 @@ public class SrConfiguracaoVO {
 		complexo = CpComplexoVO.createFrom(configuracao.getComplexo());
 
 		// Dados do Solicitante
-		dpPessoa = SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante());
-		dpPessoaParaInclusaoAutomatica = dpPessoa;
+		pessoa = SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante());
+		dpPessoaParaInclusaoAutomatica = pessoa;
 		lotacao = SelecionavelVO.createFrom(configuracao.getLotacao(), configuracao.getTipoSolicitante());
 		lotacaoParaInclusaoAutomatica = lotacao;
 		cargo = SelecionavelVO.createFrom(configuracao.getCargo(), configuracao.getTipoSolicitante());
-		funcaoConfianca = SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante());
+		funcao = SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante());
 		cpGrupo = SelecionavelVO.createFrom(configuracao.getCpGrupo(), configuracao.getTipoSolicitante());
 
 		solicitante = SelecionavelVO.createFrom(configuracao.getSolicitante());

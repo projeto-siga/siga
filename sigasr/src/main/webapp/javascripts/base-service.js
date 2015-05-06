@@ -14,7 +14,6 @@ function Formulario(form) {
 	}
 	
 	this.toJson = function() {
-		console.log(form);
 		return form.serializeJSON();
 	}
 	
@@ -31,8 +30,13 @@ function Formulario(form) {
 	this.prepareObjectToForm = function(obj) {
 		for (var x in obj) {
 		    if (typeof obj[x] == 'object') {
-		    	var component = form.find('[name=' + x + ']'),
-	    		className = component.size() > 0 ? component[0].className : null,
+		    	var component = form.find('[name=' + x + ']');
+		    	
+		    	if (component.length == 0) {
+		    		component = form.find('[id=' + x + ']');
+		    	}
+		    	
+	    		var className = component.size() > 0 ? component[0].className : null,
 	        	objeto = obj[x];
 	    		
 		    	// Caso o atributo seja um objeto, verifica qual seu tipo e preenche os valores necessários
@@ -62,13 +66,14 @@ function Formulario(form) {
 	}
 	
 	/**
-	 * Cria os atributos esperados pelo componente selecao.html
+	 * Cria os atributos esperados pelo componente selecao.tag
 	 */
 	this.prepareForSelecaoComponent = function(atributo, obj, objeto) {
-		obj[atributo] = objeto ? objeto.id : '';
-		obj[atributo+"_sigla"] = objeto ? objeto.sigla : '';
-		obj[atributo+"_descricao"] = objeto ? objeto.descricao : '';
-		obj[atributo+"Span"] = objeto ? objeto.descricao : '';
+		obj["formulario_"+atributo+"Sel"] = objeto ? objeto.id : '';
+		obj["formulario_"+atributo+"Sel_id"] = objeto ? objeto.id : '';
+		obj["formulario_"+atributo+"Sel_sigla"] = objeto ? objeto.sigla : '';
+		obj["formulario_"+atributo+"Sel_descricao"] = objeto ? objeto.descricao : '';
+		obj[atributo+"SelSpan"] = objeto ? objeto.descricao : '';
 	}
 }
 

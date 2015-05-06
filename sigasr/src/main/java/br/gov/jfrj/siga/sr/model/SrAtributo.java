@@ -27,12 +27,13 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAtributo extends HistoricoSuporteVraptor {
+public class SrAtributo extends HistoricoSuporteVraptor implements ConvertableEntity {
 	private static final long serialVersionUID = 1L;
 
 	public static ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);

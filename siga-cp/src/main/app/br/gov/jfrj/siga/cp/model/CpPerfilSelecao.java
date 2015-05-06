@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.util;
+package br.gov.jfrj.siga.cp.model;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpPerfil;

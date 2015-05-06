@@ -9,12 +9,13 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_OBJETIVO_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class SrObjetivoAtributo extends ObjetoVraptor {
+public class SrObjetivoAtributo extends ObjetoVraptor implements ConvertableEntity {
 	
 	public static ActiveRecord<SrObjetivoAtributo> AR = new ActiveRecord<>(SrObjetivoAtributo.class);
 

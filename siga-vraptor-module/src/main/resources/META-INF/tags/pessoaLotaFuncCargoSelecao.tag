@@ -35,27 +35,32 @@
 </select>
 
 <span id="spanPessoa${nomeSelPessoa}">
-	<siga:selecao propriedade="pessoa" tipo="pessoa" tema="simple" modulo="siga" inputName="${nomeSelPessoa}" 
+	<input type="hidden" name="${nomeSelPessoa}" id="${nomeSelPessoa}" class="pessoaLotaFuncCargoSelecao">
+	<siga:selecao propriedade="pessoa" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
 </span>
 
 <span id="spanLotacao${nomeSelLotacao}">
-	<siga:selecao propriedade="lotacao" tipo="lotacao" tema="simple" modulo="siga" inputName="${nomeSelLotacao}" 
+	<input type="hidden" name="${nomeSelLotacao}" id="${nomeSelLotacao}" class="pessoaLotaFuncCargoSelecao">
+	<siga:selecao propriedade="lotacao" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
 </span>
 
 <span id="spanFuncao${nomeSelFuncao}">
-	<siga:selecao propriedade="funcao" tipo="funcao" tema="simple" modulo="siga" inputName="${nomeSelFuncao}" 
+	<input type="hidden" name="${nomeSelFuncao}" id="${nomeSelFuncao}" class="pessoaLotaFuncCargoSelecao">
+	<siga:selecao propriedade="funcao" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueFuncao}"/>
 </span>
 
 <span id="spanCargo${nomeSelCargo}">
-	<siga:selecao propriedade="cargo" tipo="cargo" tema="simple" modulo="siga" inputName="${nomeSelCargo}" 
+	<input type="hidden" name="${nomeSelCargo}" id="${nomeSelCargo}" class="pessoaLotaFuncCargoSelecao">
+	<siga:selecao propriedade="cargo" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueCargo}"/>
 </span>
 
 <span id="spanGrupo${nomeSelGrupo}">
-	<siga:selecao propriedade="perfil" tipo="perfil" tema="simple" modulo="siga" prefix="gi" inputName="${nomeSelGrupo}" 
+	<input type="hidden" name="${nomeSelGrupo}" id="${nomeSelGrupo}" class="pessoaLotaFuncCargoSelecao">
+	<siga:selecao propriedade="perfil" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueGrupo}"/>
 </span>
 
@@ -69,37 +74,37 @@ var select = document.getElementById('${nomeSelPessoa}${nomeSelLotacao}${nomeSel
 // http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined
 function limparPessoa() {
 	document.getElementById('spanPessoa${nomeSelPessoa}').style.display = 'none';
-	document.getElementById('formulario_${nomeSelPessoa}_pessoaSel_sigla').value='';
-	document.getElementById('formulario_${nomeSelPessoa}_pessoaSel_descricao').value='';
-	document.getElementById('pessoa_pessoaSelSpan').innerHTML='';
+	document.getElementById('formulario_pessoaSel_sigla').value='';
+	document.getElementById('formulario_pessoaSel_descricao').value='';
+	document.getElementById('pessoaSelSpan').innerHTML='';
 }
 
 function limparLotacao() { 
 	document.getElementById('spanLotacao${nomeSelLotacao}').style.display = 'none';
-	document.getElementById('formulario_${nomeSelLotacao}_lotacaoSel_sigla').value='';
-	document.getElementById('formulario_${nomeSelLotacao}_lotacaoSel_descricao').value='';
-	document.getElementById('lotacao_lotacaoSelSpan').innerHTML='';
+	document.getElementById('formulario_lotacaoSel_sigla').value='';
+	document.getElementById('formulario_lotacaoSel_descricao').value='';
+	document.getElementById('lotacaoSelSpan').innerHTML='';
 }
 
 function limparFuncao() {
 	document.getElementById('spanFuncao${nomeSelFuncao}').style.display = 'none';
-	document.getElementById('formulario_${nomeSelFuncao}_funcaoSel_sigla').value='';
-	document.getElementById('formulario_${nomeSelFuncao}_funcaoSel_descricao').value='';
-	document.getElementById('funcao_funcaoSelSpan').innerHTML='';
+	document.getElementById('formulario_funcaoSel_sigla').value='';
+	document.getElementById('formulario_funcaoSel_descricao').value='';
+	document.getElementById('funcaoSelSpan').innerHTML='';
 }
 
 function limparCargo() {
 	document.getElementById('spanCargo${nomeSelCargo}').style.display = 'none';
-	document.getElementById('formulario_${nomeSelCargo}_cargoSel_sigla').value='';
-	document.getElementById('formulario_${nomeSelCargo}_cargoSel_descricao').value='';
-	document.getElementById('cargo_cargoSelSpan').innerHTML='';
+	document.getElementById('formulario_cargoSel_sigla').value='';
+	document.getElementById('formulario_cargoSel_descricao').value='';
+	document.getElementById('cargoSelSpan').innerHTML='';
 }
 
 function limparGrupo() {
 	document.getElementById('spanGrupo${nomeSelGrupo}').style.display = 'none';
-	document.getElementById('formulario_${nomeSelGrupo}_perfilSel_sigla').value='';
-	document.getElementById('formulario_${nomeSelGrupo}_perfilSel_descricao').value='';
-	document.getElementById('perfil_perfilSelSpan').innerHTML='';
+	document.getElementById('formulario_perfilSel_sigla').value='';
+	document.getElementById('formulario_perfilSel_descricao').value='';
+	document.getElementById('perfilSelSpan').innerHTML='';
 }
 
 select.onchange = function(){

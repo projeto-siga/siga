@@ -57,6 +57,7 @@ import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoEmail;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFormula;
 import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
+import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -64,7 +65,6 @@ import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-import br.gov.jfrj.siga.util.CpGrupoDeEmailSelecao;
 
 import com.google.common.base.Optional;
 

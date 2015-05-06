@@ -34,9 +34,9 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
+import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.util.CpGrupoDeEmailSelecao;
 
 @Resource
 public class GrupoDeEmailController extends GrupoController {

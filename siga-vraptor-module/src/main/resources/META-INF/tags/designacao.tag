@@ -9,7 +9,7 @@
 <%@ attribute name="listasPrioridade" required="false"%>
 <%@ attribute name="designacoes" required="false"%>
 <%@ attribute name="modoExibicao" required="false"%>
-<%@ attribute name="mostrarDesativado" required="false"%>
+<%@ attribute name="mostrarDesativados" required="false"%>
 
 
 <div class="gt-content">
@@ -18,7 +18,7 @@
 		<c:if test="${requestScope[modoExibicao] == 'designacao'}">
 			<div class="gt-form-row dataTables_length">
 				<label>
-					<siga:checkbox name="mostrarDesativado" value="${requestScope[mostrarDesativado]}"></siga:checkbox>
+					<siga:checkbox name="mostrarDesativados" value="${requestScope[mostrarDesativados]}"></siga:checkbox>
 					<b>Incluir Inativas</b>
 				</label>
 			</div>
@@ -46,13 +46,13 @@
 			</thead>
 			<tbody>
 				<c:forEach items="${requestScope[designacoes]}" var="design">
-					<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')" 
+					<tr data-json-id="${design.id}" data-json='${design.toVO().toJson()}'
 						style="cursor: pointer;">
 						<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 						<td>${design.orgaoUsuario != null ? design.orgaoUsuario.acronimoOrgaoUsu : ""}</td>
 						<td>${design.complexo != null ? design.complexo.nomeComplexo : ""}</td>
 						<td>${design.solicitante != null ? design.solicitante.sigla : "" }</td>
-						<td><%-- ${design.descrConfiguracao} --%></td>
+						<td>${design.descrConfiguracao}</td>
 						<td>${design.atendente != null && design.atendente.lotacaoAtual != null ? design.atendente.lotacaoAtual.siglaLotacao : "" }</td>
 						<td class="acoes"> 
 							<siga:desativarReativar id="${design.id}" onReativar="designacaoService.reativar" onDesativar="designacaoService.desativar" isAtivo="${design.isAtivo()}"></siga:desativarReativar>
@@ -66,8 +66,8 @@
 							<input type="checkbox" checked="${design.utilizarItemHerdado}"
 							id="check${design.id}" />
 						</td>
-						<th><%-- ${design.isHerdado} --%></th>
-						<th><%-- ${design.utilizarItemHerdado} --%></th>
+						<th>${design.herdado}</th>
+						<th>${design.utilizarItemHerdado}</th>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -200,8 +200,7 @@
 	
 	
 	
-		<%-- 		#{include 'Application/editarDesignacaoItem.html' /} --%>
-<%-- 		<jsp:include page="editarItem.jsp"></jsp:include> --%>
+
 	</div>
 </siga:modal>
 		
@@ -246,7 +245,7 @@
 		 tabelaRegistros : jQuery('#designacoes_table'),
 		 objectName : 'designacao',
 		 formCadastro : jQuery('#formDesignacao'),
-		 mostrarDesativados : mostrarDesativados,
+		 mostrarDesativados : $('#checkmostrarDesativados').attr('checked') ? true : false,
 		 colunas : colunasDesignacao.acoes,
 	};	
 	
@@ -470,7 +469,7 @@
 			trItens = $('<tr>'),
 			trAcoes = $('<tr>'),
 			descricao = designacao.descrConfiguracao != undefined ? designacao.descrConfiguracao : '';
-		
+
 		TableHelper.detalheLista("<b>Itens de configuraÃ§Ã£o:</b>", designacao.listaItemConfiguracaoVO, trItens);
 		TableHelper.detalheLista("<b>AÃ§Ãµes:</b>", designacao.listaAcaoVO, trAcoes);
 		detalheDescricaoLista("<b>DescriÃ§Ã£o:</b>", descricao, trDescricao);

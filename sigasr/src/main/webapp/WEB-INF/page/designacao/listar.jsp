@@ -23,47 +23,24 @@
 			<script type="text/javascript">
 				var telaOrigem = 'listarDesignacao';
 				
-				var QueryString = function () {
-					// This function is anonymous, is executed immediately and
-					// the return value is assigned to QueryString!
-					var query_string = {};
-					var query = window.location.search.substring(1);
-					var vars = query.split("&");
-					for (var i=0;i<vars.length;i++) {
-						var pair = vars[i].split("=");
-				    	// If first entry with this name
-				    	if (typeof query_string[pair[0]] === "undefined") {
-							query_string[pair[0]] = pair[1];
-							// If second entry with this name
-						} else if (typeof query_string[pair[0]] === "string") {
-							var arr = [ query_string[pair[0]], pair[1] ];
-							query_string[pair[0]] = arr;
-							// If third or later entry with this name
-						} else {
-							query_string[pair[0]].push(pair[1]);
-						}
-					}
-					return query_string;
-				}();
-				
 				//removendo a referencia de '$' para o jQuery
 				$( document ).ready(function() {
-					if (QueryString.mostrarDesativados != undefined) {
-						document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
-						document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
-					}
+// 					if ("${mostrarDesativado}" != "") {
+// 						document.getElementById('checkmostrarDesativado').checked = '${mostrarDesativado}';
+// 						document.getElementById('checkmostrarDesativado').value = '${mostrarDesativado}';
+// 					}
 						
-					$("#checkmostrarDesativado").click(function() {
+					$("#checkmostrarDesativados").click(function() {
 						jQuery.blockUI(objBlock);
-						if (document.getElementById('checkmostrarDesativado').checked)
-							location.href = '${linkTo[DesignacaoController].listar[true]}';
+						if (document.getElementById('checkmostrarDesativados').checked)
+							location.href = '${linkTo[DesignacaoController].listarDesativados}';
 						else
-							location.href = '${linkTo[DesignacaoController].listar[false]}';
+							location.href = '${linkTo[DesignacaoController].listar}';
 					});
 				});
 			</script>
 		
-			<siga:designacao modoExibicao="modoExibicao" designacoes="designacoes" mostrarDesativado="mostrarDesativado"/> 
+			<siga:designacao modoExibicao="modoExibicao" designacoes="designacoes" mostrarDesativados="mostrarDesativados"/> 
 			
 			<script>
 				$(document).ready(function() {

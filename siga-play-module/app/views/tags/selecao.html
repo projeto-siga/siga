@@ -117,18 +117,14 @@ self.ajax_${nomeclean} = function() {
 	}
 }
 
-</script><input type="hidden" name="${_nome}"
-	value="${_value?.id}" id="${nomeclean}" /> <input type="hidden"
-	value="${_value?.descricao}" id="${nomeclean}_descricao" /> <input
-	type="hidden" name="${nomeclean}_buscar" value=""
-	id="${nomeclean}_buscar" /> <input type="hidden"
-	name="req${nomeclean}" value="" id="req${nomeclean}" /> <input
-	type="hidden" name="alterouSel" value="" id="alterouSel" /> <input
-	type="text" size="25" name="${nomeclean}_sigla"
-	value="${_value?.sigla}" id="${nomeclean}_sigla"
-	onblur="javascript: ajax_${nomeclean}();"
-	onkeypress="return handleEnter(this, event)" ${selecaoDisabled} /> <input type="button"
-	id="${nomeclean}Button" value="..."
-	onclick="javascript: popitup_${nomeclean}('');" theme="simple" ${selecaoDisabled} >
-	<span id="${nomeclean}Span">${_value?.descricao}</span> <!--  idAjax="${_idAjax}" -->
+</script>
+	<input type="hidden" name="${_nome}" value="${_value?.id}" id="${nomeclean}" /> 
+	<input type="hidden" value="${_value?.descricao}" id="${nomeclean}_descricao" /> 
+	<input type="hidden" name="${nomeclean}_buscar" value="" id="${nomeclean}_buscar" /> 
+	<input type="hidden" name="req${nomeclean}" value="" id="req${nomeclean}" /> 
+	<input type="hidden" name="alterouSel" value="" id="alterouSel" /> 
+	<input type="text" size="25" name="${nomeclean}_sigla" value="${_value?.sigla}" id="${nomeclean}_sigla" onblur="javascript: ajax_${nomeclean}();" onkeypress="return handleEnter(this, event)" ${selecaoDisabled} /> 
+	<input type="button" id="${nomeclean}Button" value="..." onclick="javascript: popitup_${nomeclean}('');" theme="simple" ${selecaoDisabled} >
+	<span id="${nomeclean}Span">${_value?.descricao}</span> 
+	<!--  idAjax="${_idAjax}" -->
 	<!--/ajax:${_idAjax}--> </span>

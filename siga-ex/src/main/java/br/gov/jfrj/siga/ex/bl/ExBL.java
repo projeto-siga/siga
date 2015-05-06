@@ -866,10 +866,18 @@ public class ExBL extends CpBL {
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA){
 					m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
+					
+					if(mob.temDocumentosJuntados()){
+						atualizaMarcasDocumentosJuntados(mob);
+					}
 				}
 				if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA || t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
 						&& !apensadoAVolumeDoMesmoProcesso){
-					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;				
+					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
+					
+					if(mob.temDocumentosJuntados()){
+						atualizaMarcasDocumentosJuntados(mob);
+					}
 				}
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 						&& mob.doc().isEletronico()) {

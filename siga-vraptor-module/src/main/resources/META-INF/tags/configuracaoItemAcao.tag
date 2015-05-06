@@ -317,13 +317,18 @@
 			
 			// Atualiza a string serializada
 			if (rowValues) {
-	        	params += '&' + objectName + '.itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0];
+	        	params 	+= '&itemConfiguracaoSet[' + i + ']=' + rowValues[0]
+	        			+  '&itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0]
+	        	       	+  '&itemConfiguracaoSet[' + i + '].siglaItemConfiguracao=' + rowValues[1]
+     	       		   	+  '&itemConfiguracaoSet[' + i + '].tituloItemConfiguracao=' + rowValues[2]
+	        			+  '&itemConfiguracaoSet[' + i + '].descrItemConfiguracao=' + rowValues[3]
+	        			+  '&itemConfiguracaoSet[' + i + '].descricaoSimilaridade=' + rowValues[4];
 	        	hasValue = true;
 			}
 		});
 
-		if (!hasItem)
-			params += '&' + objectName + '.itemConfiguracaoSet=';
+// 		if (!hasItem)
+// 			params += '&itemConfiguracaoSet=';
 		
 		// Percorre lista de AÃ§Ãµes
 		this.acaoTable.api().rows().indexes().each(function (i) {
@@ -331,13 +336,16 @@
 			
 			// Atualiza a string serializada
 			if (rowValues) {
-				params += '&' + objectName + '.acoesSet[' + i + '].idAcao=' + rowValues[0];
+				params 	+= '&acoesSet[' + i + ']=' + rowValues[0]
+						+  '&acoesSet[' + i + '].idAcao=' + rowValues[0]
+						+  '&acoesSet[' + i + '].siglaAcao=' + rowValues[1]
+						+  '&acoesSet[' + i + '].tituloAcao=' + rowValues[2];
 				hasAcao = true;
 			}
 		});
 
-		if (!hasAcao)
-			params += '&' + objectName + '.acoesSet=';
+// 		if (!hasAcao)
+// 			params += '&acoesSet=';
 		
 		return params;
 	}

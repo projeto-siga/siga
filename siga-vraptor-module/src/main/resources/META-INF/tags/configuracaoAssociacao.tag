@@ -54,7 +54,7 @@
 	
 		<form id="associacaoForm">
 		
-			<input id="idConfiguracao" type="hidden" name="idConfiguracao">
+			<input id="idConfiguracao" type="hidden" name="associacao.idConfiguracao">
 			
 			<div id="divSolicitante" class="gt-form-row gt-width-100">
 				<label>Solicitante</label> 
@@ -76,7 +76,7 @@
 			<div class="gt-form-row gt-width-100">
 				<label>Órgão</label>
 				
-				<select name="orgaoUsuario" class="select-siga" style="width: 100%;">
+				<select name="orgaoUsuario.idOrgaoUsu" id="orgaoUsuario" class="select-siga" style="width: 100%;">
 					<option value="0">Nenhum</option>
 					<c:forEach items="${orgaos}" var="orgao">
 						<option value="${orgao.idOrgaoUsu}">${orgao.nmOrgaoUsu}</option>
@@ -87,7 +87,7 @@
 			<div class="gt-form-row gt-width-100">
 				<label>Local</label>
 				
-				<select name="complexo" class="select-siga" style="width: 100%;">
+				<select name="complexo.idComplexo" id="complexo" class="select-siga" style="width: 100%;">
 					<option value="0">Nenhum</option>
 					<c:forEach items="${locais}" var="local">
 						<option value="${local.idComplexo}">${local.nomeComplexo}</option>
@@ -99,7 +99,7 @@
 			
 			<c:if test="${modoExibicao == 'atributo'}">
 				<div class="gt-form-row">
-					<label><siga:checkbox name="atributoObrigatorio" value="${atributoObrigatorio}"></siga:checkbox>
+					<label><siga:checkbox nameInput="associacao.atributoObrigatorio" name="atributoObrigatorio" value="${atributoObrigatorio}"></siga:checkbox>
 						Obrigatório
 					</label>
 				</div>
@@ -188,7 +188,7 @@
 	associacaoService = new AssociacaoService(associacaoServiceConfig);
 
 	associacaoService.getId = function(obj) {
-		return obj.idConfiguracao;
+		return obj.idConfiguracao || obj['associacao.idConfiguracao'];
 	}
 
 	associacaoService.cadastrar = function(title) {
@@ -277,7 +277,9 @@
     }
 
 	associacaoService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + associacaoService.getListasAsString();
+		debugger;
+		var serializado = BaseService.prototype.serializar.call(this, obj) + "&" + associacaoService.getListasAsString();
+		return serializado + "&associacao=" + this.getId(obj);
 	}
 	
 	associacaoService.getRow = function(assoc) {

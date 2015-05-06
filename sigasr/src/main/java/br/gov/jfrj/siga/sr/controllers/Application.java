@@ -181,7 +181,7 @@ public class Application extends SigaApplication {
 		String itens = "";
 		for (Object o : SrItemConfiguracao.listar(false)){
 			SrItemConfiguracao a = (SrItemConfiguracao) o;
-			itens += a.siglaItemConfiguracao + "&nbsp;&nbsp;" + (a.getGcTags()) + "<br/>";
+			itens += a.getSiglaItemConfiguracao() + "&nbsp;&nbsp;" + (a.getGcTags()) + "<br/>";
 		}
 		render(acoes, itens);
 	}
@@ -303,7 +303,7 @@ public class Application extends SigaApplication {
 	@SuppressWarnings("static-access")
 	private static void validarFormEditarItem(
 			SrItemConfiguracao itemConfiguracao) throws Exception {
-		if (itemConfiguracao.siglaItemConfiguracao.equals("")) {
+		if (itemConfiguracao.getSiglaItemConfiguracao().equals("")) {
 			validation.current().addError("siglaAcao", "Código não informado");
 		}
 		if (validation.current().hasErrors()) {
@@ -832,7 +832,7 @@ public class Application extends SigaApplication {
 				mov.atendente = null;
 			mov.motivoEscalonamento = motivo;
 			mov.designacao = SrConfiguracao.findById(idDesignacao);
-			mov.descrMovimentacao = "Motivo: " + mov.motivoEscalonamento + "; Item: " + mov.itemConfiguracao.tituloItemConfiguracao
+			mov.descrMovimentacao = "Motivo: " + mov.motivoEscalonamento + "; Item: " + mov.itemConfiguracao.getTituloItemConfiguracao()
 					+ "; Ação: " + mov.acao.getTituloAcao() + "; Atendente: " + mov.lotaAtendente.getSigla();
 			mov.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
 			exibir(solicitacao.idSolicitacao, todoOContexto(), ocultas());

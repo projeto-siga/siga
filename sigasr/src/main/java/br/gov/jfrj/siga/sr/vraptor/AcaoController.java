@@ -14,18 +14,19 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
+import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
 @Path("app/acao")
 public class AcaoController extends SrController {
 
+	public AcaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, dao, so, em, srValidator);
+	}
+
 	private static final String ACAO = "acao";
 	private static final String ACOES = "acoes";
-
-	public AcaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
-	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/listar/{mostrarDesativados}")
@@ -41,7 +42,7 @@ public class AcaoController extends SrController {
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	@Path("/editar/{id}")
+	@Path("/editar")
 	public void editar(Long id) throws Exception {
 		SrAcao acao = new SrAcao();
 		if (id != null)
@@ -51,8 +52,27 @@ public class AcaoController extends SrController {
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	public void gravarAcao(SrAcao acao) throws Exception {
+	@Path("/gravar")
+	public void gravar(SrAcao acao) throws Exception {
 		validarFormEditarAcao(acao);
+		acao.salvar();
+
+		result.use(Results.http()).body(acao.toJson());
+	}
+
+	//@AssertAcesso(ADM_ADMINISTRAR)
+	@Path("/desativar")
+	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
+		SrAcao acao = SrAcao.AR.findById(id);
+		acao.finalizar();
+
+		result.use(Results.http()).body(acao.toJson());
+	}
+
+	//@AssertAcesso(ADM_ADMINISTRAR)
+	@Path("/reativar")
+	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
+		SrAcao acao = SrAcao.AR.findById(id);
 		acao.salvar();
 
 		result.use(Results.http()).body(acao.toJson());
@@ -85,23 +105,6 @@ public class AcaoController extends SrController {
 		render(itens, filtro, nome, sol);
 	}
 	*/
-
-	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
-		//assertAcesso(ADM_ADMINISTRAR);
-		SrAcao acao = SrAcao.AR.findById(id);
-		acao.finalizar();
-
-		result.use(Results.http()).body(acao.toJson());
-	}
-
-	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
-		//assertAcesso(ADM_ADMINISTRAR);
-		SrAcao acao = SrAcao.AR.findById(id);
-		acao.salvar();
-
-		result.use(Results.http()).body(acao.toJson());
-	}
-
 
 	private void validarFormEditarAcao(SrAcao acao) {
 		if ("".equals(acao.getSiglaAcao()))

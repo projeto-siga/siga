@@ -13,7 +13,7 @@ public class SrValidator {
 	}
 
 	public boolean hasErrors() {
-		return errors.isEmpty();
+		return !errors.isEmpty();
 	}
 
 	public List<SrError> getErros() {

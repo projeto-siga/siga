@@ -525,7 +525,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 			SrItemConfiguracao conf = this.itemConfiguracaoSet.get(this.itemConfiguracaoSet.size() -1);
 
 			if (conf != null) {
-				descrItemConfiguracao = conf.getAtual().tituloItemConfiguracao;
+				descrItemConfiguracao = conf.getAtual().getTituloItemConfiguracao();
 
 				if (this.itemConfiguracaoSet.size() > 1)
 					if (descrItemConfiguracao != null)

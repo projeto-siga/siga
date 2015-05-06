@@ -23,14 +23,15 @@ import br.gov.jfrj.siga.sr.model.SrExcecaoHorario;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.model.SrSemana;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
+import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
 @Path("app/equipe")
 public class EquipeController extends SrController {
 
-	public EquipeController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, SrDao.getInstance(), so, em);
+	public EquipeController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, SrDao.getInstance(), so, em, srValidator);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();

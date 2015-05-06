@@ -110,9 +110,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and sol.lotaSolicitante.idLotacaoIni = "
 					+ lotaSolicitante.getIdInicial());
 		if (itemConfiguracao != null
-				&& itemConfiguracao.getId() > 0L)
+				&& itemConfiguracao.getIdItemConfiguracao() > 0L)
 			query.append(" and sol.itemConfiguracao.itemInicial.idItemConfiguracao = "
-					+ itemConfiguracao.getItemInicial().getId());
+					+ itemConfiguracao.getItemInicial().getIdItemConfiguracao());
 		if (acao != null && acao.getIdAcao() > 0L)
 			query.append(" and sol.acao.acaoInicial.idAcao = "
 					+ acao.getAcaoInicial().getIdAcao());

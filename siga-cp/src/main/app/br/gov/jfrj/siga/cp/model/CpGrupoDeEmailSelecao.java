@@ -16,30 +16,31 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.util;
+package br.gov.jfrj.siga.cp.model;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpPerfil;
+import br.gov.jfrj.siga.cp.CpGrupo;
+import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Selecao;
 
-public class CpPerfilSelecao extends Selecao<CpPerfil> {
+public class CpGrupoDeEmailSelecao extends Selecao<CpGrupo> {
 
 	@Override
-	public CpPerfil buscarObjeto() throws AplicacaoException {
+	public CpGrupo buscarObjeto() throws AplicacaoException {
 		if (getId() == null)
 			return null;
 
-		final CpPerfil o = CpDao.getInstance().consultar(getId(),
-				CpPerfil.class, false);
+		final CpGrupo o = CpDao.getInstance().consultar(getId(), CpGrupo.class,
+				false);
 
 		return o;
 	}
 
 	@Override
 	public boolean buscarPorId() throws AplicacaoException {
-		final CpPerfil o = CpDao.getInstance().consultar(getId(),
-				CpPerfil.class, false);
+		final CpGrupo o = CpDao.getInstance().consultar(getId(), CpGrupo.class,
+				false);
 		if (o == null)
 			return false;
 
@@ -52,10 +53,10 @@ public class CpPerfilSelecao extends Selecao<CpPerfil> {
 		if (buscarPorSiglaCompleta())
 			return true;
 
-		final CpPerfil oExemplo = new CpPerfil();
+		final CpGrupo oExemplo = new CpGrupoDeEmail();
 		oExemplo.setSigla(getSigla());
 
-		final CpPerfil o = CpDao.getInstance().consultarPorSigla(oExemplo);
+		final CpGrupo o = CpDao.getInstance().consultarPorSigla(oExemplo);
 
 		if (o == null) {
 			apagar();
@@ -73,11 +74,11 @@ public class CpPerfilSelecao extends Selecao<CpPerfil> {
 		 * ouFiltro.setSigla(getSigla().substring(0, 2)); CpOrgaoUsuario ou =
 		 * CpDao.getInstance().consultarPorSigla(ouFiltro);
 		 */
-		final CpPerfil oExemplo = new CpPerfil();
+		final CpGrupo oExemplo = new CpGrupoDeEmail();
 		// oExemplo.setOrgaoUsuario(ou);
 		oExemplo.setSigla(getSigla().substring(2));
 
-		final CpPerfil o = CpDao.getInstance().consultarPorSigla(oExemplo);
+		final CpGrupo o = CpDao.getInstance().consultarPorSigla(oExemplo);
 
 		if (o == null) {
 			return false;
@@ -89,6 +90,6 @@ public class CpPerfilSelecao extends Selecao<CpPerfil> {
 
 	@Override
 	public String getAcaoBusca() {
-		return "/gi/perfil";
+		return "/gi/grupoDeEmail";
 	}
 }

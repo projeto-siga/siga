@@ -18,6 +18,7 @@ import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
+import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
@@ -31,8 +32,8 @@ public class ItemConfiguracaoController extends SrController {
 	private static final String UNIDADES_MEDIDA = "unidadesMedida";
 	private static final String PESQUISA_SATISFACAO = "pesquisaSatisfacao";
 
-	public ItemConfiguracaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+	public ItemConfiguracaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, dao, so, em, srValidator);
 	}
 	
 	//@AssertAcesso(ADM_ADMINISTRAR)

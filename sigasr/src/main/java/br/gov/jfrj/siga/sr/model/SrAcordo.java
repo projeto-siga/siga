@@ -11,23 +11,22 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAcordoVO;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_ACORDO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcordo extends HistoricoSuporte implements Selecionavel {
+public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel {
 	private static final long serialVersionUID = 1L;
 	
 	public static ActiveRecord<SrAcordo> AR = new ActiveRecord<>(SrAcordo.class);	

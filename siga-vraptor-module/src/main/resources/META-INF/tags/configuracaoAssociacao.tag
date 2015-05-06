@@ -35,7 +35,7 @@
 					<th>Local</th>
 					<th>Solicitante</th>
 					<th><i>Item &darr;</i></th>
-					<th>Açãoo</th>
+					<th>Ação</th>
 					<th>Obrigatório</th>
 					<th></th>
 				</tr>
@@ -53,16 +53,17 @@
 	<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 	
 		<form id="associacaoForm">
-			<input id="idConfiguracao" type="hidden" name="idConfiguracao">
+		
+			<input id="idConfiguracao" type="hidden" name="associacao.idConfiguracao">
 			
 			<div id="divSolicitante" class="gt-form-row gt-width-100">
 				<label>Solicitante</label> 
 				<siga:pessoaLotaFuncCargoSelecao
 						nomeSelLotacao="lotacao"
-						nomeSelPessoa="dpPessoa"
-						nomeSelFuncao="funcaoConfianca"
+						nomeSelPessoa="pessoa"
+						nomeSelFuncao="funcao"
 						nomeSelCargo="cargo"
-						nomeSelGrupo="cpGrupo"
+						nomeSelGrupo="grupo"
 						valuePessoa="${dpPessoa != null ? dpPessoa.pessoaAtual :'' }"
 						valueLotacao="${lotacao != null ? lotacao.lotacaoAtual : '' }"
 						valueFuncao="${funcaoConfianca }"
@@ -75,7 +76,7 @@
 			<div class="gt-form-row gt-width-100">
 				<label>Órgão</label>
 				
-				<select name="orgaoUsuario" class="select-siga" style="width: 100%;">
+				<select name="orgaoUsuario.idOrgaoUsu" id="orgaoUsuario" class="select-siga" style="width: 100%;">
 					<option value="0">Nenhum</option>
 					<c:forEach items="${orgaos}" var="orgao">
 						<option value="${orgao.idOrgaoUsu}">${orgao.nmOrgaoUsu}</option>
@@ -86,20 +87,19 @@
 			<div class="gt-form-row gt-width-100">
 				<label>Local</label>
 				
-				<select name="complexo" class="select-siga" style="width: 100%;">
+				<select name="complexo.idComplexo" id="complexo" class="select-siga" style="width: 100%;">
 					<option value="0">Nenhum</option>
 					<c:forEach items="${locais}" var="local">
 						<option value="${local.idComplexo}">${local.nomeComplexo}</option>
 					</c:forEach>
 				</select>
 			</div>
-		
-<%-- 			#{configuracaoItemAcao itemConfiguracaoSet:_itemConfiguracaoSet, --%>
-<%-- 							 acoesSet:_acoesSet}#{/configuracaoItemAcao} --%>
+
+			<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
 			
 			<c:if test="${modoExibicao == 'atributo'}">
 				<div class="gt-form-row">
-					<label><siga:checkbox name="atributoObrigatorio" value="${atributoObrigatorio}"></siga:checkbox>
+					<label><siga:checkbox nameInput="associacao.atributoObrigatorio" name="atributoObrigatorio" value="${atributoObrigatorio}"></siga:checkbox>
 						Obrigatório
 					</label>
 				</div>
@@ -161,7 +161,7 @@
 	   	         error: function(response) {
 	   	        	$('#modal-associacao').hide(); 
 	
-	   	        	var modalErro = $('#"modal-associacao-error"');
+	   	        	var modalErro = $("#modal-associacao-error");
 	   	        	modalErro.find("h3").html(response.responseText);
 	   	        	modalErro.show(); 
 	   	         }
@@ -188,7 +188,7 @@
 	associacaoService = new AssociacaoService(associacaoServiceConfig);
 
 	associacaoService.getId = function(obj) {
-		return obj.idConfiguracao;
+		return obj.idConfiguracao || obj['associacao.idConfiguracao'];
 	}
 
 	associacaoService.cadastrar = function(title) {
@@ -196,7 +196,7 @@
             return;
 
 		// reset no componente de pessoaLotaFuncCargoSelecao
-		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
+		$("#pessoalotacaofuncaocargogrupo")[0].changeValue(1);
 		configuracaoItemAcaoService.iniciarDataTables();
 		BaseService.prototype.cadastrar.call(this, title);	
 	}
@@ -206,7 +206,7 @@
 	 */
 	 associacaoService.editar = function(obj, title) {
 		// reset no componente de pessoaLotaFuncCargoSelecao
-		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
+		$("#pessoalotacaofuncaocargogrupo")[0].changeValue(1);
 		
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 	}
@@ -214,7 +214,7 @@
 	associacaoService.getObjetoParaGravar = function() {
 		var obj = BaseService.prototype.getObjetoParaGravar.call(this);
 
-		var modoExibicao = ${modoExibicao};
+		var modoExibicao = "${modoExibicao}";
 		if (modoExibicao == 'atributo'){
 			obj.atributo = { idAtributo : $('#idAtributo').val() };
 		} else if (modoExibicao == 'pesquisa'){ 
@@ -225,7 +225,7 @@
 
 	associacaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
-		var modoExibicao = ${modoExibicao};
+		var modoExibicao = "${modoExibicao}";
 		
 		if (modoExibicao == 'atributo'){
 			item =  this.getItemPaiPorId(obj.atributo.idAtributo);
@@ -259,7 +259,7 @@
 		node.attr('data-json-id', assoc.idConfiguracao);
 		node.attr('data-json', JSON.stringify(assoc));
 		node.on('click', function() {
-			associacaoService.editar(assoc, 'Alterar AssociaÃƒÂ§ÃƒÂ£o');
+			associacaoService.editar(assoc, 'Alterar Associação');
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(assoc);
 			$("#checkatributoObrigatorio").attr('checked', assoc.atributoObrigatorio);
 		});
@@ -277,7 +277,9 @@
     }
 
 	associacaoService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + associacaoService.getListasAsString();
+		debugger;
+		var serializado = BaseService.prototype.serializar.call(this, obj) + "&" + associacaoService.getListasAsString();
+		return serializado + "&associacao=" + this.getId(obj);
 	}
 	
 	associacaoService.getRow = function(assoc) {
@@ -296,7 +298,7 @@
 
 	associacaoService.conteudoColunaAcao = function(assoc) {
 		if(assoc.ativo) {
-			return 		'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover associaÃƒÂ§ÃƒÂ£o">' +
+			return 		'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover associação">' +
 							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
 							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;"/>' + 
 						'</a>';
@@ -400,8 +402,8 @@
 			trItens = $('<tr>'),
 			trAcoes = $('<tr>');
 
-		TableHelper.detalheLista("<b>Itens de configuraÃƒÂ§ÃƒÂ£o:</b>", associacao.listaItemConfiguracaoVO, trItens);
-		TableHelper.detalheLista("<b>AÃ§Ãµes:</b>", associacao.listaAcaoVO, trAcoes);
+		TableHelper.detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
+		TableHelper.detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
 			
 		table.append(trItens);
 		table.append(trAcoes);
@@ -440,7 +442,7 @@
 	}
 
 	function getAtributoObrigatorioString(value) {
-		return value ? 'Sim': 'NÃ£o';
+		return value ? 'Sim': 'Não';
 	}
 
 	function desassociar(event, idAssociacaoDesativar) {
@@ -454,13 +456,13 @@
 			mostrarDesativa = $('#checkmostrarAssocDesativada').is(':checked');
 
 
-		var modoExibicao = ${modoExibicao};
+		var modoExibicao = "${modoExibicao}";
 		var vUrl, vData = null;
 		if (modoExibicao == 'atributo'){
-			vUrl = "@{Application.desativarAssociacaoEdicao()}";
+			vUrl = "${linkTo[AssociacaoController].desativarAssociacao}";
 			vData = {idAtributo : idItem, idAssociacao : idAssociacao};
 		} else if (modoExibicao == 'pesquisa'){
-			vUrl = "@{Application.desativarAssociacaoPesquisaEdicao()}";
+			vUrl = "${linkTo[AssociacaoController].desativarAssociacao}";
 			vData = {idPesquisa : idItem, idAssociacao : idAssociacao};
 		}
 		
@@ -481,7 +483,7 @@
 	         error: function(response) {
 	        	$('#modal-associacao').hide(); 
 
-	        	var modalErro = $('#"modal-associacao-error"');
+	        	var modalErro = $("#modal-associacao-error");
 	        	modalErro.find("h3").html(response.responseText);
 	        	modalErro.show(); 
 	         }

@@ -22,7 +22,7 @@
 						<li><a href="${linkTo[AcaoController].listar[false]}">A&ccedil;&atilde;o</a></li>
 						<li><a href="${linkTo[TipoAcaoController].listar[false]}">Tipo de A&ccedil;&atilde;o</a></li>
 						<li><a href="@{Application.listarDesignacao}">Designa&ccedil;&atilde;o</a></li>
-						<li><a href="@{Application.buscarAcordo}">Acordo</a></li>
+						<li><a href="${linkTo[AcordoController].listar[false]}">Acordo</a></li>
 						<li><a href="@{Application.listarDisponibilidadeItens}">Disponibilidade</a></li>
 						<li><a href="${linkTo[EquipeController].listar[false]}">Equipe</a></li>
 						<li><a href="${linkTo[AtributoController].listar[false]}">Atributo</a></li>

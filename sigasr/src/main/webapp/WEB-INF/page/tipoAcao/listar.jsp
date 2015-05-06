@@ -39,7 +39,7 @@
 					</thead>
 					<tbody>
 						<c:forEach items="${tiposAcao}" var="tipoAcao">
-							<tr data-json-id="${tipoAcao.idTipoAcao}" data-json="${tipoAcao.toJson()}" onclick="tipoAcaoService.editar($(this).data('json'), 'Alterar Tipo de A&ccedil;&atilde;o')" style="cursor: pointer;">
+							<tr data-json-id="${tipoAcao.idTipoAcao}" data-json='${tipoAcao.toJson()}' onclick="tipoAcaoService.editar($(this).data('json'), 'Alterar Tipo de A&ccedil;&atilde;o')" style="cursor: pointer;">
 								<td>${tipoAcao.siglaTipoAcao}</td>
 								<td>
 									<span style="margin-left: ${(tipoAcao.nivel-1)*2}em; ${tipoAcao.nivel == 1 ? 'font-weight: bold;' : ''}">

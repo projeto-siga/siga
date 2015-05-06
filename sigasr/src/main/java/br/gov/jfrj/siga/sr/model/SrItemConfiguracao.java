@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.JsonArray;
@@ -46,8 +47,8 @@ import com.google.gson.JsonArray;
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSelecionavel {
-	
+public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSelecionavel, ConvertableEntity {
+
 	public static ActiveRecord<SrItemConfiguracao> AR = new ActiveRecord<>(SrItemConfiguracao.class);
 
 	private static final long serialVersionUID = 1L;
@@ -58,9 +59,9 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		@Override
 		public int compare(SrItemConfiguracao o1, SrItemConfiguracao o2) {
 			if (o1 != null && o2 != null
-					&& o1.idItemConfiguracao == o2.idItemConfiguracao)
+					&& o1.getIdItemConfiguracao() == o2.getIdItemConfiguracao())
 				return 0;
-			return o1.siglaItemConfiguracao.compareTo(o2.siglaItemConfiguracao);
+			return o1.getSiglaItemConfiguracao().compareTo(o2.getSiglaItemConfiguracao());
 		}
 	};
 
@@ -126,22 +127,22 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	}
 
 	public SrItemConfiguracao(String sigla, String descricao) {
-		this.tituloItemConfiguracao = descricao;
-		this.siglaItemConfiguracao = sigla;
+		this.setTituloItemConfiguracao(descricao);
+		this.setSiglaItemConfiguracao(sigla);
 	}
 
 	public void adicionarDesignacao(SrConfiguracao designacao) throws Exception {
-		if (designacoesSet == null) {
-			designacoesSet = new ArrayList<SrConfiguracao>();
+		if (getDesignacoesSet() == null) {
+			setDesignacoesSet(new ArrayList<SrConfiguracao>());
 		}
 		if (podeAdicionar(designacao)) {
-			designacoesSet.add(designacao);
+			getDesignacoesSet().add(designacao);
 			salvar();
 		}
 	}
 
 	private boolean podeAdicionar(SrConfiguracao designacao) {
-		for (SrConfiguracao designacaoSalva : designacoesSet) {
+		for (SrConfiguracao designacaoSalva : getDesignacoesSet()) {
 			if (designacaoSalva.getId().equals(designacao.getId())) {
 				return Boolean.FALSE;
 			}
@@ -151,29 +152,29 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 
 	@Override
 	public Long getId() {
-		return idItemConfiguracao;
+		return getIdItemConfiguracao();
 	}
 
 	public String getSigla() {
-		return siglaItemConfiguracao;
+		return getSiglaItemConfiguracao();
 	}
 
 	public String getDescricao() {
-		return tituloItemConfiguracao;
+		return getTituloItemConfiguracao();
 	}
 
 	@Override
 	public void setId(Long id) {
-		this.idItemConfiguracao = id;
+		this.setIdItemConfiguracao(id);
 	}
 
 	public void setDescricao(String descricao) {
-		this.tituloItemConfiguracao = descricao;
+		this.setTituloItemConfiguracao(descricao);
 	}
 
 	public List<SrItemConfiguracao> getHistoricoItemConfiguracao() {
-		if (itemInicial != null)
-			return itemInicial.meuItemHistoricoSet;
+		if (getItemInicial() != null)
+			return getItemInicial().getMeuItemHistoricoSet();
 		return null;
 	}
 
@@ -186,111 +187,6 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		return sols.get(0);
 	}
 	
-	public Long getIdItemConfiguracao() {
-		return idItemConfiguracao;
-	}
-
-	public void setIdItemConfiguracao(Long idItemConfiguracao) {
-		this.idItemConfiguracao = idItemConfiguracao;
-	}
-
-	public String getSiglaItemConfiguracao() {
-		return siglaItemConfiguracao;
-	}
-
-	public void setSiglaItemConfiguracao(String siglaItemConfiguracao) {
-		this.siglaItemConfiguracao = siglaItemConfiguracao;
-	}
-
-	public String getDescrItemConfiguracao() {
-		return descrItemConfiguracao;
-	}
-
-	public void setDescrItemConfiguracao(String descrItemConfiguracao) {
-		this.descrItemConfiguracao = descrItemConfiguracao;
-	}
-
-	public String getTituloItemConfiguracao() {
-		return tituloItemConfiguracao;
-	}
-
-	public void setTituloItemConfiguracao(String tituloItemConfiguracao) {
-		this.tituloItemConfiguracao = tituloItemConfiguracao;
-	}
-
-	public String getDescricaoSimilaridade() {
-		return descricaoSimilaridade;
-	}
-
-	public void setDescricaoSimilaridade(String descricaoSimilaridade) {
-		this.descricaoSimilaridade = descricaoSimilaridade;
-	}
-
-	public SrItemConfiguracao getItemInicial() {
-		return itemInicial;
-	}
-
-	public void setItemInicial(SrItemConfiguracao itemInicial) {
-		this.itemInicial = itemInicial;
-	}
-
-	public List<SrItemConfiguracao> getMeuItemHistoricoSet() {
-		return meuItemHistoricoSet;
-	}
-
-	public void setMeuItemHistoricoSet(List<SrItemConfiguracao> meuItemHistoricoSet) {
-		this.meuItemHistoricoSet = meuItemHistoricoSet;
-	}
-
-	public Set<SrGestorItem> getGestorSet() {
-		return gestorSet;
-	}
-
-	public void setGestorSet(Set<SrGestorItem> gestorSet) {
-		this.gestorSet = gestorSet;
-	}
-
-	public int getNumFatorMultiplicacaoGeral() {
-		return numFatorMultiplicacaoGeral;
-	}
-
-	public void setNumFatorMultiplicacaoGeral(int numFatorMultiplicacaoGeral) {
-		this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
-	}
-
-	public Set<SrFatorMultiplicacao> getFatorMultiplicacaoSet() {
-		return fatorMultiplicacaoSet;
-	}
-
-	public void setFatorMultiplicacaoSet(
-			Set<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
-		this.fatorMultiplicacaoSet = fatorMultiplicacaoSet;
-	}
-
-	public List<SrConfiguracao> getDesignacoes() {
-		return designacoes;
-	}
-
-	public void setDesignacoes(List<SrConfiguracao> designacoes) {
-		this.designacoes = designacoes;
-	}
-
-	public List<SrConfiguracao> getDesignacoesSet() {
-		return designacoesSet;
-	}
-
-	public void setDesignacoesSet(List<SrConfiguracao> designacoesSet) {
-		this.designacoesSet = designacoesSet;
-	}
-
-	public void setPai(SrItemConfiguracao pai) {
-		this.pai = pai;
-	}
-
-	public void setFilhoSet(List<SrItemConfiguracao> filhoSet) {
-		this.filhoSet = filhoSet;
-	}
-
 	@Override
 	public SrItemConfiguracao selecionar(String sigla) throws Exception {
 		return selecionar(sigla, null);
@@ -326,24 +222,24 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		else
 			lista = listaBase;
 
-		if ((siglaItemConfiguracao == null || siglaItemConfiguracao.equals(""))
-				&& (tituloItemConfiguracao == null || tituloItemConfiguracao
+		if ((getSiglaItemConfiguracao() == null || getSiglaItemConfiguracao().equals(""))
+				&& (getTituloItemConfiguracao() == null || getTituloItemConfiguracao()
 						.equals("")))
 			return lista;
 
 		for (SrItemConfiguracao item : lista) {
-			if (siglaItemConfiguracao != null
-					&& !siglaItemConfiguracao.equals("")
-					&& !(item.siglaItemConfiguracao.toLowerCase()
+			if (getSiglaItemConfiguracao() != null
+					&& !getSiglaItemConfiguracao().equals("")
+					&& !(item.getSiglaItemConfiguracao().toLowerCase()
 							.contains(getSigla())))
 				continue;
-			if (tituloItemConfiguracao != null
-					&& !tituloItemConfiguracao.equals("")) {
+			if (getTituloItemConfiguracao() != null
+					&& !getTituloItemConfiguracao().equals("")) {
 				boolean naoAtende = false;
-				for (String s : tituloItemConfiguracao.toLowerCase().split(
+				for (String s : getTituloItemConfiguracao().toLowerCase().split(
 						"\\s")){
-					if (!item.tituloItemConfiguracao.toLowerCase().contains(s)
-							&& !(item.descricaoSimilaridade != null && item.descricaoSimilaridade
+					if (!item.getTituloItemConfiguracao().toLowerCase().contains(s)
+							&& !(item.getDescricaoSimilaridade() != null && item.getDescricaoSimilaridade()
 									.toLowerCase().contains(s)))
 						naoAtende = true;
 				}
@@ -356,7 +252,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 				do {
 					if (!listaFinal.contains(item))
 						listaFinal.add(item);
-					item = item.pai;
+					item = item.getPai();
 					if (item != null)
 						item = item.getAtual();
 				} while (item != null);
@@ -371,8 +267,8 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	@Override
 	public void setSigla(String sigla) {
 		if (sigla == null) {
-			siglaItemConfiguracao = "";
-			tituloItemConfiguracao = "";
+			setSiglaItemConfiguracao("");
+			setTituloItemConfiguracao("");
 		} else {
 			final Pattern p1 = Pattern.compile("^" + MASCARA_JAVA + "$");
 			final Matcher m1 = p1.matcher(sigla);
@@ -382,9 +278,9 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 					s += m1.group(i);
 					s += (i < m1.groupCount() - 1) ? "." : "";
 				}
-				siglaItemConfiguracao = s;
+				setSiglaItemConfiguracao(s);
 			} else
-				tituloItemConfiguracao = sigla;
+				setTituloItemConfiguracao(sigla);
 		}
 	}
 
@@ -514,7 +410,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	public String getGcTags() {
 		int nivel = this.getNivel();
 		String tags = "";
-		SrItemConfiguracao pai = this.pai;
+		SrItemConfiguracao pai = this.getPai();
 		if (pai != null)
 			tags += pai.getGcTags();
 		return tags + "&tags=@" + getTituloSlugify();
@@ -526,31 +422,31 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	}
 
     public String getTituloSlugify() {
-		return Texto.slugify(tituloItemConfiguracao, true, false);
+		return Texto.slugify(getTituloItemConfiguracao(), true, false);
 	}
 
     @Override
     public void salvar() throws Exception {
-    	if (getNivel() > 1 && pai == null) {
-			pai = getPaiPorSigla();
+    	if (getNivel() > 1 && getPai() == null) {
+			setPai(getPaiPorSigla());
 		}
 		super.salvar();
 
-        if (gestorSet != null)
-            for (SrGestorItem gestor : gestorSet){
+        if (getGestorSet() != null)
+            for (SrGestorItem gestor : getGestorSet()){
                 gestor.itemConfiguracao = this;
                 gestor.salvar();
             }
 
-        if (fatorMultiplicacaoSet != null)
-            for (SrFatorMultiplicacao fator : fatorMultiplicacaoSet){
+        if (getFatorMultiplicacaoSet() != null)
+            for (SrFatorMultiplicacao fator : getFatorMultiplicacaoSet()){
                 fator.itemConfiguracao = this;
                 fator.salvar();
             }
 
         // DB1: precisa salvar item a item
-      	if (this.designacoes != null) {
-      		for (SrConfiguracao designacao : this.designacoes) {
+      	if (this.getDesignacoes() != null) {
+      		for (SrConfiguracao designacao : this.getDesignacoes()) {
       			// se for uma configuração herdada
       			if (designacao.isHerdado()) {
       				// se estiver marcada como "não Herdar"
@@ -586,7 +482,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	public List<SrItemConfiguracao> getItemETodosDescendentes() {
 		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
 		lista.add(this);
-		for (SrItemConfiguracao filho : filhoSet) {
+		for (SrItemConfiguracao filho : getFilhoSet()) {
 			if (filho.getHisDtFim() == null)
 				lista.addAll(filho.getItemETodosDescendentes());
 		}
@@ -595,7 +491,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 
 	@Override
 	public String toString() {
-		return siglaItemConfiguracao + " - " + tituloItemConfiguracao;
+		return getSiglaItemConfiguracao() + " - " + getTituloItemConfiguracao();
 	}
 
 	public SrItemConfiguracaoVO toVO() {
@@ -734,9 +630,9 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	}
 
 	public Map<String, SrDisponibilidade> buscarDisponibilidadesPaiPorOrgao(List<CpOrgaoUsuario> orgaos) {
-		if(this.pai != null) {
-			Map<String, SrDisponibilidade> disponibilidadesPai = buscarDisponibilidadesPorOrgao(this.pai, orgaos);
-			Map<String, SrDisponibilidade> disponibilidadesAvo = buscarDisponibilidadesPorOrgao(this.pai.pai, orgaos);
+		if(this.getPai() != null) {
+			Map<String, SrDisponibilidade> disponibilidadesPai = buscarDisponibilidadesPorOrgao(this.getPai(), orgaos);
+			Map<String, SrDisponibilidade> disponibilidadesAvo = buscarDisponibilidadesPorOrgao(this.getPai().getPai(), orgaos);
 
 			return selecionarDisponibilidades(disponibilidadesAvo, disponibilidadesPai, orgaos);
 		}
@@ -791,21 +687,125 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		if (this.filhoSet != null)
 			c.addAll(filhoSet);
 
-		if (this.itemInicial != null && !this.itemInicial.getId().equals(this.getId()))
-			c.addAll(itemInicial.getFilhoSet());
+		if (this.getItemInicial() != null && !this.getItemInicial().getId().equals(this.getId()))
+			c.addAll(getItemInicial().getFilhoSet());
 
 		return c;
 	}
 
 	public Collection<SrConfiguracao> getDesignacoesAtivas() {
 		Map<Long, SrConfiguracao> listaCompleta = new HashMap<Long, SrConfiguracao>();
-		if (this.itemInicial != null)
+		if (this.getItemInicial() != null)
 			for (SrItemConfiguracao itenConf : getHistoricoItemConfiguracao())
-				if (itenConf.designacoesSet != null)
-					for (SrConfiguracao d : itenConf.designacoesSet)
+				if (itenConf.getDesignacoesSet() != null)
+					for (SrConfiguracao d : itenConf.getDesignacoesSet())
 						if (d.isAtivo() && d.isDesignacao())
 							listaCompleta.put(d.getId(), d);
 
 		return listaCompleta.values();
+	}
+
+	public Long getIdItemConfiguracao() {
+		return idItemConfiguracao;
+	}
+
+	public void setIdItemConfiguracao(Long idItemConfiguracao) {
+		this.idItemConfiguracao = idItemConfiguracao;
+	}
+
+	public String getSiglaItemConfiguracao() {
+		return siglaItemConfiguracao;
+	}
+
+	public void setSiglaItemConfiguracao(String siglaItemConfiguracao) {
+		this.siglaItemConfiguracao = siglaItemConfiguracao;
+	}
+
+	public String getDescrItemConfiguracao() {
+		return descrItemConfiguracao;
+	}
+
+	public void setDescrItemConfiguracao(String descrItemConfiguracao) {
+		this.descrItemConfiguracao = descrItemConfiguracao;
+	}
+
+	public String getTituloItemConfiguracao() {
+		return tituloItemConfiguracao;
+	}
+
+	public void setTituloItemConfiguracao(String tituloItemConfiguracao) {
+		this.tituloItemConfiguracao = tituloItemConfiguracao;
+	}
+
+	public String getDescricaoSimilaridade() {
+		return descricaoSimilaridade;
+	}
+
+	public void setDescricaoSimilaridade(String descricaoSimilaridade) {
+		this.descricaoSimilaridade = descricaoSimilaridade;
+	}
+
+	public void setPai(SrItemConfiguracao pai) {
+		this.pai = pai;
+	}
+
+	public void setFilhoSet(List<SrItemConfiguracao> filhoSet) {
+		this.filhoSet = filhoSet;
+	}
+
+	public SrItemConfiguracao getItemInicial() {
+		return itemInicial;
+	}
+
+	public void setItemInicial(SrItemConfiguracao itemInicial) {
+		this.itemInicial = itemInicial;
+	}
+
+	public List<SrItemConfiguracao> getMeuItemHistoricoSet() {
+		return meuItemHistoricoSet;
+	}
+
+	public void setMeuItemHistoricoSet(List<SrItemConfiguracao> meuItemHistoricoSet) {
+		this.meuItemHistoricoSet = meuItemHistoricoSet;
+	}
+
+	public Set<SrGestorItem> getGestorSet() {
+		return gestorSet;
+	}
+
+	public void setGestorSet(Set<SrGestorItem> gestorSet) {
+		this.gestorSet = gestorSet;
+	}
+
+	public int getNumFatorMultiplicacaoGeral() {
+		return numFatorMultiplicacaoGeral;
+	}
+
+	public void setNumFatorMultiplicacaoGeral(int numFatorMultiplicacaoGeral) {
+		this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
+	}
+
+	public Set<SrFatorMultiplicacao> getFatorMultiplicacaoSet() {
+		return fatorMultiplicacaoSet;
+	}
+
+	public void setFatorMultiplicacaoSet(Set<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
+		this.fatorMultiplicacaoSet = fatorMultiplicacaoSet;
+	}
+
+	public List<SrConfiguracao> getDesignacoes() {
+		return designacoes;
+	}
+
+	public void setDesignacoes(List<SrConfiguracao> designacoes) {
+		this.designacoes = designacoes;
+	}
+
+	public List<SrConfiguracao> getDesignacoesSet() {
+		return designacoesSet;
+	}
+
+	public void setDesignacoesSet(List<SrConfiguracao> designacoesSet) {
+		this.designacoesSet = designacoesSet;
 	}
 }

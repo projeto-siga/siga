@@ -22,7 +22,7 @@ import com.google.gson.JsonObject;
 public class SrConfiguracaoVO {
 	public Long idConfiguracao;
 	public Long hisIdIni;
-	public boolean isHerdado;
+	public boolean herdado;
 	public boolean utilizarItemHerdado;
 	public boolean atributoObrigatorio;
 	public boolean ativo;
@@ -53,7 +53,7 @@ public class SrConfiguracaoVO {
 	public SrConfiguracaoVO(SrConfiguracao configuracao) {
 		idConfiguracao = configuracao.getId();
 		hisIdIni = configuracao.getHisIdIni();
-		isHerdado = configuracao.isHerdado();
+		herdado = configuracao.isHerdado();
 		utilizarItemHerdado = configuracao.isUtilizarItemHerdado();
 		ativo = configuracao.isAtivo();
 		descrConfiguracao = configuracao.getDescrConfiguracao();

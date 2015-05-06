@@ -22,14 +22,16 @@ import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrObjetivoAtributo;
 import br.gov.jfrj.siga.sr.model.SrTipoAtributo;
+import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
 @Path("app/atributo")
 public class AtributoController extends SrController {
 
-	public AtributoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+
+	public AtributoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, CpDao.getInstance(), so, em, srValidator);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
@@ -38,7 +40,7 @@ public class AtributoController extends SrController {
 	@SuppressWarnings("unchecked")
 	@Path("/listar")
 	public void listar(boolean mostrarDesativados) {
-		// assertAcesso("ADM:Administrar"); 
+		// assertAcesso("ADM:Administrar");
 		List<SrAtributo> atts = SrAtributo.listar(null, mostrarDesativados);
 		List<SrObjetivoAtributo> objetivos = SrObjetivoAtributo.AR.all().fetch();
 		List<CpOrgaoUsuario> orgaos = em().createQuery("from CpOrgaoUsuario").getResultList();
@@ -50,7 +52,7 @@ public class AtributoController extends SrController {
 		result.include("locais", locais);
 		result.include("mostrarDesativados", mostrarDesativados);
 		result.include("tiposAtributo",SrTipoAtributo.values());
-		
+
 		result.include("pessoaSel", new DpPessoaSelecao());
 		result.include("lotacaoSel", new DpLotacaoSelecao());
 		result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
@@ -82,12 +84,12 @@ public class AtributoController extends SrController {
 		item.salvar();
 		result.use(Results.http()).body(item.toJson(false));
 	}
-	
+
 	@Path("/associacoes")
 	public void buscarAssociacaoAtributo(Long idAtributo) throws Exception {
 		SrAtributo attr = SrAtributo.AR.findById(idAtributo);
 		String ret = "";
-		
+
 		if (attr != null) {
 			 ret = attr.toJson(true);
 		}
@@ -104,7 +106,7 @@ public class AtributoController extends SrController {
         List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesAtributo(att, exibirInativos);
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
-	
+
 	private void validarFormEditarAtributo(SrAtributo atributo) {
 		if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && atributo.getDescrPreDefinido().equals("")) {
 			srValidator.addError("att.descrPreDefinido", "Valores Pré-definido não informados");

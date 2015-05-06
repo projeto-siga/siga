@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import play.data.validation.Validation;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -14,14 +13,15 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao;
+import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
 @Path("app/tipoAcao")
 public class TipoAcaoController extends SrController {
 
-	public TipoAcaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
-		super(request, result, dao, so, em);
+	public TipoAcaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, dao, so, em, srValidator);
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
@@ -44,7 +44,7 @@ public class TipoAcaoController extends SrController {
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	@Path("/editar/{id}")
+	@Path("/editar")
 	public void editar(Long id) throws Exception {
 		SrTipoAcao tipoAcao = new SrTipoAcao();
 		if (id != null)
@@ -68,6 +68,7 @@ public class TipoAcaoController extends SrController {
 		SrTipoAcao tipoAcao = SrTipoAcao.AR.findById(id);
 		tipoAcao.finalizar();
 
+		//result.use(Results.json()).from(tipoAcao).serialize();
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
@@ -113,12 +114,12 @@ public class TipoAcaoController extends SrController {
 
 	private void validarFormEditar(SrTipoAcao acao) {
 		if ("".equals(acao.getSiglaTipoAcao())) {
-			Validation.addError("siglaAcao", "C&oacute;digo n&atilde;o informado");
+			srValidator.addError("siglaAcao", "C&oacute;digo n&atilde;o informado");
 		}
 		if ("".equals(acao.getTituloTipoAcao())) {
-			Validation.addError("tituloAcao", "Titulo n&atilde;o informado");
+			srValidator.addError("tituloAcao", "Titulo n&atilde;o informado");
 		}
-		if (Validation.hasErrors()) {
+		if (srValidator.hasErrors()) {
 			enviarErroValidacao();
 		}
 	}

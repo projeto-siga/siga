@@ -46,8 +46,9 @@ public class Correio extends Mailer {
 	public static void notificarAtendente(SrMovimentacao movimentacao, SrSolicitacao sol) {
 		List<String> recipients = new ArrayList<String>();
 		String email = null;
+		DpPessoa atendente = null;
 		
-		DpPessoa atendente = sol.getSolicitacaoAtual().getAtendente();
+		atendente = sol.getSolicitacaoAtual().getAtendente();
 		if (atendente != null) {
 			email = atendente.getPessoaAtual().getEmailPessoa();
 			if (email != null)
@@ -57,19 +58,23 @@ public class Correio extends Mailer {
 			List<DpPessoa> listaPessoasAtendentes = sol.getSolicitacaoAtual().getPessoasAtendentesDisponiveis();
 			List<DpSubstituicao> listaSubstitutos = sol.getSolicitacaoAtual().getSubstitutos();
 			if (listaPessoasAtendentes.size() > 0)
-				for (DpPessoa pessoaDaLotacao : listaPessoasAtendentes)
-					if (pessoaDaLotacao.getDataFim() == null) {
-						email = pessoaDaLotacao.getPessoaAtual().getEmailPessoa();
+				for (DpPessoa pessoaDaLotacao : listaPessoasAtendentes) {
+					atendente = pessoaDaLotacao.getPessoaAtual();
+					if (atendente.getDataFim() == null) {
+						email = atendente.getEmailPessoa();
 						if (email != null)
 							recipients.add(email);
 					}
+				}
 			if (listaSubstitutos.size() > 0)
-				for (DpSubstituicao pessoaSubstitutaDaLotacao : listaSubstitutos)
-					if (pessoaSubstitutaDaLotacao.getSubstituto().getDataFim() == null) {
-						email = pessoaSubstitutaDaLotacao.getSubstituto().getPessoaAtual().getEmailPessoa();
+				for (DpSubstituicao pessoaSubstitutaDaLotacao : listaSubstitutos) {
+					atendente = pessoaSubstitutaDaLotacao.getSubstituto().getPessoaAtual(); 
+					if (atendente.getDataFim() == null) {
+						email = atendente.getEmailPessoa();
 						if (email != null)
 							recipients.add(email);
 					}
+				}
 		}
 		if (recipients.size() > 0)
 			try {

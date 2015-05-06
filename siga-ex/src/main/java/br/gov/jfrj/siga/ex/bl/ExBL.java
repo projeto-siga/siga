@@ -158,9 +158,7 @@ public class ExBL extends CpBL {
 	private ProcessadorModelo processadorModeloFreemarker = new ProcessadorModeloFreemarker();
 
 	private final static Logger log = Logger.getLogger(ExBL.class);
-
-	private Set<ExMovimentacao> transferenciasSet = new TreeSet<ExMovimentacao>();
-		
+	
 	public ThreadLocal<SortedSet<ExMobil>> getThreadAlteracaoParcial() {
 		return threadAlteracaoParcial;
 	}
@@ -859,18 +857,10 @@ public class ExBL extends CpBL {
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA){
 					m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
-					transferenciasSet.add(mov);
-					if(mov.getDtFimMov()!=null){
-						movT.add(mov);
-					}
 				}
 				if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA || t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
 						&& !apensadoAVolumeDoMesmoProcesso){
 					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
-					transferenciasSet.add(mov);
-					if(mov.getDtFimMov()!=null){
-						movT.add(mov);
-					}
 				}
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 						&& mob.doc().isEletronico()) {
@@ -943,14 +933,26 @@ public class ExBL extends CpBL {
 				}
 			}
 						
-			Iterator itr = movT.iterator();
-
+			List<ExMovimentacao> transferenciasMobil = mob.getMovimentacoesPorTipo(3);
+			Set<ExMovimentacao> transferenciasRetornoMobil = new TreeSet<ExMovimentacao>();
+			
+			Iterator it =  transferenciasMobil.iterator();
+			
+			while(it.hasNext()){			
+				ExMovimentacao elemento = (ExMovimentacao) it.next();
+				if(elemento.getDtFimMov() != null){
+					transferenciasRetornoMobil.add(elemento);
+				}
+			}
+						
+			Iterator itr = transferenciasRetornoMobil.iterator();
 			while (itr.hasNext()) {
 				ExMovimentacao element = (ExMovimentacao) itr.next();
-
+				ExMobil mobil = element.getExMobil();
+				
 				if (element.getLotaCadastrante() != null
-						&& !transferenciasSet.isEmpty()
-						&& !contemRetornoTransferencia(element)) {
+						&& !transferenciasRetornoMobil.isEmpty()
+						&& !contemRetornoTransferencia(element, mobil)) {
 					
 					Date dtMarca = element.getDtFimMov();
 					dtMarca.setHours(23);
@@ -982,6 +984,7 @@ public class ExBL extends CpBL {
 													// marca
 													// "A Devolver (Fora do Prazo)"
 				}
+
 			}
 			
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
@@ -1047,24 +1050,28 @@ public class ExBL extends CpBL {
 		return set;
 	}
 	
-	public boolean contemRetornoTransferencia(ExMovimentacao mov) {
+	public boolean contemRetornoTransferencia(ExMovimentacao mov, ExMobil mob) {
 		boolean contains = false;
-		Iterator itr = transferenciasSet.iterator();
-		
-		while (itr.hasNext()) {
-			ExMovimentacao element = (ExMovimentacao) itr.next();
-			if(ExTipoMovimentacao.hasTransferencia(element.getIdTpMov()) == ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov()))
-			if (mov != null){
-				if (element.getIdMov() != mov.getIdMov()
-						&& ExTipoMovimentacao.hasTransferencia(element.getIdTpMov())
-						&& ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov())
-						&& mov.getLotaCadastrante() == element.getLotaResp()
-						) {
-					contains = !contains;
-					mov.setDtFimMov(null);
+		Iterator it;
+				List<ExMovimentacao> listaTransf = mob.getMovimentacoesPorTipo(3);
+				it = listaTransf.iterator();
+
+				while (it.hasNext()) {
+
+					ExMovimentacao element = (ExMovimentacao) it.next();
+					if(ExTipoMovimentacao.hasTransferencia(element.getIdTpMov()) == ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov()))
+						if (mov != null){
+							if (element.getIdMov() != mov.getIdMov()
+									&& ExTipoMovimentacao.hasTransferencia(element.getIdTpMov())
+									&& ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov())
+									&& mov.getLotaCadastrante() == element.getLotaResp()
+									) {
+								contains = !contains;
+								mov.setDtFimMov(null);
+							}
+						}
 				}
-			}
-		}
+		
 		return contains;
 	}
 	

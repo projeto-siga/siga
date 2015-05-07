@@ -173,11 +173,6 @@
 	equipeService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		equipeService.atualizarModalEquipe(obj);
-
-		document.getElementsByName('lotacaoEquipeSel.id')[0].value = obj.lotacaoEquipe.id;
-		document.getElementsByName('lotacaoEquipeSel.sigla')[0].value = obj.lotacaoEquipe.sigla;
-		document.getElementsByName('lotacaoEquipeSel.descricao')[0].value = obj.lotacaoEquipe.descricao;
-		document.getElementById('lotacaoSelSpan').innerHTML = obj.lotacaoEquipe.descricao;
 		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 
@@ -187,11 +182,6 @@
 	equipeService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
 		equipeService.atualizarModalEquipe();
-
-		document.getElementsByName('lotacaoEquipeSel.id')[0].value = '${lotacaoSel.id}';
-		document.getElementsByName('lotacaoEquipeSel.sigla')[0].value = '${lotacaoSel.sigla}';
-		document.getElementsByName('lotacaoEquipeSel.descricao')[0].value = '${lotacaoSel.descricao}';
-		document.getElementById('lotacaoSelSpan').innerHTML = '${lotacaoSel.descricao}';
 		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 

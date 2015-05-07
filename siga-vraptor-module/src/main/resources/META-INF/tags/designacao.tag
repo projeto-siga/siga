@@ -114,10 +114,10 @@
 							<label>Solicitante</label>
 							<siga:pessoaLotaFuncCargoSelecao
 								nomeSelLotacao="lotacao"
-								nomeSelPessoa="dpPessoa"
-								nomeSelFuncao="funcaoConfianca"
+								nomeSelPessoa="pessoa"
+								nomeSelFuncao="funcao"
 								nomeSelCargo="cargo"
-								nomeSelGrupo="cpGrupo"
+								nomeSelGrupo="grupo"
 								valuePessoa="${dpPessoa != null ? dpPessoa.pessoaAtual :'' }"
 								valueLotacao="${lotacao != null ? lotacao.lotacaoAtual : '' }"
 								valueFuncao="${funcaoConfianca }"
@@ -128,14 +128,14 @@
 						</div>
 						<div class="box gt-width-50">
 							<label>&Oacute;rg&atilde;o</label>
-							<siga:select name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="0" headerValue="Nenhum"/>
+							<siga:select id="orgaoUsuario" name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="0" headerValue="Nenhum"/>
 						</div>
 					</div>
 		
 					<div class="gt-form-row box-wrapper">
 						<div class="box box-left gt-width-50">
 							<label>Local</label>
-							<siga:select name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="0" headerValue="Nenhum"/>
+							<siga:select id="complexo" name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="0" headerValue="Nenhum"/>
 						</div>
 						<div class="box gt-width-50">
 							<label>Atendente <span>*</span></label>
@@ -301,7 +301,7 @@
 	}
 
 	designacaoService.opts.formCadastro.resetForm = function(form) {
-		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
+		$("#pessoalotacaofuncaocargogrupo")[0].changeValue(1);
 	}
 
 	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {

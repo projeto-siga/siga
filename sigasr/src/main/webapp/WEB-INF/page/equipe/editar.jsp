@@ -122,7 +122,7 @@
 			</form>
 			
 			<div class="gt-form-row">
-				<siga:designacao modoExibicao="equipe" designacoes="${designacoes}" mostrarDesativado="mostrarDesativado"
+				<siga:designacao modoExibicao="equipe" designacoes="${designacoes}" mostrarDesativados="mostrarDesativado"
 					unidadesMedida="${unidadesMedida}" orgaos="${orgaos}" locais="${locais}" 
 					pesquisaSatisfacao="${pesquisaSatisfacao}" listasPrioridade="${listasPrioridade}" /> 
 			</div>

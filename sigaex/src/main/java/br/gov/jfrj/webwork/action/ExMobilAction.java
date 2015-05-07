@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
- * 
+ *
  *     This file is part of SIGA.
- * 
+ *
  *     SIGA is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
- * 
+ *
  *     SIGA is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -306,7 +306,7 @@ public class ExMobilAction extends
 
 	@Override
 	public String aSelecionar() throws Exception {
-		assertAcesso("");
+	//	assertAcesso("");
 		String s = super.aSelecionar();
 		if (getSel() != null && getMatricula() != null) {
 			GenericoSelecao sel = new GenericoSelecao();
@@ -552,10 +552,10 @@ public class ExMobilAction extends
 			 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Correcao problema
 			 * id to load is required for loading. Verificando se o ID do
 			 * documento não é nulo antes de pesquisar
-			 * 
+			 *
 			 * final ExDocumento docdoc = dao().consultar(flt.getIdDoc(),
 			 * ExDocumento.class, false); docVia.setExDocumento(docdoc);
-			 * 
+			 *
 			 * return docVia;
 			 */
 			if (flt != null && flt.getIdDoc() != null) {
@@ -575,16 +575,16 @@ public class ExMobilAction extends
 			throws AplicacaoException {
 
 
-		
+
 		ExMobil mob = (ExMobil) sel;
-		
+
 		if (mob.doc() == null)
 			return null;
-		
+
 		//Edson: Se a via, volume ou documento inteiro tiver sido eliminado(a), não retorna nada.
 		if (mob.isEliminado())
 			return null;
-		
+
 		// Se for uma via ou volume, retornar
 		if (mob.isVia() || mob.isVolume())
 			return mob;
@@ -1018,18 +1018,18 @@ public class ExMobilAction extends
 		if (getIdTipoFormaDoc() != null && getIdTipoFormaDoc() != 0)
 			tipoForma = dao().consultar(getIdTipoFormaDoc(),
 					ExTipoFormaDoc.class, false);
-		
+
 		List<ExFormaDocumento> formasDoc = new ArrayList<ExFormaDocumento>();
 		formasDoc.addAll(bl.obterFormasDocumento(
 
 
 
 
-						bl.obterListaModelos(null, false, null, false, getTitular(), getLotaTitular(), false), 
+						bl.obterListaModelos(null, false, null, false, getTitular(), getLotaTitular(), false),
 						null, tipoForma));
 		return formasDoc;
 //		return bl.obterFormasDocumento(
-//				bl.obterListaModelos(null, false, null, false, getTitular(), getLotaTitular(), false), 
+//				bl.obterListaModelos(null, false, null, false, getTitular(), getLotaTitular(), false),
 //				doc.getExTipoDocumento(), null);
 	}
 
@@ -1523,5 +1523,5 @@ public class ExMobilAction extends
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
 	}
-	
+
 }

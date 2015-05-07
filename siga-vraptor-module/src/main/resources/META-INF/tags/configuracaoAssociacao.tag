@@ -277,7 +277,6 @@
     }
 
 	associacaoService.serializar = function(obj) {
-		debugger;
 		var serializado = BaseService.prototype.serializar.call(this, obj) + "&" + associacaoService.getListasAsString();
 		return serializado + "&associacao=" + this.getId(obj);
 	}

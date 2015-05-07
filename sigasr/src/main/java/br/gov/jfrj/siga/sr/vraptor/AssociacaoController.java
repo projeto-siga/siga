@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;

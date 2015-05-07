@@ -95,6 +95,10 @@
 				<div class="gt-form-row">
 					<div class="gt-form-row">
 						<label>Item de Configuração</label> 
+						
+						<siga:selecao propriedade="itemConfiguracao" tipo="item" tema="simple" modulo="sigasr"
+	 						urlAcao="buscar" onchange="bloqueiaItemOkSeVazio()" onblur="bloqueiaItemOk()"/>
+						
 <%-- 						#{selecao tipo:'item', --%>
 <%-- 							nome:'itemConfiguracao', --%>
 <%-- 							value:itemConfiguracao?.atual, onblur:'bloqueiaItemOk();', onchange:'bloqueiaItemOkSeVazio();' /} --%>
@@ -129,6 +133,8 @@
 				<div class="gt-form-row">
 					<div class="gt-form-row">
 						<label>Ação</label> 
+						<siga:selecao propriedade="acao" tipo="acao" tema="simple" modulo="sigasr"
+	 						urlAcao="buscar" onchange="bloqueiaAcaoOkSeVazio()" onblur="bloqueiaAcaoOk()"/>
 <%-- 						#{selecao tipo:'acao', --%>
 <%-- 							nome:'acao', value:acao?.atual, onblur:'bloqueiaAcaoOk();', onchange:'bloqueiaAcaoOkSeVazio();' /} --%>
 						<span style="display:none;color: red" id="designacao.acao">Ação não informada.</span>
@@ -317,12 +323,12 @@
 			
 			// Atualiza a string serializada
 			if (rowValues) {
-	        	params 	+= '&itemConfiguracaoSet[' + i + ']=' + rowValues[0]
-	        			+  '&itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0]
-	        	       	+  '&itemConfiguracaoSet[' + i + '].siglaItemConfiguracao=' + rowValues[1]
-     	       		   	+  '&itemConfiguracaoSet[' + i + '].tituloItemConfiguracao=' + rowValues[2]
-	        			+  '&itemConfiguracaoSet[' + i + '].descrItemConfiguracao=' + rowValues[3]
-	        			+  '&itemConfiguracaoSet[' + i + '].descricaoSimilaridade=' + rowValues[4];
+	        	params 	+= '&itemConfiguracaoSet[' + i + ']=' + rowValues[0];
+// 	        			+  '&itemConfiguracaoSet[' + i + '].idItemConfiguracao=' + rowValues[0]
+// 	        	       	+  '&itemConfiguracaoSet[' + i + '].siglaItemConfiguracao=' + rowValues[1]
+//      	       		+  '&itemConfiguracaoSet[' + i + '].tituloItemConfiguracao=' + rowValues[2]
+// 	        			+  '&itemConfiguracaoSet[' + i + '].descrItemConfiguracao=' + rowValues[3]
+// 	        			+  '&itemConfiguracaoSet[' + i + '].descricaoSimilaridade=' + rowValues[4];
 	        	hasValue = true;
 			}
 		});
@@ -336,10 +342,10 @@
 			
 			// Atualiza a string serializada
 			if (rowValues) {
-				params 	+= '&acoesSet[' + i + ']=' + rowValues[0]
-						+  '&acoesSet[' + i + '].idAcao=' + rowValues[0]
-						+  '&acoesSet[' + i + '].siglaAcao=' + rowValues[1]
-						+  '&acoesSet[' + i + '].tituloAcao=' + rowValues[2];
+				params 	+= '&acoesSet[' + i + ']=' + rowValues[0];
+// 						+  '&acoesSet[' + i + '].idAcao=' + rowValues[0]
+// 						+  '&acoesSet[' + i + '].siglaAcao=' + rowValues[1]
+// 						+  '&acoesSet[' + i + '].tituloAcao=' + rowValues[2];
 				hasAcao = true;
 			}
 		});

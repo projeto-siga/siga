@@ -25,14 +25,17 @@
 </select>
 
 <span id="spanPessoa${requestScope._nomeSelPessoaClean}">
+	<input type="hidden" name="${nomeSelPessoa}" id="${nomeSelPessoa}" class="pessoaLotaSelecao">
 	<siga:selecao tipo="pessoa" propriedade="pessoa" tema="simple" modulo="siga" inputName="${nomeSelPessoaClean}" 
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
 </span>
 
 <span id="spanLotacao${requestScope._nomeSelLotacaoClean}">
+	<input type="hidden" name="${nomeSelLotacao}" id="${nomeSelLotacao}" class="pessoaLotaSelecao">
 	<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" inputName="${nomeSelLotacaoClean}" 
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
 </span>
+
 <script language="javascript">
 var select = document.getElementById('${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}');
 if (document.getElementById('${requestScope._nomeSelPessoaClean}').value)

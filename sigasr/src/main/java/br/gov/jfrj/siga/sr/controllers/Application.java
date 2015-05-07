@@ -1511,8 +1511,7 @@ public class Application extends SigaApplication {
 		render("@selecionar", sel);
 	}
 
-	public static void buscarAcao(String sigla, String nome, SrAcao filtro,
-			SrSolicitacao sol) {
+	public static void buscarAcao(String sigla, String nome, SrAcao filtro, SrSolicitacao sol) {
 		List<SrAcao> itens = null;
 
 		try {
@@ -1520,9 +1519,7 @@ public class Application extends SigaApplication {
 				filtro = new SrAcao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(sol != null
-					&& (sol.solicitante != null || sol.local != null) ? sol
-					.getAcoesDisponiveis() : null);
+			itens = filtro.buscar(sol != null && (sol.solicitante != null || sol.local != null) ? sol.getAcoesDisponiveis() : null);
 		} catch (Exception e) {
 			itens = new ArrayList<SrAcao>();
 		}

@@ -18,10 +18,12 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrObjetivoAtributo;
 import br.gov.jfrj.siga.sr.model.SrTipoAtributo;
+import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -39,8 +41,8 @@ public class AtributoController extends SrController {
 
 	@SuppressWarnings("unchecked")
 	@Path("/listar")
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void listar(boolean mostrarDesativados) {
-		// assertAcesso("ADM:Administrar");
 		List<SrAtributo> atts = SrAtributo.listar(null, mostrarDesativados);
 		List<SrObjetivoAtributo> objetivos = SrObjetivoAtributo.AR.all().fetch();
 		List<CpOrgaoUsuario> orgaos = em().createQuery("from CpOrgaoUsuario").getResultList();
@@ -52,7 +54,7 @@ public class AtributoController extends SrController {
 		result.include("locais", locais);
 		result.include("mostrarDesativados", mostrarDesativados);
 		result.include("tiposAtributo",SrTipoAtributo.values());
-
+		
 		result.include("pessoaSel", new DpPessoaSelecao());
 		result.include("lotacaoSel", new DpLotacaoSelecao());
 		result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
@@ -61,24 +63,24 @@ public class AtributoController extends SrController {
 	}
 
 	@Path("/gravar")
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void gravarAtributo(SrAtributo atributo) throws Exception {
-		// assertAcesso("ADM:Administrar");
 		validarFormEditarAtributo(atributo);
 		atributo.salvar();
 		result.use(Results.http()).body(atributo.toVO(false).toJson());
 	}
 
 	@Path("/desativar")
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void desativarAtributo(Long id) throws Exception {
-		// assertAcesso("ADM:Administrar");
 		SrAtributo item = SrAtributo.AR.findById(id);
 		item.finalizar();
 		result.use(Results.http()).body(item.toJson());
 	}
 
 	@Path("/reativar")
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void reativarAtributo(Long id) throws Exception {
-		// assertAcesso("ADM:Administrar");
 		SrAtributo item = SrAtributo.AR.findById(id);
 		item.salvar();
 		result.use(Results.http()).body(item.toJson(false));
@@ -96,9 +98,8 @@ public class AtributoController extends SrController {
 	}
 
 	@Path("/atributos")
+	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
     public void listarAssociacaoAtributo(Long idAtributo, boolean exibirInativos) throws Exception {
-//        assertAcesso("ADM:Administrar");
-
     	SrAtributo att = new SrAtributo();
     	if (idAtributo != null)
     		att = SrAtributo.AR.findById(idAtributo);

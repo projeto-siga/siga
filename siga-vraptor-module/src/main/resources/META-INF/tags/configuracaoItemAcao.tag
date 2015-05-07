@@ -133,7 +133,7 @@
 				<div class="gt-form-row">
 					<div class="gt-form-row">
 						<label>Ação</label> 
-						<siga:selecao propriedade="acao" tipo="acao" tema="simple" modulo="sigasr"
+						<siga:selecao propriedade="acao" tipo="tipoAcao" tema="simple" modulo="sigasr"
 	 						urlAcao="buscar" onchange="bloqueiaAcaoOkSeVazio()" onblur="bloqueiaAcaoOk()"/>
 <%-- 						#{selecao tipo:'acao', --%>
 <%-- 							nome:'acao', value:acao?.atual, onblur:'bloqueiaAcaoOk();', onchange:'bloqueiaAcaoOkSeVazio();' /} --%>

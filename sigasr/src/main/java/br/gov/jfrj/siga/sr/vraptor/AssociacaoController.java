@@ -18,10 +18,12 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
+import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -38,17 +40,35 @@ public class AssociacaoController extends SrController {
 	}
 
 	@Path("/desativar")
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void desativarAssociacao(Long idAssociacao) throws Exception {
-		// assertAcesso("ADM:Administrar");
 		SrConfiguracao associacao = SrConfiguracao.AR.findById(idAssociacao);
 		associacao.finalizar();
 		result.use(Results.http()).body(associacao.toJson());
 	}
 
 	@Path("/gravar")
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel) throws Exception {
-		// assertAcesso("ADM:Administrar");
+		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, pessoaSel, funcaoSel, cargoSel, perfilSel);
+		associacao.salvarComoAssociacaoAtributo();
+		SrConfiguracao refresh = SrConfiguracao.AR.findById(associacao.getId());
+		result.use(Results.http()).body(refresh.toVO().toJson());
+	}
+
+	@Path("/gravarComoPesquisa")
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	public void gravarAssociacaoPesquisa(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
+			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel) throws Exception {
+		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, pessoaSel, funcaoSel, cargoSel, perfilSel);
+		associacao.salvarComoAssociacaoPesquisa();
+		SrConfiguracao refresh = SrConfiguracao.AR.findById(associacao.getId());
+		result.use(Results.http()).body(refresh.toVO().toJson());
+	}
+
+	private void setDadosAssociacao(SrConfiguracao associacao, SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
+			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel) throws Exception {
 		associacao.setAtributo(SrAtributo.AR.findById(atributo.getIdAtributo()));
 		
 		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
@@ -72,22 +92,6 @@ public class AssociacaoController extends SrController {
 		if (perfilSel != null){
 			associacao.setCpGrupo(perfilSel.buscarObjeto());
 		}
-
-		associacao.salvarComoAssociacaoAtributo();
-		// SrConfiguracao.AR.em().refresh(associacao);
-		SrConfiguracao refresh = SrConfiguracao.AR.findById(associacao.getId());
-		result.use(Results.http()).body(refresh.toVO().toJson());
-	}
-
-	@Path("/gravarComoPesquisa")
-	public void gravarAssociacaoPesquisa(SrConfiguracao associacao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgao) throws Exception {
-		// assertAcesso("ADM:Administrar");
-		associacao.setAtributo(SrAtributo.AR.findById(associacao.getId()));
-		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
-		associacao.setAcoesSet(acoesSet);
-		associacao.salvarComoAssociacaoPesquisa();
-		SrConfiguracao refresh = SrConfiguracao.AR.findById(associacao.getId());
-		result.use(Results.http()).body(refresh.toVO().toJson());
 	}
 
 }

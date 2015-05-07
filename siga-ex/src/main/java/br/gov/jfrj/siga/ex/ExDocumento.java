@@ -2639,4 +2639,24 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 
 		return null;
 	}
+	
+	/**
+	 * Retorna o conteúdo entre dois textos.
+	 */
+	public String getConteudoEntreTextos(String textoInicial, String textoFinal) {
+		try {
+			if(textoInicial == null || textoInicial.isEmpty() || textoFinal == null || textoFinal.isEmpty())
+				return "";
+
+			String s = getConteudoBlobHtmlString();
+			
+			if(!s.contains(textoInicial) || !s.contains(textoFinal))
+				return "";
+			
+			return Texto.extrai(s, textoInicial, textoFinal).trim();
+		} catch (Exception e) {
+			return "";
+		} 
+	}
+	
 }

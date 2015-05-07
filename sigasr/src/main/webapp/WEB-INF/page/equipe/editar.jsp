@@ -143,7 +143,7 @@
 						<select name="diaSemana" class="select-siga" style="{width:100%;}">
 							<option value=0>Nenhuma</optgroup>
 							<c:forEach items="${diasSemana}" var="dia">
-								<option value="${dia.idDiaSemana}">${dia.descrDiaSemana}</option>
+								<option value="${dia}">${dia.descrDiaSemana}</option>
 							</c:forEach>						
 						</select> 
 						<span style="display:none;color: red" id="diaSemanaError">Dia da Semana não informado</span>

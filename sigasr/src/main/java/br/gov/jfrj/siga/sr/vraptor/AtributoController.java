@@ -55,9 +55,9 @@ public class AtributoController extends SrController {
 		result.include("mostrarDesativados", mostrarDesativados);
 		result.include("tiposAtributo",SrTipoAtributo.values());
 		
-		result.include("pessoaSel", new DpPessoaSelecao());
+		result.include("dpPessoaSel", new DpPessoaSelecao());
 		result.include("lotacaoSel", new DpLotacaoSelecao());
-		result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
+		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
 		result.include("cargoSel", new DpCargoSelecao());
 		result.include("cpGrupoSel", new CpPerfilSelecao());
 

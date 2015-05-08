@@ -114,8 +114,8 @@
 							<label>Solicitante</label>
 							<siga:pessoaLotaFuncCargoSelecao
 								nomeSelLotacao="lotacao"
-								nomeSelPessoa="pessoa"
-								nomeSelFuncao="funcao"
+								nomeSelPessoa="dpPessoa"
+								nomeSelFuncao="funcaoConfianca"
 								nomeSelCargo="cargo"
 								nomeSelGrupo="cpGrupo"
 								valuePessoa="${dpPessoa != null ? dpPessoa.pessoaAtual :'' }"
@@ -302,7 +302,7 @@
 	}
 
 	designacaoService.opts.formCadastro.resetForm = function(form) {
-		$("#pessoalotacaofuncaocargocpGrupo")[0].changeValue(1);
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
 	}
 
 	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {

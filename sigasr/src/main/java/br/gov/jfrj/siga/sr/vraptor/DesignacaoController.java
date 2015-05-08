@@ -53,9 +53,9 @@ public class DesignacaoController extends SrController {
 		result.include("locais", locais);
 		result.include("pesquisaSatisfacao", pesquisaSatisfacao);
 		
-		result.include("pessoaSel", new DpPessoaSelecao());
+		result.include("dpPessoaSel", new DpPessoaSelecao());
 		result.include("lotacaoSel", new DpLotacaoSelecao());
-		result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
+		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
 		result.include("cargoSel", new DpCargoSelecao());
 		result.include("cpGrupoSel", new CpPerfilSelecao());
 	}

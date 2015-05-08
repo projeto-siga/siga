@@ -1,11 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<jsp:include page="../main.jsp"></jsp:include>
+<jsp:include page="../popupHeader.jsp"></jsp:include>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">
-			<form method="POST" action="${linkTo[TipoAcaoController].buscar}">
+			<form method="POST" action="${linkTo[TipoAcaoController].buscar}" enctype="multipart/form-data">
 				<input type="hidden" name="popup" value="true" />
 				<table class="gt-form-table">
 					<tr class="header">
@@ -13,7 +13,8 @@
 					</tr>
 					<tr>
 						<td>C&oacute;digo:</td>
-						<td><input type="text" name="filtro.siglaTipoAcao" value="${filtro.siglaTipoAcao}" />
+						<td>
+							<input type="text" name="filtro.siglaTipoAcao" value="${filtro.siglaTipoAcao}" />
 						</td>
 					</tr>
 					<tr>
@@ -46,7 +47,7 @@
 			<c:forEach items="${itens}" var="tipoAcao">
 				<tr>
 					<td>
-						<a href='javascript:opener.retorna__tipoAcao${nome}("${tipoAcao.id}","${tipoAcao.sigla}","${tipoAcao.descricao}"); window.close();'>${tipoAcao.sigla}</a>
+						<a href='javascript:opener.retorna_${param.propriedade}${nome}("${tipoAcao.id}","${tipoAcao.sigla}","${tipoAcao.descricao}"); window.close();'>${tipoAcao.sigla}</a>
 					</td>
 					<td style="padding-left: ${tipoAcao.nivel*13}px;">${tipoAcao.descricao}</td>
 				</tr>

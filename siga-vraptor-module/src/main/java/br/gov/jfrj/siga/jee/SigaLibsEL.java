@@ -32,6 +32,11 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
+
+import org.mvel2.templates.CompiledTemplate;
+import org.mvel2.templates.TemplateCompiler;
+import org.mvel2.templates.TemplateRuntime;
+
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.ReaisPorExtenso;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -369,5 +374,84 @@ public class SigaLibsEL {
 								lotacao,
 								CpTipoConfiguracao.TIPO_CONFIG_CADASTRAR_QUALQUER_SUBST);
 	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Object evaluate(String expression, Object root) {
+		expression = expression.replace(".", ".?");
+		CompiledTemplate template = TemplateCompiler
+				.compileTemplate("${" + expression + "}");
+		Map vars = new HashMap();
+		vars.putAll((Map) root);
+
+		Object output = TemplateRuntime.execute(template, vars);
+		return output;
+	}
+
+//	@SuppressWarnings({ "rawtypes", "unchecked" })
+//	public static Object evaluate(String expression, Object root) throws Exception {
+//		Object expr = Ognl.parseExpression(expression);
+//
+//	    OgnlContext ctx = new OgnlContext(); 
+//	    
+//	    Map vars = new HashMap();
+//		vars.putAll((Map) root);
+//		
+//	    Object output = Ognl.getValue(expr, ctx, vars);
+//		return output;
+//	}
+	
+//	protected ELContext createContext(){
+//		  ELResolver resolver=new CompositeELResolver(){
+//		{
+//		      add(new ArrayELResolver(false));
+//		      add(new ListELResolver(false));
+//		      add(new MapELResolver(false));
+//		      add(new ResourceBundleELResolver());
+//		      add(new BeanELResolver());
+//		    }
+//		  }
+//		
+//		  return new ELContext(resolver);
+//		}
+	
+//	@SuppressWarnings({ "rawtypes", "unchecked" })
+//	public static Object evaluate(String expression, Object root) throws Exception {
+//		Map vars = new HashMap();
+//		vars.putAll((Map) root);
+//		
+//		ELResolver elResolver = new ELResolver(vars);
+//	    final VariableMapper variableMapper = new DemoVariableMapper();
+//	    final DemoFunctionMapper functionMapper = new DemoFunctionMapper();
+//	    functionMapper.addFunction("myprefix", "hello", sayHello);
+//	    final CompositeELResolver compositeELResolver = new CompositeELResolver();
+//	    compositeELResolver.add(demoELResolver);
+//	    compositeELResolver.add(new ArrayELResolver());
+//	    compositeELResolver.add(new ListELResolver());
+//	    compositeELResolver.add(new BeanELResolver());
+//	    compositeELResolver.add(new MapELResolver());
+//	    
+//	    ELContext context = new ELContext() {
+//	      @Override
+//	      public ELResolver getELResolver() {
+//	        return compositeELResolver;
+//	      }
+//	      @Override
+//	      public FunctionMapper getFunctionMapper() {
+//	        return functionMapper;
+//	      }
+//	      @Override
+//	      public VariableMapper getVariableMapper() {
+//	        return variableMapper;
+//	      }
+//	    };
+//		
+//		Object expr = Ognl.parseExpression(expression);
+//
+//	    OgnlContext ctx = new OgnlContext();
+//	    
+//	    Object output = Ognl.getValue(expr, ctx, vars);
+//		return output;
+//	}
+	
 
 }

@@ -174,7 +174,6 @@
 	equipeService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		equipeService.atualizarModalEquipe(obj);
-		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 
 	/**
@@ -183,7 +182,6 @@
 	equipeService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
 		equipeService.atualizarModalEquipe();
-		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 
 	/**

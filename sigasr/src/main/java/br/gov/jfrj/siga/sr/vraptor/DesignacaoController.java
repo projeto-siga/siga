@@ -12,6 +12,11 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
@@ -47,6 +52,12 @@ public class DesignacaoController extends SrController {
 		result.include("orgaos", orgaos);
 		result.include("locais", locais);
 		result.include("pesquisaSatisfacao", pesquisaSatisfacao);
+		
+		result.include("pessoaSel", new DpPessoaSelecao());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
+		result.include("cargoSel", new DpCargoSelecao());
+		result.include("cpGrupoSel", new CpPerfilSelecao());
 	}
 
 	@Path("/listar")

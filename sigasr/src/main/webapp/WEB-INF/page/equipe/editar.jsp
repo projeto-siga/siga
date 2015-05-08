@@ -82,7 +82,8 @@
 				</div>
 				<div class="gt-form-row gt-width-100">
 					<label>Lotação</label>
-					<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" desativar="sim" inputName="lotacaoEquipe" />
+					<input type="hidden" name="lotacaoEquipe" id="lotacaoEquipe" class="selecao">
+					<siga:selecao propriedade="lotacaoEquipe" tema="simple" modulo="siga" urlAcao="buscar" desativar="sim" />
 				</div>
 				
 				<div class="gt-form-table">

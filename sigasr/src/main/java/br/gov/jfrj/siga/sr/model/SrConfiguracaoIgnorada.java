@@ -12,10 +12,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.JPA;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_CONFIGURACAO_IGNORADA", schema = "SIGASR")
+@Table(name = "SR_CONFIGURACAO_IGNORADA", schema = Catalogs.SIGASR)
 public class SrConfiguracaoIgnorada extends Objeto {
 
 	/**

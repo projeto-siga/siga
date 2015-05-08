@@ -21,6 +21,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao.SrTipoAcaoVO;
@@ -31,9 +32,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Entity
-@Table(name = "SR_ACAO", schema = "SIGASR")
+@Table(name = "SR_ACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrAcao>, ConvertableEntity {
+
 	private static final long serialVersionUID = 8387408543308440033L;
 
 	public static ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);
@@ -382,6 +384,10 @@ public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, C
 			return 0;
 		}
 		return this.descrAcao.compareTo(arg0.descrAcao);
+	}
+	
+	public String getAcaoBusca() {
+		return "/acao";
 	}
 
 	/**

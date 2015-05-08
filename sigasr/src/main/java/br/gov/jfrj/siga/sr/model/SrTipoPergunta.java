@@ -8,9 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
+import br.gov.jfrj.siga.base.util.Catalogs;
 
 @Entity
-@Table(name = "SR_TIPO_PERGUNTA", schema = "SIGASR")
+@Table(name = "SR_TIPO_PERGUNTA", schema = Catalogs.SIGASR)
 public class SrTipoPergunta extends GenericModel {
 
 	final static public long TIPO_PERGUNTA_TEXTO_LIVRE = 1;

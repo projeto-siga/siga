@@ -35,8 +35,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 
-import org.hibernate.annotations.Formula;
-
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 

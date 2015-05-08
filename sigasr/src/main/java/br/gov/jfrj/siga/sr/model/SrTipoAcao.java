@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.FieldNameExclusionEstrategy;
@@ -29,7 +30,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_TIPO_ACAO", schema = "SIGASR")
+@Table(name = "SR_TIPO_ACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrTipoAcao> {
 

@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -24,7 +25,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrAcordoVO;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
-@Table(name = "SR_ACORDO", schema = "SIGASR")
+@Table(name = "SR_ACORDO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel {
 	private static final long serialVersionUID = 1L;

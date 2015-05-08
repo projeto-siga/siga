@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
@@ -28,7 +29,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_EQUIPE", schema = "SIGASR")
+@Table(name = "SR_EQUIPE", schema = Catalogs.SIGASR)
 public class SrEquipe extends HistoricoSuporteVraptor implements ConvertableEntity {
 
 	public static ActiveRecord<SrEquipe> AR = new ActiveRecord<>(SrEquipe.class);

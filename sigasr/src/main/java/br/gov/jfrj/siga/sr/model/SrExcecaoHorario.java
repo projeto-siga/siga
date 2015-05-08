@@ -17,10 +17,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.DatatypeConverter;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
-@Table(name = "SR_EXCECAO_HORARIO", schema = "SIGASR")
+@Table(name = "SR_EXCECAO_HORARIO", schema = Catalogs.SIGASR)
 public class SrExcecaoHorario extends ObjetoVraptor {
 
 	/**

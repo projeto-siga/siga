@@ -11,9 +11,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
+import br.gov.jfrj.siga.base.util.Catalogs;
 
 @Entity
-@Table(name = "SR_RESPOSTA", schema = "SIGASR")
+@Table(name = "SR_RESPOSTA", schema = Catalogs.SIGASR)
 public class SrResposta extends GenericModel {
 
 	@Id

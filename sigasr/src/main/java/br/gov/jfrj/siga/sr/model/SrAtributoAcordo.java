@@ -10,17 +10,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoAcordoVO;
 
 @Entity
-@Table(name = "SR_ATRIBUTO_ACORDO", schema = "SIGASR")
+@Table(name = "SR_ATRIBUTO_ACORDO", schema = Catalogs.SIGASR)
 public class SrAtributoAcordo extends HistoricoSuporte {
 
 	/**

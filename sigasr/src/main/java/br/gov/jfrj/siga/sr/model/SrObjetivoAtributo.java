@@ -8,12 +8,13 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
-@Table(name = "SR_OBJETIVO_ATRIBUTO", schema = "SIGASR")
+@Table(name = "SR_OBJETIVO_ATRIBUTO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class SrObjetivoAtributo extends ObjetoVraptor implements ConvertableEntity {
 	

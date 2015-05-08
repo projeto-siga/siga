@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Objeto;
@@ -17,7 +18,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 import br.gov.jfrj.siga.sr.model.vo.SrFatorMultiplicacaoVO;
 
 @Entity
-@Table(name = "SR_FATOR_MULTIPLICACAO", schema = "SIGASR")
+@Table(name = "SR_FATOR_MULTIPLICACAO", schema = Catalogs.SIGASR)
 public class SrFatorMultiplicacao extends Objeto{
 	
 	/**

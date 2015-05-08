@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.JPA;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -27,7 +28,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_PESQUISA", schema = "SIGASR")
+@Table(name = "SR_PESQUISA", schema = Catalogs.SIGASR)
 public class SrPesquisa extends HistoricoSuporte {
 
 	private static final long serialVersionUID = 1L;

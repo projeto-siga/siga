@@ -66,8 +66,8 @@ public class PesquisaSatisfacaoController extends SrController {
 	
 	// @AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
-	public void gravar(SrPesquisa pesquisa, Set<SrPergunta> perguntaSet) throws Exception {
-		pesquisa = (SrPesquisa) Objeto.getImplementation(pesquisa);
+	public void gravar(SrPesquisa srPesquisa, Set<SrPergunta> perguntaSet) throws Exception {
+		SrPesquisa pesquisa = (SrPesquisa) Objeto.getImplementation(srPesquisa);
 		pesquisa.setPerguntaSet((pesquisa.getPerguntaSet() != null) ? pesquisa
 				.getPerguntaSet() : new HashSet<SrPergunta>());
 		pesquisa.salvar();

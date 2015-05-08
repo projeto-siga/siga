@@ -5,7 +5,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<siga:pagina titulo="P&aacute;gina Inicial" incluirJs="/siga/javascript/principal.js">
+<siga:pagina titulo="P&aacute;gina Inicial" incluirJs="siga/javascript/principal.js">
 	<ww:token />
 
 	<div class="gt-bd">

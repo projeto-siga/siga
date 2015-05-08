@@ -11,8 +11,8 @@
 
 <siga:pagina titulo="Assinatura de Despacho em Lote"
 						 onLoad="javascript: TestarAssinaturaDigital()"
-						 incluirJs="/sigaex/javascript/assinatura.js">
-						
+						 incluirJs="sigaex/javascript/assinatura.js">
+
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {

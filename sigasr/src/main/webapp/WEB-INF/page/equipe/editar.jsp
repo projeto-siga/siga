@@ -303,6 +303,10 @@
         document.getElementById("interFim").value = '';
         document.getElementById("dataEspecifica").value = '';
 	}
+
+	function atualizaData(dataString) {
+		return new Date(dataString);
+	}
 	
 	function atualizaHora(data, horaString) {
 		var horaMinuto = horaString.split(":"),

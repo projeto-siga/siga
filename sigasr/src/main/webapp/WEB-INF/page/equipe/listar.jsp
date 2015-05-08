@@ -145,7 +145,7 @@
 					if (rowValues) {
 						if (rowValues[0] == 0)
 							params += '&excecaoHorarioSet[' + i
-									+ '].dataEspecifica=' + rowValues[1];
+									+ '].strDataEspecifica=' + atualizaData(rowValues[1]).toJSON();
 						else
 							params += '&excecaoHorarioSet[' + i
 									+ '].diaSemana=' + rowValues[0];

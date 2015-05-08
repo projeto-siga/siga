@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Itens de ConfiguraÃ§Ã£o">
+<siga:pagina titulo="Itens de Configuração">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	
@@ -13,6 +13,7 @@
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
+	<script src="/sigasr/javascripts/jquery.blockUI.js"></script>
 	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 
@@ -56,7 +57,7 @@
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
-			<h2>Itens de ConfiguraÃ§Ã£o</h2>
+			<h2>Itens de Configuração</h2>
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
@@ -73,9 +74,9 @@
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th>CÃ³digo</th>
-							<th>TÃ­tulo</th>
-							<th>DescriÃ§Ã£o</th>
+							<th>Código</th>
+							<th>Título</th>
+							<th>Descrição</th>
 							<th>Similaridade</th>
 							<th></th>
 							<th>VO Item</th>
@@ -85,7 +86,7 @@
 					<tbody>
 						<c:forEach items="${itens}" var="item">
 							<tr data-json-id="${item.idItemConfiguracao}" data-json="${item.toVO().toJson()}" 
-								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuraÃ§Ã£o')"
+								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
 								style="cursor: pointer;">
 								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 								<td>${item.siglaItemConfiguracao}</td>
@@ -148,15 +149,18 @@
 		return query_string;
 	}();
 
-	if (QueryString.mostrarDesativados != undefined) {
-		document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
-		document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
-	}
-		
-	$("#checkmostrarDesativado").click(function() {
-		jQuery.blockUI(objBlock);
-		${linkTo[ItemConfiguracaoController].listar[document.getElementById('checkmostrarDesativado').checked]};
+	jQuery(document).ready(function($) {
+		if (QueryString.mostrarDesativados != undefined) {
+			document.getElementById('checkmostrarDesativados').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativados').value = QueryString.mostrarDesativados == 'true';
+		}
+			
+		$("#checkmostrarDesativados").click(function() {
+			jQuery.blockUI(objBlock);
+			location.href = '${linkTo[ItemConfiguracaoController].listar}'+document.getElementById('checkmostrarDesativados').checked;
+		});
 	});
+	
 
 	var itemTable = new SigaTable('#itens_configuracao_table')
 		.configurar("aaSorting", [[colunasLista.codigo, 'asc']])
@@ -246,7 +250,7 @@
 	itemConfiguracaoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		atualizarModalItem(obj);
-		// carrega as designaÃ§Ãµes do item
+		// carrega as designações do item
 		carregarDesignacoes(obj.id);
 	}
 
@@ -303,7 +307,7 @@
         		designacaoService.populateFromJSonList(listaJSon);
         	},
         	error: function(error) {
-            	alert("NÃ£o foi possÃ­vel carregar as DesignaÃ§Ãµes deste item.");
+            	alert("NÃ£o foi possível carregar as Designações deste item.");
         	}
        	});
     }

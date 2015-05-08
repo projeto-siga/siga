@@ -10,6 +10,7 @@ import play.data.validation.Validation;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -54,13 +55,6 @@ public class ItemConfiguracaoController extends SrController {
 		result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
 	}
 	
-	//@AssertAcesso(ADM_ADMINISTRAR)
-	@Path("/desativarPermissaoUsoLista/{id}")
-	public void desativarPermissaoUsoLista(Long id) throws Exception {
-		SrConfiguracao designacao = em().find(SrConfiguracao.class, id);
-		designacao.finalizar();
-	}
-	
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
 		SrLista lista = SrLista.AR.findById(id);
 		lista.finalizar();
@@ -97,32 +91,6 @@ public class ItemConfiguracaoController extends SrController {
 		result.include("designacoes", SrConfiguracao.convertToJSon(designacoes));
 	}
 	
-	public static String configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
-		SrLista lista = SrLista.AR.findById(idLista);
-		return SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados);
-	}
-	
-	public void gravarConfiguracaoAutomatica(SrConfiguracao configuracaoInclusaoAutomatica) throws Exception {
-		configuracaoInclusaoAutomatica.salvarComoInclusaoAutomaticaLista(configuracaoInclusaoAutomatica.getListaPrioridade());
-		configuracaoInclusaoAutomatica.refresh();
-		
-		result.include("configuracaoInclusaoAutomatica", configuracaoInclusaoAutomatica.toVO().toJson());
-	}
-	
-	public void desativarConfiguracaoAutomatica(Long id) throws Exception {
-		SrConfiguracao configuracao = em().find(SrConfiguracao.class, id);
-		configuracao.finalizar();
-		
-		result.include("configuracaoInclusaoAutomatica", configuracao.toVO().toJson());
-	}
-	
-	public void reativarConfiguracaoAutomatica(Long id) throws Exception {
-		SrConfiguracao configuracao = em().find(SrConfiguracao.class, id);
-		configuracao.salvar();
-		
-		result.include("configuracaoInclusaoAutomatica", configuracao.toVO().toJson());
-	}
-	
 	private void validarFormEditarLista(SrLista lista) {
 		if (lista.nomeLista == null || lista.nomeLista.trim().equals("")) {
 			Validation.addError("lista.nomeLista",
@@ -132,6 +100,19 @@ public class ItemConfiguracaoController extends SrController {
 		if (Validation.hasErrors()) {
 			enviarErroValidacao();
 		}
+	}
+	
+	//@AssertAcesso(ADM_ADMINISTRAR)
+	public void gravarDesignacaoItem(SrConfiguracao designacao, Long idItemConfiguracao) throws Exception {
+		designacao.salvarComoDesignacao();
+		designacao.refresh();
+
+		SrItemConfiguracao itemConfiguracao = SrItemConfiguracao.AR.findById(idItemConfiguracao);
+		itemConfiguracao.adicionarDesignacao(designacao);
+		
+		result.use(Results.json())
+			.from(designacao.getSrConfiguracaoJson(itemConfiguracao))
+		    .serialize();
 	}
 
 }

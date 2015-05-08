@@ -71,7 +71,6 @@
 </style>
 		<div class="gt-form gt-content-box div-editar-equipe">
 			<form id="form" class="formEditarEquipe" enctype="multipart/form-data">
-				<input type="hidden" id="equipeHidden" name="equipe">
 				<input type="hidden" id="idEquipe" name="equipe.idEquipe">
 				<input type="hidden" id="idEquipeIni" name="equipe.hisIdIni">
 				<input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario" value='${lotacaoUsuario.toJson()}'/>

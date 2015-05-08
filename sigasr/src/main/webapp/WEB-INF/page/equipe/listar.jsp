@@ -129,7 +129,8 @@
 	}
 
 	equipeService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + equipeService.getListasAsString();
+		var serializado = BaseService.prototype.serializar.call(this, obj)  + "&" + equipeService.getListasAsString();
+		return serializado + "&equipe=" + this.getId(obj);
 	}
 	
 	equipeService.getListasAsString = function() {

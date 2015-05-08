@@ -36,31 +36,31 @@
 
 <span id="spanPessoa${nomeSelPessoa}">
 	<input type="hidden" name="${nomeSelPessoa}" id="${nomeSelPessoa}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="pessoa" tema="simple" modulo="siga"
+	<siga:selecao propriedade="${nomeSelPessoa}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
 </span>
 
 <span id="spanLotacao${nomeSelLotacao}">
 	<input type="hidden" name="${nomeSelLotacao}" id="${nomeSelLotacao}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="lotacao" tema="simple" modulo="siga"
+	<siga:selecao propriedade="${nomeSelLotacao}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
 </span>
 
 <span id="spanFuncao${nomeSelFuncao}">
 	<input type="hidden" name="${nomeSelFuncao}" id="${nomeSelFuncao}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="funcao" tema="simple" modulo="siga"
+	<siga:selecao propriedade="${nomeSelFuncao}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueFuncao}"/>
 </span>
 
 <span id="spanCargo${nomeSelCargo}">
 	<input type="hidden" name="${nomeSelCargo}" id="${nomeSelCargo}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="cargo" tema="simple" modulo="siga"
+	<siga:selecao propriedade="${nomeSelCargo}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueCargo}"/>
 </span>
 
 <span id="spanGrupo${nomeSelGrupo}">
 	<input type="hidden" name="${nomeSelGrupo}" id="${nomeSelGrupo}" class="pessoaLotaFuncCargoSelecao">
-	<siga:selecao propriedade="perfil" tema="simple" modulo="siga"
+	<siga:selecao propriedade="${nomeSelGrupo}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueGrupo}"/>
 </span>
 
@@ -74,42 +74,42 @@ var select = document.getElementById('${nomeSelPessoa}${nomeSelLotacao}${nomeSel
 // http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined
 function limparPessoa() {
 	document.getElementById('spanPessoa${nomeSelPessoa}').style.display = 'none';
-	document.getElementById('formulario_pessoaSel_id').value='';
-	document.getElementById('formulario_pessoaSel_sigla').value='';
-	document.getElementById('formulario_pessoaSel_descricao').value='';
-	document.getElementById('pessoaSelSpan').innerHTML='';
+	document.getElementById('formulario_${nomeSelPessoa}Sel_id').value='';
+	document.getElementById('formulario_${nomeSelPessoa}Sel_sigla').value='';
+	document.getElementById('formulario_${nomeSelPessoa}Sel_descricao').value='';
+	document.getElementById('${nomeSelPessoa}SelSpan').innerHTML='';
 }
 
 function limparLotacao() { 
 	document.getElementById('spanLotacao${nomeSelLotacao}').style.display = 'none';
-	document.getElementById('formulario_lotacaoSel_id').value='';
-	document.getElementById('formulario_lotacaoSel_sigla').value='';
-	document.getElementById('formulario_lotacaoSel_descricao').value='';
-	document.getElementById('lotacaoSelSpan').innerHTML='';
+	document.getElementById('formulario_${nomeSelLotacao}Sel_id').value='';
+	document.getElementById('formulario_${nomeSelLotacao}Sel_sigla').value='';
+	document.getElementById('formulario_${nomeSelLotacao}Sel_descricao').value='';
+	document.getElementById('${nomeSelLotacao}SelSpan').innerHTML='';
 }
 
 function limparFuncao() {
 	document.getElementById('spanFuncao${nomeSelFuncao}').style.display = 'none';
-	document.getElementById('formulario_funcaoSel_id').value='';
-	document.getElementById('formulario_funcaoSel_sigla').value='';
-	document.getElementById('formulario_funcaoSel_descricao').value='';
-	document.getElementById('funcaoSelSpan').innerHTML='';
+	document.getElementById('formulario_${nomeSelFuncao}Sel_id').value='';
+	document.getElementById('formulario_${nomeSelFuncao}Sel_sigla').value='';
+	document.getElementById('formulario_${nomeSelFuncao}Sel_descricao').value='';
+	document.getElementById('${nomeSelFuncao}SelSpan').innerHTML='';
 }
 
 function limparCargo() {
 	document.getElementById('spanCargo${nomeSelCargo}').style.display = 'none';
-	document.getElementById('formulario_cargoSel_id').value='';
-	document.getElementById('formulario_cargoSel_sigla').value='';
-	document.getElementById('formulario_cargoSel_descricao').value='';
-	document.getElementById('cargoSelSpan').innerHTML='';
+	document.getElementById('formulario_${nomeSelCargo}Sel_id').value='';
+	document.getElementById('formulario_${nomeSelCargo}Sel_sigla').value='';
+	document.getElementById('formulario_${nomeSelCargo}Sel_descricao').value='';
+	document.getElementById('${nomeSelCargo}SelSpan').innerHTML='';
 }
 
 function limparGrupo() {
 	document.getElementById('spanGrupo${nomeSelGrupo}').style.display = 'none';
-	document.getElementById('formulario_perfilSel_id').value='';
-	document.getElementById('formulario_perfilSel_sigla').value='';
-	document.getElementById('formulario_perfilSel_descricao').value='';
-	document.getElementById('perfilSelSpan').innerHTML='';
+	document.getElementById('formulario_${nomeSelGrupo}Sel_id').value='';
+	document.getElementById('formulario_${nomeSelGrupo}Sel_sigla').value='';
+	document.getElementById('formulario_${nomeSelGrupo}Sel_descricao').value='';
+	document.getElementById('${nomeSelGrupo}SelSpan').innerHTML='';
 }
 
 select.onchange = function(){

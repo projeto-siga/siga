@@ -14,6 +14,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
+import br.gov.jfrj.siga.sr.model.TipoAcaoSelecao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -34,6 +35,7 @@ public class AcaoController extends SrController {
 		List<SrAcao> acoes = SrAcao.listar(mostrarDesativados);
 
 		result.include(ACOES, acoes);
+		result.include("tipoAcaoSel", new TipoAcaoSelecao());
 		result.include("mostrarDesativados", mostrarDesativados);
 	}
 

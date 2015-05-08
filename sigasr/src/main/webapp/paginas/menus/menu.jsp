@@ -26,7 +26,7 @@
 						<li><a href="@{Application.listarDisponibilidadeItens}">Disponibilidade</a></li>
 						<li><a href="${linkTo[EquipeController].listar[false]}">Equipe</a></li>
 						<li><a href="${linkTo[AtributoController].listar[false]}">Atributo</a></li>
-						<li><a href="@{Application.listarPesquisa}">Pesquisa de Satisfa&ccedil;&atilde;o</a></li> 
+						<li><a href="${linkTo[PesquisaSatisfacaoController].listar[false]}">Pesquisa de Satisfa&ccedil;&atilde;o</a></li> 
 					</c:if>
 					<c:if test="${exibirMenuConhecimentos}">
 						<li><a href="@{Application.listarConhecimento}">Conhecimento</a></li>

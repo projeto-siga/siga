@@ -140,7 +140,8 @@
 						<div class="box gt-width-50">
 							<label>Atendente <span>*</span></label>
 							
-							<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
+							<input type="hidden" name="atendente" id="atendente" class="selecao">
+							<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
 							
 		<%-- 					#{selecao --%>
 		<%-- 						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual, --%>

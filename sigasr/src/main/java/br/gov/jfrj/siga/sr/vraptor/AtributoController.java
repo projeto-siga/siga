@@ -60,6 +60,10 @@ public class AtributoController extends SrController {
 		result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
 		result.include("cargoSel", new DpCargoSelecao());
 		result.include("cpGrupoSel", new CpPerfilSelecao());
+
+		
+//		result.include("acaoSel", new CpPerfilSelecao());
+//		result.include("itemConfiguracaoSel", new CpPerfilSelecao());
 	}
 
 	@Path("/gravar")

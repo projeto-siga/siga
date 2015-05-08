@@ -634,7 +634,7 @@
 					<div class="gt-form-row gt-width-100">
 						<div class="gt-left-col gt-width-100" style="display: none;">
 							<label>Procedimento original</label>
-							<textarea id="een" name="xml" class="gt-form-text" rows="20"
+							<textarea id="een" name="xmlOriginal" class="gt-form-text" rows="20"
 								ng-bind="xmlOriginal"></textarea>
 						</div>
 						<div class="gt-left-col gt-width-100">

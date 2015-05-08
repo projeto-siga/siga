@@ -86,7 +86,7 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 	}
 
 	public Long getId() {
-		return Long.valueOf(getIdOrgaoUsu());
+		return getIdOrgaoUsu();
 	}
 
 	public String getSigla() {

@@ -2,6 +2,10 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+<c:set var="propriedadeClean"
+	value="${fn:replace(param.propriedade,'.','')}" />
 
 <siga:pagina titulo="Busca de Órgão Integrado" popup="true">
 
@@ -61,7 +65,7 @@
 			itens="${itens}" var="item">
 			<tr class="${evenorodd}">
 				<td width="10%" align="center"><a
-					href="javascript: opener.retorna_${param.propriedade}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
+					href="javascript: opener.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
 				<td width="70%" align="left">${item.descricao}</td>
 				<td align="left" width="20%">${item.dataFimLotacao}</td>
 			</tr>

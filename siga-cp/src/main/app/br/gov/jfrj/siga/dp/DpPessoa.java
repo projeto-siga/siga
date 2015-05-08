@@ -164,6 +164,12 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	public void setSigla(final String sigla) {
+		if (sigla == null) {
+			setSesbPessoa(null);
+			setMatricula(null);
+			return;
+		}
+		
 		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9])([0-9]+)");
 		final Matcher m = p1.matcher(sigla);
 		if (m.find()) {

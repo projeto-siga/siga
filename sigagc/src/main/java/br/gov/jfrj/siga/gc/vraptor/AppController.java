@@ -7,10 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.EntityManager;
@@ -28,7 +26,6 @@ import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -53,6 +50,7 @@ import br.gov.jfrj.siga.gc.util.diff_match_patch.Diff;
 import br.gov.jfrj.siga.gc.util.diff_match_patch.Operation;
 import br.gov.jfrj.siga.model.DadosRI;
 import br.gov.jfrj.siga.vraptor.LoadOptional;
+import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 import com.google.gson.Gson;
@@ -82,68 +80,50 @@ public class AppController extends GcController {
 		result.include("contagens", contagens);
 	}
 
-	/*private static List<GcLabelValue> lCachePontoDeEntrada = null;
-	private static Date dtCachePontoDeEntrada = null;
+	/*
+	 * private static List<GcLabelValue> lCachePontoDeEntrada = null; private
+	 * static Date dtCachePontoDeEntrada = null;
+	 * 
+	 * public static void pontoDeEntrada(String texto) {
+	 * pontosDeEntradaAtualizarCache();
+	 * 
+	 * List<GcLabelValue> l = new ArrayList<GcLabelValue>();
+	 * 
+	 * if (texto != null && texto.trim().length() > 0) { texto =
+	 * GcLabelValue.removeAcento(texto).trim().toLowerCase(); texto =
+	 * texto.replace("  ", " "); String[] palavras = texto.split(" "); for
+	 * (GcLabelValue lv : lCachePontoDeEntrada) { if (lv.fts(palavras))
+	 * l.add(lv); } }
+	 * 
+	 * if (l.size() == 0) renderJSON("[]");
+	 * 
+	 * renderJSON(l); }
+	 * 
+	 * public void pontosDeEntrada(String texto) {
+	 * pontosDeEntradaAtualizarCache();
+	 * 
+	 * Map<String,SortedSet<GcLabelValue>> map = new
+	 * TreeMap<String,SortedSet<GcLabelValue>>(); for (GcLabelValue lv :
+	 * lCachePontoDeEntrada) { String[] a = lv.getLabel().split(": "); if
+	 * (a.length == 2) { if (!map.containsKey(a[0])) map.put(a[0], new
+	 * TreeSet<GcLabelValue>()); map.get(a[0]).add(lv); } else if (a.length ==
+	 * 1) { if (!map.containsKey(CATEGORIA_OUTRAS)) map.put(CATEGORIA_OUTRAS,
+	 * new TreeSet<GcLabelValue>()); map.get(CATEGORIA_OUTRAS).add(lv); } }
+	 * render(map); }
+	 * 
+	 * private void pontosDeEntradaAtualizarCache() { if (lCachePontoDeEntrada
+	 * == null || dtCachePontoDeEntrada == null ||
+	 * dtCachePontoDeEntrada.before(new Date())) { synchronized
+	 * (GcLabelValue.class) { if (lCachePontoDeEntrada == null ||
+	 * dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new
+	 * Date())) { lCachePontoDeEntrada = new ArrayList<GcLabelValue>(); Query q
+	 * = JPA.em().createNamedQuery("pontosDeEntrada"); q.setParameter("texto",
+	 * "%"); List<Object[]> lista = q.getResultList(); for (Object[] ao : lista)
+	 * { GcInformacao i = (GcInformacao) ao[0]; GcArquivo a = (GcArquivo) ao[1];
+	 * lCachePontoDeEntrada.add(new GcLabelValue(a.titulo, i.getSigla())); }
+	 * dtCachePontoDeEntrada = new Date(new Date().getTime() + 60000); } } } }
+	 */
 
-	public static void pontoDeEntrada(String texto) {
-		pontosDeEntradaAtualizarCache();
-		
-		List<GcLabelValue> l = new ArrayList<GcLabelValue>();
-
-		if (texto != null && texto.trim().length() > 0) {
-			texto = GcLabelValue.removeAcento(texto).trim().toLowerCase();
-			texto = texto.replace("  ", " ");
-			String[] palavras = texto.split(" ");
-			for (GcLabelValue lv : lCachePontoDeEntrada) {
-				if (lv.fts(palavras))
-					l.add(lv);
-			}
-		}
-		
-		if (l.size() == 0)
-			renderJSON("[]");
-		
-		renderJSON(l);
-	}
-
-	public void pontosDeEntrada(String texto) {
-		pontosDeEntradaAtualizarCache();
-		
-		Map<String,SortedSet<GcLabelValue>> map = new TreeMap<String,SortedSet<GcLabelValue>>();
-		for (GcLabelValue lv : lCachePontoDeEntrada) {
-			String[] a = lv.getLabel().split(": ");
-			if (a.length == 2) {
-				if (!map.containsKey(a[0]))
-					map.put(a[0], new TreeSet<GcLabelValue>());
-				map.get(a[0]).add(lv);
-			} else if (a.length == 1) {
-				if (!map.containsKey(CATEGORIA_OUTRAS))
-					map.put(CATEGORIA_OUTRAS, new TreeSet<GcLabelValue>());
-				map.get(CATEGORIA_OUTRAS).add(lv);
-			}
-		}		
-		render(map);
-	}
-
-	private void pontosDeEntradaAtualizarCache() {
-		if (lCachePontoDeEntrada == null || dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new Date())) {
-			synchronized (GcLabelValue.class) {
-				if (lCachePontoDeEntrada == null || dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new Date())) {
-					lCachePontoDeEntrada = new ArrayList<GcLabelValue>();
-					Query q = JPA.em().createNamedQuery("pontosDeEntrada");
-					q.setParameter("texto", "%");
-					List<Object[]> lista = q.getResultList();
-					for (Object[] ao : lista) {
-						GcInformacao i = (GcInformacao) ao[0];
-						GcArquivo a = (GcArquivo) ao[1];
-						lCachePontoDeEntrada.add(new GcLabelValue(a.titulo, i.getSigla()));
-					}
-					dtCachePontoDeEntrada = new Date(new Date().getTime() + 60000);
-				}
-			}
-		}
-	}*/
-	
 	@Path("/public/app/knowledge")
 	public void publicKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo, boolean popup,
@@ -153,7 +133,7 @@ public class AppController extends GcController {
 	}
 
 	public void knowledge(Long id, String[] tags, String msgvazio,
-			String urlvazio, String titulo, boolean popup, String estiloBusca, 
+			String urlvazio, String titulo, boolean popup, String estiloBusca,
 			Boolean podeCriar) throws Exception {
 		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo, false,
 				popup, estiloBusca, podeCriar);
@@ -175,8 +155,8 @@ public class AppController extends GcController {
 
 	private void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
-			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar)
-			throws UnsupportedEncodingException, Exception {
+			boolean testarAcesso, boolean popup, String estiloBusca,
+			Boolean podeCriar) throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
 		GcInformacao info = null;
@@ -236,16 +216,16 @@ public class AppController extends GcController {
 				classificacao += s;
 			}
 		}
-		// Necess·rio para criar um novo conhecimento a partir de um j·
-		// existente, a classificaÁ„o
-		// È passada como queryString. Sem fazer isso, as hashTags n„o s„o
+		// Necess√°rio para criar um novo conhecimento a partir de um j√°
+		// existente, a classifica√ß√£o
+		// √© passada como queryString. Sem fazer isso, as hashTags n√£o s√£o
 		// passadas.
 		// classificacao = URLEncoder.encode(classificacao, "UTF-8");
 		// if (msgvazio != null) {
 		// msgvazio = msgvazio.replace("*aqui*", "<a href=\"" + urlvazio +
 		// "\">aqui</a>");
 		// }
-		
+
 		if (podeCriar == null)
 			podeCriar = true;
 
@@ -438,7 +418,7 @@ public class AppController extends GcController {
 		result.include("evolucao", evolucao);
 	}
 
-	public void listar(GcInformacaoFiltro filtro, int estatistica) {
+	public void listar(GcInformacaoFiltro filtro, int estatistica) throws Exception {
 		List<GcInformacao> lista;
 		if (filtro.pesquisa)
 			lista = filtro.buscar();
@@ -446,7 +426,7 @@ public class AppController extends GcController {
 			lista = new ArrayList<GcInformacao>();
 
 		// Montando o filtro...
-		// String[] tipos = new String[] { "Pessoa", "Lota√ß„o" };
+		// String[] tipos = new String[] { "Pessoa", "Lota√É¬ß√£o" };
 		List<CpMarcador> marcadores = em().createQuery(
 				"select distinct cpMarcador from GcMarca").getResultList();
 		em().createQuery("select cp from CpOrgaoUsuario cp").getResultList();
@@ -455,10 +435,10 @@ public class AppController extends GcController {
 		List<GcTipoInformacao> tiposinformacao = GcTipoInformacao.AR.all()
 				.fetch();
 
-		List<Integer> anos = new ArrayList<Integer>();
+		List<SigaIdDescr> anos = new ArrayList<SigaIdDescr>();
 		int ano = bl.dt().getYear() + 1900;
 		for (int i = 0; i < 10; i++) {
-			anos.add(ano - i);
+			anos.add(new SigaIdDescr(ano - i, ano - i));
 		}
 
 		if (filtro == null)
@@ -477,7 +457,7 @@ public class AppController extends GcController {
 		GcArvore arvore = new GcArvore();
 
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
-		// n„o exibe conhecimentos cancelados
+		// n√£o exibe conhecimentos cancelados
 		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
 				.fetch();
 
@@ -495,7 +475,7 @@ public class AppController extends GcController {
 	public void buscar(String texto, String classificacao) {
 		GcArvore arvore = new GcArvore();
 		// List<GcInformacao> infs = GcInformacao.all().fetch();
-		// n„o exibe conhecimentos cancelados
+		// n√£o exibe conhecimentos cancelados
 		List<GcInformacao> infs = GcInformacao.AR.find("byHisDtFimIsNull")
 				.fetch();
 
@@ -541,7 +521,7 @@ public class AppController extends GcController {
 
 	/*
 	 * public void buscar(String texto) { GcArvore arvore = new GcArvore();
-	 * //List<GcInformacao> infs = GcInformacao.all().fetch(); //n„o exibe
+	 * //List<GcInformacao> infs = GcInformacao.all().fetch(); //n√£o exibe
 	 * conhecimentos cancelados List<GcInformacao> infs =
 	 * GcInformacao.find("byHisDtFimIsNull").fetch();
 	 * 
@@ -596,33 +576,29 @@ public class AppController extends GcController {
 			result.include("informacao", informacao);
 		} else
 			throw new AplicacaoException(
-					"RestriÁ„o de Acesso ("
-							+ informacao.visualizacao.nome
-							+ ") : O usu·rio n„o tem permiss„o para visualizar o conhecimento solicitado.");
-	}
-	 
-	/*public static void exibirPontoDeEntrada(String sigla) throws Exception {
-		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		DpPessoa titular = titular();
-		DpLotacao lotaTitular = lotaTitular();
-		CpIdentidade idc = idc();
-
-		if (informacao.acessoPermitido(titular, lotaTitular,
-				informacao.visualizacao.id)) {
-			String conteudo = Util.marcarLinkNoConteudo(informacao.arq
-					.getConteudoTXT());
-			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
-			GcBL.logarVisita(informacao, idc, titular, lotaTitular);
-			render(informacao);
-		} else
-			throw new AplicacaoException(
 					"Restri√ß√£o de Acesso ("
 							+ informacao.visualizacao.nome
 							+ ") : O usu√°rio n√£o tem permiss√£o para visualizar o conhecimento solicitado.");
-	}*/
+	}
 
-	@Path({"/app/editar/{sigla}", "/app/editar/"})
+	/*
+	 * public static void exibirPontoDeEntrada(String sigla) throws Exception {
+	 * GcInformacao informacao = GcInformacao.findBySigla(sigla); DpPessoa
+	 * titular = titular(); DpLotacao lotaTitular = lotaTitular(); CpIdentidade
+	 * idc = idc();
+	 * 
+	 * if (informacao.acessoPermitido(titular, lotaTitular,
+	 * informacao.visualizacao.id)) { String conteudo =
+	 * Util.marcarLinkNoConteudo(informacao.arq .getConteudoTXT()); if (conteudo
+	 * != null) informacao.arq.setConteudoTXT(conteudo);
+	 * GcBL.logarVisita(informacao, idc, titular, lotaTitular);
+	 * render(informacao); } else throw new AplicacaoException(
+	 * "Restri√É¬ß√É¬£o de Acesso (" + informacao.visualizacao.nome +
+	 * ") : O usu√É¬°rio n√É¬£o tem permiss√É¬£o para visualizar o conhecimento solicitado."
+	 * ); }
+	 */
+
+	@Path({ "/app/editar/{sigla}", "/app/editar/" })
 	public void editar(String sigla, String classificacao, String inftitulo,
 			String origem, String conteudo, GcTipoInformacao tipo)
 			throws Exception {
@@ -644,7 +620,8 @@ public class AppController extends GcController {
 					.fetch();
 			List<GcAcesso> acessos = GcAcesso.AR.all().fetch();
 			if (inftitulo == null)
-				inftitulo = (informacao.arq != null) ? informacao.arq.titulo : null;
+				inftitulo = (informacao.arq != null) ? informacao.arq.titulo
+						: null;
 
 			if (conteudo == null)
 				conteudo = (informacao.arq != null) ? informacao.arq
@@ -686,10 +663,10 @@ public class AppController extends GcController {
 			if (informacao.lotacao == null) {
 				informacao.lotacao = lotaTitular;
 			}
-			
+
 			boolean editarClassificacao = false;
 			try {
-				assertAcesso("EDTCLASS:Editar classifica√ß√£o");
+				assertAcesso("EDTCLASS:Editar classifica√É¬ß√É¬£o");
 				editarClassificacao = true;
 			} catch (Exception e) {
 				//
@@ -706,9 +683,9 @@ public class AppController extends GcController {
 			result.include("editarClassificacao", editarClassificacao);
 		} else
 			throw new AplicacaoException(
-					"RestriÁ„o de Acesso ("
+					"Restri√ß√£o de Acesso ("
 							+ informacao.edicao.nome
-							+ ") : O usu·rio n„o tem permiss„o para editar o conhecimento solicitado.");
+							+ ") : O usu√°rio n√£o tem permiss√£o para editar o conhecimento solicitado.");
 	}
 
 	@Path("/app/historico/{sigla}")
@@ -783,9 +760,9 @@ public class AppController extends GcController {
 			result.include("mapTxt", mapTxt);
 		} else
 			throw new AplicacaoException(
-					"Restri√ß„o de Acesso ("
+					"Restri√É¬ß√£o de Acesso ("
 							+ informacao.visualizacao.nome
-							+ ") : O usu·rio n„o tem permiss„o para visualizar o conhecimento solicitado.");
+							+ ") : O usu√°rio n√£o tem permiss√£o para visualizar o conhecimento solicitado.");
 
 	}
 
@@ -802,9 +779,9 @@ public class AppController extends GcController {
 			result.include("informacao", informacao);
 		} else
 			throw new AplicacaoException(
-					"Restri√ß„o de Acesso ("
+					"Restri√É¬ß√£o de Acesso ("
 							+ informacao.visualizacao.nome
-							+ ") : O usu·rio n„o tem permiss„o para visualizar o conhecimento solicitado.");
+							+ ") : O usu√°rio n√£o tem permiss√£o para visualizar o conhecimento solicitado.");
 	}
 
 	@Path("/app/fechar/{sigla}")
@@ -818,9 +795,9 @@ public class AppController extends GcController {
 			result.redirectTo(this).exibir(inf.getSiglaCompacta(), null);
 		} else
 			throw new AplicacaoException(
-					"RestriÁ„o de Acesso ("
+					"Restri√ß√£o de Acesso ("
 							+ inf.edicao.nome
-							+ ") : O usu·rio n„o tem permiss„o para finalizar o conhecimento solicitado.");
+							+ ") : O usu√°rio n√£o tem permiss√£o para finalizar o conhecimento solicitado.");
 	}
 
 	@Path("/app/duplicar/{sigla}")
@@ -900,14 +877,15 @@ public class AppController extends GcController {
 		informacao.edicao = edicao;
 		informacao.visualizacao = visualizacao;
 
-		// Atualiza a classificaÁ„o com as hashTags encontradas
-		classificacao = bl.findHashTag(conteudo, classificacao,
-				CONTROLE_HASH_TAG);
-		
+		// Atualiza a classifica√ß√£o com as hashTags encontradas
+		if (conteudo != null)
+			classificacao = bl.findHashTag(conteudo, classificacao,
+					CONTROLE_HASH_TAG);
+
 		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
 				&& informacao.grupo == null)
 			throw new Exception(
-					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restriÁ„o.");
+					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restri√ß√£o.");
 
 		if (informacao.id != 0)
 			bl.movimentar(informacao,
@@ -939,7 +917,7 @@ public class AppController extends GcController {
 
 		if (informacao.elaboracaoFim != null)
 			throw new AplicacaoException(
-					"N„o È permitido remover informaÁıes que j· foram finalizadas.");
+					"N√£o √© permitido remover informa√ß√µes que j√° foram finalizadas.");
 		em().createQuery("delete from GcMarca where inf.id = :id")
 				.setParameter("id", informacao.id).executeUpdate();
 		em().createQuery("delete from GcMovimentacao where inf.id = :id")
@@ -996,10 +974,10 @@ public class AppController extends GcController {
 					getLotaTitular());
 			result.redirectTo(this).result.redirectTo(this).exibir(
 					informacao.getSiglaCompacta(),
-					"SolicitaÁ„o de revis„o realizada com sucesso!");
+					"Solicita√ß√£o de revis√£o realizada com sucesso!");
 		} else
 			throw new AplicacaoException(
-					"Para solicitar revis„o È necess·rio selecionar uma Pessoa ou LotaÁ„o.");
+					"Para solicitar revis√£o √© necess√°rio selecionar uma Pessoa ou Lota√ß√£o.");
 	}
 
 	@Path("/app/anexar/{sigla}")
@@ -1009,31 +987,33 @@ public class AppController extends GcController {
 	}
 
 	public void gravarArquivo(GcInformacao informacao, String titulo,
-			UploadedFile file, String CKEditorFuncNum, String origem) throws Exception {
+			UploadedFile file, String CKEditorFuncNum, String origem)
+			throws Exception {
 		if (file != null)
 			if (file.getSize() > 2097152)
 				throw new AplicacaoException(
-						"O tamanho do arquivo È maior que o "
-								+ "m·ximo permitido (2MB)");
-			if (!(file.getSize() > 0)) 
-				throw new AplicacaoException(
-						"Nao È permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
-			byte arquivo[] = IOUtils.toByteArray(file.getFile());
-			String tituloArquivo = file.getFileName();
-			if (origem.equals("editar")) {
-				long id = bl.gravarArquivoSemMovimentacao(arquivo, tituloArquivo, file.getContentType().toLowerCase());
-				String url = "/sigagc/app/baixar?id=" + id;
-				String js = "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('"
-						+ CKEditorFuncNum + "','" + url + "');</script>";
-				result.use(Results.http()).body(js);  
-			}
-			else {
-				if (titulo != null && titulo.trim().length() > 0)
-					tituloArquivo = titulo;
-				bl.gravarArquivoComMovimentacao(informacao, getIdentidadeCadastrante(), getTitular(), 
-						getLotaTitular(), tituloArquivo, arquivo);
-				result.use(Results.http()).body("success");
-			}
+						"O tamanho do arquivo √© maior que o "
+								+ "m√°ximo permitido (2MB)");
+		if (!(file.getSize() > 0))
+			throw new AplicacaoException(
+					"Nao √© permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
+		byte arquivo[] = IOUtils.toByteArray(file.getFile());
+		String tituloArquivo = file.getFileName();
+		if (origem.equals("editar")) {
+			long id = bl.gravarArquivoSemMovimentacao(arquivo, tituloArquivo,
+					file.getContentType().toLowerCase());
+			String url = "/sigagc/app/baixar?id=" + id;
+			String js = "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('"
+					+ CKEditorFuncNum + "','" + url + "');</script>";
+			result.use(Results.http()).body(js);
+		} else {
+			if (titulo != null && titulo.trim().length() > 0)
+				tituloArquivo = titulo;
+			bl.gravarArquivoComMovimentacao(informacao,
+					getIdentidadeCadastrante(), getTitular(), getLotaTitular(),
+					tituloArquivo, arquivo);
+			result.use(Results.http()).body("success");
+		}
 	}
 
 	@Path("/app/removerAnexo/{sigla}/{idArq}/{idMov}")
@@ -1065,7 +1045,7 @@ public class AppController extends GcController {
 		if (arq != null)
 			return new ByteArrayDownload(arq.conteudo, arq.mimeType,
 					arq.titulo, true);
-		throw new Exception("Arquivo n„o encontrado.");
+		throw new Exception("Arquivo n√£o encontrado.");
 	}
 
 	@Path("/app/revisado/{sigla}")
@@ -1102,7 +1082,7 @@ public class AppController extends GcController {
 				}
 			}
 		}
-		throw new AplicacaoException("N„o h· pedido de revis„o pendente para "
+		throw new AplicacaoException("N√£o h√° pedido de revis√£o pendente para "
 				+ getIdentidadeCadastrante().getDpPessoa().getSigla());
 	}
 

@@ -505,8 +505,8 @@ public class ProcessadorHtml {
 			// + " - FIM removerEspacosHtml");
 			return s;
 		} catch (final Exception ex) {
-			throw new Exception(ex);
-			// return sHtml;
+			//throw new Exception(ex);
+			 return sHtml;
 		}
 	}
 
@@ -654,8 +654,8 @@ public class ProcessadorHtml {
 			// + " - FIM removerTagsDesconhecidosHtml");
 			return s;
 		} catch (final Exception ex) {
-			throw new Exception(ex);
-			// return sHtml;
+			//throw new Exception(ex);
+			 return sHtml;
 		}
 	}
 

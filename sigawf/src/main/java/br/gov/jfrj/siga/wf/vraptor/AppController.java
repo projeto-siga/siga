@@ -30,6 +30,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.vraptor.StringQualquer;
 import br.gov.jfrj.siga.wf.WfConhecimento;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
@@ -42,8 +43,8 @@ public class AppController extends WfController {
 
 	private static final String WF_REDIRECT_TO = "wf_redirect_to";
 
-	public AppController(HttpServletRequest request, Result result,
-			WfDao dao, SigaObjects so, WfUtil util) {
+	public AppController(HttpServletRequest request, Result result, WfDao dao,
+			SigaObjects so, WfUtil util) {
 		super(request, result, dao, so, util);
 	}
 
@@ -150,7 +151,7 @@ public class AppController extends WfController {
 	 * @throws CsisException
 	 */
 	public void executeTask(Long tiId, String[] fieldNames,
-			String[] fieldValues, String transitionName, String sigla)
+			StringQualquer[] fieldValues, String transitionName, String sigla)
 			throws Exception {
 		String cadastrante = getTitular().getSigla() + "@"
 				+ getLotaTitular().getSiglaCompleta();
@@ -189,7 +190,8 @@ public class AppController extends WfController {
 							} else if (variable.getMappedName().startsWith(
 									"dt_")) {
 								value = SigaCalendar
-										.converteStringEmData(fieldValues[c]);
+										.converteStringEmData(fieldValues[c]
+												.toString());
 								c++;
 							} else if (variable.getMappedName().startsWith(
 									"sel_")) {
@@ -239,7 +241,7 @@ public class AppController extends WfController {
 		/*
 		 * fim do código inserido para corrigir o caracter &raquo;
 		 */
-		if (transitionName.length() == 0 || transitionName.equals("Prosseguir"))
+		if (transitionName == null || transitionName.length() == 0 || transitionName.equals("Prosseguir"))
 			transitionName = null;
 		// Transition transition = taskInstance.getTask().getTaskNode()
 		// .getLeavingTransition(transitionName);
@@ -266,13 +268,15 @@ public class AppController extends WfController {
 		util.transferirDocumentosVinculados(taskInstance.getProcessInstance(),
 				cadastrante);
 
-		// Redireciona para a pagina escolhida quando o procedimento criar uma variavel pre-definida
+		// Redireciona para a pagina escolhida quando o procedimento criar uma
+		// variavel pre-definida
 		//
 		String redirectTo = (String) taskInstance.getVariable(WF_REDIRECT_TO);
 		if (redirectTo != null) {
-			//taskInstance.deleteVariable(WF_REDIRECT_TO);
+			// taskInstance.deleteVariable(WF_REDIRECT_TO);
 			WfDao.getInstance().getSessao().flush();
-			taskInstance.getProcessInstance().getContextInstance().deleteVariable(WF_REDIRECT_TO);
+			taskInstance.getProcessInstance().getContextInstance()
+					.deleteVariable(WF_REDIRECT_TO);
 			WfDao.getInstance().getSessao().flush();
 			result.redirectTo(redirectTo);
 			return;
@@ -372,7 +376,8 @@ public class AppController extends WfController {
 		if (ator_pessoaSel.getId() != null)
 			actorId = daoPes(ator_pessoaSel.getId()).getSigla();
 		if (lotaAtor_lotacaoSel.getId() != null)
-			lotaActorId = daoLot(lotaAtor_lotacaoSel.getId()).getSiglaCompleta();
+			lotaActorId = daoLot(lotaAtor_lotacaoSel.getId())
+					.getSiglaCompleta();
 
 		if (actorId == null && lotaActorId == null)
 			throw new AplicacaoException(

@@ -22,10 +22,6 @@
 	    </jsp-property-group>
 	</jsp-config>
 	
-	<listener>
-		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
-	</listener>
-
 	<welcome-file-list>
 		<welcome-file>app/inbox</welcome-file>
 	</welcome-file-list>
@@ -92,11 +88,7 @@
 	</security-role>
 
 	<error-page>
-		<error-code>403</error-code>
-		<location>/sigalibs/erro403.jsp</location>
-	</error-page>
-	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
-		<location>/sigalibs/erroGeral.jsp</location>
+		<location>/WEB-INF/page/erroGeral.jsp</location>
 	</error-page>
 </web-app>

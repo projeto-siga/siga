@@ -78,7 +78,7 @@
 												</c:when>
 												<c:otherwise>
 													<a
-														href="/sigaex/expediente/doc/exibir.action?sigla=${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}">${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}</a>
+														href="/sigaex/app/expediente/doc/exibir?sigla=${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}">${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}</a>
 												</c:otherwise>
 											</c:choose>
 										</c:when> <c:when
@@ -159,7 +159,7 @@
 										<c:forEach var="transition" items="${task.transitions}">
 											<siga:link icon="${transition.icon}"
 												title="${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}"
-												url="javascript: var h = document.getElementById('transitionName'); h.value='${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}'; var form = document.getElementById('form${tiId}'); form.submit();"
+												url="javascript: var h = document.getElementById('transitionName${tiId}'); h.value='${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}'; var form = document.getElementById('form${tiId}'); form.submit();"
 												test="${true}" />
 										</c:forEach>
 									</siga:links>

@@ -97,8 +97,8 @@ public class SigaController {
 		this.so = so;
 		this.em = em;
 
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
+		//result.on(AplicacaoException.class).forwardTo(this).appexception();
+		//result.on(Exception.class).forwardTo(this).exception();
 		
 		result.include("cadastrante", getCadastrante());
 		result.include("lotaCadastrante", getLotaCadastrante());

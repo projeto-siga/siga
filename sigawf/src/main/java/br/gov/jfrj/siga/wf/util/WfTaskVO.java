@@ -199,11 +199,11 @@ public class WfTaskVO {
 										.getLotacaoOuLotacaoPrincipalDaPessoa();
 	
 								if (podeMovimentar && !estaComTarefa) {
-									if (!lotWF.equivale(lotEX)) {
+									if (lotWF == null || !lotWF.equivale(lotEX)) {
 										setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
 												+ documento
 												+ " for transferido para "
-												+ lotWF.getSigla() + ".");
+												+ (lotWF == null ? "Nula" : lotWF.getSigla()) + ".");
 									}
 								}
 								if (!podeMovimentar && estaComTarefa) {

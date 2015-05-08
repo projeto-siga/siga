@@ -19,7 +19,7 @@
 			style="margin: 0px; padding: 0px; border: 0px;" id="form${tiId}">
 			<input name="result" type="hidden" value="doc" /> <input
 				name="sigla" type="hidden" value="${item.key}" /> <input
-				id="transitionName" name="transitionName" type="hidden" value="" />
+				id="transitionName${tiId}" name="transitionName" type="hidden" value="" />
 
 			<%@ include file="tarefa.jsp"%>
 		</form>

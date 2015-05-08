@@ -107,9 +107,11 @@ ${meta}
 		//$('.autogrow').css('overflow', 'hidden').autogrow();
 	});
 </script>
-<c:if test="${not empty titular}">
-	${f:getComplementoHead(cadastrante.orgaoUsuario)}
-</c:if>
+<c:catch>
+	<c:if test="${not empty titular}">
+		${f:getComplementoHead(cadastrante.orgaoUsuario)}
+	</c:if>
+</c:catch>
 </head>
 
 <body onload="${onLoad}">

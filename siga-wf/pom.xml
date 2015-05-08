@@ -36,6 +36,12 @@
             <groupId>org.jbpm.jbpm3</groupId>
             <artifactId>jbpm-jpdl</artifactId>
         </dependency>
+        
+       	<dependency>
+			<groupId>javax.jcr</groupId>
+			<artifactId>jcr</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>

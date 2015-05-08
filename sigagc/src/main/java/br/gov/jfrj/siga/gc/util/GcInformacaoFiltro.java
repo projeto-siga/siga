@@ -2,33 +2,13 @@ package br.gov.jfrj.siga.gc.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
-
-import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.gc.model.GcAcesso;
-import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
-import br.gov.jfrj.siga.gc.model.GcMarca;
-import br.gov.jfrj.siga.gc.model.GcMovimentacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
 
@@ -52,7 +32,27 @@ public class GcInformacaoFiltro {
 	public DpPessoa responsavel;
 	public DpLotacao lotaResponsavel;
 
-	public List<GcInformacao> buscar() {
+	public List<GcInformacao> buscar() throws Exception {
+
+		if (autor != null && autor.getId() != null)
+			autor = DpPessoa.AR.findById(autor.getId());
+		else
+			autor = null;
+		
+		if (lotacao != null && lotacao.getId() != null)
+			lotacao = DpLotacao.AR.findById(lotacao.getId());
+		else 
+			lotacao = null;
+
+		if (responsavel != null && responsavel.getId() != null)
+			responsavel = DpPessoa.AR.findById(responsavel.getId());
+		else
+			responsavel = null;
+		
+		if (lotaResponsavel != null && lotaResponsavel.getId() != null)
+			lotaResponsavel = DpLotacao.AR.findById(lotaResponsavel.getId());
+		else
+			lotaResponsavel = null;
 
 		String query = null;
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
@@ -73,7 +73,7 @@ public class GcInformacaoFiltro {
 
 		if (autor != null)
 			query += " and inf.autor.idPessoaIni = " + autor.getIdInicial();
-		if (lotacao != null)
+		if (lotacao != null )
 			query += " and inf.lotacao.idLotacaoIni = "
 					+ lotacao.getIdInicial();
 

@@ -147,6 +147,12 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public void setSigla(String sigla) {
+		if (sigla == null) {
+			setOrgaoUsuario(null);
+			setSiglaLotacao(null);
+			return;
+		}
+		
 		String siglasOrgaoUsu = "";
 		List<CpOrgaoUsuario> lou = CpDao.getInstance()
 				.listarOrgaosUsuarios();

@@ -14,12 +14,10 @@ public class GcController extends SigaController {
 	public GcController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		// result.include("processDefinitions", getProcessDefinitions());
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException {
-		so.assertAcesso("GC:MÛdulo de Gest„o de Conhecimento;" + pathServico);
+		so.assertAcesso("GC:M√≥dulo de Gest√£o de Conhecimento;" + pathServico);
 	}
 
 	protected CpDao dao() {

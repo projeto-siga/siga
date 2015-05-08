@@ -1,5 +1,8 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
+<c:set var="propriedadeClean"
+	value="${fn:replace(param.propriedade,'.','')}" />
+
 <siga:pagina titulo="Buscar">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">

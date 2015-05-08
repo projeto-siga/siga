@@ -14,6 +14,7 @@
 <%@ attribute name="headerKey" required="false"%>
 
 <!-- wwselect -->
+<%-- Seria ótimo se pudéssemos chamar a EL para calcular a expressão "name", mas não sei como fazer isso. --%>
 <c:if test="${empty value}">
 	<c:set var="value" value="${requestScope[name]}"/>
 </c:if>
@@ -21,7 +22,7 @@
 <tr><td>${label}</td><td>
 </c:if>
 <select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if>>
-<c:if test="${not empty headerKey}">
+<c:if test="${not empty headerKey or not empty headerValue}">
 	<option value="${headerKey}"
 			${headerKey == value ? 'selected' : ''}
 			>${headerValue}</option>  

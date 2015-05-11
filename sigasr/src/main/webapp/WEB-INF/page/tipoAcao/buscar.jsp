@@ -1,5 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<title>Siga - Tipo A&ccedil;&atilde;o</title>
+
 <jsp:include page="../popupHeader.jsp"></jsp:include>
 
 <div class="gt-bd clearfix">
@@ -14,14 +16,15 @@
 					<tr>
 						<td>C&oacute;digo:</td>
 						<td>
-							<input type="text" name="filtro.siglaTipoAcao" value="${filtro.siglaTipoAcao}" />
+							<input type="text" name="tipoAcao.siglaTipoAcao" value="${tipoAcao.siglaTipoAcao}"/>
 						</td>
 					</tr>
 					<tr>
 						<td>T&iacute;tulo</td>
 						<td>
-							<input type="text" name="filtro.tituloTipoAcao" value="${filtro.tituloTipoAcao}" />
+							<input type="text" name="tipoAcao.tituloTipoAcao" value="${tipoAcao.tituloTipoAcao}"/>
 							<input type="hidden" name="nome" value="${nome}" />
+							<input type="hidden" name="tipoAcao"/>
 						</td>
 					</tr>
 					<tr>

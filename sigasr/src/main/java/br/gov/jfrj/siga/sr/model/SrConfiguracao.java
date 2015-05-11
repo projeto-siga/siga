@@ -90,7 +90,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 	private SrPrioridade prioridadeNaLista;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"), schema="SIGASR")
+	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"), schema = Catalogs.SIGASR)
 	private List<SrTipoPermissaoLista> tipoPermissaoSet;
 
 	@ManyToOne(fetch = FetchType.LAZY)

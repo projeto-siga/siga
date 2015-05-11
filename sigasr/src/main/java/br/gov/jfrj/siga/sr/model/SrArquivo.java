@@ -15,9 +15,10 @@ import javax.persistence.Table;
 import org.apache.commons.io.IOUtils;
 
 import play.db.jpa.GenericModel;
+import br.gov.jfrj.siga.base.util.Catalogs;
 
 @Entity
-@Table(name = "SR_ARQUIVO", schema="SIGASR")
+@Table(name = "SR_ARQUIVO", schema = Catalogs.SIGASR)
 public class SrArquivo extends GenericModel {
 
 	@Id

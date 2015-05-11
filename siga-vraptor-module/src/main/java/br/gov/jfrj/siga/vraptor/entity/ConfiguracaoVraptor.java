@@ -39,12 +39,6 @@ public class ConfiguracaoVraptor extends CpConfiguracao {
 	 */
 	private static final long serialVersionUID = 1L;
 
-
-	@Override
-	public CpConfiguracao getConfiguracaoAtual() {
-		return super.getConfiguracaoAtual();
-	}
-
 	public void finalizar() throws Exception {
 		try {
 			Historico historico = ((Historico) this);

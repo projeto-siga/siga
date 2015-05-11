@@ -74,6 +74,9 @@ public class SrExcecaoHorario extends ObjetoVraptor {
 
 	@Transient
 	private String strInterFim;
+	
+	@Transient
+	private String strDataEspecifica;
 
 	public SrExcecaoHorario() {
 		super();
@@ -186,5 +189,15 @@ public class SrExcecaoHorario extends ObjetoVraptor {
 	@Override
 	protected Long getId() {
 		return idExcecaoHorario;
+	}
+
+	public String getStrDataEspecifica() {
+		return strDataEspecifica;
+	}
+
+	public void setStrDataEspecifica(String strDataEspecifica) {
+		this.strDataEspecifica = strDataEspecifica;
+		
+		this.setDataEspecifica(DatatypeConverter.parseTime(strDataEspecifica).getTime());
 	}
 }

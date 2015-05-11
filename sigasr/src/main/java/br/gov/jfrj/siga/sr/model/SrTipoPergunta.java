@@ -7,41 +7,73 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import play.db.jpa.GenericModel;
 import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_TIPO_PERGUNTA", schema = Catalogs.SIGASR)
-public class SrTipoPergunta extends GenericModel {
+public class SrTipoPergunta extends Objeto {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9170359662414485419L;
 
 	final static public long TIPO_PERGUNTA_TEXTO_LIVRE = 1;
-
 	final static public long TIPO_PERGUNTA_NOTA_1_A_5 = 2;
-	
+
+	public static ActiveRecord<SrTipoPergunta> AR = new ActiveRecord<>(SrTipoPergunta.class);
+
 	@Id
 	@Column(name = "ID_TIPO_PERGUNTA")
-	public Long idTipoPergunta;
+	private Long idTipoPergunta;
 
 	@Column(name = "NOME_TIPO_PERGUNTA")
-	public String nomeTipoPergunta;
-	
+	private String nomeTipoPergunta;
+
 	@Column(name = "DESCR_TIPO_PERGUNTA")
-	public String descrTipoPergunta;
+	private String descrTipoPergunta;
+
 
 	public SrTipoPergunta() {
-
-	}
-
-	public Long getId() {
-		return this.idTipoPergunta;
-	}
-
-	public void setId(Long id) {
-		idTipoPergunta = id;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static List<SrTipoPergunta> buscarTodos() {
-		return SrTipoPergunta.all().query.getResultList();
+		return SrTipoPergunta.AR.all().query.getResultList();
 	}
+
+	public Long getIdTipoPergunta() {
+		return idTipoPergunta;
+	}
+
+	public void setIdTipoPergunta(Long idTipoPergunta) {
+		this.idTipoPergunta = idTipoPergunta;
+	}
+
+	public String getNomeTipoPergunta() {
+		return nomeTipoPergunta;
+	}
+
+	public void setNomeTipoPergunta(String nomeTipoPergunta) {
+		this.nomeTipoPergunta = nomeTipoPergunta;
+	}
+
+	public String getDescrTipoPergunta() {
+		return descrTipoPergunta;
+	}
+
+	public void setDescrTipoPergunta(String descrTipoPergunta) {
+		this.descrTipoPergunta = descrTipoPergunta;
+	}
+
+	@Override
+	public String toString() {
+		return "SrTipoPergunta [idTipoPergunta=" + idTipoPergunta
+				+ ", nomeTipoPergunta=" + nomeTipoPergunta
+				+ ", descrTipoPergunta=" + descrTipoPergunta + "]";
+	}
+	
+	
 }

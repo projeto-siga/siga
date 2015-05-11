@@ -13,9 +13,14 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrEquipe;
@@ -23,6 +28,7 @@ import br.gov.jfrj.siga.sr.model.SrExcecaoHorario;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.model.SrSemana;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
+import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -38,8 +44,8 @@ public class EquipeController extends SrController {
 	}
 
 	@Path("/listar")
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void listar(boolean mostrarDesativados) {
-		// assertAcesso("ADM:Administrar");
 		List<SrEquipe> listaEquipe = SrEquipe.listar(mostrarDesativados);
 		List<CpOrgaoUsuario> orgaos = dao.listarOrgaosUsuarios();
 
@@ -59,13 +65,22 @@ public class EquipeController extends SrController {
 		result.include("unidadesMedida", unidadesMedida);
 		result.include("pesquisaSatisfacao", pesquisaSatisfacao);
 		result.include("lotacaoUsuario", lotacaoUsuario);
-		result.include("lotacaoSel", lotacaoSel);
+		result.include("lotacaoEquipeSel", lotacaoSel);
 		result.include("diasSemana", SrSemana.values());
+		
+		result.include("dpPessoaSel", new DpPessoaSelecao());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+		result.include("cargoSel", new DpCargoSelecao());
+		result.include("cpGrupoSel", new CpPerfilSelecao());
+		
+//		result.include("acaoSel", new CpPerfilSelecao());
+//		result.include("itemConfiguracaoSel", new CpPerfilSelecao());
 	}
 
 	@Path("/gravar")
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void gravarEquipe(SrEquipe equipe, List<SrExcecaoHorario> excecaoHorarioSet, DpLotacaoSelecao lotacaoEquipeSel) throws Exception {
-		// assertAcesso("ADM:Administrar");
 		equipe.setExcecaoHorarioSet(excecaoHorarioSet);
 		if (equipe.getLotacaoEquipe() == null) {
 			if (lotacaoEquipeSel == null) {

@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
@@ -69,7 +72,6 @@ public class TipoAcaoController extends SrController {
 		SrTipoAcao tipoAcao = SrTipoAcao.AR.findById(id);
 		tipoAcao.finalizar();
 
-		//result.use(Results.json()).from(tipoAcao).serialize();
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 

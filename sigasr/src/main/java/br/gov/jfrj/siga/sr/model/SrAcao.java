@@ -25,7 +25,6 @@ import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao.SrTipoAcaoVO;
-import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
@@ -34,8 +33,7 @@ import com.google.gson.GsonBuilder;
 @Entity
 @Table(name = "SR_ACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrAcao>, ConvertableEntity {
-
+public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrAcao> {
 	private static final long serialVersionUID = 8387408543308440033L;
 
 	public static ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);

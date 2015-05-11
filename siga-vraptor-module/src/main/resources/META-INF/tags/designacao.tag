@@ -128,19 +128,20 @@
 						</div>
 						<div class="box gt-width-50">
 							<label>&Oacute;rg&atilde;o</label>
-							<siga:select name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="0" headerValue="Nenhum"/>
+							<siga:select id="orgaoUsuario" name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="0" headerValue="Nenhum"/>
 						</div>
 					</div>
 		
 					<div class="gt-form-row box-wrapper">
 						<div class="box box-left gt-width-50">
 							<label>Local</label>
-							<siga:select name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="0" headerValue="Nenhum"/>
+							<siga:select id="complexo" name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="0" headerValue="Nenhum"/>
 						</div>
 						<div class="box gt-width-50">
 							<label>Atendente <span>*</span></label>
 							
-							<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
+							<input type="hidden" name="atendente" id="atendente" class="selecao">
+							<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
 							
 		<%-- 					#{selecao --%>
 		<%-- 						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual, --%>

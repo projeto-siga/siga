@@ -20,7 +20,7 @@
 <c:if test="${theme != 'simple'}">
 <tr><td>${label}</td><td>
 </c:if>
-<select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if>>
+<select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if> class="select-siga">
 <c:if test="${not empty headerKey}">
 	<option value="${headerKey}"
 			${headerKey == value ? 'selected' : ''}

@@ -174,7 +174,7 @@ public class SrMovimentacao extends GenericModel {
 			SrResposta resp = new SrResposta();
 			resp.movimentacao = this;
 			resp.pergunta = SrPergunta.findById(idPergunta);
-			if (resp.pergunta.tipoPergunta.idTipoPergunta == SrTipoPergunta.TIPO_PERGUNTA_TEXTO_LIVRE)
+			if (resp.pergunta.tipoPergunta.getIdTipoPergunta() == SrTipoPergunta.TIPO_PERGUNTA_TEXTO_LIVRE)
 				resp.descrResposta = respostaMap.get(idPergunta);
 			else
 				resp.grauSatisfacao = SrGrauSatisfacao.valueOf(respostaMap.get(idPergunta));

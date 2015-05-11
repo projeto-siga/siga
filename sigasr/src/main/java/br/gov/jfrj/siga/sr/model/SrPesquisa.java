@@ -16,12 +16,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import play.db.jpa.JPA;
 import br.gov.jfrj.siga.base.util.Catalogs;
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.Util;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -29,9 +28,12 @@ import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_PESQUISA", schema = Catalogs.SIGASR)
-public class SrPesquisa extends HistoricoSuporte {
+public class SrPesquisa extends HistoricoSuporteVraptor {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3775609274483552051L;
 
 	public static ActiveRecord<SrPesquisa> AR = new ActiveRecord<>(SrPesquisa.class);
 
@@ -39,28 +41,26 @@ public class SrPesquisa extends HistoricoSuporte {
 	@SequenceGenerator(sequenceName = "SIGASR.SR_PESQUISA_SEQ", name = "srPesquisaSeq")
 	@GeneratedValue(generator = "srPesquisaSeq")
 	@Column(name = "ID_PESQUISA")
-	public Long idPesquisa;
+	private Long idPesquisa;
 
 	@Column(name = "NOME_PESQUISA")
-	public String nomePesquisa;
+	private String nomePesquisa;
 
 	@Column(name = "DESCR_PESQUISA")
-	public String descrPesquisa;
+	private String descrPesquisa;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrPesquisa pesquisaInicial;
+	private SrPesquisa pesquisaInicial;
 
 	@OneToMany(targetEntity = SrPesquisa.class, mappedBy = "pesquisaInicial", fetch=FetchType.LAZY)
-	//@OrderBy("hisDtIni desc")
-	public List<SrPesquisa> meuPesquisaHistoricoSet;
+	private List<SrPesquisa> meuPesquisaHistoricoSet;
 
 	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "pesquisa", fetch=FetchType.LAZY)
-	//@OrderBy("ordemPergunta")
-	public Set<SrPergunta> perguntaSet;
+	private Set<SrPergunta> perguntaSet;
+
 
 	public SrPesquisa() {
-
 	}
 
 	public Long getId() {
@@ -94,15 +94,14 @@ public class SrPesquisa extends HistoricoSuporte {
 	@SuppressWarnings("unchecked")
 	public static List<SrPesquisa> listar(boolean mostrarDesativados) {
 		if (!mostrarDesativados) {
-			return SrPesquisa.find("byHisDtFimIsNull").fetch();
+			return SrPesquisa.AR.find("byHisDtFimIsNull").fetch();
 		} else {
 			StringBuilder str = new StringBuilder();
 			str.append("SELECT p FROM SrPesquisa p where p.idPesquisa IN (");
 			str.append("SELECT MAX(idPesquisa) FROM SrPesquisa GROUP BY hisIdIni)");
 
-			return JPA.em()
-					.createQuery(str.toString())
-					.getResultList();
+			return AR.em().createQuery(str.toString()).getResultList();
+
 		}
 	}
 
@@ -178,7 +177,7 @@ public class SrPesquisa extends HistoricoSuporte {
 
 	public SrPesquisa atualizarTiposPerguntas() {
 		for (SrPergunta srPergunta : this.perguntaSet) {
-			srPergunta.tipoPergunta = SrTipoPergunta.findById(srPergunta.tipoPergunta.idTipoPergunta);
+			srPergunta.tipoPergunta = SrTipoPergunta.findById(srPergunta.tipoPergunta.getIdTipoPergunta());
 		}
 		return this;
 	}
@@ -199,4 +198,53 @@ public class SrPesquisa extends HistoricoSuporte {
 
 		return jsonArray;
 	}
+
+	public Long getIdPesquisa() {
+		return idPesquisa;
+	}
+
+	public void setIdPesquisa(Long idPesquisa) {
+		this.idPesquisa = idPesquisa;
+	}
+
+	public String getNomePesquisa() {
+		return nomePesquisa;
+	}
+
+	public void setNomePesquisa(String nomePesquisa) {
+		this.nomePesquisa = nomePesquisa;
+	}
+
+	public String getDescrPesquisa() {
+		return descrPesquisa;
+	}
+
+	public void setDescrPesquisa(String descrPesquisa) {
+		this.descrPesquisa = descrPesquisa;
+	}
+
+	public SrPesquisa getPesquisaInicial() {
+		return pesquisaInicial;
+	}
+
+	public void setPesquisaInicial(SrPesquisa pesquisaInicial) {
+		this.pesquisaInicial = pesquisaInicial;
+	}
+
+	public List<SrPesquisa> getMeuPesquisaHistoricoSet() {
+		return meuPesquisaHistoricoSet;
+	}
+
+	public void setMeuPesquisaHistoricoSet(List<SrPesquisa> meuPesquisaHistoricoSet) {
+		this.meuPesquisaHistoricoSet = meuPesquisaHistoricoSet;
+	}
+
+	public Set<SrPergunta> getPerguntaSet() {
+		return perguntaSet;
+	}
+
+	public void setPerguntaSet(Set<SrPergunta> perguntaSet) {
+		this.perguntaSet = perguntaSet;
+	}
+	
 }

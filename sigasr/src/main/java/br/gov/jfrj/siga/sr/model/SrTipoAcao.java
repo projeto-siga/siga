@@ -22,6 +22,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.util.FieldNameExclusionEstrategy;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
@@ -32,7 +33,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_TIPO_ACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrTipoAcao> {
+public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrTipoAcao>, Selecionavel {
 
 	public static ActiveRecord<SrTipoAcao> AR = new ActiveRecord<>(SrTipoAcao.class);
 
@@ -297,7 +298,7 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionave
 	}
 
 	public static List<SrTipoAcao> listar(boolean mostrarDesativados) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		if (!mostrarDesativados)
 			sb.append(" hisDtFim is null");

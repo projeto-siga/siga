@@ -60,10 +60,10 @@
 				<label>Solicitante</label> 
 				<siga:pessoaLotaFuncCargoSelecao
 						nomeSelLotacao="lotacao"
-						nomeSelPessoa="pessoa"
-						nomeSelFuncao="funcao"
+						nomeSelPessoa="dpPessoa"
+						nomeSelFuncao="funcaoConfianca"
 						nomeSelCargo="cargo"
-						nomeSelGrupo="grupo"
+						nomeSelGrupo="cpGrupo"
 						valuePessoa="${dpPessoa != null ? dpPessoa.pessoaAtual :'' }"
 						valueLotacao="${lotacao != null ? lotacao.lotacaoAtual : '' }"
 						valueFuncao="${funcaoConfianca }"
@@ -196,7 +196,7 @@
             return;
 
 		// reset no componente de pessoaLotaFuncCargoSelecao
-		$("#pessoalotacaofuncaocargogrupo")[0].changeValue(1);
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
 		configuracaoItemAcaoService.iniciarDataTables();
 		BaseService.prototype.cadastrar.call(this, title);	
 	}
@@ -206,7 +206,7 @@
 	 */
 	 associacaoService.editar = function(obj, title) {
 		// reset no componente de pessoaLotaFuncCargoSelecao
-		$("#pessoalotacaofuncaocargogrupo")[0].changeValue(1);
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
 		
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 	}

@@ -84,3 +84,4 @@ siga-uteis-play-module/
 sigaex/.tern-project
 sigasr/.tern-project
 *.orig
+*rebel.xml

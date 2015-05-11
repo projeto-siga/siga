@@ -91,4 +91,9 @@
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.Boolean podeCadastrarQqSubstituicaoPorConfiguracao( br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao)</function-signature>
  </function>
+ <function>
+  <name>evaluate</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.Object evaluate( java.lang.String, java.lang.Object)</function-signature>
+ </function>
 </taglib>

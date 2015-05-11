@@ -39,6 +39,10 @@
 		<path>/META-INF/tags/selecao.tag</path>
 	</tag-file>
 	<tag-file>
+		<name>selecao2</name>
+		<path>/META-INF/tags/selecao2.tag</path>
+	</tag-file>
+	<tag-file>
 		<name>selecionado</name>
 		<path>/META-INF/tags/selecionado.tag</path>
 	</tag-file>
@@ -89,6 +93,10 @@
 	<tag-file>
 		<name>pessoaLotaSelecao</name>
 		<path>/META-INF/tags/pessoaLotaSelecao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>pessoaLotaSelecao2</name>
+		<path>/META-INF/tags/pessoaLotaSelecao2.tag</path>
 	</tag-file>
 	<tag-file>
 		<name>pessoaLotaFuncCargoSelecao</name>

@@ -29,7 +29,7 @@ public class SrAtributoAcordo extends HistoricoSuporte {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_ACORDO_SEQ", name = "SrAtributoAcordoSeq")
+	@SequenceGenerator(sequenceName = "SR_ATRIBUTO_ACORDO_SEQ", schema = Catalogs.SIGASR, name = "SrAtributoAcordoSeq")
 	@GeneratedValue(generator = "SrAtributoAcordoSeq")
 	@Column(name = "ID_ATRIBUTO_ACORDO")
 	public Long idAtributoAcordo;

@@ -37,7 +37,7 @@ public class SrEquipe extends HistoricoSuporteVraptor implements ConvertableEnti
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_EQUIPE_SEQ", name = "srEquipeSeq")
+	@SequenceGenerator(sequenceName = "SR_EQUIPE_SEQ", schema = Catalogs.SIGASR, name = "srEquipeSeq")
 	@GeneratedValue(generator = "srEquipeSeq")
 	@Column(name = "ID_EQUIPE")
 	private Long idEquipe;

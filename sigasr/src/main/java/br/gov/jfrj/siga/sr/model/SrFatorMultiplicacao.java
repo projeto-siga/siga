@@ -27,7 +27,7 @@ public class SrFatorMultiplicacao extends Objeto{
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_FATOR_MULTIPLICACAO_SEQ", name = "srFatorMultiplicacao")
+	@SequenceGenerator(sequenceName = "SR_FATOR_MULTIPLICACAO_SEQ", schema = Catalogs.SIGASR, name = "srFatorMultiplicacao")
 	@GeneratedValue(generator = "srFatorMultiplicacao")
 	@Column(name = "ID_FATOR_MULTIPLICACAO")
 	public Long idFatorMultiplicacao;

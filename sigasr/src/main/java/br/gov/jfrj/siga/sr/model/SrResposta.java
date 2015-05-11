@@ -18,7 +18,7 @@ import br.gov.jfrj.siga.base.util.Catalogs;
 public class SrResposta extends GenericModel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_RESPOSTA_SEQ", name = "srRespostaSeq")
+	@SequenceGenerator(sequenceName = "SR_RESPOSTA_SEQ", schema = Catalogs.SIGASR, name = "srRespostaSeq")
 	@GeneratedValue(generator = "srRespostaSeq")
 	@Column(name = "ID_RESPOSTA")
 	public Long idResposta;

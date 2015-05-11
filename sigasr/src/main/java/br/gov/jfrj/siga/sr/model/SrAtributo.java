@@ -40,7 +40,7 @@ public class SrAtributo extends HistoricoSuporteVraptor implements ConvertableEn
 	public static ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
+	@SequenceGenerator(sequenceName = "SR_ATRIBUTO_SEQ", schema = Catalogs.SIGASR, name = "srAtributoSeq")
 	@GeneratedValue(generator = "srAtributoSeq")
 	@Column(name = "ID_ATRIBUTO")
 	private Long idAtributo;

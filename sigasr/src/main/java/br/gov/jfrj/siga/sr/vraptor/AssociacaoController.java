@@ -23,6 +23,7 @@ import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
+import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -50,32 +51,42 @@ public class AssociacaoController extends SrController {
 	@Path("/gravar")
 //	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
-			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel) throws Exception {
-		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, pessoaSel, funcaoSel, cargoSel, perfilSel);
+			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel, SrPesquisa pesquisaSatisfacao) throws Exception {
+		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
 		associacao.salvarComoAssociacaoAtributo();
-		SrConfiguracao refresh = SrConfiguracao.AR.findById(associacao.getId());
-		result.use(Results.http()).body(refresh.toVO().toJson());
+		result.use(Results.http()).body(associacao.toVO().toJson());
 	}
 
 	@Path("/gravarComoPesquisa")
 //	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
-	public void gravarAssociacaoPesquisa(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
-			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel) throws Exception {
-		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, pessoaSel, funcaoSel, cargoSel, perfilSel);
+	public void gravarAssociacaoPesquisa(SrConfiguracao associacao, SrPesquisa pesquisaSatisfacao, SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
+			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel) throws Exception {
+		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
 		associacao.salvarComoAssociacaoPesquisa();
-		SrConfiguracao refresh = SrConfiguracao.AR.findById(associacao.getId());
-		result.use(Results.http()).body(refresh.toVO().toJson());
+		result.use(Results.http()).body(associacao.toVO().toJson());
 	}
 
 	private void setDadosAssociacao(SrConfiguracao associacao, SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
-			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel) throws Exception {
-		associacao.setAtributo(SrAtributo.AR.findById(atributo.getIdAtributo()));
+			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel, SrPesquisa pesquisaSatisfacao) throws Exception {
+		
+		if (atributo != null && atributo.getId() != null) {
+			associacao.setAtributo(SrAtributo.AR.findById(atributo.getId()));
+		}
+		
+		if (pesquisaSatisfacao != null && pesquisaSatisfacao.getId() != null) {
+			associacao.setPesquisaSatisfacao(SrPesquisa.AR.findById(pesquisaSatisfacao.getId()));
+		}
+		
+		if (complexo != null && complexo.getIdComplexo() != null) {
+			associacao.setComplexo(CpComplexo.AR.findById(complexo.getIdComplexo()));
+		}
+		
+		if (orgaoUsuario != null && orgaoUsuario.getIdOrgaoUsu() != null) {
+			associacao.setOrgaoUsuario(CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
+		}
 		
 		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
 		associacao.setAcoesSet(acoesSet);
-		
-		associacao.setComplexo(CpComplexo.AR.findById(complexo.getIdComplexo()));
-		associacao.setOrgaoUsuario(CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
 
 		if (pessoaSel != null)
 			associacao.setDpPessoa(pessoaSel.buscarObjeto());

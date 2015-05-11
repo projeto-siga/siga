@@ -242,7 +242,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 	}
 
 	public String getPesquisaSatisfacaoString() {
-		return pesquisaSatisfacao.nomePesquisa;
+		return pesquisaSatisfacao.getNomePesquisa();
 	}
 
 	public String getAtributoObrigatorioString() {

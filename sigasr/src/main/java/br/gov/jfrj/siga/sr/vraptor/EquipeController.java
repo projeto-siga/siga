@@ -13,7 +13,11 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
@@ -61,8 +65,17 @@ public class EquipeController extends SrController {
 		result.include("unidadesMedida", unidadesMedida);
 		result.include("pesquisaSatisfacao", pesquisaSatisfacao);
 		result.include("lotacaoUsuario", lotacaoUsuario);
-		result.include("lotacaoSel", lotacaoSel);
+		result.include("lotacaoEquipeSel", lotacaoSel);
 		result.include("diasSemana", SrSemana.values());
+		
+		result.include("dpPessoaSel", new DpPessoaSelecao());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+		result.include("cargoSel", new DpCargoSelecao());
+		result.include("cpGrupoSel", new CpPerfilSelecao());
+		
+//		result.include("acaoSel", new CpPerfilSelecao());
+//		result.include("itemConfiguracaoSel", new CpPerfilSelecao());
 	}
 
 	@Path("/gravar")

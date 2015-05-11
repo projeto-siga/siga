@@ -71,7 +71,6 @@
 </style>
 		<div class="gt-form gt-content-box div-editar-equipe">
 			<form id="form" class="formEditarEquipe" enctype="multipart/form-data">
-				<input type="hidden" id="equipeHidden" name="equipe">
 				<input type="hidden" id="idEquipe" name="equipe.idEquipe">
 				<input type="hidden" id="idEquipeIni" name="equipe.hisIdIni">
 				<input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario" value='${lotacaoUsuario.toJson()}'/>
@@ -82,7 +81,8 @@
 				</div>
 				<div class="gt-form-row gt-width-100">
 					<label>Lotação</label>
-					<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" desativar="sim" inputName="lotacaoEquipe" />
+					<input type="hidden" name="lotacaoEquipe" id="lotacaoEquipe" class="selecao">
+					<siga:selecao propriedade="lotacaoEquipe" tema="simple" modulo="siga" urlAcao="buscar" desativar="sim" />
 				</div>
 				
 				<div class="gt-form-table">
@@ -301,6 +301,10 @@
         document.getElementById("interIni").value = '';
         document.getElementById("interFim").value = '';
         document.getElementById("dataEspecifica").value = '';
+	}
+
+	function atualizaData(dataString) {
+		return new Date(dataString);
 	}
 	
 	function atualizaHora(data, horaString) {

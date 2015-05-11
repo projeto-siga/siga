@@ -129,7 +129,8 @@
 	}
 
 	equipeService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + equipeService.getListasAsString();
+		var serializado = BaseService.prototype.serializar.call(this, obj)  + "&" + equipeService.getListasAsString();
+		return serializado + "&equipe=" + this.getId(obj);
 	}
 	
 	equipeService.getListasAsString = function() {
@@ -145,7 +146,7 @@
 					if (rowValues) {
 						if (rowValues[0] == 0)
 							params += '&excecaoHorarioSet[' + i
-									+ '].dataEspecifica=' + rowValues[1];
+									+ '].strDataEspecifica=' + atualizaData(rowValues[1]).toJSON();
 						else
 							params += '&excecaoHorarioSet[' + i
 									+ '].diaSemana=' + rowValues[0];
@@ -173,7 +174,6 @@
 	equipeService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		equipeService.atualizarModalEquipe(obj);
-		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 
 	/**
@@ -182,7 +182,6 @@
 	equipeService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
 		equipeService.atualizarModalEquipe();
-		document.getElementById('equipeHidden').value = equipeService.getId(obj);
 	}
 
 	/**

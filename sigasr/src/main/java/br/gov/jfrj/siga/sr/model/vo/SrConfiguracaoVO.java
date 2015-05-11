@@ -39,11 +39,11 @@ public class SrConfiguracaoVO {
 	private String descPrioridade;
 
 	// Solicitante
-	private SelecionavelVO pessoa;
+	private SelecionavelVO dpPessoa;
 	private SelecionavelVO lotacao;
 	private SelecionavelVO lotacaoParaInclusaoAutomatica;
 	private SelecionavelVO cargo;
-	private SelecionavelVO funcao;
+	private SelecionavelVO funcaoConfianca;
 	private SelecionavelVO cpGrupo;
 	private SelecionavelVO solicitante;
 	private SrPrioridade prioridadeNaLista;
@@ -62,25 +62,22 @@ public class SrConfiguracaoVO {
 		setDescPrioridade(configuracao.getPrioridade() != null ? configuracao.getPrioridade().descPrioridade : "");
 		setDescPrioridadeNaLista(configuracao.getPrioridadeNaLista() != null ? configuracao.getPrioridadeNaLista().descPrioridade : "");
 
+		setListaItemConfiguracaoVO(new ArrayList<SrItemConfiguracaoVO>());
 		if(configuracao.getItemConfiguracaoSet() != null) {
-			setListaItemConfiguracaoVO(new ArrayList<SrItemConfiguracaoVO>());
-
 			for (SrItemConfiguracao item : configuracao.getItemConfiguracaoSet()) {
 				getListaItemConfiguracaoVO().add(item.toVO());
 			}
 		}
 
+		setListaAcaoVO(new ArrayList<SrAcao.SrAcaoVO>());
 		if(configuracao.getAcoesSet() != null) {
-			setListaAcaoVO(new ArrayList<SrAcao.SrAcaoVO>());
-
 			for (SrAcao item : configuracao.getAcoesSet()) {
 				getListaAcaoVO().add(item.toVO());
 			}
 		}
 
+		setListaTipoPermissaoListaVO(new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>());
 		if(configuracao.getTipoPermissaoSet() != null) {
-			setListaTipoPermissaoListaVO(new ArrayList<SrTipoPermissaoLista.SrTipoPermissaoListaVO>());
-
 			for (SrTipoPermissaoLista item : configuracao.getTipoPermissaoSet()) {
 				getListaTipoPermissaoListaVO().add(item.toVO());
 			}
@@ -97,12 +94,12 @@ public class SrConfiguracaoVO {
 		setComplexo(CpComplexoVO.createFrom(configuracao.getComplexo()));
 
 		// Dados do Solicitante
-		setPessoa(SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante()));
-		setDpPessoaParaInclusaoAutomatica(getPessoa());
+		setDpPessoa(SelecionavelVO.createFrom(configuracao.getDpPessoa(), configuracao.getTipoSolicitante()));
+		setDpPessoaParaInclusaoAutomatica(getDpPessoa());
 		setLotacao(SelecionavelVO.createFrom(configuracao.getLotacao(), configuracao.getTipoSolicitante()));
 		setLotacaoParaInclusaoAutomatica(getLotacao());
 		setCargo(SelecionavelVO.createFrom(configuracao.getCargo(), configuracao.getTipoSolicitante()));
-		setFuncao(SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante()));
+		setFuncaoConfianca(SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante()));
 		setCpGrupo(SelecionavelVO.createFrom(configuracao.getCpGrupo(), configuracao.getTipoSolicitante()));
 
 		setSolicitante(SelecionavelVO.createFrom(configuracao.getSolicitante()));
@@ -255,12 +252,12 @@ public class SrConfiguracaoVO {
 		this.descPrioridade = descPrioridade;
 	}
 
-	public SelecionavelVO getPessoa() {
-		return pessoa;
+	public SelecionavelVO getDpPessoa() {
+		return dpPessoa;
 	}
 
-	public void setPessoa(SelecionavelVO pessoa) {
-		this.pessoa = pessoa;
+	public void setDpPessoa(SelecionavelVO pessoa) {
+		this.dpPessoa = pessoa;
 	}
 
 	public SelecionavelVO getLotacao() {
@@ -287,12 +284,12 @@ public class SrConfiguracaoVO {
 		this.cargo = cargo;
 	}
 
-	public SelecionavelVO getFuncao() {
-		return funcao;
+	public SelecionavelVO getFuncaoConfianca() {
+		return funcaoConfianca;
 	}
 
-	public void setFuncao(SelecionavelVO funcao) {
-		this.funcao = funcao;
+	public void setFuncaoConfianca(SelecionavelVO funcao) {
+		this.funcaoConfianca = funcao;
 	}
 
 	public SelecionavelVO getCpGrupo() {

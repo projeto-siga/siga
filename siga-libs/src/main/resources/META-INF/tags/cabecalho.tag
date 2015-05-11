@@ -130,7 +130,7 @@ ${meta}
 								<div class="gt-util-box-inner"
 									style="padding-top: 10px; font-size: 100%;">
 									<p style="text-align: right;">
-										Olï¿½, <strong><c:catch>
+										Olá, <strong><c:catch>
 												<c:out default="Convidado"
 													value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
 												<c:choose>
@@ -162,7 +162,7 @@ ${meta}
 						</c:if>
 						<!-- / utility box -->
 						<!-- logo -->
-						<a href="/siga" title="Pï¿½gina inicial" class="link-sem-estilo">
+						<a href="/siga" title="Página inicial" class="link-sem-estilo">
 							<div class="gt-logo" style="padding: 0;">
 								<img style="margin-top: 3px; margin-bottom: -13px;"
 									src="/siga/imagens/logo.png">

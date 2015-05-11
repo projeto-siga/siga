@@ -297,7 +297,7 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionave
 	}
 
 	public static List<SrTipoAcao> listar(boolean mostrarDesativados) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		if (!mostrarDesativados)
 			sb.append(" hisDtFim is null");

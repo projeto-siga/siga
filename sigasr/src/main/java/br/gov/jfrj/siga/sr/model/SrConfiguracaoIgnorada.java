@@ -25,7 +25,7 @@ public class SrConfiguracaoIgnorada extends Objeto {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_CONFIGURACAO_IGNORADA_SEQ", name = "srConfIgnSeq")
+	@SequenceGenerator(sequenceName = "SR_CONFIGURACAO_IGNORADA_SEQ", schema = Catalogs.SIGASR, name = "srConfIgnSeq")
 	@GeneratedValue(generator = "srConfIgnSeq")
 	@Column(name = "ID_CONFIGURACAO_IGNORADA")	
 	public Long idConfiguracaoIgnorada;

@@ -21,7 +21,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 public class SrPergunta extends HistoricoSuporte {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_PERGUNTA_SEQ", name = "srPerguntaSeq")
+	@SequenceGenerator(sequenceName = "SR_PERGUNTA_SEQ", schema = Catalogs.SIGASR, name = "srPerguntaSeq")
 	@GeneratedValue(generator = "srPerguntaSeq")
 	@Column(name = "ID_PERGUNTA")
 	public Long idPergunta;

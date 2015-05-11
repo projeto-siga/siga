@@ -22,7 +22,7 @@ import br.gov.jfrj.siga.base.util.Catalogs;
 public class SrArquivo extends GenericModel {
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ARQUIVO_SEQ", name = "srArquivoSeq")
+	@SequenceGenerator(sequenceName = "SR_ARQUIVO_SEQ", schema = Catalogs.SIGASR, name = "srArquivoSeq")
 	@GeneratedValue(generator = "srArquivoSeq")
 	@Column(name = "ID_ARQUIVO")
 	public Long idArquivo;

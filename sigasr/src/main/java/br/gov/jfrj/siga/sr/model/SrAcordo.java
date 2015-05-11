@@ -33,7 +33,7 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel {
 	public static ActiveRecord<SrAcordo> AR = new ActiveRecord<>(SrAcordo.class);	
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ACORDO_SEQ", name = "srAcordoSeq")
+	@SequenceGenerator(sequenceName = "SR_ACORDO_SEQ", schema = Catalogs.SIGASR, name = "srAcordoSeq")
 	@GeneratedValue(generator = "srAcordoSeq")
 	@Column(name = "ID_ACORDO")
 	public Long idAcordo;

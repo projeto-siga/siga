@@ -96,7 +96,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public static ActiveRecord<SrSolicitacao> AR = new ActiveRecord<>(SrSolicitacao.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_SOLICITACAO_SEQ", name = "srSolicitacaoSeq")
+	@SequenceGenerator(sequenceName = "SR_SOLICITACAO_SEQ", schema = Catalogs.SIGASR, name = "srSolicitacaoSeq")
 	@GeneratedValue(generator = "srSolicitacaoSeq")
 	@Column(name = "ID_SOLICITACAO")
 	public Long idSolicitacao;

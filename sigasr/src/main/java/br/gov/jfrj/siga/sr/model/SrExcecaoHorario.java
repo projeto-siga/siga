@@ -30,7 +30,7 @@ public class SrExcecaoHorario extends ObjetoVraptor {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_EXCECAO_HORARIO_SEQ", name = "srExcecaoHorarioSeq")
+	@SequenceGenerator(sequenceName = "SR_EXCECAO_HORARIO_SEQ", schema = Catalogs.SIGASR, name = "srExcecaoHorarioSeq")
 	@GeneratedValue(generator = "srExcecaoHorarioSeq")
 	@Column(name = "ID_EXCECAO_HORARIO", nullable = false)
 	private Long idExcecaoHorario;

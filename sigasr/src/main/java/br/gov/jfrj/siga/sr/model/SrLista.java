@@ -66,7 +66,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 	}
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_LISTA_SEQ", name = "srListaSeq")
+	@SequenceGenerator(sequenceName = "SR_LISTA_SEQ", schema = Catalogs.SIGASR, name = "srListaSeq")
 	@GeneratedValue(generator = "srListaSeq")
 	@Column(name = "ID_LISTA")
 	public Long idLista;

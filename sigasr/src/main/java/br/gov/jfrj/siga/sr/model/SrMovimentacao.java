@@ -287,8 +287,8 @@ public class SrMovimentacao extends GenericModel {
 		solicitacao.atualizarMarcas();
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
-				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.ABERTURA
-				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.ABERTURA_FECHAMENTO
+				&& solicitacao.getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA
+				&& !(solicitacao.getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
 		

@@ -10,6 +10,7 @@ import play.data.validation.Validation;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -18,6 +19,7 @@ import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
+import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -125,13 +127,37 @@ public class ItemConfiguracaoController extends SrController {
 	
 	private void validarFormEditarLista(SrLista lista) {
 		if (lista.nomeLista == null || lista.nomeLista.trim().equals("")) {
-			Validation.addError("lista.nomeLista",
-					"Nome da Lista não informados");
+			Validation.addError("lista.nomeLista","Nome da Lista não informados");
 		}
 
 		if (Validation.hasErrors()) {
 			enviarErroValidacao();
 		}
+	}
+	
+	@Path("/buscar")
+	public void buscar(String sigla, String nome, SrItemConfiguracao filtro, SrSolicitacao sol) {
+		List<SrItemConfiguracao> items = null;
+		try {
+			if (filtro == null)
+				filtro = new SrItemConfiguracao();
+			if (sigla != null && !sigla.trim().equals(""))
+				filtro.setSigla(sigla);
+			items = filtro.buscar(sol != null && (sol.getSolicitante() != null || sol.getLocal() != null) ? sol.getItensDisponiveis() : null);
+		} catch (Exception e) {
+			items = new ArrayList<SrItemConfiguracao>();
+		}
+		result.include("items", items);
+		result.include("sol", sol);
+		result.include("filtro", filtro);
+		result.include("nome", nome);
+	}
+	
+	@Path("/selecionar")
+	public void selecionar(String sigla, SrSolicitacao sol) throws Exception {
+		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla, sol.getItensDisponiveis());
+		result.include("selecionar", sel);
+		result.use(Results.status()).ok();
 	}
 
 }

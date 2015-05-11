@@ -153,14 +153,14 @@ public class Application extends SigaApplication {
 		SrSolicitacao solicitacao;
 		if (id == null) {
 			solicitacao = new SrSolicitacao();
-			solicitacao.solicitante = titular();
+			solicitacao.setSolicitante(titular());
 		} else
 			solicitacao = SrSolicitacao.findById(id);
 
-		if (solicitacao.dtOrigem == null)
-			solicitacao.dtOrigem = new Date();
-		if (solicitacao.dtIniEdicao == null)
-			solicitacao.dtIniEdicao = new Date();
+		if (solicitacao.getDtOrigem() == null)
+			solicitacao.setDtOrigem(new Date());
+		if (solicitacao.getDtIniEdicao() == null)
+			solicitacao.setDtIniEdicao(new Date());
 		solicitacao.atualizarAcordos();
 
 		formEditar(solicitacao.deduzirLocalRamalEMeioContato());
@@ -217,15 +217,15 @@ public class Application extends SigaApplication {
 
 	public static void exibirItemConfiguracao(SrSolicitacao solicitacao)
 			throws Exception {
-		if (solicitacao.solicitante == null)
+		if (solicitacao.getSolicitante() == null)
 			render(solicitacao);
 
 		if (!solicitacao.getItensDisponiveis().contains(
-				solicitacao.itemConfiguracao))
-			solicitacao.itemConfiguracao = null;
+				solicitacao.getItemConfiguracao()))
+			solicitacao.setItemConfiguracao(null);
 
-		DpPessoa titular = solicitacao.titular;
-		DpLotacao lotaTitular = solicitacao.lotaTitular;
+		DpPessoa titular = solicitacao.getTitular();
+		DpLotacao lotaTitular = solicitacao.getLotaTitular();
 		Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, titular, lotaTitular, acoesEAtendentes);
 	}
@@ -237,11 +237,11 @@ public class Application extends SigaApplication {
 
 	public static void exibirAcaoEscalonar(Long id, Long itemConfiguracao) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		solicitacao.titular = titular();
-		solicitacao.lotaTitular = lotaTitular();
+		solicitacao.setTitular(titular());
+		solicitacao.setLotaTitular(lotaTitular());
 		Map<SrAcao, List<SrTarefa>> acoesEAtendentes = new HashMap<SrAcao, List<SrTarefa>>();
 		if (itemConfiguracao != null){
-			solicitacao.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
+			solicitacao.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao));
 			acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		}
 		render(solicitacao, acoesEAtendentes);
@@ -266,20 +266,20 @@ public class Application extends SigaApplication {
 	private static void validarFormEditar(SrSolicitacao solicitacao)
 			throws Exception {
 
-		if (solicitacao.solicitante == null) {
+		if (solicitacao.getSolicitante() == null) {
 			validation.current().addError("solicitacao.solicitante",
 					"Solicitante n&atilde;o informado");
 		}
-		if (solicitacao.itemConfiguracao == null) {
+		if (solicitacao.getItemConfiguracao() == null) {
 			validation.current().addError("solicitacao.itemConfiguracao",
 					"Item n&atilde;o informado");
 		}
-		if (solicitacao.acao == null) {
+		if (solicitacao.getAcao() == null) {
 			validation.current().addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
 		}
 
-		if (solicitacao.descrSolicitacao == null
-				|| solicitacao.descrSolicitacao.trim().equals("")) {
+		if (solicitacao.getDescrSolicitacao() == null
+				|| solicitacao.getDescrSolicitacao().trim().equals("")) {
 			validation.current().addError("solicitacao.descrSolicitacao",
 					"Descri&ccedil&atilde;o n&atilde;o informada");
 		}
@@ -375,7 +375,7 @@ public class Application extends SigaApplication {
 
 		solicitacao.salvar(cadastrante(), cadastrante().getLotacao(),
 				titular(), lotaTitular());
-		Long id = solicitacao.idSolicitacao;
+		Long id = solicitacao.getIdSolicitacao();
 		exibir(id, todoOContexto(), ocultas());
 	}
 
@@ -647,7 +647,7 @@ public class Application extends SigaApplication {
 
 	public static void selecionarSolicitacao(String sigla) throws Exception {
 		SrSolicitacao sel = new SrSolicitacao();
-		sel.lotaTitular = lotaTitular();
+		sel.setLotaTitular(lotaTitular());
 		sel = (SrSolicitacao) sel.selecionar(sigla);
 		render("@selecionar", sel);
 	}
@@ -694,19 +694,19 @@ public class Application extends SigaApplication {
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
 		movimentacao.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, todoOContexto(), ocultas());
+		exibir(movimentacao.solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
 	}
 
 	public static void anexarArquivo(SrMovimentacao movimentacao)
 			throws Exception {
 		movimentacao.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
-		exibir(movimentacao.solicitacao.idSolicitacao, todoOContexto(), ocultas());
+		exibir(movimentacao.solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
 	}
 
 	public static void fechar(Long id, String motivo) throws Exception {
 		SrSolicitacao sol = SrSolicitacao.findById(id);
 		sol.fechar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular(), motivo);
-		exibir(sol.idSolicitacao, todoOContexto(), ocultas());
+		exibir(sol.getIdSolicitacao(), todoOContexto(), ocultas());
 	}
 
 	public static void excluir(Long id) throws Exception {
@@ -779,8 +779,8 @@ public class Application extends SigaApplication {
 
 	public static void escalonar(Long id) throws Exception {
 		SrSolicitacao solicitacao = SrSolicitacao.findById(id);
-		solicitacao.titular = titular();
-		solicitacao.lotaTitular = lotaTitular();
+		solicitacao.setTitular(titular());
+		solicitacao.setLotaTitular(lotaTitular());
 		solicitacao = solicitacao.getSolicitacaoAtual();
 		Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 		render(solicitacao, acoesEAtendentes);
@@ -809,17 +809,17 @@ public class Application extends SigaApplication {
 			}
 			SrSolicitacao filha = null;
 			if(solicitacao.isFilha())
-				filha = solicitacao.solicitacaoPai.criarFilhaSemSalvar();
+				filha = solicitacao.getSolicitacaoPai().criarFilhaSemSalvar();
 			else
 				filha = solicitacao.criarFilhaSemSalvar();
-			filha.itemConfiguracao = SrItemConfiguracao.findById(itemConfiguracao);
-			filha.acao = SrAcao.AR.findById(acao.getIdAcao());
-			filha.designacao = SrConfiguracao.findById(idDesignacao);
-			filha.descrSolicitacao = descricao;
+			filha.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao));
+			filha.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
+			filha.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
+			filha.setDescrSolicitacao(descricao);
 			if (idAtendenteNaoDesignado != null)
-				filha.atendenteNaoDesignado = atendenteNaoDesignado;
+				filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
 			filha.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
-			exibir(filha.idSolicitacao, todoOContexto(), ocultas());
+			exibir(filha.getIdSolicitacao(), todoOContexto(), ocultas());
 		}
 		else {
 			SrMovimentacao mov = new SrMovimentacao(solicitacao);
@@ -835,7 +835,7 @@ public class Application extends SigaApplication {
 			mov.descrMovimentacao = "Motivo: " + mov.motivoEscalonamento + "; Item: " + mov.itemConfiguracao.getTituloItemConfiguracao()
 					+ "; Ação: " + mov.acao.getTituloAcao() + "; Atendente: " + mov.lotaAtendente.getSigla();
 			mov.salvar(cadastrante(), cadastrante().getLotacao(), titular(), lotaTitular());
-			exibir(solicitacao.idSolicitacao, todoOContexto(), ocultas());
+			exibir(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
 		}
 
 	}
@@ -1207,7 +1207,7 @@ public class Application extends SigaApplication {
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
 			itens = filtro.buscar(sol != null
-					&& (sol.solicitante != null || sol.local != null) ? sol
+					&& (sol.getSolicitante() != null || sol.getLocal() != null) ? sol
 					.getItensDisponiveis() : null);
 		} catch (Exception e) {
 			itens = new ArrayList<SrItemConfiguracao>();
@@ -1519,7 +1519,7 @@ public class Application extends SigaApplication {
 				filtro = new SrAcao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(sol != null && (sol.solicitante != null || sol.local != null) ? sol.getAcoesDisponiveis() : null);
+			itens = filtro.buscar(sol != null && (sol.getSolicitante() != null || sol.getLocal() != null) ? sol.getAcoesDisponiveis() : null);
 		} catch (Exception e) {
 			itens = new ArrayList<SrAcao>();
 		}

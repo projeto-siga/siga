@@ -79,11 +79,8 @@
 <siga:modal nome="itemConfiguracao" titulo="Adicionar Item de Configuração">
 	<script>
 	//Edson: esta funcao evita que o usuario de ok sem a busca por ajax ter terminado
-	function bloqueiaItemOk(){
-		$("#modalItemOk").attr("disabled", "disabled");
-	}
 	function bloqueiaItemOkSeVazio(){
-		if ($("#itemConfiguracao").val() && $("#itemConfiguracao_sigla").val() && $("#itemConfiguracaoSpan").text())
+		if ($("#formulario_itemConfiguracao_id").val() && $("#formulario_itemConfiguracao_sigla").val() && $("#itemConfiguracaoSpan").text())
 			$("#modalItemOk").removeAttr('disabled');
 		else 
 			$("#modalItemOk").attr("disabled", "disabled");
@@ -94,9 +91,9 @@
 			<div class="gt-form gt-content-box">
 				<div class="gt-form-row">
 					<div class="gt-form-row">
-						<label>Item de Configuração</label> 
-						<siga:selecao propriedade="itemConfiguracao" tema="simple" modulo="sigasr"
-	 						urlAcao="buscar" onchange="bloqueiaItemOkSeVazio()" onblur="bloqueiaItemOk()"/>
+						<label>Item de Configuração</label>
+						<siga:selecao2 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"
+						     onchange="bloqueiaItemOkSeVazio()"/>
 						<span style="display:none;color: red" id="designacao.itemConfiguracao">Item de Configuração não informado.</span>
 					</div>
 					<div class="gt-form-row">
@@ -112,9 +109,6 @@
 <siga:modal nome="acao" titulo="Adicionar Ação">
 	<script>
 	//Edson: esta funcao evita que o usuario de ok sem a busca por ajax ter terminado
-	function bloqueiaAcaoOk() {
-		$("#modalAcaoOk").attr("disabled", "disabled");
-	}
 	function bloqueiaAcaoOkSeVazio() {
 		if ($("#acao").val() && $("#acao_sigla").val() && $("#acaoSpan").text())
 			$("#modalAcaoOk").removeAttr('disabled');
@@ -128,8 +122,8 @@
 				<div class="gt-form-row">
 					<div class="gt-form-row">
 						<label>Ação</label> 
-						<siga:selecao propriedade="acao" tema="simple" modulo="sigasr"
-	 						urlAcao="buscar" onchange="bloqueiaAcaoOkSeVazio()" onblur="bloqueiaAcaoOk()"/>
+						<siga:selecao2 propriedade="acao" tipo="acao" tema="simple" modulo="sigasr"
+						 	onchange="bloqueiaAcaoOkSeVazio()"/>
 						<span style="display:none;color: red" id="designacao.acao">Ação não informada.</span>
 					</div>
 					<div class="gt-form-row">
@@ -194,17 +188,17 @@
 		});
 	}
 	configuracaoItemAcaoService.inserirItemConfiguracao = function() {
-		var idSelecionado = $("#itemConfiguracao").val();
+		var idSelecionado = $("#formulario_itemConfiguracao_id").val();
 		
 		if (idSelecionado == undefined || idSelecionado == '') {
 			alert("Por favor, selecione um item de configuração antes de continuar, ou clique em Cancelar.");
 			return;
 		}
 		if(configuracaoItemAcaoService.podeAdicionarItem(idSelecionado)) {
-			var row = [	$("#itemConfiguracao").val(),
-			           	$("#itemConfiguracao_sigla").val(),
-			           	$("#itemConfiguracao_descricao").val(),
-			           	$("#itemConfiguracao_descricao").val(),
+			var row = [	$("#formulario_itemConfiguracao_id").val(),
+			           	$("#formulario_itemConfiguracao_sigla").val(),
+			           	$("#formulario_itemConfiguracao_descricao").val(),
+			           	$("#formulario_itemConfiguracao_descricao").val(),
 			           	"",
 			           	"<a class=\"itemConfiguracao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 			

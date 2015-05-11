@@ -148,7 +148,7 @@ public class SrPrioridadeSolicitacao extends Objeto {
 	
 	private JsonObject jsonSolicitacao(Gson gson) {
 		JsonObject solicitacao = new JsonObject();
-		solicitacao.add("idSolicitacao", gson.toJsonTree(getSolicitacao().idSolicitacao));
+		solicitacao.add("idSolicitacao", gson.toJsonTree(getSolicitacao().getIdSolicitacao()));
 		solicitacao.add("hisIdIni", gson.toJsonTree(getSolicitacao().getIdInicial()));
 		return solicitacao;
 	}

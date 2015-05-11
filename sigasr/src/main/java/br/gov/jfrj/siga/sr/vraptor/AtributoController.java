@@ -23,6 +23,7 @@ import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrObjetivoAtributo;
 import br.gov.jfrj.siga.sr.model.SrTipoAtributo;
+import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -55,6 +56,7 @@ public class AtributoController extends SrController {
 		result.include("mostrarDesativados", mostrarDesativados);
 		result.include("tiposAtributo",SrTipoAtributo.values());
 		
+		result.include("pessoa", new DpPessoaSelecao());
 		result.include("dpPessoaSel", new DpPessoaSelecao());
 		result.include("lotacaoSel", new DpLotacaoSelecao());
 		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
@@ -62,8 +64,8 @@ public class AtributoController extends SrController {
 		result.include("cpGrupoSel", new CpPerfilSelecao());
 
 		
-//		result.include("acaoSel", new CpPerfilSelecao());
-//		result.include("itemConfiguracaoSel", new CpPerfilSelecao());
+		result.include("itemConfiguracao", new SelecionavelVO(null,null));
+		result.include("acao", new SelecionavelVO(null,null));
 	}
 
 	@Path("/gravar")

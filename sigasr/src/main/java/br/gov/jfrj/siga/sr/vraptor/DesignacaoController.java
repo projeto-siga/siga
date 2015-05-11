@@ -52,7 +52,7 @@ public class DesignacaoController extends SrController {
 		result.include("orgaos", orgaos);
 		result.include("locais", locais);
 		result.include("pesquisaSatisfacao", pesquisaSatisfacao);
-		
+
 		result.include("dpPessoaSel", new DpPessoaSelecao());
 		result.include("lotacaoSel", new DpLotacaoSelecao());
 		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
@@ -93,7 +93,6 @@ public class DesignacaoController extends SrController {
 	public void gravar(SrConfiguracao designacao) throws Exception {
 		validarFormEditarDesignacao(designacao);
 		designacao.salvarComoDesignacao();
-		designacao.refresh();
 
 		result.use(Results.http()).body(designacao.toJson());
 	}

@@ -13,11 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.opensymphony</groupId>
-            <artifactId>webwork</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>info.bliki.wiki</groupId>
             <artifactId>bliki-core</artifactId>
         </dependency>

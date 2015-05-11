@@ -49,19 +49,21 @@ public class WfAuthenticationService extends DefaultAuthenticationService
 	@Override
 	public String getActorId() {
 		if (this.actorId == null) {
-			if (com.opensymphony.webwork.ServletActionContext.getRequest() == null
-					|| com.opensymphony.webwork.ServletActionContext
-							.getRequest().getUserPrincipal() == null)
-				return null;
-
-			try {
-				String principal = com.opensymphony.webwork.ServletActionContext
-						.getRequest().getUserPrincipal().getName();
-				UsuarioAutenticado.carregarUsuarioAutenticado(principal, this);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+			//Nato: desabilitado porque tem dependência no WebWork. Precisa ser transferido para o sigawf e depender do servletcontext ou do vraptor.
+			//
+//			if (com.opensymphony.webwork.ServletActionContext.getRequest() == null
+//					|| com.opensymphony.webwork.ServletActionContext
+//							.getRequest().getUserPrincipal() == null)
+//				return null;
+//
+//			try {
+//				String principal = com.opensymphony.webwork.ServletActionContext
+//						.getRequest().getUserPrincipal().getName();
+//				UsuarioAutenticado.carregarUsuarioAutenticado(principal, this);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				return null;
+//			}
 
 			if (getCadastrante() == null)
 				return null;

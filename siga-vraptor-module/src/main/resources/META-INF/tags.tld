@@ -106,4 +106,16 @@
 		<name>checkbox</name>
 		<path>/META-INF/tags/checkbox.tag</path>
 	</tag-file>
+	<tag-file>
+		<name>designacao</name>
+		<path>/META-INF/tags/designacao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>configuracaoAssociacao</name>
+		<path>/META-INF/tags/configuracaoAssociacao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>configuracaoItemAcao</name>
+		<path>/META-INF/tags/configuracaoItemAcao.tag</path>
+	</tag-file>
 </taglib>

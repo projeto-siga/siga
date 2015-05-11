@@ -25,8 +25,10 @@ package br.gov.jfrj.siga.dp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
+
 @Entity
-@Table(name = "CP_TIPO_MARCADOR", schema = "CORPORATIVO")
+@Table(name = "CP_TIPO_MARCADOR", schema = Catalogs.CORPORATIVO)
 public class CpTipoMarcador extends AbstractCpTipoMarcador {
 
 }

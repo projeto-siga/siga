@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Objeto;
@@ -17,7 +18,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 import br.gov.jfrj.siga.sr.model.vo.SrGestorItemVO;
 
 @Entity
-@Table(name = "SR_GESTOR_ITEM", schema = "SIGASR")
+@Table(name = "SR_GESTOR_ITEM", schema = Catalogs.SIGASR)
 public class SrGestorItem extends Objeto{
 
 	/**
@@ -26,7 +27,7 @@ public class SrGestorItem extends Objeto{
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_GESTOR_ITEM_SEQ", name = "srGestorItemSeq")
+	@SequenceGenerator(sequenceName = "SR_GESTOR_ITEM_SEQ", schema = Catalogs.SIGASR, name = "srGestorItemSeq")
 	@GeneratedValue(generator = "srGestorItemSeq")
 	@Column(name = "ID_GESTOR_ITEM")
 	public Long idGestorItem;

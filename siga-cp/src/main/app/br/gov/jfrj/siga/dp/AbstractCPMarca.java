@@ -36,6 +36,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
@@ -43,7 +44,7 @@ import br.gov.jfrj.siga.model.Objeto;
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
 @Entity()
-@Table(name = "CP_MARCA", schema="CORPORATIVO")
+@Table(name = "CP_MARCA", schema = Catalogs.CORPORATIVO)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.INTEGER
 
@@ -51,7 +52,7 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCPMarca extends Objeto implements Serializable {
 
 	@Id
-	@SequenceGenerator(name="my_seq", sequenceName="CORPORATIVO.CP_MARCA_SEQ")
+	@SequenceGenerator(name="my_seq", schema = Catalogs.CORPORATIVO, sequenceName="CP_MARCA_SEQ")
 	@GeneratedValue(generator = "my_seq")
 	@Column(name = "ID_MARCA")
 	private java.lang.Long idMarca;

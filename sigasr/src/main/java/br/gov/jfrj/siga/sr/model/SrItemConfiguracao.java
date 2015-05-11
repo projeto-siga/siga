@@ -34,6 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -45,7 +46,7 @@ import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 import com.google.gson.JsonArray;
 
 @Entity
-@Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
+@Table(name = "SR_ITEM_CONFIGURACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSelecionavel, ConvertableEntity {
 
@@ -69,7 +70,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	// "([0-9][0-9])?([.])?([0-9][0-9])?([.])?([0-9][0-9])";
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
+	@SequenceGenerator(sequenceName = "SR_ITEM_CONFIGURACAO_SEQ", schema = Catalogs.SIGASR, name = "srItemSeq")
 	@GeneratedValue(generator = "srItemSeq")
 	@Column(name = "ID_ITEM_CONFIGURACAO")
 	private Long idItemConfiguracao;
@@ -115,7 +116,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	private List<SrConfiguracao> designacoes;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_CONFIGURACAO")})
+	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = Catalogs.SIGASR, joinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_CONFIGURACAO")})
 	private List<SrConfiguracao> designacoesSet;
 
 	public SrItemConfiguracao() {
@@ -808,4 +809,5 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	public void setDesignacoesSet(List<SrConfiguracao> designacoesSet) {
 		this.designacoesSet = designacoesSet;
 	}
+	
 }

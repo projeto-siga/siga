@@ -17,10 +17,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.DatatypeConverter;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
-@Table(name = "SR_EXCECAO_HORARIO", schema = "SIGASR")
+@Table(name = "SR_EXCECAO_HORARIO", schema = Catalogs.SIGASR)
 public class SrExcecaoHorario extends ObjetoVraptor {
 
 	/**
@@ -29,7 +30,7 @@ public class SrExcecaoHorario extends ObjetoVraptor {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_EXCECAO_HORARIO_SEQ", name = "srExcecaoHorarioSeq")
+	@SequenceGenerator(sequenceName = "SR_EXCECAO_HORARIO_SEQ", schema = Catalogs.SIGASR, name = "srExcecaoHorarioSeq")
 	@GeneratedValue(generator = "srExcecaoHorarioSeq")
 	@Column(name = "ID_EXCECAO_HORARIO", nullable = false)
 	private Long idExcecaoHorario;

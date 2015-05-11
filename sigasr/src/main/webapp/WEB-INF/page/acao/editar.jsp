@@ -21,14 +21,25 @@
 
 		<div class="gt-form-row gt-width-66">
 			<label>Tipo de a&ccedil;&atilde;o</label>
-			<siga:selecao modulo="sigasr" tema="simple" propriedade="tipoAcao" urlAcao="buscar" inputName="tipoAcao" ></siga:selecao>
+			<input type="hidden" name="acao.tipoAcao" id="tipoAcao" class="selecao">
+			<siga:selecao modulo="sigasr" tema="simple" propriedade="tipoAcao" urlAcao="buscar"></siga:selecao>
 		</div>
 
 		<div class="gt-form-row">
-			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="acaoService.gravar()"/>
+			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="prepararObjeto()"/>
 			<a class="gt-btn-medium gt-btn-left" onclick="acaoService.cancelarGravacao()">Cancelar</a>
 			<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="acaoService.aplicar()"/>
 		</div>
 
 	</form>
 </div>
+
+<script>
+	function prepararObjeto() {
+		var tipoAcao = $('#tipoAcao');
+		var tipoAcaoSelId = $('#formulario_tipoAcaoSel_id');
+		tipoAcao.val(tipoAcaoSelId.val());
+
+		acaoService.gravar();
+	}
+</script>

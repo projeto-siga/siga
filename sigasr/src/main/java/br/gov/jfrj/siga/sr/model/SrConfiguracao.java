@@ -20,6 +20,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -43,7 +44,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
+@Table(name = "SR_CONFIGURACAO", schema = Catalogs.SIGASR)
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEntity {
 
@@ -55,14 +56,14 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 	private SrItemConfiguracao itemConfiguracaoFiltro;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
+	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = Catalogs.SIGASR, joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")})
 	private List<SrItemConfiguracao> itemConfiguracaoSet;
 
 	@Transient
 	private SrAcao acaoFiltro;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_ACAO", schema = "SIGASR", joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
+	@JoinTable(name="SR_CONFIGURACAO_ACAO", schema = Catalogs.SIGASR, joinColumns={@JoinColumn(name="ID_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_ACAO")})
 	private List<SrAcao> acoesSet;
 
 	@ManyToOne
@@ -89,7 +90,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 	private SrPrioridade prioridadeNaLista;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"), schema="SIGASR")
+	@JoinTable(name="SR_CONFIGURACAO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_CONFIGURACAO"), inverseJoinColumns = @JoinColumn(name = "TIPO_PERMISSAO"), schema = Catalogs.SIGASR)
 	private List<SrTipoPermissaoLista> tipoPermissaoSet;
 
 	@ManyToOne(fetch = FetchType.LAZY)

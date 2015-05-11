@@ -34,12 +34,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @Entity
-@Table(name = "CP_GRUPO", schema = "CORPORATIVO")
+@Table(name = "CP_GRUPO", schema = Catalogs.CORPORATIVO)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ID_TP_GRUPO", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class AbstractCpGrupo extends HistoricoAuditavelSuporte {

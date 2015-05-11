@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
@@ -28,7 +29,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_EQUIPE", schema = "SIGASR")
+@Table(name = "SR_EQUIPE", schema = Catalogs.SIGASR)
 public class SrEquipe extends HistoricoSuporteVraptor implements ConvertableEntity {
 
 	public static ActiveRecord<SrEquipe> AR = new ActiveRecord<>(SrEquipe.class);
@@ -36,7 +37,7 @@ public class SrEquipe extends HistoricoSuporteVraptor implements ConvertableEnti
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_EQUIPE_SEQ", name = "srEquipeSeq")
+	@SequenceGenerator(sequenceName = "SR_EQUIPE_SEQ", schema = Catalogs.SIGASR, name = "srEquipeSeq")
 	@GeneratedValue(generator = "srEquipeSeq")
 	@Column(name = "ID_EQUIPE")
 	private Long idEquipe;

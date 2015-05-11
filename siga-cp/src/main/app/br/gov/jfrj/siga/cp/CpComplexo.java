@@ -30,10 +30,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
-@Table(name = "CP_COMPLEXO", schema = "CORPORATIVO")
+@Table(name = "CP_COMPLEXO", schema = Catalogs.CORPORATIVO)
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpComplexo extends AbstractCpComplexo {
 	

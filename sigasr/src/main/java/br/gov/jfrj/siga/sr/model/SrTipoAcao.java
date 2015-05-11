@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -30,7 +31,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_TIPO_ACAO", schema = "SIGASR")
+@Table(name = "SR_TIPO_ACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrTipoAcao>, Selecionavel {
 
@@ -39,7 +40,7 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionave
 	private static final long serialVersionUID = 8387408543308440033L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ACAO_SEQ", name = "srAcaoSeq")
+	@SequenceGenerator(sequenceName = "SR_ACAO_SEQ", schema = Catalogs.SIGASR, name = "srAcaoSeq")
 	@GeneratedValue(generator = "srAcaoSeq")
 	@Column(name = "ID_TIPO_ACAO")
 	private Long idTipoAcao;
@@ -297,7 +298,7 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionave
 	}
 
 	public static List<SrTipoAcao> listar(boolean mostrarDesativados) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		if (!mostrarDesativados)
 			sb.append(" hisDtFim is null");

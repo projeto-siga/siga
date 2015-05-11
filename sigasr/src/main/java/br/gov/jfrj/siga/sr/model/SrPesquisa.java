@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.Util;
@@ -28,7 +29,7 @@ import com.google.gson.JsonObject;
 import edu.emory.mathcs.backport.java.util.Collections;
 
 @Entity
-@Table(name = "SR_PESQUISA", schema = "SIGASR")
+@Table(name = "SR_PESQUISA", schema = Catalogs.SIGASR)
 public class SrPesquisa extends HistoricoSuporteVraptor {
 
 	/**
@@ -39,7 +40,7 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 	public static final ActiveRecord<SrPesquisa> AR = new ActiveRecord<>(SrPesquisa.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_PESQUISA_SEQ", name = "srPesquisaSeq")
+	@SequenceGenerator(sequenceName = "SR_PESQUISA_SEQ", schema = Catalogs.SIGASR, name = "srPesquisaSeq")
 	@GeneratedValue(generator = "srPesquisaSeq")
 	@Column(name = "ID_PESQUISA")
 	private Long idPesquisa;

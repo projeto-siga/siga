@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.sr.model;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,16 +9,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_PERGUNTA", schema = "SIGASR")
-public class SrPergunta extends HistoricoSuporte {
+public class SrPergunta extends HistoricoSuporteVraptor {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8405698996883999900L;
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR.SR_PERGUNTA_SEQ", name = "srPerguntaSeq")
@@ -46,11 +49,9 @@ public class SrPergunta extends HistoricoSuporte {
 	public SrPergunta perguntaInicial;
 
 	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "perguntaInicial")
-	//@OrderBy("hisDtIni desc")
 	public List<SrPergunta> meuPerguntaHistoricoSet;
 
 	public SrPergunta() {
-
 	}
 
 	public Long getId() {

@@ -29,10 +29,11 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(schema="CORPORATIVO", name="CP_APLICACAO_FERIADO")
+@Table(schema = Catalogs.CORPORATIVO, name="CP_APLICACAO_FERIADO")
 public class CpAplicacaoFeriado extends AbstractCpAplicacaoFeriado implements Serializable,
 		Selecionavel {
 

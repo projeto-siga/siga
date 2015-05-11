@@ -810,7 +810,4 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		this.designacoesSet = designacoesSet;
 	}
 	
-	public String getAcaoBusca() {
-		return "/item";
-	}
 }

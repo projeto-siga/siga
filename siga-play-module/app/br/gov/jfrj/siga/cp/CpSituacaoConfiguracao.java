@@ -21,8 +21,10 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
+
 @Entity
-@Table(name = "CP_SITUACAO_CONFIGURACAO", schema="CORPORATIVO")
+@Table(name = "CP_SITUACAO_CONFIGURACAO", schema = Catalogs.CORPORATIVO)
 public class CpSituacaoConfiguracao extends AbstractCpSituacaoConfiguracao {
 
 	/**

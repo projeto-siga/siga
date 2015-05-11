@@ -385,10 +385,6 @@ public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, C
 		}
 		return this.descrAcao.compareTo(arg0.descrAcao);
 	}
-	
-	public String getAcaoBusca() {
-		return "/acao";
-	}
 
 	/**
 	 * Classe que representa um V.O. de {@link SrAcao}.

@@ -36,6 +36,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
@@ -43,7 +44,7 @@ import br.gov.jfrj.siga.model.Objeto;
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
 @Entity()
-@Table(name = "CP_MARCA", schema="CORPORATIVO")
+@Table(name = "CP_MARCA", schema = Catalogs.CORPORATIVO)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.INTEGER
 

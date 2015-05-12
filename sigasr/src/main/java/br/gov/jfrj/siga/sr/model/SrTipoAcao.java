@@ -101,7 +101,6 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<Sr
 		return tituloTipoAcao;
 	}
 
-	@Override
 	public void setDescricao(String descricao) {
 		this.tituloTipoAcao = descricao;
 	}
@@ -190,7 +189,6 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<Sr
 		return false;
 	}
 
-	@Override
 	public SrTipoAcao selecionar(String sigla) throws Exception {
 		setSigla(sigla);
 		List<SrTipoAcao> itens = buscar();
@@ -199,7 +197,6 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<Sr
 		return itens.get(0);
 	}
 
-	@Override
 	public List<SrTipoAcao> buscar() throws Exception {
 		List<SrTipoAcao> lista = new ArrayList<SrTipoAcao>();
 		List<SrTipoAcao> listaFinal = new ArrayList<SrTipoAcao>();

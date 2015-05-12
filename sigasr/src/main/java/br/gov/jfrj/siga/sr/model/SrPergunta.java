@@ -27,7 +27,7 @@ public class SrPergunta extends HistoricoSuporteVraptor {
 
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_PERGUNTA_SEQ", schema = Catalogs.SIGASR, name = "srPerguntaSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_PERGUNTA_SEQ", name = "srPerguntaSeq")
 	@GeneratedValue(generator = "srPerguntaSeq")
 	@Column(name = "ID_PERGUNTA")
 	public Long idPergunta;

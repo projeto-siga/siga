@@ -40,7 +40,7 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 	public static final ActiveRecord<SrPesquisa> AR = new ActiveRecord<>(SrPesquisa.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_PESQUISA_SEQ", schema = Catalogs.SIGASR, name = "srPesquisaSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_PESQUISA_SEQ", name = "srPesquisaSeq")
 	@GeneratedValue(generator = "srPesquisaSeq")
 	@Column(name = "ID_PESQUISA")
 	private Long idPesquisa;

@@ -33,7 +33,7 @@ public class SrPrioridadeSolicitacao extends Objeto {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_PRIORIDADE_SOLICITACAO_SEQ", schema = Catalogs.SIGASR, name = "srPrioridadeSolicitacaoSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_PRIORIDADE_SOLICITACAO_SEQ", name = "srPrioridadeSolicitacaoSeq")
 	@GeneratedValue(generator = "srPrioridadeSolicitacaoSeq")
 	@Column(name = "ID_PRIORIDADE_SOLICITACAO")
 	public Long idPrioridadeSolicitacao;

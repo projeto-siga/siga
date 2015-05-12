@@ -40,7 +40,7 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionave
 	private static final long serialVersionUID = 8387408543308440033L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ACAO_SEQ", schema = Catalogs.SIGASR, name = "srAcaoSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_ACAO_SEQ", name = "srAcaoSeq")
 	@GeneratedValue(generator = "srAcaoSeq")
 	@Column(name = "ID_TIPO_ACAO")
 	private Long idTipoAcao;

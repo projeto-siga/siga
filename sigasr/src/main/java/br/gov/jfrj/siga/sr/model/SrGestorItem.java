@@ -27,7 +27,7 @@ public class SrGestorItem extends Objeto{
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_GESTOR_ITEM_SEQ", schema = Catalogs.SIGASR, name = "srGestorItemSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_GESTOR_ITEM_SEQ",name = "srGestorItemSeq")
 	@GeneratedValue(generator = "srGestorItemSeq")
 	@Column(name = "ID_GESTOR_ITEM")
 	public Long idGestorItem;

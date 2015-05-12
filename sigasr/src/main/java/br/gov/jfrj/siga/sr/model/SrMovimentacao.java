@@ -43,7 +43,7 @@ public class SrMovimentacao extends GenericModel {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_MOVIMENTACAO_SEQ", schema = Catalogs.SIGASR, name = "srMovimentacaoSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_MOVIMENTACAO_SEQ", name = "srMovimentacaoSeq")
 	@GeneratedValue(generator = "srMovimentacaoSeq")
 	@Column(name = "ID_MOVIMENTACAO")
 	public long idMovimentacao;

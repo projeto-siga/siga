@@ -74,8 +74,8 @@ public class EquipeController extends SrController {
 		result.include("cargoSel", new DpCargoSelecao());
 		result.include("cpGrupoSel", new CpPerfilSelecao());
 		
-//		result.include("acaoSel", new CpPerfilSelecao());
-//		result.include("itemConfiguracaoSel", new CpPerfilSelecao());
+		result.include("itemConfiguracao", new SelecionavelVO(null,null));
+		result.include("acao", new SelecionavelVO(null,null));
 	}
 
 	@Path("/gravar")

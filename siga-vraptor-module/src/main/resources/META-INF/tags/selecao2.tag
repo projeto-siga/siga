@@ -58,7 +58,9 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 	
 	<c:if test="${reler == 'ajax'}">
 		sbmt('${empty idAjax ? propriedade : idAjax}');
-	</c:if> 
+	</c:if>
+
+	${onchange}
 }
  
 self.newwindow_${propriedadeClean} = '';

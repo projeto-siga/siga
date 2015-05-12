@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -14,6 +15,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
+import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.TipoAcaoSelecao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -81,33 +83,39 @@ public class AcaoController extends SrController {
 		result.use(Results.http()).body(acao.toJson());
 	}
 
-	/*
-	public void selecionarAcao(String sigla, SrSolicitacao sol)
-			throws Exception {
-
+	@Path("/selecionar")
+	public void selecionar(String sigla, SrSolicitacao sol)throws Exception {
 		SrAcao sel = new SrAcao().selecionar(sigla, sol.getAcoesDisponiveis());
-		render("@selecionar", sel);
+		result.include("selecionar", sel);			
+		result.use(Results.status()).ok();
 	}
 
-	public void buscarAcao(String sigla, String nome, SrAcao filtro,
-			SrSolicitacao sol) {
-		List<SrAcao> itens = null;
+	@Path("/buscar")
+	public void buscar(String sigla, String nome, String siglaAcao, String tituloAcao, SrSolicitacao sol, String propriedade) {
+		List<SrAcao> items = null;
+		
+		SrAcao filtro = new SrAcao();
+		filtro.setSiglaAcao(siglaAcao);
+		filtro.setTituloAcao(tituloAcao);
 
 		try {
-			if (filtro == null)
-				filtro = new SrAcao();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = filtro.buscar(sol != null
-					&& (sol.solicitante != null || sol.local != null) ? sol
+			
+			items = filtro.buscar(sol != null
+					&& (sol.getSolicitante() != null || sol.getLocal() != null) ? sol
 					.getAcoesDisponiveis() : null);
+			
 		} catch (Exception e) {
-			itens = new ArrayList<SrAcao>();
+			items = new ArrayList<SrAcao>();
 		}
 
-		render(itens, filtro, nome, sol);
+		result.include("items", items);
+		result.include("sol", sol);
+		result.include("filtro", filtro);
+		result.include("nome", nome);
+		result.include("propriedade", propriedade);
 	}
-	*/
 
 	private void validarFormEditarAcao(SrAcao acao) {
 		if ("".equals(acao.getSiglaAcao()))

@@ -67,7 +67,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	@Id
 	@GeneratedValue(generator = "generator")
-	@SequenceGenerator(name = "generator", sequenceName = Catalogs.CORPORATIVO + "CP_CONFIGURACAO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = Catalogs.CORPORATIVO + ".CP_CONFIGURACAO_SEQ")
 	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;

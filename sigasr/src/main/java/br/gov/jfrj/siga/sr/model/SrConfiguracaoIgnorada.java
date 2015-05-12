@@ -12,10 +12,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.JPA;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_CONFIGURACAO_IGNORADA", schema = "SIGASR")
+@Table(name = "SR_CONFIGURACAO_IGNORADA", schema = Catalogs.SIGASR)
 public class SrConfiguracaoIgnorada extends Objeto {
 
 	/**
@@ -24,7 +25,7 @@ public class SrConfiguracaoIgnorada extends Objeto {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_CONFIGURACAO_IGNORADA_SEQ", name = "srConfIgnSeq")
+	@SequenceGenerator(sequenceName = "SR_CONFIGURACAO_IGNORADA_SEQ", schema = Catalogs.SIGASR, name = "srConfIgnSeq")
 	@GeneratedValue(generator = "srConfIgnSeq")
 	@Column(name = "ID_CONFIGURACAO_IGNORADA")	
 	public Long idConfiguracaoIgnorada;

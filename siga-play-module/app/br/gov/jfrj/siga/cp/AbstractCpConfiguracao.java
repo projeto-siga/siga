@@ -40,6 +40,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -66,7 +67,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	@Id
 	@GeneratedValue(generator = "generator")
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")
+	@SequenceGenerator(name = "generator", schema = Catalogs.CORPORATIVO, sequenceName = "CP_CONFIGURACAO_SEQ")
 	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;

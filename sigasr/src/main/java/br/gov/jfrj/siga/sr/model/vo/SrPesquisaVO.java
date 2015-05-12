@@ -16,7 +16,7 @@ public class SrPesquisaVO extends AbstractSelecionavel {
 	}
 	
 	public SrPesquisaVO(SrPesquisa pesquisa) {
-		super(pesquisa.idPesquisa, pesquisa.descrPesquisa);
+		super(pesquisa.getIdPesquisa(), pesquisa.getDescrPesquisa());
 		this.hisIdIni = pesquisa.getHisIdIni();
 		this.ativo = pesquisa.isAtivo();
 	}

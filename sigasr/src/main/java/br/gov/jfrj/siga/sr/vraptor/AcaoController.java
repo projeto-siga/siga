@@ -39,8 +39,9 @@ public class AcaoController extends SrController {
 		result.include("mostrarDesativados", mostrarDesativados);
 	}
 
+	@Path("/listarDesativados")
 	public void listarDesativados() throws Exception {
-		listar(Boolean.TRUE);
+		result.redirectTo(AcaoController.class).listar(Boolean.TRUE);
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)

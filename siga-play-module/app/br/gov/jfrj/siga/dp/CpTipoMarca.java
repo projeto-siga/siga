@@ -25,10 +25,11 @@ package br.gov.jfrj.siga.dp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
-@Table(schema="CORPORATIVO", name="CP_TIPO_MARCA")
+@Table(schema = Catalogs.CORPORATIVO, name="CP_TIPO_MARCA")
 public class CpTipoMarca extends AbstractCpTipoMarca {
 	public static final long TIPO_MARCA_SIGA_EX = 1;
 	public static final long TIPO_MARCA_SIGA_SR = 2;

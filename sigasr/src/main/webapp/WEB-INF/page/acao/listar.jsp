@@ -5,14 +5,17 @@
 
 	<jsp:include page="../main.jsp"></jsp:include>
 
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-	<script src="../../../javascripts/jquery.serializejson.min.js"></script>
-	<script src="../../../javascripts/jquery.populate.js"></script>
-	<script src="../../../javascripts/base-service.js"></script>
-	<script src="../../../javascripts/jquery.validate.min.js"></script>
-	<script src="../../../javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.populate.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
+	
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/moment.js"></script>
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
@@ -103,7 +106,7 @@
 			 tabelaRegistros : $('#acoes_table'),
 			 objectName : 'acao',
 			 formCadastro : $('#acaoForm'),
-			 mostrarDesativados : QueryString.mostrarDesativados,
+			 mostrarDesativados : $('#checkmostrarDesativados').attr('checked') ? true : false, //QueryString.mostrarDesativados,
 			 colunas : colunasAcao.acoes
 	};
 	

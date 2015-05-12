@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @NamedQueries({
@@ -35,7 +36,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 		@NamedQuery(name = "consultarPorSiglaStringCpServico", query = "select org from CpServico org "
 				+ "where upper(org.siglaServico) like upper(:siglaServico)") })
 @Entity
-@Table(name = "CP_SERVICO", schema = "CORPORATIVO")
+@Table(name = "CP_SERVICO", schema = Catalogs.CORPORATIVO)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpServico extends AbstractCpServico implements Selecionavel {
 

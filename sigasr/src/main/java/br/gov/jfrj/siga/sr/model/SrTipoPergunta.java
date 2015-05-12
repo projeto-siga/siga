@@ -7,11 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "SR_TIPO_PERGUNTA", schema = "SIGASR")
+@Table(name = "SR_TIPO_PERGUNTA", schema = Catalogs.SIGASR)
 public class SrTipoPergunta extends Objeto {
 
 	/**

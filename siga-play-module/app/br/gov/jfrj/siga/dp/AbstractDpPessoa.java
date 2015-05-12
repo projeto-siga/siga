@@ -26,7 +26,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 

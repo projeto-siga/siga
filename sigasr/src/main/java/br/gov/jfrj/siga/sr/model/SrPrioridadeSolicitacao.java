@@ -13,6 +13,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sr.model.vo.SrPrioridadeSolicitacaoVO;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
@@ -23,7 +24,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 @Entity
-@Table(name = "SR_PRIORIDADE_SOLICITACAO", schema = "SIGASR")
+@Table(name = "SR_PRIORIDADE_SOLICITACAO", schema = Catalogs.SIGASR)
 public class SrPrioridadeSolicitacao extends Objeto {
 
 	/**
@@ -32,7 +33,7 @@ public class SrPrioridadeSolicitacao extends Objeto {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_PRIORIDADE_SOLICITACAO_SEQ", name = "srPrioridadeSolicitacaoSeq")
+	@SequenceGenerator(sequenceName = "SR_PRIORIDADE_SOLICITACAO_SEQ", schema = Catalogs.SIGASR, name = "srPrioridadeSolicitacaoSeq")
 	@GeneratedValue(generator = "srPrioridadeSolicitacaoSeq")
 	@Column(name = "ID_PRIORIDADE_SOLICITACAO")
 	public Long idPrioridadeSolicitacao;

@@ -202,8 +202,8 @@
 							<!-- A lista de par -->
 							<tr>
 								<td>Classificação:</td>
-								<td><siga:selecao propriedade="filtro.tag" modulo="sigagc"
-										tipo="tag" tema="simple" ocultardescricao="nao" /></td>
+								<td><siga:selecao2 propriedade="filtro.tag" modulo="sigagc"
+										tipo="tag" tema="simple" /></td>
 							</tr>
 							<tr>
 								<td class="tdLabel"><label for="descrDocumento"

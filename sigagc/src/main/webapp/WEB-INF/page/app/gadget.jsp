@@ -13,9 +13,9 @@
 		<tbody>
 		<c:forEach var="contagem" items="${contagens}">
 			<tr>
-				<td ><a href="${linkTo[AppController].listar}?filtro.situacao.id=${contagem[0]}&filtro.lotaResponsavel=${lotaTitular.idLotacao}&filtro.pesquisa=true">${contagem[1]}</a></td>
-				<td align="right" ><a href="${linkTo[AppController].listar}?filtro.situacao.id=${contagem[0]}&filtro.responsavel=${cadastrante.idPessoa}&filtro.pesquisa=true">${contagem[2]}</a></td>
-				<td align="right" ><a href="${linkTo[AppController].listar}?filtro.situacao.id=${contagem[0]}&filtro.lotaResponsavel=${lotaTitular.idLotacao}&filtro.pesquisa=true">${contagem[3]}</a></td>
+				<td ><a href="${linkTo[AppController].listar}?filtro.situacao.id=${contagem[0]}&filtro.lotaResponsavel.id=${lotaTitular.idLotacao}&filtro.pesquisa=true">${contagem[1]}</a></td>
+				<td align="right" ><a href="${linkTo[AppController].listar}?filtro.situacao.id=${contagem[0]}&filtro.responsavel.id=${cadastrante.idPessoa}&filtro.pesquisa=true">${contagem[2]}</a></td>
+				<td align="right" ><a href="${linkTo[AppController].listar}?filtro.situacao.id=${contagem[0]}&filtro.lotaResponsavel.id=${lotaTitular.idLotacao}&filtro.pesquisa=true">${contagem[3]}</a></td>
 			</tr>
 		</c:forEach>
 		</tbody>

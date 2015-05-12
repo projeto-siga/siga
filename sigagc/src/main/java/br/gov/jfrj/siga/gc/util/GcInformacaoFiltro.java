@@ -52,7 +52,7 @@ public class GcInformacaoFiltro {
 
 		query = "from GcInformacao inf where inf.hisDtIni is not null ";
 
-		if (tag != null)
+		if (tag != null && tag.getId() != null && !tag.getId().equals(0L))
 			// query =
 			// "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = "
 			// + tag.id;
@@ -60,7 +60,7 @@ public class GcInformacaoFiltro {
 					+ tag.titulo + "'";
 		// query += " and inf.tags.id = " + tag.id;
 
-		if (orgaoUsu != null)
+		if (orgaoUsu != null && orgaoUsu.getId() != null)
 			query += " and inf.ou = " + orgaoUsu.getId();
 
 		if (autor != null)
@@ -69,7 +69,7 @@ public class GcInformacaoFiltro {
 			query += " and inf.lotacao.idLotacaoIni = "
 					+ lotacao.getIdInicial();
 
-		if (tipo != null)
+		if (tipo != null && tipo.id != 0L)
 			query += " and inf.tipo = " + tipo.id;
 
 		if (ano != null)

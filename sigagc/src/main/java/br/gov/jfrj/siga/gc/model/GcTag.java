@@ -112,6 +112,10 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	}
 
 	public void setId(Long id) {
+		if (id == null) {
+			this.id = 0;
+			return;
+		}
 		this.id = id;
 	}
 

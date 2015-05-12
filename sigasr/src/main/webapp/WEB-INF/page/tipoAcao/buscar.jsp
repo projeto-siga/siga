@@ -16,15 +16,16 @@
 					<tr>
 						<td>C&oacute;digo:</td>
 						<td>
-							<input type="text" name="tipoAcao.siglaTipoAcao" value="${tipoAcao.siglaTipoAcao}"/>
+							<input type="text" id="siglaTipoAcao" name="tipoAcao.siglaTipoAcao" value="${tipoAcao.siglaTipoAcao}"/>
 						</td>
 					</tr>
 					<tr>
 						<td>T&iacute;tulo</td>
 						<td>
-							<input type="text" name="tipoAcao.tituloTipoAcao" value="${tipoAcao.tituloTipoAcao}"/>
+							<input type="text" id="tituloTipoAcao" name="tipoAcao.tituloTipoAcao" value="${tipoAcao.tituloTipoAcao}"/>
 							<input type="hidden" name="nome" value="${nome}" />
 							<input type="hidden" name="tipoAcao"/>
+							<input type="hidden" name="propriedade" value="${param.propriedade}" />
 						</td>
 					</tr>
 					<tr>

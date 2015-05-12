@@ -92,7 +92,7 @@ public class TipoAcaoController extends SrController {
 	}
 
 	@Path("/buscar")
-	public void buscar(SrTipoAcao tipoAcao, String nome) {
+	public void buscar(SrTipoAcao tipoAcao, String nome, String propriedade) {
 		List<SrTipoAcao> itens = null;
 
 		SrTipoAcao filtro = null;
@@ -109,6 +109,7 @@ public class TipoAcaoController extends SrController {
 		result.include("itens", itens);
 		result.include("tipoAcao", filtro);
 		result.include("nome", nome);
+		result.include("param.propriedade", propriedade);
 	}
 
 	private boolean temSigla(String sigla) {

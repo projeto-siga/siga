@@ -41,6 +41,25 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<packagingExcludes>
+						WEB-INF/lib/siga-ext-*.jar
+					</packagingExcludes>
+					<webResources>
+						<resource>
+							<directory>src/main/webapp/paginas</directory>
+							<filtering>true</filtering>
+							<includes>
+								<include>login.jsp</include>
+								<include>loginInvalido.jsp </include>
+							</includes>
+							<targetPath>/paginas</targetPath>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -67,10 +86,10 @@
 		</dependency>
 
 		<dependency>
-		  <groupId>org.apache.tomcat</groupId>
-		  <artifactId>tomcat-catalina</artifactId>
-		  <version>8.0.11</version>
-		  <scope>provided</scope>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<version>8.0.11</version>
+			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>

@@ -71,8 +71,9 @@ public class ObjetoObjectInstantiator implements Instantiator<Object> {
 				if (id != null) {
 					EntityManager em = ContextoPersistencia.em();
 					obj = em.find(target.getClassType(), id);
-					em.detach(obj); // Detached para que não seja acidentalmente
-									// salva no banco de dados
+					if (obj != null)
+						em.detach(obj); // Detached para que não seja acidentalmente
+					// salva no banco de dados
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(

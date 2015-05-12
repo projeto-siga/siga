@@ -9,6 +9,7 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 
 import play.db.jpa.JPA;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -25,13 +26,13 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 @NamedNativeQuery(name = "contarSrMarcas", query = ""
 		+ "SELECT m.id_marcador, m.descr_marcador, c.cont_pessoa, c.cont_lota, c.cont_unassigned "
 		+ "FROM "
-		+ "	corporativo.cp_marcador m, "
+		+ Catalogs.CORPORATIVO + ".cp_marcador m, "
 		+ "	("
 		+ "		SELECT id_marcador,"
 		+ "		SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
 		+ "		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota, "
 		+ "		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni and id_pessoa_ini is null THEN 1 ELSE 0 END) cont_unassigned "
-		+ "		FROM corporativo.cp_marca marca"
+		+ "		FROM " + Catalogs.CORPORATIVO + ".cp_marca marca"
 		+ "		WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
 		+ "		AND (dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
 		+ "		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"

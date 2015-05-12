@@ -36,6 +36,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -43,7 +44,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "CP_CONFIGURACAO", schema = "CORPORATIVO")
+@Table(name = "CP_CONFIGURACAO", schema = Catalogs.CORPORATIVO)
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
 		@NamedQuery(name = "consultarDataUltimaAtualizacao", query = ""

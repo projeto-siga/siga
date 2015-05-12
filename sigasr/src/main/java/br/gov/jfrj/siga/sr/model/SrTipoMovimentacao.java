@@ -8,11 +8,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.model.ActiveRecord;
 import play.db.jpa.GenericModel;
+import br.gov.jfrj.siga.base.util.Catalogs;
 
 @Entity
-@Table(name = "SR_TIPO_MOVIMENTACAO", schema = "SIGASR")
+@Table(name = "SR_TIPO_MOVIMENTACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class SrTipoMovimentacao extends GenericModel {
 

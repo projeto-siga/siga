@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -29,12 +28,13 @@ import org.joda.time.DateTime;
 
 import play.db.jpa.GenericModel;
 import util.SigaPlayCalendar;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
 
 @Entity
-@Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
+@Table(name = "SR_MOVIMENTACAO", schema = Catalogs.SIGASR)
 public class SrMovimentacao extends GenericModel {
 
 	/**
@@ -43,7 +43,7 @@ public class SrMovimentacao extends GenericModel {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_MOVIMENTACAO_SEQ", name = "srMovimentacaoSeq")
+	@SequenceGenerator(sequenceName = "SR_MOVIMENTACAO_SEQ", schema = Catalogs.SIGASR, name = "srMovimentacaoSeq")
 	@GeneratedValue(generator = "srMovimentacaoSeq")
 	@Column(name = "ID_MOVIMENTACAO")
 	public long idMovimentacao;

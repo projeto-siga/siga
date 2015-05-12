@@ -72,6 +72,7 @@ import play.mvc.Router;
 import util.SigaPlayCalendar;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
@@ -88,14 +89,14 @@ import br.gov.jfrj.siga.sr.util.Cronometro;
 import br.gov.jfrj.siga.sr.util.Util;
 
 @Entity
-@Table(name = "SR_SOLICITACAO", schema = "SIGASR")
+@Table(name = "SR_SOLICITACAO", schema = Catalogs.SIGASR)
 public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	private static final long serialVersionUID = 1L;
 
 	public static ActiveRecord<SrSolicitacao> AR = new ActiveRecord<>(SrSolicitacao.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_SOLICITACAO_SEQ", name = "srSolicitacaoSeq")
+	@SequenceGenerator(sequenceName = "SR_SOLICITACAO_SEQ", schema = Catalogs.SIGASR, name = "srSolicitacaoSeq")
 	@GeneratedValue(generator = "srSolicitacaoSeq")
 	@Column(name = "ID_SOLICITACAO")
 	public Long idSolicitacao;
@@ -147,7 +148,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrSolicitacao solicitacaoPai;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SR_SOLICITACAO_ACORDO", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_SOLICITACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
+	@JoinTable(name = "SR_SOLICITACAO_ACORDO", schema = Catalogs.SIGASR, joinColumns = { @JoinColumn(name = "ID_SOLICITACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
 	public List<SrAcordo> acordos;
 
 	@Enumerated

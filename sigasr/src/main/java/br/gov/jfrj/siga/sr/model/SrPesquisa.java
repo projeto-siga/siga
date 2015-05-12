@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.Util;
@@ -25,8 +26,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 @Entity
-@Table(name = "SR_PESQUISA", schema = "SIGASR")
+@Table(name = "SR_PESQUISA", schema = Catalogs.SIGASR)
 public class SrPesquisa extends HistoricoSuporteVraptor {
 
 	/**
@@ -34,10 +37,10 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 	 */
 	private static final long serialVersionUID = 3775609274483552051L;
 
-	public static ActiveRecord<SrPesquisa> AR = new ActiveRecord<>(SrPesquisa.class);
+	public static final ActiveRecord<SrPesquisa> AR = new ActiveRecord<>(SrPesquisa.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_PESQUISA_SEQ", name = "srPesquisaSeq")
+	@SequenceGenerator(sequenceName = "SR_PESQUISA_SEQ", schema = Catalogs.SIGASR, name = "srPesquisaSeq")
 	@GeneratedValue(generator = "srPesquisaSeq")
 	@Column(name = "ID_PESQUISA")
 	private Long idPesquisa;
@@ -62,23 +65,17 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 	public SrPesquisa() {
 	}
 
-	public Long getId() {
-		return this.idPesquisa;
-	}
-
-	public void setId(Long id) {
-		idPesquisa = id;
-	}
-
 	@Override
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<SrPesquisa> getHistoricoPesquisa() {
 		if (pesquisaInicial != null)
 			return pesquisaInicial.meuPesquisaHistoricoSet;
-		return null;
+		
+		return Collections.emptyList();
 	}
 
 	public SrPesquisa getPesquisaAtual() {
@@ -115,9 +112,11 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 			}
 	}
 
+	@SuppressWarnings("unchecked")
 	public Set<SrPergunta> getPerguntaSetAtivas() {
 		if (pesquisaInicial == null)
-			return null;
+			return Collections.emptySet();
+
 		TreeSet<SrPergunta> listaCompleta = new TreeSet<SrPergunta>(
 				new Comparator<SrPergunta>() {
 					@Override
@@ -126,11 +125,10 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 					}
 				});
 		for (SrPesquisa pesquisa : getHistoricoPesquisa())
-			if (pesquisa.meuPesquisaHistoricoSet != null)
-				if (pesquisa.perguntaSet != null)
-					for (SrPergunta perg : pesquisa.perguntaSet)
-						if (perg.getHisDtFim() == null)
-							listaCompleta.add(perg);
+			if (pesquisa.meuPesquisaHistoricoSet != null && pesquisa.perguntaSet != null)
+				for (SrPergunta perg : pesquisa.perguntaSet)
+					if (perg.getHisDtFim() == null)
+						listaCompleta.add(perg);
 		return listaCompleta;
 	}
 
@@ -174,9 +172,9 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 		return jsonArray;
 	}
 
-	public SrPesquisa atualizarTiposPerguntas() {
+	public SrPesquisa atualizarTiposPerguntas() throws Exception {
 		for (SrPergunta srPergunta : this.perguntaSet) {
-			srPergunta.tipoPergunta = SrTipoPergunta.findById(srPergunta.tipoPergunta.getIdTipoPergunta());
+			srPergunta.tipoPergunta = SrTipoPergunta.AR.findById(srPergunta.tipoPergunta.getIdTipoPergunta());
 		}
 		return this;
 	}
@@ -196,14 +194,6 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 		}
 
 		return jsonArray;
-	}
-
-	public Long getIdPesquisa() {
-		return idPesquisa;
-	}
-
-	public void setIdPesquisa(Long idPesquisa) {
-		this.idPesquisa = idPesquisa;
 	}
 
 	public String getNomePesquisa() {
@@ -245,5 +235,23 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 	public void setPerguntaSet(Set<SrPergunta> perguntaSet) {
 		this.perguntaSet = perguntaSet;
 	}
-	
+
+	@Override
+	public Long getId() {
+		return getIdPesquisa();
+	}
+
+	@Override
+	public void setId(Long idPesquisa) {
+		this.setIdPesquisa(idPesquisa);
+	}
+
+	public Long getIdPesquisa() {
+		return idPesquisa;
+	}
+
+	public void setIdPesquisa(Long idPesquisa) {
+		this.idPesquisa = idPesquisa;
+	}
+
 }

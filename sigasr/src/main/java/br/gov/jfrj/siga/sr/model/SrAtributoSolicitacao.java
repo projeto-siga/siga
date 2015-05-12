@@ -10,9 +10,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.db.jpa.GenericModel;
+import br.gov.jfrj.siga.base.util.Catalogs;
 
 @Entity
-@Table(name="SR_ATRIBUTO_SOLICITACAO", schema="SIGASR")
+@Table(name="SR_ATRIBUTO_SOLICITACAO", schema = Catalogs.SIGASR)
 public class SrAtributoSolicitacao extends GenericModel {
 	
 	/**
@@ -21,7 +22,7 @@ public class SrAtributoSolicitacao extends GenericModel {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SOLICITACAO_SEQ", name = "srAtributoSolicitacaoSeq")
+	@SequenceGenerator(sequenceName = "SR_ATRIBUTO_SOLICITACAO_SEQ", schema = Catalogs.SIGASR, name = "srAtributoSolicitacaoSeq")
 	@GeneratedValue(generator = "srAtributoSolicitacaoSeq")
 	@Column(name = "ID_ATRIBUTO_SOLICITACAO")
 	public long id;

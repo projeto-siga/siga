@@ -1,12 +1,12 @@
 package br.gov.jfrj.siga.cp;
 
-import java.util.Calendar;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
+
 @Entity
-@Table(name = "CP_UNIDADE_MEDIDA", schema = "CORPORATIVO")
+@Table(name = "CP_UNIDADE_MEDIDA", schema = Catalogs.CORPORATIVO)
 public class CpUnidadeMedida extends AbstractCpUnidadeMedida {
 
 	final static public int ANO = 1;

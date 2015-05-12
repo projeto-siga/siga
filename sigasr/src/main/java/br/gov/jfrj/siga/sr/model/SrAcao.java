@@ -21,6 +21,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao.SrTipoAcaoVO;
@@ -30,7 +31,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Entity
-@Table(name = "SR_ACAO", schema = "SIGASR")
+@Table(name = "SR_ACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrAcao> {
 	private static final long serialVersionUID = 8387408543308440033L;
@@ -38,7 +39,7 @@ public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, C
 	public static ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ACAO_SEQ", name = "srAcaoSeq")
+	@SequenceGenerator(sequenceName = "SR_ACAO_SEQ", schema = Catalogs.SIGASR, name = "srAcaoSeq")
 	@GeneratedValue(generator = "srAcaoSeq")
 	@Column(name = "ID_ACAO")
 	private Long idAcao;

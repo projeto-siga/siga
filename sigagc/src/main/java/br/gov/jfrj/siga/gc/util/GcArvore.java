@@ -16,6 +16,9 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 	final HashMap<GcTag, Long> mapFreq = new HashMap<GcTag, Long>();
 	final HashMap<GcInformacao, List<GcTag>> mapInf = new HashMap<GcInformacao, List<GcTag>>();
 	final GcArvoreNo raiz = new GcArvoreNo();
+	public int getContador() {
+		return mapInf.size();
+	}
 	public void add(GcTag tag, GcInformacao inf) {
 		// Find frequency of each individual item (requires 1 table scan)
 		if (mapFreq.containsKey(tag)) {
@@ -174,7 +177,7 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 				if (no.infs.size() > 0) {
 					sb.append("<ul>");
 					for (GcInformacao inf : no.infs) {
-						sb.append("<li style='display:none' class=li"+ no.tag.titulo + "><a href=\"exibir?sigla=" + URLEncoder.encode(inf.getSigla(), "UTF-8") + "\">");
+						sb.append("<li style='display:none' class=li"+ no.tag.titulo + "><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
 						sb.append(inf.arq.titulo);
 						sb.append("</a></li>");
 					}
@@ -220,7 +223,7 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 				if (no.infs.size() < 3) {
 					sb.append("<ul>");
 					for (GcInformacao inf : no.infs) {
-						sb.append("<li class=li"+ no.tag.titulo +"><a href=\"exibir?sigla=" + URLEncoder.encode(inf.getSigla(), "UTF-8") + "\">");
+						sb.append("<li class=li"+ no.tag.titulo +"><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
 						sb.append(inf.arq.titulo);
 						sb.append("</a></li>");
 					}
@@ -234,10 +237,10 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 						//sb.append("<li><a href=\"exibir?id=" + inf.id + "\">");
 						
 						if(contador < 3){
-							sb.append("<li class=li" + no.tag.titulo + contador + "><a href=\"exibir?sigla=" + URLEncoder.encode(inf.getSigla(), "UTF-8") + "\">");
+							sb.append("<li class=li" + no.tag.titulo + contador + "><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
 						}
 						else{
-							sb.append("<li style='display:none' class=li"+ no.tag.titulo +"><a href=\"exibir?sigla=" + URLEncoder.encode(inf.getSigla(), "UTF-8") + "\">");
+							sb.append("<li style='display:none' class=li"+ no.tag.titulo +"><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
 						}
 						sb.append(inf.arq.titulo);
 						sb.append("</a></li>");

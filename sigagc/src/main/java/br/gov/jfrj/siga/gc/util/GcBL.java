@@ -66,7 +66,7 @@ public class GcBL {
 		mov.tipo = GcTipoMovimentacao.AR.findById(id);
 		if (mov.tipo == null)
 			throw new Exception(
-					"Não foi possível localizar um tipo de movimentacão com id="
+					"NÃ£o foi possÃ­vel localizar um tipo de movimentacÃ£o com id="
 							+ id);
 		mov.arq = arqDuplicado;
 		return movimentar(inf, mov);
@@ -82,7 +82,7 @@ public class GcBL {
 		mov.tipo = GcTipoMovimentacao.AR.findById(idTipo);
 		if (mov.tipo == null)
 			throw new Exception(
-					"Não foi possível localizar um tipo de movimentacão com id="
+					"NÃ£o foi possÃ­vel localizar um tipo de movimentacÃ£o com id="
 							+ idTipo);
 		mov.pessoaAtendente = pessoa;
 		mov.lotacaoAtendente = lotacao;
@@ -115,10 +115,8 @@ public class GcBL {
 				mov.arq = arq;
 			} else if (idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_EDICAO
 					|| idTipo == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) {
-				// throw new
-				// Exception("Não é permitido salvar uma informação com título, conteúdo e classificação vazios.");
 				throw new AplicacaoException(
-						"Não é permitido salvar uma informação com título ou conteúdo vazios.");
+						"NÃ£o Ã© permitido salvar uma informaÃ§Ã£o com tÃ­tulo ou conteÃºdo vazios.");
 			}
 		}
 
@@ -155,7 +153,7 @@ public class GcBL {
 		// dao().iniciarTransacao();
 		// try {
 
-		// Atualiza o campo arq, pois este não pode ser nulo
+		// Atualiza o campo arq, pois este nÃ£o pode ser nulo
 		if (inf.movs != null) {
 			for (GcMovimentacao mov : inf.movs) {
 				if (inf.arq == null)
@@ -344,7 +342,7 @@ public class GcBL {
 	}
 
 	/**
-	 * Executa algoritmo de comparação entre dois sets e preenche as listas:
+	 * Executa algoritmo de comparaÃ§Ã£o entre dois sets e preenche as listas:
 	 * inserir, excluir e atualizar.
 	 */
 	private void encaixar(SortedSet<GcMarca> setA, SortedSet<GcMarca> setB,
@@ -415,8 +413,8 @@ public class GcBL {
 	}
 
 	/**
-	 * Calcula quais as marcas cada informação terá com base nas
-	 * movimentações que foram feitas na informacao.
+	 * Calcula quais as marcas cada informaÃ§Ã£o terÃ¡ com base nas
+	 * movimentaÃ§Ãµes que foram feitas na informacao.
 	 * 
 	 * @param inf
 	 */
@@ -658,7 +656,7 @@ public class GcBL {
 	/**
 	 * Metodo que grava arquivos no GcArquivo e atrela esse arquivo a um conhecimento atraves  
 	 * da movimentacao TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO.
-	 * Chamado pela página anexar.html
+	 * Chamado pela pï¿½gina anexar.html
 	 */
 	public void gravarArquivoComMovimentacao(GcInformacao info,
 			CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular,
@@ -672,7 +670,7 @@ public class GcBL {
 	
 	/**
 	 * Metodo que grava imagens no GcArquivo sem associa-las a um conhecimento.
-	 * Chamado pela página editar.html
+	 * Chamado pela pÃ¡gina editar.html
 	 */
 	public long gravarArquivoSemMovimentacao(byte[] file, String titulo, String contentType) {
 		GcArquivo arq = new GcArquivo();

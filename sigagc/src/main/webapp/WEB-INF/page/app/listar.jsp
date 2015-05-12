@@ -69,17 +69,17 @@
 										<td style="padding: 0; width: 30% !important;">
 											<table class="gt-table-lista">
 												<c:set var="cont" value="${0}" />
-												<c:forEach items="${marcas}" var="m">
+												<c:forEach items="${i.marcas}" var="m">
 													<c:if
 														test="${filtro.situacao.idMarcador == m.cpMarcador.idMarcador || filtro.situacao.idMarcador == null}">
 														<c:set var="j" value="${cont == 0 ? 0 : k}" />
 														<tr class="status-${j}">
 															<td style="width: 73px !important;">${m.dtIniMarcaDDMMYYYY}</td>
 															<td style="width: 50px !important;"><span
-																title="${m.dpLotacaoIni?.descricao}">${m.dpLotacaoIni.sigla}</span>
+																title="${m.dpLotacaoIni.descricao}">${m.dpLotacaoIni.sigla}</span>
 															</td>
 															<td style="width: 50px !important;"><span
-																title="${m.dpPessoaIni?.descricao}">${m.dpPessoaIni.sigla}</span>
+																title="${m.dpPessoaIni.descricao}">${m.dpPessoaIni.sigla}</span>
 															</td style="width:20%!important;">
 															<td>${m.cpMarcador.descrMarcador}</td>
 														</tr>

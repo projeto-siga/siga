@@ -156,7 +156,7 @@
 	
 	function drawEvolution() {
 		// Some raw data (not necessarily accurate)
-		var data = google.visualization.arrayToDataTable([${evolucao.raw()}]);
+		var data = google.visualization.arrayToDataTable([${evolucao}]);
 	
 		// Create and draw the visualization.
 		var grafico = new google.visualization.ColumnChart(document.getElementById('evolution'));

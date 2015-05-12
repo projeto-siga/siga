@@ -8,10 +8,10 @@
 		</li>
 		<li><a class="" href="${linkTo[AppController].listar}">Pesquisar</a>
 		</li>
-		<li><a class="" href="#">Estatísticas</a>
+		<li><a class="" href="#">EstatÃ­sticas</a>
 			<ul>
 				<li><a class="" href="${linkTo[AppController].estatisticaGeral}">Gerais</a></li>
-				<li><a class="" href="${linkTo[AppController].estatisticaLotacao}">Por Lotação</a></li>
+				<li><a class="" href="${linkTo[AppController].estatisticaLotacao}">Por LotaÃ§Ã£o</a></li>
 			</ul>
 		</li>
 	</ul></li>

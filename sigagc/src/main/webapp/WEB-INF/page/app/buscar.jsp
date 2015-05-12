@@ -21,21 +21,21 @@
 			</div>
 		
 			<c:if test="${not empty texto}">
-				<c:if test="${empty arvore}">
+				<c:if test="${arvore.getContador() == 0}">
 					<p class="gt-notice-box">A busca não retornou resultados.</p>
 					<br />
 					<div class="gt-cancel" style="float:left;"><a href="/sigagc/app/buscar">voltar</a></div>
 				</c:if>
-				<c:if test="${not empty arvore}">
+				<c:if test="${arvore.getContador() > 0}">
 					<c:if test="${not empty texto}">
 						<div style="float:right;"><a href="/sigagc/app/buscar">remover filtro: "${texto}"</a></div>
 						<br />	
 					</c:if>
-					<div>${arvore.toHTML(texto).raw()}</div>			
+					<div>${arvore.toHTML(texto)}</div>
 				</c:if>
 			</c:if>
 			<c:if test="${empty texto}">
-				<div>${arvore.toHTML(texto).raw()}</div>
+				<div>${arvore.toHTML(texto)}</div>
 			</c:if>
 			
 			<c:if test="${not empty classificacao}">

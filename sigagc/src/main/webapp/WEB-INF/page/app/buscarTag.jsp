@@ -7,22 +7,21 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<div class="gt-content-box gt-for-table">
-				<form action="@{Application.buscarTag}" id="frm">
+				<form action="${linkTo[AppController].buscarTag}" id="frm">
 					<input type="hidden" name="popup" value="true" />
 					<table class="gt-form-table">
 						<tr class="header">
 							<td align="center" valign="top" colspan="4">Dados do item</td>
 						</tr>
 						<tr>
-							<td width="25%">TÃ­tulo:</td>
+							<td width="25%">Ti­tulo:</td>
 							<td><input type="text" name="filtro.titulo"
 								value="${filtro.titulo}" />
 							</td>
 						</tr>
 						<tr>
-							<siga:select  label="Categoria" name="filtro.categoria" list="listaTagCategorias" listKey="false" listValue="false">
-								#{option null}[Todas]#{/option}
-								</siga:select>
+							<siga:select label="Categoria" name="filtro.categoria" list="listaTagCategorias" listKey="false" listValue="false" 
+									headerValue="Todas"/>
 						</tr>
 						<tr>
 							<td><input type="hidden" name="nome" value="${nome}" /> <input
@@ -40,7 +39,7 @@
 		<div class="gt-content-box gt-for-table">
 			<table class="gt-table">
 				<tr>
-					<th>TÃ­tulo
+					<th>Tí­tulo
 					</td>
 					<th>Categoria
 					</td>
@@ -48,7 +47,7 @@
 				<c:forEach var="item" items="${itens}">
 				<tr>
 					<td><a
-						href="javascript:opener.retorna_item${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">
+						href="javascript:opener.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');window.close()">
 							<siga:selecionado sigla="${item.sigla}" descricao="${item.descricao}" /></a>
 					</td>
 					<td>${item.categoria}</td>

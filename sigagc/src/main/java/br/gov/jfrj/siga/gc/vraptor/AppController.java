@@ -342,7 +342,6 @@ public class AppController extends GcController {
 					(Integer) visitados[1], 0, (Long) visitados[2], 0));
 		}
 		String evolucao = set.criarGrafico();
-
 		result.include("listaMaisRecentes", listaMaisRecentes);
 		result.include("listaMaisVisitados", listaMaisVisitados);
 		result.include("listaPrincipaisAutores", listaPrincipaisAutores);
@@ -1110,12 +1109,14 @@ public class AppController extends GcController {
 		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null);
 	}
 
+	@Path("/app/tag/selecionar")
 	public void selecionarTag(String sigla) throws Exception {
 		GcTag sel = (GcTag) new GcTag().selecionar(sigla);
 		result.include("sel", sel);
 		// render("@siga-play-module.selecionar", sel);
 	}
 
+	@Path("/app/tag/buscar")
 	public void buscarTag(String sigla, GcTag filtro) {
 		List<GcTag> itens = null;
 

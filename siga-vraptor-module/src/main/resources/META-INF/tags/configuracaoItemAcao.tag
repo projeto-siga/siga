@@ -92,8 +92,7 @@
 				<div class="gt-form-row">
 					<div class="gt-form-row">
 						<label>Item de Configuração</label>
-						<siga:selecao2 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"
-						     onchange="bloqueiaItemOkSeVazio()"/>
+						<siga:selecao2 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr" onchange="bloqueiaItemOkSeVazio()"/>
 						<span style="display:none;color: red" id="designacao.itemConfiguracao">Item de Configuração não informado.</span>
 					</div>
 					<div class="gt-form-row">
@@ -122,8 +121,7 @@
 				<div class="gt-form-row">
 					<div class="gt-form-row">
 						<label>Ação</label> 
-						<siga:selecao2 propriedade="acao" tipo="acao" tema="simple" modulo="sigasr"
-						 	onchange="bloqueiaAcaoOkSeVazio()"/>
+						<siga:selecao2 propriedade="acao" tipo="acao" tema="simple" modulo="sigasr" onchange="bloqueiaAcaoOkSeVazio()"/>
 						<span style="display:none;color: red" id="designacao.acao">Ação não informada.</span>
 					</div>
 					<div class="gt-form-row">

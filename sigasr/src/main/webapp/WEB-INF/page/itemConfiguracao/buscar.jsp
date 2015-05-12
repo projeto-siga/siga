@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <jsp:include page="../popupHeader.jsp"></jsp:include>
+<jsp:include page="../main.jsp"></jsp:include>
 
 <script language="javascript">
 function sbmt(nivel){

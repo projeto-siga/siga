@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import play.data.validation.Validation;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -77,6 +78,9 @@ public class ItemConfiguracaoController extends SrController {
 		result.include("lista", lista.toJson());
 	}
 	
+	
+	@Get
+	@Path("/{id}/designacoes")
 	public void buscarDesignacoes(Long id) throws Exception {
 		List<SrConfiguracao> designacoes;
 
@@ -88,7 +92,9 @@ public class ItemConfiguracaoController extends SrController {
 		else
 			designacoes = new ArrayList<SrConfiguracao>();
 
-		result.include("designacoes", SrConfiguracao.convertToJSon(designacoes));
+		result.use(Results.json())
+		.from(SrConfiguracao.convertToJSon(designacoes))
+	    .serialize();
 	}
 	
 	private void validarFormEditarLista(SrLista lista) {

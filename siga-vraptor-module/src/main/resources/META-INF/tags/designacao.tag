@@ -1,6 +1,8 @@
-<%@ tag body-content="scriptless"%>
+<%@ tag body-content="empty"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <%@ attribute name="orgaos" required="false"%>
 <%@ attribute name="locais" required="false"%>
@@ -10,7 +12,6 @@
 <%@ attribute name="designacoes" required="false"%>
 <%@ attribute name="modoExibicao" required="false"%>
 <%@ attribute name="mostrarDesativados" required="false"%>
-
 
 <div class="gt-content">
 	<!-- content bomex -->
@@ -24,7 +25,7 @@
 			</div>
 		</c:if>
 
-		<table id="designacoes_table" border="0" class="gt-table display">
+		<table id="designacoes_table" border="" class="gt-table display">
 			<thead>
 				<tr>
 					<th style="color: #333">
@@ -79,20 +80,19 @@
 	</div>
 </div>
 
+<style>
+#sortable ul {
+        height: 1.5em;
+        line-height: 1.2em;
+}
+
+.ui-state-highlight {
+        height: 1.5em;
+        line-height: 1.2em;
+}
+</style>
 <siga:modal nome="designacao" titulo="Cadastrar Designacao">
 	<div id="divEditarDesignacaoItem">
-	
-		<style>
-		#sortable ul {
-		        height: 1.5em;
-		        line-height: 1.2em;
-		}
-		
-		.ui-state-highlight {
-		        height: 1.5em;
-		        line-height: 1.2em;
-		}
-		</style>
 		<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 			<form id="formDesignacao">
 				<input type="hidden" id="idConfiguracao" name="idConfiguracao" value="${idConfiguracao}" />

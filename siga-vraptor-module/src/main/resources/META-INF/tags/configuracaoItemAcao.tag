@@ -12,7 +12,7 @@
 		<label>Itens de Configuração</label>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
-			<table id="itemConfiguracao_table" border="0" class="gt-table-nowrap display">
+			<table id="itemConfiguracao_table" border="" class="gt-table-nowrap display">
 				<thead>
 					<tr>
 						<th>ID</th>
@@ -48,7 +48,7 @@
 		<label>Ações</label>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
-			<table id="acao_table" border="0" class="gt-table display">
+			<table id="acao_table" border="" class="gt-table display">
 				<thead>
 					<tr>
 						<th>ID</th>

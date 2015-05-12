@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Itens de Configuração">
+<siga:pagina titulo="Itens de ConfiguraÃ§Ã£o">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	
@@ -57,7 +57,7 @@
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
-			<h2>Itens de Configuração</h2>
+			<h2>Itens de ConfiguraÃ§Ã£o</h2>
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
@@ -74,9 +74,9 @@
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th>Código</th>
-							<th>Título</th>
-							<th>Descrição</th>
+							<th>CÃ³digo</th>
+							<th>TÃ­tulo</th>
+							<th>DescriÃ§Ã£o</th>
 							<th>Similaridade</th>
 							<th></th>
 							<th>VO Item</th>
@@ -85,8 +85,8 @@
 	
 					<tbody>
 						<c:forEach items="${itens}" var="item">
-							<tr data-json-id="${item.idItemConfiguracao}" data-json="${item.toVO().toJson()}" 
-								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
+							<tr data-json-id="${item.idItemConfiguracao}" data-json='${item.toVO().toJson()}' 
+								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuraÃ§Ã£o')"
 								style="cursor: pointer;">
 								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 								<td>${item.siglaItemConfiguracao}</td>
@@ -250,7 +250,7 @@
 	itemConfiguracaoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		atualizarModalItem(obj);
-		// carrega as designações do item
+		// carrega as designaï¿½ï¿½es do item
 		carregarDesignacoes(obj.id);
 	}
 
@@ -299,15 +299,14 @@
 	function carregarDesignacoes(id) {
         $.ajax({
         	type: "GET",
-        	url: "${linkTo[ItemConfiguracaoController].buscarDesignacoes}",
-        	data: id,
+        	url: "/sigasr/app/itemConfiguracao/" + id + "/designacoes",
         	dataType: "text",
         	success: function(lista) {
         		var listaJSon = JSON.parse(lista);
         		designacaoService.populateFromJSonList(listaJSon);
         	},
         	error: function(error) {
-            	alert("NÃ£o foi possível carregar as Designações deste item.");
+            	alert("NÃ£o foi possÃ­vel carregar as DesignaÃ§Ãµes deste item.");
         	}
        	});
     }

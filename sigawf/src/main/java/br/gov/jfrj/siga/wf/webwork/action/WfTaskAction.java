@@ -823,7 +823,10 @@ public class WfTaskAction extends WfSigaActionSupport {
 				|| (lotaActorId != null
 						&& taskInstance.getPooledActors().size() != 0 && !((PooledActor) taskInstance
 						.getPooledActors().toArray()[0]).getActorId().equals(
-						lotaActorId));
+						lotaActorId) || 
+						(taskInstance.getSwimlaneInstance() != null && 
+							!((PooledActor)taskInstance.getSwimlaneInstance().getPooledActors().toArray()[0]).getActorId().equals(lotaActorId))
+						);
 
 		if (fActorChanged || fPooledActorsChanged)
 			assertPodeTransferirDocumentosVinculados(taskInstance,
@@ -846,6 +849,11 @@ public class WfTaskAction extends WfSigaActionSupport {
 						lotAtualPool != null ? lotAtualPool : lotAtualAtor,
 						daoLot(lotaAtorSel.getId()));
 				taskInstance.setPooledActors(new String[] { lotaActorId });
+				if (taskInstance.getSwimlaneInstance() != null){
+					PooledActor pa = (PooledActor) taskInstance.getSwimlaneInstance().getPooledActors().iterator().next();
+					pa.setActorId(lotaActorId);
+				}else{
+				}
 			}
 		}
 		if (fActorChanged || fPooledActorsChanged)

@@ -16,6 +16,7 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrPergunta;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.model.SrTipoPergunta;
@@ -25,8 +26,12 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 @Resource
 @Path("app/pesquisaSatisfacao")
 public class PesquisaSatisfacaoController extends SrController {
+	
+	private static final String PESQUISA = "pesquisa";
 
-	public PesquisaSatisfacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
+	public PesquisaSatisfacaoController(HttpServletRequest request,
+			Result result, CpDao dao, SigaObjects so, EntityManager em,
+			SrValidator srValidator) {
 		super(request, result, dao, so, em, srValidator);
 	}
 
@@ -44,6 +49,11 @@ public class PesquisaSatisfacaoController extends SrController {
 		result.include("tipos", tipos);
 		result.include("orgaos", orgaos);
 		result.include("locais", locais);
+		result.include("mostrarDesativados", mostrarDesativados);
+	}
+
+	public void listarDesativados() throws Exception {
+		listar(Boolean.TRUE);
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
@@ -63,7 +73,17 @@ public class PesquisaSatisfacaoController extends SrController {
 
 		result.use(Results.http()).body(pesq.toJson());
 	}
-	
+
+	// @AssertAcesso(ADM_ADMINISTRAR)
+	@Path("/editar")
+	public void editar(Long id) throws Exception {
+		SrPesquisa pesquisa = new SrPesquisa();
+		if (id != null)
+			pesquisa = SrPesquisa.AR.findById(id);
+
+		result.include(PESQUISA, pesquisa);
+	}
+
 	// @AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrPesquisa srPesquisa, Set<SrPergunta> perguntaSet) throws Exception {
@@ -75,9 +95,58 @@ public class PesquisaSatisfacaoController extends SrController {
 		result.use(Results.http()).body(pesquisa.toJson());
 	}
 	
-	public void listarDesativados() throws Exception {
-		listar(Boolean.TRUE);
+
+	// @AssertAcesso(ADM_ADMINISTRAR)
+	@Path("/listarAssociacao/{idPesquisa}")
+	public void listarAssociacao(Long idPesquisa) throws Exception {
+		SrPesquisa pesquisa = new SrPesquisa();
+
+		if (idPesquisa != null)
+			pesquisa = SrPesquisa.AR.findById(idPesquisa);
+
+		List<SrConfiguracao> associacoes = SrConfiguracao
+				.listarAssociacoesPesquisa(pesquisa, Boolean.FALSE);
+
+		result.use(Results.http()).body(
+				SrConfiguracao.convertToJSon(associacoes));
 	}
 
+	@Path("/listarAssociacaoDesativados/{idPesquisa}")
+	public void listarAssociacaoDesativados(Long idPesquisa) throws Exception {
+		SrPesquisa pesquisa = new SrPesquisa();
+		if (idPesquisa != null)
+			pesquisa = SrPesquisa.AR.findById(idPesquisa);
+		List<SrConfiguracao> associacoes = SrConfiguracao
+				.listarAssociacoesPesquisa(pesquisa, Boolean.TRUE);
+
+		result.use(Results.http()).body(
+				SrConfiguracao.convertToJSon(associacoes));
+	}
+
+	// @AssertAcesso(ADM_ADMINISTRAR)
+	@Path("/desativarAssociacaoEdicao")
+	public void desativarAssociacaoEdicao(Long idAssociacao) throws Exception {
+		SrConfiguracao associacao = SrConfiguracao.AR.em().find(SrConfiguracao.class, idAssociacao);
+		associacao.finalizar();
+		result.use(Results.http()).body(associacao.toJson());
+	}
+
+	// @AssertAcesso(ADM_ADMINISTRAR)
+	@Path("/desativarAssociacaoPesquisaEdicao")
+	public void desativarAssociacaoPesquisaEdicao(Long idAssociacao) throws Exception {
+		SrConfiguracao associacao = SrConfiguracao.AR.em().find(SrConfiguracao.class, idAssociacao);
+		associacao.finalizar();
+		result.use(Results.http()).body(associacao.toJson());
+	}
+
+	@Path("/buscarAssociacao/{idPesquisa}")
+	public void buscarAssociacao(Long idPesquisa) throws Exception {
+		SrPesquisa pesq = SrPesquisa.AR.findById(idPesquisa);
+
+		if (pesq != null) {
+			result.use(Results.http()).body(pesq.toJson(true));
+		}
+		result.use(Results.http()).body("");
+	}
 
 }

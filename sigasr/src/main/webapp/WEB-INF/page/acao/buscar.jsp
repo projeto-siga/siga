@@ -1,13 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<title>Siga - Tipo A&ccedil;&atilde;o</title>
-
 <jsp:include page="../popupHeader.jsp"></jsp:include>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">
-			<form method="POST" action="${linkTo[TipoAcaoController].buscar}" enctype="multipart/form-data">
+			<form method="POST" action="${linkTo[AcaoController].buscar}" enctype="multipart/form-data">
 				<input type="hidden" name="popup" value="true" />
 				<table class="gt-form-table">
 					<tr class="header">
@@ -16,16 +14,14 @@
 					<tr>
 						<td>C&oacute;digo:</td>
 						<td>
-							<input type="text" id="siglaTipoAcao" name="tipoAcao.siglaTipoAcao" value="${tipoAcao.siglaTipoAcao}"/>
+							<input type="text" name="filtro.siglaTipoAcao" value="${filtro.siglaTipoAcao}" />
 						</td>
 					</tr>
 					<tr>
 						<td>T&iacute;tulo</td>
 						<td>
-							<input type="text" id="tituloTipoAcao" name="tipoAcao.tituloTipoAcao" value="${tipoAcao.tituloTipoAcao}"/>
+							<input type="text" name="filtro.tituloTipoAcao" value="${filtro.tituloTipoAcao}" />
 							<input type="hidden" name="nome" value="${nome}" />
-							<input type="hidden" name="tipoAcao"/>
-							<input type="hidden" name="propriedade" value="${param.propriedade}" />
 						</td>
 					</tr>
 					<tr>

@@ -48,7 +48,7 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 	private static final long serialVersionUID = 7243562288736225097L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_DISPONIBILIDADE_SEQ", schema = Catalogs.SIGASR, name = "srDisponibilidadeSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_DISPONIBILIDADE_SEQ", name = "srDisponibilidadeSeq")
 	@GeneratedValue(generator = "srDisponibilidadeSeq")
 	@Column(name = "ID_DISPONIBILIDADE")
 	private Long idDisponibilidade;

@@ -10,14 +10,17 @@ import play.data.validation.Validation;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
+import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -125,13 +128,58 @@ public class ItemConfiguracaoController extends SrController {
 	
 	private void validarFormEditarLista(SrLista lista) {
 		if (lista.nomeLista == null || lista.nomeLista.trim().equals("")) {
-			Validation.addError("lista.nomeLista",
-					"Nome da Lista n√£o informados");
+			Validation.addError("lista.nomeLista","Nome da Lista n„o informados");
 		}
 
 		if (Validation.hasErrors()) {
 			enviarErroValidacao();
 		}
+	}
+	
+	@Path("/buscar")
+	public void buscar(String sigla, String nome, String siglaItemConfiguracao, 
+			String tituloItemConfiguracao, SrSolicitacao sol, String propriedade) {
+		List<SrItemConfiguracao> items = null;
+		SrItemConfiguracao filtro = new SrItemConfiguracao();
+		try {
+			filtro.setSiglaItemConfiguracao(siglaItemConfiguracao);
+			filtro.setTituloItemConfiguracao(tituloItemConfiguracao);
+			
+			if (sigla != null && !sigla.trim().equals(""))
+				filtro.setSigla(sigla);
+			
+			if (buscaPorItens(sol)) {
+				items = filtro.buscar(sol.getItensDisponiveis());
+			}else{
+				items = filtro.buscar();
+			}
+		} catch (Exception e) {
+			items = new ArrayList<SrItemConfiguracao>();
+		}
+		if (sol.getLocal() == null ){
+			sol.setLocal(new CpComplexo());
+		}
+		if (sol.getSolicitante() == null ){
+			sol.setSolicitante(new DpPessoa());
+		}
+		result.include("items", items);
+		result.include("sol", sol);
+		result.include("filtro", filtro);
+		result.include("nome", nome);
+		result.include("propriedade", propriedade);
+	}
+
+	private boolean buscaPorItens(SrSolicitacao sol) {
+		return sol != null && 
+				((sol.getSolicitante() != null && sol.getSolicitante().getId() != null) || 
+				 (sol.getLocal() != null && sol.getLocal().getIdComplexo() != null));
+	}
+	
+	@Path("/selecionar")
+	public void selecionar(String sigla, SrSolicitacao sol) throws Exception {
+		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla, sol.getItensDisponiveis());
+		result.include("selecionar", sel);			
+		result.use(Results.status()).ok();
 	}
 
 }

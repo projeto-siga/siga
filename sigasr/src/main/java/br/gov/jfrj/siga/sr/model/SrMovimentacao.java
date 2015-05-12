@@ -43,7 +43,7 @@ public class SrMovimentacao extends GenericModel {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_MOVIMENTACAO_SEQ", schema = Catalogs.SIGASR, name = "srMovimentacaoSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_MOVIMENTACAO_SEQ", name = "srMovimentacaoSeq")
 	@GeneratedValue(generator = "srMovimentacaoSeq")
 	@Column(name = "ID_MOVIMENTACAO")
 	public long idMovimentacao;
@@ -287,8 +287,8 @@ public class SrMovimentacao extends GenericModel {
 		solicitacao.atualizarMarcas();
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
-				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.ABERTURA
-				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.ABERTURA_FECHAMENTO
+				&& solicitacao.getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA
+				&& !(solicitacao.getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
 		

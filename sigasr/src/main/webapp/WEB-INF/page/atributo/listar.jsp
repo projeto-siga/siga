@@ -48,6 +48,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
 			<h2>Pesquisa de atributos</h2>
+					 
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">

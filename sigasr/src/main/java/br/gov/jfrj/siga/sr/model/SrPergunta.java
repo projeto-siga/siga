@@ -17,7 +17,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
-@Table(name = "SR_PERGUNTA", schema = "SIGASR")
+@Table(name = "SR_PERGUNTA", schema = Catalogs.SIGASR)
 public class SrPergunta extends HistoricoSuporteVraptor {
 
 	/**

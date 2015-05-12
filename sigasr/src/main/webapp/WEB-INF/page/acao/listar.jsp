@@ -121,7 +121,7 @@
 			if (document.getElementById('checkmostrarDesativados').checked)
 				location.href = "${linkTo[AcaoController].listarDesativados}";
 			else
-				location.href = "${linkTo[AcaoController].listar}";
+				location.href = "${linkTo[AcaoController].listar[false]}";
 		});
 		
 		/* Table initialization */

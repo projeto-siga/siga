@@ -92,14 +92,14 @@ public class TipoAcaoController extends SrController {
 	}
 
 	@Path("/buscar")
-	public void buscar(String sigla, String nome) {
+	public void buscar(SrTipoAcao tipoAcao, String nome, String propriedade) {
 		List<SrTipoAcao> itens = null;
 
 		SrTipoAcao filtro = null;
 		try {
-			filtro = new SrTipoAcao();
-			if (temSigla(sigla))
-				filtro.setSigla(sigla);
+			filtro = (null != tipoAcao) ? tipoAcao : new SrTipoAcao();
+			if (temSigla(tipoAcao.getSiglaTipoAcao()))
+				filtro.setSigla(tipoAcao.getSiglaTipoAcao());
 
 			itens = filtro.buscar();
 		} catch (Exception e) {
@@ -107,8 +107,9 @@ public class TipoAcaoController extends SrController {
 		}
 
 		result.include("itens", itens);
-		result.include("filtro", filtro);
+		result.include("tipoAcao", filtro);
 		result.include("nome", nome);
+		result.include("param.propriedade", propriedade);
 	}
 
 	private boolean temSigla(String sigla) {

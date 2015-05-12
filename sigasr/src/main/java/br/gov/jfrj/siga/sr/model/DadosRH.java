@@ -6,10 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import play.db.jpa.GenericModel;
 
 @Entity
-@Table(name = "DADOS_RH", schema = "SIGARH")
+@Table(name = "DADOS_RH", schema = Catalogs.SIGASR)
 public class DadosRH  extends GenericModel {
 	private static final long serialVersionUID = -3610233962047379185L;
 	

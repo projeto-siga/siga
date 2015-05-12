@@ -110,7 +110,7 @@
 	<script>
 	//Edson: esta funcao evita que o usuario de ok sem a busca por ajax ter terminado
 	function bloqueiaAcaoOkSeVazio() {
-		if ($("#acao").val() && $("#acao_sigla").val() && $("#acaoSpan").text())
+		if ($("#formulario_acao_id").val() && $("#formulario_acao_sigla").val() && $("#acaoSpan").text())
 			$("#modalAcaoOk").removeAttr('disabled');
 		else 
 			$("#modalAcaoOk").attr("disabled", "disabled");
@@ -278,7 +278,7 @@
 	    } );
 	}
 	configuracaoItemAcaoService.inserirAcao = function() {
-		var idSelecionado = $("#acao").val();
+		var idSelecionado = $("#formulario_acao_id").val();
 		
 		if (idSelecionado == undefined || idSelecionado == '') {
 			alert("Por favor, selecione uma ação antes de continuar, ou clique em Cancelar.");

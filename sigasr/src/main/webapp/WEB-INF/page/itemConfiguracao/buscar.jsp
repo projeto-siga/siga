@@ -20,15 +20,16 @@ function sbmt(nivel){
 					</tr>
 					<tr>
 						<td>Código:</td>
-						<td><input type="text" name="filtro.siglaItemConfiguracao" value="${filtro.siglaItemConfiguracao}" />
+						<td><input type="text" name="siglaItemConfiguracao" value="${filtro.siglaItemConfiguracao}" />
 						</td>
 					</tr>
 					<tr>
 						<td>Título</td>
-						<td><input type="text" name="filtro.tituloItemConfiguracao" value="${filtro.tituloItemConfiguracao}" /></td>
+						<td><input type="text" name="tituloItemConfiguracao" value="${filtro.tituloItemConfiguracao}" /></td>
 					</tr>
 					<tr>
 						<td><input type="hidden" name="nome" value="${nome}" />
+							<input type="hidden" name="propriedade" value="${propriedade}" />
 							<input type="hidden" name="sol.solicitante" value="${sol.solicitante.idPessoa}" />
 							<input type="hidden" name="sol.titular" value="${sol.titular.idPessoa}" />
 							<input type="hidden" name="sol.lotaTitular" value="${sol.lotaTitular.idLotacao}" />
@@ -71,19 +72,18 @@ function sbmt(nivel){
 									&nbsp;&nbsp;
 								</c:otherwise>
 							</c:choose>
-							
 							<c:choose>
-								<c:when test="${item.especifico || (!sol.solicitante && !sol.local) }">
+								<c:when test="${item.especifico || (not empty sol.solicitante && not empty sol.local) }">
 									<a href="javascript:opener.retorna_${param.propriedade}${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.tituloItemConfiguracao}</a>
 								</c:when>
 								<c:otherwise>
-									<span>${item.tituloItemConfiguracao}</span>
+									<span>${item.tituloItemConfiguracao} / </span>
 								</c:otherwise>
 							</c:choose>
 						</td>
 						<td class="gt-celula-nowrap">${item.siglaItemConfiguracao}</td>
-						<td class="gt-celula-nowrap"><siga:selecionado sigla="${item.descrItemConfiguracao}" descricao="${item.descrItemConfiguracao}"></siga:selecionado></td>
-						<td class="gt-celula-nowrap"><siga:selecionado sigla="${item.descricaoSimilaridade}" descricao="${item.descricaoSimilaridade}"></siga:selecionado></td>
+						<td class="gt-celula-nowrap">${item.descrItemConfiguracao}</td>
+						<td class="gt-celula-nowrap">${item.descricaoSimilaridade}</td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -93,14 +93,15 @@ function sbmt(nivel){
 
 <script language="javascript">
 
-<c:if test="${!filtro.tituloItemConfiguracao}">
-$(document).ready(function(){
-	var sinais = $("[name='sinal']"); 
-	for(i=0; i<sinais.length; i++ ){
-        clica(sinais[i]);
-     }
+$(document).ready(function() {
+	var titulo = "${filtro.tituloItemConfiguracao}"; 
+	if (titulo == "" || titulo == undefined) {
+		var sinais = $("[name='sinal']"); 
+		for(i=0; i<sinais.length; i++ ){
+	        clica(sinais[i]);
+	    }
+	}
 });
-</c:if>
 
 function clica(obj){
 	var ope = obj.innerHTML; 

@@ -146,7 +146,7 @@
 	    $('#acao_table tbody').on( 'click', 'a.acao_remove', function () {
 	    	configuracaoItemAcaoService.acaoTable.api().row($(this).closest('tr')).remove().draw(false);
 	    } );
-	
+
 	});
 
 	/**
@@ -187,6 +187,22 @@
 			"aLengthMenu": [3, 10, 25, 50, 100]
 		});
 	}
+
+	configuracaoItemAcaoService.limparItemConfiguracao = function() {
+		// limpando campos do componente de busca
+		$("#formulario_itemConfiguracao_id").val('');
+		$("#formulario_itemConfiguracao_descricao").val('');
+		$("#formulario_itemConfiguracao_sigla").val('');
+		$("#itemConfiguracaoSpan").html('');
+	}
+
+	configuracaoItemAcaoService.limparAcao = function() {
+		$("#formulario_acao_id").val('');
+		$("#formulario_acao_descricao").val('');
+		$("#formulario_acao_sigla").val('');
+		$("#acaoSpan").html('');
+	}
+	
 	configuracaoItemAcaoService.inserirItemConfiguracao = function() {
 		var idSelecionado = $("#formulario_itemConfiguracao_id").val();
 		
@@ -204,11 +220,7 @@
 			
 			this.itemConfiguracaoTable.api().row.add(row).draw();
 	        			
-			// limpando campos do componente de busca
-			$("#itemConfiguracao").val('');
-			$("#itemConfiguracao_descricao").val('');
-			$("#itemConfiguracao_sigla").val('');
-			$("#itemConfiguracaoSpan").html('');
+			configuracaoItemAcaoService.limparItemConfiguracao();
 			
 			configuracaoItemAcaoService.modalFechar('itemConfiguracao');
 		} 
@@ -273,18 +285,15 @@
 			return;
 		}
 		if(configuracaoItemAcaoService.podeAdicionarAcao(idSelecionado)) {
-			var row = [	$("#acao").val(),
-	        			$("#acao_sigla").val(),
-	        			$("#acao_descricao").val(),
+			var row = [	$("#formulario_acao_id").val(),
+	        			$("#formulario_acao_sigla").val(),
+	        			$("#formulario_acao_descricao").val(),
 	        			"<a class=\"acao_remove\"><img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: inline; cursor: pointer\" /></a>"];
 			
 			this.acaoTable.api().row.add(row).draw();
 			
 			// limpando campos do componente de busca
-			$("#acao").val('');
-			$("#acao_descricao").val('');
-			$("#acao_sigla").val('');
-			$("#acaoSpan").html('');
+			configuracaoItemAcaoService.limparAcao();
 			
 			configuracaoItemAcaoService.modalFechar('acao');
 		}
@@ -293,6 +302,8 @@
     
 	configuracaoItemAcaoService.modalAbrir = function(componentId) {
 		$("#" + componentId + "_dialog").dialog('open');
+		configuracaoItemAcaoService.limparItemConfiguracao();
+		configuracaoItemAcaoService.limparAcao();
 	}
 	
 	configuracaoItemAcaoService.modalFechar = function(componentId) {

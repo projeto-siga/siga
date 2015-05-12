@@ -6,8 +6,12 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Documento" onLoad="javascript: TestarAssinaturaDigital();">
+<siga:pagina titulo="Documento"
+						 onLoad="javascript: TestarAssinaturaDigital();"
+						 incluirJs="sigaex/javascript/assinatura.js">
+
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
@@ -19,7 +23,7 @@
 			}
 		}
 	</script>
-	
+
 	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
 	</c:if>
@@ -63,7 +67,7 @@
 				<div id="dados-assinatura" style="visible: hidden">
 					<ww:hidden id="pdfchk_0" name="pdfchk_${doc.idDoc}" value="${sigla}" />
 					<ww:hidden id="urlchk_0" name="urlchk_${doc.idDoc}" value="/arquivo/exibir.action?arquivo=${doc.codigoCompacto}.pdf" />
-				
+
 					<c:set var="jspServer" value="${request.contextPath}/expediente/mov/assinar_gravar.action" />
 					<c:set var="nextURL" value="${request.contextPath}/expediente/doc/exibir.action?sigla=${sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
@@ -71,7 +75,10 @@
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 					<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
-					<c:set var="urlBase" value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+					<c:set var="req" value="${pageContext.request}" />
+					<c:set var="url">${req.requestURL}</c:set>
+					<c:set var="uri" value="${req.requestURI}" />
+					<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 					<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
 
 					<c:set var="botao" value="" />
@@ -80,7 +87,7 @@
 					</c:if>
 					<c:set var="lote" value="false" />
 				</div>
-				
+
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
@@ -106,10 +113,10 @@
 					}
 				 </script>
 				</c:if>
-				 
+
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
+					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 				</c:if>
 			</div>
 		</div>
@@ -117,7 +124,7 @@
 	<c:if test="${not autenticando}">
 		<c:if test="${f:podeAssinarComSenha(titular,lotaTitular,mob)}">
 			<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
-		        		
+
 			<div id="dialog-form" title="Assinar com Senha">
 	 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_senha_gravar.action" >
 	 				<ww:hidden id="sigla" name="sigla"	value="${sigla}" />
@@ -129,8 +136,8 @@
 	    			</fieldset>
 	  			</form>
 			</div>
-		
-			 <script> 
+
+			 <script>
 			    dialog = $("#dialog-form").dialog({
 			      autoOpen: false,
 			      height: 210,
@@ -143,14 +150,14 @@
 			          }
 			      },
 			      close: function() {
-			        
+
 			      }
 			    });
-				
+
 			    function assinarComSenha() {
 			       dialog.dialog( "open" );
 			    }
-		
+
 			    function assinarGravar() {
 			    	$("#form-assinarSenha").submit();
 				}

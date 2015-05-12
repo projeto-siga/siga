@@ -5,7 +5,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<siga:pagina titulo="P&aacute;gina Inicial" incluirJs="principal.js">
+<siga:pagina titulo="P&aacute;gina Inicial" incluirJs="siga/javascript/principal.js">
 	<ww:token />
 
 	<div class="gt-bd">
@@ -57,7 +57,7 @@
 							<span id='right' style="margin: 0; padding: 0;">
                                 <jsp:include page="loading.jsp" />
 							</span>
-							<!-- 
+							<!--
 							<div class="gt-table-buttons">
 								<a href="" class="gt-btn-green-large gt-btn-right">Iniciar
 									Procedimento</a>

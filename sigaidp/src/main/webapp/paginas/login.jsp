@@ -3,7 +3,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<siga:pagina titulo="Justiça Federal" desabilitarbusca="sim" incluirJs="jquery.placeholder.js">
+<siga:pagina titulo="Justiça Federal" desabilitarbusca="sim" incluirJs="siga/javascript/jquery.placeholder.js">
 
 	<script type="text/javascript">
 		/*  converte para maiúscula a sigla do estado  */
@@ -39,7 +39,7 @@
 				<form method="post" action="j_security_check" enctype="application/x-www-form-urlencoded" class="gt-form">
 					<!-- form row -->
 					<div class="gt-form-row">
-						<label class="gt-label">Matrícula</label> 
+						<label class="gt-label">Matrícula</label>
 						<input id="j_username" type="text" name="j_username" placeholder="XX99999"
 							onblur="javascript:converteUsuario(this)" class="gt-form-text">
 					</div>
@@ -47,7 +47,7 @@
 
 					<!-- form row -->
 					<div class="gt-form-row">
-						<label class="gt-label">Senha</label> 
+						<label class="gt-label">Senha</label>
 						<input type="password" name="j_password" class="gt-form-text">
 					</div>
 					<!-- /form row -->
@@ -96,10 +96,10 @@
             }
             return "";
         }
-        
+
         var idp = getCookie("JSESSIONID").replace(/"/g,"");
         if (idp != null && idp != "undefined")
         	sessionStorage.setItem("idp", idp);
-    	
+
     </script>
 </siga:pagina>

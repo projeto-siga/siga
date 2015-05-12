@@ -3,21 +3,22 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <siga:pagina titulo="Movimentação" desabilitarmenu="sim"
-	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
+	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};"
+	incluirJs="sigaex/javascript/assinatura.js" >
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Autenticação de Documentos</h2>
 			<div>
-				<c:url	var='pdfAssinado' value='arquivoAutenticado.action?n=${n}&answer=${answer}&assinado=true' /> 
+				<c:url	var='pdfAssinado' value='arquivoAutenticado.action?n=${n}&answer=${answer}&assinado=true' />
 				<c:url	var='pdf' value='arquivoAutenticado.action?n=${n}&answer=${answer}&assinado=false' />
 				<iframe	src="${pdfAssinado}" width="100%" height="600" align="center" style="margin-top: 10px;"> </iframe>
 			</div>
-			<div>	
+			<div>
 				<br/>
 				<h2>Arquivos para Download</h2>
 				<ul>
@@ -27,7 +28,7 @@
 				<h3>Assinaturas:</h3>
 				<ul>
 					<c:forEach var="assinatura" items="${assinaturas}" varStatus="loop">
-						<c:url	var='arqAssinatura' value='arquivoAutenticado.action?n=${n}&answer=${answer}&idMov=${assinatura.idMov}' /> 
+						<c:url	var='arqAssinatura' value='arquivoAutenticado.action?n=${n}&answer=${answer}&idMov=${assinatura.idMov}' />
 						<li><a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}</a></li>
 					</c:forEach>
 				</ul>
@@ -44,18 +45,21 @@
 						<c:set var="nextURL"
 							value="${request.contextPath}/autenticar.action?n=${n}&answer=${answer}" />
 						<c:set var="urlPath" value="${request.contextPath}" />
-					
+
 						<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 						<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 						<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
-						<c:set var="urlBase"
-							value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+						<c:set var="req" value="${pageContext.request}" />
+						<c:set var="url">${req.requestURL}</c:set>
+						<c:set var="uri" value="${req.requestURI}" />
+						<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
+
 						<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
 						<c:set var="lote" value="false" />
-					</div>		
+					</div>
 					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
 					<div id="capicom-div">
-						<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false');" class="gt-btn-alternate-large gt-btn-left">Assinar</a> 
+						<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false');" class="gt-btn-alternate-large gt-btn-left">Assinar</a>
 					</div>
 					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. </p>
 					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
@@ -79,8 +83,3 @@
 		</div>
 	</div>
 </siga:pagina>
-
-
-
-
-

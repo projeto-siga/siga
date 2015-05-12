@@ -11,15 +11,15 @@
 					 siga-dev.corp.jfrj.gov.br
 					 siga-hmg,
 					 siga-hmg.corp.jfrj.gov.br
-					 siga.corp.jfrj.gov.br,
+					 sigat,
+					 sigat.jfrj.jus.br,
 					 siga,
+					 siga.jfrj.jus.br,
+					 belina.jfrj.jus.br,
 					 classec250,
 					 classec250.corp.jfrj.gov.br
 					 classef,
-					 classef.corp.jfrj.gov.br,
-					 siga-beta,
-					 siga-beta.corp.jfrj.gov.br,
-					 belina.jfrj.jus.br			 
+					 classef.corp.jfrj.gov.br
 			</Domains>
 		</Trust>
 	</PicketLinkIDP>

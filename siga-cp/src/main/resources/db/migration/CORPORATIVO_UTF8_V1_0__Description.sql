@@ -2556,6 +2556,12 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
+[#macro gravacao]
+    [#if gerar_gravacao!false]
+        [#nested]
+    [/#if]
+[/#macro]
+
 [#macro finalizacao]
     [#if gerar_finalizacao!false]
         [#nested]
@@ -2882,7 +2888,7 @@ window.onload = function(){
     </div>
 [/#macro]
 
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick=""]
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":"]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
@@ -2892,11 +2898,11 @@ window.onload = function(){
                 [@inlineTemplate/]
         [/#if]
     
-        ${titulo!""}[#if titulo != ""]:[/#if]
+        ${titulo!""}[#if titulo != ""]${pontuacao!""}[/#if]
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]''${idAjax}''[/#if]);"[/#if] onclick="${onclick}">
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}">
                     [#list l as opcao]
                         <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
             [/#list]
@@ -5216,6 +5222,40 @@ Pede deferimento.</span><br/><br/><br/>
     [#else]
 		<span class="valor">${v}</span>
     [/#if]
+[/#macro]
+
+[#macro webservice var url timeout cache=""]
+  [#if cache?has_content]
+    <input type="hidden" name="vars" value="${cache}" />
+  [/#if]
+  [#if cache?has_content && .vars[cache]??]
+    [#local str=.vars[cache] /]
+    <input type="hidden" name="${cache}" value="${str}">
+  [#else]
+    [#local payload][#nested][/#local]
+    [#local str=func.webservice(url,payload,timeout) /]
+    <input type="hidden" name="${cache}" value="${str?url('UTF-8')}">
+  [/#if]
+  [#if str?has_content]
+     [#local retornoSource="[#assign " + var + "=func.parseXML(str) /]"/]
+  [#else]
+     [#local retornoSource="[#assign " + var + "=str /]"/]
+  [/#if]
+  [#local retornoTemplate = retornoSource?interpret]
+  [@retornoTemplate /] 
+[/#macro]
+
+[#macro descricao]
+   [#if gerar_descricao!false]
+    <!-- descricao -->
+      [#nested]
+    <!-- /descricao -->
+   [/#if]
+[/#macro]
+
+[#macro classificacao codigo]
+   <input type="hidden" name="vars" value="codigoClassificacao" />
+   <input type="hidden" id="codigoClassificacao" name="codigoClassificacao" value="${codigo}" />
 [/#macro]
 
 [#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]

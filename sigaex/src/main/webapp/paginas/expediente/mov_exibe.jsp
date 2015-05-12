@@ -6,8 +6,12 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Documento" popup="true" onLoad="javascript: TestarAssinaturaDigital();">
+<siga:pagina titulo="Documento" popup="true"
+			onLoad="javascript: TestarAssinaturaDigital();"
+			incluirJs="sigaex/javascript/assinatura.js">
+
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
@@ -65,8 +69,8 @@ function visualizarImpressao(via) {
 	if (via != null)
 		v = '-' + String.fromCharCode('A'.charCodeAt(0) + via - 1);
 	else
-		v = ''; 
-	frm.target='_blank'; 
+		v = '';
+	frm.target='_blank';
 	frm.action='<c:url value="/arquivo/exibir.action?arquivo="/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
 	frm.submit();
 	frm.target=t;
@@ -290,20 +294,22 @@ function visualizarImpressao(via) {
 
 					<c:set var="jspServer"
 						value="${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
-					<c:set var="jspServerSenha" 
+					<c:set var="jspServerSenha"
 					    value="${request.contextPath}/expediente/mov/assinar_mov_login_senha_gravar.action" />
 					<c:set var="nextURL"
 						value="${request.contextPath}/expediente/mov/fechar_popup.action?sigla=${mob.sigla}" />
 					<c:set var="urlPath" value="${request.contextPath}" />
-					
+
 					<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 					<ww:hidden id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 					<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 					<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
-					<c:set var="urlBase"
-						value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+					<c:set var="req" value="${pageContext.request}" />
+					<c:set var="url">${req.requestURL}</c:set>
+					<c:set var="uri" value="${req.requestURI}" />
+					<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 					<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
-					
+
 					<c:if test="${not autenticando}">
 						<ww:if test="${mov.exTipoMovimentacao.idTpMov==2}">
 							<c:set var="botao" value="ambos" />
@@ -315,9 +321,9 @@ function visualizarImpressao(via) {
 					<c:if test="${autenticando}">
 						<c:set var="botao" value="autenticando" />
 					</c:if>
-					
+
 					<c:set var="lote" value="false" />
-				</div>		
+				</div>
 				<p><b>Link para assinatura externa: </b>${enderecoAutenticacao} (informar o código ${mov.siglaAssinaturaExterna})</p>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
@@ -328,20 +334,20 @@ function visualizarImpressao(via) {
 							<c:choose>
 								<c:when
 									test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Despacho</a> 
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Despacho</a>
 								</c:when>
 								<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Transferir</a> 
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Transferir</a>
 								</c:when>
 								<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Desentranhamento</a> 
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Desentranhamento</a>
 								</c:when>
 								<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Encerramento</a> 
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Encerramento</a>
 								</c:when>
 								<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
-									<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar</a> 
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Anexo</a> 
+									<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar</a>
+									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Anexo</a>
 								</c:when>
 							</c:choose>
 						</c:if>
@@ -370,14 +376,14 @@ function visualizarImpressao(via) {
 			</div>
 		</div>
 	</div>
-	
+
 	<c:if test="${not autenticando}">
 		<c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
 		<c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" />
-		
+
 		<c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
 			<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
-	        		
+
 			<div id="dialog-form" title="Assinar com Senha">
 	 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" >
 	 				<ww:hidden id="id" name="id" value="${mov.idMov}" />
@@ -390,8 +396,8 @@ function visualizarImpressao(via) {
 	    			</fieldset>
 	  			</form>
 			</div>
-	
-			 <script> 
+
+			 <script>
 			    dialog = $("#dialog-form").dialog({
 			      autoOpen: false,
 			      height: 210,
@@ -400,31 +406,31 @@ function visualizarImpressao(via) {
 			      buttons: {
 			    	  <c:if test="${podeAssinarMovimentacaoComSenha}">
 			          	"Assinar": assinarGravar,
-			          </c:if>	
+			          </c:if>
 			    	  <c:if test="${podeConferirCopiaMovimentacaoComSenha}">
 				          "Autenticar": conferirCopiaGravar,
-			          </c:if>	
+			          </c:if>
 			          "Cancelar": function() {
 			            dialog.dialog( "close" );
 			          }
 			      },
 			      close: function() {
-			        
+
 			      }
 			    });
-			
+
 			    function assinarComSenha() {
 			       dialog.dialog( "open" );
 			    }
-	
+
 			    function assinarGravar() {
 			    	AssinarDocumentosSenha('false', this);
 				}
-	
+
 			    function conferirCopiaGravar() {
 			    	AssinarDocumentosSenha('true', this);
 				}
 			  </script>
-		</c:if>	
-	</c:if>		
+		</c:if>
+	</c:if>
 </siga:pagina>

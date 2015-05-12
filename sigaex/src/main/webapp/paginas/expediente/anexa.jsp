@@ -3,13 +3,15 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
-
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 
-<siga:pagina titulo="Movimentação" onLoad="javascript: TestarAssinaturaDigital();">
+<siga:pagina titulo="Movimentação"
+						 onLoad="javascript: TestarAssinaturaDigital();"
+						 incluirJs="sigaex/javascript/assinatura.js">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -37,9 +39,9 @@
 				x.arquivo.focus();
 			}
 		}
-		
+
 		function checkUncheckAll(theElement) {
-			var theForm = theElement.form, z = 0;		
+			var theForm = theElement.form, z = 0;
 			for(z=0; z<theForm.length;z++) {
 		    	if(theForm[z].type == 'checkbox' && theForm[z].name != 'checkall') {
 					theForm[z].checked = !(theElement.checked);
@@ -48,18 +50,18 @@
 			}
 		}
 
-		function montaTableAssinados(carregaDiv){	
+		function montaTableAssinados(carregaDiv){
 			if(carregaDiv == true) {
-				$('#tableAssinados').html('Carregando...');			
-				$.ajax({				     				  
-					  url:'/sigaex/expediente/mov/mostrar_anexos_assinados.action?sigla=${mobilVO.sigla}',					    					   					 
+				$('#tableAssinados').html('Carregando...');
+				$.ajax({
+					  url:'/sigaex/expediente/mov/mostrar_anexos_assinados.action?sigla=${mobilVO.sigla}',
 					  success: function(data) {
-				    	$('#tableAssinados').html(data);				    
+				    	$('#tableAssinados').html(data);
 				 	 }
 				});
-			}	
-			else ($('#tableAssinados').html(''));		
-		}		
+			}
+			else ($('#tableAssinados').html(''));
+		}
 
 		/**
 		 * Valida se o anexo foi selecionado ao clicar em OK
@@ -83,16 +85,16 @@
 				nomeusuario.value = tmp.toUpperCase();
 			}
 		}
-	</script>	
+	</script>
 
 	</script>
-	
+
 	<ww:url id="urlExibir" action="exibir" namespace="/expediente/doc">
 		<ww:param name="sigla">${mobilVO.sigla}</ww:param>
 	</ww:url>
-	
+
 	<div class="gt-bd clearfix">
-	    <div class="gt-content clearfix">		
+	    <div class="gt-content clearfix">
 	        <c:if test="${!assinandoAnexosGeral}">
 				<h2>Anexação de Arquivo - ${mob.siglaEDescricaoCompleta}</h2>
 				<div class="gt-content-box gt-for-table">
@@ -139,7 +141,7 @@
 								<ww:file name="arquivo" label="Arquivo" accept="application/pdf"
 									     onchange="testpdf(this.form)" />
 							</tr>
-							
+
 							<c:set var="pendencias" value="${false}"/>
 							<c:forEach var="mov" items="${mobilCompletoVO.movs}">
 							    <c:if test="${(not mov.cancelada) and (mov.idTpMov eq 57)}">
@@ -163,43 +165,43 @@
 									</td>
 								</tr>
 						    </c:if>
-							
+
 							<tr>
 								<td colspan="2"><input type="submit" value="Ok"
-									class="gt-btn-medium gt-btn-left" onclick="javascript: return validaSelecaoAnexo( this.form );" /> 
+									class="gt-btn-medium gt-btn-left" onclick="javascript: return validaSelecaoAnexo( this.form );" />
 									<input  type="button" value="Voltar" onclick="javascript:window.location.href='${urlExibir}'"
-									        class="gt-btn-medium gt-btn-left" />	
-									<br/>        								
+									        class="gt-btn-medium gt-btn-left" />
+									<br/>
 									<input type="checkbox"  theme="simple" name="check"
 	                                       onclick="javascript:montaTableAssinados(check.checked);" /> <b>Exibir anexos assinados</b>
 								</td>
 							</tr>
-						</table>						
-					</ww:form>							
-				</div>			
+						</table>
+					</ww:form>
+				</div>
 	        </c:if>
-		
-	        <ww:if test="${(not empty mobilVO.movs)}">	 
-	        
+
+	        <ww:if test="${(not empty mobilVO.movs)}">
+
 		        <c:if test="${assinandoAnexosGeral}">
 		           <input style="display: inline"
-					    type="checkbox"  theme="simple" name="check" 
+					    type="checkbox"  theme="simple" name="check"
 	                    onclick="javascript:montaTableAssinados(check.checked);" /><b>Exibir anexos assinados</b>
-	                <br/>  
-	             </c:if>  		  
-	             <br/>   
+	                <br/>
+	             </c:if>
+	             <br/>
 				 <h2>Anexos Pendentes de Assinatura
-				
+
 				 <ww:if test="${assinandoAnexosGeral}">
-					      - ${mob.siglaEDescricaoCompleta}</h2> 
-			     </ww:if>	
+					      - ${mob.siglaEDescricaoCompleta}</h2>
+			     </ww:if>
 			     <ww:else></h2></ww:else>
-			     <div class="gt-content-box gt-for-table">   
+			     <div class="gt-content-box gt-for-table">
 			     <ww:form name="frm_anexo" id="frm_anexo" cssClass="form"
 				      theme="simple">
 				    <ww:hidden name="popup" value="true" />
 				    <ww:hidden name="copia" id="copia" value="false" />
-				    				
+
 					<table class="gt-table mov">
 						<thead>
 							<tr>
@@ -214,7 +216,7 @@
 									<td align="center"><input type="checkbox" name="checkall"
 										onclick="checkUncheckAll(this)" /></td>
 								</ww:if>
-								<ww:else><td></td></ww:else>	
+								<ww:else><td></td></ww:else>
 								<th align="left">Lotação</th>
 								<th align="left">Pessoa</th>
 								<th align="left">Lotação</th>
@@ -243,7 +245,7 @@
 									</ww:if>
 									<ww:else>
 									    <td></td>
-									</ww:else>		
+									</ww:else>
 									<td align="center">${dt}</td>
 									<td align="left"><siga:selecionado
 										sigla="${mov.parte.lotaCadastrante.sigla}"
@@ -290,46 +292,48 @@
 												    <c:set var="assinadopor" value="${false}" />
 												</c:if>
 											</c:forEach>
-										    </siga:links>    
-										
+										    </siga:links>
+
 										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 										      <ww:hidden name="pdf${x}" value="${mov.mov.referencia}" />
 						  					  <ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.mov.nmPdf}"/>
-										</c:if>	
+										</c:if>
 									</td>
 							    </tr>
 						    </c:if>
 					    </c:forEach>
-					</table>	
+					</table>
 				</ww:form>
-		    </div>			
+		    </div>
 		    <br/>
 			<div id="dados-assinatura" style="visible: hidden">
 				<c:set var="jspServer"
 				       value="${request.contextPath}/expediente/mov/assinar_mov_gravar.action" />
-			    <c:set var="jspServerSenha" 
+			    <c:set var="jspServerSenha"
 			    	   value="${request.contextPath}/expediente/mov/assinar_mov_login_senha_gravar.action" />
 				<c:set var="nextURL"
 					   value="${request.contextPath}/expediente/doc/atualizar_marcas.action?sigla=${mobilVO.sigla}" />
 			    <c:set var="urlPath" value="${request.contextPath}" />
-			    
+
 	    		<ww:hidden id="jspserver" name="jspserver" value="${jspServer}" />
 				<ww:hidden id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 				<ww:hidden id="nexturl" name="nextUrl" value="${nextURL}" />
 				<ww:hidden id="urlpath" name="urlpath" value="${urlPath}" />
-				<c:set var="urlBase"
-					value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+				<c:set var="req" value="${pageContext.request}" />
+				<c:set var="url">${req.requestURL}</c:set>
+				<c:set var="uri" value="${req.requestURI}" />
+				<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 				<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
-			    						
+
 			    <c:set var="botao" value="ambos" />
 			    <c:set var="lote" value="true" />
-			</div>			
+			</div>
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<div id="capicom-div">
-						<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a> 
+						<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a>
 						<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
-					</div> 
+					</div>
 				<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
 				<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
 				<script type="text/javascript">
@@ -342,17 +346,17 @@
 					}
 				 </script>
 			</c:if>
-		    
+
 			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-			    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}						
+			    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 			</c:if>
-			
+
     	 	 <c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
 			 <c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
-	
+
 			 <c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
   				     <a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
-  				     
+
 					<div id="dialog-form" title="Assinar com Senha">
 			 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_mov_login_senha_gravar.action" >
 			 				<ww:hidden id="id" name="id" value="${mov.idMov}" />
@@ -365,8 +369,8 @@
 			    			</fieldset>
 			  			</form>
 					</div>
-  				     
-	  				 <script> 
+
+	  				 <script>
 					    dialog = $("#dialog-form").dialog({
 						    autoOpen: false,
 				      		height: 210,
@@ -375,33 +379,33 @@
 				      		buttons: {
 				    	  		<c:if test="${podeAssinarMovimentacaoComSenha}">
 				          			"Assinar": assinarGravar,
-				          		</c:if>	
+				          		</c:if>
 				    	  		<c:if test="${podeConferirCopiaMovimentacaoComSenha}">
 					          		"Autenticar": conferirCopiaGravar,
-				          		</c:if>	
+				          		</c:if>
 				          			"Cancelar": function() {
 				            		dialog.dialog( "close" );
 				          	}
 			      		},
 	    		      close: function() {
-			        
+
 				      }
 			    	});
-			
+
 					    function assinarComSenha() {
 					       dialog.dialog( "open" );
 					    }
-			
+
 					    function assinarGravar() {
 					    	AssinarDocumentosSenha('false', this);
 						}
-			
+
 					    function conferirCopiaGravar() {
 					    	AssinarDocumentosSenha('true', this);
 						}
 				  </script>
 			 </c:if>
-		</div>				   	
+		</div>
 	    </ww:if>
 	    <ww:else>
 		    <c:if test="${assinandoAnexosGeral}">
@@ -409,12 +413,12 @@
 			        montaTableAssinados(true);
 				</script>
 		    </c:if>
-	    </ww:else>    
-	    <div class="gt-content clearfix">	  
-		<div id="tableAssinados"></div>		
-		</div>    	
-</div></div>      	
-	
-		
+	    </ww:else>
+	    <div class="gt-content clearfix">
+		<div id="tableAssinados"></div>
+		</div>
+</div></div>
+
+
 
 </siga:pagina>

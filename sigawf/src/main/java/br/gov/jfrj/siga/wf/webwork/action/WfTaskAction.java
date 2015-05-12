@@ -48,11 +48,13 @@ import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.wf.WfConhecimento;
 import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfAssignmentHandler;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 import br.gov.jfrj.siga.wf.util.WfGraphFactory;
@@ -345,7 +347,7 @@ public class WfTaskAction extends WfSigaActionSupport {
 	public String designarAtor() throws Exception {
 		loadTaskInstance();
 		if (taskInstance != null) {
-			taskInstance.setActorId(getTitular().getSiglaCompleta());
+			taskInstance.setActorId(getTitular().getSiglaCompleta(),false);
 			carregarAtorEGrupo();
 		}
 		inicializarTaskVO();
@@ -487,7 +489,7 @@ public class WfTaskAction extends WfSigaActionSupport {
 					"Não foi possível recuperar a instância da tarefa.");
 
 		if (taskInstance.getActorId() == null) {
-			taskInstance.setActorId(getTitular().getSiglaCompleta());
+			taskInstance.setActorId(getTitular().getSiglaCompleta(),false);
 			carregarAtorEGrupo();
 		}
 
@@ -677,12 +679,24 @@ public class WfTaskAction extends WfSigaActionSupport {
 						if (value != null && value.trim().length() == 0)
 							value = null;
 						String destino = ti.getActorId();
-						if (destino == null)
+						
+						if (destino != null){
+							DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+							flt.setSigla(destino);
+							DpPessoa ator = (DpPessoa) WfDao.getInstance()
+									.consultarPorSigla(flt);
+							if (!atorDeveReexecutarTarefa(ator,ti)){
+								destino = null;
+							}
+						}
+						
+						if (destino == null){
 							for (PooledActor lot : (Collection<PooledActor>) ti
 									.getPooledActors()) {
 								destino = "@" + lot.getActorId();
 								break;
 							}
+						}
 						if (value != null && destino != null)
 							service.transferir(value, destino, siglaTitular, true);
 					}
@@ -690,6 +704,14 @@ public class WfTaskAction extends WfSigaActionSupport {
 			}
 		}
 	}
+	
+	private static boolean atorDeveReexecutarTarefa(DpPessoa ator, TaskInstance ti) {
+		DpLotacaoDaoFiltro lotflt = new DpLotacaoDaoFiltro();
+		lotflt.setSiglaCompleta(((PooledActor) ti.getPooledActors().toArray()[0]).getActorId());
+		DpLotacao lotacao = (DpLotacao) WfDao.getInstance().consultarPorSigla(lotflt);
+		return !ator.isFechada() && ator.getLotacao().equivale(lotacao);
+	}
+
 
 	public static void assertPodeTransferirDocumentosVinculados(
 			TaskInstance ti, String siglaTitular) throws Exception {
@@ -801,7 +823,10 @@ public class WfTaskAction extends WfSigaActionSupport {
 				|| (lotaActorId != null
 						&& taskInstance.getPooledActors().size() != 0 && !((PooledActor) taskInstance
 						.getPooledActors().toArray()[0]).getActorId().equals(
-						lotaActorId));
+						lotaActorId) || 
+						(taskInstance.getSwimlaneInstance() != null && 
+							!((PooledActor)taskInstance.getSwimlaneInstance().getPooledActors().toArray()[0]).getActorId().equals(lotaActorId))
+						);
 
 		if (fActorChanged || fPooledActorsChanged)
 			assertPodeTransferirDocumentosVinculados(taskInstance,
@@ -824,6 +849,11 @@ public class WfTaskAction extends WfSigaActionSupport {
 						lotAtualPool != null ? lotAtualPool : lotAtualAtor,
 						daoLot(lotaAtorSel.getId()));
 				taskInstance.setPooledActors(new String[] { lotaActorId });
+				if (taskInstance.getSwimlaneInstance() != null){
+					PooledActor pa = (PooledActor) taskInstance.getSwimlaneInstance().getPooledActors().iterator().next();
+					pa.setActorId(lotaActorId);
+				}else{
+				}
 			}
 		}
 		if (fActorChanged || fPooledActorsChanged)

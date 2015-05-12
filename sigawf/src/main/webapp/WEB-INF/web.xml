@@ -16,13 +16,13 @@
 			<taglib-uri>http://localhost/customtag</taglib-uri>
 			<taglib-location>/WEB-INF/tags/tags.tld</taglib-location>
 		</taglib>
-		
+
 		<taglib>
 			<taglib-uri>http://localhost/functiontag</taglib-uri>
 			<taglib-location>/WEB-INF/tags/func.tld</taglib-location>
 		</taglib>
 	</jsp-config>
-	
+
 	<listener>
 		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
 	</listener>
@@ -63,15 +63,15 @@
 			<param-value>max-age=3600</param-value>
 		</init-param>
 	</filter>
-	
+
 	<filter-mapping>
 		<filter-name>WorkFlowFilter</filter-name>
 		<url-pattern>*.action</url-pattern>
 		<url-pattern>/loadPhoto</url-pattern>
-		<url-pattern>/upload</url-pattern>		
-		<url-pattern>/servicos/*</url-pattern>		
+		<url-pattern>/upload</url-pattern>
+		<url-pattern>/servicos/*</url-pattern>
 	</filter-mapping>
-	
+
 	<filter-mapping>
 		<filter-name>WebWork</filter-name>
 		<url-pattern>*.action</url-pattern>
@@ -102,29 +102,29 @@
 		<servlet-name>UploadServlet</servlet-name>
 		<servlet-class>br.gov.jfrj.siga.wf.servlet.UploadServlet</servlet-class>
 	</servlet>
-	
+
 	<servlet>
 		<servlet-name>loadPhoto</servlet-name>
 		<servlet-class>br.gov.jfrj.siga.wf.servlet.SingleImageServlet</servlet-class>
 	</servlet>
-    <servlet>		
-        <servlet-name>WfService</servlet-name>		
-        <servlet-class>br.gov.jfrj.siga.wf.service.impl.WfServiceImpl</servlet-class>		
+    <servlet>
+        <servlet-name>WfService</servlet-name>
+        <servlet-class>br.gov.jfrj.siga.wf.service.impl.WfServiceImpl</servlet-class>
     </servlet>
 
 	<servlet-mapping>
 		<servlet-name>UploadServlet</servlet-name>
 		<url-pattern>/upload</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>loadPhoto</servlet-name>
 		<url-pattern>/loadPhoto</url-pattern>
 	</servlet-mapping>
-	
-	<servlet-mapping>		
-        <servlet-name>WfService</servlet-name>		
-        <url-pattern>/servicos/WfService</url-pattern>		
+
+	<servlet-mapping>
+        <servlet-name>WfService</servlet-name>
+        <url-pattern>/servicos/WfService</url-pattern>
     </servlet-mapping>
 
 	<security-constraint>
@@ -166,13 +166,22 @@
 			<role-name>superusuario</role-name>
 		</auth-constraint>
 	</security-constraint>
-	
+
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>servicos</web-resource-name>
 			<url-pattern>/servicos/*</url-pattern>
 		</web-resource-collection>
+    <web-resource-collection>
+      <web-resource-name>testes</web-resource-name>
+      <url-pattern>/testes/*</url-pattern>
+    </web-resource-collection>
+    <web-resource-collection>
+      <web-resource-name>upload</web-resource-name>
+      <url-pattern>/upload</url-pattern>
+    </web-resource-collection>
 	</security-constraint>
+
 
 	<login-config>
 		<auth-method>FORM</auth-method>

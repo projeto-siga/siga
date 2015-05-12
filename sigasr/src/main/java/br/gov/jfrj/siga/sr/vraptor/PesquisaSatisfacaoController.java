@@ -86,18 +86,16 @@ public class PesquisaSatisfacaoController extends SrController {
 
 	// @AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
-	public void gravar(SrPesquisa srPesquisa, Set<SrPergunta> perguntaSet) throws Exception {
-		SrPesquisa pesquisa = (SrPesquisa) Objeto.getImplementation(srPesquisa);
-		pesquisa.setPerguntaSet((pesquisa.getPerguntaSet() != null) ? pesquisa
-				.getPerguntaSet() : new HashSet<SrPergunta>());
+	public void gravarPesquisa(SrPesquisa pesquisa, Set<SrPergunta> perguntaSet) throws Exception {
+		pesquisa = (SrPesquisa) Objeto.getImplementation(pesquisa);
+		pesquisa.setPerguntaSet((pesquisa.getPerguntaSet() != null) ? pesquisa.getPerguntaSet() : new HashSet<SrPergunta>());
 		pesquisa.salvar();
 
-		result.use(Results.http()).body(pesquisa.toJson());
+		result.use(Results.http()).body(pesquisa.atualizarTiposPerguntas().toJson());
 	}
 	
 
 	// @AssertAcesso(ADM_ADMINISTRAR)
-	@Path("/listarAssociacao/{idPesquisa}")
 	public void listarAssociacao(Long idPesquisa) throws Exception {
 		SrPesquisa pesquisa = new SrPesquisa();
 
@@ -111,7 +109,7 @@ public class PesquisaSatisfacaoController extends SrController {
 				SrConfiguracao.convertToJSon(associacoes));
 	}
 
-	@Path("/listarAssociacaoDesativados/{idPesquisa}")
+	@Path("/listarAssociacaoDesativados")
 	public void listarAssociacaoDesativados(Long idPesquisa) throws Exception {
 		SrPesquisa pesquisa = new SrPesquisa();
 		if (idPesquisa != null)

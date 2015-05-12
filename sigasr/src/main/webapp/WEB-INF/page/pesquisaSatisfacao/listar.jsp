@@ -91,9 +91,9 @@
 	}();
 
 	var opts = {
-		urlDesativar : "${linkTo[PesquisaSatisfacaoController].desativar}",
-		urlReativar : "${linkTo[PesquisaSatisfacaoController].reativar}",
-		urlGravar : "${linkTo[PesquisaSatisfacaoController].gravar}",
+		urlDesativar : "${linkTo[PesquisaSatisfacaoController].desativar}?",
+		urlReativar : "${linkTo[PesquisaSatisfacaoController].reativar}?",
+		urlGravar : '${linkTo[PesquisaSatisfacaoController].gravarPesquisa}',
 		dialogCadastro : $('#pesquisa_dialog'),
 		tabelaRegistros : $('#pesquisa_table'),
 		objectName : 'pesquisa',
@@ -176,7 +176,8 @@
 	var pesquisaService = new PesquisaService(opts);
 	
 	pesquisaService.getId = function(pesquisa) {
-		return pesquisa.idPesquisa;
+		console.log(pesquisa);
+		return pesquisa.idPesquisa || pesquisa['pesquisa.idPesquisa'];
 	}
 
 	pesquisaService.getRow = function(pesquisa) {

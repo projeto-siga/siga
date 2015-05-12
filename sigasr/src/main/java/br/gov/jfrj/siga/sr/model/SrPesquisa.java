@@ -20,6 +20,7 @@ import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.Util;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
@@ -30,7 +31,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 @Entity
 @Table(name = "SR_PESQUISA", schema = Catalogs.SIGASR)
-public class SrPesquisa extends HistoricoSuporteVraptor {
+public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEntity {
 
 	/**
 	 * 
@@ -107,7 +108,7 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 		super.salvar();
 		if (perguntaSet != null)
 			for (SrPergunta pergunta : perguntaSet) {
-				pergunta.pesquisa = this;
+				pergunta.setPesquisa(this);
 				pergunta.salvar();
 			}
 	}
@@ -121,7 +122,7 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 				new Comparator<SrPergunta>() {
 					@Override
 					public int compare(SrPergunta a1, SrPergunta a2) {
-						return a1.ordemPergunta.compareTo(a2.ordemPergunta);
+						return a1.getOrdemPergunta().compareTo(a2.getOrdemPergunta());
 					}
 				});
 		for (SrPesquisa pesquisa : getHistoricoPesquisa())
@@ -134,7 +135,7 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 
 	public String getPergunta(Long idPergunta) {
 		SrPergunta pergunta = SrPergunta.findById(idPergunta);
-		return pergunta.descrPergunta;
+		return pergunta.getDescrPergunta();
 	}
 
 	// Edson: Não consegui fazer com que esse cascade fosse automático.
@@ -174,7 +175,7 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 
 	public SrPesquisa atualizarTiposPerguntas() throws Exception {
 		for (SrPergunta srPergunta : this.perguntaSet) {
-			srPergunta.tipoPergunta = SrTipoPergunta.AR.findById(srPergunta.tipoPergunta.getIdTipoPergunta());
+			srPergunta.setTipoPergunta(SrTipoPergunta.AR.findById(srPergunta.getTipoPergunta().getIdTipoPergunta()));
 		}
 		return this;
 	}
@@ -238,12 +239,12 @@ public class SrPesquisa extends HistoricoSuporteVraptor {
 
 	@Override
 	public Long getId() {
-		return getIdPesquisa();
+		return this.getIdPesquisa();
 	}
 
 	@Override
-	public void setId(Long idPesquisa) {
-		this.setIdPesquisa(idPesquisa);
+	public void setId(Long id) {
+		this.setIdPesquisa(id);
 	}
 
 	public Long getIdPesquisa() {

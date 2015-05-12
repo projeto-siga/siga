@@ -27,9 +27,9 @@
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 	<form id="pesquisaForm">
-		<input type="hidden" name="idPesquisa" id="idPesquisa" />
+		<input type="hidden" name="pesquisa" id="idPesquisa" />
 		<input type="hidden" name="hisIdIni" id="hisIdIni"/>
-		
+
 		<div class="gt-form-row gt-width-66">
 			<label>Nome <span>*</span></label> <input type="text"
 				name="nomePesquisa" id="nomePesquisa" size="60" maxlength="255" required />
@@ -42,14 +42,16 @@
 		<div class="gt-form-row">
 			<label>Perguntas</label>
 			<ul id="perguntas" style="color: #365b6d"></ul>
-			<input type="button" value="Incluir" id="botaoIncluir"
-				class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+			<input type="button" value="Incluir" id="botaoIncluir" class="gt-btn-small gt-btn-left" style="font-size: 10px;">
 		</div>
 	</form>
 
-	<div id="divconfiguracaoAssociacao">
-<%-- 		<jsp:include page="associacao.jsp" /> --%>
-	</div>
+	<siga:configuracaoAssociacao orgaos="${orgaos}"
+								 locais="${locais}"
+								 itemConfiguracaoSet="${itemConfiguracaoSet}"
+								 acoesSet="${acoesSet}"
+								 modoExibicao='atributo'
+								 urlGravar="${linkTo[AssociacaoController].gravarAssociacao}"></siga:configuracaoAssociacao>
 
 	<div class="gt-form-row">
 		<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
@@ -59,7 +61,7 @@
 </div>
 
 <siga:modal nome="pergunta" titulo="Incluir Pergunta">
-	<div id="dialogPergunta">
+	<div id="dialog">
 		<div class="gt-content">
 			<div class="gt-form gt-content-box">
 				<form id="perguntaForm">
@@ -90,13 +92,13 @@
 
 <script>
 	associacaoService.getUrlDesativarReativar = function(desativados) {
-		idPesquisa = $("[name=idPesquisa]").val();
-	    var url = "${linkTo[PesquisaSatisfacaoController].listarAssociacao[idPesquisa]}";
+  	  var url = "${linkTo[PesquisaSatisfacaoController].listarAssociacao}",
+   	     idPesquisa = $("[name=idPesquisa]").val();
 
-	    if(desativados)
-	        url = "${linkTo[PesquisaSatisfacaoController].listarAssociacaoDesativados}"; 
-
-	    return url;
+  	  if(desativados)
+    	    url = "${linkTo[PesquisaSatisfacaoController].listarAssociacaoDesativados}";
+        
+  	  return url + "?idPesquisa=" + idPesquisa;
 	}
 
 	jQuery(document).ready(function($) {

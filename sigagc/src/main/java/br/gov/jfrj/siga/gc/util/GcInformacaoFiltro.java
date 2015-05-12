@@ -34,24 +34,16 @@ public class GcInformacaoFiltro {
 
 	public List<GcInformacao> buscar() throws Exception {
 
-		if (autor != null && autor.getId() != null)
-			autor = DpPessoa.AR.findById(autor.getId());
-		else
+		if (autor != null && autor.getId() == null)
 			autor = null;
 		
-		if (lotacao != null && lotacao.getId() != null)
-			lotacao = DpLotacao.AR.findById(lotacao.getId());
-		else 
+		if (lotacao != null && lotacao.getId() == null)
 			lotacao = null;
 
-		if (responsavel != null && responsavel.getId() != null)
-			responsavel = DpPessoa.AR.findById(responsavel.getId());
-		else
+		if (responsavel != null && responsavel.getId() == null)
 			responsavel = null;
 		
-		if (lotaResponsavel != null && lotaResponsavel.getId() != null)
-			lotaResponsavel = DpLotacao.AR.findById(lotaResponsavel.getId());
-		else
+		if (lotaResponsavel != null && lotaResponsavel.getId() == null)
 			lotaResponsavel = null;
 
 		String query = null;

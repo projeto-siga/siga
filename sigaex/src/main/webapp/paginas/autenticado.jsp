@@ -9,7 +9,7 @@
 
 <siga:pagina titulo="Movimentação" desabilitarmenu="sim"
 	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};"
-	incluirJs="/sigaex/javascript/assinatura.js" >
+	incluirJs="sigaex/javascript/assinatura.js" >
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Autenticação de Documentos</h2>

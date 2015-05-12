@@ -11,7 +11,7 @@
 
 <siga:pagina titulo="Movimentação"
 						 onLoad="javascript: TestarAssinaturaDigital();"
-						 incluirJs="/sigaex/javascript/assinatura.js">
+						 incluirJs="sigaex/javascript/assinatura.js">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>

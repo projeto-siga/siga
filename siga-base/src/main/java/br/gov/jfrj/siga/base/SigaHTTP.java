@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
- * 
+ *
  *     This file is part of SIGA.
- * 
+ *
  *     SIGA is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
- * 
+ *
  *     SIGA is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -44,7 +44,7 @@ import org.jsoup.nodes.Element;
 import org.picketlink.common.util.StringUtil;
 
 /**
- * 
+ *
  * @author Rodrigo Ramalho
  * 	       hodrigohamalho@gmail.com
  *
@@ -61,7 +61,7 @@ public class SigaHTTP {
 	private final String SET_COOKIE = "set-cookie";
 	private final String HTTP_POST_BINDING_REQUEST = "HTTP Post Binding (Request)";
 	private final String doubleQuotes = "\"";
-	private static final int MAX_RETRY = 3; 
+	private static final int MAX_RETRY = 3;
 	private int retryCount = 0;
 	private String idp;
 
@@ -84,12 +84,9 @@ public class SigaHTTP {
 		Executor exec = Executor.newInstance(HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build());
 		String currentCookie = JSESSIONID_PREFIX+doubleQuotes+getCookie(request, cookieValue)+doubleQuotes;
 		String cValue = getIdp(request);
-
-		if (StringUtil.isNullOrEmpty(cValue) && StringUtil.isNullOrEmpty(cookieValue)){
-			return "";
-		}
-
-		String idpCookie = JSESSIONID_PREFIX+doubleQuotes+cValue+doubleQuotes;
+		String idpCookie = null;
+		if (StringUtil.isNotNull(cValue))
+		  idpCookie = JSESSIONID_PREFIX+doubleQuotes+cValue+doubleQuotes;
 
 		try{
 			// Efetua o request para o Service Provider (modulo)
@@ -100,15 +97,19 @@ public class SigaHTTP {
 			html = handleResponse(html, response);
 			currentCookie = extractSetCookie(currentCookie, response);
 
-			// Verifica se retornou o form de autenticação do picketlink 
+			// Verifica se retornou o form de autenticação do picketlink
 			if (html.contains(HTTP_POST_BINDING_REQUEST)){
+				if (StringUtil.isNullOrEmpty(cookieValue)){
+				  return "";
+				}
+				
 				// Atribui o valor do SAMLRequest contido no html retornado no GET efetuado.
 				String SAMLRequestValue = getAttributeValueFromHtml(html, SAMLRequest);
 				// Atribui a URL do IDP (sigaidp)
 				String idpURL = getAttributeActionFromHtml(html);
 				if (!idpURL.contains("http"))
 					idpURL = completeURL(URL, idpURL);
-				
+
 				// Faz um novo POST para o IDP com o SAMLRequest como parametro e utilizando o sessionID do IDP
 				response =  exec.execute(Request.Post(idpURL).useExpectContinue().
 						addHeader("content-type", "application/x-www-form-urlencoded").
@@ -303,7 +304,7 @@ public class SigaHTTP {
 				for (String s : header.keySet()) {
 					conn.setRequestProperty(s, header.get(s));
 				}
-			}	
+			}
 
 			System.setProperty("http.keepAlive", "false");
 

@@ -75,7 +75,7 @@ ${meta}
 
 <link rel="shortcut icon" href="/siga/sigalibs/siga.ico" />
 
-<!-- 
+<!--
 <script src="/siga/javascript/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
 <script src="/siga/javascript/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 -->
@@ -87,13 +87,13 @@ ${meta}
 <!-- <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/development-bundle/themes/base/jquery.ui.all.css"
 	type="text/css" media="screen, projection"> -->
 <c:if test="${not empty incluirJs}">
-    <script src="${incluirJs}" type="text/javascript"></script>
+    <script src="/${incluirJs}" type="text/javascript"></script>
 </c:if>
-		
-<%-- Desabilitado porque requer o jquery 1.7 ou maior. 	
+
+<%-- Desabilitado porque requer o jquery 1.7 ou maior.
 <script language="JavaScript"
 	src="/siga/javascript/autogrow.min.js" type="text/javascript"></script>
---%>	
+--%>
 <!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
 <script type="text/javascript">
@@ -168,10 +168,10 @@ ${meta}
 									src="/siga/imagens/logo.png">
 							</div>
 							<div class="gt-company">
-								<strong>${f:resource('siga.cabecalho.titulo')} 
+								<strong>${f:resource('siga.cabecalho.titulo')}
 									<c:catch>
 										<c:if test="${not empty titular.orgaoUsuario.descricao}">- ${titular.orgaoUsuario.descricao}</c:if>
-									</c:catch> 
+									</c:catch>
 								</strong>
 							</div>
 							<div class="gt-version">
@@ -183,7 +183,7 @@ ${meta}
 						</a>
 					</div>
 				</div>
-				
+
 				<!-- /head top -->
 				<!-- navbar -->
 				<c:if test="${desabilitarmenu != 'sim'}">
@@ -207,7 +207,7 @@ ${meta}
 
 											var lis = document
 													.getElementsByTagName('li');
-											 
+
 											for (var i = 0, li; li = lis[i]; i++) {
 												var link = li
 														.getElementsByTagName('a')[0];

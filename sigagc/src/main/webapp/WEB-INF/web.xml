@@ -13,19 +13,19 @@
 			<taglib-uri>http://localhost/functiontag</taglib-uri>
 			<taglib-location>/WEB-INF/tags/func.tld</taglib-location>
 		</taglib>
-	    <jsp-property-group>
-	        <description>Property group for common configuration for all the JSP's</description> 
-	        <url-pattern>*.jsp</url-pattern>
-	        <url-pattern>*.html</url-pattern>
-	        <el-ignored>false</el-ignored>
-	        <page-encoding>UTF-8</page-encoding>
-	    </jsp-property-group>
+		<jsp-property-group>
+			<description>Property group for common configuration for all the JSP's</description>
+			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>*.html</url-pattern>
+			<el-ignored>false</el-ignored>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
 	</jsp-config>
-	
+
 	<welcome-file-list>
 		<welcome-file>app/inbox</welcome-file>
 	</welcome-file-list>
- 
+
 	<filter>
 		<filter-name>vraptor</filter-name>
 		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
@@ -37,33 +37,33 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-	
+
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>/public/app/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-	
+
 	<!-- Inicio de WebServer -->
 	<context-param>
-	    <param-name>br.com.caelum.vraptor.provider</param-name>
-	    <param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
-	</context-param>	
-	
+		<param-name>br.com.caelum.vraptor.provider</param-name>
+		<param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>
+
 	<context-param>
 		<param-name>br.com.caelum.vraptor.encoding</param-name>
 		<param-value>UTF-8</param-value>
-	</context-param> 
-		
-	<context-param>  
-   		<param-name>br.com.caelum.vraptor.packages</param-name>  
-	   	<param-value>  
+	</context-param>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.packages</param-name>
+		<param-value>  
         	br.gov.jfrj.siga.vraptor,
-        	br.com.caelum.vraptor.util.jpa  
-   		</param-value>  
-	</context-param>  
-	
+        	br.com.caelum.vraptor.util.jpa
+   		</param-value>
+	</context-param>
+
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>

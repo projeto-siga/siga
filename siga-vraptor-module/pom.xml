@@ -26,6 +26,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<dependency>
+			<groupId>br.com.caelum</groupId>
+			<artifactId>iogi</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>

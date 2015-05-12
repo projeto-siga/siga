@@ -113,11 +113,6 @@
 		<!-- SIGA -->
 		<dependency>
 			<groupId>siga</groupId>
-			<artifactId>siga-libs</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>siga</groupId>
 			<artifactId>siga-ldap</artifactId>
 		</dependency>
 		

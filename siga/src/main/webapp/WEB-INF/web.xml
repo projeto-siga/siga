@@ -4,18 +4,25 @@
 
 	<display-name>Sistema Integrado de Gestão Administrativa</display-name>
 
+	<!-- Inicio de WebServer -->
 	<context-param>
-		<param-name>br.com.caelum.vraptor.provider</param-name>
-		<param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
-	</context-param>
+	    <param-name>br.com.caelum.vraptor.provider</param-name>
+	    <param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>	
+	
 	<context-param>
 		<param-name>br.com.caelum.vraptor.encoding</param-name>
 		<param-value>UTF-8</param-value>
-	</context-param>
-	<context-param>
-		<param-name>br.com.caelum.vraptor.packages</param-name>
-		<param-value>br.gov.jfrj.siga.vraptor</param-value>
-	</context-param>
+	</context-param> 
+		
+	<context-param>  
+   		<param-name>br.com.caelum.vraptor.packages</param-name>  
+	   	<param-value>  
+        	br.gov.jfrj.siga.vraptor,
+        	br.com.caelum.vraptor.util.jpa
+   		</param-value>  
+	</context-param>  
+	
 
 	<filter>
 		<filter-name>vraptor</filter-name>

@@ -306,7 +306,7 @@ public class ExMobilAction extends
 
 	@Override
 	public String aSelecionar() throws Exception {
-	//	assertAcesso("");
+		assertAcesso("");
 		String s = super.aSelecionar();
 		if (getSel() != null && getMatricula() != null) {
 			GenericoSelecao sel = new GenericoSelecao();

@@ -10,6 +10,8 @@ function sbmt(nivel){
 }
 </script>
 
+<head><title>Pesquisa de Itens de Configuração</title></head>
+
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">

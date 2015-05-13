@@ -3,6 +3,8 @@
 <jsp:include page="../popupHeader.jsp"></jsp:include>
 <jsp:include page="../main.jsp"></jsp:include>
 
+<head><title>Pesquisa de Ações</title></head>
+
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-content-box gt-for-table">

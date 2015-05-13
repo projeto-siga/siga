@@ -71,9 +71,10 @@ public class AtributoController extends SrController {
 	@Path("/gravar")
 //	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void gravarAtributo(SrAtributo atributo) throws Exception {
-		validarFormEditarAtributo(atributo);
-		atributo.salvar();
-		result.use(Results.http()).body(atributo.toVO(false).toJson());
+		if (validarFormEditarAtributo(atributo)) {
+			atributo.salvar();
+			result.use(Results.http()).body(atributo.toVO(false).toJson());
+		}
 	}
 
 	@Path("/desativar")
@@ -113,14 +114,17 @@ public class AtributoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
 
-	private void validarFormEditarAtributo(SrAtributo atributo) {
-		if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && atributo.getDescrPreDefinido().equals("")) {
-			srValidator.addError("att.descrPreDefinido", "Valores Pré-definido não informados");
+	private boolean validarFormEditarAtributo(SrAtributo atributo) {
+		if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && (atributo.getDescrPreDefinido() == null || atributo.getDescrPreDefinido().isEmpty() ) ) {
+			srValidator.addError("atributo.descrPreDefinido", "Valores Pré-definido não informados");
 		}
 
 		if (srValidator.hasErrors()) {
 			enviarErroValidacao();
+			return false;
 		}
+		
+		return true;
 	}
 
 }

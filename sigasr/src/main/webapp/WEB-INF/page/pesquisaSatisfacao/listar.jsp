@@ -104,17 +104,16 @@
 
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
-			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
-			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativadoss').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativadoss').value = QueryString.mostrarDesativados == 'true';
 		}
-			
-		$("#checkmostrarDesativado").click(function() {
-			jQuery.blockUI(objBlock);
-			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = "${linkTo[PesquisaSatisfacaoController].listarDesativados}";
-			else
-				location.href = "${linkTo[PesquisaSatisfacaoController].listar}";	
-		});
+
+		 $("#checkmostrarDesativados").click(function() {
+			   if (document.getElementById('checkmostrarDesativados').checked)
+			    location.href = "${linkTo[PesquisaSatisfacaoController].listar[true]}";
+			   else
+			    location.href = "${linkTo[PesquisaSatisfacaoController].listar[false]}"; 
+			  });
 		
 		opts.dataTable= $('#pesquisa_table').dataTable({
 			"language": {
@@ -186,5 +185,22 @@
 	pesquisaService.onRowClick = function(pesquisa) {
 		pesquisaService.editar(pesquisa, 'Alterar pesquisa');
 	}
-	
+
+	/**
+	* Sobescreve o metodo cadastrar para limpar a tela.
+	*/
+	pesquisaService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
+
+		// limpa a lista de Associações
+		associacaoService.limparDadosAssociacoes();
+		associacaoService.atualizarListaAssociacoes({});
+		associacaoService.verificarTipoAtributo();
+	}
+
+	pesquisaService.serializar = function(obj) {
+		var query = BaseService.prototype.serializar.call(this, obj);
+		return query + "&pesquisa=" + this.getId(obj);
+	}
+
 </script>

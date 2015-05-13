@@ -27,16 +27,23 @@
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 	<form id="pesquisaForm">
-		<input type="hidden" name="pesquisa" id="idPesquisa" />
-		<input type="hidden" name="hisIdIni" id="hisIdIni"/>
+
+		<input type="hidden" name="pesquisa.idPesquisa" id="idPesquisa" value="${idAtributo}">
+		<input type="hidden" name="pesquisa.hisIdIni" id="hisIdIni" value="${hisIdIni}">
 
 		<div class="gt-form-row gt-width-66">
-			<label>Nome <span>*</span></label> <input type="text"
-				name="nomePesquisa" id="nomePesquisa" size="60" maxlength="255" required />
+			<label>Nome <span>*</span></label> 
+			<input type="text"
+					name="pesquisa.nomePesquisa"
+					id="nomePesquisa"
+					value="${nomePesquisa}" size="50" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Descri&ccedil;&atilde;o</label> <input type="text" name="descrPesquisa" id="descrPesquisa"
-				size="60" maxlength="255" />
+			<label>Descri&ccedil;&atilde;o</label> 
+			<input type="text"
+					name="pesquisa.descrPesquisa"
+					id="descrPesquisa"
+					value="${descrPesquisa}" size="60" maxlength="255" required/>
 		</div>
 
 		<div class="gt-form-row">
@@ -46,11 +53,11 @@
 		</div>
 	</form>
 
-	<siga:configuracaoAssociacao orgaos="${orgaos}"
+ 	<siga:configuracaoAssociacao orgaos="${orgaos}"
 								 locais="${locais}"
 								 itemConfiguracaoSet="${itemConfiguracaoSet}"
 								 acoesSet="${acoesSet}"
-								 modoExibicao='atributo'
+								 modoExibicao='pesquisa'
 								 urlGravar="${linkTo[AssociacaoController].gravarAssociacao}"></siga:configuracaoAssociacao>
 
 	<div class="gt-form-row">

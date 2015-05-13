@@ -3,7 +3,6 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +11,13 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Objeto;
@@ -20,25 +25,27 @@ import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrPergunta;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.model.SrTipoPergunta;
+import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
 @Path("app/pesquisaSatisfacao")
 public class PesquisaSatisfacaoController extends SrController {
-	
+
 	private static final String PESQUISA = "pesquisa";
 
-	public PesquisaSatisfacaoController(HttpServletRequest request,
-			Result result, CpDao dao, SigaObjects so, EntityManager em,
-			SrValidator srValidator) {
-		super(request, result, dao, so, em, srValidator);
+	public PesquisaSatisfacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, CpDao.getInstance(), so, em, srValidator);
+
+		result.on(AplicacaoException.class).forwardTo(this).appexception();
+		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
 	@SuppressWarnings("unchecked")
 	@Path("/listar/{mostrarDesativados}")
-	public void listar(boolean mostrarDesativados) throws Exception {
+	public void listar(boolean mostrarDesativados) {
 
 		List<SrPesquisa> pesquisas = SrPesquisa.listar(mostrarDesativados);
 		List<SrTipoPergunta> tipos = SrTipoPergunta.buscarTodos();
@@ -50,10 +57,16 @@ public class PesquisaSatisfacaoController extends SrController {
 		result.include("orgaos", orgaos);
 		result.include("locais", locais);
 		result.include("mostrarDesativados", mostrarDesativados);
-	}
 
-	public void listarDesativados() throws Exception {
-		listar(Boolean.TRUE);
+		result.include("pessoa", new DpPessoaSelecao());
+		result.include("dpPessoaSel", new DpPessoaSelecao());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+		result.include("cargoSel", new DpCargoSelecao());
+		result.include("cpGrupoSel", new CpPerfilSelecao());
+		
+		result.include("itemConfiguracao", new SelecionavelVO(null,null));
+		result.include("acao", new SelecionavelVO(null,null));
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
@@ -63,6 +76,7 @@ public class PesquisaSatisfacaoController extends SrController {
 		pesq.finalizar();
 
 		result.use(Results.http()).body(pesq.toJson());
+
 	}
 
 	// @AssertAcesso(ADM_ADMINISTRAR)
@@ -86,14 +100,16 @@ public class PesquisaSatisfacaoController extends SrController {
 
 	// @AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
-	public void gravarPesquisa(SrPesquisa pesquisa, Set<SrPergunta> perguntaSet) throws Exception {
-		pesquisa = (SrPesquisa) Objeto.getImplementation(pesquisa);
-		pesquisa.setPerguntaSet((pesquisa.getPerguntaSet() != null) ? pesquisa.getPerguntaSet() : new HashSet<SrPergunta>());
-		pesquisa.salvar();
+	public void gravarPesquisa(SrPesquisa pesquisa) throws Exception {
+		SrPesquisa srPesquisa = (SrPesquisa) Objeto.getImplementation(pesquisa);
+		srPesquisa.setPerguntaSet((pesquisa.getPerguntaSet() != null) 
+				? srPesquisa.getPerguntaSet() : new HashSet<SrPergunta>());
+		srPesquisa.salvar();
 
-		result.use(Results.http()).body(pesquisa.atualizarTiposPerguntas().toJson());
+		result.use(Results.http())
+			.body(srPesquisa.atualizarTiposPerguntas().toJson());
+
 	}
-	
 
 	// @AssertAcesso(ADM_ADMINISTRAR)
 	public void listarAssociacao(Long idPesquisa) throws Exception {

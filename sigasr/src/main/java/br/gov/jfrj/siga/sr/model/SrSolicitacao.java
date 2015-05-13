@@ -1522,7 +1522,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			for (SrConfiguracao conf : confs) {
 				if (conf.getAcordo() != null) {
 					SrAcordo acordoAtual = ((SrAcordo) SrAcordo.AR
-							.findById(conf.getAcordo().idAcordo)).getAcordoAtual();
+							.findById(conf.getAcordo().getIdAcordo())).getAcordoAtual();
 					if (acordoAtual != null && !getAcordos().contains(acordoAtual))
 						getAcordos().add(acordoAtual);
 				}

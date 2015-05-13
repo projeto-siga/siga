@@ -6,12 +6,15 @@
 	<jsp:include page="../main.jsp"></jsp:include>
 
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="../../../javascripts/jquery.serializejson.min.js"></script>
 	<script src="../../../javascripts/jquery.populate.js"></script>
 	<script src="../../../javascripts/jquery.maskedinput.min.js"></script>
 	<script src="../../../javascripts/base-service.js"></script>
+    <script src="../../../javascripts/jquery.validate.min.js"></script>
+	<script src="../../../javascripts/detalhe-tabela.js"></script>
+	<script src="../../../javascripts/language/messages_pt_BR.min.js"></script>
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
@@ -28,7 +31,7 @@
 					<thead>
 						<tr>
 							<th>Nome</th>
-							<th>Descri√ß√£o</th>
+							<th>DescriÁ„o</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -36,17 +39,17 @@
 					<tbody>
 						<c:forEach items="${acordos}" var="acordo">
 							<tr <c:choose>	
-									<c:when test="${popup == true}">
+									<c:when test="${popup}">
 										onclick="javascript:opener.retorna_acordo${nome}('${acordo.id}','${acordo.id}','${acordo.nomeAcordo}');window.close()"
 									</c:when>
 									<c:otherwise>
-										data-json-id="${acordo.id}" data-json="${acordo.toJson()}" onclick="acordoService.editar($(this).data('json'), 'Alterar Acordo')"
+										data-json-id="${acordo.id}" data-json='${acordo.toJson()}' onclick="acordoService.editar($(this).data('json'), 'Alterar Acordo')"
 									</c:otherwise>
 								</c:choose>
 									style="cursor: pointer;">
 									<td >${acordo.nomeAcordo}</td>
 									<td>${acordo.descrAcordo}</td>
-									<td class="acordos">
+									<td class="acoes">
 										<siga:desativarReativar id="${acordo.idAcordo}" onReativar="acordoService.reativar" onDesativar="acordoService.desativar" isAtivo="${acordo.isAtivo()}"></siga:desativarReativar>
 									</td>
 							</tr>
@@ -65,10 +68,8 @@
 	<br /><br /><br />
 	
 	<siga:modal nome="acordo" titulo="Cadastrar Acordo">
-		<div id="divEditarAcordo"><jsp:include page="editar.jsp"></jsp:include></div>
-	</siga:modal>	
-	
-	
+		<div id="divEditarAcordoForm"><jsp:include page="editar.jsp"></jsp:include></div>
+	</siga:modal>
 </siga:pagina>
 
 <script>
@@ -110,15 +111,14 @@
 			
 		$("#checkmostrarDesativados").click(function() {
 			if (document.getElementById('checkmostrarDesativados').checked)
-				location.href = "${linkTo[AcordoController].listarDesativados}";
+				location.href = "${linkTo[AcordoController].listar[true]}";
 			else
-				location.href = "${linkTo[AcordoController].listar}";	
+				location.href = "${linkTo[AcordoController].listar[false]}";	
 		});
 
-		
 		optsAcordo.acordoTable = $('#acordo_table').dataTable({
 			"language": {
-				"emptyTable":     "N√£o existem resultados",
+				"emptyTable":     "N„o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -131,13 +131,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "√öltimo",
-			        "next":       "Pr√≥ximo",
+			        "last":       "⁄ltimo",
+			        "next":       "PrÛximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordena√ß√£o crescente",
-			        "sortDescending": ": clique para ordena√ß√£o decrescente"
+			        "sortAscending":  ": clique para ordenaÁ„o crescente",
+			        "sortDescending": ": clique para ordenaÁ„o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -168,10 +168,10 @@
 	});
 
 	var optsAcordo = {
-			 urlDesativar : "${linkTo[AcordoController].desativarAcordo}",
-			 urlReativar : "${linkTo[AcordoController].reativarAcordo}",
+			 urlDesativar : "${linkTo[AcordoController].desativar}",
+			 urlReativar : "${linkTo[AcordoController].reativar}",
 			 urlGravar : "${linkTo[AcordoController].gravarAcordo}",
-			 dialogCadastro : $('#editarAcordo_dialog'),
+			 dialogCadastro : $('#acordo_dialog'),
 			 tabelaRegistros : $('#acordo_table'),
 			 objectName : 'acordo',
 			 formCadastro : jQuery('#acordoForm'),
@@ -191,7 +191,7 @@
 	var acordoService = new AcordoService(optsAcordo);
 	
 	acordoService.getId = function(acordo) {
-		return acordo.id;
+		return acordo.idAcordo || acordo['acordo.idAcordo'];
 	}
 
 	acordoService.getRow = function(acordo) {
@@ -202,19 +202,6 @@
 		acordoService.editar(acordo, 'Alterar Acordo');
 	}
 
-	/**
-	* Sobrescreve o m√©todo gravar para tratar a lista de par√¢metros.
-	*/
-	acordoService.gravar = function() {
-		gravarAplicar(this, false);
-	}
-
-	/**
-	* Sobrescreve o m√©todo aplicar para tratar a lista de par√¢metros.
-	*/
-	acordoService.aplicar = function() {
-		return gravarAplicar(this, true);
-	}
 
 	function gravarAplicar(baseService, isAplicar) {
 		if (!baseService.isValidForm())
@@ -263,13 +250,31 @@
 		carregarAbrangenciasAcordo(obj.id);
 	}
 
+	/**
+	 * Sobescreve o metodo cadastrar para limpar a tela.
+	 */
+	acordoService.cadastrar = function(title) {
+		// Atualiza a lista de par√¢metros
+		atualizarParametrosAcordo();
+
+		// carrega a Abrang√™ncias do Acordo
+		carregarAbrangenciasAcordo();
+		
+		BaseService.prototype.cadastrar.call(this, title); // super.editar();
+	}	
+
+	acordoService.serializar = function(obj) {
+		var query = BaseService.prototype.serializar.call(this, obj);
+		return query + "&acordo=" + this.getId(obj);
+	}
+
 	function carregarAbrangenciasAcordo(id) {
 		tableAssociacao.api().clear().draw();
 
 		if (id) {
 			$.ajax({
 	        	type: "GET",
-	        	url: "@{Application.buscarAbrangenciasAcordo()}?id=" + id,
+                url: "${linkTo[AcordoController].buscarAbrangenciasAcordo}?id=" + id,
 	        	dataType: "text",
 	        	success: function(lista) {
 	        		var listaJSon = JSON.parse(lista);
@@ -348,17 +353,5 @@
             $("#"+nomeLista)[0]["index"]--;
         });
     }
-
-	/**
-	 * Sobescreve o metodo cadastrar para limpar a tela.
-	 */
-	acordoService.cadastrar = function(title) {
-		// Atualiza a lista de par√¢metros
-		atualizarParametrosAcordo();
-
-		// carrega a Abrang√™ncias do Acordo
-		carregarAbrangenciasAcordo();
-		
-		BaseService.prototype.cadastrar.call(this, title); // super.editar();
-	}	
+	
 </script>

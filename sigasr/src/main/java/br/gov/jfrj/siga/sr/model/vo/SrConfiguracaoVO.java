@@ -59,8 +59,8 @@ public class SrConfiguracaoVO {
 		setDescrConfiguracao(configuracao.getDescrConfiguracao());
 		setPrioridade(configuracao.getPrioridade());
 		setPrioridadeNaLista(configuracao.getPrioridadeNaLista());
-		setDescPrioridade(configuracao.getPrioridade() != null ? configuracao.getPrioridade().descPrioridade : "");
-		setDescPrioridadeNaLista(configuracao.getPrioridadeNaLista() != null ? configuracao.getPrioridadeNaLista().descPrioridade : "");
+		setDescPrioridade(configuracao.getPrioridade() != null ? configuracao.getPrioridade().getDescPrioridade() : "");
+		setDescPrioridadeNaLista(configuracao.getPrioridadeNaLista() != null ? configuracao.getPrioridadeNaLista().getDescPrioridade() : "");
 
 		setListaItemConfiguracaoVO(new ArrayList<SrItemConfiguracaoVO>());
 		if(configuracao.getItemConfiguracaoSet() != null) {

@@ -248,7 +248,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 		for (int i = 0; i <= prioridades.size() - 1; i++) {
 			SrPrioridadeSolicitacao prioridadeSolic = prioridades.get(i);
 			if(prioridadeSolicitacao.getPrioridade() != null) {
-				if (prioridadeSolic.getPrioridade() == null || prioridadeSolicitacao.getPrioridade().idPrioridade > prioridadeSolic.getPrioridade().idPrioridade) {
+				if (prioridadeSolic.getPrioridade() == null || prioridadeSolicitacao.getPrioridade().getIdPrioridade() > prioridadeSolic.getPrioridade().getIdPrioridade()) {
 					return prioridadeSolic.getNumPosicao();
 				}
 			}

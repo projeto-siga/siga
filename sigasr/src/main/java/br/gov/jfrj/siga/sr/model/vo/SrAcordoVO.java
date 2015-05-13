@@ -22,8 +22,8 @@ public class SrAcordoVO extends AbstractSelecionavel {
 		SrAcordoVO acordoVO = new SrAcordoVO(acordo.getId(), acordo.getSigla(), acordo.getDescricao());
 		acordoVO.ativo = acordo.isAtivo();
 		acordoVO.hisIdIni = acordo.getHisIdIni();
-		acordoVO.nomeAcordo = acordo.nomeAcordo;
-		acordoVO.descrAcordo = acordo.descrAcordo;
+		acordoVO.nomeAcordo = acordo.getNomeAcordo();
+		acordoVO.descrAcordo = acordo.getDescrAcordo();
 		acordoVO.atributoAcordoSet = new ArrayList<SrAtributoAcordoVO>();
 		
 		if (acordo.atributoAcordoSet != null)

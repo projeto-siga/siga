@@ -18,7 +18,7 @@ public class SrAtributoAcordoVO {
 	public SrAtributoAcordoVO(SrAtributoAcordo atributoAcordo) {
 		this.idAtributoAcordo = atributoAcordo.idAtributoAcordo; 
 		this.operador = atributoAcordo.operador;
-		this.operadorNome = atributoAcordo.operador != null ? atributoAcordo.operador.nome : "";
+		this.operadorNome = atributoAcordo.operador != null ? atributoAcordo.operador.getNome() : "";
 		this.valor = atributoAcordo.valor;
 		this.unidadeMedida = atributoAcordo.unidadeMedida;
 		this.unidadeMedidaPlural = atributoAcordo.unidadeMedida != null ? atributoAcordo.unidadeMedida.getPlural() : "";

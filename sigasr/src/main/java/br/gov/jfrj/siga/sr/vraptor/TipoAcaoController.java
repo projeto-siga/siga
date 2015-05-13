@@ -118,10 +118,10 @@ public class TipoAcaoController extends SrController {
 
 	private void validarFormEditar(SrTipoAcao acao) {
 		if ("".equals(acao.getSiglaTipoAcao())) {
-			srValidator.addError("siglaAcao", "C&oacute;digo n&atilde;o informado");
+			srValidator.addError("tipoAcao.siglaTipoAcao", "C&oacute;digo n&atilde;o informado");
 		}
 		if ("".equals(acao.getTituloTipoAcao())) {
-			srValidator.addError("tituloAcao", "Titulo n&atilde;o informado");
+			srValidator.addError("tipoAcao.tituloTipoAcao", "Titulo n&atilde;o informado");
 		}
 		if (srValidator.hasErrors()) {
 			enviarErroValidacao();

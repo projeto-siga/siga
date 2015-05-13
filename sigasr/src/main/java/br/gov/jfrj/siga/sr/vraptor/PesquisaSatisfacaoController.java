@@ -35,9 +35,11 @@ public class PesquisaSatisfacaoController extends SrController {
 
 	private static final String PESQUISA = "pesquisa";
 
-	public PesquisaSatisfacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
-		super(request, result, CpDao.getInstance(), so, em, srValidator);
+	public PesquisaSatisfacaoController(HttpServletRequest request,
+			Result result, SigaObjects so, EntityManager em,
+			SrValidator srValidator) {
 
+		super(request, result, CpDao.getInstance(), so, em, srValidator);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
 	}
@@ -64,7 +66,7 @@ public class PesquisaSatisfacaoController extends SrController {
 		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
 		result.include("cargoSel", new DpCargoSelecao());
 		result.include("cpGrupoSel", new CpPerfilSelecao());
-		
+
 		result.include("itemConfiguracao", new SelecionavelVO(null,null));
 		result.include("acao", new SelecionavelVO(null,null));
 	}
@@ -111,30 +113,25 @@ public class PesquisaSatisfacaoController extends SrController {
 
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
-	public void listarAssociacao(Long idPesquisa) throws Exception {
-		SrPesquisa pesquisa = new SrPesquisa();
+	@Path("/associacoes")
+	public void buscarAssociacaoPesquisa(Long idPesquisa) throws Exception {
+		SrPesquisa pesq = SrPesquisa.AR.findById(idPesquisa);
 
-		if (idPesquisa != null)
-			pesquisa = SrPesquisa.AR.findById(idPesquisa);
-
-		List<SrConfiguracao> associacoes = SrConfiguracao
-				.listarAssociacoesPesquisa(pesquisa, Boolean.FALSE);
-
-		result.use(Results.http()).body(
-				SrConfiguracao.convertToJSon(associacoes));
+		if (pesq != null) {
+			result.use(Results.http()).body(pesq.toJson(true));
+		}
+		result.use(Results.http()).body("");
 	}
 
-	@Path("/listarAssociacaoDesativados")
-	public void listarAssociacaoDesativados(Long idPesquisa) throws Exception {
+	// @AssertAcesso(ADM_ADMINISTRAR)
+	@Path("/pesquisas")
+	public void listarAssociacaoPesquisa(Long idPesquisa, boolean exibirInativos) throws Exception {
 		SrPesquisa pesquisa = new SrPesquisa();
-		if (idPesquisa != null)
-			pesquisa = SrPesquisa.AR.findById(idPesquisa);
-		List<SrConfiguracao> associacoes = SrConfiguracao
-				.listarAssociacoesPesquisa(pesquisa, Boolean.TRUE);
+    	if (idPesquisa != null)
+    		pesquisa = SrPesquisa.AR.findById(idPesquisa);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarAssociacoesPesquisa(pesquisa, exibirInativos);
 
-		result.use(Results.http()).body(
-				SrConfiguracao.convertToJSon(associacoes));
+        result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
 	}
 
 	// @AssertAcesso(ADM_ADMINISTRAR)
@@ -152,15 +149,5 @@ public class PesquisaSatisfacaoController extends SrController {
 		associacao.finalizar();
 		result.use(Results.http()).body(associacao.toJson());
 	}
-
-	@Path("/buscarAssociacao/{idPesquisa}")
-	public void buscarAssociacao(Long idPesquisa) throws Exception {
-		SrPesquisa pesq = SrPesquisa.AR.findById(idPesquisa);
-
-		if (pesq != null) {
-			result.use(Results.http()).body(pesq.toJson(true));
-		}
-		result.use(Results.http()).body("");
-	}
-
+	
 }

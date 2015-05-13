@@ -26,7 +26,7 @@
 </style>
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
-	<form id="pesquisaForm">
+	<form id="pesquisaForm" action="#" enctype="multipart/form-data">
 
 		<input type="hidden" name="pesquisa.idPesquisa" id="idPesquisa" value="${idAtributo}">
 		<input type="hidden" name="pesquisa.hisIdIni" id="hisIdIni" value="${hisIdIni}">
@@ -52,13 +52,13 @@
 			<input type="button" value="Incluir" id="botaoIncluir" class="gt-btn-small gt-btn-left" style="font-size: 10px;">
 		</div>
 	</form>
-
- 	<siga:configuracaoAssociacao orgaos="${orgaos}"
+ 
+	<siga:configuracaoAssociacao orgaos="${orgaos}"
 								 locais="${locais}"
 								 itemConfiguracaoSet="${itemConfiguracaoSet}"
 								 acoesSet="${acoesSet}"
 								 modoExibicao='pesquisa'
-								 urlGravar="${linkTo[AssociacaoController].gravarAssociacao}"></siga:configuracaoAssociacao>
+								 urlGravar="${linkTo[AssociacaoController].gravarAssociacaoPesquisa}"></siga:configuracaoAssociacao>
 
 	<div class="gt-form-row">
 		<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
@@ -99,13 +99,14 @@
 
 <script>
 	associacaoService.getUrlDesativarReativar = function(desativados) {
-  	  var url = "${linkTo[PesquisaSatisfacaoController].listarAssociacao}",
-   	     idPesquisa = $("[name=idPesquisa]").val();
-
-  	  if(desativados)
-    	    url = "${linkTo[PesquisaSatisfacaoController].listarAssociacaoDesativados}";
-        
-  	  return url + "?idPesquisa=" + idPesquisa;
+		var url = '${linkTo[PesquisaSatisfacaoController].listarAssociacaoPesquisa}';
+		var idAtributo = $("[id=idPesquisa]").val();
+		var exibirInativo = "";
+		
+		if(desativados)
+			exibirInativo = "&exibirInativos=true";
+		
+		return url + "?idAtributo=" + idAtributo + exibirInativo;
 	}
 
 	jQuery(document).ready(function($) {
@@ -116,7 +117,7 @@
 	        dialog = jDialog[0],
 	        jDescrPergunta = $("#descrPergunta"),
 	        jTipoPergunta = $("#tipoPergunta");
-       
+
         $( "#perguntas" ).sortable({placeholder: "ui-state-highlight"});
         $( "#perguntas" ).disableSelection();
        

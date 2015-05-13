@@ -26,9 +26,12 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
+public class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 		Comparable<CpGrupo> {
 
+	public CpGrupo() {
+	}
+	
 	public int compareTo(CpGrupo o) {
 		return getId().compareTo(o.getId());
 	}

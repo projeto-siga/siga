@@ -113,6 +113,8 @@ public class PrincipalAction extends SigaActionSupport {
 				lot = pes.getLotacao();
 				testes = "/testes";
 				incluirMatricula = "&matricula=" + matricula;
+			}else{
+				incluirMatricula = "&matricula=" + getTitular().getSiglaCompleta();
 			}
 
 			// TODO n�o precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...

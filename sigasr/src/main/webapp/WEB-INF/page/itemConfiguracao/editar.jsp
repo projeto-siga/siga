@@ -73,7 +73,7 @@
 					</tr>
 					<tr>
 						<td width="5%">
-							<label class="inline">CÃ³digo: <span>*</span></label> 
+							<label class="inline">Codigo: <span>*</span></label> 
 						</td>
 						<td>
 							<input id="siglaItemConfiguracao"

@@ -43,7 +43,7 @@ public class ItemConfiguracaoController extends SrController {
 	@Path("/listar/{mostrarDesativados}")
 	public void listar(boolean mostrarDesativados) throws Exception {
 		List<SrItemConfiguracao> itens = SrItemConfiguracao.listar(mostrarDesativados);
-		List<CpOrgaoUsuario> orgaos = em().createQuery("from CpOrgaoUsuario").getResultList();
+		List<CpOrgaoUsuario> orgaos = CpOrgaoUsuario.AR.em().createQuery("from CpOrgaoUsuario").getResultList();
 		List<CpComplexo> locais = CpComplexo.AR.all().fetch();
 		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.AR.find("hisDtFim is null").fetch();

@@ -30,7 +30,7 @@ public class SrGestorItem extends Objeto{
 	@SequenceGenerator(sequenceName = "SR_GESTOR_ITEM_SEQ", schema = Catalogs.SIGASR, name = "srGestorItemSeq")
 	@GeneratedValue(generator = "srGestorItemSeq")
 	@Column(name = "ID_GESTOR_ITEM")
-	public Long idGestorItem;
+	private Long idGestorItem;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESSOA")
@@ -44,23 +44,7 @@ public class SrGestorItem extends Objeto{
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
-	public SrItemConfiguracao itemConfiguracao;
-	
-	public DpPessoa getDpPessoa() {
-		return dpPessoa;
-	}
-	
-	public void setDpPessoa(DpPessoa dpPessoa) {
-		this.dpPessoa = dpPessoa;
-	}
-	
-	public DpLotacao getDpLotacao() {
-		return dpLotacao;
-	}
-	
-	public void setDpLotacao(DpLotacao dpLotacao) {
-		this.dpLotacao = dpLotacao;
-	}
+	private SrItemConfiguracao itemConfiguracao;
 	
 	public SrGestorItemVO toVO() {
 		if (this.dpPessoa != null && this.dpPessoa.getId() != null && (this.dpPessoa.getSigla() == null || this.dpPessoa.getDescricao() == null))
@@ -70,6 +54,38 @@ public class SrGestorItem extends Objeto{
 			this.dpLotacao = DpLotacao.findById(this.dpLotacao.getId());
 		
 		return new SrGestorItemVO(this.idGestorItem, this.dpPessoa, this.dpLotacao);
+	}
+
+	public Long getIdGestorItem() {
+		return idGestorItem;
+	}
+
+	public void setIdGestorItem(Long idGestorItem) {
+		this.idGestorItem = idGestorItem;
+	}
+
+	public DpPessoa getDpPessoa() {
+		return dpPessoa;
+	}
+
+	public void setDpPessoa(DpPessoa dpPessoa) {
+		this.dpPessoa = dpPessoa;
+	}
+
+	public DpLotacao getDpLotacao() {
+		return dpLotacao;
+	}
+
+	public void setDpLotacao(DpLotacao dpLotacao) {
+		this.dpLotacao = dpLotacao;
+	}
+
+	public SrItemConfiguracao getItemConfiguracao() {
+		return itemConfiguracao;
+	}
+
+	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
+		this.itemConfiguracao = itemConfiguracao;
 	}
 	
 }

@@ -368,7 +368,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 			sb.append(configuracao.getDirecaoOrdenacao());
 		}
 
-		Query query = em().createQuery(sb.toString());
+		Query query = AR.em().createQuery(sb.toString());
 		query.setFirstResult(configuracao.getFistResult());
 		query.setMaxResults(configuracao.getTamanho());
 
@@ -380,7 +380,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 
 	private static Integer countAtivos(PaginaItemConfiguracao pagina) {
 		StringBuilder sb = querySelecionarAtivos("count(i)", pagina);
-		Query query = em().createQuery(sb.toString());
+		Query query = AR.em().createQuery(sb.toString());
 
 		if(pagina.possuiParametroConsulta()) {
 			query.setParameter("tituloOuCodigo", "%" + pagina.getTituloOuCodigo() + "%");
@@ -435,7 +435,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 
         if (getGestorSet() != null)
             for (SrGestorItem gestor : getGestorSet()){
-                gestor.itemConfiguracao = this;
+                gestor.setItemConfiguracao(this);
                 gestor.salvar();
             }
 

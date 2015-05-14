@@ -79,7 +79,6 @@
 							<input id="siglaItemConfiguracao"
 								   type="text"
 								   name="siglaItemConfiguracao"
-								   value="${itemConfiguracao.siglaItemConfiguracao}"
 								   maxlength="255"
 								   required /> 
 						</td>
@@ -93,7 +92,6 @@
 							<input type="text" 
 								   id="tituloItemConfiguracao"
 								   name="tituloItemConfiguracao"
-								   value="${itemConfiguracao.tituloItemConfiguracao}"
 								   style="width: 67.6%;"
 								   maxlength="255"
 								   required />
@@ -107,7 +105,6 @@
 							<input type="text"
 								id="descrItemConfiguracao"
 								name="descrItemConfiguracao"
-								value="${itemConfiguracao.descrItemConfiguracao}"
 								style="width: 690px" maxlength="255" />
 						</td>
 					</tr>
@@ -132,7 +129,7 @@
 							<label class="inline">Similaridade (Separar itens com ponto e vírgula):</label>
 							<textarea cols="63" rows="3" maxlength="8192" 
 								name="descricaoSimilaridade"
-								id="descricaoSimilaridade">${itemConfiguracao.descricaoSimilaridade}</textarea>
+								id="descricaoSimilaridade"></textarea>
 						</td>
 					</tr>
 				</table>
@@ -147,7 +144,6 @@
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true; else{ if (tecla==8 || tecla==0) return true; else return false; }"
 								   type="text" id="numFatorMultiplicacaoGeral" 
 								   name="numFatorMultiplicacaoGeral"
-								   value="${itemConfiguracao.numFatorMultiplicacaoGeral}"
 								   size="20"
 								   maxlength="9"
 								   required

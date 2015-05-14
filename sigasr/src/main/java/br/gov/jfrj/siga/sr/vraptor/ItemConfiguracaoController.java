@@ -14,6 +14,9 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -24,6 +27,7 @@ import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
+import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -51,6 +55,7 @@ public class ItemConfiguracaoController extends SrController {
 		List<CpComplexo> locais = CpComplexo.AR.all().fetch();
 		List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
 		List<SrPesquisa> pesquisaSatisfacao = SrPesquisa.AR.find("hisDtFim is null").fetch();
+		List<SrConfiguracao> designacoes = new ArrayList<SrConfiguracao>();
 
 		result.include(ITENS, itens);
 		result.include(ORGAOS, orgaos);
@@ -58,10 +63,24 @@ public class ItemConfiguracaoController extends SrController {
 		result.include(UNIDADES_MEDIDA, unidadesMedida);
 		result.include(PESQUISA_SATISFACAO, pesquisaSatisfacao);
 		result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
+		
+		// Includes para os componentes de pessoaLotaSelecao de Gestor e Fator de Multiplicação
 		result.include("gestorpessoaSel", new DpPessoaSelecao());
 		result.include("gestorlotacaoSel", new DpLotacaoSelecao());
 		result.include("fatorrpessoaSel", new DpPessoaSelecao());
 		result.include("fatorlotacaoSel", new DpLotacaoSelecao());
+		
+		// includes para o componente de Designação
+		result.include("modoExibicao", "item");
+		result.include("designacoes", designacoes);
+		result.include("dpPessoaSel", new DpPessoaSelecao());
+		result.include("atendenteSel", new DpLotacaoSelecao());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+		result.include("cargoSel", new DpCargoSelecao());
+		result.include("cpGrupoSel", new CpPerfilSelecao());
+		result.include("itemConfiguracao", new SelecionavelVO(null,null));
+		result.include("acao", new SelecionavelVO(null,null));
 	}
 	
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {

@@ -155,7 +155,7 @@
 							<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
 						</div>
 					</div>
-					<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
+					<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet != null ? itemConfiguracaoSet : ''}" acoesSet="${acoesSet != null ? acoesSet : ''}"></siga:configuracaoItemAcao>
 		
 					<div class="gt-form-row">
 						<div class="gt-form-row">

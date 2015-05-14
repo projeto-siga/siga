@@ -8,5 +8,9 @@
 			<param-name>characterEncoding</param-name>
 			<param-value>UTF-8</param-value>
 		</param>
+		<param>
+        <param-name>disableProxyCaching</param-name>
+        <param-value>false</param-value>
+     </param>
 	</valve>
 </jboss-web>

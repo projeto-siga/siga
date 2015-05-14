@@ -146,16 +146,11 @@
 							
 							<input type="hidden" name="atendente" id="atendente" class="selecao">
 							<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente" desativar="${requestScope[modoExibicao] == 'equipe' ? 'true' : disabled}"/>
-
-		 
-		<%-- 					#{selecao --%>
-		<%-- 						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual, --%>
-		<%-- 						disabled:_modoExibicao == 'equipe' ? 'true' : disabled /} --%>
 		
 							<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
 						</div>
 					</div>
-					<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
+					<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"/>
 		
 					<div class="gt-form-row">
 						<div class="gt-form-row">

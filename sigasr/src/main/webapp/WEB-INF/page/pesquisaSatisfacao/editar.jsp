@@ -106,7 +106,7 @@
 		if(desativados)
 			exibirInativo = "&exibirInativos=true";
 		
-		return url + "?idAtributo=" + idAtributo + exibirInativo;
+		return url + "?idPesquisa=" + idAtributo + exibirInativo;
 	}
 
 	jQuery(document).ready(function($) {

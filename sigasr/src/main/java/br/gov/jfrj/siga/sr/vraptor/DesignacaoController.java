@@ -126,7 +126,7 @@ public class DesignacaoController extends SrController {
 		if (designacao.getAtendente().getId() == null)
 			designacao.setAtendente(null);
 
-		if (designacao.getOrgaoUsuario().getId() == null)
+		if (designacao.getOrgaoUsuario().getIdOrgaoUsu() == null)
 			designacao.setOrgaoUsuario(null);
 
 		if (designacao.getComplexo().getIdComplexo() == null)
@@ -134,6 +134,9 @@ public class DesignacaoController extends SrController {
 
 		if (designacao.getDpPessoa().getId() == null)
 			designacao.setDpPessoa(null);
+		
+		if (designacao.getComplexo().getIdComplexo() == null)
+			designacao.setComplexo(null);
 	}
 
 }

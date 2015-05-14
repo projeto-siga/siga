@@ -189,13 +189,13 @@
 	}
 
 	acaoService.editar = function(obj, title) {
-		BaseService.prototype.editar.call(this, obj, title);
 		acaoService.limparTipoAcao();
+		BaseService.prototype.editar.call(this, obj, title);
 	}
 
 	acaoService.cadastrar = function(title) {
-        BaseService.prototype.cadastrar.call(this, title);
         acaoService.limparTipoAcao();
+        BaseService.prototype.cadastrar.call(this, title);
 	}
 
 	acaoService.limparTipoAcao = function() {

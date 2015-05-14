@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ tag body-content="scriptless"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
@@ -15,6 +16,7 @@
 </c:if>
 
 <c:set var="titulo_pagina" scope="request">${titulo}</c:set>
+
 <siga:cabecalho titulo="${titulo}" popup="${popup}" meta="${meta}"
 	onLoad="${onLoad}" desabilitarbusca="${desabilitarbusca}"
 	desabilitarmenu="${desabilitarmenu}" incluirJs="${incluirJs}" />

@@ -13,6 +13,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrDisponibilidade;
+import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrTipoDisponibilidade;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
@@ -37,7 +38,6 @@ public class DisponibilidadeController extends SrController {
 
 	@Path("/listarPagina")
 	public void listarPagina(PaginaItemConfiguracao pagina) {
-
 		@SuppressWarnings("unchecked")
 		List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
 
@@ -45,8 +45,11 @@ public class DisponibilidadeController extends SrController {
 	}
 
 	@Path("/gravar")
-	public String gravar(SrDisponibilidade disponibilidade, PaginaItemConfiguracao pagina) throws Exception {
+	public void gravar(SrDisponibilidade disponibilidade, PaginaItemConfiguracao pagina, SrItemConfiguracao itemConfiguracao, CpOrgaoUsuario orgao) throws Exception {
+		disponibilidade.setItemConfiguracao(itemConfiguracao);
+		disponibilidade.setOrgao(orgao);
+
 		disponibilidade.salvar(pagina);
-		return disponibilidade.toJsonObject().toString();
+		result.use(Results.http()).body(disponibilidade.toJsonObject().toString());
 	}
 }

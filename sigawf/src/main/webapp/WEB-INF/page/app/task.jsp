@@ -6,12 +6,12 @@
 			<c:if
 				test="${not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 				<div id="desc_editar" style="display: none;">
-					<h3>DescriÁ„o da Tarefa</h3>
+					<h3>Descri√ß√£o da Tarefa</h3>
 					<div class="gt-form gt-content-box">
 						<form method="POST" action="${linkTo[AppController].saveKnowledge}">
 							<input name="tiId" type="hidden" value="${tiId}" />
 							<div class="gt-form-row gt-width-100">
-								<label>DescriÁ„o</label>
+								<label>Descri√ß√£o</label>
 								<textarea cols="80" rows="15" name="conhecimento"
 									class="gt-form-textarea">${task.conhecimento}</textarea>
 							</div>
@@ -28,7 +28,7 @@
 
 			<!-- Adicionando a lista de Tarefas -->
 			<form method="POST" action="${linkTo[AppController].executeTask}">
-				<h3>ExecuÁ„o da Tarefa</h3>
+				<h3>Execu√ß√£o da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<div style="margin:10px;" >
 						<c:if
@@ -44,11 +44,11 @@
 										<c:if test="${task.conhecimentoEditavel}">
 											<a
 												style="float: right; margin-left: 15px; margin-bottom: 15px;"
-												title="Editar a descriÁ„o"
+												title="Editar a descri√ß√£o"
 												href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';"><img
 												src="/siga/css/famfamfam/icons/pencil.png"> </a>
 										</c:if>${task.descricao}</c:when>
-									<c:otherwise>Ainda n„o existe uma descriÁ„o de como esta tarefa deve ser executada. Por favor, clique <a
+									<c:otherwise>Ainda n√£o existe uma descri√ß√£o de como esta tarefa deve ser executada. Por favor, clique <a
 											href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';">aqui</a> para contribuir.</c:otherwise>
 								</c:choose> </span>
 						</c:if>
@@ -179,7 +179,7 @@
 			</form>
 			<c:if
 				test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance))}">
-				<h3 class="gt-form-head">DesignaÁao da Tarefa</h3>
+				<h3 class="gt-form-head">Designa√ßao da Tarefa</h3>
 				<div class="gt-form gt-content-box">
 					<form method="POST" action="${linkTo[AppController].assignTask}">
 						<input name="tiId" type="hidden" value="${taskInstance.id}" />
@@ -194,7 +194,7 @@
 						</div>
 						<div class="gt-form-row gt-width-100">
 
-							<label>LotaÁ„o</label>
+							<label>Lota√ß√£o</label>
 							<siga:selecao modulo="siga" tipo="lotacao" tema="simple"
 										propriedade="lotaAtor"
 										siglaInicial="${lotaAtorSel.sigla}"
@@ -221,13 +221,13 @@
 					</form>
 				</div>
 
-				<h3>Coment·rios</h3>
+				<h3>Coment√°rios</h3>
 				<div class="gt-content-box">
 					<table class="gt-table">
 						<thead>
 							<th>Data/Hora</th>
 							<th>Atendente</th>
-							<th>DescriÁ„o</th>
+							<th>Descri√ß√£o</th>
 						</thead>
 						<c:forEach var="ti" items="${wf:ordenarTarefas(taskInstance)}">
 							<c:forEach var="c" items="${wf:ordenarComentarios(ti)}">
@@ -247,7 +247,7 @@
 				</div>
 				<div class="gt-form gt-content-box">
 					<form method="POST" action="${linkTo[AppController].commentTask}">
-						<input name="tiId" type="hidden" value="${taskInstance.id}" /> <label>Coment·rio</label>
+						<input name="tiId" type="hidden" value="${taskInstance.id}" /> <label>Coment√°rio</label>
 						<div class="gt-form-row gt-width-100">
 							<input type="text" size="80" name="comentario"
 								class="gt-form-text" />
@@ -276,7 +276,7 @@
 					<c:choose>
 						<c:when test="${taskInstance.priority == 1}">Muito Alta</c:when>
 						<c:when test="${taskInstance.priority == 2}">Alta</c:when>
-						<c:when test="${taskInstance.priority == 3}">MÈdia</c:when>
+						<c:when test="${taskInstance.priority == 3}">M√©dia</c:when>
 						<c:when test="${taskInstance.priority == 4}">Baixa</c:when>
 						<c:when test="${taskInstance.priority == 51}">Muito Baixa</c:when>
 					</c:choose>
@@ -288,7 +288,7 @@
 					<b>Titular:</b> ${task.titular} (${task.lotaTitular})
 				</p>
 				<p>
-					<b>InÌcio:</b> ${f:espera(taskInstance.create)}
+					<b>In√≠cio:</b> ${f:espera(taskInstance.create)}
 				</p>
 			</div>
 			<!-- /Sidebar Content -->
@@ -385,15 +385,12 @@
 
 	</div>
 
-	
-
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 
-		<c:url var="url" value="/../sigagc/app/knowledge">
+		<c:url var="url" value="/../sigagc/app/knowledgeInplace">
 			<c:param name="tags">${task.ancora}</c:param>
-			<c:param name="estilo">inplace</c:param>
-			<c:param name="msgvazio">Ainda n„o existe uma descriÁ„o de como esta tarefa deve ser executada. Por favor, clique <a href="$1">aqui</a> para contribuir.</c:param>
+			<c:param name="msgvazio">Ainda n√£o existe uma descri√ß√£o de como esta tarefa deve ser executada. Por favor, clique <a href="$1">aqui</a> para contribuir.</c:param>
 			<c:param name="titulo">${taskInstance.task.processDefinition.name} - ${taskInstance.task.name}</c:param>
 			<c:param name="ts">${currentTimeMillis}</c:param>
 		</c:url>
@@ -401,12 +398,11 @@
 	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc-ancora'));
 	</script>
 
-		<c:url var="url" value="/../sigagc/app/knowledge">
+		<c:url var="url" value="/../sigagc/app/knowledgeSidebar">
 			<c:param name="tags">@workflow</c:param>
 			<c:forEach var="tag" items="${task.tags}">
 				<c:param name="tags">${tag}</c:param>
 			</c:forEach>
-			<c:param name="estilo">sidebar</c:param>
 			<c:param name="ts">${currentTimeMillis}</c:param>
 		</c:url>
 		<script type="text/javascript">

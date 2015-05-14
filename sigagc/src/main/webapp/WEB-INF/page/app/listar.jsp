@@ -2,7 +2,6 @@
 
 <siga:pagina titulo="Informações">
 
-
 	<c:set var="count" value="${0}" />
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">

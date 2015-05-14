@@ -125,10 +125,10 @@ public class AppController extends GcController {
 	 */
 
 	@Path("/public/app/knowledge")
-	public void publicKnowledge(Long id, String[] tags, String estilo,
-			String msgvazio, String urlvazio, String titulo, boolean popup,
-			String estiloBusca, Boolean podeCriar) throws Exception {
-		renderKnowledge(id, tags, estilo, msgvazio, urlvazio, titulo, true,
+	public void publicKnowledge(Long id, String[] tags, String msgvazio,
+			String urlvazio, String titulo, boolean popup, String estiloBusca,
+			Boolean podeCriar) throws Exception {
+		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo, true,
 				popup, estiloBusca, podeCriar);
 	}
 
@@ -139,14 +139,14 @@ public class AppController extends GcController {
 				popup, estiloBusca, podeCriar);
 	}
 
-	public void knowledge_inplace(Long id, String[] tags, String msgvazio,
+	public void knowledgeInplace(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean popup, String estiloBusca,
 			Boolean podeCriar) throws Exception {
 		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo, false,
 				popup, estiloBusca, podeCriar);
 	}
 
-	public void knowledge_sidebar(Long id, String[] tags, String msgvazio,
+	public void knowledgeSidebar(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean popup, String estiloBusca,
 			Boolean podeCriar) throws Exception {
 		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo, false,
@@ -417,7 +417,8 @@ public class AppController extends GcController {
 		result.include("evolucao", evolucao);
 	}
 
-	public void listar(GcInformacaoFiltro filtro, int estatistica) throws Exception {
+	public void listar(GcInformacaoFiltro filtro, int estatistica)
+			throws Exception {
 		List<GcInformacao> lista;
 		if (filtro.pesquisa)
 			lista = filtro.buscar();
@@ -550,36 +551,6 @@ public class AppController extends GcController {
 	// render(informacoes);
 	// }
 
-	@Path("/app/exibir/{sigla}")
-	public void exibir(String sigla, String mensagem) throws Exception {
-		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		DpPessoa titular = getTitular();
-		DpLotacao lotaTitular = getLotaTitular();
-		CpIdentidade idc = getIdentidadeCadastrante();
-		GcMovimentacao movNotificacao = informacao.podeTomarCiencia(titular,
-				lotaTitular);
-
-		if (informacao.acessoPermitido(titular, lotaTitular,
-				informacao.visualizacao.id)
-				|| informacao.podeRevisar(titular, lotaTitular)
-				|| movNotificacao != null) {
-			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
-					.getConteudoTXT());
-			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
-			if (movNotificacao != null)
-				bl.notificado(informacao, idc, titular, lotaTitular,
-						movNotificacao);
-			bl.logarVisita(informacao, idc, titular, lotaTitular);
-			result.include("mensagem", mensagem);
-			result.include("informacao", informacao);
-		} else
-			throw new AplicacaoException(
-					"Restrição de Acesso ("
-							+ informacao.visualizacao.nome
-							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
-	}
-
 	/*
 	 * public static void exibirPontoDeEntrada(String sigla) throws Exception {
 	 * GcInformacao informacao = GcInformacao.findBySigla(sigla); DpPessoa
@@ -687,14 +658,38 @@ public class AppController extends GcController {
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
 	}
 
-	@Path("/app/historico/{sigla}")
-	public void historico(String sigla) throws Exception {
+	@Path("/app/exibir/{sigla}")
+	public void exibir(String sigla, String mensagem, boolean historico,
+			boolean movimentacoes) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		DpPessoa titular = getTitular();
+		DpLotacao lotaTitular = getLotaTitular();
+		CpIdentidade idc = getIdentidadeCadastrante();
+		GcMovimentacao movNotificacao = informacao.podeTomarCiencia(titular,
+				lotaTitular);
 
-		if (informacao.podeRevisar(getTitular(), getLotaTitular())
-				|| informacao.acessoPermitido(getTitular(), getLotaTitular(),
-						informacao.visualizacao.id)) {
+		if (!informacao.acessoPermitido(titular, lotaTitular,
+				informacao.visualizacao.id)
+				&& !informacao.podeRevisar(titular, lotaTitular)
+				&& movNotificacao == null)
+			throw new AplicacaoException(
+					"Restrição de Acesso ("
+							+ informacao.visualizacao.nome
+							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 
+		String conteudo = bl.marcarLinkNoConteudo(informacao.arq
+				.getConteudoTXT());
+		if (conteudo != null)
+			informacao.arq.setConteudoTXT(conteudo);
+		if (movNotificacao != null)
+			bl.notificado(informacao, idc, titular, lotaTitular, movNotificacao);
+		bl.logarVisita(informacao, idc, titular, lotaTitular);
+		result.include("informacao", informacao);
+		result.include("mensagem", mensagem);
+		result.include("movimentacoes", movimentacoes);
+		result.include("historico", historico);
+
+		if (historico) {
 			diff_match_patch diff = new diff_match_patch();
 
 			String txtAnterior = "";
@@ -746,41 +741,21 @@ public class AppController extends GcController {
 						tituloAnterior = titulo;
 					}
 				}
+				result.include("list", list);
+				result.include("mapTitulo", mapTitulo);
+				result.include("mapTxt", mapTxt);
 			}
+		}
+	}
 
-			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
-					.getConteudoTXT());
-			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
-
-			result.include("informacao", informacao);
-			result.include("list", list);
-			result.include("mapTitulo", mapTitulo);
-			result.include("mapTxt", mapTxt);
-		} else
-			throw new AplicacaoException(
-					"RestriÃ§ão de Acesso ("
-							+ informacao.visualizacao.nome
-							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
-
+	@Path("/app/historico/{sigla}")
+	public void historico(String sigla) throws Exception {
+		result.forwardTo(this).exibir(sigla, null, true, false);
 	}
 
 	@Path("/app/movimentacoes/{sigla}")
 	public void movimentacoes(String sigla) throws Exception {
-		GcInformacao informacao = GcInformacao.findBySigla(sigla);
-		if (informacao.podeRevisar(getTitular(), getLotaTitular())
-				|| informacao.acessoPermitido(getTitular(), getLotaTitular(),
-						informacao.visualizacao.id)) {
-			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
-					.getConteudoTXT());
-			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
-			result.include("informacao", informacao);
-		} else
-			throw new AplicacaoException(
-					"RestriÃ§ão de Acesso ("
-							+ informacao.visualizacao.nome
-							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
+		result.forwardTo(this).exibir(sigla, null, false, true);
 	}
 
 	@Path("/app/fechar/{sigla}")
@@ -791,7 +766,8 @@ public class AppController extends GcController {
 					null, null, null, null, null, null, null, null, null);
 			bl.gravar(inf, getIdentidadeCadastrante(), getTitular(),
 					getLotaTitular());
-			result.redirectTo(this).exibir(inf.getSiglaCompacta(), null);
+			result.redirectTo(this).exibir(inf.getSiglaCompacta(), null, false,
+					false);
 		} else
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
@@ -848,7 +824,8 @@ public class AppController extends GcController {
 				}
 			}
 		}
-		result.redirectTo(this).exibir(inf.getSiglaCompacta(), null);
+		result.redirectTo(this).exibir(inf.getSiglaCompacta(), null, false,
+				false);
 	}
 
 	public void gravar(@LoadOptional GcInformacao informacao, String inftitulo,
@@ -907,7 +884,8 @@ public class AppController extends GcController {
 			}
 			result.redirectTo(origem);
 		} else
-			result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null);
+			result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null,
+					false, false);
 	}
 
 	@Path("/app/remover/{sigla}")
@@ -946,7 +924,7 @@ public class AppController extends GcController {
 					getLotaTitular());
 			correio.notificar(informacao, pesResponsavel, lotResponsavel, email);
 			result.redirectTo(this).exibir(informacao.getSiglaCompacta(),
-					"Notificacao realizada com sucesso!");
+					"Notificacao realizada com sucesso!", false, false);
 		} else
 			throw new AplicacaoException(
 					"Para notificar so e necessario selecionar uma Pessoa ou Lotacao.");
@@ -973,7 +951,8 @@ public class AppController extends GcController {
 					getLotaTitular());
 			result.redirectTo(this).result.redirectTo(this).exibir(
 					informacao.getSiglaCompacta(),
-					"Solicitação de revisão realizada com sucesso!");
+					"Solicitação de revisão realizada com sucesso!", false,
+					false);
 		} else
 			throw new AplicacaoException(
 					"Para solicitar revisão é necessário selecionar uma Pessoa ou Lotação.");
@@ -1072,7 +1051,8 @@ public class AppController extends GcController {
 							informacao.visualizacao.id))
 						result.redirectTo(this).exibir(
 								informacao.getSiglaCompacta(),
-								"Conhecimento revisado com sucesso!");
+								"Conhecimento revisado com sucesso!", false,
+								false);
 					else {
 						// buscar(null);
 						buscar(null, null);
@@ -1090,7 +1070,8 @@ public class AppController extends GcController {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		bl.interessado(informacao, getIdentidadeCadastrante(), getTitular(),
 				getLotaTitular(), true);
-		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null);
+		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null,
+				false, false);
 	}
 
 	@Path("/app/desmarcarComoInteressado/{sigla}")
@@ -1098,7 +1079,8 @@ public class AppController extends GcController {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		bl.interessado(informacao, getIdentidadeCadastrante(), getTitular(),
 				getLotaTitular(), false);
-		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null);
+		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null,
+				false, false);
 	}
 
 	@Path("/app/cancelar/{sigla}")
@@ -1106,7 +1088,8 @@ public class AppController extends GcController {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
 		bl.cancelar(informacao, getIdentidadeCadastrante(), getTitular(),
 				getLotaTitular());
-		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null);
+		result.redirectTo(this).exibir(informacao.getSiglaCompacta(), null,
+				false, false);
 	}
 
 	@Path("/app/tag/selecionar")

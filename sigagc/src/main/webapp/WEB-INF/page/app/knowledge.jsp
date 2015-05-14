@@ -13,18 +13,15 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td>
-					<!-- <ul style="column-count: 3; column-gap: 20px;"> --> <!--  -->
-					#{list items:conhecimentos, as:'conhecimento'}
-					<div
-						style="display: block; width: 33%; height: 8em; float: left; word-wrap: normal; white-space: wrap; overflow: hidden; text-overflow: ellipsis;">
-						<h4 style="margin: 0; padding: 0; border: 0;">
-							*{<a href="@{Application.exibir}?id=${conhecimento[0]}">${conhecimento[1]}</a>}*
-							<a href="@{Application.exibir}?sigla=${conhecimento[3]}">${conhecimento[1]}</a>
-						</h4>
-						<div style="padding: 0; border: 0;">${conhecimento[2]}</div>
-					</div> #{/list}
-					</ul></td>
+				<td><c:forEach var="conhecimento" items="${conhecimentos}">
+						<div
+							style="display: block; width: 33%; height: 8em; float: left; word-wrap: normal; white-space: wrap; overflow: hidden; text-overflow: ellipsis;">
+							<h4 style="margin: 0; padding: 0; border: 0;">
+								<a href="${linkTo[AppController].exibir[conhecimento[3]]}">${conhecimento[1]}</a>
+							</h4>
+							<div style="padding: 0; border: 0;">${conhecimento[2]}</div>
+						</div>
+					</c:forEach></td>
 			</tr>
 		</tbody>
 	</table>

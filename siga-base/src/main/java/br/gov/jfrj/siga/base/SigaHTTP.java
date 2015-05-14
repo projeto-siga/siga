@@ -99,7 +99,7 @@ public class SigaHTTP {
 
 			// Verifica se retornou o form de autenticação do picketlink
 			if (html.contains(HTTP_POST_BINDING_REQUEST)){
-				if (StringUtil.isNullOrEmpty(cookieValue)){
+				if (StringUtil.isNullOrEmpty(idpCookie)){
 				  return "";
 				}
 				

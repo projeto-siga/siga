@@ -17,9 +17,7 @@ import play.db.jpa.GenericModel;
 @Table(name="peritos" , schema="SIGAPMP")
 public class Peritos extends GenericModel {
 
-/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
 @Id()

@@ -691,7 +691,7 @@ public class Application extends SigaApplication {
 		try{
 			// Devo verificar agendamento conflitante, antes de fazer o UPDATE.
 			System.out.println(perito_juizo.trim()+""+data_ag+" "+hora_ag.substring(0,2)+hora_ag.substring(3,5));
-			agendamentoEmConflito = Agendamentos.find("perito_juizo like '"+perito_juizo.trim()+"%' and perito_juizo <> '-' and hora_ag='" +hora_ag.substring(0,2)+hora_ag.substring(3,5)+ "' and data_ag=to_date('"+ data_ag +"', 'dd-mm-yy' )").first();
+			agendamentoEmConflito = Agendamentos.find("perito_juizo like '"+perito_juizo.trim()+"%' and perito_juizo <> '-' and hora_ag='" +hora_ag.substring(0,2)+hora_ag.substring(3,5)+ "' and data_ag=to_date('"+ data_ag +"', 'dd-mm-yy' ) and localFk<>'"+cod_sala+"'").first();
 			
 			if (agendamentoEmConflito!=null){
 				Excecoes("Perito nao disponivel no horario de " + agendamentoEmConflito.hora_ag.substring(0,2) +"h"+agendamentoEmConflito.hora_ag.substring(2,4)+"min" , " agendamento_excluir?frm_data_ag="+data_ag);
@@ -1001,7 +1001,7 @@ public class Application extends SigaApplication {
 			resposta="ok";
 		}catch(PersistenceException e){
 			e.printStackTrace();
-			resposta="Não ok.";
+			resposta="Nao ok.";
 			if (e.getMessage().substring(23, 53)
 					.equals(".ConstraintViolationException:")) {
 				resposta = "Verifique se o CPF do perito esta correto, ou, se o perito ja esta cadastrado. ";

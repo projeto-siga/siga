@@ -3,9 +3,5 @@
 	<context-root>sigari</context-root>
 	<valve>
 		<class-name>org.picketlink.identity.federation.bindings.tomcat.sp.ServiceProviderAuthenticator</class-name>
-		<param>
-        <param-name>disableProxyCaching</param-name>
-        <param-value>false</param-value>
-     </param>
 	</valve>
 </jboss-web>

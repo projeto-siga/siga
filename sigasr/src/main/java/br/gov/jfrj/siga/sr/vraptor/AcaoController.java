@@ -58,8 +58,9 @@ public class AcaoController extends SrController {
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
-	public void gravar(SrAcao acao) throws Exception {
+	public void gravar(SrAcao acao, TipoAcaoSelecao tipoAcaoSel) throws Exception {
 		validarFormEditarAcao(acao);
+		acao.setTipoAcao(tipoAcaoSel.buscarObjeto());
 		acao.salvar();
 
 		result.use(Results.http()).body(acao.toJson());

@@ -205,11 +205,10 @@
 				<div class="gt-form-row">
 					<label>Gestor: <span>*</span></label>
 					<div id="divGestor">
-						<siga:pessoaLotaSelecao2
- 							propriedadePessoa="gestor.pessoa"
- 							propriedadeLotacao="gestor.lotacao"
- 							disabled="disabled">
- 						</siga:pessoaLotaSelecao2>
+						<siga:pessoaLotaSelecao
+							nomeSelPessoa="gestor.pessoa"
+							nomeSelLotacao="gestor.lotacao"
+ 							disabled="disabled"/>
 					</div>
 				</div>
 				<div class="gt-form-row">
@@ -229,9 +228,9 @@
 				<div class="gt-form-row ">
 					<label>Solicitante: <span>*</span></label>
 					<div id="divFator">
- 						<siga:pessoaLotaSelecao2
- 							propriedadePessoa="fator.pessoa"
- 							propriedadeLotacao="fator.lotacao"
+ 						<siga:pessoaLotaSelecao
+ 							nomeSelPessoa="fator.pessoa"
+ 							nomeSelLotacao="fator.lotacao"
  							disabled="disabled"/>
 					</div>
 				</div>

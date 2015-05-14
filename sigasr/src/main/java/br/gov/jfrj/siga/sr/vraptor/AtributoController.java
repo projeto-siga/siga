@@ -23,6 +23,7 @@ import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrObjetivoAtributo;
 import br.gov.jfrj.siga.sr.model.SrTipoAtributo;
+import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -55,6 +56,7 @@ public class AtributoController extends SrController {
 		result.include("mostrarDesativados", mostrarDesativados);
 		result.include("tiposAtributo",SrTipoAtributo.values());
 		
+		result.include("pessoa", new DpPessoaSelecao());
 		result.include("dpPessoaSel", new DpPessoaSelecao());
 		result.include("lotacaoSel", new DpLotacaoSelecao());
 		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
@@ -62,16 +64,17 @@ public class AtributoController extends SrController {
 		result.include("cpGrupoSel", new CpPerfilSelecao());
 
 		
-//		result.include("acaoSel", new CpPerfilSelecao());
-//		result.include("itemConfiguracaoSel", new CpPerfilSelecao());
+		result.include("itemConfiguracao", new SelecionavelVO(null,null));
+		result.include("acao", new SelecionavelVO(null,null));
 	}
 
 	@Path("/gravar")
 //	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void gravarAtributo(SrAtributo atributo) throws Exception {
-		validarFormEditarAtributo(atributo);
-		atributo.salvar();
-		result.use(Results.http()).body(atributo.toVO(false).toJson());
+		if (validarFormEditarAtributo(atributo)) {
+			atributo.salvar();
+			result.use(Results.http()).body(atributo.toVO(false).toJson());
+		}
 	}
 
 	@Path("/desativar")
@@ -111,14 +114,17 @@ public class AtributoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
 
-	private void validarFormEditarAtributo(SrAtributo atributo) {
-		if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && atributo.getDescrPreDefinido().equals("")) {
-			srValidator.addError("att.descrPreDefinido", "Valores Pré-definido não informados");
+	private boolean validarFormEditarAtributo(SrAtributo atributo) {
+		if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && (atributo.getDescrPreDefinido() == null || atributo.getDescrPreDefinido().isEmpty() ) ) {
+			srValidator.addError("atributo.descrPreDefinido", "Valores Pré-definido não informados");
 		}
 
 		if (srValidator.hasErrors()) {
 			enviarErroValidacao();
+			return false;
 		}
+		
+		return true;
 	}
 
 }

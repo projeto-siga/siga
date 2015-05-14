@@ -27,31 +27,31 @@ public class SrPergunta extends HistoricoSuporteVraptor {
 
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_PERGUNTA_SEQ", schema = Catalogs.SIGASR, name = "srPerguntaSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_PERGUNTA_SEQ", name = "srPerguntaSeq")
 	@GeneratedValue(generator = "srPerguntaSeq")
 	@Column(name = "ID_PERGUNTA")
-	public Long idPergunta;
+	private Long idPergunta;
 
 	@Column(name = "DESCR_PERGUNTA")
-	public String descrPergunta;
+	private String descrPergunta;
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_PESQUISA")
-	public SrPesquisa pesquisa;
+	private SrPesquisa pesquisa;
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_TIPO_PERGUNTA")
-	public SrTipoPergunta tipoPergunta;
+	private SrTipoPergunta tipoPergunta;
 
 	@Column(name = "ORDEM_PERGUNTA")
-	public Long ordemPergunta;
+	private Long ordemPergunta;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrPergunta perguntaInicial;
+	private SrPergunta perguntaInicial;
 
 	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "perguntaInicial")
-	public List<SrPergunta> meuPerguntaHistoricoSet;
+	private List<SrPergunta> meuPerguntaHistoricoSet;
 
 	public SrPergunta() {
 	}
@@ -80,6 +80,62 @@ public class SrPergunta extends HistoricoSuporteVraptor {
 		if (perguntas == null)
 			return null;
 		return perguntas.get(0);
+	}
+
+	public Long getIdPergunta() {
+		return idPergunta;
+	}
+
+	public void setIdPergunta(Long idPergunta) {
+		this.idPergunta = idPergunta;
+	}
+
+	public String getDescrPergunta() {
+		return descrPergunta;
+	}
+
+	public void setDescrPergunta(String descrPergunta) {
+		this.descrPergunta = descrPergunta;
+	}
+
+	public SrPesquisa getPesquisa() {
+		return pesquisa;
+	}
+
+	public void setPesquisa(SrPesquisa pesquisa) {
+		this.pesquisa = pesquisa;
+	}
+
+	public SrTipoPergunta getTipoPergunta() {
+		return tipoPergunta;
+	}
+
+	public void setTipoPergunta(SrTipoPergunta tipoPergunta) {
+		this.tipoPergunta = tipoPergunta;
+	}
+
+	public Long getOrdemPergunta() {
+		return ordemPergunta;
+	}
+
+	public void setOrdemPergunta(Long ordemPergunta) {
+		this.ordemPergunta = ordemPergunta;
+	}
+
+	public SrPergunta getPerguntaInicial() {
+		return perguntaInicial;
+	}
+
+	public void setPerguntaInicial(SrPergunta perguntaInicial) {
+		this.perguntaInicial = perguntaInicial;
+	}
+
+	public List<SrPergunta> getMeuPerguntaHistoricoSet() {
+		return meuPerguntaHistoricoSet;
+	}
+
+	public void setMeuPerguntaHistoricoSet(List<SrPergunta> meuPerguntaHistoricoSet) {
+		this.meuPerguntaHistoricoSet = meuPerguntaHistoricoSet;
 	}
 	
 }

@@ -14,12 +14,12 @@ import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 public class Correio extends Mailer {
 
 	public static void notificarAbertura(SrSolicitacao sol) {
-		DpPessoa pessoaAtual = sol.solicitante.getPessoaAtual();
+		DpPessoa pessoaAtual = sol.getSolicitante().getPessoaAtual();
 		if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
 			return;
 		
 		if (sol.isFilha())
-			setSubject("Escalonamento da solicitação " + sol.solicitacaoPai.getCodigo());
+			setSubject("Escalonamento da solicitação " + sol.getSolicitacaoPai().getCodigo());
 		else
 			setSubject("Abertura da solicitação " + sol.getCodigo());
 		
@@ -31,7 +31,7 @@ public class Correio extends Mailer {
 
 	public static void notificarMovimentacao(SrMovimentacao movimentacao) {
 		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
-		DpPessoa pessoaAtual = sol.solicitante.getPessoaAtual();
+		DpPessoa pessoaAtual = sol.getSolicitante().getPessoaAtual();
 		if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
 			return;
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
@@ -46,14 +46,14 @@ public class Correio extends Mailer {
 		List<String> recipients = new ArrayList<String>();
 		String email = null;
 		
-		DpPessoa atendenteSolPai = sol.solicitacaoPai.getAtendente();
+		DpPessoa atendenteSolPai = sol.getSolicitacaoPai().getAtendente();
 		if (atendenteSolPai != null) {
 			email = atendenteSolPai.getPessoaAtual().getEmailPessoa();
 			if (email != null)
 				recipients.add(email);
 		} 
 		else {
-			DpLotacao lotaAtendenteSolPai = sol.solicitacaoPai
+			DpLotacao lotaAtendenteSolPai = sol.getSolicitacaoPai()
 					.getLotaAtendente();
 			if (lotaAtendenteSolPai != null)
 				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai
@@ -81,7 +81,7 @@ public class Correio extends Mailer {
 		List<String> recipients = new ArrayList<String>();
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
 		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		for (SrGestorItem gestor : sol.itemConfiguracao.getGestorSet()) {
+		for (SrGestorItem gestor : sol.getItemConfiguracao().getGestorSet()) {
 			DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
 			if (pessoaGestorAtual != null
 					&& pessoaGestorAtual.getDataFim() == null)
@@ -96,7 +96,7 @@ public class Correio extends Mailer {
 							recipients.add(gestorPessoa.getPessoaAtual()
 									.getEmailPessoa());
 		}
-		recipients.add(sol.solicitante.getEmailPessoa());
+		recipients.add(sol.getSolicitante().getEmailPessoa());
 		if (recipients.size() > 0) {
 			addRecipient(recipients.toArray());
 			send(movimentacao, sol);
@@ -106,7 +106,7 @@ public class Correio extends Mailer {
 	public static void notificarCancelamentoMovimentacao(
 			SrMovimentacao movimentacao) {
 		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
-		DpPessoa solicitanteAtual = sol.solicitante.getPessoaAtual();
+		DpPessoa solicitanteAtual = sol.getSolicitante().getPessoaAtual();
 		if (solicitanteAtual.getEmailPessoa() == null)
 			return;
 		setSubject("Movimentação da solicitação " + sol.getCodigo());
@@ -117,7 +117,7 @@ public class Correio extends Mailer {
 
 	public static void pesquisaSatisfacao(SrSolicitacao sol) throws Exception {
 		SrSolicitacao solAtual = sol.getSolicitacaoAtual();
-		DpPessoa solicitanteAtual = solAtual.solicitante.getPessoaAtual();
+		DpPessoa solicitanteAtual = solAtual.getSolicitante().getPessoaAtual();
 		if (solicitanteAtual.getEmailPessoa() == null)
 			return;
 		setSubject("Pesquisa de Satisfação da solicitação "

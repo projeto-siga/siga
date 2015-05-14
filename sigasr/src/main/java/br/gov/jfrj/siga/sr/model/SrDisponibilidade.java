@@ -27,13 +27,14 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.util.Catalogs;
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.sr.model.vo.DisponibilidadesPorOrgaoCache;
 import br.gov.jfrj.siga.sr.model.vo.DisponibilidadesPorOrgaoCacheHolder;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -43,12 +44,14 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_DISPONIBILIDADE", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
+public class SrDisponibilidade extends HistoricoSuporteVraptor implements Cloneable {
 
 	private static final long serialVersionUID = 7243562288736225097L;
 
+	public static ActiveRecord<SrDisponibilidade> AR = new ActiveRecord<>(SrDisponibilidade.class);
+
 	@Id
-	@SequenceGenerator(sequenceName = "SR_DISPONIBILIDADE_SEQ", schema = Catalogs.SIGASR, name = "srDisponibilidadeSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_DISPONIBILIDADE_SEQ", name = "srDisponibilidadeSeq")
 	@GeneratedValue(generator = "srDisponibilidadeSeq")
 	@Column(name = "ID_DISPONIBILIDADE")
 	private Long idDisponibilidade;
@@ -60,7 +63,7 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 	@JoinColumn(name = "ID_ORGAO_USU")
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private CpOrgaoUsuario orgao;
-	
+
 	@Enumerated
 	@Column(name = "TP_DISPONIBILIDADE")
 	private SrTipoDisponibilidade tipo;
@@ -78,21 +81,21 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 
 	@Column(name = "DET_TECNICO")
 	private String detalhamentoTecnico;
-	
+
 	@Transient
 	private transient JsonArray disponibilidadesAtualizadas;
 
 	public SrDisponibilidade() {
 		this.disponibilidadesAtualizadas = new JsonArray();
 	}
-	
+
 	public SrDisponibilidade(SrItemConfiguracao itemConfiguracao, CpOrgaoUsuario orgao) {
 		this();
 		this.tipo = SrTipoDisponibilidade.NENHUM;
 		this.itemConfiguracao = itemConfiguracao;
 		this.orgao = orgao;
 	}
-	
+
 	@Override
 	public Long getId() {
 		return idDisponibilidade;
@@ -171,7 +174,7 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 	public void setDetalhamentoTecnico(String detalhamentoTecnico) {
 		this.detalhamentoTecnico = detalhamentoTecnico;
 	}
-	
+
 	public String getIcone() {
 		return this.tipo.getCaminhoIcone();
 	}
@@ -198,18 +201,18 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 
 		return object;
 	}
-	
+
 	public static Map<String, SrDisponibilidade> buscarTodos(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
 		return DisponibilidadesPorOrgaoCacheHolder.get().buscarTodos(itemConfiguracao, orgaos);
 	}
-	
+
 	public static SrDisponibilidade buscarPara(SrItemConfiguracao itemConfiguracao, CpOrgaoUsuario orgao) {
 		return DisponibilidadesPorOrgaoCacheHolder.get().buscar(itemConfiguracao, orgao);
 	}
-	
+
 	public void salvar(PaginaItemConfiguracao pagina) throws Exception {
 		this.salvar();
-		
+
 		pagina.buscarItens(Arrays.asList(orgao));
 		configurarAtualizacaoDisponibilidades(itemConfiguracao, Arrays.asList(orgao));
 		pagina.invalidarCache();
@@ -217,14 +220,14 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 
 	private void configurarAtualizacaoDisponibilidades(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
 		this.disponibilidadesAtualizadas.addAll(itemConfiguracao.criarDisponibilidadesJSON(itemConfiguracao, orgaos));
-		
+
 		for (SrItemConfiguracao filho : itemConfiguracao.getFilhoSet()) {
 			if(filho.getHisDtFim() == null) {
 				configurarAtualizacaoDisponibilidades(filho, orgaos);
 			}
 		}
 	}
-	
+
 	public boolean isNenhuma() {
 		return SrTipoDisponibilidade.NENHUM.equals(tipo);
 	}
@@ -243,10 +246,10 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 		this.setDataHoraTermino(novaDisponibilidade.getDataHoraTermino());
 		this.setDetalhamentoTecnico(novaDisponibilidade.getDetalhamentoTecnico());
 		this.setMensagem(novaDisponibilidade.getMensagem());
-		
+
 		return this;
 	}
-	
+
 	public void setDataHoraInicioString(String dataInicioString) {
 		try {
 			this.dataHoraInicio = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(dataInicioString);
@@ -254,7 +257,7 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void setDataHoraTerminoString(String dataTerminoString) {
 		try {
 			this.dataHoraTermino = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(dataTerminoString);
@@ -282,7 +285,7 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 		clone.setDataHoraTermino(disponibilidadePai.getDataHoraTermino());
 		clone.setDetalhamentoTecnico(disponibilidadePai.getDetalhamentoTecnico());
 		clone.setMensagem(disponibilidadePai.getMensagem());
-		
+
 		return clone;
 	}
 
@@ -290,11 +293,11 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 	public static DisponibilidadesPorOrgaoCache agruparDisponibilidades(
 			List<SrItemConfiguracao> itensConfiguracao,
 			List<CpOrgaoUsuario> orgaos) {
-		
+
 		if(itensConfiguracao.isEmpty()) {
 			return new DisponibilidadesPorOrgaoCache();
 		}
-		
+
 		return new DisponibilidadesPorOrgaoCache (
 				em().createQuery("SELECT d FROM SrDisponibilidade d WHERE d.itemConfiguracao.hisIdIni IN (:hisIdInis) AND d.orgao IN (:orgaos) AND d.hisDtFim is null ")
 				.setParameter("hisIdInis", obterIds(itensConfiguracao))
@@ -305,10 +308,10 @@ public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 
 	private static Set<Long> obterIds(List<SrItemConfiguracao> itensConfiguracao) {
 		Set<Long> ids = new HashSet<Long>();
-		
+
 		for (SrItemConfiguracao itemConfiguracao : itensConfiguracao) {
 			ids.add(itemConfiguracao.getHisIdIni());
-			
+
 			SrItemConfiguracao pai = itemConfiguracao.getPai();
 			while (pai != null) {
 				ids.add(pai.getHisIdIni());

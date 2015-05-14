@@ -66,7 +66,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 	}
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_LISTA_SEQ", schema = Catalogs.SIGASR, name = "srListaSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_LISTA_SEQ", name = "srListaSeq")
 	@GeneratedValue(generator = "srListaSeq")
 	@Column(name = "ID_LISTA")
 	public Long idLista;
@@ -248,7 +248,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 		for (int i = 0; i <= prioridades.size() - 1; i++) {
 			SrPrioridadeSolicitacao prioridadeSolic = prioridades.get(i);
 			if(prioridadeSolicitacao.getPrioridade() != null) {
-				if (prioridadeSolic.getPrioridade() == null || prioridadeSolicitacao.getPrioridade().idPrioridade > prioridadeSolic.getPrioridade().idPrioridade) {
+				if (prioridadeSolic.getPrioridade() == null || prioridadeSolicitacao.getPrioridade().getIdPrioridade() > prioridadeSolic.getPrioridade().getIdPrioridade()) {
 					return prioridadeSolic.getNumPosicao();
 				}
 			}

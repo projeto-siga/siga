@@ -17,39 +17,39 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAcordoVO;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_ACORDO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel {
+public class SrAcordo extends HistoricoSuporteVraptor implements ConvertableEntity {
 	private static final long serialVersionUID = 1L;
 	
-	public static ActiveRecord<SrAcordo> AR = new ActiveRecord<>(SrAcordo.class);	
+	public static final ActiveRecord<SrAcordo> AR = new ActiveRecord<>(SrAcordo.class);	
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ACORDO_SEQ", schema = Catalogs.SIGASR, name = "srAcordoSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_ACORDO_SEQ", name = "srAcordoSeq")
 	@GeneratedValue(generator = "srAcordoSeq")
 	@Column(name = "ID_ACORDO")
-	public Long idAcordo;
+	private Long idAcordo;
 
 	@Column(name = "NOME_ACORDO")
-	public String nomeAcordo;
+	private String nomeAcordo;
 
 	@Column(name = "DESCR_ACORDO")
-	public String descrAcordo;
+	private String descrAcordo;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrAcordo acordoInicial;
+	private SrAcordo acordoInicial;
 
 	@OneToMany(targetEntity = SrAcordo.class, mappedBy = "acordoInicial", fetch = FetchType.LAZY)
-	//@OrderBy("hisDtIni desc")
 	public List<SrAcordo> meuAcordoHistoricoSet;
 
 	@OneToMany(targetEntity = SrAtributoAcordo.class, mappedBy = "acordo", fetch = FetchType.LAZY)
@@ -59,12 +59,14 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel {
 
 	}
 
+	@Override
 	public Long getId() {
-		return this.idAcordo;
+		return getIdAcordo();
 	}
 
-	public void setId(Long id) {
-		idAcordo = id;
+	@Override
+	public void setId(Long idAcordo) {
+		this.setIdAcordo(idAcordo);
 	}
 
 	@Override
@@ -72,10 +74,11 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<SrAcordo> getHistoricoAcordo() {
-		if (acordoInicial != null)
-			return acordoInicial.meuAcordoHistoricoSet;
-		return null;
+		if (getAcordoInicial() != null)
+			return getAcordoInicial().meuAcordoHistoricoSet;
+		return Collections.emptyList();
 	}
 
 	public SrAcordo getAcordoAtual() {
@@ -153,19 +156,12 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel {
 		return pa.getValorEmSegundos();
 	}
 
-	@Override
 	public String getSigla() {
-		return idAcordo.toString();
+		return getIdAcordo().toString();
 	}
 
-	@Override
-	public void setSigla(String sigla) {
-		
-	}
-
-	@Override
 	public String getDescricao() {
-		return nomeAcordo;
+		return getNomeAcordo();
 	}
 	
 	public SrAcordoVO toVO() {
@@ -175,5 +171,37 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel {
 	public String toJson() {
 		return this.toVO().toJson();
 	}
+	
+	public Long getIdAcordo() {
+		return idAcordo;
+	}
 
+	public void setIdAcordo(Long idAcordo) {
+		this.idAcordo = idAcordo;
+	}
+
+	public String getNomeAcordo() {
+		return nomeAcordo;
+	}
+
+	public void setNomeAcordo(String nomeAcordo) {
+		this.nomeAcordo = nomeAcordo;
+	}
+
+	public String getDescrAcordo() {
+		return descrAcordo;
+	}
+
+	public void setDescrAcordo(String descrAcordo) {
+		this.descrAcordo = descrAcordo;
+	}
+
+	public SrAcordo getAcordoInicial() {
+		return acordoInicial;
+	}
+
+	public void setAcordoInicial(SrAcordo acordoInicial) {
+		this.acordoInicial = acordoInicial;
+	}	
+	
 }

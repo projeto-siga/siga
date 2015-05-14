@@ -70,7 +70,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	// "([0-9][0-9])?([.])?([0-9][0-9])?([.])?([0-9][0-9])";
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ITEM_CONFIGURACAO_SEQ", schema = Catalogs.SIGASR, name = "srItemSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
 	@GeneratedValue(generator = "srItemSeq")
 	@Column(name = "ID_ITEM_CONFIGURACAO")
 	private Long idItemConfiguracao;

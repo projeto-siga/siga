@@ -218,7 +218,7 @@
 		if (modoExibicao == 'atributo'){
 			obj.atributo = { idAtributo : $('#idAtributo').val() };
 		} else if (modoExibicao == 'pesquisa'){ 
-			obj.pesquisaSatisfacao = { idPesquisa : $('#idPesquisa').val() };
+			obj.pesquisa = { idPesquisa : $('#idPesquisa').val() };
 		}
 		return obj;
 	}
@@ -230,7 +230,7 @@
 		if (modoExibicao == 'atributo'){
 			item =  this.getItemPaiPorId(obj.atributo.idAtributo);
 		} else if (modoExibicao == 'pesquisa'){
-			item = this.getItemPaiPorId(obj.pesquisaSatisfacao.idPesquisa);
+			item = this.getItemPaiPorId(obj.pesquisa.idPesquisa);
 		}
 
 		// Se eh edicao mantem o json atualizado

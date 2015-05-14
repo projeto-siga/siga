@@ -26,30 +26,39 @@
 </style>
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
-	<form id="pesquisaForm">
-		<input type="hidden" name="idPesquisa" id="idPesquisa" />
-		<input type="hidden" name="hisIdIni" id="hisIdIni"/>
-		
+	<form id="pesquisaForm" action="#" enctype="multipart/form-data">
+
+		<input type="hidden" name="pesquisa.idPesquisa" id="idPesquisa" value="${idAtributo}">
+		<input type="hidden" name="pesquisa.hisIdIni" id="hisIdIni" value="${hisIdIni}">
+
 		<div class="gt-form-row gt-width-66">
-			<label>Nome <span>*</span></label> <input type="text"
-				name="nomePesquisa" id="nomePesquisa" size="60" maxlength="255" required />
+			<label>Nome <span>*</span></label> 
+			<input type="text"
+					name="pesquisa.nomePesquisa"
+					id="nomePesquisa"
+					value="${nomePesquisa}" size="50" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Descri&ccedil;&atilde;o</label> <input type="text" name="descrPesquisa" id="descrPesquisa"
-				size="60" maxlength="255" />
+			<label>Descri&ccedil;&atilde;o</label> 
+			<input type="text"
+					name="pesquisa.descrPesquisa"
+					id="descrPesquisa"
+					value="${descrPesquisa}" size="60" maxlength="255" required/>
 		</div>
 
 		<div class="gt-form-row">
 			<label>Perguntas</label>
 			<ul id="perguntas" style="color: #365b6d"></ul>
-			<input type="button" value="Incluir" id="botaoIncluir"
-				class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+			<input type="button" value="Incluir" id="botaoIncluir" class="gt-btn-small gt-btn-left" style="font-size: 10px;">
 		</div>
 	</form>
-
-	<div id="divconfiguracaoAssociacao">
-<%-- 		<jsp:include page="associacao.jsp" /> --%>
-	</div>
+ 
+	<siga:configuracaoAssociacao orgaos="${orgaos}"
+								 locais="${locais}"
+								 itemConfiguracaoSet="${itemConfiguracaoSet}"
+								 acoesSet="${acoesSet}"
+								 modoExibicao='pesquisa'
+								 urlGravar="${linkTo[AssociacaoController].gravarAssociacaoPesquisa}"></siga:configuracaoAssociacao>
 
 	<div class="gt-form-row">
 		<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
@@ -59,7 +68,7 @@
 </div>
 
 <siga:modal nome="pergunta" titulo="Incluir Pergunta">
-	<div id="dialogPergunta">
+	<div id="dialog">
 		<div class="gt-content">
 			<div class="gt-form gt-content-box">
 				<form id="perguntaForm">
@@ -90,13 +99,14 @@
 
 <script>
 	associacaoService.getUrlDesativarReativar = function(desativados) {
-		idPesquisa = $("[name=idPesquisa]").val();
-	    var url = "${linkTo[PesquisaSatisfacaoController].listarAssociacao[idPesquisa]}";
-
-	    if(desativados)
-	        url = "${linkTo[PesquisaSatisfacaoController].listarAssociacaoDesativados}"; 
-
-	    return url;
+		var url = '${linkTo[PesquisaSatisfacaoController].listarAssociacaoPesquisa}';
+		var idAtributo = $("[id=idPesquisa]").val();
+		var exibirInativo = "";
+		
+		if(desativados)
+			exibirInativo = "&exibirInativos=true";
+		
+		return url + "?idAtributo=" + idAtributo + exibirInativo;
 	}
 
 	jQuery(document).ready(function($) {
@@ -107,7 +117,7 @@
 	        dialog = jDialog[0],
 	        jDescrPergunta = $("#descrPergunta"),
 	        jTipoPergunta = $("#tipoPergunta");
-       
+
         $( "#perguntas" ).sortable({placeholder: "ui-state-highlight"});
         $( "#perguntas" ).disableSelection();
        

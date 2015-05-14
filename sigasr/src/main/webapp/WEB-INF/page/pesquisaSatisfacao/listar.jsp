@@ -4,15 +4,19 @@
 <siga:pagina titulo="Servi&ccedil;os">
 
 	<jsp:include page="../main.jsp"></jsp:include>
-
+	
+	
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.populate.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-	<script src="../../../javascripts/jquery.serializejson.min.js"></script>
-	<script src="../../../javascripts/jquery.populate.js"></script>
-	<script src="../../../javascripts/base-service.js"></script>
-	<script src="../../../javascripts/jquery.validate.min.js"></script>
-	<script src="../../../javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.blockUI.js"></script>
+	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
+	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
@@ -91,9 +95,9 @@
 	}();
 
 	var opts = {
-		urlDesativar : "${linkTo[PesquisaSatisfacaoController].desativar}",
-		urlReativar : "${linkTo[PesquisaSatisfacaoController].reativar}",
-		urlGravar : "${linkTo[PesquisaSatisfacaoController].gravar}",
+		urlDesativar : "${linkTo[PesquisaSatisfacaoController].desativar}?",
+		urlReativar : "${linkTo[PesquisaSatisfacaoController].reativar}?",
+		urlGravar : '${linkTo[PesquisaSatisfacaoController].gravarPesquisa}',
 		dialogCadastro : $('#pesquisa_dialog'),
 		tabelaRegistros : $('#pesquisa_table'),
 		objectName : 'pesquisa',
@@ -104,17 +108,16 @@
 
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
-			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
-			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativadoss').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativadoss').value = QueryString.mostrarDesativados == 'true';
 		}
-			
-		$("#checkmostrarDesativado").click(function() {
-			jQuery.blockUI(objBlock);
-			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = "${linkTo[PesquisaSatisfacaoController].listarDesativados}";
-			else
-				location.href = "${linkTo[PesquisaSatisfacaoController].listar}";	
-		});
+
+		 $("#checkmostrarDesativados").click(function() {
+			   if (document.getElementById('checkmostrarDesativados').checked)
+			    location.href = "${linkTo[PesquisaSatisfacaoController].listar[true]}";
+			   else
+			    location.href = "${linkTo[PesquisaSatisfacaoController].listar[false]}"; 
+			  });
 		
 		opts.dataTable= $('#pesquisa_table').dataTable({
 			"language": {
@@ -176,7 +179,8 @@
 	var pesquisaService = new PesquisaService(opts);
 	
 	pesquisaService.getId = function(pesquisa) {
-		return pesquisa.idPesquisa;
+		console.log(pesquisa);
+		return pesquisa.idPesquisa || pesquisa['pesquisa.idPesquisa'];
 	}
 
 	pesquisaService.getRow = function(pesquisa) {
@@ -185,5 +189,49 @@
 	pesquisaService.onRowClick = function(pesquisa) {
 		pesquisaService.editar(pesquisa, 'Alterar pesquisa');
 	}
-	
+
+	/**
+	* Customiza o metodo editar
+	*/
+	pesquisaService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
+// 		atualiza a lista de Associações
+		this.buscarAssociacoes(obj);
+	}
+
+	/**
+	* Sobescreve o metodo cadastrar para limpar a tela.
+	*/
+	pesquisaService.cadastrar = function(title) {
+		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
+
+		// limpa a lista de Associações
+		associacaoService.limparDadosAssociacoes();
+		associacaoService.atualizarListaAssociacoes({});
+	}
+
+	pesquisaService.serializar = function(obj) {
+		var query = BaseService.prototype.serializar.call(this, obj);
+		return query + "&pesquisa=" + this.getId(obj);
+	}
+
+	pesquisaService.buscarAssociacoes = function(assoc) {
+		associacaoService.limparDadosAssociacoes();
+		if (assoc && this.getId(assoc)) {
+			$.ajax({
+		    	type: "GET",
+		    	url: "${linkTo[PesquisaSatisfacaoController].buscarAssociacaoPesquisa}?idPesquisa=" + this.getId(assoc),
+		    	dataType: "text",
+		    	success: function(obj) {
+		    		var associacaoJson = JSON.parse(obj);
+		    		// alimenta a lista de AssociaÃ§Ãµes
+					associacaoService.atualizarListaAssociacoes(associacaoJson);
+		    	},
+		    	error: function(error) {
+		        	alert("Não foi possível carregar as Associações deste Atributo.");
+		    	}
+		   	});
+		}
+	}
+
 </script>

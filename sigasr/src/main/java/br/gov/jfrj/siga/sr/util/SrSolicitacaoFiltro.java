@@ -89,7 +89,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		StringBuffer query = new StringBuffer(queryString);
 		
-		if (acordo != null && acordo.idAcordo > 0L)
+		if (acordo != null && acordo.getIdAcordo() > 0L)
 			query.append(" inner join sol.acordos acordo where acordo.hisIdIni = "
 					+ acordo.getHisIdIni() + " and ");
 		else
@@ -97,27 +97,27 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(" sol.hisDtFim is null ");
 		
-		if (cadastrante != null)
+		if (getCadastrante() != null)
 			query.append(" and sol.cadastrante.idPessoaIni = "
-					+ cadastrante.getIdInicial());
-		if (lotaTitular != null)
+					+ getCadastrante().getIdInicial());
+		if (getLotaTitular() != null)
 			query.append(" and sol.lotaTitular.idLotacaoIni = "
-					+ lotaTitular.getIdInicial());
-		if (solicitante != null)
+					+ getLotaTitular().getIdInicial());
+		if (getSolicitante() != null)
 			query.append(" and sol.solicitante.idPessoaIni = "
-					+ solicitante.getIdInicial());
-		if (lotaSolicitante != null)
+					+ getSolicitante().getIdInicial());
+		if (getLotaSolicitante() != null)
 			query.append(" and sol.lotaSolicitante.idLotacaoIni = "
-					+ lotaSolicitante.getIdInicial());
-		if (itemConfiguracao != null
-				&& itemConfiguracao.getIdItemConfiguracao() > 0L)
+					+ getLotaSolicitante().getIdInicial());
+		if (getItemConfiguracao() != null
+				&& getItemConfiguracao().getIdItemConfiguracao() > 0L)
 			query.append(" and sol.itemConfiguracao.itemInicial.idItemConfiguracao = "
-					+ itemConfiguracao.getItemInicial().getIdItemConfiguracao());
-		if (acao != null && acao.getIdAcao() > 0L)
+					+ getItemConfiguracao().getItemInicial().getIdItemConfiguracao());
+		if (getAcao() != null && getAcao().getIdAcao() > 0L)
 			query.append(" and sol.acao.acaoInicial.idAcao = "
-					+ acao.getAcaoInicial().getIdAcao());
-		if (prioridade != null && prioridade.idPrioridade > 0L)
-			query.append(" and sol.prioridade <= " + prioridade.ordinal());
+					+ getAcao().getAcaoInicial().getIdAcao());
+		if (getPrioridade() != null && getPrioridade().getIdPrioridade() > 0L)
+			query.append(" and sol.prioridade <= " + getPrioridade().ordinal());
 		
 		if (idListaPrioridade != null && !idListaPrioridade.equals(QUALQUER_LISTA_OU_NENHUMA)){
 			if (idListaPrioridade.equals(NENHUMA_LISTA)) {
@@ -129,8 +129,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			}
 		}
 		
-		if (descrSolicitacao != null && !descrSolicitacao.trim().equals("")) {
-			for (String s : descrSolicitacao.split(" ")) {
+		if (getDescrSolicitacao() != null && !getDescrSolicitacao().trim().equals("")) {
+			for (String s : getDescrSolicitacao().split(" ")) {
 				query.append(" and ( lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ");
 				query.append(" or sol in (select mov.solicitacao from SrMovimentacao mov");

@@ -36,7 +36,7 @@ public class SrConfiguracaoAssociacaoVO {
 		this.solicitante = SelecionavelVO.createFrom(configuracao.getSolicitante());
 		this.atendente = SelecionavelVO.createFrom(configuracao.getAtendente());
 		this.prioridade = configuracao.getPrioridade();
-		this.descPrioridade = configuracao.getPrioridade() != null ? configuracao.getPrioridade().descPrioridade : "";
+		this.descPrioridade = configuracao.getPrioridade() != null ? configuracao.getPrioridade().getDescPrioridade() : "";
 		this.ativo = configuracao.isAtivo();
 	}
 

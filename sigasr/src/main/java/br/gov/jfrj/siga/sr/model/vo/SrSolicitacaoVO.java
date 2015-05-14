@@ -48,10 +48,10 @@ public class SrSolicitacaoVO {
 		this.codigo = sol.getCodigo();
 		this.descricao = sol.getDescricao();
 		this.itemConfiguracao = sol.getItemAtual() != null ? sol.getItemAtual().toVO() : null;
-		this.nomeSolicitante = sol.solicitante != null ? sol.solicitante.getNomeAbreviado() : "";
-		this.descricaoSolicitante = sol.solicitante != null ? sol.solicitante.getDescricaoIniciaisMaiusculas() : "";
-		this.lotaSolicitante = sol.lotaSolicitante != null ? SelecionavelVO.createFrom(sol.lotaSolicitante) : null;
-		this.dtRegString = sol.solicitacaoInicial.getDtRegString();
+		this.nomeSolicitante = sol.getSolicitante() != null ? sol.getSolicitante().getNomeAbreviado() : "";
+		this.descricaoSolicitante = sol.getSolicitante() != null ? sol.getSolicitante().getDescricaoIniciaisMaiusculas() : "";
+		this.lotaSolicitante = sol.getLotaSolicitante() != null ? SelecionavelVO.createFrom(sol.getLotaSolicitante()) : null;
+		this.dtRegString = sol.getSolicitacaoInicial().getDtRegString();
 		this.lotaAtendente = sol.getLotaAtendente() != null ? SelecionavelVO.createFrom(sol.getLotaAtendente()) : null;
 		this.ultimaMovimentacao = sol.getUltimaMovimentacaoQuePossuaDescricao() != null ? sol.getUltimaMovimentacaoQuePossuaDescricao().descrMovimentacao : "";
 		this.dtUltimaMovimentacaoString = sol.getUltimaMovimentacao() != null ? sol.getUltimaMovimentacao().getDtIniMovDDMMYYYYHHMM() : "";
@@ -62,7 +62,7 @@ public class SrSolicitacaoVO {
 		this.ultimaMovimentacaoformatada = SigaPlayUtil.selecionado(this.ultimaMovimentacao, this.ultimaMovimentacao);
 		
 		this.lotaAtendenteFormatada = this.lotaAtendente != null ? getLotacaoFormatada(this.lotaAtendente) : "";
-		this.prioridadeFormatada = sol.prioridade != null ? SigaPlayUtil.selecionado(sol.prioridade.descPrioridade, sol.prioridade.descPrioridade) : "";
+		this.prioridadeFormatada = sol.getPrioridade() != null ? SigaPlayUtil.selecionado(sol.getPrioridade().getDescPrioridade(), sol.getPrioridade().getDescPrioridade()) : "";
 	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, boolean podeRemover, boolean podePriorizar) throws Exception {
@@ -71,7 +71,7 @@ public class SrSolicitacaoVO {
 		this.prioridadeSolicitacaoVO = prioridadeSolicitacao.toVO();
 		this.prioridadeListaFormatada = SigaPlayUtil.tagA(String.valueOf(prioridadeSolicitacao.numPosicao));
 		this.prioridadeFormatada = prioridadeSolicitacao.prioridade != null ? 
-				SigaPlayUtil.selecionado(prioridadeSolicitacao.prioridade.descPrioridade, prioridadeSolicitacao.prioridade.descPrioridade) : "";
+				SigaPlayUtil.selecionado(prioridadeSolicitacao.prioridade.getDescPrioridade(), prioridadeSolicitacao.prioridade.getDescPrioridade()) : "";
 			
 		if (podeRemover)
 			this.botaoRemover = SigaPlayUtil.botaoRemoverSolicitacao(this.idSolicitacao, lista.idLista);

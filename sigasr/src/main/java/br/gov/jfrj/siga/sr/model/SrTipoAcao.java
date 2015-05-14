@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.util.FieldNameExclusionEstrategy;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
@@ -33,14 +34,14 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_TIPO_ACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrTipoAcao>, Selecionavel {
+public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<SrTipoAcao>, Selecionavel, ConvertableEntity {
 
 	public static ActiveRecord<SrTipoAcao> AR = new ActiveRecord<>(SrTipoAcao.class);
 
 	private static final long serialVersionUID = 8387408543308440033L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SR_ACAO_SEQ", schema = Catalogs.SIGASR, name = "srAcaoSeq")
+	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_ACAO_SEQ", name = "srAcaoSeq")
 	@GeneratedValue(generator = "srAcaoSeq")
 	@Column(name = "ID_TIPO_ACAO")
 	private Long idTipoAcao;
@@ -101,7 +102,6 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionave
 		return tituloTipoAcao;
 	}
 
-	@Override
 	public void setDescricao(String descricao) {
 		this.tituloTipoAcao = descricao;
 	}
@@ -190,7 +190,6 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionave
 		return false;
 	}
 
-	@Override
 	public SrTipoAcao selecionar(String sigla) throws Exception {
 		setSigla(sigla);
 		List<SrTipoAcao> itens = buscar();
@@ -199,7 +198,6 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements SrSelecionave
 		return itens.get(0);
 	}
 
-	@Override
 	public List<SrTipoAcao> buscar() throws Exception {
 		List<SrTipoAcao> lista = new ArrayList<SrTipoAcao>();
 		List<SrTipoAcao> listaFinal = new ArrayList<SrTipoAcao>();

@@ -167,7 +167,7 @@ BaseService.prototype.errorHandler = function(error) {
 		$("#responseText").html( error.responseText);
 		$("#responseStatus").html(error.statusText);
 
-		$('#server_error_dialog').dialog('open');
+		$('#server_error').dialog('open');
 	}
 }
 /**

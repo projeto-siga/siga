@@ -43,7 +43,7 @@
 								<td>${tipoAcao.siglaTipoAcao}</td>
 								<td>
 									<span style="margin-left: ${(tipoAcao.nivel-1)*2}em; ${tipoAcao.nivel == 1 ? 'font-weight: bold;' : ''}">
-										<siga:selecionado sigla="${tipoAcao.atual.tituloTipoAcao}" descricao="${tipoAcao.atual.descricao}"></siga:selecionado>
+										<siga:selecionado sigla="${tipoAcao.atual.tituloTipoAcao}" descricao=""></siga:selecionado>
 									</span>
 								</td>
 								<td>${tipoAcao.descrTipoAcao}</td>
@@ -186,8 +186,10 @@
 		spanHTML = spanHTML.replace('{margin-left}', marginLeft + 'em');
 		spanHTML = spanHTML.replace('{font-weight}', fontWeight);
 		spanHTML = spanHTML.replace('{descricao}', tipoAcao.tituloTipoAcao);
-		
-		return [tipoAcao.siglaTipoAcao, spanHTML, tipoAcao.descrTipoAcao, 'COLUNA_ACOES'];
+
+		var descrTipoAcao = tipoAcao.descrTipoAcao == undefined || tipoAcao.descrTipoAcao == null ? "" : tipoAcao.descrTipoAcao;
+	
+		return [tipoAcao.siglaTipoAcao, spanHTML, descrTipoAcao, 'COLUNA_ACOES'];
 	}
 	tipoAcaoService.onRowClick = function(tipoAcao) {
 		tipoAcaoService.editar(tipoAcao, 'Alterar Tipo de A&ccedil;&atilde;o');

@@ -43,7 +43,7 @@
 			<input type="text"
 					name="pesquisa.descrPesquisa"
 					id="descrPesquisa"
-					value="${descrPesquisa}" size="60" maxlength="255" required/>
+					value="${descrPesquisa}" size="60" maxlength="255"/>
 		</div>
 
 		<div class="gt-form-row">

@@ -61,7 +61,14 @@
 		<c:set var="urlBuscar" value="/app${acaoBusca}/${urlAcao}" />
 	</c:otherwise>
 </c:choose>
-
+<c:choose>
+	<c:when test="${empty inputName}">
+		<c:set var="spanName" value="${propriedade}${tipoSel}" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="spanName" value="${inputName}" />
+	</c:otherwise>
+</c:choose>
 <c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
 
 <c:set var="larguraPopup" value="600" />
@@ -82,7 +89,7 @@ self.retorna_${propriedade}${tipoSel}${inputName} = function(id, sigla, descrica
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
 			document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = descricao;
-			document.getElementById('${propriedade}${tipoSel}${inputName}SelSpan').innerHTML = descricao;
+			document.getElementById('${spanName}SelSpan').innerHTML = descricao;
 		} catch (E) {
 		}
 	</c:if>
@@ -217,10 +224,11 @@ self.ajax_${propriedade}${tipoSel}${inputName} = function() {
 </c:if>
 
 <c:if test="${ocultardescricao != 'sim'}">
-	<span id="${propriedade}${tipoSel}${inputName}SelSpan">
+	<span id="${spanName}SelSpan">
 		<c:out value="${requestScope[propriedadeTipoSel].descricao}" />
 	</span>
 </c:if>
+
 
 <c:if test="${not empty tipo}">
 	<c:choose>
@@ -252,7 +260,7 @@ self.ajax_${propriedade}${tipoSel}${inputName} = function() {
 		document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = '${siglaSubst}';
 		document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = "${descricaoSubst}";
 		<c:if test="${ocultardescricao != 'sim'}">
-			document.getElementById('${propriedade}${tipoSel}${inputName}SelSpan').innerHTML = "${descricaoSubst}";
+			document.getElementById('${spanName}SelSpan').innerHTML = "${descricaoSubst}";
 		</c:if>
 	</script>
 </c:if>

@@ -62,7 +62,7 @@ public class SrSolicitacaoVO {
 		this.ultimaMovimentacaoformatada = SigaPlayUtil.selecionado(this.ultimaMovimentacao, this.ultimaMovimentacao);
 		
 		this.lotaAtendenteFormatada = this.lotaAtendente != null ? getLotacaoFormatada(this.lotaAtendente) : "";
-		this.prioridadeFormatada = sol.getPrioridade() != null ? SigaPlayUtil.selecionado(sol.getPrioridade().descPrioridade, sol.getPrioridade().descPrioridade) : "";
+		this.prioridadeFormatada = sol.getPrioridade() != null ? SigaPlayUtil.selecionado(sol.getPrioridade().getDescPrioridade(), sol.getPrioridade().getDescPrioridade()) : "";
 	}
 	
 	public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, boolean podeRemover, boolean podePriorizar) throws Exception {
@@ -71,7 +71,7 @@ public class SrSolicitacaoVO {
 		this.prioridadeSolicitacaoVO = prioridadeSolicitacao.toVO();
 		this.prioridadeListaFormatada = SigaPlayUtil.tagA(String.valueOf(prioridadeSolicitacao.numPosicao));
 		this.prioridadeFormatada = prioridadeSolicitacao.prioridade != null ? 
-				SigaPlayUtil.selecionado(prioridadeSolicitacao.prioridade.descPrioridade, prioridadeSolicitacao.prioridade.descPrioridade) : "";
+				SigaPlayUtil.selecionado(prioridadeSolicitacao.prioridade.getDescPrioridade(), prioridadeSolicitacao.prioridade.getDescPrioridade()) : "";
 			
 		if (podeRemover)
 			this.botaoRemover = SigaPlayUtil.botaoRemoverSolicitacao(this.idSolicitacao, lista.idLista);

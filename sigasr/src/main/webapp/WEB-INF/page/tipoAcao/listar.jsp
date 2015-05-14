@@ -169,8 +169,13 @@
 	var tipoAcaoService = new TipoAcaoService(opts);
 	
 	tipoAcaoService.getId = function(tipoAcao) {
-		return tipoAcao.idTipoAcao;
+		return tipoAcao.idTipoAcao || tipoAcao['tipoAcao.idTipoAcao'];
 	}
+
+	tipoAcaoService.serializar = function(obj) {
+        var serializado = BaseService.prototype.serializar.call(this, obj);
+        return serializado + "&tipoAcao=" + this.getId(obj);
+    }
 
 	tipoAcaoService.getRow = function(tipoAcao) {
 		var marginLeft = (tipoAcao.nivel-1) * 2,

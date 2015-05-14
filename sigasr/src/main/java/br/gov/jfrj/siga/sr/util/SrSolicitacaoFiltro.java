@@ -89,7 +89,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		StringBuffer query = new StringBuffer(queryString);
 		
-		if (acordo != null && acordo.idAcordo > 0L)
+		if (acordo != null && acordo.getIdAcordo() > 0L)
 			query.append(" inner join sol.acordos acordo where acordo.hisIdIni = "
 					+ acordo.getHisIdIni() + " and ");
 		else
@@ -116,7 +116,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (getAcao() != null && getAcao().getIdAcao() > 0L)
 			query.append(" and sol.acao.acaoInicial.idAcao = "
 					+ getAcao().getAcaoInicial().getIdAcao());
-		if (getPrioridade() != null && getPrioridade().idPrioridade > 0L)
+		if (getPrioridade() != null && getPrioridade().getIdPrioridade() > 0L)
 			query.append(" and sol.prioridade <= " + getPrioridade().ordinal());
 		
 		if (idListaPrioridade != null && !idListaPrioridade.equals(QUALQUER_LISTA_OU_NENHUMA)){

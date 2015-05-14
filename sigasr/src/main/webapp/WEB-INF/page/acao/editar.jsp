@@ -4,7 +4,7 @@
 <div class="gt-form gt-content-box">
 	<form id="acaoForm" enctype="multipart/form-data">
 
-		<input type="hidden" name="idAcao">
+		<input type="hidden" name="acao.idAcao" id="id">
 
 		<div class="gt-form-row gt-width-66">
 			<label>C&oacute;digo <span>*</span></label>
@@ -21,7 +21,7 @@
 
 		<div class="gt-form-row gt-width-66">
 			<label>Tipo de a&ccedil;&atilde;o</label>
-			<input type="hidden" name="acao.tipoAcao" id="tipoAcao" class="selecao">
+			<input type="hidden" name="tipoAcao" id="tipoAcao" class="selecao">
 			<siga:selecao modulo="sigasr" tema="simple" propriedade="tipoAcao" urlAcao="buscar"></siga:selecao>
 		</div>
 

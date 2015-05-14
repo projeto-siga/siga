@@ -1,0 +1,31 @@
+<script language="javascript">
+
+function ${_nome}(){
+	#{if _url}
+		PassAjaxResponseToFunction('${_url}', 'carregouAjax${_nome}', null, false, null);
+	#{/if}
+	#{else}
+		$( "#${_nome}_dialog" ).dialog( "open" );
+	#{/else}
+}
+
+function carregouAjax${_nome}(response, param){
+		$("#${_nome}_dialog").html(response);
+		$("#${_nome}_dialog").dialog( "open" );
+}
+
+</script>
+
+<div id="${_nome}_dialog" title="${_titulo}">
+#{doBody /}
+</div>
+
+<script>
+$("#${_nome}_dialog").dialog({
+    autoOpen: false,
+    height: ${_altura?_altura:"'auto'"},
+    width: ${_largura?_largura:"'auto'"},
+    modal: true,
+    resizable: false
+  });
+</script>

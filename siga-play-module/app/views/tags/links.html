@@ -1,0 +1,27 @@
+<p class="gt-table-action-list">
+	#{set linkSeparator:false /}
+	<!--  -->
+	#{list items:_acoes, as:'acao'}
+	<!--  -->
+	#{set linkConfirm:null /} #{if acao.msgConfirmacao != null}
+	<!--  -->
+	#{set linkConfirm: "if (confirm('" + acao.msgConfirmacao + "')) " /}
+	#{/if} #{set 'img'} <img
+		src="${_base}/siga/css/famfamfam/icons/${acao.icone}.png"
+		style="margin-right: 5px;"> #{/set}
+
+	<!--  -->
+	#{if linkSeparator} <span class="gt-separator">|</span>#{/if}
+	<!--  -->
+	#{set linkSeparator = true /} ${acao.pre} #{if acao.popup} <a 
+		href="javascript:${linkConfirm?linkConfirm.raw():''}popitup('${acao.url}');">${img.raw()}${acao.nome}</a>
+	#{/if} #{elseif acao.ajax} <span id="spanAjax_${acao.idAjax}"> <a 
+		href="javascript: SetInnerHTMLFromAjaxResponse('${acao.url}', 'spanAjax_${acao.idAjax}');">${img.raw()}${acao.nome}</a>
+	</span> #{/elseif} #{elseif acao.modal} <a
+		href="javascript: ${acao.url}();">${img.raw()}${acao.nome}</a>
+      #{/elseif} #{else} #{if linkConfirm != null} <a 
+		href="javascript:${linkConfirm.raw()}location.href='${acao.url}';">${img.raw()}${acao.nome}</a>
+	#{/if}#{else} <a href="${acao.url}">${img.raw()}${acao.nome}</a>
+	#{/else} #{/else} ${acao.pos} #{/list}
+</p>
+

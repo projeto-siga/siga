@@ -1,0 +1,4 @@
+self: play -> siga-play-module 0.1
+
+require:
+    - play

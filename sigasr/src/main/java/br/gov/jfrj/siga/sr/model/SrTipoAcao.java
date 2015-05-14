@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.util.FieldNameExclusionEstrategy;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
@@ -33,7 +34,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_TIPO_ACAO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<SrTipoAcao>, Selecionavel {
+public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<SrTipoAcao>, Selecionavel, ConvertableEntity {
 
 	public static ActiveRecord<SrTipoAcao> AR = new ActiveRecord<>(SrTipoAcao.class);
 

@@ -1,6 +1,6 @@
 <div class="gt-form gt-content-box">
 	<form id="tipoAcaoForm">
-		<input type="hidden" name="tipoAcao">
+		<input type="hidden" name="tipoAcao.idTipoAcao" id="idTipoAcao">
 
 		<div class="gt-form-row gt-width-66">
 			<label>C&oacute;digo<span>*</span></label>

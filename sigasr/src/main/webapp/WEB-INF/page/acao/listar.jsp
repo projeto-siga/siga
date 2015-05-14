@@ -185,8 +185,31 @@
 	var acaoService = new AcaoService(opts);
 	
 	acaoService.getId = function(acao) {
-		return acao.id;
+		return acao.id || acao['acao.idAcao'];
 	}
+
+	acaoService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title);
+		acaoService.limparTipoAcao();
+	}
+
+	acaoService.cadastrar = function(title) {
+        BaseService.prototype.cadastrar.call(this, title);
+        acaoService.limparTipoAcao();
+	}
+
+	acaoService.limparTipoAcao = function() {
+	    $("#formulario_tipoAcaoSel_id").val('');
+	    $("#formulario_tipoAcaoSel_descricao").val('');
+	    $("#formulario_tipoAcaoSel_sigla").val('');
+	    $("#tipoAcaoSelSpan").html('');
+
+	}
+
+	acaoService.serializar = function(obj) {
+        var query = BaseService.prototype.serializar.call(this, obj);
+        return query + "&acao=" + this.getId(obj);
+    }
 
 	acaoService.getRow = function(acao) {
 		var marginLeft = (acao.nivel-1) * 2,

@@ -329,7 +329,6 @@ BaseService.prototype.gravarAplicar = function(isAplicar) {
 
 			if (isAplicar) {
 				service.formularioHelper.populateFromJson(JSON.parse(objSalvo));
-				alert("Cadastro salvo com sucesso.");
 			}
 
 			else

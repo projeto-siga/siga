@@ -54,7 +54,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_LOTACAO", schema = Catalogs.CORPORATIVO)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
-		Selecionavel, Historico, Sincronizavel,  Comparable  {
+		Selecionavel, Historico, Sincronizavel,  Comparable, DpConvertableEntity  {
 	private static final long serialVersionUID = 5628179687234082413L;
 	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(DpLotacao.class);
 

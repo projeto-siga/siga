@@ -35,6 +35,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.cp.CpConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -45,7 +46,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @NamedQuery(name = "consultarCpOrgaoUsuario", query = "select u from CpOrgaoUsuario u order by u.siglaOrgaoUsu")
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
-		Serializable, Selecionavel, Assemelhavel {
+		Serializable, Selecionavel, Assemelhavel, CpConvertableEntity {
 	public static ActiveRecord<CpOrgaoUsuario> AR = new ActiveRecord<>(CpOrgaoUsuario.class);
 
 	/**

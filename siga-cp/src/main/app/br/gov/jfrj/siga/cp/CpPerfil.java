@@ -25,6 +25,6 @@ import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @DiscriminatorValue("1")
-public class CpPerfil extends CpGrupo implements Selecionavel {
+public class CpPerfil extends CpGrupo implements Selecionavel, CpConvertableEntity {
 
 }

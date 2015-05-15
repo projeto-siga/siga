@@ -1283,7 +1283,9 @@ public class ExDocumentoAction extends ExActionSupport {
 					+ (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
 
-			doc.setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
+			if (doc.getOrgaoUsuario() == null){
+				doc.setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
+			}
 
 			if (isClassificacaoIntermediaria()
 					&& (descrClassifNovo == null || descrClassifNovo.trim()

@@ -105,7 +105,7 @@ public class AtributoController extends SrController {
 	}
 
 	@Path("/atributos")
-	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
     public void listarAssociacaoAtributo(Long idAtributo, boolean exibirInativos) throws Exception {
     	SrAtributo att = new SrAtributo();
     	if (idAtributo != null)

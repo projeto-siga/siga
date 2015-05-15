@@ -105,7 +105,6 @@ public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, C
 		return tituloAcao;
 	}
 
-	@Override
 	public void setDescricao(String descricao) {
 		this.tituloAcao = descricao;
 	}
@@ -130,7 +129,6 @@ public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, C
 		return false;
 	}
 
-	@Override
 	public SrAcao selecionar(String sigla) throws Exception {
 		return selecionar(sigla, null);
 	}
@@ -145,7 +143,6 @@ public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, C
 
 	}
 
-	@Override
 	public List<SrAcao> buscar() throws Exception {
 		return buscar(null);
 	}

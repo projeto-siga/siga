@@ -30,8 +30,9 @@
 						<li><a href="${linkTo[AtributoController].listar[false]}">Atributo</a></li>
 						<li><a href="${linkTo[PesquisaSatisfacaoController].listar[false]}">Pesquisa de Satisfa&ccedil;&atilde;o</a></li> 
 					</c:if>
-					<c:if test="${exibirMenuConhecimentos}">
-						<li><a href="@{Application.listarConhecimento}">Conhecimento</a></li>
+<%-- 					<c:if test="${exibirMenuConhecimentos}"> --%>
+					<c:if test="${true}">
+						<li><a href="${linkTo[ConhecimentoController].listar}">Conhecimento</a></li>
 					</c:if>
 				</ul>
 			</li>

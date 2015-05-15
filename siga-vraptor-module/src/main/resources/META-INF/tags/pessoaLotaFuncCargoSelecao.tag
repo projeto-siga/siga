@@ -148,6 +148,14 @@ select.onchange = function(){
 	}
 }
 
+select.clearAll = function() {
+	limparPessoa();
+	limparLotacao();
+    limparFuncao();
+    limparCargo();
+    limparGrupo();
+}
+
 select.changeValue = function(newValue) {
 	select.value = newValue;
 	select.onchange();

@@ -157,7 +157,6 @@ self.ajax_${propriedadeClean} = function() {
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedadeClean}SelButton" value="..."
 		onclick="javascript: popitup_${propriedadeClean}('');"
-		onblur="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
 		${disabledBtn} theme="simple">
 </c:if>
 

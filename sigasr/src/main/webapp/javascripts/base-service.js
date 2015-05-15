@@ -167,7 +167,7 @@ BaseService.prototype.errorHandler = function(error) {
 		$("#responseText").html( error.responseText);
 		$("#responseStatus").html(error.statusText);
 
-		$('#server_error_dialog').dialog('open');
+		$('#server_error').dialog('open');
 	}
 }
 /**
@@ -329,7 +329,7 @@ BaseService.prototype.gravarAplicar = function(isAplicar) {
 
 			if (isAplicar) {
 				service.formularioHelper.populateFromJson(JSON.parse(objSalvo));
-				alert("Cadastro salvo com sucesso.");
+                alert("Cadastro salvo com sucesso.");
 			}
 
 			else

@@ -146,16 +146,11 @@
 							
 							<input type="hidden" name="atendente" id="atendente" class="selecao">
 							<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente" desativar="${requestScope[modoExibicao] == 'equipe' ? 'true' : disabled}"/>
-
-		 
-		<%-- 					#{selecao --%>
-		<%-- 						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual, --%>
-		<%-- 						disabled:_modoExibicao == 'equipe' ? 'true' : disabled /} --%>
 		
 							<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
 						</div>
 					</div>
-					<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet != null ? itemConfiguracaoSet : ''}" acoesSet="${acoesSet != null ? acoesSet : ''}"></siga:configuracaoItemAcao>
+					<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"/>
 		
 					<div class="gt-form-row">
 						<div class="gt-form-row">
@@ -251,6 +246,8 @@
 	var designacaoService = new DesignacaoService(designacaoOpts);
 	// Sobescreve o metodo cadastrar para limpar a tela
 	designacaoService.cadastrar = function(title) {
+		document.getElementById("atendenteSelSpan").innerHTML = "";
+		document.getElementById("dpPessoaSelSpan").innerHTML = "";
 		BaseService.prototype.cadastrar.call(this, title);
 		// atualiza os dados da DesignaÃ§Ã£o
 		atualizarDesignacaoEdicao();
@@ -443,7 +440,7 @@
 	function duplicarDesignacao(event) {
 		var tr = $(event.currentTarget).parent().parent();
 		event.stopPropagation();
-		designacaoService.editar(tr.data('json'), 'Duplicar DesignaÃ§Ã£o');
+		designacaoService.editar(tr.data('json'), 'Duplicar Designa&ccedil;&atilde;o');
 		resetId();
 	}
 

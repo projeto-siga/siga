@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Entity
 @Table(name = "CP_COMPLEXO", schema = Catalogs.CORPORATIVO)
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class CpComplexo extends AbstractCpComplexo {
+public class CpComplexo extends AbstractCpComplexo implements CpConvertableEntity {
 	
 	public static ActiveRecord<CpComplexo> AR = new ActiveRecord<>(CpComplexo.class);
 

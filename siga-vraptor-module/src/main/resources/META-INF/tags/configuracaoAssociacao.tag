@@ -196,6 +196,7 @@
             return;
 
 		// reset no componente de pessoaLotaFuncCargoSelecao
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].clearAll();
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
 		configuracaoItemAcaoService.iniciarDataTables();
 		BaseService.prototype.cadastrar.call(this, title);	
@@ -206,6 +207,7 @@
 	 */
 	 associacaoService.editar = function(obj, title) {
 		// reset no componente de pessoaLotaFuncCargoSelecao
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].clearAll();
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
 		
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();

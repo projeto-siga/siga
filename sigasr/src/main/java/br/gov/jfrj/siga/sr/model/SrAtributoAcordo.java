@@ -18,10 +18,11 @@ import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoAcordoVO;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 
 @Entity
 @Table(name = "SR_ATRIBUTO_ACORDO", schema = Catalogs.SIGASR)
-public class SrAtributoAcordo extends HistoricoSuporte {
+public class SrAtributoAcordo extends HistoricoSuporte implements ConvertableEntity{
 
 	/**
 	 * 

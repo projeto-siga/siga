@@ -66,7 +66,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
-		Selecionavel, Historico, Sincronizavel, Comparable {
+		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
 	/**
 	 * 
 	 */

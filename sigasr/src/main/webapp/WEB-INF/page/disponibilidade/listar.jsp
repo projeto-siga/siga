@@ -1,12 +1,13 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Servi&ccedil;os" >
+<siga:pagina titulo="Servi&ccedil;os">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
-	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script
+		src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
@@ -17,56 +18,63 @@
 	<script src="/sigasr/javascripts/moment.js"></script>
 
 	<style>
-		td .orgao:first-child {
-			margin-left: 10px;
-		}
-		.orgao {
-			width: 15px;
-			height: 15px;
-			display: inline-block;
-			padding-right: 5px;
-			line-height: 0px;
-			vertical-align: middle !important;
-		}
-		.item-pai {
-			padding-left: 0em !important;
-			font-weight: bold !important;
-		}
+td .orgao:first-child {
+	margin-left: 10px;
+}
 
-		.item-filho {
-			padding-left: 2em !important;
-			font-style: italic !important;
-		}
+.orgao {
+	width: 15px;
+	height: 15px;
+	display: inline-block;
+	padding-right: 5px;
+	line-height: 0px;
+	vertical-align: middle !important;
+}
 
-		.item-neto {
-			padding-left: 4em !important;
-		}
-	</style>
+.item-pai {
+	padding-left: 0em !important;
+	font-weight: bold !important;
+}
+
+.item-filho {
+	padding-left: 2em !important;
+	font-style: italic !important;
+}
+
+.item-neto {
+	padding-left: 4em !important;
+}
+</style>
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
 			<h2>Disponibilidades de Itens de Configura&ccedil;&atilde;o</h2>
 
 			<div class="gt-content-box dataTables_div">
-				<table id="itens_configuracao_table" border="0" class="gt-table display"></table>
+				<table id="itens_configuracao_table" border="0"
+					class="gt-table display"></table>
 			</div>
 		</div>
 	</div>
 
 	<!-- template utilizado para adicionar os orgaos -->
-	<div id="templateDisponibilidadeItem" style="display:none">
+	<div id="templateDisponibilidadeItem" style="display: none">
 		{for orgao in orgaos}
-			<div class='orgao' data-sigla-orgao="!{orgao.sigla}" data-item-configuracao-id="!{itemConfiguracao.id}" onclick="disponibilidadeService.alterarDisponibilidade('!{orgao.sigla}', !{itemConfiguracao.hisIdIni})">
-				<img src="" src-original="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}"/>
+			
+			<div class='orgao' data-sigla-orgao="!{orgao.sigla}"
+				data-item-configuracao-id="!{itemConfiguracao.id}"
+				onclick="disponibilidadeService.alterarDisponibilidade('!{orgao.sigla}', !{itemConfiguracao.hisIdIni})">
+				<img src=""
+					src-original="!{disponibilidadeService.construirIcone(orgao.sigla, itemConfiguracao)}"/>
 			</div>
-	  	{/for}
+		{/for}
 	</div>
 
 	<!-- template utilizado para mostrar as siglas dos orgaos no titulo da tabela -->
-	<div id="templateSiglasOrgaos" style="display:none">
+	<div id="templateSiglasOrgaos" style="display: none">
 		{for orgao in orgaos}
 			<div class="orgao">!{orgao.sigla}</div>
-  		{/for}
+		{/for}
 	</div>
 
 	<!-- modal de cadastro -->
@@ -76,42 +84,48 @@
 				<input type="hidden" name="idDisponibilidade">
 
 				<div class="gt-form-row gt-width-66">
-					<label>Tipo <span>*</span></label>
-
-					<select id="ddlTipoDisponibilidade" name="tipo" class="select-siga" onchange="disponibilidadeService.onChangeTipo()">
-						<c:forEach items="${tipoDisponibilidades}" var="tipoDisponibilidade">
+					<label>Tipo <span>*</span></label> <select
+						id="tipo" name="disponibilidade.tipo" class="select-siga"
+						onchange="disponibilidadeService.onChangeTipo()">
+						<c:forEach items="${tipoDisponibilidades}"
+							var="tipoDisponibilidade">
 							<option value="${tipoDisponibilidade}">${tipoDisponibilidade.descricao}</option>
 						</c:forEach>
 					</select>
 
 				</div>
 				<div id="camposDisponibilidade">
-					<div id="mensagem" class="gt-form-row gt-width-66">
+					<div id="div_mensagem" class="gt-form-row gt-width-66">
 						<label>Mensagem<span>*</span></label>
-						<textarea name="mensagem" cols="60" maxlength="255" required></textarea>
+						<textarea id="mensagem" name="disponibilidade.mensagem" cols="60" maxlength="255" required></textarea>
 					</div>
 					<div class="gt-form-row gt-width-66">
 						<label>Detalhamento t&eacute;cnico<span>*</span></label>
-						<textarea name="detalhamentoTecnico" cols="60" maxlength="255" required></textarea>
+						<textarea id="detalhamentoTecnico" name="disponibilidade.detalhamentoTecnico" cols="60" maxlength="255"
+							required></textarea>
 					</div>
 
 					<div id="erroHorarioInvalido"></div>
 
 					<div class="gt-form-row gt-width-66">
 						<label>Data/hora in&iacute;cio</label>
-						<input id="dataHoraInicio" class="dataHora" name="dataHoraInicio"/>
+						<input id="dataHoraInicio" class="dataHora" name="disponibilidade.dataHoraInicio" />
 					</div>
 
 					<div class="gt-form-row gt-width-66">
 						<label>Data/hora t&eacute;rmino</label>
-						<input id="dataHoraFim" class="dataHora" name="dataHoraTermino"/>
+						<input id="dataHoraTermino" class="dataHora" name="disponibilidade.dataHoraTermino" />
 					</div>
 				</div>
 
 				<div class="gt-form-row">
-					<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="disponibilidadeService.gravar()"/>
-					<a class="gt-btn-medium gt-btn-left" onclick="disponibilidadeService.cancelarGravacao()">Cancelar</a>
-					<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="disponibilidadeService.aplicar()"/>
+					<input type="button" value="Gravar"
+						class="gt-btn-medium gt-btn-left"
+						onclick="disponibilidadeService.gravar()" /> <a
+						class="gt-btn-medium gt-btn-left"
+						onclick="disponibilidadeService.cancelarGravacao()">Cancelar</a> <input
+						type="button" value="Aplicar" class="gt-btn-medium gt-btn-left"
+						onclick="disponibilidadeService.aplicar()" />
 				</div>
 			</form>
 		</div>
@@ -201,7 +215,7 @@
 			this.disponibilidadeSelecionada = this.buscarDisponibilidade(this.itemConfiguracaoSelecionado, sigla);
 
 			new Formulario($('#disponibilidadeForm')).populateFromJson(this.disponibilidadeSelecionada);
-			$('#ddlTipoDisponibilidade').trigger('change');
+			$('#tipo').trigger('change');
 		}
 
 		this.buscarOgao = function(sigla) {
@@ -251,7 +265,7 @@
 		}
 
 		this.onChangeTipo = function() {
-			var tipo = $('#ddlTipoDisponibilidade').val();
+			var tipo = $('#tipo').val();
 
 			if(this.deveEsconderTudo(tipo)) {
 				this.esconderCamposDisponibilidade();
@@ -267,8 +281,8 @@
 		}
 
 		this.esconderCampoMensagem = function() {
-			$('#mensagem').hide();
-			$('#mensagem textarea').val('');
+			$('#div_mensagem').hide();
+			$('#div_mensagem textarea').val('');
 			return this;
 		}
 
@@ -279,7 +293,7 @@
 		}
 
 		this.mostrarCamposDisponibilidade = function() {
-			$('#mensagem').show();
+			$('#div_mensagem').show();
 			$('#camposDisponibilidade').show();
 			return this;
 		}
@@ -320,19 +334,31 @@
 		this.getObjetoParaGravar = function() {
 			var disponibilidade = BaseService.prototype.getObjetoParaGravar.call(this, opts);
 			// Precisa estar assim para recarregar o item de configuracao utilizando o SrItemConfiguracaoBinder.java
+			
 			disponibilidade.itemConfiguracao = this.itemConfiguracaoSelecionado.id;
-			disponibilidade.orgao = this.orgaoSelecionado;
+			disponibilidade.orgao = this.orgaoSelecionado.idOrgaoUsu;
+			disponibilidade["disponibilidade.idDisponibilidade"] = disponibilidade.idDisponibilidade;
+			
+			var pagina = Object.create(this.pagina);
+			disponibilidade.pagina = new Object();
+			disponibilidade.pagina.tamanho = pagina.tamanho;
+			disponibilidade.pagina.numero = pagina.numero;    
+			disponibilidade.pagina.count = pagina.count;         
+			disponibilidade.pagina.orderBy = pagina.orderBy;         
+			disponibilidade.pagina.direcaoOrdenacao = pagina.direcaoOrdenacao;
+			disponibilidade.pagina.tituloOuCodigo = pagina.tituloOuCodigo;
 
 			// WA para a serializacao da data com horario que nao estava funcionando.
-			if(disponibilidade.dataHoraInicio) {
-				disponibilidade.dataHoraInicioString = disponibilidade.dataHoraInicio;
-				delete disponibilidade.dataHoraInicio;
+			if(disponibilidade["disponibilidade.dataHoraInicio"]) {
+				disponibilidade["disponibilidade.dataHoraInicioString"] = disponibilidade["disponibilidade.dataHoraInicio"];
+				delete disponibilidade["disponibilidade.dataHoraInicio"];
 			}
 
-			if(disponibilidade.dataHoraTermino) {
-				disponibilidade.dataHoraTerminoString = disponibilidade.dataHoraTermino;
-				delete disponibilidade.dataHoraTermino;
+			if(disponibilidade["disponibilidade.dataHoraTermino"]) {
+				disponibilidade["disponibilidade.dataHoraTerminoString"] = disponibilidade["disponibilidade.dataHoraTermino"];
+				delete disponibilidade["disponibilidade.dataHoraTermino"];
 			}
+			 
 			return disponibilidade;
 		}
 
@@ -473,19 +499,19 @@
 			);
 			this.validator = jQuery("form").validate();
 			$("#dataHoraInicio").rules("add", {dataHora: ""});
-			$("#dataHoraFim").rules("add", {dataHora: ""});
+			$("#dataHoraTermino").rules("add", {dataHora: ""});
 			$("#dataHoraInicio").rules("add", {periodo: ""});
-			$("#dataHoraFim").rules("add", {periodo: ""});
+			$("#dataHoraTermino").rules("add", {periodo: ""});
 			return this;
 		}
 
 		this.horarioEstaValido = function() {
 			var dataHoraInicioString = $("#dataHoraInicio").val(),
-				dataHoraFimString = $("#dataHoraFim").val();
+				dataHoraTerminoString = $("#dataHoraTermino").val();
 
-			if(dataHoraInicioString && dataHoraFimString) {
+			if(dataHoraInicioString && dataHoraTerminoString) {
 				var dataHoraInicio = moment(dataHoraInicioString, 'DD/MM/YYYY HH:mm'),
-					dataHoraTermino = moment(dataHoraFimString, 'DD/MM/YYYY HH:mm'),
+					dataHoraTermino = moment(dataHoraTerminoString, 'DD/MM/YYYY HH:mm'),
 					valido = true,
 					mensagem = null;
 

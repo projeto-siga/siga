@@ -139,8 +139,8 @@
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenaÃƒÂ§ÃƒÂ£o crescente",
-			        "sortDescending": ": clique para ordenaÃƒÂ§ÃƒÂ£o decrescente"
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -228,7 +228,7 @@
 					associacaoService.atualizarListaAssociacoes(associacaoJson);
 		    	},
 		    	error: function(error) {
-		        	alert("NÃ£o foi possÃ­vel carregar as AssociaÃ§Ãµes deste Atributo.");
+		        	alert("Não foi possível carregar as Associações deste Atributo.");
 		    	}
 		   	});
 		}

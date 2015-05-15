@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-
 <siga:pagina titulo="Seguran&ccedil;a">
 	<jsp:include page="../main.jsp"></jsp:include>
 
@@ -25,11 +24,6 @@
 				
 				//removendo a referencia de '$' para o jQuery
 				$( document ).ready(function() {
-// 					if ("${mostrarDesativado}" != "") {
-// 						document.getElementById('checkmostrarDesativado').checked = '${mostrarDesativado}';
-// 						document.getElementById('checkmostrarDesativado').value = '${mostrarDesativado}';
-// 					}
-						
 					$("#checkmostrarDesativados").click(function() {
 						jQuery.blockUI(objBlock);
 						if (document.getElementById('checkmostrarDesativados').checked)

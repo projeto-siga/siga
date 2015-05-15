@@ -246,6 +246,8 @@
 	var designacaoService = new DesignacaoService(designacaoOpts);
 	// Sobescreve o metodo cadastrar para limpar a tela
 	designacaoService.cadastrar = function(title) {
+		document.getElementById("atendenteSelSpan").innerHTML = "";
+		document.getElementById("dpPessoaSelSpan").innerHTML = "";
 		BaseService.prototype.cadastrar.call(this, title);
 		// atualiza os dados da DesignaÃ§Ã£o
 		atualizarDesignacaoEdicao();
@@ -438,7 +440,7 @@
 	function duplicarDesignacao(event) {
 		var tr = $(event.currentTarget).parent().parent();
 		event.stopPropagation();
-		designacaoService.editar(tr.data('json'), 'Duplicar DesignaÃ§Ã£o');
+		designacaoService.editar(tr.data('json'), 'Duplicar Designa&ccedil;&atilde;o');
 		resetId();
 	}
 

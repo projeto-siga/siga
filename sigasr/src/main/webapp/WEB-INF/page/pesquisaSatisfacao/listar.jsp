@@ -212,6 +212,7 @@
 	pesquisaService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
 
+		$('#perguntas').html('');
 		// limpa a lista de Associações
 		associacaoService.limparDadosAssociacoes();
 		associacaoService.atualizarListaAssociacoes({});
@@ -249,7 +250,7 @@
 	            params += '&perguntaSet[' + i + '].descrPergunta=' + jDivs[0].innerHTML;
 	            params += '&perguntaSet[' + i + '].tipoPergunta.idTipoPergunta=' + jDivs[1].id;
 	            params += '&perguntaSet[' + i + '].ordemPergunta=' + i;
-	            if (this.id.indexOf("novo_") < 1)
+	            if (this.id.indexOf("novo_") < 0)
 	                    params += '&perguntaSet[' + i + '].idPergunta=' + this.id;
 	    	});
     	return params;

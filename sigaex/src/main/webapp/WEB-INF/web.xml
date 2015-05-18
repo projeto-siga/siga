@@ -179,8 +179,12 @@
 	<!-- Libera acesso aos seguintes diretorios -->
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>arquivos</web-resource-name>
+			<web-resource-name>autenticar</web-resource-name>
 			<url-pattern>/arquivos/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name></web-resource-name>
+			<url-pattern>/autenticar.action</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>imagens</web-resource-name>
@@ -214,6 +218,10 @@
       <web-resource-name>testes</web-resource-name>
       <url-pattern>/testes/*</url-pattern>
     </web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>busca</web-resource-name>
+			<url-pattern>/expediente/selecionar.action</url-pattern>
+		</web-resource-collection>
 	</security-constraint>
 
 	<login-config>

@@ -65,10 +65,10 @@ public class ItemConfiguracaoController extends SrController {
 		result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
 		
 		// Includes para os componentes de pessoaLotaSelecao de Gestor e Fator de Multiplicação
-		result.include("gestorpessoaSel", new DpPessoaSelecao());
-		result.include("gestorlotacaoSel", new DpLotacaoSelecao());
-		result.include("fatorrpessoaSel", new DpPessoaSelecao());
-		result.include("fatorlotacaoSel", new DpLotacaoSelecao());
+		result.include("gestorPessoaSel", new DpPessoaSelecao());
+		result.include("gestorLotacaoSel", new DpLotacaoSelecao());
+		result.include("fatorPessoaSel", new DpPessoaSelecao());
+		result.include("fatorLotacaoSel", new DpLotacaoSelecao());
 		
 		// includes para o componente de Designação
 		result.include("modoExibicao", "item");

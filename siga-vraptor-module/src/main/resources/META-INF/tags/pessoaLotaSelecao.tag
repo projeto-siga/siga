@@ -25,13 +25,13 @@
 
 <span id="spanPessoa${nomeSelPessoa}">
 	<input type="hidden" name="${nomeSelPessoa}" id="${nomeSelPessoa}" class="pessoaLotaSelecao">
-	<siga:selecao tipo="pessoa" propriedade="pessoa" tema="simple" modulo="siga" inputName="${nomeSelPessoa}" 
+	<siga:selecao propriedade="${nomeSelPessoa}" tema="simple" modulo="siga" 
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
 </span>
 
 <span id="spanLotacao${nomeSelLotacao}">
 	<input type="hidden" name="${nomeSelLotacao}" id="${nomeSelLotacao}" class="pessoaLotaSelecao">
-	<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" inputName="${nomeSelLotacao}" 
+	<siga:selecao propriedade="${nomeSelLotacao}" tema="simple" modulo="siga"  
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
 </span>
 
@@ -49,17 +49,17 @@ select.onchange = function(){
 	if (select.value == '1'){
 		document.getElementById('spanLotacao${nomeSelLotacao}').style.display = 'none';
 		document.getElementById('spanPessoa${nomeSelPessoa}').style.display = 'inline';
-		document.getElementById('${nomeSelLotacao}').value='';
-		document.getElementById('${nomeSelLotacao}_sigla').value='';
-		document.getElementById('${nomeSelLotacao}_descricao').value='';
-		document.getElementById('${nomeSelLotacao}Span').innerHTML='';
+		document.getElementById('formulario_${nomeSelLotacao}Sel_id').value='';
+		document.getElementById('formulario_${nomeSelLotacao}Sel_sigla').value='';
+		document.getElementById('formulario_${nomeSelLotacao}Sel_descricao').value='';
+		document.getElementById('${nomeSelLotacao}SelSpan').innerHTML='';
 	} else if (select.value == '2'){
 		document.getElementById('spanPessoa${nomeSelPessoa}').style.display = 'none';
 		document.getElementById('spanLotacao${nomeSelLotacao}').style.display = 'inline';
-		document.getElementById('${nomeSelPessoa}').value='';
-		document.getElementById('${nomeSelPessoa}_sigla').value='';
-		document.getElementById('${nomeSelPessoa}_descricao').value='';
-		document.getElementById('${nomeSelPessoa}Span').innerHTML='';
+		document.getElementById('formulario_${nomeSelPessoa}Sel_id').value='';
+		document.getElementById('formulario_${nomeSelPessoa}Sel_sigla').value='';
+		document.getElementById('formulario_${nomeSelPessoa}Sel_descricao').value='';
+		document.getElementById('${nomeSelPessoa}SelSpan').innerHTML='';
 	}
 }
 select.onchange();

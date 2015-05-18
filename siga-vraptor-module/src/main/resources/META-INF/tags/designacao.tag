@@ -25,7 +25,7 @@
 			</div>
 		</c:if>
 
-		<table id="designacoes_table" border="" class="gt-table display">
+		<table id="designacoes_table" class="gt-table display">
 			<thead>
 				<tr>
 					<th style="color: #333">

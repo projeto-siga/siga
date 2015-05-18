@@ -94,7 +94,7 @@
 					<h2>Exceções ao calendário padrão</h2>
 					<!-- content bomex -->
 					<div class="gt-content-box dataTables_div">
-						<table id="excecoes_table" border="0" class="gt-table display">
+						<table id="excecoes_table" class="gt-table display">
 							<thead>
 								<tr>
 									<th>Dia Semana</th>

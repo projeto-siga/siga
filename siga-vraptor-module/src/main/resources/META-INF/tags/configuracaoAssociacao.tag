@@ -22,7 +22,7 @@
             	<b>Incluir Inativas</b>
             </label>
         </div>        
-		<table id="associacao_table" border="0" class="gt-table display">
+		<table id="associacao_table" class="gt-table display">
 			<thead>
 				<tr>
 					<th style="color: #333">
@@ -399,7 +399,7 @@
 	function detalhesListaAssociacao(d, associacao) {
 		var tr = $('<tr class="detail">'),
 			td = $('<td colspan="6">'),
-			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:60px;">'),
+			table = $('<table class="datatable" cellpadding="5" cellspacing="0" style="margin-left:60px;">'),
 			trItens = $('<tr>'),
 			trAcoes = $('<tr>');
 

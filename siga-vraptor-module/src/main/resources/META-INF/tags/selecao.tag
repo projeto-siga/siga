@@ -21,8 +21,13 @@
 <%@ attribute name="urlSelecionar" required="false"%>
 <%@ attribute name="onchange" required="false"%>
 <%@ attribute name="onblur" required="false"%>
-<!-- A lista de par -->
+<%@ attribute name="requiredValue" required="false" %>
 
+<c:if test="${requiredValue == null}">
+	<c:set var="requiredValue" value="" />
+</c:if>
+
+<!-- A lista de par -->
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
 	<c:set var="p2" value="${fn:split(parametro,'=')}" />
 	<c:if test="${not empty p2 and not empty p2[0]}">
@@ -211,10 +216,10 @@ self.ajax_${propriedade}${tipoSel}${inputName} = function() {
 <input type="hidden" name="${inputNameTipoSel}.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>" id="formulario_${inputNameTipoSel}_descricao"/>
 <input type="hidden" name="${inputNameTipoSel}.buscar" value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>" id="formulario_${inputNameTipoSel}_buscar"/>
 <input type="text" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
-	onkeypress="return handleEnter(this, event)"
+	onkeypress="return handleEnter(this, event)" ${requiredValue}
 	onblur="javascript: ajax_${propriedade}${tipoSel}${inputName}();<c:if test="${not empty onblur}">${onblur};</c:if>" size="25"
 	<c:if test="${not empty onchange}">onchange="javascript:${onchange};"</c:if>
-	${disabledTxt} />	
+	${disabledTxt}/>
 	
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedade}${tipoSel}${inputName}SelButton" value="..."

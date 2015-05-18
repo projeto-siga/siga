@@ -51,8 +51,7 @@ td .orgao:first-child {
 			<h2>Disponibilidades de Itens de Configura&ccedil;&atilde;o</h2>
 
 			<div class="gt-content-box dataTables_div">
-				<table id="itens_configuracao_table" border="0"
-					class="gt-table display"></table>
+				<table id="itens_configuracao_table" class="gt-table display"></table>
 			</div>
 		</div>
 	</div>

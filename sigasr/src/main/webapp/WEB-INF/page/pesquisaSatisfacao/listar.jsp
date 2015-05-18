@@ -30,7 +30,7 @@
 					</label>
 				</div>
 
-				<table id="pesquisa_table" border="0" class="gt-table display">
+				<table id="pesquisa_table" class="gt-table display">
 					<thead>
 						<tr>
 							<th>Nome</th>

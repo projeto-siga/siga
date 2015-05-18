@@ -42,7 +42,7 @@
                 <div class="gt-form-row dataTables_length">
                     <siga:checkbox name="mostrarDesativados" value="${requestScope[mostrarDesativados]}"></siga:checkbox>
                 </div>        
-				<table id="associacao_table" border="0" class="gt-table display">
+				<table id="associacao_table" class="gt-table display">
 					<thead>
 						<tr>
 							<th style="color: #333">
@@ -381,7 +381,7 @@
 			td = $('<td colspan="6">'),
 			trItens = $('<tr>'),
 			trAcoes = $('<tr>'),
-			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
+			table = $('<table class="datatable" cellpadding="5" cellspacing="0" style="padding-left:50px;">');
 
 		if (itemArray && itemArray[colunasAssociacao.jSon]) {
 			var associacao = itemArray[colunasAssociacao.jSon];

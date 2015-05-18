@@ -31,7 +31,7 @@
 			<h2>Pesquisa de Equipes</h2>
 			<!-- content bomex -->
 			<div class="gt-content-box gt-for-table dataTables_div">
-				<table id="equipes_table" border="0" class="gt-table display">
+				<table id="equipes_table" class="gt-table display">
 					<thead>
 						<tr>
 							<th style="font-weight: bold;">Sigla</th>

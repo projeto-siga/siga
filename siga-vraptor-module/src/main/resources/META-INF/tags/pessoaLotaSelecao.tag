@@ -12,6 +12,10 @@
 <%@ attribute name="disabled" required="false"%>
 <%@ attribute name="requiredValue" required="false"%>
 
+<c:if test="${requiredValue == null}">
+	<c:set var="requiredValue" value="" />
+</c:if>
+
 <c:set var="desativar" value="nao"></c:set>
 <c:if test="${disabled == 'sim'}">
 	<c:set var="pessoaLotaSelecaoDisabled" value="disabled='disabled'" scope="request"/>
@@ -26,13 +30,13 @@
 <span id="spanPessoa${nomeSelPessoa}">
 	<input type="hidden" name="${nomeSelPessoa}" id="${nomeSelPessoa}" class="pessoaLotaSelecao">
 	<siga:selecao propriedade="${nomeSelPessoa}" tema="simple" modulo="siga" 
-		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
+		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}" requiredValue="${requiredValue}"/>
 </span>
 
 <span id="spanLotacao${nomeSelLotacao}">
 	<input type="hidden" name="${nomeSelLotacao}" id="${nomeSelLotacao}" class="pessoaLotaSelecao">
 	<siga:selecao propriedade="${nomeSelLotacao}" tema="simple" modulo="siga"  
-		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
+		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}" requiredValue="${requiredValue}"/>
 </span>
 
 <script language="javascript">

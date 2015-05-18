@@ -206,6 +206,7 @@
 							nomeSelLotacao="gestorLotacao"
 							valuePessoa="${gestor != null ? gestor.pessoa :'' }"
 							valueLotacao="${gestor != null ? gestor.lotacao : '' }"
+							requiredValue="required"
  							disabled="disabled"/>
 					</div>
 				</div>
@@ -231,6 +232,7 @@
  							nomeSelLotacao="fatorLotacao"
  							valuePessoa="${fator != null ? fator.pessoa :'' }"
 							valueLotacao="${fator != null ? fator.lotacao : '' }"
+							requiredValue="required"
  							disabled="disabled"/>
 					</div>
 				</div>
@@ -297,7 +299,7 @@
 		gestores = jGestores[0];
 		jDialog = $("#dialog");
 		dialog = jDialog[0];
-		jSelect = $("#gestorpessoagestorlotacao");
+		jSelect = $("#gestorPessoagestorLotacao");
 		
 		$( "#gestoresUl" ).sortable({placeholder: "ui-state-highlight"});
 		$( "#gestoresUl" ).disableSelection();
@@ -313,13 +315,13 @@
 		    modal: true,
 		    resizable: false,
 		    close: function() {
-		    	$("#gestorpessoa_sigla").val('');
-		    	$("#gestorlotacao_sigla").val('');
-		    	$("#gestorpessoa_descricao").val('');
-		    	$("#gestorlotacao_descricao").val('');
-		    	$("#gestorpessoaSpan").html('');  
-		    	$("#gestorlotacaoSpan").html('');  
-		        jDialog.data('gestorSet','');
+		        $("#formulario_gestorPessoaSel_sigla").val('');
+				$("#formulario_gestorLotacaoSel_sigla").val('');
+				$("#formulario_gestorPessoaSel_descricao").val('');
+				$("#formulario_gestorLotacaoSel_descricao").val('');
+				$("#gestorPessoaSelSpan").html('');  
+				$("#gestorLotacaoSelSpan").html('');
+				jDialog.data('gestorSet','');
 		
 		        validatorFormGestor.resetForm();
 		    },
@@ -332,7 +334,7 @@
 		});
 			
 		gestores["index"] = 0;
-		gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor,  id){
+		gestores.incluirItem = function(siglaGestor, nomeGestor, tipoGestor, idDerivadoGestor, id) {
 			if (!id)
 		    	id = 'novo_' + ++gestores["index"];
 			
@@ -361,7 +363,7 @@
 		fatores = jFatores[0];
 		jDialogFator = $("#dialogFator");
 		dialogFator = jDialogFator[0];
-		jSelectFator = $("#fatorpessoafatorlotacao");
+		jSelectFator = $("#fatorPessoafatorLotacao");
 		jNumFatorMult = $("#numfatorMult");
 		
 		$( "#fatoresUl" ).sortable({placeholder: "ui-state-highlight"});
@@ -378,21 +380,20 @@
 		    modal: true,
 		    resizable: false,
 		    close: function() {
-		    	$("#fatorpessoa_sigla").val('');
-		    	$("#fatorlotacao_sigla").val('');
-		    	$("#fatorpessoa_descricao").val('');
-		    	$("#fatorlotacao_descricao").val('');
-		    	$("#numfatorMult").val('1');
-		    	$("#fatorpessoaSpan").html('');  
-		    	$("#fatorlotacaoSpan").html('');  
-		    	jDialogFator.data('fatorMultiplicacaoSet','');
-		
+		    	$("#formulario_fatorPessoaSel_sigla").val('');
+				$("#formulario_fatorLotacaoSel_sigla").val('');
+				$("#formulario_fatorPessoaSel_descricao").val('');
+				$("#formulario_fatorLotacaoSel_descricao").val('');
+				$("#numfatorMult").val('1');
+				$("#fatorPessoaSelSpan").html('');  
+				$("#fatorLotacaoSelSpan").html('');
+				jDialogFator.data('fatorMultiplicacaoSet','');
 		    	validatorFormFator.resetForm();
 			}, 
 			open: function(){
 		    	$('#erroNumFatorMult').hide();
 		
-		    	if (jDialogFator.data("gestorSet"))
+		    	if (jDialogFator.data("fatorMultiplicacaoSet"))
 		        	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
 		        else
 		          	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
@@ -438,9 +439,9 @@
 		var jTipoEscolhido = jSelect.find("option:selected");
 		
 		if(jTipoEscolhido.val() == 1) {
-			acao($("#gestorpessoa_sigla").val(), $("#gestorpessoa_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
+			acao($("#formulario_gestorPessoaSel_sigla").val(), $("#formulario_gestorPessoaSel_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
 			} else if (jTipoEscolhido.val() == 2) {
-				acao($("#gestorlotacao_sigla").val(), $("#gestorlotacao_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
+				acao($("#formulario_gestorLotacaoSel_sigla").val(), $("#formulario_gestorLotacaoSel_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
 		}
 		
 		jDialog.dialog('close');
@@ -461,9 +462,9 @@
 		
 		if(numFatorMult.val() > 0) {
 		    if(jTipoEscolhidoFator.val() == 1) {
-		        acaoFator($("#fatorpessoa_sigla").val(), $("#fatorpessoa_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
+		        acaoFator($("#formulario_fatorPessoaSel_sigla").val(), $("#formulario_fatorPessoaSel_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
 		    } else if (jTipoEscolhidoFator.val() == 2) {
-		        acaoFator($("#fatorlotacao_sigla").val(), $("#fatorlotacao_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
+		        acaoFator($("#formulario_fatorLotacaoSel_sigla").val(), $("#formulario_fatorLotacaoSel_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
 		    }
 		    
 			  jDialogFator.dialog('close');
@@ -479,7 +480,7 @@
 	
 	designacaoService.gravar = function() {
 		var id = itemConfiguracaoService.getIdEdicao();
-		designacaoOpts.urlGravar = '@{Application.gravarDesignacaoItem()}?idItemConfiguracao=' + id;
+		designacaoOpts.urlGravar = '${linkTo[ItemConfiguracaoController].gravarDesignacaoItem}' + id;
 		BaseService.prototype.gravar.call(this);
 	}
 	

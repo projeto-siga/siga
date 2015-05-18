@@ -27,7 +27,7 @@
 						<b>Incluir Inativas</b>
 					</label>
 				</div>				
-				<table id="acordo_table" border="0" class="gt-table display">
+				<table id="acordo_table" class="gt-table display">
 					<thead>
 						<tr>
 							<th>Nome</th>

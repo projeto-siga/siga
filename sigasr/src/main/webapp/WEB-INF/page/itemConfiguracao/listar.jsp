@@ -66,7 +66,7 @@
 						<b>Incluir Inativas</b>
 					</label>
 				</div>
-				<table id="itens_configuracao_table" border="0" class="gt-table display">
+				<table id="itens_configuracao_table" class="gt-table display">
 					<thead>
 						<tr>
 							<th style="color: #333" class="hide-sort-arrow">
@@ -313,7 +313,7 @@
 
 	function detalhesItemConfiguracaoFormat( d, obj) {
 		var tr = obj.ativo == true ? $('<tr class="detail">') : $('<tr class="detail configuracao-herdada">'),
-			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:56px;">'+
+			detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" style="margin-left:56px;">'+
 			'<tr>'+
 				'<td style="padding-right: 0px;"><b>Similaridade:</b></td>'+
 					'<td style="padding-left: 5px;">' + (obj.descricaoSimilaridade || "") + '</td>'+

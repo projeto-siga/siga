@@ -86,10 +86,8 @@
 							value="${idTipoPergunta}" />
 					</div>
 					<div class="gt-form-row">
-						<input type="button" id="modalOk" value="Ok"
-							class="gt-btn-medium gt-btn-left" /> <input type="button"
-							value="Cancelar" id="modalCancel"
-							class="gt-btn-medium gt-btn-left" />
+						<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" /> 
+						<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
 					</div>
 				</form>
 			</div>
@@ -146,13 +144,19 @@
                 }
         });
         $("#modalOk").click(function(){
-        	if (!jQuery("#perguntaForm").valid())
+            if (!jQuery("#perguntaForm").valid())
                 return false;
 
-                var pesquisa = jDialog.data('pesquisa');
-                var jTipoEscolhido = jTipoPergunta.find("option:selected");
-                pesquisa(jDescrPergunta.val(), jTipoEscolhido.val(), jTipoEscolhido.text(), jDialog.data("id"));
-                jDialog.dialog('close');
+            var idTipoPerguntaSelecionado = $("#tipoPergunta").val();
+            if (idTipoPerguntaSelecionado == null || idTipoPerguntaSelecionado == undefined || idTipoPerguntaSelecionado == 0) {
+                alert("Informe um Tipo de Pergunta diferente de Indefinido.");
+                return false;
+            }
+
+            var pesquisa = jDialog.data('pesquisa');
+            var jTipoEscolhido = jTipoPergunta.find("option:selected");
+            pesquisa(jDescrPergunta.val(), jTipoEscolhido.val(), jTipoEscolhido.text(), jDialog.data("id"));
+            jDialog.dialog('close');
         });
         $("#modalCancel").click(function(){
                 jDialog.dialog('close');

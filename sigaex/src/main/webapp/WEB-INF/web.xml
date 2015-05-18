@@ -135,15 +135,15 @@
 		</init-param>
 	</servlet>
 
-    <!-- Standard Action Servlet Configuration -->
-    <servlet>
-        <servlet-name>dwr</servlet-name>
-        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ExService</servlet-name>
-        <servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
-    </servlet>
+	<!-- Standard Action Servlet Configuration -->
+	<servlet>
+		<servlet-name>dwr</servlet-name>
+		<servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ExService</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>AudioCaptcha</servlet-name>
@@ -179,11 +179,11 @@
 	<!-- Libera acesso aos seguintes diretorios -->
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>autenticar</web-resource-name>
+			<web-resource-name>arquivos</web-resource-name>
 			<url-pattern>/arquivos/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name></web-resource-name>
+			<web-resource-name>autenticar</web-resource-name>
 			<url-pattern>/autenticar.action</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
@@ -198,14 +198,14 @@
 			<web-resource-name>freemarker</web-resource-name>
 			<url-pattern>/freemarker/*</url-pattern>
 		</web-resource-collection>
-    <web-resource-collection>
-      <web-resource-name>servicos</web-resource-name>
-      <url-pattern>/servicos/*</url-pattern>
-    </web-resource-collection>
-    <web-resource-collection>
-      <web-resource-name>externo</web-resource-name>
-      <url-pattern>/externo/*</url-pattern>
-    </web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>servicos</web-resource-name>
+			<url-pattern>/servicos/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>externo</web-resource-name>
+			<url-pattern>/externo/*</url-pattern>
+		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>externo</web-resource-name>
 			<url-pattern>/externo/*</url-pattern>
@@ -215,12 +215,8 @@
 			<url-pattern>/staticJavascript.jf</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-      <web-resource-name>testes</web-resource-name>
-      <url-pattern>/testes/*</url-pattern>
-    </web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>busca</web-resource-name>
-			<url-pattern>/expediente/selecionar.action</url-pattern>
+			<web-resource-name>testes</web-resource-name>
+			<url-pattern>/testes/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 

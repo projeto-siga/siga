@@ -34,7 +34,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEntity {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3775609274483552051L;
 
@@ -60,7 +60,7 @@ public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEn
 	private List<SrPesquisa> meuPesquisaHistoricoSet;
 
 	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "pesquisa", fetch=FetchType.LAZY)
-	private Set<SrPergunta> perguntaSet;
+	private List<SrPergunta> perguntaSet;
 
 
 	public SrPesquisa() {
@@ -75,7 +75,7 @@ public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEn
 	public List<SrPesquisa> getHistoricoPesquisa() {
 		if (pesquisaInicial != null)
 			return pesquisaInicial.meuPesquisaHistoricoSet;
-		
+
 		return Collections.emptyList();
 	}
 
@@ -229,11 +229,11 @@ public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEn
 		this.meuPesquisaHistoricoSet = meuPesquisaHistoricoSet;
 	}
 
-	public Set<SrPergunta> getPerguntaSet() {
+	public List<SrPergunta> getPerguntaSet() {
 		return perguntaSet;
 	}
 
-	public void setPerguntaSet(Set<SrPergunta> perguntaSet) {
+	public void setPerguntaSet(List<SrPergunta> perguntaSet) {
 		this.perguntaSet = perguntaSet;
 	}
 

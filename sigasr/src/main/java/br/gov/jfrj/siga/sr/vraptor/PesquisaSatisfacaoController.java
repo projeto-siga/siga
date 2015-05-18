@@ -1,8 +1,10 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -35,13 +37,8 @@ public class PesquisaSatisfacaoController extends SrController {
 
 	private static final String PESQUISA = "pesquisa";
 
-	public PesquisaSatisfacaoController(HttpServletRequest request,
-			Result result, SigaObjects so, EntityManager em,
-			SrValidator srValidator) {
-
+	public PesquisaSatisfacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em, SrValidator srValidator) {
 		super(request, result, CpDao.getInstance(), so, em, srValidator);
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
@@ -102,15 +99,11 @@ public class PesquisaSatisfacaoController extends SrController {
 
 	// @AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
-	public void gravarPesquisa(SrPesquisa pesquisa) throws Exception {
-		SrPesquisa srPesquisa = (SrPesquisa) Objeto.getImplementation(pesquisa);
-		srPesquisa.setPerguntaSet((pesquisa.getPerguntaSet() != null) 
-				? srPesquisa.getPerguntaSet() : new HashSet<SrPergunta>());
-		srPesquisa.salvar();
+	public void gravarPesquisa(SrPesquisa pesquisa, List<SrPergunta> perguntaSet) throws Exception {
+		pesquisa.setPerguntaSet(perguntaSet != null ? perguntaSet : new ArrayList<SrPergunta>());
+		pesquisa.salvar();
 
-		result.use(Results.http())
-			.body(srPesquisa.atualizarTiposPerguntas().toJson());
-
+		result.use(Results.http()).body(pesquisa.atualizarTiposPerguntas().toJson());
 	}
 
 	@Path("/associacoes")
@@ -149,5 +142,5 @@ public class PesquisaSatisfacaoController extends SrController {
 		associacao.finalizar();
 		result.use(Results.http()).body(associacao.toJson());
 	}
-	
+
 }

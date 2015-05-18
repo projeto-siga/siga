@@ -14,6 +14,7 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
@@ -21,7 +22,7 @@ import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 public class SrPergunta extends HistoricoSuporteVraptor {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 8405698996883999900L;
 
@@ -56,12 +57,14 @@ public class SrPergunta extends HistoricoSuporteVraptor {
 	public SrPergunta() {
 	}
 
+	@Override
 	public Long getId() {
-		return this.idPergunta;
+		return this.getIdPergunta();
 	}
 
+	@Override
 	public void setId(Long id) {
-		idPergunta = id;
+		this.setIdPergunta(id);
 	}
 
 	@Override
@@ -137,5 +140,5 @@ public class SrPergunta extends HistoricoSuporteVraptor {
 	public void setMeuPerguntaHistoricoSet(List<SrPergunta> meuPerguntaHistoricoSet) {
 		this.meuPerguntaHistoricoSet = meuPerguntaHistoricoSet;
 	}
-	
+
 }

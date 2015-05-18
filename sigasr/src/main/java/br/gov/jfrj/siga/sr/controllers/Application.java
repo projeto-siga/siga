@@ -1363,10 +1363,10 @@ public class Application extends SigaApplication {
     }
 
 
-	public static String gravarPesquisa(SrPesquisa pesquisa, Set<SrPergunta> perguntaSet) throws Exception {
+	public static String gravarPesquisa(SrPesquisa pesquisa, List<SrPergunta> perguntaSet) throws Exception {
 		assertAcesso("ADM:Administrar");
 		pesquisa = (SrPesquisa) Objeto.getImplementation(pesquisa);
-		pesquisa.setPerguntaSet((pesquisa.getPerguntaSet() != null) ? pesquisa.getPerguntaSet() : new HashSet<SrPergunta>());
+		pesquisa.setPerguntaSet((pesquisa.getPerguntaSet() != null) ? pesquisa.getPerguntaSet() : new ArrayList<SrPergunta>());
 		pesquisa.salvar();
 
 		return pesquisa.atualizarTiposPerguntas().toJson();

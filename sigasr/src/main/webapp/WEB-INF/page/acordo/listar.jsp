@@ -1,20 +1,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Serviços">
+<siga:pagina titulo="Servi&ccedil;os">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-	<script src="../../../javascripts/jquery.serializejson.min.js"></script>
-	<script src="../../../javascripts/jquery.populate.js"></script>
-	<script src="../../../javascripts/jquery.maskedinput.min.js"></script>
-	<script src="../../../javascripts/base-service.js"></script>
-    <script src="../../../javascripts/jquery.validate.min.js"></script>
-	<script src="../../../javascripts/detalhe-tabela.js"></script>
-	<script src="../../../javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.populate.js"></script>
+	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
+    <script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
@@ -31,7 +31,7 @@
 					<thead>
 						<tr>
 							<th>Nome</th>
-							<th>Descrição</th>
+							<th>Descri&ccedil;&atilde;o</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -118,7 +118,7 @@
 
 		optsAcordo.acordoTable = $('#acordo_table').dataTable({
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "N&atilde;o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -131,13 +131,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
+			        "last":       "&Uacute;ltimo",
+			        "next":       "Pr&oacute;ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordenaÃƒÂ§ÃƒÂ£o crescente",
+			        "sortDescending": ": clique para ordenaÃƒÂ§ÃƒÂ£o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -191,7 +191,7 @@
 	var acordoService = new AcordoService(optsAcordo);
 	
 	acordoService.getId = function(acordo) {
-		return acordo.idAcordo || acordo['acordo.idAcordo'];
+		return acordo.idAcordo || acordo['acordo.idAcordo'] || acordo['id'];
 	}
 
 	acordoService.getRow = function(acordo) {
@@ -203,6 +203,11 @@
 	}
 
 
+
+	function isValidForm() {
+	    return jQuery("#acordoForm").valid();
+	}
+    
 	function gravarAplicar(baseService, isAplicar) {
 		if (!baseService.isValidForm())
 			return false;
@@ -264,7 +269,7 @@
 	}	
 
 	acordoService.serializar = function(obj) {
-		var query = BaseService.prototype.serializar.call(this, obj);
+		var query = BaseService.prototype.serializar.call(this, obj) + serializeParametrosAcordo();
 		return query + "&acordo=" + this.getId(obj);
 	}
 
@@ -281,7 +286,7 @@
 	        		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	        	},
 	        	error: function(error) {
-	            	alert("NÃ£o foi possÃ­vel carregar as AbrangÃªncias deste Acordo.");
+	            	alert("N&atilde;o foi poss&iacute;vel carregar as Abrang&ecirc;ncias deste Acordo.");
 	        	}
 	       	});
 		}
@@ -325,7 +330,7 @@
 	acordoService.conteudoColunaAcao = function(abrangencia){
         if (abrangencia.ativo) {          
             return '<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-					'<a class="once desassociar" onclick="desassociar(event, ' + abrangencia.idConfiguracao + ')" title="Remover permissÃ£o">' +
+					'<a class="once desassociar" onclick="desassociar(event, ' + abrangencia.idConfiguracao + ')" title="Remover permiss&atilde;o">' +
 					'<input class="idAssociacao" type="hidden" value="'+abrangencia.idConfiguracao+'"/>' +
 					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
 					'</a>' +	
@@ -342,7 +347,7 @@
 			for (var i = 0; i < acordo.atributoAcordoSet.length; i++) {
 				var item = acordo.atributoAcordoSet[i];
 
-				$("#parametrosAcordo")[0].incluirItem(item.atributo.idAtributo, item.atributo.nomeAtributo, item.operador, item.operadorNome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedidaPlural, item.idAcordoAtributo);
+				$("#parametrosAcordo")[0].incluirItem(item.atributo.idAtributo, item.atributo.nomeAtributo, item.operador, item.operadorNome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedidaPlural, item.idAtributoAcordo);
 			}
 		}
 	}

@@ -10,18 +10,15 @@
 			
 			<div class="gt-form-row gt-width-66">
 				<label>Nome <span>*</span></label>
-				 <input type="text"
-					name="acordo.nomeAcordo"
-					id="nomeAcordo"
-					value="${nomeAcordo}" size="50" maxlength="255" required/>
+				 <input type="text"	name="acordo.nomeAcordo"
+					id="nomeAcordo"	value="${nomeAcordo}" 
+					size="50" maxlength="255" required/>
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Descrição</label>
+				<label>Descri&ccedil;&atilde;o</label>
 				<input maxlength="255" type="text"
-					name="acordo.descrAcordo"
-					id="descrAcordo"
-					value="${descrAcordo}" 
-					style="width: 372px;" />
+					name="acordo.descrAcordo" id="descrAcordo"
+					value="${descrAcordo}" style="width: 372px;" />
 			</div>
 			
 			<div class="gt-form-row">
@@ -50,8 +47,8 @@
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th>ID Orgão</th>
-							<th>Orgão</th>
+							<th>ID Org&atilde;o</th>
+							<th>Org&atilde;o</th>
 							<th>ID Local</th>
 							<th>Local</th>
 							<th>Tipo Solicitante</th>
@@ -64,7 +61,7 @@
 							<th>ID Prioridade</th>
 							<th>Prioridade</th>
 							<th>idAssociacao</th>
-							<th>Id Histórico Associação</th>
+							<th>Id Hist&oacute;rico Associa&ccedil;&atilde;o</th>
 							<th></th>
 							<th>JSon</th>
 						</tr>
@@ -91,7 +88,7 @@
 								<td class="gt-celula-nowrap"
 									style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 									<a class="once desassociar" onclick="desassociar(event, ${abrang.idConfiguracao})"
-										title="Remover permissão"> 
+										title="Remover permiss&atilde;o"> 
 										<input class="idAssociacao" type="hidden" value="${abrang.idConfiguracao}" /> 
 										<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">
 									</a>
@@ -151,7 +148,7 @@
 	</div>
 </div>
 
-<siga:modal nome="associacao" titulo="Cadastrar Associação">
+<siga:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o">
 	<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 		<input id="idConfiguracao" type="hidden" name="idConfiguracao">
 		<input id="hisIdIni" type="hidden" name="hisIdIni">
@@ -173,7 +170,7 @@
 			</siga:pessoaLotaFuncCargoSelecao>
 		</div>
 		<div class="gt-form-row gt-width-100">
-			<label>Órgão</label> 
+			<label>&Oacute;rg&atilde;o</label> 
 			<siga:select name="orgaoUsuario" list="orgaos"
 				listKey="idOrgaoUsu" id="orgaoUsuario"
 				headerValue="" headerKey="0"
@@ -209,7 +206,7 @@
 					value="${prioridade}" />
 		</div>
 
-<%-- 		<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao> --%>
+		<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
 								 
 		<div class="gt-form-row">
 			<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
@@ -289,7 +286,7 @@
 	      		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	      	 },
 	      	 error: function(error) {
-	          	alert("NÃ£o foi possÃ­vel carregar as AbrangÃªncias deste Acordo.");
+	          	alert("N&atilde;o foi poss&iacute;vel carregar as Abrang&ecirc;ncias deste Acordo.");
 	      	 }
        });
     });
@@ -368,10 +365,10 @@
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangencia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrang&ecirc;ncia');
 		else {
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangencia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrang&ecirc;ncia');
 		}
 		jQuery("#associacao_dialog").dialog('open');
 	};
@@ -386,8 +383,8 @@
 		if (itemArray && itemArray[colunasAssociacao.jSon]) {
 			var associacao = itemArray[colunasAssociacao.jSon];
 			
-			TableHelper.detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
-			TableHelper.detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
+			TableHelper.detalheLista("<b>Itens de configura&ccedil;&atilde;o:</b>", associacao.listaItemConfiguracaoVO, trItens);
+			TableHelper.detalheLista("<b>A&ccedil;&otilde;es:</b>", associacao.listaAcaoVO, trAcoes);
 
 			table.append(trItens);
 			table.append(trAcoes);
@@ -634,7 +631,7 @@
 		        var associacao = JSON.parse(jSon); 
 		        var html = 
 					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-						'<a class="once desassociar" onclick="desassociar(event, '+ associacao.idConfiguracao + ')" title="Remover permissão">' +
+						'<a class="once desassociar" onclick="desassociar(event, '+ associacao.idConfiguracao + ')" title="Remover permiss&atilde;o">' +
 							'<input class="idAssociacao" type="hidden" value="' + associacao.idConfiguracao + '}"/>' +
 							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
 						'</a>' +
@@ -717,15 +714,15 @@
 		$("#parametrosAcordo").find("li").each(function(i) {
 			var jDivs=$(this).find("span");
 
-			params += '&acordo.atributoAcordoSet[' + i + '].valor=' + jDivs[2].innerHTML;
-		    params += '&acordo.atributoAcordoSet[' + i + '].atributo.idAtributo=' + jDivs[0].id;
-		    params += '&acordo.atributoAcordoSet[' + i + '].unidadeMedida=' + jDivs[3].id;
-		    params += '&acordo.atributoAcordoSet[' + i + '].operador=' + jDivs[1].id;
+			params += '&atributoAcordoSet[' + i + '].valor=' + jDivs[2].innerHTML;
+		    params += '&atributoAcordoSet[' + i + '].atributo=' + jDivs[0].id;
+		    params += '&unidadeMedida[' + i + '].id=' + jDivs[3].id;
+		    params += '&atributoAcordoSet[' + i + '].operador=' + jDivs[1].id;
 
-		    if (this.id.indexOf("novo_") < 1)
-		    	params += '&acordo.atributoAcordoSet[' + i + '].idAtributoAcordo=' + this.id;
+		    if (this.id.indexOf("novo_") < 0)
+		    	params += '&atributoAcordoSet[' + i + '].idAtributoAcordo=' + this.id;
 		});
-		
+
 		return params;
 	}
 

@@ -11,6 +11,8 @@ var newwin = null;
 
 <mod:modelo>
 	<mod:entrevista>
+		<mod:selecao titulo="Autorizante" var="autoridade" opcoes="Juiz Federal - Diretor do Foro;Presidente do Tribunal Regional Federal da 2ª Região" reler="sim" />
+			<br/><br/>
         <c:set var="intervaloMsg">
 &nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).</br>&nbsp;&nbsp;&nbsp;Na hipótese de prestação de serviço extraordinário em fins de semana/feriados, somente a sobrejornada igual ou superior a 8 (oito) horas poderá conter intervalo para almoço, a teor do artigo 1º, caput, da Resolução nº 88/2009, do Conselho Nacional de Justiça. </c:set>
 	<mod:grupo >    
@@ -215,8 +217,7 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
 		FIM CABECALHO -->
 
 		
-		<p style="font-size: 11pt; text-indent: 3cm; font-weight: bold;">Exmo.
-		Juiz Federal - Diretor do Foro,</p>
+		<p style="font-size: 11pt; text-indent: 3cm; font-weight: bold;">Exmo. Senhor ${autoridade},</p>
 		<br />
 		<p style="text-align: justify; text-indent: 3cm;">Solicito
 		autorização para prestação de serviço extraordinário segundo a escala

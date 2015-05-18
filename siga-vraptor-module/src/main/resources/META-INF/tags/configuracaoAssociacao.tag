@@ -228,10 +228,11 @@
 	associacaoService.onGravar = function(obj, objSalvo) {
 		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
 		var modoExibicao = "${modoExibicao}";
+		var item = null;
 		
 		if (modoExibicao == 'atributo'){
 			item =  this.getItemPaiPorId(obj.atributo.idAtributo);
-		} else if (modoExibicao == 'pesquisa'){
+		} else if  (modoExibicao == 'pesquisa'){
 			item = this.getItemPaiPorId(obj.pesquisa.idPesquisa);
 		}
 

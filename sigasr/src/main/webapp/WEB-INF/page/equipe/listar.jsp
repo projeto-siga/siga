@@ -27,6 +27,7 @@
 	
 	
 	<div class="gt-bd clearfix">
+	    <input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario" value='${lotacaoUsuario.toJson()}'/>
 		<div class="gt-content">
 			<h2>Pesquisa de Equipes</h2>
 			<!-- content bomex -->
@@ -251,10 +252,10 @@
 		    if (lotacaoUsuarioValue && lotacaoUsuarioValue != "") {
 				var lota = JSON.parse(lotacaoUsuarioValue);
 				equipeEdicao = {
-					lotacaoEquipe : lota.id,
-					lotacaoEquipe_sigla : lota.descricao,
-					lotacaoEquipeSpan : lota.descricao,
-					lotacaoEquipe_sigla : lota.sigla
+					formulario_lotacaoEquipeSel_id : lota.id,
+					formulario_lotacaoEquipeSel_descricao : lota.descricao,
+					formulario_lotacaoEquipeSel_sigla : lota.sigla,
+					lotacaoEquipeSelSpan : lota.descricao
 				};
 		    }else{
 		    	equipeEdicao = {};

@@ -4,8 +4,8 @@
 <siga:pagina titulo="Servi&ccedil;os">
 
 	<jsp:include page="../main.jsp"></jsp:include>
-	
-	
+
+
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
@@ -60,7 +60,7 @@
 	</div>
 	<siga:modal nome="pesquisa" titulo="Cadastrar Pesquisa">
 		<div id="divEditarPesquisaForm">
-			<jsp:include page="editar.jsp" /> 
+			<jsp:include page="editar.jsp" />
 		</div>
 	</siga:modal>
 </siga:pagina>
@@ -116,9 +116,9 @@
 			   if (document.getElementById('checkmostrarDesativados').checked)
 			    location.href = "${linkTo[PesquisaSatisfacaoController].listar[true]}";
 			   else
-			    location.href = "${linkTo[PesquisaSatisfacaoController].listar[false]}"; 
+			    location.href = "${linkTo[PesquisaSatisfacaoController].listar[false]}";
 			  });
-		
+
 		opts.dataTable= $('#pesquisa_table').dataTable({
 			"language": {
 				"emptyTable":     "N&atilde;o existem resultados",
@@ -150,14 +150,14 @@
 			}],
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 				var pesquisa = undefined;
-				
+
 				try {
 					pesquisa = JSON.parse($(nRow).data('json'));
 				}
 				catch(err) {
 					pesquisa = $(nRow).data('json');
 				}
-				
+
 				if (pesquisa) {
 					if (pesquisa.ativo == false)
 						$('td', nRow).addClass('item-desativado');
@@ -175,9 +175,9 @@
 	}
 	// pesquisaService extends BaseService
 	PesquisaService.prototype = Object.create(BaseService.prototype);
-	
+
 	var pesquisaService = new PesquisaService(opts);
-	
+
 	pesquisaService.getId = function(pesquisa) {
 		console.log(pesquisa);
 		return pesquisa.idPesquisa || pesquisa['pesquisa.idPesquisa'];
@@ -194,8 +194,15 @@
 	* Customiza o metodo editar
 	*/
 	pesquisaService.editar = function(obj, title) {
+		perguntas.limpar();
+
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
-// 		atualiza a lista de Associações
+
+		for(var i = 0; i < obj.perguntasSet.length; i++) {
+			var pergunta = obj.perguntasSet[i];
+			perguntas.incluirItem(pergunta.descrPergunta, pergunta.tipoPergunta.idTipoPergunta, pergunta.tipoPergunta.nomeTipoPergunta, pergunta.idPergunta);
+		}
+
 		this.buscarAssociacoes(obj);
 	}
 
@@ -205,6 +212,7 @@
 	pesquisaService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
 
+		$('#perguntas').html('');
 		// limpa a lista de Associações
 		associacaoService.limparDadosAssociacoes();
 		associacaoService.atualizarListaAssociacoes({});
@@ -212,7 +220,7 @@
 
 	pesquisaService.serializar = function(obj) {
 		var query = BaseService.prototype.serializar.call(this, obj);
-		return query + "&pesquisa=" + this.getId(obj);
+		return query + "&pesquisa=" + this.getId(obj) + pesquisaService.paramsPerguntas();
 	}
 
 	pesquisaService.buscarAssociacoes = function(assoc) {
@@ -232,6 +240,20 @@
 		    	}
 		   	});
 		}
+	}
+
+	pesquisaService.paramsPerguntas = function() {
+	    var jForm = $("form"),
+	    	params = new String();
+	    	$("#perguntas").find("li").each(function(i){
+	            var jDivs=$(this).find("span");
+	            params += '&perguntaSet[' + i + '].descrPergunta=' + jDivs[0].innerHTML;
+	            params += '&perguntaSet[' + i + '].tipoPergunta.idTipoPergunta=' + jDivs[1].id;
+	            params += '&perguntaSet[' + i + '].ordemPergunta=' + i;
+	            if (this.id.indexOf("novo_") < 0)
+	                    params += '&perguntaSet[' + i + '].idPergunta=' + this.id;
+	    	});
+    	return params;
 	}
 
 </script>

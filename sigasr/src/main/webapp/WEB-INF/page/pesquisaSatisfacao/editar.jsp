@@ -6,7 +6,7 @@
 			height: 1.5em;
 			line-height: 1.2em;
 	}
-	
+
 	.ui-state-highlight {
 			height: 1.5em;
 			line-height: 1.2em;
@@ -18,7 +18,7 @@
 			height: 1.5em;
 			line-height: 1.2em;
 	}
-	
+
 	.ui-state-highlight {
 			height: 1.5em;
 			line-height: 1.2em;
@@ -32,14 +32,14 @@
 		<input type="hidden" name="pesquisa.hisIdIni" id="hisIdIni" value="${hisIdIni}">
 
 		<div class="gt-form-row gt-width-66">
-			<label>Nome <span>*</span></label> 
+			<label>Nome <span>*</span></label>
 			<input type="text"
 					name="pesquisa.nomePesquisa"
 					id="nomePesquisa"
 					value="${nomePesquisa}" size="50" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Descri&ccedil;&atilde;o</label> 
+			<label>Descri&ccedil;&atilde;o</label>
 			<input type="text"
 					name="pesquisa.descrPesquisa"
 					id="descrPesquisa"
@@ -52,7 +52,7 @@
 			<input type="button" value="Incluir" id="botaoIncluir" class="gt-btn-small gt-btn-left" style="font-size: 10px;">
 		</div>
 	</form>
- 
+
 	<siga:configuracaoAssociacao orgaos="${orgaos}"
 								 locais="${locais}"
 								 itemConfiguracaoSet="${itemConfiguracaoSet}"
@@ -102,15 +102,15 @@
 		var url = '${linkTo[PesquisaSatisfacaoController].listarAssociacaoPesquisa}';
 		var idAtributo = $("[id=idPesquisa]").val();
 		var exibirInativo = "";
-		
+
 		if(desativados)
 			exibirInativo = "&exibirInativos=true";
-		
+
 		return url + "?idPesquisa=" + idAtributo + exibirInativo;
 	}
 
 	jQuery(document).ready(function($) {
-		
+
     	var jPerguntas = $("#perguntas"),
 	        perguntas = jPerguntas[0],
 	        jDialog = $("#dialog"),
@@ -120,11 +120,11 @@
 
         $( "#perguntas" ).sortable({placeholder: "ui-state-highlight"});
         $( "#perguntas" ).disableSelection();
-       
+
         $("#botaoIncluir").click(function() {
-                jDialog.data('pesquisa', perguntas.incluirItem).dialog('open');
+			jDialog.data('pesquisa', perguntas.incluirItem).dialog('open');
         });
-       
+
         jDialog.dialog({
                 autoOpen: false,
                 height: 'auto',
@@ -140,7 +140,7 @@
                         if (jDialog.data("descrPergunta"))
                                 jDialog.dialog('option', 'title', 'Alterar Pergunta');
                         else
-                                jDialog.dialog('option', 'title', 'Incluir Pergunta');                  
+                                jDialog.dialog('option', 'title', 'Incluir Pergunta');
                         jDescrPergunta.val(jDialog.data("descrPergunta"));
                         jTipoPergunta.find("option[value=" + jDialog.data("tipoPergunta") + "]").prop('selected', true);
                 }
@@ -148,7 +148,7 @@
         $("#modalOk").click(function(){
         	if (!jQuery("#perguntaForm").valid())
                 return false;
-            
+
                 var pesquisa = jDialog.data('pesquisa');
                 var jTipoEscolhido = jTipoPergunta.find("option:selected");
                 pesquisa(jDescrPergunta.val(), jTipoEscolhido.val(), jTipoEscolhido.text(), jDialog.data("id"));
@@ -214,7 +214,7 @@
 
 	function podeCadastrarAssociacao() {
 		var pesquisaId = $("#idPesquisa");
-        if ((pesquisaId == undefined || pesquisaId.val() == "")  && pesquisaService.aplicar() == false) 
+        if ((pesquisaId == undefined || pesquisaId.val() == "")  && pesquisaService.aplicar() == false)
             return false;
         else
             return true;

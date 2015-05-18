@@ -378,6 +378,7 @@ public class SigaLibsEL {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Object evaluate(String expression, Object root) {
 		expression = expression.replace(".", ".?");
+		expression = expression.replaceFirst("^([a-z0-9]+)(?:$|(?:\\.|\\[)?.*$)", "isdef $1 ? $0 : null");
 		CompiledTemplate template = TemplateCompiler
 				.compileTemplate("${" + expression + "}");
 		Map vars = new HashMap();

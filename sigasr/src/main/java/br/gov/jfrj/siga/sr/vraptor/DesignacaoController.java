@@ -17,7 +17,9 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
+import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -88,7 +90,9 @@ public class DesignacaoController extends SrController {
 
 	// @AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
-	public void gravar(SrConfiguracao designacao) throws Exception {
+	public void gravar(SrConfiguracao designacao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
+		designacao.setAcoesSet(acoesSet);
+		designacao.setItemConfiguracaoSet(itemConfiguracaoSet);
 		validarFormEditarDesignacao(designacao);
 
 		if (srValidator.hasErrors())

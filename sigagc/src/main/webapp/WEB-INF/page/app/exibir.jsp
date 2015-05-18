@@ -124,17 +124,13 @@
 							<th rowspan="2">Evento</th>
 							<th colspan="2" align="left">Cadastrante</th>
 							<th colspan="2" align="left">Titular</th>
-							<th colspan="2" align="left">Atendente</th>
-							<th rowspan="2">Descrição</th>
 						</tr>
 						<tr>
 							<th align="left">Lotação</th>
 							<th align="left">Pessoa</th>
 							<th align="left">Lotação</th>
 							<th align="left">Pessoa</th>
-							<th align="left">Lotação</th>
-							<th align="left">Pessoa</th>
-						</tr>
+s						</tr>
 					</thead>
 					<tbody>
 						<c:forEach var="m" items="${informacao.movs}">
@@ -199,11 +195,6 @@
 								<td align="left"><span
 									title="${m.lotacaoTitular.descricao}">${m.lotacaoTitular.sigla}</span></td>
 								<td align="left"><span title="${m.pessoaTitular.descricao}">${m.pessoaTitular.nomeAbreviado}</span></td>
-								<td align="left"><span
-									title="${m.lotacaoAtendente.descricao}">${m.lotacaoAtendente.sigla}</span></td>
-								<td align="left"><span
-									title="${m.pessoaAtendente.descricao}">${m.pessoaAtendente.nomeAbreviado}</span></td>
-								<td>${descricao}</td>
 							</tr>
 						</c:forEach>
 					</tbody>

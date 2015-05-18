@@ -5,7 +5,7 @@
 		<c:forEach var="conhecimento" items="${conhecimentos}">
 			<c:if test="${cadastrante!=null}">
 				<a style="float: right;" title="Editar conhecimento"
-					href="${linkTo[AppController].editar[conhecimento[3][null][null][referer]}"
+					href="${linkTo[AppController].editar}?sigla=${conhecimento[3]}&origem=${referer}"
 					${popup?'target="_blank"':''}> <img
 					src="/siga/css/famfamfam/icons/pencil.png">
 				</a>

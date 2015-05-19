@@ -91,7 +91,7 @@
 				</div>
 				
 				<div class="gt-form-row">
-					<h2>Exceções ao calendário padrão</h2>
+					<label style="font-weight: bold;">Exceções ao calendário padrão</label>
 					<!-- content bomex -->
 					<div class="gt-content-box dataTables_div">
 						<table id="excecoes_table" class="gt-table display">

@@ -48,7 +48,7 @@
 			<tbody>
 				<c:forEach items="${requestScope[designacoes]}" var="design">
 					<tr data-json-id="${design.id}" data-json='${design.toVO().toJson()}'
-						onclick="designacaoService.editar($(this).data('json'), 'Alterar Designa&ccedil;&atilde;o')"
+						onclick="designacaoService.editar($(this).data('json'), 'Alterar Designação')"
 						style="cursor: pointer;">
 						<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 						<td>${design.orgaoUsuario != null ? design.orgaoUsuario.acronimoOrgaoUsu : ""}</td>
@@ -92,7 +92,7 @@
         line-height: 1.2em;
 }
 </style>
-<siga:modal nome="designacao" titulo="Cadastrar Designacao">
+<siga:modal nome="designacao" titulo="Cadastrar Designação">
 	<div id="divEditarDesignacaoItem">
 		<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 			<form id="formDesignacao">
@@ -275,7 +275,7 @@
 	}
 	
 	designacaoService.onRowClick = function(designacao) {
-		designacaoService.editar(designacao, 'Alterar designacao');
+		designacaoService.editar(designacao, 'Alterar designação');
 	}
 	/**
 	 * Customiza o metodo editar
@@ -414,7 +414,7 @@
 
 		tr.on('click', function() {
 			var json = $(this).data('json');
-			designacaoService.editar(json, 'Alterar designacao');
+			designacaoService.editar(json, 'Alterar designação');
 		});
 
 		new DesativarReativar(this)

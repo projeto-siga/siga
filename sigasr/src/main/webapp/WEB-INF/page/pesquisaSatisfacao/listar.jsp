@@ -180,7 +180,6 @@
 	var pesquisaService = new PesquisaService(opts);
 
 	pesquisaService.getId = function(pesquisa) {
-		console.log(pesquisa);
 		return pesquisa.idPesquisa || pesquisa['pesquisa.idPesquisa'];
 	}
 

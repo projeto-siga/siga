@@ -137,8 +137,10 @@ public class AcordoController extends SrController {
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	public void desativarAbrangenciaEdicao(Long idAssociacao) throws Exception {
+	@Path("/desativarAbrangenciaEdicao")
+	public void desativarAbrangenciaEdicao(Long idAcordo, Long idAssociacao) throws Exception {
 		SrConfiguracao abrangencia = SrConfiguracao.AR.findById(idAssociacao);
 		abrangencia.finalizar();
+		result.use(Results.http()).body(abrangencia.toJson());
 	}
 }

@@ -37,7 +37,7 @@
 
 			<div class="gt-content-box dataTables_div">
                 <div class="gt-form-row dataTables_length">
-                    <siga:checkbox name="mostrarDesativados" value="${requestScope[mostrarDesativados]}"></siga:checkbox>
+                    <siga:checkbox name="mostrarAssocDesativada" value="${requestScope[mostrarAssocDesativada]}"></siga:checkbox>
                 </div>        
 				<table id="associacao_table" class="gt-table display">
 					<thead>
@@ -165,7 +165,7 @@
 				valueLotacao="${lotacao != null ? lotacao.lotacaoAtual : '' }"
 				valueFuncao="${funcaoConfianca }"
 				valueCargo="${cargo}"
-				valueGrupo="${cpGrup}"
+				valueGrupo="${cpGrupo}"
 				disabled="disabled">
 			</siga:pessoaLotaFuncCargoSelecao>
 		</div>
@@ -187,14 +187,8 @@
 		</div>
 		<div class="gt-form-row gt-width-100">
 			<label>Atendente</label>
-<%-- 			#{selecao tipo:'lotacao', nome:'atendente', --%>
-<%-- 				value:atendente.lotacaoAtual /} --%>
-					<input type="hidden" name="atendente" id="atendente" class="selecao">
-					<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
-		
-					<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>	
-
-
+				<input type="hidden" name="atendente" id="atendente" class="selecao">
+				<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
 		</div>
 
 		<div class="gt-form-row gt-width-100">
@@ -687,7 +681,7 @@
 			
 			$.ajax({
 			     type: "POST",
-			     url: "${linkTo[AcordoController].desativarAbrangenciaEdicao}?idAcordo=" + idAcordo + "?idAssociacao=" + idAssociacao,
+			     url: "${linkTo[AcordoController].desativarAbrangenciaEdicao}?idAcordo=" + idAcordo + "&idAssociacao=" + idAssociacao,
 			     data: {idAcordo : idAcordo, idAssociacao : idAssociacao},
 			     dataType: "text",
 			     success: function(response) {

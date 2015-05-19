@@ -1,11 +1,11 @@
 package br.gov.jfrj.siga.sr.model;
 
 public enum SrOperador {
-	MENOR(1, "Menor que"), 
-	MENOR_OU_IGUAL(2, "Menor ou Igual a"), 
-	IGUAL(3, "Igual a"), 
-	MAIOR(4, "Maior que"), 
-	MAIOR_OU_IGUAL(5, "Maior ou igual a");
+	MENOR(0, "Menor que"), 
+	MENOR_OU_IGUAL(1, "Menor ou Igual a"), 
+	IGUAL(2, "Igual a"), 
+	MAIOR(3, "Maior que"), 
+	MAIOR_OU_IGUAL(4, "Maior ou igual a");
 
 	private int idOperador;
 	private String nome;

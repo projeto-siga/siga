@@ -156,7 +156,7 @@
 						<div class="gt-form-row">
 							<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();designacaoService.gravar()"/>
 							<a class="gt-btn-medium gt-btn-left" onclick="designacaoService.cancelarGravacao()">Cancelar</a>
-							<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="designacaoService.aplicar()"/>
+							<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();designacaoService.aplicar()"/>
 						</div>
 					</div>
 		

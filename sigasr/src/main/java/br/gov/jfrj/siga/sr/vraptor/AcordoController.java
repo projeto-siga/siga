@@ -1,11 +1,11 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import play.db.jpa.JPA;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -15,8 +15,10 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.enumeration.SrUnidadeMedida;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
+import br.gov.jfrj.siga.sr.model.SrAtributoAcordo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrOperador;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
@@ -60,9 +62,41 @@ public class AcordoController extends SrController {
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
-	public void gravarAcordo(SrAcordo acordo) throws Exception {
+	public void gravarAcordo(SrAcordo acordo, List<SrAtributoAcordo> atributoAcordoSet, List<Integer> unidadeMedida ) throws Exception {
+		acordo.getAtributoAcordoSet().clear();
+
+		if(isNotEmptyUnidadeMedida(unidadeMedida))  
+			acordo.getAtributoAcordoSet().addAll(buscaAtributosAcordo(atributoAcordoSet, unidadeMedida));
+
 		acordo.salvar();
 		result.use(Results.http()).body(acordo.toJson());
+	}
+
+	private HashMap<Integer, CpUnidadeMedida> getUnidadesMedida(List<Integer> unidadeMedida) {
+		HashMap<Integer, CpUnidadeMedida> unidadesMedidaEncontradas = new HashMap<>();
+
+		for (int i = 0; i < unidadeMedida.size(); i++) {
+			CpUnidadeMedida cpUnidadeMedida = new CpUnidadeMedida();
+			cpUnidadeMedida.setIdUnidadeMedida(Long.valueOf(unidadeMedida.get(i)));
+			cpUnidadeMedida.setDescricao(SrUnidadeMedida.values()[unidadeMedida.get(i)-1].getNome());
+			unidadesMedidaEncontradas.put(i, cpUnidadeMedida);
+		}
+		return unidadesMedidaEncontradas;
+	}
+
+	private List<SrAtributoAcordo> buscaAtributosAcordo(List<SrAtributoAcordo> atributoAcordo, List<Integer> unidadeMedida)  {
+		HashMap<Integer, CpUnidadeMedida> unidadesMedidaEncontradas = getUnidadesMedida(unidadeMedida);
+		
+		for (int i = 0; i < atributoAcordo.size(); i++) {
+			CpUnidadeMedida cpUnidadeMedida = unidadesMedidaEncontradas.get(i);
+			SrAtributoAcordo srAtributoAcordo = atributoAcordo.get(i);
+			srAtributoAcordo.setUnidadeMedida(cpUnidadeMedida);
+		}
+		return atributoAcordo;
+	}
+	
+	private boolean isNotEmptyUnidadeMedida(List<Integer> unidadeMedida) {
+		return unidadeMedida != null && !unidadeMedida.isEmpty();
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
@@ -103,8 +137,10 @@ public class AcordoController extends SrController {
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	public void desativarAbrangenciaEdicao(Long idAssociacao) throws Exception {
+	@Path("/desativarAbrangenciaEdicao")
+	public void desativarAbrangenciaEdicao(Long idAcordo, Long idAssociacao) throws Exception {
 		SrConfiguracao abrangencia = SrConfiguracao.AR.findById(idAssociacao);
 		abrangencia.finalizar();
+		result.use(Results.http()).body(abrangencia.toJson());
 	}
 }

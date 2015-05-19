@@ -178,6 +178,11 @@ public class SrAtributo extends HistoricoSuporteVraptor implements ConvertableEn
 		return this.getIdAtributo().equals(((SrAtributo) obj).getIdAtributo());
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+	
 	public SrAtributoVO toVO(boolean listarAssociacoes) {
 		return SrAtributoVO.createFrom(this, listarAssociacoes);
 	}

@@ -21,6 +21,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAcordoVO;
 import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
@@ -28,7 +29,9 @@ import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 @Entity
 @Table(name = "SR_ACORDO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcordo extends HistoricoSuporteVraptor implements ConvertableEntity {
+public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel, ConvertableEntity{
+	//public class SrAcordo extends HistoricoSuporteVraptor implements ConvertableEntity {
+	
 	private static final long serialVersionUID = 1L;
 	
 	public static final ActiveRecord<SrAcordo> AR = new ActiveRecord<>(SrAcordo.class);	
@@ -53,7 +56,7 @@ public class SrAcordo extends HistoricoSuporteVraptor implements ConvertableEnti
 	public List<SrAcordo> meuAcordoHistoricoSet;
 
 	@OneToMany(targetEntity = SrAtributoAcordo.class, mappedBy = "acordo", fetch = FetchType.LAZY)
-	public Set<SrAtributoAcordo> atributoAcordoSet;
+	private List<SrAtributoAcordo> atributoAcordoSet;
 
 	public SrAcordo() {
 
@@ -116,9 +119,9 @@ public class SrAcordo extends HistoricoSuporteVraptor implements ConvertableEnti
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
-		if (atributoAcordoSet != null)
-			for (SrAtributoAcordo atributoAcordo : atributoAcordoSet) {
-				atributoAcordo.acordo = this;
+		if (getAtributoAcordoSet() != null)
+			for (SrAtributoAcordo atributoAcordo : getAtributoAcordoSet()) {
+				atributoAcordo.setAcordo(this);
 				atributoAcordo.salvar();
 			}
 	}
@@ -127,21 +130,21 @@ public class SrAcordo extends HistoricoSuporteVraptor implements ConvertableEnti
 	@Override
 	public void finalizar() throws Exception {
 		super.finalizar();
-		if (atributoAcordoSet != null)
-			for (SrAtributoAcordo atributoAcordo : atributoAcordoSet) {
+		if (getAtributoAcordoSet() != null)
+			for (SrAtributoAcordo atributoAcordo : getAtributoAcordoSet()) {
 				atributoAcordo.finalizar();
 			}
 	}
 
 	public SrAtributoAcordo getAtributo(SrAtributo att) {
-		for (SrAtributoAcordo pa : atributoAcordoSet)
-			if (pa.atributo.equals(att))
+		for (SrAtributoAcordo pa : getAtributoAcordoSet())
+			if (pa.getAtributo().equals(att))
 				return pa;
 		return null;
 	}
 
 	private SrAtributoAcordo getAtributo(String codigo) {
-		if (atributoAcordoSet == null)
+		if (getAtributoAcordoSet() == null)
 			return null;
 		SrAtributo att = SrAtributo.get(codigo);
 		if (att == null)
@@ -202,6 +205,19 @@ public class SrAcordo extends HistoricoSuporteVraptor implements ConvertableEnti
 
 	public void setAcordoInicial(SrAcordo acordoInicial) {
 		this.acordoInicial = acordoInicial;
+	}
+
+	@Override
+	public void setSigla(String sigla) {
+		
+	}
+
+	public List<SrAtributoAcordo> getAtributoAcordoSet() {
+		return atributoAcordoSet;
+	}
+
+	public void setAtributoAcordoSet(List<SrAtributoAcordo> atributoAcordoSet) {
+		this.atributoAcordoSet = atributoAcordoSet;
 	}	
 	
 }

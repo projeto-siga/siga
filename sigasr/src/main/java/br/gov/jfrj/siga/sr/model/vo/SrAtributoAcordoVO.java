@@ -16,13 +16,13 @@ public class SrAtributoAcordoVO {
 	public boolean ativo;
 	
 	public SrAtributoAcordoVO(SrAtributoAcordo atributoAcordo) {
-		this.idAtributoAcordo = atributoAcordo.idAtributoAcordo; 
-		this.operador = atributoAcordo.operador;
-		this.operadorNome = atributoAcordo.operador != null ? atributoAcordo.operador.getNome() : "";
-		this.valor = atributoAcordo.valor;
-		this.unidadeMedida = atributoAcordo.unidadeMedida;
-		this.unidadeMedidaPlural = atributoAcordo.unidadeMedida != null ? atributoAcordo.unidadeMedida.getPlural() : "";
-		this.atributo = SrAtributoVO.createFrom(atributoAcordo.atributo, false);
+		this.idAtributoAcordo = atributoAcordo.getIdAtributoAcordo(); 
+		this.operador = atributoAcordo.getOperador();
+		this.operadorNome = atributoAcordo.getOperador() != null ? atributoAcordo.getOperador().getNome() : "";
+		this.valor = atributoAcordo.getValor();
+		this.unidadeMedida = atributoAcordo.getUnidadeMedida();
+		this.unidadeMedidaPlural = atributoAcordo.getUnidadeMedida() != null ? atributoAcordo.getUnidadeMedida().getPlural() : "";
+		this.atributo = SrAtributoVO.createFrom(atributoAcordo.getAtributo(), false);
 		this.ativo = atributoAcordo.isAtivo();
 	}
 	

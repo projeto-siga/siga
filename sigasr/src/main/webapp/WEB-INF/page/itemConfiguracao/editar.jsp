@@ -64,8 +64,8 @@
 	<div>
 		<div class="gt-content-box gt-for-table">
 			<form id="formItemConfiguracao" class="form100" enctype="multipart/form-data">
-				<input type="hidden" name="id" id="idItemConfiguracao">
-				<input type="hidden" name="hisIdIni" id="hisIdIni">
+				<input type="hidden" name="itemConfiguracao.id" id="id" value="${id}">
+				<input type="hidden" name="itemConfiguracao.hisIdIni" id="hisIdIni" value="${hisIdIni} }">
 				
 				<table class="gt-form-table">
 					<tr class="header">
@@ -78,7 +78,7 @@
 						<td>
 							<input id="siglaItemConfiguracao"
 								   type="text"
-								   name="siglaItemConfiguracao"
+								   name="itemConfiguracao.siglaItemConfiguracao"
 								   maxlength="255"
 								   required /> 
 						</td>
@@ -91,7 +91,7 @@
 						<td>	
 							<input type="text" 
 								   id="tituloItemConfiguracao"
-								   name="tituloItemConfiguracao"
+								   name="itemConfiguracao.tituloItemConfiguracao"
 								   style="width: 67.6%;"
 								   maxlength="255"
 								   required />
@@ -104,7 +104,7 @@
 						<td colspan="2">
 							<input type="text"
 								id="descrItemConfiguracao"
-								name="descrItemConfiguracao"
+								name="itemConfiguracao.descrItemConfiguracao"
 								style="width: 690px" maxlength="255" />
 						</td>
 					</tr>
@@ -128,7 +128,7 @@
 						<td colspan="3">
 							<label class="inline">Similaridade (Separar itens com ponto e vírgula):</label>
 							<textarea cols="63" rows="3" maxlength="8192" 
-								name="descricaoSimilaridade"
+								name="itemConfiguracao.descricaoSimilaridade"
 								id="descricaoSimilaridade"></textarea>
 						</td>
 					</tr>
@@ -143,7 +143,7 @@
 						<td>
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true; else{ if (tecla==8 || tecla==0) return true; else return false; }"
 								   type="text" id="numFatorMultiplicacaoGeral" 
-								   name="numFatorMultiplicacaoGeral"
+								   name="itemConfiguracao.numFatorMultiplicacaoGeral"
 								   size="20"
 								   maxlength="9"
 								   required
@@ -439,9 +439,9 @@
 		var jTipoEscolhido = jSelect.find("option:selected");
 		
 		if(jTipoEscolhido.val() == 1) {
-			acao($("#formulario_gestorPessoaSel_sigla").val(), $("#formulario_gestorPessoaSel_descricao").val(), 'pessoa', $("#gestorpessoa").val(), jDialog.data("id"));
+			acao($("#formulario_gestorPessoaSel_sigla").val(), $("#formulario_gestorPessoaSel_descricao").val(), 'pessoa', $("#formulario_gestorPessoaSel_id").val(), jDialog.data("id"));
 			} else if (jTipoEscolhido.val() == 2) {
-				acao($("#formulario_gestorLotacaoSel_sigla").val(), $("#formulario_gestorLotacaoSel_descricao").val(), 'lotacao', $("#gestorlotacao").val(), jDialog.data("id"));
+				acao($("#formulario_gestorLotacaoSel_sigla").val(), $("#formulario_gestorLotacaoSel_descricao").val(), 'lotacao', $("#formulario_gestorLotacaoSel_id").val(), jDialog.data("id"));
 		}
 		
 		jDialog.dialog('close');
@@ -462,9 +462,9 @@
 		
 		if(numFatorMult.val() > 0) {
 		    if(jTipoEscolhidoFator.val() == 1) {
-		        acaoFator($("#formulario_fatorPessoaSel_sigla").val(), $("#formulario_fatorPessoaSel_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#fatorpessoa").val(), jDialogFator.data("id"));
+		        acaoFator($("#formulario_fatorPessoaSel_sigla").val(), $("#formulario_fatorPessoaSel_descricao").val(), $("#numfatorMult").val(), 'pessoa', $("#formulario_fatorPessoaSel_id").val(), jDialogFator.data("id"));
 		    } else if (jTipoEscolhidoFator.val() == 2) {
-		        acaoFator($("#formulario_fatorLotacaoSel_sigla").val(), $("#formulario_fatorLotacaoSel_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#fatorlotacao").val(), jDialogFator.data("id"));
+		        acaoFator($("#formulario_fatorLotacaoSel_sigla").val(), $("#formulario_fatorLotacaoSel_descricao").val(), $("#numfatorMult").val(), 'lotacao', $("#formulario_fatorLotacaoSel_id").val(), jDialogFator.data("id"));
 		    }
 		    
 			  jDialogFator.dialog('close');
@@ -476,32 +476,5 @@
 	$("#modalCancelFator").click(function(){
 		jDialogFator.dialog('close');
 		validatorFormFator.resetForm();
-	});
-	
-	designacaoService.gravar = function() {
-		var id = itemConfiguracaoService.getIdEdicao();
-		designacaoOpts.urlGravar = '${linkTo[ItemConfiguracaoController].gravarDesignacaoItem}' + id;
-		BaseService.prototype.gravar.call(this);
-	}
-	
-	designacaoService.onGravar = function(obj, objSalvo) {
-		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo),
-			itemConfiguracaoAntivo = {
-				id : itemConfiguracaoService.getIdEdicao()
-			};
-		
-		afterGravarDesignacao(tr, objSalvo, this);
-		itemConfiguracaoService.onGravar(itemConfiguracaoAntivo, objSalvo.itemConfiguracao);
-		$('#idItemConfiguracao').val(objSalvo.itemConfiguracao.id);
-		return tr;
-	}
-	
-	designacaoService.cadastrar = function(titulo) {
-		if (!itemConfiguracaoService.getIdEdicao() && itemConfiguracaoService.aplicar() == false) {
-			return;
-		}
-		
-		BaseService.prototype.cadastrar.call(this, titulo);
-			atualizarDesignacaoEdicao();
-	}    
+	});	
 </script>

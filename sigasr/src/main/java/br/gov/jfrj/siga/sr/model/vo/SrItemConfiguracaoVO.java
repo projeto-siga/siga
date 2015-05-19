@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.sr.model.vo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import br.gov.jfrj.siga.sr.model.SrFatorMultiplicacao;
 import br.gov.jfrj.siga.sr.model.SrGestorItem;
@@ -32,7 +31,7 @@ public class SrItemConfiguracaoVO implements ISelecionavel {
 	public List<SrFatorMultiplicacaoVO> fatorMultiplicacaoSetVO;
 	
 	public SrItemConfiguracaoVO(Long id, String descricao, String titulo, String sigla, Long hisIdIni, String descricaoSimilaridade, 
-			int numFatorMultiplicacaoGeral, boolean isAtivo, int nivel, Set<SrGestorItem> gestorSet, Set<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
+			int numFatorMultiplicacaoGeral, boolean isAtivo, int nivel, List<SrGestorItem> gestorSet, List<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
 		this.id = id;
 		this.descrItemConfiguracao = descricao;
 		this.tituloItemConfiguracao = titulo;

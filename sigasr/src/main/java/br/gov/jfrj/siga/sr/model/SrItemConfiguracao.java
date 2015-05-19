@@ -321,7 +321,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		for (int i = 0; i < 3 - (getNivel() - 1); i++) {
 			sigla += ".00";
 		}
-		return SrItemConfiguracao.find(
+		return SrItemConfiguracao.AR.find(
 				"byHisDtFimIsNullAndSiglaItemConfiguracao", sigla).first();
 	}
 
@@ -463,7 +463,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
       						// se a configuração for do Item ou de um de seus históricos, remove
       						if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
       							for (SrItemConfiguracao itemHist : this.getHistoricoItemConfiguracao()) {
-      								if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
+      								if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
       									igItem.delete();
       									break;
       								}
@@ -562,14 +562,14 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 
 			for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
 				// Se a configuração for do Item, vai como desmarcado
-				if (item.getId().equals(igItem.itemConfiguracao.getId())) {
+				if (item.getId().equals(igItem.getItemConfiguracao().getId())) {
 					conf.setUtilizarItemHerdado(false);
 				}
 
 				// se a configuração for do Item (histórico), vai como desmarcado
 				else if (item.getHistoricoItemConfiguracao() != null && item.getHistoricoItemConfiguracao().size() > 0) {
 					for (SrItemConfiguracao itemHist : item.getHistoricoItemConfiguracao()) {
-						if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
+						if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
 							conf.setUtilizarItemHerdado(false);
 							encontrou = true;
 							break;
@@ -583,7 +583,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 					while(itemPai != null) {
 
 						// Se for configuração do pai, não aparece na tela caso esteja marcada para Ignorar no Pai
-						if (itemPai.getId().equals(igItem.itemConfiguracao.getId())) {
+						if (itemPai.getId().equals(igItem.getItemConfiguracao().getId())) {
 							i.remove();
 							break;
 						}

@@ -13,13 +13,13 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 import br.gov.jfrj.siga.sr.model.vo.SrFatorMultiplicacaoVO;
+import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_FATOR_MULTIPLICACAO", schema = Catalogs.SIGASR)
-public class SrFatorMultiplicacao extends Objeto{
+public class SrFatorMultiplicacao extends ObjetoVraptor {
 	
 	/**
 	 * 
@@ -30,10 +30,10 @@ public class SrFatorMultiplicacao extends Objeto{
 	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_FATOR_MULTIPLICACAO_SEQ", name = "srFatorMultiplicacao")
 	@GeneratedValue(generator = "srFatorMultiplicacao")
 	@Column(name = "ID_FATOR_MULTIPLICACAO")
-	public Long idFatorMultiplicacao;
+	private Long idFatorMultiplicacao;
 	
 	@Column(name = "NUM_FATOR_MULTIPLICACAO")
-	public int numFatorMultiplicacao = 1;
+	private int numFatorMultiplicacao = 1;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESSOA")
@@ -47,8 +47,13 @@ public class SrFatorMultiplicacao extends Objeto{
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
-	public SrItemConfiguracao itemConfiguracao;
+	private SrItemConfiguracao itemConfiguracao;
 	
+	
+	public SrFatorMultiplicacao() {
+		super();
+	}
+
 	public DpPessoa getDpPessoa() {
 		return dpPessoa;
 	}
@@ -73,6 +78,35 @@ public class SrFatorMultiplicacao extends Objeto{
 			this.dpLotacao = DpLotacao.findById(this.dpLotacao.getId());
 		
 		return new SrFatorMultiplicacaoVO(this.idFatorMultiplicacao, this.numFatorMultiplicacao, this.dpPessoa, this.dpLotacao);
+	}
+
+	public Long getIdFatorMultiplicacao() {
+		return idFatorMultiplicacao;
+	}
+
+	public void setIdFatorMultiplicacao(Long idFatorMultiplicacao) {
+		this.idFatorMultiplicacao = idFatorMultiplicacao;
+	}
+
+	public int getNumFatorMultiplicacao() {
+		return numFatorMultiplicacao;
+	}
+
+	public void setNumFatorMultiplicacao(int numFatorMultiplicacao) {
+		this.numFatorMultiplicacao = numFatorMultiplicacao;
+	}
+
+	public SrItemConfiguracao getItemConfiguracao() {
+		return itemConfiguracao;
+	}
+
+	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
+		this.itemConfiguracao = itemConfiguracao;
+	}
+
+	@Override
+	protected Long getId() {
+		return this.getIdFatorMultiplicacao();
 	}
 
 }

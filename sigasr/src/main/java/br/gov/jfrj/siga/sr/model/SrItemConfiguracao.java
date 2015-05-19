@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,14 +102,14 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	//@OrderBy("hisDtIni desc")
 	private List<SrItemConfiguracao> meuItemHistoricoSet;
 
-	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
-    private Set<SrGestorItem> gestorSet;
+	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)
+    private List<SrGestorItem> gestorSet;
 
 	@Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
 	private int numFatorMultiplicacaoGeral = 1;
 
-	@OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
-	private Set<SrFatorMultiplicacao> fatorMultiplicacaoSet;
+	@OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)
+	private List<SrFatorMultiplicacao> fatorMultiplicacaoSet;
 
 	@Transient
 	private List<SrConfiguracao> designacoes;
@@ -441,7 +440,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 
         if (getFatorMultiplicacaoSet() != null)
             for (SrFatorMultiplicacao fator : getFatorMultiplicacaoSet()){
-                fator.itemConfiguracao = this;
+                fator.setItemConfiguracao(this);
                 fator.salvar();
             }
 
@@ -770,14 +769,6 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		this.meuItemHistoricoSet = meuItemHistoricoSet;
 	}
 
-	public Set<SrGestorItem> getGestorSet() {
-		return gestorSet;
-	}
-
-	public void setGestorSet(Set<SrGestorItem> gestorSet) {
-		this.gestorSet = gestorSet;
-	}
-
 	public int getNumFatorMultiplicacaoGeral() {
 		return numFatorMultiplicacaoGeral;
 	}
@@ -785,12 +776,21 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	public void setNumFatorMultiplicacaoGeral(int numFatorMultiplicacaoGeral) {
 		this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
 	}
+	
+	public List<SrGestorItem> getGestorSet() {
+		return gestorSet;
+	}
 
-	public Set<SrFatorMultiplicacao> getFatorMultiplicacaoSet() {
+	public void setGestorSet(List<SrGestorItem> gestorSet) {
+		this.gestorSet = gestorSet;
+	}
+
+	public List<SrFatorMultiplicacao> getFatorMultiplicacaoSet() {
 		return fatorMultiplicacaoSet;
 	}
 
-	public void setFatorMultiplicacaoSet(Set<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
+	public void setFatorMultiplicacaoSet(
+			List<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
 		this.fatorMultiplicacaoSet = fatorMultiplicacaoSet;
 	}
 

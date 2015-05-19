@@ -265,7 +265,7 @@
 				designacao.orgaoUsuario != null ? designacao.orgaoUsuario.sigla : ' ',
 				designacao.complexo != null ? designacao.complexo.descricao : ' ',
 				designacao.solicitante != null ? designacao.solicitante.sigla : ' ',
-				designacao.descrConfiguracao,
+				designacao.descrConfiguracao != null ? designacao.descrConfiguracao : '',
 				designacao.atendente != null ? designacao.atendente.sigla : '',
 				'COLUNA_ACOES',
 				JSON.stringify(designacao),
@@ -360,10 +360,15 @@
 		}
 	}
 
-	designacaoService.populateFromJSonList = function(listaJSon) {
+	designacaoService.reset = function() {
 		if(designacaoService.designacaoTable) {
 			designacaoService.designacaoTable.destruir();
 		}
+	}
+
+	designacaoService.populateFromJSonList = function(listaJSon) {
+		designacaoService.reset();
+		
 		var table = designacaoOpts.tabelaRegistros;
 		
 		for (var i = 0; i < listaJSon.length; i++) {

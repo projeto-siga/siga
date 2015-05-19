@@ -85,7 +85,7 @@
 	
 					<tbody>
 						<c:forEach items="${itens}" var="item">
-							<tr data-json-id="${item.idItemConfiguracao}" data-json='${item.toVO().toJson()}' 
+							<tr data-json-id="${item.id}" data-json='${item.toVO().toJson()}' 
 								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
 								style="cursor: pointer;">
 								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
@@ -94,7 +94,7 @@
 								<td>${item.descrItemConfiguracao}</td>
 								<td>${item.descricaoSimilaridade}</td>
 								<td class="acoes">
-									<siga:desativarReativar id="${item.idItemConfiguracao}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
+									<siga:desativarReativar id="${item.id}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
 								</td>
 								<td style="display: none;">${item.srItemConfiguracaoJson}</td>
 							</tr>
@@ -224,14 +224,19 @@
 	var itemConfiguracaoService = new ItemConfiguracaoService(optsLista);
 	
 	itemConfiguracaoService.getId = function(itemConfiguracao) {
-		return itemConfiguracao.id;
+		return itemConfiguracao.id || itemConfiguracao['itemConfiguracao.id'] || itemConfiguracao[''];
 	}
 	itemConfiguracaoService.getIdEdicao = function() {
 		return $('#idItemConfiguracao').val();
 	}
 	itemConfiguracaoService.getRow = function(itemConfiguracao) {
-		return ['', itemConfiguracao.siglaItemConfiguracao, itemConfiguracao.tituloItemConfiguracao,
-				itemConfiguracao.descrItemConfiguracao, itemConfiguracao.descricaoSimilaridade, 'COLUNA_ACOES', itemConfiguracao];
+		return ['', 
+				itemConfiguracao.siglaItemConfiguracao, 
+				itemConfiguracao.tituloItemConfiguracao,
+				itemConfiguracao.descrItemConfiguracao,
+				itemConfiguracao.descricaoSimilaridade,
+				'COLUNA_ACOES',
+				itemConfiguracao];
 	}
 
 	itemConfiguracaoService.onRowClick = function(item) {
@@ -250,7 +255,7 @@
 	itemConfiguracaoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		atualizarModalItem(obj);
-		// carrega as designaï¿½ï¿½es do item
+		// carrega as designaÃ§Ãµes do item
 		carregarDesignacoes(obj.id);
 	}
 
@@ -264,7 +269,7 @@
 	}
 
 	itemConfiguracaoService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + itemConfiguracaoService.getListasAsString();
+		return BaseService.prototype.serializar.call(this, obj)  + "&" + itemConfiguracaoService.getListasAsString() + "&itemConfiguracao=" + this.getId(obj);
 	}
 
 	itemConfiguracaoService.getListasAsString = function() {
@@ -275,9 +280,9 @@
             	tipo = jDivs[0].id;
             
             if(tipo === 'pessoa'){
-            	params += '&itemConfiguracao.gestorSet[' + i + '].dpPessoa.idPessoa=' + jDivs[1].id;
+            	params += '&gestorSet[' + i + '].dpPessoa.idPessoa=' + jDivs[1].id;
             } else if (tipo === 'lotacao') {
-            	params += '&itemConfiguracao.gestorSet[' + i + '].dpLotacao.idLotacao=' + jDivs[1].id;
+            	params += '&gestorSet[' + i + '].dpLotacao.idLotacao=' + jDivs[1].id;
             }                            
         });
         $("#fatoresUl").find("li").each(function(i){
@@ -285,18 +290,20 @@
             	tipoF = jDivsF[0].id;
         	
             if(tipoF === 'pessoa') {
-                params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].dpPessoa.idPessoa=' + jDivsF[1].id;
+                params += '&fatorMultiplicacaoSet[' + i + '].dpPessoa.idPessoa=' + jDivsF[1].id;
             } else if (tipoF === 'lotacao') {
-                params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].dpLotacao.idLotacao=' + jDivsF[1].id;
+                params += '&fatorMultiplicacaoSet[' + i + '].dpLotacao.idLotacao=' + jDivsF[1].id;
             }
 
-            params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].numFatorMultiplicacao=' + parseInt(jDivsF[1].innerHTML.replace(" / Fator: ", ""));
+            params += '&fatorMultiplicacaoSet[' + i + '].numFatorMultiplicacao=' + parseInt(jDivsF[1].innerHTML.replace(" / Fator: ", ""));
    	 	});
 
         return params;
     }
 
 	function carregarDesignacoes(id) {
+		designacaoService.reset();
+		
         $.ajax({
         	type: "GET",
         	url: "/sigasr/app/itemConfiguracao/" + id + "/designacoes",

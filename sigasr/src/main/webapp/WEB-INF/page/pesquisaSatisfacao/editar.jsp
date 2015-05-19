@@ -95,7 +95,9 @@
 	</div>
 </siga:modal>
 
-<script>
+<script type="text/javascript">
+	var pesquisaFormValidator, perguntaFormValidator = null;
+
 	associacaoService.getUrlDesativarReativar = function(desativados) {
 		var url = '${linkTo[PesquisaSatisfacaoController].listarAssociacaoPesquisa}';
 		var idAtributo = $("[id=idPesquisa]").val();
@@ -120,6 +122,7 @@
         $( "#perguntas" ).disableSelection();
 
         $("#botaoIncluir").click(function() {
+        	perguntaFormValidator.resetForm();
 			jDialog.data('pesquisa', perguntas.incluirItem).dialog('open');
         });
 
@@ -143,6 +146,7 @@
                         jTipoPergunta.find("option[value=" + jDialog.data("tipoPergunta") + "]").prop('selected', true);
                 }
         });
+        
         $("#modalOk").click(function(){
             if (!jQuery("#perguntaForm").valid())
                 return false;
@@ -153,13 +157,13 @@
                 return false;
             }
 
-            var pesquisa = jDialog.data('pesquisa');
+            var pesquisa = jDialog.data('acao');
             var jTipoEscolhido = jTipoPergunta.find("option:selected");
             pesquisa(jDescrPergunta.val(), jTipoEscolhido.val(), jTipoEscolhido.text(), jDialog.data("id"));
             jDialog.dialog('close');
         });
         $("#modalCancel").click(function(){
-                jDialog.dialog('close');
+            jDialog.dialog('close');
         });
 
         perguntas["index"] = 0;
@@ -203,8 +207,14 @@
         perguntas.limpar = function() {
        		$("#perguntas").html('');
        	}
-        var pesquisaFormValidator = $("#pesquisaForm").validate();
-        var perguntaFormValidator = $("#perguntaForm").validate();
+
+        pesquisaFormValidator = $("#pesquisaForm").validate({
+			onfocusout: false
+		});
+        perguntaFormValidator = $("#perguntaForm").validate({
+			onfocusout: false
+		});
+
 	});
 
 	function isValidForm() {
@@ -214,6 +224,7 @@
 	function resetErrosForm() {
 		pesquisaFormValidator.reset();
 		perguntaFormValidator.reset();
+		
 	}
 
 	function podeCadastrarAssociacao() {

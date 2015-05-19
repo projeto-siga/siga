@@ -27,7 +27,7 @@ public class ConhecimentoController extends SrController {
 		super(request, result, SrDao.getInstance(), so, em, srValidator);
 	}
 
-	@AssertAcesso(EDTCONH_CRIAR_CONHECIMENTOS)
+//	@AssertAcesso(EDTCONH_CRIAR_CONHECIMENTOS)
 	@Path("/listar")
 	public void listar(boolean ajax, Long idItem, Long idAcao) throws Exception{
 		SrItemConfiguracao item = idItem != null ? SrItemConfiguracao.AR.findById(idItem) : new SrItemConfiguracao();

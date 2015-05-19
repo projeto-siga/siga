@@ -2623,9 +2623,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (acordo == null)
 			return true;
 		acordo = acordo.getAcordoAtual();
-		if (acordo.atributoAcordoSet == null)
+		if (acordo.getAtributoAcordoSet() == null)
 			return true;
-		for (SrAtributoAcordo pa : acordo.atributoAcordoSet) {
+		for (SrAtributoAcordo pa : acordo.getAtributoAcordoSet()) {
 			if (!isAtributoAcordoSatisfeito(pa))
 				return false;
 		}
@@ -2635,7 +2635,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public boolean isAtributoAcordoSatisfeito(SrAtributoAcordo atributoAcordo) {
 		try {
 			SrValor valor = (SrValor) SrSolicitacao.class.getMethod(
-					atributoAcordo.atributo.asGetter()).invoke(this);
+					atributoAcordo.getAtributo().asGetter()).invoke(this);
 			if (valor == null)
 				return true;
 			return atributoAcordo.isNaFaixa(valor);

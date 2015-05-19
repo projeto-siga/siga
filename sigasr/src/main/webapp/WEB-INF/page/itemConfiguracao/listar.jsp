@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Itens de ConfiguraÃ§Ã£o">
+<siga:pagina titulo="Itens de Configuração">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	
@@ -57,7 +57,7 @@
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
-			<h2>Itens de ConfiguraÃ§Ã£o</h2>
+			<h2>Itens de Configuração</h2>
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
@@ -74,19 +74,19 @@
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th>CÃ³digo</th>
-							<th>TÃ­tulo</th>
-							<th>DescriÃ§Ã£o</th>
+							<th>Código</th>
+							<th>Título</th>
+							<th>Descrição</th>
 							<th>Similaridade</th>
 							<th></th>
-							<th>VO Item</th>
+							<th style="display: none;">VO Item</th>
 						</tr>
 					</thead>
 	
 					<tbody>
 						<c:forEach items="${itens}" var="item">
 							<tr data-json-id="${item.idItemConfiguracao}" data-json='${item.toVO().toJson()}' 
-								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuraÃ§Ã£o')"
+								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
 								style="cursor: pointer;">
 								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 								<td>${item.siglaItemConfiguracao}</td>
@@ -96,7 +96,7 @@
 								<td class="acoes">
 									<siga:desativarReativar id="${item.idItemConfiguracao}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
 								</td>
-								<td>${item.srItemConfiguracaoJson}</td>
+								<td style="display: none;">${item.srItemConfiguracaoJson}</td>
 							</tr>
 						</c:forEach>
 					</tbody>
@@ -306,7 +306,7 @@
         		designacaoService.populateFromJSonList(listaJSon);
         	},
         	error: function(error) {
-            	alert("NÃ£o foi possÃ­vel carregar as DesignaÃ§Ãµes deste item.");
+            	alert("Não foi possível carregar as Designações deste item.");
         	}
        	});
     }

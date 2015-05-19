@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,14 +102,14 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	//@OrderBy("hisDtIni desc")
 	private List<SrItemConfiguracao> meuItemHistoricoSet;
 
-	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao")
-    private Set<SrGestorItem> gestorSet;
+	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)
+    private List<SrGestorItem> gestorSet;
 
 	@Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
 	private int numFatorMultiplicacaoGeral = 1;
 
-	@OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao")
-	private Set<SrFatorMultiplicacao> fatorMultiplicacaoSet;
+	@OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)
+	private List<SrFatorMultiplicacao> fatorMultiplicacaoSet;
 
 	@Transient
 	private List<SrConfiguracao> designacoes;
@@ -322,7 +321,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		for (int i = 0; i < 3 - (getNivel() - 1); i++) {
 			sigla += ".00";
 		}
-		return SrItemConfiguracao.find(
+		return SrItemConfiguracao.AR.find(
 				"byHisDtFimIsNullAndSiglaItemConfiguracao", sigla).first();
 	}
 
@@ -441,7 +440,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 
         if (getFatorMultiplicacaoSet() != null)
             for (SrFatorMultiplicacao fator : getFatorMultiplicacaoSet()){
-                fator.itemConfiguracao = this;
+                fator.setItemConfiguracao(this);
                 fator.salvar();
             }
 
@@ -464,7 +463,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
       						// se a configuração for do Item ou de um de seus históricos, remove
       						if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
       							for (SrItemConfiguracao itemHist : this.getHistoricoItemConfiguracao()) {
-      								if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
+      								if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
       									igItem.delete();
       									break;
       								}
@@ -563,14 +562,14 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 
 			for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
 				// Se a configuração for do Item, vai como desmarcado
-				if (item.getId().equals(igItem.itemConfiguracao.getId())) {
+				if (item.getId().equals(igItem.getItemConfiguracao().getId())) {
 					conf.setUtilizarItemHerdado(false);
 				}
 
 				// se a configuração for do Item (histórico), vai como desmarcado
 				else if (item.getHistoricoItemConfiguracao() != null && item.getHistoricoItemConfiguracao().size() > 0) {
 					for (SrItemConfiguracao itemHist : item.getHistoricoItemConfiguracao()) {
-						if (itemHist.getId().equals(igItem.itemConfiguracao.getId())) {
+						if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
 							conf.setUtilizarItemHerdado(false);
 							encontrou = true;
 							break;
@@ -584,7 +583,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 					while(itemPai != null) {
 
 						// Se for configuração do pai, não aparece na tela caso esteja marcada para Ignorar no Pai
-						if (itemPai.getId().equals(igItem.itemConfiguracao.getId())) {
+						if (itemPai.getId().equals(igItem.getItemConfiguracao().getId())) {
 							i.remove();
 							break;
 						}
@@ -770,14 +769,6 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		this.meuItemHistoricoSet = meuItemHistoricoSet;
 	}
 
-	public Set<SrGestorItem> getGestorSet() {
-		return gestorSet;
-	}
-
-	public void setGestorSet(Set<SrGestorItem> gestorSet) {
-		this.gestorSet = gestorSet;
-	}
-
 	public int getNumFatorMultiplicacaoGeral() {
 		return numFatorMultiplicacaoGeral;
 	}
@@ -785,12 +776,21 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	public void setNumFatorMultiplicacaoGeral(int numFatorMultiplicacaoGeral) {
 		this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
 	}
+	
+	public List<SrGestorItem> getGestorSet() {
+		return gestorSet;
+	}
 
-	public Set<SrFatorMultiplicacao> getFatorMultiplicacaoSet() {
+	public void setGestorSet(List<SrGestorItem> gestorSet) {
+		this.gestorSet = gestorSet;
+	}
+
+	public List<SrFatorMultiplicacao> getFatorMultiplicacaoSet() {
 		return fatorMultiplicacaoSet;
 	}
 
-	public void setFatorMultiplicacaoSet(Set<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
+	public void setFatorMultiplicacaoSet(
+			List<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
 		this.fatorMultiplicacaoSet = fatorMultiplicacaoSet;
 	}
 

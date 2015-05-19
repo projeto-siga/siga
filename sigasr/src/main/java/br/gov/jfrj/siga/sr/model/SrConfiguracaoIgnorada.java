@@ -11,33 +11,38 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import play.db.jpa.JPA;
 import br.gov.jfrj.siga.base.util.Catalogs;
-import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO_IGNORADA", schema = Catalogs.SIGASR)
-public class SrConfiguracaoIgnorada extends Objeto {
+public class SrConfiguracaoIgnorada extends ObjetoVraptor {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	public static ActiveRecord<SrConfiguracaoIgnorada> AR = new ActiveRecord<>(SrConfiguracaoIgnorada.class);
+	
 	@Id
 	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_CONFIGURACAO_IGNORADA_SEQ", name = "srConfIgnSeq")
 	@GeneratedValue(generator = "srConfIgnSeq")
 	@Column(name = "ID_CONFIGURACAO_IGNORADA")	
-	public Long idConfiguracaoIgnorada;
+	private Long idConfiguracaoIgnorada;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO", nullable = false)
-	public SrItemConfiguracao itemConfiguracao;
+	private SrItemConfiguracao itemConfiguracao;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_CONFIGURACAO", nullable = false)
-	public SrConfiguracao configuracao;
+	private SrConfiguracao configuracao;
 	
+	public SrConfiguracaoIgnorada() {
+		super();
+	}
 	
 	public static SrConfiguracaoIgnorada createNew(SrItemConfiguracao itemConfiguracao, SrConfiguracao configuracao) {
 		SrConfiguracaoIgnorada newItem = new SrConfiguracaoIgnorada();
@@ -54,7 +59,7 @@ public class SrConfiguracaoIgnorada extends Objeto {
 		sb.append(" and ig.configuracao.id = ");
 		sb.append(configuracao.getId());
 		
-		List<SrConfiguracaoIgnorada> list = JPA.em().createQuery(sb.toString()).getResultList();
+		List<SrConfiguracaoIgnorada> list = AR.em().createQuery(sb.toString()).getResultList();
 		
 		if (list != null && list.size() > 0)
 			return list.get(0);
@@ -67,8 +72,37 @@ public class SrConfiguracaoIgnorada extends Objeto {
 		StringBuffer sb = new StringBuffer("select ig from SrConfiguracaoIgnorada as ig where ig.configuracao.id = ");
 		sb.append(configuracao.getId());
 		
-		List<SrConfiguracaoIgnorada> list = JPA.em().createQuery(sb.toString()).getResultList();
+		List<SrConfiguracaoIgnorada> list = AR.em().createQuery(sb.toString()).getResultList();
 		
 		return list;
+	}
+	
+	public Long getIdConfiguracaoIgnorada() {
+		return idConfiguracaoIgnorada;
+	}
+
+	public void setIdConfiguracaoIgnorada(Long idConfiguracaoIgnorada) {
+		this.idConfiguracaoIgnorada = idConfiguracaoIgnorada;
+	}
+
+	public SrItemConfiguracao getItemConfiguracao() {
+		return itemConfiguracao;
+	}
+
+	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
+		this.itemConfiguracao = itemConfiguracao;
+	}
+
+	public SrConfiguracao getConfiguracao() {
+		return configuracao;
+	}
+
+	public void setConfiguracao(SrConfiguracao configuracao) {
+		this.configuracao = configuracao;
+	}
+
+	@Override
+	protected Long getId() {
+		return this.getIdConfiguracaoIgnorada();
 	}
 }

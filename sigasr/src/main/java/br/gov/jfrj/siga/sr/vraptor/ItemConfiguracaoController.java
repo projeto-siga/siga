@@ -23,8 +23,9 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
+import br.gov.jfrj.siga.sr.model.SrFatorMultiplicacao;
+import br.gov.jfrj.siga.sr.model.SrGestorItem;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
-import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
@@ -82,27 +83,64 @@ public class ItemConfiguracaoController extends SrController {
 		result.include("itemConfiguracao", new SelecionavelVO(null,null));
 		result.include("acao", new SelecionavelVO(null,null));
 	}
-	
+
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@Path("/desativar")
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
-		SrLista lista = SrLista.AR.findById(id);
-		lista.finalizar();
+		SrItemConfiguracao item = SrItemConfiguracao.AR.findById(id);
+		item.finalizar();
 
-		result.include("lista", lista.toJson());
+		result.use(Results.http()).body(item.getSrItemConfiguracaoJson());
 	}
 
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
-		SrLista lista = SrLista.AR.findById(id);
-		lista.salvar();
+		SrItemConfiguracao item = SrItemConfiguracao.AR.findById(id);
+		item.salvar();
 		
-		result.include("lista", lista.toJson());
+		result.use(Results.http()).body(item.getSrItemConfiguracaoJson());
 	}
 	
-	public void gravar(SrLista lista) throws Exception {
-		lista.lotaCadastrante = getLotaTitular();
-		validarFormEditarLista(lista);
-		lista.salvar();
+//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@Path("/gravar")
+	public void gravar(SrItemConfiguracao itemConfiguracao, List<SrGestorItem> gestorSet, List<SrFatorMultiplicacao> fatorMultiplicacaoSet) throws Exception {
+		// WO para tratar o erro de conversão de listas do Vraptor
+		itemConfiguracao.setGestorSet(gestorSet);
+		itemConfiguracao.setFatorMultiplicacaoSet(fatorMultiplicacaoSet);
 		
-		result.include("lista", lista.toJson());
+		validarFormEditarItem(itemConfiguracao);
+		itemConfiguracao.salvar();
+
+		// Atualiza os conhecimentos relacionados
+		// Edson: deveria ser feito por webservice. Nao estah sendo coberta
+		// a atualizacao da classificacao quando ocorre mudanca de posicao na
+		// hierarquia, pois isso eh mais complexo de acertar.
+//		try {
+//			HashMap<String, String> atributos = new HashMap<String, String>();
+//			for (Http.Header h : request.headers.values())
+//				if (!h.name.equals("content-type"))
+//					atributos.put(h.name, h.value());
+//
+//			SrItemConfiguracao anterior = null;
+//			List<SrItemConfiguracao> itens = itemConfiguracao.getHistoricoItemConfiguracao();
+//			if(itens != null)
+//				anterior = itens.get(0);
+//			if (anterior != null
+//					&& !itemConfiguracao.tituloItemConfiguracao
+//							.equals(anterior.tituloItemConfiguracao))
+//				ConexaoHTTP.get("http://"
+//						+ Play.configuration.getProperty("servidor.principal")
+//						+ ":8080/sigagc/app/updateTag?before="
+//						+ anterior.getTituloSlugify() + "&after="
+//						+ itemConfiguracao.getTituloSlugify(), atributos);
+//		} catch (Exception e) {
+//			Logger.error("Item " + itemConfiguracao.idItemConfiguracao
+//					+ " salvo, mas nao foi possivel atualizar conhecimento");
+//			e.printStackTrace();
+//		}
+//
+		result.use(Results.http()).body(itemConfiguracao.getSrItemConfiguracaoJson());
 	}
 	
 	
@@ -119,32 +157,17 @@ public class ItemConfiguracaoController extends SrController {
 		else
 			designacoes = new ArrayList<SrConfiguracao>();
 
-		result.use(Results.json())
-		.from(SrConfiguracao.convertToJSon(designacoes))
-	    .serialize();
+		result.use(Results.http()).body(SrConfiguracao.convertToJSon(designacoes));
 	}
 	
-	private void validarFormEditarLista(SrLista lista) {
-		if (lista.nomeLista == null || lista.nomeLista.trim().equals("")) {
-			Validation.addError("lista.nomeLista","Nome da Lista n�o informados");
+	private void validarFormEditarItem(SrItemConfiguracao itemConfiguracao) throws Exception {
+		if (itemConfiguracao.getSiglaItemConfiguracao().equals("")) {
+			Validation.addError("siglaAcao", "Código não informado");
 		}
-
 		if (Validation.hasErrors()) {
 			enviarErroValidacao();
 		}
-	}
-	
-	//@AssertAcesso(ADM_ADMINISTRAR)
-	public void gravarDesignacaoItem(SrConfiguracao designacao, Long idItemConfiguracao) throws Exception {
-		designacao.salvarComoDesignacao();
-		designacao.refresh();
 
-		SrItemConfiguracao itemConfiguracao = SrItemConfiguracao.AR.findById(idItemConfiguracao);
-		itemConfiguracao.adicionarDesignacao(designacao);
-		
-		result.use(Results.json())
-			.from(designacao.getSrConfiguracaoJson(itemConfiguracao))
-		    .serialize();
 	}
 	
 	@Path("/buscar")

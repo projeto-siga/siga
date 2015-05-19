@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Itens de Configuração">
+<siga:pagina titulo="Itens de Configura��o">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	
@@ -74,19 +74,19 @@
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th>Código</th>
-							<th>Título</th>
-							<th>Descrição</th>
+							<th>C�digo</th>
+							<th>T�tulo</th>
+							<th>Descri��o</th>
 							<th>Similaridade</th>
 							<th></th>
-							<th>VO Item</th>
+							<th style="display: none;">VO Item</th>
 						</tr>
 					</thead>
 	
 					<tbody>
 						<c:forEach items="${itens}" var="item">
 							<tr data-json-id="${item.idItemConfiguracao}" data-json='${item.toVO().toJson()}' 
-								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
+								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configura��o')"
 								style="cursor: pointer;">
 								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 								<td>${item.siglaItemConfiguracao}</td>
@@ -96,7 +96,7 @@
 								<td class="acoes">
 									<siga:desativarReativar id="${item.idItemConfiguracao}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
 								</td>
-								<td>${item.srItemConfiguracaoJson}</td>
+								<td style="display: none;">${item.srItemConfiguracaoJson}</td>
 							</tr>
 						</c:forEach>
 					</tbody>
@@ -224,14 +224,19 @@
 	var itemConfiguracaoService = new ItemConfiguracaoService(optsLista);
 	
 	itemConfiguracaoService.getId = function(itemConfiguracao) {
-		return itemConfiguracao.id;
+		return itemConfiguracao['itemConfiguracao.idItemConfiguracao'] || itemConfiguracao['idItemConfiguracao'] || '';
 	}
 	itemConfiguracaoService.getIdEdicao = function() {
 		return $('#idItemConfiguracao').val();
 	}
 	itemConfiguracaoService.getRow = function(itemConfiguracao) {
-		return ['', itemConfiguracao.siglaItemConfiguracao, itemConfiguracao.tituloItemConfiguracao,
-				itemConfiguracao.descrItemConfiguracao, itemConfiguracao.descricaoSimilaridade, 'COLUNA_ACOES', itemConfiguracao];
+		return ['', 
+				itemConfiguracao.siglaItemConfiguracao, 
+				itemConfiguracao.tituloItemConfiguracao,
+				itemConfiguracao.descrItemConfiguracao,
+				itemConfiguracao.descricaoSimilaridade,
+				'COLUNA_ACOES',
+				itemConfiguracao];
 	}
 
 	itemConfiguracaoService.onRowClick = function(item) {
@@ -250,8 +255,8 @@
 	itemConfiguracaoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		atualizarModalItem(obj);
-		// carrega as designa��es do item
-		carregarDesignacoes(obj.id);
+		// carrega as designações do item
+		carregarDesignacoes(this.getId(obj));
 	}
 
 	/**
@@ -264,7 +269,7 @@
 	}
 
 	itemConfiguracaoService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + itemConfiguracaoService.getListasAsString();
+		return BaseService.prototype.serializar.call(this, obj)  + "&" + itemConfiguracaoService.getListasAsString() + "&itemConfiguracao=" + this.getId(obj);
 	}
 
 	itemConfiguracaoService.getListasAsString = function() {
@@ -275,9 +280,9 @@
             	tipo = jDivs[0].id;
             
             if(tipo === 'pessoa'){
-            	params += '&itemConfiguracao.gestorSet[' + i + '].dpPessoa.idPessoa=' + jDivs[1].id;
+            	params += '&gestorSet[' + i + '].dpPessoa.idPessoa=' + jDivs[1].id;
             } else if (tipo === 'lotacao') {
-            	params += '&itemConfiguracao.gestorSet[' + i + '].dpLotacao.idLotacao=' + jDivs[1].id;
+            	params += '&gestorSet[' + i + '].dpLotacao.idLotacao=' + jDivs[1].id;
             }                            
         });
         $("#fatoresUl").find("li").each(function(i){
@@ -285,18 +290,20 @@
             	tipoF = jDivsF[0].id;
         	
             if(tipoF === 'pessoa') {
-                params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].dpPessoa.idPessoa=' + jDivsF[1].id;
+                params += '&fatorMultiplicacaoSet[' + i + '].dpPessoa.idPessoa=' + jDivsF[1].id;
             } else if (tipoF === 'lotacao') {
-                params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].dpLotacao.idLotacao=' + jDivsF[1].id;
+                params += '&fatorMultiplicacaoSet[' + i + '].dpLotacao.idLotacao=' + jDivsF[1].id;
             }
 
-            params += '&itemConfiguracao.fatorMultiplicacaoSet[' + i + '].numFatorMultiplicacao=' + parseInt(jDivsF[1].innerHTML.replace(" / Fator: ", ""));
+            params += '&fatorMultiplicacaoSet[' + i + '].numFatorMultiplicacao=' + parseInt(jDivsF[1].innerHTML.replace(" / Fator: ", ""));
    	 	});
 
         return params;
     }
 
 	function carregarDesignacoes(id) {
+		designacaoService.reset();
+		
         $.ajax({
         	type: "GET",
         	url: "/sigasr/app/itemConfiguracao/" + id + "/designacoes",

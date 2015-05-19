@@ -157,6 +157,7 @@
 	});
 	
 	opts.dataTable= $('#atributo_table').dataTable({
+		    stateSave : true,
 			"language": {
 				"emptyTable":     "Não existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",

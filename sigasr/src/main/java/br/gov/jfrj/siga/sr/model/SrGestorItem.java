@@ -13,13 +13,13 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 import br.gov.jfrj.siga.sr.model.vo.SrGestorItemVO;
+import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_GESTOR_ITEM", schema = Catalogs.SIGASR)
-public class SrGestorItem extends Objeto{
+public class SrGestorItem extends ObjetoVraptor {
 
 	/**
 	 * 
@@ -46,6 +46,11 @@ public class SrGestorItem extends Objeto{
 	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
 	private SrItemConfiguracao itemConfiguracao;
 	
+	
+	public SrGestorItem() {
+		super();
+	}
+
 	public SrGestorItemVO toVO() {
 		if (this.dpPessoa != null && this.dpPessoa.getId() != null && (this.dpPessoa.getSigla() == null || this.dpPessoa.getDescricao() == null))
 			this.dpPessoa = DpPessoa.findById(this.dpPessoa.getId());
@@ -86,6 +91,11 @@ public class SrGestorItem extends Objeto{
 
 	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
 		this.itemConfiguracao = itemConfiguracao;
+	}
+
+	@Override
+	protected Long getId() {
+		return this.idGestorItem;
 	}
 	
 }

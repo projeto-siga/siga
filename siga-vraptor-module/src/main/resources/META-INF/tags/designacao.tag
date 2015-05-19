@@ -39,7 +39,7 @@
 					<th>Descri&ccedil;&atilde;o</th>
 					<th>Atendente</th>
 					<th>A&ccedil;&otilde;es</th>
-					<th>JSon - Designa&ccedil;&atilde;o</th>
+					<th style="display:none;">JSon - Designa&ccedil;&atilde;o</th>
 					<th>Checkbox Heran&ccedil;a</th>
 					<th>Herdado</th>
 					<th>Utilizar Herdado</th>
@@ -48,7 +48,7 @@
 			<tbody>
 				<c:forEach items="${requestScope[designacoes]}" var="design">
 					<tr data-json-id="${design.id}" data-json='${design.toVO().toJson()}'
-						onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')"
+						onclick="designacaoService.editar($(this).data('json'), 'Alterar Designa&ccedil;&atilde;o')"
 						style="cursor: pointer;">
 						<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 						<td>${design.orgaoUsuario != null ? design.orgaoUsuario.acronimoOrgaoUsu : ""}</td>
@@ -62,7 +62,7 @@
 								<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"> 
 							</a>
 						</td>
-						<td>${design.getSrConfiguracaoJson()}</td>
+						<td style="display:none;">${design.getSrConfiguracaoJson()}</td>
 						<td class="checkbox-hidden"
 							style="width: 25px !important; padding-left: 5px; padding-right: 5px;">
 							<input type="checkbox" checked="${design.utilizarItemHerdado}"
@@ -281,6 +281,8 @@
 	 * Customiza o metodo editar
 	 */
 	designacaoService.editar = function(obj, title) {
+		document.getElementById("atendenteSelSpan").innerHTML = "";
+        document.getElementById("dpPessoaSelSpan").innerHTML = "";
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		// atualiza as listas
 		atualizarDesignacaoEdicao(obj);

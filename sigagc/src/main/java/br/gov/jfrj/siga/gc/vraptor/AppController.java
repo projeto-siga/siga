@@ -7,8 +7,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.persistence.EntityManager;
@@ -45,6 +47,7 @@ import br.gov.jfrj.siga.gc.util.GcCloud;
 import br.gov.jfrj.siga.gc.util.GcGraficoEvolucao;
 import br.gov.jfrj.siga.gc.util.GcGraficoEvolucaoItem;
 import br.gov.jfrj.siga.gc.util.GcInformacaoFiltro;
+import br.gov.jfrj.siga.gc.util.GcLabelValue;
 import br.gov.jfrj.siga.gc.util.diff_match_patch;
 import br.gov.jfrj.siga.gc.util.diff_match_patch.Diff;
 import br.gov.jfrj.siga.gc.util.diff_match_patch.Operation;
@@ -69,6 +72,7 @@ public class AppController extends GcController {
 		this.correio = correio;
 	}
 
+	private static final String CATEGORIA_OUTRAS = "[Outros]";
 	private static final String HTTP_LOCALHOST_8080 = "http://localhost:8080";
 	private static final int CONTROLE_HASH_TAG = 1;
 
@@ -80,49 +84,76 @@ public class AppController extends GcController {
 		result.include("contagens", contagens);
 	}
 
-	/*
-	 * private static List<GcLabelValue> lCachePontoDeEntrada = null; private
-	 * static Date dtCachePontoDeEntrada = null;
-	 * 
-	 * public static void pontoDeEntrada(String texto) {
-	 * pontosDeEntradaAtualizarCache();
-	 * 
-	 * List<GcLabelValue> l = new ArrayList<GcLabelValue>();
-	 * 
-	 * if (texto != null && texto.trim().length() > 0) { texto =
-	 * GcLabelValue.removeAcento(texto).trim().toLowerCase(); texto =
-	 * texto.replace("  ", " "); String[] palavras = texto.split(" "); for
-	 * (GcLabelValue lv : lCachePontoDeEntrada) { if (lv.fts(palavras))
-	 * l.add(lv); } }
-	 * 
-	 * if (l.size() == 0) renderJSON("[]");
-	 * 
-	 * renderJSON(l); }
-	 * 
-	 * public void pontosDeEntrada(String texto) {
-	 * pontosDeEntradaAtualizarCache();
-	 * 
-	 * Map<String,SortedSet<GcLabelValue>> map = new
-	 * TreeMap<String,SortedSet<GcLabelValue>>(); for (GcLabelValue lv :
-	 * lCachePontoDeEntrada) { String[] a = lv.getLabel().split(": "); if
-	 * (a.length == 2) { if (!map.containsKey(a[0])) map.put(a[0], new
-	 * TreeSet<GcLabelValue>()); map.get(a[0]).add(lv); } else if (a.length ==
-	 * 1) { if (!map.containsKey(CATEGORIA_OUTRAS)) map.put(CATEGORIA_OUTRAS,
-	 * new TreeSet<GcLabelValue>()); map.get(CATEGORIA_OUTRAS).add(lv); } }
-	 * render(map); }
-	 * 
-	 * private void pontosDeEntradaAtualizarCache() { if (lCachePontoDeEntrada
-	 * == null || dtCachePontoDeEntrada == null ||
-	 * dtCachePontoDeEntrada.before(new Date())) { synchronized
-	 * (GcLabelValue.class) { if (lCachePontoDeEntrada == null ||
-	 * dtCachePontoDeEntrada == null || dtCachePontoDeEntrada.before(new
-	 * Date())) { lCachePontoDeEntrada = new ArrayList<GcLabelValue>(); Query q
-	 * = JPA.em().createNamedQuery("pontosDeEntrada"); q.setParameter("texto",
-	 * "%"); List<Object[]> lista = q.getResultList(); for (Object[] ao : lista)
-	 * { GcInformacao i = (GcInformacao) ao[0]; GcArquivo a = (GcArquivo) ao[1];
-	 * lCachePontoDeEntrada.add(new GcLabelValue(a.titulo, i.getSigla())); }
-	 * dtCachePontoDeEntrada = new Date(new Date().getTime() + 60000); } } } }
-	 */
+	private static List<GcLabelValue> lCachePontoDeEntrada = null;
+	private static Date dtCachePontoDeEntrada = null;
+
+	public void pontoDeEntrada(String texto) {
+		pontosDeEntradaAtualizarCache();
+
+		List<GcLabelValue> l = new ArrayList<GcLabelValue>();
+
+		if (texto != null && texto.trim().length() > 0) {
+			texto = GcLabelValue.removeAcento(texto).trim().toLowerCase();
+			texto = texto.replace("  ", " ");
+			String[] palavras = texto.split(" ");
+			for (GcLabelValue lv : lCachePontoDeEntrada) {
+				if (lv.fts(palavras))
+					l.add(lv);
+			}
+		}
+
+		if (l.size() == 0) {
+			result.use(Results.http()).body("[]");
+			return;
+		}
+
+		Gson gson = new GsonBuilder()
+				.setDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").create();
+		result.use(Results.http()).body(gson.toJson(l));
+	}
+
+	public void pontosDeEntrada(String texto) {
+		pontosDeEntradaAtualizarCache();
+
+		Map<String, SortedSet<GcLabelValue>> map = new TreeMap<String, SortedSet<GcLabelValue>>();
+		for (GcLabelValue lv : lCachePontoDeEntrada) {
+			String[] a = lv.getLabel().split(": ");
+			if (a.length == 2) {
+				if (!map.containsKey(a[0]))
+					map.put(a[0], new TreeSet<GcLabelValue>());
+				map.get(a[0]).add(lv);
+			} else if (a.length == 1) {
+				if (!map.containsKey(CATEGORIA_OUTRAS))
+					map.put(CATEGORIA_OUTRAS, new TreeSet<GcLabelValue>());
+				map.get(CATEGORIA_OUTRAS).add(lv);
+			}
+		}
+		result.include("map", map);
+	}
+
+	private void pontosDeEntradaAtualizarCache() {
+		if (lCachePontoDeEntrada == null || dtCachePontoDeEntrada == null
+				|| dtCachePontoDeEntrada.before(new Date())) {
+			synchronized (GcLabelValue.class) {
+				if (lCachePontoDeEntrada == null
+						|| dtCachePontoDeEntrada == null
+						|| dtCachePontoDeEntrada.before(new Date())) {
+					lCachePontoDeEntrada = new ArrayList<GcLabelValue>();
+					Query q = em().createNamedQuery("pontosDeEntrada");
+					q.setParameter("texto", "%");
+					List<Object[]> lista = q.getResultList();
+					for (Object[] ao : lista) {
+						GcInformacao i = (GcInformacao) ao[0];
+						GcArquivo a = (GcArquivo) ao[1];
+						lCachePontoDeEntrada.add(new GcLabelValue(a.titulo, i
+								.getSigla()));
+					}
+					dtCachePontoDeEntrada = new Date(
+							new Date().getTime() + 60000);
+				}
+			}
+		}
+	}
 
 	@Path("/public/app/knowledge")
 	public void publicKnowledge(Long id, String[] tags, String msgvazio,
@@ -133,10 +164,11 @@ public class AppController extends GcController {
 	}
 
 	public void knowledge(Long id, String[] tags, String msgvazio,
-			String urlvazio, String titulo, boolean popup, String estiloBusca,
-			Boolean podeCriar) throws Exception {
-		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo, false,
-				popup, estiloBusca, podeCriar);
+			String urlvazio, String titulo, boolean testarAcesso,
+			boolean popup, String estiloBusca, Boolean podeCriar)
+			throws Exception {
+		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca, podeCriar);
 	}
 
 	public void knowledgeInplace(Long id, String[] tags, String msgvazio,
@@ -586,9 +618,9 @@ public class AppController extends GcController {
 				|| informacao.podeRevisar(titular, lotaTitular)
 				|| informacao.acessoPermitido(titular, lotaTitular,
 						informacao.edicao.id)) {
-			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.AR.all()
-					.fetch();
-			List<GcAcesso> acessos = GcAcesso.AR.all().fetch();
+			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.AR.find(
+					"order by id").fetch();
+			List<GcAcesso> acessos = GcAcesso.AR.find("order by id").fetch();
 			if (inftitulo == null)
 				inftitulo = (informacao.arq != null) ? informacao.arq.titulo
 						: null;
@@ -748,6 +780,27 @@ public class AppController extends GcController {
 		}
 	}
 
+	public void exibirPontoDeEntrada(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		DpPessoa titular = getTitular();
+		DpLotacao lotaTitular = getLotaTitular();
+		CpIdentidade idc = getIdentidadeCadastrante();
+
+		if (informacao.acessoPermitido(titular, lotaTitular,
+				informacao.visualizacao.id)) {
+			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
+					.getConteudoTXT());
+			if (conteudo != null)
+				informacao.arq.setConteudoTXT(conteudo);
+			bl.logarVisita(informacao, idc, titular, lotaTitular);
+			result.include("informacao", informacao);
+		} else
+			throw new AplicacaoException(
+					"Restrição de Acesso ("
+							+ informacao.visualizacao.nome
+							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
+	}
+
 	@Path("/app/historico/{sigla}")
 	public void historico(String sigla) throws Exception {
 		result.forwardTo(this).exibir(sigla, null, true, false);
@@ -859,7 +912,7 @@ public class AppController extends GcController {
 					CONTROLE_HASH_TAG);
 
 		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
-				&& informacao.grupo == null)
+				&& informacao.getGrupo() == null)
 			throw new Exception(
 					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restrição.");
 
@@ -909,20 +962,26 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
-	public void notificarGravar(GcInformacao informacao, Long pessoa,
-			Long lotacao, String email) throws Exception {
+	public void notificarGravar(GcInformacao informacao, DpPessoa pessoa,
+			DpLotacao lotacao, String email) throws Exception {
+		// Nato: precisei fazer isso pq não vem attached e depois será feito um
+		// lazy-load. Precisamos melhorar depois.
+		informacao = GcInformacao.AR.findById(informacao.id);
+
+		// Nato: precisei fazer isso pq o vraptor injeta a entidade vazia. O
+		// ideal seria injetar null se nenhum parâmetro for especificado.
+		if (pessoa != null && pessoa.getId() == null)
+			pessoa = null;
+		if (lotacao != null && lotacao.getId() == null)
+			lotacao = null;
+
 		if (pessoa != null || lotacao != null || email != null) {
-			DpPessoa pesResponsavel = (DpPessoa) ((pessoa != null) ? DpPessoa.AR
-					.findById(pessoa) : null);
-			DpLotacao lotResponsavel = (DpLotacao) ((lotacao != null) ? DpLotacao.AR
-					.findById(lotacao) : null);
 			bl.movimentar(informacao,
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR,
-					pesResponsavel, lotResponsavel, email, null, null, null,
-					null, null, null);
+					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pessoa,
+					lotacao, email, null, null, null, null, null, null);
 			bl.gravar(informacao, getIdentidadeCadastrante(), getTitular(),
 					getLotaTitular());
-			correio.notificar(informacao, pesResponsavel, lotResponsavel, email);
+			correio.notificar(informacao, pessoa, lotacao, email);
 			result.redirectTo(this).exibir(informacao.getSiglaCompacta(),
 					"Notificacao realizada com sucesso!", false, false);
 		} else
@@ -936,21 +995,27 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
-	public void solicitarRevisaoGravar(GcInformacao informacao, Long pessoa,
-			Long lotacao) throws Exception {
+	public void solicitarRevisaoGravar(GcInformacao informacao,
+			DpPessoa pessoa, DpLotacao lotacao) throws Exception {
+
+		// Nato: precisei fazer isso pq não vem attached e depois será feito um
+		// lazy-load. Precisamos melhorar depois.
+		informacao = GcInformacao.AR.findById(informacao.id);
+
+		// Nato: precisei fazer isso pq o vraptor injeta a entidade vazia. O
+		// ideal seria injetar null se nenhum parâmetro for especificado.
+		if (pessoa != null && pessoa.getId() == null)
+			pessoa = null;
+		if (lotacao != null && lotacao.getId() == null)
+			lotacao = null;
+
 		if (pessoa != null || lotacao != null) {
-			DpPessoa pesResponsavel = (DpPessoa) ((pessoa != null) ? DpPessoa.AR
-					.findById(pessoa) : null);
-			DpLotacao lotResponsavel = (DpLotacao) ((lotacao != null) ? DpLotacao.AR
-					.findById(lotacao) : null);
 			bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO,
-					pesResponsavel, lotResponsavel, null, null, null, null,
-					null, null, null);
+					pessoa, lotacao, null, null, null, null, null, null, null);
 			bl.gravar(informacao, getIdentidadeCadastrante(), getTitular(),
 					getLotaTitular());
-			result.redirectTo(this).result.redirectTo(this).exibir(
-					informacao.getSiglaCompacta(),
+			result.redirectTo(this).exibir(informacao.getSiglaCompacta(),
 					"Solicitação de revisão realizada com sucesso!", false,
 					false);
 		} else

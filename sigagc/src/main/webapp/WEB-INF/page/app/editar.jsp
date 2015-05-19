@@ -33,7 +33,7 @@
 
 			<div class="gt-form gt-content-box">
 				<form id="frm" action="${linkTo[AppController].gravar}"
-					method="POST">
+					method="POST" enctype="multipart/form-data">
 					<c:if test="${informacao.id != 0}">
 					</c:if>
 					<input type="hidden" id="infoId" name="informacao.id"
@@ -63,8 +63,8 @@
 						style="display: none">
 						<label>Grupo</label>
 						<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-							<siga:selecao propriedade="informacao.grupo" modulo="siga"
-								tipo="perfil" tema="simple" ocultardescricao="nao" />
+							<siga:selecao2 propriedade="informacao.grupo" modulo="siga"
+								tipo="perfil" tema="simple" />
 						</div>
 					</div>
 
@@ -284,7 +284,7 @@
 				.replace(
 						'conteudo',
 						{
-							filebrowserUploadUrl : '@{Application.gravarArquivo}?origem=editar',
+							filebrowserUploadUrl : '${linkTo[AppController].gravarArquivo}?origem=editar',
 							toolbar : [
 									{
 										name : 'clipboard',

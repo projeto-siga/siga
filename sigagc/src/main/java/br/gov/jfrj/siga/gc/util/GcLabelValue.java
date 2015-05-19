@@ -1,4 +1,4 @@
-package utils;
+package br.gov.jfrj.siga.gc.util;
 
 import java.text.Normalizer;
 

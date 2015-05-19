@@ -63,7 +63,11 @@
         	br.com.caelum.vraptor.util.jpa
    		</param-value>
 	</context-param>
-
+	
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>

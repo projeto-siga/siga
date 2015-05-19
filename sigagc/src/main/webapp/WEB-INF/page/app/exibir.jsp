@@ -37,6 +37,11 @@
 				<p>
 					<b>Órgão Usuário:</b> ${informacao.ou.acronimoOrgaoUsu}
 				</p>
+				<c:if test="${not emptyinformacao.grupo}">
+				<p>
+					<b>Grupo:</b> ${informacao.grupo.siglaGrupo} - ${informacao.grupo.dscGrupo}
+				</p>
+				</c:if>				
 				<p>
 					<b>Visualização:</b> ${informacao.visualizacao.nome}
 				</p>

@@ -37,7 +37,7 @@
 	       $("#uploader").plupload({
 	           // General settings
 	           runtimes : 'html5,flash,silverlight,html4',
-	           url: '@{Application.anexarGravar}', 
+	           url: '${linkTo[AppController].anexarGravar}', 
 	           max_file_count: 0,
 	           prevent_duplicates: true,
 	           //chunk_size: '1mb',
@@ -46,9 +46,9 @@
 	               max_file_size: '2mb', //-- quando alterar esse valor alterar tb o arquivo pt_BR.js para alterar a msg de erro
 	               // Specify what files to browse for
 	               mime_types: [
-	                   {title: "Todos os arquivos", extensions : "jpg,gif,png,tiff,txt,doc,docx,xls,xlsx,ppt,pptx,pdf"},
-	                   {title: "Arquivos de imagem", extensions : "jpg,gif,png,tiff"},
-	                   {title: "Arquivos de documento", extensions:"txt,doc,docx,xls,xlsx,ppt,pptx,pdf"}
+	                            {title: "Todos os arquivos", extensions : "jpg,bmp,png,doc,docx,xls,xlsx,ppt,pptx,pdf,txt"},
+	                            {title: "Arquivos de imagem", extensions : "jpg,bmp,png"},
+	                            {title: "Arquivos de documento", extensions:"doc,docx,xls,xlsx,ppt,pptx,pdf,txt"}
 	               ]
 	           },
 	           // Rename files by clicking on their titles
@@ -59,7 +59,8 @@
 	           dragdrop: true,
 	           multipart: true,
 	           multipart_params: {
-	               "informacao.id": "${informacao?.id}",
+	               "informacao.id": "${informacao.id}",
+	               "origem": "anexar"
 	           },
 	           // Views to activate
 	           views: {            
@@ -78,14 +79,14 @@
 	               FilesAdded: function(up, files) {
 	                   if(up.files.length == 1) {
 	                       $('#uploader').plupload('notify', 'info', "Dica! <br />" + 
-	                                               "Clique duas vezes em cima do nome do arquivo, caso queira alterá-lo.");
+	                                               "Clique duas vezes em cima do nome do arquivo, caso queira alter�-lo.");
 	                       $("div.plupload_message").addClass("dica");
 	                       $(".dica").delay(10000).fadeOut("fast", "linear");        
 	                   }
 	                   else if(up.files.length == $maxFiles) {
 	                       $("div.plupload_message").remove();
-	                       $('#uploader').plupload('notify', 'info', "Aviso: Limite máximo atingido.<br /> Só é possível anexar "
-	                               + $maxFiles + " arquivos de uma única vez.");
+	                       $('#uploader').plupload('notify', 'info', "Aviso: Limite m�ximo atingido.<br /> N�o � poss�vel anexar "
+	                               + $maxFiles + " arquivos de uma �nica vez.");
 	                       up.disableBrowse();
 	                       $("#uploader_browse").addClass("ui-button-disabled ui-state-disabled");
 	                   }

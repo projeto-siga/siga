@@ -656,7 +656,7 @@ public class GcBL {
 	/**
 	 * Metodo que grava arquivos no GcArquivo e atrela esse arquivo a um conhecimento atraves  
 	 * da movimentacao TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO.
-	 * Chamado pela p�gina anexar.html
+	 * Chamado pela página anexar.html
 	 */
 	public void gravarArquivoComMovimentacao(GcInformacao info,
 			CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular,

@@ -128,7 +128,7 @@ public class GcInformacao extends Objeto {
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_GRUPO")
-	public CpGrupo grupo;
+	private CpGrupo grupo;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
@@ -596,7 +596,7 @@ public class GcInformacao extends Objeto {
 						.getConf()
 						.consultarPerfisPorPessoaELotacao(titular, lotaTitular,
 								new Date())) {
-					if (perfil.equivale(grupo))
+					if (perfil.equivale(getGrupo()))
 						return true;
 				}
 			} catch (Exception e) {
@@ -759,5 +759,13 @@ public class GcInformacao extends Objeto {
 
 	public CpIdentidade getHisIdcIni() {
 		return hisIdcIni;
+	}
+
+	public CpGrupo getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(CpGrupo grupo) {
+		this.grupo = grupo;
 	}
 }

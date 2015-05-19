@@ -166,6 +166,10 @@
                                                 class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
 						</td>
 					</tr>
+					
+                    <tr class="header">
+                        <td align="center" valign="top" colspan="2" style="border-radius: 5px;">Designações</td>
+                    </tr>
 				</table>
 				
 				<div id="divDesignacoes" class="gt-form-row">

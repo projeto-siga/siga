@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Itens de Configuração">
+<siga:pagina titulo="Itens de Configuraï¿½ï¿½o">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	
@@ -57,7 +57,7 @@
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
-			<h2>Itens de Configuração</h2>
+			<h2>Itens de ConfiguraÃ§Ã£o</h2>
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
@@ -74,9 +74,9 @@
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th>Código</th>
-							<th>Título</th>
-							<th>Descrição</th>
+							<th>Cï¿½digo</th>
+							<th>Tï¿½tulo</th>
+							<th>Descriï¿½ï¿½o</th>
 							<th>Similaridade</th>
 							<th></th>
 							<th style="display: none;">VO Item</th>
@@ -85,8 +85,8 @@
 	
 					<tbody>
 						<c:forEach items="${itens}" var="item">
-							<tr data-json-id="${item.id}" data-json='${item.toVO().toJson()}' 
-								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
+							<tr data-json-id="${item.idItemConfiguracao}" data-json='${item.toVO().toJson()}' 
+								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuraï¿½ï¿½o')"
 								style="cursor: pointer;">
 								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 								<td>${item.siglaItemConfiguracao}</td>
@@ -94,7 +94,7 @@
 								<td>${item.descrItemConfiguracao}</td>
 								<td>${item.descricaoSimilaridade}</td>
 								<td class="acoes">
-									<siga:desativarReativar id="${item.id}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
+									<siga:desativarReativar id="${item.idItemConfiguracao}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
 								</td>
 								<td style="display: none;">${item.srItemConfiguracaoJson}</td>
 							</tr>
@@ -224,7 +224,7 @@
 	var itemConfiguracaoService = new ItemConfiguracaoService(optsLista);
 	
 	itemConfiguracaoService.getId = function(itemConfiguracao) {
-		return itemConfiguracao.id || itemConfiguracao['itemConfiguracao.id'] || itemConfiguracao[''];
+		return itemConfiguracao['itemConfiguracao.idItemConfiguracao'] || itemConfiguracao['idItemConfiguracao'] || '';
 	}
 	itemConfiguracaoService.getIdEdicao = function() {
 		return $('#idItemConfiguracao').val();
@@ -256,7 +256,7 @@
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		atualizarModalItem(obj);
 		// carrega as designaÃ§Ãµes do item
-		carregarDesignacoes(obj.id);
+		carregarDesignacoes(this.getId(obj));
 	}
 
 	/**
@@ -313,7 +313,7 @@
         		designacaoService.populateFromJSonList(listaJSon);
         	},
         	error: function(error) {
-            	alert("Não foi possível carregar as Designações deste item.");
+            	alert("NÃ£o foi possÃ­vel carregar as DesignaÃ§Ãµes deste item.");
         	}
        	});
     }

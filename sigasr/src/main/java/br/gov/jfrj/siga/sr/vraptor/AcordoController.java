@@ -13,13 +13,20 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.enumeration.SrUnidadeMedida;
+import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoAcordo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
+import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrOperador;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
@@ -58,6 +65,13 @@ public class AcordoController extends SrController {
 		result.include("locais", locais);
 		result.include("operadores", SrOperador.values());
 		result.include("prioridades", SrPrioridade.values());
+		
+		result.include("dpPessoaSel", new DpPessoaSelecao());
+		result.include("atendenteSel", new DpLotacaoSelecao());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+		result.include("cargoSel", new DpCargoSelecao());
+		result.include("cpGrupoSel", new CpPerfilSelecao());
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
@@ -129,9 +143,11 @@ public class AcordoController extends SrController {
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	public void gravarAbrangencia(SrConfiguracao associacao) throws Exception {
+	public void gravarAbrangencia(SrConfiguracao associacao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
+		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
+		associacao.setAcoesSet(acoesSet);
+		
 		associacao.salvarComoAbrangenciaAcordo();
-		associacao.refresh();
 
 		result.use(Results.http()).body(associacao.toJson());
 	}

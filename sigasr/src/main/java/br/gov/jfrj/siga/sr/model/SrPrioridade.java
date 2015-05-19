@@ -10,7 +10,7 @@ import com.google.gson.JsonObject;
 
 public enum SrPrioridade {
 
-	IMEDIATO(5, "Imediata"), ALTO(4, "Alta"), MEDIO(3, "MÃ©dia"), 
+	IMEDIATO(5, "Imediata"), ALTO(4, "Alta"), MEDIO(3, "Média"), 
 	BAIXO(2, "Baixa"), PLANEJADO(1, "Planejada");
 	
 	private int idPrioridade;

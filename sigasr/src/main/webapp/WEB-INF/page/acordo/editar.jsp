@@ -104,9 +104,9 @@
 			</div>
 
 			<div class="gt-form-row">
-				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="acordoService.gravar()" />
+				<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();acordoService.gravar()" />
 				<a class="gt-btn-medium gt-btn-left" onclick="acordoService.cancelarGravacao()">Cancelar</a>
-				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="acordoService.aplicar()" />
+				<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="preparaObjeto();acordoService.aplicar()" />
 			</div>
 		</form>
 	</div>
@@ -151,6 +151,7 @@
 <siga:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o">
 	<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 		<input id="idConfiguracao" type="hidden" name="idConfiguracao">
+		<input type="hidden" name="associacao">
 		<input id="hisIdIni" type="hidden" name="hisIdIni">
 	
 		<div id="divSolicitante" class="gt-form-row gt-width-100">
@@ -268,6 +269,29 @@
 	colunasAssociacao.botaoExcluir =                16;
 	colunasAssociacao.jSon = 						17;
 
+	var preparaObjeto = function() {
+		var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo", "cpGrupo"];
+		
+		solicitanteTypes.forEach(function(entry) {
+			var inputName = entry + "Sel.id";
+			var inputValue = $( "input[name='" + inputName + "']" ).val();
+		    if(inputValue != "")
+			    $("input[name='associacao." + entry + "']" ).val(inputValue);
+		});
+
+		var orgaoUsuarioValue = $('#orgaoUsuario').find(":selected").val();
+		if(orgaoUsuarioValue != "") 
+		    $("input[name='associacao.orgaoUsuario']").val(orgaoUsuarioValue);
+			
+		var complexoValue = $('#complexo').find(":selected").val();
+		if(complexoValue != "")
+		    $("input[name='associacao.complexo']").val(complexoValue);
+
+		var atendenteValue =$( "input[name='atendenteSel.id']" ).val();
+		if(atendenteValue != "") 
+		    $("input[name='associacao.atendente']").val(atendenteValue);
+	}
+	
     jQuery("#checkmostrarAssocDesativada").click(function() {
     	tableAssociacao.api().clear().draw();
         
@@ -394,10 +418,10 @@
 	function limparDadosAssociacaoModal() {
 		unblock();
 
-		$("#atendente").val('');
-		$("#atendente_descricao").val('');
-		$("#atendente_sigla").val('');
-		$("#atendenteSpan").html('');
+		$("#formulario_atendenteSel_id").val('');
+		$("#formulario_atendenteSel_descricao").val('');
+		$("#formulario_atendenteSel_sigla").val('');
+		$("#atendenteSelSpan").html('');
 		$("#idConfiguracao").val('');
 		$("#hisIdIni").val('');
 
@@ -418,15 +442,14 @@
 		limparDadosAssociacaoModal();
 
 		// Atualiza campos Selecao
-		$("#atendente").val(itemArray[colunasAssociacao.idAtendente]);
-		$("#atendente_descricao").val(itemArray[colunasAssociacao.descricaoAtendente]);
-		$("#atendente_sigla").val(itemArray[colunasAssociacao.atendente]);
-		$("#atendenteSpan").html(itemArray[colunasAssociacao.descricaoAtendente]);
-		$("#dpPessoa").val(itemArray[colunasAssociacao.idSolicitante]);
-		$("#dpPessoa_sigla").val(itemArray[colunasAssociacao.solicitante]);
-		$("#dpPessoaSpan").html(itemArray[colunasAssociacao.descricaoSolicitante]);
+		$("#formulario_atendenteSel_id").val(itemArray[colunasAssociacao.idAtendente]);
+		$("#formulario_atendenteSel_descricao").val(itemArray[colunasAssociacao.descricaoAtendente]);
+		$("#formulario_atendenteSel_sigla").val(itemArray[colunasAssociacao.atendente]);
+		$("#atendenteSelSpan").html(itemArray[colunasAssociacao.descricaoAtendente]);
 		$("#idConfiguracao").val(itemArray[colunasAssociacao.idAssociacao]);
 		$("#hisIdIni").val(itemArray[colunasAssociacao.hisIdIni]);
+
+		preencheDadosSolicitante(itemArray[colunasAssociacao.jSon].solicitante);
 
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
@@ -439,15 +462,31 @@
 		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[colunasAssociacao.tipoSolicitante]);
 
 		// atualiza os valores do componente pessoaLotaFuncCargoSelecao
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(itemArray[colunasAssociacao.jSon].solicitante.tipo);
 		getIdFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).val(itemArray[colunasAssociacao.idSolicitante]);
 		getDescricaoFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).val(itemArray[colunasAssociacao.descricaoSolicitante]);
         getSiglaFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).val(itemArray[colunasAssociacao.solicitante]);
         getSpanFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).html(itemArray[colunasAssociacao.descricaoSolicitante]);
-        
-        $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 
         // atualiza os dados da lista de Itens e Ações
         configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(itemArray[colunasAssociacao.jSon]);
+	}
+
+	function preencheDadosSolicitante(solicitante) {
+		var tipos = ["dpPessoa", "lotacao", "funcaoConfianca", "cargo", "cpGrupo"];
+		var tipo = "";
+		
+		try {
+			tipo = tipos[solicitante.tipo - 1];
+		} catch(err) {
+			tipo = 0;
+		}
+
+		$("#formulario_" + tipo + "Sel_id").val(solicitante.id);
+		$("#formulario_" + tipo + "Sel_descricao").val(solicitante.descricao);
+		$("#formulario_" + tipo + "Sel_sigla").val(solicitante.sigla);
+		$("#formulario_" + tipo + "Sel_buscar").val(solicitante.buscar);
+		$("#"+ tipo + "SelSpan").html(solicitante.descricao);
 	}
 
 	function transformStringToBoolean(value) {
@@ -519,20 +558,52 @@
 		params += '&associacao.orgaoUsuario=' + row[colunasAssociacao.idOrgao];
 		params += '&associacao.complexo=' + row[colunasAssociacao.idLocal];
 		params += '&associacao.prioridade=' + row[colunasAssociacao.idPrioridade];
-        params += '&associacao.atendente=' + row[colunasAssociacao.idAtendente];
-        params += '&associacao.idConfiguracao=' + row[colunasAssociacao.idAssociacao];
+        params += '&associacao=' + row[colunasAssociacao.idAssociacao];
         params += '&associacao.hisIdIni=' + row[colunasAssociacao.hisIdIni];
        	params += configuracaoItemAcaoService.getItemAcaoAsString('associacao');
 
        	// atualiza o solicitante
-		params += getDadosSolicitante(row, i);
-
+		params += getDadosSolicitanteSel();
+		
 		if ($("#id").val() != undefined && $("#id").val() != '')
 		params += '&associacao.acordo.idAcordo=' + $("#id").val();
 
 		return params;
 	};
 
+	function getDadosSolicitanteSel() {
+		var params = "";
+		params += '&associacao.atendente=' + $('#formulario_atendenteSel_id').val();
+
+		var solicitante = getSolicitante();
+		params += '&associacao.' + solicitante.name + '=' + solicitante.id;
+
+		return params;
+	};
+
+	function getSolicitante() {
+		var solicitante = {"name": '', "id":'', "descricao": '', "sigla": ''};
+		$('#divSolicitante span').each(function(i,span){
+			$(span).find('input').filter(function(i, input){
+			    if($(input).attr('name') !== undefined && $(input).val() !== ''){
+			      
+			    	if($(input).attr('name').endsWith('descricao'))
+			       		solicitante.descricao = $(input).val();
+			     
+			     	if($(input).attr('name').endsWith('sigla'))
+			      		solicitante.sigla = $(input).val();
+			    
+			      	if($(input).attr('name').endsWith('id')) {
+			        	solicitante.name = $(input).closest('span').find(".pessoaLotaFuncCargoSelecao").attr('name');
+			        	solicitante.id = $(input).val();
+			      	}
+			    }
+			});
+		});
+
+		return solicitante;
+	}
+	
 	function getDadosSolicitante(rowValues, i) {
     	var params = '';
  
@@ -594,7 +665,8 @@
 			jPrioridade = jPrioridadeCbb.options[jPrioridadeCbb.selectedIndex];
 			jPessoaLotaFuncCargoCbb = $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0],
 			jPessoaLotaFuncCargo = jPessoaLotaFuncCargoCbb.options[jPessoaLotaFuncCargoCbb.selectedIndex];
-		
+		var solicitante = getSolicitante();
+
 		var row = [
 					'+',                                                                    // colunasAssociacao.botaoExpandir
 					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.value : '',
@@ -602,12 +674,12 @@
 	          		jComplexo.value > 0 ? jComplexo.value : '',
 	          		jComplexo.value > 0 ? jComplexo.text : '',
 	          		jPessoaLotaFuncCargo.value > 0 ? jPessoaLotaFuncCargo.value : '',
-          			getIdFieldSolicitante(jPessoaLotaFuncCargo.value).val() > 0 ? getIdFieldSolicitante(jPessoaLotaFuncCargo.value).val() : '',
-          			getDescricaoFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
-          			getSiglaFieldSolicitante(jPessoaLotaFuncCargo.value).val(),
-	          		$("#atendente").val() > 0 ? $("#atendente").val() : '',
-          			$("#atendente_descricao").val(),
-          			$("#atendente_sigla").val(),
+	          		solicitante.id,
+	          		solicitante.descricao,
+	          		solicitante.sigla,
+					$("#formulario_atendenteSel_id").val() > 0 ? $("#formulario_atendenteSel_id").val() : '',
+          			$("#formulario_atendenteSel_descricao").val(),
+          			$("#formulario_atendenteSel_sigla").val(),
           			jPrioridade.value != '' ? jPrioridade.value : '',
 	          		jPrioridade.value != '' ? jPrioridade.text : '',
 					idAssociacao > 0 ? idAssociacao : '',															// colunasAssociacao.idAssociacao
@@ -618,7 +690,7 @@
 
 		$.ajax({
 	         type: "POST",
-	         url: "${linkTo[AcordoController].gravarAbrangencia}?associacao=" + associacao,
+	         url: "${linkTo[AcordoController].gravarAbrangencia}",
 	         data: serializeAssociacao(row),
 	         dataType: "text",
 	         success: function(jSon) {

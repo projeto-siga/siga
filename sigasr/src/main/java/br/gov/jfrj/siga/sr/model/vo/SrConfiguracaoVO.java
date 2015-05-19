@@ -102,7 +102,7 @@ public class SrConfiguracaoVO {
 		setFuncaoConfianca(SelecionavelVO.createFrom(configuracao.getFuncaoConfianca(), configuracao.getTipoSolicitante()));
 		setCpGrupo(SelecionavelVO.createFrom(configuracao.getCpGrupo(), configuracao.getTipoSolicitante()));
 
-		setSolicitante(SelecionavelVO.createFrom(configuracao.getSolicitante()));
+		setSolicitante(SelecionavelVO.createFrom(configuracao.getSolicitante(),configuracao.getTipoSolicitante()));
 	}
 
 	public SrConfiguracaoVO(SrConfiguracao configuracao, boolean atributoObrigatorio) {

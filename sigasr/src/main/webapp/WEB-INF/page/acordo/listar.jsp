@@ -175,7 +175,7 @@
 			 tabelaRegistros : $('#acordo_table'),
 			 objectName : 'acordo',
 			 formCadastro : jQuery('#acordoForm'),
-			 mostrarDesativados : QueryString.mostrarDesativados,
+			 mostrarDesativados : $('#checkmostrarDesativados').attr('checked') ? true : false,
 			 colunas : colunasAcordo.acoes
 	};
 

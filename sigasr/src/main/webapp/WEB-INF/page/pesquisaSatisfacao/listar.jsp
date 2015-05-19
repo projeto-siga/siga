@@ -120,6 +120,7 @@
 			  });
 
 		opts.dataTable= $('#pesquisa_table').dataTable({
+			stateSave : true,
 			"language": {
 				"emptyTable":     "N&atilde;o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",

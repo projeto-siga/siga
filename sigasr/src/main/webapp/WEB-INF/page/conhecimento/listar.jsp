@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina>
+<siga:pagina titulo="Edição de Conhecimento">
 	<jsp:include page="../main.jsp"></jsp:include>
 	<div class="gt-bd gt-cols clearfix">
 	    <div class="gt-content">

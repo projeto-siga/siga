@@ -195,11 +195,12 @@
 
 		<div class="gt-form-row gt-width-100">
 			<label>Prioridade</label> 
-				<siga:select name="prioridade" list="prioridades"
-					listKey="idPrioridade" id="prioridade"
-					headerValue="" headerKey="0"
-					listValue="descPrioridade" theme="simple"
-					value="${prioridade}" />
+		    <select name="prioridade" id="prioridade">
+				<option value="0"></option>
+				<c:forEach items="${prioridades}" var="item">
+				   <option value="${item}">${item.descPrioridade}</option>
+				</c:forEach>
+		    </select>
 		</div>
 
 		<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>

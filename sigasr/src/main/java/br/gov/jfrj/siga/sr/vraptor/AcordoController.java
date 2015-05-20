@@ -65,7 +65,7 @@ public class AcordoController extends SrController {
 		result.include("locais", locais);
 		result.include("operadores", SrOperador.values());
 		result.include("prioridades", SrPrioridade.values());
-		
+
 		result.include("dpPessoaSel", new DpPessoaSelecao());
 		result.include("atendenteSel", new DpLotacaoSelecao());
 		result.include("lotacaoSel", new DpLotacaoSelecao());
@@ -77,9 +77,7 @@ public class AcordoController extends SrController {
 	//@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravarAcordo(SrAcordo acordo, List<SrAtributoAcordo> atributoAcordoSet, List<Integer> unidadeMedida ) throws Exception {
-		acordo.getAtributoAcordoSet().clear();
-
-		if(isNotEmptyUnidadeMedida(unidadeMedida))  
+		if(isNotEmptyUnidadeMedida(unidadeMedida))
 			acordo.getAtributoAcordoSet().addAll(buscaAtributosAcordo(atributoAcordoSet, unidadeMedida));
 
 		acordo.salvar();
@@ -100,7 +98,7 @@ public class AcordoController extends SrController {
 
 	private List<SrAtributoAcordo> buscaAtributosAcordo(List<SrAtributoAcordo> atributoAcordo, List<Integer> unidadeMedida)  {
 		HashMap<Integer, CpUnidadeMedida> unidadesMedidaEncontradas = getUnidadesMedida(unidadeMedida);
-		
+
 		for (int i = 0; i < atributoAcordo.size(); i++) {
 			CpUnidadeMedida cpUnidadeMedida = unidadesMedidaEncontradas.get(i);
 			SrAtributoAcordo srAtributoAcordo = atributoAcordo.get(i);
@@ -108,7 +106,7 @@ public class AcordoController extends SrController {
 		}
 		return atributoAcordo;
 	}
-	
+
 	private boolean isNotEmptyUnidadeMedida(List<Integer> unidadeMedida) {
 		return unidadeMedida != null && !unidadeMedida.isEmpty();
 	}
@@ -146,7 +144,7 @@ public class AcordoController extends SrController {
 	public void gravarAbrangencia(SrConfiguracao associacao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
 		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
 		associacao.setAcoesSet(acoesSet);
-		
+
 		associacao.salvarComoAbrangenciaAcordo();
 
 		result.use(Results.http()).body(associacao.toJson());

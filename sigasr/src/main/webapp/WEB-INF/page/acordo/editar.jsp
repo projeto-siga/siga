@@ -827,8 +827,10 @@
 		        open: function(){
 	                if (jDialog.data("valor"))
 		                jDialog.dialog('option', 'title', 'Alterar Parametro');
-	                else
-		                jDialog.dialog('option', 'title', 'Incluir Parametro');
+	                else {
+			                jDialog.dialog('option', 'title', 'Incluir Parametro');
+			                $("#valor-error").html('');
+		                }
 	                
 	                jValor.val(jDialog.data("valor"));
 	                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);

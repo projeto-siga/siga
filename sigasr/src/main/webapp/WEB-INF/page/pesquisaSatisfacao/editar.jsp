@@ -74,7 +74,7 @@
 				<form id="perguntaForm">
 					<div class="gt-form-row">
 						<label>Pergunta <span>*</span></label> <input type="text"
-							id="descrPergunta" name="descrPergunta" value="" size="60"
+							id="descrPergunta" name="descrPergunta" value="${descrPergunta}" size="60"
 							maxlength="255" required />
 					</div>
 					<div class="gt-form-row">
@@ -122,8 +122,9 @@
         $( "#perguntas" ).disableSelection();
 
         $("#botaoIncluir").click(function() {
+        	document.getElementById("descrPergunta").className = "";
         	perguntaFormValidator.resetForm();
-			jDialog.data('pesquisa', perguntas.incluirItem).dialog('open');
+			jDialog.data('acao', perguntas.incluirItem).dialog('open');
         });
 
         jDialog.dialog({
@@ -146,22 +147,23 @@
                         jTipoPergunta.find("option[value=" + jDialog.data("tipoPergunta") + "]").prop('selected', true);
                 }
         });
-        
+
         $("#modalOk").click(function(){
-            if (!jQuery("#perguntaForm").valid())
+        	if (!jQuery("#perguntaForm").valid())
                 return false;
 
-            var idTipoPerguntaSelecionado = $("#tipoPergunta").val();
-            if (idTipoPerguntaSelecionado == null || idTipoPerguntaSelecionado == undefined || idTipoPerguntaSelecionado == 0) {
-                alert("Informe um Tipo de Pergunta diferente de Indefinido.");
-                return false;
-            }
+        		var idTipoPerguntaSelecionado = $("#tipoPergunta").val();
+             	if (idTipoPerguntaSelecionado == null || idTipoPerguntaSelecionado == undefined || idTipoPerguntaSelecionado == 0) {
+                	alert("Informe um Tipo de Pergunta diferente de Indefinido.");
+                	return false;
+             	}
 
-            var pesquisa = jDialog.data('acao');
-            var jTipoEscolhido = jTipoPergunta.find("option:selected");
-            pesquisa(jDescrPergunta.val(), jTipoEscolhido.val(), jTipoEscolhido.text(), jDialog.data("id"));
-            jDialog.dialog('close');
+                var acao = jDialog.data('acao');
+                var jTipoEscolhido = jTipoPergunta.find("option:selected");
+                acao(jDescrPergunta.val(), jTipoEscolhido.val(), jTipoEscolhido.text(), jDialog.data("id"));
+                jDialog.dialog('close');
         });
+
         $("#modalCancel").click(function(){
             jDialog.dialog('close');
         });
@@ -180,7 +182,7 @@
                         jDialog.data("descrPergunta",jDivs[0].innerHTML)
                                 .data("tipoPergunta",jDivs[1].id)
                                 .data("id",id)
-                                .data("pesquisa", perguntas.alterarItem)
+                                .data("acao", perguntas.alterarItem)
                                 .dialog("open");
                 });
                 jNewTr.find("img:eq(1)").click(function(){
@@ -208,12 +210,8 @@
        		$("#perguntas").html('');
        	}
 
-        pesquisaFormValidator = $("#pesquisaForm").validate({
-			onfocusout: false
-		});
-        perguntaFormValidator = $("#perguntaForm").validate({
-			onfocusout: false
-		});
+        pesquisaFormValidator = $("#pesquisaForm").validate();
+        perguntaFormValidator = $("#perguntaForm").validate();
 
 	});
 

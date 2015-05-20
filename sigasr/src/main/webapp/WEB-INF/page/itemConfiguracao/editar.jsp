@@ -69,11 +69,11 @@
 				
 				<table class="gt-form-table">
 					<tr class="header">
-						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados Bï¿½sicos</td>
+						<td align="center" valign="top" colspan="2" style="border-radius: 5px;">Dados Básicos</td>
 					</tr>
 					<tr>
 						<td width="5%">
-							<label class="inline">Cï¿½digo: <span>*</span></label> 
+							<label class="inline">Código: <span>*</span></label> 
 						</td>
 						<td>
 							<input id="siglaItemConfiguracao"
@@ -86,7 +86,7 @@
 					<tr>
 						<td>
 							<label class="inline"
-							style="margin-left: 10px;">Tï¿½tulo: <span>*</span></label> 
+							style="margin-left: 10px;">Título: <span>*</span></label> 
 						</td>
 						<td>	
 							<input type="text" 
@@ -99,7 +99,7 @@
 					</tr>
 					<tr>
 						<td>
-							<label class="inline">Descriï¿½ï¿½o:</label> 
+							<label class="inline">Descrição:</label> 
 						</td>
 						<td colspan="2">
 							<input type="text"
@@ -126,7 +126,7 @@
 					</tr>
 					<tr>
 						<td colspan="3">
-							<label class="inline">Similaridade (Separar itens com ponto e vï¿½rgula):</label>
+							<label class="inline">Similaridade (Separar itens com ponto e vírgula):</label>
 							<textarea cols="63" rows="3" maxlength="8192" 
 								name="itemConfiguracao.descricaoSimilaridade"
 								id="descricaoSimilaridade"></textarea>
@@ -134,11 +134,11 @@
 					</tr>
 				</table>
 				<table class="gt-form-table">
-					<tr class="header"><td align="center" valign="top" colspan="3">Priorizaï¿½ï¿½o</td></tr>
+					<tr class="header"><td align="center" valign="top" colspan="3">Priorização</td></tr>
 
 					<tr>
 						<td width="10.5%">
-							<label class="inline">Fator de Multiplicaï¿½ï¿½o: <span>*</span></label> 
+							<label class="inline">Fator de Multiplicação: <span>*</span></label> 
 						</td>
 						<td>
 							<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true; else{ if (tecla==8 || tecla==0) return true; else return false; }"
@@ -152,7 +152,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<label class="inline">Fator de Multiplicaï¿½ï¿½o por Solicitante:</label> 
+							<label class="inline">Fator de Multiplicação por Solicitante:</label> 
 						</td>
 					</tr>
 					<tr>
@@ -168,7 +168,7 @@
 					</tr>
 					
                     <tr class="header">
-                        <td align="center" valign="top" colspan="2" style="border-radius: 5px;">Designaï¿½ï¿½es</td>
+                        <td align="center" valign="top" colspan="2" style="border-radius: 5px;">Designações</td>
                     </tr>
 				</table>
 				
@@ -180,7 +180,7 @@
 					<tr>
 						<tr>
 							<td>
-								<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Nï¿½o foi possï¿½vel gravar o registro.</p>
+								<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Não foi possível gravar o registro.</p>
 							</td>
 						</tr>
 					<tr>
@@ -241,12 +241,12 @@
 					</div>
 				</div>
 				<div class="gt-form-row ">
-					<label>Fator de Multiplicaï¿½ï¿½o: </label>
+					<label>Fator de Multiplicação: </label>
 					<input id="numfatorMult" onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
 						   type="text" name="numfatorMult" value="1" size="43" maxlength="9"
 						   required 
 						   min="1"/>
-						   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicaï¿½ï¿½o menor que 1</span>
+						   <span style="display: none; color: red;" id="erroNumFatorMult">Fator de multiplicação menor que 1</span>
 				</div>
 				<div class="gt-form-row">
 					<input type="button" id="modalOkFator" value="Ok"
@@ -398,9 +398,9 @@
 		    	$('#erroNumFatorMult').hide();
 		
 		    	if (jDialogFator.data("fatorMultiplicacaoSet"))
-		        	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicaï¿½ï¿½o');
+		        	jDialogFator.dialog('option', 'title', 'Alterar Fator de Multiplicação');
 		        else
-		          	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicaï¿½ï¿½o');  
+		          	jDialogFator.dialog('option', 'title', 'Incluir Fator de Multiplicação');  
 		       	}
 		});
 		

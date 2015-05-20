@@ -447,7 +447,7 @@
 	function duplicarDesignacao(event) {
 		var tr = $(event.currentTarget).parent().parent();
 		event.stopPropagation();
-		designacaoService.editar(tr.data('json'), 'Duplicar Designa&ccedil;&atilde;o');
+		designacaoService.editar(tr.data('json'), "Duplicar Designação");
 		resetId();
 	}
 

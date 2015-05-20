@@ -38,6 +38,7 @@
 			<div class="gt-content-box dataTables_div">
                 <div class="gt-form-row dataTables_length">
                     <siga:checkbox name="mostrarAssocDesativada" value="${requestScope[mostrarAssocDesativada]}"></siga:checkbox>
+                    <b>Incluir Inativas</b>
                 </div>        
 				<table id="associacao_table" class="gt-table display">
 					<thead>
@@ -194,11 +195,12 @@
 
 		<div class="gt-form-row gt-width-100">
 			<label>Prioridade</label> 
-				<siga:select name="prioridade" list="prioridades"
-					listKey="idPrioridade" id="prioridade"
-					headerValue="" headerKey="0"
-					listValue="descPrioridade" theme="simple"
-					value="${prioridade}" />
+		    <select name="prioridade" id="prioridade">
+				<option value="0"></option>
+				<c:forEach items="${prioridades}" var="item">
+				   <option value="${item}">${item.descPrioridade}</option>
+				</c:forEach>
+		    </select>
 		</div>
 
 		<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
@@ -383,10 +385,10 @@
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangencia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangência');
 		else {
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangencia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangência');
 		}
 		jQuery("#associacao_dialog").dialog('open');
 	};
@@ -418,10 +420,12 @@
 	function limparDadosAssociacaoModal() {
 		unblock();
 
+		//limpa o atendente
 		$("#formulario_atendenteSel_id").val('');
 		$("#formulario_atendenteSel_descricao").val('');
 		$("#formulario_atendenteSel_sigla").val('');
 		$("#atendenteSelSpan").html('');
+
 		$("#idConfiguracao").val('');
 		$("#hisIdIni").val('');
 
@@ -434,6 +438,8 @@
 		jComplexoCbb.selectedIndex = 0;
 		jPrioridadeCbb.selectedIndex = 0;
 		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
+		//limpa o solicitante
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].clearAll();
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 	}
 	
@@ -838,8 +844,10 @@
 		        open: function(){
 	                if (jDialog.data("valor"))
 		                jDialog.dialog('option', 'title', 'Alterar Parametro');
-	                else
-		                jDialog.dialog('option', 'title', 'Incluir Parametro');
+	                else {
+			                jDialog.dialog('option', 'title', 'Incluir Parametro');
+			                $("#valor-error").html('');
+		                }
 	                
 	                jValor.val(jDialog.data("valor"));
 	                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);

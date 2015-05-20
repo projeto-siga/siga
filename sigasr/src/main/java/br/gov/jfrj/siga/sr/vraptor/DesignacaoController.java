@@ -115,7 +115,7 @@ public class DesignacaoController extends SrController {
 	}
 
 	private void verificaObjetosNulos(SrConfiguracao designacao) {
-		if (designacao.getCargo().getIdCargo() == null)
+		if (designacao.getCargo().getId() == null)
 			designacao.setCargo(null);
 
 		if (designacao.getCpGrupo().getId() == null)
@@ -131,9 +131,6 @@ public class DesignacaoController extends SrController {
 			designacao.setAtendente(null);
 
 		if (designacao.getOrgaoUsuario().getIdOrgaoUsu() == null)
-			designacao.setOrgaoUsuario(null);
-
-		if (designacao.getComplexo().getIdComplexo() == null)
 			designacao.setOrgaoUsuario(null);
 
 		if (designacao.getDpPessoa().getId() == null)

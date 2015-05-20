@@ -192,7 +192,7 @@
 	var acordoService = new AcordoService(optsAcordo);
 	
 	acordoService.getId = function(acordo) {
-		return acordo.idAcordo || acordo['acordo.idAcordo'] || acordo['id'];
+		return acordo.idAcordo || acordo['acordo.idAcordo'] || acordo['id'] || '';
 	}
 
 	acordoService.getRow = function(acordo) {

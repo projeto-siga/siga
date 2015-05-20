@@ -175,7 +175,7 @@
 			<siga:select name="orgaoUsuario" list="orgaos"
 				listKey="idOrgaoUsu" id="orgaoUsuario"
 				headerValue="" headerKey="0"
-				listValue="acronimoOrgaoUsu"
+				listValue="nmOrgaoUsu"
 				value="${idOrgaoUsu}" />
 		</div>
 		<div class="gt-form-row gt-width-100">
@@ -383,10 +383,10 @@
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrang&ecirc;ncia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangencia');
 		else {
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrang&ecirc;ncia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangencia');
 		}
 		jQuery("#associacao_dialog").dialog('open');
 	};

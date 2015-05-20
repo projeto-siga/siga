@@ -38,6 +38,7 @@
 			<div class="gt-content-box dataTables_div">
                 <div class="gt-form-row dataTables_length">
                     <siga:checkbox name="mostrarAssocDesativada" value="${requestScope[mostrarAssocDesativada]}"></siga:checkbox>
+                    <b>Incluir Inativas</b>
                 </div>        
 				<table id="associacao_table" class="gt-table display">
 					<thead>
@@ -383,10 +384,10 @@
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrang&ecirc;ncia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangência');
 		else {
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrang&ecirc;ncia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangência');
 		}
 		jQuery("#associacao_dialog").dialog('open');
 	};

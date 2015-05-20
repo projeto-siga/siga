@@ -38,6 +38,7 @@
 			<div class="gt-content-box dataTables_div">
                 <div class="gt-form-row dataTables_length">
                     <siga:checkbox name="mostrarAssocDesativada" value="${requestScope[mostrarAssocDesativada]}"></siga:checkbox>
+                    <b>Incluir Inativas</b>
                 </div>        
 				<table id="associacao_table" class="gt-table display">
 					<thead>
@@ -383,10 +384,10 @@
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangencia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangência');
 		else {
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangencia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangência');
 		}
 		jQuery("#associacao_dialog").dialog('open');
 	};
@@ -418,10 +419,12 @@
 	function limparDadosAssociacaoModal() {
 		unblock();
 
+		//limpa o atendente
 		$("#formulario_atendenteSel_id").val('');
 		$("#formulario_atendenteSel_descricao").val('');
 		$("#formulario_atendenteSel_sigla").val('');
 		$("#atendenteSelSpan").html('');
+
 		$("#idConfiguracao").val('');
 		$("#hisIdIni").val('');
 
@@ -434,6 +437,8 @@
 		jComplexoCbb.selectedIndex = 0;
 		jPrioridadeCbb.selectedIndex = 0;
 		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
+		//limpa o solicitante
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].clearAll();
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 	}
 	

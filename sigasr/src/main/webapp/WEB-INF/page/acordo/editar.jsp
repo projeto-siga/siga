@@ -419,10 +419,12 @@
 	function limparDadosAssociacaoModal() {
 		unblock();
 
+		//limpa o atendente
 		$("#formulario_atendenteSel_id").val('');
 		$("#formulario_atendenteSel_descricao").val('');
 		$("#formulario_atendenteSel_sigla").val('');
 		$("#atendenteSelSpan").html('');
+
 		$("#idConfiguracao").val('');
 		$("#hisIdIni").val('');
 
@@ -435,6 +437,8 @@
 		jComplexoCbb.selectedIndex = 0;
 		jPrioridadeCbb.selectedIndex = 0;
 		jPessoaLotaFuncCargoCbb.selectedIndex = 0;
+		//limpa o solicitante
+		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].clearAll();
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 	}
 	

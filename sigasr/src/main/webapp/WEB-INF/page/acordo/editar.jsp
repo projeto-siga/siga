@@ -462,7 +462,9 @@
 		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[colunasAssociacao.tipoSolicitante]);
 
 		// atualiza os valores do componente pessoaLotaFuncCargoSelecao
-		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(itemArray[colunasAssociacao.jSon].solicitante.tipo);
+		if (itemArray[colunasAssociacao.jSon].solicitante != null)
+			$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(itemArray[colunasAssociacao.jSon].solicitante.tipo);
+
 		getIdFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).val(itemArray[colunasAssociacao.idSolicitante]);
 		getDescricaoFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).val(itemArray[colunasAssociacao.descricaoSolicitante]);
         getSiglaFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).val(itemArray[colunasAssociacao.solicitante]);
@@ -482,11 +484,14 @@
 			tipo = 0;
 		}
 
-		$("#formulario_" + tipo + "Sel_id").val(solicitante.id);
-		$("#formulario_" + tipo + "Sel_descricao").val(solicitante.descricao);
-		$("#formulario_" + tipo + "Sel_sigla").val(solicitante.sigla);
-		$("#formulario_" + tipo + "Sel_buscar").val(solicitante.buscar);
-		$("#"+ tipo + "SelSpan").html(solicitante.descricao);
+
+		if(solicitante != null) {
+			$("#formulario_" + tipo + "Sel_id").val(solicitante.id);
+			$("#formulario_" + tipo + "Sel_descricao").val(solicitante.descricao);
+			$("#formulario_" + tipo + "Sel_sigla").val(solicitante.sigla);
+			$("#formulario_" + tipo + "Sel_buscar").val(solicitante.buscar);
+			$("#"+ tipo + "SelSpan").html(solicitante.descricao);
+		}
 	}
 
 	function transformStringToBoolean(value) {
@@ -553,11 +558,18 @@
 
 	function serializeAssociacao(row) {
 		var params = "";
+
+		if(row[colunasAssociacao.idOrgao] != "") 
+			params += '&associacao.orgaoUsuario=' + row[colunasAssociacao.idOrgao];
+			
+		if(row[colunasAssociacao.idLocal] != "")
+			params += '&associacao.complexo=' + row[colunasAssociacao.idLocal];
+
+		if(row[colunasAssociacao.idPrioridade] != 0)
+			params += '&associacao.prioridade=' + row[colunasAssociacao.idPrioridade];
+
 		
 		// caso exista algum item na tabela
-		params += '&associacao.orgaoUsuario=' + row[colunasAssociacao.idOrgao];
-		params += '&associacao.complexo=' + row[colunasAssociacao.idLocal];
-		params += '&associacao.prioridade=' + row[colunasAssociacao.idPrioridade];
         params += '&associacao=' + row[colunasAssociacao.idAssociacao];
         params += '&associacao.hisIdIni=' + row[colunasAssociacao.hisIdIni];
        	params += configuracaoItemAcaoService.getItemAcaoAsString('associacao');
@@ -573,10 +585,14 @@
 
 	function getDadosSolicitanteSel() {
 		var params = "";
-		params += '&associacao.atendente=' + $('#formulario_atendenteSel_id').val();
+
+		var atendenteValue =$( "input[name='atendenteSel.id']" ).val();
+		if(atendenteValue != "") 
+			params += '&associacao.atendente=' + $('#formulario_atendenteSel_id').val();
 
 		var solicitante = getSolicitante();
-		params += '&associacao.' + solicitante.name + '=' + solicitante.id;
+		if(solicitante != null && solicitante.id != "")
+			params += '&associacao.' + solicitante.name + '=' + solicitante.id;
 
 		return params;
 	};

@@ -176,7 +176,7 @@
 			<siga:select name="orgaoUsuario" list="orgaos"
 				listKey="idOrgaoUsu" id="orgaoUsuario"
 				headerValue="" headerKey="0"
-				listValue="acronimoOrgaoUsu"
+				listValue="nmOrgaoUsu"
 				value="${idOrgaoUsu}" />
 		</div>
 		<div class="gt-form-row gt-width-100">

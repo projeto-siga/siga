@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Servi&ccedil;os">
+<siga:pagina titulo="Acordos">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 
@@ -192,7 +192,7 @@
 	var acordoService = new AcordoService(optsAcordo);
 	
 	acordoService.getId = function(acordo) {
-		return acordo.idAcordo || acordo['acordo.idAcordo'] || acordo['id'];
+		return acordo.idAcordo || acordo['acordo.idAcordo'] || acordo['id'] || '';
 	}
 
 	acordoService.getRow = function(acordo) {

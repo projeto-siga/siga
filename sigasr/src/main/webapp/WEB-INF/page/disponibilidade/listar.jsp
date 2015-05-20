@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Servi&ccedil;os">
+<siga:pagina titulo="Disponibilidade de itens de configuração">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>

@@ -77,7 +77,9 @@ public class AcordoController extends SrController {
 	//@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravarAcordo(SrAcordo acordo, List<SrAtributoAcordo> atributoAcordoSet, List<Integer> unidadeMedida ) throws Exception {
-		if(isNotEmptyUnidadeMedida(unidadeMedida))
+	    if (acordo.getAtributoAcordoSet() != null)
+	        acordo.getAtributoAcordoSet().clear();
+	    if(isNotEmptyUnidadeMedida(unidadeMedida))
 			acordo.getAtributoAcordoSet().addAll(buscaAtributosAcordo(atributoAcordoSet, unidadeMedida));
 
 		acordo.salvar();
@@ -130,12 +132,12 @@ public class AcordoController extends SrController {
 	}
 
 	@Path("/abrangencias")
-	public void buscarAbrangenciasAcordo(Long id) throws Exception {
+	public void buscarAbrangenciasAcordo(Long id, boolean exibirInativos) throws Exception {
 		SrAcordo acordo = new SrAcordo();
 
 		if (id != null)
 			acordo = SrAcordo.AR.findById(id);
-		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(Boolean.FALSE, acordo);
+		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(exibirInativos, acordo);
 
 		result.use(Results.http()).body(SrConfiguracao.convertToJSon(abrangencias));
 	}

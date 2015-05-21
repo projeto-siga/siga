@@ -137,8 +137,8 @@
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
-			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
+			        "sortAscending":  ": clique para ordena��o crescente",
+			        "sortDescending": ": clique para ordena��o decrescente"
 			    }
 			},
 			"columnDefs": [{

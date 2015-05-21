@@ -230,7 +230,6 @@
 
 <script type="text/javascript">
 	function getUrlDesativarReativar(desativados) {
-	    
 	    var url = '${linkTo[AcordoController].buscarAbrangenciasAcordo}';
 	    var idAcordo = $("[id=id]").val();
 	    var exibirInativo = "";
@@ -306,7 +305,7 @@
 	      		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	      	 },
 	      	 error: function(error) {
-	          	alert("N&atilde;o foi poss&iacute;vel carregar as Abrang&ecirc;ncias deste Acordo.");
+	          	alert("Não foi possível carregar as Abrangências deste Acordo.");
 	      	 }
        });
     });
@@ -728,7 +727,6 @@
 				row[colunasAssociacao.idAssociacao] = associacao.idConfiguracao;
 		        row[colunasAssociacao.jSon] = associacao;						         
 		        row[colunasAssociacao.botaoExcluir] = html;
-		        
 		        var trObject = isEditing ? tableAssociacao.api().row('.selected').data(row) : tableAssociacao.api().row.add(row).draw(),
 				    tr = $(trObject.node());
 			    

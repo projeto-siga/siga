@@ -25,6 +25,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
 @Table(name = "CP_TIPO_CONFIGURACAO", schema = Catalogs.CORPORATIVO)
@@ -138,4 +139,6 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public CpTipoConfiguracao() {
 	}
+	
+	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(CpTipoConfiguracao.class);
 }

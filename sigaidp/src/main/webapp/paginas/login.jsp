@@ -6,6 +6,10 @@
 <siga:pagina titulo="Justiça Federal" desabilitarbusca="sim" incluirJs="siga/javascript/jquery.placeholder.js">
 
 	<script type="text/javascript">
+		function salvarUsuario(matricula){
+			localStorage.setItem("matricula", matricula);
+		}
+	
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
 			re = /^[a-zA-Z]{2}\d{3,6}$/;
@@ -14,6 +18,8 @@
 			if (tmp.match(re) || tmp.match(ret2)) {
 				nomeusuario.value = tmp.toUpperCase();
 			}
+
+			salvarUsuario(nomeusuario.value);
 		}
 	</script>
 
@@ -99,7 +105,7 @@
 
         var idp = getCookie("JSESSIONID").replace(/"/g,"");
         if (idp != null && idp != "undefined")
-        	sessionStorage.setItem("idp", idp);
+        	localStorage.setItem("idp", idp);
 
     </script>
 </siga:pagina>

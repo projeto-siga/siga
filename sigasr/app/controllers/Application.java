@@ -82,7 +82,7 @@ public class Application extends SigaApplication {
 	}
 
 	@Before(priority = 2, unless = { "exibirAtendente", "exibirLocalERamal",
-			"exibirItemConfiguracao" })
+			"exibirItemConfiguracao", "selecionarSolicitacao" })
 	public static void addDefaults() throws Exception {
 
 		try {

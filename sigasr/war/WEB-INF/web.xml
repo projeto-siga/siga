@@ -46,6 +46,8 @@
 			<url-pattern>/public/*</url-pattern>
 			<url-pattern>/errors/*</url-pattern>
 			<url-pattern>/corporativo/dadosrh</url-pattern >
+			<url-pattern>/solicitacao/selecionar</url-pattern >
+			
 		</web-resource-collection>
 	</security-constraint>
 

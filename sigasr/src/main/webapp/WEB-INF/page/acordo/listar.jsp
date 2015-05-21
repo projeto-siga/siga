@@ -287,7 +287,7 @@
 	        		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	        	},
 	        	error: function(error) {
-	            	alert("N&atilde;o foi poss&iacute;vel carregar as Abrang&ecirc;ncias deste Acordo.");
+	            	alert("Não foi possível carregar as Abrangências deste Acordo.");
 	        	}
 	       	});
 		}

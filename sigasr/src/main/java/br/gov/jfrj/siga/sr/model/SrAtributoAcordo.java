@@ -22,11 +22,8 @@ import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_ATRIBUTO_ACORDO", schema = Catalogs.SIGASR)
-public class SrAtributoAcordo extends HistoricoSuporteVraptor {
+public class SrAtributoAcordo extends HistoricoSuporteVraptor implements ConvertableEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -61,6 +58,7 @@ public class SrAtributoAcordo extends HistoricoSuporteVraptor {
 	//@OrderBy("hisDtIni desc")
 	private	List<SrAtributoAcordo> meuAtributoAcordoHistoricoSet;
 
+	@Override
 	public Long getId() {
 		return this.getIdAtributoAcordo();
 	}
@@ -111,7 +109,7 @@ public class SrAtributoAcordo extends HistoricoSuporteVraptor {
 		return getValorEUnidade().getValorEmSegundos();
 	}
 	
-	public SrAtributoAcordoVO toVO() {
+	public SrAtributoAcordoVO toVO() throws Exception {
 		return SrAtributoAcordoVO.createFrom(this);
 	}
 

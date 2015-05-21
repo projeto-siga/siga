@@ -45,7 +45,7 @@ public class SrSolicitacaoListaVO {
 		SrLista lista = null;
 		
 		if (filtro.idListaPrioridade != null)
-			lista = SrLista.findById(filtro.idListaPrioridade);
+			lista = SrLista.AR.findById(filtro.idListaPrioridade);
 		
 		if (telaDeListas && lista != null) {
 			solicitacoesVO.podePriorizar = lista.podePriorizar(lotaTitular, cadastrante);
@@ -110,7 +110,7 @@ public class SrSolicitacaoListaVO {
 	
 	private List<ColunasVO> getColunasEmComum() {
 		List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
-		colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("C�digo", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
 		colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
 		colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados"));
 		colunasVO.add(new ColunasVO("Aberto", "dtRegString", "gt-celula-nowrap solicitacao-dados"));
@@ -124,7 +124,7 @@ public class SrSolicitacaoListaVO {
 		colunasDetalhamento.add(new ColunasVO("Teor", "teorFormatado"));
 		colunasDetalhamento.add(new ColunasVO("Solicitante", "solicitanteFormatado"));
 		colunasDetalhamento.add(new ColunasVO("Prioridade", "prioridadeFormatada"));
-		colunasDetalhamento.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes"));
+		colunasDetalhamento.add(new ColunasVO("Situa��o", "marcadoresEmHtmlDetalhes"));
 		colunasDetalhamento.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada"));
 		
 		return colunasDetalhamento;

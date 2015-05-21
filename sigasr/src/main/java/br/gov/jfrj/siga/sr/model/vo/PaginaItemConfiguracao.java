@@ -29,7 +29,7 @@ public class PaginaItemConfiguracao extends Pagina {
 				.toString();
 	}
 
-	public PaginaItemConfiguracao atualizar(List<CpOrgaoUsuario> orgaos) {
+	public PaginaItemConfiguracao atualizar(List<CpOrgaoUsuario> orgaos) throws Exception {
 		return buscarItens(orgaos)
 				.adicionarOrgaos(orgaos)
 				.invalidarCache();
@@ -47,7 +47,7 @@ public class PaginaItemConfiguracao extends Pagina {
 		return this;
 	}
 	
-	public PaginaItemConfiguracao buscarItens(List<CpOrgaoUsuario> orgaos) {
+	public PaginaItemConfiguracao buscarItens(List<CpOrgaoUsuario> orgaos) throws Exception {
 		List<SrItemConfiguracao> itensConfiguracao = SrItemConfiguracao.listar(this);
 		DisponibilidadesPorOrgaoCacheHolder.put(SrDisponibilidade.agruparDisponibilidades(itensConfiguracao, orgaos));
 		

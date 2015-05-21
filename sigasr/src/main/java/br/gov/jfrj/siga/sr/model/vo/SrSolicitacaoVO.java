@@ -43,7 +43,7 @@ public class SrSolicitacaoVO {
 	public SrItemConfiguracaoVO itemConfiguracao;
 	public SrPrioridadeSolicitacaoVO prioridadeSolicitacaoVO;
 	
-	public SrSolicitacaoVO(SrSolicitacao sol) {
+	public SrSolicitacaoVO(SrSolicitacao sol) throws Exception {
 		this.idSolicitacao = sol.getId();
 		this.codigo = sol.getCodigo();
 		this.descricao = sol.getDescricao();

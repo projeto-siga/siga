@@ -18,7 +18,7 @@ public class SrAcordoVO extends AbstractSelecionavel {
 		super(id, sigla, descricao);
 	}
 	
-	public static SrAcordoVO createFrom(SrAcordo acordo) {
+	public static SrAcordoVO createFrom(SrAcordo acordo) throws Exception {
 		SrAcordoVO acordoVO = new SrAcordoVO(acordo.getId(), acordo.getSigla(), acordo.getDescricao());
 		acordoVO.ativo = acordo.isAtivo();
 		acordoVO.hisIdIni = acordo.getHisIdIni();

@@ -15,99 +15,100 @@ import com.google.gson.JsonElement;
  * Classe que representa um V.O. de {@link SrItemConfiguracao}.
  */
 public class SrItemConfiguracaoVO implements ISelecionavel {
-	
-	private Long id;
-	private String sigla;
-	private String descricao;
-	public Long idItemConfiguracao;
-	public String descrItemConfiguracao;
-	public String tituloItemConfiguracao;
-	public String siglaItemConfiguracao;
-	public Long hisIdIni;
-	public String descricaoSimilaridade;
-	public int numFatorMultiplicacaoGeral;
-	public boolean ativo;
-	public int nivel;
-	public List<SrGestorItemVO> gestorSetVO;
-	public List<SrFatorMultiplicacaoVO> fatorMultiplicacaoSetVO;
-	
-	public SrItemConfiguracaoVO(Long id, String descricao, String titulo, String sigla, Long hisIdIni, String descricaoSimilaridade, 
-			int numFatorMultiplicacaoGeral, boolean isAtivo, int nivel, List<SrGestorItem> gestorSet, List<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
-		this.id = id;
-		this.idItemConfiguracao = id;
-		this.descrItemConfiguracao = descricao;
-		this.tituloItemConfiguracao = titulo;
-		this.descricao = titulo;
-		this.siglaItemConfiguracao = sigla;
-		this.sigla = sigla;
-		this.hisIdIni = hisIdIni;
-		this.descricaoSimilaridade = descricaoSimilaridade;
-		this.ativo = isAtivo;
-		this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
-		this.nivel = nivel;
-		this.gestorSetVO = new ArrayList<SrGestorItemVO>();
-		this.fatorMultiplicacaoSetVO = new ArrayList<SrFatorMultiplicacaoVO>();
-		
-		if(gestorSet != null)
-			for (SrGestorItem item : gestorSet) {
-				gestorSetVO.add(item.toVO());
-			}
-		
-		if(fatorMultiplicacaoSet != null)
-			for (SrFatorMultiplicacao item : fatorMultiplicacaoSet) {
-				fatorMultiplicacaoSetVO.add(item.toVO());
-			}
-	}
-	
-	/**
-	 * Converte o objeto para Json.
-	 */
-	public String toJson() {
-		return toJsonObject().toString();
-	}
-	
-	public JsonElement toJsonObject() {
-		GsonBuilder builder = new GsonBuilder();
-		builder.setPrettyPrinting().serializeNulls();
-		Gson gson = builder.create();
 
-		return gson.toJsonTree(this);
-	}
-	
-	public static SrItemConfiguracaoVO createFrom(SrItemConfiguracao item) {
-		if (item != null)
-			return new SrItemConfiguracaoVO(item.getIdItemConfiguracao(), item.getDescrItemConfiguracao(), item.getTituloItemConfiguracao(), item.getSiglaItemConfiguracao(), item.getHisIdIni(), item.getDescricaoSimilaridade(), item.getNumFatorMultiplicacaoGeral(), item.isAtivo(), item.getNivel(), item.getGestorSet(), item.getFatorMultiplicacaoSet());
-		else
-			return null;
-	}
+    private Long id;
+    private String sigla;
+    private String descricao;
+    public Long idItemConfiguracao;
+    public String descrItemConfiguracao;
+    public String tituloItemConfiguracao;
+    public String siglaItemConfiguracao;
+    public Long hisIdIni;
+    public String descricaoSimilaridade;
+    public int numFatorMultiplicacaoGeral;
+    public boolean ativo;
+    public int nivel;
+    public List<SrGestorItemVO> gestorSetVO;
+    public List<SrFatorMultiplicacaoVO> fatorMultiplicacaoSetVO;
 
-	@Override
-	public Long getId() {
-		return this.id;
-	}
+    public SrItemConfiguracaoVO(Long id, String descricao, String titulo, String sigla, Long hisIdIni, String descricaoSimilaridade, int numFatorMultiplicacaoGeral, boolean isAtivo, int nivel,
+            List<SrGestorItem> gestorSet, List<SrFatorMultiplicacao> fatorMultiplicacaoSet) throws Exception {
+        this.id = id;
+        this.idItemConfiguracao = id;
+        this.descrItemConfiguracao = descricao;
+        this.tituloItemConfiguracao = titulo;
+        this.descricao = titulo;
+        this.siglaItemConfiguracao = sigla;
+        this.sigla = sigla;
+        this.hisIdIni = hisIdIni;
+        this.descricaoSimilaridade = descricaoSimilaridade;
+        this.ativo = isAtivo;
+        this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
+        this.nivel = nivel;
+        this.gestorSetVO = new ArrayList<SrGestorItemVO>();
+        this.fatorMultiplicacaoSetVO = new ArrayList<SrFatorMultiplicacaoVO>();
 
-	@Override
-	public String getSigla() {
-		return this.sigla;
-	}
+        if (gestorSet != null)
+            for (SrGestorItem item : gestorSet) {
+                gestorSetVO.add(item.toVO());
+            }
 
-	@Override
-	public String getDescricao() {
-		return this.descricao;
-	}
-	
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+        if (fatorMultiplicacaoSet != null)
+            for (SrFatorMultiplicacao item : fatorMultiplicacaoSet) {
+                fatorMultiplicacaoSetVO.add(item.toVO());
+            }
+    }
 
-	@Override
-	public void setSigla(String sigla) {
-		this.sigla = sigla;
-	}
+    /**
+     * Converte o objeto para Json.
+     */
+    public String toJson() {
+        return toJsonObject().toString();
+    }
 
-	@Override
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
+    public JsonElement toJsonObject() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting().serializeNulls();
+        Gson gson = builder.create();
+
+        return gson.toJsonTree(this);
+    }
+
+    public static SrItemConfiguracaoVO createFrom(SrItemConfiguracao item) throws Exception {
+        if (item != null)
+            return new SrItemConfiguracaoVO(item.getIdItemConfiguracao(), item.getDescrItemConfiguracao(), item.getTituloItemConfiguracao(), item.getSiglaItemConfiguracao(), item.getHisIdIni(),
+                    item.getDescricaoSimilaridade(), item.getNumFatorMultiplicacaoGeral(), item.isAtivo(), item.getNivel(), item.getGestorSet(), item.getFatorMultiplicacaoSet());
+        else
+            return null;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public String getSigla() {
+        return this.sigla;
+    }
+
+    @Override
+    public String getDescricao() {
+        return this.descricao;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
+    }
+
+    @Override
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 }

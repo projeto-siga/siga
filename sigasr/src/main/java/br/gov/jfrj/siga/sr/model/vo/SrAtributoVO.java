@@ -27,7 +27,7 @@ public class SrAtributoVO {
 	public Long hisIdIni;
 	public List<SrConfiguracaoVO> associacoesVO;
 
-	public SrAtributoVO(SrAtributo atributo, List<SrConfiguracao> associacoes) {
+	public SrAtributoVO(SrAtributo atributo, List<SrConfiguracao> associacoes) throws Exception {
 		this.ativo = atributo.isAtivo();
 		this.idAtributo = atributo.getIdAtributo();
 		this.nomeAtributo = atributo.getNomeAtributo();
@@ -66,7 +66,7 @@ public class SrAtributoVO {
 		return jsonTree.toString();
 	}
 
-	public static SrAtributoVO createFrom(SrAtributo atributo, boolean listarAssociacoes) {
+	public static SrAtributoVO createFrom(SrAtributo atributo, boolean listarAssociacoes) throws Exception {
 		if (atributo != null) {
 			List<SrConfiguracao> associacoes = new ArrayList<SrConfiguracao>();
 

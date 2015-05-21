@@ -39,7 +39,7 @@ public class SrConfiguracaoVO {
 	private String descPrioridade;
 
 	// Solicitante
-	private SelecionavelVO dpPessoa;
+	private SelecionavelVO dpPessoa;   
 	private SelecionavelVO lotacao;
 	private SelecionavelVO lotacaoParaInclusaoAutomatica;
 	private SelecionavelVO cargo;
@@ -50,7 +50,7 @@ public class SrConfiguracaoVO {
 	private String descPrioridadeNaLista;
 	private SelecionavelVO dpPessoaParaInclusaoAutomatica;
 
-	public SrConfiguracaoVO(SrConfiguracao configuracao) {
+	public SrConfiguracaoVO(SrConfiguracao configuracao) throws Exception {
 		setIdConfiguracao(configuracao.getId());
 		setHisIdIni(configuracao.getHisIdIni());
 		setHerdado(configuracao.isHerdado());
@@ -105,7 +105,7 @@ public class SrConfiguracaoVO {
 		setSolicitante(SelecionavelVO.createFrom(configuracao.getSolicitante(),configuracao.getTipoSolicitante()));
 	}
 
-	public SrConfiguracaoVO(SrConfiguracao configuracao, boolean atributoObrigatorio) {
+	public SrConfiguracaoVO(SrConfiguracao configuracao, boolean atributoObrigatorio) throws Exception {
 		this(configuracao);
 		this.setAtributoObrigatorio(atributoObrigatorio);
 	}

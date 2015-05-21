@@ -15,7 +15,7 @@ public class SrAtributoAcordoVO {
 	public SrAtributoVO atributo;
 	public boolean ativo;
 	
-	public SrAtributoAcordoVO(SrAtributoAcordo atributoAcordo) {
+	public SrAtributoAcordoVO(SrAtributoAcordo atributoAcordo) throws Exception {
 		this.idAtributoAcordo = atributoAcordo.getIdAtributoAcordo(); 
 		this.operador = atributoAcordo.getOperador();
 		this.operadorNome = atributoAcordo.getOperador() != null ? atributoAcordo.getOperador().getNome() : "";
@@ -26,7 +26,7 @@ public class SrAtributoAcordoVO {
 		this.ativo = atributoAcordo.isAtivo();
 	}
 	
-	public static SrAtributoAcordoVO createFrom(SrAtributoAcordo atributoAcordo) {
+	public static SrAtributoAcordoVO createFrom(SrAtributoAcordo atributoAcordo) throws Exception {
 		if (atributoAcordo != null)
 			return new SrAtributoAcordoVO(atributoAcordo);
 		else

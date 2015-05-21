@@ -24,180 +24,177 @@ import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 @Table(name = "SR_EXCECAO_HORARIO", schema = Catalogs.SIGASR)
 public class SrExcecaoHorario extends ObjetoVraptor {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_EXCECAO_HORARIO_SEQ", name = "srExcecaoHorarioSeq")
-	@GeneratedValue(generator = "srExcecaoHorarioSeq")
-	@Column(name = "ID_EXCECAO_HORARIO", nullable = false)
-	private Long idExcecaoHorario;
+    @Id
+    @SequenceGenerator(sequenceName = Catalogs.SIGASR + ".SR_EXCECAO_HORARIO_SEQ", name = "srExcecaoHorarioSeq")
+    @GeneratedValue(generator = "srExcecaoHorarioSeq")
+    @Column(name = "ID_EXCECAO_HORARIO", nullable = false)
+    private Long idExcecaoHorario;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_EQUIPE", nullable = false)
-	private SrEquipe equipe;
+    @ManyToOne
+    @JoinColumn(name = "ID_EQUIPE", nullable = false)
+    private SrEquipe equipe;
 
-	@Column(name = "DIA_SEMANA")
-	@Enumerated(EnumType.ORDINAL)
-	private SrSemana diaSemana;
+    @Column(name = "DIA_SEMANA")
+    @Enumerated(EnumType.ORDINAL)
+    private SrSemana diaSemana;
 
-	@Column(name = "DT_ESPECIFICA")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dataEspecifica;
+    @Column(name = "DT_ESPECIFICA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataEspecifica;
 
-	@Column(name = "HORA_INI")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date horaIni;
+    @Column(name = "HORA_INI")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date horaIni;
 
-	@Column(name = "HORA_FIM")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date horaFim;
+    @Column(name = "HORA_FIM")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date horaFim;
 
-	@Column(name = "INTER_INI")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date interIni;
+    @Column(name = "INTER_INI")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date interIni;
 
-	@Column(name = "INTER_FIM")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date interFim;
+    @Column(name = "INTER_FIM")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date interFim;
 
-	@Transient
-	private String strHoraIni;
+    @Transient
+    private String strHoraIni;
 
-	@Transient
-	private String strHoraFim;
+    @Transient
+    private String strHoraFim;
 
-	@Transient
-	private String strInterIni;
+    @Transient
+    private String strInterIni;
 
-	@Transient
-	private String strInterFim;
-	
-	@Transient
-	private String strDataEspecifica;
+    @Transient
+    private String strInterFim;
 
-	public SrExcecaoHorario() {
-		super();
-	}
+    @Transient
+    private String strDataEspecifica;
 
-	public String getStrHoraIni() {
-		return strHoraIni;
-	}
+    public SrExcecaoHorario() {
+        super();
+    }
 
-	public void setStrHoraIni(String strHoraIni) {
-		this.strHoraIni = strHoraIni;
+    public String getStrHoraIni() {
+        return strHoraIni;
+    }
 
-		this.setHoraIni(DatatypeConverter.parseTime(strHoraIni).getTime());
-	}
+    public void setStrHoraIni(String strHoraIni) {
+        this.strHoraIni = strHoraIni;
 
-	public String getStrHoraFim() {
-		return strHoraFim;
-	}
+        this.setHoraIni(DatatypeConverter.parseTime(strHoraIni).getTime());
+    }
 
-	public void setStrHoraFim(String strHoraFim) {
-		this.strHoraFim = strHoraFim;
+    public String getStrHoraFim() {
+        return strHoraFim;
+    }
 
-		this.setHoraFim(DatatypeConverter.parseTime(strHoraFim).getTime());
-	}
+    public void setStrHoraFim(String strHoraFim) {
+        this.strHoraFim = strHoraFim;
 
-	public String getStrInterIni() {
-		return strInterIni;
-	}
+        this.setHoraFim(DatatypeConverter.parseTime(strHoraFim).getTime());
+    }
 
-	public void setStrInterIni(String strInterIni) {
-		this.strInterIni = strInterIni;
+    public String getStrInterIni() {
+        return strInterIni;
+    }
 
-		this.setInterIni(DatatypeConverter.parseTime(strInterIni).getTime());
-	}
+    public void setStrInterIni(String strInterIni) {
+        this.strInterIni = strInterIni;
 
-	public String getStrInterFim() {
-		return strInterFim;
-	}
+        this.setInterIni(DatatypeConverter.parseTime(strInterIni).getTime());
+    }
 
-	public void setStrInterFim(String strInterFim) {
-		this.strInterFim = strInterFim;
+    public String getStrInterFim() {
+        return strInterFim;
+    }
 
-		this.setInterFim(DatatypeConverter.parseTime(strInterFim).getTime());
-	}
+    public void setStrInterFim(String strInterFim) {
+        this.strInterFim = strInterFim;
 
-	public Long getIdExcecaoHorario() {
-		return idExcecaoHorario;
-	}
+        this.setInterFim(DatatypeConverter.parseTime(strInterFim).getTime());
+    }
 
-	public void setIdExcecaoHorario(Long idExcecaoHorario) {
-		this.idExcecaoHorario = idExcecaoHorario;
-	}
+    public Long getIdExcecaoHorario() {
+        return idExcecaoHorario;
+    }
 
-	public SrEquipe getEquipe() {
-		return equipe;
-	}
+    public void setIdExcecaoHorario(Long idExcecaoHorario) {
+        this.idExcecaoHorario = idExcecaoHorario;
+    }
 
-	public void setEquipe(SrEquipe equipe) {
-		this.equipe = equipe;
-	}
+    public SrEquipe getEquipe() {
+        return equipe;
+    }
 
-	public SrSemana getDiaSemana() {
-		return diaSemana;
-	}
+    public void setEquipe(SrEquipe equipe) {
+        this.equipe = equipe;
+    }
 
-	public void setDiaSemana(SrSemana diaSemana) {
-		this.diaSemana = diaSemana;
-	}
+    public SrSemana getDiaSemana() {
+        return diaSemana;
+    }
 
-	public Date getDataEspecifica() {
-		return dataEspecifica;
-	}
+    public void setDiaSemana(SrSemana diaSemana) {
+        this.diaSemana = diaSemana;
+    }
 
-	public void setDataEspecifica(Date dataEspecifica) {
-		this.dataEspecifica = dataEspecifica;
-	}
+    public Date getDataEspecifica() {
+        return dataEspecifica;
+    }
 
-	public Date getHoraIni() {
-		return horaIni;
-	}
+    public void setDataEspecifica(Date dataEspecifica) {
+        this.dataEspecifica = dataEspecifica;
+    }
 
-	public void setHoraIni(Date horaIni) {
-		this.horaIni = horaIni;
-	}
+    public Date getHoraIni() {
+        return horaIni;
+    }
 
-	public Date getHoraFim() {
-		return horaFim;
-	}
+    public void setHoraIni(Date horaIni) {
+        this.horaIni = horaIni;
+    }
 
-	public void setHoraFim(Date horaFim) {
-		this.horaFim = horaFim;
-	}
+    public Date getHoraFim() {
+        return horaFim;
+    }
 
-	public Date getInterIni() {
-		return interIni;
-	}
+    public void setHoraFim(Date horaFim) {
+        this.horaFim = horaFim;
+    }
 
-	public void setInterIni(Date interIni) {
-		this.interIni = interIni;
-	}
+    public Date getInterIni() {
+        return interIni;
+    }
 
-	public Date getInterFim() {
-		return interFim;
-	}
+    public void setInterIni(Date interIni) {
+        this.interIni = interIni;
+    }
 
-	public void setInterFim(Date interFim) {
-		this.interFim = interFim;
-	}
+    public Date getInterFim() {
+        return interFim;
+    }
 
-	@Override
-	protected Long getId() {
-		return idExcecaoHorario;
-	}
+    public void setInterFim(Date interFim) {
+        this.interFim = interFim;
+    }
 
-	public String getStrDataEspecifica() {
-		return strDataEspecifica;
-	}
+    @Override
+    protected Long getId() {
+        return idExcecaoHorario;
+    }
 
-	public void setStrDataEspecifica(String strDataEspecifica) {
-		this.strDataEspecifica = strDataEspecifica;
-		
-		this.setDataEspecifica(DatatypeConverter.parseTime(strDataEspecifica).getTime());
-	}
+    public String getStrDataEspecifica() {
+        return strDataEspecifica;
+    }
+
+    public void setStrDataEspecifica(String strDataEspecifica) {
+        this.strDataEspecifica = strDataEspecifica;
+
+        this.setDataEspecifica(DatatypeConverter.parseTime(strDataEspecifica).getTime());
+    }
 }

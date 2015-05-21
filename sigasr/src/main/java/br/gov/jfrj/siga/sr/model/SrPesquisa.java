@@ -133,8 +133,8 @@ public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEn
 		return listaCompleta;
 	}
 
-	public String getPergunta(Long idPergunta) {
-		SrPergunta pergunta = SrPergunta.findById(idPergunta);
+	public String getPergunta(Long idPergunta) throws Exception {
+		SrPergunta pergunta = SrPergunta.AR.findById(idPergunta);
 		return pergunta.getDescrPergunta();
 	}
 
@@ -148,11 +148,11 @@ public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEn
 			}
 	}
 
-	public String toJson() {
+	public String toJson() throws Exception {
 		return toJson(false);
 	}
 
-	public String toJson(boolean listarAssociacoes) {
+	public String toJson(boolean listarAssociacoes) throws Exception {
 		Gson gson = Util.createGson("meuPesquisaHistoricoSet", "perguntaSet", "pesquisaInicial");
 
 		JsonObject jsonObject = (JsonObject) gson.toJsonTree(this);
@@ -180,7 +180,7 @@ public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEn
 		return this;
 	}
 
-	private JsonArray getAssociacoesJson(boolean listarAssociacoes) {
+	private JsonArray getAssociacoesJson(boolean listarAssociacoes) throws Exception {
 		Gson gson = Util.createGson("");
 		JsonArray jsonArray = new JsonArray();
 

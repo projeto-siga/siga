@@ -22,7 +22,7 @@ import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_ATRIBUTO_ACORDO", schema = Catalogs.SIGASR)
-public class SrAtributoAcordo extends HistoricoSuporteVraptor implements ConvertableEntity {
+public class SrAtributoAcordo extends HistoricoSuporteVraptor {
 
 	private static final long serialVersionUID = 1L;
 

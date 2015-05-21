@@ -842,12 +842,13 @@
 	                jDialog.data('operador','');
 		        },
 		        open: function(){
+		        	$("#valor-error").html('');
+			        $('#valor').attr('class', 'valid');
+			        
 	                if (jDialog.data("valor"))
 		                jDialog.dialog('option', 'title', 'Alterar Parametro');
-	                else {
-			                jDialog.dialog('option', 'title', 'Incluir Parametro');
-			                $("#valor-error").html('');
-		                }
+	                else
+		                jDialog.dialog('option', 'title', 'Incluir Parametro');
 	                
 	                jValor.val(jDialog.data("valor"));
 	                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);

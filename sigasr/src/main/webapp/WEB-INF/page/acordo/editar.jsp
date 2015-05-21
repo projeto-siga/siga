@@ -728,7 +728,6 @@
 				row[colunasAssociacao.idAssociacao] = associacao.idConfiguracao;
 		        row[colunasAssociacao.jSon] = associacao;						         
 		        row[colunasAssociacao.botaoExcluir] = html;
-		        
 		        var trObject = isEditing ? tableAssociacao.api().row('.selected').data(row) : tableAssociacao.api().row.add(row).draw(),
 				    tr = $(trObject.node());
 			    

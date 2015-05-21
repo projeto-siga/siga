@@ -77,7 +77,8 @@ public class AcordoController extends SrController {
 	//@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravarAcordo(SrAcordo acordo, List<SrAtributoAcordo> atributoAcordoSet, List<Integer> unidadeMedida ) throws Exception {
-		if(isNotEmptyUnidadeMedida(unidadeMedida))
+		acordo.getAtributoAcordoSet().clear();
+	    if(isNotEmptyUnidadeMedida(unidadeMedida))
 			acordo.getAtributoAcordoSet().addAll(buscaAtributosAcordo(atributoAcordoSet, unidadeMedida));
 
 		acordo.salvar();

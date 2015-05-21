@@ -24,6 +24,11 @@
 				
 				//removendo a referencia de '$' para o jQuery
 				$( document ).ready(function() {
+					if ("${mostrarDesativados}" != "") {
+						document.getElementById('checkmostrarDesativados').checked = ${mostrarDesativados};
+						document.getElementById('checkmostrarDesativados').value = ${mostrarDesativados};
+					}
+					
 					$("#checkmostrarDesativados").click(function() {
 						jQuery.blockUI(objBlock);
 						if (document.getElementById('checkmostrarDesativados').checked)

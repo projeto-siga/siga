@@ -132,12 +132,12 @@ public class AcordoController extends SrController {
 	}
 
 	@Path("/abrangencias")
-	public void buscarAbrangenciasAcordo(Long id) throws Exception {
+	public void buscarAbrangenciasAcordo(Long id, boolean exibirInativos) throws Exception {
 		SrAcordo acordo = new SrAcordo();
 
 		if (id != null)
 			acordo = SrAcordo.AR.findById(id);
-		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(Boolean.FALSE, acordo);
+		List<SrConfiguracao> abrangencias = SrConfiguracao.listarAbrangenciasAcordo(exibirInativos, acordo);
 
 		result.use(Results.http()).body(SrConfiguracao.convertToJSon(abrangencias));
 	}

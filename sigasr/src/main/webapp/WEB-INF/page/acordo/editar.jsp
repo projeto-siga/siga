@@ -230,7 +230,6 @@
 
 <script type="text/javascript">
 	function getUrlDesativarReativar(desativados) {
-	    
 	    var url = '${linkTo[AcordoController].buscarAbrangenciasAcordo}';
 	    var idAcordo = $("[id=id]").val();
 	    var exibirInativo = "";
@@ -306,7 +305,7 @@
 	      		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	      	 },
 	      	 error: function(error) {
-	          	alert("N&atilde;o foi poss&iacute;vel carregar as Abrang&ecirc;ncias deste Acordo.");
+	          	alert("Não foi possível carregar as Abrangências deste Acordo.");
 	      	 }
        });
     });

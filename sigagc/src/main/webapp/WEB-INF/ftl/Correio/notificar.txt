@@ -1,1 +1,0 @@
-Informamos ${msgDestinatario} a respeito do conhecimento n&ordm; ${inf.sigla}, com o seguinte título: ${inf.arq.titulo}. Para acessar o conhecimento, acesse o endereço @@{Application.exibir(inf.sigla)}.

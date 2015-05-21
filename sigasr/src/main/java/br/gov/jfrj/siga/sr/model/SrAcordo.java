@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.sr.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -59,7 +60,8 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel, C
 	private List<SrAtributoAcordo> atributoAcordoSet;
 
 	public SrAcordo() {
-
+	    this.atributoAcordoSet = new ArrayList<>();
+	    this.meuAcordoHistoricoSet = new ArrayList<>();
 	}
 
 	@Override

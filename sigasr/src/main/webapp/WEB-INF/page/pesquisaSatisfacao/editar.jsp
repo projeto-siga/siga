@@ -86,7 +86,7 @@
 							value="${idTipoPergunta}" />
 					</div>
 					<div class="gt-form-row">
-						<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" /> 
+						<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" />
 						<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
 					</div>
 				</form>
@@ -123,7 +123,6 @@
 
         $("#botaoIncluir").click(function() {
         	document.getElementById("descrPergunta").className = "";
-        	perguntaFormValidator.resetForm();
 			jDialog.data('acao', perguntas.incluirItem).dialog('open');
         });
 
@@ -139,10 +138,13 @@
                         jDialog.data('tipoPergunta','');
                 },
                 open: function(){
+                		perguntaFormValidator.resetForm();
+
                         if (jDialog.data("descrPergunta"))
                                 jDialog.dialog('option', 'title', 'Alterar Pergunta');
                         else
                                 jDialog.dialog('option', 'title', 'Incluir Pergunta');
+
                         jDescrPergunta.val(jDialog.data("descrPergunta"));
                         jTipoPergunta.find("option[value=" + jDialog.data("tipoPergunta") + "]").prop('selected', true);
                 }
@@ -222,7 +224,7 @@
 	function resetErrosForm() {
 		pesquisaFormValidator.reset();
 		perguntaFormValidator.reset();
-		
+
 	}
 
 	function podeCadastrarAssociacao() {

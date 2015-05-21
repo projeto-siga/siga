@@ -821,7 +821,7 @@
 		jParametro = $("#parametro");
 		jUnidadeMedida = $("#unidadeMedida");
 		jOperador = $("#operador");
-		
+
 		$("#botaoIncluir").click(function(){
 	        jDialog.data('acao',parametrosAcordo.incluirItem).dialog('open');
 		});
@@ -840,8 +840,11 @@
 	                jDialog.data('operador','');
 		        },
 		        open: function(){
-		        	$("#valor-error").html('');
-			        $('#valor').attr('class', 'valid');
+			        limparErros();
+			        
+		        	jParametro.on('change', function() {
+		    			limparErros();
+		    		});
 			        
 	                if (jDialog.data("valor"))
 		                jDialog.dialog('option', 'title', 'Alterar Parametro');
@@ -914,4 +917,9 @@
 	        parametrosAcordo["index"]--;
 		}
 	});
+
+	function limparErros() {
+		$("#valor").attr('class', 'valid');
+		$("#valor-error").css('display', 'none');
+	}
 </script>

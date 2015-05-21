@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Disponibilidade de itens de configuração">
+<siga:pagina titulo="Disponibilidade de itens de configuraï¿½ï¿½o">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -264,6 +264,9 @@ td .orgao:first-child {
 		}
 
 		this.onChangeTipo = function() {
+
+			disponibilidadeService.resetErrosForm();
+
 			var tipo = $('#tipo').val();
 
 			if(this.deveEsconderTudo(tipo)) {

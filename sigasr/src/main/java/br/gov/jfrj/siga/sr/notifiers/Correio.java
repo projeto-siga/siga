@@ -84,20 +84,20 @@ public class Correio extends Mailer {
 		for (SrGestorItem gestor : sol.getItemConfiguracao().getGestorSet()) {
 			DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
 			if (pessoaGestorAtual != null
-					&& pessoaGestorAtual.getDataFim() == null)
-				if (pessoaGestorAtual.getEmailPessoa() != null)
+					&& pessoaGestorAtual.getDataFim() == null 
+					&& pessoaGestorAtual.getEmailPessoa() != null)
 					recipients.add(pessoaGestorAtual.getEmailPessoa());
 
 			if (gestor.getDpLotacao() != null)
 				for (DpPessoa gestorPessoa : gestor.getDpLotacao()
 						.getDpPessoaLotadosSet())
-					if (gestorPessoa.getPessoaAtual().getDataFim() == null)
-						if (gestorPessoa.getPessoaAtual().getEmailPessoa() != null)
+					if (gestorPessoa.getPessoaAtual().getDataFim() == null 
+						&& gestorPessoa.getPessoaAtual().getEmailPessoa() != null)
 							recipients.add(gestorPessoa.getPessoaAtual()
 									.getEmailPessoa());
 		}
 		recipients.add(sol.getSolicitante().getEmailPessoa());
-		if (recipients.size() > 0) {
+		if (recipients.isEmpty()) {
 			addRecipient(recipients.toArray());
 			send(movimentacao, sol);
 		}

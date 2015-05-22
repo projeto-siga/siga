@@ -49,7 +49,7 @@ import com.google.gson.JsonArray;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSelecionavel, ConvertableEntity {
 
-	public static ActiveRecord<SrItemConfiguracao> AR = new ActiveRecord<>(SrItemConfiguracao.class);
+	public static final ActiveRecord<SrItemConfiguracao> AR = new ActiveRecord<>(SrItemConfiguracao.class);
 
 	private static final long serialVersionUID = 1L;
 //	private static final int NETO = 3;
@@ -58,10 +58,12 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 	private static Comparator<SrItemConfiguracao> comparator = new Comparator<SrItemConfiguracao>() {
 		@Override
 		public int compare(SrItemConfiguracao o1, SrItemConfiguracao o2) {
-			if (o1 != null && o2 != null
-					&& o1.getIdItemConfiguracao() == o2.getIdItemConfiguracao())
+			if (o1 == null || o2 == null)
+				return -1;
+			else if (o1.getIdItemConfiguracao().equals(o2.getIdItemConfiguracao()))
 				return 0;
-			return o1.getSiglaItemConfiguracao().compareTo(o2.getSiglaItemConfiguracao());
+			else 
+				return o1.getSiglaItemConfiguracao().compareTo(o2.getSiglaItemConfiguracao());
 		}
 	};
 
@@ -155,10 +157,12 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		return getIdItemConfiguracao();
 	}
 
+	@Override
 	public String getSigla() {
 		return getSiglaItemConfiguracao();
 	}
 
+	@Override
 	public String getDescricao() {
 		return getTituloItemConfiguracao();
 	}
@@ -168,6 +172,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		this.setIdItemConfiguracao(id);
 	}
 
+	@Override
 	public void setDescricao(String descricao) {
 		this.setTituloItemConfiguracao(descricao);
 	}
@@ -196,7 +201,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 			List<SrItemConfiguracao> listaBase) throws Exception {
 		setSigla(sigla);
 		List<SrItemConfiguracao> itens = buscar(listaBase, false);
-		if (itens.size() == 0 || itens.size() > 1 || itens.get(0).isGenerico())
+		if (itens.isEmpty() || itens.size() > 1 || itens.get(0).isGenerico())
 			return null;
 		return itens.get(0);
 	}

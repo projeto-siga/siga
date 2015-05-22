@@ -7,42 +7,48 @@ public abstract class AbstractSelecionavel implements ISelecionavel {
 	private Long id;
 	private String sigla;
 	private String descricao;
-	
+
 	public AbstractSelecionavel(Long id, String sigla, String descricao) {
 		this.setId(id);
 		this.setSigla(sigla);
 		this.setDescricao(descricao);
 	}
-	
+
 	public AbstractSelecionavel(Long id, String descricao) {
 		this.setId(id);
 		this.setDescricao(descricao);
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
 
+	@Override
 	public String getSigla() {
 		return sigla;
 	}
 
+	@Override
 	public void setSigla(String sigla) {
 		this.sigla = sigla;
 	}
 
+	@Override
 	public String getDescricao() {
 		return descricao;
 	}
 
+	@Override
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-	
+
 	/**
 	 * Converte o objeto para Json.
 	 */
@@ -53,5 +59,5 @@ public abstract class AbstractSelecionavel implements ISelecionavel {
 
 		return gson.toJson(this);
 	}
-	
+
 }

@@ -58,7 +58,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 				+ "and hisDtFim is null")
 
 })
-public class CpConfiguracao extends AbstractCpConfiguracao {
+public class CpConfiguracao extends AbstractCpConfiguracao implements CpConvertableEntity {
 
 	/**
 	 * 

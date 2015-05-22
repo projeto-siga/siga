@@ -18,7 +18,7 @@ import freemarker.template.TemplateException;
 @Component
 @RequestScoped
 public class Correio {
-    private static final String MOVIMENTACAO_DA_SOLICITACAO = "Movimentação da solicitação ";
+    private static final String MOVIMENTACAO_DA_SOLICITACAO = "Movimentaï¿½ï¿½o da solicitaï¿½ï¿½o ";
     private static final String EMAIL_ADMINISTRADOR_DO_SIGA = "Administrador do Siga<sigadocs@jfrj.jus.br>";
 
     private Freemarker freemarker;
@@ -44,9 +44,9 @@ public class Correio {
 
         String assunto = "";
         if (sol.isFilha())
-            assunto = "Escalonamento da solicitação " + sol.getSolicitacaoPai().getCodigo();
+            assunto = "Escalonamento da solicitaï¿½ï¿½o " + sol.getSolicitacaoPai().getCodigo();
         else
-            assunto = "Abertura da solicitação " + sol.getCodigo();
+            assunto = "Abertura da solicitaï¿½ï¿½o " + sol.getCodigo();
 
         String conteudo = getConteudoComSolicitacao(sol);
 

@@ -53,5 +53,4 @@ public abstract class AbstractSelecionavel implements ISelecionavel {
 
         return gson.toJson(this);
     }
-
 }

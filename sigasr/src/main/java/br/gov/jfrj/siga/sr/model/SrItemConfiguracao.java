@@ -49,20 +49,23 @@ import com.google.gson.JsonArray;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSelecionavel, ConvertableEntity {
 
-    public static ActiveRecord<SrItemConfiguracao> AR = new ActiveRecord<>(SrItemConfiguracao.class);
+	public static final ActiveRecord<SrItemConfiguracao> AR = new ActiveRecord<>(SrItemConfiguracao.class);
 
     private static final long serialVersionUID = 1L;
     // private static final int NETO = 3;
 
-    @SuppressWarnings("unused")
-    private static Comparator<SrItemConfiguracao> comparator = new Comparator<SrItemConfiguracao>() {
-        @Override
-        public int compare(SrItemConfiguracao o1, SrItemConfiguracao o2) {
-            if (o1 != null && o2 != null && o1.getIdItemConfiguracao() == o2.getIdItemConfiguracao())
-                return 0;
-            return o1.getSiglaItemConfiguracao().compareTo(o2.getSiglaItemConfiguracao());
-        }
-    };
+	@SuppressWarnings("unused")
+	private static Comparator<SrItemConfiguracao> comparator = new Comparator<SrItemConfiguracao>() {
+		@Override
+		public int compare(SrItemConfiguracao o1, SrItemConfiguracao o2) {
+			if (o1 == null || o2 == null)
+				return -1;
+			else if (o1.getIdItemConfiguracao().equals(o2.getIdItemConfiguracao()))
+				return 0;
+			else 
+				return o1.getSiglaItemConfiguracao().compareTo(o2.getSiglaItemConfiguracao());
+		}
+	};
 
     private static String MASCARA_JAVA = "([0-9]{0,2})\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?";
     // "([0-9][0-9])?([.])?([0-9][0-9])?([.])?([0-9][0-9])";

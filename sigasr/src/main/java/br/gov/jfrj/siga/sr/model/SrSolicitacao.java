@@ -1272,9 +1272,9 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
                     e.params = new HashMap<String, Object>();
                 e.params.put("id", getIdSolicitacao());
 
-                // if (!e.isModal())
-                // TODO Verificar Router
-                // e.url = Router.reverse(e.url, e.params).url;
+                if (!e.isModal())
+                    e.url = e.url + "?" + e.params;
+
                 if (!e.pode)
                     return false;
                 return super.add(e);

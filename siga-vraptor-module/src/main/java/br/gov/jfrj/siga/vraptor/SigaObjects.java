@@ -169,7 +169,6 @@ public class SigaObjects implements ConheceUsuario {
 	}
 
 	public CpDao dao() {
-		// TODO Auto-generated method stub
 		return CpDao.getInstance();
 	}
 

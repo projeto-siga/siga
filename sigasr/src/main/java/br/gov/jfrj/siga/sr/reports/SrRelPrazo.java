@@ -1344,11 +1344,11 @@ public class SrRelPrazo extends RelatorioTemplate {
 		}
 
 		for (SrMovimentacao mov : sol.getMovimentacaoSet()) {
-			if (mov.tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
-				listaPendentes.add(new DateTime(mov.dtIniMov));
+			if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
+				listaPendentes.add(new DateTime(mov.getDtIniMov()));
 			}
-			if (mov.tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
-				listaPendentes.add(new DateTime(mov.dtIniMov));
+			if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
+				listaPendentes.add(new DateTime(mov.getDtIniMov()));
 			}
 		}
 

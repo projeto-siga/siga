@@ -54,6 +54,7 @@ import br.gov.jfrj.siga.sr.model.SrUrgencia;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
+import br.gov.jfrj.siga.sr.notifiers.Correio;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoAtendidos;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
@@ -67,8 +68,12 @@ import com.google.gson.Gson;
 
 public class Application extends SrController {
 
-    public Application(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
+    // TODO: usado nas classes SrColicitacao e SrMovimentacao
+    private Correio correio;
+
+    public Application(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator, Correio correio) {
         super(request, result, dao, so, em, srValidator);
+        this.correio = correio;
         // TODO Auto-generated constructor stub
     }
 
@@ -643,14 +648,14 @@ public class Application extends SrController {
     }
 
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
-        movimentacao.tipoMov = SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
+        movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        exibir(movimentacao.solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
+        exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     public void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        exibir(movimentacao.solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
+        exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     public void fechar(Long id, String motivo) throws Exception {
@@ -762,16 +767,16 @@ public class Application extends SrController {
             exibir(filha.getIdSolicitacao(), todoOContexto(), ocultas());
         } else {
             SrMovimentacao mov = new SrMovimentacao(solicitacao);
-            mov.tipoMov = SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO);
-            mov.itemConfiguracao = SrItemConfiguracao.AR.findById(itemConfiguracao);
-            mov.acao = SrAcao.AR.findById(acao.getIdAcao());
-            mov.lotaAtendente = atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente;
-            if (solicitacao.getAtendente() != null && !mov.lotaAtendente.equivale(solicitacao.getAtendente().getLotacao()))
-                mov.atendente = null;
-            mov.motivoEscalonamento = motivo;
-            mov.designacao = SrConfiguracao.AR.findById(idDesignacao);
-            mov.descrMovimentacao = "Motivo: " + mov.motivoEscalonamento + "; Item: " + mov.itemConfiguracao.getTituloItemConfiguracao() + "; Ação: " + mov.acao.getTituloAcao() + "; Atendente: "
-                    + mov.lotaAtendente.getSigla();
+            mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
+            mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao));
+            mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
+            mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
+            if (solicitacao.getAtendente() != null && !mov.getLotaAtendente().equivale(solicitacao.getAtendente().getLotacao()))
+                mov.setAtendente(null);
+            mov.setMotivoEscalonamento(motivo);
+            mov.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
+            mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Ação: " + mov.getAcao().getTituloAcao()
+                    + "; Atendente: " + mov.getLotaAtendente().getSigla());
             mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
             exibir(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
         }

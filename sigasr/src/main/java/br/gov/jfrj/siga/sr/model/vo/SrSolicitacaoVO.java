@@ -53,7 +53,7 @@ public class SrSolicitacaoVO {
         this.setLotaSolicitante(sol.getLotaSolicitante() != null ? SelecionavelVO.createFrom(sol.getLotaSolicitante()) : null);
         this.setDtRegString(sol.getSolicitacaoInicial().getDtRegString());
         this.setLotaAtendente(sol.getLotaAtendente() != null ? SelecionavelVO.createFrom(sol.getLotaAtendente()) : null);
-        this.setUltimaMovimentacao(sol.getUltimaMovimentacaoQuePossuaDescricao() != null ? sol.getUltimaMovimentacaoQuePossuaDescricao().descrMovimentacao : "");
+        this.setUltimaMovimentacao(sol.getUltimaMovimentacaoQuePossuaDescricao() != null ? sol.getUltimaMovimentacaoQuePossuaDescricao().getDescrMovimentacao() : "");
         this.setDtUltimaMovimentacaoString(sol.getUltimaMovimentacao() != null ? sol.getUltimaMovimentacao().getDtIniMovDDMMYYYYHHMM() : "");
 
         this.setTeorFormatado(getTeorFormatado(sol.getItemAtual(), this.getDescricao()));

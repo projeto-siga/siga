@@ -1,14 +1,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<c:set var="locaisDisponiveis" value="${solicitacao.locaisDisponiveis}"></c:set>
 <c:if test="${locaisDisponiveis.size() > 1}">
 	<div class="gt-form-row gt-width-66">
 		<label>Local</label>
 		<siga:select id="local" 
 		             name="solicitacao.local" 
-		             list="${locaisDisponiveis}" 
-		             listValue="idComplexo" 
+		             list="locaisDisponiveis" 
+		             listValue="nomeComplexo" 
 		             listKey="idComplexo" 
 		             value="${solicitacao.local.idComplexo}" />
 	</div>

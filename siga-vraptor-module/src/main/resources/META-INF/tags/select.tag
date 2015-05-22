@@ -14,7 +14,6 @@
 <%@ attribute name="headerKey" required="false"%>
 <%@ attribute name="isEnum" required="false"%>
 
-<!-- wwselect -->
 <c:if test="${empty value}">
 	<c:set var="value" value="${requestScope[name]}"/>
 </c:if>

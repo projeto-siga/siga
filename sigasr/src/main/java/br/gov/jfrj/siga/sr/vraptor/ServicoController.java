@@ -23,12 +23,16 @@ public class ServicoController extends SrController {
     }
     
     
-    @Path("/cadastrar")
-    public void cadastrar() {
-     
+    @Path("/teste")
+    public void teste(boolean banco) {
+        SrSolicitacao value = new SrSolicitacao();
+        if (banco) {
+            value = (SrSolicitacao) SrSolicitacao.AR.all().fetch().get(0);
+        }
         
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
-        result.include("solicitacao",new SrSolicitacao());
+        result.include("locaisDisponiveis",value.getLocaisDisponiveis());
+        result.include("solicitacao",value);
     }
 
 }

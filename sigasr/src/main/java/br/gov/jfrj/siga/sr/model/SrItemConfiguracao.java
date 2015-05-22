@@ -51,8 +51,8 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 
 	public static final ActiveRecord<SrItemConfiguracao> AR = new ActiveRecord<>(SrItemConfiguracao.class);
 
-	private static final long serialVersionUID = 1L;
-//	private static final int NETO = 3;
+    private static final long serialVersionUID = 1L;
+    // private static final int NETO = 3;
 
 	@SuppressWarnings("unused")
 	private static Comparator<SrItemConfiguracao> comparator = new Comparator<SrItemConfiguracao>() {
@@ -67,752 +67,734 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
 		}
 	};
 
-	private static String MASCARA_JAVA = "([0-9]{0,2})\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?";
-	// "([0-9][0-9])?([.])?([0-9][0-9])?([.])?([0-9][0-9])";
+    private static String MASCARA_JAVA = "([0-9]{0,2})\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?\\.?([0-9]{0,2})?";
+    // "([0-9][0-9])?([.])?([0-9][0-9])?([.])?([0-9][0-9])";
 
-	@Id
-	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
-	@GeneratedValue(generator = "srItemSeq")
-	@Column(name = "ID_ITEM_CONFIGURACAO")
-	private Long idItemConfiguracao;
+    @Id
+    @SequenceGenerator(sequenceName = Catalogs.SIGASR + ".SR_ITEM_CONFIGURACAO_SEQ", name = "srItemSeq")
+    @GeneratedValue(generator = "srItemSeq")
+    @Column(name = "ID_ITEM_CONFIGURACAO")
+    private Long idItemConfiguracao;
 
-	@Column(name = "SIGLA_ITEM_CONFIGURACAO")
-	private String siglaItemConfiguracao;
+    @Column(name = "SIGLA_ITEM_CONFIGURACAO")
+    private String siglaItemConfiguracao;
 
-	@Column(name = "DESCR_ITEM_CONFIGURACAO")
-	private String descrItemConfiguracao;
+    @Column(name = "DESCR_ITEM_CONFIGURACAO")
+    private String descrItemConfiguracao;
 
-	@Column(name = "TITULO_ITEM_CONFIGURACAO")
-	private String tituloItemConfiguracao;
+    @Column(name = "TITULO_ITEM_CONFIGURACAO")
+    private String tituloItemConfiguracao;
 
-	@Lob
-	@Column(name = "DESCR_SIMILARIDADE", length = 8192)
-	private String descricaoSimilaridade;
+    @Lob
+    @Column(name = "DESCR_SIMILARIDADE", length = 8192)
+    private String descricaoSimilaridade;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
-	@JoinColumn(name = "ID_PAI")
-	private SrItemConfiguracao pai;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "ID_PAI")
+    private SrItemConfiguracao pai;
 
-	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "pai", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-	private List<SrItemConfiguracao> filhoSet;
+    @OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "pai", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private List<SrItemConfiguracao> filhoSet;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
-	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	private SrItemConfiguracao itemInicial;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+    private SrItemConfiguracao itemInicial;
 
-	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-	//@OrderBy("hisDtIni desc")
-	private List<SrItemConfiguracao> meuItemHistoricoSet;
+    @OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    // @OrderBy("hisDtIni desc")
+    private List<SrItemConfiguracao> meuItemHistoricoSet;
 
-	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)
     private List<SrGestorItem> gestorSet;
 
-	@Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
-	private int numFatorMultiplicacaoGeral = 1;
+    @Column(name = "NUM_FATOR_MULTIPLICACAO_GERAL")
+    private int numFatorMultiplicacaoGeral = 1;
 
-	@OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)
-	private List<SrFatorMultiplicacao> fatorMultiplicacaoSet;
+    @OneToMany(targetEntity = SrFatorMultiplicacao.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)
+    private List<SrFatorMultiplicacao> fatorMultiplicacaoSet;
 
-	@Transient
-	private List<SrConfiguracao> designacoes;
+    @Transient
+    private List<SrConfiguracao> designacoes;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="SR_CONFIGURACAO_ITEM", schema = Catalogs.SIGASR, joinColumns={@JoinColumn(name="ID_ITEM_CONFIGURACAO")}, inverseJoinColumns={@JoinColumn(name="ID_CONFIGURACAO")})
-	private List<SrConfiguracao> designacoesSet;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "SR_CONFIGURACAO_ITEM", schema = Catalogs.SIGASR, joinColumns = { @JoinColumn(name = "ID_ITEM_CONFIGURACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_CONFIGURACAO") })
+    private List<SrConfiguracao> designacoesSet;
 
-	public SrItemConfiguracao() {
-		this(null, null);
-	}
+    public SrItemConfiguracao() {
+        this(null, null);
+    }
 
-	public SrItemConfiguracao(String descricao) {
-		this(descricao, null);
-	}
+    public SrItemConfiguracao(String descricao) {
+        this(descricao, null);
+    }
 
-	public SrItemConfiguracao(String sigla, String descricao) {
-		this.setTituloItemConfiguracao(descricao);
-		this.setSiglaItemConfiguracao(sigla);
-	}
+    public SrItemConfiguracao(String sigla, String descricao) {
+        this.setTituloItemConfiguracao(descricao);
+        this.setSiglaItemConfiguracao(sigla);
+    }
 
-	public void adicionarDesignacao(SrConfiguracao designacao) throws Exception {
-		if (getDesignacoesSet() == null) {
-			setDesignacoesSet(new ArrayList<SrConfiguracao>());
-		}
-		if (podeAdicionar(designacao)) {
-			getDesignacoesSet().add(designacao);
-			salvar();
-		}
-	}
+    public void adicionarDesignacao(SrConfiguracao designacao) throws Exception {
+        if (getDesignacoesSet() == null) {
+            setDesignacoesSet(new ArrayList<SrConfiguracao>());
+        }
+        if (podeAdicionar(designacao)) {
+            getDesignacoesSet().add(designacao);
+            salvar();
+        }
+    }
 
-	private boolean podeAdicionar(SrConfiguracao designacao) {
-		for (SrConfiguracao designacaoSalva : getDesignacoesSet()) {
-			if (designacaoSalva.getId().equals(designacao.getId())) {
-				return Boolean.FALSE;
-			}
-		}
-		return Boolean.TRUE;
-	}
+    private boolean podeAdicionar(SrConfiguracao designacao) {
+        for (SrConfiguracao designacaoSalva : getDesignacoesSet()) {
+            if (designacaoSalva.getId().equals(designacao.getId())) {
+                return Boolean.FALSE;
+            }
+        }
+        return Boolean.TRUE;
+    }
 
-	@Override
-	public Long getId() {
-		return getIdItemConfiguracao();
-	}
+    @Override
+    public Long getId() {
+        return getIdItemConfiguracao();
+    }
 
-	@Override
-	public String getSigla() {
-		return getSiglaItemConfiguracao();
-	}
+    public String getSigla() {
+        return getSiglaItemConfiguracao();
+    }
 
-	@Override
-	public String getDescricao() {
-		return getTituloItemConfiguracao();
-	}
+    public String getDescricao() {
+        return getTituloItemConfiguracao();
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.setIdItemConfiguracao(id);
-	}
+    @Override
+    public void setId(Long id) {
+        this.setIdItemConfiguracao(id);
+    }
 
-	@Override
-	public void setDescricao(String descricao) {
-		this.setTituloItemConfiguracao(descricao);
-	}
+    public void setDescricao(String descricao) {
+        this.setTituloItemConfiguracao(descricao);
+    }
 
-	public List<SrItemConfiguracao> getHistoricoItemConfiguracao() {
-		if (getItemInicial() != null)
-			return getItemInicial().getMeuItemHistoricoSet();
-		return null;
-	}
+    public List<SrItemConfiguracao> getHistoricoItemConfiguracao() {
+        if (getItemInicial() != null)
+            return getItemInicial().getMeuItemHistoricoSet();
+        return null;
+    }
 
-	public SrItemConfiguracao getAtual() {
-		if (getHisDtFim() == null)
-			return this;
-		List<SrItemConfiguracao> sols = getHistoricoItemConfiguracao();
-		if (sols == null)
-			return null;
-		return sols.get(0);
-	}
-	
-	@Override
-	public SrItemConfiguracao selecionar(String sigla) throws Exception {
-		return selecionar(sigla, null);
-	}
+    public SrItemConfiguracao getAtual() {
+        if (getHisDtFim() == null)
+            return this;
+        List<SrItemConfiguracao> sols = getHistoricoItemConfiguracao();
+        if (sols == null)
+            return null;
+        return sols.get(0);
+    }
 
-	public SrItemConfiguracao selecionar(String sigla,
-			List<SrItemConfiguracao> listaBase) throws Exception {
-		setSigla(sigla);
-		List<SrItemConfiguracao> itens = buscar(listaBase, false);
-		if (itens.isEmpty() || itens.size() > 1 || itens.get(0).isGenerico())
-			return null;
-		return itens.get(0);
-	}
+    @Override
+    public SrItemConfiguracao selecionar(String sigla) throws Exception {
+        return selecionar(sigla, null);
+    }
 
-	@Override
-	public List<SrItemConfiguracao> buscar() throws Exception {
-		return buscar(null);
-	}
+    public SrItemConfiguracao selecionar(String sigla, List<SrItemConfiguracao> listaBase) throws Exception {
+        setSigla(sigla);
+        List<SrItemConfiguracao> itens = buscar(listaBase, false);
+        if (itens.size() == 0 || itens.size() > 1 || itens.get(0).isGenerico())
+            return null;
+        return itens.get(0);
+    }
 
-	public List<SrItemConfiguracao> buscar(List<SrItemConfiguracao> listaBase)
-			throws Exception {
-		return buscar(listaBase, true);
-	}
+    @Override
+    public List<SrItemConfiguracao> buscar() throws Exception {
+        return buscar(null);
+    }
 
-	public List<SrItemConfiguracao> buscar(List<SrItemConfiguracao> listaBase,
-			boolean comHierarquia) throws Exception {
+    public List<SrItemConfiguracao> buscar(List<SrItemConfiguracao> listaBase) throws Exception {
+        return buscar(listaBase, true);
+    }
 
-		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
-		List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
+    public List<SrItemConfiguracao> buscar(List<SrItemConfiguracao> listaBase, boolean comHierarquia) throws Exception {
 
-		if (listaBase == null)
-			lista = listar(Boolean.FALSE);
-		else
-			lista = listaBase;
+        List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
+        List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
 
-		if ((getSiglaItemConfiguracao() == null || getSiglaItemConfiguracao().equals(""))
-				&& (getTituloItemConfiguracao() == null || getTituloItemConfiguracao()
-						.equals("")))
-			return lista;
+        if (listaBase == null)
+            lista = listar(Boolean.FALSE);
+        else
+            lista = listaBase;
 
-		for (SrItemConfiguracao item : lista) {
-			if (getSiglaItemConfiguracao() != null
-					&& !getSiglaItemConfiguracao().equals("")
-					&& !(item.getSiglaItemConfiguracao().toLowerCase()
-							.contains(getSigla())))
-				continue;
-			if (getTituloItemConfiguracao() != null
-					&& !getTituloItemConfiguracao().equals("")) {
-				boolean naoAtende = false;
-				for (String s : getTituloItemConfiguracao().toLowerCase().split(
-						"\\s")){
-					if (!item.getTituloItemConfiguracao().toLowerCase().contains(s)
-							&& !(item.getDescricaoSimilaridade() != null && item.getDescricaoSimilaridade()
-									.toLowerCase().contains(s)))
-						naoAtende = true;
-				}
+        if ((getSiglaItemConfiguracao() == null || getSiglaItemConfiguracao().equals("")) && (getTituloItemConfiguracao() == null || getTituloItemConfiguracao().equals("")))
+            return lista;
 
-				if (naoAtende)
-					continue;
-			}
+        for (SrItemConfiguracao item : lista) {
+            if (getSiglaItemConfiguracao() != null && !getSiglaItemConfiguracao().equals("") && !(item.getSiglaItemConfiguracao().toLowerCase().contains(getSigla())))
+                continue;
+            if (getTituloItemConfiguracao() != null && !getTituloItemConfiguracao().equals("")) {
+                boolean naoAtende = false;
+                for (String s : getTituloItemConfiguracao().toLowerCase().split("\\s")) {
+                    if (!item.getTituloItemConfiguracao().toLowerCase().contains(s) && !(item.getDescricaoSimilaridade() != null && item.getDescricaoSimilaridade().toLowerCase().contains(s)))
+                        naoAtende = true;
+                }
 
-			if (comHierarquia)
-				do {
-					if (!listaFinal.contains(item))
-						listaFinal.add(item);
-					item = item.getPai();
-					if (item != null)
-						item = item.getAtual();
-				} while (item != null);
-			else
-				listaFinal.add(item);
-		}
+                if (naoAtende)
+                    continue;
+            }
 
-		Collections.sort(listaFinal, new SrItemConfiguracaoComparator());
-		return listaFinal;
-	}
+            if (comHierarquia)
+                do {
+                    if (!listaFinal.contains(item))
+                        listaFinal.add(item);
+                    item = item.getPai();
+                    if (item != null)
+                        item = item.getAtual();
+                } while (item != null);
+            else
+                listaFinal.add(item);
+        }
 
-	@Override
-	public void setSigla(String sigla) {
-		if (sigla == null) {
-			setSiglaItemConfiguracao("");
-			setTituloItemConfiguracao("");
-		} else {
-			final Pattern p1 = Pattern.compile("^" + MASCARA_JAVA + "$");
-			final Matcher m1 = p1.matcher(sigla);
-			if (m1.find()) {
-				String s = "";
-				for (int i = 1; i <= m1.groupCount(); i++) {
-					s += m1.group(i);
-					s += (i < m1.groupCount() - 1) ? "." : "";
-				}
-				setSiglaItemConfiguracao(s);
-			} else
-				setTituloItemConfiguracao(sigla);
-		}
-	}
+        Collections.sort(listaFinal, new SrItemConfiguracaoComparator());
+        return listaFinal;
+    }
 
-	public int getNivel() {
-		int camposVazios = 0;
-		if (getSigla() == null)
-			return 0;
-		int pos = getSigla().indexOf(".00", 0);
-		while (pos > -1) {
-			camposVazios++;
-			pos = getSigla().indexOf(".00", pos + 1);
-		}
+    @Override
+    public void setSigla(String sigla) {
+        if (sigla == null) {
+            setSiglaItemConfiguracao("");
+            setTituloItemConfiguracao("");
+        } else {
+            final Pattern p1 = Pattern.compile("^" + MASCARA_JAVA + "$");
+            final Matcher m1 = p1.matcher(sigla);
+            if (m1.find()) {
+                String s = "";
+                for (int i = 1; i <= m1.groupCount(); i++) {
+                    s += m1.group(i);
+                    s += (i < m1.groupCount() - 1) ? "." : "";
+                }
+                setSiglaItemConfiguracao(s);
+            } else
+                setTituloItemConfiguracao(sigla);
+        }
+    }
 
-		return 3 - camposVazios;
-	}
+    public int getNivel() {
+        int camposVazios = 0;
+        if (getSigla() == null)
+            return 0;
+        int pos = getSigla().indexOf(".00", 0);
+        while (pos > -1) {
+            camposVazios++;
+            pos = getSigla().indexOf(".00", pos + 1);
+        }
 
-	public boolean isEspecifico() {
-		return getNivel() == 3;
-	}
+        return 3 - camposVazios;
+    }
 
-	public boolean isGenerico() {
-		return getNivel() == 1;
-	}
+    public boolean isEspecifico() {
+        return getNivel() == 3;
+    }
 
-	public String getSiglaSemZeros() {
-		int posFimComparacao = getSigla().indexOf(".00");
-		if (posFimComparacao < 0)
-			posFimComparacao = getSigla().length() - 1;
-		return getSigla().substring(0, posFimComparacao + 1);
-	}
+    public boolean isGenerico() {
+        return getNivel() == 1;
+    }
 
-	public SrItemConfiguracao getPaiPorSigla() {
-		String sigla = getSiglaSemZeros();
-		sigla = sigla.substring(0, sigla.length() - 1);
-		if (sigla.lastIndexOf(".") == -1)
-			return null;
-		sigla = sigla.substring(0, sigla.lastIndexOf("."));
-		for (int i = 0; i < 3 - (getNivel() - 1); i++) {
-			sigla += ".00";
-		}
-		return SrItemConfiguracao.AR.find(
-				"byHisDtFimIsNullAndSiglaItemConfiguracao", sigla).first();
-	}
+    public String getSiglaSemZeros() {
+        int posFimComparacao = getSigla().indexOf(".00");
+        if (posFimComparacao < 0)
+            posFimComparacao = getSigla().length() - 1;
+        return getSigla().substring(0, posFimComparacao + 1);
+    }
 
-	public boolean isPaiDeOuIgualA(SrItemConfiguracao outroItem) {
-		if (outroItem == null || outroItem.getSigla() == null)
-			return false;
-		if (this.equals(outroItem))
-			return true;
+    public SrItemConfiguracao getPaiPorSigla() {
+        String sigla = getSiglaSemZeros();
+        sigla = sigla.substring(0, sigla.length() - 1);
+        if (sigla.lastIndexOf(".") == -1)
+            return null;
+        sigla = sigla.substring(0, sigla.lastIndexOf("."));
+        for (int i = 0; i < 3 - (getNivel() - 1); i++) {
+            sigla += ".00";
+        }
+        return SrItemConfiguracao.AR.find("byHisDtFimIsNullAndSiglaItemConfiguracao", sigla).first();
+    }
 
-		return outroItem.getSigla().startsWith(getSiglaSemZeros());
-	}
+    public boolean isPaiDeOuIgualA(SrItemConfiguracao outroItem) {
+        if (outroItem == null || outroItem.getSigla() == null)
+            return false;
+        if (this.equals(outroItem))
+            return true;
 
-	public boolean isFilhoDeOuIgualA(SrItemConfiguracao outroItem) {
-		return outroItem.isPaiDeOuIgualA(this);
-	}
+        return outroItem.getSigla().startsWith(getSiglaSemZeros());
+    }
 
-	public static List<SrItemConfiguracao> listar(boolean mostrarDesativados) {
-		StringBuffer sb = new StringBuffer();
+    public boolean isFilhoDeOuIgualA(SrItemConfiguracao outroItem) {
+        return outroItem.isPaiDeOuIgualA(this);
+    }
 
-		if (!mostrarDesativados)
-			sb.append(" hisDtFim is null ");
-		else {
-			sb.append(" idItemConfiguracao in (");
-			sb.append(" SELECT max(idItemConfiguracao) as idItemConfiguracao FROM ");
-			sb.append(" SrItemConfiguracao GROUP BY hisIdIni) ");
-		}
-		sb.append(" order by siglaItemConfiguracao ");
+    public static List<SrItemConfiguracao> listar(boolean mostrarDesativados) {
+        StringBuffer sb = new StringBuffer();
 
-		return SrItemConfiguracao.AR.find(sb.toString()).fetch();
-	}
+        if (!mostrarDesativados)
+            sb.append(" hisDtFim is null ");
+        else {
+            sb.append(" idItemConfiguracao in (");
+            sb.append(" SELECT max(idItemConfiguracao) as idItemConfiguracao FROM ");
+            sb.append(" SrItemConfiguracao GROUP BY hisIdIni) ");
+        }
+        sb.append(" order by siglaItemConfiguracao ");
 
-	@SuppressWarnings("unchecked")
-	public static List<SrItemConfiguracao> listar(PaginaItemConfiguracao configuracao) {
-		if (configuracao.precisaExecutarCount()) {
-			configuracao.setCount(countAtivos(configuracao));
-		}
+        return SrItemConfiguracao.AR.find(sb.toString()).fetch();
+    }
 
-		StringBuilder sb = querySelecionarAtivos("i", configuracao);
-		if (configuracao.getOrderBy() != null) {
-			sb.append(MessageFormat.format(" order by i.{0} ", configuracao.getOrderBy()));
-		}
-		if (configuracao.getDirecaoOrdenacao() != null) {
-			sb.append(configuracao.getDirecaoOrdenacao());
-		}
+    @SuppressWarnings("unchecked")
+    public static List<SrItemConfiguracao> listar(PaginaItemConfiguracao configuracao) {
+        if (configuracao.precisaExecutarCount()) {
+            configuracao.setCount(countAtivos(configuracao));
+        }
 
-		Query query = AR.em().createQuery(sb.toString());
-		query.setFirstResult(configuracao.getFistResult());
-		query.setMaxResults(configuracao.getTamanho());
+        StringBuilder sb = querySelecionarAtivos("i", configuracao);
+        if (configuracao.getOrderBy() != null) {
+            sb.append(MessageFormat.format(" order by i.{0} ", configuracao.getOrderBy()));
+        }
+        if (configuracao.getDirecaoOrdenacao() != null) {
+            sb.append(configuracao.getDirecaoOrdenacao());
+        }
 
-		if(configuracao.possuiParametroConsulta()) {
-			query.setParameter("tituloOuCodigo", "%" + configuracao.getTituloOuCodigo() + "%");
-		}
-		return query.getResultList();
-	}
+        Query query = AR.em().createQuery(sb.toString());
+        query.setFirstResult(configuracao.getFistResult());
+        query.setMaxResults(configuracao.getTamanho());
 
-	private static Integer countAtivos(PaginaItemConfiguracao pagina) {
-		StringBuilder sb = querySelecionarAtivos("count(i)", pagina);
-		Query query = AR.em().createQuery(sb.toString());
+        if (configuracao.possuiParametroConsulta()) {
+            query.setParameter("tituloOuCodigo", "%" + configuracao.getTituloOuCodigo() + "%");
+        }
+        return query.getResultList();
+    }
 
-		if(pagina.possuiParametroConsulta()) {
-			query.setParameter("tituloOuCodigo", "%" + pagina.getTituloOuCodigo() + "%");
-		}
-		return ((Long) query.getSingleResult()).intValue();
-	}
+    private static Integer countAtivos(PaginaItemConfiguracao pagina) {
+        StringBuilder sb = querySelecionarAtivos("count(i)", pagina);
+        Query query = AR.em().createQuery(sb.toString());
 
-	private static StringBuilder querySelecionarAtivos(String clause, PaginaItemConfiguracao pagina) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(MessageFormat.format("SELECT {0} FROM SrItemConfiguracao i WHERE hisDtFim is null ", clause));
+        if (pagina.possuiParametroConsulta()) {
+            query.setParameter("tituloOuCodigo", "%" + pagina.getTituloOuCodigo() + "%");
+        }
+        return ((Long) query.getSingleResult()).intValue();
+    }
 
-		if(pagina.possuiParametroConsulta()) {
-			sb.append(" AND (UPPER(i.tituloItemConfiguracao) LIKE UPPER(:tituloOuCodigo) OR UPPER(i.siglaItemConfiguracao) LIKE UPPER(:tituloOuCodigo)) ");
-		}
-		sb.append(" AND idItemConfiguracao in (");
-		sb.append(" SELECT max(idItemConfiguracao) as idItemConfiguracao FROM ");
-		sb.append(" SrItemConfiguracao GROUP BY hisIdIni) ");
+    private static StringBuilder querySelecionarAtivos(String clause, PaginaItemConfiguracao pagina) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format("SELECT {0} FROM SrItemConfiguracao i WHERE hisDtFim is null ", clause));
 
-		return sb;
-	}
+        if (pagina.possuiParametroConsulta()) {
+            sb.append(" AND (UPPER(i.tituloItemConfiguracao) LIKE UPPER(:tituloOuCodigo) OR UPPER(i.siglaItemConfiguracao) LIKE UPPER(:tituloOuCodigo)) ");
+        }
+        sb.append(" AND idItemConfiguracao in (");
+        sb.append(" SELECT max(idItemConfiguracao) as idItemConfiguracao FROM ");
+        sb.append(" SrItemConfiguracao GROUP BY hisIdIni) ");
 
-	@Override
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		return false;
-	}
+        return sb;
+    }
 
-	@SuppressWarnings("unused")
-	public String getGcTags() {
-		int nivel = this.getNivel();
-		String tags = "";
-		SrItemConfiguracao pai = this.getPai();
-		if (pai != null)
-			tags += pai.getGcTags();
-		return tags + "&tags=@" + getTituloSlugify();
-	}
+    @Override
+    public boolean semelhante(Assemelhavel obj, int profundidade) {
+        return false;
+    }
 
-	public String getGcTagAbertura() {
-		String s = "^sr:" + getTituloSlugify();
-		return s;
-	}
+    @SuppressWarnings("unused")
+    public String getGcTags() {
+        int nivel = this.getNivel();
+        String tags = "";
+        SrItemConfiguracao pai = this.getPai();
+        if (pai != null)
+            tags += pai.getGcTags();
+        return tags + "&tags=@" + getTituloSlugify();
+    }
+
+    public String getGcTagAbertura() {
+        String s = "^sr:" + getTituloSlugify();
+        return s;
+    }
 
     public String getTituloSlugify() {
-		return Texto.slugify(getTituloItemConfiguracao(), true, false);
-	}
+        return Texto.slugify(getTituloItemConfiguracao(), true, false);
+    }
 
     @Override
     public void salvar() throws Exception {
-    	if (getNivel() > 1 && getPai() == null) {
-			setPai(getPaiPorSigla());
-		}
-		super.salvar();
+        if (getNivel() > 1 && getPai() == null) {
+            setPai(getPaiPorSigla());
+        }
+        super.salvar();
 
         if (getGestorSet() != null)
-            for (SrGestorItem gestor : getGestorSet()){
+            for (SrGestorItem gestor : getGestorSet()) {
                 gestor.setItemConfiguracao(this);
                 gestor.salvar();
             }
 
         if (getFatorMultiplicacaoSet() != null)
-            for (SrFatorMultiplicacao fator : getFatorMultiplicacaoSet()){
+            for (SrFatorMultiplicacao fator : getFatorMultiplicacaoSet()) {
                 fator.setItemConfiguracao(this);
                 fator.salvar();
             }
 
         // DB1: precisa salvar item a item
-      	if (this.getDesignacoes() != null) {
-      		for (SrConfiguracao designacao : this.getDesignacoes()) {
-      			// se for uma configuração herdada
-      			if (designacao.isHerdado()) {
-      				// se estiver marcada como "não Herdar"
-      				if (!designacao.isUtilizarItemHerdado()) {
-      					// cria uma nova entrada na tabela, para que seja ignorada nas próximas vezes
-      					SrConfiguracaoIgnorada.createNew(this, designacao).salvar();
-      				}
-
-      				// verifica se existia entrada para "não Herdar", e remove (usuário marcou para usar herança)
-      				else {
-      					List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(designacao);
-
-      					for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
-      						// se a configuração for do Item ou de um de seus históricos, remove
-      						if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
-      							for (SrItemConfiguracao itemHist : this.getHistoricoItemConfiguracao()) {
-      								if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
-      									igItem.delete();
-      									break;
-      								}
-      							}
-      						}
-      					}
-      				}
-      			}
-      			else {
-      				designacao.salvarComoDesignacao();
-      			}
-      		}
-      	}
-	}
-
-	public List<SrItemConfiguracao> getItemETodosDescendentes() {
-		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
-		lista.add(this);
-		for (SrItemConfiguracao filho : getFilhoSet()) {
-			if (filho.getHisDtFim() == null)
-				lista.addAll(filho.getItemETodosDescendentes());
-		}
-		return lista;
-	}
-
-	@Override
-	public String toString() {
-		return getSiglaItemConfiguracao() + " - " + getTituloItemConfiguracao();
-	}
-
-	public SrItemConfiguracaoVO toVO() {
-		return SrItemConfiguracaoVO.createFrom(this);
-	}
-
-	/**
-	 * Retorna um Json de {@link SrItemConfiguracao}.
-	 */
-	public String getSrItemConfiguracaoJson() {
-		return this.toVO().toJson();
-	}
-
-	public SrItemConfiguracao getPai() {
-		return pai;
-	}
-
-	/**
-	 * Retorna a lista de {@link SrItemConfiguracao Pai} que este item possui.
-	 */
-	private List<SrItemConfiguracao> getListaPai() {
-		List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
-		SrItemConfiguracao itemPai = this.getPai();
-
-		while (itemPai != null) {
-			if (!lista.contains(itemPai))
-				lista.add(itemPai);
-
-			itemPai = itemPai.getPai();
-		}
-
-		return lista;
-	}
-
-	/**
-	 * Lista as Designações que são vinculadas aos {@link SrItemConfiguracao Pai} deste item.
-	 */
-	public List<SrConfiguracao> getDesignacoesPai() {
-		List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
-
-		for (SrItemConfiguracao pai : this.getListaPai()) {
-			for (SrConfiguracao confPai : pai.getDesignacoesAtivas()) {
-				confPai.setHerdado(true);
-				confPai.setUtilizarItemHerdado(true);
-
-				listasDesignacoesPai.add(confPai);
-			}
-		}
-
-		return listasDesignacoesPai;
-	}
-
-
-	/**
-	 * Marca os itens como  herdados.
-	 */
-	public static List<SrConfiguracao> marcarComoHerdadas(List<SrConfiguracao> listasDesignacoesPai, SrItemConfiguracao item) {
-		Iterator<SrConfiguracao> i = listasDesignacoesPai.iterator();
-
-		while (i.hasNext()) {
-			SrConfiguracao conf = i.next();
-			boolean encontrou = false;
-
-			conf.setHerdado(true);
-			conf.setUtilizarItemHerdado(true);
-
-			List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(conf);
-
-			for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
-				// Se a configuração for do Item, vai como desmarcado
-				if (item.getId().equals(igItem.getItemConfiguracao().getId())) {
-					conf.setUtilizarItemHerdado(false);
-				}
-
-				// se a configuração for do Item (histórico), vai como desmarcado
-				else if (item.getHistoricoItemConfiguracao() != null && item.getHistoricoItemConfiguracao().size() > 0) {
-					for (SrItemConfiguracao itemHist : item.getHistoricoItemConfiguracao()) {
-						if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
-							conf.setUtilizarItemHerdado(false);
-							encontrou = true;
-							break;
-						}
-					}
-				}
-
-				else {
-					SrItemConfiguracao itemPai = item.getPai();
-
-					while(itemPai != null) {
-
-						// Se for configuração do pai, não aparece na tela caso esteja marcada para Ignorar no Pai
-						if (itemPai.getId().equals(igItem.getItemConfiguracao().getId())) {
-							i.remove();
-							break;
-						}
-						else
-							itemPai = itemPai.getPai();
-					}
-				}
-
-				// Caso tenha encontrado a configuração correta, interrompe o loop
-				if (encontrou)
-					break;
-			}
-		}
-
-		return listasDesignacoesPai;
-	}
-
-	public Map<String, SrDisponibilidade> buscarDisponibilidadesPorOrgao(List<CpOrgaoUsuario> orgaos) {
-		return buscarDisponibilidadesPorOrgao(this, orgaos);
-	}
-
-	public Map<String, SrDisponibilidade> buscarDisponibilidadesPorOrgao(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
-		if(itemConfiguracao != null) {
-			return SrDisponibilidade.buscarTodos(itemConfiguracao, orgaos);
-		}
-		return new HashMap<String, SrDisponibilidade>();
-	}
-
-	public Collection<SrDisponibilidade> encontrarDisponibilidades(List<CpOrgaoUsuario> orgaos) {
-		Map<String, SrDisponibilidade> disponibilidadesPai = buscarDisponibilidadesPaiPorOrgao(orgaos);
-		Map<String, SrDisponibilidade> disponibilidades = buscarDisponibilidadesPorOrgao(orgaos);
-
-		Map<String, SrDisponibilidade> disponibilidadesSelecionadas = selecionarDisponibilidades(disponibilidadesPai, disponibilidades, orgaos);
-		return preencherDisponibilidadesVazias(disponibilidadesSelecionadas, orgaos);
-	}
-
-	private Collection<SrDisponibilidade> preencherDisponibilidadesVazias(Map<String, SrDisponibilidade> disponibilidadesSelecionadas, List<CpOrgaoUsuario> orgaos) {
-		for (CpOrgaoUsuario cpOrgaoUsuario : orgaos) {
-			if (!disponibilidadesSelecionadas.containsKey(cpOrgaoUsuario.getSigla())) {
-				disponibilidadesSelecionadas.put(cpOrgaoUsuario.getSigla(), new SrDisponibilidade(this, cpOrgaoUsuario));
-			}
-		}
-		return disponibilidadesSelecionadas.values();
-	}
-
-	public Map<String, SrDisponibilidade> buscarDisponibilidadesPaiPorOrgao(List<CpOrgaoUsuario> orgaos) {
-		if(this.getPai() != null) {
-			Map<String, SrDisponibilidade> disponibilidadesPai = buscarDisponibilidadesPorOrgao(this.getPai(), orgaos);
-			Map<String, SrDisponibilidade> disponibilidadesAvo = buscarDisponibilidadesPorOrgao(this.getPai().getPai(), orgaos);
-
-			return selecionarDisponibilidades(disponibilidadesAvo, disponibilidadesPai, orgaos);
-		}
-		return new HashMap<String, SrDisponibilidade>();
-	}
-
-	private Map<String, SrDisponibilidade> selecionarDisponibilidades(Map<String, SrDisponibilidade> disponibilidades, Map<String, SrDisponibilidade> disponibilidadesPrioritarias, List<CpOrgaoUsuario> orgaos) {
-		Map<String, SrDisponibilidade> disponibilidadesPeriorizadas = new HashMap<String, SrDisponibilidade>();
-		for (CpOrgaoUsuario orgao : orgaos) {
-			SrDisponibilidade disponibilidade = selecionarDisponibilidadePrioritaria(disponibilidades, disponibilidadesPrioritarias, orgao);
-
-			if(disponibilidade != null) {
-				SrDisponibilidade disponibilidadeSelecionada = disponibilidade.pertenceA(this) ? disponibilidade : disponibilidade.clonarParaCriarNovo(this);
-				disponibilidadesPeriorizadas.put(orgao.getSigla(), disponibilidadeSelecionada);
-			}
-		}
-		return disponibilidadesPeriorizadas;
-	}
-
-	private SrDisponibilidade selecionarDisponibilidadePrioritaria(Map<String, SrDisponibilidade> disponibilidades, Map<String, SrDisponibilidade> disponibilidadesPrioritarias, CpOrgaoUsuario orgao) {
-		SrDisponibilidade disponibilidade = disponibilidadesPrioritarias.get(orgao.getSigla());
-
-		/**
-		 * Se o item nao tem disponibilidade para aquele orgao, entao retorna a disponibilidade do pai
-		 */
-		if (disponibilidade == null) {
-			return disponibilidades.get(orgao.getSigla());
-		}
-		/**
-		 * Senao, se a disponibilidade do item eh nenhuma e o item pai possui disponibilidade, entao utiliza a disponibilidade do pai
-		 */
-		else if (disponibilidade.isNenhuma()) {
-			SrDisponibilidade disponibilidadePai = disponibilidades.get(orgao.getSigla());
-			if (disponibilidadePai != null) {
-				return disponibilidade.clonarParaAtualizar(disponibilidadePai);
-			}
-		}
-		return disponibilidade;
-	}
-
-	public JsonArray criarDisponibilidadesJSON(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
-		JsonArray array = new JsonArray();
-		for (SrDisponibilidade disponibilidade : itemConfiguracao.encontrarDisponibilidades(orgaos)) {
-			array.add(disponibilidade.toJsonObject());
-		}
-		return array;
-	}
-
-	public List<SrItemConfiguracao> getFilhoSet() {
-		List<SrItemConfiguracao> c = new ArrayList<SrItemConfiguracao>();
-
-		if (this.filhoSet != null)
-			c.addAll(filhoSet);
-
-		if (this.getItemInicial() != null && !this.getItemInicial().getId().equals(this.getId()))
-			c.addAll(getItemInicial().getFilhoSet());
-
-		return c;
-	}
-
-	public Collection<SrConfiguracao> getDesignacoesAtivas() {
-		Map<Long, SrConfiguracao> listaCompleta = new HashMap<Long, SrConfiguracao>();
-		if (this.getItemInicial() != null)
-			for (SrItemConfiguracao itenConf : getHistoricoItemConfiguracao())
-				if (itenConf.getDesignacoesSet() != null)
-					for (SrConfiguracao d : itenConf.getDesignacoesSet())
-						if (d.isAtivo() && d.isDesignacao())
-							listaCompleta.put(d.getId(), d);
-
-		return listaCompleta.values();
-	}
-
-	public Long getIdItemConfiguracao() {
-		return idItemConfiguracao;
-	}
-
-	public void setIdItemConfiguracao(Long idItemConfiguracao) {
-		this.idItemConfiguracao = idItemConfiguracao;
-	}
-
-	public String getSiglaItemConfiguracao() {
-		return siglaItemConfiguracao;
-	}
-
-	public void setSiglaItemConfiguracao(String siglaItemConfiguracao) {
-		this.siglaItemConfiguracao = siglaItemConfiguracao;
-	}
-
-	public String getDescrItemConfiguracao() {
-		return descrItemConfiguracao;
-	}
-
-	public void setDescrItemConfiguracao(String descrItemConfiguracao) {
-		this.descrItemConfiguracao = descrItemConfiguracao;
-	}
-
-	public String getTituloItemConfiguracao() {
-		return tituloItemConfiguracao;
-	}
-
-	public void setTituloItemConfiguracao(String tituloItemConfiguracao) {
-		this.tituloItemConfiguracao = tituloItemConfiguracao;
-	}
-
-	public String getDescricaoSimilaridade() {
-		return descricaoSimilaridade;
-	}
-
-	public void setDescricaoSimilaridade(String descricaoSimilaridade) {
-		this.descricaoSimilaridade = descricaoSimilaridade;
-	}
-
-	public void setPai(SrItemConfiguracao pai) {
-		this.pai = pai;
-	}
-
-	public void setFilhoSet(List<SrItemConfiguracao> filhoSet) {
-		this.filhoSet = filhoSet;
-	}
-
-	public SrItemConfiguracao getItemInicial() {
-		return itemInicial;
-	}
-
-	public void setItemInicial(SrItemConfiguracao itemInicial) {
-		this.itemInicial = itemInicial;
-	}
-
-	public List<SrItemConfiguracao> getMeuItemHistoricoSet() {
-		return meuItemHistoricoSet;
-	}
-
-	public void setMeuItemHistoricoSet(List<SrItemConfiguracao> meuItemHistoricoSet) {
-		this.meuItemHistoricoSet = meuItemHistoricoSet;
-	}
-
-	public int getNumFatorMultiplicacaoGeral() {
-		return numFatorMultiplicacaoGeral;
-	}
-
-	public void setNumFatorMultiplicacaoGeral(int numFatorMultiplicacaoGeral) {
-		this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
-	}
-	
-	public List<SrGestorItem> getGestorSet() {
-		return gestorSet;
-	}
-
-	public void setGestorSet(List<SrGestorItem> gestorSet) {
-		this.gestorSet = gestorSet;
-	}
-
-	public List<SrFatorMultiplicacao> getFatorMultiplicacaoSet() {
-		return fatorMultiplicacaoSet;
-	}
-
-	public void setFatorMultiplicacaoSet(
-			List<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
-		this.fatorMultiplicacaoSet = fatorMultiplicacaoSet;
-	}
-
-	public List<SrConfiguracao> getDesignacoes() {
-		return designacoes;
-	}
-
-	public void setDesignacoes(List<SrConfiguracao> designacoes) {
-		this.designacoes = designacoes;
-	}
-
-	public List<SrConfiguracao> getDesignacoesSet() {
-		return designacoesSet;
-	}
-
-	public void setDesignacoesSet(List<SrConfiguracao> designacoesSet) {
-		this.designacoesSet = designacoesSet;
-	}
-	
+        if (this.getDesignacoes() != null) {
+            for (SrConfiguracao designacao : this.getDesignacoes()) {
+                // se for uma configuração herdada
+                if (designacao.isHerdado()) {
+                    // se estiver marcada como "não Herdar"
+                    if (!designacao.isUtilizarItemHerdado()) {
+                        // cria uma nova entrada na tabela, para que seja ignorada nas próximas vezes
+                        SrConfiguracaoIgnorada.createNew(this, designacao).salvar();
+                    }
+
+                    // verifica se existia entrada para "não Herdar", e remove (usuário marcou para usar herança)
+                    else {
+                        List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(designacao);
+
+                        for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
+                            // se a configuração for do Item ou de um de seus históricos, remove
+                            if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
+                                for (SrItemConfiguracao itemHist : this.getHistoricoItemConfiguracao()) {
+                                    if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
+                                        igItem.delete();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    designacao.salvarComoDesignacao();
+                }
+            }
+        }
+    }
+
+    public List<SrItemConfiguracao> getItemETodosDescendentes() {
+        List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
+        lista.add(this);
+        for (SrItemConfiguracao filho : getFilhoSet()) {
+            if (filho.getHisDtFim() == null)
+                lista.addAll(filho.getItemETodosDescendentes());
+        }
+        return lista;
+    }
+
+    @Override
+    public String toString() {
+        return getSiglaItemConfiguracao() + " - " + getTituloItemConfiguracao();
+    }
+
+    public SrItemConfiguracaoVO toVO() throws Exception {
+        return SrItemConfiguracaoVO.createFrom(this);
+    }
+
+    /**
+     * Retorna um Json de {@link SrItemConfiguracao}.
+     * @throws Exception 
+     */
+    public String getSrItemConfiguracaoJson() throws Exception {
+        return this.toVO().toJson();
+    }
+
+    public SrItemConfiguracao getPai() {
+        return pai;
+    }
+
+    /**
+     * Retorna a lista de {@link SrItemConfiguracao Pai} que este item possui.
+     */
+    private List<SrItemConfiguracao> getListaPai() {
+        List<SrItemConfiguracao> lista = new ArrayList<SrItemConfiguracao>();
+        SrItemConfiguracao itemPai = this.getPai();
+
+        while (itemPai != null) {
+            if (!lista.contains(itemPai))
+                lista.add(itemPai);
+
+            itemPai = itemPai.getPai();
+        }
+
+        return lista;
+    }
+
+    /**
+     * Lista as Designações que são vinculadas aos {@link SrItemConfiguracao Pai} deste item.
+     */
+    public List<SrConfiguracao> getDesignacoesPai() {
+        List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
+
+        for (SrItemConfiguracao pai : this.getListaPai()) {
+            for (SrConfiguracao confPai : pai.getDesignacoesAtivas()) {
+                confPai.setHerdado(true);
+                confPai.setUtilizarItemHerdado(true);
+
+                listasDesignacoesPai.add(confPai);
+            }
+        }
+
+        return listasDesignacoesPai;
+    }
+
+    /**
+     * Marca os itens como herdados.
+     */
+    public static List<SrConfiguracao> marcarComoHerdadas(List<SrConfiguracao> listasDesignacoesPai, SrItemConfiguracao item) {
+        Iterator<SrConfiguracao> i = listasDesignacoesPai.iterator();
+
+        while (i.hasNext()) {
+            SrConfiguracao conf = i.next();
+            boolean encontrou = false;
+
+            conf.setHerdado(true);
+            conf.setUtilizarItemHerdado(true);
+
+            List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(conf);
+
+            for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
+                // Se a configuração for do Item, vai como desmarcado
+                if (item.getId().equals(igItem.getItemConfiguracao().getId())) {
+                    conf.setUtilizarItemHerdado(false);
+                }
+
+                // se a configuração for do Item (histórico), vai como desmarcado
+                else if (item.getHistoricoItemConfiguracao() != null && item.getHistoricoItemConfiguracao().size() > 0) {
+                    for (SrItemConfiguracao itemHist : item.getHistoricoItemConfiguracao()) {
+                        if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
+                            conf.setUtilizarItemHerdado(false);
+                            encontrou = true;
+                            break;
+                        }
+                    }
+                }
+
+                else {
+                    SrItemConfiguracao itemPai = item.getPai();
+
+                    while (itemPai != null) {
+
+                        // Se for configuração do pai, não aparece na tela caso esteja marcada para Ignorar no Pai
+                        if (itemPai.getId().equals(igItem.getItemConfiguracao().getId())) {
+                            i.remove();
+                            break;
+                        } else
+                            itemPai = itemPai.getPai();
+                    }
+                }
+
+                // Caso tenha encontrado a configuração correta, interrompe o loop
+                if (encontrou)
+                    break;
+            }
+        }
+
+        return listasDesignacoesPai;
+    }
+
+    public Map<String, SrDisponibilidade> buscarDisponibilidadesPorOrgao(List<CpOrgaoUsuario> orgaos) {
+        return buscarDisponibilidadesPorOrgao(this, orgaos);
+    }
+
+    public Map<String, SrDisponibilidade> buscarDisponibilidadesPorOrgao(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
+        if (itemConfiguracao != null) {
+            return SrDisponibilidade.buscarTodos(itemConfiguracao, orgaos);
+        }
+        return new HashMap<String, SrDisponibilidade>();
+    }
+
+    public Collection<SrDisponibilidade> encontrarDisponibilidades(List<CpOrgaoUsuario> orgaos) {
+        Map<String, SrDisponibilidade> disponibilidadesPai = buscarDisponibilidadesPaiPorOrgao(orgaos);
+        Map<String, SrDisponibilidade> disponibilidades = buscarDisponibilidadesPorOrgao(orgaos);
+
+        Map<String, SrDisponibilidade> disponibilidadesSelecionadas = selecionarDisponibilidades(disponibilidadesPai, disponibilidades, orgaos);
+        return preencherDisponibilidadesVazias(disponibilidadesSelecionadas, orgaos);
+    }
+
+    private Collection<SrDisponibilidade> preencherDisponibilidadesVazias(Map<String, SrDisponibilidade> disponibilidadesSelecionadas, List<CpOrgaoUsuario> orgaos) {
+        for (CpOrgaoUsuario cpOrgaoUsuario : orgaos) {
+            if (!disponibilidadesSelecionadas.containsKey(cpOrgaoUsuario.getSigla())) {
+                disponibilidadesSelecionadas.put(cpOrgaoUsuario.getSigla(), new SrDisponibilidade(this, cpOrgaoUsuario));
+            }
+        }
+        return disponibilidadesSelecionadas.values();
+    }
+
+    public Map<String, SrDisponibilidade> buscarDisponibilidadesPaiPorOrgao(List<CpOrgaoUsuario> orgaos) {
+        if (this.getPai() != null) {
+            Map<String, SrDisponibilidade> disponibilidadesPai = buscarDisponibilidadesPorOrgao(this.getPai(), orgaos);
+            Map<String, SrDisponibilidade> disponibilidadesAvo = buscarDisponibilidadesPorOrgao(this.getPai().getPai(), orgaos);
+
+            return selecionarDisponibilidades(disponibilidadesAvo, disponibilidadesPai, orgaos);
+        }
+        return new HashMap<String, SrDisponibilidade>();
+    }
+
+    private Map<String, SrDisponibilidade> selecionarDisponibilidades(Map<String, SrDisponibilidade> disponibilidades, Map<String, SrDisponibilidade> disponibilidadesPrioritarias,
+            List<CpOrgaoUsuario> orgaos) {
+        Map<String, SrDisponibilidade> disponibilidadesPeriorizadas = new HashMap<String, SrDisponibilidade>();
+        for (CpOrgaoUsuario orgao : orgaos) {
+            SrDisponibilidade disponibilidade = selecionarDisponibilidadePrioritaria(disponibilidades, disponibilidadesPrioritarias, orgao);
+
+            if (disponibilidade != null) {
+                SrDisponibilidade disponibilidadeSelecionada = disponibilidade.pertenceA(this) ? disponibilidade : disponibilidade.clonarParaCriarNovo(this);
+                disponibilidadesPeriorizadas.put(orgao.getSigla(), disponibilidadeSelecionada);
+            }
+        }
+        return disponibilidadesPeriorizadas;
+    }
+
+    private SrDisponibilidade selecionarDisponibilidadePrioritaria(Map<String, SrDisponibilidade> disponibilidades, Map<String, SrDisponibilidade> disponibilidadesPrioritarias, CpOrgaoUsuario orgao) {
+        SrDisponibilidade disponibilidade = disponibilidadesPrioritarias.get(orgao.getSigla());
+
+        /**
+         * Se o item nao tem disponibilidade para aquele orgao, entao retorna a disponibilidade do pai
+         */
+        if (disponibilidade == null) {
+            return disponibilidades.get(orgao.getSigla());
+        }
+        /**
+         * Senao, se a disponibilidade do item eh nenhuma e o item pai possui disponibilidade, entao utiliza a disponibilidade do pai
+         */
+        else if (disponibilidade.isNenhuma()) {
+            SrDisponibilidade disponibilidadePai = disponibilidades.get(orgao.getSigla());
+            if (disponibilidadePai != null) {
+                return disponibilidade.clonarParaAtualizar(disponibilidadePai);
+            }
+        }
+        return disponibilidade;
+    }
+
+    public JsonArray criarDisponibilidadesJSON(SrItemConfiguracao itemConfiguracao, List<CpOrgaoUsuario> orgaos) {
+        JsonArray array = new JsonArray();
+        for (SrDisponibilidade disponibilidade : itemConfiguracao.encontrarDisponibilidades(orgaos)) {
+            array.add(disponibilidade.toJsonObject());
+        }
+        return array;
+    }
+
+    public List<SrItemConfiguracao> getFilhoSet() {
+        List<SrItemConfiguracao> c = new ArrayList<SrItemConfiguracao>();
+
+        if (this.filhoSet != null)
+            c.addAll(filhoSet);
+
+        if (this.getItemInicial() != null && !this.getItemInicial().getId().equals(this.getId()))
+            c.addAll(getItemInicial().getFilhoSet());
+
+        return c;
+    }
+
+    public Collection<SrConfiguracao> getDesignacoesAtivas() {
+        Map<Long, SrConfiguracao> listaCompleta = new HashMap<Long, SrConfiguracao>();
+        if (this.getItemInicial() != null)
+            for (SrItemConfiguracao itenConf : getHistoricoItemConfiguracao())
+                if (itenConf.getDesignacoesSet() != null)
+                    for (SrConfiguracao d : itenConf.getDesignacoesSet())
+                        if (d.isAtivo() && d.isDesignacao())
+                            listaCompleta.put(d.getId(), d);
+
+        return listaCompleta.values();
+    }
+
+    public Long getIdItemConfiguracao() {
+        return idItemConfiguracao;
+    }
+
+    public void setIdItemConfiguracao(Long idItemConfiguracao) {
+        this.idItemConfiguracao = idItemConfiguracao;
+    }
+
+    public String getSiglaItemConfiguracao() {
+        return siglaItemConfiguracao;
+    }
+
+    public void setSiglaItemConfiguracao(String siglaItemConfiguracao) {
+        this.siglaItemConfiguracao = siglaItemConfiguracao;
+    }
+
+    public String getDescrItemConfiguracao() {
+        return descrItemConfiguracao;
+    }
+
+    public void setDescrItemConfiguracao(String descrItemConfiguracao) {
+        this.descrItemConfiguracao = descrItemConfiguracao;
+    }
+
+    public String getTituloItemConfiguracao() {
+        return tituloItemConfiguracao;
+    }
+
+    public void setTituloItemConfiguracao(String tituloItemConfiguracao) {
+        this.tituloItemConfiguracao = tituloItemConfiguracao;
+    }
+
+    public String getDescricaoSimilaridade() {
+        return descricaoSimilaridade;
+    }
+
+    public void setDescricaoSimilaridade(String descricaoSimilaridade) {
+        this.descricaoSimilaridade = descricaoSimilaridade;
+    }
+
+    public void setPai(SrItemConfiguracao pai) {
+        this.pai = pai;
+    }
+
+    public void setFilhoSet(List<SrItemConfiguracao> filhoSet) {
+        this.filhoSet = filhoSet;
+    }
+
+    public SrItemConfiguracao getItemInicial() {
+        return itemInicial;
+    }
+
+    public void setItemInicial(SrItemConfiguracao itemInicial) {
+        this.itemInicial = itemInicial;
+    }
+
+    public List<SrItemConfiguracao> getMeuItemHistoricoSet() {
+        return meuItemHistoricoSet;
+    }
+
+    public void setMeuItemHistoricoSet(List<SrItemConfiguracao> meuItemHistoricoSet) {
+        this.meuItemHistoricoSet = meuItemHistoricoSet;
+    }
+
+    public int getNumFatorMultiplicacaoGeral() {
+        return numFatorMultiplicacaoGeral;
+    }
+
+    public void setNumFatorMultiplicacaoGeral(int numFatorMultiplicacaoGeral) {
+        this.numFatorMultiplicacaoGeral = numFatorMultiplicacaoGeral;
+    }
+
+    public List<SrGestorItem> getGestorSet() {
+        return gestorSet;
+    }
+
+    public void setGestorSet(List<SrGestorItem> gestorSet) {
+        this.gestorSet = gestorSet;
+    }
+
+    public List<SrFatorMultiplicacao> getFatorMultiplicacaoSet() {
+        return fatorMultiplicacaoSet;
+    }
+
+    public void setFatorMultiplicacaoSet(List<SrFatorMultiplicacao> fatorMultiplicacaoSet) {
+        this.fatorMultiplicacaoSet = fatorMultiplicacaoSet;
+    }
+
+    public List<SrConfiguracao> getDesignacoes() {
+        return designacoes;
+    }
+
+    public void setDesignacoes(List<SrConfiguracao> designacoes) {
+        this.designacoes = designacoes;
+    }
+
+    public List<SrConfiguracao> getDesignacoesSet() {
+        return designacoesSet;
+    }
+
+    public void setDesignacoesSet(List<SrConfiguracao> designacoesSet) {
+        this.designacoesSet = designacoesSet;
+    }
+
 }

@@ -37,7 +37,7 @@ import com.google.gson.GsonBuilder;
 public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrAcao>, ConvertableEntity {
 	private static final long serialVersionUID = 8387408543308440033L;
 
-	public static ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);
+	public static final ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);
 
 	@Id
 	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_ACAO_SEQ", name = "srAcaoSeq")

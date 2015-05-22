@@ -23,394 +23,593 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
 
-import play.db.jpa.GenericModel;
-import util.SigaPlayCalendar;
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
+import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
+import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_MOVIMENTACAO", schema = Catalogs.SIGASR)
-public class SrMovimentacao extends GenericModel {
+public class SrMovimentacao extends ObjetoVraptor {
+    private static final long serialVersionUID = 1L;
+    public static final ActiveRecord<SrMovimentacao> AR = new ActiveRecord<>(SrMovimentacao.class);
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    @Id
+    @SequenceGenerator(sequenceName = Catalogs.SIGASR + ".SR_MOVIMENTACAO_SEQ", name = "srMovimentacaoSeq")
+    @GeneratedValue(generator = "srMovimentacaoSeq")
+    @Column(name = "ID_MOVIMENTACAO")
+    private long idMovimentacao;
 
-	@Id
-	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_MOVIMENTACAO_SEQ", name = "srMovimentacaoSeq")
-	@GeneratedValue(generator = "srMovimentacaoSeq")
-	@Column(name = "ID_MOVIMENTACAO")
-	public long idMovimentacao;
+    @Column(name = "DESCR_MOVIMENTACAO")
+    private String descrMovimentacao;
 
-	@Column(name = "DESCR_MOVIMENTACAO")
-	public String descrMovimentacao;
+    @Column(name = "DT_INI_MOV")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dtIniMov;
 
-	@Column(name = "DT_INI_MOV")
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date dtIniMov;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ID_ARQUIVO")
+    private SrArquivo arquivo;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "ID_ARQUIVO")
-	public SrArquivo arquivo;
+    @ManyToOne
+    @JoinColumn(name = "ID_ATENDENTE")
+    private DpPessoa atendente;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_ATENDENTE")
-	public DpPessoa atendente;
+    @ManyToOne
+    @JoinColumn(name = "ID_LOTA_ATENDENTE")
+    private DpLotacao lotaAtendente;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_LOTA_ATENDENTE")
-	public DpLotacao lotaAtendente;
-	
-	@ManyToOne
-	@JoinColumn(name = "ID_DESIGNACAO")
-	public SrConfiguracao designacao;
+    @ManyToOne
+    @JoinColumn(name = "ID_DESIGNACAO")
+    private SrConfiguracao designacao;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_CADASTRANTE")
-	public DpPessoa cadastrante;
+    @ManyToOne
+    @JoinColumn(name = "ID_CADASTRANTE")
+    private DpPessoa cadastrante;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_LOTA_CADASTRANTE")
-	public DpLotacao lotaCadastrante;
-	
-	@ManyToOne
-	@JoinColumn(name = "ID_TITULAR")
-	public DpPessoa titular;
+    @ManyToOne
+    @JoinColumn(name = "ID_LOTA_CADASTRANTE")
+    private DpLotacao lotaCadastrante;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_LOTA_TITULAR")
-	public DpLotacao lotaTitular;
+    @ManyToOne
+    @JoinColumn(name = "ID_TITULAR")
+    private DpPessoa titular;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_SOLICITACAO")
-	public SrSolicitacao solicitacao;
+    @ManyToOne
+    @JoinColumn(name = "ID_LOTA_TITULAR")
+    private DpLotacao lotaTitular;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_LISTA")
-	public SrLista lista;
+    @ManyToOne
+    @JoinColumn(name = "ID_SOLICITACAO")
+    private SrSolicitacao solicitacao;
 
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_MOV_CANCELADORA")
-	public SrMovimentacao movCanceladora;
+    @ManyToOne
+    @JoinColumn(name = "ID_LISTA")
+    private SrLista lista;
 
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
-	public SrTipoMovimentacao tipoMov;
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "ID_MOV_CANCELADORA")
+    private SrMovimentacao movCanceladora;
 
-	@Column(name = "NUM_SEQUENCIA")
-	public Long numSequencia;
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "ID_TIPO_MOVIMENTACAO")
+    private SrTipoMovimentacao tipoMov;
 
-	@Column(name = "ID_PRIORIDADE")
-	public Long prioridade;
+    @Column(name = "NUM_SEQUENCIA")
+    private Long numSequencia;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_PESQUISA")
-	public SrPesquisa pesquisa;
+    @Column(name = "ID_PRIORIDADE")
+    private Long prioridade;
 
-	@OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
-	// @OrderBy("pergunta asc")
-	protected List<SrResposta> respostaSet;
-	
-	@OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "movFinalizadora", fetch=FetchType.LAZY)
-	protected List<SrMovimentacao> movFinalizadaSet;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PESQUISA")
+    private SrPesquisa pesquisa;
 
-	@Column(name = "DT_AGENDAMENTO")
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date dtAgenda;
+    @OneToMany(targetEntity = SrResposta.class, mappedBy = "movimentacao", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    // @OrderBy("pergunta asc")
+    private List<SrResposta> respostaSet;
 
-	@Enumerated
-	public SrTipoMotivoPendencia motivoPendencia;
+    @OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "movFinalizadora", fetch = FetchType.LAZY)
+    private List<SrMovimentacao> movFinalizadaSet;
 
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_MOV_FINALIZADORA")
-	public SrMovimentacao movFinalizadora;
-	
-	@ManyToOne
-	@JoinColumn(name = "ID_SOLICITACAO_REFERENCIA")
-	public SrSolicitacao solicitacaoReferencia;
-	
-	@ManyToOne
-	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
-	public SrItemConfiguracao itemConfiguracao;
+    @Column(name = "DT_AGENDAMENTO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dtAgenda;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_ACAO")
-	public SrAcao acao;
-	
-	@Enumerated
-	public SrTipoMotivoEscalonamento motivoEscalonamento;
+    @Enumerated
+    private SrTipoMotivoPendencia motivoPendencia;
 
-	public SrMovimentacao() throws Exception {
-		this(null);
-	}
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "ID_MOV_FINALIZADORA")
+    private SrMovimentacao movFinalizadora;
 
-	public SrMovimentacao(SrSolicitacao sol) throws Exception {
-		this.solicitacao = sol;
-		if (this.solicitacao != null) {
-			SrMovimentacao ultMov = solicitacao.getUltimaMovimentacao();
-			if (ultMov != null) {
-				this.lotaAtendente = ultMov.lotaAtendente;
-				this.atendente = ultMov.atendente;
-			}
-		}
-	}
+    @ManyToOne
+    @JoinColumn(name = "ID_SOLICITACAO_REFERENCIA")
+    private SrSolicitacao solicitacaoReferencia;
 
-	public List<SrResposta> getRespostaSet() {
-		if (respostaSet == null)
-			return new ArrayList<SrResposta>();
-		return respostaSet;
-	}
+    @ManyToOne
+    @JoinColumn(name = "ID_ITEM_CONFIGURACAO")
+    private SrItemConfiguracao itemConfiguracao;
 
-	public void setRespostaMap(Map<Long, String> respostaMap)
-			throws Exception {
-		respostaSet = new ArrayList<SrResposta>();
-		for (Long idPergunta : respostaMap.keySet()){
-			SrResposta resp = new SrResposta();
-			resp.movimentacao = this;
-			resp.pergunta = SrPergunta.findById(idPergunta);
-			if (resp.pergunta.getTipoPergunta().getIdTipoPergunta() == SrTipoPergunta.TIPO_PERGUNTA_TEXTO_LIVRE)
-				resp.descrResposta = respostaMap.get(idPergunta);
-			else
-				resp.grauSatisfacao = SrGrauSatisfacao.valueOf(respostaMap.get(idPergunta));
-			respostaSet.add(resp);
-		}
-	}
+    @ManyToOne
+    @JoinColumn(name = "ID_ACAO")
+    private SrAcao acao;
 
-	public HashMap<Long, String> getRespostaMap() {
-		HashMap<Long, String> map = new HashMap<Long, String>();
-		if (respostaSet != null)
-			for (SrResposta resp : respostaSet) {
-				if (!resp.descrResposta.equals(""))
-					map.put(resp.pergunta.getIdPergunta(), resp.descrResposta);
-				else
-					map.put(resp.pergunta.getIdPergunta(),
-							resp.grauSatisfacao.descrGrauSatisfacao);
-			}
-		return map;
-	}
-	
-	public boolean isCancelada() {
-		return movCanceladora != null;
-	}
+    @Enumerated
+    private SrTipoMotivoEscalonamento motivoEscalonamento;
 
-	public boolean isFinalizada() {
-		return movFinalizadora != null;
-	}
-	
-	public boolean isCanceladoOuCancelador() {
-		return isCancelada()
-				|| tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
-	}
+//    @Inject
+//    @Transient
+//    private Correio correio;
 
-	public SrMovimentacao getAnterior() {
-		boolean pronto = false;
-		for (SrMovimentacao mov : solicitacao.getMovimentacaoSet()) {
-			if (pronto)
-				return mov;
-			if (mov.idMovimentacao == this.idMovimentacao)
-				pronto = true;
-		}
-		return null;
-	}
+    public SrMovimentacao() throws Exception {
+        this(null);
+    }
 
-	public String getDtIniString() {
-		SigaPlayCalendar cal = new SigaPlayCalendar();
-		cal.setTime(dtIniMov);
-		return cal.getTempoTranscorridoString(false);
-	}
+    public SrMovimentacao(SrSolicitacao sol) throws Exception {
+        this.setSolicitacao(sol);
+        if (this.getSolicitacao() != null) {
+            SrMovimentacao ultMov = getSolicitacao().getUltimaMovimentacao();
+            if (ultMov != null) {
+                this.setLotaAtendente(ultMov.getLotaAtendente());
+                this.setAtendente(ultMov.getAtendente());
+            }
+        }
+    }
 
-	public String getDtIniMovDDMMYYHHMM() {
-		if (dtIniMov != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
-			return df.format(dtIniMov);
-		}
-		return "";
-	}
+    public List<SrResposta> getRespostaSet() {
+        if (respostaSet == null)
+            return new ArrayList<SrResposta>();
+        return respostaSet;
+    }
 
-	public String getDtAgendaDDMMYYHHMM() {
-		if (dtAgenda != null) {
-			DateTime dateTime = new DateTime(dtAgenda);
-			return dateTime.toString("dd/MM/yyyy HH:mm");
-		}
-		return "";
-	}
+    public void setRespostaMap(Map<Long, String> respostaMap) throws Exception {
+        setRespostaSet(new ArrayList<SrResposta>());
+        for (Long idPergunta : respostaMap.keySet()) {
+            SrResposta resp = new SrResposta();
+            resp.setMovimentacao(this);
+            resp.setPergunta(SrPergunta.AR.findById(idPergunta));
+            if (resp.getPergunta().getTipoPergunta().getIdTipoPergunta() == SrTipoPergunta.TIPO_PERGUNTA_TEXTO_LIVRE)
+                resp.setDescrResposta(respostaMap.get(idPergunta));
+            else
+                resp.setGrauSatisfacao(SrGrauSatisfacao.valueOf(respostaMap.get(idPergunta)));
+            getRespostaSet().add(resp);
+        }
+    }
 
-	public String getAtendenteString() {
-		if (atendente != null)
-			return atendente.getSigla() + " (" + lotaAtendente.getSigla() + ")";
-		else
-			return lotaAtendente.getSigla();
-	}
+    public HashMap<Long, String> getRespostaMap() {
+        HashMap<Long, String> map = new HashMap<Long, String>();
+        if (getRespostaSet() != null)
+            for (SrResposta resp : getRespostaSet()) {
+                if (!resp.getDescrResposta().equals(""))
+                    map.put(resp.getPergunta().getIdPergunta(), resp.getDescrResposta());
+                else
+                    map.put(resp.getPergunta().getIdPergunta(), resp.getGrauSatisfacao().getDescrGrauSatisfacao());
+            }
+        return map;
+    }
 
-	public String getDtIniMovDDMMYYYYHHMM() {
-		if (dtIniMov != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-			return df.format(dtIniMov);
-		}
-		return "";
+    public boolean isCancelada() {
+        return getMovCanceladora() != null;
+    }
 
-	}
+    public boolean isFinalizada() {
+        return getMovFinalizadora() != null;
+    }
 
-	public String getCadastranteString() {
-		return atendente.getSigla() + " (" + lotaAtendente.getSigla() + ")";
-	}
+    public boolean isCanceladoOuCancelador() {
+        return isCancelada() || getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
+    }
 
-	public void setArquivo(File file) {
-		this.arquivo = SrArquivo.newInstance(file);
-	}
-	
-	public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante, 
-			DpPessoa titular, DpLotacao lotaTitular)
-			throws Exception {
-		this.cadastrante = cadastrante;
-		this.lotaCadastrante = lotaCadastrante;
-		this.titular = titular;
-		this.lotaTitular = lotaTitular;
-		return salvar();
-	}
+    public SrMovimentacao getAnterior() {
+        boolean pronto = false;
+        for (SrMovimentacao mov : getSolicitacao().getMovimentacaoSet()) {
+            if (pronto)
+                return mov;
+            if (mov.getIdMovimentacao() == this.getIdMovimentacao())
+                pronto = true;
+        }
+        return null;
+    }
 
-	public SrMovimentacao salvar() throws Exception {
+    public String getDtIniString() {
+        SigaPlayCalendar cal = new SigaPlayCalendar();
+        cal.setTime(getDtIniMov());
+        return cal.getTempoTranscorridoString(false);
+    }
 
-		//Edson: considerar deixar esse codigo em SrSolicitacao.movimentar(),
-		//visto que sao chamadas muitas operacoes daquela classe
+    public String getDtIniMovDDMMYYHHMM() {
+        if (getDtIniMov() != null) {
+            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
+            return df.format(getDtIniMov());
+        }
+        return "";
+    }
 
-		checarCampos();
-		super.save();
-		solicitacao.refresh();
+    public String getDtAgendaDDMMYYHHMM() {
+        if (getDtAgenda() != null) {
+            DateTime dateTime = new DateTime(getDtAgenda());
+            return dateTime.toString("dd/MM/yyyy HH:mm");
+        }
+        return "";
+    }
 
-		solicitacao.atualizarMarcas();
-		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
-				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
-				&& solicitacao.getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA
-				&& !(solicitacao.getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO
-				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
-			notificar();
-		
-		//Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
-		if (solicitacao.isFilha() &&
-				tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
-			Correio.notificarAtendente(this); //notifica o atendente da solicitacao pai, caso a filha seja fechada
-		return this;
-	}
+    public String getAtendenteString() {
+        if (getAtendente() != null)
+            return getAtendente().getSigla() + " (" + getLotaAtendente().getSigla() + ")";
+        else
+            return getLotaAtendente().getSigla();
+    }
 
-	public void desfazer(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		SrMovimentacao movCanceladora = new SrMovimentacao(this.solicitacao);
-		movCanceladora.tipoMov = SrTipoMovimentacao
-				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
-		movCanceladora.descrMovimentacao = "Cancelando "
-				+ tipoMov.nome.toLowerCase();
+    public String getDtIniMovDDMMYYYYHHMM() {
+        if (getDtIniMov() != null) {
+            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            return df.format(getDtIniMov());
+        }
+        return "";
 
-		SrMovimentacao ultimaValida = getAnterior();
-		movCanceladora.atendente = ultimaValida.atendente;
-		movCanceladora.lotaAtendente = ultimaValida.lotaAtendente;
-		movCanceladora.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
-		
-		this.movCanceladora = movCanceladora;
-		
-		if (movFinalizadaSet != null)
-			for (SrMovimentacao movFinalizada : movFinalizadaSet){
-				movFinalizada.movFinalizadora = null;
-				movFinalizada.save();
-			}
-		movFinalizadaSet = new ArrayList<SrMovimentacao>();
-		
-		this.salvar();
-		
-	}
+    }
 
-	private void checarCampos() throws Exception {
+    public String getCadastranteString() {
+        return getAtendente().getSigla() + " (" + getLotaAtendente().getSigla() + ")";
+    }
 
-		if (solicitacao == null)
-			throw new Exception(
-					"Movimentaï¿½ï¿½o precisa fazer parte de uma solicitaï¿½ï¿½o");
+    public void setArquivo(File file) {
+        this.arquivo = SrArquivo.newInstance(file);
+    }
 
-		if (arquivo != null) {
-			double lenght = (double) arquivo.blob.length / 1024 / 1024;
-			if (lenght > 2)
-				throw new IllegalArgumentException("O tamanho do arquivo ("
-						+ new DecimalFormat("#.00").format(lenght)
-						+ "MB) ï¿½ maior que o mï¿½ximo permitido (2MB)");
-		}
+    public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+        this.setCadastrante(cadastrante);
+        this.setLotaCadastrante(lotaCadastrante);
+        this.setTitular(titular);
+        this.setLotaTitular(lotaTitular);
+        salvarAtualizandoSolicitacao();
+        return this;
+    }
 
-		if (dtIniMov == null)
-			dtIniMov = new Date();
+    public void salvarAtualizandoSolicitacao() throws Exception {
 
-		SrMovimentacao ultimaMovDoContexto = solicitacao
-				.getUltimaMovimentacaoMesmoSeCanceladaTodoOContexto();
-		
-		if (ultimaMovDoContexto == null) {
-			numSequencia = 1L;
-		} else {
-			SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
+        // Edson: considerar deixar esse codigo em SrSolicitacao.movimentar(),
+        // visto que sao chamadas muitas operacoes daquela classe
 
-			if (lotaAtendente == null) {
-				lotaAtendente = anterior.lotaAtendente;
-			}
+        checarCampos();
+        super.save();
 
-			if (numSequencia == null)
-				numSequencia = ultimaMovDoContexto.numSequencia + 1;
-		}
+        getSolicitacao().atualizarMarcas();
+        if (getSolicitacao().getMovimentacaoSetComCancelados().size() > 1
+                && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
+                && getSolicitacao().getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA
+                && !(getSolicitacao().getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && getTipoMov()
+                        .getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
+            notificar();
 
-		if (tipoMov == null)
-			tipoMov = SrTipoMovimentacao
-			.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO);
+        // Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
+//        if (getSolicitacao().isFilha() && getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+//            this.getCorreio().notificarAtendente(this); // notifica o atendente da solicitacao pai, caso a filha seja fechada
 
-		if (!solicitacao.isRascunho()) {
-			if (atendente == null && lotaAtendente == null)
-				throw new Exception("Atendente nï¿½o pode ser nulo");
+    }
 
-			if (lotaAtendente == null)
-				lotaAtendente = atendente.getLotacao();
-		}
-	}
+    public void desfazer(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+        SrMovimentacao movCanceladora = new SrMovimentacao(this.getSolicitacao());
+        movCanceladora.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO));
+        movCanceladora.setDescrMovimentacao("Cancelando " + getTipoMov().getNome().toLowerCase());
 
-	public void notificar() {
-		if (tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
-			Correio.notificarReplanejamentoMovimentacao(this);
-		else if (!isCancelada())
-			Correio.notificarMovimentacao(this);
-		else
-			Correio.notificarCancelamentoMovimentacao(this);
-	}
-	
-	public String getMotivoPendenciaString() {
-		return this.motivoPendencia != null ? this.motivoPendencia.descrTipoMotivoPendencia : "";
-	}
-	
-	public SrMovimentacao getMovFinalizada(){
-		if (movFinalizadaSet == null || movFinalizadaSet.size() == 0)
-			return null;
-		return movFinalizadaSet.get(0);
-	}
-	
-	public Date getDtFimMov(){
-		return movFinalizadora != null ? movFinalizadora.dtIniMov
-				: dtAgenda;
-	}
+        SrMovimentacao ultimaValida = getAnterior();
+        movCanceladora.setAtendente(ultimaValida.getAtendente());
+        movCanceladora.setLotaAtendente(ultimaValida.getLotaAtendente());
+        movCanceladora.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 
-	public SrItemConfiguracao getItemConfiguracao() {
-		return itemConfiguracao;
-	}
+        this.setMovCanceladora(movCanceladora);
 
-	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
-		this.itemConfiguracao = itemConfiguracao;
-	}
+        if (getMovFinalizadaSet() != null)
+            for (SrMovimentacao movFinalizada : getMovFinalizadaSet()) {
+                movFinalizada.setMovFinalizadora(null);
+                movFinalizada.save();
+            }
+        setMovFinalizadaSet(new ArrayList<SrMovimentacao>());
 
-	public SrAcao getAcao() {
-		return acao;
-	}
+        this.salvarAtualizandoSolicitacao();
 
-	public void setAcao(SrAcao acao) {
-		this.acao = acao;
-	}
-	
-	public String getMotivoEscalonamentoString() {
-		return this.motivoEscalonamento.descrTipoMotivoEscalonamento;
-	}
+    }
+
+    private void checarCampos() throws Exception {
+
+        if (getSolicitacao() == null)
+            throw new Exception("Movimentação precisa fazer parte de uma solicitação");
+
+        if (getArquivo() != null) {
+            double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
+            if (lenght > 2)
+                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) é maior que o máximo permitido (2MB)");
+        }
+
+        if (getDtIniMov() == null)
+            setDtIniMov(new Date());
+
+        SrMovimentacao ultimaMovDoContexto = getSolicitacao().getUltimaMovimentacaoMesmoSeCanceladaTodoOContexto();
+
+        if (ultimaMovDoContexto == null) {
+            setNumSequencia(1L);
+        } else {
+            SrMovimentacao anterior = getSolicitacao().getUltimaMovimentacao();
+
+            if (getLotaAtendente() == null) {
+                setLotaAtendente(anterior.getLotaAtendente());
+            }
+
+            if (getNumSequencia() == null)
+                setNumSequencia(ultimaMovDoContexto.getNumSequencia() + 1);
+        }
+
+        if (getTipoMov() == null)
+            setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
+
+        if (!getSolicitacao().isRascunho()) {
+            if (getAtendente() == null && getLotaAtendente() == null)
+                throw new Exception("Atendente não pode ser nulo");
+
+            if (getLotaAtendente() == null)
+                setLotaAtendente(getAtendente().getLotacao());
+        }
+    }
+
+    public void notificar() throws Exception {
+//        if (getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
+//            this.getCorreio().notificarReplanejamentoMovimentacao(this);
+//        else if (!isCancelada())
+//            this.getCorreio().notificarMovimentacao(this);
+//        else
+//            this.getCorreio().notificarCancelamentoMovimentacao(this);
+    }
+
+    public String getMotivoPendenciaString() {
+        return this.getMotivoPendencia() != null ? this.getMotivoPendencia().getDescrTipoMotivoPendencia() : "";
+    }
+
+    public SrMovimentacao getMovFinalizada() {
+        if (getMovFinalizadaSet() == null || getMovFinalizadaSet().size() == 0)
+            return null;
+        return getMovFinalizadaSet().get(0);
+    }
+
+    public Date getDtFimMov() {
+        return getMovFinalizadora() != null ? getMovFinalizadora().getDtIniMov() : getDtAgenda();
+    }
+
+    public SrItemConfiguracao getItemConfiguracao() {
+        return itemConfiguracao;
+    }
+
+    public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
+        this.itemConfiguracao = itemConfiguracao;
+    }
+
+    public SrAcao getAcao() {
+        return acao;
+    }
+
+    public void setAcao(SrAcao acao) {
+        this.acao = acao;
+    }
+
+    public String getMotivoEscalonamentoString() {
+        return this.getMotivoEscalonamento().getDescrTipoMotivoEscalonamento();
+    }
+
+    @Override
+    protected Long getId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+//    public Correio getCorreio() {
+//        return correio;
+//    }
+//    
+//    public void setCorreio(Correio correio) {
+//        this.correio = correio;
+//    }
+
+    public long getIdMovimentacao() {
+        return idMovimentacao;
+    }
+
+    public void setIdMovimentacao(long idMovimentacao) {
+        this.idMovimentacao = idMovimentacao;
+    }
+
+    public String getDescrMovimentacao() {
+        return descrMovimentacao;
+    }
+
+    public void setDescrMovimentacao(String descrMovimentacao) {
+        this.descrMovimentacao = descrMovimentacao;
+    }
+
+    public Date getDtIniMov() {
+        return dtIniMov;
+    }
+
+    public void setDtIniMov(Date dtIniMov) {
+        this.dtIniMov = dtIniMov;
+    }
+
+    public SrArquivo getArquivo() {
+        return arquivo;
+    }
+
+    public void setArquivo(SrArquivo arquivo) {
+        this.arquivo = arquivo;
+    }
+
+    public DpPessoa getAtendente() {
+        return atendente;
+    }
+
+    public void setAtendente(DpPessoa atendente) {
+        this.atendente = atendente;
+    }
+
+    public DpLotacao getLotaAtendente() {
+        return lotaAtendente;
+    }
+
+    public void setLotaAtendente(DpLotacao lotaAtendente) {
+        this.lotaAtendente = lotaAtendente;
+    }
+
+    public SrConfiguracao getDesignacao() {
+        return designacao;
+    }
+
+    public void setDesignacao(SrConfiguracao designacao) {
+        this.designacao = designacao;
+    }
+
+    public DpPessoa getCadastrante() {
+        return cadastrante;
+    }
+
+    public void setCadastrante(DpPessoa cadastrante) {
+        this.cadastrante = cadastrante;
+    }
+
+    public DpLotacao getLotaCadastrante() {
+        return lotaCadastrante;
+    }
+
+    public void setLotaCadastrante(DpLotacao lotaCadastrante) {
+        this.lotaCadastrante = lotaCadastrante;
+    }
+
+    public DpPessoa getTitular() {
+        return titular;
+    }
+
+    public void setTitular(DpPessoa titular) {
+        this.titular = titular;
+    }
+
+    public DpLotacao getLotaTitular() {
+        return lotaTitular;
+    }
+
+    public void setLotaTitular(DpLotacao lotaTitular) {
+        this.lotaTitular = lotaTitular;
+    }
+
+    public SrSolicitacao getSolicitacao() {
+        return solicitacao;
+    }
+
+    public void setSolicitacao(SrSolicitacao solicitacao) {
+        this.solicitacao = solicitacao;
+    }
+
+    public SrLista getLista() {
+        return lista;
+    }
+
+    public void setLista(SrLista lista) {
+        this.lista = lista;
+    }
+
+    public SrMovimentacao getMovCanceladora() {
+        return movCanceladora;
+    }
+
+    public void setMovCanceladora(SrMovimentacao movCanceladora) {
+        this.movCanceladora = movCanceladora;
+    }
+
+    public SrTipoMovimentacao getTipoMov() {
+        return tipoMov;
+    }
+
+    public void setTipoMov(SrTipoMovimentacao tipoMov) {
+        this.tipoMov = tipoMov;
+    }
+
+    public Long getNumSequencia() {
+        return numSequencia;
+    }
+
+    public void setNumSequencia(Long numSequencia) {
+        this.numSequencia = numSequencia;
+    }
+
+    public Long getPrioridade() {
+        return prioridade;
+    }
+
+    public void setPrioridade(Long prioridade) {
+        this.prioridade = prioridade;
+    }
+
+    public SrPesquisa getPesquisa() {
+        return pesquisa;
+    }
+
+    public void setPesquisa(SrPesquisa pesquisa) {
+        this.pesquisa = pesquisa;
+    }
+
+    public void setRespostaSet(List<SrResposta> respostaSet) {
+        this.respostaSet = respostaSet;
+    }
+
+    public List<SrMovimentacao> getMovFinalizadaSet() {
+        return movFinalizadaSet;
+    }
+
+    public void setMovFinalizadaSet(List<SrMovimentacao> movFinalizadaSet) {
+        this.movFinalizadaSet = movFinalizadaSet;
+    }
+
+    public Date getDtAgenda() {
+        return dtAgenda;
+    }
+
+    public void setDtAgenda(Date dtAgenda) {
+        this.dtAgenda = dtAgenda;
+    }
+
+    public SrTipoMotivoPendencia getMotivoPendencia() {
+        return motivoPendencia;
+    }
+
+    public void setMotivoPendencia(SrTipoMotivoPendencia motivoPendencia) {
+        this.motivoPendencia = motivoPendencia;
+    }
+
+    public SrMovimentacao getMovFinalizadora() {
+        return movFinalizadora;
+    }
+
+    public void setMovFinalizadora(SrMovimentacao movFinalizadora) {
+        this.movFinalizadora = movFinalizadora;
+    }
+
+    public SrSolicitacao getSolicitacaoReferencia() {
+        return solicitacaoReferencia;
+    }
+
+    public void setSolicitacaoReferencia(SrSolicitacao solicitacaoReferencia) {
+        this.solicitacaoReferencia = solicitacaoReferencia;
+    }
+
+    public SrTipoMotivoEscalonamento getMotivoEscalonamento() {
+        return motivoEscalonamento;
+    }
+
+    public void setMotivoEscalonamento(SrTipoMotivoEscalonamento motivoEscalonamento) {
+        this.motivoEscalonamento = motivoEscalonamento;
+    }
 }

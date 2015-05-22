@@ -20,13 +20,13 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import play.db.jpa.JPA;
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
 import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
@@ -37,7 +37,7 @@ import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 public class SrAtributo extends HistoricoSuporteVraptor implements ConvertableEntity {
 	private static final long serialVersionUID = 1L;
 
-	public static ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);
+	public static final ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);
 
 	@Id
 	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
@@ -147,7 +147,7 @@ public class SrAtributo extends HistoricoSuporteVraptor implements ConvertableEn
 			SrConfiguracao confFiltro = new SrConfiguracao();
 			confFiltro.setLotacao(lotaTitular);
 			confFiltro.setDpPessoa(pess);
-			confFiltro.setCpTipoConfiguracao(JPA.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+			confFiltro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
 			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO });
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -183,21 +183,23 @@ public class SrAtributo extends HistoricoSuporteVraptor implements ConvertableEn
 		return super.hashCode();
 	}
 	
-	public SrAtributoVO toVO(boolean listarAssociacoes) {
+	public SrAtributoVO toVO(boolean listarAssociacoes) throws Exception {
 		return SrAtributoVO.createFrom(this, listarAssociacoes);
 	}
 
 	/**
 	 * Retorna um Json de {@link SrAtributo}.
+	 * @throws Exception 
 	 */
-	public String toJson(boolean listarAssociacoes) {
+	public String toJson(boolean listarAssociacoes) throws Exception {
 		return this.toVO(listarAssociacoes).toJson();
 	}
 
 	/**
 	 * Retorna um Json de {@link SrAtributo}.
+	 * @throws Exception 
 	 */
-	public String toJson() {
+	public String toJson() throws Exception {
 		return this.toVO(false).toJson();
 	}
 

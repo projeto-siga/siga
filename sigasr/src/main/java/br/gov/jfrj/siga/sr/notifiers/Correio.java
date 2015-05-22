@@ -1,129 +1,146 @@
 package br.gov.jfrj.siga.sr.notifiers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import play.Logger;
-import play.mvc.Mailer;
+import br.com.caelum.vraptor.freemarker.Freemarker;
+import br.com.caelum.vraptor.ioc.Component;
+import br.com.caelum.vraptor.ioc.RequestScoped;
+import br.com.caelum.vraptor.view.LinkToHandler;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sr.model.SrGestorItem;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
+import freemarker.template.TemplateException;
 
-public class Correio extends Mailer {
+@Component
+@RequestScoped
+public class Correio {
+    private static final String MOVIMENTACAO_DA_SOLICITACAO = "Movimenta��o da solicita��o ";
+    private static final String EMAIL_ADMINISTRADOR_DO_SIGA = "Administrador do Siga<sigadocs@jfrj.jus.br>";
 
-	public static void notificarAbertura(SrSolicitacao sol) {
-		DpPessoa pessoaAtual = sol.getSolicitante().getPessoaAtual();
-		if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
-			return;
-		
-		if (sol.isFilha())
-			setSubject("Escalonamento da solicitação " + sol.getSolicitacaoPai().getCodigo());
-		else
-			setSubject("Abertura da solicitação " + sol.getCodigo());
-		
-		addRecipient(pessoaAtual.getEmailPessoa());
-		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		send(sol);
+    private Freemarker freemarker;
+    private LinkToHandler linkTo;
 
-	}
+    public Correio(Freemarker freemarker, LinkToHandler linkTo) {
+        this.freemarker = freemarker;
+        this.linkTo = linkTo;
+    }
 
-	public static void notificarMovimentacao(SrMovimentacao movimentacao) {
-		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
-		DpPessoa pessoaAtual = sol.getSolicitante().getPessoaAtual();
-		if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
-			return;
-		setSubject("Movimentação da solicitação " + sol.getCodigo());
-		addRecipient(pessoaAtual.getEmailPessoa());
-		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		send(movimentacao, sol);
-	}
+    private void enviar(String remetente, String assunto, String conteudo, String... destinatarios) throws Exception {
+        br.gov.jfrj.siga.base.Correio.enviar(remetente, destinatarios, assunto, conteudo);
+    }
 
-	public static void notificarAtendente(SrMovimentacao movimentacao) {
-		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
-		setSubject("Movimentação da solicitação " + sol.getCodigo());
-		List<String> recipients = new ArrayList<String>();
-		String email = null;
-		
-		DpPessoa atendenteSolPai = sol.getSolicitacaoPai().getAtendente();
-		if (atendenteSolPai != null) {
-			email = atendenteSolPai.getPessoaAtual().getEmailPessoa();
-			if (email != null)
-				recipients.add(email);
-		} 
-		else {
-			DpLotacao lotaAtendenteSolPai = sol.getSolicitacaoPai()
-					.getLotaAtendente();
-			if (lotaAtendenteSolPai != null)
-				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai
-						.getDpPessoaLotadosSet())
-					if (pessoaDaLotacao.getDataFim() == null) {
-						email = pessoaDaLotacao.getPessoaAtual().getEmailPessoa();
-						if (email != null)
-							recipients.add(email);
-					}
-		}
+    private void enviar(String remetente, String assunto, String conteudo, Object[] destinatarios) throws Exception {
+        br.gov.jfrj.siga.base.Correio.enviar(remetente, (String[]) destinatarios, assunto, conteudo);
+    }
 
-		if (recipients.size() > 0)
-			try {
-				addRecipient(recipients.toArray());
-				setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-				send(movimentacao, sol);
-			} catch (Exception e) {
-				Logger.error(e, "Nao foi possivel notificar o atendente");
-			}
-	}
+    public void notificarAbertura(SrSolicitacao sol) throws Exception {
+        DpPessoa pessoaAtual = sol.getSolicitante().getPessoaAtual();
+        if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
+            return;
 
-	public static void notificarReplanejamentoMovimentacao(
-			SrMovimentacao movimentacao) {
-		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
-		List<String> recipients = new ArrayList<String>();
-		setSubject("Movimentação da solicitação " + sol.getCodigo());
-		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		for (SrGestorItem gestor : sol.getItemConfiguracao().getGestorSet()) {
-			DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
-			if (pessoaGestorAtual != null
-					&& pessoaGestorAtual.getDataFim() == null 
-					&& pessoaGestorAtual.getEmailPessoa() != null)
-					recipients.add(pessoaGestorAtual.getEmailPessoa());
+        String assunto = "";
+        if (sol.isFilha())
+            assunto = "Escalonamento da solicita��o " + sol.getSolicitacaoPai().getCodigo();
+        else
+            assunto = "Abertura da solicita��o " + sol.getCodigo();
 
-			if (gestor.getDpLotacao() != null)
-				for (DpPessoa gestorPessoa : gestor.getDpLotacao()
-						.getDpPessoaLotadosSet())
-					if (gestorPessoa.getPessoaAtual().getDataFim() == null 
-						&& gestorPessoa.getPessoaAtual().getEmailPessoa() != null)
-							recipients.add(gestorPessoa.getPessoaAtual()
-									.getEmailPessoa());
-		}
-		recipients.add(sol.getSolicitante().getEmailPessoa());
-		if (recipients.isEmpty()) {
-			addRecipient(recipients.toArray());
-			send(movimentacao, sol);
-		}
-	}
+        String conteudo = getConteudoComSolicitacao(sol);
 
-	public static void notificarCancelamentoMovimentacao(
-			SrMovimentacao movimentacao) {
-		SrSolicitacao sol = movimentacao.solicitacao.getSolicitacaoAtual();
-		DpPessoa solicitanteAtual = sol.getSolicitante().getPessoaAtual();
-		if (solicitanteAtual.getEmailPessoa() == null)
-			return;
-		setSubject("Movimentação da solicitação " + sol.getCodigo());
-		addRecipient(solicitanteAtual.getEmailPessoa());
-		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		send(movimentacao, sol);
-	}
+        enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, pessoaAtual.getEmailPessoa());
+    }
 
-	public static void pesquisaSatisfacao(SrSolicitacao sol) throws Exception {
-		SrSolicitacao solAtual = sol.getSolicitacaoAtual();
-		DpPessoa solicitanteAtual = solAtual.getSolicitante().getPessoaAtual();
-		if (solicitanteAtual.getEmailPessoa() == null)
-			return;
-		setSubject("Pesquisa de Satisfação da solicitação "
-				+ solAtual.getCodigo());
-		addRecipient(solicitanteAtual.getEmailPessoa());
-		setFrom("Administrador do Siga<sigadocs@jfrj.jus.br>");
-		send(sol);
-	}
+    public void notificarMovimentacao(SrMovimentacao movimentacao) throws Exception {
+        SrSolicitacao sol = movimentacao.getSolicitacao().getSolicitacaoAtual();
+        DpPessoa pessoaAtual = sol.getSolicitante().getPessoaAtual();
+        if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
+            return;
+        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
+        String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
+
+        enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, pessoaAtual.getEmailPessoa());
+    }
+
+    public void notificarAtendente(SrMovimentacao movimentacao) throws Exception {
+        SrSolicitacao sol = movimentacao.getSolicitacao().getSolicitacaoAtual();
+        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
+        List<String> recipients = new ArrayList<String>();
+        String email = null;
+
+        DpPessoa atendenteSolPai = sol.getSolicitacaoPai().getAtendente();
+        if (atendenteSolPai != null) {
+            email = atendenteSolPai.getPessoaAtual().getEmailPessoa();
+            if (email != null)
+                recipients.add(email);
+        } else {
+            DpLotacao lotaAtendenteSolPai = sol.getSolicitacaoPai().getLotaAtendente();
+            if (lotaAtendenteSolPai != null)
+                for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai.getDpPessoaLotadosSet())
+                    if (pessoaDaLotacao.getDataFim() == null) {
+                        email = pessoaDaLotacao.getPessoaAtual().getEmailPessoa();
+                        if (email != null)
+                            recipients.add(email);
+                    }
+        }
+
+        if (!recipients.isEmpty()) {
+            String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
+            enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, recipients.toArray());
+        }
+    }
+
+    public void notificarReplanejamentoMovimentacao(SrMovimentacao movimentacao) throws Exception {
+        SrSolicitacao sol = movimentacao.getSolicitacao().getSolicitacaoAtual();
+        List<String> recipients = new ArrayList<String>();
+        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
+        for (SrGestorItem gestor : sol.getItemConfiguracao().getGestorSet()) {
+            DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
+            if (pessoaGestorAtual != null && pessoaGestorAtual.getDataFim() == null)
+                if (pessoaGestorAtual.getEmailPessoa() != null)
+                    recipients.add(pessoaGestorAtual.getEmailPessoa());
+
+            if (gestor.getDpLotacao() != null)
+                for (DpPessoa gestorPessoa : gestor.getDpLotacao().getDpPessoaLotadosSet())
+                    if (gestorPessoa.getPessoaAtual().getDataFim() == null)
+                        if (gestorPessoa.getPessoaAtual().getEmailPessoa() != null)
+                            recipients.add(gestorPessoa.getPessoaAtual().getEmailPessoa());
+        }
+        recipients.add(sol.getSolicitante().getEmailPessoa());
+
+        if (!recipients.isEmpty()) {
+            String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
+            enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, recipients.toArray());
+        }
+    }
+
+    public void notificarCancelamentoMovimentacao(SrMovimentacao movimentacao) throws Exception {
+        SrSolicitacao sol = movimentacao.getSolicitacao().getSolicitacaoAtual();
+        DpPessoa solicitanteAtual = sol.getSolicitante().getPessoaAtual();
+        if (solicitanteAtual.getEmailPessoa() == null)
+            return;
+        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
+        String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
+        enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, solicitanteAtual.getEmailPessoa());
+    }
+
+    public void pesquisaSatisfacao(SrSolicitacao sol) throws Exception {
+        SrSolicitacao solAtual = sol.getSolicitacaoAtual();
+        DpPessoa solicitanteAtual = solAtual.getSolicitante().getPessoaAtual();
+        if (solicitanteAtual.getEmailPessoa() == null)
+            return;
+        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
+        String conteudo = getConteudoComSolicitacao(sol);
+        enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, solicitanteAtual.getEmailPessoa());
+    }
+
+    private String getConteudoComSolicitacao(SrSolicitacao sol) throws IOException, TemplateException {
+        return freemarker.use("notificar").with("sol", sol).with("linkTo", linkTo).getContent();
+    }
+
+    private String getConteudoComSolicitacaoEMovimentacao(SrMovimentacao movimentacao, SrSolicitacao sol) throws IOException, TemplateException {
+        return freemarker.use("notificar").with("sol", sol).with("movimentacao", movimentacao).with("linkTo", linkTo).getContent();
+    }
 }

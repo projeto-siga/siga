@@ -18,6 +18,8 @@ import freemarker.template.TemplateException;
 @Component
 @RequestScoped
 public class Correio {
+    private static final String MOVIMENTACAO_DA_SOLICITACAO = "Movimentação da solicitação ";
+    private static final String EMAIL_ADMINISTRADOR_DO_SIGA = "Administrador do Siga<sigadocs@jfrj.jus.br>";
 
     private Freemarker freemarker;
     private LinkToHandler linkTo;
@@ -26,9 +28,6 @@ public class Correio {
         this.freemarker = freemarker;
         this.linkTo = linkTo;
     }
-
-    private static final String MOVIMENTACAO_DA_SOLICITACAO = "Movimentação da solicitação ";
-    private static final String EMAIL_ADMINISTRADOR_DO_SIGA = "Administrador do Siga<sigadocs@jfrj.jus.br>";
 
     private void enviar(String remetente, String assunto, String conteudo, String... destinatarios) throws Exception {
         br.gov.jfrj.siga.base.Correio.enviar(remetente, destinatarios, assunto, conteudo);
@@ -52,7 +51,6 @@ public class Correio {
         String conteudo = getConteudoComSolicitacao(sol);
 
         enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, pessoaAtual.getEmailPessoa());
-        // send(sol);
     }
 
     public void notificarMovimentacao(SrMovimentacao movimentacao) throws Exception {
@@ -64,7 +62,6 @@ public class Correio {
         String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
 
         enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, pessoaAtual.getEmailPessoa());
-        // send(movimentacao, sol);
     }
 
     public void notificarAtendente(SrMovimentacao movimentacao) throws Exception {
@@ -93,7 +90,6 @@ public class Correio {
             String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
             enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, recipients.toArray());
         }
-        // send(movimentacao, sol);
     }
 
     public void notificarReplanejamentoMovimentacao(SrMovimentacao movimentacao) throws Exception {
@@ -114,10 +110,9 @@ public class Correio {
         }
         recipients.add(sol.getSolicitante().getEmailPessoa());
 
-        if (recipients.size() > 0) {
+        if (!recipients.isEmpty()) {
             String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
             enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, recipients.toArray());
-            // send(movimentacao, sol);
         }
     }
 
@@ -129,7 +124,6 @@ public class Correio {
         String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
         String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
         enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, solicitanteAtual.getEmailPessoa());
-        // send(movimentacao, sol);
     }
 
     public void pesquisaSatisfacao(SrSolicitacao sol) throws Exception {
@@ -140,7 +134,6 @@ public class Correio {
         String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
         String conteudo = getConteudoComSolicitacao(sol);
         enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, solicitanteAtual.getEmailPessoa());
-        // send(sol);
     }
 
     private String getConteudoComSolicitacao(SrSolicitacao sol) throws IOException, TemplateException {

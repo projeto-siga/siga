@@ -5,58 +5,76 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import play.db.jpa.GenericModel;
 import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_TIPO_PERMISSAO_LISTA", schema = Catalogs.SIGASR)
-public class SrTipoPermissaoLista extends GenericModel{
+public class SrTipoPermissaoLista extends ObjetoVraptor {
 
-	final static public long GESTAO = 1; 
+    private static final long serialVersionUID = 1555809464123606397L;
 
-	final static public long PRIORIZACAO = 2; 
+    public static final ActiveRecord<SrTipoPermissaoLista> AR = new ActiveRecord<>(SrTipoPermissaoLista.class);
 
-	final static public long INCLUSAO = 3; 
-	
-	final static public long CONSULTA = 4; 
+    final static public long GESTAO = 1;
 
-	@Id
-	@Column(name = "ID_TIPO_PERMISSAO")
-	public Long idTipoPermissaoLista;
-	
-	@Column(name = "DESCR_TIPO_PERMISSAO", nullable = false)
-	public String descrTipoPermissaoLista;
-	
-	public SrTipoPermissaoLista(int id, String descricao) {
-		super();
-		this.idTipoPermissaoLista = Long.valueOf(id);
-		this.descrTipoPermissaoLista = descricao;
-	}
+    final static public long PRIORIZACAO = 2;
 
-	public Long getIdTipoPermissaoLista() {
-		return idTipoPermissaoLista;
-	}
-	
-	public String getDescrTipoPermissaoLista() {
-		return descrTipoPermissaoLista;
-	}
-	
-	/**
-	 * Classe que representa um V.O. de {@link SrTipoPermissaoLista}.
-	 */
-	public class SrTipoPermissaoListaVO {
-		
-		public Long idTipoPermissaoLista;
-		public String descrTipoPermissaoLista;
-		
-		public SrTipoPermissaoListaVO(Long id, String descricao) {
-			this.idTipoPermissaoLista = id;
-			this.descrTipoPermissaoLista= descricao;
-		}
-	}
-	
-	public SrTipoPermissaoListaVO toVO() {
-		return new SrTipoPermissaoListaVO(this.idTipoPermissaoLista, this.descrTipoPermissaoLista);
-	}
-	
+    final static public long INCLUSAO = 3;
+
+    final static public long CONSULTA = 4;
+
+    @Id
+    @Column(name = "ID_TIPO_PERMISSAO")
+    private Long idTipoPermissaoLista;
+
+    @Column(name = "DESCR_TIPO_PERMISSAO", nullable = false)
+    private String descrTipoPermissaoLista;
+
+    public SrTipoPermissaoLista(int id, String descricao) {
+        super();
+        this.setIdTipoPermissaoLista(Long.valueOf(id));
+        this.setDescrTipoPermissaoLista(descricao);
+    }
+
+    public Long getIdTipoPermissaoLista() {
+        return idTipoPermissaoLista;
+    }
+
+    public String getDescrTipoPermissaoLista() {
+        return descrTipoPermissaoLista;
+    }
+
+    /**
+     * Classe que representa um V.O. de {@link SrTipoPermissaoLista}.
+     */
+    public class SrTipoPermissaoListaVO {
+
+        public Long idTipoPermissaoLista;
+        public String descrTipoPermissaoLista;
+
+        public SrTipoPermissaoListaVO(Long id, String descricao) {
+            this.idTipoPermissaoLista = id;
+            this.descrTipoPermissaoLista = descricao;
+        }
+    }
+
+    public SrTipoPermissaoListaVO toVO() {
+        return new SrTipoPermissaoListaVO(this.getIdTipoPermissaoLista(), this.getDescrTipoPermissaoLista());
+    }
+
+    @Override
+    protected Long getId() {
+        return this.getIdTipoPermissaoLista();
+    }
+
+    public void setIdTipoPermissaoLista(Long idTipoPermissaoLista) {
+        this.idTipoPermissaoLista = idTipoPermissaoLista;
+    }
+
+    public void setDescrTipoPermissaoLista(String descrTipoPermissaoLista) {
+        this.descrTipoPermissaoLista = descrTipoPermissaoLista;
+    }
+
 }

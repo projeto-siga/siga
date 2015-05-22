@@ -17,46 +17,46 @@ import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 @Table(name = "SR_OBJETIVO_ATRIBUTO", schema = Catalogs.SIGASR)
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class SrObjetivoAtributo extends ObjetoVraptor implements ConvertableEntity {
-	
-	public static ActiveRecord<SrObjetivoAtributo> AR = new ActiveRecord<>(SrObjetivoAtributo.class);
 
-	private static final long serialVersionUID = 1L;
+    public static final ActiveRecord<SrObjetivoAtributo> AR = new ActiveRecord<>(SrObjetivoAtributo.class);
 
-	final static public long OBJETIVO_SOLICITACAO = 1;
+    private static final long serialVersionUID = 1L;
 
-	final static public long OBJETIVO_ACORDO = 2;
+    final static public long OBJETIVO_SOLICITACAO = 1;
 
-	final static public long OBJETIVO_INDICADOR = 3;
-	
-	@Id
-	@Column(name = "ID_OBJETIVO")
-	private long idObjetivo;
+    final static public long OBJETIVO_ACORDO = 2;
 
-	@Column(name = "DESCR_OBJETIVO", nullable = false)
-	private String descrObjetivo;
-	
-	public Long getId() {
-		return this.getIdObjetivo();
-	}
-	
-	public String getDescricao() {
-		return this.getDescrObjetivo();
-	}
+    final static public long OBJETIVO_INDICADOR = 3;
 
-	public long getIdObjetivo() {
-		return idObjetivo;
-	}
+    @Id
+    @Column(name = "ID_OBJETIVO")
+    private long idObjetivo;
 
-	public void setIdObjetivo(long idObjetivo) {
-		this.idObjetivo = idObjetivo;
-	}
+    @Column(name = "DESCR_OBJETIVO", nullable = false)
+    private String descrObjetivo;
 
-	public String getDescrObjetivo() {
-		return descrObjetivo;
-	}
+    public Long getId() {
+        return this.getIdObjetivo();
+    }
 
-	public void setDescrObjetivo(String descrObjetivo) {
-		this.descrObjetivo = descrObjetivo;
-	}
+    public String getDescricao() {
+        return this.getDescrObjetivo();
+    }
+
+    public long getIdObjetivo() {
+        return idObjetivo;
+    }
+
+    public void setIdObjetivo(long idObjetivo) {
+        this.idObjetivo = idObjetivo;
+    }
+
+    public String getDescrObjetivo() {
+        return descrObjetivo;
+    }
+
+    public void setDescrObjetivo(String descrObjetivo) {
+        this.descrObjetivo = descrObjetivo;
+    }
 
 }

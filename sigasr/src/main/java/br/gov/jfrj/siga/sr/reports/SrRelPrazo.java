@@ -26,7 +26,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.Minutes;
 import org.joda.time.Period;
 
-import play.db.jpa.JPA;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.Font;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
@@ -34,6 +33,7 @@ import br.gov.jfrj.relatorio.dinamico.Coluna;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.CpOcorrenciaFeriado;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
@@ -125,7 +125,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 				TreeMap<String, Double> map = new TreeMap<String, Double>();
 				TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
 
-				List<SrSolicitacao> listaTotal = SrSolicitacao
+				List<SrSolicitacao> listaTotal = SrSolicitacao.AR
 						.find("select sol.local.nomeComplexo, count(*) "
 								+ "from SrSolicitacao sol, SrMovimentacao mov "
 								+ "where sol.idSolicitacao = mov.solicitacao "
@@ -162,7 +162,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 					cls_12 = 0;
 					cls_24 = 0;
 					cls_ac24 = 0;
-					List<SrSolicitacao> solicDoComplexo = SrSolicitacao
+					List<SrSolicitacao> solicDoComplexo = SrSolicitacao.AR
 							.find("select sol.local.nomeComplexo, sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
 									+ "from SrSolicitacao sol, SrMovimentacao mov "
 									+ "where sol.idSolicitacao = mov.solicitacao "
@@ -191,7 +191,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 						Object[] obj = (Object[]) it.next();
 						local = (String) obj[0];
 						set.add(local);
-						SrSolicitacao sol = SrSolicitacao.findById(obj[1]);
+						SrSolicitacao sol = SrSolicitacao.AR.findById(obj[1]);
 						DateTime startemp = new DateTime(obj[2]);
 						DateTime endtemp = new DateTime(obj[3]);
 						DateTime start1 = new DateTime();
@@ -371,7 +371,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 					}
 				} // final do for para o conjunto
 			} else { // else do if parametros.get("local").equals("0")
-				percTotal = SrSolicitacao
+				percTotal = SrSolicitacao.AR
 						.find("select count(*) "
 								+ "from SrSolicitacao sol, SrMovimentacao mov "
 								+ "where sol.idSolicitacao = mov.solicitacao "
@@ -394,7 +394,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 								+ parametros.get("dtFim")
 								+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").first();
 
-				List<SrSolicitacao> lista = SrSolicitacao
+				List<SrSolicitacao> lista = SrSolicitacao.AR
 						.find("select sol.local.nomeComplexo, sol.dtReg, mov.dtIniMov,sol.idSolicitacao "
 								+ "from SrSolicitacao sol, SrMovimentacao mov "
 								+ "where sol.idSolicitacao = mov.solicitacao "
@@ -423,7 +423,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 					local = (String) obj[0];
 					DateTime startemp = new DateTime(obj[1]);
 					DateTime endtemp = new DateTime(obj[2]);
-					SrSolicitacao sol = SrSolicitacao.findById(obj[3]);
+					SrSolicitacao sol = SrSolicitacao.AR.findById(obj[3]);
 					DateTime start1 = new DateTime();
 					DateTime end1 = new DateTime();
 					DateTime startp = new DateTime();
@@ -555,7 +555,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 				query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni "
 						+ "from DpLotacao where idLotacao in ("
 						+ parametros.get("lotacao") + "))";
-			List lotacoes = JPA.em().createQuery(query).getResultList();
+			List lotacoes = ContextoPersistencia.em().createQuery(query).getResultList();
 			StringBuilder listalotacoes = new StringBuilder();
 			for (int i = 0; i < lotacoes.size(); i++) {
 				listalotacoes.append(lotacoes.get(i));
@@ -567,7 +567,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 				TreeMap<String, Double> map = new TreeMap<String, Double>();
 				TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
 
-				List<SrSolicitacao> listaTotal = SrSolicitacao
+				List<SrSolicitacao> listaTotal = SrSolicitacao.AR
 						.find("select sol.local.nomeComplexo, count(*) "
 								+ "from SrSolicitacao sol, SrMovimentacao mov "
 								+ "where sol.idSolicitacao = mov.solicitacao "
@@ -607,7 +607,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 					cls_12 = 0;
 					cls_24 = 0;
 					cls_ac24 = 0;
-					List<SrSolicitacao> solicDoComplexo = SrSolicitacao
+					List<SrSolicitacao> solicDoComplexo = SrSolicitacao.AR
 							.find("select sol.local.nomeComplexo, sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
 									+ "from SrSolicitacao sol, SrMovimentacao mov "
 									+ "where sol.idSolicitacao = mov.solicitacao "
@@ -638,7 +638,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 						Object[] obj = (Object[]) it.next();
 						local = (String) obj[0];
 						set.add(local);
-						SrSolicitacao sol = SrSolicitacao.findById(obj[1]);
+						SrSolicitacao sol = SrSolicitacao.AR.findById(obj[1]);
 						DateTime startemp = new DateTime(obj[2]);
 						DateTime endtemp = new DateTime(obj[3]);
 						DateTime start1 = new DateTime();
@@ -823,7 +823,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 				TreeMap<String, Double> map = new TreeMap<String, Double>();
 				TreeMap<String, Long> maptotais = new TreeMap<String, Long>();
 
-				percTotal = SrSolicitacao
+				percTotal = SrSolicitacao.AR
 						.find("select count(*) "
 								+ "from SrSolicitacao sol, SrMovimentacao mov "
 								+ "where sol.idSolicitacao = mov.solicitacao "
@@ -849,7 +849,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 								+ parametros.get("dtFim")
 								+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").first();
 
-				List<SrSolicitacao> listaTotal = SrSolicitacao
+				List<SrSolicitacao> listaTotal = SrSolicitacao.AR
 						.find("select mov.lotaAtendente.siglaLotacao, count(*) "
 								+ "from SrSolicitacao sol, SrMovimentacao mov "
 								+ "where sol.idSolicitacao = mov.solicitacao "
@@ -893,7 +893,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 					cls_12 = 0;
 					cls_24 = 0;
 					cls_ac24 = 0;
-					List<SrSolicitacao> solicDoComplexo = SrSolicitacao
+					List<SrSolicitacao> solicDoComplexo = SrSolicitacao.AR
 							.find("select mov.lotaAtendente.siglaLotacao, sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
 									+ "from SrSolicitacao sol, SrMovimentacao mov "
 									+ "where sol.idSolicitacao = mov.solicitacao "
@@ -924,7 +924,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 						Object[] obj = (Object[]) it.next();
 						local = (String) obj[0];
 						set.add(local);
-						SrSolicitacao sol = SrSolicitacao.findById(obj[1]);
+						SrSolicitacao sol = SrSolicitacao.AR.findById(obj[1]);
 						DateTime startemp = new DateTime(obj[2]);
 						DateTime endtemp = new DateTime(obj[3]);
 						DateTime start1 = new DateTime();
@@ -1114,14 +1114,14 @@ public class SrRelPrazo extends RelatorioTemplate {
 				query = "select idLotacao from DpLotacao where idLotacaoIni in (select idLotacaoIni "
 						+ "from DpLotacao where idLotacao in ("
 						+ parametros.get("lotacao") + "))";
-			List lotacoes = JPA.em().createQuery(query).getResultList();
+			List lotacoes = ContextoPersistencia.em().createQuery(query).getResultList();
 			StringBuilder listalotacoes = new StringBuilder();
 			for (int i = 0; i < lotacoes.size(); i++) {
 				listalotacoes.append(lotacoes.get(i));
 				if (i < (lotacoes.size() - 1))
 					listalotacoes.append(",");
 			}
-			percTotal = SrSolicitacao
+			percTotal = SrSolicitacao.AR
 					.find("select count(*) "
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
@@ -1147,7 +1147,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 							+ parametros.get("dtFim")
 							+ " 23:59:59','dd/MM/yy hh24:mi:ss') ").first();
 
-			List<SrSolicitacao> lista = SrSolicitacao
+			List<SrSolicitacao> lista = SrSolicitacao.AR
 					.find("select mov.lotaAtendente.siglaLotacao, sol.idSolicitacao, sol.dtReg, mov.dtIniMov "
 							+ "from SrSolicitacao sol, SrMovimentacao mov "
 							+ "where sol.idSolicitacao = mov.solicitacao "
@@ -1176,7 +1176,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 			while (it.hasNext()) {
 				Object[] obj = (Object[]) it.next();
 				local = (String) obj[0];
-				SrSolicitacao sol = SrSolicitacao.findById(obj[1]);
+				SrSolicitacao sol = SrSolicitacao.AR.findById(obj[1]);
 				DateTime startemp = new DateTime(obj[2]);
 				DateTime endtemp = new DateTime(obj[3]);
 				DateTime start1 = new DateTime();
@@ -1300,7 +1300,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 	}
 
 	private Set calculaFeriados() {
-		List<CpOcorrenciaFeriado> ferjust = CpOcorrenciaFeriado.find(
+		List<CpOcorrenciaFeriado> ferjust = CpOcorrenciaFeriado.AR.find(
 				"select dtIniFeriado, dtFimFeriado from CpOcorrenciaFeriado")
 				.fetch();
 		Set dataDosFeriados = new HashSet();
@@ -1326,7 +1326,7 @@ public class SrRelPrazo extends RelatorioTemplate {
 		List<DateTime> listaPendentes = new ArrayList<DateTime>();
 
 		List<Object> d = new LinkedList<Object>();
-		List<CpOcorrenciaFeriado> ferjust = CpOcorrenciaFeriado.find(
+		List<CpOcorrenciaFeriado> ferjust = CpOcorrenciaFeriado.AR.find(
 				"select dtIniFeriado, dtFimFeriado from CpOcorrenciaFeriado")
 				.fetch();
 		Set dataDosFeriados = new HashSet();
@@ -1344,11 +1344,11 @@ public class SrRelPrazo extends RelatorioTemplate {
 		}
 
 		for (SrMovimentacao mov : sol.getMovimentacaoSet()) {
-			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
-				listaPendentes.add(new DateTime(mov.dtIniMov));
+			if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
+				listaPendentes.add(new DateTime(mov.getDtIniMov()));
 			}
-			if (mov.tipoMov.idTipoMov == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
-				listaPendentes.add(new DateTime(mov.dtIniMov));
+			if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA) {
+				listaPendentes.add(new DateTime(mov.getDtIniMov()));
 			}
 		}
 

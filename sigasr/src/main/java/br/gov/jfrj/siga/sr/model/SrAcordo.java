@@ -169,11 +169,11 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel, C
 		return getNomeAcordo();
 	}
 	
-	public SrAcordoVO toVO() {
+	public SrAcordoVO toVO() throws Exception {
 		return SrAcordoVO.createFrom(this);
 	}
 	
-	public String toJson() {
+	public String toJson() throws Exception {
 		return this.toVO().toJson();
 	}
 	

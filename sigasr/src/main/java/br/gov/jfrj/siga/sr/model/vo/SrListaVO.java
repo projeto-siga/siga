@@ -10,34 +10,98 @@ import com.google.gson.GsonBuilder;
  */
 public class SrListaVO {
 
-	public Long idLista;
-	public Long hisIdIni;
-	public String nomeLista;
-	public String nomeLotacao;
-	public String descrAbrangencia;
-	public String descrJustificativa;
-	public String descrPriorizacao;
-	public boolean ativo;
+    private Long idLista;
+    private Long hisIdIni;
+    private String nomeLista;
+    private String nomeLotacao;
+    private String descrAbrangencia;
+    private String descrJustificativa;
+    private String descrPriorizacao;
+    private boolean ativo;
 
-	public SrListaVO(SrLista lista) {
-		this.idLista = lista.idLista;
-		this.hisIdIni = lista.getHisIdIni();
-		this.nomeLista = lista.nomeLista;
-		this.nomeLotacao = lista.lotaCadastrante != null ? lista.lotaCadastrante.getDescricao() : "";
-		this.descrAbrangencia = lista.descrAbrangencia;
-		this.descrJustificativa = lista.descrJustificativa;
-		this.descrPriorizacao = lista.descrPriorizacao;
-		this.ativo = lista.isAtivo();
-	}
-	
-	/**
-	 * Converte o objeto para Json.
-	 */
-	public String toJson() {
-		GsonBuilder builder = new GsonBuilder();
-		builder.setPrettyPrinting().serializeNulls();
-		Gson gson = builder.create();
+    public SrListaVO(SrLista lista) {
+        this.setIdLista(lista.idLista);
+        this.setHisIdIni(lista.getHisIdIni());
+        this.setNomeLista(lista.nomeLista);
+        this.setNomeLotacao(lista.lotaCadastrante != null ? lista.lotaCadastrante.getDescricao() : "");
+        this.setDescrAbrangencia(lista.descrAbrangencia);
+        this.setDescrJustificativa(lista.descrJustificativa);
+        this.setDescrPriorizacao(lista.descrPriorizacao);
+        this.setAtivo(lista.isAtivo());
+    }
 
-		return gson.toJson(this);
-	}
+    /**
+     * Converte o objeto para Json.
+     */
+    public String toJson() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting().serializeNulls();
+        Gson gson = builder.create();
+
+        return gson.toJson(this);
+    }
+
+    public Long getIdLista() {
+        return idLista;
+    }
+
+    public void setIdLista(Long idLista) {
+        this.idLista = idLista;
+    }
+
+    public Long getHisIdIni() {
+        return hisIdIni;
+    }
+
+    public void setHisIdIni(Long hisIdIni) {
+        this.hisIdIni = hisIdIni;
+    }
+
+    public String getNomeLista() {
+        return nomeLista;
+    }
+
+    public void setNomeLista(String nomeLista) {
+        this.nomeLista = nomeLista;
+    }
+
+    public String getNomeLotacao() {
+        return nomeLotacao;
+    }
+
+    public void setNomeLotacao(String nomeLotacao) {
+        this.nomeLotacao = nomeLotacao;
+    }
+
+    public String getDescrAbrangencia() {
+        return descrAbrangencia;
+    }
+
+    public void setDescrAbrangencia(String descrAbrangencia) {
+        this.descrAbrangencia = descrAbrangencia;
+    }
+
+    public String getDescrJustificativa() {
+        return descrJustificativa;
+    }
+
+    public void setDescrJustificativa(String descrJustificativa) {
+        this.descrJustificativa = descrJustificativa;
+    }
+
+    public String getDescrPriorizacao() {
+        return descrPriorizacao;
+    }
+
+    public void setDescrPriorizacao(String descrPriorizacao) {
+        this.descrPriorizacao = descrPriorizacao;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
 }

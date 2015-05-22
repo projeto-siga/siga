@@ -709,18 +709,10 @@ public class AppController extends GcController {
 							+ informacao.visualizacao.nome
 							+ ") : O usuário não tem permissão para visualizar o conhecimento solicitado.");
 
-		String conteudo = bl.marcarLinkNoConteudo(informacao.arq
-				.getConteudoTXT());
-		if (conteudo != null)
-			informacao.arq.setConteudoTXT(conteudo);
 		if (movNotificacao != null)
 			bl.notificado(informacao, idc, titular, lotaTitular, movNotificacao);
 		bl.logarVisita(informacao, idc, titular, lotaTitular);
-		result.include("informacao", informacao);
-		result.include("mensagem", mensagem);
-		result.include("movimentacoes", movimentacoes);
-		result.include("historico", historico);
-
+		
 		if (historico) {
 			diff_match_patch diff = new diff_match_patch();
 
@@ -778,6 +770,22 @@ public class AppController extends GcController {
 				result.include("mapTxt", mapTxt);
 			}
 		}
+
+		for(GcTag t : informacao.getTags())
+			;
+		em().detach(informacao);
+		String conteudo = bl.marcarLinkNoConteudo(informacao.arq
+				.getConteudoTXT());
+//		if (conteudo != null)
+//			informacao.arq.setConteudoTXT(conteudo);
+
+		result.include("informacao", informacao);
+		result.include("mensagem", mensagem);
+		result.include("movimentacoes", movimentacoes);
+		result.include("historico", historico);
+		result.include("conteudo", conteudo);
+
+
 	}
 
 	public void exibirPontoDeEntrada(String sigla) throws Exception {
@@ -790,10 +798,11 @@ public class AppController extends GcController {
 				informacao.visualizacao.id)) {
 			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
 					.getConteudoTXT());
-			if (conteudo != null)
-				informacao.arq.setConteudoTXT(conteudo);
+//			if (conteudo != null)
+//				informacao.arq.setConteudoTXT(conteudo);
 			bl.logarVisita(informacao, idc, titular, lotaTitular);
 			result.include("informacao", informacao);
+			result.include("conteudo", conteudo);
 		} else
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
@@ -901,6 +910,9 @@ public class AppController extends GcController {
 			else if (pessoa != null)
 				informacao.ou = pessoa.getOrgaoUsuario();
 		}
+		if (informacao.getGrupo() != null
+				&& informacao.getGrupo().getId() == null)
+			informacao.setGrupo(null);
 
 		informacao.tipo = tipo;
 		informacao.edicao = edicao;
@@ -1030,21 +1042,30 @@ public class AppController extends GcController {
 	}
 
 	public void gravarArquivo(GcInformacao informacao, String titulo,
-			UploadedFile file, String CKEditorFuncNum, String origem)
+			UploadedFile upload, UploadedFile file, String CKEditorFuncNum, String origem)
 			throws Exception {
-		if (file != null)
-			if (file.getSize() > 2097152)
+		// Nato: precisei fazer isso pq não vem attached e depois será feito um
+		// lazy-load. Precisamos melhorar depois.
+		informacao = GcInformacao.AR.findById(informacao.id);
+
+		
+		if (file != null) {
+			upload = file;
+		}
+		if (upload != null) {
+			if (upload.getSize() > 2097152)
 				throw new AplicacaoException(
 						"O tamanho do arquivo é maior que o "
 								+ "máximo permitido (2MB)");
-		if (!(file.getSize() > 0))
-			throw new AplicacaoException(
-					"Nao é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
-		byte arquivo[] = IOUtils.toByteArray(file.getFile());
-		String tituloArquivo = file.getFileName();
+			if (!(upload.getSize() > 0))
+				throw new AplicacaoException(
+						"Nao é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");
+		}
+		byte arquivo[] = IOUtils.toByteArray(upload.getFile());
+		String tituloArquivo = upload.getFileName();
 		if (origem.equals("editar")) {
 			long id = bl.gravarArquivoSemMovimentacao(arquivo, tituloArquivo,
-					file.getContentType().toLowerCase());
+					upload.getContentType().toLowerCase());
 			String url = "/sigagc/app/baixar?id=" + id;
 			String js = "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('"
 					+ CKEditorFuncNum + "','" + url + "');</script>";
@@ -1059,7 +1080,7 @@ public class AppController extends GcController {
 		}
 	}
 
-	@Path("/app/removerAnexo/{sigla}/{idArq}/{idMov}")
+	@Path("/app/removerAnexo")
 	public void removerAnexo(String sigla, long idArq, long idMov)
 			throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
@@ -1082,12 +1103,12 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
-	@Path("/app/baixar/{id}")
+	@Path({"/app/baixar/{id}","/app/baixar"})
 	public Download baixar(Long id) throws Exception {
 		GcArquivo arq = GcArquivo.AR.findById(id);
 		if (arq != null)
 			return new ByteArrayDownload(arq.conteudo, arq.mimeType,
-					arq.titulo, true);
+					arq.titulo, false);
 		throw new Exception("Arquivo não encontrado.");
 	}
 

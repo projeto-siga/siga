@@ -11,6 +11,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
+import br.gov.jfrj.siga.model.Selecionavel;
 
 public class GcInformacaoFiltro {
 	public GcTipoInformacao tipo;
@@ -34,15 +35,19 @@ public class GcInformacaoFiltro {
 
 	public List<GcInformacao> buscar() throws Exception {
 
+		if (tag != null && tag.getSigla() != null && (tag.getId() == null || tag.getId().equals(0L))) {
+			tag = (GcTag) tag.selecionar(tag.getSigla());
+		}
+
 		if (autor != null && autor.getId() == null)
 			autor = null;
-		
+
 		if (lotacao != null && lotacao.getId() == null)
 			lotacao = null;
 
 		if (responsavel != null && responsavel.getId() == null)
 			responsavel = null;
-		
+
 		if (lotaResponsavel != null && lotaResponsavel.getId() == null)
 			lotaResponsavel = null;
 
@@ -65,7 +70,7 @@ public class GcInformacaoFiltro {
 
 		if (autor != null)
 			query += " and inf.autor.idPessoaIni = " + autor.getIdInicial();
-		if (lotacao != null )
+		if (lotacao != null)
 			query += " and inf.lotacao.idLotacaoIni = "
 					+ lotacao.getIdInicial();
 

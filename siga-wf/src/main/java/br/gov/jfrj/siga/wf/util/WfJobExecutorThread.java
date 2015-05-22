@@ -20,19 +20,20 @@ package br.gov.jfrj.siga.wf.util;
 
 import java.lang.reflect.Field;
 
+import javax.servlet.ServletException;
+
 import org.hibernate.Session;
-import org.jbpm.JbpmConfiguration;
 import org.jbpm.db.GraphSession;
 import org.jbpm.job.Job;
-import org.jbpm.job.executor.JobExecutor;
 import org.jbpm.job.executor.JobExecutorThread;
 
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
- * Classe que representa um thread de execução de job
+ * Classe que representa um thread de execuï¿½ï¿½o de job
  * 
  * @author kpf
  * 
@@ -51,16 +52,22 @@ public class WfJobExecutorThread extends JobExecutorThread {
 
 	/**
 	 * Executa o job.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Override
 	protected void executeJob(Job job) throws Exception {
 		GraphSession s = WfContextBuilder.getJbpmContext().getGraphSession();
-		Session session;
+		Session session = null;
 		try {
 			Field fld = GraphSession.class.getDeclaredField("session");
 			fld.setAccessible(true);
 			session = (Session) fld.get(s);
+
+			if (session == null)
+				throw new Exception(
+						"NÃ£o foi possÃ­vel obter a sessÃ£o do hibernate para executar o timer.");
+
 			HibernateUtil.setSessao(session);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -75,6 +82,18 @@ public class WfJobExecutorThread extends JobExecutorThread {
 
 		HibernateUtil.removeSessao();
 		ModeloDao.freeInstance();
-	}
 
+		// WfExecutionEnvironment ee = new WfExecutionEnvironment();
+		// try {
+		// Wf.setInstance(null);
+		// ee.antes(session);
+		// super.executeJob(job);
+		// ee.depois();
+		// } catch (Exception e) {
+		// ee.excecao();
+		// throw new ServletException(e);
+		// } finally {
+		// ee.finalmente();
+		// }
+	}
 }

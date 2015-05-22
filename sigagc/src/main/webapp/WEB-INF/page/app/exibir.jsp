@@ -24,7 +24,7 @@
 			<!-- Dados do documento -->
 			<div class="gt-content-box" style="padding: 10px;">
 				<h2>${informacao.arq.titulo}</h2>
-				${informacao.conteudoHTML}
+				${conteudo}
 			</div>
 		</div>
 
@@ -85,11 +85,11 @@
 					<h3>Arquivos Anexos</h3>
 					<c:forEach items="${informacao.movs}" var="m">
 						<c:if
-							test="${m.tipo.id == models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO && m.movCanceladora == null}">
+							test="${m.tipo.id == 13 && m.movCanceladora == null}">
 							<p>
 								<img style="margin-bottom: -4px;"
 									src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
-									target="_blank" href="@{Application.baixar(m.arq.id)}">${m.arq.titulo}</a>
+									target="_blank" href="${linkTo[AppController].baixar[m.arq.id]}">${m.arq.titulo}</a>
 							</p>
 						</c:if>
 					</c:forEach>
@@ -110,7 +110,7 @@
 
 	<script type="text/javascript">
 		SetInnerHTMLFromAjaxResponse(
-				"knowledge?estilo=sidebar&ts=${currentTimeMillis}${informacao.gcTags}&id=${informacao.id}",
+				"/sigagc/app/knowledgeSidebar?ts=${currentTimeMillis}${informacao.gcTags}&id=${informacao.id}",
 				document.getElementById('gc'));
 	</script>
 

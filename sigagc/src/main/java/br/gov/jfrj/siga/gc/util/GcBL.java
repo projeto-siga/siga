@@ -413,8 +413,8 @@ public class GcBL {
 	}
 
 	/**
-	 * Calcula quais as marcas cada informação terá com base nas
-	 * movimentações que foram feitas na informacao.
+	 * Calcula quais as marcas cada informação terá com base nas movimentações
+	 * que foram feitas na informacao.
 	 * 
 	 * @param inf
 	 */
@@ -648,31 +648,30 @@ public class GcBL {
 				info,
 				GcTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
 				null, null, null, null, null, null, mov, null, null);
-	//	gravar(info, idc, titular, lotaTitular);
+		// gravar(info, idc, titular, lotaTitular);
 		mov.movCanceladora = m;
 		gravar(info, idc, titular, lotaTitular);
 	}
-	
+
 	/**
-	 * Metodo que grava arquivos no GcArquivo e atrela esse arquivo a um conhecimento atraves  
-	 * da movimentacao TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO.
+	 * Metodo que grava arquivos no GcArquivo e atrela esse arquivo a um
+	 * conhecimento atraves da movimentacao TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO.
 	 * Chamado pela página anexar.html
 	 */
 	public void gravarArquivoComMovimentacao(GcInformacao info,
 			CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular,
 			String titulo, byte[] file) throws Exception {
-		movimentar(info,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
-				null, null, null, titulo, null, null, null, null,
-				file);
+		movimentar(info, GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO,
+				null, null, null, titulo, null, null, null, null, file);
 		gravar(info, idc, titular, lotaTitular);
 	}
-	
+
 	/**
 	 * Metodo que grava imagens no GcArquivo sem associa-las a um conhecimento.
 	 * Chamado pela página editar.html
 	 */
-	public long gravarArquivoSemMovimentacao(byte[] file, String titulo, String contentType) {
+	public long gravarArquivoSemMovimentacao(byte[] file, String titulo,
+			String contentType) {
 		GcArquivo arq = new GcArquivo();
 		arq.titulo = titulo;
 		arq.classificacao = null;
@@ -680,10 +679,10 @@ public class GcBL {
 		if (arq.isImage()) {
 			arq.save();
 			return arq.id;
-		}
-		else
-			return -1; //nao existe arquivo no banco com id negativo, 
-						//assim esse retorno indica que o arquivo nao foi salvo no banco
+		} else
+			return -1; // nao existe arquivo no banco com id negativo,
+						// assim esse retorno indica que o arquivo nao foi salvo
+						// no banco
 	}
 
 	private String acronimoOrgao = null;
@@ -796,7 +795,7 @@ public class GcBL {
 				.createNativeQuery("select " + sequence + ".nextval from dual")
 				.getSingleResult().toString());
 	}
-	
+
 	private EntityManager em() {
 		return this.em;
 	}
@@ -804,17 +803,19 @@ public class GcBL {
 	/**
 	 * Cria um link referenciando automaticamente um
 	 * documento/serviço/conhecimento quando é acrescentado o seu código no
-	 * campo de conteúdo da informação. Ex: Estou editando um conhecimento,
-	 * no seu campo texto quero referenciar o seguinte documento
+	 * campo de conteúdo da informação. Ex: Estou editando um conhecimento, no
+	 * seu campo texto quero referenciar o seguinte documento
 	 * JFRJ-OFI-2013/00003. Quando acrescento esse código do ofício e mando
-	 * salvar as alterações do conhecimento é criado um link que leva direto
-	 * ao documento referenciado.
+	 * salvar as alterações do conhecimento é criado um link que leva direto ao
+	 * documento referenciado.
 	 * 
-	 * Além disso, também identifica e cria links para hashTags. Esses
-	 * hashTags são inseridos no campo de classificação do conhecimento.
+	 * Além disso, também identifica e cria links para hashTags. Esses hashTags
+	 * são inseridos no campo de classificação do conhecimento.
 	 * 
 	 **/
 	public String marcarLinkNoConteudo(String conteudo) throws Exception {
+		if (conteudo == null)
+			return null;
 
 		if (acronimoOrgao == null) {
 			acronimoOrgao = "";
@@ -822,6 +823,10 @@ public class GcBL {
 					"select acronimoOrgaoUsu from CpOrgaoUsuario").fetch();
 			for (String ao : acronimo)
 				acronimoOrgao += (acronimoOrgao.isEmpty() ? "" : "|") + ao;
+		}
+		if (conteudo.startsWith("<")) {
+			conteudo = findSiglaHTML(conteudo);
+			return findHashTagHTML(conteudo, null, CONTROLE_LINK_HASH_TAG);
 		}
 		conteudo = findSigla(conteudo);
 		return findHashTag(conteudo, null, CONTROLE_LINK_HASH_TAG);
@@ -872,11 +877,57 @@ public class GcBL {
 		return sb.toString();
 	}
 
+	private String findSiglaHTML(String conteudo) throws Exception {
+		String sigla = null;
+		GcInformacao infoReferenciada = null;
+		StringBuffer sb = new StringBuffer();
+
+		// lembrar de retirar o RJ quando for para a produção.
+		Pattern padraoSigla = Pattern.compile(
+		// reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01,
+		// JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01,
+		// TRF2-PRO-2013/00001-V01
+				"(?i)(?:(?:RJ|"
+						+ acronimoOrgao
+						+ ")-([A-Za-z]{2,3})-[0-9]{4}/[0-9]{5}(?:.[0-9]{2})?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)");
+
+		Matcher matcherSigla = padraoSigla.matcher(conteudo);
+		while (matcherSigla.find()) {
+			// identifica que é um código de um conhecimento, ou serviço ou
+			// documento
+			if (matcherSigla.group(1) != null) {
+				sigla = matcherSigla.group(0).toUpperCase().trim();
+				// conhecimento
+				if (matcherSigla.group(1).toUpperCase().equals("GC")) {
+					infoReferenciada = GcInformacao.findBySigla(sigla);
+					matcherSigla.appendReplacement(sb, "<a href=\""
+							+ URL_SIGA_GC + URLEncoder.encode(sigla, "UTF-8")
+							+ "\">" + sigla + " - "
+							+ infoReferenciada.arq.titulo + "</a>");
+				}
+				// serviço
+				else if (matcherSigla.group(1).toUpperCase().equals("SR")) {
+					matcherSigla.appendReplacement(sb, "<a href=\""
+							+ URL_SIGA_SR + URLEncoder.encode(sigla, "UTF-8")
+							+ "\">" + sigla + "</a>");
+				}
+				// documento
+				else {
+					matcherSigla.appendReplacement(sb, "<a href=\""
+							+ URL_SIGA_DOC + URLEncoder.encode(sigla, "UTF-8")
+							+ "\">" + sigla + "</a>");
+				}
+			}
+		}
+		matcherSigla.appendTail(sb);
+		return sb.toString();
+	}
+
 	/**
-	 * Método que encontra uma hashTag. Quando o parâmetro controle é igual a
-	 * 1, a classificação é atualizada para poder ser gravada. Quando o
-	 * controle é igual a 2, o conteudo é marcado com os links das hashTags
-	 * encontradas. O conteudo não é gravado com os links.
+	 * Método que encontra uma hashTag. Quando o parâmetro controle é igual a 1,
+	 * a classificação é atualizada para poder ser gravada. Quando o controle é
+	 * igual a 2, o conteudo é marcado com os links das hashTags encontradas. O
+	 * conteudo não é gravado com os links.
 	 */
 	public String findHashTag(String conteudo, String classificacao,
 			int controle) {

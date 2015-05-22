@@ -34,8 +34,6 @@ import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
-
-import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -125,10 +123,10 @@ public class GcInformacao extends Objeto {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_LOTACAO_TITULAR")
 	public DpLotacao lotacao;
-	
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_GRUPO")
-	private CpGrupo grupo;
+	private CpPerfil grupo;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
@@ -761,11 +759,11 @@ public class GcInformacao extends Objeto {
 		return hisIdcIni;
 	}
 
-	public CpGrupo getGrupo() {
+	public CpPerfil getGrupo() {
 		return grupo;
 	}
 
-	public void setGrupo(CpGrupo grupo) {
+	public void setGrupo(CpPerfil grupo) {
 		this.grupo = grupo;
 	}
 }

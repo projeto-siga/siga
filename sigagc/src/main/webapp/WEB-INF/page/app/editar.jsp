@@ -42,19 +42,19 @@
 						name="sigla" value="${informacao.sigla}" />
 					<div class="gt-form-row gt-width-100">
 						<div class="gt-left-col gt-width-25" style="margin-right: 2em">
-							<siga:select label="Tipo" name="tipo.id" list="tiposInformacao"
+							<siga:select label="Tipo" name="tipo.id" list="tiposInformacao" value="${tipo.id}"
 								listKey="id" listValue="nome" onchange="postback();" />
 						</div>
 						<c:if
 							test="${empty informacao.edicao.id || informacao.acessoPermitido(titular,lotaTitular, informacao.edicao.id)}">
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Visualizacão" name="visualizacao.id"
-									list="acessos" listKey="id" listValue="nome"
+								<siga:select label="Visualizacão" name="visualizacao.id" id="informacaoVisualizacao"
+									list="acessos" listKey="id" listValue="nome" value="${informacao.visualizacao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>
 							<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-								<siga:select label="Edicão" name="edicao.id" list="acessos"
-									listKey="id" listValue="nome"
+								<siga:select label="Edicão" name="edicao.id" list="acessos" id="informacaoEdicao"
+									listKey="id" listValue="nome" value="${informacao.edicao.id}"
 									onchange="javascript:ocultaGrupo();" />
 							</div>
 						</c:if>
@@ -64,7 +64,7 @@
 						<label>Grupo</label>
 						<div class="gt-left-col gt-width-25" style="padding-left: 2em">
 							<siga:selecao2 propriedade="informacao.grupo" modulo="siga"
-								tipo="perfil" tema="simple" />
+								tipo="gi/perfil" tema="simple" />
 						</div>
 					</div>
 
@@ -131,9 +131,9 @@
 							Texto</h3>
 						<p>Clique em uma imagem/arquivo abaixo para incluir uma
 							referência no texto.</p>
-						<c:forEach items="${informacao.mov}" var="m">
+						<c:forEach items="${informacao.movs}" var="m">
 							<c:if
-								test="${m.tipo.id == models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO && m.movCanceladora == null}">
+								test="${m.tipo.id == 13 && m.movCanceladora == null}">
 								<p>
 									<img style="margin-bottom: -4px;"
 										src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
@@ -143,7 +143,7 @@
 										src="/siga/css/famfamfam/icons/cross.png" /> <span
 										class="gt-table-action-list"> <a
 										href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
-											ReplaceInnerHTMLFromAjaxResponse('removerAnexo?sigla=${informacao.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
+											ReplaceInnerHTMLFromAjaxResponse('../removerAnexo?sigla=${informacao.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
 																null, document.getElementById('ajax_arquivo'));">remover</a></span>
 									&nbsp;]
 								</p>

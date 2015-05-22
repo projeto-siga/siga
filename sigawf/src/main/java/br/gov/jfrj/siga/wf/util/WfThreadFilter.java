@@ -17,17 +17,17 @@ public class WfThreadFilter extends ThreadFilter {
 	public void doFilter(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
-		WfInterceptor i = new WfInterceptor();
+		WfExecutionEnvironment ee = new WfExecutionEnvironment();
 		try {
 			Wf.setInstance(null);
-			i.antes();
+			ee.antes(null);
 			chain.doFilter(request, response);
-			i.depois();
+			ee.depois();
 		} catch (Exception e) {
-			i.excecao();
+			ee.excecao();
 			throw new ServletException(e);
 		} finally {
-			i.finalmente();
+			ee.finalmente();
 		}
 	}
 

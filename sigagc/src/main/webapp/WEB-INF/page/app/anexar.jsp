@@ -1,8 +1,8 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <siga:pagina titulo="Anexação de Arquivo">
-    <link rel="stylesheet" href="../public/stylesheets/jquery-ui-1.10.4.custom/jquery-ui-1.10.4.custom.css" type="text/css" />
-    <link rel="stylesheet" href="../public/stylesheets/plupload/jquery.ui.plupload.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/stylesheets/jquery-ui-1.10.4.custom/jquery-ui-1.10.4.custom.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/stylesheets/plupload/jquery.ui.plupload.css" type="text/css" />
     
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
@@ -17,7 +17,7 @@
 	        <div class="gt-form-row gt-width-100">
 	            <br /><br /><br />    
 	            <p class="gt-cancel">
-	                <a href="${linkTo[AppController].exibir[informacao.sigla]}">voltar</a>
+	                <a href="${linkTo[AppController].exibir[informacao.siglaCompacta]}">voltar</a>
 	            </p>
 	        </div>
 		</div>
@@ -25,9 +25,9 @@
 	
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="../public/javascripts/plupload/plupload.full.min.js"></script>
-	<script type="text/javascript" src="../public/javascripts/plupload/jquery.ui.plupload.min.js"></script>
-	<script type="text/javascript" src="../public/javascripts/plupload/pt_BR.js"></script>
+	<script type="text/javascript" src="../../public/javascripts/plupload/plupload.full.min.js"></script>
+	<script type="text/javascript" src="../../public/javascripts/plupload/jquery.ui.plupload.min.js"></script>
+	<script type="text/javascript" src="../../public/javascripts/plupload/pt_BR.js"></script>
 	
 	<script type="text/javascript">
 	   var $anexados = 0;
@@ -37,7 +37,7 @@
 	       $("#uploader").plupload({
 	           // General settings
 	           runtimes : 'html5,flash,silverlight,html4',
-	           url: '${linkTo[AppController].anexarGravar}', 
+	           url: '${linkTo[AppController].gravarArquivo}', 
 	           max_file_count: 0,
 	           prevent_duplicates: true,
 	           //chunk_size: '1mb',
@@ -114,7 +114,7 @@
 	               UploadComplete: function(up, files) {
 	                   if(up.files.length == $anexados) {
 	                       up.destroy();
-	                       location.href = "${linkTo[AppController].exibir[informacao.sigla]}";
+	                       location.href = "${linkTo[AppController].exibir[informacao.siglaCompacta]}";
 	                   }
 	                   else {
 	                       $("p.gt-notice-box").remove();

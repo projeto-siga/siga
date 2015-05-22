@@ -1,83 +1,3 @@
-#{extends 'main.html' /} #{set title:'Informação'/}
-<div class="gt-bd gt-cols clearfix">
-	<div class="gt-content">
-		<h2>${informacao?.arq?.titulo}</h2>
-		<!-- Dados do documento -->
-		<div class="gt-content-box" style="padding: 10px;">
-			${informacao.conteudoHTML.raw()}
-		</div>
-	</div>
-
-	<div class="gt-sidebar">
-		<div class="gt-sidebar-content">
-			<h3>${informacao?.tipo?.nome}</h3>
-			<p>
-				<b>Tipo: </b> ${informacao.tipo.nome}
-			</p>
-			<p>
-				<b>Órgão Usuário:</b> ${informacao?.ou?.acronimoOrgaoUsu}
-			</p>
-			<p>
-				<b>Visualização:</b> ${informacao?.visualizacao?.nome}
-			</p>
-			<p>
-				<b>Edição:</b> ${informacao?.edicao?.nome}
-			</p>
-			<p>
-				<b>Autor:</b> ${informacao?.autor?.descricaoIniciaisMaiusculas} -
-				${informacao?.autor?.sigla}
-			</p>
-			<p>
-				<b>Lotação:</b> ${informacao?.lotacao?.descricaoIniciaisMaiusculas}
-				- ${informacao?.lotacao?.sigla}
-			</p>
-			<p>
-				<b>Data de criação:</b> ${informacao?.dtIniString}
-			</p>
-			<p>
-				<b>Finalizado em:</b> ${informacao?.elaboracaoFim?.format('dd/MM/yyyy HH:mm:ss')}
-			</p>
-			<!--  -->
-			#{if informacao.contemArquivos}
-			<h3>Arquivos Anexos</h3>
-			#{list items:informacao.movs, as:'m'} #{if m.tipo.id ==
-			models.GcTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO &&
-			m.movCanceladora == null}
-			<p>
-				<img style="margin-bottom: -4px;" src="/siga/css/famfamfam/icons/${m.arq.icon}.png" />
-				<a target="_blank" href="@{Application.baixar(m.arq.id)}">${m.arq.titulo}</a>
-			</p>
-			#{/if} #{/list} #{/if}
-		</div>
-
-		<div class="gt-sidebar-content" id="gc"></div>
-
-		<!-- / sidebar -->
-	</div>
-</div>
-
-<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("knowledge?estilo=sidebar&ts=${currentTimeMillis}${informacao.gcTags.raw()}&id=${informacao.id}",document.getElementById('gc'));
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <siga:pagina titulo="Exibição de Tópico de Informação">
@@ -86,8 +6,7 @@
 			<h2>${informacao.arq.titulo}</h2>
 			<!-- Dados do documento -->
 			<div class="gt-content-box" style="padding: 10px;">
-				${informacao.conteudoHTML}
-			</div>
+				${conteudo}</div>
 		</div>
 
 		<div class="gt-sidebar">
@@ -100,10 +19,11 @@
 					<b>Órgão Usuário:</b> ${informacao.ou.acronimoOrgaoUsu}
 				</p>
 				<c:if test="${not emptyinformacao.grupo}">
-				<p>
-					<b>Grupo:</b> ${informacao.grupo.siglaGrupo} - ${informacao.grupo.dscGrupo}
-				</p>
-				</c:if>				
+					<p>
+						<b>Grupo:</b> ${informacao.grupo.siglaGrupo} -
+						${informacao.grupo.dscGrupo}
+					</p>
+				</c:if>
 				<p>
 					<b>Visualização:</b> ${informacao.visualizacao.nome}
 				</p>
@@ -172,7 +92,7 @@
 
 	<script type="text/javascript">
 		SetInnerHTMLFromAjaxResponse(
-				"knowledge?estilo=sidebar&ts=${currentTimeMillis}${informacao.gcTags}&id=${informacao.id}",
+				"knowledgeSidebar?ts=${currentTimeMillis}${informacao.gcTags}&id=${informacao.id}",
 				document.getElementById('gc'));
 	</script>
 </siga:pagina>

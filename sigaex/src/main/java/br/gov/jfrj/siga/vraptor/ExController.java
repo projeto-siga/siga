@@ -75,7 +75,7 @@ public class ExController extends SigaController {
 
 	protected void verificaNivelAcesso(ExMobil mob) {
 		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-			throw new AplicacaoException("Acesso ao documento " + mob.getSigla() + " permitido somente a usuários autorizados. (" + getTitular().getSigla()
+			throw new AplicacaoException("Acesso ao documento " + mob.getSigla() + " permitido somente a usuï¿½rios autorizados. (" + getTitular().getSigla()
 					+ "/" + getLotaTitular().getSiglaCompleta() + ")");
 		}
 	}
@@ -173,7 +173,7 @@ public class ExController extends SigaController {
 		ExConfiguracao exConfiguracao = new ExConfiguracao();
 
 		if (configuracaoBaseParaExConfiguracao.isAtivo())
-			exConfiguracao.setAtivo();
+			exConfiguracao.updateAtivo();
 		exConfiguracao.setCargo(configuracaoBaseParaExConfiguracao.getCargo());
 		exConfiguracao.setComplexo(configuracaoBaseParaExConfiguracao.getComplexo());
 		exConfiguracao.setConfiguracaoInicial(configuracaoBaseParaExConfiguracao.getConfiguracaoInicial());
@@ -236,8 +236,8 @@ public class ExController extends SigaController {
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
+		map.put(1, "Matrï¿½cula");
+		map.put(2, "ï¿½rgï¿½o Integrado");
 		return map;
 	}
 
@@ -251,7 +251,7 @@ public class ExController extends SigaController {
 	}
 
 	protected void assertAcesso(String pathServico) throws AplicacaoException {
-		super.assertAcesso("DOC:Módulo de Documentos;" + pathServico);
+		super.assertAcesso("DOC:Mï¿½dulo de Documentos;" + pathServico);
 	}
 
 	protected  HttpServletResponse getResponse() {

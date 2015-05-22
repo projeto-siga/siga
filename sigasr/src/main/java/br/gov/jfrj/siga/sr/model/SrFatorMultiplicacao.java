@@ -20,93 +20,92 @@ import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 @Entity
 @Table(name = "SR_FATOR_MULTIPLICACAO", schema = Catalogs.SIGASR)
 public class SrFatorMultiplicacao extends ObjetoVraptor {
-	
-	/**
+
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_FATOR_MULTIPLICACAO_SEQ", name = "srFatorMultiplicacao")
-	@GeneratedValue(generator = "srFatorMultiplicacao")
-	@Column(name = "ID_FATOR_MULTIPLICACAO")
-	private Long idFatorMultiplicacao;
-	
-	@Column(name = "NUM_FATOR_MULTIPLICACAO")
-	private int numFatorMultiplicacao = 1;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_PESSOA")
-	@NaoRecursivo
-	private DpPessoa dpPessoa;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_LOTACAO")
-	@NaoRecursivo
-	private DpLotacao dpLotacao;
+    @Id
+    @SequenceGenerator(sequenceName = Catalogs.SIGASR + ".SR_FATOR_MULTIPLICACAO_SEQ", name = "srFatorMultiplicacao")
+    @GeneratedValue(generator = "srFatorMultiplicacao")
+    @Column(name = "ID_FATOR_MULTIPLICACAO")
+    private Long idFatorMultiplicacao;
 
-	@ManyToOne()
-	@JoinColumn(name = "ID_ITEM_CONFIGURACAO")
-	private SrItemConfiguracao itemConfiguracao;
-	
-	
-	public SrFatorMultiplicacao() {
-		super();
-	}
+    @Column(name = "NUM_FATOR_MULTIPLICACAO")
+    private int numFatorMultiplicacao = 1;
 
-	public DpPessoa getDpPessoa() {
-		return dpPessoa;
-	}
-	
-	public void setDpPessoa(DpPessoa dpPessoa) {
-		this.dpPessoa = dpPessoa;
-	}
-	
-	public DpLotacao getDpLotacao() {
-		return dpLotacao;
-	}
-	
-	public void setDpLotacao(DpLotacao dpLotacao) {
-		this.dpLotacao = dpLotacao;
-	}
-	
-	public SrFatorMultiplicacaoVO toVO() {
-		if (this.dpPessoa != null && this.dpPessoa.getId() != null && (this.dpPessoa.getSigla() == null || this.dpPessoa.getDescricao() == null))
-			this.dpPessoa = DpPessoa.findById(this.dpPessoa.getId());
-		
-		if (this.dpLotacao != null && this.dpLotacao.getId() != null && (this.dpLotacao.getSigla() == null || this.dpLotacao.getDescricao() == null))
-			this.dpLotacao = DpLotacao.findById(this.dpLotacao.getId());
-		
-		return new SrFatorMultiplicacaoVO(this.idFatorMultiplicacao, this.numFatorMultiplicacao, this.dpPessoa, this.dpLotacao);
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PESSOA")
+    @NaoRecursivo
+    private DpPessoa dpPessoa;
 
-	public Long getIdFatorMultiplicacao() {
-		return idFatorMultiplicacao;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_LOTACAO")
+    @NaoRecursivo
+    private DpLotacao dpLotacao;
 
-	public void setIdFatorMultiplicacao(Long idFatorMultiplicacao) {
-		this.idFatorMultiplicacao = idFatorMultiplicacao;
-	}
+    @ManyToOne()
+    @JoinColumn(name = "ID_ITEM_CONFIGURACAO")
+    private SrItemConfiguracao itemConfiguracao;
 
-	public int getNumFatorMultiplicacao() {
-		return numFatorMultiplicacao;
-	}
+    public SrFatorMultiplicacao() {
+        super();
+    }
 
-	public void setNumFatorMultiplicacao(int numFatorMultiplicacao) {
-		this.numFatorMultiplicacao = numFatorMultiplicacao;
-	}
+    public DpPessoa getDpPessoa() {
+        return dpPessoa;
+    }
 
-	public SrItemConfiguracao getItemConfiguracao() {
-		return itemConfiguracao;
-	}
+    public void setDpPessoa(DpPessoa dpPessoa) {
+        this.dpPessoa = dpPessoa;
+    }
 
-	public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
-		this.itemConfiguracao = itemConfiguracao;
-	}
+    public DpLotacao getDpLotacao() {
+        return dpLotacao;
+    }
 
-	@Override
-	protected Long getId() {
-		return this.getIdFatorMultiplicacao();
-	}
+    public void setDpLotacao(DpLotacao dpLotacao) {
+        this.dpLotacao = dpLotacao;
+    }
+
+    public SrFatorMultiplicacaoVO toVO() throws Exception {
+        if (this.dpPessoa != null && this.dpPessoa.getId() != null && (this.dpPessoa.getSigla() == null || this.dpPessoa.getDescricao() == null))
+            this.dpPessoa = DpPessoa.AR.findById(this.dpPessoa.getId());
+
+        if (this.dpLotacao != null && this.dpLotacao.getId() != null && (this.dpLotacao.getSigla() == null || this.dpLotacao.getDescricao() == null))
+            this.dpLotacao = DpLotacao.AR.findById(this.dpLotacao.getId());
+
+        return new SrFatorMultiplicacaoVO(this.idFatorMultiplicacao, this.numFatorMultiplicacao, this.dpPessoa, this.dpLotacao);
+    }
+
+    public Long getIdFatorMultiplicacao() {
+        return idFatorMultiplicacao;
+    }
+
+    public void setIdFatorMultiplicacao(Long idFatorMultiplicacao) {
+        this.idFatorMultiplicacao = idFatorMultiplicacao;
+    }
+
+    public int getNumFatorMultiplicacao() {
+        return numFatorMultiplicacao;
+    }
+
+    public void setNumFatorMultiplicacao(int numFatorMultiplicacao) {
+        this.numFatorMultiplicacao = numFatorMultiplicacao;
+    }
+
+    public SrItemConfiguracao getItemConfiguracao() {
+        return itemConfiguracao;
+    }
+
+    public void setItemConfiguracao(SrItemConfiguracao itemConfiguracao) {
+        this.itemConfiguracao = itemConfiguracao;
+    }
+
+    @Override
+    protected Long getId() {
+        return this.getIdFatorMultiplicacao();
+    }
 
 }

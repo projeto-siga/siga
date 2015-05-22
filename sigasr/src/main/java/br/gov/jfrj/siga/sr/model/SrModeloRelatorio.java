@@ -10,16 +10,11 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.SrProcessadorFreemarker;
 
 public class SrModeloRelatorio  extends HistoricoSuporte{
+    private static final long serialVersionUID = 2948543585700308996L;
 
-	/*
-	 * @Lob
-	 * @Column(name = "CONTEUDO_BLOB", length = 8192) public String
-	 * conteudoBlob;
-	 */
-
-	private String nomeModelo;
+    private String nomeModelo;
 	
-	public Set<SrIndicador> indicadores;
+	private Set<SrIndicador> indicadores;
 
 	public Set<SrIndicador> getIndicadores() {
 		SrIndicador i = new SrIndicador();
@@ -79,5 +74,9 @@ public class SrModeloRelatorio  extends HistoricoSuporte{
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+    public void setNomeModelo(String nomeModelo) {
+        this.nomeModelo = nomeModelo;
+    }
 
 }

@@ -14,56 +14,106 @@ import javax.persistence.Table;
 
 import org.apache.commons.io.IOUtils;
 
-import play.db.jpa.GenericModel;
 import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
+import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_ARQUIVO", schema = Catalogs.SIGASR)
-public class SrArquivo extends GenericModel {
+public class SrArquivo extends ObjetoVraptor implements ConvertableEntity {
 
-	@Id
-	@SequenceGenerator(sequenceName = Catalogs.SIGASR +".SR_ARQUIVO_SEQ", name = "srArquivoSeq")
-	@GeneratedValue(generator = "srArquivoSeq")
-	@Column(name = "ID_ARQUIVO")
-	public Long idArquivo;
+    private static final long serialVersionUID = -4338358297062727340L;
+    
+    public static final ActiveRecord<SrArquivo> AR = new ActiveRecord<>(SrArquivo.class);
 
-	@Lob
-	public byte[] blob;
+    @Id
+    @SequenceGenerator(sequenceName = Catalogs.SIGASR + ".SR_ARQUIVO_SEQ", name = "srArquivoSeq")
+    @GeneratedValue(generator = "srArquivoSeq")
+    @Column(name = "ID_ARQUIVO")
+    private Long idArquivo;
 
-	@Column(name = "MIME")
-	public String mime;
+    @Lob
+    private byte[] blob;
 
-	@Column(name = "NOME_ARQUIVO")
-	public String nomeArquivo;
+    @Column(name = "MIME")
+    private String mime;
 
-	@Column(name = "DESCRICAO")
-	public String descricao;
+    @Column(name = "NOME_ARQUIVO")
+    private String nomeArquivo;
 
-	private SrArquivo() {
+    @Column(name = "DESCRICAO")
+    private String descricao;
 
-	}
+    private SrArquivo() {
 
-	private SrArquivo(File file) {
-		try {
+    }
 
-			nomeArquivo = file.getName();
-			blob = IOUtils.toByteArray(new FileInputStream(file));
-			mime = new javax.activation.MimetypesFileTypeMap()
-					.getContentType(file);
-		} catch (IOException ioe) {
-			// Ver o que fazer aqui
-		}
-	}
+    private SrArquivo(File file) {
+        try {
 
-	// Edson: Necessário porque é preciso garantir
-	// que o SrArquivo não seja instanciado a não ser que realmente tenha sido
-	// selecionado um arquivo no form (para que não surja um registro SrArquivo
-	// sem conteúdo no banco)
-	public static SrArquivo newInstance(File file) {
-		if (file != null)
-			return new SrArquivo(file);
-		else
-			return null;
-	}
+            setNomeArquivo(file.getName());
+            setBlob(IOUtils.toByteArray(new FileInputStream(file)));
+            setMime(new javax.activation.MimetypesFileTypeMap().getContentType(file));
+        } catch (IOException ioe) {
+            // Ver o que fazer aqui
+        }
+    }
+
+    // Edson: Necessário porque é preciso garantir
+    // que o SrArquivo não seja instanciado a não ser que realmente tenha sido
+    // selecionado um arquivo no form (para que não surja um registro SrArquivo
+    // sem conteúdo no banco)
+    public static SrArquivo newInstance(File file) {
+        if (file != null)
+            return new SrArquivo(file);
+        else
+            return null;
+    }
+
+    @Override
+    public Long getId() {
+        return this.getIdArquivo();
+    }
+
+    public Long getIdArquivo() {
+        return idArquivo;
+    }
+
+    public void setIdArquivo(Long idArquivo) {
+        this.idArquivo = idArquivo;
+    }
+
+    public byte[] getBlob() {
+        return blob;
+    }
+
+    public void setBlob(byte[] blob) {
+        this.blob = blob;
+    }
+
+    public String getMime() {
+        return mime;
+    }
+
+    public void setMime(String mime) {
+        this.mime = mime;
+    }
+
+    public String getNomeArquivo() {
+        return nomeArquivo;
+    }
+
+    public void setNomeArquivo(String nomeArquivo) {
+        this.nomeArquivo = nomeArquivo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 
 }

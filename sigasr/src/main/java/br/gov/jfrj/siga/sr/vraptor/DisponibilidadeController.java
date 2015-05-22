@@ -37,7 +37,7 @@ public class DisponibilidadeController extends SrController {
 	}
 
 	@Path("/listarPagina")
-	public void listarPagina(PaginaItemConfiguracao pagina) {
+	public void listarPagina(PaginaItemConfiguracao pagina) throws Exception {
 		@SuppressWarnings("unchecked")
 		List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
 

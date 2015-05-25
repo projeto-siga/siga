@@ -23,14 +23,15 @@ import java.util.Date;
 import javax.jws.WebService;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cd.AssinaturaDigital;
 import br.gov.jfrj.siga.cd.Cd;
 import br.gov.jfrj.siga.cd.service.CdService;
 
 /**
- * Est· classe implementa os mÈtodos de validaÁ„o e convers„o de assinaturas
- * digitais. O acesso ‡ esta classe È realizado via web-services, com interfaces
- * definidas no mÛdulo siga-ws, conforme o padr„o adotados para o SIGA.
+ * Est√° classe implementa os m√©todos de valida√ß√£o e convers√£o de assinaturas
+ * digitais. O acesso √† esta classe √© realizado via web-services, com interfaces
+ * definidas no m√≥dulo siga-ws, conforme o padr√£o adotados para o SIGA.
  * 
  * @author tah
  * 
@@ -50,6 +51,7 @@ public class CdServiceImpl implements CdService {
 
 	public String validarAssinatura(byte[] assinatura, byte[] documento,
 			Date dtAssinatura, boolean verificarLCRs) {
+		assertAssinatura(assinatura);
 		try {
 			return Cd
 					.getInstance()
@@ -65,6 +67,7 @@ public class CdServiceImpl implements CdService {
 
 	public String validarAssinaturaPKCS7(byte[] digest, String digestAlgorithm,
 			byte[] assinatura, Date dtAssinatura, boolean verificarLCRs) {
+		assertAssinatura(assinatura);
 		try {
 			return AssinaturaDigital.validarAssinaturaPKCS7(digest,
 					digestAlgorithm, assinatura, dtAssinatura, verificarLCRs);
@@ -93,7 +96,7 @@ public class CdServiceImpl implements CdService {
 	 * public String validarAssinatura(String mimeType, byte[] digest, String
 	 * digestAlgorithm, byte[] assinatura, Date dtAssinatura, boolean
 	 * verificarLCRs) throws Exception { if (mimeType == null) return
-	 * Service.ERRO + "Mime Type n„o pode ser nulo";
+	 * Service.ERRO + "Mime Type n√£o pode ser nulo";
 	 * 
 	 * if (mimeType.equals(CdService.MIME_TYPE_PKCS7)) return
 	 * validarAssinaturaPKCS7(digest, digestAlgorithm, assinatura, dtAssinatura,
@@ -102,7 +105,7 @@ public class CdServiceImpl implements CdService {
 	 * if (mimeType.equals(CdService.MIME_TYPE_CMS)) return
 	 * validarAssinaturaCMS(digest, digestAlgorithm, assinatura, dtAssinatura);
 	 * 
-	 * return Service.ERRO + "Mime Type '" + mimeType + "' inv·lido"; }
+	 * return Service.ERRO + "Mime Type '" + mimeType + "' inv√°lido"; }
 	 * 
 	 * public byte[] converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(
 	 * byte[] pkcs7) { try { return AssinaturaDigital
@@ -133,6 +136,7 @@ public class CdServiceImpl implements CdService {
 	public byte[] validarECompletarAssinatura(byte[] assinatura,
 			byte[] documento, boolean politica, Date dtAssinatura)
 			throws Exception {
+		assertAssinatura(assinatura);
 		return Cd
 				.getInstance()
 				.getAssinaturaDigital()
@@ -154,11 +158,19 @@ public class CdServiceImpl implements CdService {
 	public byte[] validarECompletarPacoteAssinavel(byte[] certificado,
 			byte[] documento, byte[] assinatura, boolean politica,
 			Date dtAssinatura) throws Exception {
+		assertAssinatura(assinatura);
 		return Cd
 				.getInstance()
 				.getAssinaturaDigital()
 				.validarECompletarPacoteAssinavel(certificado, documento,
 						assinatura, politica, dtAssinatura);
+	};
+	
+	private void assertAssinatura(byte[] assinatura) {
+		if (assinatura==null){
+			throw new AplicacaoException("A assinatura n√£o foi enviada para valida√ß√£o! Principais motivos: 1) o usu√°rio cancelou "
+					+ "a opera√ß√£o de assinatura; 2) o usu√°rio impediu que o navegador acessasse o certificado.");
+		}
 	};
 
 }

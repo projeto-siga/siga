@@ -38,11 +38,15 @@ public class SolicitacaoController extends SrController {
         if (banco) {
             solicitacao = (SrSolicitacao) SrSolicitacao.AR.all().fetch().get(0);
         }
-
+        
+        //TODO: controllers.SigaApplication.podeUtilizarServico('SIGA;GC')
+        boolean podeUtilizarServicoSigaGC = false;
+        
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("solicitacao", solicitacao);
         result.include("itemConfiguracao",solicitacao.getItemConfiguracao());
+        result.include("podeUtilizarServicoSigaGC",podeUtilizarServicoSigaGC);
     }
 
     @Path("/testeErro")
@@ -61,7 +65,11 @@ public class SolicitacaoController extends SrController {
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
         result.include("solicitacao",solicitacao);
         result.include("acoesEAtendentes",acoesEAtendentes);
-
+    }
+    
+    @Path("/exibirAtributos")
+    public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
+        result.include("solicitacao",solicitacao);
     }
 
 }

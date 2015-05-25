@@ -188,7 +188,7 @@ public class TestesController extends SigaController {
 		return Arrays.asList(
 			new ConfiguracaoAcessoTeste("siga_ex_test_url", "siga_ex_test", "/sigaex/app/testes/gadgetTest", "Atendente"),
 			new ConfiguracaoAcessoTeste("siga_wf_test_url", "siga_wf_test", "/sigawf/app/testes/gadgetTest", "Atendente"),
-			new ConfiguracaoAcessoTeste("siga_cd_test_url", "siga_cd_test", "/sigacd/testes/testes.action", "OK!")
+			new ConfiguracaoAcessoTeste("siga_cd_test_url", "siga_cd_test", "/sigacd/testes/CdTestesServlet", "OK!")
 		);
 	}
 	

@@ -23,21 +23,23 @@
 				</c:if>
 				<div
 					style="width: 49%; float: left; clear: both; padding: 0; margin: 0;">
-					<div style="width: 100%; padding: 0; margin: 0;">
-						<h2 class="gt-table-head">
-							Expedientes
-						</h2>
-						<div id='left'>
-                            <jsp:include page="loading.jsp" />
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
+						<div style="width: 100%; padding: 0; margin: 0;">
+							<h2 class="gt-table-head">
+								Expedientes
+							</h2>
+							<div id='left'>
+	                            <jsp:include page="loading.jsp" />
+							</div>
+							<br />
+							<h2 class="gt-table-head">
+								Processos Administrativos
+							</h2>
+							<div id='leftbottom'>
+	                            <jsp:include page="loading.jsp" />
+							</div>
 						</div>
-						<br />
-						<h2 class="gt-table-head">
-							Processos Administrativos
-						</h2>
-						<div id='leftbottom'>
-                            <jsp:include page="loading.jsp" />
-						</div>
-					</div>
+					</c:if>
 				</div>
 				<div style="width: 49%; float: right; padding: 0; margin: 0;">
 					<div style="width: 100%; padding: 0; margin: 0;">
@@ -67,6 +69,20 @@
 							<div id='rightbottom2'>
                                 <jsp:include page="loading.jsp" />
 							</div>
+						</c:if>
+						<br />
+						<c:if
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
+							<h2 class="gt-table-head">Transportes</h2>
+							<!-- content box -->
+							<div id='rightbottom3'>
+                                <jsp:include page="loading.jsp" />
+							</div>
+							<!-- script type="text/javascript">
+								SetInnerHTMLFromAjaxResponse(
+								"/sigatp/gadget",
+								document.getElementById('rightbottom3'));
+							</script> -->
 						</c:if>
 						<br />
 					</div>

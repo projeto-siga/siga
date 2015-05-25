@@ -108,6 +108,12 @@
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-cp</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>net.sf.jasperreports</groupId>
+					<artifactId>jasperreports</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- SIGA -->

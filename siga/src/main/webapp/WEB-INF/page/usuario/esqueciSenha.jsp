@@ -66,7 +66,7 @@ function checkIntegradoAD(){
 function exibirDadosIntegracaoAD(response,param){
 	if (response != "0"){
 		document.getElementById('dadosIntegracaoAD').style.display = 'block';
-		document.getElementById('msgExplicacao').innerHTML = 'Seu Ûrg„o est· integrado ao AD. Sua senha de rede email ser„o alteradas.';
+		document.getElementById('msgExplicacao').innerHTML = 'Seu √≥rg√£o est√° integrado ao AD. Sua senha de rede email ser√£o alteradas.';
 	}else{
 		document.getElementById('dadosIntegracaoAD').style.display = 'none';
 		document.getElementById('passMet1').value = "";
@@ -98,7 +98,7 @@ function permitirInclusaoUsuario(response,param){
 
 }
 
-/*  converte para mai˙scula a sigla do estado  */
+/*  converte para mai√∫scula a sigla do estado  */
 function converteUsuario(nomeusuario){
   re= /^[a-zA-Z0-9]{2}\d{4,6}$/;
   tmp = nomeusuario.value;
@@ -109,10 +109,10 @@ function converteUsuario(nomeusuario){
 
 function passwordStrength(password,metodo) {
         var desc = new Array();
-        desc[0] = "Inaceit·vel";
+        desc[0] = "Inaceit√°vel";
         desc[1] = "Muito Fraca";
         desc[2] = "Fraca";
-        desc[3] = "Razo·vel";
+        desc[3] = "Razo√°vel";
         desc[4] = "Boa";
         desc[5] = "Forte";
         var score   = 0;
@@ -147,13 +147,13 @@ function validateUsuarioForm(form,metodo) {
 	}
 	var s = document.getElementById('passwordStrength' + metodo).className;
 	if (s == "strength0" || s == "strength1" || s == "strength2") {
-		alert("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras mai˙sculas, min˙sculas e n˙meros");
+		alert("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras mai√∫sculas, min√∫sculas e n√∫meros");
 		return false;
 	}
 	var p1 = document.getElementById("pass" + metodo).value;
 	var p2 = document.getElementById("pass2" + metodo).value;
 	if (p1 != p2) {
-		alert("RepetiÁ„o da nova senha n„o confere, favor redigitar.");
+		alert("Repeti√ß√£o da nova senha n√£o confere, favor redigitar.");
 		return false; 
 	}
 	return true;
@@ -197,12 +197,12 @@ function refreshWindow(){
 			</c:if>
 		
 			<c:if test="${baseTeste}">
-					<p id="msgSenha" class="gt-error">ATEN«√O: Esta È uma vers„o de testes. Para sua seguranÁa, N√O utilize a mesma senha da vers„o de PRODU«√O.</p>
+					<p id="msgSenha" class="gt-error">ATEN√á√ÉO: Esta √© uma vers√£o de testes. Para sua seguran√ßa, N√ÉO utilize a mesma senha da vers√£o de PRODU√á√ÉO.</p>
 			</c:if>
 	
 			<h1 class="gt-form-head">${titulo}</h1>
 
-			<h2 class="gt-form-head">MÈtodo 1 - Envio de senha nova para o
+			<h2 class="gt-form-head">M√©todo 1 - Envio de senha nova para o
 				e-mail</h2>
 			<p id="msgExplicacao"></p>
 			<div class="gt-form gt-content-box">
@@ -212,15 +212,15 @@ function refreshWindow(){
 					<input type="hidden" name="usuario.page" value="1" />
 					<div class="gt-form-row gt-width-100">
 						<div class="gt-left-col gt-width-33">
-							<label>MatrÌcula</label>
+							<label>Matr√≠cula</label>
 							<input type="text" name="usuario.matricula" id="txtMatricula"
 								onblur="javascript:converteUsuario(this);javascript:checkIntegradoAD(this);javascript:checkEmailValido(this);" 
 								class="gt-form-text" />
 						</div>
 						<div class="gt-right-col gt-width-66">
 							<label>&nbsp;</label>
-							<p>Ex.: XX99999, onde XX È a sigla do seu Ûrg„o (T2, RJ, ES,
-								etc.) e 99999 È o n˙mero da sua matrÌcula.</p>
+							<p>Ex.: XX99999, onde XX √© a sigla do seu √≥rg√£o (T2, RJ, ES,
+								etc.) e 99999 √© o n√∫mero da sua matr√≠cula.</p>
 						</div>
 					</div>
 
@@ -243,15 +243,15 @@ function refreshWindow(){
 	
 	
 								<div class="gt-left-col gt-width-33">
-									<label>RepetiÁ„o da nova senha</label>
+									<label>Repeti√ß√£o da nova senha</label>
 									<input type="password" name="usuario.senhaConfirma" id="pass2Met1"
 										onblur="javascript:converteUsuario(this)" 
 										class="gt-form-text" />
 								</div>
 	
 								<div class="gt-left-col gt-width-33">
-									<label>ForÁa da senha</label>
-									<div id="passwordDescriptionMet1">Senha n„o informada</div>
+									<label>For√ßa da senha</label>
+									<div id="passwordDescriptionMet1">Senha n√£o informada</div>
 									<div id="passwordStrengthMet1" class="strength0"></div>
 								</div>
 						</div>
@@ -264,13 +264,13 @@ function refreshWindow(){
 				</form>
 			</div>
 
-			<h2 class="gt-form-head">MÈtodo 2 - Alterar a senha com auxÌlio
+			<h2 class="gt-form-head">M√©todo 2 - Alterar a senha com aux√≠lio
 				de 2 pessoas</h2>
 			<p>
-				O sistema altera a senha da pessoa conforme solicitado, porÈm È
-				necess·rio o apoio de mais 2 pessoas para completar o processo. <br />
-				As pessoas auxiliares devem estar na mesma lotaÁ„o da pessoa
-				indicada para ter a senha substituÌda ou devem estar na lotaÁ„o
+				O sistema altera a senha da pessoa conforme solicitado, por√©m √©
+				necess√°rio o apoio de mais 2 pessoas para completar o processo. <br />
+				As pessoas auxiliares devem estar na mesma lota√ß√£o da pessoa
+				indicada para ter a senha substitu√≠da ou devem estar na lota√ß√£o
 				imediatamente superior na hierarquia organizacional.
 			</p>
 			<div class="gt-form gt-content-box">
@@ -281,8 +281,8 @@ function refreshWindow(){
 					<h4>Dados do primeiro auxiliar:</h4>
 					<div class="gt-form-row gt-width-100">
 						<div class="gt-left-col gt-width-33">
-							<label>MatrÌcula<a href="#"
-								title="Ex.: XX99999, onde XX È a sigla do seu Ûrg„o (T2, RJ, ES, etc.) e 99999 È o n˙mero da matrÌcula da primeira pessoa que auxiliar· na alteraÁ„o de senha."><img
+							<label>Matr√≠cula<a href="#"
+								title="Ex.: XX99999, onde XX √© a sigla do seu √≥rg√£o (T2, RJ, ES, etc.) e 99999 √© o n√∫mero da matr√≠cula da primeira pessoa que auxiliar√° na altera√ß√£o de senha."><img
 									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
 									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
 							<input type="text"name="usuario.auxiliar1" onblur="javascript:converteUsuario(this)" class="gt-form-text" />
@@ -303,8 +303,8 @@ function refreshWindow(){
 					<h4>Dados do segundo auxiliar:</h4>
 					<div class="gt-form-row gt-width-100">
 						<div class="gt-left-col gt-width-33">
-							<label>MatrÌcula<a href="#"
-								title="Ex.: XX99999, onde XX È a sigla do seu Ûrg„o (T2, RJ, ES, etc.) e 99999 È o n˙mero da matrÌcula da segunda pessoa que auxiliar· na alteraÁ„o de senha."><img
+							<label>Matr√≠cula<a href="#"
+								title="Ex.: XX99999, onde XX √© a sigla do seu √≥rg√£o (T2, RJ, ES, etc.) e 99999 √© o n√∫mero da matr√≠cula da segunda pessoa que auxiliar√° na altera√ß√£o de senha."><img
 									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
 									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
 							<input type="text" name="usuario.auxiliar2"
@@ -327,8 +327,8 @@ function refreshWindow(){
 					<h4>Alterar senha de:</h4>
 					<div class="gt-form-row gt-width-100">
 						<div class="gt-left-col gt-width-33">
-							<label>MatrÌcula<a href="#"
-								title="Ex.: XX99999, onde XX È a sigla do seu Ûrg„o (T2, RJ, ES, etc.) e 99999 È o n˙mero da matrÌcula do usu·rio que ter· a senha alterada."><img
+							<label>Matr√≠cula<a href="#"
+								title="Ex.: XX99999, onde XX √© a sigla do seu √≥rg√£o (T2, RJ, ES, etc.) e 99999 √© o n√∫mero da matr√≠cula do usu√°rio que ter√° a senha alterada."><img
 									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
 									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
 							<input type="text" name="usuario.matricula"
@@ -350,15 +350,15 @@ function refreshWindow(){
 						</div>
 
 						<div class="gt-left-col gt-width-33">
-							<label>RepetiÁ„o da nova senha</label>
+							<label>Repeti√ß√£o da nova senha</label>
 							<input type="password" name="senhaConfirma" id="pass2Met2"
 								onblur="javascript:converteUsuario(this)"
 								class="gt-form-text" />
 						</div>
 
 						<div class="gt-left-col gt-width-33">
-							<label>ForÁa da senha</label>
-							<div id="passwordDescriptionMet2">Senha n„o informada</div>
+							<label>For√ßa da senha</label>
+							<div id="passwordDescriptionMet2">Senha n√£o informada</div>
 							<div id="passwordStrengthMet2" class="strength0"></div>
 						</div>
 					</div>

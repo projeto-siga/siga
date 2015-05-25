@@ -1,9 +1,9 @@
 <PicketLink xmlns="urn:picketlink:identity-federation:config:2.1">
 	<PicketLinkSP xmlns="urn:picketlink:identity-federation:config:2.1" ServerEnvironment="tomcat" BindingType="POST">
-		<IdentityURL>${idp.url::https://localhost:8443/sigaidp/}</IdentityURL>
-		<ServiceURL>${siga.url::https://localhost:8443/siga/}</ServiceURL>
+		<IdentityURL>${idp.url::/sigaidp/}</IdentityURL>
+		<ServiceURL>${siga.url::/siga/}</ServiceURL>
 	</PicketLinkSP>
-	
+
 	<Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1">
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler" />
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AuthenticationHandler" >
@@ -12,5 +12,5 @@
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.RolesGenerationHandler" />
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AttributeHandler"/>
 	</Handlers>
-	
+
 </PicketLink>

@@ -56,11 +56,11 @@ public class UsuarioController extends SigaController {
 		}
 
 		if (isIntegradoAD(nomeUsuario) && senhaTrocadaAD){
-			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail tambÈm foi alterada.";
+			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail tamb√©m foi alterada.";
 		}
 		
 		if (isIntegradoAD(nomeUsuario) && !senhaTrocadaAD){
-			msgAD = "<br/><br/><br/>ATEN«√O: A senha de rede e e-mail N√O foi alterada embora o seu Ûrg„o esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
+			msgAD = "<br/><br/><br/>ATEN√á√ÉO: A senha de rede e e-mail N√ÉO foi alterada embora o seu √≥rg√£o esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 		}
 		
 		result.include("mensagem", "A senha foi alterada com sucesso" + msgAD);	
@@ -72,7 +72,7 @@ public class UsuarioController extends SigaController {
 	@Get("/app/usuario/incluir_usuario")
 	public void incluirUsuario() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
-		result.include("titulo", "Novo Usu·rio");
+		result.include("titulo", "Novo Usu√°rio");
 		result.include("proxima_acao", "incluir_usuario_gravar");
 		result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 		
@@ -98,10 +98,10 @@ public class UsuarioController extends SigaController {
 			if (!Cp.getInstance().getBL().podeAlterarSenha(usuario.getAuxiliar1(), usuario.getCpf1(), usuario.getSenha1(),
 					usuario.getAuxiliar2(), usuario.getCpf2(), usuario.getSenha2(), usuario.getMatricula(), usuario.getCpf(),
 					usuario.getSenhaNova())){
-				String mensagem = "N„o foi possÌvel alterar a senha!<br/>" +
-								  "1) As pessoas informadas n„o podem ser as mesmas;<br/>" +
-								  "2) Verifique se as matrÌculas e senhas foram informadas corretamente;<br/>" +
-								  "3) Verifique se as pessoas s„o da mesma lotaÁ„o ou da lotaÁ„o imediatamente superior em relaÁ„o ‡ matrÌcula que ter· a senha alterada;<br/>";
+				String mensagem = "N√£o foi poss√≠vel alterar a senha!<br/>" +
+								  "1) As pessoas informadas n√£o podem ser as mesmas;<br/>" +
+								  "2) Verifique se as matr√≠culas e senhas foram informadas corretamente;<br/>" +
+								  "3) Verifique se as pessoas s√£o da mesma lota√ß√£o ou da lota√ß√£o imediatamente superior em rela√ß√£o √† matr√≠cula que ter√° a senha alterada;<br/>";
 				result.include("mensagem", mensagem);
 				result.redirectTo("/app/usuario/incluir_usuario");
 			}else{
@@ -111,16 +111,16 @@ public class UsuarioController extends SigaController {
 			}
 			break;
 		default:
-			result.include("mensagem", "MÈtodo inv·lido!");
+			result.include("mensagem", "M√©todo inv√°lido!");
 			result.redirectTo("/app/usuario/incluir_usuario");
 		}
 		
 		if (isIntegradoAoAD){
 			
 			if (senhaTrocadaAD){
-				msgComplemento = "<br/> AtenÁ„o: Sua senha de rede e e-mail foi definida com sucesso.";
+				msgComplemento = "<br/> Aten√ß√£o: Sua senha de rede e e-mail foi definida com sucesso.";
 			}else{
-				msgComplemento = "<br/> ATEN«√O: A senha de rede e e-mail N√O foi definida embora o seu Ûrg„o esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
+				msgComplemento = "<br/> ATEN√á√ÉO: A senha de rede e e-mail N√ÉO foi definida embora o seu √≥rg√£o esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 			}
 
 			
@@ -128,8 +128,8 @@ public class UsuarioController extends SigaController {
 			msgComplemento = "<br/> O seu login e senha foram enviados para seu email.";
 		}
 
-		result.include("mensagem", "Usu·rio cadastrado com sucesso." + msgComplemento);
-		result.include("titulo", "Novo Usu·rio");
+		result.include("mensagem", "Usu√°rio cadastrado com sucesso." + msgComplemento);
+		result.include("titulo", "Novo Usu√°rio");
 		result.include("volta", "incluir");
 		result.redirectTo("/app/usuario/incluir_usuario");
 	}
@@ -157,10 +157,10 @@ public class UsuarioController extends SigaController {
 			if (!Cp.getInstance().getBL().podeAlterarSenha(usuario.getAuxiliar1(), usuario.getCpf1(),
 					usuario.getSenha1(), usuario.getAuxiliar2(), usuario.getCpf2(), usuario.getSenha2(),
 					usuario.getMatricula(), usuario.getCpf(), usuario.getSenhaNova())){
-				String mensagem = "N„o foi possÌvel alterar a senha!<br/>" +
-						"1) As pessoas informadas n„o podem ser as mesmas;<br/>" +
-						"2) Verifique se as matrÌculas e senhas foram informadas corretamente;<br/>" +
-						"3) Verifique se as pessoas s„o da mesma lotaÁ„o ou da lotaÁ„o imediatamente superior em relaÁ„o ‡ matrÌcula que ter· a senha alterada;<br/>";
+				String mensagem = "N√£o foi poss√≠vel alterar a senha!<br/>" +
+						"1) As pessoas informadas n√£o podem ser as mesmas;<br/>" +
+						"2) Verifique se as matr√≠culas e senhas foram informadas corretamente;<br/>" +
+						"3) Verifique se as pessoas s√£o da mesma lota√ß√£o ou da lota√ß√£o imediatamente superior em rela√ß√£o √† matr√≠cula que ter√° a senha alterada;<br/>";
 				result.include("mensagem", mensagem);
 				result.redirectTo("/app/usuario/esqueci_senha");
 				return;
@@ -173,17 +173,17 @@ public class UsuarioController extends SigaController {
 			break;
 
 		default:
-			result.include("mensagem", "MÈtodo inv·lido!");
+			result.include("mensagem", "M√©todo inv√°lido!");
 			result.redirectTo("/app/esqueci_senha");
 			return;
 		}
 
 		if (isIntegradoAD(usuario.getMatricula()) && senhaTrocadaAD){
-			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail tambÈm foi alterada.";
+			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail tamb√©m foi alterada.";
 		}
 		
 		if (isIntegradoAD(usuario.getMatricula()) && !senhaTrocadaAD){
-			msgAD = "<br/><br/><br/>ATEN«√O: A senha de rede e e-mail N√O foi alterada embora o seu Ûrg„o esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
+			msgAD = "<br/><br/><br/>ATEN√á√ÉO: A senha de rede e e-mail N√ÉO foi alterada embora o seu √≥rg√£o esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 		}
 		
 		result.include("mensagem", "A Senha foi alterada com sucesso e foi enviada para seu email" + msgAD);
@@ -208,8 +208,8 @@ public class UsuarioController extends SigaController {
 		CpOrgaoUsuario orgaoFlt = new CpOrgaoUsuario();
 		
 		if (matricula == null || matricula.length() < 2) {
-			LOG.warn( "A matrÌcula informada È nula ou inv·lida" );
-			throw new AplicacaoException( "A matrÌcula informada È nula ou inv·lida." );
+			LOG.warn( "A matr√≠cula informada √© nula ou inv√°lida" );
+			throw new AplicacaoException( "A matr√≠cula informada √© nula ou inv√°lida." );
 		}
 		
 		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
@@ -242,26 +242,26 @@ public class UsuarioController extends SigaController {
 		CpOrgaoUsuario orgaoFlt = new CpOrgaoUsuario();
 		
 		if ( matricula == null || matricula.length() < 2 ) {
-			LOG.warn( "A matrÌcula informada È nula ou inv·lida" );
-			throw new AplicacaoException( "A matrÌcula informada È nula ou inv·lida." );
+			LOG.warn( "A matr√≠cula informada √© nula ou inv√°lida" );
+			throw new AplicacaoException( "A matr√≠cula informada √© nula ou inv√°lida." );
 		}
 		
 		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
 		CpOrgaoUsuario orgaoUsu = dao.consultarPorSigla(orgaoFlt);
 		
 		if (orgaoUsu == null){
-			throw new AplicacaoException("O Ûrg„o informado È nulo ou inv·lido." );
+			throw new AplicacaoException("O √≥rg√£o informado √© nulo ou inv√°lido." );
 		}
 
 		List<DpPessoa> lstPessoa = null;
 		try{
 			lstPessoa = dao.consultarPorMatriculaEOrgao(Long.valueOf(matricula.substring(2)), orgaoUsu.getId(), false, false);
 		}catch(Exception e){
-			throw new AplicacaoException("Formato de matrÌcula inv·lida." );
+			throw new AplicacaoException("Formato de matr√≠cula inv√°lida." );
 		}
 
 		if (lstPessoa.size() == 0){
-			throw new AplicacaoException("O usu·rio n„o est· cadastrado no banco de dados." );
+			throw new AplicacaoException("O usu√°rio n√£o est√° cadastrado no banco de dados." );
 		}
 		
 		if (lstPessoa != null && lstPessoa.size() == 1) {
@@ -269,7 +269,7 @@ public class UsuarioController extends SigaController {
 			if (p.getEmailPessoaAtual() != null && p.getEmailPessoaAtual().trim().length() > 0){
 				return true;
 			}else{
-				throw new AplicacaoException("VocÍ ainda n„o possui um e-mail v·lido. Tente mais tarde." );
+				throw new AplicacaoException("Voc√™ ainda n√£o possui um e-mail v√°lido. Tente mais tarde." );
 			}
 		}
 		

@@ -51,13 +51,15 @@ public class PrincipalController extends SigaController {
 				lot = pes.getLotacao();
 				testes = "/testes";
 				incluirMatricula = "&matricula=" + matricula;
+			} else {
+				incluirMatricula = "&matricula=" + getTitular().getSiglaCompleta();
 			}
 
-			// TODO n�o precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
+			// TODO não precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
 			
 			//String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ getRequest().getServerPort();
-			final String urlBase = getRequest().getScheme() + "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
-
+			String urlBase = getRequest().getScheme() + "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
+			
 			String URLSelecionar = "";
 			String uRLExibir = "";
 
@@ -75,24 +77,32 @@ public class PrincipalController extends SigaController {
 			if (copiaSigla.startsWith("-"))
 				copiaSigla = copiaSigla.substring(1);
 
-			//alterada a condi��o que verifica se � uma solicita��o do siga-sr
-			//dessa forma a regex verifica se a sigla come�a com SR ou sr e termina com n�meros
-			//necess�rio para n�o dar conflito caso exista uma lota��o que inicie com SR
+			//alterada a condição que verifica se é uma solicitação do siga-sr
+			//dessa forma a regex verifica se a sigla começa com SR ou sr e termina com números
+			//necessário para não dar conflito caso exista uma lotação que inicie com SR
 			if (copiaSigla.startsWith("SR")) {
 //			if (copiaSigla.matches("^[SR|sr].*[0-9]+$")) {
 				if (Cp.getInstance()
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;SR"))
 					URLSelecionar = urlBase + "/sigasr" + testes+ "/solicitacao/selecionar?sigla=" + sigla + incluirMatricula;
-			} else if (copiaSigla.startsWith("MTP")
-					|| copiaSigla.startsWith("RTP")
-					|| copiaSigla.startsWith("STP")) {
+			}
+			//alterado formato da sigla de requisições, missões e serviços
+			//else if (copiaSigla.startsWith("MTP")
+			//		|| copiaSigla.startsWith("RTP")
+			//		|| copiaSigla.startsWith("STP")) {
+			else if (copiaSigla.startsWith("TP") &&
+					(copiaSigla.endsWith("M") ||
+					 copiaSigla.endsWith("S") ||
+					 copiaSigla.endsWith("R"))) {
 				if (Cp.getInstance()
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;TP")) {
-					URLSelecionar = urlBase + "/sigatp" + "/selecionar.action?sigla=" + sigla + incluirMatricula;
+					URLSelecionar = urlBase + "/sigatp"
+							+ "/selecionar.action?sigla=" + sigla
+							+ incluirMatricula;
 				}
-			} 
+			}
 			else
 				URLSelecionar = urlBase 
 						+ "/sigaex" + (testes.length() > 0 ? testes : "/app/expediente") + "/selecionar?sigla=" + sigla+ incluirMatricula;
@@ -101,14 +111,14 @@ public class PrincipalController extends SigaController {
 			String[] response = http.get(URLSelecionar, getRequest(), null).split(";");
 
 			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
-				//verificar se ap�s a retirada dos prefixos referente 
-				//ao org�o (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e n�o achar resultado com as op��es anteriores 
-				//a string copiaSigla somente possui n�meros
+				//verificar se após a retirada dos prefixos referente 
+				//ao orgão (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e não achar resultado com as opções anteriores 
+				//a string copiaSigla somente possui números
 				if (copiaSigla.matches("(^[0-9]+$)")) {
 					URLSelecionar = urlBase 
 							+ "/siga/app"+ (testes.length() > 0 ? testes : "/pessoa") + "/selecionar?sigla=" + sigla+ incluirMatricula;
 				}
-				//encontrar lota��es
+				//encontrar lotações
 				else {
 					URLSelecionar = urlBase 
 						+ "/siga/app"+ (testes.length() > 0 ? testes : "/lotacao")+ "/selecionar?sigla=" + sigla+ incluirMatricula;
@@ -125,9 +135,14 @@ public class PrincipalController extends SigaController {
 				if (copiaSigla.startsWith("SR"))
 //					if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
 						uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
-				else if (copiaSigla.startsWith("MTP")
-						|| copiaSigla.startsWith("STP")
-						|| copiaSigla.startsWith("RTP"))
+				//alterado formato da sigla de requisições, missões e serviços
+				//else if (copiaSigla.startsWith("MTP")
+				//		|| copiaSigla.startsWith("STP")
+				//		|| copiaSigla.startsWith("RTP"))
+				else if (copiaSigla.startsWith("TP") &&
+						(copiaSigla.endsWith("M") ||
+						 copiaSigla.endsWith("S") ||
+						 copiaSigla.endsWith("R")))
 					uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
 				else
 					uRLExibir = "/sigaex/app/expediente/doc/exibir?sigla="+ response[2];

@@ -1,9 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-
-<siga:pagina titulo="Cadastro de SolicitaÁ„o">
-    <jsp:include page="../main.jsp"></jsp:include>
-    <script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
     
 <style>
 .barra-subtitulo {
@@ -26,17 +22,241 @@
 	border: 0;
 }
 </style>
+
+<siga:pagina titulo="Cadastro de SolicitaÁ„o">
+	<jsp:include page="../main.jsp"></jsp:include>
+	
+	<div class="gt-bd gt-cols clearfix">
+		<div class="gt-content clearfix">
+			<h2>
+				<c:choose>
+					<c:when test="${solicitacao.idSolicitacao != null || solicitacao.solicitacaoPai != null}">
+						${solicitacao.codigo}
+					</c:when>
+					<c:otherwise>
+						Cadastro de Solicita&ccedil;&atilde;o
+					</c:otherwise>
+				</c:choose>
+			</h2>
+			<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
+	
+				<form action="${linkto[SolicitacaoController].gravar}" 
+					enctype="multipart/form-data" id="formSolicitacao" onsubmit="javascript:return block();"> 
+					<c:if test="${solicitacao.solicitacaoPai != null}">
+						<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
+						value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
+					</c:if>
+					<c:if test="${solicitacao.idSolicitacao}">
+						<input
+						type="hidden" name="idSolicitacao" id="idSol"
+						value="${solicitacao.idSolicitacao}" /> 
+					</c:if> 
+					<input type="hidden" name="dtIniEdicaoDDMMYYYYHHMMSS" 
+					value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
+					<input type="hidden"
+					name="numSolicitacao" value="${solicitacao.numSolicitacao}" />
+					<input type="hidden"
+					name="numSequencia" value="${solicitacao.numSequencia}" />
+					
+					<div class="gt-form-table">
+						<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
+							Dados B&aacute;sicos
+						</div>
+					</div>
+		
+<%-- 					#{ifErrors} --%>
+<!-- 					<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram -->
+<%-- 						preenchidos ${error}</p> --%>
+<%-- 					#{/ifErrors} --%>
+					<div class="gt-form-row box-wrapper">
+						<div class="gt-form-row gt-width-66">
+							<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
+								type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
+								value="${cadastrante.sigla}" />
+								<input type="hidden" id="siglaCadastrante" name="cadastrante" value="${cadastrante.idPessoa}" />
+								<input type="hidden" name="lotaTitular" value="${lotaTitular != null ? lotaTitular.idLotacao:''}" />
+								<input type="hidden" name="titular" value="${titular!= null ? titular.idPessoa:''}" />
+						</div>
+					</div>	 
+		
+					<div class="gt-form-row gt-width-66">
+						<label>Solicitante</label> 
+						<siga:selecao tipo="pessoa"
+						propriedade="solicitante"
+						tema="simple" modulo="siga" urlAcao="buscar"
+						onchange="carregarLocalRamalEMeioContato();carregarItem();
+						notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitante');" />
+						<span style="margin-left: 10px;"
+							id="spanInterlocutor"><siga:checkbox name="mostrarInterlocutor" value="false" depende="interlocutor"/>Interlocutor</span>
+<%-- 						<span style="color: red">#{error 'solicitante' /}</span> --%>
+					</div>
+					<div class="gt-form-row gt-width-66" id="interlocutor"
+						style="display: none;">
+						<label>Interlocutor</label> 
+						<siga:selecao tipo="pessoa"
+						propriedade="interlocutor" 
+						tema="simple" modulo="siga" urlAcao="buscar"/>
+					</div>
+					
+					<div id="divLocalRamalEMeioContato">
+						<jsp:include page="exibirLocalRamalEMeioContato.jsp" />
+					</div>
+		
+					<div class="gt-form-row gt-width-66">
+						<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>
+						<siga:select name="formaAcompanhamento"
+						list="formaAcompanhamentoList"
+						listValue="descrFormaAcompanhamento" listKey="idFormaAcompanhamento"
+						value="${solicitacao.formaAcompanhamento}" />
+					</div>	
+						
+					<div class="gt-form-table">
+						<div class="barra-subtitulo header" align="center" valign="top">
+							Detalhamento
+						</div>
+					</div>
+		
+					<div id="divItem">
+						<jsp:include page="exibirItemConfiguracao.jsp" />
+					</div>
+		
+					<div class="gt-form-row gt-width-66">
+						<label>Descri√ß√£o</label>
+						<textarea cols="85" rows="10" name="descrSolicitacao"
+							id="descrSolicitacao" maxlength="8192">${solicitacao.descrSolicitacao}</textarea>
+<%-- 						<span style="color: red">#{error 'descrSolicitacao' /}</span> --%>
+					</div>
+					<div class="gt-form-row gt-width-66">
+						<label>Anexar arquivo</label> <input type="file"
+							name="arquivo" />
+					</div>
+		
+					<div class="gt-form-table">
+						<div class="barra-subtitulo header" align="center" valign="top">
+							Prioridade</div>
+					</div>
+					<div class="gt-form-row box-wrapper">
+						<div class="gt-form-row gt-width-33">
+							<label>Gravidade</label> 
+							<siga:select name="gravidade" id="gravidade" list="gravidadeList" listValue="descrGravidade" listKey="nivelGravidade" isEnum="true"
+							value="${solicitacao.gravidade ? solicitacao.gravidade: SrGravidade.NORMAL.descrGravidade}" onchange="carregarPrioridade()"
+							style="width:235px"  />
+						</div>
+						<div class="gt-form-row gt-width-33">
+							<label>Urg&ecirc;ncia</label> 
+							<siga:select name="urgencia" id="urgencia" list="urgenciaList" listValue="descrUrgencia" listKey="nivelUrgencia" isEnum="true"
+							value="${solicitacao.urgencia ? solicitacao.urgencia: SrUrgencia.NORMAL.descrUrgencia}" 
+							onchange="carregarPrioridade()" style="width:235px" />
+						</div>
+						<div class="gt-form-row gt-width-33">
+							<label>Tend&ecirc;ncia</label>
+							<siga:select name="tendencia" id="tendencia" list="tendenciaList" listValue="descrTendencia" listKey="nivelTendencia" isEnum="true"
+							value="${solicitacao.tendencia ? solicitacao.tendencia: SrTendencia.PIORA_MEDIO_PRAZO.descrTendencia}"
+							onchange="carregarPrioridade()" style="width:235px;"/>
+						</div>
+					</div>
+					<div id="divPrioridade" class="gt-form-row gt-width-66">
+						<label style="float: left">Prioridade: &nbsp;</label>
+						<span>${solicitacao.prioridade != null ? solicitacao.prioridade.descPrioridade : 'Teste'}</span>
+<%-- 							<siga:select name="prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true"  --%>
+<%-- 							value="${solicitacao.prioridade ? solicitacao.prioridade: SrPrioridade.PLANEJADO.descPrioridade}" style="width:235px;border:none;display:none;"/> --%>
+							<br />
+					</div>
+		
+		
+					<c:if test="${solicitacao.podeAbrirJaFechando(titular, lotaTitular)}">
+						<div class="gt-form-row gt-width-66">
+							<label><siga:checkbox name="fecharAoAbrir" value="${solicitacao.fecharAoAbrir}"
+									depende="motivoFechamento" disabled="alterando"/>Fechar o chamado logo ap&oacute;s a abertura</label>
+						</div>
+					</c:if>
+		
+					<div class="gt-form-row gt-width-66" id="motivoFechamento"
+						style="display: none">
+						<label>Motivo do fechamento</label> <input type="text" size="100"
+							name="motivoFechamentoAbertura"
+							id="motivoFechamentoAbertura" />
+					</div>
+					<c:choose>
+						<c:when test="${!solicitacao.jaFoiDesignada()}">
+							<br />
+							<div class="gt-form-row">
+								<label> <siga:checkbox name="rascunho"
+									value="${solicitacao.rascunho}"/> Rascunho </label>
+							</div>
+						</c:when>
+						<c:when test="${solicitacao.isPai() && solicitacao.idSolicitacao != null}">
+							<div class="gt-form-table">
+								<div class="barra-subtitulo header" align="center" valign="top"> Fechamento Autom√°tico</div>
+							</div>
+							<p> <siga:checkbox name="fechadoAutomaticamente"
+								value="${solicitacao.fechadoAutomaticamente}"/>Fechar automaticamente a solicita√ß√£o <b>${solicitacao.codigo}</b>.</p>
+							<br />
+						</c:when>
+					</c:choose>
+					<div class="gt-form-row">
+						<input type="submit" value="Gravar"
+							class="gt-btn-medium gt-btn-left" id="gravar" /> <a
+							href="@{Application.buscarSolicitacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+					</div>
+				</form>
+			</div>
+		</div>
+<!-- 		paginas n„o migradas -->
+<%-- 		<jsp:include page="exibirCronometro.jsp"/> --%>
+<%-- 		<jsp:include page="exibirPendencias.jsp /> --%>
+		
+		<%--
+		<div class="gt-sidebar">
+			<div class="gt-sidebar-content" id="solicitacoesRelacionadas">
+				<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
+				<div class="gt-content-box gt-form">
+					<label>Filtro</label>
+	
+					<div id="filtro">
+						<span><siga:checkbox name="apenasFechados"
+						value="apenasFechados"/> Apenas Fechados</span>
+					</div>
+	
+					<div class="gt-content-box "
+						style="margin: 10px -16px -6px -16px; border-radius: 0 0 5px 5px !important;">
+						<table border="0" width="100%" class="gt-table">
+							<colgroup>
+								<col width="35%" />
+								<col width="65%" />
+							</colgroup>
+							<thead>
+								<tr>
+									<th>C&oacute;digo</th>
+									<th>Teor</th>
+								</tr>
+							</thead>
+							<tbody id="bodySolRelacionadas">
+							<jsp:include page="listarSolicitacoesRelacionadas.html"/>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		--%>
+		
+		<div id="divConhecimentosRelacionados">
+		</div>
+	</div>
+</siga:pagina>
+<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 <script language="javascript">
 	
-	$(document).ready(function() {
+	jQuery(document).ready(function($) {
 		$('#gravar').click(function() {
-			if ($('#siglaCadastrante').val() != $('#formulario_solicitacao.solicitante_pessoaSel_sigla')[0].value) {
+			if ($('#siglaCadastrante').val() != $('#formulario_solicitante_pessoaSel_sigla')[0].value) {
 				var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
 				$('#stringDtMeioContato').val(stringDt);
 			} 
 		}); 
 
-		if($('#solicitacaointerlocutor').val() != "") {
+		if($('#formulario_interlocutor_pessoaSel_id').val() != "") {
 			$('#checkmostrarInterlocutor').prop('checked', true);	
 			$('#interlocutor').show();		
 		}
@@ -66,10 +286,10 @@
 				div.style.display = 'inline';
 			else {
 				div.style.display = 'none';
-				jQuery("#solicitacaointerlocutor").val("");
-				jQuery("#solicitacaointerlocutor_descricao").val("");
-				jQuery("#solicitacaointerlocutor_sigla").val("");
-				jQuery("#solicitacaointerlocutorSpan").html("");
+				jQuery("#formulario_interlocutor_pessoaSel_id").val("");
+				jQuery("#formulario_interlocutor_pessoaSel_descricao").val("");
+				jQuery("#formulario_interlocutor_pessoaSel_sigla").val("");
+				jQuery("#interlocutor_pessoaSelSpan").html("");
 			}
 		}
 	}
@@ -278,14 +498,14 @@
 	// alguns campos na tela
 	function validarCadastranteSolicitante() {
 		var siglaCadastrante = $('#siglaCadastrante').val();
-		var siglaSolicitante = $('#solicitacaosolicitante_sigla')[0].value;
+		var siglaSolicitante = $('#formulario_solicitante_pessoaSel_sigla')[0].value;
 
 		if (siglaCadastrante == siglaSolicitante) {
-			$('#spanInterlocutor')[0].style.display='none';
+			$('#interlocutor_pessoaSelSpan')[0].style.display='none';
 			$('#meioComunicacao')[0].style.display='none';
 		}
 		else {
-			$('#spanInterlocutor')[0].style.display='inline';
+			$('#interlocutor_pessoaSelSpan')[0].style.display='inline';
 			$('#meioComunicacao')[0].style.display='inline';
 		}
 	}
@@ -321,7 +541,7 @@
 			params = params + input.attr('name') + '=' + input.val() + '&'
 		});
 		
-		params = params + 'solicitacao.apenasFechados' + '=' + $('#apenasFechados').val();
+		params = params + 'apenasFechados' + '=' + $('#apenasFechados').val();
 		return params;
 	}
 		
@@ -441,232 +661,4 @@
 
   		return num;
 	};
-</script>	
-	<div class="gt-bd gt-cols clearfix">
-		<div class="gt-content clearfix">
-			<h2>
-				<c:choose>
-					<c:when test="${solicitacao.idSolicitacao != null || solicitacao.solicitacaoPai != null}">
-						${solicitacao.codigo}
-					</c:when>
-					<c:otherwise>
-						Cadastro de Solicita&ccedil;&atilde;o
-					</c:otherwise>
-				</c:choose>
-			</h2>
-			<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
-	
-				<form action="${linkto[SolicitacaoController].gravar}" 
-					enctype="multipart/form-data" id="formSolicitacao" onsubmit="javascript:return block();"> 
-					<c:if test="${solicitacao.solicitacaoPai != null}">
-						<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
-						value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
-					</c:if>
-					<c:if test="${solicitacao.idSolicitacao}">
-						<input
-						type="hidden" name="solicitacao.idSolicitacao" id="idSol"
-						value="${solicitacao.idSolicitacao}" /> 
-					</c:if> 
-					<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMMSS" 
-					value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
-					<input type="hidden"
-					name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
-					<input type="hidden"
-					name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
-					
-					<div class="gt-form-table">
-						<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
-							Dados B&aacute;sicos
-						</div>
-					</div>
-		
-<%-- 					#{ifErrors} --%>
-<!-- 					<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram -->
-<%-- 						preenchidos ${error}</p> --%>
-<%-- 					#{/ifErrors} --%>
-					<div class="gt-form-row box-wrapper">
-						<div class="gt-form-row gt-width-66">
-							<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
-								type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
-								value="${cadastrante.sigla}" />
-								<input type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante" value="${cadastrante.idPessoa}" />
-								<input type="hidden" name="solicitacao.lotaTitular" value="${lotaTitular != null ? lotaTitular.idLotacao:''}" />
-								<input type="hidden" name="solicitacao.titular" value="${titular!= null ? titular.idPessoa:''}" />
-						</div>
-					</div>	 
-		
-					<div class="gt-form-row gt-width-66">
-						<label>Solicitante</label> 
-						<siga:selecao tipo="pessoa"
-						propriedade="solicitacao.solicitante"
-						tema="simple" modulo="siga" urlAcao="buscar"
-						onchange="carregarLocalRamalEMeioContato();carregarItem();
-						notificarCampoMudou('#solicitacaosolicitante', 'Solicitante', 'solicitacao.solicitante');" />
-						<span style="margin-left: 10px;"
-							id="spanInterlocutor"><siga:checkbox name="mostrarInterlocutor" value="false" depende="interlocutor"/>Interlocutor</span>
-<%-- 						<span style="color: red">#{error 'solicitacao.solicitante' /}</span> --%>
-					</div>
-					<div class="gt-form-row gt-width-66" id="interlocutor"
-						style="display: none;">
-						<label>Interlocutor</label> 
-						<siga:selecao tipo="pessoa"
-						propriedade="solicitacao.interlocutor" 
-						tema="simple" modulo="siga" urlAcao="buscar"/>
-					</div>
-					
-					<div id="divLocalRamalEMeioContato">
-					   <jsp:include page="exibirLocalRamalEMeioContato.jsp" />
-					</div>
-		
-					<div class="gt-form-row gt-width-66">
-						<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>
-						<siga:select name="solicitacao.formaAcompanhamento"
-						list="formaAcompanhamentoList"
-						label="descrFormaAcompanhamento"
-						value="${solicitacao.formaAcompanhamento}" />
-					</div>	
-						
-					<div class="gt-form-table">
-						<div class="barra-subtitulo header" align="center" valign="top">
-							Detalhamento
-						</div>
-					</div>
-		
-					<div id="divItem">
-					   <jsp:include page="exibirItemConfiguracao.jsp" />
- 					</div>
-		
-					<div class="gt-form-row gt-width-66">
-						<label>DescriÁ„o</label>
-						<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
-							id="descrSolicitacao" maxlength="8192">${solicitacao.descrSolicitacao}</textarea>
-<%-- 						<span style="color: red">#{error 'solicitacao.descrSolicitacao' /}</span> --%>
-					</div>
-					<div class="gt-form-row gt-width-66">
-						<label>Anexar arquivo</label> <input type="file"
-							name="solicitacao.arquivo" />
-					</div>
-		
-					<div class="gt-form-table">
-						<div class="barra-subtitulo header" align="center" valign="top">
-							Prioridade</div>
-					</div>
-					<div class="gt-form-row box-wrapper">
-						<div class="gt-form-row gt-width-33">
-							<label>Gravidade</label> 
-							<siga:select name="solicitacao.gravidade" id="gravidade" list="gravidadeList" listValue="descrGravidade" listKey="nivelGravidade" isEnum="true"
-							label="respostaEnunciado" value="${solicitacao.gravidade ? solicitacao.gravidade: SrGravidade.NORMAL.descrGravidade}" onchange="carregarPrioridade()" />
-<%-- 							<siga:select name="solicitacao.gravidade" id="gravidade" list="gravidadeList" listValue="descrGravidade" listKey="nivelGravidade" isEnum="true" --%>
-<%-- 							label="respostaEnunciado" value="${solicitacao.gravidade ? solicitacao.gravidade: SrGravidade.NORMAL.descrGravidade}" style="width:235px;" onchange="carregarPrioridade()" /> --%>
-						</div>
-						<div class="gt-form-row gt-width-33">
-							<label>Urg&ecirc;ncia</label> 
-							<siga:select name="solicitacao.urgencia" id="urgencia" list="urgenciaList" listValue="descrUrgencia" listKey="nivelUrgencia" isEnum="true"
-							label="respostaEnunciado" value="${solicitacao.urgencia ? solicitacao.urgencia: SrUrgencia.NORMAL.descrUrgencia}" 
-							onchange="carregarPrioridade()"/>
-<%-- 							<siga:select name="solicitacao.urgencia" id="urgencia" list="urgenciaList" listValue="descrUrgencia" listKey="nivelUrgencia" isEnum="true" --%>
-<%-- 							label="respostaEnunciado" value="${solicitacao.urgencia ? solicitacao.urgencia: SrUrgencia.NORMAL.descrUrgencia}" style="width:235px"  --%>
-<%-- 							onchange="carregarPrioridade()"/> --%>
-						</div>
-						<div class="gt-form-row gt-width-33">
-							<label>Tend&ecirc;ncia</label>
-							<siga:select name="solicitacao.tendencia" id="tendencia" list="tendenciaList" listValue="descrTendencia" listKey="nivelTendencia" isEnum="true"
-							label="respostaEnunciado" value="${solicitacao.tendencia ? solicitacao.tendencia: SrTendencia.PIORA_MEDIO_PRAZO.descrTendencia}"
-							onchange="carregarPrioridade()" />
-<%-- 							<siga:select name="solicitacao.tendencia" id="tendencia" list="tendenciaList" listValue="descrTendencia" listKey="nivelTendencia" isEnum="true" --%>
-<%-- 							label="respostaEnunciado" value="${solicitacao.tendencia ? solicitacao.tendencia: SrTendencia.PIORA_MEDIO_PRAZO.descrTendencia}" --%>
-<%-- 							style="width:235px;" onchange="carregarPrioridade()" /> --%>
-						</div>
-					</div>
-					<div id="divPrioridade" class="gt-form-row gt-width-66">
-						<label style="float: left">Prioridade: &nbsp;</label>
-						<span>${solicitacao.prioridade != null ? solicitacao.prioridade.descPrioridade : SrPrioridade.PLANEJADO.descPrioridade}</span>
-						<siga:select name="solicitacao.prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true" 
-							label="descPrioridade" value="${solicitacao.prioridade ? solicitacao.prioridade: SrPrioridade.PLANEJADO.descPrioridade}"/>
-<%-- 							<siga:select name="solicitacao.prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true"  --%>
-<%-- 							label="descPrioridade" value="${solicitacao.prioridade ? solicitacao.prioridade: SrPrioridade.PLANEJADO.descPrioridade}" style="width:235px;border:none;display:none;"/> --%>
-							<br />
-					</div>
-		
-		
-					<c:if test="${solicitacao.podeAbrirJaFechando(titular, lotaTitular)}">
-						<div class="gt-form-row gt-width-66">
-							<label><siga:checkbox name="solicitacao.fecharAoAbrir" value="solicitacao.fecharAoAbrir"
-									depende="motivoFechamento" disabled="alterando"/>Fechar o chamado logo ap&oacute;s a abertura</label>
-						</div>
-					</c:if>
-		
-					<div class="gt-form-row gt-width-66" id="motivoFechamento"
-						style="display: none">
-						<label>Motivo do fechamento</label> <input type="text" size="100"
-							name="solicitacao.motivoFechamentoAbertura"
-							id="motivoFechamentoAbertura" />
-					</div>
-					<c:choose>
-						<c:when test="${!solicitacao.jaFoiDesignada()}">
-							<br />
-							<div class="gt-form-row">
-								<label> <siga:checkbox name="solicitacao.rascunho"
-									value="solicitacao.rascunho"/> Rascunho </label>
-							</div>
-						</c:when>
-						<c:when test="${solicitacao.isPai() && solicitacao.idSolicitacao != null}">
-							<div class="gt-form-table">
-								<div class="barra-subtitulo header" align="center" valign="top"> Fechamento Autom√°tico</div>
-							</div>
-							<p> <siga:checkbox name="solicitacao.fechadoAutomaticamente"
-								value="solicitacao.fechadoAutomaticamente"/>Fechar automaticamente a solicita√ß√£o <b>${solicitacao.codigo}</b>.</p>
-							<br />
-						</c:when>
-					</c:choose>
-					<div class="gt-form-row">
-						<input type="submit" value="Gravar"
-							class="gt-btn-medium gt-btn-left" id="gravar" /> <a
-							href="@{Application.buscarSolicitacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-					</div>
-				</form>
-			</div>
-		</div>
-<!-- 		paginas n„o migradas -->
-<%-- 		<jsp:include page="exibirCronometro.jsp"/> --%>
-<%-- 		<jsp:include page="exibirPendencias.jsp /> --%>
-		
-		<%--
-		<div class="gt-sidebar">
-			<div class="gt-sidebar-content" id="solicitacoesRelacionadas">
-				<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
-				<div class="gt-content-box gt-form">
-					<label>Filtro</label>
-	
-					<div id="filtro">
-						<span><siga:checkbox name="apenasFechados"
-						value="apenasFechados"/> Apenas Fechados</span>
-					</div>
-	
-					<div class="gt-content-box "
-						style="margin: 10px -16px -6px -16px; border-radius: 0 0 5px 5px !important;">
-						<table border="0" width="100%" class="gt-table">
-							<colgroup>
-								<col width="35%" />
-								<col width="65%" />
-							</colgroup>
-							<thead>
-								<tr>
-									<th>C&oacute;digo</th>
-									<th>Teor</th>
-								</tr>
-							</thead>
-							<tbody id="bodySolRelacionadas">
-							<jsp:include page="listarSolicitacoesRelacionadas.html"/>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-		--%>
-		
-		<div id="divConhecimentosRelacionados">
-		</div>
-	</div>
-</siga:pagina>
+</script>

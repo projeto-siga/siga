@@ -20,6 +20,8 @@
 		    exibirLocalRamalEMeioContato.jsp    
 		    <jsp:include page="exibirLocalRamalEMeioContato.jsp"></jsp:include>
 		    
+		    descricaoAcao.jsp    
+		    <siga:descricaoAcao acao="${acao}"/>
 		    
         </form>
     </div>

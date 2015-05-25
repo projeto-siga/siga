@@ -9,6 +9,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
@@ -28,7 +29,7 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/teste")
-    public void teste(boolean banco) {
+    public void teste(boolean banco) throws Exception {
         SrSolicitacao value = new SrSolicitacao();
         if (banco) {
             value = (SrSolicitacao) SrSolicitacao.AR.all().fetch().get(0);
@@ -37,10 +38,12 @@ public class SolicitacaoController extends SrController {
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("locaisDisponiveis", value.getLocaisDisponiveis());
         result.include("solicitacao", value);
+        
+        result.include("acao", SrAcao.AR.findById(407L));
     }
 
     @Path("/testeErro")
-    public void testeErro() {
+    public void testeErro() throws Exception {
         validator.add(new ValidationMessage("Chamas", "nome.teste"));
         validator.add(new ValidationMessage("Eternas", "nome.teste"));
         validator.add(new ValidationMessage("do", "nome.teste"));

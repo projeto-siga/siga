@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-
+    
 <style>
 .barra-subtitulo {
 	color: #365b6d !important;
@@ -98,8 +98,9 @@
 						tema="simple" modulo="siga" urlAcao="buscar"/>
 					</div>
 					
-<%-- 					<div id="divLocalRamalEMeioContato"><jsp:include --%>
-<%-- 						page="exibirLocalRamalEMeioContato.jsp" /></div> --%>
+					<div id="divLocalRamalEMeioContato">
+						<jsp:include page="exibirLocalRamalEMeioContato.jsp" />
+					</div>
 		
 					<div class="gt-form-row gt-width-66">
 						<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>
@@ -115,8 +116,9 @@
 						</div>
 					</div>
 		
-<%-- 					<div id="divItem"><jsp:include --%>
-<%-- 						page="exibirItemConfiguracao.jsp" /></div> --%>
+					<div id="divItem">
+						<jsp:include page="exibirItemConfiguracao.jsp" />
+					</div>
 		
 					<div class="gt-form-row gt-width-66">
 						<label>Descrição</label>

@@ -134,13 +134,7 @@
 			<groupId>org.picketbox</groupId>
 			<artifactId>picketbox</artifactId>
 			<version>4.0.21.Beta3</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-		</dependency>
+		</dependency>			
 
 	</dependencies>
 
@@ -229,7 +223,7 @@
 					<source>1.7</source>
 					<target>1.7</target>
 					<fork>true</fork>
-
+					<encoding>ISO-8859-1</encoding>
 				</configuration>
 			</plugin>
 

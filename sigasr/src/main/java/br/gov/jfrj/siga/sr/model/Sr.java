@@ -40,6 +40,10 @@ public class Sr extends Cp /*
 	 * @return Instância de workflow
 	 */
 	public static Sr getInstance() {
+	    if (!(Cp.getInstance() instanceof Sr)) {
+	        setInstance(null);
+	    }
+	        
 		
 		if (!isInstantiated()) {
 			synchronized (Cp.class) {

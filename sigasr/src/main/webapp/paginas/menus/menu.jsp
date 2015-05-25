@@ -3,7 +3,6 @@
 
 <li><a href="#">Servi&ccedil;os</a>
 	<ul>
-		<li><a href="${linkTo[SolicitacaoController].teste}">Cadastrar2</a></li>
 		<li><a href="${linkTo[SolicitacaoController].editar}">Cadastrar</a></li>
 		<li><a href="@{Application.buscarSolicitacao}">Pesquisar</a></li>
 	</ul>

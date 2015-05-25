@@ -1,7 +1,5 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
-import static br.com.caelum.vraptor.view.Results.http;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,18 +10,9 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.HttpStatus;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.validator.ValidationMessage;
-import br.com.caelum.vraptor.view.HttpResult;
-import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -36,17 +25,15 @@ import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrGravidade;
 import br.gov.jfrj.siga.sr.model.SrLista;
-import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
-import br.gov.jfrj.siga.sr.model.SrTendencia;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao.SrTarefa;
+import br.gov.jfrj.siga.sr.model.SrTendencia;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
-import br.gov.jfrj.siga.sr.validator.SrError;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -54,35 +41,22 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 @Path("app/solicitacao")
 public class SolicitacaoController extends SrController {
     private Correio correio;
-    private Validator validator;
 
-    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator, Correio correio, Validator validator) {
+    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator, Correio correio) {
         super(request, result, dao, so, em, srValidator);
         this.correio = correio;
-        this.validator = validator;
     }
 
-    @Path("/teste")
-    public void teste(boolean banco) {
-        SrSolicitacao value = new SrSolicitacao();
-        if (banco) {
-            value = (SrSolicitacao) SrSolicitacao.AR.all().fetch().get(0);
-        }
-
-        result.include("meiosComunicadaoList", SrMeioComunicacao.values());
-        result.include("locaisDisponiveis", value.getLocaisDisponiveis());
-        result.include("solicitacao", value);
+    @Path("/exibirAcao")
+    public void exibirAcao(SrSolicitacao solicitacao) throws Exception {
+        Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+        result.include("solicitacao", solicitacao);
+        result.include("acoesEAtendentes", acoesEAtendentes);
     }
 
-    @Path("/testeErro")
-    public void testeErro() {
-        validator.add(new ValidationMessage("Chamas", "nome.teste"));
-        validator.add(new ValidationMessage("Eternas", "nome.teste"));
-        validator.add(new ValidationMessage("do", "nome.teste"));
-        validator.add(new ValidationMessage("Aconchego", "nome.teste"));
-
-        validator.onErrorUsePageOf(this).teste(false);
-
+    @Path("/exibirAtributos")
+    public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
+        result.include("solicitacao", solicitacao);
     }
     
     @Path("/gravar")

@@ -1,6 +1,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<siga:pagina titulo="Cadastro de Solicitação">
+    <jsp:include page="../main.jsp"></jsp:include>
+    <script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+    
 <style>
 .barra-subtitulo {
 	color: #365b6d !important;
@@ -437,12 +441,7 @@
 
   		return num;
 	};
-</script>
-<script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
-
-<siga:pagina titulo="Cadastro de Solicitação">
-	<jsp:include page="../main.jsp"></jsp:include>
-	
+</script>	
 	<div class="gt-bd gt-cols clearfix">
 		<div class="gt-content clearfix">
 			<h2>
@@ -515,8 +514,9 @@
 						tema="simple" modulo="siga" urlAcao="buscar"/>
 					</div>
 					
-<%-- 					<div id="divLocalRamalEMeioContato"><jsp:include --%>
-<%-- 						page="exibirLocalRamalEMeioContato.jsp" /></div> --%>
+					<div id="divLocalRamalEMeioContato">
+					   <jsp:include page="exibirLocalRamalEMeioContato.jsp" />
+					</div>
 		
 					<div class="gt-form-row gt-width-66">
 						<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>

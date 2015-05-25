@@ -25,6 +25,7 @@ import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrGravidade;
 import br.gov.jfrj.siga.sr.model.SrLista;
+import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
@@ -240,6 +241,11 @@ public class SolicitacaoController extends SrController {
         result.include("urgenciaList",SrUrgencia.values());
         result.include("tendenciaList",SrTendencia.values());
         result.include("prioridadeList",SrPrioridade.values());
+
+        result.include("locaisDisponiveis",solicitacao.getLocaisDisponiveis());
+        result.include("meiosComunicadaoList",SrMeioComunicacao.values());
+        result.include("itemConfiguracao",solicitacao.getItemConfiguracao());
+        result.include("podeUtilizarServicoSigaGC",false);
         
     }
 }

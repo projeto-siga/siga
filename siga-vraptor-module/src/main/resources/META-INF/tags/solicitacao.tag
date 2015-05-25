@@ -7,6 +7,10 @@
 <script src="/sigasr/public/javascripts/jquery.cookie.js"></script>
 <script src="/sigasr/public/javascripts/HTMLSelectElement.prototype.selectedOptions.js"></script>
 
+<%@ attribute name="solicitacaoListaVO" required="false"%>
+<%@ attribute name="filtro" required="false"%>
+<%@ attribute name="modoExibicao" required="false"%>
+
 <style>
 	.bt-expandir {
 		background: none !important;

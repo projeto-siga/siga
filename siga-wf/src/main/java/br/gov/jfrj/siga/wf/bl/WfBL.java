@@ -48,6 +48,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
@@ -280,6 +281,17 @@ public class WfBL extends CpBL {
 			}
 		}
 
+		
+		if (ti.getActorId() != null){
+			DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+			flt.setSigla(ti.getActorId());
+			DpPessoa actor = (DpPessoa) WfDao.getInstance().consultarPorSigla(flt);
+			if (cadastrante.getLotacao().equivale(actor.getLotacao()) ||
+					(lotaTitular != null && lotaTitular.equivale(actor.getLotacao()))){
+				return true;
+			}
+		}
+		
 		return false;
 	}
 
@@ -435,6 +447,14 @@ public class WfBL extends CpBL {
 	 */
 	public void encerrarProcessInstanceDaTarefa(Long idTI, Date dtFim) throws AplicacaoException {
 		TaskInstance ti = WfContextBuilder.getJbpmContext().getJbpmContext().getTaskInstance(idTI);
+
+		if (ti==null){
+			throw new AplicacaoException("Tarefa não encontrada!");
+		}
+		if (dtFim==null){
+			throw new AplicacaoException("Data inválida!");
+		}
+		
 		encerrarProcessInstance(ti.getProcessInstance().getId(), dtFim);
 	}
 	

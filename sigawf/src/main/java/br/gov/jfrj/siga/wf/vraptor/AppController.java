@@ -53,9 +53,9 @@ public class AppController extends WfController {
 	}
 
 	/**
-	 * Coloca as tarefas que est„o para o usu·rio no atributo "taskInstances".
-	 * AlÈm disso, coloca os procedimentos que podem ser iniciados pelo usu·rio
-	 * do sistema no atributo "processDefinitions".Este mÈtodo È executando ao
+	 * Coloca as tarefas que est√£o para o usu√°rio no atributo "taskInstances".
+	 * Al√©m disso, coloca os procedimentos que podem ser iniciados pelo usu√°rio
+	 * do sistema no atributo "processDefinitions".Este m√©todo √© executando ao
 	 * ser chamada a action "inbox.action".
 	 * 
 	 * @return
@@ -78,8 +78,8 @@ public class AppController extends WfController {
 	}
 
 	/**
-	 * Cria uma inst‚ncia de processo baseando-se na definiÁ„o de processo
-	 * escolhida pelo usu·rio.
+	 * Cria uma inst√¢ncia de processo baseando-se na defini√ß√£o de processo
+	 * escolhida pelo usu√°rio.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -121,7 +121,7 @@ public class AppController extends WfController {
 	}
 
 	/**
-	 * Action que inicializa todos os campos que ser„o necess·rios para
+	 * Action que inicializa todos os campos que ser√£o necess√°rios para
 	 * finalizar a tarefa especificada pelo Id do ProcessoInstance e o Id do
 	 * ProcessDefinition.
 	 * 
@@ -133,7 +133,7 @@ public class AppController extends WfController {
 		List<SigaIdDescr> prioridades = new ArrayList<SigaIdDescr>();
 		prioridades.add(new SigaIdDescr(1, "Muito Alta"));
 		prioridades.add(new SigaIdDescr(2, "Alta"));
-		prioridades.add(new SigaIdDescr(3, "MÈdia"));
+		prioridades.add(new SigaIdDescr(3, "M√©dia"));
 		prioridades.add(new SigaIdDescr(4, "Baixa"));
 		prioridades.add(new SigaIdDescr(5, "Muito Baixa"));
 		result.include("prioridades", prioridades);
@@ -143,8 +143,8 @@ public class AppController extends WfController {
 
 	/**
 	 * Action que finaliza uma tarefa com as variaveis atribuidas. Os valores
-	 * s„o atribuÌdos ‡s vari·veis da tarefa e depois a tarefa È transferida ao
-	 * prÛximo passo. Se a prÛxima tarefa for para o mesmo ator, esta È exibida
+	 * s√£o atribu√≠dos √†s vari√°veis da tarefa e depois a tarefa √© transferida ao
+	 * pr√≥ximo passo. Se a pr√≥xima tarefa for para o mesmo ator, esta √© exibida
 	 * imediatamente.
 	 * 
 	 * @return
@@ -160,7 +160,7 @@ public class AppController extends WfController {
 
 		// Pegar automaticamente
 		if (taskInstance.getActorId() == null) {
-			taskInstance.setActorId(getTitular().getSiglaCompleta());
+			taskInstance.setActorId(getTitular().getSiglaCompleta(), false);
 			carregarAtorEGrupo(taskInstance);
 		}
 
@@ -202,7 +202,7 @@ public class AppController extends WfController {
 								c++;
 
 							}
-							// Verifica se as vari·veis "required" foram
+							// Verifica se as vari√°veis "required" foram
 							// preenchidas"
 							if (variable.isRequired()
 									&& (value == null || (value instanceof String && (((String) value)
@@ -225,21 +225,21 @@ public class AppController extends WfController {
 		}
 
 		// Bloco que transfere a tarefa
-		if (transitionName != null && transitionName.contains(" ª ")) {
-			transitionName = transitionName.substring(0,
-					transitionName.indexOf(" ª "));
-		}
-		/*
-		 * cÛdigo inserido para corrigir o caracter &raquo; (ª) contido no bot„o
-		 * e enviado pelo submit. Este, no caso de autenticaÁ„o por certificado,
-		 * vem em conjunto com o caracter ¬. (
-		 */
 		if (transitionName != null && transitionName.contains(" ¬ª ")) {
 			transitionName = transitionName.substring(0,
 					transitionName.indexOf(" ¬ª "));
 		}
 		/*
-		 * fim do cÛdigo inserido para corrigir o caracter &raquo;
+		 * c√≥digo inserido para corrigir o caracter &raquo; (¬ª) contido no bot√£o
+		 * e enviado pelo submit. Este, no caso de autentica√ß√£o por certificado,
+		 * vem em conjunto com o caracter √Ç. (
+		 */
+		if (transitionName != null && transitionName.contains(" √Ç¬ª ")) {
+			transitionName = transitionName.substring(0,
+					transitionName.indexOf(" √Ç¬ª "));
+		}
+		/*
+		 * fim do c√≥digo inserido para corrigir o caracter &raquo;
 		 */
 		if (transitionName == null || transitionName.length() == 0 || transitionName.equals("Prosseguir"))
 			transitionName = null;
@@ -291,10 +291,10 @@ public class AppController extends WfController {
 		}
 
 		// Verificar se um novo task foi criado para o process instance em
-		// quest„o. Se esse
-		// task existir e for designado para o mesmo ator, ent„o a prÛxima
-		// p·gina a ser exibida ser· a p·gina de apresentaÁ„o do task, e n„o a
-		// p·gina inicial.
+		// quest√£o. Se esse
+		// task existir e for designado para o mesmo ator, ent√£o a pr√≥xima
+		// p√°gina a ser exibida ser√° a p√°gina de apresenta√ß√£o do task, e n√£o a
+		// p√°gina inicial.
 		{
 			long idpi = taskInstance.getProcessInstance().getId();
 			SortedSet<TaskInstance> tasks = Wf
@@ -317,7 +317,7 @@ public class AppController extends WfController {
 
 		// Pegar
 		if (taskInstance.getActorId() == null) {
-			taskInstance.setActorId(getTitular().getSiglaCompleta());
+			taskInstance.setActorId(getTitular().getSiglaCompleta(), false);
 			carregarAtorEGrupo(taskInstance);
 		}
 
@@ -381,7 +381,7 @@ public class AppController extends WfController {
 
 		if (actorId == null && lotaActorId == null)
 			throw new AplicacaoException(
-					"N„o È permitido designar a tarefa quando tanto a pessoa quanto a lotaÁ„o est„o em branco.");
+					"N√£o √© permitido designar a tarefa quando tanto a pessoa quanto a lota√ß√£o est√£o em branco.");
 
 		DpLotacao lotAtualAtor = null;
 		DpLotacao lotAtualPool = null;
@@ -409,7 +409,10 @@ public class AppController extends WfController {
 				|| (lotaActorId != null
 						&& taskInstance.getPooledActors().size() != 0 && !((PooledActor) taskInstance
 						.getPooledActors().toArray()[0]).getActorId().equals(
-						lotaActorId));
+						lotaActorId) || 
+						(taskInstance.getSwimlaneInstance() != null && 
+						!((PooledActor)taskInstance.getSwimlaneInstance().getPooledActors().toArray()[0]).getActorId().equals(lotaActorId))
+					);
 
 		if (fActorChanged || fPooledActorsChanged)
 			util.assertPodeTransferirDocumentosVinculados(taskInstance,
@@ -432,6 +435,11 @@ public class AppController extends WfController {
 						lotAtualPool != null ? lotAtualPool : lotAtualAtor,
 						daoLot(lotaAtor_lotacaoSel.getId()));
 				taskInstance.setPooledActors(new String[] { lotaActorId });
+				if (taskInstance.getSwimlaneInstance() != null){
+					PooledActor pa = (PooledActor) taskInstance.getSwimlaneInstance().getPooledActors().iterator().next();
+					pa.setActorId(lotaActorId);
+				}else{
+				}
 			}
 		}
 		if (fActorChanged || fPooledActorsChanged)
@@ -457,11 +465,11 @@ public class AppController extends WfController {
 			Comment c = new Comment(
 					getCadastrante().getSigla(),
 					"Tarefa designada para "
-							+ (taskInstance.getPooledActors().size() != 0 ? "lotaÁ„o "
+							+ (taskInstance.getPooledActors().size() != 0 ? "lota√ß√£o "
 									+ ((PooledActor) taskInstance
 											.getPooledActors().toArray()[0])
 											.getActorId() + "."
-									: " nenhuma lotaÁ„o.")
+									: " nenhuma lota√ß√£o.")
 							+ (justificativa != null
 									&& justificativa.trim().length() > 0 ? " Justificativa: "
 									+ justificativa + "."
@@ -473,7 +481,7 @@ public class AppController extends WfController {
 	}
 
 	/**
-	 * Insere um coment·rio ‡ tarefa.
+	 * Insere um coment√°rio √† tarefa.
 	 * 
 	 * @return
 	 * @throws CsisException
@@ -488,9 +496,9 @@ public class AppController extends WfController {
 	}
 
 	/**
-	 * Verifica se as tarefas que est„o designadas para o usu·rio est„o
-	 * associadas a documentos do SIGA-DOC (por intermÈdio da vari·vel iniciada
-	 * com o prefixo "doc_". Se estiver, chama o mÈtodo addTask(). Este mÈtodo
+	 * Verifica se as tarefas que est√£o designadas para o usu√°rio est√£o
+	 * associadas a documentos do SIGA-DOC (por interm√©dio da vari√°vel iniciada
+	 * com o prefixo "doc_". Se estiver, chama o m√©todo addTask(). Este m√©todo
 	 * executado quando a action "doc.action" for chamada.
 	 */
 	public void doc(String sigla) throws Exception {
@@ -524,13 +532,13 @@ public class AppController extends WfController {
 		TaskInstance taskInstance = WfContextBuilder.getJbpmContext()
 				.getJbpmContext().getTaskInstance(tiId);
 		if (taskInstance == null)
-			throw new Exception("Atividade indisponÌvel.");
+			throw new Exception("Atividade indispon√≠vel.");
 		return taskInstance;
 	}
 
 	/**
-	 * Carrega as informaÁıes relativas ‡ tarefa, tais como, a inst‚ncia da
-	 * tarefa, os logs, a prioridade e suas vari·veis.
+	 * Carrega as informa√ß√µes relativas √† tarefa, tais como, a inst√¢ncia da
+	 * tarefa, os logs, a prioridade e suas vari√°veis.
 	 * 
 	 * @throws Exception
 	 */
@@ -552,7 +560,7 @@ public class AppController extends WfController {
 	}
 
 	/**
-	 * Carrega a pessoa e a lotaÁ„o designados ‡ terefa.
+	 * Carrega a pessoa e a lota√ß√£o designados √† terefa.
 	 * 
 	 * @param taskInstance
 	 * 

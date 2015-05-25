@@ -8,7 +8,8 @@
 				<div id="desc_editar" style="display: none;">
 					<h3>Descrição da Tarefa</h3>
 					<div class="gt-form gt-content-box">
-						<form method="POST" action="${linkTo[AppController].saveKnowledge}">
+						<form method="POST"
+							action="${linkTo[AppController].saveKnowledge}">
 							<input name="tiId" type="hidden" value="${tiId}" />
 							<div class="gt-form-row gt-width-100">
 								<label>Descrição</label>
@@ -30,7 +31,7 @@
 			<form method="POST" action="${linkTo[AppController].executeTask}">
 				<h3>Execução da Tarefa</h3>
 				<div class="gt-form gt-content-box">
-					<div style="margin:10px;" >
+					<div style="margin: 10px;">
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 							<span id="gc-ancora"></span>
@@ -50,7 +51,8 @@
 										</c:if>${task.descricao}</c:when>
 									<c:otherwise>Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
 											href="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display='';">aqui</a> para contribuir.</c:otherwise>
-								</c:choose> </span>
+								</c:choose>
+							</span>
 						</c:if>
 					</div>
 					<div class="gt-form-row gt-width-100">
@@ -60,98 +62,101 @@
 							<c:forEach var="variable" items="${task.variableList}">
 								<c:if test="${not variable.aviso}">
 									<tr>
-									<c:choose>
-									<c:when test="${fn:startsWith(variable.mappedName,'sel_')}">
-											<td width="">${fn:substring(variable.variableName,0,fn:indexOf(variable.variableName,'('))}</td>
-									</c:when>
-									<c:otherwise>
-										<td width="">${variable.variableName}</td>
-									</c:otherwise>
-									</c:choose>
+										<c:choose>
+											<c:when test="${fn:startsWith(variable.mappedName,'sel_')}">
+												<td width="">${fn:substring(variable.variableName,0,fn:indexOf(variable.variableName,'('))}</td>
+											</c:when>
+											<c:otherwise>
+												<td width="">${variable.variableName}</td>
+											</c:otherwise>
+										</c:choose>
 
 										<td width=""><c:set var="editable"
 												value="${variable.writable and (variable.readable or empty taskInstance.token.processInstance.contextInstance.variables[variable.mappedName])}" />
 											<c:if test="${editable}">
 												<input name="fieldNames" type="hidden"
 													value="${variable.mappedName}" />
-											</c:if> <c:choose><c:when test="${fn:startsWith(variable.mappedName,'doc_')}">
-												<c:choose>
-													<c:when test="${editable}">
-														<siga:selecao propriedade="${variable.mappedName}"
-															modulo="sigaex" tipo="expediente" tema="simple"
-															ocultardescricao="sim"
-															siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
-													</c:when>
-													<c:otherwise>
-														<a
-															href="/sigaex/app/expediente/doc/exibir?sigla=${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}">${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}</a>
-													</c:otherwise>
-												</c:choose>
-											</c:when> <c:when
-											test="${fn:startsWith(variable.mappedName,'pes_')}">
-												<c:choose>
-													<c:when test="${editable}">
-														<siga:selecao propriedade="${variable.mappedName}"
-															modulo="siga" tipo="pessoa" tema="simple"
-															ocultardescricao="sim"
-															siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
-													</c:when>
-													<c:otherwise>
+											</c:if> <c:choose>
+												<c:when test="${fn:startsWith(variable.mappedName,'doc_')}">
+													<c:choose>
+														<c:when test="${editable}">
+															<siga:selecao propriedade="${variable.mappedName}"
+																modulo="sigaex" tipo="expediente" tema="simple"
+																ocultardescricao="sim"
+																siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+														</c:when>
+														<c:otherwise>
+															<a
+																href="/sigaex/app/expediente/doc/exibir?sigla=${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}">${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}</a>
+														</c:otherwise>
+													</c:choose>
+												</c:when>
+												<c:when test="${fn:startsWith(variable.mappedName,'pes_')}">
+													<c:choose>
+														<c:when test="${editable}">
+															<siga:selecao propriedade="${variable.mappedName}"
+																modulo="siga" tipo="pessoa" tema="simple"
+																ocultardescricao="sim"
+																siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+														</c:when>
+														<c:otherwise>
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 								</c:otherwise>
-												</c:choose>
-											</c:when>  <c:when
-											test="${fn:startsWith(variable.mappedName,'lot_')}">
-												<c:choose>
-													<c:when test="${editable}">
-														<siga:selecao propriedade="${variable.mappedName}"
-															modulo="siga" tipo="lotacao" tema="simple"
-															ocultardescricao="sim"
-															siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
-													</c:when>
-													<c:otherwise>
+													</c:choose>
+												</c:when>
+												<c:when test="${fn:startsWith(variable.mappedName,'lot_')}">
+													<c:choose>
+														<c:when test="${editable}">
+															<siga:selecao propriedade="${variable.mappedName}"
+																modulo="siga" tipo="lotacao" tema="simple"
+																ocultardescricao="sim"
+																siglaInicial="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+														</c:when>
+														<c:otherwise>
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 								</c:otherwise>
-												</c:choose>
-											</c:when>  <c:when
-											test="${fn:startsWith(variable.mappedName,'dt_')}">
-												<c:choose>
-													<c:when test="${editable}">
-														<input name="fieldValues" type="text"
-															value="<fmt:formatDate pattern="dd/MM/yyyy"	value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />"
-															onblur="javascript:verifica_data(this, true);" />
-													</c:when>
-													<c:otherwise>
-														<fmt:formatDate pattern="dd/MM/yyyy"
-															value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
-													</c:otherwise>
-												</c:choose>
-											</c:when>  <c:when
-											test="${fn:startsWith(variable.mappedName,'sel_')}">
-												<c:choose>
-													<c:when test="${editable}">
-														<select name="fieldValues">
-															<c:forEach var="opcao"
-																items="${wf:listarOpcoes(variable.variableName)}">
-																<option value="${opcao}">${opcao}</option>
-															</c:forEach>
-														</select>
-													</c:when>
-													<c:otherwise>
+													</c:choose>
+												</c:when>
+												<c:when test="${fn:startsWith(variable.mappedName,'dt_')}">
+													<c:choose>
+														<c:when test="${editable}">
+															<input name="fieldValues" type="text"
+																value="<fmt:formatDate pattern="dd/MM/yyyy"	value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />"
+																onblur="javascript:verifica_data(this, true);" />
+														</c:when>
+														<c:otherwise>
+															<fmt:formatDate pattern="dd/MM/yyyy"
+																value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+														</c:otherwise>
+													</c:choose>
+												</c:when>
+												<c:when test="${fn:startsWith(variable.mappedName,'sel_')}">
+													<c:choose>
+														<c:when test="${editable}">
+															<select name="fieldValues">
+																<c:forEach var="opcao"
+																	items="${wf:listarOpcoes(variable.variableName)}">
+																	<option value="${opcao}">${opcao}</option>
+																</c:forEach>
+															</select>
+														</c:when>
+														<c:otherwise>
 										${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
-												</c:choose>
-											</c:when> <c:otherwise>
-												<c:choose>
-													<c:when test="${editable}">
-														<input name="fieldValues" type="text"
-															value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
-													</c:when>
-													<c:otherwise>
+													</c:choose>
+												</c:when>
+												<c:otherwise>
+													<c:choose>
+														<c:when test="${editable}">
+															<input name="fieldValues" type="text"
+																value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
+														</c:when>
+														<c:otherwise>
 									${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}
 									</c:otherwise>
-												</c:choose>
-											</c:otherwise></c:choose></td>
+													</c:choose>
+												</c:otherwise>
+											</c:choose></td>
 									</tr>
 								</c:if>
 							</c:forEach>
@@ -186,24 +191,23 @@
 						<div class="gt-form-row gt-width-100">
 							<label>Pessoa</label>
 							<siga:selecao modulo="siga" tipo="pessoa" tema="simple"
-										propriedade="ator"
-										siglaInicial="${atorSel.sigla}"
-										idInicial="${atorSel.id}"
-										descricaoInicial="${atorSel.descricao}" />
-							
+								propriedade="ator" siglaInicial="${atorSel.sigla}"
+								idInicial="${atorSel.id}"
+								descricaoInicial="${atorSel.descricao}" />
+
 						</div>
 						<div class="gt-form-row gt-width-100">
 
 							<label>Lotação</label>
 							<siga:selecao modulo="siga" tipo="lotacao" tema="simple"
-										propriedade="lotaAtor"
-										siglaInicial="${lotaAtorSel.sigla}"
-										idInicial="${lotaAtorSel.id}"
-										descricaoInicial="${lotaAtorSel.descricao}" />
+								propriedade="lotaAtor" siglaInicial="${lotaAtorSel.sigla}"
+								idInicial="${lotaAtorSel.id}"
+								descricaoInicial="${lotaAtorSel.descricao}" />
 						</div>
 						<div class="gt-form-row gt-width-33" style="float: left">
 							<label>Prioridade</label>
-							<siga:select name="prioridade" list="prioridades" listKey="id" listValue="descr" theme="simple" />
+							<siga:select name="prioridade" list="prioridades" listKey="id"
+								listValue="descr" theme="simple" />
 						</div>
 						<div class="gt-form-row gt-width-66" style="float: right">
 							<label>Justificativa (opcional)</label> <input type="text"
@@ -220,31 +224,35 @@
 						</div>
 					</form>
 				</div>
+			</c:if>
 
-				<h3>Comentários</h3>
-				<div class="gt-content-box">
-					<table class="gt-table">
-						<thead>
-							<th>Data/Hora</th>
-							<th>Atendente</th>
-							<th>Descrição</th>
-						</thead>
-						<c:forEach var="ti" items="${wf:ordenarTarefas(taskInstance)}">
-							<c:forEach var="c" items="${wf:ordenarComentarios(ti)}">
-								<tr>
-									<td>${f:espera(c.time)}</td>
-									<td>${c.actorId}</td>
-									<td>${c.message}</td>
-								</tr>
-							</c:forEach>
+			<h3>Comentários</h3>
+			<div class="gt-content-box">
+				<table class="gt-table">
+					<thead>
+						<th>Data/Hora</th>
+						<th>Atendente</th>
+						<th>Descrição</th>
+					</thead>
+					<c:forEach var="ti" items="${wf:ordenarTarefas(taskInstance)}">
+						<c:forEach var="c" items="${wf:ordenarComentarios(ti)}">
 							<tr>
-								<td>${f:espera(ti.create)}</td>
-								<td>${ti.actorId}</td>
-								<td><b>${ti.name}</b></td>
+								<td>${f:espera(c.time)}</td>
+								<td>${c.actorId}</td>
+								<td>${c.message}</td>
 							</tr>
 						</c:forEach>
-					</table>
-				</div>
+						<tr>
+							<td>${f:espera(ti.create)}</td>
+							<td>${ti.actorId}</td>
+							<td><b>${ti.name}</b></td>
+						</tr>
+					</c:forEach>
+				</table>
+			</div>
+
+			<c:if
+				test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance))}">
 				<div class="gt-form gt-content-box">
 					<form method="POST" action="${linkTo[AppController].commentTask}">
 						<input name="tiId" type="hidden" value="${taskInstance.id}" /> <label>Comentário</label>
@@ -327,23 +335,17 @@
 			</div>
 			<!-- /Sidebar Box -->
 --%>
-			
+
 			<!-- Sidebar List -->
 			<div class="gt-sidebar-list">
 				<h3>Mapa do Procedimento</h3>
-				<div style="display: none" id="input">
-					digraph G {
-						graph[size="3,3", rankdir="LR"]; ${dot}
-					}
-				</div>
-				<a
-						onclick="javascript: showBig();"
-						title="Zoom" href="#">
-				<div class="gt-sidebar-list-content" id="output">
-				</div>
+				<div style="display: none" id="input">digraph G {
+					graph[size="3,3", rankdir="LR"]; ${dot} }</div>
+				<a onclick="javascript: showBig();" title="Zoom" href="#">
+					<div class="gt-sidebar-list-content" id="output"></div>
 				</a>
 			</div>
-			
+
 			<!-- /Sidebar List -->
 
 			<div class="gt-sidebar-content" id="gc"></div>
@@ -365,23 +367,19 @@
 			class="gt-btn-large gt-btn-left">Voltar</a>
 
 	</div>
-	
+
 	<div class="gt-bd clearfix" style="display: none" id="svg">
 		<div class="gt-content clearfix">
 			<div id="desc_editar">
 				<h3>Mapa do Procedimento</h3>
-				<div style="display: none" id="input2">
-					digraph G {
-						graph[size="100,100", rankdir="LR"]; ${dot}
-					}
-				</div>
-				
-				<div class="gt-form gt-content-box" style="padding-bottom: 15px;" id="output2">
-				</div>
+				<div style="display: none" id="input2">digraph G {
+					graph[size="100,100", rankdir="LR"]; ${dot} }</div>
+
+				<div class="gt-form gt-content-box" style="padding-bottom: 15px;"
+					id="output2"></div>
 			</div>
 		</div>
-		<a href="javascript: hideBig();"
-			class="gt-btn-large gt-btn-left">Voltar</a>
+		<a href="javascript: hideBig();" class="gt-btn-large gt-btn-left">Voltar</a>
 
 	</div>
 
@@ -390,13 +388,15 @@
 
 		<c:url var="url" value="/../sigagc/app/knowledgeInplace">
 			<c:param name="tags">${task.ancora}</c:param>
-			<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a href="$1">aqui</a> para contribuir.</c:param>
+			<c:param name="msgvazio">Ainda não existe uma descrição de como esta tarefa deve ser executada. Por favor, clique <a
+					href="$1">aqui</a> para contribuir.</c:param>
 			<c:param name="titulo">${taskInstance.task.processDefinition.name} - ${taskInstance.task.name}</c:param>
 			<c:param name="ts">${currentTimeMillis}</c:param>
 		</c:url>
 		<script type="text/javascript">
-	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc-ancora'));
-	</script>
+			SetInnerHTMLFromAjaxResponse("${url}", document
+					.getElementById('gc-ancora'));
+		</script>
 
 		<c:url var="url" value="/../sigagc/app/knowledgeSidebar">
 			<c:param name="tags">@workflow</c:param>
@@ -406,114 +406,123 @@
 			<c:param name="ts">${currentTimeMillis}</c:param>
 		</c:url>
 		<script type="text/javascript">
-	SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
-	</script>
+			SetInnerHTMLFromAjaxResponse("${url}", document
+					.getElementById('gc'));
+		</script>
 	</c:if>
-	
+
 	<script>
 		if (window.Worker) {
 			window.VizWorker = new Worker("/siga/javascript/viz.js");
-			window.VizWorker.onmessage = function (oEvent) {
-				  document.getElementById(oEvent.data.id).innerHTML = oEvent.data.svg;
-				  $(document).ready(function () {
-					    updateContainer();
-					});
-				};
+			window.VizWorker.onmessage = function(oEvent) {
+				document.getElementById(oEvent.data.id).innerHTML = oEvent.data.svg;
+				$(document).ready(function() {
+					updateContainer();
+				});
+			};
 		} else {
-			document.write("<script src='/siga/javascript/viz.js' language='JavaScript1.1' type='text/javascript'>"+"<"+"/script>");
+			document
+					.write("<script src='/siga/javascript/viz.js' language='JavaScript1.1' type='text/javascript'>"
+							+ "<"+"/script>");
 		}
 	</script>
-    <script>
+	<script>
 		function bigmap() {
 			var input = 'digraph G { graph[size="100,100"]; ${dot} }';
 
 			if (window.VizWorker) {
-				document.getElementById("output2").innerHTML = "Aguarde..."; 
-				window.VizWorker.postMessage({id:"output2", graph:input});
+				document.getElementById("output2").innerHTML = "Aguarde...";
+				window.VizWorker.postMessage({
+					id : "output2",
+					graph : input
+				});
 				return;
 			}
 
 			var format = "svg";
 			var engine = "dot";
-			
+
 			var result = Viz(input, format, engine);
-			
+
 			if (format == "svg") {
-			  document.getElementById("output2").innerHTML = result;
+				document.getElementById("output2").innerHTML = result;
 			} else {
-			  document.getElementById("output2").innerHTML = "";
+				document.getElementById("output2").innerHTML = "";
 			}
-			$(document).ready(function () {
-			    updateContainer();
+			$(document).ready(function() {
+				updateContainer();
 			});
 		}
-		
+
 		function smallmap() {
 			var input = 'digraph G { graph[size="3,3"]; ${dot} }';
 
 			if (window.VizWorker) {
-				document.getElementById("output").innerHTML = "Aguarde..."; 
-				window.VizWorker.postMessage({id:"output", graph:input});
+				document.getElementById("output").innerHTML = "Aguarde...";
+				window.VizWorker.postMessage({
+					id : "output",
+					graph : input
+				});
 				return;
 			}
-			
+
 			var format = "svg";
 			var engine = "dot";
-			
+
 			var result = Viz(input, format, engine);
-			
+
 			if (format == "svg") {
-			  document.getElementById("output").innerHTML = result;
+				document.getElementById("output").innerHTML = result;
 			} else {
-			  document.getElementById("output").innerHTML = "";
+				document.getElementById("output").innerHTML = "";
 			}
 		}
 
 		function showBig() {
-			document.getElementById('page').style.display='none';
-			document.getElementById('svg').style.display='block';
+			document.getElementById('page').style.display = 'none';
+			document.getElementById('svg').style.display = 'block';
 			bigmap();
 		}
-		
+
 		function hideBig() {
-			document.getElementById('page').style.display='block';
-			document.getElementById('svg').style.display='none';
+			document.getElementById('page').style.display = 'block';
+			document.getElementById('svg').style.display = 'none';
 			updateContainer();
 		}
-		
+
 		smallmap();
 
-		$(document).ready(function () {
-		    updateContainer();
-		    $(window).resize(function() {
-		        updateContainer();
-		    });
+		$(document).ready(function() {
+			updateContainer();
+			$(window).resize(function() {
+				updateContainer();
+			});
 		});
 		function updateContainer() {
-		    var smallwidth = $('#output').width(); 
-		    var smallsvg = $('#output :first-child').first(); 
-		    var smallviewbox = smallsvg.attr('viewBox');
-		      
-		    if(typeof smallviewbox != 'undefined') {
-			    var a = smallviewbox.split(' ');  
-	
-			    // set attrs and 'resume' force 
-			    smallsvg.attr('width', smallwidth);
-			    smallsvg.attr('height', smallwidth * a[3] / a[2]);
-		    }
-		    
-		    var bigwidth = $('#output2').width(); 
-		    var bigsvg = $('#output2 :first-child').first(); 
-		    var bigviewbox = bigsvg.attr('viewBox');
-		      
-		    if(typeof bigviewbox != 'undefined') {
-			    var a = bigviewbox.split(' ');  
-	
-			    // set attrs and 'resume' force 
-			    bigsvg.attr('width', bigwidth);
-			    bigsvg.attr('height', bigwidth * a[3] / a[2]);
-		    }
+			var smallwidth = $('#output').width();
+			var smallsvg = $('#output :first-child').first();
+			var smallviewbox = smallsvg.attr('viewBox');
+
+			if (typeof smallviewbox != 'undefined') {
+				var a = smallviewbox.split(' ');
+
+				// set attrs and 'resume' force 
+				smallsvg.attr('width', smallwidth);
+				smallsvg.attr('height', smallwidth * a[3] / a[2]);
+			}
+
+			var bigwidth = $('#output2').width();
+			var bigsvg = $('#output2 :first-child').first();
+			var bigviewbox = bigsvg.attr('viewBox');
+
+			if (typeof bigviewbox != 'undefined') {
+				var a = bigviewbox.split(' ');
+
+				// set attrs and 'resume' force 
+				bigsvg.attr('width', bigwidth);
+				bigsvg.attr('height', bigwidth * a[3] / a[2]);
+			}
 		}
-    </script>
-	
+	</script>
+
 </siga:pagina>

@@ -26,8 +26,11 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfAssignmentHandler;
 import br.gov.jfrj.siga.wf.util.WfGraphFactory;
 import br.gov.jfrj.siga.wf.util.WfTaskVO;
@@ -44,8 +47,8 @@ public class WfUtil {
 	}
 
 	/**
-	 * Retorna a sigla do ator a quem está atribuida a tarefa, ou a sigla da
-	 * lotação se a tarefa estiver no pool. Se a tarefa estiver com o titular,
+	 * Retorna a sigla do ator a quem estï¿½ atribuida a tarefa, ou a sigla da
+	 * lotaï¿½ï¿½o se a tarefa estiver no pool. Se a tarefa estiver com o titular,
 	 * retorna "(minha)"
 	 * 
 	 * 
@@ -89,7 +92,7 @@ public class WfUtil {
 	}
 
 	/**
-	 * Retorna a sigla do primeiro ator que faça parte do pool de atores na task
+	 * Retorna a sigla do primeiro ator que faï¿½a parte do pool de atores na task
 	 * instance.
 	 * 
 	 * @param ti
@@ -109,7 +112,7 @@ public class WfUtil {
 	}
 
 	/**
-	 * Inicializa a variável "task" para que seus atributos possam ser
+	 * Inicializa a variï¿½vel "task" para que seus atributos possam ser
 	 * visualizados pelas actions.
 	 * 
 	 * @throws IllegalAccessException
@@ -232,15 +235,15 @@ public class WfUtil {
 	public static void transferirDocumentosVinculados(ProcessInstance pi,
 			String siglaTitular) throws Exception {
 		ExService service = Service.getExService();
-
+		
 		ArrayList<Token> tokens = new ArrayList<Token>();
 		pi.getRootToken().collectChildrenRecursively(tokens);
 		tokens.add(pi.getRootToken());
-
+		
 		ArrayList<TaskInstance> tis = new ArrayList<TaskInstance>();
 		for (Token t : tokens) {
-			tis.addAll((Collection<TaskInstance>) (pi.getTaskMgmtInstance()
-					.getSignallingTasks(new ExecutionContext(t))));
+			tis.addAll((Collection<TaskInstance>) (pi
+				.getTaskMgmtInstance().getSignallingTasks(new ExecutionContext(t))));
 		}
 
 		for (TaskInstance ti : tis) {
@@ -249,29 +252,44 @@ public class WfUtil {
 						.getTask().getTaskController().getVariableAccesses();
 				for (VariableAccess variable : variableAccesses) {
 					if (variable.getMappedName().startsWith("doc_")
-							&& variable.isReadable()
-							&& !variable.isWritable()
-							&& !variable.getAccess().toString()
-									.contains(WfTaskVO.DISABLE_DOC_FORWARD)) {
+							&& variable.isReadable() && !variable.isWritable() && !variable.getAccess().toString().contains(WfTaskVO.DISABLE_DOC_FORWARD)) {
 						String value = (String) ti.getToken()
 								.getProcessInstance().getContextInstance()
 								.getVariable(variable.getMappedName());
 						if (value != null && value.trim().length() == 0)
 							value = null;
 						String destino = ti.getActorId();
-						if (destino == null)
+						
+						if (destino != null){
+							DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+							flt.setSigla(destino);
+							DpPessoa ator = (DpPessoa) WfDao.getInstance()
+									.consultarPorSigla(flt);
+							if (!atorDeveReexecutarTarefa(ator,ti)){
+								destino = null;
+							}
+						}
+						
+						if (destino == null){
 							for (PooledActor lot : (Collection<PooledActor>) ti
 									.getPooledActors()) {
 								destino = "@" + lot.getActorId();
 								break;
 							}
+						}
 						if (value != null && destino != null)
-							service.transferir(value, destino, siglaTitular,
-									true);
+							service.transferir(value, destino, siglaTitular, true);
 					}
 				}
 			}
 		}
+	}
+	
+	private static boolean atorDeveReexecutarTarefa(DpPessoa ator, TaskInstance ti) {
+		DpLotacaoDaoFiltro lotflt = new DpLotacaoDaoFiltro();
+		lotflt.setSiglaCompleta(((PooledActor) ti.getPooledActors().toArray()[0]).getActorId());
+		DpLotacao lotacao = (DpLotacao) WfDao.getInstance().consultarPorSigla(lotflt);
+		return !ator.isFechada() && ator.getLotacao().equivale(lotacao);
 	}
 
 	public void assertPodeTransferirDocumentosVinculados(TaskInstance ti,
@@ -293,9 +311,9 @@ public class WfUtil {
 					if (value != null && value.trim().length() != 0)
 						if (!service.podeTransferir(value, siglaTitular, true)) {
 							throw new AplicacaoException(
-									"A tarefa não pode prosseguir porque o documento '"
+									"A tarefa nï¿½o pode prosseguir porque o documento '"
 											+ value
-											+ "' não pode ser transferido. Por favor, verifique se o documento está em sua lotação e se está 'Aguardando andamento'.");
+											+ "' nï¿½o pode ser transferido. Por favor, verifique se o documento estï¿½ em sua lotaï¿½ï¿½o e se estï¿½ 'Aguardando andamento'.");
 						}
 				}
 			}
@@ -324,11 +342,11 @@ public class WfUtil {
 		}
 
 		throw new AplicacaoException(
-				"A designação de '"
+				"A designaï¿½ï¿½o de '"
 						+ lotAtual.getSigla()
 						+ "' para '"
 						+ lotFutura.getSigla()
-						+ "' não é permitida pois só são aceitas lotações ascendentes seguindo a linha do organograma ou descendentes diretas.");
+						+ "' nï¿½o ï¿½ permitida pois sï¿½ sï¿½o aceitas lotaï¿½ï¿½es ascendentes seguindo a linha do organograma ou descendentes diretas.");
 	}
 
 	public String getSiglaTitular() {
@@ -337,8 +355,8 @@ public class WfUtil {
 	}
 
 	/**
-	 * Monta o objeto WfTaskVO (view object, que será usado na interface do
-	 * usuário).
+	 * Monta o objeto WfTaskVO (view object, que serï¿½ usado na interface do
+	 * usuï¿½rio).
 	 * 
 	 * @param taskInstance
 	 * @param variableAccesses

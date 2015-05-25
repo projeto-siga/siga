@@ -108,7 +108,14 @@
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-wf</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>net.sf.jasperreports</groupId>
+					<artifactId>jasperreports</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-base</artifactId>

@@ -282,16 +282,17 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		List<Object[]> resultado = query.list();
 		Set<Tarefa> tarefas = new TreeSet<Tarefa>(new TarefaComparator());
 		for (Object[] o : resultado) {
-			Tarefa t = new Tarefa();
-			t.setDataInicioProcedimento((Calendar) o[2]);
-			t.setDataFimProcedimento((Calendar) o[3]);
-			t.setNumeroDocumento((String) o[0]);
-			t.setNome((String) o[4]);
-			t.setDataInicio((Calendar) o[5]);
-			t.setDataFim((Calendar) o[6]);
-
-			tarefas.add(t);
-
+			if (o[0]!=null){
+				Tarefa t = new Tarefa();
+				t.setDataInicioProcedimento((Calendar) o[2]);
+				t.setDataFimProcedimento((Calendar) o[3]);
+				t.setNumeroDocumento((String) o[0]);
+				t.setNome((String) o[4]);
+				t.setDataInicio((Calendar) o[5]);
+				t.setDataFim((Calendar) o[6]);
+	
+				tarefas.add(t);
+			}
 		}
 		// Set<Doc> secs = new TreeSet<Doc>(new DocComparator());
 		// for (Object[] o : resultado) {

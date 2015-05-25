@@ -248,4 +248,13 @@ public class SolicitacaoController extends SrController {
         result.include("podeUtilizarServicoSigaGC",false);
         
     }
+    
+    @Path("/retirarDeLista")
+    public void retirarDeLista(Long idSolicitacao, Long idLista) throws Exception {
+        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
+        SrLista lista = SrLista.AR.findById(idLista);
+        solicitacao.retirarDeLista(lista, getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+        result.include("lista", lista);
+        result.include("solicitacao", solicitacao);
+    }
 }

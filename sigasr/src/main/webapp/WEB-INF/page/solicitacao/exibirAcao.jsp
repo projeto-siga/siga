@@ -90,8 +90,6 @@ function carregarLotacaoDaAcao(){
     </script>
 </c:if>
 
-if: ${not empty solicitacao.itemConfiguracao } / ${not empty acoesEAtendentes}
-
 <c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}" > 
     <div class="gt-form-row gt-width-66">
     <label>Ação</label>   
@@ -130,5 +128,5 @@ if: ${not empty solicitacao.itemConfiguracao } / ${not empty acoesEAtendentes}
 </c:if>
 
 <div id="divAtributos">
-<%--     <jsp:include page="exibirAtributos.jsp"></jsp:include> --%>
+    <jsp:include page="exibirAtributos.jsp"></jsp:include>
 </div>

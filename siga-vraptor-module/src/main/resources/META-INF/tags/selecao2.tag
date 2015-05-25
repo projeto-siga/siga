@@ -1,8 +1,8 @@
 <%@ tag body-content="empty"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ attribute name="titulo" required="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ attribute name="titulo" required="false"%>
 <%@ attribute name="propriedade"%>
 <%@ attribute name="reler" required="false"%>
 <%@ attribute name="relertab" required="false"%>
@@ -13,6 +13,7 @@
 <%@ attribute name="modulo" required="false"%>
 <%@ attribute name="idAjax" required="false"%>
 <%@ attribute name="onchange" required="false"%>
+<%@ attribute name="paramList" required="false"%>
 
 <c:set var="propriedadeClean" value="${fn:replace(propriedade,'.','')}" />
 

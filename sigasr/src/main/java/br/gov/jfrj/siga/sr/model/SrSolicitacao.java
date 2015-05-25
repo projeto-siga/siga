@@ -521,11 +521,11 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public int getGUT() {
-        return getGravidade().getNivelGravidade() * getUrgencia().getNivelUrgencia() * getTendencia().nivelTendencia;
+        return getGravidade().getNivelGravidade() * getUrgencia().getNivelUrgencia() * getTendencia().getNivelTendencia();
     }
 
     public String getGUTString() {
-        return getGravidade().getDescrGravidade() + " " + getUrgencia().getDescrUrgencia() + " " + getTendencia().descrTendencia;
+        return getGravidade().getDescrGravidade() + " " + getUrgencia().getDescrUrgencia() + " " + getTendencia().getDescrTendencia();
     }
 
     public String getGUTPercent() {

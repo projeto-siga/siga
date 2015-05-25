@@ -298,6 +298,10 @@ public class CpConfiguracaoBL {
 		// } catch (Exception e) {
 		// System.out.println(e.getStackTrace());
 		// }
+		
+		if (lista == null) {
+		    return null;
+		}
 
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn))

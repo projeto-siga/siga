@@ -21,6 +21,11 @@
 		    <jsp:include page="exibirLocalRamalEMeioContato.jsp"></jsp:include>
 		    
 		    
+		    <br/><br/><br/>
+		    exibirItemConfiguracao.jsp
+		    <jsp:include page="exibirItemConfiguracao.jsp"></jsp:include>
+		    
+		    
         </form>
     </div>
 </siga:pagina>

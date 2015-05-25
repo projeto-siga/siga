@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,8 +12,10 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrSolicitacao.SrTarefa;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -29,14 +34,15 @@ public class SolicitacaoController extends SrController {
 
     @Path("/teste")
     public void teste(boolean banco) {
-        SrSolicitacao value = new SrSolicitacao();
+        SrSolicitacao solicitacao = new SrSolicitacao();
         if (banco) {
-            value = (SrSolicitacao) SrSolicitacao.AR.all().fetch().get(0);
+            solicitacao = (SrSolicitacao) SrSolicitacao.AR.all().fetch().get(0);
         }
 
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
-        result.include("locaisDisponiveis", value.getLocaisDisponiveis());
-        result.include("solicitacao", value);
+        result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
+        result.include("solicitacao", solicitacao);
+        result.include("itemConfiguracao",solicitacao.getItemConfiguracao());
     }
 
     @Path("/testeErro")
@@ -49,5 +55,14 @@ public class SolicitacaoController extends SrController {
         validator.onErrorUsePageOf(this).teste(false);
 
     }
+    
+    @Path("/exibirAcao")
+    public void exibirAcao(SrSolicitacao solicitacao) throws Exception {
+        Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+        result.include("solicitacao",solicitacao);
+        result.include("acoesEAtendentes",acoesEAtendentes);
+
+    }
 
 }
+

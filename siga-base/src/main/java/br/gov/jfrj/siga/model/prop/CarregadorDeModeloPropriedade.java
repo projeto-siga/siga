@@ -53,7 +53,7 @@ public class CarregadorDeModeloPropriedade {
 		Properties geral = new Properties();
 		Class cls = obj.getClass();
 		String clsNme = cls.getName();
-		// retorna propriedades da cache, se tem lá
+		// retorna propriedades da cache, se tem lï¿½
 		Properties prpCache = cache.get(clsNme);
 		if (prpCache != null)
 			return prpCache;
@@ -116,9 +116,9 @@ public class CarregadorDeModeloPropriedade {
 		} catch (Exception e) {
 
 		}
-
+		
 		// tenta carregar carregar propriedades registradas por um servidor de
-		// aplicações, por exemplo.
+		// aplicacoes, por exemplo.
 		try {
 			return carregarPropriedadesDoSistema();
 		} catch (Exception e) {
@@ -132,7 +132,7 @@ public class CarregadorDeModeloPropriedade {
 						+ NOME_ARQ_PROPS
 						+ ".file=CAMINHO_COMPLETO_DO_ARQUIVO na inicialização do programa \n 3) Coloque um arquivo "
 						+ NOME_ARQ_PROPS
-						+ " no mesmo diretório do aplicativo \n 4) Se for uma aplicação web, coloque o arquivo "
+						+ " no mesmo diretï¿½rio do aplicativo \n 4) Se for uma aplicação web, coloque o arquivo "
 						+ NOME_ARQ_PROPS
 						+ " no diretório de configuração do servidor de aplicação e configure-o para ler tal arquivo");
 
@@ -150,7 +150,7 @@ public class CarregadorDeModeloPropriedade {
 	/**
 	 * Tenta carregar as propriedades em um arquivo localizado em um diretório
 	 * específico. Ess forma é ideal para compartilhar arquivos de propriedades
-	 * entre módulos web e não-web, mantendo-os em um arquivo único.
+	 * entre módulos web e nãp-web, mantendo-os em um arquivo único.
 	 * 
 	 * @param caminhoArquivo
 	 * @return

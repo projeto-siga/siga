@@ -26,7 +26,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -162,9 +162,10 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	private CpTipoPessoa cpTipoPessoa;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pessoaInicial")
+	@OrderBy("idPessoa DESC")
 	@Desconsiderar
 	//private Set<DpPessoa> pessoasPosteriores = new HashSet<DpPessoa>(0);
-	private Set<DpPessoa> pessoasPosteriores = new TreeSet<DpPessoa>();
+	private Set<DpPessoa> pessoasPosteriores;
 
 	/**
 	 * @return the cpTipoPessoa
@@ -637,7 +638,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	}
 
 	/**
-	 * Define o nome de exibição (apelido ou nome com pronome de tratamento, por
+	 * Define o nome de exibiï¿½ï¿½o (apelido ou nome com pronome de tratamento, por
 	 * exemplo)
 	 * 
 	 * @param nomeExibicao
@@ -647,7 +648,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	}
 
 	/**
-	 * Retorna o nome de exibição (apelido ou nome com pronome de tratamento,
+	 * Retorna o nome de exibiï¿½ï¿½o (apelido ou nome com pronome de tratamento,
 	 * por exemplo)
 	 * 
 	 * @return

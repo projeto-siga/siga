@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -124,42 +125,49 @@ public class CpConfiguracaoBL {
 			return getHashListas().get(idTipoConfig);
 	}
 
-	private synchronized void atualizarCache(Long idTipoConfig) {
-			if (!cacheInicializado){
-				inicializarCache();
-				return;
-			}
-			Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
-	
-			if (dtUltimaAtualizacaoCache == null || dt.after(dtUltimaAtualizacaoCache)) {
-	
-				SessionFactory sfCpDao = CpDao.getInstance().getSessao()
-						.getSessionFactory();
-				
-				sfCpDao.evict(CpConfiguracao.class);
-	
-	
-				List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
-				Logger.getLogger("siga.conf.cache").fine("N˙mero de alteraÁıes no cache: " + alteracoes.size());
-				if (alteracoes.size() > 0){
-					evitarLazy(alteracoes);
-					inicializarCache(idTipoConfig);
-					
-					for (CpConfiguracao cpConfiguracao : alteracoes) {
-						Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
-						inicializarCache(idTpConf);
-						if (cpConfiguracao.ativaNaData(dt)){
-							hashListas.get(idTpConf).add(cpConfiguracao);	
-						}else{
-							hashListas.get(idTpConf).remove(cpConfiguracao);
-						}
-					}
-				}
-	
-				dtUltimaAtualizacaoCache = dt;
-			}
+	private void atualizarCache(Long idTipoConfig) {
+		if (!cacheInicializado){
+			inicializarCache();
+			return;
+		}
+		Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
+
+		if (dtUltimaAtualizacaoCache == null || dt.after(dtUltimaAtualizacaoCache)) {
+			procederAtualizacaoDeCache(idTipoConfig, dt);
+		}
 	}
 
+	private synchronized void procederAtualizacaoDeCache(Long idTipoConfig, Date dt) {
+		if (dtUltimaAtualizacaoCache != null && !dt.after(dtUltimaAtualizacaoCache)) 
+			return;
+
+		SessionFactory sfCpDao = CpDao.getInstance().getSessao()
+				.getSessionFactory();
+
+		sfCpDao.evict(CpConfiguracao.class);
+
+
+		List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
+	
+		Logger.getLogger("siga.conf.cache").fine("Numero de alteracoes no cache: " + alteracoes.size());
+		if (alteracoes.size() > 0){
+			evitarLazy(alteracoes);
+			inicializarCache(idTipoConfig);
+
+			for (CpConfiguracao cpConfiguracao : alteracoes) {
+				Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
+				inicializarCache(idTpConf);
+				if (cpConfiguracao.ativaNaData(dt)){
+					hashListas.get(idTpConf).add(cpConfiguracao); 
+				}else{
+					hashListas.get(idTpConf).remove(cpConfiguracao);
+				}
+			}
+		}
+
+		dtUltimaAtualizacaoCache = dt;
+	}
+	
 	protected void inicializarCache(Long idTipoConfig) {
 		if (idTipoConfig!= null && hashListas.get(idTipoConfig) == null){
 			TreeSet<CpConfiguracao> tree = new TreeSet<CpConfiguracao>(comparator);
@@ -170,12 +178,13 @@ public class CpConfiguracaoBL {
 		}
 	}
 
+
 	/**
-	 * Varre as entidades definidas na configuraÁ„o para evitar que o hibernate
-	 * guarde versıes lazy delas.
+	 * Varre as entidades definidas na configura√ß√£o para evitar que o hibernate
+	 * guarde vers√µes lazy delas.
 	 * 
 	 * @param listaCfg
-	 *            - lista de configuraÁıes que podem ter objetos lazy
+	 *            - lista de configura√ß√µes que podem ter objetos lazy
 	 */
 	protected void evitarLazy(List<CpConfiguracao> provResults) {
 		for (CpConfiguracao cfg : provResults) {
@@ -218,8 +227,8 @@ public class CpConfiguracaoBL {
 	}
 
 	/**
-	 * Limpa o cache do hibernate. Como as configuraÁıes s„o mantidas em cache
-	 * por motivo de performance, as alteraÁıes precisam ser atualizadas para
+	 * Limpa o cache do hibernate. Como as configura√ß√µes s√£o mantidas em cache
+	 * por motivo de performance, as altera√ß√µes precisam ser atualizadas para
 	 * que possam valer imediatamente.
 	 * 
 	 * @throws Exception
@@ -232,13 +241,13 @@ public class CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * ObtÈm a configuraÁ„o a partir de um filtro, como uma consulta comum a uma
-	 * entidade. O par‚metro atributoDesconsideradoFiltro deve-se ao seguinte:
-	 * para se escolher a configuraÁ„o a ser retornada do bando, s„o
-	 * consideradas na base as configuraÁıes que n„o possuam algum campo
-	 * preenchido que nulo no filtro, a n„o ser que esse atributo tenha sido
-	 * passado atravÈs desse par„metro. Se nenhuma lista de configuraÁıes for
-	 * informada, busca todas as configuraÁıes para o TipoDeConfiguracao
+	 * Obt√©m a configura√ß√£o a partir de um filtro, como uma consulta comum a uma
+	 * entidade. O par√¢metro atributoDesconsideradoFiltro deve-se ao seguinte:
+	 * para se escolher a configura√ß√£o a ser retornada do bando, s√£o
+	 * consideradas na base as configura√ß√µes que n√£o possuam algum campo
+	 * preenchido que nulo no filtro, a n√£o ser que esse atributo tenha sido
+	 * passado atrav√©s desse par√£metro. Se nenhuma lista de configura√ß√µes for
+	 * informada, busca todas as configura√ß√µes para o TipoDeConfiguracao
 	 * constante no filtro.
 	 * 
 	 * @param cpConfiguracaoFiltro
@@ -268,7 +277,7 @@ public class CpConfiguracaoBL {
 					cpConfiguracaoFiltro.getLotacao(), dtEvn);
 
 			// Quando o filtro especifica um perfil, ou seja, estamos tentando
-			// avaliar as permissıes de um determinado perfil, ele e todos os
+			// avaliar as permiss√µes de um determinado perfil, ele e todos os
 			// seus pais devem ser inseridos na lista de perfis
 			if (cpConfiguracaoFiltro.getCpGrupo() != null) {
 				perfis = new TreeSet<CpPerfil>();
@@ -353,6 +362,14 @@ public class CpConfiguracaoBL {
 								.equivale(lotacao.getOrgaoUsuario()))
 					continue;
 
+				if (g instanceof CpPerfil && cfg.getDscFormula()!=null){
+					Map<String,DpPessoa> pessoaMap = new HashMap<String, DpPessoa>();
+					pessoaMap.put("pessoa", pessoa);
+					if (!(Boolean) MVEL.eval(cfg.getDscFormula(),pessoaMap)){
+						continue;
+					}
+				}
+				
 				do {
 					perfis.add((CpPerfil) g);
 					g = ((CpPerfil) g).getCpGrupoPai();
@@ -368,13 +385,13 @@ public class CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * ObtÈm a situaÁ„o a partir de um filtro, como uma consulta comum a uma
-	 * entidade. O par‚metro atributoDesconsideradoFiltro deve-se ao seguinte:
-	 * para se escolher a situaÁ„o a ser retornada, s„o consideradas na base as
-	 * configuraÁıes que n„o possuam algum campo preenchido que nulo no filtro,
-	 * a n„o ser que esse atributo tenha sido passado atravÈs desse par„metro.
-	 * Caso nenhuma configuraÁ„o seja selecionada, a situaÁ„o default do tipo de
-	 * configuraÁ„o ser· retornada.
+	 * Obt√©m a situa√ß√£o a partir de um filtro, como uma consulta comum a uma
+	 * entidade. O par√¢metro atributoDesconsideradoFiltro deve-se ao seguinte:
+	 * para se escolher a situa√ß√£o a ser retornada, s√£o consideradas na base as
+	 * configura√ß√µes que n√£o possuam algum campo preenchido que nulo no filtro,
+	 * a n√£o ser que esse atributo tenha sido passado atrav√©s desse par√£metro.
+	 * Caso nenhuma configura√ß√£o seja selecionada, a situa√ß√£o default do tipo de
+	 * configura√ß√£o ser√° retornada.
 	 * 
 	 * @param cpConfiguracaoFiltro
 	 * @param atributoDesconsideradoFiltro
@@ -495,7 +512,7 @@ public class CpConfiguracaoBL {
 	 * pertence
 	 * 
 	 * @param cfg
-	 *            - A configuraÁ„o a ser verificada
+	 *            - A configura√ß√£o a ser verificada
 	 * @param perfis
 	 *            - os perfis da pessoa/lotacao
 	 * @return
@@ -513,7 +530,7 @@ public class CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * MÈtodo com implementaÁ„o completa, chamado pelas outras sobrecargas
+	 * M√©todo com implementa√ß√£o completa, chamado pelas outras sobrecargas
 	 * 
 	 * @param cpTpDoc
 	 * @param cpFormaDoc
@@ -572,7 +589,7 @@ public class CpConfiguracaoBL {
 	/**
 	 * 
 	 * Usado para se verificar se uma pessoa pode realizar uma determinada
-	 * operaÁ„o no documento
+	 * opera√ß√£o no documento
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -618,8 +635,8 @@ public class CpConfiguracaoBL {
 	}
 
 	/**
-	 * Infere configuraÁıes Ûbvias. Por exemplo, se for informada a pessoa, a
-	 * lotaÁ„o, Ûrg„o etc. j· ser„o preenchidos automaticamente.
+	 * Infere configura√ß√µes √≥bvias. Por exemplo, se for informada a pessoa, a
+	 * lota√ß√£o, √≥rg√£o etc. j√° ser√£o preenchidos automaticamente.
 	 * 
 	 * @param cpConfiguracao
 	 */
@@ -673,7 +690,7 @@ public class CpConfiguracaoBL {
 				// Constroi uma linha completa, tipo full path
 				for (String s : servicoPath.split(";")) {
 					String[] asParts = s.split(":"); // Separa a sigla da
-														// descriÁ„o
+														// descri√ß√£o
 					String sSigla = asParts[0];
 					srv = new CpServico();
 					srv.setSiglaServico(srvPai != null ? srvPai.getSigla()
@@ -731,13 +748,13 @@ public class CpConfiguracaoBL {
 				aCfgGrp.add(cfgGrp);
 			}
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo configuraÁıes", 0, e);
+			throw new AplicacaoException("Erro obtendo configura√ß√µes", 0, e);
 		}
 		return aCfgGrp;
 	}
 
 	/**
-	 * Retorna as pessoas que podem acessar o grupos de seguranÁa da lotaÁ„o
+	 * Retorna as pessoas que podem acessar o grupos de seguran√ßa da lota√ß√£o
 	 * 
 	 * @param lot
 	 * @return
@@ -848,7 +865,7 @@ public class CpConfiguracaoBL {
 
 	public synchronized void inicializarCache() {
 		if (!cacheInicializado){
-			Logger.getLogger("siga.conf.cache").info("Inicializando cache de configuraÁıes via " + this.getClass().getSimpleName());
+			Logger.getLogger("siga.conf.cache").info("Inicializando cache de configura√ß√µes via " + this.getClass().getSimpleName());
 			long inicio = System.currentTimeMillis();
 
 			List<CpTipoConfiguracao> tiposConfiguracao = CpDao.getInstance().listarTiposConfiguracao();
@@ -856,12 +873,12 @@ public class CpConfiguracaoBL {
 				try{
 			        inicializarCache(cpTpConf.getIdTpConfiguracao());
 				}catch(Exception e){
-					Logger.getLogger("siga.conf.cache").warning("N„o foi possÌvel inicializar o cache CP_TIPO_CONFIGURACAO [" + cpTpConf.getDscTpConfiguracao() + "] ID: [" + cpTpConf.getIdTpConfiguracao() + "]");
+					Logger.getLogger("siga.conf.cache").warning("N√£o foi poss√≠vel inicializar o cache CP_TIPO_CONFIGURACAO [" + cpTpConf.getDscTpConfiguracao() + "] ID: [" + cpTpConf.getIdTpConfiguracao() + "]");
 				}
 			}
 			cacheInicializado = true;
 			
-			Logger.getLogger("siga.conf.cache").info("Cache de configuraÁıes inicializado em ms: " + (System.currentTimeMillis() - inicio));
+			Logger.getLogger("siga.conf.cache").info("Cache de configura√ß√µes inicializado em ms: " + (System.currentTimeMillis() - inicio));
 		}
 	}
 

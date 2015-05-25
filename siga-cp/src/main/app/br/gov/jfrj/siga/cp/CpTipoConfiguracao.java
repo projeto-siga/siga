@@ -112,6 +112,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	
 	public static final long TIPO_CONFIG_SR_ABRANGENCIA_ACORDO = 304;
 
+	public static final long TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA = 305;
+
 	public static final long TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO = 34;
 	
 	public static final long TIPO_CONFIG_AUTUAVEL = 35;

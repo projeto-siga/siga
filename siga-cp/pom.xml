@@ -77,7 +77,14 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-rel</artifactId>
 		</dependency>
+		
+		<dependency>
+            <groupId>org.mvel</groupId>
+            <artifactId>mvel2</artifactId>
+        </dependency>
 	</dependencies>
+	
+	
 	<profiles>
 
 		<profile>
@@ -147,7 +154,7 @@
 						<configuration>
 							<images>
 								<image>
-									<name>alexeiled/docker-oracle-xe-11g:latest</name>
+									<name>wnameless/oracle-xe-11g:latest</name>
 									<alias>db.server</alias>
 									<run>
 										<ports>

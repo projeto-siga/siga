@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
@@ -64,6 +65,8 @@ public class CpConfiguracao extends AbstractCpConfiguracao implements CpConverta
 	 * 
 	 */
 	private static final long serialVersionUID = 3624557793773660738L;
+	
+	public static final ActiveRecord<CpConfiguracao> AR = new ActiveRecord<>(CpConfiguracao.class);
 
 	public CpConfiguracao() {
 	}

@@ -532,11 +532,12 @@
 						</div>
 					</div>
 		
-<%-- 					<div id="divItem"><jsp:include --%>
-<%-- 						page="exibirItemConfiguracao.jsp" /></div> --%>
+					<div id="divItem">
+					   <jsp:include page="exibirItemConfiguracao.jsp" />
+ 					</div>
 		
 					<div class="gt-form-row gt-width-66">
-						<label>DescriÃ§Ã£o</label>
+						<label>Descrição</label>
 						<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
 							id="descrSolicitacao" maxlength="8192">${solicitacao.descrSolicitacao}</textarea>
 <%-- 						<span style="color: red">#{error 'solicitacao.descrSolicitacao' /}</span> --%>

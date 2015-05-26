@@ -36,6 +36,7 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	 * 
 	 */
 	public static final long serialVersionUID = 3624557793773660738L;
+	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(CpTipoConfiguracao.class);
 
 	// SIGA-EX
 
@@ -140,5 +141,4 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public CpTipoConfiguracao() {
 	}
 	
-	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(CpTipoConfiguracao.class);
 }

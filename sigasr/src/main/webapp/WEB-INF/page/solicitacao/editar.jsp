@@ -1,5 +1,25 @@
+<%@page import="br.gov.jfrj.siga.sr.model.SrPrioridade"%>
+<%@page import="br.gov.jfrj.siga.sr.model.SrTendencia"%>
+<%@page import="br.gov.jfrj.siga.sr.model.SrUrgencia"%>
+<%@page import="br.gov.jfrj.siga.sr.model.SrGravidade"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+
+<c:set var="gravidade_normal">
+    <%=SrGravidade.NORMAL.name()%>
+</c:set>
+
+<c:set var="urgencia_normal">
+    <%=SrUrgencia.NORMAL.name()%>
+</c:set>
+
+<c:set var="tendencia_piora">
+    <%=SrTendencia.PIORA_MEDIO_PRAZO.name()%>
+</c:set>
+
+<c:set var="prioridade_planejado">
+    <%=SrPrioridade.PLANEJADO.getDescPrioridade()%>
+</c:set>
 
 <style>
 .barra-subtitulo {
@@ -457,7 +477,7 @@
 			</h2>
 			<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
 	
-				<form action="${linkto[SolicitacaoController].gravar}" 
+				<form action="${linkTo[SolicitacaoController].gravar}" 
 					enctype="multipart/form-data" id="formSolicitacao" onsubmit="javascript:return block();"> 
 					<c:if test="${solicitacao.solicitacaoPai != null}">
 						<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
@@ -556,25 +576,25 @@
 						<div class="gt-form-row gt-width-33">
 							<label>Gravidade</label> 
 							<siga:select name="gravidade" id="gravidade" list="gravidadeList" listValue="respostaEnunciado" listKey="nivelGravidade" isEnum="true"
-							value="${solicitacao.gravidade ? solicitacao.gravidade: SrGravidade.NORMAL.respostaEnunciado}" onchange="carregarPrioridade()"
+							value="${solicitacao.gravidade ? solicitacao.gravidade: gravidade_normal}" onchange="carregarPrioridade()"
 							style="width:235px"  />
 						</div>
 						<div class="gt-form-row gt-width-33">
 							<label>Urg&ecirc;ncia</label> 
 							<siga:select name="urgencia" id="urgencia" list="urgenciaList" listValue="respostaEnunciado" listKey="nivelUrgencia" isEnum="true"
-							value="${solicitacao.urgencia ? solicitacao.urgencia: SrUrgencia.NORMAL.respostaEnunciado}" 
+							value="${solicitacao.urgencia ? solicitacao.urgencia: urgencia_normal}" 
 							onchange="carregarPrioridade()" style="width:235px" />
 						</div>
 						<div class="gt-form-row gt-width-33">
 							<label>Tend&ecirc;ncia</label>
 							<siga:select name="tendencia" id="tendencia" list="tendenciaList" listValue="respostaEnunciado" listKey="nivelTendencia" isEnum="true"
-							value="${solicitacao.tendencia ? solicitacao.tendencia: SrTendencia.PIORA_MEDIO_PRAZO.respostaEnunciado}"
+							value="${solicitacao.tendencia ? solicitacao.tendencia: tendencia_piora}"
 							onchange="carregarPrioridade()" style="width:235px;"/>
 						</div>
 					</div>
 					<div id="divPrioridade" class="gt-form-row gt-width-66">
 						<label style="float: left">Prioridade: &nbsp;</label>
-						<span>${solicitacao.prioridade != null ? solicitacao.prioridade.descPrioridade : 'Teste'}</span>
+						<span>${solicitacao.prioridade != null ? solicitacao.prioridade.descPrioridade : prioridade_planejado}</span>
 <%-- 							<siga:select name="prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true"  --%>
 <%-- 							value="${solicitacao.prioridade ? solicitacao.prioridade: SrPrioridade.PLANEJADO.descPrioridade}" style="width:235px;border:none;display:none;"/> --%>
 							<br />

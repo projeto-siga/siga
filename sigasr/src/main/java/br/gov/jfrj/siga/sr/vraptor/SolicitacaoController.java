@@ -14,6 +14,8 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -147,18 +149,27 @@ public class SolicitacaoController extends SrController {
 
     public void exibirItemConfiguracao(SrSolicitacao solicitacao) throws Exception {
         if (solicitacao.getSolicitante() == null)
-            // render(solicitacao);
+        	// render(solicitacao);
+            result.include("solicitacao", solicitacao);
 
-            if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao()))
-                solicitacao.setItemConfiguracao(null);
+        else if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())) {
+        	solicitacao.setItemConfiguracao(null);
 
-        DpPessoa titular = solicitacao.getTitular();
-        DpLotacao lotaTitular = solicitacao.getLotaTitular();
-        Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-        // render(solicitacao, titular, lotaTitular, acoesEAtendentes);
+            DpPessoa titular = solicitacao.getTitular();
+            DpLotacao lotaTitular = solicitacao.getLotaTitular();
+            Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+            
+            result.include("solicitacao", solicitacao);
+            result.include("titular", titular);
+            result.include("lotaTitular", lotaTitular);
+            result.include("acoesEAtendentes", acoesEAtendentes);
+           // render(solicitacao, titular, lotaTitular, acoesEAtendentes);
+        }
     }
     public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
         // render(solicitacao);
+    	
+    	result.include("solicitacao", solicitacao);
     }
     public void exibirPrioridade(SrSolicitacao solicitacao) {
         solicitacao.associarPrioridadePeloGUT();
@@ -231,6 +242,11 @@ public class SolicitacaoController extends SrController {
         List<CpComplexo> locais = ContextoPersistencia.em().createQuery("from CpComplexo").getResultList();
 
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+
+        DpPessoaSelecao pessoaSel = new DpPessoaSelecao();
+        pessoaSel.setId(getCadastrante().getId());
+        pessoaSel.buscar();
+		result.include("solicitante_pessoaSel", pessoaSel);
 
         result.include("solicitacao",solicitacao);
         result.include("locais",locais);

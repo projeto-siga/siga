@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.proxy.HibernateProxy;
+import org.mvel2.MVEL;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;

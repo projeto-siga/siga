@@ -716,12 +716,12 @@ public class FuncoesEL {
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
 			DpLotacao lotaTitular) throws Exception {
 
-		// Nato: Nesse caso, o titular é considerado o subscritor do documento.
-		// Não sei se isso é 100% correto, mas acho que é uma abordagem bastante
-		// razoável.
+		// Nato: Nesse caso, o titular ï¿½ considerado o subscritor do documento.
+		// Nï¿½o sei se isso ï¿½ 100% correto, mas acho que ï¿½ uma abordagem bastante
+		// razoï¿½vel.
 		// Markenson: Conversando com o Renato, alteramos o titular para o
 		// titular do sistema
-		// e não do documento.
+		// e nï¿½o do documento.
 		Ex.getInstance()
 				.getBL()
 				.criarWorkflow(cadastrante,
@@ -812,7 +812,7 @@ public class FuncoesEL {
 	 */
 	public static String formatarCPF(String cpf) {
 
-		// Se CPF já vem formatado, devolve cpf
+		// Se CPF jï¿½ vem formatado, devolve cpf
 		Pattern p = Pattern
 				.compile("[0-9]{2,3}?\\.[0-9]{3}?\\.[0-9]{3}?\\-[0-9]{2}?");
 		Matcher m = p.matcher(cpf);
@@ -821,15 +821,15 @@ public class FuncoesEL {
 			return cpf;
 		}
 
-		// O texto é truncado para 11 caracteres caso seja maior
+		// O texto ï¿½ truncado para 11 caracteres caso seja maior
 		if (cpf.length() > 11) {
 			cpf = cpf.substring(0, 11);
 		}
 
-		// Determina o número de zeros à esquerda
+		// Determina o nï¿½mero de zeros ï¿½ esquerda
 		int numZerosAEsquerda = 11 - cpf.length();
 
-		// aplica os zeros à esquerda
+		// aplica os zeros ï¿½ esquerda
 		for (int i = 0; i < numZerosAEsquerda; i++) {
 			cpf = "0" + cpf;
 		}
@@ -884,13 +884,13 @@ public class FuncoesEL {
 			nivel = "Auxiliar";
 
 		if (nivel.indexOf('I') > 0)
-			nivel = "Intermediário";
+			nivel = "Intermediï¿½rio";
 
 		if (nivel.indexOf('S') > 0)
 			nivel = "Superior";
 
-		return "Nível " + nivel + ", Classe " + aux + classe + aux
-				+ ", Padrão " + aux + padrao + aux;
+		return "Nï¿½vel " + nivel + ", Classe " + aux + classe + aux
+				+ ", Padrï¿½o " + aux + padrao + aux;
 	}
 
 	public static String buscarLotacaoPorSigla(String sigla, Long idOrgaoUsu)
@@ -1023,12 +1023,16 @@ public class FuncoesEL {
 	}
 	
 	public static String webservice(String url, String corpo, Integer timeout) {
-		HashMap<String,String> headers = new HashMap<String, String>();
-		headers.put("Content-Type", "text/xml;charset=UTF-8");
-		//String s = ConexaoHTTP.get(url, headers, timeout, corpo); //Reescrito para utilizar o SigaTTP
-		SigaHTTP sigaHTTP = new SigaHTTP();
-		String s = sigaHTTP.getNaWeb(url, headers, timeout, corpo);
-		return s;
+		try {
+			HashMap<String,String> headers = new HashMap<String, String>();
+			headers.put("Content-Type", "text/xml;charset=UTF-8");
+			//String s = ConexaoHTTP.get(url, headers, timeout, corpo); //Reescrito para utilizar o SigaTTP
+			SigaHTTP sigaHTTP = new SigaHTTP();
+			String s = sigaHTTP.getNaWeb(url, headers, timeout, corpo);
+			return s;
+		} catch (Exception e) {
+			return "";
+		}
 	}
 	
 	public static NodeModel parseXML(String xml) throws Exception  {
@@ -1081,5 +1085,5 @@ public class FuncoesEL {
 		return Ex
 				.getInstance()
 				.getComp().podeAutenticarDocumento(titular, lotaTitular, doc);
-	}	
+	}
 }

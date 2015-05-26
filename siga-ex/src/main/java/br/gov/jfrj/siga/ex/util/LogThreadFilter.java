@@ -49,7 +49,7 @@ public class LogThreadFilter implements Filter {
 			chain.doFilter(request, response);
 		} catch (RuntimeException rte) {
             logger.error( "Ocorreu um erro ao executar o filtro. ", rte );
-			rte.printStackTrace();
+			//rte.printStackTrace();
 			throw new ServletException( rte );
 		}
 		

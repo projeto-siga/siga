@@ -229,7 +229,7 @@ public class ExMovimentacaoVO extends ExVO {
 							"script_key",
 							"Autenticar",
 							"/app/expediente/mov",
-							"exibir",
+							"autenticar_mov",
 							Ex.getInstance().getComp()
 									.podeAutenticarMovimentacao(titular, lotaTitular, mov),
 							null, "&popup=true&autenticando=true", null, null, null);
@@ -275,7 +275,7 @@ public class ExMovimentacaoVO extends ExVO {
 								"script_key",
 								"Autenticar",
 								"/app/expediente/mov",
-								"exibir",
+								"autenticar_mov",
 								Ex.getInstance().getComp()
 										.podeAutenticarMovimentacao(titular, lotaTitular, mov),
 								null, "&popup=true&autenticando=true", null, null, null);
@@ -325,7 +325,7 @@ public class ExMovimentacaoVO extends ExVO {
 					String mensagemPos = null;
 					
 					if(!mov.getExMobilRef().getExDocumento().getDescrDocumento().equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
-						mensagemPos = " Descrição: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
+						mensagemPos = " DescriÃ§Ã£o: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
 					
 					
 					addAcao(null, mov.getExMobilRef().getSigla(),
@@ -340,7 +340,7 @@ public class ExMovimentacaoVO extends ExVO {
 				String mensagemPos = null;
 				
 				if(!mov.getExMobil().getExDocumento().getDescrDocumento().equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
-					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
+					mensagemPos = " DescriÃ§Ã£o: " + mov.getExDocumento().getDescrDocumento();
 				
 				
 				
@@ -359,7 +359,7 @@ public class ExMovimentacaoVO extends ExVO {
 					String mensagemPos = null;
 					
 					if(!mov.getExMobilRef().getExDocumento().getDescrDocumento().equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
-						mensagemPos = " Descrição: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
+						mensagemPos = " DescriÃ§Ã£o: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
 					
 					
 					addAcao(null, mov.getExMobilRef().getSigla(),
@@ -374,7 +374,7 @@ public class ExMovimentacaoVO extends ExVO {
 				String mensagemPos = null;
 				
 				if(!mov.getExMobil().getExDocumento().getDescrDocumento().equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
-					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
+					mensagemPos = " DescriÃ§Ã£o: " + mov.getExDocumento().getDescrDocumento();
 				
 				
 				
@@ -429,12 +429,12 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(null, mov.getExMobilRef().getSigla(),
 						"/app/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
-						"Ver também: ",  " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento(), null);
+						"Ver tambÃ©m: ",  " DescriÃ§Ã£o: " + mov.getExMobilRef().getExDocumento().getDescrDocumento(), null);
 			} else {
 				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc",
 						"exibir", true, null, "sigla="
-								+ mov.getExMobil().getSigla(), "Ver também: ",
-								" Descrição: " + mov.getExDocumento().getDescrDocumento(), null);
+								+ mov.getExMobil().getSigla(), "Ver tambÃ©m: ",
+								" DescriÃ§Ã£o: " + mov.getExDocumento().getDescrDocumento(), null);
 			}
 		}
 		
@@ -456,7 +456,7 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_ELIMINACAO){
 			descricao = null;
 			if (originadaAqui) {
-				//Não faz nada, pois o documento eliminado nunca é exibido
+				//NÃ£o faz nada, pois o documento eliminado nunca Ã© exibido
 			} else {
 				descricao = mov.getExMobil().getSigla();
 			}
@@ -482,7 +482,7 @@ public class ExMovimentacaoVO extends ExVO {
 				|| idTpMov == TIPO_MOVIMENTACAO_RECEBIMENTO_TRANSITORIO) {
 			String pre =  null;
 			if(mov.getDtFimMovDDMMYY() != ""){
-				pre = "Devolver até " + mov.getDtFimMovDDMMYY() + " | ";
+				pre = "Devolver atÃ© " + mov.getDtFimMovDDMMYY() + " | ";
 			}
 			if (!mov.isCancelada())
 				addAcao(null, "Protocolo", "/app/expediente/mov",

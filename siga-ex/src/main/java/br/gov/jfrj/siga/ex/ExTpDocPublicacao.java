@@ -33,7 +33,7 @@ public class ExTpDocPublicacao extends AbstractExTpDocPublicacao implements
 	public static int TIPO_MATERIA_DESPACHO = 3;
 	public static int TIPO_MATERIA_EDITAL = 4;
 	public static int TIPO_MATERIA_INFORMACAO_DE_SECRETARIA = 5;
-	public static int TIPO_MATERIA_ORDEM_DE_SERVIÇO = 6;
+	public static int TIPO_MATERIA_ORDEM_DE_SERVICO = 6;
 	public static int TIPO_MATERIA_PORTARIA = 7;
 	public static int TIPO_MATERIA_SENTENCA = 8;
 	public static int TIPO_MATERIA_ACORDAO = 9;

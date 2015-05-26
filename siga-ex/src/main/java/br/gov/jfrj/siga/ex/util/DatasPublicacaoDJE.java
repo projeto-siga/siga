@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -25,6 +26,7 @@ import java.util.GregorianCalendar;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.CpFeriado;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 
 public class DatasPublicacaoDJE {
 
@@ -35,19 +37,19 @@ public class DatasPublicacaoDJE {
 	private CpFeriado feriadoPublicacao;
 	private CpFeriado feriadoDisponibilizacao;
 
-	// Necessário para verificação do dia da semana
+	// NecessÃ¡rio para verificaÃ§Ã£o do dia da semana
 	private Calendar calPublicacao;
 
-	// Necessário para verificação do dia da semana
+	// NecessÃ¡rio para verificaÃ§Ã£o do dia da semana
 	private Calendar calDisponibilizacao;
 
-	// Necessário para verificação do horário limite
+	// NecessÃ¡rio para verificaÃ§Ã£o do horÃ¡rio limite
 	private Calendar calHoje;
 
 	public DatasPublicacaoDJE(Date dataDisponib) throws AplicacaoException {
 		if (dataDisponib == null)
 			throw new AplicacaoException(
-					"Não foi informada uma data de disponibilização para cálculos");
+					"NÃ£o foi informada uma data de disponibilizaÃ§Ã£o para cÃ¡lculos");
 		setDataDisponibilizacao(dataDisponib);
 	}
 
@@ -55,21 +57,34 @@ public class DatasPublicacaoDJE {
 			throws AplicacaoException {
 		if (getDataDisponibilizacao() == null)
 			throw new AplicacaoException(
-					"Não foi informada uma data de disponibilização para cálculos");
+					"NÃ£o foi informada uma data de disponibilizaÃ§Ã£o para cÃ¡lculos");
 
-		if (isDisponibilizacaoDMais30())
-			return "Data de disponibilização está além do limite: mais de 31 dias a partir de hoje";
-		else if (isDisponibilizacaoAntesDeDMais2())
-			return "Data de disponibilização não permitida: menos de 2 dias a partir de hoje";
-		else if (sao17Horas() && apenasSolicitacao)
-			return "Data de disponibilização não permitida: Excedido Horário de Solicitação (17 Horas). Defina a disponibilização para um dia depois do escolhido";
-		else if (isDisponibilizacaoDomingo())
-			return "Data de disponibilização é domingo";
-		else if (isDisponibilizacaoSabado())
-			return "Data de disponibilização é sábado";
-		else if (isDisponibilizacaoFeriado())
-			return "Data de disponibilização é feriado: "
-					+ getFeriadoDisponibilizacao().getDscFeriado();
+		Date proximaDataDisponivel = null;
+		
+		if(!(sao17Horas() && apenasSolicitacao))
+			proximaDataDisponivel = consultarProximaDataDisponivel();
+		
+		if(proximaDataDisponivel != null && getDataDisponibilizacao().before(proximaDataDisponivel)) {
+			SimpleDateFormat formatBra = new SimpleDateFormat("dd/MM/yyyy");  
+			return "Data de disponibilizaÃ§Ã£o inferior a prÃ³xima data disponï¿­vel. PrÃ³xima data para disponibilizaÃ§Ã£o ï¿© " + formatBra.format(proximaDataDisponivel) + ".";
+		}
+		
+		if(proximaDataDisponivel == null || getDataDisponibilizacao().after(proximaDataDisponivel)) {
+		
+			if (isDisponibilizacaoDMais30())
+				return "Data de disponibilizaÃ§Ã£o estï¿¡ alï¿©m do limite: mais de 31 dias a partir de hoje";
+			else if (sao17Horas() && apenasSolicitacao)
+				return "Data de disponibilizaÃ§Ã£o nï¿£o permitida: Excedido Horï¿¡rio de SolicitaÃ§Ã£o (17 Horas). Defina a disponibilizaÃ§Ã£o com mais de 2 dias a partir de hoje";
+			else if (isDisponibilizacaoAntesDeDMais2())
+				return "Data de disponibilizaÃ§Ã£o nï¿£o permitida: menos de 2 dias a partir de hoje";
+			else if (isDisponibilizacaoDomingo())
+				return "Data de disponibilizaÃ§Ã£o ï¿© domingo";
+			else if (isDisponibilizacaoSabado())
+				return "Data de disponibilizaÃ§Ã£o ï¿© sï¿¡bado";
+			else if (isDisponibilizacaoFeriado())
+				return "Data de disponibilizaÃ§Ã£o ï¿© feriado: "
+						+ getFeriadoDisponibilizacao().getDscFeriado();
+		}
 
 		while (true) {
 			if (isPublicacaoDomingo() || isPublicacaoSabado()
@@ -80,6 +95,58 @@ public class DatasPublicacaoDJE {
 		}
 
 		return null;
+	}
+	
+	public static Date consultarProximaDataDisponivel() {
+		try {
+			
+			StringBuilder corpo = new StringBuilder();
+			corpo.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">");
+			corpo.append("<soapenv:Header/>");
+			corpo.append("<soapenv:Body>");
+			corpo.append("<tem:ProximaDataDisponivel/>");
+			corpo.append("</soapenv:Body>");
+			corpo.append("</soapenv:Envelope>");
+			
+			String retorno = FuncoesEL.webservice(SigaExProperties.getServidorDJEDataDisponivel(), corpo.toString(), 6000);
+			String tagDataInicial = "<ProximaDataDisponivelResult>";
+			String tagDataFinal = "</ProximaDataDisponivelResult>";
+			String proximaDataDisponibilizacaoString = null; 
+			Date proximaDataDisponibilizacao;
+			
+			
+			if(retorno != null && 
+					retorno.contains(tagDataInicial)  && 
+					retorno.contains(tagDataFinal)) {
+				
+				proximaDataDisponibilizacaoString = retorno.substring(retorno.indexOf(tagDataInicial) + tagDataInicial.length(), retorno.indexOf(tagDataFinal));
+				
+				if(proximaDataDisponibilizacaoString != null) {
+					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+					proximaDataDisponibilizacao = formatter.parse(proximaDataDisponibilizacaoString);
+					return proximaDataDisponibilizacao;
+				}
+			}
+		} catch (Exception e) {
+			return null;
+		}
+		
+		return null;
+	}
+	
+	public static String consultarProximaDataDisponivelString() {
+		try {
+			Date proximaDataDisponivel = consultarProximaDataDisponivel();
+				
+			if(proximaDataDisponivel != null) {
+				SimpleDateFormat formatBra = new SimpleDateFormat("dd/MM/yyyy");  
+				return formatBra.format(proximaDataDisponivel);
+			}
+		} catch (Exception e) {
+		   return "";
+		}
+	   
+	   return "";
 	}
 
 	private Date adicionaUmDia(Date data) {
@@ -166,7 +233,7 @@ public class DatasPublicacaoDJE {
 			
 			diferencaEmMilisegundos = getDataDisponibilizacao().getTime() - getHojeMeiaNoite().getTime();
 			
-			//Início de Horário de Verão.
+			//InÃ­cio de HorÃ¡rio de VerÃ£o.
 			if(diferencaEmMilisegundos == 342000000L)
 				diferencaEmMilisegundos += 3600000L; 
 			
@@ -244,8 +311,8 @@ public class DatasPublicacaoDJE {
 		if (calDisponibilizacao == null) {
 			GregorianCalendar provCal = new GregorianCalendar();
 			provCal.setTime(getDataDisponibilizacao());
-			// Elimina o risco de erro na contagem por causa do início do
-			// horário de verão:
+			// Elimina o risco de erro na contagem por causa do inÃ­cio do
+			// horÃ¡rio de verÃ£o:
 			provCal.add(Calendar.HOUR_OF_DAY, 3);
 			setCalDisponibilizacao(provCal);
 		}

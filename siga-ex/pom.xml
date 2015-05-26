@@ -32,17 +32,57 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin> <artifactId>maven-antrun-plugin</artifactId> <executions> 
-				<execution> <phase>process-classes</phase> <goals> <goal>run</goal> </goals> 
-				</execution> </executions> <configuration> <tasks> <taskdef name="instrument" 
-				classname="org.hibernate.tool.instrument.javassist.InstrumentTask"> <classpath 
-				path="maven.compile.classpath"/> <classpath path="maven.runtime.classpath"/> 
-				<classpath path="maven.plugin.classpath"/> </taskdef> <instrument verbose="true"> 
-				<fileset dir="${project.build.outputDirectory}/br/gov/jfrj/siga/ex"> <include 
-				name="*.class"/> </fileset> </instrument> </tasks> </configuration> <dependencies> 
-				<dependency> <groupId>javassist</groupId> <artifactId>javassist</artifactId> 
-				<version>3.12.1.GA</version> <scope>compile</scope> </dependency> </dependencies> 
-				</plugin> -->
+			<!-- <plugin> <groupId>org.hibernate.orm.tooling</groupId> <artifactId>hibernate-enhance-maven-plugin</artifactId> 
+				<executions> <execution> <phase>compile</phase> <goals> <goal>enhance</goal> 
+				</goals> </execution> </executions> <dependencies> <dependency> <groupId>siga</groupId> 
+				<artifactId>siga-ex</artifactId> <version>${project.version}</version> </dependency> 
+				</dependencies> </plugin> -->
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<tasks>
+						<taskdef name="instrument"
+							classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
+							<classpath path="maven.compile.classpath" />
+							<classpath path="maven.runtime.classpath" />
+							<classpath path="maven.plugin.classpath" />
+						</taskdef>
+						<instrument verbose="true">
+							<fileset dir="${project.build.outputDirectory}/br/gov/jfrj/siga/ex">
+								<include name="*.class" />
+							</fileset>
+						</instrument>
+					</tasks>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-core</artifactId>
+						<version>${hibernate.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.javassist</groupId>
+						<artifactId>javassist</artifactId>
+						<version>3.18.1.GA-redhat-1</version>
+						<scope>compile</scope>
+					</dependency>
+					<dependency>
+						<groupId>siga</groupId>
+						<artifactId>siga-ex</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -216,7 +256,7 @@
 						<configuration>
 							<images>
 								<image>
-									<name>alexeiled/docker-oracle-xe-11g:latest</name>
+									<name>wnameless/oracle-xe-11g:latest</name>
 									<alias>db.server</alias>
 									<run>
 										<ports>

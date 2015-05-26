@@ -58,16 +58,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar o documento ao qual pertence o mÛbil
-	 * passado por par‚metro. Considera se o documento ainda n„o foi assinado
-	 * (sendo ent„o considerado aberto; estando j· assinado, retorna verdadeiro)
-	 * e se <i>uma das</i> seguintes condiÁıes È satisfeita:
+	 * Retorna se √© poss√≠vel acessar o documento ao qual pertence o m√≥bil
+	 * passado por par√¢metro. Considera se o documento ainda n√£o foi assinado
+	 * (sendo ent√£o considerado aberto; estando j√° assinado, retorna verdadeiro)
+	 * e se <i>uma das</i> seguintes condi√ß√µes √© satisfeita:
 	 * <ul>
-	 * <li>Usu·rio È da lotaÁ„o cadastrante do documento</li>
-	 * <li>Usu·rio È subscritor do documento</li>
-	 * <li>Usu·rio È titular do documento</li>
-	 * <li><i>podeMovimentar()</i> È verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>Usu·rio È um dos cossignat·rios do documento</li>
+	 * <li>Usu√°rio √© da lota√ß√£o cadastrante do documento</li>
+	 * <li>Usu√°rio √© subscritor do documento</li>
+	 * <li>Usu√°rio √© titular do documento</li>
+	 * <li><i>podeMovimentar()</i> √© verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>Usu√°rio √© um dos cossignat√°rios do documento</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -90,14 +90,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * * Retorna se È possÌvel acessar um documento ao qual pertence o mÛbil
-	 * passado por par‚metro. Considera se o documento est· cancelado (n„o
+	 * * Retorna se √© poss√≠vel acessar um documento ao qual pertence o m√≥bil
+	 * passado por par√¢metro. Considera se o documento est√° cancelado (n√£o
 	 * estando cancelado, retorna verdadeiro) e se <i>uma das</i> seguintes
-	 * condiÁıes È satisfeita:
+	 * condi√ß√µes √© satisfeita:
 	 * <ul>
-	 * <li>Usu·rio È da lotaÁ„o cadastrante do documento</li>
-	 * <li>Usu·rio È subscritor do documento</li>
-	 * <li>Usu·rio È titular do documento</li>
+	 * <li>Usu√°rio √© da lota√ß√£o cadastrante do documento</li>
+	 * <li>Usu√°rio √© subscritor do documento</li>
+	 * <li>Usu√°rio √© titular do documento</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -119,14 +119,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/**
-	 * * Retorna se È possÌvel acessar um documento ao qual pertence o mÛbil
-	 * passado por par‚metro. Considera se o documento est· sem efeito (n„o
+	 * * Retorna se √© poss√≠vel acessar um documento ao qual pertence o m√≥bil
+	 * passado por par√¢metro. Considera se o documento est√° sem efeito (n√£o
 	 * estando sem efeito, retorna verdadeiro) e se <i>uma das</i> seguintes
-	 * condiÁıes È satisfeita:
+	 * condi√ß√µes √© satisfeita:
 	 * <ul>
-	 * <li>Usu·rio È da lotaÁ„o cadastrante do documento</li>
-	 * <li>Usu·rio È subscritor do documento</li>
-	 * <li>Usu·rio È titular do documento</li>
+	 * <li>Usu√°rio √© da lota√ß√£o cadastrante do documento</li>
+	 * <li>Usu√°rio √© subscritor do documento</li>
+	 * <li>Usu√°rio √© titular do documento</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -148,8 +148,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar o documento ao qual pertence o mÛbil
-	 * passado por par‚metro, analisando <i>podeAcessarAberto()</i>,
+	 * Retorna se √© poss√≠vel acessar o documento ao qual pertence o m√≥bil
+	 * passado por par√¢metro, analisando <i>podeAcessarAberto()</i>,
 	 * <i>podeAcessarCancelado()</i> e <i>podeAcessarPorNivel()</i>
 	 * 
 	 * @param titular
@@ -187,8 +187,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	public boolean podeAcessarDocumento(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) {
+			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+
 		ExDocumento doc = mob.doc();
+
+		if(doc.getOrgaoUsuario() != null  
+				&& doc.getOrgaoUsuario().getIdOrgaoUsu() != null) {
+			if(podePorConfiguracao(titular, lotaTitular, CpTipoConfiguracao.TIPO_CONFIG_ACESSAR, doc.getOrgaoUsuario())) {
+				return true;	
+			}
+		}		
+		
 		if (doc.getDnmAcesso() == null) {
 			Ex.getInstance().getBL().atualizarDnmAcesso(doc);
 		}
@@ -202,8 +211,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 
 	/**
-	 * Retorna se È possÌvel acessar documento reservado, considerando se o
-	 * documento È reservado entre lotaÁıes (se n„o for, retorna verdadeiro) e
+	 * Retorna se √© poss√≠vel acessar documento reservado, considerando se o
+	 * documento √© reservado entre lota√ß√µes (se n√£o for, retorna verdadeiro) e
 	 * se <i>podeAcessarReservadoEntreLotacoes().</i>
 	 * 
 	 * @param titular
@@ -222,14 +231,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar o documento a que pertence o mÛbil passado
-	 * por par‚metro, considerando seu nÌvel de acesso, e tambÈm o seguinte:
+	 * Retorna se √© poss√≠vel acessar o documento a que pertence o m√≥bil passado
+	 * por par√¢metro, considerando seu n√≠vel de acesso, e tamb√©m o seguinte:
 	 * <ul>
-	 * <li>Se h· documento pai e usu·rio pode acess·-lo <i>por nÌvel</i>,
+	 * <li>Se h√° documento pai e usu√°rio pode acess√°-lo <i>por n√≠vel</i>,
 	 * retorna verdadeiro</li>
-	 * <li>Se o usu·rio tem perfil vinculado ao documento, retorna verdadeiro</li>
+	 * <li>Se o usu√°rio tem perfil vinculado ao documento, retorna verdadeiro</li>
 	 * <li>Nos demais casos, retorna conforme a resposta de
-	 * <i>podeAcessarPorNivelN()</i>, dependendo do grau do nÌvel de acesso do
+	 * <i>podeAcessarPorNivelN()</i>, dependendo do grau do n√≠vel de acesso do
 	 * documento</li>
 	 * </ul>
 	 * 
@@ -257,11 +266,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return true;
 		}
 		
-		// Verifica se o titular È subscritor de algum despacho do documento
+		// Verifica se o titular √© subscritor de algum despacho do documento
 		if (mob.doc().getSubscritorDespacho().contains(titular))
             return true;
 		
-		// Verifica se o titular È subscritor ou cosignat·rio do documento
+		// Verifica se o titular √© subscritor ou cosignat√°rio do documento
 		if (mob.doc().getSubscritorECosignatarios().contains(titular))
 			return true;
 
@@ -285,7 +294,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar documento p˙blico. Sempre verdade.
+	 * Retorna se √© poss√≠vel acessar documento p√∫blico. Sempre verdade.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -298,19 +307,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar o documento que contÈm o mÛbil passado por
-	 * par‚metro. N„o È checado o nÌvel de acesso. Presume-se que o documento
-	 * seja limitado ao Ûrg„o. <i>Uma das</i> seguintes condiÁıes tem de ser
+	 * Retorna se √© poss√≠vel acessar o documento que cont√©m o m√≥bil passado por
+	 * par√¢metro. N√£o √© checado o n√≠vel de acesso. Presume-se que o documento
+	 * seja limitado ao √≥rg√£o. <i>Uma das</i> seguintes condi√ß√µes tem de ser
 	 * satisfeita:
 	 * <ul>
-	 * <li>”rg„o a que pertence a lotaÁ„o passada por par‚metro tem de ser o
-	 * Ûrg„o da lotaÁ„o cadastrante do documento</li>
-	 * <li>Usu·rio È o subscritor do documento, n„o importando de que Ûrg„o seja
+	 * <li>√ìrg√£o a que pertence a lota√ß√£o passada por par√¢metro tem de ser o
+	 * √≥rg√£o da lota√ß√£o cadastrante do documento</li>
+	 * <li>Usu√°rio √© o subscritor do documento, n√£o importando de que √≥rg√£o seja
 	 * </li>
-	 * <li>Usu·rio È o titular do documento, n„o importando de que Ûrg„o seja</li>
-	 * <li>Usu·rio È o destinatario do documento ou da lotaÁ„o deste, n„o
-	 * importando de que Ûrg„o seja</li>
-	 * <li><i>jaEsteveNoOrgao()</i> È verdadeiro para esses par‚metros</li>
+	 * <li>Usu√°rio √© o titular do documento, n√£o importando de que √≥rg√£o seja</li>
+	 * <li>Usu√°rio √© o destinatario do documento ou da lota√ß√£o deste, n√£o
+	 * importando de que √≥rg√£o seja</li>
+	 * <li><i>jaEsteveNoOrgao()</i> √© verdadeiro para esses par√¢metros</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -338,13 +347,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se um documento j· esteve num Ûrg„o (TRF, JFRJ, JFES),
-	 * verificando se alguma movimentaÁ„o de algum mÛbil do documento teve
-	 * lotaÁ„o atendente pertencente ao Ûrg„o onde est· a lotaÁ„o passada por
-	 * par‚metro ou se, tendo sido definida uma pessoa atendente para a
-	 * movimentaÁ„o, o Ûrg„o a que a pessoa <i>pertencia*</i> È o Ûrg„o da
-	 * pessoa passada por par‚metro. <br/>
-	 * * Rever o restante deste documento, se os verbos est„o no tempo correto
+	 * Retorna se um documento j√° esteve num √≥rg√£o (TRF, JFRJ, JFES),
+	 * verificando se alguma movimenta√ß√£o de algum m√≥bil do documento teve
+	 * lota√ß√£o atendente pertencente ao √≥rg√£o onde est√° a lota√ß√£o passada por
+	 * par√¢metro ou se, tendo sido definida uma pessoa atendente para a
+	 * movimenta√ß√£o, o √≥rg√£o a que a pessoa <i>pertencia*</i> √© o √≥rg√£o da
+	 * pessoa passada por par√¢metro. <br/>
+	 * * Rever o restante deste documento, se os verbos est√£o no tempo correto
 	 * 
 	 * @param doc
 	 * @param titular
@@ -369,17 +378,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar o documento que contÈm o mÛbil passado por
-	 * par‚metro. N„o È checado o nÌvel de acesso. Presume-se que o documento
+	 * Retorna se √© poss√≠vel acessar o documento que cont√©m o m√≥bil passado por
+	 * par√¢metro. N√£o √© checado o n√≠vel de acesso. Presume-se que o documento
 	 * seja limitado de pessoa para subsecretaria. <i>Uma das</i> seguintes
-	 * condiÁıes tem de ser satisfeita:
+	 * condi√ß√µes tem de ser satisfeita:
 	 * <ul>
-	 * <li>Usu·rio È o prÛprio cadastrante do documento</li>
-	 * <li>Usu·rio È o subscritor do documento</li>
-	 * <li>Usu·rio È o titular do documento</li>
-	 * <li>Usu·rio pertence ‡ subsecretaria da lotaÁ„o destinat·ria do documento
+	 * <li>Usu√°rio √© o pr√≥prio cadastrante do documento</li>
+	 * <li>Usu√°rio √© o subscritor do documento</li>
+	 * <li>Usu√°rio √© o titular do documento</li>
+	 * <li>Usu√°rio pertence √† subsecretaria da lota√ß√£o destinat√°ria do documento
 	 * </li>
-	 * <li><i>pessoaJaTeveAcesso()</i> È verdadeiro para esses par‚metros</li>
+	 * <li><i>pessoaJaTeveAcesso()</i> √© verdadeiro para esses par√¢metros</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -407,18 +416,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar o documento que contÈm o mÛbil passado por
-	 * par‚metro. N„o È checado o nÌvel de acesso. Presume-se que o documento
+	 * Retorna se √© poss√≠vel acessar o documento que cont√©m o m√≥bil passado por
+	 * par√¢metro. N√£o √© checado o n√≠vel de acesso. Presume-se que o documento
 	 * seja limitado de subsecretaria para pessoa. <i>Uma das</i> seguintes
-	 * condiÁıes tem de ser satisfeita:
+	 * condi√ß√µes tem de ser satisfeita:
 	 * <ul>
-	 * <li>Usu·rio pertence ‡ subsecretaria da lotaÁ„o cadastrante do documento</li>
-	 * <li>Usu·rio È o destinat·rio do documento</li>
-	 * <li>Usu·rio È o subscritor do documento</li>
-	 * <li>Usu·rio È o titular do documento</li>
-	 * <li>Usu·rio È da lotaÁ„o destinat·ria do documento, se n„o tiver sido
-	 * definida pessoa destinat·ria</li>
-	 * <li><i>pessoaJaTeveAcesso()</i> È verdadeiro para esses par‚metros</li>
+	 * <li>Usu√°rio pertence √† subsecretaria da lota√ß√£o cadastrante do documento</li>
+	 * <li>Usu√°rio √© o destinat√°rio do documento</li>
+	 * <li>Usu√°rio √© o subscritor do documento</li>
+	 * <li>Usu√°rio √© o titular do documento</li>
+	 * <li>Usu√°rio √© da lota√ß√£o destinat√°ria do documento, se n√£o tiver sido
+	 * definida pessoa destinat√°ria</li>
+	 * <li><i>pessoaJaTeveAcesso()</i> √© verdadeiro para esses par√¢metros</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -450,7 +459,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar documento reservado entre lotaÁıes, com
+	 * Retorna se √© poss√≠vel acessar documento reservado entre lota√ß√µes, com
 	 * base em <i>podeAcessarPorNivel20()</i> e <i>podeAcessarPorNivel60().</i>
 	 * 
 	 * @param titular
@@ -465,18 +474,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar o documento que contÈm o mÛbil passado por
-	 * par‚metro. N„o È checado o nÌvel de acesso. Presume-se que o documento
-	 * seja limitado entre lotaÁıes. <i>Uma das</i> seguintes condiÁıes tem de
+	 * Retorna se √© poss√≠vel acessar o documento que cont√©m o m√≥bil passado por
+	 * par√¢metro. N√£o √© checado o n√≠vel de acesso. Presume-se que o documento
+	 * seja limitado entre lota√ß√µes. <i>Uma das</i> seguintes condi√ß√µes tem de
 	 * ser satisfeita:
 	 * <ul>
-	 * <li>Usu·rio È da lotaÁ„o cadastrante do documento</li>
-	 * <li>Usu·rio È o subscritor do documento</li>
-	 * <li>Usu·rio È o titular do documento</li>
-	 * <li>Usu·rio pertence ‡ subsecretaria da lotaÁ„o destinat·ria do documento
+	 * <li>Usu√°rio √© da lota√ß√£o cadastrante do documento</li>
+	 * <li>Usu√°rio √© o subscritor do documento</li>
+	 * <li>Usu√°rio √© o titular do documento</li>
+	 * <li>Usu√°rio pertence √† subsecretaria da lota√ß√£o destinat√°ria do documento
 	 * </li>
-	 * <li>Usu·rio È da lotaÁ„o destinat·ria do documento</li>
-	 * <li><i>jaPassouPor()</i> È verdadeiro para esses par‚metros</li>
+	 * <li>Usu√°rio √© da lota√ß√£o destinat√°ria do documento</li>
+	 * <li><i>jaPassouPor()</i> √© verdadeiro para esses par√¢metros</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -501,17 +510,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel acessar o documento que contÈm o mÛbil passado por
-	 * par‚metro. N„o È checado o nÌvel de acesso. Presume-se que o documento
-	 * seja limitado entre pessoas. <i>Uma das</i> seguintes condiÁıes tem de
+	 * Retorna se √© poss√≠vel acessar o documento que cont√©m o m√≥bil passado por
+	 * par√¢metro. N√£o √© checado o n√≠vel de acesso. Presume-se que o documento
+	 * seja limitado entre pessoas. <i>Uma das</i> seguintes condi√ß√µes tem de
 	 * ser satisfeita:
 	 * <ul>
-	 * <li>Usu·rio È o prÛprio cadastrante do documento</li>
-	 * <li>Usu·rio È o subscritor do documento</li>
-	 * <li>Usu·rio È o titular do documento</li>
-	 * <li>Usu·rio È o prÛprio destinat·rio do documento</li>
-	 * <li>Usu·rio È da lotaÁ„o destinat·ria do documento</li>
-	 * <li><i>pessoaJaTeveAcesso()</i> È verdadeiro para esses par‚metros</li>
+	 * <li>Usu√°rio √© o pr√≥prio cadastrante do documento</li>
+	 * <li>Usu√°rio √© o subscritor do documento</li>
+	 * <li>Usu√°rio √© o titular do documento</li>
+	 * <li>Usu√°rio √© o pr√≥prio destinat√°rio do documento</li>
+	 * <li>Usu√°rio √© da lota√ß√£o destinat√°ria do documento</li>
+	 * <li><i>pessoaJaTeveAcesso()</i> √© verdadeiro para esses par√¢metros</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -536,16 +545,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel anexar arquivo a um mÛbil. As condiÁıes s„o as
+	 * Retorna se √© poss√≠vel anexar arquivo a um m√≥bil. As condi√ß√µes s√£o as
 	 * seguintes:
 	 * <ul>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>MÛbil n„o pode estar juntado</li>
-	  * <li>MÛbil n„o pode estar arquivado</li>
-	 * <li>Volume n„o pode estar encerrado</li>
-	 * <li>MÛbil tem de estar finalizado</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o mÛbil / usu·rio</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>M√≥bil n√£o pode estar juntado</li>
+	  * <li>M√≥bil n√£o pode estar arquivado</li>
+	 * <li>Volume n√£o pode estar encerrado</li>
+	 * <li>M√≥bil tem de estar finalizado</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o m√≥bil / usu√°rio</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -577,8 +586,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna um configuraÁ„o existente para a combinaÁ„o dos dados passados
-	 * como par‚metros, caso exista.
+	 * Retorna um configura√ß√£o existente para a combina√ß√£o dos dados passados
+	 * como par√¢metros, caso exista.
 	 * 
 	 * @param titularIniciador
 	 * @param lotaTitularIniciador
@@ -606,7 +615,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				tipoConfig, CpTipoConfiguracao.class, false));
 		if (cfgFiltro.getCpTipoConfiguracao() == null)
 			throw new RuntimeException(
-					"N„o È permitido buscar uma configuraÁ„o sem definir seu tipo.");
+					"N√£o √© permitido buscar uma configura√ß√£o sem definir seu tipo.");
 		if (tipoMov != 0)
 			cfgFiltro.setExTipoMovimentacao(CpDao.getInstance().consultar(
 					tipoMov, ExTipoMovimentacao.class, false));
@@ -623,12 +632,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		ExConfiguracao cfg = (ExConfiguracao) getConfiguracaoBL()
 				.buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
-		// Essa linha È necess·ria porque quando recuperamos um objeto da classe
-		// WfConfiguracao do TreeMap est·tico que os armazena, este objeto est·
-		// detached, ou seja, n„o est· conectado com a seÁ„o atual do hibernate.
+		// Essa linha √© necess√°ria porque quando recuperamos um objeto da classe
+		// WfConfiguracao do TreeMap est√°tico que os armazena, este objeto est√°
+		// detached, ou seja, n√£o est√° conectado com a se√ß√£o atual do hibernate.
 		// Portanto, quando vamos acessar alguma propriedade dele que seja do
-		// tipo LazyRead, obtemos um erro. O mÈtodo lock, attacha ele novamente
-		// na seÁ„o atual.
+		// tipo LazyRead, obtemos um erro. O m√©todo lock, attacha ele novamente
+		// na se√ß√£o atual.
 		if (cfg != null)
 			ExDao.getInstance().getSessao().lock(cfg, LockMode.NONE);
 
@@ -636,14 +645,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Verifica se uma pessoa ou lotaÁ„o tem permiss„o em uma configuraÁ„o
-	 * passada como par‚metro.
+	 * Verifica se uma pessoa ou lota√ß√£o tem permiss√£o em uma configura√ß√£o
+	 * passada como par√¢metro.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
 	 * @param tipoConfig
 	 * @param tipoMovimentacao
-	 *            - ConfiguraÁ„o que ter· a permiss„o verificada.
+	 *            - Configura√ß√£o que ter√° a permiss√£o verificada.
 	 * @return
 	 * @throws Exception
 	 */
@@ -679,18 +688,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel fazer arquivamento corrente de um mÛbil, segundo as regras a
+	 * Retorna se √© poss√≠vel fazer arquivamento corrente de um m√≥bil, segundo as regras a
 
 	 * seguir:
 	 * <ul>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>MÛbil tem de ser via ou geral de processo (caso em que se condidera a
-	 * situaÁ„o do ˙ltimo volume)</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>MÛbil n„o pode estar juntado</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via ou geral de processo (caso em que se condidera a
+	 * situa√ß√£o do √∫ltimo volume)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>M√≥bil n√£o pode estar juntado</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -727,18 +736,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/**
-	 * Retorna se È possÌvel fazer sobrestar um mÛbil, segundo as
+	 * Retorna se √© poss√≠vel fazer sobrestar um m√≥bil, segundo as
 	 * regras a seguir:
 
 
 	 * <ul>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>MÛbil tem de ser via ou volume (n„o pode ser geral)</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>MÛbil n„o pode estar juntado</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via ou volume (n√£o pode ser geral)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>M√≥bil n√£o pode estar juntado</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -773,17 +782,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel tornar um documento sem efeito, segundo as
+	 * Retorna se √© poss√≠vel tornar um documento sem efeito, segundo as
 	 * regras a seguir:
 
 
 	 * <ul>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>MÛbil tem de ser via ou volume (n„o pode ser geral)</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>MÛbil n„o pode estar juntado</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via ou volume (n√£o pode ser geral)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>M√≥bil n√£o pode estar juntado</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -806,7 +815,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
 			return false;
 		
-		//Verifica se o documento est· com pedido de publicaÁ„o no DJE ou BIE.
+		//Verifica se o documento est√° com pedido de publica√ß√£o no DJE ou BIE.
 		if(mob.doc().isPublicacaoSolicitada() ||  
 				mob.doc().isPublicacaoAgendada() || 	
 				mob.doc().isPublicacaoBoletimSolicitada() ||
@@ -816,7 +825,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		
 		//Verifica se o subscritor pode movimentar todos os mobils
-		//E TambÈm se algum documento diferente est· apensado ou juntado a este documento
+		//E Tamb√©m se algum documento diferente est√° apensado ou juntado a este documento
 
 
 		for (ExMobil m : mob.doc().getExMobilSet()) {
@@ -845,16 +854,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}	
 	
 	/**
-	 * Retorna se È possÌvel criar subprocesso, segundo as regras abaixo:
+	 * Retorna se √© poss√≠vel criar subprocesso, segundo as regras abaixo:
 	 * <ul>
 	 * <li>Documento tem de ser processo</li>
-	 * <li>MÛbil n„o pode ser geral</li>
+	 * <li>M√≥bil n√£o pode ser geral</li>
 
-	 * <li>Documento n„o pode ter um mÛbil pai</li>
-	 * <li>Documento n„o pode estar cancelado</li>
-	 * <li>Usu·rio tem de ter permiss„o para acessar o documento que contÈm o
-	 * mÛbil. <b>… mesmo necess·rio verificar isso?</b></li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o: Criar
+	 * <li>Documento n√£o pode ter um m√≥bil pai</li>
+	 * <li>Documento n√£o pode estar cancelado</li>
+	 * <li>Usu√°rio tem de ter permiss√£o para acessar o documento que cont√©m o
+	 * m√≥bil. <b>√â mesmo necess√°rio verificar isso?</b></li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o: Criar
 	 * Documento Filho</li>
 	 * </ul>
 	 * 
@@ -884,15 +893,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel criar um documento filho do mÛbil passado como
-	 * par‚metro, de acordo com as regras:
+	 * Retorna se √© poss√≠vel criar um documento filho do m√≥bil passado como
+	 * par√¢metro, de acordo com as regras:
 	 * <ul>
-	 * <li>Documento n„o pode estar cancelado</li>
-	 * <li>Volume n„o pode estar encerrado, pelo fato de documento filho
-	 * representar conte˙do agregado ao mÛbil</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>Documento n√£o pode estar cancelado</li>
+	 * <li>Volume n√£o pode estar encerrado, pelo fato de documento filho
+	 * representar conte√∫do agregado ao m√≥bil</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -914,8 +923,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel fazer simulaÁ„o, com base na configuraÁ„o de tipo
-	 * "Pode Simular Usu·rio"
+	 * Retorna se √© poss√≠vel fazer simula√ß√£o, com base na configura√ß√£o de tipo
+	 * "Pode Simular Usu√°rio"
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -929,18 +938,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel mostrar o link para arquivamento intermedi·rio de
-	 * um mÛbil, de acordo com as condiÁıes a seguir:
+	 * Retorna se √© poss√≠vel mostrar o link para arquivamento intermedi√°rio de
+	 * um m√≥bil, de acordo com as condi√ß√µes a seguir:
 	 * <ul>
-	 * <li>MÛbil tem de ser via ou geral de processo</li>
+	 * <li>M√≥bil tem de ser via ou geral de processo</li>
 
-	 * <li>MÛbil tem de estar assinado</li>
-	 * <li>MÛbil tem de estar arquivado corrente</li>
-	 * <li>PCTT tem de prever, para o mÛbil, tempo de permanÍncia no arquivo
-	 * intermedi·rio</li>
-	 * <li>MÛbil n„o pode estar arquivado intermedi·rio nem permanente</li>
-	 * <li>MÛbil n„o pode estar em edital de eliminaÁ„o</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de estar assinado</li>
+	 * <li>M√≥bil tem de estar arquivado corrente</li>
+	 * <li>PCTT tem de prever, para o m√≥bil, tempo de perman√™ncia no arquivo
+	 * intermedi√°rio</li>
+	 * <li>M√≥bil n√£o pode estar arquivado intermedi√°rio nem permanente</li>
+	 * <li>M√≥bil n√£o pode estar em edital de elimina√ß√£o</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -973,9 +982,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel fazer o arquivamento intermedi·rio do mÛbil, ou
-	 * seja, se È possÌvel mostrar o link para movimentaÁ„o e se, alÈm disso, o
-	 * mÛbil encontra-se na lotaÁ„o titular ou È digital.
+	 * Retorna se √© poss√≠vel fazer o arquivamento intermedi√°rio do m√≥bil, ou
+	 * seja, se √© poss√≠vel mostrar o link para movimenta√ß√£o e se, al√©m disso, o
+	 * m√≥bil encontra-se na lota√ß√£o titular ou √© digital.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -992,19 +1001,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel exibir o link para arquivamento permanente de um
-	 * mÛbil, de acordo com as condiÁıes a seguir:
+	 * Retorna se √© poss√≠vel exibir o link para arquivamento permanente de um
+	 * m√≥bil, de acordo com as condi√ß√µes a seguir:
 	 * <ul>
-	 * <li>MÛbil tem de ser via ou geral de processo</li>
-	 * <li>MÛbil n„o pode estar sem efeito</li>
-	 * <li>MÛbil tem de estar assinado</li>
-	 * <li>MÛbil tem de estar arquivado corrente ou intermedi·rio; n„o pode ter
+	 * <li>M√≥bil tem de ser via ou geral de processo</li>
+	 * <li>M√≥bil n√£o pode estar sem efeito</li>
+	 * <li>M√≥bil tem de estar assinado</li>
+	 * <li>M√≥bil tem de estar arquivado corrente ou intermedi√°rio; n√£o pode ter
 	 * sido arquivado permanentemente</li>
 	 * <li>Tem de estar prevista guarda permanente, seja por PCTT ou por
-	 * indicaÁ„o</li>
-	 * <li>MÛbil n„o pode estar em edital de eliminaÁ„o</li>
-	 * <li>MÛbil n„o pode ter sido eliminado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * indica√ß√£o</li>
+	 * <li>M√≥bil n√£o pode estar em edital de elimina√ß√£o</li>
+	 * <li>M√≥bil n√£o pode ter sido eliminado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -1037,9 +1046,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel fazer o arquivamento permanente do mÛbil, ou seja,
-	 * se È possÌvel mostrar o link para movimentaÁ„o e se, alÈm disso, o mÛbil
-	 * encontra-se na lotaÁ„o titular ou È digital.
+	 * Retorna se √© poss√≠vel fazer o arquivamento permanente do m√≥bil, ou seja,
+	 * se √© poss√≠vel mostrar o link para movimenta√ß√£o e se, al√©m disso, o m√≥bil
+	 * encontra-se na lota√ß√£o titular ou √© digital.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1056,17 +1065,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
-	 * Retorna se È possÌvel assinar digitalmente o documento a que pertence o
-	 * mÛbil passado por par‚metro, conforme as seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel assinar digitalmente o documento a que pertence o
+	 * m√≥bil passado por par√¢metro, conforme as seguintes condi√ß√µes:
 	 * <ul>
-	 * <li>Documento n„o pode ser processo interno importado</li>
-	 * <li>Usu·rio tem de ser cossignat·rio do documento ou subscritor ou
+	 * <li>Documento n√£o pode ser processo interno importado</li>
+	 * <li>Usu√°rio tem de ser cossignat√°rio do documento ou subscritor ou
 	 * [cadastrante, caso o documento seja externo], ou <i>podeMovimentar()</i>
-	 * tem de ser verdadeiro para o mÛbil / usu·rio</li>
+	 * tem de ser verdadeiro para o m√≥bil / usu√°rio</li>
 	 * <li>Documento tem de estar finalizado</li>
-	 * <li>Documento n„o pode estar cancelado</li>
-	 * <li>Documento n„o pode estar em algum arquivo nem eliminado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>Documento n√£o pode estar cancelado</li>
+	 * <li>Documento n√£o pode estar em algum arquivo nem eliminado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -1088,7 +1097,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isArquivado() || mob.isEliminado())
 			return false;
 
-		// cosignatario pode assinar depois que o subscritor j· tiver assinado
+		// cosignatario pode assinar depois que o subscritor j√° tiver assinado
 
 		boolean isConsignatario = false;
 
@@ -1108,7 +1117,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& mob.doc().getCadastrante().equivale(titular))
 			isCadastranteExterno = true;
 
-		//condiÁıes para assinatura digital de cosignat·rios em documentos fÌsicos 
+		//condi√ß√µes para assinatura digital de cosignat√°rios em documentos f√≠sicos 
 		if 	((mob.doc().getSubscritor() != null && mob.doc().getSubscritor().equivale(titular) 
 				|| isConsignatario) && mob.doc().isFisico() && mob.doc().isFinalizado())
 			return true;
@@ -1136,7 +1145,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
-	 * Retorna se È possÌvel assinar um documento com senha:
+	 * Retorna se √© poss√≠vel assinar um documento com senha:
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1156,7 +1165,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
-	 * Retorna se pode autenticar um documento que sÛ foi assinado com senha.
+	 * Retorna se pode autenticar um documento que s√≥ foi assinado com senha.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1165,7 +1174,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAutenticarDocumento(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExDocumento doc) {
+			final DpLotacao lotaTitular, final ExDocumento doc) throws Exception {
 		
 		if (doc.isEletronico() &&  !doc.isAutenticado() && doc.temAssinaturasComSenha()) {
 			 return true;
@@ -1175,7 +1184,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
-	 * Retorna se pode autenticar uma movimentaÁ„o que sÛ foi assinada com senha.
+	 * Retorna se pode autenticar uma movimenta√ß√£o que s√≥ foi assinada com senha.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1184,9 +1193,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAutenticarMovimentacao(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMovimentacao mov) {
+			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
 		
-		//N„o È necess·rio autenticar movimentaÁ„o de anexaÁ„o pois o link para assinar/autenticar sempre est· disponÌvel. 
+		//N√£o √© necess√°rio autenticar movimenta√ß√£o de anexa√ß√£o pois o link para assinar/autenticar sempre est√° dispon√≠vel. 
 		if(mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
 			return false;
 		
@@ -1198,7 +1207,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
-	 * Retorna se È possÌvel assinar uma movimentaÁ„o com senha:
+	 * Retorna se √© poss√≠vel assinar uma movimenta√ß√£o com senha:
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1207,7 +1216,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAssinarMovimentacaoComSenha(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMovimentacao mov) {
+			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
 
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA,
 				ExTipoMovimentacao.class, false);
@@ -1218,7 +1227,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
-	 * Retorna se È possÌvel assinar movimentaÁıes do mobil com senha:
+	 * Retorna se √© poss√≠vel assinar movimenta√ß√µes do mobil com senha:
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1238,7 +1247,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
-	 * Retorna se È possÌvel assinar uma movimentaÁ„o com senha:
+	 * Retorna se √© poss√≠vel assinar uma movimenta√ß√£o com senha:
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1264,7 +1273,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}	
 	
 	/*
-	 * Retorna se È possÌvel cÛpia de um movimentaÁıes do mobil com senha:
+	 * Retorna se √© poss√≠vel c√≥pia de um movimenta√ß√µes do mobil com senha:
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1285,7 +1294,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				null, exTpMov, null, null, null, lotaTitular, titular, null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}	
-
 	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {
 		
 		if(doc.getExTipoDocumento().getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO))
@@ -1295,7 +1303,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/**
-	 * Retorna se È possÌvel ser subscritor de um documento.
+	 * Retorna se √© poss√≠vel ser subscritor de um documento.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1322,15 +1330,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel publicar o Boletim Interno que possui mob, segundo
+	 * Retorna se √© poss√≠vel publicar o Boletim Interno que possui mob, segundo
 	 * as regras:
 	 * <ul>
 	 * <li>Documento tem de estar finalizado</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>Documento n„o pode estar publicado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o:
-	 * Movimentar / PublicaÁ„o Boletim</li>
+	 * <li>Documento n√£o pode estar publicado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o:
+	 * Movimentar / Publica√ß√£o Boletim</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -1358,13 +1366,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se uma pessoa j· teve acesso a um documento. Para isso, verifica
-	 * se pessoa j· foi atendente de alguma das movimentaÁıes de qualquer mÛbil
-	 * do documento, caso a movimentaÁ„o n„o tenha como atendente toda uma
-	 * lotaÁ„o, ou se ela È da lotaÁ„o atendente de alguma dessas movimentaÁıes.
-	 * Se a movimentaÁ„o em quest„o for uma redefiniÁ„o de nÌvel de acesso,
-	 * verifica se foi o prÛprio usu·rio que cadastrou a redefiniÁ„o.
-	 * <b>Documentar a raz„o dessas regras.</b>
+	 * Retorna se uma pessoa j√° teve acesso a um documento. Para isso, verifica
+	 * se pessoa j√° foi atendente de alguma das movimenta√ß√µes de qualquer m√≥bil
+	 * do documento, caso a movimenta√ß√£o n√£o tenha como atendente toda uma
+	 * lota√ß√£o, ou se ela √© da lota√ß√£o atendente de alguma dessas movimenta√ß√µes.
+	 * Se a movimenta√ß√£o em quest√£o for uma redefini√ß√£o de n√≠vel de acesso,
+	 * verifica se foi o pr√≥prio usu√°rio que cadastrou a redefini√ß√£o.
+	 * <b>Documentar a raz√£o dessas regras.</b>
 	 * 
 	 * @param doc
 	 * @param titular
@@ -1395,10 +1403,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se uma pessoa/lotaÁ„o est· vinculada a um documento por meio de algum
-	 * perfil. Para isso, verifica cada movimentaÁ„o n„o cancelada de vinculaÁ„o
-	 * de perfil registrada no mÛbil geral do documento e analisa se a pessoa/lotaÁ„o
-	 * passada por par‚metro È <i>titular/lotaTitular</i> de alguma dessas movimentaÁıes.
+	 * Retorna se uma pessoa/lota√ß√£o est√° vinculada a um documento por meio de algum
+	 * perfil. Para isso, verifica cada movimenta√ß√£o n√£o cancelada de vincula√ß√£o
+	 * de perfil registrada no m√≥bil geral do documento e analisa se a pessoa/lota√ß√£o
+	 * passada por par√¢metro √© <i>titular/lotaTitular</i> de alguma dessas movimenta√ß√µes.
 
 	 * 
 	 * @param doc
@@ -1434,8 +1442,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se uma <i>lotaÁ„o</i> j· foi atendente em alguma movimentaÁ„o
-	 * (mesmo cancelada) de algum mÛbil do documento passado por par„metro
+	 * Retorna se uma <i>lota√ß√£o</i> j√° foi atendente em alguma movimenta√ß√£o
+	 * (mesmo cancelada) de algum m√≥bil do documento passado por par√£metro
 	 * 
 	 * @param doc
 	 * @param lota
@@ -1452,12 +1460,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel exibir a opÁ„o de criar via em documento.
-	 * <b>Verificar qual a utilidade desse mÈtodo</b>. CondiÁıes:
+	 * Retorna se √© poss√≠vel exibir a op√ß√£o de criar via em documento.
+	 * <b>Verificar qual a utilidade desse m√©todo</b>. Condi√ß√µes:
 	 * <ul>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>Tem de ser possÌvel criar via (<i>podeCriarVia()</i>)</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>Tem de ser poss√≠vel criar via (<i>podeCriarVia()</i>)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -1481,18 +1489,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel desentranhar mÛbil de outro. Regras:
+	 * Retorna se √© poss√≠vel desentranhar m√≥bil de outro. Regras:
 	 * <ul>
-	 * <li>MÛbil tem de ser via</li>
-	 * <li>MÛbil tem de estar juntado externo ou interno (verifica-se juntada
-	 * interna pela existÍncia de mÛbil pai)</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>A n„o ser que o mÛbil esteja juntado externo, <i>podeMovimentar()</i>
-	 * tem de ser verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>MÛbil tem de estar juntado. <b>Obs.: essa checagem n„o torna
-	 * desnecess·rios os processamentos acima?</b></li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o:
+	 * <li>M√≥bil tem de ser via</li>
+	 * <li>M√≥bil tem de estar juntado externo ou interno (verifica-se juntada
+	 * interna pela exist√™ncia de m√≥bil pai)</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>A n√£o ser que o m√≥bil esteja juntado externo, <i>podeMovimentar()</i>
+	 * tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>M√≥bil tem de estar juntado. <b>Obs.: essa checagem n√£o torna
+	 * desnecess√°rios os processamentos acima?</b></li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o:
 	 * Cancelar Juntada</li>
 	 * </ul>
 	 * 
@@ -1533,50 +1541,50 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel cancelar a ˙ltima movimentaÁ„o n„o cancelada do
-	 * mÛbil mob, segundo as regras abaixo.
+	 * Retorna se √© poss√≠vel cancelar a √∫ltima movimenta√ß√£o n√£o cancelada do
+	 * m√≥bil mob, segundo as regras abaixo.
 	 * <ul>
-	 * <li>⁄ltima movimentaÁ„o n„o cancelada do mÛbil n„o pode ser apensaÁ„o nem
-	 * desapensaÁ„o</li>
-	 * <li>⁄ltima movimentaÁ„o n„o cancelada do mÛbil n„o pode ser assinatura do
-	 * documento ou de movimentaÁ„o</li>
-	 * <li>⁄ltima movimentaÁ„o n„o cancelada do mÛbil n„o pode ser recebimento</li>
-	 * <li>⁄ltima movimentaÁ„o n„o cancelada do mÛbil n„o pode ser inclus„o em
-	 * edital de eliminaÁ„o</li>
-	 * <li>⁄ltima movimentaÁ„o n„o cancelada do mÛbil n„o pode ser atualizaÁ„o
-	 * resultante de assinatura do documento ou de movimentaÁ„o</li>
-	 * <li>⁄ltima movimentaÁ„o n„o cancelada do mÛbil n„o pode ser publicaÁ„o do
-	 * Boletim nem notificaÁ„o de publicaÁ„o do Boletim</li>
-	 * <li>Se a ˙ltima movimentaÁ„o n„o cancelada for agendamento de publicaÁ„o
-	 * direta no DJE, o usu·rio que tem permiss„o para atender pedidos de
-	 * publicaÁ„o indireta pode cancelar, n„o importando se
-	 * <i>podeMovimentar()</i> È verdadeiro</li>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>Se a ˙ltima movimentaÁ„o j· for um cancelamento, n„o permite cancelar
-	 * a ˙ltima movimentaÁ„o n„o cancelada, a n„o ser que a ˙ltima movimentaÁ„o
-	 * seja cancelamento de atualizaÁ„o ou de recebimento transitÛrio</li>
-	 * <li>Apenas o usu·rio que seja da lotaÁ„o cadastrante da ˙ltima
-	 * movimentaÁ„o n„o cancelada pode cancel·-la, se for dos seguintes tipos:</li>
+	 * <li>√öltima movimenta√ß√£o n√£o cancelada do m√≥bil n√£o pode ser apensa√ß√£o nem
+	 * desapensa√ß√£o</li>
+	 * <li>√öltima movimenta√ß√£o n√£o cancelada do m√≥bil n√£o pode ser assinatura do
+	 * documento ou de movimenta√ß√£o</li>
+	 * <li>√öltima movimenta√ß√£o n√£o cancelada do m√≥bil n√£o pode ser recebimento</li>
+	 * <li>√öltima movimenta√ß√£o n√£o cancelada do m√≥bil n√£o pode ser inclus√£o em
+	 * edital de elimina√ß√£o</li>
+	 * <li>√öltima movimenta√ß√£o n√£o cancelada do m√≥bil n√£o pode ser atualiza√ß√£o
+	 * resultante de assinatura do documento ou de movimenta√ß√£o</li>
+	 * <li>√öltima movimenta√ß√£o n√£o cancelada do m√≥bil n√£o pode ser publica√ß√£o do
+	 * Boletim nem notifica√ß√£o de publica√ß√£o do Boletim</li>
+	 * <li>Se a √∫ltima movimenta√ß√£o n√£o cancelada for agendamento de publica√ß√£o
+	 * direta no DJE, o usu√°rio que tem permiss√£o para atender pedidos de
+	 * publica√ß√£o indireta pode cancelar, n√£o importando se
+	 * <i>podeMovimentar()</i> √© verdadeiro</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>Se a √∫ltima movimenta√ß√£o j√° for um cancelamento, n√£o permite cancelar
+	 * a √∫ltima movimenta√ß√£o n√£o cancelada, a n√£o ser que a √∫ltima movimenta√ß√£o
+	 * seja cancelamento de atualiza√ß√£o ou de recebimento transit√≥rio</li>
+	 * <li>Apenas o usu√°rio que seja da lota√ß√£o cadastrante da √∫ltima
+	 * movimenta√ß√£o n√£o cancelada pode cancel√°-la, se for dos seguintes tipos:</li>
 	 * <ul>
-	 * <li>TransferÍncia</li>
-	 * <li>TransferÍncia Externa</li>
-	 * <li>Despacho Interno com TransferÍncia</li>
-	 * <li>Despacho com transferÍncia Externa</li>
-	 * <li>Despacho com TransferÍncia</li>
-	 * <li>Recebimento TransitÛrio</li>
+	 * <li>Transfer√™ncia</li>
+	 * <li>Transfer√™ncia Externa</li>
+	 * <li>Despacho Interno com Transfer√™ncia</li>
+	 * <li>Despacho com transfer√™ncia Externa</li>
+	 * <li>Despacho com Transfer√™ncia</li>
+	 * <li>Recebimento Transit√≥rio</li>
 	 * <li>Recebimento</li>
-	 * <li><b>Registro de Assinatura do Documento (desnecess·rio)</li>
-	 * <li>Assinatura Digital do Documento (desnecess·rio)</b></li>
+	 * <li><b>Registro de Assinatura do Documento (desnecess√°rio)</li>
+	 * <li>Assinatura Digital do Documento (desnecess√°rio)</b></li>
 	 * </ul>
-	 * <li>Excetuadas as condiÁıes acima, para cancelar a ˙ltima movimentaÁ„o
-	 * n„o cancelada do mÛbil o usu·rio ter· de ser 1) o atendente da
-	 * movimentaÁ„o, 2) o subscritor da movimentaÁ„o, 3) o titular da
-	 * movimentaÁ„o ou 4) da lotaÁ„o cadastrante da movimentaÁ„o</li> <li>Se
-	 * ˙ltima movimentaÁ„o n„o cancelada for de registro de assinatura, sÛ deixa
-	 * cancelar se n„o houver alguma movimentaÁ„o posterior em alguma das vias.
-	 * <b>Obs.: regra em desuso. Parece tambÈm haver erro no cÛdigo
-	 * (before(dt)?)</b></li> <li>N„o pode haver configuraÁ„o impeditiva. Tipo
-	 * de configuraÁ„o: Cancelar MovimentaÁ„o</li> </ul>
+	 * <li>Excetuadas as condi√ß√µes acima, para cancelar a √∫ltima movimenta√ß√£o
+	 * n√£o cancelada do m√≥bil o usu√°rio ter√° de ser 1) o atendente da
+	 * movimenta√ß√£o, 2) o subscritor da movimenta√ß√£o, 3) o titular da
+	 * movimenta√ß√£o ou 4) da lota√ß√£o cadastrante da movimenta√ß√£o</li> <li>Se
+	 * √∫ltima movimenta√ß√£o n√£o cancelada for de registro de assinatura, s√≥ deixa
+	 * cancelar se n√£o houver alguma movimenta√ß√£o posterior em alguma das vias.
+	 * <b>Obs.: regra em desuso. Parece tamb√©m haver erro no c√≥digo
+	 * (before(dt)?)</b></li> <li>N√£o pode haver configura√ß√£o impeditiva. Tipo
+	 * de configura√ß√£o: Cancelar Movimenta√ß√£o</li> </ul>
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1587,7 +1595,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeCancelarMovimentacao(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		
-		//N„o deixa cancelar movimentaÁ„o de um mobil diferente de geral quando um documento est· sem efeito.
+		//N√£o deixa cancelar movimenta√ß√£o de um mobil diferente de geral quando um documento est√° sem efeito.
 
 		if(!mob.isGeral() && mob.doc().isSemEfeito())
 			return false;
@@ -1601,8 +1609,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (exUltMov == null || exUltMovNaoCanc == null)
 			return false;
 		
-		//SÛ deixa cancelar movimentaÁ„o de tornar documento sem efeito, se o titular for o subscritor do documento
-		//TambÈm n„o È permitido os cosignat·rios cancelar essa movimentaÁ„o
+		//S√≥ deixa cancelar movimenta√ß√£o de tornar documento sem efeito, se o titular for o subscritor do documento
+		//Tamb√©m n√£o √© permitido os cosignat√°rios cancelar essa movimenta√ß√£o
 		if(mob.isGeral() && 
 				exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO &&
 				!exUltMovNaoCanc.getSubscritor().equivale(titular))
@@ -1611,7 +1619,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 			return false;
 
-		// N„o deixa cancelar apensaÁ„o ou desapensaÁ„o
+		// N√£o deixa cancelar apensa√ß√£o ou desapensa√ß√£o
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
 			return false;
@@ -1625,7 +1633,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO)
 			return false;
 
-		// N„o deixa cancelar assinatura
+		// N√£o deixa cancelar assinatura
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 						|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
@@ -1635,7 +1643,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 			return false;
 
-		// N„o deixa cancelar a atualizaÁ„o (por enquanto, sÛ ser resultar
+		// N√£o deixa cancelar a atualiza√ß√£o (por enquanto, s√≥ ser resultar
 		// da
 		// assinatura)
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ATUALIZACAO
@@ -1651,7 +1659,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DISPONIBILIZACAO)
 			return false;
 		
-		//N„o deixa cancelar juntada quando o documento est· juntado a um expediente/processo que j· sofreu outra movimentaÁ„o
+		//N√£o deixa cancelar juntada quando o documento est√° juntado a um expediente/processo que j√° sofreu outra movimenta√ß√£o
 		if(exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA) {
 			
 			if (exUltMovNaoCanc.getExMobilRef().isArquivado())
@@ -1663,7 +1671,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& ultimaMovimentacaoDaReferencia.getDtMov().after(exUltMovNaoCanc.getDtMov()))
 				return false;
 			
-			//Verifica se o mobil de referÍncia j· recebeu outras movimentaÁıes depois da movimentaÁ„o que vai ser cancelada.
+			//Verifica se o mobil de refer√™ncia j√° recebeu outras movimenta√ß√µes depois da movimenta√ß√£o que vai ser cancelada.
 			if(mob.doc().isEletronico()
 					&& exUltMovNaoCanc.getExMobilRef() != null
 					&& exUltMovNaoCanc.getExMobilRef().doc().isNumeracaoUnicaAutomatica()) {
@@ -1682,16 +1690,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		}
 		
 
-		// Verifica se a ˙ltima movimentaÁ„o n„o cancelada È agendamento de
-		// publicaÁ„o no DJE
+		// Verifica se a √∫ltima movimenta√ß√£o n√£o cancelada √© agendamento de
+		// publica√ß√£o no DJE
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO
 				&& podeAtenderPedidoPublicacao(titular, lotaTitular, mob))
 			return true;
 
 
-		// N„o deixa cancelar a mov se a via estiver cancelada ou h· um
-		// cancelamento imediatamente anterior, a n„o ser se este for
-		// cancelamento de receb transitÛrio ou de atualizaÁ„o
+		// N√£o deixa cancelar a mov se a via estiver cancelada ou h√° um
+		// cancelamento imediatamente anterior, a n√£o ser se este for
+		// cancelamento de receb transit√≥rio ou de atualiza√ß√£o
 		if (mob.isCancelada()
 				|| (exUltMovNaoCanc.getIdMov() != exUltMov.getIdMov()
 						&& exUltMov.getExMovimentacaoRef() != null
@@ -1701,7 +1709,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ATUALIZACAO)
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)
 			return false;
-		// Essas sÛ a lota do cadastrante pode cancelar
+		// Essas s√≥ a lota do cadastrante pode cancelar
 		else if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
@@ -1729,8 +1737,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			}
 		}
 
-		// Antes de deixar cancelar a assinatura, vÍ antes se houve
-		// movimentaÁıes posteriores em qualquer via
+		// Antes de deixar cancelar a assinatura, v√™ antes se houve
+		// movimenta√ß√µes posteriores em qualquer via
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO) {
 			Date dt = exUltMovNaoCanc.getDtIniMov();
 			for (ExMobil m : mob.doc().getExMobilSet()) {
@@ -1741,7 +1749,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			}
 		}
 		
-		//N„o deixa desfazer os antigos arquivamentos feitos em volume de processo
+		//N√£o deixa desfazer os antigos arquivamentos feitos em volume de processo
 		if (exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
 				&& !podeDesarquivarCorrente(titular, lotaTitular, mob)) {
 			return false;
@@ -1763,13 +1771,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel cancelar uma movimentaÁ„o mov, segundo as regras
-	 * abaixo. <b>MÈtodo em desuso?</b>
+	 * Retorna se √© poss√≠vel cancelar uma movimenta√ß√£o mov, segundo as regras
+	 * abaixo. <b>M√©todo em desuso?</b>
 	 * <ul>
-	 * <li>MovimentaÁ„o n„o pode estar cancelada</li>
-	 * <li>Usu·rio tem de ser da lotaÁ„o cadastrante da movimentaÁ„o</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o:
-	 * Cancelar MovimentaÁ„o</li>
+	 * <li>Movimenta√ß√£o n√£o pode estar cancelada</li>
+	 * <li>Usu√°rio tem de ser da lota√ß√£o cadastrante da movimenta√ß√£o</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o:
+	 * Cancelar Movimenta√ß√£o</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -1800,18 +1808,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel cancelar a via mob, conforme estabelecido a seguir:
+	 * Retorna se √© poss√≠vel cancelar a via mob, conforme estabelecido a seguir:
 	 * <ul>
-	 * <li>MÛbil tem de ser via</li>
-	 * <li>Documento que contÈm a via n„o pode estar assinado</li>
-	 * <li>Via n„o pode estar cancelada</li>
-	 * <li>⁄ltima movimentaÁ„o n„o cancelada da via tem de ser a sua criaÁ„o</li>
-	 * <li>N„o pode haver movimentaÁıes canceladas posteriores ‡ criaÁ„o</li>
-	 * <li>Com relaÁ„o ‡ movimentaÁ„o de criaÁ„o (˙ltima movimentaÁ„o n„o
-	 * cancelada), o usu·rio tem de ser 1) da lotaÁ„o atendente da movimentaÁ„o,
-	 * 2) o subscritor da movimentaÁ„o, 3) o titular da movimentaÁ„o ou 4) da
-	 * lotaÁ„o cadastrante da movimentaÁ„o</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via</li>
+	 * <li>Documento que cont√©m a via n√£o pode estar assinado</li>
+	 * <li>Via n√£o pode estar cancelada</li>
+	 * <li>√öltima movimenta√ß√£o n√£o cancelada da via tem de ser a sua cria√ß√£o</li>
+	 * <li>N√£o pode haver movimenta√ß√µes canceladas posteriores √† cria√ß√£o</li>
+	 * <li>Com rela√ß√£o √† movimenta√ß√£o de cria√ß√£o (√∫ltima movimenta√ß√£o n√£o
+	 * cancelada), o usu√°rio tem de ser 1) da lota√ß√£o atendente da movimenta√ß√£o,
+	 * 2) o subscritor da movimenta√ß√£o, 3) o titular da movimenta√ß√£o ou 4) da
+	 * lota√ß√£o cadastrante da movimenta√ß√£o</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -1850,7 +1858,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				return false;
 		}
 		
-		//N„o È possÌvel cancelar a ˙ltima via de um documento pois estava gerando erros nas marcas do mobil geral.
+		//N√£o √© poss√≠vel cancelar a √∫ltima via de um documento pois estava gerando erros nas marcas do mobil geral.
 		boolean isUnicaViaNaoCancelada = true;
 		for (ExMobil outroMobil : mob.getDoc().getExMobilSet()) {
 			if(!outroMobil.isGeral() &&  !outroMobil.isCancelada()
@@ -1868,19 +1876,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel criar via para o documento que contÈm o mÛbil
-	 * passado por par‚metro, de acordo com as seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel criar via para o documento que cont√©m o m√≥bil
+	 * passado por par√¢metro, de acordo com as seguintes condi√ß√µes:
 	 * <ul>
 	 * <li>Documento tem de ser expediente</li>
-	 * <li>Documento n„o pode ter pai, pois n„o È permitido criar vias em
+	 * <li>Documento n√£o pode ter pai, pois n√£o √© permitido criar vias em
 	 * documento filho</li>
-	 * <li>N˙mero da ˙ltima via n„o pode ser maior ou igual a 21</li>
+	 * <li>N√∫mero da √∫ltima via n√£o pode ser maior ou igual a 21</li>
 	 * <li>Documento tem de estar finalizado</li>
-	 * <li>Documento n„o pode ter sido eliminado</li>
-	 * <li>Documento tem de possuir alguma via n„o cancelada</li>
-	 * <li>LotaÁ„o do titular igual a do cadastrante ou a do subscritor ou 
+	 * <li>Documento n√£o pode ter sido eliminado</li>
+	 * <li>Documento tem de possuir alguma via n√£o cancelada</li>
+	 * <li>Lota√ß√£o do titular igual a do cadastrante ou a do subscritor ou 
 
-	 * o titular ser o prÛprio subscritor</li>
+	 * o titular ser o pr√≥prio subscritor</li>
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -1914,7 +1922,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				(podeMovimentar(titular, lotaTitular, mob) 
 				   || mob.doc().getLotaCadastrante().equivale(lotaTitular)				        
 				   || (mob.doc().getLotaSubscritor() != null && mob.doc().getLotaSubscritor().equivale(lotaTitular))
-			       || (mob.doc().getSubscritor() != null &&  mob.doc().getSubscritor().equivale(titular))) // subscritor È null para documentos externos		      
+			       || (mob.doc().getSubscritor() != null &&  mob.doc().getSubscritor().equivale(titular))) // subscritor √© null para documentos externos		      
 			) {
 
 			return true;
@@ -1924,12 +1932,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel criar volume para o documento que contÈm o mÛbil
-	 * passado por par‚metro, de acordo com as seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel criar volume para o documento que cont√©m o m√≥bil
+	 * passado por par√¢metro, de acordo com as seguintes condi√ß√µes:
 	 * <ul>
 	 * <li>Documento tem de ser processo</li>
 	 * <li>Processo tem de estar finalizado</li>
-	 * <li>⁄ltimo volume tem de estar encerrado</li>
+	 * <li>√öltimo volume tem de estar encerrado</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -1971,15 +1979,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel encerrar um volume, dadas as seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel encerrar um volume, dadas as seguintes condi√ß√µes:
 	 * <ul>
-	 * <li>MÛbil tem de ser volume</li>
-	 * <li>Volume n„o pode estar encerrado</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>MÛbil n„o pode estar spbrestado</li>
-	 * <li>Volume n„o pode estar em tr‚nsito</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser volume</li>
+	 * <li>Volume n√£o pode estar encerrado</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>M√≥bil n√£o pode estar spbrestado</li>
+	 * <li>Volume n√£o pode estar em tr√¢nsito</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2022,14 +2030,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel reabrir um mÛbil, segundo as seguintes regras:
+	 * Retorna se √© poss√≠vel reabrir um m√≥bil, segundo as seguintes regras:
 	 * <ul>
-	 * <li>MÛbil tem de ser via ou geral de processo.</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>MÛbil tem de estar arquivado corrente ou intermedi·rio, mas n„o permanentemente</li>
-	 * <li>MÛbil n„o pode estar em edital de eliminaÁ„o</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via ou geral de processo.</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>M√≥bil tem de estar arquivado corrente ou intermedi√°rio, mas n√£o permanentemente</li>
+	 * <li>M√≥bil n√£o pode estar em edital de elimina√ß√£o</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2059,13 +2067,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel reabrir um mÛbil, segundo as seguintes regras:
+	 * Retorna se √© poss√≠vel reabrir um m√≥bil, segundo as seguintes regras:
 	 * <ul>
-	 * <li>MÛbil tem de ser via ou geral de processo.</li>
-	 * <li>MÛbil tem de estar em arquivo intermedi·rio, n„o permanente</li>
-	 * <li>MÛbil n„o pode estar em edital de eliminaÁ„o</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via ou geral de processo.</li>
+	 * <li>M√≥bil tem de estar em arquivo intermedi√°rio, n√£o permanente</li>
+	 * <li>M√≥bil n√£o pode estar em edital de elimina√ß√£o</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2097,9 +2105,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel fazer o desarquivamento intermedi·rio do mÛbil, ou
-	 * seja, se È possÌvel mostrar o link para movimentaÁ„o e se, alÈm disso, o
-	 * mÛbil encontra-se na lotaÁ„o titular ou È digital.
+	 * Retorna se √© poss√≠vel fazer o desarquivamento intermedi√°rio do m√≥bil, ou
+	 * seja, se √© poss√≠vel mostrar o link para movimenta√ß√£o e se, al√©m disso, o
+	 * m√≥bil encontra-se na lota√ß√£o titular ou √© digital.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -2116,12 +2124,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel desobrestar um mÛbil, segundo as seguintes regras:
+	 * Retorna se √© poss√≠vel desobrestar um m√≥bil, segundo as seguintes regras:
 	 * <ul>
-	 * <li>MÛbil tem de ser via ou volume. N„o pode ser geral</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>MÛbil tem de estar sobrestado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via ou volume. N√£o pode ser geral</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>M√≥bil tem de estar sobrestado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2147,18 +2155,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}	
 	
 	/**
-	 * Retorna se È possÌvel fazer despacho no mÛbil, conforme as regras a
+	 * Retorna se √© poss√≠vel fazer despacho no m√≥bil, conforme as regras a
 	 * seguir:
 	 * <ul>
-	 * <li>MÛbil n„o pode ter despacho pendente de assinatura</li>
-	 * <li>MÛbil tem de ser via ou volume. N„o pode ser geral</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>MÛbil n„o pode estar em edital de eliminaÁ„o</li>
-	 * <li>MÛbil tem de estar assinado ou ser externo. <b>Mas documento externo
-	 * n„o È cnsiderado assinado? <i>isAssinado</i> n„o deveria retornar
+	 * <li>M√≥bil n√£o pode ter despacho pendente de assinatura</li>
+	 * <li>M√≥bil tem de ser via ou volume. N√£o pode ser geral</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>M√≥bil n√£o pode estar em edital de elimina√ß√£o</li>
+	 * <li>M√≥bil tem de estar assinado ou ser externo. <b>Mas documento externo
+	 * n√£o √© cnsiderado assinado? <i>isAssinado</i> n√£o deveria retornar
 	 * verdadeiro?</b></li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2189,7 +2197,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel fazer download do conte˙do. MÈtodo em desuso,
+	 * Retorna se √© poss√≠vel fazer download do conte√∫do. M√©todo em desuso,
 	 * retornando sempre <i>false</i>.
 	 * 
 	 * @param titular
@@ -2203,10 +2211,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel duplicar o documento ue contÈm o mÛbil mob. Basta
-	 * n„o estar eliminado o documento e n„o haver configuraÁ„o impeditiva, o
-	 * que significa que, tendo acesso a um documento n„o eliminado, qualquer
-	 * usu·rio pode duplic·-lo.
+	 * Retorna se √© poss√≠vel duplicar o documento ue cont√©m o m√≥bil mob. Basta
+	 * n√£o estar eliminado o documento e n√£o haver configura√ß√£o impeditiva, o
+	 * que significa que, tendo acesso a um documento n√£o eliminado, qualquer
+	 * usu√°rio pode duplic√°-lo.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -2227,7 +2235,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/**
-	 * Retorna se È possÌvel exibir informaÁıes completas.
+	 * Retorna se √© poss√≠vel exibir informa√ß√µes completas.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -2241,14 +2249,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel editar um documento, conforme as seguintes regras:
+	 * Retorna se √© poss√≠vel editar um documento, conforme as seguintes regras:
 	 * <ul>
-	 * <li>Se o documento for fÌsico, n„o pode estar finalizado</li>
-	 * <li>Documento n„o pode estar cancelado</li>
-	 * <li>Se o documento for digital, n„o pode estar assinado</li>
-	 * <li>Usu·rio tem de ser 1) da lotaÁ„o cadastrante do documento,
+	 * <li>Se o documento for f√≠sico, n√£o pode estar finalizado</li>
+	 * <li>Documento n√£o pode estar cancelado</li>
+	 * <li>Se o documento for digital, n√£o pode estar assinado</li>
+	 * <li>Usu√°rio tem de ser 1) da lota√ß√£o cadastrante do documento,
 	 * 2)subscritor do documento ou 3) titular do documento</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2286,18 +2294,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel agendar publicaÁ„o direta, de acordo com as
+	 * Retorna se √© poss√≠vel agendar publica√ß√£o direta, de acordo com as
 	 * seguintes regras:
 	 * <ul>
 	 * <li>Documento tem de estar fechado</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>N„o pode haver agendamento de publicaÁ„o direta em aberto</li>
-	 * <li>N„o pode haver agendamento de publicaÁ„o indireta em aberto</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>MÛbil n„o pode estar eliminado</li>
-	 * <li>Nada È dito a respeito do Boletim Interno</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>N√£o pode haver agendamento de publica√ß√£o direta em aberto</li>
+	 * <li>N√£o pode haver agendamento de publica√ß√£o indireta em aberto</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>M√≥bil n√£o pode estar eliminado</li>
+	 * <li>Nada √© dito a respeito do Boletim Interno</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2338,10 +2346,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel fazer o agendamento de publicaÁ„o solicitada
-	 * indiretamente. Basta haver permiss„o para atender pedido de publicaÁ„o e
-	 * estar com publicaÁ„o indireta solicitada o documento a que pertence o
-	 * mÛbil passado por par‚metro.
+	 * Retorna se √© poss√≠vel fazer o agendamento de publica√ß√£o solicitada
+	 * indiretamente. Basta haver permiss√£o para atender pedido de publica√ß√£o e
+	 * estar com publica√ß√£o indireta solicitada o documento a que pertence o
+	 * m√≥bil passado por par√¢metro.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -2358,21 +2366,21 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/**
-	 * Retorna se È possÌvel solicitar publicaÁ„o indireta no DJE, conforme as
+	 * Retorna se √© poss√≠vel solicitar publica√ß√£o indireta no DJE, conforme as
 	 * regras a seguir:
 	 * <ul>
-	 * <li>N„o pode ser possÌvel agendar publicaÁ„o direta</li>
-	 * <li>Documento tem de estar fechado (verificaÁ„o desnecess·ria, visto que
-	 * abaixo se checa se est· assinado)</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
+	 * <li>N√£o pode ser poss√≠vel agendar publica√ß√£o direta</li>
+	 * <li>Documento tem de estar fechado (verifica√ß√£o desnecess√°ria, visto que
+	 * abaixo se checa se est√° assinado)</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>N„o pode haver outra solicitaÁ„o de publicaÁ„o no DJE em aberto</li>
-	 * <li>N„o pode pode haver solicitaÁ„o de publicaÁ„o no Boletim em aberto</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>MÛbil n„o pode estar eliminado</li>
-	 * <li>N„o pode haver agendamento de publicaÁ„o direta em aberto
-	 * <b>(verificaÁ„o desnecess·ria?)</b></li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>N√£o pode haver outra solicita√ß√£o de publica√ß√£o no DJE em aberto</li>
+	 * <li>N√£o pode pode haver solicita√ß√£o de publica√ß√£o no Boletim em aberto</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>M√≥bil n√£o pode estar eliminado</li>
+	 * <li>N√£o pode haver agendamento de publica√ß√£o direta em aberto
+	 * <b>(verifica√ß√£o desnecess√°ria?)</b></li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2408,13 +2416,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel utilizar o recurso Criar Anexo, com base nas
+	 * Retorna se √© poss√≠vel utilizar o recurso Criar Anexo, com base nas
 	 * seguintes regras:
 	 * <ul>
 	 * <li>Documento tem de estar finalizado</li>
 	 * <li>Documento tem de ser interno produzido</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2484,9 +2492,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/**
-	 * Retorna se È possÌvel, com base em configuraÁ„o, utilizar a rotina de
-	 * atendimento de pedidos indiretos de publicaÁ„o no DJE. N„o È utilizado o
-	 * par„metro mob.
+	 * Retorna se √© poss√≠vel, com base em configura√ß√£o, utilizar a rotina de
+	 * atendimento de pedidos indiretos de publica√ß√£o no DJE. N√£o √© utilizado o
+	 * par√£metro mob.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -2501,12 +2509,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel excluir o documento cujo mÛbil È o representado
-	 * pelo par‚metro mob. As regras para o documento s„o as seguintes:
+	 * Retorna se √© poss√≠vel excluir o documento cujo m√≥bil √© o representado
+	 * pelo par√¢metro mob. As regras para o documento s√£o as seguintes:
 	 * <ul>
-	 * <li>Documento n„o pode estar finalizado, seja fÌsico ou eletrÙnico</li>
-	 * <li>LotaÁ„o do usu·rio tem de ser a do cadastrante do documento</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>Documento n√£o pode estar finalizado, seja f√≠sico ou eletr√¥nico</li>
+	 * <li>Lota√ß√£o do usu√°rio tem de ser a do cadastrante do documento</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2530,15 +2538,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel excluir uma movimentaÁ„o de anexaÁ„o, representada
+	 * Retorna se √© poss√≠vel excluir uma movimenta√ß√£o de anexa√ß√£o, representada
 	 * por mov, conforme as regras a seguir:
 	 * <ul>
-	 * <li>AnexaÁ„o n„o pode estar cancelada</li>	
-	 * <li>Anexo n„o pode estar assinado</li>
-	 * <li>Se o documento for fÌsico, n„o pode estar finalizado</li>
-	 * <li>Se o documento for eletrÙnico, n„o pode estar assinado</li>
-	 * <li>LotaÁ„o do usu·rio tem de ser a lotaÁ„o cadastrante da movimentaÁ„o</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o: Excluir
+	 * <li>Anexa√ß√£o n√£o pode estar cancelada</li>	
+	 * <li>Anexo n√£o pode estar assinado</li>
+	 * <li>Se o documento for f√≠sico, n√£o pode estar finalizado</li>
+	 * <li>Se o documento for eletr√¥nico, n√£o pode estar assinado</li>
+	 * <li>Lota√ß√£o do usu√°rio tem de ser a lota√ß√£o cadastrante da movimenta√ß√£o</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o: Excluir
 	 * Anexo</li>
 	 * </ul>
 	 * 
@@ -2571,14 +2579,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/**
-	 * Retorna se È possÌvel excluir uma movimentaÁ„o de Inclus„o de Cossignat·rio 
+	 * Retorna se √© poss√≠vel excluir uma movimenta√ß√£o de Inclus√£o de Cossignat√°rio 
 	 * <ul>
-	 * <li>N„o pode estar cancelada</li>	
-	 * <li>N„o pode estar assinado</li>
-	 * <li>Se o documento for fÌsico, n„o pode estar finalizado</li>
-	 * <li>N„o pode estar assinado</li>
-	 * <li>LotaÁ„o do usu·rio tem de ser a lotaÁ„o cadastrante da movimentaÁ„o</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o: Excluir
+	 * <li>N√£o pode estar cancelada</li>	
+	 * <li>N√£o pode estar assinado</li>
+	 * <li>Se o documento for f√≠sico, n√£o pode estar finalizado</li>
+	 * <li>N√£o pode estar assinado</li>
+	 * <li>Lota√ß√£o do usu√°rio tem de ser a lota√ß√£o cadastrante da movimenta√ß√£o</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o: Excluir
 	 * Anexo</li>
 	 * </ul>
 	 * 
@@ -2614,18 +2622,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}	
 
 	/**
-	 * Retorna se È possÌvel cancelar uma movimentaÁ„o mov, de anexaÁ„o de
+	 * Retorna se √© poss√≠vel cancelar uma movimenta√ß√£o mov, de anexa√ß√£o de
 	 * arquivo. Regras:
 	 * <ul>
-	 * <li>AnexaÁ„o n„o pode estar cancelada</li>	
-	 * <li>N„o pode mais ser possÌvel <i>excluir</i> a anexaÁ„o</li>
-	 * <li>Se o documento for fÌsico, anexaÁ„o n„o pode ter sido feita antes da
-	 * finalizaÁ„o</li>
-	 * <li>Se o documento for digital, anexaÁ„o n„o pode ter sido feita antes da
+	 * <li>Anexa√ß√£o n√£o pode estar cancelada</li>	
+	 * <li>N√£o pode mais ser poss√≠vel <i>excluir</i> a anexa√ß√£o</li>
+	 * <li>Se o documento for f√≠sico, anexa√ß√£o n√£o pode ter sido feita antes da
+	 * finaliza√ß√£o</li>
+	 * <li>Se o documento for digital, anexa√ß√£o n√£o pode ter sido feita antes da
 	 * assinatura</li>	
-	 * <li>LotaÁ„o do usu·rio tem de ser a lotaÁ„o cadastrante da movimentaÁ„o</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o:
-	 * Cancelar MovimentaÁ„o</li>
+	 * <li>Lota√ß√£o do usu√°rio tem de ser a lota√ß√£o cadastrante da movimenta√ß√£o</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o:
+	 * Cancelar Movimenta√ß√£o</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2672,13 +2680,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel cancelar uma movimentaÁ„o de vinculaÁ„o de perfil,
-	 * passada atravÈs do par‚metro mov. As regras s„o as seguintes:
+	 * Retorna se √© poss√≠vel cancelar uma movimenta√ß√£o de vincula√ß√£o de perfil,
+	 * passada atrav√©s do par√¢metro mov. As regras s√£o as seguintes:
 	 * <ul>
-	 * <li>VinculaÁ„o de perfil n„o pode estar cancelada</li>
-	 * <li>LotaÁ„o do usu·rio tem de ser a lotaÁ„o cadastrante da movimentaÁ„o</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o:
-	 * Cancelar MovimentaÁ„o</li>
+	 * <li>Vincula√ß√£o de perfil n√£o pode estar cancelada</li>
+	 * <li>Lota√ß√£o do usu√°rio tem de ser a lota√ß√£o cadastrante da movimenta√ß√£o</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o:
+	 * Cancelar Movimenta√ß√£o</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2707,15 +2715,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * <b>(Quando È usado este mÈtodo?)</b> Retorna se È possÌvel cancelar
-	 * movimentaÁ„o do tipo despacho, representada pelo par‚metro mov. S„o estas
+	 * <b>(Quando √© usado este m√©todo?)</b> Retorna se √© poss√≠vel cancelar
+	 * movimenta√ß√£o do tipo despacho, representada pelo par√¢metro mov. S√£o estas
 	 * as regras:
 	 * <ul>
-	 * <li>Despacho n„o pode estar cancelado</li>
-	 * <li>LotaÁ„o do usu·rio tem de ser a lotaÁ„o cadastrante do despacho</li>
-	 * <li>Despacho n„o pode estar assinado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o:
-	 * Cancelar MovimentaÁ„o</li>
+	 * <li>Despacho n√£o pode estar cancelado</li>
+	 * <li>Lota√ß√£o do usu√°rio tem de ser a lota√ß√£o cadastrante do despacho</li>
+	 * <li>Despacho n√£o pode estar assinado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o:
+	 * Cancelar Movimenta√ß√£o</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2754,15 +2762,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel excluir anotaÁ„o realizada no mÛbil, passada pelo
-	 * par‚metro mov. As seguintes regras incidem sobre a movimentaÁ„o a ser
-	 * excluÌda:
+	 * Retorna se √© poss√≠vel excluir anota√ß√£o realizada no m√≥bil, passada pelo
+	 * par√¢metro mov. As seguintes regras incidem sobre a movimenta√ß√£o a ser
+	 * exclu√≠da:
 	 * <ul>
-	 * <li>N„o pode estar cancelada</li>
-	 * <li>LotaÁ„o do usu·rio tem de ser a do cadastrante ou do subscritor
-	 * (respons·vel) da movimentaÁ„o</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva. Tipo de configuraÁ„o: Excluir
-	 * AnotaÁ„o</li>
+	 * <li>N√£o pode estar cancelada</li>
+	 * <li>Lota√ß√£o do usu√°rio tem de ser a do cadastrante ou do subscritor
+	 * (respons√°vel) da movimenta√ß√£o</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva. Tipo de configura√ß√£o: Excluir
+	 * Anota√ß√£o</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2779,7 +2787,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mov.isCancelada())
 			return false;
 		
-		//Verifica se foi a pessoa ou lotaÁ„o que fez a anotaÁ„o
+		//Verifica se foi a pessoa ou lota√ß√£o que fez a anota√ß√£o
 		if (!mov.getCadastrante().getIdInicial().equals(titular.getIdInicial())
 				&& !mov.getSubscritor().getIdInicial().equals(titular.getIdInicial())
 				&& !mov.getLotaCadastrante().getIdInicial().equals(
@@ -2793,7 +2801,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel exibir todos os mÛbil's. Basta o documento estar
+	 * Retorna se √© poss√≠vel exibir todos os m√≥bil's. Basta o documento estar
 	 * finalizado.
 	 * 
 	 * @param titular
@@ -2807,10 +2815,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel fazer anotaÁ„o no mÛbil. Basta o mÛbil n„o estar
-	 * eliminado, n„o estar em tr‚nsito, n„o ser geral e n„o haver configuraÁ„o
-	 * impeditiva, o que significa que, tendo acesso a um documento n„o
-	 * eliminado fora de tr‚nsito, qualquer usu·rio pode fazer anotaÁ„o.
+	 * Retorna se √© poss√≠vel fazer anota√ß√£o no m√≥bil. Basta o m√≥bil n√£o estar
+	 * eliminado, n√£o estar em tr√¢nsito, n√£o ser geral e n√£o haver configura√ß√£o
+	 * impeditiva, o que significa que, tendo acesso a um documento n√£o
+	 * eliminado fora de tr√¢nsito, qualquer usu√°rio pode fazer anota√ß√£o.
 
 	 * 
 	 * @param titular
@@ -2830,10 +2838,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel vincular perfil ao documento. Basta n„o estar
-	 * eliminado o documento e n„o haver configuraÁ„o impeditiva, o que
-	 * significa que, tendo acesso a um documento n„o eliminado, qualquer
-	 * usu·rio pode se cadastrar como interessado.
+	 * Retorna se √© poss√≠vel vincular perfil ao documento. Basta n√£o estar
+	 * eliminado o documento e n√£o haver configura√ß√£o impeditiva, o que
+	 * significa que, tendo acesso a um documento n√£o eliminado, qualquer
+	 * usu√°rio pode se cadastrar como interessado.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -2858,15 +2866,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel finalizar o documento ao qual o mÛbil passado por
-	 * par‚metro pertence. S„o estas as regras:
+	 * Retorna se √© poss√≠vel finalizar o documento ao qual o m√≥bil passado por
+	 * par√¢metro pertence. S√£o estas as regras:
 	 * <ul>
-	 * <li>Documento n„o pode estar finalizado</li>
-	 * <li>Se o documento for interno produzido, usu·rio tem de ser: 1) da
-	 * lotaÁ„o cadastrante do documento, 2) o subscritor do documento ou 3) o
-	 * titular do documento. <b>Obs.: por que a origem do documento est· sendo
+	 * <li>Documento n√£o pode estar finalizado</li>
+	 * <li>Se o documento for interno produzido, usu√°rio tem de ser: 1) da
+	 * lota√ß√£o cadastrante do documento, 2) o subscritor do documento ou 3) o
+	 * titular do documento. <b>Obs.: por que a origem do documento est√° sendo
 	 * considerada nesse caso?</b></li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2898,8 +2906,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel que o usu·rio finalize o documento e assine
-	 * digitalmente numa ˙nica operaÁ„o. Os requisitos s„o os mesmos que tÍm de
+	 * Retorna se √© poss√≠vel que o usu√°rio finalize o documento e assine
+	 * digitalmente numa √∫nica opera√ß√£o. Os requisitos s√£o os mesmos que t√™m de
 	 * ser cumpridos para se poder finalizar
 	 * 
 	 * @param titular
@@ -2916,15 +2924,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel incluir cossignat·rio no documento que contÈm o
-	 * mÛbil passado por par‚metro. O documento tem de atender as seguintes
-	 * condiÁıes:
+	 * Retorna se √© poss√≠vel incluir cossignat√°rio no documento que cont√©m o
+	 * m√≥bil passado por par√¢metro. O documento tem de atender as seguintes
+	 * condi√ß√µes:
 	 * <ul>
-	 * <li>N„o pode estar cancelado</li>
-	 * <li>Sendo documento fÌsico, n„o pode estar finalizado</li>
-	 * <li>Sendo documento digital, n„o pode estar assinado</li>
-	 * <li>LotaÁ„o do usu·rio tem de ser a lotaÁ„o cadastrante do documento</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>N√£o pode estar cancelado</li>
+	 * <li>Sendo documento f√≠sico, n√£o pode estar finalizado</li>
+	 * <li>Sendo documento digital, n√£o pode estar assinado</li>
+	 * <li>Lota√ß√£o do usu√°rio tem de ser a lota√ß√£o cadastrante do documento</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -2951,16 +2959,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel incluir o mÛbil em edital de eliminaÁ„o, de acordo
-	 * com as condiÁıes a seguir:
+	 * Retorna se √© poss√≠vel incluir o m√≥bil em edital de elimina√ß√£o, de acordo
+	 * com as condi√ß√µes a seguir:
 	 * <ul>
-	 * <li>MÛbil tem de ser via ou geral de processo</li>
-	 * <li>MÛbil tem de estar em arquivo corrente ou intermedi·rio</li>
-	 * <li>PCTT tem de prever, para o mÛbil, destinaÁ„o final EliminaÁ„o</li>
-	 * <li>MÛbil n„o pode estar arquivado permanentemente</li>
-	 * <li>Documento a que o mÛbil pertence tem de ser digital ou estar na
-	 * lotaÁ„o titular</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via ou geral de processo</li>
+	 * <li>M√≥bil tem de estar em arquivo corrente ou intermedi√°rio</li>
+	 * <li>PCTT tem de prever, para o m√≥bil, destina√ß√£o final Elimina√ß√£o</li>
+	 * <li>M√≥bil n√£o pode estar arquivado permanentemente</li>
+	 * <li>Documento a que o m√≥bil pertence tem de ser digital ou estar na
+	 * lota√ß√£o titular</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * 
@@ -2999,17 +3007,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel junta este mÛbil a outro. Seguem as regras:
+	 * Retorna se √© poss√≠vel junta este m√≥bil a outro. Seguem as regras:
 	 * <ul>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>Volume n„o pode estar encerrado</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o mÛbil/usu·rio</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>Volume n√£o pode estar encerrado</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o m√≥bil/usu√°rio</li>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>MÛbil n„o pode estar juntado <b>(mas pode ser juntado estando
+	 * <li>M√≥bil n√£o pode estar juntado <b>(mas pode ser juntado estando
 	 * apensado?)</b></li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -3046,16 +3054,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel apensar este mÛbil a outro, conforme as regras:
+	 * Retorna se √© poss√≠vel apensar este m√≥bil a outro, conforme as regras:
 	 * <ul>
-	 * <li>MÛbil precisa ser via ou volume</li>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito <b>(o que È isEmTransito?)</b></li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o mÛbil/usu·rio</li>
+	 * <li>M√≥bil precisa ser via ou volume</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito <b>(o que √© isEmTransito?)</b></li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o m√≥bil/usu√°rio</li>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>MÛbil n„o pode estar juntado</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil n√£o pode estar juntado</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -3085,19 +3093,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel desapensar este mÛbil de outro, conforme as
-	 * seguintes condiÁıes para o mÛbil:
+	 * Retorna se √© poss√≠vel desapensar este m√≥bil de outro, conforme as
+	 * seguintes condi√ß√µes para o m√≥bil:
 	 * <ul>
 	 * <li>Precisa ser via ou volume</li>
-	 * <li>Precisa ter movimentaÁ„o n„o cancelada</li>
+	 * <li>Precisa ter movimenta√ß√£o n√£o cancelada</li>
 	 * <li>Precisa estar apensado</li>
-	 * <li>N„o pode estar em tr‚nsito <b>(o que È isEmTransito?)</b></li>
-	 * <li>N„o pode estar cancelado</li>
-	 * <li>N„o pode estar em algum arquivo</li>
-	 * <li>N„o pode estar juntado <b>(mas pode ser juntado estando
+	 * <li>N√£o pode estar em tr√¢nsito <b>(o que √© isEmTransito?)</b></li>
+	 * <li>N√£o pode estar cancelado</li>
+	 * <li>N√£o pode estar em algum arquivo</li>
+	 * <li>N√£o pode estar juntado <b>(mas pode ser juntado estando
 	 * apensado?)</b></li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o mÛbil/usu·rio</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o m√≥bil/usu√°rio</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -3133,18 +3141,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se o usu·rio tem a permiss„o b·sica para movimentar o documento.
-	 * MÈtodo usado como premissa para v·rias outras permissıes de movimentaÁ„o.
+	 * Retorna se o usu√°rio tem a permiss√£o b√°sica para movimentar o documento.
+	 * M√©todo usado como premissa para v√°rias outras permiss√µes de movimenta√ß√£o.
 	 * Regras:
 	 * <ul>
-	 * <li>Se mÛbil È geral, <i>podeMovimentar()</i> tem de ser verdadeiro para
-	 * algum mÛbil do mesmo documento</li>
-	 * <li>MÛbil tem de ser geral, via ou volume</li>
-	 * <li>MÛbil tem de de ter alguma movimentaÁ„o n„o cancelada</li>
-	 * <li><b>MÛbil n„o pode estar cancelado nem aberto</b></li>
-	 * <li>Usu·rio tem de ser da lotaÁ„o atendente definida na ˙ltima
-	 * movimentaÁ„o n„o cancelada</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>Se m√≥bil √© geral, <i>podeMovimentar()</i> tem de ser verdadeiro para
+	 * algum m√≥bil do mesmo documento</li>
+	 * <li>M√≥bil tem de ser geral, via ou volume</li>
+	 * <li>M√≥bil tem de de ter alguma movimenta√ß√£o n√£o cancelada</li>
+	 * <li><b>M√≥bil n√£o pode estar cancelado nem aberto</b></li>
+	 * <li>Usu√°rio tem de ser da lota√ß√£o atendente definida na √∫ltima
+	 * movimenta√ß√£o n√£o cancelada</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 */
 	public boolean podeMovimentar(final DpPessoa titular,
@@ -3168,9 +3176,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		}
 
 		/*
-		 * Orlando: Inclui a condiÁ„o "&& !exMov.getResp().equivale(titular))"
-		 * no IF ,abaixo, para permitir que um usu·rio possa transferir quando
-		 * ele for o atendente do documento, mesmo que ele n„o esteja na lotaÁ„o
+		 * Orlando: Inclui a condi√ß√£o "&& !exMov.getResp().equivale(titular))"
+		 * no IF ,abaixo, para permitir que um usu√°rio possa transferir quando
+		 * ele for o atendente do documento, mesmo que ele n√£o esteja na lota√ß√£o
 
 		 * do documento
 		 */
@@ -3210,15 +3218,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/**
-	 * Retorna se o usu·rio tem È o atendente do documento. Regras:
+	 * Retorna se o usu√°rio tem √© o atendente do documento. Regras:
 	 * <ul>
-	 * <li>Se mÛbil È geral, <i>isAtendente()</i> tem de ser verdadeiro para
-	 * algum mÛbil do mesmo documento</li>
-	 * <li>MÛbil tem de ser geral, via ou volume</li>
-	 * <li>MÛbil tem de de ter alguma movimentaÁ„o n„o cancelada</li>
-	 * <li><b>MÛbil n„o pode estar cancelado</b></li>
-	 * <li>Usu·rio tem de ser da lotaÁ„o atendente definida na ˙ltima
-	 * movimentaÁ„o n„o cancelada, ou no documento se ainda n„o for finalizado.</li>
+	 * <li>Se m√≥bil √© geral, <i>isAtendente()</i> tem de ser verdadeiro para
+	 * algum m√≥bil do mesmo documento</li>
+	 * <li>M√≥bil tem de ser geral, via ou volume</li>
+	 * <li>M√≥bil tem de de ter alguma movimenta√ß√£o n√£o cancelada</li>
+	 * <li><b>M√≥bil n√£o pode estar cancelado</b></li>
+	 * <li>Usu√°rio tem de ser da lota√ß√£o atendente definida na √∫ltima
+	 * movimenta√ß√£o n√£o cancelada, ou no documento se ainda n√£o for finalizado.</li>
 	 * </ul>
 	 */
 	public static boolean isAtendente(final DpPessoa titular,
@@ -3281,18 +3289,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel refazer um documento. TÍm de ser satisfeitas as
-	 * seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel refazer um documento. T√™m de ser satisfeitas as
+	 * seguintes condi√ß√µes:
 	 * <ul>
 	 * <li>Documento tem de estar finalizado</li>
-	 * <li>Usu·rio tem de ser o subscritor ou o titular do documento ou ser da
-	 * lotaÁ„o cadastrante do documento</li>
-	 * <li>Documento n„o pode estar assinado, a n„o ser que seja dos tipos
-	 * externo ou interno importado, que s„o naturalmente considerados
-	 * assinados. PorÈm, se for documento de um desses tipos, n„o pode haver pdf
-	 * anexado <b>(verificar por quÍ)</b></li>
-	 * <li>Documento tem de possuir via n„o cancelada ou volume n„o cancelado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>Usu√°rio tem de ser o subscritor ou o titular do documento ou ser da
+	 * lota√ß√£o cadastrante do documento</li>
+	 * <li>Documento n√£o pode estar assinado, a n√£o ser que seja dos tipos
+	 * externo ou interno importado, que s√£o naturalmente considerados
+	 * assinados. Por√©m, se for documento de um desses tipos, n√£o pode haver pdf
+	 * anexado <b>(verificar por qu√™)</b></li>
+	 * <li>Documento tem de possuir via n√£o cancelada ou volume n√£o cancelado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -3320,17 +3328,17 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel indicar um mÛbil para guarda permanente. TÍm de ser
-	 * satisfeitas as seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel indicar um m√≥bil para guarda permanente. T√™m de ser
+	 * satisfeitas as seguintes condi√ß√µes:
 	 * <ul>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>MÛbil tem de ser via ou geral de processo</li>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>MÛbil n„o pode estar juntado</li>
-	 * <li>MÛbil n„o pode ter sido j· indicado para guarda permanente</li>
-	 * <li>MÛbil n„o pode ter sido arquivado permanentemente nem eliminado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via ou geral de processo</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>M√≥bil n√£o pode estar juntado</li>
+	 * <li>M√≥bil n√£o pode ter sido j√° indicado para guarda permanente</li>
+	 * <li>M√≥bil n√£o pode ter sido arquivado permanentemente nem eliminado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -3359,14 +3367,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel reclassificar um documento. TÍm de ser satisfeitas
-	 * as seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel reclassificar um documento. T√™m de ser satisfeitas
+	 * as seguintes condi√ß√µes:
 	 * <ul>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>MÛbil tem de ser geral</li>
-	 * <li>MÛbil n„o pode ter sido eliminado</li>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser geral</li>
+	 * <li>M√≥bil n√£o pode ter sido eliminado</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 ** 
 	 * @param titular
 	 * @param lotaTitular
@@ -3385,14 +3393,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel avaliar um documento. TÍm de ser satisfeitas as
-	 * seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel avaliar um documento. T√™m de ser satisfeitas as
+	 * seguintes condi√ß√µes:
 	 * <ul>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>MÛbil tem de ser geral</li>
-	 * <li>MÛbil n„o pode ter sido eliminado</li>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser geral</li>
+	 * <li>M√≥bil n√£o pode ter sido eliminado</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -3410,16 +3418,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel reverter a indicaÁ„o de um mÛbil para guarda
-	 * permanente. TÍm de ser satisfeitas as seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel reverter a indica√ß√£o de um m√≥bil para guarda
+	 * permanente. T√™m de ser satisfeitas as seguintes condi√ß√µes:
 	 * <ul>
-	 * <li>MÛbil tem de estar indicado para guarda permanente</li>
-	 * <li>MÛbil tem de ser via ou geral de processo</li>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>MÛbil n„o pode estar juntado</li>
-	 * <li>MÛbil n„o pode ter sido arquivado permanentemente nem eliminado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de estar indicado para guarda permanente</li>
+	 * <li>M√≥bil tem de ser via ou geral de processo</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>M√≥bil n√£o pode estar juntado</li>
+	 * <li>M√≥bil n√£o pode ter sido arquivado permanentemente nem eliminado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -3442,15 +3450,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel retirar um mÛbil de edital de eliminaÁ„o. TÍm de
-	 * ser satisfeitas as seguintes condiÁıes:
+	 * Retorna se √© poss√≠vel retirar um m√≥bil de edital de elimina√ß√£o. T√™m de
+	 * ser satisfeitas as seguintes condi√ß√µes:
 	 * <ul>
-	 * <li>MÛbil n„o pode ter sido eliminado</li>
-	 * <li>MÛbil tem de estar em edital de eliminaÁ„o</li>
-	 * <li>Edital contendo o mÛbil precisa estar assinado</li>
+	 * <li>M√≥bil n√£o pode ter sido eliminado</li>
+	 * <li>M√≥bil tem de estar em edital de elimina√ß√£o</li>
+	 * <li>Edital contendo o m√≥bil precisa estar assinado</li>
 	 * <li>Pessoa a fazer a retirada tem de ser o subscritor ou titular do
 	 * edital</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -3486,7 +3494,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se a lotaÁ„o ou pessoa tem permiss„o para receber documento
+	 * Retorna se a lota√ß√£o ou pessoa tem permiss√£o para receber documento
 	 * 
 	 * @param pessoa
 	 * @param lotacao	
@@ -3502,21 +3510,21 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/**
-	 * Retorna se È possÌvel receber o mÛbil. conforme as regras a seguir:
+	 * Retorna se √© poss√≠vel receber o m√≥bil. conforme as regras a seguir:
 	 * <ul>
-	 * <li>MÛbil tem de ser via ou volume</li>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>MÛbil tem de estar em tr‚nsito</li>
-	 * <li>LotaÁ„o do usu·rio tem de ser a do atendente definido na ˙ltima
-	 * movimentaÁ„o</li>
-	 * <li>Se o mÛbil for eletrÙnico, n„o pode estar marcado como Despacho
-	 * pendente de assinatura, ou seja, mÛbil em que tenha havido despacho ou
-	 * despacho com transferÍncia n„o pode ser recebido antes de assinado o
+	 * <li>M√≥bil tem de ser via ou volume</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>M√≥bil tem de estar em tr√¢nsito</li>
+	 * <li>Lota√ß√£o do usu√°rio tem de ser a do atendente definido na √∫ltima
+	 * movimenta√ß√£o</li>
+	 * <li>Se o m√≥bil for eletr√¥nico, n√£o pode estar marcado como Despacho
+	 * pendente de assinatura, ou seja, m√≥bil em que tenha havido despacho ou
+	 * despacho com transfer√™ncia n√£o pode ser recebido antes de assinado o
 	 * despacho</li>
 	 * </ul>
-	 * <b>Obs.: Teoricamente, qualquer pessoa pode receber mÛbil transferido
-	 * para Ûrg„o externo</b>
+	 * <b>Obs.: Teoricamente, qualquer pessoa pode receber m√≥bil transferido
+	 * para √≥rg√£o externo</b>
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -3538,15 +3546,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		}
 
 
-		// Orlando: O IF abaixo foi incluÌdo para n„o permitir que o documento
-		// seja recebido apÛs ter sido transferido para um Ûrg„o externo,
-		// inclusive no caso de despacho com transferÍncia externa.
+		// Orlando: O IF abaixo foi inclu√≠do para n√£o permitir que o documento
+		// seja recebido ap√≥s ter sido transferido para um √≥rg√£o externo,
+		// inclusive no caso de despacho com transfer√™ncia externa.
 		if (mob.isEmTransitoExterno())
 			return false;
 
 
-		// Verifica se o despacho j· est· assinado, em caso de documentos
-		// eletrÙnicos
+		// Verifica se o despacho j√° est√° assinado, em caso de documentos
+		// eletr√¥nicos
 		if (mob.doc().isEletronico()) {
 			for (CpMarca marca : mob.getExMarcaSet()) {
 				if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA)
@@ -3560,26 +3568,26 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel receber o mÛbil eletronicamente, de acordo com as
+	 * Retorna se √© poss√≠vel receber o m√≥bil eletronicamente, de acordo com as
 	 * regras a seguir, <b>que deveriam ser parecidas com as de podeReceber(),
-	 * para n„o haver incoerÍncia</b>:
+	 * para n√£o haver incoer√™ncia</b>:
 	 * <ul>
-	 * <li>MÛbil tem de ser via ou volume</li>
-	 * <li>A ˙ltima movimentaÁ„o n„o cancelada do mÛbil n„o pode ser
-	 * transferÍncia externa <b>(regra falha, pois pode ser feita anotaÁ„o)</b></li>
-	 * <li>MÛbil n„o pode estar marcado como "Despacho pendente de assinatura",
-	 * ou seja, tendo havido despacho ou despacho com transferÍncia, este
-	 * precisa ter sido assinado para haver transferÍncia</li>
-	 * <li>Se houver pessoa atendente definida na ˙ltima movimentaÁ„o n„o
-	 * cancelada, o usu·rio tem de ser essa pessoa</li>
-	 * <li>N„o havendo pessoa atendente definida na ˙ltima movimentaÁ„o, apenas
-	 * lotaÁ„o atendente, a lotaÁ„o do usu·rio tem de ser essa</li>
-	 * <li>Documento tem de ser eletrÙnico <b>(melhor se fosse verificado no
-	 * inÌcio)</b></li>
-	 * <li>MÛbil tem de estar em tr„nsito <b>(melhor se fosse verificado no
-	 * inÌcio)</b></li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva para recebimento (n„o para
-	 * recebimento eletrÙnico)</li>
+	 * <li>M√≥bil tem de ser via ou volume</li>
+	 * <li>A √∫ltima movimenta√ß√£o n√£o cancelada do m√≥bil n√£o pode ser
+	 * transfer√™ncia externa <b>(regra falha, pois pode ser feita anota√ß√£o)</b></li>
+	 * <li>M√≥bil n√£o pode estar marcado como "Despacho pendente de assinatura",
+	 * ou seja, tendo havido despacho ou despacho com transfer√™ncia, este
+	 * precisa ter sido assinado para haver transfer√™ncia</li>
+	 * <li>Se houver pessoa atendente definida na √∫ltima movimenta√ß√£o n√£o
+	 * cancelada, o usu√°rio tem de ser essa pessoa</li>
+	 * <li>N√£o havendo pessoa atendente definida na √∫ltima movimenta√ß√£o, apenas
+	 * lota√ß√£o atendente, a lota√ß√£o do usu√°rio tem de ser essa</li>
+	 * <li>Documento tem de ser eletr√¥nico <b>(melhor se fosse verificado no
+	 * in√≠cio)</b></li>
+	 * <li>M√≥bil tem de estar em tr√£nsito <b>(melhor se fosse verificado no
+	 * in√≠cio)</b></li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva para recebimento (n√£o para
+	 * recebimento eletr√¥nico)</li>
 	 * </ul>
 	 * 
 	 * @param cadastrante
@@ -3598,7 +3606,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 				|| ultMov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA)
 			return false;
-		// Verifica se o despacho j· est· assinado
+		// Verifica se o despacho j√° est√° assinado
 		for (CpMarca marca : mob.getExMarcaSet()) {
 			if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA)
 				return false;
@@ -3617,15 +3625,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel vincular este mÛbil a outro, conforme as regras:
+	 * Retorna se √© poss√≠vel vincular este m√≥bil a outro, conforme as regras:
 	 * <ul>
-	 * <li>MÛbil tem de ser via ou volume</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o mÛbil/usu·rio</li>
-	 * <li>MÛbil n„o pode estar em tr„nsito</li>
-	 * <li>MÛbil n„o pode estar juntado</li>
-	 * <li>MÛbil n„o pode estar cancelado</li>
-	 * <li>MÛbil n„o pode ter sido eliminado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil tem de ser via ou volume</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o m√≥bil/usu√°rio</li>
+	 * <li>M√≥bil n√£o pode estar em tr√£nsito</li>
+	 * <li>M√≥bil n√£o pode estar juntado</li>
+	 * <li>M√≥bil n√£o pode estar cancelado</li>
+	 * <li>M√≥bil n√£o pode ter sido eliminado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -3654,20 +3662,20 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel registrar assinatura manual de documento que contÈm
-	 * o mÛbil passado por par‚metro. As regras s„o as seguintes:
+	 * Retorna se √© poss√≠vel registrar assinatura manual de documento que cont√©m
+	 * o m√≥bil passado por par√¢metro. As regras s√£o as seguintes:
 	 * <ul>
-	 * <li>MÛbil tem de ser geral</li>
-	 * <li>N„o pode ser mÛbil de processo interno importado</li>
-	 * <li>N„o pode ser mÛbil de documento externo</li>
-	 * <li>Documento n„o pode estar cancelado</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro ou usu·rio tem de ser o
-	 * prÛprio subscritor ou titular do documento</li>
-	 * <li>Documento n„o pode ser eletrÙnico</li>
+	 * <li>M√≥bil tem de ser geral</li>
+	 * <li>N√£o pode ser m√≥bil de processo interno importado</li>
+	 * <li>N√£o pode ser m√≥bil de documento externo</li>
+	 * <li>Documento n√£o pode estar cancelado</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro ou usu√°rio tem de ser o
+	 * pr√≥prio subscritor ou titular do documento</li>
+	 * <li>Documento n√£o pode ser eletr√¥nico</li>
 	 * <li>Documento tem de estar finalizado</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>MÛbil n„o pode ter sido eliminado</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>M√≥bil n√£o pode ter sido eliminado</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * </ul>
 	 * 
 	 * @param titular
@@ -3711,9 +3719,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel agendar publicaÁ„o no Boletim. … necess·rio que n„o
+	 * Retorna se √© poss√≠vel agendar publica√ß√£o no Boletim. √â necess√°rio que n√£o
 	 * sejam ainda 17 horas e que <i>podeBotaoAgendarPublicacaoBoletim()</i>
-	 * seja verdadeiro para este mÛbil e usu·rio.
+	 * seja verdadeiro para este m√≥bil e usu√°rio.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -3731,20 +3739,20 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel exibir a opÁ„o para agendar publicaÁ„o no Boletim.
+	 * Retorna se √© poss√≠vel exibir a op√ß√£o para agendar publica√ß√£o no Boletim.
 	 * Seguem as regras:
 	 * <ul>
-	 * <li>MÛbil n„o pode ser geral</li>
+	 * <li>M√≥bil n√£o pode ser geral</li>
 	 * <li>Documento tem de estar finalizado</li>
 	 * <li>Documento tem de ser do tipo interno produzido</li>
 	 * <li><i>podeGerenciarPublicacaoBoletimPorConfiguracao()</i> ou
-	 * <i>podeMovimentar()</i>tem de ser verdadeiro para o usu·rio</li>
-	 * <li>Documento n„o pode j· ter sido publicado em boletim</li>
-	 * <li>PublicaÁ„o no boletim n„o pode ter sido j· agendada para o documento</li>
+	 * <i>podeMovimentar()</i>tem de ser verdadeiro para o usu√°rio</li>
+	 * <li>Documento n√£o pode j√° ter sido publicado em boletim</li>
+	 * <li>Publica√ß√£o no boletim n√£o pode ter sido j√° agendada para o documento</li>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>Documento n„o pode ter sido eliminado</li>
-	 * <li>MÛbil n„o pode estar em algum arquivo</li>
-	 * <li>N„o pode haver configuraÁ„o impeditiva</li>
+	 * <li>Documento n√£o pode ter sido eliminado</li>
+	 * <li>M√≥bil n√£o pode estar em algum arquivo</li>
+	 * <li>N√£o pode haver configura√ß√£o impeditiva</li>
 	 * 
 	 * </ul>
 	 * 
@@ -3785,9 +3793,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel alterar o nÌvel de accesso do documento. …
-	 * necess·rio apenas que o usu·rio possa acessar o documento e que n„o haja
-	 * configuraÁ„o impeditiva. <b>Obs.: N„o È verificado se
+	 * Retorna se √© poss√≠vel alterar o n√≠vel de accesso do documento. √â
+	 * necess√°rio apenas que o usu√°rio possa acessar o documento e que n√£o haja
+	 * configura√ß√£o impeditiva. <b>Obs.: N√£o √© verificado se
 	 * <i>podeMovimentar()</i></b>
 	 * 
 	 * @param titular
@@ -3819,14 +3827,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel que algum mÛbil seja juntado a este, segundo as
+	 * Retorna se √© poss√≠vel que algum m√≥bil seja juntado a este, segundo as
 	 * seguintes regras:
 	 * <ul>
-	 * <li>N„o pode estar cancelado</li>
-	 * <li>Volume n„o pode estar encerrado</li>
-	 * <li>N„o pode estar em algum arquivo</li>
-	 * <li>N„o pode estar juntado</li>
-	 * <li>N„o pode estar em tr‚nsito</li>
+	 * <li>N√£o pode estar cancelado</li>
+	 * <li>Volume n√£o pode estar encerrado</li>
+	 * <li>N√£o pode estar em algum arquivo</li>
+	 * <li>N√£o pode estar juntado</li>
+	 * <li>N√£o pode estar em tr√¢nsito</li>
 	 * <li><i>podeMovimentar()</i> precisa retornar verdadeiro para ele</li>
 	 * </ul>
 	 * 
@@ -3846,8 +3854,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel a uma lotaÁ„o, com base em configuraÁ„o, receber
-	 * mÛbil de documento n„o assinado. N„o È aqui verificado se o mÛbil est·
+	 * Retorna se √© poss√≠vel a uma lota√ß√£o, com base em configura√ß√£o, receber
+	 * m√≥bil de documento n√£o assinado. N√£o √© aqui verificado se o m√≥bil est√°
 	 * realmente pendente de assinatura
 	 * 
 	 * @param pessoa
@@ -3863,11 +3871,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel fazer transferÍncia. As regras s„o as seguintes
-	 * para este mÛbil: <ul <li>Precisa ser via ou volume (n„o pode ser geral)</li>
-	 * <li>N„o pode estar em tr‚nsito</li> <li>N„o pode estar juntado.</li> <li>
-	 * N„o pode estar em arquivo permanente.</li> <li><i>podeMovimentar()</i>
-	 * precisa retornar verdadeiro para ele</li> <li>N„o pode haver configuraÁ„o
+	 * Retorna se √© poss√≠vel fazer transfer√™ncia. As regras s√£o as seguintes
+	 * para este m√≥bil: <ul <li>Precisa ser via ou volume (n√£o pode ser geral)</li>
+	 * <li>N√£o pode estar em tr√¢nsito</li> <li>N√£o pode estar juntado.</li> <li>
+	 * N√£o pode estar em arquivo permanente.</li> <li><i>podeMovimentar()</i>
+	 * precisa retornar verdadeiro para ele</li> <li>N√£o pode haver configura√ß√£o
 	 * impeditiva</li> </ul>
 	 * 
 	 * @param titular
@@ -3907,15 +3915,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 
 	/**
-	 * Retorna se È possÌvel fazer vinculaÁ„o deste mobil a outro, conforme as
-	 * seguintes regras para <i>este</i> mÛbil:
+	 * Retorna se √© poss√≠vel fazer vincula√ß√£o deste mobil a outro, conforme as
+	 * seguintes regras para <i>este</i> m√≥bil:
 	 * <ul>
-	 * <li>Precisa ser via ou volume (n„o pode ser geral)</li>
-	 * <li>N„o pode estar em tr‚nsito</li>
-	 * <li>N„o pode estar juntado.</li>
+	 * <li>Precisa ser via ou volume (n√£o pode ser geral)</li>
+	 * <li>N√£o pode estar em tr√¢nsito</li>
+	 * <li>N√£o pode estar juntado.</li>
 	 * <li><i>podeMovimentar()</i> precisa retornar verdadeiro para ele</li>
 	 * </ul>
-	 * N„o È levada em conta, aqui, a situaÁ„o do mobil ao qual se pertende
+	 * N√£o √© levada em conta, aqui, a situa√ß√£o do mobil ao qual se pertende
 	 * vincular.
 	 * 
 	 * 
@@ -3970,10 +3978,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel visualizar impress„o do mÛbil. Sempre retorna
-	 * <i>true</i>, a n„o ser que o documento esteja finalizado e o mobil em
-	 * quest„o n„o seja via ou volume. isso impede que se visualize impress„o do
-	 * mobil geral apÛs a finalizaÁ„o.
+	 * Retorna se √© poss√≠vel visualizar impress√£o do m√≥bil. Sempre retorna
+	 * <i>true</i>, a n√£o ser que o documento esteja finalizado e o mobil em
+	 * quest√£o n√£o seja via ou volume. isso impede que se visualize impress√£o do
+	 * mobil geral ap√≥s a finaliza√ß√£o.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -3995,8 +4003,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel visualizar impress„o do documento em quest„o e de
-	 * todos os filhos, com base na permiss„o para visualizaÁ„o da impress„o de
+	 * Retorna se √© poss√≠vel visualizar impress√£o do documento em quest√£o e de
+	 * todos os filhos, com base na permiss√£o para visualiza√ß√£o da impress√£o de
 	 * cada um dos filhos.
 	 * 
 	 * @param titular
@@ -4020,9 +4028,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 
 	/**
-	 * Retorna se È possÌvel, com base em configuraÁ„o, utilizar rotina para
-	 * redefiniÁ„o de permissıes de publicaÁ„o no DJE. N„o È utilizado o
-	 * par„metro mob. <b>AtenÁ„o: MÈtodo em desuso.</b>
+	 * Retorna se √© poss√≠vel, com base em configura√ß√£o, utilizar rotina para
+	 * redefini√ß√£o de permiss√µes de publica√ß√£o no DJE. N√£o √© utilizado o
+	 * par√£metro mob. <b>Aten√ß√£o: M√©todo em desuso.</b>
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -4040,9 +4048,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna se È possÌvel, com base em configuraÁ„o, utilizar rotina para
-	 * redefiniÁ„o de permissıes de publicaÁ„o no Boletim. N„o È utilizado o
-	 * par‚metro mob.
+	 * Retorna se √© poss√≠vel, com base em configura√ß√£o, utilizar rotina para
+	 * redefini√ß√£o de permiss√µes de publica√ß√£o no Boletim. N√£o √© utilizado o
+	 * par√¢metro mob.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -4059,9 +4067,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * MÈtodo genÈrico que recebe funÁ„o por String e concatena com o mÈtodo de
-	 * checagem de permiss„o correspondente. Por exemplo, para a funÁ„o juntar,
-	 * È invocado <i>podeJuntar()</i>
+	 * M√©todo gen√©rico que recebe fun√ß√£o por String e concatena com o m√©todo de
+	 * checagem de permiss√£o correspondente. Por exemplo, para a fun√ß√£o juntar,
+	 * √© invocado <i>podeJuntar()</i>
 	 * 
 	 * @param funcao
 	 * @param titular
@@ -4089,9 +4097,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * MÈtodo genÈrico que recebe funÁ„o por String e concatena com o mÈtodo de
-	 * checagem de permiss„o correspondente. Por exemplo, para a funÁ„o
-	 * excluirAnexo, È invocado <i>podeExcluirAnexo()</i>
+	 * M√©todo gen√©rico que recebe fun√ß√£o por String e concatena com o m√©todo de
+	 * checagem de permiss√£o correspondente. Por exemplo, para a fun√ß√£o
+	 * excluirAnexo, √© invocado <i>podeExcluirAnexo()</i>
 	 * 
 	 * @param funcao
 	 * @param titular
@@ -4165,19 +4173,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	/**
 
 
-	 * Retorna se È possÌvel autuar um expediente, com base nas seguintes
+	 * Retorna se √© poss√≠vel autuar um expediente, com base nas seguintes
 	 * regras:
 	 * <ul>
 	 * <li>Documento tem de ser expediente</li>
 	 * <li>Documento tem de estar assinado</li>
-	 * <li>Documento n„o pode estar sem efeito</li>
-	 * <li>MÛbil n„o pode ser geral</li>
-	 * <li>MÛbil n„o pode estar em edital de eliminaÁ„o</li>
-	 * <li>MÛbil n„o pode estar juntado</li>
-	 * <li>MÛbil n„o pode estar apensado</li>
-	 * <li>MÛbil n„o pode estar em tr‚nsito</li>
-	 * <li>MÛbil n„o pode estar arquivado permanentemente</li>
-	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu·rio / mÛbil</li>
+	 * <li>Documento n√£o pode estar sem efeito</li>
+	 * <li>M√≥bil n√£o pode ser geral</li>
+	 * <li>M√≥bil n√£o pode estar em edital de elimina√ß√£o</li>
+	 * <li>M√≥bil n√£o pode estar juntado</li>
+	 * <li>M√≥bil n√£o pode estar apensado</li>
+	 * <li>M√≥bil n√£o pode estar em tr√¢nsito</li>
+	 * <li>M√≥bil n√£o pode estar arquivado permanentemente</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o usu√°rio / m√≥bil</li>
 	 * </ul>
 	 * 
 	 * @param titular

@@ -494,7 +494,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	public java.lang.String getDescrCurta() {
 		if (getDescrDocumento() == null)
-			return "[sem descrição]";
+			return "[sem descriï¿½ï¿½o]";
 		if (getDescrDocumento().length() > 40)
 			return getDescrDocumento().substring(0, 39) + "...";
 		else
@@ -526,7 +526,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	@Field(name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
-		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
+		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criaï¿½ï¿½o do mesmo");
 		String nivel = null;
 		ExNivelAcesso nivelAcesso = getExNivelAcesso();
 
@@ -534,7 +534,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			nivel = nivelAcesso.getGrauNivelAcesso().toString();
 
 		} else {
-			log.warn("[getNivelAcesso] - O nÃ­vel de acesso ou o grau do nível de acesso do documento é nulo.");
+			log.warn("[getNivelAcesso] - O nÃ­vel de acesso ou o grau do nï¿½vel de acesso do documento ï¿½ nulo.");
 		}
 
 		return nivel;
@@ -1381,7 +1381,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		if (getExFormaDocumento() == null)
 			return null;
 		return getExFormaDocumento().getDescrFormaDoc()
-				+ (isEletronico() ? "" : " (físico)");
+				+ (isEletronico() ? "" : " (fï¿½sico)");
 	}
 
 	/**
@@ -2258,6 +2258,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 		return set;
 	}
+	
+	/**
+	 * Retorna se um documento possui alguma assinatura.
+	 */
+	public boolean possuiAlgumaAssinatura() {
+		if(getTodasAsAssinaturas() != null && getTodasAsAssinaturas().size() > 0)
+			return true;
+		
+		return false;
+	}
 
 	/**
 	 * Verifica se um documento foi assinado pelo subscritor e por todos os
@@ -2462,7 +2472,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		// pdf nÃ£o serÃ¡ refeito.
 		if (isAssinado() || isAssinadoDigitalmente())
 			throw new AplicacaoException(
-					"O conteúdo não pode ser alterado pois o documento já está assinado");
+					"O conteï¿½do nï¿½o pode ser alterado pois o documento jï¿½ estï¿½ assinado");
 		setConteudoBlob("doc.pdf", conteudo);
 	}
 
@@ -2537,7 +2547,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			if (s.length() > 0)
 				s += ", ";
 			if (ExAcesso.ACESSO_PUBLICO.equals(o))
-				s += "Público";
+				s += "Pï¿½blico";
 			else if (o instanceof CpOrgaoUsuario)
 				s += ((CpOrgaoUsuario) o).getSigla();
 			else if (o instanceof DpLotacao)
@@ -2631,5 +2641,24 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Retorna o conteï¿ºdo entre dois textos.
+	 */
+	public String getConteudoEntreTextos(String textoInicial, String textoFinal) {
+		try {
+			if(textoInicial == null || textoInicial.isEmpty() || textoFinal == null || textoFinal.isEmpty())
+				return "";
+
+			String s = getConteudoBlobHtmlString();
+			
+			if(!s.contains(textoInicial) || !s.contains(textoFinal))
+				return "";
+			
+			return Texto.extrai(s, textoInicial, textoFinal).trim();
+		} catch (Exception e) {
+			return "";
+		} 
 	}
 }

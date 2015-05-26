@@ -26,7 +26,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
 @Table(name = "CP_SITUACAO_CONFIGURACAO", schema = Catalogs.CORPORATIVO)
-public class CpSituacaoConfiguracao extends AbstractCpSituacaoConfiguracao {
+public class CpSituacaoConfiguracao extends AbstractCpSituacaoConfiguracao implements CpConvertableEntity {
 
 	/**
 	 * 

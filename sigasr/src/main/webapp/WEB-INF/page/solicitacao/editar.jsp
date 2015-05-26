@@ -47,7 +47,7 @@
 	<jsp:include page="../main.jsp"></jsp:include>
 	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
-	<script language="javascript">
+	<script>
 		jQuery(document).ready(function($) {
 			$('#gravar').click(function() {
 				if ($('#siglaCadastrante').val() != $('#formulario_solicitante_pessoaSel_sigla')[0].value) {
@@ -485,15 +485,15 @@
 					</c:if>
 					<c:if test="${solicitacao.idSolicitacao}">
 						<input
-						type="hidden" name="idSolicitacao" id="idSol"
+						type="hidden" name="solicitacao.idSolicitacao" id="idSol"
 						value="${solicitacao.idSolicitacao}" /> 
 					</c:if> 
-					<input type="hidden" name="dtIniEdicaoDDMMYYYYHHMMSS" 
+					<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMMSS" 
 					value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
 					<input type="hidden"
-					name="numSolicitacao" value="${solicitacao.numSolicitacao}" />
+					name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
 					<input type="hidden"
-					name="numSequencia" value="${solicitacao.numSequencia}" />
+					name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 					
 					<div class="gt-form-table">
 						<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
@@ -508,11 +508,11 @@
 					<div class="gt-form-row box-wrapper">
 						<div class="gt-form-row gt-width-66">
 							<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
-								type="hidden" id="siglaCadastrante" name="cadastrante.sigla"
+								type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante.sigla"
 								value="${cadastrante.sigla}" />
-								<input type="hidden" id="siglaCadastrante" name="cadastrante" value="${cadastrante.idPessoa}" />
-								<input type="hidden" name="lotaTitular" value="${lotaTitular != null ? lotaTitular.idLotacao:''}" />
-								<input type="hidden" name="titular" value="${titular!= null ? titular.idPessoa:''}" />
+								<input type="hidden" id="idCadastrante" name="solicitacao.cadastrante" value="${cadastrante.idPessoa}" />
+								<input type="hidden" name="solicitacao.lotaTitular" value="${lotaTitular != null ? lotaTitular.idLotacao:''}" />
+								<input type="hidden" name="solicitacao.titular" value="${titular!= null ? titular.idPessoa:''}" />
 						</div>
 					</div>	 
 		
@@ -541,7 +541,7 @@
 		
 					<div class="gt-form-row gt-width-66">
 						<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>
-						<siga:select name="formaAcompanhamento"
+						<siga:select name="solicitacao.formaAcompanhamento"
 						list="formaAcompanhamentoList"
 						listValue="descrFormaAcompanhamento" listKey="idFormaAcompanhamento"
 						value="${solicitacao.formaAcompanhamento}" />
@@ -559,7 +559,7 @@
 		
 					<div class="gt-form-row gt-width-66">
 						<label>Descrição</label>
-						<textarea cols="85" rows="10" name="descrSolicitacao"
+						<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
 							id="descrSolicitacao" maxlength="8192">${solicitacao.descrSolicitacao}</textarea>
 <%-- 						<span style="color: red">#{error 'descrSolicitacao' /}</span> --%>
 					</div>
@@ -575,19 +575,19 @@
 					<div class="gt-form-row box-wrapper">
 						<div class="gt-form-row gt-width-33">
 							<label>Gravidade</label> 
-							<siga:select name="gravidade" id="gravidade" list="gravidadeList" listValue="respostaEnunciado" listKey="nivelGravidade" isEnum="true"
+							<siga:select name="solicitacao.gravidade" id="gravidade" list="gravidadeList" listValue="respostaEnunciado" listKey="nivelGravidade" isEnum="true"
 							value="${solicitacao.gravidade ? solicitacao.gravidade: gravidade_normal}" onchange="carregarPrioridade()"
 							style="width:235px"  />
 						</div>
 						<div class="gt-form-row gt-width-33">
 							<label>Urg&ecirc;ncia</label> 
-							<siga:select name="urgencia" id="urgencia" list="urgenciaList" listValue="respostaEnunciado" listKey="nivelUrgencia" isEnum="true"
+							<siga:select name="solicitacao.urgencia" id="urgencia" list="urgenciaList" listValue="respostaEnunciado" listKey="nivelUrgencia" isEnum="true"
 							value="${solicitacao.urgencia ? solicitacao.urgencia: urgencia_normal}" 
 							onchange="carregarPrioridade()" style="width:235px" />
 						</div>
 						<div class="gt-form-row gt-width-33">
 							<label>Tend&ecirc;ncia</label>
-							<siga:select name="tendencia" id="tendencia" list="tendenciaList" listValue="respostaEnunciado" listKey="nivelTendencia" isEnum="true"
+							<siga:select name="solicitacao.tendencia" id="tendencia" list="tendenciaList" listValue="respostaEnunciado" listKey="nivelTendencia" isEnum="true"
 							value="${solicitacao.tendencia ? solicitacao.tendencia: tendencia_piora}"
 							onchange="carregarPrioridade()" style="width:235px;"/>
 						</div>
@@ -603,7 +603,7 @@
 		
 					<c:if test="${solicitacao.podeAbrirJaFechando(titular, lotaTitular)}">
 						<div class="gt-form-row gt-width-66">
-							<label><siga:checkbox name="fecharAoAbrir" value="${solicitacao.fecharAoAbrir}"
+							<label><siga:checkbox name="solicitacao.fecharAoAbrir" value="${solicitacao.fecharAoAbrir}"
 									depende="motivoFechamento" disabled="alterando"/>Fechar o chamado logo ap&oacute;s a abertura</label>
 						</div>
 					</c:if>
@@ -618,7 +618,7 @@
 						<c:when test="${!solicitacao.jaFoiDesignada()}">
 							<br />
 							<div class="gt-form-row">
-								<label> <siga:checkbox name="rascunho"
+								<label> <siga:checkbox name="solicitacao.rascunho"
 									value="${solicitacao.rascunho}"/> Rascunho </label>
 							</div>
 						</c:when>
@@ -626,7 +626,7 @@
 							<div class="gt-form-table">
 								<div class="barra-subtitulo header" align="center" valign="top"> Fechamento Automático</div>
 							</div>
-							<p> <siga:checkbox name="fechadoAutomaticamente"
+							<p> <siga:checkbox name="solicitacao.fechadoAutomaticamente"
 								value="${solicitacao.fechadoAutomaticamente}"/>Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>.</p>
 							<br />
 						</c:when>
@@ -634,7 +634,7 @@
 					<div class="gt-form-row">
 						<input type="submit" value="Gravar"
 							class="gt-btn-medium gt-btn-left" id="gravar" /> <a
-							href="@{Application.buscarSolicitacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+							href="${linkTo[SolicitacaoController].buscarSolicitacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 					</div>
 				</form>
 			</div>

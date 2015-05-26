@@ -555,20 +555,20 @@
 					<div class="gt-form-row box-wrapper">
 						<div class="gt-form-row gt-width-33">
 							<label>Gravidade</label> 
-							<siga:select name="gravidade" id="gravidade" list="gravidadeList" listValue="descrGravidade" listKey="nivelGravidade" isEnum="true"
-							value="${solicitacao.gravidade ? solicitacao.gravidade: SrGravidade.NORMAL.descrGravidade}" onchange="carregarPrioridade()"
+							<siga:select name="gravidade" id="gravidade" list="gravidadeList" listValue="respostaEnunciado" listKey="nivelGravidade" isEnum="true"
+							value="${solicitacao.gravidade ? solicitacao.gravidade: SrGravidade.NORMAL.respostaEnunciado}" onchange="carregarPrioridade()"
 							style="width:235px"  />
 						</div>
 						<div class="gt-form-row gt-width-33">
 							<label>Urg&ecirc;ncia</label> 
-							<siga:select name="urgencia" id="urgencia" list="urgenciaList" listValue="descrUrgencia" listKey="nivelUrgencia" isEnum="true"
-							value="${solicitacao.urgencia ? solicitacao.urgencia: SrUrgencia.NORMAL.descrUrgencia}" 
+							<siga:select name="urgencia" id="urgencia" list="urgenciaList" listValue="respostaEnunciado" listKey="nivelUrgencia" isEnum="true"
+							value="${solicitacao.urgencia ? solicitacao.urgencia: SrUrgencia.NORMAL.respostaEnunciado}" 
 							onchange="carregarPrioridade()" style="width:235px" />
 						</div>
 						<div class="gt-form-row gt-width-33">
 							<label>Tend&ecirc;ncia</label>
-							<siga:select name="tendencia" id="tendencia" list="tendenciaList" listValue="descrTendencia" listKey="nivelTendencia" isEnum="true"
-							value="${solicitacao.tendencia ? solicitacao.tendencia: SrTendencia.PIORA_MEDIO_PRAZO.descrTendencia}"
+							<siga:select name="tendencia" id="tendencia" list="tendenciaList" listValue="respostaEnunciado" listKey="nivelTendencia" isEnum="true"
+							value="${solicitacao.tendencia ? solicitacao.tendencia: SrTendencia.PIORA_MEDIO_PRAZO.respostaEnunciado}"
 							onchange="carregarPrioridade()" style="width:235px;"/>
 						</div>
 					</div>

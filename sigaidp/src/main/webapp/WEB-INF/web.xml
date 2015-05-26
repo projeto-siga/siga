@@ -1,16 +1,18 @@
-<?xml version="1.0"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
-
 	<display-name>Siga Identity Provider</display-name>
 	<description>Este projeto e o centralizador do processo de autenticacao do siga</description>
-
 	<listener>
 		<listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
 	</listener>
 
-	<!-- Define a Security Constraint on this Application -->
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Area restrita</web-resource-name>
@@ -20,15 +22,12 @@
 			<role-name>sigausuario</role-name>
 		</auth-constraint>
 	</security-constraint>
-	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>js</web-resource-name>
 			<url-pattern>/javascript/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
-
-	<!-- Define the Login Configuration for this Application -->
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<realm-name>Siga IDP</realm-name>
@@ -37,8 +36,6 @@
 			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
 		</form-login-config>
 	</login-config>
-
-	<!-- Security roles referenced by this web application -->
 	<security-role>
 		<role-name>sigausuario</role-name>
 	</security-role>
@@ -51,5 +48,14 @@
 	<security-role>
 		<role-name>superusuario</role-name>
 	</security-role>
-
+	<servlet>
+		<description></description>
+		<display-name>IDPServlet</display-name>
+		<servlet-name>IDPServlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.picketlink.servlet.IDPServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>IDPServlet</servlet-name>
+		<url-pattern>/IDPServlet</url-pattern>
+	</servlet-mapping>
 </web-app>

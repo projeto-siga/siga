@@ -122,7 +122,7 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	var url = '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+	var url = '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
 		
 	if (!newwindow_${propriedade}.closed && newwindow_${propriedade}.location) {
 		newwindow_${propriedade}.location.href = url;
@@ -172,7 +172,7 @@ self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 }
 
 self.ajax_${propriedade}${tipoSel} = function() {
-	var sigla = document.getElementsByName('${inputNameTipoSel}.sigla')[0].value;
+	var sigla = $.trim(document.getElementsByName('${inputNameTipoSel}.sigla')[0].value);
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
@@ -185,7 +185,10 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		</c:otherwise>
 	</c:choose>
 	url = url + '&sigla=' + sigla;
-	PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
+	Siga.ajax(url, null, "GET", function(response){		
+		resposta_ajax_${propriedade}${tipoSel}(response);
+	});	
+	//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 	
 }
 

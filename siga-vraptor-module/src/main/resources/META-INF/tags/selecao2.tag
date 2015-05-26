@@ -66,7 +66,7 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 self.newwindow_${propriedadeClean} = '';
 self.popitup_${propriedadeClean} = function(sigla) {
 
-	var url = '/${modulo}${urlBuscar}?propriedade=${propriedade}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+	var url = '/${modulo}${urlBuscar}?propriedade=${propriedade}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
 		
 	if (!newwindow_${propriedadeClean}.closed && newwindow_${propriedadeClean}.location) {
 		newwindow_${propriedadeClean}.location.href = url;
@@ -116,13 +116,16 @@ self.resposta_ajax_${propriedadeClean} = function(response, d1, d2, d3) {
 }
 
 self.ajax_${propriedadeClean} = function() {
-	var sigla = document.getElementsByName('${propriedade}.sigla')[0].value;
+	var sigla = $.trim(document.getElementsByName('${propriedade}.sigla')[0].value);
 	if (sigla == '') {
 		return retorna_${propriedadeClean}('', '', '');
 	}
 	var url = '/${modulo}/app/${tipo}/selecionar?propriedade=${propriedade}'+'${selecaoParams}';
 	url = url + '&sigla=' + sigla;
-	PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedadeClean}', false);
+	Siga.ajax(url, null, "GET", function(response){		
+		resposta_ajax_${propriedadeClean}(response);
+	});	
+	//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedadeClean}', false);
 }
 
 </script>

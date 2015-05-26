@@ -3,10 +3,10 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<siga:pagina titulo="Justiça Federal" desabilitarbusca="sim" incluirJs="jquery.placeholder.js">
+<siga:pagina titulo="Login InvÃ¡lido" desabilitarbusca="sim" incluirJs="jquery.placeholder.js">
 
 	<script type="text/javascript">
-		/*  converte para maiúscula a sigla do estado  */
+		/*  converte para maiï¿ºscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
 			re = /^[a-zA-Z]{2}\d{3,6}$/;
 			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
@@ -23,15 +23,33 @@
 
 		<!-- main content -->
 		<div id="gc-ancora" class="gt-content">
-			<c:import url="comentario.jsp" />
-			<h4>Versão: ${siga.versao} </h4>
+			<c:choose>
+				<c:when test="${f:resource('siga.gc.paginadelogin')}">
+					<c:url var="url" value="/../sigagc/publicKnowledge">
+						<c:param name="tags">^pagina-de-login</c:param>
+						<c:param name="estilo">inplace</c:param>
+						<c:param name="msgvazio">Ainda nÃ£o existem informaÃ§Ãµes para serem exibidas aqui. Por favor, clique <a
+								href="$1">aqui</a> para contribuir.</c:param>
+						<c:param name="titulo">PÃ¡gina de Login</c:param>
+						<c:param name="ts">${currentTimeMillis}</c:param>
+					</c:url>
+					<script type="text/javascript">
+						SetInnerHTMLFromAjaxResponse("${url}", document
+								.getElementById('gc-ancora'));
+					</script>
+				</c:when>
+				<c:otherwise>
+					<c:import url="comentario.jsp" />
+				</c:otherwise>
+			</c:choose>
+			<h4>VersÃ£o: ${siga.versao} </h4>
 		</div>
 		<!-- / main content -->
 
 		<!-- sidebar -->
 		<div class="gt-sidebar">
 			<!-- login form head -->
-			<div class="gt-mylogin-hd">Identificação</div>
+			<div class="gt-mylogin-hd">IdentificaÃ§Ã£o</div>
 
 			<!-- login box -->
 			<div class="gt-mylogin-box">
@@ -43,13 +61,13 @@
 						</div>
 						
 						<div class="login-invalido-descricao">
-							<p>XX é a sigla do seu órgão (T2, RJ, ES, etc.) </p>
-							<p>99999 é o número da matrícula. </p>
+							<p>XX ï¿© a sigla do seu Ã³rgÃ£o (T2, RJ, ES, etc.) </p>
+							<p>99999 ï¿© o nï¿ºmero da matrÃ­cula. </p>
 						</div>
 					</div>
 					<!-- form row -->
 					<div class="gt-form-row">
-						<label class="gt-label">Matrícula</label> 
+						<label class="gt-label">MatrÃ­cula</label> 
 						<input id="j_username" type="text" name="j_username" placeholder="XX99999"
 							onblur="javascript:converteUsuario(this)" class="gt-form-text">
 					</div>
@@ -69,7 +87,7 @@
 					<!-- /form row -->
 
 					<p class="gt-forgot-password">
-						<a href="/siga/usuario/incluir_usuario.action">Sou um novo usuário</a>
+						<a href="/siga/usuario/incluir_usuario.action">Sou um novo usuÃ¡rio</a>
 					</p>
 					<p class="gt-forgot-password">
 						<a href="/siga/usuario/esqueci_senha.action">Esqueci minha senha</a>
@@ -81,7 +99,7 @@
 
 			<!-- Sidebar Navigation -->
 			<div class="gt-sidebar-nav gt-sidebar-nav-blue">
-				<h3>Links Úteis</h3>
+				<h3>Links ï¿šteis</h3>
 				<ul>
 					<li><a href="/siga/arquivos/apostila_sigaex.pdf">Apostila SIGA-Doc</a></li>
 					<li><a href="/siga/arquivos/apostila_sigawf.pdf">Apostila SIGA-Workflow</a></li>

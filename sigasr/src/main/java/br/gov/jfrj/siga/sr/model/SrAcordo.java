@@ -162,7 +162,10 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel, C
 	}
 
 	public String getSigla() {
-		return getIdAcordo().toString();
+	    if (getIdAcordo() != null)
+	        return getIdAcordo().toString();
+	    else
+	        return "";
 	}
 
 	public String getDescricao() {

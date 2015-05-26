@@ -558,7 +558,7 @@ public class Application extends SrController {
         SrSolicitacaoFiltro filtro = new SrSolicitacaoFiltro();
         SrSolicitacaoListaVO solicitacaoListaVO;
         String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
-        filtro.idListaPrioridade = id;
+        filtro.setIdListaPrioridade(id);
         lista = lista.getListaAtual();
         String jsonPrioridades = SrPrioridade.getJSON().toString();
 
@@ -622,7 +622,7 @@ public class Application extends SrController {
         SrSolicitacaoListaVO solicitacaoListaVO;
 
         try {
-            if (filtro.pesquisar) {
+            if (filtro.isPesquisar()) {
                 solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, nome, popup, getLotaTitular(), getCadastrante());
             } else {
                 solicitacaoListaVO = new SrSolicitacaoListaVO();
@@ -1526,14 +1526,14 @@ public class Application extends SrController {
     }
 
     public String gravarLista(SrLista lista) throws Exception {
-        lista.lotaCadastrante = getLotaTitular();
+        lista.setLotaCadastrante(getLotaTitular());
         validarFormEditarLista(lista);
         lista.salvar();
         return lista.toJson();
     }
 
     private void validarFormEditarLista(SrLista lista) {
-        if (lista.nomeLista == null || lista.nomeLista.trim().equals("")) {
+        if (lista.getNomeLista() == null || lista.getNomeLista().trim().equals("")) {
             srValidator.addError("lista.nomeLista", "Nome da Lista não informados");
         }
 

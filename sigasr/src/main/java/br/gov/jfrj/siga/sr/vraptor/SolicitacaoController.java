@@ -14,7 +14,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -61,7 +60,7 @@ public class SolicitacaoController extends SrController {
     public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
         result.include("solicitacao", solicitacao);
     }
-    
+
     @Path("/gravar")
     public void gravar(SrSolicitacao solicitacao) throws Exception {
 
@@ -99,16 +98,14 @@ public class SolicitacaoController extends SrController {
         }
 
         if (srValidator.hasErrors()) {
-        	enviarErroValidacao();
+            enviarErroValidacao();
         }
     }
-
 
     public boolean todoOContexto() {
         return true;
         // return Boolean.parseBoolean(params.get("todoOContexto"));
     }
-    
 
     public boolean ocultas() {
         return true;
@@ -135,46 +132,49 @@ public class SolicitacaoController extends SrController {
             ocultas = false;
 
         Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas, null, false, todoOContexto, !ocultas, false);
-        
-        result.include("solicitacao",solicitacao);
+
+        result.include("solicitacao", solicitacao);
         result.include("movimentacao", movimentacao);
-        result.include("todoOContexto",todoOContexto);
-        result.include("ocultas",ocultas);
-        result.include("movs",movs);
+        result.include("todoOContexto", todoOContexto);
+        result.include("ocultas", ocultas);
+        result.include("movs", movs);
     }
-    
+
     public void exibirLocalRamalEMeioContato(SrSolicitacao solicitacao) throws Exception {
         // render(solicitacao.deduzirLocalRamalEMeioContato());
     }
 
     public void exibirItemConfiguracao(SrSolicitacao solicitacao) throws Exception {
         if (solicitacao.getSolicitante() == null)
-        	// render(solicitacao);
+            // render(solicitacao);
             result.include("solicitacao", solicitacao);
 
         else if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())) {
-        	solicitacao.setItemConfiguracao(null);
+            solicitacao.setItemConfiguracao(null);
 
             DpPessoa titular = solicitacao.getTitular();
             DpLotacao lotaTitular = solicitacao.getLotaTitular();
             Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-            
+
             result.include("solicitacao", solicitacao);
             result.include("titular", titular);
             result.include("lotaTitular", lotaTitular);
             result.include("acoesEAtendentes", acoesEAtendentes);
-           // render(solicitacao, titular, lotaTitular, acoesEAtendentes);
+            // render(solicitacao, titular, lotaTitular, acoesEAtendentes);
         }
     }
+
     public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
         // render(solicitacao);
-    	
-    	result.include("solicitacao", solicitacao);
+
+        result.include("solicitacao", solicitacao);
     }
+
     public void exibirPrioridade(SrSolicitacao solicitacao) {
         solicitacao.associarPrioridadePeloGUT();
         // render(solicitacao);
     }
+
     public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
 
         solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
@@ -182,16 +182,16 @@ public class SolicitacaoController extends SrController {
         // render(solicitacoesRelacionadas);
     }
 
-    // DB1: foi necessï¿½rio receber e passar o parametro "nome"(igual ao buscarItem())
+    // DB1: foi necessário receber e passar o parametro "nome"(igual ao buscarItem())
     // para chamar a function javascript correta,
-    // e o parametro "popup" porque este metodo ï¿½ usado tambï¿½m na lista,
-    // e nï¿½o foi possï¿½vel deixar default no template(igual ao buscarItem.html)
+    // e o parametro "popup" porque este metodo é usado também na lista,
+    // e não foi possível deixar default no template(igual ao buscarItem.html)
     @SuppressWarnings("unchecked")
-    public void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception {
+    @Path("/buscar")
+    public void buscar(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception {
         SrSolicitacaoListaVO solicitacaoListaVO;
-
         try {
-            if (filtro.pesquisar) {
+            if (filtro.isPesquisar()) {
                 solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, nome, popup, getLotaTitular(), getCadastrante());
             } else {
                 solicitacaoListaVO = new SrSolicitacaoListaVO();
@@ -202,17 +202,26 @@ public class SolicitacaoController extends SrController {
         }
 
         // Montando o filtro...
-        String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
+        String[] tipos = new String[] { "Pessoa", "Lotação" };
         List<CpMarcador> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList();
 
         List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
         List<SrLista> listasPrioridade = SrLista.listar(false);
-        // render(solicitacaoListaVO, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao, listasPrioridade);
+
+        result.include("solicitacaoListaVO", solicitacaoListaVO);
+        result.include("tipos", tipos);
+        result.include("marcadores", marcadores);
+        result.include("filtro", filtro);
+        result.include("nome", nome);
+        result.include("popup", popup);
+        result.include("atributosDisponiveisAdicao", atributosDisponiveisAdicao);
+        result.include("listasPrioridade", listasPrioridade);
+        result.include("prioridadesEnum", SrPrioridade.values());
     }
 
     public List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
         List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
-        HashMap<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
+        Map<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
 
         for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
             if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
@@ -221,7 +230,7 @@ public class SolicitacaoController extends SrController {
         }
         return listaAtributosAdicao;
     }
-    
+
     @Path("/editar")
     public void editar(Long id) throws Exception {
 
@@ -236,8 +245,7 @@ public class SolicitacaoController extends SrController {
             solicitacao.setDtOrigem(new Date());
         if (solicitacao.getDtIniEdicao() == null)
             solicitacao.setDtIniEdicao(new Date());
-        //solicitacao.atualizarAcordos();
-
+        // solicitacao.atualizarAcordos();
 
         List<CpComplexo> locais = ContextoPersistencia.em().createQuery("from CpComplexo").getResultList();
 
@@ -246,24 +254,24 @@ public class SolicitacaoController extends SrController {
         DpPessoaSelecao pessoaSel = new DpPessoaSelecao();
         pessoaSel.setId(getCadastrante().getId());
         pessoaSel.buscar();
-		result.include("solicitante_pessoaSel", pessoaSel);
+        result.include("solicitante_pessoaSel", pessoaSel);
 
-        result.include("solicitacao",solicitacao);
-        result.include("locais",locais);
-        result.include("acoesEAtendentes",acoesEAtendentes);
+        result.include("solicitacao", solicitacao);
+        result.include("locais", locais);
+        result.include("acoesEAtendentes", acoesEAtendentes);
         result.include("formaAcompanhamentoList", SrFormaAcompanhamento.values());
         result.include("gravidadeList", SrGravidade.values());
-        result.include("urgenciaList",SrUrgencia.values());
-        result.include("tendenciaList",SrTendencia.values());
-        result.include("prioridadeList",SrPrioridade.values());
+        result.include("urgenciaList", SrUrgencia.values());
+        result.include("tendenciaList", SrTendencia.values());
+        result.include("prioridadeList", SrPrioridade.values());
 
-        result.include("locaisDisponiveis",solicitacao.getLocaisDisponiveis());
-        result.include("meiosComunicadaoList",SrMeioComunicacao.values());
-        result.include("itemConfiguracao",solicitacao.getItemConfiguracao());
-        result.include("podeUtilizarServicoSigaGC",false);
-        
+        result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
+        result.include("meiosComunicadaoList", SrMeioComunicacao.values());
+        result.include("itemConfiguracao", solicitacao.getItemConfiguracao());
+        result.include("podeUtilizarServicoSigaGC", false);
+
     }
-    
+
     @Path("/retirarDeLista")
     public void retirarDeLista(Long idSolicitacao, Long idLista) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);

@@ -47,17 +47,6 @@
 					<packagingExcludes>
 						WEB-INF/lib/siga-ext-*.jar
 					</packagingExcludes>
-					<webResources>
-						<resource>
-							<directory>src/main/webapp/paginas/entradas</directory>
-							<filtering>true</filtering>
-							<includes>
-								<include>login.jsp</include>
-							</includes>
-							<targetPath>/paginas/entradas</targetPath>
-						</resource>
-					</webResources>
-
 				</configuration>
 			</plugin>
 		</plugins>

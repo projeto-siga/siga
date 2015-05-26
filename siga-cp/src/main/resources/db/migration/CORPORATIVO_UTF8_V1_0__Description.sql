@@ -3350,14 +3350,22 @@ Pede deferimento.</span><br/><br/><br/>
 
 [#macro data titulo var reler=false idAjax="" default="" obrigatorio=false]
     [#if reler == true && idAjax != ""]
-            [#local jreler = " sbmt(''" + idAjax + "'');\""]
+            [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
             [#local jreler = " sbmt();\""]
     [/#if]
 
-    [#local v = .vars[var]!default]
+    [#local v = .vars[var]!"" /]
+    [#if v == ""]
+        [#if default?is_date]
+            [#local v = default?string("dd/MM/yyyy") /]
+        [#else]
+            [#local v = default /]
+        [/#if]
+    [/#if]
 
-[#if (alerta!"NÃ£o") = ''Sim'' && v = ""]
+
+    [#if (alerta!"Não") = 'Sim' && v==""]
     [#list obrigatorios?split(",") as campo]
          [#if campo == var]
          [#local vermelho = "color:red"]
@@ -3365,18 +3373,16 @@ Pede deferimento.</span><br/><br/><br/>
         [/#list]
     [/#if]
 
-    [#if obriga','WE8ISO8859P1'));
-	dbms_lob.append(dest_blob, src_blob);
-	src_blob := utl_raw.cast_to_raw(convert('torio]
+
+    [#if obrigatorio]
     [#local negrito = "font-weight:bold"]
     <input type="hidden" name="obrigatorios" value="${var}" />
     [/#if]
 
     [#if titulo?? && titulo != ""]<span style="${negrito!};${vermelho!}">${titulo}</span>[/#if]
-
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-        <input type="text" name="${var}" value="${v}" size="10" maxlength="10" onblur="javascript:verifica_data(this[#if !obrigatorio], ''Sim''[/#if]);${jreler!}" />
+<input type="text" name="${var}" value="${v}" size="10" maxlength="10" onmousedown="$('.campoData').datepicker($.datepicker.regional['pt-BR']);" onblur="javascript:verifica_data(this[#if !obrigatorio], 'Sim'[/#if]);${jreler!}" class="campoData" />
     [#else]
     <span class="valor">${v}</span>
     [/#if]
@@ -5256,6 +5262,27 @@ Pede deferimento.</span><br/><br/><br/>
 [#macro classificacao codigo]
    <input type="hidden" name="vars" value="codigoClassificacao" />
    <input type="hidden" id="codigoClassificacao" name="codigoClassificacao" value="${codigo}" />
+[/#macro]
+
+[#macro solicitacao tamanhoLetra="Normal" _tipo="FORMULÁRIO" assunto=""]
+    [#if tamanhoLetra! == "Normal"]
+        [#assign tl = "11pt" /]
+    [#elseif tamanhoLetra! == "Pequeno"]
+        [#assign tl = "9pt" /]
+    [#elseif tamanhoLetra! == "Grande"]
+        [#assign tl = "13pt" /]
+    [#else]     
+        [#assign tl = "11pt"]
+    [/#if]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false numeracaoCentralizada=false incluirMioloDJE=false]
+              <table style="float:none;" width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
+                  <tr>
+                     <td align="left" style="text-align: justify; font-family: Arial; font-size: ${tl};"><br/>Assunto: ${assunto}</td>
+                  </tr>
+              </table>
+            <br/>
+            [#nested] 
+     [/@estiloBrasaoCentralizado]
 [/#macro]
 
 [#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]

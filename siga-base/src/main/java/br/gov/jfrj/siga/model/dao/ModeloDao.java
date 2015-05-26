@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -69,7 +69,7 @@ public abstract class ModeloDao {
 			System.out.println(e.getStackTrace());
 		}
 
-		// Cria um novo Dao se ainda n�o houver
+		// Cria um novo Dao se ainda não houver
 		if (dao == null) {
 			try {
 				dao = clazz.newInstance();
@@ -102,7 +102,7 @@ public abstract class ModeloDao {
 
 		final ModeloDao dao = ModeloDao.threadDao.get();
 
-		// fecha o dao e a se��o do hibernate
+		// fecha o dao e a seï¿½ï¿½o do hibernate
 		if (dao != null) {
 			ModeloDao.threadDao.remove();
 		}
@@ -113,10 +113,10 @@ public abstract class ModeloDao {
 			final boolean lock) {
 
 		if (id == null) {
-			log.warn("[aConsultar] - O ID recebido para efetuar a consulta � nulo. ID: "
+			log.warn("[aConsultar] - O ID recebido para efetuar a consulta é nulo. ID: "
 					+ id);
 			throw new IllegalArgumentException(
-					"O identificador do objeto � nulo ou inv�lido.");
+					"O identificador do objeto é nulo ou inválido.");
 		}
 		T entidade;
 		if (lock)
@@ -155,7 +155,7 @@ public abstract class ModeloDao {
 	public Session getSessao() {
 		if (sessao == null)
 			throw new IllegalStateException(
-					"Vari�vel Session n�o foi atribu�da para este DAO");
+					"Variï¿½vel Session nï¿½o foi atribuï¿½da para este DAO");
 		return sessao;
 	}
 
@@ -165,7 +165,7 @@ public abstract class ModeloDao {
 	public StatelessSession getSessaoStateless() {
 		if (sessaoStateless == null)
 			throw new IllegalStateException(
-					"Vari�vel Session n�o foi atribu�da para este DAO");
+					"Variï¿½vel Session nï¿½o foi atribuï¿½da para este DAO");
 		return sessaoStateless;
 	}
 
@@ -182,7 +182,7 @@ public abstract class ModeloDao {
 		return entidade;
 	}
 
-	// Renato: desativei esse m�todo pois ele n�o informar quest�es de cache ou de ordena��o. � melhor termos m�todos espec�ficos, ent�o.
+	// Renato: desativei esse método pois ele não informar questões de cache ou de ordenação. É melhor termos métodos específicos, então.
 	//	public <T> List<T> listarTodos(Class<T> clazz) {
 	//		// Criteria crit = getSessao().createCriteria(getPersistentClass());
 	//		// return crit.list();
@@ -248,14 +248,14 @@ public abstract class ModeloDao {
 	//	}
 
 	/**
-	 * @return true se a sess�o do Hibernate n�o for nula e estiver aberta.
+	 * @return true se a sessão do Hibernate não for nula e estiver aberta.
 	 */
 	public boolean sessaoEstahAberta() {
 		return this.getSessao() != null && this.getSessao().isOpen();
 	}
 
 	/**
-	 * @return true se a transacao da sess�o do Hibernate estiver ativa
+	 * @return true se a transacao da sessão do Hibernate estiver ativa
 	 */
 	public boolean transacaoEstaAtiva() {
 		return this.getSessao() != null && this.getSessao().isOpen()

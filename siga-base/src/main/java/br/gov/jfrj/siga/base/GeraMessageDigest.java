@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -65,11 +65,11 @@ public class GeraMessageDigest {
 			caracteres.append(maiuscula);
 
 		}
-		// Exclus„o das letras o e O na geraÁ„o de senha
+		// Exclus√£o das letras o e O na gera√ß√£o de senha
 		caracteres.deleteCharAt(caracteres.indexOf("o"));
 		caracteres.deleteCharAt(caracteres.indexOf("O"));
 
-		// exclus„o do n˙mero zero na geraÁ„o de senha
+		// exclus√£o do n√∫mero zero na gera√ß√£o de senha
 		for (int i = 0; i < 10 - 1; i++) {
 			caracteres.append('1' + i);
 		}

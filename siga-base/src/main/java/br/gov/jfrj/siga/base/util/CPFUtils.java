@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.base.util;
+Ôªøpackage br.gov.jfrj.siga.base.util;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -7,7 +7,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 public class CPFUtils {
 
 	/**
-	 * Valida se o CPF È nulo ou em Branco e se os caracteres do CPF s„o numÈricos com exceÁ„o do "." e do "-". 
+	 * Valida se o CPF √© nulo ou em Branco e se os caracteres do CPF s√£o num√©ricos com exce√ß√£o do "." e do "-". 
 	 * @param cpf
 	 * @throws AplicacaoException
 	 */
@@ -28,7 +28,7 @@ public class CPFUtils {
 		}
 		
 		if ( !result ) {
-			throw new AplicacaoException( "A quantidade de digitos do CPF informado È inv·lida" );
+			throw new AplicacaoException( "A quantidade de digitos do CPF informado √© inv√°lida" );
 		}
 		
 		return result;
@@ -37,13 +37,13 @@ public class CPFUtils {
 	private static void validaCpfNuloOuBranco(final String cpf)
 			throws AplicacaoException {
 		if ( StringUtils.isBlank( cpf ) ) {
-			throw new AplicacaoException( "O CPF informado È nulo ou inv·lido" );
+			throw new AplicacaoException( "O CPF informado √© nulo ou inv√°lido" );
 		}
 	}
 	
 	private static boolean validaDigitosNumericos(String cpfLimpo) throws AplicacaoException {
 		if ( !StringUtils.isNumeric( cpfLimpo ) ) {
-			throw new AplicacaoException( "O CPF informado possui caracteres inv·lidos." );
+			throw new AplicacaoException( "O CPF informado possui caracteres inv√°lidos." );
 		}
 		return true;
 	}
@@ -57,8 +57,8 @@ public class CPFUtils {
 
 	/**
 	 * @param cpf
-	 * @return o valor Long do CPF utilizando o mÈtodo {@link #efetuaValidacaoSimples(String) efetuaValidacaoSimples} <br/>
-	 * para validar o CPF antes de efetuar a convers„o.
+	 * @return o valor Long do CPF utilizando o m√©todo {@link #efetuaValidacaoSimples(String) efetuaValidacaoSimples} <br/>
+	 * para validar o CPF antes de efetuar a convers√£o.
 	 * @throws AplicacaoException
 	 */
 	public static Long getLongValueValidaSimples(String cpf) throws AplicacaoException {

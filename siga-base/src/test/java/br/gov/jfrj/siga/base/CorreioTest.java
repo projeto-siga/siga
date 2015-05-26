@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -27,9 +27,9 @@ public class CorreioTest {
 	public static void main(String[] args) throws Exception {
 		String[] destinatatios = args;
 		//envia em formato text/plain
-		Correio.enviar(destinatatios[0], "(text/plain)Assunto Teste Email AÁ„o!", "Teste aÁ„o! AtenÁ„o: esta È uma mensagem autom·tica. Por favor, n„o responda.");
+		Correio.enviar(destinatatios[0], "(text/plain)Assunto Teste Email A√ß√£o!", "Teste a√ß√£o! Aten√ß√£o: esta √© uma mensagem autom√°tica. Por favor, n√£o responda.");
 		
 		//envia em formato text/html
-		Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),destinatatios,"(text/html)Assunto Teste Email AÁ„o!", "Teste aÁ„o! AtenÁ„o: esta È uma mensagem autom·tica. Por favor, n„o responda.", "Teste aÁ„o! AtenÁ„o: esta È uma mensagem autom·tica. Por favor, n„o responda.");
+		Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),destinatatios,"(text/html)Assunto Teste Email A√ß√£o!", "Teste a√ß√£o! Aten√ß√£o: esta √© uma mensagem autom√°tica. Por favor, n√£o responda.", "Teste a√ß√£o! Aten√ß√£o: esta √© uma mensagem autom√°tica. Por favor, n√£o responda.");
 	}
 }

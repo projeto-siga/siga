@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.base.auditoria.hibernate.auditor;
+Ôªøpackage br.gov.jfrj.siga.base.auditoria.hibernate.auditor;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.HibernateException;
@@ -15,10 +15,10 @@ import org.hibernate.event.spi.SaveOrUpdateEvent;
 import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
 
 /**
- * Classe respons·vel por configurar o interceptor e os listeners que ser„o 
- * respons·veis por auditar o tempo decorrido durante as operaÁıes de 
+ * Classe respons√°vel por configurar o interceptor e os listeners que ser√£o 
+ * respons√°veis por auditar o tempo decorrido durante as opera√ß√µes de 
  * load, update, insert e delete de cada entidade configurada na
- * configuraÁ„o do Hibernate. 
+ * configura√ß√£o do Hibernate. 
  * 
  * @author bruno.lacerda@avantiprima.com.br
  *
@@ -123,7 +123,7 @@ public class SigaHibernateChamadaAuditor extends SigaAuditor {
 		private static final long serialVersionUID = 1L;
 		@Override
 		public String onPrepareStatement(String sql) {
-			// Evitando logar execuc„o do jobExecutor do JBPM que roda a cada 5 segundos
+			// Evitando logar execuc√£o do jobExecutor do JBPM que roda a cada 5 segundos
 			if ( isAuditoriaHabilitada() && !sql.contains( "select * from ( select job0_.ID" ) ) {
 				SigaHibernateAuditorLogUtil.loga( getCategoriaDeLogParaInterceptor(), "[ON PREPARED STATEMENT] " + "SQL: " + sql );
 			}

@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Superclasse abstrata respons·vel pela infraestrutura de tratamento de
- * propriedades Toda classe que tratar propriedades est·ticas deve subclasse·-la
+ * Superclasse abstrata respons√°vel pela infraestrutura de tratamento de
+ * propriedades Toda classe que tratar propriedades est√°ticas deve subclasse√°-la
  * e criar um arquivo de propriedades chamado 'app.properties' no mesmo pacote
  * que ela.
  * 
@@ -38,16 +38,16 @@ public abstract class ModeloPropriedade {
 	protected String[] prefixo;
 
 	/**
-	 * Retorna o prefixo do mÛdulo (programa), fazendo uma separaÁ„o de
-	 * namespaces para cada projeto. Esse prefixo È adicionado ‡ propriedade que
-	 * o usu·rio deseja buscar. Por exemplo, se for buscada uma propriedade
-	 * "teste" no mÛdulo siga.cd (projeto siga-cd), equivale ‡ solicitar uma
+	 * Retorna o prefixo do m√≥dulo (programa), fazendo uma separa√ß√£o de
+	 * namespaces para cada projeto. Esse prefixo √© adicionado √† propriedade que
+	 * o usu√°rio deseja buscar. Por exemplo, se for buscada uma propriedade
+	 * "teste" no m√≥dulo siga.cd (projeto siga-cd), equivale √† solicitar uma
 	 * propriedade "siga.cd.teste" <br/>
 	 * Veja alguns exemplos:
 	 * <table border="1">
 	 * <tr>
 	 * <th>projeto</th>
-	 * <th>prefixo do mÛdulo</th>
+	 * <th>prefixo do m√≥dulo</th>
 	 * </tr>
 	 * <tr>
 	 * <td>siga-cp</td>
@@ -92,12 +92,12 @@ public abstract class ModeloPropriedade {
 
 	/**
 	 * atribui o prefixo para as propriedades. Note que se um prefixo for, por
-	 * exemplo, "a.b.c", ent„o as combinaÁıes de busca nos arquivos de
-	 * propriedades ser„o a.b.c.[propriedade], b.c.[propriedade],
+	 * exemplo, "a.b.c", ent√£o as combina√ß√µes de busca nos arquivos de
+	 * propriedades ser√£o a.b.c.[propriedade], b.c.[propriedade],
 	 * c.[propriedade] e [propriedade]
 	 * 
 	 * @param prefstr
-	 *            a string de par‚metros contendo os prefixos separados por
+	 *            a string de par√¢metros contendo os prefixos separados por
 	 *            pontos
 	 */
 	public void setPrefixo(String prefstr) {
@@ -120,19 +120,19 @@ public abstract class ModeloPropriedade {
 	}
 
 	/**
-	 * ObtÈm a propriedade referente ao nome (par‚metro) ou null se n„o existir.
-	 * obs-1: Note que o par‚metro tem heranÁa e È procurado da subclasse para
-	 * as superclasses, assim com um objeto. obs-2: Note tambÈm que se
-	 * setPrefixo(prefixo) for executado, a procura do par‚metro ser· feita pela
-	 * combinaÁ„o dos prefixos gerados por 'prefixo'. Ex: se for executado
-	 * setPrefixo("a.b.c"), ent„o quando executado o mÈtodo
-	 * obterPropriedade("um.dois.tres") ser· procurada propriedade na seguinte
+	 * Obt√©m a propriedade referente ao nome (par√¢metro) ou null se n√£o existir.
+	 * obs-1: Note que o par√¢metro tem heran√ßa e √© procurado da subclasse para
+	 * as superclasses, assim com um objeto. obs-2: Note tamb√©m que se
+	 * setPrefixo(prefixo) for executado, a procura do par√¢metro ser√° feita pela
+	 * combina√ß√£o dos prefixos gerados por 'prefixo'. Ex: se for executado
+	 * setPrefixo("a.b.c"), ent√£o quando executado o m√©todo
+	 * obterPropriedade("um.dois.tres") ser√° procurada propriedade na seguinte
 	 * ordem ....: 1) a.b.c.um.dois.tres 2) b.c.um.dois.tres 3) c.um.dois.tres
 	 * 4) um.dois.tres
 	 * 
 	 * @param nome
 	 *            nome da propriedade a carregar.
-	 * @return propriedade referente ao nome (par‚metro) ou null.
+	 * @return propriedade referente ao nome (par√¢metro) ou null.
 	 * @throws Exception
 	 */
 	public String obterPropriedade(String nome) throws Exception {
@@ -155,15 +155,15 @@ public abstract class ModeloPropriedade {
 	}
 
 	/**
-	 * obtÈm uma lista de propriedades que comeÁam com um nome (par‚metro) que È
-	 * separado por um ponto e seguido de um numero sequencial. Ex: par‚metro
+	 * obt√©m uma lista de propriedades que come√ßam com um nome (par√¢metro) que √©
+	 * separado por um ponto e seguido de um numero sequencial. Ex: par√¢metro
 	 * nome -> uf no arquivo : uf.0=AC uf.1=AL uf.2=AM ... uf.26=TO
 	 * 
-	 * Obs: Note que os par‚metros em lista tambÈm tÍm heranÁa, da mesma forma
-	 * que os par‚metros simples
+	 * Obs: Note que os par√¢metros em lista tamb√©m t√™m heran√ßa, da mesma forma
+	 * que os par√¢metros simples
 	 * 
 	 * @param nome
-	 *            nome do par‚metro a obter. Se atribuÌdo o prefixo, o mesmo n„o
+	 *            nome do par√¢metro a obter. Se atribu√≠do o prefixo, o mesmo n√£o
 	 *            deve estar contido.
 	 * @return
 	 * @throws Exception
@@ -182,14 +182,14 @@ public abstract class ModeloPropriedade {
 
 	/**
 	 * 
-	 * ObtÈm um HashMap com as chaves e respectivos valores das propriedades
-	 * cuja chave contÈm o nome passado como par‚metro, esteja ou n„o essa
-	 * propriedade acompanhada do prefixo do mÛdulo no arquivo de propriedades.
-	 * Seguindo essa ideia, para se obter todas as propriedades do mÛdulo, basta
-	 * passar uma String vazia (n„o nula) como par‚metro.
+	 * Obt√©m um HashMap com as chaves e respectivos valores das propriedades
+	 * cuja chave cont√©m o nome passado como par√¢metro, esteja ou n√£o essa
+	 * propriedade acompanhada do prefixo do m√≥dulo no arquivo de propriedades.
+	 * Seguindo essa ideia, para se obter todas as propriedades do m√≥dulo, basta
+	 * passar uma String vazia (n√£o nula) como par√¢metro.
 	 * 
 	 * @param nome
-	 *            nome do par‚metro a obter. Se atribuÌdo o prefixo, o mesmo n„o
+	 *            nome do par√¢metro a obter. Se atribu√≠do o prefixo, o mesmo n√£o
 	 *            deve estar contido.
 	 * @return
 	 * @throws Exception

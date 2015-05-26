@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -61,13 +61,13 @@ public class HibernateUtil {
 			if (s == null) {
 				s = HibernateUtil.sessionFactory.openSession();
 				HibernateUtil.threadSession.set(s);
-				HibernateUtil.logger.debug("Nova sess„o do hibernate aberta.");
+				HibernateUtil.logger.debug("Nova sess√£o do hibernate aberta.");
 			} else {
-				HibernateUtil.logger.debug("Retornada sess„o do hibernate aberta anteriormente.");
+				HibernateUtil.logger.debug("Retornada sess√£o do hibernate aberta anteriormente.");
 			}
 			
 		} catch (final HibernateException he) {
-			HibernateUtil.logger.error("erro do hibernate ao obter a sess„o");
+			HibernateUtil.logger.error("erro do hibernate ao obter a sess√£o");
 		}
 		
 		return s;
@@ -113,7 +113,7 @@ public class HibernateUtil {
 		} catch (final HibernateException hbex) {
 			HibernateUtil.rollbackTransacao();
 			throw new AplicacaoException(
-					"Erro gravando transaÁ„o no banco de dados", 0, hbex);
+					"Erro gravando transa√ß√£o no banco de dados", 0, hbex);
 		}
 	}
 
@@ -138,14 +138,14 @@ public class HibernateUtil {
 			try {
 				s.close();
 			} catch (final HibernateException he) {
-				HibernateUtil.logger.error("erro ao fechar a sess„o hibernate");
+				HibernateUtil.logger.error("erro ao fechar a sess√£o hibernate");
 				HibernateUtil.logger.error(he.getMessage());
 			}
 			try {
 				HibernateUtil.threadSession.remove();
 			} catch (final Exception he) {
 				HibernateUtil.logger
-						.error("erro ao remover a sess„o hibernate");
+						.error("erro ao remover a sess√£o hibernate");
 				HibernateUtil.logger.error(he.getMessage());
 			}
 		}
@@ -235,7 +235,7 @@ public class HibernateUtil {
 			// Make sure you log the exception, as it might be swallowed
 			System.out.println("HibernateUtil");
 			ex.printStackTrace();
-			HibernateUtil.logger.error("N„o foi possÌvel configurar o hibernate.", ex);
+			HibernateUtil.logger.error("N√£o foi poss√≠vel configurar o hibernate.", ex);
 			
 			throw new ExceptionInInitializerError(ex);
 		}
@@ -252,7 +252,7 @@ public class HibernateUtil {
 			// Make sure you log the exception, as it might be swallowed
 			System.out.println("HibernateUtil");
 			ex.printStackTrace();
-			HibernateUtil.logger.error("N„o foi possÌvel configurar o hibernate.", ex);
+			HibernateUtil.logger.error("N√£o foi poss√≠vel configurar o hibernate.", ex);
 			
 			throw new ExceptionInInitializerError(ex);
 		}
@@ -290,7 +290,7 @@ public class HibernateUtil {
 		} catch (final Throwable ex) {
 			
 			// Make sure you log the exception, as it might be swallowed
-			HibernateUtil.logger.error("N„o foi possÌvel configurar o hibernate.", ex);
+			HibernateUtil.logger.error("N√£o foi poss√≠vel configurar o hibernate.", ex);
 			
 			throw new ExceptionInInitializerError(ex);
 		}

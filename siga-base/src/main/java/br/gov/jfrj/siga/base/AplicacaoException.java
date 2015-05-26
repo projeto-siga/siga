@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -25,7 +25,7 @@ package br.gov.jfrj.siga.base;
 
 
 /**
- * @author SEANS Classe padr„o para tratamenteo de erros nos Sistemas
+ * @author SEANS Classe padr√£o para tratamenteo de erros nos Sistemas
  * 
  */
 public class AplicacaoException extends RuntimeException {
@@ -37,7 +37,7 @@ public class AplicacaoException extends RuntimeException {
 	private int codigoErro;
 
 	/**
-	 * Construtor padr„o para a Classe
+	 * Construtor padr√£o para a Classe
 	 * 
 	 */
 	public AplicacaoException() {
@@ -49,7 +49,7 @@ public class AplicacaoException extends RuntimeException {
 	 * Construtor da Classe que atribui uma mensagem
 	 * 
 	 * @param message -
-	 *            DescriÁ„o do motivo da exceÁ„o
+	 *            Descri√ß√£o do motivo da exce√ß√£o
 	 */
 	public AplicacaoException(final String message) {
 		this(message, 0);
@@ -58,12 +58,12 @@ public class AplicacaoException extends RuntimeException {
 
 	/**
 	 * 
-	 * Construtor da Classe que atribui uma mensagem e cÛdigo de IdentificaÁ„o
+	 * Construtor da Classe que atribui uma mensagem e c√≥digo de Identifica√ß√£o
 	 * 
 	 * @param message -
-	 *            DescriÁ„o do motivo da exceÁ„o
+	 *            Descri√ß√£o do motivo da exce√ß√£o
 	 * @param codigo -
-	 *            CÛdigo de identificaÁ„o da exceÁ„o para
+	 *            C√≥digo de identifica√ß√£o da exce√ß√£o para
 	 */
 	public AplicacaoException(final String message, final int codigo) {
 		this(message, codigo, null);
@@ -71,15 +71,15 @@ public class AplicacaoException extends RuntimeException {
 
 	/**
 	 * 
-	 * Construtor da Classe que atribui uma mensagem, um cÛdigo de IdentificaÁ„o
-	 * e uma causa para a exceÁ„o
+	 * Construtor da Classe que atribui uma mensagem, um c√≥digo de Identifica√ß√£o
+	 * e uma causa para a exce√ß√£o
 	 * 
 	 * @param message -
-	 *            DescriÁ„o do motivo da exceÁ„o
+	 *            Descri√ß√£o do motivo da exce√ß√£o
 	 * @param codigo -
-	 *            CÛdigo de identificaÁ„o da exceÁ„o para
+	 *            C√≥digo de identifica√ß√£o da exce√ß√£o para
 	 * @param causa -
-	 *            Objeto da classe Throwable que gerou esta exceÁ„o
+	 *            Objeto da classe Throwable que gerou esta exce√ß√£o
 	 */
 	public AplicacaoException(final String message, final int codigo, final Throwable causa) {
 		super(message, causa);

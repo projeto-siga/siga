@@ -110,6 +110,8 @@ self.retorna_${propriedade}${tipoSel}${inputName} = function(id, sigla, descrica
 	<c:if test="${reler == 'ajax'}">
 		sbmt('${empty idAjax ? propriedade : idAjax}');
 	</c:if> 
+
+	${onchange};
 }
  
  

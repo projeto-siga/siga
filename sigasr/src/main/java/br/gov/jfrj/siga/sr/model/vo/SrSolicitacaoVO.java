@@ -74,7 +74,7 @@ public class SrSolicitacaoVO {
                 prioridadeSolicitacao.prioridade.getDescPrioridade()) : "");
 
         if (podeRemover)
-            this.botaoRemover = SigaVraptorUtil.botaoRemoverSolicitacao(this.getIdSolicitacao(), lista.idLista);
+            this.botaoRemover = SigaVraptorUtil.botaoRemoverSolicitacao(this.getIdSolicitacao(), lista.getIdLista());
 
         if (podePriorizar)
             this.botaoPriorizar = SigaVraptorUtil.botaoPriorizarSolicitacao();

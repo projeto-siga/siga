@@ -148,6 +148,9 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public void setSigla(String sigla) {
+	    if (sigla == null) {
+	        sigla = "";
+	    }
 		String siglasOrgaoUsu = "";
 		List<CpOrgaoUsuario> lou = CpDao.getInstance()
 				.listarOrgaosUsuarios();
@@ -237,8 +240,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public Long getIdInicial() {
-		// TODO Auto-generated method stub
-		return getIdLotacaoIni().longValue();
+		return getIdLotacaoIni();
 	}
 
 	public Boolean isSubsecretaria() {

@@ -32,6 +32,10 @@ public class SrTipoPermissaoLista extends ObjetoVraptor {
     @Column(name = "DESCR_TIPO_PERMISSAO", nullable = false)
     private String descrTipoPermissaoLista;
 
+    public SrTipoPermissaoLista(){
+    	
+    }
+    
     public SrTipoPermissaoLista(int id, String descricao) {
         super();
         this.setIdTipoPermissaoLista(Long.valueOf(id));

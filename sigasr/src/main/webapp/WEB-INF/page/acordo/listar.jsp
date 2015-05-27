@@ -4,6 +4,7 @@
 <siga:pagina titulo="Acordos">
 
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>

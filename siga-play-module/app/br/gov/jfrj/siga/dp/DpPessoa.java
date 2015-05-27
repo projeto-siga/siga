@@ -164,7 +164,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return Texto.maiusculasEMinusculas(getDescricao());
 	}
 
-	public void setSigla(final String sigla) {
+	public void setSigla(String sigla) {
+	    if (sigla == null) {
+	        sigla = "";
+	    }
 		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9])([0-9]+)");
 		final Matcher m = p1.matcher(sigla);
 		if (m.find()) {

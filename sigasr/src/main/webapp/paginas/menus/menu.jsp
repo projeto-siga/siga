@@ -4,13 +4,13 @@
 <li><a href="#">Servi&ccedil;os</a>
 	<ul>
 		<li><a href="${linkTo[SolicitacaoController].editar}">Cadastrar</a></li>
-		<li><a href="@{Application.buscarSolicitacao}">Pesquisar</a></li>
+		<li><a href="${linkTo[SolicitacaoController].buscar}">Pesquisar</a></li>
 	</ul>
 </li>
 
 <li><a href="#">Prioriza&ccedil;&atilde;o</a>
 	<ul>
-		<li><a href="@{Application.listarLista}">Lista de Prioridade</a></li>
+		<li><a href="${linkTo[SolicitacaoController].listarLista[false]}">Lista de Prioridade</a></li>
 	</ul>
 </li>
 	

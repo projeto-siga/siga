@@ -43,8 +43,8 @@ public class SrSolicitacaoListaVO {
         SrSolicitacaoListaVO solicitacoesVO = new SrSolicitacaoListaVO();
         SrLista lista = null;
 
-        if (filtro.idListaPrioridade != null)
-            lista = SrLista.AR.findById(filtro.idListaPrioridade);
+        if (filtro.getIdListaPrioridade() != null)
+            lista = SrLista.AR.findById(filtro.getIdListaPrioridade());
 
         if (telaDeListas && lista != null) {
             solicitacoesVO.setPodePriorizar(lista.podePriorizar(lotaTitular, cadastrante));

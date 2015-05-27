@@ -20,6 +20,7 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.enumeration.SrUnidadeMedida;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
@@ -158,5 +159,24 @@ public class AcordoController extends SrController {
 		SrConfiguracao abrangencia = SrConfiguracao.AR.findById(idAssociacao);
 		abrangencia.finalizar();
 		result.use(Results.http()).body(abrangencia.toJson());
+	}
+	
+	//@AssertAcesso(ADM_ADMINISTRAR)
+	@Path("/buscar")
+	public void buscar(boolean mostrarDesativados, String nome, boolean popup) throws Exception {
+	    List<SrAtributo> parametros = SrAtributo.listarParaAcordo(mostrarDesativados);
+        List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
+        List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
+        List<CpComplexo> locais = CpComplexo.AR.all().fetch();
+        List<SrAcordo> acordos = SrAcordo.listar(mostrarDesativados);
+        
+        result.include("parametros", parametros);
+        result.include("unidadesMedida", unidadesMedida);
+        result.include("orgaos", orgaos);
+        result.include("locais", locais);
+        result.include("acordos", acordos);
+        result.include("mostrarDesativados",mostrarDesativados);
+        result.include("nome", nome);
+        result.include("popup", popup);
 	}
 }

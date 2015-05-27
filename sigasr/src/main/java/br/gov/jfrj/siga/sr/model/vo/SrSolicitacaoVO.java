@@ -108,7 +108,7 @@ public class SrSolicitacaoVO {
             sb.append("}'," + codigo + "');window.close()\">");
             sb.append(codigo + "</a>");
         } else {
-        	//TODO Alterar este link após migração para vRaptor
+            // TODO Alterar este link após migração para vRaptor
             sb.append("<a href=\"/sigasr/solicitacao/exibir/");
             sb.append(id + "\">");
             sb.append(codigo + "</a>");
@@ -147,12 +147,11 @@ public class SrSolicitacaoVO {
     }
 
     private String getMarcadoresEmHTMLDetalhes(String marcadoresEmHTML, String data) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<td style=\"padding: 8px 5px 8px 10px !important\"><b>");
+        StringBuilder sb = new StringBuilder();
+        sb.append("<b>");
         sb.append(marcadoresEmHTML);
         sb.append(" desde</b> ");
         sb.append(data);
-        sb.append("</td>");
 
         return sb.toString();
     }

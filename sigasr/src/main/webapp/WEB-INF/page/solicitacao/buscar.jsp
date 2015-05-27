@@ -14,8 +14,7 @@
 	    <h2>Pesquisa de Solicitações</h2>
 	    <c:choose>
 	        <c:when test="${not empty solicitacaoListaVO.getItens()}">
-	           Itens: ${solicitacaoListaVO.getItens().size() }
-<%-- 	           <siga:solicitacao solicitacaoListaVO="${solicitacaoListaVO}" filtro="${filtro}" modoExibicao="solicitacao" /> --%>
+	           <siga:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="solicitacao" />
 	        </c:when>
 	        <c:when test="${filtro.pesquisar}">
 	            <div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>

@@ -1,11 +1,11 @@
-<link rel="stylesheet" type="text/css" href="/sigasr/public/stylesheets/jquery.multiselect.css">
+<link rel="stylesheet" type="text/css" href="/sigasr/stylesheets/jquery.multiselect.css">
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <script src="//datatables.net/release-datatables/extensions/ColVis/js/dataTables.colVis.min.js"></script>
-<script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
-<script src="/sigasr/public/javascripts/tabela-dinamica.js"></script>
-<script src="/sigasr/public/javascripts/jquery.multiselect.min.js"></script>
-<script src="/sigasr/public/javascripts/jquery.cookie.js"></script>
-<script src="/sigasr/public/javascripts/HTMLSelectElement.prototype.selectedOptions.js"></script>
+<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+<script src="/sigasr/javascripts/tabela-dinamica.js"></script>
+<script src="/sigasr/javascripts/jquery.multiselect.min.js"></script>
+<script src="/sigasr/javascripts/jquery.cookie.js"></script>
+<script src="/sigasr/javascripts/HTMLSelectElement.prototype.selectedOptions.js"></script>
 
 <%@ attribute name="solicitacaoListaVO" required="false"%>
 <%@ attribute name="filtro" required="false"%>
@@ -37,23 +37,21 @@
 
 <div class="gt-content-box gt-for-table dataTables_div">
 	<div class="siga-multiple-select">
-		<select id="selectColunasTabela" name="colunasTabela" multiple="multiple">
-		</select>
-
-		<c:if test="${requestScope[modoExibicao] == 'solicitacao'}">
+		<select id="selectColunasTabela" name="colunasTabela" multiple="multiple"/></select>
+		<c:if test="${modoExibicao == 'solicitacao'}">
 		    <select id="selectColunasDetalhamento" name="colunasDetalhamento" multiple="multiple"></select>
 	    </c:if>
 	</div>
 	<div>
 	</div>
-	<table id="solicitacoes_table" border="0" class="gt-table-nowrap display" data-json="${_solicitacaoListaVO?.toJson()}">
+	<table id="solicitacoes_table" border="0" class="gt-table-nowrap display" data-json='${requestScope[solicitacaoListaVO].toJson()}'>
 		<thead></thead>
 		<tbody id="sortable" class="ui-sortable"></tbody>
 	</table>
 </div>
 
 <script type="text/javascript">
-	var tabelaDinamica = new TabelaDinamica('#solicitacoes_table', '${requestScope[modoExibicao]}').criar();
+	var tabelaDinamica = new TabelaDinamica('#solicitacoes_table', '${modoExibicao}').criar();
 
 	if (tabelaDinamica && tabelaDinamica.objetoTabela && tabelaDinamica.objetoTabela.podePriorizar) {
 		$( "#sortable" ).sortable({placeholder: "ui-state-highlight"});
@@ -85,7 +83,7 @@
 
 		tabelaDinamica.atualizarColunasSelecionadas(selectColunasTabela, tabelaDinamica.objetoTabela.colunasTabelaJson, tabelaDinamica.TIPO_COLUNA_TABELA);
 
-		if("${requestScope[modoExibicao]}" == "solicitacao") {
+		if("${modoExibicao}" == "solicitacao") {
 
 			var selectColunasDetalhamento = $("#selectColunasDetalhamento").multiselect({
 				header: false,

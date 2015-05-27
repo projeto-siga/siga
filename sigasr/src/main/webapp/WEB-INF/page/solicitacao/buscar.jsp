@@ -128,16 +128,16 @@
 	                        <td>Acordo</td>
 	                        <td>
 	                           <input type="hidden" name="filtro.acordoSel" value="" />
-	                           <siga:selecao2 propriedade="filtro.acordoSel" tipo="acordo" tema="simple" modulo="sigasr" paramList="popup=true;"/>
-	                            <div id="chkNaoSatisfatorios" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
-	                                <label>
-		                                <siga:checkbox nameInput="filtro.naoSatisfatorios" name="filtro.naoSatisfatorios" value="${filtro.naoSatisfatorios}"/>
-		                                Apenas solicitações em descumprimento dos seus acordos
-	                                </label>
-	                            </div>
-	                            <script language="javascript">
-	                                $("#chkNaoSatisfatorios").appendTo("#spanAcordofiltroacordo");
-	                            </script>
+	                           <siga:selecao2 tamanho="grande" propriedade="filtro.acordoSel" tipo="acordo" tema="simple" modulo="sigasr" paramList="popup=true;"/>
+	                           <div id="chkNaoSatisfatorios" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
+	                              <label>
+		                             <siga:checkbox nameInput="filtro.naoSatisfatorios" name="filtro.naoSatisfatorios" value="${filtro.naoSatisfatorios}"/>
+		                             Apenas solicitações em descumprimento dos seus acordos
+	                              </label>
+	                           </div>
+	                           <script language="javascript">
+	                               $("#chkNaoSatisfatorios").appendTo("#spanAcordofiltroacordo");
+	                           </script>
 	                        </td>
 	                    </tr>   
 	                    <tr>

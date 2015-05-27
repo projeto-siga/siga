@@ -20,13 +20,13 @@ public class SrListaVO {
     private boolean ativo;
 
     public SrListaVO(SrLista lista) {
-        this.setIdLista(lista.idLista);
+        this.setIdLista(lista.getIdLista());
         this.setHisIdIni(lista.getHisIdIni());
-        this.setNomeLista(lista.nomeLista);
-        this.setNomeLotacao(lista.lotaCadastrante != null ? lista.lotaCadastrante.getDescricao() : "");
-        this.setDescrAbrangencia(lista.descrAbrangencia);
-        this.setDescrJustificativa(lista.descrJustificativa);
-        this.setDescrPriorizacao(lista.descrPriorizacao);
+        this.setNomeLista(lista.getNomeLista());
+        this.setNomeLotacao(lista.getLotaCadastrante() != null ? lista.getLotaCadastrante().getDescricao() : "");
+        this.setDescrAbrangencia(lista.getDescrAbrangencia());
+        this.setDescrJustificativa(lista.getDescrJustificativa());
+        this.setDescrPriorizacao(lista.getDescrPriorizacao());
         this.setAtivo(lista.isAtivo());
     }
 

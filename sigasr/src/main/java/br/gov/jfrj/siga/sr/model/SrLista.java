@@ -65,26 +65,26 @@ public class SrLista extends HistoricoSuporteVraptor {
     @SequenceGenerator(sequenceName = Catalogs.SIGASR + ".SR_LISTA_SEQ", name = "srListaSeq")
     @GeneratedValue(generator = "srListaSeq")
     @Column(name = "ID_LISTA")
-    public Long idLista;
+    private Long idLista;
 
-    @Column(name = "NOME_LISTA")
-    public String nomeLista;
+	@Column(name = "NOME_LISTA")
+    private String nomeLista;
 
     @Lob
     @Column(name = "DESCR_ABRANGENCIA", length = 8192)
-    public String descrAbrangencia;
+    private String descrAbrangencia;
 
     @Lob
     @Column(name = "DESCR_JUSTIFICATIVA", length = 8192)
-    public String descrJustificativa;
+    private String descrJustificativa;
 
     @Lob
     @Column(name = "DESCR_PRIORIZACAO", length = 8192)
-    public String descrPriorizacao;
+    private String descrPriorizacao;
 
     @ManyToOne
     @JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
-    public DpLotacao lotaCadastrante;
+    private DpLotacao lotaCadastrante;
 
     @OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
     // @OrderBy("numPosicao")
@@ -92,7 +92,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 
     @ManyToOne()
     @JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-    public SrLista listaInicial;
+    private SrLista listaInicial;
 
     @OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
     // @OrderBy("hisDtIni desc")
@@ -350,4 +350,77 @@ public class SrLista extends HistoricoSuporteVraptor {
             }
         }
     }
+    
+    public Long getIdLista() {
+		return idLista;
+	}
+
+	public void setIdLista(Long idLista) {
+		this.idLista = idLista;
+	}
+
+	public String getNomeLista() {
+		return nomeLista;
+	}
+
+	public void setNomeLista(String nomeLista) {
+		this.nomeLista = nomeLista;
+	}
+
+	public String getDescrAbrangencia() {
+		return descrAbrangencia;
+	}
+
+	public void setDescrAbrangencia(String descrAbrangencia) {
+		this.descrAbrangencia = descrAbrangencia;
+	}
+
+	public String getDescrJustificativa() {
+		return descrJustificativa;
+	}
+
+	public void setDescrJustificativa(String descrJustificativa) {
+		this.descrJustificativa = descrJustificativa;
+	}
+
+	public String getDescrPriorizacao() {
+		return descrPriorizacao;
+	}
+
+	public void setDescrPriorizacao(String descrPriorizacao) {
+		this.descrPriorizacao = descrPriorizacao;
+	}
+
+	public DpLotacao getLotaCadastrante() {
+		return lotaCadastrante;
+	}
+
+	public void setLotaCadastrante(DpLotacao lotaCadastrante) {
+		this.lotaCadastrante = lotaCadastrante;
+	}
+
+	public Set<SrPrioridadeSolicitacao> getMeuPrioridadeSolicitacaoSet() {
+		return meuPrioridadeSolicitacaoSet;
+	}
+
+	public void setMeuPrioridadeSolicitacaoSet(
+			Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet) {
+		this.meuPrioridadeSolicitacaoSet = meuPrioridadeSolicitacaoSet;
+	}
+
+	public SrLista getListaInicial() {
+		return listaInicial;
+	}
+
+	public void setListaInicial(SrLista listaInicial) {
+		this.listaInicial = listaInicial;
+	}
+
+	public List<SrLista> getMeuListaHistoricoSet() {
+		return meuListaHistoricoSet;
+	}
+
+	public void setMeuListaHistoricoSet(List<SrLista> meuListaHistoricoSet) {
+		this.meuListaHistoricoSet = meuListaHistoricoSet;
+	}    
 }

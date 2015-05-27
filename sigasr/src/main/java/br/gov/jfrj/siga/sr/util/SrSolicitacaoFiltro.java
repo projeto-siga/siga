@@ -109,7 +109,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
             } else {
                 SrLista lista = SrLista.AR.findById(idListaPrioridade);
                 query.append(" and exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.solicitacaoInicial.idSolicitacao = sol.solicitacaoInicial.idSolicitacao ");
-                query.append(" and prio.lista.listaInicial.idLista = " + lista.listaInicial.getId() + ") ");
+                query.append(" and prio.lista.listaInicial.idLista = " + lista.getListaInicial().getId() + ") ");
             }
         }
 

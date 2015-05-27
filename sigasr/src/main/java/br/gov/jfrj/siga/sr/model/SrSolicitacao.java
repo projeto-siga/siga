@@ -1836,7 +1836,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         Collections.sort(listaFinal, new Comparator<SrLista>() {
             @Override
             public int compare(SrLista l1, SrLista l2) {
-                return l1.nomeLista.compareTo(l2.nomeLista);
+                return l1.getNomeLista().compareTo(l2.getNomeLista());
             }
         });
         return listaFinal;
@@ -1883,7 +1883,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public boolean isEmListaPertencenteA(DpLotacao lota) {
         for (SrLista l : getListasAssociadas()) {
-            if (l.lotaCadastrante.equivale(lota))
+            if (l.getLotaCadastrante().equivale(lota))
                 return true;
         }
         return false;
@@ -1906,13 +1906,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             throw new IllegalArgumentException("Lista não informada");
 
         if (isEmLista(lista))
-            throw new IllegalArgumentException("Lista " + lista.nomeLista + " já contém a solicitação " + getCodigo());
+            throw new IllegalArgumentException("Lista " + lista.getNomeLista() + " já contém a solicitação " + getCodigo());
 
         SrMovimentacao mov = new SrMovimentacao();
         mov.setCadastrante(pess);
         mov.setLotaCadastrante(lota);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA));
-        mov.setDescrMovimentacao("Inclusão na lista " + lista.nomeLista);
+        mov.setDescrMovimentacao("Inclusão na lista " + lista.getNomeLista());
         mov.setLista(lista);
         mov.setSolicitacao(this);
         mov.salvarAtualizandoSolicitacao();

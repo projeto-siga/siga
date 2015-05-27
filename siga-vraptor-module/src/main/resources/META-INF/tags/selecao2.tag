@@ -14,6 +14,7 @@
 <%@ attribute name="idAjax" required="false"%>
 <%@ attribute name="onchange" required="false"%>
 <%@ attribute name="paramList" required="false"%>
+<%@ attribute name="tamanho" required="false"%>
 
 <c:set var="propriedadeClean" value="${fn:replace(propriedade,'.','')}" />
 
@@ -26,10 +27,9 @@
 
 <c:set var="urlBuscar" value="/app/${tipo}/buscar" />
 
-<c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
+<c:set var="tam" value="${tamanho}" />
 <c:set var="larguraPopup" value="600" />
 <c:set var="alturaPopup" value="400" />
-
 
 <script type="text/javascript">
 

@@ -13,7 +13,10 @@ import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.sr.model.SrAcao;
+import br.gov.jfrj.siga.sr.model.SrAcaoSelecao;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
+import br.gov.jfrj.siga.sr.model.SrAcordoSelecao;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrLista;
@@ -58,6 +61,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
     private DpPessoaSelecao solicitanteSel;
     private DpLotacaoSelecao lotaSolicitanteSel;
+    
+    private SrAcaoSelecao acaoSel;
+    private SrAcordoSelecao acordoSel;
 
     public SrSolicitacaoFiltro() {
         super();
@@ -86,6 +92,14 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
         if (lotaSolicitanteSel != null) {
             this.setLotaSolicitante(lotaSolicitanteSel.buscarObjeto());
+        }
+        
+        if (acaoSel != null) {
+            this.setAcao(acaoSel.getObjeto());
+        }
+        
+        if (acordoSel != null) {
+            this.setAcordo(acordoSel.buscarObjeto());
         }
     }
 
@@ -408,6 +422,22 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
     public void setLotaSolicitanteSel(DpLotacaoSelecao lotaSolicitanteSel) {
         this.lotaSolicitanteSel = lotaSolicitanteSel;
+    }
+
+    public SrAcaoSelecao getAcaoSel() {
+        return acaoSel;
+    }
+
+    public void setAcaoSel(SrAcaoSelecao acaoSel) {
+        this.acaoSel = acaoSel;
+    }
+
+    public SrAcordoSelecao getAcordoSel() {
+        return acordoSel;
+    }
+
+    public void setAcordoSel(SrAcordoSelecao acordoSel) {
+        this.acordoSel = acordoSel;
     }
 
 }

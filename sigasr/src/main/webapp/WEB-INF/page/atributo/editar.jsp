@@ -116,11 +116,6 @@
 		else
 			return value;
 	}
-
-	function getAtributoObrigatorioString() {
-		var isChecked = $("#checkatributoObrigatorio")[0].checked;
-		return isChecked ? "Sim": "Não";
-	}
 	
 	associacaoService.verificarTipoAtributo = function() {
 		if($("select[id='tipoAtributo']").val() === 'VL_PRE_DEFINIDO') {

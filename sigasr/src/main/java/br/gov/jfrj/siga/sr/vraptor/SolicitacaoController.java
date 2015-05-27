@@ -320,13 +320,12 @@ public class SolicitacaoController extends SrController {
         }
     }
     public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
-        // render(solicitacao);
-    	
     	result.include("solicitacao", solicitacao);
     }
+    
     public void exibirPrioridade(SrSolicitacao solicitacao) {
         solicitacao.associarPrioridadePeloGUT();
-        // render(solicitacao);
+        result.include("solicitacao", solicitacao);
     }
     public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
 
@@ -410,20 +409,19 @@ public class SolicitacaoController extends SrController {
         pessoaSel.buscar();
 		result.include("solicitacao.solicitante", pessoaSel);
 
-        result.include("solicitacao",solicitacao);
-        result.include("locais",locais);
-        result.include("acoesEAtendentes",acoesEAtendentes);
+        result.include("solicitacao", solicitacao);
+        result.include("locais", locais);
+        result.include("acoesEAtendentes", acoesEAtendentes);
         result.include("formaAcompanhamentoList", SrFormaAcompanhamento.values());
         result.include("gravidadeList", SrGravidade.values());
         result.include("tipoMotivoEscalonamentoList", SrTipoMotivoEscalonamento.values());
-        result.include("urgenciaList",SrUrgencia.values());
-        result.include("tendenciaList",SrTendencia.values());
-        result.include("prioridadeList",SrPrioridade.values());
-        result.include("locaisDisponiveis",solicitacao.getLocaisDisponiveis());
-        result.include("meiosComunicadaoList",SrMeioComunicacao.values());
-        result.include("itemConfiguracao",solicitacao.getItemConfiguracao());
-        result.include("podeUtilizarServicoSigaGC",false);
-
+        result.include("urgenciaList", SrUrgencia.values());
+        result.include("tendenciaList", SrTendencia.values());
+        result.include("prioridadeList", SrPrioridade.values());
+        result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
+        result.include("meiosComunicadaoList", SrMeioComunicacao.values());
+        result.include("itemConfiguracao", solicitacao.getItemConfiguracao());
+        result.include("podeUtilizarServicoSigaGC", false);
     }
     
     @Path("/retirarDeLista")

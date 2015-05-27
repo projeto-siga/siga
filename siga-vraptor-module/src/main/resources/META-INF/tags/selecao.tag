@@ -23,6 +23,10 @@
 <%@ attribute name="onblur" required="false"%>
 <%@ attribute name="requiredValue" required="false" %>
 
+<c:if test="${propriedade != null}">
+	<c:set var="propriedade" value="${fn:replace(propriedade,'.','')}" />
+</c:if>
+
 <c:if test="${requiredValue == null}">
 	<c:set var="requiredValue" value="" />
 </c:if>
@@ -111,7 +115,7 @@ self.retorna_${propriedade}${tipoSel}${inputName} = function(id, sigla, descrica
 		sbmt('${empty idAjax ? propriedade : idAjax}');
 	</c:if> 
 
-	${onchange};
+// 	${onchange};
 }
  
  

@@ -50,13 +50,13 @@
 	<script>
 		jQuery(document).ready(function($) {
 			$('#gravar').click(function() {
-				if ($('#siglaCadastrante').val() != $('#formulario_solicitante_pessoaSel_sigla')[0].value) {
+				if ($('#siglaCadastrante').val() != $('#formulario_solicitacaosolicitante_sigla')[0].value) {
 					var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
 					$('#stringDtMeioContato').val(stringDt);
 				} 
 			}); 
 	
-			if($('#formulario_interlocutor_pessoaSel_id').val() != "") {
+			if($('#formulario_solicitacaointerlocutor_id').val() != "") {
 				$('#checkmostrarInterlocutor').prop('checked', true);	
 				$('#interlocutor').show();		
 			}
@@ -86,10 +86,10 @@
 					div.style.display = 'inline';
 				else {
 					div.style.display = 'none';
-					jQuery("#formulario_interlocutor_pessoaSel_id").val("");
-					jQuery("#formulario_interlocutor_pessoaSel_descricao").val("");
-					jQuery("#formulario_interlocutor_pessoaSel_sigla").val("");
-					jQuery("#interlocutor_pessoaSelSpan").html("");
+					jQuery("#formulario_solicitacaointerlocutor_id").val("");
+					jQuery("#formulario_solicitacaointerlocutor_descricao").val("");
+					jQuery("#formulario_solicitacaointerlocutor_sigla").val("");
+					jQuery("#solicitacaointerlocutorSpan").html("");
 				}
 			}
 		}
@@ -106,11 +106,15 @@
 			frm = document.getElementById('formSolicitacao');
 			params = '';
 			for (i = 0; i < frm.length; i++){
-				if (frm[i].name && frm[i].value)
-					params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+				if (frm[i].name && frm[i].value) {
+					if (params != '')
+						params = params + '&';
+				
+					params = params + frm[i].name + '=' + escape(frm[i].value);
+				}
 			}
-	
-			var url = '${linkTo[SolicitacaoController].exibirLocalRamalEMeioContato['+params+']}';
+
+			var url = '${linkTo[SolicitacaoController].exibirLocalRamalEMeioContato}?' + params;
 			Siga.ajax(url, null, "GET", function(response){
 				carregouLocalRamalEMeioContato(response);
 			});
@@ -178,11 +182,14 @@
 		
 		function carregouConhecimentosRelacionados(response){
 			var div = document.getElementById('divConhecimentosRelacionados');
-			div.innerHTML = response;
-			var scripts = div.getElementsByTagName("script");
-			for(var i=0;i<scripts.length;i++)  
-			   eval(scripts[i].text);  
-			//jQuery.unblockUI();
+
+			if (div) {
+				div.innerHTML = response;
+				var scripts = div.getElementsByTagName("script");
+				for(var i=0;i<scripts.length;i++)  
+				   eval(scripts[i].text);  
+				//jQuery.unblockUI();
+			}
 		}
 	
 		function carregarPrioridade() {
@@ -298,7 +305,7 @@
 		// alguns campos na tela
 		function validarCadastranteSolicitante() {
 			var siglaCadastrante = $('#siglaCadastrante').val();
-			var siglaSolicitante = $('#formulario_solicitante_pessoaSel_sigla')[0].value;
+			var siglaSolicitante = $('#formulario_solicitacaosolicitante_sigla')[0].value;
 	
 			if (siglaCadastrante == siglaSolicitante) {
 				$('#spanInterlocutor')[0].style.display='none';
@@ -363,7 +370,7 @@
 		function carregarFiltrosAoIniciar() {
 			var divFiltro = $('#filtro');
 			
-			addFiltroAoIniciar(divFiltro, '#formulario_solicitante_pessoaSel_id', 'Solicitante', 'solicitacao.solicitante');
+			addFiltroAoIniciar(divFiltro, '#formulario_solicitacaosolicitante_id', 'Solicitante', 'solicitacao.solicitante');
 			addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
 			addFiltroAoIniciar(divFiltro, '#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');
 	
@@ -452,7 +459,7 @@
 			while(params.indexOf('solicitacao') >= 0) {
 				params = params.replace("solicitacao", "filtro");
 			}
-			window.open('${linkTo[SolicitacaoController].buscarSolicitacao['+ params +']}',"_blank");
+			window.open('${linkTo[SolicitacaoController].buscar}?'+ params,"_blank");
 		}
 		
 		function formatarValorTimer(num) {
@@ -483,17 +490,11 @@
 						<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
 						value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
 					</c:if>
-					<c:if test="${solicitacao.idSolicitacao}">
-						<input
-						type="hidden" name="solicitacao.idSolicitacao" id="idSol"
-						value="${solicitacao.idSolicitacao}" /> 
-					</c:if> 
-					<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMMSS" 
-					value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
-					<input type="hidden"
-					name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
-					<input type="hidden"
-					name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
+					
+					<input type="hidden" name="solicitacao.idSolicitacao" id="idSol" value="${solicitacao.idSolicitacao}" /> 
+					<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMMSS" value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
+					<input type="hidden" name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
+					<input type="hidden" name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
 					
 					<div class="gt-form-table">
 						<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
@@ -518,21 +519,24 @@
 		
 					<div class="gt-form-row gt-width-66">
 						<label>Solicitante</label> 
-						<siga:selecao tipo="pessoa"
-						propriedade="solicitante"
-						tema="simple" modulo="siga" urlAcao="buscar"
-						onchange="carregarLocalRamalEMeioContato();carregarItem();
-							notificarCampoMudou('#formulario_solicitante_pessoaSel_id', 'Solicitante', 'solicitante')" />
-						<span style="margin-left: 10px;"
-							id="spanInterlocutor"><siga:checkbox name="mostrarInterlocutor" value="false" depende="interlocutor"/>Interlocutor</span>
+						<siga:selecao2 tipo="pessoa"
+							propriedade="solicitacao.solicitante"
+							tema="simple"
+							modulo="siga"
+							onchange="carregarLocalRamalEMeioContato();carregarItem();
+								notificarCampoMudou('#formulario_solicitacaosolicitante_id', 'Solicitante', 'solicitante')" />
+						<span style="margin-left: 10px;" id="spanInterlocutor">
+							<siga:checkbox name="mostrarInterlocutor" value="false" depende="interlocutor"/>Interlocutor
+						</span>
 <%-- 						<span style="color: red">#{error 'solicitante' /}</span> --%>
 					</div>
 					<div class="gt-form-row gt-width-66" id="interlocutor"
 						style="display: none;">
 						<label>Interlocutor</label> 
-						<siga:selecao tipo="pessoa"
-						propriedade="interlocutor" 
-						tema="simple" modulo="siga" urlAcao="buscar"/>
+						<siga:selecao2 tipo="pessoa"
+							propriedade="solicitacao.interlocutor" 
+							tema="simple"
+							modulo="siga"/>
 					</div>
 					
 					<div id="divLocalRamalEMeioContato">
@@ -634,7 +638,7 @@
 					<div class="gt-form-row">
 						<input type="submit" value="Gravar"
 							class="gt-btn-medium gt-btn-left" id="gravar" /> <a
-							href="${linkTo[SolicitacaoController].buscarSolicitacao}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+							href="${linkTo[SolicitacaoController].buscar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
 					</div>
 				</form>
 			</div>

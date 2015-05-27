@@ -18,10 +18,6 @@
 	</script>
 </c:if>
 
-
-
-<br/>
-
 <div class="gt-form-row gt-width-66">
 	<label>Telefone</label> 
 	<input type="text" name="solicitacao.telPrincipal" id="telPrincipal" value="${solicitacao.telPrincipal}" maxlength="255" />
@@ -40,7 +36,7 @@
                      isEnum="true"/>
 	</div>
 	<div class="gt-form-row box-wrapper">
-		<div class="box box-left gt-width-25">
+		<div class="box box-left gt-width-25" style="margin-left: 15px;">
 			<label>Contato inicial</label> 
 			<label>Data</label> 
 			<input type="text" name="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}" /> 

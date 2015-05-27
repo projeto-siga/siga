@@ -38,27 +38,25 @@
 
 				<tbody>
 					<c:forEach items="${listas}" var="item">
-						<tr data-json-id="${item.idLista}" data-json="${item.toJson()}"
-							<c:if test="${item.podeConsultar(lotaTitular, cadastrante)}">
-								onclick="javascript:window.location='${linkTo[SolicitacaoController].exibirLista[item.idLista]}'" style="cursor: pointer;" 
-							</c:if>>
+						<tr data-json-id="${item.idLista}" data-json="${item.toJson()}">
+ 							
 							<td >${item.nomeLista}</td>
-							
 							<td>${item.lotaCadastrante.nomeLotacao}</td>
-							<td class="acoes">
+
+							<td class="acoes"> 
 								<c:if test="${item.podeEditar(lotaTitular, cadastrante)}">	
-   									<siga:desativarReativar id="${item.idLista}" 
-															onReativar="listaService.reativar" 
-															onDesativar="listaService.desativar" 
-															isAtivo="${item.isAtivo()}">
-									</siga:desativarReativar>
-									<a onclick="javascript: editarLista(event, $(this).parent().parent().data('json'))"> 
+<%--    									<siga:desativarReativar id="${item.idLista}"  --%>
+<%-- 															onReativar="listaService.reativar"  --%>
+<%-- 															onDesativar="listaService.desativar"  --%>
+<%-- 															isAtivo="${item.isAtivo()}"> --%>
+<%-- 									</siga:desativarReativar> --%>
+									<a onclick="javascript:editarLista(event, $(this).parent().parent().data('json'))"> 
 										<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">
-								</a>
+									</a>
 								</c:if>
 							</td>
 						</tr>
-						</a>
+<!-- 						</a> -->
 					</c:forEach>
 				</tbody>
 			</table>
@@ -82,21 +80,19 @@
  		<div class="gt-table-buttons">
 			<a onclick="listaService.cadastrar('Incluir Lista')" class="gt-btn-medium gt-btn-left">Incluir</a>
 			<div class="gt-table-buttons"> 
-			</div>
 		</div>
+	</div>
 
  	<siga:modal nome="editarLista" titulo="Inserir Lista">
 		<div id="divEditarLista">
-			<%-- <jsp:include page="editarLista.jsp"></jsp:include> --%>
-			<form id="formLista" method="post" enctype="multipart/form-data">
-				<input type="text"></input>
-			</form>
+			<jsp:include page="editarLista.jsp" />
 		</div>
-	</siga:modal> 
+	</siga:modal>
+	<br />
+	<br />
+	<br />
 </siga:pagina>
-<br />
-<br />
-<br />
+
 
 <script type="text/javascript">
 	var listaTable,
@@ -176,8 +172,8 @@
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordena��o crescente",
-			        "sortDescending": ": clique para ordena��o decrescente"
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -223,22 +219,22 @@
 	}
 
 	listaService.getId = function(lista) {
-		return lista.idLista;
+		return lista.idLista || lista['lista.idLista'];
 	}
 
 	listaService.getRow = function(lista) {
 		return [lista.nomeLista, lista.nomeLotacao, 'COLUNA_ACOES'];
 	}
 	
-	listaService.editarButton = '<a onclick="javascript: editarLista(event, $(this).parent().parent().data(\'json\'))"><img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;"></a>';
+	listaService.editarButton = '<a onclick="javascript: editarLista(event, lista"><img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;"></a>';
 	
 	/**
 	 * Customiza o metodo editar
 	 */
-	listaService.editar = function(lista, title) {
-		BaseService.prototype.editar.call(this, lista, title); // super.editar();
+	listaService.editar = function(obj, title) {
+		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		limparDadosListaModal();
-		// carrega as permissões da lista
+		// carrega as permissÃµes da lista
 		carregarPermissoes(lista.idLista);
 		configuracaoInclusaoAutomaticaService.carregarParaLista(lista.idLista);
 	}
@@ -257,7 +253,7 @@
 	}
 
 	/**
-	 * Sobrescreve o método para adicionar também o botão editar.
+	 * Sobrescreve o mÃ©todo para adicionar tambÃ©m o botÃ£o editar.
 	 */
 	listaService.gerarColunaAtivar = function(id) {
 		var column = BaseService.prototype.gerarColunaAtivar.call(this, id);
@@ -265,14 +261,19 @@
 		return column;
 	}
 	/**
-	 * Sobrescreve o método para adicionar também o botão editar.
+	 * Sobrescreve o mÃ©todo para adicionar tambÃ©m o botÃ£o editar.
 	 */
 	listaService.gerarColunaDesativar = function(id) {
 		var column = BaseService.prototype.gerarColunaDesativar.call(this, id);
 		column = column + " " + listaService.editarButton;
 		return column;
-	 }
-	 
+	}
+
+	listaService.serializar = function(obj) {
+		var query = BaseService.prototype.serializar.call(this, obj);
+		return query + "&lista=" + this.getId(obj);
+	}
+
 	function editarLista(event, jSonItem) {
 		event.stopPropagation();
 		listaService.editar(jSonItem, 'Alterar Lista');

@@ -328,7 +328,7 @@
 					iniciarCarregarSolicitacoesRelacionadas();
 					//jQuery.blockUI(objBlock);
 					
-					var url = '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas['+params+']}';
+					var url = '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}'+params;
 					Siga.ajax(url, null, "GET", function(response){
 						carregouSolicitacoesRelacionadas(response);
 					});				

@@ -328,11 +328,13 @@ public class SolicitacaoController extends SrController {
         solicitacao.associarPrioridadePeloGUT();
         // render(solicitacao);
     }
+    
     public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
 
         solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
         List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
-        // render(solicitacoesRelacionadas);
+        
+        result.include("solicitacoesRelacionadas", solicitacoesRelacionadas);
     }
 
     // DB1: foi necessï¿½rio receber e passar o parametro "nome"(igual ao buscarItem())

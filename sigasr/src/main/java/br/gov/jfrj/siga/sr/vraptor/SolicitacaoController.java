@@ -56,6 +56,18 @@ import com.google.gson.Gson;
 @Resource
 @Path("app/solicitacao")
 public class SolicitacaoController extends SrController {
+	
+	private static final String TIPOS_PERMISSAO_JSON = "tiposPermissaoJson";
+	private static final String CADASTRANTE = "cadastrante";
+	private static final String LOTA_TITULAR = "lotaTitular";
+	private static final String MOSTRAR_DESATIVADOS = "mostrarDesativados";
+	private static final String LISTAS = "listas";
+	private static final String SOLICITACAO_LISTA_VO = "solicitacaoListaVO";
+	private static final String TIPOS_PERMISSAO = "tiposPermissao";
+	private static final String LOCAIS = "locais";
+	private static final String LISTA = "lista";
+	private static final String ORGAOS = "orgaos";
+
     private Correio correio;
 
     public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator, Correio correio) {
@@ -83,13 +95,42 @@ public class SolicitacaoController extends SrController {
         List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.AR.all().fetch();
         List<SrLista> listas = SrLista.listar(mostrarDesativados);
         String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
-        result.include("listas", listas);
-        result.include("mostrarDesativados", mostrarDesativados);
-        result.include("lotaTitular", getLotaTitular());
-        result.include("cadastrante", getCadastrante());
-        
 
-        // render(listas, mostrarDesativados, orgaos, locais, tiposPermissao, tiposPermissaoJson);
+        result.include(ORGAOS, orgaos);
+		result.include(LOCAIS, locais);
+		result.include(TIPOS_PERMISSAO, tiposPermissao);
+		result.include(LISTAS, listas);
+        result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
+        result.include(LOTA_TITULAR, getLotaTitular());
+        result.include(CADASTRANTE, getCadastrante());
+        result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
+        
+    }
+
+    public String configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
+        SrLista lista = SrLista.AR.findById(idLista);
+        return SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados);
+    }
+
+    /**
+     * Recupera as {@link SrConfiguracao permissoes} de uma {@link SrLista lista}.
+     *
+     * @param idObjetivo
+     *            - ID da lista
+     * @return - String contendo a lista no formato jSon
+     */
+    public String buscarPermissoesLista(Long idLista) throws Exception {
+        List<SrConfiguracao> permissoes;
+
+        if (idLista != null) {
+            SrLista lista = SrLista.AR.findById(idLista);
+
+            // permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(lotaTitular(), cadastrante()));
+            permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
+        } else
+            permissoes = new ArrayList<SrConfiguracao>();
+
+        return SrConfiguracao.convertToJSon(permissoes);
     }
     
     @Path("/listarListaDesativados")
@@ -132,7 +173,7 @@ public class SolicitacaoController extends SrController {
     }
     
     @SuppressWarnings("unchecked")
-    @Path("/exibirLista")
+    @Path("/exibirLista/{id}")
     public void exibirLista(Long id) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
         List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
@@ -156,7 +197,14 @@ public class SolicitacaoController extends SrController {
             solicitacaoListaVO = new SrSolicitacaoListaVO();
         }
 
-        // render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO, tiposPermissaoJson, jsonPrioridades);
+        result.include(LISTA, lista);
+        result.include(ORGAOS, orgaos);
+        result.include(LOCAIS, locais);
+        result.include(TIPOS_PERMISSAO, tiposPermissao);
+        result.include(SOLICITACAO_LISTA_VO, solicitacaoListaVO);
+        result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
+        result.include("jsonPrioridades", jsonPrioridades);
+
     }
     
     
@@ -258,7 +306,7 @@ public class SolicitacaoController extends SrController {
 
             result.include("solicitacao", solicitacao);
             result.include("titular", titular);
-            result.include("lotaTitular", lotaTitular);
+            result.include(LOTA_TITULAR, lotaTitular);
             result.include("acoesEAtendentes", acoesEAtendentes);
             // render(solicitacao, titular, lotaTitular, acoesEAtendentes);
         }

@@ -54,6 +54,9 @@ public class SrPrioridadeSolicitacao extends ObjetoVraptor {
 	@Column(name = "NAO_REPOSICIONAR_AUTOMATICO")
 	@Type(type = "yes_no")
 	public Boolean naoReposicionarAutomatico;
+
+	public SrPrioridadeSolicitacao(){
+	}
 	
 	public SrPrioridadeSolicitacao(SrLista lista, SrSolicitacao solicitacao) {
 		this.lista = lista;

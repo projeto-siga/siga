@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -18,7 +20,7 @@ import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 
 public class SrSolicitacaoFiltro extends SrSolicitacao {
-    
+
     private static final long serialVersionUID = 1L;
     public static final Long QUALQUER_LISTA_OU_NENHUMA = -1L;
     public static final Long NENHUMA_LISTA = 0L;
@@ -47,9 +49,44 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
     private boolean apenasFechados;
 
     private Long idNovoAtributo;
-    
+
+    private DpPessoaSelecao atendenteSel;
+    private DpLotacaoSelecao lotaAtendenteSel;
+
+    private DpPessoaSelecao cadastranteSel;
+    private DpLotacaoSelecao lotaCadastranteSel;
+
+    private DpPessoaSelecao solicitanteSel;
+    private DpLotacaoSelecao lotaSolicitanteSel;
+
     public SrSolicitacaoFiltro() {
         super();
+    }
+
+    public void carregarSelecao() {
+        if (atendenteSel != null) {
+            this.setAtendente(atendenteSel.buscarObjeto());
+        }
+
+        if (lotaAtendenteSel != null) {
+            this.setLotaAtendente(lotaAtendenteSel.buscarObjeto());
+        }
+
+        if (cadastranteSel != null) {
+            this.setCadastrante(cadastranteSel.buscarObjeto());
+        }
+
+        if (lotaCadastranteSel != null) {
+            this.setLotaCadastrante(lotaCadastranteSel.buscarObjeto());
+        }
+
+        if (solicitanteSel != null) {
+            this.setSolicitante(solicitanteSel.buscarObjeto());
+        }
+
+        if (lotaSolicitanteSel != null) {
+            this.setLotaSolicitante(lotaSolicitanteSel.buscarObjeto());
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -88,9 +125,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
             query.append(" where ");
 
         query.append(" sol.hisDtFim is null ");
-        
-        setCadastrante(null);
-        
+
         if (Filtros.deveAdicionar(getCadastrante()))
             query.append(" and sol.cadastrante.idPessoaIni = " + getCadastrante().getIdInicial());
         if (Filtros.deveAdicionar(getLotaTitular()))
@@ -325,6 +360,54 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
     public void setIdNovoAtributo(Long idNovoAtributo) {
         this.idNovoAtributo = idNovoAtributo;
+    }
+
+    public DpPessoaSelecao getAtendenteSel() {
+        return atendenteSel;
+    }
+
+    public void setAtendenteSel(DpPessoaSelecao atendenteSel) {
+        this.atendenteSel = atendenteSel;
+    }
+
+    public DpLotacaoSelecao getLotaAtendenteSel() {
+        return lotaAtendenteSel;
+    }
+
+    public void setLotaAtendenteSel(DpLotacaoSelecao lotaAtendenteSel) {
+        this.lotaAtendenteSel = lotaAtendenteSel;
+    }
+
+    public DpPessoaSelecao getCadastranteSel() {
+        return cadastranteSel;
+    }
+
+    public void setCadastranteSel(DpPessoaSelecao cadastranteSel) {
+        this.cadastranteSel = cadastranteSel;
+    }
+
+    public DpLotacaoSelecao getLotaCadastranteSel() {
+        return lotaCadastranteSel;
+    }
+
+    public void setLotaCadastranteSel(DpLotacaoSelecao lotacadastranteSel) {
+        this.lotaCadastranteSel = lotacadastranteSel;
+    }
+
+    public DpPessoaSelecao getSolicitanteSel() {
+        return solicitanteSel;
+    }
+
+    public void setSolicitanteSel(DpPessoaSelecao solicitanteSel) {
+        this.solicitanteSel = solicitanteSel;
+    }
+
+    public DpLotacaoSelecao getLotaSolicitanteSel() {
+        return lotaSolicitanteSel;
+    }
+
+    public void setLotaSolicitanteSel(DpLotacaoSelecao lotaSolicitanteSel) {
+        this.lotaSolicitanteSel = lotaSolicitanteSel;
     }
 
 }

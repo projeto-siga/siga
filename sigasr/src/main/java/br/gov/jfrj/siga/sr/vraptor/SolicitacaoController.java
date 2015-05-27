@@ -192,6 +192,7 @@ public class SolicitacaoController extends SrController {
         SrSolicitacaoListaVO solicitacaoListaVO;
         try {
             if (filtro.isPesquisar()) {
+                filtro.carregarSelecao();
                 solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, nome, popup, getLotaTitular(), getCadastrante());
             } else {
                 solicitacaoListaVO = new SrSolicitacaoListaVO();

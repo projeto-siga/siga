@@ -14,7 +14,7 @@
 	    <h2>Pesquisa de Solicitações</h2>
 	    <c:choose>
 	        <c:when test="${not empty solicitacaoListaVO.getItens()}">
-<%-- 	           Itens: ${solicitacaoListaVO.getItens() } --%>
+	           Itens: ${solicitacaoListaVO.getItens().size() }
 <%-- 	           <siga:solicitacao solicitacaoListaVO="${solicitacaoListaVO}" filtro="${filtro}" modoExibicao="solicitacao" /> --%>
 	        </c:when>
 	        <c:when test="${filtro.pesquisar}">
@@ -45,9 +45,9 @@
 		                                        value="${filtro.situacao.idMarcador}"
 		                                        theme="simple"/> 
                                 com
-                                <input type="hidden" name="filtro.atendente" value="" />
-                                <input type="hidden" name="filtro.lotaAtendente" value="" />
-                                <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.atendente" propriedadeLotacao="filtro.lotaAtendente"/>
+                                <input type="hidden" name="filtro.atendenteSel" value="" />
+                                <input type="hidden" name="filtro.lotaAtendenteSel" value="" />
+                                <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.atendenteSel" propriedadeLotacao="filtro.lotaAtendenteSel"/>
 	                            <div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
 	                                <label> 
 	                                   <siga:checkbox nameInput="filtro.naoDesignados" name="filtro.naoDesignados" value="${filtro.naoDesignados}"/> 
@@ -62,17 +62,17 @@
 	                    <tr>
 	                        <td>Cadastrante</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.cadastrante" value="" />
-	                           <input type="hidden" name="filtro.lotaCadastrante" value="" />
-	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.cadastrante" propriedadeLotacao="filtro.lotaCadastrante"/>
+	                           <input type="hidden" name="filtro.cadastranteSel" value="" />
+	                           <input type="hidden" name="filtro.lotaCadastranteSel" value="" />
+	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.cadastranteSel" propriedadeLotacao="filtro.lotaCadastranteSel"/>
 	                        </td>
 	                    </tr>
 	                    <tr>
 	                        <td>Solicitante</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.solicitante" value="" />
-                               <input type="hidden" name="filtro.lotaSolicitante" value="" />
-	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.solicitante" propriedadeLotacao="filtro.lotaSolicitante"/>
+	                           <input type="hidden" name="filtro.solicitanteSel" value="" />
+                               <input type="hidden" name="filtro.lotaSolicitanteSel" value="" />
+	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.solicitanteSel" propriedadeLotacao="filtro.lotaSolicitanteSel"/>
 	                        </td>
 	                    </tr>
 	                    <tr>

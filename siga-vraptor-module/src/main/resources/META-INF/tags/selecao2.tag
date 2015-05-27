@@ -67,7 +67,7 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 self.newwindow_${propriedadeClean} = '';
 self.popitup_${propriedadeClean} = function(sigla) {
 
-	var url = '/${modulo}${urlBuscar}?propriedade=${propriedade}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+	var url = '/${modulo}${urlBuscar}?propriedade=${propriedadeClean}&sigla='+encodeURI(sigla) +'${selecaoParams}';
 		
 	if (!newwindow_${propriedadeClean}.closed && newwindow_${propriedadeClean}.location) {
 		newwindow_${propriedadeClean}.location.href = url;

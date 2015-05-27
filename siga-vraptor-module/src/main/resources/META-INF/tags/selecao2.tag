@@ -14,6 +14,7 @@
 <%@ attribute name="idAjax" required="false"%>
 <%@ attribute name="onchange" required="false"%>
 <%@ attribute name="paramList" required="false"%>
+<%@ attribute name="tamanho" required="false"%>
 
 <c:set var="propriedadeClean" value="${fn:replace(propriedade,'.','')}" />
 
@@ -26,10 +27,9 @@
 
 <c:set var="urlBuscar" value="/app/${tipo}/buscar" />
 
-<c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
+<c:set var="tam" value="${tamanho}" />
 <c:set var="larguraPopup" value="600" />
 <c:set var="alturaPopup" value="400" />
-
 
 <script type="text/javascript">
 
@@ -67,7 +67,7 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 self.newwindow_${propriedadeClean} = '';
 self.popitup_${propriedadeClean} = function(sigla) {
 
-	var url = '/${modulo}${urlBuscar}?propriedade=${propriedade}&sigla='+encodeURI(sigla) +'${selecaoParams}';
+	var url = '/${modulo}${urlBuscar}?propriedade=${propriedadeClean}&sigla='+encodeURI(sigla) +'${selecaoParams}';
 		
 	if (!newwindow_${propriedadeClean}.closed && newwindow_${propriedadeClean}.location) {
 		newwindow_${propriedadeClean}.location.href = url;

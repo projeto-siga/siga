@@ -17,9 +17,11 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -37,16 +39,19 @@ import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
-import br.gov.jfrj.siga.sr.model.SrTipoMotivoEscalonamento;
-import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao.SrTarefa;
 import br.gov.jfrj.siga.sr.model.SrTendencia;
+import br.gov.jfrj.siga.sr.model.SrTipoMotivoEscalonamento;
+import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
+import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+
+import com.google.gson.Gson;
 
 @Resource
 @Path("app/solicitacao")
@@ -68,8 +73,94 @@ public class SolicitacaoController extends SrController {
     @Path("/exibirAtributos")
     public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
         result.include("solicitacao", solicitacao);
+    }   
+    
+    @SuppressWarnings("unchecked")
+    @Path("/listarLista")
+    public void listarLista(boolean mostrarDesativados) throws Exception {
+        List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
+        List<CpComplexo> locais = CpComplexo.AR.all().fetch();
+        List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.AR.all().fetch();
+        List<SrLista> listas = SrLista.listar(mostrarDesativados);
+        String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
+        result.include("listas", listas);
+        result.include("mostrarDesativados", mostrarDesativados);
+        result.include("lotaTitular", getLotaTitular());
+        result.include("cadastrante", getCadastrante());
+        
+
+        // render(listas, mostrarDesativados, orgaos, locais, tiposPermissao, tiposPermissaoJson);
     }
     
+    @Path("/listarListaDesativados")
+    public void listarListaDesativados() throws Exception {
+        listarLista(Boolean.TRUE);
+    }     
+    
+    //@Path("/listarLista/gravar", "/gravarLista")
+    @Path("/gravarLista")
+    public void gravarLista(SrLista lista) throws Exception {
+        lista.setLotaCadastrante(getLotaTitular());
+        validarFormEditarLista(lista);
+        lista.salvar();
+        result.use(Results.http()).body(lista.toJson());
+    }
+    
+    private void validarFormEditarLista(SrLista lista) {
+        if (lista.getNomeLista() == null || lista.getNomeLista().trim().equals("")) {
+            srValidator.addError("lista.nomeLista", "Nome da Lista nÃ£o informados");
+        }
+
+        if (srValidator.hasErrors()) {
+            enviarErroValidacao();
+        }
+    }
+    
+    @Path("/desativarLista")    
+    public void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
+        SrLista lista = SrLista.AR.findById(id);
+        lista.finalizar();
+
+        result.use(Results.http()).body(lista.toJson());
+    }
+
+    @Path("/reativarLista")
+    public void reativarLista(Long id, boolean mostrarDesativados) throws Exception {
+        SrLista lista = SrLista.AR.findById(id);
+        lista.salvar();
+        result.use(Results.http()).body(lista.toJson());
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Path("/exibirLista")
+    public void exibirLista(Long id) throws Exception {
+        SrLista lista = SrLista.AR.findById(id);
+        List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
+        List<CpComplexo> locais = CpComplexo.AR.all().fetch();
+        List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.AR.all().fetch();
+        SrSolicitacaoFiltro filtro = new SrSolicitacaoFiltro();
+        SrSolicitacaoListaVO solicitacaoListaVO;
+        String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
+        filtro.setIdListaPrioridade(id);
+        lista = lista.getListaAtual();
+        String jsonPrioridades = SrPrioridade.getJSON().toString();
+
+        if (!lista.podeConsultar(getLotaTitular(), getCadastrante())) {
+            throw new Exception("Exibição não permitida");
+        }
+
+        try {
+            solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, true, "", false, getLotaTitular(), getCadastrante());
+        } catch (Exception e) {
+            e.printStackTrace();
+            solicitacaoListaVO = new SrSolicitacaoListaVO();
+        }
+
+        // render(lista, orgaos, locais, tiposPermissao, solicitacaoListaVO, tiposPermissaoJson, jsonPrioridades);
+    }
+    
+    
+
     @Path("/gravar")
     public void gravar(SrSolicitacao solicitacao) throws Exception {
 
@@ -107,16 +198,14 @@ public class SolicitacaoController extends SrController {
         }
 
         if (srValidator.hasErrors()) {
-        	enviarErroValidacao();
+            enviarErroValidacao();
         }
     }
-
 
     public boolean todoOContexto() {
         return true;
         // return Boolean.parseBoolean(params.get("todoOContexto"));
     }
-    
 
     public boolean ocultas() {
         return true;
@@ -143,46 +232,49 @@ public class SolicitacaoController extends SrController {
             ocultas = false;
 
         Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas, null, false, todoOContexto, !ocultas, false);
-        
-        result.include("solicitacao",solicitacao);
+
+        result.include("solicitacao", solicitacao);
         result.include("movimentacao", movimentacao);
-        result.include("todoOContexto",todoOContexto);
-        result.include("ocultas",ocultas);
-        result.include("movs",movs);
+        result.include("todoOContexto", todoOContexto);
+        result.include("ocultas", ocultas);
+        result.include("movs", movs);
     }
-    
+
     public void exibirLocalRamalEMeioContato(SrSolicitacao solicitacao) throws Exception {
         // render(solicitacao.deduzirLocalRamalEMeioContato());
     }
 
     public void exibirItemConfiguracao(SrSolicitacao solicitacao) throws Exception {
         if (solicitacao.getSolicitante() == null)
-        	// render(solicitacao);
+            // render(solicitacao);
             result.include("solicitacao", solicitacao);
 
         else if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())) {
-        	solicitacao.setItemConfiguracao(null);
+            solicitacao.setItemConfiguracao(null);
 
             DpPessoa titular = solicitacao.getTitular();
             DpLotacao lotaTitular = solicitacao.getLotaTitular();
             Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-            
+
             result.include("solicitacao", solicitacao);
             result.include("titular", titular);
             result.include("lotaTitular", lotaTitular);
             result.include("acoesEAtendentes", acoesEAtendentes);
-           // render(solicitacao, titular, lotaTitular, acoesEAtendentes);
+            // render(solicitacao, titular, lotaTitular, acoesEAtendentes);
         }
     }
+
     public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
         // render(solicitacao);
-    	
-    	result.include("solicitacao", solicitacao);
+
+        result.include("solicitacao", solicitacao);
     }
+
     public void exibirPrioridade(SrSolicitacao solicitacao) {
         solicitacao.associarPrioridadePeloGUT();
         // render(solicitacao);
     }
+
     public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
 
         solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
@@ -190,16 +282,17 @@ public class SolicitacaoController extends SrController {
         // render(solicitacoesRelacionadas);
     }
 
-    // DB1: foi necessï¿½rio receber e passar o parametro "nome"(igual ao buscarItem())
+    // DB1: foi necessário receber e passar o parametro "nome"(igual ao buscarItem())
     // para chamar a function javascript correta,
-    // e o parametro "popup" porque este metodo ï¿½ usado tambï¿½m na lista,
-    // e nï¿½o foi possï¿½vel deixar default no template(igual ao buscarItem.html)
+    // e o parametro "popup" porque este metodo é usado também na lista,
+    // e não foi possível deixar default no template(igual ao buscarItem.html)
     @SuppressWarnings("unchecked")
-    public void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception {
+    @Path("/buscar")
+    public void buscar(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception {
         SrSolicitacaoListaVO solicitacaoListaVO;
-
         try {
-            if (filtro.pesquisar) {
+            if (filtro.isPesquisar()) {
+                filtro.carregarSelecao();
                 solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, nome, popup, getLotaTitular(), getCadastrante());
             } else {
                 solicitacaoListaVO = new SrSolicitacaoListaVO();
@@ -210,17 +303,26 @@ public class SolicitacaoController extends SrController {
         }
 
         // Montando o filtro...
-        String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
+        String[] tipos = new String[] { "Pessoa", "Lotação" };
         List<CpMarcador> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList();
 
         List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
         List<SrLista> listasPrioridade = SrLista.listar(false);
-        // render(solicitacaoListaVO, tipos, marcadores, filtro, nome, popup, atributosDisponiveisAdicao, listasPrioridade);
+
+        result.include("solicitacaoListaVO", solicitacaoListaVO);
+        result.include("tipos", tipos);
+        result.include("marcadores", marcadores);
+        result.include("filtro", filtro);
+        result.include("nome", nome);
+        result.include("popup", popup);
+        result.include("atributosDisponiveisAdicao", atributosDisponiveisAdicao);
+        result.include("listasPrioridade", listasPrioridade);
+        result.include("prioridadesEnum", SrPrioridade.values());
     }
 
     public List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
         List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
-        HashMap<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
+        Map<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
 
         for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
             if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
@@ -229,7 +331,7 @@ public class SolicitacaoController extends SrController {
         }
         return listaAtributosAdicao;
     }
-    
+
     @Path("/editar")
     public void editar(Long id) throws Exception {
 
@@ -244,8 +346,7 @@ public class SolicitacaoController extends SrController {
             solicitacao.setDtOrigem(new Date());
         if (solicitacao.getDtIniEdicao() == null)
             solicitacao.setDtIniEdicao(new Date());
-        //solicitacao.atualizarAcordos();
-
+        // solicitacao.atualizarAcordos();
 
         List<CpComplexo> locais = ContextoPersistencia.em().createQuery("from CpComplexo").getResultList();
 
@@ -254,25 +355,24 @@ public class SolicitacaoController extends SrController {
         DpPessoaSelecao pessoaSel = new DpPessoaSelecao();
         pessoaSel.setId(getCadastrante().getId());
         pessoaSel.buscar();
-		result.include("solicitante_pessoaSel", pessoaSel);
+        result.include("solicitante_pessoaSel", pessoaSel);
 
-        result.include("solicitacao",solicitacao);
-        result.include("locais",locais);
-        result.include("acoesEAtendentes",acoesEAtendentes);
+        result.include("solicitacao", solicitacao);
+        result.include("locais", locais);
+        result.include("acoesEAtendentes", acoesEAtendentes);
         result.include("formaAcompanhamentoList", SrFormaAcompanhamento.values());
         result.include("gravidadeList", SrGravidade.values());
         result.include("tipoMotivoEscalonamentoList", SrTipoMotivoEscalonamento.values());
         result.include("urgenciaList",SrUrgencia.values());
         result.include("tendenciaList",SrTendencia.values());
         result.include("prioridadeList",SrPrioridade.values());
-
         result.include("locaisDisponiveis",solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList",SrMeioComunicacao.values());
         result.include("itemConfiguracao",solicitacao.getItemConfiguracao());
         result.include("podeUtilizarServicoSigaGC",false);
-        
+
     }
-    
+
     @Path("/retirarDeLista")
     public void retirarDeLista(Long idSolicitacao, Long idLista) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);

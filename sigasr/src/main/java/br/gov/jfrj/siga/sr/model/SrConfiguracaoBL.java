@@ -182,11 +182,11 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
             if (srConf.getListaPrioridade() != null) {
                 srConf.getListaPrioridade().getHisIdIni();
 
-                if (srConf.getListaPrioridade().meuListaHistoricoSet != null)
-                    srConf.getListaPrioridade().meuListaHistoricoSet.size();
+                if (srConf.getListaPrioridade().getMeuListaHistoricoSet() != null)
+                    srConf.getListaPrioridade().getMeuListaHistoricoSet().size();
 
-                if (srConf.getListaPrioridade().meuPrioridadeSolicitacaoSet != null)
-                    srConf.getListaPrioridade().meuPrioridadeSolicitacaoSet.size();
+                if (srConf.getListaPrioridade().getMeuPrioridadeSolicitacaoSet() != null)
+                    srConf.getListaPrioridade().getMeuPrioridadeSolicitacaoSet().size();
             }
 
             if (srConf.getPesquisaSatisfacao() != null)

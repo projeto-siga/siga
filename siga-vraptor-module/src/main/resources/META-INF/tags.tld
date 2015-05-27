@@ -118,4 +118,8 @@
 		<name>configuracaoItemAcao</name>
 		<path>/META-INF/tags/configuracaoItemAcao.tag</path>
 	</tag-file>
+	<tag-file>
+        <name>solicitacao</name>
+        <path>/META-INF/tags/solicitacao.tag</path>
+    </tag-file>
 </taglib>

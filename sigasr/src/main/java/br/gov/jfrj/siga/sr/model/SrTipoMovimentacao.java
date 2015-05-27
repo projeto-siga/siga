@@ -81,6 +81,10 @@ public class SrTipoMovimentacao extends ObjetoVraptor {
         this.setIdTipoMov(idTipoMov);
         this.setNome(nome);
     }
+    
+    public SrTipoMovimentacao() {
+        super();
+    }
 
     public SrTipoMovimentacao getSrTipoMovimentacao() {
         return getSrTipoMovimentacao();

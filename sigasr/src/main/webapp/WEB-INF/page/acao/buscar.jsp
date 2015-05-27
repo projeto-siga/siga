@@ -1,7 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <jsp:include page="../popupHeader.jsp"></jsp:include>
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <jsp:include page="../main.jsp"></jsp:include>
+
 
 <head><title>Pesquisa de Ações</title></head>
 
@@ -48,7 +50,7 @@
 			</tr>
 			<c:forEach items="${items}" var="acao">
 				<tr>
-					<td><a href="javascript:opener.retorna_acao${nome}('${acao.id}','${acao.sigla}','${acao.descricao}');window.close()">${acao.sigla}</a></td>
+					<td><a href="javascript:opener.retorna_${param.propriedade}('${acao.id}','${acao.sigla}','${acao.descricao}');window.close()">${acao.sigla}</a></td>
 					<td style="padding-left: ${acao.nivel*13}px;">${acao.descricao}</td>
 				</tr>
 			</c:forEach>

@@ -139,7 +139,7 @@ public class SrPrioridadeSolicitacao extends ObjetoVraptor {
 
 	private JsonElement jsonLista(Gson gson) {
 		JsonObject lista = new JsonObject();
-		lista.add("idLista", gson.toJsonTree(getLista().idLista));
+		lista.add("idLista", gson.toJsonTree(getLista().getIdLista()));
 		lista.add("hisIdIni", gson.toJsonTree(getLista().getIdInicial()));
 		
 		return lista;

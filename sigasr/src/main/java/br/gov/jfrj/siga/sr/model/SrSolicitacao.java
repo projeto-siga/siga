@@ -503,7 +503,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public String getDtRegString() {
         SigaPlayCalendar cal = new SigaPlayCalendar();
         cal.setTime(getDtReg());
-        return "<!--" + getDtReg().getTime() + "-->" + cal.getTempoTranscorridoString(false);
+        return "<!--" + getDtReg().getTime() + "-->" + "<b>" + cal.getTempoTranscorridoString(false) + " </b>";
     }
 
     public String getAtributosString() {

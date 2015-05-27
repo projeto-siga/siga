@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,18 +15,25 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcao;
+import br.gov.jfrj.siga.sr.model.SrArquivo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrGravidade;
+import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
@@ -32,6 +41,9 @@ import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao.SrTarefa;
 import br.gov.jfrj.siga.sr.model.SrTendencia;
+import br.gov.jfrj.siga.sr.model.SrTipoMotivoEscalonamento;
+import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
+import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
@@ -39,9 +51,23 @@ import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
+import com.google.gson.Gson;
+
 @Resource
 @Path("app/solicitacao")
 public class SolicitacaoController extends SrController {
+	
+	private static final String TIPOS_PERMISSAO_JSON = "tiposPermissaoJson";
+	private static final String CADASTRANTE = "cadastrante";
+	private static final String LOTA_TITULAR = "lotaTitular";
+	private static final String MOSTRAR_DESATIVADOS = "mostrarDesativados";
+	private static final String LISTAS = "listas";
+	private static final String SOLICITACAO_LISTA_VO = "solicitacaoListaVO";
+	private static final String TIPOS_PERMISSAO = "tiposPermissao";
+	private static final String LOCAIS = "locais";
+	private static final String LISTA = "lista";
+	private static final String ORGAOS = "orgaos";
+
     private Correio correio;
 
     public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator, Correio correio) {
@@ -59,6 +85,126 @@ public class SolicitacaoController extends SrController {
     @Path("/exibirAtributos")
     public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
         result.include("solicitacao", solicitacao);
+    }   
+    
+    @SuppressWarnings("unchecked")
+    @Path("/listarLista")
+    public void listarLista(boolean mostrarDesativados) throws Exception {
+        List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
+        List<CpComplexo> locais = CpComplexo.AR.all().fetch();
+        List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.AR.all().fetch();
+        List<SrLista> listas = SrLista.listar(mostrarDesativados);
+        String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
+
+        result.include(ORGAOS, orgaos);
+		result.include(LOCAIS, locais);
+		result.include(TIPOS_PERMISSAO, tiposPermissao);
+		result.include(LISTAS, listas);
+        result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
+        result.include(LOTA_TITULAR, getLotaTitular());
+        result.include(CADASTRANTE, getCadastrante());
+        result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
+        
+    }
+
+    public String configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
+        SrLista lista = SrLista.AR.findById(idLista);
+        return SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados);
+    }
+
+    /**
+     * Recupera as {@link SrConfiguracao permissoes} de uma {@link SrLista lista}.
+     *
+     * @param idObjetivo
+     *            - ID da lista
+     * @return - String contendo a lista no formato jSon
+     */
+    public String buscarPermissoesLista(Long idLista) throws Exception {
+        List<SrConfiguracao> permissoes;
+
+        if (idLista != null) {
+            SrLista lista = SrLista.AR.findById(idLista);
+
+            // permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(lotaTitular(), cadastrante()));
+            permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
+        } else
+            permissoes = new ArrayList<SrConfiguracao>();
+
+        return SrConfiguracao.convertToJSon(permissoes);
+    }
+    
+    @Path("/listarListaDesativados")
+    public void listarListaDesativados() throws Exception {
+        listarLista(Boolean.TRUE);
+    }     
+    
+    //@Path("/listarLista/gravar", "/gravarLista")
+    @Path("/gravarLista")
+    public void gravarLista(SrLista lista) throws Exception {
+        lista.setLotaCadastrante(getLotaTitular());
+        validarFormEditarLista(lista);
+        lista.salvar();
+        result.use(Results.http()).body(lista.toJson());
+    }
+    
+    private void validarFormEditarLista(SrLista lista) {
+        if (lista.getNomeLista() == null || lista.getNomeLista().trim().equals("")) {
+            srValidator.addError("lista.nomeLista", "Nome da Lista não informados");
+        }
+
+        if (srValidator.hasErrors()) {
+            enviarErroValidacao();
+        }
+    }
+    
+    @Path("/desativarLista")    
+    public void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
+        SrLista lista = SrLista.AR.findById(id);
+        lista.finalizar();
+
+        result.use(Results.http()).body(lista.toJson());
+    }
+
+    @Path("/reativarLista")
+    public void reativarLista(Long id, boolean mostrarDesativados) throws Exception {
+        SrLista lista = SrLista.AR.findById(id);
+        lista.salvar();
+        result.use(Results.http()).body(lista.toJson());
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Path("/exibirLista/{id}")
+    public void exibirLista(Long id) throws Exception {
+        SrLista lista = SrLista.AR.findById(id);
+        List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
+        List<CpComplexo> locais = CpComplexo.AR.all().fetch();
+        List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.AR.all().fetch();
+        SrSolicitacaoFiltro filtro = new SrSolicitacaoFiltro();
+        SrSolicitacaoListaVO solicitacaoListaVO;
+        String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
+        filtro.setIdListaPrioridade(id);
+        lista = lista.getListaAtual();
+        String jsonPrioridades = SrPrioridade.getJSON().toString();
+
+        if (!lista.podeConsultar(getLotaTitular(), getCadastrante())) {
+            throw new Exception("Exibi��o n�o permitida");
+        }
+
+        try {
+            solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, true, "", false, getLotaTitular(), getCadastrante());
+        } catch (Exception e) {
+            e.printStackTrace();
+            solicitacaoListaVO = new SrSolicitacaoListaVO();
+        }
+
+        result.include(LISTA, lista);
+        result.include(ORGAOS, orgaos);
+        result.include(LOCAIS, locais);
+        result.include(TIPOS_PERMISSAO, tiposPermissao);
+        result.include(SOLICITACAO_LISTA_VO, solicitacaoListaVO);
+        result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
+        result.include("jsonPrioridades", jsonPrioridades);
+
     }
     
     @Path("/gravar")
@@ -168,7 +314,7 @@ public class SolicitacaoController extends SrController {
             
             result.include("solicitacao", solicitacao);
             result.include("titular", titular);
-            result.include("lotaTitular", lotaTitular);
+            result.include(LOTA_TITULAR, lotaTitular);
             result.include("acoesEAtendentes", acoesEAtendentes);
            // render(solicitacao, titular, lotaTitular, acoesEAtendentes);
         }
@@ -269,15 +415,15 @@ public class SolicitacaoController extends SrController {
         result.include("acoesEAtendentes",acoesEAtendentes);
         result.include("formaAcompanhamentoList", SrFormaAcompanhamento.values());
         result.include("gravidadeList", SrGravidade.values());
+        result.include("tipoMotivoEscalonamentoList", SrTipoMotivoEscalonamento.values());
         result.include("urgenciaList",SrUrgencia.values());
         result.include("tendenciaList",SrTendencia.values());
         result.include("prioridadeList",SrPrioridade.values());
-
         result.include("locaisDisponiveis",solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList",SrMeioComunicacao.values());
         result.include("itemConfiguracao",solicitacao.getItemConfiguracao());
         result.include("podeUtilizarServicoSigaGC",false);
-        
+
     }
     
     @Path("/retirarDeLista")
@@ -295,5 +441,93 @@ public class SolicitacaoController extends SrController {
         solicitacao.setSolicitante(getTitular());
         
         return solicitacao;
+    }
+    
+    @Path("/incluirEmListaGravar")
+    public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, Boolean naoReposicionarAutomatico) throws Exception {
+        if (idLista == null) {
+            throw new Exception("Selecione a lista para inclusão da solicitação");
+        }
+        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
+        SrLista lista = SrLista.AR.findById(idLista);
+        solicitacao.incluirEmLista(lista, getCadastrante(), getLotaTitular(), prioridade, naoReposicionarAutomatico);     
+        exibir(idSolicitacao, todoOContexto(), ocultas());
+    }
+    
+    @Path("/responderPesquisaGravar")
+    public void responderPesquisaGravar(Long id, Map<Long, String> respostaMap) throws Exception {
+        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+        sol.responderPesquisa(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), respostaMap);
+        exibir(id, todoOContexto(), ocultas());
+    }
+    
+    @Path("/baixar")    
+    public Download baixar(Long idArquivo) throws Exception {
+         SrArquivo arq = SrArquivo.AR.findById(idArquivo);
+         final InputStream inputStream = new ByteArrayInputStream(arq.getBlob());
+         return new InputStreamDownload(inputStream, "application/pdf", arq.getNomeArquivo());
+    }
+    
+    @Path("/escalonarGravar")
+    public void escalonarGravar(Long id, Long itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
+            Boolean criaFilha, Boolean fechadoAuto) throws Exception {
+        if (itemConfiguracao == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
+            throw new Exception("Operacao nao permitida. Necessario informar um item de configuracao " + "e uma acao.");
+        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
+
+        DpLotacao atendenteNaoDesignado = null;
+        DpLotacao atendente = null;
+        if (idAtendente != null)
+            atendente = ContextoPersistencia.em().find(DpLotacao.class, idAtendente);
+        if (idAtendenteNaoDesignado != null)
+            atendenteNaoDesignado = ContextoPersistencia.em().find(DpLotacao.class, idAtendenteNaoDesignado);
+
+        if (criaFilha) {
+            if (fechadoAuto != null) {
+                solicitacao.setFechadoAutomaticamente(fechadoAuto);
+                solicitacao.save();
+            }
+            SrSolicitacao filha = null;
+            if (solicitacao.isFilha())
+                filha = solicitacao.getSolicitacaoPai().criarFilhaSemSalvar();
+            else
+                filha = solicitacao.criarFilhaSemSalvar();
+            filha.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao));
+            filha.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
+            filha.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
+            filha.setDescrSolicitacao(descricao);
+            if (idAtendenteNaoDesignado != null)
+                filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
+            filha.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+            exibir(filha.getIdSolicitacao(), todoOContexto(), ocultas());
+        } else {
+            SrMovimentacao mov = new SrMovimentacao(solicitacao);
+            mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
+            mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao));
+            mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
+            mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
+            if (solicitacao.getAtendente() != null && !mov.getLotaAtendente().equivale(solicitacao.getAtendente().getLotacao()))
+                mov.setAtendente(null);
+            mov.setMotivoEscalonamento(motivo);
+            mov.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
+            mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; A��o: " + mov.getAcao().getTituloAcao()
+                    + "; Atendente: " + mov.getLotaAtendente().getSigla());
+            mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+            exibir(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
+        }
+    }
+    
+    @Path("/exibirAcaoEscalonar")
+    public void exibirAcaoEscalonar(Long id, Long itemConfiguracao) throws Exception {
+        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
+        solicitacao.setTitular(getTitular());
+        solicitacao.setLotaTitular(getLotaTitular());
+        Map<SrAcao, List<SrTarefa>> acoesEAtendentes = new HashMap<SrAcao, List<SrTarefa>>();
+        if (itemConfiguracao != null) {
+            solicitacao.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao));
+            acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+        }
+        result.include("solicitacao", solicitacao);
+        result.include("acoesEAtendentes", acoesEAtendentes);
     }
 }

@@ -305,7 +305,7 @@
 	      		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	      	 },
 	      	 error: function(error) {
-	          	alert("Não foi possível carregar as Abrangências deste Acordo.");
+	          	alert("Nï¿½o foi possï¿½vel carregar as Abrangï¿½ncias deste Acordo.");
 	      	 }
        });
     });
@@ -331,7 +331,6 @@
 			"searchable" : false
 		}])
 	.configurar("fnRowCallback", associacaoRowCallback)
-	.configurar("iDisplayLength", 25)
 	.criar()
 	.detalhes(detalhesListaAssociacao);
 
@@ -348,18 +347,6 @@
             document.getElementById('checkmostrarAssocDesativada').value = QueryString.mostrarDesativados == 'true';
         }
 
-        $('#associacao_table tbody').on('click', 'tr', function () {
-			var itemSelecionado = associacaoTable.dataTable.api().row(this).data();
-			
-			if (itemSelecionado != undefined) {
-				associacaoTable.dataTable.$('tr.selected').removeClass('selected');
-	            $(this).addClass('selected');
-	            
-				atualizarAssociacaoModal(itemSelecionado);
-			    associacaoModalAbrir(true);
-			}
-		});
-		
 		tableAssociacao = associacaoTable.dataTable;
 
 		$("#parametroForm").validate();
@@ -384,26 +371,24 @@
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangência');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangï¿½ncia');
 		else {
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangência');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangï¿½ncia');
 		}
 		jQuery("#associacao_dialog").dialog('open');
 	};
 
-	function detalhesListaAssociacao(itemArray) {
+	function detalhesListaAssociacao(itemArray, associacao) {
 		var tr = $('<tr class="detail">'),
 			td = $('<td colspan="6">'),
 			trItens = $('<tr>'),
 			trAcoes = $('<tr>'),
 			table = $('<table class="datatable" cellpadding="5" cellspacing="0" style="padding-left:50px;">');
 
-		if (itemArray && itemArray[colunasAssociacao.jSon]) {
-			var associacao = itemArray[colunasAssociacao.jSon];
-			
-			TableHelper.detalheLista("<b>Itens de configura&ccedil;&atilde;o:</b>", associacao.listaItemConfiguracaoVO, trItens);
-			TableHelper.detalheLista("<b>A&ccedil;&otilde;es:</b>", associacao.listaAcaoVO, trAcoes);
+		if (associacao) {
+			TableHelper.detalheLista("<b>Itens de configura&ccedil;&atilde;o:</b>", associacao.listaItemConfiguracaoVO || [], trItens);
+			TableHelper.detalheLista("<b>A&ccedil;&otilde;es:</b>", associacao.listaAcaoVO || [], trAcoes);
 
 			table.append(trItens);
 			table.append(trAcoes);
@@ -443,7 +428,7 @@
 	}
 	
 	// Alimenta os campos do Popup antes de abrir ao usuÃƒÂ¡rio.
-	function atualizarAssociacaoModal(itemArray) {
+	function atualizarAssociacaoModal(itemArray, associacao) {
 		limparDadosAssociacaoModal();
 
 		// Atualiza campos Selecao
@@ -453,8 +438,8 @@
 		$("#atendenteSelSpan").html(itemArray[colunasAssociacao.descricaoAtendente]);
 		$("#idConfiguracao").val(itemArray[colunasAssociacao.idAssociacao]);
 		$("#hisIdIni").val(itemArray[colunasAssociacao.hisIdIni]);
-
-		preencheDadosSolicitante(itemArray[colunasAssociacao.jSon].solicitante);
+		
+		preencheDadosSolicitante(associacao.solicitante);
 
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
@@ -467,8 +452,8 @@
 		jPessoaLotaFuncCargoCbb.selectedIndex = findSelectedIndexByValue(jPessoaLotaFuncCargoCbb, itemArray[colunasAssociacao.tipoSolicitante]);
 
 		// atualiza os valores do componente pessoaLotaFuncCargoSelecao
-		if (itemArray[colunasAssociacao.jSon].solicitante != null)
-			$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(itemArray[colunasAssociacao.jSon].solicitante.tipo);
+		if (associacao.solicitante != null)
+			$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(associacao.solicitante.tipo);
 
 		getIdFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).val(itemArray[colunasAssociacao.idSolicitante]);
 		getDescricaoFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).val(itemArray[colunasAssociacao.descricaoSolicitante]);
@@ -476,7 +461,7 @@
         getSpanFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).html(itemArray[colunasAssociacao.descricaoSolicitante]);
 
         // atualiza os dados da lista de Itens e AÃ§Ãµes
-        configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(itemArray[colunasAssociacao.jSon]);
+        configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(associacao);
 	}
 
 	function preencheDadosSolicitante(solicitante) {
@@ -716,21 +701,14 @@
 	         dataType: "text",
 	         success: function(jSon) {
 		        var associacao = JSON.parse(jSon); 
-		        var html = 
-					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-						'<a class="once desassociar" onclick="desassociar(event, '+ associacao.idConfiguracao + ')" title="Remover permiss&atilde;o">' +
-							'<input class="idAssociacao" type="hidden" value="' + associacao.idConfiguracao + '}"/>' +
-							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-						'</a>' +
-					'</td>';
 
 				row[colunasAssociacao.idAssociacao] = associacao.idConfiguracao;
 		        row[colunasAssociacao.jSon] = associacao;						         
-		        row[colunasAssociacao.botaoExcluir] = html;
 		        var trObject = isEditing ? tableAssociacao.api().row('.selected').data(row) : tableAssociacao.api().row.add(row).draw(),
 				    tr = $(trObject.node());
 			    
 	          	atualizarComponenteDetalhes(tr);
+	          	acordoService.adicionarFuncionalidadesNaLinhaDeAssociacao(tr, associacao, row);
 	          	associacaoModalFechar();
 	         },
 	         error: function(response) {

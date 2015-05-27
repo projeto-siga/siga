@@ -38,28 +38,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 
     private static final long serialVersionUID = 1L;
 
-    public static ActiveRecord<SrLista> AR = new ActiveRecord<>(SrLista.class);
-
-    @SuppressWarnings("unused")
-    private class SrSolicitacaoListaComparator implements Comparator<SrSolicitacao> {
-
-        private SrLista lista;
-
-        public SrSolicitacaoListaComparator(SrLista lista) {
-            this.lista = lista;
-        }
-
-        @Override
-        public int compare(SrSolicitacao s1, SrSolicitacao s2) {
-            try {
-                return Long.valueOf(s1.getPrioridadeNaLista(lista)).compareTo(Long.valueOf(s2.getPrioridadeNaLista(lista)));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return -1;
-            }
-        }
-
-    }
+    public static final ActiveRecord<SrLista> AR = new ActiveRecord<>(SrLista.class);
 
     @Id
     @SequenceGenerator(sequenceName = Catalogs.SIGASR + ".SR_LISTA_SEQ", name = "srListaSeq")
@@ -67,7 +46,7 @@ public class SrLista extends HistoricoSuporteVraptor {
     @Column(name = "ID_LISTA")
     private Long idLista;
 
-    @Column(name = "NOME_LISTA")
+	@Column(name = "NOME_LISTA")
     private String nomeLista;
 
     @Lob
@@ -86,15 +65,13 @@ public class SrLista extends HistoricoSuporteVraptor {
     @JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
     private DpLotacao lotaCadastrante;
 
-    // @OrderBy("numPosicao")
     @OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
-    private Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet = new HashSet<SrPrioridadeSolicitacao>();
+    private Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet;
 
     @ManyToOne()
     @JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
     private SrLista listaInicial;
 
-    // @OrderBy("hisDtIni desc")
     @OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
     private List<SrLista> meuListaHistoricoSet;
 
@@ -349,6 +326,27 @@ public class SrLista extends HistoricoSuporteVraptor {
                 break;
             }
         }
+    }
+    
+    @SuppressWarnings("unused")
+    private class SrSolicitacaoListaComparator implements Comparator<SrSolicitacao> {
+
+        private SrLista lista;
+
+        public SrSolicitacaoListaComparator(SrLista lista) {
+            this.lista = lista;
+        }
+
+        @Override
+        public int compare(SrSolicitacao s1, SrSolicitacao s2) {
+            try {
+                return Long.valueOf(s1.getPrioridadeNaLista(lista)).compareTo(Long.valueOf(s2.getPrioridadeNaLista(lista)));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
     }
 
     public Long getIdLista() {

@@ -14,18 +14,15 @@
 	    <h2>Pesquisa de Solicitações</h2>
 	    <c:choose>
 	        <c:when test="${not empty solicitacaoListaVO.getItens()}">
-	           Itens: ${solicitacaoListaVO.getItens().size() }
-<%-- 	           <siga:solicitacao solicitacaoListaVO="${solicitacaoListaVO}" filtro="${filtro}" modoExibicao="solicitacao" /> --%>
+	           <siga:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="solicitacao" />
 	        </c:when>
 	        <c:when test="${filtro.pesquisar}">
 	            <div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>
 	        </c:when>
-	    
-	    
 	    </c:choose>
 	    
 	    <div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-	        <form action="${linkTo[SolicitacaoController].buscar}" method="POST" onsubmit="javascript: return block();" >
+	        <form action="${linkTo[SolicitacaoController].buscar}" method="GET" onsubmit="javascript: return block();" >
 	            <input type="hidden" name="filtro.pesquisar" value="true" />
 	            <input type="hidden" name="nome" value="${nome}" />
 	            <input type="hidden" name="popup" value="${popup}" />
@@ -37,13 +34,13 @@
 	                        <td>Situação</td>
 	                        <td>
 	                           <siga:select name="filtro.situacao" 
-		                                        list="marcadores"
-		                                        listKey="idMarcador"
-		                                        listValue="descrMarcador"
-		                                        headerKey="0"
-		                                        headerValue="Todas"
-		                                        value="${filtro.situacao.idMarcador}"
-		                                        theme="simple"/> 
+	                                        list="marcadores"
+	                                        listKey="idMarcador"
+	                                        listValue="descrMarcador"
+	                                        headerKey="0"
+	                                        headerValue="Todas"
+	                                        value="${filtro.situacao.idMarcador}"
+	                                        theme="simple"/> 
                                 com
                                 <input type="hidden" name="filtro.atendenteSel" value="" />
                                 <input type="hidden" name="filtro.lotaAtendenteSel" value="" />
@@ -92,8 +89,8 @@
 	                    <tr>
 	                        <td>Ação</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.acao" value="" />
-	                           <siga:selecao2 propriedade="filtro.acao" tipo="acao" tema="simple" modulo="sigasr"/>
+	                           <input type="hidden" name="filtro.acaoSel" value="" />
+	                           <siga:selecao2 propriedade="filtro.acaoSel" tipo="acao" tema="simple" modulo="sigasr"/>
 	                        </td>
 	                    </tr>
 	                    <tr>
@@ -129,17 +126,17 @@
 	                    <tr>
 	                        <td>Acordo</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.acordo" value="" />
-	                           <siga:selecao2 propriedade="filtro.acordo" tipo="acordo" tema="simple" modulo="sigasr"/>
-	                            <div id="chkNaoSatisfatorios" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
-	                                <label>
-		                                <siga:checkbox nameInput="filtro.naoSatisfatorios" name="filtro.naoSatisfatorios" value="${filtro.naoSatisfatorios}"/>
-		                                Apenas solicitações em descumprimento dos seus acordos
-	                                </label>
-	                            </div>
-	                            <script language="javascript">
-	                                $("#chkNaoSatisfatorios").appendTo("#spanAcordofiltroacordo");
-	                            </script>
+	                           <input type="hidden" name="filtro.acordoSel" value="" />
+	                           <siga:selecao2 tamanho="grande" propriedade="filtro.acordoSel" tipo="acordo" tema="simple" modulo="sigasr" paramList="popup=true;"/>
+	                           <div id="chkNaoSatisfatorios" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
+	                              <label>
+		                             <siga:checkbox nameInput="filtro.naoSatisfatorios" name="filtro.naoSatisfatorios" value="${filtro.naoSatisfatorios}"/>
+		                             Apenas solicitações em descumprimento dos seus acordos
+	                              </label>
+	                           </div>
+	                           <script language="javascript">
+	                               $("#chkNaoSatisfatorios").appendTo("#spanAcordofiltroacordo");
+	                           </script>
 	                        </td>
 	                    </tr>   
 	                    <tr>

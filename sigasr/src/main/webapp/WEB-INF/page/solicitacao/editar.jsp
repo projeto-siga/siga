@@ -309,6 +309,8 @@
 	
 			if (siglaCadastrante == siglaSolicitante) {
 				$('#spanInterlocutor')[0].style.display='none';
+				$('#checkmostrarInterlocutor')[0].checked=false;
+				$('#checkmostrarInterlocutor')[0].onchange();
 				$('#meioComunicacao')[0].style.display='none';
 			}
 			else {

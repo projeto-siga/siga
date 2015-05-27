@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 <li><a href="#">Documentos</a>
 	<ul>
 		<li><a href="/sigaex/app/expediente/doc/editar">Novo</a></li>
@@ -212,4 +213,5 @@
 
 
 		</ul></li>
+</c:if>
 </c:if>

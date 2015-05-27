@@ -16,6 +16,12 @@ submitOk = function() {
 }
 </script>
 
+<c:if test="${idTpFormaDoc == 1}">
+	<div id="sigaex"></div>
+</c:if>
+<c:if test="${idTpFormaDoc == 2}">
+	<div id="processos"></div>
+</c:if>
 <div class="gt-content-box gt-for-table">
 	<table border="0" class="gt-table">
 		<thead>
@@ -39,7 +45,8 @@ submitOk = function() {
 			&& listEstado[0] != 13 && listEstado[0] != 16
 			&& listEstado[0] != 18 && listEstado[0] != 20 
 			&& listEstado[0] != 21 && listEstado[0] != 22 
-			&& listEstado[0] != 26 && listEstado[0] != 32}">
+			&& listEstado[0] != 26 && listEstado[0] != 32
+			&& listEstado[0] != 62 && listEstado[0] != 63 && listEstado[0] != 64}">
 
 					<c:set var="titulo1" value="" />
 					<c:set var="titulo2" value="" />

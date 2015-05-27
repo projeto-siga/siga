@@ -5,6 +5,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <c:choose>
 	<c:when test="${(not empty mobilVO.movs)}">
@@ -127,8 +128,9 @@
 	   		<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
 			<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 			<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-			<c:set var="urlBase"
-				value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+			<c:set var="url">${request.requestURL}</c:set>
+			<c:set var="uri" value="${request.requestURI}" />
+			<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 			<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
 		    						
 		    <c:set var="botao" value="ambos" />
@@ -137,7 +139,7 @@
 		<c:if 
 			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 				<div id="capicom-div">
-					<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Conferir Cópia em Lote</a> 
+					<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a> 
 					<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
 				</div> 
 			<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
@@ -154,7 +156,7 @@
 		</c:if>
 	    
 		<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-		    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}						
+		    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}						
 		</c:if>
 	</c:when>
 	<c:otherwise>

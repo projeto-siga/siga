@@ -6,8 +6,11 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Assinatura em Lote" onLoad="javascript: TestarAssinaturaDigital()">
+<siga:pagina titulo="Assinatura em Lote"
+						 onLoad="javascript: TestarAssinaturaDigital();"
+						 incluirJs="sigaex/javascript/assinatura.js">
 
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
@@ -73,18 +76,27 @@
 					<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 					<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 					<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-					<c:set var="urlBase"
-						value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+					<c:set var="url">${request.requestURL}</c:set>
+					<c:set var="uri" value="${request.requestURI}" />
+					<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />   		    
 		
 					<c:set var="botao" value=""/>
+					<c:if test="${autenticando}">
+						<c:set var="botao" value="autenticando" />
+					</c:if>
 				    <c:set var="lote" value="true"/>	
 				</div>			
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/javascript/inc_assina_js.jsp" />
 						<div id="capicom-div">
-							<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
+							<c:if test="${not autenticando}">
+								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Documento</a>
+							</c:if>
+							<c:if test="${autenticando}">
+								<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar Documento</a>
+							</c:if>
 						</div> 
 					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
 					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges"><u>aqui</u></a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>

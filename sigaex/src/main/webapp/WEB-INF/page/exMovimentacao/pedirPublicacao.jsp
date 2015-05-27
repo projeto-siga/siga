@@ -110,6 +110,10 @@
 					</tr>
 					<tr><td colspan="2"></td></tr>
 					<tr>
+						<td>Próxima data para disponibilização:</td>
+						<td>${proximaDataDisponivelStr}</td>
+					</tr>
+					<tr>
 						<td>
 							<label>Data para disponibilização:</label>
 						</td>					

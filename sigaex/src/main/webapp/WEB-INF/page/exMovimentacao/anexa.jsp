@@ -4,9 +4,11 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-
-<siga:pagina titulo="Movimentação" onLoad="javascript: TestarAssinaturaDigital();">
+<siga:pagina titulo="Movimentação"
+						 onLoad="javascript: TestarAssinaturaDigital();"
+						 incluirJs="sigaex/javascript/assinatura.js">
 
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">
@@ -324,7 +326,10 @@
 						<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 						<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" /> 
 						<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-						<c:set var="urlBase" value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+						
+						<c:set var="url">${request.requestURL}</c:set>
+						<c:set var="uri" value="${request.requestURI}" />
+						<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 						<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
 		
 						<c:set var="botao" value="ambos" />
@@ -334,7 +339,7 @@
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 						<div id="capicom-div">
 							<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);"
-								class="gt-btn-alternate-large gt-btn-left">Conferir Cópia em Lote</a> <a id="bot-assinar"
+								class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a> <a id="bot-assinar"
 								href="#" onclick="javascript: AssinarDocumentos('false', this);"
 								class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
 						</div>

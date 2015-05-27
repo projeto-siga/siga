@@ -2676,6 +2676,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("tamMaxDescr", 255 - doc.getDescrDocumento().length());
 		result.include("request", getRequest());
 		result.include("sigla", sigla);
+		result.include("proximaDataDisponivelStr", DatasPublicacaoDJE.consultarProximaDataDisponivelString());
 	}
 
 	@Post("/app/expediente/mov/agendar_publicacao_gravar")
@@ -3103,6 +3104,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("idLotDefault", listaLotPubl.getIdLotDefault());
 		result.include("tamMaxDescr", 255 - doc.getDescrDocumento().length());
 		result.include("mensagem",mensagem);
+		result.include("proximaDataDisponivelStr", DatasPublicacaoDJE.consultarProximaDataDisponivelString());
 	}
 	
 	@Post("/app/expediente/mov/pedirPublicacaoGravar")

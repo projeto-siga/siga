@@ -115,6 +115,10 @@
 								</tr>
 							</c:otherwise>
 						</c:choose>
+						<tr>
+							<td>Próxima data para disponibilização:</td>
+							<td>${proximaDataDisponivelStr}</td>
+						</tr>
 						
 						<tr>
 							<td>

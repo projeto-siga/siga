@@ -58,7 +58,12 @@ function validar(silencioso){
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
 	var eletro2 = document.getElementById('eletronicoCheck2');
-
+	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
+	if (descricaoAutomatica == null && (descr==null || descr=="")) {
+		aviso("Preencha o campo Descrição antes de gravar o documento.", silencioso);
+		return false;
+	}
+	
 	if (descr==null || descr=="") {
 		aviso("Preencha o campo Descrição antes de gravar o documento.", silencioso);
 		return false;

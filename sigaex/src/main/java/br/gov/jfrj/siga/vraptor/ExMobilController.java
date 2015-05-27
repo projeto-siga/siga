@@ -69,12 +69,16 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 	@Get("app/expediente/doc/marcar_tudo")
 	public void aMarcarTudo() {
+		assertAcesso("");
+		
 		Ex.getInstance().getBL().marcarTudo();
 		result.redirectTo("/app/expediente/doc/finalizou_rotina");
 	}
 
 	@Get("app/expediente/doc/numerar_tudo")
 	public void aNumerarTudo() {
+		assertAcesso("");
+		
 		int aPartirDe = 0;
 		if (param("apartir") != null) {
 			aPartirDe = paramInteger("apartir");
@@ -85,6 +89,8 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 	@Get("app/expediente/doc/marcar")
 	public void aMarcar() {
+		assertAcesso("");
+		
 		String sigla = param("sigla");
 		String[] siglasSparadas = sigla.split(";");
 		for (String s : siglasSparadas) {
@@ -113,6 +119,8 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
 			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc,
 			final Integer offset) {
+		assertAcesso("");
+		
 		getP().setOffset(offset);
 		this.setSigla(sigla);
 		this.setPostback(postback);
@@ -200,6 +208,8 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText,
 			final Long ultMovEstadoDoc, final Integer paramoffset) {
+		assertAcesso("");
+		
 		getP().setOffset(paramoffset);
 		this.setPostback(postback);
 
@@ -455,6 +465,8 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 	@Get("app/expediente/selecionar")
 	public void selecionar(final String sigla, final String matricula) throws Exception {
+		assertAcesso("");
+		
 		final String resultado = super.aSelecionar(sigla);
 		if (getSel() != null && matricula != null) {
 			GenericoSelecao sel = new GenericoSelecao();

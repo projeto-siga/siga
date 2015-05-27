@@ -4,8 +4,9 @@
 
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Movimentação" desabilitarmenu="sim" onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
+<siga:pagina titulo="Movimentação" desabilitarmenu="sim" onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};" incluirJs="sigaex/javascript/assinatura.js">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Autenticação de Documentos</h2>
@@ -43,7 +44,9 @@
 						<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
 						<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 						<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-						<c:set var="urlBase" value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+						<c:set var="url">${request.requestURL}</c:set>
+						<c:set var="uri" value="${request.requestURI}" />
+						<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 						<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
 						<c:set var="lote" value="false" />
 					</div>		

@@ -137,14 +137,14 @@
 					<div class="gt-content">
 						<c:if test="${f:resource('isWorkflowEnabled')}">
 							<c:if test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
-								<div id="${docVO.sigla}" depende=";wf;" />
+								<div id="${docVO.sigla}" depende=";wf;" class="wf_div" />
 								<!--ajax:${doc.codigo}-${i}-->
 								<!--/ajax:${doc.codigo}-${i}-->
 					</div>
 								<c:set var="primeiroMobil" value="${false}" />
 							</c:if>
 						<c:if test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
-							<div id="${m.sigla}" depende=";wf;" />
+							<div id="${m.sigla}" depende=";wf;" class="wf_div" />
 							<!--ajax:${doc.codigo}-${i}-->
 							<!--/ajax:${doc.codigo}-${i}-->
 				</div>
@@ -476,7 +476,7 @@
 				function updateContainerRelacaoDocs() {
 					var smallwidth = $('#outputRelacaoDocs').width();
 					var smallsvg = $('#outputRelacaoDocs :first-child').first();
-					var smallviewbox = smallsvg.attr('viewBox');
+					var smallviewbox = document.getElementById('outputTramitacao').firstElementChild.getAttribute('viewBox');
 
 					if (typeof smallviewbox != 'undefined') {
 						var a = smallviewbox.split(' ');
@@ -756,7 +756,11 @@
 
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">
-		ReplaceInnerHTMLFromAjaxResponse("/sigawf/app/doc?sigla=${docVO.doc.codigo}&ts=1${currentTimeMillis}", null, "wf");
+		var url = "/sigawf/app/doc?sigla=${docVO.doc.codigo}&ts=1${currentTimeMillis}";
+		Siga.ajax(url, null, "GET", function(response){		
+			var div = $(".wf_div:last"); 
+			$(div).html(response);
+		});		
 	</script>
 </c:if>
 <c:if
@@ -770,7 +774,10 @@
 		<c:param name="ts">${currentTimeMillis}</c:param>
 	</c:url>
 	<script type="text/javascript">
-		SetInnerHTMLFromAjaxResponse("${url}", document.getElementById('gc'));
+		var urlGc = "${url}";
+		Siga.ajax(urlGc.substring(7), null, "GET", function(response){	
+			$("#gc").html(response);
+		});		
 	</script>
 </c:if>
 

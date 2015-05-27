@@ -750,7 +750,7 @@ function limpaCampos()
 											<td>
 												<div style="display: inline" id="comboModeloDiv">
 													<script type="text/javascript">
-														setTimeout("alteraForma()",500);
+														setTimeout("alteraForma()",2000);
 													</script>
 												</div>
 											</td>

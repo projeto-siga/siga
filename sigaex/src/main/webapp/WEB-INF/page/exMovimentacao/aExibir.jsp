@@ -5,8 +5,11 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Documento" popup="true" onLoad="javascript: TestarAssinaturaDigital();">
+<siga:pagina titulo="Documento" popup="true"
+			onLoad="javascript: TestarAssinaturaDigital();"
+			incluirJs="sigaex/javascript/assinatura.js">
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
@@ -304,7 +307,10 @@ function visualizarImpressao(via) {
 					<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
 					<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 					<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-					<c:set var="urlBase" value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+					<c:set var="url">${request.requestURL}</c:set>
+					<c:set var="uri" value="${request.requestURI}" />
+					<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
+					<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
 					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
 					
 					<c:if test="${not autenticando}">

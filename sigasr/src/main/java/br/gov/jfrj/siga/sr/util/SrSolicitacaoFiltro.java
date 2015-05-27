@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -24,29 +26,68 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
     public static final Long NENHUMA_LISTA = 0L;
     private static final String AND = " AND ";
 
-    public boolean pesquisar = false;
+    private boolean pesquisar = false;
 
-    public String dtIni;
+    private String dtIni;
 
-    public String dtFim;
+    private String dtFim;
 
-    public CpMarcador situacao;
+    private CpMarcador situacao;
 
-    public DpPessoa atendente;
+    private DpPessoa atendente;
 
-    public SrAcordo acordo;
+    private SrAcordo acordo;
 
-    public DpLotacao lotaAtendente;
+    private DpLotacao lotaAtendente;
 
-    public Long idListaPrioridade;
+    private Long idListaPrioridade;
 
-    public boolean naoDesignados;
+    private boolean naoDesignados;
 
-    public boolean naoSatisfatorios;
+    private boolean naoSatisfatorios;
 
-    public boolean apenasFechados;
+    private boolean apenasFechados;
 
-    public Long idNovoAtributo;
+    private Long idNovoAtributo;
+
+    private DpPessoaSelecao atendenteSel;
+    private DpLotacaoSelecao lotaAtendenteSel;
+
+    private DpPessoaSelecao cadastranteSel;
+    private DpLotacaoSelecao lotaCadastranteSel;
+
+    private DpPessoaSelecao solicitanteSel;
+    private DpLotacaoSelecao lotaSolicitanteSel;
+
+    public SrSolicitacaoFiltro() {
+        super();
+    }
+
+    public void carregarSelecao() {
+        if (atendenteSel != null) {
+            this.setAtendente(atendenteSel.buscarObjeto());
+        }
+
+        if (lotaAtendenteSel != null) {
+            this.setLotaAtendente(lotaAtendenteSel.buscarObjeto());
+        }
+
+        if (cadastranteSel != null) {
+            this.setCadastrante(cadastranteSel.buscarObjeto());
+        }
+
+        if (lotaCadastranteSel != null) {
+            this.setLotaCadastrante(lotaCadastranteSel.buscarObjeto());
+        }
+
+        if (solicitanteSel != null) {
+            this.setSolicitante(solicitanteSel.buscarObjeto());
+        }
+
+        if (lotaSolicitanteSel != null) {
+            this.setLotaSolicitante(lotaSolicitanteSel.buscarObjeto());
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public List<SrSolicitacao> buscar() throws Exception {
@@ -58,7 +99,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
         List<SrSolicitacao> listaFinal = new ArrayList<SrSolicitacao>();
 
-        if (naoSatisfatorios) {
+        if (isNaoSatisfatorios()) {
             for (SrSolicitacao sol : lista)
                 if (!sol.isAcordosSatisfeitos())
                     listaFinal.add(sol);
@@ -71,49 +112,46 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
     @SuppressWarnings("unchecked")
     public List<Object[]> buscarSimplificado() throws Exception {
         String query = montarBusca("select sol.idSolicitacao, sol.descrSolicitacao, sol.codigo, item.tituloItemConfiguracao" + " from SrSolicitacao sol inner join sol.itemConfiguracao as item ");
-
-        List<Object[]> listaRetorno = ContextoPersistencia.em().createQuery(query).setMaxResults(10).getResultList();
-
-        return listaRetorno;
+        return ContextoPersistencia.em().createQuery(query).setMaxResults(10).getResultList();
     }
 
     private String montarBusca(String queryString) throws Exception {
 
-        StringBuffer query = new StringBuffer(queryString);
+        StringBuilder query = new StringBuilder(queryString);
 
-        if (acordo != null && acordo.getIdAcordo() > 0L)
-            query.append(" inner join sol.acordos acordo where acordo.hisIdIni = " + acordo.getHisIdIni() + " and ");
+        if (Filtros.deveAdicionar(getAcordo()))
+            query.append(" inner join sol.acordos acordo where acordo.hisIdIni = " + getAcordo().getHisIdIni() + " and ");
         else
             query.append(" where ");
 
         query.append(" sol.hisDtFim is null ");
 
-        if (getCadastrante() != null)
+        if (Filtros.deveAdicionar(getCadastrante()))
             query.append(" and sol.cadastrante.idPessoaIni = " + getCadastrante().getIdInicial());
-        if (getLotaTitular() != null)
+        if (Filtros.deveAdicionar(getLotaTitular()))
             query.append(" and sol.lotaTitular.idLotacaoIni = " + getLotaTitular().getIdInicial());
-        if (getSolicitante() != null)
+        if (Filtros.deveAdicionar(getSolicitante()))
             query.append(" and sol.solicitante.idPessoaIni = " + getSolicitante().getIdInicial());
-        if (getLotaSolicitante() != null)
+        if (Filtros.deveAdicionar(getLotaSolicitante()))
             query.append(" and sol.lotaSolicitante.idLotacaoIni = " + getLotaSolicitante().getIdInicial());
-        if (getItemConfiguracao() != null && getItemConfiguracao().getIdItemConfiguracao() > 0L)
+        if (Filtros.deveAdicionar(getItemConfiguracao()))
             query.append(" and sol.itemConfiguracao.itemInicial.idItemConfiguracao = " + getItemConfiguracao().getItemInicial().getIdItemConfiguracao());
-        if (getAcao() != null && getAcao().getIdAcao() > 0L)
+        if (Filtros.deveAdicionar(getAcao()))
             query.append(" and sol.acao.acaoInicial.idAcao = " + getAcao().getAcaoInicial().getIdAcao());
         if (getPrioridade() != null && getPrioridade().getIdPrioridade() > 0L)
             query.append(" and sol.prioridade <= " + getPrioridade().ordinal());
 
-        if (idListaPrioridade != null && !idListaPrioridade.equals(QUALQUER_LISTA_OU_NENHUMA)) {
-            if (idListaPrioridade.equals(NENHUMA_LISTA)) {
+        if (getIdListaPrioridade() != null && !getIdListaPrioridade().equals(QUALQUER_LISTA_OU_NENHUMA)) {
+            if (getIdListaPrioridade().equals(NENHUMA_LISTA)) {
                 query.append(" and not exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.solicitacaoInicial = sol.solicitacaoInicial) ");
             } else {
-                SrLista lista = SrLista.AR.findById(idListaPrioridade);
+                SrLista lista = SrLista.AR.findById(getIdListaPrioridade());
                 query.append(" and exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.solicitacaoInicial.idSolicitacao = sol.solicitacaoInicial.idSolicitacao ");
                 query.append(" and prio.lista.listaInicial.idLista = " + lista.getListaInicial().getId() + ") ");
             }
         }
 
-        if (getDescrSolicitacao() != null && !getDescrSolicitacao().trim().equals("")) {
+        if (getDescrSolicitacao() != null && !"".equals(getDescrSolicitacao().trim())) {
             for (String s : getDescrSolicitacao().split(" ")) {
                 query.append(" and ( lower(sol.descrSolicitacao) like '%" + s.toLowerCase() + "%' ");
                 query.append(" or sol in (select mov.solicitacao from SrMovimentacao mov");
@@ -124,31 +162,31 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
         final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat dfHibernate = new SimpleDateFormat("yyyy-MM-dd");
 
-        if (dtIni != null)
+        if (getDtIni() != null)
             try {
-                query.append(" and sol.dtReg >= to_date('" + dfHibernate.format(dfUsuario.parse(dtIni)) + "', 'yyyy-MM-dd') ");
+                query.append(" and sol.dtReg >= to_date('" + dfHibernate.format(dfUsuario.parse(getDtIni())) + "', 'yyyy-MM-dd') ");
             } catch (ParseException e) {
                 //
             }
 
-        if (dtFim != null)
+        if (getDtFim() != null)
             try {
-                query.append(" and sol.dtReg <= to_date('" + dfHibernate.format(dfUsuario.parse(dtFim)) + " 23:59', 'yyyy-MM-dd HH24:mi') ");
+                query.append(" and sol.dtReg <= to_date('" + dfHibernate.format(dfUsuario.parse(getDtFim())) + " 23:59', 'yyyy-MM-dd HH24:mi') ");
             } catch (ParseException e) {
                 //
             }
 
-        StringBuffer subquery = new StringBuffer();
+        StringBuilder subquery = new StringBuilder();
 
-        if (situacao != null && situacao.getIdMarcador() != null && situacao.getIdMarcador() > 0)
-            subquery.append(" and situacao.cpMarcador.idMarcador = " + situacao.getIdMarcador());
-        if (atendente != null)
-            subquery.append("and situacao.dpPessoaIni.idPessoa = " + atendente.getIdInicial());
-        else if (lotaAtendente != null) {
-            if (naoDesignados)
-                subquery.append("and situacao.dpLotacaoIni.idLotacao = " + lotaAtendente.getIdInicial() + " and situacao.dpPessoaIni is null");
+        if (getSituacao() != null && getSituacao().getIdMarcador() != null && getSituacao().getIdMarcador() > 0)
+            subquery.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador());
+        if (Filtros.deveAdicionar(getAtendente()))
+            subquery.append("and situacao.dpPessoaIni.idPessoa = " + getAtendente().getIdInicial());
+        else if (Filtros.deveAdicionar(getLotaAtendente())) {
+            if (isNaoDesignados())
+                subquery.append("and situacao.dpLotacaoIni.idLotacao = " + getLotaAtendente().getIdInicial() + " and situacao.dpPessoaIni is null");
             else
-                subquery.append("and situacao.dpLotacaoIni.idLotacao = " + lotaAtendente.getIdInicial());
+                subquery.append("and situacao.dpLotacaoIni.idLotacao = " + getLotaAtendente().getIdInicial());
         }
 
         if (subquery.length() > 0) {
@@ -159,18 +197,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
         montarQueryAtributos(query);
 
-        if (apenasFechados) {
+        if (isApenasFechados()) {
             query.append(" and not exists (from SrMovimentacao where tipoMov in (7,8) and solicitacao = sol.hisIdIni)");
         }
 
         return query.append(") order by sol.idSolicitacao desc").toString();
     }
 
-    private void montarQueryAtributos(StringBuffer query) {
+    private void montarQueryAtributos(StringBuilder query) {
         Boolean existeFiltroPreenchido = Boolean.FALSE; // Indica se foi preenchido algum dos atributos informados na requisicao
 
-        StringBuffer subqueryAtributo = new StringBuffer();
-        if (meuAtributoSolicitacaoSet != null && meuAtributoSolicitacaoSet.size() > 0) {
+        StringBuilder subqueryAtributo = new StringBuilder();
+        if (meuAtributoSolicitacaoSet != null && !meuAtributoSolicitacaoSet.isEmpty()) {
             subqueryAtributo.append(" and (");
 
             for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
@@ -207,7 +245,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
     }
 
     public List<SrAtributo> itensDisponiveis(List<SrAtributo> atributosDisponiveis, SrAtributo atributo) {
-        ArrayList<SrAtributo> arrayList = new ArrayList<SrAtributo>(atributosDisponiveis);
+        List<SrAtributo> arrayList = new ArrayList<SrAtributo>(atributosDisponiveis);
         arrayList.add(atributo);
 
         Collections.sort(arrayList, new Comparator<SrAtributo>() {
@@ -224,6 +262,152 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
             }
         });
         return arrayList;
+    }
+
+    public boolean isPesquisar() {
+        return pesquisar;
+    }
+
+    public void setPesquisar(boolean pesquisar) {
+        this.pesquisar = pesquisar;
+    }
+
+    public String getDtIni() {
+        return dtIni;
+    }
+
+    public void setDtIni(String dtIni) {
+        this.dtIni = dtIni;
+    }
+
+    public String getDtFim() {
+        return dtFim;
+    }
+
+    public void setDtFim(String dtFim) {
+        this.dtFim = dtFim;
+    }
+
+    public CpMarcador getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(CpMarcador situacao) {
+        this.situacao = situacao;
+    }
+
+    @Override
+    public DpPessoa getAtendente() {
+        return atendente;
+    }
+
+    public void setAtendente(DpPessoa atendente) {
+        this.atendente = atendente;
+    }
+
+    public SrAcordo getAcordo() {
+        return acordo;
+    }
+
+    public void setAcordo(SrAcordo acordo) {
+        this.acordo = acordo;
+    }
+
+    @Override
+    public DpLotacao getLotaAtendente() {
+        return lotaAtendente;
+    }
+
+    public void setLotaAtendente(DpLotacao lotaAtendente) {
+        this.lotaAtendente = lotaAtendente;
+    }
+
+    public Long getIdListaPrioridade() {
+        return idListaPrioridade;
+    }
+
+    public void setIdListaPrioridade(Long idListaPrioridade) {
+        this.idListaPrioridade = idListaPrioridade;
+    }
+
+    public boolean isNaoDesignados() {
+        return naoDesignados;
+    }
+
+    public void setNaoDesignados(boolean naoDesignados) {
+        this.naoDesignados = naoDesignados;
+    }
+
+    public boolean isNaoSatisfatorios() {
+        return naoSatisfatorios;
+    }
+
+    public void setNaoSatisfatorios(boolean naoSatisfatorios) {
+        this.naoSatisfatorios = naoSatisfatorios;
+    }
+
+    public boolean isApenasFechados() {
+        return apenasFechados;
+    }
+
+    public void setApenasFechados(boolean apenasFechados) {
+        this.apenasFechados = apenasFechados;
+    }
+
+    public Long getIdNovoAtributo() {
+        return idNovoAtributo;
+    }
+
+    public void setIdNovoAtributo(Long idNovoAtributo) {
+        this.idNovoAtributo = idNovoAtributo;
+    }
+
+    public DpPessoaSelecao getAtendenteSel() {
+        return atendenteSel;
+    }
+
+    public void setAtendenteSel(DpPessoaSelecao atendenteSel) {
+        this.atendenteSel = atendenteSel;
+    }
+
+    public DpLotacaoSelecao getLotaAtendenteSel() {
+        return lotaAtendenteSel;
+    }
+
+    public void setLotaAtendenteSel(DpLotacaoSelecao lotaAtendenteSel) {
+        this.lotaAtendenteSel = lotaAtendenteSel;
+    }
+
+    public DpPessoaSelecao getCadastranteSel() {
+        return cadastranteSel;
+    }
+
+    public void setCadastranteSel(DpPessoaSelecao cadastranteSel) {
+        this.cadastranteSel = cadastranteSel;
+    }
+
+    public DpLotacaoSelecao getLotaCadastranteSel() {
+        return lotaCadastranteSel;
+    }
+
+    public void setLotaCadastranteSel(DpLotacaoSelecao lotacadastranteSel) {
+        this.lotaCadastranteSel = lotacadastranteSel;
+    }
+
+    public DpPessoaSelecao getSolicitanteSel() {
+        return solicitanteSel;
+    }
+
+    public void setSolicitanteSel(DpPessoaSelecao solicitanteSel) {
+        this.solicitanteSel = solicitanteSel;
+    }
+
+    public DpLotacaoSelecao getLotaSolicitanteSel() {
+        return lotaSolicitanteSel;
+    }
+
+    public void setLotaSolicitanteSel(DpLotacaoSelecao lotaSolicitanteSel) {
+        this.lotaSolicitanteSel = lotaSolicitanteSel;
     }
 
 }

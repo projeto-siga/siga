@@ -13,6 +13,7 @@
 <%@ attribute name="headerValue" required="false"%>
 <%@ attribute name="headerKey" required="false"%>
 <%@ attribute name="isEnum" required="false"%>
+<%@ attribute name="style" required="false"%>
 
 <c:if test="${empty value}">
 	<c:set var="value" value="${requestScope[name]}"/>
@@ -27,7 +28,7 @@
 <tr><td>${label}</td><td>
 </c:if>
 
-<select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if> class="select-siga">
+<select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if> class="select-siga" style="${style != null ? style : ''}">
 
 <c:choose>
     <c:when test="${ehEnum}">

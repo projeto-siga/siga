@@ -40,7 +40,7 @@
                      isEnum="true"/>
 	</div>
 	<div class="gt-form-row box-wrapper">
-		<div class="box box-left gt-width-25" style="margin-left: 15px;">
+		<div class="box box-left gt-width-25">
 			<label>Contato inicial</label> 
 			<label>Data</label> 
 			<input type="text" name="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}" /> 

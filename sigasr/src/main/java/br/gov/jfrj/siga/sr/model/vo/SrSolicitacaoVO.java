@@ -8,7 +8,7 @@ import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
-import br.gov.jfrj.siga.sr.util.SigaPlayUtil;
+import br.gov.jfrj.siga.sr.util.SigaVraptorUtil;
 import edu.emory.mathcs.backport.java.util.Collections;
 
 public class SrSolicitacaoVO {
@@ -59,25 +59,25 @@ public class SrSolicitacaoVO {
         this.setTeorFormatado(getTeorFormatado(sol.getItemAtual(), this.getDescricao()));
         this.setSolicitanteFormatado(getSolicitanteFormatado(this.getNomeSolicitante(), this.getDescricaoSolicitante(), this.getLotaSolicitante()));
         this.setDtUltimaMovimentacaoFormatada(getDtUltimaMovimentacaoFormatado(this.getDtUltimaMovimentacaoString()));
-        this.setUltimaMovimentacaoformatada(SigaPlayUtil.selecionado(this.getUltimaMovimentacao(), this.getUltimaMovimentacao()));
+        this.setUltimaMovimentacaoformatada(SigaVraptorUtil.selecionado(this.getUltimaMovimentacao(), this.getUltimaMovimentacao()));
 
         this.setLotaAtendenteFormatada(this.getLotaAtendente() != null ? getLotacaoFormatada(this.getLotaAtendente()) : "");
-        this.setPrioridadeFormatada(sol.getPrioridade() != null ? SigaPlayUtil.selecionado(sol.getPrioridade().getDescPrioridade(), sol.getPrioridade().getDescPrioridade()) : "");
+        this.setPrioridadeFormatada(sol.getPrioridade() != null ? SigaVraptorUtil.selecionado(sol.getPrioridade().getDescPrioridade(), sol.getPrioridade().getDescPrioridade()) : "");
     }
 
     public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, boolean podeRemover, boolean podePriorizar) throws Exception {
         this(sol);
 
         this.setPrioridadeSolicitacaoVO(prioridadeSolicitacao.toVO());
-        this.setPrioridadeListaFormatada(SigaPlayUtil.tagA(String.valueOf(prioridadeSolicitacao.numPosicao)));
-        this.setPrioridadeFormatada(prioridadeSolicitacao.prioridade != null ? SigaPlayUtil.selecionado(prioridadeSolicitacao.prioridade.getDescPrioridade(),
+        this.setPrioridadeListaFormatada(SigaVraptorUtil.tagA(String.valueOf(prioridadeSolicitacao.numPosicao)));
+        this.setPrioridadeFormatada(prioridadeSolicitacao.prioridade != null ? SigaVraptorUtil.selecionado(prioridadeSolicitacao.prioridade.getDescPrioridade(),
                 prioridadeSolicitacao.prioridade.getDescPrioridade()) : "");
 
         if (podeRemover)
-            this.botaoRemover = SigaPlayUtil.botaoRemoverSolicitacao(this.getIdSolicitacao(), lista.getIdLista());
+            this.botaoRemover = SigaVraptorUtil.botaoRemoverSolicitacao(this.getIdSolicitacao(), lista.getIdLista());
 
         if (podePriorizar)
-            this.botaoPriorizar = SigaPlayUtil.botaoPriorizarSolicitacao();
+            this.botaoPriorizar = SigaVraptorUtil.botaoPriorizarSolicitacao();
 
         if (podeRemover || podePriorizar)
             this.setBotaoRemoverPriorizar(this.botaoRemover + this.botaoPriorizar);
@@ -108,6 +108,7 @@ public class SrSolicitacaoVO {
             sb.append("}'," + codigo + "');window.close()\">");
             sb.append(codigo + "</a>");
         } else {
+        	//TODO Alterar este link após migração para vRaptor
             sb.append("<a href=\"/sigasr/solicitacao/exibir/");
             sb.append(id + "\">");
             sb.append(codigo + "</a>");
@@ -119,20 +120,20 @@ public class SrSolicitacaoVO {
     private String getTeorFormatado(SrItemConfiguracao itemConfiguracao, String descricao) {
         StringBuffer sb = new StringBuffer();
         sb.append("<b>");
-        sb.append(SigaPlayUtil.descricaoItem(itemConfiguracao));
+        sb.append(SigaVraptorUtil.descricaoItem(itemConfiguracao));
         sb.append(":</b>&nbsp;");
-        sb.append(SigaPlayUtil.selecionado(descricao, descricao));
+        sb.append(SigaVraptorUtil.selecionado(descricao, descricao));
 
         return sb.toString();
     }
 
     private String getSolicitanteFormatado(String nomeSolicitante, String descricaoSolicitante, SelecionavelVO lotaSolicitante) {
         StringBuffer sb = new StringBuffer();
-        sb.append(SigaPlayUtil.selecionado(nomeSolicitante, descricaoSolicitante));
+        sb.append(SigaVraptorUtil.selecionado(nomeSolicitante, descricaoSolicitante));
         sb.append("&nbsp;");
 
         if (lotaSolicitante != null)
-            sb.append(SigaPlayUtil.selecionado(lotaSolicitante.getSigla(), lotaSolicitante.getDescricao()));
+            sb.append(SigaVraptorUtil.selecionado(lotaSolicitante.getSigla(), lotaSolicitante.getDescricao()));
 
         return sb.toString();
     }
@@ -142,7 +143,7 @@ public class SrSolicitacaoVO {
     }
 
     private String getDtUltimaMovimentacaoFormatado(String dtUltimaMovimentacao) {
-        return new String("<b>" + SigaPlayUtil.selecionado(dtUltimaMovimentacao, dtUltimaMovimentacao) + "</b>");
+        return new String("<b>" + SigaVraptorUtil.selecionado(dtUltimaMovimentacao, dtUltimaMovimentacao) + "</b>");
     }
 
     private String getMarcadoresEmHTMLDetalhes(String marcadoresEmHTML, String data) {

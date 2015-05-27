@@ -110,6 +110,8 @@ self.retorna_${propriedade}${tipoSel}${inputName} = function(id, sigla, descrica
 	<c:if test="${reler == 'ajax'}">
 		sbmt('${empty idAjax ? propriedade : idAjax}');
 	</c:if> 
+
+	${onchange};
 }
  
  
@@ -218,13 +220,12 @@ self.ajax_${propriedade}${tipoSel}${inputName} = function() {
 <input type="text" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
 	onkeypress="return handleEnter(this, event)" ${requiredValue}
 	onblur="javascript: ajax_${propriedade}${tipoSel}${inputName}();<c:if test="${not empty onblur}">${onblur};</c:if>" size="25"
-	<c:if test="${not empty onchange}">onchange="javascript:${onchange};"</c:if>
+	onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
 	${disabledTxt}/>
 	
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedade}${tipoSel}${inputName}SelButton" value="..."
 		onclick="javascript: popitup_${propriedade}${tipoSel}${inputName}('');"
-		onblur="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
 		${disabledBtn} theme="simple">
 </c:if>
 

@@ -86,20 +86,20 @@ public class SrLista extends HistoricoSuporteVraptor {
     @JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
     private DpLotacao lotaCadastrante;
 
-    @OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
     // @OrderBy("numPosicao")
-    protected Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet = new HashSet<SrPrioridadeSolicitacao>();
+    @OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "lista", fetch = FetchType.LAZY)
+    private Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet = new HashSet<SrPrioridadeSolicitacao>();
 
     @ManyToOne()
     @JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
     private SrLista listaInicial;
 
-    @OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
     // @OrderBy("hisDtIni desc")
-    public List<SrLista> meuListaHistoricoSet;
+    @OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
+    private List<SrLista> meuListaHistoricoSet;
 
     public static List<SrLista> listar(boolean mostrarDesativado) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if (!mostrarDesativado)
             sb.append(" hisDtFim is null ");
@@ -120,11 +120,11 @@ public class SrLista extends HistoricoSuporteVraptor {
 
     @Override
     public Long getId() {
-        return this.idLista;
+        return this.getIdLista();
     }
 
     public void setId(Long id) {
-        idLista = id;
+        setIdLista(id);
     }
 
     @Override
@@ -133,8 +133,8 @@ public class SrLista extends HistoricoSuporteVraptor {
     }
 
     public List<SrLista> getHistoricoLista() {
-        if (listaInicial != null)
-            return listaInicial.meuListaHistoricoSet;
+        if (getListaInicial() != null)
+            return getListaInicial().getMeuListaHistoricoSet();
         return null;
     }
 
@@ -157,32 +157,32 @@ public class SrLista extends HistoricoSuporteVraptor {
 
     public Set<SrPrioridadeSolicitacao> getPrioridadeSolicitacaoSet(boolean ordemCrescente) {
         TreeSet<SrPrioridadeSolicitacao> listaCompleta = new TreeSet<SrPrioridadeSolicitacao>(new SrPrioridadeSolicitacaoComparator(ordemCrescente));
-        if (listaInicial != null)
+        if (getListaInicial() != null)
             for (SrLista lista : getHistoricoLista())
-                if (lista.meuPrioridadeSolicitacaoSet != null)
-                    for (SrPrioridadeSolicitacao prioridadeSolicitacao : lista.meuPrioridadeSolicitacaoSet)
+                if (lista.getMeuPrioridadeSolicitacaoSet() != null)
+                    for (SrPrioridadeSolicitacao prioridadeSolicitacao : lista.getMeuPrioridadeSolicitacaoSet())
                         listaCompleta.add(prioridadeSolicitacao);
         return listaCompleta;
     }
 
     public boolean podeEditar(DpLotacao lotaTitular, DpPessoa pess) {
-        return (lotaTitular.equivale(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
+        return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
     }
 
     public boolean podeIncluir(DpLotacao lotaTitular, DpPessoa pess) {
-        return (lotaTitular.equivale(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.INCLUSAO);
+        return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.INCLUSAO);
     }
 
     public boolean podeConsultar(DpLotacao lotaTitular, DpPessoa pess) {
-        return (lotaTitular.equivale(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
+        return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
     }
 
     public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
-        return (lotaTitular.equivale(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
+        return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
     }
 
     public boolean podePriorizar(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
-        return (lotaTitular.equivale(lotaCadastrante)) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.PRIORIZACAO);
+        return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.PRIORIZACAO);
     }
 
     private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, Long tipoPermissaoLista) {
@@ -255,7 +255,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 
         for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
             if (!prioridadeSolicitacao.getSolicitacao().isEmLista(this))
-                throw new IllegalArgumentException("A solicita√ß√£o " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " n√£o faz parte da lista");
+                throw new IllegalArgumentException("A solicitaÁ„o " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " n„o faz parte da lista");
 
             AtualizacaoLista atualizacaoLista = atualizacoesAgrupadas.get(prioridadeSolicitacao.getId());
             if (atualizacaoLista != null) {
@@ -294,7 +294,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 
     public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {
         if (!podeConsultar(lotacao, cadastrante)) {
-            throw new Exception("Exibi√ß√£o n√£o permitida");
+            throw new Exception("ExibiÁ„o n„o permitida");
         }
     }
 
@@ -318,7 +318,7 @@ public class SrLista extends HistoricoSuporteVraptor {
             }
         }
         prioridadeSolicitacao.setNumPosicao(posicao);
-        meuPrioridadeSolicitacaoSet.add(prioridadeSolicitacao);
+        getMeuPrioridadeSolicitacaoSet().add(prioridadeSolicitacao);
         prioridadeSolicitacao.salvar();
     }
 
@@ -343,84 +343,83 @@ public class SrLista extends HistoricoSuporteVraptor {
 
     private void excluir(SrPrioridadeSolicitacao prioridadeSolicitacao) {
         for (SrLista listaHistorico : getHistoricoLista()) {
-            boolean removido = listaHistorico.meuPrioridadeSolicitacaoSet.remove(prioridadeSolicitacao);
+            boolean removido = listaHistorico.getMeuPrioridadeSolicitacaoSet().remove(prioridadeSolicitacao);
 
             if (removido) {
                 break;
             }
         }
     }
-    
+
     public Long getIdLista() {
-		return idLista;
-	}
+        return idLista;
+    }
 
-	public void setIdLista(Long idLista) {
-		this.idLista = idLista;
-	}
+    public void setIdLista(Long idLista) {
+        this.idLista = idLista;
+    }
 
-	public String getNomeLista() {
-		return nomeLista;
-	}
+    public String getNomeLista() {
+        return nomeLista;
+    }
 
-	public void setNomeLista(String nomeLista) {
-		this.nomeLista = nomeLista;
-	}
+    public void setNomeLista(String nomeLista) {
+        this.nomeLista = nomeLista;
+    }
 
-	public String getDescrAbrangencia() {
-		return descrAbrangencia;
-	}
+    public String getDescrAbrangencia() {
+        return descrAbrangencia;
+    }
 
-	public void setDescrAbrangencia(String descrAbrangencia) {
-		this.descrAbrangencia = descrAbrangencia;
-	}
+    public void setDescrAbrangencia(String descrAbrangencia) {
+        this.descrAbrangencia = descrAbrangencia;
+    }
 
-	public String getDescrJustificativa() {
-		return descrJustificativa;
-	}
+    public String getDescrJustificativa() {
+        return descrJustificativa;
+    }
 
-	public void setDescrJustificativa(String descrJustificativa) {
-		this.descrJustificativa = descrJustificativa;
-	}
+    public void setDescrJustificativa(String descrJustificativa) {
+        this.descrJustificativa = descrJustificativa;
+    }
 
-	public String getDescrPriorizacao() {
-		return descrPriorizacao;
-	}
+    public String getDescrPriorizacao() {
+        return descrPriorizacao;
+    }
 
-	public void setDescrPriorizacao(String descrPriorizacao) {
-		this.descrPriorizacao = descrPriorizacao;
-	}
+    public void setDescrPriorizacao(String descrPriorizacao) {
+        this.descrPriorizacao = descrPriorizacao;
+    }
 
-	public DpLotacao getLotaCadastrante() {
-		return lotaCadastrante;
-	}
+    public DpLotacao getLotaCadastrante() {
+        return lotaCadastrante;
+    }
 
-	public void setLotaCadastrante(DpLotacao lotaCadastrante) {
-		this.lotaCadastrante = lotaCadastrante;
-	}
+    public void setLotaCadastrante(DpLotacao lotaCadastrante) {
+        this.lotaCadastrante = lotaCadastrante;
+    }
 
-	public Set<SrPrioridadeSolicitacao> getMeuPrioridadeSolicitacaoSet() {
-		return meuPrioridadeSolicitacaoSet;
-	}
+    public Set<SrPrioridadeSolicitacao> getMeuPrioridadeSolicitacaoSet() {
+        return meuPrioridadeSolicitacaoSet;
+    }
 
-	public void setMeuPrioridadeSolicitacaoSet(
-			Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet) {
-		this.meuPrioridadeSolicitacaoSet = meuPrioridadeSolicitacaoSet;
-	}
+    public void setMeuPrioridadeSolicitacaoSet(Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet) {
+        this.meuPrioridadeSolicitacaoSet = meuPrioridadeSolicitacaoSet;
+    }
 
-	public SrLista getListaInicial() {
-		return listaInicial;
-	}
+    public SrLista getListaInicial() {
+        return listaInicial;
+    }
 
-	public void setListaInicial(SrLista listaInicial) {
-		this.listaInicial = listaInicial;
-	}
+    public void setListaInicial(SrLista listaInicial) {
+        this.listaInicial = listaInicial;
+    }
 
-	public List<SrLista> getMeuListaHistoricoSet() {
-		return meuListaHistoricoSet;
-	}
+    public List<SrLista> getMeuListaHistoricoSet() {
+        return meuListaHistoricoSet;
+    }
 
-	public void setMeuListaHistoricoSet(List<SrLista> meuListaHistoricoSet) {
-		this.meuListaHistoricoSet = meuListaHistoricoSet;
-	}    
+    public void setMeuListaHistoricoSet(List<SrLista> meuListaHistoricoSet) {
+        this.meuListaHistoricoSet = meuListaHistoricoSet;
+    }
 }

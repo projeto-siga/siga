@@ -3,8 +3,6 @@
 
 <siga:pagina titulo="Acordos">
 
-	<jsp:include page="../main.jsp"></jsp:include>
-
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
@@ -15,7 +13,9 @@
     <script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
-	
+
+    <jsp:include page="../main.jsp"></jsp:include>
+    
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
 			<h2>Acordos</h2>
@@ -275,7 +275,6 @@
 	}
 
 	function carregarAbrangenciasAcordo(id) {
-		tableAssociacao.api().clear().draw();
 
 		if (id) {
 			$.ajax({
@@ -291,9 +290,16 @@
 	        	}
 	       	});
 		}
+		else {
+			associacaoTable.clear();
+		}
     }
 
 	acordoService.populateFromJSonList = function(listaJSon, dataTable) {
+		this.limparDadosAssociacoes();
+
+		var table = associacaoTable.table;
+		
 		for (var i = 0; i < listaJSon.length; i++) {
 			var abrangencia = listaJSon[i];
 				row = [
@@ -313,29 +319,84 @@
 		          		abrangencia.descPrioridade ? abrangencia.descPrioridade : '',
 				        abrangencia.idConfiguracao,												// colunas.idAssociacao
 				        abrangencia.hisIdIni,													// colunas.idAssociacao
-						'',																		// colunas.botaoExcluir
-				        abrangencia																// colunas.jSon
+						'COLUNA_ACOES',															// colunas.botaoExcluir
+				        JSON.stringify(abrangencia)												// colunas.jSon
 		   			];
 
-				
-	        row[colunasAssociacao.botaoExcluir] = acordoService.conteudoColunaAcao(abrangencia);
-	        var tr = tableAssociacao.api().row.add(row).draw().node();
+			var tr = TableHelper.criarTd(row);
+            
+            acordoService.adicionarFuncionalidadesNaLinhaDeAssociacao(tr, abrangencia, row);
+            table.append(tr);
+
             if (!abrangencia.ativo) {
                 $('td', $(tr)).addClass('item-desativado');
-                $('td:last', $(tr)).html(' ');
             }    
 	    	
 		}
+		acordoService.configurarAssociacaoDataTable();
 	}
 
+    acordoService.adicionarFuncionalidadesNaLinhaDeAssociacao = function(node, assoc, row) {
+        node.data('json', assoc);
+        node.data('json-id', assoc.idConfiguracao);
+        node.attr('data-json', JSON.stringify(assoc));
+        node.attr('data-json-id', assoc.idConfiguracao);
+        node.find('td:first').addClass('details-control');
+
+        var indiceAcoes = this.indiceAcoes(node),
+            tdAcoes = node.find('td:nth(' + indiceAcoes + ')').addClass('acoes');
+        tdAcoes.html(acordoService.conteudoColunaAcao(assoc));
+        
+        node.on('click', function() {
+        	var associacao = node.data('json');
+        	associacaoTable.table.find('.selected').removeClass('selected');
+        	node.addClass('selected');
+        	
+            row[colunasAssociacao.jSon] = JSON.stringify(associacao);
+            atualizarAssociacaoModal(row, associacao);
+            associacaoModalAbrir(true);
+        });
+    }
+	
+    acordoService.configurarAssociacaoDataTable = function() {
+    	associacaoTable = new SigaTable('#associacao_table')
+            .configurar("columnDefs", [{
+            	"targets": [colunasAssociacao.idOrgao, 
+                            colunasAssociacao.idLocal, 
+                            colunasAssociacao.tipoSolicitante, 
+                            colunasAssociacao.idSolicitante, 
+                            colunasAssociacao.descricaoSolicitante, 
+                            colunasAssociacao.idAtendente, 
+                            colunasAssociacao.idPrioridade, 
+                            colunasAssociacao.descricaoAtendente, 
+                            colunasAssociacao.idAssociacao,
+                            colunasAssociacao.hisIdIni,
+                            colunasAssociacao.jSon],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [colunasAssociacao.botaoExpandir],
+                "sortable": false,
+                "searchable" : false
+            }])
+            .configurar("fnRowCallback", associacaoRowCallback)
+            .criar()
+            .detalhes(detalhesListaAssociacao);
+    }
+
+    acordoService.limparDadosAssociacoes = function() {
+        if(associacaoTable) {
+            associacaoTable.destruir();
+        }
+    }
+	
 	acordoService.conteudoColunaAcao = function(abrangencia){
         if (abrangencia.ativo) {          
-            return '<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-					'<a class="once desassociar" onclick="desassociar(event, ' + abrangencia.idConfiguracao + ')" title="Remover permiss&atilde;o">' +
+            return '<a class="once desassociar" onclick="desassociar(event, ' + abrangencia.idConfiguracao + ')" title="Remover permiss&atilde;o">' +
 					'<input class="idAssociacao" type="hidden" value="'+abrangencia.idConfiguracao+'"/>' +
 					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
-					'</a>' +	
-					'</td>';
+					'</a>';	
         }
         return ' ';
 	}	

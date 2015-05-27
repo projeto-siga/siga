@@ -67,7 +67,7 @@ public class SrLista extends HistoricoSuporteVraptor {
     @Column(name = "ID_LISTA")
     private Long idLista;
 
-    @Column(name = "NOME_LISTA")
+	@Column(name = "NOME_LISTA")
     private String nomeLista;
 
     @Lob

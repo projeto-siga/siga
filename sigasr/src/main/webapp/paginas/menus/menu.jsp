@@ -10,7 +10,7 @@
 
 <li><a href="#">Prioriza&ccedil;&atilde;o</a>
 	<ul>
-		<li><a href="@{Application.listarLista}">Lista de Prioridade</a></li>
+		<li><a href="${linkTo[SolicitacaoController].listarLista[false]}">Lista de Prioridade</a></li>
 	</ul>
 </li>
 	

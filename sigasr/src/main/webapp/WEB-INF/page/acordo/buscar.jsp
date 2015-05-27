@@ -244,6 +244,14 @@
             error: baseService.errorHandler
         });
     }
+
+    acordoService.onGravar = function(obj, objSalvo) {
+        var row = BaseService.prototype.onGravar.call(this, obj, objSalvo);
+        var tr = $(row);
+        tr.attr('onclick','').unbind('click');
+        tr.off('click');
+        tr.attr('onclick', 'javascript:opener.retorna_${propriedade}("'+objSalvo.id+'","'+objSalvo.nomeAcordo+'","'+objSalvo.descrAcordo+'");window.close()');
+    }
     
     /**
      * Customiza o metodo editar

@@ -1,4 +1,4 @@
-
+Ôªø
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -49,7 +49,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 public class ExEmailNotificacaoController extends SigaController{
 
 	private static final Logger LOGGER = Logger.getLogger(ExEmailNotificacaoController.class);
-	private static final String VERIFICADOR_ACESSO = "DOC:MÛdulo de Documentos;FE:Ferramentas;EMAIL:Email de NotificaÁ„o";
+	private static final String VERIFICADOR_ACESSO = "DOC:M√≥dulo de Documentos;FE:Ferramentas;EMAIL:Email de Notifica√ß√£o";
 
 	public ExEmailNotificacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
@@ -92,10 +92,10 @@ public class ExEmailNotificacaoController extends SigaController{
 				dao().commitTransacao();				
 			} catch (final Exception e) {
 				dao().rollbackTransacao();
-				throw new AplicacaoException("Erro na exclus„o do email", 0, e);
+				throw new AplicacaoException("Erro na exclus√£o do email", 0, e);
 			}
 		} else
-			throw new AplicacaoException("ID n„o informada");
+			throw new AplicacaoException("ID n√£o informada");
 		result.redirectTo(ExEmailNotificacaoController.class).lista();
 	}
 		
@@ -143,7 +143,7 @@ public class ExEmailNotificacaoController extends SigaController{
 			dao().commitTransacao();			
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na gravaÁ„o", 0, e);
+			throw new AplicacaoException("Erro na grava√ß√£o", 0, e);
 		}
 		
 		result.redirectTo(ExEmailNotificacaoController.class).lista();
@@ -156,14 +156,14 @@ public class ExEmailNotificacaoController extends SigaController{
 		switch (tipoEmail) {
 			case 2 :
 				if (pessEmailSel.buscarObjeto() == null) {
-					throw new AplicacaoException("Preencha Tipo de interessado na movimentaÁ„o"); 
+					throw new AplicacaoException("Preencha Tipo de interessado na movimenta√ß√£o"); 
 				}
 				DpPessoa pessoaEmail = pessEmailSel.buscarObjeto();
 				exEmail.setPessoaEmail(pessoaEmail.getPessoaInicial());
 				break;
 			case 3 :
 				if (lotaEmailSel.buscarObjeto() == null) {
-					throw new AplicacaoException("Preencha Tipo de interessado na movimentaÁ„o"); 
+					throw new AplicacaoException("Preencha Tipo de interessado na movimenta√ß√£o"); 
 				}
 				DpLotacao lotacaoEmail = lotaEmailSel.buscarObjeto();
 				exEmail.setLotacaoEmail(lotacaoEmail.getLotacaoInicial()); 
@@ -177,12 +177,12 @@ public class ExEmailNotificacaoController extends SigaController{
 			final DpPessoaSelecao pessSel, final Integer tipoDest,
 			final ExEmailNotificacao exEmail) {
 		if (pessSel.buscarObjeto() == null && lotaSel.buscarObjeto() == null) {
-			throw new AplicacaoException("Preencha Tipo de destinat·rio da movimentaÁ„o");
+			throw new AplicacaoException("Preencha Tipo de destinat√°rio da movimenta√ß√£o");
 		}
 		if (tipoDest == 1) {
 			DpPessoa dpPessoa = pessSel.buscarObjeto();
 			exEmail.setDpPessoa(dpPessoa.getPessoaInicial());
-		} else { /* destinat·rio da movimentaÁ„o È uma lotaÁ„o */
+		} else { /* destinat√°rio da movimenta√ß√£o √© uma lota√ß√£o */
 			DpLotacao dpLotacao = lotaSel.buscarObjeto();
 			exEmail.setDpLotacao(dpLotacao.getLotacaoInicial());			
 		}
@@ -190,16 +190,16 @@ public class ExEmailNotificacaoController extends SigaController{
 
 	private Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "MatrÌcula");
-		map.put(2, "”rg„o Integrado");
+		map.put(1, "Matr√≠cula");
+		map.put(2, "√ìrg√£o Integrado");
 		return map;
 	}
 	
 	private Map<Integer, String> getListaTipoEmail() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Default");
-		map.put(2, "MatrÌcula");
-		map.put(3, "”rg„o Integrado");		
+		map.put(2, "Matr√≠cula");
+		map.put(3, "√ìrg√£o Integrado");		
 		map.put(4, "Email");
 		return map;
 	}

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -21,7 +21,7 @@
 			</tr>
 			<tr>
 				<td style="width: 10%;">
-				   <input type="radio" name="ordenar" value="descricao" onclick="this.form.submit();">Descrição<br>
+				   <input type="radio" name="ordenar" value="descricao" onclick="this.form.submit();">DescriÃ§Ã£o<br>
 				</td>
 				<td>
 				   <input type="radio" name="ordenar" value="sigla" onclick="this.form.submit();">Sigla
@@ -36,7 +36,7 @@
 	<table class="gt-table" width="100%">
 	<thead>
 		<tr class="header">
-			<th>Descrição</th>
+			<th>DescriÃ§Ã£o</th>
 			<th>Sigla</th>
 			<th>Tipo</th>
             <th>Origem</th>

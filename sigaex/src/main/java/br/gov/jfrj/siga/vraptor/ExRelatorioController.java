@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -122,7 +122,7 @@ public class ExRelatorioController extends ExController {
 		} else if (nomeArquivoRel.equals("relTipoDoc.jsp")) {
 			fazerResultsParaRelTipoDoc(lotacaoDestinatarioSel);
 		} else {
-			throw new AplicacaoException("Modelo de relatÛrio n„o definido!");
+			throw new AplicacaoException("Modelo de relat√≥rio n√£o definido!");
 		}
 	}
 
@@ -234,7 +234,7 @@ public class ExRelatorioController extends ExController {
 	public Download aRelFormularios(final String secaoUsuario, final String orgaoUsuario, final String lotacaoTitular, final String idTit,
 			final String nomeArquivoRel) throws Exception {
 
-		assertAcesso("FORMS:RelaÁ„o de formul·rios");
+		assertAcesso("FORMS:Rela√ß√£o de formul√°rios");
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 		parametros.put("secaoUsuario", secaoUsuario);
@@ -263,17 +263,17 @@ public class ExRelatorioController extends ExController {
 			final DpLotacao lota = dao().consultar(lotacaoDestinatarioSel.getId(), DpLotacao.class, false);
 
 			if (lota == null) {
-				throw new AplicacaoException("LotaÁ„o inexistente");
+				throw new AplicacaoException("Lota√ß√£o inexistente");
 			}
 
 			parameters.put("lotacao", lota.getIdLotacao().toString());
 			parameters.put("siglalotacao", lota.getSiglaLotacao());
 		} else {
-			throw new AplicacaoException("LotaÁ„o n„o informada");
+			throw new AplicacaoException("Lota√ß√£o n√£o informada");
 		}
 
 		if (dataInicio.equals("") || dataFim.equals("")) {
-			throw new AplicacaoException("Data n„o informada");
+			throw new AplicacaoException("Data n√£o informada");
 		}
 
 		final SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");
@@ -281,7 +281,7 @@ public class ExRelatorioController extends ExController {
 		java.util.Date dataF = formatador.parse(dataFim);
 
 		if (dataI.after(dataF)) {
-			throw new AplicacaoException("Data informada n„o È v·lida");
+			throw new AplicacaoException("Data informada n√£o √© v√°lida");
 		}
 
 		final InputStream inputStream = aGeraRelatorio(parameters);
@@ -307,7 +307,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelDocumentosSubordinados")
 	public Download aRelDocumentosSubordinados() throws Exception {
-		assertAcesso("SUBORD:RelatÛrio de documentos em setores subordinados");
+		assertAcesso("SUBORD:Relat√≥rio de documentos em setores subordinados");
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
@@ -331,7 +331,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelMovDocsSubordinados")
 	public Download aRelMovDocumentosSubordinados() throws Exception {
-		assertAcesso("MVSUB:RelatÛrio de movimentaÁ„o de documentos em setores subordinados");
+		assertAcesso("MVSUB:Relat√≥rio de movimenta√ß√£o de documentos em setores subordinados");
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
@@ -355,7 +355,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelDocsSubCriados")
 	public Download aRelDocsSubCriados() throws Exception {
-		assertAcesso("CRSUB:RelatÛrio de criaÁ„o de documentos em setores subordinados");
+		assertAcesso("CRSUB:Relat√≥rio de cria√ß√£o de documentos em setores subordinados");
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
@@ -390,13 +390,13 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelDocEntreDatas")
 	public Download aRelDocEntreDatas() throws Exception {
-		assertAcesso("DATAS:RelaÁ„o de documentos entre datas");
+		assertAcesso("DATAS:Rela√ß√£o de documentos entre datas");
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatÛrio retornar· muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception("O relat√≥rio retornar√° muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
@@ -421,13 +421,13 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelMovimentacao")
 	public Download aRelMovimentacao() throws Exception {
-		assertAcesso("DATAS:RelaÁ„o de documentos entre datas");
+		assertAcesso("DATAS:Rela√ß√£o de documentos entre datas");
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatÛrio retornar· muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception("O relat√≥rio retornar√° muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
@@ -452,13 +452,13 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelMovCad")
 	public Download aRelMovCad() throws Exception {
-		assertAcesso("MOVCAD:RelaÁ„o de movimentaÁıes por cadastrante");
+		assertAcesso("MOVCAD:Rela√ß√£o de movimenta√ß√µes por cadastrante");
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatÛrio retornar· muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception("O relat√≥rio retornar√° muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
@@ -483,13 +483,13 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelOrgao")
 	public Download aRelOrgao() throws Exception {
-		assertAcesso("DATAS:RelaÁ„o de documentos entre datas");
+		assertAcesso("DATAS:Rela√ß√£o de documentos entre datas");
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatÛrio retornar· muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception("O relat√≥rio retornar√° muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
@@ -516,13 +516,13 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelTipoDoc")
 	public Download aRelTipoDoc() throws Exception {
-		assertAcesso("DATAS:RelaÁ„o de documentos entre datas");
+		assertAcesso("DATAS:Rela√ß√£o de documentos entre datas");
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatÛrio retornar· muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception("O relat√≥rio retornar√° muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
@@ -546,13 +546,13 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelMovProcesso")
 	public Download aRelMovProcesso() throws Exception {
-		assertAcesso("RELMVP:RelaÁ„o de movimentaÁıes de processos");
+		assertAcesso("RELMVP:Rela√ß√£o de movimenta√ß√µes de processos");
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatÛrio retornar· muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception("O relat√≥rio retornar√° muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
@@ -574,7 +574,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/aRelClassificacao")
 	public Download aRelClassificacao() throws Exception {
-		assertAcesso("CLSD:ClassificaÁ„o Documental;CLASS:RelaÁ„o de classificaÁıes");
+		assertAcesso("CLSD:Classifica√ß√£o Documental;CLASS:Rela√ß√£o de classifica√ß√µes");
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 		parametros.put("codificacao", getRequest().getParameter("codificacao"));
@@ -589,7 +589,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelClassDocDocumentos")
 	public Download aRelClassDocDocumentos() throws Exception {
-		assertAcesso("CLSD:ClassificaÁ„o Documental;DOCS:RelaÁ„o de documentos classificados");
+		assertAcesso("CLSD:Classifica√ß√£o Documental;DOCS:Rela√ß√£o de documentos classificados");
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 		String codificacao = getRequest().getParameter("codificacao");
@@ -598,7 +598,7 @@ public class ExRelatorioController extends ExController {
 		String secaoUsuario = getRequest().getParameter("secaoUsuario");
 
 		if ((codificacao == null || codificacao.length() == 0) && (idLotacao == null || idLotacao.length() == 0)) {
-			throw new AplicacaoException("Especifique pelo menos um dos par‚metros!");
+			throw new AplicacaoException("Especifique pelo menos um dos par√¢metros!");
 		}
 
 		parametros.put("codificacao", codificacao);
@@ -614,7 +614,7 @@ public class ExRelatorioController extends ExController {
 	}
 
 	protected void assertAcesso(final String pathServico) {
-		super.assertAcesso("REL:Gerar relatÛrios;" + pathServico);
+		super.assertAcesso("REL:Gerar relat√≥rios;" + pathServico);
 	}
 
 	private String getMascaraEntrada() {

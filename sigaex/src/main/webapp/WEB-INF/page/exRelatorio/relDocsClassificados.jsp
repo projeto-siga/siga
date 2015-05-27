@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+Ôªø<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -15,12 +15,12 @@
 <input id="mask_out" type="hidden" value="${mascaraSaida}">
 <input id="mask_js" type="hidden" value="${mascaraJavascript}">
 
-<c:set var="titulo_pagina" scope="request">RelatÛrio de ClassificaÁ„o Documental</c:set>
+<c:set var="titulo_pagina" scope="request">Relat√≥rio de Classifica√ß√£o Documental</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
 
 <tr>
 	<td width="30%">
-		LotaÁ„o:
+		Lota√ß√£o:
 	</td>
 	<td>
 		<siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/>
@@ -28,7 +28,7 @@
 </tr>
 <tr>
 	<td>
-		Sub·rvore da ClassificaÁ„o documental (opcional):
+		Sub√°rvore da Classifica√ß√£o documental (opcional):
 	</td>
 	<td>
 		<input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)"/>

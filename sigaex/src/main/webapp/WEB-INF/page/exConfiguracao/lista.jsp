@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Lista Configurações">
+<siga:pagina titulo="Lista ConfiguraÃ§Ãµes">
 
 <script type="text/javascript">
 	function sbmt(id, action) {
@@ -32,7 +32,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 
-			<h2>Configurações Cadastradas</h2>
+			<h2>ConfiguraÃ§Ãµes Cadastradas</h2>
 
 			<div class="gt-content-box gt-for-table">
 				<input type="hidden" name="postback" value="1" />
@@ -41,11 +41,11 @@
 						<td colspan="2">Dados da Pesquisa</td>
 					</tr>
 					<tr>
-						<td><b>Tipo de Configuração</b> 
+						<td><b>Tipo de ConfiguraÃ§Ã£o</b> 
 								<siga:select name="idTpConfiguracao"
 									list="listaTiposConfiguracao" listKey="idTpConfiguracao"
 									id="idTpConfiguracao" headerValue="[Indefinido]" headerKey="0"
-									listValue="dscTpConfiguracao" theme="simple" /> <b>Órgão</b> 
+									listValue="dscTpConfiguracao" theme="simple" /> <b>Ã“rgÃ£o</b> 
 								<siga:select
 									name="idOrgaoUsu" list="orgaosUsu" listKey="idOrgaoUsu"
 									listValue="nmOrgaoUsu" theme="simple" headerValue="[Todos]"
@@ -55,7 +55,7 @@
 						<td><input type="button" value="Pesquisar"
 							class="gt-btn-medium gt-btn-left"
 							onclick="javascript:montaTableCadastradas();" /> <input
-							type="button" value="Incluir Configuração"
+							type="button" value="Incluir ConfiguraÃ§Ã£o"
 							class="gt-btn-large gt-btn-left"
 							onclick="javascript:window.location.href='editar'"></td>
 					</tr>

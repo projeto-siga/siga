@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -80,7 +80,7 @@ public class ExTipoDespachoController extends ExController {
 				result.redirectTo(this).lista();
 			} catch (Exception e) {
 				dao().rollbackTransacao();
-				throw new AplicacaoException("Ocorreu um Erro durante a remoção.", 0, e);
+				throw new AplicacaoException("Ocorreu um Erro durante a remoÃ§Ã£o.", 0, e);
 			}
 		}
 	}
@@ -100,7 +100,7 @@ public class ExTipoDespachoController extends ExController {
 			result.redirectTo(this).lista();
 		} catch (Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("Ocorreu um Erro durante a gravação", 0, e);
+			throw new AplicacaoException("Ocorreu um Erro durante a gravaÃ§Ã£o", 0, e);
 		}
 
 	}

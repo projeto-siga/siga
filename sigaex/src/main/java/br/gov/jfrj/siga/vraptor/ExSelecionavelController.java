@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -51,8 +51,8 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "MatrÌcula");
-		map.put(2, "”rg„o Integrado");
+		map.put(1, "Matr√≠cula");
+		map.put(2, "√ìrg√£o Integrado");
 		return map;
 	}
 
@@ -61,6 +61,6 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 	}
 
 	protected void assertAcesso(final String pathServico) {
-		super.assertAcesso("DOC:MÛdulo de Documentos;" + pathServico);
+		super.assertAcesso("DOC:M√≥dulo de Documentos;" + pathServico);
 	}
 }

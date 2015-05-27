@@ -1,18 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+Ôªø<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=iso-8859-1"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="MovimentaÁ„o">
+<siga:pagina titulo="Movimenta√ß√£o">
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
 	</c:if>
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Cancelamento de MovimentaÁ„o - ${mob.siglaEDescricaoCompleta}</h2>
+			<h2>Cancelamento de Movimenta√ß√£o - ${mob.siglaEDescricaoCompleta}</h2>
 			<div class="gt-content-box gt-for-table">
 				<form action="${request.contextPath}/app/expediente/mov/cancelar_movimentacao_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
@@ -30,7 +30,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td>Respons·vel (Opcional):</td>
+							<td>Respons√°vel (Opcional):</td>
 							<td>
 								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>&nbsp;
 								<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" />&nbsp;Substituto

@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -92,7 +92,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 
 	@Get("app/expediente/classificacao/listar")
 	public void lista() {
-		assertAcesso("DOC:MÛdulo de Documentos;FE:Ferramentas;PC:Plano de ClassificaÁ„o");
+		assertAcesso("DOC:M√≥dulo de Documentos;FE:Ferramentas;PC:Plano de Classifica√ß√£o");
 		result.include("classificacaoVigente", getClassificacaoVigente());
 	}
 	
@@ -138,7 +138,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 
 	@Get("app/expediente/classificacao/editar")
 	public ExClassificacao edita(ExClassificacao exClassificacao, String codificacao, String acao) throws Exception {
-		assertAcesso("DOC:MÛdulo de Documentos;FE:Ferramentas;PC:Plano de ClassificaÁ„o");
+		assertAcesso("DOC:M√≥dulo de Documentos;FE:Ferramentas;PC:Plano de Classifica√ß√£o");
 		ExClassificacao exClass = null;
 		if (codificacao != null && exClassificacao == null) {
 			exClass = buscarExClassificacao(codificacao);
@@ -148,7 +148,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 		
 		if (exClass == null && !acao.equals("nova_classificacao")) {
 			throw new AplicacaoException(
-					"A classificaÁ„o documental n„o est· disponÌvel: "+ codificacao);
+					"A classifica√ß√£o documental n√£o est√° dispon√≠vel: "+ codificacao);
 		}
 		
 		result.include("listaExTipoDestinacao", getListaExTipoDestinacao());
@@ -166,16 +166,16 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 	}
 	@Get("app/expediente/classificacao/gravar")
 	public void gravar(ExClassificacao exClassificacao, String codificacaoAntiga, String acao) throws Exception {
-		assertAcesso("DOC:MÛdulo de Documentos;FE:Ferramentas;PC:Plano de ClassificaÁ„o");
+		assertAcesso("DOC:M√≥dulo de Documentos;FE:Ferramentas;PC:Plano de Classifica√ß√£o");
 		
 		if (exClassificacao.getCodificacao().length() == 0 || exClassificacao.getDescrClassificacao().length() == 0) {
-			throw new AplicacaoException("Preencha o cÛdigo da classificaÁ„o e a descriÁ„o!");
+			throw new AplicacaoException("Preencha o c√≥digo da classifica√ß√£o e a descri√ß√£o!");
 		}
 
 		if (acao.equals("nova_classificacao")) {
 			ExClassificacao exClassExistente = buscarExClassificacao(exClassificacao.getCodificacao());
 			if (exClassExistente != null) {
-				throw new AplicacaoException("A classificaÁ„o documental j· existe: "+ exClassExistente.getCodificacao());
+				throw new AplicacaoException("A classifica√ß√£o documental j√° existe: "+ exClassExistente.getCodificacao());
 			}
 		}
 		
@@ -183,7 +183,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 		try{
 
 			if (exClassificacao.getCodificacao().length() == 0 || exClassificacao.getDescrClassificacao().length() == 0) {
-				throw new AplicacaoException("Preencha o cÛdigo da classificaÁ„o e a descriÁ„o!");
+				throw new AplicacaoException("Preencha o c√≥digo da classifica√ß√£o e a descri√ß√£o!");
 			}
 	
 			if (acao.equals("nova_classificacao")) {
@@ -211,17 +211,17 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			}
 	
 			dao().commitTransacao();
-			setMensagem("ClassificaÁ„o salva!");
+			setMensagem("Classifica√ß√£o salva!");
 			result.redirectTo("editar?codificacao="+exClassificacao.getCodificacao()+"&acao=editar_classificacao");
 		} catch (Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("N„o foi possÌvel gravar classificaÁ„o no banco de dados."+e.getMessage());			
+			throw new AplicacaoException("N√£o foi poss√≠vel gravar classifica√ß√£o no banco de dados."+e.getMessage());			
 		}			
 	}
 	
 	@Get("app/expediente/classificacao/excluir")
 	public void excluir(String codificacao) throws Exception {
-		assertAcesso("DOC:MÛdulo de Documentos;FE:Ferramentas;PC:Plano de ClassificaÁ„o");
+		assertAcesso("DOC:M√≥dulo de Documentos;FE:Ferramentas;PC:Plano de Classifica√ß√£o");
 		dao().iniciarTransacao();
 		try{		
 			ExClassificacao exClass;
@@ -231,7 +231,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			result.redirectTo(this).lista();
 		} catch (Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("N„o foi possÌvel excluir classificaÁ„o do banco de dados."+e.getMessage());			
+			throw new AplicacaoException("N√£o foi poss√≠vel excluir classifica√ß√£o do banco de dados."+e.getMessage());			
 		}			
 	}
 	
@@ -239,9 +239,9 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 	@Post("app/expediente/classificacao/gravarVia")
 	public void gravarVia(String acao, String codificacao, ExVia via, Long idDestino, Long idTemporalidadeArqCorr,
 			Long idTemporalidadeArqInterm, Long idDestinacaoFinal) throws Exception {
-		assertAcesso("DOC:MÛdulo de Documentos;FE:Ferramentas;PC:Plano de ClassificaÁ„o");
+		assertAcesso("DOC:M√≥dulo de Documentos;FE:Ferramentas;PC:Plano de Classifica√ß√£o");
 		if (idDestino == null || idDestino <= 0) {
-			throw new AplicacaoException("A destinaÁ„o da via deve ser definida!");
+			throw new AplicacaoException("A destina√ß√£o da via deve ser definida!");
 		}
 		dao().iniciarTransacao();
 		try{
@@ -250,7 +250,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 	
 			ExClassificacao exClassAntiga = buscarExClassificacao(codificacao);
 			if (exClassAntiga == null){
-				throw new AplicacaoException("Erro ao obter a classificaÁ„o");
+				throw new AplicacaoException("Erro ao obter a classifica√ß√£o");
 			}
 			ExClassificacao exClassNovo = Ex.getInstance().getBL().getCopia(exClassAntiga);
 			dao().gravarComHistorico(exClassNovo, exClassAntiga, dt,getIdentidadeCadastrante());
@@ -318,13 +318,13 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			result.forwardTo(this).edita(exClassNovo, codificacao, acao);
 		} catch (Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("N„o foi possÌvel gravar via no banco de dados."+e.getMessage());			
+			throw new AplicacaoException("N√£o foi poss√≠vel gravar via no banco de dados."+e.getMessage());			
 		}				
 	}
 
 	@Get("app/expediente/classificacao/excluirVia")
 	public void excluirVia(Long idVia, String codificacao, String acao) throws Exception {
-		assertAcesso("DOC:MÛdulo de Documentos;FE:Ferramentas;PC:Plano de ClassificaÁ„o");
+		assertAcesso("DOC:M√≥dulo de Documentos;FE:Ferramentas;PC:Plano de Classifica√ß√£o");
 		dao().iniciarTransacao();
 		try {
 			ExVia exVia = dao().consultar(idVia, ExVia.class, false);
@@ -332,7 +332,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 	
 			ExClassificacao exClassAntiga = buscarExClassificacao(codificacao);
 			if (exClassAntiga == null){
-				throw new AplicacaoException("Erro ao obter a classificaÁ„o");
+				throw new AplicacaoException("Erro ao obter a classifica√ß√£o");
 			}
 			
 			ExClassificacao exClassNovo = Ex.getInstance().getBL().getCopia(exClassAntiga);
@@ -343,7 +343,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 		
 		} catch (Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("N„o foi possÌvel excluir via do banco de dados."+e.getMessage());			
+			throw new AplicacaoException("N√£o foi poss√≠vel excluir via do banco de dados."+e.getMessage());			
 		}		
 		result.redirectTo("editar?codificacao="+codificacao+"&acao="+acao);
 	}	
@@ -409,7 +409,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			return ExDao.getInstance().listarExClassificacaoPorNivel(MascaraUtil.getInstance().getMscTodosDoNivel(1));
 		}
 
-		// se lista do nÌvel anterior est· definido, carrega lista baseando-se
+		// se lista do n√≠vel anterior est√° definido, carrega lista baseando-se
 		// na anterior
 		String nivelListaAnterior = nivelSelecionado[nivel - 1];
 		if (nivelListaAnterior != null && !nivelListaAnterior.equals("-1")) {

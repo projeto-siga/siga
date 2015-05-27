@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+Ôªøpackage br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
@@ -125,7 +125,7 @@ public class ExAutenticacaoController extends ExController{
 			result.forwardTo(this).arquivoAutenticado(n, answer);
 			return;
 		} else {
-			setMensagem("N„o foi possÌvel fazer o Download do arquivo. Por favor, tente novamente.");
+			setMensagem("N√£o foi poss√≠vel fazer o Download do arquivo. Por favor, tente novamente.");
 		}
 		setDefaultResults();
 	}
@@ -157,7 +157,7 @@ public class ExAutenticacaoController extends ExController{
 				bytes = mov.getConteudoBlobMov2();
 				
 				if (bytes == null){
-					throw new AplicacaoException("Arquivo n„o encontrado para Download.");
+					throw new AplicacaoException("Arquivo n√£o encontrado para Download.");
 				}else{
 					return new ByteArrayDownload(bytes,contentType,fileName,false);					
 				}
@@ -172,7 +172,7 @@ public class ExAutenticacaoController extends ExController{
 					bytes = arq.getPdf();
 				
 				if (bytes == null){
-					throw new AplicacaoException("Arquivo n„o encontrado para Download.");
+					throw new AplicacaoException("Arquivo n√£o encontrado para Download.");
 				}else{
 					return new ByteArrayDownload(bytes,contentType,fileName,false);					
 				}		
@@ -196,7 +196,7 @@ public class ExAutenticacaoController extends ExController{
 		}
 		
 		if (!captcha.isCorrect(answer)) {
-			setMensagem("N„o foi possÌvel fazer o Download do arquivo. Por favor, tente novamente.");
+			setMensagem("N√£o foi poss√≠vel fazer o Download do arquivo. Por favor, tente novamente.");
 		}
 		
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);

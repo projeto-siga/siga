@@ -1,4 +1,4 @@
-<%@ tag body-content="empty"%>
+ï»¿<%@ tag body-content="empty"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ attribute name="conteudo" required="true"%>
 <%@ attribute name="nome" required="true"%>
@@ -64,7 +64,7 @@
 		value="http://${nomeServidorComPorta}/sigaex/XStandard/buttons-pt.xml" />
 	<param name="Icons"
 		value="http://${nomeServidorComPorta}/sigaex/XStandard/icons.xml" />
-	<!-- Ver como coloca português -->
+	<!-- Ver como coloca portuguÃªs -->
 	<param name="Lang" value="pt" />
 	<param name="Localization"
 		value="http://${nomeServidorComPorta}/sigaex/XStandard/localization-pt.xml" />
@@ -84,15 +84,15 @@
 	<param name="ProxySetting" value="platform" />
 	<param name="Debug" value="yes" />
 
-	<!-- Tem duas opções que talvez sejam úteis: PreviewXSLT e ScreenReaderXSLT -->
-	<!-- A opção icons é pros ícones das operações principais. O Placeholders é pros ícones das tags customizadas -->
-	<!-- Ver qual a utilidade desse aqui: param name = EditorCSS --> <!-- Essas abaixo definem os botões em outros modos de visualização 
+	<!-- Tem duas opÃ§Ãµes que talvez sejam Ãºteis: PreviewXSLT e ScreenReaderXSLT -->
+	<!-- A opÃ§Ã£o icons Ã© pros Ã­cones das operaÃ§Ãµes principais. O Placeholders Ã© pros Ã­cones das tags customizadas -->
+	<!-- Ver qual a utilidade desse aqui: param name = EditorCSS --> <!-- Essas abaixo definem os botÃµes em outros modos de visualizaÃ§Ã£o 
 		<param name="ToolbarSource" value="" />
 		<param name="ToolbarPreview" value="" />
 		<param name="ToolbarScreenReader" value="" /> 
 		Talvez CustomInlineElements, CustomBlockElements e CustomEmptyElements sirvam pras tabelas
 		Depois, ver se as integration settings servem pra alguma coisa
-		VER HeartbeatURL e Heartbeat Interval. Parecem ser úteis pra verificar sessão
-		Talvez algumas subs sejam úteis para mudar os contexts menus. Ver na seção Hooks & Extensions
-		Funções TagList, Path e QPath e TagListXML são interessantes
+		VER HeartbeatURL e Heartbeat Interval. Parecem ser Ãºteis pra verificar sessÃ£o
+		Talvez algumas subs sejam Ãºteis para mudar os contexts menus. Ver na seÃ§Ã£o Hooks & Extensions
+		FunÃ§Ãµes TagList, Path e QPath e TagListXML sÃ£o interessantes
 		--> </object>

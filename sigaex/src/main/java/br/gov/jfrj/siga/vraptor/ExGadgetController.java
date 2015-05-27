@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -50,7 +50,7 @@ public class ExGadgetController extends ExController {
 	@Get("app/expediente/gadget")
 	public void execute(final String idTpMarcadorExcluir, final Integer idTpFormaDoc, boolean apenasQuadro) throws Exception {
 		if (idTpFormaDoc == null || idTpFormaDoc.equals(0)) {
-			throw new AplicacaoException("CÛdigo do tipo de marca (Processos ou Expedientes) n„o foi informado");
+			throw new AplicacaoException("C√≥digo do tipo de marca (Processos ou Expedientes) n√£o foi informado");
 		}
 		List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular(), idTpFormaDoc);
 
@@ -71,7 +71,7 @@ public class ExGadgetController extends ExController {
 		}
 
 		if (super.getTitular() == null) {
-			throw new AplicacaoException("Titular nulo, verificar se usu·rio est· ativo no RH");
+			throw new AplicacaoException("Titular nulo, verificar se usu√°rio est√° ativo no RH");
 		}
 
 		super.getRequest().setAttribute("_cadastrante",

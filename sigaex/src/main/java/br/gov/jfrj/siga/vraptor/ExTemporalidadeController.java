@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+Ôªøpackage br.gov.jfrj.siga.vraptor;
 
 import java.util.Date;
 import java.util.List;
@@ -47,7 +47,7 @@ public class ExTemporalidadeController extends ExController {
 		final ExTemporalidade exTemporal = buscarExTemporalidade(idTemporalidade);
 
 		if (exTemporal == null && !"nova_temporalidade".equals(acao)) {
-			throw new AplicacaoException("A temporalidade n„o est· disponÌvel. ID = " + idTemporalidade);
+			throw new AplicacaoException("A temporalidade n√£o est√° dispon√≠vel. ID = " + idTemporalidade);
 		}
 
 		final List<CpUnidadeMedida> listaCpUnidade = ExDao.getInstance().listarUnidadesMedida();
@@ -66,13 +66,13 @@ public class ExTemporalidadeController extends ExController {
 		}
 
 		if (descTemporalidade == null || descTemporalidade.trim().length() == 0) {
-			throw new AplicacaoException("VocÍ deve especificar uma descriÁ„o!");
+			throw new AplicacaoException("Voc√™ deve especificar uma descri√ß√£o!");
 		}
 		if ((valorTemporalidade != null && valorTemporalidade >= 0) && idCpUnidade <= 0) {
-			throw new AplicacaoException("VocÍ deve especificar a unidade de medida do valor informado!");
+			throw new AplicacaoException("Voc√™ deve especificar a unidade de medida do valor informado!");
 		}
 		if ((valorTemporalidade == null || valorTemporalidade <= 0) && idCpUnidade > 0) {
-			throw new AplicacaoException("VocÍ deve especificar um valor para a unidade de medida informada!");
+			throw new AplicacaoException("Voc√™ deve especificar um valor para a unidade de medida informada!");
 		}
 
 		ModeloDao.iniciarTransacao();
@@ -80,7 +80,7 @@ public class ExTemporalidadeController extends ExController {
 		ExTemporalidade exTemporal = buscarExTemporalidade(idTemporalidade);
 		if ("nova_temporalidade".equals(acao)) {
 			if (exTemporal != null) {
-				throw new AplicacaoException("A temporalidade j· existe: " + exTemporal.getDescTemporalidade());
+				throw new AplicacaoException("A temporalidade j√° existe: " + exTemporal.getDescTemporalidade());
 			} else {
 				exTemporal = new ExTemporalidade();
 				fillEntity(descTemporalidade, valorTemporalidade, idCpUnidade, exTemporal);
@@ -123,7 +123,7 @@ public class ExTemporalidadeController extends ExController {
 				sb.append("(id: ");
 				sb.append(v.getId());
 				sb.append(") (Arquivo Corrente)");
-				sb.append("<br/> ClassificaÁ„o: ");
+				sb.append("<br/> Classifica√ß√£o: ");
 				sb.append(v.getExClassificacao().getDescricaoCompleta());
 				sb.append(" (Via ");
 				sb.append(v.getLetraVia());
@@ -132,7 +132,7 @@ public class ExTemporalidadeController extends ExController {
 			exTemporal.getExViaArqCorrenteSet().iterator().next();
 
 			throw new AplicacaoException(
-					"N„o È possÌvel excluir a temporalidade documental, pois est· associada ‡s seguintes classificaÁıes documentais:<br/><br/>" + sb.toString());
+					"N√£o √© poss√≠vel excluir a temporalidade documental, pois est√° associada √†s seguintes classifica√ß√µes documentais:<br/><br/>" + sb.toString());
 		}
 
 		if (exTemporal.getExViaArqIntermediarioSet().size() > 0) {
@@ -141,7 +141,7 @@ public class ExTemporalidadeController extends ExController {
 				sb.append("(id: ");
 				sb.append(v.getId());
 				sb.append(") (Arquivo Intermediario)");
-				sb.append("<br/> ClassificaÁ„o: ");
+				sb.append("<br/> Classifica√ß√£o: ");
 				sb.append(v.getExClassificacao().getDescricaoCompleta());
 				sb.append(" (Via ");
 				sb.append(v.getLetraVia());
@@ -150,7 +150,7 @@ public class ExTemporalidadeController extends ExController {
 			exTemporal.getExViaArqCorrenteSet().iterator().next();
 
 			throw new AplicacaoException(
-					"N„o È possÌvel excluir a temporalidade documental, pois est· associada ‡s seguintes classificaÁıes documentais:<br/><br/>" + sb.toString());
+					"N√£o √© poss√≠vel excluir a temporalidade documental, pois est√° associada √†s seguintes classifica√ß√µes documentais:<br/><br/>" + sb.toString());
 		}
 
 		dao().excluirComHistorico(exTemporal, dt, getIdentidadeCadastrante());

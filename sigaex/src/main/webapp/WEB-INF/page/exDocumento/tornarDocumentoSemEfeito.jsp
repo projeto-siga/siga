@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=iso-8859-1"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -13,7 +13,7 @@ function sbmt() {
 }
 </script>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -33,7 +33,7 @@ function sbmt() {
 					
 					<table class="gt-form-table">
 						<tr class="header">
-							<td colspan="2">Dados da movimentação</td>
+							<td colspan="2">Dados da movimentaÃ§Ã£o</td>
 						</tr>
 						<tr id="tr_titular" style="display:none">
 							<td>Titular:</td>

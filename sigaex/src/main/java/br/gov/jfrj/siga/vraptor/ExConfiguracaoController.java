@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+Ôªøpackage br.gov.jfrj.siga.vraptor;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
@@ -53,7 +53,7 @@ public class ExConfiguracaoController extends ExController {
 	private static final String AJAX = "ajax";
 	private static final String FORMA = "forma";
 	private static final String MODELO = "modelo";
-	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:ConfiguraÁıes";
+	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configura√ß√µes";
 	
 	public ExConfiguracaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
@@ -120,9 +120,9 @@ public class ExConfiguracaoController extends ExController {
 				dao().commitTransacao();
 			} catch (final Exception e) {
 				dao().rollbackTransacao();
-				throw new AplicacaoException("Erro na gravaÁ„o", 0, e);
+				throw new AplicacaoException("Erro na grava√ß√£o", 0, e);
 			}
-		} else throw new AplicacaoException("ID n„o informada");
+		} else throw new AplicacaoException("ID n√£o informada");
 		
 		escreveFormRetornoExclusao(nmTipoRetorno, idMod, idFormaDoc);
 	}
@@ -190,7 +190,7 @@ public class ExConfiguracaoController extends ExController {
 			config.setCpTipoConfiguracao(dao().consultar(idTpConfiguracao,
 					CpTipoConfiguracao.class, false));
 		} else {
-			result.include("err", "Tipo de configuraÁ„o n„o informado");
+			result.include("err", "Tipo de configura√ß√£o n√£o informado");
 			result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");
 			return;
 		}
@@ -295,10 +295,10 @@ public class ExConfiguracaoController extends ExController {
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		if (idTpConfiguracao == null || idTpConfiguracao == 0)
-			throw new AplicacaoException("Tipo de configuracao n„o informado");
+			throw new AplicacaoException("Tipo de configuracao n√£o informado");
 
 		if (idSituacao == null || idSituacao == 0)
-			throw new AplicacaoException("SituaÁ„o de Configuracao n„o informada");
+			throw new AplicacaoException("Situa√ß√£o de Configuracao n√£o informada");
 
 		try {
 			dao().iniciarTransacao();
@@ -307,7 +307,7 @@ public class ExConfiguracaoController extends ExController {
 			dao().commitTransacao();
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na gravaÁ„o", 0, e);
+			throw new AplicacaoException("Erro na grava√ß√£o", 0, e);
 		}
 	}
 	
@@ -398,7 +398,7 @@ public class ExConfiguracaoController extends ExController {
 		if (!Ex.getInstance().getConf().podePorConfiguracao(getTitular(),
 				getLotaTitular(),
 				CpTipoConfiguracao.TIPO_CONFIG_GERENCIAR_PUBLICACAO_BOLETIM))
-			throw new AplicacaoException("OperaÁ„o restrita");
+			throw new AplicacaoException("Opera√ß√£o restrita");
 	}
 	
 	private Set<ExFormaDocumento> getListaFormas() throws Exception {
@@ -430,8 +430,8 @@ public class ExConfiguracaoController extends ExController {
 	
 	private Map<Integer, String> getListaTipoPublicador() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "MatrÌcula");
-		map.put(2, "”rg„o Integrado");
+		map.put(1, "Matr√≠cula");
+		map.put(2, "√ìrg√£o Integrado");
 		return map;
 	}
 	

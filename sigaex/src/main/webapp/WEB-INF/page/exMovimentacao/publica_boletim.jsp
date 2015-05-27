@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+Ôªø<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -7,11 +7,11 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="MovimentaÁ„o">
+<siga:pagina titulo="Movimenta√ß√£o">
 
 <script language="Javascript1.1" type="text/javascript">
 function confirma(){
- return confirm ('Essa movimentaÁ„o n„o poder· ser desfeita. Prosseguir?');
+ return confirm ('Essa movimenta√ß√£o n√£o poder√° ser desfeita. Prosseguir?');
 }
 </script>
 
@@ -37,10 +37,10 @@ function confirma(){
 						</tr>
 						<tr class="tdLabel">
 							<td>
-								<label for="boletim_publicar_gravar_dtPubl" class="label">Data da PublicaÁ„o:</label>
+								<label for="boletim_publicar_gravar_dtPubl" class="label">Data da Publica√ß√£o:</label>
 							</td>
 							<td>
-								<input type="text" name="dtPubl" onblur="javascript:verifica_data(this,0);" label="Data da PublicaÁ„o" value="${dtPubl}"/>
+								<input type="text" name="dtPubl" onblur="javascript:verifica_data(this,0);" label="Data da Publica√ß√£o" value="${dtPubl}"/>
 							</td>
 						</tr>
 						

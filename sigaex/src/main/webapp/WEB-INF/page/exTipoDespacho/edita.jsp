@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -18,14 +18,14 @@
 						<c:if test="${!empty exTipoDespacho.idTpDespacho}">
 							<input type="hidden" name="exTipoDespacho.idTpDespacho" value="${exTipoDespacho.idTpDespacho}"/>
 							<tr>
-								<td width="10%">Código:</td>
+								<td width="10%">CÃ³digo:</td>
 								<td>
 									<fmt:formatNumber pattern="0000000" value="${exTipoDespacho.idTpDespacho}" />
 								</td>
 							</tr>
 						</c:if>
 						<tr>
-							<td width="10%">Descrição:</td>
+							<td width="10%">DescriÃ§Ã£o:</td>
 							<td>
 								<textarea name="exTipoDespacho.descTpDespacho" cols="60" rows="5" class="gt-text-area">${exTipoDespacho.descTpDespacho}</textarea>
 							</td>

@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -75,7 +75,7 @@ public class ExController extends SigaController {
 
 	protected void verificaNivelAcesso(ExMobil mob) {
 		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-			throw new AplicacaoException("Acesso ao documento " + mob.getSigla() + " permitido somente a usu�rios autorizados. (" + getTitular().getSigla()
+			throw new AplicacaoException("Acesso ao documento " + mob.getSigla() + " permitido somente a usuï¿½rios autorizados. (" + getTitular().getSigla()
 					+ "/" + getLotaTitular().getSiglaCompleta() + ")");
 		}
 	}
@@ -236,8 +236,8 @@ public class ExController extends SigaController {
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matr�cula");
-		map.put(2, "�rg�o Integrado");
+		map.put(1, "Matrï¿½cula");
+		map.put(2, "ï¿½rgï¿½o Integrado");
 		return map;
 	}
 
@@ -251,7 +251,7 @@ public class ExController extends SigaController {
 	}
 
 	protected void assertAcesso(String pathServico) throws AplicacaoException {
-		super.assertAcesso("DOC:M�dulo de Documentos;" + pathServico);
+		super.assertAcesso("DOC:Mï¿½dulo de Documentos;" + pathServico);
 	}
 
 	protected  HttpServletResponse getResponse() {

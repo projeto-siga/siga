@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+﻿package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -139,7 +139,7 @@ public class ExModeloController extends ExSelecionavelController {
 		ModeloDao.iniciarTransacao();
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (id == null) {
-			throw new AplicacaoException("ID n�o informada");
+			throw new AplicacaoException("ID não informada");
 		}
 		final ExModelo modelo = dao().consultar(id, ExModelo.class, false);
 		dao().excluirComHistorico(modelo, dao().consultarDataEHoraDoServidor(), getIdentidadeCadastrante());

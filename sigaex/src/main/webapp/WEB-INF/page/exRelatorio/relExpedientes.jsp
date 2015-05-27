@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -13,7 +13,7 @@ function sbmt() {
 }
 </script>
 <c:set var="titulo_pagina" scope="request">
-	Relatório de Expedientes
+	RelatÃ³rio de Expedientes
 </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 <input type="hidden" name="tipoRelatorio" id="tipoRelatorio" value="relExpedientes.jrxml" />
@@ -22,7 +22,7 @@ function sbmt() {
 </h1>
 <tr>
 	<td>
-		Lotação
+		LotaÃ§Ã£o
 	</td>
 	<td>
 		<siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/>
@@ -32,7 +32,7 @@ function sbmt() {
 <input type="hidden" name="siglalotacao" id="siglaLotacao" value="${lotacaoDestinatarioSel.sigla}" />
 <tr>
 	<td>
-		Data Início
+		Data InÃ­cio
 	</td>
 	<td>
 		<input type="text" name="dataInicio" id="dataInicio" onblur="javascript:verifica_data(this, true);comparaData(dataInicio,dataFim);"

@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -405,25 +405,25 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 	private Map<Integer, String> getListaOrdem() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(0, "Data do documento");
-		map.put(1, "Data da situação");
-		map.put(2, "Ano e número");
-		map.put(3, "Data de finalização");
-		map.put(4, "Data de criação do temporário");
+		map.put(1, "Data da situaÃ§Ã£o");
+		map.put(2, "Ano e nÃºmero");
+		map.put(3, "Data de finalizaÃ§Ã£o");
+		map.put(4, "Data de criaÃ§Ã£o do temporÃ¡rio");
 		return map;
 	}
 
 	private Map<Integer, String> getListaVisualizacao() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(0, "Normal");
-		map.put(1, "Última anotação");
+		map.put(1, "Ãšltima anotaÃ§Ã£o");
 		return map;
 	}
 
 	private Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
-		map.put(3, "Órgão Externo");
+		map.put(1, "MatrÃ­cula");
+		map.put(2, "Ã“rgÃ£o Integrado");
+		map.put(3, "Ã“rgÃ£o Externo");
 		map.put(4, "Campo Livre");
 		return map;
 	}
@@ -479,7 +479,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		if (mob.doc() == null)
 			return null;
 		
-		//Edson: Se a via, volume ou documento inteiro tiver sido eliminado(a), não retorna nada.
+		//Edson: Se a via, volume ou documento inteiro tiver sido eliminado(a), nÃ£o retorna nada.
 		if (mob.isEliminado())
 			return null;
 		
@@ -515,7 +515,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		}
 
 		if (mob.isGeral() && mob.doc().isProcesso()) {
-			// Se o ultimo volume estiver na lotação do titular ou com ele,
+			// Se o ultimo volume estiver na lotaÃ§Ã£o do titular ou com ele,
 			// retornar o ultimo volume
 			//
 			ExMobil m = mob.doc().getUltimoVolume();

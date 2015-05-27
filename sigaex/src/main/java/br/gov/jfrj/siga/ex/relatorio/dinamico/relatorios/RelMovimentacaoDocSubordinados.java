@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -55,10 +55,10 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par‚metro secaoUsuario n„o informado!");
+					"Par√¢metro secaoUsuario n√£o informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Par‚metro link_siga n„o informado!");
+			throw new DJBuilderException("Par√¢metro link_siga n√£o informado!");
 		}
 
 	}
@@ -67,22 +67,22 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("RelatÛrio de MovimentaÁ„o de Documentos em Setores Subordinados");
+		this.setTitle("Relat√≥rio de Movimenta√ß√£o de Documentos em Setores Subordinados");
 		this.addColuna("Setor", 0, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Documento", 25, RelatorioRapido.CENTRO, false);
 		this.addColuna("Data", 20, RelatorioRapido.CENTRO, false);
-		this.addColuna("LotaÁ„o", 20, RelatorioRapido.CENTRO, false);
-		this.addColuna("SituaÁ„o", 20, RelatorioRapido.CENTRO, false);
-		this.addColuna("DescriÁ„o", 20, RelatorioRapido.CENTRO, false);
-		this.addColuna("AnotaÁ„o", 20, RelatorioRapido.CENTRO, false);
-		this.addColuna("DuraÁ„o (em dias)", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Lota√ß√£o", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("Situa√ß√£o", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("Descri√ß√£o", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("Anota√ß√£o", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("Dura√ß√£o (em dias)", 15, RelatorioRapido.CENTRO, false);
 		return this;
 
 	}
 	
 	public Collection processarDados() throws Exception {
 
-		// ObtÈm uma formaDoc a partir da sigla passada e monta trecho da query
+		// Obt√©m uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
@@ -98,7 +98,7 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 						+ tipoFormaDoc.getIdTipoFormaDoc();
 
 			
-		// ObtÈm a lotaÁ„o com o id passado...
+		// Obt√©m a lota√ß√£o com o id passado...
 		Query qrySetor = HibernateUtil.getSessao().createQuery(
 				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 			
@@ -108,7 +108,7 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 		
 	
 
-		// ... e monta trecho da query para as lotaÁıes
+		// ... e monta trecho da query para as lota√ß√µes
 		String listaLotacoes = "";
 		Set<DpLotacao> todasLotas;
 		if (parametros.get("incluirSubordinados") != null)
@@ -121,14 +121,14 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 			listaLotacoes += lot.getIdInicial().toString();
 		}
 
-		// Monta trecho da query para ocultar seletivamente a descriÁ„o do
+		// Monta trecho da query para ocultar seletivamente a descri√ß√£o do
 		// documento
 		String trechoQryDescrDocumento = "(case when ("
 				+ "	nivel.idNivelAcesso <> 1 "
 				+ "	and nivel.idNivelAcesso <> 6"
 				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
 
-		// Monta trecho da query para retornar o cÛdigo do documento
+		// Monta trecho da query para retornar o c√≥digo do documento
 		/*String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
 				+ "|| '-' || " + "forma.siglaFormaDoc "
 				+ "|| '-' || " + "doc.anoEmissao " + "|| '/' || "
@@ -278,7 +278,7 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 
 	public Collection processarDadosAnterior() throws Exception {
 
-		// ObtÈm uma formaDoc a partir da sigla passada e monta trecho da query
+		// Obt√©m uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
@@ -294,7 +294,7 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 						+ tipoFormaDoc.getIdTipoFormaDoc();
 
 			
-		// ObtÈm a lotaÁ„o com o id passado...
+		// Obt√©m a lota√ß√£o com o id passado...
 		Query qrySetor = HibernateUtil.getSessao().createQuery(
 				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 			
@@ -304,7 +304,7 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 		
 	
 
-		// ... e monta trecho da query para as lotaÁıes
+		// ... e monta trecho da query para as lota√ß√µes
 		String listaLotacoes = "";
 		Set<DpLotacao> todasLotas;
 		if (parametros.get("incluirSubordinados") != null)
@@ -317,14 +317,14 @@ public class RelMovimentacaoDocSubordinados extends RelatorioTemplate {
 			listaLotacoes += lot.getIdInicial().toString();
 		}
 
-		// Monta trecho da query para ocultar seletivamente a descriÁ„o do
+		// Monta trecho da query para ocultar seletivamente a descri√ß√£o do
 		// documento
 		String trechoQryDescrDocumento = "(case when ("
 				+ "	nivel.idNivelAcesso <> 1 "
 				+ "	and nivel.idNivelAcesso <> 6"
 				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
 
-		// Monta trecho da query para retornar o cÛdigo do documento
+		// Monta trecho da query para retornar o c√≥digo do documento
 		String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
 				+ "|| '-' || " + "forma.siglaFormaDoc "
 				+ "|| '-' || " + "doc.anoEmissao " + "|| '/' || "

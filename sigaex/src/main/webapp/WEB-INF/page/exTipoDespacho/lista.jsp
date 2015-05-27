@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -21,8 +21,8 @@
 			<div class="gt-content-box gt-for-table">
 				<table class="gt-table">
 					<thead>
-						<th align="right">Número</th>
-						<th colspan="3">Descrição</th>
+						<th align="right">NÃºmero</th>
+						<th colspan="3">DescriÃ§Ã£o</th>
 					</thead>
 					<c:forEach var="tipoDespacho" items="${tiposDespacho}">
 						<tr>

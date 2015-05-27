@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page isErrorPage="true" import="java.io.*" contentType="text/html"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
@@ -47,7 +47,7 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 			<div class="gt-content clearfix">
 
 				<div id="caption" class="gt-error-page-hd">
-					<h2>Não Foi Possível Completar a Operação</h2>
+					<h2>NÃ£o Foi PossÃ­vel Completar a OperaÃ§Ã£o</h2>
 				</div>
 
 				<div class="gt-content-box">

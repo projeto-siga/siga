@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor.builder;
+Ôªøpackage br.gov.jfrj.siga.vraptor.builder;
 
 import org.jboss.logging.Logger;
 
@@ -55,7 +55,7 @@ public final class BuscaDocumentoBuilder {
 		}
 		
 		if (doc == null) {
-			throw new AplicacaoException("Documento n„o informado");
+			throw new AplicacaoException("Documento n√£o informado");
 		}
 
 		return doc;
@@ -67,8 +67,8 @@ public final class BuscaDocumentoBuilder {
 			try {
 				mobil = movimentacao.getExMobil();
 			} catch (Exception e) {
-				LOGGER.warn("[getMov] - N„o foi possÌvel recuperar o mobil da movimentaÁ„o");
-				throw new AplicacaoException("Ocorreu um erro ao recuperar o mobil da movimentaÁ„o.", 0, e);
+				LOGGER.warn("[getMov] - N√£o foi poss√≠vel recuperar o mobil da movimenta√ß√£o");
+				throw new AplicacaoException("Ocorreu um erro ao recuperar o mobil da movimenta√ß√£o.", 0, e);
 			}
 		}
 

@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
+Ôªøpackage br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,25 +31,25 @@ public class RelOrgao extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par‚metro secaoUsuario n„o informado!");
+					"Par√¢metro secaoUsuario n√£o informado!");
 		}
 		if (parametros.get("lotacaoTitular") == null) {
-			throw new DJBuilderException("Par‚metro lotaÁ„o n„o informado!");
+			throw new DJBuilderException("Par√¢metro lota√ß√£o n√£o informado!");
 		}
 		if (parametros.get("orgao") == null) {
-			throw new DJBuilderException("Par‚metro Ûrg„o n„o informado!");
+			throw new DJBuilderException("Par√¢metro √≥rg√£o n√£o informado!");
 		}
 		//if (parametros.get("lotacao") == null) {
-		//	throw new DJBuilderException("Par‚metro Ûrg„o n„o informado!");
+		//	throw new DJBuilderException("Par√¢metro √≥rg√£o n√£o informado!");
 		//}
 		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Par‚metro dataInicial n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataInicial n√£o informado!");
 		}
 		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Par‚metro dataFinal n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataFinal n√£o informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Par‚metro link_siga n„o informado!");
+			throw new DJBuilderException("Par√¢metro link_siga n√£o informado!");
 		}
 	}
 
@@ -57,9 +57,9 @@ public class RelOrgao extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 		
-		this.setTitle("RelatÛrio de Despachos e TransferÍncias");
+		this.setTitle("Relat√≥rio de Despachos e Transfer√™ncias");
 		estiloTituloColuna.setFont(new Font(8,"Arial",true));
-		this.addColuna("LotaÁ„o", 10, RelatorioRapido.CENTRO, false);
+		this.addColuna("Lota√ß√£o", 10, RelatorioRapido.CENTRO, false);
 		this.addColuna("Expedientes recebidos", 10, RelatorioRapido.CENTRO,
 				false);
 		this.addColuna("Expedientes transferidos", 13,
@@ -126,13 +126,13 @@ public class RelOrgao extends RelatorioTemplate {
 			for (String s : set) {
 				d.add(s);
 				acrescentarColuna(d, map, s, "Expediente", "Recebimento");
-				acrescentarColuna(d, map, s, "Expediente", "TransferÍncia");
+				acrescentarColuna(d, map, s, "Expediente", "Transfer√™ncia");
 				acrescentarColuna(d, map, s, "Expediente", "Arquivamento Corrente"); 
 				acrescentarColuna(d, map, s, "Expediente", "Desarquivamento");
 				acrescentarColuna(d, map, s, "Processo Administrativo",
 				"Recebimento");
 				acrescentarColuna(d, map, s, "Processo Administrativo",
-						"TransferÍncia");
+						"Transfer√™ncia");
 				acrescentarColuna(d, map, s, "Processo Administrativo", "Arquivamento Corrente");
 				acrescentarColuna(d, map, s, "Processo Administrativo", "Desarquivamento");
 			}
@@ -177,11 +177,11 @@ public class RelOrgao extends RelatorioTemplate {
 		for (String s : set) {
 			d.add(s);
 			acrescentarColuna(d, map, s, "Expediente", "Recebimento");
-			acrescentarColuna(d, map, s, "Expediente", "TransferÍncia");
+			acrescentarColuna(d, map, s, "Expediente", "Transfer√™ncia");
 			acrescentarColuna(d, map, s, "Expediente", "Arquivamento Corrente");
 			acrescentarColuna(d, map, s, "Expediente", "Desarquivamento"); 
 			acrescentarColuna(d, map, s, "Processo Administrativo","Recebimento");
-			acrescentarColuna(d, map, s, "Processo Administrativo",	"TransferÍncia");
+			acrescentarColuna(d, map, s, "Processo Administrativo",	"Transfer√™ncia");
 			acrescentarColuna(d, map, s, "Processo Administrativo", "Arquivamento Corrente");
 			acrescentarColuna(d, map, s, "Processo Administrativo", "Desarquivamento");
 		}
@@ -197,8 +197,8 @@ public class RelOrgao extends RelatorioTemplate {
 		if (map.containsKey(key))
 			l += map.get(key);
 
-		if (tipomov.equals("TransferÍncia")) {
-			key = chave(s, tipodoc, "Despacho com TransferÍncia");
+		if (tipomov.equals("Transfer√™ncia")) {
+			key = chave(s, tipodoc, "Despacho com Transfer√™ncia");
 			if (map.containsKey(key))
 				l += map.get(key);
 		}

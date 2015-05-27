@@ -1,11 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+Ôªø<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Cadastro de configuraÁ„o">
+<siga:pagina titulo="Cadastro de configura√ß√£o">
 
 <script type="text/javascript" language="Javascript1.1">
 
@@ -40,14 +40,14 @@ function sbmt() {
 		<input type="hidden" name="idFormaDoc" value="${idFormaDoc}"/> 
 		<c:set var="dataFim" value="" />
 		
-		<h1>Cadastro de configuraÁ„o</h1>
+		<h1>Cadastro de configura√ß√£o</h1>
 		<div class="gt-content-box gt-for-table">
 		<table class="gt-form-table" width="100%">
 			<tr class="header">
-				<td colspan="2">Dados da configuraÁ„o</td>
+				<td colspan="2">Dados da configura√ß√£o</td>
 			</tr>
 			<tr>
-				<td><b>Tipo de ConfiguraÁ„o</b></td>
+				<td><b>Tipo de Configura√ß√£o</b></td>
 				<td>
 					<c:choose>
 						<c:when test="${campoFixo && not empty config.cpTipoConfiguracao}">
@@ -64,13 +64,13 @@ function sbmt() {
 				</td>
 			</tr>
 			<tr>
-				<td><b>SituaÁ„o</b></td>
+				<td><b>Situa√ß√£o</b></td>
 				<td><siga:select name="idSituacao" list="listaSituacao"
 					listKey="idSitConfiguracao" listValue="dscSitConfiguracao"
 					theme="simple" headerValue="[Indefinido]" headerKey="0" value="${idSituacao}"/></td>
 			</tr>
 			<tr>
-				<td>NÌvel de acesso</td>
+				<td>N√≠vel de acesso</td>
 				<td><siga:select name="idNivelAcesso" list="listaNivelAcesso"
 					theme="simple" listKey="idNivelAcesso" listValue="nmNivelAcesso"
 					headerValue="[Indefinido]" headerKey="0" value="${idNivelAcesso}"/></td>
@@ -80,7 +80,7 @@ function sbmt() {
 				<td><siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/></td>
 			</tr>
 			<tr>
-				<td>LotaÁ„o</td>
+				<td>Lota√ß√£o</td>
 				<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
 			</tr>
 			<tr>
@@ -88,17 +88,17 @@ function sbmt() {
 				<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
 			</tr>			
 			<tr>
-				<td>FunÁ„o de ConfianÁa</td>
+				<td>Fun√ß√£o de Confian√ßa</td>
 				<td><siga:selecao propriedade="funcao" tema="simple" modulo="siga"/></td>
 			</tr>
 			<tr>
-				<td>”rg„o</td>
+				<td>√ìrg√£o</td>
 				<td><siga:select name="idOrgaoUsu" list="orgaosUsu"
 					listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
 					headerValue="[Indefinido]" headerKey="0" value="${idOrgaoUsu}"/></td>
 			</tr>
 			<tr>
-				<td>Tipo de MovimentaÁ„o</td>
+				<td>Tipo de Movimenta√ß√£o</td>
 				<td>
 					<c:choose>
 						<c:when test="${campoFixo && not empty config.exTipoMovimentacao}">
@@ -134,9 +134,9 @@ function sbmt() {
 					</c:choose>
 				</td>
 			</tr>
-			<!-- Esse timeout no modelo est· estranho. Est· sendo necess·rio porque primeiro
-      		 precisa ser executado o request ajax referente ‡ FormaDocumento, da qual a lista 
-		     de modelos depende. Talvez seria bom tornar sÌncronos esses dois requests ajax    -->
+			<!-- Esse timeout no modelo est√° estranho. Est√° sendo necess√°rio porque primeiro
+      		 precisa ser executado o request ajax referente √† FormaDocumento, da qual a lista 
+		     de modelos depende. Talvez seria bom tornar s√≠ncronos esses dois requests ajax    -->
 			<tr>
 				<td>Modelo:</td>
 				<td>
@@ -158,7 +158,7 @@ function sbmt() {
 				</td>
 			</tr>		
 			<tr>
-				<td>ClassificaÁ„o</td>
+				<td>Classifica√ß√£o</td>
 				<td><siga:selecao propriedade="classificacao" tema="simple" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/></td>
 			</tr>			
 			<tr>
@@ -168,7 +168,7 @@ function sbmt() {
 					headerValue="[Indefinido]" headerKey="0" value="${idTpDoc}"/></td>
 			</tr>
 			<tr>
-				<td>”rg„o Objeto</td>
+				<td>√ìrg√£o Objeto</td>
 				<td><siga:select name="idOrgaoObjeto" list="orgaosUsu"
 					listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
 					headerValue="[Indefinido]" headerKey="0" value="${idOrgaoObjeto}"/></td>

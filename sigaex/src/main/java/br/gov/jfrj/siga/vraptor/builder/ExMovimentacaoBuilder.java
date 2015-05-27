@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor.builder;
+﻿package br.gov.jfrj.siga.vraptor.builder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -189,7 +189,7 @@ public final class ExMovimentacaoBuilder {
 		mov.setNmArqMov(fileName);
 
 		if ((mov.getTitular() != null && mov.getSubscritor() == null) || (mov.getLotaTitular() != null && mov.getLotaSubscritor() == null)) {
-			throw new AplicacaoException("N�o foi selecionado o substituto para o titular");
+			throw new AplicacaoException("Não foi selecionado o substituto para o titular");
 		}
 	}
 

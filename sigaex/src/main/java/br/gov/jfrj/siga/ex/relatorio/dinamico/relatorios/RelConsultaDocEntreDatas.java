@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -48,19 +48,19 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par‚metro secaoUsuario n„o informado!");
+					"Par√¢metro secaoUsuario n√£o informado!");
 		}
 		if (parametros.get("lotacao") == null) {
-			throw new DJBuilderException("Par‚metro lotacao n„o informado!");
+			throw new DJBuilderException("Par√¢metro lotacao n√£o informado!");
 		}
 		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Par‚metro dataInicial n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataInicial n√£o informado!");
 		}
 		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Par‚metro dataFinal n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataFinal n√£o informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Par‚metro link_siga n„o informado!");
+			throw new DJBuilderException("Par√¢metro link_siga n√£o informado!");
 		}
 	}
 
@@ -68,12 +68,12 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 		// TODO Auto-generated method stub
-		this.setTitle("RelaÁ„o de Documentos entre Datas");
-		this.addColuna("CÛdigo do Documento", 20, RelatorioRapido.ESQUERDA,
+		this.setTitle("Rela√ß√£o de Documentos entre Datas");
+		this.addColuna("C√≥digo do Documento", 20, RelatorioRapido.ESQUERDA,
 				 true, true);
-		this.addColuna("DescriÁ„o do documento", 100, RelatorioRapido.ESQUERDA,
+		this.addColuna("Descri√ß√£o do documento", 100, RelatorioRapido.ESQUERDA,
 				false);
-		this.addColuna("LotaÁ„o do Cadastrante", 40, RelatorioRapido.ESQUERDA,
+		this.addColuna("Lota√ß√£o do Cadastrante", 40, RelatorioRapido.ESQUERDA,
 				false);
 
 		return this;

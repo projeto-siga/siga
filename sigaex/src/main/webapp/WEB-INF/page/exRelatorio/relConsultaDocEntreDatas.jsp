@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -13,12 +13,12 @@ function sbmt() {
 }
 </script>
 <c:set var="titulo_pagina" scope="request">
-	Relação de documentos entre duas datas
+	RelaÃ§Ã£o de documentos entre duas datas
 </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 <tr>
 	<td>
-		Lotação
+		LotaÃ§Ã£o
 	</td>
 	<td>
 		<siga:selecao propriedade="lotacaoDestinatario" tema="simple" reler="sim" modulo="siga"/>

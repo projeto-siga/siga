@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
+Ôªøpackage br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -38,25 +38,25 @@ public class RelMovProcesso extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par‚metro secaoUsuario n„o informado!");
+					"Par√¢metro secaoUsuario n√£o informado!");
 		}
 		if (parametros.get("lotacao") == null) {
-			throw new DJBuilderException("Par‚metro lotaÁ„o n„o informado!");
+			throw new DJBuilderException("Par√¢metro lota√ß√£o n√£o informado!");
 		}
 		//if (parametros.get("orgao") == null) {
-		//	throw new DJBuilderException("Par‚metro Ûrg„o n„o informado!");
+		//	throw new DJBuilderException("Par√¢metro √≥rg√£o n√£o informado!");
 		//}
 		if (parametros.get("processo") == null) {
-			throw new DJBuilderException("Par‚metro n˙mero do processo n„o informado!");
+			throw new DJBuilderException("Par√¢metro n√∫mero do processo n√£o informado!");
 		}
 		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Par‚metro dataInicial n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataInicial n√£o informado!");
 		}
 		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Par‚metro dataFinal n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataFinal n√£o informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Par‚metro link_siga n„o informado!");
+			throw new DJBuilderException("Par√¢metro link_siga n√£o informado!");
 		}
 	}
 
@@ -64,11 +64,11 @@ public class RelMovProcesso extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 		
-		this.setTitle("RelatÛrio de MovimentaÁıes de Processos");
-		this.addColuna("LotaÁ„o", 10, RelatorioRapido.CENTRO, false);
+		this.setTitle("Relat√≥rio de Movimenta√ß√µes de Processos");
+		this.addColuna("Lota√ß√£o", 10, RelatorioRapido.CENTRO, false);
 		this.addColuna("Processo", 40, RelatorioRapido.CENTRO,
 				false);
-		this.addColuna("MovimentaÁıes", 50,
+		this.addColuna("Movimenta√ß√µes", 50,
 				RelatorioRapido.CENTRO, false);
 			return this;
 	}

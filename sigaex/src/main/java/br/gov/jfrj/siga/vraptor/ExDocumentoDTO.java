@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+Ôªøpackage br.gov.jfrj.siga.vraptor;
 
 import java.io.File;
 import java.io.InputStream;
@@ -346,16 +346,16 @@ public class ExDocumentoDTO {
 	}
 
 	/*
-	 * como usamos <file name="arquivo" .../> o content Type do arquivo ser·
-	 * obtido atravÈs getter/setter de <file-tag-name>ContentType
+	 * como usamos <file name="arquivo" .../> o content Type do arquivo ser√°
+	 * obtido atrav√©s getter/setter de <file-tag-name>ContentType
 	 */
 	public String getArquivoContentType() {
 		return arquivoContentType;
 	}
 
 	/*
-	 * como usamos <file name="arquivo" .../> o nome do arquivo ser· obtido
-	 * atravÈs getter/setter de <file-tag-name>FileName
+	 * como usamos <file name="arquivo" .../> o nome do arquivo ser√° obtido
+	 * atrav√©s getter/setter de <file-tag-name>FileName
 	 */
 	public String getArquivoFileName() {
 		return arquivoFileName;
@@ -409,7 +409,7 @@ public class ExDocumentoDTO {
 		try {
 			minhaData = df1.parse(getDtDocString());
 		} catch (final ParseException e) {
-			return "Ocorreu um erro na convers„o da Data";
+			return "Ocorreu um erro na convers√£o da Data";
 		}
 		df1.applyPattern("'" + "Rio de Janeiro" + ",' dd 'de' MMMM 'de' yyyy.");
 		return df1.format(minhaData);
@@ -462,9 +462,9 @@ public class ExDocumentoDTO {
 
 	public Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "MatrÌcula");
-		map.put(2, "”rg„o Integrado");
-		map.put(3, "”rg„o Externo");
+		map.put(1, "Matr√≠cula");
+		map.put(2, "√ìrg√£o Integrado");
+		map.put(3, "√ìrg√£o Externo");
 		map.put(4, "Campo Livre");
 		return map;
 	}
@@ -583,8 +583,8 @@ public class ExDocumentoDTO {
 	}
 
 	public String getEletronicoString() {
-		return (getEletronico() == 1) ? "Documento EletrÙnico"
-				: "Documento FÌsico";
+		return (getEletronico() == 1) ? "Documento Eletr√¥nico"
+				: "Documento F√≠sico";
 	}
 
 	public boolean isSubstituicao() {

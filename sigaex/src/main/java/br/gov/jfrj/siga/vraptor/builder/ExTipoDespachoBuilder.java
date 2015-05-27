@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -50,7 +50,7 @@ public final class ExTipoDespachoBuilder {
 
 		tipoDespacho.setDescTpDespacho(descTpDespacho);
 		tipoDespacho.setFgAtivo(fgAtivo);
-		// se id for zero ent�o obriga a gravar um novo
+		// se id for zero então obriga a gravar um novo
 		if (idTpDespacho != null && idTpDespacho == 0)
 			tipoDespacho.setIdTpDespacho(null);
 		else

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 
  */
 package br.gov.jfrj.siga.vraptor.builder;

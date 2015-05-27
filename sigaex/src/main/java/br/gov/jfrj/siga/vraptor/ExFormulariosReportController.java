@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+﻿package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -83,7 +83,7 @@ public class ExFormulariosReportController extends ExController {
 		try {
 			JasperCompileManager.compileReportToFile(sJRXml, sJasper);
 		} catch (Exception e) {
-			throw new Exception("Erro ao criar um relat�rio", e);
+			throw new Exception("Erro ao criar um relatório", e);
 		}
 		
 		parametros.put("secaoUsuario", getCadastrante().getOrgaoUsuario().getDescricaoMaiusculas());

@@ -1,4 +1,4 @@
-
+Ôªø
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -403,26 +403,26 @@ public class ExServiceImpl implements ExService {
     		ExDocumento doc = new ExDocumento();
     		
     		if(cadastranteStr == null || cadastranteStr.isEmpty())
-    			throw new AplicacaoException("A matrÌcula do cadastrante n„o foi informada.");
+    			throw new AplicacaoException("A matr√≠cula do cadastrante n√£o foi informada.");
     		
     		if(subscritorStr == null || subscritorStr.isEmpty())
-    			throw new AplicacaoException("A matrÌcula do subscritor n„o foi informada.");
+    			throw new AplicacaoException("A matr√≠cula do subscritor n√£o foi informada.");
 
     		cadastrante = dao().getPessoaFromSigla(cadastranteStr);
     		
     		if(cadastrante == null)
-    			throw new AplicacaoException("N„o foi possÌvel encontrar um cadastrante com a matrÌcula informada.");
+    			throw new AplicacaoException("N√£o foi poss√≠vel encontrar um cadastrante com a matr√≠cula informada.");
     		
     		if(cadastrante.isFechada())
-    			throw new AplicacaoException("O cadastrante n„o est· mais ativo.");
+    			throw new AplicacaoException("O cadastrante n√£o est√° mais ativo.");
     		
     		subscritor = dao().getPessoaFromSigla(subscritorStr);
     		
     		if(subscritor == null)
-    			throw new AplicacaoException("N„o foi possÌvel encontrar um subscritor com a matrÌcula informada.");
+    			throw new AplicacaoException("N√£o foi poss√≠vel encontrar um subscritor com a matr√≠cula informada.");
  
     		if(subscritor.isFechada())
-    			throw new AplicacaoException("O subscritor n„o est· mais ativo.");
+    			throw new AplicacaoException("O subscritor n√£o est√° mais ativo.");
     		
     		if(descricaoTipoDeDocumento == null)
     			tipoDocumento = (dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class,
@@ -431,28 +431,28 @@ public class ExServiceImpl implements ExService {
     			tipoDocumento = dao().consultarExTipoDocumento(descricaoTipoDeDocumento);
     		
     		if(tipoDocumento == null)
-    			throw new AplicacaoException("N„o foi possÌvel encontrar o Tipo de Documento. Os Tipos de Documentos aceitos s„o: 1-Interno Produzido, 2-Interno Importado, 3-Externo");
+    			throw new AplicacaoException("N√£o foi poss√≠vel encontrar o Tipo de Documento. Os Tipos de Documentos aceitos s√£o: 1-Interno Produzido, 2-Interno Importado, 3-Externo");
     		
     		if(nomeForma == null)
-    			throw new AplicacaoException("O Tipo n„o foi informado.");
+    			throw new AplicacaoException("O Tipo n√£o foi informado.");
     		
     		if(nomeModelo == null)
-    			throw new AplicacaoException("O modelo n„o foi informado.");
+    			throw new AplicacaoException("O modelo n√£o foi informado.");
 
     		modelo = dao().consultarExModelo(nomeForma, nomeModelo);
     		
     		if(modelo == null)
-    			throw new AplicacaoException("N„o foi possÌvel encontrar um modelo com os dados informados.");
+    			throw new AplicacaoException("N√£o foi poss√≠vel encontrar um modelo com os dados informados.");
     		else
     			modelo = modelo.getModeloAtual();
     		
     		forma = modelo.getExFormaDocumento();
     		
     		if(!forma.podeSerDoTipo(tipoDocumento))
-    			throw new AplicacaoException("O documento do tipo " + forma.getDescricao() + " n„o pode ser " + tipoDocumento.getDescricao());
+    			throw new AplicacaoException("O documento do tipo " + forma.getDescricao() + " n√£o pode ser " + tipoDocumento.getDescricao());
     		
        		if((classificacaoStr == null || classificacaoStr.isEmpty()) && !modelo.isClassificacaoAutomatica())
-       			throw new AplicacaoException("A ClassificaÁ„o n„o foi informada.");
+       			throw new AplicacaoException("A Classifica√ß√£o n√£o foi informada.");
     		
     		if(modelo.isClassificacaoAutomatica()) 
     			classificacao = modelo.getExClassificacao();
@@ -460,7 +460,7 @@ public class ExServiceImpl implements ExService {
     			classificacao =  dao().consultarExClassificacao(classificacaoStr);
     		
     		if(classificacao == null)
-    			throw new AplicacaoException("N„o foi possÌvel encontrar uma classificaÁ„o com o cÛdigo informado.");
+    			throw new AplicacaoException("N√£o foi poss√≠vel encontrar uma classifica√ß√£o com o c√≥digo informado.");
     		else
     			classificacao = classificacao.getClassificacaoAtual();
     		
@@ -629,10 +629,10 @@ public class ExServiceImpl implements ExService {
     	    		ExDocumento docPai = mobPai.getExDocumento();
     				
     				if(docPai.getExMobilPai() != null)
-    					throw new AplicacaoException("N„o foi possÌvel criar o documento pois o documento pai (" + docPai.getSigla() + ") j· È documento filho.");
+    					throw new AplicacaoException("N√£o foi poss√≠vel criar o documento pois o documento pai (" + docPai.getSigla() + ") j√° √© documento filho.");
     				
     				if(!docPai.isAssinado())
-    					throw new AplicacaoException("N„o foi possÌvel criar o documento pois o documento pai (" + docPai.getSigla() + ") ainda n„o foi assinado.");
+    					throw new AplicacaoException("N√£o foi poss√≠vel criar o documento pois o documento pai (" + docPai.getSigla() + ") ainda n√£o foi assinado.");
     				
     				doc.setExMobilPai(mobPai);
     			}

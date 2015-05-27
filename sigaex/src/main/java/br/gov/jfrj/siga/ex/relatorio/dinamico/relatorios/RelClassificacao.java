@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
+ï»¿package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,10 +29,10 @@ public class RelClassificacao extends RelatorioTemplate {
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
-		this.setTitle("Relação de Classificação Documental");
-		this.addColuna("Codificação", 12, RelatorioRapido.CENTRO,
+		this.setTitle("RelaÃ§Ã£o de ClassificaÃ§Ã£o Documental");
+		this.addColuna("CodificaÃ§Ã£o", 12, RelatorioRapido.CENTRO,
 				false, false);
-		this.addColuna("Descrição", 50, RelatorioRapido.ESQUERDA,
+		this.addColuna("DescriÃ§Ã£o", 50, RelatorioRapido.ESQUERDA,
 				false, false);
 		this.addColuna("Destino", 12, RelatorioRapido.ESQUERDA,
 				false, false);
@@ -59,14 +59,14 @@ public class RelClassificacao extends RelatorioTemplate {
 		}
 		
 		for (ExClassificacao c : listaClass) {
-			dados.add(c.getCodificacao()); //Codificação
+			dados.add(c.getCodificacao()); //CodificaÃ§Ã£o
 
 			StringBuffer descr = new StringBuffer(); 
 			for (int i = 1; i < c.getNivel(); i++) {
 				descr.append("  ");
 			}
 			descr.append(c.getDescrClassificacao());
-			dados.add(descr.toString()); //Descrição
+			dados.add(descr.toString()); //DescriÃ§Ã£o
 			
 			if (c.getExViaSet() == null  || c.getExViaSet().size() == 0){
 				dados.add("");	//Destino
@@ -84,7 +84,7 @@ public class RelClassificacao extends RelatorioTemplate {
 							codificacao.append(v.getLetraVia());
 							
 							dados.add(codificacao.toString());											//codificacao
-							dados.add(descr.toString()); 										//descrição
+							dados.add(descr.toString()); 										//descriÃ§Ã£o
 						}
 						dados.add(v.getExTipoDestinacao()==null?"":v.getExTipoDestinacao().getDescrTipoDestinacao());	//Destino
 						dados.add(v.getTemporalidadeCorrente()==null?"":v.getTemporalidadeCorrente().getDescTemporalidade());	//Arq. Cor.

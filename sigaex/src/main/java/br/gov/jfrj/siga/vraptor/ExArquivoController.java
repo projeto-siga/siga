@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -82,7 +82,7 @@ public class ExArquivoController extends ExController {
 					hash = HASH_ALGORITHM;
 				if (hash != null) {
 					if (!(hash.equals("SHA1") || hash.equals("SHA-256") || hash.equals("SHA-512") || hash.equals("MD5"))) {
-						throw new AplicacaoException("Algoritmo de hash inv·lido. Os permitidos s„o: SHA1, SHA-256, SHA-512 e MD5.");
+						throw new AplicacaoException("Algoritmo de hash inv√°lido. Os permitidos s√£o: SHA1, SHA-256, SHA-512 e MD5.");
 					}
 				}
 				completo = false;
@@ -95,10 +95,10 @@ public class ExArquivoController extends ExController {
 			}
 			final ExMobil mob = Documento.getMobil(arquivo);
 			if (mob == null) {
-				throw new AplicacaoException("A sigla informada n„o corresponde a um documento da base de dados.");
+				throw new AplicacaoException("A sigla informada n√£o corresponde a um documento da base de dados.");
 			}
 			if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-				throw new AplicacaoException("Documento " + mob.getSigla() + " inacessÌvel ao usu·rio " + getTitular().getSigla() + "/"
+				throw new AplicacaoException("Documento " + mob.getSigla() + " inacess√≠vel ao usu√°rio " + getTitular().getSigla() + "/"
 						+ getLotaTitular().getSiglaCompleta() + ".");
 			}
 			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
@@ -116,7 +116,7 @@ public class ExArquivoController extends ExController {
 					ab = Documento.getDocumento(mob, mov, completo, estampar, hash, null);
 				}
 				if (ab == null) {
-					throw new Exception("PDF inv·lido!");
+					throw new Exception("PDF inv√°lido!");
 				}
 				if (pacoteAssinavel) {
 					CdService client = Service.getCdService();
@@ -132,7 +132,7 @@ public class ExArquivoController extends ExController {
 			if (isHtml) {
 				ab = Documento.getDocumentoHTML(mob, mov, completo, contextpath, servernameport);
 				if (ab == null) {
-					throw new Exception("HTML inv·lido!");
+					throw new Exception("HTML inv√°lido!");
 				}
 			}
 			if (imutavel) {
@@ -154,16 +154,16 @@ public class ExArquivoController extends ExController {
 
 				if ((etag).equals(ifNoneMatch) && ifNoneMatch != null) {
 					getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
-					return new InputStreamDownload(makeByteArrayInputStream((new byte[0]), false), TEXT_PLAIN, "arquivo inv·lido");
+					return new InputStreamDownload(makeByteArrayInputStream((new byte[0]), false), TEXT_PLAIN, "arquivo inv√°lido");
 				}
 			}
 			getResponse().setHeader("Pragma", "");
 			return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), checkDownloadType(ab, isPdf, fB64), arquivo);
 		} catch (Exception e) {
 			if (e.getClass().getSimpleName().equals("ClientAbortException")) {
-				return new InputStreamDownload(makeByteArrayInputStream((new byte[0]), false), TEXT_PLAIN, "arquivo inv·lido");
+				return new InputStreamDownload(makeByteArrayInputStream((new byte[0]), false), TEXT_PLAIN, "arquivo inv√°lido");
 			}
-			throw new RuntimeException("erro na geraÁ„o do documento.", e);
+			throw new RuntimeException("erro na gera√ß√£o do documento.", e);
 		}
 	}
 
@@ -194,10 +194,10 @@ public class ExArquivoController extends ExController {
 
 	private Download iniciarDownload(ExMobil mob, ExInputStreamDownload exDownload) {
 		try {
-			// Calcula o hash do documento, mas n„o leva em consideraÁ„o
-			// para fins de hash os ˙ltimos bytes do arquivos, pois l·
-			// fica armazanada a ID e as datas de criaÁ„o e modificaÁ„o
-			// e estas s„o sempre diferente de um pdf para o outro.
+			// Calcula o hash do documento, mas n√£o leva em considera√ß√£o
+			// para fins de hash os √∫ltimos bytes do arquivos, pois l√°
+			// fica armazanada a ID e as datas de cria√ß√£o e modifica√ß√£o
+			// e estas s√£o sempre diferente de um pdf para o outro.
 			MessageDigest md = MessageDigest.getInstance("MD5");
 	
 			byte ab[] = exDownload.getBytes();
@@ -220,7 +220,7 @@ public class ExArquivoController extends ExController {
 			}
 			return exDownload;
 		}catch(Exception e) {
-			throw new AplicacaoException("erro na geraÁ„o do documento.");
+			throw new AplicacaoException("erro na gera√ß√£o do documento.");
 		}
 	}
 
@@ -244,16 +244,16 @@ public class ExArquivoController extends ExController {
 		if (somenteHash) {
 			if (algoritmoHash != null) {
 				if (!(algoritmoHash.equals("SHA1") || algoritmoHash.equals("SHA-256") || algoritmoHash.equals("SHA-512") || algoritmoHash.equals("MD5")))
-					throw new AplicacaoException("Algoritmo de hash inv·lido. Os permitidos s„o: SHA1, SHA-256, SHA-512 e MD5.");
+					throw new AplicacaoException("Algoritmo de hash inv√°lido. Os permitidos s√£o: SHA1, SHA-256, SHA-512 e MD5.");
 			}
 		}
 
 		if (mob == null) {
-			throw new AplicacaoException("A sigla informada n„o corresponde a um documento da base de dados.");
+			throw new AplicacaoException("A sigla informada n√£o corresponde a um documento da base de dados.");
 		}
 
 		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-			throw new AplicacaoException("Documento " + mob.getSigla() + " inacessÌvel ao usu·rio " + getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + ".");
+			throw new AplicacaoException("Documento " + mob.getSigla() + " inacess√≠vel ao usu√°rio " + getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + ".");
 		}
 	}
 	

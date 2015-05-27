@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
+﻿package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,23 +34,23 @@ public class RelTipoDoc extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par�metro secaoUsuario n�o informado!");
+					"Parâmetro secaoUsuario não informado!");
 		}
 		if (parametros.get("lotacaoTitular") == null) {
-			throw new DJBuilderException("Par�metro lota��o n�o informado!");
+			throw new DJBuilderException("Parâmetro lotação não informado!");
 		}
 		/*
 		 * if (parametros.get("orgao") == null) { throw new
-		 * DJBuilderException("Par�metro �rg�o n�o informado!"); }
+		 * DJBuilderException("Parâmetro órgão não informado!"); }
 		 */
 		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Par�metro dataInicial n�o informado!");
+			throw new DJBuilderException("Parâmetro dataInicial não informado!");
 		}
 		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Par�metro dataFinal n�o informado!");
+			throw new DJBuilderException("Parâmetro dataFinal não informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Par�metro link_siga n�o informado!");
+			throw new DJBuilderException("Parâmetro link_siga não informado!");
 		}
 	}
 
@@ -58,7 +58,7 @@ public class RelTipoDoc extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Rela��o de Documentos Criados");
+		this.setTitle("Relação de Documentos Criados");
 		this.addColuna("Tipo de Documento", 35, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Forma do Documento", 40, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Total", 25, RelatorioRapido.CENTRO, false);

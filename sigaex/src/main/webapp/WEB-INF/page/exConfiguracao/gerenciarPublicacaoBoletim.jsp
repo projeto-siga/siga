@@ -1,11 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»¿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Gerência de Publicação Boletim Interno">
+<siga:pagina titulo="GerÃªncia de PublicaÃ§Ã£o Boletim Interno">
 	<script type="text/javascript">
 		function hideShowSel(combo){
 			var sel1Span = document.getElementById('span' + combo.name.substring(4));
@@ -27,7 +27,7 @@
 		}
 	</script>
 	
-	<h1>Gerenciamento de permissões para solicitação de publicação no BI:</h1>
+	<h1>Gerenciamento de permissÃµes para solicitaÃ§Ã£o de publicaÃ§Ã£o no BI:</h1>
 	<br />
 	
 	<form id="frm" name="frm" action="${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim_gravar" method="POST">
@@ -38,7 +38,7 @@
 		
 		<table class="form">
 			<tr class="header">
-				<td colspan="2">Incluir Permissão de Publicação</td>
+				<td colspan="2">Incluir PermissÃ£o de PublicaÃ§Ã£o</td>
 			</tr>
 			<tr>
 				<td>Forma:</td>
@@ -92,7 +92,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Permissão:</td>
+				<td>PermissÃ£o:</td>
 				<td>
 					<select name="idSituacao">
 						<c:forEach var="situacao" items="${listaSituacaoPodeNaoPode}">
@@ -116,9 +116,9 @@
 		<table class="list">
 			<tr class="header">
 				<td align="center">Pessoa</td>
-				<td align="center">Lotação</td>
-				<td align="center">Permissão</td>
-				<td align="center">Data de Fim de Vigência</td>
+				<td align="center">LotaÃ§Ã£o</td>
+				<td align="center">PermissÃ£o</td>
+				<td align="center">Data de Fim de VigÃªncia</td>
 				<td align="center"></td>
 				<td></td>
 			</tr>

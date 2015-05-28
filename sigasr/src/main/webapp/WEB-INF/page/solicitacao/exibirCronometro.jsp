@@ -7,22 +7,22 @@
 <script type="text/javascript">
 
 	$(document).ready(function() {
-		if (cron.decorrido != null)
-			atualizaDecorrido(cron.decorrido);
-		
+		<c:if test="${cron.decorrido != null}">
+			atualizaDecorrido(${cron.decorrido});
+		</c:if>
 
-		if (cron.restante != null)	
-			atualizaRestante(cron.restante);
-		
+		<c:if test="${cron.restante != null}">	
+			atualizaRestante(${cron.restante});
+		</c:if>
 	});
 	
 	function atualizaDecorrido(tempo){
 		$('#valorDecorrido').html(toString(tempo));
-		if (cron.ligado){
+		<c:if test="${cron.ligado}"> 
 	   		setTimeout(function() {
 	   			atualizaDecorrido(tempo + 1000);
 	   		}, 1000);
-	   	}
+	   	</c:if>
 	}
 	
 	function atualizaRestante(tempo) { 
@@ -35,11 +35,11 @@
 			$('#valorRestante').css('color', 'red');
 		}
 	   	
-		if (cron.ligado) {
+		<c:if test="${cron.ligado}">
 	   		setTimeout(function() {
 	   			atualizaRestante(tempo - 1000);
 	   		}, 1000);
-	   	}
+	   	</c:if>
 	}
 
 	function toString(tempo) {
@@ -112,17 +112,17 @@
 			<img src="/siga/css/famfamfam/icons/clock.png" width="15px;"
 				style="vertical-align: bottom;">&nbsp;${cron.descricao}
 		</h3>
-		<c:if  test="${cron.inicio}">
-		<p><b>In&iacute;cio: </b>${cron.inicioString}</p>
+		<c:if  test="${cron.inicio != null}">
+		    <p><b>In&iacute;cio: </b>${cron.inicioString}</p>
 		</c:if>
-		<c:if  test="${cron.fim}">
-		<p><b>Fim: </b>${cron.fimString}</p>
+		<c:if  test="${cron.fim != null}">
+		    <p><b>Fim: </b>${cron.fimString}</p>
 		</c:if>
 		<c:if  test="${cron.decorrido != null}">
-		<p><span style="font-weight: bold; color: black;" id="descrDecorrido">Decorrido:&nbsp;</span><span id="valorDecorrido" style="color: black;" ></span></p>
+		    <p><span style="font-weight: bold; color: black;" id="descrDecorrido">Decorrido:&nbsp;</span><span id="valorDecorrido" style="color: black;" ></span></p>
 		</c:if>
 		<c:if  test="${cron.restante != null}">
-		<p><span style="font-weight: bold; color: black;" id="descrRestante">Restante:&nbsp;</span><span id="valorRestante" style="color: black;" ></span></p>
+		    <p><span style="font-weight: bold; color: black;" id="descrRestante">Restante:&nbsp;</span><span id="valorRestante" style="color: black;" ></span></p>
 		</c:if>
 	</div>
 </div>

@@ -100,8 +100,6 @@ public class ExDocumentoController extends ExController {
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	private ExDocumento buscarDocumento(final BuscaDocumentoBuilder builder,
@@ -147,7 +145,8 @@ public class ExDocumentoController extends ExController {
 	public void aDesfazerCancelamentoDocumento(final String sigla) {
 		assertAcesso("");
 
-		final ExDocumentoDTO dto = new ExDocumentoDTO(sigla);
+		final ExDocumentoDTO dto = new ExDocumentoDTO();
+		dto.setSigla(sigla);
 		buscarDocumento(true, dto);
 		if (!Ex.getInstance()
 				.getComp()
@@ -322,7 +321,8 @@ public class ExDocumentoController extends ExController {
 	public void criarVia(final String sigla) {
 		assertAcesso("");
 
-		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO(sigla);
+		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+		exDocumentoDTO.setSigla(sigla);
 		buscarDocumento(true, exDocumentoDTO);
 
 		if (!Ex.getInstance()
@@ -343,7 +343,8 @@ public class ExDocumentoController extends ExController {
 	public void criarVolume(final String sigla) {
 		assertAcesso("");
 
-		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO(sigla);
+		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+		exDocumentoDTO.setSigla(sigla);
 		buscarDocumento(true, exDocumentoDTO);
 
 		if (!Ex.getInstance()
@@ -382,7 +383,7 @@ public class ExDocumentoController extends ExController {
 			InvocationTargetException {
 		assertAcesso("");
 
-		final boolean isDocNovo = (exDocumentoDTO == null);
+		final boolean isDocNovo = (exDocumentoDTO == null || exDocumentoDTO.getSigla() == null);
 		if (isDocNovo) {
 			exDocumentoDTO = new ExDocumentoDTO();
 			exDocumentoDTO.setCriandoAnexo(criandoAnexo == null ? false
@@ -562,7 +563,23 @@ public class ExDocumentoController extends ExController {
 				final String chave = key.replace("exDocumentoDTO.", "");
 				parFreeMarker.put(chave, as);
 			}
+			for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
+				if (!parFreeMarker.containsKey(p)) {
+					final String as[] =  new String[] {exDocumentoDTO.getParamsEntrevista().get(p)};
+					parFreeMarker.put(p, as);
+					System.out.println("*** " + p + ", " + exDocumentoDTO.getParamsEntrevista().get(p));
+				}
+			}
 		}
+//		result.include("param", exDocumentoDTO.getParamsEntrevista());
+		
+		List<String> l = new ArrayList<String>();
+		for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
+			result.include(p, exDocumentoDTO.getParamsEntrevista().get(p));
+			l.add(p);
+			System.out.println("*** " + p + ", " + exDocumentoDTO.getParamsEntrevista().get(p));
+		}
+		result.include("vars", l);
 
 		result.include("possuiMaisQueUmModelo", (getModelos(exDocumentoDTO)
 				.size() > 1));
@@ -1140,8 +1157,8 @@ public class ExDocumentoController extends ExController {
 
 			tempoIni = System.currentTimeMillis();
 
-			if (doc.getOrgaoUsuario() == null) {
-				doc.setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
+			if (exDocumentoDTO.getDoc().getOrgaoUsuario() == null) {
+				exDocumentoDTO.getDoc().setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
 			}
 
 			if (exDocumentoDTO.isClassificacaoIntermediaria()
@@ -1198,7 +1215,7 @@ public class ExDocumentoController extends ExController {
 
 			lerEntrevista(exDocumentoDTO);
 
-			if (exDocumentoDTO.getDesativarDocPai().equals("sim")) {
+			if ("sim".equals(exDocumentoDTO.getDesativarDocPai())) {
 				exDocumentoDTO
 						.setDesativ("&exDocumentoDTO.desativarDocPai=sim");
 			}
@@ -1224,7 +1241,7 @@ public class ExDocumentoController extends ExController {
 		} else {
 			final String url = MessageFormat.format("exibir?sigla={0}{1}",
 					exDocumentoDTO.getDoc().getSigla(),
-					exDocumentoDTO.getDesativ());
+					exDocumentoDTO.getDesativ() == null ? "" : exDocumentoDTO.getDesativ());
 			result.redirectTo(url);
 		}
 	}
@@ -1341,7 +1358,8 @@ public class ExDocumentoController extends ExController {
 	public void refazer(final String sigla) {
 		assertAcesso("");
 
-		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO(sigla);
+		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+		exDocumentoDTO.setSigla(sigla);
 		this.buscarDocumento(true, exDocumentoDTO);
 
 		if (!Ex.getInstance()
@@ -1559,9 +1577,10 @@ public class ExDocumentoController extends ExController {
 
 			exDocumentoDTO.setIdMod(mod.getIdMod());
 			if ((exDocumentoDTO.getIdMod() != 0)
-					&& (exDocumentoDTO.getMobilPaiSel().getId() == null)
+					&& (exDocumentoDTO.getMobilPaiSel() == null || exDocumentoDTO.getMobilPaiSel().getId() == null)
 					&& (exDocumentoDTO.getIdMobilAutuado() == null)) {
-				exDocumentoDTO.getClassificacaoSel().apagar();
+				if (exDocumentoDTO.getClassificacaoSel() != null)
+					exDocumentoDTO.getClassificacaoSel().apagar();	
 			}
 		}
 
@@ -1570,9 +1589,10 @@ public class ExDocumentoController extends ExController {
 		}
 
 		if (exDocumentoDTO.isAlterouModelo()
-				&& exDocumentoDTO.getMobilPaiSel().getId() == null
+				&& (exDocumentoDTO.getMobilPaiSel() == null || exDocumentoDTO.getMobilPaiSel().getId() == null)
 				&& exDocumentoDTO.getIdMobilAutuado() == null) {
-			exDocumentoDTO.getClassificacaoSel().apagar();
+			if (exDocumentoDTO.getClassificacaoSel() != null)
+				exDocumentoDTO.getClassificacaoSel().apagar();
 		}
 
 		boolean naLista = false;
@@ -1593,10 +1613,12 @@ public class ExDocumentoController extends ExController {
 		}
 
 		exDocumentoDTO.setModelo(mod);
-		if (mod.getExClassificacao() != null
+		if (mod.getExClassificacao() != null && exDocumentoDTO
+				.getClassificacaoSel() != null
 				&& mod.getExClassificacao().getId() != exDocumentoDTO
 						.getClassificacaoSel().getId()) {
-			exDocumentoDTO.getClassificacaoSel().buscarPorObjeto(
+			if (exDocumentoDTO.getClassificacaoSel() != null)
+				exDocumentoDTO.getClassificacaoSel().buscarPorObjeto(
 					mod.getExClassificacao());
 		}
 	}
@@ -1775,6 +1797,7 @@ public class ExDocumentoController extends ExController {
 						}
 					} catch (final UnsupportedEncodingException e) {
 					}
+					System.out.println(s);
 				}
 			}
 		}
@@ -2159,7 +2182,8 @@ public class ExDocumentoController extends ExController {
 	public void aAcessar(final String sigla) throws Exception {
 		assertAcesso("");
 
-		final ExDocumentoDTO dto = new ExDocumentoDTO(sigla);
+		final ExDocumentoDTO dto = new ExDocumentoDTO();
+		dto.setSigla(sigla);
 		buscarDocumento(false, dto);
 
 		assertAcesso(dto);

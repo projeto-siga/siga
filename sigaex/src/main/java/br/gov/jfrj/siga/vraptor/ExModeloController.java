@@ -40,9 +40,6 @@ public class ExModeloController extends ExSelecionavelController {
 
 	public ExModeloController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
-		
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	@Get("app/modelo/listar")

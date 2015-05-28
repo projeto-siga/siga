@@ -40,9 +40,6 @@ public class ExFormulariosReportController extends ExController {
 			HttpServletResponse response, ServletContext context,
 			Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, dao, so, em);
-		
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
 	@Get("app/expediente/rel/formularios")

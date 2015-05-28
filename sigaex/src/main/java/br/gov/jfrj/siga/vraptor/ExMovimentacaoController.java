@@ -91,9 +91,6 @@ public class ExMovimentacaoController extends ExController {
 			EntityManager em, Validator validator) {
 		
 		super(request, response, context, result, ExDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	private ExDocumento buscarDocumento(final BuscaDocumentoBuilder builder) {

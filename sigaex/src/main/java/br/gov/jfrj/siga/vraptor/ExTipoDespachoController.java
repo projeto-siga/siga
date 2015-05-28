@@ -42,8 +42,6 @@ public class ExTipoDespachoController extends ExController {
 	public ExTipoDespachoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em) {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	@Get("app/despacho/tipodespacho/listar")

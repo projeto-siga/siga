@@ -62,9 +62,6 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 	public ExMobilController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		setItemPagina(50);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	@Get("app/expediente/doc/marcar_tudo")

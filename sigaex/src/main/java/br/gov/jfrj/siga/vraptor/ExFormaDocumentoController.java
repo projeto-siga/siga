@@ -25,9 +25,6 @@ public class ExFormaDocumentoController extends ExController {
 	public ExFormaDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	@Get("app/forma/listar")

@@ -187,7 +187,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	public boolean podeAcessarDocumento(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		ExDocumento doc = mob.doc();
 
@@ -683,7 +683,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	private Boolean podePorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, long tipoConfig, CpOrgaoUsuario orgaoObjeto) throws Exception {
+			DpLotacao lotaTitular, long tipoConfig, CpOrgaoUsuario orgaoObjeto) {
 		return podePorConfiguracao(titular, lotaTitular, 0L, tipoConfig, orgaoObjeto);
 	}
 
@@ -1174,7 +1174,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAutenticarDocumento(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExDocumento doc) throws Exception {
+			final DpLotacao lotaTitular, final ExDocumento doc) {
 		
 		if (doc.isEletronico() &&  !doc.isAutenticado() && doc.temAssinaturasComSenha()) {
 			 return true;
@@ -1193,7 +1193,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAutenticarMovimentacao(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+			final DpLotacao lotaTitular, final ExMovimentacao mov) {
 		
 		//Não é necessário autenticar movimentação de anexação pois o link para assinar/autenticar sempre está disponível. 
 		if(mov.getExTipoMovimentacao().getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
@@ -1216,7 +1216,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAssinarMovimentacaoComSenha(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
+			final DpLotacao lotaTitular, final ExMovimentacao mov) {
 
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA,
 				ExTipoMovimentacao.class, false);

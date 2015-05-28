@@ -42,7 +42,10 @@ window.Siga = {
       if (ajax.params == null || ajax.params == 'undefined'){
        ajax.params = {};
       }
-      ajax.params["idp"] = sessionStorage.getItem("idp");
+      
+      var idp = localStorage.getItem("idp");
+      if (idp != null && idp != 'undefined')
+    	  ajax.params["idp"] = idp;
 
       $.ajax({
          url: ajax.url,

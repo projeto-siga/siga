@@ -141,12 +141,15 @@ self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 
 self.ajax_${propriedade}${tipoSel} = function() {
 	var sigla = $.trim(document.getElementsByName('${propriedade}${tipoSel}Sel.sigla')[0].value);
+	var matricula = localStorage.getItem("matricula");
 	
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
 	var url = '${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 	url = url + '&sigla=' + sigla;
+	url = url + '&matricula=' + matricula;
+	
 	Siga.ajax(url, null, "GET", function(response){		
 		resposta_ajax_${propriedade}${tipoSel}(response);
 	});	

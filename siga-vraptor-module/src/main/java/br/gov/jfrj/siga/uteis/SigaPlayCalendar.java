@@ -76,20 +76,20 @@ public class SigaPlayCalendar extends GregorianCalendar {
         if (fazMenosDeUmMinuto())
             haQuantoTempo = "Neste instante";
         else if (fazMenosDeDoisMinutos())
-            haQuantoTempo = "HÃ¡ 1 minuto";
+            haQuantoTempo = "Há 1 minuto";
         else if (fazMenosDeUmaHora())
-            haQuantoTempo = "HÃ¡ " + tempoTranscorridoMinutos() + " minutos";
+            haQuantoTempo = "Há " + tempoTranscorridoMinutos() + " minutos";
         else if (foiHoje())
-            haQuantoTempo = "Ã€s " + format.format(this.getTime());
+            haQuantoTempo = "Às " + format.format(this.getTime());
         else if (foiOntemOuHoje())
-            haQuantoTempo = "Ontem, Ã s " + format.format(this.getTime());
+            haQuantoTempo = "Ontem, às " + format.format(this.getTime());
         else if (fazMenosDeUmaSemana()) {
             switch (this.get(Calendar.DAY_OF_WEEK)) {
             case Calendar.MONDAY:
                 haQuantoTempo = "Segunda-feira";
                 break;
             case Calendar.TUESDAY:
-                haQuantoTempo = "TerÃ§a-feira";
+                haQuantoTempo = "Terça-feira";
                 break;
             case Calendar.WEDNESDAY:
                 haQuantoTempo = "Quarta-feira";
@@ -101,20 +101,20 @@ public class SigaPlayCalendar extends GregorianCalendar {
                 haQuantoTempo = "Sexta";
                 break;
             case Calendar.SATURDAY:
-                haQuantoTempo = "SÃ¡bado";
+                haQuantoTempo = "Sábado";
                 break;
             case Calendar.SUNDAY:
                 haQuantoTempo = "Domingo";
                 break;
             }
 
-            haQuantoTempo += ", Ã s " + format.format(this.getTime());
+            haQuantoTempo += ", Às " + format.format(this.getTime());
 
         } else {
             if (ocultarMinutos)
-                format.applyPattern("dd/MM/yy");
+                format.applyPattern("dd/MM/yyyy");
             else
-                format.applyPattern("dd/MM/yy HH:mm");
+                format.applyPattern("dd/MM/yyyy HH:mm");
             haQuantoTempo = format.format(this.getTime());
         }
         return haQuantoTempo;

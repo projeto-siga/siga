@@ -299,7 +299,7 @@ public class SolicitacaoController extends SrController {
             srValidator.addError("solicitacao.descrSolicitacao", "Descri&ccedil&atilde;o n&atilde;o informada");
         }
 
-        HashMap<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
+        Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
         for (SrAtributoSolicitacao att : solicitacao.getAtributoSolicitacaoSet()) {
             // Para evitar NullPointerExcetpion quando nao encontrar no Map
             if (Boolean.TRUE.equals(obrigatorio.get(att.getAtributo().getIdAtributo()))) {

@@ -42,7 +42,7 @@ import com.google.gson.JsonObject;
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
 public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEntity {
 
-    public static ActiveRecord<SrConfiguracao> AR = new ActiveRecord<>(SrConfiguracao.class);
+    public static final ActiveRecord<SrConfiguracao> AR = new ActiveRecord<>(SrConfiguracao.class);
 
     private static final long serialVersionUID = 4959384444345462871L;
 
@@ -270,7 +270,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarDesignacoes(boolean mostrarDesativados, DpLotacao atendente) {
-        StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+        StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
         sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
 
         if (atendente != null) {
@@ -291,7 +291,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarDesignacoes(SrEquipe equipe) {
-        StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+        StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
         sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO);
 
         if (equipe != null && equipe.getLotacao() != null && equipe.getLotacao().getIdLotacaoIni() != null) {
@@ -311,7 +311,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarAbrangenciasAcordo(boolean mostrarDesativados, SrAcordo acordo) {
-        StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+        StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
         sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
 
         if (acordo != null) {
@@ -332,7 +332,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarAbrangenciasAcordo() {
-        StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+        StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
         sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO);
         sb.append(" and conf.hisDtFim is null");
 
@@ -352,7 +352,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarPermissoesUsoLista(SrLista lista, boolean mostrarDesativado) {
-        StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+        StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
         sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA);
         sb.append(" and conf.listaPrioridade.hisIdIni = ");
         sb.append(lista.getHisIdIni());
@@ -367,7 +367,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> listarInclusaoAutomatica(SrLista lista, boolean mostrarDesativado) {
-        StringBuffer sb = new StringBuffer("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
+        StringBuilder sb = new StringBuilder("select conf from SrConfiguracao as conf where conf.cpTipoConfiguracao.idTpConfiguracao = ");
         sb.append(CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA);
         sb.append(" and conf.listaPrioridade.hisIdIni = ");
         sb.append(lista.getHisIdIni());
@@ -492,7 +492,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     public String getDescrItemConfiguracaoAtual() {
         String descrItemConfiguracao = null;
-        if (this.itemConfiguracaoSet != null && this.itemConfiguracaoSet.size() > 0) {
+        if (this.itemConfiguracaoSet != null && !this.itemConfiguracaoSet.isEmpty()) {
             SrItemConfiguracao conf = this.itemConfiguracaoSet.get(this.itemConfiguracaoSet.size() - 1);
 
             if (conf != null) {
@@ -502,16 +502,16 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
                     if (descrItemConfiguracao != null)
                         descrItemConfiguracao = descrItemConfiguracao.concat(" ...");
                     else
-                        descrItemConfiguracao = new String("...");
+                        descrItemConfiguracao = "...";
             }
         } else
-            descrItemConfiguracao = new String();
+            descrItemConfiguracao = "";
 
         return descrItemConfiguracao;
     }
 
     public String getDescrTipoPermissao() {
-        if (this.tipoPermissaoSet != null && this.tipoPermissaoSet.size() > 0) {
+        if (this.tipoPermissaoSet != null && !this.tipoPermissaoSet.isEmpty()) {
             SrTipoPermissaoLista tipoPermissao = this.tipoPermissaoSet.get(0);
             return tipoPermissao.getDescrTipoPermissaoLista().concat(" ...");
         }
@@ -520,7 +520,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     public String getDescrAcaoAtual() {
         String descrAcao = null;
-        if (this.acoesSet != null && this.acoesSet.size() > 0) {
+        if (this.acoesSet != null && !this.acoesSet.isEmpty()) {
             SrAcao acao = this.acoesSet.get(this.acoesSet.size() - 1);
 
             if (acao != null) {
@@ -530,18 +530,18 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
                     if (descrAcao != null)
                         descrAcao = descrAcao.concat(" ...");
                     else
-                        descrAcao = new String("...");
+                        descrAcao = "...";
             }
         } else
-            descrAcao = new String();
+            descrAcao = "";
 
         return descrAcao;
     }
 
     /**
-     * MÃ©todo que retorna um nÃºmero referente ao tipo de solicitante selecionado. Esse nÃºmero refere-se ao Ã­ndice do item selecionado no componente pessoaLotaFuncCargoSelecao.html
+     * Método que retorna um número referente ao tipo de solicitante selecionado. Esse número refere-se ao Índice do item selecionado no componente pessoaLotaFuncCargoSelecao.html
      *
-     * @return <li>1 para Pessoa; <li>2 para LotaÃ§Ã£o; <li>3 para Funcao; <li>4 para Cargo;
+     * @return <li>1 para Pessoa; <li>2 para Lotação; <li>3 para Função; <li>4 para Cargo;
      */
     public int getTipoSolicitante() {
         if (this.getLotacao() != null && this.getLotacao().getLotacaoAtual() != null)
@@ -558,7 +558,8 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     /**
      * Retorna um Json de {@link SrConfiguracaoVO} que contÃ©m: <li> {@link SrListaConfiguracaoVO}</li> <li> {@link SrItemConfiguracaoVO}</li> <li> {@link SrAcaoVO}</li>
-     * @throws Exception 
+     * 
+     * @throws Exception
      *
      */
     public String getSrConfiguracaoJson() throws Exception {
@@ -607,7 +608,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     public int getNivelItemParaComparar() {
         int soma = 0;
-        if (itemConfiguracaoSet != null && itemConfiguracaoSet.size() > 0) {
+        if (itemConfiguracaoSet != null && !itemConfiguracaoSet.isEmpty()) {
             for (SrItemConfiguracao i : itemConfiguracaoSet) {
                 SrItemConfiguracao iAtual = i.getAtual();
                 if (iAtual != null)
@@ -620,7 +621,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     public int getNivelAcaoParaComparar() {
         int soma = 0;
-        if (acoesSet != null && acoesSet.size() > 0) {
+        if (acoesSet != null && !acoesSet.isEmpty()) {
             for (SrAcao i : acoesSet) {
                 SrAcao iAtual = i.getAtual();
                 if (iAtual != null)
@@ -633,7 +634,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     @SuppressWarnings("unchecked")
     public static List<SrConfiguracao> buscaParaConfiguracaoInsercaoAutomaticaLista(SrLista lista, boolean mostrarDesativados) throws Exception {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("select conf from SrConfiguracao as conf ");
         sb.append("where conf.cpTipoConfiguracao.idTpConfiguracao = :tipoConfiguracao ");
         sb.append("and conf.listaPrioridade.hisIdIni = :idIniLista ");

@@ -35,6 +35,8 @@
 	}
 </script>
 
+<script src="/sigasr/javascripts/jquery-1.11.1.min.js"></script>
+<script src="/sigasr/javascripts/jquery-migrate-1.0.0.js"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="/sigasr/javascripts/jquery.blockUI.js"></script>
 <script src="/sigasr/javascripts/jquery-config.js"></script>

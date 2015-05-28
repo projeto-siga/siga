@@ -389,9 +389,12 @@ public class SolicitacaoController extends SrController {
         result.include("solicitacao", solicitacao);
     }
     
+    @Path("/exibirPrioridade")
     public void exibirPrioridade(SrSolicitacao solicitacao) {
         solicitacao.associarPrioridadePeloGUT();
+        
         result.include("solicitacao", solicitacao);
+        result.include("prioridadeList",SrPrioridade.values());
     }
     
     public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
@@ -423,7 +426,7 @@ public class SolicitacaoController extends SrController {
         }
 
         // Montando o filtro...
-        String[] tipos = new String[] { "Pessoa", "Lotação" };
+        String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
         List<CpMarcador> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList();
 
         List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
@@ -451,8 +454,8 @@ public class SolicitacaoController extends SrController {
         }
         return listaAtributosAdicao;
     }
-
-    @Path("/editar/{id}")
+    
+    @Path({"/editar", "/editar/{id}"})
     public void editar(Long id) throws Exception {
         SrSolicitacao solicitacao;
 

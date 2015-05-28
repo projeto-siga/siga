@@ -32,6 +32,6 @@
 	- ${solicitacao.marcadoresEmHtml}
 </span>
 <br/>
-<c:forEach items="" var="solFilha">
+<c:forEach items="${solicitacao.solicitacaoFilhaSet}" var="solFilha">
 	<siga:listaArvore solicitacao="${solFilha}" visualizando="${visualizando}" nivel="${nivel+1}"/>
 </c:forEach>

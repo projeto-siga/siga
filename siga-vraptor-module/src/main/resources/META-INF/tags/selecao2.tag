@@ -1,3 +1,4 @@
+
 <%@ tag body-content="empty"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
@@ -39,7 +40,8 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
     } catch (E) {
     } finally {
     }
-    
+
+    document.getElementsByName('${propriedade}')[0].value = id;
 	document.getElementsByName('${propriedade}.id')[0].value = id;
 	
 	<c:if test="${ocultardescricao != 'sim'}">
@@ -141,6 +143,9 @@ self.ajax_${propriedadeClean} = function() {
 </c:choose>
 
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
+<input type="hidden" name="${propriedade}"
+	value="<c:out value="${f:evaluate(f:concat(propriedade,'.id'),requestScope)}"/>"
+	id="formulario_${propriedadeClean}" />
 <input type="hidden" name="${propriedade}.id"
 	value="<c:out value="${f:evaluate(f:concat(propriedade,'.id'),requestScope)}"/>"
 	id="formulario_${propriedadeClean}_id" />
@@ -151,9 +156,8 @@ self.ajax_${propriedadeClean} = function() {
 	value="<c:out value="${f:evaluate(f:concat(propriedade,'.sigla'),requestScope)}"/>"
 	id="formulario_${propriedadeClean}_sigla"
 	onkeypress="return handleEnter(this, event)"
-	onblur="javascript: ajax_${propriedadeClean}();<c:if test="${not empty onchange}">${onchange};</c:if>"
-	size="25" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if>
-	${disabledTxt} />
+	onblur="javascript: ajax_${propriedadeClean}();"
+	size="25" ${disabledTxt} />
 
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedadeClean}SelButton" value="..."

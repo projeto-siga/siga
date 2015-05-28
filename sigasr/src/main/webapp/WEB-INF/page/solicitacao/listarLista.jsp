@@ -23,9 +23,10 @@
 		<!-- content bomex -->
 		<div class="gt-content-box gt-for-table dataTables_div">
 			<div class="gt-form-row dataTables_length">
-				<label>
-					<siga:checkbox name="mostrarDesativados" value="${mostrarDesativados}"></siga:checkbox>
-					<b>Incluir Inativas</b>
+				<label> 
+					<siga:checkbox name="mostrarDesativados"
+						value="${mostrarDesativados}"></siga:checkbox> 
+						<b>Incluir Inativas</b>
 				</label>
 			</div>
 			<table id="listas_table" border="0" class="gt-table display">
@@ -49,18 +50,14 @@
 
 							<td class="acoes"> 
 								<c:if test="${item.podeEditar(lotaTitular, cadastrante)}">	
-<%--    									<siga:desativarReativar id="${item.idLista}"  --%>
-<%-- 															onReativar="listaService.reativar"  --%>
-<%-- 															onDesativar="listaService.desativar"  --%>
-<%-- 															isAtivo="${item.isAtivo()}"> --%>
-<%-- 									</siga:desativarReativar> --%>
+									<siga:desativarReativar id="${item.idLista}" onReativar="listaService.reativar" onDesativar="listaService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
+    									
 									<a onclick="javascript:editarLista(event, $(this).parent().parent().data('json'))"> 
 										<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">
 									</a>
 								</c:if>
 							</td>
 						</tr>
-<!-- 						</a> -->
 					</c:forEach>
 				</tbody>
 			</table>
@@ -133,24 +130,23 @@
 			 tabelaRegistros : $('#listas_table'),
 			 objectName : 'lista',
 			 formCadastro : $('#formLista'),
-			 mostrarDesativados : $('#checkmostrarDesativados').attr('checked') ? true : false,//QueryString.mostrarDesativados,
+			 mostrarDesativados : QueryString.mostrarDesativados,
 			 colunas : colunasLista.acoes
 		};	
 	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
-			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
-			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativados').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativados').value = QueryString.mostrarDesativados == 'true';
 		}
-			
-		$("#checkmostrarDesativado").click(function() {
-			jQuery.blockUI(objBlock);
-			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = "${linkTo[SolicitacaoController].listarListaDesativados}";
+
+		$("#checkmostrarDesativados").click(function() {
+			if (document.getElementById('checkmostrarDesativados').checked)
+				location.href = "${linkTo[SolicitacaoController].listarLista[true]}";
 			else
 				location.href = "${linkTo[SolicitacaoController].listarLista[false]}";	
 		});
-		
+
 		/* Table initialization */
 		opts.dataTable= $('#listas_table').dataTable({
 			"language": {

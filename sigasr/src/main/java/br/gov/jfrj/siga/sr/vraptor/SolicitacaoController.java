@@ -92,7 +92,7 @@ public class SolicitacaoController extends SrController {
     }   
     
     @SuppressWarnings("unchecked")
-    @Path("/listarLista")
+    @Path("/listarLista/{mostrarDesativados}")
     public void listarLista(boolean mostrarDesativados) throws Exception {
         List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
         List<CpComplexo> locais = CpComplexo.AR.all().fetch();
@@ -205,11 +205,6 @@ public class SolicitacaoController extends SrController {
 
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(permissoes));
     }
-
-    @Path("/listarListaDesativados")
-    public void listarListaDesativados() throws Exception {
-        listarLista(Boolean.TRUE);
-    }     
 
     @Path("/gravarLista")
     public void gravarLista(SrLista lista) throws Exception {

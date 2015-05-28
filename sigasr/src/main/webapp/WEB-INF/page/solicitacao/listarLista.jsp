@@ -4,17 +4,18 @@
 <siga:pagina titulo="Listas">
 	
 	<jsp:include page="../main.jsp"></jsp:include>
+
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
-	
-	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
-	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.blockUI.js"></script>
 	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
-	<script src="/sigasr/javascripts/moment.js"></script>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
@@ -38,7 +39,10 @@
 
 				<tbody>
 					<c:forEach items="${listas}" var="item">
-						<tr data-json-id="${item.idLista}" data-json="${item.toJson()}">
+						<tr data-json-id="${item.idLista}" data-json='${item.toJson()}'
+							<c:if test="${item.podeConsultar(lotaTitular, cadastrante)}">
+ 								onclick="javascript:window.location='${linkTo[SolicitacaoController].exibirLista[item.idLista]}'" style="cursor: pointer;"
+ 							</c:if>>
  							
 							<td >${item.nomeLista}</td>
 							<td>${item.lotaCadastrante.nomeLotacao}</td>
@@ -82,15 +86,11 @@
 			<div class="gt-table-buttons"> 
 		</div>
 	</div>
-
- 	<siga:modal nome="editarLista" titulo="Inserir Lista">
-		<div id="divEditarLista">
-			<jsp:include page="editarLista.jsp" />
-		</div>
+	
+	<siga:modal nome="editarLista" titulo="Cadastrar Acordo">
+		<div id="divEditarLista"><jsp:include page="editarLista.jsp"></jsp:include></div>
 	</siga:modal>
-	<br />
-	<br />
-	<br />
+
 </siga:pagina>
 
 
@@ -226,7 +226,7 @@
 		return [lista.nomeLista, lista.nomeLotacao, 'COLUNA_ACOES'];
 	}
 	
-	listaService.editarButton = '<a onclick="javascript: editarLista(event, lista"><img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;"></a>';
+	listaService.editarButton = '<a onclick="javascript:editarLista(event, $(this).parent().parent().data(\'json\'))"><img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;"></a>';
 	
 	/**
 	 * Customiza o metodo editar
@@ -276,6 +276,6 @@
 
 	function editarLista(event, jSonItem) {
 		event.stopPropagation();
-		listaService.editar(jSonItem, 'Alterar Lista');
+ 		listaService.editar(jSonItem, 'Alterar Lista');
 	}
 </script>

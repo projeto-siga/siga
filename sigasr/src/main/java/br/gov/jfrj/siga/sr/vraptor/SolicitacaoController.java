@@ -19,6 +19,10 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -96,6 +100,14 @@ public class SolicitacaoController extends SrController {
         List<SrLista> listas = SrLista.listar(mostrarDesativados);
         String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 
+        
+        result.include("dpPessoaSel", new DpPessoaSelecao());
+        result.include("atendenteSel", new DpLotacaoSelecao());
+        result.include("lotacaoSel", new DpLotacaoSelecao());
+        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+        result.include("cargoSel", new DpCargoSelecao());
+        result.include("cpGrupoSel", new CpPerfilSelecao());
+        
         result.include(ORGAOS, orgaos);
 		result.include(LOCAIS, locais);
 		result.include(TIPOS_PERMISSAO, tiposPermissao);
@@ -104,12 +116,73 @@ public class SolicitacaoController extends SrController {
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
-        
+
     }
 
-    public String configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
+    @Path("/listarPermissaoUsoLista")
+    public void listarPermissaoUsoListaDesativados(Long idLista) throws Exception {
+        SrLista lista = new SrLista();
+        if (idLista != null)
+            lista = SrLista.AR.findById(idLista);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.TRUE);
+
+        result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
+    }
+
+    @Path("/gravarPermissaoUsoLista")
+    public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
+        assertAcesso("ADM:Administrar");
+        permissao.salvarComoPermissaoUsoLista();
+
+        result.use(Results.http()).body(permissao.toVO().toJson());
+    }
+
+    @Path("/listarPermissaoUsoLista/{idLista}")
+    public void listarPermissaoUsoLista(Long idLista) throws Exception {
+        assertAcesso("ADM:Administrar");
+
+        SrLista lista = new SrLista();
+        if (idLista != null)
+            lista = SrLista.AR.findById(idLista);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.FALSE);
+
+        result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
+    }
+    
+    @Path("/listarPermissaoUsoLista/{idLista}")
+    public void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
+        assertAcesso("ADM:Administrar");
+        SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, idPermissao);
+        configuracao.finalizar();
+
+        result.use(Results.http()).body(configuracao.getSrConfiguracaoJson());
+    }
+
+    @Path("/configuracoesParaInclusaoAutomatica/{idLista}/{mostrarDesativados}")
+    public void configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(idLista);
-        return SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados);
+
+        result.use(Results.http()).body(SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados));
+    }
+
+    @Path("/configuracaoAutomaticaGravar")
+    public void configuracaoAutomaticaGravar(SrConfiguracao configuracaoInclusaoAutomatica) throws Exception {
+        configuracaoInclusaoAutomatica.salvarComoInclusaoAutomaticaLista(configuracaoInclusaoAutomatica.getListaPrioridade());
+        result.use(Results.http()).body(configuracaoInclusaoAutomatica.toVO().toJson());
+    }
+
+    @Path("/desativarConfiguracaoAutomaticaGravar")
+    public void desativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
+        SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
+        configuracao.finalizar();
+        result.use(Results.http()).body(configuracao.toVO().toJson());
+    }
+
+    @Path("/reativarConfiguracaoAutomaticaGravar")
+    public void reativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
+        SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
+        configuracao.salvar();
+        result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
     /**
@@ -119,26 +192,25 @@ public class SolicitacaoController extends SrController {
      *            - ID da lista
      * @return - String contendo a lista no formato jSon
      */
-    public String buscarPermissoesLista(Long idLista) throws Exception {
+    @Path("/listarListaDesativados/{idLista}")
+    public void buscarPermissoesLista(Long idLista) throws Exception {
         List<SrConfiguracao> permissoes;
 
         if (idLista != null) {
             SrLista lista = SrLista.AR.findById(idLista);
-
-            // permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(lotaTitular(), cadastrante()));
+            permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
             permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
         } else
             permissoes = new ArrayList<SrConfiguracao>();
 
-        return SrConfiguracao.convertToJSon(permissoes);
+        result.use(Results.http()).body(SrConfiguracao.convertToJSon(permissoes));
     }
-    
+
     @Path("/listarListaDesativados")
     public void listarListaDesativados() throws Exception {
         listarLista(Boolean.TRUE);
     }     
-    
-    //@Path("/listarLista/gravar", "/gravarLista")
+
     @Path("/gravarLista")
     public void gravarLista(SrLista lista) throws Exception {
         lista.setLotaCadastrante(getLotaTitular());

@@ -21,6 +21,10 @@
     <%=SrPrioridade.PLANEJADO.name()%>
 </c:set>
 
+<c:set var="prioridade_desc">
+    <%=SrPrioridade.PLANEJADO.getDescPrioridade()%>
+</c:set>
+
 <siga:pagina titulo="Cadastro de Solicitação">
 	<jsp:include page="../main.jsp"></jsp:include>
 	
@@ -605,7 +609,8 @@
 					</div>
 					<div id="divPrioridade" class="gt-form-row gt-width-66">
 						<label style="float: left">Prioridade: &nbsp;</label>
-						<span>${solicitacao.prioridade != null ? solicitacao.prioridade : prioridade_planejado}</span>
+						<span>${solicitacao.prioridade != null ? solicitacao.prioridade.descPrioridade: prioridade_desc}</span>
+						
 						<siga:select name="prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true"
 							value="${solicitacao.prioridade != null ? solicitacao.prioridade: prioridade_planejado}" style="width:235px;border:none;display:none;"/>
 							<br />
@@ -652,7 +657,7 @@
 		</div>
 <!-- 		paginas não migradas -->
 <%-- 		<jsp:include page="exibirCronometro.jsp"/> --%>
-<%-- 		<jsp:include page="exibirPendencias.jsp /> --%>
+		<jsp:include page="exibirPendencias.jsp"/>
 		
 		<%--
 		<div class="gt-sidebar">

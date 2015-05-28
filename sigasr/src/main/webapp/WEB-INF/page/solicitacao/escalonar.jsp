@@ -48,7 +48,7 @@
 			<div class="gt-form-row">
 				<label><c:set var="valueCheckbox"
 						value="${titular.orgaoUsuario.idOrgaoUsu == 1 ? false : true}" />
-					<siga:checkbox name="criaFilha" onchande="onchangeCheckCriaFilha()"
+					<siga:checkbox name="criaFilha" onchange="onchangeCheckCriaFilha()"
 						value="valueCheckbox" /> <c:choose>
 						<c:when test="${solicitacao.isFilha()}">
 							<c:set var="codigo" value="${solicitacao.solicitacaoPai.codigo}" />
@@ -79,7 +79,7 @@
 				<br /> <br />
 				<c:if test="!solicitacao.isPai() && !solicitacao.isFilha()">
 					<siga:checkbox name="fechadoAuto"
-						onchande="onchangeCheckCriaFilha()"
+						onchange="onchangeCheckCriaFilha()"
 						value="${solicitacao.fechadoAutomaticamente}" />
 				Fechar automaticamente a solicitação <b>${codigo}</b>, quando
 				todas as solicitaç&otilde;es filhas forem fechadas pelos seus

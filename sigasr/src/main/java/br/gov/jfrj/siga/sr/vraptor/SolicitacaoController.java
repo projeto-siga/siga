@@ -386,7 +386,7 @@ public class SolicitacaoController extends SrController {
         return listaAtributosAdicao;
     }
     
-    @Path("/editar/{id}")
+    @Path({"/editar", "/editar/{id}"})
     public void editar(Long id) throws Exception {
         SrSolicitacao solicitacao;
         

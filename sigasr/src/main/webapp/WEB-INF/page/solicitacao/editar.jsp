@@ -18,35 +18,36 @@
 </c:set>
 
 <c:set var="prioridade_planejado">
-    <%=SrPrioridade.PLANEJADO.getDescPrioridade()%>
+    <%=SrPrioridade.PLANEJADO.name()%>
 </c:set>
-
-<style>
-.barra-subtitulo {
-	color: #365b6d !important;
-	border-bottom: 1px solid #ccc;
-	border-radius: 0 !important;
-	margin: 0 -15px 10px -15px;
-}
-
-.barra-subtitulo-top {
-	border-radius: 5px 5px 0 0 !important;
-	margin-top: -15px !important;
-}
-
-.tempo h3 {
-	color: #365b6d;
-	font-weight: normal;
-	margin-bottom: 0px;
-	font-size: 115.0%;
-	border: 0;
-}
-</style>
 
 <siga:pagina titulo="Cadastro de Solicitação">
 	<jsp:include page="../main.jsp"></jsp:include>
 	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	
+	<style>
+	.barra-subtitulo {
+		color: #365b6d !important;
+		border-bottom: 1px solid #ccc;
+		border-radius: 0 !important;
+		margin: 0 -15px 10px -15px;
+	}
+	
+	.barra-subtitulo-top {
+		border-radius: 5px 5px 0 0 !important;
+		margin-top: -15px !important;
+	}
+	
+	.tempo h3 {
+		color: #365b6d;
+		font-weight: normal;
+		margin-bottom: 0px;
+		font-size: 115.0%;
+		border: 0;
+	}
+	</style>
+	
 	<script>
 		jQuery(document).ready(function($) {
 			$('#gravar').click(function() {
@@ -220,8 +221,8 @@
 				if(divFiltroExistente.size() > 0) {
 					var span = divFiltroExistente.find('span'),
 						checkbox = divFiltroExistente.find(':checkbox')
+					span.html($.trim(optionHtml));
 					
-					span.html(optionHtml.trim());
 					checkbox.attr('checked', true);
 				}
 				/** 
@@ -238,7 +239,8 @@
 					input.attr('disabled', $('#bodySolRelacionadas').attr('requesting'));
 	
 					var label = $('<span style="margin-left:5px">');
-					label.html(optionHtml.trim());
+					label.html($.trim(optionHtml));
+					//label.html(optionHtml.trim());
 				
 					div.append(input);
 					div.append(label);
@@ -272,7 +274,8 @@
 	
 		// Recebe notificacao de alteracao em campo que eh atributo
 		function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl, teste) {
-			var label = $(campoRef).prev('label').html().trim();
+			//var label = $(campoRef).prev('label').html().trim();
+			var label = $.trim($(campoRef).prev('label').html());
 	
 			notificarCampoMudou(campoRef, label, optionVl);
 			carregarSolRelacionadas();
@@ -284,7 +287,8 @@
 			if(campo.size() > 0) {
 				// Se o filtro eh uma select, entao pega o valor selecionado na select
 				if(campo[0].tagName == 'SELECT') {
-					return tipoCampo + ' - ' + campo.find('option:selected').html().trim();
+					return tipoCampo + ' - ' + $.trim(campo.find('option:selected').html());
+					//return tipoCampo + ' - ' + campo.find('option:selected').html().trim();
 				}
 				else {
 					// Se o campo for um componente de selecao, entao pega o valor selecionado (estara em um span gerado pelo componente)
@@ -401,7 +405,8 @@
 	
 					// Se for select, busca pelo atributo selecionado
 					if (inputAtributo.tagName == 'SELECT') {
-						atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
+						//atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
+						atrHtml = atrHtml + ' - ' + $.trim($(inputAtributo).find('option:selected').html());
 					}
 					addFiltro($('#filtro'), atrClass, atrHtml, atrName);
 				}

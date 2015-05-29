@@ -19,55 +19,55 @@ public class SrTipoMovimentacao extends ObjetoVraptor {
 
     private static final long serialVersionUID = 1L;
 
-    final static public long TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO = 1;
+    public static final long TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO = 1;
 
-    final static public long TIPO_MOVIMENTACAO_ANDAMENTO = 2;
+    public static final long TIPO_MOVIMENTACAO_ANDAMENTO = 2;
 
-    final static public long TIPO_MOVIMENTACAO_INCLUSAO_LISTA = 3;
+    public static final long TIPO_MOVIMENTACAO_INCLUSAO_LISTA = 3;
 
-    final static public long TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO = 4;
+    public static final long TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO = 4;
 
-    final static public long TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO = 5;
+    public static final long TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO = 5;
 
-    final static public long TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA = 6;
+    public static final long TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA = 6;
 
-    final static public long TIPO_MOVIMENTACAO_FECHAMENTO = 7;
+    public static final long TIPO_MOVIMENTACAO_FECHAMENTO = 7;
 
-    final static public long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO = 8;
+    public static final long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO = 8;
 
-    final static public long TIPO_MOVIMENTACAO_INICIO_PENDENCIA = 9;
+    public static final long TIPO_MOVIMENTACAO_INICIO_PENDENCIA = 9;
 
-    final static public long TIPO_MOVIMENTACAO_REABERTURA = 10;
+    public static final long TIPO_MOVIMENTACAO_REABERTURA = 10;
 
-    final static public long TIPO_MOVIMENTACAO_FIM_PENDENCIA = 11;
+    public static final long TIPO_MOVIMENTACAO_FIM_PENDENCIA = 11;
 
-    final static public long TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO = 12;
+    public static final long TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO = 12;
 
-    final static public long TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA = 13;
+    public static final long TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA = 13;
 
-    final static public long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO = 14;
+    public static final long TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO = 14;
 
     // final static public long TIPO_MOVIMENTACAO_FECHAMENTO_PARCIAL = 15;
 
-    final static public long TIPO_MOVIMENTACAO_AVALIACAO = 16;
+    public static final long TIPO_MOVIMENTACAO_AVALIACAO = 16;
 
     // final static public long TIPO_MOVIMENTACAO_INICIO_CONTROLE_QUALIDADE = 17;
 
-    final static public long TIPO_MOVIMENTACAO_JUNTADA = 18;
+    public static final long TIPO_MOVIMENTACAO_JUNTADA = 18;
 
-    final static public long TIPO_MOVIMENTACAO_DESENTRANHAMENTO = 19;
+    public static final long TIPO_MOVIMENTACAO_DESENTRANHAMENTO = 19;
 
-    final static public long TIPO_MOVIMENTACAO_VINCULACAO = 20;
+    public static final long TIPO_MOVIMENTACAO_VINCULACAO = 20;
 
-    final static public long TIPO_MOVIMENTACAO_ALTERACAO_PRAZO = 21;
+    public static final long TIPO_MOVIMENTACAO_ALTERACAO_PRAZO = 21;
 
     // final static public long TIPO_MOVIMENTACAO_RASCUNHO = 22;
 
     // final static public long TIPO_MOVIMENTACAO_EXCLUSAO = 23;
 
-    final static public long TIPO_MOVIMENTACAO_ESCALONAMENTO = 24;
+    public static final long TIPO_MOVIMENTACAO_ESCALONAMENTO = 24;
 
-    public static ActiveRecord<SrTipoMovimentacao> AR = new ActiveRecord<>(SrTipoMovimentacao.class);
+    public static final ActiveRecord<SrTipoMovimentacao> AR = new ActiveRecord<>(SrTipoMovimentacao.class);
 
     @Id
     @Column(name = "ID_TIPO_MOVIMENTACAO")
@@ -81,13 +81,9 @@ public class SrTipoMovimentacao extends ObjetoVraptor {
         this.setIdTipoMov(idTipoMov);
         this.setNome(nome);
     }
-    
+
     public SrTipoMovimentacao() {
         super();
-    }
-
-    public SrTipoMovimentacao getSrTipoMovimentacao() {
-        return getSrTipoMovimentacao();
     }
 
     public Long getIdTipoMov() {

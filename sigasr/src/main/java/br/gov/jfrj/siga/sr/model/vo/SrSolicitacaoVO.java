@@ -99,7 +99,7 @@ public class SrSolicitacaoVO {
     }
 
     private String getCodigoFormatado(Long id, String codigo, String nome, boolean isPopup) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if (isPopup) {
             sb.append("<a href=\"javascript:opener.retorna_solicitacao");
@@ -118,7 +118,7 @@ public class SrSolicitacaoVO {
     }
 
     private String getTeorFormatado(SrItemConfiguracao itemConfiguracao, String descricao) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<b>");
         sb.append(SigaVraptorUtil.descricaoItem(itemConfiguracao));
         sb.append(":</b>&nbsp;");
@@ -128,7 +128,7 @@ public class SrSolicitacaoVO {
     }
 
     private String getSolicitanteFormatado(String nomeSolicitante, String descricaoSolicitante, SelecionavelVO lotaSolicitante) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(SigaVraptorUtil.selecionado(nomeSolicitante, descricaoSolicitante));
         sb.append("&nbsp;");
 

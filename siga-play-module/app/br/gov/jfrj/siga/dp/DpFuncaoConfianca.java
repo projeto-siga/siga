@@ -42,7 +42,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "DP_FUNCAO_CONFIANCA", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 		Serializable, Selecionavel, Sincronizavel {
 
@@ -118,7 +118,7 @@ public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 		this.nmFuncaoConfiancaAI = nmFuncaoConfiancaAI;
 	}
 
-	// MÈtodos necess·rios para ser "Sincronizavel"
+	// M√©todos necess√°rios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimFuncao();

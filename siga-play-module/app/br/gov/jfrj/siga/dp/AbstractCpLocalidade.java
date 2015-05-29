@@ -37,7 +37,7 @@ import br.gov.jfrj.siga.model.Objeto;
 
 
 /**
- * Classe que representa uma linha na tabela DP_CARGO. Você pode customizar o
+ * Classe que representa uma linha na tabela DP_CARGO. VocÃª pode customizar o
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
 

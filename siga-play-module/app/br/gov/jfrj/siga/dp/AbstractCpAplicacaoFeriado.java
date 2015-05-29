@@ -36,7 +36,7 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-//Essa anotaÁ„o È necess·ria por causa do mappedBy em CpOcorrenciaFeriado que aponta pra c· 
+//Essa anota√ß√£o √© necess√°ria por causa do mappedBy em CpOcorrenciaFeriado que aponta pra c√° 
 @MappedSuperclass
 public abstract class AbstractCpAplicacaoFeriado extends Objeto implements Serializable {
 

@@ -23,7 +23,7 @@ import java.io.UnsupportedEncodingException;
 public class Texto {
 
 	/**
-	 * Remove os acentos da string e coloca os caracteres em letras mai˙sculas
+	 * Remove os acentos da string e coloca os caracteres em letras mai√∫sculas
 	 * 
 	 * @param acentuado
 	 *            - String acentuada
@@ -46,18 +46,18 @@ public class Texto {
 		if (acentuado == null)
 			return null;
 		String temp = new String(acentuado);
-		temp = temp.replaceAll("[√¬¡¿]", "A");
-		temp = temp.replaceAll("[…» ]", "E");
-		temp = temp.replaceAll("[ÕÃŒ]", "I");
-		temp = temp.replaceAll("[’‘”“]", "O");
-		temp = temp.replaceAll("[€⁄Ÿ‹]", "U");
-		temp = temp.replaceAll("[«]", "C");
-		temp = temp.replaceAll("[„‚·‡]", "a");
-		temp = temp.replaceAll("[ÈËÍ]", "e");
-		temp = temp.replaceAll("[ÌÏÓ]", "i");
-		temp = temp.replaceAll("[ıÙÛÚ]", "o");
-		temp = temp.replaceAll("[˚˙˘¸]", "u");
-		temp = temp.replaceAll("[Á]", "c");
+		temp = temp.replaceAll("[√É√Ç√Å√Ä]", "A");
+		temp = temp.replaceAll("[√â√à√ä]", "E");
+		temp = temp.replaceAll("[√ç√å√é]", "I");
+		temp = temp.replaceAll("[√ï√î√ì√í]", "O");
+		temp = temp.replaceAll("[√õ√ö√ô√ú]", "U");
+		temp = temp.replaceAll("[√á]", "C");
+		temp = temp.replaceAll("[√£√¢√°√†]", "a");
+		temp = temp.replaceAll("[√©√®√™]", "e");
+		temp = temp.replaceAll("[√≠√¨√Æ]", "i");
+		temp = temp.replaceAll("[√µ√¥√≥√≤]", "o");
+		temp = temp.replaceAll("[√ª√∫√π√º]", "u");
+		temp = temp.replaceAll("[√ß]", "c");
 		return temp;
 	}
 

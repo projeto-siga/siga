@@ -36,10 +36,10 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 /**
- * Uma configuraÁ„o de acesso È a representaÁ„o de uma configuraÁ„o
- * (CpConfiguracao) com o objetivo especÌfico de controlar o acesso a
- * determinado serviÁo. A entidade que est· sendo configurada pode ser um Ûrg„o
- * usu·rio, uma lotaÁ„o, uma pessoa, uma identidade ou um perfil.
+ * Uma configura√ß√£o de acesso √© a representa√ß√£o de uma configura√ß√£o
+ * (CpConfiguracao) com o objetivo espec√≠fico de controlar o acesso a
+ * determinado servi√ßo. A entidade que est√° sendo configurada pode ser um √≥rg√£o
+ * usu√°rio, uma lota√ß√£o, uma pessoa, uma identidade ou um perfil.
  */
 @SuppressWarnings("unchecked")
 public class ConfiguracaoAcesso implements Comparable {
@@ -203,7 +203,7 @@ public class ConfiguracaoAcesso implements Comparable {
 
 	/**
 	 * 
-	 * @return retorna o objeto que È a origem da configuraÁ„o
+	 * @return retorna o objeto que √© a origem da configura√ß√£o
 	 */
 	public Object getOrigem() {
 		if (getPessoa() != null) {
@@ -221,7 +221,7 @@ public class ConfiguracaoAcesso implements Comparable {
 
 	/**
 	 * 
-	 * @return retorna uma string representativa da origem para exibiÁıes curtas
+	 * @return retorna uma string representativa da origem para exibi√ß√µes curtas
 	 */
 	public String printOrigemCurta() {
 		Object ori = getOrigem();

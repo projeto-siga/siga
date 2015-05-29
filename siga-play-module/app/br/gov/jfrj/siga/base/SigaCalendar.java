@@ -303,12 +303,12 @@ public class SigaCalendar extends GregorianCalendar {
 	}
 
 	/**
-	 * Considera que um ano tem 360 dias (calendário contábil). Se a data
-	 * inicial for o dia 31 de um mês, ela se tornará igual ao dia 30 do mesmo
-	 * mês. Se a data final for o dia 31 de um mês e a data inicial for anterior
-	 * ao trigésimo dia de um mês, a data final se tornará igual ao dia primeiro
-	 * do próximo mês. Caso contrário, a data final se tornará igual ao
-	 * trigésimo dia do mesmo mês.
+	 * Considera que um ano tem 360 dias (calendÃ¡rio contÃ¡bil). Se a data
+	 * inicial for o dia 31 de um mÃªs, ela se tornarÃ¡ igual ao dia 30 do mesmo
+	 * mÃªs. Se a data final for o dia 31 de um mÃªs e a data inicial for anterior
+	 * ao trigÃ©simo dia de um mÃªs, a data final se tornarÃ¡ igual ao dia primeiro
+	 * do prÃ³ximo mÃªs. Caso contrÃ¡rio, a data final se tornarÃ¡ igual ao
+	 * trigÃ©simo dia do mesmo mÃªs.
 	 * 
 	 * @param end
 	 * @return
@@ -351,7 +351,7 @@ public class SigaCalendar extends GregorianCalendar {
 			Date resultado = df.parse(sDt);
 			return resultado;
 		} catch (ParseException e) {
-			throw new AplicacaoException("Data inválida!");
+			throw new AplicacaoException("Data invÃ¡lida!");
 		}
 	}
 
@@ -424,20 +424,20 @@ public class SigaCalendar extends GregorianCalendar {
 		if (fazMenosDeUmMinuto())
 			haQuantoTempo = "Neste instante";
 		else if (fazMenosDeDoisMinutos())
-			haQuantoTempo = "Há 1 minuto";
+			haQuantoTempo = "HÃ¡ 1 minuto";
 		else if (fazMenosDeUmaHora())
-			haQuantoTempo = "Há " + tempoTranscorridoMinutos() + " minutos";
+			haQuantoTempo = "HÃ¡ " + tempoTranscorridoMinutos() + " minutos";
 		else if (foiHoje())
-			haQuantoTempo = "Às " + format.format(this.getTime());
+			haQuantoTempo = "Ã€s " + format.format(this.getTime());
 		else if (foiOntemOuHoje())
-			haQuantoTempo = "Ontem, às " + format.format(this.getTime());
+			haQuantoTempo = "Ontem, Ã s " + format.format(this.getTime());
 		else if (fazMenosDeUmaSemana()) {
 			switch (this.get(Calendar.DAY_OF_WEEK)) {
 			case Calendar.MONDAY:
 				haQuantoTempo = "Segunda-feira";
 				break;
 			case Calendar.TUESDAY:
-				haQuantoTempo = "Terça-feira";
+				haQuantoTempo = "TerÃ§a-feira";
 				break;
 			case Calendar.WEDNESDAY:
 				haQuantoTempo = "Quarta-feira";
@@ -449,14 +449,14 @@ public class SigaCalendar extends GregorianCalendar {
 				haQuantoTempo = "Sexta";
 				break;
 			case Calendar.SATURDAY:
-				haQuantoTempo = "Sábado";
+				haQuantoTempo = "SÃ¡bado";
 				break;
 			case Calendar.SUNDAY:
 				haQuantoTempo = "Domingo";
 				break;
 			}
 
-			haQuantoTempo += ", às " + format.format(this.getTime());
+			haQuantoTempo += ", Ã s " + format.format(this.getTime());
 
 		} else {
 			if (ocultarMinutos)

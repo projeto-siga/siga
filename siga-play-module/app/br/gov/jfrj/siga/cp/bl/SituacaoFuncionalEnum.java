@@ -1,7 +1,7 @@
 package br.gov.jfrj.siga.cp.bl;
 
 /**
- * Combinação de situações funcionais utilizados na pesquina CpDao.pessoasPorLotacao()
+ * CombinaÃ§Ã£o de situaÃ§Ãµes funcionais utilizados na pesquina CpDao.pessoasPorLotacao()
  * @author kpf
  *
  */

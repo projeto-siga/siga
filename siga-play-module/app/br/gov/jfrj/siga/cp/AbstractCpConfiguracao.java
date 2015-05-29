@@ -226,6 +226,14 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 		this.idConfiguracao = idConfiguracao;
 	}
 
+	public String getDescrConfiguracao() {
+		return descrConfiguracao;
+	}
+
+	public void setDescrConfiguracao(String descrConfiguracao) {
+		this.descrConfiguracao = descrConfiguracao;
+	}
+
 	public CpOrgaoUsuario getOrgaoUsuario() {
 		return orgaoUsuario;
 	}
@@ -381,14 +389,6 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	public void setOrgaoObjeto(CpOrgaoUsuario orgaoObjeto) {
 		this.orgaoObjeto = orgaoObjeto;
-	}
-
-	public String getDescrConfiguracao() {
-		return descrConfiguracao;
-	}
-
-	public void setDescrConfiguracao(String descrConfiguracao) {
-		this.descrConfiguracao = descrConfiguracao;
 	}
 
 }

@@ -42,7 +42,7 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 /**
- * Classe que representa uma linha na tabela DP_FUNCAO_CONFIANCA. Você pode
+ * Classe que representa uma linha na tabela DP_FUNCAO_CONFIANCA. VocÃª pode
  * customizar o comportamento desta classe editando a classe
  * {@link DpFuncaoConfianca}.
  */

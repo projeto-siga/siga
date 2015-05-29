@@ -32,7 +32,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.util.encoders.Base64;
 
 /**
- * Classe respons·vel por criptografar dados .
+ * Classe respons√°vel por criptografar dados .
  * 
  * @author kpf
  * 
@@ -67,7 +67,7 @@ public class Criptografia {
 
 		if (args.length != 2) {
 			throw new Exception(
-					"Par‚metros inv·lidos!\n"
+					"Par√¢metros inv√°lidos!\n"
 							+ "Use: Criptografia [mensagem que sera criptografada] [chave da criptografia]");
 		}
 

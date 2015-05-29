@@ -388,18 +388,8 @@ public class SMTPTransport extends Transport {
 	private DigestMD5 md5support;
 
 	private synchronized DigestMD5 getMD5() {
-		if (md5support == null){
-		
-//			md5support = new DigestMD5(debug ? out : null);
-
-			// karina
-			if (debug){
-				MailLogger ml = new MailLogger("MailLogger", "DEBUG", debug, out);
-				md5support = new DigestMD5(ml);
-			}else{
-				md5support = null;
-			}
-		}
+		if (md5support == null)
+			md5support = new DigestMD5(debug ? out : null);
 		return md5support;
 	}
 

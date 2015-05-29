@@ -65,11 +65,11 @@ public class GeraMessageDigest {
 			caracteres.append(maiuscula);
 
 		}
-		// Exclusão das letras o e O na geração de senha
+		// ExclusÃ£o das letras o e O na geraÃ§Ã£o de senha
 		caracteres.deleteCharAt(caracteres.indexOf("o"));
 		caracteres.deleteCharAt(caracteres.indexOf("O"));
 
-		// exclusão do número zero na geração de senha
+		// exclusÃ£o do nÃºmero zero na geraÃ§Ã£o de senha
 		for (int i = 0; i < 10 - 1; i++) {
 			caracteres.append('1' + i);
 		}

@@ -21,16 +21,16 @@ package br.gov.jfrj.siga.model;
 import br.gov.jfrj.siga.base.AplicacaoException;
 
 /**
- * Classe abstrata que provÍ suporte ‡ caixa de seleÁ„o da interface do usu·rio
+ * Classe abstrata que prov√™ suporte √† caixa de sele√ß√£o da interface do usu√°rio
  * do SIGA.<br/>
  * 
  * 
  * Procedimentos para usar a tag siga:selecao
  * 
- * 1) Na action da p·gina, crie um atributo de seleÁ„o com o final "Sel" (TEM
+ * 1) Na action da p√°gina, crie um atributo de sele√ß√£o com o final "Sel" (TEM
  * QUE TER SEL NO FINAL)
  * 
- * obs: Os tipos de seleÁ„o est„o em:
+ * obs: Os tipos de sele√ß√£o est√£o em:
  * 
  * projeto siga-libs: br.gov.jfrj.siga.libs.webwork
  * 
@@ -44,14 +44,14 @@ public class ExRelatorioAction extends SigaActionSupport {
 	public get/set()...
 	
 }
-</code> 2) Insira a tag em sua p·gina, SEM O FINAL "SEL"
+</code> 2) Insira a tag em sua p√°gina, SEM O FINAL "SEL"
  * 
  * Ex: <code>
 <siga:selecao propriedade="lotacaoDestinatario" tema="simple" />
 </code> 3) No exemplo acima, para pegar o valor selecionado, use <code>
     getRequest().getParameter("lotacaoDestinatarioSel.sigla") 
 </code>
- * 4) Inclua o postback na p·gina para selecionar o Ûrg„o automaticamante <code>
+ * 4) Inclua o postback na p√°gina para selecionar o √≥rg√£o automaticamante <code>
 <ww:hidden name="postback" value="1" />
 </code>
  * 

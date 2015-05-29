@@ -21,7 +21,7 @@ import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
 
 /**
- * Filtro base para implementaÁ„o dos ThreadFilters
+ * Filtro base para implementa√ß√£o dos ThreadFilters
  * 
  * @author bruno.lacerda@avantiprima.com.br
  * 
@@ -39,10 +39,10 @@ public abstract class ThreadFilter implements Filter {
 	}
 
 	/**
-	 * Marca o momento em que o ThreadFilter iniciou a execuÁ„o do mÈtodo
-	 * doFilter e grava a URL que est· sendo executada. Estes dados ser„o
-	 * utilizados para gerar o Log do tempo gastu durante a execuÁ„o do filtro
-	 * para a URL em quest„o.</br> <b>Obs:</b> Para que funcione, È necess·rio
+	 * Marca o momento em que o ThreadFilter iniciou a execu√ß√£o do m√©todo
+	 * doFilter e grava a URL que est√° sendo executada. Estes dados ser√£o
+	 * utilizados para gerar o Log do tempo gastu durante a execu√ß√£o do filtro
+	 * para a URL em quest√£o.</br> <b>Obs:</b> Para que funcione, √© necess√°rio
 	 * que a propriedade <i>audita.thread.filter</i> esteja definida como
 	 * <i>true</i> no arquivo <i>siga.properties</i>.
 	 * 
@@ -79,8 +79,8 @@ public abstract class ThreadFilter implements Filter {
 	/**
 	 * 
 	 * @param request
-	 * @return MatrÌcula do Usu·rio obtida atravÈs do mÈtodo getName da
-	 *         implementaÁ„o da interface Principal
+	 * @return Matr√≠cula do Usu√°rio obtida atrav√©s do m√©todo getName da
+	 *         implementa√ß√£o da interface Principal
 	 */
 	protected String getUserPrincipalName(HttpServletRequest request) {
 		return request.getUserPrincipal() != null ? request.getUserPrincipal()
@@ -88,9 +88,9 @@ public abstract class ThreadFilter implements Filter {
 	}
 
 	/**
-	 * Marca o momento em que o ThreadFilter terminou a execuÁ„o do mÈtodo
-	 * doFilter loga a URL que est· sendo executada e o tempo gasto durante o
-	 * processo.</br> <b>Obs:</b> Para que funcione, È necess·rio que a
+	 * Marca o momento em que o ThreadFilter terminou a execu√ß√£o do m√©todo
+	 * doFilter loga a URL que est√° sendo executada e o tempo gasto durante o
+	 * processo.</br> <b>Obs:</b> Para que funcione, √© necess√°rio que a
 	 * propriedade <i>audita.thread.filter</i> esteja definida como <i>true</i>
 	 * no arquivo <i>siga.properties</i>.
 	 */
@@ -111,10 +111,10 @@ public abstract class ThreadFilter implements Filter {
 	}
 
 	/**
-	 * Extrai o contexto da aplicaÁ„o a partir da requisiÁ„o
+	 * Extrai o contexto da aplica√ß√£o a partir da requisi√ß√£o
 	 * 
 	 * @param request
-	 * @return Contexto da aplicaÁ„o
+	 * @return Contexto da aplica√ß√£o
 	 */
 	private String getContexto(HttpServletRequest request) {
 		String contexto = request.getContextPath();
@@ -138,7 +138,7 @@ public abstract class ThreadFilter implements Filter {
 			hostName = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
 			log.warn(
-					"N„o foi possÌvel identificar o nome do Host para adicion·-lo ao Log por CSV",
+					"N√£o foi poss√≠vel identificar o nome do Host para adicion√°-lo ao Log por CSV",
 					e);
 			e.printStackTrace();
 		}
@@ -150,7 +150,7 @@ public abstract class ThreadFilter implements Filter {
 	}
 
 	/**
-	 * Loga como error as exceÁıes que vierem a acontecer durante a execuÁ„o dos
+	 * Loga como error as exce√ß√µes que vierem a acontecer durante a execu√ß√£o dos
 	 * ThreadFiltesr
 	 * 
 	 * @param request
@@ -169,7 +169,7 @@ public abstract class ThreadFilter implements Filter {
 
 		String mensagemErro = this.montaMensagemErroExcecoes(ex);
 
-		// N„o logar AplicacaoException, pois È erro de lÛgica de negÛcio e n„o falha do sistema
+		// N√£o logar AplicacaoException, pois √© erro de l√≥gica de neg√≥cio e n√£o falha do sistema
 		if (ex instanceof AplicacaoException)
 			return;
 		if (ex.getCause() != null) {
@@ -213,5 +213,11 @@ public abstract class ThreadFilter implements Filter {
 			cfg.setProperty(propertyName, transactionFactoryClassName);
 		}
 	}
+
+	@Override
+	public void destroy() {}
+
+	@Override
+	public void init(FilterConfig arg0) throws ServletException {}
 
 }

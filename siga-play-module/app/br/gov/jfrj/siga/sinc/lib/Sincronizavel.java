@@ -52,7 +52,7 @@ public interface Sincronizavel extends Assemelhavel {
 	public void setLoteDeImportacao(String loteDeImportacao);
 
 	// Retorna zero se o elemento for independente de qualquer outro, ou 1, 2,
-	// 3, etc conforme dist‚ncia para o elemento independente mais longinquo.
+	// 3, etc conforme dist√¢ncia para o elemento independente mais longinquo.
 	public int getNivelDeDependencia();
 
 	public String getDescricaoExterna();

@@ -42,7 +42,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "DP_CARGO", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpCargo extends AbstractDpCargo implements Serializable,
 		Selecionavel, Sincronizavel {
 
@@ -69,7 +69,7 @@ public class DpCargo extends AbstractDpCargo implements Serializable,
 
 	// Nato: Essas linha precisaram ser comentadas para que a rotina de
 	// sincronismo funcione corretamente. Se existe a necessidade de eliminar o
-	// que está escrito entre parêntesis, essa alteração deve ser realizada no
+	// que estÃ¡ escrito entre parÃªntesis, essa alteraÃ§Ã£o deve ser realizada no
 	// programa que gera o XML. No caso, atualmente, no MUMPS.
 	//
 	// @Override
@@ -106,7 +106,7 @@ public class DpCargo extends AbstractDpCargo implements Serializable,
 
 	}
 
-	// Métodos necessários para ser "Sincronizavel"
+	// MÃ©todos necessÃ¡rios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimCargo();

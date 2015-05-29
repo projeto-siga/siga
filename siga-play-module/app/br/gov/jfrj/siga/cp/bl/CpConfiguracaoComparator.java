@@ -84,11 +84,11 @@ public class CpConfiguracaoComparator implements Comparator<CpConfiguracao> {
 		return 0;
 	}
 
-	// CritÈrios de desempate
+	// Crit√©rios de desempate
 	//
 	public int untieSelectedFields(CpConfiguracao c1, CpConfiguracao c2) {
 
-		// A configuraÁ„o mais restritiva deve ser priorizada.
+		// A configura√ß√£o mais restritiva deve ser priorizada.
 		//
 		if (c1.getCpSituacaoConfiguracao() != null
 				&& c2.getCpSituacaoConfiguracao() != null) {
@@ -102,10 +102,10 @@ public class CpConfiguracaoComparator implements Comparator<CpConfiguracao> {
 				return 1;
 		}
 
-		// Se n„o houver critÈrio melhor, priorizar em funÁ„o da id do grupo
-		// para que n„o mude cada vez que a lista È recarregada ou que uma nova
-		// configuraÁ„o for inserida na lista, pois nesse caso ela ganharia uma
-		// nova id e alteraria a ordenaÁ„o.
+		// Se n√£o houver crit√©rio melhor, priorizar em fun√ß√£o da id do grupo
+		// para que n√£o mude cada vez que a lista √© recarregada ou que uma nova
+		// configura√ß√£o for inserida na lista, pois nesse caso ela ganharia uma
+		// nova id e alteraria a ordena√ß√£o.
 		//
 		if (c1.getCpGrupo() != null && c2.getCpGrupo() != null)
 			return c1.getCpGrupo().getId().compareTo(c2.getCpGrupo().getId());

@@ -56,12 +56,12 @@ public class CpLocalidade extends AbstractCpLocalidade implements Serializable,
 	}
 	/*
 	static {
-		String[] municipiosArray ={"Angra dos Reis", "Barra do Piraí", "Cachoeiro do Itapemirim", "Campos",
-				"Duque de Caxias", "Itaboraí", "Itaperuna", "Macaé", "Magé",
-				"Niterói", "Nova Friburgo", "Nova Iguaçu", "Petrópolis", "Resende",
-				"Rio de Janeiro", "São Gonçalo", "São João de Meriti",
-				"São Mateus", "São Pedro da Aldeia", "Teresópolis", "Três Rios",
-				"Vitória", "Volta Redonda" }; 
+		String[] municipiosArray ={"Angra dos Reis", "Barra do PiraÃ­", "Cachoeiro do Itapemirim", "Campos",
+				"Duque de Caxias", "ItaboraÃ­", "Itaperuna", "MacaÃ©", "MagÃ©",
+				"NiterÃ³i", "Nova Friburgo", "Nova IguaÃ§u", "PetrÃ³polis", "Resende",
+				"Rio de Janeiro", "SÃ£o GonÃ§alo", "SÃ£o JoÃ£o de Meriti",
+				"SÃ£o Mateus", "SÃ£o Pedro da Aldeia", "TeresÃ³polis", "TrÃªs Rios",
+				"VitÃ³ria", "Volta Redonda" }; 
 		MUNICIPIOS = Arrays.asList(municipiosArray);
 	} */
 

@@ -47,7 +47,7 @@ public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 			t_grpGrupo = new CpPerfilJEE();
 			break;
 		default:
-			throw new AplicacaoException("Id do tipo do grupo inv·lido: "
+			throw new AplicacaoException("Id do tipo do grupo inv√°lido: "
 					+ IdTipoGrupo);
 		}
 		return t_grpGrupo;

@@ -39,73 +39,81 @@ import javax.mail.internet.MimeMultipart;
 
 import org.bouncycastle.util.encoders.Base64;
 
-
 public class Correio {
 
 	public static void enviar(final String destinatario, final String assunto,
 			final String conteudo) throws Exception {
 		final String[] to = { destinatario };
 
-		Correio.enviar(SigaBaseProperties.getString("servidor.smtp.usuario.remetente"), to,
-				assunto, conteudo, null);
+		Correio.enviar(
+				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+				to, assunto, conteudo, null);
 	}
 
 	public static void enviar(final String remetente,
 			final String[] destinatarios, final String assunto,
 			final String conteudo, final String conteudoHTML) throws Exception {
 
-		List<String> listaServidoresEmail = SigaBaseProperties.getListaServidoresEmail();
-		
-		//lista indisponivel. Tenta ler apenas 1 servidor definido.
-		if(listaServidoresEmail == null || listaServidoresEmail.size() == 0){
+		List<String> listaServidoresEmail = SigaBaseProperties
+				.getListaServidoresEmail();
+
+		// lista indisponivel. Tenta ler apenas 1 servidor definido.
+		if (listaServidoresEmail == null || listaServidoresEmail.size() == 0) {
 			listaServidoresEmail = new ArrayList<String>();
-			listaServidoresEmail.add(SigaBaseProperties.getString("servidor.smtp"));
+			listaServidoresEmail.add(SigaBaseProperties
+					.getString("servidor.smtp"));
 		}
-		
+
 		boolean servidorDisponivel = false;
 		for (String servidorEmail : listaServidoresEmail) {
-			try{
-				enviarParaServidor(servidorEmail,remetente, destinatarios, assunto, conteudo,
-						conteudoHTML);
+			try {
+				enviarParaServidor(servidorEmail, remetente, destinatarios,
+						assunto, conteudo, conteudoHTML);
 				servidorDisponivel = true;
 				break;
-			}catch(Exception e){
-				Logger.getLogger("siga.email").warning("Servidor de e-mail indisponÌvel: " + servidorEmail);;
+			} catch (Exception e) {
+				Logger.getLogger("siga.email").warning(
+						"Servidor de e-mail indispon√≠vel: " + servidorEmail);
+				;
 			}
 		}
-		
-		if (!servidorDisponivel){
-			throw new AplicacaoException("N„o foi possÌvel se conectar ao servidor de e-mail!");
+
+		if (!servidorDisponivel) {
+			throw new AplicacaoException(
+					"N√£o foi poss√≠vel se conectar ao servidor de e-mail!");
 		}
 
 	}
 
 	private static void enviarParaServidor(final String servidorEmail,
-			String remetente, final String[] destinatarios, final String assunto,
-			final String conteudo, final String conteudoHTML) throws Exception {
-		// Cria propriedades a serem usadas na sess„o.
+			String remetente, final String[] destinatarios,
+			final String assunto, final String conteudo,
+			final String conteudoHTML) throws Exception {
+		// Cria propriedades a serem usadas na sess√£o.
 		final Properties props = new Properties();
 
-		// Define propriedades da sess„o.
+		// Define propriedades da sess√£o.
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.host", servidorEmail);
 		props.put("mail.host", servidorEmail);
 		props.put("mail.mime.charset", "UTF-8");
 
-		// Cria sess„o. setDebug(true) È interessante pois
+		// Cria sess√£o. setDebug(true) √© interessante pois
 		// mostra os passos do envio da mensagem e o
 		// recebimento da mensagem do servidor no console.
 		Session session = null;
-		if (Boolean.valueOf(SigaBaseProperties.getString("servidor.smtp.auth"))){
+		if (Boolean.valueOf(SigaBaseProperties.getString("servidor.smtp.auth"))) {
 			props.put("mail.smtp.auth", "true");
-			final String usuario = SigaBaseProperties.getString("servidor.smtp.auth.usuario"); 
-			final String senha = SigaBaseProperties.getString("servidor.smtp.auth.senha");
-			session = Session.getInstance(props,new Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication(){
+			final String usuario = SigaBaseProperties
+					.getString("servidor.smtp.auth.usuario");
+			final String senha = SigaBaseProperties
+					.getString("servidor.smtp.auth.senha");
+			session = Session.getInstance(props, new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(usuario, senha);
 				}
 			});
-		}else{
+		} else {
 			session = Session.getInstance(props);
 		}
 
@@ -160,8 +168,8 @@ public class Correio {
 				InternetHeaders ihs2 = new InternetHeaders();
 				ihs2.addHeader("Content-Type", "text/html; charset=UTF-8");
 				ihs2.addHeader("Content-Transfer-Encoding", "base64");
-				MimeBodyPart mb2 = new MimeBodyPart(ihs2, Base64
-						.encode(conteudoHTML.getBytes("utf-8")));
+				MimeBodyPart mb2 = new MimeBodyPart(ihs2,
+						Base64.encode(conteudoHTML.getBytes("utf-8")));
 				mp.addBodyPart(mb2);
 
 				// Set the content for the message and transmit
@@ -169,10 +177,12 @@ public class Correio {
 			}
 
 			// Envia mensagem.
-			//Transport.send(msg);
-			
-			Transport tr = new br.gov.jfrj.siga.base.SMTPTransport(session, null);
-			tr.connect(servidorEmail, Integer.valueOf(SigaBaseProperties.getString("servidor.smtp.porta")), null, null);
+			// Transport.send(msg);
+
+			Transport tr = new br.gov.jfrj.siga.base.SMTPTransport(session,
+					null);
+			tr.connect(servidorEmail, Integer.valueOf(SigaBaseProperties
+					.getString("servidor.smtp.porta")), null, null);
 			msg.saveChanges(); // don't forget this
 			tr.sendMessage(msg, msg.getAllRecipients());
 			tr.close();
@@ -182,11 +192,9 @@ public class Correio {
 		}
 	}
 
-
 	public static void enviar(String remetente, String[] destinatarios,
 			String assunto, String conteudo) throws Exception {
-		Correio.enviar(remetente, destinatarios,
-				assunto, conteudo, null);
+		Correio.enviar(remetente, destinatarios, assunto, conteudo, null);
 	}
 
 }

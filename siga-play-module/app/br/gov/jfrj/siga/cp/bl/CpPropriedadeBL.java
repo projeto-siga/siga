@@ -31,7 +31,7 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 		return this.obterPropriedadeLista("siga.cp.municipio");
 	}
 	/*
-	 *  Propriedades de conex„o
+	 *  Propriedades de conex√£o
 	 */
 	public String urlConexao() throws Exception {
 		return this.obterPropriedade("hibernate.connection.url");

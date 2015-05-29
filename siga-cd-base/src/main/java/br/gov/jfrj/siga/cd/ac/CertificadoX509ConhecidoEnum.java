@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -60,7 +60,7 @@ public enum CertificadoX509ConhecidoEnum {
 		this.certificado = certificado;
 	}
 	/**
-	 * Obtém todos os certificados X509 conhecidos
+	 * ObtÃ©m todos os certificados X509 conhecidos
 	 * @return
 	 */
 	public static ArrayList<X509Certificate> obterCertificados() {
@@ -71,7 +71,7 @@ public enum CertificadoX509ConhecidoEnum {
 		return knownCertsList;
 	}
 	/**
-	 * obtém o certificado X509 correspondente
+	 * obtÃ©m o certificado X509 correspondente
 	 * @return
 	 */
 	public X509Certificate  getCertificado() {

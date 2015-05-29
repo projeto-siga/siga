@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -22,7 +22,7 @@ import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
 
 /**
- * Eumerador para os Certificados auto assinados confi·veis (Truested Anchors)
+ * Eumerador para os Certificados auto assinados confi√°veis (Truested Anchors)
  * 
  * Sempre que o sistema necessitar de um novo Truested Anchor, o mesmo deve ser
  * aqui especificado
@@ -45,7 +45,7 @@ public enum TrustAnchorEnum {
 	}
 	
 	/**
-	 * ObtÈm todos os trust anchors
+	 * Obt√©m todos os trust anchors
 	 * @return
 	 */
 	public static ArrayList<TrustAnchor>obterTrustAnchors() {

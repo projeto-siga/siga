@@ -951,6 +951,7 @@ public class ExBL extends CpBL {
 			}
 						
 			List<ExMovimentacao> transferenciasMobil = mob.getMovimentacoesPorTipo(3);
+			transferenciasMobil.removeAll(mob.getMovimentacoesCanceladas());
 			Set<ExMovimentacao> transferenciasRetornoMobil = new TreeSet<ExMovimentacao>();
 			
 			Iterator it =  transferenciasMobil.iterator();
@@ -1071,10 +1072,17 @@ public class ExBL extends CpBL {
 		return set;
 	}
 	
+	/**
+	 * Localiza a movimentação de transferência de retorno (correspondente)  
+	 * @param mov
+	 * @param mob
+	 * @return - true se há uma movimentação de retorno que corresponde à movimentação de transferência.
+	 */
 	public boolean contemRetornoTransferencia(ExMovimentacao mov, ExMobil mob) {
 		boolean contains = false;
 		Iterator it;
 				List<ExMovimentacao> listaTransf = mob.getMovimentacoesPorTipo(3);
+				listaTransf.removeAll(mob.getMovimentacoesCanceladas());
 				it = listaTransf.iterator();
 
 				while (it.hasNext()) {
@@ -1089,6 +1097,7 @@ public class ExBL extends CpBL {
 									) {
 								contains = !contains;
 								mov.setDtFimMov(null);
+								break;
 							}
 						}
 				}

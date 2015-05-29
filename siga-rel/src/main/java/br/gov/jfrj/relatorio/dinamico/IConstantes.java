@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -19,7 +19,7 @@
 package br.gov.jfrj.relatorio.dinamico;
 
 /**
- * Define diversas constantes para o relatÛrio din‚mico.
+ * Define diversas constantes para o relat√≥rio din√¢mico.
  * @author kpf
  *
  */

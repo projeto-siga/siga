@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -26,8 +26,8 @@ import ar.com.fdvs.dj.domain.entities.DJGroup;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import ar.com.fdvs.dj.domain.entities.columns.SimpleColumn;
 /**
- * Possibilita a definiÁ„o de hyperlinks nos relatÛrios din‚micos.<br/ >
- * A definiÁ„o do layout È feita no mÈtodo getRelatorio() da classe AbstractRelatorioBaseBuilder.
+ * Possibilita a defini√ß√£o de hyperlinks nos relat√≥rios din√¢micos.<br/ >
+ * A defini√ß√£o do layout √© feita no m√©todo getRelatorio() da classe AbstractRelatorioBaseBuilder.
  * 
  * @author kpf
  *

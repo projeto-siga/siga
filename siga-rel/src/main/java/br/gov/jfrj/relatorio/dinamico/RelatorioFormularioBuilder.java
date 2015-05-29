@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -29,9 +29,9 @@ import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 
 /**
- * Classe de Exemplo para criaÁ„o de um RelatÛrio Builder.
+ * Classe de Exemplo para cria√ß√£o de um Relat√≥rio Builder.
  * 
- * RelatÛrio personalizado de formul·rio do SIGA-EX criado por heranÁa
+ * Relat√≥rio personalizado de formul√°rio do SIGA-EX criado por heran√ßa
  * do AbstractRelatorioBaseBuilder. 
  */
 public class RelatorioFormularioBuilder extends AbstractRelatorioBaseBuilder {
@@ -49,7 +49,7 @@ public class RelatorioFormularioBuilder extends AbstractRelatorioBaseBuilder {
 		
 		try {
 		
-			this.setTitle("SIGA-DOC - RelaÁ„o de Formul·rios");
+			this.setTitle("SIGA-DOC - Rela√ß√£o de Formul√°rios");
 			
 			AbstractColumn colForma = ColumnBuilder.getInstance()
 				.setTitle("Forma")

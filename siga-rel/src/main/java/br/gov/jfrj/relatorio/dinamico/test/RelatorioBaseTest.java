@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -34,24 +34,24 @@ public class RelatorioBaseTest {
 		//HibernateUtil.configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml");
 		
 		RelatorioRapido rel = new RelatorioRapido(null);
-		rel.setTitle("Relatório de Modelos");		
+		rel.setTitle("RelatÃ³rio de Modelos");		
 		rel.addColuna("Forma", 20,RelatorioRapido.ESQUERDA,false);
 		rel.addColuna("Modelo", 50,RelatorioRapido.ESQUERDA,false);
 		rel.addColuna("Class Documental", 15,RelatorioRapido.CENTRO,false);
-		rel.addColuna("Class Criação", 15,RelatorioRapido.CENTRO,false,true);
+		rel.addColuna("Class CriaÃ§Ã£o", 15,RelatorioRapido.CENTRO,false,true);
 		
 		List<String> dados = new ArrayList<String>();
 		for (int i=0; i<100; i++){
 			dados.add("Forma_aaaaa" + i);
 			dados.add("Modelo_bbbbb" + i);
 			dados.add("Class Documental_ccccc"+ i);
-			dados.add("Class Criação_ddddd"+ i);
+			dados.add("Class CriaÃ§Ã£o_ddddd"+ i);
 			dados.add("siga/sigaex/app/expediente/exibir?sigla=\"000000 " + i + "-A\"");
 		}
 		dados.add("Forma_aaaaa" + 1);
 		dados.add("Modelo_bbbbb" + 1);
 		dados.add("Class Documental_ccccc"+ 1);
-		dados.add("Class Criação_ddddd"+ 1);
+		dados.add("Class CriaÃ§Ã£o_ddddd"+ 1);
 		dados.add("siga/sigaex/app/expediente/exibir?sigla=\"000000 " + 1 + "-A\"");
 
 		rel.setDados(dados);

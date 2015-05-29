@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -32,19 +32,19 @@ import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 
 /**
- * USE ESTA CLASSE para a criaÁ„o de relatÛrios r·pidos.<br />
+ * USE ESTA CLASSE para a cria√ß√£o de relat√≥rios r√°pidos.<br />
  * 
  * Procedimentos para criar relatorios no siga-ex<br />
  * 
  * RESUMO:<BR/>
- * 1) Criar a classe do relatÛrio (extends RelatorioTemplate)<br/>
- * 2) Implementar os mÈtodos:<br/>
- * 2.1) construtor passando um Map <-- Com o par‚mentros que podem ser usados no
- * relatÛrio.<br/>
- * 2.2) configurarRelatorio() <-- Para definir o layout do relatÛrio.<br/>
+ * 1) Criar a classe do relat√≥rio (extends RelatorioTemplate)<br/>
+ * 2) Implementar os m√©todos:<br/>
+ * 2.1) construtor passando um Map <-- Com o par√¢mentros que podem ser usados no
+ * relat√≥rio.<br/>
+ * 2.2) configurarRelatorio() <-- Para definir o layout do relat√≥rio.<br/>
  * 2.3) processarDados() <-- Para gerar um Set ou List contendo os dados do
- * relatÛrio.<br/>
- * 3) Usar o relatÛrio:<br/>
+ * relat√≥rio.<br/>
+ * 3) Usar o relat√≥rio:<br/>
  * Exemplo: MeuRelatorio r = new MeuRelatorio(null); r.gerar();
  * JasperViewer.viewReport(r.getRelatorioJasperPrint());
  * 
@@ -53,27 +53,27 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
  * 
  * <br />
  * A) Crie a classe do relatorio<br />
- * a.1) Crie um builder baseado no AbstractRelatorioBaseBuilder caso n„o use o
+ * a.1) Crie um builder baseado no AbstractRelatorioBaseBuilder caso n√£o use o
  * RelatorioTemplate ou RelatorioRapido<br />
  * a.2) Crie a classe do relatorio baseada no template
  * (br.gov.jfrj.siga.ex.relatorio.dinamico.RelatorioTemplate.java)<br />
  * <br />
- * 1) Crie o menu do relatÛrio (/sigaex/WebContent/paginas/menus/menu.jsp)<br />
+ * 1) Crie o menu do relat√≥rio (/sigaex/WebContent/paginas/menus/menu.jsp)<br />
  * Exemplo:<br />
  * <li><ww:url id="url" action="relRelatorios"<br />
  * namespace="/expediente/rel"><br />
  * <ww:param name="nomeArquivoRel">relModelos.jsp</ww:param><br />
- * </ww:url> <ww:a href="%{url}">RelatÛrio de Modelos</ww:a></li> <br />
+ * </ww:url> <ww:a href="%{url}">Relat√≥rio de Modelos</ww:a></li> <br />
  * 
  * 
- * 2) Insira o cÛdigo de teste do .jsp no relatorio.jsp
- * (/sigaex/WebContent/paginas/expediente/relatorio.jsp) <______ ATEN«√O
+ * 2) Insira o c√≥digo de teste do .jsp no relatorio.jsp
+ * (/sigaex/WebContent/paginas/expediente/relatorio.jsp) <______ ATEN√á√ÉO
  * /sigaex/WebContent/paginas/EXPEDIENTE!!!!!!/relatorio.jsp<br />
  * <br />
  * <br />
  * 2.1) Informe o nome do arquivo<br />
  * 2.2) Informe o actionName<br />
- * 2.3) Informe o tÌtulo da p·gina<br />
+ * 2.3) Informe o t√≠tulo da p√°gina<br />
  * 2.4) Informe o nomeRelatorio<br />
  * <br />
  * Exemplo: <br />
@@ -84,13 +84,13 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
  * <c:set var="nomeRelatorio" scope="request">relNOME_DO_RELATORIO.jsp</c:set><br />
  * </c:when><br />
  * <br />
- * 3) Crie a p·gina .jsp que receber· os par‚metros do relatÛrio<br />
+ * 3) Crie a p√°gina .jsp que receber√° os par√¢metros do relat√≥rio<br />
  * /sigaex/WebContent/paginas/expediente/relatorios/<nomeDoRelatorio>.jsp<br />
  * <br />
  * 4) Crie a action no xwork.xml<br />
  * 4.1) Informe o nome da action (emiteRel...)<br />
  * 4.2) Informe a classe (br.gov.jfrj.webwork.action.ExRelatorioAction)<br />
- * 4.3) Informe o mÈtodo que tratar· o relatÛrio<br />
+ * 4.3) Informe o m√©todo que tratar√° o relat√≥rio<br />
  * 4.5) Informe o result name = relatorio<br />
  * 4.6) Informe o contentType = application/pdf<br />
  * 4.7) Informe o inputName = inputStream<br />
@@ -106,18 +106,18 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
  * </result><br />
  * </action><br />
  * <br />
- * 5) No br.gov.jfrj.webwork.action.ExRelatorioAction.java inclua o mÈtodo que
- * vai gerar o relatÛrio<br />
- * 5.1) Use um cÛdigo como esse para gerar o relatorio<br />
+ * 5) No br.gov.jfrj.webwork.action.ExRelatorioAction.java inclua o m√©todo que
+ * vai gerar o relat√≥rio<br />
+ * 5.1) Use um c√≥digo como esse para gerar o relatorio<br />
  * <br />
  * public String aRelDocumentosSubordinados() throws Exception {<br />
  * <br />
- * Map parametros = new HashMap<String, String>(); <-- Para passar par‚metros
- * para o relatÛrio<br />
+ * Map parametros = new HashMap<String, String>(); <-- Para passar par√¢metros
+ * para o relat√≥rio<br />
  * <br />
  * <br />
- * ObrigatÛrio para
- * RelatÛrioRapido--->parametros.put("secaoUsuario",getRequest()
+ * Obrigat√≥rio para
+ * Relat√≥rioRapido--->parametros.put("secaoUsuario",getRequest()
  * .getParameter("secaoUsuario"));<br />
  * <br />
  * parametros.put("lotacao",getRequest().getParameter(
@@ -142,10 +142,10 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
  * return "relatorio";<br />
  * <br />
  * <br />
- * 5.1) Na ˙ltima linha do mÈtodo coloque (return "relatorio";)<br />
+ * 5.1) Na √∫ltima linha do m√©todo coloque (return "relatorio";)<br />
  * <br />
  * 
- * DICA: Para testar o relatÛrio na prÛpria classe, use o mÈtodo main. Exemplo <br/>
+ * DICA: Para testar o relat√≥rio na pr√≥pria classe, use o m√©todo main. Exemplo <br/>
  * public static void main(String[] args){<br/>
  * <br/>
  * try {<br/>
@@ -174,17 +174,17 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	protected AbstractRelatorioBaseBuilder relatorio;
 
 	/**
-	 * Caso o relatÛrio precise receber par‚metros, use o construtor para
-	 * obrigar o utilizador do relatÛrio a inform·-los. O ideal È que as
-	 * validaÁıes dos par‚metros sejam feitas aqui no construtor<br />
+	 * Caso o relat√≥rio precise receber par√¢metros, use o construtor para
+	 * obrigar o utilizador do relat√≥rio a inform√°-los. O ideal √© que as
+	 * valida√ß√µes dos par√¢metros sejam feitas aqui no construtor<br />
 	 * Exemplo: <br />
 	 * public RelatorioDocumentosSubordinados(Map parametros) throws
 	 * DJBuilderException {
 	 * 
 	 * super(parametros); if (parametros.get("secaoUsuario") == null){ throw new
-	 * DJBuilderException("Par‚metro secaoUsuario n„o informado!"); } if
+	 * DJBuilderException("Par√¢metro secaoUsuario n√£o informado!"); } if
 	 * (parametros.get("link_siga") == null){ throw new
-	 * DJBuilderException("Par‚metro link_siga n„o informado!"); } }
+	 * DJBuilderException("Par√¢metro link_siga n√£o informado!"); } }
 	 */
 	public RelatorioTemplate(Map parametros) throws DJBuilderException {
 		super(parametros);
@@ -197,7 +197,7 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 		if (dados!=null && dados.size() > 0) {
 			relatorio.setDados(dados);
 		} else {
-			throw new Exception("N„o h· dados para gerar o relatÛrio!");
+			throw new Exception("N√£o h√° dados para gerar o relat√≥rio!");
 		}
 
 	}
@@ -205,10 +205,10 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	/**
 	 * Classe que permite o uso do Design Pattern Template Method.
 	 * 
-	 * Implemente este mÈtodo para definir o desenho do relatÛrio usando um
-	 * builder. Use a classe RelatorioRapido como builder para gerar relatÛrios
-	 * r·pidos.<BR>
-	 * Caso queira um builder de relatÛrio personalizado, estenda a classe
+	 * Implemente este m√©todo para definir o desenho do relat√≥rio usando um
+	 * builder. Use a classe RelatorioRapido como builder para gerar relat√≥rios
+	 * r√°pidos.<BR>
+	 * Caso queira um builder de relat√≥rio personalizado, estenda a classe
 	 * AbstractRelatorioBaseBuilder.<BR>
 	 * 
 	 * <br />
@@ -216,16 +216,16 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	 * public AbstractRelatorioBaseBuilder configurarRelatorio() throws
 	 * DJBuilderException, JRException {
 	 * 
-	 * this.setTitle("RelatÛrio de Documentos em Setores Subordinados");
+	 * this.setTitle("Relat√≥rio de Documentos em Setores Subordinados");
 	 * this.addColuna("Setor", 0,RelatorioRapido.ESQUERDA,true);
 	 * this.addColuna("Documento", 25,RelatorioRapido.ESQUERDA,false,true);
-	 * this.addColuna("DescriÁ„o", 50,RelatorioRapido.ESQUERDA,false);
-	 * this.addColuna("Respons·vel", 30,RelatorioRapido.ESQUERDA,false);
-	 * this.addColuna("SituaÁ„o", 30,RelatorioRapido.ESQUERDA,false);
+	 * this.addColuna("Descri√ß√£o", 50,RelatorioRapido.ESQUERDA,false);
+	 * this.addColuna("Respons√°vel", 30,RelatorioRapido.ESQUERDA,false);
+	 * this.addColuna("Situa√ß√£o", 30,RelatorioRapido.ESQUERDA,false);
 	 * 
 	 * return this; }
 	 * 
-	 * @return Retorna um builder de relatÛrios.
+	 * @return Retorna um builder de relat√≥rios.
 	 * @throws DJBuilderException
 	 * @throws JRException
 	 * @throws ColumnBuilderException 
@@ -234,11 +234,11 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 			throws DJBuilderException, JRException, ColumnBuilderException;
 
 	/**
-	 * Implemente este mÈtodo para processar os dados que ser„o exibidos no
-	 * relatÛrio. … neste mÈtodo que se faz as consultas a um banco de dados,
+	 * Implemente este m√©todo para processar os dados que ser√£o exibidos no
+	 * relat√≥rio. √â neste m√©todo que se faz as consultas a um banco de dados,
 	 * por exemplo. <br />
-	 * CUIDADO: A coleÁ„o de dados deve ser ordenada, sen„o os dados v„o
-	 * aparecer desordenados no relatÛrio. Exemplo:<br />
+	 * CUIDADO: A cole√ß√£o de dados deve ser ordenada, sen√£o os dados v√£o
+	 * aparecer desordenados no relat√≥rio. Exemplo:<br />
 	 * public Collection processarDados() {
 	 * 
 	 * List<String> d = new LinkedList<String>(); Query q =
@@ -254,12 +254,12 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	 * return d; }
 	 * 
 	 * 
-	 * @return Retorna um Collection contendo os dados do relatÛrio.
+	 * @return Retorna um Collection contendo os dados do relat√≥rio.
 	 */
 	public abstract Collection processarDados() throws Exception;
 
 	/**
-	 * MÈtodo que gera o relatÛrio em PDF.<br>
+	 * M√©todo que gera o relat√≥rio em PDF.<br>
 	 * 
 	 * @throws JRException
 	 */

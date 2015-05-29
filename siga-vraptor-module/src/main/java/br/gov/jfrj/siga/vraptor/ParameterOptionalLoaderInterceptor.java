@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+﻿package br.gov.jfrj.siga.vraptor;
 
 /***
  * Copyright (c) 2009 Caelum - www.caelum.com.br/opensource All rights reserved.
@@ -53,7 +53,7 @@ import com.google.common.collect.Iterables;
  *
  * @author Lucas Cavalcanti
  * @author Cecilia Fernandes
- * @author Ot�vio Scherer Garcia
+ * @author Otávio Scherer Garcia
  * @since 3.3.2
  *
  */

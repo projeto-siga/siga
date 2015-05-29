@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+Ôªøpackage br.gov.jfrj.siga.vraptor;
 
 /***
  * Copyright (c) 2009 Caelum - www.caelum.com.br/opensource
@@ -141,7 +141,7 @@ public class SigaLogicResult implements LogicResult {
 				try {
 					String path = request.getContextPath();
 					
-					//Nato: mudei o par‚metro que È passado para contemplar o encoding
+					//Nato: mudei o par√¢metro que √© passado para contemplar o encoding
 					//String url = router.urlFor(type, method, args);
 					Object[] encodedargs = new Object[args.length];
 					int i = 0;

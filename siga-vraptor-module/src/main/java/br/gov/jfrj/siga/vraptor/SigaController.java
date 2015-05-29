@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+ï»¿package br.gov.jfrj.siga.vraptor;
 
 import static br.com.caelum.vraptor.view.Results.http;
 
@@ -46,7 +46,7 @@ public class SigaController {
 	
 	private String mensagemAguarde = null;
 	
-	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
+	//Todo: verificar se apÃ³s a migraÃ§Ã£o do vraptor se ainda necessita deste atributo "par"
 	private Map<String, String[]> par;
 	
 	protected Map<String, String[]> getPar() {

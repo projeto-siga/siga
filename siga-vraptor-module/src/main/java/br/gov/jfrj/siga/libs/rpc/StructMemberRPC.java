@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -18,7 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.libs.rpc;
 /**
- * É a representação de um valor de um membro de Struct RPC
+ * Ã‰ a representaÃ§Ã£o de um valor de um membro de Struct RPC
  * @author aym
  *
  */

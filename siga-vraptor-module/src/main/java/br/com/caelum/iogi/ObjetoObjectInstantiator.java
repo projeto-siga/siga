@@ -1,4 +1,4 @@
-package br.com.caelum.iogi;
+Ôªøpackage br.com.caelum.iogi;
 
 import javax.persistence.EntityManager;
 
@@ -72,12 +72,12 @@ public class ObjetoObjectInstantiator implements Instantiator<Object> {
 					EntityManager em = ContextoPersistencia.em();
 					obj = em.find(target.getClassType(), id);
 					if (obj != null)
-						em.detach(obj); // Detached para que n„o seja acidentalmente
+						em.detach(obj); // Detached para que n√£o seja acidentalmente
 					// salva no banco de dados
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(
-						"N„o foi possÌvel ler um objeto do banco de dados.", e);
+						"N√£o foi poss√≠vel ler um objeto do banco de dados.", e);
 			}
 
 			// if (obj == null) {

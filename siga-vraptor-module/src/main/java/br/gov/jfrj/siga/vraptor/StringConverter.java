@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+﻿package br.gov.jfrj.siga.vraptor;
 
 import java.util.ResourceBundle;
 

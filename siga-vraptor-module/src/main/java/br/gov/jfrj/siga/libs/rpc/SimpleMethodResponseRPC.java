@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -20,9 +20,9 @@ package br.gov.jfrj.siga.libs.rpc;
 
 import java.util.HashMap;
 /**
- * 		… uma resposta RPC simples no formato chave->valor<br/>
+ * 		√â uma resposta RPC simples no formato chave->valor<br/>
  * <br/> Exemplo de uso: 
- * <br/>    // cria e prepara os par‚metros de retorno <String-nome,String-valor>
+ * <br/>    // cria e prepara os par√¢metros de retorno <String-nome,String-valor>
  * <br/>	HashMap<String, String> parRet = new HashMap<String, String>();
  * <br/>    parRet.put("param1", "valor1");
  * <br/>	parRet.put("param2", "valor2");

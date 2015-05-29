@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.validation;
+﻿package br.gov.jfrj.siga.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

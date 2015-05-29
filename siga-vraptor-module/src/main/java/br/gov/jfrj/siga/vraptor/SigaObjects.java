@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor;
+Ôªøpackage br.gov.jfrj.siga.vraptor;
 
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class SigaObjects implements ConheceUsuario {
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException {
-		String servico = "SIGA:Sistema Integrado de Gest„o Administrativa;"
+		String servico = "SIGA:Sistema Integrado de Gest√£o Administrativa;"
 				+ pathServico;
 		System.out.println("\n" + servico + "\n");
 		if (!Cp.getInstance()
@@ -64,8 +64,8 @@ public class SigaObjects implements ConheceUsuario {
 			String siglaLotacao = getLotaTitular() == null ? "Indefinida"
 					: getLotaTitular().getSiglaCompleta();
 
-			throw new AplicacaoException("Acesso negado. ServiÁo: '" + servico
-					+ "' usu·rio: " + siglaUsuario + " lotaÁ„o: "
+			throw new AplicacaoException("Acesso negado. Servi√ßo: '" + servico
+					+ "' usu√°rio: " + siglaUsuario + " lota√ß√£o: "
 					+ siglaLotacao);
 		}
 	}
@@ -80,7 +80,7 @@ public class SigaObjects implements ConheceUsuario {
 				UsuarioAutenticado.carregarUsuarioAutenticadoRequest(request,
 						this);
 			} else {
-				// autenticaÁ„o por formul·rio
+				// autentica√ß√£o por formul√°rio
 				String principal = request.getUserPrincipal().getName();
 				UsuarioAutenticado.carregarUsuarioAutenticado(principal, this);
 			}

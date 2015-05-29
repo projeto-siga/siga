@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.validation;
+﻿package br.gov.jfrj.siga.validation;
 
 import java.text.MessageFormat;
 import java.util.Calendar;

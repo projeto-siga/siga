@@ -1,80 +1,80 @@
-<%@ tag body-content="empty"%>
+Ôªø<%@ tag body-content="empty"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <li><a id="menu_siga" class="" href="#">SIGA</a>
 	<ul>
-		<li><a href="/siga/app/principal">P·gina Inicial</a>
+		<li><a href="/siga/app/principal">P√°gina Inicial</a>
 		</li>
 		<c:if test="${empty pagina_de_erro}">
-			<li><a href="#">MÛdulos</a>
+			<li><a href="#">M√≥dulos</a>
 				<ul>
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:MÛdulo de Documentos')}">
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:M√≥dulo de Documentos')}">
 						<li><a
 							href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Documentos</a>
 						</li>
 					</c:if>
 
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:MÛdulo de Workflow')}">
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:M√≥dulo de Workflow')}">
 						<li><a href="/sigawf/app/resumo">Workflow</a>
 						</li>
 					</c:if>
 
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SR')}">
-						<li><a href="/sigasr/">ServiÁos</a>
+						<li><a href="/sigasr/">Servi√ßos</a>
 						</li>
 					</c:if>
 
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:MÛdulo de Gest„o de Conhecimento')}">
-						<li><a href="/sigagc/app/estatisticaGeral">Gest„o de Conhecimento</a>
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:M√≥dulo de Gest√£o de Conhecimento')}">
+						<li><a href="/sigagc/app/estatisticaGeral">Gest√£o de Conhecimento</a>
 						</li>
 					</c:if>
 					
 
 					<!-- <li><a href="/sigatr/">Treinamento</a>
 					</li> -->
-					<!-- <li><a href="/SigaServicos/">ServiÁos</a>
+					<!-- <li><a href="/SigaServicos/">Servi√ßos</a>
 					</li> -->
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: MÛdulo de Adicional de QualificaÁ„o') or 
-						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: MÛdulo de BenefÌcios') or 
-						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: MÛdulo de Cadastro') or 
-						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: MÛdulo de Consultas') or 
-						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: MÛdulo de LotaÁ„o') or 
-						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: MÛdulo de Treinamento')}">
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: M√≥dulo de Adicional de Qualifica√ß√£o') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: M√≥dulo de Benef√≠cios') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: M√≥dulo de Cadastro') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: M√≥dulo de Consultas') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: M√≥dulo de Lota√ß√£o') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: M√≥dulo de Treinamento')}">
 						<li><a href="#">Pessoas</a>
 							<ul>
 								<c:if
-									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: MÛdulo de Adicional de QualificaÁ„o')}">
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: M√≥dulo de Adicional de Qualifica√ß√£o')}">
 									<li><a href="${f:getURLSistema('siga.sgp.aq')}">AQ</a></li>
 								</c:if>
 								<c:if
-									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: MÛdulo de BenefÌcios')}">
-									<li><a href="${f:getURLSistema('siga.sgp.bnf')}">BenefÌcios</a>
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: M√≥dulo de Benef√≠cios')}">
+									<li><a href="${f:getURLSistema('siga.sgp.bnf')}">Benef√≠cios</a>
 									</li>
 								</c:if>
 								<c:if
-									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: MÛdulo de Cadastro')}">
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: M√≥dulo de Cadastro')}">
 									<li><a href="${f:getURLSistema('siga.sgp.cad')}">Cadastro</a>
 									</li>
 								</c:if>
 								<c:if
-									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: MÛdulo de Consultas')}">
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: M√≥dulo de Consultas')}">
 									<li><a href="${f:getURLSistema('siga.sgp.cst')}">Consultas</a>
 									</li>
 								</c:if>
 								<c:if
-									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: MÛdulo de LotaÁ„o')}">
-									<li><a href="${f:getURLSistema('siga.sgp.lot')}">LotaÁ„o</a>
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: M√≥dulo de Lota√ß√£o')}">
+									<li><a href="${f:getURLSistema('siga.sgp.lot')}">Lota√ß√£o</a>
 									</li>
 								</c:if>
 								<c:if
-									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: MÛdulo de Treinamento')}">
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: M√≥dulo de Treinamento')}">
 									<li><a href="${f:getURLSistema('siga.sgp.trn')}">Treinamento</a>
 									</li>
 								</c:if>
@@ -82,31 +82,31 @@
 						</li>
 					</c:if>
 					
-					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP:Agendamento de perÌcias do INSS')}">
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP:Agendamento de per√≠cias do INSS')}">
 					<li><a href="#">Agendas</a>
 						<ul>
 							<c:if
 								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
-								<li><a href="/sigapp/">PerÌcias MÈdicas</a>
+								<li><a href="/sigapp/">Per√≠cias M√©dicas</a>
 								</li>
 							</c:if>
 						</ul>
 					</li>
 					</c:if>
 						
-					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:MÛdulo de Transportes')}">
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:M√≥dulo de Transportes')}">
                     	<li><a href="/sigatp/">Transportes</a>
                     </li>
                 </c:if>
                 
-                	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:MÛdulo de Servicos Externos')}">
+                	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:M√≥dulo de Servicos Externos')}">
 						<li><a href="/sigase/">Dados Externos</a>
 						</li>
 					</c:if>
 					
 				</ul>
 			</li>
-			<li><a href="#">AdministraÁ„o</a>
+			<li><a href="#">Administra√ß√£o</a>
 				<ul>
 					<li><a href="/siga/app/usuario/trocar_senha" >Trocar senha</a>
 					</li>
@@ -116,7 +116,7 @@
 					</li>
 					<c:if
 						test="${(not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao) ||(not empty titular && titular.idPessoa!=cadastrante.idPessoa)}">
-						<li><a href="/siga/substituicao/finalizar.action">Finalizar substituiÁ„o de 
+						<li><a href="/siga/substituicao/finalizar.action">Finalizar substitui√ß√£o de 
 					<c:choose>
 									<c:when
 										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">${titular.nomePessoa}</c:when>
@@ -128,17 +128,17 @@
 					 --%>
 					 <c:choose>
 					 <c:when test="${(cadastrante.idPessoa != titular.idPessoa) || (cadastrante.lotacao.idLotacao != lotaTitular.idLotacao)}">
-						<%-- È uma substituiÁ„o --%>
+						<%-- √© uma substitui√ß√£o --%>
 						<c:if
 							test="${f:podeCadastrarQqSubstituicaoPorConfiguracao(cadastrante, cadastrante.lotacao)}">
 							<li><a
-									href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar possÌveis substitutos</a>
+									href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar poss√≠veis substitutos</a>
 							</li>
 						</c:if>
 					</c:when>
 					<c:otherwise>
 						<li><a
-								href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar possÌveis substitutos</a>
+								href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar poss√≠veis substitutos</a>
 						</li>
 					</c:otherwise>
 					</c:choose>
@@ -146,8 +146,8 @@
 			</li>
 
 
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gest„o Administrativa;GI:MÛdulo de Gest„o de Identidade')}">
-				<li><a href="#">Gest„o de Identidade</a>
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gest√£o Administrativa;GI:M√≥dulo de Gest√£o de Identidade')}">
+				<li><a href="#">Gest√£o de Identidade</a>
 					<ul>
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;ID:Gerenciar identidades')}">
@@ -155,8 +155,8 @@
 							</li>
 						</c:if>
 						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERMISSAO:Gerenciar permissıes')}">
-							<li><a href="/siga/app/gi/acesso/listar">Configurar Permissıes</a>
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;PERMISSAO:Gerenciar permiss√µes')}">
+							<li><a href="/siga/app/gi/acesso/listar">Configurar Permiss√µes</a>
 							</li>
 						</c:if>
 						<c:if
@@ -170,32 +170,32 @@
 							</li>
 						</c:if>
 						<c:if 						
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR:Gerenciar grupos de distribuiÁ„o')
-							       || (f:podeGerirAlgumGrupo(titular,lotaTitular,2) && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;DELEG:Gerenciar grupos de distribuiÁ„o delegados'))}"> 	
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR:Gerenciar grupos de distribui√ß√£o')
+							       || (f:podeGerirAlgumGrupo(titular,lotaTitular,2) && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;DELEG:Gerenciar grupos de distribui√ß√£o delegados'))}"> 	
 	 						<li><a
-									href="${serverAndPort}/siga/app/gi/grupoDeEmail/listar">Grupo de DistribuiÁ„o</a>
+									href="${serverAndPort}/siga/app/gi/grupoDeEmail/listar">Grupo de Distribui√ß√£o</a>
 							</li>
 						</c:if>
 						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;SELFSERVICE:Gerenciar serviÁos da prÛpria lotaÁ„o')}">
-							<li><a href="/siga/app/gi/servico/editar">Acesso a ServiÁos</a>
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;SELFSERVICE:Gerenciar servi√ßos da pr√≥pria lota√ß√£o')}">
+							<li><a href="/siga/app/gi/servico/editar">Acesso a Servi√ßos</a>
 							</li>
 						</c:if>
 						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;REL:Gerar relatÛrios')}">
-							<li><a href="#">RelatÛrios</a>
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;REL:Gerar relat√≥rios')}">
+							<li><a href="#">Relat√≥rios</a>
 								<ul>
 									<li><a
-											href="/siga/app/gi/relatorio/selecionar_acesso_servico">Acesso aos ServiÁos</a>
+											href="/siga/app/gi/relatorio/selecionar_acesso_servico">Acesso aos Servi√ßos</a>
 									</li>
 									<li><a
-											href="/siga/app/gi/relatorio/selecionar_permissao_usuario">Permissıes de Usu·rio</a>
+											href="/siga/app/gi/relatorio/selecionar_permissao_usuario">Permiss√µes de Usu√°rio</a>
 									</li>
 									<li><a
-											href="/siga/app/gi/relatorio/selecionar_alteracao_direitos">AlteraÁ„o de Direitos</a>
+											href="/siga/app/gi/relatorio/selecionar_alteracao_direitos">Altera√ß√£o de Direitos</a>
 									</li>
 									<li><a
-											href="/siga/app/gi/relatorio/selecionar_historico_usuario">HistÛrico de Usu·rio</a>
+											href="/siga/app/gi/relatorio/selecionar_historico_usuario">Hist√≥rico de Usu√°rio</a>
 									</li>
 								</ul></li>
 						</c:if>
@@ -204,7 +204,7 @@
 		</c:if>
 
 		<c:if
-			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gest„o Administrativa;FE:Ferramentas')}">
+			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gest√£o Administrativa;FE:Ferramentas')}">
 			<li><a href="#">Ferramentas</a>
 				<ul>
 					<c:if
@@ -213,8 +213,8 @@
 						</li>
 					</c:if>
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO:Cadastrar Org„os')}">
-						<li><a href="/siga/app/orgao/listar">Cadastro de Org„os Externos</a>
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO:Cadastrar Org√£os')}">
+						<li><a href="/siga/app/orgao/listar">Cadastro de Org√£os Externos</a>
 						</li>
 					</c:if>
 					<c:if
@@ -237,7 +237,7 @@
 				<c:forEach var="substituicao" items="${meusTitulares}">
 					<li>
 						<a style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
-						    href="javascript:if (confirm('Deseja excluir substituiÁ„o?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
+						    href="javascript:if (confirm('Deseja excluir substitui√ß√£o?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
 							<img style="display: inline;"
 							src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
 							onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"

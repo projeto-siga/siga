@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -21,7 +21,7 @@ package br.gov.jfrj.siga.libs.rpc;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
- * É a representação de um valor de String RPC
+ * Ã‰ a representaÃ§Ã£o de um valor de String RPC
  * @author aym
  *
  */

@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.jee;
+﻿package br.gov.jfrj.siga.jee;
 
 import java.security.Security;
 
@@ -8,7 +8,7 @@ import javax.servlet.ServletContextListener;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
- * Listener criado para adicionar o SecurityProvider do BouncyCastle aos Providers de Seguran�a da JVM.
+ * Listener criado para adicionar o SecurityProvider do BouncyCastle aos Providers de Segurança da JVM.
  * As bibliotecas do BouncyCastle devem estar na pasta ${JBOSS_HOME}/server/[PROFILE]/lib
  * 
  * @author bruno.lacerda@avantiprima.com.br

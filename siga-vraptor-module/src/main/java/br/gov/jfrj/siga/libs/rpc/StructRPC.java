@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 /**
- * É a representação de uma Struct RPC
+ * Ã‰ a representaÃ§Ã£o de uma Struct RPC
  * @author aym
  *
  */

@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -22,11 +22,11 @@ package br.gov.jfrj.siga.libs.rpc;
  * <br/>   
  * <br/>    a forma de preenchimento da resposta depende da subclasse.
  * <br/>    pode ser uma resposta simples, em estrutura de tabela ou erro (fault) 
- * <br/>  	o mÈtodo toXMLString() retorna uma forma simplificada de XML-RPC.
+ * <br/>  	o m√©todo toXMLString() retorna uma forma simplificada de XML-RPC.
  * <br/>    uso em cliente javascript: vide siga-libs/lib/js/Ajax.js
  * <br/>    uso no webwork:
- * <br/>	   A action deve preencher a vari·vel respostaXMLStringRPC
- * <br/>       p·gina jsp de resposta padr„o: /sigalibs/rpc_retorno.jsp
+ * <br/>	   A action deve preencher a vari√°vel respostaXMLStringRPC
+ * <br/>       p√°gina jsp de resposta padr√£o: /sigalibs/rpc_retorno.jsp
  * <br/>       <%@page contentType="text/xml; charset=UTF-8" %>${respostaXMLStringRPC}
  * <br/>	  
  * 

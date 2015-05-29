@@ -1,4 +1,4 @@
-<%@ tag body-content="scriptless"%>
+Ôªø<%@ tag body-content="scriptless"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
@@ -25,7 +25,7 @@
 <select id="${propriedadePessoaClean}${propriedadeLotacaoClean}"
 	onchange="" ${pessoaLotaSelecaoDisabled}>
 	<option value="1">Pessoa</option>
-	<option value="2">LotaÁ„o</option>
+	<option value="2">Lota√ß√£o</option>
 	<c:if test="${not empty propriedadeEmail}">
 		<option value="3">E-mail</option>
 	</c:if>
@@ -54,8 +54,8 @@
 		select.value = 1;
 	else
 		select.value = 2;
-	// O onchange tem de ser definido da forma abaixo porque, quando esta tag est· dentro de um cÛdigo
-	// carregado por ajax, n„o funciona o tratamento do modo tradicional (onchange="", etc)
+	// O onchange tem de ser definido da forma abaixo porque, quando esta tag est√° dentro de um c√≥digo
+	// carregado por ajax, n√£o funciona o tratamento do modo tradicional (onchange="", etc)
 	// http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined
 	select.onchange = function() {
 		var select = document

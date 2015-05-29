@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -20,12 +20,12 @@ package br.gov.jfrj.siga.libs.rpc;
 
 import java.util.HashMap;
 /**
- * 		É uma resposta RPC a ser enviada ao cliente em caso de erro<br/>
+ * 		Ã‰ uma resposta RPC a ser enviada ao cliente em caso de erro<br/>
  * <br/> Exemplo de uso: 
  *           
  * <br/>    // Cria a resposta
  * <br/>	FaultMethodResponseRPC erro = new FaultMethodResponseRPC();
- * <br/>	erro.set(0, "isto é uma mensagem de erro" )
+ * <br/>	erro.set(0, "isto Ã© uma mensagem de erro" )
  * <br/>    // atribui a resposta no formato XML ao retorno
  * <br/>	setRespostaXMLStringRPC(erro.toXMLString());
  * <br/>  

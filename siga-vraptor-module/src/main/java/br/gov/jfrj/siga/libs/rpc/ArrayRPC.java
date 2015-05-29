@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -20,7 +20,7 @@ package br.gov.jfrj.siga.libs.rpc;
 
 import java.util.ArrayList;
 /**
- * É a representação de uma estrutura de Array RPC
+ * Ã‰ a representaÃ§Ã£o de uma estrutura de Array RPC
  * @author aym
  *
  */

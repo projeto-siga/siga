@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -91,10 +91,10 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 		
 		try {
 			/*
-			 * Essa condição é necessário porque o retorno do método getSigla para o ExMobil e DpPessoa
-			 * são as siglas completas, ex: JFRJ-MEM-2014/00003 e RJ14723. No caso da lotação o getSigla
-			 * somente retorna SESIA. No entanto é necessário que o método selecionar retorne a sigla completa, ex:
-			 * RJSESIA, pois esse retorno é o parametro de entrada para o método aExibir, que necessita da sigla completa.
+			 * Essa condiÃ§Ã£o Ã© necessÃ¡rio porque o retorno do mÃ©todo getSigla para o ExMobil e DpPessoa
+			 * sÃ£o as siglas completas, ex: JFRJ-MEM-2014/00003 e RJ14723. No caso da lotaÃ§Ã£o o getSigla
+			 * somente retorna SESIA. No entanto Ã© necessÃ¡rio que o mÃ©todo selecionar retorne a sigla completa, ex:
+			 * RJSESIA, pois esse retorno Ã© o parametro de entrada para o mÃ©todo aExibir, que necessita da sigla completa.
 			 * */
 /*			if (this instanceof DpLotacaoAction) {
 				DpLotacao lotacao = new DpLotacao();

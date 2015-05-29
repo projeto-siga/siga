@@ -1,4 +1,4 @@
-<%@ tag body-content="scriptless"%>
+﻿<%@ tag body-content="scriptless"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
@@ -21,7 +21,7 @@
 
 <select id="${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}" onchange="" ${pessoaLotaSelecaoDisabled} >
   <option value="1">Pessoa</option>
-  <option value="2">Lotação</option>
+  <option value="2">LotaÃ§Ã£o</option>
 </select>
 
 <span id="spanPessoa${requestScope._nomeSelPessoaClean}">
@@ -38,8 +38,8 @@ var select = document.getElementById('${requestScope._nomeSelPessoaClean}${reque
 if (document.getElementById('${requestScope._nomeSelPessoaClean}').value)
 	select.value = 1;
 else select.value= 2;
-// O onchange tem de ser definido da forma abaixo porque, quando esta tag está dentro de um código
-// carregado por ajax, não funciona o tratamento do modo tradicional (onchange="", etc)
+// O onchange tem de ser definido da forma abaixo porque, quando esta tag esta dentro de um codigo
+// carregado por ajax, nao funciona o tratamento do modo tradicional (onchange="", etc)
 // http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined
 select.onchange = function(){
 	var select = document.getElementById('${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}');

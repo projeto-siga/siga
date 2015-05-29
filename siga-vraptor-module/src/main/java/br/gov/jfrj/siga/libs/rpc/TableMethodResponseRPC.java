@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 import br.gov.jfrj.siga.libs.rpc.MethodResponseRPC;
 /**
- * 		� uma resposta RPC no formato de tabela
+ * 		É uma resposta RPC no formato de tabela
  * <br/> 
  * <br/> Exemplo de uso: 
  * <br/>    // Cria a resposta

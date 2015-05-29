@@ -1,4 +1,4 @@
-<%@ tag body-content="scriptless"%>
+﻿<%@ tag body-content="scriptless"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ attribute name="popup"%>
 <%@ attribute name="pagina_de_erro"%>
@@ -35,7 +35,7 @@
 							style="cursor: pointer">&nbsp;&nbsp;<c:catch>
 							<c:out default="Convidado" value="${cadastrante.nomePessoa}" />
 							<c:choose>
-								<c:when test="${empty cadastrante}"> - Sem Lotação</c:when>
+								<c:when test="${empty cadastrante}"> - Sem LotaÃ§Ã£o</c:when>
 								<c:when
 									test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">
 					 COMO ${titular.nomePessoa}</c:when>

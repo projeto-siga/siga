@@ -1,4 +1,4 @@
-<%@ tag body-content="empty"%>
+ï»¿<%@ tag body-content="empty"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ attribute name="id" required="false"%>
 <%@ attribute name="label" required="false"%>
@@ -14,7 +14,7 @@
 <%@ attribute name="headerKey" required="false"%>
 
 <!-- wwselect -->
-<%-- Seria ótimo se pudéssemos chamar a EL para calcular a expressão "name", mas não sei como fazer isso. --%>
+<%-- Seria Ã³timo se pudÃ©ssemos chamar a EL para calcular a expressÃ£o "name", mas nÃ£o sei como fazer isso. --%>
 <c:if test="${empty value}">
 	<c:set var="value" value="${requestScope[name]}"/>
 </c:if>

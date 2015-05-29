@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -201,10 +201,10 @@ public class CpDaoTest extends TestCase {
 	}
 
 	/*
-	 * O M…TODO testBL foi DESATIVADO pois est· usando a conta de um usu·rio
-	 * real e, alÈm disso, disparando e-mais por causa das trocas de senha e
-	 * criaÁ„o de identidades. Esse teste deve ser REFATORADO para fazer parte
-	 * da integraÁ„o contÌnua.
+	 * O M√âTODO testBL foi DESATIVADO pois est√° usando a conta de um usu√°rio
+	 * real e, al√©m disso, disparando e-mais por causa das trocas de senha e
+	 * cria√ß√£o de identidades. Esse teste deve ser REFATORADO para fazer parte
+	 * da integra√ß√£o cont√≠nua.
 	 */
 	public void __DESATIVADO__testBL() throws AplicacaoException, Exception,
 	IllegalAccessException {
@@ -241,7 +241,7 @@ public class CpDaoTest extends TestCase {
 				.alterarIdentidade(idNova, c.getTime(), null);
 		assertEquals(idAlterada.getDtExpiracaoIdentidade(), c.getTime());
 
-		// Se n„o h· alteraÁ„o, a ID deve ser mantida
+		// Se n√£o h√° altera√ß√£o, a ID deve ser mantida
 		CpIdentidade idAlterada2 = Cp.getInstance().getBL()
 				.alterarIdentidade(idAlterada, c.getTime(), null);
 		assertEquals(idAlterada.getId(), idAlterada2.getId());
@@ -256,10 +256,10 @@ public class CpDaoTest extends TestCase {
 				.consultaIdentidades(idAlterada.getDpPessoa());
 		assertEquals(l.size(), 1);
 
-		// A identidade est· bloqueada?
+		// A identidade est√° bloqueada?
 		assertFalse(idAlterada.isBloqueada());
 
-		// A pessoa est· bloqueada?
+		// A pessoa est√° bloqueada?
 		assertFalse(idAlterada.getDpPessoa().isBloqueada());
 
 		// Bloquear a identidade
@@ -291,7 +291,7 @@ public class CpDaoTest extends TestCase {
 
 		/*
 		 * O TESTE DE TROCA DE SENHA ABAIXO FOI DESATIVADO, PORQUE SEMPRE ENVIA
-		 * E-MAIL PARA O USU¡RIOCOM O BUILD AUTOMATICO DA FERRAMENTA HUDSON(CI).
+		 * E-MAIL PARA O USU√ÅRIOCOM O BUILD AUTOMATICO DA FERRAMENTA HUDSON(CI).
 		 */
 		// Troca a senha
 		String senha = decodificarSenha(idAlterada);
@@ -316,7 +316,7 @@ public class CpDaoTest extends TestCase {
 	}
 
 	// Esse teste deve ficar sempre desativado. Caso ele seja executado, todas
-	// as senhas ser„o lidas do esquema "ACESSO_TOMCAT" e depois ser„o escritas
+	// as senhas ser√£o lidas do esquema "ACESSO_TOMCAT" e depois ser√£o escritas
 	// identidades no esquema "CORPORATIVO"
 	// public void testImportarAcessoTomcar() throws AplicacaoException,
 	// Exception, IllegalAccessException {
@@ -365,7 +365,7 @@ public class CpDaoTest extends TestCase {
 
 		CpDao dao = CpDao.getInstance();
 
-		System.out.println("Data e hora da ultima atualizaÁ„o - "
+		System.out.println("Data e hora da ultima atualiza√ß√£o - "
 				+ dao.consultarDataUltimaAtualizacao());
 
 		dao.iniciarTransacao();

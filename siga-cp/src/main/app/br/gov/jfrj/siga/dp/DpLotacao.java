@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -184,7 +184,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	// que no futuro essa necessidade seja revista.
 	public String getSiglaAmpliada() {
 		if (getOrgaoUsuario().getIdOrgaoUsu() == 1L && isSubsecretaria())
-			return getSiglaLotacao() + " DireÁ„o";
+			return getSiglaLotacao() + " Dire√ß√£o";
 		return getSiglaLotacao();
 	}
 
@@ -198,7 +198,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	public String getDescricaoAmpliada() {
 		if (getOrgaoUsuario().getIdOrgaoUsu() == 1L && isSubsecretaria())
-			return "DireÁ„o da " + getNomeLotacao();
+			return "Dire√ß√£o da " + getNomeLotacao();
 		return getNomeLotacao();
 	}
 
@@ -269,7 +269,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return lot;
 	}
 
-	// MÈtodos necess·rios para ser "Sincronizavel"
+	// M√©todos necess√°rios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimLotacao();
@@ -339,7 +339,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	/**
-	 * Retorna a lotaÁ„o atual no histÛrico desta lotaÁ„o
+	 * Retorna a lota√ß√£o atual no hist√≥rico desta lota√ß√£o
 	 * 
 	 * @return DpLotacao
 	 */
@@ -392,7 +392,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	/**
 	 * 
-	 * @return o id do Ûrg„o do usu·rio
+	 * @return o id do √≥rg√£o do usu√°rio
 	 */
 	public Long getIdOrgaoUsuario() {
 		Long idOrgaoUsuario = null;
@@ -404,10 +404,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 	
 	 /**
-     * Retorna a data de inÌcio da lotaÁ„o no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de in√≠cio da lota√ß√£o no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de inÌcio da pessoa no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de in√≠cio da pessoa no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -421,10 +421,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
     }
 
     /**
-     * Retorna a data de fim da lotaÁ„o no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de fim da lota√ß√£o no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de inÌcio da fim no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de in√≠cio da fim no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */

@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -39,9 +39,9 @@ public class CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna a subsecretaria a que uma lotaÁ„o pertence. Se a lotaÁ„o j· for
-	 * uma subsecretaria (o que È verificado pelo tamanho da sigla), ela mesma È
-	 * retornada. Caso contr·rio, a lotaÁ„o pai È devolvida. <b>Regra
+	 * Retorna a subsecretaria a que uma lota√ß√£o pertence. Se a lota√ß√£o j√° for
+	 * uma subsecretaria (o que √© verificado pelo tamanho da sigla), ela mesma √©
+	 * retornada. Caso contr√°rio, a lota√ß√£o pai √© devolvida. <b>Regra
 	 * aparentemente falha</b>
 	 * 
 	 * @param lota
@@ -90,7 +90,7 @@ public class CpCompetenciaBL {
 			return !configuracaoBL.podePorConfiguracao(cpIdentidade, CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN);
 		} catch (final Exception e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel verificar se a identidade est· bloqueada.",
+					"N√£o foi poss√≠vel verificar se a identidade est√° bloqueada.",
 					0, e);
 		}
 	}
@@ -101,7 +101,7 @@ public class CpCompetenciaBL {
 					CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN);
 		} catch (final Exception e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel verificar se a pessoa est· bloqueada.",
+					"N√£o foi poss√≠vel verificar se a pessoa est√° bloqueada.",
 					0, e);
 		}
 	}

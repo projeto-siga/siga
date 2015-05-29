@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -21,7 +21,7 @@ package br.gov.jfrj.siga.cp.grupo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 /**
- *  Configuração de grupo para uma lotação
+ *  ConfiguraÃ§Ã£o de grupo para uma lotaÃ§Ã£o
  */
 public class ConfiguracaoGrupoLotacao extends ConfiguracaoGrupo {
 	private DpLotacao dpLotacao;

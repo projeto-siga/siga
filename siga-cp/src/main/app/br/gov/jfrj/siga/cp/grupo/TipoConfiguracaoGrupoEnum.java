@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -23,31 +23,31 @@ import java.util.ArrayList;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
 
 /**
- * Enumerador para os tipos de configuração permitidas para os grupos
+ * Enumerador para os tipos de configuraÃ§Ã£o permitidas para os grupos
  */
 public enum TipoConfiguracaoGrupoEnum {
 	PESSOA(0, "Pessoa", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 			CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO,
-			CpTipoGrupo.TIPO_GRUPO_PERFIL_JEE }), LOTACAO(1, "Lotação",
+			CpTipoGrupo.TIPO_GRUPO_PERFIL_JEE }), LOTACAO(1, "LotaÃ§Ã£o",
 			new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 					CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO }), CARGO(2,
 			"Cargo", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 					CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO }), FUNCAOCONFIANCA(
-			3, "Função de Confiança", new int[] {
+			3, "FunÃ§Ã£o de ConfianÃ§a", new int[] {
 					CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO,
 					CpTipoGrupo.TIPO_GRUPO_PERFIL_DE_ACESSO }), EMAIL(4,
 			"Email", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO }), FORMULA(
-			5, "Fórmula", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO });
+			5, "FÃ³rmula", new int[] { CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO });
 	private int codigo;
 	private String descricao;
 	private int[] idsDeTiposDeGrupo; // 1 - Perfil de acesso, 2 - Pasta
 
 	/**
-	 * Obtém os valores do enumerador para um dado tipo de grupo
+	 * ObtÃ©m os valores do enumerador para um dado tipo de grupo
 	 * 
 	 * @param p_ctgTipoGrupo
 	 *            CpTipoGrupo O tipo de grupo para o qual se quer os tipos de
-	 *            configuração
+	 *            configuraÃ§Ã£o
 	 * @return ArrayList<TipoConfiguracaoGrupoEnum> a lista com os
 	 *         TipoConfiguracaoGrupoEnum
 	 * 
@@ -67,15 +67,15 @@ public enum TipoConfiguracaoGrupoEnum {
 	}
 
 	/**
-	 * Obtém um TipoConfiguracaoGrupoEnum para um determinado tipo de grupo e
-	 * código caso não exista nenhum TipoConfiguracaoGrupoEnum que atenda as
-	 * condições retorna nulo
+	 * ObtÃ©m um TipoConfiguracaoGrupoEnum para um determinado tipo de grupo e
+	 * cÃ³digo caso nÃ£o exista nenhum TipoConfiguracaoGrupoEnum que atenda as
+	 * condiÃ§Ãµes retorna nulo
 	 * 
 	 * @param p_ctgTipoGrupo
 	 *            CpTipoGrupo O tipo de grupo para o qual se quer os tipos de
-	 *            configuração
+	 *            configuraÃ§Ã£o
 	 * @param p_intCodigo
-	 *            int O código do TipoConfiguracaoGrupoEnum
+	 *            int O cÃ³digo do TipoConfiguracaoGrupoEnum
 	 * @return TipoConfiguracaoGrupoEnum
 	 * 
 	 */
@@ -101,25 +101,25 @@ public enum TipoConfiguracaoGrupoEnum {
 	}
 
 	/**
-	 * Obtém o código do tipo d grupo
+	 * ObtÃ©m o cÃ³digo do tipo d grupo
 	 * 
-	 * @return o código
+	 * @return o cÃ³digo
 	 */
 	public int getCodigo() {
 		return codigo;
 	}
 
 	/**
-	 * Obtém a descrição do tipo de grupo
+	 * ObtÃ©m a descriÃ§Ã£o do tipo de grupo
 	 * 
-	 * @return a descrição
+	 * @return a descriÃ§Ã£o
 	 */
 	public String getDescricao() {
 		return descricao;
 	}
 
 	/**
-	 * Obtém os ids de tipo de grupo que o TipoConfiguracaoGrupoEnum pode vir a
+	 * ObtÃ©m os ids de tipo de grupo que o TipoConfiguracaoGrupoEnum pode vir a
 	 * atender
 	 * 
 	 * return array com os ids dos tipos de grupo

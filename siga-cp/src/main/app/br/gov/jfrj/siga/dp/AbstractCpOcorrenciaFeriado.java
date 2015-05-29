@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -39,7 +39,7 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-//Essa anotaÁ„o È necess·ria por causa do mappedBy em CpFeriado que aponta pra c·
+//Essa anota√ß√£o √© necess√°ria por causa do mappedBy em CpFeriado que aponta pra c√°
 @MappedSuperclass
 public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Serializable {
 
@@ -102,7 +102,7 @@ public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Seri
 	}
 	
 	/**
-	 * Retorna a data de inÌcio formato dd/mm/aa ,
+	 * Retorna a data de in√≠cio formato dd/mm/aa ,
 	 * por exemplo, 01/02/10.
 	 * 
 	 * @return Data no formato dd/mm/aa, por

@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -18,7 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.grupo;
 /**
- *  Configuração de grupo para uma fórmula 
+ *  ConfiguraÃ§Ã£o de grupo para uma fÃ³rmula 
  */
 public class ConfiguracaoGrupoFormula extends ConfiguracaoGrupo {
 	private String dscFormula;

@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -118,7 +118,7 @@ public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 		this.nmFuncaoConfiancaAI = nmFuncaoConfiancaAI;
 	}
 
-	// MÈtodos necess·rios para ser "Sincronizavel"
+	// M√©todos necess√°rios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimFuncao();

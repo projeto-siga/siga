@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -22,16 +22,16 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 
 /**
- * F·brica para a geraÁ„o de uma ConfiguraÁ„o de grupo
+ * F√°brica para a gera√ß√£o de uma Configura√ß√£o de grupo
  */
 public class ConfiguracaoGrupoFabrica {
 	/**
-	 * Cria uma configuraÁ„o de grupo (ConfiguracaoGrupo)
+	 * Cria uma configura√ß√£o de grupo (ConfiguracaoGrupo)
 	 * 
 	 * @param p_enmTipo
-	 *            TipoConfiguracaoGrupoEnum O tipo de configuraÁ„o de grupo que
-	 *            deseja criar. @ return ConfiguracaoGrupo uma nova inst‚ncia de
-	 *            configuraÁ„o de grupo
+	 *            TipoConfiguracaoGrupoEnum O tipo de configura√ß√£o de grupo que
+	 *            deseja criar. @ return ConfiguracaoGrupo uma nova inst√¢ncia de
+	 *            configura√ß√£o de grupo
 	 * @throws Exception
 	 */
 	public ConfiguracaoGrupo getInstance(TipoConfiguracaoGrupoEnum p_enmTipo)
@@ -50,18 +50,18 @@ public class ConfiguracaoGrupoFabrica {
 			return new ConfiguracaoGrupoFuncao();
 		} else {
 			throw new AplicacaoException(
-					"Par‚metro TipoConfiguracaoGrupoEmailEnum."
-							+ p_enmTipo.getDescricao() + " n„o tratado !");
+					"Par√¢metro TipoConfiguracaoGrupoEmailEnum."
+							+ p_enmTipo.getDescricao() + " n√£o tratado !");
 		}
 	}
 
 	/**
-	 * Cria uma configuraÁ„o de grupo (ConfiguracaoGrupo)
+	 * Cria uma configura√ß√£o de grupo (ConfiguracaoGrupo)
 	 * 
 	 * @param p_enmTipo
-	 *            TipoConfiguracaoGrupoEnum O tipo de configuraÁ„o de grupo que
-	 *            deseja criar. @ return ConfiguracaoGrupo uma nova inst‚ncia de
-	 *            configuraÁ„o de grupo
+	 *            TipoConfiguracaoGrupoEnum O tipo de configura√ß√£o de grupo que
+	 *            deseja criar. @ return ConfiguracaoGrupo uma nova inst√¢ncia de
+	 *            configura√ß√£o de grupo
 	 * @throws Exception
 	 */
 	public ConfiguracaoGrupo getInstance(CpConfiguracao p_cpcConfiguracao)
@@ -89,7 +89,7 @@ public class ConfiguracaoGrupoFabrica {
 			t_cgpConfiguracao = new ConfiguracaoGrupoFuncao();
 		}
 		if (t_cgpConfiguracao == null) {
-			throw new Exception("CpConfiguracao incompatÌvel.");
+			throw new Exception("CpConfiguracao incompat√≠vel.");
 		}
 		t_cgpConfiguracao.setCpConfiguracao(p_cpcConfiguracao);
 		t_cgpConfiguracao.atualizarDeCpConfiguracao();

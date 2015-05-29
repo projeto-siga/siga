@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -205,8 +205,8 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	public String getPadraoReferenciaInvertido() {
 		if (getPadraoReferencia() != null && !getPadraoReferencia().equals("")) {
-			//Caso o padr„o de referÍncia n„o esteja no formado utilizado pela SJRJ.
-			//Retorna o padr„o cadastrado no BD sem inverter.
+			//Caso o padr√£o de refer√™ncia n√£o esteja no formado utilizado pela SJRJ.
+			//Retorna o padr√£o cadastrado no BD sem inverter.
 			try {
 				String partes[] = getPadraoReferencia().split("-");
 				String partesConcat = partes[1] + "-" + partes[0];
@@ -225,7 +225,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return getSigla();
 	}
 
-	// MÈtodos necess·rios para ser "Sincronizavel"
+	// M√©todos necess√°rios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimPessoa();
@@ -279,7 +279,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	//
-	// FunÁıes utilizadas nas fÛrmulas de inclus„o em grupos de email.
+	// Fun√ß√µes utilizadas nas f√≥rmulas de inclus√£o em grupos de email.
 	//
 
 	public boolean tipoLotacaoSiglaIgual(String s) {
@@ -504,10 +504,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 	
     /**
-     * Retorna a data de inÌcio da pessoa no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de in√≠cio da pessoa no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de inÌcio da pessoa no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de in√≠cio da pessoa no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -524,7 +524,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
      * Retorna a data de fim da pessoa no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de inÌcio da fim no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de in√≠cio da fim no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -549,16 +549,16 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
     
    /**
-    * MÈtodo que filtra o pessoaPosteriores para que apareÁa somente o histÛrico com informaÁıes corporativas, comparando 
-    * uma linha da lista com a prÛxima para verificar se ocorreu alguma alteraÁ„o de lotaÁ„o, funÁ„o ou padr„o.
-    * @return lista com histÛrico referentes as seguintes informaÁıes: lotaÁıes, funÁ„o e padr„o.
+    * M√©todo que filtra o pessoaPosteriores para que apare√ßa somente o hist√≥rico com informa√ß√µes corporativas, comparando 
+    * uma linha da lista com a pr√≥xima para verificar se ocorreu alguma altera√ß√£o de lota√ß√£o, fun√ß√£o ou padr√£o.
+    * @return lista com hist√≥rico referentes as seguintes informa√ß√µes: lota√ß√µes, fun√ß√£o e padr√£o.
     */
     public List<DpPessoa> getHistoricoInfoCorporativas() {
-    	//transforma um treeSet (pessoaPosteriores) em um list para que se possa percorrer a lista do fim para o comeÁo 
+    	//transforma um treeSet (pessoaPosteriores) em um list para que se possa percorrer a lista do fim para o come√ßo 
     	List<DpPessoa> listaPessoaPosterioresA = new ArrayList<DpPessoa>(getPessoaInicial().getPessoasPosteriores());
     	List<DpPessoa> listaPessoaPosterioresB = listaPessoaPosterioresA;
     	List<DpPessoa> listaHistoricoPessoa = new ArrayList<DpPessoa>();
-    	//define que o iterator comeÁa pelo fim da lista 
+    	//define que o iterator come√ßa pelo fim da lista 
     	ListIterator<DpPessoa> itPessoaPosteriorA = listaPessoaPosterioresA.listIterator(listaPessoaPosterioresA.size());
     	ListIterator<DpPessoa> itPessoaPosteriorB = listaPessoaPosterioresB.listIterator(listaPessoaPosterioresB.size());
     	DpPessoa pessoaPost = null;
@@ -571,17 +571,17 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
     	while (itPessoaPosteriorB.hasPrevious() ) {
 			pessoaPost = itPessoaPosteriorA.previous();
 			pessoaHist = itPessoaPosteriorB.previous();
-			//verifica se a lotaÁ„o da lista listaPessoaPosterioresA È a mesma que da lista listaPessoaPosterioresB, 
-			//que est· um registro a frente (linha seguinte)
-			//somente adiciona na lista listaHistoricoPessoa,que ser· retornada pelo mÈtodo, caso as lotaÁıes sejam diferentes
+			//verifica se a lota√ß√£o da lista listaPessoaPosterioresA √© a mesma que da lista listaPessoaPosterioresB, 
+			//que est√° um registro a frente (linha seguinte)
+			//somente adiciona na lista listaHistoricoPessoa,que ser√° retornada pelo m√©todo, caso as lota√ß√µes sejam diferentes
 			if(!pessoaHist.getLotacao().getSigla().equals(pessoaPost.getLotacao().getSigla())) 
 				listaHistoricoPessoa.add(pessoaHist);
-			//verifica se o padr„o de referÍncia da lista listaPessoaPosterioresA È o mesma que da lista listaPessoaPosterioresB
+			//verifica se o padr√£o de refer√™ncia da lista listaPessoaPosterioresA √© o mesma que da lista listaPessoaPosterioresB
 			else if((pessoaHist.getPadraoReferencia() == null ^ pessoaPost.getPadraoReferencia() == null) || 
 						((pessoaHist.getPadraoReferencia() != null && pessoaPost.getPadraoReferencia() != null) &&
 								!pessoaHist.getPadraoReferencia().equals(pessoaPost.getPadraoReferencia())) ) 
 				listaHistoricoPessoa.add(pessoaHist);	
-			//verifica se a funÁ„o de confianÁa da lista listaPessoaPosterioresA È a mesma que da lista listaPessoaPosterioresB
+			//verifica se a fun√ß√£o de confian√ßa da lista listaPessoaPosterioresA √© a mesma que da lista listaPessoaPosterioresB
 			else if((pessoaHist.getFuncaoConfianca() == null ^ pessoaPost.getFuncaoConfianca() == null) || 
 						((pessoaHist.getFuncaoConfianca() != null && pessoaPost.getFuncaoConfianca() != null) &&
 								!pessoaHist.getFuncaoConfianca().getNomeFuncao().equals(pessoaPost.getFuncaoConfianca().getNomeFuncao())) ) 

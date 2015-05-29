@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -638,7 +638,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	}
 
 	/**
-	 * Define o nome de exibi��o (apelido ou nome com pronome de tratamento, por
+	 * Define o nome de exibição (apelido ou nome com pronome de tratamento, por
 	 * exemplo)
 	 * 
 	 * @param nomeExibicao
@@ -648,7 +648,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	}
 
 	/**
-	 * Retorna o nome de exibi��o (apelido ou nome com pronome de tratamento,
+	 * Retorna o nome de exibição (apelido ou nome com pronome de tratamento,
 	 * por exemplo)
 	 * 
 	 * @return

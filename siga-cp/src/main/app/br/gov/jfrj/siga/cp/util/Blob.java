@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -36,7 +36,7 @@ public class Blob {
 			// fromBlob.free();
 			return blobAsBytes;
 		} catch (SQLException e) {
-			throw new RuntimeException("Não foi possível ler um BLOB.", e);
+			throw new RuntimeException("NÃ£o foi possÃ­vel ler um BLOB.", e);
 		}
 
 		// ByteArrayOutputStream baos = new ByteArrayOutputStream();

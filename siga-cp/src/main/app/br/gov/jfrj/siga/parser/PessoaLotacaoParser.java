@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -60,7 +60,7 @@ public class PessoaLotacaoParser extends SiglaParser {
 		Matcher matcher = pattern.matcher(codigo);
 		if (!matcher.matches())
 			throw new RuntimeException(
-					"Erro de sintaxe na definição da lotação para qual o documento deve ser transferido. A sintaxe correta é, por exemplo: @RJSESIE.");
+					"Erro de sintaxe na definiÃ§Ã£o da lotaÃ§Ã£o para qual o documento deve ser transferido. A sintaxe correta Ã©, por exemplo: @RJSESIE.");
 		else {
 			String siglaPessoa = matcher.group(3);
 			String orgaoPessoa = matcher.group(2);

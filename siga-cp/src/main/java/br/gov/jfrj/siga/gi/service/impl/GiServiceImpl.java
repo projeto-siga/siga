@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -42,9 +42,9 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.service.GiService;
 
 /**
- * Esta classe implementa os mÈtodos de gest„o de identidade O acesso ‡ esta
- * classe È realizado via web-services, com interfaces definidas no mÛdulo
- * siga-ws, conforme o padr„o adotados para o SIGA.
+ * Esta classe implementa os m√©todos de gest√£o de identidade O acesso √† esta
+ * classe √© realizado via web-services, com interfaces definidas no m√≥dulo
+ * siga-ws, conforme o padr√£o adotados para o SIGA.
  * 
  * @author tah
  * 

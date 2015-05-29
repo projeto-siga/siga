@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -102,7 +102,7 @@ public class CpFeriado extends AbstractCpFeriado implements Serializable,
 	 * 
 	 * if (calInicio.get(Calendar.YEAR) == calFim.get(Calendar.YEAR)) return
 	 * comparaSemAno(calParam, calInicio) <= 0 && comparaSemAno(calParam,
-	 * calFim) >= 0; // ExceÁ„o(else): recesso else return
+	 * calFim) >= 0; // Exce√ß√£o(else): recesso else return
 	 * comparaSemAno(calParam, calInicio) <= 0 || comparaSemAno(calParam,
 	 * calFim) >= 0; }
 	 * 

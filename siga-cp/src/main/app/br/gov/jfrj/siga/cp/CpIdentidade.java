@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -39,7 +39,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @Table(name = "CP_IDENTIDADE", schema = "CORPORATIVO")
 
-// Ver um lugar melhor para queries assim ficarem quando n�o se estiver usando
+// Ver um lugar melhor para queries assim ficarem quando não se estiver usando
 // XML
 @NamedQueries({ @NamedQuery(name = "consultarIdentidadeCadastranteAtiva", query = "select u from CpIdentidade u , DpPessoa pes "
 		+ "where u.nmLoginIdentidade = :nmUsuario "

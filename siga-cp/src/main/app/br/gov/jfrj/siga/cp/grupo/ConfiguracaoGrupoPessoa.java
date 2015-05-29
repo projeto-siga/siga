@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -21,7 +21,7 @@ package br.gov.jfrj.siga.cp.grupo;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 /**
- *  Configuração de grupo para uma pessoa 
+ *  ConfiguraÃ§Ã£o de grupo para uma pessoa 
  */
 public class ConfiguracaoGrupoPessoa extends ConfiguracaoGrupo {
 	private DpPessoa dpPessoa;

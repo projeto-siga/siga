@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -31,7 +31,7 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 		return this.obterPropriedadeLista("siga.cp.municipio");
 	}
 	/*
-	 *  Propriedades de conex�o
+	 *  Propriedades de conexão
 	 */
 	public String urlConexao() throws Exception {
 		return this.obterPropriedade("hibernate.connection.url");

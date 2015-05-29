@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -51,7 +51,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	private Integer hisAtivo;
 
 	/**
-	 * Atribui o hisAtivo j� que o mesmo � sempre calculado
+	 * Atribui o hisAtivo já que o mesmo é sempre calculado
 	 */
 	public void updateAtivo() {
 		this.hisAtivo = this.hisDtFim == null ? 1 : 0;

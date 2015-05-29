@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -33,7 +33,7 @@ import javax.persistence.MappedSuperclass;
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
- * Classe que representa uma linha na tabela DP_CARGO. Voc� pode customizar o
+ * Classe que representa uma linha na tabela DP_CARGO. Você pode customizar o
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
 @MappedSuperclass

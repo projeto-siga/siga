@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -58,10 +58,10 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("dataInicio") == null) {
 			throw new DJBuilderException(
-					"Par‚metro data de inÌcio n„o informada!");
+					"Par√¢metro data de in√≠cio n√£o informada!");
 		}
 		if (parametros.get("dataFim") == null) {
-			throw new DJBuilderException("Par‚metro data de fim n„o informada!");
+			throw new DJBuilderException("Par√¢metro data de fim n√£o informada!");
 		}
 		String t_strDataHoraIni = (String) parametros.get("dataInicio")
 				+ " 00:00:00";
@@ -70,7 +70,7 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 			t_dtaDataHoraIni = converteParaData(t_strDataHoraIni);
 		} catch (Exception e) {
 			throw new DJBuilderException(
-					"Data de inÌcio tem de estar no formato 'DD/MM/AAAA'!");
+					"Data de in√≠cio tem de estar no formato 'DD/MM/AAAA'!");
 		}
 		String t_strDataHoraFim = (String) parametros.get("dataFim")
 				+ " 23:59:59";
@@ -88,7 +88,7 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 			setCpOrgaoUsuario(dao().consultar(idOrg, CpOrgaoUsuario.class,
 					false));
 		} catch (Exception e) {
-			throw new DJBuilderException("Orgao Usuario inv·lido ! erro:"
+			throw new DJBuilderException("Orgao Usuario inv√°lido ! erro:"
 					+ e.getMessage());
 		}
 		setDtInicio(t_dtaDataHoraIni);
@@ -101,13 +101,13 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 			throws DJBuilderException {// jar:file:/fullpath/main.jar!/a.resource
 		this.setTemplateFile(null);
 		this.setTitle("Alteracao de Direitos - de "
-				+ parametros.get("dataInicio") + " atÈ "
+				+ parametros.get("dataInicio") + " at√© "
 				+ parametros.get("dataFim"));
 		this.addColuna("Pessoa", 40, RelatorioRapido.ESQUERDA, false, false);
-		this.addColuna("ServiÁo", 40, RelatorioRapido.ESQUERDA, false, false);
-		this.addColuna("SituaÁ„o Inicial", 10, RelatorioRapido.ESQUERDA, false,
+		this.addColuna("Servi√ßo", 40, RelatorioRapido.ESQUERDA, false, false);
+		this.addColuna("Situa√ß√£o Inicial", 10, RelatorioRapido.ESQUERDA, false,
 				false);
-		this.addColuna("SituaÁ„o Final", 10, RelatorioRapido.ESQUERDA, false,
+		this.addColuna("Situa√ß√£o Final", 10, RelatorioRapido.ESQUERDA, false,
 				false);
 		return this;
 	}
@@ -155,12 +155,12 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 	}
 
 	/**
-	 * Preenche os dados com as informaÁıes da configuraÁ„o j· formatados
+	 * Preenche os dados com as informa√ß√µes da configura√ß√£o j√° formatados
 	 * 
 	 * @param cfga
-	 *            - ConfiguraÁ„o acesso
+	 *            - Configura√ß√£o acesso
 	 * @param dados
-	 *            - coleÁ„o de linhas do relatÛrio
+	 *            - cole√ß√£o de linhas do relat√≥rio
 	 */
 	private void processarItem(Item itm, List<String> dados) {
 
@@ -260,12 +260,12 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 	}
 
 	/**
-	 * ObtÈm uma lista ordenada com as configuraÁıesAcesso na data
+	 * Obt√©m uma lista ordenada com as configura√ß√µesAcesso na data
 	 * 
 	 * @param ou
-	 *            Org„o Usu·rio
+	 *            Org√£o Usu√°rio
 	 * @param dtEvn
-	 *            Data em quest„o
+	 *            Data em quest√£o
 	 * @return lista ordenada
 	 */
 	@SuppressWarnings("unchecked")
@@ -346,16 +346,16 @@ public class AlteracaoDireitosRelatorio extends RelatorioTemplate {
 	}
 
 	/**
-	 * Compara a configuraÁ„o
+	 * Compara a configura√ß√£o
 	 * 
 	 * @param ou
-	 *            Ûrg„o do usu·rio
+	 *            √≥rg√£o do usu√°rio
 	 * @param dtAntes
-	 *            Primeira data da comparaÁ„o
+	 *            Primeira data da compara√ß√£o
 	 * @param dtDepois
-	 *            Segunda data da comparaÁ„o
-	 * @return ArrayList<ConfiguracaoAcesso[2]> com a sincronizaÁ„o das
-	 *         configuraÁıes nas datas
+	 *            Segunda data da compara√ß√£o
+	 * @return ArrayList<ConfiguracaoAcesso[2]> com a sincroniza√ß√£o das
+	 *         configura√ß√µes nas datas
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")

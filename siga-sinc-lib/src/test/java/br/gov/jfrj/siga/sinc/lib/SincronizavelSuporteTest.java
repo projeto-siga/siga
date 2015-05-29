@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -27,12 +27,12 @@ public class SincronizavelSuporteTest extends TestCase {
 	public SincronizavelSuporteTest() {
 		l1 = new Lotacao();
 		l1.sigla = "CSIS";
-		l1.nome = "Coordenadoria de Sistemas de InformaÁ„o";
+		l1.nome = "Coordenadoria de Sistemas de Informa√ß√£o";
 		l1.setIdExterna("l1");
 
 		l2 = new Lotacao();
 		l2.sigla = "SESIE";
-		l2.nome = "SeÁ„o de Sistemas Especializados";
+		l2.nome = "Se√ß√£o de Sistemas Especializados";
 		l2.setIdExterna("l2");
 
 		p1 = new Pessoa();
@@ -46,7 +46,7 @@ public class SincronizavelSuporteTest extends TestCase {
 		_p1.nome = "Orlando";
 		_p1.cpf = "123456789-12";
 		_p1.lotacao = l2;
-		_p1.desconsiderar = "n„o";
+		_p1.desconsiderar = "n√£o";
 		_p1.setIdExterna("p1");
 
 		p2 = new Pessoa();
@@ -75,14 +75,14 @@ public class SincronizavelSuporteTest extends TestCase {
 
 		l3 = new Lotacao();
 		l3.sigla = "SESIE";
-		l3.nome = "SeÁ„o de Sistemas Especializados";
+		l3.nome = "Se√ß√£o de Sistemas Especializados";
 		l3.naoPropagar = "sim";
 		l3.setIdExterna("l3");
 
 		_l3 = new Lotacao();
 		_l3.sigla = "SESIE";
-		_l3.nome = "SeÁ„o de Sistemas Especializados";
-		_l3.naoPropagar = "n„o";
+		_l3.nome = "Se√ß√£o de Sistemas Especializados";
+		_l3.naoPropagar = "n√£o";
 		_l3.setIdExterna("l3");
 
 		p6 = new Pessoa();

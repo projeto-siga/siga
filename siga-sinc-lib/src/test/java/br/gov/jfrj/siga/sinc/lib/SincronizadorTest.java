@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -39,22 +39,22 @@ public class SincronizadorTest extends TestCase {
 		l1 = new Lotacao();
 		l1.setIdExterna("1");
 		l1.sigla = "CSIS";
-		l1.nome = "Coordenadoria de Sistemas de Informação";
+		l1.nome = "Coordenadoria de Sistemas de InformaÃ§Ã£o";
 
 		_l1 = new Lotacao();
 		_l1.setIdExterna("1");
 		_l1.sigla = "CSIS";
-		_l1.nome = "Coordenadoria de Sistemas de Informação";
+		_l1.nome = "Coordenadoria de Sistemas de InformaÃ§Ã£o";
 
 		l2 = new Lotacao();
 		l2.setIdExterna("2");
 		l2.sigla = "SESIE";
-		l2.nome = "Seção de Sistemas Especializados";
+		l2.nome = "SeÃ§Ã£o de Sistemas Especializados";
 
 		_l2 = new Lotacao();
 		_l2.setIdExterna("2");
 		_l2.sigla = "SESIE";
-		_l2.nome = "Seção de Sistemas Especializados";
+		_l2.nome = "SeÃ§Ã£o de Sistemas Especializados";
 
 		p1 = new Pessoa();
 		p1.setIdExterna("1");

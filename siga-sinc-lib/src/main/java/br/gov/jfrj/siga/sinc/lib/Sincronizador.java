@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -33,8 +33,8 @@ import br.gov.jfrj.siga.sinc.lib.Item.Operacao;
 
 public class Sincronizador {
 
-	private static final int MAX_ATERACOES = 50; // número máximo de alterações
-	// em um único passo
+	private static final int MAX_ATERACOES = 50; // nÃºmero mÃ¡ximo de alteraÃ§Ãµes
+	// em um Ãºnico passo
 	private SincronizavelComparator sc = new SincronizavelComparator();
 	private ItemComparator ic = new ItemComparator();
 
@@ -67,7 +67,7 @@ public class Sincronizador {
 			this.map.put(getSicronizavelKey(s), s);
 	}
 
-	// Executa algoritmo de comparação entre as listas xml e tabela e
+	// Executa algoritmo de comparaÃ§Ã£o entre as listas xml e tabela e
 	// preenche
 	// as listas: inserir, excluir e atualizar.
 	//
@@ -85,7 +85,7 @@ public class Sincronizador {
 		while (oAntigo != null || oNovo != null) {
 			if ((oAntigo == null)
 					|| (oNovo != null && sc.compare(oAntigo, oNovo) > 0)) {
-				// O novo não existe entre os antigos, portanto deve ser
+				// O novo nÃ£o existe entre os antigos, portanto deve ser
 				// incluido
 				list.add(new Item(Item.Operacao.incluir, oNovo, null));
 				if (iNovo.hasNext())
@@ -95,7 +95,7 @@ public class Sincronizador {
 					oNovo = null;
 			} else if (oNovo == null
 					|| (oAntigo != null && sc.compare(oNovo, oAntigo) > 0)) {
-				// O corp não existe no xml
+				// O corp nÃ£o existe no xml
 				list.add(new Item(Item.Operacao.excluir, null, oAntigo));
 				// excluir.add(oTabela);
 				if (iAntigo.hasNext())
@@ -125,7 +125,7 @@ public class Sincronizador {
 
 			if (list.size() > MAX_ATERACOES) {
 				// throw new AplicacaoException(
-				// "Número máximo de alterações em um único passo ultrapassado! ("
+				// "NÃºmero mÃ¡ximo de alteraÃ§Ãµes em um Ãºnico passo ultrapassado! ("
 				// + MAX_ATERACOES + ")");
 			}
 		}

@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.vraptor;
+package br.gov.jfrj.siga.vraptor;
 
 /**
  * Melhoria feita sobre a annotation @Load, para permitir contornar o 

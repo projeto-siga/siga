@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.cp.bl;
+package br.gov.jfrj.siga.cp.bl;
 
 /**
  * Combinação de situações funcionais utilizados na pesquina CpDao.pessoasPorLotacao()

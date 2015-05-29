@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.base.auditoria.filter;
+package br.gov.jfrj.siga.base.auditoria.filter;
 
 import java.io.IOException;
 import java.net.InetAddress;

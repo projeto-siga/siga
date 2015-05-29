@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.dp.dao;
+package br.gov.jfrj.siga.dp.dao;
 
 import java.io.UnsupportedEncodingException;
 

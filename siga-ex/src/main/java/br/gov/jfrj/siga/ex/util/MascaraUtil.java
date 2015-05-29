@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.ex.util;
+package br.gov.jfrj.siga.ex.util;
 
 import java.util.Formatter;
 import java.util.HashMap;

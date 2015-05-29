@@ -1,4 +1,4 @@
-﻿package br.com.caelum.iogi;
+package br.com.caelum.iogi;
 
 import javax.persistence.EntityManager;
 

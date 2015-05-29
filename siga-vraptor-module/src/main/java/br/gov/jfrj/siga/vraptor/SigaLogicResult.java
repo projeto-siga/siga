@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.vraptor;
+package br.gov.jfrj.siga.vraptor;
 
 /***
  * Copyright (c) 2009 Caelum - www.caelum.com.br/opensource

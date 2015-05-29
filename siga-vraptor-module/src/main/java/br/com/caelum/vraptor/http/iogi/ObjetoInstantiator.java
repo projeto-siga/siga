@@ -1,4 +1,4 @@
-﻿package br.com.caelum.vraptor.http.iogi;
+package br.com.caelum.vraptor.http.iogi;
 
 /***
  * Copyright (c) 2009 Caelum - www.caelum.com.br/opensource

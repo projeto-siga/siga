@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.base.util;
+package br.gov.jfrj.siga.base.util;
 
 import org.apache.commons.lang.StringUtils;
 

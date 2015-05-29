@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
+package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

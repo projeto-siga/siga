@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.vraptor;
+package br.gov.jfrj.siga.vraptor;
 
 import br.com.caelum.vraptor.http.route.PathAnnotationRoutesParser;
 import br.com.caelum.vraptor.http.route.Router;

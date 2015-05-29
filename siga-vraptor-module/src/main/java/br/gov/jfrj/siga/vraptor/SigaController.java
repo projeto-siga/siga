@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.vraptor;
+package br.gov.jfrj.siga.vraptor;
 
 import static br.com.caelum.vraptor.view.Results.http;
 

@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.base.auditoria.hibernate.auditor;
+package br.gov.jfrj.siga.base.auditoria.hibernate.auditor;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.cfg.Configuration;

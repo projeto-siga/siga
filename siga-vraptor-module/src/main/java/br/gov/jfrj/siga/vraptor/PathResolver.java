@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.vraptor;
+package br.gov.jfrj.siga.vraptor;
 
 import br.com.caelum.vraptor.http.FormatResolver;
 import br.com.caelum.vraptor.ioc.Component;

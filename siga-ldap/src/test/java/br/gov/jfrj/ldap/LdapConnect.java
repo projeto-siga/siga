@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.ldap;
+package br.gov.jfrj.ldap;
 
 public class LdapConnect {
 	

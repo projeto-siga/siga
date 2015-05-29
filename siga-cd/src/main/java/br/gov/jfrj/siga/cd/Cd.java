@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.cd;
+package br.gov.jfrj.siga.cd;
 
 
 public class Cd {

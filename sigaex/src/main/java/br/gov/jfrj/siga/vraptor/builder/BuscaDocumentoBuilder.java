@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.vraptor.builder;
+package br.gov.jfrj.siga.vraptor.builder;
 
 import org.jboss.logging.Logger;
 

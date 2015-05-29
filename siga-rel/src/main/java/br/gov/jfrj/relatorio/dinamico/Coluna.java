@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.relatorio.dinamico;
+package br.gov.jfrj.relatorio.dinamico;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

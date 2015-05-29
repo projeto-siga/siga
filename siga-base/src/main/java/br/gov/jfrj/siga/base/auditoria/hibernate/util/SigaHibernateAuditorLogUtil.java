@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.base.auditoria.hibernate.util;
+package br.gov.jfrj.siga.base.auditoria.hibernate.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

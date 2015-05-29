@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.vraptor.builder;
+package br.gov.jfrj.siga.vraptor.builder;
 
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;

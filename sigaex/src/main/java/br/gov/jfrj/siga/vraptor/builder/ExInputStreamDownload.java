@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.vraptor.builder;
+package br.gov.jfrj.siga.vraptor.builder;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

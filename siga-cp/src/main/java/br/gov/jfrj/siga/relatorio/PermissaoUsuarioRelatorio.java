@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.relatorio;
+package br.gov.jfrj.siga.relatorio;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

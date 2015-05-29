@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.cp;
+package br.gov.jfrj.siga.cp;
 
 import java.util.Calendar;
 

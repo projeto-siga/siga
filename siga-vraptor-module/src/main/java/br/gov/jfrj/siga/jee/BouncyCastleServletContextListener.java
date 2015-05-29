@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.jee;
+package br.gov.jfrj.siga.jee;
 
 import java.security.Security;
 

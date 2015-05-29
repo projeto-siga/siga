@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.vraptor.builder;
+package br.gov.jfrj.siga.vraptor.builder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

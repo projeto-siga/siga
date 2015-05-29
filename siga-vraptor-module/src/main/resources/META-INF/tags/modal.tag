@@ -1,4 +1,4 @@
-﻿<%@ tag body-content="scriptless"%>
+<%@ tag body-content="scriptless"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ attribute name="nome" required="false"%>
 <%@ attribute name="url" required="false"%>

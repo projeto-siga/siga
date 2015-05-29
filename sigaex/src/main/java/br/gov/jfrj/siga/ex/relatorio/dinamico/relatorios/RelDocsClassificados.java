@@ -1,4 +1,4 @@
-﻿package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
+package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -153,7 +153,7 @@
 				if (frm[i].name && frm[i].value)
 					params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
 			}
-			var url = '${linkTo[SolicitacaoController].exibirItemConfiguracao['+params+']}';
+			var url = '${linkTo[SolicitacaoController].exibirItemConfiguracao}?' + params;
 			Siga.ajax(url, null, "GET", function(response){		
 				carregouItem(response);
 			});
@@ -178,7 +178,7 @@
 				if (frm[i].name && frm[i].value)
 					params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
 			}
-			var url = '${linkTo[SolicitacaoController].exibirConhecimentosRelacionados['+params+']}';
+			var url = '${linkTo[SolicitacaoController].exibirConhecimentosRelacionados}?' + params;
 			Siga.ajax(url, null, "GET", function(response){		
 				carregouConhecimentosRelacionados(response);
 			});
@@ -336,7 +336,7 @@
 					iniciarCarregarSolicitacoesRelacionadas();
 					//jQuery.blockUI(objBlock);
 					
-					var url = '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}'+params;
+					var url = '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+params;
 					Siga.ajax(url, null, "GET", function(response){
 						carregouSolicitacoesRelacionadas(response);
 					});				
@@ -444,7 +444,7 @@
 	
 		function exibirSolicitacao(idSolicitacao) {
 			var params = 'id=' + idSolicitacao;
-			window.open('${linkTo[SolicitacaoController].exibir['+ params +']}',"_blank");
+			window.open('${linkTo[SolicitacaoController].exibir}?' + params, "_blank");
 		}
 		
 		function verMais(){

@@ -278,6 +278,11 @@ public class SolicitacaoController extends SrController {
     public void gravar(SrSolicitacao solicitacao) throws Exception {
         if (!solicitacao.isRascunho())
             validarFormEditar(solicitacao);
+        
+        // TODO WO para tratar o caso do Interlocutor, pois está serializando um objeto nulo 
+        // e está gerando erro ao persistir a solicitação
+        if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
+        	solicitacao.setInterlocutor(null);
 
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getId(), todoOContexto(), ocultas());
@@ -332,7 +337,7 @@ public class SolicitacaoController extends SrController {
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
+            throw new Exception("Esta solicitação foi excluída");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
@@ -365,9 +370,9 @@ public class SolicitacaoController extends SrController {
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
     }
 
+    @Path("/exibirItemConfiguracao")
     public void exibirItemConfiguracao(SrSolicitacao solicitacao) throws Exception {
         if (solicitacao.getSolicitante() == null)
-            // render(solicitacao);
             result.include("solicitacao", solicitacao);
 
         else if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())) {
@@ -381,7 +386,6 @@ public class SolicitacaoController extends SrController {
             result.include("titular", titular);
             result.include(LOTA_TITULAR, lotaTitular);
             result.include("acoesEAtendentes", acoesEAtendentes);
-            // render(solicitacao, titular, lotaTitular, acoesEAtendentes);
         }
     }
 
@@ -397,6 +401,7 @@ public class SolicitacaoController extends SrController {
         result.include("prioridadeList",SrPrioridade.values());
     }
     
+    @Path("/listarSolicitacoesRelacionadas")
     public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
 
         solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);

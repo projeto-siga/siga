@@ -1190,9 +1190,11 @@ public class AppController extends GcController {
 		List<GcTag> itens = null;
 
 		Query query = em().createNamedQuery("listarTagCategorias");
-		List<Object[]> listaTagCategorias = query.getResultList();
-		if (listaTagCategorias.size() == 0)
-			listaTagCategorias = null;
+		List<String> l = query.getResultList();
+		List<SigaIdDescr> listaTagCategorias = new ArrayList<SigaIdDescr>();
+		for (Object s : l) {
+			listaTagCategorias.add(new SigaIdDescr(s, s));
+		}
 
 		try {
 			if (filtro == null)

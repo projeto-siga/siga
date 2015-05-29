@@ -57,6 +57,9 @@ public class WfJobExecutorThread extends JobExecutorThread {
 	 */
 	@Override
 	protected void executeJob(Job job) throws Exception {
+		if (true)
+			return;
+		
 		GraphSession s = WfContextBuilder.getJbpmContext().getGraphSession();
 		Session session = null;
 		try {

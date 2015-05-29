@@ -14,13 +14,13 @@
 							<td align="center" valign="top" colspan="4">Dados do item</td>
 						</tr>
 						<tr>
-							<td width="25%">Ti≠tulo:</td>
+							<td width="25%">Ti√≠tulo:</td>
 							<td><input type="text" name="filtro.titulo"
 								value="${filtro.titulo}" />
 							</td>
 						</tr>
 						<tr>
-							<siga:select label="Categoria" name="filtro.categoria" list="listaTagCategorias" listKey="false" listValue="false" 
+							<siga:select label="Categoria" name="filtro.categoria" list="listaTagCategorias" listKey="id" listValue="descr" 
 									headerValue="Todas"/>
 						</tr>
 						<tr>
@@ -39,7 +39,7 @@
 		<div class="gt-content-box gt-for-table">
 			<table class="gt-table">
 				<tr>
-					<th>TÌ≠tulo
+					<th>T√≠tulo
 					</td>
 					<th>Categoria
 					</td>

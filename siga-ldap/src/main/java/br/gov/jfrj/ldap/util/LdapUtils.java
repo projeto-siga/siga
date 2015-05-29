@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -24,7 +24,7 @@ public class LdapUtils {
 	/**
 	 * Formata o DN corretamente caso exista algum caracter especial.
 	 * 
-	 * Referências:
+	 * ReferÃªncias:
 	 * http://java.sun.com/products/jndi/tutorial/beyond/names/syntax.html
 	 * http://www.owasp.org/index.php/Preventing_LDAP_Injection_in_Java
 	 * 
@@ -78,7 +78,7 @@ public class LdapUtils {
 	/**
 	 * Formata o filtro corretamente caso exista algum caracter especial.
 	 * 
-	 * Referências:
+	 * ReferÃªncias:
 	 * http://java.sun.com/products/jndi/tutorial/beyond/names/syntax.html
 	 * http://www.owasp.org/index.php/Preventing_LDAP_Injection_in_Java
 	 * 

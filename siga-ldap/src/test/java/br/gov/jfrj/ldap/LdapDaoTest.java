@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -133,9 +133,9 @@ public class LdapDaoTest extends TestCase{
 		ldap.alterarSenha(DN_USUARIO, PASSWORD2, PASSWORD1);
 		assertTrue(ldap.verificarConexao(siglaUsuario, "csis.local",
 				PASSWORD1, SERVIDOR, PORTA_COMUM));
-		// A alteraÁ„o de senha seguinte deveria falhar. PorÈm o ldap armazena a
+		// A altera√ß√£o de senha seguinte deveria falhar. Por√©m o ldap armazena a
 		// senha em cache e ainda
-		// n„o foi descoberta uma maneira de desativar o cache
+		// n√£o foi descoberta uma maneira de desativar o cache
 		ldap.alterarSenha(DN_USUARIO, PASSWORD2, PASSWORD1);
 	}
 

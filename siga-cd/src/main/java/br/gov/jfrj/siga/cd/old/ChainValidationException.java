@@ -1,4 +1,4 @@
-/*******************************************************************************
+ï»¿/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -21,8 +21,8 @@ package br.gov.jfrj.siga.cd.old;
 /**
  * @author mparaiso
  * 
- * Classe de Exceção disparada quando ocorre algum problema com a validação de
- * uma cadeia de certificação.
+ * Classe de ExceÃ§Ã£o disparada quando ocorre algum problema com a validaÃ§Ã£o de
+ * uma cadeia de certificaÃ§Ã£o.
  * 
  */
 public class ChainValidationException extends Exception {

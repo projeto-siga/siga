@@ -1,4 +1,4 @@
-/*******************************************************************************
+Ôªø/*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -42,10 +42,10 @@ import java.util.Vector;
 import org.bouncycastle.jce.provider.X509CRLObject;
 
 /**
- * Classe respons·vel por realizar a validaÁ„o de um certificado. … verificada
- * toda a cadeia de certificaÁ„o, assim como as CRLs dos certificados existentes
- * na cadeia. Por default, X509ChainValidator n„o faz a verificaÁ„o das CRLs.
- * Para tanto deve-se chamar o mÈtodo checkCRL(true).
+ * Classe respons√°vel por realizar a valida√ß√£o de um certificado. √â verificada
+ * toda a cadeia de certifica√ß√£o, assim como as CRLs dos certificados existentes
+ * na cadeia. Por default, X509ChainValidator n√£o faz a verifica√ß√£o das CRLs.
+ * Para tanto deve-se chamar o m√©todo checkCRL(true).
  * 
  * @author mparaiso
  */
@@ -69,16 +69,16 @@ public class X509ChainValidator {
 	}
 
 	/**
-	 * MÈtodo interno para ler todas CRLs de todos os certificados passados para
+	 * M√©todo interno para ler todas CRLs de todos os certificados passados para
 	 * o objeto.
 	 * 
-	 * Este mÈtodo varre todos os certificados passados para este objeto no
-	 * construtor e monta uma lista com as CRLs dos certificados. Isso È feito
-	 * para que se possa testar o status de revogaÁ„o dos mesmos. … importante
-	 * lembrar que este mÈtodo normalmente sÛ È utilizado caso a verificaÁ„o de
+	 * Este m√©todo varre todos os certificados passados para este objeto no
+	 * construtor e monta uma lista com as CRLs dos certificados. Isso √© feito
+	 * para que se possa testar o status de revoga√ß√£o dos mesmos. √â importante
+	 * lembrar que este m√©todo normalmente s√≥ √© utilizado caso a verifica√ß√£o de
 	 * CRL estiver habilitada.
 	 * 
-	 * Este mÈtodo usa o CRLLocator para abrir o certificado e baixar a CRL.
+	 * Este m√©todo usa o CRLLocator para abrir o certificado e baixar a CRL.
 	 * 
 	 * @see br.gov.jfrj.siga.cd.old.com.certisign.utlis.CRLLocator
 	 * 
@@ -105,12 +105,12 @@ public class X509ChainValidator {
 	}
 
 	/**
-	 * Este mÈtodo gera, a partir de uma cadeia de certificados completa, uma
-	 * cadeia de certificados v·lida para o algorÌtmo de validaÁ„o de cadeias
-	 * PKIX. … levado em consideraÁ„o que a cadeia de certificados passada como
-	 * par‚metro esteja bem formada e em ordem crescente, ou seja, o primeiro
+	 * Este m√©todo gera, a partir de uma cadeia de certificados completa, uma
+	 * cadeia de certificados v√°lida para o algor√≠tmo de valida√ß√£o de cadeias
+	 * PKIX. √â levado em considera√ß√£o que a cadeia de certificados passada como
+	 * par√¢metro esteja bem formada e em ordem crescente, ou seja, o primeiro
 	 * certificado deve ser o certificado a ser autenticado, seguido do
-	 * certificado do seu emissor (AC Intermedi·ria) e assim por diante.
+	 * certificado do seu emissor (AC Intermedi√°ria) e assim por diante.
 	 * 
 	 * @param certificados -
 	 *            Cadeia de certificados completa, incluindo o certificado raiz.
@@ -120,7 +120,7 @@ public class X509ChainValidator {
 
 		final Vector wellFormedChain = new Vector();
 
-		// O certificado raiz È descartado, considerando-se que È o ˙ltimo da
+		// O certificado raiz √© descartado, considerando-se que √© o √∫ltimo da
 		// matriz de certificados passada.
 		for (int index = 0; index < certificates.length - 1; index++) {
 			wellFormedChain.add(certificates[index]);
@@ -130,11 +130,11 @@ public class X509ChainValidator {
 	}
 
 	/**
-	 * Construtor para X509ChainValidator. S„o passados a cadeia de certificados
-	 * a ser validada, assim como os roots v·lidos para a validaÁ„o da cadeia.
+	 * Construtor para X509ChainValidator. S√£o passados a cadeia de certificados
+	 * a ser validada, assim como os roots v√°lidos para a valida√ß√£o da cadeia.
 	 * 
 	 * @param certCadeia
-	 *            Deve ser uma cadeia de certificados v·lida, de acordo com o
+	 *            Deve ser uma cadeia de certificados v√°lida, de acordo com o
 	 *            PKIX.
 	 * @param trustedAnchors
 	 *            Um ou mais certificados raiz.
@@ -154,15 +154,15 @@ public class X509ChainValidator {
 	}
 
 	/**
-	 * Este mÈtodo realiza a validaÁ„o da cadeia de certificados. Caso checkCRL
-	 * esteja true, ent„o È feita a validaÁ„o de revogaÁ„o dos certificados em
-	 * relaÁ„o as suas CRLs. Todos os certificados da cadeia s„o verifificados,
-	 * n„o apenas o certificados apresentado, mas tambÈm os das ACs
-	 * intermedi·rias. Caso a cadeia de certificados esteja v·lida, ent„o
-	 * validateChain retorna void. Caso contr·rio uma exceÁ„o È lanÁada.
+	 * Este m√©todo realiza a valida√ß√£o da cadeia de certificados. Caso checkCRL
+	 * esteja true, ent√£o √© feita a valida√ß√£o de revoga√ß√£o dos certificados em
+	 * rela√ß√£o as suas CRLs. Todos os certificados da cadeia s√£o verifificados,
+	 * n√£o apenas o certificados apresentado, mas tamb√©m os das ACs
+	 * intermedi√°rias. Caso a cadeia de certificados esteja v√°lida, ent√£o
+	 * validateChain retorna void. Caso contr√°rio uma exce√ß√£o √© lan√ßada.
 	 * 
 	 * @throws ChainValidationException
-	 *             indica que houve um problema na validaÁ„o da cadeia.
+	 *             indica que houve um problema na valida√ß√£o da cadeia.
 	 */
 	public void validateChain(Date dtSigned) throws ChainValidationException {
 		try {
@@ -205,29 +205,29 @@ public class X509ChainValidator {
 			PKIXCertPathValidatorResult result = null;
 
 			// Estamos com o seguinte problema: Quando utilizamos as rotinas da
-			// SUN, funciona, mas seria necess·rio possuir todas as CRLs,
+			// SUN, funciona, mas seria necess√°rio possuir todas as CRLs,
 			// inclusive as mais antiga, pois quando informamos a data, ele
-			// exclui CRLs que nao est„o v·lidas nessa data.
+			// exclui CRLs que nao est√£o v√°lidas nessa data.
 
 			result = (PKIXCertPathValidatorResult) cpv.validate(cp, params);
 		} catch (final CertificateException e) {
 			throw new ChainValidationException(
-					"Falha na criaÁ„o do caminho dos certificados (CertPath)!"
-							+ " Verifique se a cadeia de certificados existente È uma v·lida!\n",
+					"Falha na cria√ß√£o do caminho dos certificados (CertPath)!"
+							+ " Verifique se a cadeia de certificados existente √© uma v√°lida!\n",
 					e);
 		} catch (final InvalidAlgorithmParameterException e) {
 			throw new ChainValidationException(
 					"Falha na leitura dos certificados raizes (TrustedAnchor)! "
-							+ "Verifique se os certificados raizes passados s„o v·lidos!\n",
+							+ "Verifique se os certificados raizes passados s√£o v√°lidos!\n",
 					e);
 		} catch (final NoSuchAlgorithmException e) {
 			throw new ChainValidationException(
-					"Falha na criaÁ„o do CertStore! Os par‚metros passados"
-							+ " para a criaÁ„o do CertStore podem estar com problemas!\n",
+					"Falha na cria√ß√£o do CertStore! Os par√¢metros passados"
+							+ " para a cria√ß√£o do CertStore podem estar com problemas!\n",
 					e);
 		} catch (final NoSuchProviderException e) {
 			throw new ChainValidationException(
-					"O provedor criptogr·fico especificado n„o est· disponÌvel!\n",
+					"O provedor criptogr√°fico especificado n√£o est√° dispon√≠vel!\n",
 					e);
 		} catch (final CertPathValidatorException e) {
 			// for (X509CRLObject x : (Collection<X509CRLObject>) this.crls)
@@ -235,15 +235,15 @@ public class X509ChainValidator {
 			// + " - " + x.getNextUpdate());
 			//
 			throw new ChainValidationException(
-					"N„o foi possÌvel validar a cadeia de certificados!\n Caso as CRLs"
-							+ " tenham sido verificadas È possÌvel que algum certificado da cadeia esteja revogado!\n"
+					"N√£o foi poss√≠vel validar a cadeia de certificados!\n Caso as CRLs"
+							+ " tenham sido verificadas √© poss√≠vel que algum certificado da cadeia esteja revogado!\n"
 							+ e);
 		}
 	}
 
 	/**
-	 * Por padr„o a verificaÁ„o de CRLs fica desabilitada. Para habilit·-la È
-	 * necess·rio setar checkCRL(true)
+	 * Por padr√£o a verifica√ß√£o de CRLs fica desabilitada. Para habilit√°-la √©
+	 * necess√°rio setar checkCRL(true)
 	 * 
 	 * @param checkCRL -
 	 *            True para verificar as CRLs da cadeia de certificados
@@ -253,9 +253,9 @@ public class X509ChainValidator {
 	}
 
 	/**
-	 * MÈtodo para descobrir se a verificaÁ„o de CRLs ser· usada ou n„o.
+	 * M√©todo para descobrir se a verifica√ß√£o de CRLs ser√° usada ou n√£o.
 	 * 
-	 * @return Estado atual da verificaÁ„o de CRL.
+	 * @return Estado atual da verifica√ß√£o de CRL.
 	 */
 	public boolean isCheckCRL() {
 		return this.checkCRL;

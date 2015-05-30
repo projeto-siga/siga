@@ -51,6 +51,7 @@ import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
+import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -71,6 +72,10 @@ public class SolicitacaoController extends SrController {
 	private static final String LOCAIS = "locais";
 	private static final String LISTA = "lista";
 	private static final String ORGAOS = "orgaos";
+	private static final String FILTRO = "filtro";
+	private static final String PODEREMOVER = "podeEditar";
+	private static final String PODEEDITAR = "podeRemover";
+	private static final String PODEPRIORIZAR = "podePriorizar";
 
     private Correio correio;
 
@@ -185,14 +190,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-    /**
-     * Recupera as {@link SrConfiguracao permissoes} de uma {@link SrLista lista}.
-     *
-     * @param idObjetivo
-     *            - ID da lista
-     * @return - String contendo a lista no formato jSon
-     */
-    @Path("/listarListaDesativados/{idLista}")
+    @Path("/buscarpermissoeslista")
     public void buscarPermissoesLista(Long idLista) throws Exception {
         List<SrConfiguracao> permissoes;
 
@@ -254,7 +252,7 @@ public class SolicitacaoController extends SrController {
         String jsonPrioridades = SrPrioridade.getJSON().toString();
 
         if (!lista.podeConsultar(getLotaTitular(), getCadastrante())) {
-            throw new Exception("Exibiï¿½ï¿½o nï¿½o permitida");
+            throw new Exception("Exibição não permitida");
         }
 
         try {
@@ -265,10 +263,14 @@ public class SolicitacaoController extends SrController {
         }
 
         result.include(LISTA, lista);
+        result.include(PODEREMOVER, lista.podeRemover(getLotaTitular(), getCadastrante()));
+        result.include(PODEEDITAR, lista.podeEditar(getLotaTitular(), getCadastrante()));
+        result.include(PODEPRIORIZAR, lista.podePriorizar(getLotaTitular(), getCadastrante()));
         result.include(ORGAOS, orgaos);
         result.include(LOCAIS, locais);
         result.include(TIPOS_PERMISSAO, tiposPermissao);
         result.include(SOLICITACAO_LISTA_VO, solicitacaoListaVO);
+        result.include(FILTRO, filtro);
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
         result.include("jsonPrioridades", jsonPrioridades);
 
@@ -597,4 +599,11 @@ public class SolicitacaoController extends SrController {
         result.include("solicitacao", solicitacao);
         result.include("acoesEAtendentes", acoesEAtendentes);
     }
+    
+    @Path("/priorizarLista")
+    public void priorizarLista(List<AtualizacaoLista> listaPrioridadeSolicitacao, Long id) throws Exception {
+        SrLista lista = SrLista.AR.findById(id);
+        lista.priorizar(getCadastrante(), getLotaTitular(), listaPrioridadeSolicitacao);
+        exibirLista(id);
+    }    
 }

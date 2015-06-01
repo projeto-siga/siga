@@ -17,6 +17,8 @@ import com.google.gson.GsonBuilder;
 
 public class SrSolicitacaoListaVO {
 
+    private static final String ULTIMA_MOVIMENTACAOFORMATADA = "ultimaMovimentacaoformatada";
+    private static final String GT_CELULA_NOWRAP_SOLICITACAO_DADOS = "gt-celula-nowrap solicitacao-dados";
     private static Long LARGURA_COLUNA_CODIGO = 130L;
     private static Long LARGURA_COLUNA_REMOVER_PRIORIZAR = 55L;
     private static Long LARGURA_COLUNA_PRIORIDADE = 20L;
@@ -88,17 +90,17 @@ public class SrSolicitacaoListaVO {
         if (telaDeListas) {
             colunasVO.add(new ColunasVO("#", "prioridadeListaFormatada", "gt-celula-nowrap solicitacao-dados solicitacao-prioridade numero-solicitacao", LARGURA_COLUNA_PRIORIDADE));
             colunasVO.addAll(getColunasEmComum());
-            colunasVO.add(new ColunasVO("Lotação", "lotaAtendenteFormatada", "gt-celula-nowrap solicitacao-dados"));
-            colunasVO.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
+            colunasVO.add(new ColunasVO("Lotação", "lotaAtendenteFormatada", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
+            colunasVO.add(new ColunasVO("Última Movimentação", ULTIMA_MOVIMENTACAOFORMATADA, GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
 
             if (podeRemover || podePriorizar)
                 colunasVO.add(new ColunasVO("", "botaoRemoverPriorizar", "gt-celula-nowrap solicitacao-dados solicitacao-remover", LARGURA_COLUNA_REMOVER_PRIORIZAR));
         } else {
             colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control"));
             colunasVO.addAll(getColunasEmComum());
-            colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados"));
-            colunasVO.add(new ColunasVO("Úšltimo Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados"));
-            colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", "gt-celula-nowrap solicitacao-dados"));
+            colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
+            colunasVO.add(new ColunasVO("Úšltimo Andamento", ULTIMA_MOVIMENTACAOFORMATADA, GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
+            colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
         }
 
         return colunasVO;
@@ -107,23 +109,23 @@ public class SrSolicitacaoListaVO {
     private List<ColunasVO> getColunasEmComum() {
         List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
         colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
-        colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
-        colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados"));
-        colunasVO.add(new ColunasVO("Aberto", "dtRegString", "gt-celula-nowrap solicitacao-dados"));
+        colunasVO.add(new ColunasVO("Teor", "teorFormatado", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
+        colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
+        colunasVO.add(new ColunasVO("Aberto", "dtRegString", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
 
         return colunasVO;
     }
 
     public List<ColunasVO> gerarColunasDetalhamentoSolicitacao(boolean telaDeListas) {
-        List<ColunasVO> colunasDetalhamento = new ArrayList<ColunasVO>();
+        List<ColunasVO> colunasDetalhamentoSolicitacao = new ArrayList<ColunasVO>();
 
-        colunasDetalhamento.add(new ColunasVO("Teor", "teorFormatado"));
-        colunasDetalhamento.add(new ColunasVO("Solicitante", "solicitanteFormatado"));
-        colunasDetalhamento.add(new ColunasVO("Prioridade", "prioridadeFormatada"));
-        colunasDetalhamento.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes"));
-        colunasDetalhamento.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada"));
+        colunasDetalhamentoSolicitacao.add(new ColunasVO("Teor", "teorFormatado"));
+        colunasDetalhamentoSolicitacao.add(new ColunasVO("Solicitante", "solicitanteFormatado"));
+        colunasDetalhamentoSolicitacao.add(new ColunasVO("Prioridade", "prioridadeFormatada"));
+        colunasDetalhamentoSolicitacao.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes"));
+        colunasDetalhamentoSolicitacao.add(new ColunasVO("Última Movimentação", ULTIMA_MOVIMENTACAOFORMATADA));
 
-        return colunasDetalhamento;
+        return colunasDetalhamentoSolicitacao;
     }
 
     public String toJson() {
@@ -137,7 +139,7 @@ public class SrSolicitacaoListaVO {
         Gson gson = builder.create();
 
         // remove a primeira coluna, que serÃ¡ sempre o detalhamento ou posiÃ§Ã£o na lista
-        if (colunas.size() > 0) {
+        if (!colunas.isEmpty()) {
             if (telaDeListas)
                 colunasResult = colunas.subList(1, colunas.size() - 1);
             else

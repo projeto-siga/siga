@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.sr.util;
 
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
-import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 
 public class AtualizacaoLista {
 
@@ -40,10 +39,5 @@ public class AtualizacaoLista {
 
 	public void setNaoReposicionarAutomatico(boolean naoReposicionarAutomatico) {
 		this.naoReposicionarAutomatico = naoReposicionarAutomatico;
-	}
-
-	@Override
-	public Long getId() {
-		return idPrioridadeSolicitacao;
 	}
 }	

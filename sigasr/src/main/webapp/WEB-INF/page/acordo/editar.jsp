@@ -305,7 +305,7 @@
 	      		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	      	 },
 	      	 error: function(error) {
-	          	alert("Nï¿½o foi possï¿½vel carregar as Abrangï¿½ncias deste Acordo.");
+	          	alert("Não foi possível carregar as Abrangências deste Acordo.");
 	      	 }
        });
     });
@@ -371,10 +371,10 @@
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangï¿½ncia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangência');
 		else {
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangï¿½ncia');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangência');
 		}
 		jQuery("#associacao_dialog").dialog('open');
 	};

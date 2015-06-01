@@ -50,7 +50,7 @@ public class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 			t_grpGrupo = new CpPerfilJEE();
 			break;
 		default:
-			throw new AplicacaoException("Id do tipo do grupo inválido: "
+			throw new AplicacaoException("Id do tipo do grupo invï¿½lido: "
 					+ IdTipoGrupo);
 		}
 		return t_grpGrupo;
@@ -77,7 +77,7 @@ public class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 	}
 
 	public int getNivel() {
-		if (getCpGrupoPai() != null)
+		if (getCpGrupoPai() != null && getCpGrupoPai().getId() != null)
 			return getCpGrupoPai().getNivel() + 1;
 		return 0;
 	}

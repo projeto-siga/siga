@@ -1,0 +1,17 @@
+Informamos que a solicitação ${sol.codigo} recebeu a seguinte movimentacao em ${movimentacao.dtIniMovDDMMYYYYHHMM}:
+
+	Tipo: ${movimentacao.tipoMov.nome}
+	${movimentacao.descrMovimentacao}
+	Por ${movimentacao.cadastrante?.descricaoIniciaisMaiusculas} (${movimentacao.lotaCadastrante?.siglaLotacao})
+	
+#{if sol.solicitacaoPai.atendente != null}
+	#{set descricao : sol.solicitacaoPai?.atendente?.descricaoIniciaisMaiusculas.raw() /}
+#{/if}
+#{else}
+	#{set descricao : sol.solicitacaoPai?.lotaAtendente?.descricao.raw() /} 
+#{/else}	
+Este email foi enviado porque ${descricao} é atendente atual da solicitação ${sol.solicitacaoPai.codigo}, 
+que gerou a solicitação acima através da ação Escalonar. 
+
+Para acessar a solicitação, acesse @@{Application.exibir(sol.idSolicitacao)}.
+	

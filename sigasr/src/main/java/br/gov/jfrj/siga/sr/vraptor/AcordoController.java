@@ -182,5 +182,12 @@ public class AcordoController extends SrController {
         result.include("nome", nome);
         result.include("popup", popup);
         result.include("propriedade", propriedade);
+        
+        result.include("dpPessoaSel", new DpPessoaSelecao());
+        result.include("atendenteSel", new DpLotacaoSelecao());
+        result.include("lotacaoSel", new DpLotacaoSelecao());
+        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+        result.include("cargoSel", new DpCargoSelecao());
+        result.include("cpGrupoSel", new CpPerfilSelecao());
     }
 }

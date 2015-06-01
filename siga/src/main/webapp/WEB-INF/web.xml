@@ -6,23 +6,29 @@
 
 	<!-- Inicio de WebServer -->
 	<context-param>
-	    <param-name>br.com.caelum.vraptor.provider</param-name>
-	    <param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
-	</context-param>	
-	
+		<param-name>br.com.caelum.vraptor.provider</param-name>
+		<param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>
+
 	<context-param>
 		<param-name>br.com.caelum.vraptor.encoding</param-name>
 		<param-value>UTF-8</param-value>
-	</context-param> 
-		
-	<context-param>  
-   		<param-name>br.com.caelum.vraptor.packages</param-name>  
-	   	<param-value>  
+	</context-param>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.packages</param-name>
+		<param-value>  
         	br.gov.jfrj.siga.vraptor,
         	br.com.caelum.vraptor.util.jpa
-   		</param-value>  
-	</context-param>  
-	
+   		</param-value>
+	</context-param>
+
+	<jsp-config>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
 
 	<filter>
 		<filter-name>vraptor</filter-name>

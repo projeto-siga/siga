@@ -112,7 +112,7 @@
 
 		<dependency>
 			<groupId>siga</groupId>
-			<artifactId>siga-libs</artifactId>
+			<artifactId>siga-vraptor-module</artifactId>
 		</dependency>
 
 		<dependency>

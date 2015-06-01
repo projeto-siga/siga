@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <siga:pagina titulo="Página de Login" desabilitarbusca="sim"
@@ -80,12 +80,11 @@
 					<!-- /form row -->
 
 					<p class="gt-forgot-password">
-						<a href="/siga/usuario/incluir_usuario.action">Sou um novo
+						<a href="/siga/app/usuario/incluir_usuario">Sou um novo
 							usuário</a>
 					</p>
 					<p class="gt-forgot-password">
-						<a href="/siga/usuario/esqueci_senha.action">Esqueci minha
-							senha</a>
+						<a href="/siga/app/usuario/esqueci_senha">Esqueci minha senha</a>
 					</p>
 				</form>
 				<!-- /login form -->
@@ -94,7 +93,7 @@
 
 			<!-- Sidebar Navigation -->
 			<div class="gt-sidebar-nav gt-sidebar-nav-blue">
-				<h3>Links ￚteis</h3>
+				<h3>Links Úteis</h3>
 				<ul>
 					<li><a href="/siga/arquivos/apostila_sigaex.pdf">Apostila
 							SIGA-Doc</a></li>

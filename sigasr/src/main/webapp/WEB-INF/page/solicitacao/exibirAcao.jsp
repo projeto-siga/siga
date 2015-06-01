@@ -103,7 +103,7 @@ function carregarLotacaoDaAcao(){
                 </optgroup>                  
             </c:forEach>
         </select> 
-<%--      <span style="color: red">#{error 'solicitacao.acao' /}</span> --%>
+        <siga:error name="solicitacao.acao"/>
     </div>
     <div>
         <!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao

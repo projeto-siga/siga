@@ -41,7 +41,7 @@ public class ContextInterceptor implements Interceptor {
 			SrDao.getInstance((Session) em.getDelegate(), ((Session) em.getDelegate()).getSessionFactory().openStatelessSession());
 			
 			// TODO modificar para invocar este método apenas uma vez - verificar o melhor local para isso
-			//SrConfiguracaoBL.get().inicializarCache();
+			SrConfiguracaoBL.get().inicializarCache();
 			
 			stack.next(method, resourceInstance);
 		} catch (Exception e) {

@@ -495,7 +495,7 @@
 			</h2>
 			<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
 	
-				<form action="${linkTo[SolicitacaoController].gravar}" 
+				<form action="${linkTo[SolicitacaoController].gravar}"
 					enctype="multipart/form-data" id="formSolicitacao" onsubmit="javascript:return block();"> 
 					<c:if test="${solicitacao.solicitacaoPai != null}">
 						<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
@@ -512,11 +512,13 @@
 							Dados B&aacute;sicos
 						</div>
 					</div>
-		
-<%-- 					#{ifErrors} --%>
-<!-- 					<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram -->
-<%-- 						preenchidos ${error}</p> --%>
-<%-- 					#{/ifErrors} --%>
+					
+					<c:if test="${errors != null && !erros.isEmpty()}">
+						<div class="gt-form-table">
+							<p class="gt-error">Alguns campos obrigatórios não foram preenchidos</p>
+						</div>
+					</c:if>
+					
 					<div class="gt-form-row box-wrapper">
 						<div class="gt-form-row gt-width-66">
 							<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
@@ -539,7 +541,7 @@
 						<span style="margin-left: 10px;" id="spanInterlocutor">
 							<siga:checkbox name="mostrarInterlocutor" value="false" depende="interlocutor"/>Interlocutor
 						</span>
-<%-- 						<span style="color: red">#{error 'solicitante' /}</span> --%>
+						<siga:error name="solicitacao.solicitante"/>
 					</div>
 					<div class="gt-form-row gt-width-66" id="interlocutor"
 						style="display: none;">
@@ -576,7 +578,7 @@
 						<label>DescriÃ§Ã£o</label>
 						<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
 							id="descrSolicitacao" maxlength="8192">${solicitacao.descrSolicitacao}</textarea>
-<%-- 						<span style="color: red">#{error 'descrSolicitacao' /}</span> --%>
+							<siga:error name="solicitacao.descrSolicitacao"/>
 					</div>
 					<div class="gt-form-row gt-width-66">
 						<label>Anexar arquivo</label> <input type="file"

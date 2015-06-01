@@ -126,7 +126,7 @@ public class Application extends SrController {
     }
 
     // protected static void assertAcesso(String path) throws Exception {
-    // SigaApplication.assertAcesso("SR:Módulo de Serviços;" + path);
+    // SigaApplication.assertAcesso("SR:Mï¿½dulo de Serviï¿½os;" + path);
     // }
 
     // @Catch()
@@ -194,7 +194,7 @@ public class Application extends SrController {
 
     public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
 
-        solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
+        //solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
         List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
         // render(solicitacoesRelacionadas);
     }
@@ -210,13 +210,13 @@ public class Application extends SrController {
 
     public List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
         List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
-        Map<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
-
-        for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
-            if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
-                listaAtributosAdicao.add(srAtributo);
-            }
-        }
+//        Map<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
+//
+//        for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
+//            if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
+//                listaAtributosAdicao.add(srAtributo);
+//            }
+//        }
         return listaAtributosAdicao;
     }
 
@@ -297,7 +297,7 @@ public class Application extends SrController {
     @SuppressWarnings("static-access")
     private void validarFormEditarItem(SrItemConfiguracao itemConfiguracao) throws Exception {
         if (itemConfiguracao.getSiglaItemConfiguracao().equals("")) {
-            srValidator.addError("siglaAcao", "Código não informado");
+            srValidator.addError("siglaAcao", "Cï¿½digo nï¿½o informado");
         }
         if (srValidator.hasErrors()) {
             enviarErroValidacao();
@@ -308,10 +308,10 @@ public class Application extends SrController {
     @SuppressWarnings("static-access")
     private void validarFormEditarAcao(SrAcao acao) {
         if (acao.getSiglaAcao().equals("")) {
-            srValidator.addError("siglaAcao", "Código não informado");
+            srValidator.addError("siglaAcao", "Cï¿½digo nï¿½o informado");
         }
         if (acao.getTituloAcao().equals("")) {
-            srValidator.addError("tituloAcao", "Titulo não informado");
+            srValidator.addError("tituloAcao", "Titulo nï¿½o informado");
         }
         if (srValidator.hasErrors()) {
             enviarErroValidacao();
@@ -345,7 +345,7 @@ public class Application extends SrController {
         StringBuffer sb = new StringBuffer();
 
         if (designacao.getDescrConfiguracao() == null || designacao.getDescrConfiguracao().isEmpty())
-            srValidator.addError("designacao.descrConfiguracao", "Descrição não informada");
+            srValidator.addError("designacao.descrConfiguracao", "Descriï¿½ï¿½o nï¿½o informada");
 
         for (SrError error : srValidator.getErros()) {
             sb.append(error.getKey() + ";");
@@ -445,7 +445,7 @@ public class Application extends SrController {
 
         // Header
         StringBuilder sbevol = new StringBuilder();
-        sbevol.append("['Mês','Fechados','Abertos'],");
+        sbevol.append("['Mï¿½s','Fechados','Abertos'],");
 
         // Values
         for (int i = -6; i <= 0; i++) {
@@ -504,7 +504,7 @@ public class Application extends SrController {
 
         // Header
         StringBuilder sbGUT = new StringBuilder();
-        sbGUT.append("['Gravidade','Urgência','Total'],");
+        sbGUT.append("['Gravidade','Urgï¿½ncia','Total'],");
 
         // Values
         for (Iterator<String[]> itgut = listaGUT.iterator(); itgut.hasNext();) {
@@ -529,12 +529,12 @@ public class Application extends SrController {
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicitação não encontrada");
+            throw new Exception("Solicitaï¿½ï¿½o nï¿½o encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicitação foi excluída");
+            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
@@ -563,7 +563,7 @@ public class Application extends SrController {
         String jsonPrioridades = SrPrioridade.getJSON().toString();
 
         if (!lista.podeConsultar(getLotaTitular(), getCadastrante())) {
-            throw new Exception("Exibição não permitida");
+            throw new Exception("Exibiï¿½ï¿½o nï¿½o permitida");
         }
 
         try {
@@ -613,10 +613,10 @@ public class Application extends SrController {
         // render("@selecionar", sel);
     }
 
-    // DB1: foi necessário receber e passar o parametro "nome"(igual ao buscarItem())
+    // DB1: foi necessï¿½rio receber e passar o parametro "nome"(igual ao buscarItem())
     // para chamar a function javascript correta,
-    // e o parametro "popup" porque este metodo é usado também na lista,
-    // e não foi possível deixar default no template(igual ao buscarItem.html)
+    // e o parametro "popup" porque este metodo ï¿½ usado tambï¿½m na lista,
+    // e nï¿½o foi possï¿½vel deixar default no template(igual ao buscarItem.html)
     @SuppressWarnings("unchecked")
     public void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception {
         SrSolicitacaoListaVO solicitacaoListaVO;
@@ -633,7 +633,7 @@ public class Application extends SrController {
         }
 
         // Montando o filtro...
-        String[] tipos = new String[] { "Pessoa", "Lotação" };
+        String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
         List<CpMarcador> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList();
 
         List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
@@ -775,7 +775,7 @@ public class Application extends SrController {
                 mov.setAtendente(null);
             mov.setMotivoEscalonamento(motivo);
             mov.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
-            mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Ação: " + mov.getAcao().getTituloAcao()
+            mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Aï¿½ï¿½o: " + mov.getAcao().getTituloAcao()
                     + "; Atendente: " + mov.getLotaAtendente().getSigla());
             mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
             exibir(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
@@ -1217,7 +1217,7 @@ public class Application extends SrController {
     @SuppressWarnings("static-access")
     private void validarFormEditarAtributo(SrAtributo atributo) {
         if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && atributo.getDescrPreDefinido().equals("")) {
-            srValidator.addError("att.descrPreDefinido", "Valores Pré-definido não informados");
+            srValidator.addError("att.descrPreDefinido", "Valores Prï¿½-definido nï¿½o informados");
         }
 
         if (srValidator.hasErrors()) {
@@ -1378,7 +1378,7 @@ public class Application extends SrController {
         // a atualizacao da classificacao quando ocorre mudanca de posicao na
         // hierarquia, pois isso eh mais complexo de acertar.
 
-        // Karina: Comentado pois precisa ser refatorado devido ao uso do ConexaoHTTP que está deprecated
+        // Karina: Comentado pois precisa ser refatorado devido ao uso do ConexaoHTTP que estï¿½ deprecated
         // try {
         // HashMap<String, String> atributos = new HashMap<String, String>();
         // for (Http.Header h : request.headers.values())

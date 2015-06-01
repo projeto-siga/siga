@@ -82,11 +82,13 @@
 			<a onclick="listaService.cadastrar('Incluir Lista')" class="gt-btn-medium gt-btn-left">Incluir</a>
 			<div class="gt-table-buttons"> 
 		</div>
-	</div>
+	</div> 
+</div>
+</div>
 	
-	<siga:modal nome="editarLista" titulo="Cadastrar Acordo">
-		<div id="divEditarLista"><jsp:include page="editarLista.jsp"></jsp:include></div>
-	</siga:modal>
+<siga:modal nome="editarLista" titulo="Cadastrar Acordo">
+	<div id="divEditarLista"><jsp:include page="editarLista.jsp"></jsp:include></div>
+</siga:modal>
 
 </siga:pagina>
 
@@ -231,8 +233,8 @@
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		limparDadosListaModal();
 		// carrega as permissÃµes da lista
-		carregarPermissoes(lista.idLista);
-		configuracaoInclusaoAutomaticaService.carregarParaLista(lista.idLista);
+		carregarPermissoes(idLista);
+		configuracaoInclusaoAutomaticaService.carregarParaLista(idLista);
 	}
 
 	listaService.onGravar = function(obj, objSalvo) {

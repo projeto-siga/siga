@@ -21,9 +21,6 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
-import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
-import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -53,7 +50,7 @@ import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
-import br.gov.jfrj.siga.sr.notifiers.Correio;
+import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -63,7 +60,6 @@ import com.google.gson.Gson;
 @Resource
 @Path("app/solicitacao")
 public class SolicitacaoController extends SrController {
-
     private static final String ADM_ADMINISTRAR = "ADM:Administrar";
     private static final String TITULAR = "titular";
     private static final String ACOES_E_ATENDENTES = "acoesEAtendentes";
@@ -78,14 +74,15 @@ public class SolicitacaoController extends SrController {
     private static final String LOCAIS = "locais";
     private static final String LISTA = "lista";
     private static final String ORGAOS = "orgaos";
+	private static final String PODEREMOVER = "podeEditar";
+	private static final String PODEEDITAR = "podeRemover";
+	private static final String PODEPRIORIZAR = "podePriorizar";
+	private static final String FILTRO = "filtro";    
 
-    private Correio correio;
     private Validator validator;
 
-    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, 
-    		SrValidator srValidator, Correio correio, Validator validator) {
+    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) {
         super(request, result, dao, so, em, srValidator);
-        this.correio = correio;
         this.validator = validator;
     }
 
@@ -110,13 +107,12 @@ public class SolicitacaoController extends SrController {
         List<SrLista> listas = SrLista.listar(mostrarDesativados);
         String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 
-        result.include("dpPessoaSel", new DpPessoaSelecao());
-        result.include("atendenteSel", new DpLotacaoSelecao());
-        result.include("lotacaoSel", new DpLotacaoSelecao());
-        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-        result.include("cargoSel", new DpCargoSelecao());
-        result.include("cpGrupoSel", new CpPerfilSelecao());
-
+        result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
+        result.include("prioridades", SrPrioridade.getValoresEmOrdem());
+//        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+//        result.include("cargoSel", new DpCargoSelecao());SSSSS
+//        result.include("cpGrupoSel", new CpPerfilSelecao());
+//        
         result.include(ORGAOS, orgaos);
         result.include(LOCAIS, locais);
         result.include(TIPOS_PERMISSAO, tiposPermissao);
@@ -125,6 +121,8 @@ public class SolicitacaoController extends SrController {
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
+        
+        
 
     }
 
@@ -157,8 +155,8 @@ public class SolicitacaoController extends SrController {
 
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
-
-    @Path("/listarPermissaoUsoLista/{idLista}")
+    
+    @Path("/desativarPermissaoUsoListaEdicao/{idLista}")
     public void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
         assertAcesso(ADM_ADMINISTRAR);
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, idPermissao);
@@ -194,19 +192,12 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-    /**
-     * Recupera as {@link SrConfiguracao permissoes} de uma {@link SrLista lista}.
-     *
-     * @param idObjetivo
-     *            - ID da lista
-     * @return - String contendo a lista no formato jSon
-     */
-    @Path("/listarListaDesativados/{idLista}")
-    public void buscarPermissoesLista(Long idLista) throws Exception {
+    @Path("/listarListaDesativados/{id}")
+    public void buscarPermissoesLista(Long id) throws Exception {
         List<SrConfiguracao> permissoes;
 
-        if (idLista != null) {
-            SrLista lista = SrLista.AR.findById(idLista);
+        if (id != null) {
+            SrLista lista = SrLista.AR.findById(id);
             permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
             permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
         } else
@@ -274,10 +265,14 @@ public class SolicitacaoController extends SrController {
         }
 
         result.include(LISTA, lista);
+        result.include(PODEREMOVER, lista.podeRemover(getLotaTitular(), getCadastrante()));
+        result.include(PODEEDITAR, lista.podeEditar(getLotaTitular(), getCadastrante()));
+        result.include(PODEPRIORIZAR, lista.podePriorizar(getLotaTitular(), getCadastrante()));
         result.include(ORGAOS, orgaos);
         result.include(LOCAIS, locais);
         result.include(TIPOS_PERMISSAO, tiposPermissao);
         result.include(SOLICITACAO_LISTA_VO, solicitacaoListaVO);
+        result.include(FILTRO, filtro);
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
         result.include("jsonPrioridades", jsonPrioridades);
 
@@ -756,4 +751,12 @@ public class SolicitacaoController extends SrController {
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
+
+    @Path("/priorizarLista")
+    public void priorizarLista(List<AtualizacaoLista> listaPrioridadeSolicitacao, Long id) throws Exception {
+        SrLista lista = SrLista.AR.findById(id);
+        lista.priorizar(getCadastrante(), getLotaTitular(), listaPrioridadeSolicitacao);
+        exibirLista(id);
+        result.use(Results.http()).setStatusCode(200);
+    }    
 }

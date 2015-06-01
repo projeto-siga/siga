@@ -218,5 +218,11 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
         }
         evitarLazy((List<CpConfiguracao>) (List<?>) evitarLazy);
     }
-
+    
+    @Override
+    public synchronized void inicializarCache() {
+    	if(!cacheInicializado) {
+    		super.inicializarCache();
+    	}
+    }
 }

@@ -81,6 +81,8 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.ListaInclusaoAutomatica;
+import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
+import br.gov.jfrj.siga.sr.notifiers.Destinatario;
 import br.gov.jfrj.siga.sr.util.Cronometro;
 import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
@@ -1351,8 +1353,10 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
             incluirEmListasAutomaticas();
 
-            // if (!isEditado() && getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA_FECHAMENTO)
-            // this.getCorreio().notificarAbertura(this);
+             if (!isEditado() && getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA_FECHAMENTO)
+            	 CorreioHolder
+            	 	.get()
+            	 	.notificarAbertura(this);
         } else
             atualizarMarcas();
     }
@@ -1966,7 +1970,9 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void enviarPesquisa() throws Exception {
         // Implementar
-        // this.getCorreio().pesquisaSatisfacao(this);
+    	CorreioHolder
+    		.get()
+    		.pesquisaSatisfacao(this);
     }
 
     public void responderPesquisa(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, Map<Long, String> respostaMap) throws Exception {
@@ -2849,4 +2855,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         this.rascunho = rascunho;
     }
 
+	public Destinatario getDestinatarioEmailNotificacao() {
+		return new Destinatario(getSolicitacaoAtual().getSolicitante().getPessoaAtual());
+	}
 }

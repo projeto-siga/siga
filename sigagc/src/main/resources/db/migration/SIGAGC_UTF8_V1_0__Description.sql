@@ -120,7 +120,7 @@ begin
 --	Enter the code for the function following
 --	this line
 
-      sem_acento := CONVERT(TRANSLATE(UPPER( acentuado ),'ÃƒÃ•Ã‘','AON'),'US7ASCII');
+      sem_acento := CONVERT(TRANSLATE(UPPER( acentuado ),'ÃƒÂƒÃƒÂ•ÃƒÂ‘','AON'),'US7ASCII');
 
 	return	sem_acento;
 			
@@ -478,28 +478,28 @@ end;
 	  REFERENCES "CORPORATIVO"."CP_CONFIGURACAO" ("ID_CONFIGURACAO") ENABLE;
 	  
 	  
-insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Criação', 1);
-insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Concluído', 2);
+insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('CriaÃ§Ã£o', 1);
+insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('ConcluÃ­do', 2);
 insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Cancelado', 3);
-insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Solicitação de revisão', 4);
+insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('SolicitaÃ§Ã£o de revisÃ£o', 4);
 insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Revisado', 5);
-insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Notificação', 6);
+insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('NotificaÃ§Ã£o', 6);
 insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Ciente', 7);
-insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Classificação', 8);
+insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('ClassificaÃ§Ã£o', 8);
 insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Interesse', 9);
-insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Edição', 10);
+insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('EdiÃ§Ã£o', 10);
 insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Visita', 11);
-insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Cancelamento de movimentação', 12);
-insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Anexação de arquivo', 13);
+insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Cancelamento de movimentaÃ§Ã£o', 12);
+insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('AnexaÃ§Ã£o de arquivo', 13);
 insert into SIGAGC.GC_TIPO_MOVIMENTACAO (NOME_TIPO_MOVIMENTACAO, ID_TIPO_MOVIMENTACAO) values ('Duplicado', 14);
 insert into SIGAGC.GC_TIPO_INFORMACAO (ARQUIVO, NOME_TIPO_INFORMACAO, ID_TIPO_INFORMACAO) values (NULL, 'Registro de Conhecimento', 1);
-insert into SIGAGC.GC_TIPO_TAG (NOME_TIPO_TAG, ID_TIPO_TAG) values ('Classificação', 1);
+insert into SIGAGC.GC_TIPO_TAG (NOME_TIPO_TAG, ID_TIPO_TAG) values ('ClassificaÃ§Ã£o', 1);
 insert into SIGAGC.GC_TIPO_TAG (NOME_TIPO_TAG, ID_TIPO_TAG) values ('Marcador', 2);
-insert into SIGAGC.GC_TIPO_TAG (NOME_TIPO_TAG, ID_TIPO_TAG) values ('Âncora', 3);
-insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('Público', 1);
-insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('Restrito ao órgão', 2);
-insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('Lotação e superiores', 3);
-insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('Lotação e inferiores', 4);
-insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('Lotação', 5);
+insert into SIGAGC.GC_TIPO_TAG (NOME_TIPO_TAG, ID_TIPO_TAG) values ('Ã‚ncora', 3);
+insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('PÃºblico', 1);
+insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('Restrito ao Ã³rgÃ£o', 2);
+insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('LotaÃ§Ã£o e superiores', 3);
+insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('LotaÃ§Ã£o e inferiores', 4);
+insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('LotaÃ§Ã£o', 5);
 insert into SIGAGC.GC_ACESSO (NOME_ACESSO, ID_ACESSO) values ('Pessoal', 6);
 commit;

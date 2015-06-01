@@ -15,7 +15,7 @@ public class GcConfiguracao extends CpConfiguracao // implements
 // HistoricoPersistivel
 {
 
-	// Simulação de herança múltipla
+	// SimulaÃ§Ã£o de heranÃ§a mÃºltipla
 	// @Transient
 	// private EntidadeSiga entidadePai = new EntidadeSiga(this);
 
@@ -38,7 +38,7 @@ public class GcConfiguracao extends CpConfiguracao // implements
 	// }
 	//
 	// public String getPesquisaSatisfacaoString() {
-	// return pesquisaSatisfacao ? "Sim" : "Não";
+	// return pesquisaSatisfacao ? "Sim" : "NÃ£o";
 	// }
 
 	// @Override

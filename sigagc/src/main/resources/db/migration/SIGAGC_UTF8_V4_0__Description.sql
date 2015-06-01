@@ -1,4 +1,4 @@
---Retirando tÌtulo dos templates, pois j· existe no conhecimento
+--Retirando t√≠tulo dos templates, pois j√° existe no conhecimento
 
 set define off
 DECLARE

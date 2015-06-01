@@ -926,7 +926,7 @@ public class AppController extends GcController {
 		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
 				&& informacao.getGrupo() == null)
 			throw new Exception(
-					"Para acesso do tipo 'Grupo', e necessario informar um grupo para restrição.");
+					"Para acesso do tipo 'Grupo', e necessário informar um grupo para restrição.");
 
 		if (informacao.id != 0)
 			bl.movimentar(informacao,

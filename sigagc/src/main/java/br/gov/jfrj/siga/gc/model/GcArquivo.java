@@ -105,9 +105,9 @@ public class GcArquivo extends Objeto implements Serializable {
 	}
 
 	/**
-	 * Duplica o conte˙do de um conhecimento atravÈs de serializaÁ„o. Uma das
-	 * formas de se fazer deep copying do conte˙do, assim quando alterar a cÛpia
-	 * n„o modifica o original
+	 * Duplica o conte√∫do de um conhecimento atrav√©s de serializa√ß√£o. Uma das
+	 * formas de se fazer deep copying do conte√∫do, assim quando alterar a c√≥pia
+	 * n√£o modifica o original
 	 */
 	public GcArquivo duplicarConteudoInfo() {
 		try {
@@ -124,14 +124,14 @@ public class GcArquivo extends Objeto implements Serializable {
 			return cloneConteudoInfo;
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel duplicar esse conhecimento.");
+					"N√£o foi poss√≠vel duplicar esse conhecimento.");
 		}
 	}
 
 	/**
-	 * MÈtodo criado pois a ferramenta plupload retornar um mime type padr„o
-	 * "octet stream". Ent„o, È necess·rio que a aplicaÁ„o identifique pela
-	 * extens„o do arquivo qual o mime type do anexo.
+	 * M√©todo criado pois a ferramenta plupload retornar um mime type padr√£o
+	 * "octet stream". Ent√£o, √© necess√°rio que a aplica√ß√£o identifique pela
+	 * extens√£o do arquivo qual o mime type do anexo.
 	 * 
 	 * @return mimeType
 	 */

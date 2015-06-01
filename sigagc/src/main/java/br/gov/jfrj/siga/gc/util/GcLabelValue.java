@@ -42,12 +42,12 @@ public class GcLabelValue implements Comparable {
 		if (acentuado == null)
 			return null;
 		return Normalizer.normalize(acentuado, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-//		String semacentos = new String(acentuado.replaceAll("[√¬¡¿]", "A").replaceAll("[…» ]", "E")
-//				.replaceAll("[ÕÃŒ]", "I").replaceAll("[’‘”“]", "O")
-//				.replaceAll("[€⁄Ÿ‹]", "U").replaceAll("[«]", "C")
-//				.replaceAll("[„‚·‡]", "a").replaceAll("[ÈËÍ]", "e")
-//				.replaceAll("[ÌÏÓ]", "i").replaceAll("[ıÙÛÚ]", "o")
-//				.replaceAll("[˚˙˘¸]", "u").replaceAll("[Á]", "c"));
+//		String semacentos = new String(acentuado.replaceAll("[√É√Ç√Å√Ä]", "A").replaceAll("[√â√à√ä]", "E")
+//				.replaceAll("[√ç√å√é]", "I").replaceAll("[√ï√î√ì√í]", "O")
+//				.replaceAll("[√õ√ö√ô√ú]", "U").replaceAll("[√á]", "C")
+//				.replaceAll("[√£√¢√°√†]", "a").replaceAll("[√©√®√™]", "e")
+//				.replaceAll("[√≠√¨√Æ]", "i").replaceAll("[√µ√¥√≥√≤]", "o")
+//				.replaceAll("[√ª√∫√π√º]", "u").replaceAll("[√ß]", "c"));
 //		return semacentos;
 	}
 

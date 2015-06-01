@@ -2,7 +2,7 @@
 <body>
 	<p>
 		Informamos que a solicitação <b>${(sol.codigo)!}</b>
-		recebeu a seguinte movimentacao em ${(movimentacao.dtIniMovDDMMYYYYHHMM)!}:
+		recebeu a seguinte movimentação em ${(movimentacao.dtIniMovDDMMYYYYHHMM)!}:
 	</p>
 	<blockquote>
 		<p>Tipo de movimentação: ${(movimentacao.tipoMov.nome)!}</p>

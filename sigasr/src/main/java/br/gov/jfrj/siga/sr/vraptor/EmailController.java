@@ -94,7 +94,7 @@ public class EmailController {
 			public void executar() throws Exception {
 				CorreioHolder
 				.get()
-				.notificarCancelamentoMovimentacao(SrMovimentacao.AR.findById(4980L));
+				.notificarCancelamentoMovimentacao(SrMovimentacao.AR.findById(1462L));
 			}
 		}, "notificarCancelamentoMovimentacao");
 	}

@@ -511,7 +511,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         return s.toString();
     }
 
-    // Edson: Necessï¿½rio porque nao hï¿½ binder para arquivo
+    // Edson: Necessário porque nao há binder para arquivo
     public void setArquivo(File file) {
         this.arquivo = SrArquivo.newInstance(file);
     }
@@ -1256,7 +1256,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
             @Override
             public boolean add(SrOperacao e) {
-                // Edson: serï¿½ que essas coisas poderiam estar dentro do
+                // Edson: será que essas coisas poderiam estar dentro do
                 // SrOperacao?
                 if (e.params == null)
                     e.params = new HashMap<String, Object>();
@@ -1416,7 +1416,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     private void checarEPreencherCampos() throws Exception {
 
         if (getCadastrante() == null)
-            throw new Exception("Cadastrante nÃ£o pode ser nulo");
+            throw new Exception("Cadastrante não pode ser nulo");
 
         if (getDtReg() == null)
             setDtReg(new Date());
@@ -1424,7 +1424,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         if (getArquivo() != null) {
             double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
             if (lenght > 2)
-                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) ï¿½ maior que o mï¿½ximo permitido (2MB)");
+                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) é maior que o máximo permitido (2MB)");
         }
 
         if (getLotaCadastrante() == null)
@@ -1896,16 +1896,16 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (lista == null)
-            throw new IllegalArgumentException("Lista nÃ£o informada");
+            throw new IllegalArgumentException("Lista não informada");
 
         if (isEmLista(lista))
-            throw new IllegalArgumentException("Lista " + lista.getNomeLista() + " jÃ¡ contÃ©m a solicitaÃ§Ã£o " + getCodigo());
+            throw new IllegalArgumentException("Lista " + lista.getNomeLista() + " já contém a solicitação " + getCodigo());
 
         SrMovimentacao mov = new SrMovimentacao();
         mov.setCadastrante(pess);
         mov.setLotaCadastrante(lota);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA));
-        mov.setDescrMovimentacao("InclusÃ£o na lista " + lista.getNomeLista());
+        mov.setDescrMovimentacao("Inclusão na lista " + lista.getNomeLista());
         mov.setLista(lista);
         mov.setSolicitacao(this);
         mov.salvarAtualizandoSolicitacao();
@@ -1915,13 +1915,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void retirarDeLista(SrLista lista, DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (lista == null)
-            throw new IllegalArgumentException("Lista nÃ£o informada");
+            throw new IllegalArgumentException("Lista não informada");
 
         SrMovimentacao mov = new SrMovimentacao();
         mov.setCadastrante(cadastrante);
         mov.setLotaCadastrante(lotaCadastrante);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA));
-        mov.setDescrMovimentacao("Cancelamento de InclusÃƒÂ£o em Lista");
+        mov.setDescrMovimentacao("Cancelamento de Inclusão em Lista");
         mov.setSolicitacao(this);
         mov.setLista(lista);
         mov.salvarAtualizandoSolicitacao();
@@ -1941,7 +1941,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo) throws Exception {
 
         if (isPai() && !isAFechar())
-            throw new Exception("OperaÃ§Ã£o nÃ£o permitida. NecessÃ¡rio fechar toda solicitaÃ§Ã£o " + "filha criada partir dessa que deseja fechar.");
+            throw new Exception("Operação não permitida. Necessário fechar toda solicitação " + "filha criada partir dessa que deseja fechar.");
 
         if ((cadastrante != null) && !podeFechar(cadastrante, lotaTitular))
             throw new Exception(OPERACAO_NAO_PERMITIDA);
@@ -1954,7 +1954,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
         if (podeFecharPaiAutomatico())
-            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "SolicitaÃ§Ã£o fechada automaticamente");
+            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicitação fechada automaticamente");
 
         /*
          * if (temPesquisaSatisfacao()) enviarPesquisa();
@@ -1970,7 +1970,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         if (!podeResponderPesquisa(titular, lotaTitular))
             throw new Exception(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
-        movimentacao.setDescrMovimentacao("AvaliaÃ§Ã£o realizada.");
+        movimentacao.setDescrMovimentacao("Avaliação realizada.");
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_AVALIACAO));
         movimentacao.setRespostaMap(respostaMap);
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);

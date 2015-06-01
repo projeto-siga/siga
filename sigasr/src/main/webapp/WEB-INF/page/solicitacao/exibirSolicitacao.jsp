@@ -74,6 +74,7 @@ function postback(){
 		</h3>
 
 		#{links acoes:solicitacao.operacoes(titular, lotaTitular), base:_base /}
+		<siga:links  />
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
 				<siga:descricaoItem itemConfiguracao="${solicitacao.itemAtual}" /> -
@@ -97,8 +98,7 @@ function postback(){
 		<br/>
 		<div class="gt-content-box gt-form"
 			style="margin-bottom: 0px !important">
-			<form action="@{Application.darAndamento()}" method="post"
-				enctype="multipart/form-data" onsubmit="javascript: return block();" enctype="multipart/form-data">
+			<form action="${linkTo[SolicitacaoController].darAndamento}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
@@ -416,8 +416,7 @@ function postback(){
 	
 	<siga:modal nome="anexarArquivo" titulo="Anexar Arquivo">
 		<div class="gt-content-box gt-form">
-			<form action="@{Application.anexarArquivo()}" method="post"
-				enctype="multipart/form-data" onsubmit="javascript: return block();" enctype="multipart/form-data">
+            <form action="${linkTo[SolicitacaoController].anexarArquivo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">				
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
@@ -441,8 +440,7 @@ function postback(){
 		</div>
 	</siga:modal> 
 	<siga:modal nome="fechar" titulo="Fechar">
-		<form action="@{Application.fechar()}" method="post"
-			enctype="multipart/form-data" onsubmit="javascript: return block();" enctype="multipart/form-data">
+		<form action="${linkTo[SolicitacaoController].fechar}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
 			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 			<input type="hidden" name="ocultas" value="${ocultas}" />
 			<div style="display: inline" class="gt-form-row gt-width-66">
@@ -463,16 +461,17 @@ function postback(){
 	<siga:modal nome="escalonar" titulo="Escalonar Solicitação" url="escalonar.jsp" />
 
 	<siga:modal nome="juntar" titulo="Juntar">
-		<form action="@{Application.juntar()}" method="post" enctype="multipart/form-data"
-			enctype="multipart/form-data" id="formGravarJuncao">
+		<form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">
 			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 			<input type="hidden" name="ocultas" value="${ocultas}" />
 			<input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
 			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
 				<label>Solicitação</label> <br />
-				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeJuntada',
-					value: idSolicitacaoRecebeJuntada, grande:true,
-					onchange: "validarAssociacao('Juncao');"  /}
+<%-- 				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeJuntada', --%>
+<%-- 					value: idSolicitacaoRecebeJuntada, grande:true, --%>
+<%-- 					onchange: "validarAssociacao('Juncao');"  /} --%>
+					<input type="hidden" name="idSolicitacaoRecebeJuntada" value="" />
+                    <siga:selecao2 propriedade="idSolicitacaoRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"/>
 				<span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
 			</div>
 			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
@@ -486,16 +485,17 @@ function postback(){
 		</form>
 	</siga:modal>
 	<siga:modal nome="vincular" titulo="Vincular">
-		<form action="@{Application.vincular()}" method="post" enctype="multipart/form-data"
-			enctype="multipart/form-data" id="formGravarVinculo">
+		<form action="${linkTo[SolicitacaoController].vincular}" method="post" enctype="multipart/form-data" id="formGravarVinculo">
 			<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 			<input type="hidden" name="ocultas" value="${ocultas}" />
 			<input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
 			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
 				<label>Solicitação</label> <br />
-				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeVinculo',
-					value: idSolicitacaoRecebeVinculo, grande:true,
-					onchange: "validarAssociacao('Vinculo');"  /}
+<%-- 				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeVinculo', --%>
+<%-- 					value: idSolicitacaoRecebeVinculo, grande:true, --%>
+<%-- 					onchange: "validarAssociacao('Vinculo');"  /} --%>
+                <input type="hidden" name="idSolicitacaoRecebeVinculo" value="" />
+                <siga:selecao2 propriedade="idSolicitacaoRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"/>                       
 				<span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
 			</div>
 			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
@@ -520,7 +520,7 @@ function postback(){
 	<siga:modal nome="pendencia" titulo="Pendência">
 		<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
 			<div class="gt-content-box gt-for-table gt-form">
-				<form action="@{Application.deixarPendente()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
+				<form action="${linkTo[SolicitacaoController].deixarPendente}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
 					<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 					<input type="hidden" name="ocultas" value="${ocultas}" />
 					<div class="gt-form-row gt-width-66">
@@ -550,8 +550,7 @@ function postback(){
 	</siga:modal> 
 	<siga:modal nome="alterarPrazo" titulo="Alterar Prazo">
 		<div class="gt-form gt-content-box">
-			<form action="@{Application.alterarPrazo()}" method="post"
-				enctype="multipart/form-data" onsubmit="javascript: return block();">
+			<form action="${linkTo[SolicitacaoController].alterarPrazo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<div class="gt-form-row gt-width-66">
@@ -572,7 +571,7 @@ function postback(){
 		</div>
 	</siga:modal>
 	<siga:modal nome="desentranhar" titulo="Desentranhar">
-		<form action="@{Application.desentranhar()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
+		<form action="${linkTo[SolicitacaoController].desentranhar}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
 			<div style="display: inline" class="gt-form-row gt-width-66">
 				<label>Justificativa</label>
 				<textarea style="width: 100%" name="justificativa" cols="50" rows="4"> </textarea>
@@ -624,7 +623,7 @@ function postback(){
 </script>
 
 <siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendência">
-	<form action="@{Application.terminarPendencia()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
+	<form action="${linkTo[SolicitacaoController].terminarPendencia}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
 		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div style="display: inline" class="gt-form-row gt-width-66">

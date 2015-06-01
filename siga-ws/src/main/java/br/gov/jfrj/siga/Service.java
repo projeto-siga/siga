@@ -43,7 +43,7 @@ public abstract class Service {
 	static CdService cd = null;
 	static GiService gi = null;
 
-	/* Externalização das informacoes dos servicos
+	/* ExternalizaÃ§Ã£o das informacoes dos servicos
 	 * bruno.lacerda@avantiprima.com.br
 	 */
 	public static WfService getWfService() {

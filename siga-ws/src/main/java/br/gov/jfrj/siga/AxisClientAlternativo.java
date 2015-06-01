@@ -158,14 +158,14 @@ public class AxisClientAlternativo {
 	 */
 	/*
 	 * public static void testar(byte[] zipData) { try { Service service = new
-	 * Service(); // operaÁ„o------------------------------------------------
+	 * Service(); // opera√ß√£o------------------------------------------------
 	 * 
 	 * OperationDesc oper; ParameterDesc param; oper = new OperationDesc();
-	 * oper.setName("RecebeDocumentos"); // define o par‚metro que o webservice
+	 * oper.setName("RecebeDocumentos"); // define o par√¢metro que o webservice
 	 * espera receber param = new ParameterDesc(new QName("http://tempuri.org/",
 	 * "_arrBytArquivoZip"), ParameterDesc.IN, new QName(
 	 * "http://www.w3.org/2001/XMLSchema", "base64Binary"), byte[].class, false,
-	 * false); param.setOmittable(true); // adiciona o par‚metro na operaÁ„o
+	 * false); param.setOmittable(true); // adiciona o par√¢metro na opera√ß√£o
 	 * oper.addParameter(param); oper.setReturnType(new
 	 * QName("http://www.w3.org/2001/XMLSchema", "base64Binary")); // define o
 	 * tipo de retorno oper.setReturnClass(byte[].class);

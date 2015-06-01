@@ -1,10 +1,10 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
-<siga:pagina popup="false" titulo="AdministraÁ„o do SIGA WF">
+<siga:pagina popup="false" titulo="Administra√ß√£o do SIGA WF">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 
-			<h1>AdministraÁ„o do SIGA WF</h1>
+			<h1>Administra√ß√£o do SIGA WF</h1>
 
 			<h2>Encerrar Processo</h2>
 			<div class="gt-form gt-content-box">
@@ -17,7 +17,7 @@
 					
 					<tr>
 						<td><label>Data de fim do Processo (Opcional, use
-								para n„o distorcer a estatÌstica):</label></td>
+								para n√£o distorcer a estat√≠stica):</label></td>
 						<td><input type="text" name="dtFim"
 								onblur="javascript:verifica_data(this, true);comparaData(dataInicial,dataFinal);"
 								size="12" maxlength="10" class="gt-form-text" /></td>

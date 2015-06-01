@@ -32,7 +32,7 @@ import org.jbpm.graph.def.ProcessDefinition;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
- * Servlet que desenha o gr·fico do processo.
+ * Servlet que desenha o gr√°fico do processo.
  * 
  * @author kpf
  * 

@@ -68,7 +68,7 @@ public class DesignacaoController extends WfController {
 	// private Set<String> raiaProcessada = new HashSet<String>();
 
 	/**
-	 * Inicializa os tipos de respons·veis e suas respectivas expressıes, quando
+	 * Inicializa os tipos de respons√°veis e suas respectivas express√µes, quando
 	 * houver.
 	 */
 	public DesignacaoController(HttpServletRequest request, Result result,
@@ -78,16 +78,16 @@ public class DesignacaoController extends WfController {
 		WfTipoResponsavel tpIndefinido = new WfTipoResponsavel(
 				TIPO_RESP_INDEFINIDO, "[Indefinido]", "");
 		WfTipoResponsavel tpMatricula = new WfTipoResponsavel(
-				TIPO_RESP_MATRICULA, "MatrÌcula", "matricula");
+				TIPO_RESP_MATRICULA, "Matr√≠cula", "matricula");
 		WfTipoResponsavel tpLotacao = new WfTipoResponsavel(TIPO_RESP_LOTACAO,
-				"LotaÁ„o", "lotacao");
+				"Lota√ß√£o", "lotacao");
 		WfTipoResponsavel tpLotaSuperior = new WfTipoResponsavel(
-				TIPO_RESP_LOTA_SUP, "LotaÁ„o Superior",
+				TIPO_RESP_LOTA_SUP, "Lota√ß√£o Superior",
 				"previous --> group() --> superior_group");
 		WfTipoResponsavel tpSupHier = new WfTipoResponsavel(TIPO_RESP_SUP_HIER,
-				"Superior Hier·rquico", "previous --> chief");
+				"Superior Hier√°rquico", "previous --> chief");
 		WfTipoResponsavel tpExpressao = new WfTipoResponsavel(
-				TIPO_RESP_EXPRESSAO, "Express„o", "");
+				TIPO_RESP_EXPRESSAO, "Express√£o", "");
 
 		listaTipoResponsavel.add(tpIndefinido);
 		listaTipoResponsavel.add(tpMatricula);
@@ -102,9 +102,9 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Grava a configuraÁ„o da designaÁ„o. Inicialmente processa-se as raias e
-	 * depois as tarefas, desativa-se as configuraÁıes antigas e retorna ‡
-	 * p·gina pesquisarDesignaÁ„o.jsp com os dados gravados.
+	 * Grava a configura√ß√£o da designa√ß√£o. Inicialmente processa-se as raias e
+	 * depois as tarefas, desativa-se as configura√ß√µes antigas e retorna √†
+	 * p√°gina pesquisarDesigna√ß√£o.jsp com os dados gravados.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -143,7 +143,7 @@ public class DesignacaoController extends WfController {
 				WfConfiguracao cfg = prepararConfiguracao(orgaoUsuario,
 						procedimento);
 
-				if (t.getSwimlane() != null) { // se task est· em uma raia
+				if (t.getSwimlane() != null) { // se task est√° em uma raia
 					listaDesignacaoRaia = processarRaia(orgaoUsuario,
 							procedimento, t.getSwimlane(), cfg, horaDoDB,
 							raiasGravadas, listaDesignacaoRaia);
@@ -162,7 +162,7 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * LÍ as definiÁıes gravadas no banco e exibe na p·gina.
+	 * L√™ as defini√ß√µes gravadas no banco e exibe na p√°gina.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -209,14 +209,14 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Como na p·gina pesquisarDesignaÁ„o.jsp os componentes de seleÁ„o das
-	 * expressıes s„o din‚micas, È necess·ria a extraÁ„o dos dados diretamente
-	 * dos par‚metros do request. O prefixo "tipoResponsavel_" È definido na
-	 * p·gina pesquisarDesignacao.jsp
+	 * Como na p√°gina pesquisarDesigna√ß√£o.jsp os componentes de sele√ß√£o das
+	 * express√µes s√£o din√¢micas, √© necess√°ria a extra√ß√£o dos dados diretamente
+	 * dos par√¢metros do request. O prefixo "tipoResponsavel_" √© definido na
+	 * p√°gina pesquisarDesignacao.jsp
 	 * 
 	 * @param id
 	 *            da tarefa
-	 * @return Um objeto String com a express„o que equivale ao item
+	 * @return Um objeto String com a express√£o que equivale ao item
 	 *         selecionado.
 	 */
 	private String extrairExpressao(long id) {
@@ -251,13 +251,13 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Busca um configuraÁ„o do tipo TIPO_CONFIG_DESIGNAR_TAREFA no banco de
+	 * Busca um configura√ß√£o do tipo TIPO_CONFIG_DESIGNAR_TAREFA no banco de
 	 * dados, caso exista.
 	 * 
 	 * @param nome
 	 *            - Nome da raia ou tarefa.
 	 * @param isRaia
-	 *            - Determina se o par‚metro anterior È uma raia ou tarefa.
+	 *            - Determina se o par√¢metro anterior √© uma raia ou tarefa.
 	 * @return
 	 * @throws Exception
 	 */
@@ -287,11 +287,11 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Monta a lista de designaÁıes que se referem ‡s raias.
+	 * Monta a lista de designa√ß√µes que se referem √†s raias.
 	 * 
 	 * @param pd
 	 *            - Objeto ProcessDefinition
-	 * @return - Lista de designaÁıes
+	 * @return - Lista de designa√ß√µes
 	 * @throws Exception
 	 */
 	private List<Designacao> getDesignacaoSwimlanes(
@@ -335,11 +335,11 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Monta a lista de designaÁıes que se referem ‡s tarefas.
+	 * Monta a lista de designa√ß√µes que se referem √†s tarefas.
 	 * 
 	 * @param pd
 	 *            - Objeto ProcessDefinition
-	 * @return - Lista de designaÁıes
+	 * @return - Lista de designa√ß√µes
 	 * @throws Exception
 	 */
 	private List<Designacao> getDesignacaoTarefas(CpOrgaoUsuario orgaoUsuario,
@@ -411,20 +411,20 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Retorna a lista de tipos de respons·veis que podem ter designaÁıes
-	 * definidas. Este mÈtodo È usado pela p·gina pesquisarDesignaÁ„o.jsp
+	 * Retorna a lista de tipos de respons√°veis que podem ter designa√ß√µes
+	 * definidas. Este m√©todo √© usado pela p√°gina pesquisarDesigna√ß√£o.jsp
 	 * 
-	 * @return Lista de designaÁıes
+	 * @return Lista de designa√ß√µes
 	 */
 	private List<WfTipoResponsavel> getListaTipoResponsavel() {
 		return listaTipoResponsavel;
 	}
 
 	/**
-	 * Grava a nova configuraÁ„o no banco de dados.
+	 * Grava a nova configura√ß√£o no banco de dados.
 	 * 
 	 * @param cfg
-	 *            - ConfiguraÁ„o a ser gravada
+	 *            - Configura√ß√£o a ser gravada
 	 * @throws Exception
 	 */
 	private void gravarNovaConfig(WfConfiguracao cfg) throws Exception {
@@ -432,12 +432,12 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Desativa uma configuraÁ„o existente.
+	 * Desativa uma configura√ß√£o existente.
 	 * 
 	 * @param cfgExistente
-	 *            - objecto da configuraÁ„o existente
+	 *            - objecto da configura√ß√£o existente
 	 * @param dataFim
-	 *            - data em que a configuraÁ„o ser· desativada
+	 *            - data em que a configura√ß√£o ser√° desativada
 	 * @throws AplicacaoException
 	 */
 	private void invalidarConfiguracao(WfConfiguracao cfgExistente, Date dataFim)
@@ -450,10 +450,10 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Limpa o cache do hibernate. Como as configuraÁıes s„o armazenadas em
-	 * cache por serem pouco modificadas, faz-se necess·rio limpar o cache
-	 * quando as configuraÁıes s„o alteradas ou incluÌdas, sen„o as
-	 * configuraÁıes somente ser„o v·lidas quando o session factory for
+	 * Limpa o cache do hibernate. Como as configura√ß√µes s√£o armazenadas em
+	 * cache por serem pouco modificadas, faz-se necess√°rio limpar o cache
+	 * quando as configura√ß√µes s√£o alteradas ou inclu√≠das, sen√£o as
+	 * configura√ß√µes somente ser√£o v√°lidas quando o session factory for
 	 * reinicializado.
 	 * 
 	 * @throws Exception
@@ -482,9 +482,9 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Prepara um objeto para receber uma nova configuraÁ„o.
+	 * Prepara um objeto para receber uma nova configura√ß√£o.
 	 * 
-	 * @return Objeto apto a receber uma configuraÁ„o.
+	 * @return Objeto apto a receber uma configura√ß√£o.
 	 */
 	private WfConfiguracao prepararConfiguracao(CpOrgaoUsuario orgaoUsuario,
 			String procedimento) {
@@ -499,18 +499,18 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Processa as designaÁıes definidas para raia extraindo as informaÁıes do
+	 * Processa as designa√ß√µes definidas para raia extraindo as informa√ß√µes do
 	 * request.
 	 * 
 	 * @param raia
 	 *            - Raia a ser processada
 	 * @param cfg
-	 *            - ConfiguraÁ„o prÈ-processada que receber· as informaÁıes de
-	 *            designaÁ„o.
+	 *            - Configura√ß√£o pr√©-processada que receber√° as informa√ß√µes de
+	 *            designa√ß√£o.
 	 * @param horaDoBD
-	 *            - Hora que ser· utilizada em todas as operaÁıes do banco de
-	 *            dados fazendo com que todas as alteraÁıes tenham o mesmo
-	 *            hor·rio.
+	 *            - Hora que ser√° utilizada em todas as opera√ß√µes do banco de
+	 *            dados fazendo com que todas as altera√ß√µes tenham o mesmo
+	 *            hor√°rio.
 	 * @param raiasGravadas
 	 * @param listaDesignacaoRaia
 	 * @return
@@ -521,7 +521,7 @@ public class DesignacaoController extends WfController {
 			Date horaDoBD, Set<Long> raiasGravadas,
 			List<Designacao> listaDesignacaoRaia) throws Exception {
 
-		if (!raiasGravadas.contains(raia.getId())) { // se a swimlane n„o foi
+		if (!raiasGravadas.contains(raia.getId())) { // se a swimlane n√£o foi
 			// gravada ainda
 
 			for (Object o : raia.getTasks()) {
@@ -536,7 +536,7 @@ public class DesignacaoController extends WfController {
 				expressao = extrairExpressao(tarefaRaia.getId());
 
 				if (ator != null || lotaAtor != null || expressao != null) {// se
-					// configuraÁ„o
+					// configura√ß√£o
 					// definida
 					cfg.setAtor(ator);
 					cfg.setLotaAtor(lotaAtor);
@@ -551,7 +551,7 @@ public class DesignacaoController extends WfController {
 
 					gravarNovaConfig(cfg);
 
-					// atualiza os dados da vis„o
+					// atualiza os dados da vis√£o
 					for (Designacao d : listaDesignacaoRaia) {
 						if (d.getRaia().equals(
 								tarefaRaia.getSwimlane().getName())) {
@@ -596,18 +596,18 @@ public class DesignacaoController extends WfController {
 	}
 
 	/**
-	 * Processa as designaÁıes definidas para a tarefa extraindo as informaÁıes
+	 * Processa as designa√ß√µes definidas para a tarefa extraindo as informa√ß√µes
 	 * do request.
 	 * 
 	 * @param t
 	 *            - Tarefa a ser processada
 	 * @param cfg
-	 *            - ConfiguraÁ„o prÈ-processada que receber· as informaÁıes de
-	 *            designaÁ„o.
+	 *            - Configura√ß√£o pr√©-processada que receber√° as informa√ß√µes de
+	 *            designa√ß√£o.
 	 * @param horaDoBD
-	 *            - Hora que ser· utilizada em todas as operaÁıes do banco de
-	 *            dados fazendo com que todas as alteraÁıes tenham o mesmo
-	 *            hor·rio.
+	 *            - Hora que ser√° utilizada em todas as opera√ß√µes do banco de
+	 *            dados fazendo com que todas as altera√ß√µes tenham o mesmo
+	 *            hor√°rio.
 	 * @param listaDesignacaoTarefa
 	 * @return
 	 * @throws Exception
@@ -624,7 +624,7 @@ public class DesignacaoController extends WfController {
 		expressao = extrairExpressao(t.getId());
 
 		if (ator != null || lotaAtor != null || expressao != null) {// se
-			// configuraÁ„o
+			// configura√ß√£o
 			// definida
 			cfg.setAtor(ator);
 			cfg.setLotaAtor(lotaAtor);
@@ -638,7 +638,7 @@ public class DesignacaoController extends WfController {
 			invalidarConfiguracao(cfgExistente, horaDoBD);
 
 			gravarNovaConfig(cfg);
-			// atualiza os dados da vis„o
+			// atualiza os dados da vis√£o
 			for (Designacao d : listaDesignacaoTarefa) {
 				if (d.getTarefa().equals(t.getName())) {
 					d.setAtor(null);

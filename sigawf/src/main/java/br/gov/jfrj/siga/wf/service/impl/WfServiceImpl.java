@@ -45,8 +45,8 @@ import br.gov.jfrj.siga.wf.vraptor.WfUtil;
 
 /**
  * Classe que representa o webservice do workflow. O SIGA-DOC faz a chamada
- * remota dos mÈtodos dessa classe para atualizar o workflow automaticamente,
- * baseando-se nas operaÁıes sobre documentos.
+ * remota dos m√©todos dessa classe para atualizar o workflow automaticamente,
+ * baseando-se nas opera√ß√µes sobre documentos.
  * 
  * @author kpf
  * 
@@ -65,10 +65,10 @@ public class WfServiceImpl implements WfService {
 	}
 
 	/**
-	 * Atualiza o workflow de um documento. Este mÈtodo pesquisa todas as
-	 * vari·veis que comeÁam com "doc_" em todas as inst‚ncias de tarefas.
-	 * Quando encontra a vari·vel, passa a sigla do documento para o execution
-	 * execution context e executa a aÁ„o da tarefa.
+	 * Atualiza o workflow de um documento. Este m√©todo pesquisa todas as
+	 * vari√°veis que come√ßam com "doc_" em todas as inst√¢ncias de tarefas.
+	 * Quando encontra a vari√°vel, passa a sigla do documento para o execution
+	 * execution context e executa a a√ß√£o da tarefa.
 	 */
 	public Boolean atualizarWorkflowsDeDocumento(String codigoDocumento)
 			throws Exception {
@@ -126,7 +126,7 @@ public class WfServiceImpl implements WfService {
 	}
 
 	/**
-	 * Executa aÁıes na tarefa baseando-se nos serviÁos externos associados ‡
+	 * Executa a√ß√µes na tarefa baseando-se nos servi√ßos externos associados √†
 	 * tarefa.
 	 * 
 	 * @param codigoDocumento
@@ -161,7 +161,7 @@ public class WfServiceImpl implements WfService {
 					.findLatestProcessDefinition(nomeProcesso);
 			if (pd == null)
 				throw new RuntimeException(
-						"N„o foi encontrado um ProcessDefinition com o nome '"
+						"N√£o foi encontrado um ProcessDefinition com o nome '"
 								+ nomeProcesso + "'");
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);

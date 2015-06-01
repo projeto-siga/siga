@@ -47,8 +47,8 @@ public class WfUtil {
 	}
 
 	/**
-	 * Retorna a sigla do ator a quem est� atribuida a tarefa, ou a sigla da
-	 * lota��o se a tarefa estiver no pool. Se a tarefa estiver com o titular,
+	 * Retorna a sigla do ator a quem estï¿½ atribuida a tarefa, ou a sigla da
+	 * lotaï¿½ï¿½o se a tarefa estiver no pool. Se a tarefa estiver com o titular,
 	 * retorna "(minha)"
 	 * 
 	 * 
@@ -92,7 +92,7 @@ public class WfUtil {
 	}
 
 	/**
-	 * Retorna a sigla do primeiro ator que fa�a parte do pool de atores na task
+	 * Retorna a sigla do primeiro ator que faï¿½a parte do pool de atores na task
 	 * instance.
 	 * 
 	 * @param ti
@@ -112,7 +112,7 @@ public class WfUtil {
 	}
 
 	/**
-	 * Inicializa a vari�vel "task" para que seus atributos possam ser
+	 * Inicializa a variï¿½vel "task" para que seus atributos possam ser
 	 * visualizados pelas actions.
 	 * 
 	 * @throws IllegalAccessException
@@ -311,9 +311,9 @@ public class WfUtil {
 					if (value != null && value.trim().length() != 0)
 						if (!service.podeTransferir(value, siglaTitular, true)) {
 							throw new AplicacaoException(
-									"A tarefa n�o pode prosseguir porque o documento '"
+									"A tarefa nï¿½o pode prosseguir porque o documento '"
 											+ value
-											+ "' n�o pode ser transferido. Por favor, verifique se o documento est� em sua lota��o e se est� 'Aguardando andamento'.");
+											+ "' nï¿½o pode ser transferido. Por favor, verifique se o documento estï¿½ em sua lotaï¿½ï¿½o e se estï¿½ 'Aguardando andamento'.");
 						}
 				}
 			}
@@ -342,11 +342,11 @@ public class WfUtil {
 		}
 
 		throw new AplicacaoException(
-				"A designa��o de '"
+				"A designaï¿½ï¿½o de '"
 						+ lotAtual.getSigla()
 						+ "' para '"
 						+ lotFutura.getSigla()
-						+ "' n�o � permitida pois s� s�o aceitas lota��es ascendentes seguindo a linha do organograma ou descendentes diretas.");
+						+ "' nï¿½o ï¿½ permitida pois sï¿½ sï¿½o aceitas lotaï¿½ï¿½es ascendentes seguindo a linha do organograma ou descendentes diretas.");
 	}
 
 	public String getSiglaTitular() {
@@ -355,8 +355,8 @@ public class WfUtil {
 	}
 
 	/**
-	 * Monta o objeto WfTaskVO (view object, que ser� usado na interface do
-	 * usu�rio).
+	 * Monta o objeto WfTaskVO (view object, que serï¿½ usado na interface do
+	 * usuï¿½rio).
 	 * 
 	 * @param taskInstance
 	 * @param variableAccesses

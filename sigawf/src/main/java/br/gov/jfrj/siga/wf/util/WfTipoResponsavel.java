@@ -1,7 +1,7 @@
 package br.gov.jfrj.siga.wf.util;
 
 /**
- * Classe que representa o tipo do responsável designado.
+ * Classe que representa o tipo do responsÃ¡vel designado.
  * 
  * @author kpf
  * 
@@ -9,17 +9,17 @@ package br.gov.jfrj.siga.wf.util;
 public class WfTipoResponsavel {
 	private int id;
 	/**
-	 * Texto amigável que representa o tipo de responsável.
+	 * Texto amigÃ¡vel que representa o tipo de responsÃ¡vel.
 	 */
 	private String texto;
 
 	/**
-	 * Texto da expressão ou identificador do tipo de responsável.
+	 * Texto da expressÃ£o ou identificador do tipo de responsÃ¡vel.
 	 */
 	private String valor;
 
 	/**
-	 * Construtor da classe TipoResponsável.
+	 * Construtor da classe TipoResponsÃ¡vel.
 	 * 
 	 * @param id
 	 * @param texto
@@ -32,7 +32,7 @@ public class WfTipoResponsavel {
 	}
 
 	/**
-	 * Retorna o id do tipo de responsável.
+	 * Retorna o id do tipo de responsÃ¡vel.
 	 * 
 	 * @return
 	 */
@@ -41,7 +41,7 @@ public class WfTipoResponsavel {
 	}
 
 	/**
-	 * Retorna o texto amigável do Tipo de responsável
+	 * Retorna o texto amigÃ¡vel do Tipo de responsÃ¡vel
 	 * 
 	 * @return
 	 */
@@ -50,8 +50,8 @@ public class WfTipoResponsavel {
 	}
 
 	/**
-	 * Retorna o valor do tipo de responsável, por exemplo, a expressão
-	 * associada ao tipo de responsável.
+	 * Retorna o valor do tipo de responsÃ¡vel, por exemplo, a expressÃ£o
+	 * associada ao tipo de responsÃ¡vel.
 	 * 
 	 * @return
 	 */
@@ -60,7 +60,7 @@ public class WfTipoResponsavel {
 	}
 
 	/**
-	 * Define o id do tipo de responsável.
+	 * Define o id do tipo de responsÃ¡vel.
 	 * 
 	 * @param id
 	 */
@@ -69,7 +69,7 @@ public class WfTipoResponsavel {
 	}
 
 	/**
-	 * Define o texto amigável do tipo de responsável.
+	 * Define o texto amigÃ¡vel do tipo de responsÃ¡vel.
 	 * 
 	 * @param texto
 	 */
@@ -78,7 +78,7 @@ public class WfTipoResponsavel {
 	}
 
 	/**
-	 * Define o valor (por exemplo, a expressão) do tipo de responsável.
+	 * Define o valor (por exemplo, a expressÃ£o) do tipo de responsÃ¡vel.
 	 * 
 	 * @param valor
 	 */
@@ -87,7 +87,7 @@ public class WfTipoResponsavel {
 	}
 
 	/**
-	 * Retorna o texto amigável do tipo de responsável.
+	 * Retorna o texto amigÃ¡vel do tipo de responsÃ¡vel.
 	 */
 	public String toString() {
 		return this.getId() + ")" + this.getTexto();

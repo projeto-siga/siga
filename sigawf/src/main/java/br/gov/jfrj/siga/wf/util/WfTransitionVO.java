@@ -26,8 +26,8 @@ import java.util.Set;
 import org.jbpm.graph.def.Transition;
 
 /**
- * Classe que repesenta um View Object (Objeto Vis„o, ou seja, objeto que ser·
- * usado na exibiÁ„o da interface do usu·rio) de uma vari·vel presente em uma
+ * Classe que repesenta um View Object (Objeto Vis√£o, ou seja, objeto que ser√°
+ * usado na exibi√ß√£o da interface do usu√°rio) de uma vari√°vel presente em uma
  * tarefa.
  * 
  * @author tah
@@ -47,7 +47,7 @@ public class WfTransitionVO implements Comparable {
 		if (name != null) {
 			if (name.equalsIgnoreCase("sim"))
 				yes = true;
-			if (name.equalsIgnoreCase("n„o") || name.equalsIgnoreCase("nao"))
+			if (name.equalsIgnoreCase("n√£o") || name.equalsIgnoreCase("nao"))
 				no = true;
 		}
 

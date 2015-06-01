@@ -24,7 +24,7 @@ import org.jbpm.graph.def.ActionHandler;
 import org.jbpm.graph.exe.ExecutionContext;
 
 /**
- * Action personalizada que sempre passa o executionContext nas chamadas dos mÈtodos. 
+ * Action personalizada que sempre passa o executionContext nas chamadas dos m√©todos. 
  * @author kpf
  *
  */
@@ -33,22 +33,22 @@ public abstract class WfActionHandler implements ActionHandler {
 	private String method;
 
 	/**
-	 * Passa o executionContext nas chamadas dos mÈtodos
+	 * Passa o executionContext nas chamadas dos m√©todos
 	 */
 	public void execute(ExecutionContext executionContext) throws Exception {
 		if (method == null)
-			throw new Exception("N„o foi associado um Action.");
+			throw new Exception("N√£o foi associado um Action.");
 		else {
 			Method m = this.getClass()
 					.getMethod(method, ExecutionContext.class);
 			if (m == null)
-				throw new Exception("Action n„o encontrado.");
+				throw new Exception("Action n√£o encontrado.");
 			m.invoke(this, executionContext);
 		}
 	}
 
 	/**
-	 * Retorna o mÈtodo a ser invocado.
+	 * Retorna o m√©todo a ser invocado.
 	 * @return
 	 */
 	public String getMethod() {
@@ -56,7 +56,7 @@ public abstract class WfActionHandler implements ActionHandler {
 	}
 
 	/**
-	 * Informa o mÈtodo a ser invocado.
+	 * Informa o m√©todo a ser invocado.
 	 * @param method
 	 */
 	public void setMethod(String method) {

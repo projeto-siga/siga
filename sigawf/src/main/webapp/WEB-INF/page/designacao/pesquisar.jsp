@@ -28,24 +28,24 @@
 
 		switch (objSelecionado.selectedIndex) {
 
-		//N„o Definido
+		//N√£o Definido
 		case 0:
 			break;
-		//MatrÌcula
+		//Matr√≠cula
 		case 1:
 			var tipo = "matricula";
 			break;
-		//LotaÁ„o	
+		//Lota√ß√£o	
 		case 2:
 			var tipo = "lotacao";
 			break;
-		//LotaÁ„o superior	
+		//Lota√ß√£o superior	
 		case 3:
 			break;
-		//Superior hier·rquico	
+		//Superior hier√°rquico	
 		case 4:
 			break;
-		//Express„o	
+		//Express√£o	
 		case 5:
 			var tipo = "expressao";
 			break;
@@ -77,16 +77,16 @@
 	}
 </script>
 
-<siga:pagina titulo="DefiniÁ„o de Responsabilidades">
+<siga:pagina titulo="Defini√ß√£o de Responsabilidades">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>DefiniÁ„o de Responsabilidades</h2>
-			<h4>SeleÁ„o de ”rg„o e Procedimento</h4>
+			<h2>Defini√ß√£o de Responsabilidades</h2>
+			<h4>Sele√ß√£o de √ìrg√£o e Procedimento</h4>
 			<div class="gt-content-box gt-for-table">
 				<form id="formulario" action="" method="POST" class="form">
 
 					<table class="gt-form-table">
-						<siga:select label="”rg„o" id="orgao" name="orgao" list="listaOrgao"
+						<siga:select label="√ìrg√£o" id="orgao" name="orgao" list="listaOrgao"
 							listValue="acronimoOrgaoUsu" listKey="acronimoOrgaoUsu"
 							multiple="false"/>
 						<siga:select label="Procedimento" id="procedimento" name="procedimento"
@@ -106,8 +106,8 @@
 				<table class="gt-form-table" style="table-layout: fixed;">
 					<tr class="header">
 						<td width="10%">Raia</td>
-						<td width="30%">Tarefa (Nome do nÛ)</td>
-						<td width="60%">Respons·vel</td>
+						<td width="30%">Tarefa (Nome do n√≥)</td>
+						<td width="60%">Respons√°vel</td>
 					</tr>
 
 					<!-- raias -->

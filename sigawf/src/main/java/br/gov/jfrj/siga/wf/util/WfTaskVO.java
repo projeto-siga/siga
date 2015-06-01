@@ -54,8 +54,8 @@ import br.gov.jfrj.siga.wf.util.WfAssignmentHandler;
 import br.gov.jfrj.siga.wf.util.WfWikiParser;
 
 /**
- * Classe que repesenta um View Object (Objeto Vis„o, ou seja, objeto que ser·
- * usado na exibiÁ„o da interface do usu·rio) de uma tarefa.
+ * Classe que repesenta um View Object (Objeto Vis√£o, ou seja, objeto que ser√°
+ * usado na exibi√ß√£o da interface do usu√°rio) de uma tarefa.
  * 
  * @author kpf
  * 
@@ -82,13 +82,13 @@ public class WfTaskVO {
 	private String ancora;
 
 	/**
-	 * Construtor privado, impedindo a instanciaÁ„o sem informar a tarefa.
+	 * Construtor privado, impedindo a instancia√ß√£o sem informar a tarefa.
 	 */
 	private WfTaskVO() {
 	};
 
 	/**
-	 * Contrutor padr„o (default)
+	 * Contrutor padr√£o (default)
 	 * 
 	 * @param taskInstance
 	 */
@@ -135,8 +135,8 @@ public class WfTaskVO {
 				break;
 			}
 
-		// O ideal È que seja desconsiderada apenas a variavel cujo valor seja
-		// igual a siglaDoc, e n„o todas que comeÁam com doc_
+		// O ideal √© que seja desconsiderada apenas a variavel cujo valor seja
+		// igual a siglaDoc, e n√£o todas que come√ßam com doc_
 		if (taskInstance.getTask().getTaskController() != null) {
 			List<VariableAccess> variableAccesses = (List<VariableAccess>) taskInstance
 					.getTask().getTaskController().getVariableAccesses();
@@ -200,23 +200,23 @@ public class WfTaskVO {
 	
 								if (podeMovimentar && !estaComTarefa) {
 									if (lotWF == null || !lotWF.equivale(lotEX)) {
-										setMsgAviso("Esta tarefa sÛ poder· prosseguir quando o documento "
+										setMsgAviso("Esta tarefa s√≥ poder√° prosseguir quando o documento "
 												+ documento
 												+ " for transferido para "
 												+ (lotWF == null ? "Nula" : lotWF.getSigla()) + ".");
 									}
 								}
 								if (!podeMovimentar && estaComTarefa) {
-									setMsgAviso("Esta tarefa sÛ poder· prosseguir quando o documento "
+									setMsgAviso("Esta tarefa s√≥ poder√° prosseguir quando o documento "
 											+ documento
-											+ ", que est· com "
+											+ ", que est√° com "
 											+ lotEX.getSigla() + ", for devolvido.");
 								}
 								if (!podeMovimentar && !estaComTarefa) {
 									if (lotWF != null && !lotWF.equivale(lotEX)) {
-										setMsgAviso("Esta tarefa sÛ poder· prosseguir quando o documento "
+										setMsgAviso("Esta tarefa s√≥ poder√° prosseguir quando o documento "
 												+ documento
-												+ ", que est· com "
+												+ ", que est√° com "
 												+ lotEX.getSigla()
 												+ ", for transferido para "
 												+ lotWF.getSigla() + ".");
@@ -327,10 +327,10 @@ public class WfTaskVO {
 						}
 					}
 				}
-				// Ser· que j· temos em "set" uma lista das pessoas respons·veis
-				// pelo prÛximo passo?
-				// nextNode deve pular para o prÛximo se n„o for um tasknode e
-				// se sÛ tiver uma saida
+				// Ser√° que j√° temos em "set" uma lista das pessoas respons√°veis
+				// pelo pr√≥ximo passo?
+				// nextNode deve pular para o pr√≥ximo se n√£o for um tasknode e
+				// se s√≥ tiver uma saida
 
 				//System.out.println(set);
 
@@ -373,7 +373,7 @@ public class WfTaskVO {
 	}
 
 	/**
-	 * Retorna a lista de vari·veis.
+	 * Retorna a lista de vari√°veis.
 	 * 
 	 * @return
 	 */
@@ -382,7 +382,7 @@ public class WfTaskVO {
 	}
 
 	/**
-	 * Define a lista de vari·veis.
+	 * Define a lista de vari√°veis.
 	 * 
 	 * @param variables
 	 */
@@ -391,7 +391,7 @@ public class WfTaskVO {
 	}
 
 	/**
-	 * Retorna as transiÁıes.
+	 * Retorna as transi√ß√µes.
 	 * 
 	 * @return
 	 */
@@ -400,7 +400,7 @@ public class WfTaskVO {
 	}
 
 	/**
-	 * Define as transiÁıes.
+	 * Define as transi√ß√µes.
 	 * 
 	 * @param transitions
 	 */
@@ -409,7 +409,7 @@ public class WfTaskVO {
 	}
 
 	/**
-	 * Retorna a descriÁ„o da tarefa.
+	 * Retorna a descri√ß√£o da tarefa.
 	 * 
 	 * @return
 	 */

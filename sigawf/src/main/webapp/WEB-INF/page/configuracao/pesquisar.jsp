@@ -28,14 +28,14 @@
 
 		switch (objSelecionado.selectedIndex) {
 
-		//N„o Definido
+		//N√£o Definido
 		case 0:
 			break;
-		//MatrÌcula
+		//Matr√≠cula
 		case 1:
 			var tipo = "matricula";
 			break;
-		//LotaÁ„o	
+		//Lota√ß√£o	
 		case 2:
 			var tipo = "lotacao";
 			break;
@@ -64,20 +64,20 @@
 </script>
 
 <siga:pagina
-	titulo="ConfiguraÁ„o de Permissıes para InstaciaÁ„o de Procedimentos">
+	titulo="Configura√ß√£o de Permiss√µes para Instacia√ß√£o de Procedimentos">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>ConfiguraÁ„o de Permiss„o para Instanciar Procidimento</h2>
+			<h2>Configura√ß√£o de Permiss√£o para Instanciar Procidimento</h2>
 			<div class="gt-content-box gt-for-table">
 				<form id="formulario" action="" method="POST" cssClass="form">
 					<input type="hidden" name="procedimento" value="${procedimento}" />
 					<input type="hidden" name="orgao" value="${orgao}" />
 					<table class="gt-form-table">
 						<tr class="header">
-							<td colspan="2">Dados da ConfiguraÁ„o</td>
+							<td colspan="2">Dados da Configura√ß√£o</td>
 						</tr>
 						<tr>
-							<td>”rg„o:</td>
+							<td>√ìrg√£o:</td>
 							<td>${orgao}</td>
 						</tr>
 						<tr class="header">
@@ -88,7 +88,7 @@
 					<table class="gt-form-table" style="table-layout: fixed;">
 						<c:if test="${not empty listaPermissao}">
 							<tr class="header">
-								<td width="100%">Permiss„o para Instanciar Procidimento
+								<td width="100%">Permiss√£o para Instanciar Procidimento
 									concedida para:</td>
 							</tr>
 
@@ -115,7 +115,7 @@
 
 									<c:choose>
 										<c:when test="${p.tipoResponsavel == 1}">
-											<!-- MATRÕCULA -->
+											<!-- MATR√çCULA -->
 											<div style="display: none;" id="lotacao_${p.id}">
 												<siga:selecao modulo="siga" tipo="lotacao"
 													tema="simple" propriedade="lotacao_${p.id}"
@@ -131,7 +131,7 @@
 											</div>
 										</c:when>
 										<c:when test="${p.tipoResponsavel == 2}">
-											<!-- LOTA«√O -->
+											<!-- LOTA√á√ÉO -->
 											<div style="display: inline;" id="lotacao_${p.id}">
 												<siga:selecao modulo="siga" tipo="lotacao"
 													tema="simple" propriedade="lotacao_${p.id}"
@@ -156,7 +156,7 @@
 							</c:forEach>
 						</c:if>
 						<tr class="header">
-							<td>Nova configuraÁ„o</td>
+							<td>Nova configura√ß√£o</td>
 						</tr>
 
 						<tr>

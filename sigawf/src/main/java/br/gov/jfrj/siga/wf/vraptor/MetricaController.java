@@ -32,14 +32,14 @@ public class MetricaController extends WfController {
 	}
 
 	/**
-	 * Este método é executado quando a action "medir.action" é chamada.
+	 * Este mÃ©todo Ã© executado quando a action "medir.action" Ã© chamada.
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
 	public void medir(Long orgao, String procedimento, Long pdId)
 			throws Exception {
-		assertAcesso("MEDIR:Analisar métricas");
+		assertAcesso("MEDIR:Analisar mÃ©tricas");
 
 		ProcessDefinition pd = WfDao.getInstance().getProcessDefinition(pdId);
 
@@ -94,7 +94,7 @@ public class MetricaController extends WfController {
 	}
 
 	/**
-	 * Método utilizado para
+	 * MÃ©todo utilizado para
 	 * 
 	 * @param idGrupo
 	 * @return
@@ -110,8 +110,8 @@ public class MetricaController extends WfController {
 	}
 
 	/**
-	 * Cria um relatório estatístico de um determinado procedimento. Este método
-	 * é executado quando a action "emiteRelEstatisticaProcedimento.action" é
+	 * Cria um relatÃ³rio estatÃ­stico de um determinado procedimento. Este mÃ©todo
+	 * Ã© executado quando a action "emiteRelEstatisticaProcedimento.action" Ã©
 	 * chamada.
 	 * 
 	 * @return
@@ -133,8 +133,8 @@ public class MetricaController extends WfController {
 	}
 
 	/**
-	 * Cria um relatório estatístico de um determinado procedimento. Este método
-	 * é executado quando a action "emiteRelEstatisticaProcedimento.action" é
+	 * Cria um relatÃ³rio estatÃ­stico de um determinado procedimento. Este mÃ©todo
+	 * Ã© executado quando a action "emiteRelEstatisticaProcedimento.action" Ã©
 	 * chamada.
 	 * 
 	 * @return
@@ -156,8 +156,8 @@ public class MetricaController extends WfController {
 	}
 
 	/**
-	 * Cria um relatório estatístico de um determinado procedimento. Este método
-	 * é executado quando a action "emiteRelEstatisticaProcedimento.action" é
+	 * Cria um relatÃ³rio estatÃ­stico de um determinado procedimento. Este mÃ©todo
+	 * Ã© executado quando a action "emiteRelEstatisticaProcedimento.action" Ã©
 	 * chamada.
 	 * 
 	 * @return

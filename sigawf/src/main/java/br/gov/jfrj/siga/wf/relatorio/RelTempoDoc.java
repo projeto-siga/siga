@@ -52,7 +52,7 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
- * Classe que representa o relatório de docs que demoraram
+ * Classe que representa o relatÃ³rio de docs que demoraram
  * 
  * @author kpf
  * 
@@ -60,60 +60,60 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 public class RelTempoDoc extends RelatorioTemplate {
 
 	/**
-	 * Construtor que define os parâmetros que são obrigatórios para a
-	 * construção do relatório.
+	 * Construtor que define os parÃ¢metros que sÃ£o obrigatÃ³rios para a
+	 * construÃ§Ã£o do relatÃ³rio.
 	 * 
 	 * @param parametros
-	 *            - Mapa contendo os parâmetros necessários para a construção do
-	 *            relatório. As Keys do Map são: secaoUsuario - Informa a seção
-	 *            judiciária a ser impressa no cabeçalho do relatório;
+	 *            - Mapa contendo os parÃ¢metros necessÃ¡rios para a construÃ§Ã£o do
+	 *            relatÃ³rio. As Keys do Map sÃ£o: secaoUsuario - Informa a seÃ§Ã£o
+	 *            judiciÃ¡ria a ser impressa no cabeÃ§alho do relatÃ³rio;
 	 *            nomeProcedimento - Nome do procedimento ao qual se refere o
-	 *            relatório; dataInicial e dataFinal - datas que definem o
-	 *            período em que os procedimentos foram encerrados.
+	 *            relatÃ³rio; dataInicial e dataFinal - datas que definem o
+	 *            perÃ­odo em que os procedimentos foram encerrados.
 	 * @throws DJBuilderException
 	 */
 	public RelTempoDoc(Map parametros) throws DJBuilderException {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
+					"ParÃ¢metro secaoUsuario nÃ£o informado!");
 		}
 		if (parametros.get("nomeProcedimento") == null) {
 			throw new DJBuilderException(
-					"Parâmetro nomeProcedimento não informado!");
+					"ParÃ¢metro nomeProcedimento nÃ£o informado!");
 		}
 
 		if (parametros.get("dataInicialDe") == null) {
 			throw new DJBuilderException(
-					"Parâmetro dataInicialDe não informado!");
+					"ParÃ¢metro dataInicialDe nÃ£o informado!");
 		}
 		if (parametros.get("dataInicialAte") == null) {
 			throw new DJBuilderException(
-					"Parâmetro dataInicialAte não informado!");
+					"ParÃ¢metro dataInicialAte nÃ£o informado!");
 		}
 		if (parametros.get("dataFinalDe") == null) {
-			throw new DJBuilderException("Parâmetro dataFinalDe não informado!");
+			throw new DJBuilderException("ParÃ¢metro dataFinalDe nÃ£o informado!");
 		}
 		if (parametros.get("dataFinalAte") == null) {
 			throw new DJBuilderException(
-					"Parâmetro dataFinalAte não informado!");
+					"ParÃ¢metro dataFinalAte nÃ£o informado!");
 		}
 	}
 
 	/**
-	 * Configura o layout do relatório.
+	 * Configura o layout do relatÃ³rio.
 	 */
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
 		this.setTitle(parametros.get("nomeProcedimento") + " [iniciado(s) de "
-				+ parametros.get("dataInicialDe") + " até "
+				+ parametros.get("dataInicialDe") + " atÃ© "
 				+ parametros.get("dataInicialAte") + ", finalizado(s) de "
-				+ parametros.get("dataFinalDe") + " até "
+				+ parametros.get("dataFinalDe") + " atÃ© "
 				+ parametros.get("dataFinalAte") + "]");
 		this.addColuna("Documento", 25, RelatorioRapido.CENTRO, false);
-		this.addColuna("Início", 25, RelatorioRapido.CENTRO, false);
+		this.addColuna("InÃ­cio", 25, RelatorioRapido.CENTRO, false);
 		this.addColuna("Fim", 25, RelatorioRapido.CENTRO, false);
 		this.addColuna("Tempo", 25, RelatorioRapido.CENTRO, false);
 
@@ -121,13 +121,13 @@ public class RelTempoDoc extends RelatorioTemplate {
 	}
 
 	/**
-	 * Pesquisa os dados no banco de dados, realiza os cálculos e monta uma
-	 * collection com os dados que serão apresentados no relatório.
+	 * Pesquisa os dados no banco de dados, realiza os cÃ¡lculos e monta uma
+	 * collection com os dados que serÃ£o apresentados no relatÃ³rio.
 	 */
 	@Override
 	public Collection processarDados() {
 
-		// inicialização das variáveis
+		// inicializaÃ§Ã£o das variÃ¡veis
 		String procedimento = (String) parametros.get("nomeProcedimento");
 		Date dataInicialDe = getDataDe("dataInicialDe");
 		Date dataInicialAte = getDataAte("dataInicialAte");
@@ -149,8 +149,8 @@ public class RelTempoDoc extends RelatorioTemplate {
 	}
 
 	/**
-	 * Retorna os docs no período indicado, ordenadas pelo tempo de
-	 * demora, podendo estar ou não finalizados.
+	 * Retorna os docs no perÃ­odo indicado, ordenadas pelo tempo de
+	 * demora, podendo estar ou nÃ£o finalizados.
 	 * 
 	 * Exemplo da query:
 	 * 
@@ -158,8 +158,8 @@ public class RelTempoDoc extends RelatorioTemplate {
 	 * SIGAWF.JBPM_PROCESSINSTANCE PI, (SELECT DISTINCT PROCESSINSTANCE_,
 	 * STRINGVALUE_ FROM SIGAWF.JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%'
 	 * AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, (SELECT *
-	 * FROM SIGAWF.JBPM_PROCESSDEFINITION WHERE NAME_ = 'Contratação: fase de
-	 * análise') PD WHERE PI.PROCESSDEFINITION_=PD.ID_ AND PI.END_ IS NOT NULL
+	 * FROM SIGAWF.JBPM_PROCESSDEFINITION WHERE NAME_ = 'ContrataÃ§Ã£o: fase de
+	 * anÃ¡lise') PD WHERE PI.PROCESSDEFINITION_=PD.ID_ AND PI.END_ IS NOT NULL
 	 * AND PI.ID_ = VI.PROCESSINSTANCE_ AND (PI.START_ >= To_Date('01/03/2011')
 	 * and PI.START_ <= To_Date('31/03/2011')) AND (PI.END_ >=
 	 * To_Date('01/03/2011') and PI.END_ <= To_Date('31/05/2011')) ;
@@ -241,7 +241,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 	}
 
 	/**
-	 * Soma um dia à data para que esta possa estar incluída na pesquisa.
+	 * Soma um dia Ã  data para que esta possa estar incluÃ­da na pesquisa.
 	 * @param dataInicialAte
 	 * @return
 	 */
@@ -253,9 +253,9 @@ public class RelTempoDoc extends RelatorioTemplate {
 	}
 
 	/**
-	 * Retorna um objeto Date com a data passada como parêmetro. ATENÇÃO: Este
-	 * método pode ser reescrito com um DateFormat em um refactoring posterior.
-	 * A data é definida como hh:mm:ss = 00:00:00
+	 * Retorna um objeto Date com a data passada como parÃªmetro. ATENÃ‡ÃƒO: Este
+	 * mÃ©todo pode ser reescrito com um DateFormat em um refactoring posterior.
+	 * A data Ã© definida como hh:mm:ss = 00:00:00
 	 * 
 	 * @param data
 	 * @return
@@ -272,9 +272,9 @@ public class RelTempoDoc extends RelatorioTemplate {
 	}
 
 	/**
-	 * Retorna um objeto Date com a data passada como parêmetro. ATENÇÃO: Este
-	 * método pode ser reescrito com um DateFormat em um refactoring posterior.
-	 * A data é definida como hh:mm:ss = 23:59:59
+	 * Retorna um objeto Date com a data passada como parÃªmetro. ATENÃ‡ÃƒO: Este
+	 * mÃ©todo pode ser reescrito com um DateFormat em um refactoring posterior.
+	 * A data Ã© definida como hh:mm:ss = 23:59:59
 	 * 
 	 * @param data
 	 * @return
@@ -291,8 +291,8 @@ public class RelTempoDoc extends RelatorioTemplate {
 	}
 
 	/**
-	 * Utilizado para realizar testes no relatório. ATENÇÃO; Uma classe de teste
-	 * (JUnit) deve ser criada para substituir este método.
+	 * Utilizado para realizar testes no relatÃ³rio. ATENÃ‡ÃƒO; Uma classe de teste
+	 * (JUnit) deve ser criada para substituir este mÃ©todo.
 	 * 
 	 * @param args
 	 */

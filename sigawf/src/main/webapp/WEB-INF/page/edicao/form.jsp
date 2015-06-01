@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
-<siga:pagina titulo="EdiÁ„o de Procedimento">
+<siga:pagina titulo="Edi√ß√£o de Procedimento">
 
 	<style type="text/css">
 		table {
@@ -55,7 +55,7 @@
 		ng-controller="wfDesignCtrl" ng-init="carregar('${procedimento}')">
 		<div class="gt-content clearfix" ng-hide="exibirXml">
 
-			<h2 class="gt-form-head">DefiniÁ„o de Procedimento</h2>
+			<h2 class="gt-form-head">Defini√ß√£o de Procedimento</h2>
 
 
 
@@ -126,7 +126,7 @@
 
 			<!-- Start State -->
 			<h2 class="gt-form-head"
-				style="margin-top: 20px !important; clear: both">InÌcio</h2>
+				style="margin-top: 20px !important; clear: both">In√≠cio</h2>
 
 			<div id="start-state-container" class="gt-form gt-content-box"
 				style="margin-bottom: 10px !important;"
@@ -162,7 +162,7 @@
 							</select>
 						</div>
 						<div class="gt-left-col gt-width-25">
-							<label>DescriÁ„o</label> <input type="text"
+							<label>Descri√ß√£o</label> <input type="text"
 								ng-model="node.task.description" class="gt-form-text">
 						</div>
 						<div class="gt-right-col gt-width-25">
@@ -175,7 +175,7 @@
 								ng-click="addTransicao(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">TransiÁ„o</span></a></label> <label
+									style="vertical-align: top;">Transi√ß√£o</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
 								ng-click="addEvento(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
@@ -185,15 +185,15 @@
 								ng-click="addVariavel(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">Vari·vel</span></a></label>
+									style="vertical-align: top;">Vari√°vel</span></a></label>
 						</div>
 					</div>
 
-					<!-- Vari·veis -->
+					<!-- Vari√°veis -->
 					<div class="gt-form-row gt-width-100"
 						ng-show="node.task.controller.variable != null && node.task.controller.variable.length > 0">
 						<div class="gt-left-col gt-width-25">
-							<label>Vari·veis</label>
+							<label>Vari√°veis</label>
 						</div>
 						<div class="gt-right-col gt-width-75">
 							<div
@@ -221,7 +221,7 @@
 											ng-click="delVariavel(node, $index)"><img
 												src="/siga/css/famfamfam/icons/delete.png"
 												style="margin-right: 5px;"><span
-												style="vertical-align: top;">Vari·vel</span></a></label>
+												style="vertical-align: top;">Vari√°vel</span></a></label>
 									</div>
 								</div>
 							</div>
@@ -267,11 +267,11 @@
 						</div>
 					</div>
 
-					<!-- TransiÁıes -->
+					<!-- Transi√ß√µes -->
 					<div id="transition-container" class="gt-form-row gt-width-100"
 						ng-show="node.transition != null && node.transition.length > 0">
 						<div class="gt-left-col gt-width-25">
-							<label>TransiÁıes</label>
+							<label>Transi√ß√µes</label>
 						</div>
 						<div class="gt-right-col gt-width-75">
 							<div ng-repeat="transicao in node.transition">
@@ -286,7 +286,7 @@
 											ng-options="node._name for node in nodes()" required="true"></select>
 									</div>
 									<div class="gt-left-col gt-width-25">
-										<label>CondiÁ„o</label> <input type="text"
+										<label>Condi√ß√£o</label> <input type="text"
 											ng-model="node.transition[$index]._condition"
 											class="gt-form-text">
 									</div>
@@ -295,7 +295,7 @@
 											ng-click="delTransicao(node, $index)"><img
 												src="/siga/css/famfamfam/icons/delete.png"
 												style="margin-right: 5px;"><span
-												style="vertical-align: top;">TransiÁ„o</span></a></label> <label
+												style="vertical-align: top;">Transi√ß√£o</span></a></label> <label
 											style="float: right; margin-left: 1em;"><a
 											ng-click="addTransicaoEmail(transicao)"><img
 												src="/siga/css/famfamfam/icons/add.png"
@@ -304,7 +304,7 @@
 									</div>
 								</div>
 
-								<!-- TransiÁ„o - Emails -->
+								<!-- Transi√ß√£o - Emails -->
 								<div class="gt-form-row gt-width-100"
 									ng-show="transicao.mail != null && transicao.mail.length > 0">
 									<div class="gt-left-col gt-width-25">
@@ -321,7 +321,7 @@
 														class="gt-form-text">
 												</div>
 												<div class="gt-left-col gt-width-25">
-													<label>Destinat·rio(s)</label> <input
+													<label>Destinat√°rio(s)</label> <input
 														ng-model="transicao.mail[$index]._actors"
 														class="gt-form-text">
 												</div>
@@ -357,7 +357,7 @@
 
 			<!-- Node -->
 			<h2 class="gt-form-head"
-				style="margin-top: 20px !important; clear: both">NÛs</h2>
+				style="margin-top: 20px !important; clear: both">N√≥s</h2>
 
 			<div id="node-container" class="gt-form gt-content-box"
 				style="margin-bottom: 10px !important;" ng-repeat="node in pd.node">
@@ -380,7 +380,7 @@
 								ng-click="delNode($index)"><img
 									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">NÛ</span></a></label> <label
+									style="vertical-align: top;">N√≥</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
 								ng-click="addEvento(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
@@ -390,7 +390,7 @@
 								ng-click="addTransicao(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">TransiÁ„o</span></a></label>
+									style="vertical-align: top;">Transi√ß√£o</span></a></label>
 						</div>
 					</div>
 
@@ -405,7 +405,7 @@
 
 			<div class="gt-form-row">
 				<input type="button" ng-click="addNode()" class="gt-btn-medium"
-					value="Adicionar NÛ" />
+					value="Adicionar N√≥" />
 			</div>
 
 
@@ -435,7 +435,7 @@
 								ng-click="delMailNode($index)"><img
 									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">NÛ</span></a></label> <label
+									style="vertical-align: top;">N√≥</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
 								ng-click="addEvento(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
@@ -445,7 +445,7 @@
 								ng-click="addTransicao(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">TransiÁ„o</span></a></label>
+									style="vertical-align: top;">Transi√ß√£o</span></a></label>
 						</div>
 					</div>
 
@@ -490,7 +490,7 @@
 								ng-click="delFork($index)"><img
 									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">NÛ</span></a></label> <label
+									style="vertical-align: top;">N√≥</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
 								ng-click="addEvento(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
@@ -500,7 +500,7 @@
 								ng-click="addTransicao(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">TransiÁ„o</span></a></label>
+									style="vertical-align: top;">Transi√ß√£o</span></a></label>
 						</div>
 					</div>
 
@@ -544,7 +544,7 @@
 								ng-click="delJoin($index)"><img
 									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">NÛ</span></a></label> <label
+									style="vertical-align: top;">N√≥</span></a></label> <label
 								style="float: right; margin-left: 1em;"><a
 								ng-click="addEvento(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
@@ -554,7 +554,7 @@
 								ng-click="addTransicao(node)"><img
 									src="/siga/css/famfamfam/icons/add.png"
 									style="margin-right: 5px;"><span
-									style="vertical-align: top;">TransiÁ„o</span></a></label>
+									style="vertical-align: top;">Transi√ß√£o</span></a></label>
 						</div>
 					</div>
 

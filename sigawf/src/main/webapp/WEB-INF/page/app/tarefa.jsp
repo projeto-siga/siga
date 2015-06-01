@@ -24,14 +24,14 @@
 				<c:otherwise>
 					<table class="form" width="100%">
 						<tr class="header">
-							<td colspan="2">Execução da Tarefa</td>
+							<td colspan="2">ExecuÃ§Ã£o da Tarefa</td>
 						</tr>
 						</c:otherwise>
 						</c:choose>
 
 						<input type="hidden" value="${task.taskInstance.id}" name="tiId" />
 						<tr>
-							<td <c:if test="${task.conhecimentoEditavel}">rowspan="2"</c:if>>Descrição</td>
+							<td <c:if test="${task.conhecimentoEditavel}">rowspan="2"</c:if>>DescriÃ§Ã£o</td>
 							<td><span id="desc_ver">${task.descricao}</span> <c:if
 									test="${task.conhecimentoEditavel}">
 									<span id="desc_editar" style="display: none"><textarea
@@ -42,7 +42,7 @@
 						<c:if test="${task.conhecimentoEditavel}">
 							<tr>
 								<td><input name="editar_conhecimento" type="button"
-									value="Editar a descrição" id="desc_but_editar"
+									value="Editar a descriÃ§Ã£o" id="desc_but_editar"
 									onclick="javascript: document.getElementById('desc_ver').style.display='none'; document.getElementById('desc_editar').style.display=''; document.getElementById('desc_but_editar').style.display='none'; document.getElementById('desc_but_gravar').style.display=''; " />
 									<input name="salvar_conhecimento" type="submit"
 									id="desc_but_gravar" value="Salvar" style="display: none"

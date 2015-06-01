@@ -29,7 +29,7 @@
 	}
 </script>
 
-<siga:pagina titulo="EstatÌstica de procedimento">
+<siga:pagina titulo="Estat√≠stica de procedimento">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>${titulo_pagina}</h2>
@@ -40,7 +40,7 @@
 						<input type="hidden" name="orgao" value="${pdId}" />
 						<input type="hidden" name="procedimento" value="${procedimento}" />
 						<tr>
-							<td>”rg„o</td>
+							<td>√ìrg√£o</td>
 							<td>${orgao}</td>
 						</tr>
 						<tr>
@@ -49,8 +49,8 @@
 						</tr>
 						<tr>
 							<siga:select
-								list="#{'1':'EstatÌsticas gerais', '2':'Tempo de documentos','3':'Tempo de documentos detalhado'}"
-								label="RelatÛrio" name="selecaoRelatorio"
+								list="#{'1':'Estat√≠sticas gerais', '2':'Tempo de documentos','3':'Tempo de documentos detalhado'}"
+								label="Relat√≥rio" name="selecaoRelatorio"
 								onchange="javascript:exibirOpcoesExtras()" />
 						</tr>
 						<tr>
@@ -58,7 +58,7 @@
 							<td><input type="text" name="dataInicialDe"
 								onblur="javascript:verifica_data(this, true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe)"
-								size="12" maxlength="10" /> atÈ <input type="text"
+								size="12" maxlength="10" /> at√© <input type="text"
 								name="dataInicialAte"
 								onblur="javascript:verifica_data(this, true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe)"
@@ -69,7 +69,7 @@
 							<td><input type="text" name="dataFinalDe"
 								onblur="javascript:verifica_data(this,true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe);"
-								size="12" maxlength="10" /> atÈ <input type="text"
+								size="12" maxlength="10" /> at√© <input type="text"
 								name="dataFinalAte"
 								onblur="javascript:verifica_data(this,true);comparaData(dataInicialDe,dataInicialAte);
 				comparaData(dataInicialAte,dataFinalDe);"
@@ -82,7 +82,7 @@
 									Procedimentos Abertos</label></td>
 						</tr>
 						<tr id="opcaoPercentualMediaTruncada">
-							<td><label>Percentual&nbsp;da&nbsp;MÈdia&nbsp;Truncada
+							<td><label>Percentual&nbsp;da&nbsp;M√©dia&nbsp;Truncada
 									(entre ${minMediaTruncada}% e ${maxMediaTruncada}%):</label></td>
 							<td><input type="text" id="percentualMediaTruncada"
 								name="percentualMediaTruncada" style="float: left"
@@ -101,7 +101,7 @@
 
 						<tr>
 							<td colspan="2"><input type="button"
-								onclick="javascript:sbmt()" value="Gerar relatÛrio"
+								onclick="javascript:sbmt()" value="Gerar relat√≥rio"
 								class="gt-btn-medium gt-btn-left" /></td>
 						</tr>
 					</table>

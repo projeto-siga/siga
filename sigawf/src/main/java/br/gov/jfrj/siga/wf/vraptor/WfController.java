@@ -47,7 +47,7 @@ public class WfController extends SigaController {
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException {
-		so.assertAcesso("WF:MÛdulo de Workflow;" + pathServico);
+		so.assertAcesso("WF:M√≥dulo de Workflow;" + pathServico);
 	}
 
 	protected WfDao dao() {
@@ -55,15 +55,15 @@ public class WfController extends SigaController {
 	}
 
 	/**
-	 * Como na p·gina pesquisarDesignaÁ„o.jsp os componentes de seleÁ„o dos
-	 * atores s„o din‚micos, È necess·ria a extraÁ„o dos dados diretamente dos
-	 * par‚metros do request. O prefixo "matricula_" È difinido na p·gina
+	 * Como na p√°gina pesquisarDesigna√ß√£o.jsp os componentes de sele√ß√£o dos
+	 * atores s√£o din√¢micos, √© necess√°ria a extra√ß√£o dos dados diretamente dos
+	 * par√¢metros do request. O prefixo "matricula_" √© difinido na p√°gina
 	 * pesquisaDesignacao.jsp e os sufixos "_pessoaSel.id" e "_pessoaSel.sigla"
-	 * s„o definidos na TAG selecao.tag
+	 * s√£o definidos na TAG selecao.tag
 	 * 
 	 * @param id
 	 *            da tarefa
-	 * @return Um objeto DpPessoa do ator selecionado na p·gina.
+	 * @return Um objeto DpPessoa do ator selecionado na p√°gina.
 	 */
 	protected DpPessoa extrairAtor(long id) {
 		String keyMatriculaId = "matricula_" + id + "_pessoaSel.id";
@@ -85,15 +85,15 @@ public class WfController extends SigaController {
 	}
 
 	/**
-	 * Como na p·gina pesquisarDesignaÁ„o.jsp os componentes de seleÁ„o das
-	 * lotaÁıes s„o din‚micas, È necess·ria a extraÁ„o dos dados diretamente dos
-	 * par‚metros do request. O prefixo "lotacao_" È difinido na p·gina
+	 * Como na p√°gina pesquisarDesigna√ß√£o.jsp os componentes de sele√ß√£o das
+	 * lota√ß√µes s√£o din√¢micas, √© necess√°ria a extra√ß√£o dos dados diretamente dos
+	 * par√¢metros do request. O prefixo "lotacao_" √© difinido na p√°gina
 	 * pesquisaDesignacao.jsp e os sufixos "_lotacaoSel.id" e
-	 * "_lotacaoSel.sigla" s„o definidos na TAG selecao.tag
+	 * "_lotacaoSel.sigla" s√£o definidos na TAG selecao.tag
 	 * 
 	 * @param id
 	 *            da tarefa
-	 * @return Um objeto DpPessoa do ator selecionado na p·gina
+	 * @return Um objeto DpPessoa do ator selecionado na p√°gina
 	 */
 	protected DpLotacao extrairLotaAtor(long id) {
 		String keyLotacaoId = "lotacao_" + id + "_lotacaoSel.id";
@@ -115,21 +115,21 @@ public class WfController extends SigaController {
 	}
 	
 	/**
-	 * Retorna a lista de procedimentos que podem ter designaÁıes definidas.
-	 * Este mÈtodo È usado pela p·gina pesquisarDesignaÁ„o.jsp
+	 * Retorna a lista de procedimentos que podem ter designa√ß√µes definidas.
+	 * Este m√©todo √© usado pela p√°gina pesquisarDesigna√ß√£o.jsp
 	 * 
-	 * @return Lista de definiÁıes de processo
+	 * @return Lista de defini√ß√µes de processo
 	 */
 	protected List<ProcessDefinition> getListaProcedimento() {
 		@SuppressWarnings("unchecked")
 		List<ProcessDefinition> lista = WfContextBuilder.getJbpmContext()
 				.getJbpmContext().getGraphSession()
 				.findLatestProcessDefinitions();
-		// Markenson: O cÛdigo abaixo foi inserido para evitar a carga de
-		// definicıes de processos defeituosos
+		// Markenson: O c√≥digo abaixo foi inserido para evitar a carga de
+		// definic√µes de processos defeituosos
 		// Esse problema foi detectado quando o Orlando fez o deploy de um
 		// processo sem definir o nome
-		// O tratamento de deploys deve fazer essa verificaÁ„o
+		// O tratamento de deploys deve fazer essa verifica√ß√£o
 		List<ProcessDefinition> resultado = new ArrayList<ProcessDefinition>();
 		for (ProcessDefinition p : lista) {
 			if (p.getName() != null) {

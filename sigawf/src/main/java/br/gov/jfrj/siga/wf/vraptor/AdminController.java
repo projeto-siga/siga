@@ -50,7 +50,7 @@ public class AdminController extends WfController {
 				return;
 			}
 		}
-		throw new AplicacaoException("Nenhuma ação realizada");
+		throw new AplicacaoException("Nenhuma aÃ§Ã£o realizada");
 	}
 
 	public void endProcessInstance(Long idTI, Long idPI, Date dtFim) throws Exception {

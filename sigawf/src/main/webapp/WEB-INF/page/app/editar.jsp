@@ -1,9 +1,9 @@
 <%@ include file="/WEB-INF/page/include.jsp"%><!--  -->
 
-<siga:pagina titulo="Edição de Definição de Procedimento">
+<siga:pagina titulo="EdiÃ§Ã£o de DefiniÃ§Ã£o de Procedimento">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Edição de Definição de Procedimento: ${nome}</h2>
+			<h2>EdiÃ§Ã£o de DefiniÃ§Ã£o de Procedimento: ${nome}</h2>
 			
 			<h4>Tarefas <span class="gt-table-action-list"><a href=""><img src="/siga/css/famfamfam/icons/add.png" alt="Adicionar"></a></span></h4>
 			<div class="gt-content-box gt-form">
@@ -22,13 +22,13 @@
 					</div>
 				</div>
 				<div class="gt-form-row gt-width-100">
-					<label>Variáveis <span class="gt-table-action-list"><a href=""><img src="/siga/css/famfamfam/icons/add.png" alt="Adicionar"></a></span></label>
+					<label>VariÃ¡veis <span class="gt-table-action-list"><a href=""><img src="/siga/css/famfamfam/icons/add.png" alt="Adicionar"></a></span></label>
 					<table class="gt-table gt-form" style="table-layout: fixed;">
 						<tr class="header">
 							<td>Nome</td>
-							<td>Título</td>
+							<td>TÃ­tulo</td>
 							<td style="width:6em;">Acesso</td>
-							<td style="width:3em; text-align: center;">Ações</td>
+							<td style="width:3em; text-align: center;">AÃ§Ãµes</td>
 						</tr>
 						<tr>
 							<td><input type="text" name="raia_nome" value="" class="gt-form-text gt-width-100"/>${dTarefa.raia}</td>
@@ -42,13 +42,13 @@
 					</table>
 				</div>
 				<div class="gt-form-row gt-width-100">
-					<label>Transições <span class="gt-table-action-list"><a href=""><img src="/siga/css/famfamfam/icons/add.png" alt="Adicionar"></a></span></label>
+					<label>TransiÃ§Ãµes <span class="gt-table-action-list"><a href=""><img src="/siga/css/famfamfam/icons/add.png" alt="Adicionar"></a></span></label>
 					<table class="gt-table gt-form" style="table-layout: fixed;">
 						<tr class="header">
 							<td>Nome</td>
-							<td>Título</td>
-							<td>Condição</td>
-							<td style="width:3em; text-align: center;">Ações</td>
+							<td>TÃ­tulo</td>
+							<td>CondiÃ§Ã£o</td>
+							<td style="width:3em; text-align: center;">AÃ§Ãµes</td>
 						</tr>
 						<tr>
 							<td><select name="raia_nome"class="gt-form-text gt-width-100"/>${dTarefa.raia}</td>
@@ -68,7 +68,7 @@
 	<mail-node name="Indeferimento" actors="#{UO}">
 		<subject>Indeferimento SEC</subject>
 		<text>
-A solicitação eletrônica de contratação número #{doc_a} foi indeferida pelo seguinte motivo: #{motivo_indef}.
+A solicitaÃ§Ã£o eletrÃ´nica de contrataÃ§Ã£o nÃºmero #{doc_a} foi indeferida pelo seguinte motivo: #{motivo_indef}.
 		</text>
 		<transition to="Fim 2"></transition>
 	</mail-node>
@@ -83,7 +83,7 @@ A solicitação eletrônica de contratação número #{doc_a} foi indeferida pelo segu
 		</transition>
 		
 		<transition to="Cientifica SCM" name="Autorizar">
-			<condition expression="#{sel_autoriza == 'Não'}"></condition>
+			<condition expression="#{sel_autoriza == 'NÃ£o'}"></condition>
 		</transition>
 					
  --%>			
@@ -92,7 +92,7 @@ A solicitação eletrônica de contratação número #{doc_a} foi indeferida pelo segu
 				<table class="gt-table gt-form" style="table-layout: fixed;">
 					<tr class="header">
 						<td>Nome</td>
-						<td style="width:3em; text-align: center;">Ações</td>
+						<td style="width:3em; text-align: center;">AÃ§Ãµes</td>
 					</tr>
 					<tr>
 						<td><input type="text" name="raia_nome" value="Nome da primeira raia" class="gt-form-text gt-width-100"/>${dTarefa.raia}</td>

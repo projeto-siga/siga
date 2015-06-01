@@ -56,11 +56,11 @@
 	</c:if>
 </li>
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;MEDIR: Analisar métricas')}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;MEDIR: Analisar mÃ©tricas')}">
 
-	<li><a href="#">Relatórios</a>
+	<li><a href="#">RelatÃ³rios</a>
 		<ul>
-			<li><a href="#">Apresentar Métricas</a>
+			<li><a href="#">Apresentar MÃ©tricas</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
 						<li><a href="${linkTo[MedicaoController].medir}?orgao=${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}&procedimento=${pd.name}">${pd.name}</a>

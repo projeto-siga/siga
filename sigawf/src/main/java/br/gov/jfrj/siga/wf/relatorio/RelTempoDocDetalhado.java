@@ -53,27 +53,27 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par‚metro secaoUsuario n„o informado!");
+					"Par√¢metro secaoUsuario n√£o informado!");
 		}
 		if (parametros.get("nomeProcedimento") == null) {
 			throw new DJBuilderException(
-					"Par‚metro nomeProcedimento n„o informado!");
+					"Par√¢metro nomeProcedimento n√£o informado!");
 		}
 
 		if (parametros.get("dataInicialDe") == null) {
 			throw new DJBuilderException(
-					"Par‚metro dataInicialDe n„o informado!");
+					"Par√¢metro dataInicialDe n√£o informado!");
 		}
 		if (parametros.get("dataInicialAte") == null) {
 			throw new DJBuilderException(
-					"Par‚metro dataInicialAte n„o informado!");
+					"Par√¢metro dataInicialAte n√£o informado!");
 		}
 		if (parametros.get("dataFinalDe") == null) {
-			throw new DJBuilderException("Par‚metro dataFinalDe n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataFinalDe n√£o informado!");
 		}
 		if (parametros.get("dataFinalAte") == null) {
 			throw new DJBuilderException(
-					"Par‚metro dataFinalAte n„o informado!");
+					"Par√¢metro dataFinalAte n√£o informado!");
 		}
 	}
 
@@ -82,11 +82,11 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 			throws DJBuilderException, JRException {
 
 		this.setTitle("Tarefas por DOC");
-		this.addColuna("N˙mero do DOC", 20, RelatorioRapido.ESQUERDA, true);
+		this.addColuna("N√∫mero do DOC", 20, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Tarefa", 55, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("InÌcio", 25, RelatorioRapido.CENTRO, false);
+		this.addColuna("In√≠cio", 25, RelatorioRapido.CENTRO, false);
 		this.addColuna("Fim", 25, RelatorioRapido.CENTRO, false);
-		this.addColuna("DuraÁ„o", 30, RelatorioRapido.CENTRO, false);
+		this.addColuna("Dura√ß√£o", 30, RelatorioRapido.CENTRO, false);
 
 		return this;
 	}
@@ -162,7 +162,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 	private void addLinhaFinal(EstatisticaGrupoRel est,
 			List<String> dados, Tarefa ultimaTarefa) {
 	
-		dados.add("InformaÁıes Gerais");
+		dados.add("Informa√ß√µes Gerais");
 
 		dados.add("MEDIA GERAL [Grupos]");
 		dados.add("");
@@ -349,9 +349,9 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 	}
 
 	/**
-	 * Retorna um objeto Date com a data passada como parÍmetro. ATEN«√O: Este
-	 * mÈtodo pode ser reescrito com um DateFormat em um refactoring posterior.
-	 * A data È definida como hh:mm:ss = 23:59:59
+	 * Retorna um objeto Date com a data passada como par√™metro. ATEN√á√ÉO: Este
+	 * m√©todo pode ser reescrito com um DateFormat em um refactoring posterior.
+	 * A data √© definida como hh:mm:ss = 23:59:59
 	 * 
 	 * @param data
 	 * @return
@@ -454,8 +454,8 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 
 	/**
 	 * Compara duas tarefas. Se as tarefas se referem a documentos diferentes, a
-	 * ordem È do documento mais demorado para o mais r·pido. Se as tarefas
-	 * forem referentes ao mesmo documento, a ordem È pela tarefa que foi criada
+	 * ordem √© do documento mais demorado para o mais r√°pido. Se as tarefas
+	 * forem referentes ao mesmo documento, a ordem √© pela tarefa que foi criada
 	 * primeiro.
 	 * 
 	 * @author kpf

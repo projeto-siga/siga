@@ -38,7 +38,7 @@ public class ConfiguracaoController extends WfController {
 	private List<WfTipoResponsavel> listaTipoResponsavel = new ArrayList<WfTipoResponsavel>();
 
 	/**
-	 * Inicializa os tipos de respons·veis e suas respectivas expressıes, quando
+	 * Inicializa os tipos de respons√°veis e suas respectivas express√µes, quando
 	 * houver.
 	 */
 	public ConfiguracaoController(HttpServletRequest request, Result result,
@@ -48,9 +48,9 @@ public class ConfiguracaoController extends WfController {
 		WfTipoResponsavel tpIndefinido = new WfTipoResponsavel(
 				TIPO_RESP_INDEFINIDO, "[Indefinido]", "");
 		WfTipoResponsavel tpMatricula = new WfTipoResponsavel(
-				TIPO_RESP_MATRICULA, "MatrÌcula", "matricula");
+				TIPO_RESP_MATRICULA, "Matr√≠cula", "matricula");
 		WfTipoResponsavel tpLotacao = new WfTipoResponsavel(TIPO_RESP_LOTACAO,
-				"LotaÁ„o", "lotacao");
+				"Lota√ß√£o", "lotacao");
 
 		listaTipoResponsavel.add(tpIndefinido);
 		listaTipoResponsavel.add(tpMatricula);
@@ -58,9 +58,9 @@ public class ConfiguracaoController extends WfController {
 	}
 
 	/**
-	 * Grava a configuraÁ„o da permiss„o. Primeiro, processa-se as alteraıes nas
-	 * permissıes existentes e depois processa-se as novas permissıes. As
-	 * permissıes indefinidas s„o excluÌdas da lista de permissıes.
+	 * Grava a configura√ß√£o da permiss√£o. Primeiro, processa-se as altera√µes nas
+	 * permiss√µes existentes e depois processa-se as novas permiss√µes. As
+	 * permiss√µes indefinidas s√£o exclu√≠das da lista de permiss√µes.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -75,7 +75,7 @@ public class ConfiguracaoController extends WfController {
 		Date horaDoDB = dao().consultarDataEHoraDoServidor();
 		if (pd != null) {
 
-			// processa permissıes existentes
+			// processa permiss√µes existentes
 			List<Permissao> listaPermissao = getPermissoes(orgaoUsuario,
 					procedimento);
 			for (Permissao perm : listaPermissao) {
@@ -87,7 +87,7 @@ public class ConfiguracaoController extends WfController {
 
 			}
 
-			// processa nova permiss„o
+			// processa nova permiss√£o
 			WfConfiguracao cfg = prepararConfiguracao(orgaoUsuario,
 					procedimento);
 			Permissao novaPermissao = new Permissao();
@@ -102,7 +102,7 @@ public class ConfiguracaoController extends WfController {
 				listaPermissao.add(novaPermissao);
 			}
 
-			// remove permissıes inv·lidas
+			// remove permiss√µes inv√°lidas
 			ArrayList<Permissao> listaAux = new ArrayList<Permissao>();
 			for (Permissao perm : listaPermissao) {
 				if (perm.getPessoa() != null || perm.getLotacao() != null) {
@@ -119,7 +119,7 @@ public class ConfiguracaoController extends WfController {
 	}
 
 	/**
-	 * Seleciona um procedimento que ter· suas permissıes configuradas.
+	 * Seleciona um procedimento que ter√° suas permiss√µes configuradas.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -146,11 +146,11 @@ public class ConfiguracaoController extends WfController {
 	}
 
 	/**
-	 * Retorna a lista de configuraÁıes definidas para uma permiss„o.
+	 * Retorna a lista de configura√ß√µes definidas para uma permiss√£o.
 	 * 
 	 * @param perm
 	 *            -
-	 * @return Lista de permissıes j· gravadas no banco de dados.
+	 * @return Lista de permiss√µes j√° gravadas no banco de dados.
 	 * @throws Exception
 	 */
 	private List<WfConfiguracao> getConfiguracaoExistente(
@@ -171,7 +171,7 @@ public class ConfiguracaoController extends WfController {
 		List<WfConfiguracao> cfgExistente = WfDao.getInstance().consultar(
 				fltConfigExistente);
 		List<WfConfiguracao> resultado = new ArrayList<WfConfiguracao>();
-		// Melhorar isso: o filtro por pessoa ou lotaÁ„o n„o est· funcionando
+		// Melhorar isso: o filtro por pessoa ou lota√ß√£o n√£o est√° funcionando
 		for (WfConfiguracao c : cfgExistente) {
 			if ((c.getDpPessoa() != null || c.getLotacao() != null)
 					&& c.getHisDtFim() == null
@@ -184,12 +184,12 @@ public class ConfiguracaoController extends WfController {
 	}
 
 	/**
-	 * Retorna a lista de permissıes definidas para uma definiÁ„o de
+	 * Retorna a lista de permiss√µes definidas para uma defini√ß√£o de
 	 * procedimento.
 	 * 
 	 * @param pd
-	 *            - DefiniÁ„o de processo
-	 * @return - Lista de permissıes
+	 *            - Defini√ß√£o de processo
+	 * @return - Lista de permiss√µes
 	 * @throws Exception
 	 */
 	private List<Permissao> getPermissoes(CpOrgaoUsuario orgaoUsuario,
@@ -234,7 +234,7 @@ public class ConfiguracaoController extends WfController {
 	}
 
 	/**
-	 * MÈtodo utilizado para gravar uma nova configuraÁ„o. ATEN«√O: ESTE M…TODO
+	 * M√©todo utilizado para gravar uma nova configura√ß√£o. ATEN√á√ÉO: ESTE M√âTODO
 	 * PROVAVELMENTE PODE SER ELIMINADO EM UM REFACTORING.
 	 * 
 	 * @param cfg
@@ -245,16 +245,16 @@ public class ConfiguracaoController extends WfController {
 	}
 
 	/**
-	 * Torna uma configuraÁ„o existente inv·lida. A invalidaÁ„o da configuraÁ„o
-	 * normalmente ocorre ao se criar uma nova configuraÁ„o. A configuraÁ„o
-	 * antiga torna-se inv·lida mas continua sendo mantida no banco de dados
-	 * para fins de histÛrico.
+	 * Torna uma configura√ß√£o existente inv√°lida. A invalida√ß√£o da configura√ß√£o
+	 * normalmente ocorre ao se criar uma nova configura√ß√£o. A configura√ß√£o
+	 * antiga torna-se inv√°lida mas continua sendo mantida no banco de dados
+	 * para fins de hist√≥rico.
 	 * 
 	 * @param cfgExistente
-	 *            - ConfiguraÁ„o a ser invalidada
+	 *            - Configura√ß√£o a ser invalidada
 	 * @param dataFim
-	 *            - Data que define o fim da validade da configuraÁ„o, ou seja,
-	 *            data de invalidaÁ„o.
+	 *            - Data que define o fim da validade da configura√ß√£o, ou seja,
+	 *            data de invalida√ß√£o.
 	 * @throws AplicacaoException
 	 */
 	private void invalidarConfiguracao(WfConfiguracao cfgExistente, Date dataFim)
@@ -267,8 +267,8 @@ public class ConfiguracaoController extends WfController {
 	}
 
 	/**
-	 * Limpa o cache do hibernate. Como as configuraÁıes s„o mantidas em cache
-	 * por motivo de performance, as alteraÁıes precisam ser atualizadas para
+	 * Limpa o cache do hibernate. Como as configura√ß√µes s√£o mantidas em cache
+	 * por motivo de performance, as altera√ß√µes precisam ser atualizadas para
 	 * que possam valer imediatamente.
 	 * 
 	 * @throws Exception
@@ -298,9 +298,9 @@ public class ConfiguracaoController extends WfController {
 
 	/**
 	 * Inicia um objeto WfConfiguracao de modo que possa receber as
-	 * configuraÁıes definidas pelo usu·rio.
+	 * configura√ß√µes definidas pelo usu√°rio.
 	 * 
-	 * @return - ConfiguraÁ„o pronta para receber as configuraÁıes.
+	 * @return - Configura√ß√£o pronta para receber as configura√ß√µes.
 	 */
 	private WfConfiguracao prepararConfiguracao(CpOrgaoUsuario orgaoUsuario,
 			String procedimento) {
@@ -315,18 +315,18 @@ public class ConfiguracaoController extends WfController {
 	}
 
 	/**
-	 * Processa as permissıes definidas pelo usu·rio. S„o extraÌdos os dados do
-	 * request, definida a data de inÌcio da configuraÁ„o, definidas as
-	 * permissıes, definida a invalidaÁ„o da configuraÁ„o antiga e atualizada a
-	 * vis„o do usu·rio.
+	 * Processa as permiss√µes definidas pelo usu√°rio. S√£o extra√≠dos os dados do
+	 * request, definida a data de in√≠cio da configura√ß√£o, definidas as
+	 * permiss√µes, definida a invalida√ß√£o da configura√ß√£o antiga e atualizada a
+	 * vis√£o do usu√°rio.
 	 * 
 	 * @param permissao
-	 *            - Permiss„o a ser processada
+	 *            - Permiss√£o a ser processada
 	 * @param cfg
-	 *            - ConfiguraÁ„o preparada para receber as novas configuraÁıes
+	 *            - Configura√ß√£o preparada para receber as novas configura√ß√µes
 	 * @param horaDoBD
-	 *            - Hora do banco de dados. A data/hora de inÌcio de vigÍncia
-	 *            deve ser a mesma da invalidaÁ„o da configuraÁ„o anterior.
+	 *            - Hora do banco de dados. A data/hora de in√≠cio de vig√™ncia
+	 *            deve ser a mesma da invalida√ß√£o da configura√ß√£o anterior.
 	 * @throws Exception
 	 */
 	private void processarPermissao(CpOrgaoUsuario orgaoUsuario,
@@ -339,7 +339,7 @@ public class ConfiguracaoController extends WfController {
 		pessoa = extrairAtor(permissao.getId());
 
 		if (pessoa != null || lotacao != null) {// se
-			// configuraÁ„o
+			// configura√ß√£o
 			// definida
 			cfg.setDpPessoa(pessoa);
 			cfg.setLotacao(lotacao);
@@ -359,9 +359,9 @@ public class ConfiguracaoController extends WfController {
 			cfg.setCpSituacaoConfiguracao(sit);
 			gravarNovaConfig(cfg);
 			permissao.setId(cfg.getIdConfiguracao()); // deixa de usar a id
-			// tempor·ria
+			// tempor√°ria
 
-			// atualiza os dados da vis„o
+			// atualiza os dados da vis√£o
 			if (pessoa != null) {
 				permissao.setPessoa(pessoa);
 				permissao.setTipoResponsavel(TIPO_RESP_MATRICULA);

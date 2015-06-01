@@ -35,6 +35,7 @@ import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrGravidade;
@@ -412,7 +413,7 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/listarSolicitacoesRelacionadas")
-    public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
+    public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, List<SrAtributoSolicitacaoMap> atributoSolicitacaoMap) throws Exception {
 
         solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
         List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
@@ -460,10 +461,11 @@ public class SolicitacaoController extends SrController {
 
     public List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
         List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
-        Map<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
+        List<SrAtributoSolicitacaoMap> atributoMap = filtro.getAtributoSolicitacaoMap();
 
         for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
-            if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
+        	SrAtributoSolicitacaoMap atrib = new SrAtributoSolicitacaoMap(srAtributo.getIdAtributo(),srAtributo.getDescrAtributo());
+            if (!atributoMap.contains(atrib)) {
                 listaAtributosAdicao.add(srAtributo);
             }
         }

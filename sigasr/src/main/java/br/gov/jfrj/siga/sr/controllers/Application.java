@@ -29,6 +29,7 @@ import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
 import br.gov.jfrj.siga.sr.model.SrDisponibilidade;
@@ -192,7 +193,7 @@ public class Application extends SrController {
         // render(acoes, itens);
     }
 
-    public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
+    public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, List<SrAtributoSolicitacaoMap> atributoSolicitacaoMap) throws Exception {
 
         solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
         List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
@@ -209,15 +210,28 @@ public class Application extends SrController {
     }
 
     public List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
-        List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
-        Map<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
+    	
+    	List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
+        List<SrAtributoSolicitacaoMap> atributoMap = filtro.getAtributoSolicitacaoMap();
 
         for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
-            if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
+        	SrAtributoSolicitacaoMap atrib = new SrAtributoSolicitacaoMap(srAtributo.getIdAtributo(),srAtributo.getDescrAtributo());
+            if (!atributoMap.contains(atrib)) {
                 listaAtributosAdicao.add(srAtributo);
             }
         }
         return listaAtributosAdicao;
+
+    	
+//        List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
+//        Map<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
+//
+//        for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
+//            if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
+//                listaAtributosAdicao.add(srAtributo);
+//            }
+//        }
+//        return listaAtributosAdicao;
     }
 
     public void exibirItemConfiguracao(SrSolicitacao solicitacao) throws Exception {

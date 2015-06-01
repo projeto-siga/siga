@@ -495,7 +495,7 @@
 			</h2>
 			<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
 	
-				<form action="${linkTo[SolicitacaoController].gravar}" 
+				<form action="${linkTo[SolicitacaoController].gravar}" method="post"
 					enctype="multipart/form-data" id="formSolicitacao" onsubmit="javascript:return block();"> 
 					<c:if test="${solicitacao.solicitacaoPai != null}">
 						<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 

@@ -29,7 +29,7 @@
 </script>
 
 <div id="atributos">
-    <c:forEach items="${solicitacao.atributoAssociados}" var="atributo">
+    <c:forEach items="${solicitacao.atributoAssociados}" var="atributo" varStatus="loop">
         <div class="gt-form-row gt-width-66">
             <label>
                 ${atributo.nomeAtributo} 
@@ -39,57 +39,65 @@
             </label>
             <c:if test="${atributo.tipoAtributo != null}">
                 <c:if test="${atributo.tipoAtributo.name() == 'TEXTO'}">
-                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}"
-                        onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" size="70" maxlength="255" />
+                	<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
+                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}"
+                        onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" size="70" maxlength="255" />
 <%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'TEXT_AREA'}">
-                    <textarea cols="85" rows="10" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" class="${atributo.idAtributo}"
-                        onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" maxlength="255">${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
-<%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
+                
+                <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
+                <textarea cols="85" rows="10" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" class="${atributo.idAtributo}"
+                    onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" maxlength="255">${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
+<%-- <%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'DATA'}">
-                    <siga:dataCalendar nome="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" id="calendarioAtributo${atributo.idAtributo}"
-                        value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}];')"
-                        cssClass="${atributo.idAtributo}"/>
-<%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
+                	<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
+                    <siga:dataCalendar nome="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" id="calendarioAtributo${atributo.idAtributo}"
+                         value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"
+                         cssClass="${atributo.idAtributo}"/>
+<%-- <%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'NUM_INTEIRO'}">
+                    <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
                     <input type="text" class="${atributo.idAtributo}"
                         onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-                        onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');"
-                        name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" maxlength="9"/>
-<%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
+                        onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"
+                        name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" maxlength="9"/>
+<%-- <%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'NUM_DECIMAL'}">
-                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" 
+                    <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
+                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" 
                         id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}"
-                        onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" maxlength="9"/>
-<%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
+                        onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" maxlength="9"/>
+<%-- <%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'HORA'}">
-                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"
-                        onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" />
-<%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
-                    <span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Horário inválido</span>
+                    <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
+                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"
+                        onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" />
+<%-- <%--                     <span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span> --%>
+<%--                     <span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Horário inválido</span> --%>
                     <script>
-                        $(function() {
-                            $("#horarioAtributo${atributo.idAtributo}").mask("99:99");
-                            $("#horarioAtributo${atributo.idAtributo}").blur(function() {
-                                var hora = this.value;
-                                var array = hora.split(':');
-                                if (array[0] > 23 || array[1] > 59) {
-                                    $('#erroHoraAtributo${atributo.idAtributo}').show(); 
-                                    return;
-                                }
-                                $('#erroHoraAtributo${atributo.idAtributo}').hide();    
-                            });
-                        });
-                    </script>
+                         $(function() {
+                             $("#horarioAtributo${atributo.idAtributo}").mask("99:99");
+                             $("#horarioAtributo${atributo.idAtributo}").blur(function() {
+                                 var hora = this.value;
+                                 var array = hora.split(':');
+                                 if (array[0] > 23 || array[1] > 59) {
+                                     $('#erroHoraAtributo${atributo.idAtributo}').show(); 
+                                     return;
+                                 }
+                                 $('#erroHoraAtributo${atributo.idAtributo}').hide();    
+                             });
+                         });
+                     </script>
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'VL_PRE_DEFINIDO'}" >
-                    <select name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}"
-                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}','${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');"} >
+                    <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
+                    <select name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}"
+                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}','${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"} >
                         <c:forEach items="${atributo.preDefinidoSet}" var="valorAtributoSolicitacao">
                             <option value="${valorAtributoSolicitacao}">
                                 ${valorAtributoSolicitacao}

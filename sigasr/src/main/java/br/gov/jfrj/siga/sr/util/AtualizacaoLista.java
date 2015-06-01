@@ -3,7 +3,7 @@ package br.gov.jfrj.siga.sr.util;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 
-public class AtualizacaoLista implements ConvertableEntity{
+public class AtualizacaoLista {
 
 	private Long idPrioridadeSolicitacao;
 	private SrPrioridade prioridade;

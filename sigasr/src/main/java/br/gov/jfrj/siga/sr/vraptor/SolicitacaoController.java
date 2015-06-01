@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -599,11 +600,12 @@ public class SolicitacaoController extends SrController {
         result.include("solicitacao", solicitacao);
         result.include("acoesEAtendentes", acoesEAtendentes);
     }
-    
+
     @Path("/priorizarLista")
     public void priorizarLista(List<AtualizacaoLista> listaPrioridadeSolicitacao, Long id) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
         lista.priorizar(getCadastrante(), getLotaTitular(), listaPrioridadeSolicitacao);
         exibirLista(id);
+        result.use(Results.http()).setStatusCode(200);
     }    
 }

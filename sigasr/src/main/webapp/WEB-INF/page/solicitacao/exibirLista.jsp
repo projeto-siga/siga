@@ -94,7 +94,7 @@
 		
 			<p class="gt-table-action-list">
 				<c:if test="${podeEditar}">
-					<a href="#" onclick="javascript: editarLista(event, ${lista.toJson()})"> 
+					<a href="#" onclick='javascript: editarLista(event, ${lista.toJson()})'> 
 						<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">Editar
 					</a>
 				</c:if>
@@ -141,7 +141,7 @@
 	
 	<siga:modal nome="editarLista" titulo="Editar Lista">
 		<div id="divEditarLista">
-<%-- 			<jsp:include page="editarLista.jsp">
+<%--  			<jsp:include page="editarLista.jsp">
 			</jsp:include> --%>
 		</div>
 	</siga:modal>
@@ -212,22 +212,21 @@
 
 	$(function(){
 	    $('#btn').click(function() {
-	        var prioridades=[];
-	    	$("#sortable > tr").each(function() {
+	        var prioridades="";
+	    	$("#sortable > tr").each(function(index) {
 	    		var solicitacaoString = $(this).attr('data-json'),
 	    			solicitacao = JSON.parse(solicitacaoString);
-
-    			if (solicitacao)
-    				prioridades.push(solicitacao.prioridadeSolicitacaoVO);
+    			if (solicitacao){
+        			for (atributo in solicitacao.prioridadeSolicitacaoVO){
+        				prioridades += "listaPrioridadeSolicitacao["+index+"]."+atributo+"="+solicitacao.prioridadeSolicitacaoVO[atributo]+"&";
+        			}
+    			}
 	 	    });
 	 	    if (prioridades.length > 0) {
-	 	    	$.post('${linkTo[SolicitacaoController].priorizarLista}', {
-		 	    	listaPrioridadeSolicitacao : prioridades,
-		 	    	id : $('[name=idLista]').val(),
-		 	    	success: function() {
-		 	    		alert('Lista gravada com sucesso');
-		 	    	}
-	 	    	});
+	 	    	$.post('${linkTo[SolicitacaoController].priorizarLista}?' + prioridades, {
+		 	    	id : $('[name=idLista]').val()
+	 	    	}).success(function() {
+		 	    		alert('Lista gravada com sucesso')});
 		 	}
 	    });
 	});

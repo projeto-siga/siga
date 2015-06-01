@@ -1,4 +1,4 @@
-<%@ tag body-content="scriptless"%>
+<%@ tag body-content="scriptless" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ attribute name="popup"%>
 <%@ attribute name="pagina_de_erro"%>

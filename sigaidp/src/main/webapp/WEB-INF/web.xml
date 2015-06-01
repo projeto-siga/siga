@@ -5,6 +5,14 @@
 	version="2.5">
 	<display-name>Siga Identity Provider</display-name>
 	<description>Este projeto e o centralizador do processo de autenticacao do siga</description>
+
+	<jsp-config>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
+	
 	<listener>
 		<listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
 	</listener>

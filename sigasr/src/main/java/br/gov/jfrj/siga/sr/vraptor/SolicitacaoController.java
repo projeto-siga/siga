@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
@@ -73,10 +74,13 @@ public class SolicitacaoController extends SrController {
     private static final String ORGAOS = "orgaos";
 
     private Correio correio;
+    private Validator validator;
 
-    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator, Correio correio) {
+    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, 
+    		SrValidator srValidator, Correio correio, Validator validator) {
         super(request, result, dao, so, em, srValidator);
         this.correio = correio;
+        this.validator = validator;
     }
 
     @Path("/exibirAcao")
@@ -286,6 +290,9 @@ public class SolicitacaoController extends SrController {
 
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getId(), todoOContexto(), ocultas());
+        
+        result.include("solicitacao", solicitacao);
+        validator.onErrorUsePageOf(SolicitacaoController.class).editar(null);
     }
 
     private void validarFormEditar(SrSolicitacao solicitacao) throws Exception {
@@ -312,10 +319,9 @@ public class SolicitacaoController extends SrController {
                     srValidator.addError("solicitacao.atributoSolicitacaoMap[" + att.getAtributo().getIdAtributo() + "]", att.getAtributo().getNomeAtributo() + " n&atilde;o informado");
             }
         }
-
-        if (srValidator.hasErrors()) {
-            enviarErroValidacao();
-        }
+        
+        if (srValidator.hasErrors())
+        	enviarErroValidacao();
     }
 
     public boolean todoOContexto() {

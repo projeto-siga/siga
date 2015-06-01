@@ -50,7 +50,6 @@ import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
-import br.gov.jfrj.siga.sr.notifiers.Correio;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -76,11 +75,8 @@ public class SolicitacaoController extends SrController {
     private static final String LISTA = "lista";
     private static final String ORGAOS = "orgaos";
 
-    private Correio correio;
-
-    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator, Correio correio) {
+    public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
         super(request, result, dao, so, em, srValidator);
-        this.correio = correio;
     }
 
     @Path("/exibirAcao")

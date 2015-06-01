@@ -23,7 +23,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
 
@@ -31,7 +30,7 @@ import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.sr.notifiers.Correio;
+import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
@@ -144,10 +143,6 @@ public class SrMovimentacao extends ObjetoVraptor {
 
     @Enumerated
     private SrTipoMotivoEscalonamento motivoEscalonamento;
-
-//    @Inject
-//    @Transient
-//    private Correio correio;
 
     public SrMovimentacao() throws Exception {
         this(null);
@@ -360,13 +355,19 @@ public class SrMovimentacao extends ObjetoVraptor {
         }
     }
 
-    public void notificar() throws Exception {
-//        if (getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
-//            this.getCorreio().notificarReplanejamentoMovimentacao(this);
-//        else if (!isCancelada())
-//            this.getCorreio().notificarMovimentacao(this);
-//        else
-//            this.getCorreio().notificarCancelamentoMovimentacao(this);
+	public void notificar() throws Exception {
+        if (getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
+            CorreioHolder
+            	.get()
+            	.notificarReplanejamentoMovimentacao(this);
+        else if (!isCancelada())
+        	CorreioHolder
+        		.get()
+        		.notificarMovimentacao(this);
+        else
+        	CorreioHolder
+        		.get()
+        		.notificarCancelamentoMovimentacao(this);
     }
 
     public String getMotivoPendenciaString() {
@@ -408,14 +409,6 @@ public class SrMovimentacao extends ObjetoVraptor {
         // TODO Auto-generated method stub
         return null;
     }
-
-//    public Correio getCorreio() {
-//        return correio;
-//    }
-//    
-//    public void setCorreio(Correio correio) {
-//        this.correio = correio;
-//    }
 
     public long getIdMovimentacao() {
         return idMovimentacao;
@@ -612,4 +605,45 @@ public class SrMovimentacao extends ObjetoVraptor {
     public void setMotivoEscalonamento(SrTipoMotivoEscalonamento motivoEscalonamento) {
         this.motivoEscalonamento = motivoEscalonamento;
     }
+    
+	public List<String> getEmailsNotificacaoReplanejamento() {
+		SrSolicitacao solicitacao = getSolicitacao().getSolicitacaoAtual();
+		List<String> recipients = new ArrayList<String>();
+		for (SrGestorItem gestor : solicitacao.getItemConfiguracao().getGestorSet()) {
+			DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
+			if (pessoaGestorAtual != null && pessoaGestorAtual.getDataFim() == null)
+				if (pessoaGestorAtual.getEmailPessoa() != null)
+					recipients.add(pessoaGestorAtual.getEmailPessoa());
+
+			if (gestor.getDpLotacao() != null)
+				for (DpPessoa gestorPessoa : gestor.getDpLotacao().getDpPessoaLotadosSet())
+					if (gestorPessoa.getPessoaAtual().getDataFim() == null)
+						if (gestorPessoa.getPessoaAtual().getEmailPessoa() != null)
+							recipients.add(gestorPessoa.getPessoaAtual().getEmailPessoa());
+		}
+		recipients.add(solicitacao.getSolicitante().getEmailPessoa());
+		return recipients;
+	}
+
+	public List<String> getEmailsNotificacaoAtendende() {
+		List<String> recipients = new ArrayList<String>();
+		String email = null;
+
+		DpPessoa atendenteSolPai = solicitacao.getSolicitacaoPai().getAtendente();
+		if (atendenteSolPai != null) {
+			email = atendenteSolPai.getPessoaAtual().getEmailPessoa();
+			if (email != null)
+				recipients.add(email);
+		} else {
+			DpLotacao lotaAtendenteSolPai = solicitacao.getSolicitacaoPai().getLotaAtendente();
+			if (lotaAtendenteSolPai != null)
+				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai.getDpPessoaLotadosSet())
+					if (pessoaDaLotacao.getDataFim() == null) {
+						email = pessoaDaLotacao.getPessoaAtual().getEmailPessoa();
+						if (email != null)
+							recipients.add(email);
+					}
+		}
+		return recipients;
+	}
 }

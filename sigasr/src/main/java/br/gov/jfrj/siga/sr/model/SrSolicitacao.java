@@ -81,6 +81,8 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.ListaInclusaoAutomatica;
+import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
+import br.gov.jfrj.siga.sr.notifiers.Destinatario;
 import br.gov.jfrj.siga.sr.util.Cronometro;
 import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
@@ -93,7 +95,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     private static final String HH_MM = "HH:mm";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
-    private static final String OPERACAO_NAO_PERMITIDA = "Operação não permitida";
+    private static final String OPERACAO_NAO_PERMITIDA = "Operaï¿½ï¿½o nï¿½o permitida";
 
     private static final long serialVersionUID = 1L;
 
@@ -393,7 +395,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             if (isFilha())
                 return getSolicitacaoPai().getDescricao();
             else
-                return "Descrição não informada";
+                return "Descriï¿½ï¿½o nï¿½o informada";
         } else
             return getDescrSolicitacao();
     }
@@ -1287,16 +1289,16 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));
 
-        operacoes.add(new SrOperacao("cross", "Cancelar Solicitação", podeCancelar(pess, lota), "Application.cancelar"));
+        operacoes.add(new SrOperacao("cross", "Cancelar Solicitaï¿½ï¿½o", podeCancelar(pess, lota), "Application.cancelar"));
 
         operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(pess, lota), "Application.reabrir"));
 
-        operacoes.add(new SrOperacao("clock_pause", "Incluir Pendência", podeDeixarPendente(pess, lota), "pendencia", MODAL_TRUE));
+        operacoes.add(new SrOperacao("clock_pause", "Incluir Pendï¿½ncia", podeDeixarPendente(pess, lota), "pendencia", MODAL_TRUE));
 
         /*
          * operacoes.add(new SrOperacao("clock_edit", "Alterar Prazo", podeAlterarPrazo(lotaTitular, titular), "alterarPrazo", "modal=true"));
          */
-        operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicitação?", null, "", ""));
+        operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicitaï¿½ï¿½o?", null, "", ""));
 
         operacoes.add(new SrOperacao("attach", "Anexar Arquivo", podeAnexarArquivo(pess, lota), "anexarArquivo", MODAL_TRUE));
 
@@ -1348,8 +1350,10 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
             incluirEmListasAutomaticas();
 
-            // if (!isEditado() && getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA_FECHAMENTO)
-            // this.getCorreio().notificarAbertura(this);
+             if (!isEditado() && getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA_FECHAMENTO)
+            	 CorreioHolder
+            	 	.get()
+            	 	.notificarAbertura(this);
         } else
             atualizarMarcas();
     }
@@ -1451,9 +1455,9 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             setOrgaoUsuario(getLotaSolicitante().getOrgaoUsuario());
 
         if (getNumSolicitacao() == null && !isRascunho() && !isFilha()) {
-            // DB1: Verifica se é uma Solicitação Filha, pois caso seja não
-            // deve atualizar o número da solicitação, caso contrário não
-            // funcionará o filtro por código para essa filha
+            // DB1: Verifica se ï¿½ uma Solicitaï¿½ï¿½o Filha, pois caso seja nï¿½o
+            // deve atualizar o nï¿½mero da solicitaï¿½ï¿½o, caso contrï¿½rio nï¿½o
+            // funcionarï¿½ o filtro por cï¿½digo para essa filha
             setNumSolicitacao(getProximoNumero());
             atualizarCodigo();
         }
@@ -1469,7 +1473,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         // sÃ³ valida o atendente caso nÃ£o seja rascunho
         if (!isRascunho() && getDesignacao() == null)
-            throw new Exception("Não foi encontrado nenhum atendente designado " + "para esta solicitação. Sugestão: alterar item de " + "configuração e/ou ação");
+            throw new Exception("Nï¿½o foi encontrado nenhum atendente designado " + "para esta solicitaï¿½ï¿½o. Sugestï¿½o: alterar item de " + "configuraï¿½ï¿½o e/ou aï¿½ï¿½o");
 
         if (isFilha()) {
             if (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty())
@@ -1488,7 +1492,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
 
-        // tratamento pois pode ter retorno nulo do método
+        // tratamento pois pode ter retorno nulo do mï¿½todo
         // getUltimaMovimentacaoCancelave()
         if (movimentacao != null) {
 
@@ -1848,12 +1852,12 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public Set<SrSolicitacao> getSolicitacoesVinculadas() {
         Set<SrSolicitacao> solVinculadas = new HashSet<SrSolicitacao>();
 
-        // vinculações partindo desta solicitação
+        // vinculaï¿½ï¿½es partindo desta solicitaï¿½ï¿½o
         for (SrMovimentacao mov : getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
             if (mov.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_VINCULACAO && mov.getSolicitacaoReferencia() != null)
                 solVinculadas.add(mov.getSolicitacaoReferencia());
 
-        // vinculações partindo de outra solicitação referenciando esta
+        // vinculaï¿½ï¿½es partindo de outra solicitaï¿½ï¿½o referenciando esta
         for (SrMovimentacao mov : getMovimentacaoReferenciaSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
             if (this.equals(mov.getSolicitacaoReferencia()))
                 solVinculadas.add(mov.getSolicitacao());
@@ -1963,7 +1967,9 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void enviarPesquisa() throws Exception {
         // Implementar
-        // this.getCorreio().pesquisaSatisfacao(this);
+    	CorreioHolder
+    		.get()
+    		.pesquisaSatisfacao(this);
     }
 
     public void responderPesquisa(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, Map<Long, String> respostaMap) throws Exception {
@@ -2036,7 +2042,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void alterarPrazo(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo, String calendario, String horario) throws Exception {
         if (!podeAlterarPrazo(titular, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception("Operaï¿½ï¿½o nï¿½o permitida");
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         DateTime datetime = new DateTime();
         DateTimeFormatter formatter = DateTimeFormat.forPattern(DD_MM_YYYY_HH_MM);
@@ -2057,7 +2063,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA));
 
         // Edson: eh necessario setar a finalizadora na finalizada antes de
-        // salvar() a finalizadora, pq se não, ao atualizarMarcas(), vai
+        // salvar() a finalizadora, pq se nï¿½o, ao atualizarMarcas(), vai
         // parecer que a pendencia nao foi finalizada, atrapalhando calculos
         // de prazo
         SrMovimentacao movFinalizada = SrMovimentacao.AR.findById(idMovimentacao);
@@ -2085,11 +2091,11 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         if ((cadastrante != null) && !podeJuntar(titular, lotaTitular))
             throw new Exception(OPERACAO_NAO_PERMITIDA);
         if (solRecebeJuntada.equivale(this))
-            throw new Exception("Não é possivel juntar uma solicitação a si mesma.");
+            throw new Exception("Nï¿½o ï¿½ possivel juntar uma solicitaï¿½ï¿½o a si mesma.");
         if (solRecebeJuntada.isJuntada() && solRecebeJuntada.getSolicitacaoPrincipal().equivale(this))
-            throw new Exception("Não e possivel realizar juntada circular.");
+            throw new Exception("Nï¿½o e possivel realizar juntada circular.");
         if (solRecebeJuntada.isFilha() && solRecebeJuntada.getSolicitacaoPai().equivale(this))
-            throw new Exception("Não e possivel juntar uma solicitação a uma das suas filhas. Favor realizar o processo inverso.");
+            throw new Exception("Nï¿½o e possivel juntar uma solicitaï¿½ï¿½o a uma das suas filhas. Favor realizar o processo inverso.");
 
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_JUNTADA));
@@ -2116,7 +2122,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         if ((cadastrante != null) && !podeVincular(titular, lotaTitular))
             throw new Exception(OPERACAO_NAO_PERMITIDA);
         if (solRecebeVinculo.equivale(this))
-            throw new Exception("Não e possivel vincular uma solicitação a si mesma.");
+            throw new Exception("Nï¿½o e possivel vincular uma solicitaï¿½ï¿½o a si mesma.");
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_VINCULACAO));
         movimentacao.setSolicitacaoReferencia(solRecebeVinculo);
@@ -2846,4 +2852,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         this.rascunho = rascunho;
     }
 
+	public Destinatario getDestinatarioEmailNotificacao() {
+		return new Destinatario(getSolicitacaoAtual().getSolicitante().getPessoaAtual());
+	}
 }

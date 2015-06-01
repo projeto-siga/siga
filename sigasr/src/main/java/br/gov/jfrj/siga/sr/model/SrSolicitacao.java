@@ -787,27 +787,44 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     // Edson: poderia também guardar num HashMap transiente e, ao salvar(),
     // mandar criar os atributos, caso se quisesse permitir um
     // solicitacao.getAtributoSet().put...
-    public void setAtributoSolicitacaoMap(List<String> atributosSolicitacao) throws Exception {
-        if (atributosSolicitacao != null) {
+    public void setAtributoSolicitacaoMap(List<SrAtributoSolicitacaoMap> atributoSolicitacaoMap) throws Exception {
+
+        if (atributoSolicitacaoMap != null) {
             meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
+            
+            for (SrAtributoSolicitacaoMap atribSolicitacao : atributoSolicitacaoMap) {
+            	SrAtributo att = SrAtributo.AR.findById(atribSolicitacao.getIdAtributo());
+	            SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(att, atribSolicitacao.getValorAtributo(), this);
+	            meuAtributoSolicitacaoSet.add(attSolicitacao);
+	        }
+        }
+    	
+//        if (atributosSolicitacao != null) {
+//            meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
 //            for (Long idAtt : atributosSolicitacao.keySet()) {
 //                SrAtributo att = SrAtributo.AR.findById(idAtt);
 //                SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(att, atributosSolicitacao.get(idAtt), this);
 //                meuAtributoSolicitacaoSet.add(attSolicitacao);
 //            }
-        }
+//        }
     }
 
-    public List<String> getAtributoSolicitacaoMap() {
-        HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para manter a ordem de insercao
-        List<String> lista = new ArrayList<String>();
-        if (meuAtributoSolicitacaoSet != null)
-            for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
-                map.put(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao());
-                lista.add(att.getValorAtributoSolicitacao());
-            }
-        
-        return lista;
+    public List<SrAtributoSolicitacaoMap> getAtributoSolicitacaoMap() {
+    	
+    	List<SrAtributoSolicitacaoMap> list = new ArrayList<>();
+    	if(meuAtributoSolicitacaoSet != null){
+    		for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
+    			//if(att.getAtributo() != null)
+    			list.add(new SrAtributoSolicitacaoMap(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao()));
+    		}
+    	}
+    	return list;
+//    	HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para manter a ordem de insercao
+//        if (meuAtributoSolicitacaoSet != null)
+//            for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
+//                map.put(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao());
+//            }
+//        return map;
     }
 
     private Set<SrSolicitacao> getSolicitacaoFilhaSet() {

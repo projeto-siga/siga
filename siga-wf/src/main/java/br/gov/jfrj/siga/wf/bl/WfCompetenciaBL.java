@@ -32,7 +32,7 @@ import br.gov.jfrj.siga.wf.WfConfiguracao;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
- * Classe que representa as competÍncias da lÛgica de negÛcio do sistema de
+ * Classe que representa as compet√™ncias da l√≥gica de neg√≥cio do sistema de
  * workflow.
  * 
  * @author kpf
@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 public class WfCompetenciaBL extends CpCompetenciaBL {
 
 	/**
-	 * Verifica se a pessoa ou lotaÁ„o pode instanciar um procedimento
+	 * Verifica se a pessoa ou lota√ß√£o pode instanciar um procedimento
 	 * (Process).
 	 * 
 	 * @param titular
@@ -59,8 +59,8 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna um configuraÁ„o existente para a combinaÁ„o dos dados passados
-	 * como par‚metros, caso exista.
+	 * Retorna um configura√ß√£o existente para a combina√ß√£o dos dados passados
+	 * como par√¢metros, caso exista.
 	 * 
 	 * @param titularIniciador
 	 * @param lotaTitularIniciador
@@ -92,12 +92,12 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 		WfConfiguracao cfg = (WfConfiguracao) getConfiguracaoBL()
 				.buscaConfiguracao(cfgFiltro, new int[] { 0 }, null);
 
-		// Essa linha È necess·ria porque quando recuperamos um objeto da classe
-		// WfConfiguracao do TreeMap est·tico que os armazena, este objeto est·
-		// detached, ou seja, n„o est· conectado com a seÁ„o atual do hibernate.
+		// Essa linha √© necess√°ria porque quando recuperamos um objeto da classe
+		// WfConfiguracao do TreeMap est√°tico que os armazena, este objeto est√°
+		// detached, ou seja, n√£o est√° conectado com a se√ß√£o atual do hibernate.
 		// Portanto, quando vamos acessar alguma propriedade dele que seja do
-		// tipo LazyRead, obtemos um erro. O mÈtodo lock, attacha ele novamente
-		// na seÁ„o atual.
+		// tipo LazyRead, obtemos um erro. O m√©todo lock, attacha ele novamente
+		// na se√ß√£o atual.
 		if (cfg != null)
 			WfDao.getInstance().getSessao().lock(cfg, LockMode.NONE);
 
@@ -105,14 +105,14 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Verifica se uma pessoa ou lotaÁ„o tem permiss„o em uma configuraÁ„o
-	 * passada como par‚metro.
+	 * Verifica se uma pessoa ou lota√ß√£o tem permiss√£o em uma configura√ß√£o
+	 * passada como par√¢metro.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
 	 * @param procedimento
 	 * @param tipoConfig
-	 *            - ConfiguraÁ„o que ter· a permiss„o verificada.
+	 *            - Configura√ß√£o que ter√° a permiss√£o verificada.
 	 * @return
 	 * @throws Exception
 	 */
@@ -137,7 +137,7 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Retorna uma configuraÁ„o de designaÁ„o de tarefa.
+	 * Retorna uma configura√ß√£o de designa√ß√£o de tarefa.
 	 * 
 	 * @param titularIniciador
 	 * @param lotaTitularIniciador
@@ -165,18 +165,18 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
-	 * Verifica se uma pessoa ou lotaÁ„o tem competÍncia para realizar uma
-	 * determinada aÁ„o no sistema.
+	 * Verifica se uma pessoa ou lota√ß√£o tem compet√™ncia para realizar uma
+	 * determinada a√ß√£o no sistema.
 	 * 
 	 * @param funcao
-	 *            CompetÍncia a ser testada (Ex: IntanciarProcedimento)
+	 *            Compet√™ncia a ser testada (Ex: IntanciarProcedimento)
 	 * @param titular
 	 *            Pessoa a ser verificada
 	 * @param lotaTitular
-	 *            LotaÁ„o a ser verificada
+	 *            Lota√ß√£o a ser verificada
 	 * @param pd
 	 *            Procedimento a ser testado
-	 * @return true se a pessoa/lotaÁ„o tem competÍncia para realizar a aÁ„o.
+	 * @return true se a pessoa/lota√ß√£o tem compet√™ncia para realizar a a√ß√£o.
 	 */
 	public boolean testaCompetencia(final String funcao,
 			final DpPessoa titular, final DpLotacao lotaTitular, final String pd) {

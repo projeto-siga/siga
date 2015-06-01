@@ -24,7 +24,7 @@ import org.jbpm.JbpmConfiguration;
 import org.jbpm.graph.def.ProcessDefinition;
 
 /**
- * Classe utilit·ria utilizada para testar o contexto do JBPM.
+ * Classe utilit√°ria utilizada para testar o contexto do JBPM.
  * 
  * @author kpf
  * 
@@ -34,8 +34,8 @@ public class WfContextTest {
 	private static final String PROCEDIMENTO_A_REMOVER = "testeNovo";
 
 	/**
-	 * Remove um procedimento com todas as suas versıes. CUIDADO AO USAR ESTE
-	 * M…TODO!.
+	 * Remove um procedimento com todas as suas vers√µes. CUIDADO AO USAR ESTE
+	 * M√âTODO!.
 	 * 
 	 * @param args
 	 */
@@ -50,7 +50,7 @@ public class WfContextTest {
 				.getGraphSession().findAllProcessDefinitionVersions(
 						PROCEDIMENTO_A_REMOVER)) {
 			if (pd.getVersion() != 19 && pd.getVersion() != 16) {
-				System.out.println("Removendo vers„o: " + pd.getVersion());
+				System.out.println("Removendo vers√£o: " + pd.getVersion());
 				ctx.getGraphSession().deleteProcessDefinition(pd);
 			}
 		}

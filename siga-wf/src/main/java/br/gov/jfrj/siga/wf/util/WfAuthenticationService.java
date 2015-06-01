@@ -27,8 +27,8 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 /**
- * Classe que representa o serviÁo de autenticaÁ„o do sistema de workflow. Esta
- * classe È definida em siga-wf/src/jbpm.cfg.xml.
+ * Classe que representa o servi√ßo de autentica√ß√£o do sistema de workflow. Esta
+ * classe √© definida em siga-wf/src/jbpm.cfg.xml.
  * 
  * @author kpf
  * 
@@ -49,7 +49,7 @@ public class WfAuthenticationService extends DefaultAuthenticationService
 	@Override
 	public String getActorId() {
 		if (this.actorId == null) {
-			//Nato: desabilitado porque tem dependÍncia no WebWork. Precisa ser transferido para o sigawf e depender do servletcontext ou do vraptor.
+			//Nato: desabilitado porque tem depend√™ncia no WebWork. Precisa ser transferido para o sigawf e depender do servletcontext ou do vraptor.
 			//
 //			if (com.opensymphony.webwork.ServletActionContext.getRequest() == null
 //					|| com.opensymphony.webwork.ServletActionContext
@@ -82,42 +82,42 @@ public class WfAuthenticationService extends DefaultAuthenticationService
 	}
 
 	/**
-	 * Retorna o cadastrante, ou seja, a pessoa que est· operando o sistema.
+	 * Retorna o cadastrante, ou seja, a pessoa que est√° operando o sistema.
 	 */
 	public DpPessoa getCadastrante() {
 		return cadastrante;
 	}
 
 	/**
-	 * Define o cadastrante, ou seja, a pessoa que est· operando o sistema.
+	 * Define o cadastrante, ou seja, a pessoa que est√° operando o sistema.
 	 */
 	public void setCadastrante(DpPessoa cadastrante) {
 		this.cadastrante = cadastrante;
 	}
 
 	/**
-	 * Retorna o titular, ou seja, quem È respons·vel oficial.
+	 * Retorna o titular, ou seja, quem √© respons√°vel oficial.
 	 */
 	public DpPessoa getTitular() {
 		return titular;
 	}
 
 	/**
-	 * Define o titular, ou seja, quem È respons·vel oficial.
+	 * Define o titular, ou seja, quem √© respons√°vel oficial.
 	 */
 	public void setTitular(DpPessoa titular) {
 		this.titular = titular;
 	}
 
 	/**
-	 * Retorna a lotaÁ„o do titular
+	 * Retorna a lota√ß√£o do titular
 	 */
 	public DpLotacao getLotaTitular() {
 		return lotaTitular;
 	}
 
 	/**
-	 * Define a lotaÁ„o do titular.
+	 * Define a lota√ß√£o do titular.
 	 */
 	public void setLotaTitular(DpLotacao lotaTitular) {
 		this.lotaTitular = lotaTitular;

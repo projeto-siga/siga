@@ -30,7 +30,7 @@ public class WfExecutionEnvironment {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
 			log.error(
-					"[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sess�o do Hibernate",
+					"[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sessï¿½o do Hibernate",
 					ex);
 			// ex.printStackTrace();
 		}
@@ -94,7 +94,7 @@ public class WfExecutionEnvironment {
 		// Novo
 		if (!WfDao.getInstance().sessaoEstahAberta())
 			throw new AplicacaoException(
-					"Erro: sess�o do Hibernate est� fechada.");
+					"Erro: sessï¿½o do Hibernate estï¿½ fechada.");
 
 		if (session == null)
 			WfContextBuilder.getJbpmContext().getJbpmContext()
@@ -108,7 +108,7 @@ public class WfExecutionEnvironment {
 		// Session session = (Session) fld.get(s);
 		// if (!session.isOpen())
 		// throw new AplicacaoException(
-		// "Erro: sess�o do Hibernate est� fechada.");
+		// "Erro: sessï¿½o do Hibernate estï¿½ fechada.");
 		// HibernateUtil.setSessao(session);
 		// WfDao.getInstance();
 

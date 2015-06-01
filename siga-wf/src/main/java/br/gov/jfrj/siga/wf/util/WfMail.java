@@ -29,7 +29,7 @@ import org.jbpm.taskmgmt.def.TaskController;
 import br.gov.jfrj.siga.wf.bl.Wf;
 
 /**
- * Classe que representa o serviço de e-mail. Esta classe é definida em
+ * Classe que representa o serviÃ§o de e-mail. Esta classe Ã© definida em
  * siga-wf/src/jbpm.cfg.xml.
  * 
  * @author kpf
@@ -44,8 +44,8 @@ public class WfMail extends Mail {
 	private static final long serialVersionUID = -1530708539893196841L;
 
 	/**
-	 * Retorna o texto do e-mail. Esse método inclui automaticamente rodapé com
-	 * informações da tarefa correspondente ao e-mail.
+	 * Retorna o texto do e-mail. Esse mÃ©todo inclui automaticamente rodapÃ© com
+	 * informaÃ§Ãµes da tarefa correspondente ao e-mail.
 	 */
 	@Override
 	public String getText() {
@@ -75,8 +75,8 @@ public class WfMail extends Mail {
 
 
 	/**
-	 * Ao iniciar a manipulação do e-mail, esse método captura as informações
-	 * sobre os documentos do SIGA-DOC que se referem à tarefa que enviou o
+	 * Ao iniciar a manipulaÃ§Ã£o do e-mail, esse mÃ©todo captura as informaÃ§Ãµes
+	 * sobre os documentos do SIGA-DOC que se referem Ã  tarefa que enviou o
 	 * e-mail.
 	 */
 	@Override
@@ -103,7 +103,7 @@ public class WfMail extends Mail {
 	@Override
 	public void send() {
 		// Para debugar o workflow, o ideal e desabilitar os emails e apenas
-		// logá-los no System.out.
+		// logÃ¡-los no System.out.
 //		super.getBccRecipients().add("xxx@xxx.com.br");
 		super.send();
 		// System.out.println(this.toString());

@@ -22,74 +22,74 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 /**
- * Esta classe representa uma designaÁ„o de responsabilidade e È utilizada na view pesquisarDesignaÁ„o.jsp <br/> 
+ * Esta classe representa uma designa√ß√£o de responsabilidade e √© utilizada na view pesquisarDesigna√ß√£o.jsp <br/> 
  * 
- * DesignaÁ„o de Tarefas (Cadastro de Responsabilidades)
+ * Designa√ß√£o de Tarefas (Cadastro de Responsabilidades)
 
-1.CRIA«√O
+1.CRIA√á√ÉO
 2.OBJETIVO
-3.UTILIZA«√O
+3.UTILIZA√á√ÉO
 4.COMPONENTES
 5.BANCO DE DADOS
-6.FUNCIONAMENTO B¡SICO
-7.OBSERVA«’ES
+6.FUNCIONAMENTO B√ÅSICO
+7.OBSERVA√á√ïES
 
-1.CRIA«√O
-	Funcionalidade iniciada na iteraÁ„o 05/10/2009 a 16/10/2009 do SIGAWF.
+1.CRIA√á√ÉO
+	Funcionalidade iniciada na itera√ß√£o 05/10/2009 a 16/10/2009 do SIGAWF.
 	
 2.OBJETIVO
-	Configurar quem s„o os respons·veis por cada tarefa do processo. 
+	Configurar quem s√£o os respons√°veis por cada tarefa do processo. 
 
-3.UTILIZA«√O
-	Acesse a opÁ„o "Designar Tarefas" e o processo desejado no quadro de tarefas 
-	localizado na p·gina inicial do SIGA-DOC. 
+3.UTILIZA√á√ÉO
+	Acesse a op√ß√£o "Designar Tarefas" e o processo desejado no quadro de tarefas 
+	localizado na p√°gina inicial do SIGA-DOC. 
 
 4.COMPONENTES
 	4.1 pesquisarDesignacao.jsp (/sigawf/WebContent/WEB-INF/page/workflow/)
-		Interface do usu·rio de configuraÁ„o e pesquisa de desgnaÁıes
+		Interface do usu√°rio de configura√ß√£o e pesquisa de desgna√ß√µes
 		
 	4.2 WfDesignacaoAction.java (/sigawf/src/br/gov/jfrj/siga/wf/webwork/action/)
-		Executa a lÛgica da funcionalidade de designaÁ„o de resposabilidades. 
-		Possui uma classe interna que define o tipo de respons·vel.
+		Executa a l√≥gica da funcionalidade de designa√ß√£o de resposabilidades. 
+		Possui uma classe interna que define o tipo de respons√°vel.
 		
 	4.3 Designacao.java (/siga-wf/src/br/gov/jfrj/siga/wf/)
-		Representa uma designaÁ„o de responsabilidade
+		Representa uma designa√ß√£o de responsabilidade
 		
 	4.4 xwork.xml (/sigawf/src/)
-		ConfiguraÁ„o do webwork que realiza a conex„o entre a interface do usu·rio e 
-		lÛgica da designaÁ„o de tarefas.
+		Configura√ß√£o do webwork que realiza a conex√£o entre a interface do usu√°rio e 
+		l√≥gica da designa√ß√£o de tarefas.
 		
 	4.5 inbox.jsp (/sigawf/WebContent/WEB-INF/page/workflow/)
-		Interface de acesso ‡ funcionalidade
+		Interface de acesso √† funcionalidade
 
 5.BANCO DE DADOS
 	
 	5.1 CORPORATIVO.CP_CONFIGURACAO
-		Registra as informaÁıes comuns entre configuraÁıes. 
-		Determina se uma configuraÁ„o est· ativa ou n„o dentre outras informaÁıes.
+		Registra as informa√ß√µes comuns entre configura√ß√µes. 
+		Determina se uma configura√ß√£o est√° ativa ou n√£o dentre outras informa√ß√µes.
 
 	5.2 SIGAWF.WF_CONFIGURACAO
-		Registra a configuraÁ„o da designaÁ„o da tarefa
+		Registra a configura√ß√£o da designa√ß√£o da tarefa
 
-6.FUNCIONAMENTO B¡SICO
+6.FUNCIONAMENTO B√ÅSICO
        
 	6.1 PESQUISA
-       Quando o usu·rio acessa a p·gina inicial, seleciona a opÁ„o "Designar Tarefas" 
-       e o processo desejado, o inbox.jsp chama a action pesquisarDesignaÁ„o configurada 
-       no xwork.xml. Nesse momento o mÈtodo WfDesignacaoAction.aPesquisarDesignacao() È 
-       chamado e retorna a p·gina pesquisarDesignacao.jsp. A p·gina pesquisarDesignacao.jsp 
-       lÍ as listas de designaÁ„o (com raias e sem raias) e a p·gina È desenhada na tela do 
-       usu·rio. 
+       Quando o usu√°rio acessa a p√°gina inicial, seleciona a op√ß√£o "Designar Tarefas" 
+       e o processo desejado, o inbox.jsp chama a action pesquisarDesigna√ß√£o configurada 
+       no xwork.xml. Nesse momento o m√©todo WfDesignacaoAction.aPesquisarDesignacao() √© 
+       chamado e retorna a p√°gina pesquisarDesignacao.jsp. A p√°gina pesquisarDesignacao.jsp 
+       l√™ as listas de designa√ß√£o (com raias e sem raias) e a p√°gina √© desenhada na tela do 
+       usu√°rio. 
        
 	6.2 GRAVACAO
-       O usu·rio define as responsabilidades atravÈs dos componentes de seleÁ„o (seleÁ„o.tag) 
-       e clica no bot„o gravar que ativa a action gravarDesignacao que, por sua vez, chama o 
-       mÈtodo WfDesignacaoAction.aGravarDesignacao(). Este mÈtodo grava as designaÁıes e retorna 
-       a p·gina pesquisarDesignacao.jsp com as informaÁıes gravadas.
+       O usu√°rio define as responsabilidades atrav√©s dos componentes de sele√ß√£o (sele√ß√£o.tag) 
+       e clica no bot√£o gravar que ativa a action gravarDesignacao que, por sua vez, chama o 
+       m√©todo WfDesignacaoAction.aGravarDesignacao(). Este m√©todo grava as designa√ß√µes e retorna 
+       a p√°gina pesquisarDesignacao.jsp com as informa√ß√µes gravadas.
 
-7.OBSERVA«’ES       
-       Maiores detalhes s„o encontrados no prÛprio cÛdigo dos componentes respons·veis 
-       pela funcionalidade de desiganÁ„o de tarefas.  
+7.OBSERVA√á√ïES       
+       Maiores detalhes s√£o encontrados no pr√≥prio c√≥digo dos componentes respons√°veis 
+       pela funcionalidade de desigan√ß√£o de tarefas.  
  * 
  * @author kpf
  * 
@@ -106,13 +106,13 @@ public class Designacao {
 	private Integer tipoResponsavel;
 
 	/**
-	 * Retorna o tipo de respons·vel desigando para a tarefa.
+	 * Retorna o tipo de respons√°vel desigando para a tarefa.
 	 * 
-	 * @return retorna 0 para INDEFINIDO (Sem designaÁ„o), retorna 1 para
-	 *         MATRICULA (MatrÌcula de uma pessoa [DpPessoa]), retorna 2 para
-	 *         LOTACAO (Sigla de uma lotaÁ„o) retorna 3 para LOTA_SUP (LotaÁ„o
+	 * @return retorna 0 para INDEFINIDO (Sem designa√ß√£o), retorna 1 para
+	 *         MATRICULA (Matr√≠cula de uma pessoa [DpPessoa]), retorna 2 para
+	 *         LOTACAO (Sigla de uma lota√ß√£o) retorna 3 para LOTA_SUP (Lota√ß√£o
 	 *         hierarquicamente superior da pessoa designada na tarefa anterior)
-	 *         retorna 4 para SUP_HIER (Superior hier·rquico da pessoa designada
+	 *         retorna 4 para SUP_HIER (Superior hier√°rquico da pessoa designada
 	 *         na tarefa anterior)
 	 */
 	public Integer getTipoResponsavel() {
@@ -120,13 +120,13 @@ public class Designacao {
 	}
 
 	/**
-	 * Informa o tipo de respons·vel desigando para a tarefa.
+	 * Informa o tipo de respons√°vel desigando para a tarefa.
 	 * 
-	 * @return retorna 0 para INDEFINIDO (Sem designaÁ„o), retorna 1 para
-	 *         MATRICULA (MatrÌcula de uma pessoa [DpPessoa]), retorna 2 para
-	 *         LOTACAO (Sigla de uma lotaÁ„o) retorna 3 para LOTA_SUP (LotaÁ„o
+	 * @return retorna 0 para INDEFINIDO (Sem designa√ß√£o), retorna 1 para
+	 *         MATRICULA (Matr√≠cula de uma pessoa [DpPessoa]), retorna 2 para
+	 *         LOTACAO (Sigla de uma lota√ß√£o) retorna 3 para LOTA_SUP (Lota√ß√£o
 	 *         hierarquicamente superior da pessoa designada na tarefa anterior)
-	 *         retorna 4 para SUP_HIER (Superior hier·rquico da pessoa designada
+	 *         retorna 4 para SUP_HIER (Superior hier√°rquico da pessoa designada
 	 *         na tarefa anterior)
 	 */
 	public void setTipoResponsavel(Integer tipoResponsavel) {
@@ -134,7 +134,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Retorna o procedimento referente ‡ designaÁ„o.
+	 * Retorna o procedimento referente √† designa√ß√£o.
 	 * 
 	 * @return
 	 */
@@ -143,7 +143,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Informa o procedimento referente ‡ designaÁ„o.
+	 * Informa o procedimento referente √† designa√ß√£o.
 	 * 
 	 * @param procedimento
 	 */
@@ -152,7 +152,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Retorna a raia referente ‡ designaÁ„o.
+	 * Retorna a raia referente √† designa√ß√£o.
 	 * 
 	 * @return
 	 */
@@ -161,7 +161,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Informa a raia referente ‡ designaÁ„o.
+	 * Informa a raia referente √† designa√ß√£o.
 	 * 
 	 * @param raia
 	 */
@@ -170,7 +170,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Retorna a tarefa referente ‡ designaÁ„o.
+	 * Retorna a tarefa referente √† designa√ß√£o.
 	 * 
 	 * @return
 	 */
@@ -179,7 +179,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Informa a tarefa referente ‡ designaÁ„o.
+	 * Informa a tarefa referente √† designa√ß√£o.
 	 * 
 	 * @param tarefa
 	 */
@@ -188,9 +188,9 @@ public class Designacao {
 	}
 
 	/**
-	 * Retorna a express„o de uma designaÁ„o. As expressıes existentes s„o :
-	 * "previous --> group() --> superior_group" para LotaÁ„o superior e
-	 * "previous --> chief" para superior hier·rquico.
+	 * Retorna a express√£o de uma designa√ß√£o. As express√µes existentes s√£o :
+	 * "previous --> group() --> superior_group" para Lota√ß√£o superior e
+	 * "previous --> chief" para superior hier√°rquico.
 	 * 
 	 * @return
 	 */
@@ -199,9 +199,9 @@ public class Designacao {
 	}
 
 	/**
-	 * Informa a express„o de uma designaÁ„o. As expressıes existentes s„o :
-	 * "previous --> group() --> superior_group" para LotaÁ„o superior e
-	 * "previous --> chief" para superior hier·rquico.
+	 * Informa a express√£o de uma designa√ß√£o. As express√µes existentes s√£o :
+	 * "previous --> group() --> superior_group" para Lota√ß√£o superior e
+	 * "previous --> chief" para superior hier√°rquico.
 	 * @param expressao
 	 */
 	public void setExpressao(String expressao) {
@@ -209,7 +209,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Retorna o ator referente ‡ designaÁ„o.
+	 * Retorna o ator referente √† designa√ß√£o.
 	 * @return
 	 */
 	public DpPessoa getAtor() {
@@ -217,7 +217,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Informa o ator referente ‡ designaÁ„o. 
+	 * Informa o ator referente √† designa√ß√£o. 
 	 * @param ator
 	 */
 	public void setAtor(DpPessoa ator) {
@@ -225,7 +225,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Retorna a lotaÁ„o referente ‡ designaÁ„o.
+	 * Retorna a lota√ß√£o referente √† designa√ß√£o.
 	 * @return
 	 */
 	public DpLotacao getLotaAtor() {
@@ -233,7 +233,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Informa a lotaÁ„o referente ‡ designaÁ„o.
+	 * Informa a lota√ß√£o referente √† designa√ß√£o.
 	 * @param lotaAtor
 	 */
 	public void setLotaAtor(DpLotacao lotaAtor) {
@@ -241,7 +241,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Retorna o ID da designaÁ„o.
+	 * Retorna o ID da designa√ß√£o.
 	 * @return
 	 */
 	public Long getId() {
@@ -249,7 +249,7 @@ public class Designacao {
 	}
 
 	/**
-	 * Informa o ID da designaÁ„o.
+	 * Informa o ID da designa√ß√£o.
 	 * @param id
 	 */
 	public void setId(Long id) {

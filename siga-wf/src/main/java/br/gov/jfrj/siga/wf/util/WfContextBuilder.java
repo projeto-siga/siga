@@ -32,7 +32,7 @@ public class WfContextBuilder {
 	private static JbpmConfiguration configuration = null;
 
 	/**
-	 * Retorna uma configuração do JBPM.
+	 * Retorna uma configuraÃ§Ã£o do JBPM.
 	 * 
 	 * @return
 	 */
@@ -46,7 +46,7 @@ public class WfContextBuilder {
 	}
 
 	/**
-	 * Cria uma nova configuração do JBPM.
+	 * Cria uma nova configuraÃ§Ã£o do JBPM.
 	 */
 	public static void createJbpmContext() {
 		if (localContext.get() == null)

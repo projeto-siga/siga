@@ -29,8 +29,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
- * Classe utilizada para descobrir o endereÁo de e-mail baseado na sigla de uma
- * pessoa. Esta classe È definida em siga-wf/src/jbpm.cfg.xml.
+ * Classe utilizada para descobrir o endere√ßo de e-mail baseado na sigla de uma
+ * pessoa. Esta classe √© definida em siga-wf/src/jbpm.cfg.xml.
  * 
  * @author kpf
  * 
@@ -40,7 +40,7 @@ public class WfAddressResolver implements AddressResolver {
 	/**
 	 * Retorna o e-mail do ator, caso exista.
 	 */
-	// Retornar uma string, string[] ou list<string>. Ou null se o usu·rio n„o
+	// Retornar uma string, string[] ou list<string>. Ou null se o usu√°rio n√£o
 	// existir
 	public Object resolveAddress(String actorId) {
 		if (actorId == null || actorId.trim().length() == 0)

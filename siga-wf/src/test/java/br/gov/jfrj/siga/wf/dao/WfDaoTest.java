@@ -38,7 +38,7 @@ import br.gov.jfrj.siga.wf.util.WfExpressionAssignmentHandler;
 import br.gov.jfrj.siga.wf.util.WfTaskInstance;
 
 /**
- * Classe utilit·ria para testar o DAO do workflow.
+ * Classe utilit√°ria para testar o DAO do workflow.
  * 
  * @author kpf
  * 
@@ -61,7 +61,7 @@ public class WfDaoTest extends TestCase {
 	 * @throws AplicacaoException
 	 */
 	public void testDataUltimaAtualizacao() throws AplicacaoException {
-		System.out.println("Data e hora da ultima atualizaÁ„o - "
+		System.out.println("Data e hora da ultima atualiza√ß√£o - "
 				+ dao.consultarDataUltimaAtualizacao());
 	}
 
@@ -77,7 +77,7 @@ public class WfDaoTest extends TestCase {
 
 		Boolean b = Wf.getInstance().getComp().podeInstanciarProcedimento(pes1,
 				pes1.getLotacao(),
-				"ProcessDefinition(ContrataÁ„o: fase de an·lise)");
+				"ProcessDefinition(Contrata√ß√£o: fase de an√°lise)");
 
 		System.out.println("Pode instanciar procedimento - " + b);
 	}
@@ -98,7 +98,7 @@ public class WfDaoTest extends TestCase {
 				.podeUtilizarServicoPorConfiguracao(
 						pes1,
 						pes1.getLotacao(),
-						"SIGA:Sistema Integrado de Gest„o Administrativa;WF:MÛdulo de Workflow;OPERAR:Executar comandos da tela inicial");
+						"SIGA:Sistema Integrado de Gest√£o Administrativa;WF:M√≥dulo de Workflow;OPERAR:Executar comandos da tela inicial");
 
 		System.out.println("Pode utilizar servico por configuracao - " + b);
 	}

@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
- * Classe que representa um thread de execu��o de job
+ * Classe que representa um thread de execuï¿½ï¿½o de job
  * 
  * @author kpf
  * 
@@ -69,7 +69,7 @@ public class WfJobExecutorThread extends JobExecutorThread {
 
 			if (session == null)
 				throw new Exception(
-						"Não foi possível obter a sessão do hibernate para executar o timer.");
+						"NÃ£o foi possÃ­vel obter a sessÃ£o do hibernate para executar o timer.");
 
 			HibernateUtil.setSessao(session);
 		} catch (Exception e) {

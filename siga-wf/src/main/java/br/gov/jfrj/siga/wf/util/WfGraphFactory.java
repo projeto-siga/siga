@@ -134,7 +134,7 @@ public class WfGraphFactory {
 		sb.append(">]");
 		if (current.equals(currentNode))
 			sb.append("[color=\"red\"]");
-		// "Início"[shape="oval"][label=<<font>Início</font><br/><font
+		// "InÃ­cio"[shape="oval"][label=<<font>InÃ­cio</font><br/><font
 		// point-size="9" color="gray">OI!</font>>];
 		sb.append(";");
 	}
@@ -184,7 +184,7 @@ public class WfGraphFactory {
 	public static void main(String[] args) throws Exception {
 		String sXML = readFile("C:/Trabalhos/Java/siga-wf-pd/src/main/jpdl/AutorizacaoAusencia/processdefinition.xml");
 		WfGraphFactory graph = new WfGraphFactory();
-		String sDOT = graph.gerarDOT(sXML, "Início", null);
+		String sDOT = graph.gerarDOT(sXML, "InÃ­cio", null);
 		String sURL = graph.gerarURL(sDOT);
 		return;
 	}

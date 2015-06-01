@@ -53,7 +53,7 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
- * Classe que representa a lÛgica do negÛcio do sistema de workflow.
+ * Classe que representa a l√≥gica do neg√≥cio do sistema de workflow.
  * 
  * @author kpf
  * 
@@ -66,17 +66,17 @@ public class WfBL extends CpBL {
 	private static TaskInstanceComparator tic = new TaskInstanceComparator();
 
 	/**
-	 * Cria uma inst‚ncia de processo. Ao final da criaÁ„o, define as seguintes
-	 * vari·veis na inst‚ncia do processo: WF_CADASTRANTE - Pessoa respons·vel
-	 * (que responde) pelas aÁıes realizadas no sistema no momento da criaÁ„o da
-	 * inst‚ncia do processo WF_LOTA_CADASTRANTE - LotaÁ„o da pessoa que est·
-	 * operando o sistema no momento da criaÁ„o da inst‚ncia do processo
-	 * WF_TITULAR - Pessoa respons·vel (que responde) pelas aÁıes realizadas no
-	 * sistema no momento da criaÁ„o da inst‚ncia do processo WF_LOTA_TITULAR -
-	 * LotaÁ„o da pessoa respons·vel (que responde) pelas aÁıes realizadas no
-	 * sistema no momento da criaÁ„o da inst‚ncia do processo
+	 * Cria uma inst√¢ncia de processo. Ao final da cria√ß√£o, define as seguintes
+	 * vari√°veis na inst√¢ncia do processo: WF_CADASTRANTE - Pessoa respons√°vel
+	 * (que responde) pelas a√ß√µes realizadas no sistema no momento da cria√ß√£o da
+	 * inst√¢ncia do processo WF_LOTA_CADASTRANTE - Lota√ß√£o da pessoa que est√°
+	 * operando o sistema no momento da cria√ß√£o da inst√¢ncia do processo
+	 * WF_TITULAR - Pessoa respons√°vel (que responde) pelas a√ß√µes realizadas no
+	 * sistema no momento da cria√ß√£o da inst√¢ncia do processo WF_LOTA_TITULAR -
+	 * Lota√ß√£o da pessoa respons√°vel (que responde) pelas a√ß√µes realizadas no
+	 * sistema no momento da cria√ß√£o da inst√¢ncia do processo
 	 * 
-	 * Essas vari·veis s„o do banco de dados corporativo.
+	 * Essas vari√°veis s√£o do banco de dados corporativo.
 	 * 
 	 * @param pdId
 	 * @param cadastrante
@@ -196,7 +196,7 @@ public class WfBL extends CpBL {
 	}
 
 	/**
-	 * Retorna o conjunto de tarefas que est„o na responsabilidade do usu·rio.
+	 * Retorna o conjunto de tarefas que est√£o na responsabilidade do usu√°rio.
 	 * 
 	 * @throws AplicacaoException
 	 */
@@ -213,8 +213,8 @@ public class WfBL extends CpBL {
 		// tasks.addAll(WfContextBuilder.getJbpmContext().getJbpmContext()
 		// .getTaskList(titular.getSigla()));
 
-		// Acrescenta os tasks das pessoas da lotaÁ„o. Se o usu·rio estiver
-		// substituindo uma lotaÁ„o, seu actorId deve ser adicionado ‡ lista
+		// Acrescenta os tasks das pessoas da lota√ß√£o. Se o usu√°rio estiver
+		// substituindo uma lota√ß√£o, seu actorId deve ser adicionado √† lista
 		// posteriormente.
 		List<DpPessoa> pessoas = dao().pessoasPorLotacao(lotaTitular.getId(),
 				false,true);
@@ -239,11 +239,11 @@ public class WfBL extends CpBL {
 	}
 
 	/*
-	 * Esse mÈtodo È necess·rio pois o mÈtodo getGroupTaskList de JbpmContext
-	 * gera uma exceÁ„o sempre que nenhum task È encontrado.
+	 * Esse m√©todo √© necess√°rio pois o m√©todo getGroupTaskList de JbpmContext
+	 * gera uma exce√ß√£o sempre que nenhum task √© encontrado.
 	 */
 	private static List<TaskInstance> getGroupTaskList(List<String> actorIds) {
-		// Acrescenta os tasks que n„o tem actorId, mas que possuem a
+		// Acrescenta os tasks que n√£o tem actorId, mas que possuem a
 		// lotaTitular ou o titular no seu pool de atores
 		List taskInstanceIds = WfDao.getInstance().getSessao().getNamedQuery(
 				"TaskMgmtSession.findPooledTaskInstancesByActorIds")
@@ -325,7 +325,7 @@ public class WfBL extends CpBL {
 	}
 
 	/**
-	 * Encerra uma process instance com uma data de fim especÌfica.
+	 * Encerra uma process instance com uma data de fim espec√≠fica.
 	 * 
 	 * @param idProcessInstance
 	 * @param dataFim
@@ -346,7 +346,7 @@ public class WfBL extends CpBL {
 			pi.setEnd(cDtFim.getTime());
 		} else {
 			throw new AplicacaoException(
-					"A data de fim È anterior ‡ data de criaÁ„o do Process Instance ID: "
+					"A data de fim √© anterior √† data de cria√ß√£o do Process Instance ID: "
 							+ pi.getId() + " START: " + pi.getStart());
 		}
 
@@ -359,7 +359,7 @@ public class WfBL extends CpBL {
 				ti.setEnd(cDtFim.getTime());
 			} else {
 				throw new AplicacaoException(
-						"A data de fim È anterior ‡ data de criaÁ„o da Task Instance ID:"
+						"A data de fim √© anterior √† data de cria√ß√£o da Task Instance ID:"
 								+ ti.getId() + " CREATE: " + ti.getCreate());
 			}
 		}
@@ -374,12 +374,12 @@ public class WfBL extends CpBL {
 	}
 	
 	/**
-	 * Exclui do banco de dados todas as inst‚ncias do processo. CUIDADO: As
-	 * exclusıes de inst‚ncias s„o realizadas em TODAS AS VERS’ES do Process
+	 * Exclui do banco de dados todas as inst√¢ncias do processo. CUIDADO: As
+	 * exclus√µes de inst√¢ncias s√£o realizadas em TODAS AS VERS√ïES do Process
 	 * Definition.
 	 * 
 	 * @param nomeProcesso -
-	 *            Nome do processo que ter· suas inst‚ncias excluÌdas.
+	 *            Nome do processo que ter√° suas inst√¢ncias exclu√≠das.
 	 */
 	public void excluirTodasProcessInstances(String nomeProcesso) {
 		List<ProcessDefinition> pd = WfContextBuilder.getJbpmContext()
@@ -399,9 +399,9 @@ public class WfBL extends CpBL {
 	}
 	
 	/**
-	 * Exclui a ˙ltima vers„o da definiÁ„o do processo (Process Definition) do
-	 * banco de dados. CUIDADO: todas as inst‚ncias associadas a ela tambÈm
-	 * ser„o excluÌdas.
+	 * Exclui a √∫ltima vers√£o da defini√ß√£o do processo (Process Definition) do
+	 * banco de dados. CUIDADO: todas as inst√¢ncias associadas a ela tamb√©m
+	 * ser√£o exclu√≠das.
 	 * 
 	 * @param nomeProcesso -
 	 *            Nome do processo.
@@ -420,8 +420,8 @@ public class WfBL extends CpBL {
 	
 	
 	/**
-	 * Exclui TODAS as definiÁıes de processo (Process definition) do banco de
-	 * dados. O process definition deixar· de existir, bem como suas inst‚ncias
+	 * Exclui TODAS as defini√ß√µes de processo (Process definition) do banco de
+	 * dados. O process definition deixar√° de existir, bem como suas inst√¢ncias
 	 * de processo.
 	 * 
 	 * @param nomeProcesso
@@ -449,10 +449,10 @@ public class WfBL extends CpBL {
 		TaskInstance ti = WfContextBuilder.getJbpmContext().getJbpmContext().getTaskInstance(idTI);
 
 		if (ti==null){
-			throw new AplicacaoException("Tarefa n„o encontrada!");
+			throw new AplicacaoException("Tarefa n√£o encontrada!");
 		}
 		if (dtFim==null){
-			throw new AplicacaoException("Data inv·lida!");
+			throw new AplicacaoException("Data inv√°lida!");
 		}
 		
 		encerrarProcessInstance(ti.getProcessInstance().getId(), dtFim);
@@ -464,7 +464,7 @@ public class WfBL extends CpBL {
 		jbpmContext.deployProcessDefinition(processDefinition);
 		long id = processDefinition.getId();
 
-		String sReturn = "DefiniÁ„o de Procedimento: " + processDefinition.getName()
+		String sReturn = "Defini√ß√£o de Procedimento: " + processDefinition.getName()
 				+ " atualizada com sucesso.";
 
 		// ProcessDefinition pi = jbpmContext.getGraphSession()

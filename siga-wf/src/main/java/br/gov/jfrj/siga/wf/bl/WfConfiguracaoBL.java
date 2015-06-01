@@ -35,7 +35,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.wf.WfConfiguracao;
 
 /**
- * Classe que representa a configuraÁ„o do sistema de workflow.
+ * Classe que representa a configura√ß√£o do sistema de workflow.
  * 
  * @author kpf
  * 
@@ -47,7 +47,7 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 	public static int TAREFA = 102;
 
 	/**
-	 * Cria uma nova configuraÁ„o.
+	 * Cria uma nova configura√ß√£o.
 	 */
 	@Override
 	public WfConfiguracao createNewConfiguracao() {
@@ -55,7 +55,7 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 	}
 
 	/**
-	 * Verifica se a configuraÁ„o È uma configuraÁ„o v·lida.
+	 * Verifica se a configura√ß√£o √© uma configura√ß√£o v√°lida.
 	 */
 	@Override
 	public boolean atendeExigencias(CpConfiguracao cfgFiltro,
@@ -98,7 +98,7 @@ public class WfConfiguracaoBL extends CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * MÈtodo com implementaÁ„o completa, chamado pelas outras sobrecargas
+	 * M√©todo com implementa√ß√£o completa, chamado pelas outras sobrecargas
 	 * 
 	 */
 	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu,

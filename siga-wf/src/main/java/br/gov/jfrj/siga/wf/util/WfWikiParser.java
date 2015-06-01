@@ -22,13 +22,13 @@ import info.bliki.wiki.model.WikiModel;
 
 
 /**
- * Classe que possibilita a utilização das marcações de wiki na definição dos processos.
+ * Classe que possibilita a utilizaÃ§Ã£o das marcaÃ§Ãµes de wiki na definiÃ§Ã£o dos processos.
  * @author kpf
  *
  */
 public class WfWikiParser {
 	/**
-	 * Substitui os caracteres das marcações WIKI para XHTML.
+	 * Substitui os caracteres das marcaÃ§Ãµes WIKI para XHTML.
 	 * @param s
 	 * @return
 	 */

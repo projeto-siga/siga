@@ -52,7 +52,7 @@ public class WfFunctionMapper implements FunctionMapper {
 			throws Exception {
 		if (codigoDocumento == null || codigoDocumento.length() == 0)
 			throw new AplicacaoException(
-					"Código do documento precisa ser informado quando é feita uma chamada para ex:isAssinado.");
+					"CÃ³digo do documento precisa ser informado quando Ã© feita uma chamada para ex:isAssinado.");
 		Boolean b = Service.getExService().isAssinado(codigoDocumento, null);
 		return b;
 	}
@@ -61,7 +61,7 @@ public class WfFunctionMapper implements FunctionMapper {
 			throws Exception {
 		if (codigoDocumento == null || codigoDocumento.length() == 0)
 			throw new AplicacaoException(
-					"Código do documento precisa ser informado quando é feita uma chamada para ex:form.");
+					"CÃ³digo do documento precisa ser informado quando Ã© feita uma chamada para ex:form.");
 		String s = Service.getExService().form(codigoDocumento, variavel);
 		return s;
 	}

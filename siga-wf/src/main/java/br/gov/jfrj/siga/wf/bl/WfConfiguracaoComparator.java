@@ -23,7 +23,7 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoComparator;
 import br.gov.jfrj.siga.wf.WfConfiguracao;
 
 /**
- * Classe que permite a comparação entre duas configurações de workflow.
+ * Classe que permite a comparaÃ§Ã£o entre duas configuraÃ§Ãµes de workflow.
  * 
  * @author kpf
  * 
@@ -31,7 +31,7 @@ import br.gov.jfrj.siga.wf.WfConfiguracao;
 public class WfConfiguracaoComparator extends CpConfiguracaoComparator {
 
 	/**
-	 * Compara duas configurações.
+	 * Compara duas configuraÃ§Ãµes.
 	 * 
 	 */
 	public int compare(CpConfiguracao c1, CpConfiguracao c2) {

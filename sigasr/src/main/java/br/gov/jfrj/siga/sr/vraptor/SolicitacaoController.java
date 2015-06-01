@@ -49,6 +49,7 @@ import br.gov.jfrj.siga.sr.model.SrTipoMotivoEscalonamento;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
+import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.notifiers.Correio;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
@@ -100,14 +101,12 @@ public class SolicitacaoController extends SrController {
         List<SrLista> listas = SrLista.listar(mostrarDesativados);
         String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 
-        
-        result.include("dpPessoaSel", new DpPessoaSelecao());
-        result.include("atendenteSel", new DpLotacaoSelecao());
-        result.include("lotacaoSel", new DpLotacaoSelecao());
-        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-        result.include("cargoSel", new DpCargoSelecao());
-        result.include("cpGrupoSel", new CpPerfilSelecao());
-        
+        result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
+        result.include("prioridades", SrPrioridade.getValoresEmOrdem());
+//        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+//        result.include("cargoSel", new DpCargoSelecao());SSSSS
+//        result.include("cpGrupoSel", new CpPerfilSelecao());
+//        
         result.include(ORGAOS, orgaos);
 		result.include(LOCAIS, locais);
 		result.include(TIPOS_PERMISSAO, tiposPermissao);
@@ -116,6 +115,8 @@ public class SolicitacaoController extends SrController {
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
+        
+        
 
     }
 
@@ -149,7 +150,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
     
-    @Path("/listarPermissaoUsoLista/{idLista}")
+    @Path("/desativarPermissaoUsoListaEdicao/{idLista}")
     public void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
         assertAcesso("ADM:Administrar");
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, idPermissao);
@@ -192,12 +193,12 @@ public class SolicitacaoController extends SrController {
      *            - ID da lista
      * @return - String contendo a lista no formato jSon
      */
-    @Path("/listarListaDesativados/{idLista}")
-    public void buscarPermissoesLista(Long idLista) throws Exception {
+    @Path("/listarListaDesativados/{id}")
+    public void buscarPermissoesLista(Long id) throws Exception {
         List<SrConfiguracao> permissoes;
 
-        if (idLista != null) {
-            SrLista lista = SrLista.AR.findById(idLista);
+        if (id != null) {
+            SrLista lista = SrLista.AR.findById(id);
             permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
             permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
         } else
@@ -213,17 +214,17 @@ public class SolicitacaoController extends SrController {
         lista.salvar();
         result.use(Results.http()).body(lista.toJson());
     }
-    
+
     private void validarFormEditarLista(SrLista lista) {
         if (lista.getNomeLista() == null || lista.getNomeLista().trim().equals("")) {
-            srValidator.addError("lista.nomeLista", "Nome da Lista n√£o informados");
+            srValidator.addError("lista.nomeLista", "Nome da Lista n„o informados");
         }
 
         if (srValidator.hasErrors()) {
             enviarErroValidacao();
         }
     }
-    
+
     @Path("/desativarLista")    
     public void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
@@ -238,7 +239,7 @@ public class SolicitacaoController extends SrController {
         lista.salvar();
         result.use(Results.http()).body(lista.toJson());
     }
-    
+
     @SuppressWarnings("unchecked")
     @Path("/exibirLista/{id}")
     public void exibirLista(Long id) throws Exception {

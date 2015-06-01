@@ -35,7 +35,7 @@ import com.google.gson.JsonObject;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<SrTipoAcao>, Selecionavel, SrConvertableEntity {
 
-    public static ActiveRecord<SrTipoAcao> AR = new ActiveRecord<>(SrTipoAcao.class);
+    public static final ActiveRecord<SrTipoAcao> AR = new ActiveRecord<>(SrTipoAcao.class);
 
     private static final long serialVersionUID = 8387408543308440033L;
 
@@ -87,6 +87,7 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<Sr
         return this.idTipoAcao;
     }
 
+    @Override
     public void setId(Long id) {
         idTipoAcao = id;
     }
@@ -192,7 +193,7 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<Sr
     public SrTipoAcao selecionar(String sigla) throws Exception {
         setSigla(sigla);
         List<SrTipoAcao> itens = buscar();
-        if (itens.size() == 0 || itens.size() > 1)
+        if (itens.isEmpty() || itens.size() > 1)
             return null;
         return itens.get(0);
     }
@@ -232,12 +233,12 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<Sr
             final Pattern p1 = Pattern.compile("^" + padrao);
             final Matcher m1 = p1.matcher(sigla);
             if (m1.find()) {
-                String s = "";
+                StringBuilder s = new StringBuilder();
                 for (int i = 1; i <= m1.groupCount(); i++) {
-                    s += m1.group(i);
-                    s += (i < m1.groupCount()) ? "." : "";
+                    s.append(m1.group(i))
+                     .append((i < m1.groupCount()) ? "." : "");
                 }
-                siglaTipoAcao = s;
+                siglaTipoAcao = s.toString();
             } else
                 tituloTipoAcao = sigla;
         }
@@ -307,6 +308,7 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<Sr
         return SrTipoAcao.AR.find(sb.toString()).fetch();
     }
 
+    @Override
     public void salvar() throws Exception {
         if (getNivel() > 1) {
             pai = getPaiPorSigla();
@@ -344,18 +346,58 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<Sr
      */
     public class SrTipoAcaoVO {
 
-        public Long id;
-        public String titulo;
-        public String sigla;
-        public Long hisIdIni;
-        public String descricao;
+        private Long id;
+        private String titulo;
+        private String sigla;
+        private Long hisIdIni;
+        private String descricao;
 
         public SrTipoAcaoVO(Long id, String titulo, String sigla, Long hisIdIni) {
+            this.setId(id);
+            this.setTitulo(titulo);
+            this.setSigla(sigla);
+            this.setHisIdIni(hisIdIni);
+            this.setDescricao(titulo);
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
             this.id = id;
+        }
+
+        public String getTitulo() {
+            return titulo;
+        }
+
+        public void setTitulo(String titulo) {
             this.titulo = titulo;
+        }
+
+        public String getSigla() {
+            return sigla;
+        }
+
+        public void setSigla(String sigla) {
             this.sigla = sigla;
+        }
+
+        public Long getHisIdIni() {
+            return hisIdIni;
+        }
+
+        public void setHisIdIni(Long hisIdIni) {
             this.hisIdIni = hisIdIni;
-            this.descricao = titulo;
+        }
+
+        public String getDescricao() {
+            return descricao;
+        }
+
+        public void setDescricao(String descricao) {
+            this.descricao = descricao;
         }
     }
 

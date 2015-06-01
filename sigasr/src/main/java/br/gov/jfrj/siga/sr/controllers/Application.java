@@ -210,7 +210,7 @@ public class Application extends SrController {
 
     public List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
         List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
-        HashMap<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
+        Map<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
 
         for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
             if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
@@ -280,7 +280,7 @@ public class Application extends SrController {
             srValidator.addError("solicitacao.descrSolicitacao", "Descri&ccedil&atilde;o n&atilde;o informada");
         }
 
-        HashMap<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
+        Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
         for (SrAtributoSolicitacao att : solicitacao.getAtributoSolicitacaoSet()) {
             // Para evitar NullPointerExcetpion quando nao encontrar no Map
             if (Boolean.TRUE.equals(obrigatorio.get(att.getAtributo().getIdAtributo()))) {

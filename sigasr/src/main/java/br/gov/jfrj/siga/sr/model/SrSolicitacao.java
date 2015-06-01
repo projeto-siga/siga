@@ -81,7 +81,8 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.ListaInclusaoAutomatica;
-import br.gov.jfrj.siga.sr.notifiers.Correio;
+import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
+import br.gov.jfrj.siga.sr.notifiers.Destinatario;
 import br.gov.jfrj.siga.sr.util.Cronometro;
 import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
@@ -90,9 +91,15 @@ import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 @Entity
 @Table(name = "SR_SOLICITACAO", schema = Catalogs.SIGASR)
 public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecionavel {
+    private static final String MODAL_TRUE = "modal=true";
+    private static final String HH_MM = "HH:mm";
+    private static final String DD_MM_YYYY = "dd/MM/yyyy";
+    private static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
+    private static final String OPERACAO_NAO_PERMITIDA = "Opera��o n�o permitida";
+
     private static final long serialVersionUID = 1L;
 
-    public static ActiveRecord<SrSolicitacao> AR = new ActiveRecord<>(SrSolicitacao.class);
+    public static final ActiveRecord<SrSolicitacao> AR = new ActiveRecord<>(SrSolicitacao.class);
 
     @Id
     @SequenceGenerator(sequenceName = Catalogs.SIGASR + ".SR_SOLICITACAO_SEQ", name = "srSolicitacaoSeq")
@@ -254,17 +261,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     @Type(type = "yes_no")
     private Boolean fechadoAutomaticamente;
     
-//    @Inject
-//    @Transient
-//    private Correio correio;
-
     public SrSolicitacao() {
 
     }
 
     public class SrTarefa {
-        public SrAcao acao;
-        public SrConfiguracao conf;
+        private SrAcao acao;
+        private SrConfiguracao conf;
 
         public SrTarefa() {
 
@@ -342,27 +345,27 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     @Override
     public void setSigla(String sigla) {
-        sigla = sigla.trim().toUpperCase();
+        String siglaUpper = sigla.trim().toUpperCase();
         Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
         for (Object ou : AR.all().fetch()) {
             CpOrgaoUsuario cpOu = (CpOrgaoUsuario) ou;
             mapAcronimo.put(cpOu.getAcronimoOrgaoUsu(), cpOu);
         }
-        String acronimos = "";
+        StringBuilder acronimos = new StringBuilder();
         for (String s : mapAcronimo.keySet()) {
-            acronimos += "|" + s;
+            acronimos.append("|" + s);
         }
-        final Pattern p = Pattern.compile("^([A-Za-z0-9]{2}" + acronimos + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
-        final Matcher m = p.matcher(sigla);
+        final Pattern p = Pattern.compile("^([A-Za-z0-9]{2}" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
+        final Matcher m = p.matcher(siglaUpper);
 
         if (m.find()) {
 
             if (m.group(1) != null) {
                 try {
-                    CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-                    orgaoUsuario.setSiglaOrgaoUsu(m.group(1));
-                    orgaoUsuario = (CpOrgaoUsuario) AR.em().createQuery("from CpOrgaoUsuario where acronimoOrgaoUsu = '" + m.group(1) + "'").getSingleResult();
-                    this.setOrgaoUsuario(orgaoUsuario);
+                    CpOrgaoUsuario orgao = new CpOrgaoUsuario();
+                    orgao.setSiglaOrgaoUsu(m.group(1));
+                    orgao = (CpOrgaoUsuario) AR.em().createQuery("from CpOrgaoUsuario where acronimoOrgaoUsu = '" + m.group(1) + "'").getSingleResult();
+                    this.setOrgaoUsuario(orgao);
                 } catch (final Exception ce) {
 
                 }
@@ -392,19 +395,16 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             if (isFilha())
                 return getSolicitacaoPai().getDescricao();
             else
-                return "Descrição não informada";
+                return "Descri��o n�o informada";
         } else
             return getDescrSolicitacao();
     }
 
     public List<SrAtributoSolicitacao> getMeuAtributoSolicitacaoSet() {
-        if (meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.size() == 0) {
-            if (isFilha())
-                return getSolicitacaoPai().getMeuAtributoSolicitacaoSet();
+        if ((meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.isEmpty()) && isFilha()) {
+            return getSolicitacaoPai().getMeuAtributoSolicitacaoSet();
         }
-
         return meuAtributoSolicitacaoSet;
-
     }
 
     public void setMeuAtributoSolicitacaoSet(List<SrAtributoSolicitacao> meuAtributoSolicitacaoSet) {
@@ -448,9 +448,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         else
             query += " and numSequencia = " + getNumSequencia();
 
-        SrSolicitacao sol = (SrSolicitacao) AR.em().createQuery(query).getSingleResult();
-
-        return sol;
+        return (SrSolicitacao) AR.em().createQuery(query).getSingleResult();
     }
 
     @Override
@@ -482,12 +480,12 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             return;
         }
 
-        String numString = getNumSolicitacao().toString();
-
+        StringBuilder numString = new StringBuilder();
+        numString.append(getNumSolicitacao().toString());
         while (numString.length() < 5)
-            numString = "0" + numString;
+            numString.insert(0, "0");
 
-        codigo = getOrgaoUsuario().getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao() + "/" + numString;
+        codigo = getOrgaoUsuario().getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao() + "/" + numString.toString();
     }
 
     public List<SrAtributoSolicitacao> getAtributoSolicitacaoSet() {
@@ -507,15 +505,15 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public String getAtributosString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (SrAtributoSolicitacao att : getAtributoSolicitacaoSet()) {
             if (att.getValorAtributoSolicitacao() != null)
-                s += att.getAtributo().getNomeAtributo() + ": " + att.getValorAtributoSolicitacao() + ". ";
+                s.append(att.getAtributo().getNomeAtributo() + ": " + att.getValorAtributoSolicitacao() + ". ");
         }
-        return s;
+        return s.toString();
     }
 
-    // Edson: Necess�rio porque nao h� binder para arquivo
+    // Edson: Necess�rio porque nao h� binder para arquivo
     public void setArquivo(File file) {
         this.arquivo = SrArquivo.newInstance(file);
     }
@@ -548,7 +546,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public String getDtRegDDMMYYYYHHMM() {
         if (getDtReg() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY_HH_MM);
             return df.format(getDtReg());
         }
         return "";
@@ -556,7 +554,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public String getDtRegDDMMYYYY() {
         if (getDtReg() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
             return df.format(getDtReg());
         }
         return "";
@@ -564,7 +562,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public String getDtRegHHMM() {
         if (getDtReg() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+            final SimpleDateFormat df = new SimpleDateFormat(HH_MM);
             return df.format(getDtReg());
         }
         return "";
@@ -679,7 +677,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCanceladas, Long tipoMov, boolean ordemCrescente, boolean todoOContexto, boolean apenasPrincipais, boolean inversoJPA,
             List<Long> tiposPrincipais) {
 
-        TreeSet<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(new SrMovimentacaoComparator(ordemCrescente));
+        Set<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(new SrMovimentacaoComparator(ordemCrescente));
 
         Set<SrSolicitacao> solsAConsiderar = new LinkedHashSet<SrSolicitacao>();
         if (todoOContexto) {
@@ -727,7 +725,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public boolean isFilha() {
-        return (this.getSolicitacaoPai() != null);
+        return this.getSolicitacaoPai() != null;
     }
 
     public Set<SrMovimentacao> getPendenciasEmAberto() {
@@ -743,8 +741,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     // Edson: ver comentario abaixo, em getTiposAtributoAssociados()
-    public HashMap<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados() throws Exception {
-        HashMap<Long, Boolean> map = new HashMap<Long, Boolean>();
+    public Map<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados() throws Exception {
+        Map<Long, Boolean> map = new HashMap<Long, Boolean>();
         getAtributoAssociados(map);
         return map;
     }
@@ -756,7 +754,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     // Edson: isso esta esquisito. A funcao esta praticamente com dois retornos.
     // Talvez ficasse melhor se o SrAtributo ja tivesse a informacao sobre
     // a obrigatoriedade dele
-    private List<SrAtributo> getAtributoAssociados(HashMap<Long, Boolean> map) throws Exception {
+    private List<SrAtributo> getAtributoAssociados(Map<Long, Boolean> map) throws Exception {
         List<SrAtributo> listaFinal = new ArrayList<SrAtributo>();
 
         SrConfiguracao confFiltro = new SrConfiguracao();
@@ -801,12 +799,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public HashMap<Long, String> getAtributoSolicitacaoMap() {
-        HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para
-                                                                       // manter
-                                                                       // a
-                                                                       // ordem
-                                                                       // de
-                                                                       // insercao
+        HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para manter a ordem de insercao
         if (meuAtributoSolicitacaoSet != null)
             for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
                 map.put(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao());
@@ -815,7 +808,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     private Set<SrSolicitacao> getSolicitacaoFilhaSet() {
-        TreeSet<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(new Comparator<SrSolicitacao>() {
+        Set<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(new Comparator<SrSolicitacao>() {
             @Override
             public int compare(SrSolicitacao s1, SrSolicitacao s2) {
                 return s1.getNumSequencia().compareTo(s2.getNumSequencia());
@@ -842,11 +835,11 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public boolean isPai() {
-        return getSolicitacaoFilhaSet() != null && getSolicitacaoFilhaSet().size() > 0;
+        return getSolicitacaoFilhaSet() != null && !getSolicitacaoFilhaSet().isEmpty();
     }
 
     public Set<SrMarca> getMarcaSet() {
-        TreeSet<SrMarca> listaCompleta = new TreeSet<SrMarca>();
+        Set<SrMarca> listaCompleta = new TreeSet<SrMarca>();
         if (getSolicitacaoInicial() != null)
             for (SrSolicitacao sol : getHistoricoSolicitacao())
                 if (sol.getMeuMarcaSet() != null)
@@ -895,7 +888,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public boolean isEmAtendimento() {
-        long idsTpsMovs[] = { TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO, TIPO_MOVIMENTACAO_REABERTURA };
+        long[] idsTpsMovs = { TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO, TIPO_MOVIMENTACAO_REABERTURA };
         return sofreuMov(idsTpsMovs, TIPO_MOVIMENTACAO_FECHAMENTO) && !isCancelado() && !isJuntada();
     }
 
@@ -905,7 +898,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public boolean isAFechar() {
         Set<SrSolicitacao> filhas = getSolicitacaoFilhaSet();
-        if (filhas.size() == 0)
+        if (filhas.isEmpty())
             return false;
         for (SrSolicitacao filha : filhas) {
             if (!filha.isFechado() && !filha.isCancelado())
@@ -948,18 +941,20 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             ultMovDoPai = this.getSolicitacaoPai().getUltimaMovimentacao();
         if (isRascunho())
             return foiCadastradaPor(pess, lota) || foiSolicitadaPor(pess, lota);
-        return (ultMov != null && ((ultMov.getAtendente() != null && pess != null && ultMov.getAtendente().equivale(pess)) || (ultMov.getLotaAtendente() != null && ultMov.getLotaAtendente().equivale(lota))))
+        return (ultMov != null && ((ultMov.getAtendente() != null && pess != null && ultMov.getAtendente().equivale(pess)) || (ultMov.getLotaAtendente() != null && ultMov.getLotaAtendente().equivale(
+                lota))))
 
-        || (ultMovDoPai != null && ((ultMovDoPai.getAtendente() != null && ultMovDoPai.getAtendente().equivale(pess)) || (ultMovDoPai.getLotaAtendente() != null && ultMovDoPai.getLotaAtendente().equivale(lota))));
+                || (ultMovDoPai != null && ((ultMovDoPai.getAtendente() != null && ultMovDoPai.getAtendente().equivale(pess)) || (ultMovDoPai.getLotaAtendente() != null && ultMovDoPai
+                        .getLotaAtendente().equivale(lota))));
 
     }
 
     public boolean foiSolicitadaPor(DpPessoa pess, DpLotacao lota) {
-        return (getSolicitante().equivale(pess) || getLotaSolicitante().equivale(lota));
+        return getSolicitante().equivale(pess) || getLotaSolicitante().equivale(lota);
     }
 
     public boolean foiCadastradaPor(DpPessoa pess, DpLotacao lota) {
-        return (getCadastrante().equivale(pess) || (getLotaTitular() != null && getLotaTitular().equivale(lota)));
+        return getCadastrante().equivale(pess) || (getLotaTitular() != null && getLotaTitular().equivale(lota));
     }
 
     public boolean isParteDeArvore() {
@@ -975,14 +970,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public boolean temArquivosAnexos() {
-        return getArquivoAnexoNaCriacao() != null || getMovimentacoesAnexacao().size() > 0;
+        return getArquivoAnexoNaCriacao() != null || !getMovimentacoesAnexacao().isEmpty();
     }
 
     public SrArquivo getArquivoAnexoNaCriacao() {
         if (getSolicitacaoInicial() != null)
             for (SrSolicitacao sol : getHistoricoSolicitacao())
                 if (sol.getArquivo() != null)
-
                     return sol.getArquivo();
         return null;
     }
@@ -1055,7 +1049,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public boolean podeAnexarArquivo(DpPessoa pess, DpLotacao lota) {
-        return (isEmAtendimento() || isPendente() || isRascunho());
+        return isEmAtendimento() || isPendente() || isRascunho();
     }
 
     public boolean podeImprimirTermoAtendimento(DpPessoa pess, DpLotacao lota) {
@@ -1104,7 +1098,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
                 + "		select idPessoa from DpPessoa " + "		where idPessoaIni = " + getSolicitante().getIdPessoaIni() + "))";
         List<SrSolicitacao> listaProvisoria = AR.em().createQuery(queryString).getResultList();
         SrSolicitacao ultima = null;
-        if (listaProvisoria != null && listaProvisoria.size() > 0)
+        if (listaProvisoria != null && !listaProvisoria.isEmpty())
             ultima = listaProvisoria.get(0);
 
         // Tenta buscar a ultima aberta pela lotacao dele
@@ -1112,7 +1106,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             queryString = "from SrSolicitacao sol where sol.idSolicitacao = (" + "	select max(idSolicitacao) from SrSolicitacao " + "	where lotaSolicitante.idLotacao in ("
                     + "		select idLotacao from DpLotacao " + "		where idLotacaoIni = " + getLotaSolicitante().getIdLotacaoIni() + "))";
             listaProvisoria = AR.em().createQuery(queryString).getResultList();
-            if (listaProvisoria != null && listaProvisoria.size() > 0)
+            if (listaProvisoria != null && !listaProvisoria.isEmpty())
                 ultima = listaProvisoria.get(0);
         }
 
@@ -1172,8 +1166,6 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public List<SrAcao> getAcoesDisponiveis() throws Exception {
-        // Map<SrAcao, SrConfiguracao> acoesEAtendentes = getAcoesDisponiveisComAtendente();
-        // return acoesEAtendentes != null ? new ArrayList<SrAcao>(acoesEAtendentes.keySet()) : null;
         List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
         List<SrAcao> acoes = new ArrayList<SrAcao>();
 
@@ -1203,7 +1195,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
                 c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
 
                 List<SrConfiguracao> confs = SrConfiguracao.listar(c, new int[] { SrConfiguracaoBL.ATENDENTE });
-                if (confs.size() > 0)
+                if (!confs.isEmpty())
                     for (SrConfiguracao conf : confs) {
                         tarefa = this.new SrTarefa();
                         tarefa.acao = a;
@@ -1266,7 +1258,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
             @Override
             public boolean add(SrOperacao e) {
-                // Edson: ser� que essas coisas poderiam estar dentro do
+                // Edson: ser� que essas coisas poderiam estar dentro do
                 // SrOperacao?
                 if (e.params == null)
                     e.params = new HashMap<String, Object>();
@@ -1283,32 +1275,32 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         operacoes.add(new SrOperacao("pencil", "Editar", podeEditar(pess, lota), "Application.editar"));
 
-        operacoes.add(new SrOperacao("table_relationship", "Vincular", podeVincular(pess, lota), "vincular", "modal=true"));
+        operacoes.add(new SrOperacao("table_relationship", "Vincular", podeVincular(pess, lota), "vincular", MODAL_TRUE));
 
-        operacoes.add(new SrOperacao("arrow_divide", "Escalonar", podeEscalonar(pess, lota), "escalonar", "modal=true"));
+        operacoes.add(new SrOperacao("arrow_divide", "Escalonar", podeEscalonar(pess, lota), "escalonar", MODAL_TRUE));
 
-        operacoes.add(new SrOperacao("arrow_join", "Juntar", podeJuntar(pess, lota), "juntar", "modal=true"));
+        operacoes.add(new SrOperacao("arrow_join", "Juntar", podeJuntar(pess, lota), "juntar", MODAL_TRUE));
 
-        operacoes.add(new SrOperacao("arrow_out", "Desentranhar", podeDesentranhar(pess, lota), "desentranhar", "modal=true"));
+        operacoes.add(new SrOperacao("arrow_out", "Desentranhar", podeDesentranhar(pess, lota), "desentranhar", MODAL_TRUE));
 
-        operacoes.add(new SrOperacao("text_list_numbers", "Incluir em Lista", podeIncluirEmLista(pess, lota), "incluirEmLista", "modal=true"));
+        operacoes.add(new SrOperacao("text_list_numbers", "Incluir em Lista", podeIncluirEmLista(pess, lota), "incluirEmLista", MODAL_TRUE));
 
-        operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(pess, lota), "fechar", "modal=true"));
+        operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(pess, lota), "fechar", MODAL_TRUE));
 
-        operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", "modal=true"));
+        operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));
 
-        operacoes.add(new SrOperacao("cross", "Cancelar Solicitação", podeCancelar(pess, lota), "Application.cancelar"));
+        operacoes.add(new SrOperacao("cross", "Cancelar Solicita��o", podeCancelar(pess, lota), "Application.cancelar"));
 
         operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(pess, lota), "Application.reabrir"));
 
-        operacoes.add(new SrOperacao("clock_pause", "Incluir Pendência", podeDeixarPendente(pess, lota), "pendencia", "modal=true"));
+        operacoes.add(new SrOperacao("clock_pause", "Incluir Pend�ncia", podeDeixarPendente(pess, lota), "pendencia", MODAL_TRUE));
 
         /*
          * operacoes.add(new SrOperacao("clock_edit", "Alterar Prazo", podeAlterarPrazo(lotaTitular, titular), "alterarPrazo", "modal=true"));
          */
-        operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicitação?", null, "", ""));
+        operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicita��o?", null, "", ""));
 
-        operacoes.add(new SrOperacao("attach", "Anexar Arquivo", podeAnexarArquivo(pess, lota), "anexarArquivo", "modal=true"));
+        operacoes.add(new SrOperacao("attach", "Anexar Arquivo", podeAnexarArquivo(pess, lota), "anexarArquivo", MODAL_TRUE));
 
         operacoes.add(new SrOperacao("printer", "Termo de Atendimento", podeImprimirTermoAtendimento(pess, lota), "Application.termoAtendimento", "popup=true"));
 
@@ -1328,6 +1320,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     @SuppressWarnings("unused")
+    @Override
     public void salvar() throws Exception {
 
         checarEPreencherCampos();
@@ -1357,8 +1350,10 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
             incluirEmListasAutomaticas();
 
-//            if (!isEditado() && getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA_FECHAMENTO)
-//                this.getCorreio().notificarAbertura(this);
+             if (!isEditado() && getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA_FECHAMENTO)
+            	 CorreioHolder
+            	 	.get()
+            	 	.notificarAbertura(this);
         } else
             atualizarMarcas();
     }
@@ -1410,18 +1405,22 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             List<SrConfiguracao> confs = SrConfiguracao.listar(c);
             for (SrConfiguracao conf : confs) {
                 if (conf.getAcordo() != null) {
-                    SrAcordo acordoAtual = ((SrAcordo) SrAcordo.AR.findById(conf.getAcordo().getIdAcordo())).getAcordoAtual();
-                    if (acordoAtual != null && !getAcordos().contains(acordoAtual))
-                        getAcordos().add(acordoAtual);
+                    adicionarAcordoAtual(conf);
                 }
             }
         }
     }
 
+    private void adicionarAcordoAtual(SrConfiguracao conf) throws Exception {
+        SrAcordo acordoAtual = SrAcordo.AR.findById(conf.getAcordo().getIdAcordo()).getAcordoAtual();
+        if (acordoAtual != null && !getAcordos().contains(acordoAtual))
+            getAcordos().add(acordoAtual);
+    }
+
     private void checarEPreencherCampos() throws Exception {
 
         if (getCadastrante() == null)
-            throw new Exception("Cadastrante não pode ser nulo");
+            throw new Exception("Cadastrante n�o pode ser nulo");
 
         if (getDtReg() == null)
             setDtReg(new Date());
@@ -1429,7 +1428,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         if (getArquivo() != null) {
             double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
             if (lenght > 2)
-                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) � maior que o m�ximo permitido (2MB)");
+                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) � maior que o m�ximo permitido (2MB)");
         }
 
         if (getLotaCadastrante() == null)
@@ -1455,14 +1454,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         if (getOrgaoUsuario() == null)
             setOrgaoUsuario(getLotaSolicitante().getOrgaoUsuario());
 
-        if (getNumSolicitacao() == null)
-            // DB1: Verifica se é uma Solicitação Filha, pois caso seja não
-            // deve atualizar o número da solicitação, caso contrário não
-            // funcionará o filtro por código para essa filha
-            if (!isRascunho() && !isFilha()) {
-                setNumSolicitacao(getProximoNumero());
-                atualizarCodigo();
-            }
+        if (getNumSolicitacao() == null && !isRascunho() && !isFilha()) {
+            // DB1: Verifica se � uma Solicita��o Filha, pois caso seja n�o
+            // deve atualizar o n�mero da solicita��o, caso contr�rio n�o
+            // funcionar� o filtro por c�digo para essa filha
+            setNumSolicitacao(getProximoNumero());
+            atualizarCodigo();
+        }
 
         if (getGravidade() == null)
             setGravidade(SrGravidade.NORMAL);
@@ -1475,7 +1473,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         // só valida o atendente caso não seja rascunho
         if (!isRascunho() && getDesignacao() == null)
-            throw new Exception("Não foi encontrado nenhum atendente designado " + "para esta solicitação. Sugestão: alterar item de " + "configuração e/ou ação");
+            throw new Exception("N�o foi encontrado nenhum atendente designado " + "para esta solicita��o. Sugest�o: alterar item de " + "configura��o e/ou a��o");
 
         if (isFilha()) {
             if (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty())
@@ -1490,11 +1488,11 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void desfazerUltimaMovimentacao(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (!podeDesfazerMovimentacao(cadastrante, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
 
         SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
 
-        // tratamento pois pode ter retorno nulo do método
+        // tratamento pois pode ter retorno nulo do m�todo
         // getUltimaMovimentacaoCancelave()
         if (movimentacao != null) {
 
@@ -1579,7 +1577,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         Set<SrMovimentacao> movs = getMovimentacaoSetOrdemCrescente();
 
-        if (movs != null && movs.size() > 0) {
+        if (movs != null && !movs.isEmpty()) {
             Long marcador = 0L;
             SrMovimentacao movMarca = null;
 
@@ -1613,9 +1611,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
                     marcador = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
                     movMarca = mov;
                 }
-                if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
-                    if (mov.getDtFimMov() == null || mov.getDtFimMov().after(new Date()))
-                        pendencias.add(mov);
+                if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA && (mov.getDtFimMov() == null || mov.getDtFimMov().after(new Date()))) {
+                    pendencias.add(mov);
                 }
 
                 if (t == TIPO_MOVIMENTACAO_ANDAMENTO || t == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO) {
@@ -1636,7 +1633,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             if (marcador != 0L)
                 acrescentarMarca(set, marcador, movMarca.getDtIniMov(), null, movMarca.getAtendente(), movMarca.getLotaAtendente());
 
-            if (pendencias.size() > 0) {
+            if (!pendencias.isEmpty()) {
                 SrMovimentacao ultimaPendencia = pendencias.get(pendencias.size() - 1);
                 Date dtFimPendenciaMaisLonge = null;
                 for (SrMovimentacao pendencia : pendencias) {
@@ -1646,7 +1643,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
                 if (isRascunho())
                     acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, ultimaPendencia.getDtIniMov(), dtFimPendenciaMaisLonge, getCadastrante(), getLotaCadastrante());
                 else
-                    acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, ultimaPendencia.getDtIniMov(), dtFimPendenciaMaisLonge, ultimaPendencia.getAtendente(), ultimaPendencia.getLotaAtendente());
+                    acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_PENDENTE, ultimaPendencia.getDtIniMov(), dtFimPendenciaMaisLonge, ultimaPendencia.getAtendente(),
+                            ultimaPendencia.getLotaAtendente());
             }
 
             if (!isFechado() && !isCancelado()) {
@@ -1828,9 +1826,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         for (SrLista l : SrLista.listar(false)) {
             SrLista atual = l.getListaAtual();
-            if (atual.podeIncluir(lotaTitular, cadastrante))
-                if (!listaFinal.contains(atual))
-                    listaFinal.add(atual);
+            if (atual.podeIncluir(lotaTitular, cadastrante) && !listaFinal.contains(atual))
+                listaFinal.add(atual);
         }
         listaFinal.removeAll(getListasAssociadas());
         Collections.sort(listaFinal, new Comparator<SrLista>() {
@@ -1857,14 +1854,14 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         // vincula��es partindo desta solicita��o
         for (SrMovimentacao mov : getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
-            if (mov.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_VINCULACAO)
-                if (mov.getSolicitacaoReferencia() != null)
-                    solVinculadas.add(mov.getSolicitacaoReferencia());
+            if (mov.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_VINCULACAO && mov.getSolicitacaoReferencia() != null)
+                solVinculadas.add(mov.getSolicitacaoReferencia());
 
         // vincula��es partindo de outra solicita��o referenciando esta
         for (SrMovimentacao mov : getMovimentacaoReferenciaSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
             if (this.equals(mov.getSolicitacaoReferencia()))
                 solVinculadas.add(mov.getSolicitacao());
+
         return solVinculadas;
     }
 
@@ -1878,7 +1875,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public boolean isEmLista() {
-        return getListasAssociadas().size() > 0;
+        return !getListasAssociadas().isEmpty();
     }
 
     public boolean isEmListaPertencenteA(DpLotacao lota) {
@@ -1903,16 +1900,16 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (lista == null)
-            throw new IllegalArgumentException("Lista não informada");
+            throw new IllegalArgumentException("Lista n�o informada");
 
         if (isEmLista(lista))
-            throw new IllegalArgumentException("Lista " + lista.getNomeLista() + " já contém a solicitação " + getCodigo());
+            throw new IllegalArgumentException("Lista " + lista.getNomeLista() + " j� cont�m a solicita��o " + getCodigo());
 
         SrMovimentacao mov = new SrMovimentacao();
         mov.setCadastrante(pess);
         mov.setLotaCadastrante(lota);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA));
-        mov.setDescrMovimentacao("Inclusão na lista " + lista.getNomeLista());
+        mov.setDescrMovimentacao("Inclus�o na lista " + lista.getNomeLista());
         mov.setLista(lista);
         mov.setSolicitacao(this);
         mov.salvarAtualizandoSolicitacao();
@@ -1922,13 +1919,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void retirarDeLista(SrLista lista, DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (lista == null)
-            throw new IllegalArgumentException("Lista não informada");
+            throw new IllegalArgumentException("Lista n�o informada");
 
         SrMovimentacao mov = new SrMovimentacao();
         mov.setCadastrante(cadastrante);
         mov.setLotaCadastrante(lotaCadastrante);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA));
-        mov.setDescrMovimentacao("Cancelamento de InclusÃ£o em Lista");
+        mov.setDescrMovimentacao("Cancelamento de Inclus�o em Lista");
         mov.setSolicitacao(this);
         mov.setLista(lista);
         mov.salvarAtualizandoSolicitacao();
@@ -1948,10 +1945,10 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo) throws Exception {
 
         if (isPai() && !isAFechar())
-            throw new Exception("Operação não permitida. Necessário fechar toda solicitação " + "filha criada partir dessa que deseja fechar.");
+            throw new Exception("Opera��o n�o permitida. Necess�rio fechar toda solicita��o " + "filha criada partir dessa que deseja fechar.");
 
         if ((cadastrante != null) && !podeFechar(cadastrante, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
 
         SrMovimentacao mov = new SrMovimentacao(this);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_FECHAMENTO));
@@ -1961,7 +1958,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
         if (podeFecharPaiAutomatico())
-            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicitação fechada automaticamente");
+            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicita��o fechada automaticamente");
 
         /*
          * if (temPesquisaSatisfacao()) enviarPesquisa();
@@ -1970,15 +1967,16 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void enviarPesquisa() throws Exception {
         // Implementar
-//        this.getCorreio().pesquisaSatisfacao(this);
+    	CorreioHolder
+    		.get()
+    		.pesquisaSatisfacao(this);
     }
 
     public void responderPesquisa(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, Map<Long, String> respostaMap) throws Exception {
         if (!podeResponderPesquisa(titular, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
-        // movimentacao.pesquisa = this.getPesquisaDesignada();
-        movimentacao.setDescrMovimentacao("Avaliação realizada.");
+        movimentacao.setDescrMovimentacao("Avalia��o realizada.");
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_AVALIACAO));
         movimentacao.setRespostaMap(respostaMap);
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
@@ -1992,7 +1990,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void reabrir(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (!podeReabrir(titular, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
         reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
         SrMovimentacao mov = new SrMovimentacao(this);
@@ -2003,7 +2001,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     private void reInserirListasDePrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         for (SrMovimentacao mov : getMovimentacaoSet()) {
-            if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO || mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO)
+            if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
+                    || mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO)
                 break;
 
             if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA)
@@ -2015,16 +2014,16 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public void deixarPendente(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrTipoMotivoPendencia motivo, String calendario, String horario,
             String detalheMotivo) throws Exception {
         if (!podeDeixarPendente(titular, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
 
-        if (calendario != null && !calendario.equals("")) {
+        if (calendario != null && !"".equals(calendario)) {
             DateTime dateTime = null;
-            if (horario != null && !horario.equals("")) {
-                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+            if (horario != null && !"".equals(horario)) {
+                DateTimeFormatter formatter = DateTimeFormat.forPattern(DD_MM_YYYY_HH_MM);
                 dateTime = new DateTime(formatter.parseDateTime(calendario + " " + horario));
             } else {
-                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+                DateTimeFormatter formatter = DateTimeFormat.forPattern(DD_MM_YYYY);
                 dateTime = new DateTime(formatter.parseDateTime(calendario));
             }
             if (dateTime != null)
@@ -2034,7 +2033,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA));
         movimentacao.setMotivoPendencia(motivo);
         movimentacao.setDescrMovimentacao(motivo.getDescrTipoMotivoPendencia());
-        if (detalheMotivo != null && !detalheMotivo.trim().equals(""))
+        if (detalheMotivo != null && !"".equals(detalheMotivo.trim()))
             movimentacao.setDescrMovimentacao(movimentacao.getDescrMovimentacao() + " | " + detalheMotivo);
         if (movimentacao.getDtAgenda() != null)
             movimentacao.setDescrMovimentacao(movimentacao.getDescrMovimentacao() + " | Fim previsto: " + movimentacao.getDtAgendaDDMMYYHHMM());
@@ -2043,11 +2042,11 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void alterarPrazo(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo, String calendario, String horario) throws Exception {
         if (!podeAlterarPrazo(titular, lotaTitular))
-            throw new Exception("Opera��o n�o permitida");
+            throw new Exception("Opera��o n�o permitida");
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         DateTime datetime = new DateTime();
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
-        if (!calendario.equals("")) {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(DD_MM_YYYY_HH_MM);
+        if (!"".equals(calendario)) {
             datetime = new DateTime(formatter.parseDateTime(calendario + " " + horario));
             movimentacao.setDtAgenda(datetime.toDate());
         }
@@ -2059,12 +2058,12 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void terminarPendencia(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String descricao, Long idMovimentacao) throws Exception {
         if (!podeTerminarPendencia(titular, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA));
 
         // Edson: eh necessario setar a finalizadora na finalizada antes de
-        // salvar() a finalizadora, pq se n�o, ao atualizarMarcas(), vai
+        // salvar() a finalizadora, pq se n�o, ao atualizarMarcas(), vai
         // parecer que a pendencia nao foi finalizada, atrapalhando calculos
         // de prazo
         SrMovimentacao movFinalizada = SrMovimentacao.AR.findById(idMovimentacao);
@@ -2078,7 +2077,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void cancelar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (!podeCancelar(titular, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO));
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
@@ -2090,13 +2089,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void juntar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
         if ((cadastrante != null) && !podeJuntar(titular, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
         if (solRecebeJuntada.equivale(this))
-            throw new Exception("Não e possivel juntar uma solicitação a si mesma.");
+            throw new Exception("N�o � possivel juntar uma solicita��o a si mesma.");
         if (solRecebeJuntada.isJuntada() && solRecebeJuntada.getSolicitacaoPrincipal().equivale(this))
-            throw new Exception("Não e possivel realizar juntada circular.");
+            throw new Exception("N�o e possivel realizar juntada circular.");
         if (solRecebeJuntada.isFilha() && solRecebeJuntada.getSolicitacaoPai().equivale(this))
-            throw new Exception("Não e possivel juntar uma solicitação a uma das suas filhas. Favor realizar o processo inverso.");
+            throw new Exception("N�o e possivel juntar uma solicita��o a uma das suas filhas. Favor realizar o processo inverso.");
 
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_JUNTADA));
@@ -2107,7 +2106,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void desentranhar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String justificativa) throws Exception {
         if (!podeDesentranhar(titular, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO));
         movimentacao.setDescrMovimentacao(justificativa);
@@ -2121,9 +2120,9 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public void vincular(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao solRecebeVinculo, String justificativa) throws Exception {
         if ((cadastrante != null) && !podeVincular(titular, lotaTitular))
-            throw new Exception("Operação não permitida");
+            throw new Exception(OPERACAO_NAO_PERMITIDA);
         if (solRecebeVinculo.equivale(this))
-            throw new Exception("Não e possivel vincular uma solicita�ao a si mesma.");
+            throw new Exception("N�o e possivel vincular uma solicita��o a si mesma.");
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_VINCULACAO));
         movimentacao.setSolicitacaoReferencia(solRecebeVinculo);
@@ -2160,7 +2159,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public String getDtOrigemDDMMYYYYHHMM() {
         if (getDtOrigem() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY_HH_MM);
             return df.format(getDtOrigem());
         }
         return "";
@@ -2168,7 +2167,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public String getDtOrigemHHMM() {
         if (getDtOrigem() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+            final SimpleDateFormat df = new SimpleDateFormat(HH_MM);
             return df.format(getDtOrigem());
         }
         return "";
@@ -2176,7 +2175,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public String getDtOrigemDDMMYYYY() {
         if (getDtOrigem() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
             return df.format(getDtOrigem());
         }
         return "";
@@ -2192,7 +2191,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public void setDtOrigemString(String stringDtMeioContato) {
-        DateTimeFormatter formatter = forPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formatter = forPattern(DD_MM_YYYY_HH_MM);
         if (stringDtMeioContato != null && !stringDtMeioContato.isEmpty() && stringDtMeioContato.contains("/") && stringDtMeioContato.contains(":"))
             this.setDtOrigem(new DateTime(formatter.parseDateTime(stringDtMeioContato)).toDate());
     }
@@ -2223,7 +2222,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public Date getDtInicioAtendimento() {
         for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente())
-            if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO || mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO)
+            if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO
+                    || mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO)
                 return mov.getDtIniMov();
         return null;
     }
@@ -2291,7 +2291,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     private Date getDtPrazoCadastramentoAcordado() {
-        if (getAcordos() == null || getAcordos().size() == 0 || isCancelado())
+        if (getAcordos() == null || getAcordos().isEmpty() || isCancelado())
             return null;
         Long menorTempoAcordado = null;
         for (SrAcordo a : getAcordos()) {
@@ -2305,7 +2305,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     private Date getDtPrazoAtendimentoAcordado() {
-        if (getAcordos() == null || getAcordos().size() == 0 || isCancelado())
+        if (getAcordos() == null || getAcordos().isEmpty() || isCancelado())
             return null;
         Long menorTempoAcordado = null;
         for (SrAcordo a : getAcordos()) {
@@ -2395,7 +2395,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public boolean isAcordosSatisfeitos() {
-        if (getAcordos() == null || getAcordos().size() == 0)
+        if (getAcordos() == null || getAcordos().isEmpty())
             return true;
         for (SrAcordo a : getAcordos()) {
             if (!isAcordoSatisfeito(a))
@@ -2407,10 +2407,10 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public boolean isAcordoSatisfeito(SrAcordo acordo) {
         if (acordo == null)
             return true;
-        acordo = acordo.getAcordoAtual();
-        if (acordo.getAtributoAcordoSet() == null)
+        SrAcordo acordoAtual = acordo.getAcordoAtual();
+        if (acordoAtual.getAtributoAcordoSet() == null)
             return true;
-        for (SrAtributoAcordo pa : acordo.getAtributoAcordoSet()) {
+        for (SrAtributoAcordo pa : acordoAtual.getAtributoAcordoSet()) {
             if (!isAtributoAcordoSatisfeito(pa))
                 return false;
         }
@@ -2423,11 +2423,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             if (valor == null)
                 return true;
             return atributoAcordo.isNaFaixa(valor);
-        } catch (NoSuchMethodException nsme) {
-            return false;
-        } catch (InvocationTargetException ite) {
-            return false;
-        } catch (IllegalAccessException iae) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             return false;
         }
     }
@@ -2855,5 +2851,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public void setRascunho(Boolean rascunho) {
         this.rascunho = rascunho;
     }
-   
+
+	public Destinatario getDestinatarioEmailNotificacao() {
+		return new Destinatario(getSolicitacaoAtual().getSolicitante().getPessoaAtual());
+	}
 }

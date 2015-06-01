@@ -1,146 +1,164 @@
 package br.gov.jfrj.siga.sr.notifiers;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.text.MessageFormat;
 import java.util.List;
 
 import br.com.caelum.vraptor.freemarker.Freemarker;
 import br.com.caelum.vraptor.ioc.Component;
 import br.com.caelum.vraptor.ioc.RequestScoped;
-import br.com.caelum.vraptor.view.LinkToHandler;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.sr.model.SrGestorItem;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
+import br.gov.jfrj.siga.sr.vraptor.SolicitacaoController;
 import freemarker.template.TemplateException;
 
 @Component
 @RequestScoped
 public class Correio {
-    private static final String MOVIMENTACAO_DA_SOLICITACAO = "Movimenta��o da solicita��o ";
-    private static final String EMAIL_ADMINISTRADOR_DO_SIGA = "Administrador do Siga<sigadocs@jfrj.jus.br>";
+	private static final String TEMPLATE_PESQUISA_SATISFACAO = "pesquisaSatisfacao";
+	private static final String TEMPLATE_NOTIFICAR_ATENDENTE = "notificarAtendente";
+	private static final String TEMPLATE_NOTIFICAR_REPLANEJAMENTO_MOVIMENTACAO = "notificarReplanejamentoMovimentacao";
+	private static final String TEMPLATE_NOTIFICAR_CANCELAMENTO_MOVIMENTACAO = "notificarCancelamentoMovimentacao";
+	private static final String TEMPLATE_NOTIFICAR_MOVIMENTACAO = "notificarMovimentacao";
+	private static final String TEMPLATE_NOTIFICAR_ABERTURA = "notificarAbertura";
+	private static final String MOVIMENTACAO_DA_SOLICITACAO = "Movimentação da solicitação ";
 
-    private Freemarker freemarker;
-    private LinkToHandler linkTo;
+	private Freemarker freemarker;
+	private PathBuilder pathBuilder;
 
-    public Correio(Freemarker freemarker, LinkToHandler linkTo) {
-        this.freemarker = freemarker;
-        this.linkTo = linkTo;
-    }
+	public Correio(Freemarker freemarker, PathBuilder urlLogic) {
+		this.freemarker = freemarker;
+		this.pathBuilder = urlLogic;
+	}
 
-    private void enviar(String remetente, String assunto, String conteudo, String... destinatarios) throws Exception {
-        br.gov.jfrj.siga.base.Correio.enviar(remetente, destinatarios, assunto, conteudo);
-    }
+	private String remetentePadrao() {
+		return SigaBaseProperties.getString("servidor.smtp.usuario.remetente");
+	}
 
-    private void enviar(String remetente, String assunto, String conteudo, Object[] destinatarios) throws Exception {
-        br.gov.jfrj.siga.base.Correio.enviar(remetente, (String[]) destinatarios, assunto, conteudo);
-    }
+	public void notificarAtendente(SrMovimentacao movimentacao) {
+		SrSolicitacao solicitacao = movimentacao.getSolicitacao().getSolicitacaoAtual();
+		List<String> recipients = movimentacao.getEmailsNotificacaoAtendende();
 
-    public void notificarAbertura(SrSolicitacao sol) throws Exception {
-        DpPessoa pessoaAtual = sol.getSolicitante().getPessoaAtual();
-        if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
-            return;
+		if (!recipients.isEmpty()) {
+			String assunto = MOVIMENTACAO_DA_SOLICITACAO + solicitacao.getCodigo();
+			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_ATENDENTE, movimentacao, solicitacao);
+			enviar(assunto, conteudo, recipients);
+		}
+	}
 
-        String assunto = "";
-        if (sol.isFilha())
-            assunto = "Escalonamento da solicita��o " + sol.getSolicitacaoPai().getCodigo();
-        else
-            assunto = "Abertura da solicita��o " + sol.getCodigo();
+	public void notificarReplanejamentoMovimentacao(SrMovimentacao movimentacao) {
+		SrSolicitacao solicitacao = movimentacao.getSolicitacao();
+		List<String> recipients = movimentacao.getEmailsNotificacaoReplanejamento();
 
-        String conteudo = getConteudoComSolicitacao(sol);
+		if (!recipients.isEmpty()) {
+			String assunto = MOVIMENTACAO_DA_SOLICITACAO + solicitacao.getCodigo();
+			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_REPLANEJAMENTO_MOVIMENTACAO, movimentacao, solicitacao);
+			enviar(assunto, conteudo, recipients);
+		}
+	}
 
-        enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, pessoaAtual.getEmailPessoa());
-    }
+	public void notificarCancelamentoMovimentacao(SrMovimentacao movimentacao) {
+		SrSolicitacao solicitacao = movimentacao.getSolicitacao().getSolicitacaoAtual();
+		Destinatario destinatario = solicitacao.getDestinatarioEmailNotificacao();
 
-    public void notificarMovimentacao(SrMovimentacao movimentacao) throws Exception {
-        SrSolicitacao sol = movimentacao.getSolicitacao().getSolicitacaoAtual();
-        DpPessoa pessoaAtual = sol.getSolicitante().getPessoaAtual();
-        if (pessoaAtual == null || pessoaAtual.getEmailPessoa() == null)
-            return;
-        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
-        String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
+		if (destinatario.possuiEmailCadastrado()) {
+			String assunto = MOVIMENTACAO_DA_SOLICITACAO + solicitacao.getCodigo();
+			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_CANCELAMENTO_MOVIMENTACAO, movimentacao, solicitacao);
+			enviar(assunto, conteudo, destinatario.getEnderecoEmail());
+		}
+	}
 
-        enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, pessoaAtual.getEmailPessoa());
-    }
+	public void notificarAbertura(SrSolicitacao solicitacao) {
+		Destinatario destinatario = solicitacao.getDestinatarioEmailNotificacao();
 
-    public void notificarAtendente(SrMovimentacao movimentacao) throws Exception {
-        SrSolicitacao sol = movimentacao.getSolicitacao().getSolicitacaoAtual();
-        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
-        List<String> recipients = new ArrayList<String>();
-        String email = null;
+		if (destinatario.possuiEmailCadastrado()) {
+			String assunto = solicitacao.isFilha() ? 
+					MessageFormat.format("Escalonamento da solicitação {0}", solicitacao.getSolicitacaoPai().getCodigo()) : 
+					MessageFormat.format("Abertura da solicitação {0}",
+					solicitacao.getCodigo());
 
-        DpPessoa atendenteSolPai = sol.getSolicitacaoPai().getAtendente();
-        if (atendenteSolPai != null) {
-            email = atendenteSolPai.getPessoaAtual().getEmailPessoa();
-            if (email != null)
-                recipients.add(email);
-        } else {
-            DpLotacao lotaAtendenteSolPai = sol.getSolicitacaoPai().getLotaAtendente();
-            if (lotaAtendenteSolPai != null)
-                for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai.getDpPessoaLotadosSet())
-                    if (pessoaDaLotacao.getDataFim() == null) {
-                        email = pessoaDaLotacao.getPessoaAtual().getEmailPessoa();
-                        if (email != null)
-                            recipients.add(email);
-                    }
-        }
+			String conteudo = getConteudoComSolicitacao(TEMPLATE_NOTIFICAR_ABERTURA, solicitacao);
+			enviar(assunto, conteudo, destinatario.getEnderecoEmail());
+		}
+	}
 
-        if (!recipients.isEmpty()) {
-            String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
-            enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, recipients.toArray());
-        }
-    }
+	public void notificarMovimentacao(SrMovimentacao movimentacao) {
+		SrSolicitacao solicitacao = movimentacao.getSolicitacao().getSolicitacaoAtual();
+		Destinatario destinatario = solicitacao.getDestinatarioEmailNotificacao();
 
-    public void notificarReplanejamentoMovimentacao(SrMovimentacao movimentacao) throws Exception {
-        SrSolicitacao sol = movimentacao.getSolicitacao().getSolicitacaoAtual();
-        List<String> recipients = new ArrayList<String>();
-        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
-        for (SrGestorItem gestor : sol.getItemConfiguracao().getGestorSet()) {
-            DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
-            if (pessoaGestorAtual != null && pessoaGestorAtual.getDataFim() == null)
-                if (pessoaGestorAtual.getEmailPessoa() != null)
-                    recipients.add(pessoaGestorAtual.getEmailPessoa());
+		if (destinatario.possuiEmailCadastrado()) {
+			String assunto = MOVIMENTACAO_DA_SOLICITACAO + solicitacao.getCodigo();
+			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_MOVIMENTACAO, movimentacao, solicitacao);
+			enviar(assunto, conteudo, destinatario.getEnderecoEmail());
+		}
+	}
+	
+	private String getConteudoComSolicitacao(String templatePath, SrSolicitacao sol) {
+		try {
+			return freemarker
+					.use(templatePath)
+					.with("sol", sol)
+					.with("link", link(sol))
+					.getContent();
+		} catch (IOException | TemplateException e) {
+			throw novaCorreioException(MessageFormat.format("Erro ao processar template {0}", templatePath), e);
+		}
+	}
+	
+	private String getConteudoComSolicitacaoEMovimentacao(String templatePath, SrMovimentacao movimentacao, SrSolicitacao sol) {
+		try {
+			return freemarker
+					.use(templatePath)
+					.with("sol", sol)
+					.with("movimentacao", movimentacao)
+					.with("link", link(sol))
+					.getContent();
+		} catch (IOException | TemplateException e) {
+			throw novaCorreioException(MessageFormat.format("Erro ao processar template {0}", templatePath), e);
+		}
+	}
 
-            if (gestor.getDpLotacao() != null)
-                for (DpPessoa gestorPessoa : gestor.getDpLotacao().getDpPessoaLotadosSet())
-                    if (gestorPessoa.getPessoaAtual().getDataFim() == null)
-                        if (gestorPessoa.getPessoaAtual().getEmailPessoa() != null)
-                            recipients.add(gestorPessoa.getPessoaAtual().getEmailPessoa());
-        }
-        recipients.add(sol.getSolicitante().getEmailPessoa());
+	private String link(SrSolicitacao solicitacao) {
+		try {
+			pathBuilder
+				.pathToRedirectTo(SolicitacaoController.class)
+				.exibir(solicitacao.getId(), Boolean.TRUE, Boolean.TRUE);
+			
+			return pathBuilder.getFullPath();
+		} catch (Exception e) {
+			throw novaCorreioException("Erro ao processar link na geracao de email", e);
+		}
+	}
+	
+	private void enviar(String assunto, String conteudo, String... destinatarios) {
+		try {
+			br.gov.jfrj.siga.base.Correio.enviar(remetentePadrao(), destinatarios, assunto, new String(), conteudo);
+		} catch (Exception e) {
+			throw novaCorreioException("Erro ao enviar email", e);
+		}
+	}
 
-        if (!recipients.isEmpty()) {
-            String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
-            enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, recipients.toArray());
-        }
-    }
+	private void enviar(String assunto, String conteudo, List<String> destinatarios) {
+		try {
+			br.gov.jfrj.siga.base.Correio.enviar(remetentePadrao(), destinatarios.toArray(new String[destinatarios.size()]), assunto, new String(), conteudo);
+		} catch (Exception e) {
+			throw novaCorreioException("Erro ao enviar email", e);
+		}
+	}
+	
+	private CorreioException novaCorreioException(String message, Exception e)  {
+		e.printStackTrace();
+		return new CorreioException(message, e);
+	}
+	
+	public void pesquisaSatisfacao(SrSolicitacao sol) throws Exception {
+		Destinatario destinatario = sol.getDestinatarioEmailNotificacao();
 
-    public void notificarCancelamentoMovimentacao(SrMovimentacao movimentacao) throws Exception {
-        SrSolicitacao sol = movimentacao.getSolicitacao().getSolicitacaoAtual();
-        DpPessoa solicitanteAtual = sol.getSolicitante().getPessoaAtual();
-        if (solicitanteAtual.getEmailPessoa() == null)
-            return;
-        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
-        String conteudo = getConteudoComSolicitacaoEMovimentacao(movimentacao, sol);
-        enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, solicitanteAtual.getEmailPessoa());
-    }
-
-    public void pesquisaSatisfacao(SrSolicitacao sol) throws Exception {
-        SrSolicitacao solAtual = sol.getSolicitacaoAtual();
-        DpPessoa solicitanteAtual = solAtual.getSolicitante().getPessoaAtual();
-        if (solicitanteAtual.getEmailPessoa() == null)
-            return;
-        String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
-        String conteudo = getConteudoComSolicitacao(sol);
-        enviar(EMAIL_ADMINISTRADOR_DO_SIGA, assunto, conteudo, solicitanteAtual.getEmailPessoa());
-    }
-
-    private String getConteudoComSolicitacao(SrSolicitacao sol) throws IOException, TemplateException {
-        return freemarker.use("notificar").with("sol", sol).with("linkTo", linkTo).getContent();
-    }
-
-    private String getConteudoComSolicitacaoEMovimentacao(SrMovimentacao movimentacao, SrSolicitacao sol) throws IOException, TemplateException {
-        return freemarker.use("notificar").with("sol", sol).with("movimentacao", movimentacao).with("linkTo", linkTo).getContent();
-    }
+		if (destinatario.possuiEmailCadastrado()) {
+			String assunto = MOVIMENTACAO_DA_SOLICITACAO + sol.getCodigo();
+			String conteudo = getConteudoComSolicitacao(TEMPLATE_PESQUISA_SATISFACAO, sol);
+			enviar(assunto, conteudo, destinatario.getEnderecoEmail());
+		}
+	}
 }

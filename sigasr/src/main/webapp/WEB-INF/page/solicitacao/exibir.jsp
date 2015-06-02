@@ -150,7 +150,7 @@
                 
                 <tbody>
                 <c:choose>
-                    <c:when test="${movs}">
+                    <c:when test="${movs != null}">
                         <c:forEach items="${movs}" var="movimentacao">
                             <tr <c:if test="${movimentacao.canceladoOuCancelador}"> 
                                     class="disabled"

@@ -657,8 +657,8 @@
 				</form>
 			</div>
 		</div>
-<!-- 		paginas não migradas -->
-<%-- 		<jsp:include page="exibirCronometro.jsp"/> --%>
+		
+ 		<jsp:include page="exibirCronometro.jsp"/>
 		<jsp:include page="exibirPendencias.jsp"/>
 		
 		<%--

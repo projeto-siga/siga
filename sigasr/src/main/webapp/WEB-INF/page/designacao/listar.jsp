@@ -32,9 +32,9 @@
 					$("#checkmostrarDesativados").click(function() {
 						jQuery.blockUI(objBlock);
 						if (document.getElementById('checkmostrarDesativados').checked)
-							location.href = '${linkTo[DesignacaoController].listarDesativados}';
+							location.href = '${linkTo[DesignacaoController].listar}' + '?mostrarDesativados=true';
 						else
-							location.href = '${linkTo[DesignacaoController].listar}';
+							location.href = '${linkTo[DesignacaoController].listar}' + '?mostrarDesativados=false';
 					});
 				});
 			</script>

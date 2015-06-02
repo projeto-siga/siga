@@ -20,15 +20,15 @@
 				<ul>
 <%-- 				<c:if test="${exibirMenuAdministrar}"> --%>
 					<c:if test="${true}">
-						<li><a href="${linkTo[ItemConfiguracaoController].listar[false]}">Item de configura&ccedil;&atilde;o</a></li>
-						<li><a href="${linkTo[AcaoController].listar[false]}">A&ccedil;&atilde;o</a></li>
-						<li><a href="${linkTo[TipoAcaoController].listar[false]}">Tipo de A&ccedil;&atilde;o</a></li>
-						<li><a href="${linkTo[DesignacaoController].listar[false]}">Designa&ccedil;&atilde;o</a></li>
-						<li><a href="${linkTo[AcordoController].listar[false]}">Acordo</a></li>
+						<li><a href="${linkTo[ItemConfiguracaoController].listar}">Item de configura&ccedil;&atilde;o</a></li>
+						<li><a href="${linkTo[AcaoController].listar}">A&ccedil;&atilde;o</a></li>
+						<li><a href="${linkTo[TipoAcaoController].listar}">Tipo de A&ccedil;&atilde;o</a></li>
+						<li><a href="${linkTo[DesignacaoController].listar}">Designa&ccedil;&atilde;o</a></li>
+						<li><a href="${linkTo[AcordoController].listar}">Acordo</a></li>
 						<li><a href="${linkTo[DisponibilidadeController].listar}">Disponibilidade</a></li>
 						<li><a href="${linkTo[EquipeController].listar[false]}">Equipe</a></li>
 						<li><a href="${linkTo[AtributoController].listar[false]}">Atributo</a></li>
-						<li><a href="${linkTo[PesquisaSatisfacaoController].listar[false]}">Pesquisa de Satisfa&ccedil;&atilde;o</a></li> 
+						<li><a href="${linkTo[PesquisaSatisfacaoController].listar}">Pesquisa de Satisfa&ccedil;&atilde;o</a></li> 
 					</c:if>
 <%-- 					<c:if test="${exibirMenuConhecimentos}"> --%>
 					<c:if test="${true}">

@@ -3,19 +3,18 @@
 
 <siga:pagina titulo="Acordos">
 
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<jsp:include page="../main.jsp"></jsp:include>
 
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
-	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
-    <script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
-
-    <jsp:include page="../main.jsp"></jsp:include>
+	<script src="/sigasr/javascripts/moment.js"></script>
     
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
@@ -112,9 +111,9 @@
 			
 		$("#checkmostrarDesativados").click(function() {
 			if (document.getElementById('checkmostrarDesativados').checked)
-				location.href = "${linkTo[AcordoController].listar[true]}";
+				location.href = "${linkTo[AcordoController].listar}"  + '?mostrarDesativados=true';
 			else
-				location.href = "${linkTo[AcordoController].listar[false]}";	
+				location.href = "${linkTo[AcordoController].listar}"  + '?mostrarDesativados=false';	
 		});
 
 		optsAcordo.acordoTable = $('#acordo_table').dataTable({

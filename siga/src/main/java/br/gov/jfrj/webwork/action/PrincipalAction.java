@@ -111,7 +111,7 @@ public class PrincipalAction extends SigaActionSupport {
 			if (matricula != null) {
 				pes = daoPes(param("matricula"));
 				lot = pes.getLotacao();
-				testes = "/testes";
+//				testes = "/testes";
 				incluirMatricula = "&matricula=" + matricula;
 			}else{
 				if (getTitular() != null)

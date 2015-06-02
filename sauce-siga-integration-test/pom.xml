@@ -1,0 +1,300 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<parent>
+		<groupId>siga</groupId>
+		<artifactId>siga-doc</artifactId>
+		<version>1.1</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>sauce-siga-integration-test</artifactId>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.12</version>
+						<configuration>
+					<!--  <systemProperties>
+								<property>
+									<name>webdriver.ie.driver</name>
+									<value>src/test/resources/drivers/Win32/IEDriverServer.exe</value>
+								</property>
+							</systemProperties> -->
+							<suiteXmlFiles>
+								<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+							</suiteXmlFiles>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+				</plugin>
+
+				<!-- Include Sauce Connect plugin -->
+				<plugin>
+					<groupId>com.saucelabs.maven.plugin</groupId>
+					<artifactId>sauce-connect-plugin</artifactId>
+					<version>2.1.3</version>
+					<configuration>
+						<sauceUsername>sigadoc</sauceUsername>
+						<sauceAccessKey>6b7f5b5c-0a1e-4c59-b9b5-e3dba4a198d8</sauceAccessKey>
+					</configuration>
+					<executions>
+						<!-- Start Sauce Connect prior to running the integration tests -->
+						<execution>
+							<id>start-sauceconnect</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>start-sauceconnect</goal>
+							</goals>
+						</execution>
+						<!-- Stop the Sauce Connect process after the integration tests have finished -->
+						<execution>
+							<id>stop-sauceconnect</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop-sauceconnect</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>				
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<activation>
+				<property>
+					<name>server.ip</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>					
+					<plugin>
+						<groupId>org.jolokia</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.10.5</version>
+						<configuration>
+							<dockerHost>https://${server.ip}:2376</dockerHost>
+							<!-- SEM TLS: --> 
+							<!-- <dockerHost>http://${server.ip}:2375</dockerHost> -->
+							<!-- <certPath>C:\Users\${user.name}\.boot2docker\certs\boot2docker-vm</certPath> -->
+							<autoPull>true</autoPull>
+							<images>
+								<image>
+									<name>wnameless/oracle-xe-11g:latest</name>
+									<alias>db.server</alias>
+									<!-- No futuro, apontar p/ o repositório local da sjsrj -->
+									<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
+									<run>
+										<ports>
+											<port>49160:22</port>
+											<port>49161:1521</port>
+											<port>49162:8080</port>
+										</ports>
+										<wait>
+											<url>http://${server.ip}:49162/apex</url>
+											<time>100000</time>
+										</wait>
+									</run>
+								</image>
+								<image>
+									<name>previousnext/mailcatcher:latest</name>
+									<alias>email.server</alias>
+									<!-- No futuro, apontar p/ o repositório local da sjsrj -->
+									<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
+									<run>
+										<ports>
+											<port>49163:1080</port>
+											<port>49164:25</port>
+										</ports>
+										<wait>
+											<url>http://${server.ip}:49163</url>
+											<time>100000</time>
+										</wait>
+									</run>
+								</image>
+								<image>
+									<name>siga/app.server:latest</name>
+									<alias>app.server</alias>
+									<!-- No futuro, apontar p/ o repositório local da sjsrj -->
+									<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
+									<run>
+										<volumes>
+											<from>sigaVolumes</from>
+										</volumes>
+										<links>
+											<link>db.server</link>
+											<link>email.server</link>
+										</links>
+										<env>
+											<flyway_run>auto</flyway_run>
+										</env>
+										<ports>
+											<port>50000:8080</port>
+										</ports>
+										<wait>
+											<url>http://${server.ip}:50000/siga</url>
+											<time>100000</time>
+										</wait>
+										<command>bash -c '/siga/inicializacao.sh'</command>
+									</run>
+								</image>
+								<image>
+									<name>siga/web.server:latest</name>
+									<alias>web.server</alias>
+									<!-- No futuro, apontar p/ o repositório local da sjsrj -->
+									<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
+									<run>
+										<ports>
+											<port>80:80</port>
+										</ports>
+										<links>
+											<link>app.server</link>
+										</links>
+										<command>/usr/sbin/httpd -DFOREGROUND</command>
+										<wait>
+											<url>http://${server.ip}/siga</url>
+											<time>100000</time>
+										</wait>
+									</run>
+								</image>
+								<image>
+									<name>siga/sigavolumes:latest</name>
+									<alias>sigaVolumes</alias>
+									<build>
+										<from>busybox:latest</from>
+										<assembly>
+										   <!-- se não informar o basedir por default ele cria /maven  -->
+										   <!-- até o jboss 5 este é o dir onde se realiza o deploy do siga. 
+										   No jboss 6 isto mudará -->
+										   <basedir>/siga/jboss-eap-5.2/jboss-as/server/sigadoc/deploy</basedir>
+										   <descriptor>src/test/resources/docker-assembly.xml</descriptor>
+										</assembly>
+										<volumes>
+										   <!-- expondo o volume abaixo, quando o app.server mapear volumes-from sigavolumes 
+										   o conteúdo deste diretório fará o override deste diretório no app.server -->
+										   <volume>/siga/jboss-eap-5.2/jboss-as/server/sigadoc/deploy</volume>
+										</volumes>
+										<command>true</command>
+									</build>
+								</image>
+							</images>
+						</configuration>
+
+						<!-- Connect start/stop to pre- and post-integration-test phase, respectively -->
+						<executions>
+							<execution>
+								<id>start</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>build</goal>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+									<goal>remove</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.17</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>2.44.0</version>
+			<scope>test</scope>
+		</dependency>
+<!-- 		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.8.8</version>
+			<scope>test</scope>
+		</dependency> -->
+		<dependency>
+            <groupId>com.saucelabs</groupId>
+            <artifactId>sauce_testng</artifactId>
+            <version>[1.0.0,)</version>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga</artifactId>
+			<version>${siga.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>sigacd</artifactId>
+			<type>war</type>
+			<version>${siga.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>sigaex</artifactId>
+			<type>war</type>
+			<version>${siga.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>sigawf</artifactId>
+			<type>war</type>
+			<version>${siga.version}</version>
+		</dependency>
+	</dependencies>
+	
+	<repositories>
+	   <repository>
+	       <id>saucelabs-repository</id>
+	       <url>http://repository-saucelabs.forge.cloudbees.com/release</url>
+	       <releases>
+	           <enabled>true</enabled>
+	       </releases>
+	       <snapshots>
+	           <enabled>true</enabled>
+	       </snapshots>
+	   </repository>
+	</repositories>
+	<pluginRepositories>
+	    <pluginRepository>
+	       <id>saucelabs-repository</id>
+	       <url>http://repository-saucelabs.forge.cloudbees.com/release</url>
+	       <releases>
+	           <enabled>true</enabled>
+	       </releases>
+	       <snapshots>
+	           <enabled>true</enabled>
+	       </snapshots>
+	   </pluginRepository>
+	</pluginRepositories>	
+</project>

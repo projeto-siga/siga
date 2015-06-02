@@ -558,10 +558,9 @@
 		
 					<div class="gt-form-row gt-width-66">
 						<label>Quando deseja receber notifica&ccedil;&atilde;o dessa solicita&ccedil;&atilde;o por e-mail?</label>
-						<siga:select name="solicitacao.formaAcompanhamento"
-						list="formaAcompanhamentoList"
-						listValue="descrFormaAcompanhamento" listKey="idFormaAcompanhamento"
-						value="${solicitacao.formaAcompanhamento != null ? solicitacao.formaAcompanhamento.idFormaAcompanhamento : ''}" />
+						<siga:select name="solicitacao.formaAcompanhamento" list="formaAcompanhamentoList"
+							listValue="descrFormaAcompanhamento" listKey="idFormaAcompanhamento" isEnum="true"
+							value="${solicitacao.formaAcompanhamento != null ? solicitacao.formaAcompanhamento : ''}" />
 					</div>	
 						
 					<div class="gt-form-table">

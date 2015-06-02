@@ -282,8 +282,8 @@ public class SolicitacaoController extends SrController {
     @Path("/gravar")
     public void gravar(SrSolicitacao solicitacao) throws Exception {
         if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
-        	result.include("solicitacao", solicitacao);
-            validator.onErrorUsePageOf(SolicitacaoController.class).editar(null);
+        	incluirListasEdicaoSolicitacao(solicitacao);
+            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getId());
             
         	return;
         }
@@ -292,6 +292,11 @@ public class SolicitacaoController extends SrController {
         // e est� gerando erro ao persistir a solicita��o
         if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
             solicitacao.setInterlocutor(null);
+        
+        // TODO WO para tratar o caso do Item de Configuração, pois est� serializando um objeto nulo
+        // e est� gerando erro ao persistir a solicita��o
+        if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null)
+            solicitacao.setItemConfiguracao(null);
 
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getId(), todoOContexto(), ocultas());
@@ -299,20 +304,16 @@ public class SolicitacaoController extends SrController {
 
     private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
         if (solicitacao.getSolicitante() == null || solicitacao.getSolicitante().getId() == null) {
-            srValidator.addError("solicitacao.solicitante", "Solicitante n&atilde;o informado");
             validator.add(new ValidationMessage("Solicitante não informado", "solicitacao.solicitante"));
         }
         if (solicitacao.getItemConfiguracao() == null || solicitacao.getItemConfiguracao().getId() == null) {
-            srValidator.addError("solicitacao.itemConfiguracao", "Item n&atilde;o informado");
             validator.add(new ValidationMessage("Item n&atilde;o informado", "solicitacao.itemConfiguracao"));
         }
         if (solicitacao.getAcao() == null || solicitacao.getAcao().getId() == null) {
-            srValidator.addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
             validator.add(new ValidationMessage("A&ccedil&atilde;o n&atilde;o informada", "solicitacao.acao"));
         }
 
         if (solicitacao.getDescrSolicitacao() == null || "".equals(solicitacao.getDescrSolicitacao().trim())) {
-            srValidator.addError("solicitacao.descrSolicitacao", "Descri&ccedil&atilde;o n&atilde;o informada");
             validator.add(new ValidationMessage("Descri&ccedil&atilde;o n&atilde;o informada", "solicitacao.descrSolicitacao"));
         }
 
@@ -321,18 +322,12 @@ public class SolicitacaoController extends SrController {
             // Para evitar NullPointerExcetpion quando nao encontrar no Map
             if (Boolean.TRUE.equals(obrigatorio.get(att.getAtributo().getIdAtributo()))) {
                 if ((att.getValorAtributoSolicitacao() == null || "".equals(att.getValorAtributoSolicitacao().trim()))) {
-                    srValidator.addError("solicitacao.atributoSolicitacaoMap[" + att.getAtributo().getIdAtributo() + "]", att.getAtributo().getNomeAtributo() + " n&atilde;o informado");
                 	validator.add(new ValidationMessage(att.getAtributo().getNomeAtributo() + " n&atilde;o informado", "solicitacao.atributoSolicitacaoMap[" + att.getAtributo().getIdAtributo() + "]"));
                 }
             }
         }
         
-        if (srValidator.hasErrors()) {
-        	enviarErroValidacao();
-        	return false;
-        }
-        else
-        	return true;
+        return !validator.hasErrors();
     }
 
 	public boolean todoOContexto() {
@@ -478,7 +473,6 @@ public class SolicitacaoController extends SrController {
         return listaAtributosAdicao;
     }
 
-    @SuppressWarnings("unchecked")
 	@Path({ "/editar", "/editar/{id}" })
     public void editar(Long id) throws Exception {
         SrSolicitacao solicitacao;
@@ -495,7 +489,13 @@ public class SolicitacaoController extends SrController {
             solicitacao.setDtIniEdicao(new Date());
         solicitacao.atualizarAcordos();
 
-        List<CpComplexo> locais = ContextoPersistencia.em().createQuery("from CpComplexo").getResultList();
+        incluirListasEdicaoSolicitacao(solicitacao);
+    }
+
+	@SuppressWarnings("unchecked")
+	private void incluirListasEdicaoSolicitacao(SrSolicitacao solicitacao)
+			throws Exception {
+		List<CpComplexo> locais = ContextoPersistencia.em().createQuery("from CpComplexo").getResultList();
 
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 
@@ -517,7 +517,7 @@ public class SolicitacaoController extends SrController {
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("itemConfiguracao", solicitacao.getItemConfiguracao());
         result.include("podeUtilizarServicoSigaGC", false);
-    }
+	}
 
     @Path("/retirarDeLista")
     public void retirarDeLista(Long idSolicitacao, Long idLista) throws Exception {

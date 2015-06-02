@@ -295,7 +295,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             int result = 1;
             result = prime * result + getOuterType().hashCode();
             result = prime * result + ((acao == null) ? 0 : acao.hashCode());
-            result = prime * result + ((conf == null) ? 0 : conf.getAtendente().hashCode());
+            result = prime * result + ((conf == null || conf.getAtendente() == null) ? 0 : conf.getAtendente().hashCode());
             return result;
         }
 
@@ -318,7 +318,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             if (conf == null) {
                 if (other.conf != null)
                     return false;
-            } else if (!conf.getAtendente().equals(other.conf.getAtendente()))
+            } else if (conf.getAtendente() != null && !conf.getAtendente().equals(other.conf.getAtendente()))
                 return false;
             return true;
         }
@@ -1145,7 +1145,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     @SuppressWarnings("unchecked")
     public List<CpComplexo> getLocaisDisponiveis() {
         List<CpComplexo> locais = new ArrayList<CpComplexo>();
-        if (getSolicitante() != null)
+        if (getSolicitante() != null && getSolicitante().getId() != null)
             locais = AR.em().createQuery("from CpComplexo where orgaoUsuario.idOrgaoUsu = " + getSolicitante().getOrgaoUsuario().getIdOrgaoUsu()).getResultList();
         return locais;
     }
@@ -1404,7 +1404,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         confSolicitante.setBuscarPorPerfis(true);
         filtrosConf.add(confSolicitante);
 
-        if (getTitular() != null) {
+        if (getTitular() != null && getTitular().getId() != null) {
             SrConfiguracao confTitular = new SrConfiguracao();
             confTitular.setDpPessoa(getTitular());
             confTitular.setLotacao(getLotaTitular());
@@ -1418,13 +1418,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             c.setItemConfiguracaoFiltro(getItemConfiguracao());
             c.setAcaoFiltro(getAcao());
             c.setPrioridade(getPrioridade());
-            if (getDesignacao() != null)
+            if (getDesignacao() != null && getDesignacao().getId() != null)
                 c.setAtendente(getDesignacao().getAtendente());
             c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
 
             List<SrConfiguracao> confs = SrConfiguracao.listar(c);
             for (SrConfiguracao conf : confs) {
-                if (conf.getAcordo() != null) {
+                if (conf.getAcordo() != null && conf.getAcordo().getId() != null) {
                     adicionarAcordoAtual(conf);
                 }
             }
@@ -1451,19 +1451,19 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
                 throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) � maior que o m�ximo permitido (2MB)");
         }
 
-        if (getLotaCadastrante() == null)
+        if (getLotaCadastrante() == null || getLotaCadastrante().getId() == null)
             setLotaCadastrante(getCadastrante().getLotacao());
 
-        if (getTitular() == null)
+        if (getTitular() == null || getTitular().getId() == null)
             setTitular(getCadastrante());
 
-        if (getLotaTitular() == null)
+        if (getLotaTitular() == null || getLotaTitular().getId() == null)
             setLotaTitular(getTitular().getLotacao());
 
-        if (getSolicitante() == null)
+        if (getSolicitante() == null || getSolicitante().getId() == null)
             setSolicitante(getCadastrante());
 
-        if (getLotaSolicitante() == null)
+        if (getLotaSolicitante() == null || getLotaSolicitante().getId() == null)
             setLotaSolicitante(getSolicitante().getLotacao());
 
         if (getSolicitante().equivale(getCadastrante())) {
@@ -1471,7 +1471,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             setMeioComunicacao(null);
         }
 
-        if (getOrgaoUsuario() == null)
+        if (getOrgaoUsuario() == null || getOrgaoUsuario().getId() == null)
             setOrgaoUsuario(getLotaSolicitante().getOrgaoUsuario());
 
         if (getNumSolicitacao() == null && !isRascunho() && !isFilha()) {

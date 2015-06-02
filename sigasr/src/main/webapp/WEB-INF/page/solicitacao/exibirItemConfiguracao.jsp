@@ -31,13 +31,13 @@ function carregouAcao(response, param){
 
 <div class="gt-form-row gt-width-66" >
     <label>Produto, Serviço ou Sistema relacionado à Solicitação</label>
-    <siga:selecao2 propriedade="itemConfiguracao" 
+    <siga:selecao2 propriedade="solicitacao.itemConfiguracao" 
                    tipo="itemConfiguracao" 
                    tema="simple" 
                    modulo="sigasr" 
                    onchange="carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')"
-                   paramList="sol.solicitante=${solicitacao.solicitante.idPessoa};sol.local=${solicitacao.local.idComplexo};sol.titular=${titular.idPessoa};sol.lotaTitular=${lotaTitular.idLotacao}"/> 
-<%--     <span style="color: red">#{error 'solicitacao.itemConfiguracao' /}</span> --%>
+                   paramList="sol.solicitante=${solicitacao.solicitante.idPessoa};sol.local=${solicitacao.local.idComplexo};sol.titular=${titular.idPessoa};sol.lotaTitular=${lotaTitular.idLotacao}"/>
+    <siga:error name="solicitacao.itemConfiguracao"/>
 </div>
 
 <div id="divAcao">

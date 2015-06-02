@@ -248,7 +248,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
     }
 
     public String getAtributoObrigatorioString() {
-        return atributoObrigatorio ? "Sim" : "Não";
+        return atributoObrigatorio ? "Sim" : "Nï¿½o";
     }
 
     public void salvarComoDesignacao() throws Exception {
@@ -539,9 +539,9 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
     }
 
     /**
-     * Método que retorna um número referente ao tipo de solicitante selecionado. Esse número refere-se ao Índice do item selecionado no componente pessoaLotaFuncCargoSelecao.html
+     * Mï¿½todo que retorna um nï¿½mero referente ao tipo de solicitante selecionado. Esse nï¿½mero refere-se ao ï¿½ndice do item selecionado no componente pessoaLotaFuncCargoSelecao.html
      *
-     * @return <li>1 para Pessoa; <li>2 para Lotação; <li>3 para Função; <li>4 para Cargo;
+     * @return <li>1 para Pessoa; <li>2 para Lotaï¿½ï¿½o; <li>3 para Funï¿½ï¿½o; <li>4 para Cargo;
      */
     public int getTipoSolicitante() {
         if (this.getLotacao() != null && this.getLotacao().getLotacaoAtual() != null)

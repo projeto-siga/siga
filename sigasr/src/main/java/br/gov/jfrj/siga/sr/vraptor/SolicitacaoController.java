@@ -18,6 +18,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -32,6 +33,7 @@ import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrGravidade;
@@ -216,7 +218,7 @@ public class SolicitacaoController extends SrController {
 
     private void validarFormEditarLista(SrLista lista) {
         if (lista.getNomeLista() == null || lista.getNomeLista().trim().equals("")) {
-            srValidator.addError("lista.nomeLista", "Nome da Lista não informados");
+            srValidator.addError("lista.nomeLista", "Nome da Lista nï¿½o informados");
         }
 
         if (srValidator.hasErrors()) {
@@ -254,7 +256,7 @@ public class SolicitacaoController extends SrController {
         String jsonPrioridades = SrPrioridade.getJSON().toString();
 
         if (!lista.podeConsultar(getLotaTitular(), getCadastrante())) {
-            throw new Exception("Exibição não permitida");
+            throw new Exception("Exibiï¿½ï¿½o nï¿½o permitida");
         }
 
         try {
@@ -293,51 +295,56 @@ public class SolicitacaoController extends SrController {
 
     @Path("/gravar")
     public void gravar(SrSolicitacao solicitacao) throws Exception {
-        if (!solicitacao.isRascunho())
-            validarFormEditar(solicitacao);
+        if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
+        	incluirListasEdicaoSolicitacao(solicitacao);
+            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getId());
+            
+        	return;
+        }
 
-        // TODO WO para tratar o caso do Interlocutor, pois está serializando um objeto nulo
-        // e está gerando erro ao persistir a solicitação
+        // TODO WO para tratar o caso do Interlocutor, pois estï¿½ serializando um objeto nulo
+        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
         if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
             solicitacao.setInterlocutor(null);
+        
+        // TODO WO para tratar o caso do Item de ConfiguraÃ§Ã£o, pois estï¿½ serializando um objeto nulo
+        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
+        if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null)
+            solicitacao.setItemConfiguracao(null);
 
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(SolicitacaoController.class).exibirSolicitacao(solicitacao.getId(), todoOContexto(), ocultas());
-        
-        result.include("solicitacao", solicitacao);
-        validator.onErrorUsePageOf(SolicitacaoController.class).editar(null);
+        result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getId(), todoOContexto(), ocultas());
     }
 
-    private void validarFormEditar(SrSolicitacao solicitacao) throws Exception {
-
-        if (solicitacao.getSolicitante() == null) {
-            srValidator.addError("solicitacao.solicitante", "Solicitante n&atilde;o informado");
+    private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
+        if (solicitacao.getSolicitante() == null || solicitacao.getSolicitante().getId() == null) {
+            validator.add(new ValidationMessage("Solicitante nÃ£o informado", "solicitacao.solicitante"));
         }
-        if (solicitacao.getItemConfiguracao() == null) {
-            srValidator.addError("solicitacao.itemConfiguracao", "Item n&atilde;o informado");
+        if (solicitacao.getItemConfiguracao() == null || solicitacao.getItemConfiguracao().getId() == null) {
+            validator.add(new ValidationMessage("Item n&atilde;o informado", "solicitacao.itemConfiguracao"));
         }
-        if (solicitacao.getAcao() == null) {
-            srValidator.addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
+        if (solicitacao.getAcao() == null || solicitacao.getAcao().getId() == null) {
+            validator.add(new ValidationMessage("A&ccedil&atilde;o n&atilde;o informada", "solicitacao.acao"));
         }
 
         if (solicitacao.getDescrSolicitacao() == null || "".equals(solicitacao.getDescrSolicitacao().trim())) {
-            srValidator.addError("solicitacao.descrSolicitacao", "Descri&ccedil&atilde;o n&atilde;o informada");
+            validator.add(new ValidationMessage("Descri&ccedil&atilde;o n&atilde;o informada", "solicitacao.descrSolicitacao"));
         }
 
         Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
         for (SrAtributoSolicitacao att : solicitacao.getAtributoSolicitacaoSet()) {
             // Para evitar NullPointerExcetpion quando nao encontrar no Map
             if (Boolean.TRUE.equals(obrigatorio.get(att.getAtributo().getIdAtributo()))) {
-                if ((att.getValorAtributoSolicitacao() == null || "".equals(att.getValorAtributoSolicitacao().trim())))
-                    srValidator.addError("solicitacao.atributoSolicitacaoMap[" + att.getAtributo().getIdAtributo() + "]", att.getAtributo().getNomeAtributo() + " n&atilde;o informado");
+                if ((att.getValorAtributoSolicitacao() == null || "".equals(att.getValorAtributoSolicitacao().trim()))) {
+                	validator.add(new ValidationMessage(att.getAtributo().getNomeAtributo() + " n&atilde;o informado", "solicitacao.atributoSolicitacaoMap[" + att.getAtributo().getIdAtributo() + "]"));
+                }
             }
         }
         
-        if (srValidator.hasErrors())
-        	enviarErroValidacao();
+        return !validator.hasErrors();
     }
 
-    public boolean todoOContexto() {
+	public boolean todoOContexto() {
         return true;
         // return Boolean.parseBoolean(params.get("todoOContexto"));
     }
@@ -348,7 +355,7 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path({"/exibir/{id}", "/exibir/{id}/{todoOContexto}/{ocultas}"})
-   	public void exibirSolicitacao(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
+    public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
             throw new Exception("Solicitação não encontrada");
@@ -381,7 +388,7 @@ public class SolicitacaoController extends SrController {
         if (solicitacao == null || solicitacao.getCadastrante() == null)
             solicitacao = criarSolicitacaoComSolicitante();
 
-        // preenche com os dados da Última solicitação do usuário
+        // preenche com os dados da ï¿½ltima solicitaï¿½ï¿½o do usuï¿½rio
         solicitacao.deduzirLocalRamalEMeioContato();
 
         result.include(SOLICITACAO, solicitacao);
@@ -421,18 +428,18 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/listarSolicitacoesRelacionadas")
-    public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, HashMap<Long, String> atributoSolicitacaoMap) throws Exception {
+    public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, List<SrAtributoSolicitacaoMap> atributoSolicitacaoMap) throws Exception {
 
-        solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
+        //solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
         List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
 
         result.include("solicitacoesRelacionadas", solicitacoesRelacionadas);
     }
 
-    // DB1: foi necessário receber e passar o parametro "nome"(igual ao buscarItem())
+    // DB1: foi necessï¿½rio receber e passar o parametro "nome"(igual ao buscarItem())
     // para chamar a function javascript correta,
-    // e o parametro "popup" porque este metodo é usado também na lista,
-    // e não foi possível deixar default no template(igual ao buscarItem.html)
+    // e o parametro "popup" porque este metodo ï¿½ usado tambï¿½m na lista,
+    // e nï¿½o foi possï¿½vel deixar default no template(igual ao buscarItem.html)
     @SuppressWarnings("unchecked")
     @Path("/buscar")
     public void buscar(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception {
@@ -450,7 +457,7 @@ public class SolicitacaoController extends SrController {
         }
 
         // Montando o filtro...
-        String[] tipos = new String[] { "Pessoa", "Lotação" };
+        String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
         List<CpMarcador> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList();
 
         List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
@@ -469,17 +476,18 @@ public class SolicitacaoController extends SrController {
 
     public List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
         List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
-        Map<Long, String> atributoMap = filtro.getAtributoSolicitacaoMap();
+        List<SrAtributoSolicitacaoMap> atributoMap = filtro.getAtributoSolicitacaoMap();
 
         for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
-            if (!atributoMap.containsKey(srAtributo.getIdAtributo())) {
+        	SrAtributoSolicitacaoMap atrib = new SrAtributoSolicitacaoMap(srAtributo.getIdAtributo(),srAtributo.getDescrAtributo());
+            if (!atributoMap.contains(atrib)) {
                 listaAtributosAdicao.add(srAtributo);
             }
         }
         return listaAtributosAdicao;
     }
 
-    @Path({ "/editar", "/editar/{id}" })
+	@Path({ "/editar", "/editar/{id}" })
     public void editar(Long id) throws Exception {
         SrSolicitacao solicitacao;
 
@@ -493,9 +501,15 @@ public class SolicitacaoController extends SrController {
             solicitacao.setDtOrigem(new Date());
         if (solicitacao.getDtIniEdicao() == null)
             solicitacao.setDtIniEdicao(new Date());
-        // solicitacao.atualizarAcordos();
+        solicitacao.atualizarAcordos();
 
-        List<CpComplexo> locais = ContextoPersistencia.em().createQuery("from CpComplexo").getResultList();
+        incluirListasEdicaoSolicitacao(solicitacao);
+    }
+
+	@SuppressWarnings("unchecked")
+	private void incluirListasEdicaoSolicitacao(SrSolicitacao solicitacao)
+			throws Exception {
+		List<CpComplexo> locais = ContextoPersistencia.em().createQuery("from CpComplexo").getResultList();
 
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 
@@ -517,7 +531,7 @@ public class SolicitacaoController extends SrController {
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("itemConfiguracao", solicitacao.getItemConfiguracao());
         result.include("podeUtilizarServicoSigaGC", false);
-    }
+	}
 
     @Path("/retirarDeLista")
     public void retirarDeLista(Long idSolicitacao, Long idLista) throws Exception {
@@ -548,19 +562,19 @@ public class SolicitacaoController extends SrController {
     @Path("/incluirEmListaGravar")
     public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, Boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
-            throw new Exception("Selecione a lista para inclusão da solicitação");
+            throw new Exception("Selecione a lista para inclusï¿½o da solicitaï¿½ï¿½o");
         }
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
         solicitacao.incluirEmLista(lista, getCadastrante(), getLotaTitular(), prioridade, naoReposicionarAutomatico);
-        exibirSolicitacao(idSolicitacao, todoOContexto(), ocultas());
+        exibir(idSolicitacao, todoOContexto(), ocultas());
     }
 
     @Path("/fechar")
     public void fechar(Long id, String motivo) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo);
-        exibirSolicitacao(sol.getIdSolicitacao(), todoOContexto(), ocultas());
+        exibir(sol.getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     @Path("/responderPesquisa")
@@ -577,7 +591,7 @@ public class SolicitacaoController extends SrController {
     public void responderPesquisaGravar(Long id, Map<Long, String> respostaMap) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.responderPesquisa(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), respostaMap);
-        exibirSolicitacao(id, todoOContexto(), ocultas());
+        exibir(id, todoOContexto(), ocultas());
     }
 
     @Path("/baixar")
@@ -603,7 +617,7 @@ public class SolicitacaoController extends SrController {
     public void escalonarGravar(Long id, Long itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
         if (itemConfiguracao == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
-            throw new Exception("Operação nao permitida. Necessario informar um item de configuração " + "e uma ação.");
+            throw new Exception("Operaï¿½ï¿½o nao permitida. Necessario informar um item de configuraï¿½ï¿½o " + "e uma aï¿½ï¿½o.");
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
 
         DpLotacao atendenteNaoDesignado = null;
@@ -630,7 +644,7 @@ public class SolicitacaoController extends SrController {
             if (idAtendenteNaoDesignado != null)
                 filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
             filha.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-            exibirSolicitacao(filha.getIdSolicitacao(), todoOContexto(), ocultas());
+            exibir(filha.getIdSolicitacao(), todoOContexto(), ocultas());
         } else {
             SrMovimentacao mov = new SrMovimentacao(solicitacao);
             mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
@@ -644,7 +658,7 @@ public class SolicitacaoController extends SrController {
             mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Aï¿½ï¿½o: " + mov.getAcao().getTituloAcao()
                     + "; Atendente: " + mov.getLotaAtendente().getSigla());
             mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-            exibirSolicitacao(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
+            exibir(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
         }
     }
 
@@ -667,7 +681,7 @@ public class SolicitacaoController extends SrController {
         SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAVincular);
         SrSolicitacao solRecebeVinculo = SrSolicitacao.AR.findById(idSolicitacaoRecebeVinculo);
         sol.vincular(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeVinculo, justificativa);
-        exibirSolicitacao(idSolicitacaoAVincular, todoOContexto(), ocultas());
+        exibir(idSolicitacaoAVincular, todoOContexto(), ocultas());
     }
     
     @Path("/juntar")
@@ -675,35 +689,35 @@ public class SolicitacaoController extends SrController {
         SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAJuntar);
         SrSolicitacao solRecebeJuntada = SrSolicitacao.AR.findById(idSolicitacaoRecebeJuntada);
         sol.juntar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeJuntada, justificativa);
-        exibirSolicitacao(idSolicitacaoAJuntar, todoOContexto(), ocultas());
+        exibir(idSolicitacaoAJuntar, todoOContexto(), ocultas());
     }
     
     @Path("/desentranhar")
     public void desentranhar(Long id, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.desentranhar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), justificativa);
-        exibirSolicitacao(id, todoOContexto(), ocultas());
+        exibir(id, todoOContexto(), ocultas());
     }
     
     @Path("/cancelar")
     public void cancelar(Long id) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.cancelar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        exibirSolicitacao(id, todoOContexto(), ocultas());
+        exibir(id, todoOContexto(), ocultas());
     }
     
     @Path("/reabrir")
     public void reabrir(Long id) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.reabrir(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        exibirSolicitacao(id, todoOContexto(), ocultas());
+        exibir(id, todoOContexto(), ocultas());
     }
     
     @Path("/deixarPendente")
     public void deixarPendente(Long id, SrTipoMotivoPendencia motivo, String calendario, String horario, String detalheMotivo) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.deixarPendente(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo, calendario, horario, detalheMotivo);
-        exibirSolicitacao(id, todoOContexto(), ocultas());
+        exibir(id, todoOContexto(), ocultas());
     }
     
     @Path("/excluir")
@@ -716,7 +730,7 @@ public class SolicitacaoController extends SrController {
     @Path("/anexarArquivo")
     public void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        exibirSolicitacao(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
+        exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
     
     @Path("/termoAtendimento")
@@ -730,28 +744,28 @@ public class SolicitacaoController extends SrController {
     public void desfazerUltimaMovimentacao(Long id) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.desfazerUltimaMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        exibirSolicitacao(id, todoOContexto(), ocultas());
+        exibir(id, todoOContexto(), ocultas());
     }
     
     @Path("/alterarPrazo")
     public void alterarPrazo(Long id, String motivo, String calendario, String horario) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.alterarPrazo(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo, calendario, horario);
-        exibirSolicitacao(id, todoOContexto(), ocultas());
+        exibir(id, todoOContexto(), ocultas());
     }
     
     @Path("/terminarPendencia")
     public void terminarPendencia(Long id, String descricao, Long idMovimentacao) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.terminarPendencia(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), descricao, idMovimentacao);
-        exibirSolicitacao(id, todoOContexto(), ocultas());
+        exibir(id, todoOContexto(), ocultas());
     }
     
     @Path("/darAndamento")
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        exibirSolicitacao(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
+        exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     @Path("/priorizarLista")

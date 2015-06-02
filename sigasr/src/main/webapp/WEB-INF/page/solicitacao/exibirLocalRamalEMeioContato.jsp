@@ -40,12 +40,12 @@
 			<label>Contato inicial</label> 
 			<label>Data</label> 
 			<input type="text" name="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}" /> 
-<%-- 			<span style="color: red">#{error 'calendario' /} </span> --%>
-			</div>
+			<siga:error name="calendario"/>
+		</div>
 		<div class="box gt-width-33" style="padding-top: 21px;">
 			<label>Hora</label> 
 		    <input type="text" name="horario" id="horarioComunicacao" value="${solicitacao.dtOrigemHHMM}" />
-<%-- 		    <span style="color: red">#{error 'horario' /}</span> --%>
+		    <siga:error name="horario"/>
 		</div>
 	</div>
 	<input type="hidden" name="solicitacao.dtOrigemString" id="stringDtMeioContato" value="${solicitacao.dtOrigemDDMMYYYYHHMM}" >

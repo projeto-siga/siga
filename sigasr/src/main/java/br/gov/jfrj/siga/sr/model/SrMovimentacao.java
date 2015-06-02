@@ -286,8 +286,8 @@ public class SrMovimentacao extends ObjetoVraptor {
             notificar();
 
         // Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
-//        if (getSolicitacao().isFilha() && getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
-//            this.getCorreio().notificarAtendente(this); // notifica o atendente da solicitacao pai, caso a filha seja fechada
+        if (getSolicitacao().isFilha() && getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+            CorreioHolder.get().notificarAtendente(this); // notifica o atendente da solicitacao pai, caso a filha seja fechada
 
     }
 

@@ -7,32 +7,120 @@
 	<short-name>demo</short-name>
 	<uri>http://localhost/jeetags</uri>
 	<tag-file>
-		<name>menuprincipal</name>
-		<path>/META-INF/tags/menuprincipal.tag</path>
-	</tag-file>
-	<tag-file>
 		<name>cabecalho</name>
 		<path>/META-INF/tags/cabecalho.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>rodape</name>
-		<path>/META-INF/tags/rodape.tag</path>
+		<name>checkbox</name>
+		<path>/META-INF/tags/checkbox.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>configuracaoAssociacao</name>
+		<path>/META-INF/tags/configuracaoAssociacao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>configuracaoItemAcao</name>
+		<path>/META-INF/tags/configuracaoItemAcao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>dataCalendar</name>
+		<path>/META-INF/tags/dataCalendar.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>desativarReativar</name>
+		<path>/META-INF/tags/desativarReativar.tag</path>
+	</tag-file>
+	<tag-file>
+    	<name>descricaoAcao</name>
+    	<path>/META-INF/tags/descricaoAcao.tag</path>
+    </tag-file>
+    <tag-file>
+    	<name>descricaoItem</name>
+    	<path>/META-INF/tags/descricaoItem.tag</path>
+    </tag-file>
+	<tag-file>
+		<name>designacao</name>
+		<path>/META-INF/tags/designacao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>div</name>
+		<path>/META-INF/tags/div.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>escolha</name>
+		<path>/META-INF/tags/escolha.tag</path>
+	</tag-file>
+	<tag-file>
+    	<name>error</name>
+    	<path>/META-INF/tags/error.tag</path>
+    </tag-file>
+	<tag-file>
+		<name>fixcrlf</name>
+		<path>/META-INF/tags/fixcrlf.tag</path>
+	</tag-file>
+	<tag-file>
+    	<name>includeAjax</name>
+    	<path>/META-INF/tags/includeAjax.tag</path>
+    </tag-file>
+	<tag-file>
+		<name>link</name>
+		<path>/META-INF/tags/link.tag</path>
 	</tag-file>
 	<tag-file>
 		<name>links</name>
 		<path>/META-INF/tags/links.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>link</name>
-		<path>/META-INF/tags/link.tag</path>
+    	<name>listaArvore</name>
+    	<path>/META-INF/tags/listaArvore.tag</path>
+    </tag-file>
+	<tag-file>
+		<name>menuprincipal</name>
+		<path>/META-INF/tags/menuprincipal.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>modal</name>
+		<path>/META-INF/tags/modal.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>monobotao</name>
+		<path>/META-INF/tags/monobotao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>monolink</name>
+		<path>/META-INF/tags/monolink.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>opcao</name>
+		<path>/META-INF/tags/opcao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>pagina</name>
+		<path>/META-INF/tags/pagina.tag</path>
 	</tag-file>
 	<tag-file>
 		<name>paginador</name>
 		<path>/META-INF/tags/paginador.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>pagina</name>
-		<path>/META-INF/tags/pagina.tag</path>
+		<name>pessoaLotaFuncCargoSelecao</name>
+		<path>/META-INF/tags/pessoaLotaFuncCargoSelecao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>pessoaLotaSelecao</name>
+		<path>/META-INF/tags/pessoaLotaSelecao.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>pessoaLotaSelecao2</name>
+		<path>/META-INF/tags/pessoaLotaSelecao2.tag</path>
+	</tag-file>
+	<tag-file>
+    	<name>quadroSolicitacao</name>
+    	<path>/META-INF/tags/quadroSolicitacao.tag</path>
+    </tag-file>
+	<tag-file>
+		<name>rodape</name>
+		<path>/META-INF/tags/rodape.tag</path>
 	</tag-file>
 	<tag-file>
 		<name>selecao</name>
@@ -47,79 +135,19 @@
 		<path>/META-INF/tags/selecionado.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>escolha</name>
-		<path>/META-INF/tags/escolha.tag</path>
+		<name>select</name>
+		<path>/META-INF/tags/select.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>opcao</name>
-		<path>/META-INF/tags/opcao.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>div</name>
-		<path>/META-INF/tags/div.tag</path>
-	</tag-file>
+        <name>solicitacao</name>
+        <path>/META-INF/tags/solicitacao.tag</path>
+    </tag-file>
 	<tag-file>
 		<name>span</name>
 		<path>/META-INF/tags/span.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>fixcrlf</name>
-		<path>/META-INF/tags/fixcrlf.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>monolink</name>
-		<path>/META-INF/tags/monolink.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>monobotao</name>
-		<path>/META-INF/tags/monobotao.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>select</name>
-		<path>/META-INF/tags/select.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>modal</name>
-		<path>/META-INF/tags/modal.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>desativarReativar</name>
-		<path>/META-INF/tags/desativarReativar.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>dataCalendar</name>
-		<path>/META-INF/tags/dataCalendar.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>pessoaLotaSelecao</name>
-		<path>/META-INF/tags/pessoaLotaSelecao.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>pessoaLotaSelecao2</name>
-		<path>/META-INF/tags/pessoaLotaSelecao2.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>pessoaLotaFuncCargoSelecao</name>
-		<path>/META-INF/tags/pessoaLotaFuncCargoSelecao.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>checkbox</name>
-		<path>/META-INF/tags/checkbox.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>designacao</name>
-		<path>/META-INF/tags/designacao.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>configuracaoAssociacao</name>
-		<path>/META-INF/tags/configuracaoAssociacao.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>configuracaoItemAcao</name>
-		<path>/META-INF/tags/configuracaoItemAcao.tag</path>
-	</tag-file>
-	<tag-file>
-        <name>solicitacao</name>
-        <path>/META-INF/tags/solicitacao.tag</path>
+        <name>arquivo</name>
+        <path>/META-INF/tags/arquivo.tag</path>
     </tag-file>
 </taglib>

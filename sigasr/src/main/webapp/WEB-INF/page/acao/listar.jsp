@@ -119,9 +119,9 @@
 		$("#checkmostrarDesativados").click(function() {
 			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativados').checked)
-				location.href = "${linkTo[AcaoController].listarDesativados}";
+				location.href = "${linkTo[AcaoController].listar}"  + "?mostrarDesativados=true";
 			else
-				location.href = "${linkTo[AcaoController].listar[false]}";
+				location.href = "${linkTo[AcaoController].listar}"  + "?mostrarDesativados=false";
 		});
 		
 		/* Table initialization */

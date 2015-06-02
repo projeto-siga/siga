@@ -17,13 +17,13 @@ public class SrTipoPermissaoLista extends ObjetoVraptor {
 
     public static final ActiveRecord<SrTipoPermissaoLista> AR = new ActiveRecord<>(SrTipoPermissaoLista.class);
 
-    final static public long GESTAO = 1;
+    public static final long GESTAO = 1;
 
-    final static public long PRIORIZACAO = 2;
+    public static final long PRIORIZACAO = 2;
 
-    final static public long INCLUSAO = 3;
+    public static final long INCLUSAO = 3;
 
-    final static public long CONSULTA = 4;
+    public static final long CONSULTA = 4;
 
     @Id
     @Column(name = "ID_TIPO_PERMISSAO")
@@ -32,10 +32,10 @@ public class SrTipoPermissaoLista extends ObjetoVraptor {
     @Column(name = "DESCR_TIPO_PERMISSAO", nullable = false)
     private String descrTipoPermissaoLista;
 
-    public SrTipoPermissaoLista(){
-    	
+    public SrTipoPermissaoLista() {
+
     }
-    
+
     public SrTipoPermissaoLista(int id, String descricao) {
         super();
         this.setIdTipoPermissaoLista(Long.valueOf(id));

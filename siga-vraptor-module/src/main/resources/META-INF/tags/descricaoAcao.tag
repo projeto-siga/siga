@@ -4,7 +4,7 @@
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<%@ attribute name="acao" required="false"%>
+<%@ attribute name="acao" type="br.gov.jfrj.siga.sr.model.SrAcao" required="false"%>
 
 <c:choose>
 	<c:when test="${acao != null}">

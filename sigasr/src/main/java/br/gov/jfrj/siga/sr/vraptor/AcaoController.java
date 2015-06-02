@@ -32,7 +32,7 @@ public class AcaoController extends SrController {
 	private static final String ACOES = "acoes";
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	@Path("/listar/{mostrarDesativados}")
+	@Path("/listar")
 	public void listar(boolean mostrarDesativados) throws Exception {
 		List<SrAcao> acoes = SrAcao.listar(mostrarDesativados);
 

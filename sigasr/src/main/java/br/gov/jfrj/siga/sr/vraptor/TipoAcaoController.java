@@ -28,22 +28,12 @@ public class TipoAcaoController extends SrController {
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)
-	@Path("/listar/{mostrarDesativados}")
+	@Path("/listar")
 	public void listar(boolean mostrarDesativados) throws Exception {
 		List<SrTipoAcao> tiposAcao = SrTipoAcao.listar(mostrarDesativados);
 
 		result.include("tiposAcao", tiposAcao);
 		result.include("mostrarDesativados", mostrarDesativados);
-	}
-
-	@Get("/listar")
-	public void listar() throws Exception {
-		result.redirectTo(TipoAcaoController.class).listar(Boolean.FALSE);
-	}
-
-	@Path("/listarDesativados")
-	public void listarDesativados() throws Exception {
-		result.redirectTo(TipoAcaoController.class).listar(Boolean.TRUE);
 	}
 
 	//@AssertAcesso(ADM_ADMINISTRAR)

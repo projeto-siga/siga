@@ -49,7 +49,7 @@ public class ItemConfiguracaoController extends SrController {
 
     // @AssertAcesso(ADM_ADMINISTRAR)
     @SuppressWarnings("unchecked")
-    @Path("/listar/{mostrarDesativados}")
+    @Path("/listar")
     public void listar(boolean mostrarDesativados) throws Exception {
         List<SrItemConfiguracao> itens = SrItemConfiguracao.listar(mostrarDesativados);
         List<CpOrgaoUsuario> orgaos = CpOrgaoUsuario.AR.em().createQuery("from CpOrgaoUsuario").getResultList();

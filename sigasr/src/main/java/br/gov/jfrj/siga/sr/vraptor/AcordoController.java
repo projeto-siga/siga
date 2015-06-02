@@ -47,7 +47,7 @@ public class AcordoController extends SrController {
 
     // @AssertAcesso(ADM_ADMINISTRAR)
     @SuppressWarnings("unchecked")
-    @Path("/listar/{mostrarDesativados}")
+    @Path("/listar")
     public void listar(boolean mostrarDesativados) throws Exception {
 
         List<SrAtributo> parametros = SrAtributo.listarParaAcordo(false);

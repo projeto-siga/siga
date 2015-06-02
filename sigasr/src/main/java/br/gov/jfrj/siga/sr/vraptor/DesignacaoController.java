@@ -35,7 +35,7 @@ public class DesignacaoController extends SrController {
 
 	// @AssertAcesso(ADM_ADMINISTRAR)
 	@SuppressWarnings("unchecked")
-	@Path("/listar/{mostrarDesativados}")
+	@Path("/listar")
 	public void listar(boolean mostrarDesativados) {
 		List<SrConfiguracao> designacoes = SrConfiguracao.listarDesignacoes(
 				mostrarDesativados, null);
@@ -57,16 +57,6 @@ public class DesignacaoController extends SrController {
 		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
 		result.include("cargoSel", new DpCargoSelecao());
 		result.include("cpGrupoSel", new CpPerfilSelecao());
-	}
-
-	@Path("/listar")
-	public void listar() {
-		result.redirectTo(DesignacaoController.class).listar(Boolean.FALSE);
-	}
-
-	@Path("/listarDesativados")
-	public void listarDesativados() {
-		result.redirectTo(DesignacaoController.class).listar(Boolean.TRUE);
 	}
 
 	// @AssertAcesso(ADM_ADMINISTRAR)

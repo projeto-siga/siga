@@ -57,7 +57,7 @@ $(function(){
 });
 
 function postback(){
-	location.href="@{Application.exibir(solicitacao.idSolicitacao)}&todoOContexto="+$("#todoOContexto").val()+"&ocultas="+$("#ocultas").val();
+	location.href="${linkTo[SolicitacaoController].exibir[solicitacao.idSolicitacao]}&todoOContexto="+$("#todoOContexto").val()+"&ocultas="+$("#ocultas").val();
 }
 </script>
 

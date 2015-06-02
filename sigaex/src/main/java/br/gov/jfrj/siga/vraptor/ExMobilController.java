@@ -29,6 +29,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -58,8 +60,10 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 
 @Resource
-public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
-	public ExMobilController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
+public class ExMobilController extends
+		ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
+	public ExMobilController(HttpServletRequest request, Result result,
+			SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		setItemPagina(50);
 	}
@@ -99,7 +103,7 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		}
 		result.redirectTo("/app/expediente/doc/finalizou_rotina");
 	}
-	
+
 	@Get("app/expediente/doc/finalizou_rotina")
 	public void aFinalizouRotina() {
 		System.out.println("Finalizou rotina");
@@ -124,22 +128,34 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 		final ExMobilBuilder builder = ExMobilBuilder.novaInstancia();
 
-		builder.setPostback(postback).setUltMovTipoResp(ultMovTipoResp).setUltMovRespSel(ultMovRespSel).setUltMovLotaRespSel(ultMovLotaRespSel)
-				.setOrgaoUsu(orgaoUsu).setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel).setSubscritorSel(subscritorSel).setTipoCadastrante(tipoCadastrante)
-				.setCadastranteSel(cadastranteSel).setLotaCadastranteSel(lotaCadastranteSel).setTipoDestinatario(tipoDestinatario)
-				.setDestinatarioSel(destinatarioSel).setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
-				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(offset);
+		builder.setPostback(postback).setUltMovTipoResp(ultMovTipoResp)
+				.setUltMovRespSel(ultMovRespSel)
+				.setUltMovLotaRespSel(ultMovLotaRespSel).setOrgaoUsu(orgaoUsu)
+				.setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel)
+				.setSubscritorSel(subscritorSel)
+				.setTipoCadastrante(tipoCadastrante)
+				.setCadastranteSel(cadastranteSel)
+				.setLotaCadastranteSel(lotaCadastranteSel)
+				.setTipoDestinatario(tipoDestinatario)
+				.setDestinatarioSel(destinatarioSel)
+				.setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
+				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel)
+				.setClassificacaoSel(classificacaoSel).setOffset(offset);
 
 		builder.processar(getLotaTitular());
 
 		if (primeiraVez == null || !primeiraVez.equals("sim")) {
 			final ExMobilDaoFiltro flt = createDaoFiltro();
 			final long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt, getTitular(), getLotaTitular()));
+			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
+					getTitular(), getLotaTitular()));
 
-			System.out.println("Consulta dos por filtro: " + (System.currentTimeMillis() - tempoIni));
+			System.out.println("Consulta dos por filtro: "
+					+ (System.currentTimeMillis() - tempoIni));
 
-			setItens(dao().consultarPorFiltroOtimizado(flt, builder.getOffset(), getItemPagina(), getTitular(), getLotaTitular()));
+			setItens(dao().consultarPorFiltroOtimizado(flt,
+					builder.getOffset(), getItemPagina(), getTitular(),
+					getLotaTitular()));
 		}
 
 		result.include("primeiraVez", primeiraVez);
@@ -172,11 +188,13 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("tipoCadastrante", builder.getTipoCadastrante());
 		result.include("cadastranteSel", builder.getCadastranteSel());
 		result.include("lotaCadastranteSel", builder.getLotaCadastranteSel());
-		result.include("orgaoExternoDestinatarioSel", builder.getOrgaoExternoDestinatarioSel());
+		result.include("orgaoExternoDestinatarioSel",
+				builder.getOrgaoExternoDestinatarioSel());
 		result.include("listaTipoDest", this.getListaTipoDest());
 		result.include("tipoDestinatario", builder.getTipoDestinatario());
 		result.include("destinatarioSel", builder.getDestinatarioSel());
-		result.include("lotacaoDestinatarioSel", builder.getLotacaoDestinatarioSel());
+		result.include("lotacaoDestinatarioSel",
+				builder.getLotacaoDestinatarioSel());
 		result.include("nmDestinatario", nmDestinatario);
 		result.include("descrDocumento", descrDocument);
 		result.include("visualizacao", visualizacao);
@@ -212,21 +230,33 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 		final ExMobilBuilder builder = ExMobilBuilder.novaInstancia();
 
-		builder.setPostback(postback).setUltMovTipoResp(ultMovTipoResp).setUltMovRespSel(ultMovRespSel).setUltMovLotaRespSel(ultMovLotaRespSel)
-				.setOrgaoUsu(orgaoUsu).setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel).setSubscritorSel(subscritorSel).setTipoCadastrante(tipoCadastrante)
-				.setCadastranteSel(cadastranteSel).setLotaCadastranteSel(lotaCadastranteSel).setTipoDestinatario(tipoDestinatario)
-				.setDestinatarioSel(destinatarioSel).setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
-				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel).setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
+		builder.setPostback(postback).setUltMovTipoResp(ultMovTipoResp)
+				.setUltMovRespSel(ultMovRespSel)
+				.setUltMovLotaRespSel(ultMovLotaRespSel).setOrgaoUsu(orgaoUsu)
+				.setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel)
+				.setSubscritorSel(subscritorSel)
+				.setTipoCadastrante(tipoCadastrante)
+				.setCadastranteSel(cadastranteSel)
+				.setLotaCadastranteSel(lotaCadastranteSel)
+				.setTipoDestinatario(tipoDestinatario)
+				.setDestinatarioSel(destinatarioSel)
+				.setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
+				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel)
+				.setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
 
 		builder.processar(getLotaTitular());
 
 		if (primeiraVez == null || !primeiraVez.equals("sim")) {
 			final ExMobilDaoFiltro flt = createDaoFiltro();
 			long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt, getTitular(), getLotaTitular()));
+			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
+					getTitular(), getLotaTitular()));
 
-			System.out.println("Consulta dos por filtro: " + (System.currentTimeMillis() - tempoIni));
-			setItens(dao().consultarPorFiltroOtimizado(flt, builder.getOffset(), getItemPagina(), getTitular(), getLotaTitular()));
+			System.out.println("Consulta dos por filtro: "
+					+ (System.currentTimeMillis() - tempoIni));
+			setItens(dao().consultarPorFiltroOtimizado(flt,
+					builder.getOffset(), getItemPagina(), getTitular(),
+					getLotaTitular()));
 		}
 
 		result.include("primeiraVez", primeiraVez);
@@ -259,11 +289,13 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("tipoCadastrante", builder.getTipoCadastrante());
 		result.include("cadastranteSel", builder.getCadastranteSel());
 		result.include("lotaCadastranteSel", builder.getLotaCadastranteSel());
-		result.include("orgaoExternoDestinatarioSel", builder.getOrgaoExternoDestinatarioSel());
+		result.include("orgaoExternoDestinatarioSel",
+				builder.getOrgaoExternoDestinatarioSel());
 		result.include("listaTipoDest", this.getListaTipoDest());
 		result.include("tipoDestinatario", builder.getTipoDestinatario());
 		result.include("destinatarioSel", builder.getDestinatarioSel());
-		result.include("lotacaoDestinatarioSel", builder.getLotacaoDestinatarioSel());
+		result.include("lotacaoDestinatarioSel",
+				builder.getLotacaoDestinatarioSel());
 		result.include("nmDestinatario", nmDestinatario);
 		result.include("descrDocumento", descrDocument);
 		result.include("visualizacao", visualizacao);
@@ -278,6 +310,31 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", forma);
 		result.include("idMod", idMod);		
+
+		if (visualizacao == 3 || visualizacao == 4) {
+			TreeMap campos = new TreeMap<String, String>();
+			for (Object[] oa : (List<Object[]>) this.getItens()) {
+				for (String s : ((ExDocumento) oa[0]).getForm().keySet()) {
+					Object nomeCampo = preprocessarNomeCampo(s);
+					if (nomeCampo != null)
+						campos.put(s, nomeCampo);
+				}
+			}
+			result.include("campos", campos);
+		}
+
+	}
+
+	final static Pattern preprocessadorPatternSelecao = Pattern
+			.compile("^([\\w_]+)(_[a-z]+Sel.)([\\w_]+)$");
+
+	private Object preprocessarNomeCampo(String s) {
+		Matcher m = preprocessadorPatternSelecao.matcher(s);
+		if (m.find())
+			s = m.replaceFirst("$1 $3");
+		if (s.endsWith(" id"))
+			return null;
+		return s;
 	}
 
 	@Override
@@ -320,7 +377,8 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 
 		flt.setAnoEmissao(paramLong("anoEmissaoString"));
 		flt.setClassificacaoSelId(paramLong("classificacaoSel.id"));
-		flt.setDescrDocumento(Texto.removeAcentoMaiusculas(param("descrDocumento")));
+		flt.setDescrDocumento(Texto
+				.removeAcentoMaiusculas(param("descrDocumento")));
 		String paramFullText = param("fullText");
 		if (paramFullText != null) {
 			paramFullText = paramFullText.trim();
@@ -329,14 +387,16 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		flt.setFullText(paramFullText);
 		flt.setDestinatarioSelId(paramLong("destinatarioSel.id"));
 		if (flt.getDestinatarioSelId() != null) {
-			flt.setDestinatarioSelId((daoPes(flt.getDestinatarioSelId())).getIdInicial());
+			flt.setDestinatarioSelId((daoPes(flt.getDestinatarioSelId()))
+					.getIdInicial());
 		}
 		flt.setIdFormaDoc(paramInteger("idFormaDoc"));
 		flt.setIdTipoFormaDoc(paramLong("idTipoFormaDoc"));
 		flt.setIdTpDoc(paramInteger("idTpDoc"));
 		flt.setLotacaoDestinatarioSelId(paramLong("lotacaoDestinatarioSel.id"));
 		if (flt.getLotacaoDestinatarioSelId() != null) {
-			flt.setLotacaoDestinatarioSelId((daoLot(flt.getLotacaoDestinatarioSelId())).getIdInicial());
+			flt.setLotacaoDestinatarioSelId((daoLot(flt
+					.getLotacaoDestinatarioSelId())).getIdInicial());
 		}
 		if (param("nmDestinatario") != null) {
 			flt.setNmDestinatario(param("nmDestinatario").toUpperCase());
@@ -349,50 +409,57 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		flt.setOrgaoExternoDestinatarioSelId(paramLong("orgaoExternoDestinatarioSel.id"));
 		flt.setSubscritorSelId(paramLong("subscritorSel.id"));
 		if (flt.getSubscritorSelId() != null) {
-			flt.setSubscritorSelId((daoPes(flt.getSubscritorSelId())).getIdInicial());
+			flt.setSubscritorSelId((daoPes(flt.getSubscritorSelId()))
+					.getIdInicial());
 		}
 
 		flt.setLotaCadastranteSelId(paramLong("lotaCadastranteSel.id"));
 		if (flt.getLotaCadastranteSelId() != null) {
-			flt.setLotaCadastranteSelId((daoLot(flt.getLotaCadastranteSelId())).getIdInicial());
+			flt.setLotaCadastranteSelId((daoLot(flt.getLotaCadastranteSelId()))
+					.getIdInicial());
 		}
 		flt.setCadastranteSelId(paramLong("cadastranteSel.id"));
 		if (flt.getCadastranteSelId() != null) {
-			flt.setCadastranteSelId((daoPes(flt.getCadastranteSelId())).getIdInicial());
+			flt.setCadastranteSelId((daoPes(flt.getCadastranteSelId()))
+					.getIdInicial());
 		}
 
 		flt.setUltMovIdEstadoDoc(paramLong("ultMovIdEstadoDoc"));
 		flt.setUltMovLotaRespSelId(paramLong("ultMovLotaRespSel.id"));
 		if (flt.getUltMovLotaRespSelId() != null)
-			flt.setUltMovLotaRespSelId((daoLot(flt.getUltMovLotaRespSelId())).getIdInicial());
+			flt.setUltMovLotaRespSelId((daoLot(flt.getUltMovLotaRespSelId()))
+					.getIdInicial());
 		flt.setUltMovRespSelId(paramLong("ultMovRespSel.id"));
 		if (flt.getUltMovRespSelId() != null) {
-			flt.setUltMovRespSelId((daoPes(flt.getUltMovRespSelId())).getIdInicial());
+			flt.setUltMovRespSelId((daoPes(flt.getUltMovRespSelId()))
+					.getIdInicial());
 		}
 
 		flt.setNumSequencia(paramInteger("numVia"));
 		if (getCadastrante() != null) {
-			flt.setLotacaoCadastranteAtualId(getCadastrante().getLotacao().getIdInicial());
+			flt.setLotacaoCadastranteAtualId(getCadastrante().getLotacao()
+					.getIdInicial());
 		}
 
 		if (paramLong("orgaoUsu") != null) {
 			flt.setIdOrgaoUsu(paramLong("orgaoUsu"));
 		}
 		if (flt.getIdOrgaoUsu() == null && getLotaTitular() != null) {
-			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
+			flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario()
+					.getIdOrgaoUsu());
 		}
 		flt.setIdMod(paramLong("idMod"));
 		flt.setOrdem(paramInteger("ordem"));
 
 		return flt;
 	}
-	
+
 	@Get("app/expediente/doc/carregar_lista_formas")
 	public void aCarregarListaFormas(Long tipoForma, Integer idFormaDoc) {
-		result.include("todasFormasDocPorTipoForma", this.getTodasFormasDocPorTipoForma(tipoForma));
+		result.include("todasFormasDocPorTipoForma",
+				this.getTodasFormasDocPorTipoForma(tipoForma));
 		result.include("idFormaDoc", idFormaDoc);
 	}
-	
 
 	@Get("app/expediente/doc/carregar_lista_modelos")
 	public void aCarregarListaModelos(final int forma, final Long idMod) {
@@ -423,6 +490,9 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(0, "Normal");
 		map.put(1, "Última anotação");
+		map.put(2, "Tabela dinâmica");
+		map.put(3, "Normal com entrevista");
+		map.put(4, "Tabela dinâmica com entrevista");
 		return map;
 	}
 
@@ -435,15 +505,19 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 		return map;
 	}
 
-	private List<ExFormaDocumento> getTodasFormasDocPorTipoForma(final Long idTipoFormaDoc) {
+	private List<ExFormaDocumento> getTodasFormasDocPorTipoForma(
+			final Long idTipoFormaDoc) {
 		final ExBL bl = Ex.getInstance().getBL();
 		ExTipoFormaDoc tipoForma = null;
 		if (idTipoFormaDoc != null && !idTipoFormaDoc.equals(0L)) {
-			tipoForma = dao().consultar(idTipoFormaDoc, ExTipoFormaDoc.class, false);
+			tipoForma = dao().consultar(idTipoFormaDoc, ExTipoFormaDoc.class,
+					false);
 		}
 
 		final List<ExFormaDocumento> formasDoc = new ArrayList<ExFormaDocumento>();
-		formasDoc.addAll(bl.obterFormasDocumento(bl.obterListaModelos(null, false, null, false, getTitular(), getLotaTitular(), false), null, tipoForma));
+		formasDoc.addAll(bl.obterFormasDocumento(bl.obterListaModelos(null,
+				false, null, false, getTitular(), getLotaTitular(), false),
+				null, tipoForma));
 		return formasDoc;
 	}
 
@@ -457,7 +531,11 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			forma = dao().consultar(idFormaDoc, ExFormaDocumento.class, false);
 		}
 
-		return Ex.getInstance().getBL().obterListaModelos(forma, false, "Todos", false, getTitular(), getLotaTitular(), false);
+		return Ex
+				.getInstance()
+				.getBL()
+				.obterListaModelos(forma, false, "Todos", false, getTitular(),
+						getLotaTitular(), false);
 	}
 
 	@Get("app/expediente/selecionar")
@@ -469,29 +547,32 @@ public class ExMobilController extends ExSelecionavelController<ExMobil, ExMobil
 			GenericoSelecao sel = new GenericoSelecao();
 			sel.setId(getSel().getId());
 			sel.setSigla(getSel().getSigla());
-			sel.setDescricao("/sigaex/app/expediente/doc/exibir?sigla=" + sel.getSigla());
+			sel.setDescricao("/sigaex/app/expediente/doc/exibir?sigla="
+					+ sel.getSigla());
 			setSel(sel);
 		}
 		if (resultado == "ajax_retorno") {
 			result.include("sel", getSel());
-			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+			result.use(Results.page()).forwardTo(
+					"/WEB-INF/jsp/ajax_retorno.jsp");
 		} else {
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
 
 	@Override
-	public Selecionavel selecionarVerificar(Selecionavel sel) throws AplicacaoException {
-		
+	public Selecionavel selecionarVerificar(Selecionavel sel)
+			throws AplicacaoException {
+
 		ExMobil mob = (ExMobil) sel;
-		
+
 		if (mob.doc() == null)
 			return null;
-		
+
 		//Edson: Se a via, volume ou documento inteiro tiver sido eliminado(a), não retorna nada.
 		if (mob.isEliminado())
 			return null;
-		
+
 		// Se for uma via ou volume, retornar
 		if (mob.isVia() || mob.isVolume())
 			return mob;

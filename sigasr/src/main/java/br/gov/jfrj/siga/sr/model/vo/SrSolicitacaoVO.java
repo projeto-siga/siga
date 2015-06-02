@@ -109,7 +109,7 @@ public class SrSolicitacaoVO {
             sb.append(codigo + "</a>");
         } else {
             // TODO Alterar este link após migração para vRaptor
-            sb.append("<a href=\"/sigasr/solicitacao/exibir/");
+            sb.append("<a href=\"/sigasr/app/solicitacao/exibir/");
             sb.append(id + "\">");
             sb.append(codigo + "</a>");
         }

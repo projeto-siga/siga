@@ -3,6 +3,18 @@
 
 <siga:pagina titulo="Movimentação de solicitação">
     <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+
+    <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+    <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
+    <script src="/sigasr/javascripts/jquery.populate.js"></script>
+    <script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+    <script src="/sigasr/javascripts/base-service.js"></script>
+    <script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+    <script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+    <script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
     
     <jsp:include page="../main.jsp"></jsp:include>
 
@@ -57,7 +69,7 @@ $(function(){
 });
 
 function postback(){
-	location.href="@{Application.exibir(solicitacao.idSolicitacao)}&todoOContexto="+$("#todoOContexto").val()+"&ocultas="+$("#ocultas").val();
+	location.href="@{${linkTo[AssociacaoController].exibir(solicitacao.idSolicitacao)}}&todoOContexto="+$("#todoOContexto").val()+"&ocultas="+$("#ocultas").val();
 }
 </script>
 
@@ -68,12 +80,13 @@ function postback(){
 		<h3>
 			${solicitacao.getMarcadoresEmHtml(titular, lotaTitular)} 
 			<c:if test="${solicitacao.solicitacaoPrincipal}"> -
-			    <a style="text-decoration: none" href="@{Application.exibir(solicitacao.solicitacaoPrincipal.idSolicitacao)}">
+			    <a style="text-decoration: none" href="${linkTo[SolicitacaoController].exibir("${solicitacao.solicitacaoPrincipal.idSolicitacao}")}">
 				${solicitacao.solicitacaoPrincipal.codigo} </a>
 			</c:if> 
 		</h3>
 
-		#{links acoes:solicitacao.operacoes(titular, lotaTitular), base:_base /}
+<!--         MIGRAR LINKS -->
+<%-- 		#{links acoes:solicitacao.operacoes(titular, lotaTitular), base:_base /} --%>
 		<siga:links  />
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
@@ -113,7 +126,7 @@ function postback(){
 							<div id="divAtendente">
 <!-- 							Marcos - Verificar se está certo assim -->
 							<siga:select name="movimentacao.atendente" list="atendentes"
-<%--  				                listKey="idOrgaoUsu"  --%>
+  				                listKey="idOrgaoUsu"
  				                id="movimentacao.atendente"
  				                headerValue="" headerKey="0"
  				                listValue="descricaoIniciaisMaiusculas"
@@ -179,7 +192,7 @@ function postback(){
 								</c:choose>
 								 
 								<c:if test="${todoOContexto}">
-								    <td><a style="color: #365b6d;" href="@{Application.exibir(movimentacao.solicitacao.idSolicitacao)}"
+								    <td><a style="color: #365b6d;" href="${linkTo[SolicitacaoController].exibir("${movimentacao.solicitacao.idSolicitacao}")}"
 			                           style="text-decoration: none"> ${movimentacao.solicitacao.numSequenciaString}</td>
 			                    </c:if> 
 								<td>${movimentacao.tipoMov.nome}</td>
@@ -343,7 +356,7 @@ function postback(){
 				<h3>Veja Tamb&eacute;m</h3>
 				<p>
 					<c:forEach items="${vinculadas}" var="vinculada"> 
-					   <a href="@{Application.exibir(vinculada?.idSolicitacao)}">
+					   <a href="${linkTo[SolicitacaoController].exibir(vinculada.idSolicitacao)}">
 					   ${vinculada.codigo} </a> <br/> 
 				    </c:forEach>
 				</p>
@@ -380,7 +393,7 @@ function postback(){
 				<h3>Solicita&ccedil;&otilde;es juntadas</h3>
 				<p>
 					<c:forEach items="${juntadas}" var="juntada">
-					    <a href="@{Application.exibir(juntada.idSolicitacao)}">
+					    <a href="${linkTo[SolicitacaoController].exibir(juntada.idSolicitacao)}">
 					    ${juntada.codigo} </a> <br/> 
 				    </c:forEach>
 				</p>
@@ -397,7 +410,7 @@ function postback(){
 							&nbsp; <input type="hidden" name="idlista"
 							value="${listas.idLista}"> <a
 							style="color: #365b6d; text-decoration: none"
-							href="@{Application.exibirLista(listas?.idLista)}">
+							href="${linkTo[SolicitacaoController].exibirLista[listas.idLista]}">
 								${listas.listaAtual.nomeLista} </a>
 						</li>
 					</c:forEach>

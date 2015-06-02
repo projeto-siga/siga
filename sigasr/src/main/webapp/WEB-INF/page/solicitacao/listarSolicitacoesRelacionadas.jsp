@@ -7,7 +7,7 @@
 <c:forEach items="${solicitacoesRelacionadas}" var="sol">
 	<tr>
 		<td>
-			<a href="#" onclick="exibirSolicitacao(${sol[0]})">
+			<a href="#" onclick="exibir(${sol[0]})">
 				${sol[2]}
 			</a>
 		</td> 

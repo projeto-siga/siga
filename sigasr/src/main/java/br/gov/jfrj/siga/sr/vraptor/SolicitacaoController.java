@@ -345,16 +345,16 @@ public class SolicitacaoController extends SrController {
         // return Boolean.parseBoolean(params.get("ocultas"));
     }
 
-    @Path("/exibir/{id}/{todoOContexto}/{ocultas}")
+    @Path("/exibir/{id}")
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicitaï¿½ï¿½o nï¿½o encontrada");
+            throw new Exception("Solicitação não encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
+            throw new Exception("Esta solicitação foi excluída");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 

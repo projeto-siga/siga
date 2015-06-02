@@ -613,7 +613,7 @@
 						<label style="float: left">Prioridade: &nbsp;</label>
 						<span>${solicitacao.prioridade != null ? solicitacao.prioridade.descPrioridade: prioridade_desc}</span>
 						
-						<siga:select name="prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true"
+						<siga:select name="solicitacao.prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true"
 							value="${solicitacao.prioridade != null ? solicitacao.prioridade: prioridade_planejado}" style="width:235px;border:none;display:none;"/>
 							<br />
 					</div>

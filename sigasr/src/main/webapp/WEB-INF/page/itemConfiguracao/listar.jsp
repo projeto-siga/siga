@@ -157,7 +157,11 @@
 			
 		$("#checkmostrarDesativados").click(function() {
 			jQuery.blockUI(objBlock);
-			location.href = '${linkTo[ItemConfiguracaoController].listar}'+document.getElementById('checkmostrarDesativados').checked;
+			
+			if (document.getElementById('checkmostrarDesativados').checked)
+				location.href = '${linkTo[ItemConfiguracaoController].listar}' + '?mostrarDesativados=true';
+			else
+				location.href = '${linkTo[ItemConfiguracaoController].listar}' + '?mostrarDesativados=false';
 		});
 	});
 	

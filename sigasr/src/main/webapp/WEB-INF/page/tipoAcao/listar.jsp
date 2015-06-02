@@ -112,17 +112,13 @@
 	};
 	
 	$(document).ready(function() {
-		if (QueryString.mostrarDesativados != undefined) {
-			document.getElementById('checkmostrarDesativados').checked = QueryString.mostrarDesativados == 'true';
-			document.getElementById('checkmostrarDesativados').value = QueryString.mostrarDesativados == 'true';
-		}
-			
 		$("#checkmostrarDesativados").click(function() {
 			jQuery.blockUI(objBlock);
+
 			if (document.getElementById('checkmostrarDesativados').checked)
-				location.href = '${linkTo[TipoAcaoController].listarDesativados}';
+				location.href = '${linkTo[TipoAcaoController].listar}' + '?mostrarDesativados=true';
 			else
-				location.href = '${linkTo[TipoAcaoController].listar}';	
+				location.href = '${linkTo[TipoAcaoController].listar}' + '?mostrarDesativados=false';
 		});
 		
 		/* Table initialization */

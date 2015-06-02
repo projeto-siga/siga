@@ -107,17 +107,12 @@
 	};
 
 	$(document).ready(function() {
-		if (QueryString.mostrarDesativados != undefined) {
-			document.getElementById('checkmostrarDesativadoss').checked = QueryString.mostrarDesativados == 'true';
-			document.getElementById('checkmostrarDesativadoss').value = QueryString.mostrarDesativados == 'true';
-		}
-
-		 $("#checkmostrarDesativados").click(function() {
-			   if (document.getElementById('checkmostrarDesativados').checked)
-			    location.href = "${linkTo[PesquisaSatisfacaoController].listar[true]}";
-			   else
-			    location.href = "${linkTo[PesquisaSatisfacaoController].listar[false]}";
-			  });
+		$("#checkmostrarDesativados").click(function() {
+			if (document.getElementById('checkmostrarDesativados').checked)
+				location.href = '${linkTo[PesquisaSatisfacaoController].listar}' + '?mostrarDesativados=true';
+			else
+				location.href = '${linkTo[PesquisaSatisfacaoController].listar}' + '?mostrarDesativados=false';
+ 		});
 
 		opts.dataTable= $('#pesquisa_table').dataTable({
 			stateSave : true,

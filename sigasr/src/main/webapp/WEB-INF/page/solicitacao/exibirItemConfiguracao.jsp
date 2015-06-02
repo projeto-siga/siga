@@ -31,7 +31,7 @@ function carregouAcao(response, param){
 
 <div class="gt-form-row gt-width-66" >
     <label>Produto, Serviço ou Sistema relacionado à Solicitação</label>
-    <siga:selecao2 propriedade="itemConfiguracao" 
+    <siga:selecao2 propriedade="solicitacao.itemConfiguracao" 
                    tipo="itemConfiguracao" 
                    tema="simple" 
                    modulo="sigasr" 

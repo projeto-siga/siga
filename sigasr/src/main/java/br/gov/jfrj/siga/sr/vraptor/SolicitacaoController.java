@@ -478,7 +478,8 @@ public class SolicitacaoController extends SrController {
         return listaAtributosAdicao;
     }
 
-    @Path({ "/editar", "/editar/{id}" })
+    @SuppressWarnings("unchecked")
+	@Path({ "/editar", "/editar/{id}" })
     public void editar(Long id) throws Exception {
         SrSolicitacao solicitacao;
 
@@ -492,7 +493,7 @@ public class SolicitacaoController extends SrController {
             solicitacao.setDtOrigem(new Date());
         if (solicitacao.getDtIniEdicao() == null)
             solicitacao.setDtIniEdicao(new Date());
-        // solicitacao.atualizarAcordos();
+        solicitacao.atualizarAcordos();
 
         List<CpComplexo> locais = ContextoPersistencia.em().createQuery("from CpComplexo").getResultList();
 

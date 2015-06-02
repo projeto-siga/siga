@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.http.route.Router;
 import br.com.caelum.vraptor.ioc.ApplicationScoped;
 import br.com.caelum.vraptor.ioc.Component;
 import br.com.caelum.vraptor.ioc.StereotypeHandler;
@@ -12,6 +13,10 @@ import br.com.caelum.vraptor.ioc.StereotypeHandler;
 @ApplicationScoped
 public class ResourcesHandler implements StereotypeHandler {
 
+    public ResourcesHandler(Router router) {
+        Resources.getInstance().setRouter(router);
+    }
+
 	@Override
 	public Class<? extends Annotation> stereotype() {
 		return Resource.class;
@@ -19,6 +24,6 @@ public class ResourcesHandler implements StereotypeHandler {
 
 	@Override
 	public void handle(Class<?> type) {
-		Resources.setClassAndMethods(type, Arrays.asList(type.getDeclaredMethods()));
+	    Resources.getInstance().setClassAndMethods(type, Arrays.asList(type.getDeclaredMethods()));
 	}
 }

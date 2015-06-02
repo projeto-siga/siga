@@ -78,7 +78,8 @@ public class SolicitacaoController extends SrController {
 	private static final String PODEREMOVER = "podeEditar";
 	private static final String PODEEDITAR = "podeRemover";
 	private static final String PODEPRIORIZAR = "podePriorizar";
-	private static final String FILTRO = "filtro";    
+	private static final String FILTRO = "filtro";
+	private static final String PRIORIDADELIST = "prioridadeList";    
 
     private Validator validator;
 
@@ -276,6 +277,19 @@ public class SolicitacaoController extends SrController {
         result.include(FILTRO, filtro);
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
         result.include("jsonPrioridades", jsonPrioridades);
+        result.include(PRIORIDADELIST, SrPrioridade.values());
+        
+        
+        result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
+        result.include("prioridades", SrPrioridade.getValoresEmOrdem());
+//        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+//        result.include("cargoSel", new DpCargoSelecao());SSSSS
+//        result.include("cpGrupoSel", new CpPerfilSelecao());
+//        
+//        result.include(LISTAS, listas);
+//        result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
+        result.include(LOTA_TITULAR, getLotaTitular());
+        result.include(CADASTRANTE, getCadastrante());
 
     }
 
@@ -340,7 +354,7 @@ public class SolicitacaoController extends SrController {
         // return Boolean.parseBoolean(params.get("ocultas"));
     }
 
-    @Path("/exibir/{id}")
+    @Path({"/exibir/{id}", "/exibir/{id}/{todoOContexto}/{ocultas}"})
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
@@ -410,7 +424,7 @@ public class SolicitacaoController extends SrController {
         solicitacao.associarPrioridadePeloGUT();
 
         result.include(SOLICITACAO, solicitacao);
-        result.include("prioridadeList", SrPrioridade.values());
+        result.include(PRIORIDADELIST, SrPrioridade.values());
     }
 
     @Path("/listarSolicitacoesRelacionadas")
@@ -512,7 +526,7 @@ public class SolicitacaoController extends SrController {
         result.include("tipoMotivoEscalonamentoList", SrTipoMotivoEscalonamento.values());
         result.include("urgenciaList", SrUrgencia.values());
         result.include("tendenciaList", SrTendencia.values());
-        result.include("prioridadeList", SrPrioridade.values());
+        result.include(PRIORIDADELIST, SrPrioridade.values());
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("itemConfiguracao", solicitacao.getItemConfiguracao());
@@ -524,8 +538,7 @@ public class SolicitacaoController extends SrController {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
         solicitacao.retirarDeLista(lista, getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.include("lista", lista);
-        result.include(SOLICITACAO, solicitacao);
+        result.forwardTo(this).exibirLista(idLista);
     }
 
     private SrSolicitacao criarSolicitacaoComSolicitante() {

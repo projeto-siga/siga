@@ -124,7 +124,7 @@ public class PrincipalController extends SigaController {
 			else {
 				if (copiaSigla.startsWith("SR"))
 //					if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
-						uRLExibir = "/sigasr/solicitacao/exibir/" + response[1];
+						uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[1];
 				else if (copiaSigla.startsWith("MTP")
 						|| copiaSigla.startsWith("STP")
 						|| copiaSigla.startsWith("RTP"))

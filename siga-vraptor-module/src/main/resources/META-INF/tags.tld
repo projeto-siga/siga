@@ -146,4 +146,8 @@
 		<name>span</name>
 		<path>/META-INF/tags/span.tag</path>
 	</tag-file>
+	<tag-file>
+        <name>arquivo</name>
+        <path>/META-INF/tags/arquivo.tag</path>
+    </tag-file>
 </taglib>

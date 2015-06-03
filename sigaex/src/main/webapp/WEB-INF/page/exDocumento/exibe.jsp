@@ -251,6 +251,38 @@
 		<c:if test="${m.pendencias}">
 			<div class="gt-sidebar-content" id="pendencias">
 				<h3>Pendências</h3>
+				<c:if test="${not empty m.pendenciaProximoModelo}">
+					<p style="margin-bottom: 3px;">
+						<b style="color: rgb(195, 0, 0)">Próximo Documento:</b>
+					</p>
+					<ul>
+						<c:if test="${m.pendenciaProximoModelo == 110}">
+							<li>
+								<a	href="${pageContext.request.contextPath}/app/expediente/doc/editar?mobilPaiSel.sigla=${m.sigla}&criandoAnexo=true"
+									title="Despacho de Concessão de Diárias" style="text-decoration: none">
+										Despacho de Concessão de Diárias
+								</a>
+							</li>
+						</c:if>
+						<c:if test="${m.pendenciaProximoModelo == 111}">
+							<li>
+								<a	href="${pageContext.request.contextPath}/app/expediente/doc/editar?mobilPaiSel.sigla=${m.sigla}&criandoAnexo=true"
+									title="Registro de Pagamento de Diárias" style="text-decoration: none">
+										Registro de Pagamento de Diárias
+								</a>
+							</li>
+						</c:if>
+						<c:if test="${m.pendenciaProximoModelo == 112}">
+							<li>
+								<a	href="${pageContext.request.contextPath}/app/expediente/doc/editar?mobilPaiSel.sigla=${m.sigla}&criandoAnexo=true"
+									title="Certidão de Publicação de Diárias" style="text-decoration: none">
+										Certidão de Publicação de Diárias
+								</a>
+							</li>
+						</c:if>
+					</ul>
+				</c:if>
+				
 				<c:if test="${not empty m.pendenciasDeAnexacao}">
 					<p style="margin-bottom: 3px;">
 						<b style="color: rgb(195, 0, 0)">Anexos Pendentes:</b>

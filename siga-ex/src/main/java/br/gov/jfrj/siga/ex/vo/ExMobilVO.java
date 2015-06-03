@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.sf.ehcache.statistics.beans.ProxiedDynamicMBean;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -46,6 +47,7 @@ public class ExMobilVO extends ExVO {
 	List<ExMovimentacaoVO> despachosNaoAssinados = new ArrayList<ExMovimentacaoVO>();
 	List<ExDocumentoVO> expedientesFilhosNaoJuntados = new ArrayList<ExDocumentoVO>();
 	List<ExMovimentacaoVO> pendenciasDeAnexacao = new ArrayList<ExMovimentacaoVO>();
+	Long pendenciaProximoModelo = null;
 
 	List<ExMovimentacaoVO> movs = new ArrayList<ExMovimentacaoVO>();
 	List<ExMarca> marcasAtivas = new ArrayList<ExMarca>();
@@ -190,6 +192,16 @@ public class ExMobilVO extends ExVO {
 				pendenciasDeAnexacao.add(new ExMovimentacaoVO(this, mov,
 						titular, lotaTitular));
 		}
+		
+		if(mob.getExDocumento().isAssinado()) {
+			if(mob.getExDocumento().getExFormaDocumento().getId() == 107L)
+				pendenciaProximoModelo = 110L;
+			else if(mob.getExDocumento().getExFormaDocumento().getId() == 110L)
+				pendenciaProximoModelo = 111L;
+			else if(mob.getExDocumento().getExFormaDocumento().getId() == 111L)
+				pendenciaProximoModelo = 112L;
+		}
+			
 
 		marcasAtivas.addAll(mob.getExMarcaSetAtivas());
 
@@ -672,11 +684,15 @@ public class ExMobilVO extends ExVO {
 		return tamanhoDeArquivo;
 	}
 
+	public Long getPendenciaProximoModelo() {
+		return pendenciaProximoModelo;
+	}
+	
 	public boolean isPendencias() {
 		return anexosNaoAssinados.size() > 0
 				|| despachosNaoAssinados.size() > 0
 				|| expedientesFilhosNaoJuntados.size() > 0
-				|| pendenciasDeAnexacao.size() > 0;
+				|| pendenciasDeAnexacao.size() > 0
+				|| pendenciaProximoModelo != null;
 	}
-
 }

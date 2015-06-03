@@ -6,40 +6,56 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.caelum.vraptor.http.route.Router;
+import br.com.caelum.vraptor.ioc.ApplicationScoped;
+import br.com.caelum.vraptor.ioc.Component;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.inject.Inject;
 
-public class Resources {
+@Component
+@ApplicationScoped
+public final class Resources {
 
-	@Inject
-	private static Router router;
+    private HashMap<Class<?>, List<Method>> classAndYourMethods = new HashMap<>();
+    private static Resources instance;
+    private Router router;
 
-	private static HashMap<Class<?>, List<Method>> classAndYourMethods = new HashMap<>();
+    public void setRouter(Router router) {
+        this.router = router;
+    }
 
-	protected static void setClassAndMethods(Class<?> classe, List<Method> methods) {
-		if(!classAndYourMethods.containsKey(classe)) {
-			classAndYourMethods.put(classe, methods);
-		}
-	}
+    public Resources() {
+    }
 
-	public static Method getMethod(Class<?> classe, final String nomeDoMetodo) {
+    public static synchronized Resources getInstance() {
+        if (null == instance)
+            instance = new Resources();
 
-		List<Method> metodos = classAndYourMethods.get(classe);
+        return instance;
+    }
 
-		Method encontrado = Iterables.find(metodos, new Predicate<Method>() {
+    protected void setClassAndMethods(Class<?> classe, List<Method> methods) {
+        if (!classAndYourMethods.containsKey(classe)) {
+            classAndYourMethods.put(classe, methods);
+        }
+    }
 
-			@Override
-			public boolean apply(Method metodoDaVez) {
-				return metodoDaVez.getName().equals(nomeDoMetodo);
-			}
-	    });
+    public Method getMethod(Class<?> classe, final String nomeDoMetodo) {
 
-		return encontrado;
-	}
+        List<Method> metodos = classAndYourMethods.get(classe);
 
-	public static String urlFor(Class<?> classe, String metodo, Map<String, Object> param) {
-		return router.urlFor(classe, getMethod(classe, metodo), param);
-	}
+        Method encontrado = Iterables.find(metodos, new Predicate<Method>() {
+
+            @Override
+            public boolean apply(Method metodoDaVez) {
+                return metodoDaVez.getName().equals(nomeDoMetodo);
+            }
+        });
+
+        return encontrado;
+    }
+
+    public String urlFor(Class<?> classe, String metodo, Object... params) {
+        return router.urlFor(classe, getMethod(classe, metodo), params);
+    }
 }

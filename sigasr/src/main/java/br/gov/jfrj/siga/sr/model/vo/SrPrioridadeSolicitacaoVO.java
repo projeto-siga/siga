@@ -12,11 +12,11 @@ public class SrPrioridadeSolicitacaoVO {
 
     public static SrPrioridadeSolicitacaoVO createFrom(SrPrioridadeSolicitacao ps) {
         SrPrioridadeSolicitacaoVO vo = new SrPrioridadeSolicitacaoVO();
-        vo.setIdPrioridadeSolicitacao(ps.idPrioridadeSolicitacao);
-        vo.setNaoReposicionarAutomatico(ps.naoReposicionarAutomatico);
-        vo.setPrioridade(ps.prioridade);
-        vo.setNumPosicao(ps.numPosicao);
-        vo.setIdSolicitacao(ps.solicitacao.getId());
+        vo.setIdPrioridadeSolicitacao(ps.getIdPrioridadeSolicitacao());
+        vo.setNaoReposicionarAutomatico(ps.getNaoReposicionarAutomatico());
+        vo.setPrioridade(ps.getPrioridade());
+        vo.setNumPosicao(ps.getNumPosicao());
+        vo.setIdSolicitacao(ps.getSolicitacao().getId());
 
         return vo;
     }

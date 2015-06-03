@@ -18,6 +18,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.util.jpa.extra.Load;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -78,7 +79,8 @@ public class SolicitacaoController extends SrController {
 	private static final String PODEREMOVER = "podeEditar";
 	private static final String PODEEDITAR = "podeRemover";
 	private static final String PODEPRIORIZAR = "podePriorizar";
-	private static final String FILTRO = "filtro";    
+	private static final String FILTRO = "filtro";
+	private static final String PRIORIDADELIST = "prioridadeList";    
 
     private Validator validator;
 
@@ -276,6 +278,19 @@ public class SolicitacaoController extends SrController {
         result.include(FILTRO, filtro);
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
         result.include("jsonPrioridades", jsonPrioridades);
+        result.include(PRIORIDADELIST, SrPrioridade.values());
+        
+        
+        result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
+        result.include("prioridades", SrPrioridade.getValoresEmOrdem());
+//        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+//        result.include("cargoSel", new DpCargoSelecao());SSSSS
+//        result.include("cpGrupoSel", new CpPerfilSelecao());
+//        
+//        result.include(LISTAS, listas);
+//        result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
+        result.include(LOTA_TITULAR, getLotaTitular());
+        result.include(CADASTRANTE, getCadastrante());
 
     }
 
@@ -288,15 +303,15 @@ public class SolicitacaoController extends SrController {
         	return;
         }
 
-        // TODO WO para tratar o caso do Interlocutor, pois estï¿½ serializando um objeto nulo
-        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
-        if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
-            solicitacao.setInterlocutor(null);
-        
-        // TODO WO para tratar o caso do Item de ConfiguraÃ§Ã£o, pois estï¿½ serializando um objeto nulo
-        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
-        if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null)
-            solicitacao.setItemConfiguracao(null);
+//        // TODO WO para tratar o caso do Interlocutor, pois estï¿½ serializando um objeto nulo
+//        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
+//        if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
+//            solicitacao.setInterlocutor(null);
+//        
+//        // TODO WO para tratar o caso do Item de ConfiguraÃ§Ã£o, pois estï¿½ serializando um objeto nulo
+//        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
+//        if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null)
+//            solicitacao.setItemConfiguracao(null);
 
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getId(), todoOContexto(), ocultas());
@@ -340,16 +355,16 @@ public class SolicitacaoController extends SrController {
         // return Boolean.parseBoolean(params.get("ocultas"));
     }
 
-    @Path("/exibir/{id}")
+    @Path({"/exibir/{id}", "/exibir/{id}/{todoOContexto}/{ocultas}"})
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicitação não encontrada");
+            throw new Exception("Solicitaï¿½ï¿½o nï¿½o encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicitação foi excluída");
+            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
@@ -410,7 +425,7 @@ public class SolicitacaoController extends SrController {
         solicitacao.associarPrioridadePeloGUT();
 
         result.include(SOLICITACAO, solicitacao);
-        result.include("prioridadeList", SrPrioridade.values());
+        result.include(PRIORIDADELIST, SrPrioridade.values());
     }
 
     @Path("/listarSolicitacoesRelacionadas")
@@ -512,7 +527,7 @@ public class SolicitacaoController extends SrController {
         result.include("tipoMotivoEscalonamentoList", SrTipoMotivoEscalonamento.values());
         result.include("urgenciaList", SrUrgencia.values());
         result.include("tendenciaList", SrTendencia.values());
-        result.include("prioridadeList", SrPrioridade.values());
+        result.include(PRIORIDADELIST, SrPrioridade.values());
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("itemConfiguracao", solicitacao.getItemConfiguracao());
@@ -524,8 +539,7 @@ public class SolicitacaoController extends SrController {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
         solicitacao.retirarDeLista(lista, getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.include("lista", lista);
-        result.include(SOLICITACAO, solicitacao);
+        result.forwardTo(this).exibirLista(idLista);
     }
 
     private SrSolicitacao criarSolicitacaoComSolicitante() {

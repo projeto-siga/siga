@@ -12,12 +12,12 @@ public class SrPrioridadeSolicitacaoComparator implements Comparator<SrPrioridad
 
     @Override
     public int compare(SrPrioridadeSolicitacao a1, SrPrioridadeSolicitacao a2) {
-        if (a1.numPosicao == null && a2.numPosicao == null)
+        if (a1.getNumPosicao() == null && a2.getNumPosicao() == null)
             return 0;
-        else if (a1.numPosicao == null && a2.numPosicao != null)
+        else if (a1.getNumPosicao() == null && a2.getNumPosicao() != null)
             return 1;
-        else if (a1.numPosicao != null && a2.numPosicao == null)
+        else if (a1.getNumPosicao() != null && a2.getNumPosicao() == null)
             return -1;
-        return ordemCrescente ? a1.numPosicao.compareTo(a2.numPosicao) : a2.numPosicao.compareTo(a1.numPosicao);
+        return ordemCrescente ? a1.getNumPosicao().compareTo(a2.getNumPosicao()) : a2.getNumPosicao().compareTo(a1.getNumPosicao());
     }
 }

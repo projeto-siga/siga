@@ -140,10 +140,7 @@
 	</div>
 	
 	<siga:modal nome="editarLista" titulo="Editar Lista">
-		<div id="divEditarLista">
-<%--  			<jsp:include page="editarLista.jsp">
-			</jsp:include> --%>
-		</div>
+		<div id="divEditarLista"><jsp:include page="editarLista.jsp"></jsp:include></div>		
 	</siga:modal>
 	
 	<!-- modal de posicao -->	
@@ -175,11 +172,9 @@
 				<div id="prioridade" class="gt-form-row gt-width-66">
 					<label>Prioridade</label> 
 					<td>
-<%-- 						<siga:select name="prioridade" id="selectPrioridade" list="${models.SrPrioridade.values()}" label="Prioridade">
-							<!-- labelProperty:'descPrioridade', value:prioridade, style:'width:250px;' } --> 
-							<option>Nenhuma</option>
-						</siga:select> --%>
-							
+						<siga:select name="prioridade" id="selectPrioridade" list="prioridadeList"
+								listKey="idPrioridade" listValue="descPrioridade" theme="simple"
+								headerValue="[Nenhuma]" headerKey="0" value="${solicitacao.prioridade.idPrioridade}" isEnum="true"/>
 							 
 					</td>					
 				</div>

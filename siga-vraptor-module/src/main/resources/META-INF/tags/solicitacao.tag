@@ -1,3 +1,5 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <link rel="stylesheet" type="text/css" href="/sigasr/stylesheets/jquery.multiselect.css">
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <script src="//datatables.net/release-datatables/extensions/ColVis/js/dataTables.colVis.min.js"></script>

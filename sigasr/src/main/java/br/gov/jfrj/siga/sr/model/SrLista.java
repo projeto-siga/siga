@@ -231,7 +231,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 
         for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
             if (!prioridadeSolicitacao.getSolicitacao().isEmLista(this))
-                throw new IllegalArgumentException("A solicitação " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " não faz parte da lista");
+                throw new IllegalArgumentException("A solicitaï¿½ï¿½o " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " nï¿½o faz parte da lista");
 
             AtualizacaoLista atualizacaoLista = atualizacoesAgrupadas.get(prioridadeSolicitacao.getId());
             if (atualizacaoLista != null) {
@@ -253,7 +253,7 @@ public class SrLista extends HistoricoSuporteVraptor {
         Long posicao = 0L;
         for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
             posicao++;
-            if (!posicao.equals(prioridadeSolicitacao.numPosicao)) {
+            if (!posicao.equals(prioridadeSolicitacao.getNumPosicao())) {
                 prioridadeSolicitacao.setNumPosicao(posicao);
                 prioridadeSolicitacao.salvar();
             }
@@ -270,7 +270,7 @@ public class SrLista extends HistoricoSuporteVraptor {
 
     public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {
         if (!podeConsultar(lotacao, cadastrante)) {
-            throw new Exception("Exibição não permitida");
+            throw new Exception("Exibiï¿½ï¿½o nï¿½o permitida");
         }
     }
 

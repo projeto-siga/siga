@@ -1247,13 +1247,16 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             else
                 this.setAcao(null);
 
-            for (SrTarefa t : acoesEAtendentes) {
-                List<SrTarefa> tarefas = acoesEAtendentesFinal.get(t.getAcao().getPai());
-                if (tarefas == null)
-                    tarefas = new ArrayList<SrTarefa>();
-                tarefas.add(t);
-                acoesEAtendentesFinal.put(t.getAcao().getPai(), tarefas);
-            }
+			for (SrTarefa t : acoesEAtendentes) {
+				 // TODO:[refatoracao] - Estava inserindo null na lista.
+				if (t.getAcao().getPai() != null) {
+					List<SrTarefa> tarefas = acoesEAtendentesFinal.get(t.getAcao().getPai());
+					if (tarefas == null)
+						tarefas = new ArrayList<SrTarefa>();
+					tarefas.add(t);
+					acoesEAtendentesFinal.put(t.getAcao().getPai(), tarefas);
+				}	
+			}
 
             // Edson: melhor se fosse um SortedSet
             for (List<SrTarefa> tarefas : acoesEAtendentesFinal.values()) {
@@ -1917,7 +1920,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public long getPrioridadeNaLista(SrLista lista) throws Exception {
         SrPrioridadeSolicitacao prioridadeSolicitacao = lista.getSrPrioridadeSolicitacao(this);
-        return prioridadeSolicitacao != null ? prioridadeSolicitacao.numPosicao : -1;
+        return prioridadeSolicitacao != null ? prioridadeSolicitacao.getNumPosicao() : -1;
     }
 
     public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
@@ -2810,8 +2813,11 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         this.numSolicitacao = numSolicitacao;
     }
 
-    public Long getNumSequencia() {
-        return numSequencia;
+	public Long getNumSequencia() {
+		if (numSequencia == null) {
+			return 0L;
+		}
+		return numSequencia;
     }
 
     public void setNumSequencia(Long numSequencia) {

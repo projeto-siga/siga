@@ -69,9 +69,9 @@ public class SrSolicitacaoVO {
         this(sol);
 
         this.setPrioridadeSolicitacaoVO(prioridadeSolicitacao.toVO());
-        this.setPrioridadeListaFormatada(SigaVraptorUtil.tagA(String.valueOf(prioridadeSolicitacao.numPosicao)));
-        this.setPrioridadeFormatada(prioridadeSolicitacao.prioridade != null ? SigaVraptorUtil.selecionado(prioridadeSolicitacao.prioridade.getDescPrioridade(),
-                prioridadeSolicitacao.prioridade.getDescPrioridade()) : "");
+        this.setPrioridadeListaFormatada(SigaVraptorUtil.tagA(String.valueOf(prioridadeSolicitacao.getNumPosicao())));
+        this.setPrioridadeFormatada(prioridadeSolicitacao.getPrioridade() != null ? SigaVraptorUtil.selecionado(prioridadeSolicitacao.getPrioridade().getDescPrioridade(),
+                prioridadeSolicitacao.getPrioridade().getDescPrioridade()) : "");
 
         if (podeRemover)
             this.botaoRemover = SigaVraptorUtil.botaoRemoverSolicitacao(this.getIdSolicitacao(), lista.getIdLista());
@@ -108,7 +108,7 @@ public class SrSolicitacaoVO {
             sb.append("}'," + codigo + "');window.close()\">");
             sb.append(codigo + "</a>");
         } else {
-            // TODO Alterar este link após migração para vRaptor
+            // TODO Alterar este link apï¿½s migraï¿½ï¿½o para vRaptor
             sb.append("<a href=\"/sigasr/app/solicitacao/exibir/");
             sb.append(id + "\">");
             sb.append(codigo + "</a>");

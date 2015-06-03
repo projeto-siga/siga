@@ -4,7 +4,7 @@
 
 <%@ attribute name="nivel" required="false"%>
 <%@ attribute name="visualizando" required="true"%>
-<%@ attribute name="solicitacao" required="true"%>
+<%@ attribute name="solicitacao" required="true" type="br.gov.jfrj.siga.sr.model.SrSolicitacao"%>
 
 <c:if test="${nivel == null}">
 	<c:set var="nivel" value="0"/>
@@ -16,7 +16,7 @@
 			<b><i>
 		</c:when>
 		<c:otherwise>
-			<a style="color: #365b6d;" href="${linkTo[SolicitacaoController].exibir["${solicitacao.idSolicitacao}"]}"
+			<a style="color: #365b6d;" href="${linkTo[SolicitacaoController].exibir[solicitacao.idSolicitacao]}"
 			style="text-decoration: none">
 		</c:otherwise>
 	</c:choose>

@@ -1,9 +1,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-<c:if test="${solicitacao.acordos}">
+
+<c:if test="${solicitacao.acordos != null && !solicitacao.acordos.isEmpty()}">
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
-			<h3>Acordos</h3>
+			<h3>Acordossssssssssss</h3>
 			<c:forEach items="${solicitacao.acordos}" var="acordo">
 				<p>
 					<b>${acordo.acordoAtual.nomeAcordo}</b>

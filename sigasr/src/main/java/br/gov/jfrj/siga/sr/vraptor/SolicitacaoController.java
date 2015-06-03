@@ -368,6 +368,8 @@ public class SolicitacaoController extends SrController {
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
+        List<DpPessoa> atendentes = solicitacao.getPessoasAtendentesDisponiveis();
+
         if (todoOContexto == null)
             todoOContexto = solicitacao.isParteDeArvore();
         // Edson: foi solicitado que funcionasse do modo abaixo. Eh o melhor modo??
@@ -382,6 +384,7 @@ public class SolicitacaoController extends SrController {
         result.include("todoOContexto", todoOContexto);
         result.include("ocultas", ocultas);
         result.include("movs", movs);
+        result.include("atendentes", atendentes);
     }
 
     @Path("/exibirLocalRamalEMeioContato")

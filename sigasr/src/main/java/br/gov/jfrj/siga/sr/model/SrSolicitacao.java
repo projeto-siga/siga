@@ -827,7 +827,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 //        return map;
     }
 
-    private Set<SrSolicitacao> getSolicitacaoFilhaSet() {
+    public Set<SrSolicitacao> getSolicitacaoFilhaSet() {
         Set<SrSolicitacao> listaCompleta = new TreeSet<SrSolicitacao>(new Comparator<SrSolicitacao>() {
             @Override
             public int compare(SrSolicitacao s1, SrSolicitacao s2) {

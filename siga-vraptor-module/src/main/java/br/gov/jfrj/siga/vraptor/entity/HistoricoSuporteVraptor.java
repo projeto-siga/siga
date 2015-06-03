@@ -3,11 +3,13 @@ package br.gov.jfrj.siga.vraptor.entity;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
+import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Historico;
 
+@MappedSuperclass
 public abstract class HistoricoSuporteVraptor extends HistoricoSuporte {
 
 	private static final long serialVersionUID = 1340587106297071271L;

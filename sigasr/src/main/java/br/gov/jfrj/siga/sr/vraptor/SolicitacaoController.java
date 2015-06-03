@@ -18,6 +18,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.util.jpa.extra.Load;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -302,15 +303,15 @@ public class SolicitacaoController extends SrController {
         	return;
         }
 
-        // TODO WO para tratar o caso do Interlocutor, pois estï¿½ serializando um objeto nulo
-        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
-        if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
-            solicitacao.setInterlocutor(null);
-        
-        // TODO WO para tratar o caso do Item de ConfiguraÃ§Ã£o, pois estï¿½ serializando um objeto nulo
-        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
-        if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null)
-            solicitacao.setItemConfiguracao(null);
+//        // TODO WO para tratar o caso do Interlocutor, pois estï¿½ serializando um objeto nulo
+//        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
+//        if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
+//            solicitacao.setInterlocutor(null);
+//        
+//        // TODO WO para tratar o caso do Item de ConfiguraÃ§Ã£o, pois estï¿½ serializando um objeto nulo
+//        // e estï¿½ gerando erro ao persistir a solicitaï¿½ï¿½o
+//        if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null)
+//            solicitacao.setItemConfiguracao(null);
 
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getId(), todoOContexto(), ocultas());
@@ -358,12 +359,12 @@ public class SolicitacaoController extends SrController {
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicitação não encontrada");
+            throw new Exception("Solicitaï¿½ï¿½o nï¿½o encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicitação foi excluída");
+            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 

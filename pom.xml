@@ -6,7 +6,7 @@
 	<groupId>siga</groupId>
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
-	<version>1.1</version>
+	<version>1.2-SNAPSHOT</version>
 
 	<modules>		
 		<module>siga-base</module>
@@ -17,7 +17,6 @@
 		<module>siga-sinc-lib</module>
 		<module>siga-cp-sinc</module>
 		<module>siga-ldap</module>
-		<module>siga-libs</module>
 		<module>siga-vraptor-module</module>
 		<module>siga-dump</module>
 		<module>siga</module>
@@ -28,8 +27,8 @@
 		<module>siga-ext</module>
 		<module>siga-ex</module>
 		<module>sigagc</module>
-		<module>siga-play-module</module>
- 		<module>sigasr</module>
+		<module>siga-cd</module>
+		<module>sigacd</module>
  		<!--<module>sigapp</module>
 		<module>sigari</module>
  		<module>sigacd</module>
@@ -256,11 +255,6 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-cd-base</artifactId>
-				<version>${siga.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>siga</groupId>
-				<artifactId>siga-libs</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>

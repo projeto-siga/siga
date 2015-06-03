@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.jbpm.db.GraphSession;
 import org.jbpm.job.Job;
@@ -39,6 +40,8 @@ import br.gov.jfrj.siga.wf.dao.WfDao;
  * 
  */
 public class WfJobExecutorThread extends JobExecutorThread {
+	private static final Logger log = Logger
+			.getLogger(WfJobExecutorThread.class);
 
 	/**
 	 * Construtor.
@@ -61,16 +64,11 @@ public class WfJobExecutorThread extends JobExecutorThread {
 			return;
 		
 		GraphSession s = WfContextBuilder.getJbpmContext().getGraphSession();
-		Session session = null;
+		Session session;
 		try {
 			Field fld = GraphSession.class.getDeclaredField("session");
 			fld.setAccessible(true);
 			session = (Session) fld.get(s);
-
-			if (session == null)
-				throw new Exception(
-						"NÃ£o foi possÃ­vel obter a sessÃ£o do hibernate para executar o timer.");
-
 			HibernateUtil.setSessao(session);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -81,10 +79,49 @@ public class WfJobExecutorThread extends JobExecutorThread {
 
 		super.executeJob(job);
 
-		WfContextBuilder.closeContext();
+		try {
+			WfContextBuilder.closeContext();
+		} catch (Exception ex) {
+			log.error(
+					"[fechaContextoWorkflow] - Ocorreu um erro ao fechar o contexto do Workflow",
+					ex);
+		}
+		try {
+			HibernateUtil.fechaSessaoSeEstiverAberta();
+		} catch (Exception ex) {
+			log.error(
+					"[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sessao do Hibernate",
+					ex);
+		}
+		try {
+			ModeloDao.freeInstance();
+		} catch (Exception ex) {
+			log.error(
+					"[fechaSessaoHibernate] - Ocorreu um erro ao liberar a instancia do modeloDao",
+					ex);
+		}
 
-		HibernateUtil.removeSessao();
-		ModeloDao.freeInstance();
+		/*
+		 * GraphSession s = WfContextBuilder.getJbpmContext().getGraphSession();
+		 * Session session = null; try { Field fld =
+		 * GraphSession.class.getDeclaredField("session");
+		 * fld.setAccessible(true); session = (Session) fld.get(s);
+		 * 
+		 * if (session == null) throw new Exception(
+		 * "NÃ£o foi possÃ­vel obter a sessÃ£o do hibernate para executar o timer."
+		 * );
+		 * 
+		 * HibernateUtil.setSessao(session); } catch (Exception e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); }
+		 * 
+		 * WfDao.getInstance();
+		 * 
+		 * super.executeJob(job);
+		 * 
+		 * WfContextBuilder.closeContext();
+		 * 
+		 * HibernateUtil.removeSessao(); ModeloDao.freeInstance();
+		 */
 
 		// WfExecutionEnvironment ee = new WfExecutionEnvironment();
 		// try {

@@ -61,7 +61,7 @@
 
 <!--         MIGRAR LINKS -->
 <%--        #{links acoes:solicitacao.operacoes(titular, lotaTitular), base:_base /} --%>
-        <siga:links  />
+        <siga:linkSr acoes="${solicitacao.operacoes(titular, lotaTitular)}" />
         <div class="gt-content-box" style="padding: 10px">
             <p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
                 <siga:descricaoItem itemConfiguracao="${solicitacao.itemAtual}" /> -

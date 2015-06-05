@@ -14,6 +14,16 @@ import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+//Biliotecas para o saucelabs
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.SessionId;
+import org.testng.annotations.Listeners;
+
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.common.SauceOnDemandSessionIdProvider;
+import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
+import com.saucelabs.testng.SauceOnDemandTestListener;
+// fim saucelabs
 
 import br.gov.jfrj.siga.page.objects.AgendamentoPublicacaoPage;
 import br.gov.jfrj.siga.page.objects.AnotacaoPage;
@@ -30,7 +40,9 @@ import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 import br.gov.jfrj.siga.page.objects.VinculacaoPage;
 import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
 
-public class AcoesDocumentoIT extends IntegrationTestBase {
+//O listener envia o resultado do testng para o saucelab
+@Listeners({SauceOnDemandTestListener.class})
+public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 	private String codigoDocumento;
 	private Boolean isDocumentoTesteCriado = Boolean.FALSE;
 	PrincipalPage principalPage;
@@ -39,7 +51,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase {
 		super();
 	}
 	
-	@BeforeClass	
+	@BeforeClass(dependsOnMethods={"iniciaWebDriver"})
 	public void setUp() {
 		try {
 			efetuaLogin();
@@ -310,5 +322,17 @@ public class AcoesDocumentoIT extends IntegrationTestBase {
 		oficioPage.criaOficio(propDocumentos);		
 		
 		return operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+	}
+	
+	// os métodos abaixo são necessários para implementar as interfaces SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider
+	@Override
+	public String getSessionId() {
+	    SessionId sessionId = ((RemoteWebDriver)driver).getSessionId();
+	    return (sessionId == null) ? null : sessionId.toString();
+	}
+	
+	@Override
+	public SauceOnDemandAuthentication getAuthentication() {
+	    return authentication;
 	}
 }

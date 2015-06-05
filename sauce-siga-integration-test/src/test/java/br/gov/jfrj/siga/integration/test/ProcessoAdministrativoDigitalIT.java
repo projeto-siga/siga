@@ -12,6 +12,16 @@ import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+//Bibliotecas para o saucelabs
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.SessionId;
+import org.testng.annotations.Listeners;
+
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.common.SauceOnDemandSessionIdProvider;
+import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
+import com.saucelabs.testng.SauceOnDemandTestListener;
+//fim saucelabs
 
 import br.gov.jfrj.siga.page.objects.AssinaturaDigitalPage;
 import br.gov.jfrj.siga.page.objects.CancelamentoJuntadaPage;
@@ -20,7 +30,9 @@ import br.gov.jfrj.siga.page.objects.PortariaPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
 
-public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase {
+//O listener envia o resultado do testng para o saucelab
+@Listeners({SauceOnDemandTestListener.class})
+public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 	private String codigoDocumento;
 	private String codigoProcesso;
 	
@@ -28,7 +40,7 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase {
 		super();
 	}
 	
-	@BeforeClass
+	@BeforeClass(dependsOnMethods={"iniciaWebDriver"})	
 	public void setUp() {
 		try{
 			efetuaLogin();			
@@ -165,5 +177,16 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase {
 		
 		// Clicar em "Ver/Assinar" (no mesmo <tr> do evento Encerramento de Volume).  - Garantir que o texto "encerrei o volume 1" apareça na tela 
 		Assert.assertTrue(operacoesDocumentoPage.clicarAssinarEncerramentoVolume(), "Texto 'encerrei o volume' não foi visualizado!");		
+	}
+	// os métodos abaixo são necessários para implementar as interfaces SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider
+	@Override
+	public String getSessionId() {
+	    SessionId sessionId = ((RemoteWebDriver)driver).getSessionId();
+	    return (sessionId == null) ? null : sessionId.toString();
+	}
+
+	@Override
+	public SauceOnDemandAuthentication getAuthentication() {
+	    return authentication;
 	}
 }

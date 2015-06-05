@@ -11,20 +11,32 @@ import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+//Bibliotecas para o saucelabs
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.SessionId;
+import org.testng.annotations.Listeners;
+
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.common.SauceOnDemandSessionIdProvider;
+import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
+import com.saucelabs.testng.SauceOnDemandTestListener;
+// fim saucelabs
 
 import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
 import br.gov.jfrj.siga.page.objects.PortariaPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 
-public class AcoesDocumentoDigitalIT extends IntegrationTestBase {
+//O listener envia o resultado do testng para o saucelab
+@Listeners({SauceOnDemandTestListener.class})
+public class AcoesDocumentoDigitalIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 	private String codigoDocumento;
 	
 	public AcoesDocumentoDigitalIT() throws FileNotFoundException, IOException {
 		super();
 	}
 	
-	@BeforeClass	
+	@BeforeClass(dependsOnMethods={"iniciaWebDriver"})
 	public void setUp() {
 		try {
 			efetuaLogin();
@@ -83,4 +95,16 @@ public class AcoesDocumentoDigitalIT extends IntegrationTestBase {
 		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[4][contains(., '" + propDocumentos.getProperty("despacho") + "')]")),
 				"Texto " + propDocumentos.getProperty("despacho") + " não encontrado.");
 	}
+	// os métodos abaixo são necessários para implementar as interfaces SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider
+	@Override
+	public String getSessionId() {
+	    SessionId sessionId = ((RemoteWebDriver)driver).getSessionId();
+	    return (sessionId == null) ? null : sessionId.toString();
+	}
+
+	@Override
+	public SauceOnDemandAuthentication getAuthentication() {
+	    return authentication;
+	}
+	
 }

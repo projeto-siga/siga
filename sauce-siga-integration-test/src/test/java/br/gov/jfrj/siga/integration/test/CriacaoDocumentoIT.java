@@ -12,6 +12,16 @@ import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+//Biliotecas para o saucelabs
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.SessionId;
+import org.testng.annotations.Listeners;
+
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.common.SauceOnDemandSessionIdProvider;
+import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
+import com.saucelabs.testng.SauceOnDemandTestListener;
+// fim saucelabs
 
 import br.gov.jfrj.siga.page.objects.EditaDocumentoPage;
 import br.gov.jfrj.siga.page.objects.MemorandoPage;
@@ -20,7 +30,8 @@ import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
 import br.gov.jfrj.siga.page.objects.PortariaPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
 
-public class CriacaoDocumentoIT extends IntegrationTestBase{
+@Listeners({SauceOnDemandTestListener.class})
+public class CriacaoDocumentoIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider{
 	private PrincipalPage principalPage;
 	private EditaDocumentoPage editaDocumentoPage;
 	
@@ -28,7 +39,7 @@ public class CriacaoDocumentoIT extends IntegrationTestBase{
 		super();
 	}
 
-	@BeforeClass(dependsOnMethods={"iniciaWebdriver"})	
+	@BeforeClass(dependsOnMethods={"iniciaWebDriver"})	
 	public void setUp() {
 		try {
 			efetuaLogin();
@@ -101,5 +112,17 @@ public class CriacaoDocumentoIT extends IntegrationTestBase{
 		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., '" + propDocumentos.getProperty("enderecoDestinatario") + "')]")), 
 				"Endereço não encontrado!");
 		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Senhor Juiz')]")), "Forma de Tratamento não encontrada!");
+	}
+	
+	// os métodos abaixo são necessários para implementar as interfaces SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider
+	@Override
+	public String getSessionId() {
+	    SessionId sessionId = ((RemoteWebDriver)driver).getSessionId();
+	    return (sessionId == null) ? null : sessionId.toString();
+	}
+
+	@Override
+	public SauceOnDemandAuthentication getAuthentication() {
+	    return authentication;
 	}
 }

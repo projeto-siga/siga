@@ -9,13 +9,9 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.openqa.selenium.By;
-//Necessário para o saucelabs 
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.remote.SessionId;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -23,9 +19,21 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 //Necessário para o saucelabs 
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.SessionId;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
+
+//As libs abaixo são necessárias para que o sessionid seja passado ao jenkins ou bamboo
+//e também para que o testlistener invoque o sauce rest api no qual notificará o sauce
+//se o teste passou ou não
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.common.SauceOnDemandSessionIdProvider;
+import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
+import com.saucelabs.testng.SauceOnDemandTestListener;
+// fim saucelabs 
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 import br.gov.jfrj.siga.page.objects.AnexoPage;
@@ -37,15 +45,6 @@ import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
 import br.gov.jfrj.siga.page.objects.ProcessoAssuntosAdministrativosPage;
 import br.gov.jfrj.siga.page.objects.RegistraAssinaturaManualPage;
 import br.gov.jfrj.siga.page.objects.TransferenciaPage;
-
-
-//As libs abaixo são necessárias para que o sessionid seja passado ao jenkins ou bamboo
-//e também para que o testlistener invoque o sauce rest api no qual notificará o sauce
-//se o teste passou ou não
-import com.saucelabs.common.SauceOnDemandAuthentication;
-import com.saucelabs.common.SauceOnDemandSessionIdProvider;
-import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
-import com.saucelabs.testng.SauceOnDemandTestListener;
 
 //O listener envia o resultado do testng para o saucelab
 @Listeners({SauceOnDemandTestListener.class})
@@ -71,6 +70,9 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	@Parameters({"Operating_System", "Browser_Name", "Browser_Version"})
 	public void iniciaWebDriver(@Optional() String operatingSystem, @Optional() String browserName, @Optional() String browserVersion) throws MalformedURLException { 
 		// Necessário para acesso ao saucelabs
+		System.out.println("================> OperatingSystem: " + operatingSystem);
+		System.out.println("================> browserName: " + browserName);
+		System.out.println("================> browserVersion: " + browserVersion);
 		String USUARIO_SAUCELAB = "sigadoc";
 		String ACCESSKEY_SAUCELAB = "6b7f5b5c-0a1e-4c59-b9b5-e3dba4a198d8";
 		authentication = new SauceOnDemandAuthentication(USUARIO_SAUCELAB , ACCESSKEY_SAUCELAB);

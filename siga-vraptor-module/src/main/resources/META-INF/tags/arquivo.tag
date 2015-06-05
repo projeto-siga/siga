@@ -3,4 +3,4 @@
 
 <%@ attribute name="arquivo" required="false" type="br.gov.jfrj.siga.sr.model.SrArquivo"%>
 
-<a href="${linkto[SolicitacaoController].baixar(requestScope[arquivo].idArquivo)}" >${arquivo.nomeArquivo}</a>
+<a href="${linkTo[SolicitacaoController].baixar[arquivo.idArquivo]}" >${arquivo.nomeArquivo}</a>

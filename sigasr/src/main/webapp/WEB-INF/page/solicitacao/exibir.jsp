@@ -625,7 +625,10 @@
 //     });
 
     function postback(){
-        location.href="${linkTo[SolicitacaoController].exibir[solicitacao.idSolicitacao]}&todoOContexto="+$("#todoOContexto").val()+"&ocultas="+$("#ocultas").val();
+        var todoOContexto = ($("#todoOContexto").val() != null ? $("#todoOContexto").val() : false);
+        var ocultas = ($("#ocultas").val() != null ? $("#ocultas").val() : false);
+        
+        location.href="${linkTo[SolicitacaoController].exibir[solicitacao.idSolicitacao]}?todoOContexto="+todoOContexto+"&ocultas="+ocultas;
     }   
 
     $("#terminarPendenciaModal_dialog").dialog({

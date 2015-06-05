@@ -346,13 +346,13 @@ public class SrMovimentacao extends ObjetoVraptor {
         if (getTipoMov() == null)
             setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
 
-        if (!getSolicitacao().isRascunho()) {
-            if (getAtendente() == null && getLotaAtendente() == null)
-                throw new Exception("Atendente não pode ser nulo");
-
-            if (getLotaAtendente() == null)
-                setLotaAtendente(getAtendente().getLotacao());
-        }
+//        if (!getSolicitacao().isRascunho()) {
+//            if (getAtendente() == null && getLotaAtendente() == null)
+//                throw new Exception("Atendente não pode ser nulo");
+//
+//            if (getLotaAtendente() == null)
+//                setLotaAtendente(getAtendente().getLotacao());
+//        }
     }
 
 	public void notificar() throws Exception {

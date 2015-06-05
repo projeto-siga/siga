@@ -538,7 +538,7 @@ public class ExMobilController extends
 						getLotaTitular(), false);
 	}
 
-	@Get("app/expediente/selecionar")
+	@Get({"app/expediente/selecionar","/expediente/selecionar.action"})
 	public void selecionar(final String sigla, final String matricula) throws Exception {
 		assertAcesso("");
 		

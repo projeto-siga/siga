@@ -38,7 +38,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	
 	@Get
 	@Post
-	@Path("/app/lotacao/buscar")
+	@Path({"/app/lotacao/buscar", "/lotacao/buscar.action"})
 	public void busca(String nome, Long idOrgaoUsu, Integer offset, String postback) throws Exception{
 		if (postback == null)
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
@@ -75,7 +75,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		flt.setIdOrgaoUsu(orgaoUsu);
 		if (flt.getIdOrgaoUsu() == null) {
 			if (getLotaTitular() == null)
-				throw new AplicacaoException("Usuário não está logado.");
+				throw new AplicacaoException("Usuï¿½rio nï¿½o estï¿½ logado.");
 			else 
 				flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
 		}
@@ -102,16 +102,16 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 	@Get 
 	@Post
-	@Path("app/lotacao/selecionar")
+	@Path({"app/lotacao/selecionar","/lotacao/selecionar.action"})
 	public String selecionar(String sigla) {
 		String resultado = super.aSelecionar(sigla);
 		if (getSel() != null) {
 			try {
 				/*
-				 * Essa condição é necessário porque o retorno do método getSigla para o ExMobil e DpPessoa
-				 * são as siglas completas, ex: JFRJ-MEM-2014/00003 e RJ14723. No caso da lotação o getSigla
-				 * somente retorna SESIA. No entanto é necessário que o método selecionar retorne a sigla completa, ex:
-				 * RJSESIA, pois esse retorno é o parametro de entrada para o método aExibir, que necessita da sigla completa.
+				 * Essa condiï¿½ï¿½o ï¿½ necessï¿½rio porque o retorno do mï¿½todo getSigla para o ExMobil e DpPessoa
+				 * sï¿½o as siglas completas, ex: JFRJ-MEM-2014/00003 e RJ14723. No caso da lotaï¿½ï¿½o o getSigla
+				 * somente retorna SESIA. No entanto ï¿½ necessï¿½rio que o mï¿½todo selecionar retorne a sigla completa, ex:
+				 * RJSESIA, pois esse retorno ï¿½ o parametro de entrada para o mï¿½todo aExibir, que necessita da sigla completa.
 				 * */
 				DpLotacao lotacao = new DpLotacao();
 				lotacao = (DpLotacao) dao().consultar(getSel().getId(), DpLotacao.class, false);

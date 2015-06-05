@@ -63,7 +63,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 
 	@Get
 	@Post
-	@Path({"/app/pessoa/buscar","/app/cosignatario/buscar"})
+	@Path({"/app/pessoa/buscar","/app/cosignatario/buscar", "/pessoa/buscar.action", "/cosignatario/buscar.action"})
 	public void buscar(String nome, String postback, Integer offset, Long idOrgaoUsu, DpLotacaoSelecao lotacaoSel) throws Exception {
 		final DpLotacao lotacaoTitular = getLotaTitular();
 		if ( postback == null && lotacaoTitular != null ) {
@@ -144,7 +144,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	
 	@Get
 	@Post
-	@Path({"/app/pessoa/selecionar","/app/cosignatario/selecionar"})
+	@Path({"/app/pessoa/selecionar","/app/cosignatario/selecionar", "/pessoa/selecionar.action","/cosignatario/selecionar.action"})
 	public void selecionar(String sigla) {
 		String resultado =  super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno"){

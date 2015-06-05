@@ -30,7 +30,7 @@ public class DpCargoController extends
 	
 	@Get
 	@Post
-	@Path("/app/cargo/buscar")
+	@Path({"/app/cargo/buscar","/cargo/buscar.action"})
 	public void busca(String nome, Long idOrgaoUsu, Integer offset, String postback) throws Exception{
 		if (postback == null)
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
@@ -85,7 +85,7 @@ public class DpCargoController extends
 
 	@Get
 	@Post
-	@Path({"/app/cargo/selecionar"})
+	@Path({"/app/cargo/selecionar","/cargo/selecionar.action"})
 	public void selecionar(String sigla) {
 		this.setNome(sigla);
 		String resultado =  super.aSelecionar(sigla);

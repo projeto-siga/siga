@@ -59,7 +59,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	
 	@Get
 	@Post
-	@Path("/app/funcao/buscar")
+	@Path({"/app/funcao/buscar", "/funcao/buscar.action"})
 	public void buscar(String nome, String postback, Integer offset, Long idOrgaoUsu) throws Exception {
 		if (postback == null){
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();

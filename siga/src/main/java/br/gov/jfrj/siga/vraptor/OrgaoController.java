@@ -43,7 +43,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 	}
 	
 	public void excluir(final Long id) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgï¿½os");
 		if (id != null) {
 			try {
 				dao().iniciarTransacao();
@@ -52,10 +52,10 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 				dao().commitTransacao();				
 			} catch (final Exception e) {
 				dao().rollbackTransacao();
-				throw new AplicacaoException("Erro na exclusão de Orgão", 0, e);
+				throw new AplicacaoException("Erro na exclusï¿½o de Orgï¿½o", 0, e);
 			}
 		} else
-			throw new AplicacaoException("ID não informada");
+			throw new AplicacaoException("ID nï¿½o informada");
 		this.result.redirectTo(this).lista();
 	}
 	
@@ -79,13 +79,13 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 							 final String siglaOrgao, 
 							 final Long idOrgaoUsu, 
 							 final String ativo) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgï¿½os");
 		
 		if(nmOrgao == null)
-			throw new AplicacaoException("Nome do Órgão Externo não informado");
+			throw new AplicacaoException("Nome do ï¿½rgï¿½o Externo nï¿½o informado");
 		
 		if(siglaOrgao == null)
-			throw new AplicacaoException("Sigla do Órgão Externo não informada");
+			throw new AplicacaoException("Sigla do ï¿½rgï¿½o Externo nï¿½o informada");
 		
 		CpOrgao orgao;		
 		if (id == null)
@@ -110,7 +110,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 			dao().commitTransacao();			
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			throw new AplicacaoException("Erro na gravaï¿½ï¿½o", 0, e);
 		}
 		this.result.redirectTo(this).lista();
 	}
@@ -121,7 +121,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 	
 	@Get
 	@Post
-	@Path("/app/orgao/buscar")
+	@Path({"/app/orgao/buscar","/orgao/buscar.action"})
 	public void busca(final String sigla,
 			     	  final Integer offset,
 			     	  final String postback,
@@ -138,7 +138,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		result.include("propriedade",propriedade);
 	}
 	
-	@Get("/app/orgao/selecionar")
+	@Get({"/app/orgao/selecionar","/orgao/selecionar.action"})
 	public void selecionar(final String sigla){
 		String resultado =  super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno"){

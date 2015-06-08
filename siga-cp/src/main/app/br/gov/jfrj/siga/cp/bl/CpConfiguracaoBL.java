@@ -871,11 +871,11 @@ public class CpConfiguracaoBL {
 
 			List<CpTipoConfiguracao> tiposConfiguracao = CpDao.getInstance().listarTiposConfiguracao();
 			for (CpTipoConfiguracao cpTpConf : tiposConfiguracao) {
-				//try{
+				try{
 			        inicializarCache(cpTpConf.getIdTpConfiguracao());
-				//}catch(Exception e){
-					//Logger.getLogger("siga.conf.cache").warning("Não foi possível inicializar o cache CP_TIPO_CONFIGURACAO [" + cpTpConf.getDscTpConfiguracao() + "] ID: [" + cpTpConf.getIdTpConfiguracao() + "]");
-				//}
+				}catch(Exception e){
+					Logger.getLogger("siga.conf.cache").warning("Não foi possível inicializar o cache CP_TIPO_CONFIGURACAO [" + cpTpConf.getDscTpConfiguracao() + "] ID: [" + cpTpConf.getIdTpConfiguracao() + "]");
+				}
 			}
 			cacheInicializado = true;
 			

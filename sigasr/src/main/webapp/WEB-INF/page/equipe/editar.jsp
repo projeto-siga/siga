@@ -213,7 +213,7 @@
 		$("#interIni").rules("add", {hora: ""});
 		$("#interFim").rules("add", {hora: ""});
 	});
-	
+
 	function modalExcecaoAbrir() {
 		// limpa as mensagens de erros
 		resetMensagensErro();
@@ -290,6 +290,11 @@
 		validatorFormExcessao.resetForm();
 		document.getElementById("diaSemanaError").style.display = "none";
 		document.getElementById("dataEspecificaError").style.display = "none";
+
+		$("#horaIni").removeClass("error");
+		$("#horaFim").removeClass("error");
+		$("#interIni").removeClass("error");
+		$("#interFim").removeClass("error");
 	}
 	
 	function resetCamposTela() {

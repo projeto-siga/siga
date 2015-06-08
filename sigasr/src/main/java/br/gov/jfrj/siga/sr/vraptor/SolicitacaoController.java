@@ -18,7 +18,6 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
-import br.com.caelum.vraptor.util.jpa.extra.Load;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -359,12 +358,12 @@ public class SolicitacaoController extends SrController {
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicitaï¿½ï¿½o nï¿½o encontrada");
+            throw new Exception("Solicitação não encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
+            throw new Exception("Esta solicitação foi excluída");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
@@ -598,11 +597,11 @@ public class SolicitacaoController extends SrController {
         exibir(id, todoOContexto(), ocultas());
     }
 
-    @Path("/baixar")
+    @Path("/baixar/{idArquivo}")
     public Download baixar(Long idArquivo) throws Exception {
         SrArquivo arq = SrArquivo.AR.findById(idArquivo);
         final InputStream inputStream = new ByteArrayInputStream(arq.getBlob());
-        return new InputStreamDownload(inputStream, "application/pdf", arq.getNomeArquivo());
+        return new InputStreamDownload(inputStream, "text/plain", arq.getNomeArquivo());
     }
 
     @Path("/escalonar")
@@ -769,7 +768,7 @@ public class SolicitacaoController extends SrController {
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     @Path("/priorizarLista")

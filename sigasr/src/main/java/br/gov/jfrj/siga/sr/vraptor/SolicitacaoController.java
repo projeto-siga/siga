@@ -21,6 +21,8 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -109,12 +111,6 @@ public class SolicitacaoController extends SrController {
         List<SrLista> listas = SrLista.listar(mostrarDesativados);
         String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 
-        result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
-        result.include("prioridades", SrPrioridade.getValoresEmOrdem());
-//        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-//        result.include("cargoSel", new DpCargoSelecao());SSSSS
-//        result.include("cpGrupoSel", new CpPerfilSelecao());
-//        
         result.include(ORGAOS, orgaos);
         result.include(LOCAIS, locais);
         result.include(TIPOS_PERMISSAO, tiposPermissao);
@@ -123,7 +119,12 @@ public class SolicitacaoController extends SrController {
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
-        
+        result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
+        result.include("prioridades", SrPrioridade.getValoresEmOrdem());
+        result.include("lotacaolotacaoAtualSel", new DpLotacaoSelecao());
+        result.include("dpPessoapessoaAtualSel", new DpPessoaSelecao());
+        result.include("cargoSel", new DpCargoSelecao());
+        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());        
         
 
     }
@@ -139,7 +140,8 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/gravarPermissaoUsoLista")
-    public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
+    public void gravarPermissaoUsoLista(SrConfiguracao permissao, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
+    	permissao.setTipoPermissaoSet(tipoPermissaoSet);
         assertAcesso(ADM_ADMINISTRAR);
         permissao.salvarComoPermissaoUsoLista();
 
@@ -167,7 +169,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.getSrConfiguracaoJson());
     }
 
-    @Path("/configuracoesParaInclusaoAutomatica/{idLista}/{mostrarDesativados}")
+    @Path("/configuracoesParaInclusaoAutomatica")
     public void configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(idLista);
 
@@ -194,7 +196,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-    @Path("/listarListaDesativados/{id}")
+    @Path({"/listarListaDesativados"})
     public void buscarPermissoesLista(Long id) throws Exception {
         List<SrConfiguracao> permissoes;
 
@@ -218,7 +220,7 @@ public class SolicitacaoController extends SrController {
 
     private void validarFormEditarLista(SrLista lista) {
         if (lista.getNomeLista() == null || lista.getNomeLista().trim().equals("")) {
-            srValidator.addError("lista.nomeLista", "Nome da Lista n�o informados");
+            srValidator.addError("lista.nomeLista", "Nome da Lista no informados");
         }
 
         if (srValidator.hasErrors()) {
@@ -282,12 +284,6 @@ public class SolicitacaoController extends SrController {
         
         result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
         result.include("prioridades", SrPrioridade.getValoresEmOrdem());
-//        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-//        result.include("cargoSel", new DpCargoSelecao());SSSSS
-//        result.include("cpGrupoSel", new CpPerfilSelecao());
-//        
-//        result.include(LISTAS, listas);
-//        result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
 

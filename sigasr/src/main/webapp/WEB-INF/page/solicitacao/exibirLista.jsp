@@ -195,7 +195,7 @@
 			</form>
 		</div>
 		
-		<div id="jsonPrioridades" data-json="${jsonPrioridades}"></div>
+		<div id="jsonPrioridades" data-json='${jsonPrioridades}'></div>
 	</siga:modal>	
 	
 </siga:pagina>
@@ -304,7 +304,7 @@
 	function carregarPermissoes(id) {
         $.ajax({
         	type: "GET",
-        	url: '${linkTo[SolicitacaoController].buscarPermissoesLista}'+"?idLista=" + id,
+        	url: '${linkTo[SolicitacaoController].buscarPermissoesLista}'+id,
         	dataType: "text",
         	success: function(lista) {
         		var permissoesJSon = JSON.parse(lista);

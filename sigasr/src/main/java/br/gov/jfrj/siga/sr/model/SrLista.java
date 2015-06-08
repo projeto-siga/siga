@@ -29,11 +29,12 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_LISTA", schema = Catalogs.SIGASR)
-public class SrLista extends HistoricoSuporteVraptor {
+public class SrLista extends HistoricoSuporteVraptor implements ConvertableEntity {
 
     private static final long serialVersionUID = 1L;
 

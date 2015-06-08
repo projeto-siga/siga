@@ -58,7 +58,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
  */
 @MappedSuperclass
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
-		implements Serializable {
+		implements Serializable, CpConvertableEntity {
 
 	/**
 	 * 

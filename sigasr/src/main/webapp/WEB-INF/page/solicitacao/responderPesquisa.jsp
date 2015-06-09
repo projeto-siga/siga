@@ -7,7 +7,7 @@ $(function(){
  	  	   type: "POST",
  	  	   async: false,
  	  	   data:  $("#formSubmit").serialize(),
- 	  	   url: "/sigasr/solicitacao/responderPesquisa"
+ 	  	   url: "${linkTo[SolicitacaoController].responderPesquisa}"
  	  	});
     });
 });

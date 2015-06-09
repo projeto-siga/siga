@@ -132,7 +132,7 @@
 							listKey="idOperador" id="operador"
 							listValue="nome" theme="simple"
 							value="${operador}" />
-					<input type="text" id="valor" name="valor" value="" style="width: 3em; text-align: right;" required />
+					<input type="text" id="valor" name="valor" value="" maxlength="4" style="width: 3em; text-align: right;" required />
 					<select id="unidadeMedida" name="unidadeMedida">
 						<c:forEach items="${unidadesMedida}" var="unidadeMedida">
 							<option value="${unidadeMedida.idUnidadeMedida}">${unidadeMedida.plural}</option>
@@ -304,7 +304,7 @@
 	      		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	      	 },
 	      	 error: function(error) {
-	          	alert("Não foi possível carregar as Abrangências deste Acordo.");
+	          	alert("NÃ£o foi possÃ­vel carregar as AbrangÃªncias deste Acordo.");
 	      	 }
        });
     });
@@ -370,10 +370,10 @@
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangência');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar AbrangÃªncia');
 		else {
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangência');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir AbrangÃªncia');
 		}
 		jQuery("#associacao_dialog").dialog('open');
 	};
@@ -901,7 +901,7 @@
 	}
 
 	$('#valor').keydown(function (e) {
-        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
              // Allow: Ctrl+A
             (e.keyCode == 65 && e.ctrlKey === true) ||
              // Allow: Ctrl+C

@@ -23,12 +23,12 @@ import br.gov.jfrj.siga.page.objects.PrincipalPage;
 public class CriacaoDocumentoIT extends IntegrationTestBase{
 	private PrincipalPage principalPage;
 	private EditaDocumentoPage editaDocumentoPage;
-	
+
 	public CriacaoDocumentoIT() throws FileNotFoundException, IOException {
 		super();
 	}
 
-	@BeforeClass	
+	@BeforeClass
 	public void setUp() {
 		try {
 			efetuaLogin();
@@ -37,19 +37,19 @@ public class CriacaoDocumentoIT extends IntegrationTestBase{
 			operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new SkipException("ExceÁ„o no mÈtodo setUp!");
-		} 
+			throw new SkipException("Exce√ß√£o no m√©todo setUp!");
+		}
 	}
-	
+
 	@BeforeMethod
 	public void paginaInicial(Method method) {
 		try {
-			System.out.println("BeforeMethod: " + method.getName() + " - Titulo p·gina: " + driver.getTitle());
-			
+			System.out.println("BeforeMethod: " + method.getName() + " - Titulo p√°gina: " + driver.getTitle());
+
 			if(driver.getCurrentUrl().contains("exibir.action") && util.getClickableElement(driver, By.linkText("Editar")) != null) {
 				operacoesDocumentoPage.clicarLinkEditar();
 			} else {
-				if(!driver.getTitle().equals("SIGA - P·gina Inicial")) {
+				if(!driver.getTitle().equals("SIGA - P√°gina Inicial")) {
 					driver.get(baseURL + "/siga");
 				}
 				principalPage.clicarBotaoNovoDocumentoEx();
@@ -62,44 +62,44 @@ public class CriacaoDocumentoIT extends IntegrationTestBase{
 	@Test(enabled = true)
 	public void criaDocumentoExterno() {
 		editaDocumentoPage.preencheDocumentoExterno(propDocumentos);
-		WebElement divVisualizacaoDocumento = util.getWebElement(driver, By.cssSelector("div.gt-content-box"));		
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Expediente Externo N∫')]")), "Texto Expediente Externo N∫ TMP n„o foi encontrado!");
+		WebElement divVisualizacaoDocumento = util.getWebElement(driver, By.cssSelector("div.gt-content-box"));
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Expediente Externo N¬∫')]")), "Texto Expediente Externo N¬∫ TMP n√£o foi encontrado!");
 	}
 
 	@Test(enabled = true)
 	public void criaDocumentoInternoImportado() {
 		editaDocumentoPage.preencheDocumentoInternoImportado(propDocumentos);
 		WebElement divVisualizacaoDocumento = util.getWebElement(driver, By.cssSelector("div.gt-content-box"));
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//b[contains(., 'Expediente Interno N∫ TMP')]")), "Texto Expediente Interno N∫ TMP n„o foi encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//b[contains(., 'Expediente Interno N¬∫ TMP')]")), "Texto Expediente Interno N¬∫ TMP n√£o foi encontrado!");
 	}
-	
+
 	@Test(enabled = true)
 	public void criaMemorando() {
 		MemorandoPage memorandoPage = PageFactory.initElements(driver, MemorandoPage.class);
 		memorandoPage.criaMemorando(propDocumentos);
 		WebElement divVisualizacaoDocumento = util.getWebElement(driver, By.cssSelector("div.gt-content-box"));
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'MEMORANDO N∫ TMP')]")), "Texto MEMORANDO N∫ TMP n„o foi encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Atenciosamente')]")), "Fecho n„o encontrado");
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'MEMORANDO N¬∫ TMP')]")), "Texto MEMORANDO N¬∫ TMP n√£o foi encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Atenciosamente')]")), "Fecho n√£o encontrado");
 	}
-	
+
 	@Test(enabled = true)
 	public void criaPortaria() {
 		PortariaPage portariaPage = PageFactory.initElements(driver, PortariaPage.class);
 		portariaPage.criaPortaria(propDocumentos);
 		WebElement divVisualizacaoDocumento = util.getWebElement(driver, By.cssSelector("div.gt-content-box"));
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'PORTARIA N∫ TMP')]")), "Texto PORTARIA N∫ TMP n„o foi encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Testes de IntegraÁ„o')]")), "InformaÁ„o sobre o que Dispıe o documento n„o encontrada!");
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//span[contains(., 'Exmo. Sr. Juiz Federal')]")), "Texto do memorando n„o encontrado!");		
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'PORTARIA N¬∫ TMP')]")), "Texto PORTARIA N¬∫ TMP n√£o foi encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Testes de Integra√ß√£o')]")), "Informa√ß√£o sobre o que Disp√µe o documento n√£o encontrada!");
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//span[contains(., 'Exmo. Sr. Juiz Federal')]")), "Texto do memorando n√£o encontrado!");
 	}
-	
+
 	@Test(enabled = true)
 	public void criaOficio() {
 		OficioPage oficioPage = PageFactory.initElements(driver, OficioPage.class);
 		oficioPage.criaOficio(propDocumentos);
 		WebElement divVisualizacaoDocumento = util.getWebElement(driver, By.cssSelector("div.gt-content-box"));
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'OFÕCIO N∫ TMP')]")), "Texto OFÕCIO N∫ TMP n„o foi encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., '" + propDocumentos.getProperty("enderecoDestinatario") + "')]")), 
-				"EndereÁo n„o encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Senhor Juiz')]")), "Forma de Tratamento n„o encontrada!");
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'OF√çCIO N¬∫ TMP')]")), "Texto OF√çCIO N¬∫ TMP n√£o foi encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., '" + propDocumentos.getProperty("enderecoDestinatario") + "')]")),
+				"Endere√ßo n√£o encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Senhor Juiz')]")), "Forma de Tratamento n√£o encontrada!");
 	}
 }

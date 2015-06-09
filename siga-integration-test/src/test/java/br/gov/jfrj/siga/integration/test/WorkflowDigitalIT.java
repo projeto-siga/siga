@@ -26,264 +26,264 @@ import br.gov.jfrj.siga.page.objects.TarefaPage;
 public class WorkflowDigitalIT extends IntegrationTestBase {
 	private String codigoDocumento;
 	private TarefaPage tarefaPage;
-	private String inicioTarefa; 
+	private String inicioTarefa;
 	private String descricaoTarefa;
 	private String url;
-	
+
 	public WorkflowDigitalIT() throws FileNotFoundException, IOException {
 		super();
 	}
-	
+
 	@BeforeClass(enabled = true)
 	public void login() {
-		efetuaLogin();		
+		efetuaLogin();
 		tarefaPage = PageFactory.initElements(driver, TarefaPage.class);
 		operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
-	
+
 	@BeforeClass(enabled = true)
 	public void solicitacaoEletronicaContratacao() {
 		try {
-			// No SIGA-DOC, criar documento: 
+			// No SIGA-DOC, criar documento:
 			PrincipalPage principalPage = PageFactory.initElements(driver, PrincipalPage.class);
 			principalPage.clicarBotaoNovoDocumentoEx();
-			
-			// SolicitaÁ„o EletrÙnica de ContrataÁ„o - Digital - Selecionar Tipo "SolicitaÁ„o EletrÙnica de ContrataÁ„o" 
+
+			// Solicita√ß√£o Eletr√¥nica de Contrata√ß√£o - Digital - Selecionar Tipo "Solicita√ß√£o Eletr√¥nica de Contrata√ß√£o"
 			// Preencher campos que ainda estiverem vazios - Clicar OK
 			SolicitacaoEletronicaContratacaoPage secPage = PageFactory.initElements(driver, SolicitacaoEletronicaContratacaoPage.class);
 			secPage.criaSolicitacaoEletronicaContratacao(propDocumentos);
-			
+
 			// Clicar em Finalizar
 			operacoesDocumentoPage.clicarLinkFinalizar();
-			
+
 			// Assinar Digitalmente (simular assinatura)
 			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
-			assinarDigitalmente(codigoDocumento, "N∫ " + codigoDocumento);
-			
+			assinarDigitalmente(codigoDocumento, "N¬∫ " + codigoDocumento);
+
 			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
-			
-			// Garantir que "Tarefa: Anexar Arquivos" apareÁa na tela
+
+			// Garantir que "Tarefa: Anexar Arquivos" apare√ßa na tela
 			WebElement tarefaElement = util.getWebElement(driver, By.xpath("//td[contains(., 'Tarefa: Anexar Arquivos')]"));
 			if(tarefaElement == null) {
-				throw new SkipException("Tarefa n„o encontrada!");
+				throw new SkipException("Tarefa n√£o encontrada!");
 			}
-			
-			// Garantir que o link "Prosseguir" apareÁa na tela
-			WebElement linkProsseguir = util.getWebElement(driver, By.xpath("//a[contains(text(), 'Prosseguir')]"));		
+
+			// Garantir que o link "Prosseguir" apare√ßa na tela
+			WebElement linkProsseguir = util.getWebElement(driver, By.xpath("//a[contains(text(), 'Prosseguir')]"));
 			if(linkProsseguir == null) {
-				throw new SkipException("Link Prosseguir n„o encontrado!");
+				throw new SkipException("Link Prosseguir n√£o encontrado!");
 			}
-			
+
 			// Armazenando nome da tarefa
 			String tarefa = tarefaElement.getText();
 			descricaoTarefa = tarefa.substring(tarefa.indexOf("Tarefa: "), tarefa.indexOf(" sendo")).substring(8);
-			
-			// Armazenando inÌcio da tarefa
+
+			// Armazenando in√≠cio da tarefa
 			String procedimento = util.getWebElement(driver, By.xpath("//td[contains(.,'Procedimento:')]")).getText();
-			inicioTarefa = procedimento.substring(procedimento.indexOf("(") + 1, procedimento.indexOf(")"));				
+			inicioTarefa = procedimento.substring(procedimento.indexOf("(") + 1, procedimento.indexOf(")"));
 		} catch(Exception e) {
 			e.printStackTrace();
-			throw new SkipException("ExceÁ„o no mÈtodo setUp!");
+			throw new SkipException("Exce√ß√£o no m√©todo setUp!");
 		}
 	}
-	
+
 	@BeforeMethod(enabled = true)
 	public void paginaInicial(Method method) {
 
-			System.out.println("BeforeMethod: " + method.getName() + " - Titulo p·gina: " + driver.getTitle());
-			
-			if(!method.getName().equals("pagamento") && !method.getName().equals("relatorioContratacao")) {							
+			System.out.println("BeforeMethod: " + method.getName() + " - Titulo p√°gina: " + driver.getTitle());
+
+			if(!method.getName().equals("pagamento") && !method.getName().equals("relatorioContratacao")) {
 				if(!driver.getCurrentUrl().contains("sigawf")) {
-					// Ir para a p·gina inicial atravÈs do menu SIGA > P·gina Inicial
+					// Ir para a p√°gina inicial atrav√©s do menu SIGA > p√°gina Inicial
 					util.getWebElement(driver, By.linkText("SIGA")).sendKeys(Keys.ENTER);
-					util.getWebElement(driver, By.linkText("P·gina Inicial")).sendKeys(Keys.ENTER);
-					util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right"));	
-					
+					util.getWebElement(driver, By.linkText("p√°gina Inicial")).sendKeys(Keys.ENTER);
+					util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right"));
+
 					WebElement linkTarefa = util.getWebElement(driver, By.xpath("//div[h2 = 'Tarefas']//tbody/tr[td[1]/a[text() = '" + descricaoTarefa + "'] "
 							+ "and td[last()][contains(., '" + inicioTarefa +"')]]/td/a"));
-					linkTarefa.click();			
+					linkTarefa.click();
 				}
-			} else {			
+			} else {
 				if(method.getName().equals("pagamento")) {
 					try {
 						geraProcesso();
 					} catch(Exception e) {
 						e.printStackTrace();
-						throw new SkipException("ExceÁ„o no mÈtodo geraProcesso!");
+						throw new SkipException("Exce√ß√£o no m√©todo geraProcesso!");
 					}
 				}
-				
+
 				url = driver.getCurrentUrl();
 				System.out.println("Url: " + url);
-				// Ir para a mÛdulo workflow atravÈs do menu SIGA > MÛdulos > Workflow
+				// Ir para a m√≥dulo workflow atrav√©s do menu SIGA > M√≥dulos > Workflow
 				util.getWebElement(driver, By.linkText("SIGA")).sendKeys(Keys.ENTER);
-				util.getWebElement(driver, By.linkText("MÛdulos")).sendKeys(Keys.ENTER);
+				util.getWebElement(driver, By.linkText("M√≥dulos")).sendKeys(Keys.ENTER);
 				util.getWebElement(driver, By.linkText("Workflow")).sendKeys(Keys.ENTER);
-				util.getWebElement(driver, By.xpath("//h3[ text() = 'Quadro de tarefas']"));				
+				util.getWebElement(driver, By.xpath("//h3[ text() = 'Quadro de tarefas']"));
 			}
 	}
-		
+
 	@Test(enabled = true, priority = 1)
 	public void comentario() {
 		tarefaPage.adicionarComentario(propDocumentos);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[text() = '" + propDocumentos.getProperty("comentario") +"']")), 
-				"Texto '" + propDocumentos.getProperty("comentario") + "' n„o encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[text() = '" + propDocumentos.getProperty("comentario") +"']")),
+				"Texto '" + propDocumentos.getProperty("comentario") + "' n√£o encontrado!");
 	}
-	
+
 	@Test(enabled = true, priority = 1)
 	public void designacaoTarefa() {
-		// Deletar a pessoa e deixar somente a lotaÁ„o - Alterar a prioridade para Alta - Clicar em Designar
-		tarefaPage.designarTarefaLotacao(propDocumentos);	
-		
-		// Garantir que o atendente da tarefa seja a lotaÁ„o designada 
+		// Deletar a pessoa e deixar somente a lota√ß√£o - Alterar a prioridade para Alta - Clicar em Designar
+		tarefaPage.designarTarefaLotacao(propDocumentos);
+
+		// Garantir que o atendente da tarefa seja a lota√ß√£o designada
 		WebElement tarefa = util.getWebElement(driver, By.xpath("//div[h2 = 'Tarefas']//tbody/tr[td[1]/a[text() = 'Anexar Arquivos'] and td[last()][contains(., '" + inicioTarefa +"')]]"));
 		List<WebElement> colunas = tarefa.findElements(By.tagName("td"));
-		
+
 		Assert.assertTrue(colunas.get(1).getText().equals(propDocumentos.getProperty("lotacao")));
-		
+
 		// E a prioridade seja alta no quadro de tarefas
 		Assert.assertTrue(colunas.get(2).getText().equals("Alta"));
-		
+
 		// Clicar no link "Anexar Arquivos"
 		util.getWebElement(driver, colunas.get(0), By.linkText("Anexar Arquivos")).click();
-		
+
 		// Clicar em Pegar tarefa para mim
 		tarefaPage.pegarTarefaParaMim();
-		
-		// Garantir que o nome da pessoa apareÁa na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.id("atorSelSpan")), "Nome da pessoa n„o encontrado!");
-		// Garantir que o bot„o "Pegar tarefa para mim" n„o apareÁa na tela 
-		Assert.assertTrue(util.isElementInvisible(driver, By.xpath("//input[@value='Pegar tarefa para mim']")), "Bot„o 'Pegar tarefa para mim' ainda est· sendo exibido!");
+
+		// Garantir que o nome da pessoa apare√ßa na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.id("atorSelSpan")), "Nome da pessoa n√£o encontrado!");
+		// Garantir que o botÔøΩo "Pegar tarefa para mim" n√£o apare√ßa na tela
+		Assert.assertTrue(util.isElementInvisible(driver, By.xpath("//input[@value='Pegar tarefa para mim']")), "BotÔøΩo 'Pegar tarefa para mim' ainda est√° sendo exibido!");
 	}
-	
+
 	@Test(enabled = true, priority = 2)
-	public void execucaoTarefaSigaDoc() {	
+	public void execucaoTarefaSigaDoc() {
 		util.getClickableElement(driver, By.partialLinkText(codigoDocumento)).click();
-		
+
 		// Clicar em Prosseguir
-		util.getWebElement(driver, By.partialLinkText("Prosseguir ª")).click();
-		
-		// Garantir que "Tarefa: Verificar programaÁ„o anual" apareÁa na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[contains(.,'Tarefa: Verificar programaÁ„o anual')]")),
-				"'Tarefa: Verificar programaÁ„o anual' n„o encontrada!");
-		
-		// Garantir que os botıes "Sim" e "N„o" apareÁam na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//a[contains(text(), 'Sim ª')]")), "Link 'Sim' n„o encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//a[contains(text(), 'N„o ª')]")), "Link 'N„o' n„o encontrado!");
-		
+		util.getWebElement(driver, By.partialLinkText("Prosseguir ¬ª")).click();
+
+		// Garantir que "Tarefa: Verificar programa√ß√£o anual" apare√ßa na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[contains(.,'Tarefa: Verificar programaÔøΩÔøΩo anual')]")),
+				"'Tarefa: Verificar programa√ß√£o anual' n√£o encontrada!");
+
+		// Garantir que os bot√µes "Sim" e "n√£o" apare√ßam na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//a[contains(text(), 'Sim ¬ª')]")), "Link 'Sim' n√£o encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//a[contains(text(), 'n√£o ¬ª')]")), "Link 'n√£o' n√£o encontrado!");
+
 		// Clicar no link do documento
-		WebElement procedimento = util.getWebElement(driver, By.xpath("//td[contains(.,'Procedimento: ContrataÁ„o: fase de an·lise')]"));
+		WebElement procedimento = util.getWebElement(driver, By.xpath("//td[contains(.,'Procedimento: Contrata√ß√£o: fase de an√°lise')]"));
 		inicioTarefa = procedimento.getText().substring(procedimento.getText().indexOf("(") + 1, procedimento.getText().indexOf(")"));
-		descricaoTarefa = "Verificar programaÁ„o anual";		
+		descricaoTarefa = "Verificar programa√ß√£o anual";
 	}
-	
+
 	@Test(enabled = true, priority = 3)
-	public void execucaoTarefaWorkflow() {		
+	public void execucaoTarefaWorkflow() {
 		// Clicar em Sim
 		util.getClickableElement(driver, By.xpath("//input[contains(@value, 'Sim')]")).click();
-		
-		// Garantir que "Tarefa: Realizar cotaÁ„o" apareÁa na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'Tarefa: Realizar cotaÁ„o')]")),
-				"'Tarefa: Realizar cotaÁ„o' n„o encontrada!");
-		
-		// Garantir que o link "Retificar SEC" e "Prosseguir" apareÁam na tela		
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Retificar SEC')]")), "Bot„o 'Retificar SEC' n„o encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Prosseguir')]")), "Bot„o 'Prosseguir' n„o encontrado!");
-		
-		// Armazenando dados do inÌcio da tarefa e descriÁ„o da tarefa
-		String inicio = util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'InÌcio:')]")).getText();
+
+		// Garantir que "Tarefa: Realizar cotaÔøΩÔøΩo" apare√ßa na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'Tarefa: Realizar cotaÔøΩÔøΩo')]")),
+				"'Tarefa: Realizar cotaÔøΩÔøΩo' n√£o encontrada!");
+
+		// Garantir que o link "Retificar SEC" e "Prosseguir" apare√ßam na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Retificar SEC')]")), "BotÔøΩo 'Retificar SEC' n√£o encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Prosseguir')]")), "BotÔøΩo 'Prosseguir' n√£o encontrado!");
+
+		// Armazenando dados do in√≠cio da tarefa e descri√ß√£o da tarefa
+		String inicio = util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'in√≠cio:')]")).getText();
 		inicioTarefa = inicio.substring(inicio.indexOf(":") + 1, inicio.length()).trim();
-		descricaoTarefa = "Realizar cotaÁ„o";
+		descricaoTarefa = "Realizar cota√ß√£o";
 	}
-		
+
 	public void geraProcesso() {
 		// Ir no menu Documento > Pesquisar
 		util.getWebElement(driver, By.linkText("SIGA")).sendKeys(Keys.ENTER);
-		util.getWebElement(driver, By.linkText("MÛdulos")).sendKeys(Keys.ENTER);
+		util.getWebElement(driver, By.linkText("M√≥dulos")).sendKeys(Keys.ENTER);
 		util.getWebElement(driver, By.linkText("Documentos")).sendKeys(Keys.ENTER);
-		
+
 		util.trocaURL(url);
 		url = driver.getCurrentUrl();
 		System.out.println("Url: " + url);
-		
-		// SituaÁ„o: aguardando andamento - Tipo: Portaria - Clicar em "buscar"
+
+		// SituaÔøΩÔøΩo: aguardando andamento - Tipo: Portaria - Clicar em "buscar"
 		PesquisaDocumentoPage pesquisaDocumentoPage = PageFactory.initElements(driver, PesquisaDocumentoPage.class);
 		pesquisaDocumentoPage.buscaPortaria();
-		
-		// Clicar em "autuar"	
+
+		// Clicar em "autuar"
 		// Preencher subscritor - Alterar Modelo para: "Contrato com Exclusividade" - Clicar em Ok
 		super.autuar(Boolean.TRUE, "Contrato com Exclusividade");
-		
+
 		// Finalizar e assinar Processo criado
 		operacoesDocumentoPage.clicarLinkFinalizar();
 		// Assinar Digitalmente (simular assinatura)
 		codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
 		assinarDigitalmente(codigoDocumento, propDocumentos.getProperty("descricao"));
-	}	
-	
+	}
+
 	@Test(enabled = true, priority = 4)
-	public void pagamento() {		
+	public void pagamento() {
 		util.trocaURL(url);
 		url = driver.getCurrentUrl();
 		System.out.println("Url: " + url);
-		
+
 		// Ir no menu Procedimentos > Iniciar > Pagamento
 		util.getWebElement(driver, By.linkText("Procedimentos")).sendKeys(Keys.ENTER);
 		util.getWebElement(driver, By.linkText("Iniciar")).sendKeys(Keys.ENTER);
 		util.getWebElement(driver, By.linkText("Pagamento")).sendKeys(Keys.ENTER);
-		
+
 		util.trocaURL(url);
 		url = driver.getCurrentUrl();
 		System.out.println("Url: " + url);
-		
-		// Colar a sigla copiada no campo de ExecuÁ„o da Tarefa
+
+		// Colar a sigla copiada no campo de Execu√ß√£o da Tarefa
 		// Clicar em prosseguir
 		tarefaPage.prosseguirPagamento(codigoDocumento);
-		
-		// Garantir que "Tarefa: … registro de preÁos - pagamento" apareÁa na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'Tarefa: … registro de preÁos - pagamento')]")),
-				"'Tarefa:  … registro de preÁos - pagamento' n„o encontrada!");
-		
-		// Garantir que os botıes "Sim" e "N„o" apareÁam na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Sim') and @type = 'submit']")), "Bot„o 'Sim' n„o encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Nao') and @type = 'submit']")), "Bot„o 'N„o' n„o encontrado!");
-		
+
+		// Garantir que "Tarefa: √â registro de pre√ßos - pagamento" apare√ßa na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'Tarefa: ÔøΩ registro de pre√ßos - pagamento')]")),
+				"'Tarefa:  √â registro de pre√ßos - pagamento' n√£o encontrada!");
+
+		// Garantir que os bot√µes "Sim" e "n√£o" apare√ßam na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Sim') and @type = 'submit']")), "BotÔøΩo 'Sim' n√£o encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Nao') and @type = 'submit']")), "BotÔøΩo 'n√£o' n√£o encontrado!");
+
 		// Clicar no link da sigla do Processo
 		util.getClickableElement(driver, By.partialLinkText(codigoDocumento)).click();
-		
-		// Garantir que "Tarefa: … registro de preÁos - pagamento" apareÁa na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[contains(.,'Tarefa: … registro de preÁos - pagamento')]")),
-				"'Tarefa: … registro de preÁos - pagamento' n„o encontrada!");
-		
-		// Garantir que os botıes "Sim" e "N„o" apareÁam na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//a[contains(text(), 'Sim ª')]")), "Link 'Sim' n„o encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//a[contains(text(), 'Nao ª')]")), "Link 'N„o' n„o encontrado!");
-	}	
-	
+
+		// Garantir que "Tarefa: ÔøΩ registro de pre√ßos - pagamento" apare√ßa na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[contains(.,'Tarefa: √â registro de pre√ßos - pagamento')]")),
+				"'Tarefa: √â registro de pre√ßos - pagamento' n√£o encontrada!");
+
+		// Garantir que os bot√µes "Sim" e "n√£o" apare√ßam na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//a[contains(text(), 'Sim ¬ª')]")), "Link 'Sim' n√£o encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//a[contains(text(), 'Nao ¬ª')]")), "Link 'n√£o' n√£o encontrado!");
+	}
+
 	@Test(enabled = true, priority = 5)
 	public void relatorioContratacao() {
 		util.trocaURL(url);
 		url = driver.getCurrentUrl();
 		System.out.println("Url: " + url);
-		
-		// Ir no menu RelatÛrios > Apresentar MÈtricas > ContrataÁ„o: fase de an·lise
-		util.getWebElement(driver, By.linkText("RelatÛrios")).sendKeys(Keys.ENTER);
-		util.getWebElement(driver, By.linkText("Apresentar MÈtricas")).sendKeys(Keys.ENTER);
-		util.getWebElement(driver, By.linkText("ContrataÁ„o: fase de an·lise")).sendKeys(Keys.ENTER);
-		
+
+		// Ir no menu Relat√≥rios > Apresentar m√©tricas > Contrata√ß√£o: fase de an√°lise
+		util.getWebElement(driver, By.linkText("Relat√≥rios")).sendKeys(Keys.ENTER);
+		util.getWebElement(driver, By.linkText("Apresentar m√©tricas")).sendKeys(Keys.ENTER);
+		util.getWebElement(driver, By.linkText("Contrata√ß√£o: fase de an√°lise")).sendKeys(Keys.ENTER);
+
 		util.trocaURL(url);
 		url = driver.getCurrentUrl();
 		System.out.println("Url: " + url);
-		
-		// Alterar o relatÛrio para "Tempo de documentos" - Inserir datas nos campos "Procedimento iniciado" e "Procedimento finalizado"
-		// Clicar em Gerar relatÛrio
+
+		// Alterar o relat√≥rio para "Tempo de documentos" - Inserir datas nos campos "Procedimento iniciado" e "Procedimento finalizado"
+		// Clicar em Gerar relat√≥rio
 		EstatisticaProcedimentoPage ePage = PageFactory.initElements(driver, EstatisticaProcedimentoPage.class);
 		ePage.gerarRelatorioContratacao(propDocumentos.getProperty("dataInicialRelatorio"), propDocumentos.getProperty("dataFinalRelatorio"));
-		
+
 		util.trocaURL(url);
 		url = driver.getCurrentUrl();
 		System.out.println("Url: " + url);
-		// Garantir que n„o retorne um erro 500
-		util.isPDF(driver);		
+		// Garantir que n√£o retorne um erro 500
+		util.isPDF(driver);
 	}
 }

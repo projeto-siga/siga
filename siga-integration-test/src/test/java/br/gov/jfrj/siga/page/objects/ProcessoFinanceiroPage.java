@@ -8,12 +8,12 @@ import org.openqa.selenium.WebDriver;
 public class ProcessoFinanceiroPage extends EditaDocumentoPage {
 
 	public ProcessoFinanceiroPage(WebDriver driver) {
-		super(driver);		
+		super(driver);
 	}
-	
+
 	public void criaProcessoFinanceiro(Properties propDocumentos, Boolean isDigital, String modeloDocumento) {
 		preencheOrigem(propDocumentos.getProperty("internoProduzido"));
-		selectTipoDocumento("Processo de ExecuÁ„o OrÁament·ria e Financeira", modeloDocumento,  By.xpath("//td[text() = 'Dados complementares']"));
+		selectTipoDocumento("Processo de Execu√ß√£o Or√ßament√°ria e Financeira", modeloDocumento,  By.xpath("//td[text() = 'Dados complementares']"));
 		preencheDocumentoInterno(propDocumentos, isDigital, Boolean.TRUE);
 		botaoOk.click();
 	}

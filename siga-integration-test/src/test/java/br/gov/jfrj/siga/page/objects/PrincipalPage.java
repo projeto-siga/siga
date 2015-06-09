@@ -42,7 +42,7 @@ public class PrincipalPage {
 		try {
 			new WebDriverWait(driver, 30).until(util.trocaURL(URL));	
 		} catch (TimeoutException e) {
-			System.out.println("TimeOut aguardando a p·gina de novo documento ser exibida. Tentando clicar novamente...");
+			System.out.println("TimeOut aguardando a p√°gina de novo documento ser exibida. Tentando clicar novamente...");
 			botaoNovoDocumentoEx.click();
 		}
 	}

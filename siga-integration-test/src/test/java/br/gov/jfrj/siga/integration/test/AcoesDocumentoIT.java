@@ -34,126 +34,126 @@ public class AcoesDocumentoIT extends IntegrationTestBase {
 	private String codigoDocumento;
 	private Boolean isDocumentoTesteCriado = Boolean.FALSE;
 	PrincipalPage principalPage;
-	
+
 	public AcoesDocumentoIT() throws FileNotFoundException, IOException {
 		super();
 	}
-	
-	@BeforeClass	
+
+	@BeforeClass
 	public void setUp() {
 		try {
 			efetuaLogin();
 			principalPage = PageFactory.initElements(driver, PrincipalPage.class);
 			operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
-					
-			codigoDocumento = criaDocumento();	
+
+			codigoDocumento = criaDocumento();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new SkipException("ExceÁ„o no mÈtodo setUp!");
-		} 
+			throw new SkipException("Exce√ß√£o no m√©todo setUp!");
+		}
 	}
-	
+
 	@BeforeMethod
 	public void paginaInicial(Method method) {
 		try {
-			System.out.println("BeforeMethod: " + method.getName() + " - Titulo p·gina: " + driver.getTitle() +
+			System.out.println("BeforeMethod: " + method.getName() + " - Titulo p√°gina: " + driver.getTitle() +
 					"url: " + driver.getCurrentUrl());
-			
+
 			if((method.getName().equals("apensarDocumento") || method.getName().equals("vincularDocumento")) && !isDocumentoTesteCriado) {
 				driver.get(baseURL + "/siga");
 				util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right"));
 				String codigoDocumentoTeste = criaDocumento();
 				super.finalizarDocumento();
-				super.assinarDigitalmente(codigoDocumentoTeste, "N∫");	
+				super.assinarDigitalmente(codigoDocumentoTeste, "NÔøΩ");
 				isDocumentoTesteCriado = Boolean.TRUE;
-				driver.get(baseURL + "/sigaex/expediente/doc/exibir.action?sigla=" + codigoDocumento);	
+				driver.get(baseURL + "/sigaex/expediente/doc/exibir.action?sigla=" + codigoDocumento);
 			} else if(!driver.getCurrentUrl().contains("exibir.action") || driver.getTitle().contains("SIGA - Erro Geral")) {
 				System.out.println("Efetuando busca!");
-				driver.get(baseURL + "/sigaex/expediente/doc/exibir.action?sigla=" + codigoDocumento);				
+				driver.get(baseURL + "/sigaex/expediente/doc/exibir.action?sigla=" + codigoDocumento);
 			}
-			
+
 			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test(enabled = true)
 	public void duplicarDocumento() {
 		operacoesDocumentoPage.clicarLinkDuplicar();
 		operacoesDocumentoPage.clicarLinkExcluir();
-		Assert.assertTrue(driver.getTitle().equals("SIGA - P·gina Inicial"), "A aÁ„o n„o direcionou para a p·gina inicial!");
+		Assert.assertTrue(driver.getTitle().equals("SIGA - P√°gina Inicial"), "A a√ß√£o n√£o direcionou para a p√°gina inicial!");
 	}
-	
+
 	@Test(enabled = false)
 	public void incluiCossignatario() {
 		operacoesDocumentoPage.clicarLinkIncluirCossignatario();
 		InclusaoCossignatarioPage inclusaoCossignatarioPage = PageFactory.initElements(driver, InclusaoCossignatarioPage.class);
 		inclusaoCossignatarioPage.incluiCossignatario(propDocumentos);
 		Assert.assertTrue(operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/div/table/tbody/tr/td[4]/a/span").contains(propDocumentos.getProperty("nomeCossignatario")),
-				"Nome do cossignat·rio n„o encontrado!");
-		operacoesDocumentoPage.excluirCossignatario();		
-		Assert.assertTrue(util.isElementInvisible(driver, By.cssSelector("/html/body/div[4]/div/div/table/tbody/tr/td[4]/a/span")), "Nome do cossignat·rio continua aparecendo na tela!");
+				"Nome do cossignat√°rio n√£o encontrado!");
+		operacoesDocumentoPage.excluirCossignatario();
+		Assert.assertTrue(util.isElementInvisible(driver, By.cssSelector("/html/body/div[4]/div/div/table/tbody/tr/td[4]/a/span")), "Nome do cossignat√°rio continua aparecendo na tela!");
 	}
-	
+
 	@Test(enabled = true, priority = 2)
 	public void anexarArquivo() {
 		super.anexarArquivo(propDocumentos.getProperty("arquivoAnexo"));
 	}
-	
+
 	@Test(enabled = true, priority = 3)
 	public void assinarAnexo() {
 		super.assinarAnexo(codigoDocumento);
 	}
-	
+
 	@Test(enabled = true, priority = 1)
 	public void finalizarDocumento() {
-		super.finalizarDocumento(); 
+		super.finalizarDocumento();
 	}
-	
+
 	@Test(enabled = true, priority = 3)
 	public void fazerAnotacao() {
 		operacoesDocumentoPage.clicarLinkFazerAnotacao();
 		AnotacaoPage anotacaoPage = PageFactory.initElements(driver, AnotacaoPage.class);
 		anotacaoPage.fazerAnotacao(propDocumentos);
-		WebElement descricaoAnotacao = util.getWebElement(driver, By.xpath("//td[4][contains(., 'Teste de anotaÁ„o')]"));
-		Assert.assertNotNull(descricaoAnotacao, "Conte˙do da anotaÁ„o n„o encontrado!");
+		WebElement descricaoAnotacao = util.getWebElement(driver, By.xpath("//td[4][contains(., 'Teste de anotaÔøΩÔøΩo')]"));
+		Assert.assertNotNull(descricaoAnotacao, "Conte√∫do da anota√ß√£o n√£o encontrado!");
 		WebElement linkExcluir = util.getWebElement(driver, descricaoAnotacao, By.linkText("Excluir"));
-		Assert.assertNotNull(linkExcluir, "Link para exclus„o da anotaÁ„o n„o encontrado!");
+		Assert.assertNotNull(linkExcluir, "Link para exclus√£o da anota√ß√£o n√£o encontrado!");
 		util.getClickableElement(driver, linkExcluir);
 		linkExcluir.click();
-		Assert.assertTrue(util.isElementInvisible(driver, By.xpath("//td[4][contains(., 'Teste de anotaÁ„o')]")), "AnotaÁ„o continua sendo exibida");
+		Assert.assertTrue(util.isElementInvisible(driver, By.xpath("//td[4][contains(., 'Teste de anota√ß√£o')]")), "Anota√ß√£o continua sendo exibida");
 	}
-	
+
 	@Test(enabled = true, priority = 5)
 	public void redefineNivelAcesso() {
 		operacoesDocumentoPage.clicarLinkRedefinirNivelAcesso();
 		RedefineNivelAcessoPage redefineNivelAcessoPage = PageFactory.initElements(driver, RedefineNivelAcessoPage.class);
 		redefineNivelAcessoPage.redefineNivelAcesso(propDocumentos);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("(//p/b[contains(.,'" + propDocumentos.getProperty("nivelAcesso") + "')])")), "NÌvel de acesso n„o foi modificado para p˙blico");		
-/*		operacoesDocumentoPage.clicarLinkDesfazerRedefinicaoSigilo();		
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("(//p/b[contains(.,'P˙blico')])")), "NÌvel de acesso n„o foi modificado para p˙blico");*/
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("(//p/b[contains(.,'" + propDocumentos.getProperty("nivelAcesso") + "')])")), "N√≠vel de acesso n√£o foi modificado para p√∫blico");
+/*		operacoesDocumentoPage.clicarLinkDesfazerRedefinicaoSigilo();
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("(//p/b[contains(.,'PÔøΩblico')])")), "NÔøΩvel de acesso n√£o foi modificado para pÔøΩblico");*/
 	}
-	
+
 	@Test(enabled = true, priority = 3)
 	public void definirPerfil() throws InterruptedException {
 		operacoesDocumentoPage.clicarLinkDefinirPerfil();
 		DefinePerfilPage definePerfilPage = PageFactory.initElements(driver, DefinePerfilPage.class);
 		definePerfilPage.definirPerfil(propDocumentos);
-		WebElement divPerfil = util.getContentDiv(driver, By.cssSelector("div.gt-sidebar-content"), propDocumentos.getProperty("perfil"));		
+		WebElement divPerfil = util.getContentDiv(driver, By.cssSelector("div.gt-sidebar-content"), propDocumentos.getProperty("perfil"));
 
-		Assert.assertNotNull(divPerfil, "Texto 'Interessado' n„o encontrado!");
-		Assert.assertTrue(divPerfil.getText().toUpperCase().contains(propDocumentos.getProperty("nomeResponsavel").toUpperCase()), "Nome do usu·rio respons·vel n„o encontrado!");			
+		Assert.assertNotNull(divPerfil, "Texto 'Interessado' n√£o encontrado!");
+		Assert.assertTrue(divPerfil.getText().toUpperCase().contains(propDocumentos.getProperty("nomeResponsavel").toUpperCase()), "Nome do usu√°rio responsÔøΩvel n√£o encontrado!");
 		operacoesDocumentoPage.clicarLinkDesfazerDefinicaoPerfil();
-		Assert.assertTrue(util.isElementInvisible(driver, By.xpath("//p[contains(., '" + propDocumentos.getProperty("perfil") + "')]")), "Texto " + propDocumentos.getProperty("perfil") + " continua visÌvel!");
+		Assert.assertTrue(util.isElementInvisible(driver, By.xpath("//p[contains(., '" + propDocumentos.getProperty("perfil") + "')]")), "Texto " + propDocumentos.getProperty("perfil") + " continua vis√≠vel!");
 	}
-	
+
 	@Test(enabled = true, priority = 2)
 	public void criarVia() {
 		operacoesDocumentoPage.clicarCriarVia();
-		WebElement divVias = util.getContentDiv(driver, By.cssSelector("div.gt-sidebar-content"), "Vias");		
-		Assert.assertNotNull(divVias, "Texto 'Vias' n„o encontrado!");
-		
+		WebElement divVias = util.getContentDiv(driver, By.cssSelector("div.gt-sidebar-content"), "Vias");
+		Assert.assertNotNull(divVias, "Texto 'Vias' n√£o encontrado!");
+
 		List<WebElement> listItems = divVias.findElements(By.tagName("li"));
 		int i;
 		for (i = 1; i < listItems.size(); i++) {
@@ -164,151 +164,151 @@ public class AcoesDocumentoIT extends IntegrationTestBase {
 			}
 		}
 		operacoesDocumentoPage.clicarCancelarVia();
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("(//ul/li["+ (i+1) +"][contains(.,'Cancelado')])")), "Texto Cancelado n„o encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("(//ul/li["+ (i+1) +"][contains(.,'Cancelado')])")), "Texto Cancelado n√£o encontrado!");
 	}
-	
+
 	@Test(enabled = true, priority = 3)
-	public void registrarAssinaturaManual() {		
+	public void registrarAssinaturaManual() {
 		super.registrarAssinaturaManual();
-		//Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[2][contains(., 'Registro de Assinatura')]")), "Texto 'Registro de Assinatura' n„o encontrado!");
+		//Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[2][contains(., 'Registro de Assinatura')]")), "Texto 'Registro de Assinatura' n√£o encontrado!");
 	}
-	
+
 	@Test(enabled = true, priority = 3)
 	public void assinarDigitalmente() {
-		super.assinarDigitalmente(codigoDocumento, "N∫");
-		//Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[2][contains(., 'Assinatura')]")), "Texto 'Assinatura' n„o encontrado!");
+		super.assinarDigitalmente(codigoDocumento, "N¬∫");
+		//Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[2][contains(., 'Assinatura')]")), "Texto 'Assinatura' n√£o encontrado!");
 	}
-	
+
 	@Test(enabled = true, priority = 4)
 	public void agendarPublicacao() {
 		operacoesDocumentoPage.clicarLinkAgendarPublicacao();
 		AgendamentoPublicacaoPage agendamentoPublicacaoPage = PageFactory.initElements(driver, AgendamentoPublicacaoPage.class);
-		Assert.assertTrue(agendamentoPublicacaoPage.visualizaPagina(), "N„o foi possÌvel visualizar os botıes da p·gina de agendamento corretamente!");
+		Assert.assertTrue(agendamentoPublicacaoPage.visualizaPagina(), "N√£o foi poss√≠vel visualizar os bot√µes da p√°gina de agendamento corretamente!");
 	}
-	
+
 	@Test(enabled = true, priority = 4)
 	public void solicitarPublicacaoBoletim() {
 		operacoesDocumentoPage.clicarLinkSolicitarPublicacaoBoletim();
-		
+
 		if(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 17) {
-			Assert.assertNotNull(util.getWebElement(driver, By.xpath("//h3[contains(., 'A solicitaÁ„o de publicaÁ„o no BIE apenas È permitida atÈ as 17:00')]")),
-					"Texto 'A solicitaÁ„o de publicaÁ„o no BIE apenas È permitida atÈ as 17:00' n„o foi encontrado!");
+			Assert.assertNotNull(util.getWebElement(driver, By.xpath("//h3[contains(., 'A solicita√ß√£o de publica√ß√£o no BIE apenas ÔøΩ permitida atÔøΩ as 17:00')]")),
+					"Texto 'A solicita√ß√£o de publica√ß√£o no BIE apenas √© permitida at√© as 17:00' n√£o foi encontrado!");
 		} else {
-			Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[3][contains(., 'SolicitaÁ„o de PublicaÁ„o no Boletim')]")), "Texto 'SolicitaÁ„o de PublicaÁ„o no Boletim' n„o foi encontrado!");		
+			Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[3][contains(., 'SolicitaÔøΩÔøΩo de PublicaÔøΩÔøΩo no Boletim')]")), "Texto 'SolicitaÔøΩÔøΩo de PublicaÔøΩÔøΩo no Boletim' n√£o foi encontrado!");
 			operacoesDocumentoPage.clicarLinkDesfazerSolicitacaoPublicacaoBoletim();
-			Assert.assertNotNull(util.isElementInvisible(driver, By.xpath("//td[3][contains(., 'SolicitaÁ„o de PublicaÁ„o no Boletim')]")), 
-					"Texto 'SolicitaÁ„o de PublicaÁ„o no Boletim' continua sendo exibido!");
-			Assert.assertNotNull(util.getWebElement(driver, By.linkText("Solicitar PublicaÁ„o no Boletim")), "Texto Solicitar PublicaÁ„o no Boletim n„o foi encontrado!");		
+			Assert.assertNotNull(util.isElementInvisible(driver, By.xpath("//td[3][contains(., 'SolicitaÔøΩÔøΩo de PublicaÔøΩÔøΩo no Boletim')]")),
+					"Texto 'Solicita√ß√£o de Publica√ß√£o no Boletim' continua sendo exibido!");
+			Assert.assertNotNull(util.getWebElement(driver, By.linkText("Solicitar Publica√ß√£o no Boletim")), "Texto Solicitar PublicaÔøΩÔøΩo no Boletim n√£o foi encontrado!");
 		}
 	}
-	
+
 	@Test(enabled = true, priority = 4)
 	public void sobrestar() {
 		operacoesDocumentoPage.clicarLinkSobrestar();
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Sobrestado')]|//div[h3 = 'Vias']/ul/li[contains(., 'Sobrestado')]")), "Texto 'Sobrestado' n„o encontrado!");	
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Sobrestado')]|//div[h3 = 'Vias']/ul/li[contains(., 'Sobrestado')]")), "Texto 'Sobrestado' n√£o encontrado!");
 		operacoesDocumentoPage.clicarLinkDesobrestar();
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' n„o encontrado!");	
-		//Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[2][contains(., 'Desobrestar')]")), "Texto 'Desobrestar' n„o encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' n√£o encontrado!");
+		//Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[2][contains(., 'Desobrestar')]")), "Texto 'Desobrestar' n√£o encontrado!");
 	}
-	
+
 	@Test(enabled = true, priority = 4)
 	public void vincularDocumento() {
 		operacoesDocumentoPage.clicarLinkVincular();
-		VinculacaoPage vinculacaoPage = PageFactory.initElements(driver, VinculacaoPage.class);		
+		VinculacaoPage vinculacaoPage = PageFactory.initElements(driver, VinculacaoPage.class);
 		String documentoApensado = vinculacaoPage.vincularDocumento(propDocumentos, codigoDocumento);
-		WebElement documentosRelationados = util.getWebElement(driver, By.id("outputRelacaoDocs"));		
-		Assert.assertNotNull(documentosRelationados, "¡rea de Documentos Relacionados n„o foi encontrada!");
-		Assert.assertTrue(documentosRelationados.getText().contains(documentoApensado), "CÛdigo do documento vinculado n„o foi encontrado!");
-				
+		WebElement documentosRelationados = util.getWebElement(driver, By.id("outputRelacaoDocs"));
+		Assert.assertNotNull(documentosRelationados, "√Årea de Documentos Relacionados n√£o foi encontrada!");
+		Assert.assertTrue(documentosRelationados.getText().contains(documentoApensado), "C√≥digo do documento vinculado n√£o foi encontrado!");
+
 		operacoesDocumentoPage.clicarLinkExibirInformacoesCompletas();
-		WebElement vinculacao = util.getWebElement(driver, By.xpath("//td[7][contains(., 'Ver tambÈm:')]"));
-		Assert.assertNotNull(vinculacao, "Texto 'Ver tambÈm:' n„o encontrado");
+		WebElement vinculacao = util.getWebElement(driver, By.xpath("//td[7][contains(., 'Ver tambÔøΩm:')]"));
+		Assert.assertNotNull(vinculacao, "Texto 'Ver tamb√©m:' n√£o encontrado");
 		util.getClickableElement(driver, vinculacao.findElement(By.linkText("Cancelar"))).click();
 
 		CancelamentoMovimentacaoPage cancelamentoMovimentacaoPage = PageFactory.initElements(driver, CancelamentoMovimentacaoPage.class);
 		cancelamentoMovimentacaoPage.cancelarMovimentacao(propDocumentos);
-		Assert.assertTrue(util.isElementInvisible(driver, By.id("outputRelacaoDocs")), "¡rea de Documentos Relacionados ainda est· visÌvel!");
+		Assert.assertTrue(util.isElementInvisible(driver, By.id("outputRelacaoDocs")), "ÔøΩrea de Documentos Relacionados ainda est√° vis√≠vel!");
 	}
-	
+
 	@Test(enabled = true, priority = 4)
 	public void arquivarCorrente() {
 		operacoesDocumentoPage.clicarLinkArquivarCorrente();
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(., 'Arquivo Corrente')]|//div[h3 = 'Vias']/ul/li[contains(., 'Arquivado Corrente')]")), "Texto Arquivado Corrente n„o foi encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(., 'Arquivo Corrente')]|//div[h3 = 'Vias']/ul/li[contains(., 'Arquivado Corrente')]")), "Texto Arquivado Corrente n√£o foi encontrado!");
 		operacoesDocumentoPage.clicarLinkDesfazerArquivamentoCorrente();
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' n„o foi encontrado!");	
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' n√£o foi encontrado!");
 	}
-	
+
 	@Test(enabled = true, priority = 4)
 	public void apensarDocumento() {
 		operacoesDocumentoPage.clicarLinkApensar();
 		ApensacaoPage apensacaoPage = PageFactory.initElements(driver, ApensacaoPage.class);
 		String documentoApensado = apensacaoPage.apensarDocumento(propDocumentos, codigoDocumento);
-		WebElement documentosRelacionados = util.getWebElement(driver, By.id("outputRelacaoDocs"));		
+		WebElement documentosRelacionados = util.getWebElement(driver, By.id("outputRelacaoDocs"));
 		if(documentosRelacionados == null ) {
-			Assert.assertNotNull(util.getWebElement(driver, By.xpath("//h3[text() = 'N„o È possÌvel apensar a um documento n„o finalizado' or "
-					+ "text() = 'N„o È possÌvel apensar um volume aberto a um volume encerrado']")), "Documento n„o apensado e mensagem de erro esperada n„o encontrada!");
+			Assert.assertNotNull(util.getWebElement(driver, By.xpath("//h3[text() = 'N√£o √© poss√≠vel apensar a um documento n√£o finalizado' or "
+					+ "text() = 'N√£o √© poss√≠vel apensar um volume aberto a um volume encerrado']")), "Documento n√£o apensado e mensagem de erro esperada n√£o encontrada!");
 		} else {
-		//Assert.assertNotNull(documentosRelacionados, "¡rea de Documentos Relacionados n„o foi encontrada!");
-		Assert.assertTrue(documentosRelacionados.getText().contains(documentoApensado), "CÛdigo do documento apensado n„o foi encontrado!");
+		//Assert.assertNotNull(documentosRelacionados, "ÔøΩrea de Documentos Relacionados n√£o foi encontrada!");
+		Assert.assertTrue(documentosRelacionados.getText().contains(documentoApensado), "C√≥digo do documento apensado n√£o foi encontrado!");
 
 		operacoesDocumentoPage.clicarLinkDesapensar();
 		DesapensamentoPage desapensamentoPage = PageFactory.initElements(driver, DesapensamentoPage.class);
 		desapensamentoPage.desapensarDocumento(propDocumentos);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' n„o foi encontrado!");	
-		Assert.assertTrue(util.isElementInvisible(driver, By.id("outputRelacaoDocs")), "¡rea de Documentos Relacionados ainda est· visÌvel!");	
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' n√£o foi encontrado!");
+		Assert.assertTrue(util.isElementInvisible(driver, By.id("outputRelacaoDocs")), "√Årea de Documentos Relacionados ainda est√° vis√≠vel!");
 		}
 	}
-	
+
 	@Test(enabled = true, priority = 4)
 	public void despacharDocumento() {
 		operacoesDocumentoPage.clicarLinkDespacharTransferir();
 		TransferenciaPage transferenciaPage = PageFactory.initElements(driver, TransferenciaPage.class);
 		transferenciaPage.despacharDocumento(propDocumentos);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[4][contains(., '" + propDocumentos.getProperty("despacho") + "')]")), "Texto do despacho n„o encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[4][contains(., '" + propDocumentos.getProperty("despacho") + "')]")), "Texto do despacho n√£o encontrado!");
 	}
-	
+
 	@Test(enabled = true, priority = 5)
 	public void assinarDespacho() {
 		operacoesDocumentoPage.clicarAssinarDespacho(baseURL, codigoDocumento);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[4][contains(., 'Assinado por')]")), "Texto 'Assinado por' n„o foi encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[4][contains(., 'Assinado por')]")), "Texto 'Assinado por' n√£o foi encontrado!");
 	}
-	  
+
 	@Test(enabled = true, priority = 4)
 	public void transferirDocumento() {
 		operacoesDocumentoPage.clicarLinkDespacharTransferir();
 		TransferenciaPage transferenciaPage = PageFactory.initElements(driver, TransferenciaPage.class);
 		transferenciaPage.transferirDocumento(propDocumentos);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'A Receber (FÌsico)')]|//div[h3 = 'Vias']/ul/li[contains(., 'A Receber (FÌsico)')]")), "Texto 'A Receber (FÌsico)' n„o foi encontrado!");	
-		
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'A Receber (FÔøΩsico)')]|//div[h3 = 'Vias']/ul/li[contains(., 'A Receber (FÔøΩsico)')]")), "Texto 'A Receber (FÔøΩsico)' n√£o foi encontrado!");
+
 		operacoesDocumentoPage.clicarLinkExibirInformacoesCompletas();
 		operacoesDocumentoPage.clicarProtocolo();
 		operacoesDocumentoPage.clicarLinkDesfazerTransferencia();
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' n„o foi encontrado!");	
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' n√£o foi encontrado!");
 	}
-	
+
 	@Test(enabled = true, priority = 4)
 	public void despachoDocumentoFilho() {
 		operacoesDocumentoPage.clicarLinkDespacharTransferir();
 		TransferenciaPage transferenciaPage = PageFactory.initElements(driver, TransferenciaPage.class);
 		String codigoDocumentoJuntado = transferenciaPage.despachoDocumentoFilho(propDocumentos, codigoDocumento);
 		WebElement juntada = util.getWebElement(driver, By.xpath("//td[4][contains(., 'Documento juntado:')]"));
-		
-		Assert.assertNotNull(juntada, "Texto 'Documento juntado:' n„o foi encontrado!");	
-		Assert.assertTrue(juntada.getText().contains(codigoDocumentoJuntado), "CÛdigo do documento juntado n„o encontrado!");	
+
+		Assert.assertNotNull(juntada, "Texto 'Documento juntado:' n√£o foi encontrado!");
+		Assert.assertTrue(juntada.getText().contains(codigoDocumentoJuntado), "C√≥digo do documento juntado n√£o encontrado!");
 	}
-	
+
 	@Test(enabled = true, priority = 4)
 	public void visualizarDossie() {
 		operacoesDocumentoPage.clicarLinkVisualizarDossie();
 		VisualizacaoDossiePage visualizacaoDossiePage = PageFactory.initElements(driver, VisualizacaoDossiePage.class);
-		Assert.assertTrue(visualizacaoDossiePage.visualizarDossie(), "Texto 'DESPACHO N∫' n„o foi encontrado");
+		Assert.assertTrue(visualizacaoDossiePage.visualizarDossie(), "Texto 'DESPACHO N¬∫' n√£o foi encontrado");
 	}
-		
+
 	public String criaDocumento() {
 		principalPage.clicarBotaoNovoDocumentoEx();
 		OficioPage oficioPage = PageFactory.initElements(driver, OficioPage.class);
-		oficioPage.criaOficio(propDocumentos);		
-		
+		oficioPage.criaOficio(propDocumentos);
+
 		return operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
 	}
 }

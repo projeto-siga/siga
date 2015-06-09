@@ -11,38 +11,38 @@ public class OficioPage extends EditaDocumentoPage {
 
 	@FindBy(name="tipoAutoridade")
 	private WebElement tipoAutoridade;
-	
+
 	@FindBy(name="genero")
 	private WebElement generoAutoridade;
-	
+
 	@FindBy(name="nome_dest")
-	private WebElement nomeDestinatario;	
-	
+	private WebElement nomeDestinatario;
+
 	@FindBy(name="cargo_dest")
-	private WebElement cargoDestinatario;	
-	
+	private WebElement cargoDestinatario;
+
 	@FindBy(name="orgao_dest")
-	private WebElement orgaoDestinatario;	
-	
+	private WebElement orgaoDestinatario;
+
 	@FindBy(name="endereco_dest")
-	private WebElement enderecoDestinatario;	
-	
+	private WebElement enderecoDestinatario;
+
 	@FindBy(css="table.cke_editor")
 	private WebElement tableCkEditor;
-	
+
 	public OficioPage(WebDriver driver) {
 		super(driver);
 	}
-	
+
 	public void criaOficio(Properties propDocumentos) {
-		preencheOrigem(propDocumentos.getProperty("internoProduzido"));		
-		selectTipoDocumento("OfÌcio", "OfÌcio", By.xpath("//td[contains(., 'Tipo de Autoridade:')]"));
+		preencheOrigem(propDocumentos.getProperty("internoProduzido"));
+		selectTipoDocumento("Of√≠cio", "Of√≠cio", By.xpath("//td[contains(., 'Tipo de Autoridade:')]"));
 		util.isElementVisible(driver, tableCkEditor);
-		// Garantindo que o processo de abrir o ckEditor n„o faÁa a p·gina perder o foco 
+		// Garantindo que o processo de abrir o ckEditor n√£o fa√ßa a p√°gina perder o foco 
 		tableCkEditor.click();
 		preencheDocumentoInterno(propDocumentos, Boolean.FALSE, Boolean.TRUE);
 		util.getSelect(driver, tipoAutoridade).selectByVisibleText(propDocumentos.getProperty("tipoAutoridade"));
-		util.getWebElement(driver, By.xpath("//b[text() = 'Forma de tratamento']"));	
+		util.getWebElement(driver, By.xpath("//b[text() = 'Forma de tratamento']"));
 		//util.getSelect(driver, generoAutoridade).selectByVisibleText(propDocumentos.getProperty("generoAutoridade"));
 		util.preencheElemento(driver, enderecoDestinatario, propDocumentos.getProperty("enderecoDestinatario"));
 		botaoOk.click();

@@ -9,20 +9,20 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AgendamentoPublicacaoPage {
 	private WebDriver driver;
-	
+
 	@FindBy(xpath="//input[@value='Ok']")
 	private WebElement botaoOk;
-	
+
 	@FindBy(xpath="//input[@value='Cancela']")
 	private WebElement botaoCancela;
-	
-	@FindBy(linkText="Visualizar Publicação")
+
+	@FindBy(linkText="Visualizar PublicaÃ§Ã£o")
 	private WebElement botaoVisualizarPublicacao;
-		
+
 	public AgendamentoPublicacaoPage(WebDriver driver) {
 		this.driver = driver;
 	}
-	
+
 	public Boolean visualizaPagina() {
 		try {
 			new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(botaoOk));

@@ -33,7 +33,7 @@
 		<div class="gt-table-button gt-width-66">
 			<input type="hidden" name="idSolicitacao" value="${solicitacao.idSolicitacao}">
 			<input type="button" value="Selecionar Lista" class="gt-btn-medium gt-btn-left" onclick="listaService.incluirEmLista()"/>
-			<a href="@{Application.exibir(solicitacao.idSolicitacao)}" class="gt-btn-medium gt-btn-left">Voltar</a>
+			<a href="${linkTo[SolicitacaoController].exibir}?${solicitacao.idSolicitacao}" class="gt-btn-medium gt-btn-left">Voltar</a>
 		</div>
 		
 		<siga:modal nome="selecionarPrioridade" titulo="Selecionar Prioridade">

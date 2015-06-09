@@ -87,6 +87,10 @@
 		<field name="lockBufferTime">
 			<int value="5000" />
 		</field>
+		<!-- 1 minute -->
+		<field name="retryInterval">
+			<int value="6000" />
+		</field>
 		<!-- 5 seconds -->
 	</bean>
 

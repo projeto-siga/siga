@@ -125,8 +125,6 @@ public class SolicitacaoController extends SrController {
         result.include("dpPessoapessoaAtualSel", new DpPessoaSelecao());
         result.include("cargoSel", new DpCargoSelecao());
         result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());        
-        
-
     }
 
     @Path("/listarPermissaoUsoLista")
@@ -346,12 +344,12 @@ public class SolicitacaoController extends SrController {
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicitação não encontrada");
+            throw new Exception("Solicitaï¿½ï¿½o nï¿½o encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicitação foi excluída");
+            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 

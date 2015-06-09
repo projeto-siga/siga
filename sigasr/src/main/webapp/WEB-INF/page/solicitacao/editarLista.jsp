@@ -8,28 +8,28 @@
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 	<form id="formLista" method="post" enctype="multipart/form-data">
 
-		<input type="hidden" id="idLista" name="idLista" value="${lista.idLista}"> 
-		<input type="hidden" id="id" name="id" value="${lista.idLista}"> 
-		<input type="hidden" id="hisIdIni" name="hisIdIni" value="${lista.hisIdIni}">
+		<input type="hidden" id="idLista" name="lista" value="${lista.idLista}"> 
+		<input type="hidden" id="id" name="lista.idLista" value="${lista.idLista}"> 
+		<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista.hisIdIni}">
 		
 		<div class="gt-form-row gt-width-66">
 			<label>Nome <span>*<span></label> <input type="text"
-				id="nomeLista" name="nomeLista" value="${nomeLista}" size="98"
+				id="nomeLista" name="lista.nomeLista" value="${nomeLista}" size="98"
 				maxlength="255" required />
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Abrang&ecirc;ncia</label>
-			<textarea cols="98" rows="5" name="descrAbrangencia"
+			<textarea cols="98" rows="5" name="lista.descrAbrangencia"
 				id="descrAbrangencia" maxlength="8192">${descrAbrangencia}</textarea>
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Justificativa</label>
-			<textarea cols="98" rows="5" name="descrJustificativa"
+			<textarea cols="98" rows="5" name="lista.descrJustificativa"
 				id="descrJustificativa" maxlength="8192">${descrJustificativa}</textarea>
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Prioriza&ccedil;&atilde;o</label>
-			<textarea cols="98" rows="5" name="descrPriorizacao"
+			<textarea cols="98" rows="5" name="lista.descrPriorizacao"
 				id="descrPriorizacao" maxlength="8192">${descrPriorizacao}</textarea>
 		</div>
 
@@ -173,7 +173,7 @@
 	</form>
 </div>
 
-<siga:modal nome="controleAcesso" titulo="Cadastrar Permissão">
+<siga:modal nome="controleAcesso" titulo="Cadastrar Permiss�o">
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
@@ -183,7 +183,7 @@
 
 					<siga:select name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu"
 						id="idOrgaoUsu" headerValue="" headerKey="0"
-						listValue="idOrgaoUsu" theme="simple"
+						listValue="acronimoOrgaoUsu" theme="simple"
 						value="${orgaoUsuario.idOrgaoUsu}" />
 				</div>
 				<%--  					<span style="color: red">#{error 'orgaoUsuario' /}</span>  --%>
@@ -195,7 +195,7 @@
 						value="${complexo.idComplexo}" />
 				</div>
 				<div class="gt-form-row div-modal-table">
-					<label>Lotação</label>
+					<label>Lota&ccedil;&atilde;o</label>
 					<siga:selecao propriedade="lotacao.lotacaoAtual" tema="simple"
 						modulo="siga" />
 
@@ -243,10 +243,10 @@
 						<div class="gt-form-row">
 
 							<div id="tiposPermissaoContainer"
-								data-json="${tiposPermissaoJson}"></div>
+								data-json='${tiposPermissaoJson}'></div>
 
 							<div class="gt-form-row gt-width-66">
-								<label>Tipo de Permissão</label>
+								<label>Tipo de Permiss�o</label>
 								
 								<siga:select name="itemTipoPermissao"
  									list="tiposPermissao" listKey="idTipoPermissaoLista"
@@ -481,7 +481,7 @@
 	configuracaoInclusaoAutomaticaService.carregarParaLista = function(idLista) {
 		if(idLista) {
 			var mostrarDesativados = $("#incluirConfiguracaoInclusaoAutomaticaInativas").is(':checked'),
-			urlConsulta = "${linkTo[SolicitacaoController].configuracoesParaInclusaoAutomatica[idLista][mostrarDesativados]}";
+			urlConsulta = "${linkTo[SolicitacaoController].configuracoesParaInclusaoAutomatica}?idLista=" + idLista.value + '&mostrarDesativados=' + mostrarDesativados;
 	
 			optsConfiguracaoInclusao.mostrarDesativados = mostrarDesativados;
 			$.get(urlConsulta, function(configuracoes) {
@@ -711,10 +711,10 @@
 		itemTipoPermissaoOptions = $("#itemTipoPermissao").clone();
 		
 		if (isEdicao)
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar PermissÃ£o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss�o');
 		else {
 			limparDadosAcessoModal();
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir PermissÃ£o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss�o');
 		}
 	
 		atualizarComboTipoPermissao();
@@ -768,28 +768,27 @@
 		
 		// caso exista algum item na tabela
 		if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
-			params += '&permissao.orgaoUsuario.idOrgaoUsu=' + row[colunas.idOrgao];
+			params += '&permissao.orgaoUsuario=' + row[colunas.idOrgao];
 		
 		if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
-	    	params += '&permissao.complexo.idComplexo=' + row[colunas.idLocal];
+	    	params += '&permissao.complexo=' + row[colunas.idLocal];
 		
 		if (row[colunas.idLotacao] != '')
-	    	params += '&permissao.lotacao.id=' + row[colunas.idLotacao];
+	    	params += '&permissao.lotacao=' + row[colunas.idLotacao];
 		
 		if (row[colunas.idPessoa] != '')
-	    	params += '&permissao.dpPessoa.id=' + row[colunas.idPessoa];
+	    	params += '&permissao.dpPessoa=' + row[colunas.idPessoa];
 		
 		if (row[colunas.idCargo] != '')
-	    	params += '&permissao.cargo.id=' + row[colunas.idCargo];
+	    	params += '&permissao.cargo=' + row[colunas.idCargo];
 		
 		if (row[colunas.idFuncao] != '')
-	    	params += '&permissao.funcaoConfianca.idFuncao=' + row[colunas.idFuncao];
+	    	params += '&permissao.funcaoConfianca=' + row[colunas.idFuncao];
 		
-		if (row[colunas.idTipoPerm] != '')
-			params += '&permissao.id=' + row[colunas.idTipoPerm];
+		params += '&permissao=' + row[colunas.idTipoPerm];
 	
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
-			params += '&permissao.listaPrioridade.id=' + $("#idLista").val();
+			params += '&permissao.listaPrioridade=' + $("#idLista").val();
 	
 		// lista de TipoPermissao
 		params += row[colunas.tipoPerm];
@@ -808,18 +807,18 @@
 					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.text : '',
 	      			jComplexo.value > 0 ? jComplexo.value : '',
 	      			jComplexo.value > 0 ? jComplexo.text : '',
-	      			$("#lotacao").val(),
-	      			$("#lotacao_descricao").val(),
-	      			$("#lotacao_sigla").val(),
-	      			$("#dpPessoa").val(),
-	      			$("#dpPessoa_descricao").val(),
-	      			$("#dpPessoa_sigla").val(),
-	      			$("#cargo").val(),
-	      			$("#cargo_descricao").val(),
-	      			$("#cargo_sigla").val(),
-	      			$("#funcaoConfianca_sigla").val(),
-	      			$("#funcaoConfianca_descricao").val(),
-	      			$("#funcaoConfianca").val(),
+	      			$("#formulario_lotacaolotacaoAtualSel_id").val(),
+	      			$("#formulario_lotacaolotacaoAtualSel_descricao").val(),
+	      			$("#formulario_lotacaolotacaoAtualSel_sigla").val(),
+	      			$("#formulario_dpPessoapessoaAtualSel_id").val(),
+	      			$("#formulario_dpPessoapessoaAtualSel_descricao").val(),
+	      			$("#formulario_dpPessoapessoaAtualSel_sigla").val(),
+	      			$("#formulario_cargoSel_id").val(),
+	      			$("#formulario_cargoSel_descricao").val(),
+	      			$("#formulario_cargoSel_sigla").val(),
+	      			$("#formulario_funcaoConfiancaSel_sigla").val(),
+	      			$("#formulario_funcaoConfiancaSel_descricao").val(),
+	      			$("#formulario_funcaoConfiancaSel_id").val(),
 	      			atualizaTipoPermissaoJson(),			//16
 	      			$("#idConfiguracao").val(),				//17    
 	      			getListasPermissaoAsString(),			//18
@@ -947,7 +946,7 @@
 	        var jDivs=$(this).find("span");
 	        
 	        // Atualiza a string serializada
-	    	params += '&permissao.tipoPermissaoSet[' + i + '].idTipoPermissaoLista=' + jDivs[0].id;
+	    	params += '&tipoPermissaoSet[' + i + ']=' + jDivs[0].id;
 	    });
 		return params;
 	}
@@ -969,7 +968,7 @@
 	        if ($("#itemTipoPermissao")[0].options.length > 0)
 	        	jDialog.data('acao', permissoes.incluirItem).dialog('open');
 	        else
-	            alert("NÃ£o existem mais Tipos de PermissÃ£o para serem incluidos");
+	            alert("N�o existem mais Tipos de PermissÃ£o para serem incluidos");
 	    });
 	   
 	    jDialog.dialog({
@@ -982,7 +981,7 @@
 	                jDialog.data('tipoPermissao','');
 	        },
 	        open: function(){
-	                jDialog.dialog('option', 'title', 'Incluir Tipo de PermissÃ£o');
+	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permiss�o');
 	                jTipoPermissao.find("option[value=" + jDialog.data("tipoPermissao") + "]").prop('selected', true);
 	        }
 	    });
@@ -1181,14 +1180,14 @@
 	function carregarPermissoes(idLista) {
 	    $.ajax({
 	    	type: "GET",
-	    	url: "${linkTo[SolicitacaoController].buscarPermissoesLista[idLista]}",
+	    	url: "${linkTo[SolicitacaoController].buscarPermissoesLista}?idLista=" + id,
 	    	dataType: "text",
 	    	success: function(lista) {
 	    		var permissoesJSon = JSON.parse(lista);
 	    		populatePermissoesFromJSonList(permissoesJSon);
 	    	},
 	    	error: function(error) {
-	        	alert("NÃ£o foi possÃ­vel carregar as PermissÃµes desta Lista.");
+	        	alert("N�o foi poss�vel carregar as Permiss�es desta Lista.");
 	    	}
 	   	});
 	}

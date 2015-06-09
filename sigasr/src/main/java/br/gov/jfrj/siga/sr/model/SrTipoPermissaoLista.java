@@ -7,11 +7,12 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_TIPO_PERMISSAO_LISTA", schema = Catalogs.SIGASR)
-public class SrTipoPermissaoLista extends ObjetoVraptor {
+public class SrTipoPermissaoLista extends ObjetoVraptor implements ConvertableEntity {
 
     private static final long serialVersionUID = 1555809464123606397L;
 
@@ -69,7 +70,7 @@ public class SrTipoPermissaoLista extends ObjetoVraptor {
     }
 
     @Override
-    protected Long getId() {
+	public Long getId() {
         return this.getIdTipoPermissaoLista();
     }
 

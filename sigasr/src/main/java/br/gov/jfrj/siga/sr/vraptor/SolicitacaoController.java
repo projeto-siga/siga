@@ -18,10 +18,11 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
-import br.com.caelum.vraptor.util.jpa.extra.Load;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -110,12 +111,6 @@ public class SolicitacaoController extends SrController {
         List<SrLista> listas = SrLista.listar(mostrarDesativados);
         String tiposPermissaoJson = new Gson().toJson(tiposPermissao);
 
-        result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
-        result.include("prioridades", SrPrioridade.getValoresEmOrdem());
-//        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-//        result.include("cargoSel", new DpCargoSelecao());SSSSS
-//        result.include("cpGrupoSel", new CpPerfilSelecao());
-//        
         result.include(ORGAOS, orgaos);
         result.include(LOCAIS, locais);
         result.include(TIPOS_PERMISSAO, tiposPermissao);
@@ -124,7 +119,12 @@ public class SolicitacaoController extends SrController {
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
-        
+        result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
+        result.include("prioridades", SrPrioridade.getValoresEmOrdem());
+        result.include("lotacaolotacaoAtualSel", new DpLotacaoSelecao());
+        result.include("dpPessoapessoaAtualSel", new DpPessoaSelecao());
+        result.include("cargoSel", new DpCargoSelecao());
+        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());        
         
 
     }
@@ -140,7 +140,8 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/gravarPermissaoUsoLista")
-    public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
+    public void gravarPermissaoUsoLista(SrConfiguracao permissao, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
+    	permissao.setTipoPermissaoSet(tipoPermissaoSet);
         assertAcesso(ADM_ADMINISTRAR);
         permissao.salvarComoPermissaoUsoLista();
 
@@ -168,7 +169,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.getSrConfiguracaoJson());
     }
 
-    @Path("/configuracoesParaInclusaoAutomatica/{idLista}/{mostrarDesativados}")
+    @Path("/configuracoesParaInclusaoAutomatica")
     public void configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(idLista);
 
@@ -195,7 +196,7 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-    @Path("/listarListaDesativados/{id}")
+    @Path({"/listarListaDesativados"})
     public void buscarPermissoesLista(Long id) throws Exception {
         List<SrConfiguracao> permissoes;
 
@@ -219,7 +220,7 @@ public class SolicitacaoController extends SrController {
 
     private void validarFormEditarLista(SrLista lista) {
         if (lista.getNomeLista() == null || lista.getNomeLista().trim().equals("")) {
-            srValidator.addError("lista.nomeLista", "Nome da Lista nï¿½o informados");
+            srValidator.addError("lista.nomeLista", "Nome da Lista no informados");
         }
 
         if (srValidator.hasErrors()) {
@@ -283,12 +284,6 @@ public class SolicitacaoController extends SrController {
         
         result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
         result.include("prioridades", SrPrioridade.getValoresEmOrdem());
-//        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-//        result.include("cargoSel", new DpCargoSelecao());SSSSS
-//        result.include("cpGrupoSel", new CpPerfilSelecao());
-//        
-//        result.include(LISTAS, listas);
-//        result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
 
@@ -351,14 +346,16 @@ public class SolicitacaoController extends SrController {
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicitaï¿½ï¿½o nï¿½o encontrada");
+            throw new Exception("Solicitação não encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
+            throw new Exception("Esta solicitação foi excluída");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
+
+        List<DpPessoa> atendentes = solicitacao.getPessoasAtendentesDisponiveis();
 
         if (todoOContexto == null)
             todoOContexto = solicitacao.isParteDeArvore();
@@ -374,6 +371,7 @@ public class SolicitacaoController extends SrController {
         result.include("todoOContexto", todoOContexto);
         result.include("ocultas", ocultas);
         result.include("movs", movs);
+        result.include("atendentes", atendentes);
     }
 
     @Path("/exibirLocalRamalEMeioContato")
@@ -587,11 +585,11 @@ public class SolicitacaoController extends SrController {
         exibir(id, todoOContexto(), ocultas());
     }
 
-    @Path("/baixar")
+    @Path("/baixar/{idArquivo}")
     public Download baixar(Long idArquivo) throws Exception {
         SrArquivo arq = SrArquivo.AR.findById(idArquivo);
         final InputStream inputStream = new ByteArrayInputStream(arq.getBlob());
-        return new InputStreamDownload(inputStream, "application/pdf", arq.getNomeArquivo());
+        return new InputStreamDownload(inputStream, "text/plain", arq.getNomeArquivo());
     }
 
     @Path("/escalonar")
@@ -758,7 +756,7 @@ public class SolicitacaoController extends SrController {
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     @Path("/priorizarLista")

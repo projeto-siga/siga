@@ -2,7 +2,6 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Movimentação de solicitação">
-    <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 
@@ -18,35 +17,35 @@
     
     <jsp:include page="../main.jsp"></jsp:include>
 
-	<style>
-		ul.lista-historico li span {
-			text-decoration: line-through;
-		}
-		
-		ul.lista-historico li {
-			list-style: none;
-		}
-		
-		ul.lista-historico li.unico {
-			margin-left: 0px !important;
-		}
-		
-		button.button-historico {
-			padding-left: 2px;
-			padding-right: 2px;
-			width: 16px;
-		}
-		
-		.historico-label {
-			font-weight: bold;
-			margin-right: 4px;
-		}
-		
-		.hidden {
-			display: none;
-		}
-	</style>
-	
+    <style>
+        ul.lista-historico li span {
+            text-decoration: line-through;
+        }
+        
+        ul.lista-historico li {
+            list-style: none;
+        }
+        
+        ul.lista-historico li.unico {
+            margin-left: 0px !important;
+        }
+        
+        button.button-historico {
+            padding-left: 2px;
+            padding-right: 2px;
+            width: 16px;
+        }
+        
+        .historico-label {
+            font-weight: bold;
+            margin-right: 4px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+    
 <div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
     <div class="gt-content clearfix">
         <h2>${solicitacao.codigo}</h2>
@@ -73,7 +72,7 @@
                 descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
             </script>
             <c:forEach items="${solicitacao.atributoSolicitacaoSet}" var="att"> 
-                <c:if test="${att.valorAtributoSolicitacao != null}">
+                <c:if test="${att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.isEmpty()}">
                     <p style="font-size: 9pt; padding: 0px">
                         <b>${att.atributo.nomeAtributo}:</b> ${att.valorAtributoSolicitacao}
                     </p>
@@ -92,14 +91,12 @@
                     value="${movimentacao.solicitacao.idSolicitacao}"> 
 
                 <c:if test="${solicitacao.podeTrocarAtendente(titular, lotaTitular)}">
-                    <c:set var="atendentes" value="${solicitacao.pessoasAtendentesDisponiveis}"/>
-                                        
-                    <c:if test="${atendentes.size >= 1}">
+                    <c:if test="${atendentes.size() >= 1}">
                         <div class="gt-form-row">
                             <label>Atendente</label>
                             <div id="divAtendente">
                             <siga:select name="movimentacao.atendente" list="atendentes"
-                                listKey="idOrgaoUsu"
+                                listKey="id"
                                 id="movimentacao.atendente"
                                 headerValue="" headerKey="0"
                                 listValue="descricaoIniciaisMaiusculas"
@@ -150,7 +147,7 @@
                 
                 <tbody>
                 <c:choose>
-                    <c:when test="${movs != null}">
+                    <c:when test="${movs != null && !movs.isEmpty()}">
                         <c:forEach items="${movs}" var="movimentacao">
                             <tr <c:if test="${movimentacao.canceladoOuCancelador}"> 
                                     class="disabled"
@@ -184,7 +181,7 @@
                                     </td>
                                 </c:if>
                                 <td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
-                                    <c:if test="${movimentacao.arquivo}">
+                                    <c:if test="${movimentacao.arquivo != null}">
                                         &nbsp;|&nbsp;
                                         <siga:arquivo arquivo="${movimentacao.arquivo}"/>
                                     </c:if>
@@ -226,32 +223,32 @@
             <p>
                 <b>Solicitante:</b>
                 ${solicitacao.solicitante.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante.siglaLotacao} 
-                <c:if test="${solicitacao.local}"> 
+                <c:if test="${solicitacao.local != null}"> 
                     (${solicitacao.local.nomeComplexo})
                 </c:if>
             </p>
-            <c:if test="${solicitacao.interlocutor}">
+            <c:if test="${solicitacao.interlocutor != null}">
                 <p>
                     <b>Interlocutor:</b>
                     ${solicitacao.interlocutor.descricaoIniciaisMaiusculas}
                 </p>
             </c:if>
-            <c:if test="${solicitacao.dtOrigem}">
+            <c:if test="${solicitacao.dtOrigem != null}">
                 <p>
                     <b>Contato Inicial:</b>
                     ${solicitacao.dtOrigemString}
-                    <c:if test="${solicitacao.meioComunicacao}">
+                    <c:if test="${solicitacao.meioComunicacao != null}">
                         , por ${solicitacao.meioComunicacao.descrMeioComunicacao}
                     </c:if>
                 </p>
             </c:if>
-            <c:if test="${solicitacao.meioComunicacao}">
+            <c:if test="${solicitacao.meioComunicacao != null}">
                 <p>
                     <b>Origem da Demanda:</b>
                     ${solicitacao.meioComunicacao.descrMeioComunicacao}
                 </p>
             </c:if>
-            <c:if test="${solicitacao.telPrincipal}">
+            <c:if test="${solicitacao.telPrincipal != null}">
                 <p>
                     <b>Telefone:</b> ${solicitacao.telPrincipal}
                 </p>
@@ -261,8 +258,8 @@
                 ${solicitacao.cadastrante.descricaoIniciaisMaiusculas}
             </p>
             <c:if test="${solicitacao.isEscalonada()}">
-                <c:set var="itemEscalonar" value="${solicitacao.getItemAtual().toString().raw()}"/>
-                <c:set var="acaoEscalonar" value="${solicitacao.getAcaoAtual().toString().raw()}"/>
+                <c:set var="itemEscalonar" value="${solicitacao.getItemAtual().toString()}"/>
+                <c:set var="acaoEscalonar" value="${solicitacao.getAcaoAtual().toString()}"/>
             </c:if>
             <p>
                 <span class="historico-label">Item de Configuração:</span>
@@ -309,18 +306,18 @@
             </p>
             <p>
                 <b>Notificação:</b>
-                ${solicitacao.formaAcompanhamento.descrFormaAcompanhamento.raw()}
+                ${solicitacao.formaAcompanhamento.descrFormaAcompanhamento}
             </p>
-            <c:if test="${solicitacao.fechadoAutomaticamente != null && solicitacao.isPai()}">
+            <c:if test="${solicitacao.isFechadoAutomaticamente() != null && solicitacao.isPai()}">
                 <p>
-                    <b>Fechamento Automático:</b> ${solicitacao.fechadoAutomaticamente.yesno('Sim', 'Não')  }
+                    <b>Fechamento Automático:</b> ${solicitacao.isFechadoAutomaticamente() ? "Sim" : "Não"}
                 </p>
             </c:if>
         </div>
     </div>
 
     <c:set var="vinculadas:solicitacao" value="${solicitacao.solicitacoesVinculadas}"/>
-    <c:if test="${vinculadas}">
+    <c:if test="${vinculadas != null && !vinculadas.isEmpty()}">
         <div class="gt-sidebar">
             <div class="gt-sidebar-content">
                 <h3>Veja Tamb&eacute;m</h3>
@@ -357,7 +354,7 @@
     </c:if>
 
     <c:set var="juntadas" value="${solicitacao.solicitacoesJuntadas}"/>
-    <c:if test="${juntadas}">
+    <c:if test="${juntadas != null && !juntadas.isEmpty()}">
         <div class="gt-sidebar">
             <div class="gt-sidebar-content">
                 <h3>Solicita&ccedil;&otilde;es juntadas</h3>
@@ -549,86 +546,90 @@
                 type="hidden" name="id" value="${solicitacao.id}" /> <input
                 type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
         </form>
-    </siga:modal>	
-	<siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendência">
-	    <form action="${linkTo[SolicitacaoController].terminarPendencia}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
-	        <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-	        <input type="hidden" name="ocultas" value="${ocultas}" />
-	        <div style="display: inline" class="gt-form-row gt-width-66">
-	            <label>Descrição</label>
-	            <textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
-	        </div>
-	        <input
-	            type="hidden" name="idMovimentacao" id="movimentacaoId" value="" /><input
-	            type="hidden" name="motivo" id="motivoId" value="" /><input
-	            type="hidden" name="id" value="${solicitacao.id}" /> <input
-	            type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-	    </form>
-	</siga:modal>    
+    </siga:modal>   
+    <siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendência">
+        <form action="${linkTo[SolicitacaoController].terminarPendencia}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
+            <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+            <input type="hidden" name="ocultas" value="${ocultas}" />
+            <div style="display: inline" class="gt-form-row gt-width-66">
+                <label>Descrição</label>
+                <textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
+            </div>
+            <input
+                type="hidden" name="idMovimentacao" id="movimentacaoId" value="" /><input
+                type="hidden" name="motivo" id="motivoId" value="" /><input
+                type="hidden" name="id" value="${solicitacao.id}" /> <input
+                type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+        </form>
+    </siga:modal>    
 </siga:pagina>
 
 <script language="javascript">
 
-	function terminarPendencia(idMov){
-		$("#movimentacaoId").val(idMov);
-		$( "#terminarPendenciaModal_dialog" ).dialog( "open" );
-	}
-	
-	function validarAssociacao(tipo) 
-	{
-		$("#erroSolicitacao"+tipo).hide();
-		$("#erroJustificativa"+tipo).hide();
-	
-		if ((tipo == 'Juncao' && $("#idSolicitacaoRecebeJuntadaSpan").html() == "")
-				|| (tipo == 'Vinculo' && $("#idSolicitacaoRecebeVinculoSpan").html() == "")) {
-			$("#erroSolicitacao"+tipo).show();
-			return false;
-		}
-		if ($("#justificativa"+tipo).val() == "") {
-			$("#erroJustificativa"+tipo).show();
-			return false;
-		}
-		return true;
-	}
-	
-	function gravarAssociacao(tipo)
-	{
-		if (!block())
-			return false;
-		if (validarAssociacao(tipo)) {
-			document.getElementById("formGravar"+tipo).submit();
-		}
-	}
-	$('#checksolicitacao.fechadoAutomaticamente').change(function() {
-		if(this.checked) {
-			$('#checksolicitacao.fechadoAutomaticamente').prop('value', 'true');
-			return;
-		}
-		$('#checksolicitacao.fechadoAutomaticamente').prop('value', 'false');
-	});
+    function terminarPendencia(idMov){
+        $("#movimentacaoId").val(idMov);
+        $( "#terminarPendenciaModal_dialog" ).dialog( "open" );
+    }
+    
+    function validarAssociacao(tipo) 
+    {
+        $("#erroSolicitacao"+tipo).hide();
+        $("#erroJustificativa"+tipo).hide();
+    
+        if ((tipo == 'Juncao' && $("#idSolicitacaoRecebeJuntadaSpan").html() == "")
+                || (tipo == 'Vinculo' && $("#idSolicitacaoRecebeVinculoSpan").html() == "")) {
+            $("#erroSolicitacao"+tipo).show();
+            return false;
+        }
+        if ($("#justificativa"+tipo).val() == "") {
+            $("#erroJustificativa"+tipo).show();
+            return false;
+        }
+        return true;
+    }
+    
+    function gravarAssociacao(tipo)
+    {
+        if (!block())
+            return false;
+        if (validarAssociacao(tipo)) {
+            document.getElementById("formGravar"+tipo).submit();
+        }
+    }
+    $('#checksolicitacao.fechadoAutomaticamente').change(function() {
+        if(this.checked) {
+            $('#checksolicitacao.fechadoAutomaticamente').prop('value', 'true');
+            return;
+        }
+        $('#checksolicitacao.fechadoAutomaticamente').prop('value', 'false');
+    });
 
-	$(function() {
-	    $( "#calendario" ).datepicker({
-	        showOn: "button",
-	        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
-	        buttonImageOnly: true,
-	        dateFormat: 'dd/mm/yy'
-	    });
-	    $( "#calendarioReplanejar" ).datepicker({
-	        showOn: "button",
-	        buttonImage: "/siga/css/famfamfam/icons/calendar.png",
-	        buttonImageOnly: true,
-	        dateFormat: 'dd/mm/yy'
-	    });
-	});
-	$(function(){
-	    $("#horario").mask("99:99");
-	    $("#horarioReplanejar").mask("99:99");
-	});
+    $(function() {
+        $( "#calendario" ).datepicker({
+            showOn: "button",
+            buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+            buttonImageOnly: true,
+            dateFormat: 'dd/mm/yy'
+        });
+        $( "#calendarioReplanejar" ).datepicker({
+            showOn: "button",
+            buttonImage: "/siga/css/famfamfam/icons/calendar.png",
+            buttonImageOnly: true,
+            dateFormat: 'dd/mm/yy'
+        });
+    });
 
-	function postback(){
-	    location.href="${linkTo[AssociacaoController].exibir[solicitacao.idSolicitacao]}&todoOContexto="+$("#todoOContexto").val()+"&ocultas="+$("#ocultas").val();
-	}	
+//     $(function(){
+//         $("#horario").mask("99:99");
+//         $("#horarioReplanejar").mask("99:99");
+//     });
+
+    function postback(){
+        var todoOContexto = ($("#todoOContexto").val() != null ? $("#todoOContexto").val() : false);
+        var ocultas = ($("#ocultas").val() != null ? $("#ocultas").val() : false);
+        
+        location.href="${linkTo[SolicitacaoController].exibir[solicitacao.idSolicitacao]}?todoOContexto="+todoOContexto+"&ocultas="+ocultas;
+    }   
 
     $("#terminarPendenciaModal_dialog").dialog({
         autoOpen: false,
@@ -714,5 +715,5 @@
         .init();
 
     new MostradorHistorico($('.historico-acao-container'), "Ação não informada")
-        .init();	
+        .init();    
 </script>

@@ -2,9 +2,9 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="siga"%>
-
+.
 <mod:modelo>
-
+	
 	<mod:entrevista>
 		<br/>
 		<mod:grupo>
@@ -32,8 +32,9 @@
 	</mod:entrevista>
 
 	<mod:documento>
-
-		<!-- INICIO PRIMEIRO CABECALHO
+	
+	<!-- INICIO PRIMEIRO CABECALHO
+		
 		<table width="100%" border="0"  bgcolor="#FFFFFF"><tr><td>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp" />
 		</td></tr>
@@ -64,8 +65,9 @@
 				</td>
 			</tr>
 		</table>
+		
 		FIM PRIMEIRO CABECALHO -->
-
+		
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizado.jsp" />
 		FIM CABECALHO -->

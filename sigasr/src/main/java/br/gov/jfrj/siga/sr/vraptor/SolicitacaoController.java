@@ -303,16 +303,6 @@ public class SolicitacaoController extends SrController {
         	return;
         }
 
-//        // TODO WO para tratar o caso do Interlocutor, pois est� serializando um objeto nulo
-//        // e est� gerando erro ao persistir a solicita��o
-//        if (solicitacao.getInterlocutor() != null && solicitacao.getInterlocutor().getId() == null)
-//            solicitacao.setInterlocutor(null);
-//        
-//        // TODO WO para tratar o caso do Item de Configuração, pois est� serializando um objeto nulo
-//        // e est� gerando erro ao persistir a solicita��o
-//        if (solicitacao.getItemConfiguracao() != null && solicitacao.getItemConfiguracao().getId() == null)
-//            solicitacao.setItemConfiguracao(null);
-
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getId(), todoOContexto(), ocultas());
     }
@@ -333,11 +323,13 @@ public class SolicitacaoController extends SrController {
         }
 
         Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
-        for (SrAtributoSolicitacao att : solicitacao.getAtributoSolicitacaoSet()) {
+        for (int i = 0; i < solicitacao.getAtributoSolicitacaoSet().size(); i++) {
+        	SrAtributoSolicitacao att = solicitacao.getAtributoSolicitacaoSet().get(i);
+        	
             // Para evitar NullPointerExcetpion quando nao encontrar no Map
             if (Boolean.TRUE.equals(obrigatorio.get(att.getAtributo().getIdAtributo()))) {
                 if ((att.getValorAtributoSolicitacao() == null || "".equals(att.getValorAtributoSolicitacao().trim()))) {
-                	validator.add(new ValidationMessage(att.getAtributo().getNomeAtributo() + " n&atilde;o informado", "solicitacao.atributoSolicitacaoMap[" + att.getAtributo().getIdAtributo() + "]"));
+                	validator.add(new ValidationMessage(att.getAtributo().getNomeAtributo() + " n&atilde;o informado", "solicitacao.atributoSolicitacaoMap[" + i + "]"));
                 }
             }
         }

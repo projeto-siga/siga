@@ -35,7 +35,7 @@ function carregouAtributos(response){
     $("#atributos").find('input,select').each(function() {
         var me = $(this);
         if(me.val()) {
-            var label = me.prev('label').html().trim(),
+            var label = $.trim(me.prev('label').html()),
                 innerHTML = label + ' - ' + me.val(),
                 divFiltro = $('#filtro'),
                 selector = "." + me.attr('class'),
@@ -92,13 +92,13 @@ function carregarLotacaoDaAcao(){
 
 <c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}" > 
     <div class="gt-form-row gt-width-66">
-    <label>Ação</label>   
-        <select name="solicitacao.acao" id="selectAcao" value="${solicitacao.acao.idAcao}" onchage="carregarAtributos();notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');">
+    	<label>Ação</label>   
+        <select name="solicitacao.acao" id="selectAcao" value="${solicitacao.acao.idAcao}" onchange="carregarAtributos();notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');">
             <option value="0">#</option>
             <c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
                 <optgroup label="${cat.tituloAcao}">
                     <c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
-                        <option value="tarefa.acao.idAcao"> ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})</option>
+                        <option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}>${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})</option>
                     </c:forEach>
                 </optgroup>                  
             </c:forEach>
@@ -111,17 +111,17 @@ function carregarLotacaoDaAcao(){
         <c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
             <c:forEach items="${acoesEAtendentes.get(cat)}" var="t">
 	            <span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
-	            <span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} - ${t.conf.atendente.descricao.raw()}</span>
+	            <span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} - ${t.conf.atendente.descricao}</span>
 	            
 	            <c:if test="${cat_isFirst && cat_isLast && t_isFirst && t_isLast}">
 	               <c:set var="lotacaoDesignada" value="${t.conf.atendente.siglaCompleta + ' - ' + t.conf.atendente.descricao}"/>
-	               <c:set var="idDesignacao" value="t.conf.idConfiguracao"/>
+	               <c:set var="idDesignacao" value="${t.conf.idConfiguracao}"/>
 	            </c:if>
 	        </c:forEach>
         </c:forEach>
         <label>Atendente</label>
         <span id="atendentePadrao" style="display:block;">
-            ${lotacaoDesignada.raw()}
+            ${lotacaoDesignada}
         </span>
         <input type="hidden" id="solicitacaoDesignacao" name="solicitacao.designacao" value="${idDesignacao}" />
     </div>

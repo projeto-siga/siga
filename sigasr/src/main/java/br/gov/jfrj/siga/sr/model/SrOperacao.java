@@ -15,6 +15,10 @@ public class SrOperacao implements Comparable<SrOperacao> {
     private String pos;
     private Map<String, Object> params;
     
+    public SrOperacao() {
+    	super();
+	}
+    
     public SrOperacao(String icone, String nome, boolean pode, String url) {
         this(icone, nome, url, pode, null, null, null, null);
     }

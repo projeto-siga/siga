@@ -8,7 +8,7 @@
 	<c:forEach items="${acoes}" var="acao">
 		<c:set var="linkConfirm" value="${null}"/>
 		
-		<c:if test="${not empty acao.msgConfirmAcao}">
+		<c:if test="${not empty acao.msgConfirmacao}">
 			<c:set var="linkConfirm" value="if (confirm('${acao.msgConfirmacao}')) " />
 		</c:if>
 		
@@ -25,22 +25,22 @@
 		${acao.pre}
 		<c:choose>
 			<c:when test="${acao.popup}">
-				<a href="javascript:${linkConfirm != null ? linkConfirm.raw() : ''}popitup('${acao.url}');">${img.raw()}${acao.nome}</a>
+				<a href="javascript:${linkConfirm != null ? linkConfirm : ''}popitup('${acao.url}');">${img}${acao.nome}</a>
 			</c:when>
 			<c:when test="${not empty acao.ajax}">
-				<span id="spanAjax_${acao.idAjax}"/> 
-				<a href="javascript: SetInnerHTMLFromAjaxResponse('${acao.url}', 'spanAjax_${acao.idAjax}');">${img.raw()}${acao.nome}</a>
+				<span id="spanAjax_${acao.nome}"></span> 
+				<a href="javascript: SetInnerHTMLFromAjaxResponse('${acao.url}', 'spanAjax_${acao.nome}');">${img}${acao.nome}</a>
 			</c:when>
 			<c:when test="${not empty acao.modal}">
-				<a href="javascript: ${acao.url}();">${img.raw()}${acao.nome}</a>
+				<a href="javascript: ${acao.url}();">${img}${acao.nome}</a>
 			</c:when>
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${linkConfirm != null}">
-						<a href="javascript:${linkConfirm.raw()}location.href='${acao.url}';">${img.raw()}${acao.nome}</a>
+						<a href="javascript:${linkConfirm}location.href='${acao.url}';">${img}${acao.nome}</a>
 					</c:when>
 					<c:otherwise>
-						<a href="${acao.url}">${img.raw()}${acao.nome}</a>
+						<a href="${acao.url}">${img}${acao.nome}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

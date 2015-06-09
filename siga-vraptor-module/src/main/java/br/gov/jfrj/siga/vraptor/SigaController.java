@@ -21,6 +21,7 @@ import br.com.caelum.vraptor.view.HttpResult;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -46,7 +47,7 @@ public class SigaController {
 	
 	private String mensagemAguarde = null;
 	
-	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
+	//Todo: verificar se apï¿½s a migraï¿½ï¿½o do vraptor se ainda necessita deste atributo "par"
 	private Map<String, String[]> par;
 	
 	protected Map<String, String[]> getPar() {
@@ -299,6 +300,11 @@ public class SigaController {
 	
 	protected Paginador getP() {
 		return p;
+	}
+	
+	protected boolean podeUtilizarServico(String servico)
+			throws Exception {
+		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), servico);
 	}
 
 }

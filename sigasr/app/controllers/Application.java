@@ -62,7 +62,11 @@ import util.SrSolicitacaoAtendidos;
 import util.SrSolicitacaoFiltro;
 import util.SrSolicitacaoItem;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -782,7 +786,21 @@ public class Application extends SigaApplication {
 		solicitacao.lotaTitular = lotaTitular();
 		solicitacao = solicitacao.getSolicitacaoAtual();
 		Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-		render(solicitacao, acoesEAtendentes);
+				
+		CpConfiguracao filtro = new CpConfiguracao();
+		filtro.setDpPessoa(titular());
+		filtro.setLotacao(lotaTitular());
+		filtro.setBuscarPorPerfis(true);
+		filtro.setCpTipoConfiguracao((CpTipoConfiguracao)CpTipoConfiguracao.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_ESCALONAMENTO_SOL_FILHA));
+		CpSituacaoConfiguracao situacao = SrConfiguracaoBL.get().buscaSituacao(filtro,
+				new int[] { 0 }, null);
+		boolean criarFilhaDefault = false;
+		if (situacao != null
+				&& (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE
+				|| situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT))
+			criarFilhaDefault = true;
+		
+		render(solicitacao, acoesEAtendentes, criarFilhaDefault);
 	}
 	
 	public static void escalonarGravar(Long id, Long itemConfiguracao,

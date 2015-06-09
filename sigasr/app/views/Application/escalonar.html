@@ -39,8 +39,7 @@ function carregouAcao(response, param){
 			onsubmit="javascript: return block();" method="POST" enctype="multipart/form-data">
 		
 		<div class="gt-form-row" >
-			<label>	#{set valueCheckbox : titular?.orgaoUsuario?.idOrgaoUsu == 1 ? false : true /}
-					#{checkbox name:'criaFilha', onchange:'onchangeCheckCriaFilha();', value: valueCheckbox /} 
+					#{checkbox name:'criaFilha', onchange:'onchangeCheckCriaFilha();', value: criarFilhaDefault /} 
 					#{if solicitacao.isFilha()} #{set codigo : solicitacao.solicitacaoPai.codigo /} #{/if}
 					#{else} #{set codigo : solicitacao.codigo /} #{/else}
 					Criar Solicitação filha de ${codigo}</label>

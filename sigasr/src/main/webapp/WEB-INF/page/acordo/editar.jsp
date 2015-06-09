@@ -370,10 +370,10 @@
 		isEditing = isEdicao;
 		
 		if (isEdicao)
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrangência');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Alterar Abrang\u00eancia');
 		else {
 			configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
-			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrangência');
+			jQuery("#associacao_dialog").dialog('option', 'title', 'Incluir Abrang\u00eancia');
 		}
 		jQuery("#associacao_dialog").dialog('open');
 	};

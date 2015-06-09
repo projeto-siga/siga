@@ -71,6 +71,10 @@
 		<path>/META-INF/tags/links.tag</path>
 	</tag-file>
 	<tag-file>
+		<name>linkSr</name>
+		<path>/META-INF/tags/linkSr.tag</path>
+	</tag-file>
+	<tag-file>
     	<name>listaArvore</name>
     	<path>/META-INF/tags/listaArvore.tag</path>
     </tag-file>

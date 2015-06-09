@@ -244,7 +244,6 @@
 	
 					var label = $('<span style="margin-left:5px">');
 					label.html($.trim(optionHtml));
-					//label.html(optionHtml.trim());
 				
 					div.append(input);
 					div.append(label);
@@ -278,7 +277,6 @@
 	
 		// Recebe notificacao de alteracao em campo que eh atributo
 		function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl, teste) {
-			//var label = $(campoRef).prev('label').html().trim();
 			var label = $.trim($(campoRef).prev('label').html());
 	
 			notificarCampoMudou(campoRef, label, optionVl);
@@ -292,7 +290,6 @@
 				// Se o filtro eh uma select, entao pega o valor selecionado na select
 				if(campo[0].tagName == 'SELECT') {
 					return tipoCampo + ' - ' + $.trim(campo.find('option:selected').html());
-					//return tipoCampo + ' - ' + campo.find('option:selected').html().trim();
 				}
 				else {
 					// Se o campo for um componente de selecao, entao pega o valor selecionado (estara em um span gerado pelo componente)
@@ -409,7 +406,6 @@
 	
 					// Se for select, busca pelo atributo selecionado
 					if (inputAtributo.tagName == 'SELECT') {
-						//atrHtml = atrHtml + ' - ' + $(inputAtributo).find('option:selected').html().trim();
 						atrHtml = atrHtml + ' - ' + $.trim($(inputAtributo).find('option:selected').html());
 					}
 					addFiltro($('#filtro'), atrClass, atrHtml, atrName);

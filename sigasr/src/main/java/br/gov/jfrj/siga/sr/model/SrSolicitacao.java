@@ -1277,20 +1277,20 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     @SuppressWarnings("serial")
-    public SortedSet<SrOperacao> operacoes(final DpPessoa pess, final DpLotacao lota) throws Exception {
-        SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
+    public List<SrOperacao> operacoes(final DpPessoa pess, final DpLotacao lota) throws Exception {
+    	List<SrOperacao> operacoes = new ArrayList<SrOperacao>() {
             @Override
             public boolean add(SrOperacao e) {
                 // Edson: ser� que essas coisas poderiam estar dentro do
                 // SrOperacao?
-                if (e.params == null)
-                    e.params = new HashMap<String, Object>();
-                e.params.put("id", getIdSolicitacao());
+                if (e.getParams() == null)
+                    e.setParams(new HashMap<String, Object>());
+                e.getParams().put("id", getIdSolicitacao());
 
                 if (!e.isModal())
-                    e.url = e.url + "?" + e.params;
+                    e.setUrl(e.getUrl() + "?" + e.getParams());
 
-                if (!e.pode)
+                if (!e.isPode())
                     return false;
                 return super.add(e);
             }
@@ -1331,6 +1331,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         operacoes.add(new SrOperacao("cancel", "Desfazer " + (ultCancelavel != null ? ultCancelavel.getTipoMov().getNome() : ""), podeDesfazerMovimentacao(pess, lota),
                 "Application.desfazerUltimaMovimentacao"));
 
+        Collections.sort(operacoes);
+        
         return operacoes;
     }
 

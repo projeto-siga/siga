@@ -21,7 +21,6 @@ package br.gov.jfrj.siga.sinc.lib;
 import java.util.Date;
 
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.Historico;
 
 public interface Sincronizavel extends Assemelhavel {
 

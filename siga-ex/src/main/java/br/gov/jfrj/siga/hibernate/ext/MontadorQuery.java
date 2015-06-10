@@ -201,7 +201,7 @@ public class MontadorQuery implements IMontadorQuery {
 	}
 
 	public void setMontadorPrincipal(IMontadorQuery montadorQueryPrincipal) {
-		// Este mÈdodo n„o faz nada. … utilizado apenas para a extens„o da busca
+		// Este m√©dodo n√£o faz nada. √â utilizado apenas para a extens√£o da busca
 		// textual do SIGA.
 	}
 }

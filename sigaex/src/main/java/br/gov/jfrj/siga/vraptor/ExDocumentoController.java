@@ -411,11 +411,13 @@ public class ExDocumentoController extends ExController {
 			if(exDocumentoDTO.getIdTpDoc() == null)
 				exDocumentoDTO.setIdTpDoc(1L);
 
-			final ExNivelAcesso nivelDefault = getNivelAcessoDefault(exDocumentoDTO);
-			if (nivelDefault != null) {
-				exDocumentoDTO.setNivelAcesso(nivelDefault.getIdNivelAcesso());
-			} else
-				exDocumentoDTO.setNivelAcesso(1L);
+			if(exDocumentoDTO.getNivelAcesso() == null) {
+				final ExNivelAcesso nivelDefault = getNivelAcessoDefault(exDocumentoDTO);
+				if (nivelDefault != null) {
+					exDocumentoDTO.setNivelAcesso(nivelDefault.getIdNivelAcesso());
+				} else
+					exDocumentoDTO.setNivelAcesso(1L);
+			}
 			
 			if(exDocumentoDTO.getIdMod() == null)
 				exDocumentoDTO.setIdMod(((ExModelo) dao()

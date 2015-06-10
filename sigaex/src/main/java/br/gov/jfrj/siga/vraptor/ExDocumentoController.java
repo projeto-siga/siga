@@ -416,8 +416,9 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.setNivelAcesso(nivelDefault.getIdNivelAcesso());
 			} else
 				exDocumentoDTO.setNivelAcesso(1L);
-
-			exDocumentoDTO.setIdMod(((ExModelo) dao()
+			
+			if(exDocumentoDTO.getIdMod() == null)
+				exDocumentoDTO.setIdMod(((ExModelo) dao()
 					.consultarAtivoPorIdInicial(ExModelo.class, 26L))
 					.getIdMod());
 		}

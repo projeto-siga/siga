@@ -385,7 +385,8 @@ public class ExDocumentoController extends ExController {
 
 		final boolean isDocNovo = (exDocumentoDTO == null || exDocumentoDTO.getSigla() == null);
 		if (isDocNovo) {
-			exDocumentoDTO = new ExDocumentoDTO();
+			if(param("postback") == null)
+				exDocumentoDTO = new ExDocumentoDTO();
 			exDocumentoDTO.setCriandoAnexo(criandoAnexo == null ? false
 					: criandoAnexo);
 
@@ -401,9 +402,14 @@ public class ExDocumentoController extends ExController {
 		buscarDocumentoOuNovo(true, exDocumentoDTO);
 
 		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
-			exDocumentoDTO.setTipoDestinatario(2);
-			exDocumentoDTO.setIdFormaDoc(2);
-			exDocumentoDTO.setIdTpDoc(1L);
+			if(exDocumentoDTO.getTipoDestinatario() == null)
+				exDocumentoDTO.setTipoDestinatario(2);
+			
+			if(exDocumentoDTO.getIdFormaDoc() == null)
+				exDocumentoDTO.setIdFormaDoc(2);
+			
+			if(exDocumentoDTO.getIdTpDoc() == null)
+				exDocumentoDTO.setIdTpDoc(1L);
 
 			final ExNivelAcesso nivelDefault = getNivelAcessoDefault(exDocumentoDTO);
 			if (nivelDefault != null) {

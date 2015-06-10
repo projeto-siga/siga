@@ -49,7 +49,7 @@ public class PrincipalController extends SigaController {
 			if (matricula != null) {
 				pes = daoPes(matricula);
 				lot = pes.getLotacao();
-				testes = "/testes";
+//				testes = "/testes";
 				incluirMatricula = "&matricula=" + matricula;
 			} else {
 				incluirMatricula = "&matricula=" + getTitular().getSiglaCompleta();

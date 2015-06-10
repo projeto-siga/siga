@@ -20,6 +20,7 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.dao.SrDao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrEquipe;
@@ -27,6 +28,7 @@ import br.gov.jfrj.siga.sr.model.SrExcecaoHorario;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.model.SrSemana;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
+import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -42,7 +44,7 @@ public class EquipeController extends SrController {
 	}
 
 	@Path("/listar")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void listar(boolean mostrarDesativados) {
 		List<SrEquipe> listaEquipe = SrEquipe.listar(mostrarDesativados);
 		List<CpOrgaoUsuario> orgaos = dao.listarOrgaosUsuarios();
@@ -77,7 +79,7 @@ public class EquipeController extends SrController {
 	}
 
 	@Path("/gravar")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
 	public void gravarEquipe(SrEquipe equipe, List<SrExcecaoHorario> excecaoHorarioSet, DpLotacaoSelecao lotacaoEquipeSel) throws Exception {
 		equipe.setExcecaoHorarioSet(excecaoHorarioSet);
 		if (equipe.getLotacaoEquipe() == null) {

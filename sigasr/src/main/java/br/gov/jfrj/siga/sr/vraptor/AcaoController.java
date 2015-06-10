@@ -31,7 +31,7 @@ public class AcaoController extends SrController {
 	private static final String ACAO = "acao";
 	private static final String ACOES = "acoes";
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/listar")
 	public void listar(boolean mostrarDesativados) throws Exception {
 		List<SrAcao> acoes = SrAcao.listar(mostrarDesativados);
@@ -46,7 +46,7 @@ public class AcaoController extends SrController {
 		result.redirectTo(AcaoController.class).listar(Boolean.TRUE);
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/editar")
 	public void editar(Long id) throws Exception {
 		SrAcao acao = new SrAcao();
@@ -56,7 +56,7 @@ public class AcaoController extends SrController {
 		result.include(ACAO, acao);
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrAcao acao, TipoAcaoSelecao tipoAcaoSel) throws Exception {
 		validarFormEditarAcao(acao);
@@ -66,7 +66,7 @@ public class AcaoController extends SrController {
 		result.use(Results.http()).body(acao.toJson());
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
 		SrAcao acao = SrAcao.AR.findById(id);
@@ -75,7 +75,7 @@ public class AcaoController extends SrController {
 		result.use(Results.http()).body(acao.toJson());
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
 		SrAcao acao = SrAcao.AR.findById(id);

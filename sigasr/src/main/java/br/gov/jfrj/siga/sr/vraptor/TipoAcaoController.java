@@ -27,7 +27,7 @@ public class TipoAcaoController extends SrController {
 		super(request, result, SrDao.getInstance(), so, em, srValidator);
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/listar")
 	public void listar(boolean mostrarDesativados) throws Exception {
 		List<SrTipoAcao> tiposAcao = SrTipoAcao.listar(mostrarDesativados);
@@ -36,7 +36,7 @@ public class TipoAcaoController extends SrController {
 		result.include("mostrarDesativados", mostrarDesativados);
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/editar")
 	public void editar(Long id) throws Exception {
 		SrTipoAcao tipoAcao = new SrTipoAcao();
@@ -46,7 +46,7 @@ public class TipoAcaoController extends SrController {
 		result.include("tipoAcao", tipoAcao);
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrTipoAcao tipoAcao) throws Exception {
 		validarFormEditar(tipoAcao);
@@ -56,7 +56,7 @@ public class TipoAcaoController extends SrController {
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id, boolean mostrarDesativados) throws Exception {
 		SrTipoAcao tipoAcao = SrTipoAcao.AR.findById(id);
@@ -65,7 +65,7 @@ public class TipoAcaoController extends SrController {
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
 		SrTipoAcao tipoAcao = SrTipoAcao.AR.findById(id);

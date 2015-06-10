@@ -1,11 +1,12 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Validation;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -22,6 +23,7 @@ import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrFatorMultiplicacao;
 import br.gov.jfrj.siga.sr.model.SrGestorItem;
@@ -47,7 +49,7 @@ public class ItemConfiguracaoController extends SrController {
         super(request, result, dao, so, em, srValidator);
     }
 
-    // @AssertAcesso(ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @SuppressWarnings("unchecked")
     @Path("/listar")
     public void listar(boolean mostrarDesativados) throws Exception {
@@ -84,7 +86,7 @@ public class ItemConfiguracaoController extends SrController {
         result.include("acao", new SelecionavelVO(null, null));
     }
 
-    // @AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativar")
     public void desativar(Long id, boolean mostrarDesativados) throws Exception {
         SrItemConfiguracao item = SrItemConfiguracao.AR.findById(id);
@@ -93,7 +95,7 @@ public class ItemConfiguracaoController extends SrController {
         result.use(Results.http()).body(item.getSrItemConfiguracaoJson());
     }
 
-    // @AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/reativar")
     public void reativar(Long id, boolean mostrarDesativados) throws Exception {
         SrItemConfiguracao item = SrItemConfiguracao.AR.findById(id);
@@ -102,7 +104,7 @@ public class ItemConfiguracaoController extends SrController {
         result.use(Results.http()).body(item.getSrItemConfiguracaoJson());
     }
 
-    // @AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravar")
     public void gravar(SrItemConfiguracao itemConfiguracao, List<SrGestorItem> gestorSet, List<SrFatorMultiplicacao> fatorMultiplicacaoSet) throws Exception {
         // WO para tratar o erro de conversão de listas do Vraptor

@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -17,6 +19,7 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
@@ -33,7 +36,7 @@ public class DesignacaoController extends SrController {
 		super(request, result, CpDao.getInstance(), so, em, srValidator);
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@SuppressWarnings("unchecked")
 	@Path("/listar")
 	public void listar(boolean mostrarDesativados) {
@@ -58,8 +61,8 @@ public class DesignacaoController extends SrController {
 		result.include("cargoSel", new DpCargoSelecao());
 		result.include("cpGrupoSel", new CpPerfilSelecao());
 	}
-
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	 
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id) throws Exception {
 		SrConfiguracao designacao = SrConfiguracao.AR.findById(id);
@@ -68,7 +71,7 @@ public class DesignacaoController extends SrController {
 		result.use(Results.http()).body(designacao.toJson());
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id) throws Exception {
 		SrConfiguracao designacao = SrConfiguracao.AR.em().find(
@@ -78,7 +81,7 @@ public class DesignacaoController extends SrController {
 		result.use(Results.http()).body(designacao.toJson());
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravar(SrConfiguracao designacao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
 		designacao.setAcoesSet(acoesSet);

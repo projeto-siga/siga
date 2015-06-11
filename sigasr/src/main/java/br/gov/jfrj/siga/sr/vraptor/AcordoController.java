@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.enumeration.SrUnidadeMedida;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
@@ -45,7 +48,7 @@ public class AcordoController extends SrController {
         result.on(Exception.class).forwardTo(this).exception();
     }
 
-    // @AssertAcesso(ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @SuppressWarnings("unchecked")
     @Path("/listar")
     public void listar(boolean mostrarDesativados) throws Exception {
@@ -75,7 +78,7 @@ public class AcordoController extends SrController {
         result.include("cpGrupoSel", new CpPerfilSelecao());
     }
 
-    // @AssertAcesso(ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravar")
     public void gravarAcordo(SrAcordo acordo, List<SrAtributoAcordo> atributoAcordoSet, List<Integer> unidadeMedida) throws Exception {
         if (acordo.getAtributoAcordoSet() != null)
@@ -114,7 +117,7 @@ public class AcordoController extends SrController {
         return unidadeMedida != null && !unidadeMedida.isEmpty();
     }
 
-    // @AssertAcesso(ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativar")
     public void desativar(Long id) throws Exception {
         SrAcordo acordo = SrAcordo.AR.findById(id);
@@ -123,7 +126,7 @@ public class AcordoController extends SrController {
         result.use(Results.http()).body(acordo.toJson());
     }
 
-    // @AssertAcesso(ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/reativar")
     public void reativar(Long id) throws Exception {
         SrAcordo acordo = SrAcordo.AR.findById(id);
@@ -143,7 +146,7 @@ public class AcordoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(abrangencias));
     }
 
-    // @AssertAcesso(ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     public void gravarAbrangencia(SrConfiguracao associacao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
         associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
         associacao.setAcoesSet(acoesSet);
@@ -153,7 +156,7 @@ public class AcordoController extends SrController {
         result.use(Results.http()).body(associacao.toJson());
     }
 
-    // @AssertAcesso(ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativarAbrangenciaEdicao")
     public void desativarAbrangenciaEdicao(Long idAcordo, Long idAssociacao) throws Exception {
         SrConfiguracao abrangencia = SrConfiguracao.AR.findById(idAssociacao);
@@ -161,7 +164,7 @@ public class AcordoController extends SrController {
         result.use(Results.http()).body(abrangencia.toJson());
     }
 
-    // @AssertAcesso(ADM_ADMINISTRAR)
+    @AssertAcesso(ADM_ADMINISTRAR)
     @SuppressWarnings("unchecked")
     @Path("/buscar")
     public void buscar(boolean mostrarDesativados, String nome, boolean popup, String propriedade) throws Exception {

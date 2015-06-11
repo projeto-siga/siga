@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -24,7 +26,6 @@ import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrObjetivoAtributo;
 import br.gov.jfrj.siga.sr.model.SrTipoAtributo;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
-import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -42,7 +43,7 @@ public class AtributoController extends SrController {
 
 	@SuppressWarnings("unchecked")
 	@Path("/listar")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	public void listar(boolean mostrarDesativados) {
 		List<SrAtributo> atts = SrAtributo.listar(null, mostrarDesativados);
 		List<SrObjetivoAtributo> objetivos = SrObjetivoAtributo.AR.all().fetch();
@@ -69,7 +70,7 @@ public class AtributoController extends SrController {
 	}
 
 	@Path("/gravar")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAtributo(SrAtributo atributo) throws Exception {
 		if (validarFormEditarAtributo(atributo)) {
 			atributo.salvar();
@@ -78,7 +79,7 @@ public class AtributoController extends SrController {
 	}
 
 	@Path("/desativar")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	public void desativarAtributo(Long id) throws Exception {
 		SrAtributo item = SrAtributo.AR.findById(id);
 		item.finalizar();
@@ -86,7 +87,7 @@ public class AtributoController extends SrController {
 	}
 
 	@Path("/reativar")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	public void reativarAtributo(Long id) throws Exception {
 		SrAtributo item = SrAtributo.AR.findById(id);
 		item.salvar();
@@ -105,7 +106,7 @@ public class AtributoController extends SrController {
 	}
 
 	@Path("/atributos")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
     public void listarAssociacaoAtributo(Long idAtributo, boolean exibirInativos) throws Exception {
     	SrAtributo att = new SrAtributo();
     	if (idAtributo != null)

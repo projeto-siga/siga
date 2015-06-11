@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -18,11 +20,13 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
+import br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
@@ -39,7 +43,7 @@ public class AssociacaoController extends SrController {
 	}
 
 	@Path("/desativar")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	public void desativarAssociacao(Long idAssociacao) throws Exception {
 		SrConfiguracao associacao = SrConfiguracao.AR.findById(idAssociacao);
 		associacao.finalizar();
@@ -47,7 +51,7 @@ public class AssociacaoController extends SrController {
 	}
 
 	@Path("/gravar")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel, SrPesquisa pesquisaSatisfacao) throws Exception {
 		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
@@ -56,7 +60,7 @@ public class AssociacaoController extends SrController {
 	}
 
 	@Path("/gravarComoPesquisa")
-//	@AssertAcesso(SrSigaPermissaoPerfil.ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAssociacaoPesquisa(SrConfiguracao associacao, SrPesquisa pesquisa, SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel) throws Exception {
 

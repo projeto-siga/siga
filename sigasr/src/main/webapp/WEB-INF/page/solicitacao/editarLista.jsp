@@ -5,13 +5,16 @@
 <script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 <script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 
-<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+<div class="gt-form gt-content-box"
+	style="width: 800px !important; max-width: 800px !important;">
 	<form id="formLista" method="post" enctype="multipart/form-data">
 
-		<input type="hidden" id="idLista" name="lista" value="${lista.idLista}"> 
-		<input type="hidden" id="id" name="lista.idLista" value="${lista.idLista}"> 
-		<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista.hisIdIni}">
-		
+		<input type="hidden" id="idLista" name="lista"
+			value="${lista.idLista}"> <input type="hidden" id="id"
+			name="lista.idLista" value="${lista.idLista}"> <input
+			type="hidden" id="hisIdIni" name="lista.hisIdIni"
+			value="${lista.hisIdIni}">
+
 		<div class="gt-form-row gt-width-66">
 			<label>Nome <span>*<span></label> <input type="text"
 				id="nomeLista" name="lista.nomeLista" value="${nomeLista}" size="98"
@@ -38,7 +41,7 @@
 				<h3 style="padding-top: 25px;">Permiss&otilde;es</h3>
 			</div>
 		</div>
-		
+
 		<div class="gt-content-box gt-for-table dataTables_div">
 			<div class="gt-form-row dataTables_length">
 				<label> <siga:checkbox name="mostrarAssocDesativada"
@@ -159,9 +162,9 @@
 				class="gt-btn-small gt-Sbtn-left">Incluir</a>
 		</div>
 		<div class="gt-form-row">
-			<input type="button" value="Gravar"
-				class="gt-btn-medium gt-btn-left" onclick="listaService.gravar()" />
-			<a class="gt-btn-medium gt-btn-left"
+			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left"
+				onclick="listaService.gravar()" /> <a
+				class="gt-btn-medium gt-btn-left"
 				onclick="listaService.cancelarGravacao()">Cancelar</a> <input
 				type="button" value="Aplicar" class="gt-btn-medium gt-btn-left"
 				onclick="listaService.aplicar()" />
@@ -198,24 +201,23 @@
 					<label>Lota&ccedil;&atilde;o</label>
 					<siga:selecao propriedade="lotacao.lotacaoAtual" tema="simple"
 						modulo="siga" />
-
 				</div>
 
 				<div class="gt-form-row div-modal-table">
 					<label>Pessoa</label>
-					<siga:selecao propriedade="dpPessoa.pessoaAtual" tema="simple"
-						modulo="siga" />
+					<input type="hidden" name="Pessoa" id="Pessoa" class="selecao">
+						<siga:selecao propriedade="dpPessoa.pessoaAtual" tema="simple" modulo="siga" urlAcao="buscar" inputName="pessoa" />
 				</div>
 
 				<div class="gt-form-row div-modal-table">
 					<label>Cargo</label>
-					<siga:selecao propriedade="cargo" tema="simple" modulo="siga" />
+					<siga:selecao propriedade="cargo.cargoAtual" tema="simple" modulo="siga" />
 				</div>
 
 				<div class="gt-form-row div-modal-table">
-					<label>Fun&ccedil;&atilde;o</label>
+					<label>Fun&ccedil;&atilde;o</label>					
 					<siga:selecao propriedade="funcaoConfianca" tema="simple"
-						modulo="siga" />
+ 						modulo="siga" inputName="funcaoAtual"/> 
 				</div>
 
 				<div class="gt-form-row div-modal-table">
@@ -247,11 +249,10 @@
 
 							<div class="gt-form-row gt-width-66">
 								<label>Tipo de Permissão</label>
-								
-								<siga:select name="itemTipoPermissao"
- 									list="tiposPermissao" listKey="idTipoPermissaoLista"
- 									id="itemTipoPermissao" headerKey="0"
- 									listValue="idTipoPermissaoLista" theme="simple" />
+
+								<siga:select name="itemTipoPermissao" list="tiposPermissao"
+									listKey="idTipoPermissaoLista" id="itemTipoPermissao"
+									headerKey="0" listValue="idTipoPermissaoLista" theme="simple" />
 							</div>
 							<div class="gt-form-row">
 								<input type="button" id="modalOk" value="Ok"
@@ -293,44 +294,43 @@
 
 			<div id="divSolicitante" class="gt-form-row gt-width-100">
 				<label>Solicitante</label>
-				<siga:selecao2 tipo="pessoa" tema="simple" modulo="sigasr"
-							propriedade="dpPessoaParaInclusaoAutomatica" />
-			</div>
-			
-			<div class="gt-form-row gt-width-100">
-				<label>&Oacute;rg&atilde;o</label> 
-				<siga:select name="orgaoUsuario" list="orgaos"
-					listKey="idOrgaoUsu" id="idOrgaoUsu"
-					headerValue="" headerKey="0"
-					listValue="acronimoOrgaoUsu" theme="simple"
-					value="${idOrgaoUsu}" style="width: 100%" />
+				<siga:pessoaLotaFuncCargoSelecao nomeSelLotacao="lotacao"
+					nomeSelPessoa="dpPessoa" nomeSelFuncao="funcaoConfianca"
+					nomeSelCargo="cargo" nomeSelGrupo="cpGrupo"
+					valuePessoa="${dpPessoa != null ? dpPessoa.pessoaAtual :'' }"
+					valueLotacao="${lotacao != null ? lotacao.lotacaoAtual : '' }"
+					valueFuncao="${funcaoConfianca }" 
+					valueCargo="${cargo}"
+					valueGrupo="${cpGrupo}" disabled="disabled">
+				</siga:pessoaLotaFuncCargoSelecao>
 			</div>
 
 			<div class="gt-form-row gt-width-100">
-				<label>Lota&ccedil;&atilde;o</label>
-				<siga:selecao2 tipo="lotacao" tema="simple" modulo="sigasr"
-					propriedade="lotacaoParaInclusaoAutomatica" />
+				<label>&Oacute;rg&atilde;o</label>
+				<siga:select name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu"
+					id="idOrgaoUsu" headerValue="" headerKey="0"
+					listValue="acronimoOrgaoUsu" theme="simple" value="${idOrgaoUsu}"
+					style="width: 100%" />
 			</div>
 
 			<div class="gt-form-row gt-width-100">
 				<label>Prioridade</label>
 				<siga:select name="prioridade" list="prioridades"
-					listKey="idPrioridade" id="idPrioridade"
-					headerValue="Nenhuma" headerKey="0"
-					listValue="descPrioridade" theme="simple"
+					listKey="idPrioridade" id="idPrioridade" headerValue="Nenhuma"
+					headerKey="0" listValue="descPrioridade" theme="simple"
 					value="${descPrioridade}" style="width: 235px;" />
 			</div>
 
 			<div class="gt-form-row gt-width-100">
 				<label>Prioridade na lista</label>
 				<siga:select name="prioridadeNaLista" list="prioridades"
-					listKey="idPrioridade" id="idPrioridade"
-					headerValue="Nenhuma" headerKey="0"
-					listValue="descPrioridade" theme="simple"
+					listKey="idPrioridade" id="idPrioridade" headerValue="Nenhuma"
+					headerKey="0" listValue="descPrioridade" theme="simple"
 					value="${descPrioridade}" style="width: 235px;" />
 			</div>
-			
-			<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
+
+			<siga:configuracaoItemAcao
+				itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
 
 			<div class="gt-form-row">
 				<a href="javascript: configuracaoInclusaoAutomaticaService.gravar()"
@@ -810,15 +810,15 @@
 	      			$("#formulario_lotacaolotacaoAtualSel_id").val(),
 	      			$("#formulario_lotacaolotacaoAtualSel_descricao").val(),
 	      			$("#formulario_lotacaolotacaoAtualSel_sigla").val(),
-	      			$("#formulario_dpPessoapessoaAtualSel_id").val(),
-	      			$("#formulario_dpPessoapessoaAtualSel_descricao").val(),
-	      			$("#formulario_dpPessoapessoaAtualSel_sigla").val(),
-	      			$("#formulario_cargoSel_id").val(),
-	      			$("#formulario_cargoSel_descricao").val(),
-	      			$("#formulario_cargoSel_sigla").val(),
-	      			$("#formulario_funcaoConfiancaSel_sigla").val(),
-	      			$("#formulario_funcaoConfiancaSel_descricao").val(),
-	      			$("#formulario_funcaoConfiancaSel_id").val(),
+	      			$("#formulario_pessoaSel_id").val(),
+	      			$("#formulario_pessoaSel_descricao").val(),
+	      			$("#formulario_pessoaSel_sigla").val(),
+	      			$("#formulario_cargocargoAtualSel_id").val(),
+	      			$("#formulario_cargocargoAtualSel_descricao").val(),
+	      			$("#formulario_cargocargoAtualSel_sigla").val(),
+	      			$("#formulario_funcaoAtualSel_sigla").val(),
+	      			$("#formulario_funcaoAtualSel_descricao").val(),
+	      			$("#formulario_funcaoAtualSel_id").val(),
 	      			atualizaTipoPermissaoJson(),			//16
 	      			$("#idConfiguracao").val(),				//17    
 	      			getListasPermissaoAsString(),			//18
@@ -1205,6 +1205,6 @@
 	})
 
 </script>
- 
+
 
 

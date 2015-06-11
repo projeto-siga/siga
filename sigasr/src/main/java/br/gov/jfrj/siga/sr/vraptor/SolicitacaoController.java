@@ -413,6 +413,7 @@ public class SolicitacaoController extends SrController {
 
     public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
         result.include(SOLICITACAO, solicitacao);
+        result.include("podeUtilizarServico",podeUtilizarServico("SIGA;GC"));
     }
 
     @Path("/exibirPrioridade")

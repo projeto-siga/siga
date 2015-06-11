@@ -1,10 +1,9 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +12,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
@@ -22,7 +20,7 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrPergunta;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
@@ -41,7 +39,7 @@ public class PesquisaSatisfacaoController extends SrController {
 		super(request, result, CpDao.getInstance(), so, em, srValidator);
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@SuppressWarnings("unchecked")
 	@Path("/listar")
 	public void listar(boolean mostrarDesativados) {
@@ -68,7 +66,7 @@ public class PesquisaSatisfacaoController extends SrController {
 		result.include("acao", new SelecionavelVO(null,null));
 	}
 
-	//@AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativar")
 	public void desativar(Long id) throws Exception {
 		SrPesquisa pesq = SrPesquisa.AR.findById(id);
@@ -78,7 +76,7 @@ public class PesquisaSatisfacaoController extends SrController {
 
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/reativar")
 	public void reativar(Long id) throws Exception {
 		SrPesquisa pesq = SrPesquisa.AR.findById(id);
@@ -87,7 +85,7 @@ public class PesquisaSatisfacaoController extends SrController {
 		result.use(Results.http()).body(pesq.toJson());
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/editar")
 	public void editar(Long id) throws Exception {
 		SrPesquisa pesquisa = new SrPesquisa();
@@ -97,7 +95,7 @@ public class PesquisaSatisfacaoController extends SrController {
 		result.include(PESQUISA, pesquisa);
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/gravar")
 	public void gravarPesquisa(SrPesquisa pesquisa, List<SrPergunta> perguntaSet) throws Exception {
 		pesquisa.setPerguntaSet(perguntaSet != null ? perguntaSet : new ArrayList<SrPergunta>());
@@ -116,7 +114,7 @@ public class PesquisaSatisfacaoController extends SrController {
 		result.use(Results.http()).body("");
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/pesquisas")
 	public void listarAssociacaoPesquisa(Long idPesquisa, boolean exibirInativos) throws Exception {
 		SrPesquisa pesquisa = new SrPesquisa();
@@ -127,7 +125,7 @@ public class PesquisaSatisfacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativarAssociacaoEdicao")
 	public void desativarAssociacaoEdicao(Long idAssociacao) throws Exception {
 		SrConfiguracao associacao = SrConfiguracao.AR.em().find(SrConfiguracao.class, idAssociacao);
@@ -135,7 +133,7 @@ public class PesquisaSatisfacaoController extends SrController {
 		result.use(Results.http()).body(associacao.toJson());
 	}
 
-	// @AssertAcesso(ADM_ADMINISTRAR)
+	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/desativarAssociacaoPesquisaEdicao")
 	public void desativarAssociacaoPesquisaEdicao(Long idAssociacao) throws Exception {
 		SrConfiguracao associacao = SrConfiguracao.AR.em().find(SrConfiguracao.class, idAssociacao);

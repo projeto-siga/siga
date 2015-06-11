@@ -1,13 +1,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Disponibilidade de itens de configuraï¿½ï¿½o">
+<siga:pagina titulo="Disponibilidade de itens de configuração">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
-	<script
-		src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>

@@ -145,9 +145,9 @@
 
 		$("#checkmostrarDesativados").click(function() {
 			if (document.getElementById('checkmostrarDesativados').checked)
-				location.href = "${linkTo[SolicitacaoController].listarLista[true]}";
+				location.href = "${linkTo[SolicitacaoController].listarLista}" + '?mostrarDesativados=true';
 			else
-				location.href = "${linkTo[SolicitacaoController].listarLista[false]}";	
+				location.href = "${linkTo[SolicitacaoController].listarLista}" + '?mostrarDesativados=false';
 		});
 
 		/* Table initialization */

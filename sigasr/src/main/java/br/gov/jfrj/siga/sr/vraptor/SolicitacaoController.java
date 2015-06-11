@@ -104,7 +104,7 @@ public class SolicitacaoController extends SrController {
     }
 
     @SuppressWarnings("unchecked")
-    @Path("/listarLista/{mostrarDesativados}")
+    @Path("/listarLista")
     public void listarLista(boolean mostrarDesativados) throws Exception {
         List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
         List<CpComplexo> locais = CpComplexo.AR.all().fetch();
@@ -291,7 +291,6 @@ public class SolicitacaoController extends SrController {
         result.include("prioridades", SrPrioridade.getValoresEmOrdem());
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
-
     }
 
     @Path("/gravar")

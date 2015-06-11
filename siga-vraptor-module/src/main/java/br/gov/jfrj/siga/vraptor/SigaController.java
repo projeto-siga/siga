@@ -147,22 +147,18 @@ public class SigaController {
 	}
 
 	protected DpLotacao getLotaTitular() {
-		// TODO Auto-generated method stub
 		return so.getLotaTitular();
 	}
 	
 	protected void setLotaTitular(DpLotacao lotaTitular) {
-		// TODO Auto-generated method stub
 		so.setLotaTitular(lotaTitular);
 	}	
 
 	protected DpPessoa getTitular() {
-		// TODO Auto-generated method stub
 		return so.getTitular();
 	}
 	
 	protected void setTitular(DpPessoa titular) {
-		// TODO Auto-generated method stub
 		so.setTitular(titular);
 	}
 	
@@ -278,6 +274,7 @@ public class SigaController {
 		this.p = p;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void setPar(final Map par) {
 		this.par = par;
 	}

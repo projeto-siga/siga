@@ -2,11 +2,9 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Movimentação de solicitação">
-
-    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-
+	<jsp:include page="../main.jsp"></jsp:include>
+	
     <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-    <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
     <script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
     <script src="/sigasr/javascripts/jquery.populate.js"></script>
     <script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
@@ -14,8 +12,6 @@
     <script src="/sigasr/javascripts/jquery.validate.min.js"></script>
     <script src="/sigasr/javascripts/detalhe-tabela.js"></script>
     <script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
-    
-    <jsp:include page="../main.jsp"></jsp:include>
 
     <style>
         ul.lista-historico li span {
@@ -58,8 +54,6 @@
             </c:if> 
         </h3>
 
-<!--         MIGRAR LINKS -->
-<%--        #{links acoes:solicitacao.operacoes(titular, lotaTitular), base:_base /} --%>
         <siga:linkSr acoes="${solicitacao.operacoes(titular, lotaTitular)}" />
         <div class="gt-content-box" style="padding: 10px">
             <p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
@@ -432,9 +426,9 @@
         </form>
     </siga:modal>
     
-    <siga:modal nome="incluirEmLista" titulo="Definir Lista" url="incluirEmLista.jsp" />
-        
-    <siga:modal nome="escalonar" titulo="Escalonar Solicitação" url="escalonar.jsp" />
+    <siga:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?id=${solicitacao.idSolicitacao}" />
+    
+    <siga:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?id=${solicitacao.idSolicitacao}" />
 
     <siga:modal nome="juntar" titulo="Juntar">
         <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">
@@ -465,7 +459,8 @@
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicitação</label> <br />
                 <input type="hidden" name="idSolicitacaoRecebeVinculo" value="" />
-                <siga:selecao2 propriedade="idSolicitacaoRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"/>                       
+                <siga:selecao2 propriedade="idSolicitacaoRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"
+                	tamanho="grande"/>                       
                 <span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
             </div>
             <div class="gt-form-row gt-width-100" style="padding: 10px 0;">
@@ -619,10 +614,10 @@
         });
     });
 
-//     $(function(){
-//         $("#horario").mask("99:99");
-//         $("#horarioReplanejar").mask("99:99");
-//     });
+    $(function(){
+        $("#horario").mask("99:99");
+        $("#horarioReplanejar").mask("99:99");
+    });
 
     function postback(){
         var todoOContexto = ($("#todoOContexto").val() != null ? $("#todoOContexto").val() : false);

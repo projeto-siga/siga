@@ -24,10 +24,10 @@ import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.com.caelum.vraptor.validator.Message;
 
-//@Component
-//@RequestScoped
-public class NotEmptyParametersProvider /*implements ParametersProvider */{
-	/*private static final Logger LOGGER = LoggerFactory.getLogger(IogiParametersProvider.class);
+@Component
+@RequestScoped
+public class NotEmptyParametersProvider implements ParametersProvider {
+	private static final Logger LOGGER = LoggerFactory.getLogger(IogiParametersProvider.class);
 	private final ParameterNameProvider nameProvider;
 	private final HttpServletRequest servletRequest;
 	private final InstantiatorWithErrors instantiator;
@@ -97,5 +97,5 @@ public class NotEmptyParametersProvider /*implements ParametersProvider */{
 			}
 		}
 		return new Parameters(parameterList);
-	}*/
+	}
 }

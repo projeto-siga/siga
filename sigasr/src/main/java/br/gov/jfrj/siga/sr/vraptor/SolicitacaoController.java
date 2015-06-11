@@ -21,6 +21,7 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -119,14 +120,18 @@ public class SolicitacaoController extends SrController {
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
-        result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
         result.include("prioridades", SrPrioridade.getValoresEmOrdem());
-        result.include("lotacaolotacaoAtualSel", new DpLotacaoSelecao());
-        result.include("dpPessoapessoaAtualSel", new DpPessoaSelecao());
-        result.include("cargoSel", new DpCargoSelecao());
-        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());        
         
-
+		result.include("dpPessoaSel", new DpPessoaSelecao());
+		result.include("lotacaoSel", new DpLotacaoSelecao());
+		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
+		result.include("cargoSel", new DpCargoSelecao());
+		result.include("cpGrupoSel", new CpPerfilSelecao());
+		
+		result.include("lotacaolotacaoAtualSel", new DpLotacaoSelecao());
+        result.include("dpPessoapessoaAtualSel", new DpPessoaSelecao());
+        result.include("funcaoConfiancafuncaoAtualSel", new DpFuncaoConfiancaSelecao());
+        result.include("cargocargoAtualSel", new DpCargoSelecao());
     }
 
     @Path("/listarPermissaoUsoLista")

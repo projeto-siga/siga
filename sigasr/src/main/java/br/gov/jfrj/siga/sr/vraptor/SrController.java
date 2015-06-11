@@ -28,11 +28,6 @@ public class SrController extends SigaController {
 		this.srValidator = srValidator;
 	}
 
-	@Override
-	protected void assertAcesso(String pathServico) {
-		super.assertAcesso("SR:Módulo de Serviços;" + pathServico);
-	}
-
 	public void enviarErroValidacao() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(HttpStatus.SC_BAD_REQUEST);

@@ -145,13 +145,14 @@
 
 		$("#checkmostrarDesativados").click(function() {
 			if (document.getElementById('checkmostrarDesativados').checked)
-				location.href = "${linkTo[SolicitacaoController].listarLista[true]}";
+				location.href = "${linkTo[SolicitacaoController].listarLista}" + '?mostrarDesativados=true';
 			else
-				location.href = "${linkTo[SolicitacaoController].listarLista[false]}";	
+				location.href = "${linkTo[SolicitacaoController].listarLista}" + '?mostrarDesativados=false';
 		});
 
 		/* Table initialization */
 		opts.dataTable= $('#listas_table').dataTable({
+			stateSave : true,
 			"language": {
 				"emptyTable":     "N&atilde;o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",

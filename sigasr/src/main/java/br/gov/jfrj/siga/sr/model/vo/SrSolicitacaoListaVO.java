@@ -40,7 +40,7 @@ public class SrSolicitacaoListaVO {
         this.setItens(new ArrayList<SrSolicitacaoVO>());
     }
 
-    public static SrSolicitacaoListaVO fromFiltro(SrSolicitacaoFiltro filtro, boolean telaDeListas, String nome, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
+    public static SrSolicitacaoListaVO fromFiltro(SrSolicitacaoFiltro filtro, boolean telaDeListas, String propriedade, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
         List<SrSolicitacao> solicitacoes = filtro.buscar();
         SrSolicitacaoListaVO solicitacoesVO = new SrSolicitacaoListaVO();
         SrLista lista = null;
@@ -73,9 +73,9 @@ public class SrSolicitacaoListaVO {
                 // sÃ³ adiciona caso exista o vÃ­nculo entre a lista e a SolicitaÃ§Ã£o
                 if (prioridade != null)
                     solicitacoesVO.getItens().add(
-                            new SrSolicitacaoVO(sol, lista, prioridade, nome, isPopup, lotaTitular, cadastrante, solicitacoesVO.isPodeRemover(), solicitacoesVO.isPodePriorizar()));
+                            new SrSolicitacaoVO(sol, lista, prioridade, propriedade, isPopup, lotaTitular, cadastrante, solicitacoesVO.isPodeRemover(), solicitacoesVO.isPodePriorizar()));
             } else
-                solicitacoesVO.getItens().add(new SrSolicitacaoVO(sol, nome, isPopup, lotaTitular, cadastrante));
+                solicitacoesVO.getItens().add(new SrSolicitacaoVO(sol, propriedade, isPopup, lotaTitular, cadastrante));
         }
 
         if (lista != null)
@@ -90,15 +90,15 @@ public class SrSolicitacaoListaVO {
         if (telaDeListas) {
             colunasVO.add(new ColunasVO("#", "prioridadeListaFormatada", "gt-celula-nowrap solicitacao-dados solicitacao-prioridade numero-solicitacao", LARGURA_COLUNA_PRIORIDADE));
             colunasVO.addAll(getColunasEmComum());
-            colunasVO.add(new ColunasVO("Lotação", "lotaAtendenteFormatada", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
-            colunasVO.add(new ColunasVO("Última Movimentação", ULTIMA_MOVIMENTACAOFORMATADA, GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
+            colunasVO.add(new ColunasVO("Lotaï¿½ï¿½o", "lotaAtendenteFormatada", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
+            colunasVO.add(new ColunasVO("ï¿½ltima Movimentaï¿½ï¿½o", ULTIMA_MOVIMENTACAOFORMATADA, GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
 
             if (podeRemover || podePriorizar)
                 colunasVO.add(new ColunasVO("", "botaoRemoverPriorizar", "gt-celula-nowrap solicitacao-dados solicitacao-remover", LARGURA_COLUNA_REMOVER_PRIORIZAR));
         } else {
             colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control"));
             colunasVO.addAll(getColunasEmComum());
-            colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
+            colunasVO.add(new ColunasVO("Situaï¿½ï¿½o", "marcadoresEmHtml", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
             colunasVO.add(new ColunasVO("Úšltimo Andamento", ULTIMA_MOVIMENTACAOFORMATADA, GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
             colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
         }
@@ -108,7 +108,7 @@ public class SrSolicitacaoListaVO {
 
     private List<ColunasVO> getColunasEmComum() {
         List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
-        colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
+        colunasVO.add(new ColunasVO("Cï¿½digo", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
         colunasVO.add(new ColunasVO("Teor", "teorFormatado", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
         colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
         colunasVO.add(new ColunasVO("Aberto", "dtRegString", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
@@ -122,8 +122,8 @@ public class SrSolicitacaoListaVO {
         colunasDetalhamentoSolicitacao.add(new ColunasVO("Teor", "teorFormatado"));
         colunasDetalhamentoSolicitacao.add(new ColunasVO("Solicitante", "solicitanteFormatado"));
         colunasDetalhamentoSolicitacao.add(new ColunasVO("Prioridade", "prioridadeFormatada"));
-        colunasDetalhamentoSolicitacao.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes"));
-        colunasDetalhamentoSolicitacao.add(new ColunasVO("Última Movimentação", ULTIMA_MOVIMENTACAOFORMATADA));
+        colunasDetalhamentoSolicitacao.add(new ColunasVO("Situaï¿½ï¿½o", "marcadoresEmHtmlDetalhes"));
+        colunasDetalhamentoSolicitacao.add(new ColunasVO("ï¿½ltima Movimentaï¿½ï¿½o", ULTIMA_MOVIMENTACAOFORMATADA));
 
         return colunasDetalhamentoSolicitacao;
     }

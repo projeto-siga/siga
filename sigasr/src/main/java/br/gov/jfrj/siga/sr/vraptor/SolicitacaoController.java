@@ -12,7 +12,9 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
@@ -437,12 +439,12 @@ public class SolicitacaoController extends SrController {
     // e n�o foi poss�vel deixar default no template(igual ao buscarItem.html)
     @SuppressWarnings("unchecked")
     @Path("/buscar")
-    public void buscar(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception {
+    public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup) throws Exception {
         SrSolicitacaoListaVO solicitacaoListaVO;
         try {
             if (filtro.isPesquisar()) {
                 filtro.carregarSelecao();
-                solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, nome, popup, getLotaTitular(), getCadastrante());
+                solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante());
             } else {
                 solicitacaoListaVO = new SrSolicitacaoListaVO();
             }
@@ -462,7 +464,7 @@ public class SolicitacaoController extends SrController {
         result.include("tipos", tipos);
         result.include("marcadores", marcadores);
         result.include("filtro", filtro);
-        result.include("nome", nome);
+        result.include("propriedade", propriedade);
         result.include("popup", popup);
         result.include("atributosDisponiveisAdicao", atributosDisponiveisAdicao);
         result.include("listasPrioridade", listasPrioridade);
@@ -771,14 +773,20 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).setStatusCode(200);
     }
     
+    @Get
+	@Post
     @Path("/selecionar")
-    public void selecionarSolicitacao(String sigla) throws Exception {
+    public void selecionar(String sigla) throws Exception {
         SrSolicitacao sel = new SrSolicitacao();
         sel.setLotaTitular(getLotaTitular());
         sel = (SrSolicitacao) sel.selecionar(sigla);
-        result.include("sel", sel);
         
-        result.use(Results.status()).ok();
-        // render("@selecionar", sel);
+        if (sel != null) {
+        	result.include("sel", sel);
+        	result.forwardTo("../../jsp/ajax_retorno.jsp");
+        }
+        else {
+        	result.forwardTo("../../jsp/ajax_vazio.jsp");
+        }
     }
 }

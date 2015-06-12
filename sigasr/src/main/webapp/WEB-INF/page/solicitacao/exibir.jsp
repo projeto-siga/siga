@@ -394,7 +394,7 @@
                 <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
                 <input type="hidden" name="ocultas" value="${ocultas}" />
                 <input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-                    value="${movimentacao.solicitacao.idSolicitacao}"> <input
+                    value="${solicitacao.idSolicitacao}"> <input
                     type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12">
                 <div class="gt-form-row">
                     <label>Arquivo</label> <input type="file"
@@ -460,7 +460,7 @@
                 <label>Solicitação</label> <br />
                 <input type="hidden" name="idSolicitacaoRecebeVinculo" value="" />
                 <siga:selecao2 propriedade="idSolicitacaoRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"
-                	tamanho="grande"/>                       
+                	tamanho="grande"/>
                 <span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
             </div>
             <div class="gt-form-row gt-width-100" style="padding: 10px 0;">

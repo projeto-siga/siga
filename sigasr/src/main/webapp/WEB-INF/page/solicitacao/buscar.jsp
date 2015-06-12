@@ -24,7 +24,7 @@
 	    <div class="gt-content-box gt-for-table" style="margin-top: 15px;">
 	        <form action="${linkTo[SolicitacaoController].buscar}" method="GET" onsubmit="javascript: return block();" >
 	            <input type="hidden" name="filtro.pesquisar" value="true" />
-	            <input type="hidden" name="nome" value="${nome}" />
+	            <input type="hidden" name="propriedade" value="${propriedade}" />
 	            <input type="hidden" name="popup" value="${popup}" />
 	            <table class="gt-form-table">
 	                <tr class="header">

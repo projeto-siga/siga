@@ -83,10 +83,10 @@ public class SrSolicitacaoVO {
             this.setBotaoRemoverPriorizar(this.botaoRemover + this.botaoPriorizar);
     }
 
-    public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, String nome, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante,
+    public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, String propriedade, boolean isPopup, DpLotacao lotaTitular, DpPessoa cadastrante,
             boolean podeRemover, boolean podePriorizar) throws Exception {
         this(sol, lista, prioridadeSolicitacao, podeRemover, podePriorizar);
-        this.setCodigoFormatado(getCodigoFormatado(sol.getId(), sol.getCodigo(), nome, isPopup));
+        this.setCodigoFormatado(getCodigoFormatado(sol.getId(), sol.getCodigo(), propriedade, isPopup));
         this.setMarcadoresEmHtml(sol.getMarcadoresEmHtml(cadastrante, lotaTitular));
         this.setMarcadoresEmHtmlDetalhes(getMarcadoresEmHTMLDetalhes(this.marcadoresEmHtml, this.getDtUltimaMovimentacaoString()));
     }
@@ -98,17 +98,16 @@ public class SrSolicitacaoVO {
         this.setMarcadoresEmHtmlDetalhes(getMarcadoresEmHTMLDetalhes(this.marcadoresEmHtml, this.getDtUltimaMovimentacaoString()));
     }
 
-    private String getCodigoFormatado(Long id, String codigo, String nome, boolean isPopup) {
+    private String getCodigoFormatado(Long id, String codigo, String propriedade, boolean isPopup) {
         StringBuilder sb = new StringBuilder();
 
         if (isPopup) {
             sb.append("<a href=\"javascript:opener.retorna_solicitacao");
-            sb.append(nome + "('");
+            sb.append(propriedade + "('");
             sb.append(getIdSolicitacao() + "','" + codigo);
             sb.append("}'," + codigo + "');window.close()\">");
             sb.append(codigo + "</a>");
         } else {
-            // TODO Alterar este link ap�s migra��o para vRaptor
             sb.append("<a href=\"/sigasr/app/solicitacao/exibir/");
             sb.append(id + "\">");
             sb.append(codigo + "</a>");

@@ -229,7 +229,7 @@ function postback(){
 			<p>
 				<b>Solicitante:</b>
 				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
-				solicitacao.local} (${solicitacao.local.nomeComplexo}) #{/if}
+				solicitacao.local}, ${solicitacao.local.nomeComplexo}#{/if}
 			</p>
 			#{if solicitacao.interlocutor}
 			<p>

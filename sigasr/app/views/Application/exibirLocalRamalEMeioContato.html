@@ -3,8 +3,16 @@
 			#{if locaisDisponiveis.size() > 1}	
 				<div class="gt-form-row gt-width-66">
 					<label>Local</label> 
-					#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',
-					labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
+					#{select name:'solicitacao.local', value:solicitacao.local?.idComplexo, id:'local'}
+						#{list items:locaisDisponiveis.keySet(), as:'orgao' }
+							<optgroup label="${orgao.acronimoOrgaoUsu}">
+							#{list items:locaisDisponiveis.get(orgao), as:'local'}
+								#{option local.idComplexo} ${local.nomeComplexo}#{/option}
+							#{/list}
+							</optgroup>					 
+						#{/list}
+					#{/select} 
+					
 				</div>
 				<script>
 					$("#local").change(function() {

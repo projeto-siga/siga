@@ -165,7 +165,7 @@ tr.fisicoeven:hover td {
 	display: inline;
 }
 
-/* Formularios que são organizados na forma de tabelas */
+/* Formularios que sï¿½o organizados na forma de tabelas */
 .gt-form-table {
 	width: 100%;
 }
@@ -434,6 +434,31 @@ table.entrevista tr TD{
 	padding-right: 0px;
 	padding-top: 0.1em;
 	padding-bottom: 0.1em;
+}
+
+ 
+table.parte {
+	padding: 0px;
+	background-color: #fff;
+	border-radius: 0px;
+	margin:  1em 0px 1em 0px;
+}
+
+table.parte TR.header {
+	font-weight: bold;
+	font-size: 100%;
+	margin: .2em 0px .2em 0px;
+	color: #333;
+	border-bottom: 1px solid #ccc !important;
+	background-color: #fff;
+	border-radius: 0px;
+}
+
+table.parte tr TD{
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
 }
 
 

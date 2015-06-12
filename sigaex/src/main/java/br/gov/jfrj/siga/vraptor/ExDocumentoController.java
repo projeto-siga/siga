@@ -383,9 +383,10 @@ public class ExDocumentoController extends ExController {
 			InvocationTargetException {
 		assertAcesso("");
 
-		final boolean isDocNovo = (exDocumentoDTO == null || exDocumentoDTO.getSigla() == null);
+		final boolean isDocNovo = (exDocumentoDTO == null || exDocumentoDTO
+				.getSigla() == null);
 		if (isDocNovo) {
-			if(param("postback") == null)
+			if (param("postback") == null)
 				exDocumentoDTO = new ExDocumentoDTO();
 			exDocumentoDTO.setCriandoAnexo(criandoAnexo == null ? false
 					: criandoAnexo);
@@ -402,13 +403,13 @@ public class ExDocumentoController extends ExController {
 		buscarDocumentoOuNovo(true, exDocumentoDTO);
 
 		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
-			if(exDocumentoDTO.getTipoDestinatario() == null)
+			if (exDocumentoDTO.getTipoDestinatario() == null)
 				exDocumentoDTO.setTipoDestinatario(2);
-			
-			if(exDocumentoDTO.getIdFormaDoc() == null)
+
+			if (exDocumentoDTO.getIdFormaDoc() == null)
 				exDocumentoDTO.setIdFormaDoc(2);
-			
-			if(exDocumentoDTO.getIdTpDoc() == null)
+
+			if (exDocumentoDTO.getIdTpDoc() == null)
 				exDocumentoDTO.setIdTpDoc(1L);
 
 			if(exDocumentoDTO.getNivelAcesso() == null) {
@@ -574,19 +575,28 @@ public class ExDocumentoController extends ExController {
 			}
 			for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
 				if (!parFreeMarker.containsKey(p)) {
-					final String as[] =  new String[] {exDocumentoDTO.getParamsEntrevista().get(p)};
+					final String as[] = new String[] { exDocumentoDTO
+							.getParamsEntrevista().get(p) };
 					parFreeMarker.put(p, as);
-					System.out.println("*** " + p + ", " + exDocumentoDTO.getParamsEntrevista().get(p));
+					System.out.println("*** " + p + ", "
+							+ exDocumentoDTO.getParamsEntrevista().get(p));
 				}
 			}
 		}
-//		result.include("param", exDocumentoDTO.getParamsEntrevista());
-		
+		// Usado pela macro de "partes"...
+		parFreeMarker.put("sigla_titular", new String[] { getTitular().getSigla() });
+		parFreeMarker.put("sigla_lota_titular",
+				new String[] { getLotaTitular().getSiglaCompleta() });
+
+
+		// result.include("param", exDocumentoDTO.getParamsEntrevista());
+
 		List<String> l = new ArrayList<String>();
 		for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
 			result.include(p, exDocumentoDTO.getParamsEntrevista().get(p));
 			l.add(p);
-			System.out.println("*** " + p + ", " + exDocumentoDTO.getParamsEntrevista().get(p));
+			System.out.println("*** " + p + ", "
+					+ exDocumentoDTO.getParamsEntrevista().get(p));
 		}
 		result.include("vars", l);
 
@@ -1233,7 +1243,8 @@ public class ExDocumentoController extends ExController {
 			tempoIni = System.currentTimeMillis();
 
 			if (exDocumentoDTO.getDoc().getOrgaoUsuario() == null) {
-				exDocumentoDTO.getDoc().setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
+				exDocumentoDTO.getDoc().setOrgaoUsuario(
+						getLotaTitular().getOrgaoUsuario());
 			}
 
 			if (exDocumentoDTO.isClassificacaoIntermediaria()
@@ -1314,9 +1325,11 @@ public class ExDocumentoController extends ExController {
 							.getDtRegDocDDMMYY());
 			result.use(Results.http()).body(body);
 		} else {
-			final String url = MessageFormat.format("exibir?sigla={0}{1}",
+			final String url = MessageFormat.format(
+					"exibir?sigla={0}{1}",
 					exDocumentoDTO.getDoc().getSigla(),
-					exDocumentoDTO.getDesativ() == null ? "" : exDocumentoDTO.getDesativ());
+					exDocumentoDTO.getDesativ() == null ? "" : exDocumentoDTO
+							.getDesativ());
 			result.redirectTo(url);
 		}
 	}
@@ -1652,10 +1665,11 @@ public class ExDocumentoController extends ExController {
 
 			exDocumentoDTO.setIdMod(mod.getIdMod());
 			if ((exDocumentoDTO.getIdMod() != 0)
-					&& (exDocumentoDTO.getMobilPaiSel() == null || exDocumentoDTO.getMobilPaiSel().getId() == null)
+					&& (exDocumentoDTO.getMobilPaiSel() == null || exDocumentoDTO
+							.getMobilPaiSel().getId() == null)
 					&& (exDocumentoDTO.getIdMobilAutuado() == null)) {
 				if (exDocumentoDTO.getClassificacaoSel() != null)
-					exDocumentoDTO.getClassificacaoSel().apagar();	
+					exDocumentoDTO.getClassificacaoSel().apagar();
 			}
 		}
 
@@ -1664,7 +1678,8 @@ public class ExDocumentoController extends ExController {
 		}
 
 		if (exDocumentoDTO.isAlterouModelo()
-				&& (exDocumentoDTO.getMobilPaiSel() == null || exDocumentoDTO.getMobilPaiSel().getId() == null)
+				&& (exDocumentoDTO.getMobilPaiSel() == null || exDocumentoDTO
+						.getMobilPaiSel().getId() == null)
 				&& exDocumentoDTO.getIdMobilAutuado() == null) {
 			if (exDocumentoDTO.getClassificacaoSel() != null)
 				exDocumentoDTO.getClassificacaoSel().apagar();
@@ -1688,13 +1703,13 @@ public class ExDocumentoController extends ExController {
 		}
 
 		exDocumentoDTO.setModelo(mod);
-		if (mod.getExClassificacao() != null && exDocumentoDTO
-				.getClassificacaoSel() != null
+		if (mod.getExClassificacao() != null
+				&& exDocumentoDTO.getClassificacaoSel() != null
 				&& mod.getExClassificacao().getId() != exDocumentoDTO
 						.getClassificacaoSel().getId()) {
 			if (exDocumentoDTO.getClassificacaoSel() != null)
 				exDocumentoDTO.getClassificacaoSel().buscarPorObjeto(
-					mod.getExClassificacao());
+						mod.getExClassificacao());
 		}
 	}
 

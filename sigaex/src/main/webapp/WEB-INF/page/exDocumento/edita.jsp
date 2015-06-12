@@ -7,6 +7,7 @@
 <siga:pagina titulo="Novo Documento">
 <script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
 <script type="text/javascript" src="../../../javascript/exDocumentoEdita.js"></script>
+<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 	

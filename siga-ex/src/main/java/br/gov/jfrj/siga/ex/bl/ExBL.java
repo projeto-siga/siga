@@ -2538,6 +2538,23 @@ public class ExBL extends CpBL {
 
 		return s;
 	}
+	
+	public String processarDadosDasPartes(final ExDocumento doc)
+			throws Exception {
+		String s = processarModelo(doc, null, "partes", null, null);
+
+		int start = 0, end = 0;
+		for (;;) {
+			start = s.indexOf("<parte", end);
+			end = s.indexOf("</parte>", start);
+			if (start == -1 || end == -1) 
+				break;
+			String parte = s.substring(start, end + 8);
+			System.out.println(parte);
+		}
+		return s;
+	}
+
 
 	/**
 	 * @param sFileName
@@ -3793,6 +3810,8 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
+			
+			processarDadosDasPartes(doc);
 			
 			String s = processarComandosEmTag(doc, "gravacao");
 

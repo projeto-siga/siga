@@ -1232,17 +1232,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpComplexo> getLocaisDisponiveis() {
+	public Map<CpOrgaoUsuario, List<CpComplexo>> getLocaisDisponiveis() {
 		List<CpComplexo> locais = new ArrayList<CpComplexo>();
+		 Map<CpOrgaoUsuario, List<CpComplexo>> hashFinal = new HashMap<CpOrgaoUsuario, List<CpComplexo>>();
 		if (solicitante != null)
 			locais = JPA
 			.em()
 			.createQuery(
-					"from CpComplexo where orgaoUsuario.idOrgaoUsu = :idOrgaoUsu order by nomeComplexo")
-					.setParameter("idOrgaoUsu", solicitante.getOrgaoUsuario().getIdOrgaoUsu())
+					"from CpComplexo order by nomeComplexo")
 					.getResultList();
-				
-		return locais;
+		for (CpComplexo c : locais){
+			if (hashFinal.get(c.getOrgaoUsuario()) == null)
+				hashFinal.put(c.getOrgaoUsuario(), new ArrayList<CpComplexo>());
+			hashFinal.get(c.getOrgaoUsuario()).add(c);
+		}
+		return hashFinal;
 	}
 
 	public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {

@@ -65,7 +65,7 @@
 			<c:forEach items="${acoesEAtendentes.get(cat)}" var="t">
 				<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
 				<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
-									- ${t.conf.atendente.descricao.raw()}</span>
+									- ${t.conf.atendente.descricao}</span>
 				<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.idLotacao}</span>
 				<c:if test="${cat_isFirst && cat_isLast && t_isLast}"> 
 					<c:set var="lotacaoDesignada" value="${t.conf.atendente.siglaCompleta + ' - ' + t.conf.atendente.descricao}"/>  
@@ -76,7 +76,7 @@
 		</c:forEach>
 
 		<label>Atendente</label>
-		<span id="atendentePadrao" style="display:block;">${lotacaoDesignada.raw()}</span>
+		<span id="atendentePadrao" style="display:block;">${lotacaoDesignada}</span>
 		<input type="hidden" id="idDesignacao" name="idDesignacao" value="${idDesignacao}" />
 		<input type="hidden" name="idAtendente" id="idAtendente" value="${idLotaAtendente}" />
 	</div>

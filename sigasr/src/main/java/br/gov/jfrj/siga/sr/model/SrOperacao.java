@@ -29,8 +29,6 @@ public class SrOperacao implements Comparable<SrOperacao> {
     
     public SrOperacao(String icone, String nome, boolean pode, String url, String parametros) {
         this(icone, nome, pode, url);
-        if (params == null)
-            params = new HashMap<String, Object>();
         if (parametros != null)
             for (final String s : parametros.split("&")) {
                 final String parametro[] = s.split("=");
@@ -43,10 +41,10 @@ public class SrOperacao implements Comparable<SrOperacao> {
         super();
         this.icone = icone;
         this.nome = nome;
-        this.url = url;
+        this.url = url != null ? url : "";
         this.pode = pode;
         this.msgConfirmacao = msgConfirmacao;
-        this.params = map;
+        this.params = map != null ? map : new HashMap<String, Object>();
         this.pre = pre;
         this.pos = pos;
     }
@@ -148,5 +146,18 @@ public class SrOperacao implements Comparable<SrOperacao> {
     public int compareTo(SrOperacao o) {
         return nome.compareTo(o.nome);
     }
+    
+    public String getParamsFormatted() {
+    	StringBuffer sb = new StringBuffer();
+    	
+    	for (Map.Entry<String, Object> entry : this.params.entrySet()) {
+   			sb.append("&");
+    		sb.append(entry.getKey());
+    		sb.append("=");
+    		sb.append(entry.getValue());
+    	}
+    	
+    	return sb.toString();
+	}
     
 }

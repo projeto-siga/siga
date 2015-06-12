@@ -347,7 +347,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public void setSigla(String sigla) {
         String siglaUpper = sigla.trim().toUpperCase();
         Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
-        for (Object ou : AR.all().fetch()) {
+        for (Object ou : CpOrgaoUsuario.AR.all().fetch()) {
             CpOrgaoUsuario cpOu = (CpOrgaoUsuario) ou;
             mapAcronimo.put(cpOu.getAcronimoOrgaoUsu(), cpOu);
         }
@@ -1242,10 +1242,14 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
         if (acoesEAtendentes != null && this.getItemConfiguracao() != null) {
 
-            if (acoesEAtendentes.size() == 1)
-                this.setAcao(acoesEAtendentes.get(0).acao);
-            else
-                this.setAcao(null);
+        	// DB1: Adicionado verificação pois ao editar uma solicitação, estava resetando a ação 
+        	// já selecionada pelo usuário mesmo que a edição fosse cancelada.
+            if (this.getAcao() == null) {
+            	if (acoesEAtendentes.size() == 1)
+            		this.setAcao(acoesEAtendentes.get(0).acao);
+                else
+                    this.setAcao(null);
+            }
 
 			for (SrTarefa t : acoesEAtendentes) {
 				 // TODO:[refatoracao] - Estava inserindo null na lista.
@@ -1277,26 +1281,21 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     @SuppressWarnings("serial")
-    public List<SrOperacao> operacoes(final DpPessoa pess, final DpLotacao lota) throws Exception {
-    	List<SrOperacao> operacoes = new ArrayList<SrOperacao>() {
-            @Override
-            public boolean add(SrOperacao e) {
-                // Edson: ser� que essas coisas poderiam estar dentro do
-                // SrOperacao?
-                if (e.getParams() == null)
-                    e.setParams(new HashMap<String, Object>());
-                e.getParams().put("id", getIdSolicitacao());
-
-                if (!e.isModal())
-                    e.setUrl(e.getUrl() + "?" + e.getParams());
-
-                if (!e.isPode())
-                    return false;
-                return super.add(e);
-            }
+    public SortedSet<SrOperacao> operacoes(final DpPessoa pess, final DpLotacao lota) throws Exception {
+    	SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
+    		@Override
+			public boolean add(SrOperacao e) {
+				// Edson: ser� que essas coisas poderiam estar dentro do
+				// SrOperacao?
+				if (!e.isModal())
+					e.setUrl(e.getUrl() + "?id="+idSolicitacao + e.getParamsFormatted());
+				if (!e.isPode())
+					return false;
+				return super.add(e);
+			}
         };
-
-        operacoes.add(new SrOperacao("pencil", "Editar", podeEditar(pess, lota), "Application.editar"));
+        
+        operacoes.add(new SrOperacao("pencil", "Editar", podeEditar(pess, lota), "editar"));
 
         operacoes.add(new SrOperacao("table_relationship", "Vincular", podeVincular(pess, lota), "vincular", MODAL_TRUE));
 
@@ -1312,27 +1311,25 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));
 
-        operacoes.add(new SrOperacao("cross", "Cancelar Solicita��o", podeCancelar(pess, lota), "Application.cancelar"));
+        operacoes.add(new SrOperacao("cross", "Cancelar Solicita��o", podeCancelar(pess, lota), "cancelar"));
 
-        operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(pess, lota), "Application.reabrir"));
+        operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(pess, lota), "reabrir"));
 
-        operacoes.add(new SrOperacao("clock_pause", "Incluir Pend�ncia", podeDeixarPendente(pess, lota), "pendencia", MODAL_TRUE));
+        operacoes.add(new SrOperacao("clock_pause", "Incluir Pend�ncia", podeDeixarPendente(pess, lota), "deixarPendente", MODAL_TRUE));
 
         /*
          * operacoes.add(new SrOperacao("clock_edit", "Alterar Prazo", podeAlterarPrazo(lotaTitular, titular), "alterarPrazo", "modal=true"));
          */
-        operacoes.add(new SrOperacao("cross", "Excluir", "Application.excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicita��o?", null, "", ""));
+        operacoes.add(new SrOperacao("cross", "Excluir", "excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicitação?", null, "", ""));
 
-        operacoes.add(new SrOperacao("attach", "Anexar Arquivo", podeAnexarArquivo(pess, lota), "anexarArquivo", MODAL_TRUE));
+        operacoes.add(new SrOperacao("attach", "Anexar Arquivo", podeAnexarArquivo(pess, lota), "anexarArquivo", MODAL_TRUE + "&solicitacao.id=" + getId()));
 
-        operacoes.add(new SrOperacao("printer", "Termo de Atendimento", podeImprimirTermoAtendimento(pess, lota), "Application.termoAtendimento", "popup=true"));
+        operacoes.add(new SrOperacao("printer", "Termo de Atendimento", podeImprimirTermoAtendimento(pess, lota), "termoAtendimento", "popup=true"));
 
         SrMovimentacao ultCancelavel = getUltimaMovimentacaoCancelavel();
         operacoes.add(new SrOperacao("cancel", "Desfazer " + (ultCancelavel != null ? ultCancelavel.getTipoMov().getNome() : ""), podeDesfazerMovimentacao(pess, lota),
-                "Application.desfazerUltimaMovimentacao"));
+                "desfazerUltimaMovimentacao"));
 
-        Collections.sort(operacoes);
-        
         return operacoes;
     }
 

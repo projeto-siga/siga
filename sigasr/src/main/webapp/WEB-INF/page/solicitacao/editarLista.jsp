@@ -9,11 +9,8 @@
 	style="width: 800px !important; max-width: 800px !important;">
 	<form id="formLista" method="post" enctype="multipart/form-data">
 
-		<input type="hidden" id="idLista" name="lista"
-			value="${lista.idLista}"> <input type="hidden" id="id"
-			name="lista.idLista" value="${lista.idLista}"> <input
-			type="hidden" id="hisIdIni" name="lista.hisIdIni"
-			value="${lista.hisIdIni}">
+		<input type="hidden" id="idLista" name="lista" value="${lista.idLista}"> 
+		<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista.hisIdIni}">
 
 		<div class="gt-form-row gt-width-66">
 			<label>Nome <span>*<span></label> <input type="text"
@@ -102,7 +99,7 @@
 								style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 								<a class="once desassociarPermissao"
 								onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})"
-								title="Remover permissÃ£o"> <input class="idPermissao"
+								title="Remover permiss&atilde;o"> <input class="idPermissao"
 									type="hidden" value="${perm.id}" /> <img id="imgCancelar"
 									src="/siga/css/famfamfam/icons/delete.png"
 									style="margin-right: 5px;">
@@ -176,7 +173,7 @@
 	</form>
 </div>
 
-<siga:modal nome="controleAcesso" titulo="Cadastrar Permiss�o">
+<siga:modal nome="controleAcesso" titulo="Cadastrar Permissão">
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
@@ -248,7 +245,7 @@
 								data-json='${tiposPermissaoJson}'></div>
 
 							<div class="gt-form-row gt-width-66">
-								<label>Tipo de Permiss�o</label>
+								<label>Tipo de Permissão</label>
 
 								<siga:select name="itemTipoPermissao" list="tiposPermissao"
 									listKey="idTipoPermissaoLista" id="itemTipoPermissao"
@@ -329,13 +326,12 @@
 					value="${descPrioridade}" style="width: 235px;" />
 			</div>
 
-			<siga:configuracaoItemAcao
-				itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
+			<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
 
 			<div class="gt-form-row">
 				<a href="javascript: configuracaoInclusaoAutomaticaService.gravar()"
-					class="gt-btn-medium gt-btn-left">Gravar</a> <a
-					href="javascript: configuracaoInclusaoAutomaticaService.cancelarGravacao()"
+					class="gt-btn-medium gt-btn-left">Gravar</a> 
+				<a href="javascript: configuracaoInclusaoAutomaticaService.cancelarGravacao()"
 					class="gt-btn-medium gt-btn-left">Cancelar</a>
 			</div>
 		</div>
@@ -530,7 +526,7 @@
 	}
 	
 	configuracaoInclusaoAutomaticaService.onRowClick = function(configuracao) {
-		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configuraÃ§Ã£o para inclusÃ£o automÃ¡tica');
+		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configuração para inclusão automática');
 	}
 	configuracaoInclusaoAutomaticaService.editar = function(configuracao, title) {
 		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
@@ -650,7 +646,7 @@
 	             }	        	 
 	         },
 	         error: function(response) {
-	        	alert("NÃ£o foi possÃ­vel desativar esta permissÃ£o.");
+	        	alert("Não foi possível desativar esta permissão.");
 	         }
 	   });
 	       
@@ -711,10 +707,10 @@
 		itemTipoPermissaoOptions = $("#itemTipoPermissao").clone();
 		
 		if (isEdicao)
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss�o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permissão');
 		else {
 			limparDadosAcessoModal();
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss�o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permissão');
 		}
 	
 		atualizarComboTipoPermissao();
@@ -852,6 +848,7 @@
 	    row[colunas.idTipoPerm] = permissao.idConfiguracao;
 	    row[colunas.acoes] = getColunaAtivarDesativar(permissao);
 	
+    	permissoesTable = $('#permissoes_table').dataTable();
 	    if (isEditingContr) {
 	         var editedRow = permissoesTable.api().row('.selected');
 	         editedRow.data(row);
@@ -870,7 +867,7 @@
 	}
 	function getColunaAtivarDesativar (permissao) {
 		return '<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
-					'<a class="once desassociarPermissao" title="Remover permissÃ£o">' + 
+					'<a class="once desassociarPermissao" title="Remover permissÃÂ£o">' + 
 						'<input class="idPermissao" type="hidden" value="' + permissao.idConfiguracao + '"/>' + 
 						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 					'</a>' + 
@@ -968,7 +965,7 @@
 	        if ($("#itemTipoPermissao")[0].options.length > 0)
 	        	jDialog.data('acao', permissoes.incluirItem).dialog('open');
 	        else
-	            alert("N�o existem mais Tipos de PermissÃ£o para serem incluidos");
+	            alert("Não existem mais Tipos de PermissÃÂ£o para serem incluidos");
 	    });
 	   
 	    jDialog.dialog({
@@ -981,7 +978,7 @@
 	                jDialog.data('tipoPermissao','');
 	        },
 	        open: function(){
-	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permiss�o');
+	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permissão');
 	                jTipoPermissao.find("option[value=" + jDialog.data("tipoPermissao") + "]").prop('selected', true);
 	        }
 	    });
@@ -1127,9 +1124,9 @@
 			permissoesTable = $('#permissoes_table').dataTable();
 		}
 		else {
-			permissoesTable = permissoesTable = $('#permissoes_table').dataTable({
+			permissoesTable = $('#permissoes_table').dataTable({
 				"language": {
-					"emptyTable":     "NÃ£o existem resultados",
+					"emptyTable":     "Não existem resultados",
 				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -1142,13 +1139,13 @@
 				    "zeroRecords":    "Nenhum registro encontrado",
 				    "paginate": {
 				        "first":      "Primeiro",
-				        "last":       "Ãltimo",
-				        "next":       "PrÃ³ximo",
+				        "last":       "Último",
+				        "next":       "Próximo",
 				        "previous":   "Anterior"
 				    },
 				    "aria": {
-				        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
-				        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
+				        "sortAscending":  ": clique para ordenação crescente",
+				        "sortDescending": ": clique para ordenação decrescente"
 				    }
 				},
 				"columnDefs": [{
@@ -1187,7 +1184,7 @@
 	    		populatePermissoesFromJSonList(permissoesJSon);
 	    	},
 	    	error: function(error) {
-	        	alert("N�o foi poss�vel carregar as Permiss�es desta Lista.");
+	        	alert("Não foi possível carregar as Permissões desta Lista.");
 	    	}
 	   	});
 	}
@@ -1195,7 +1192,7 @@
 	$(document).ready(function() {
 		listaService.conteudoColunaAcao = function(permissao) {
 			if (permissao.ativo) { 		 
-				return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissÃ£o">' + 
+				return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissÃÂ£o">' + 
 				'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
 				'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 				'</a>'

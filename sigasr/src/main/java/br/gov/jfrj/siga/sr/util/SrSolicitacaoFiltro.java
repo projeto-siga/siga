@@ -101,6 +101,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
         if (acordoSel != null) {
             this.setAcordo(acordoSel.buscarObjeto());
         }
+        
+        if (situacao != null && situacao.getIdMarcador() != null) {
+            this.setSituacao(CpMarcador.AR.findById(situacao.getIdMarcador()));
+        }
     }
 
     @SuppressWarnings("unchecked")

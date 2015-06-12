@@ -476,9 +476,9 @@
 
     <siga:modal nome="associarLista" titulo="Definir Lista" url="associarLista.jsp" />
 
-    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa.jsp" />
+    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa" />
 
-    <siga:modal nome="pendencia" titulo="Pendência">
+    <siga:modal nome="deixarPendente" titulo="Pendência">
         <div class="gt-bd gt-cols clearfix" style="padding: 20px;">
             <div class="gt-content-box gt-for-table gt-form">
                 <form action="${linkTo[SolicitacaoController].deixarPendente}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
@@ -494,8 +494,9 @@
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Motivo</label>
-                        <select name="motivo" list="models.SrTipoMotivoPendencia.values()"
-                                listValue="descrTipoMotivoPendencia" style="width: 235px;" />
+                        Motivo ${SrTipoMotivoPendencia.values()} / ${motivosPendencia}
+                        <siga:select name="motivo" id="motivo" list="motivosPendencia"
+	                            listValue="descrTipoMotivoPendencia" theme="simple" isEnum="true"/>
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Detalhamento do Motivo</label>

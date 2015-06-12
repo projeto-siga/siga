@@ -137,16 +137,6 @@ public class SolicitacaoController extends SrController {
         result.include("cargocargoAtualSel", new DpCargoSelecao());
     }
 
-    @Path("/listarPermissaoUsoLista")
-    public void listarPermissaoUsoListaDesativados(Long idLista) throws Exception {
-        SrLista lista = new SrLista();
-        if (idLista != null)
-            lista = SrLista.AR.findById(idLista);
-        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.TRUE);
-
-        result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
-    }
-
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravarPermissaoUsoLista")
     public void gravarPermissaoUsoLista(SrConfiguracao permissao, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
@@ -157,19 +147,19 @@ public class SolicitacaoController extends SrController {
     }
 
     @AssertAcesso(ADM_ADMINISTRAR)
-    @Path("/listarPermissaoUsoLista/{idLista}")
-    public void listarPermissaoUsoLista(Long idLista) throws Exception {
+    @Path("/listarPermissaoUsoLista")
+    public void listarPermissaoUsoLista(Long idLista, boolean mostrarDesativados) throws Exception {
 
         SrLista lista = new SrLista();
         if (idLista != null)
             lista = SrLista.AR.findById(idLista);
-        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.FALSE);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, mostrarDesativados);
 
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
     
     @AssertAcesso(ADM_ADMINISTRAR)
-    @Path("/desativarPermissaoUsoListaEdicao/{idLista}")
+    @Path("/desativarPermissaoUsoListaEdicao")
     public void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, idPermissao);
         configuracao.finalizar();
@@ -204,12 +194,13 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-    @Path({"/listarListaDesativados"})
-    public void buscarPermissoesLista(Long id) throws Exception {
+//    @Path({"/listarListaDesativados"})
+    @Path("/buscarPermissoesLista")
+    public void buscarPermissoesLista(Long idLista) throws Exception {
         List<SrConfiguracao> permissoes;
 
-        if (id != null) {
-            SrLista lista = SrLista.AR.findById(id);
+        if (idLista != null) {
+            SrLista lista = SrLista.AR.findById(idLista);
             permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
             permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
         } else

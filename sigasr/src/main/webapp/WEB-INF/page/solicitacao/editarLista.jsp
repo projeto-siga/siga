@@ -540,10 +540,10 @@
 		return value || " ";
 	}
 	function getUrlDesativarReativar(desativados) {
-	    var url = "${linkTo[SolicitacaoController].listarPermissaoUsoLista[idLista]}";
+	    var url = "${linkTo[SolicitacaoController].listarPermissaoUsoLista}" + "?idLista=" + $("#idLista").val();
 	
 	    if(desativados)
-	        url = "${linkTo[SolicitacaoController].listarPermissaoUsoListaDesativados}";
+	        url = "${linkTo[SolicitacaoController].listarPermissaoUsoLista}" + "?idLista=" + $("#idLista").val() + "&mostrarDesativados=true";
 	        
 	    return url;
 	}
@@ -1177,7 +1177,7 @@
 	function carregarPermissoes(idLista) {
 	    $.ajax({
 	    	type: "GET",
-	    	url: "${linkTo[SolicitacaoController].buscarPermissoesLista}?idLista=" + id,
+	    	url: "${linkTo[SolicitacaoController].buscarPermissoesLista}" + "?idLista="+idLista,
 	    	dataType: "text",
 	    	success: function(lista) {
 	    		var permissoesJSon = JSON.parse(lista);

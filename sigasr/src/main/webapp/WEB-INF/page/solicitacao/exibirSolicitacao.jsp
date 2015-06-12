@@ -278,8 +278,8 @@ function postback(){
 				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>}*
 			<c:if test="${solicitacao.isEscalonada()}">
-				<c:set var="itemEscalonar" value="${solicitacao.getItemAtual().toString().raw()}"/>
-				<c:set var="acaoEscalonar" value="${solicitacao.getAcaoAtual().toString().raw()}"/>
+				<c:set var="itemEscalonar" value="${solicitacao.getItemAtual().toString()()}"/>
+				<c:set var="acaoEscalonar" value="${solicitacao.getAcaoAtual().toString()}"/>
 			</c:if>
 			<p>
 				<span class="historico-label">Item de Configuração:</span>
@@ -326,7 +326,7 @@ function postback(){
 			</p>
 			<p>
 				<b>Notificação:</b>
-				${solicitacao.formaAcompanhamento.descrFormaAcompanhamento.raw()}
+				${solicitacao.formaAcompanhamento.descrFormaAcompanhamento()}
 			</p>
 			<c:if test="${solicitacao.fechadoAutomaticamente != null && solicitacao.isPai()}">
 				<p>

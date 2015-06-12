@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
@@ -66,7 +69,6 @@ import com.google.gson.Gson;
 @Resource
 @Path("app/solicitacao")
 public class SolicitacaoController extends SrController {
-    private static final String ADM_ADMINISTRAR = "ADM:Administrar";
     private static final String TITULAR = "titular";
     private static final String ACOES_E_ATENDENTES = "acoesEAtendentes";
     private static final String SOLICITACAO = "solicitacao";
@@ -135,40 +137,30 @@ public class SolicitacaoController extends SrController {
         result.include("cargocargoAtualSel", new DpCargoSelecao());
     }
 
-    @Path("/listarPermissaoUsoLista")
-    public void listarPermissaoUsoListaDesativados(Long idLista) throws Exception {
-        SrLista lista = new SrLista();
-        if (idLista != null)
-            lista = SrLista.AR.findById(idLista);
-        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.TRUE);
-
-        result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
-    }
-
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravarPermissaoUsoLista")
     public void gravarPermissaoUsoLista(SrConfiguracao permissao, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
     	permissao.setTipoPermissaoSet(tipoPermissaoSet);
-        assertAcesso(ADM_ADMINISTRAR);
         permissao.salvarComoPermissaoUsoLista();
 
         result.use(Results.http()).body(permissao.toVO().toJson());
     }
 
-    @Path("/listarPermissaoUsoLista/{idLista}")
-    public void listarPermissaoUsoLista(Long idLista) throws Exception {
-        assertAcesso(ADM_ADMINISTRAR);
+    @AssertAcesso(ADM_ADMINISTRAR)
+    @Path("/listarPermissaoUsoLista")
+    public void listarPermissaoUsoLista(Long idLista, boolean mostrarDesativados) throws Exception {
 
         SrLista lista = new SrLista();
         if (idLista != null)
             lista = SrLista.AR.findById(idLista);
-        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, Boolean.FALSE);
+        List<SrConfiguracao> associacoes = SrConfiguracao.listarPermissoesUsoLista(lista, mostrarDesativados);
 
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
     
-    @Path("/desativarPermissaoUsoListaEdicao/{idLista}")
+    @AssertAcesso(ADM_ADMINISTRAR)
+    @Path("/desativarPermissaoUsoListaEdicao")
     public void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
-        assertAcesso(ADM_ADMINISTRAR);
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, idPermissao);
         configuracao.finalizar();
 
@@ -202,12 +194,13 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-    @Path({"/listarListaDesativados"})
-    public void buscarPermissoesLista(Long id) throws Exception {
+//    @Path({"/listarListaDesativados"})
+    @Path("/buscarPermissoesLista")
+    public void buscarPermissoesLista(Long idLista) throws Exception {
         List<SrConfiguracao> permissoes;
 
-        if (id != null) {
-            SrLista lista = SrLista.AR.findById(id);
+        if (idLista != null) {
+            SrLista lista = SrLista.AR.findById(idLista);
             permissoes = new ArrayList<SrConfiguracao>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
             permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
         } else
@@ -571,7 +564,7 @@ public class SolicitacaoController extends SrController {
     public void fechar(Long id, String motivo) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo);
-        exibir(sol.getIdSolicitacao(), todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     @Path("/exibir/responderPesquisa")

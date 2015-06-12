@@ -235,8 +235,8 @@
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		limparDadosListaModal();
 		// carrega as permissÃµes da lista
-		carregarPermissoes(idLista);
-		configuracaoInclusaoAutomaticaService.carregarParaLista(idLista);
+		carregarPermissoes(obj.idLista);
+		configuracaoInclusaoAutomaticaService.carregarParaLista(obj.idLista);
 	}
 
 	listaService.onGravar = function(obj, objSalvo) {
@@ -271,7 +271,7 @@
 
 	listaService.serializar = function(obj) {
 		var query = BaseService.prototype.serializar.call(this, obj);
-		return query + "&lista=" + this.getId(obj);
+		return query;
 	}
 
 	function editarLista(event, jSonItem) {

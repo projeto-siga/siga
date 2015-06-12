@@ -2873,4 +2873,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 	public Destinatario getDestinatarioEmailNotificacao() {
 		return new Destinatario(getSolicitacaoAtual().getSolicitante().getPessoaAtual());
 	}
+	
+	public void refresh() {
+	    ContextoPersistencia.em().refresh(this);
+	}
 }

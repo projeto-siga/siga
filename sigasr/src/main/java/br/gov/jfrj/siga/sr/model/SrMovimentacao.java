@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,6 +31,7 @@ import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
@@ -261,6 +263,7 @@ public class SrMovimentacao extends ObjetoVraptor {
         this.setLotaCadastrante(lotaCadastrante);
         this.setTitular(titular);
         this.setLotaTitular(lotaTitular);
+        this.carregarSolicitacao();
         salvarAtualizandoSolicitacao();
         return this;
     }
@@ -272,6 +275,8 @@ public class SrMovimentacao extends ObjetoVraptor {
 
         checarCampos();
         super.save();
+        ContextoPersistencia.em().flush();
+        getSolicitacao().refresh();
 
         getSolicitacao().atualizarMarcas();
         if (getSolicitacao().getMovimentacaoSetComCancelados().size() > 1
@@ -281,7 +286,7 @@ public class SrMovimentacao extends ObjetoVraptor {
                         .getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
             notificar();
 
-        // Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
+//         Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
         if (getSolicitacao().isFilha() && getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
             CorreioHolder.get().notificarAtendente(this); // notifica o atendente da solicitacao pai, caso a filha seja fechada
 
@@ -640,5 +645,11 @@ public class SrMovimentacao extends ObjetoVraptor {
 					}
 		}
 		return recipients;
+	}
+	
+	public void carregarSolicitacao() {
+	    if (this.getSolicitacao() != null && this.getSolicitacao().getId() != null) {
+	        this.setSolicitacao(SrSolicitacao.AR.findById(this.getSolicitacao().getId()));
+	    }
 	}
 }

@@ -151,10 +151,7 @@ button.button-historico {
 						<c:choose>
 							<c:when test="${movs != null && !movs.isEmpty()}">
 								<c:forEach items="${movs}" var="movimentacao">
-									<tr
-										<c:if test="${movimentacao.canceladoOuCancelador}"> 
-                                    class="disabled"
-                                </c:if>>
+									<tr <c:if test="${movimentacao.canceladoOuCancelador}"> class="disabled" </c:if>>
 										<c:choose>
 											<c:when test="${ocultas}">
 												<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>
@@ -191,9 +188,8 @@ button.button-historico {
 										</c:if>
 										<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
 											<c:if test="${movimentacao.arquivo != null}">
-                                        &nbsp;|&nbsp;
-                                        <siga:arquivo
-													arquivo="${movimentacao.arquivo}" />
+												&nbsp;|&nbsp;
+                                        		<siga:arquivo arquivo="${movimentacao.arquivo}" />
 											</c:if> <c:if test="${movimentacao.tipoMov.idTipoMov == 16}">
 												<c:forEach items="${movimentacao.respostaSet}"
 													var="resposta">
@@ -373,266 +369,222 @@ button.button-historico {
 					<p>
 						<siga:arquivo arquivo="${solicitacao.arquivoAnexoNaCriacao}" />
 						<br />
-						<c:forEach items="${solicitacao.movimentacoesAnexacao}"
-							var="anexacao">
+						<c:forEach items="${solicitacao.movimentacoesAnexacao}" var="anexacao">
 							<siga:arquivo arquivo="${anexacao.arquivo}" /> 
-                       ${anexacao.descrMovimentacao}<br />
-						</c:forEach>
-					</p>
-				</div>
-			</div>
-		</c:if>
+							${anexacao.descrMovimentacao}<br />
+                    	</c:forEach>
+                	</p>
+	            </div>
+	        </div>
+	    </c:if>
+	
+	    <c:set var="juntadas" value="${solicitacao.solicitacoesJuntadas}"/>
+	    <c:if test="${juntadas != null && !juntadas.isEmpty()}">
+	        <div class="gt-sidebar">
+	            <div class="gt-sidebar-content">
+	                <h3>Solicita&ccedil;&otilde;es juntadas</h3>
+	                <p>
+	                    <c:forEach items="${juntadas}" var="juntada">
+	                        <a href="${linkTo[SolicitacaoController].exibir[juntada.idSolicitacao]}">
+	                        ${juntada.codigo} </a> <br/> 
+	                    </c:forEach>
+	                </p>
+	            </div>
+	        </div>
+	    </c:if>
+	    <c:if test="${solicitacao.emLista}">
+	        <div class="gt-sidebar">
+	            <div class="gt-sidebar-content">
+	                <h3>Listas de Prioridade</h3>
+	                    <ul>
+	                    <c:forEach items="${solicitacao.listasAssociadas}" var="listas">
+	                        <li>
+	                            &nbsp; <input type="hidden" name="idlista"
+	                            value="${listas.idLista}"> <a
+	                            style="color: #365b6d; text-decoration: none"
+	                            href="${linkTo[SolicitacaoController].exibirLista[listas.idLista]}">
+	                                ${listas.listaAtual.nomeLista} </a>
+	                        </li>
+	                    </c:forEach>
+	                    </ul>
+	            </div>
+	        </div>
+	    </c:if>
+    
+	    <c:if test="${solicitacao.estaCom(titular, lotaTitular) || exibirMenuAdministrar}">
+	        <jsp:include page="exibirAcordos.jsp"></jsp:include>
+	    </c:if>
+	    
+	    <div id="divConhecimentosRelacionados">
+	        <jsp:include page="exibirConhecimentosRelacionados.jsp"></jsp:include>
+	    </div>
+    
+    <siga:modal nome="anexarArquivo" titulo="Anexar Arquivo">
+        <div class="gt-content-box gt-form">
+            <form action="${linkTo[SolicitacaoController].anexarArquivo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">               
+                <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+                <input type="hidden" name="ocultas" value="${ocultas}" />
+                <input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
+                    value="${solicitacao.idSolicitacao}"> <input
+                    type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12">
+                <div class="gt-form-row">
+                    <label>Arquivo</label> <input type="file" name="movimentacao.arquivo">
+                </div>
+                <div style="display: inline" class="gt-form-row gt-width-66">
+                    <label>Descrição</label>
+                    <textarea style="width: 100%" name="movimentacao.descrMovimentacao"
+                        id="descrSolicitacao" cols="70" rows="4"
+                        value="${movimentacao.descrMovimentacao}"></textarea>
+                </div>
+                <div class="gt-form-row">
+                    <input type="submit" value="Gravar"
+                        class="gt-btn-medium gt-btn-left" />
+                </div>
+            </form>
+        </div>
+    </siga:modal> 
+    <siga:modal nome="fechar" titulo="Fechar">
+        <form action="${linkTo[SolicitacaoController].fechar}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
+            <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+            <input type="hidden" name="ocultas" value="${ocultas}" />
+            <div style="display: inline" class="gt-form-row gt-width-66">
+                <label>Motivo</label>
+                <textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
+            </div>
+            <input type="hidden" name="id" value="${solicitacao.idSolicitacao}" /> <input
+                type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+        </form>
+    </siga:modal>
+    
+    <siga:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?id=${solicitacao.idSolicitacao}" />
+    
+    <siga:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?id=${solicitacao.idSolicitacao}" />
 
-		<c:set var="juntadas" value="${solicitacao.solicitacoesJuntadas}" />
-		<c:if test="${juntadas != null && !juntadas.isEmpty()}">
-			<div class="gt-sidebar">
-				<div class="gt-sidebar-content">
-					<h3>Solicita&ccedil;&otilde;es juntadas</h3>
-					<p>
-						<c:forEach items="${juntadas}" var="juntada">
-							<a
-								href="${linkTo[SolicitacaoController].exibir[juntada.idSolicitacao]}">
-								${juntada.codigo} </a>
-							<br />
-						</c:forEach>
-					</p>
-				</div>
-			</div>
-		</c:if>
-		<c:if test="${solicitacao.emLista}">
-			<div class="gt-sidebar">
-				<div class="gt-sidebar-content">
-					<h3>Listas de Prioridade</h3>
-					<ul>
-						<c:forEach items="${solicitacao.listasAssociadas}" var="listas">
-							<li>&nbsp; <input type="hidden" name="idlista"
-								value="${listas.idLista}"> <a
-								style="color: #365b6d; text-decoration: none"
-								href="${linkTo[SolicitacaoController].exibirLista[listas.idLista]}">
-									${listas.listaAtual.nomeLista} </a>
-							</li>
-						</c:forEach>
-					</ul>
-				</div>
-			</div>
-		</c:if>
+    <siga:modal nome="juntar" titulo="Juntar">
+        <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">
+            <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+            <input type="hidden" name="ocultas" value="${ocultas}" />
+            <input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
+            <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+                <label>Solicitação</label> <br />
+                    <input type="hidden" name="idSolicitacaoRecebeJuntada" value="" />
+                    <siga:selecao2 propriedade="idSolicitacaoRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"/>
+                <span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
+            </div>
+            <div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+                <label>Justificativa</label>
+                <textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaJuncao" maxlength="255" onkeyup="validarAssociacao('Juncao')"></textarea>
+                <span id="erroJustificativaJuncao" style="color: red; display: none;"><br />Justificativa não informada.</span>
+            </div>
+            <div style="display: inline" class="gt-form-row ">
+                <input type="button" onclick="gravarAssociacao('Juncao');" value="Gravar" class="gt-btn-medium gt-btn-left" />
+            </div>
+        </form>
+    </siga:modal>
+    <siga:modal nome="vincular" titulo="Vincular">
+        <form action="${linkTo[SolicitacaoController].vincular}" method="post" enctype="multipart/form-data" id="formGravarVinculo">
+            <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+            <input type="hidden" name="ocultas" value="${ocultas}" />
+            <input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
+            <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
+                <label>Solicitação</label> <br />
+                <input type="hidden" name="idSolicitacaoRecebeVinculo" value="" />
+                <siga:selecao2 propriedade="idSolicitacaoRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"
+                	tamanho="grande"/>
+                <span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
+            </div>
+            <div class="gt-form-row gt-width-100" style="padding: 10px 0;">
+                <label>Justificativa</label>
+                <textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaVinculo" maxlength="255" onkeyup="validarAssociacao('Vinculo')"></textarea>
+                <span id="erroJustificativaVinculo" style="color: red; display: none;"><br />Justificativa não informada.</span>
+            </div>
+            <div style="display: inline" class="gt-form-row ">
+                <input type="button" onclick="gravarAssociacao('Vinculo');" value="Gravar" class="gt-btn-medium gt-btn-left" />
+            </div>
+        </form>
+    </siga:modal>
 
-		<c:if
-			test="${solicitacao.estaCom(titular, lotaTitular) || exibirMenuAdministrar}">
-			<jsp:include page="exibirAcordos.jsp"></jsp:include>
-		</c:if>
+    <siga:modal nome="associarLista" titulo="Definir Lista" url="associarLista.jsp" />
 
-		<div id="divConhecimentosRelacionados">
-			<jsp:include page="exibirConhecimentosRelacionados.jsp"></jsp:include>
-		</div>
+    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa" />
 
-		<siga:modal nome="anexarArquivo" titulo="Anexar Arquivo">
-			<div class="gt-content-box gt-form">
-				<form action="${linkTo[SolicitacaoController].anexarArquivo}"
-					method="post" onsubmit="javascript: return block();"
-					enctype="multipart/form-data">
-					<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-					<input type="hidden" name="ocultas" value="${ocultas}" /> <input
-						type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-						value="${solicitacao.idSolicitacao}"> <input type="hidden"
-						name="movimentacao.tipoMov.idTipoMov" value="12">
-					<div class="gt-form-row">
-						<label>Arquivo</label> <input type="file" name="movimentacao.arquivo">
-					</div>
-					<div style="display: inline" class="gt-form-row gt-width-66">
-						<label>Descrição</label>
-						<textarea style="width: 100%"
-							name="movimentacao.descrMovimentacao" id="descrSolicitacao"
-							cols="70" rows="4" value="${movimentacao.descrMovimentacao}"></textarea>
-					</div>
-					<div class="gt-form-row">
-						<input type="submit" value="Gravar"
-							class="gt-btn-medium gt-btn-left" />
-					</div>
-				</form>
-			</div>
-		</siga:modal>
-		<siga:modal nome="fechar" titulo="Fechar">
-			<form action="${linkTo[SolicitacaoController].fechar}" method="post"
-				onsubmit="javascript: return block();" enctype="multipart/form-data">
-				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-				<input type="hidden" name="ocultas" value="${ocultas}" />
-				<div style="display: inline" class="gt-form-row gt-width-66">
-					<label>Motivo</label>
-					<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
-				</div>
-				<input type="hidden" name="id" value="${solicitacao.idSolicitacao}" />
-				<input type="submit" value="Gravar"
-					class="gt-btn-medium gt-btn-left" />
-			</form>
-		</siga:modal>
-
-		<siga:modal nome="incluirEmLista" titulo="Definir Lista"
-			url="${linkTo[SolicitacaoController].incluirEmLista}?id=${solicitacao.idSolicitacao}" />
-
-		<siga:modal nome="escalonar" titulo="Escalonar Solicitação"
-			url="${linkTo[SolicitacaoController].escalonar}?id=${solicitacao.idSolicitacao}" />
-
-		<siga:modal nome="juntar" titulo="Juntar">
-			<form action="${linkTo[SolicitacaoController].juntar}" method="post"
-				enctype="multipart/form-data" id="formGravarJuncao">
-				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-				<input type="hidden" name="ocultas" value="${ocultas}" /> <input
-					type="hidden" name="idSolicitacaoAJuntar"
-					value="${solicitacao.idSolicitacao}">
-				<div style="display: inline; padding-top: 10px;"
-					class="gt-form-row gt-width-66">
-					<label>Solicitação</label> <br /> <input type="hidden"
-						name="idSolicitacaoRecebeJuntada" value="" />
-					<siga:selecao2 propriedade="idSolicitacaoRecebeJuntada"
-						tipo="solicitacao" tema="simple" modulo="sigasr"
-						onchange="validarAssociacao('Juncao');" />
-					<span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação
-						não informada.</span>
-				</div>
-				<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
-					<label>Justificativa</label>
-					<textarea style="width: 100%;" cols="70" rows="4"
-						name="justificativa" id="justificativaJuncao" maxlength="255"
-						onkeyup="validarAssociacao('Juncao')"></textarea>
-					<span id="erroJustificativaJuncao"
-						style="color: red; display: none;"><br />Justificativa não
-						informada.</span>
-				</div>
-				<div style="display: inline" class="gt-form-row ">
-					<input type="button" onclick="gravarAssociacao('Juncao');"
-						value="Gravar" class="gt-btn-medium gt-btn-left" />
-				</div>
-			</form>
-		</siga:modal>
-		<siga:modal nome="vincular" titulo="Vincular">
-			<form action="${linkTo[SolicitacaoController].vincular}"
-				method="post" enctype="multipart/form-data" id="formGravarVinculo">
-				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-				<input type="hidden" name="ocultas" value="${ocultas}" /> <input
-					type="hidden" name="idSolicitacaoAVincular"
-					value="${solicitacao.idSolicitacao}">
-				<div style="display: inline; padding-top: 10px;"
-					class="gt-form-row gt-width-66">
-					<label>Solicitação</label> <br /> <input type="hidden"
-						name="idSolicitacaoRecebeVinculo" value="" />
-					<siga:selecao2 propriedade="idSolicitacaoRecebeVinculo"
-						tipo="solicitacao" tema="simple" modulo="sigasr"
-						onchange="validarAssociacao('Vinculo');" tamanho="grande" />
-					<span id="erroSolicitacaoVinculo"
-						style="color: red; display: none;">Solicitação não
-						informada.</span>
-				</div>
-				<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
-					<label>Justificativa</label>
-					<textarea style="width: 100%;" cols="70" rows="4"
-						name="justificativa" id="justificativaVinculo" maxlength="255"
-						onkeyup="validarAssociacao('Vinculo')"></textarea>
-					<span id="erroJustificativaVinculo"
-						style="color: red; display: none;"><br />Justificativa não
-						informada.</span>
-				</div>
-				<div style="display: inline" class="gt-form-row ">
-					<input type="button" onclick="gravarAssociacao('Vinculo');"
-						value="Gravar" class="gt-btn-medium gt-btn-left" />
-				</div>
-			</form>
-		</siga:modal>
-
-		<siga:modal nome="associarLista" titulo="Definir Lista"
-			url="associarLista.jsp" />
-
-		<siga:modal nome="responderPesquisa" titulo="Responder Pesquisa"
-			url="responderPesquisa.jsp" />
-
-		<siga:modal nome="pendencia" titulo="Pendência">
-			<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
-				<div class="gt-content-box gt-for-table gt-form">
-					<form action="${linkTo[SolicitacaoController].deixarPendente}"
-						method="post" onsubmit="javascript: return block();"
-						enctype="multipart/form-data">
-						<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-						<input type="hidden" name="ocultas" value="${ocultas}" />
-						<div class="gt-form-row gt-width-66">
-							<label>Data de Término</label> <input type="text"
-								name="calendario" id="calendario">
-						</div>
-						<div class="gt-form-row gt-width-66">
-							<label>Horário de Término</label> <input type="text"
-								name="horario" id="horario">
-						</div>
-						<div class="gt-form-row gt-width-66">
-							<label>Motivo</label> <select name="motivo"
-								list="models.SrTipoMotivoPendencia.values()"
-								listValue="descrTipoMotivoPendencia" style="width: 235px;" />
-						</div>
-						<div class="gt-form-row gt-width-66">
-							<label>Detalhamento do Motivo</label>
-							<textarea name="detalheMotivo" cols="50" rows="4"> </textarea>
-						</div>
-						<div class="gt-form-row">
-							<input type="hidden" name="id" value="${solicitacao.id}" /> <input
-								type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-						</div>
-					</form>
-				</div>
-			</div>
-		</siga:modal>
-		<siga:modal nome="alterarPrazo" titulo="Alterar Prazo">
-			<div class="gt-form gt-content-box">
-				<form action="${linkTo[SolicitacaoController].alterarPrazo}"
-					method="post" onsubmit="javascript: return block();"
-					enctype="multipart/form-data">
-					<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-					<input type="hidden" name="ocultas" value="${ocultas}" />
-					<div class="gt-form-row gt-width-66">
-						<label>Data</label> <input type="text" name="calendario"
-							id="calendarioReplanejar">
-					</div>
-					<div class="gt-form-row gt-width-66">
-						<label>Hora</label> <input type="text" name="horario"
-							id="horarioReplanejar">
-					</div>
-					<div class="gt-form-row gt-width-66">
-						<label>Motivo</label>
-						<textarea name="motivo" cols="50" rows="4"> </textarea>
-					</div>
-					<input type="hidden" name="id" value="${solicitacao.id}" /> <input
-						type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-				</form>
-			</div>
-		</siga:modal>
-		<siga:modal nome="desentranhar" titulo="Desentranhar">
-			<form action="${linkTo[SolicitacaoController].desentranhar}"
-				method="post" onsubmit="javascript: return block();"
-				enctype="multipart/form-data">
-				<div style="display: inline" class="gt-form-row gt-width-66">
-					<label>Justificativa</label>
-					<textarea style="width: 100%" name="justificativa" cols="50"
-						rows="4"> </textarea>
-				</div>
-				<input type="hidden" name="completo" value="${completo}" /> <input
-					type="hidden" name="id" value="${solicitacao.id}" /> <input
-					type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-			</form>
-		</siga:modal>
-		<siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendência">
-			<form action="${linkTo[SolicitacaoController].terminarPendencia}"
-				method="post" onsubmit="javascript: return block();"
-				enctype="multipart/form-data">
-				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-				<input type="hidden" name="ocultas" value="${ocultas}" />
-				<div style="display: inline" class="gt-form-row gt-width-66">
-					<label>Descrição</label>
-					<textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
-				</div>
-				<input type="hidden" name="idMovimentacao" id="movimentacaoId"
-					value="" /><input type="hidden" name="motivo" id="motivoId"
-					value="" /><input type="hidden" name="id"
-					value="${solicitacao.id}" /> <input type="submit" value="Gravar"
-					class="gt-btn-medium gt-btn-left" />
-			</form>
-		</siga:modal>
+    <siga:modal nome="deixarPendente" titulo="Pendência">
+            <div class="gt-content-box gt-form clearfix">
+                <form action="${linkTo[SolicitacaoController].deixarPendente}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
+                    <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+                    <input type="hidden" name="ocultas" value="${ocultas}" />
+                    <div class="gt-form-row gt-width-66">
+                        <label>Data de Término</label>
+                        <input type="text" name="calendario" id="calendario">
+                    </div>
+                    <div class="gt-form-row gt-width-66">
+                        <label>Horário de Término</label>
+                        <input type="text" name="horario" id="horario">
+                    </div>
+                    <div class="gt-form-row gt-width-66">
+                        <label>Motivo</label>
+                        <siga:select name="motivo" id="motivo" list="motivosPendencia"
+	                            listValue="descrTipoMotivoPendencia" theme="simple" isEnum="true"/>
+                    </div>
+                    <div class="gt-form-row gt-width-66">
+                        <label>Detalhamento do Motivo</label>
+                        <textarea name="detalheMotivo" cols="50" rows="4"> </textarea>
+                    </div>
+                    <div class="gt-form-row">
+                        <input type="hidden" name="id" value="${solicitacao.id}" /> <input
+                            type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+                    </div>
+                </form>
+            </div>
+    </siga:modal> 
+    <siga:modal nome="alterarPrazo" titulo="Alterar Prazo">
+        <div class="gt-form gt-content-box">
+            <form action="${linkTo[SolicitacaoController].alterarPrazo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
+                <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+                <input type="hidden" name="ocultas" value="${ocultas}" />
+                <div class="gt-form-row gt-width-66">
+                    <label>Data</label>
+                    <input type="text" name="calendario" id="calendarioReplanejar">
+                </div>
+                <div class="gt-form-row gt-width-66">
+                    <label>Hora</label>
+                    <input type="text" name="horario" id="horarioReplanejar">
+                </div>
+                <div class="gt-form-row gt-width-66">
+                    <label>Motivo</label>
+                    <textarea name="motivo" cols="50" rows="4"> </textarea> 
+                </div>
+                <input type="hidden" name="id" value="${solicitacao.id}" /> 
+                <input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+            </form>
+        </div>
+    </siga:modal>
+    <siga:modal nome="desentranhar" titulo="Desentranhar">
+        <form action="${linkTo[SolicitacaoController].desentranhar}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
+            <div style="display: inline" class="gt-form-row gt-width-66">
+                <label>Justificativa</label>
+                <textarea style="width: 100%" name="justificativa" cols="50" rows="4"> </textarea>
+            </div>
+            <input type="hidden" name="completo" value="${completo}" /> <input
+                type="hidden" name="id" value="${solicitacao.id}" /> <input
+                type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+        </form>
+    </siga:modal>   
+    <siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendência">
+        <form action="${linkTo[SolicitacaoController].terminarPendencia}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
+            <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
+            <input type="hidden" name="ocultas" value="${ocultas}" />
+            <div style="display: inline" class="gt-form-row gt-width-66">
+                <label>Descrição</label>
+                <textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
+            </div>
+            <input
+                type="hidden" name="idMovimentacao" id="movimentacaoId" value="" /><input
+                type="hidden" name="motivo" id="motivoId" value="" /><input
+                type="hidden" name="id" value="${solicitacao.id}" /> <input
+                type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+        </form>
+    </siga:modal>    
 </siga:pagina>
 
 <script language="javascript">

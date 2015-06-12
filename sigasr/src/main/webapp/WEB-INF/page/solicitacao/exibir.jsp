@@ -479,8 +479,7 @@
     <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa" />
 
     <siga:modal nome="deixarPendente" titulo="Pendência">
-        <div class="gt-bd gt-cols clearfix" style="padding: 20px;">
-            <div class="gt-content-box gt-for-table gt-form">
+            <div class="gt-content-box gt-form clearfix">
                 <form action="${linkTo[SolicitacaoController].deixarPendente}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
                     <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
                     <input type="hidden" name="ocultas" value="${ocultas}" />
@@ -494,7 +493,6 @@
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Motivo</label>
-                        Motivo ${SrTipoMotivoPendencia.values()} / ${motivosPendencia}
                         <siga:select name="motivo" id="motivo" list="motivosPendencia"
 	                            listValue="descrTipoMotivoPendencia" theme="simple" isEnum="true"/>
                     </div>
@@ -508,7 +506,6 @@
                     </div>
                 </form>
             </div>
-        </div>
     </siga:modal> 
     <siga:modal nome="alterarPrazo" titulo="Alterar Prazo">
         <div class="gt-form gt-content-box">

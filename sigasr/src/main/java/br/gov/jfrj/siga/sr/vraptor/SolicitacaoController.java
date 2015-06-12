@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
@@ -66,7 +69,6 @@ import com.google.gson.Gson;
 @Resource
 @Path("app/solicitacao")
 public class SolicitacaoController extends SrController {
-    private static final String ADM_ADMINISTRAR = "ADM:Administrar";
     private static final String TITULAR = "titular";
     private static final String ACOES_E_ATENDENTES = "acoesEAtendentes";
     private static final String SOLICITACAO = "solicitacao";
@@ -145,18 +147,18 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
 
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravarPermissaoUsoLista")
     public void gravarPermissaoUsoLista(SrConfiguracao permissao, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
     	permissao.setTipoPermissaoSet(tipoPermissaoSet);
-        assertAcesso(ADM_ADMINISTRAR);
         permissao.salvarComoPermissaoUsoLista();
 
         result.use(Results.http()).body(permissao.toVO().toJson());
     }
 
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/listarPermissaoUsoLista/{idLista}")
     public void listarPermissaoUsoLista(Long idLista) throws Exception {
-        assertAcesso(ADM_ADMINISTRAR);
 
         SrLista lista = new SrLista();
         if (idLista != null)
@@ -166,9 +168,9 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
     
+    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativarPermissaoUsoListaEdicao/{idLista}")
     public void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
-        assertAcesso(ADM_ADMINISTRAR);
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, idPermissao);
         configuracao.finalizar();
 

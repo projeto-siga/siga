@@ -576,8 +576,8 @@
 							<siga:error name="solicitacao.descrSolicitacao"/>
 					</div>
 					<div class="gt-form-row gt-width-66">
-						<label>Anexar arquivo</label> <input type="file"
-							name="arquivo" />
+						<label>Anexar arquivo</label>
+						<input type="file" name="solicitacao.arquivo" />
 					</div>
 		
 					<div class="gt-form-table">

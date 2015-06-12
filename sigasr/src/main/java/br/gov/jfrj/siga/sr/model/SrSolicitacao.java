@@ -17,7 +17,6 @@ import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RET
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -67,6 +66,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.Catalogs;
@@ -514,8 +514,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     // Edson: Necess�rio porque nao h� binder para arquivo
-    public void setArquivo(File file) {
-        this.arquivo = SrArquivo.newInstance(file);
+    public void setArquivo(UploadedFile file) {
+    	this.arquivo = SrArquivo.newInstance(file);
     }
 
     public int getGUT() {
@@ -955,17 +955,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public boolean estaCom(DpPessoa pess, DpLotacao lota) {
-        SrMovimentacao ultMov = getUltimaMovimentacao();
-        SrMovimentacao ultMovDoPai = null;
-        if (isFilha())
-            ultMovDoPai = this.getSolicitacaoPai().getUltimaMovimentacao();
-        if (isRascunho())
-            return foiCadastradaPor(pess, lota) || foiSolicitadaPor(pess, lota);
-        return (ultMov != null && ((ultMov.getAtendente() != null && pess != null && ultMov.getAtendente().equivale(pess)) || (ultMov.getLotaAtendente() != null && ultMov.getLotaAtendente().equivale(
-                lota))))
-
-                || (ultMovDoPai != null && ((ultMovDoPai.getAtendente() != null && ultMovDoPai.getAtendente().equivale(pess)) || (ultMovDoPai.getLotaAtendente() != null && ultMovDoPai
-                        .getLotaAtendente().equivale(lota))));
+    	if (isFilha() && solicitacaoPai.estaCom(pess, lota))
+			return true;
+		if (isRascunho())
+			return foiCadastradaPor(pess, lota) || foiSolicitadaPor(pess, lota);
+		SrMovimentacao ultMov = getUltimaMovimentacao();
+		return (ultMov != null && ultMov.getLotaAtendente() != null
+				&& ultMov.getLotaAtendente().equivale(lota));
 
     }
 
@@ -1930,6 +1926,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         SrMovimentacao mov = new SrMovimentacao();
         mov.setCadastrante(pess);
         mov.setLotaCadastrante(lota);
+        mov.setLotaAtendente(lota);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA));
         mov.setDescrMovimentacao("Inclus�o na lista " + lista.getNomeLista());
         mov.setLista(lista);
@@ -2692,10 +2689,6 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
     public SrArquivo getArquivo() {
         return arquivo;
-    }
-
-    public void setArquivo(SrArquivo arquivo) {
-        this.arquivo = arquivo;
     }
 
     public SrAcao getAcao() {

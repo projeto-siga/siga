@@ -271,7 +271,7 @@
 
 	listaService.serializar = function(obj) {
 		var query = BaseService.prototype.serializar.call(this, obj);
-		return query + "&lista=" + this.getId(obj);
+		return query;
 	}
 
 	function editarLista(event, jSonItem) {

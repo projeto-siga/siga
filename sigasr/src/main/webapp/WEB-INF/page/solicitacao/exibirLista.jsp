@@ -304,7 +304,7 @@
 	function carregarPermissoes(id) {
         $.ajax({
         	type: "GET",
-        	url: '${linkTo[SolicitacaoController].buscarPermissoesLista}'+id,
+        	url: '${linkTo[SolicitacaoController].buscarPermissoesLista}?idLista='+id,
         	dataType: "text",
         	success: function(lista) {
         		var permissoesJSon = JSON.parse(lista);

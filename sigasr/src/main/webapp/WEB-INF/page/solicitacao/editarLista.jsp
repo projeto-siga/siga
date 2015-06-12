@@ -477,7 +477,7 @@
 	configuracaoInclusaoAutomaticaService.carregarParaLista = function(idLista) {
 		if(idLista) {
 			var mostrarDesativados = $("#incluirConfiguracaoInclusaoAutomaticaInativas").is(':checked'),
-			urlConsulta = "${linkTo[SolicitacaoController].configuracoesParaInclusaoAutomatica}?idLista=" + idLista.value + '&mostrarDesativados=' + mostrarDesativados;
+			urlConsulta = "${linkTo[SolicitacaoController].configuracoesParaInclusaoAutomatica}?idLista=" + idLista + '&mostrarDesativados=' + mostrarDesativados;
 	
 			optsConfiguracaoInclusao.mostrarDesativados = mostrarDesativados;
 			$.get(urlConsulta, function(configuracoes) {

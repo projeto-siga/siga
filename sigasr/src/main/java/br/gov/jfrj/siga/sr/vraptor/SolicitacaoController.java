@@ -564,7 +564,7 @@ public class SolicitacaoController extends SrController {
     public void fechar(Long id, String motivo) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo);
-        exibir(sol.getIdSolicitacao(), todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     @Path("/exibir/responderPesquisa")

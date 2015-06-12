@@ -33,7 +33,7 @@
 	                    <tr>
 	                        <td>Situação</td>
 	                        <td>
-	                           <siga:select name="filtro.situacao" 
+	                           <siga:select name="filtro.situacao.idMarcador" 
 	                                        list="marcadores"
 	                                        listKey="idMarcador"
 	                                        listValue="descrMarcador"

@@ -533,7 +533,7 @@
 		BaseService.prototype.editar.call(this, configuracao, title);
 	}
 	configuracaoInclusaoAutomaticaService.incluirInativas = function() {
-		configuracaoInclusaoAutomaticaService.carregarParaLista($('[name=idLista]').val());
+		configuracaoInclusaoAutomaticaService.carregarParaLista($('#idLista').val());
 	}
 	
 	function nullSafe(value) {
@@ -707,10 +707,10 @@
 		itemTipoPermissaoOptions = $("#itemTipoPermissao").clone();
 		
 		if (isEdicao)
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permissão');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss\u00e3o');
 		else {
 			limparDadosAcessoModal();
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permissão');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss\u00e3o');
 		}
 	
 		atualizarComboTipoPermissao();
@@ -780,7 +780,8 @@
 		
 		if (row[colunas.idFuncao] != '')
 	    	params += '&permissao.funcaoConfianca=' + row[colunas.idFuncao];
-		
+		if(row[colunas.idTipoPerm] == '')
+			row[colunas.idTipoPerm] = 0;
 		params += '&permissao=' + row[colunas.idTipoPerm];
 	
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
@@ -949,7 +950,6 @@
 	}
 	
 	$(function() {
-		
 		var jPermissoes = $("#ulPermissoes"),
 		permissoes = jPermissoes[0],
 	    jDialog = $("#dialog"),
@@ -1126,7 +1126,7 @@
 		else {
 			permissoesTable = $('#permissoes_table').dataTable({
 				"language": {
-					"emptyTable":     "Não existem resultados",
+					"emptyTable":     "N&atilde;o existem resultados",
 				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -1139,13 +1139,13 @@
 				    "zeroRecords":    "Nenhum registro encontrado",
 				    "paginate": {
 				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
+				        "last":       "&Uacute;ltimo",
+				        "next":       "Pr&oacute;ximo",
 				        "previous":   "Anterior"
 				    },
 				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
+				        "sortAscending":  ": clique para ordena&ccedil;&atilde;o crescente",
+				        "sortDescending": ": clique para ordena&ccedil;&atilde;o decrescente"
 				    }
 				},
 				"columnDefs": [{

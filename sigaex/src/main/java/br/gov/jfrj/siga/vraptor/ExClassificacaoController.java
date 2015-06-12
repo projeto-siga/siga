@@ -411,10 +411,12 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 
 		// se lista do nível anterior está definido, carrega lista baseando-se
 		// na anterior
-		String nivelListaAnterior = nivelSelecionado[nivel - 1];
-		if (nivelListaAnterior != null && !nivelListaAnterior.equals("-1")) {
-			return ExDao.getInstance().listarExClassificacaoPorNivel(
-					MascaraUtil.getInstance().getMscFilho(nivelListaAnterior, false), nivelListaAnterior);
+		if(nivelSelecionado != null && nivelSelecionado.length > (nivel - 1)) {
+			String nivelListaAnterior = nivelSelecionado[nivel - 1];
+			if (nivelListaAnterior != null && !nivelListaAnterior.equals("-1")) {
+				return ExDao.getInstance().listarExClassificacaoPorNivel(
+						MascaraUtil.getInstance().getMscFilho(nivelListaAnterior, false), nivelListaAnterior);
+			}
 		}
 
 		return result;

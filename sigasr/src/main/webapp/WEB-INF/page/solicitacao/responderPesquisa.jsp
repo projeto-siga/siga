@@ -18,26 +18,24 @@ $(function(){
 		 <input type="hidden" name="id" value="${id}" />
 		 <input type="hidden" name="completo" value="${completo}" />
 		<c:forEach items="${pesquisa.perguntaSet}" var="pergunta">
-		<c:choose>
-		<c:if test="${pergunta.tipoPergunta.idTipoPergunta == 1}">
-			<div class="gt-form-row">
-				<label>${pergunta.descrPergunta}</label><p>
-				<textarea cols="50" rows="6" id="idPergunta"
-					name="respostaMap[${pergunta.idPergunta}]"></textarea>
-			</div> 
-		</c:if>
-		<c:if test="${pergunta.tipoPergunta.idTipoPergunta == 2}">
-		<div class="gt-form-row">
+			<c:if test="${pergunta.tipoPergunta.idTipoPergunta == 1}">
+				<div class="gt-form-row">
+					<label>${pergunta.descrPergunta}</label><p>
+					<textarea cols="50" rows="6" id="idPergunta"
+						name="respostaMap[${pergunta.idPergunta}]"></textarea>
+				</div> 
+			</c:if>
+			<c:if test="${pergunta.tipoPergunta.idTipoPergunta == 2}">
+			    <div class="gt-form-row">
 				<label>${pergunta.descrPergunta}</label>
 				<c:forEach items="${models.SrGrauSatisfacao.values()}" var="grau">
 					<input type="radio" id="idGrauSatisfacao" name="respostaMap[${pergunta.idPergunta}]" value="${grau}">&nbsp;&nbsp;${grau.descrGrauSatisfacao}&nbsp;
 				</c:forEach>
-		</div>
-		</c:if>
+			</div>
+			</c:if>
 		</c:forEach>
 		<div class="gt-form-row">
-				<input type="submit" value="Enviar" class="gt-btn-medium gt-btn-left" 
-					  />
+				<input type="submit" value="Enviar" class="gt-btn-medium gt-btn-left"/>
 		</div>
 		</form>
 </div>

@@ -476,11 +476,10 @@
 
     <siga:modal nome="associarLista" titulo="Definir Lista" url="associarLista.jsp" />
 
-    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa.jsp" />
+    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa" />
 
-    <siga:modal nome="pendencia" titulo="Pendência">
-        <div class="gt-bd gt-cols clearfix" style="padding: 20px;">
-            <div class="gt-content-box gt-for-table gt-form">
+    <siga:modal nome="deixarPendente" titulo="Pendência">
+            <div class="gt-content-box gt-form clearfix">
                 <form action="${linkTo[SolicitacaoController].deixarPendente}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
                     <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
                     <input type="hidden" name="ocultas" value="${ocultas}" />
@@ -494,8 +493,8 @@
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Motivo</label>
-                        <select name="motivo" list="models.SrTipoMotivoPendencia.values()"
-                                listValue="descrTipoMotivoPendencia" style="width: 235px;" />
+                        <siga:select name="motivo" id="motivo" list="motivosPendencia"
+	                            listValue="descrTipoMotivoPendencia" theme="simple" isEnum="true"/>
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Detalhamento do Motivo</label>
@@ -507,7 +506,6 @@
                     </div>
                 </form>
             </div>
-        </div>
     </siga:modal> 
     <siga:modal nome="alterarPrazo" titulo="Alterar Prazo">
         <div class="gt-form gt-content-box">

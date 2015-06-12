@@ -370,6 +370,7 @@ public class SolicitacaoController extends SrController {
         result.include("ocultas", ocultas);
         result.include("movs", movs);
         result.include("atendentes", atendentes);
+        result.include("motivosPendencia",SrTipoMotivoPendencia.values());
     }
 
     @Path("/exibirLocalRamalEMeioContato")
@@ -707,7 +708,7 @@ public class SolicitacaoController extends SrController {
     public void deixarPendente(Long id, SrTipoMotivoPendencia motivo, String calendario, String horario, String detalheMotivo) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.deixarPendente(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo, calendario, horario, detalheMotivo);
-        exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
     }
     
     @Path("/exibir/excluir")
@@ -726,7 +727,6 @@ public class SolicitacaoController extends SrController {
     @Path("/exibir/termoAtendimento")
     public void termoAtendimento(Long id) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
-
         result.include("solicitacao", solicitacao);
     }
     

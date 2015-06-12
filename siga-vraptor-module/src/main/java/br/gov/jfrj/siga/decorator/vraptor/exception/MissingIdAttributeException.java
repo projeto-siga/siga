@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.http.iogi.exception;
+package br.gov.jfrj.siga.decorator.vraptor.exception;
 
 public class MissingIdAttributeException extends Exception {
 

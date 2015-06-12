@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.decorator.vraptor;
+package br.gov.jfrj.siga.feature.entity.instantiator.vraptor;
 
 import java.util.List;
 

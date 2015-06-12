@@ -15,8 +15,8 @@ import javax.persistence.Table;
 import org.apache.commons.io.IOUtils;
 
 import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity

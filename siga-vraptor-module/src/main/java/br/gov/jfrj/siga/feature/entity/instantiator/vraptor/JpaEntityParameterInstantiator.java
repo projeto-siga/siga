@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.decorator.vraptor;
+package br.gov.jfrj.siga.feature.entity.instantiator.vraptor;
 
 import br.com.caelum.iogi.Instantiator;
 import br.com.caelum.iogi.parameters.Parameters;

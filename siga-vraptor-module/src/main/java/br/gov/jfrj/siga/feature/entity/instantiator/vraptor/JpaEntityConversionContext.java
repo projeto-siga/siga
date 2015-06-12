@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.decorator.vraptor;
+package br.gov.jfrj.siga.feature.entity.instantiator.vraptor;
 
 import java.io.Serializable;
 
@@ -12,8 +12,8 @@ import br.com.caelum.iogi.reflection.Target;
 import br.com.caelum.vraptor.Converter;
 import br.com.caelum.vraptor.core.Converters;
 import br.com.caelum.vraptor.core.Localization;
-import br.com.caelum.vraptor.http.iogi.exception.MissingEntityException;
-import br.com.caelum.vraptor.http.iogi.exception.MissingIdAttributeException;
+import br.gov.jfrj.siga.decorator.vraptor.exception.MissingEntityException;
+import br.gov.jfrj.siga.decorator.vraptor.exception.MissingIdAttributeException;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 /**

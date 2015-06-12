@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.decorator.vraptor;
+package br.gov.jfrj.siga.feature.entity.instantiator.vraptor;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ import br.com.caelum.vraptor.core.Converters;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.http.iogi.InstantiatorWithErrors;
 import br.com.caelum.vraptor.http.iogi.VRaptorInstantiator;
-import br.com.caelum.vraptor.http.iogi.exception.MissingEntityException;
-import br.com.caelum.vraptor.http.iogi.exception.MissingIdAttributeException;
 import br.com.caelum.vraptor.validator.Message;
+import br.gov.jfrj.siga.decorator.vraptor.exception.MissingEntityException;
+import br.gov.jfrj.siga.decorator.vraptor.exception.MissingIdAttributeException;
 
 /**
  * Base para as classes reponsaveis por instanciar entidades.

@@ -340,13 +340,11 @@ public class SolicitacaoController extends SrController {
     }
 
 	public boolean todoOContexto() {
-        return true;
-        // return Boolean.parseBoolean(params.get("todoOContexto"));
+         return Boolean.parseBoolean(getRequest().getParameter("todoOContexto"));
     }
 
     public boolean ocultas() {
-        return true;
-        // return Boolean.parseBoolean(params.get("ocultas"));
+         return Boolean.parseBoolean(getRequest().getParameter("ocultas"));
     }
 
     @Path({"/exibir/{id}", "/exibir/{id}/{todoOContexto}/{ocultas}"})

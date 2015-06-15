@@ -467,7 +467,8 @@
             <input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicitação</label> <br />
-                <siga:selecao2 propriedade="idSolicitacaoRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"/>
+                <siga:selecao2 propriedade="idSolicitacaoRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"
+                	tamanho="grande"/>
                 <span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
             </div>
             <div class="gt-form-row gt-width-100" style="padding: 10px 0;">

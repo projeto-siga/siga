@@ -95,7 +95,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     private static final String HH_MM = "HH:mm";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
-    private static final String OPERACAO_NAO_PERMITIDA = "Opera��o n�o permitida";
+    private static final String OPERACAO_NAO_PERMITIDA = "Operação não permitida";
 
     private static final long serialVersionUID = 1L;
 
@@ -1304,8 +1304,10 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         operacoes.add(new SrOperacao("text_list_numbers", "Incluir em Lista", podeIncluirEmLista(pess, lota), "incluirEmLista", MODAL_TRUE));
 
         operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(pess, lota), "fechar", MODAL_TRUE));
-
-        operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));
+        
+        /*
+         * operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));
+         */
 
         operacoes.add(new SrOperacao("cross", "Cancelar Solicitação", podeCancelar(pess, lota), "cancelar"));
 

@@ -14,33 +14,33 @@
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 
 	<style>
-ul.lista-historico li span {
-	text-decoration: line-through;
-}
-
-ul.lista-historico li {
-	list-style: none;
-}
-
-ul.lista-historico li.unico {
-	margin-left: 0px !important;
-}
-
-button.button-historico {
-	padding-left: 2px;
-	padding-right: 2px;
-	width: 16px;
-}
-
-.historico-label {
-	font-weight: bold;
-	margin-right: 4px;
-}
-
-.hidden {
-	display: none;
-}
-</style>
+		ul.lista-historico li span {
+			text-decoration: line-through;
+		}
+		
+		ul.lista-historico li {
+			list-style: none;
+		}
+		
+		ul.lista-historico li.unico {
+			margin-left: 0px !important;
+		}
+		
+		button.button-historico {
+			padding-left: 2px;
+			padding-right: 2px;
+			width: 16px;
+		}
+		
+		.historico-label {
+			font-weight: bold;
+			margin-right: 4px;
+		}
+		
+		.hidden {
+			display: none;
+		}
+	</style>
 
 	<div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
 		<div class="gt-content clearfix">

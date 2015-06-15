@@ -1,13 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<c:if test="${solicitacao.solicitante}">
+<c:if test="${not empty solicitacao.solicitante}">
 	<script>
 		$(document).ready(function() {
 			$('#outrasInformacoesDaFilha').hide();
 			$("#escalonar_dialog").dialog('option', 'width', 700);
 			onchangeCheckCriaFilha();
 		});
+		
 		function onchangeCheckCriaFilha() {
 			var checkbox = $('#checkcriaFilha');
 			if (checkbox[0].checked) {
@@ -20,6 +21,7 @@
 			$('#outrasInformacoesDaFilha').hide();
 			$('#motivoEscalonamento').show();
 		}
+		
 		function carregarAcao() {
 			var inputIdSolicitacao = document.getElementById('id');
 			var inputIdItem = document.getElementById('itemConfiguracao');
@@ -41,62 +43,59 @@
 		}
 	</script>
 	<div class="gt-content-box gt-form">
-		<form id="formEscalonar"
-			action="${linkto[SolicitacaoController].escalonarGravar}"
-			onsubmit="javascript: return block();" method="POST"
-			enctype="multipart/form-data">
+		<form id="formEscalonar" action="${linkto[SolicitacaoController].escalonarGravar}"
+			onsubmit="javascript: return block();" method="POST" enctype="multipart/form-data">
 			<div class="gt-form-row">
-				<label><c:set var="valueCheckbox"
-						value="${titular.orgaoUsuario.idOrgaoUsu == 1 ? false : true}" />
-					<siga:checkbox name="criaFilha" onchange="onchangeCheckCriaFilha()"
-						value="valueCheckbox" /> <c:choose>
+				<label><c:set var="valueCheckbox" value="${titular.orgaoUsuario.idOrgaoUsu == 1 ? false : true}" />
+					<siga:checkbox name="criaFilha" onchange="onchangeCheckCriaFilha()" value="valueCheckbox" /> 
+					<c:choose>
 						<c:when test="${solicitacao.isFilha()}">
 							<c:set var="codigo" value="${solicitacao.solicitacaoPai.codigo}" />
 						</c:when>
 						<c:otherwise>
-							<c:set var="codigo" value="solicitacao.codigo" />
+							<c:set var="codigo" value="${solicitacao.codigo}" />
 						</c:otherwise>
 					</c:choose>
 					Criar Solicitação filha de ${codigo}
 				</label>
-				
-				<br /> <label>Produto, Servi&ccedil;o ou Sistema
-					relacionado &agrave; Solicita&ccedil;&atilde;o</label>
-				<siga:selecao2 propriedade="itemConfiguracao"
-					tipo="itemConfiguracao" tema="simple" modulo="sigasr"
+				<br/>
+				<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
+				<siga:selecao2 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"
 					onchange="carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')"
 					paramList="sol.solicitante=${solicitacao.solicitante.idPessoa};sol.local=${solicitacao.local.idComplexo};sol.titular=${cadastrante.idPessoa};sol.lotaTitular=${lotaTitular.idLotacao}" />
 				<span style="color: red" />
 			</div>
-			<div id="divAcaoEscalonar"><jsp:include page="exibirAcaoEscalonar.jsp" /></div>
-			<a href="javascript: modalAbrir('lotacaoAtendente')"
-				class="gt-btn-medium" style="margin: 5px 0 0 -3px;">Alterar
-				atendente</a> <input type="hidden" name="idAtendenteNaoDesignado"
-				id="atendenteNaoDesignado" value="" /> <br />
+			<div id="divAcaoEscalonar">
+				<jsp:include page="exibirAcaoEscalonar.jsp" />
+			</div>
+			<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin: 5px 0 0 -3px;">
+				Alterar atendente
+			</a>
+			<input type="hidden" name="idAtendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
+			<br/>
 			<div id="outrasInformacoesDaFilha" class="gt-form-row">
 				<label>Descrição</label>
 				<textarea name="descricao" cols="85" rows="7">${solicitacao.descrSolicitacao}</textarea>
-				<br /> <br />
+				<br/><br/>
 				<c:if test="${!solicitacao.isPai() && !solicitacao.isFilha()}">
-					<siga:checkbox name="fechadoAuto"
-						onchange="onchangeCheckCriaFilha()"
-						value="${solicitacao.fechadoAutomaticamente}" />
-				Fechar automaticamente a solicitação <b>${codigo}</b>, quando
-				todas as solicitaç&otilde;es filhas forem fechadas pelos seus
-				respectivos atendentes. </c:if>
+					<siga:checkbox name="fechadoAuto" onchange="onchangeCheckCriaFilha()" value="${solicitacao.fechadoAutomaticamente}" />
+					Fechar automaticamente a solicitação <b>${codigo}</b>, quando
+					todas as solicitaç&otilde;es filhas forem fechadas pelos seus
+					respectivos atendentes. 
+				</c:if>
 			</div>
 			<div id="motivoEscalonamento" class="gt-form-row">
-				<br /> <label>Motivo do Escalonamento</label> <select name="motivo"
-					value="NOVO_ATENDENTE" , list="tipoMotivoEscalonamentoList"
-					listValue="descrTipoMotivoEscalonamento" style="width: auto;" />
+				<br/>
+				<label>Motivo do Escalonamento</label>
+				<siga:select name="motivo" value="NOVO_ATENDENTE" list="tipoMotivoEscalonamentoList" isEnum="true" 
+					listValue="descrTipoMotivoEscalonamento" listKey="descrTipoMotivoEscalonamento" style="width: auto;"/>
 			</div>
 			<div class="gt-form-row">
-				<br /> <input type="hidden" name="id" id="id"
-					value="${solicitacao.idSolicitacao}"> <input type="hidden"
-					name="solicitante" value="${solicitacao.solicitante}"> <input
-					type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-				<a href="@{Application.exibir(solicitacao.idSolicitacao)}"
-					class="gt-btn-medium gt-btn-left">Voltar</a>
+				<br/>
+				<input type="hidden" name="id" id="id" value="${solicitacao.idSolicitacao}">
+				<input type="hidden" name="solicitante" value="${solicitacao.solicitante}">
+				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+				<a href="${linkTo[SolicitacaoController].exibir[solicitacao.idSolicitacao]}" class="gt-btn-medium gt-btn-left">Voltar</a>
 			</div>
 		</form>
 	</div>
@@ -107,19 +106,14 @@
 				<div class="gt-form gt-content-box">
 					<div class="gt-form-row">
 						<div class="gt-form-row">
-							<label>Lotação Atendente</label> <input type="hidden"
-								name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
-							<siga:selecao propriedade="lotacao" tema="simple" modulo="siga"
-								urlAcao="buscar" inputName="lotacaoSelecao" />
-
-							<span style="display: none; color: red" id="atendente">Atendente
-								não informado.</span>
+							<label>Lotação Atendente</label> 
+							<input type="hidden" name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
+							<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="lotacaoSelecao" />
+							<span style="display: none; color: red" id="atendente">Atendente não informado.</span>
 						</div>
 						<div class="gt-form-row">
-							<a href="javascript: alterarAtendente()"
-								class="gt-btn-medium gt-btn-left">Ok</a> <a
-								href="javascript: modalFechar('lotacaoAtendente')"
-								class="gt-btn-medium gt-btn-left">Cancelar</a>
+							<a href="javascript: alterarAtendente()" class="gt-btn-medium gt-btn-left">Ok</a>
+							<a href="javascript: modalFechar('lotacaoAtendente')" class="gt-btn-medium gt-btn-left">Cancelar</a>
 						</div>
 					</div>
 				</div>
@@ -137,6 +131,7 @@
 		function modalFechar(componentId) {
 			$("#" + componentId + "_dialog").dialog('close');
 		}
+		
 		// limpa campos do componente de busca - tag selecao
 		function limparCampos() {
 			$("#lotacaoSelecao").val('');
@@ -144,6 +139,7 @@
 			$("#lotacaoSelecao_sigla").val('');
 			$("#lotacaoSelecaoSpan").html('');
 		}
+		
 		function alterarAtendente() {
 			var inputNovoAtendente = $("#lotacaoSelecao").val();
 			var spanNovoAtendente = $("#lotacaoSelecao_sigla").val() + " - "

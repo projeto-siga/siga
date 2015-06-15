@@ -1414,20 +1414,38 @@ public class ExDao extends CpDao {
 
 	public int consultarQuantidade(final ExClassificacaoDaoFiltro flt) {
 		String descrClassificacao = "";
+
+		MascaraUtil m = MascaraUtil.getInstance();
+
 		if (flt.getDescricao() != null) {
-			descrClassificacao = flt.getDescricao();
+			String d = flt.getDescricao();
+			if (d.length() > 0 && m.isCodificacao(d)) {
+				descrClassificacao = m.formatar(d);
+			} else {
+				descrClassificacao = d;
+			}
 		}
 
 		final Query query = getSessao().getNamedQuery(
 				"consultarQuantidadeExClassificacao");
 
+		if (flt.getSigla() == null || flt.getSigla().equals("")) {
+			query.setString("mascara", MascaraUtil.getInstance()
+					.getMscTodosDoMaiorNivel());
+		} else {
+			query.setString(
+					"mascara",
+					MascaraUtil.getInstance().getMscFilho(
+							flt.getSigla().toString(), true));
+		}
+
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
-		query.setString("mascara", MascaraUtil.getInstance()
-				.getMscTodosDoMaiorNivel());
+		query.setString("descrClassificacaoSemAcento", Texto
+				.removeAcentoMaiusculas(descrClassificacao).replace(' ', '%'));
 
 		final int l = ((Long) query.uniqueResult()).intValue();
-		return l;
+		return l;		
 	}
 
 	public ExClassificacao consultarPorSigla(final ExClassificacao o) {

@@ -135,7 +135,7 @@
 							<th align="left">Pessoa</th>
 							<th align="left">Lotação</th>
 							<th align="left">Pessoa</th>
-s						</tr>
+						</tr>
 					</thead>
 					<tbody>
 						<c:forEach var="m" items="${informacao.movs}">

@@ -93,13 +93,16 @@
 	
 
 	<query name="consultarQuantidadeExClassificacao">
-		<![CDATA[select count(distinct cla) from ExClassificacao cla ,ExVia v  
-		where (upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%'))
-    	and cla.idClassificacao = v.exClassificacao.idClassificacao
-    	and cla.codificacao like :mascara
-    	and v.hisAtivo = 1 
-    	and cla.hisAtivo = 1
-	    and (v.codVia is not null))]]>
+		<![CDATA[select count(distinct cla) from ExClassificacao cla ,ExVia v 
+		where 	(
+			(upper(cla.descrClassificacao) like upper('%' || :descrClassificacao || '%')) or
+			(upper(cla.descrClassificacaoSemAcento) like upper('%' || :descrClassificacaoSemAcento || '%')) or 
+			(cla.codificacao = :descrClassificacao)
+		)
+			and cla.codificacao like :mascara
+	    	and cla.hisAtivo = 1
+	       	and cla.idClassificacao = v.exClassificacao.idClassificacao 
+	       	and v.hisAtivo = 1]]>
 	</query>
  
  

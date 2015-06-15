@@ -443,7 +443,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         }
         if (getNumSolicitacao() != null)
             query += " and numSolicitacao = " + getNumSolicitacao();
-        if (getNumSequencia() == null || getNumSequencia().equals(Long.valueOf(0)))
+        if (getNumSequencia() == null)
             query += " and numSequencia is null";
         else
             query += " and numSequencia = " + getNumSequencia();
@@ -1321,10 +1321,9 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         operacoes.add(new SrOperacao("clock_pause", "Incluir Pend�ncia", podeDeixarPendente(pess, lota), "deixarPendente", MODAL_TRUE));
 
         /*
-         * operacoes.add(new SrOperacao("clock_edit", "Alterar Prazo", podeAlterarPrazo(pess, lota), "alterarPrazo", MODAL_TRUE));
+         * operacoes.add(new SrOperacao("clock_edit", "Alterar Prazo", podeAlterarPrazo(lotaTitular, titular), "alterarPrazo", "modal=true"));
          */
-        
-        operacoes.add(new SrOperacao("cross", "Excluir", "excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicitação?", null, "", ""));
+        operacoes.add(new SrOperacao("cross", "Excluir", "excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicita��o?", null, "", ""));
 
         operacoes.add(new SrOperacao("attach", "Anexar Arquivo", podeAnexarArquivo(pess, lota), "anexarArquivo", MODAL_TRUE + "&solicitacao.id=" + getId()));
 
@@ -1985,7 +1984,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
         if (podeFecharPaiAutomatico())
-            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicita��o fechada automaticamente");
+            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicitação fechada automaticamente");
 
         /*
          * if (temPesquisaSatisfacao()) enviarPesquisa();
@@ -1993,7 +1992,6 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public void enviarPesquisa() throws Exception {
-        // Implementar
     	CorreioHolder
     		.get()
     		.pesquisaSatisfacao(this);

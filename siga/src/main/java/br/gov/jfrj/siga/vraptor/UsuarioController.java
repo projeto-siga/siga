@@ -226,14 +226,14 @@ public class UsuarioController extends SigaController {
 	public void checkEmailValido(String matricula) throws AplicacaoException {
 		try{
 			if(isEmailValido(matricula)) {
-				result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
-				return;
+				result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+			}else{
+				result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
 			}
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
 			
 		}catch(Exception e){
 			result.include("ajaxMsgErro", e.getMessage());
-			result.use(Results.page()).forwardTo("/sigalibs/ajax_msg_erro.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_msg_erro.jsp");
 		}
 	}
 	

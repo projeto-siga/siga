@@ -176,9 +176,12 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/configuracaoAutomaticaGravar")
-    public void configuracaoAutomaticaGravar(SrConfiguracao configuracaoInclusaoAutomatica) throws Exception {
-        configuracaoInclusaoAutomatica.salvarComoInclusaoAutomaticaLista(configuracaoInclusaoAutomatica.getListaPrioridade());
-        result.use(Results.http()).body(configuracaoInclusaoAutomatica.toVO().toJson());
+    public void configuracaoAutomaticaGravar(SrConfiguracao configuracao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
+        configuracao.setAcoesSet(acoesSet);
+        configuracao.setItemConfiguracaoSet(itemConfiguracaoSet);
+        
+        configuracao.salvarComoInclusaoAutomaticaLista(configuracao.getListaPrioridade());
+        result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
     @Path("/desativarConfiguracaoAutomaticaGravar")
@@ -545,7 +548,7 @@ public class SolicitacaoController extends SrController {
         solicitacao = solicitacao.getSolicitacaoAtual();
         List<SrPrioridade> prioridades = SrPrioridade.getValoresEmOrdem();
 
-        result.include("solicitacao", solicitacao);
+        result.include(SOLICITACAO, solicitacao);
         result.include("prioridades", prioridades);
     }
     
@@ -599,7 +602,7 @@ public class SolicitacaoController extends SrController {
         solicitacao = solicitacao.getSolicitacaoAtual();
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 
-        result.include("solicitacao", solicitacao);
+        result.include(SOLICITACAO, solicitacao);
         result.include("acoesEAtendentes", acoesEAtendentes);
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
     }
@@ -727,7 +730,7 @@ public class SolicitacaoController extends SrController {
     @Path("/exibir/termoAtendimento")
     public void termoAtendimento(Long id) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
-        result.include("solicitacao", solicitacao);
+        result.include(SOLICITACAO, solicitacao);
     }
     
     @Path("/exibir/desfazerUltimaMovimentacao")

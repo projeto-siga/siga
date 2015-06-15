@@ -43,7 +43,7 @@
 		}
 	</script>
 	<div class="gt-content-box gt-form">
-		<form id="formEscalonar" action="${linkto[SolicitacaoController].escalonarGravar}"
+		<form id="formEscalonar" action="${linkTo[SolicitacaoController].escalonarGravar}"
 			onsubmit="javascript: return block();" method="POST" enctype="multipart/form-data">
 			<div class="gt-form-row">
 				<label><c:set var="valueCheckbox" value="${titular.orgaoUsuario.idOrgaoUsu == 1 ? false : true}" />
@@ -85,13 +85,11 @@
 				</c:if>
 			</div>
 			<div id="motivoEscalonamento" class="gt-form-row">
-				<br/>
 				<label>Motivo do Escalonamento</label>
 				<siga:select name="motivo" value="NOVO_ATENDENTE" list="tipoMotivoEscalonamentoList" isEnum="true" 
 					listValue="descrTipoMotivoEscalonamento" listKey="descrTipoMotivoEscalonamento" style="width: auto;"/>
 			</div>
 			<div class="gt-form-row">
-				<br/>
 				<input type="hidden" name="id" id="id" value="${solicitacao.idSolicitacao}">
 				<input type="hidden" name="solicitante" value="${solicitacao.solicitante}">
 				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />

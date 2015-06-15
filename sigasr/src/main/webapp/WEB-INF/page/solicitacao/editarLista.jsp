@@ -286,9 +286,13 @@
 	<form id="formConfiguracaoInclusaoAutomatica">
 		<div class="gt-form gt-content-box"
 			style="width: 800px !important; max-width: 800px !important;">
-			<input id="idConfiguracao" type="hidden" name="idConfiguracao">
+			<input id="configuracao" type="hidden" name="configuracao">
 			<input id="hisIdIni" type="hidden" name="hisIdIni">
 
+			<input type="hidden" id="configuracao.orgaoUsuario" name="configuracao.orgaoUsuario" />
+			<input type="hidden" id="configuracao.prioridade" name="configuracao.prioridade" />
+			<input type="hidden" id="configuracao.prioridadeNaLista" name="configuracao.prioridadeNaLista" />
+			
 			<div id="divSolicitante" class="gt-form-row gt-width-100">
 				<label>Solicitante</label>
 				<siga:pessoaLotaFuncCargoSelecao nomeSelLotacao="lotacao"
@@ -304,7 +308,7 @@
 
 			<div class="gt-form-row gt-width-100">
 				<label>&Oacute;rg&atilde;o</label>
-				<siga:select name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu"
+				<siga:select name="configuracao.orgaoUsuario" list="orgaos" listKey="idOrgaoUsu"
 					id="idOrgaoUsu" headerValue="" headerKey="0"
 					listValue="acronimoOrgaoUsu" theme="simple" value="${idOrgaoUsu}"
 					style="width: 100%" />
@@ -312,7 +316,7 @@
 
 			<div class="gt-form-row gt-width-100">
 				<label>Prioridade</label>
-				<siga:select name="prioridade" list="prioridades"
+				<siga:select name="configuracao.prioridade" list="prioridades"
 					listKey="idPrioridade" id="idPrioridade" headerValue="Nenhuma"
 					headerKey="0" listValue="descPrioridade" theme="simple"
 					value="${descPrioridade}" style="width: 235px;" />
@@ -320,7 +324,7 @@
 
 			<div class="gt-form-row gt-width-100">
 				<label>Prioridade na lista</label>
-				<siga:select name="prioridadeNaLista" list="prioridades"
+				<siga:select name="configuracao.prioridadeNaLista" list="prioridades"
 					listKey="idPrioridade" id="idPrioridade" headerValue="Nenhuma"
 					headerKey="0" listValue="descPrioridade" theme="simple"
 					value="${descPrioridade}" style="width: 235px;" />
@@ -329,7 +333,7 @@
 			<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
 
 			<div class="gt-form-row">
-				<a href="javascript: configuracaoInclusaoAutomaticaService.gravar()"
+				<a href="javascript: configuracaoInclusaoAutomaticaService.preparaObjeto();configuracaoInclusaoAutomaticaService.gravar()"
 					class="gt-btn-medium gt-btn-left">Gravar</a> 
 				<a href="javascript: configuracaoInclusaoAutomaticaService.cancelarGravacao()"
 					class="gt-btn-medium gt-btn-left">Cancelar</a>
@@ -433,6 +437,17 @@
 		
 		this.opts.dataTable = this.configuracaoInclusaoAutomaticaTable.dataTable;
 	}
+	configuracaoInclusaoAutomaticaService.preparaObjeto = function() {
+		var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo", "cpGrupo"];
+		
+		solicitanteTypes.forEach(function(entry) {
+			var inputName = entry + "Sel.id";
+			var inputValue = $( "input[name='" + inputName + "']" ).val();
+		    if(inputValue != "")
+			    $("input[name='configuracao." + entry + "']" ).val(inputValue);
+		});
+
+	};
 	
 	configuracaoInclusaoAutomaticaService.cadastrar = function(title) {
 		// Se eh novo, entao salva
@@ -526,7 +541,7 @@
 	}
 	
 	configuracaoInclusaoAutomaticaService.onRowClick = function(configuracao) {
-		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configuração para inclusão automática');
+		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configura\u00e7\u00e3o para inclus\u00e3o autom\u00e1tica');
 	}
 	configuracaoInclusaoAutomaticaService.editar = function(configuracao, title) {
 		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
@@ -734,9 +749,9 @@
 		
 		jOrgaoUsuarioCbb.selectedIndex = 0;
 		jComplexoCbb.selectedIndex = 0;
-		$("#lotacao").val('');
-		$("#lotacao_descricao").val('');
-		$("#lotacao_sigla").val('');
+		$("#formulario_lotacaolotacaoAtualSel_id").val('');
+		$("#formulario_lotacaolotacaoAtualSel_descricao").val('');
+		$("#formulario_lotacaolotacaoAtualSel_sigla").val('');
 		$("#lotacaoSpan").html('');
 		$("#dpPessoa").val('');
 		$("#dpPessoa_descricao").val('');
@@ -965,7 +980,7 @@
 	        if ($("#itemTipoPermissao")[0].options.length > 0)
 	        	jDialog.data('acao', permissoes.incluirItem).dialog('open');
 	        else
-	            alert("Não existem mais Tipos de PermissÃÂ£o para serem incluidos");
+	            alert("N\u00e3o existem mais Tipos de Permiss\u00e3o para serem incluidos");
 	    });
 	   
 	    jDialog.dialog({
@@ -978,7 +993,7 @@
 	                jDialog.data('tipoPermissao','');
 	        },
 	        open: function(){
-	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permissão');
+	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permiss\u00e3o');
 	                jTipoPermissao.find("option[value=" + jDialog.data("tipoPermissao") + "]").prop('selected', true);
 	        }
 	    });

@@ -118,3 +118,7 @@ standalone.bat
 ```
 Ctrl + C
 ```
+
+## Ferramentas utilizadas no projeto SIGA
+
+Nós utilizamos o ![](http://structure101.com/images/s101_170.png "Structure 101") (http://structure101.com) para organizar a arquitetura do projeto.

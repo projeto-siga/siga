@@ -748,7 +748,7 @@ public class SolicitacaoController extends SrController {
     public void terminarPendencia(Long id, String descricao, Long idMovimentacao) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.terminarPendencia(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), descricao, idMovimentacao);
-        exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
     }
     
     @Path("/exibir/darAndamento")

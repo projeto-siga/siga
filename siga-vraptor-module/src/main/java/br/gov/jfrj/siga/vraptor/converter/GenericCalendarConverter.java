@@ -18,6 +18,7 @@ public class GenericCalendarConverter implements Converter<Calendar> {
 	private static final String DATA_INICIO = "01/01/1900 ";
 	private static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
 	private static final String DD_MM_YYYY = "dd/MM/yyyy";
+	private static final String PATTERN_DD_MM_YYYY = "^(([0-2]\\d|[3][0-1])\\/([0]\\d|[1][0-2])\\/[2][0]\\d{2})$";
 	private Validator validator;
 
 	public GenericCalendarConverter(Validator validator) {
@@ -25,8 +26,7 @@ public class GenericCalendarConverter implements Converter<Calendar> {
 	}
 
 	@Override
-	public Calendar convert(String value, Class<? extends Calendar> type,
-			ResourceBundle bundle) {
+	public Calendar convert(String value, Class<? extends Calendar> type, ResourceBundle bundle) {
 		if (dataPreenchida(value)) {
 			if (value.matches("\\d\\d:\\d\\d")) {
 				return converterQuandoApenasHorasMinutos(value);
@@ -44,24 +44,23 @@ public class GenericCalendarConverter implements Converter<Calendar> {
 
 	private Calendar converterUtilizandoPadroesAceitos(String value) {
 		try {
-			Calendar calendar = Calendar.getInstance();
-			SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY_HH_MM);
-			sdf.setLenient(false);
-			calendar.setTime(sdf.parse(value));
-			return calendar;
+		    if(value.matches(PATTERN_DD_MM_YYYY))
+		        return getConvertedCalendar(value, DD_MM_YYYY);
+
+			return getConvertedCalendar(value, DD_MM_YYYY_HH_MM);
 		} catch (ParseException e) {
-			try {
-				Calendar calendar = Calendar.getInstance();
-				SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY);
-				sdf.setLenient(false);
-				calendar.setTime(sdf.parse(value));
-				return calendar;				
-			} catch (Exception e2) {
-				validator.add(new I18nMessage("data", "data.validation"));
-			}
+		    validator.add(new I18nMessage("data", "data.validation", value));
 		}
 		return null;
 	}
+
+    private Calendar getConvertedCalendar(String value, String formatoData) throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(formatoData);
+        sdf.setLenient(false);
+        calendar.setTime(sdf.parse(value));
+        return calendar;
+    }
 
 	private Calendar converterQuandoApenasHorasMinutos(String value) {
 		try {

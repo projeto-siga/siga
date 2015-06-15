@@ -140,6 +140,7 @@
 		}
 
 		$("#checkmostrarDesativados").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativados').checked)
 				location.href = "${linkTo[SolicitacaoController].listarLista}" + '?mostrarDesativados=true';
 			else

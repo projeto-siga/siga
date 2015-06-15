@@ -506,7 +506,7 @@
 
     <siga:modal nome="associarLista" titulo="Definir Lista" url="associarLista.jsp" />
 
-    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa" />
+    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa?id=${solicitacao.id}" />
 
     <siga:modal nome="deixarPendente" titulo="Pendência">
             <div class="gt-content-box gt-form clearfix">

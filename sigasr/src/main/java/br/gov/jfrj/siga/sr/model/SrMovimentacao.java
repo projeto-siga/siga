@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.sr.model;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import javax.persistence.TemporalType;
 
 import org.joda.time.DateTime;
 
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -258,10 +258,6 @@ public class SrMovimentacao extends ObjetoVraptor {
         return getAtendente().getSigla() + " (" + getLotaAtendente().getSigla() + ")";
     }
 
-    public void setArquivo(File file) {
-        this.arquivo = SrArquivo.newInstance(file);
-    }
-
     public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         this.setCadastrante(cadastrante);
         this.setLotaCadastrante(lotaCadastrante);
@@ -322,12 +318,12 @@ public class SrMovimentacao extends ObjetoVraptor {
     private void checarCampos() throws Exception {
 
         if (getSolicitacao() == null)
-            throw new Exception("Movimentação precisa fazer parte de uma solicitação");
+            throw new Exception("Movimentaï¿½ï¿½o precisa fazer parte de uma solicitaï¿½ï¿½o");
 
         if (getArquivo() != null) {
             double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
             if (lenght > 2)
-                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) é maior que o máximo permitido (2MB)");
+                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) ï¿½ maior que o mï¿½ximo permitido (2MB)");
         }
 
         if (getDtIniMov() == null)
@@ -353,7 +349,7 @@ public class SrMovimentacao extends ObjetoVraptor {
 
 //        if (!getSolicitacao().isRascunho()) {
 //            if (getAtendente() == null && getLotaAtendente() == null)
-//                throw new Exception("Atendente não pode ser nulo");
+//                throw new Exception("Atendente nï¿½o pode ser nulo");
 //
 //            if (getLotaAtendente() == null)
 //                setLotaAtendente(getAtendente().getLotacao());
@@ -411,8 +407,7 @@ public class SrMovimentacao extends ObjetoVraptor {
 
     @Override
     protected Long getId() {
-        // TODO Auto-generated method stub
-        return null;
+        return idMovimentacao;
     }
 
     public long getIdMovimentacao() {
@@ -442,9 +437,9 @@ public class SrMovimentacao extends ObjetoVraptor {
     public SrArquivo getArquivo() {
         return arquivo;
     }
-
-    public void setArquivo(SrArquivo arquivo) {
-        this.arquivo = arquivo;
+    
+    public void setArquivo(UploadedFile file) {
+        this.arquivo = SrArquivo.newInstance(file);
     }
 
     public DpPessoa getAtendente() {

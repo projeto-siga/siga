@@ -34,16 +34,16 @@
 			<c:when test="${acao.modal}">
 				<a href="javascript: ${acao.url}();">${img}${acao.nome}</a>
 			</c:when>
-<%-- 			<c:otherwise> --%>
-<%-- 				<c:choose> --%>
-<%-- 					<c:when test="${not empty linkConfirm}"> --%>
-<%-- 						<a href="javascript:${linkConfirm}location.href='${acao.url}';">${img}${acao.nome}</a> --%>
-<%-- 					</c:when> --%>
-<%-- 					<c:otherwise> --%>
-<%-- 						<a href="${acao.url}">${img}${acao.nome}</a> --%>
-<%-- 					</c:otherwise> --%>
-<%-- 				</c:choose> --%>
-<%-- 			</c:otherwise> --%>
+			<c:otherwise>
+				<c:choose>
+					<c:when test="${not empty linkConfirm}">
+						<a href="javascript:${linkConfirm}location.href='${acao.url}';">${img}${acao.nome}</a>
+					</c:when>
+					<c:otherwise>
+						<a href="${acao.url}">${img}${acao.nome}</a>
+					</c:otherwise>
+				</c:choose>
+			</c:otherwise>
 		</c:choose>
 		
 		${acao.pos}

@@ -56,9 +56,10 @@
 						<c:otherwise>
 							<c:set var="codigo" value="solicitacao.codigo" />
 						</c:otherwise>
+					</c:choose>
 					Criar Solicitação filha de ${codigo}
 				</label>
-				</c:choose>
+				
 				<br /> <label>Produto, Servi&ccedil;o ou Sistema
 					relacionado &agrave; Solicita&ccedil;&atilde;o</label>
 				<siga:selecao2 propriedade="itemConfiguracao"
@@ -67,8 +68,7 @@
 					paramList="sol.solicitante=${solicitacao.solicitante.idPessoa};sol.local=${solicitacao.local.idComplexo};sol.titular=${cadastrante.idPessoa};sol.lotaTitular=${lotaTitular.idLotacao}" />
 				<span style="color: red" />
 			</div>
-			<div id="divAcaoEscalonar"><jsp:include
-					page="exibirAcaoEscalonar.html" /></div>
+			<div id="divAcaoEscalonar"><jsp:include page="exibirAcaoEscalonar.jsp" /></div>
 			<a href="javascript: modalAbrir('lotacaoAtendente')"
 				class="gt-btn-medium" style="margin: 5px 0 0 -3px;">Alterar
 				atendente</a> <input type="hidden" name="idAtendenteNaoDesignado"
@@ -77,7 +77,7 @@
 				<label>Descrição</label>
 				<textarea name="descricao" cols="85" rows="7">${solicitacao.descrSolicitacao}</textarea>
 				<br /> <br />
-				<c:if test="!solicitacao.isPai() && !solicitacao.isFilha()">
+				<c:if test="${!solicitacao.isPai() && !solicitacao.isFilha()}">
 					<siga:checkbox name="fechadoAuto"
 						onchange="onchangeCheckCriaFilha()"
 						value="${solicitacao.fechadoAutomaticamente}" />

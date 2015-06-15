@@ -62,7 +62,7 @@ public class GcInformacaoFiltro {
 			// "select inf from models.GcInformacao as inf inner join inf.tags as tag where inf.hisDtFim is null and tag.id = "
 			// + tag.id;
 			query = "select inf from GcInformacao inf inner join inf.tags tags where tags.titulo = '"
-					+ tag.titulo + "'";
+					+ tag.getTitulo() + "'";
 		// query += " and inf.tags.id = " + tag.id;
 
 		if (orgaoUsu != null && orgaoUsu.getId() != null)

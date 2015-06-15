@@ -47,8 +47,8 @@ public class GcArvoreNo implements Comparable<GcArvoreNo> {
 		final int f2 = (int) (long) arvore.mapFreq.get(o.tag);
 		if (f1 != f2)
 			return (f1 < f2 ? -1 : (f1 == f2 ? 0 : 1));
-		if (!tag.titulo.equals(o.tag.titulo))
-			return tag.titulo.compareTo(o.tag.titulo);
+		if (!tag.getTitulo().equals(o.tag.getTitulo()))
+			return tag.getTitulo().compareTo(o.tag.getTitulo());
 		return (tag.id < o.tag.id ? -1 : (tag.id == o.tag.id ? 0 : 1));
 	}
 

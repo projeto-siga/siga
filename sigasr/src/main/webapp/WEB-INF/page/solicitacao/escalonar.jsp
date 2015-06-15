@@ -78,7 +78,7 @@
 				<textarea name="descricao" cols="85" rows="7">${solicitacao.descrSolicitacao}</textarea>
 				<br/><br/>
 				<c:if test="${!solicitacao.isPai() && !solicitacao.isFilha()}">
-					<siga:checkbox name="fechadoAuto" onchange="onchangeCheckCriaFilha()" value="${solicitacao.fechadoAutomaticamente}" />
+					<siga:checkbox name="fechadoAuto" onchange="onchangeCheckCriaFilha()" value="${solicitacao.isFechadoAutomaticamente()}" />
 					Fechar automaticamente a solicitação <b>${codigo}</b>, quando
 					todas as solicitaç&otilde;es filhas forem fechadas pelos seus
 					respectivos atendentes. 

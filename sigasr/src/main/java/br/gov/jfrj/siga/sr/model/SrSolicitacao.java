@@ -819,8 +819,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     	List<SrAtributoSolicitacaoMap> list = new ArrayList<>();
     	if(meuAtributoSolicitacaoSet != null){
     		for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
-    			//if(att.getAtributo() != null)
-    			list.add(new SrAtributoSolicitacaoMap(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao()));
+    			if(att.getAtributo() != null)
+    				list.add(new SrAtributoSolicitacaoMap(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao()));
     		}
     	}
     	Collections.sort(list, new Comparator<SrAtributoSolicitacaoMap>() {

@@ -186,7 +186,7 @@
 						listValue="acronimoOrgaoUsu" theme="simple"
 						value="${orgaoUsuario.idOrgaoUsu}" />
 				</div>
-				<%--  					<span style="color: red">#{error 'orgaoUsuario' /}</span>  --%>
+				<siga:error name="orgaoUsuario"/>
 				<div class="gt-form-row div-modal-table">
 					<label>Local</label>
 					<siga:select name="complexo" list="locais" listKey="idComplexo"

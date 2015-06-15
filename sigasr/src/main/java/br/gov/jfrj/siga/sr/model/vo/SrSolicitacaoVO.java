@@ -102,10 +102,10 @@ public class SrSolicitacaoVO {
         StringBuilder sb = new StringBuilder();
 
         if (isPopup) {
-            sb.append("<a href=\"javascript:opener.retorna_solicitacao");
-            sb.append(propriedade + "('");
-            sb.append(getIdSolicitacao() + "','" + codigo);
-            sb.append("}'," + codigo + "');window.close()\">");
+            sb.append("<a href=\"javascript:opener.retorna_");
+            sb.append(propriedade + "(&#039;");
+            sb.append(getIdSolicitacao() + "&#039;,&#039;" + codigo);
+            sb.append("&#039;,&#039;" + codigo + "&#039;);window.close()\">");
             sb.append(codigo + "</a>");
         } else {
             sb.append("<a href=\"/sigasr/app/solicitacao/exibir/");

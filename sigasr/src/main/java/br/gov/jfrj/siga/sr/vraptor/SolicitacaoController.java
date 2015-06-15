@@ -548,7 +548,7 @@ public class SolicitacaoController extends SrController {
         solicitacao = solicitacao.getSolicitacaoAtual();
         List<SrPrioridade> prioridades = SrPrioridade.getValoresEmOrdem();
 
-        result.include("solicitacao", solicitacao);
+        result.include(SOLICITACAO, solicitacao);
         result.include("prioridades", prioridades);
     }
     
@@ -602,7 +602,7 @@ public class SolicitacaoController extends SrController {
         solicitacao = solicitacao.getSolicitacaoAtual();
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 
-        result.include("solicitacao", solicitacao);
+        result.include(SOLICITACAO, solicitacao);
         result.include("acoesEAtendentes", acoesEAtendentes);
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
     }
@@ -730,7 +730,7 @@ public class SolicitacaoController extends SrController {
     @Path("/exibir/termoAtendimento")
     public void termoAtendimento(Long id) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
-        result.include("solicitacao", solicitacao);
+        result.include(SOLICITACAO, solicitacao);
     }
     
     @Path("/exibir/desfazerUltimaMovimentacao")

@@ -13,10 +13,6 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
-import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
-import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
-import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -27,6 +23,7 @@ import br.gov.jfrj.siga.sr.model.SrObjetivoAtributo;
 import br.gov.jfrj.siga.sr.model.SrTipoAtributo;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
+import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
@@ -58,12 +55,7 @@ public class AtributoController extends SrController {
 		result.include("tiposAtributo",SrTipoAtributo.values());
 		
 		result.include("pessoa", new DpPessoaSelecao());
-		result.include("dpPessoaSel", new DpPessoaSelecao());
-		result.include("lotacaoSel", new DpLotacaoSelecao());
-		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-		result.include("cargoSel", new DpCargoSelecao());
-		result.include("cpGrupoSel", new CpPerfilSelecao());
-
+		PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
 		
 		result.include("itemConfiguracao", new SelecionavelVO(null,null));
 		result.include("acao", new SelecionavelVO(null,null));

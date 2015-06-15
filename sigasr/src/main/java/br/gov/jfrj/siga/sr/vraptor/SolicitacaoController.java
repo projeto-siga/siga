@@ -25,7 +25,6 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -62,6 +61,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
+import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 import com.google.gson.Gson;
@@ -126,11 +126,8 @@ public class SolicitacaoController extends SrController {
         result.include(CADASTRANTE, getCadastrante());
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
         result.include("prioridades", SrPrioridade.getValoresEmOrdem());
-		result.include("dpPessoaSel", new DpPessoaSelecao());
-		result.include("lotacaoSel", new DpLotacaoSelecao());
-		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-		result.include("cargoSel", new DpCargoSelecao());
-		result.include("cpGrupoSel", new CpPerfilSelecao());
+		
+        PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
 		
 		result.include("lotacaolotacaoAtualSel", new DpLotacaoSelecao());
         result.include("dpPessoapessoaAtualSel", new DpPessoaSelecao());
@@ -289,6 +286,8 @@ public class SolicitacaoController extends SrController {
         result.include("prioridades", SrPrioridade.getValoresEmOrdem());
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
+        
+        PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
     }
 
     @Path("/gravar")

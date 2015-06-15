@@ -2214,12 +2214,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void reabrir(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 		if (!podeReabrir(titular, lotaTitular))
 			throw new Exception("Operação não permitida");
+		DpLotacao lotacaoAtendente = getLotaAtendente();
+		if (lotacaoAtendente.isFechada())
+			throw new Exception("Operação não permitida: A Lotação atendente (" + lotacaoAtendente.getSiglaCompleta() + 
+					") foi extinta. Necessário abrir nova solicitação. Crie um vinculo dessa solicitação com a nova, através do recurso 'Vincular'");
 		reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
 		SrMovimentacao mov = new SrMovimentacao(this);
 		mov.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
-		mov.lotaAtendente = getUltimoAtendenteEtapaAtendimento();
+		//mov.lotaAtendente = getUltimoAtendenteEtapaAtendimento();
+		mov.lotaAtendente = lotacaoAtendente;
 		mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 	}
 
@@ -2272,7 +2277,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public void alterarPrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrPrioridade prioridade) throws Exception {
 		if (!podeAlterarPrioridade(titular, lotaTitular))
-			throw new Exception("Opera褯 n䯠permitida");
+			throw new Exception("Operação não permitida");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE);
@@ -2362,7 +2367,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if ((cadastrante != null) && !podeVincular(titular, lotaTitular))
 			throw new Exception("Operação não permitida");
 		if (solRecebeVinculo.equivale(this))
-	        throw new Exception("Não e possivel vincular uma solicita�ao a si mesma.");
+	        throw new Exception("Não e possivel vincular uma solicitação a si mesma.");
 		SrMovimentacao movimentacao = new SrMovimentacao(this);
 		movimentacao.tipoMov = SrTipoMovimentacao
 				.findById(TIPO_MOVIMENTACAO_VINCULACAO);

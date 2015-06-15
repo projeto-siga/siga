@@ -23,13 +23,13 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.SrAcao.SrAcaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoAssociacaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
-import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.ConfiguracaoVraptor;
 
 import com.google.gson.Gson;

@@ -28,6 +28,8 @@
     carregarConhecimentosRelacionados();
 </script>
 
+<c:set var="atributoSolicitacaoMap" value="${solicitacao.atributoSolicitacaoMap}"/>
+
 <div id="atributos">
     <c:forEach items="${solicitacao.atributoAssociados}" var="atributo" varStatus="loop">
         <div class="gt-form-row gt-width-66">
@@ -40,7 +42,7 @@
             <c:if test="${atributo.tipoAtributo != null}">
                 <c:if test="${atributo.tipoAtributo.name() == 'TEXTO'}">
                 	<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
-                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}"
+                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" size="70" maxlength="255" />
                         <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo"/>
                 </c:if>
@@ -54,7 +56,7 @@
                 <c:if test="${atributo.tipoAtributo.name() == 'DATA'}">
                 	<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
                     <siga:dataCalendar nome="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" id="calendarioAtributo${atributo.idAtributo}"
-                         value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"
+                         value="${atributoSolicitacaoMap[loop.index].valorAtributo}" onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"
                          cssClass="${atributo.idAtributo}"/>
                          <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
                 </c:if>
@@ -63,19 +65,19 @@
                     <input type="text" class="${atributo.idAtributo}"
                         onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"
-                        name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" maxlength="9"/>
+                        name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" maxlength="9"/>
                         <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'NUM_DECIMAL'}">
                     <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
-                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" 
+                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" 
                         id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" maxlength="9"/>
 						<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'HORA'}">
                     <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
-                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"
+                    <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" />
                         <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
                     	<span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Horário inválido</span>
@@ -96,10 +98,10 @@
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'VL_PRE_DEFINIDO'}" >
                     <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
-                    <select name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${solicitacao.atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}"
+                    <select name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}"
                          onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}','${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"} >
                         <c:forEach items="${atributo.preDefinidoSet}" var="valorAtributoSolicitacao">
-                            <option value="${valorAtributoSolicitacao}">
+                            <option value="${valorAtributoSolicitacao}" <c:if test="${atributoSolicitacaoMap[loop.index].valorAtributo == valorAtributoSolicitacao}">selected</c:if> >
                                 ${valorAtributoSolicitacao}
                             </option>
                         </c:forEach>

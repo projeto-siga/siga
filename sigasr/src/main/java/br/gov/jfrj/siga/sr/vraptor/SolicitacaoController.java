@@ -82,11 +82,12 @@ public class SolicitacaoController extends SrController {
     private static final String LOCAIS = "locais";
     private static final String LISTA = "lista";
     private static final String ORGAOS = "orgaos";
-	private static final String PODEREMOVER = "podeEditar";
-	private static final String PODEEDITAR = "podeRemover";
-	private static final String PODEPRIORIZAR = "podePriorizar";
+	private static final String PODE_REMOVER = "podeRemover";
+	private static final String PODE_EDITAR = "podeEditar";
+	private static final String PODE_PRIORIZAR = "podePriorizar";
 	private static final String FILTRO = "filtro";
-	private static final String PRIORIDADELIST = "prioridadeList";    
+	private static final String PRIORIDADE_LIST = "prioridadeList";
+	private static final String TIPO_MOTIVO_ESCALONAMENTO_LIST = "tipoMotivoEscalonamentoList";
 
     private Validator validator;
 
@@ -271,9 +272,9 @@ public class SolicitacaoController extends SrController {
         }
 
         result.include(LISTA, lista);
-        result.include(PODEREMOVER, lista.podeRemover(getLotaTitular(), getCadastrante()));
-        result.include(PODEEDITAR, lista.podeEditar(getLotaTitular(), getCadastrante()));
-        result.include(PODEPRIORIZAR, lista.podePriorizar(getLotaTitular(), getCadastrante()));
+        result.include(PODE_REMOVER, lista.podeRemover(getLotaTitular(), getCadastrante()));
+        result.include(PODE_EDITAR, lista.podeEditar(getLotaTitular(), getCadastrante()));
+        result.include(PODE_PRIORIZAR, lista.podePriorizar(getLotaTitular(), getCadastrante()));
         result.include(ORGAOS, orgaos);
         result.include(LOCAIS, locais);
         result.include(TIPOS_PERMISSAO, tiposPermissao);
@@ -281,7 +282,7 @@ public class SolicitacaoController extends SrController {
         result.include(FILTRO, filtro);
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
         result.include("jsonPrioridades", jsonPrioridades);
-        result.include(PRIORIDADELIST, SrPrioridade.values());
+        result.include(PRIORIDADE_LIST, SrPrioridade.values());
         
         
         result.include("lotacaoParaInclusaoAutomaticaSel", new DpLotacaoSelecao());
@@ -334,13 +335,11 @@ public class SolicitacaoController extends SrController {
     }
 
 	public boolean todoOContexto() {
-        return true;
-        // return Boolean.parseBoolean(params.get("todoOContexto"));
+         return Boolean.parseBoolean(getRequest().getParameter("todoOContexto"));
     }
 
     public boolean ocultas() {
-        return true;
-        // return Boolean.parseBoolean(params.get("ocultas"));
+         return Boolean.parseBoolean(getRequest().getParameter("ocultas"));
     }
 
     @Path({"/exibir/{id}", "/exibir/{id}/{todoOContexto}/{ocultas}"})
@@ -418,7 +417,7 @@ public class SolicitacaoController extends SrController {
         solicitacao.associarPrioridadePeloGUT();
 
         result.include(SOLICITACAO, solicitacao);
-        result.include(PRIORIDADELIST, SrPrioridade.values());
+        result.include(PRIORIDADE_LIST, SrPrioridade.values());
     }
 
     @Path("/listarSolicitacoesRelacionadas")
@@ -520,7 +519,7 @@ public class SolicitacaoController extends SrController {
         result.include("tipoMotivoEscalonamentoList", SrTipoMotivoEscalonamento.values());
         result.include("urgenciaList", SrUrgencia.values());
         result.include("tendenciaList", SrTendencia.values());
-        result.include(PRIORIDADELIST, SrPrioridade.values());
+        result.include(PRIORIDADE_LIST, SrPrioridade.values());
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("itemConfiguracao", solicitacao.getItemConfiguracao());
@@ -605,6 +604,7 @@ public class SolicitacaoController extends SrController {
 
         result.include("solicitacao", solicitacao);
         result.include("acoesEAtendentes", acoesEAtendentes);
+        result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
     }
     
     @Path("/escalonarGravar")

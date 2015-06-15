@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor.converter;
+package br.gov.jfrj.siga.feature.converter.entity.vraptor;
 
 public interface ConvertableEntity {
 

@@ -14,33 +14,33 @@
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 
 	<style>
-ul.lista-historico li span {
-	text-decoration: line-through;
-}
-
-ul.lista-historico li {
-	list-style: none;
-}
-
-ul.lista-historico li.unico {
-	margin-left: 0px !important;
-}
-
-button.button-historico {
-	padding-left: 2px;
-	padding-right: 2px;
-	width: 16px;
-}
-
-.historico-label {
-	font-weight: bold;
-	margin-right: 4px;
-}
-
-.hidden {
-	display: none;
-}
-</style>
+		ul.lista-historico li span {
+			text-decoration: line-through;
+		}
+		
+		ul.lista-historico li {
+			list-style: none;
+		}
+		
+		ul.lista-historico li.unico {
+			margin-left: 0px !important;
+		}
+		
+		button.button-historico {
+			padding-left: 2px;
+			padding-right: 2px;
+			width: 16px;
+		}
+		
+		.historico-label {
+			font-weight: bold;
+			margin-right: 4px;
+		}
+		
+		.hidden {
+			display: none;
+		}
+	</style>
 
 	<div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
 		<div class="gt-content clearfix">
@@ -506,7 +506,7 @@ button.button-historico {
 
     <siga:modal nome="associarLista" titulo="Definir Lista" url="associarLista.jsp" />
 
-    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa" />
+    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa?id=${solicitacao.id}" />
 
     <siga:modal nome="deixarPendente" titulo="Pendência">
             <div class="gt-content-box gt-form clearfix">

@@ -95,7 +95,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     private static final String HH_MM = "HH:mm";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
-    private static final String OPERACAO_NAO_PERMITIDA = "Opera��o n�o permitida";
+    private static final String OPERACAO_NAO_PERMITIDA = "Operação não permitida";
 
     private static final long serialVersionUID = 1L;
 
@@ -773,6 +773,12 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             }
         }
 
+		Collections.sort(listaFinal, new Comparator<SrAtributo>() {
+			@Override
+			public int compare(SrAtributo o1, SrAtributo o2) {
+				return o1.getIdAtributo().compareTo(o2.getIdAtributo());
+			}
+		});
         return listaFinal;
     }
 
@@ -810,7 +816,6 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public List<SrAtributoSolicitacaoMap> getAtributoSolicitacaoMap() {
-    	
     	List<SrAtributoSolicitacaoMap> list = new ArrayList<>();
     	if(meuAtributoSolicitacaoSet != null){
     		for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
@@ -818,13 +823,13 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     			list.add(new SrAtributoSolicitacaoMap(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao()));
     		}
     	}
+    	Collections.sort(list, new Comparator<SrAtributoSolicitacaoMap>() {
+			@Override
+			public int compare(SrAtributoSolicitacaoMap o1, SrAtributoSolicitacaoMap o2) {
+				return o1.getIdAtributo().compareTo(o2.getIdAtributo());
+			}
+		});
     	return list;
-//    	HashMap<Long, String> map = new LinkedHashMap<Long, String>(); // Para manter a ordem de insercao
-//        if (meuAtributoSolicitacaoSet != null)
-//            for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
-//                map.put(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao());
-//            }
-//        return map;
     }
 
     public Set<SrSolicitacao> getSolicitacaoFilhaSet() {
@@ -1304,8 +1309,10 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         operacoes.add(new SrOperacao("text_list_numbers", "Incluir em Lista", podeIncluirEmLista(pess, lota), "incluirEmLista", MODAL_TRUE));
 
         operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(pess, lota), "fechar", MODAL_TRUE));
-
-        operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));
+        
+        /*
+         * operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));
+         */
 
         operacoes.add(new SrOperacao("cross", "Cancelar Solicitação", podeCancelar(pess, lota), "cancelar"));
 

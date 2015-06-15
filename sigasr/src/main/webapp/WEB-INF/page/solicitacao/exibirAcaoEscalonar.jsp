@@ -43,7 +43,7 @@
 	}
 </script>
 
-<c:if test="${not empty solicitacao.itemConfiguracao && acoesEAtendentes}"> 
+<c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}"> 
 	<div class="gt-form-row gt-width-66">
 		<label>Ação</label>	
 		<select name="acao.idAcao" id="selectAcao" value="${solicitacao.acao.idAcao}" onchage="carregarLotacaoDaAcao()">
@@ -51,26 +51,26 @@
 			<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 				<optgroup  label="${cat.tituloAcao}">
 					<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
-						<option value="tarefa.acao.idAcao"> ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})</option>
+						<option value="${tarefa.acao.idAcao}"> ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})</option>
 					</c:forEach>					 
 				</optgroup>
 			</c:forEach>
 		</select>
-<%-- 		 <span style="color: red">#{error 'solicitacao.acao' /}</span> --%>
+		<siga:error name="solicitacao.acao"></siga:error>
 	</div>
 	<div>
 		<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
 				ja que acima no select nao tem como "esconder" essa informacao -->
-		<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
-			<c:forEach items="${acoesEAtendentes.get(cat)}" var="t">
+		<c:forEach items="${acoesEAtendentes.keySet()}" var="cat" varStatus="catPosition">
+			<c:forEach items="${acoesEAtendentes.get(cat)}" var="t" varStatus="tPosition">
 				<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
 				<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
 									- ${t.conf.atendente.descricao}</span>
 				<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.idLotacao}</span>
-				<c:if test="${cat_isFirst && cat_isLast && t_isLast}"> 
-					<c:set var="lotacaoDesignada" value="${t.conf.atendente.siglaCompleta + ' - ' + t.conf.atendente.descricao}"/>  
-					<c:set var="idLotaAtendente" value="t.conf.atendente.idLotacao"/>
-					<c:set var="idDesignacao" value="t.conf.idConfiguracao"/>
+				<c:if test="${catPosition.first && catPosition.last && tPosition.first}"> 
+					<c:set var="lotacaoDesignada" value="${t.conf.atendente.siglaCompleta}' - '${t.conf.atendente.descricao}"/>  
+					<c:set var="idLotaAtendente" value="${t.conf.atendente.idLotacao}"/>
+					<c:set var="idDesignacao" value="${t.conf.idConfiguracao}"/>
 				</c:if>
 			</c:forEach>
 		</c:forEach>

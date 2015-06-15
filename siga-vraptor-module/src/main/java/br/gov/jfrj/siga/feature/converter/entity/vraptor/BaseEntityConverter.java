@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.vraptor.converter;
+package br.gov.jfrj.siga.feature.converter.entity.vraptor;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;

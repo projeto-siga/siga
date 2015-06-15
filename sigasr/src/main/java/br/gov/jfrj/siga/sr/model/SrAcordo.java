@@ -20,11 +20,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAcordoVO;
-import br.gov.jfrj.siga.vraptor.converter.ConvertableEntity;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity

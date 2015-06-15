@@ -91,9 +91,7 @@ public class DesignacaoController extends SrController {
 		if (srValidator.hasErrors())
 			return;
 
-		verificaObjetosNulos(designacao);
 		designacao.salvarComoDesignacao();
-
 		result.use(Results.http()).body(designacao.toJson());
 	}
 
@@ -106,31 +104,4 @@ public class DesignacaoController extends SrController {
 		if (srValidator.hasErrors())
 			enviarErroValidacao();
 	}
-
-	private void verificaObjetosNulos(SrConfiguracao designacao) {
-		if (designacao.getCargo().getIdCargo() == null)
-			designacao.setCargo(null);
-
-		if (designacao.getCpGrupo().getId() == null)
-			designacao.setCpGrupo(null);
-
-		if (designacao.getFuncaoConfianca().getIdFuncao() == null)
-			designacao.setFuncaoConfianca(null);
-
-		if (designacao.getLotacao().getId() == null)
-			designacao.setLotacao(null);
-
-		if (designacao.getAtendente().getId() == null)
-			designacao.setAtendente(null);
-
-		if (designacao.getOrgaoUsuario().getIdOrgaoUsu() == null)
-			designacao.setOrgaoUsuario(null);
-
-		if (designacao.getDpPessoa().getId() == null)
-			designacao.setDpPessoa(null);
-		
-		if (designacao.getComplexo().getIdComplexo() == null)
-			designacao.setComplexo(null);
-	}
-
 }

@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Cadastro de Solicitação">
+<siga:pagina titulo="Cadastro de Solicitaï¿½ï¿½o">
 
 <jsp:include page="../main.jsp"></jsp:include>
 
@@ -11,7 +11,7 @@
 
 <div class="gt-bd clearfix">
     <div class="gt-content clearfix">
-	    <h2>Pesquisa de Solicitações</h2>
+	    <h2>Pesquisa de SolicitaÃ§Ãµees</h2>
 	    <c:choose>
 	        <c:when test="${not empty solicitacaoListaVO.getItens()}">
 	           <siga:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="solicitacao" />
@@ -31,7 +31,7 @@
 	                   <td align="center" valign="top" colspan="4">Dados para busca</td>
 	                </tr>
 	                    <tr>
-	                        <td>Situação</td>
+	                        <td>SituaÃ§Ã£o</td>
 	                        <td>
 	                           <siga:select name="filtro.situacao.idMarcador" 
 	                                        list="marcadores"
@@ -48,7 +48,7 @@
 	                            <div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
 	                                <label> 
 	                                   <siga:checkbox nameInput="filtro.naoDesignados" name="filtro.naoDesignados" value="${filtro.naoDesignados}"/> 
-	                                   Apenas não designadas
+	                                   Apenas nÃ£o designadas
 	                                </label>
 	                            </div>
 	                            <script language="javascript">
@@ -73,7 +73,7 @@
 	                        </td>
 	                    </tr>
 	                    <tr>
-	                        <td>Data de criação</td>
+	                        <td>Data de criaÃ§Ã£o</td>
 	                        <td>
 	                           <siga:dataCalendar nome="filtro.dtIni" value="${filtro.dtIni}"/> a
 	                           <siga:dataCalendar nome="filtro.dtFim" value="${filtro.dtFim}"/>
@@ -87,14 +87,14 @@
 	                        </td>
 	                    </tr>
 	                    <tr>
-	                        <td>Ação</td>
+	                        <td>AÃ§Ã£o</td>
 	                        <td>
 	                           <input type="hidden" name="filtro.acaoSel" value="" />
 	                           <siga:selecao2 propriedade="filtro.acaoSel" tipo="acao" tema="simple" modulo="sigasr"/>
 	                        </td>
 	                    </tr>
 	                    <tr>
-	                        <td>Prioridade Mínima</td>
+	                        <td>Prioridade MÃ­nima</td>
 	                        <td>
 	                           <select name="filtro.prioridade" id="filtroPrioridade" value="${filtro.prioridade}" style="width:250px;">
                                    <option value="">Todas</option>
@@ -117,7 +117,7 @@
                             </td>                                            
                         </tr>
                         <tr>
-                            <td>Descrição</td>
+                            <td>DescriÃ§Ã£o</td>
                             <td>
                                 <input type="text" name="filtro.descrSolicitacao" style="width: 247px;" id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}"/>
                             </td>
@@ -131,7 +131,7 @@
 	                           <div id="chkNaoSatisfatorios" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
 	                              <label>
 		                             <siga:checkbox nameInput="filtro.naoSatisfatorios" name="filtro.naoSatisfatorios" value="${filtro.naoSatisfatorios}"/>
-		                             Apenas solicitações em descumprimento dos seus acordos
+		                             Apenas solicitaÃ§Ãµes em descumprimento dos seus acordos
 	                              </label>
 	                           </div>
 	                           <script language="javascript">

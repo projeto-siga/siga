@@ -57,11 +57,11 @@ function printpage()
 			Lota&ccedil;&atilde;o:&nbsp;
 			</font>
 			${solicitacao.lotaSolicitante.siglaLotacao} 
-				<c:if test="${solicitacao.local}">
+				<c:if test="${not empty solicitacao.local}">
 				(${solicitacao.local.nomeComplexo})
 				</c:if>
 			</p>
-		<c:if test="${solicitacao.telPrincipal}">
+		<c:if test="${not empty solicitacao.telPrincipal}">
 			<p>
 				<font style="font-size: 11pt; font-weight: bold; text-align: left;">
 					Telefone:&nbsp; </font> <font style="font-size: 11pt;">
@@ -124,7 +124,7 @@ function printpage()
 		ACEITA&Ccedil;&Atilde;O DO USU&Aacute;RIO
 		<p></p>
 		<font style="font-weight: normal;">
-		DECLARO ESTAR CIENTE E DE ACORDO COM AS CONDI&Ccedil;&Otilde;ES DE ATENDIMENTO E QUE OS SERVIÇOS DA PRESENTE SOLICITAÇÃO FORAM 
+		DECLARO ESTAR CIENTE E DE ACORDO COM AS CONDI&Ccedil;&Otilde;ES DE ATENDIMENTO E QUE OS SERVI&Ccedil;OS DA PRESENTE SOLICITA&Ccedil;&Atilde;O FORAM 
 		EFETIVAMENTE TESTADOS TENDO SIDO DADOS COMO ACEITOS POR MIM NESTA DATA. 
 		</font>
 		</div>

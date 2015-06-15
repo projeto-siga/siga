@@ -23,7 +23,14 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+
 import junit.framework.TestCase;
+
+import org.junit.Before;
+
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoTag;
@@ -37,7 +44,19 @@ public class GcServiceImplTest extends TestCase {
 	GcTipoTag tipo = new GcTipoTag(1, "@");
 	Long tagSequential = 0L;
 
+	private EntityTransaction transaction;
+	private EntityManager em;
+
+	@Before
+	public void initializeDependencies(){
+		System.out.println("teste");
+	}
+	
 	public GcServiceImplTest() throws Exception {
+		em = Persistence.createEntityManagerFactory("default")
+				.createEntityManager();
+		transaction = em.getTransaction();
+
 		t1 = buildTag("@sr-item-1-123:sistemas");
 		t2 = buildTag("@sr-item-2-231:gestao-do-trabalho");
 		t3 = buildTag("@sr-item-3-312:siga-doc");

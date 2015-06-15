@@ -49,7 +49,7 @@ public class GenericCalendarConverter implements Converter<Calendar> {
 
 			return getConvertedCalendar(value, DD_MM_YYYY_HH_MM);
 		} catch (ParseException e) {
-		    validator.add(new I18nMessage("data", "data.validation", value));
+		    validator.add(new I18nMessage("data", "data.validation.params", value));
 		}
 		return null;
 	}

@@ -176,9 +176,12 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/configuracaoAutomaticaGravar")
-    public void configuracaoAutomaticaGravar(SrConfiguracao configuracaoInclusaoAutomatica) throws Exception {
-        configuracaoInclusaoAutomatica.salvarComoInclusaoAutomaticaLista(configuracaoInclusaoAutomatica.getListaPrioridade());
-        result.use(Results.http()).body(configuracaoInclusaoAutomatica.toVO().toJson());
+    public void configuracaoAutomaticaGravar(SrConfiguracao configuracao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
+        configuracao.setAcoesSet(acoesSet);
+        configuracao.setItemConfiguracaoSet(itemConfiguracaoSet);
+        
+        configuracao.salvarComoInclusaoAutomaticaLista(configuracao.getListaPrioridade());
+        result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
     @Path("/desativarConfiguracaoAutomaticaGravar")

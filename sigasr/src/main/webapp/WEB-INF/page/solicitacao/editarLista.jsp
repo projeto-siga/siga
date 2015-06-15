@@ -287,12 +287,14 @@
 		<div class="gt-form gt-content-box"
 			style="width: 800px !important; max-width: 800px !important;">
 			<input id="configuracao" type="hidden" name="configuracao">
-			<input id="hisIdIni" type="hidden" name="hisIdIni">
+			<input id="configuracao.hisIdIni" type="hidden" name="configuracao.hisIdIni">
+					<input type="hidden" id="configuracao.lotacao" name="configuracao.lotacao" />
+					<input type="hidden" id="configuracao.dpPessoa" name="configuracao.dpPessoa" />
+					<input type="hidden" id="configuracao.funcaoConfianca" name="configuracao.funcaoConfianca" />
+					<input type="hidden" id="configuracao.cargo" name="configuracao.cargo" />
+					<input type="hidden" id="configuracao.cpGrupo" name="configuracao.cpGrupo" />
+					<input type="hidden" id="configuracao.complexo" name="configuracao.complexo" />
 
-			<input type="hidden" id="configuracao.orgaoUsuario" name="configuracao.orgaoUsuario" />
-			<input type="hidden" id="configuracao.prioridade" name="configuracao.prioridade" />
-			<input type="hidden" id="configuracao.prioridadeNaLista" name="configuracao.prioridadeNaLista" />
-			
 			<div id="divSolicitante" class="gt-form-row gt-width-100">
 				<label>Solicitante</label>
 				<siga:pessoaLotaFuncCargoSelecao nomeSelLotacao="lotacao"
@@ -437,6 +439,7 @@
 		
 		this.opts.dataTable = this.configuracaoInclusaoAutomaticaTable.dataTable;
 	}
+	
 	configuracaoInclusaoAutomaticaService.preparaObjeto = function() {
 		var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo", "cpGrupo"];
 		
@@ -446,6 +449,7 @@
 		    if(inputValue != "")
 			    $("input[name='configuracao." + entry + "']" ).val(inputValue);
 		});
+
 
 	};
 	

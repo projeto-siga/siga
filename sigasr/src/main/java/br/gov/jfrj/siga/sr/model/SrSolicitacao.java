@@ -443,7 +443,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         }
         if (getNumSolicitacao() != null)
             query += " and numSolicitacao = " + getNumSolicitacao();
-        if (getNumSequencia() == null)
+        if (getNumSequencia() == null || getNumSequencia().equals(Long.valueOf(0)))
             query += " and numSequencia is null";
         else
             query += " and numSequencia = " + getNumSequencia();

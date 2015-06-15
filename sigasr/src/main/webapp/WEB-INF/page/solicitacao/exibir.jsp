@@ -515,7 +515,7 @@
                     <input type="hidden" name="ocultas" value="${ocultas}" />
                     <div class="gt-form-row gt-width-66">
                         <label>Data de Término</label>
-                        <input type="text" name="calendario" id="calendario">
+                        <siga:dataCalendar nome="calendario" id="calendario"/>
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Horário de Término</label>
@@ -544,7 +544,7 @@
                 <input type="hidden" name="ocultas" value="${ocultas}" />
                 <div class="gt-form-row gt-width-66">
                     <label>Data</label>
-                    <input type="text" name="calendario" id="calendarioReplanejar">
+                    <siga:dataCalendar nome="calendario" id="calendarioReplanejar"/>
                 </div>
                 <div class="gt-form-row gt-width-66">
                     <label>Hora</label>
@@ -554,8 +554,10 @@
                     <label>Motivo</label>
                     <textarea name="motivo" cols="50" rows="4"> </textarea> 
                 </div>
-                <input type="hidden" name="id" value="${solicitacao.id}" /> 
-                <input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+                <div class="gt-form-row">
+                	<input type="hidden" name="id" value="${solicitacao.id}" /> 
+                	<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+                </div>
             </form>
         </div>
     </siga:modal>
@@ -627,21 +629,6 @@
 				$('#checksolicitacao.fechadoAutomaticamente').prop('value',
 						'false');
 			});
-
-	$(function() {
-		$("#calendario").datepicker({
-			showOn : "button",
-			buttonImage : "/siga/css/famfamfam/icons/calendar.png",
-			buttonImageOnly : true,
-			dateFormat : 'dd/mm/yy'
-		});
-		$("#calendarioReplanejar").datepicker({
-			showOn : "button",
-			buttonImage : "/siga/css/famfamfam/icons/calendar.png",
-			buttonImageOnly : true,
-			dateFormat : 'dd/mm/yy'
-		});
-	});
 
 	$(function() {
 		$("#horario").mask("99:99");

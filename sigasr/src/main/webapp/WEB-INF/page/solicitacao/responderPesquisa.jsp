@@ -14,7 +14,7 @@ $(function(){
 </script>
 <div class="gt-bd gt-cols clearfix" style="padding: 20px;">
 <div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
-		<form action="${linkto[SolicitacaoController].responderPesquisaGravar}", id="formSubmit", enctype="multipart/form-data", onSubmit="javascript: return block();">
+		<form action="${linkTo[SolicitacaoController].responderPesquisaGravar}", id="formSubmit", enctype="multipart/form-data", onSubmit="javascript: return block();">
 		 <input type="hidden" name="id" value="${id}" />
 		 <input type="hidden" name="completo" value="${completo}" />
 		<c:forEach items="${pesquisa.perguntaSet}" var="pergunta">

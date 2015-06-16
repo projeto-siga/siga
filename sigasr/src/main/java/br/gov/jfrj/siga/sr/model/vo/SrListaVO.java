@@ -18,6 +18,8 @@ public class SrListaVO {
     private String descrJustificativa;
     private String descrPriorizacao;
     private boolean ativo;
+    private boolean podeEditar;
+    private boolean podeConsultar;
 
     public SrListaVO(SrLista lista) {
         this.setIdLista(lista.getIdLista());
@@ -103,5 +105,21 @@ public class SrListaVO {
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public boolean isPodeEditar() {
+        return podeEditar;
+    }
+
+    public void setPodeEditar(boolean podeEditar) {
+        this.podeEditar = podeEditar;
+    }
+
+    public boolean isPodeConsultar() {
+        return podeConsultar;
+    }
+
+    public void setPodeConsultar(boolean podeConsultar) {
+        this.podeConsultar = podeConsultar;
     }
 }

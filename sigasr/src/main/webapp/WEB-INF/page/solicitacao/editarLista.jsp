@@ -173,7 +173,7 @@
 	</form>
 </div>
 
-<siga:modal nome="controleAcesso" titulo="Cadastrar PermissÃ£o">
+<siga:modal nome="controleAcesso" titulo="Cadastrar Permissão">
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>

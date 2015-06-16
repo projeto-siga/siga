@@ -57,6 +57,7 @@ import br.gov.jfrj.siga.sr.model.SrTipoMotivoPendencia;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
+import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
@@ -126,7 +127,7 @@ public class SolicitacaoController extends SrController {
         result.include(CADASTRANTE, getCadastrante());
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
         result.include("prioridades", SrPrioridade.getValoresEmOrdem());
-		
+        
         PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
 		
 		result.include("lotacaolotacaoAtualSel", new DpLotacaoSelecao());
@@ -215,7 +216,15 @@ public class SolicitacaoController extends SrController {
         lista.setLotaCadastrante(getLotaTitular());
         validarFormEditarLista(lista);
         lista.salvar();
-        result.use(Results.http()).body(lista.toJson());
+        SrListaVO srListaVO = getSrListaVOComPermissoes(lista);
+        result.use(Results.http()).body(srListaVO.toJson());
+    }
+
+    private SrListaVO getSrListaVOComPermissoes(SrLista lista) {
+        SrListaVO srListaVO = lista.toVO();
+        srListaVO.setPodeConsultar(lista.podeConsultar(getLotaTitular(), getCadastrante()));
+        srListaVO.setPodeEditar(lista.podeEditar(getLotaTitular(), getCadastrante()));
+        return srListaVO;
     }
 
     private void validarFormEditarLista(SrLista lista) {

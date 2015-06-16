@@ -48,7 +48,6 @@
 							<td class="acoes"> 
 								<c:if test="${item.podeEditar(lotaTitular, cadastrante)}">	
 									<siga:desativarReativar id="${item.idLista}" onReativar="listaService.reativar" onDesativar="listaService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
-    									
 									<a onclick="javascript:editarLista(event, $(this).parent().parent().data('json'))"> 
 										<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">
 									</a>
@@ -169,8 +168,8 @@
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
-			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenaçã£o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -242,11 +241,17 @@
 		return tr;
 	}
 
-	function afterGravarLista(tr, designacao) {
-		var acoes = tr.find('td.acoes');
+	function afterGravarLista(tr, objSalvo) {
+	    if (objSalvo.podeEditar) {
+			var acoes = tr.find('td.acoes');
+			if (acoes)
+				acoes = acoes.append(" " + listaService.editarButton);
+	    }
 
-		if (acoes)
-			acoes = acoes.append(" " + listaService.editarButton);
+		if (objSalvo.podeConsultar) {
+		    tr.attr('onclick',"javascript:window.location='${linkTo[SolicitacaoController].exibirLista}"+listaService.getId(objSalvo)+"'");
+		    tr.attr('style',"cursor: pointer;");
+		}
 	}
 
 	/**

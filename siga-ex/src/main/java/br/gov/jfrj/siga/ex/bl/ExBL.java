@@ -1062,6 +1062,7 @@ public class ExBL extends CpBL {
 						) {
 					contains = !contains;
 					mov.setDtFimMov(null);
+					break;
 				}
 			}
 		}

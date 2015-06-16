@@ -20,6 +20,10 @@ $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
 		jqXHR.complete(function() {
 			jQuery.unblockUI();
 		});
+		
+		jqXHR.error(function(error) {
+			$('html').html(error.responseText);
+		});
 	}
 });
 

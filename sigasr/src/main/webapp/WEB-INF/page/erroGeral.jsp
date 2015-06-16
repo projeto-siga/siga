@@ -34,15 +34,11 @@
 	</c:if>
 </c:catch>
 <c:catch var="catchException">
-	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim">
-		<!--
-Unless this text is here, if your page is less than 513 bytes, Internet Explorer will display it's "Friendly HTTP Error Message",
-and your custom error will never be displayed.  This text is just used as filler.
-This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
-This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
-This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
--->
+	<siga:pagina titulo="Erro Geral">
 
+		<jsp:include page="main.jsp"></jsp:include>
+		
+		
 		<div class="gt-bd clearfix">
 			<div class="gt-content clearfix">
 
@@ -96,13 +92,13 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 </c:catch>
 
 <c:if test="${catchException!=null}">
-Erro: ${catchException.message}<br>
-	<br>
-	<br>
-
-	<pre>
-Erro original:
-${exceptionStack}</pre>
+	Erro: ${catchException.message}<br>
+		<br>
+		<br>
+	
+		<pre>
+	Erro original:
+	${exceptionStack}</pre>
 </c:if>
 
 

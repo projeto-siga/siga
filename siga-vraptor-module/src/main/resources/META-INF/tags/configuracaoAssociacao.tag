@@ -237,11 +237,12 @@
 		}
 
 		// Se eh edicao mantem o json atualizado
-		if(obj.idConfiguracao != "") {
+		var idConfiguracao = associacaoService.getId(obj);
+		if(idConfiguracao && idConfiguracao != "") {
 			var linha = this.row(obj);
 			linha.remove();
 			item.associacoesVO.forEach(function(associacao) {
-				if(associacao.idConfiguracao == obj.idConfiguracao) {
+				if(associacao.idConfiguracao == idConfiguracao) {
 					var index = item.associacoesVO.indexOf(associacao);
 					item.associacoesVO.splice(index, 1);
 				}

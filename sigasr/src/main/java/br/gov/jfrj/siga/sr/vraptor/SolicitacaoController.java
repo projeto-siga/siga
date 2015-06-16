@@ -777,20 +777,10 @@ public class SolicitacaoController extends SrController {
         sel = (SrSolicitacao) sel.selecionar(sigla);
         
         if (sel != null) {
-        	result.forwardTo(this).ajaxRetorno(sel);
+        	result.forwardTo(SelecaoController.class).ajaxRetorno(sel);
         }
         else {
-        	result.forwardTo(this).ajaxVazio();
+        	result.forwardTo(SelecaoController.class).ajaxVazio();
         }
-    }
-    
-    @Path("/ajaxRetorno")
-    public void ajaxRetorno(SrSolicitacao sol) {
-    	result.include("sel", sol);
-    }
-    
-    @Path("/ajaxVazio")
-    public void ajaxVazio() {
-    	
     }
 }

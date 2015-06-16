@@ -43,8 +43,6 @@
 
 <siga:modal nome="server_error" titulo="Erro interno no servidor">
 	<div id="erroInterno">
-		Ocorreu um erro interno no sistema. Entre em contato com o administrador.
-		</br>
-		Descri&ccedil;&atilde;o do Erro: <span id="codigoErro"></span> - <span id="responseStatus"></span> - <span id="responseText"></span>
+		<div id="responseText"></div>
 	</div>
 </siga:modal>

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -143,8 +144,16 @@ public class SigaController {
 	public void exception() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(500);
-		result.forwardTo("/WEB-INF/page/erroGeral.jsp");
+		if (requisicaoEhAjax()) {
+		    result.forwardTo("/WEB-INF/page/erroGeralAjax.jsp");
+		} else {
+		    result.forwardTo("/WEB-INF/page/erroGeral.jsp");
+		}
 	}
+
+    private boolean requisicaoEhAjax() {
+        return request.getHeader("X-Requested-With") != null;
+    }
 
 	protected DpLotacao getLotaTitular() {
 		return so.getLotaTitular();

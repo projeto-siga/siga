@@ -14,15 +14,16 @@ var objBlock = { css: {
 }, message: '<h2 style="color : #fff;"> Carregando... </h2>' };
 
 $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+	//adicionar a header "X-Requested-With" que pela convenção é uma requisição ajax.
+	options.beforeSend = function (xhr) { 
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    }
+	
 	if(originalOptions.blockUI == undefined || originalOptions.blockUI == true) {
 		jQuery.blockUI(objBlock);
 
 		jqXHR.complete(function() {
 			jQuery.unblockUI();
-		});
-		
-		jqXHR.error(function(error) {
-			$('html').html(error.responseText);
 		});
 	}
 });

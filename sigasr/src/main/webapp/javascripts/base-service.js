@@ -153,8 +153,6 @@ BaseService.prototype.serializar = function(obj) {
 }
 
 BaseService.prototype.errorHandler = function(error) {
-//	console.error(error);
-
 	if(error.status == 400) {
 		var errors = JSON.parse(error.responseText);
 		for(var i = 0; i < errors.length; i++) {
@@ -163,10 +161,7 @@ BaseService.prototype.errorHandler = function(error) {
 			span.insertAfter($("[name='" + errors[i].key + "']"));
 		}
 	} else {
-		$("#codigoErro").html( error.status);
 		$("#responseText").html( error.responseText);
-		$("#responseStatus").html(error.statusText);
-
 		$('#server_error_dialog').dialog('open');
 	}
 }

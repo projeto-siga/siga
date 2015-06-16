@@ -286,14 +286,8 @@
 	<form id="formConfiguracaoInclusaoAutomatica">
 		<div class="gt-form gt-content-box"
 			style="width: 800px !important; max-width: 800px !important;">
-			<input id="configuracao" type="hidden" name="configuracao">
-			<input id="configuracao.hisIdIni" type="hidden" name="configuracao.hisIdIni">
-					<input type="hidden" id="configuracao.lotacao" name="configuracao.lotacao" />
-					<input type="hidden" id="configuracao.dpPessoa" name="configuracao.dpPessoa" />
-					<input type="hidden" id="configuracao.funcaoConfianca" name="configuracao.funcaoConfianca" />
-					<input type="hidden" id="configuracao.cargo" name="configuracao.cargo" />
-					<input type="hidden" id="configuracao.cpGrupo" name="configuracao.cpGrupo" />
-					<input type="hidden" id="configuracao.complexo" name="configuracao.complexo" />
+			<input id="configuracao" type="hidden" name="configuracao" value="${configuracao.id}"/>
+			<input id="configuracao.hisIdIni" type="hidden" name="configuracao.hisIdIni"/>
 
 			<div id="divSolicitante" class="gt-form-row gt-width-100">
 				<label>Solicitante</label>
@@ -335,7 +329,7 @@
 			<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
 
 			<div class="gt-form-row">
-				<a href="javascript: configuracaoInclusaoAutomaticaService.preparaObjeto();configuracaoInclusaoAutomaticaService.gravar()"
+				<a href="javascript: configuracaoInclusaoAutomaticaService.gravar()"
 					class="gt-btn-medium gt-btn-left">Gravar</a> 
 				<a href="javascript: configuracaoInclusaoAutomaticaService.cancelarGravacao()"
 					class="gt-btn-medium gt-btn-left">Cancelar</a>
@@ -351,12 +345,21 @@
 		 */
 		this.getObjetoParaGravar = function() {
 			var configuracao = Object.create(configuracaoInclusaoAutomatica);
-			configuracao.listaPrioridade = service.getIdLista();
-			configuracao.dpPessoa = configuracao.dpPessoaParaInclusaoAutomatica;
-			configuracao.lotacao = configuracao.lotacaoParaInclusaoAutomatica;
+
+			//TODO  HD ARRUMAR!
+			configuracao["configuracao"] = 0;
+			configuracao["configuracao.listaPrioridade"] = service.getIdLista();
 			configuracao.itemConfiguracaoSet = configuracaoItemAcaoService.getItensArray();
 			configuracao.acoesSet = configuracaoItemAcaoService.getAcoesArray();
-	
+
+			var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo", "cpGrupo"];
+			solicitanteTypes.forEach(function(entry) {
+				var inputName = entry + "Sel.id";
+				var inputValue = $( "input[name='" + inputName + "']" ).val();
+			    if(inputValue != "")
+			    	configuracao["configuracao." + entry] = inputValue;
+			});
+			
 			delete configuracao.solicitante;
 			delete configuracao.lotacaoParaInclusaoAutomatica;
 			
@@ -440,19 +443,6 @@
 		this.opts.dataTable = this.configuracaoInclusaoAutomaticaTable.dataTable;
 	}
 	
-	configuracaoInclusaoAutomaticaService.preparaObjeto = function() {
-		var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo", "cpGrupo"];
-		
-		solicitanteTypes.forEach(function(entry) {
-			var inputName = entry + "Sel.id";
-			var inputValue = $( "input[name='" + inputName + "']" ).val();
-		    if(inputValue != "")
-			    $("input[name='configuracao." + entry + "']" ).val(inputValue);
-		});
-
-
-	};
-	
 	configuracaoInclusaoAutomaticaService.cadastrar = function(title) {
 		// Se eh novo, entao salva
 		if(!$("#idLista").val() && listaService.aplicar() == false) {
@@ -475,7 +465,7 @@
 		return new ConfiguracaoInclusaoAutomaticaDecorator(configuracao, this).getObjetoParaGravar();
 	}
 	configuracaoInclusaoAutomaticaService.getIdLista = function() {
-		return $('[name=idLista]').val();
+		return $('#idLista').val();
 	}
 	
 	configuracaoInclusaoAutomaticaService.getRow = function(configuracaoInclusaoAutomatica) {

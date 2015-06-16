@@ -4,7 +4,7 @@
 <siga:pagina titulo="Disponibilidade de itens de configuração">
 
 	<jsp:include page="../main.jsp"></jsp:include>
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>

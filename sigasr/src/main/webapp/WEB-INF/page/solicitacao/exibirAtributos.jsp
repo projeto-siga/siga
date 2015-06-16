@@ -44,13 +44,13 @@
                 	<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
                     <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" size="70" maxlength="255" />
-                        <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo"/>
+                    <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo"/>
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'TEXT_AREA'}">
                 
-                <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
-                <textarea cols="85" rows="10" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" class="${atributo.idAtributo}"
-                    onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" maxlength="255">${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
+                	<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
+                	<textarea cols="85" rows="10" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" class="${atributo.idAtributo}"
+                    	onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" maxlength="255">${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
                     <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'DATA'}">
@@ -58,7 +58,7 @@
                     <siga:dataCalendar nome="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" id="calendarioAtributo${atributo.idAtributo}"
                          value="${atributoSolicitacaoMap[loop.index].valorAtributo}" onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"
                          cssClass="${atributo.idAtributo}"/>
-                         <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
+                    <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'NUM_INTEIRO'}">
                     <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
@@ -66,21 +66,21 @@
                         onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"
                         name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" maxlength="9"/>
-                        <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
+                    <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'NUM_DECIMAL'}">
                     <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
                     <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" 
                         id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" maxlength="9"/>
-						<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
+					<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
                 </c:if>
                 <c:if test="${atributo.tipoAtributo.name() == 'HORA'}">
                     <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
                     <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" />
-                        <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
-                    	<span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Horário inválido</span>
+                    <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
+                    <span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Horário inválido</span>
                     <script>
                          $(function() {
                              $("#horarioAtributo${atributo.idAtributo}").mask("99:99");

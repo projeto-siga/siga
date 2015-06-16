@@ -110,6 +110,7 @@
 		}
 			
 		$("#checkmostrarDesativados").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativados').checked)
 				location.href = "${linkTo[AcordoController].listar}"  + '?mostrarDesativados=true';
 			else

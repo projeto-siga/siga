@@ -12,11 +12,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
-import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
-import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
-import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
@@ -25,6 +21,7 @@ import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
+import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
@@ -54,12 +51,8 @@ public class DesignacaoController extends SrController {
 		result.include("locais", locais);
 		result.include("pesquisaSatisfacao", pesquisaSatisfacao);
 
-		result.include("dpPessoaSel", new DpPessoaSelecao());
 		result.include("atendenteSel", new DpLotacaoSelecao());
-		result.include("lotacaoSel", new DpLotacaoSelecao());
-		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-		result.include("cargoSel", new DpCargoSelecao());
-		result.include("cpGrupoSel", new CpPerfilSelecao());
+		PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
 	}
 	 
 	@AssertAcesso(ADM_ADMINISTRAR)

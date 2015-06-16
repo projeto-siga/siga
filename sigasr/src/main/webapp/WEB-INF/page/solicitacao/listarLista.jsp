@@ -5,15 +5,11 @@
 	
 	<jsp:include page="../main.jsp"></jsp:include>
 
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
-	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-	<script src="/sigasr/javascripts/jquery.blockUI.js"></script>
 	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
@@ -52,7 +48,6 @@
 							<td class="acoes"> 
 								<c:if test="${item.podeEditar(lotaTitular, cadastrante)}">	
 									<siga:desativarReativar id="${item.idLista}" onReativar="listaService.reativar" onDesativar="listaService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
-    									
 									<a onclick="javascript:editarLista(event, $(this).parent().parent().data('json'))"> 
 										<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">
 									</a>
@@ -144,6 +139,7 @@
 		}
 
 		$("#checkmostrarDesativados").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativados').checked)
 				location.href = "${linkTo[SolicitacaoController].listarLista}" + '?mostrarDesativados=true';
 			else
@@ -172,8 +168,8 @@
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
-			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenaçã£o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -245,11 +241,17 @@
 		return tr;
 	}
 
-	function afterGravarLista(tr, designacao) {
-		var acoes = tr.find('td.acoes');
+	function afterGravarLista(tr, objSalvo) {
+	    if (objSalvo.podeEditar) {
+			var acoes = tr.find('td.acoes');
+			if (acoes)
+				acoes = acoes.append(" " + listaService.editarButton);
+	    }
 
-		if (acoes)
-			acoes = acoes.append(" " + listaService.editarButton);
+		if (objSalvo.podeConsultar) {
+		    tr.attr('onclick',"javascript:window.location='${linkTo[SolicitacaoController].exibirLista}"+listaService.getId(objSalvo)+"'");
+		    tr.attr('style',"cursor: pointer;");
+		}
 	}
 
 	/**

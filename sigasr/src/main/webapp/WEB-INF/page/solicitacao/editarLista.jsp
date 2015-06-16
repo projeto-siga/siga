@@ -173,7 +173,7 @@
 	</form>
 </div>
 
-<siga:modal nome="controleAcesso" titulo="Cadastrar PermissÃ£o">
+<siga:modal nome="controleAcesso" titulo="Cadastrar Permissão">
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
@@ -186,7 +186,7 @@
 						listValue="acronimoOrgaoUsu" theme="simple"
 						value="${orgaoUsuario.idOrgaoUsu}" />
 				</div>
-				<%--  					<span style="color: red">#{error 'orgaoUsuario' /}</span>  --%>
+				<siga:error name="orgaoUsuario"/>
 				<div class="gt-form-row div-modal-table">
 					<label>Local</label>
 					<siga:select name="complexo" list="locais" listKey="idComplexo"

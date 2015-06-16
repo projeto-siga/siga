@@ -25,7 +25,6 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
-import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -58,10 +57,12 @@ import br.gov.jfrj.siga.sr.model.SrTipoMotivoPendencia;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
+import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
+import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 import com.google.gson.Gson;
@@ -126,11 +127,8 @@ public class SolicitacaoController extends SrController {
         result.include(CADASTRANTE, getCadastrante());
         result.include(TIPOS_PERMISSAO_JSON, tiposPermissaoJson);
         result.include("prioridades", SrPrioridade.getValoresEmOrdem());
-		result.include("dpPessoaSel", new DpPessoaSelecao());
-		result.include("lotacaoSel", new DpLotacaoSelecao());
-		result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-		result.include("cargoSel", new DpCargoSelecao());
-		result.include("cpGrupoSel", new CpPerfilSelecao());
+        
+        PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
 		
 		result.include("lotacaolotacaoAtualSel", new DpLotacaoSelecao());
         result.include("dpPessoapessoaAtualSel", new DpPessoaSelecao());
@@ -218,7 +216,15 @@ public class SolicitacaoController extends SrController {
         lista.setLotaCadastrante(getLotaTitular());
         validarFormEditarLista(lista);
         lista.salvar();
-        result.use(Results.http()).body(lista.toJson());
+        SrListaVO srListaVO = getSrListaVOComPermissoes(lista);
+        result.use(Results.http()).body(srListaVO.toJson());
+    }
+
+    private SrListaVO getSrListaVOComPermissoes(SrLista lista) {
+        SrListaVO srListaVO = lista.toVO();
+        srListaVO.setPodeConsultar(lista.podeConsultar(getLotaTitular(), getCadastrante()));
+        srListaVO.setPodeEditar(lista.podeEditar(getLotaTitular(), getCadastrante()));
+        return srListaVO;
     }
 
     private void validarFormEditarLista(SrLista lista) {
@@ -289,6 +295,8 @@ public class SolicitacaoController extends SrController {
         result.include("prioridades", SrPrioridade.getValoresEmOrdem());
         result.include(LOTA_TITULAR, getLotaTitular());
         result.include(CADASTRANTE, getCadastrante());
+        
+        PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
     }
 
     @Path("/gravar")
@@ -548,7 +556,7 @@ public class SolicitacaoController extends SrController {
         solicitacao = solicitacao.getSolicitacaoAtual();
         List<SrPrioridade> prioridades = SrPrioridade.getValoresEmOrdem();
 
-        result.include("solicitacao", solicitacao);
+        result.include(SOLICITACAO, solicitacao);
         result.include("prioridades", prioridades);
     }
     
@@ -602,7 +610,7 @@ public class SolicitacaoController extends SrController {
         solicitacao = solicitacao.getSolicitacaoAtual();
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 
-        result.include("solicitacao", solicitacao);
+        result.include(SOLICITACAO, solicitacao);
         result.include("acoesEAtendentes", acoesEAtendentes);
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
     }
@@ -730,7 +738,7 @@ public class SolicitacaoController extends SrController {
     @Path("/exibir/termoAtendimento")
     public void termoAtendimento(Long id) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
-        result.include("solicitacao", solicitacao);
+        result.include(SOLICITACAO, solicitacao);
     }
     
     @Path("/exibir/desfazerUltimaMovimentacao")
@@ -778,11 +786,10 @@ public class SolicitacaoController extends SrController {
         sel = (SrSolicitacao) sel.selecionar(sigla);
         
         if (sel != null) {
-        	result.include("sel", sel);
-        	result.forwardTo("../../jsp/ajax_retorno.jsp");
+        	result.forwardTo(SelecaoController.class).ajaxRetorno(sel);
         }
         else {
-        	result.forwardTo("../../jsp/ajax_vazio.jsp");
+        	result.forwardTo(SelecaoController.class).ajaxVazio();
         }
     }
 }

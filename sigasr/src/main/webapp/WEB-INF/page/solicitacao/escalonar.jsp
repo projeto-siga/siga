@@ -78,7 +78,7 @@
 				<textarea name="descricao" cols="85" rows="7">${solicitacao.descrSolicitacao}</textarea>
 				<br/><br/>
 				<c:if test="${!solicitacao.isPai() && !solicitacao.isFilha()}">
-					<siga:checkbox name="fechadoAuto" onchange="onchangeCheckCriaFilha()" value="${solicitacao.fechadoAutomaticamente}" />
+					<siga:checkbox name="fechadoAuto" onchange="onchangeCheckCriaFilha()" value="${solicitacao.isFechadoAutomaticamente()}" />
 					Fechar automaticamente a solicitação <b>${codigo}</b>, quando
 					todas as solicitaç&otilde;es filhas forem fechadas pelos seus
 					respectivos atendentes. 
@@ -106,7 +106,7 @@
 						<div class="gt-form-row">
 							<label>Lotação Atendente</label> 
 							<input type="hidden" name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
-							<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="lotacaoSelecao" />
+							<siga:selecao2 tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" />
 							<span style="display: none; color: red" id="atendente">Atendente não informado.</span>
 						</div>
 						<div class="gt-form-row">
@@ -132,19 +132,20 @@
 		
 		// limpa campos do componente de busca - tag selecao
 		function limparCampos() {
-			$("#lotacaoSelecao").val('');
-			$("#lotacaoSelecao_descricao").val('');
-			$("#lotacaoSelecao_sigla").val('');
-			$("#lotacaoSelecaoSpan").html('');
+			$("#formulario_lotacao").val('');
+			$("#formulario_lotacao_descricao").val('');
+			$("#formulario_lotacao_sigla").val('');
+			$("#lotacaoSpan").html('');
 		}
 		
 		function alterarAtendente() {
-			var inputNovoAtendente = $("#lotacaoSelecao").val();
-			var spanNovoAtendente = $("#lotacaoSelecao_sigla").val() + " - "
-					+ $("#lotacaoSelecao_descricao").val();
+			var inputNovoAtendente = $("#formulario_lotacao").val();
+			var spanNovoAtendente = $("#formulario_lotacao_sigla").val() + " - "
+					+ $("#formulario_lotacao_descricao").val();
 			modalFechar('lotacaoAtendente');
 			$("#atendenteNaoDesignado").val(inputNovoAtendente);
 			$("#atendentePadrao").html(spanNovoAtendente);
+			$("#idAtendente").val(inputNovoAtendente);
 		}
 	</script>
 </c:if>

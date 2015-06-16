@@ -467,8 +467,8 @@
             <input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicitação</label> <br />
-                    <input type="hidden" name="idSolicitacaoRecebeJuntada" value="" />
-                    <siga:selecao2 propriedade="idSolicitacaoRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"/>
+                <siga:selecao2 propriedade="idSolicitacaoRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"
+                	tamanho="grande"/>
                 <span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
             </div>
             <div class="gt-form-row gt-width-100" style="padding: 10px 0;">
@@ -488,7 +488,6 @@
             <input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicitação</label> <br />
-                <input type="hidden" name="idSolicitacaoRecebeVinculo" value="" />
                 <siga:selecao2 propriedade="idSolicitacaoRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"
                 	tamanho="grande"/>
                 <span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
@@ -515,7 +514,7 @@
                     <input type="hidden" name="ocultas" value="${ocultas}" />
                     <div class="gt-form-row gt-width-66">
                         <label>Data de Término</label>
-                        <input type="text" name="calendario" id="calendario">
+                        <siga:dataCalendar nome="calendario" id="calendario"/>
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Horário de Término</label>
@@ -544,7 +543,7 @@
                 <input type="hidden" name="ocultas" value="${ocultas}" />
                 <div class="gt-form-row gt-width-66">
                     <label>Data</label>
-                    <input type="text" name="calendario" id="calendarioReplanejar">
+                    <siga:dataCalendar nome="calendario" id="calendarioReplanejar"/>
                 </div>
                 <div class="gt-form-row gt-width-66">
                     <label>Hora</label>
@@ -554,8 +553,10 @@
                     <label>Motivo</label>
                     <textarea name="motivo" cols="50" rows="4"> </textarea> 
                 </div>
-                <input type="hidden" name="id" value="${solicitacao.id}" /> 
-                <input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+                <div class="gt-form-row">
+                	<input type="hidden" name="id" value="${solicitacao.id}" /> 
+                	<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
+                </div>
             </form>
         </div>
     </siga:modal>
@@ -627,21 +628,6 @@
 				$('#checksolicitacao.fechadoAutomaticamente').prop('value',
 						'false');
 			});
-
-	$(function() {
-		$("#calendario").datepicker({
-			showOn : "button",
-			buttonImage : "/siga/css/famfamfam/icons/calendar.png",
-			buttonImageOnly : true,
-			dateFormat : 'dd/mm/yy'
-		});
-		$("#calendarioReplanejar").datepicker({
-			showOn : "button",
-			buttonImage : "/siga/css/famfamfam/icons/calendar.png",
-			buttonImageOnly : true,
-			dateFormat : 'dd/mm/yy'
-		});
-	});
 
 	$(function() {
 		$("#horario").mask("99:99");

@@ -108,6 +108,7 @@
 
 	$(document).ready(function() {
 		$("#checkmostrarDesativados").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativados').checked)
 				location.href = '${linkTo[PesquisaSatisfacaoController].listar}' + '?mostrarDesativados=true';
 			else

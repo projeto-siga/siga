@@ -95,7 +95,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     private static final String HH_MM = "HH:mm";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
-    private static final String OPERACAO_NAO_PERMITIDA = "Operação não permitida";
+    private static final String OPERACAO_NAO_PERMITIDA = "Opera��o n�o permitida";
 
     private static final long serialVersionUID = 1L;
 
@@ -819,8 +819,8 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     	List<SrAtributoSolicitacaoMap> list = new ArrayList<>();
     	if(meuAtributoSolicitacaoSet != null){
     		for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
-    			//if(att.getAtributo() != null)
-    			list.add(new SrAtributoSolicitacaoMap(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao()));
+    			if(att.getAtributo() != null)
+    				list.add(new SrAtributoSolicitacaoMap(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao()));
     		}
     	}
     	Collections.sort(list, new Comparator<SrAtributoSolicitacaoMap>() {
@@ -1314,16 +1314,16 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
          * operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));
          */
 
-        operacoes.add(new SrOperacao("cross", "Cancelar Solicitação", podeCancelar(pess, lota), "cancelar"));
+        operacoes.add(new SrOperacao("cross", "Cancelar Solicita��o", podeCancelar(pess, lota), "cancelar"));
 
         operacoes.add(new SrOperacao("lock_open", "Reabrir", podeReabrir(pess, lota), "reabrir"));
 
-        operacoes.add(new SrOperacao("clock_pause", "Incluir Pendência", podeDeixarPendente(pess, lota), "deixarPendente", MODAL_TRUE));
+        operacoes.add(new SrOperacao("clock_pause", "Incluir Pend�ncia", podeDeixarPendente(pess, lota), "deixarPendente", MODAL_TRUE));
 
         /*
          * operacoes.add(new SrOperacao("clock_edit", "Alterar Prazo", podeAlterarPrazo(lotaTitular, titular), "alterarPrazo", "modal=true"));
          */
-        operacoes.add(new SrOperacao("cross", "Excluir", "excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicitação?", null, "", ""));
+        operacoes.add(new SrOperacao("cross", "Excluir", "excluir", podeExcluir(pess, lota), "Deseja realmente excluir esta solicita��o?", null, "", ""));
 
         operacoes.add(new SrOperacao("attach", "Anexar Arquivo", podeAnexarArquivo(pess, lota), "anexarArquivo", MODAL_TRUE + "&solicitacao.id=" + getId()));
 
@@ -1984,7 +1984,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
         if (podeFecharPaiAutomatico())
-            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicita��o fechada automaticamente");
+            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicitação fechada automaticamente");
 
         /*
          * if (temPesquisaSatisfacao()) enviarPesquisa();
@@ -1992,7 +1992,6 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     }
 
     public void enviarPesquisa() throws Exception {
-        // Implementar
     	CorreioHolder
     		.get()
     		.pesquisaSatisfacao(this);

@@ -15,9 +15,6 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
-import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
-import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
-import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -32,6 +29,7 @@ import br.gov.jfrj.siga.sr.model.SrPesquisa;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
+import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
@@ -76,14 +74,11 @@ public class ItemConfiguracaoController extends SrController {
         // includes para o componente de Designação
         result.include("modoExibicao", "item");
         result.include("designacoes", designacoes);
-        result.include("dpPessoaSel", new DpPessoaSelecao());
         result.include("atendenteSel", new DpLotacaoSelecao());
-        result.include("lotacaoSel", new DpLotacaoSelecao());
-        result.include("funcaoConfiancaSel", new DpFuncaoConfiancaSelecao());
-        result.include("cargoSel", new DpCargoSelecao());
-        result.include("cpGrupoSel", new CpPerfilSelecao());
         result.include("itemConfiguracao", new SelecionavelVO(null, null));
         result.include("acao", new SelecionavelVO(null, null));
+        
+        PessoaLotaFuncCargoSelecaoHelper.adicionarCamposSelecao(result);
     }
 
     @AssertAcesso(ADM_ADMINISTRAR)
@@ -209,8 +204,9 @@ public class ItemConfiguracaoController extends SrController {
     @Path("/selecionar")
     public void selecionar(String sigla, SrSolicitacao sol) throws Exception {
         SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla, sol.getItensDisponiveis());
-        result.include("selecionar", sel);
-        result.use(Results.status()).ok();
+        
+        result
+        	.forwardTo(SelecaoController.class)
+        	.ajaxRetorno(sel);
     }
-
 }

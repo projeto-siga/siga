@@ -129,7 +129,7 @@
 				<c:forEach var="mov" items="${m.movs}">
 					<c:if
 						test="${ (exibirCompleto == 'true') or (mov.idTpMov != 14 and
-							          not mov.cancelada)}">
+							          not mov.cancelada and not mov.mov.exMovimentacaoRef.cancelada) }">
 						<tr class="${mov.classe} ${mov.disabled}">
 							<c:if test="${ (exibirCompleto == 'true')}">
 								<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />

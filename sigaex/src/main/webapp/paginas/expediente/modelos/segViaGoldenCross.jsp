@@ -21,7 +21,7 @@
 	</mod:grupo>
 	
 	<mod:grupo titulo="Pedido de 2&ordf; Via do Titular">
-		<mod:selecao var="situacaoTitular" titulo="Pedido do Titular ?" opcoes="Não;Sim" reler="ajax" idAjax="sitTitularAjax" />
+		<mod:selecao var="situacaoTitular" titulo="Pedido do Titular ?" opcoes="NÃ£o;Sim" reler="ajax" idAjax="sitTitularAjax" />
 			<mod:grupo depende="sitTitularAjax">
 				<c:if test="${situacaoTitular eq 'Sim'}">
 					<mod:texto titulo="Nome do Titular:" var="nometit" largura="60" />
@@ -40,7 +40,7 @@
 							<mod:texto titulo="Dependente ${i}:" var="nomedep${i}" largura="60"/>
 						</mod:grupo>
 						<mod:grupo largura="40">
-							<mod:selecao titulo="Tipo Dependente:" var="tipodep${i}" opcoes="[Selecione];Filho menor de 18 anos;Filho enter 18 e 24 anos;Enteado;Menor sob guarda;Filho maior inválido;Outros" reler="ajax" idAjax="tipoDepAjax${i}" />
+							<mod:selecao titulo="Tipo Dependente:" var="tipodep${i}" opcoes="[Selecione];Filho menor de 18 anos;Filho enter 18 e 24 anos;Enteado;Menor sob guarda;Filho maior invÃ¡lido;Outros" reler="ajax" idAjax="tipoDepAjax${i}" />
 					       		<mod:grupo depende="tipoDepAjax${i}">
 					       			<c:if test="${requestScope[f:concat('tipodep',i)] eq 'Outros'}">
 						         		<mod:texto var="outroTexto${i}" titulo="Outros:" largura="40" />
@@ -59,7 +59,7 @@
 						<mod:texto titulo="Agregado ${j}:" var="nomeagr${j}" largura="60" />
 					</mod:grupo>
 					<mod:grupo largura="40">
-						<mod:selecao titulo="Tipo de agregado:" var="tipoagr${j}" opcoes="[Selecione];Pai;Mãe;Outros" reler="ajax" idAjax="tipoagrAjax${j}"/>
+						<mod:selecao titulo="Tipo de agregado:" var="tipoagr${j}" opcoes="[Selecione];Pai;MÃ£e;Outros" reler="ajax" idAjax="tipoagrAjax${j}"/>
 							<mod:grupo depende="tipoagrAjax${j}">
 						 		<c:if test="${requestScope[f:concat('tipoagr',j)] eq 'Outros'}">
 						         	<mod:texto var="outroTextoagr${j}" titulo="Outros:" largura="40" />
@@ -114,7 +114,7 @@
 
 			<table width="100%" border="1" cellpadding="3">
 				<tr><td align="center" colspan="2">DEPENDENTES DIRETOS</td></tr>
-				<tr><td>Cônjuge/Companheiro(a): ${conjcomp }</td></tr>
+				<tr><td>CÃ´njuge/Companheiro(a): ${conjcomp }</td></tr>
 			</table>
 			<c:forEach var="i" begin="1" end="${quantidadeDependentes}">
 					<table width="100%" border="1" cellpadding="3">

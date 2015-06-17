@@ -37,22 +37,22 @@
 		<br/>
 		<br/>
 		<table width="100%" border="0"  bgcolor="#FFFFFF">
-			<tr><td width="50%" bgcolor="#FFFFFF"><b>PREG√O:</b></td></tr>
+			<tr><td width="50%" bgcolor="#FFFFFF"><b>PREG√ÉO:</b></td></tr>
 			<tr><td bgcolor="#FFFFFF"><b>PROCESSO:</b></td></tr>
-			<tr><td bgcolor="#FFFFFF"><b>GER NCIA:</b></td></tr>
-			<tr><td bgcolor="#FFFFFF"><b>VIG NCIA DA ATA:</b></td></tr>
+			<tr><td bgcolor="#FFFFFF"><b>GER√äNCIA:</b></td></tr>
+			<tr><td bgcolor="#FFFFFF"><b>VIG√äNCIA DA ATA:</b></td></tr>
 		</table>
 		<br/>
-		<p style="font-size:10" align="center"><b>SOLICITA«√O DE FORNECIMENTO REGISTRO DE PRE«OS</b></p>
+		<p style="font-size:10" align="center"><b>SOLICITA√á√ÉO DE FORNECIMENTO REGISTRO DE PRE√áOS</b></p>
 		<br/>
 		<table width="100%" border="1" bordercolor="#000000"  bgcolor="#000000" >
 			<tr align="center" >
 				<td rowspan="2" bgcolor="#FFFFFF">Item</td>
-				<td rowspan="2" bgcolor="#FFFFFF">EspecificaÁ„o Objeto</td>
+				<td rowspan="2" bgcolor="#FFFFFF">Especifica√ß√£o Objeto</td>
 				<td rowspan="2" bgcolor="#FFFFFF">Fornecedor</td>
-				<td rowspan="2" bgcolor="#FFFFFF">CND<br/>Validade e localizaÁ„o</td>
-				<td rowspan="2" bgcolor="#FFFFFF">CRF<br/>Validade e localizaÁ„o</td>
-				<td rowspan="2" bgcolor="#FFFFFF">CCN<br/>Validade e localizaÁ„o</td>
+				<td rowspan="2" bgcolor="#FFFFFF">CND<br/>Validade e localiza√ß√£o</td>
+				<td rowspan="2" bgcolor="#FFFFFF">CRF<br/>Validade e localiza√ß√£o</td>
+				<td rowspan="2" bgcolor="#FFFFFF">CCN<br/>Validade e localiza√ß√£o</td>
 				<td colspan="4" bgcolor="#FFFFFF">Quantidade<br/></td>
 				<td rowspan="2" bgcolor="#FFFFFF">Itens com<br/>aditamento contratual<br/>(25%)</td>
 			</tr>	
@@ -74,11 +74,11 @@
 		<br/><br/><br/>
 	<%--<table width="90%" border="0" bordercolor="#000000" bgcolor="#FFFFFF" cellpadding="0" cellspacing="0" align="right">
 		   <tr><td align="left">Rio de Janeiro,<br/><br/></td></tr>
-		   <tr><td align="left">¿ subsecretaria de AdministraÁ„o, solicitando emiss„o de Nota de Empenho para aquisiÁ„o do(s) item(ns) acima relacionado(s).</td></tr>  
+		   <tr><td align="left">√Ä subsecretaria de Administra√ß√£o, solicitando emiss√£o de Nota de Empenho para aquisi√ß√£o do(s) item(ns) acima relacionado(s).</td></tr>  
 		</table> --%>
 		<p align="left" style="text-indent: 2cm;">${doc.dtExtenso}</p>
 		
-		<p style="text-indent: 2cm;">¿ subsecretaria de AdministraÁ„o, solicitando emiss„o de Nota de Empenho para aquisiÁ„o do(s) item(ns) acima relacionado(s).</p>
+		<p style="text-indent: 2cm;">√Ä subsecretaria de Administra√ß√£o, solicitando emiss√£o de Nota de Empenho para aquisi√ß√£o do(s) item(ns) acima relacionado(s).</p>
 		
 		<br/><br/><br/><br/><br/><br/>
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />

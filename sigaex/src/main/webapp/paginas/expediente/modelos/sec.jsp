@@ -6,9 +6,9 @@
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="A SEC est· na ProgramaÁ„o Anual?">
+		<mod:grupo titulo="A SEC est√° na Programa√ß√£o Anual?">
 			<mod:radio titulo="Sim" var="progrAnual" valor="1" marcado="Sim" />
-			<mod:radio titulo="N„o" var="progrAnual" valor="2" />
+			<mod:radio titulo="N√£o" var="progrAnual" valor="2" />
 		</mod:grupo>
 	</mod:entrevista>
 
@@ -43,7 +43,7 @@
 							</tr>
 						</c:if>
 						<tr>
-							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
+							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
 						</tr>
 					</table>
 				</td>
@@ -78,7 +78,7 @@
 							</tr>
 						</c:if>
 						<tr>
-							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
+							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
 						</tr>
 					</table>
 				</td>
@@ -88,7 +88,7 @@
 		<br />
 		<br />
 		<c:if test="${progrAnual =='2'}">
-			<c:set var="varSN" value="n„o" scope="request" />
+			<c:set var="varSN" value="n√£o" scope="request" />
 		</c:if>
 		<div style="font-family: Arial; font-size: 10pt;">
 		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="4">
@@ -96,7 +96,7 @@
 				<td colspan="2" style="border-collapse: collapse; border-color: black; font-family:Arial;" >Objeto:&nbsp;${doc.descrDocumento}</td>
 			</tr>
 			<tr>
-				<td colspan="2" style="border-collapse: collapse; border-color: black; font-family:Arial;" ><b>A SEC ${varSN} est· na ProgramaÁ„o Anual.</b></td>
+				<td colspan="2" style="border-collapse: collapse; border-color: black; font-family:Arial;" ><b>A SEC ${varSN} est√° na Programa√ß√£o Anual.</b></td>
 			</tr>
 		</table>
 		</div>
@@ -130,8 +130,8 @@
 	</mod:documento>
 	<mod:assinatura>
 		<c:if test="${doc.orgaoUsuario.idOrgaoUsu == '1'}">
-			{SEC Assinada! Iniciando procedimento "ContrataÁ„o: fase de an·lise".}
-			<c:set var="f" value="${f:criarWorkflow('ContrataÁ„o: fase de an·lise', doc, cadastrante, titular, lotaCadastrante, lotaTitular)}" />
+			{SEC Assinada! Iniciando procedimento "Contrata√ß√£o: fase de an√°lise".}
+			<c:set var="f" value="${f:criarWorkflow('Contrata√ß√£o: fase de an√°lise', doc, cadastrante, titular, lotaCadastrante, lotaTitular)}" />
 	    </c:if>
 	</mod:assinatura>
 </mod:modelo>

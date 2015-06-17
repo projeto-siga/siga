@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="Texto a ser inserido no corpo da ordem de serviço">
+		<mod:grupo titulo="Texto a ser inserido no corpo da ordem de serviÃ§o">
 			<mod:grupo>
 				<mod:editor titulo="" var="texto_ordem_servico" />
 			</mod:grupo>
@@ -37,7 +37,7 @@
 					<br/>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo} de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}</p></td>
+							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ORDEM DE SERVIÃ‡O N&ordm; ${doc.codigo} de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}</p></td>
 						</tr>
 					</table>
 				</td>
@@ -49,7 +49,7 @@
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoCentralizado.jsp" />
 		FIM CABECALHO -->
 		
-		<!-- INICIO NUMERO <span style="font-weight: bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo}</span> FIM NUMERO -->
+		<!-- INICIO NUMERO <span style="font-weight: bold;">ORDEM DE SERVIÃ‡O N&ordm; ${doc.codigo}</span> FIM NUMERO -->
 		
 		<mod:letra tamanho="${tl}">
 		

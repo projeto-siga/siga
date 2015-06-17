@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-CONCESSÃO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
+CONCESSÃƒO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
 - PEDIDO -->
 
 
@@ -40,7 +40,7 @@ CONCESSÃO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 		<center><c:import url="/paginas/expediente/modelos/inc_tit_declaracao.jsp" /></center>
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		Eu, ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.sigla}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao},
-		<b>DECLARO</b> , a fim de fazer prova junto ao Plano de Saúde, que <b> ${nomedep}</b> permanece na codição de solteiro(a), estudante e vive sob minha dependência econômica.
+		<b>DECLARO</b> , a fim de fazer prova junto ao Plano de SaÃºde, que <b> ${nomedep}</b> permanece na codiÃ§Ã£o de solteiro(a), estudante e vive sob minha dependÃªncia econÃ´mica.
 		</p>
 		<br><br>		
 		<c:import url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" />

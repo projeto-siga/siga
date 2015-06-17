@@ -8,7 +8,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -37,15 +37,15 @@
 		var data = document.getElementsByName('dtDispon')[0].value;
 		var i = tamanho();	
 		if (data==null || data=="") {			
-			alert("Preencha a data para disponibilização.");
+			alert("Preencha a data para disponibilizaÃ§Ã£o.");
 			document.getElementById('dt_dispon').focus();		
 		}else {
 			if (i>256) {
-				alert('Descrição com mais de 256 caracteres');
+				alert('DescriÃ§Ã£o com mais de 256 caracteres');
 				document.getElementById('descrPublicacao').focus();	
 			}else {
 				if (i<=0) {
-					alert('Descrição deve ser preenchida');
+					alert('DescriÃ§Ã£o deve ser preenchida');
 					document.getElementById('descrPublicacao').focus();	
 				}else	
 					frm.submit();
@@ -66,12 +66,12 @@
 	}		
 </script>
 
-<%--<c:set var="titulo_pagina" scope="request">Movimentação</c:set>
+<%--<c:set var="titulo_pagina" scope="request">MovimentaÃ§Ã£o</c:set>
 <c:import context="/siga" url="/paginas/cabecalho.jsp" />--%>
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Solicitação de Publicação - ${doc.codigo}</h2>
+			<h2>SolicitaÃ§Ã£o de PublicaÃ§Ã£o - ${doc.codigo}</h2>
 			<div class="gt-content-box gt-for-table">			
 			<form name="frm" action="pedir_publicacao_gravar.action"
 					namespace="/expediente/mov" cssClass="form" method="GET">
@@ -82,14 +82,14 @@
 			</ww:if>		
 			<table class="gt-form-table">
 				<tr class="header">
-					<td colspan="2">Dados da Solicitação</td>
+					<td colspan="2">Dados da SolicitaÃ§Ã£o</td>
 				</tr>
 				<tr>					
 					<c:choose>
 						<c:when test="${cadernoDJEObrigatorio}">
 						    <c:set var="disabledTpMat">true</c:set> 
 						    <input type="hidden" name="tipoMateria" value="${tipoMateria}" />	
-							<td>Tipo de Matéria:</td>												
+							<td>Tipo de MatÃ©ria:</td>												
 							<td>
 							<c:choose>
 								<c:when test="${tipoMateria eq 'A'}">
@@ -103,55 +103,55 @@
 						</c:when>
 						<c:otherwise>
 							<td colspan="2">
-								<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de Matéria"  value="${tipoMateria}"  disabled="${disabledTpMat}" />
+								<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de MatÃ©ria"  value="${tipoMateria}"  disabled="${disabledTpMat}" />
 							</td>
 						</c:otherwise>	
 					</c:choose>
 				</tr>
 				<tr>
-					<td>Próxima data para disponibilização:</td>
+					<td>PrÃ³xima data para disponibilizaÃ§Ã£o:</td>
 					<td>${proximaDataDisponivelStr}</td>
 				</tr>
 				<tr>					
 					<td colspan="2"><ww:textfield name="dtDispon" id="dt_dispon"
 					onblur="javascript:verifica_data(this,true);prever_data();"
-					label="Data para disponibilização" /> 
+					label="Data para disponibilizaÃ§Ã£o" /> 
 					</td>
 				</tr>						
 				<tr>
-					<td>Data de publicação:</td>
+					<td>Data de publicaÃ§Ã£o:</td>
 					<td><div id="dt_publ"></div></td>
 				</tr>				
 				<tr>
-					<td>Lotação de publicação:</td>
+					<td>LotaÃ§Ã£o de publicaÃ§Ã£o:</td>
 					<td><ww:select name="idLotPublicacao" list="listaLotPubl" listKey="idLotacao"
 						        listValue="siglaLotacao" value="${idLotDefault}" onchange="javascript: buscaNomeLota();" theme="simple"  />
 								&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span></td>		
 				</tr>				
 					
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
-							rows="5" cssClass="gt-form-textarea" label="Descrição do documento"
+							rows="5" cssClass="gt-form-textarea" label="DescriÃ§Ã£o do documento"
 							onkeyup="contaLetras();" />
 				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>
 								
 				<tr class="button">
 					<td colspan="2"><input type="button" onclick="javascript: validar();" value="Ok" class="gt-btn-medium gt-btn-left"  ${disabled}/> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
-						<a href="/sigaex/arquivo/download.action?arquivo=${mob.referenciaRTF}" class="gt-btn-large gt-btn-left">Visualizar Publicação</a></td>					
+						<a href="/sigaex/arquivo/download.action?arquivo=${mob.referenciaRTF}" class="gt-btn-large gt-btn-left">Visualizar PublicaÃ§Ã£o</a></td>					
 				</tr>
 			</table>
 		</form>
 		<span style="font-weight:bold; color: red">${mensagem}</span>	
 	</div>	
-	<span style="margin-left: 0.5cm;color: red;"><b>Atenção:</b></span>
+	<span style="margin-left: 0.5cm;color: red;"><b>AtenÃ§Ã£o:</b></span>
 	<ul>
 	<li><span style="font-weight:bold">Data para
-	Disponibilização</span> - data em que a matéria efetivamente aparece no
+	DisponibilizaÃ§Ã£o</span> - data em que a matÃ©ria efetivamente aparece no
 	site</li>
-	<li><span style="font-weight:bold">Data de Publicação</span> -
-	a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
+	<li><span style="font-weight:bold">Data de PublicaÃ§Ã£o</span> -
+	a Data de DisponibilizaÃ§Ã£o + 1, conforme prevÃª art. 4Âº, parÃ¡grafo 3Âº
 	da Lei 11419 / 2006</li>
-	<li><span style="font-weight:bold">Visualizar Publicação</span> -
+	<li><span style="font-weight:bold">Visualizar PublicaÃ§Ã£o</span> -
 	Permite visualizar o documento antes de ser enviado para o DJE.</li>
 	</ul>		
 	</div>	
@@ -161,6 +161,6 @@
 </script>
 
 
-<!--  tabela do rodapé -->
+<!--  tabela do rodapÃ© -->
 <%--<c:import context="/siga" url="/paginas/rodape.jsp" />--%>
 </siga:pagina>

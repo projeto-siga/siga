@@ -9,10 +9,10 @@
 	<mod:entrevista>
 		<mod:grupo>
 			<mod:selecao titulo="Local" var="local" reler="sim"
-				opcoes="Selecione;Passeio;Av. MÈxico;Av. Bar„o de TeffÈ;Almirante Barroso" />
+				opcoes="Selecione;Passeio;Av. M√©xico;Av. Bar√£o de Teff√©;Almirante Barroso" />
 
 			<c:choose>
-				<c:when test="${local eq 'Av. MÈxico'}">
+				<c:when test="${local eq 'Av. M√©xico'}">
 					<b><mod:mensagem texto="Somente para Juizes Federais"
 						vermelho="Nao"></mod:mensagem>	
 					<mod:oculto var="observacao" valor=" "/>								
@@ -23,9 +23,9 @@
 						vermelho="Nao"></mod:mensagem>
 					<mod:oculto var="observacao" valor=" "/>							
 				</c:when>
-				<c:when test="${local eq 'Av. Bar„o de TeffÈ'}">
+				<c:when test="${local eq 'Av. Bar√£o de Teff√©'}">
 					<b><mod:mensagem
-						texto="Somente para JuÌzes Federais e Diretores de Secretaria/ Subsecretaria."
+						texto="Somente para Ju√≠zes Federais e Diretores de Secretaria/ Subsecretaria."
 						vermelho="Nao"></mod:mensagem> </b>
 					<mod:oculto var="observacao" valor=" "/>
 				</c:when>
@@ -54,9 +54,9 @@
 			<b><mod:mensagem texto="${observacao}" vermelho="Nao"></mod:mensagem>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:mensagem titulo="AtenÁ„o"
-				texto="Preencha o destinat·rio com DSEG e, apÛs finalizar, transfira para a DSEG.
-				       Anexar o CRLV, de acordo com a portaria n∞ RJ-PDG-2012/5 de 14 de marÁo de 2012." vermelho="Sim" />
+			<mod:mensagem titulo="Aten√ß√£o"
+				texto="Preencha o destinat√°rio com DSEG e, ap√≥s finalizar, transfira para a DSEG.
+				       Anexar o CRLV, de acordo com a portaria n¬∞ RJ-PDG-2012/5 de 14 de mar√ßo de 2012." vermelho="Sim" />
 		</mod:grupo>	
 	</mod:entrevista>
 
@@ -84,7 +84,7 @@
 					<br/><br/>
 					<table width="100%" border="0" >						
 						<tr>
-						<td align="right"><br/><br/><b>SOLICITA&Ccedil;&Atilde;O N∫ ${doc.codigo}</b>
+						<td align="right"><br/><br/><b>SOLICITA&Ccedil;&Atilde;O N¬∫ ${doc.codigo}</b>
 						</td>
 						</tr>
 						<tr>
@@ -104,8 +104,8 @@
 		<table border="1" width="100%">
 			<tr>
 				<td align="center"><mod:letra tamanho="${tl}">
-					<p style="font-family: Arial; font-weight: bold">SOLICITA«√O DE
-					CART√O DE ESTACIONAMENTO - ${fn:toUpperCase(local)}</p>
+					<p style="font-family: Arial; font-weight: bold">SOLICITA√á√ÉO DE
+					CART√ÉO DE ESTACIONAMENTO - ${fn:toUpperCase(local)}</p>
 				</mod:letra></td>
 			</tr>
 		</table>
@@ -125,12 +125,12 @@
 						</tr>
 						<tr>
 							<td>
-								Cargo/FunÁ„o: ${f:maiusculasEMinusculas(doc.subscritor.cargo.nomeCargo)} &nbsp; ${f:maiusculasEMinusculas(doc.subscritor.funcaoConfianca.nomeFuncao)}
+								Cargo/Fun√ß√£o: ${f:maiusculasEMinusculas(doc.subscritor.cargo.nomeCargo)} &nbsp; ${f:maiusculasEMinusculas(doc.subscritor.funcaoConfianca.nomeFuncao)}
 							</td>
 						</tr>
 						<tr>
 							<td>
-								LotaÁ„o: ${doc.subscritor.lotacao.descricao}
+								Lota√ß√£o: ${doc.subscritor.lotacao.descricao}
 							</td>
 						</tr>
 					</table>
@@ -140,7 +140,7 @@
 		<br />
 		<table border="1" width="100%">
 			<tr bgcolor="#999999">
-				<td><b>DADOS DO VEÕCULO</b></td>
+				<td><b>DADOS DO VE√çCULO</b></td>
 			</tr>
 			<tr>
 				<td>

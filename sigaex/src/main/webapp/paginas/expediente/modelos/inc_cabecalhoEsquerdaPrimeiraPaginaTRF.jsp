@@ -23,7 +23,7 @@
 				<tr>
 					<td width="100%" align="left" >
 						<p style="font-family: AvantGarde Bk BT, Arial; font-size: 15pt;">
-							TRIBUNAL REGIONAL FEDERAL DA 2ª REGI&Atilde;O
+							TRIBUNAL REGIONAL FEDERAL DA 2Âª REGI&Atilde;O
 						</p>
 					</td>
 				</tr>

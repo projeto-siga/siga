@@ -7,7 +7,7 @@
 	<mod:entrevista>
 		<c:if test="${empty esconderTexto}">
 			<mod:grupo
-				titulo="Texto a ser inserido no corpo da Portaria da Presidência">
+				titulo="Texto a ser inserido no corpo da Portaria da PresidÃªncia">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_ptp" />
 				</mod:grupo>
@@ -15,11 +15,11 @@
 		</c:if>
 		<br></br>
 		<mod:grupo>
-			<mod:texto titulo="<b>Título da Portaria</b>" var="tit_ptp" largura="60"/>
+			<mod:texto titulo="<b>TÃ­tulo da Portaria</b>" var="tit_ptp" largura="60"/>
 		</mod:grupo> 
 		<br></br>
 		<mod:grupo>
-			<mod:texto titulo="<b>Sub-Título</b>" var="subtit_ptp" largura="40"/>
+			<mod:texto titulo="<b>Sub-TÃ­tulo</b>" var="subtit_ptp" largura="40"/>
 		</mod:grupo> 
 		<br></br>
 	</mod:entrevista>

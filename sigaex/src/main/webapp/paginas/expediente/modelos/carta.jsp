@@ -21,15 +21,15 @@
 					largura="60" />
 			</mod:grupo>
 		</mod:grupo>
-		<mod:grupo titulo="Dados do destinatário">
+		<mod:grupo titulo="Dados do destinatÃ¡rio">
 			<c:if
 				test="${(not empty destinatarioSel.id) and (tipoDestinatario == 1)}">
 				<mod:grupo>
-					<mod:texto titulo="Forma de endereçamento" var="enderecamento_dest"
+					<mod:texto titulo="Forma de endereÃ§amento" var="enderecamento_dest"
 						largura="30" />
 				</mod:grupo>
 				<mod:caixaverif
-					titulo="Especificar manualmente todos os dados do destinatário"
+					titulo="Especificar manualmente todos os dados do destinatÃ¡rio"
 					var="especificarDest" reler="sim" />
 				<c:choose>
 					<c:when test="${especificarDest == 'Sim'}">
@@ -40,7 +40,7 @@
 							<mod:texto titulo="Cargo" var="cargo_dest" largura="60" />
 						</mod:grupo>
 						<mod:grupo>
-							<mod:texto titulo="Órgão" var="orgao_dest" largura="60" />
+							<mod:texto titulo="Ã“rgÃ£o" var="orgao_dest" largura="60" />
 						</mod:grupo>
 					</c:when>
 					<c:otherwise>
@@ -61,7 +61,7 @@
 					<mod:texto titulo="Cargo" var="cargo_dest" largura="60" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="Órgão" var="orgao_dest" largura="60" />
+					<mod:texto titulo="Ã“rgÃ£o" var="orgao_dest" largura="60" />
 				</mod:grupo>
 			</c:if>
 			<c:if
@@ -73,10 +73,10 @@
 				<mod:grupo>
 					<mod:texto titulo="Cargo" var="cargo_dest" largura="60" />
 				</mod:grupo>
-				<mod:texto titulo="Órgão" var="orgao_dest" largura="60" />
+				<mod:texto titulo="Ã“rgÃ£o" var="orgao_dest" largura="60" />
 
 				<mod:grupo>
-					<mod:texto titulo="Forma de endereçamento" var="enderecamento_dest"
+					<mod:texto titulo="Forma de endereÃ§amento" var="enderecamento_dest"
 						largura="30" />
 				</mod:grupo>
 			</c:if>
@@ -89,16 +89,16 @@
 					<mod:texto titulo="Cargo" var="cargo_dest" largura="60" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="Forma de endereçamento" var="enderecamento_dest"
+					<mod:texto titulo="Forma de endereÃ§amento" var="enderecamento_dest"
 						largura="30" />
 				</mod:grupo>
-				<mod:caixaverif titulo="Especificar manualmente o Orgão"
+				<mod:caixaverif titulo="Especificar manualmente o OrgÃ£o"
 					var="especificarDest" reler="sim" />
 				<c:choose>
 					<c:when test="${especificarDest == 'Sim'}">
 
 						<mod:grupo>
-							<mod:texto titulo="Órgão" var="orgao_dest" largura="60" />
+							<mod:texto titulo="Ã“rgÃ£o" var="orgao_dest" largura="60" />
 						</mod:grupo>
 					</c:when>
 					<c:otherwise>
@@ -115,10 +115,10 @@
 				<mod:grupo>
 					<mod:texto titulo="Cargo" var="cargo_dest" largura="60" />
 				</mod:grupo>
-				<mod:texto titulo="Órgão" var="orgao_dest" largura="60" />
+				<mod:texto titulo="Ã“rgÃ£o" var="orgao_dest" largura="60" />
 
 				<mod:grupo>
-					<mod:texto titulo="Forma de endereçamento" var="enderecamento_dest"
+					<mod:texto titulo="Forma de endereÃ§amento" var="enderecamento_dest"
 						largura="30" />
 				</mod:grupo>
 			</c:if>
@@ -131,16 +131,16 @@
 					<mod:texto titulo="Cargo" var="cargo_dest" largura="60" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="Forma de endereçamento" var="enderecamento_dest"
+					<mod:texto titulo="Forma de endereÃ§amento" var="enderecamento_dest"
 						largura="30" />
 				</mod:grupo>
-				<mod:caixaverif titulo="Especificar manualmente o Orgão"
+				<mod:caixaverif titulo="Especificar manualmente o OrgÃ£o"
 					var="especificarDest" reler="sim" />
 				<c:choose>
 					<c:when test="${especificarDest == 'Sim'}">
 
 						<mod:grupo>
-							<mod:texto titulo="Órgão" var="orgao_dest" largura="60" />
+							<mod:texto titulo="Ã“rgÃ£o" var="orgao_dest" largura="60" />
 						</mod:grupo>
 					</c:when>
 					<c:otherwise>
@@ -152,7 +152,7 @@
 			<c:if
 				test="${( empty destinatarioSel.id) and (tipoDestinatario == 4)}">
 				<mod:grupo>
-					<mod:texto titulo="Forma de endereçamento" var="enderecamento_dest"
+					<mod:texto titulo="Forma de endereÃ§amento" var="enderecamento_dest"
 						largura="30" />
 				</mod:grupo>
 				<mod:grupo>
@@ -162,13 +162,13 @@
 					<mod:texto titulo="Cargo" var="cargo_dest" largura="60" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="Órgão" var="orgao_dest" largura="60" />
+					<mod:texto titulo="Ã“rgÃ£o" var="orgao_dest" largura="60" />
 				</mod:grupo>
 			</c:if>
 			
 		</mod:grupo>
 		<mod:grupo>
-			<mod:memo titulo="Endereço" var="endereco_dest" linhas="4"
+			<mod:memo titulo="EndereÃ§o" var="endereco_dest" linhas="4"
 				colunas="60" />
 		</mod:grupo>
 		<mod:selecao titulo="Tamanho da letra" var="tamanhoLetra" opcoes="Normal;Pequeno;Grande"/>

@@ -10,7 +10,7 @@
 	   <mod:grupo>
 	      <mod:texto titulo="Localidade" var="localidade"/>
 	   </mod:grupo>
-	   <mod:grupo titulo="Observações:">
+	   <mod:grupo titulo="ObservaÃ§Ãµes:">
 	   <mod:grupo  >
 		<mod:editor  titulo="" var="obs"/>
 		</mod:grupo>
@@ -65,7 +65,7 @@
 				<td width="70%" bgcolor="#FFFFFF">${localidade}</td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF">Obervações:</td>
+				<td bgcolor="#FFFFFF">ObervaÃ§Ãµes:</td>
 				<td bgcolor="#FFFFFF">${obs}</td>
 			</tr>
 		</table>

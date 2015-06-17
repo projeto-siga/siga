@@ -1,7 +1,7 @@
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!-- este modelo trata de AFASTAMENTO PARA ESTUDO OU MISSÃO NO EXTERIOR -->
+<!-- este modelo trata de AFASTAMENTO PARA ESTUDO OU MISSÃƒO NO EXTERIOR -->
 
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -15,10 +15,10 @@
 				lotado(a) no(a) ${doc.subscritor.lotacao.descricao}
 				
 				  
-				vem requerer a Vossa Excelência que se 
+				vem requerer a Vossa ExcelÃªncia que se 
 				digne encaminhar o requerimento de <B>AFASTAMENTO PARA ESTUDO 
-				OU MISSÃO NO EXTERIOR</B>, em anexo, ao E. Tribunal Regional 
-				Federal da 2ª Região.
+				OU MISSÃƒO NO EXTERIOR</B>, em anexo, ao E. Tribunal Regional 
+				Federal da 2Âª RegiÃ£o.
 				</p>
 				
 				</mod:valor>
@@ -31,8 +31,8 @@
 					${doc.subscritor.padraoReferenciaInvertido},
 					lotado(a) no(a) ${doc.subscritor.lotacao.descricao},
 					
-					vem requerer a Vossa Excelência, nos termos do art. 95 e 96 da Lei 
-					n.º 8.112/90, <B>AFASTAMENTO PARA ESTUDO OU MISSÃO NO EXTERIOR</B>.
+					vem requerer a Vossa ExcelÃªncia, nos termos do art. 95 e 96 da Lei 
+					n.Âº 8.112/90, <B>AFASTAMENTO PARA ESTUDO OU MISSÃƒO NO EXTERIOR</B>.
 					</p>
 					
 					<c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" />
@@ -49,26 +49,26 @@
 				<mod:valor var="texto_requerimento3">
 				<c:import url="/paginas/expediente/modelos/inc_tit_declaracao.jsp" />	
 					<p style="TEXT-INDENT: 2cm" align="justify">
-					Declaro estar ciente de que o § 2º do art. 183 da Lei n.º 8.112/90, 
-					acrescentado pela Lei n.º 10.667/2003, <i>prevê que o servidor afastado ou 
-					licenciado do cargo efetivo, sem direito à remuneração, inclusive 
+					Declaro estar ciente de que o Â§ 2Âº do art. 183 da Lei n.Âº 8.112/90, 
+					acrescentado pela Lei n.Âº 10.667/2003, <i>prevÃª que o servidor afastado ou 
+					licenciado do cargo efetivo, sem direito Ã  remuneraÃ§Ã£o, inclusive 
 					para servir em organismo oficial internacional do qual o Brasil 
 					seja membro efetivo ou com o qual coopere, ainda que contribua 
-					para regime de previdência social no exterior, terá suspenso o 
-					seu vínculo com o regime do Plano de Seguridade Social do Servidor 
-					Público enquanto durar o afastamento ou a licença, não lhe assistindo, 
-					neste período, os benefícios do mencionado regime de previdência.</i>
+					para regime de previdÃªncia social no exterior, terÃ¡ suspenso o 
+					seu vÃ­nculo com o regime do Plano de Seguridade Social do Servidor 
+					PÃºblico enquanto durar o afastamento ou a licenÃ§a, nÃ£o lhe assistindo, 
+					neste perÃ­odo, os benefÃ­cios do mencionado regime de previdÃªncia.</i>
 					</p>
 					<br/>
 					<br/>
 					<p style="TEXT-INDENT: 2cm" align="justify">
-					Declaro, ainda, estar ciente de que o § 3º do referido artigo, também 
-					acrescentado pela Lei n.º 10.667/2003, <i>assegura ao servidor, na situação 
-					acima descrita, a manutenção da vinculação ao regime do Plano de 
-					Seguridade Social do Servidor Público, mediante o recolhimento 
-					mensal da respectiva contribuição, no mesmo percentual devido 
-					pelos servidores em atividade, incidente sobre a remuneração 
-					total do cargo a que faz jus no exercício de suas atribuições, 
+					Declaro, ainda, estar ciente de que o Â§ 3Âº do referido artigo, tambÃ©m 
+					acrescentado pela Lei n.Âº 10.667/2003, <i>assegura ao servidor, na situaÃ§Ã£o 
+					acima descrita, a manutenÃ§Ã£o da vinculaÃ§Ã£o ao regime do Plano de 
+					Seguridade Social do Servidor PÃºblico, mediante o recolhimento 
+					mensal da respectiva contribuiÃ§Ã£o, no mesmo percentual devido 
+					pelos servidores em atividade, incidente sobre a remuneraÃ§Ã£o 
+					total do cargo a que faz jus no exercÃ­cio de suas atribuiÃ§Ãµes, 
 					computando-se, para esse efeito, inclusive, as vantagens pessoais.</i>
 					</p>
 					<br/><br/>

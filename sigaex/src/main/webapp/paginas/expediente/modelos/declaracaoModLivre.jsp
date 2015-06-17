@@ -7,7 +7,7 @@
 <mod:modelo>
 
 <mod:entrevista>
-		<mod:grupo titulo="Texto da declação">
+		<mod:grupo titulo="Texto da declaÃ§Ã£o">
 			<mod:grupo>
 				<mod:editor titulo="" var="texto_declaracao" />
 			</mod:grupo>

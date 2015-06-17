@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -37,7 +37,7 @@ function tamanho2() {
 }
 function corrige() {
 	if (tamanho2()<0) {
-		alert('Descrição com mais de 255 caracteres');
+		alert('DescriÃ§Ã£o com mais de 255 caracteres');
 		nota = new String();
 		nota = document.getElementById("descrMov").value;
 		document.getElementById("descrMov").value = nota.substring(0,255);
@@ -78,7 +78,7 @@ function popitup_movimentacao() {
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Definição de Perfil - ${mob.siglaEDescricaoCompleta}</h2>
+			<h2>DefiniÃ§Ã£o de Perfil - ${mob.siglaEDescricaoCompleta}</h2>
 			<div class="gt-content-box gt-for-table">
 			
 			<ww:form name="frm" action="vincularPapel_gravar"
@@ -99,7 +99,7 @@ function popitup_movimentacao() {
 
 			<table class="gt-form-table">
 				<tr class="header">
-					<td colspan="2">Vinculação</td>
+					<td colspan="2">VinculaÃ§Ã£o</td>
 				</tr>
 				<tr>
 					<td>Data:</td>
@@ -109,7 +109,7 @@ function popitup_movimentacao() {
 				
 				
 				<tr>
-				    <td>Responsável:</td>
+				    <td>ResponsÃ¡vel:</td>
 
 					<td><ww:select name="tipoResponsavel" list="listaTipoRespPerfil"
 						onchange="javascript:sbmt();" /> 
@@ -154,7 +154,7 @@ function popitup_movimentacao() {
 				</c:if>
 				<c:if test="${tipoResponsavel == 3}">
 					<tr>
-						<td>Observação</td>
+						<td>ObservaÃ§Ã£o</td>
 						<td><ww:textfield size="30" name="obsOrgao" /></td>
 					</tr>
 				</c:if>--%>

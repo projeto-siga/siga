@@ -8,11 +8,11 @@
 	<mod:entrevista>
 
 		<mod:grupo titulo="Detalhe do Contrato">
-			<mod:texto titulo="Informe o n∫ da Ata de Registro de PreÁos"
+			<mod:texto titulo="Informe o n¬∫ da Ata de Registro de Pre√ßos"
 				largura="12" maxcaracteres="10" var="ataregpreco" />
 			<mod:texto titulo="Ano" largura="5" maxcaracteres="4" var="ano" />
 			<mod:grupo>
-				<mod:texto titulo="N∫ Processo" largura="10" maxcaracteres="6"
+				<mod:texto titulo="N¬∫ Processo" largura="10" maxcaracteres="6"
 					var="n1" />
 				<mod:texto largura="10" maxcaracteres="6" var="n2" />
 				<mod:texto largura="10" maxcaracteres="6" var="n3" />
@@ -30,29 +30,29 @@
 		</mod:grupo>
 
 		<mod:grupo titulo="Detalhe do Objeto">
-			<mod:texto titulo="Informe o n˙mero do <b>PREG√O</b>" largura="10"
+			<mod:texto titulo="Informe o n√∫mero do <b>PREG√ÉO</b>" largura="10"
 				maxcaracteres="8" var="pregao" />
 			<mod:grupo>
 				<mod:texto titulo="Material a ser fornecido" largura="30"
 					var="forninst" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:numero titulo="Prazo de Entrega no m·ximo" largura="6"
+				<mod:numero titulo="Prazo de Entrega no m√°ximo" largura="6"
 					maxcaracteres="5" var="prazo" extensoNum="sim" />
 				<mod:oculto var="prazonumextenso" valor="${prazonumextenso}" />
 			</mod:grupo>
 		</mod:grupo>
 
-		<mod:grupo titulo="PreÁo e Pagamento">
+		<mod:grupo titulo="Pre√ßo e Pagamento">
 			<mod:texto titulo="Informe a quantidade de itens" largura="3" var="n"
 				reler="sim" />
 			<c:forEach var="i" begin="1" end="${n}">
 				<mod:grupo>
 					<mod:texto titulo="Item" largura="3" var="item${i}" />
-					<mod:texto titulo="EspecificaÁ„o" largura="45"
+					<mod:texto titulo="Especifica√ß√£o" largura="45"
 						var="especificacao${i}" />
 					<mod:texto titulo="Quantidade" largura="3" var="quantidade${i }" />
-					<mod:monetario titulo="PreÁo Unit·rio" largura="12"
+					<mod:monetario titulo="Pre√ßo Unit√°rio" largura="12"
 						maxcaracteres="10" var="preco${i}" formataNum="sim"
 						extensoNum="sim" reler="sim" />
 				</mod:grupo>
@@ -64,7 +64,7 @@
 			<mod:texto titulo="Nome" largura="60" maxcaracteres="40"
 				var="subsecretaria" />
 			<mod:grupo>
-				<mod:texto titulo="EndereÁo" largura="60" maxcaracteres="40"
+				<mod:texto titulo="Endere√ßo" largura="60" maxcaracteres="40"
 					var="endereco" />
 			</mod:grupo>
 		</mod:grupo>
@@ -77,13 +77,13 @@
 			<mod:texto titulo="Cep" largura="15" maxcaracteres="9" var="cep" />
 		</mod:grupo>
 
-		<mod:grupo titulo="VigÍncia">
-			<mod:numero titulo=" Periodo de VigÍncia em meses" largura="5"
+		<mod:grupo titulo="Vig√™ncia">
+			<mod:numero titulo=" Periodo de Vig√™ncia em meses" largura="5"
 				maxcaracteres="3" var="vigencia" extensoNum="sim" />
 			<mod:oculto var="vigencianumextenso" valor="${vigencianumextenso}" />
 		</mod:grupo>
 
-		<mod:grupo titulo="DotaÁ„o OrÁament·ria">
+		<mod:grupo titulo="Dota√ß√£o Or√ßament√°ria">
 			<mod:texto titulo="Programa de Trabalho" largura="60"
 				maxcaracteres="40" var="progtrabalho" />
 		</mod:grupo>
@@ -101,42 +101,42 @@
 		<head>
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 1</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 1</font></u>
 		</head>
 		<body>
 
 		<font size="2">
-		<p align="center"><b>ATA DE REGISTRO DE PRE«OS N.∫&nbsp;
+		<p align="center"><b>ATA DE REGISTRO DE PRE√áOS N.¬∫&nbsp;
 		${ataregpreco }/${ano }</b></p>
-		<p align="center"><b>PROCESSO N.∫&nbsp; ${n1 }/${n2 }/${n3 } -
+		<p align="center"><b>PROCESSO N.¬∫&nbsp; ${n1 }/${n2 }/${n3 } -
 		EOF</b></p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">A justiÁa Federal de
+		<p style="TEXT-INDENT: 1.5cm" align="justify">A justi√ßa Federal de
 		1&deg; Grau no Rio de Janeiro, com sede na Av.Rio Branco, 243 - Anexo
 		I - 14&deg; andar, Centro/RJ, inscrita no C.N.P.J. sob o n&deg;
 		05.424.540./0001-16, neste ato representadas pelo Dr. <b>${nomeDoutor
 		}</b>, Juiz Federal - Diretor do Foro, Identidade n&deg; <b>${identidade
-		}</b>, CPF: <b>${cpf}</b> doravante denominada JUSTI«A FEDERAL, resolve,
-		em face das propostas apresentadas no <b>Preg„o:${pregao }/(${ano
-		})</b>, <b>REGISTRAR O PRE«O</b> da empresa classificada em primeiro lugar
-		para o objeto da licitaÁ„o e igualmente daquelas que manifestaram
-		interesse em se registrar tambÈm pelo menor preÁo, doravante
+		}</b>, CPF: <b>${cpf}</b> doravante denominada JUSTI√áA FEDERAL, resolve,
+		em face das propostas apresentadas no <b>Preg√£o:${pregao }/(${ano
+		})</b>, <b>REGISTRAR O PRE√áO</b> da empresa classificada em primeiro lugar
+		para o objeto da licita√ß√£o e igualmente daquelas que manifestaram
+		interesse em se registrar tamb√©m pelo menor pre√ßo, doravante
 		denominadas FORNECEDORAS, em conformidade com o disposto na Lei n&deg;
 		10.520, de 17/07/2002, Decreto n&deg; 3.555, de 08/08/2000 e n&deg;
 		3.931, de 19/07/2001 e, subsidiariamente, a Lei n&deg; 8.666, de
-		21/06/1993 e suas alteraÁıes, mediante as cl·usulas e condiÁıes a
+		21/06/1993 e suas altera√ß√µes, mediante as cl√°usulas e condi√ß√µes a
 		seguir:</p>
 
 		<p><b><u>CL&Aacute;USULA PRIMEIRA - DO OBJETO</u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">1.1. A presente ata
-		tem por objeto o <b>Registro de PreÁos</b> para o fornecimento e
-		instalaÁ„o de <b>${forninst}</b>, conforme
+		tem por objeto o <b>Registro de Pre√ßos</b> para o fornecimento e
+		instala√ß√£o de <b>${forninst}</b>, conforme
 		especifica&ccedil;&otilde;es constantes do Termo de Refer&ecirc;ncia
 		do Edital do <b>Preg&atilde;o n&ordm; ${pregao }/(${ano })</b>, que
-		integram a presente Ata, e PreÁos Registrados e Empresa(s)
+		integram a presente Ata, e Pre√ßos Registrados e Empresa(s)
 		Forncedora(s).</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">1.2. A
@@ -163,19 +163,19 @@
 		aquisi&ccedil;&otilde;es adicionais de que trata o subitem 1.3
 		n&atilde;o poder&atilde;o exceder, por &oacute;rg&atilde;o ou
 		entidade, a 100% (cem por cento) dos quantitativos registrados na Ata
-		de Registro de PreÁos.</p>
+		de Registro de Pre√ßos.</p>
 		<br>
 		</font>
 		<c:import
 			url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
-		<!-- Fim da 1∫ p·gina -->
+		<!-- Fim da 1¬∫ p√°gina -->
 
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 2</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 2</font></u>
 
 		<font size="2">
 		<p><b><u>CL&Aacute;USULA SEGUNDA - DO PRAZO DE ENTREGA E
@@ -232,13 +232,13 @@
 		<c:import
 			url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
-		<!-- Fim da 2∫ p·gina -->
+		<!-- Fim da 2¬∫ p√°gina -->
 
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 3</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 3</font></u>
 
 		<font size="2">
 		<p><b><u>CL&Aacute;USULA TERCEIRA - DO PRE&Ccedil;O E
@@ -249,9 +249,9 @@
 		<table width="100%" border="0" cellpadding="1">
 			<tr>
 				<td width="7%" align="center">ITEM</td>
-				<td width="53%" align="center">ESPECIFICA«√O</td>
+				<td width="53%" align="center">ESPECIFICA√á√ÉO</td>
 				<td width="20%" align="center">QUANTIDADE</td>
-				<td width="20%" align="center">PRE«O UNIT¡RIO</td>
+				<td width="20%" align="center">PRE√áO UNIT√ÅRIO</td>
 			</tr>
 		</table>
 
@@ -272,133 +272,133 @@
 			</tr>
 		</table>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">3.1. A JUSTI«A
-		FEDERAL pagar· ‡(s) FORNECEDORA(S) o valor unit·rio registrado no
-		item, multiplicado pela quantidade solicitada, que constar· da
-		SolicitaÁ„o de Fornecimento(<b>Anexo VI</b>)e da Nota de Empenho, e
+		<p style="TEXT-INDENT: 1.5cm" align="justify">3.1. A JUSTI√áA
+		FEDERAL pagar√° √†(s) FORNECEDORA(S) o valor unit√°rio registrado no
+		item, multiplicado pela quantidade solicitada, que constar√° da
+		Solicita√ß√£o de Fornecimento(<b>Anexo VI</b>)e da Nota de Empenho, e
 		ainda do Termo de Contrato, quando for o caso.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">3.2. IncluÌdos no
-		preÁo unit·rio est„o todos os impostos, taxas e encargos sociais,
-		obrigaÁıes trabalhistas, previdenci·rias, fiscais e comerciais, assim
-		como despesas com transportes, as quais correr„o por conta das
+		<p style="TEXT-INDENT: 1.5cm" align="justify">3.2. Inclu√≠dos no
+		pre√ßo unit√°rio est√£o todos os impostos, taxas e encargos sociais,
+		obriga√ß√µes trabalhistas, previdenci√°rias, fiscais e comerciais, assim
+		como despesas com transportes, as quais correr√£o por conta das
 		FORNECEDORA(S).</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">3.3. Os preÁos
-		registrados dever„o sempre ser adequados ao valor de mercado, sob pena
-		de n„o haver a aquisiÁ„o.</p>
+		<p style="TEXT-INDENT: 1.5cm" align="justify">3.3. Os pre√ßos
+		registrados dever√£o sempre ser adequados ao valor de mercado, sob pena
+		de n√£o haver a aquisi√ß√£o.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">3.4. As Notas de
-		Empenho, quando for o caso, ser„o emitidas ‡ medida que forem sendo
+		Empenho, quando for o caso, ser√£o emitidas √† medida que forem sendo
 		solicitados os materiais.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">3.5. As Notas
-		Fiscais/Faturas dever„o ser entregues diretamente ao titular da
+		Fiscais/Faturas dever√£o ser entregues diretamente ao titular da
 		Subsecretaria de <b>${subsecretaria }</b>, situada na <b>${endereco}</b>,
 		<b>${bairro }</b>, <b>${cidade }</b> - Cep: <b>${cep }</b>, para serem
 		devidamente atestadas.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">3.6. O pagamento ‡
-		Fornecedora ser· efetivado, por crÈdito em conta corrente, mediante
-		ordem banc·ria, atÈ o 10∫ dia ˙til apÛs a apresentaÁ„o da fatura ou
-		nota fiscal discriminativa do material entregue/serviÁos prestados,
-		devidamente atestada por servidor ou Comiss„o nomeada pela
-		AdministraÁ„o, salvo eventual atraso de distribuiÁ„o de recursos
-		financeiros efetuados pelo Conselho da JustiÁa Federal, decorrente de
-		execuÁ„o orÁament·ria.</p>
+		<p style="TEXT-INDENT: 1.5cm" align="justify">3.6. O pagamento √†
+		Fornecedora ser√° efetivado, por cr√©dito em conta corrente, mediante
+		ordem banc√°ria, at√© o 10¬∫ dia √∫til ap√≥s a apresenta√ß√£o da fatura ou
+		nota fiscal discriminativa do material entregue/servi√ßos prestados,
+		devidamente atestada por servidor ou Comiss√£o nomeada pela
+		Administra√ß√£o, salvo eventual atraso de distribui√ß√£o de recursos
+		financeiros efetuados pelo Conselho da Justi√ßa Federal, decorrente de
+		execu√ß√£o or√ßament√°ria.</p>
 		</font>
 		<c:import
 			url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
-		<!-- Fim da 3∫ p·gina -->
+		<!-- Fim da 3¬∫ p√°gina -->
 
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 4</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 4</font></u>
 
 		<font size="2">
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.6.1 - No perÌodo acima
-		n„o haver· atualizaÁ„o financeira.</p>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.6.1 - No per√≠odo acima
+		n√£o haver√° atualiza√ß√£o financeira.</p>
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.6.2 - A fatura/nota
-		fiscal dever· ser apresentada em 02 (duas) vias.</p>
+		fiscal dever√° ser apresentada em 02 (duas) vias.</p>
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.6.3 - Ser· considerada
-		como data do pagamento a data da emiss„o da Ordem Banc·ria.</p>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.6.3 - Ser√° considerada
+		como data do pagamento a data da emiss√£o da Ordem Banc√°ria.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">3.7. Caso seja
-		necess·ria a retificaÁ„o da fatura por culpa da(s) Fornecedora(s), a
-		fluÍncia do prazo de 10 (dez) dias ˙teis ser· suspensa, reiniciando-se
-		a contagem a partir da reapresentaÁ„o da fatura retificada.</p>
+		necess√°ria a retifica√ß√£o da fatura por culpa da(s) Fornecedora(s), a
+		flu√™ncia do prazo de 10 (dez) dias √∫teis ser√° suspensa, reiniciando-se
+		a contagem a partir da reapresenta√ß√£o da fatura retificada.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">3.8. A JustiÁa
-		Federal reserva-se o direito de n„o efetuar o pagamento se, no ato da
-		atestaÁ„o, o material/serviÁo n„o estiver em perfeitas condiÁıes ou de
-		acordo com as especificaÁıes apresentadas e aceitas pela JustiÁa
+		<p style="TEXT-INDENT: 1.5cm" align="justify">3.8. A Justi√ßa
+		Federal reserva-se o direito de n√£o efetuar o pagamento se, no ato da
+		atesta√ß√£o, o material/servi√ßo n√£o estiver em perfeitas condi√ß√µes ou de
+		acordo com as especifica√ß√µes apresentadas e aceitas pela Justi√ßa
 		Federal.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">3.9 - A SeÁ„o
-		Judici·ria do Rio de Janeiro poder· deduzir da import‚ncia a pagar os
-		valores correspondentes a multas ou indenizaÁıes devidas pela
+		<p style="TEXT-INDENT: 1.5cm" align="justify">3.9 - A Se√ß√£o
+		Judici√°ria do Rio de Janeiro poder√° deduzir da import√¢ncia a pagar os
+		valores correspondentes a multas ou indeniza√ß√µes devidas pela
 		fornecedora nos termos do presente ajuste.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">3.10 -
-		A(s)Fornecedora(s) dever·(„o) comprovar, quando da apresentaÁ„o da
-		nota fiscal ‡ JustiÁa Federal, a regularidade perante a Seguridade
-		Social e ao Fundo de Garantia de Tempo de ServiÁo, atravÈs da
-		apresentaÁ„o da CND e do CRF, dentro das respectivas validade, sob
-		pena de n„o pagamento do material fornecido/serviÁo executado e de
-		rescis„o contratual, em atendimento ao disposto no ß 3∫. do art. l95
-		da ConstituiÁ„o Federal, no art. 2∫ da Lei 9.012/95, e nos arts.
+		A(s)Fornecedora(s) dever√°(√£o) comprovar, quando da apresenta√ß√£o da
+		nota fiscal √† Justi√ßa Federal, a regularidade perante a Seguridade
+		Social e ao Fundo de Garantia de Tempo de Servi√ßo, atrav√©s da
+		apresenta√ß√£o da CND e do CRF, dentro das respectivas validade, sob
+		pena de n√£o pagamento do material fornecido/servi√ßo executado e de
+		rescis√£o contratual, em atendimento ao disposto no ¬ß 3¬∫. do art. l95
+		da Constitui√ß√£o Federal, no art. 2¬∫ da Lei 9.012/95, e nos arts.
 		55,inciso VIII e 78,inciso I, ambos da Lei 8.666/93.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">3.11 - Na ocasi„o da
-		entrega da nota fiscal a(s) Fornecedora(s) dever·(„o) comprovar a
-		condiÁ„o de optante pelo SIMPLES (Sistema Integrado de Pagamento de
-		Impostos e ContribuiÁıes das Microempresas e Empresas de pequeno
-		Porte), mediante a apresentaÁ„o da declaraÁ„o indicada em ato
+		<p style="TEXT-INDENT: 1.5cm" align="justify">3.11 - Na ocasi√£o da
+		entrega da nota fiscal a(s) Fornecedora(s) dever√°(√£o) comprovar a
+		condi√ß√£o de optante pelo SIMPLES (Sistema Integrado de Pagamento de
+		Impostos e Contribui√ß√µes das Microempresas e Empresas de pequeno
+		Porte), mediante a apresenta√ß√£o da declara√ß√£o indicada em ato
 		normativo da Secretaria da Receita Federal, e dos documentos,
-		devidamente autenticados, que comprovem ser o signat·rio da referida
-		declaraÁ„o representante legal da empresa.</p>
+		devidamente autenticados, que comprovem ser o signat√°rio da referida
+		declara√ß√£o representante legal da empresa.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">As pessoas jurÌdicas
-		n„o optantes pelo SIMPLES e aquelas que ainda n„o formalizaram a opÁ„o
-		sofrer„o a retenÁ„o de impostos/contribuiÁıes por esta SeÁ„o
-		Judici·ria no momento do pagamento, conforme disposto no art. 64 da
-		Lei n∫ 9.430, de 27/12/96, regulamentado por ato normativo da
+		<p style="TEXT-INDENT: 1.5cm" align="justify">As pessoas jur√≠dicas
+		n√£o optantes pelo SIMPLES e aquelas que ainda n√£o formalizaram a op√ß√£o
+		sofrer√£o a reten√ß√£o de impostos/contribui√ß√µes por esta Se√ß√£o
+		Judici√°ria no momento do pagamento, conforme disposto no art. 64 da
+		Lei n¬∫ 9.430, de 27/12/96, regulamentado por ato normativo da
 		Secretaria da Receita Federal.</p>
 		</font>
 		<c:import
 			url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
-		<!-- Fim da 4∫ p·gina -->
+		<!-- Fim da 4¬∫ p√°gina -->
 
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 5</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 5</font></u>
 
 		<font size="2">
-		<p><b><u>CL&Aacute;USULA QUARTA - DA VIG NCIA</u></b></p>
+		<p><b><u>CL&Aacute;USULA QUARTA - DA VIG√äNCIA</u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">4.1 - A presente Ata
-		de Registro de PreÁos ter· vigÍncia de <b>${vigencia }</b>&nbsp; (<b>${vigencianumextenso}</b>)
+		de Registro de Pre√ßos ter√° vig√™ncia de <b>${vigencia }</b>&nbsp; (<b>${vigencianumextenso}</b>)
 		meses, contada a partir da data da assinatura da mesma.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">&nbsp;&nbsp;&nbsp;<b>PAR¡GRAFO
-		⁄NICO:</b>A presente Ata poder· ser prorrogada, na forma autorizada pelo
-		art. 4∫ do Decreto n∫ 3.931/2001.</p>
+		<p style="TEXT-INDENT: 1.5cm" align="justify">&nbsp;&nbsp;&nbsp;<b>PAR√ÅGRAFO
+		√öNICO:</b>A presente Ata poder√° ser prorrogada, na forma autorizada pelo
+		art. 4¬∫ do Decreto n¬∫ 3.931/2001.</p>
 
-		<p><b><u>CL&Aacute;USULA QUINTA - DA DOTA«√O OR«AMENT¡RIA</u></b></p>
+		<p><b><u>CL&Aacute;USULA QUINTA - DA DOTA√á√ÉO OR√áAMENT√ÅRIA</u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">5.1 - As despesas
-		decorrentes do fornecimento e execuÁ„o dos serviÁos, objeto deste
-		Registro de PreÁos, correr„o ‡ conta dos recursos consignados ‡ SeÁ„o
-		Judici·ria do Rio de Janeiro, para o corrente exercÌcio, conforme o
+		decorrentes do fornecimento e execu√ß√£o dos servi√ßos, objeto deste
+		Registro de Pre√ßos, correr√£o √† conta dos recursos consignados √† Se√ß√£o
+		Judici√°ria do Rio de Janeiro, para o corrente exerc√≠cio, conforme o
 		especificado a seguir:</p>
 
 		<p style="TEXT-INDENT: 1.5cm">
@@ -408,335 +408,335 @@
 		}</b>.<br>
 		</p>
 
-		<p><b><u>CL&Aacute;USULA SEXTA - DAS OBRIGA«’ES DA(S)
+		<p><b><u>CL&Aacute;USULA SEXTA - DAS OBRIGA√á√ïES DA(S)
 		FORNECEDORA(S):</u></b></p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">6.1 - S„o obrigaÁıes
+		<p style="TEXT-INDENT: 1.5cm" align="justify">6.1 - S√£o obriga√ß√µes
 		da(s) Fornecedora(s):</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.1.1 - entregar os
-		materiais e executar os serviÁos, objeto deste Registro de PreÁos, de
-		acordo com as especificaÁıes constantes do <b> Anexo I </b> - Termo de
-		ReferÍncia do Preg„o n∫ <b>${pregao }</b>/(<b>${ano }</b>), em
-		conson‚ncia com a proposta respectiva, bem como a cumprir com o prazo
-		de entrega e quantidades constantes da SolicitaÁ„o de Fornecimento(<b>
+		materiais e executar os servi√ßos, objeto deste Registro de Pre√ßos, de
+		acordo com as especifica√ß√µes constantes do <b> Anexo I </b> - Termo de
+		Refer√™ncia do Preg√£o n¬∫ <b>${pregao }</b>/(<b>${ano }</b>), em
+		conson√¢ncia com a proposta respectiva, bem como a cumprir com o prazo
+		de entrega e quantidades constantes da Solicita√ß√£o de Fornecimento(<b>
 		Anexo VI</b>).</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.1.2 - manter, durante todo
-		o perÌodo de vigÍncia da Ata de Registro de PreÁos, em compatibilidade
-		com as obrigaÁıes assumidas, todas as condiÁıes de habilitaÁ„o e
-		qualificaÁ„o exigidas no Preg„o n∫ <b>${pregao }</b>/(<b>${ano }</b>).</p>
+		o per√≠odo de vig√™ncia da Ata de Registro de Pre√ßos, em compatibilidade
+		com as obriga√ß√µes assumidas, todas as condi√ß√µes de habilita√ß√£o e
+		qualifica√ß√£o exigidas no Preg√£o n¬∫ <b>${pregao }</b>/(<b>${ano }</b>).</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.1.3 - fornecer aos seus
-		funcion·rios crach·s de identificaÁ„o, sem os quais n„o ser·
-		autorizada a entrada nas dependÍncias da Contratante.</p>
+		funcion√°rios crach√°s de identifica√ß√£o, sem os quais n√£o ser√°
+		autorizada a entrada nas depend√™ncias da Contratante.</p>
 		</font>
 		<c:import
 			url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
-		<!-- Fim da 5∫ p·gina -->
+		<!-- Fim da 5¬∫ p√°gina -->
 
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 6</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 6</font></u>
 
 		<font size="2">
 		<p style="TEXT-INDENT: 1.5cm" align="justify">6.2 - A(s)
-		Fornecedora(s) È(s„o) respons·vel(eis) por:</p>
+		Fornecedora(s) √©(s√£o) respons√°vel(eis) por:</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.1 - qualquer acidente
 		que venha a ocorrer com seus empregados e por danos que estes
-		provoquem ‡ JustiÁa Federal ou a terceiros, n„o excluindo essa
-		responsabilidade a fiscalizaÁ„o ou o acompanhamento pela JustiÁa
+		provoquem √† Justi√ßa Federal ou a terceiros, n√£o excluindo essa
+		responsabilidade a fiscaliza√ß√£o ou o acompanhamento pela Justi√ßa
 		Federal;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.2 - todos os encargos
-		previdenci·rios e obrigaÁıes sociais previstos na legislaÁ„o social
-		trabalhista em vigor relativos a seus funcion·rios, vez que os mesmos
-		n„o manter„o nenhum vÌnculo empregatÌcio com a SeÁ„o Judici·ria do Rio
+		previdenci√°rios e obriga√ß√µes sociais previstos na legisla√ß√£o social
+		trabalhista em vigor relativos a seus funcion√°rios, vez que os mesmos
+		n√£o manter√£o nenhum v√≠nculo empregat√≠cio com a Se√ß√£o Judici√°ria do Rio
 		de Janeiro;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.3 - todas as
-		providÍncias e obrigaÁıes estabelecidas na legislaÁ„o especÌfica de
-		acidentes de trabalho, quando, em ocorrÍncia da espÈcie, forem vÌtimas
-		os seus funcion·rios quando da realizaÁ„o da entrega dos
-		materiais/prestaÁ„o dos serviÁos, ou em conex„o com eles;</p>
+		provid√™ncias e obriga√ß√µes estabelecidas na legisla√ß√£o espec√≠fica de
+		acidentes de trabalho, quando, em ocorr√™ncia da esp√©cie, forem v√≠timas
+		os seus funcion√°rios quando da realiza√ß√£o da entrega dos
+		materiais/presta√ß√£o dos servi√ßos, ou em conex√£o com eles;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.4 - todos os encargos
-		fiscais e comerciais decorrentes do presente Registro de PreÁos;</p>
+		fiscais e comerciais decorrentes do presente Registro de Pre√ßos;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">6.3 - A
-		inadimplÍncia da(s) Fornecedora(s), com referÍncia aos encargos
-		sociais, comerciais e fiscais, n„o transfere a responsabilidade por
-		seu pagamento ‡ AdministraÁ„o da SeÁ„o Judici·ria do Rio de Janeiro,
-		raz„o pela qual a(s) Fornecedora(s) renuncia(m) expressamente a
-		qualquer vÌnculo de solidariedade, ativa ou passiva, com a SJRJ.</p>
+		inadimpl√™ncia da(s) Fornecedora(s), com refer√™ncia aos encargos
+		sociais, comerciais e fiscais, n√£o transfere a responsabilidade por
+		seu pagamento √† Administra√ß√£o da Se√ß√£o Judici√°ria do Rio de Janeiro,
+		raz√£o pela qual a(s) Fornecedora(s) renuncia(m) expressamente a
+		qualquer v√≠nculo de solidariedade, ativa ou passiva, com a SJRJ.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">6.4 - A(s)
-		Fornecedora(s) dever·(„o) cumprir, ainda, com as demais obrigaÁıes
-		constantes da especificaÁ„o elaborada pela Subsecretaria de <b>${subsecretaria
-		}</b>, que integra o presente Registro de PreÁos.</p>
+		Fornecedora(s) dever√°(√£o) cumprir, ainda, com as demais obriga√ß√µes
+		constantes da especifica√ß√£o elaborada pela Subsecretaria de <b>${subsecretaria
+		}</b>, que integra o presente Registro de Pre√ßos.</p>
 
-		<p><b><u>CL&Aacute;USULA S…TIMA - DO CANCELAMENTO DO
+		<p><b><u>CL&Aacute;USULA S√âTIMA - DO CANCELAMENTO DO
 		REGISTRO</u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">7.1 - O fornecedor
-		ter· seu registro cancelado quando:</p>
+		ter√° seu registro cancelado quando:</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - descumprir as condiÁıes
-		da Ata de Registro de PreÁos;</p>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - descumprir as condi√ß√µes
+		da Ata de Registro de Pre√ßos;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - n„o retirar a
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - n√£o retirar a
 		respectiva nota de empenho ou instrumento equivalente, no prazo
-		estabelecido pela AdministraÁ„o, sem justificativa aceit·vel;</p>
+		estabelecido pela Administra√ß√£o, sem justificativa aceit√°vel;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - n„o aceitar reduzir o
-		seu preÁo registrado, na hipÛtese de este se tornar superior ‡queles
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - n√£o aceitar reduzir o
+		seu pre√ßo registrado, na hip√≥tese de este se tornar superior √†queles
 		praticados no mercado;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - tiver presentes razıes
-		de interesse p˙blico.</p>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - tiver presentes raz√µes
+		de interesse p√∫blico.</p>
 		</font>
 		<c:import
 			url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
-		<!-- Fim da 6∫ p·gina -->
+		<!-- Fim da 6¬∫ p√°gina -->
 
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 7</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 7</font></u>
 
 		<font size="2">
-		<p style="TEXT-INDENT: 1.5cm" align="justify">&nbsp;&nbsp;&nbsp;&nbsp;<b>PAR¡GRAFO
-		1∫</b> - O cancelamento de registro, nas hipÛteses previstas, assegurados
-		o contraditÛrio e a ampla defesa, ser· formalizado por despacho da
-		autoridade competente do Ûrg„o gerenciador.</p>
+		<p style="TEXT-INDENT: 1.5cm" align="justify">&nbsp;&nbsp;&nbsp;&nbsp;<b>PAR√ÅGRAFO
+		1¬∫</b> - O cancelamento de registro, nas hip√≥teses previstas, assegurados
+		o contradit√≥rio e a ampla defesa, ser√° formalizado por despacho da
+		autoridade competente do √≥rg√£o gerenciador.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">&nbsp;&nbsp;&nbsp;&nbsp;<b>PAR¡GRAFO
-		2∫</b> - A(s) fornecedora(s) poder·(„o) solicitar o cancelamento do seu
-		registro de preÁo na ocorrÍncia de fato superveniente que venha
-		comprometer a perfeita execuÁ„o contratual, decorrentes de caso
-		fortuito ou de forÁa maior devidamente comprovados</p>
+		<p style="TEXT-INDENT: 1.5cm" align="justify">&nbsp;&nbsp;&nbsp;&nbsp;<b>PAR√ÅGRAFO
+		2¬∫</b> - A(s) fornecedora(s) poder√°(√£o) solicitar o cancelamento do seu
+		registro de pre√ßo na ocorr√™ncia de fato superveniente que venha
+		comprometer a perfeita execu√ß√£o contratual, decorrentes de caso
+		fortuito ou de for√ßa maior devidamente comprovados</p>
 
 		<p><b><u>CL&Aacute;USULA OITAVA - DAS PENALIDADES</u></b></p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">8.1 - O n„o
-		cumprimento pela(s) Fornecedora(s) de qualquer uma das obrigaÁıes,
-		dentro das especificaÁıes e/ou condiÁıes predeterminadas nesta Ata de
-		Registro de PreÁos, sujeit·-la-· ‡s penalidades previstas nos artigos
-		86 a 88 da Lei n∞ 8.666/93;</p>
+		<p style="TEXT-INDENT: 1.5cm" align="justify">8.1 - O n√£o
+		cumprimento pela(s) Fornecedora(s) de qualquer uma das obriga√ß√µes,
+		dentro das especifica√ß√µes e/ou condi√ß√µes predeterminadas nesta Ata de
+		Registro de Pre√ßos, sujeit√°-la-√° √†s penalidades previstas nos artigos
+		86 a 88 da Lei n¬∞ 8.666/93;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">8.2 - As penalidades
-		a que est· sujeita a(s) Fornecedora(s) inadimplente(s), nos termos da
-		Lei no 8.666/93, s„o as seguintes:</p>
+		a que est√° sujeita a(s) Fornecedora(s) inadimplente(s), nos termos da
+		Lei no 8.666/93, s√£o as seguintes:</p>
 
 		<p style="TEXT-INDENT: 1.5cm">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a)advertÍncia;</p>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a)advert√™ncia;</p>
 
 		<p style="TEXT-INDENT: 1.5cm">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b)multa;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c)suspens„o tempor·ria de
-		participar em licitaÁ„o e impedimento em contratar com a AdministraÁ„o
-		por prazo n„o superior a 02 (dois) anos;</p>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c)suspens√£o tempor√°ria de
+		participar em licita√ß√£o e impedimento em contratar com a Administra√ß√£o
+		por prazo n√£o superior a 02 (dois) anos;</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">8.3 - A recusa
-		injustificada em assinar a Ata de Registro de PreÁos, aceitar ou
+		injustificada em assinar a Ata de Registro de Pre√ßos, aceitar ou
 		retirar o instrumento equivalente, dentro do prazo estabelecido pela
-		AdministraÁ„o, sujeita o adjudicat·rio ‡ penalidade de multa de atÈ
-		10% (dez por cento) sobre o valor da adjudicaÁ„o, independentemente da
+		Administra√ß√£o, sujeita o adjudicat√°rio √† penalidade de multa de at√©
+		10% (dez por cento) sobre o valor da adjudica√ß√£o, independentemente da
 		multa estipulada no subitem 8.4.2.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">8.4 - A inexecuÁ„o
-		total ou parcial do Registro de PreÁos poder· acarretar, a critÈrio da
-		AdministraÁ„o, a aplicaÁ„o das multas, alternativamente:</p>
+		<p style="TEXT-INDENT: 1.5cm" align="justify">8.4 - A inexecu√ß√£o
+		total ou parcial do Registro de Pre√ßos poder√° acarretar, a crit√©rio da
+		Administra√ß√£o, a aplica√ß√£o das multas, alternativamente:</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.4.1 - Multa compensatÛria
-		de atÈ 30% (trinta por cento) sobre o valor equivalente ‡ obrigaÁ„o
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.4.1 - Multa compensat√≥ria
+		de at√© 30% (trinta por cento) sobre o valor equivalente √† obriga√ß√£o
 		inadimplida.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.4.2 - Multa correspondente
-		‡ diferenÁa entre o valor total porventura resultante de nova
-		contrataÁ„o e o valor total que seria pago ao adjudicat·rio.</p>
+		√† diferen√ßa entre o valor total porventura resultante de nova
+		contrata√ß√£o e o valor total que seria pago ao adjudicat√°rio.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.4.3 - Multa de 50%
-		(cinq¸enta por cento) sobre o valor global do Registro de PreÁos, no
-		caso de inexecuÁ„o total do mesmo.</p>
+		(cinq√ºenta por cento) sobre o valor global do Registro de Pre√ßos, no
+		caso de inexecu√ß√£o total do mesmo.</p>
 		</font>
 		<c:import
 			url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
-		<!-- Fim da 7∫ p·gina -->
+		<!-- Fim da 7¬∫ p√°gina -->
 
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 8</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 8</font></u>
 
 		<font size="2">
-		<p style="TEXT-INDENT: 1.5cm" align="justify">8.5 - A atualizaÁ„o
-		dos valores correspondentes ‡ multa estabelecida no item 8.4 far-se-·
-		a partir do 1∫ (primeiro) dia, decorrido o prazo estabelecido no item
+		<p style="TEXT-INDENT: 1.5cm" align="justify">8.5 - A atualiza√ß√£o
+		dos valores correspondentes √† multa estabelecida no item 8.4 far-se-√°
+		a partir do 1¬∫ (primeiro) dia, decorrido o prazo estabelecido no item
 		8.7.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">8.6 - Os atrasos
-		injustificados no cumprimento das obrigaÁıes assumidas pela
-		fornecedora sujeit·-la-· ‡ multa di·ria, atÈ a data do efetivo
-		adimplemento, de 0,3% (trÍs dÈcimos por cento), calculada ‡ base de
-		juros compostos, sem prejuÌzo das demais penalidades previstas na Lei
-		n∫ 8.666/93.</p>
+		injustificados no cumprimento das obriga√ß√µes assumidas pela
+		fornecedora sujeit√°-la-√° √† multa di√°ria, at√© a data do efetivo
+		adimplemento, de 0,3% (tr√™s d√©cimos por cento), calculada √† base de
+		juros compostos, sem preju√≠zo das demais penalidades previstas na Lei
+		n¬∫ 8.666/93.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.6.1 - A multa moratÛria
-		estabelecida ficar· limitada ‡ estipulada para inexecuÁ„o parcial ou
-		total do Registro de PreÁos (subitem8.4.1)</p>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.6.1 - A multa morat√≥ria
+		estabelecida ficar√° limitada √† estipulada para inexecu√ß√£o parcial ou
+		total do Registro de Pre√ßos (subitem8.4.1)</p>
 
 		<p style="TEXT-INDENT: 1.5cm">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.6.2 - O perÌodo de atraso
-		ser· contado em dias corridos.</p>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.6.2 - O per√≠odo de atraso
+		ser√° contado em dias corridos.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">8.7 - A multa dever·
+		<p style="TEXT-INDENT: 1.5cm" align="justify">8.7 - A multa dever√°
 		ser paga no prazo de 30 (trinta) dias, contados da data do recebimento
-		da intimaÁ„o por via postal, ou data da juntada aos autos do mandado
-		de intimaÁ„o cumprido, conforme o caso.</p>
+		da intima√ß√£o por via postal, ou data da juntada aos autos do mandado
+		de intima√ß√£o cumprido, conforme o caso.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">8.8 - Caso a multa
-		n„o seja paga no prazo estabelecido no item 8.7, dever· ser descontada
-		dos pagamentos do respectivo Registro de PreÁos, ou, ainda, cobrada
+		n√£o seja paga no prazo estabelecido no item 8.7, dever√° ser descontada
+		dos pagamentos do respectivo Registro de Pre√ßos, ou, ainda, cobrada
 		judicialmente, se for o caso.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">8.9 - A atualizaÁ„o
-		dos valores correspondentes ‡s multas estabelecidas neste Registro de
-		PreÁos dar-se-· atravÈs do IPCA-E/IBGE, tendo em vista o disposto no
-		art. 1∫ da Lei n∫ 8.383, de 30/12/91 ou de outro Ìndice,
+		<p style="TEXT-INDENT: 1.5cm" align="justify">8.9 - A atualiza√ß√£o
+		dos valores correspondentes √†s multas estabelecidas neste Registro de
+		Pre√ßos dar-se-√° atrav√©s do IPCA-E/IBGE, tendo em vista o disposto no
+		art. 1¬∫ da Lei n¬∫ 8.383, de 30/12/91 ou de outro √≠ndice,
 		posteriormente determinado em lei.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">8.10 - A contagem
-		dos prazos dispostos neste Registro de PreÁos obedecer· ao disposto no
-		art. 110, da Lei n∫ 8.666/93.</p>
+		dos prazos dispostos neste Registro de Pre√ßos obedecer√° ao disposto no
+		art. 110, da Lei n¬∫ 8.666/93.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">8.11 - Os
-		procedimentos de aplicaÁ„o e recolhimento das multas foram
-		regulamentadas pela IN 24-12, do EgrÈgio Tribunal Regional Federal da
-		2™ Regi„o.</p>
+		procedimentos de aplica√ß√£o e recolhimento das multas foram
+		regulamentadas pela IN 24-12, do Egr√©gio Tribunal Regional Federal da
+		2¬™ Regi√£o.</p>
 
-		<p><b><u>CL&Aacute;USULA NONA - DA DOCUMENTA«√O
+		<p><b><u>CL&Aacute;USULA NONA - DA DOCUMENTA√á√ÉO
 		COMPLEMENTAR</u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">9.1 - Fazem parte
-		integrante do presente Registro de PreÁos, independentemente de
-		transcriÁ„o, os seguintes documentos:</p>
+		integrante do presente Registro de Pre√ßos, independentemente de
+		transcri√ß√£o, os seguintes documentos:</p>
 
 		<p style="TEXT-INDENT: 1.5cm">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a) Preg„o n∫ <b>${pregao
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a) Preg√£o n¬∫ <b>${pregao
 		}</b>/(<b>${ano }</b>) e seus anexos.<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b) Proposta da(s)
-		Fornecedora(s) apresentada ‡ JustiÁa Federal em ${ano }.</p>
+		Fornecedora(s) apresentada √† Justi√ßa Federal em ${ano }.</p>
 
-		<p><b><u>CL&Aacute;USULA D…CIMA - DA PUBLICA«√O</u></b></p>
+		<p><b><u>CL&Aacute;USULA D√âCIMA - DA PUBLICA√á√ÉO</u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">10.1 - O presente
-		Registro de PreÁos ser· publicado no Di·rio Oficial da Uni„o, na forma
-		de extrato, de acordo com o que determina do par·grafo ⁄nico do artigo
-		61 da Lei n∞ 8.666/93;</p>
+		Registro de Pre√ßos ser√° publicado no Di√°rio Oficial da Uni√£o, na forma
+		de extrato, de acordo com o que determina do par√°grafo √önico do artigo
+		61 da Lei n¬∞ 8.666/93;</p>
 		</font>
 		<c:import
 			url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
-		<!-- Fim da 8∫ p·gina -->
+		<!-- Fim da 8¬∫ p√°gina -->
 
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 9</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 9</font></u>
 
 		<font size="2">
-		<p><b><u>CL&Aacute;USULA D…CIMA PRIMEIRA - DA FISCALIZA«√O</u></b></p>
+		<p><b><u>CL&Aacute;USULA D√âCIMA PRIMEIRA - DA FISCALIZA√á√ÉO</u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">11.1 - A entrega dos
-		materiais e a execuÁ„o dos serviÁos ser„o acompanhadas e fiscalizadas
-		por servidor/Comiss„o designados pela AdministraÁ„o.</p>
+		materiais e a execu√ß√£o dos servi√ßos ser√£o acompanhadas e fiscalizadas
+		por servidor/Comiss√£o designados pela Administra√ß√£o.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">11.2 - O
-		representante anotar· em registro prÛprio todas as ocorrÍncias
-		relacionadas com a entrega dos materiais e execuÁ„o dos serviÁos
-		mencionados, determinando o que for necess·rio ‡ regularizaÁ„o das
+		representante anotar√° em registro pr√≥prio todas as ocorr√™ncias
+		relacionadas com a entrega dos materiais e execu√ß√£o dos servi√ßos
+		mencionados, determinando o que for necess√°rio √† regulariza√ß√£o das
 		faltas ou defeitos observados.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">11.3 - As decisıes e
-		providÍncias que ultrapassarem a competÍncia do representante ser„o
-		solicitadas a seus superiores em tempo h·bil para a adoÁ„o das medidas
+		<p style="TEXT-INDENT: 1.5cm" align="justify">11.3 - As decis√µes e
+		provid√™ncias que ultrapassarem a compet√™ncia do representante ser√£o
+		solicitadas a seus superiores em tempo h√°bil para a ado√ß√£o das medidas
 		convenientes.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">11.4 - O exercÌcio
-		da fiscalizaÁ„o pela JustiÁa Federal n„o excluir· a responsabilidade
+		<p style="TEXT-INDENT: 1.5cm" align="justify">11.4 - O exerc√≠cio
+		da fiscaliza√ß√£o pela Justi√ßa Federal n√£o excluir√° a responsabilidade
 		da(s) Fornecedora(s).</p>
 
-		<p><b><u>CL&Aacute;USULA D…CIMA SEGUNDA - DOS RECURSOS
+		<p><b><u>CL&Aacute;USULA D√âCIMA SEGUNDA - DOS RECURSOS
 		ADMINISTRATIVOS</u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">12.1 - Aplica-se o
 		disposto no art. 109 da lei 8.666/93.</p>
 
-		<p><b><u>CL&Aacute;USULA D…CIMA TERCEIRA - DAS
-		CONSIDERA«’ES FINAIS </u></b></p>
+		<p><b><u>CL&Aacute;USULA D√âCIMA TERCEIRA - DAS
+		CONSIDERA√á√ïES FINAIS </u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">13.1 - O Registro de
-		PreÁos poder· ser aditado nos termos previstos no art. 65 da Lei n∫
-		8.666/93, com a apresentaÁ„o das devidas justificativas.</p>
+		Pre√ßos poder√° ser aditado nos termos previstos no art. 65 da Lei n¬∫
+		8.666/93, com a apresenta√ß√£o das devidas justificativas.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">13.2 - A(s)
-		Fornecedora(s) dever·(„o) manter durante toda a validade do Registro
-		de PreÁos, em compatibilidade com as obrigaÁıes por ela assumidas,
-		todas as condiÁıes de habilitaÁ„o e qualificaÁ„o exigidas na
-		licitaÁ„o.</p>
+		Fornecedora(s) dever√°(√£o) manter durante toda a validade do Registro
+		de Pre√ßos, em compatibilidade com as obriga√ß√µes por ela assumidas,
+		todas as condi√ß√µes de habilita√ß√£o e qualifica√ß√£o exigidas na
+		licita√ß√£o.</p>
 
-		<p style="TEXT-INDENT: 1.5cm" align="justify">13.3. N„o constitui
-		obrigaÁ„o da JUSTI«A FEDERAL a aquisiÁ„o de qualquer quantidade dos
+		<p style="TEXT-INDENT: 1.5cm" align="justify">13.3. N√£o constitui
+		obriga√ß√£o da JUSTI√áA FEDERAL a aquisi√ß√£o de qualquer quantidade dos
 		itens objeto da presente Ata.</p>
 		</font>
 		<c:import
 			url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
-		<!-- Fim da 9∫ p·gina -->
+		<!-- Fim da 9¬∫ p√°gina -->
 
 		<c:import
 			url="/paginas/expediente/modelos/inc_cabecalhoCentralizadoPrimeiraPagina.jsp" />
-		<u><font size="1">Processo n∫ ${n1}/${n2 }/${n3 } - EOF -
-		Ata de Registro de PreÁos n∫ ${ataregpreco}/ ${ano} - Fornec. e
-		InstalaÁ„o de ${forninst } &nbsp;&nbsp; 10</font></u>
+		<u><font size="1">Processo n¬∫ ${n1}/${n2 }/${n3 } - EOF -
+		Ata de Registro de Pre√ßos n¬∫ ${ataregpreco}/ ${ano} - Fornec. e
+		Instala√ß√£o de ${forninst } &nbsp;&nbsp; 10</font></u>
 
 		<font size="2">
-		<p><b><u>CL&Aacute;USULA D…CIMA QUARTA - DO FORO </u></b></p>
+		<p><b><u>CL&Aacute;USULA D√âCIMA QUARTA - DO FORO </u></b></p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">14.1 - Para dirimir
-		as questıes oriundas da presente Ata de Registro de PreÁos, fica
-		eleito o Foro da JustiÁa Federal - SeÁ„o Judici·ria do Rio de Janeiro.</p>
+		as quest√µes oriundas da presente Ata de Registro de Pre√ßos, fica
+		eleito o Foro da Justi√ßa Federal - Se√ß√£o Judici√°ria do Rio de Janeiro.</p>
 
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E por estarem ajustados, È
-		lavrada a presente Ata, extraÌda em 03 (trÍs) vias de igual teor e
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E por estarem ajustados, √©
+		lavrada a presente Ata, extra√≠da em 03 (tr√™s) vias de igual teor e
 		forma, que depois de lida e achada conforme vai assinada pelas partes.
 		</p>
 		</font>
@@ -751,7 +751,7 @@
 		<br>
 
 		________________________________________________<br>
-		JUSTI«A FEDERAL DE 1∫ GRAU NO RIO DE JANEIRO<br>
+		JUSTI√áA FEDERAL DE 1¬∫ GRAU NO RIO DE JANEIRO<br>
 		<br>
 		<br>
 		<br>

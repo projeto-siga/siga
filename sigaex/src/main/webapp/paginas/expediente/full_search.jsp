@@ -69,10 +69,10 @@ function popitup_movimentacao(url) {
 			</tr>
 			<tr>
 			<td>
-				<ww:checkbox name="fullSearchTambemSigilosos" />Buscar documentos com nível de acesso limitado
+				<ww:checkbox name="fullSearchTambemSigilosos" />Buscar documentos com nÃ­vel de acesso limitado
 			</td>
 			</tr>
-			<%--<tr><span style="color: red">O serviço de busca textual está temporariamente indisponível</span></tr> --%>
+			<%--<tr><span style="color: red">O serviÃ§o de busca textual estÃ¡ temporariamente indisponÃ­vel</span></tr> --%>
 			<%--
 		<tr>
 			<td>Priorizar documentos</td>
@@ -83,30 +83,30 @@ function popitup_movimentacao(url) {
 		</tr>
 		--%>
 			<!--  <tr>
-		<td>&lt;&lt;Mais Opções&gt;&gt;</td>
+		<td>&lt;&lt;Mais OpÃ§Ãµes&gt;&gt;</td>
 		</tr>-->
 		</table>
 		<ul style="font-size: 10px">
 			<li>Digite a palavra entre aspas para pesquisar por toda a
-			expressão. Exemplo: <span style="font-weight: bold;"> "fulano
-			de tal" memorando</span> trará apenas documentos com a palavra <span style="font-weight: bold;">memorando</span>
+			expressÃ£o. Exemplo: <span style="font-weight: bold;"> "fulano
+			de tal" memorando</span> trarÃ¡ apenas documentos com a palavra <span style="font-weight: bold;">memorando</span>
 			que contenham o nome <span style="font-weight: bold;">completo</span>
 			Fulano de Tal</li>
-			<li>Digite o sinal de - junto a uma palavra para excluí-la da
+			<li>Digite o sinal de - junto a uma palavra para excluÃ­-la da
 			busca. Exemplo: <span style="font-weight: bold;"> "fulano de
-			tal" -designação</span> trará todos os documentos que contenham o nome
-			Fulano de Tal e não possuam o termo <span style="font-weight: bold;">designação</span></li>
-			<li>As palavras são sempre pesquisadas nos seguintes locais:
-			corpo do documento, anotações, despachos curtos e anexos</li>
-			<li>Apenas os documentos assinados são
-			alcançados pela busca</li>
+			tal" -designaÃ§Ã£o</span> trarÃ¡ todos os documentos que contenham o nome
+			Fulano de Tal e nÃ£o possuam o termo <span style="font-weight: bold;">designaÃ§Ã£o</span></li>
+			<li>As palavras sÃ£o sempre pesquisadas nos seguintes locais:
+			corpo do documento, anotaÃ§Ãµes, despachos curtos e anexos</li>
+			<li>Apenas os documentos assinados sÃ£o
+			alcanÃ§ados pela busca</li>
 		</ul>
 
 	</ww:form>
 	</div>
 	
 	<c:if test="${empty showedResults && postback==1}">
-		<p class="no_results">A pesquisa não retornou resultados</p>
+		<p class="no_results">A pesquisa nÃ£o retornou resultados</p>
 	</c:if>
 
 	<siga:paginador maxItens="${itemPagina}" maxIndices="10"

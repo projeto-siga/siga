@@ -8,16 +8,16 @@
 	  	<br>
 		<mod:grupo>
 				<mod:selecao var="organ"
-				titulo="<b>Órgão</b>"
-				opcoes="Coordenadoria dos Juizados Especiais Federais;Gabinete Pres. Coordenadoria dos Juizados Especiais Federais;Núcleo de Apoio - Coordenadoria dos Juizados Especiais Federais"	
+				titulo="<b>Ã“rgÃ£o</b>"
+				opcoes="Coordenadoria dos Juizados Especiais Federais;Gabinete Pres. Coordenadoria dos Juizados Especiais Federais;NÃºcleo de Apoio - Coordenadoria dos Juizados Especiais Federais"	
 				reler="sim" />
 		</mod:grupo>
 		<mod:grupo>
-			    <mod:texto titulo="<b>Referência</b>" var="proc" largura="25"/>
+			    <mod:texto titulo="<b>ReferÃªncia</b>" var="proc" largura="25"/>
 		</mod:grupo>
 		<c:if test="${empty esconderTexto}">
 			<mod:grupo
-				titulo="Texto a ser inserido no corpo da Decisão">
+				titulo="Texto a ser inserido no corpo da DecisÃ£o">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_dec" />
 				</mod:grupo>  
@@ -67,7 +67,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">DECISÃO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
+							<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">DECISÃƒO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
 						</tr>
 					</table>
 				</td>
@@ -83,10 +83,10 @@
 		    <!-- INICIO MIOLO -->
 			<!-- INICIO CORPO -->
 			<br>
-			<p align="left"><b>Referência: ${proc}</b></p>
+			<p align="left"><b>ReferÃªncia: ${proc}</b></p>
 			<p align="left"><b>${organ}</b></p>
 		</mod:letra>
-			<p align="center" style="font-family:Arial;font-weight:bold;font-size:14pt;"><b>Decisão</b></p>
+			<p align="center" style="font-family:Arial;font-weight:bold;font-size:14pt;"><b>DecisÃ£o</b></p>
 		<mod:letra tamanho="${tl}">
 			<span style="font-size: ${tl};line-height: 1px"> ${texto_dec} </span>
 			<!-- FIM CORPO -->

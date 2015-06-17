@@ -9,15 +9,15 @@
 	<mod:entrevista>
 	<br>
 	    <br>
-	    <span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI«√O COM NOME COMPLETO E ASSUNTO</b></span><br>
-		<span style="color:red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ DIMED</b></span>
+	    <span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI√á√ÉO COM NOME COMPLETO E ASSUNTO</b></span><br>
+		<span style="color:red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä DIMED</b></span>
 		<br/><br/>
-		<mod:grupo titulo="DADOS DO MAGISTRADO/SERVIDOR BENEFICI¡RIO TITULAR">
+		<mod:grupo titulo="DADOS DO MAGISTRADO/SERVIDOR BENEFICI√ÅRIO TITULAR">
 			<mod:grupo>
 				
 				<mod:texto titulo="Ramal" var="ramal" largura="15"/>
 		
-				<mod:texto titulo="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plano de Sa˙de a que est· vinculado" var ="plano"/>
+				<mod:texto titulo="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plano de Sa√∫de a que est√° vinculado" var ="plano"/>
 				
 			</mod:grupo>
 		</mod:grupo>
@@ -29,7 +29,7 @@
 				reler="sim"  /><br/>
 		<mod:grupo depende="contDependAjax">
 				<c:forEach var="i" begin="1" end="${contdep}">
-		           <mod:grupo titulo="Dependente n∫ ${i}">
+		           <mod:grupo titulo="Dependente n¬∫ ${i}">
 			           <mod:grupo>
 				           <mod:texto titulo="Nome" var="nom${i}" largura="60"/>
 		               </mod:grupo>
@@ -37,12 +37,12 @@
 				
 			           <mod:grupo>
 				           <mod:data titulo="Data de Nascimento" var="dtNasc${i}"/>
-			               <mod:selecao titulo="Estado Civil" var="estado${i}" opcoes="Solteiro;Solteira;Casado;Casada;Vi˙vo;Vi˙va;Outros" reler="n„o" />
+			               <mod:selecao titulo="Estado Civil" var="estado${i}" opcoes="Solteiro;Solteira;Casado;Casada;Vi√∫vo;Vi√∫va;Outros" reler="n√£o" />
 			           </mod:grupo>
 			           <mod:grupo>
-				           <mod:texto titulo="N∫ Identidade" var="iden${i}" largura="20" obrigatorio="nao"/>
-				           <mod:texto titulo="Org„o Expedidor" var ="OrgExp${i}" obrigatorio="nao"/>
-				           <mod:data titulo="Data de ExpediÁ„o" var="dtExp${i}" obrigatorio="nao"/>
+				           <mod:texto titulo="N¬∫ Identidade" var="iden${i}" largura="20" obrigatorio="nao"/>
+				           <mod:texto titulo="Org√£o Expedidor" var ="OrgExp${i}" obrigatorio="nao"/>
+				           <mod:data titulo="Data de Expedi√ß√£o" var="dtExp${i}" obrigatorio="nao"/>
 			           </mod:grupo>
 			       </mod:grupo> 
 			       <hr style="color: #FFFFFF;" />
@@ -53,50 +53,50 @@
 	        
 	        <hr style="color: #FFFFFF;" />
 		<mod:selecao var="contdoc"
-				titulo="<b>Quantidade de Documentos ComprobatÛrios</b>"
+				titulo="<b>Quantidade de Documentos Comprobat√≥rios</b>"
 				opcoes="1;2;3;4;5"
 				reler="sim"  /><br/>
 		<mod:grupo depende="contDependAjax">
 				<c:forEach var="i" begin="1" end="${contdoc}">
 		              <mod:grupo>
-				          <mod:texto titulo="<b>Documento n∫ ${i}</b>" var="dcmt${i}" largura="60"/>
+				          <mod:texto titulo="<b>Documento n¬∫ ${i}</b>" var="dcmt${i}" largura="60"/>
 		               </mod:grupo>
 	            </c:forEach>    
 	    </mod:grupo>        
 	        <br></br>
 			<mod:grupo>			
-			<mod:caixaverif titulo="Declaro estar ciente dos termos do capitulo IV da resoluÁao n™ 2 de 2008 do Conselho da JustiÁa
-					Federal, que regulamenta a assistÍncia ‡ saude prevista no art. 2320 da lei n∫ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.112, de 1990, 
-					com a redaÁ„o dada pela lei 11.032, de 2006, e de que  o respectivo auxilio ser· pago mediante
-					reembolso.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, ainda que os benefici·rios acima relacionados n„o recebem  auxÌlio semelhante, nem participam de outro 
-					programa de assistÍncia sa˙de, custeado pelos cofres p˙blicos, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ainda que em partes.<br><br>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, por fim, estar ciente de que a documentaÁ„o sobre a operadora/contrato do plano de saude
-					ser· apresentada apÛs a regulamentaÁ„o da matÈria pelo TRF - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2™ Regi„o." var="decl" marcado="Sim" obrigatorio="Sim" reler="Nao"/>
+			<mod:caixaverif titulo="Declaro estar ciente dos termos do capitulo IV da resolu√ßao n¬™ 2 de 2008 do Conselho da Justi√ßa
+					Federal, que regulamenta a assist√™ncia √† saude prevista no art. 2320 da lei n¬∫ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.112, de 1990, 
+					com a reda√ß√£o dada pela lei 11.032, de 2006, e de que  o respectivo auxilio ser√° pago mediante
+					reembolso.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, ainda que os benefici√°rios acima relacionados n√£o recebem  aux√≠lio semelhante, nem participam de outro 
+					programa de assist√™ncia sa√∫de, custeado pelos cofres p√∫blicos, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ainda que em partes.<br><br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, por fim, estar ciente de que a documenta√ß√£o sobre a operadora/contrato do plano de saude
+					ser√° apresentada ap√≥s a regulamenta√ß√£o da mat√©ria pelo TRF - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2¬™ Regi√£o." var="decl" marcado="Sim" obrigatorio="Sim" reler="Nao"/>
 			</mod:grupo>
 			<br>
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<mod:obrigatorios />
 			<br><br>
 			<br>
-			<mod:grupo titulo="ResoluÁ„o 02/2008/CJF:<br/><br>
-					Art. 42. SÛ far· jus ao ressarcimento o
-					benefici·rio que n„o receber auxÌlio semelhante e nem participar de outro 
-					programa de assistÍncia ‡ sa˙de de servidor, custeado pelos cofres p˙blicos, 
+			<mod:grupo titulo="Resolu√ß√£o 02/2008/CJF:<br/><br>
+					Art. 42. S√≥ far√° jus ao ressarcimento o
+					benefici√°rio que n√£o receber aux√≠lio semelhante e nem participar de outro 
+					programa de assist√™ncia √† sa√∫de de servidor, custeado pelos cofres p√∫blicos, 
 					ainda que em parte.<br/><br>
-					Art. 43. S„o benefici·rios do auxÌlio:<br/>
+					Art. 43. S√£o benefici√°rios do aux√≠lio:<br/>
 					I - na qualidade de titulares: <br/>
- 					a)     magistrados e servidores ativos e inativos, incluÌdos os cedidos e ocupantes apenas de cargo comissionado no Conselho e Ûrg„os da JustiÁa Federal de primeiro e segundo graus;
-					b)     pensionistas estatut·rios.<br/>
+ 					a)     magistrados e servidores ativos e inativos, inclu√≠dos os cedidos e ocupantes apenas de cargo comissionado no Conselho e √≥rg√£os da Justi√ßa Federal de primeiro e segundo graus;
+					b)     pensionistas estatut√°rios.<br/>
 					II - na qualidade de dependente do titular:<br/>
-					a)     o cÙnjuge, o companheiro ou companheira de uni„o est·vel;<br/>
-					b)     a pessoa desquitada, separada judicialmente ou divorciada, que perceba pens„o alimentÌcia;<br/>
-					c)     os filhos e enteados, solteiros, atÈ 21 (vinte e um) anos de idade ou, se inv·lidos, enquanto durar a invalidez;<br/>
-					d)     os filhos e enteados, entre 21 (vinte e um) e 24 (vinte e quatro) anos de idade, dependentes econÙmicos do magistrado ou servidor e estudantes de curso regular reconhecido pelo MinistÈrio da  EducaÁ„o;<br/>
-					e)     o menor sob guarda ou tutela concedida por decis„o judicial.<br/><br>
-					Art. 45. S„o documentos indispens·veis para inscriÁ„o:<br>
-					I - cÛpia autenticada do contrato celebrado entre o benefici·rio titular e a operadora de planos de sa˙de ou o original seguido de cÛpia, a ser conferida pelo servidor respons·vel;<br/>
-					II - comprovante de que a operadora de planos de sa˙de contratada pelo servidor est· regular e autorizada pela AgÍncia Nacional de Sa˙de (ANS);<br>
-					III - declaraÁ„o para fins de cumprimento do art. 42 desta ResoluÁ„o;<br>
-					IV - documentos oficiais que comprovem a situaÁ„o de  dependÍncia, (...)"/>
+					a)     o c√¥njuge, o companheiro ou companheira de uni√£o est√°vel;<br/>
+					b)     a pessoa desquitada, separada judicialmente ou divorciada, que perceba pens√£o aliment√≠cia;<br/>
+					c)     os filhos e enteados, solteiros, at√© 21 (vinte e um) anos de idade ou, se inv√°lidos, enquanto durar a invalidez;<br/>
+					d)     os filhos e enteados, entre 21 (vinte e um) e 24 (vinte e quatro) anos de idade, dependentes econ√¥micos do magistrado ou servidor e estudantes de curso regular reconhecido pelo Minist√©rio da  Educa√ß√£o;<br/>
+					e)     o menor sob guarda ou tutela concedida por decis√£o judicial.<br/><br>
+					Art. 45. S√£o documentos indispens√°veis para inscri√ß√£o:<br>
+					I - c√≥pia autenticada do contrato celebrado entre o benefici√°rio titular e a operadora de planos de sa√∫de ou o original seguido de c√≥pia, a ser conferida pelo servidor respons√°vel;<br/>
+					II - comprovante de que a operadora de planos de sa√∫de contratada pelo servidor est√° regular e autorizada pela Ag√™ncia Nacional de Sa√∫de (ANS);<br>
+					III - declara√ß√£o para fins de cumprimento do art. 42 desta Resolu√ß√£o;<br>
+					IV - documentos oficiais que comprovem a situa√ß√£o de  depend√™ncia, (...)"/>
 			
 		 	
 		<br>	
@@ -143,7 +143,7 @@
 <br/>
 		<table border="1" cellpadding="5" width="96%"style="font-size:19" >
 			<tr>
-    			<th colspan="2" align="left" style="font-size:10"><b>1-DADOS DO MAGISTRADO/SERVIDOR BENEFICI¡RIO (TITULAR)</b></th>
+    			<th colspan="2" align="left" style="font-size:10"><b>1-DADOS DO MAGISTRADO/SERVIDOR BENEFICI√ÅRIO (TITULAR)</b></th>
   			</tr>
   			<tr >
   				<td>
@@ -152,7 +152,7 @@
   				 <table width="100%" border="0" cellpadding="1" cellspacing="1" bgcolor="#FFFFFF">
 			        <tr>
 			      	<td width="70%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Nome &nbsp; :&nbsp;${doc.subscritor.descricao}</td>
-			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">MatrÌcula &nbsp;:&nbsp;${doc.subscritor.matricula}</td>
+			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Matr√≠cula &nbsp;:&nbsp;${doc.subscritor.matricula}</td>
                     </tr>
                  </table>
                  
@@ -165,21 +165,21 @@
                  
                   <table width="100%" border="0" cellpadding="1" cellspacing="1" bgcolor="#FFFFFF">
 			        <tr>
-			      	<td width="70%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">LotaÁ„o &nbsp; :&nbsp;${doc.subscritor.lotacao.descricao}</td>
+			      	<td width="70%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Lota√ß√£o &nbsp; :&nbsp;${doc.subscritor.lotacao.descricao}</td>
 			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Ramal &nbsp;:&nbsp;${ramal}</td>
                     </tr>
                  </table>
                  
                  <table width="100%" border="0" cellpadding="1" cellspacing="0">
 			       <tr>
-     			   <td width="100%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" align="left">Plano de Sa˙de a que est· ${vinc} &nbsp; : &nbsp;${plano}</td>
+     			   <td width="100%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" align="left">Plano de Sa√∫de a que est√° ${vinc} &nbsp; : &nbsp;${plano}</td>
 			       </tr>
 		         </table>
                  
                 <!--  
   				Nome: ${doc.subscritor.descricao}&nbsp;_________&nbsp; Matricula: ${doc.subscritor.matricula}<br/>
 				Cargo: ${doc.subscritor.cargo.descricao} &nbsp;_________&nbsp;Quadro de Pessoal:&nbsp;TRF<br/>
-				LotaÁ„o: ${doc.subscritor.lotacao.descricao}  &nbsp;_________&nbsp;Ramal: ${ramal}<br/>
+				Lota√ß√£o: ${doc.subscritor.lotacao.descricao}  &nbsp;_________&nbsp;Ramal: ${ramal}<br/>
 				Plano de Sa&uacute;de a que est&aacute; ${vinc}: ${plano}
 				-->
 				
@@ -221,9 +221,9 @@
                  
                   <table width="100%" border="0" cellpadding="1" cellspacing="1" bgcolor="#FFFFFF">
 			        <tr>
-			      	<td width="34%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">N∫ Identidade &nbsp;:&nbsp;${idenn}</td>
-			        <td width="36%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">”rg„o Expedidor &nbsp;:&nbsp;${OrgExpp}</td>
-			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Data de ExpediÁ„o &nbsp;&nbsp;&nbsp;:&nbsp;${dtExpp}</td>
+			      	<td width="34%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">N¬∫ Identidade &nbsp;:&nbsp;${idenn}</td>
+			        <td width="36%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">√ìrg√£o Expedidor &nbsp;:&nbsp;${OrgExpp}</td>
+			        <td width="30%" style="font-family:Arial;font-size:9pt" bgcolor="#FFFFFF" border="0" align="left">Data de Expedi√ß√£o &nbsp;&nbsp;&nbsp;:&nbsp;${dtExpp}</td>
                     </tr>
                  </table>
   				 
@@ -232,7 +232,7 @@
   					Nome: ${nomm}  <br> Parentesco: ${parenn} &nbsp;_____&nbsp;
   					Estado Civil: ${estd} &nbsp;_____&nbsp;
   					Data de Nascimento: ${dtNascc} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
-  					N∫ Identidade: ${idenn} &nbsp;_____&nbsp; 
+  					N¬∫ Identidade: ${idenn} &nbsp;_____&nbsp; 
   					&Oacute;rg&atilde;o Expedidor: ${OrgExpp} &nbsp;_____&nbsp;
   					Data de Expedi&ccedil;&atilde;o: ${dtExpp}<br/>
   					 -->
@@ -249,15 +249,15 @@
 			</tr>
 			<tr >
 				<td >
-					Declaro estar ciente dos termos do capitulo IV da resoluÁ„o n™ 2 de 2008 do Conselho da JustiÁa
-					Federal, que regulamenta a assistÍncia ‡ saude prevista no art. 2320 da lei n∫ 8.112, de 1990, 
-					com a redaÁ„o dada pela lei 11.032, de 2006, e de que  o respectivo auxÌlio ser· pago mediante
+					Declaro estar ciente dos termos do capitulo IV da resolu√ß√£o n¬™ 2 de 2008 do Conselho da Justi√ßa
+					Federal, que regulamenta a assist√™ncia √† saude prevista no art. 2320 da lei n¬∫ 8.112, de 1990, 
+					com a reda√ß√£o dada pela lei 11.032, de 2006, e de que  o respectivo aux√≠lio ser√° pago mediante
 					reembolso.<br></br>
-					Declaro, ainda que os beneficiados acima relacionados n„o recebem  auxÌlio semelhante, nem participam de outro 
-					programa de assistÍncia sa˙de, custeado pelos cofres p˙blicos, ainda que em partes.<br></br>
+					Declaro, ainda que os beneficiados acima relacionados n√£o recebem  aux√≠lio semelhante, nem participam de outro 
+					programa de assist√™ncia sa√∫de, custeado pelos cofres p√∫blicos, ainda que em partes.<br></br>
 					<b>
-					Declaro, por fim, estar ciente de que a documentaÁ„o sobre a operadora/contrato do plano de sa˙de
-					ser· apresentada apÛs a regulamentaÁ„o da matÈria pelo TRF - 2™ Regi„o.
+					Declaro, por fim, estar ciente de que a documenta√ß√£o sobre a operadora/contrato do plano de sa√∫de
+					ser√° apresentada ap√≥s a regulamenta√ß√£o da mat√©ria pelo TRF - 2¬™ Regi√£o.
 					</b> 
 				</td>
 			</tr>
@@ -269,7 +269,7 @@
 			</tr>
 			<tr >
 				<td >
-					Em anexo seguem os documentos que comprovam a situaÁ„o de dependÍncia: ${rel}<br/>
+					Em anexo seguem os documentos que comprovam a situa√ß√£o de depend√™ncia: ${rel}<br/>
 					<c:if test="${contdoc > '0'}">
 		        	   <c:forEach var="i" begin="1" end="${contdoc}">
 				          <c:set var="docs" value="${requestScope[(f:concat('dcmt',i))]}" />
@@ -290,30 +290,30 @@
 		<br>
 		<table border="1" cellpadding="5" width="96%"style="font-size:9">
 			<tr>
-				<th colspan="2" align="left" style="font-size:9"><b>5- OBSERVA«’ES </b></th>
+				<th colspan="2" align="left" style="font-size:9"><b>5- OBSERVA√á√ïES </b></th>
 			</tr>
 			<tr >
 				<td >
 					Res. 02/2008/CJF:<br/> 
-					"Art. 42. SÛ far· jus ao ressarcimento o
-					benefici·rio que n„o receber auxÌlio semelhante e nem participar de outro 
-					programa de assistÍncia ‡ sa˙de de servidor, custeado pelos cofres p˙blicos, 
+					"Art. 42. S√≥ far√° jus ao ressarcimento o
+					benefici√°rio que n√£o receber aux√≠lio semelhante e nem participar de outro 
+					programa de assist√™ncia √† sa√∫de de servidor, custeado pelos cofres p√∫blicos, 
 					ainda que em parte.<br/>
-					Art. 43. S„o benefici·rios do auxÌlio:<br/>
+					Art. 43. S√£o benefici√°rios do aux√≠lio:<br/>
 					I - na qualidade de titulares: <br/>
- 					a)     magistrados e servidores ativos e inativos, incluÌdos os cedidos e ocupantes apenas de cargo comissionado no Conselho e Ûrg„os da JustiÁa Federal de primeiro e segundo graus;
-					b)     pensionistas estatut·rios.<br/>
+ 					a)     magistrados e servidores ativos e inativos, inclu√≠dos os cedidos e ocupantes apenas de cargo comissionado no Conselho e √≥rg√£os da Justi√ßa Federal de primeiro e segundo graus;
+					b)     pensionistas estatut√°rios.<br/>
 					II - na qualidade de dependente do titular:<br/>
-					a)     o cÙnjuge, o companheiro ou companheira de uni„o est·vel;<br/>
-					b)     a pessoa desquitada, separada judicialmente ou divorciada, que perceba pens„o alimentÌcia;<br/>
-					c)     os filhos e enteados, solteiros, atÈ 21 (vinte e um) anos de idade ou, se inv·lidos, enquanto durar a invalidez;<br/>
-					d)     os filhos e enteados, entre 21 (vinte e um) e 24 (vinte e quatro) anos de idade, dependentes econÙmicos do magistrado ou servidor e estudantes de curso regular reconhecido pelo MinistÈrio da  EducaÁ„o;<br/>
-					e)     o menor sob guarda ou tutela concedida por decis„o judicial.<br/>
-					Art. 45. S„o documentos indispens·veis para inscriÁ„o:
-					I - cÛpia autenticada do contrato celebrado entre o benefici·rio titular e a operadora de planos de sa˙de ou o original seguido de cÛpia, a ser conferida pelo servidor respons·vel;<br/>
-					II - comprovante de que a operadora de planos de sa˙de contratada pelo servidor est· regular e autorizada pela AgÍncia Nacional de Sa˙de (ANS);
-					III - declaraÁ„o para fins de cumprimento do art. 42 desta ResoluÁ„o;
-					IV - documentos oficiais que comprovem a situaÁ„o de  dependÍncia, (...)"
+					a)     o c√¥njuge, o companheiro ou companheira de uni√£o est√°vel;<br/>
+					b)     a pessoa desquitada, separada judicialmente ou divorciada, que perceba pens√£o aliment√≠cia;<br/>
+					c)     os filhos e enteados, solteiros, at√© 21 (vinte e um) anos de idade ou, se inv√°lidos, enquanto durar a invalidez;<br/>
+					d)     os filhos e enteados, entre 21 (vinte e um) e 24 (vinte e quatro) anos de idade, dependentes econ√¥micos do magistrado ou servidor e estudantes de curso regular reconhecido pelo Minist√©rio da  Educa√ß√£o;<br/>
+					e)     o menor sob guarda ou tutela concedida por decis√£o judicial.<br/>
+					Art. 45. S√£o documentos indispens√°veis para inscri√ß√£o:
+					I - c√≥pia autenticada do contrato celebrado entre o benefici√°rio titular e a operadora de planos de sa√∫de ou o original seguido de c√≥pia, a ser conferida pelo servidor respons√°vel;<br/>
+					II - comprovante de que a operadora de planos de sa√∫de contratada pelo servidor est√° regular e autorizada pela Ag√™ncia Nacional de Sa√∫de (ANS);
+					III - declara√ß√£o para fins de cumprimento do art. 42 desta Resolu√ß√£o;
+					IV - documentos oficiais que comprovem a situa√ß√£o de  depend√™ncia, (...)"
 				</td>
 			</tr>
 		</table>

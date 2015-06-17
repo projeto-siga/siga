@@ -8,11 +8,11 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo
-			titulo="SOLICITA«√O - Encaminhar com antecedÍncia mÌnima de 22 (vinte e dois) dias ˙teis">
+			titulo="SOLICITA√á√ÉO - Encaminhar com anteced√™ncia m√≠nima de 22 (vinte e dois) dias √∫teis">
 			<mod:grupo>
-				<mod:selecao titulo="SolicitaÁ„o dentro do prazo" opcoes="sim;n„o"
+				<mod:selecao titulo="Solicita√ß√£o dentro do prazo" opcoes="sim;n√£o"
 					var="solicitacao_prazo" reler="sim" />
-				<c:if test="${solicitacao_prazo=='n„o'}">
+				<c:if test="${solicitacao_prazo=='n√£o'}">
 					<mod:grupo>
 						<mod:memo colunas="55" linhas="2"
 							titulo="Caso negativo, justifique" var="obs_prazo" />
@@ -21,13 +21,13 @@
 			</mod:grupo>
 			<mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="AÁ„o de capacitaÁ„o (TÌtulo)" largura="40"
+					<mod:texto titulo="A√ß√£o de capacita√ß√£o (T√≠tulo)" largura="40"
 						var="capacit_tit" />
 				</mod:grupo>
 				<mod:grupo>
 				</mod:grupo>
-				<mod:grupo titulo="Periodo da capacitaÁ„o">
-					<mod:data titulo="Data de inÌcio" var="data_ini" alerta="Nao" />
+				<mod:grupo titulo="Periodo da capacita√ß√£o">
+					<mod:data titulo="Data de in√≠cio" var="data_ini" alerta="Nao" />
 					<mod:data titulo="Data de fim" var="data_fim" alerta="Nao" />
 					<mod:texto titulo="Cidade" largura="30" var="cidade" />
 					<mod:selecao titulo="UF" var="uf"
@@ -35,28 +35,28 @@
 				</mod:grupo>
 				<mod:grupo>
 					<mod:grupo
-						titulo="Valor&nbsp;&nbsp; (Caso a aÁ„o n„o tenha Ùnus, deixe estes campos em branco)">
-						<mod:monetario titulo="Valor unit·rio" largura="12"
+						titulo="Valor&nbsp;&nbsp; (Caso a a√ß√£o n√£o tenha √¥nus, deixe estes campos em branco)">
+						<mod:monetario titulo="Valor unit√°rio" largura="12"
 							maxcaracteres="10" var="valor_prospectoUnit" formataNum="sim"
-							extensoNum="n„o" reler="ajax" idAjax="precounitajax" />
+							extensoNum="n√£o" reler="ajax" idAjax="precounitajax" />
 						<mod:monetario titulo="Valor total" largura="12"
 							maxcaracteres="10" var="valor_prospectoTotal" formataNum="sim"
-							extensoNum="n„o" reler="ajax" idAjax="precototalajax" />
+							extensoNum="n√£o" reler="ajax" idAjax="precototalajax" />
 					</mod:grupo>
 				</mod:grupo>
 				<mod:grupo>
-					<mod:selecao titulo="Passagens" var="passagens" opcoes="sim;n„o" />
-					<mod:selecao titulo="Di·rias" var="diarias" opcoes="sim;n„o" />
+					<mod:selecao titulo="Passagens" var="passagens" opcoes="sim;n√£o" />
+					<mod:selecao titulo="Di√°rias" var="diarias" opcoes="sim;n√£o" />
 				</mod:grupo>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="InstituiÁ„o/Consultor" var="institucao_consultor" />
+				<mod:texto titulo="Institui√ß√£o/Consultor" var="institucao_consultor" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Pessoa JurÌdica: CNPJ" largura="16"
+				<mod:texto titulo="Pessoa Jur√≠dica: CNPJ" largura="16"
 					maxcaracteres="18" var="cnpj" />
 
-				<mod:texto titulo="Pessoa fÌsica: NIT ou PIS/PASEP" largura="16"
+				<mod:texto titulo="Pessoa f√≠sica: NIT ou PIS/PASEP" largura="16"
 					maxcaracteres="14" var="nit_pis_pasep" />
 
 				<mod:texto titulo="CPF:" largura="16" maxcaracteres="14" var="cpf" />
@@ -64,16 +64,16 @@
 			<mod:grupo depende="precounitajax;precototalajax">
 				<c:if
 					test="${conv:monetarioParaFloat(valor_prospectoUnit) > 0 or conv:monetarioParaFloat(valor_prospectoTotal) > 0}">
-					<mod:grupo titulo="IndicaÁ„o de duas propostas para comparaÁ„o"></mod:grupo>
+					<mod:grupo titulo="Indica√ß√£o de duas propostas para compara√ß√£o"></mod:grupo>
 					<c:forEach var="i" begin="1" end="2">
-						<mod:grupo titulo="InstituiÁ„o/consultor ${i}">
+						<mod:grupo titulo="Institui√ß√£o/consultor ${i}">
 							<mod:grupo>
-								<mod:texto titulo="AÁ„o de capacitaÁ„o / TÌtulo" largura="40"
+								<mod:texto titulo="A√ß√£o de capacita√ß√£o / T√≠tulo" largura="40"
 									var="capacit_tit_indic${i}" />
 							</mod:grupo>
-							<mod:grupo titulo="Data/PerÌodo da capacitaÁ„o">
+							<mod:grupo titulo="Data/Per√≠odo da capacita√ß√£o">
 								<mod:data titulo="De" alerta="Nao" var="data_per_ini${i}" />
-								<mod:data titulo="atÈ" alerta="Nao" var="data_per_fim${i}" />
+								<mod:data titulo="at√©" alerta="Nao" var="data_per_fim${i}" />
 							</mod:grupo>
 							<mod:grupo>
 								<mod:texto titulo="Cidade" largura="30" var="compara_cidade${i}" />
@@ -81,14 +81,14 @@
 									opcoes="&nbsp;;AC;AL;AP;AM;BA;CE;DF;ES;GO;MA;MT;MS;MG;PA;PB;PR;PE;PI;RJ;RR;RO;RN;RS;SC;SP;SE;TO" />
 							</mod:grupo>
 							<mod:grupo>
-								<mod:texto titulo="InstituiÁ„o/Consultor"
+								<mod:texto titulo="Institui√ß√£o/Consultor"
 									var="institucao_consultor_indic${i}" />
 							</mod:grupo>
 							<mod:grupo>
 
 								<mod:monetario titulo="Valor total" largura="12"
 									maxcaracteres="10" var="valor_indic${i}" formataNum="sim"
-									reler="sim" extensoNum="n„o" />
+									reler="sim" extensoNum="n√£o" />
 							</mod:grupo>
 						</mod:grupo>
 					</c:forEach>
@@ -96,24 +96,24 @@
 			</mod:grupo>
 
 			<mod:grupo titulo="">
-				<mod:memo colunas="55" titulo="ObservaÁıes" linhas="2" var="obs" />
+				<mod:memo colunas="55" titulo="Observa√ß√µes" linhas="2" var="obs" />
 			</mod:grupo>
 
 			<mod:grupo>
 				<mod:grupo>
 					<mod:memo colunas="55" linhas="2"
-						titulo="Justifique por que a proposta escolhida È a que melhor atende ‡s necessidades e a import‚ncia dela para as atividades de sua unidade"
+						titulo="Justifique por que a proposta escolhida √© a que melhor atende √†s necessidades e a import√¢ncia dela para as atividades de sua unidade"
 						var="importancia" />
 				</mod:grupo>
 			</mod:grupo>
 			<br>
-			<b><mod:mensagem texto="A(s) proposta(s) deve(m) ser anexada(s) ao presente formul·rio."></mod:mensagem></b>
+			<b><mod:mensagem texto="A(s) proposta(s) deve(m) ser anexada(s) ao presente formul√°rio."></mod:mensagem></b>
 			<br>
 			<mod:caixaverif obrigatorio="Sim" titulo="Ciente" var="cienteProposta"  />
 			<br>
 			<br>
 			<mod:grupo
-				titulo="Identifique as atividades/tarefas da unidade que ser„o afetadas pela capacitaÁ„o">
+				titulo="Identifique as atividades/tarefas da unidade que ser√£o afetadas pela capacita√ß√£o">
 				<mod:selecao titulo="Quantas atividades/tarefas deseja elencar"
 					var="ativ_hoje" reler="ajax" idAjax="atividadeAjax"
 					opcoes="1;2;3;4;5;6;7;8;9;10" />
@@ -129,16 +129,16 @@
 							<mod:grupo titulo="Atividade ${i}">
 								<mod:grupo>
 									<mod:texto
-										titulo="Atividade/tarefa que ser· afetada pelo treinamento"
+										titulo="Atividade/tarefa que ser√° afetada pelo treinamento"
 										largura="40" var="ativ_tarefa${i}" />
 								</mod:grupo>
 								<mod:grupo>
 									<mod:memo colunas="55" linhas="2"
-										titulo="Como È desenvolvida atualmente" var="des${i}" />
+										titulo="Como √© desenvolvida atualmente" var="des${i}" />
 								</mod:grupo>
 								<mod:grupo>
 									<mod:memo colunas="55" linhas="2"
-										titulo="Como prevÍ que ficar· apÛs a capacitaÁ„o"
+										titulo="Como prev√™ que ficar√° ap√≥s a capacita√ß√£o"
 										var="ativ_pos_capacit${i}" />
 								</mod:grupo>
 							</mod:grupo>
@@ -148,12 +148,12 @@
 			</mod:grupo>
 			<mod:grupo titulo="Servidor(es) Indicado(s)">
 				<mod:selecao titulo="Mais que 10 servidores a indicar" var="quantos"
-					opcoes="n„o;sim" reler="ajax" idAjax="quantosAjax" />
+					opcoes="n√£o;sim" reler="ajax" idAjax="quantosAjax" />
 				<mod:grupo depende="quantosAjax">
 					<c:choose>
 						<c:when test="${quantos=='sim'}">
 							<mod:mensagem
-								texto="A lista de servidores dever· ser anexada ao documento informando matrÌcula, nome, cargo, funÁ„o e lotaÁ„o de cada servidor."
+								texto="A lista de servidores dever√° ser anexada ao documento informando matr√≠cula, nome, cargo, fun√ß√£o e lota√ß√£o de cada servidor."
 								vermelho="sim" />
 						</c:when>
 						<c:otherwise>
@@ -169,7 +169,7 @@
 							<mod:mensagem texto="Digite um numero menor do que 1000"
 								vermelho="sim" />
 						</c:if>
-						<c:if test="${serv_indic<999 and quantos == 'n„o'}">
+						<c:if test="${serv_indic<999 and quantos == 'n√£o'}">
 							<c:forEach var="i" begin="1" end="${serv_indic}">
 								<mod:grupo titulo="Sevidor ${i}">
 
@@ -184,37 +184,37 @@
 				</mod:grupo>
 				<mod:grupo>
 					<mod:memo colunas="55" linhas="2"
-						titulo="Justifique o n˙mero de servidores indicados"
+						titulo="Justifique o n√∫mero de servidores indicados"
 						var="justif_n_serv" />
 				</mod:grupo>
 				<mod:grupo>
 					<mod:memo colunas="55" linhas="2"
-						titulo="CritÈrio(s) utilizado(s) para a indicaÁ„o" var="criterios" />
+						titulo="Crit√©rio(s) utilizado(s) para a indica√ß√£o" var="criterios" />
 				</mod:grupo>
 				<mod:grupo
-					titulo="Cada servidor indicado est· devidamente ciente do inteiro teor da portaria n∫ 042-GDF, de 10.09.2002, assumindo os compromissos determinados nesse ato normativo, sobretudo no que se refere ‡ multiplicaÁ„o do conhecimento adquirido">
+					titulo="Cada servidor indicado est√° devidamente ciente do inteiro teor da portaria n¬∫ 042-GDF, de 10.09.2002, assumindo os compromissos determinados nesse ato normativo, sobretudo no que se refere √† multiplica√ß√£o do conhecimento adquirido">
 					<mod:grupo>
 						<mod:memo colunas="55" linhas="2"
-							titulo="Indique abaixo a forma de multiplicaÁ„o que ser· utilizada"
+							titulo="Indique abaixo a forma de multiplica√ß√£o que ser√° utilizada"
 							var="forma_multiplicacao" />
 					</mod:grupo>
 				</mod:grupo>
 
 
 				<mod:grupo
-					titulo="Responsabilizo-me pelas informaÁıes prestadas e pela multiplicaÁ„o do conhecimento
-				   adquirido pelos indicados, assim como pelo atesto ao final da aÁ„o de capacitaÁ„o.">
+					titulo="Responsabilizo-me pelas informa√ß√µes prestadas e pela multiplica√ß√£o do conhecimento
+				   adquirido pelos indicados, assim como pelo atesto ao final da a√ß√£o de capacita√ß√£o.">
 				</mod:grupo>								
 			</mod:grupo>
 		</mod:grupo>	
 		<br>	
 		<mod:mensagem
-			texto="A SOLICITA«√O DE
-				PAGAMENTO DE DI¡RIAS, SE FOR O CASO, DEVER¡ SER ENCAMINHADA PARA A
-				SECRETARIA GERAL PELO SIGA-DOC, COM, NO MÕNIMO, 7 (SETE) DIAS ⁄TEIS
-				DE ANTECED NCIA DA DATA DE INÕCIO DO CURSO, POR MEIO DO FORMUL¡RIO
-				PROPOSTA DE CONCESS√O DE DI¡RIAS, DISPONÕVEL NA
-				P¡GINA DA INTRANET, MENU ORGANIZA«√O/FORMUL¡RIOS, SEGUINDO AS ORIENTA«’ES
+			texto="A SOLICITA√á√ÉO DE
+				PAGAMENTO DE DI√ÅRIAS, SE FOR O CASO, DEVER√Å SER ENCAMINHADA PARA A
+				SECRETARIA GERAL PELO SIGA-DOC, COM, NO M√çNIMO, 7 (SETE) DIAS √öTEIS
+				DE ANTECED√äNCIA DA DATA DE IN√çCIO DO CURSO, POR MEIO DO FORMUL√ÅRIO
+				PROPOSTA DE CONCESS√ÉO DE DI√ÅRIAS, DISPON√çVEL NA
+				P√ÅGINA DA INTRANET, MENU ORGANIZA√á√ÉO/FORMUL√ÅRIOS, SEGUINDO AS ORIENTA√á√ïES
 				ALI CONTIDAS.">
 		</mod:mensagem>
 	</mod:entrevista>
@@ -251,8 +251,8 @@
 				<td width="50%">
 				<table width="100%" height="100%" cellpadding="10" cellspacing="1">
 					<tr bordercolor="#FFFFFF">
-						<td align="center" colspan="2" bordercolor="#FFFFFF">SOLICITA«√O
-						DE INSCRI«√O EM A«√O DE &nbsp;&nbsp;&nbsp;CAPACITA«√O EXTERNA -
+						<td align="center" colspan="2" bordercolor="#FFFFFF">SOLICITA√á√ÉO
+						DE INSCRI√á√ÉO EM A√á√ÉO DE &nbsp;&nbsp;&nbsp;CAPACITA√á√ÉO EXTERNA -
 						COM ONUS</td>
 					</tr>
 					<tr>
@@ -271,15 +271,15 @@
 
 		<table width="100%">
 			<tr>
-				<td colspan="2" bgcolor="#E8E8E8">SOLICITA«√O - Encaminhar com antecedÍncia mÌnima de 22 (vinte de dois) dias ˙teis</td>
+				<td colspan="2" bgcolor="#E8E8E8">SOLICITA√á√ÉO - Encaminhar com anteced√™ncia m√≠nima de 22 (vinte de dois) dias √∫teis</td>
 			</tr>
 
 			<tr>
 				<td colspan="2">
-				<p><font size="2">SOLICITA«√O DENTRO DO PRAZO?&nbsp; <b>${solicitacao_prazo}</b></font></p>
+				<p><font size="2">SOLICITA√á√ÉO DENTRO DO PRAZO?&nbsp; <b>${solicitacao_prazo}</b></font></p>
 				</td>
 			</tr>
-			<c:if test="${solicitacao_prazo=='n„o'}">
+			<c:if test="${solicitacao_prazo=='n√£o'}">
 				<tr>
 					<td>
 					<p><font size="2">Caso negativo, justifique:<br>
@@ -290,8 +290,8 @@
 			</c:if>
 
 			<tr>
-				<td width="50%"><font size="2">A«√O DE CAPACITA«√O
-				(TÕTULO):&nbsp;<b> ${capacit_tit}</b></font></td>
+				<td width="50%"><font size="2">A√á√ÉO DE CAPACITA√á√ÉO
+				(T√çTULO):&nbsp;<b> ${capacit_tit}</b></font></td>
 
 			</tr>
 		</table>
@@ -303,19 +303,19 @@
 				<td width="50%"><font size="2">Cidade: <b>&nbsp;${cidade}</b>&nbsp;&nbsp;&nbsp;UF:<b>${uf}</b></font></td>
 			</tr>
 			<tr>
-				<td colspan="2"><font size="2">VALOR UNIT¡RIO:<b>&nbsp;${valor_prospectoUnit}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VALOR
+				<td colspan="2"><font size="2">VALOR UNIT√ÅRIO:<b>&nbsp;${valor_prospectoUnit}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VALOR
 				TOTAL:&nbsp;<b>${valor_prospectoTotal}</b></font></td>
 			</tr>
 			<tr>
 				<td><font size="2">PASSAGEM:<b>&nbsp;${passagens}</b></font></td>
-				<td><font size="2">DI¡RIAS:<b>&nbsp;${diarias}</b></font></td>
+				<td><font size="2">DI√ÅRIAS:<b>&nbsp;${diarias}</b></font></td>
 			</tr>
 			<tr>
-				<td colspan="2"><font size="2">INSTITU«√O/CONSULTOR:<b>&nbsp;
+				<td colspan="2"><font size="2">INSTITU√á√ÉO/CONSULTOR:<b>&nbsp;
 				${institucao_consultor}</b></font></td>
 			</tr>
 			<tr>
-				<td colspan="2"><font size="2">PESSOA JURÕDICA (CNPJ):<b>&nbsp;
+				<td colspan="2"><font size="2">PESSOA JUR√çDICA (CNPJ):<b>&nbsp;
 				${cnpj}</b></font></td>
 			</tr>
 			<tr>
@@ -327,8 +327,8 @@
 		<br>
 		<table width="100%">
 			<tr>
-				<td align="center" bgcolor="#E8E8E8">INDICA«√O DE DUAS
-				PROPOSTAS PARA COMPARA«√O</td>
+				<td align="center" bgcolor="#E8E8E8">INDICA√á√ÉO DE DUAS
+				PROPOSTAS PARA COMPARA√á√ÉO</td>
 			</tr>
 		</table>
 
@@ -336,12 +336,12 @@
 
 			<tr>
 				<td width="2%"></td>
-				<td width="30%"><font size="2">A«√O DE CAPACITA«√O
+				<td width="30%"><font size="2">A√á√ÉO DE CAPACITA√á√ÉO
 				(TITULO)</font></td>
 				<td width="15%"><font size="2">DATA/PERIODO DA
-				CAPACITA«√O</font></td>
+				CAPACITA√á√ÉO</font></td>
 				<td width="20%"><font size="2">CIDADE/UF</font></td>
-				<td width="23%"><font size="2">INSTITUI«√O/CONSULTOR</font></td>
+				<td width="23%"><font size="2">INSTITUI√á√ÉO/CONSULTOR</font></td>
 				<td width="10%"><font size="2">VALOR TOTAL</font></td>
 			</tr>
 			<c:forEach var="i" begin="1" end="2">
@@ -371,13 +371,13 @@
 		<table width="100%">
 			<tr>
 				<td>
-				<p><font size="2">ObservaÁıes:<br>
+				<p><font size="2">Observa√ß√µes:<br>
 				<b>${obs}</b></font></p>
 				</td>
 			</tr>
 			<tr>
 				<td>
-				<p><font size="2">Justifique por que a proposta escolhida È a que melhor atende ‡s necessidades e a import‚ncia dela para as atividades de sua unidade:</font><br>
+				<p><font size="2">Justifique por que a proposta escolhida √© a que melhor atende √†s necessidades e a import√¢ncia dela para as atividades de sua unidade:</font><br>
 				<font size="2"> <b>${importancia}</b></font></p>
 				</td>
 			</tr>
@@ -386,17 +386,17 @@
 		<table width="100%">
 			<tr>
 				<td align="center" bgcolor="#E8E8E8">Identifique as
-				atividades/tarefas da unidade que ser„o afetadas pela capacitaÁ„o.</td>
+				atividades/tarefas da unidade que ser√£o afetadas pela capacita√ß√£o.</td>
 			</tr>
 		</table>
 		<table width="100%">
 			<tr>
-				<td><font size="1"> ATIVIDADE/TAREFA QUE SER¡ AFETADA
+				<td><font size="1"> ATIVIDADE/TAREFA QUE SER√Å AFETADA
 				PELO TREINAMENTO </font></td>
-				<td valign="top"><font size="1"> COMO … DESENVOLVIDA
+				<td valign="top"><font size="1"> COMO √â DESENVOLVIDA
 				ATUALMENTE? </font></td>
-				<td><font size="1"> COMO VOC  PREV  QUE FICAR¡ AP”S A
-				CAPACITA«√O?</font></td>
+				<td><font size="1"> COMO VOC√ä PREV√ä QUE FICAR√Å AP√ìS A
+				CAPACITA√á√ÉO?</font></td>
 			</tr>
 		</table>
 		<table width="100%">
@@ -423,8 +423,8 @@
 				<td width="2%"><font size="2"> </font></td>
 				<td width="29%"><font size="2"> NOME </font></td>
 				<td width="28%"><font size="2"> CARGO </font></td>
-				<td width="31%"><font size="2"> FUN«√O </font></td>
-				<td width="10%"><font size="2"> LOTA«√O </font></td>
+				<td width="31%"><font size="2"> FUN√á√ÉO </font></td>
+				<td width="10%"><font size="2"> LOTA√á√ÉO </font></td>
 			</tr>
 			<c:forEach var="i" begin="1" end="${serv_indic}">
 				<tr>
@@ -439,31 +439,31 @@
 		<table width="100%">
 			<tr>
 				<td colspan="2">
-				<p><font size="2">ObservaÁıes: (Justifique o n˙mero de
+				<p><font size="2">Observa√ß√µes: (Justifique o n√∫mero de
 				servidores indicados)</font><font size="2"><br>
 				<b>${justif_n_serv}</b></font></p>
 				</td>
 			</tr>
 			<tr>
 				<td>
-				<p><font size="2">CritÈrios utilizados para a indicaÁ„o:</font><font
+				<p><font size="2">Crit√©rios utilizados para a indica√ß√£o:</font><font
 					size="2"> <br>
 				<b>${criterios}</b></font></p>
 				</td>
 			</tr>
 			<tr>
 				<td>
-				<p><font size="2">Cada servidor indicado est· devidamente
-				ciente do inteiro teor da portaria n∫ 042-GDF, de 10.09.2002,
+				<p><font size="2">Cada servidor indicado est√° devidamente
+				ciente do inteiro teor da portaria n¬∫ 042-GDF, de 10.09.2002,
 				assumindo os compromissos determinados nesse ato normativo,
-				sobretudo no que se refere ‡ multiplicaÁ„o do conhecimento
+				sobretudo no que se refere √† multiplica√ß√£o do conhecimento
 				adquirido.</font><font size="2"> </font></p>
 				</td>
 			</tr>
 			<tr>
 				<td>
-				<p><font size="2">Indique abaixo a forma de multiplicaÁ„o
-				que ser· utilizada:</font><font size="2"> <br>
+				<p><font size="2">Indique abaixo a forma de multiplica√ß√£o
+				que ser√° utilizada:</font><font size="2"> <br>
 				<b>${forma_multiplicacao}</b> </font></p>
 				</td>
 			</tr>
@@ -471,9 +471,9 @@
 		<br>
 		<table width="90%" cellpadding="1" cellspacing="0" align="left">
 			<tr>
-				<td><font size="2">Responsabilizo-me pelas informaÁıes
-				prestadas e pela multiplicaÁ„o do conhecimento adquirido pelos
-				indicados, assim como pelo atesto ao final da aÁ„o de capacitaÁ„o.</font><br>
+				<td><font size="2">Responsabilizo-me pelas informa√ß√µes
+				prestadas e pela multiplica√ß√£o do conhecimento adquirido pelos
+				indicados, assim como pelo atesto ao final da a√ß√£o de capacita√ß√£o.</font><br>
 				<br>
 				</td>
 			</tr>
@@ -491,12 +491,12 @@
 		<br>
 		<table width="90%" align="left" border="0" cellspacing="0">					
 			<tr>
-				<td align="justify"><font size="1">A SOLICITA«√O DE
-				PAGAMENTO DE DI¡RIAS, SE FOR O CASO, DEVER¡ SER ENCAMINHADA PARA A
-				SECRETARIA GERAL PELO SIGA-DOC, COM, NO MÕNIMO, 7 (SETE) DIAS ⁄TEIS
-				DE ANTECED NCIA DA DATA DE INÕCIO DO CURSO, POR MEIO DO FORMUL¡RIO
-				PROPOSTA DE CONCESS√O DE DI¡RIAS, DISPONÕVEL NA
-				P¡GINA DA INTRANET, MENU ORGANIZA«√O/FORMUL¡RIOS, SEGUINDO AS ORIENTA«’ES
+				<td align="justify"><font size="1">A SOLICITA√á√ÉO DE
+				PAGAMENTO DE DI√ÅRIAS, SE FOR O CASO, DEVER√Å SER ENCAMINHADA PARA A
+				SECRETARIA GERAL PELO SIGA-DOC, COM, NO M√çNIMO, 7 (SETE) DIAS √öTEIS
+				DE ANTECED√äNCIA DA DATA DE IN√çCIO DO CURSO, POR MEIO DO FORMUL√ÅRIO
+				PROPOSTA DE CONCESS√ÉO DE DI√ÅRIAS, DISPON√çVEL NA
+				P√ÅGINA DA INTRANET, MENU ORGANIZA√á√ÉO/FORMUL√ÅRIOS, SEGUINDO AS ORIENTA√á√ïES
 				ALI CONTIDAS.</font></td>
 			</tr>
 		</table>

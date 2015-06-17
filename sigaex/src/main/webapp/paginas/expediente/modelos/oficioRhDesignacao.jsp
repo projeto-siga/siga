@@ -13,16 +13,16 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:funcao titulo="Função" var="funcao" />
+			<mod:funcao titulo="FunÃ§Ã£o" var="funcao" />
 		</mod:grupo>
 	</mod:entrevista>
 	<mod:documento>
 		<mod:valor var="texto_oficio">
 			<p style="TEXT-INDENT: 2cm" align="justify">Solicito a Vossa
-			Excelência a <b>nomeação/designação</b> do(a) servidor(a) <mod:identificacao
+			ExcelÃªncia a <b>nomeaÃ§Ã£o/designaÃ§Ã£o</b> do(a) servidor(a) <mod:identificacao
 				pessoa="${requestScope['servidor_pessoaSel.id']}" /> para exercer o(a)
-			cargo em comissão/função comissionada de <b>${requestScope['funcao_funcaoSel.descricao']}</b>,
-			a partir da publicação da respectiva portaria.</p>
+			cargo em comissÃ£o/funÃ§Ã£o comissionada de <b>${requestScope['funcao_funcaoSel.descricao']}</b>,
+			a partir da publicaÃ§Ã£o da respectiva portaria.</p>
 		</mod:valor>
 	</mod:documento>
 </mod:modelo>

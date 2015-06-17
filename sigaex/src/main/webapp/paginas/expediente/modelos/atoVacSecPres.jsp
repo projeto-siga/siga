@@ -19,20 +19,20 @@
 	
  			<mod:grupo>
 				<mod:pessoa titulo="<b>Nome do Servidor</b>" var="serv" />
-		<!--    <mod:selecao titulo="<b>¡rea</b>" var="area"  opcoes="Administrativa;Apoio Especializado;Judici·ria" reler="sim" />   -->
+		<!--    <mod:selecao titulo="<b>√Årea</b>" var="area"  opcoes="Administrativa;Apoio Especializado;Judici√°ria" reler="sim" />   -->
 			</mod:grupo>
 								
 			<br>
 			<mod:grupo>
 			    <mod:selecao titulo="<b>Classe</b>" var="classe" opcoes=" ;A;B;C" reler="sim" />
-			    <mod:selecao titulo="<b>NÌvel</b>" var="niv" opcoes=" ;NA;NI;NS" reler="sim" />
-				<mod:selecao titulo="<b>Padr„o</b>" var="padr" opcoes=" ;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15" reler="sim" />
-				<mod:selecao titulo="<b>Quadro de Pessoal</b>" var="quadr" opcoes=" ;SeÁ„o Judici·ria do Estado do EspÌrito Santo;SeÁ„o Judici·ria do Estado do Rio de Janeiro" reler="sim" />
+			    <mod:selecao titulo="<b>N√≠vel</b>" var="niv" opcoes=" ;NA;NI;NS" reler="sim" />
+				<mod:selecao titulo="<b>Padr√£o</b>" var="padr" opcoes=" ;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15" reler="sim" />
+				<mod:selecao titulo="<b>Quadro de Pessoal</b>" var="quadr" opcoes=" ;Se√ß√£o Judici√°ria do Estado do Esp√≠rito Santo;Se√ß√£o Judici√°ria do Estado do Rio de Janeiro" reler="sim" />
 			</mod:grupo>
 	   <br><br>
 		
 		<mod:grupo>
-			<mod:data titulo="<b>Data de InÌcio da Vac‚ncia</b>" var="dtvac" />
+			<mod:data titulo="<b>Data de In√≠cio da Vac√¢ncia</b>" var="dtvac" />
 		</mod:grupo>
 		<br><br>
 		
@@ -51,16 +51,16 @@
 			<br/><br/>
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<c:choose><c:when test="${doc.subscritor.sexo == 'M'}">O PRESIDENTE</c:when><c:otherwise>A PRESIDENTE</c:otherwise></c:choose> 
-			DO TRIBUNAL REGIONAL FEDERAL DA 2™ REGI√O, no uso de suas atribuiÁıes, e considerando o que consta nos autos do Processo Administrativo 
-			n∫ <c:choose><c:when test="${tipproc == 'Outro'}">${proc},</c:when><c:otherwise>${proc}-${tipproc},</c:otherwise></c:choose> RESOLVE: <br><br>
+			DO TRIBUNAL REGIONAL FEDERAL DA 2¬™ REGI√ÉO, no uso de suas atribui√ß√µes, e considerando o que consta nos autos do Processo Administrativo 
+			n¬∫ <c:choose><c:when test="${tipproc == 'Outro'}">${proc},</c:when><c:otherwise>${proc}-${tipproc},</c:otherwise></c:choose> RESOLVE: <br><br>
 			DECLARAR VAGO,  
 			a partir de ${dtvac} o cargo de ${f:maiusculasEMinusculas(servid.cargo.nomeCargo)}, 
-			<c:choose><c:when test="${opt != '1'}">${opt}</c:when><c:otherwise>Classe "${classe}", Nivel "${niv}", Padr„o "${padr}"</c:otherwise></c:choose>, 
-			do Quadro de Pessoal da JustiÁa Federal de Primeira Inst‚ncia - SeÁ„o Judici·ria do Estado do 
-			<c:choose><c:when test="${servid.orgaoUsuario.siglaOrgaoUsu == 'RJ'}">Rio de Janeiro</c:when><c:otherwise>EspÌrito Santo</c:otherwise></c:choose>, 
+			<c:choose><c:when test="${opt != '1'}">${opt}</c:when><c:otherwise>Classe "${classe}", Nivel "${niv}", Padr√£o "${padr}"</c:otherwise></c:choose>, 
+			do Quadro de Pessoal da Justi√ßa Federal de Primeira Inst√¢ncia - Se√ß√£o Judici√°ria do Estado do 
+			<c:choose><c:when test="${servid.orgaoUsuario.siglaOrgaoUsu == 'RJ'}">Rio de Janeiro</c:when><c:otherwise>Esp√≠rito Santo</c:otherwise></c:choose>, 
 			ocupado <c:choose><c:when test="${servid.sexo == 'M'}">pelo servidor </c:when><c:otherwise>pela servidora </c:otherwise></c:choose>
-		${servid.nomePessoa}, em virtude de posse em outro cargo p˙blico federal inacumul·vel, com base no artigo 33, inciso VIII, da Lei n∫ 
-		8.112/90 c/c a ResoluÁ„o n∫ 03/2008, do Conselho da JustiÁa Federal.
+		${servid.nomePessoa}, em virtude de posse em outro cargo p√∫blico federal inacumul√°vel, com base no artigo 33, inciso VIII, da Lei n¬∫ 
+		8.112/90 c/c a Resolu√ß√£o n¬∫ 03/2008, do Conselho da Justi√ßa Federal.
 			
 	</mod:valor>  	
   </mod:documento>

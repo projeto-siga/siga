@@ -37,7 +37,7 @@
 							</tr>
 						</c:if>
 						<tr>
-							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.cadastrante.descricao}">${doc.lotaCadastrante.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
+							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.cadastrante.descricao}">${doc.lotaCadastrante.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
 						</tr>
 					</table>
 				</td>
@@ -72,7 +72,7 @@
 							</tr>
 						</c:if>
 						<tr>
-							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.cadastrante.descricao}">${doc.lotaCadastrante.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
+							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.cadastrante.descricao}">${doc.lotaCadastrante.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
 						</tr>
 					</table>
 				</td>
@@ -85,11 +85,11 @@
 		<table width="100%" border="0" cellpadding="12" cellspacing="12"
 			bgcolor="#FFFFFF">
 			<tr>
-				<td width="25%">”rg„o Externo:</td>
+				<td width="25%">√ìrg√£o Externo:</td>
 				<td width="75%">${doc.orgaoExterno.descricao}</td>
 			</tr>
 			<tr>
-				<td width="25%">”rg„o Externo Obs.:</td>
+				<td width="25%">√ìrg√£o Externo Obs.:</td>
 				<td width="75%">${doc.obsOrgao}</td>
 			</tr>
 			<tr>
@@ -97,12 +97,12 @@
 				<td>${doc.dtDocOriginalDDMMYYYY}</td>
 			</tr>
 			<tr>
-				<td>N˙mero Original:</td>
+				<td>N√∫mero Original:</td>
 				<td>${doc.numExtDoc}</td>
 			</tr>
 			<c:if test="${not empty doc.numAntigoDoc}">
 				<tr>
-					<td>N˙mero no Sistema Antigo:</td>
+					<td>N√∫mero no Sistema Antigo:</td>
 					<td>${doc.numAntigoDoc}</td>
 				</tr>
 			</c:if>
@@ -115,7 +115,7 @@
 				<td>${doc.nmSubscritorExt}</td>
 			</tr>
 			<tr>
-				<td>DescriÁ„o:</td>
+				<td>Descri√ß√£o:</td>
 				<td>${doc.descrDocumento}</td>
 			</tr>
 			<tr>

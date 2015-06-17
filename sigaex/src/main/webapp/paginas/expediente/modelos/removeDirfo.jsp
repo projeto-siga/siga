@@ -14,7 +14,7 @@
 
 <script>
  function aviso(){
-   var mensagem = "ObrigatÛrio o preenchimento de todos os campos";   
+   var mensagem = "Obrigat√≥rio o preenchimento de todos os campos";   
    document.getElementById("msg").innerHTML=mensagem;            
    document.getElementById("msg").value=mensagem;
  }
@@ -33,13 +33,13 @@
      var ano = d.getFullYear()
 
      // Para obtermos o nome do dia criamos um Array em que Domingo ocupa a
-     // posiÁ„o 0, segunda ocupa a posiÁ„o 1, ...
-     var nomesDias=new Array("Domingo","Segunda-feira","TerÁa-feira","Quarta-feira",
-	 "Quinta-feira","Sexta-feira","S·bado")
-     var nomesMeses=new Array("Janeiro","Fevereiro","MarÁo","Abril","Maio","Junho",
+     // posi√ß√£o 0, segunda ocupa a posi√ß√£o 1, ...
+     var nomesDias=new Array("Domingo","Segunda-feira","Ter√ßa-feira","Quarta-feira",
+	 "Quinta-feira","Sexta-feira","S√°bado")
+     var nomesMeses=new Array("Janeiro","Fevereiro","Mar√ßo","Abril","Maio","Junho",
 	 "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro")
 
-     var data="Hoje È "+nomesDias[dia]+", "+d.getDate()
+     var data="Hoje √© "+nomesDias[dia]+", "+d.getDate()
      data+=" de "+nomesMeses[mes]+" de "+ano    
      alert (data) ; 
  }
@@ -56,7 +56,7 @@
  
  		<mod:grupo titulo="DADOS DA PORTARIA" />
 		<mod:grupo>
-			<mod:numero titulo="N∫ da Portaria" var="numeroPortaria" largura="14"
+			<mod:numero titulo="N¬∫ da Portaria" var="numeroPortaria" largura="14"
 				maxcaracteres="12" />
 			<mod:data titulo="Data da Portaria" var="dataPortaria" />
 		</mod:grupo>
@@ -65,7 +65,7 @@
 <body onload="aviso()">
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="DETALHES DA REMO«√O" />
+		<mod:grupo titulo="DETALHES DA REMO√á√ÉO" />
 		<font color="red"><b><span id="msg"></span></b></font>
  		<mod:grupo titulo="DADOS DA PORTARIA" />
 		<mod:grupo>
@@ -75,7 +75,7 @@
 		<mod:grupo>
 			<mod:texto titulo="Nome" var="nomeServidor" largura="62"
 				maxcaracteres="60" />
-			<mod:texto titulo="MatrÌcula" var="matriculaServidor" largura="12"
+			<mod:texto titulo="Matr√≠cula" var="matriculaServidor" largura="12"
 				maxcaracteres="10" />
 		</mod:grupo>
 		<mod:grupo>
@@ -83,17 +83,17 @@
 				largura="45" maxcaracteres="43" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="¡rea" var="areaServidor" largura="45"
+			<mod:texto titulo="√Årea" var="areaServidor" largura="45"
 				maxcaracteres="43" />
-			<mod:texto titulo="ReferÍncia" var="referenciaAreaServidor"
+			<mod:texto titulo="Refer√™ncia" var="referenciaAreaServidor"
 				largura="45" maxcaracteres="43" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="LotaÁ„o Antiga" var="lotacaoAntiga" largura="45"
+			<mod:texto titulo="Lota√ß√£o Antiga" var="lotacaoAntiga" largura="45"
 				maxcaracteres="43" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="LotaÁ„o Nova" var="lotacaoNova" largura="45"
+			<mod:texto titulo="Lota√ß√£o Nova" var="lotacaoNova" largura="45"
 				maxcaracteres="43" />
 		</mod:grupo>
 		<mod:grupo>
@@ -101,7 +101,7 @@
 		</mod:grupo>
 		<mod:grupo>
 			<mod:memo colunas="60" linhas="3"
-				titulo="Texto a ser inserido no corpo da RemoÁ„o" var="texto_oficio" />
+				titulo="Texto a ser inserido no corpo da Remo√ß√£o" var="texto_oficio" />
 		</mod:grupo>
 	</mod:entrevista>
 	<mod:documento>
@@ -136,15 +136,15 @@
 		
 		<p>&nbsp;</p>
 		<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 1.0cm" align="justify">O J U I Z F E D E R
-		A L - DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI«OS AUXILIARES
-		DA JUSTI«A FEDERAL DE 1∫ GRAU - SE«√O JUDICI¡RIA DO RIO DE JANEIRO, no
-		uso de suas atribuiÁıes legais e, ${texto_oficio}, RESOLVE:<br><!-- FIM ABERTURA -->
+		A L - DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI√áOS AUXILIARES
+		DA JUSTI√áA FEDERAL DE 1¬∫ GRAU - SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO, no
+		uso de suas atribui√ß√µes legais e, ${texto_oficio}, RESOLVE:<br><!-- FIM ABERTURA -->
 		<br>
 		<br>
 		REMOVER o(a) servidor(a) ${nomeServidor},<br>
-		${cargoEspecialidade}, ¡rea ${areaServidor},
-		${referenciaAreaServidor}, matrÌcula n∫ <br>
-		${matriculaServidor}, da LotaÁ„o ${lotacaoAntiga} para ${lotacaoNova}
+		${cargoEspecialidade}, √Årea ${areaServidor},
+		${referenciaAreaServidor}, matr√≠cula n¬∫ <br>
+		${matriculaServidor}, da Lota√ß√£o ${lotacaoAntiga} para ${lotacaoNova}
 		a partir de ${dataRemocao}.<br>
 		<br>
 		<br>

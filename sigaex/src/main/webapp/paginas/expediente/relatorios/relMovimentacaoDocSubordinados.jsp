@@ -14,15 +14,15 @@ function sbmt() {
 }
 </script>
 
-<c:set var="titulo_pagina" scope="request">Relatório de Movimentação de Documentos em Setores Subordinados</c:set>
+<c:set var="titulo_pagina" scope="request">RelatÃ³rio de MovimentaÃ§Ã£o de Documentos em Setores Subordinados</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
 <tr>
-	<td>Tipo de Relatório:</td>
+	<td>Tipo de RelatÃ³rio:</td>
 	<td><ww:select name="tipoRel"
 		list="#{'1':'Documentos Ativos', '2':'Como Gestor', '3':'Como Interessado'}" /></td>
 </tr>
 <tr>
-	<td width="15%">Lotação:</td>
+	<td width="15%">LotaÃ§Ã£o:</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/></td>
 </tr>
 <tr>

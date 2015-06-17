@@ -7,21 +7,21 @@
 <mod:modelo>
 	<mod:entrevista>
 		<br/>
-		<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI«√O COM NOME COMPLETO E ASSUNTO</b></span><br>
-		<span style="color:red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ SRH</b></span>	
+		<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI√á√ÉO COM NOME COMPLETO E ASSUNTO</b></span><br>
+		<span style="color:red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä SRH</b></span>	
 		<br/><br/>
 	<mod:grupo titulo="">	
 		<mod:grupo>
 				<mod:selecao var="ilustrissimo"
 				titulo="VOCATIVO"
-				opcoes="ILUSTRÕSSIMA SENHORA DIRETORA;ILUSTRÕSSIMO SENHOR DIRETOR"	
+				opcoes="ILUSTR√çSSIMA SENHORA DIRETORA;ILUSTR√çSSIMO SENHOR DIRETOR"	
 				reler="sim" />
 		</mod:grupo>
 		<br>	
 	</mod:grupo>
 	<mod:grupo titulo=""> 
 		        <mod:texto titulo="RAMAL DO REQUERENTE" var="ramal"/></mod> <br><br>
-		        <mod:selecao titulo="Acerto Gramatical da LotaÁ„o" var="acgr"  opcoes="no;na" reler="sim" />
+		        <mod:selecao titulo="Acerto Gramatical da Lota√ß√£o" var="acgr"  opcoes="no;na" reler="sim" />
 	</mod:grupo>
     <br/> 
 				
@@ -53,7 +53,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr><br><br>
-						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">CERTID√O COMPROVANDO CONDI«√O DE SERVIDOR</p></td>
+						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">CERTID√ÉO COMPROVANDO CONDI√á√ÉO DE SERVIDOR</p></td>
 						</tr>
 					</table>
 				</td>
@@ -75,11 +75,11 @@
 		
 		<p style="text-align: center;font-weight:bold;font-size:11pt;"><center><br><br><b> ${ilustrissimo} DA SECRETARIA DE RECURSOS HUMANOS</center></b></p>
 				<br><br><br><br>		
-			${doc.subscritor.descricao}, matrÌcula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
-			do Quadro de Pessoal do Tribunal Regional Federal da 2™ Regi„o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, 
-			ramal ${ramal}, vem requerer a Vossa Senhoria que seja expedida <b>Certid„o</b> comprovando a sua condiÁ„o de servidor desta EgrÈgia Corte, contendo o respectivo endereÁo e CNPJ desta, bem como a data de sua posse.
+			${doc.subscritor.descricao}, matr√≠cula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
+			do Quadro de Pessoal do Tribunal Regional Federal da 2¬™ Regi√£o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, 
+			ramal ${ramal}, vem requerer a Vossa Senhoria que seja expedida <b>Certid√£o</b> comprovando a sua condi√ß√£o de servidor desta Egr√©gia Corte, contendo o respectivo endere√ßo e CNPJ desta, bem como a data de sua posse.
 			<br><br>
-			Esclarece, outrossim, serem estes dados necess·rios para locaÁ„o de imÛvel nesta Cidade.
+			Esclarece, outrossim, serem estes dados necess√°rios para loca√ß√£o de im√≥vel nesta Cidade.
 
 			
 			<br><br>

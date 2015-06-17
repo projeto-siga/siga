@@ -7,10 +7,10 @@
 
 <mod:modelo>
 	<mod:entrevista>
-	<mod:grupo titulo="1 - Dados do beneficiário">
+	<mod:grupo titulo="1 - Dados do beneficiÃ¡rio">
 			<mod:pessoa var="nome" titulo="Nome"/>
 		<mod:grupo>
-			<mod:lotacao var="lotacao" titulo="Lotação"/>
+			<mod:lotacao var="lotacao" titulo="LotaÃ§Ã£o"/>
 		</mod:grupo>
 		<mod:grupo>
 			<mod:texto var="ramal" titulo="Ramal" largura="5"/>
@@ -19,15 +19,15 @@
 			<mod:texto var="dtposse" titulo="Data da posse" largura="5"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto var="dtexercicio" titulo="Data do exercício" largura="5"/>
+			<mod:texto var="dtexercicio" titulo="Data do exercÃ­cio" largura="5"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:mensagem titulo="Deseja usufruir do benefício Auxílio Alimentação ? " />
-			<mod:selecao titulo="" var="resp1" opcoes="  ;desejo;não desejo" />		
+			<mod:mensagem titulo="Deseja usufruir do benefÃ­cio AuxÃ­lio AlimentaÃ§Ã£o ? " />
+			<mod:selecao titulo="" var="resp1" opcoes="  ;desejo;nÃ£o desejo" />		
 		</mod:grupo>
 		<mod:grupo>
 			<mod:mensagem titulo="Acumula cargo ou emprego publico ? " />
-			<mod:selecao titulo="" var="resp2" opcoes="  ;NÃO ACUMULO CARGO OU EMPREGO PÚBLICO;ACUMULO CARGO OU EMPREGO PÚBLICO" />		
+			<mod:selecao titulo="" var="resp2" opcoes="  ;NÃƒO ACUMULO CARGO OU EMPREGO PÃšBLICO;ACUMULO CARGO OU EMPREGO PÃšBLICO" />		
 		</mod:grupo>
 	</mod:grupo>
 	</mod:entrevista>
@@ -55,7 +55,7 @@
 					<br/>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">INCLUSÃO NO PROGRAMA DE APOIO À PSIQUIATRIA E PSICOLOGIA (PAPSI)</p></td>
+							<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">INCLUSÃƒO NO PROGRAMA DE APOIO Ã€ PSIQUIATRIA E PSICOLOGIA (PAPSI)</p></td>
 						</tr>
 					</table>
 				</td>
@@ -66,7 +66,7 @@
 			<table width="100%" border="0" cellpadding="2" cellspacing="1" bgcolor="#000000">
 				<tr>
 					<td bgcolor="#FFFFFF" width="60%">Nome: ${requestScope['nome_pessoaSel.descricao']}</td> 
-					<td bgcolor="#FFFFFF" width="40%">Matrícula: ${requestScope['nome_pessoaSel.sigla']}</td>
+					<td bgcolor="#FFFFFF" width="40%">MatrÃ­cula: ${requestScope['nome_pessoaSel.sigla']}</td>
 				</tr>
 			</table>
 			<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
@@ -76,28 +76,28 @@
 			</table>
 			<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
 				<tr>
-					<td bgcolor="#FFFFFF" width="60%">Lotação: ${requestScope['lotacao_lotacaoSel.descricao']}</td>
+					<td bgcolor="#FFFFFF" width="60%">LotaÃ§Ã£o: ${requestScope['lotacao_lotacaoSel.descricao']}</td>
 					<td bgcolor="#FFFFFF" width="40%">Ramal: ${ramal }</td>
 				</tr>
 				
 				<tr>
 					<td bgcolor="#FFFFFF" width="60%">Data da posse: ${dtposse}</td>
-					<td bgcolor="#FFFFFF" width="40%">Data do exercício: ${dtexercicio}</td>			
+					<td bgcolor="#FFFFFF" width="40%">Data do exercÃ­cio: ${dtexercicio}</td>			
 				</tr>
 				
 			</table>
 			<table width="100%" border="1" cellpading="2" cellspacing="1" bgcolor="#000000">
 				<tr>
-					<td>Acúmulo de cargo ou emprego público: ${resp2}</td>
+					<td>AcÃºmulo de cargo ou emprego pÃºblico: ${resp2}</td>
 				</tr>
 			</table>
 			<br>
 	 		<table width="100%" border="1" bgcolor="#FFFFFF">
 			  <tr>	
 				  <td>  
-				      <p style="margin-left: 5%"> Nos termos da resolução nº 323, 10/07/2003, publicada no DOU, que regulamentou a <br> concessão do Auxílio-alimentação, no âmbito do Conselho e da Justiça Federal de primeiro e segundo <br>graus, DECLARO que <b><u>${resp1} </u></b> usufruir do benefício Auxílio-alimentação.</p>
+				      <p style="margin-left: 5%"> Nos termos da resoluÃ§Ã£o nÂº 323, 10/07/2003, publicada no DOU, que regulamentou a <br> concessÃ£o do AuxÃ­lio-alimentaÃ§Ã£o, no Ã¢mbito do Conselho e da JustiÃ§a Federal de primeiro e segundo <br>graus, DECLARO que <b><u>${resp1} </u></b> usufruir do benefÃ­cio AuxÃ­lio-alimentaÃ§Ã£o.</p>
 					  <br>                                                
-				      <p style="margin-left: 5%"> Declaro ter ciência que no caso de acumulação lícita de cargo ou emprego público  farei jus à <br> percepção de apenas um Auxílio-alimentação, mediante opção e que de acordo com o Art. 2º, ítem I, da referida <br> Resolução, os servidores CEDIDOS ou REQUISITADOS deverão apresentar declaração fornecida pelo <br> órgão de origem ou por aquele onde presta serviço, de que não percebe auxílio da natureza idêntica. </p>
+				      <p style="margin-left: 5%"> Declaro ter ciÃªncia que no caso de acumulaÃ§Ã£o lÃ­cita de cargo ou emprego pÃºblico  farei jus Ã  <br> percepÃ§Ã£o de apenas um AuxÃ­lio-alimentaÃ§Ã£o, mediante opÃ§Ã£o e que de acordo com o Art. 2Âº, Ã­tem I, da referida <br> ResoluÃ§Ã£o, os servidores CEDIDOS ou REQUISITADOS deverÃ£o apresentar declaraÃ§Ã£o fornecida pelo <br> Ã³rgÃ£o de origem ou por aquele onde presta serviÃ§o, de que nÃ£o percebe auxÃ­lio da natureza idÃªntica. </p>
 				      <br>
 				  </td>                                                   
          																																																																					
@@ -107,28 +107,28 @@
          			
          	<table width="100%" border="1" cellpadding="2" cellspacing="1">
 				<tr>
-					<td width="100%">OBSERVAÇÕES</td>
+					<td width="100%">OBSERVAÃ‡Ã•ES</td>
 				</tr>
 			</table>
 			
 			<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
 			<tr>  <td>
-					<p> Art.  9º O servidor que acumule licitamente cargos ou empregos fara jus à percepção de apenas um auxílio-<br>alimentação mediante opção<br>
+					<p> Art.  9Âº O servidor que acumule licitamente cargos ou empregos fara jus Ã  percepÃ§Ã£o de apenas um auxÃ­lio-<br>alimentaÃ§Ã£o mediante opÃ§Ã£o<br>
 					</p>
 				    </b>
-					<p> Art. 10º Para habilitar-se a receber o auxílio-alimentação, o servidor deverá preencher formulário próprio de <br>cadastramento e, se for o caso, apresentar:</p>
+					<p> Art. 10Âº Para habilitar-se a receber o auxÃ­lio-alimentaÃ§Ã£o, o servidor deverÃ¡ preencher formulÃ¡rio prÃ³prio de <br>cadastramento e, se for o caso, apresentar:</p>
 					</br>
-					<p> I - em se tratando de requisitado ou cedido, declaração de outro órgão informando que não percebe o<br> benefício; e </p>
+					<p> I - em se tratando de requisitado ou cedido, declaraÃ§Ã£o de outro Ã³rgÃ£o informando que nÃ£o percebe o<br> benefÃ­cio; e </p>
 					</br>
-					<p> II - na hipótese de acumulação lícita de cargo público, declaração do outro órgao informando que o servidor <br> não percebe auxílio de natureza idêntica. </p>
+					<p> II - na hipÃ³tese de acumulaÃ§Ã£o lÃ­cita de cargo pÃºblico, declaraÃ§Ã£o do outro Ã³rgao informando que o servidor <br> nÃ£o percebe auxÃ­lio de natureza idÃªntica. </p>
 					</br>
-					<p> § 1º Na hipótese do inciso I deste artigo, no caso de optar o servidor por receber o auxílio alimentação de <br> órgão diverso do que paga a sua remuneração, o valor do benefício será creditado em sua conta corrente. </p>
+					<p> Â§ 1Âº Na hipÃ³tese do inciso I deste artigo, no caso de optar o servidor por receber o auxÃ­lio alimentaÃ§Ã£o de <br> Ã³rgÃ£o diverso do que paga a sua remuneraÃ§Ã£o, o valor do benefÃ­cio serÃ¡ creditado em sua conta corrente. </p>
 					</br>
-					<p> § 2º A desistência da percepção do auxílio-alimentação, a solicitação de reinclusão e qualquer alteração na <br> situação de optante e não optante deverão ser formalizadasjunto à área competente. </p>
+					<p> Â§ 2Âº A desistÃªncia da percepÃ§Ã£o do auxÃ­lio-alimentaÃ§Ã£o, a solicitaÃ§Ã£o de reinclusÃ£o e qualquer alteraÃ§Ã£o na <br> situaÃ§Ã£o de optante e nÃ£o optante deverÃ£o ser formalizadasjunto Ã  Ã¡rea competente. </p>
 					</br>
-			        <p> Art. 11 O auxílio-alimentação a ser concedido ao servidor cuja jornadas de trabalho <br> seja inferior a trinta horas <br> semanais corrsponderá a cinqüenta por cento do valor fixado para o benefício. </p>
+			        <p> Art. 11 O auxÃ­lio-alimentaÃ§Ã£o a ser concedido ao servidor cuja jornadas de trabalho <br> seja inferior a trinta horas <br> semanais corrsponderÃ¡ a cinqÃ¼enta por cento do valor fixado para o benefÃ­cio. </p>
 			        </br>
-			        <p> § 1º Ocorrendo a acumulação de cargos a que alude o art, 9º e sendo a soma das jornadas de trabalho superior a trinta horas semanais, o servidor perceberá o auxílio pelo seu valor integral, a ser pago pelo órgão <br> ou entidade de sua opção.
+			        <p> Â§ 1Âº Ocorrendo a acumulaÃ§Ã£o de cargos a que alude o art, 9Âº e sendo a soma das jornadas de trabalho superior a trinta horas semanais, o servidor perceberÃ¡ o auxÃ­lio pelo seu valor integral, a ser pago pelo Ã³rgÃ£o <br> ou entidade de sua opÃ§Ã£o.
 			        </p>
 			        <br> 				
 				  </td>
@@ -147,12 +147,12 @@
 		    <br>
 					<table width="100%" align="left">		
 						<tr>
-							<td>5 - SEÇÃO DE BENEFÍCIOS</td>
+							<td>5 - SEÃ‡ÃƒO DE BENEFÃCIOS</td>
 						</tr>
 						<tr>
 							<td>
 							<br/>
-								Incluído por:___________________________________________  em:____/____/____ 
+								IncluÃ­do por:___________________________________________  em:____/____/____ 
 							</td>												
 						</tr>
 					</table>

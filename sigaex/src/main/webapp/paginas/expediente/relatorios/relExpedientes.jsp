@@ -15,13 +15,13 @@ function sbmt() {
 	frmRelExpedientes.submit();	
 }
 </script>
-<c:set var="titulo_pagina" scope="request">Relatório de Expedientes</c:set>
+<c:set var="titulo_pagina" scope="request">RelatÃ³rio de Expedientes</c:set>
 <ww:hidden name="secaoUsuario"
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 <ww:hidden name="tipoRelatorio" value="relExpedientes.jrxml" />
 <h1>${titulo_pagina}</h1>
 <tr>
-	<td>Lotação</td>
+	<td>LotaÃ§Ã£o</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple"
 		reler="sim" modulo="siga"/></td>
 </tr>
@@ -29,7 +29,7 @@ function sbmt() {
 <input type="hidden" name="siglalotacao"
 	value="${lotacaoDestinatarioSel.sigla}" />
 <tr>
-	<td>Data Início</td>
+	<td>Data InÃ­cio</td>
 	<td><ww:textfield name="dataInicio"
 		onblur="javascript:verifica_data(this, true);comparaData(dataInicio,dataFim);"
 		theme="simple" size="12" maxlength="10" /></td>

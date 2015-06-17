@@ -14,11 +14,11 @@ function sbmt() {
 	frmRelExpedientes.submit();	
 }
 </script>
-<c:set var="titulo_pagina" scope="request">Relação de documentos entre duas datas</c:set>
+<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de documentos entre duas datas</c:set>
 <ww:hidden name="secaoUsuario"
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 <tr>
-	<td>Lotação</td>
+	<td>LotaÃ§Ã£o</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple"
 		reler="sim" modulo="siga"/></td>
 </tr>

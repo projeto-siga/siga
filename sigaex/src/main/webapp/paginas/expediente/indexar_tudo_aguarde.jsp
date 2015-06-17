@@ -12,7 +12,7 @@
 	<meta http-equiv="refresh"
 		content="3;url=<ww:url includeParams="all"/>" />
 </c:set>
-<siga:pagina titulo="Indexação de Documentos" meta="${cabecalho_meta}">
+<siga:pagina titulo="IndexaÃ§Ã£o de Documentos" meta="${cabecalho_meta}">
 
 	<p class="no_results">Indexando, aguarde...</p>
 

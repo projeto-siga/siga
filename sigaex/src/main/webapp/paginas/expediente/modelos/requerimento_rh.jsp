@@ -5,12 +5,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-LICEN«A ADOTANTE -->
+LICEN√áA ADOTANTE -->
 
 <mod:modelo>
 	<mod:entrevista>
 		<c:if test="${empty esconderTexto}">
-		<mod:texto titulo="EndereÁamento" var="texto_destinatario"/> 
+		<mod:texto titulo="Endere√ßamento" var="texto_destinatario"/> 
 			<mod:grupo titulo="Texto a ser inserido no corpo do requerimento">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_requerimento" />
@@ -48,7 +48,7 @@ LICEN«A ADOTANTE -->
 				<h1 align="center">${texto_destinatario}</h1>
 			</c:when>
 			<c:when test="${not empty sepag}">
-				<h1>SENHOR(A) SUPERVISOR(A) DA SE«√O DE FOLHA DE PAGAMENTO</h1>
+				<h1>SENHOR(A) SUPERVISOR(A) DA SE√á√ÉO DE FOLHA DE PAGAMENTO</h1>
 			</c:when>
 			<c:when
 				test="${para eq 'diretorForo' || (not empty doc.lotaDestinatario and f:lotacaoPorNivelMaximo(doc.lotaDestinatario,4).sigla == 'DIRFO')}">
@@ -56,13 +56,13 @@ LICEN«A ADOTANTE -->
 			</c:when>
 			<c:when test="${para eq 'diretoraRH'}">
 				<h1 align="center">Ilma. Sra. Diretora da Subsecretaria de
-				Gest„o de Pessoas</h1>
+				Gest√£o de Pessoas</h1>
 			</c:when>
 			<c:when test="${para eq 'sinap'}">
-				<h1 align="center">Ilma. Sra. Supervisora da SeÁ„o de Inativos e Pensionistas</h1>
+				<h1 align="center">Ilma. Sra. Supervisora da Se√ß√£o de Inativos e Pensionistas</h1>
 			</c:when>
 			<c:when test="${para eq 'presidenteTRF'}">
-				<h3 align="center">EXCELENTÕSSIMO SENHOR PRESIDENTE DO TRIBUNAL REGIONAL FEDERAL DA 2™ REGI√O</H3>
+				<h3 align="center">EXCELENT√çSSIMO SENHOR PRESIDENTE DO TRIBUNAL REGIONAL FEDERAL DA 2¬™ REGI√ÉO</H3>
 			</c:when>
 			<c:when test="${not empty doc.lotaDestinatario}">
 				<h1>SENHOR(A) SUPERVISOR(A) DA ${doc.lotaDestinatario.nomeMaiusculas}</h1>

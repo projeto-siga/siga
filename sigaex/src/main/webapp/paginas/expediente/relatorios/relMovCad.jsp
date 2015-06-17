@@ -14,12 +14,12 @@ function sbmt() {
 	frmRelExpedientes.submit();	
 }
 </script>
-<c:set var="titulo_pagina" scope="request">Relação de Movimentações por Cadastrante</c:set>
+<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de MovimentaÃ§Ãµes por Cadastrante</c:set>
 <ww:hidden name="secaoUsuario"
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 <tr>
 <tr>
-	<td>Lotação</td>
+	<td>LotaÃ§Ã£o</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple"
 		reler="sim" modulo="siga"/></td>
 </tr>

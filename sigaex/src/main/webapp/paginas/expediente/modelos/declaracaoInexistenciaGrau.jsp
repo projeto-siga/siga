@@ -4,13 +4,13 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<!-- Alterei este formulário para que sirva tanto para declarar que tem grau parentesco, como para declarar que não tem grau de parentesco.Rj13939 -->
+<!-- Alterei este formulÃ¡rio para que sirva tanto para declarar que tem grau parentesco, como para declarar que nÃ£o tem grau de parentesco.Rj13939 -->
 
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:selecao titulo="Vínculo" var="vinculo"
-				opcoes="Servidor;Requisitado com cargo;Requisitado sem cargo; Sem vínculo com a administração"
+			<mod:selecao titulo="VÃ­nculo" var="vinculo"
+				opcoes="Servidor;Requisitado com cargo;Requisitado sem cargo; Sem vÃ­nculo com a administraÃ§Ã£o"
 				reler="ajax" idAjax="vinculoajax" />
 		</mod:grupo>
 		<mod:grupo depende="vinculoajax">
@@ -22,17 +22,17 @@
 				</mod:grupo>
 
 				<mod:grupo>
-					<mod:texto titulo="Função comissionada/Cargo em Comissão"
+					<mod:texto titulo="FunÃ§Ã£o comissionada/Cargo em ComissÃ£o"
 						var="funcao_cargo" largura="50" />
 				</mod:grupo>
 			</c:if>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Lotação" var="lotacao" />
+			<mod:texto titulo="LotaÃ§Ã£o" var="lotacao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:selecao titulo="Possui Parentesco" var="parentesco"
-				opcoes="Não;Sim" reler="ajax" idAjax="parentescoajax" />
+				opcoes="NÃ£o;Sim" reler="ajax" idAjax="parentescoajax" />
 		</mod:grupo>
 		<mod:grupo depende="parentescoajax">
 			<c:if test="${parentesco == 'Sim'}">
@@ -53,7 +53,7 @@
 						</mod:grupo>
 						<mod:grupo>
 							<mod:data
-								titulo="&nbsp;&nbsp;&nbsp Data de ingresso no cargo em comissão/função de confiança"
+								titulo="&nbsp;&nbsp;&nbsp Data de ingresso no cargo em comissÃ£o/funÃ§Ã£o de confianÃ§a"
 								var="dataingresso${i}" />
 						</mod:grupo>
 						<br>
@@ -103,36 +103,36 @@
 		FIM CABECALHO -->
 
 		<mod:letra tamanho="${tl}">
-			<!-- Esta variável "corpoTexto" tem a finalidade de evitar duplicidade no código -->
+			<!-- Esta variÃ¡vel "corpoTexto" tem a finalidade de evitar duplicidade no cÃ³digo -->
 			<c:set var="corpoTexto"
-				value="relação familiar ou de parentesco que importe prática vedada pela
-						Súmula Vinculante Nº 13 de 29 de agosto de 2008 do Supremo Tribunal
-						Federal combinado com a Resolução Nº 07/2005 do Conselho Nacional de
-						Justiça (CNJ)."></c:set>
+				value="relaÃ§Ã£o familiar ou de parentesco que importe prÃ¡tica vedada pela
+						SÃºmula Vinculante NÂº 13 de 29 de agosto de 2008 do Supremo Tribunal
+						Federal combinado com a ResoluÃ§Ã£o NÂº 07/2005 do Conselho Nacional de
+						JustiÃ§a (CNJ)."></c:set>
 
-			<!-- Estes ifs são para omitir  vírgulas e espaços no texto, dependendo dos campos que forem preenchidos -->
+			<!-- Estes ifs sÃ£o para omitir  vÃ­rgulas e espaÃ§os no texto, dependendo dos campos que forem preenchidos -->
 
 			<c:if test="${ not empty funcao_cargo and not empty cargo_espec}">
 				<p style="TEXT-INDENT: 2cm" align="justify">
 				${doc.subscritor.descricao}, ${cargo_espec}, ${funcao_cargo},
-				matrícula nº ${doc.subscritor.matricula}, lotado(a) no(a) ${lotacao}, <b>DECLARA</b>
+				matrÃ­cula nÂº ${doc.subscritor.matricula}, lotado(a) no(a) ${lotacao}, <b>DECLARA</b>
 				que
 			</c:if>
 			<c:if test="${ empty funcao_cargo and not empty cargo_espec}">
 				<p style="TEXT-INDENT: 2cm" align="justify">
-				${doc.subscritor.descricao}, ${cargo_espec}, matrícula nº
+				${doc.subscritor.descricao}, ${cargo_espec}, matrÃ­cula nÂº
 				${doc.subscritor.matricula}, lotado(a)  no(a) ${lotacao}, <b>DECLARA</b>
 				que
 			</c:if>
 			<c:if test="${empty funcao_cargo and empty cargo_espec}">
 				<p style="TEXT-INDENT: 2cm" align="justify">
-				${doc.subscritor.descricao}, matrícula nº
+				${doc.subscritor.descricao}, matrÃ­cula nÂº
 				${doc.subscritor.matricula}, lotado(a)  no(a) ${lotacao}, <b>DECLARA</b>
 				que
 			</c:if>
 			<c:if test="${ empty cargo_espec and not empty funcao_cargo}">
 				<p style="TEXT-INDENT: 2cm" align="justify">
-				${doc.subscritor.descricao}, ${funcao_cargo}, matrícula nº
+				${doc.subscritor.descricao}, ${funcao_cargo}, matrÃ­cula nÂº
 				${doc.subscritor.matricula}, lotado(a)  no(a) ${lotacao}, <b>DECLARA</b>
 				que
 			</c:if>
@@ -144,33 +144,33 @@
 					<c:forEach var="i" begin="1" end="${nr_parentes}">
 						<p>Nome do Parente: <b>${requestScope[f:concat('parente',i)]}</b>.</p>
 						<p>Grau de parentesco: <b>${requestScope[f:concat('grau',i)]}</b>.</p>
-						<p>Data de ingresso no cargo em comissão/função de confiança:
+						<p>Data de ingresso no cargo em comissÃ£o/funÃ§Ã£o de confianÃ§a:
 						<b>${requestScope[f:concat('dataingresso',i)]}</b>.</p>
 						<br>
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
-					<c:if test="${parentesco == 'Não'}">
-						<b>não tem</b>
+					<c:if test="${parentesco == 'NÃ£o'}">
+						<b>nÃ£o tem</b>
 						${corpoTexto}
 					</c:if>
 				</c:otherwise>
 			</c:choose>
 
 			<p style="TEXT-INDENT: 2cm" align="justify">Declara, por fim, que
-			deverá comunicar à Subsecretaria de Gestão de Pessoas, de imediato, a
-			ocorrência de fatos que possam alterar a situação objeto desta
-			declaração.</p>
+			deverÃ¡ comunicar Ã  Subsecretaria de GestÃ£o de Pessoas, de imediato, a
+			ocorrÃªncia de fatos que possam alterar a situaÃ§Ã£o objeto desta
+			declaraÃ§Ã£o.</p>
 
 			<p style="TEXT-INDENT: 2cm" align="justify">Responsabiliza-se
-			pela exatidão e veracidade das informações declaradas, ciente de que,
-			se falsa a declaração, ficará sujeito(a) às penas da lei (art. 299, do
+			pela exatidÃ£o e veracidade das informaÃ§Ãµes declaradas, ciente de que,
+			se falsa a declaraÃ§Ã£o, ficarÃ¡ sujeito(a) Ã s penas da lei (art. 299, do
 			CP).</p>
 
 			<p align="center">${doc.dtExtenso}</p>
 			<br />
 			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
-			<p align="center">Matrícula: ${doc.subscritor.matricula}</p>
+			<p align="center">MatrÃ­cula: ${doc.subscritor.matricula}</p>
 		</mod:letra>
 
 		<!-- INICIO PRIMEIRO RODAPE

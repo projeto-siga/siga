@@ -7,12 +7,12 @@
 	<mod:entrevista>
 		<mod:grupo>
 				<mod:selecao titulo="Quantidade de PCDs a informar:" opcoes="1;2;3;4;5;6;7;8;9;10" var="pcds" reler="sim" />
-				<mod:selecao titulo="MÍs de ReferÍncia:" var="mesReferencia" opcoes="Janeiro;Fevereiro;MarÁo;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
+				<mod:selecao titulo="M√™s de Refer√™ncia:" var="mesReferencia" opcoes="Janeiro;Fevereiro;Mar√ßo;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
 				<mod:texto titulo="Ano:" var="anoReferencia" largura="4" />
 		</mod:grupo>
 			<mod:grupo>
 				<c:forEach var="i" begin="1" end="${pcds}">
-					<mod:texto titulo="N˙mero da PCD" var="numpcd${i}" />	
+					<mod:texto titulo="N√∫mero da PCD" var="numpcd${i}" />	
 					<mod:grupo>
 							<mod:editor titulo="" var="texto_diaria${i}" />
 					</mod:grupo>
@@ -64,14 +64,14 @@
 		</c:choose> <br>
 		PARA: ${doc.destinatarioString}</p>
 	
-		<p align="center"> SOLICITA«√O DE PUBLICA«√O BOLETIM INTERNO<br/>
-		PCD - Pedido de Concess„o de Di·ria
+		<p align="center"> SOLICITA√á√ÉO DE PUBLICA√á√ÉO BOLETIM INTERNO<br/>
+		PCD - Pedido de Concess√£o de Di√°ria
 		</p>
 		
 		<span style="font-size:${tl};">
 		
 		<!-- INICIO CORPO -->
-		<p><span style="font-weight: bold">CONCESS√O DE DI¡RIAS - ${mesReferencia} de ${anoReferencia}</span></p>
+		<p><span style="font-weight: bold">CONCESS√ÉO DE DI√ÅRIAS - ${mesReferencia} de ${anoReferencia}</span></p>
 		<!-- FIM CORPO -->
 		</span>
 		

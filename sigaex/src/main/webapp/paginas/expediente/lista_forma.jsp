@@ -22,7 +22,7 @@
 			</tr>
 			<tr>
 				<td style="width: 10%;">
-				   <input type="radio" name="ordenar" value="descricao" onclick="this.form.submit();">Descrição<br>
+				   <input type="radio" name="ordenar" value="descricao" onclick="this.form.submit();">DescriÃ§Ã£o<br>
 				</td>
 				<td>
 				   <input type="radio" name="ordenar" value="sigla" onclick="this.form.submit();">Sigla
@@ -37,7 +37,7 @@
 	<table class="gt-table" width="100%">
 	<thead>
 		<tr class="header">
-			<th>Descrição</th>
+			<th>DescriÃ§Ã£o</th>
 			<th>Sigla</th>
 			<th>Tipo</th>
             <th>Origem</th>

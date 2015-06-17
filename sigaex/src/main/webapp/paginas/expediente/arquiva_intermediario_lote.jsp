@@ -10,7 +10,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Arquivamento Intermediário em Lote">
+<siga:pagina titulo="Arquivamento IntermediÃ¡rio em Lote">
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
@@ -37,7 +37,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Arquivamento Intermediário em Lote</h2>
+			<h2>Arquivamento IntermediÃ¡rio em Lote</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -49,7 +49,7 @@
 		<ww:hidden name="p.offset" value="${p.offset}" />
 		<table class="gt-form-table">
 			<tr class="header">
-				<td colspan="2">Arquivamento Intermediário</td>
+				<td colspan="2">Arquivamento IntermediÃ¡rio</td>
 			</tr>
 			<tr>
 				<td>Data:</td>
@@ -57,7 +57,7 @@
 					onblur="javascript:verifica_data(this,0);" /></td>
 			</tr>
 			<tr>
-				<td>Responsável:</td>
+				<td>ResponsÃ¡vel:</td>
 				<td><siga:selecao tema="simple" propriedade="subscritor" />
 				&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 					onclick="javascript:displayTitular(this);" />Substituto</td>
@@ -77,13 +77,13 @@
 				tema="simple" /></td>
 			</tr>
 			<tr>
-				<td>Função do Responsável:</td>
+				<td>FunÃ§Ã£o do ResponsÃ¡vel:</td>
 				<td colspan="1"><input type="hidden" name="campos"
 					value="nmFuncaoSubscritor" /> <ww:textfield
 					name="nmFuncaoSubscritor" size="50" maxLength="128" /> (opcional)</td>
 			</tr>
 			<tr>
-				<td>Localização</td>
+				<td>LocalizaÃ§Ã£o</td>
 				<td>
 					<ww:textfield name="descrMov" maxlength="80"
 						size="80" />
@@ -114,7 +114,7 @@
 				</pg:pages>
 				&nbsp;&nbsp;&nbsp;&nbsp;
 				<input id="pag" type="text" value="${currentPageNumber}" size="3"/>
-				<input id="pag_btn" type="button" value="Ir para página" onclick="javascript: sbmt(($('#pag').val()-1)*100);" class="gt-btn-medium" style="display: inline;" />
+				<input id="pag_btn" type="button" value="Ir para pÃ¡gina" onclick="javascript: sbmt(($('#pag').val()-1)*100);" class="gt-btn-medium" style="display: inline;" />
 				<script>
 				$('#pag').keypress(function(eve) {
 				     var key = eve.keyCode || e.which ;
@@ -139,14 +139,14 @@
 								name="checkall" onclick="checkUncheckAll(this)" />
 							</c:if>
 						</td>
-						<td rowspan="2" align="right">Número</td>
+						<td rowspan="2" align="right">NÃºmero</td>
 						<td colspan="3" align="center">Documento</td>
-						<td colspan="2" align="center">Última Movimentação</td>
-						<td rowspan="2">Descrição</td>
+						<td colspan="2" align="center">Ãšltima MovimentaÃ§Ã£o</td>
+						<td rowspan="2">DescriÃ§Ã£o</td>
 					</tr>
 					<tr class="header">
 						<td align="center">Data</td>
-						<td align="center">Lotação</td>
+						<td align="center">LotaÃ§Ã£o</td>
 						<td align="center">Pessoa</td>
 						<td align="center">Data</td>
 						<td align="center">Pessoa</td>

@@ -12,7 +12,7 @@
 	<mod:entrevista>
 	
 	
-	<mod:grupo titulo="PerÌodo solicitado">			
+	<mod:grupo titulo="Per√≠odo solicitado">			
 		<mod:data var="data1" titulo="Data inicial" reler="ajax" idAjax="dataAjax"/>
 		<mod:data var="data2" titulo="Data final" reler="ajax" idAjax="dataAjax"/>
 	</mod:grupo>
@@ -26,7 +26,7 @@
 			<c:when test="${not empty docs}">		
 				<c:set var="i" value="0"/>
 				<table>
-					<tr><th>LotaÁ„o</th><th>Matricula</th><th>Outros Motivos</th><th>Motivo</th><th>Titular</th><th>Substituto</th><th>Data Inicial</th><th>Data Final</th><th>Documento<br/>de<br/>IndicaÁ„o</th><th>Cargo</th></tr>
+					<tr><th>Lota√ß√£o</th><th>Matricula</th><th>Outros Motivos</th><th>Motivo</th><th>Titular</th><th>Substituto</th><th>Data Inicial</th><th>Data Final</th><th>Documento<br/>de<br/>Indica√ß√£o</th><th>Cargo</th></tr>
 						<c:forEach var="doc" items="${docs}">   								 										    							    				
 		    				<tr>				    								    				
 		    					<c:if test="${(data1Ant != data1 or data2Ant != data2)}">				    								    				
@@ -70,7 +70,7 @@
 			</c:choose>		
 		</mod:grupo>
 		<mod:grupo>
-			<mod:selecao var="maisServidores" titulo="Deseja entrar com mais servidores?" reler="ajax" idAjax="maisServidoresAjax" opcoes="N„o;Sim"/>
+			<mod:selecao var="maisServidores" titulo="Deseja entrar com mais servidores?" reler="ajax" idAjax="maisServidoresAjax" opcoes="N√£o;Sim"/>
 		</mod:grupo>
 		
 		<mod:grupo depende="maisServidoresAjax">
@@ -81,12 +81,12 @@
 		</mod:grupo>
 		<mod:grupo depende="qtdServidoresAjax">	
 			<c:if test="${(qtdServidores >= 20) and (not empty qtdServidores)}">
-				<mod:mensagem texto="Digite um n˙mero menor que 20"/>
+				<mod:mensagem texto="Digite um n√∫mero menor que 20"/>
 			</c:if>				
 			<c:if test="${(qtdServidores < 20) and (not empty qtdServidores)}">
 				<mod:grupo>
 					<table>
-					<tr><th>LotaÁ„o</th><th>Matricula</th><th>Outros Motivos</th><th>Motivo</th><th>Titular</th><th>Substituto</th><th>Data Inicial</th><th>Data Final</th><th>Documento<br/>de<br/>IndicaÁ„o</th><th>Cargo</th></tr>
+					<tr><th>Lota√ß√£o</th><th>Matricula</th><th>Outros Motivos</th><th>Motivo</th><th>Titular</th><th>Substituto</th><th>Data Inicial</th><th>Data Final</th><th>Documento<br/>de<br/>Indica√ß√£o</th><th>Cargo</th></tr>
 					<c:forEach var="x" begin="${end}" end="${qtdServidores + i - 1}">
 						<tr>
 							<mod:oculto var="marcacao${x}" valor="oi"/>
@@ -120,18 +120,18 @@
 	<mod:documento>
 		<mod:valor var="texto_portaria">
 		
-		<!-- INICIO ABERTURA --><p><B>A DIRETORA DA SUBSECRETARIA DE GEST√O DE PESSOAS DA JUSTI«A FEDERAL DE 1∫ INST¬NCIA - SE«√O JUDICIARIA DO RIO DE JANEIRO,</B> 
-		usando a competÍncia que lhe foi delegada pela portaria n∫ 011 - GDF, de 26 de marÁo de 2003,
+		<!-- INICIO ABERTURA --><p><B>A DIRETORA DA SUBSECRETARIA DE GEST√ÉO DE PESSOAS DA JUSTI√áA FEDERAL DE 1¬∫ INST√ÇNCIA - SE√á√ÉO JUDICIARIA DO RIO DE JANEIRO,</B> 
+		usando a compet√™ncia que lhe foi delegada pela portaria n¬∫ 011 - GDF, de 26 de mar√ßo de 2003,
 		<p><b>RESOLVE:</b></p><!-- FIM ABERTURA -->
-		<!-- INICIO CORPO --><p><b>DESIGNAR</b> os servidores abaixo relacionados (organizados pelo respectivos motivos) para substituÌrem seus respectivos
-		titulares, em virtude de compensaÁ„o dos dias trabalhados no recesso judici·rio:</p>
+		<!-- INICIO CORPO --><p><b>DESIGNAR</b> os servidores abaixo relacionados (organizados pelo respectivos motivos) para substitu√≠rem seus respectivos
+		titulares, em virtude de compensa√ß√£o dos dias trabalhados no recesso judici√°rio:</p>
 		<c:forEach var="i" begin="0" end="${end}">
 			
 			<c:if test="${requestScope[f:concat('marcacao',i)]=='oi'}">
 					${requestScope[f:concat('motivo',i)]}:<br/>
 				<table width="100%">
 					<tr>
-						<td width="17%">NOME</td><td width="11%">MAT.</td><td width="17%">TITULAR DO<br/>CARGO/<br/>FUN«¬O</td><td width="10%">LOTA-<br/>«√O</td><td width="16%">CARGO/<br/>FUN«√O</td><td width="14%">PERÕODO</td><td>DOCU-<br/>MENTO</td>
+						<td width="17%">NOME</td><td width="11%">MAT.</td><td width="17%">TITULAR DO<br/>CARGO/<br/>FUN√á√ÇO</td><td width="10%">LOTA-<br/>√á√ÉO</td><td width="16%">CARGO/<br/>FUN√á√ÉO</td><td width="14%">PER√çODO</td><td>DOCU-<br/>MENTO</td>
 					</tr>				
 				<c:forEach var="x" begin="${i}" end="${end}">
 					<c:if test="${requestScope[f:concat('motivo',i)]== requestScope[f:concat('motivo',x)]}">

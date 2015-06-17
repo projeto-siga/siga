@@ -3,44 +3,44 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!-- este modelo trata de
-FORMUL¡RIO DE EXCLUS√O DE USU¡RIO-->
+FORMUL√ÅRIO DE EXCLUS√ÉO DE USU√ÅRIO-->
 
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:selecao titulo="Excluir Usu·rio" opcoes="Magistrado;Servidor"
+			<mod:selecao titulo="Excluir Usu√°rio" opcoes="Magistrado;Servidor"
 				var="tipoUsuario" reler="sim" />
 		</mod:grupo>
 
 		<!-- doc.subscritor.matricula -->
 
-		<mod:grupo titulo="IdentificaÁ„o do Usu·rio">
-			<mod:pessoa titulo="MatrÌcula do Usu·rio" var="usuario" />
+		<mod:grupo titulo="Identifica√ß√£o do Usu√°rio">
+			<mod:pessoa titulo="Matr√≠cula do Usu√°rio" var="usuario" />
 			<br />
 			<mod:texto titulo="E-mail Institucional (alias)" var="email"
 				largura="30" maxcaracteres="30" obrigatorio="Sim" />@jfrj.jus.br <br />
 		</mod:grupo>
 		<mod:grupo titulo="Telefone Funcional:">
-			<mod:texto titulo="CÛdigo de ·rea" var="codArea" largura="2"
+			<mod:texto titulo="C√≥digo de √°rea" var="codArea" largura="2"
 				maxcaracteres="2" obrigatorio="Sim" />
-			<mod:texto titulo="N˙mero" var="telefone" maxcaracteres="10"
+			<mod:texto titulo="N√∫mero" var="telefone" maxcaracteres="10"
 				largura="10" obrigatorio="Sim" />
 		</mod:grupo>
 
 		<c:if test="${tipoUsuario == 'Magistrado'}">
 			<mod:grupo>
-				<mod:mensagem titulo="ObservaÁ„o"
-					texto="exclus„o È necess·ria somente se a remoÁ„o se der para outra seccional ou Tribunal.
-				O subscritor do formul·rio de exclus„o deve ser o prÛprio magistrado. Caso o magistrado j· tenha 
-				sido removido, o formul·rio de solicitaÁ„o de exclus„o poder· ter como subscritor o Diretor de Secretaria."
+				<mod:mensagem titulo="Observa√ß√£o"
+					texto="exclus√£o √© necess√°ria somente se a remo√ß√£o se der para outra seccional ou Tribunal.
+				O subscritor do formul√°rio de exclus√£o deve ser o pr√≥prio magistrado. Caso o magistrado j√° tenha 
+				sido removido, o formul√°rio de solicita√ß√£o de exclus√£o poder√° ter como subscritor o Diretor de Secretaria."
 					vermelho="Sim" />
 			</mod:grupo>
 		</c:if>
 
 		<c:if test="${tipoUsuario == 'Servidor'}">
 			<mod:grupo>
-				<mod:mensagem titulo="ObservaÁ„o"
-					texto="O subscritor do formul·rio de exclus„o de servidor ser· o Magistrado da vara."
+				<mod:mensagem titulo="Observa√ß√£o"
+					texto="O subscritor do formul√°rio de exclus√£o de servidor ser√° o Magistrado da vara."
 					vermelho="Sim" />
 			</mod:grupo>
 		</c:if>
@@ -77,7 +77,7 @@ FORMUL¡RIO DE EXCLUS√O DE USU¡RIO-->
 						</tr>
 						<tr>
 							<td align="right">
-								<p><b>Formul·rio N&ordm; ${doc.codigo}</b></p><br/>
+								<p><b>Formul√°rio N&ordm; ${doc.codigo}</b></p><br/>
 							</td>
 						</tr>
 					</table>
@@ -96,16 +96,16 @@ FORMUL¡RIO DE EXCLUS√O DE USU¡RIO-->
 
 			<table bgcolor="#000000" border="1" cellpadding="5" align="center">
 				<tr>
-					<td bgcolor="#FFFFFF" colspan="3" align="left"><b> 1 - SOLICITA«√O DE
-					EXCLUS√O DE <c:if test="${tipoUsuario == 'Magistrado'}">
+					<td bgcolor="#FFFFFF" colspan="3" align="left"><b> 1 - SOLICITA√á√ÉO DE
+					EXCLUS√ÉO DE <c:if test="${tipoUsuario == 'Magistrado'}">
     MAGISTRADO 
     </c:if> <c:if test="${tipoUsuario == 'Servidor'}">
     SERVIDOR
     </c:if> </b></td>
 				</tr>
 				<tr>
-					<td bgcolor="#FFFFFF" colspan="3" align="left"><b>1.1 - IDENTIFICA«√O DO
-					USU¡RIO </b></td>
+					<td bgcolor="#FFFFFF" colspan="3" align="left"><b>1.1 - IDENTIFICA√á√ÉO DO
+					USU√ÅRIO </b></td>
 				</tr>
 				<tr>
 					<td bgcolor="#FFFFFF" colspan="3" align="left"><b>NOME COMPLETO</b><br />

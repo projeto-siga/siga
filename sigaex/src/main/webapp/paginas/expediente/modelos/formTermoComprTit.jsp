@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-CONCESSÃO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
+CONCESSÃƒO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
 - PEDIDO -->
 
 
@@ -37,7 +37,7 @@ CONCESSÃO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 		<center><c:import url="/paginas/expediente/modelos/inc_tit_termoCompromisso.jsp" /></center>
 		<p style="TEXT-INDENT: 10cm" align="justify">
 		Eu, ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.sigla}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao},
-		comprometo-me a informar por escrito a Subsecreteria de Gestão de Pessoas a data término gravidez, qualquer que seja o motivo. em até  03 (TRÊS) dias úteis após o fim desta.   
+		comprometo-me a informar por escrito a Subsecreteria de GestÃ£o de Pessoas a data tÃ©rmino gravidez, qualquer que seja o motivo. em atÃ©  03 (TRÃŠS) dias Ãºteis apÃ³s o fim desta.   
 		</p>
 		<br><br>		
 		<c:import url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" />

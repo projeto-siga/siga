@@ -31,7 +31,7 @@
 	<c:when test="${not empty mov.titular.funcaoConfianca.nomeFuncao}">
 		${mov.titular.funcaoConfianca.nomeFuncao}<c:if
 			test="${mov.titular.idPessoa != mov.subscritor.idPessoa}">
-	EM EXERCÕCIO
+	EM EXERC√çCIO
 </c:if>
 	</c:when>
 	<c:when test="${not empty mov.subscritor.funcaoConfianca.nomeFuncao}">

@@ -16,5 +16,5 @@
 		<br>  
 		<br>
 		<p align="center"> 
-		<b>ASSINATURA E MATRÕCULA DO SUPERIOR HIER¡RQUICO</b>
+		<b>ASSINATURA E MATR√çCULA DO SUPERIOR HIER√ÅRQUICO</b>
 		</p>

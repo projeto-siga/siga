@@ -14,7 +14,7 @@ function sbmt() {
 	frmRelExpedientes.submit();	
 }
 </script>
-<c:set var="titulo_pagina" scope="request">RelaÁ„o de formul·rios</c:set>
+<c:set var="titulo_pagina" scope="request">Rela√ß√£o de formul√°rios</c:set>
 <ww:hidden name="secaoUsuario"
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 

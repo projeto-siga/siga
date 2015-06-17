@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Corrigir Data de Fim de Movimentação">
+<siga:pagina titulo="Corrigir Data de Fim de MovimentaÃ§Ã£o">
 
 <script type="text/javascript" language="Javascript1.1">
 function sbmt() {

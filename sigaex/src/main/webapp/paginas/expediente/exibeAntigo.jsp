@@ -46,7 +46,7 @@
 
 				<c:set var="ocultarCodigo" value="${true}" />
 
-				<!-- Links para as ações de cada mobil -->
+				<!-- Links para as aÃ§Ãµes de cada mobil -->
 				<c:if test='${param.popup!="true"}'>
 					<c:set var="acoes" value="${m.acoesOrdenadasPorNome}" />
 					<%-- 			<ww:if test="%{#attr.m.mob.geral}"><c:set var="acoes" value="${docVO.acoesOrdenadasPorNome}"/></ww:if>--%>
@@ -66,9 +66,9 @@
 					</siga:links>
 				</c:if>
 
-				<!-- Somente quando o workflow está ativado -->
+				<!-- Somente quando o workflow estÃ¡ ativado -->
 				<c:if test="${f:resource('isWorkflowEnabled')}">
-				<!-- Se for um processo administrativo, colocar a caixa do wf geral no último volume -->
+				<!-- Se for um processo administrativo, colocar a caixa do wf geral no Ãºltimo volume -->
 				<ww:if test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 						<div id="${docVO.sigla}" depende=";wf;" />
 						<!--ajax:${doc.codigo}-${i}-->
@@ -88,7 +88,7 @@
 	
 	<c:set var="dtUlt" value="" />
 
-	<!-- Verifica se haverá alguma movimentação para ser exibida -->
+	<!-- Verifica se haverÃ¡ alguma movimentaÃ§Ã£o para ser exibida -->
 	<c:set var="temmov" value="${false}" />
 	<c:forEach var="mov" items="${m.movs}">
 		<c:if
@@ -98,7 +98,7 @@
 		</c:if>
 	</c:forEach>
 
-	<!-- Tabela de movimentações -->
+	<!-- Tabela de movimentaÃ§Ãµes -->
 	<c:if test="${temmov}">
 		<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
 			<table class="gt-table mov">
@@ -108,20 +108,20 @@
 						<th rowspan="2">Evento</th>
 						<th colspan="2" align="left">Cadastrante</th>
 						<c:if test="${ (exibirCompleto == 'true')}">
-							<th colspan="2" align="left">Responsável</th>
+							<th colspan="2" align="left">ResponsÃ¡vel</th>
 						</c:if>
 						<th colspan="2" align="left">Atendente</th>
-						<th rowspan="2">Descrição</th>
-						<th align="center" rowspan="2">Duração</th>
+						<th rowspan="2">DescriÃ§Ã£o</th>
+						<th align="center" rowspan="2">DuraÃ§Ã£o</th>
 					</tr>
 					<tr>
-						<th align="left">Lotação</th>
+						<th align="left">LotaÃ§Ã£o</th>
 						<th align="left">Pessoa</th>
 						<c:if test="${ (exibirCompleto == 'true')}">
-							<th align="left">Lotação</th>
+							<th align="left">LotaÃ§Ã£o</th>
 							<th align="left">Pessoa</th>
 						</c:if>
-						<th align="left">Lotação</th>
+						<th align="left">LotaÃ§Ã£o</th>
 						<th align="left">Pessoa</th>
 					</tr>
 				</thead>
@@ -305,9 +305,9 @@
 
 
 
-	<!-- Visualização dos principais dados do documento em questão -->
+	<!-- VisualizaÃ§Ã£o dos principais dados do documento em questÃ£o -->
 
-	<!-- Links para as ações de gerais do documento -->
+	<!-- Links para as aÃ§Ãµes de gerais do documento -->
 	<%--
  --%>
 </div>
@@ -339,12 +339,12 @@
 				<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 			</p>
 			<p>
-				<b>Nível de Acesso:</b> ${docVO.nmNivelAcesso} 
+				<b>NÃ­vel de Acesso:</b> ${docVO.nmNivelAcesso} 
 				<c:if test="${not empty docVO.listaDeAcessos}">
 					<ww:if test="%{#attr.docVO.listaDeAcessos.size() eq 1}">
 						<c:forEach var="acesso" items="${docVO.listaDeAcessos}" varStatus="loop">
 							<ww:if test="${acesso eq 'PUBLICO'}">
-								(Público)
+								(PÃºblico)
 							</ww:if>
 							<ww:else>
 								(${acesso.sigla})
@@ -376,10 +376,10 @@
 				<b>Modelo:</b> ${docVO.modelo}
 			</p>
 			<p>
-				<b>Descrição:</b> ${docVO.descrDocumento}
+				<b>DescriÃ§Ã£o:</b> ${docVO.descrDocumento}
 			</p>
 			<p>
-				<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
+				<b>ClassificaÃ§Ã£o:</b> ${docVO.classificacaoDescricaoCompleta}
 			</p>
 			<%--	<p>
 				<jsp:useBean id="now" class="java.util.Date"/>
@@ -393,7 +393,7 @@
 								em ${marca.dtIniMarcaDDMMYYYY}
 							</c:if>
 							<c:if test="${not empty marca.dtFimMarca}"> 
-								até ${marca.dtFimMarcaDDMMYYYY}
+								atÃ© ${marca.dtFimMarcaDDMMYYYY}
 							</c:if>
 							[${marca.dpLotacaoIni.sigla}
 							<c:if test="${not empty marca.dpPessoaIni}">
@@ -455,7 +455,7 @@
 
 </div>
 
-<!-- Somente quando o workflow está ativado -->
+<!-- Somente quando o workflow estÃ¡ ativado -->
 
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/doc.action?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>

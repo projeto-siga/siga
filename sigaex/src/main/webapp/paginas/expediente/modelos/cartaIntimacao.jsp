@@ -9,15 +9,15 @@
 	<mod:entrevista>
 		<mod:grupo titulo="Dados referenciais">
 			<mod:grupo>
-				<mod:texto titulo="Processo Administrativo n∫" var="num_processo" largura="25" />
+				<mod:texto titulo="Processo Administrativo n¬∫" var="num_processo" largura="25" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:texto titulo="Intimando" var="intimando" largura="60" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:memo titulo="EndereÁo" var="endereco_dest" linhas="4" colunas="60"/>
+				<mod:memo titulo="Endere√ßo" var="endereco_dest" linhas="4" colunas="60"/>
 			</mod:grupo>
-		    <mod:grupo titulo="Texto a ser inserido no corpo da intimaÁ„o">
+		    <mod:grupo titulo="Texto a ser inserido no corpo da intima√ß√£o">
 			    <mod:grupo>
 					<mod:editor titulo="" var="texto_intimacao"/>
 				</mod:grupo>
@@ -66,26 +66,26 @@
 			FIM CABECALHO -->	
 			<c:forEach var="x" begin="0" end="1"><br/></c:forEach>
 			<table width="100%" border=0 bgcolor="#FFFFFF">
-				<tr><td><b>JUSTI«A FEDERAL DE 1∫ GRAU</b></td></tr>
-				<tr><td><b>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</b></td></tr>
-				<tr><td><b>AV. RIO BRANCO, N∫ 243 - 13∫ ANDAR - ANEXO I</b></td></tr>
+				<tr><td><b>JUSTI√áA FEDERAL DE 1¬∫ GRAU</b></td></tr>
+				<tr><td><b>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</b></td></tr>
+				<tr><td><b>AV. RIO BRANCO, N¬∫ 243 - 13¬∫ ANDAR - ANEXO I</b></td></tr>
 				<tr><td><b>CENTRO - RIO DE JANEIRO - RJ</b></td></tr>
 	     		<tr><td><b>CEP: 20.040-009</b></td></tr>
 			</table>
 			<br/>
 			
 			<table width="100%" border=0 bgcolor="#FFFFFF">
-				<tr><td><b>Processo Administrativo n∫: ${num_processo}</b><br/><br/></td></tr>
+				<tr><td><b>Processo Administrativo n¬∫: ${num_processo}</b><br/><br/></td></tr>
 				<tr><td><b>INTIMANDO:&nbsp ${intimando}</b><br/><br/></td></tr>
 			</table>	
 			<table width="100%" border=0 bgcolor="#FFFFFF">
-				<tr><td width="16%" valign="top"><b>ENDERE«O:&nbsp</b></td><td width="84%"><siga:fixcrlf>${endereco_dest}</siga:fixcrlf></td></tr>
+				<tr><td width="16%" valign="top"><b>ENDERE√áO:&nbsp</b></td><td width="84%"><siga:fixcrlf>${endereco_dest}</siga:fixcrlf></td></tr>
 			</table>
 			<br/>
 			<br/>
 		
 			
-			<p align="center"><B>CARTA DE INTIMA«√O - N&ordm; - ${doc.codigo} </b></p>
+			<p align="center"><B>CARTA DE INTIMA√á√ÉO - N&ordm; - ${doc.codigo} </b></p>
 			<p align="justify">${texto_intimacao}</p>
 			<p align="center">${doc.dtExtenso}</p><br/>
 			

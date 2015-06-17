@@ -24,11 +24,11 @@
 			<mod:grupo>
 				<mod:texto titulo="Tipo de documento" var="tipoDeDocumento"
 					largura="20" valor="${tipoDeDocumentoValue}" />
-				<mod:texto titulo="Número" var="numero" largura="20" valor="${numeroValue}" />
+				<mod:texto titulo="NÃºmero" var="numero" largura="20" valor="${numeroValue}" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:data titulo="Data" var="data" valor="${dataValue}" />
-				<mod:texto titulo="Nome do Órgão" var="orgao" largura="30" valor="${orgaoValue}"/>
+				<mod:texto titulo="Nome do Ã“rgÃ£o" var="orgao" largura="30" valor="${orgaoValue}"/>
 			</mod:grupo>
 		</mod:grupo>
 
@@ -39,11 +39,11 @@
 		<c:if test="${param['alterouSel'] eq 'destinatario'}">
 			<c:set var="orgao_dest_prov">${doc.destinatario.lotacao.nomeLotacao}</c:set>
 		</c:if>
-		<mod:grupo titulo="Órgão de destino">
+		<mod:grupo titulo="Ã“rgÃ£o de destino">
 			<mod:grupo>
 				<mod:texto titulo="Nome" var="orgao_dest" largura="30"
 					valor="${orgao_dest_prov}" /> &nbsp&nbsp&nbsp <mod:selecao
-					titulo="Gênero do Destinatário" var="genero"
+					titulo="GÃªnero do DestinatÃ¡rio" var="genero"
 					opcoes="Feminino;Masculino" />
 
 			</mod:grupo>
@@ -54,7 +54,7 @@
 			</mod:grupo>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Nº da Portaria de delegação" var="portDelegacao"
+			<mod:texto titulo="NÂº da Portaria de delegaÃ§Ã£o" var="portDelegacao"
 				largura="60" />
 		</mod:grupo>
 		<mod:selecao titulo="Tamanho da letra" var="tamanhoLetra"
@@ -112,7 +112,7 @@
 			</p>
 			<c:if test="${not empty orgao_dest}">
 				<c:if test="${genero=='Feminino'}">
-					<p>À ${orgao_dest},</p>
+					<p>Ã€ ${orgao_dest},</p>
 				</c:if>
 				<c:if test="${genero=='Masculino'}">
 					<p>Ao ${orgao_dest},</p>

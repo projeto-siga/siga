@@ -11,16 +11,16 @@
 <c:set var="para" value="sinap" scope="request" />
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">
 	<mod:entrevista>
-		<mod:grupo titulo="DETALHES DO FUNCIONÁRIO">
+		<mod:grupo titulo="DETALHES DO FUNCIONÃRIO">
 			<mod:texto titulo="Ramal" var="ramal"/>
 		</mod:grupo>
 	</mod:entrevista>
 	<mod:documento>		
 		<mod:valor var="texto_requerimento"><p style="TEXT-INDENT: 2cm" align="justify">		
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.funcaoString}, 
-		${doc.subscritor.padraoReferenciaInvertido}, matrícula nº ${doc.subscritor.sigla}, do Quadro de Pessoal Permanente da Justiça Federal de Primeiro Grau no Rio de Janeiro,
+		${doc.subscritor.padraoReferenciaInvertido}, matrÃ­cula nÂº ${doc.subscritor.sigla}, do Quadro de Pessoal Permanente da JustiÃ§a Federal de Primeiro Grau no Rio de Janeiro,
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, 
-		ramal ${ramal}, vem requerer a V. Sa. a elaboração de projeção de aposentadoria.
+		ramal ${ramal}, vem requerer a V. Sa. a elaboraÃ§Ã£o de projeÃ§Ã£o de aposentadoria.
 		</p>
 		</mod:valor>
 	</mod:documento>

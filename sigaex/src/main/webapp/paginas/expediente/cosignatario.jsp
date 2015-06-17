@@ -15,7 +15,7 @@
 	}
 </script>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -25,7 +25,7 @@
 		<div class="gt-content clearfix">
 
 			<h2>
-				Inclusão de Cossignatário- ${mob.siglaEDescricaoCompleta}</h2>
+				InclusÃ£o de CossignatÃ¡rio- ${mob.siglaEDescricaoCompleta}</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -35,14 +35,14 @@
 					<ww:hidden name="sigla" value="%{sigla}" />
 					<table class="gt-form-table">
 						<tr class="header">
-							<td colspan="2">Dados do Cossignatário</td>
+							<td colspan="2">Dados do CossignatÃ¡rio</td>
 						</tr>
 						<%--<ww:textfield name="dtMovString" label="Data"
 					onblur="javascript:verifica_data(this);" />--%>
 
-						<siga:selecao titulo="Cossignatário:" propriedade="cosignatario" modulo="siga"/>
+						<siga:selecao titulo="CossignatÃ¡rio:" propriedade="cosignatario" modulo="siga"/>
 						<ww:textfield name="funcaoCosignatario"
-							label="Função;Lotação;Localidade" size="50" maxLength="128" />
+							label="FunÃ§Ã£o;LotaÃ§Ã£o;Localidade" size="50" maxLength="128" />
 
 						<tr class="button">
 							<td colspan="2"><input type="submit" value="Ok"

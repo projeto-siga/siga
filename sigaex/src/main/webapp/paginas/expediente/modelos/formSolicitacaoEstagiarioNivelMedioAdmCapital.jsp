@@ -10,35 +10,35 @@
 						<mod:lotacao titulo="Unidade Organizacional" var="unidade"/>
 				</mod:grupo>
 				<mod:grupo>
-					<mod:pessoa titulo="MatrÌcula do Supervisor do est·gio" var="supervisor"/> 
+					<mod:pessoa titulo="Matr√≠cula do Supervisor do est√°gio" var="supervisor"/> 
 				</mod:grupo>
 				<br/>
 				<mod:grupo>
-					<mod:texto titulo="¡rea de formaÁ„o do estagi·rio" var="area" largura="30" />
+					<mod:texto titulo="√Årea de forma√ß√£o do estagi√°rio" var="area" largura="30" />
 				</mod:grupo>
 				<mod:grupo>
 					<mod:memo titulo="Proposta de trabalho com justificativa" var="proposta" colunas="80" linhas="3"/> 
 				</mod:grupo>
 				<mod:grupo>
-				DescriÁ„o sucinta das atividades a serem realizadas pelo estagi·rio.
-				<span style="color:red"> A ATUA«√O PREVISTA PARA O ESTAGI¡RIO DE NÕVEL M…DIO, 
-				INDEPENDENTEMENTE DA ESPECIALIDADE, REFERE-SE MAIS DIRETAMENTE ¿S ATIVIDADES RELACIONADAS ¿S ROTINAS DE TRABALHO DO DIA A DIA. </span>
+				Descri√ß√£o sucinta das atividades a serem realizadas pelo estagi√°rio.
+				<span style="color:red"> A ATUA√á√ÉO PREVISTA PARA O ESTAGI√ÅRIO DE N√çVEL M√âDIO, 
+				INDEPENDENTEMENTE DA ESPECIALIDADE, REFERE-SE MAIS DIRETAMENTE √ÄS ATIVIDADES RELACIONADAS √ÄS ROTINAS DE TRABALHO DO DIA A DIA. </span>
 					<mod:memo titulo="" var="atividades" colunas="80" linhas="3"/>
 				</mod:grupo>
 				<mod:grupo>
-					<mod:memo titulo="Objetivos educacionais para o estagi·rio (quanto ‡ complementaÁ„o do ensino profissional pelo desempenho das atividades; desenvolvimento de relaÁıes interpessoais; etc.)" var="objetivos" colunas="80" linhas="3"/>
+					<mod:memo titulo="Objetivos educacionais para o estagi√°rio (quanto √† complementa√ß√£o do ensino profissional pelo desempenho das atividades; desenvolvimento de rela√ß√µes interpessoais; etc.)" var="objetivos" colunas="80" linhas="3"/>
 				</mod:grupo>
 				<mod:grupo>
 				Resultados previstos para o Projeto/Programa.
-				<span style="color:red"> EVENTUALMENTE, O ESTAGI¡RIO DE NÕVEL M…DIO PODER¡ SER SOLICITADO 
-				PARA COLABORAR EM PROJETO/PROGRAMA ESTRAT…GICO. NESSE CASO, ESTE CAMPO DEVER¡ SER PREENCHIDO, 
-				DEVENDO TAMB…M CONSTAR A INDICA«√O DO RESPECTIVO PROJETO/PROGRAMA. </span>
+				<span style="color:red"> EVENTUALMENTE, O ESTAGI√ÅRIO DE N√çVEL M√âDIO PODER√Å SER SOLICITADO 
+				PARA COLABORAR EM PROJETO/PROGRAMA ESTRAT√âGICO. NESSE CASO, ESTE CAMPO DEVER√Å SER PREENCHIDO, 
+				DEVENDO TAMB√âM CONSTAR A INDICA√á√ÉO DO RESPECTIVO PROJETO/PROGRAMA. </span>
 					<mod:memo titulo="" var="resultados" colunas="80" linhas="3"/>
 				</mod:grupo>
 				<mod:grupo>
-				CritÈrio(s) previsto(s) para avaliaÁ„o dos resultados.
-					<span style="color:red"> CAMPO A SER PREENCHIDO NO CASO DE O ESTAGI¡RIO DE NÕVEL M…DIO SER SOLICITADO 
-					PARA COLABORAR EM PROJETO/PROGRAMA ESTRAT…GICO. </span>
+				Crit√©rio(s) previsto(s) para avalia√ß√£o dos resultados.
+					<span style="color:red"> CAMPO A SER PREENCHIDO NO CASO DE O ESTAGI√ÅRIO DE N√çVEL M√âDIO SER SOLICITADO 
+					PARA COLABORAR EM PROJETO/PROGRAMA ESTRAT√âGICO. </span>
 					<mod:memo titulo="" var="criterios" colunas="80" linhas="3"/>
 				</mod:grupo>
 				<br />

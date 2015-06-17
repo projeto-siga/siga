@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-LICENÇA PARA AFASTAMENTO DO CONJUGUE
+LICENÃ‡A PARA AFASTAMENTO DO CONJUGUE
 < ESTE DOCUMENTO SE DIVIDE EM 3 PAGINAS >
 [OBS AO PROGRAMADOR: CRIAR DIGITO OU METODO P/ SALTAR PAGINA]  -->
 
@@ -16,9 +16,9 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 		<mod:valor var="texto_requerimento">
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência que se digne encaminhar 
-		o requerimento de <b>LICENÇA POR MOTIVO DE AFASTAMENTO DO CÔNJUGE COM EXERCÍCIO 
-		PROVISÓRIO</b>, em anexo, ao E. Tribunal Regional Federal da 2ª Região.
+		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia que se digne encaminhar 
+		o requerimento de <b>LICENÃ‡A POR MOTIVO DE AFASTAMENTO DO CÃ”NJUGE COM EXERCÃCIO 
+		PROVISÃ“RIO</b>, em anexo, ao E. Tribunal Regional Federal da 2Âª RegiÃ£o.
 		</p>
 		</mod:valor>
 		<mod:valor var="texto_requerimento2">
@@ -26,16 +26,16 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 		<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />
 
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência, nos termos do art. 84 da Lei nº 8.112/90, c/c alteração dada pela Lei nº 9.527/97, regulamentado pela Resolução nº 498/2006, do Conselho da Justiça Federal, <B>LICENÇA POR MOTIVO DE AFASTAMENTO DO CÔNJUGE COM EXERCÍCIO 
-		PROVISÓRIO</B>.
+		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia, nos termos do art. 84 da Lei nÂº 8.112/90, c/c alteraÃ§Ã£o dada pela Lei nÂº 9.527/97, regulamentado pela ResoluÃ§Ã£o nÂº 498/2006, do Conselho da JustiÃ§a Federal, <B>LICENÃ‡A POR MOTIVO DE AFASTAMENTO DO CÃ”NJUGE COM EXERCÃCIO 
+		PROVISÃ“RIO</B>.
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		Declara estar ciente dos termos da norma citada, especialmente no que diz respeito ao seguinte:
 		<ul>
-		<li>que a concessão será por prazo indeterminado, enquanto perdurar o vínculo matrimonial ou a união estável, comprometendo-se a encaminhar ao órgão de origem, anualmente, declaração que ateste o deslocamento e manutenção da situação mencionada (art. 2º, parágrafo 1º c/c art. 5º, parágrafo 3º);</li>
-		<li>que o período de licença sem remuneração não será contado para nenhum efeito, exceto para aposentadoria na hipótese do art. 6º, suspendendo o estágio probatório, a aquisição da estabilidade e a concessão de progressão ou promoção funcional (art. 3º e parágrafo único);</li>
-		<li>que o período de exercício provisório será contado para todos os efeitos legais (art. 4º, parágrafo único);</li>
-		<li>que, na hipótese de não ser concedido o exercício provisório, será assegurada ao servidor licenciado, mediante requerimento, a manutenção da vinculação ao regime do Plano de Seguridade Social do Servidor Público mediante recolhimento mensal da respectiva contribuição, no mesmo percentual devido pelos servidores em atividade, incidente sobre a remuneração total do cargo a que faz jus no exercício de suas atribuições, computando-se, para esse efeito, inclusive, as vantagens pessoais (art. 6º).</li>		
+		<li>que a concessÃ£o serÃ¡ por prazo indeterminado, enquanto perdurar o vÃ­nculo matrimonial ou a uniÃ£o estÃ¡vel, comprometendo-se a encaminhar ao Ã³rgÃ£o de origem, anualmente, declaraÃ§Ã£o que ateste o deslocamento e manutenÃ§Ã£o da situaÃ§Ã£o mencionada (art. 2Âº, parÃ¡grafo 1Âº c/c art. 5Âº, parÃ¡grafo 3Âº);</li>
+		<li>que o perÃ­odo de licenÃ§a sem remuneraÃ§Ã£o nÃ£o serÃ¡ contado para nenhum efeito, exceto para aposentadoria na hipÃ³tese do art. 6Âº, suspendendo o estÃ¡gio probatÃ³rio, a aquisiÃ§Ã£o da estabilidade e a concessÃ£o de progressÃ£o ou promoÃ§Ã£o funcional (art. 3Âº e parÃ¡grafo Ãºnico);</li>
+		<li>que o perÃ­odo de exercÃ­cio provisÃ³rio serÃ¡ contado para todos os efeitos legais (art. 4Âº, parÃ¡grafo Ãºnico);</li>
+		<li>que, na hipÃ³tese de nÃ£o ser concedido o exercÃ­cio provisÃ³rio, serÃ¡ assegurada ao servidor licenciado, mediante requerimento, a manutenÃ§Ã£o da vinculaÃ§Ã£o ao regime do Plano de Seguridade Social do Servidor PÃºblico mediante recolhimento mensal da respectiva contribuiÃ§Ã£o, no mesmo percentual devido pelos servidores em atividade, incidente sobre a remuneraÃ§Ã£o total do cargo a que faz jus no exercÃ­cio de suas atribuiÃ§Ãµes, computando-se, para esse efeito, inclusive, as vantagens pessoais (art. 6Âº).</li>		
 		</ul>
 		</p>
 		<c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" />
@@ -51,27 +51,27 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<i>
-		Declaro estar ciente de que o § 2º do art. 183 da Lei n.º 8.112/90, 
-		acrescentado pela Lei n.º 10.667/2003, prevê que o servidor afastado ou 
-		licenciado do cargo efetivo, sem direito à remuneração, inclusive para 
+		Declaro estar ciente de que o Â§ 2Âº do art. 183 da Lei n.Âº 8.112/90, 
+		acrescentado pela Lei n.Âº 10.667/2003, prevÃª que o servidor afastado ou 
+		licenciado do cargo efetivo, sem direito Ã  remuneraÃ§Ã£o, inclusive para 
 		servir em organismo oficial internacional do qual o Brasil seja membro 
 		efetivo ou com o qual coopere, ainda que contribua para regime de 
-		previdência social no exterior, terá suspenso o seu vínculo com o 
-		regime do Plano de Seguridade Social do Servidor Público enquanto 
-		durar o afastamento ou a licença, não lhes assistindo, neste período, 
-		os benefícios do mencionado regime de previdência.
+		previdÃªncia social no exterior, terÃ¡ suspenso o seu vÃ­nculo com o 
+		regime do Plano de Seguridade Social do Servidor PÃºblico enquanto 
+		durar o afastamento ou a licenÃ§a, nÃ£o lhes assistindo, neste perÃ­odo, 
+		os benefÃ­cios do mencionado regime de previdÃªncia.
 		</i>
 		</p> 
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<i>
-		Declaro, ainda, estar ciente de que o § 3º do referido artigo, 
-		também acrescentado pela Lei n.º 10.667/2003, assegura ao servidor na 
-		situação acima descrita, a manutenção da vinculação ao regime do Plano 
-		de Seguridade Social do Servidor Público, mediante o recolhimento mensal 
-		da respectiva contribuição, no mesmo percentual devido pelos servidores em 
-		atividade, incidente sobre a remuneração total do cargo a que faz jus no 
-		exercício de suas atribuições, computando-se, para esse efeito, inclusive, 
+		Declaro, ainda, estar ciente de que o Â§ 3Âº do referido artigo, 
+		tambÃ©m acrescentado pela Lei n.Âº 10.667/2003, assegura ao servidor na 
+		situaÃ§Ã£o acima descrita, a manutenÃ§Ã£o da vinculaÃ§Ã£o ao regime do Plano 
+		de Seguridade Social do Servidor PÃºblico, mediante o recolhimento mensal 
+		da respectiva contribuiÃ§Ã£o, no mesmo percentual devido pelos servidores em 
+		atividade, incidente sobre a remuneraÃ§Ã£o total do cargo a que faz jus no 
+		exercÃ­cio de suas atribuiÃ§Ãµes, computando-se, para esse efeito, inclusive, 
 		as vantagens pessoais.
 		</i>
 		</p>	

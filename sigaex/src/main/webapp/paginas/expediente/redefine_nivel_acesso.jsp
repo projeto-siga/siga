@@ -6,7 +6,7 @@
 
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Redefinição de Nível de Acesso">
+<siga:pagina titulo="RedefiniÃ§Ã£o de NÃ­vel de Acesso">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -29,7 +29,7 @@ function sbmt() {
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Redefinição de Nível de Acesso - ${mob.siglaEDescricaoCompleta}</h2>
+			<h2>RedefiniÃ§Ã£o de NÃ­vel de Acesso - ${mob.siglaEDescricaoCompleta}</h2>
 			<div class="gt-content-box gt-for-table">
 
 		<ww:form name="frm" action="redefinir_nivel_acesso_gravar"
@@ -39,7 +39,7 @@ function sbmt() {
 
 			<table class="gt-form-table">
 				<tr class="header">
-					<td colspan="2">Redefinição de Nível de Acesso</td>
+					<td colspan="2">RedefiniÃ§Ã£o de NÃ­vel de Acesso</td>
 				</tr>
 				<tr>
 					<td>Data:</td>
@@ -47,7 +47,7 @@ function sbmt() {
 						onblur="javascript:verifica_data(this,0);" /></td>
 				</tr>
 				<tr>
-					<td>Responsável:</td>
+					<td>ResponsÃ¡vel:</td>
 					<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 					&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 						onclick="javascript:displayTitular(this);" />Substituto</td>
@@ -67,7 +67,7 @@ function sbmt() {
 							tema="simple" modulo="siga"/></td>
 				</tr>
 				<tr>
-					<td>Nível de Acesso</td>
+					<td>NÃ­vel de Acesso</td>
 					<td><ww:select name="nivelAcesso" list="listaNivelAcesso"
 						theme="simple" listKey="idNivelAcesso" listValue="nmNivelAcesso" /></td>
 				</tr>

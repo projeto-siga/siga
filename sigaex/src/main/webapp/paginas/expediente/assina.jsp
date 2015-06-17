@@ -13,7 +13,7 @@
 						 incluirJs="sigaex/javascript/assinatura.js">
 
 	<script type="text/javascript" language="Javascript1.1">
-		/*  converte para maiúscula a sigla do estado  */
+		/*  converte para maiÃºscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
 			re = /^[a-zA-Z]{2}\d{3,6}$/;
 			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
@@ -43,12 +43,12 @@
 					</tr>
 					<tr class="header">
 						<td><b>De:</b> ${doc.subscritorString}</td>
-						<td><b>Classificação:</b>
+						<td><b>ClassificaÃ§Ã£o:</b>
 							${doc.exClassificacao.descricaoCompleta}</td>
 					</tr>
 					<tr class="header">
 						<td><b>Para:</b> ${doc.destinatarioString}</td>
-						<td><b>Descrição:</b> ${doc.descrDocumento}</td>
+						<td><b>DescriÃ§Ã£o:</b> ${doc.descrDocumento}</td>
 					</tr>
 					<c:if test="${doc.conteudo != ''}">
 						<tr>
@@ -89,7 +89,7 @@
 				</div>
 
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
 					<div id="capicom-div">
 						<c:if
@@ -101,8 +101,8 @@
 							<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar Documento</a>
 						</c:if>
 					</div>
-					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
-					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrÃ£o do SIGA-DOC sÃ³ poderÃ¡ ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> Ã© permitida.</p>
+					<p id="capicom-missing" style="display: none;">NÃ£o foi possÃ­vel localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o mÃ©todo padrÃ£o do SIGA-DOC, serÃ¡ necessÃ¡rio instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. SerÃ¡ necessÃ¡rio expandir o <i>ZIP</i> e depois executar o arquivo de instalaÃ§Ã£o.</p>
 				<script type="text/javascript">
 					 if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
 						 document.getElementById("capicom-div").style.display = "block";
@@ -115,7 +115,7 @@
 				</c:if>
 
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 				</c:if>
 			</div>
@@ -129,7 +129,7 @@
 	 			<form id="form-assinarSenha" method="post" action="/sigaex/expediente/mov/assinar_senha_gravar.action" >
 	 				<ww:hidden id="sigla" name="sigla"	value="${sigla}" />
 	    			<fieldset>
-	    			  <label>Matrícula</label> <br/>
+	    			  <label>MatrÃ­cula</label> <br/>
 	    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
 	    			  <label>Senha</label> <br/>
 	    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off"/>

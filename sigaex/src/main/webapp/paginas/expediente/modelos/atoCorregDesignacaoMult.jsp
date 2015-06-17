@@ -10,19 +10,19 @@
 <mod:modelo urlBase="/paginas/expediente/modelos/ato_corregedoria.jsp">
 	<mod:entrevista>
 
-		<mod:grupo titulo="Juiz a ser substituído">
+		<mod:grupo titulo="Juiz a ser substituÃ­do">
 			<mod:grupo>
-				<mod:selecao titulo="Dr" var="genero"  opcoes="masc;fem" reler="não" />
-				<mod:selecao titulo="Juiz Federal" var="titulo" opcoes="Substituto;Titular" reler="não"/>
-				<mod:selecao titulo="na titularidade" var="estado"  opcoes="sim;não" reler="não" />
-				<mod:selecao titulo="Com prejuízo" var="prej"  opcoes="sim;não" reler="não" />
+				<mod:selecao titulo="Dr" var="genero"  opcoes="masc;fem" reler="nÃ£o" />
+				<mod:selecao titulo="Juiz Federal" var="titulo" opcoes="Substituto;Titular" reler="nÃ£o"/>
+				<mod:selecao titulo="na titularidade" var="estado"  opcoes="sim;nÃ£o" reler="nÃ£o" />
+				<mod:selecao titulo="Com prejuÃ­zo" var="prej"  opcoes="sim;nÃ£o" reler="nÃ£o" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="pessoa" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="em virtude" var="motivo"  reler="não"/>
-				<mod:selecao titulo="Nº de Juizes" var="numJuizes" opcoes="1;2;3;4;5;6;7;8;9;10" reler="ajax" idAjax="numJuizAjax" />
+				<mod:texto titulo="em virtude" var="motivo"  reler="nÃ£o"/>
+				<mod:selecao titulo="NÂº de Juizes" var="numJuizes" opcoes="1;2;3;4;5;6;7;8;9;10" reler="ajax" idAjax="numJuizAjax" />
 			</mod:grupo>
 		</mod:grupo>
 		<hr>
@@ -31,10 +31,10 @@
 		<mod:grupo titulo="Juizes a serem Designados" depende="numJuizAjax">
 			<c:forEach var="i" begin="1" end="${numJuizes}">
 				<mod:grupo>
-					<mod:selecao titulo="Dr" var="genero${i}"  opcoes="masc;fem" reler="não" />
-					<mod:selecao titulo="Juiz Federal" var="titulo${i}" opcoes="Titular;Substituto" reler="não"/>
-					<mod:selecao titulo="na titularidade" var="estado${i}"  opcoes="sim;não" reler="não" />
-					<mod:selecao titulo="Com prejuízo" var="prej${i}"  opcoes="sim;não" reler="não" />
+					<mod:selecao titulo="Dr" var="genero${i}"  opcoes="masc;fem" reler="nÃ£o" />
+					<mod:selecao titulo="Juiz Federal" var="titulo${i}" opcoes="Titular;Substituto" reler="nÃ£o"/>
+					<mod:selecao titulo="na titularidade" var="estado${i}"  opcoes="sim;nÃ£o" reler="nÃ£o" />
+					<mod:selecao titulo="Com prejuÃ­zo" var="prej${i}"  opcoes="sim;nÃ£o" reler="nÃ£o" />
 				</mod:grupo>
 				<mod:grupo>					
 					<mod:pessoa titulo="Nome" var="pessoa${i}" />
@@ -58,9 +58,9 @@
 		<c:set var="pessoa_resp" value ="${f:pessoa(requestScope['pessoa_pessoaSel.id'])}" />
 			<br/><br/>
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			O Doutor ${doc.subscritor.descricao}, Corregedor-Regional da Justiça Federal da 2ª Região, no uso 
-			de suas atribuições legais e nos termos do art 4º da Resolução nº 026 de 23 de julho 2009
-			da Presidência deste Tribunal, RESOLVE designar 			
+			O Doutor ${doc.subscritor.descricao}, Corregedor-Regional da JustiÃ§a Federal da 2Âª RegiÃ£o, no uso 
+			de suas atribuiÃ§Ãµes legais e nos termos do art 4Âº da ResoluÃ§Ã£o nÂº 026 de 23 de julho 2009
+			da PresidÃªncia deste Tribunal, RESOLVE designar 			
 			
 			
 			<c:forEach var="i" begin="1" end="${numJuizes}">
@@ -80,7 +80,7 @@
 				</c:choose> do(a) 
 				${desig.lotacao.descricao},
 				<c:choose>
-					<c:when test="${requestScope[f:concat('genero',i)] == 'fem'}">Drª.</c:when>
+					<c:when test="${requestScope[f:concat('genero',i)] == 'fem'}">DrÂª.</c:when>
 					<c:otherwise>Dr.</c:otherwise>
 				</c:choose>
 				${desig.descricao}, 			
@@ -88,15 +88,15 @@
 					<c:when test="${requestScope[f:concat('prej',i)] == 'sim'}">com</c:when>
 					<c:otherwise>sem</c:otherwise>
 				</c:choose>
-				prejuízo de sua jurisdição, assumir a titularidade do(a) ${pessoa_resp.lotacao.descricao }, no período de ${requestScope[f:concat('dtMarcada1',i)]} a ${requestScope[f:concat('dtMarcada2',i)]},
+				prejuÃ­zo de sua jurisdiÃ§Ã£o, assumir a titularidade do(a) ${pessoa_resp.lotacao.descricao }, no perÃ­odo de ${requestScope[f:concat('dtMarcada1',i)]} a ${requestScope[f:concat('dtMarcada2',i)]},
 				
 				
 
 			</c:forEach>
 			em virtude de ${motivo} 
 			<c:choose>
-				<c:when test="${genero == 'fem'}">da MM. Juíza Federal</c:when>
-				<c:otherwise>do MM. Juíz Federal</c:otherwise>
+				<c:when test="${genero == 'fem'}">da MM. JuÃ­za Federal</c:when>
+				<c:otherwise>do MM. JuÃ­z Federal</c:otherwise>
 			</c:choose>
 			
 			<c:choose>

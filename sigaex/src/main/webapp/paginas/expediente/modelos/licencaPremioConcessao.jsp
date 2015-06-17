@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-LICENÇA PRÊMIO CONCESSÃO -->
+LICENÃ‡A PRÃŠMIO CONCESSÃƒO -->
 
 <c:set var="esconderTexto" value="sim" scope="request" />
 <c:set var="para" value="diretoraRH" scope="request" />
@@ -11,10 +11,10 @@ LICENÇA PRÊMIO CONCESSÃO -->
 	<mod:documento>		
 	<mod:valor var="texto_requerimento">	
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria a <b> CONCESSÃO DE LICENÇA PRÊMIO</b>
-		por assiduidade, referente(s) ao(s) qüinqüênio(s) a que faz 
-		jus, de acordo com o art. 87 da Lei n.º 8.112/90, em sua 
-		redação original.</p>
+		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria a <b> CONCESSÃƒO DE LICENÃ‡A PRÃŠMIO</b>
+		por assiduidade, referente(s) ao(s) qÃ¼inqÃ¼Ãªnio(s) a que faz 
+		jus, de acordo com o art. 87 da Lei n.Âº 8.112/90, em sua 
+		redaÃ§Ã£o original.</p>
 	</mod:valor>			
 		
 </mod:documento>

@@ -6,7 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-DECLARAÇÃO DE MARGEM DE REFINANCIAMENRO-COMPRA DE DÍVIDA -->
+DECLARAÃ‡ÃƒO DE MARGEM DE REFINANCIAMENRO-COMPRA DE DÃVIDA -->
 
 <c:set var="esconderTexto" value="sim" scope="request" />
 <c:set var="sepag" value="sim" scope="request" />
@@ -14,10 +14,10 @@ DECLARAÇÃO DE MARGEM DE REFINANCIAMENRO-COMPRA DE DÍVIDA -->
 	<mod:entrevista>
 		<mod:obrigatorios />
 		<mod:grupo titulo="">
-			<mod:texto obrigatorio="Sim" titulo="Instituição Financeira" var="instituicaoFinanceiro"/>
-			<mod:texto titulo="Agência" var="agencia" obrigatorio="Sim"/>
+			<mod:texto obrigatorio="Sim" titulo="InstituiÃ§Ã£o Financeira" var="instituicaoFinanceiro"/>
+			<mod:texto titulo="AgÃªncia" var="agencia" obrigatorio="Sim"/>
 			<mod:memo colunas="80" linhas="5" 
-				titulo="Observações" 
+				titulo="ObservaÃ§Ãµes" 
 				var="obs" />			
 		</mod:grupo>
 				
@@ -25,8 +25,8 @@ DECLARAÇÃO DE MARGEM DE REFINANCIAMENRO-COMPRA DE DÍVIDA -->
 	<mod:documento>		
 		<mod:valor var="texto_requerimento"><p style="TEXT-INDENT: 2cm">		
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
-		${doc.subscritor.padraoReferenciaInvertido}, matrícula ${doc.subscritor.sigla}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao },  
-		vem requerer a Vossa Senhoria declaração de margem para fins de consignação de empréstimo na seguinte Instituição Financeira: ${instituicaoFinanceiro}, agência ${agencia}.
+		${doc.subscritor.padraoReferenciaInvertido}, matrÃ­cula ${doc.subscritor.sigla}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao },  
+		vem requerer a Vossa Senhoria declaraÃ§Ã£o de margem para fins de consignaÃ§Ã£o de emprÃ©stimo na seguinte InstituiÃ§Ã£o Financeira: ${instituicaoFinanceiro}, agÃªncia ${agencia}.
 		</p>
 		<p style="TEXT-INDENT: 2cm">${obs}</p>
 		</mod:valor>

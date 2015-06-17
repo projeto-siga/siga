@@ -14,7 +14,7 @@
 	<mod:entrevista>
 		<mod:grupo titulo="Detalhes do Contrato" />
 		<mod:grupo>
-			<mod:monetario titulo="Processo Nº" var="numProcesso1" largura="6"
+			<mod:monetario titulo="Processo NÂº" var="numProcesso1" largura="6"
 				maxcaracteres="5" verificaNum="sim" />
 			<mod:selecao titulo="" var="mes" opcoes="JAN;FEV;MAR;ABR;MAIO;JUN;JUL;AGO;SET;OUT;NOV;DEZ" reler="nao" />
 			<mod:monetario titulo="" var="numProcesso3" largura="6"
@@ -26,7 +26,7 @@
 		<mod:grupo>  
 			<mod:selecao titulo="Tipo do Contrato" var="tipoContrato"
 				opcoes="ATA de RP;Obras Serv_Eventuais;Outros" reler="sim" />
-			<mod:monetario titulo="Número" var="numero" largura="6"
+			<mod:monetario titulo="NÃºmero" var="numero" largura="6"
 				maxcaracteres="4" verificaNum="sim" />
 			<mod:monetario titulo="Ano" var="ano" largura="6" maxcaracteres="4"
 				verificaNum="sim" />
@@ -34,11 +34,11 @@
 		<c:if test="${tipoContrato !='Obras Serv_Eventuais'}">
 			<mod:grupo>
 				<mod:selecao titulo="Finalidade" var="finalidadeContrato"
-					opcoes="Aquisição de;Fornecimento de;Fornecimento e Instalação de;Prestação de Serviços"
+					opcoes="AquisiÃ§Ã£o de;Fornecimento de;Fornecimento e InstalaÃ§Ã£o de;PrestaÃ§Ã£o de ServiÃ§os"
 					reler="sim" />
 			</mod:grupo>
 		</c:if>
-		<c:if test="${finalidadeContrato=='Prestação de Serviços'}">
+		<c:if test="${finalidadeContrato=='PrestaÃ§Ã£o de ServiÃ§os'}">
 			<mod:grupo>
 				<mod:texto titulo="Nome da Empresa" var="variavel"
 					maxcaracteres="50" largura="55" />
@@ -59,10 +59,10 @@
 			<mod:grupo>
 				<mod:texto titulo="Documento Identidade" largura="12"
 					maxcaracteres="9" var="identJuiz" />
-				<mod:texto titulo="Orgão Emissor" largura="5" var="orgEmissorJuiz" />
+				<mod:texto titulo="OrgÃ£o Emissor" largura="5" var="orgEmissorJuiz" />
 				<mod:texto titulo="CPF" largura="15" maxcaracteres="11"
 					var="cpfJuiz" />
-				<mod:texto titulo="Nº Folhas do auto" largura="4" var="folhas" />
+				<mod:texto titulo="NÂº Folhas do auto" largura="4" var="folhas" />
 			</mod:grupo>
 		</mod:grupo>
 
@@ -70,7 +70,7 @@
 			<mod:texto titulo="Nome da Empresa" largura="60" maxcaracteres="40"
 				var="nomeEmpresa" />
 			<mod:grupo>
-				<mod:texto titulo="Endereço" largura="70" maxcaracteres="50"
+				<mod:texto titulo="EndereÃ§o" largura="70" maxcaracteres="50"
 					var="endEmpresa" />
 			</mod:grupo>
 			<mod:grupo>
@@ -87,7 +87,7 @@
 			<mod:grupo>
 				<mod:texto titulo="Documento Identidade" largura="12"
 					maxcaracteres="9" var="identRepresentante" />
-				<mod:texto titulo="Orgão Emissor" largura="5"
+				<mod:texto titulo="OrgÃ£o Emissor" largura="5"
 					var="orgEmissorRepresentante" />
 				<mod:texto titulo="CPF" largura="15" maxcaracteres="11"
 					var="cpfRepresentante" />
@@ -96,7 +96,7 @@
 		</c:if>
 		<%--
 			<c:choose>
-				<c:when test="${finalidadeContrato!='Prestação de Serviços'}">
+				<c:when test="${finalidadeContrato!='PrestaÃ§Ã£o de ServiÃ§os'}">
 					<mod:oculto var="variavel"
 						valor="${finalidadeContrato} ${variavel2}" />
 				</c:when>
@@ -135,7 +135,7 @@
 				<table width="100%">				
 					<tr>
 					   <td>
-                             <u><font size="2">Processo nº${numProcesso1}/${numProcesso2}/${numProcesso3}-EOF - Contrato nº ${numero}/${ano} Nome da Empresa ${nomeEmpresa} </font></u>                              
+                             <u><font size="2">Processo nÂº${numProcesso1}/${numProcesso2}/${numProcesso3}-EOF - Contrato nÂº ${numero}/${ano} Nome da Empresa ${nomeEmpresa} </font></u>                              
 					   </td>
 					</tr>
 				</table>
@@ -153,46 +153,46 @@
 		 </tr>
 		 <tr>
 		   <td>
-             <u><font size="2">Processo nº${numProcesso1}/${numProcesso2}/${numProcesso3}-EOF - Contrato nº ${numero}/${ano} Nome da Empresa ${nomeEmpresa}</font></u>                              
+             <u><font size="2">Processo nÂº${numProcesso1}/${numProcesso2}/${numProcesso3}-EOF - Contrato nÂº ${numero}/${ano} Nome da Empresa ${nomeEmpresa}</font></u>                              
 		   </td>
 		</tr>		 
         </table>
 		FIM CABECALHO -->
 		<br>
 				
-		<p align="center"><b>TERMO DE CONTRATO N.º&nbsp;
+		<p align="center"><b>TERMO DE CONTRATO N.Âº&nbsp;
 		${termoContrato }/(${anoContrato }) </b></p>
 		
 		<p align="right"><b>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONTRATO
-		DE PRESTAÇÃO DE SERVIÇOS DE<br>
+		DE PRESTAÃ‡ÃƒO DE SERVIÃ‡OS DE<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENGENHARIA
 		PARA ${variavel2 }, QUE ENTRE<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SI
-		FAZEM A JUSTIÇA FEDERAL DE 1º GRAU NO RIO DE<br>
+		FAZEM A JUSTIÃ‡A FEDERAL DE 1Âº GRAU NO RIO DE<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JANEIRO
 		E A EMPRESA ${nomeEmpresa }</b></p>
 
-		<p align="center"><b>PROCESSO Nº &nbsp; ${numProcesso1 }/${numProcesso2 }/${numProcesso3 } -
+		<p align="center"><b>PROCESSO NÂº &nbsp; ${numProcesso1 }/${numProcesso2 }/${numProcesso3 } -
 		EOF</b></p>
 
-		<p style="TEXT-INDENT: 2cm" align="justify">A justiça Federal de
+		<p style="TEXT-INDENT: 2cm" align="justify">A justiÃ§a Federal de
 		1&deg; Grau no Rio de Janeiro, com sede na Av.Rio Branco, 243 - Anexo
 		I - 14&deg; andar, Centro/RJ, inscrita no C.N.P.J. sob o n&deg;
 		05.424.540./0001-16, neste ato representada pelo Dr. <b>${nomeJuiz
 		}</b>, Juiz Federal - Diretor do Foro, Identidade n&deg; <b>${identJuiz
 		}</b> - <b>${orgEmissorJuiz }</b>, CPF: <b>${cpfJuiz }</b> doravante
 		denominada CONTRATANTE, e a empresa <b>${nomeEmpresa }</b>,
-		estabelecida na <b>${endEmpresa }</b>, inscrita no C.N.P.J sob o nº <b>${cnpj
+		estabelecida na <b>${endEmpresa }</b>, inscrita no C.N.P.J sob o nÂº <b>${cnpj
 		}</b>, TEL: <b>${tel }</b>, FAX: <b>${fax }<b>, representada neste
-		ato pelo Sr.(a) <b>${nomeRepresentante }<b>, Identidade nº <b>${identRepresentante}</b>
+		ato pelo Sr.(a) <b>${nomeRepresentante }<b>, Identidade nÂº <b>${identRepresentante}</b>
 		- <b>${orgEmissorRepresentante }</b>, CPF: <b>${cpfRepresentante }</b>,
 		doravante denominada CONTRATADA, tendo em vista o decidido no Processo
-		Administrativo nº <b>${numProcesso1 }</b>/<b>${numProcesso2 }</b>/<b>${numProcesso3 }</b> - EOF, por
-		despacho do Exmº Sr. <b>${nomeJuiz }</b> Juiz Federal - Diretor do
-		Foro, às Fls. <b>${folhas }</b> dos autos, firmam o presente contrato,
-		nos termos e sujeitas as partes às normas da Lei nº 8.666/93 e às
-		cláusulas contratuais a seguir:</p>
+		Administrativo nÂº <b>${numProcesso1 }</b>/<b>${numProcesso2 }</b>/<b>${numProcesso3 }</b> - EOF, por
+		despacho do ExmÂº Sr. <b>${nomeJuiz }</b> Juiz Federal - Diretor do
+		Foro, Ã s Fls. <b>${folhas }</b> dos autos, firmam o presente contrato,
+		nos termos e sujeitas as partes Ã s normas da Lei nÂº 8.666/93 e Ã s
+		clÃ¡usulas contratuais a seguir:</p>
 		<br>
 		${texto_contrato}
 		<!-- INICIO PRIMEIRO RODAPE

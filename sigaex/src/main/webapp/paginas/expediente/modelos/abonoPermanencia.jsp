@@ -13,7 +13,7 @@ ABONO DE PERMANENCIA -->
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">
 	<mod:entrevista>
 	
-		<mod:grupo titulo="DETALHES DO FUNCIONÁRIO">
+		<mod:grupo titulo="DETALHES DO FUNCIONÃRIO">
 			<mod:texto titulo="Ramal" var="ramal"/>
 		</mod:grupo>
 				
@@ -21,10 +21,10 @@ ABONO DE PERMANENCIA -->
 	<mod:documento>		
 		<mod:valor var="texto_requerimento"><p style="TEXT-INDENT: 2cm">		
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
-		${doc.subscritor.padraoReferenciaInvertido}, matrícula ${doc.subscritor.sigla}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, ramal ${ramal}, 
-		vem requerer a Vossa Excelência o <b>ABONO DE PERMANÊNCIA</b>, equivalente 
-		ao valor da contribuição previdenciária, em face do disposto na 
-		Emenda Constitucional n.º 41, de 19 de dezembro de 2003.
+		${doc.subscritor.padraoReferenciaInvertido}, matrÃ­cula ${doc.subscritor.sigla}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, ramal ${ramal}, 
+		vem requerer a Vossa ExcelÃªncia o <b>ABONO DE PERMANÃŠNCIA</b>, equivalente 
+		ao valor da contribuiÃ§Ã£o previdenciÃ¡ria, em face do disposto na 
+		Emenda Constitucional n.Âº 41, de 19 de dezembro de 2003.
 		</p>
 		
 		</mod:valor>

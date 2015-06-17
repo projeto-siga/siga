@@ -5,7 +5,7 @@
 	<mod:entrevista>
 	</mod:entrevista>
 	<mod:documento>
-		<b>${doc.subscritor.descricao}</b>, matrícula N&ordm; <b>${doc.subscritor.sigla}</b>, 
+		<b>${doc.subscritor.descricao}</b>, matrÃ­cula N&ordm; <b>${doc.subscritor.sigla}</b>, 
 		<b>${doc.subscritor.cargo.nomeCargo}</b>, 
 		<b>${doc.subscritor.padraoReferenciaInvertido}</b>, 
 		lotado(a) no(a) <b>${doc.subscritor.lotacao.descricao}</b>,

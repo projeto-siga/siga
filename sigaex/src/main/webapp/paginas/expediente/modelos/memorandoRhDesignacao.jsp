@@ -16,17 +16,17 @@
 			<c:forEach var="i" begin="1" end="${qtdServidores}">
 				<mod:pessoa titulo="Servidor" var="servidor${i}" />
 				<br />
-				<mod:funcao titulo="FunÁ„o Indicada" var="funcao_indicada${i}"></mod:funcao>
+				<mod:funcao titulo="Fun√ß√£o Indicada" var="funcao_indicada${i}"></mod:funcao>
 				<hr color="#FFFFFF" />
 			</c:forEach>
 		</mod:grupo>
 
 		<mod:selecao titulo="Documento feito de ordem de Magistrado?"
-			var="autoridade" opcoes="N√O;SIM" reler="ajax"
+			var="autoridade" opcoes="N√ÉO;SIM" reler="ajax"
 			idAjax="autoridadeAjax" />
 		<mod:grupo depende="autoridadeAjax">
 			<c:if test="${autoridade eq 'SIM'}">
-				<mod:pessoa titulo="MatrÌcula da Autoridade competente"
+				<mod:pessoa titulo="Matr√≠cula da Autoridade competente"
 					var="autoridade" />
 				<mod:grupo>
 					<mod:radio marcado="Sim" titulo="Titular" var="botao"
@@ -36,8 +36,8 @@
 			</c:if>
 		</mod:grupo>
 		<br />
-		<b> <mod:mensagem titulo="AtenÁ„o"
-			texto="preencha o destinat·rio com SELOT e, apÛs finalizar, transfira para a SELOT." />
+		<b> <mod:mensagem titulo="Aten√ß√£o"
+			texto="preencha o destinat√°rio com SELOT e, ap√≥s finalizar, transfira para a SELOT." />
 		</b>
 		<br />
 	</mod:entrevista>
@@ -49,11 +49,11 @@
 					Juiz(a) Federal ${requestScope['botao']} do(a) <b>${f:lotacaoPessoa(requestScope['autoridade_pessoaSel.id'])}</b>,
 					Dr(a). <b>${requestScope['autoridade_pessoaSel.descricao']}</b>, indico 
 					
-				</c:if> <c:if test="${autoridade eq 'N√O'}">
+				</c:if> <c:if test="${autoridade eq 'N√ÉO'}">
 					Indico 
 				</c:if> o(os) servidor(es) abaixo relacionado(s), para exercer(em) a(s)
-			funÁ„o(ıes) comissionada(s) conforme discriminado, a partir da
-			publicaÁ„o da respectiva portaria:</p>
+			fun√ß√£o(√µes) comissionada(s) conforme discriminado, a partir da
+			publica√ß√£o da respectiva portaria:</p>
 			<c:forEach var="i" begin="1" end="${qtdServidores}">
 				<c:set var="pes"
 					value="${f:pessoa(requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.id')])}" />
@@ -63,7 +63,7 @@
 
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">MATRÕCULA: ${pes.matricula}</td>
+							align="left" colspan="1">MATR√çCULA: ${pes.matricula}</td>
 					</tr>
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
@@ -72,16 +72,16 @@
 
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">LOTA«√O: ${f:removeAcentoMaiusculas(pes.lotacao.descricao) }</td>
+							align="left" colspan="1">LOTA√á√ÉO: ${f:removeAcentoMaiusculas(pes.lotacao.descricao) }</td>
 					</tr>
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">FUN«√O ATUAL:
+							align="left" colspan="1">FUN√á√ÉO ATUAL:
 						${pes.funcaoConfianca.descricao}</td>
 					</tr>
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">FUN«√O INDICADA:
+							align="left" colspan="1">FUN√á√ÉO INDICADA:
 						${requestScope[f:concat(f:concat('funcao_indicada',i),'_funcaoSel.descricao')]}
 						</td>
 					</tr>

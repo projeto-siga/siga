@@ -12,19 +12,19 @@ REQUERIMENTO PARA AUXILIO-NATALIDADE -->
 	<mod:entrevista>
 	
 		<!--  inicio da entrevista -->
-		<mod:grupo titulo="Quem est· requerendo o AuxÌlio?">
-			<mod:selecao titulo="Requerente" var="requerente" opcoes="Pai;M„e"
+		<mod:grupo titulo="Quem est√° requerendo o Aux√≠lio?">
+			<mod:selecao titulo="Requerente" var="requerente" opcoes="Pai;M√£e"
 				reler="ajax" idAjax="requerenteAjax" />
 				
-			<!--  CONDI«√O DE SE EH PAI OU MAE -->
+			<!--  CONDI√á√ÉO DE SE EH PAI OU MAE -->
 			<mod:grupo depende="requerenteAjax">
 			<c:if test="${requerente == 'Pai'}">
-				<mod:selecao titulo="A m„e È Servidora P˙blica?" var="seraServidora"
-					opcoes="---;Sim;N„o" reler="ajax" idAjax="seraServidoraAjax"/>				
+				<mod:selecao titulo="A m√£e √© Servidora P√∫blica?" var="seraServidora"
+					opcoes="---;Sim;N√£o" reler="ajax" idAjax="seraServidoraAjax"/>				
 				
 				<mod:grupo depende="seraServidoraAjax">
-				<c:if test="${seraServidora == 'N„o'}">
-					<mod:grupo titulo="DADOS DA M√E">
+				<c:if test="${seraServidora == 'N√£o'}">
+					<mod:grupo titulo="DADOS DA M√ÉE">
 						<mod:texto titulo="Nome Completo" largura="50" var="nomeMae" />
 					</mod:grupo>
 				</c:if>
@@ -35,13 +35,13 @@ REQUERIMENTO PARA AUXILIO-NATALIDADE -->
 
 
 
-		<!-- CODI«√O PARA REALIZAR O REQUERIMENTO COM OU SEM DECLARA«√O ou nem realiza-lo -->
+		<!-- CODI√á√ÉO PARA REALIZAR O REQUERIMENTO COM OU SEM DECLARA√á√ÉO ou nem realiza-lo -->
 
 
 		<!--  SE O SISTEMA PERMITIR O BENEFICIO -->
 		
-		<mod:grupo titulo="DETALHES DO(S) REC…M-NASCIDO(S)">
-				<mod:selecao titulo="N˙mero de RecÈm-Nascidos"
+		<mod:grupo titulo="DETALHES DO(S) REC√âM-NASCIDO(S)">
+				<mod:selecao titulo="N√∫mero de Rec√©m-Nascidos"
 					var="quantidadeNascidos" opcoes="1;2;3;4;5;6" reler="ajax" idAjax="quantidadeNascidosAjax" />
 				<mod:grupo depende="quantidadeNascidosAjax">
 				<c:forEach var="i" begin="1" end="${quantidadeNascidos}">
@@ -54,19 +54,19 @@ REQUERIMENTO PARA AUXILIO-NATALIDADE -->
 				</mod:grupo>
 		</mod:grupo>		
 		<!-- and NomeMae != null -->
-		<!--  SE O SISTEMA N√O PERMITIR O BENIFICIO	-->
+		<!--  SE O SISTEMA N√ÉO PERMITIR O BENIFICIO	-->
 		<c:if test="${(requerente == 'Pai' and seraServidora == 'Sim')}">
 			<FONT COLOR="red"><b>
-			<P>Este AuxÌlio Natalidade n„o poder· ser concedido, pelos
+			<P>Este Aux√≠lio Natalidade n√£o poder√° ser concedido, pelos
 			seguintes motivos: <br>
-			Segundo o <b>Art. 196 ß 2∫</b> da Lei <b>n∫ 8.112/90 </B>, que reza:
+			Segundo o <b>Art. 196 ¬ß 2¬∫</b> da Lei <b>n¬∫ 8.112/90 </B>, que reza:
 			<br>
-			<I> "O auxÌlio ser· pago ao cÙnjuge ou companheiro servidor
-			p˙blico, quando a parturiente n„o for servidora".
+			<I> "O aux√≠lio ser√° pago ao c√¥njuge ou companheiro servidor
+			p√∫blico, quando a parturiente n√£o for servidora".
 			</I>
 			<br>
-			Desta forma o beneficio sÛ poder· ser concedido a apenas a servidora<br>
-			m„e, e este benefÌcio n„o poder· ser duplicado.</P>
+			Desta forma o beneficio s√≥ poder√° ser concedido a apenas a servidora<br>
+			m√£e, e este benef√≠cio n√£o poder√° ser duplicado.</P>
 			</b></FONT>
 			<b></b>
 		</c:if>
@@ -77,7 +77,7 @@ REQUERIMENTO PARA AUXILIO-NATALIDADE -->
 		
 		
 		<mod:valor var="texto_requerimento">
-		<P><!--  REQUERIMENTO SE BENEFICIO N√O FOR CONCEDIDO IMPRIMIRA MENSAGEM ALERTA -->
+		<P><!--  REQUERIMENTO SE BENEFICIO N√ÉO FOR CONCEDIDO IMPRIMIRA MENSAGEM ALERTA -->
 		<c:if test="${(requerente == 'Pai' and seraServidora == 'Sim')}">
 				<TABLE width="470" border="1" cellspacing="0" cellpadding="0">
 					<TR bgcolor="#000000">
@@ -89,16 +89,16 @@ REQUERIMENTO PARA AUXILIO-NATALIDADE -->
 					<TR>
 						<TD>
 						<P align="justify"><FONT size="3" face="Arial, Helvetica, sans-serif">Este
-						AuxÌlio Natalidade n„o poder· ser concedido, pelos seguintes
-						motivos: Segundo o <b>Art. 196 ß 2∫</b> da Lei <b>n∫ 8.112/90 </b>,
+						Aux√≠lio Natalidade n√£o poder√° ser concedido, pelos seguintes
+						motivos: Segundo o <b>Art. 196 ¬ß 2¬∫</b> da Lei <b>n¬∫ 8.112/90 </b>,
 						que reza:<br>
 						</FONT></P>
 						<P align="justify"><FONT size="3" face="Arial, Helvetica, sans-serif"><I>"O
-						auxÌlio ser· pago ao cÙnjuge ou companheiro servidor p˙blico,<br>
-						quando a parturiente n„o for servidora".</I><br>
-						Desta forma o beneficio sÛ poder· ser concedido a apenas a
+						aux√≠lio ser√° pago ao c√¥njuge ou companheiro servidor p√∫blico,<br>
+						quando a parturiente n√£o for servidora".</I><br>
+						Desta forma o beneficio s√≥ poder√° ser concedido a apenas a
 						servidora<br>
-						m„e, e este benefÌcio n„o poder· ser duplicado. </FONT></P>
+						m√£e, e este benef√≠cio n√£o poder√° ser duplicado. </FONT></P>
 						</TD>
 					</TR>
 					<TR bgcolor="#999999">
@@ -108,10 +108,10 @@ REQUERIMENTO PARA AUXILIO-NATALIDADE -->
 				</P>
 		</c:if>
 		
-		<c:if test="${(requerente == 'Pai' and seraServidora == 'N„o') or requerente == 'M„e'}">
+		<c:if test="${(requerente == 'Pai' and seraServidora == 'N√£o') or requerente == 'M√£e'}">
 			<p style="TEXT-INDENT: 2cm" align="justify">
-				${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, vem requerer a Vossa Senhoria concess„o do <b>AUXÕLIO-NATALIDADE</b>, a que faz jus, de acordo com o art. 196 e par·grafos 
-				da Lei 8.112/90 e ResoluÁ„o n∫ 2/2008 do Conselho da JustiÁa Federal, conforme documentaÁ„o em anexo, em virtude do nascimento
+				${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, vem requerer a Vossa Senhoria concess√£o do <b>AUX√çLIO-NATALIDADE</b>, a que faz jus, de acordo com o art. 196 e par√°grafos 
+				da Lei 8.112/90 e Resolu√ß√£o n¬∫ 2/2008 do Conselho da Justi√ßa Federal, conforme documenta√ß√£o em anexo, em virtude do nascimento
 				
 							
 			<c:if test="${quantidadeNascidos =='1'}"> 
@@ -139,15 +139,15 @@ REQUERIMENTO PARA AUXILIO-NATALIDADE -->
 		</mod:valor>
 		<!--  REQUERIMENTO  CONCEDIDO -->
 		<%--<mod:valor var="texto_requerimento2">
-		<c:if test="${(requerente == 'Pai' and seraServidora == 'N„o') or requerente == 'M„e'}">
+		<c:if test="${(requerente == 'Pai' and seraServidora == 'N√£o') or requerente == 'M√£e'}">
 	
 			<c:import url="/paginas/expediente/modelos/inc_tit_SraDiretoraSubsecretariaRH.jsp" />
 			
 			
 				<p style="TEXT-INDENT: 2cm" align="justify">
-				${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferencia}, vem requerer a Vossa Senhoria, a concess„o do <b>AUXÕLIO-NATALIDADE</b>, a que faz jus, de acordo com o art. 196 e par·grafos 
-				da Lei 8.112/90 e ResoluÁ„o n∫ 106/93, alterada pela ResoluÁ„o n∫ 290/2002, ambas 
-				do Conselho da JustiÁa Federal, conforme documentaÁ„o em anexo, em virtude do nascimento
+				${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferencia}, vem requerer a Vossa Senhoria, a concess√£o do <b>AUX√çLIO-NATALIDADE</b>, a que faz jus, de acordo com o art. 196 e par√°grafos 
+				da Lei 8.112/90 e Resolu√ß√£o n¬∫ 106/93, alterada pela Resolu√ß√£o n¬∫ 290/2002, ambas 
+				do Conselho da Justi√ßa Federal, conforme documenta√ß√£o em anexo, em virtude do nascimento
 				
 							
 			<c:if test="${quantidadeNascidos =='1'}"> 
@@ -183,18 +183,18 @@ REQUERIMENTO PARA AUXILIO-NATALIDADE -->
 		</c:if>
 		</mod:valor>--%>
 
-			<!--  EMITE A DECLARA«√O, quando a m„e nao È servidora mas o pai SIM -->
+			<!--  EMITE A DECLARA√á√ÉO, quando a m√£e nao √© servidora mas o pai SIM -->
 		
 		<mod:valor var="texto_requerimento2">
-			<c:if test="${requerente == 'Pai' and seraServidora == 'N„o'}">
+			<c:if test="${requerente == 'Pai' and seraServidora == 'N√£o'}">
 				<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
 				<c:import url="/paginas/expediente/modelos/inc_tit_declaracao.jsp" />
 					
 					<p style="TEXT-INDENT: 2cm" align="justify">
-					Declaro, atendendo ao disposto no ß 2∫ do art. 196 da Lei n.∫
+					Declaro, atendendo ao disposto no ¬ß 2¬∫ do art. 196 da Lei n.¬∫
 						8.112/90, 
-					para fins de concess„o de auxÌlio-natalidade, que
-					${nomeMae}</b> n„o È servidora p˙blica.
+					para fins de concess√£o de aux√≠lio-natalidade, que
+					${nomeMae}</b> n√£o √© servidora p√∫blica.
 					</p>
 					<br>
 					<br>

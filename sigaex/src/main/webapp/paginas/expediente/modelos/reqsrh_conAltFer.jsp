@@ -9,15 +9,15 @@
 
 <mod:modelo>
 	<mod:entrevista>
-	    <span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI«√O COM NOME COMPLETO E ASSUNTO</b></span><br>
-		<span style="color: red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ CHEFIA IMEDIATA PARA ANU NCIA E, EM SEGUIDA, ¿ DICAP/SECADS</b></span>
+	    <span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI√á√ÉO COM NOME COMPLETO E ASSUNTO</b></span><br>
+		<span style="color: red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä CHEFIA IMEDIATA PARA ANU√äNCIA E, EM SEGUIDA, √Ä DICAP/SECADS</b></span>
 		<br>
 		<br>
 
 		<mod:grupo titulo="">
 			<mod:grupo>
 				<mod:selecao var="ilustrissimo" titulo="VOCATIVO"
-					opcoes="ILUSTRÕSSIMA SENHORA DIRETORA;ILUSTRÕSSIMO SENHOR DIRETOR"
+					opcoes="ILUSTR√çSSIMA SENHORA DIRETORA;ILUSTR√çSSIMO SENHOR DIRETOR"
 					reler="sim" />
 			</mod:grupo>
 			<br>
@@ -27,26 +27,26 @@
 			<br />
 
 			<mod:texto titulo="RAMAL" var="ramal" />
-			<mod:selecao titulo="Acerto Gramatical da LotaÁ„o" var="acgr"  opcoes="no;na" reler="sim" />
+			<mod:selecao titulo="Acerto Gramatical da Lota√ß√£o" var="acgr"  opcoes="no;na" reler="sim" />
 			<br /></br>
 		</mod:grupo>
 
 
-		<mod:grupo titulo="Tipo de SolicitaÁ„o:">
-			<mod:radio titulo="MarcaÁ„o de FÈrias" var="tipo" valor="1"
+		<mod:grupo titulo="Tipo de Solicita√ß√£o:">
+			<mod:radio titulo="Marca√ß√£o de F√©rias" var="tipo" valor="1"
 				reler="sim" />
-			<mod:radio titulo="AlteraÁ„o de PerÌodo" var="tipo" valor="2"
+			<mod:radio titulo="Altera√ß√£o de Per√≠odo" var="tipo" valor="2"
 				reler="sim" />
 		</mod:grupo>
 
 
-		<mod:selecao var="periodoaquisitivo" titulo="PerÌodo Aquisitivo"
+		<mod:selecao var="periodoaquisitivo" titulo="Per√≠odo Aquisitivo"
 			opcoes="2008/2009;2009/2010;2010/2011;2011/2012;2012/2013;2013/2014;2014/2015;2015/2016;2016/2017;2017/2018;2018/2019;2019/2020"
 			reler="sim" />
 		</br>
 		<br>
 
-		<mod:grupo titulo="PerÌodo de FÈrias:">
+		<mod:grupo titulo="Per√≠odo de F√©rias:">
 			<mod:radio titulo="Integral" var="periodo" valor="1" reler="sim" />
 			<mod:radio titulo="Parcelado" var="periodo" valor="2" reler="sim" />
 		</mod:grupo>
@@ -61,7 +61,7 @@
 		</c:if>
 
 		<c:if test="${valorperiodo == 1}">
-			<mod:grupo titulo=" PerÌodo de FÈrias">
+			<mod:grupo titulo=" Per√≠odo de F√©rias">
 				<mod:data titulo="De" var="datinicio" obrigatorio="sim" />
 				<mod:data titulo="a" var="datfim" obrigatorio="sim" />
 				<c:if test="${valtipo == 2}">
@@ -79,14 +79,14 @@
 				opcoes="1;2;3" reler="sim" />
 			<br />
 			<br>
-			<mod:grupo titulo=" PerÌodos de FÈrias ">
+			<mod:grupo titulo=" Per√≠odos de F√©rias ">
 			</mod:grupo>
 			<mod:grupo depende="contDependAjax">
 
 				<c:if test="${valorperiodo == 2}">
 					<c:forEach var="i" begin="1" end="${contadorinterv}">
 					
-					<mod:grupo titulo=" PerÌodo n∫ ${i}">
+					<mod:grupo titulo=" Per√≠odo n¬∫ ${i}">
 							<mod:data titulo="De" var="datinicio${i}" obrigatorio="sim" />
 							<mod:data titulo="a" var="datfim${i}" obrigatorio="sim" />
 							<c:if test="${valtipo == 2}">
@@ -104,18 +104,18 @@
 		<br>
 		<br>
 
-		<mod:grupo titulo="AntecipaÁ„o da GratificaÁ„o Natalina: ">
+		<mod:grupo titulo="Antecipa√ß√£o da Gratifica√ß√£o Natalina: ">
 			<mod:radio var="antgratnat" titulo="Sim" valor="Sim" reler="sim" />
-			<mod:radio var="antgratnat" titulo="N„o" valor="N„o" reler="sim" />
+			<mod:radio var="antgratnat" titulo="N√£o" valor="N√£o" reler="sim" />
 		</mod:grupo>
 		<br>
 		<br>
-		<mod:grupo titulo="AntecipaÁ„o do Sal·rio do mÍs das FÈrias: ">
+		<mod:grupo titulo="Antecipa√ß√£o do Sal√°rio do m√™s das F√©rias: ">
 			<mod:radio var="antsalfer" titulo="Sim" valor="Sim" reler="sim" />
-			<mod:radio var="antsalfer" titulo="N„o" valor="N„o" reler="sim" />
+			<mod:radio var="antsalfer" titulo="N√£o" valor="N√£o" reler="sim" />
 		</mod:grupo>
-		<mod:radio titulo="<b>Declaro ter ciÍncia de que poderei N√O receber antecipadamente o adicional e a remuneraÁ„o de fÈrias, em caso de requerimento</b>" marcado="Sim" reler="nao" />
-        <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enviado fora do prazo previsto na Portaria n∫ 113/2005-Pres do TRF-2™ Regi„o</b>
+		<mod:radio titulo="<b>Declaro ter ci√™ncia de que poderei N√ÉO receber antecipadamente o adicional e a remunera√ß√£o de f√©rias, em caso de requerimento</b>" marcado="Sim" reler="nao" />
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enviado fora do prazo previsto na Portaria n¬∫ 113/2005-Pres do TRF-2¬™ Regi√£o</b>
 		<br>
 	</mod:entrevista>
 
@@ -144,7 +144,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr><br>
-						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:12,5pt;">SOLICITA«√O DE CONCESS√O / ALTERA«√O DE F…RIAS</p></td>
+						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:12,5pt;">SOLICITA√á√ÉO DE CONCESS√ÉO / ALTERA√á√ÉO DE F√âRIAS</p></td>
 						</tr>
 					</table>
 				</td>
@@ -165,9 +165,9 @@
 			</c:otherwise>
 		</c:choose>
 		<c:set var="conalter"
-			value="<b>Concess„o de FÈrias</b> , nos termos dos arts. 77 e 78 da Lei 8.112/1990"></c:set>
+			value="<b>Concess√£o de F√©rias</b> , nos termos dos arts. 77 e 78 da Lei 8.112/1990"></c:set>
 		<c:if test="${tipo == 2}">
-			<c:set var="conalter" value="<b>alteraÁ„o de data de suas fÈrias</b>"></c:set>
+			<c:set var="conalter" value="<b>altera√ß√£o de data de suas f√©rias</b>"></c:set>
 		</c:if>
 		<c:set var="opt" value="${f:classNivPadr(doc.subscritor.padraoReferencia)}"/>
 		
@@ -175,17 +175,17 @@
 		<br />
 		<br />	
 
-		${doc.subscritor.descricao}, matrÌcula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
-		do Quadro de Pessoal do Tribunal Regional Federal da 2™ Regi„o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, ramal ${ramal}, solicita a V.S™ ${conalter}, conforme descrito a seguir.
+		${doc.subscritor.descricao}, matr√≠cula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
+		do Quadro de Pessoal do Tribunal Regional Federal da 2¬™ Regi√£o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, ramal ${ramal}, solicita a V.S¬™ ${conalter}, conforme descrito a seguir.
 		<br>
 		<br>
 		<br>
-		PerÌodo Aquisitivo &nbsp;&nbsp;&nbsp;:
+		Per√≠odo Aquisitivo &nbsp;&nbsp;&nbsp;:
 		${periodoaquisitivo}&nbsp;&nbsp;&nbsp;
 		<br>
 		<br>
 		<c:if test="${periodo == 1}">
-			PerÌodo de FÈrias &nbsp;&nbsp; :
+			Per√≠odo de F√©rias &nbsp;&nbsp; :
 		         <c:choose>
 				<c:when test="${tipo == 1}"> ${datinicio} a ${datfim}<br>
 				</c:when>
@@ -194,7 +194,7 @@
 		</c:if>
 
 		<c:if test="${periodo == 2}">
-			PerÌodos de FÈrias&nbsp;&nbsp;&nbsp;:
+			Per√≠odos de F√©rias&nbsp;&nbsp;&nbsp;:
 			
 			      <c:if test="${tipo == 1}">
 				<c:forEach var="i" begin="1" end="${contadorinterv}">
@@ -217,16 +217,16 @@
 			</c:if>
 		</c:if>
 		</p>
-		AntecipaÁ„o da GratificaÁ„o Natalina : ${antgratnat}
+		Antecipa√ß√£o da Gratifica√ß√£o Natalina : ${antgratnat}
 		<br />
-		AntecipaÁ„o do Sal·rio do mÍs de fÈrias : ${antsalfer}
+		Antecipa√ß√£o do Sal√°rio do m√™s de f√©rias : ${antsalfer}
 
 
 		<br>
 		<br>
 		<p style="font-family:Arial;font-size:9pt">
-		<b>Declaro ter ciÍncia de que poderei n„o receber antecipadamente o adicional e a remuneraÁ„o de fÈrias, em caso de requerimento enviado fora do prazo 
-		previsto na Portaria n∫ 113/2005-Pres do TRF-2™ Regi„o.</b>
+		<b>Declaro ter ci√™ncia de que poderei n√£o receber antecipadamente o adicional e a remunera√ß√£o de f√©rias, em caso de requerimento enviado fora do prazo 
+		previsto na Portaria n¬∫ 113/2005-Pres do TRF-2¬™ Regi√£o.</b>
 		</p>
 		<br><br>
 

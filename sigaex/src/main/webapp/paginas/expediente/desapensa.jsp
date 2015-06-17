@@ -15,7 +15,7 @@ function sbmt() {
 }
 </script>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -40,7 +40,7 @@ function sbmt() {
 					</tr>
 					<ww:textfield name="dtMovString" label="Data" />
 					<tr>
-						<td>Responsável:</td>
+						<td>ResponsÃ¡vel:</td>
 						<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 						&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 							onclick="javascript:displayTitular(this);" />Substituto</td>

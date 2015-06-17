@@ -15,17 +15,17 @@
 				<mod:pessoa titulo="Servidor" var="servidor${i}" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Função" var="funcao${i}" />
+				<mod:texto titulo="FunÃ§Ã£o" var="funcao${i}" />
 			</mod:grupo>
 			<br />
 		</c:forEach>
 		<mod:grupo>
 				<mod:selecao titulo="Documento feito de ordem de Magistrado?"
-					var="autoridade" opcoes="NÃO;SIM" reler="ajax"
+					var="autoridade" opcoes="NÃƒO;SIM" reler="ajax"
 					idAjax="autoridadeAjax" />
 				<mod:grupo depende="autoridadeAjax">
 					<c:if test="${requestScope[f:concat('autoridade',i)] eq 'SIM'}">
-						<mod:pessoa titulo="Matrícula da Autoridade competente"
+						<mod:pessoa titulo="MatrÃ­cula da Autoridade competente"
 							var="autoridade" />
 						<mod:grupo>
 							<mod:radio marcado="Sim" titulo="Titular" var="botao${i}"
@@ -37,8 +37,8 @@
 				</mod:grupo>
 		</mod:grupo>
 		<mod:grupo>
-			<b> <mod:mensagem titulo="Atenção"
-				texto="preencha o destinatário com SELOT e, após finalizar, transfira para a SELOT." />
+			<b> <mod:mensagem titulo="AtenÃ§Ã£o"
+				texto="preencha o destinatÃ¡rio com SELOT e, apÃ³s finalizar, transfira para a SELOT." />
 			</b>
 		</mod:grupo>
 	</mod:entrevista>
@@ -114,16 +114,16 @@
 					Juiz(a) Federal ${requestScope['botao']} do(a) <b>${f:lotacaoPessoa(requestScope['autoridade_pessoaSel.id'])}</b>,
 					Dr(a). <b>${requestScope['autoridade_pessoaSel.descricao']}</b>, indico 
 			</c:if>
-			<c:if test="${autoridade eq 'NÃO'}">
+			<c:if test="${autoridade eq 'NÃƒO'}">
 					Indico 
 			</c:if>
 			<c:if test="${servidores == 1}">
-				o(a) servidor(a) abaixo relacionado(a) para exercer a seguinte função comissionada
+				o(a) servidor(a) abaixo relacionado(a) para exercer a seguinte funÃ§Ã£o comissionada
 			</c:if>
 			<c:if test="${servidores > 1}">
-				os(as) servidores(as) abaixo relacionados(as) para exercerem as seguintes funções comissionadas
+				os(as) servidores(as) abaixo relacionados(as) para exercerem as seguintes funÃ§Ãµes comissionadas
 			</c:if>
-			a partir da publicação da respectiva portaria.
+			a partir da publicaÃ§Ã£o da respectiva portaria.
 			</p>
 
 			<p style="TEXT-INDENT: 2cm" align="justify">
@@ -131,11 +131,11 @@
 			bgcolor="#000000">
 			<tr>
 				<td bgcolor="#FFFFFF" align="center" width="23%">Servidor</td>
-				<td bgcolor="#FFFFFF" align="center" width="12%">Matrícula</td>
+				<td bgcolor="#FFFFFF" align="center" width="12%">MatrÃ­cula</td>
 				<td bgcolor="#FFFFFF" align="center" width="20%">Cargo</td>
-				<td bgcolor="#FFFFFF" align="center" width="10%">Nível / Classe / Padrão</td>
-				<td bgcolor="#FFFFFF" align="center" width="18%">Lotação</td>
-				<td bgcolor="#FFFFFF" align="center" width="17%">Função Comissionada</td>
+				<td bgcolor="#FFFFFF" align="center" width="10%">NÃ­vel / Classe / PadrÃ£o</td>
+				<td bgcolor="#FFFFFF" align="center" width="18%">LotaÃ§Ã£o</td>
+				<td bgcolor="#FFFFFF" align="center" width="17%">FunÃ§Ã£o Comissionada</td>
 			</tr>
 			</table>			
 			<c:forEach var="i" begin="1" end="${servidores}">

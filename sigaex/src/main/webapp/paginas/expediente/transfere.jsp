@@ -11,7 +11,7 @@
 
 
 
-<siga:pagina titulo="Transferência">
+<siga:pagina titulo="TransferÃªncia">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -38,7 +38,7 @@ function tamanho2() {
 }
 function corrige() {
 	if (tamanho2()<0) {
-		alert('Descrição com mais de 400 caracteres');
+		alert('DescriÃ§Ã£o com mais de 400 caracteres');
 		nota = new String();
 		nota = document.getElementById("descrMov").value;
 		document.getElementById("descrMov").value = nota.substring(0,400);
@@ -170,12 +170,12 @@ function popitup_movimentacao() {
 						tema="simple" modulo="siga"/></td>
 					</tr>
 					<tr>
-						<td>Função;Lotação;Localidade:</td>
+						<td>FunÃ§Ã£o;LotaÃ§Ã£o;Localidade:</td>
 						<td colspan="3"><input type="hidden" name="campos"
 							value="nmFuncaoSubscritor" /> <ww:textfield
 							name="nmFuncaoSubscritor" size="50" maxLength="128" />
-						(Opcionalmente informe a função e a lotação na forma:
-						Função;Lotação;Localidade)</td>
+						(Opcionalmente informe a funÃ§Ã£o e a lotaÃ§Ã£o na forma:
+						FunÃ§Ã£o;LotaÃ§Ã£o;Localidade)</td>
 					</tr>
 
 					<tr>
@@ -184,9 +184,9 @@ function popitup_movimentacao() {
 							listKey="idTpDespacho" listValue="descTpDespacho"
 							onchange="javascript:sbmt();" /></td>
 					</tr>
-					<!--Orlando: Substitui o textfield pelo textarea no choose, abaixo, para atender aos usuários, que disseram terem dificuldade
-					ao escrever, porque não viam o início da digitação na caixa de texto. Também incluí funções e um div para limitar o número de caracteres,
-					como ocorre na antoção (anotação JSP)-->
+					<!--Orlando: Substitui o textfield pelo textarea no choose, abaixo, para atender aos usuÃ¡rios, que disseram terem dificuldade
+					ao escrever, porque nÃ£o viam o inÃ­cio da digitaÃ§Ã£o na caixa de texto. TambÃ©m incluÃ­ funÃ§Ãµes e um div para limitar o nÃºmero de caracteres,
+					como ocorre na antoÃ§Ã£o (anotaÃ§Ã£o JSP)-->
 					<c:choose>
 						<c:when test="${idTpDespacho == -1}">
 							<tr>
@@ -225,10 +225,10 @@ function popitup_movimentacao() {
 					<td><siga:selecao propriedade="titular" tema="simple" /></td>
 				</tr>
 				<tr>
-					<td>Função;Lotação;Localidade:</td>
+					<td>FunÃ§Ã£o;LotaÃ§Ã£o;Localidade:</td>
 					<td colspan="3"><input type="hidden" name="campos"
 						value="nmFuncaoSubscritor" /> <ww:textfield
-						name="nmFuncaoSubscritor" size="50" maxLength="128" /> (Opcionalmente informe a função e a lotação na forma: Função;Lotação;Localidade)</td>
+						name="nmFuncaoSubscritor" size="50" maxLength="128" /> (Opcionalmente informe a funÃ§Ã£o e a lotaÃ§Ã£o na forma: FunÃ§Ã£o;LotaÃ§Ã£o;Localidade)</td>
 				</tr>
 				<tr>
 					<td>Despacho</td>
@@ -263,15 +263,15 @@ function popitup_movimentacao() {
 		<table class="form" width="100%">
  --%>
 					<tr class="header">
-						<td colspan="2">Transferência</td>
+						<td colspan="2">TransferÃªncia</td>
 					</tr>
 
 					<c:if test="${not doc.eletronico}">
 						<tr>
-							<td><span style="color: red"><b>Atenção:</b></span></td>
+							<td><span style="color: red"><b>AtenÃ§Ã£o:</b></span></td>
 							<td><span style="color: red"><b>Este documento
-							não é digital, portanto, além de transferi-lo pelo sistema,<br />
-							é necessário imprimi-lo e enviá-lo por papel.</b></span></td>
+							nÃ£o Ã© digital, portanto, alÃ©m de transferi-lo pelo sistema,<br />
+							Ã© necessÃ¡rio imprimi-lo e enviÃ¡-lo por papel.</b></span></td>
 						</tr>
 					</c:if>
 					<tr>
@@ -291,13 +291,13 @@ function popitup_movimentacao() {
 						</c:choose></td>
 					</tr>
 					<tr>
-					<td>Data da devolução:</td>
+					<td>Data da devoluÃ§Ã£o:</td>
 						<td><ww:textfield name="dtDevolucaoMovString"
 							onblur="javascript:verifica_data(this,0);" /> (Opcional)</td>
 					</tr>
 					<tr>
 						<td colspan=2><input type="checkbox" name="protocolo"
-							value="mostrar" />&nbsp;Mostrar protocolo ao concluir a transferência</td>
+							value="mostrar" />&nbsp;Mostrar protocolo ao concluir a transferÃªncia</td>
 					</tr>
 
 					<%--<c:if test="${tipoResponsavel != 3}">
@@ -316,7 +316,7 @@ function popitup_movimentacao() {
 				</c:if>--%>
 					<c:if test="${tipoResponsavel == 3}">
 						<tr>
-							<td>Observação</td>
+							<td>ObservaÃ§Ã£o</td>
 							<td><ww:textfield size="30" name="obsOrgao" /></td>
 						</tr>
 					</c:if>

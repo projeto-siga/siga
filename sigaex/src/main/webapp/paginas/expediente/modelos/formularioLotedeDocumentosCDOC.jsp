@@ -20,7 +20,7 @@
 				<br />
 			</c:forEach>
 		</mod:grupo>
-		<mod:grupo titulo="Observação">
+		<mod:grupo titulo="ObservaÃ§Ã£o">
 				<mod:grupo>
 					<mod:editor titulo="" var="obs" />
 				</mod:grupo>
@@ -53,7 +53,7 @@
 			bgcolor="#FFFFFF">
 			<tr>
 				<td bgcolor="#FFFFFF" align="center">
-				<h2>Remessa de Documentos Físicos</h2>
+				<h2>Remessa de Documentos FÃ­sicos</h2>
 				</td>
 			</tr>
 		</table>
@@ -77,7 +77,7 @@
 			<tr>
 				<td width="10%" align="center"  style="border-collapse: collapse; border-color: black;">Item</td>
 				<td width="40%" align="center"  style="border-collapse: collapse; border-color: black;">Documento</td>
-				<td width="35%" align="center"  style="border-collapse: collapse; border-color: black;">Assinatura/Matrícula</td>
+				<td width="35%" align="center"  style="border-collapse: collapse; border-color: black;">Assinatura/MatrÃ­cula</td>
 				<td width="15%" align="center"  style="border-collapse: collapse; border-color: black;">Data</td>
 			</tr>
 		</table>
@@ -95,7 +95,7 @@
 		<br />
 		<table width="100%" border="1" cellpadding="3" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 			<tr>
-				<th style="border-collapse: collapse; border-color: black;">Observação</th>
+				<th style="border-collapse: collapse; border-color: black;">ObservaÃ§Ã£o</th>
 			</tr>
 			<tr>
 				<td style="border-collapse: collapse; border-color: black;"><c:if test="${empty obs}">&nbsp;</c:if>${obs}</td>

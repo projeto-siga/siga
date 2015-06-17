@@ -27,14 +27,14 @@
 		           <table  width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 		              <tr  bgcolor="#C0C0C0">
 		                 <td  width="20%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp</td>
-		                 <td height="26px" width="19%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Vigência</td>
+		                 <td height="26px" width="19%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">VigÃªncia</td>
 		                 <td  width="12%"  align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Fls.</td>
 		                 <td  width="13%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Public.<br/>Fls.</td>
 		                 <td  width="18%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">SIAFI</td>
 		                 <td  width="18%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">SIASG</td>
 		              </tr>
 		              <tr >
-		                 <td  height="26px"   align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Ata Nº</td>
+		                 <td  height="26px"   align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Ata NÂº</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
@@ -42,23 +42,7 @@
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		              </tr>
 		              <tr >
-		                 <td  height="26px"   align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Contrato Nº</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		              </tr>
-		              <tr >
-		                 <td  height="26px"   align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Garantia</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
-		              </tr>
-		              <tr >
-		                 <td  height="26px"   align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Contrato Nº</td>
+		                 <td  height="26px"   align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Contrato NÂº</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
@@ -74,7 +58,23 @@
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		              </tr>
 		              <tr >
-		                 <td height="26px"    align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Contrato Nº</td>
+		                 <td  height="26px"   align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Contrato NÂº</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		              </tr>
+		              <tr >
+		                 <td  height="26px"   align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Garantia</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
+		              </tr>
+		              <tr >
+		                 <td height="26px"    align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Contrato NÂº</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
@@ -90,7 +90,7 @@
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		              </tr>
 		               <tr >
-		                 <td height="26px"    align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Contrato Nº</td>
+		                 <td height="26px"    align="center" height="26px" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Contrato NÂº</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		                 <td    align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
@@ -110,11 +110,11 @@
 		         <td valign="top" align="center" width="50%" style="border-collapse: collapse; border-color: black;" >
 		           <table  border="1"  width="100%" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 		              <tr  bgcolor="#C0C0C0">
-		                 <td  width="22%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">CND<br/>Válida até</td>
+		                 <td  width="22%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">CND<br/>VÃ¡lida atÃ©</td>
 		                 <td  width="12%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Fls.</td>
-		                 <td  width="26%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">CCN<br/>Válida até</td>
+		                 <td  width="26%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">CCN<br/>VÃ¡lida atÃ©</td>
 		                 <td  width="12%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Fls.</td>
-		                 <td  width="18%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">CRF<br/>Válida até</td>
+		                 <td  width="18%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">CRF<br/>VÃ¡lida atÃ©</td>
 		                 <td  width="12%" align="center" style="font-size: 7pt; border-collapse: collapse; border-color: black;">Fls.</td>
 		              </tr>
 		              <c:forEach var="x" begin="0" end="6">

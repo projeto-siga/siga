@@ -47,7 +47,7 @@
 					<br/>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="left" width="40%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;"><b>TERMO N.บ&nbsp; ${doc.codigo}</b></p></td>
+							<td align="left" width="40%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;"><b>TERMO N.ยบ&nbsp; ${doc.codigo}</b></p></td>
 							<td align="right" width="60%"><mod:letra tamanho="${tl}"><p>${doc.dtExtenso}</p></mod:letra></td>
 						</tr>
 					</table>

@@ -69,7 +69,7 @@
 				</c:choose></td>
 				<c:if test="${tipoResponsavel == 3}">
 					<tr>
-						<td>Observação</td>
+						<td>ObservaÃ§Ã£o</td>
 						<td><ww:textfield size="30" name="obsOrgao" /></td>
 					</tr>
 				</c:if>
@@ -89,22 +89,22 @@
 					test="${(secao==0 and not m.emTransitoExterno) or (secao==1 and m.emTransitoExterno)}">
 					<c:if test="${empty primeiro}">
 						<h1><c:choose>
-							<c:when test="${secao==0}">Documentos em Trânsito</c:when>
-							<c:otherwise>Documentos Transferidos a Órgão Externo</c:otherwise>
+							<c:when test="${secao==0}">Documentos em TrÃ¢nsito</c:when>
+							<c:otherwise>Documentos Transferidos a Ã“rgÃ£o Externo</c:otherwise>
 						</c:choose></h1>
 
 						<table class="list" width="100%">
 							<tr class="header">
 								<td rowspan="2" align="center"><input type="checkbox"
 									name="checkall" onclick="checkUncheckAll(this)" /></td>
-								<td rowspan="2" align="right">Número</td>
+								<td rowspan="2" align="right">NÃºmero</td>
 								<td colspan="3" align="center">Documento</td>
-								<td colspan="2" align="center">Última Movimentação</td>
-								<td rowspan="2">Descrição</td>
+								<td colspan="2" align="center">Ãšltima MovimentaÃ§Ã£o</td>
+								<td rowspan="2">DescriÃ§Ã£o</td>
 							</tr>
 							<tr class="header">
 								<td align="center">Data</td>
-								<td align="center">Lotação</td>
+								<td align="center">LotaÃ§Ã£o</td>
 								<td align="center">Pessoa</td>
 								<td align="center">Data</td>
 								<td align="center">Pessoa</td>

@@ -130,8 +130,8 @@
 					src="/siga/css/famfamfam/icons/arrow_down.png"
 					style="margin-right: 5px;">Ir para o Final</a>
 				<siga:link icon="application_view_list" classe="once"
-					title="Visualizar&nbsp;Movimentações" url="${url}" test="${true}" />
-				<siga:link icon="wrench" title="Preferência:" test="${true}" />
+					title="Visualizar&nbsp;MovimentaÃ§Ãµes" url="${url}" test="${true}" />
+				<siga:link icon="wrench" title="PreferÃªncia:" test="${true}" />
 				<input type="radio" id="radioHTML" name="formato" value="html"
 					checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">&nbsp;HTML<!-- <a
 					id="htmllink"><img src="/siga/css/famfamfam/icons/zoom.png" />
@@ -172,9 +172,9 @@
 				<c:set var="arqsNum" value="${mob.arquivosNumerados}" />
 
 				<tr class="${exibedoc}">
-					<td align="center">Documentos do Dossiê</td>
-					<td align="center">Lotação</td>
-					<td align="center">Pág.</td>
+					<td align="center">Documentos do DossiÃª</td>
+					<td align="center">LotaÃ§Ã£o</td>
+					<td align="center">PÃ¡g.</td>
 				</tr>
 
 				<c:forEach var="arqNumerado" items="${arqsNum}">
@@ -294,7 +294,7 @@
 
 
 	<%--
-<!--  tabela do rodapé -->
+<!--  tabela do rodapÃ© -->
 <c:choose>
 	<c:when test='${param.popup!="true"}'>
 		<c:import context="/siga" url="/paginas/rodape.jsp" />
@@ -310,7 +310,7 @@
 <siga:rodape />
 
 
-<!-- Página Inicial -->
+<!-- PÃ¡gina Inicial -->
 <script>
 	var path = '/sigaex/arquivo/exibir.action?arquivo=';
 	var htmlAtual = '${arqsNum[0].referenciaHtml}&completo=1';

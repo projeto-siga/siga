@@ -53,12 +53,12 @@
 		FIM CABECALHO --> --%>
 
 		<br />
-		<%-- Não serão necessários os campos Apenso e volume abaixo, por isto estão comentados  --%>
+		<%-- NÃ£o serÃ£o necessÃ¡rios os campos Apenso e volume abaixo, por isto estÃ£o comentados  --%>
 		<table align="center" width="60%" border="1" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
 				<td width="30%" bgcolor="#FFFFFF" align="center"><br />
-				<b>Processo Nº</b><br />
+				<b>Processo NÂº</b><br />
 				<br />
 				</td>
 				<%-- 		<td width="15%" bgcolor="#FFFFFF" align="center"><b>Apenso</b></td> 

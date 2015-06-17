@@ -3,38 +3,38 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-ALTERAÇÃO DE DADOS CADASTRAIS -->
+ALTERAÃ‡ÃƒO DE DADOS CADASTRAIS -->
 
 <c:set var="esconderTexto" value="sim" scope="request" />
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">  
     <mod:entrevista>    
-        <mod:grupo titulo="O QUE SERÁ ATUALIZADO NO CADASTRO FUNCIONAL?"></mod:grupo>
+        <mod:grupo titulo="O QUE SERÃ ATUALIZADO NO CADASTRO FUNCIONAL?"></mod:grupo>
         <mod:selecao titulo="Escolaridade" var="alterarEscolaridade"
-            opcoes="Não;Sim" reler="sim" />
+            opcoes="NÃ£o;Sim" reler="sim" />
 
         <mod:selecao titulo="Estado Civil" var="alterarEstadoCivil"
-            opcoes="Não;Sim" reler="sim" />
+            opcoes="NÃ£o;Sim" reler="sim" />
 
-        <mod:selecao titulo="Endereço" var="alterarEndereco" 
-            opcoes="Não;Sim" reler="sim" />
+        <mod:selecao titulo="EndereÃ§o" var="alterarEndereco" 
+            opcoes="NÃ£o;Sim" reler="sim" />
 
         <mod:selecao titulo="Telefone" var="alterarTelefone" 
-            opcoes="Não;Sim" reler="sim" />
+            opcoes="NÃ£o;Sim" reler="sim" />
         
         <hr>
 
         <c:if test="${alterarEscolaridade == 'Sim'}">
             <mod:grupo>
                 <mod:selecao titulo="Escolaridade" var="escolaridade"
-                    opcoes="Antigo Primário;Antigo Ginásio;Antigo Científico;
-                Ensino Fundamental ou 1º Grau; Ensino Médio ou 2º grau;
-                Superior ou Graduação; Pós-Graduação, Mestrado ou Doutorado"
+                    opcoes="Antigo PrimÃ¡rio;Antigo GinÃ¡sio;Antigo CientÃ­fico;
+                Ensino Fundamental ou 1Âº Grau; Ensino MÃ©dio ou 2Âº grau;
+                Superior ou GraduaÃ§Ã£o; PÃ³s-GraduaÃ§Ã£o, Mestrado ou Doutorado"
                     reler="sim" />
-                    <c:if test="${escolaridade == ' Pós-Graduação, Mestrado ou Doutorado'}">
+                    <c:if test="${escolaridade == ' PÃ³s-GraduaÃ§Ã£o, Mestrado ou Doutorado'}">
                     <mod:grupo>
-                    <mod:selecao titulo="Requer Adicional de Qualificação por curso de Pós-Graduação" var="adicionalopg"
-                    opcoes=" ;Sim;Não"
-                    reler="não" />
+                    <mod:selecao titulo="Requer Adicional de QualificaÃ§Ã£o por curso de PÃ³s-GraduaÃ§Ã£o" var="adicionalopg"
+                    opcoes=" ;Sim;NÃ£o"
+                    reler="nÃ£o" />
                     </mod:grupo>
                     </c:if>
             </mod:grupo>
@@ -43,14 +43,14 @@ ALTERAÇÃO DE DADOS CADASTRAIS -->
         <c:if test="${alterarEstadoCivil == 'Sim'}">
             <mod:grupo>
                 <mod:selecao titulo="Estado Civil" var="estadocivil"
-                    opcoes="Solteiro(a);Casado(a);Divorciado(a);Desquitado(a);Viúvo(a)"
-                    reler="não" />
+                    opcoes="Solteiro(a);Casado(a);Divorciado(a);Desquitado(a);ViÃºvo(a)"
+                    reler="nÃ£o" />
             </mod:grupo>
         </c:if>
 
         <c:if test="${alterarEndereco == 'Sim'}">
             <mod:grupo>
-                <mod:texto largura="80" titulo="Endereço" var="endereco"/>
+                <mod:texto largura="80" titulo="EndereÃ§o" var="endereco"/>
             </mod:grupo>
             <mod:grupo>
                 <mod:texto largura="40" titulo="Bairro" var="bairro" />
@@ -60,7 +60,7 @@ ALTERAÇÃO DE DADOS CADASTRAIS -->
             <mod:grupo>
                 <mod:texto largura="9" titulo="CEP" var="cep" />
             </mod:grupo>
-            <mod:mensagem titulo="Atenção" texto="&quot;Se comprovadamente falsa a declaração, sujeitar-se-á o declarante às sanções civis, administrativas e criminais previstas na legislação aplicável.&quot; (Lei 7115/1983, art. 2º)" vermelho="Sim"></mod:mensagem>
+            <mod:mensagem titulo="AtenÃ§Ã£o" texto="&quot;Se comprovadamente falsa a declaraÃ§Ã£o, sujeitar-se-Ã¡ o declarante Ã s sanÃ§Ãµes civis, administrativas e criminais previstas na legislaÃ§Ã£o aplicÃ¡vel.&quot; (Lei 7115/1983, art. 2Âº)" vermelho="Sim"></mod:mensagem>
         </c:if>
 
         <c:if test="${alterarTelefone == 'Sim'}">
@@ -84,15 +84,15 @@ ALTERAÇÃO DE DADOS CADASTRAIS -->
         <p style="TEXT-INDENT: 2cm" align="justify" >       
         ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a)
         no(a) ${doc.subscritor.lotacao.descricao}, solicita a Vossa Senhoria
-        que sejam efetuadas as seguintes <b>ALTERAÇÕES EM SEUS ASSENTAMENTOS FUNCIONAIS</b>:
+        que sejam efetuadas as seguintes <b>ALTERAÃ‡Ã•ES EM SEUS ASSENTAMENTOS FUNCIONAIS</b>:
         </p>    
         
         <ul>
         <c:if test="${alterarEscolaridade == 'Sim'}">
         <li>
         Escolaridade: (Com documento autenticado em anexo)<br/>${escolaridade}<br />
-        <c:if test="${escolaridade == ' Pós-Graduação, Mestrado ou Doutorado'}"><br />
-        -   Requer Adicional de Qualificação por curso de Pós-Graduação? ${adicionalopg}</li>
+        <c:if test="${escolaridade == ' PÃ³s-GraduaÃ§Ã£o, Mestrado ou Doutorado'}"><br />
+        -   Requer Adicional de QualificaÃ§Ã£o por curso de PÃ³s-GraduaÃ§Ã£o? ${adicionalopg}</li>
         </c:if>
         </c:if>
         
@@ -109,9 +109,9 @@ ALTERAÇÃO DE DADOS CADASTRAIS -->
                 Cidade: ${cidade}<br />
                 UF: ${uf}<br />
                 CEP:  ${cep}<br />
-                <b>Atenção: &quot;Se comprovadamente falsa a declaração, 
-                sujeitar-se-á o declarante às sanções civis, administrativas e criminais 
-                previstas na legislação aplicável.&quot; (Lei 7115/1983, art. 2º)</b> 
+                <b>AtenÃ§Ã£o: &quot;Se comprovadamente falsa a declaraÃ§Ã£o, 
+                sujeitar-se-Ã¡ o declarante Ã s sanÃ§Ãµes civis, administrativas e criminais 
+                previstas na legislaÃ§Ã£o aplicÃ¡vel.&quot; (Lei 7115/1983, art. 2Âº)</b> 
                 
         </c:if>
             

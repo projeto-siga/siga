@@ -3,8 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="Boletim de FrequÍncia">
-			<mod:selecao titulo="MÍs de referÍncia" var="mes"
+		<mod:grupo titulo="Boletim de Frequ√™ncia">
+			<mod:selecao titulo="M√™s de refer√™ncia" var="mes"
 				opcoes="Jan;Fev;Mar;Abr;Maio;Jun;Jul;Ago;Set;Out;Nov;Dez" />
 			<c:if test="${mes=='Jan'}">
 				<c:set var="numMes" value="01" />
@@ -51,13 +51,13 @@
 				</c:if>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:lotacao titulo="LotaÁ„o" var="lotacao" reler="sim" />
+				<mod:lotacao titulo="Lota√ß√£o" var="lotacao" reler="sim" />
 			</mod:grupo>
 
 			<input type="hidden" id="atualizandoCaixaVerif"
 				name="atualizandoCaixaVerif" />
 			<mod:caixaverif var="subLotacoes" reler="sim" marcado="Sim"
-				titulo="Incluir SublotaÁıes"
+				titulo="Incluir Sublota√ß√µes"
 				onclique="javascript:document.getElementById('atualizandoCaixaVerif').value=1;" />
 			<c:if test="${requestScope['subLotacoes'] eq 'Sim'}">
 				<c:set var="testarSubLotacoes" value="true" />
@@ -68,12 +68,12 @@
 
 		</mod:grupo>
 		<mod:grupo>
-			<b> <mod:mensagem titulo="AtenÁ„o"
-				texto="preencha o destinat·rio com SECAD e, apÛs finalizar, transfira para a SECAD." />
+			<b> <mod:mensagem titulo="Aten√ß√£o"
+				texto="preencha o destinat√°rio com SECAD e, ap√≥s finalizar, transfira para a SECAD." />
 			</b>
 		</mod:grupo>
 
-		<%-- O bloco abaixo carrega do BD as pessoas de um lotaÁ„o, apenas quando a lotaÁ„o muda --%>
+		<%-- O bloco abaixo carrega do BD as pessoas de um lota√ß√£o, apenas quando a lota√ß√£o muda --%>
 		<mod:ler var="siglaLotacaoAnterior" />
 		<c:choose>
 			<c:when
@@ -109,39 +109,39 @@
 			<mod:grupo largura="30">${pes_descricao}</mod:grupo>
 			<mod:grupo largura="70">
 				<mod:grupo>
-					<mod:selecao titulo="FrequÍncia" var="freq${pes_sigla}"
-						opcoes="Sem lanÁamentos;Com lanÁamentos" reler="ajax"
+					<mod:selecao titulo="Frequ√™ncia" var="freq${pes_sigla}"
+						opcoes="Sem lan√ßamentos;Com lan√ßamentos" reler="ajax"
 						idAjax="ajax${pes_sigla}" />
 				</mod:grupo>
 				<mod:grupo depende="ajax${pes_sigla}">
 					<c:if
-						test="${(requestScope[f:concat('freq',pes_sigla)] == 'Com lanÁamentos')}">
-						<mod:selecao titulo="AusÍncia(s)" var="faltas${pes_sigla}"
+						test="${(requestScope[f:concat('freq',pes_sigla)] == 'Com lan√ßamentos')}">
+						<mod:selecao titulo="Aus√™ncia(s)" var="faltas${pes_sigla}"
 							opcoes="1;2;3;4;5" reler="ajax" idAjax="ajax${pes_sigla}" />
 						<c:forEach var="i" begin="1"
 							end="${requestScope[f:concat('faltas',pes_sigla)]}">
 							<mod:grupo>
 								<mod:selecao
-									titulo="Motivo (As tabelas da Base Legal encontram-se na p·gina da SECAD na Intranet)"
+									titulo="Motivo (As tabelas da Base Legal encontram-se na p√°gina da SECAD na Intranet)"
 									var="motivo${i}${pes_sigla}"
-									opcoes="[Selecione o tipo de AusÍncia];Afastamento em Virtude de ParticipaÁ„o em Programa de Treinamento;Afastamento para Participar de Atividade InstrutÛria;Afastamento por j˙ri e outros serviÁos obrigatÛrios por lei;Atraso/SaÌda Antecipada;AusÍncia/Falta Justificada com CompensaÁ„o;AusÍncia/Falta Justificada sem CompensaÁ„o;AusÍncia por motivo de greve com compensaÁ„o;AusÍncia por motivo de greve sem compensaÁ„o;CompensaÁ„o de Trabalho no Recesso;CompensaÁ„o Decorrente de Trabalho nas EleiÁıes;Falta Injustificada;Recesso;Trabalho Prestado nas EleiÁıes;"
+									opcoes="[Selecione o tipo de Aus√™ncia];Afastamento em Virtude de Participa√ß√£o em Programa de Treinamento;Afastamento para Participar de Atividade Instrut√≥ria;Afastamento por j√∫ri e outros servi√ßos obrigat√≥rios por lei;Atraso/Sa√≠da Antecipada;Aus√™ncia/Falta Justificada com Compensa√ß√£o;Aus√™ncia/Falta Justificada sem Compensa√ß√£o;Aus√™ncia por motivo de greve com compensa√ß√£o;Aus√™ncia por motivo de greve sem compensa√ß√£o;Compensa√ß√£o de Trabalho no Recesso;Compensa√ß√£o Decorrente de Trabalho nas Elei√ß√µes;Falta Injustificada;Recesso;Trabalho Prestado nas Elei√ß√µes;"
 									reler="ajax" idAjax="ajax${pes_sigla}" />
 							</mod:grupo>
 							<c:choose>
 								<c:when
-									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == '[Selecione o tipo de AusÍncia]'}">								</c:when>
+									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == '[Selecione o tipo de Aus√™ncia]'}">								</c:when>
 								<c:when
-									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'CompensaÁ„o de Trabalho no Recesso'}">
+									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensa√ß√£o de Trabalho no Recesso'}">
 									<mod:texto titulo="Datas" var="datas${i}${pes_sigla}"
 										largura="60" />
 								</c:when>
 								<c:when
-									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/SaÌda Antecipada'}">
+									test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/Sa√≠da Antecipada'}">
 									<mod:data titulo="Data" var="data${i}${pes_sigla}"
 										reler="ajax" idAjax="dataAjax${i}${pes_sigla}" />
 									<mod:hora titulo="das" var="horaIni${i}${pes_sigla}"
 										reler="ajax" idAjax="horaIniAjax${i}${pes_sigla}" />
-									<mod:hora titulo="‡s" var="horaFim${i}${pes_sigla}"
+									<mod:hora titulo="√†s" var="horaFim${i}${pes_sigla}"
 										reler="ajax" idAjax="horaFimAjax${i}${pes_sigla}" />	
 								</c:when>
 								<c:otherwise>
@@ -157,7 +157,7 @@
 													test="${f:mesModData(requestScope[f:concat(f:concat('de',i),pes_sigla)])!= f:concat(f:concat(numMes,'/'),ano)}">
 													<mod:grupo>
 														<mod:mensagem titulo="Alerta"
-															texto="A data inicial informada deve ser igual ao mÍs ou ano referido"
+															texto="A data inicial informada deve ser igual ao m√™s ou ano referido"
 															vermelho="Sim" />
 													</mod:grupo>
 												</c:when>
@@ -166,7 +166,7 @@
 											</c:choose>
 										</c:if>
 									</mod:grupo>
-									<mod:data titulo="AtÈ" var="ate${i}${pes_sigla}" reler="ajax"
+									<mod:data titulo="At√©" var="ate${i}${pes_sigla}" reler="ajax"
 										idAjax="ateAjax${i}${pes_sigla}" />
 									<mod:grupo depende="ateAjax${i}${pes_sigla}">
 										<c:if
@@ -176,7 +176,7 @@
 													test="${f:mesModData(requestScope[f:concat(f:concat('ate',i),pes_sigla)])!= f:concat(f:concat(numMes,'/'),ano)}">
 													<mod:grupo>
 														<mod:mensagem titulo="Alerta"
-															texto="A data final informada deve ser igual ao mÍs ou ano referido"
+															texto="A data final informada deve ser igual ao m√™s ou ano referido"
 															vermelho="Sim" />
 													</mod:grupo>
 												</c:when>
@@ -194,32 +194,32 @@
 		</c:forEach>
 		<c:if test="${not empty requestScope['lotacao_lotacaoSel.sigla']}">
 			<mod:grupo>
-				<mod:mensagem titulo="Total de pessoas por LotaÁ„o :" />
+				<mod:mensagem titulo="Total de pessoas por Lota√ß√£o :" />
 				<b>${contadorDePessoas}</b>
 			</mod:grupo>
 		</c:if>
 		<c:if
 			test="${(not empty requestScope['lotacao_lotacaoSel.descricao'])}">
 			<mod:grupo>
-				<mod:selecao titulo="InformaÁıes Adicionais ?"
-					var="informacoesAdicionais" opcoes="N„o;Sim" reler="ajax"
+				<mod:selecao titulo="Informa√ß√µes Adicionais ?"
+					var="informacoesAdicionais" opcoes="N√£o;Sim" reler="ajax"
 					idAjax="infoAdicionais" />
 				<mod:grupo depende="infoAdicionais">
 					<c:if test="${informacoesAdicionais eq 'Sim'}">
-						<mod:memo colunas="60" linhas="3" titulo="InformaÁıes"
+						<mod:memo colunas="60" linhas="3" titulo="Informa√ß√µes"
 							var="informacoes" />
 					</c:if>
 				</mod:grupo>
 			</mod:grupo>
 
 			<mod:grupo>
-				<mod:selecao titulo="Houve servidores incluidos na lotaÁ„o no mÍs ?"
-					var="servIncluidos" opcoes="N„o;Sim" reler="ajax" idAjax="servIncl" />
+				<mod:selecao titulo="Houve servidores incluidos na lota√ß√£o no m√™s ?"
+					var="servIncluidos" opcoes="N√£o;Sim" reler="ajax" idAjax="servIncl" />
 			</mod:grupo>
 			<mod:grupo depende="servIncl">
 				<c:if test="${servIncluidos eq 'Sim'}">
 					<mod:grupo>
-						<mod:selecao titulo="N∫ de Servidor(es) Incluido(s) :"
+						<mod:selecao titulo="N¬∫ de Servidor(es) Incluido(s) :"
 							var="numServIncluidos"
 							opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30"
 							reler="ajax" idAjax="numServIncl" />
@@ -233,14 +233,14 @@
 									largura="15" />
 								<mod:data titulo="A partir de" var="dataIncluso${i }" />
 								<mod:grupo>
-									<mod:caixaverif titulo="Houve ausÍncia deste servidor ?"
+									<mod:caixaverif titulo="Houve aus√™ncia deste servidor ?"
 										var="periodoAusencia${i}" reler="ajax"
 										idAjax="pedAusencia${i}" />
 									<mod:grupo depende="pedAusencia${i}">
 										<c:if
 											test="${requestScope[f:concat('periodoAusencia',i)] == 'Sim'}">
 											<mod:grupo>
-												<mod:texto titulo="AusÍncia :" var="ausencia${i}"
+												<mod:texto titulo="Aus√™ncia :" var="ausencia${i}"
 													largura="40" />
 												<mod:data titulo="De" var="dataInicio${i}" />
 												<mod:data titulo="a" var="dataFim${i}" />
@@ -254,13 +254,13 @@
 				</c:if>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Houve servidores excluÌdos da lotaÁ„o no mÍs ?"
-					var="servExcluidos" opcoes="N„o;Sim" reler="ajax" idAjax="servExcl" />
+				<mod:selecao titulo="Houve servidores exclu√≠dos da lota√ß√£o no m√™s ?"
+					var="servExcluidos" opcoes="N√£o;Sim" reler="ajax" idAjax="servExcl" />
 			</mod:grupo>
 			<mod:grupo depende="servExcl">
 				<c:if test="${servExcluidos == 'Sim'}">
 					<mod:grupo>
-						<mod:selecao titulo="N∫ de Servidor(es) ExcluÌdo(s) :"
+						<mod:selecao titulo="N¬∫ de Servidor(es) Exclu√≠do(s) :"
 							var="numServExcluidos"
 							opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30"
 							reler="ajax" idAjax="numServExcl" />
@@ -275,14 +275,14 @@
 								<mod:data titulo="A partir de" var="dataExcluido${j}" />
 								<mod:grupo>
 									<mod:caixaverif
-										titulo="Houve ausÍncia deste servidor atÈ a data em quest„o ?"
+										titulo="Houve aus√™ncia deste servidor at√© a data em quest√£o ?"
 										var="periodoAusenciaExcluido${j}" reler="ajax"
 										idAjax="pedAusExcl${j}" />
 									<mod:grupo depende="pedAusExcl${j}">
 										<c:if
 											test="${requestScope[f:concat('periodoAusenciaExcluido',j)] == 'Sim'}">
 											<mod:grupo>
-												<mod:texto titulo="AusÍncia :" var="ausenciaExcluido${j}"
+												<mod:texto titulo="Aus√™ncia :" var="ausenciaExcluido${j}"
 													largura="40" />
 												<mod:data titulo="De" var="dataInicioExclusao${j}" />
 												<mod:data titulo="a" var="dataFimExclusao${j}" />
@@ -320,7 +320,7 @@
 		FIM PRIMEIRO CABECALHO -->
 
 		<p style="text-align: center;"><br />
-		<b>BOLETIM DE FREQU NCIA</b><br />
+		<b>BOLETIM DE FREQU√äNCIA</b><br />
 		<br />
 		</p>
 
@@ -331,11 +331,11 @@
 				<td width="70%">${f:lotacao(requestScope['lotacao_lotacaoSel.id']).descricao}</td>
 			</tr>
 			<tr>
-				<td>MÍs/Ano:</td>
+				<td>M√™s/Ano:</td>
 				<td>${mes}/${ano}</td>
 			</tr>
 			<tr>
-				<td>Data da emiss„o:</td>
+				<td>Data da emiss√£o:</td>
 				<td>${doc.dtDocDDMMYY}</td>
 			</tr>
 		</table>
@@ -345,10 +345,10 @@
 			<table width="100%" border="1" cellpadding="2" cellspacing="1"
 				bgcolor="#000000">
 				<tr>
-					<td bgcolor="#FFFFFF" width="15%" align="center"><b>MatrÌcula</b></td>
+					<td bgcolor="#FFFFFF" width="15%" align="center"><b>Matr√≠cula</b></td>
 					<td bgcolor="#FFFFFF" width="35%" align="center"><b>Nome</b></td>
-					<td bgcolor="#FFFFFF" width="15%" align="center"><b>FrequÍncia</b></td>
-					<td bgcolor="#FFFFFF" width="35%" align="center"><b>PerÌodo/Motivo</b></td>
+					<td bgcolor="#FFFFFF" width="15%" align="center"><b>Frequ√™ncia</b></td>
+					<td bgcolor="#FFFFFF" width="35%" align="center"><b>Per√≠odo/Motivo</b></td>
 				</tr>
 
 				<c:forEach var="i" begin="1" end="${contadorDePessoas}">
@@ -356,7 +356,7 @@
 						value="${requestScope[f:concat('nome',i)]}" />
 					<c:set var="pes_sigla" value="${requestScope[f:concat('sigla',i)]}" />
 					<c:if
-						test="${(requestScope[f:concat('freq',pes_sigla)] == 'Com lanÁamentos')}">
+						test="${(requestScope[f:concat('freq',pes_sigla)] == 'Com lan√ßamentos')}">
 						<tr>
 							<td bgcolor="#FFFFFF" width="15%" align="center">${pes_sigla}</td>
 							<td bgcolor="#FFFFFF" width="35%" align="center">${pes_descricao}</td>
@@ -366,18 +366,18 @@
 								end="${requestScope[f:concat('faltas',pes_sigla)]}">
 								<c:choose>
 									<c:when
-										test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == '[Selecione o tipo de AusÍncia]'}"> N„o foi selecionado um tipo de ausÍncia </c:when>
+										test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == '[Selecione o tipo de Aus√™ncia]'}"> N√£o foi selecionado um tipo de aus√™ncia </c:when>
 									<c:when
-										test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'CompensaÁ„o de Trabalho no Recesso'}"> ${requestScope[f:concat(f:concat('datas',i),pes_sigla)]} - ${requestScope[f:concat(f:concat('motivo',i),pes_sigla)]}
+										test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensa√ß√£o de Trabalho no Recesso'}"> ${requestScope[f:concat(f:concat('datas',i),pes_sigla)]} - ${requestScope[f:concat(f:concat('motivo',i),pes_sigla)]}
 											<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'CompensaÁ„o de Trabalho no Recesso'}">
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensa√ß√£o de Trabalho no Recesso'}">
 												 	(PORTARIA DIRFO)	
 											</c:if>
 									</c:when>
 									<c:when
-										test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/SaÌda Antecipada'}"> ${requestScope[f:concat(f:concat('data',i),pes_sigla)]} - das ${requestScope[f:concat(f:concat('horaIni',i),pes_sigla)]} ‡s ${requestScope[f:concat(f:concat('horaFim',i),pes_sigla)]} - ${requestScope[f:concat(f:concat('motivo',i),pes_sigla)]}
+										test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/Sa√≠da Antecipada'}"> ${requestScope[f:concat(f:concat('data',i),pes_sigla)]} - das ${requestScope[f:concat(f:concat('horaIni',i),pes_sigla)]} √†s ${requestScope[f:concat(f:concat('horaFim',i),pes_sigla)]} - ${requestScope[f:concat(f:concat('motivo',i),pes_sigla)]}
 											<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/SaÌda Antecipada'}">
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Atraso/Sa√≠da Antecipada'}">
 												 	(art.44, INCISO II LEI 8112/90)	
 											</c:if>
 									</c:when>
@@ -391,7 +391,7 @@
 													(art.44, INCISO I LEI 8112/90)
 											</c:if>
 										<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento por J˙ri e Outros Serv. Obrigat. por Lei'}">
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento por J√∫ri e Outros Serv. Obrigat. por Lei'}">
 													(art.102, INCISO VI, LEI 8112/90)
 											</c:if>
 										<c:if
@@ -399,12 +399,12 @@
 													(art.102, INCISO IV LEI 8112/90)
 											</c:if>
 										<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Trabalho Prestado nas EleiÁıes'}">
-												 	(art.120, &sect;2∫ LEI 4737/65 C/C art.98 LEI 9504/97)	
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Trabalho Prestado nas Elei√ß√µes'}">
+												 	(art.120, &sect;2¬∫ LEI 4737/65 C/C art.98 LEI 9504/97)	
 											</c:if>
 										<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'CompensaÁ„o Decorrente de Trabalho nas EleiÁıes'}">
-												 	(arts.218 e 221/CPP e 412, &sect;2∫ /CPC)	
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Compensa√ß√£o Decorrente de Trabalho nas Elei√ß√µes'}">
+												 	(arts.218 e 221/CPP e 412, &sect;2¬∫ /CPC)	
 											</c:if>
 
 										<c:if
@@ -412,24 +412,24 @@
 												 	(PORTARIA DIRFO)	
 											</c:if>
 										<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento para Participar de Atividade InstrutÛria'}">
-													(art.76-A, LEI 8112/90 C/C art.8∫ DECRETO 6114/07)	 		
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Afastamento para Participar de Atividade Instrut√≥ria'}">
+													(art.76-A, LEI 8112/90 C/C art.8¬∫ DECRETO 6114/07)	 		
 											</c:if>
 										<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'AusÍncia/Falta Justificada com CompensaÁ„o'}">
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Aus√™ncia/Falta Justificada com Compensa√ß√£o'}">
 													(art. 44, II da Lei 8112/90)
 											</c:if>
 										<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'AusÍncia/Falta Justificada sem CompensaÁ„o'}">
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Aus√™ncia/Falta Justificada sem Compensa√ß√£o'}">
 													(art. 44, II da Lei 8112/90)
 											</c:if>
 										<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'AusÍncia por motivo de greve com compensaÁ„o'}">
-													(art. 2∫, II da Res. 419/2005 do CJF)
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Aus√™ncia por motivo de greve com compensa√ß√£o'}">
+													(art. 2¬∫, II da Res. 419/2005 do CJF)
 											</c:if>
 										<c:if
-											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'AusÍncia por motivo de greve sem compensaÁ„o'}">
-													(art. 2∫, I da Res. 419/2005 do CJF)
+											test="${requestScope[f:concat(f:concat('motivo',i),pes_sigla)] == 'Aus√™ncia por motivo de greve sem compensa√ß√£o'}">
+													(art. 2¬∫, I da Res. 419/2005 do CJF)
 											</c:if>
 									</c:otherwise>
 								</c:choose>
@@ -444,7 +444,7 @@
 					bgcolor="#000000">
 					<tr>
 						<td colspan="2" bgcolor="#FFFFFF" align="center"><b>SERVIDOR(ES)
-						INCLUÕDO(S) DA LOTA«√O</b></td>
+						INCLU√çDO(S) DA LOTA√á√ÉO</b></td>
 					</tr>
 				</table>
 				<table width="100%" border="1" cellpadding="2" cellspacing="1"
@@ -452,7 +452,7 @@
 					<tr>
 						<td bgcolor="#FFFFFF" width="50%" align="center"><b>Nome</b></td>
 						<td bgcolor="#FFFFFF" width="25%" align="center"><b>Matr&iacute;cula</b></td>
-						<td bgcolor="#FFFFFF" width="25%" align="center"><b>PerÌodo/Motivo</b></td>
+						<td bgcolor="#FFFFFF" width="25%" align="center"><b>Per√≠odo/Motivo</b></td>
 					</tr>
 					<c:forEach var="i" begin="1" end="${numServIncluidos}">
 						<tr>
@@ -477,7 +477,7 @@
 											no dia <b>${requestScope[f:concat('dataInicio',i)]}</b>.
 									</c:when>
 									<c:otherwise>
-									no perÌodo de <b>${requestScope[f:concat('dataInicio',i)]}</b> a <b>${requestScope[f:concat('dataFim',i)]}</b>.
+									no per√≠odo de <b>${requestScope[f:concat('dataInicio',i)]}</b> a <b>${requestScope[f:concat('dataFim',i)]}</b>.
 								</c:otherwise>
 								</c:choose>
 							</c:if></td>
@@ -490,7 +490,7 @@
 					bgcolor="#000000">
 					<tr>
 						<td colspan="2" bgcolor="#FFFFFF" align="center"><b>SERVIDOR(ES)
-						EXCLUÕDO(S) DA LOTA«√O</b></td>
+						EXCLU√çDO(S) DA LOTA√á√ÉO</b></td>
 					</tr>
 				</table>
 				<table width="100%" border="1" cellpadding="2" cellspacing="1"
@@ -498,7 +498,7 @@
 					<tr>
 						<td bgcolor="#FFFFFF" width="50%" align="center"><b>Nome</b></td>
 						<td bgcolor="#FFFFFF" width="25%" align="center"><b>Matr&iacute;cula</b></td>
-						<td bgcolor="#FFFFFF" width="25%" align="center"><b>PerÌodo/Motivo</b></td>
+						<td bgcolor="#FFFFFF" width="25%" align="center"><b>Per√≠odo/Motivo</b></td>
 					</tr>
 					<c:forEach var="j" begin="1" end="${numServExcluidos}">
 						<tr>
@@ -523,7 +523,7 @@
 											no dia <b>${requestScope[f:concat('dataInicio',j)]}</b>.
 									</c:when>
 									<c:otherwise>
-									no perÌodo de <b>${requestScope[f:concat('dataInicioExclusao',j)]}</b> a <b>${requestScope[f:concat('dataFimExclusao',j)]}</b>.
+									no per√≠odo de <b>${requestScope[f:concat('dataInicioExclusao',j)]}</b> a <b>${requestScope[f:concat('dataFimExclusao',j)]}</b>.
 								</c:otherwise>
 								</c:choose>
 							</c:if></td>
@@ -535,7 +535,7 @@
 				<table width="100%" border="1" cellpadding="2" cellspacing="1"
 					bgcolor="#000000">
 					<tr>
-						<td colspan="2" bgcolor="#FFFFFF" align="center"><b>INFORMA«’ES
+						<td colspan="2" bgcolor="#FFFFFF" align="center"><b>INFORMA√á√ïES
 						ADICIONAIS</b></td>
 					</tr>
 					<tr>

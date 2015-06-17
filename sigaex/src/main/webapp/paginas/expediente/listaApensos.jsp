@@ -16,17 +16,17 @@
 	<h1>Documento(s) Apensado(s)</h1>
 	<table class="list" width="100%">
 		<tr class="header">
-			<td rowspan="3" align="right">Número</td>
+			<td rowspan="3" align="right">NÃºmero</td>
 			<td colspan="3" align="center">Documento</td>
 			<td rowspan="3">Tipo</td>
-			<td rowspan="3">Descrição</td>
+			<td rowspan="3">DescriÃ§Ã£o</td>
 		</tr>
 		<tr class="header">
 			<td rowspan="2" align="center">Data</td>
-			<td colspan="2" align="center">Responsável</td>
+			<td colspan="2" align="center">ResponsÃ¡vel</td>
 		</tr>
 		<tr class="header">
-			<td align="center">Lotação</td>
+			<td align="center">LotaÃ§Ã£o</td>
 			<td align="center">Pessoa</td>
 		</tr>
 		<c:forEach var="mobItem" items="${m.apensosDiretosExcetoVolumeApensadoAoProximo}">
@@ -87,7 +87,7 @@
 							lotaTitular)}</td>
 						</c:when>
 						<c:otherwise>
-							<td>[Descrição Inacessível]</td>
+							<td>[DescriÃ§Ã£o InacessÃ­vel]</td>
 						</c:otherwise>
 					</c:choose>
 				</tr>

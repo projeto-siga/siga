@@ -10,13 +10,13 @@
 	<mod:entrevista>
 		<mod:grupo titulo="Dados Cadastrais">
 			<mod:grupo>
-				<mod:pessoa titulo="MatrÌcula" var="servidor" />
+				<mod:pessoa titulo="Matr√≠cula" var="servidor" />
 			</mod:grupo>
 			<mod:grupo largura="42">
 				<mod:data titulo="Data de Nascimento" var="dtNascimento" />
 			</mod:grupo>
 			<mod:grupo largura="58">
-				<mod:texto titulo="Tipo sanguÌneo e fator RH" largura="5"
+				<mod:texto titulo="Tipo sangu√≠neo e fator RH" largura="5"
 					var="tipoSangueRH" />
 			</mod:grupo>
 			<mod:grupo>
@@ -24,14 +24,14 @@
 				<mod:texto titulo="Nacionalidade" largura="37" var="nacionalidade" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:numero titulo="N˙mero do RG" largura="20" var="numRG"
+				<mod:numero titulo="N√∫mero do RG" largura="20" var="numRG"
 					maxcaracteres="20" />
-				<mod:texto titulo="”rg„o Emissor" largura="20" var="orgEmissorRG"
+				<mod:texto titulo="√ìrg√£o Emissor" largura="20" var="orgEmissorRG"
 					maxcaracteres="20" />
-				<mod:data titulo="Data de Emiss„o" var="dtEmissaoRG" />
+				<mod:data titulo="Data de Emiss√£o" var="dtEmissaoRG" />
 			</mod:grupo>
 			<mod:grupo largura="39">
-				<mod:texto titulo="N˙mero do CPF" largura="19" var="numCPF"
+				<mod:texto titulo="N√∫mero do CPF" largura="19" var="numCPF"
 					maxcaracteres="19" />
 			</mod:grupo>
 			<mod:grupo largura="61">
@@ -39,11 +39,11 @@
 					maxcaracteres="25" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:numero titulo="TÌtulo Eleitoral" largura="30" var="titEleitor"
+				<mod:numero titulo="T√≠tulo Eleitoral" largura="30" var="titEleitor"
 					maxcaracteres="30" />
 				<mod:texto titulo="Zona" largura="3" var="zona" maxcaracteres="3" />
-				<mod:texto titulo="SeÁ„o" largura="5" var="secao" maxcaracteres="5" />
-				<mod:data titulo="Data de Emiss„o" var="dtEmissaoTit" />
+				<mod:texto titulo="Se√ß√£o" largura="5" var="secao" maxcaracteres="5" />
+				<mod:data titulo="Data de Emiss√£o" var="dtEmissaoTit" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:numero titulo="Certificado de Reservista" largura="20"
@@ -54,7 +54,7 @@
 						maxcaracteres="20" />
 			</mod:grupo>
 			<mod:grupo largura="33">			 
-				<mod:numero titulo="N˙mero do Registro" largura="20"
+				<mod:numero titulo="N√∫mero do Registro" largura="20"
 						var="numRegistro" maxcaracteres="20" />
 			</mod:grupo>
 			<mod:grupo largura="49">				 
@@ -62,25 +62,25 @@
 						maxcaracteres="5" />
 			</mod:grupo>			
 		</mod:grupo>
-		<mod:grupo titulo="SituaÁ„o Funcional">
+		<mod:grupo titulo="Situa√ß√£o Funcional">
 			<mod:grupo>
 				<mod:selecao titulo="Natureza do Ato" var="naturezaAto"
-						opcoes="NomeaÁ„o;RemoÁ„o;RequisiÁ„o;RemoÁ„o (Lei 11416/06)"
+						opcoes="Nomea√ß√£o;Remo√ß√£o;Requisi√ß√£o;Remo√ß√£o (Lei 11416/06)"
 						 reler="ajax" idAjax="naturezaAtoAjax"/>
 			</mod:grupo>
 			<mod:grupo depende="naturezaAtoAjax">
-				<ww:if test="${naturezaAto == 'RequisiÁ„o' or naturezaAto == 'RemoÁ„o' or
-							   naturezaAto == 'RemoÁ„o (Lei 11416/06)'}">	
+				<ww:if test="${naturezaAto == 'Requisi√ß√£o' or naturezaAto == 'Remo√ß√£o' or
+							   naturezaAto == 'Remo√ß√£o (Lei 11416/06)'}">	
 					<mod:grupo largura="44">			   				 
 						<mod:data titulo="Data da Posse na Origem" var="dtPosse" />
 					</mod:grupo>	
 					<mod:grupo largura="66">	
-						<mod:data titulo="Data do ExercÌcio" var="dtExercicio" />
+						<mod:data titulo="Data do Exerc√≠cio" var="dtExercicio" />
 					</mod:grupo>
 					<mod:grupo>		
 						<mod:texto titulo="Cargo" largura="36" var="cargo"
 						maxcaracteres="36" />				
-						&nbsp;<mod:texto titulo="”rg„o Origem" largura="43" var="orgaoOrigem"
+						&nbsp;<mod:texto titulo="√ìrg√£o Origem" largura="43" var="orgaoOrigem"
 						maxcaracteres="43" />
 					</mod:grupo>						
 				</ww:if>
@@ -89,19 +89,19 @@
 						<mod:data titulo="Data da Posse" var="dtPosse" />						
 					</mod:grupo>					
 					<mod:grupo largura="66">					
-						<mod:data titulo="Data do ExercÌcio" var="dtExercicio" />
+						<mod:data titulo="Data do Exerc√≠cio" var="dtExercicio" />
 					</mod:grupo>	
 														
 					<mod:grupo>					
 						<mod:texto titulo="Cargo" largura="44" var="cargo" 	maxcaracteres="44" />										
-					&nbsp;<mod:texto titulo="Padr„o" largura="42" var="padrao" maxcaracteres="42" />
+					&nbsp;<mod:texto titulo="Padr√£o" largura="42" var="padrao" maxcaracteres="42" />
 					</mod:grupo>
 				</ww:else>	
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="VeÌculo de PublicaÁ„o" largura="15"
+				<mod:texto titulo="Ve√≠culo de Publica√ß√£o" largura="15"
 							var="veiculo" maxcaracteres="15" />				
-				<mod:data titulo="Dt. PublicaÁ„o" var="publicacao"  />				
+				<mod:data titulo="Dt. Publica√ß√£o" var="publicacao"  />				
 				 <mod:texto titulo="Autoridade" largura="25"
 							var="autoridade" maxcaracteres="25" />
 			</mod:grupo> 		
@@ -174,11 +174,11 @@
 		FIM CABECALHO --> --%>
 
 		<br />
-		<%-- N„o ser„o necess·rios os campos Apenso e volume abaixo, por isto est„o comentados  --%>
+		<%-- N√£o ser√£o necess√°rios os campos Apenso e volume abaixo, por isto est√£o comentados  --%>
 		<table align="center" width="60%" border="1" cellspacing="1">
 			<tr>
 				<td width="30%"  align="center"><br />
-				<b>ASSENTAMENTO FUNCIONAL N∫</b><br />
+				<b>ASSENTAMENTO FUNCIONAL N¬∫</b><br />
 				<br />
 				</td>
 				<%-- 		<td width="15%" bgcolor="#FFFFFF" align="center"><b>Apenso</b></td> 
@@ -198,7 +198,7 @@
 			<table align="center" width="60%" border="1" cellspacing="1">
 				<tr>
 					<td width="30%" align="center"><br />
-					<b>N∫ no Sistema Antigo</b><br />
+					<b>N¬∫ no Sistema Antigo</b><br />
 					<br />
 					</td>
 					<%-- 		<td width="15%" align="center"><b>Apenso</b></td> 
@@ -246,7 +246,7 @@
 
 		<table align="center" width="60%" border="1" cellpadding="4">
 			<tr>
-				<td width="50%" align="center"><b>MatrÌcula</b>
+				<td width="50%" align="center"><b>Matr√≠cula</b>
 				</td>
 				<td align="center">${f:pessoa(requestScope['servidor_pessoaSel.id']).matricula}</td>
 			</tr>
@@ -296,7 +296,7 @@
 			</tr>
 		</table>
 		<br />
-		<%-- N„o ser„o necess·rios os campos Apenso e volume abaixo, por isto est„o comentados  --%>
+		<%-- N√£o ser√£o necess√°rios os campos Apenso e volume abaixo, por isto est√£o comentados  --%>
 
 		<table Width="100%" cellpadding="6">
 
@@ -309,7 +309,7 @@
 					style="font-family: Arial Narrow; font-size: 7pt;">NOME: </b>
 				&nbsp;${f:pessoa(requestScope['servidor_pessoaSel.id']).nomePessoa}
 				</td>
-				<td><b style="font-family: Arial Narrow; font-size: 7pt;">MATRÕCULA:</b>
+				<td><b style="font-family: Arial Narrow; font-size: 7pt;">MATR√çCULA:</b>
 				&nbsp;${f:pessoa(requestScope['servidor_pessoaSel.id']).matricula}</td>
 			</tr>
 			<tr>
@@ -318,7 +318,7 @@
 				NASCIMENTO:</b> &nbsp;${dtNascimento}</td>
 				<td colspan="2"><b
 					style="font-family: Arial Narrow; font-size: 7pt;">TIPO
-				SANGUÕNEO E FATOR RH:</b> &nbsp;${tipoSangueRH}</td>
+				SANGU√çNEO E FATOR RH:</b> &nbsp;${tipoSangueRH}</td>
 			</tr>
 			<tr>
 				<td colspan="2"><b
@@ -332,10 +332,10 @@
 				<td><b style="font-family: Arial Narrow; font-size: 7pt;">RG:</b>
 				&nbsp;${numRG}</td>
 				<td colspan="2"><b
-					style="font-family: Arial Narrow; font-size: 7pt;">”RG√O
+					style="font-family: Arial Narrow; font-size: 7pt;">√ìRG√ÉO
 				EMISSOR:</b> &nbsp;${orgEmissorRG}</td>
 				<td><b style="font-family: Arial Narrow; font-size: 7pt;">DATA
-				DE EMISS√O:</b> &nbsp;${dtEmissaoRG}</td>
+				DE EMISS√ÉO:</b> &nbsp;${dtEmissaoRG}</td>
 			</tr>
 			<tr>
 				<td colspan="2"><b
@@ -346,21 +346,21 @@
 				&nbsp;${pisPasep}</td>
 			</tr>
 			<tr>
-				<td><b style="font-family: Arial Narrow; font-size: 7pt;">TÕTULO
+				<td><b style="font-family: Arial Narrow; font-size: 7pt;">T√çTULO
 				ELEITORAL:</b> &nbsp;${titEleitor}</td>
 				<td><b style="font-family: Arial Narrow; font-size: 7pt;">ZONA:</b>
 				&nbsp;${zona}</td>
-				<td><b style="font-family: Arial Narrow; font-size: 7pt;">SE«√O:</b>
+				<td><b style="font-family: Arial Narrow; font-size: 7pt;">SE√á√ÉO:</b>
 				&nbsp;${secao}</td>
 				<td><b style="font-family: Arial Narrow; font-size: 7pt;">DATA
-				DE EMISS√O:</b> &nbsp;${dtEmissaoTit}</td>
+				DE EMISS√ÉO:</b> &nbsp;${dtEmissaoTit}</td>
 			</tr>
 			<c:if test="${not empty cnh}">
 				<tr>
 					<td><b style="font-family: Arial Narrow; font-size: 7pt;">CNH:</b>
 					&nbsp;${cnh}</td>
 					<td colspan="2"><b
-						style="font-family: Arial Narrow; font-size: 7pt;">N∫ DO
+						style="font-family: Arial Narrow; font-size: 7pt;">N¬∫ DO
 					REGISTRO:</b> &nbsp;${numRegistro}</td>
 					<td><b style="font-family: Arial Narrow; font-size: 7pt;">CATEGORIA</b>
 					&nbsp;${categoria}</td>
@@ -380,8 +380,8 @@
 				<td colspan="2"><b
 					style="font-family: Arial Narrow; font-size: 7pt;">NATUREZA DO
 				ATO:</b> &nbsp;${naturezaAto}</td>
-				<ww:if test="${naturezaAto == 'RequisiÁ„o' or naturezaAto == 'RemoÁ„o' or
-							   naturezaAto == 'RemoÁ„o (Lei 11416/06)'}">
+				<ww:if test="${naturezaAto == 'Requisi√ß√£o' or naturezaAto == 'Remo√ß√£o' or
+							   naturezaAto == 'Remo√ß√£o (Lei 11416/06)'}">
 					<td><b style="font-family: Arial Narrow; font-size: 7pt;">DATA DA POSSE
 					ORIGEM:</b> &nbsp;${dtPosse}</td>
 				</ww:if>	
@@ -390,21 +390,21 @@
 					DA POSSE:</b> &nbsp;${dtPosse}</td>
 				</ww:else>	
 				<td><b style="font-family: Arial Narrow; font-size: 7pt;">DATA
-				EXERCÕCIO:</b> &nbsp;${dtExercicio}</td>
+				EXERC√çCIO:</b> &nbsp;${dtExercicio}</td>
 			</tr>
 			<tr>
 				<td colspan="2"><b
 					style="font-family: Arial Narrow; font-size: 7pt;">CARGO:</b>
 				&nbsp;${cargo}</td>
-				<ww:if test="${naturezaAto == 'RequisiÁ„o' or naturezaAto == 'RemoÁ„o' or
-							   naturezaAto == 'RemoÁ„o (Lei 11416/06)'}">
+				<ww:if test="${naturezaAto == 'Requisi√ß√£o' or naturezaAto == 'Remo√ß√£o' or
+							   naturezaAto == 'Remo√ß√£o (Lei 11416/06)'}">
 					<td colspan="2"><b
-					style="font-family: Arial Narrow; font-size: 7pt;">”RG√O ORIGEM:</b>
+					style="font-family: Arial Narrow; font-size: 7pt;">√ìRG√ÉO ORIGEM:</b>
 				&nbsp;${orgaoOrigem}</td>	
 				</ww:if>
 				<ww:else>				
 				<td colspan="2"><b
-					style="font-family: Arial Narrow; font-size: 7pt;">PADR√O:</b>
+					style="font-family: Arial Narrow; font-size: 7pt;">PADR√ÉO:</b>
 				&nbsp;${padrao}</td>
 				</ww:else>
 			</tr>
@@ -413,9 +413,9 @@
 					style="font-family: Arial Narrow; font-size: 7pt;">AUTORIDADE:</b>
 				&nbsp;${autoridade}	
 				</td>
-				<td><b style="font-family: Arial Narrow; font-size: 7pt;">VEÕCULO DE PUBLICA«√O:</b>
+				<td><b style="font-family: Arial Narrow; font-size: 7pt;">VE√çCULO DE PUBLICA√á√ÉO:</b>
 				&nbsp;${veiculo}</td>
-				<td><b style="font-family: Arial Narrow; font-size: 7pt;">DATA DE PUBLICA«√O:</b>
+				<td><b style="font-family: Arial Narrow; font-size: 7pt;">DATA DE PUBLICA√á√ÉO:</b>
 				&nbsp;${publicacao}</td>				
 				
 			</tr>			

@@ -16,31 +16,31 @@
 				<mod:texto titulo="Naturalidade/UF" largura="40" var="naturalidade" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:monetario titulo="N∫ Identidade" largura="13" maxcaracteres="9" var="docIdentidade" verificaNum="sim" />
-				<mod:texto titulo="Org„o Expedidor" largura="10" var="orgExpedidor" />
-				<mod:data titulo="Data de Emiss„o" var="dataEmissao" />
+				<mod:monetario titulo="N¬∫ Identidade" largura="13" maxcaracteres="9" var="docIdentidade" verificaNum="sim" />
+				<mod:texto titulo="Org√£o Expedidor" largura="10" var="orgExpedidor" />
+				<mod:data titulo="Data de Emiss√£o" var="dataEmissao" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:monetario titulo="N∫ CPF" var="docCpf" largura="15" maxcaracteres="11" verificaNum="sim" />
-				<mod:selecao titulo="Estado Civil" var="estadoCivil" opcoes="Solteiro(a);Casado(a);Divorciado(a);Vi˙va(o);Desquitado" reler="sim"/>
-				<mod:texto titulo="Tipo Sang¸Ìneo" var="tipoSanguineo" largura="5" />
+				<mod:monetario titulo="N¬∫ CPF" var="docCpf" largura="15" maxcaracteres="11" verificaNum="sim" />
+				<mod:selecao titulo="Estado Civil" var="estadoCivil" opcoes="Solteiro(a);Casado(a);Divorciado(a);Vi√∫va(o);Desquitado" reler="sim"/>
+				<mod:texto titulo="Tipo Sang√º√≠neo" var="tipoSanguineo" largura="5" />
 				<mod:texto titulo="Fator RH" var="fatorRh" largura="5" />
 			</mod:grupo>
-			<mod:grupo titulo="FiliaÁ„o">
+			<mod:grupo titulo="Filia√ß√£o">
 					<mod:texto titulo="Pai" var="pai" largura="60" />
 				<mod:grupo>
-					<mod:texto titulo="M„e" var="mae" largura="60" />
+					<mod:texto titulo="M√£e" var="mae" largura="60" />
 				</mod:grupo>
 			</mod:grupo>
 			<mod:grupo>
 				<c:if test="${estadoCivil == 'Casado(a)'}">
-					<mod:texto titulo="CÙnjuge" var="conjuge" largura="60" />
+					<mod:texto titulo="C√¥njuge" var="conjuge" largura="60" />
 				</c:if>
 			</mod:grupo>
 		</mod:grupo>
 		
-		<mod:grupo titulo="DADOS RESID NCIAIS">
-				<mod:texto titulo="EndereÁo" var="endereco" largura="60" />
+		<mod:grupo titulo="DADOS RESID√äNCIAIS">
+				<mod:texto titulo="Endere√ßo" var="endereco" largura="60" />
 			<mod:grupo>
 				<mod:texto titulo="Telefone" var="tel" largura="15" maxcaracteres="11" />
 				<mod:texto titulo="Celular" var="cel" largura="15" maxcaracteres="11" />
@@ -54,27 +54,27 @@
 		
 		<mod:grupo titulo="DADOS DO CURSO" >
 			<mod:grupo>
-				<mod:selecao titulo="PerÌodo" var="periodo" opcoes="1;2;3;4;5;6;7;8;9;10" reler="n„o" />
+				<mod:selecao titulo="Per√≠odo" var="periodo" opcoes="1;2;3;4;5;6;7;8;9;10" reler="n√£o" />
 				<mod:texto titulo="Ano" var="ano" largura="5" /> 
-				<mod:texto titulo="MatrÌcula" var="matricula" largura="20" />
+				<mod:texto titulo="Matr√≠cula" var="matricula" largura="20" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="InstituiÁ„o de Ensino" var="instEnsino" largura="60" />
+				<mod:texto titulo="Institui√ß√£o de Ensino" var="instEnsino" largura="60" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Curso" opcoes="CiÍncias Cont·beis;Direito;NÌvel MÈdio" var="curso" />
-				<mod:selecao titulo="Turno" opcoes="Manh„;Tarde;Noite" var="turno" />
-				<mod:selecao titulo="Disponibilidade para Est·gio" opcoes="Manh„;Tarde" var="dispEstagio" />
+				<mod:selecao titulo="Curso" opcoes="Ci√™ncias Cont√°beis;Direito;N√≠vel M√©dio" var="curso" />
+				<mod:selecao titulo="Turno" opcoes="Manh√£;Tarde;Noite" var="turno" />
+				<mod:selecao titulo="Disponibilidade para Est√°gio" opcoes="Manh√£;Tarde" var="dispEstagio" />
 			</mod:grupo>
 		</mod:grupo>
 		
-		<mod:grupo titulo="DADOS DO EST¡GIO">
-		        <mod:lotacao titulo="Unidade de LotaÁ„o" var="unidade" obrigatorio="Sim" /> <br>				
+		<mod:grupo titulo="DADOS DO EST√ÅGIO">
+		        <mod:lotacao titulo="Unidade de Lota√ß√£o" var="unidade" obrigatorio="Sim" /> <br>				
 				<mod:texto titulo="Telefone1" var="telEstagio" largura="15" maxcaracteres="11" />
 				<mod:texto titulo="Telefone2" var="telEstagio2" largura="15" maxcaracteres="11" />
 			<mod:grupo>
-				<mod:data titulo="Data inÌcio do Est·gio" var="dataInicio" />
-				<mod:data titulo="Previs„o de TÈrmino" var="previsaoTermino" />				
+				<mod:data titulo="Data in√≠cio do Est√°gio" var="dataInicio" />
+				<mod:data titulo="Previs√£o de T√©rmino" var="previsaoTermino" />				
 			</mod:grupo>
 			<mod:grupo>
 				<mod:pessoa titulo="Supervisor" var="supervisor" />
@@ -97,7 +97,7 @@
 		</head>
 		<body>
 		<p align="right">
-		SIGLA:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MATRÕCULA:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Avisado em_____/_____/____<br>
+		SIGLA:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MATR√çCULA:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Avisado em_____/_____/____<br>
 		</p>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
@@ -107,7 +107,7 @@
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 					<tr>
-						<td align="center"><b>CADASTRO DE ESTAGI¡RIO - ¡REA JUDICI¡RIA -</b></td>
+						<td align="center"><b>CADASTRO DE ESTAGI√ÅRIO - √ÅREA JUDICI√ÅRIA -</b></td>
 					</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
@@ -129,16 +129,16 @@
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td bgcolor="#FFFFFF" width="30%">N∫ Identidade: <b>${docIdentidade}</b></td>
-				<td bgcolor="#FFFFFF" width="35%">Org„o Expedidor: <b>${orgExpedidor}</b></td>
-				<td bgcolor="#FFFFFF" width="35%">Data Emiss„o: <b>${dataEmissao }</b></td>
+				<td bgcolor="#FFFFFF" width="30%">N¬∫ Identidade: <b>${docIdentidade}</b></td>
+				<td bgcolor="#FFFFFF" width="35%">Org√£o Expedidor: <b>${orgExpedidor}</b></td>
+				<td bgcolor="#FFFFFF" width="35%">Data Emiss√£o: <b>${dataEmissao }</b></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td bgcolor="#FFFFFF" width="30%">N∫ CPF: <b>${docCpf}</b></td>
+				<td bgcolor="#FFFFFF" width="30%">N¬∫ CPF: <b>${docCpf}</b></td>
 				<td bgcolor="#FFFFFF" width="30%">Estado Civil: <b>${estadoCivil}</b></td>
-				<td bgcolor="#FFFFFF" width="23%">Tipo Sang¸Ìneo: <b>${tipoSanguineo}</b></td>
+				<td bgcolor="#FFFFFF" width="23%">Tipo Sang√º√≠neo: <b>${tipoSanguineo}</b></td>
 				<td bgcolor="#FFFFFF" width="17%">Fator RH: <b>${fatorRh}</b></td>
 			</tr>
 		</table>
@@ -149,19 +149,19 @@
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td bgcolor="#FFFFFF" >M„e: <b>${mae}</b></td>
+				<td bgcolor="#FFFFFF" >M√£e: <b>${mae}</b></td>
 			</tr>
 		</table>
 		<c:if test="${estadoCivil == 'Casado(a)'}">
 			<table width="100%" border="1" cellpadding="3">
 				<tr>
-					<td bgcolor="#FFFFFF" >CÙnjuge: <b>${conjuge}</b></td>
+					<td bgcolor="#FFFFFF" >C√¥njuge: <b>${conjuge}</b></td>
 				</tr>
 			</table>
 		</c:if>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td width="60%">EndereÁo: <b>${endereco}</b></td>
+				<td width="60%">Endere√ßo: <b>${endereco}</b></td>
 				<td width="20%">Telefone: <b>${tel}</b></td>
 				<td width="20%">Celular: <b>${cel}</b></td>
 			</tr>
@@ -180,33 +180,33 @@
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 				<tr>
-					<td width="30%">PerÌodo/Ano: <b>${periodo}&ordm;</b> - <b>${ano}</b></td>
-					<td width="30%">MatrÌcula: <b>${matricula}</b></td>
+					<td width="30%">Per√≠odo/Ano: <b>${periodo}&ordm;</b> - <b>${ano}</b></td>
+					<td width="30%">Matr√≠cula: <b>${matricula}</b></td>
 				</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td width="40%">InstituiÁ„o de Ensino: <b>${instEnsino}</b></td>
+				<td width="40%">Institui√ß√£o de Ensino: <b>${instEnsino}</b></td>
 				<td width="20%">Turno: <b>${turno}</b></td>
-				<td width="40%">Disponibilidade para Est·gio: <b>${dispEstagio }</b>
+				<td width="40%">Disponibilidade para Est√°gio: <b>${dispEstagio }</b>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td bgcolor="#FFFFFF" width="100%" colspan="3"><b>3. DADOS DO EST¡GIO</b></td>
+				<td bgcolor="#FFFFFF" width="100%" colspan="3"><b>3. DADOS DO EST√ÅGIO</b></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 				<tr>
-					<td width="50%">Unidade de LotaÁ„o: <b>${f:lotacao(requestScope['unidade_lotacaoSel.id']).descricao}</b></td>
+					<td width="50%">Unidade de Lota√ß√£o: <b>${f:lotacao(requestScope['unidade_lotacaoSel.id']).descricao}</b></td>
 					<td width="25%">Telefone1: <b>${telEstagio}</b></td>
 					<td width="25%">Telefone2: <b>${telEstagio2}</b></td>
 				</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td width="50%">Data de InÌcio do Est·gio: <b>${dataInicio}</b></td>
-				<td width="50%">Previs„o de TÈrmino do Est·gio: <b>${previsaoTermino}</b></td>
+				<td width="50%">Data de In√≠cio do Est√°gio: <b>${dataInicio}</b></td>
+				<td width="50%">Previs√£o de T√©rmino do Est√°gio: <b>${previsaoTermino}</b></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="3">
@@ -215,16 +215,16 @@
 				<c:if test="${not empty requestScope['supervisor_pessoaSel.id']}">
 					<c:set var="cargo" value="${f:cargoPessoa(requestScope['supervisor_pessoaSel.id'])}"/>
 				</c:if>
-				<td width="40%">Cargo/FunÁ„o: <b>${cargo}</b></td>
+				<td width="40%">Cargo/Fun√ß√£o: <b>${cargo}</b></td>
 			</tr>
 		</table>	
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td bgcolor="#FFFFFF" width="100%"><b>4. DOCUMENTOS NECESS¡RIOS</b></td>
+				<td bgcolor="#FFFFFF" width="100%"><b>4. DOCUMENTOS NECESS√ÅRIOS</b></td>
 			</tr>
 				<tr>
 						<td>
-								<b> - Documento de apresentaÁ„o ‡ Vara Federal/ao Juizado Especial Federal (OfÌcio da EMARF ou Encaminhamento da DICRE);</b><br><br>
+								<b> - Documento de apresenta√ß√£o √† Vara Federal/ao Juizado Especial Federal (Of√≠cio da EMARF ou Encaminhamento da DICRE);</b><br><br>
 								<b> - 1 foto 3 X 4.</b>
 							
 						</td>
@@ -232,12 +232,12 @@
 		</table>
 		<table width="100%" border="1" cellpadding="15">
 		<tr>
-			<td align="center"> Afirmamos a veracidade das informaÁıes acima descritas.<br><br><br><br>
+			<td align="center"> Afirmamos a veracidade das informa√ß√µes acima descritas.<br><br><br><br>
 			
 									______________________________________<br>
-									(Assinatura do Estagi·rio)<br><br><br><br><br>
+									(Assinatura do Estagi√°rio)<br><br><br><br><br>
 									
-			Solicito a EMISS√O do crach· de identificaÁ„o do(a) estagi·ri(a).<br><br><br><br>
+			Solicito a EMISS√ÉO do crach√° de identifica√ß√£o do(a) estagi√°ri(a).<br><br><br><br>
 			
 			<c:import url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" />
 			

@@ -20,11 +20,11 @@
 					var="gestorSuplente" obrigatorio="Sim" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:pessoa titulo="3) Nome do Fiscal TÈcnico (Titular)"
+				<mod:pessoa titulo="3) Nome do Fiscal T√©cnico (Titular)"
 					var="fiscalTecTitular" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:pessoa titulo="4) Nome do Fiscal TÈcnico (Suplente)"
+				<mod:pessoa titulo="4) Nome do Fiscal T√©cnico (Suplente)"
 					var="fiscalTecSuplente" />
 			</mod:grupo>
 			<mod:grupo>
@@ -42,8 +42,8 @@
 
 		</mod:grupo>
 		<mod:grupo>
-			<mod:selecao titulo="Incluir Fiscais de SubseÁ„o Judici·ria?"
-				var="inclFiscais" opcoes="N„o;Sim" reler="ajax" idAjax="fiscaisAjax" />
+			<mod:selecao titulo="Incluir Fiscais de Subse√ß√£o Judici√°ria?"
+				var="inclFiscais" opcoes="N√£o;Sim" reler="ajax" idAjax="fiscaisAjax" />
 		</mod:grupo>
 		<mod:grupo depende="fiscaisAjax">
 			<c:if test="${inclFiscais == 'Sim'}">
@@ -84,7 +84,7 @@
 					</table>
 				</c:if>
 				<mod:mensagem titulo="Obs."
-					texto="Neste caso, o gestor do contrato dever· cientificar cada fiscal/suplente de subseÁ„o designado" />
+					texto="Neste caso, o gestor do contrato dever√° cientificar cada fiscal/suplente de subse√ß√£o designado" />
 			</c:if>
 		</mod:grupo>
 	</mod:entrevista>
@@ -128,27 +128,27 @@
 
 		<p>Ref. Processo : ${numProcesso}</p>
 
-		<p style="text-align: center; font: bold;"><b>DESIGNA«√O DE
+		<p style="text-align: center; font: bold;"><b>DESIGNA√á√ÉO DE
 		GESTOR/FISCAL DE CONTRATO </b></p>
 
 		<p>Sr(a) Diretor(a) da Subsecretaria,</p>
 
-		<p>Solicito, nos termos do art. 67 da Lei n∫ 8.666/93, a
-		designaÁ„o dos servidores abaixo relacionados para a gerÍncia e
-		fiscalizaÁ„o do presente ajuste:</p>
+		<p>Solicito, nos termos do art. 67 da Lei n¬∫ 8.666/93, a
+		designa√ß√£o dos servidores abaixo relacionados para a ger√™ncia e
+		fiscaliza√ß√£o do presente ajuste:</p>
 		<br />
 
 		<table border="1" width="100%" align="left" cellpadding="5">
 			<tr bgcolor="#999999">
 				<td colspan="2"><b>GESTOR</b></td>
 				<c:if test="${!doc.eletronico}">
-					<td width="10%">ciÍncia</td>
+					<td width="10%">ci√™ncia</td>
 				</c:if>
 			</tr>
 			<tr>
 				<td width="69%">Titular:
 				${requestScope['gestorTitular_pessoaSel.descricao']}</td>
-				<td width="21%">MatrÌcula:
+				<td width="21%">Matr√≠cula:
 				${f:pessoa(requestScope['gestorTitular_pessoaSel.id']).matricula}</td>
 				<c:if test="${!doc.eletronico}">
 					<td></td>
@@ -157,7 +157,7 @@
 			<tr>
 				<td>Suplente:
 				${requestScope['gestorSuplente_pessoaSel.descricao']}</td>
-				<td>MatrÌcula:
+				<td>Matr√≠cula:
 				${f:pessoa(requestScope['gestorSuplente_pessoaSel.id']).matricula}</td>
 				<c:if test="${!doc.eletronico}">
 					<td></td>
@@ -165,15 +165,15 @@
 			</tr>
 			<c:if test="${not empty requestScope['fiscalTecTitular_pessoaSel.id']}">
 				<tr bgcolor="#999999">
-					<td colspan="2"><b>FISCAL T…CNICO</b></td>
+					<td colspan="2"><b>FISCAL T√âCNICO</b></td>
 					<c:if test="${!doc.eletronico}">
-						<td width="10%">ciÍncia</td>
+						<td width="10%">ci√™ncia</td>
 					</c:if>
 				</tr>
 				<tr>
 					<td width="69%">Titular:
 					${requestScope['fiscalTecTitular_pessoaSel.descricao']}</td>
-					<td width="21%">MatrÌcula:
+					<td width="21%">Matr√≠cula:
 					${f:pessoa(requestScope['fiscalTecTitular_pessoaSel.id']).matricula}</td>
 					<c:if test="${!doc.eletronico}">
 						<td></td>
@@ -182,7 +182,7 @@
 				<tr>
 					<td>Suplente:
 					${requestScope['fiscalTecSuplente_pessoaSel.descricao']}</td>
-					<td>MatrÌcula:
+					<td>Matr√≠cula:
 					${f:pessoa(requestScope['fiscalTecSuplente_pessoaSel.id']).matricula}</td>
 					<c:if test="${!doc.eletronico}">
 						<td></td>
@@ -193,13 +193,13 @@
 				<tr bgcolor="#999999">
 					<td colspan="2"><b>FISCAL ADMINISTRATIVO</b></td>
 					<c:if test="${!doc.eletronico}">
-						<td width="10%">ciÍncia</td>
+						<td width="10%">ci√™ncia</td>
 					</c:if>
 				</tr>
 				<tr>
 					<td width="69%">Titular:
 					${requestScope['fiscalAdmTitular_pessoaSel.descricao']}</td>
-					<td width="21%">MatrÌcula:
+					<td width="21%">Matr√≠cula:
 					${f:pessoa(requestScope['fiscalAdmTitular_pessoaSel.id']).matricula}</td>
 					<c:if test="${!doc.eletronico}">
 						<td></td>
@@ -208,7 +208,7 @@
 				<tr>
 					<td>Suplente:
 					${requestScope['fiscalAdmSuplente_pessoaSel.descricao']}</td>
-					<td>MatrÌcula:
+					<td>Matr√≠cula:
 					${f:pessoa(requestScope['fiscalAdmSuplente_pessoaSel.id']).matricula}</td>
 					<c:if test="${!doc.eletronico}">
 						<td></td>
@@ -219,7 +219,7 @@
 				<tr bgcolor="#999999">
 					<td colspan="2"><b>OUTROS FISCAIS DA CAPITAL</b></td>
 					<c:if test="${!doc.eletronico}">
-						<td width="10%">ciÍncia</td>
+						<td width="10%">ci√™ncia</td>
 					</c:if>
 				<tr>
 					<td colspan="2">${outrosFiscais}</td>
@@ -235,8 +235,8 @@
 			<br> <br> <br>
 			<table border="1" width="100%" align="left" style="float:none; clear:both;">
 				<tr>
-					<th bgcolor="#999999" colspan="2"><b>FISCAL DE SUBSE«√O
-					JUDICI¡RIA</b></th>
+					<th bgcolor="#999999" colspan="2"><b>FISCAL DE SUBSE√á√ÉO
+					JUDICI√ÅRIA</b></th>
 				</tr>
 				<c:forEach var="i" begin="1" end="${contadorDeLocalidades}">
 					<c:if
@@ -248,18 +248,18 @@
 								<tr>
 									<td width="73%" align="left">Titular:
 									${f:maiusculasEMinusculas(requestScope[f:concat(f:concat('fiscalTitular',i),'_pessoaSel.descricao')])}</td>
-									<td width="27%" align="left">MatrÌcula:${f:pessoa(requestScope[f:concat(f:concat('fiscalTitular',i),'_pessoaSel.id')]).matricula}</td>
+									<td width="27%" align="left">Matr√≠cula:${f:pessoa(requestScope[f:concat(f:concat('fiscalTitular',i),'_pessoaSel.id')]).matricula}</td>
 								</tr>
 								<tr>
 									<td align="left">Suplente(s):
 									${f:maiusculasEMinusculas(requestScope[f:concat(f:concat('fiscalSuplente',i),'_pessoaSel.descricao')])}</td>
-									<td align="left">MatrÌcula:${f:pessoa(requestScope[f:concat(f:concat('fiscalSuplente',i),'_pessoaSel.id')]).matricula}</td>
+									<td align="left">Matr√≠cula:${f:pessoa(requestScope[f:concat(f:concat('fiscalSuplente',i),'_pessoaSel.id')]).matricula}</td>
 								</tr>
 								<c:if test="${not empty requestScope[f:concat(f:concat('fiscalSuplente2',i),'_pessoaSel.id')]}">
 									<tr>
 										<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;												
 										${f:maiusculasEMinusculas(requestScope[f:concat(f:concat('fiscalSuplente2',i),'_pessoaSel.descricao')])}</td>
-										<td align="left">MatrÌcula:${f:pessoa(requestScope[f:concat(f:concat('fiscalSuplente2',i),'_pessoaSel.id')]).matricula}</td>
+										<td align="left">Matr√≠cula:${f:pessoa(requestScope[f:concat(f:concat('fiscalSuplente2',i),'_pessoaSel.id')]).matricula}</td>
 									</tr>
 								</c:if>
 							</table>
@@ -268,8 +268,8 @@
 					</c:if>
 				</c:forEach>
 			</table>
-			<b>OBS.: Neste caso, o gestor do contrato dever· cientificar cada
-			fiscal/suplente de subseÁ„o designado.</b>
+			<b>OBS.: Neste caso, o gestor do contrato dever√° cientificar cada
+			fiscal/suplente de subse√ß√£o designado.</b>
 		Nesses termos, aguardo deferimento.
 			<br>
 			<br>

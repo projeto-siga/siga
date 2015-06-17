@@ -13,7 +13,7 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:lotacao titulo="Próxima lotação" var="lotacao" />
+			<mod:lotacao titulo="PrÃ³xima lotaÃ§Ã£o" var="lotacao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="A partir de" var="dataInicio" />
@@ -21,7 +21,7 @@
 	</mod:entrevista>
 	<mod:documento>
 		
-		<mod:valor var="texto_solicitacao"><p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>remoção</b>
+		<mod:valor var="texto_solicitacao"><p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>remoÃ§Ã£o</b>
 			do(a) servidor(a)<mod:identificacao pessoa="${requestScope['servidor_pessoaSel.id']}" negrito="sim" nivelHierarquicoMaximoDaLotacao="4" />
 			para a <b>${f:lotacao(requestScope['lotacao_lotacaoSel.id']).descricao}</b>,
 			a partir de <b>${dataInicio}</b>.</p>

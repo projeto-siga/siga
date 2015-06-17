@@ -10,26 +10,26 @@
 <mod:modelo>
 	<mod:entrevista>
 	<br/>
-		<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI«√O COM NOME COMPLETO E ASSUNTO</b></span><br>
-		<span style="color:red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ SRH</b></span>
+		<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI√á√ÉO COM NOME COMPLETO E ASSUNTO</b></span><br>
+		<span style="color:red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä SRH</b></span>
 		<br/><br/>
 		
 		<mod:grupo titulo=" ">	
 			<mod:grupo>
 				 <mod:selecao var="ilustrissimo"
 				titulo="VOCATIVO"
-				opcoes="ILUSTRÕSSIMA SENHORA DIRETORA;ILUSTRÕSSIMO SENHOR DIRETOR"	
+				opcoes="ILUSTR√çSSIMA SENHORA DIRETORA;ILUSTR√çSSIMO SENHOR DIRETOR"	
 				reler="sim" />
 			</mod:grupo>
 			<br>	
 			<mod:grupo titulo=""> 
 		       	<mod:texto titulo="RAMAL DO REQUERENTE" var="ramal"/></mod> <br><br>
-		        <mod:selecao titulo="Acerto Gramatical da LotaÁ„o" var="acgr"  opcoes="no;na" reler="sim" />
+		        <mod:selecao titulo="Acerto Gramatical da Lota√ß√£o" var="acgr"  opcoes="no;na" reler="sim" />
 			</mod:grupo>
 			 <br/><br>
 		</mod:grupo>
 		
-		<mod:grupo titulo="AlteraÁıes solicitadas:">
+		<mod:grupo titulo="Altera√ß√µes solicitadas:">
 				
 			  <mod:caixaverif titulo="Nome"
 							var="mudnome" reler="sim"/><br/>
@@ -40,16 +40,16 @@
 		      <mod:caixaverif titulo="Estado Civil"
 							var="mudest" reler="sim"/><br/>
 				
-			  <mod:caixaverif titulo="EndereÁo"
+			  <mod:caixaverif titulo="Endere√ßo"
 							var="altend" reler="sim" /><br/>
 				
 			  <c:if test="${ altend == 'Sim'}">
 			    <br>
-			    <mod:grupo titulo="Novo EndereÁo:">
+			    <mod:grupo titulo="Novo Endere√ßo:">
 			         <mod:grupo>
-			            <mod:selecao titulo="Logradouro" var="via" opcoes="Alameda;Avenida;Beco;Estrada;PraÁa;Rua;Travessa" reler="sim" />
+			            <mod:selecao titulo="Logradouro" var="via" opcoes="Alameda;Avenida;Beco;Estrada;Pra√ßa;Rua;Travessa" reler="sim" />
 			            <mod:texto titulo="" var="descvia" largura="40"/>
-			            <mod:texto titulo="N∫" var="numer" largura="5" maxcaracteres="11" />
+			            <mod:texto titulo="N¬∫" var="numer" largura="5" maxcaracteres="11" />
 			            <mod:texto titulo="Complemento" var="complem" largura="10" />	
 		             </mod:grupo>
 		             <mod:grupo>
@@ -81,13 +81,13 @@
 		
 	    <br/> 
 	    <mod:selecao var="contDocs"
-				titulo="Quantidade de Documentos ComprobatÛrios"
+				titulo="Quantidade de Documentos Comprobat√≥rios"
 				opcoes="1;2;3;4;5"
 				reler="sim"  /><br/>
 		<mod:grupo depende="contDependAjax">
 				<c:forEach var="i" begin="1" end="${contDocs}">
 					<mod:grupo>
-						<mod:texto titulo="Documento n∫ ${i}" var="documento${i}" largura="30" 
+						<mod:texto titulo="Documento n¬∫ ${i}" var="documento${i}" largura="30" 
 						maxcaracteres="50" obrigatorio="Sim"/>
 					</mod:grupo>
                     <hr style="color: #FFFFFF;" />
@@ -124,7 +124,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr><br><br>
-						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:9pt;">ALTERA«√O DE ASSENTAMENTOS FUNCIONAIS</p></td>
+						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:9pt;">ALTERA√á√ÉO DE ASSENTAMENTOS FUNCIONAIS</p></td>
 						</tr>
 					</table>
 				</td>
@@ -135,16 +135,16 @@
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
-		<c:set var="altt" value="seja efetuada a seguinte alteraÁ„o"></c:set>
-		<c:set var="mud" value="MudanÁa Solicitada"></c:set>
+		<c:set var="altt" value="seja efetuada a seguinte altera√ß√£o"></c:set>
+		<c:set var="mud" value="Mudan√ßa Solicitada"></c:set>
 		<c:if test="${(mudnome == 'Sim' and altesc == 'Sim') or (mudnome == 'Sim' and mudest == 'Sim') or (mudnome == 'Sim' and altend == 'Sim')or (mudnome == 'Sim' and outros == 'Sim') or (altesc == 'Sim' and mudest == 'Sim') or (altesc == 'Sim' and altend == 'Sim')or (altesc == 'Sim' and outros == 'Sim') or (mudest == 'Sim' and altend == 'Sim') or (mudest == 'Sim' and outros == 'Sim') or (altend == 'Sim' and outros == 'Sim')}">
-          <c:set var="altt" value="sejam efetuadas as seguintes alteraÁıes"></c:set>
-          <c:set var="mud" value="MudanÁas Solicitadas"></c:set>
+          <c:set var="altt" value="sejam efetuadas as seguintes altera√ß√µes"></c:set>
+          <c:set var="mud" value="Mudan√ßas Solicitadas"></c:set>
         </c:if>
 			<c:set var="opt" value="${f:classNivPadr(doc.subscritor.padraoReferencia)}"/>           
 			<p style="font-family:Arial;font-weight:bold;font-size:8pt;"> <b><center> ${ilustrissimo} DA SECRETARIA DE RECURSOS HUMANOS</center></b></p>
 			<p style="font-family:Arial;font-size:9pt;">			
-			${doc.subscritor.descricao}, matrÌcula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
+			${doc.subscritor.descricao}, matr√≠cula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
 			do Quadro de Pessoal deste Tribunal, 
 			<c:if test="${ doc.subscritor.sexo == 'M'}">
 			   	lotado
@@ -152,17 +152,17 @@
 			<c:if test="${ doc.subscritor.sexo == 'F'}">
 			    lotada
 			</c:if>
-			 ${acgr} ${doc.subscritor.lotacao.descricao},  ramal ${ramal}, requer a V™.S™. que
+			 ${acgr} ${doc.subscritor.lotacao.descricao},  ramal ${ramal}, requer a V¬™.S¬™. que
 			${altt} em seus assentamentos funcionais :<br><br>  
 			<b>${mud}:</b><br>
-		    <c:if test="${ mudnome == 'Sim'}">AlteraÁ„o de Nome<br></c:if>
-		    <c:if test="${ altesc == 'Sim'}">AlteraÁ„o de Escolaridade<br></c:if>
-		    <c:if test="${ mudest == 'Sim'}">AlteraÁ„o de Estado Civil<br></c:if>
+		    <c:if test="${ mudnome == 'Sim'}">Altera√ß√£o de Nome<br></c:if>
+		    <c:if test="${ altesc == 'Sim'}">Altera√ß√£o de Escolaridade<br></c:if>
+		    <c:if test="${ mudest == 'Sim'}">Altera√ß√£o de Estado Civil<br></c:if>
 		    <c:if test="${outros == 'Sim'}">${outrostext}</c:if><br>
 		    <c:if test="${ altend == 'Sim'}">
-		   <!--      AlteraÁ„o de EndereÁo<br><br>   --> 
-		         <br><b>Novo EndereÁo:</b><br>
-		          ${via}&nbsp;${descvia}&nbsp;n∫&nbsp;${numer}&nbsp;***&nbsp;Complemento : ${complem}<br>
+		   <!--      Altera√ß√£o de Endere√ßo<br><br>   --> 
+		         <br><b>Novo Endere√ßo:</b><br>
+		          ${via}&nbsp;${descvia}&nbsp;n¬∫&nbsp;${numer}&nbsp;***&nbsp;Complemento : ${complem}<br>
 		          Bairro : ${bairr}&nbsp;***&nbsp;Cidade : ${cidad}&nbsp;***&nbsp;UF : ${uf}&nbsp;***&nbsp;CEP : ${cepp}<br>
 		    
 		    <c:if test="${rec == 'Sim'}">Telefone para recados : ${telef}&nbsp;&nbsp;***&nbsp;Contato : ${contato}<br></c:if>
@@ -173,8 +173,8 @@
 			<br>	
 			<b>
 			<c:choose>
-					<c:when test="${contDocs == 1}">Documento comprobatÛrio anexado:</c:when>
-					<c:otherwise>Documentos comprobatÛrios anexados:</c:otherwise>
+					<c:when test="${contDocs == 1}">Documento comprobat√≥rio anexado:</c:when>
+					<c:otherwise>Documentos comprobat√≥rios anexados:</c:otherwise>
 		    </c:choose>
 		    </b>
 		    <br>

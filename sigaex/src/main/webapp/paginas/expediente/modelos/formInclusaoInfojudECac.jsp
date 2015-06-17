@@ -7,9 +7,9 @@
 		<br />
 		<mod:texto titulo="E-mail Institucional (alias)"  var="email" largura="30" maxcaracteres="30" obrigatorio="Sim" />@jfrj.jus.br
 		<br /><br />
-		<mod:mensagem vermelho="Sim" texto="Para indicaÁ„o de novo usu·rio, no caso de remoÁ„o do magistrado para outra SeÁ„o Judici·ria ou Tribunal, 
-		dever· ser preenchido e encaminhado ‡ SEJUD o respectivo formul·rio de exclus„o. Caso o magistrado j· 
-		tenha sido removido, o formul·rio de solicitaÁ„o de exclus„o poder· ser encaminhado 
+		<mod:mensagem vermelho="Sim" texto="Para indica√ß√£o de novo usu√°rio, no caso de remo√ß√£o do magistrado para outra Se√ß√£o Judici√°ria ou Tribunal, 
+		dever√° ser preenchido e encaminhado √† SEJUD o respectivo formul√°rio de exclus√£o. Caso o magistrado j√° 
+		tenha sido removido, o formul√°rio de solicita√ß√£o de exclus√£o poder√° ser encaminhado 
 		pelo Diretor de Secretaria." titulo="OBS" />
 	</mod:entrevista>
 	<mod:documento>
@@ -49,7 +49,7 @@
 <br/>SECRETARIA DA RECEITA FEDERAL
 </td>
 						</tr>
-						<tr><td><p align="right"><b>Formul·rio N&ordm; ${doc.codigo}</b></p><br/>
+						<tr><td><p align="right"><b>Formul√°rio N&ordm; ${doc.codigo}</b></p><br/>
 						</td></tr>
 					</table>
 				</td>
@@ -69,14 +69,14 @@
 
 			<table bgcolor="#000000" border="1" cellpadding="5" width="450" align="center" cellspacing="0">
 				<tr>
-					<td bgcolor="#FFFFFF" colspan="2" align="left"><b> 1.1 - SOLICITA«√O DE
+					<td bgcolor="#FFFFFF" colspan="2" align="left"><b> 1.1 - SOLICITA√á√ÉO DE
 					CADASTRAMENTO DE MAGISTRADO </b>
 					</td>
 				</tr>
 
 				<tr>
-					<td bgcolor="#FFFFFF" colspan="2" align="left"><b>1.1 - IDENTIFICA«√O DO
-					USU¡RIO </b></td>
+					<td bgcolor="#FFFFFF" colspan="2" align="left"><b>1.1 - IDENTIFICA√á√ÉO DO
+					USU√ÅRIO </b></td>
 				</tr>
 				<tr>
 					<td bgcolor="#FFFFFF" width="500" ><b>NOME COMPLETO</b><br />
@@ -103,7 +103,7 @@
 					<td bgcolor="#FFFFFF" colspan="2"><b><p align="center">TERMO DE RESPONSABILIDADE</p></b> <br />
 					<br />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					Comprometo-me a manter sigilo sobre os dados cadastrais a que tenha acesso ou conhecimento, em raz„o do ConvÍnio INFOJUD, celebrado entre a Secretaria de Receita Federal (SRF) e o Tribunal Regional Federal da 2™ Regi„o, em 18/12/2006, visando simplificar e agilizar o atendimento de requisiÁ„o de informaÁ„o protegida por sigilo fiscal. Do mesmo modo, estou ciente do que preceitua o Decreto n∫ 4.553 de 27/12/2002 (salvaguarda de dados, informaÁıes, documentos e materiais sigilosos). Comprometo-me a utilizar os dados a que tiver acesso exclusivamente dentro das atribuiÁıes de minha responsabilidade.</b> <br />
+					Comprometo-me a manter sigilo sobre os dados cadastrais a que tenha acesso ou conhecimento, em raz√£o do Conv√™nio INFOJUD, celebrado entre a Secretaria de Receita Federal (SRF) e o Tribunal Regional Federal da 2¬™ Regi√£o, em 18/12/2006, visando simplificar e agilizar o atendimento de requisi√ß√£o de informa√ß√£o protegida por sigilo fiscal. Do mesmo modo, estou ciente do que preceitua o Decreto n¬∫ 4.553 de 27/12/2002 (salvaguarda de dados, informa√ß√µes, documentos e materiais sigilosos). Comprometo-me a utilizar os dados a que tiver acesso exclusivamente dentro das atribui√ß√µes de minha responsabilidade.</b> <br />
 					<br />
 					
 					

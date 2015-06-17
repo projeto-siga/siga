@@ -24,16 +24,16 @@
 								value="${f:pessoa(requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.id')]).funcaoConfianca.descricao}" />
 										
 					<ww:if test="${empty funcao}">
-						FunÁ„o: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S/ FUN«√O						
+						Fun√ß√£o: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S/ FUN√á√ÉO						
 		  		  	</ww:if>
 					<ww:else> 
-						FunÁ„o:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${funcao}
+						Fun√ß√£o:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${funcao}
 					</ww:else>							
 					<c:if test="${f:pessoa(requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.id')]).cargo.descricao == 'TECNICO JUDICIARIO/SEGURANCA E TRANSPORTE'}">
 						<mod:grupo>
-							Exercer· as funÁıes de seguranÁa, 						
+							Exercer√° as fun√ß√µes de seguran√ßa, 						
 							<mod:selecao titulo="conforme disposto na Portaria RJ-PGD-2007/46"
-							var="seguranca${i}" opcoes="Sim;N„o" />
+							var="seguranca${i}" opcoes="Sim;N√£o" />
 						</mod:grupo>
 					</c:if> 
 				</mod:grupo>				
@@ -45,11 +45,11 @@
 		</mod:grupo>
 		<mod:grupo>
 			<mod:selecao titulo="Documento feito de ordem de Magistrado?"
-				var="autoridade" opcoes="N√O;SIM" reler="ajax"
+				var="autoridade" opcoes="N√ÉO;SIM" reler="ajax"
 				idAjax="autoridadeAjax" />
 			<mod:grupo depende="autoridadeAjax">
 				<c:if test="${autoridade eq 'SIM'}">
-					<mod:pessoa titulo="MatrÌcula da Autoridade competente"
+					<mod:pessoa titulo="Matr√≠cula da Autoridade competente"
 						var="autoridade" />
 					<mod:grupo>
 						<mod:radio marcado="Sim" titulo="Titular" var="botao"
@@ -61,8 +61,8 @@
 			</mod:grupo>
 		</mod:grupo>
 		<mod:grupo>
-			<b> <mod:mensagem titulo="AtenÁ„o"
-				texto="preencha o destinat·rio com SELOT e, apÛs finalizar, transfira para a SELOT." />
+			<b> <mod:mensagem titulo="Aten√ß√£o"
+				texto="preencha o destinat√°rio com SELOT e, ap√≥s finalizar, transfira para a SELOT." />
 			</b>
 		</mod:grupo>
 	</mod:entrevista>
@@ -73,15 +73,15 @@
 				De ordem do(a) Exmo(a). Juiz(a) Federal ${requestScope['botao']} do(a) <b>${f:lotacaoPessoa(requestScope['autoridade_pessoaSel.id'])}</b>,
 				Dr(a). <b>${requestScope['autoridade_pessoaSel.descricao']}</b>, solicito  	
 			</c:if> 
-			<c:if test="${autoridade eq 'N√O'}">
+			<c:if test="${autoridade eq 'N√ÉO'}">
 				Solicito 				
-			</c:if> a dispensa do(s) servidor(es) abaixo relacionado(s), da(s) funÁ„o(ıes) 
+			</c:if> a dispensa do(s) servidor(es) abaixo relacionado(s), da(s) fun√ß√£o(√µes) 
 			comissionada(s) discriminada(s), 
 			<c:if test="${not empty dataInicio}">
 						a partir de <b>${dataInicio}</b>.
 			</c:if> 
 			<c:if test="${empty dataInicio}">
-						a partir da <b>publicaÁ„o da(s) respectiva(s) Portaria(s)</b>.
+						a partir da <b>publica√ß√£o da(s) respectiva(s) Portaria(s)</b>.
 			</c:if></p>
 			<br/> <br/>			
 			<c:forEach var="i" begin="1" end="${qtdServidores}">
@@ -93,7 +93,7 @@
 
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">MATRÕCULA: ${pes.matricula}</td>
+							align="left" colspan="1">MATR√çCULA: ${pes.matricula}</td>
 					</tr>
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
@@ -102,18 +102,18 @@
 
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">LOTA«√O: ${f:removeAcentoMaiusculas(pes.lotacao.descricao) }</td>
+							align="left" colspan="1">LOTA√á√ÉO: ${f:removeAcentoMaiusculas(pes.lotacao.descricao) }</td>
 					</tr>
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">FUN«√O COMISSIONADA:
+							align="left" colspan="1">FUN√á√ÉO COMISSIONADA:
 						<b>${pes.funcaoConfianca.descricao}</b></td>
 					</tr>	
 					<c:if test="${not empty requestScope[f:concat('seguranca',i)]}">
 						<tr>
 							<td align="left"> O servidor <b> 
-								<c:if test="${requestScope[f:concat('seguranca',i)] == 'N„o'}"> n„o </c:if> 
-				 					exercer·</b> funÁıes de seguranÁa, conforme a Portaria RJ-PGD-2007/46.
+								<c:if test="${requestScope[f:concat('seguranca',i)] == 'N√£o'}"> n√£o </c:if> 
+				 					exercer√°</b> fun√ß√µes de seguran√ßa, conforme a Portaria RJ-PGD-2007/46.
 				 			</td>
 				 		</tr>
 					</c:if>					

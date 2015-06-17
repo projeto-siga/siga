@@ -19,25 +19,25 @@
 			<mod:texto titulo="Juizo de conhecimento" var="juizoCon"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Juizo da execuÁ„o penal" var="juizoPen"/>
+			<mod:texto titulo="Juizo da execu√ß√£o penal" var="juizoPen"/>
 		</mod:grupo>
 		
-		<mod:grupo titulo="IDENTIFICA«√O DO CONDENADO">
+		<mod:grupo titulo="IDENTIFICA√á√ÉO DO CONDENADO">
 			<mod:grupo>
 				<mod:texto titulo="Nome" var="nome"/>	
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="FiliaÁ„o" var="filiacao"/>	
+				<mod:texto titulo="Filia√ß√£o" var="filiacao"/>	
 			</mod:grupo>
 			<mod:grupo>
 				<mod:texto titulo="Naturalidade" var="natural"/>
 				<mod:texto titulo="Data de nascimento" var="dtnasc"/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Profiss„o" var="prof"/>	
+				<mod:texto titulo="Profiss√£o" var="prof"/>	
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Grau de instruÁ„o" var="grau"/>	
+				<mod:texto titulo="Grau de instru√ß√£o" var="grau"/>	
 				<mod:texto titulo="Estado civil" var="estCivil"/>	
 			</mod:grupo>
 			<mod:grupo>
@@ -50,7 +50,7 @@
 				<mod:texto titulo="Outro(s) Nome(s)" var="outro"/>	
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="EndereÁo(s) Completo(s)" var="end"/>	
+				<mod:texto titulo="Endere√ßo(s) Completo(s)" var="end"/>	
 			</mod:grupo>			
 		</mod:grupo>
 		
@@ -58,50 +58,50 @@
 		<mod:grupo titulo="DADOS DO PROCESSO CRIMINAL">
 			<mod:grupo>
 				<mod:texto titulo="Numero do processo de origem" var="num"/>
-				<mod:texto titulo="Org„o de Origem" var="org"/>	
+				<mod:texto titulo="Org√£o de Origem" var="org"/>	
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Local de OcorrÍncia do delito" var="loc"/>	
+				<mod:texto titulo="Local de Ocorr√™ncia do delito" var="loc"/>	
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="TipificaÁ„o Penal" var="tppenal"/>	
+				<mod:texto titulo="Tipifica√ß√£o Penal" var="tppenal"/>	
 			</mod:grupo>
 			<mod:grupo>
 				<mod:texto titulo="Data do fato" var="dtfato"/>
-				<mod:texto titulo="recebimento da den˙ncia ou queixa" var="recDen"/>
-				<mod:texto titulo="Data da publicaÁ„o da pron˙ncia" var="dtPron"/>	
+				<mod:texto titulo="recebimento da den√∫ncia ou queixa" var="recDen"/>
+				<mod:texto titulo="Data da publica√ß√£o da pron√∫ncia" var="dtPron"/>	
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Data de publicaÁ„o da sentenÁa" var="dtSent"/>
-				<mod:texto titulo="Data de publicaÁao do acord„o" var="dtAcordao"/>
-				<mod:texto titulo="”rg„o do Tribunal" var="orgTrib"/>	
+				<mod:texto titulo="Data de publica√ß√£o da senten√ßa" var="dtSent"/>
+				<mod:texto titulo="Data de publica√ßao do acord√£o" var="dtAcordao"/>
+				<mod:texto titulo="√ìrg√£o do Tribunal" var="orgTrib"/>	
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Data do tr‚nsito em julgado" var="dttransDef"/>
-				<mod:texto titulo="Data do tr‚nsito em julgamento para o Ministerio publico" var="dttransMP"/>
+				<mod:texto titulo="Data do tr√¢nsito em julgado" var="dttransDef"/>
+				<mod:texto titulo="Data do tr√¢nsito em julgamento para o Ministerio publico" var="dttransMP"/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="SuspenÁ„o pelo artigo 366 do CPP" var="suspensao"/>
+				<mod:texto titulo="Suspen√ß√£o pelo artigo 366 do CPP" var="suspensao"/>
 			</mod:grupo>
 		</mod:grupo>
 				
 		<mod:grupo titulo= "PENAS IMPOSTAS NO PROCESSO">	
-			<mod:grupo titulo="CRIME COMUM - reclus„o">
+			<mod:grupo titulo="CRIME COMUM - reclus√£o">
 				<mod:texto titulo="ano(s)" var="anoReclusao" />
-				<mod:texto titulo="mÍs(es)" var="mesReclusao" />
+				<mod:texto titulo="m√™s(es)" var="mesReclusao" />
 				<mod:texto titulo="dia(s)" var="diaReclusao" />
 			</mod:grupo>
-			<mod:grupo titulo="CRIME COMUM - DetenÁ„o">
+			<mod:grupo titulo="CRIME COMUM - Deten√ß√£o">
 				<mod:texto titulo="ano(s)" var="anoDetencao" />
-				<mod:texto titulo="mÍs(es)" var="mesDetencao" />
+				<mod:texto titulo="m√™s(es)" var="mesDetencao" />
 				<mod:texto titulo="dia(s)" var="diaDetencao" />
 			</mod:grupo>
 			<mod:grupo titulo="CRIME HEDIONDO">
 				<mod:texto titulo="ano(s)" var="anoHediondo" />
-				<mod:texto titulo="mÍs(es)" var="mesHediondo" />
+				<mod:texto titulo="m√™s(es)" var="mesHediondo" />
 				<mod:texto titulo="dia(s)" var="diaHediondo" />
 			</mod:grupo>
-			<mod:grupo titulo="REINCID NCIA">
+			<mod:grupo titulo="REINCID√äNCIA">
 				<mod:texto titulo="COMUM" var="reinComum" />
 				<mod:texto titulo="HEDIONDA" var="reinHedio" />
 				<mod:texto titulo="GENERICA" var="reinGene" />
@@ -111,7 +111,7 @@
 			</mod:grupo>	
 		</mod:grupo>
 		
-		<mod:grupo titulo="DADOS PARA DETRA«AO PENAL">
+		<mod:grupo titulo="DADOS PARA DETRA√áAO PENAL">
 				<mod:memo var="editor" colunas="80" linhas="3"/>
 		</mod:grupo>
 
@@ -162,17 +162,17 @@
 			<span style="font-size: align=right"> ${texto_ato} </span>
 			
 			<p>&nbsp;</p>
-			O(a) Doutor(a) ${juiz.descricao} , Desembargador(a) Federal do Tribunal Regional Federal da 2a. regi„o,
-			na forma da lei, e no uso de suas atribuiÁıes, FAZ SABER ao Exm∫ Dr. Juiz de Direito da Vara de 
-			ExecuÁıes Penais do Estado do Rio de Janeiro, que perante este Tribunal tramitam os autos da ApelaÁ„o 
-			Criminal n˙mero ,${numP} contra o(a) apenado(a) abaixo identificado(a), o(a) qual foi 
-			condenado(a) ‡s sanÁıes adiante especificadas, estando o(a) apenado(a) preso(a), passo o mesmo ‡ 
-			disposiÁ„o de V.Ex™, a fim de que faÁa executar a condenaÁ„o, consoante dados a seguir indicados:
+			O(a) Doutor(a) ${juiz.descricao} , Desembargador(a) Federal do Tribunal Regional Federal da 2a. regi√£o,
+			na forma da lei, e no uso de suas atribui√ß√µes, FAZ SABER ao Exm¬∫ Dr. Juiz de Direito da Vara de 
+			Execu√ß√µes Penais do Estado do Rio de Janeiro, que perante este Tribunal tramitam os autos da Apela√ß√£o 
+			Criminal n√∫mero ,${numP} contra o(a) apenado(a) abaixo identificado(a), o(a) qual foi 
+			condenado(a) √†s san√ß√µes adiante especificadas, estando o(a) apenado(a) preso(a), passo o mesmo √† 
+			disposi√ß√£o de V.Ex¬™, a fim de que fa√ßa executar a condena√ß√£o, consoante dados a seguir indicados:
 			<br/>
 			JUIZO DE CONHECIMENTO: ${juizpCon}<br/>
-			JUÕZO DA EXECU«√O PENAL: ${juizoPen }<br/>
+			JU√çZO DA EXECU√á√ÉO PENAL: ${juizoPen }<br/>
 
-			<p align="center">IDENTIFICA«√O DO CONDENADO   <br/>
+			<p align="center">IDENTIFICA√á√ÉO DO CONDENADO   <br/>
 			 
 				<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 		             <tr> 
@@ -187,7 +187,7 @@
 		        
 				<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 		             <tr> 
-			           <td  bgcolor="#FFFFFF" width="100%" align="center"><b>FiliaÁ„o</b><br/></td>
+			           <td  bgcolor="#FFFFFF" width="100%" align="center"><b>Filia√ß√£o</b><br/></td>
 		             </tr>
 		             <tr> <td>	
 			            <table border="0" width=100% bordercolor="#FFFFFF" bgcolor="#000000" align="center">
@@ -234,7 +234,7 @@
 		        
 		        <table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 		             <tr> 
-			           <td  bgcolor="#FFFFFF"  align="center"><b>Profiss„o</b><br/></td>
+			           <td  bgcolor="#FFFFFF"  align="center"><b>Profiss√£o</b><br/></td>
 		             </tr>
 		             <tr> <td>	
 			            <table border="1" width="100%" bordercolor="#000000" bgcolor="#000000" align="center">
@@ -248,7 +248,7 @@
 			           	<td width= "48%"  bgcolor="#FFFFFF"  align="center">
 							<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 			            	<tr>
-			            		<td bgcolor="#FFFFFF"  align="center"><b>Grau de InstruÁ„o</b><br/></td>
+			            		<td bgcolor="#FFFFFF"  align="center"><b>Grau de Instru√ß√£o</b><br/></td>
 			            	</tr>
 			            	<tr>
 			            		<td>
@@ -314,7 +314,7 @@
 		        
 		        <table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 		             <tr> 
-			           <td  bgcolor="#FFFFFF"  align="center"><b>EndereÁo Completo</b><br/></td>
+			           <td  bgcolor="#FFFFFF"  align="center"><b>Endere√ßo Completo</b><br/></td>
 		             </tr>
 		             <tr> <td>	
 			            <table border="0" width="100%" bordercolor="#000000" bgcolor="#000000" align="center">
@@ -349,7 +349,7 @@
 			            <td width= "56%"  bgcolor="#FFFFFF"  align="center">
 							<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 			            		<tr>
-			            			<td bgcolor="#FFFFFF"  align="center"><b>“rg„o de origem</b><br/></td>
+			            			<td bgcolor="#FFFFFF"  align="center"><b>√írg√£o de origem</b><br/></td>
 			            		</tr>
 			            		<tr>
 			            			<td>
@@ -364,7 +364,7 @@
 		        
 			 	<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 		             <tr> 
-			           <td  bgcolor="#FFFFFF"  align="center"><b>Local de OcorrÍncia do delito</b><br/></td>
+			           <td  bgcolor="#FFFFFF"  align="center"><b>Local de Ocorr√™ncia do delito</b><br/></td>
 		             </tr>
 		             <tr> <td>	
 			            <table border="1" width="100%" bordercolor="#000000" bgcolor="#000000" align="center">
@@ -375,7 +375,7 @@
 		        
 		        <table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 		             <tr> 
-			           <td  bgcolor="#FFFFFF"  align="center"><b>Tipific„o Penal</b><br/></td>
+			           <td  bgcolor="#FFFFFF"  align="center"><b>Tipific√£o Penal</b><br/></td>
 		             </tr>
 		             <tr> <td>	
 			            <table border="1" width="100%" bordercolor="#000000" bgcolor="#000000" align="center">
@@ -407,7 +407,7 @@
 			            <td width= "30%"  bgcolor="#FFFFFF"  align="center">
 							<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 			            		<tr>
-			            			<td bgcolor="#FFFFFF"  align="center"><b>Recebimento da den˙ncia ou queixa</b><br/></td>
+			            			<td bgcolor="#FFFFFF"  align="center"><b>Recebimento da den√∫ncia ou queixa</b><br/></td>
 			            		</tr>
 			            		<tr>
 			            			<td>
@@ -422,7 +422,7 @@
 			            <td width= "31%"  bgcolor="#FFFFFF"  align="center">
 							<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 			            		<tr>
-			            			<td bgcolor="#FFFFFF"  align="center"><b>Data da publicaÁ„o da pronuncia</b><br/></td>
+			            			<td bgcolor="#FFFFFF"  align="center"><b>Data da publica√ß√£o da pronuncia</b><br/></td>
 			            		</tr>
 			            		<tr>
 			            			<td>
@@ -440,7 +440,7 @@
 			           	<td width= "31%"  bgcolor="#FFFFFF"  align="center">
 							<table border="1" width=100% bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 			            	<tr>
-			            		<td bgcolor="#FFFFFF"  align="center"><b>Data da publicaÁ„o da sentenÁa</b><br/></td>
+			            		<td bgcolor="#FFFFFF"  align="center"><b>Data da publica√ß√£o da senten√ßa</b><br/></td>
 			            	</tr>
 			            	<tr>
 			            		<td>
@@ -458,7 +458,7 @@
 			            <td width= "30%"  bgcolor="#FFFFFF"  align="center">
 							<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 			            		<tr>
-			            			<td bgcolor="#FFFFFF"  align="center"><b>Data da publicaÁ„o do ¡cord„o</b><br/></td>
+			            			<td bgcolor="#FFFFFF"  align="center"><b>Data da publica√ß√£o do √Åcord√£o</b><br/></td>
 			            		</tr>
 			            		<tr>
 			            			<td>
@@ -473,7 +473,7 @@
 			            <td width= "31%"  bgcolor="#FFFFFF"  align="center">
 							<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 			            		<tr>
-			            			<td bgcolor="#FFFFFF"  align="center"><b>”rg„o do Tribunal</b><br/></td>
+			            			<td bgcolor="#FFFFFF"  align="center"><b>√ìrg√£o do Tribunal</b><br/></td>
 			            		</tr>
 			            		<tr>
 			            			<td>
@@ -510,7 +510,7 @@
 			            <td width= "46%"  bgcolor="#FFFFFF"  align="center">
 							<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 			            		<tr>
-			            			<td bgcolor="#FFFFFF"  align="center"><b><b>Data do transito em julgado para o MinistÈrio Publico</b><br/></td>
+			            			<td bgcolor="#FFFFFF"  align="center"><b><b>Data do transito em julgado para o Minist√©rio Publico</b><br/></td>
 			            		</tr>
 			            		<tr>
 			            			<td>
@@ -525,7 +525,7 @@
 		        </table>
 			 	<table border="1" width="100%" bordercolor="#000000" bgcolor="#FFFFFF" align="center">
 		             <tr> 
-			           <td  bgcolor="#FFFFFF" width="100%" align="center"><b>Suspens„o pelo artigo 366 do CPP</b><br/></td>
+			           <td  bgcolor="#FFFFFF" width="100%" align="center"><b>Suspens√£o pelo artigo 366 do CPP</b><br/></td>
 		             </tr>
 		             <tr> <td>	
 			            <table border="0" width="100%" bordercolor="#FFFFFF" bgcolor="#000000" align="center">
@@ -534,7 +534,7 @@
 					</tr>
 		        </table>
 		        
-		        <p align="center">DADOS PARA DETRA«√O PENAL  <br/>
+		        <p align="center">DADOS PARA DETRA√á√ÉO PENAL  <br/>
 		        
 		        <table border="1" width="100%" bordercolor="#FFFFFF" bgcolor="#000000" align="center">
 			       	<tr><td bgcolor="#FFFFFF" align="center"><b> ${editor}</b><br/><br/><br/></td><tr/>
@@ -544,7 +544,7 @@
 		        
 		        <table border="1" width="100%" bordercolor="#FFFFFF" bgcolor="#000000" align="center">
 			       	<tr>
-			       		<td width= "28%" bgcolor="#FFFFFF" align="center"><b>CRIME COMUM - reclus„o</b><br/></td>
+			       		<td width= "28%" bgcolor="#FFFFFF" align="center"><b>CRIME COMUM - reclus√£o</b><br/></td>
 			       		<td width= "12%" bgcolor="#FFFFFF" align="center"><b>ANO(S)</b><br/></td>
 			       		<td width= "12%" bgcolor="#FFFFFF" align="center">${anoReclusao }<br/></td>
 			       		<td width= "12%" bgcolor="#FFFFFF" align="center"><b>MES(ES)</b><br/></td>
@@ -553,7 +553,7 @@
 			       		<td width= "12%" bgcolor="#FFFFFF" align="center">${diaReclusao }<br/></td>
 			       	<tr/>
 			       	<tr>
-			       		<td width= "28%" bgcolor="#FFFFFF" align="center"><b>CRIME COMUM - detenÁ„o</b><br/></td>
+			       		<td width= "28%" bgcolor="#FFFFFF" align="center"><b>CRIME COMUM - deten√ß√£o</b><br/></td>
 			       		<td width= "12%" bgcolor="#FFFFFF" align="center"><b>ANO(S)</b><br/></td>
 			       		<td width= "12%" bgcolor="#FFFFFF" align="center">${anoDetencao}<br/></td>
 			       		<td width= "12%" bgcolor="#FFFFFF" align="center"><b>MES(ES)</b><br/></td>

@@ -12,7 +12,7 @@
 <!-- 
 <script>
  function aviso(){
-   var mensagem = "ObrigatÛrio o preenchimento de todos os campos";   
+   var mensagem = "Obrigat√≥rio o preenchimento de todos os campos";   
    document.getElementById("msg").innerHTML=mensagem;            
    document.getElementById("msg").value=mensagem;
  }
@@ -23,12 +23,12 @@
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="DETALHES DA REMO«√O" />
+		<mod:grupo titulo="DETALHES DA REMO√á√ÉO" />
 		<mod:grupo>
-			<mod:lotacao titulo="LotaÁ„o Nova" var="lotacaoNova" />
+			<mod:lotacao titulo="Lota√ß√£o Nova" var="lotacaoNova" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:data titulo="Data RemoÁ„o" var="dataRemocao" />
+			<mod:data titulo="Data Remo√ß√£o" var="dataRemocao" />
 		</mod:grupo>
 		<mod:grupo>
 			<font color="black"><b> <mod:memo colunas="60" linhas="3"
@@ -60,16 +60,16 @@
 		<br>
 
 		<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify">O JUIZ FEDERAL -
-		DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI«OS AUXILIARES DA
-		JUSTI«A FEDERAL DE 1∫ GRAU - SE«√O JUDICI¡RIA DO RIO DE JANEIRO, no
-		uso de suas atribuiÁıes legais e, ${textoPortaria}, RESOLVE:</p><!-- FIM ABERTURA -->
+		DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI√áOS AUXILIARES DA
+		JUSTI√áA FEDERAL DE 1¬∫ GRAU - SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO, no
+		uso de suas atribui√ß√µes legais e, ${textoPortaria}, RESOLVE:</p><!-- FIM ABERTURA -->
 		<br>
 		<br>
 
 		<p style="MARGIN-LEFT: 2cm" align="justify">REMOVER o(a)
 		servidor(a) <b>${doc.subscritor.descricao}</b>, <b>${doc.subscritor.cargo.nomeCargo}</b>,
-		<b>${doc.subscritor.padraoReferenciaInvertido}</b>, matrÌcula n&ordm; <b>${doc.subscritor.sigla}</b>,
-		da LotaÁ„o <b>${doc.subscritor.lotacao.descricao}</b>
+		<b>${doc.subscritor.padraoReferenciaInvertido}</b>, matr√≠cula n&ordm; <b>${doc.subscritor.sigla}</b>,
+		da Lota√ß√£o <b>${doc.subscritor.lotacao.descricao}</b>
 		para <b>${requestScope['lotacaoNova_lotacaoSel.descricao']}</b>, a
 		partir de <b>${dataRemocao}</b>.</p>
 		<br>

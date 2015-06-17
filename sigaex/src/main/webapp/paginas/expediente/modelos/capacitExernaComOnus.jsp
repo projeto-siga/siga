@@ -3,63 +3,63 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-SOLICITA«√O DE INSCRI«√O EM A«√O DE CAPACITA«√O EXTERNA - COM ‘NUS -->
+SOLICITA√á√ÉO DE INSCRI√á√ÉO EM A√á√ÉO DE CAPACITA√á√ÉO EXTERNA - COM √îNUS -->
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="SolicitaÁ„o">
+		<mod:grupo titulo="Solicita√ß√£o">
 			<mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="AÁ„o de capacitaÁ„o" var="capacit_tit" />
+					<mod:texto titulo="A√ß√£o de capacita√ß√£o" var="capacit_tit" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:data titulo="Data de inÌcio" var="data_ini" />
+					<mod:data titulo="Data de in√≠cio" var="data_ini" />
 					<mod:data titulo="Data de fim" var="data_fim" />
 				</mod:grupo>
 				<mod:texto titulo="Cidade/UF" var="cidade_uf" />
 				<mod:selecao titulo="Prospecto anexo?" var="prospecto_anexo"
-					opcoes="sim;n„o" />
+					opcoes="sim;n√£o" />
 				<mod:texto titulo="Valor" var="valor" />
-				<mod:selecao titulo="Passagens?" var="passagens" opcoes="sim;n„o" />
-				<mod:selecao titulo="Di·rias?" var="diarias" opcoes="sim;n„o" />
+				<mod:selecao titulo="Passagens?" var="passagens" opcoes="sim;n√£o" />
+				<mod:selecao titulo="Di√°rias?" var="diarias" opcoes="sim;n√£o" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="InstituiÁ„o/Consultor TESTANDO"
+				<mod:texto titulo="Institui√ß√£o/Consultor TESTANDO"
 					var="instituicao_consultor" />
 				<mod:texto titulo="CNPJ ou CPF" var="cnpj_cpf" />
-				<mod:texto titulo="NIT/PIS/PASEP (Pessoa fÌsica)"
+				<mod:texto titulo="NIT/PIS/PASEP (Pessoa f√≠sica)"
 					var="nit_pis_pasep" />
 			</mod:grupo>
-			<mod:grupo titulo="IndicaÁ„o de InstituiÁ„o / Consultor">
+			<mod:grupo titulo="Indica√ß√£o de Institui√ß√£o / Consultor">
 				<mod:selecao
-					titulo="N˙mero de indicaÁıes a serem preenchidas para esta aÁ„o de capacitaÁ„o"
+					titulo="N√∫mero de indica√ß√µes a serem preenchidas para esta a√ß√£o de capacita√ß√£o"
 					var="indicacoes" opcoes="1;2;3;4;5" reler="sim" />
 				<c:forEach var="i" begin="1" end="${indicacoes}">
 					<mod:grupo>
-						<mod:texto titulo="${i}) AÁ„o de capacitaÁ„o / TÌtulo"
+						<mod:texto titulo="${i}) A√ß√£o de capacita√ß√£o / T√≠tulo"
 							var="capacit_tit_indic${i}" />
 					</mod:grupo>
 					<mod:grupo>
-						<mod:texto titulo="Data/PerÌodo da CapacitaÁ„o"
+						<mod:texto titulo="Data/Per√≠odo da Capacita√ß√£o"
 							var="data_per_indic${i}" />
-						<mod:texto titulo="InstituiÁ„o/Consultor"
+						<mod:texto titulo="Institui√ß√£o/Consultor"
 							var="institucao_consultor_indic${i}" />
 						<mod:texto titulo="Valor" var="valor_indic${i}" />
 					</mod:grupo>
 				</c:forEach>
 			</mod:grupo>
-			<mod:grupo titulo="ObservaÁıes">
+			<mod:grupo titulo="Observa√ß√µes">
 			<mod:memo colunas="80" linhas="5" 
-				titulo="Justifique a indicaÁ„o que melhor 
-						atenderia ‡s necessidades de capacitaÁ„o" 
+				titulo="Justifique a indica√ß√£o que melhor 
+						atenderia √†s necessidades de capacita√ß√£o" 
 				var="obs" />
 
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="SolicitaÁ„o dentro do prazo?" var="prazo_ok"
-					opcoes="sim;n„o" reler="sim"/>
+				<mod:selecao titulo="Solicita√ß√£o dentro do prazo?" var="prazo_ok"
+					opcoes="sim;n√£o" reler="sim"/>
 					
-				<c:if test="${prazo_ok == 'n„o'}">	
+				<c:if test="${prazo_ok == 'n√£o'}">	
 					<mod:memo colunas="80" linhas="5" 
 						titulo="Justifique"
 						var="justificativa_prazo" />
@@ -68,8 +68,8 @@ SOLICITA«√O DE INSCRI«√O EM A«√O DE CAPACITA«√O EXTERNA - COM ‘NUS -->
 					
 				<mod:grupo>
 				<mod:memo colunas="80" linhas="5" 
-						titulo="Qual a import‚ncia que a aÁ„o de 
-						capacitaÁ„o ter· para o desenvolvimento das 
+						titulo="Qual a import√¢ncia que a a√ß√£o de 
+						capacita√ß√£o ter√° para o desenvolvimento das 
 						atividades da unidade organizacional?
 						(DEFINA, DE FORMA QUE OS OBJETIVOS 
 						A SEREM ATINGIDOS POSSAM SER MENSURADOS OU OBSERVADOS)"
@@ -79,45 +79,45 @@ SOLICITA«√O DE INSCRI«√O EM A«√O DE CAPACITA«√O EXTERNA - COM ‘NUS -->
 
 
 			<mod:grupo
-				titulo="Atividades/tarefas da unidade que ser„o afetadas pela capacitaÁ„o">
+				titulo="Atividades/tarefas da unidade que ser√£o afetadas pela capacita√ß√£o">
 				<mod:selecao titulo="Quantas atividades/tarefas deseja elencar?"
 					var="ativ_tarefa" opcoes="1;2;3;4;5" reler="sim" />
 				<c:forEach var="i" begin="1" end="${ativ_tarefa}">
 					<mod:grupo>
 						<mod:texto
-							titulo="${i}) Atividade/tarefa que ser· afetada pelo treinamento"
+							titulo="${i}) Atividade/tarefa que ser√° afetada pelo treinamento"
 							var="ativ_tarefa${i}" />
 					</mod:grupo>
 					<mod:grupo>
 						<mod:memo colunas="80" linhas="5"
-						    titulo="Como È desenvolvida atualmente?"
+						    titulo="Como √© desenvolvida atualmente?"
 							var="ativ_hoje${i}" />
 					</mod:grupo>
 					<mod:grupo>
 						<mod:memo colunas="80" linhas="5"
-						    titulo="Como prevÍ que ficar· apÛs a capacitaÁ„o?"
+						    titulo="Como prev√™ que ficar√° ap√≥s a capacita√ß√£o?"
 							var="ativ_pos_capacit${i}" />
 					</mod:grupo>
 				</c:forEach>
 			</mod:grupo>
 			<mod:grupo titulo="Servidores Indicados">
 				<mod:selecao
-					titulo="Quantos servidores ser„o indicados para esta aÁ„o de capacitaÁ„o?"
+					titulo="Quantos servidores ser√£o indicados para esta a√ß√£o de capacita√ß√£o?"
 					var="servidores_indic" opcoes="1;2;3;4;5" reler="sim" />
 				<c:forEach var="i" begin="1" end="${servidores_indic}">
 					<mod:grupo>
-						<mod:texto titulo="${i}) Nome/cargo do servidor/funÁ„o/seÁ„o"
+						<mod:texto titulo="${i}) Nome/cargo do servidor/fun√ß√£o/se√ß√£o"
 							var="serv_indic${i}" />
 					</mod:grupo>
 					<mod:grupo>
 						<mod:memo colunas="80" linhas="5"
-						    titulo="CritÈrios usados para a indicaÁ„o?"
+						    titulo="Crit√©rios usados para a indica√ß√£o?"
 							var="criterios${i}" />
 					</mod:grupo>
 				</c:forEach>
 				<mod:grupo>
 					<mod:memo colunas="80" linhas="5"
-					    titulo="Justifique o n˙mero de servidores indicados"
+					    titulo="Justifique o n√∫mero de servidores indicados"
 						var="justif_n_serv" />
 				</mod:grupo>
 				<mod:grupo>
@@ -131,16 +131,16 @@ SOLICITA«√O DE INSCRI«√O EM A«√O DE CAPACITA«√O EXTERNA - COM ‘NUS -->
 		<head></head>
 		<body>
 
-		<h1>SOLICITA«√O DE INSCRI«√O EM A«√O DE CAPACITA«√O EXTERNA - COM ‘NUS
+		<h1>SOLICITA√á√ÉO DE INSCRI√á√ÉO EM A√á√ÉO DE CAPACITA√á√ÉO EXTERNA - COM √îNUS
 		</h1>
 
-		<h3>1- SOLICITA«√O - ENCAMINHAR COM ANTECED NCIA MÕNIMA DE 20 (VINTE)
+		<h3>1- SOLICITA√á√ÉO - ENCAMINHAR COM ANTECED√äNCIA M√çNIMA DE 20 (VINTE)
 		DIAS</h3>
 
 		<p>&nbsp;</p>
 		<table width="100%" border="1" cellspacing="0" cellpadding="0">
 			<tr>
-				<td colspan="4">A«√O DE CAPACITA«√O (TÕTULO): ${capacit_tit}</td>
+				<td colspan="4">A√á√ÉO DE CAPACITA√á√ÉO (T√çTULO): ${capacit_tit}</td>
 			</tr>
 			<tr>
 				<td colspan="2">DATA / PER&Iacute;ODO: ${data_ini} a ${data_fim}</td>

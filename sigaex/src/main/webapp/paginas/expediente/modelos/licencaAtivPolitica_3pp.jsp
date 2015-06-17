@@ -6,7 +6,7 @@
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">
 	<mod:entrevista>
 	
-		<mod:grupo titulo="QUANTO AO PERÍODO DE LICENÇA">
+		<mod:grupo titulo="QUANTO AO PERÃODO DE LICENÃ‡A">
 			<mod:data titulo="Data de Incio" var="dataInicio" />
 			<mod:data titulo="Data de Fim" var="dataFim" />
 			<mod:grupo>
@@ -21,9 +21,9 @@
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a)
 		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa
-		Excelência, que se digne encaminhar o requerimento de <B>LICENÇA PARA
-		ATIVIDADE POLÍTICA</B>, no período compreendido entre ${dataInicio} e
-		${dataFim}, em anexo, ao E. Tribunal Regional Federal da 2ª Região.
+		ExcelÃªncia, que se digne encaminhar o requerimento de <B>LICENÃ‡A PARA
+		ATIVIDADE POLÃTICA</B>, no perÃ­odo compreendido entre ${dataInicio} e
+		${dataFim}, em anexo, ao E. Tribunal Regional Federal da 2Âª RegiÃ£o.
 		</p>
 		</mod:valor>	
 		<mod:valor var="texto_requerimento2">
@@ -31,41 +31,41 @@
 		<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />			
 			<p style="TEXT-INDENT: 2cm; font-size: 12px" align="justify">
 			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, 
-			vem requerer a Vossa Excelência, nos termos da LC n.º 64/90 c/c o 
-			art. 86 e §§ da Lei n.º 8.112/90, com a redação dada pela 
-			Lei n.º 9.527/97, <b>LICENÇA PARA ATIVIDADE POLÍTICA</b> no período 
+			vem requerer a Vossa ExcelÃªncia, nos termos da LC n.Âº 64/90 c/c o 
+			art. 86 e Â§Â§ da Lei n.Âº 8.112/90, com a redaÃ§Ã£o dada pela 
+			Lei n.Âº 9.527/97, <b>LICENÃ‡A PARA ATIVIDADE POLÃTICA</b> no perÃ­odo 
 			compreendido entre ${dataInicio} e ${dataFim}, tendo em vista a candidatura ao cargo eletivo de ${cargoEletivo}, 
-			conforme cópia autenticada da ata da convenção partidária e/ou protocolo do pedido de registro na Justiça Eleitoral.
+			conforme cÃ³pia autenticada da ata da convenÃ§Ã£o partidÃ¡ria e/ou protocolo do pedido de registro na JustiÃ§a Eleitoral.
 			</p>
 			<p style="TEXT-INDENT: 2cm; font-size: 12px" align="justify">
-			Declara estar ciente das situações abaixo relacionadas:</p>
+			Declara estar ciente das situaÃ§Ãµes abaixo relacionadas:</p>
 			<ul style="font-size: 12px">
 			<li>
-				que a licença será sem remuneração, a partir da data em que for escolhido em convenção partidária, até o dia imediatamente anterior ao do registro da candidatura perante a Justiça Eleitoral, e com a remuneração do cargo efetivo a partir do protocolo do pedido de registro da candidatura na Justiça Eleitoral até o décimo dia seguinte ao da eleição, por até 3 (três) meses. 
+				que a licenÃ§a serÃ¡ sem remuneraÃ§Ã£o, a partir da data em que for escolhido em convenÃ§Ã£o partidÃ¡ria, atÃ© o dia imediatamente anterior ao do registro da candidatura perante a JustiÃ§a Eleitoral, e com a remuneraÃ§Ã£o do cargo efetivo a partir do protocolo do pedido de registro da candidatura na JustiÃ§a Eleitoral atÃ© o dÃ©cimo dia seguinte ao da eleiÃ§Ã£o, por atÃ© 3 (trÃªs) meses. 
 			</li>
 			<li>
-				que deverá apresentar o comprovante do registro, no prazo máximo de quinze dias, a contar de sua homologação na Justiça Eleitoral. 
+				que deverÃ¡ apresentar o comprovante do registro, no prazo mÃ¡ximo de quinze dias, a contar de sua homologaÃ§Ã£o na JustiÃ§a Eleitoral. 
 			</li>
 			<li>
-				que a licença poderá ser interrompida, a qualquer tempo, a seu pedido.
+				que a licenÃ§a poderÃ¡ ser interrompida, a qualquer tempo, a seu pedido.
 			</li>
 			<li>
-				que em caso de desistência à candidatura, reassumirá imediatamente as atividades do cargo.
+				que em caso de desistÃªncia Ã  candidatura, reassumirÃ¡ imediatamente as atividades do cargo.
 			</li>
 			<li>
-				que em caso de cancelamento ou indeferimento do registro, mediante decisão transitada em julgado, reassumirá imediatamente as atividades do cargo, devolvendo as quantias recebidas desde o início do afastamento. 
+				que em caso de cancelamento ou indeferimento do registro, mediante decisÃ£o transitada em julgado, reassumirÃ¡ imediatamente as atividades do cargo, devolvendo as quantias recebidas desde o inÃ­cio do afastamento. 
 			</li>
 			<li>
-				que uma vez concedida a licença sem remuneração, a concessão da licença com remuneração será considerada como prorrogação da primeira, não havendo necessidade de retorno ao serviço.
+				que uma vez concedida a licenÃ§a sem remuneraÃ§Ã£o, a concessÃ£o da licenÃ§a com remuneraÃ§Ã£o serÃ¡ considerada como prorrogaÃ§Ã£o da primeira, nÃ£o havendo necessidade de retorno ao serviÃ§o.
 			</li>
 			<li>
-				que o período de licença, com remuneração, contar-se-á apenas para os efeitos de aposentadoria e disponibilidade. 
+				que o perÃ­odo de licenÃ§a, com remuneraÃ§Ã£o, contar-se-Ã¡ apenas para os efeitos de aposentadoria e disponibilidade. 
 			</li>
 			<li>
-				que o período concedido sem remuneração, contará apenas para aposentadoria, caso o servidor opte pela manutenção da vinculação ao Plano de Seguridade Social do Servidor Público, mediante recolhimento mensal da respectiva contribuição, no mesmo percentual devido pelos servidores em atividade, que terá como base de cálculo a remuneração contributiva do cargo efetivo a que faria jus se em exercício estivesse, computando-se para esse efeito, inclusive, as vantagens pessoais, nos termos do art. 183 da Lei nº 8.112 de 1990, com as alterações da Lei nº 10.667, de 14 de maio de 2003. 
+				que o perÃ­odo concedido sem remuneraÃ§Ã£o, contarÃ¡ apenas para aposentadoria, caso o servidor opte pela manutenÃ§Ã£o da vinculaÃ§Ã£o ao Plano de Seguridade Social do Servidor PÃºblico, mediante recolhimento mensal da respectiva contribuiÃ§Ã£o, no mesmo percentual devido pelos servidores em atividade, que terÃ¡ como base de cÃ¡lculo a remuneraÃ§Ã£o contributiva do cargo efetivo a que faria jus se em exercÃ­cio estivesse, computando-se para esse efeito, inclusive, as vantagens pessoais, nos termos do art. 183 da Lei nÂº 8.112 de 1990, com as alteraÃ§Ãµes da Lei nÂº 10.667, de 14 de maio de 2003. 
 			</li>
 			<li>
-				que o período de afastamento, com ou sem remuneração, suspende o estágio probatório e o prazo para aquisição de estabilidade, bem como não lhe dá direito a receber o auxílio-alimentação.		
+				que o perÃ­odo de afastamento, com ou sem remuneraÃ§Ã£o, suspende o estÃ¡gio probatÃ³rio e o prazo para aquisiÃ§Ã£o de estabilidade, bem como nÃ£o lhe dÃ¡ direito a receber o auxÃ­lio-alimentaÃ§Ã£o.		
 			</li>
 			</ul>
 			<c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" />
@@ -82,23 +82,23 @@
 			
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<i>
-			Declaro estar ciente de que o § 2º do art. 183 da Lei n.º 8.112/90, acrescentado
-			pela Lei n.º 10.667/2003, prevê que o servidor afastado ou licenciado do cargo 
-			efetivo, sem direito à remuneração, inclusive para servir em organismo oficial 
+			Declaro estar ciente de que o Â§ 2Âº do art. 183 da Lei n.Âº 8.112/90, acrescentado
+			pela Lei n.Âº 10.667/2003, prevÃª que o servidor afastado ou licenciado do cargo 
+			efetivo, sem direito Ã  remuneraÃ§Ã£o, inclusive para servir em organismo oficial 
 			internacional do qual o Brasil seja membro efetivo ou com o qual coopere, ainda 
-			que contribua para regime de previdência social no exterior, terá suspenso o seu 
-			vínculo com o regime do Plano de Seguridade Social do Servidor Público enquanto 
-			durar o afastamento ou a licença, não lhes assistindo, neste período, 
-			os benefícios do mencionado regime de previdência.
+			que contribua para regime de previdÃªncia social no exterior, terÃ¡ suspenso o seu 
+			vÃ­nculo com o regime do Plano de Seguridade Social do Servidor PÃºblico enquanto 
+			durar o afastamento ou a licenÃ§a, nÃ£o lhes assistindo, neste perÃ­odo, 
+			os benefÃ­cios do mencionado regime de previdÃªncia.
 			</i></p>
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<i> 
-			Declaro, ainda, estar ciente de que o § 3º do referido artigo, também acrescentado 
-			pela Lei n.º 10.667/2003, assegura ao servidor na situação acima descrita, a 
-			manutenção da vinculação ao regime do Plano de Seguridade Social do Servidor 
-			Público, mediante o recolhimento mensal da respectiva contribuição, no mesmo 
-			percentual devido pelos servidores em atividade, incidente sobre a remuneração 
-			total do cargo a que faz jus no exercício de suas atribuições, computando-se, 
+			Declaro, ainda, estar ciente de que o Â§ 3Âº do referido artigo, tambÃ©m acrescentado 
+			pela Lei n.Âº 10.667/2003, assegura ao servidor na situaÃ§Ã£o acima descrita, a 
+			manutenÃ§Ã£o da vinculaÃ§Ã£o ao regime do Plano de Seguridade Social do Servidor 
+			PÃºblico, mediante o recolhimento mensal da respectiva contribuiÃ§Ã£o, no mesmo 
+			percentual devido pelos servidores em atividade, incidente sobre a remuneraÃ§Ã£o 
+			total do cargo a que faz jus no exercÃ­cio de suas atribuiÃ§Ãµes, computando-se, 
 			para esse efeito, inclusive, as vantagens pessoais.
 			</i></p>
 			<p align="center">${doc.dtExtenso}</p>

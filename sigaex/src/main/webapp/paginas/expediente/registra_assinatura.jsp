@@ -57,15 +57,15 @@ function sbmt() {
 						<td><siga:selecao propriedade="titular" tema="simple" modulo="siga"/></td>
 					</tr>
 					<tr>
-						<td><span style="font-weight: bold">Atenção:</span></td>
+						<td><span style="font-weight: bold">AtenÃ§Ã£o:</span></td>
 						<td>
-							<span>Após o registro da assinatura não é mais possível editar ou excluir o documento.</span> <br>
+							<span>ApÃ³s o registro da assinatura nÃ£o Ã© mais possÃ­vel editar ou excluir o documento.</span> <br>
 							<span style="font-weight: bold">Deseja registrar a assinatura?</span>
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2"><input type="submit" value="Sim" class="gt-btn-medium gt-btn-left"/> <input type="button"
-							value="Não" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/></td>
+							value="NÃ£o" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/></td>
 					</tr>
 				</table>
 			</ww:form>

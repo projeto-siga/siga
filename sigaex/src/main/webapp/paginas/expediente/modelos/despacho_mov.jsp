@@ -41,7 +41,7 @@
 		<br/>
 		</p>
 		<c:if test="${(not empty mov.lotaResp) and (mov.lotaResp.idLotacaoIni != mov.lotaCadastrante.idLotacaoIni)}">
-			<p>À ${mov.lotaResp.descricao},</p>
+			<p>Ã€ ${mov.lotaResp.descricao},</p>
 		</c:if>
 		<c:if test="${not empty despachoTexto}">
 			<p style="TEXT-INDENT: 2cm">${despachoTexto}</p>

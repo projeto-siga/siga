@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-PRORROGA«√O DE EXERCÕCIO DA POSSE DE SERVIDOR RECEM EMPOSSADO -->
+PRORROGA√á√ÉO DE EXERC√çCIO DA POSSE DE SERVIDOR RECEM EMPOSSADO -->
 
 <c:set var="esconderTexto" value="sim" scope="request" />
 <c:set var="para" value="diretoraRH" scope="request" />
@@ -16,10 +16,10 @@ PRORROGA«√O DE EXERCÕCIO DA POSSE DE SERVIDOR RECEM EMPOSSADO -->
 			<mod:texto titulo="Cargo Empossado" largura="40" var="cargoEmpossado"/>
 	 </mod:grupo>
 	 <mod:grupo titulo="DETALHES DO REGISTRO DO SERVIDOR">			
-			<mod:texto titulo="N˙mero do Ato" var="atoNum"/>
+			<mod:texto titulo="N√∫mero do Ato" var="atoNum"/>
 			<mod:data titulo="Data do Ato" var="atoData"/>	
 	 <mod:grupo></mod:grupo>
-			<mod:data titulo="Data da PublicaÁ„o no Diario Oficial da Uni„o" var="dataPublicacaoDOU"/>			
+			<mod:data titulo="Data da Publica√ß√£o no Diario Oficial da Uni√£o" var="dataPublicacaoDOU"/>			
 	 </mod:grupo>
 		
 	</mod:entrevista>
@@ -30,17 +30,17 @@ PRORROGA«√O DE EXERCÕCIO DA POSSE DE SERVIDOR RECEM EMPOSSADO -->
 		<!-- 
 		
 			NOTA:
-				N„o tenho certeza se devemos apontar a recuperacao dos dados 
-				do servidor (ou seja funcionario) da base de dados no BD, pois ser· 
-				q a informaÁ„o desejada ja persiste? Mas ele ele n„o È um funcionario
+				N√£o tenho certeza se devemos apontar a recuperacao dos dados 
+				do servidor (ou seja funcionario) da base de dados no BD, pois ser√° 
+				q a informa√ß√£o desejada ja persiste? Mas ele ele n√£o √© um funcionario
 				recem empossado?
 				
-				Para o sistema recuperar informaÁıes da base de dados sobre o funcionario,
-				neste caso deveriamos saber como funciona os tramites de cadastro na seÁ„o,
-				pois ser· q seu cadastro È feito de imediato? - Sera q ele ja
-				CONSTA no sistema???? ou apÛs alguns dias? - N√O SABEMOS, E POR isso 
+				Para o sistema recuperar informa√ß√µes da base de dados sobre o funcionario,
+				neste caso deveriamos saber como funciona os tramites de cadastro na se√ß√£o,
+				pois ser√° q seu cadastro √© feito de imediato? - Sera q ele ja
+				CONSTA no sistema???? ou ap√≥s alguns dias? - N√ÉO SABEMOS, E POR isso 
 				entendi	q EMBORA FUNCIONARIO, AINDA NAO CONSTA NO SISTEMA, por isso nao
-				seu nome n„o aparecer· no formulario e consequentemente, ALGUEM DEVERA 
+				seu nome n√£o aparecer√° no formulario e consequentemente, ALGUEM DEVERA 
 				digitar seu nome em um campo texto na tela.
 										
 			1)	AS LINHAS DE BAIXO REPRESENTAM 
@@ -50,12 +50,12 @@ PRORROGA«√O DE EXERCÕCIO DA POSSE DE SERVIDOR RECEM EMPOSSADO -->
 			SE TIVER CERTEZA DISSO, POIS O SISTEMA 
 			BUSCA A INFORMACAO DAS CLASSES.
 												 		
-				<B>${doc.subscritor.descricao}</B>, nomeado(a) pelo Ato n∫ ${atoNum}, de ${atoData}, 
-				publicado no Di·rio Oficial da Uni„o - SeÁ„o 2 de ${dataPublicacaoDOU}, 
+				<B>${doc.subscritor.descricao}</B>, nomeado(a) pelo Ato n¬∫ ${atoNum}, de ${atoData}, 
+				publicado no Di√°rio Oficial da Uni√£o - Se√ß√£o 2 de ${dataPublicacaoDOU}, 
 				para o cargo de ${subscritor.cargo.nomeCargo}, tendo, nesta data, 
-				assinado o termo de posse,  vem requerer a V.S™, nos termos do 
-				<b>art. 15 da Lei n.∫ 8.112/90, com a redaÁ„o dada pela Lei 
-				n.∫ 9.527/97, <b>a prorrogaÁ„o do exercÌcio pelo 
+				assinado o termo de posse,  vem requerer a V.S¬™, nos termos do 
+				<b>art. 15 da Lei n.¬∫ 8.112/90, com a reda√ß√£o dada pela Lei 
+				n.¬∫ 9.527/97, <b>a prorroga√ß√£o do exerc√≠cio pelo 
 				prazo de 15 (quinze) dias</b>.
 				
 
@@ -68,12 +68,12 @@ PRORROGA«√O DE EXERCÕCIO DA POSSE DE SERVIDOR RECEM EMPOSSADO -->
 		
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${servidorEmpossado}, nomeado(a) pelo Ato n∫ ${atoNum}, de ${atoData}, 
-		publicado no Di·rio Oficial da Uni„o - SeÁ„o 2 de ${dataPublicacaoDOU}, 
+		${servidorEmpossado}, nomeado(a) pelo Ato n¬∫ ${atoNum}, de ${atoData}, 
+		publicado no Di√°rio Oficial da Uni√£o - Se√ß√£o 2 de ${dataPublicacaoDOU}, 
 		para o cargo de ${cargoEmpossado}, tendo, nesta data, 
-		assinado o termo de posse,  vem requerer a V.S™, nos termos do 
-		art. 15 da Lei n.∫ 8.112/90, com a redaÁ„o dada pela Lei 
-		n.∫ 9.527/97, a <b>PRORROGA«√O DO EXERCÕCIO</b> pelo 
+		assinado o termo de posse,  vem requerer a V.S¬™, nos termos do 
+		art. 15 da Lei n.¬∫ 8.112/90, com a reda√ß√£o dada pela Lei 
+		n.¬∫ 9.527/97, a <b>PRORROGA√á√ÉO DO EXERC√çCIO</b> pelo 
 		prazo de 15 (quinze) dias.
 		</p>
 		</mod:valor>

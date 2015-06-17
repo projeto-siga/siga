@@ -6,9 +6,9 @@
 	</mod:entrevista>
 	<mod:documento>
 		<p>NOME: <u>${doc.subscritor.descricao}</u> &nbsp; &nbsp; &nbsp;
-		&nbsp; MATRÕCULA: <u>${doc.subscritor.sigla}</u><br />
+		&nbsp; MATR√çCULA: <u>${doc.subscritor.sigla}</u><br />
 		CARGO: <u>${doc.subscritor.cargo.nomeCargo}</u><br />
-		LOTA«√O: <u>${doc.subscritor.lotacao.descricao}</u> &nbsp; &nbsp;
+		LOTA√á√ÉO: <u>${doc.subscritor.lotacao.descricao}</u> &nbsp; &nbsp;
 		&nbsp; &nbsp; RAMAL: <u>${ramal}</u></p>
 	</mod:documento>
 </mod:modelo>

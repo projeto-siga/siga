@@ -8,11 +8,11 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="MovimentaÁ„o">
+<siga:pagina titulo="Movimenta√ß√£o">
 
 <script language="Javascript1.1" type="text/javascript">
 function confirma(){
- return confirm ('Essa movimentaÁ„o n„o poder· ser desfeita. Prosseguir?');
+ return confirm ('Essa movimenta√ß√£o n√£o poder√° ser desfeita. Prosseguir?');
 }
 </script>
 
@@ -39,7 +39,7 @@ function confirma(){
 					</tr>
 					<ww:textfield name="dtPubl"
 						onblur="javascript:verifica_data(this,0);"
-						label="Data da PublicaÁ„o" />
+						label="Data da Publica√ß√£o" />
 					<tr class="button">
 						<td colspan="2"><input type="submit" value="Ok" onclick="javascript: return confirma();" class="gt-btn-medium gt-btn-left"/> <input type="button"
 							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>

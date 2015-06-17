@@ -6,7 +6,7 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:texto titulo="Número do Documento" var="num_doc" largura="15" /> Ano/Número
+			<mod:texto titulo="NÃºmero do Documento" var="num_doc" largura="15" /> Ano/NÃºmero
 				</mod:grupo>
 	</mod:entrevista>
 
@@ -49,7 +49,7 @@
 		<mod:letra tamanho="${tl}">
 			<p style="TEXT-INDENT: 2cm" align="justify">Declaro, sob as penas
 			da lei, que realizei o deslocamento proposto na PCD SIGA-EX
-			Nº-RJ-FOR-${num_doc}, para a localidade e o período solicitado.</p>
+			NÂº-RJ-FOR-${num_doc}, para a localidade e o perÃ­odo solicitado.</p>
 			<br />
 			<br />
 			<p align="center">${doc.dtExtenso}</p>

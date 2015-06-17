@@ -3,23 +3,23 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-VACÂNCIA -->
+VACÃ‚NCIA -->
 
 <script language="javascript">
 var newwin = null;
 </script>
 
 <c:set var="textoRodape"
-	value="Documentos imprescindíveis para instrução do processo administrativo, consoante Resolução n.º 148, de 26/05/95, do Conselho da Justiça Federal e Ordem de Serviço nº 04, de 03/10/2001, da Direção do Foro."
+	value="Documentos imprescindÃ­veis para instruÃ§Ã£o do processo administrativo, consoante ResoluÃ§Ã£o n.Âº 148, de 26/05/95, do Conselho da JustiÃ§a Federal e Ordem de ServiÃ§o nÂº 04, de 03/10/2001, da DireÃ§Ã£o do Foro."
 	scope="request" />
 <c:set var="esconderTexto" value="sim" scope="request" />
 <c:set var="para" value="diretorForo" scope="request" />
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">
 	<mod:entrevista>
 
-		<mod:grupo titulo="DETALHES DA VACÂNCIA">
+		<mod:grupo titulo="DETALHES DA VACÃ‚NCIA">
 			<mod:texto titulo="Cargo a ser ocupado" var="cargoASerOcupado" />
-			<mod:texto titulo="Órgão" var="orgao" />
+			<mod:texto titulo="Ã“rgÃ£o" var="orgao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="Data da Posse" var="dataDaPosse" />
@@ -27,7 +27,7 @@ var newwin = null;
 		<%--<mod:selecao var="numDependentes" titulo="Numero de dependentes"
 			opcoes="1;2;3;4;5;6;7;8;9" />--%>
 		<mod:grupo titulo="CONTATOS">
-			<mod:texto titulo="Endereço" var="endereco" largura="70" />
+			<mod:texto titulo="EndereÃ§o" var="endereco" largura="70" />
 			<mod:texto titulo="Cep" largura="13" var="cep" />
 		</mod:grupo>
 
@@ -38,22 +38,22 @@ var newwin = null;
 
 		<mod:grupo titulo="DOCUMENTOS ANEXOS AO REQUERIMENTO">
 			<mod:caixaverif
-				titulo="Declaração de bens atualizada até a data da vacância, com os respectivos valores;"
-				var="declaraBensAnex" reler="Não" />
+				titulo="DeclaraÃ§Ã£o de bens atualizada atÃ© a data da vacÃ¢ncia, com os respectivos valores;"
+				var="declaraBensAnex" reler="NÃ£o" />
 		</mod:grupo>
 
 		<mod:grupo>
-			<mod:caixaverif titulo="Declaração de Devolução do Token;"
-				var="declaraDevolvToken" reler="Não" />
+			<mod:caixaverif titulo="DeclaraÃ§Ã£o de DevoluÃ§Ã£o do Token;"
+				var="declaraDevolvToken" reler="NÃ£o" />
 		</mod:grupo>
 
 		<mod:grupo>
 			<mod:caixaverif
-				titulo="Cópias da declaração de Imposto de renda e recibo de entrega ou declaração de isenção;"
-				var="IrpfCopiaAnex" reler="Não" />
+				titulo="CÃ³pias da declaraÃ§Ã£o de Imposto de renda e recibo de entrega ou declaraÃ§Ã£o de isenÃ§Ã£o;"
+				var="IrpfCopiaAnex" reler="NÃ£o" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:caixaverif titulo="Cópia do CPF;" var="cpfAnex" reler="Não" />
+			<mod:caixaverif titulo="CÃ³pia do CPF;" var="cpfAnex" reler="NÃ£o" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:radio titulo="Termo de posse no novo cargo"
@@ -68,69 +68,69 @@ var newwin = null;
 			<mod:obrigatorios />
 			<br/>
 			<mod:grupo>
-				<mod:caixaverif titulo="Comprometo-me a entregar o termo de posse no prazo de 02 (dois) dia úteis, contados da data da posse no novo cargo público inacumulável, para fins de instrução do processo administrativo de vacância"
-					var="comprometoMe" reler="Não" obrigatorio="Sim" />
+				<mod:caixaverif titulo="Comprometo-me a entregar o termo de posse no prazo de 02 (dois) dia Ãºteis, contados da data da posse no novo cargo pÃºblico inacumulÃ¡vel, para fins de instruÃ§Ã£o do processo administrativo de vacÃ¢ncia"
+					var="comprometoMe" reler="NÃ£o" obrigatorio="Sim" />
 			</mod:grupo>	
 		</c:if>
 		
-		<c:set var="labelOutrosDocs">Outros documentos fora da lista. <b>Separar por vírgula</b></c:set>
+		<c:set var="labelOutrosDocs">Outros documentos fora da lista. <b>Separar por vÃ­rgula</b></c:set>
 		<mod:texto titulo="${labelOutrosDocs}" var="outroDoc" largura="50"/>
 		<%--<mod:grupo>
 			<mod:memo colunas="80" linhas="1"
-				titulo="Outros documentos fora da lista. Separar por vírgula." var="outroDoc" />
+				titulo="Outros documentos fora da lista. Separar por vÃ­rgula." var="outroDoc" />
 		</mod:grupo>--%>
 
-		<mod:grupo titulo="ITENS QUE ESTÃO SENDO DEVOLVIDOS">
+		<mod:grupo titulo="ITENS QUE ESTÃƒO SENDO DEVOLVIDOS">
 			<mod:grupo>
 				<mod:caixaverif
-					titulo="Crachá Funcional e Carteira Funcional à SECAD;"
-					var="crachaDev" reler="Não" />
+					titulo="CrachÃ¡ Funcional e Carteira Funcional Ã  SECAD;"
+					var="crachaDev" reler="NÃ£o" />
 			</mod:grupo>
 
 			<mod:grupo>
 				<mod:caixaverif
-					titulo="Carteiras do Plano de Saúde do Titular e do(s) dependente(s) à SEBEN;"
-					var="carteiraSaudeDev" reler="Não" />
+					titulo="Carteiras do Plano de SaÃºde do Titular e do(s) dependente(s) Ã  SEBEN;"
+					var="carteiraSaudeDev" reler="NÃ£o" />
 			</mod:grupo>
 
 			<mod:grupo>
 				<mod:caixaverif
-					titulo="Documento emitido pelo órgão promotor do curso de formação de que não percebeu o auxílio financeiro;"
-					var="documentoCurso" reler="Não" />
+					titulo="Documento emitido pelo Ã³rgÃ£o promotor do curso de formaÃ§Ã£o de que nÃ£o percebeu o auxÃ­lio financeiro;"
+					var="documentoCurso" reler="NÃ£o" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:caixaverif
-					titulo="Comprovante de recolhimento de contribuição para a Previdência Social, do servidor público, durante o curso de formação à CLCP;"
-					var="comprovanteContribuicao" reler="Não" />
+					titulo="Comprovante de recolhimento de contribuiÃ§Ã£o para a PrevidÃªncia Social, do servidor pÃºblico, durante o curso de formaÃ§Ã£o Ã  CLCP;"
+					var="comprovanteContribuicao" reler="NÃ£o" />
 
 			</mod:grupo>
 			<mod:grupo>
 				<mod:caixaverif
-					titulo="Comprovante de Frequência durante o curso de formação à CLCP."
-					var="comprovanteFrequencia" reler="Não" />
+					titulo="Comprovante de FrequÃªncia durante o curso de formaÃ§Ã£o Ã  CLCP."
+					var="comprovanteFrequencia" reler="NÃ£o" />
 
 			</mod:grupo>
-			<c:set var="labelOutrosDocs">Outros itens fora da lista. <b>Separar por vírgula</b></c:set>
+			<c:set var="labelOutrosDocs">Outros itens fora da lista. <b>Separar por vÃ­rgula</b></c:set>
 		<mod:texto titulo="${labelOutrosDocs}" var="outroItem" largura="50"/>
 		</mod:grupo>
 		<br/>
-		<mod:grupo><mod:mensagem titulo="Atenção"
-				texto="preencha o destinatário com Seleg e, após finalizar, transfira para a Seleg." vermelho="Sim" /></mod:grupo>
+		<mod:grupo><mod:mensagem titulo="AtenÃ§Ã£o"
+				texto="preencha o destinatÃ¡rio com Seleg e, apÃ³s finalizar, transfira para a Seleg." vermelho="Sim" /></mod:grupo>
 		<br/>
 		<c:set var="conteudo1">
-			Acarreta perda de vínculo com a Administração Pública, com pagamento de indenização de férias. 
+			Acarreta perda de vÃ­nculo com a AdministraÃ§Ã£o PÃºblica, com pagamento de indenizaÃ§Ã£o de fÃ©rias. 
 		</c:set>
 		<c:set var="conteudo2">
-			Acarreta manutenção do vínculo com a Administração Pública, o que possibilita averbação de tempo para férias (não havendo pagamento de indenização de férias) e manutenção de determinadas vantagens pessoais.
+			Acarreta manutenÃ§Ã£o do vÃ­nculo com a AdministraÃ§Ã£o PÃºblica, o que possibilita averbaÃ§Ã£o de tempo para fÃ©rias (nÃ£o havendo pagamento de indenizaÃ§Ã£o de fÃ©rias) e manutenÃ§Ã£o de determinadas vantagens pessoais.
 		</c:set>
 		<c:set var="textoCiencia">
-			<b>Estou ciente das diferentes consequências entre a  
+			<b>Estou ciente das diferentes consequÃªncias entre a  
 			<span onmouseover="this.style.cursor='hand';" 
 			onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste',null,'height=50,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${conteudo1}');">
-				<u> exoneração a pedido</u></span> 
+				<u> exoneraÃ§Ã£o a pedido</u></span> 
 			e a 
 			<span onmouseover="this.style.cursor='hand';" onclick="javascript: if (newwin!=null) newwin.close; newwin.close(); newwin = window.open('teste2',null,'height=125,width=400,status=no,toolbar=no,menubar=no,location=no'); newwin.document.write('${conteudo2}');"><u>
-			vacância por posse em outro cargo inacumulável</u></span> </b>
+			vacÃ¢ncia por posse em outro cargo inacumulÃ¡vel</u></span> </b>
 		</c:set>
 		<mod:obrigatorios />
 			<br/>
@@ -142,13 +142,13 @@ var newwin = null;
 		<mod:valor var="texto_requerimento">
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo},
-			${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao} vem requerer a Vossa Excelência
-			que se digne encaminhar o requerimento de vacância por posse em outro
-			cargo inacumulável, em anexo, ao E.
-			Tribunal Regional Federal da 2ª Região.</p>
+			${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao} vem requerer a Vossa ExcelÃªncia
+			que se digne encaminhar o requerimento de vacÃ¢ncia por posse em outro
+			cargo inacumulÃ¡vel, em anexo, ao E.
+			Tribunal Regional Federal da 2Âª RegiÃ£o.</p>
 
 			<p style="TEXT-INDENT: 2cm" align="justify">Informa, ainda, o
-			endereço atualizado para fins de correspondência:</p>
+			endereÃ§o atualizado para fins de correspondÃªncia:</p>
 	
 		${endereco}.
 		<br>
@@ -181,33 +181,33 @@ var newwin = null;
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<p style="TEXT-INDENT: 1.5cm; font-size: 12px" align="justify">
 			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo},
-			${doc.subscritor.padraoReferencia}, matrícula
+			${doc.subscritor.padraoReferencia}, matrÃ­cula
 			${doc.subscritor.matricula}, lotado(a) no(a)
 			${doc.subscritor.lotacao.descricao}, vem requerer a
-			Vossa Excelência <b>vacância</b> do cargo público que ora ocupa, com
+			Vossa ExcelÃªncia <b>vacÃ¢ncia</b> do cargo pÃºblico que ora ocupa, com
 			base no art. 33, VIII, da Lei 8.112/90, a partir do dia
-			${dataDaPosse}, em razão de posse no cargo de ${cargoASerOcupado} do Quadro de
+			${dataDaPosse}, em razÃ£o de posse no cargo de ${cargoASerOcupado} do Quadro de
 			Pessoal do(a) ${orgao}.
 			<p />
-			<p style="TEXT-INDENT: 1.5cm; font-size: 12px" align="justify">Está ciente das diferentes conseqüências entre exoneração a pedido e vacância por posse
-			em outro cargo inacumulável.<p />
+			<p style="TEXT-INDENT: 1.5cm; font-size: 12px" align="justify">EstÃ¡ ciente das diferentes conseqÃ¼Ãªncias entre exoneraÃ§Ã£o a pedido e vacÃ¢ncia por posse
+			em outro cargo inacumulÃ¡vel.<p />
 			<p style="TEXT-INDENT: 1.5cm; font-size: 12px" align="justify"><b><i>Em
 			anexo, encontram-se o(s) seguinte(s) documento(s):</b></i></p>
 			<ul style="font-size: 12px">
 				<c:if test="${declaraDevolvToken=='Sim'}">
-					<li>Declaração de Devolução do Token;</li>
+					<li>DeclaraÃ§Ã£o de DevoluÃ§Ã£o do Token;</li>
 				</c:if>
 				
 				<c:if test="${declaraBensAnex=='Sim'}">
-					<li>Declaração de bens atualizada até a data da vacância,
+					<li>DeclaraÃ§Ã£o de bens atualizada atÃ© a data da vacÃ¢ncia,
 					com os respectivos valores;</li>
 				</c:if>
 				<c:if test="${IrpfCopiaAnex=='Sim'}">
-					<li>Cópias da declaração de Imposto de renda e recibo de
-					entrega ou declaração de isenção;</li>
+					<li>CÃ³pias da declaraÃ§Ã£o de Imposto de renda e recibo de
+					entrega ou declaraÃ§Ã£o de isenÃ§Ã£o;</li>
 				</c:if>
 				<c:if test="${cpfAnex=='Sim'}">
-					<li>Cópia do CPF;</li>
+					<li>CÃ³pia do CPF;</li>
 				</c:if>
 				<c:if test="${termoPosseComprom == 'posse'}">
 					<li>Termo de posse no novo cargo;</li>
@@ -222,24 +222,24 @@ var newwin = null;
 				</c:if>
 			</ul>
 			<p style="TEXT-INDENT: 1.5cm; font-size: 12px" align="justify"><b><i>Declara,
-			ainda, ter devolvido às respectivas Seções:</b></i></p>
+			ainda, ter devolvido Ã s respectivas SeÃ§Ãµes:</b></i></p>
 			<ul style="font-size: 12px">
 				<c:if test="${crachaDev=='Sim'}">
-					<li>Crachá Funcional e Carteira Funcional à SECAD;</li>
+					<li>CrachÃ¡ Funcional e Carteira Funcional Ã  SECAD;</li>
 				</c:if>
 				<c:if test="${carteiraSaudeDev=='Sim'}">
-					<li>Carteira(s) do Plano de Saúde do Titular e
-					do(s) dependente(s) à SEBEN;</li>
+					<li>Carteira(s) do Plano de SaÃºde do Titular e
+					do(s) dependente(s) Ã  SEBEN;</li>
 				</c:if>
 				<c:if test="${documentoCurso=='Sim'}">
-					<li>Documento emitido pelo órgão promotor do curso de formação
-					de que não percebeu o auxílio financeiro á CLCP;</li>
+					<li>Documento emitido pelo Ã³rgÃ£o promotor do curso de formaÃ§Ã£o
+					de que nÃ£o percebeu o auxÃ­lio financeiro Ã¡ CLCP;</li>
 				</c:if>
 				<c:if test="${comprovanteContribuicao=='Sim'}">
-					<li>Comprovante de recolhimento de contribuição para a Previdência Social, do servidor público, durante o curso de formação à CLCP;</li>
+					<li>Comprovante de recolhimento de contribuiÃ§Ã£o para a PrevidÃªncia Social, do servidor pÃºblico, durante o curso de formaÃ§Ã£o Ã  CLCP;</li>
 				</c:if>
 				<c:if test="${comprovanteFrequencia=='Sim'}">
-					<li>Comprovante de Frequência durante o curso de formação á
+					<li>Comprovante de FrequÃªncia durante o curso de formaÃ§Ã£o Ã¡
 					CLCP;</li>
 				</c:if>
 				<c:if test="${ not empty outroItem }">

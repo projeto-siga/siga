@@ -5,7 +5,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <!-- este modelo trata de
-solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
+solicita√ß√£o de inscri√ß√£o para capacita√ß√£o sem onus -->
 <script type="text/javascript">
 
 	function alerta(){
@@ -29,10 +29,10 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 		
 			
 			
-			<mod:grupo titulo="Contrato de AquisiÁ„o em Geral">
+			<mod:grupo titulo="Contrato de Aquisi√ß√£o em Geral">
 			
 									
-				<mod:monetario titulo="Termo de contrato de N∫" largura="12" maxcaracteres="10" var="termo" verificaNum="sim"/>
+				<mod:monetario titulo="Termo de contrato de N¬∫" largura="12" maxcaracteres="10" var="termo" verificaNum="sim"/>
 			
 				<mod:texto	titulo="Fornecimento de" largura="20" var="forn" />
 			
@@ -53,11 +53,11 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 			
 				<mod:grupo titulo="Processo Administrativo">
 			
-					<mod:monetario titulo="N∫ 1" largura="4" maxcaracteres="3" var="n1" verificaNum="sim"/>
+					<mod:monetario titulo="N¬∫ 1" largura="4" maxcaracteres="3" var="n1" verificaNum="sim"/>
 			
-					<mod:monetario titulo="N∫ 2" largura="4" maxcaracteres="3" var="n2" verificaNum="sim"/>
+					<mod:monetario titulo="N¬∫ 2" largura="4" maxcaracteres="3" var="n2" verificaNum="sim"/>
 			
-					<mod:monetario titulo="N∫ 3" largura="4" maxcaracteres="3" var="n3" verificaNum="sim"/>
+					<mod:monetario titulo="N¬∫ 3" largura="4" maxcaracteres="3" var="n3" verificaNum="sim"/>
 			
 				</mod:grupo>
 							
@@ -83,7 +83,7 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 								
 								<mod:grupo>								
 								
-									<mod:texto titulo="DescriÁ„o${i}" largura="20" maxcaracteres="18" var="desc${i}"/>							
+									<mod:texto titulo="Descri√ß√£o${i}" largura="20" maxcaracteres="18" var="desc${i}"/>							
 								
 									<mod:monetario titulo="Quantidade${i}" largura="6" maxcaracteres="4" var="qtd_item${i}" verificaNum="sim"/>									
 								
@@ -106,7 +106,7 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 						
 						<mod:texto	titulo="Rua" largura="20" var="rua" />				
 						
-						<mod:texto	titulo="SeÁ„o" largura="20" var="secao"  />
+						<mod:texto	titulo="Se√ß√£o" largura="20" var="secao"  />
 						
 						<mod:monetario titulo="Prazo (em dias)" largura="6" maxcaracteres="4" var="prazo" verificaNum="sim"/>					
 					
@@ -117,7 +117,7 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 					
 						<mod:texto	titulo="Nome" largura="20" var="emp"  />
 						
-						<mod:texto	titulo="EndereÁo" largura="20" var="end"  />
+						<mod:texto	titulo="Endere√ßo" largura="20" var="end"  />
 						
 						<mod:monetario titulo="Telefone" largura="10" maxcaracteres="8" var="tel" verificaNum="sim"/>
 						
@@ -129,7 +129,7 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 					
 					
 								
-					<mod:grupo titulo="Preg„o">
+					<mod:grupo titulo="Preg√£o">
 			
 						<mod:monetario titulo="Numero" largura="12" maxcaracteres="10" var="pregao" verificaNum="sim"/>
 						
@@ -157,90 +157,90 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 	
 	<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp"/>
 	
-	<p style="TEXT-INDENT: 4cm" align="left">/TERMO DE CONTRATO N∫${termo}/${ano}<br>
+	<p style="TEXT-INDENT: 4cm" align="left">/TERMO DE CONTRATO N¬∫${termo}/${ano}<br>
 	CONTRATO DE FORNECIMENTO DE ${forn} ,<br>
 	QUE ENTRE SI FAZEM A <br>
-	JUSTI«A FEDERAL DE 1∫ GRAU NO RIO DE JANEIRO <br>
+	JUSTI√áA FEDERAL DE 1¬∫ GRAU NO RIO DE JANEIRO <br>
 	NO RIO DE JANEIRO E A EMPRESA ${emp}<br>
-	PROCESSO N∞ ${n1}/${n2}/${n3} - EOF</p>
+	PROCESSO N¬∞ ${n1}/${n2}/${n3} - EOF</p>
 	
-	<p style="TEXT-INDENT: 2cm" align="justify">A JustiÁa Federal de 1∫ Grau no Rio de Janeiro, com sede na Av. Rio 
-	Branco, 243 - Anexo I - 14∞ andar, Centro/RJ, inscrita no C.N.P.J. sob o n∫ 05.424.540/0001-16, neste ato 
-	representada pelo Dr. ${jfdr}, Juiz Federal - Diretor do Foro, identidade n∫ ${ident},  
+	<p style="TEXT-INDENT: 2cm" align="justify">A Justi√ßa Federal de 1¬∫ Grau no Rio de Janeiro, com sede na Av. Rio 
+	Branco, 243 - Anexo I - 14¬∞ andar, Centro/RJ, inscrita no C.N.P.J. sob o n¬∫ 05.424.540/0001-16, neste ato 
+	representada pelo Dr. ${jfdr}, Juiz Federal - Diretor do Foro, identidade n¬∫ ${ident},  
 	CPF: ${cpf}, doravante denominada CONTRATANTE, e a empresa ${emp}, estabelecida na ${end},
-	 TEL: ${tel}, FAX: ${fax} ,inscrita no C.N.P.J sob o n∞ ${cnpj}, representada neste ato pelo 
-	 Sr.${represent} , cÈdula de identidade n∫ ${ident_represent},  CPF: ${cpf_represent}, doravante denominada 
-	 CONTRATADA, tendo em vista o decidido no Processo Administrativo n∞ ${n1}/${n2}/${n3} -EOF, atravÈs de 
-	 despacho do Exm∞ Sr Juiz Federal - Diretor do Foro (fls. .......... dos autos), firmam o presente contrato, em 
-	 conformidade com o disposto na Lei n∫ 10.520, de 17/07/2002, Decreto n∫ 3.555, de 08/08/2000 e, subsidiariamente, 
-	 a Lei n∫ 8.666, de 21/06/93 e suas alteraÁıes, mediante as cl·usulas e condiÁıes a seguir:</p>
+	 TEL: ${tel}, FAX: ${fax} ,inscrita no C.N.P.J sob o n¬∞ ${cnpj}, representada neste ato pelo 
+	 Sr.${represent} , c√©dula de identidade n¬∫ ${ident_represent},  CPF: ${cpf_represent}, doravante denominada 
+	 CONTRATADA, tendo em vista o decidido no Processo Administrativo n¬∞ ${n1}/${n2}/${n3} -EOF, atrav√©s de 
+	 despacho do Exm¬∞ Sr Juiz Federal - Diretor do Foro (fls. .......... dos autos), firmam o presente contrato, em 
+	 conformidade com o disposto na Lei n¬∫ 10.520, de 17/07/2002, Decreto n¬∫ 3.555, de 08/08/2000 e, subsidiariamente, 
+	 a Lei n¬∫ 8.666, de 21/06/93 e suas altera√ß√µes, mediante as cl√°usulas e condi√ß√µes a seguir:</p>
 	
-	<h2>CL¡USULA PRIMEIRA DO OBJETIVO</h2>
+	<h2>CL√ÅUSULA PRIMEIRA DO OBJETIVO</h2>
 	
 	<p style="TEXT-INDENT: 2cm" align="justify">1.1 - Constitui objeto do presente contrato o fornecimento de 
-	${quantidade} (por extenso) ${forn}, conforme Termo de ReferÍncia do Preg„o n∫ ${pregao}/${ano}, que faz parte integrante 
+	${quantidade} (por extenso) ${forn}, conforme Termo de Refer√™ncia do Preg√£o n¬∫ ${pregao}/${ano}, que faz parte integrante 
 	deste contrato.</p>
-	OBS:<b>O objeto ser· alterado de acordo com o resultado da licitaÁ„o.</b>
+	OBS:<b>O objeto ser√° alterado de acordo com o resultado da licita√ß√£o.</b>
 	
-	<h2>CL¡USULA SEGUNDA - DO RECEBIMENTO E INSTALA«√O(QUANDO HOUVER) DOS EQUIPAMENTOS</h2>
+	<h2>CL√ÅUSULA SEGUNDA - DO RECEBIMENTO E INSTALA√á√ÉO(QUANDO HOUVER) DOS EQUIPAMENTOS</h2>
 	
-	<p style="TEXT-INDENT: 2cm" align="justify">2.1	A Contratada far· a entrega dos equipamentos na ${secao},
-	 situada na Rua ${rua}, no prazo de ${prazo} dias, apÛs a assinatura do contrato.
-OBS: O prazo de entrega ser· preenchido nos termos da proposta da licitante vencedora, observado o prazo m·ximo 
-estipulado na EspecificaÁ„o.
-	<p style="TEXT-INDENT: 2cm" align="justify">2.2 - O equipamento ser· recebido provisoriamente para inspeÁ„o
-	, visando a comprovar o atendimento ‡s especificaÁıes tÈcnicas, no ato da entrega.</p>
-	<p style="TEXT-INDENT: 2cm" align="justify">2.3 - No caso de sinais externos de avaria, o equipamento dever·
-	ser imediatamente substituÌdo pela Contratada.</p>
-	<p style="TEXT-INDENT: 2cm" align="justify">2.4 - O objeto do presente contrato ser· recebido definitivamente, por servidor ou Comiss„o nomeada pela 
-	AdministraÁ„o, no prazo de atÈ 15 (quinze) dias ˙teis, contados a partir do recebimento provisÛrio, apÛs 
-	verificada e comprovada a conformidade do material com as especificaÁıes exigidas no Edital do Preg„o</p>
-	<p style="TEXT-IDENT: 2cm" aligen="justify">2.4.1 - A nota fiscal encaminha a pela contratad ser· atestada na mesma
-	 data da expediÁ„o do termo de Recebimento Definitivo</p>
-	 <h2>CL¡USULA TERCEIRA - DAS OBRIGA«’ES DA CONTRATADA:</h2>
-	<p style="TEXT-INDENT: 2cm" align="justify">3.1 - A empresa contratada È respons·vel por:</p>
-	<p style="TEXT-INDENT: 3cm" align="justify">a) qualquer acidente que venha a ocorrer com seus empregados e por danos que estes provoquem ‡ JustiÁa Federal ou a 
-terceiros, n„o excluindo essa responsabilidade a fiscalizaÁ„o ou o acompanhamento pela Contratante;</p>
-		<p style="TEXT-INDENT: 3cm" align="justify">b) todos os encargos previdenci·rios e obrigaÁıes sociais previstos na 
-	legislaÁ„o social trabalhista em vigor relativos a seus funcion·rios, vez que os mesmos n„o manter„o nenhum vÌnculo 
-	empregatÌcio com a SeÁ„o Judici·ria do Rio de Janeiro;</p>
-	<p style="TEXT-INDENT: 3cm" align="justify">c) todas as providÍncias e obrigaÁıes estabelecidas na legislaÁ„o 
-	especÌfica de acidentes de trabalho, quando, em ocorrÍncia da espÈcie, forem vÌtimas os seus funcion·rios quando da 
-	realizaÁ„o dos serviÁos contratados, ou em conex„o com eles;</p>
+	<p style="TEXT-INDENT: 2cm" align="justify">2.1	A Contratada far√° a entrega dos equipamentos na ${secao},
+	 situada na Rua ${rua}, no prazo de ${prazo} dias, ap√≥s a assinatura do contrato.
+OBS: O prazo de entrega ser√° preenchido nos termos da proposta da licitante vencedora, observado o prazo m√°ximo 
+estipulado na Especifica√ß√£o.
+	<p style="TEXT-INDENT: 2cm" align="justify">2.2 - O equipamento ser√° recebido provisoriamente para inspe√ß√£o
+	, visando a comprovar o atendimento √†s especifica√ß√µes t√©cnicas, no ato da entrega.</p>
+	<p style="TEXT-INDENT: 2cm" align="justify">2.3 - No caso de sinais externos de avaria, o equipamento dever√°
+	ser imediatamente substitu√≠do pela Contratada.</p>
+	<p style="TEXT-INDENT: 2cm" align="justify">2.4 - O objeto do presente contrato ser√° recebido definitivamente, por servidor ou Comiss√£o nomeada pela 
+	Administra√ß√£o, no prazo de at√© 15 (quinze) dias √∫teis, contados a partir do recebimento provis√≥rio, ap√≥s 
+	verificada e comprovada a conformidade do material com as especifica√ß√µes exigidas no Edital do Preg√£o</p>
+	<p style="TEXT-IDENT: 2cm" aligen="justify">2.4.1 - A nota fiscal encaminha a pela contratad ser√° atestada na mesma
+	 data da expedi√ß√£o do termo de Recebimento Definitivo</p>
+	 <h2>CL√ÅUSULA TERCEIRA - DAS OBRIGA√á√ïES DA CONTRATADA:</h2>
+	<p style="TEXT-INDENT: 2cm" align="justify">3.1 - A empresa contratada √© respons√°vel por:</p>
+	<p style="TEXT-INDENT: 3cm" align="justify">a) qualquer acidente que venha a ocorrer com seus empregados e por danos que estes provoquem √† Justi√ßa Federal ou a 
+terceiros, n√£o excluindo essa responsabilidade a fiscaliza√ß√£o ou o acompanhamento pela Contratante;</p>
+		<p style="TEXT-INDENT: 3cm" align="justify">b) todos os encargos previdenci√°rios e obriga√ß√µes sociais previstos na 
+	legisla√ß√£o social trabalhista em vigor relativos a seus funcion√°rios, vez que os mesmos n√£o manter√£o nenhum v√≠nculo 
+	empregat√≠cio com a Se√ß√£o Judici√°ria do Rio de Janeiro;</p>
+	<p style="TEXT-INDENT: 3cm" align="justify">c) todas as provid√™ncias e obriga√ß√µes estabelecidas na legisla√ß√£o 
+	espec√≠fica de acidentes de trabalho, quando, em ocorr√™ncia da esp√©cie, forem v√≠timas os seus funcion√°rios quando da 
+	realiza√ß√£o dos servi√ßos contratados, ou em conex√£o com eles;</p>
 	<p style="TEXT-INDENT: 3cm" align="justify">d) todos os encargos de eventual demanda trabalhista, civil ou penal, 
-	relacionados ‡ prestaÁ„o dos serviÁos, 
-	originalmente ou vinculada por prevenÁ„o, conex„o ou continÍncia;</p>
+	relacionados √† presta√ß√£o dos servi√ßos, 
+	originalmente ou vinculada por preven√ß√£o, conex√£o ou contin√™ncia;</p>
 	<p style="TEXT-INDENT: 3cm" align="justify">e) todos os encargos fiscais e comerciais decorrentes do presente 
 	contrato;</p>
-	<p style="TEXT-INDENT: 3cm" align="justify">f) todas as despesas referentes  ao suporte de serviÁos, durante  o prazo 
-	de garantia, bem como pelo transporte de tÈcnicos e equipamentos necess·rios ao cumprimento do presente contrato, sem
-	Ùnus para a contratante.</p>
+	<p style="TEXT-INDENT: 3cm" align="justify">f) todas as despesas referentes  ao suporte de servi√ßos, durante  o prazo 
+	de garantia, bem como pelo transporte de t√©cnicos e equipamentos necess√°rios ao cumprimento do presente contrato, sem
+	√¥nus para a contratante.</p>
 	<p style="TEXT-INDENT: 3cm" align="justify">e) todos os encargos fiscais e comerciais decorrentes do presente 
 	contrato;</p>
-	<p style="TEXT-INDENT: 3cm" align="justify">f) todas as despesas referentes  ao suporte de serviÁos, durante  o prazo 
-	de garantia, bem como pelo transporte de tÈcnicos e equipamentos necess·rios ao cumprimento do presente contrato, sem 
-	Ùnus para a contratante.</p>
-	<p style="TEXT-INDENT: 2cm" align="justify">3.2 - A inadiplÍncia da contratada, com referÍncia aos encargos sociais,
-	comerciais e fiscais, n„o transfere a responsabilidade por seu pagamento ‡ AdministraÁ„o da SeÁ„o Judici·ria do Rio de
-	Janeiro, raz„o pela qual a contratada renuncia expressamente a qualquer vÌnculo de solidariedade, ativa ou passiva, com
+	<p style="TEXT-INDENT: 3cm" align="justify">f) todas as despesas referentes  ao suporte de servi√ßos, durante  o prazo 
+	de garantia, bem como pelo transporte de t√©cnicos e equipamentos necess√°rios ao cumprimento do presente contrato, sem 
+	√¥nus para a contratante.</p>
+	<p style="TEXT-INDENT: 2cm" align="justify">3.2 - A inadipl√™ncia da contratada, com refer√™ncia aos encargos sociais,
+	comerciais e fiscais, n√£o transfere a responsabilidade por seu pagamento √† Administra√ß√£o da Se√ß√£o Judici√°ria do Rio de
+	Janeiro, raz√£o pela qual a contratada renuncia expressamente a qualquer v√≠nculo de solidariedade, ativa ou passiva, com
 	a SJRJ.</p>
-	<p style="TEXT-INDENT: 2cm" align="justify">3.3 - A contratada dever· cumprir, ainda com as demis obrigaÁıes constantes 
-	da especificaÁ„o elaborada pela Subsecretaria de Inform·tica, que integra o presente contrato.</p>
-	<h2>CL¡USULA QUARTA - DAS OBRIGA«’ES DA CONTRATANTE:</h2>
-	<p style="TEXT-INDENT: 2cm" align="justify">4.1 - Caber· ‡ Contratante:
-	 <p style="TEXT-INDENT: 3cm" align="justify">4.1.1 - permitir acesso, aos empregados da Contratada, ‡s instalaÁıes da 
-	 Contratante para a entrega/execuÁ„o dos serviÁos constantes do objeto.</p>
+	<p style="TEXT-INDENT: 2cm" align="justify">3.3 - A contratada dever√° cumprir, ainda com as demis obriga√ß√µes constantes 
+	da especifica√ß√£o elaborada pela Subsecretaria de Inform√°tica, que integra o presente contrato.</p>
+	<h2>CL√ÅUSULA QUARTA - DAS OBRIGA√á√ïES DA CONTRATANTE:</h2>
+	<p style="TEXT-INDENT: 2cm" align="justify">4.1 - Caber√° √† Contratante:
+	 <p style="TEXT-INDENT: 3cm" align="justify">4.1.1 - permitir acesso, aos empregados da Contratada, √†s instala√ß√µes da 
+	 Contratante para a entrega/execu√ß√£o dos servi√ßos constantes do objeto.</p>
 	 
-	<p style="TEXT-INDENT: 3cm" align="justify">4.1.2 - prestar as informaÁıes e os esclarecimentos que venham a ser 
+	<p style="TEXT-INDENT: 3cm" align="justify">4.1.2 - prestar as informa√ß√µes e os esclarecimentos que venham a ser 
 	solicitados pelos empregados da Contratada.</p>
-	<p style="TEXT-INDENT: 3cm" align="justify">4.1.3 - rejeitar qualquer material/serviÁo executado em desacordo 
-	com as EspecificaÁıes do Preg„o n∫ ${pregao}/${ano}.</p>
-	<p style="TEXT-INDENT: 3cm" align="justify">4.1.4 - solicitar que seja substituÌdo o material que n„o atender
-	 ‡s EspecificaÁıes do Preg„o n∫ ${pregao}/${ano}</p>
-	<p style="TEXT-INDENT: 3cm" align="justify">4.1.5 - atestar as faturas correspondentes, por intermÈdio da 
-	FiscalizaÁ„o, designada pela AdministraÁ„o.</p>
-	<h2>CL¡USULA QUINTA - DO PRE«O E DO PAGAMENTO:</h2>
-	<p style="TEXT-INDENT: 2cm" align="justify">5.1 - A Contratante pagar· ‡ Contratada pelo fornecimento objeto deste Contrato, o valor total de 
+	<p style="TEXT-INDENT: 3cm" align="justify">4.1.3 - rejeitar qualquer material/servi√ßo executado em desacordo 
+	com as Especifica√ß√µes do Preg√£o n¬∫ ${pregao}/${ano}.</p>
+	<p style="TEXT-INDENT: 3cm" align="justify">4.1.4 - solicitar que seja substitu√≠do o material que n√£o atender
+	 √†s Especifica√ß√µes do Preg√£o n¬∫ ${pregao}/${ano}</p>
+	<p style="TEXT-INDENT: 3cm" align="justify">4.1.5 - atestar as faturas correspondentes, por interm√©dio da 
+	Fiscaliza√ß√£o, designada pela Administra√ß√£o.</p>
+	<h2>CL√ÅUSULA QUINTA - DO PRE√áO E DO PAGAMENTO:</h2>
+	<p style="TEXT-INDENT: 2cm" align="justify">5.1 - A Contratante pagar√° √† Contratada pelo fornecimento objeto deste Contrato, o valor total de 
 	R$ ${valor} , inclusos todos os impostos e taxas vigentes, conforme tabela a seguir:</p>
 	
         
@@ -265,181 +265,181 @@ terceiros, n„o excluindo essa responsabilidade a fiscalizaÁ„o ou o acompanhament
         </table>
         
         		
-		<p style="TEXT-INDENT:2cm" align="justify">5.2 - As Notas Fiscais/Faturas dever„o ser entregues 
+		<p style="TEXT-INDENT:2cm" align="justify">5.2 - As Notas Fiscais/Faturas dever√£o ser entregues 
 		na Rua ${rua}, para serem devidamente atestadas.</p>
 		
-		<p style="TEXT-INDENT:2cm" align="justify">5.3 - O pagamento ‡ Contratada ser· efetivado, por crÈdito em conta corrente, mediante ordem banc·ria, 
-		atÈ o 10∫ dia ˙til apÛs a apresentaÁ„o da fatura ou nota fiscal discriminativa do material entregue, 
-		devidamente atestada por servidor ou Comiss„o nomeada pela AdministraÁ„o, salvo eventual atraso de distribuiÁ„o
-		 de recursos financeiros efetuados pelo Conselho da JustiÁa Federal, decorrente de execuÁ„o orÁament·ria.</p>
+		<p style="TEXT-INDENT:2cm" align="justify">5.3 - O pagamento √† Contratada ser√° efetivado, por cr√©dito em conta corrente, mediante ordem banc√°ria, 
+		at√© o 10¬∫ dia √∫til ap√≥s a apresenta√ß√£o da fatura ou nota fiscal discriminativa do material entregue, 
+		devidamente atestada por servidor ou Comiss√£o nomeada pela Administra√ß√£o, salvo eventual atraso de distribui√ß√£o
+		 de recursos financeiros efetuados pelo Conselho da Justi√ßa Federal, decorrente de execu√ß√£o or√ßament√°ria.</p>
 		 
-		 <p style="TEXT-INDENT:3cm" align="justify">5.3.1 - No perÌodo acima n„o haver· atualizaÁ„o financeira.</p>
+		 <p style="TEXT-INDENT:3cm" align="justify">5.3.1 - No per√≠odo acima n√£o haver√° atualiza√ß√£o financeira.</p>
 		 
-		 <p style="TEXT-INDENT:3cm" align="justify">5.3.2 - A fatura/nota fiscal dever· ser apresentada em 02 (duas) vias.</p>
+		 <p style="TEXT-INDENT:3cm" align="justify">5.3.2 - A fatura/nota fiscal dever√° ser apresentada em 02 (duas) vias.</p>
 		 
-		 <p style="TEXT-INDENT:3cm" align="justify">5.3.3 - Ser· considerada como data do pagamento a data da emiss„o
-		  da Ordem Banc·ria.</p>
-		 <p style="TEXT-INDENT:2cm" align="justify">5.4 - Caso seja necessaria a retificaÁ„o da fatura por culpa da 
-		 contratada a fluÍncia do prazo de 10(dez) dias ˙teis ser· suspensa, reiniciando-se a contagem a partir da
-		 reapresentaÁ„o da fatura retificada</p>
+		 <p style="TEXT-INDENT:3cm" align="justify">5.3.3 - Ser√° considerada como data do pagamento a data da emiss√£o
+		  da Ordem Banc√°ria.</p>
+		 <p style="TEXT-INDENT:2cm" align="justify">5.4 - Caso seja necessaria a retifica√ß√£o da fatura por culpa da 
+		 contratada a flu√™ncia do prazo de 10(dez) dias √∫teis ser√° suspensa, reiniciando-se a contagem a partir da
+		 reapresenta√ß√£o da fatura retificada</p>
 		 
-		 <p style="TEXT-INDENT:2cm" align="justify">5.5 - A Contratante reserva-se o direito de n„o efetuar o pagamento se, no ato da atestaÁ„o, o material n„o
-		  estiver em perfeitas condiÁıes ou de acordo com as especificaÁıes apresentadas e aceitas pela Contratada.
+		 <p style="TEXT-INDENT:2cm" align="justify">5.5 - A Contratante reserva-se o direito de n√£o efetuar o pagamento se, no ato da atesta√ß√£o, o material n√£o
+		  estiver em perfeitas condi√ß√µes ou de acordo com as especifica√ß√µes apresentadas e aceitas pela Contratada.
 		  
-		 <p style="TEXT-INDENT:2cm" align="justify">5.6 - A SeÁ„o Judici·ria do rio de janeiro poder· deduzir da import‚ncia a pagar os valores correspondentes a 
-		 multas ou indenizaÁıes devidas pela contratada nos termos da presente ajuste.</p>
+		 <p style="TEXT-INDENT:2cm" align="justify">5.6 - A Se√ß√£o Judici√°ria do rio de janeiro poder√° deduzir da import√¢ncia a pagar os valores correspondentes a 
+		 multas ou indeniza√ß√µes devidas pela contratada nos termos da presente ajuste.</p>
 		 
-		 <p style="TEXT-INDENT:2cm" align="justify">5.7 - A Contratada dever· confirmar, quando da apresentaÁ„o da nota
-		  fiscal ‡ Contratante, a regularidade perante a Seguridade Social e ao Fundo de Garantia de Tempo de ServiÁo,
-		   atravÈs da apresentaÁ„o da CND e do CRF, dentro das respectivas validades, sob pena de n„o pagamento do
-		    material fornecido e de rescis„o contratual, em atendimento ao disposto no ß 3∫. do art. l95 da 
-		    ConstituiÁ„o Federal, no art. 2∫ da Lei 9.012/95, e nos art. 55, inciso VIII e 78, inciso I, ambos da 
+		 <p style="TEXT-INDENT:2cm" align="justify">5.7 - A Contratada dever√° confirmar, quando da apresenta√ß√£o da nota
+		  fiscal √† Contratante, a regularidade perante a Seguridade Social e ao Fundo de Garantia de Tempo de Servi√ßo,
+		   atrav√©s da apresenta√ß√£o da CND e do CRF, dentro das respectivas validades, sob pena de n√£o pagamento do
+		    material fornecido e de rescis√£o contratual, em atendimento ao disposto no ¬ß 3¬∫. do art. l95 da 
+		    Constitui√ß√£o Federal, no art. 2¬∫ da Lei 9.012/95, e nos art. 55, inciso VIII e 78, inciso I, ambos da 
 		    Lei 8.666/93.</p>
 		    
-		  <p style="TEXT-INDENT:2cm" align="justify">5.8 - Na ocasi„o da entrega da nota fiscal, a contratada dever·
-		   comprovar a condiÁ„o de optante pelo SIMPLES (Sistema Integrado de Pagamento de Impostos e ContribuiÁıes das
-		    Microempresas e Empresas de pequeno Porte), mediante a apresentaÁ„o da declaraÁ„o indicada em ato 
+		  <p style="TEXT-INDENT:2cm" align="justify">5.8 - Na ocasi√£o da entrega da nota fiscal, a contratada dever√°
+		   comprovar a condi√ß√£o de optante pelo SIMPLES (Sistema Integrado de Pagamento de Impostos e Contribui√ß√µes das
+		    Microempresas e Empresas de pequeno Porte), mediante a apresenta√ß√£o da declara√ß√£o indicada em ato 
 		    normativo da Secretaria da Receita Federal e dos documentos, devidamente autenticados, que comprovem ser o
-		     signat·rio da referida declaraÁ„o representante legal da empresa.</p>
+		     signat√°rio da referida declara√ß√£o representante legal da empresa.</p>
 		     
-		  <p style="TEXT-INDENT:2cm" align="justify">As pessoas jurÌdicas n„o optantes pelo SIMPLES e aquelas que ainda
-		   n„o formalizaram a opÁ„o sofrer„o a retenÁ„o de impostos/contribuiÁıes por esta SeÁ„o Judici·ria no momento
-		    do pagamento, conforme disposto no art. 64 da Lei n∫ 9.430, de 27/12/96, regulamentado por ato normativo
+		  <p style="TEXT-INDENT:2cm" align="justify">As pessoas jur√≠dicas n√£o optantes pelo SIMPLES e aquelas que ainda
+		   n√£o formalizaram a op√ß√£o sofrer√£o a reten√ß√£o de impostos/contribui√ß√µes por esta Se√ß√£o Judici√°ria no momento
+		    do pagamento, conforme disposto no art. 64 da Lei n¬∫ 9.430, de 27/12/96, regulamentado por ato normativo
 		     da Secretaria da Receita Federal.</p>
 		
-		   <h2>CL¡USULA SEXTA - DA GARANTIA CONTRATUAL:</h2>
+		   <h2>CL√ÅUSULA SEXTA - DA GARANTIA CONTRATUAL:</h2>
 		   
-		   <p style="TEXT-INDENT:2cm" align="justify">6.1 - A contratada presta, neste ato, garantia contratual, nos termos do art. 56, par·grafo 1∫ , da Lei 8.666/93, no valor de 
+		   <p style="TEXT-INDENT:2cm" align="justify">6.1 - A contratada presta, neste ato, garantia contratual, nos termos do art. 56, par√°grafo 1¬∫ , da Lei 8.666/93, no valor de 
 		   R$ ${garant_val}, equivalente a 5% (cinco por cento) do valor global deste contrato.</p>
 		   
-		   <h2>CL¡USULA S…TIMA - DA DOTA«√O OR«AMENT¡RIA:</h2>
+		   <h2>CL√ÅUSULA S√âTIMA - DA DOTA√á√ÉO OR√áAMENT√ÅRIA:</h2>
 		   
-		   <p style="TEXT-INDENT:2cm" align="justify">7.1 - As despesas decorrentes do objeto deste contrato, correr„o
-		    ‡ conta dos recursos consignados ‡ SeÁ„o Judici·ria do Rio de Janeiro, para o corrente exercÌcio, conforme
+		   <p style="TEXT-INDENT:2cm" align="justify">7.1 - As despesas decorrentes do objeto deste contrato, correr√£o
+		    √† conta dos recursos consignados √† Se√ß√£o Judici√°ria do Rio de Janeiro, para o corrente exerc√≠cio, conforme
 		     o especificado abaixo:</p>
 		     
 		   <p style="TEXT-INDENT:4cm" align="justify">	Programa de Trabalho:</p> 
 	       <p style="TEXT-INDENT:4cm" align="justify">  Elemento de Despesa:</p>
            <p style="TEXT-INDENT:4cm" align="justify">	Nota de Empenho:</p>
            
-           <h2>CL¡USULA OITAVA - DO PRAZO DE GARANTIA E DA ASSIST NCIA T…CNICA:</h2>
+           <h2>CL√ÅUSULA OITAVA - DO PRAZO DE GARANTIA E DA ASSIST√äNCIA T√âCNICA:</h2>
            
-           <p style="TEXT-INDENT:2cm" align="justify">8.1 - O prazo de garantia dos equipamentos È de ${garant_mes}
+           <p style="TEXT-INDENT:2cm" align="justify">8.1 - O prazo de garantia dos equipamentos √© de ${garant_mes}
             meses, contados do recebimento definitivo dos mesmos.</p>
             
-            <p style="TEXT-INDENT:2cm" align="justify"><b>* O prazo de garantia ser· o constante na proposta da licitante 
-            vencedora, respeitado o prazo mÌnimo constante no Termo de ReferÍncia, que integra o presente Contrato.<b></p>
+            <p style="TEXT-INDENT:2cm" align="justify"><b>* O prazo de garantia ser√° o constante na proposta da licitante 
+            vencedora, respeitado o prazo m√≠nimo constante no Termo de Refer√™ncia, que integra o presente Contrato.<b></p>
            
-           <p style="TEXT-INDENT:2cm" align="justify">8.2 - A Contratada dever· dar atendimento total durante o perÌodo
-            de garantia dirigindo-se ao local onde o equipamento estiver instalado na SeÁ„o Judici·ria do Rio de 
-            Janeiro, conforme constante no Termo de ReferÍncia do Preg„o n∫${pregao}/ ${ano_preg}, que integra o presente 
+           <p style="TEXT-INDENT:2cm" align="justify">8.2 - A Contratada dever√° dar atendimento total durante o per√≠odo
+            de garantia dirigindo-se ao local onde o equipamento estiver instalado na Se√ß√£o Judici√°ria do Rio de 
+            Janeiro, conforme constante no Termo de Refer√™ncia do Preg√£o n¬∫${pregao}/ ${ano_preg}, que integra o presente 
             contrato.</p>
-            <p style="TEXT-INDENT:2cm" align="justify">8.2.1 - O prazo de garantia ser· contado a partir de entrega e
-            recebimento definitivo de equipamento, durante o qual, caso apresente algum defeito dever· ser substituido 
-             por outro novo de mesma caracterÌstia ou superior </p>
+            <p style="TEXT-INDENT:2cm" align="justify">8.2.1 - O prazo de garantia ser√° contado a partir de entrega e
+            recebimento definitivo de equipamento, durante o qual, caso apresente algum defeito dever√° ser substituido 
+             por outro novo de mesma caracter√≠stia ou superior </p>
              
-             <h2>CL¡USULA NONA - DAS PENALIDADES:</h2>
+             <h2>CL√ÅUSULA NONA - DAS PENALIDADES:</h2>
              
-             <p style="TEXT-INDENT:2cm" align="justify">9.1 - O n„o cumprimento pela contratada de qualquer uma das 
-             obrigaÁıes, dentro dos prazos estabelecidos por este contrato, sujeit·-la-· ‡s penalidades previstas nos 
-             artigos 86 a 88 da Lei n∞ 8.666/93;</p>
+             <p style="TEXT-INDENT:2cm" align="justify">9.1 - O n√£o cumprimento pela contratada de qualquer uma das 
+             obriga√ß√µes, dentro dos prazos estabelecidos por este contrato, sujeit√°-la-√° √†s penalidades previstas nos 
+             artigos 86 a 88 da Lei n¬∞ 8.666/93;</p>
              
-             <p style="TEXT-INDENT:2cm" align="justify">9.2 - As penalidades a que est· sujeita a contratada 
-             inadimplente, nos termos da Lei no 8.666/93, s„o as seguintes:</p>
+             <p style="TEXT-INDENT:2cm" align="justify">9.2 - As penalidades a que est√° sujeita a contratada 
+             inadimplente, nos termos da Lei no 8.666/93, s√£o as seguintes:</p>
              
-             <p style="TEXT-INDENT:3cm" align="justify">a) AdvertÍncia;
+             <p style="TEXT-INDENT:3cm" align="justify">a) Advert√™ncia;
              <p style="TEXT-INDENT:3cm" align="justify">b) Multa;
-             <p style="TEXT-INDENT:3cm" align="justify">c) SuspenÁ„o tempor·ria de participar emlicitaÁ„o e 
-             impedimento em contratar com a AdministraÁ„o por prazo n„o superior a 2(dois) anos.
+             <p style="TEXT-INDENT:3cm" align="justify">c) Suspen√ß√£o tempor√°ria de participar emlicita√ß√£o e 
+             impedimento em contratar com a Administra√ß√£o por prazo n√£o superior a 2(dois) anos.
              
              <p style="TEXT-INDENT:2cm" align="justify">9.3 - A recusa injustificada em assinar o Contrato, aceitar ou
-              retirar o instrumento equivalente, dentro do prazo estabelecido pela AdministraÁ„o, sujeita o 
-              adjudicat·rio ‡ penalidade de multa de atÈ 10% (dez por cento) sobre o valor da adjudicaÁ„o, 
+              retirar o instrumento equivalente, dentro do prazo estabelecido pela Administra√ß√£o, sujeita o 
+              adjudicat√°rio √† penalidade de multa de at√© 10% (dez por cento) sobre o valor da adjudica√ß√£o, 
               independentemente da multa estipulada no subitem 9.4.2.</p>
-              <p style="TEXT-INDENT:2cm" align="justify">9.4 - A inexecuÁ„o total ou parcial do contrato poder· 
-              acarretar, a critÈrio da AdministraÁ„o, a aplicaÁ„o das multas, alternativamente:</p>
-              <p style="TEXT-INDENT:3cm" align="justify">9.4.1 - Multa compensatÛria de atÈ 30% (trinta por cento)
-               sobre o valor equivalente ‡ obrigaÁ„o inadimplida.</p>
-              <p style="TEXT-INDENT:3cm" align="justify">9.4.2 - Multa correspondente ‡ diferenÁa entre o valor total porventura resultante de nova 
-              contrataÁ„o e o valor total que seria pago ao adjudicat·rio.</p>
-              <p style="TEXT-INDENT:3cm" align="justify">9.4.3 - Multa de 50% (cinq¸enta por cento) sobre o valor 
-              global do contrato, no caso de inexecuÁ„o total do mesmo.</p>
-              <p style="TEXT-INDENT:2cm" align="justify">9.5 - A atualizaÁ„o dos valores correspondentes ‡ multa estabelecida no item 9.4  far-se-· a partir do 1∫ (primeiro) 
+              <p style="TEXT-INDENT:2cm" align="justify">9.4 - A inexecu√ß√£o total ou parcial do contrato poder√° 
+              acarretar, a crit√©rio da Administra√ß√£o, a aplica√ß√£o das multas, alternativamente:</p>
+              <p style="TEXT-INDENT:3cm" align="justify">9.4.1 - Multa compensat√≥ria de at√© 30% (trinta por cento)
+               sobre o valor equivalente √† obriga√ß√£o inadimplida.</p>
+              <p style="TEXT-INDENT:3cm" align="justify">9.4.2 - Multa correspondente √† diferen√ßa entre o valor total porventura resultante de nova 
+              contrata√ß√£o e o valor total que seria pago ao adjudicat√°rio.</p>
+              <p style="TEXT-INDENT:3cm" align="justify">9.4.3 - Multa de 50% (cinq√ºenta por cento) sobre o valor 
+              global do contrato, no caso de inexecu√ß√£o total do mesmo.</p>
+              <p style="TEXT-INDENT:2cm" align="justify">9.5 - A atualiza√ß√£o dos valores correspondentes √† multa estabelecida no item 9.4  far-se-√° a partir do 1¬∫ (primeiro) 
               dia, decorrido o prazo estabelecido no item 9.7.</p>
-              <p style="TEXT-INDENT:2cm" align="justify">9.6 - Os atrasos injustificados no cumprimento das obrigaÁıes 
-              assumidas pela contratada sujeita-la ‡ multa di·ria, atÈ a data do efetivo adimplemento, de 0,3% 
-              (trÍs dÈcimos por centavo calculada a bese de juros compostos sem prejuÌzodas demais penalidades 
-              previstas na Lei n∞ 8.666/93</p>
-              <p style="TEXT-INDENT:2cm" align="justify">9.6.1 - A multa moratÛria estabelecida ficar· limitada ‡ 
-              estipulada para inexecuÁ„o parcial ou total do contrato (subitem 9.4.1).</p>
-              <p style="TEXT-INDENT:3cm" align="justify">9.6.2 - O periodo de atraso ser· contado em dias corridos.</p>
-              <p style="TEXT-INDENT:2cm" align="justify">9.7 - A multa dever· ser paga no prazo de 30 (trinta) dias, 
+              <p style="TEXT-INDENT:2cm" align="justify">9.6 - Os atrasos injustificados no cumprimento das obriga√ß√µes 
+              assumidas pela contratada sujeita-la √† multa di√°ria, at√© a data do efetivo adimplemento, de 0,3% 
+              (tr√™s d√©cimos por centavo calculada a bese de juros compostos sem preju√≠zodas demais penalidades 
+              previstas na Lei n¬∞ 8.666/93</p>
+              <p style="TEXT-INDENT:2cm" align="justify">9.6.1 - A multa morat√≥ria estabelecida ficar√° limitada √† 
+              estipulada para inexecu√ß√£o parcial ou total do contrato (subitem 9.4.1).</p>
+              <p style="TEXT-INDENT:3cm" align="justify">9.6.2 - O periodo de atraso ser√° contado em dias corridos.</p>
+              <p style="TEXT-INDENT:2cm" align="justify">9.7 - A multa dever√° ser paga no prazo de 30 (trinta) dias, 
               
-              contados da data do recebimento da intimaÁ„o por via postal, ou da data da juntada aos autos do mandato
-              de intimaÁ„o cumprido, conforme o caso.</p>
-              <p style="TEXT-INDENT:2cm" align="justify">9.8 - Caso a multa n„o seja paga no prazo estabelecido no item 9.7, dever· ser descontada dos 
+              contados da data do recebimento da intima√ß√£o por via postal, ou da data da juntada aos autos do mandato
+              de intima√ß√£o cumprido, conforme o caso.</p>
+              <p style="TEXT-INDENT:2cm" align="justify">9.8 - Caso a multa n√£o seja paga no prazo estabelecido no item 9.7, dever√° ser descontada dos 
               pagamentos (ou da garantia) do respectivo contrato, ou, ainda, cobrada judicialmente, se for o caso.</p>
-              <p style="TEXT-INDENT:3cm" align="justify">9.8.1 - Se a multa for superior ao valor da garantia prestada, alÈm da perda desta, responder· o 
-              contratado pela diferenÁa faltante. (este subitem sÛ entra se houver cl·usula de garantia).</p>
-              <p style="TEXT-INDENT:2cm" align="justify">9.9 - A atualizaÁ„o dos valores correspondentes ‡s multas 
-              estabelecidas neste Contrato dar-se-· atravÈs do IPCA-E/IBGE, tendo em vista o disposto no art. 1∫ da 
-              Lei n∫ 8.383, de 30/12/91 ou de outro Ìndice, posteriormente determinado em lei.</p>
+              <p style="TEXT-INDENT:3cm" align="justify">9.8.1 - Se a multa for superior ao valor da garantia prestada, al√©m da perda desta, responder√° o 
+              contratado pela diferen√ßa faltante. (este subitem s√≥ entra se houver cl√°usula de garantia).</p>
+              <p style="TEXT-INDENT:2cm" align="justify">9.9 - A atualiza√ß√£o dos valores correspondentes √†s multas 
+              estabelecidas neste Contrato dar-se-√° atrav√©s do IPCA-E/IBGE, tendo em vista o disposto no art. 1¬∫ da 
+              Lei n¬∫ 8.383, de 30/12/91 ou de outro √≠ndice, posteriormente determinado em lei.</p>
               <p style="TEXT-INDENT:2cm" align="justify">9.10 - A contagem dos prazos dispostos neste Contrato
-              obedecer· ao disposto no art. 110, da Lei n∫ 8.666/93.</p>
-              <p style="TEXT-INDENT:2cm" align="justify">9.11 - Os procedimentos de aplicaÁ„o e recolhimento das 
-              multas foram regulamentadas pela IN n∫ 24-12, do EgrÈgio Tribunal Regional Federal da 2™ Regi„o.</p>
-             <h2>CL¡USULA D…CIMA - DA RESCIS√O:</h2>
-             <p style="TEXT-INDENT:2cm" align="justify">10.1 - A inexecuÁ„o parcial ou total do Contrato enseja a
-             sua rescis„o, conforme disposto nos artigos 77 a 80 da Lei n∫ 8.666/93, sem prejuÌzo da aplicaÁ„o das 
-             penalidades previstas na Cl·usula Nona.</p>
-             <p style="TEXT-INDENT:2cm" align="justify">10.2 - A rescis„o do Contrato poder· ser:</p>
+              obedecer√° ao disposto no art. 110, da Lei n¬∫ 8.666/93.</p>
+              <p style="TEXT-INDENT:2cm" align="justify">9.11 - Os procedimentos de aplica√ß√£o e recolhimento das 
+              multas foram regulamentadas pela IN n¬∫ 24-12, do Egr√©gio Tribunal Regional Federal da 2¬™ Regi√£o.</p>
+             <h2>CL√ÅUSULA D√âCIMA - DA RESCIS√ÉO:</h2>
+             <p style="TEXT-INDENT:2cm" align="justify">10.1 - A inexecu√ß√£o parcial ou total do Contrato enseja a
+             sua rescis√£o, conforme disposto nos artigos 77 a 80 da Lei n¬∫ 8.666/93, sem preju√≠zo da aplica√ß√£o das 
+             penalidades previstas na Cl√°usula Nona.</p>
+             <p style="TEXT-INDENT:2cm" align="justify">10.2 - A rescis√£o do Contrato poder√° ser:</p>
              <p style="TEXT-INDENT:3cm" align="justify">10.2.1 - determinada por ato unilateral e escrito da 
-             AdministraÁ„o da SeÁ„o Judici·ria do Rio de Janeiro, nos casos enumerados nos inciso I a XII e XVII 
+             Administra√ß√£o da Se√ß√£o Judici√°ria do Rio de Janeiro, nos casos enumerados nos inciso I a XII e XVII 
              do art. 78 da lei mencionada.</p>
              <p style="TEXT-INDENT:4cm" align="justify">10.2.1.1 - Nos casos previstos nos incisos I a VIII e XI a
-             XVII, a AdministraÁ„o notificar· a Contratada, atravÈs de OfÌcio, com prova de recebimento.</p>
-             <p style="TEXT-INDENT:4cm" align="justify">10.2.1.2 - Nos casos previstos nos incisos IX e X, a rescis„o dar-se-· de pleno direito, 
-             independentemente de aviso ou interpelaÁ„o judicial ou extrajudicial.</p>
-             <p style="TEXT-INDENT:3cm" align="justify">10.2.2 - amig·vel, por acordo entre as partes, desde que 
-              haja conveniÍncia para a AdministraÁ„o da SeÁ„o Judici·ria do Rio de Janeiro.</p>
-             <p style="TEXT-INDENT:3cm" align="justify">10.2.3 - judicial, nos termos da legislaÁ„o vigente sobre a
-              matÈria.</p>
-             <p style="TEXT-INDENT:2cm" align="justify">10.4 - A rescis„o ser· determinada na forma do art. 79 da Lei n∫ 8.666/93.</p>
-             <h2>CL¡USULA D…CIMA PRIMEIRA - DA DOCUMENTA«√O COMPLEMENTAR:</h2> 
+             XVII, a Administra√ß√£o notificar√° a Contratada, atrav√©s de Of√≠cio, com prova de recebimento.</p>
+             <p style="TEXT-INDENT:4cm" align="justify">10.2.1.2 - Nos casos previstos nos incisos IX e X, a rescis√£o dar-se-√° de pleno direito, 
+             independentemente de aviso ou interpela√ß√£o judicial ou extrajudicial.</p>
+             <p style="TEXT-INDENT:3cm" align="justify">10.2.2 - amig√°vel, por acordo entre as partes, desde que 
+              haja conveni√™ncia para a Administra√ß√£o da Se√ß√£o Judici√°ria do Rio de Janeiro.</p>
+             <p style="TEXT-INDENT:3cm" align="justify">10.2.3 - judicial, nos termos da legisla√ß√£o vigente sobre a
+              mat√©ria.</p>
+             <p style="TEXT-INDENT:2cm" align="justify">10.4 - A rescis√£o ser√° determinada na forma do art. 79 da Lei n¬∫ 8.666/93.</p>
+             <h2>CL√ÅUSULA D√âCIMA PRIMEIRA - DA DOCUMENTA√á√ÉO COMPLEMENTAR:</h2> 
              <p style="TEXT-INDENT:2cm" align="justify">11.1 - Fazem parte integrante do presente contrato, independentemente de 
-             transcriÁ„o, os  seguintes documentos:</p>
-             <p style="TEXT-INDENT:3cm" align="justify">a) Preg„o n∞ ${pregao}/ ${ano_preg} e seus anexos.</p>
-             <p style="TEXT-INDENT:3cm" align="justify">b) Proposta da Contratada apresentada ‡ Contratante em (data).</p>
-             <h2>CL¡USULA D…CIMA SEGUNDA - DA PUBLICA«√O:</h2>
+             transcri√ß√£o, os  seguintes documentos:</p>
+             <p style="TEXT-INDENT:3cm" align="justify">a) Preg√£o n¬∞ ${pregao}/ ${ano_preg} e seus anexos.</p>
+             <p style="TEXT-INDENT:3cm" align="justify">b) Proposta da Contratada apresentada √† Contratante em (data).</p>
+             <h2>CL√ÅUSULA D√âCIMA SEGUNDA - DA PUBLICA√á√ÉO:</h2>
              	
-             <p style="TEXT-INDENT:2cm" align="justify">12.1 - O presente contrato ser· publicado no Di·rio Oficial
-              da Uni„o, na forma de extrato, de acordo com o que determina do par·grafo ⁄nico do artigo 61 da Lei n∞
+             <p style="TEXT-INDENT:2cm" align="justify">12.1 - O presente contrato ser√° publicado no Di√°rio Oficial
+              da Uni√£o, na forma de extrato, de acordo com o que determina do par√°grafo √önico do artigo 61 da Lei n¬∞
               8.666/93.
-             <h2>CL¡USULA D…CIMA TERCEIRA - DA FISCALIZA«√O:</h2>
-             <p style="TEXT-INDENT:2cm" align="justify">13.1 - A execuÁ„o dos serviÁos ser· acompanhada e fiscalizada por servidores/comiss„o, designados pela 
-            	AdministraÁ„o.</p>
-            <p style="TEXT-INDENT:2cm" align="justify">13.2 - O representante anotar· em registro prÛprio todas as ocorrÍncias relacionadas com a execuÁ„o 
-            dos serviÁos mencionados, determinando o que for necess·rio ‡ regularizaÁ„o das faltas ou defeitos 
+             <h2>CL√ÅUSULA D√âCIMA TERCEIRA - DA FISCALIZA√á√ÉO:</h2>
+             <p style="TEXT-INDENT:2cm" align="justify">13.1 - A execu√ß√£o dos servi√ßos ser√° acompanhada e fiscalizada por servidores/comiss√£o, designados pela 
+            	Administra√ß√£o.</p>
+            <p style="TEXT-INDENT:2cm" align="justify">13.2 - O representante anotar√° em registro pr√≥prio todas as ocorr√™ncias relacionadas com a execu√ß√£o 
+            dos servi√ßos mencionados, determinando o que for necess√°rio √† regulariza√ß√£o das faltas ou defeitos 
             observados.</p>
-            <p style="TEXT-INDENT:2cm" align="justify">13.3 - As decisıes e providÍncias que ultrapassarem a 
-            competÍncia do representante ser„o solicitadas a seus superiores em tempo h·bil para a adoÁ„o das medidas
+            <p style="TEXT-INDENT:2cm" align="justify">13.3 - As decis√µes e provid√™ncias que ultrapassarem a 
+            compet√™ncia do representante ser√£o solicitadas a seus superiores em tempo h√°bil para a ado√ß√£o das medidas
              convenientes.</p>
-            <p style="TEXT-INDENT:2cm" align="justify">13.4 - O exercÌcio da fiscalizaÁ„o pela contratante n„o excluir·
+            <p style="TEXT-INDENT:2cm" align="justify">13.4 - O exerc√≠cio da fiscaliza√ß√£o pela contratante n√£o excluir√°
             a responsabilidade da contratada.</p>
-            <h2>CL¡USULA D…CIMA QUARTA - DOS RECURSOS ADMINISTRATIVOS</h2>
+            <h2>CL√ÅUSULA D√âCIMA QUARTA - DOS RECURSOS ADMINISTRATIVOS</h2>
             <p style="TEXT-INDENT:2cm" align="justify">14.1 - Aplica-se o disposto no art. 109 da lei 8.666/93.</p>
-            <H2>CL¡USULA D…CIMA QUINTA - DAS CONSIDERA«’ES FINAIS:</H2>
+            <H2>CL√ÅUSULA D√âCIMA QUINTA - DAS CONSIDERA√á√ïES FINAIS:</H2>
             
-            <p style="TEXT-INDENT:2cm" align="justify">15.1 - O contrato poder· ser aditado nos termos previstos no 
-            art. 65 da Lei n∫ 8.666/93, com a apresentaÁ„o das devidas justificativas</p>
-            <p style="TEXT-INDENT:2cm" align="justify">15.2 - A Contratada dever· manter durante toda a execuÁ„o do 
-            contrato, em compatibilidade com as obrigaÁıes por ela assumidas, todas as condiÁıes de habilitaÁ„o e 
-            qualificaÁ„o exigidas na licitaÁ„o</p>
-            <h2>CL¡USULA D…CIMA SEXTA - DO FORO:</h2>
-            <p style="TEXT-INDENT:2cm" align="justify">16.1 - Para dirimir as questıes oriundas do presente contrato, 
-            fica eleito o Foro da JustiÁa Federal - SeÁ„o Judici·ria do Rio de Janeiro.</p>
-            <p style="TEXT-INDENT:2cm" align="justify">E por estarem ajustados, È lavrado o presente termo de contrato, 
-            extraÌdo em 03 (trÍs) vias de igual teor e forma, que depois de lido e achado conforme vai assinado pelas 
+            <p style="TEXT-INDENT:2cm" align="justify">15.1 - O contrato poder√° ser aditado nos termos previstos no 
+            art. 65 da Lei n¬∫ 8.666/93, com a apresenta√ß√£o das devidas justificativas</p>
+            <p style="TEXT-INDENT:2cm" align="justify">15.2 - A Contratada dever√° manter durante toda a execu√ß√£o do 
+            contrato, em compatibilidade com as obriga√ß√µes por ela assumidas, todas as condi√ß√µes de habilita√ß√£o e 
+            qualifica√ß√£o exigidas na licita√ß√£o</p>
+            <h2>CL√ÅUSULA D√âCIMA SEXTA - DO FORO:</h2>
+            <p style="TEXT-INDENT:2cm" align="justify">16.1 - Para dirimir as quest√µes oriundas do presente contrato, 
+            fica eleito o Foro da Justi√ßa Federal - Se√ß√£o Judici√°ria do Rio de Janeiro.</p>
+            <p style="TEXT-INDENT:2cm" align="justify">E por estarem ajustados, √© lavrado o presente termo de contrato, 
+            extra√≠do em 03 (tr√™s) vias de igual teor e forma, que depois de lido e achado conforme vai assinado pelas 
             partes contratantes.</p>
             
             <p style="TEXT-INDENT:5cm" align="justify">Rio de janeiro,&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
@@ -448,7 +448,7 @@ terceiros, n„o excluindo essa responsabilidade a fiscalizaÁ„o ou o acompanhament
             &nbsp .<br><br>
             
            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp ____________________________________________
-           &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp JUSTI«A FEDERAL DE 1∫ GRAU NO RIO DE JANEIRO<br><br>             
+           &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp JUSTI√áA FEDERAL DE 1¬∫ GRAU NO RIO DE JANEIRO<br><br>             
            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp ____________________________________________
            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp EMPRESA
                       

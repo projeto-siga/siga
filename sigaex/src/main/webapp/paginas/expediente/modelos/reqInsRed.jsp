@@ -9,19 +9,19 @@
 	<mod:entrevista> 
 	  
 	         <br>
-	         <span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI«√O COM NOME COMPLETO E ASSUNTO</b></span><br>
-		     <span style="color:red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ CHEFIA IMEDIATA PARA ANU NCIA E EM SEGUIDA AO RH LOCAL</b></span>	
+	         <span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI√á√ÉO COM NOME COMPLETO E ASSUNTO</b></span><br>
+		     <span style="color:red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä CHEFIA IMEDIATA PARA ANU√äNCIA E EM SEGUIDA AO RH LOCAL</b></span>	
 	         <br><br>
 	         	         
 		        <mod:grupo>
 		           <mod:texto titulo="<b>RAMAL DO REQUERENTE</b>" var="ramal"/></mod> <br><br>
-		           <mod:selecao titulo="<b>Acerto Gramatical da LotaÁ„o</b>" var="acgr"  opcoes="no;na" reler="sim" /><br></br>
+		           <mod:selecao titulo="<b>Acerto Gramatical da Lota√ß√£o</b>" var="acgr"  opcoes="no;na" reler="sim" /><br></br>
 		           <mod:texto titulo="<b>E-mail</b>" var="ema"/></mod> <br><br>
 		           <mod:texto titulo="<b>Idade</b>" var="idade" largura="3" /></mod>
 		         </mod:grupo>
 		          <hr style="color: #FFFFFF;" />
 		           <mod:grupo>
-		               <mod:texto titulo="<b>N˙mero de Filhos / Enteados registrados nos assentamentos funcionais</b>" var="numfil" largura="3" /></mod> <br><br>
+		               <mod:texto titulo="<b>N√∫mero de Filhos / Enteados registrados nos assentamentos funcionais</b>" var="numfil" largura="3" /></mod> <br><br>
 		               <mod:texto titulo="<b>Por extenso</b>" var="pexte" largura="7" />
 	               </mod:grupo>
 	               <hr style="color: #FFFFFF;" />
@@ -85,7 +85,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr>
-						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br></br>INSCRI«√O PARA FINS DO EDITAL DE REDISTRIBUI«√O DE CARGOS</p></td>
+						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br></br>INSCRI√á√ÉO PARA FINS DO EDITAL DE REDISTRIBUI√á√ÉO DE CARGOS</p></td>
 						</tr>
 					</table>
 				</td>
@@ -102,11 +102,11 @@
 		<c:set var="lotc" value="lotado"></c:set>
 		<c:set var="lotd" value="cedido"></c:set>
 		<c:set var="doo" value="da"></c:set>
-		<c:set var="prepo" value="‡"></c:set>
+		<c:set var="prepo" value="√†"></c:set>
 		<c:set var="doa" value="da"></c:set>
-		<c:set var="prepa" value="‡"></c:set>
+		<c:set var="prepa" value="√†"></c:set>
 		<c:set var="dod" value="da"></c:set>
-		<c:set var="prepd" value="‡"></c:set>
+		<c:set var="prepd" value="√†"></c:set>
 		
 		
 		<c:if test="${doc.subscritor.sexo == 'F'}">
@@ -117,18 +117,18 @@
 		
 						  		    
 		        
-		<c:if test="${quadr1 == 1}"><c:set var="qpo" value="Tribunal Regional Federal da 2™ Regi„o"></c:set><c:set var="doo" value="do"></c:set><c:set var="prepo" value="ao"></c:set></c:if>
-		<c:if test="${quadr1 == 2}"><c:set var="qpo" value="SeÁ„o Judici·ria do Estado do Rio de Janeiro"></c:set></c:if>
-		<c:if test="${quadr1 == 3}"><c:set var="qpo" value="SeÁ„o Judici·ria do Estado do EspÌrito Santo"></c:set></c:if>
+		<c:if test="${quadr1 == 1}"><c:set var="qpo" value="Tribunal Regional Federal da 2¬™ Regi√£o"></c:set><c:set var="doo" value="do"></c:set><c:set var="prepo" value="ao"></c:set></c:if>
+		<c:if test="${quadr1 == 2}"><c:set var="qpo" value="Se√ß√£o Judici√°ria do Estado do Rio de Janeiro"></c:set></c:if>
+		<c:if test="${quadr1 == 3}"><c:set var="qpo" value="Se√ß√£o Judici√°ria do Estado do Esp√≠rito Santo"></c:set></c:if>
 		
-		<c:if test="${quadr2 == 1}"><c:set var="qpa" value="Tribunal Regional Federal da 2™ Regi„o"></c:set><c:set var="doa" value="do"></c:set><c:set var="prepa" value="ao"></c:set></c:if>
-		<c:if test="${quadr2 == 2}"><c:set var="qpa" value="SeÁ„o Judici·ria do Estado do Rio de Janeiro"></c:set></c:if>
-		<c:if test="${quadr2 == 3}"><c:set var="qpa" value="SeÁ„o Judici·ria do Estado do EspÌrito Santo"></c:set></c:if>
+		<c:if test="${quadr2 == 1}"><c:set var="qpa" value="Tribunal Regional Federal da 2¬™ Regi√£o"></c:set><c:set var="doa" value="do"></c:set><c:set var="prepa" value="ao"></c:set></c:if>
+		<c:if test="${quadr2 == 2}"><c:set var="qpa" value="Se√ß√£o Judici√°ria do Estado do Rio de Janeiro"></c:set></c:if>
+		<c:if test="${quadr2 == 3}"><c:set var="qpa" value="Se√ß√£o Judici√°ria do Estado do Esp√≠rito Santo"></c:set></c:if>
 		
 		
-		<c:if test="${quadr3 == 1}"><c:set var="qpd" value="Tribunal Regional Federal da 2™ Regi„o"></c:set><c:set var="dod" value="do"></c:set><c:set var="prepd" value="ao"></c:set></c:if>
-		<c:if test="${quadr3 == 2}"><c:set var="qpd" value="SeÁ„o Judici·ria do Estado do Rio de Janeiro"></c:set></c:if>
-		<c:if test="${quadr3 == 3}"><c:set var="qpd" value="SeÁ„o Judici·ria do Estado do EspÌrito Santo"></c:set></c:if>
+		<c:if test="${quadr3 == 1}"><c:set var="qpd" value="Tribunal Regional Federal da 2¬™ Regi√£o"></c:set><c:set var="dod" value="do"></c:set><c:set var="prepd" value="ao"></c:set></c:if>
+		<c:if test="${quadr3 == 2}"><c:set var="qpd" value="Se√ß√£o Judici√°ria do Estado do Rio de Janeiro"></c:set></c:if>
+		<c:if test="${quadr3 == 3}"><c:set var="qpd" value="Se√ß√£o Judici√°ria do Estado do Esp√≠rito Santo"></c:set></c:if>
 		
 		<c:if test="${numfil == 1}"><c:set var="texto1" value=" e"></c:set><c:set var="numf" value=""></c:set><c:set var="texto2" value=" um filho/enteado registrado em seus assentamentos funcionais."></c:set><c:set var="texto3" value=""></c:set></c:if>
 		<c:if test="${numfil >  1}"><c:set var="texto1" value=" e"></c:set><c:set var="numf" value="${numfil}"></c:set><c:set var="texto2" value="filhos/enteados registrados em seus assentamentos funcionais."></c:set><c:set var="texto3" value=" (${pexte}) "></c:set></c:if>
@@ -137,9 +137,9 @@
 		<br></br><br></br>
 		
 		<p style="font-family:Arial;font-size:11pt"> 
-		${doc.subscritor.descricao}, matrÌcula ${doc.subscritor.matricula}, ${f:maiusculasEMinusculas(doc.subscritor.cargo.nomeCargo)},
+		${doc.subscritor.descricao}, matr√≠cula ${doc.subscritor.matricula}, ${f:maiusculasEMinusculas(doc.subscritor.cargo.nomeCargo)},
 		do Quadro de Pessoal ${doo} ${qpo}, ora ${lotd} ${prepa} ${qpa}, ${lotc} ${acgr} ${f:maiusculasEMinusculas(doc.subscritor.lotacao.descricao)}, 
-		ramal ${ramal}, e-mail ${ema}, vem apresentar sua inscriÁ„o para fins de redistribuiÁ„o de seu cargo para o Quadro de Pessoal ${dod} ${qpd}.
+		ramal ${ramal}, e-mail ${ema}, vem apresentar sua inscri√ß√£o para fins de redistribui√ß√£o de seu cargo para o Quadro de Pessoal ${dod} ${qpd}.
 		<br><br>Informa ainda ter ${idade} anos de idade${texto1} ${numf} ${texto3}${texto2}
         </p>
 		<br></br><br>

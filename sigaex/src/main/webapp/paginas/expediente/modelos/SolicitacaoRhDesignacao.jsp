@@ -11,15 +11,15 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Função" var="funcao" />
+			<mod:texto titulo="FunÃ§Ã£o" var="funcao" />
 		</mod:grupo>
 	</mod:entrevista>
 	<mod:documento>
 		<mod:valor var="texto_solicitacao">
-			<p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>designação</b>
+			<p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>designaÃ§Ã£o</b>
 			do(a) servidor(a)<mod:identificacao pessoa="${requestScope['servidor_pessoaSel.id']}" negrito="sim" nivelHierarquicoMaximoDaLotacao="4" /> para exercer a
-			função comissionada de <b>${funcao}</b>,
-			a partir da publicação da respectiva portaria.
+			funÃ§Ã£o comissionada de <b>${funcao}</b>,
+			a partir da publicaÃ§Ã£o da respectiva portaria.
 			</p>
 		</mod:valor>	
 	</mod:documento>

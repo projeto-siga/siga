@@ -8,7 +8,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -42,15 +42,15 @@
 		var data = document.getElementsByName('dtDispon')[0].value;
 		var i = tamanho();
 		if (data==null || data=="") {			
-			alert("Preencha a data para disponibilização.");
+			alert("Preencha a data para disponibilizaÃ§Ã£o.");
 			document.getElementById('dt_dispon').focus();		
 		}else {
 			if (i>256) {
-				alert('Descrição com mais de 256 caracteres');
+				alert('DescriÃ§Ã£o com mais de 256 caracteres');
 				document.getElementById('descrPublicacao').focus();	
 			}else {
 				if (i<=0) {
-					alert('Descrição deve ser preenchida');
+					alert('DescriÃ§Ã£o deve ser preenchida');
 					document.getElementById('descrPublicacao').focus();	
 				}else	
 					frm.submit();
@@ -74,7 +74,7 @@
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">		
-			<h2>Agendamento de Publicação - ${mob.siglaEDescricaoCompleta}</h2>
+			<h2>Agendamento de PublicaÃ§Ã£o - ${mob.siglaEDescricaoCompleta}</h2>
 			<div class="gt-content-box gt-for-table">			
 		<form name="frm" action="agendar_publicacao_gravar.action"
 namespace="/expediente/mov" cssClass="form" method="GET">
@@ -100,7 +100,7 @@ namespace="/expediente/mov" cssClass="form" method="GET">
 						<c:set var="disabledTpMat">true</c:set> 
 						<input type="hidden" name="tipoMateria" value="${tipoMateria}" />
 						<tr>
-							<td>Tipo de Matéria:</td>
+							<td>Tipo de MatÃ©ria:</td>
 							<td>
 								<c:choose>
 									<c:when test="${tipoMateria eq 'A'}">
@@ -114,22 +114,22 @@ namespace="/expediente/mov" cssClass="form" method="GET">
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de Matéria"  value="${tipoMateria}" disabled="${disabledTpMat}" />
+						<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tipoMateria" id="tm" label="Tipo de MatÃ©ria"  value="${tipoMateria}" disabled="${disabledTpMat}" />
 					</c:otherwise>
 				</c:choose>
 				<tr>
-					<td>Próxima data para disponibilização:</td>
+					<td>PrÃ³xima data para disponibilizaÃ§Ã£o:</td>
 					<td>${proximaDataDisponivelStr}</td>
 				</tr>
 				<ww:textfield name="dtDispon" id="dt_dispon"
 					onblur="javascript:verifica_data(this,true);prever_data();"
-					label="Data para disponibilização" />
+					label="Data para disponibilizaÃ§Ã£o" />
 				<tr>
-					<td>Data de publicação:</td>
+					<td>Data de publicaÃ§Ã£o:</td>
 					<td><div id="dt_publ" /></td>
 				</tr>				
 				<tr>									
-					<td>Lotação de Publicação:</td>
+					<td>LotaÃ§Ã£o de PublicaÃ§Ã£o:</td>
 						<ww:if test="${podeAtenderPedidoPubl}">
 							<td><siga:selecao tema="simple" propriedade="lotaSubscritor" modulo="siga" /></td>
 						</ww:if>
@@ -140,13 +140,13 @@ namespace="/expediente/mov" cssClass="form" method="GET">
 						</ww:else>									
 				</tr>	
 				<ww:textarea name="descrPublicacao" cols="80" id="descrPublicacao"
-							rows="5" cssClass="gt-form-textarea" label="Descrição do documento"
+							rows="5" cssClass="gt-form-textarea" label="DescriÃ§Ã£o do documento"
 							onkeyup="contaLetras();" />	
 				<tr><td></td><td><div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div></td></tr>						
 				<tr>
 					<td colspan="2"><input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-medium gt-btn-left" ${disabled}/> <input type="button"
 						value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
-						<a href="/sigaex/arquivo/download.action?arquivo=${mob.referenciaRTF}" class="gt-btn-large gt-btn-left">Visualizar Publicação</a>
+						<a href="/sigaex/arquivo/download.action?arquivo=${mob.referenciaRTF}" class="gt-btn-large gt-btn-left">Visualizar PublicaÃ§Ã£o</a>
 				</tr>
 			</table>
 			</form>	
@@ -155,15 +155,15 @@ namespace="/expediente/mov" cssClass="form" method="GET">
 			
 			
 			<br/>
-			<span style="margin-left: 0.5cm;color: red;"><b>Atenção:</b></span>
+			<span style="margin-left: 0.5cm;color: red;"><b>AtenÃ§Ã£o:</b></span>
 			<ul>
 				<li><span style="font-weight:bold">Data para
-				Disponibilização</span> - data em que a matéria efetivamente aparece no
+				DisponibilizaÃ§Ã£o</span> - data em que a matÃ©ria efetivamente aparece no
 				site</li>
-				<li><span style="font-weight:bold">Data de Publicação</span> -
-				a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
+				<li><span style="font-weight:bold">Data de PublicaÃ§Ã£o</span> -
+				a Data de DisponibilizaÃ§Ã£o + 1, conforme prevÃª art. 4Âº, parÃ¡grafo 3Âº
 				da Lei 11419 / 2006</li>
-				<li><span style="font-weight:bold">Visualizar Publicação</span> -
+				<li><span style="font-weight:bold">Visualizar PublicaÃ§Ã£o</span> -
 				Permite visualizar o documento antes de ser enviado para o DJE.</li>
 			</ul>
 </div></div>

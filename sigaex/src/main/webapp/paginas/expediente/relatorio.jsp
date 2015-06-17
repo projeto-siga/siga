@@ -6,7 +6,7 @@ page language="java" contentType="text/html; charset=UTF-8" buffer="128kb"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Relatório">
+<siga:pagina titulo="RelatÃ³rio">
 
 <script type="text/javascript" language="Javascript1.1">
 <ww:url id="url" action="relRelatorios" namespace="/expediente/rel">
@@ -48,73 +48,73 @@ function visualizarRelatorio(rel) {
 <c:choose>
 	<c:when test='${param.nomeArquivoRel eq "relFormularios.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelFormularios</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Formulários</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de FormulÃ¡rios</c:set>
 		<c:set var="nomeRelatorio" scope="request">relFormularios.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relConsultaDocEntreDatas.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelDocEntreDatas</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de documentos entre datas</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de documentos entre datas</c:set>
 		<c:set var="nomeRelatorio" scope="request">relConsultaDocEntreDatas.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relModelos.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelModelos</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Modelos</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de Modelos</c:set>
 		<c:set var="nomeRelatorio" scope="request">relModelos.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relDocumentosSubordinados.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelDocumentosSubordinados</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Documentos em Setores Subordinados</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de Documentos em Setores Subordinados</c:set>
 		<c:set var="nomeRelatorio" scope="request">relDocumentosSubordinados.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relMovimentacaoDocSubordinados.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelMovDocsSubordinados</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Movimentação de Documentos em Setores Subordinados</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de MovimentaÃ§Ã£o de Documentos em Setores Subordinados</c:set>
 		<c:set var="nomeRelatorio" scope="request">relMovimentacaoDocSubordinados.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relCrDocSubordinados.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelDocsSubCriados</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Criação de Documentos em Setores Subordinados</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de CriaÃ§Ã£o de Documentos em Setores Subordinados</c:set>
 		<c:set var="nomeRelatorio" scope="request">relCrDocSubordinados.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relMovimentacao.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelMovimentacao</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Movimentações</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de MovimentaÃ§Ãµes</c:set>
 		<c:set var="nomeRelatorio" scope="request">relMovimentacao.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relMovCad.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelMovCad</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Movimentações por Cadastrante</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de MovimentaÃ§Ãµes por Cadastrante</c:set>
 		<c:set var="nomeRelatorio" scope="request">relMovCad.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relOrgao.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelOrgao</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Despachos e Transferências</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de Despachos e TransferÃªncias</c:set>
 		<c:set var="nomeRelatorio" scope="request">relOrgao.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relTipoDoc.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelTipoDoc</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Documentos Criados</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de Documentos Criados</c:set>
 		<c:set var="nomeRelatorio" scope="request">relTipoDoc.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relMovProcesso.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelMovProcesso</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Movimentações de Processos</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de MovimentaÃ§Ãµes de Processos</c:set>
 		<c:set var="nomeRelatorio" scope="request">relMovProcesso.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relClassificacao.jsp"}'>
 		<c:set var="actionName" scope="request">aRelClassificacao</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Classificação Documental</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de ClassificaÃ§Ã£o Documental</c:set>
 		<c:set var="nomeRelatorio" scope="request">relClassificacao.jsp</c:set>
 	</c:when>
 	<c:when test='${param.nomeArquivoRel eq "relDocsClassificados.jsp"}'>
 		<c:set var="actionName" scope="request">emiteRelClassDocDocumentos</c:set>
-		<c:set var="titulo_pagina" scope="request">Relação de Documentos Classificados</c:set>
+		<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de Documentos Classificados</c:set>
 		<c:set var="nomeRelatorio" scope="request">relDocsClassificados.jsp</c:set>
 	</c:when>
 	
 	<c:otherwise>
 		<c:set var="actionName" scope="request">emiteRelExpedientes</c:set>
-		<c:set var="titulo_pagina" scope="request">Relatório de Expedientes</c:set>
+		<c:set var="titulo_pagina" scope="request">RelatÃ³rio de Expedientes</c:set>
 		<c:set var="nomeRelatorio" scope="request">relExpedientes.jsp</c:set>
 		<c:set var="tipoRelatorio" scope="request">relExpedientes.jrxml</c:set>
 	</c:otherwise>
@@ -135,7 +135,7 @@ function visualizarRelatorio(rel) {
 			
 			<table class="gt-form-table">
 			<tr class="header">
-				<td colspan="2">Dados do Relatório</td>
+				<td colspan="2">Dados do RelatÃ³rio</td>
 			</tr>
 			<c:import url="/paginas/expediente/relatorios/${nomeRelatorio}"/>
 			<tr class="button">

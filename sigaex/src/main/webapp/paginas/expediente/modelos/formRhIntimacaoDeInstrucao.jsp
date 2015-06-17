@@ -10,24 +10,24 @@
 		</br>
 		<mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Tipo de Intimação" var="tipoDeIntimacao" 
-					opcoes="No ambiente de trabalho;Afastado do serviço" reler='sim'/>
+				<mod:selecao titulo="Tipo de IntimaÃ§Ã£o" var="tipoDeIntimacao" 
+					opcoes="No ambiente de trabalho;Afastado do serviÃ§o" reler='sim'/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Processo Administrativo Nº" var="numProcesso" largura="20" />
+				<mod:texto titulo="Processo Administrativo NÂº" var="numProcesso" largura="20" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:pessoa titulo="Matrícula do Servidor/Juiz Federal" var="matricula" reler="sim"
+				<mod:pessoa titulo="MatrÃ­cula do Servidor/Juiz Federal" var="matricula" reler="sim"
 					buscarFechadas="true" />
 			</mod:grupo>
 			<mod:grupo>
-				<c:if test="${tipoDeIntimacao == 'Afastado do serviço'}">
-					<mod:texto titulo="Endereço Residencial" var="endereco" largura="50" />
+				<c:if test="${tipoDeIntimacao == 'Afastado do serviÃ§o'}">
+					<mod:texto titulo="EndereÃ§o Residencial" var="endereco" largura="50" />
 				</c:if>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Endereço da SGP" var="enderecoSGP" 
-					opcoes="AV. Rio Branco, 243, anexo I, 9º andar;Av. Rio Branco, 243, anexo I, 10º andar;Av. Venezuela 134, bl. A - 5º andar"/>
+				<mod:selecao titulo="EndereÃ§o da SGP" var="enderecoSGP" 
+					opcoes="AV. Rio Branco, 243, anexo I, 9Âº andar;Av. Rio Branco, 243, anexo I, 10Âº andar;Av. Venezuela 134, bl. A - 5Âº andar"/>
 			</mod:grupo>
 			</br>
 		</mod:grupo>
@@ -44,7 +44,7 @@
 				<br/><br/>
 					<table width="100%" border="0" >
 						<tr>
-							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >SUBSECRETARIA DE GESTÃO DE PESSOAS (SGP)</p></td>
+							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >SUBSECRETARIA DE GESTÃƒO DE PESSOAS (SGP)</p></td>
 						</tr>
 						<tr>
 							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >${enderecoSGP}</p></td>
@@ -53,7 +53,7 @@
 							<td align="center">
 								<br/>
 								<br/>
-								<p style="font-family:Arial;font-size:11pt;font-weight:bold;" >INTIMAÇÃO DA INSTRUÇÃO</p>
+								<p style="font-family:Arial;font-size:11pt;font-weight:bold;" >INTIMAÃ‡ÃƒO DA INSTRUÃ‡ÃƒO</p>
 							</td>
 						</tr>
 				<tr><td></td>
@@ -69,23 +69,23 @@
 	
 		<br />
 		
-			PROCESSO ADMINISTRATIVO Nº: ${numProcesso}
+			PROCESSO ADMINISTRATIVO NÂº: ${numProcesso}
 			<br/>
-			<b>INTIMAÇÃO DE</b> ${f:pessoa(requestScope['matricula_pessoaSel.id']).nomePessoa}
-			<c:if test="${tipoDeIntimacao == 'Afastado do serviço'}">
+			<b>INTIMAÃ‡ÃƒO DE</b> ${f:pessoa(requestScope['matricula_pessoaSel.id']).nomePessoa}
+			<c:if test="${tipoDeIntimacao == 'Afastado do serviÃ§o'}">
 				<br/>
-				<b>ENDEREÇO RESIDENCIAL:</b> ${endereco}
+				<b>ENDEREÃ‡O RESIDENCIAL:</b> ${endereco}
 			</c:if>
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
-			Tendo em vista o disposto no art. 4º da Resolução nº 68 de 27/07/2009 do Conselho da Justiça 
-			Federal (CJF), INTIMO V.Sa. para, querendo, encaminhar a esta Unidade, no prazo máximo de 10 
-			(dez) dias, a contar do recebimento desta, DEFESA nos autos do Processo Administrativo em epígrafe, 
-			que versa sobre a devolução de valores indevidamente pagos.
+			Tendo em vista o disposto no art. 4Âº da ResoluÃ§Ã£o nÂº 68 de 27/07/2009 do Conselho da JustiÃ§a 
+			Federal (CJF), INTIMO V.Sa. para, querendo, encaminhar a esta Unidade, no prazo mÃ¡ximo de 10 
+			(dez) dias, a contar do recebimento desta, DEFESA nos autos do Processo Administrativo em epÃ­grafe, 
+			que versa sobre a devoluÃ§Ã£o de valores indevidamente pagos.
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">
-			Esta Intimação assinada deverá ser devolvida, com urgência, a esta Unidade, que, após o prazo acima 
-			previsto, prosseguirá com a tramitação do processo, independentemente de sua manifestação.
+			Esta IntimaÃ§Ã£o assinada deverÃ¡ ser devolvida, com urgÃªncia, a esta Unidade, que, apÃ³s o prazo acima 
+			previsto, prosseguirÃ¡ com a tramitaÃ§Ã£o do processo, independentemente de sua manifestaÃ§Ã£o.
 		</p>
 		<br />
 		<br />

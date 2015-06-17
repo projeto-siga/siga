@@ -22,10 +22,10 @@
 	<!-- mascara.js -->
 
 
-<c:set var="titulo_pagina" scope="request">RelatÛrio de ClassificaÁ„o Documental</c:set>
+<c:set var="titulo_pagina" scope="request">Relat√≥rio de Classifica√ß√£o Documental</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
 
 <tr>
-	<td  width="30%">Sub·rvore da ClassificaÁ„o documental (opcional):</td>
+	<td  width="30%">Sub√°rvore da Classifica√ß√£o documental (opcional):</td>
 	<td><input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)"/></td>
 </tr>

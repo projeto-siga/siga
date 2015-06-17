@@ -4,8 +4,8 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<!--INCLUSÃO DO MODELO: insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_CLASSIFICACAO, ID_FORMA_DOC) values (560,'Cálculo de Pedido de Concessão de Diária (PCD)', 'calculoPCD.jsp',null,3);-->
-<!--CONFIGURAÇÃO PARA SOLICITAR PUBLICAÇÃO NO BI: insert into ex_configuracao (id_configuracao, id_tp_mov,id_mod,id_sit_configuracao,id_tp_configuracao ) values (1325,36,560,1,1) -->
+<!--INCLUSÃƒO DO MODELO: insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_CLASSIFICACAO, ID_FORMA_DOC) values (560,'CÃ¡lculo de Pedido de ConcessÃ£o de DiÃ¡ria (PCD)', 'calculoPCD.jsp',null,3);-->
+<!--CONFIGURAÃ‡ÃƒO PARA SOLICITAR PUBLICAÃ‡ÃƒO NO BI: insert into ex_configuracao (id_configuracao, id_tp_mov,id_mod,id_sit_configuracao,id_tp_configuracao ) values (1325,36,560,1,1) -->
 <c:set var="ID_MODELO_PAI" value="554" />
 <mod:modelo>
 	<mod:entrevista>
@@ -22,7 +22,7 @@
 				</mod:grupo>
 			</c:when>
 			<c:otherwise>
-		O PAI DESTE DOCUMENTO DEVE SER UM PEDIDO DE CONCESSÃO DE DÁRIAS
+		O PAI DESTE DOCUMENTO DEVE SER UM PEDIDO DE CONCESSÃƒO DE DÃRIAS
 	</c:otherwise>
 		</c:choose>
 	</mod:entrevista>
@@ -33,7 +33,7 @@
 				<head>
 				</head>
 				<body>
-				<!-- Utiliza a classe CalculoPCD para efetuar os cálculos -->
+				<!-- Utiliza a classe CalculoPCD para efetuar os cÃ¡lculos -->
 				<jsp:useBean id="calculo"
 					class="br.gov.jfrj.siga.ex.util.CalculoPCD" scope="request" />
 				<jsp:setProperty name="calculo" property="cargo"
@@ -119,7 +119,7 @@
 						<jsp:setProperty name="calculo" property="executorMandado"
 							value="true" />
 					</c:when>
-					<c:when test="${doc.exMobilPai.doc.form['executor'] == 'Não'}">
+					<c:when test="${doc.exMobilPai.doc.form['executor'] == 'NÃ£o'}">
 						<jsp:setProperty name="calculo" property="executorMandado"
 							value="false" />
 					</c:when>
@@ -132,7 +132,7 @@
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp" />
 		</td></tr>
 		<tr bgcolor="#FFFFFF">
-			<td align="center"><b>CÁLCULO DE DIÁRIAS</b></td>
+			<td align="center"><b>CÃLCULO DE DIÃRIAS</b></td>
 		<tr>
 	
 			<tr bgcolor="#FFFFFF">
@@ -159,7 +159,7 @@
 
 				<table width="100%">
 					<tr>
-						<td><b>Número:</b></td>
+						<td><b>NÃºmero:</b></td>
 						<td>${doc.exMobilPai.doc.sigla}</td>
 					</tr>
 				</table>
@@ -173,13 +173,13 @@
 						<td bgcolor="#FFFFFF">${pesProponente.nomePessoa}</td>
 					</tr>
 					<tr>
-						<td bgcolor="#FFFFFF" width="30%"><b>Matrícula: </b></td>
+						<td bgcolor="#FFFFFF" width="30%"><b>MatrÃ­cula: </b></td>
 						<td bgcolor="#FFFFFF">${pesProponente.matricula}</td>
 					</tr>
 				</table>
 				<c:set var="pesBeneficiario"
 					value="${f:pessoa(doc.exMobilPai.doc.form['beneficiario_pessoaSel.id'])}" />
-				<b>BENEFICIÁRIO</b>
+				<b>BENEFICIÃRIO</b>
 				<table border="0" width="100%" bordercolor="#000000"
 					bgcolor="#000000" align="" cellpadding="2" cellspacing="1">
 					<tr>
@@ -187,7 +187,7 @@
 						<td bgcolor="#FFFFFF">${pesBeneficiario.nomePessoa}</td>
 					</tr>
 					<tr>
-						<td bgcolor="#FFFFFF" width="30%"><b>Matrícula: </b></td>
+						<td bgcolor="#FFFFFF" width="30%"><b>MatrÃ­cula: </b></td>
 						<td bgcolor="#FFFFFF">${pesBeneficiario.matricula}</td>
 					</tr>
 					<tr>
@@ -195,7 +195,7 @@
 						<td bgcolor="#FFFFFF">${doc.exMobilPai.doc.form['cargoBeneficiario']}</td>
 					</tr>
 					<tr>
-						<td bgcolor="#FFFFFF" width="30%"><b>Função: </b></td>
+						<td bgcolor="#FFFFFF" width="30%"><b>FunÃ§Ã£o: </b></td>
 						<td bgcolor="#FFFFFF">${doc.exMobilPai.doc.form['funcaoBeneficiario']}</td>
 					</tr>
 					<tr>
@@ -204,20 +204,20 @@
 						<td bgcolor="#FFFFFF">${doc.exMobilPai.doc.form['executor']}</td>
 					</tr>
 				</table>
-				<b>CÁLCULO</b>
+				<b>CÃLCULO</b>
 				<table border="0" width="100%" bordercolor="#000000"
 					bgcolor="#000000" align="" cellpadding="2" cellspacing="1">
 					<tr>
 						<td bgcolor="#AAAAAA" align="center" width="35%"><b>Tipo</b></td>
 						<td bgcolor="#AAAAAA" align="center" width="20%"><b>Valor
-						Unitário</b></td>
-						<td bgcolor="#AAAAAA" align="center" width="20%"><b>Nº
-						Diárias/Dias</b></td>
+						UnitÃ¡rio</b></td>
+						<td bgcolor="#AAAAAA" align="center" width="20%"><b>NÂº
+						DiÃ¡rias/Dias</b></td>
 						<td bgcolor="#AAAAAA" align="center" width="25%"><b>Total
 						Parcial</b></td>
 					</tr>
 					<tr>
-						<td bgcolor="#FFFFFF" align="center"><b>Diária (R$)</b></td>
+						<td bgcolor="#FFFFFF" align="center"><b>DiÃ¡ria (R$)</b></td>
 						<td bgcolor="#FFFFFF" align="right">
 						${f:floatParaMonetario(calculo.valorDiaria)}</td>
 						<td bgcolor="#FFFFFF" align="center">${f:replace(calculo.numeroDiarias,".",",")}</td>
@@ -231,12 +231,12 @@
 						<td bgcolor="#FFFFFF" align="right">${f:floatParaMonetario(calculo.calculoDeslocamento)}</td>
 					</tr>
 					<tr>
-						<td bgcolor="#FFFFFF" align="center"><b>Auxílio-Alimentação(R$)</b></td>
+						<td bgcolor="#FFFFFF" align="center"><b>AuxÃ­lio-AlimentaÃ§Ã£o(R$)</b></td>
 						<td bgcolor="#FFFFFF" align="right">${f:floatParaMonetario(calculo.valorAuxilioAlimentacaoDiario)}</td>
 						<td bgcolor="#FFFFFF" align="center">${f:replace(calculo.numeroDiariasDesconto,".0","")}</td>
 						<td bgcolor="#FFFFFF" align="right">${f:floatParaMonetario(calculo.calculoDescontoAlimentacao)}</td>
 						</tr> <tr> <td bgcolor="#FFFFFF"
-						align="center"><b>Auxílio-Transporte (R$)</b></td> <td
+						align="center"><b>AuxÃ­lio-Transporte (R$)</b></td> <td
 						bgcolor="#FFFFFF"
 						align="right">${f:floatParaMonetario(calculo.valorAuxilioTransporteDiario)}</td>
 						<td bgcolor="#FFFFFF" align="center">${f:replace(calculo.numeroDiariasDesconto,".0","")}</td>
@@ -266,18 +266,18 @@
 				<br />
 				<br />
 
-				<!-- O COMENTÁRIO ABAIXO REFERE-SE ÀS TAGS DE PUBLICAÇÃO NO BOLETIM INTERNO. NÃO REMOVA-O!! -->
+				<!-- O COMENTÃRIO ABAIXO REFERE-SE Ã€S TAGS DE PUBLICAÃ‡ÃƒO NO BOLETIM INTERNO. NÃƒO REMOVA-O!! -->
 
 				<!-- INICIO NUMERO ${doc.codigo} FIM NUMERO -->
 				<!-- INICIO CORPO 
 		<div style="text-align: left;">		
-		BENEFICIÁRIO:${pesBeneficiario.nomePessoa} - 
+		BENEFICIÃRIO:${pesBeneficiario.nomePessoa} - 
 		${doc.exMobilPai.doc.form['cargoBeneficiario']} - ${doc.exMobilPai.doc.form['funcaoBeneficiario']}<br/>
 		ENTIDADE/LOCAL: ${doc.exMobilPai.doc.form['localServico']}<br/>
-		PERÍODO:${doc.exMobilPai.doc.form['dataInicioAfastamento']} a ${doc.exMobilPai.doc.form['dataFimAfastamento']}<br/>
+		PERÃODO:${doc.exMobilPai.doc.form['dataInicioAfastamento']} a ${doc.exMobilPai.doc.form['dataFimAfastamento']}<br/>
 		TRANSPORTE:${doc.exMobilPai.doc.form['categoria']}<br/>
-		VALOR DA DIÁRIA:${f:floatParaMonetario(calculo.valorDiaria)}<br/>
-		Nº DE DIÁRIA(S): ${f:replace(calculo.numeroDiarias,".",",")} + ${calculo.numeroDeslocamentos} ADICIONAL(IS) DE 25% - ART. 103, RES. 89/2009-CJF<br/>
+		VALOR DA DIÃRIA:${f:floatParaMonetario(calculo.valorDiaria)}<br/>
+		NÂº DE DIÃRIA(S): ${f:replace(calculo.numeroDiarias,".",",")} + ${calculo.numeroDeslocamentos} ADICIONAL(IS) DE 25% - ART. 103, RES. 89/2009-CJF<br/>
 		VALOR PAGO: ${f:floatParaMonetario(calculo.calculoValorLiquido)}<br/>
 		OBJETIVO DO DESLOCAMENTO: ${doc.exMobilPai.doc.form['tipoServico']}<br/>
 		PROPONENTE:${pesProponente.nomePessoa} - ${pesProponente.cargo.nomeCargo} - ${pesProponente.funcaoConfianca.nomeFuncao} <br/>
@@ -301,7 +301,7 @@
 				</html>
 			</c:when>
 			<c:otherwise>
-		O PAI DESTE DOCUMENTO DEVE SER UM PEDIDO DE CONCESSÃO DE DÁRIAS
+		O PAI DESTE DOCUMENTO DEVE SER UM PEDIDO DE CONCESSÃƒO DE DÃRIAS
 	</c:otherwise>
 		</c:choose>
 	</mod:documento>

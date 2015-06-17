@@ -7,17 +7,17 @@
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:selecao titulo="Selecione a opção desejada" var="opcao"
-			opcoes="Selecione;Marcação;Alteração;Cancelamento" reler="sim"></mod:selecao>
+		<mod:selecao titulo="Selecione a opÃ§Ã£o desejada" var="opcao"
+			opcoes="Selecione;MarcaÃ§Ã£o;AlteraÃ§Ã£o;Cancelamento" reler="sim"></mod:selecao>
 		<c:choose>
-			<c:when test="${opcao eq 'Marcação'}">
-				<mod:grupo titulo="Fruição/Marcacao de férias">
-					<mod:selecao titulo="Número de marcações" var="marcacoes"
+			<c:when test="${opcao eq 'MarcaÃ§Ã£o'}">
+				<mod:grupo titulo="FruiÃ§Ã£o/Marcacao de fÃ©rias">
+					<mod:selecao titulo="NÃºmero de marcaÃ§Ãµes" var="marcacoes"
 						opcoes="1;2;3" reler="ajax" idAjax="marcacoesAjax" />
 					<mod:grupo depende="marcacoesAjax">
 						<c:forEach var="i" begin="1" end="${marcacoes}">
 							<mod:grupo>
-								<mod:selecao titulo="<b>${i})</b> Período Aquisitivo"
+								<mod:selecao titulo="<b>${i})</b> PerÃ­odo Aquisitivo"
 									var="periodoAquisitivo${i}"
 									opcoes="2011/2012;2012/2013;2013/2014;2014/2015;2015/2016" />
 							&nbsp;&nbsp;&nbsp;	
@@ -32,8 +32,8 @@
 								<c:if test="${requestScope[f:concat('sequencial',i)] == 1}">
 									&nbsp;&nbsp;&nbsp;						    
 									<mod:selecao
-										titulo="Deseja o adiantamento da remuneração de férias?"
-										var="adiantamento${i}" opcoes="Sim;Não" />
+										titulo="Deseja o adiantamento da remuneraÃ§Ã£o de fÃ©rias?"
+										var="adiantamento${i}" opcoes="Sim;NÃ£o" />
 								</c:if>
 							</mod:grupo>
 							<br />
@@ -42,14 +42,14 @@
 				</mod:grupo>
 
 			</c:when>
-			<c:when test="${opcao eq 'Alteração'}">
-				<mod:grupo titulo="Alteração de Férias">
-					<mod:selecao titulo="Número de alterações" var="alteracoes"
+			<c:when test="${opcao eq 'AlteraÃ§Ã£o'}">
+				<mod:grupo titulo="AlteraÃ§Ã£o de FÃ©rias">
+					<mod:selecao titulo="NÃºmero de alteraÃ§Ãµes" var="alteracoes"
 						opcoes="1;2;3" reler="ajax" idAjax="alteracoesAjax" />
 					<mod:grupo depende="alteracoesAjax">
 						<c:forEach var="i" begin="1" end="${alteracoes}">
 							<mod:grupo>
-								<mod:selecao titulo="<b>${i})</b> Período Aquisitivo"
+								<mod:selecao titulo="<b>${i})</b> PerÃ­odo Aquisitivo"
 									var="periodoAquisitivo${i}"
 									opcoes="2011/2012;2012/2013;2013/2014;2014/2015;2015/2016" />
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
@@ -57,7 +57,7 @@
 									opcoes="1;2;3" reler="ajax" idAjax="seqAlteracoesAjax${i}" />
 							</mod:grupo>
 							<mod:grupo>
-								<mod:data titulo="Período de" var="dataInicio${i}" />
+								<mod:data titulo="PerÃ­odo de" var="dataInicio${i}" />
 
 								<mod:data titulo="a" var="dataFinal${i}" />
 
@@ -68,8 +68,8 @@
 								<c:if test="${requestScope[f:concat('sequencial',i)] == 1}">
 									<mod:grupo>
 										<mod:selecao
-											titulo="Deseja o adiantamento da remuneração de férias?"
-											var="adiantamento${i}" opcoes="Sim;Não" />
+											titulo="Deseja o adiantamento da remuneraÃ§Ã£o de fÃ©rias?"
+											var="adiantamento${i}" opcoes="Sim;NÃ£o" />
 									</mod:grupo>
 								</c:if>
 							</mod:grupo>
@@ -78,18 +78,18 @@
 				</mod:grupo>
 			</c:when>
 			<c:when test="${opcao eq 'Cancelamento'}">
-				<mod:grupo titulo="Cancelamento de férias">
-					<mod:selecao titulo="Número de cancelamentos" var="cancelamentos"
+				<mod:grupo titulo="Cancelamento de fÃ©rias">
+					<mod:selecao titulo="NÃºmero de cancelamentos" var="cancelamentos"
 						opcoes="1;2;3" reler="ajax" idAjax="cancelamentosAjax" />
 					<mod:grupo depende="cancelamentosAjax">
 						<c:forEach var="i" begin="1" end="${cancelamentos}">
 							<mod:grupo>
-								<mod:selecao titulo="<b>${i})</b> Período Aquisitivo"
+								<mod:selecao titulo="<b>${i})</b> PerÃ­odo Aquisitivo"
 									var="periodoAquisitivo${i}"
 									opcoes="2011/2012;2012/2013;2013/2014;2014/2015;2015/2016" />
 								<mod:selecao titulo="Sequencial" var="sequencial${i}"
 									opcoes="1;2;3" />
-								<mod:data titulo="Período de" var="dataInicio${i}" />
+								<mod:data titulo="PerÃ­odo de" var="dataInicio${i}" />
 								<mod:data titulo="a" var="dataFinal${i}" />
 							</mod:grupo>
 						</c:forEach>
@@ -98,15 +98,15 @@
 			</c:when>
 			<c:otherwise></c:otherwise>
 		</c:choose>
-		<c:if test="${(opcao eq 'Alteração') or (opcao eq 'Cancelamento')}">
-			<mod:grupo titulo="Demais Informações">
+		<c:if test="${(opcao eq 'AlteraÃ§Ã£o') or (opcao eq 'Cancelamento')}">
+			<mod:grupo titulo="Demais InformaÃ§Ãµes">
 				<mod:grupo>
-					<mod:selecao titulo="Deseja manter os demais períodos já marcados?"
-						var="manterPeriodos" opcoes="Sim;Não" />
+					<mod:selecao titulo="Deseja manter os demais perÃ­odos jÃ¡ marcados?"
+						var="manterPeriodos" opcoes="Sim;NÃ£o" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:selecao titulo="Qual o motivo desta solicitação?" var="motivo"
-						opcoes="Necessidade de serviço;Outros" reler="ajax"
+					<mod:selecao titulo="Qual o motivo desta solicitaÃ§Ã£o?" var="motivo"
+						opcoes="Necessidade de serviÃ§o;Outros" reler="ajax"
 						idAjax="outrosAjax" />
 				</mod:grupo>
 				<mod:grupo depende="outrosAjax">
@@ -140,20 +140,20 @@
 			url="/paginas/expediente/modelos/inc_tit_SraDiretoraSecretariaSubsecretaria.jsp" />
 
 
-		<p style="TEXT-INDENT: 2cm" align="justify">Matrícula:
+		<p style="TEXT-INDENT: 2cm" align="justify">MatrÃ­cula:
 		${doc.subscritor.sigla}</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">Nome:
 		${doc.subscritor.descricao}</p>
 		<br />
 		<p style="TEXT-INDENT: 2cm" align="justify">Venho,
 		respeitosamente, requerer a V.S&ordf;. <c:choose>
-			<c:when test="${opcao eq 'Marcação'}">fruição de minhas férias regulamentares, na forma abaixo discriminada:
+			<c:when test="${opcao eq 'MarcaÃ§Ã£o'}">fruiÃ§Ã£o de minhas fÃ©rias regulamentares, na forma abaixo discriminada:
 			    <br />
 				<br />
 				<table width="80%" align="center" border="1" cellpadding="2"
 					cellspacing="1" bgcolor="#000000">
 					<tr>
-						<td bgcolor="#FFFFFF" width="05%" align="center">Período
+						<td bgcolor="#FFFFFF" width="05%" align="center">PerÃ­odo
 						Aquisitivo</td>
 						<td bgcolor="#FFFFFF" width="05%" align="center">Parcela</td>
 						<td bgcolor="#FFFFFF" width="15%">Detalhes</td>
@@ -177,14 +177,14 @@
 				<br />
 				<br />
 			</c:when>
-			<c:when test="${opcao eq 'Alteração'}">
-				<b>alteração</b> de minhas férias regulamentares, na forma abaixo discriminada:
+			<c:when test="${opcao eq 'AlteraÃ§Ã£o'}">
+				<b>alteraÃ§Ã£o</b> de minhas fÃ©rias regulamentares, na forma abaixo discriminada:
 			    <br />
 				<br />
 				<table width="80%" align="center" border="1" cellpadding="2"
 					cellspacing="1" bgcolor="#000000">
 					<tr>
-						<td bgcolor="#FFFFFF" width="05%" align="center">Período
+						<td bgcolor="#FFFFFF" width="05%" align="center">PerÃ­odo
 						Aquisitivo</td>
 						<td bgcolor="#FFFFFF" width="05%" align="center">Sequencial</td>
 						<td bgcolor="#FFFFFF" width="15%">Detalhes</td>
@@ -194,7 +194,7 @@
 						<tr>
 							<td bgcolor="#FFFFFF" align="center">${requestScope[f:concat('periodoAquisitivo',i)]}</td>
 							<td bgcolor="#FFFFFF" align="center">${requestScope[f:concat('sequencial',i)]}</td>
-							<td bgcolor="#FFFFFF" align="left">Período:
+							<td bgcolor="#FFFFFF" align="left">PerÃ­odo:
 							${requestScope[f:concat('dataInicio',i)]} a
 							${requestScope[f:concat('dataFinal',i)]}<br />
 							Alterar para: ${requestScope[f:concat('novaDataInicio',i)]} a
@@ -209,14 +209,14 @@
 				</table>
 			</c:when>
 			<c:when test="${opcao eq 'Cancelamento'}">
-				<b>cancelamento</b> de minhas férias regulamentares, na forma abaixo discriminada:
+				<b>cancelamento</b> de minhas fÃ©rias regulamentares, na forma abaixo discriminada:
 			    <br />
 				<br />
 				<br />
 				<table width="80%" align="center" border="1" cellpadding="2"
 					cellspacing="1" bgcolor="#000000">
 					<tr>
-						<td bgcolor="#FFFFFF" width="05%" align="center">Período
+						<td bgcolor="#FFFFFF" width="05%" align="center">PerÃ­odo
 						Aquisitivo</td>
 						<td bgcolor="#FFFFFF" width="05%" align="center">Sequencial</td>
 						<td bgcolor="#FFFFFF" width="10%">Detalhes</td>
@@ -225,26 +225,26 @@
 						<tr>
 							<td bgcolor="#FFFFFF" align="center">${requestScope[f:concat('periodoAquisitivo',i)]}</td>
 							<td bgcolor="#FFFFFF" align="center">${requestScope[f:concat('sequencial',i)]}</td>
-							<td bgcolor="#FFFFFF" align="left">Período:${requestScope[f:concat('dataInicio',i)]}
+							<td bgcolor="#FFFFFF" align="left">PerÃ­odo:${requestScope[f:concat('dataInicio',i)]}
 							a ${requestScope[f:concat('dataFinal',i)]}</td>
 						</tr>
 					</c:forEach>
 				</table>
 			</c:when>
 			<c:otherwise></c:otherwise>
-		</c:choose> <c:if test="${(opcao eq 'Alteração') or (opcao eq 'Cancelamento')}">
+		</c:choose> <c:if test="${(opcao eq 'AlteraÃ§Ã£o') or (opcao eq 'Cancelamento')}">
 			<p style="TEXT-INDENT: 2cm" align="justify">Deseja manter os
-			demais períodos já marcados? <b>${manterPeriodos}</b></p>
+			demais perÃ­odos jÃ¡ marcados? <b>${manterPeriodos}</b></p>
 			<ww:if test="${motivo == 'Outros'}">
 				<p style="TEXT-INDENT: 2cm" align="justify">Qual o motivo desta
-				solicitação? ${motivoDesc}</p>
+				solicitaÃ§Ã£o? ${motivoDesc}</p>
 			</ww:if>
 			<ww:else>
 				<p style="TEXT-INDENT: 2cm" align="justify">Qual o motivo desta
-				solicitação? <b>${motivo}</b></p>
+				solicitaÃ§Ã£o? <b>${motivo}</b></p>
 			</ww:else>
-		</c:if> <c:if test="${(opcao eq 'Alteração') or (opcao eq 'Marcação')}">
-			<p style="TEXT-INDENT: 2cm" align="justify">Conforme o art.8º, parágrafo 8º, da Resolução CF-RES-2012/00221 de 19/12/2012, declaro estar CIENTE de que cabe à Administração, comunicar, com antecedência de 90 dias do fim do prazo de fruição das férias, ao servidor e à chefia imediata, a obrigatoriedade de gozo dessas férias e que, não havendo manifestação de minha parte ou de meu superior hierárquico acerca da marcação, a Administração o fará de ofício.</p>
+		</c:if> <c:if test="${(opcao eq 'AlteraÃ§Ã£o') or (opcao eq 'MarcaÃ§Ã£o')}">
+			<p style="TEXT-INDENT: 2cm" align="justify">Conforme o art.8Âº, parÃ¡grafo 8Âº, da ResoluÃ§Ã£o CF-RES-2012/00221 de 19/12/2012, declaro estar CIENTE de que cabe Ã  AdministraÃ§Ã£o, comunicar, com antecedÃªncia de 90 dias do fim do prazo de fruiÃ§Ã£o das fÃ©rias, ao servidor e Ã  chefia imediata, a obrigatoriedade de gozo dessas fÃ©rias e que, nÃ£o havendo manifestaÃ§Ã£o de minha parte ou de meu superior hierÃ¡rquico acerca da marcaÃ§Ã£o, a AdministraÃ§Ã£o o farÃ¡ de ofÃ­cio.</p>
 		</c:if> <c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" /> <c:import
 			url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" /> <c:import
 			url="/paginas/expediente/modelos/inc_deAcordoAssSupHierarquico.jsp" />

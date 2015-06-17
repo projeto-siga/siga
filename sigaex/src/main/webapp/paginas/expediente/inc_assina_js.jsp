@@ -5,7 +5,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <c:choose>
-	<c:when test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;ADRB:Política - Referência Básica')}">
+	<c:when test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;ADRB:PolÃ­tica - ReferÃªncia BÃ¡sica')}">
 		<input type="hidden" id="gPolitica" name="gPolitica" value="true" />
 	</c:when>
 	<c:otherwise>
@@ -14,7 +14,7 @@
 </c:choose>
 
 <c:choose>
-	<c:when test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;REP:Acesso ao Repositório de Certificados Digitais')}">
+	<c:when test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;REP:Acesso ao RepositÃ³rio de Certificados Digitais')}">
 		<input type="hidden" id="acessoCertificadoDigital" name="acessoCertificadoDigital" value="true" />
 	</c:when>
 	<c:otherwise>

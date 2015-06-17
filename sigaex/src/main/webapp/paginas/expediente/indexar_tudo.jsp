@@ -8,9 +8,9 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Indexação de Documentos">
+<siga:pagina titulo="IndexaÃ§Ã£o de Documentos">
 
-	<p class="no_results">Indexação concluida.</p>
+	<p class="no_results">IndexaÃ§Ã£o concluida.</p>
 	<p class="no_results">${mensagemAguarde}</p>
 
 </siga:pagina>

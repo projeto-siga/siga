@@ -13,24 +13,24 @@
 		<mod:grupo>
 		 
 		    <p align="left"><span style="color: red"> <br><b>
-			ATEN«√O: EM CASO DE D⁄VIDA NO PREENCHIMENTO, FAVOR OBTER AUXÕLIO NO RAMAL 8559 - SEPADI  (FALAR COM A SERVIDORA ROSA)
+			ATEN√á√ÉO: EM CASO DE D√öVIDA NO PREENCHIMENTO, FAVOR OBTER AUX√çLIO NO RAMAL 8559 - SEPADI  (FALAR COM A SERVIDORA ROSA)
 			<br><br>
-			(os campos marcados com * s„o de preenchimento obrigatÛrio)</b></span></p>
+			(os campos marcados com * s√£o de preenchimento obrigat√≥rio)</b></span></p>
 
 		</mod:grupo>
 		<!-- 
 		<mod:grupo>
 			<mod:radio titulo="INICIAL" var="periodo" valor="1" reler="sim"
 				marcado="Sim" />
-			<mod:radio titulo="PRORROGA«√O" var="periodo" valor="2" reler="sim" />
+			<mod:radio titulo="PRORROGA√á√ÉO" var="periodo" valor="2" reler="sim" />
 		</mod:grupo>
          -->
 		<hr style="color: #FFFFFF;" />
 		
-          <mod:grupo titulo="Proposto pertencente ao quadro do Tribunal Regional Federal da 2™ Regi„o (*)">
+          <mod:grupo titulo="Proposto pertencente ao quadro do Tribunal Regional Federal da 2¬™ Regi√£o (*)">
 
 			<mod:radio titulo="SIM" var="ppq" valor="1" reler="sim"/>
-			<mod:radio titulo="N√O" var="ppq" valor="2" reler="sim"/>
+			<mod:radio titulo="N√ÉO" var="ppq" valor="2" reler="sim"/>
 		</mod:grupo>
 		<c:set var="valorppq" value="${ppq}" />
 	        <c:if test="${empty valorppq}">
@@ -44,13 +44,13 @@
 			<br>
 			<br>
 
-			<mod:texto titulo="C/C n∞" var="contac" />
+			<mod:texto titulo="C/C n¬∞" var="contac" />
 			<mod:texto titulo="Banco" var="banc" />
-			<mod:texto titulo="AgÍncia" var="agen" />
+			<mod:texto titulo="Ag√™ncia" var="agen" />
 			<br>
 			<!--
-			<mod:texto titulo="Valor Mensal do AuxÌlio-AlimentaÁ„o" var="valref" />
-			<mod:texto titulo="Valor Mensal do AuxÌlio-Transporte" var="valtrans" />
+			<mod:texto titulo="Valor Mensal do Aux√≠lio-Alimenta√ß√£o" var="valref" />
+			<mod:texto titulo="Valor Mensal do Aux√≠lio-Transporte" var="valtrans" />
 		    -->
 		</mod:grupo>
 		</c:if>
@@ -62,30 +62,30 @@
 		<mod:texto titulo="Cargo" var="carg" largura="45"/>
 			<br>
 
-			<mod:texto titulo="C/C n∞" var="contac" />
+			<mod:texto titulo="C/C n¬∞" var="contac" />
 			<mod:texto titulo="Banco" var="banc" />
-			<mod:texto titulo="AgÍncia" var="agen" />
+			<mod:texto titulo="Ag√™ncia" var="agen" />
 			<br>
 			<mod:grupo>
-			    <p align="left"><span style="color: red"> <br>AtenÁ„o : use ponto ao invÈs de vÌrgula nos valores abaixo, para que n„o ocorra erro</span></p>
+			    <p align="left"><span style="color: red"> <br>Aten√ß√£o : use ponto ao inv√©s de v√≠rgula nos valores abaixo, para que n√£o ocorra erro</span></p>
             </mod:grupo>
-			<mod:texto titulo="Valor Mensal do AuxÌlio-AlimentaÁ„o R$" var="valref" />
-			<mod:texto titulo="Valor Mensal do AuxÌlio-Transporte R$" var="valtrans" />
+			<mod:texto titulo="Valor Mensal do Aux√≠lio-Alimenta√ß√£o R$" var="valref" />
+			<mod:texto titulo="Valor Mensal do Aux√≠lio-Transporte R$" var="valtrans" />
 		</mod:grupo>
 		 </c:if>
 	
 	   
 		<hr style="color: #FFFFFF;" />
 		<mod:grupo>
-			<mod:memo titulo="<b>ServiÁo a ser executado e Local (*)</b>" var="texto_serv" colunas="70"
+			<mod:memo titulo="<b>Servi√ßo a ser executado e Local (*)</b>" var="texto_serv" colunas="70"
 				linhas="3" />
 		</mod:grupo>
 		<br>
 		<br>
-		<mod:grupo titulo="SolicitaÁ„o de passagem aÈrea (*)">
+		<mod:grupo titulo="Solicita√ß√£o de passagem a√©rea (*)">
 
 			<mod:radio titulo="SIM" var="opc" valor="1" reler="sim" />
-			<mod:radio titulo="N√O" var="opc" valor="2" reler="sim"/>
+			<mod:radio titulo="N√ÉO" var="opc" valor="2" reler="sim"/>
 		</mod:grupo>
 		
 		<c:set var="valoropc" value="${opc}" />
@@ -94,7 +94,7 @@
 	        </c:if>
 		
 		<c:if test="${valoropc == '1'}">
-		   <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A n„o devoluÁ„o dos cartıes de embarque no prazo de 05 dias do retorno ‡ sede ensejar· a restituiÁ„o do valor pago a tÌtulo de di·rias (arts. 112 e 114 da ResoluÁ„o 4/2008/CJF)</font>
+		   <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A n√£o devolu√ß√£o dos cart√µes de embarque no prazo de 05 dias do retorno √† sede ensejar√° a restitui√ß√£o do valor pago a t√≠tulo de di√°rias (arts. 112 e 114 da Resolu√ß√£o 4/2008/CJF)</font>
 		</c:if>
 		
 		
@@ -103,7 +103,7 @@
 		<mod:grupo titulo="Uso de Carro Oficial (*)">
 
 			<mod:radio titulo="SIM" var="opcr" valor="1" reler="sim"/>
-			<mod:radio titulo="N√O" var="opcr" valor="2" reler="sim"/>
+			<mod:radio titulo="N√ÉO" var="opcr" valor="2" reler="sim"/>
 		</mod:grupo>	
 			<c:set var="valoropcr" value="${opcr}" />
 	        <c:if test="${empty valoropcr}">
@@ -111,16 +111,16 @@
 	        </c:if>
 		
 		<c:if test="${valoropcr == '2' && valoropc == '1'}">
-		   <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;… devida a concess„o do adicional de deslocamento previsto no ß 2∫ do art. 107 da ResoluÁ„o 4/2008/CJF</font>
+		   <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;√â devida a concess√£o do adicional de deslocamento previsto no ¬ß 2¬∫ do art. 107 da Resolu√ß√£o 4/2008/CJF</font>
 		</c:if>
 			
 		
 		<hr style="color: #FFFFFF;" />
-		<mod:grupo titulo="Itiner·rios (*)">
+		<mod:grupo titulo="Itiner√°rios (*)">
 			<mod:texto titulo="Origem/Destino" var="dest" largura="40" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></br>
 		</mod:grupo>
-		<mod:grupo titulo="PerÌodo de afastamento (*)">
-			<mod:selecao titulo="Dia ˙nico" var="diaunic" opcoes="SIM;N√O"
+		<mod:grupo titulo="Per√≠odo de afastamento (*)">
+			<mod:selecao titulo="Dia √∫nico" var="diaunic" opcoes="SIM;N√ÉO"
 				reler="sim" />
 			<br>
 			<c:choose>
@@ -128,7 +128,7 @@
 					<mod:data titulo="Dia de afastamento" var="perafast" />
 				</c:when>
 				<c:otherwise>
-					<mod:data titulo="PerÌodo de afastamento" var="perafast" />
+					<mod:data titulo="Per√≠odo de afastamento" var="perafast" />
 					&nbsp;&nbsp;<mod:data titulo="a" var="perafast2" />
 				</c:otherwise>
 			</c:choose>
@@ -136,9 +136,9 @@
 		
 		<hr style="color: #FFFFFF;" />
 		<span style="color: red"> <b>OBS.: O afastamento que se
-		iniciar a partir da sexta-feira ou que inclua s·bado, domingo ou
-		feriado dever· ser acompanhado de justificativa, condicionando-se o
-		pagamento ‡ aceitaÁ„o da justificativa pelo ordenador de despesas (art 111,II,ß2∫ Res. 4/2008/CJF). O mesmo se dar· quando houver
+		iniciar a partir da sexta-feira ou que inclua s√°bado, domingo ou
+		feriado dever√° ser acompanhado de justificativa, condicionando-se o
+		pagamento √† aceita√ß√£o da justificativa pelo ordenador de despesas (art 111,II,¬ß2¬∫ Res. 4/2008/CJF). O mesmo se dar√° quando houver
 		necessidade de pernoite na noite anterior e/ou posterior ao evento.</b> </span>
 
 
@@ -183,7 +183,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>PROPOSTA E CONCESS√O DE DI¡RIAS N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
+							<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>PROPOSTA E CONCESS√ÉO DE DI√ÅRIAS N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
 						</tr>
 					</table>
 				</td>
@@ -203,9 +203,9 @@
            <c:set var="func" value="${pessoa_prop.funcaoConfianca.nomeFuncao}"></c:set>
            <c:set var="matr" value="${pessoa_prop.sesbPessoa}${pessoa_prop.matricula}"></c:set>
         </c:if>
-        <c:set var="observ" value="ObservaÁ„o"></c:set>
+        <c:set var="observ" value="Observa√ß√£o"></c:set>
         <c:if test="${opc == '1' || opcr == '2'}">
-           <c:set var="observ" value="ObservaÁıes"></c:set>
+           <c:set var="observ" value="Observa√ß√µes"></c:set>
         </c:if>
        <!--
         <b>
@@ -222,8 +222,8 @@
 		</table>
         <table border="0"  bgcolor="#FFFFFF" cellpadding="1" width="51%" align="right" >
 	  		   <tr>
-  				<td width="40%" style="font-family:Arial;font-size:8.5pt;font-weight:normal" bgcolor="#FFFFFF" border="0" align="left"><b>(&nbsp;&nbsp;)&nbsp;PRORROGA«√O</b></td>
-				<td width="60%" style="font-family:Arial;font-size:8.5pt;font-weight:normal" bgcolor="#FFFFFF" border="0" align="left"><b>(&nbsp;&nbsp;) CapacitaÁ„o de Recursos Humanos</b></td>
+  				<td width="40%" style="font-family:Arial;font-size:8.5pt;font-weight:normal" bgcolor="#FFFFFF" border="0" align="left"><b>(&nbsp;&nbsp;)&nbsp;PRORROGA√á√ÉO</b></td>
+				<td width="60%" style="font-family:Arial;font-size:8.5pt;font-weight:normal" bgcolor="#FFFFFF" border="0" align="left"><b>(&nbsp;&nbsp;) Capacita√ß√£o de Recursos Humanos</b></td>
   			   </tr>
   		</table>
   		</b>
@@ -257,7 +257,7 @@
 						<table width="100%" border="0" cellpadding="3" cellspacing="0">
 							<tr><c:choose>
 								<c:when test="${doc.subscritor.matricula > 9999}">
-								<td width="100%" bgcolor="#FFFFFF" align="left"><b>FunÁ„o
+								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Fun√ß√£o
 								:</b>&nbsp;${doc.subscritor.funcaoConfianca.nomeFuncao}</td>
 								</c:when>
 								<c:otherwise>
@@ -289,19 +289,19 @@
 							<tr>
 								<td width="75%" bgcolor="#FFFFFF" align="left"><b>Cargo
 								</b>&nbsp;:&nbsp;${carg}&nbsp;&nbsp;&nbsp;&nbsp;<c:choose>
-									<c:when test="${ppq == 1}"><b>FunÁ„o
+									<c:when test="${ppq == 1}"><b>Fun√ß√£o
 								</b>&nbsp;:&nbsp;${func}</td>
-								<td width="25%" bgcolor="#FFFFFF" align="left"><b>MatrÌcula :
+								<td width="25%" bgcolor="#FFFFFF" align="left"><b>Matr√≠cula :
 								</b>&nbsp;&nbsp;${matr}</c:when></c:choose></td>
 							</tr>
 						</table>
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
 							<tr>
 								<td width="40%" bgcolor="#FFFFFF" align="left"><b>C/C
-								N∫ : </b>&nbsp;${contac}</td>
+								N¬∫ : </b>&nbsp;${contac}</td>
 								<td width="35%" bgcolor="#FFFFFF" align="left"><b>Banco :
 								</b>&nbsp;${banc}</td>
-								<td width="25%" bgcolor="#FFFFFF" align="left"><b>AgÍncia :
+								<td width="25%" bgcolor="#FFFFFF" align="left"><b>Ag√™ncia :
 								</b>&nbsp;${agen}</td>
 							</tr>
 						</table>
@@ -310,9 +310,9 @@
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
 							<tr>
 								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Valor
-								Mensal do AuxÌlio-AlimentaÁ„o : </b>&nbsp;R$&nbsp;${alm}</td>
+								Mensal do Aux√≠lio-Alimenta√ß√£o : </b>&nbsp;R$&nbsp;${alm}</td>
 								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Valor
-								Mensal do AuxÌlio-Transporte : </b>&nbsp;R$&nbsp;${trp}
+								Mensal do Aux√≠lio-Transporte : </b>&nbsp;R$&nbsp;${trp}
 								</td>
 
 							</tr>
@@ -326,7 +326,7 @@
 
 						<table width="100%" border="1" cellpadding="2" cellspacing="1">
 							<tr>
-								<td width="100%" bgcolor="#FFFFFF" align="left"><b>ServiÁo a ser executado e Local:</b></td>
+								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Servi√ßo a ser executado e Local:</b></td>
 							</tr>
 						</table>
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
@@ -343,16 +343,16 @@
 						<td>
 						<table width="100%" border="1" cellpadding="2" cellspacing="1">
 							<tr>
-								<td width="100%" bgcolor="#FFFFFF" align="left"><b>SolicitaÁ„o
-								de Passagem AÈrea </b></td>
+								<td width="100%" bgcolor="#FFFFFF" align="left"><b>Solicita√ß√£o
+								de Passagem A√©rea </b></td>
 
 							</tr>
 						</table>
 						<table width="100%" border="0" cellpadding="2" cellspacing="0">
 							<tr>
 								<td width="50%" bgcolor="#FFFFFF"><c:choose>
-									<c:when test="${opc==1}">&nbsp;(X)&nbsp;SIM&nbsp;(&nbsp;&nbsp;)&nbsp;N√O</c:when>
-									<c:otherwise>&nbsp;(&nbsp;&nbsp;)&nbsp;SIM&nbsp;(X)&nbsp;N√O</c:otherwise>
+									<c:when test="${opc==1}">&nbsp;(X)&nbsp;SIM&nbsp;(&nbsp;&nbsp;)&nbsp;N√ÉO</c:when>
+									<c:otherwise>&nbsp;(&nbsp;&nbsp;)&nbsp;SIM&nbsp;(X)&nbsp;N√ÉO</c:otherwise>
 								</c:choose></td>
 
 
@@ -374,8 +374,8 @@
 						<table width="100%" border="0" cellpadding="2" cellspacing="0">
 							<tr>
 								<td width="50%" bgcolor="#FFFFFF"><c:choose>
-									<c:when test="${opcr==1}">&nbsp;(X)&nbsp;SIM&nbsp;(&nbsp;&nbsp;)&nbsp;N√O</c:when>
-									<c:otherwise>&nbsp;(&nbsp;&nbsp;)&nbsp;SIM&nbsp;(X)&nbsp;N√O</c:otherwise>
+									<c:when test="${opcr==1}">&nbsp;(X)&nbsp;SIM&nbsp;(&nbsp;&nbsp;)&nbsp;N√ÉO</c:when>
+									<c:otherwise>&nbsp;(&nbsp;&nbsp;)&nbsp;SIM&nbsp;(X)&nbsp;N√ÉO</c:otherwise>
 								</c:choose></td>
 							</tr>
 						</table>
@@ -387,7 +387,7 @@
                       <td>
 						<table width="100%" border="1" cellpadding="2" cellspacing="1">
 						   <tr>
-							<td width="100%" bgcolor="#FFFFFF" align="left"><b>Itiner·rios</b></td>
+							<td width="100%" bgcolor="#FFFFFF" align="left"><b>Itiner√°rios</b></td>
                            </tr>
 				        </table>
 				        <table width="100%" border="0" cellpadding="2" cellspacing="0">
@@ -395,7 +395,7 @@
 						     <td width="65%" bgcolor="#FFFFFF"><b>Origem/Destino</b></td>
                              <td width="35%" bgcolor="#FFFFFF"><b><c:choose>
 					            <c:when test="${diaunic=='SIM'}">Dia de Afastamento</c:when>
-					            <c:otherwise>PerÌodo de Afastamento</c:otherwise>
+					            <c:otherwise>Per√≠odo de Afastamento</c:otherwise>
 					            </c:choose></b></td>
                            </tr>
 				        </table>
@@ -441,9 +441,9 @@
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
 							<tr>
 								<td width="100%" bgcolor="#FFFFFF">O afastamento que se
-		iniciar a partir da sexta-feira ou que inclua s·bado, domingo ou
-		feriado dever· ser acompanhado de justificativa, condicionando-se o
-		pagamento ‡ aceitaÁ„o da justificativa pelo ordenador de despesas (art 111,II,ß2∫ Res. 4/2008/CJF). O mesmo se dar· quando houver
+		iniciar a partir da sexta-feira ou que inclua s√°bado, domingo ou
+		feriado dever√° ser acompanhado de justificativa, condicionando-se o
+		pagamento √† aceita√ß√£o da justificativa pelo ordenador de despesas (art 111,II,¬ß2¬∫ Res. 4/2008/CJF). O mesmo se dar√° quando houver
 		necessidade de pernoite na noite anterior e/ou posterior ao evento.</td>
 							</tr>
 						</table>
@@ -452,7 +452,7 @@
 						
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
 							<tr>
-								<td width="100%" bgcolor="#FFFFFF">A n„o devoluÁ„o dos cartıes de embarque no prazo de 05 dias do retorno ‡ sede ensejar· a restituiÁ„o do valor pago a tÌtulo de di·rias (arts. 112 e 114 da ResoluÁ„o 4/2008/CJF).</td>
+								<td width="100%" bgcolor="#FFFFFF">A n√£o devolu√ß√£o dos cart√µes de embarque no prazo de 05 dias do retorno √† sede ensejar√° a restitui√ß√£o do valor pago a t√≠tulo de di√°rias (arts. 112 e 114 da Resolu√ß√£o 4/2008/CJF).</td>
 							</tr>
 						</table>
 						</c:if>
@@ -461,7 +461,7 @@
 						
 						<table width="100%" border="0" cellpadding="5" cellspacing="0">
 							<tr>
-								<td width="100%" bgcolor="#FFFFFF">… devida a concess„o do adicional de deslocamento previsto no ß 2∫ do art. 107 da ResoluÁ„o 4/2008/CJF.</td>
+								<td width="100%" bgcolor="#FFFFFF">√â devida a concess√£o do adicional de deslocamento previsto no ¬ß 2¬∫ do art. 107 da Resolu√ß√£o 4/2008/CJF.</td>
 							</tr>
 						</table>
 						
@@ -506,22 +506,22 @@
 						<td>
 						<table width="100%" border="1" cellpadding="2" cellspacing="1">
 							<tr>
-								<td width="100%" bgcolor="#FFFFFF" align="left"><b>C·lculo
-								das Di·rias</b></td>
+								<td width="100%" bgcolor="#FFFFFF" align="left"><b>C√°lculo
+								das Di√°rias</b></td>
 							</tr>
 						</table>
 						<table width="100%" border="0" cellpadding="2" cellspacing="0">
 							<tr>
-								<td width="27.5%" bgcolor="#FFFFFF"><b>N˙mero Total de
-								Di·rias</b></td>
+								<td width="27.5%" bgcolor="#FFFFFF"><b>N√∫mero Total de
+								Di√°rias</b></td>
                                 <td width="27.5%" bgcolor="#FFFFFF" align="left"><b>:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___________________</td>
-								<td width="16%" bgcolor="#FFFFFF"><b>Vale-RefeiÁ„o</b></td>
+								<td width="16%" bgcolor="#FFFFFF"><b>Vale-Refei√ß√£o</b></td>
                                 <td width="29%" bgcolor="#FFFFFF" align="left"><b>:</b>&nbsp;R$&nbsp;_____________________</td>
 							</tr>
 						</table>
 						<table width="100%" border="0" cellpadding="2" cellspacing="0">
 							<tr>
-								<td width="27.5%" bgcolor="#FFFFFF" align="left"><b>Valor Unit·rio da Di·ria</td>
+								<td width="27.5%" bgcolor="#FFFFFF" align="left"><b>Valor Unit√°rio da Di√°ria</td>
 								<td width="27.5%" bgcolor="#FFFFFF" align="left"><b>:</b>&nbsp;R$&nbsp;___________________</td>
 								<td width="16%" bgcolor="#FFFFFF"><b>Vale-Transporte</b></td>
 								<td width="29%" bgcolor="#FFFFFF" align="left"><b>:</b>&nbsp;R$&nbsp;_____________________</td>
@@ -529,7 +529,7 @@
 						</table>
 						<table width="100%" border="0" cellpadding="2" cellspacing="0">
 							<tr>
-								<td width="27.5%" bgcolor="#FFFFFF" align="left"><b>AuxÌlio</b>&nbsp;(art. 107 ß2∫ Res.CJF)</b></td>
+								<td width="27.5%" bgcolor="#FFFFFF" align="left"><b>Aux√≠lio</b>&nbsp;(art. 107 ¬ß2¬∫ Res.CJF)</b></td>
 								<td width="27.5%" bgcolor="#FFFFFF" align="left"><b>:</b>&nbsp;R$&nbsp;___________________</td>
 								<td width="16%" bgcolor="#FFFFFF" align="left"><b>Total Desconto</b></td>
                                 <td width="29%" bgcolor="#FFFFFF" align="left"><b>:</b>&nbsp;R$&nbsp;_____________________</td>
@@ -539,7 +539,7 @@
 							<tr>
 								<td width="27.5%" bgcolor="#FFFFFF" align="left"><b>Valor Bruto</b></td>
 								<td width="27.5%" bgcolor="#FFFFFF" align="left"><b>:</b>&nbsp;R$&nbsp;___________________</td>
-								<td width="16%" bgcolor="#FFFFFF" align="left"><b>Valor LÌquido</b></td>
+								<td width="16%" bgcolor="#FFFFFF" align="left"><b>Valor L√≠quido</b></td>
                                 <td width="29%" bgcolor="#FFFFFF" align="left"><b>:</b>&nbsp;R$&nbsp;_____________________</td>
 							</tr>
 						</table>
@@ -549,7 +549,7 @@
 								<td>
 								<table width="100%" border="1" cellpadding="2" cellspacing="1">
 									<tr>
-										<td width="100%" bgcolor="#FFFFFF" align="left"><b>3-Concess„o</b>
+										<td width="100%" bgcolor="#FFFFFF" align="left"><b>3-Concess√£o</b>
 										</td>
 
 									</tr>
@@ -565,7 +565,7 @@
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
 									<tr>
 										<td width="50%" bgcolor="#FFFFFF">(&nbsp;&nbsp;)&nbsp;Concedo
-										as di·rias.Pague-se.</td>
+										as di√°rias.Pague-se.</td>
 										<td width="50%" bgcolor="#FFFFFF">(&nbsp;&nbsp;)&nbsp;Requisite(m)-se
 										a(s) passagem(ens)</td>
 								</table>
@@ -633,7 +633,7 @@
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
 									<tr>
 										<td width="100%" bgcolor="#FFFFFF" align="left">Paga a
-										import‚ncia
+										import√¢ncia
 										de&nbsp;&nbsp;_________________&nbsp;(&nbsp;___________________________________________________</td>
 								</table>
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
@@ -650,8 +650,8 @@
 								</table>
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
 									<tr>
-										<td width="60%" bgcolor="#FFFFFF" align="left">atravÈs da
-										Ordem Banc·ria n∫.&nbsp;&nbsp;___________________________,</td>
+										<td width="60%" bgcolor="#FFFFFF" align="left">atrav√©s da
+										Ordem Banc√°ria n¬∫.&nbsp;&nbsp;___________________________,</td>
 										<td width="40%" bgcolor="#FFFFFF" align="left">&nbsp;de&nbsp;____
 										/____ /_________.</td>
 								</table>
@@ -690,7 +690,7 @@
 								</table>
 								<table width="100%" border="1" cellpadding="2" cellspacing="1">
 									<tr>
-										<td width="100%" bgcolor="#FFFFFF" align="left"><b>5-PublicaÁ„o</b>
+										<td width="100%" bgcolor="#FFFFFF" align="left"><b>5-Publica√ß√£o</b>
 										</td>
 
 									</tr>
@@ -706,12 +706,12 @@
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
 									<tr>
 										<td width="100%" bgcolor="#FFFFFF" align="left">O
-										presidente documento est· de acordo com as normas
-										regulamentares pertinentes e ser· publicado no Boletim:</td>
+										presidente documento est√° de acordo com as normas
+										regulamentares pertinentes e ser√° publicado no Boletim:</td>
 								</table>
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
 									<tr>
-										<td width="50%" bgcolor="#FFFFFF" align="left">Concess„o:</td>
+										<td width="50%" bgcolor="#FFFFFF" align="left">Concess√£o:</td>
 
 										<td width="50%" bgcolor="#FFFFFF" align="left">Pagamento:</td>
 								</table>
@@ -721,10 +721,10 @@
 								</table>
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
 									<tr>
-										<td width="50%" bgcolor="#FFFFFF" align="left">N∫.&nbsp;______________
+										<td width="50%" bgcolor="#FFFFFF" align="left">N¬∫.&nbsp;______________
 										&nbsp;,&nbsp;&nbsp;de&nbsp;____ /____ /_______.</td>
 
-										<td width="50%" bgcolor="#FFFFFF" align="left">N∫.&nbsp;_______________
+										<td width="50%" bgcolor="#FFFFFF" align="left">N¬∫.&nbsp;_______________
 										&nbsp;,&nbsp;&nbsp;de&nbsp;____ /____ /_______.</td>
 								</table>
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
@@ -750,7 +750,7 @@
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
 									<tr>
 										<td width="100%" bgcolor="#FFFFFF" align="center">Assinatura
-										do Respons·vel</td>
+										do Respons√°vel</td>
 								</table>
 								<table width="100%" border="0" cellpadding="2" cellspacing="0">
 									<tr>

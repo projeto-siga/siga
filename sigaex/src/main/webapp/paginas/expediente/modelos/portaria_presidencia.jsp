@@ -7,7 +7,7 @@
 	<mod:entrevista>
 		<c:if test="${empty esconderTexto}">
 			<mod:grupo
-				titulo="Texto a ser inserido no corpo da Portaria da Presidência">
+				titulo="Texto a ser inserido no corpo da Portaria da PresidÃªncia">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_ptp" />
 				</mod:grupo>

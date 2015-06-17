@@ -8,20 +8,20 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>		
-			<mod:selecao titulo="Número de servidores a serem incluídos"
+			<mod:selecao titulo="NÃºmero de servidores a serem incluÃ­dos"
 				var="numIncluidos"
 				opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20"
 				reler="ajax" idAjax="numIncluidosAjax" />
 			<mod:grupo depende="numIncluidosAjax">
 				<c:forEach var="i" begin="1" end="${numIncluidos}">
 					<mod:grupo>
-						<b>Dados do ${i}º servidor que prestará hora extra:</b>
+						<b>Dados do ${i}Âº servidor que prestarÃ¡ hora extra:</b>
 						<mod:grupo>
-							<mod:pessoa titulo="Matrícula" var="servidor${i}" />
+							<mod:pessoa titulo="MatrÃ­cula" var="servidor${i}" />
 						</mod:grupo>
 						<mod:grupo>
 							<mod:selecao
-								titulo="Número de datas a serem incluídas para o servidor"
+								titulo="NÃºmero de datas a serem incluÃ­das para o servidor"
 								var="numDatas${i}" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15"
 								reler="ajax" idAjax="numDatasAjax${i}" />
 						</mod:grupo>
@@ -29,7 +29,7 @@
 							<c:forEach var="j" begin="1" end="${requestScope[f:concat('numDatas',i)]}">
 								<mod:grupo>
 									<mod:data titulo="Data" var="data${i}${j}"></mod:data> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						    		 <mod:hora titulo="Horário" var="horaini${i}${j}" /> hs às  <mod:hora var="horafim${i}${j}" titulo=""/> hs
+						    		 <mod:hora titulo="HorÃ¡rio" var="horaini${i}${j}" /> hs Ã s  <mod:hora var="horafim${i}${j}" titulo=""/> hs
 								</mod:grupo>
 							</c:forEach>
 						</mod:grupo>
@@ -39,16 +39,16 @@
 		</mod:grupo>
 		<mod:grupo>
 			<mod:memo colunas="70" linhas="3"
-				titulo="As horas-extras acima mostram-se necessárias (MANIFESTAÇÃO FUNDAMENTADA)"
+				titulo="As horas-extras acima mostram-se necessÃ¡rias (MANIFESTAÃ‡ÃƒO FUNDAMENTADA)"
 				var="motivo" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:selecao titulo="Horas extras trabalhadas" var="tipoHoraExtra"
-				opcoes="em dias úteis;em fins de semana/feriados" />
+				opcoes="em dias Ãºteis;em fins de semana/feriados" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:memo colunas="70" linhas="2" titulo="As mencionadas tarefas não podem ser realizadas 
-			durante o expediente regulamentar, eis que <br> (MANIFESTAÇÃO FUNDAMENTADA)"
+			<mod:memo colunas="70" linhas="2" titulo="As mencionadas tarefas nÃ£o podem ser realizadas 
+			durante o expediente regulamentar, eis que <br> (MANIFESTAÃ‡ÃƒO FUNDAMENTADA)"
 				var="justificativa" />
 		</mod:grupo>
 
@@ -77,7 +77,7 @@
 						<tr><br /><br /><br /></tr>
 						<tr>
 							<td align="right"><font style="font-family:Arial;font-size:11pt;font-weight:bold;">
-							SOLICITAÇÃO N&ordm; ${doc.codigo}</font></td>
+							SOLICITAÃ‡ÃƒO N&ordm; ${doc.codigo}</font></td>
 						</tr>	
 						<tr>
 							<td align="right"><font style="font-family:Arial;font-size:11pt;font-weight:bold;">
@@ -98,21 +98,21 @@
 		Juiz Federal - Diretor do Foro,</p>
 		<br />
 		<p style="text-align: justify; text-indent: 3cm;">Solicito
-		autorização para prestação de serviço extraordinário segundo a escala
+		autorizaÃ§Ã£o para prestaÃ§Ã£o de serviÃ§o extraordinÃ¡rio segundo a escala
 		abaixo discriminada, com vista ao pagamento do respectivo adicional,
-		de acordo com os artigos 42 e seguintes da Resolução nº 4/2008, do
-		Conselho da Justiça Federal.</p>
+		de acordo com os artigos 42 e seguintes da ResoluÃ§Ã£o nÂº 4/2008, do
+		Conselho da JustiÃ§a Federal.</p>
 		<br />
 
 		<table width="100%" align="center" border="1" cellpadding="2"
 			cellspacing="1" bgcolor="#000000">
 			<tr>
 				<td bgcolor="#FFFFFF" width="20%" align="center">Servidor</td>
-				<td bgcolor="#FFFFFF" width="09%" align="center">Matrícula</td>
+				<td bgcolor="#FFFFFF" width="09%" align="center">MatrÃ­cula</td>
 				<td bgcolor="#FFFFFF" width="20%" align="center">Cargo
-				Efetivo/Função Comissionada</td>
+				Efetivo/FunÃ§Ã£o Comissionada</td>
 				<td bgcolor="#FFFFFF" width="11%" align="center">Data</td>
-				<td bgcolor="#FFFFFF" width="10%">Horário</td>
+				<td bgcolor="#FFFFFF" width="10%">HorÃ¡rio</td>
 			</tr>
 		</table>
 		<c:forEach var="i" begin="1" end="${numIncluidos}">
@@ -148,20 +148,20 @@
 		</c:forEach>
 	
 		<p style="text-align: justify; text-indent: 3cm;">As horas-extras
-		acima mostram-se necessárias &nbsp;${motivo}</p>
+		acima mostram-se necessÃ¡rias &nbsp;${motivo}</p>
 		<c:if test="${tipoHoraExtra eq 'em fins de semana/feriados'}">
-			<c:set var="tampouco" value="tampouco em dias úteis," scope="request" />
+			<c:set var="tampouco" value="tampouco em dias Ãºteis," scope="request" />
 		</c:if>
 		<p style="text-align: justify; text-indent: 3cm;">As mencionadas
-		tarefas não podem ser realizadas durante o expediente regulamentar,
+		tarefas nÃ£o podem ser realizadas durante o expediente regulamentar,
 		${tampouco} eis que &nbsp;${justificativa}</p>
 
-		<p style="text-align: justify; text-indent: 3cm;">Na hipótese de
-		deferimento, comprometo-me a encaminhar à Subsecretaria de Gestão de
-		Pessoas a ficha individual de frequência de serviço extraordinário
+		<p style="text-align: justify; text-indent: 3cm;">Na hipÃ³tese de
+		deferimento, comprometo-me a encaminhar Ã  Subsecretaria de GestÃ£o de
+		Pessoas a ficha individual de frequÃªncia de serviÃ§o extraordinÃ¡rio
 		preenchida, bem como atestada por mim e pela chefia imediata do(s)
-		respectivo(s) servidor(es) até o 2º dia útil do mês subsequente ao da
-		prestação do serviço, nos termos do artigo 49 da Resolução
+		respectivo(s) servidor(es) atÃ© o 2Âº dia Ãºtil do mÃªs subsequente ao da
+		prestaÃ§Ã£o do serviÃ§o, nos termos do artigo 49 da ResoluÃ§Ã£o
 		supramencionada.</p>
 
 		<br />

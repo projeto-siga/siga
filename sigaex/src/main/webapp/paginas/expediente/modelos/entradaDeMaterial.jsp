@@ -5,9 +5,9 @@
 <mod:modelo>
 	<c:set var="apenasNome" value="Sim" scope="request" />
 	<mod:entrevista>
-		<mod:grupo titulo="Tipo de Formul·rio">	
+		<mod:grupo titulo="Tipo de Formul√°rio">	
 			<mod:radio titulo="Entrada de Material" var="tipoFormulario" valor="1" marcado="Sim"/>
-			<mod:radio titulo="SaÌda de Material" var="tipoFormulario" valor="2"/>
+			<mod:radio titulo="Sa√≠da de Material" var="tipoFormulario" valor="2"/>
 		</mod:grupo>
 		
 		<mod:data titulo="Data" var="data" obrigatorio="Sim"></mod:data>
@@ -20,16 +20,16 @@
 				idAjax="tipoAjax" />
 			<mod:grupo depende="tipoAjax">
 				<c:if test="${tipo eq 'Interno/Externo'}">
-					<mod:lotacao titulo="Origem Interna" var="origem" /><mod:texto titulo="LocalizaÁ„o" var="localizacao"/><br />
+					<mod:lotacao titulo="Origem Interna" var="origem" /><mod:texto titulo="Localiza√ß√£o" var="localizacao"/><br />
 					<mod:texto var="destino" titulo="Destino Externo" largura="60" />
 				</c:if>	
 				<c:if test="${tipo eq 'Externo/Interno'}">
 					<mod:texto var="origem" titulo="Origem Externa" largura="60" /><br />
-					<mod:lotacao titulo="Destino Interno" var="destino" /><mod:texto titulo="LocalizaÁ„o" var="localizacao"/><br />
+					<mod:lotacao titulo="Destino Interno" var="destino" /><mod:texto titulo="Localiza√ß√£o" var="localizacao"/><br />
 				</c:if>
 				<c:if test="${tipo eq 'Interno/Interno'}">
-					<mod:lotacao titulo="Origem Interna" var="origem" /><mod:texto titulo="LocalizaÁ„o" var="localizacaoOri" largura="20"/><br />
-					<mod:lotacao titulo="Destino Interno" var="destino" /><mod:texto titulo="LocalizaÁ„o" var="localizacaoDest" largura="20"/><br />
+					<mod:lotacao titulo="Origem Interna" var="origem" /><mod:texto titulo="Localiza√ß√£o" var="localizacaoOri" largura="20"/><br />
+					<mod:lotacao titulo="Destino Interno" var="destino" /><mod:texto titulo="Localiza√ß√£o" var="localizacaoDest" largura="20"/><br />
 					
 				</c:if>
 			</mod:grupo>
@@ -41,10 +41,10 @@
 			var="totalDeMaterial" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="sim" />
 			<c:forEach var="i" begin="1" end="${totalDeMaterial}">
 				<mod:grupo>
-					<mod:texto titulo="DescriÁ„o" var="descricao${i}" largura="60" />
+					<mod:texto titulo="Descri√ß√£o" var="descricao${i}" largura="60" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="N∫ de SÈrie/N∫ do PatrimÙnio" var="serie${i}" largura="60" />
+					<mod:texto titulo="N¬∫ de S√©rie/N¬∫ do Patrim√¥nio" var="serie${i}" largura="60" />
 				</mod:grupo>
 				<mod:grupo>
 					<mod:selecao titulo="Quantidade"
@@ -55,11 +55,11 @@
 		</mod:grupo>
 		
 		<mod:grupo titulo="">
-				<mod:texto titulo="ObservaÁıes" var="obs" largura="80" />
+				<mod:texto titulo="Observa√ß√µes" var="obs" largura="80" />
 		</mod:grupo>
 		<br />
 		<mod:grupo titulo="">
-				<mod:texto titulo="Respons·vel" var="responsavel" largura="80" /><br />
+				<mod:texto titulo="Respons√°vel" var="responsavel" largura="80" /><br />
 				<mod:texto titulo="Identidade" var="identidade" largura="10" /><b>(Ex: 99999999-9)</b> 
 		</mod:grupo>
 		
@@ -97,7 +97,7 @@
 									ENTRADA DE MATERIAL
 								</c:when>
 								<c:otherwise>
-									SAÕDA DE MATERIAL
+									SA√çDA DE MATERIAL
 								</c:otherwise>
 							</c:choose>
 							<br /><br />N&ordm; ${doc.codigo}</p></td>
@@ -115,11 +115,11 @@
 									ENTRADA
 								</c:when>
 								<c:otherwise>
-									SAÕDA
+									SA√çDA
 								</c:otherwise>
 							</c:choose>				
 					do(s) material(is), abaixo relacionado(s)<br />
-					nesta SeÁ„o Judici·ria 
+					nesta Se√ß√£o Judici√°ria 
 				    <c:if test="${not empty data}"> na data </c:if>${data }.</b></td>
 			</tr>
 		</table>
@@ -137,7 +137,7 @@
 					<td width="50%" bgcolor="#FFFFFF" align="center">${requestScope['origem_lotacaoSel.sigla']}</td>
 					<td width="50%" bgcolor="#FFFFFF" align="center">${destino}</td>
 					<tr>
-						<td width="50%" bgcolor="#FFFFFF"><b>LocalizaÁ„o:</b> ${localizacao}</td>
+						<td width="50%" bgcolor="#FFFFFF"><b>Localiza√ß√£o:</b> ${localizacao}</td>
 						<td width="50%" bgcolor="#FFFFFF"></td>						
 					</tr>
 				</c:if>
@@ -146,20 +146,20 @@
 					<td width="50%" bgcolor="#FFFFFF" align="center">${requestScope['destino_lotacaoSel.sigla']}</td>
 					<tr>
 					    <td width="50%" bgcolor="#FFFFFF"></td>
-						<td width="50%" bgcolor="#FFFFFF"><b>LocalizaÁ„o:</b> ${localizacao}</td>						
+						<td width="50%" bgcolor="#FFFFFF"><b>Localiza√ß√£o:</b> ${localizacao}</td>						
 					</tr>
 				</c:if>
 				<c:if test="${tipo eq 'Interno/Interno'}">
 					<td width="50%" bgcolor="#FFFFFF" align="center">${requestScope['origem_lotacaoSel.sigla']}</td>
 					<td width="50%" bgcolor="#FFFFFF" align="center">${requestScope['destino_lotacaoSel.sigla']}</td>
 					<tr>
-						<td width="50%" bgcolor="#FFFFFF"><b>LocalizaÁ„o:</b> ${localizacaoOri}</td>
-						<td width="50%" bgcolor="#FFFFFF"><b>LocalizaÁ„o:</b> ${localizacaoDest}</td>						
+						<td width="50%" bgcolor="#FFFFFF"><b>Localiza√ß√£o:</b> ${localizacaoOri}</td>
+						<td width="50%" bgcolor="#FFFFFF"><b>Localiza√ß√£o:</b> ${localizacaoDest}</td>						
 					</tr>
 				</c:if>
 			</tr>
 		<%--	<tr>
-				<td width="50%" bgcolor="#FFFFFF"><b>LocalizaÁ„o</b></td>
+				<td width="50%" bgcolor="#FFFFFF"><b>Localiza√ß√£o</b></td>
 				<td width="50%" bgcolor="#FFFFFF" align="center"><c:if test="${empty localizacao}">&nbsp;</c:if>${localizacao }</td>
 			</tr> --%>
 			
@@ -170,8 +170,8 @@
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
-				<td width="50%" bgcolor="#FFFFFF" align="center"><b>DescriÁ„o do Material</b></td>
-				<td width="35%" bgcolor="#FFFFFF" align="center"><b>N∫ de SÈrie/N∫ do PatrimÙnio</b></td>
+				<td width="50%" bgcolor="#FFFFFF" align="center"><b>Descri√ß√£o do Material</b></td>
+				<td width="35%" bgcolor="#FFFFFF" align="center"><b>N¬∫ de S√©rie/N¬∫ do Patrim√¥nio</b></td>
 				<td width="15%" bgcolor="#FFFFFF" align="center"><b>Quantidade</b></td>
 			</tr>
 		</table>
@@ -190,7 +190,7 @@
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF" ><b>ObservaÁıes</b></td>
+				<td bgcolor="#FFFFFF" ><b>Observa√ß√µes</b></td>
 			</tr>
 			<tr>
 				<td bgcolor="#FFFFFF">
@@ -208,7 +208,7 @@
 				<td bgcolor="#FFFFFF" width="70%" align="center"><c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" /></td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF" width="30%" align="center"><b>Respons·vel</b></td>
+				<td bgcolor="#FFFFFF" width="30%" align="center"><b>Respons√°vel</b></td>
 				<td bgcolor="#FFFFFF" width="70%">&nbsp ${responsavel}</td>
 			</tr>
 			<tr>
@@ -228,7 +228,7 @@
 						ENTRADA
 					</c:when>
 					<c:otherwise>
-						SAÕDA
+						SA√çDA
 					</c:otherwise>
 				</c:choose>
 				</b></td>

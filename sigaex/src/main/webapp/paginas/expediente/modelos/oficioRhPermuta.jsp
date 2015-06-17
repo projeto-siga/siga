@@ -23,7 +23,7 @@
 	<mod:documento>
 		<mod:valor var="texto_oficio">
 			<p style="TEXT-INDENT: 2cm" align="justify">Solicito a Vossa
-			Excelência as providências necessárias para que seja realizada a <b>remoção por permuta</b> entre os(as) servidores(as)
+			ExcelÃªncia as providÃªncias necessÃ¡rias para que seja realizada a <b>remoÃ§Ã£o por permuta</b> entre os(as) servidores(as)
 			<mod:identificacao pessoa="${requestScope['servidor1_pessoaSel.id']}"/>
 			e
 			<mod:identificacao pessoa="${requestScope['servidor2_pessoaSel.id']}" />

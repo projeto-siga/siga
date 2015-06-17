@@ -5,9 +5,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <mod:modelo>
-<%--  Suprimi a entrevista pois o  n˙mero do processo ser· preenchido automaticamente, n„o ser· necess·rio o campo processo.
+<%--  Suprimi a entrevista pois o  n√∫mero do processo ser√° preenchido automaticamente, n√£o ser√° necess√°rio o campo processo.
 	<mod:entrevista>
-		<mod:texto titulo="N∫ processo" var="numProcesso" largura="20" />
+		<mod:texto titulo="N¬∫ processo" var="numProcesso" largura="20" />
 	</mod:entrevista>  --%>
 	<mod:documento>
 		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -49,13 +49,13 @@
 		<br />
 		<br />
 
-		<p align="center"><b>CERTID√O</b></p>
+		<p align="center"><b>CERTID√ÉO</b></p>
 
 		<br />
 		<br />
 
 		<p align="left" style="TEXT-INDENT: 2cm">Certifico que, nesta
-		data, encerrei o volume ${mob.numSequencia} do processo em epÌgrafe.</p>
+		data, encerrei o volume ${mob.numSequencia} do processo em ep√≠grafe.</p>
 
 		<br />
 		<br />

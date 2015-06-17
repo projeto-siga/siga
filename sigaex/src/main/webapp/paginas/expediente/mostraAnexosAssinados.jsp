@@ -23,17 +23,17 @@
 							<th align="center" rowspan="2">&nbsp;&nbsp;&nbsp;Data</th>
 							<th colspan="2" align="center">Cadastrante</th>
 							<th colspan="2" align="center">Atendente</th>
-							<th rowspan="2">Descrição</th>
+							<th rowspan="2">DescriÃ§Ã£o</th>
 						</tr>
 						<tr>
-						    <ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+						    <ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 								<td align="center"><input type="checkbox" name="checkall"
 									onclick="checkUncheckAll(this)" /></td>
 							</ww:if>
 							<ww:else><td></td></ww:else>
-							<th align="left">Lotação</th>
+							<th align="left">LotaÃ§Ã£o</th>
 							<th align="left">Pessoa</th>
-							<th align="left">Lotação</th>
+							<th align="left">LotaÃ§Ã£o</th>
 							<th align="left">Pessoa</th>
 						</tr>
 					<thead>
@@ -48,7 +48,7 @@
 								<ww:else>
 									<c:set var="dtUlt" value="${dt}" />
 								</ww:else>
-								<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+								<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 									<c:set var="x" scope="request">chk_${mov.mov.idMov}</c:set>
 									<c:remove var="x_checked" scope="request" />
 									<c:if test="${param[x] == 'true'}">
@@ -104,7 +104,7 @@
 											<c:set var="assinadopor" value="${false}" />
 										</c:if>
 									</c:forEach>
-									<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+									<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 										<ww:hidden name="pdf${x}" value="${mov.mov.referencia}" />
 										<ww:hidden name="url${x}" value="${mov.mov.nmPdf}" />
 									</c:if>
@@ -135,13 +135,13 @@
 	    <c:set var="lote" value="true" />
 	</div>
 	<c:if
-		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 			<div id="capicom-div">
 				<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a>
 				<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
 			</div>
-		<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
-		<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+		<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrÃ£o do SIGA-DOC sÃ³ poderÃ¡ ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> Ã© permitida.</p>
+		<p id="capicom-missing" style="display: none;">NÃ£o foi possÃ­vel localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o mÃ©todo padrÃ£o do SIGA-DOC, serÃ¡ necessÃ¡rio instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. SerÃ¡ necessÃ¡rio expandir o <i>ZIP</i> e depois executar o arquivo de instalaÃ§Ã£o.</p>
 				<script type="text/javascript">
 					 if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
 						 document.getElementById("capicom-div").style.display = "block";
@@ -153,10 +153,10 @@
 				 </script>
 	</c:if>
 
-	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 	    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 	</c:if>
 </ww:if>
 <ww:else>
-		<b>Não há anexos assinados</b>
+		<b>NÃ£o hÃ¡ anexos assinados</b>
 </ww:else>

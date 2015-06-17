@@ -8,9 +8,9 @@
 	<mod:entrevista>
 	
 		<mod:grupo titulo="DETALHES DA REMO&Ccedil;&Atilde;O">
-				<mod:texto titulo="Remoção para" var="remocao" largura="70" />
+				<mod:texto titulo="RemoÃ§Ã£o para" var="remocao" largura="70" />
 				<br/>
-				<span><b>(Órgãos: CJF; TRF2R; SJES. TRF1R; TRF3R; TRF4R; TRF5R e respectivas seções judiciárias)</b></span>
+				<span><b>(Ã“rgÃ£os: CJF; TRF2R; SJES. TRF1R; TRF3R; TRF4R; TRF5R e respectivas seÃ§Ãµes judiciÃ¡rias)</b></span>
 				<mod:memo colunas="60" linhas="3"  titulo="Motivo" var="motivo"/>
 		</mod:grupo>
 				
@@ -22,17 +22,17 @@
 	</c:if>
 	<mod:valor var="texto_requerimento">
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência que se digne 
-		encaminhar o requerimento de <b>remoção</b>, em anexo, ao E. Tribunal Regional Federal da 2ª Região.
+		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia que se digne 
+		encaminhar o requerimento de <b>remoÃ§Ã£o</b>, em anexo, ao E. Tribunal Regional Federal da 2Âª RegiÃ£o.
 	    </p>
 	  </mod:valor>  		
 		<mod:valor var="texto_requerimento2">
 		<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegi.jsp" />
 
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência, nos termos do 
-		art. 36 da Lei n.º 8.112/90, combinado com a redação dada pela Lei
-		n.º 9.527/97, <b>remoção</b>${remocaoPara}, pelos 
+		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia, nos termos do 
+		art. 36 da Lei n.Âº 8.112/90, combinado com a redaÃ§Ã£o dada pela Lei
+		n.Âº 9.527/97, <b>remoÃ§Ã£o</b>${remocaoPara}, pelos 
 		motivos a seguir expostos:
 		</p>
 		

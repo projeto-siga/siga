@@ -4,13 +4,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="DADOS DOS MAGISTRADOS/SERVIDORES BENEFICI¡RIO">
+		<mod:grupo titulo="DADOS DOS MAGISTRADOS/SERVIDORES BENEFICI√ÅRIO">
 			<mod:grupo>
 				<mod:texto titulo="Quadro de pessoal" var="quadro" />
 				<mod:texto titulo="Ramal" var="ramal" largura="15"/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Plano de Sa˙de a que est· vinculado" var ="plano"/>
+				<mod:texto titulo="Plano de Sa√∫de a que est√° vinculado" var ="plano"/>
 			</mod:grupo>
 		</mod:grupo>
 		
@@ -25,16 +25,16 @@
 			</mod:grupo>
 			<mod:grupo>
 				<mod:data titulo="data de nascimento" var="dtNasc"/>
-				<mod:selecao titulo="Estado Civil" var="estado" opcoes="solteiro(a);casado(a);vi˙vo(a);outros" reler="n„o" />
+				<mod:selecao titulo="Estado Civil" var="estado" opcoes="solteiro(a);casado(a);vi√∫vo(a);outros" reler="n√£o" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="N∫ Identidade" var="iden" largura="20"/>
-				<mod:texto titulo="Org„o Expedidor" var ="OrgExp"/>
-				<mod:data titulo="Data de ExpediÁ„o" var="dtExp"/>
+				<mod:texto titulo="N¬∫ Identidade" var="iden" largura="20"/>
+				<mod:texto titulo="Org√£o Expedidor" var ="OrgExp"/>
+				<mod:data titulo="Data de Expedi√ß√£o" var="dtExp"/>
 			</mod:grupo>
 			<mod:grupo>
 				<mod:data titulo="data" var="dt"/>
-				<mod:texto titulo="relaÁao de documentos de dependencia" var="rel"/>
+				<mod:texto titulo="rela√ßao de documentos de dependencia" var="rel"/>
 			</mod:grupo>
 		</mod:grupo>
 	</mod:entrevista>
@@ -76,13 +76,13 @@
 <br/>
 		<table border="1" cellpadding="5" width="96%"style="font-size:9" >
 			<tr>
-    			<th colspan="2" align="left" style="font-size:12"><b>1-DADOS DO MAGISTRADOS/SERVIDOR BENEFICI¡RIO(TITULAR)</b></th>
+    			<th colspan="2" align="left" style="font-size:12"><b>1-DADOS DO MAGISTRADOS/SERVIDOR BENEFICI√ÅRIO(TITULAR)</b></th>
   			</tr>
   			<tr >
   				<td>
   				Nome: ${doc.subscritor.descricao}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; matricula:${doc.subscritor.matricula}<br/>
 				Cargo: ${doc.subscritor.cargo.descricao} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quadro de pessoal:${quadro}<br/>
-				LotaÁ„o: ${doc.subscritor.lotacao.descricao}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ramal:${ramal}<br/>
+				Lota√ß√£o: ${doc.subscritor.lotacao.descricao}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ramal:${ramal}<br/>
 				Plano de Sa&uacute;de a que est&aacute; vinculado: ${plano}
 				
   				</td>
@@ -98,7 +98,7 @@
   					Nome: ${dep}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Parentesco: ${paren} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   					Estado Civil: ${estado} <br/>
   					Data de nascimento: ${dtNasc} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  					N∫ Identidade:${ iden} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  					N¬∫ Identidade:${ iden} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
   					&Oacute;rg&atilde;o Expedidor: ${OrgExp} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
   					Data de expedi&ccedil;&atilde;o: ${dtExp }<br/>
   				</td>
@@ -113,15 +113,15 @@
 			</tr>
 			<tr >
 				<td >
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro estar ciente dos termos do capitulo IV da resoluÁao n™ 2 de 2008 do Conselho da JustiÁa
-					Federal, que regulamenta a assistencia ‡ saude prevista no art. 2320 da lei n∫ 8.112, de 1990, 
-					com a redaÁ„o dada pela lei 11.032, de 2006, e de que  o repesctivo auxilio sera pago mediante
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro estar ciente dos termos do capitulo IV da resolu√ßao n¬™ 2 de 2008 do Conselho da Justi√ßa
+					Federal, que regulamenta a assistencia √† saude prevista no art. 2320 da lei n¬∫ 8.112, de 1990, 
+					com a reda√ß√£o dada pela lei 11.032, de 2006, e de que  o repesctivo auxilio sera pago mediante
 					reembolso.<br/>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, ainda que os beneficios acima relacionados n„o recebem  auxilio semelhante, nem participar de outro 
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, ainda que os beneficios acima relacionados n√£o recebem  auxilio semelhante, nem participar de outro 
 					progrmaa de assisaitencia saude, custeado pelos cofres publicos, ainda que eme partes.<br/>
 					<b>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, por fim, estar ciente de que a documentoÁ„o sobre a operadora/contrato do contrato do plano de saude
-					sera apresentada apos a regulamentaÁ„o da matÈria pelo TRF - 2™ Regi„o.
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, por fim, estar ciente de que a documento√ß√£o sobre a operadora/contrato do contrato do plano de saude
+					sera apresentada apos a regulamenta√ß√£o da mat√©ria pelo TRF - 2¬™ Regi√£o.
 					</b> 
 				</td>
 			</tr>
@@ -133,7 +133,7 @@
 			</tr>
 			<tr >
 				<td >
-					Em anexo seguem os documentos que comprovam a situaÁ„o de dependencia: ${rel}<br/>
+					Em anexo seguem os documentos que comprovam a situa√ß√£o de dependencia: ${rel}<br/>
 				</td>
 			</tr>
 			<tr align="right">
@@ -144,30 +144,30 @@
 		<br/>
 		<table border="1" cellpadding="5" width="96%"style="font-size:9">
 			<tr>
-				<th colspan="2" align="left" style="font-size:12"><b>5- OBSERVA«’ES </b></th>
+				<th colspan="2" align="left" style="font-size:12"><b>5- OBSERVA√á√ïES </b></th>
 			</tr>
 			<tr >
 				<td >
 					Res. 02/2008/CJF:<br/> 
-					"Art. 42. SÛ far· jus ao ressarcimento o
-					benefici·rio que n„o receber auxÌlio semelhante e nem participar de outro 
-					programa de assistÍncia ‡ sa˙de de servidor, custeado pelos cofres p˙blicos, 
+					"Art. 42. S√≥ far√° jus ao ressarcimento o
+					benefici√°rio que n√£o receber aux√≠lio semelhante e nem participar de outro 
+					programa de assist√™ncia √† sa√∫de de servidor, custeado pelos cofres p√∫blicos, 
 					ainda que em parte.<br/>
-					Art. 43. S„o benefici·rios do auxÌlio:<br/>
+					Art. 43. S√£o benefici√°rios do aux√≠lio:<br/>
 					I - na qualidade de titulares: <br/>
- 					a)     magistrados e servidores ativos e inativos, incluÌdos os cedidos e ocupantes apenas de cargo comissionado no Conselho e Ûrg„os da JustiÁa Federal de primeiro e segundo graus;
-					b)     pensionistas estatut·rios.<br/>
+ 					a)     magistrados e servidores ativos e inativos, inclu√≠dos os cedidos e ocupantes apenas de cargo comissionado no Conselho e √≥rg√£os da Justi√ßa Federal de primeiro e segundo graus;
+					b)     pensionistas estatut√°rios.<br/>
 					II - na qualidade de dependente do titular:<br/>
-					a)     o cÙnjuge, o companheiro ou companheira de uni„o est·vel;<br/>
-					b)     a pessoa desquitada, separada judicialmente ou divorciada, que perceba pens„o alimentÌcia;<br/>
-					c)     os filhos e enteados, solteiros, atÈ 21 (vinte e um) anos de idade ou, se inv·lidos, enquanto durar a invalidez;<br/>
-					d)     os filhos e enteados, entre 21 (vinte e um) e 24 (vinte e quatro) anos de idade, dependentes econÙmicos do magistrado ou servidor e estudantes de curso regular reconhecido pelo MinistÈrio da  EducaÁ„o;<br/>
-					e)     o menor sob guarda ou tutela concedida por decis„o judicial.<br/>
-					Art. 45. S„o documentos indispens·veis para inscriÁ„o:
-					I - cÛpia autenticada do contrato celebrado entre o benefici·rio titular e a operadora de planos de sa˙de ou o original seguido de cÛpia, a ser conferida pelo servidor respons·vel;<br/>
-					II - comprovante de que a operadora de planos de sa˙de contratada pelo servidor est· regular e autorizada pela AgÍncia Nacional de Sa˙de (ANS);
-					III - declaraÁ„o para fins de cumprimento do art. 42 desta ResoluÁ„o;
-					IV - documentos oficiais que comprovem a situaÁ„o de  dependÍncia, (...)"
+					a)     o c√¥njuge, o companheiro ou companheira de uni√£o est√°vel;<br/>
+					b)     a pessoa desquitada, separada judicialmente ou divorciada, que perceba pens√£o aliment√≠cia;<br/>
+					c)     os filhos e enteados, solteiros, at√© 21 (vinte e um) anos de idade ou, se inv√°lidos, enquanto durar a invalidez;<br/>
+					d)     os filhos e enteados, entre 21 (vinte e um) e 24 (vinte e quatro) anos de idade, dependentes econ√¥micos do magistrado ou servidor e estudantes de curso regular reconhecido pelo Minist√©rio da  Educa√ß√£o;<br/>
+					e)     o menor sob guarda ou tutela concedida por decis√£o judicial.<br/>
+					Art. 45. S√£o documentos indispens√°veis para inscri√ß√£o:
+					I - c√≥pia autenticada do contrato celebrado entre o benefici√°rio titular e a operadora de planos de sa√∫de ou o original seguido de c√≥pia, a ser conferida pelo servidor respons√°vel;<br/>
+					II - comprovante de que a operadora de planos de sa√∫de contratada pelo servidor est√° regular e autorizada pela Ag√™ncia Nacional de Sa√∫de (ANS);
+					III - declara√ß√£o para fins de cumprimento do art. 42 desta Resolu√ß√£o;
+					IV - documentos oficiais que comprovem a situa√ß√£o de  depend√™ncia, (...)"
 				</td>
 			</tr>
 		</table>

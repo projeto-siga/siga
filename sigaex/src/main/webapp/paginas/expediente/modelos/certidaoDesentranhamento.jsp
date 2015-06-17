@@ -8,7 +8,7 @@
 	<mod:entrevista>
 
 		<mod:grupo>
-			<mod:texto titulo="Desentranhar folhas: inÌcio" var="folhaInicial"
+			<mod:texto titulo="Desentranhar folhas: in√≠cio" var="folhaInicial"
 				largura="8" />
 			<mod:texto titulo="fim" var="folhaFinal" largura="8" />
 		</mod:grupo>
@@ -16,7 +16,7 @@
 			<mod:texto titulo="Vocativo" var="vocativo" largura="20" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:pessoa titulo="Respons·vel" var="responsavel" />
+			<mod:pessoa titulo="Respons√°vel" var="responsavel" />
 		</mod:grupo>
 		<%--  <mod:grupo titulo="Finalidade:"></mod:grupo>
 			<mod:grupo>
@@ -65,7 +65,7 @@
 		<br />
 		<br />
 
-		<p align="center"><b>CERTID√O DE DESENTRANHAMENTO</b></p>
+		<p align="center"><b>CERTID√ÉO DE DESENTRANHAMENTO</b></p>
 		<br />
 		<br />
 		<c:choose>
@@ -80,7 +80,7 @@
 
 		<p align="left">${mobil.nomeCompleto}</p>
 
-		<p align="left">RESPONS¡VEL: ${vocativo}
+		<p align="left">RESPONS√ÅVEL: ${vocativo}
 		${mov.subscritor.descricao}</p>
 		<c:if test="${not empty textoMotivo}">
 			<p align="left">MOTIVO: ${textoMotivo}</p>
@@ -94,7 +94,7 @@
 		</c:if> <c:if test="${folhaInicial == folhaFinal}">
 		 a folha ${folhaInicial}
 		</c:if> do ${mobil.descricaoCompleta} do
-		${mobil.doc.exFormaDocumento.exTipoFormaDoc.descricao} em epÌgrafe.</p>
+		${mobil.doc.exFormaDocumento.exTipoFormaDoc.descricao} em ep√≠grafe.</p>
 
 		<br />
 		<br />

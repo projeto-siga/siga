@@ -7,7 +7,7 @@
 	<mod:entrevista>
 		<c:if test="${empty esconderTexto}">
 			<mod:grupo
-				titulo="Texto a ser inserido no corpo da Ordem de Serviço da Presidência">
+				titulo="Texto a ser inserido no corpo da Ordem de ServiÃ§o da PresidÃªncia">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_osp" />
 				</mod:grupo>
@@ -52,7 +52,7 @@
 				<br/><br/>
 					<table width="100%" border="0" >
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >ORDEM DE SERVIÇO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
+							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >ORDEM DE SERVIÃ‡O N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
 						</tr>
 					</table>
 				</td>
@@ -60,16 +60,16 @@
 		</table>
 		FIM PRIMEIRO CABECALHO -->
 		
-                <!-- <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p> -->
+                <!-- <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">ORDEM DE SERVIÃ‡O N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p> -->
 		<p align="center" style="font-family:Arial;font-size:11pt;">
 
                  <!-- INICIO TITULO 
 			<mod:letra tamanho="${tl}">
-				<p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span></p>
+				<p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">ORDEM DE SERVIÃ‡O N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span></p>
 			</mod:letra>
 		      FIM TITULO -->
 
-		<!-- INICIO NUMERO <span style="font-weight: bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO --></p>	
+		<!-- INICIO NUMERO <span style="font-weight: bold;">ORDEM DE SERVIÃ‡O N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO --></p>	
 
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />

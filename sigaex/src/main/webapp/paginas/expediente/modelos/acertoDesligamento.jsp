@@ -16,7 +16,7 @@
 			<mod:grupo>
 				<mod:texto var="numAto" titulo="Numero ATO TRF"/>		 
 				<mod:data var="dataAto" titulo=" Data do Ato"/>	
-				<mod:data var="dataPublicacao" titulo=" Data da publicação"/>		
+				<mod:data var="dataPublicacao" titulo=" Data da publicaÃ§Ã£o"/>		
 			</mod:grupo>			
 		</mod:grupo>
 		<mod:grupo titulo="Desligamento">
@@ -31,7 +31,7 @@
 			<c:choose>
 				<c:when test="${acertoMes == 'Sim'}">					
 					<mod:grupo>
-						<mod:selecao var="debitoCreditoDesligamento" titulo="Débito/Crédito" opcoes="Débito;Crédito"/>					
+						<mod:selecao var="debitoCreditoDesligamento" titulo="DÃ©bito/CrÃ©dito" opcoes="DÃ©bito;CrÃ©dito"/>					
 					</mod:grupo>					
 						<mod:monetario var="totalDesligamento" formataNum="sim" extensoNum="sim" titulo="Valor do resultado" reler="sim"/>
 				</c:when>
@@ -43,12 +43,12 @@
 		</mod:grupo>
 		
 		<mod:grupo>	
-		<mod:caixaverif var="natalina" titulo="Gratificação natalina" reler="ajax" idAjax="natalinaAjax"/>
+		<mod:caixaverif var="natalina" titulo="GratificaÃ§Ã£o natalina" reler="ajax" idAjax="natalinaAjax"/>
 		<mod:grupo depende="natalinaAjax">
 			<c:choose>
 				<c:when test="${natalina == 'Sim'}">
 					<mod:grupo>
-						<mod:selecao var="debitoCreditoNatalina" titulo="Débito/Crédito" opcoes="Débito;Crédito"/>					
+						<mod:selecao var="debitoCreditoNatalina" titulo="DÃ©bito/CrÃ©dito" opcoes="DÃ©bito;CrÃ©dito"/>					
 					</mod:grupo>					
 					<mod:monetario var="totalNatalina" formataNum="sim" extensoNum="sim" titulo="Valor do resultado"/>
 					
@@ -60,12 +60,12 @@
 		</mod:grupo>	
 		</mod:grupo>			
 		<mod:grupo>	
-		<mod:caixaverif var="ferias" titulo="Indenização de férias" reler="ajax" idAjax="feriasAjax"/>
+		<mod:caixaverif var="ferias" titulo="IndenizaÃ§Ã£o de fÃ©rias" reler="ajax" idAjax="feriasAjax"/>
 		<mod:grupo depende="feriasAjax">				
 			<c:choose>
 				<c:when test="${ferias == 'Sim'}">
 					<mod:grupo>
-						<mod:selecao var="debitoCreditoFerias" titulo="Débito/Crédito" opcoes="Débito;Crédito"/>					
+						<mod:selecao var="debitoCreditoFerias" titulo="DÃ©bito/CrÃ©dito" opcoes="DÃ©bito;CrÃ©dito"/>					
 					</mod:grupo>					
 					<mod:monetario var="totalFerias" formataNum="sim" extensoNum="sim" titulo="Valor do resultado"/>
 				</c:when>
@@ -76,12 +76,12 @@
 		</mod:grupo>	
 		</mod:grupo>
 		<mod:grupo>
-		<mod:caixaverif var="beneficios" titulo="Lançamento de benefícios" reler="ajax" idAjax="beneficiosAjax"/>
+		<mod:caixaverif var="beneficios" titulo="LanÃ§amento de benefÃ­cios" reler="ajax" idAjax="beneficiosAjax"/>
 		<mod:grupo depende="beneficiosAjax">				
 			<c:choose>
 				<c:when test="${beneficios == 'Sim'}">
 					<mod:grupo>
-						<mod:selecao var="debitoCreditoBeneficios" titulo="Débito/Crédito" opcoes="Débito;Crédito"/>					
+						<mod:selecao var="debitoCreditoBeneficios" titulo="DÃ©bito/CrÃ©dito" opcoes="DÃ©bito;CrÃ©dito"/>					
 					</mod:grupo>
 					<mod:monetario var="totalBeneficios" formataNum="sim" extensoNum="sim" titulo="Valor do resultado"/>
 				</c:when>
@@ -91,7 +91,7 @@
 			</c:choose>
 		</mod:grupo>
 		</mod:grupo>
-		<mod:caixaverif var="outros" titulo="Outros Lançamentos" reler="ajax" idAjax="outrosAjax"/>
+		<mod:caixaverif var="outros" titulo="Outros LanÃ§amentos" reler="ajax" idAjax="outrosAjax"/>
 			<mod:grupo depende="outrosAjax">
 			<c:choose>
 				<c:when test="${outros == 'Sim'}">
@@ -102,10 +102,10 @@
 							<mod:mensagem titulo="${i})"/>
 						</mod:grupo>
 						<mod:grupo>	
-							<mod:texto var="lancamento${i}" titulo="Lançamento"/>
+							<mod:texto var="lancamento${i}" titulo="LanÃ§amento"/>
 						</mod:grupo>
 						<mod:grupo>
-							<mod:selecao var="debitoCreditoLancamento${i}" titulo="Débito/Crédito" opcoes="Débito;Crédito"/>					
+							<mod:selecao var="debitoCreditoLancamento${i}" titulo="DÃ©bito/CrÃ©dito" opcoes="DÃ©bito;CrÃ©dito"/>					
 						</mod:grupo>
 						<mod:grupo>
 							<mod:monetario var="valorLancamento${i}" formataNum="sim" extensoNum="sim" titulo="Valor do resultado"/>
@@ -136,11 +136,11 @@
 		<p align="center"><b>Numero do processo administrativo:</b> ${numProcesso} <br/><b>Numero ATO TRF:</b> ${numAto} <b>de</b> ${dataAto}, publicada em ${dataPublicacao}</p>
 		<br>
 		<br>
-		<p align="center"><b>Seção de folha de pagamento</b><br/>Débito crédito</p>
+		<p align="center"><b>SeÃ§Ã£o de folha de pagamento</b><br/>DÃ©bito crÃ©dito</p>
 		<c:set var="total" value="${0}"/>
 			
 			<c:choose>
-				<c:when test="${debitoCreditoDesligamento == 'Débito'}">
+				<c:when test="${debitoCreditoDesligamento == 'DÃ©bito'}">
 					<c:set var="total" value="${total - f:monetarioParaFloat(totalDesligamento)}"/>
 				</c:when>
 				<c:otherwise>
@@ -149,7 +149,7 @@
 			</c:choose>
 			
 			<c:choose>
-				<c:when test="${debitoCreditoNatalina == 'Débito'}">
+				<c:when test="${debitoCreditoNatalina == 'DÃ©bito'}">
 					<c:set var="total" value="${total - f:monetarioParaFloat(totalNatalina)}"/>
 				</c:when>
 				<c:otherwise>
@@ -158,7 +158,7 @@
 			</c:choose>		 
 			
 			<c:choose>
-				<c:when test="${debitoCreditoFerias == 'Débito'}">
+				<c:when test="${debitoCreditoFerias == 'DÃ©bito'}">
 					<c:set var="total" value="${total - f:monetarioParaFloat(totalFerias)}"/>
 				</c:when>
 				<c:otherwise>
@@ -167,7 +167,7 @@
 			</c:choose>		 
 			
 			<c:choose>
-				<c:when test="${debitoCreditoBeneficios == 'Débito'}">
+				<c:when test="${debitoCreditoBeneficios == 'DÃ©bito'}">
 					<c:set var="total" value="${total - f:monetarioParaFloat(totalBeneficios)}"/>
 				</c:when>
 				<c:otherwise>
@@ -179,7 +179,7 @@
 				<c:set var="debitoCreditoLancamento" value="${requestScope[f:concat('debitoCreditoLancamento',i)]}"/>
 				<c:set var="valorLancamento" value="${requestScope[f:concat('valorLancamento',i)]}"/>
 				<c:choose>
-				<c:when test="${debitoCreditoLancamento == 'Débito'}">
+				<c:when test="${debitoCreditoLancamento == 'DÃ©bito'}">
 					<c:set var="total" value="${total - f:monetarioParaFloat(valorLancamento)}"/>
 				</c:when>
 				<c:otherwise>
@@ -220,24 +220,24 @@
 				<b>Lancamentos</b>
 			</td>
 			<td>
-				<b>Crédito</b>
+				<b>CrÃ©dito</b>
 			<td>
-				<b>Débito</b>
+				<b>DÃ©bito</b>
 			</td>
 		</table>
 		<table width="100%">
 		<c:if test="${not empty totalDesligamento or not empty tipoDesligamento}">
 			<tr>
 				<td>
-					Acerto do mês
+					Acerto do mÃªs
 				</td>
 				<td>
-					<c:if test="${debitoCreditoDesligamento=='Crédito'}">
+					<c:if test="${debitoCreditoDesligamento=='CrÃ©dito'}">
 						R$ ${totalDesligamento}
 					</c:if>  
 				</td>
 				<td>
-					<c:if test="${debitoCreditoDesligamento=='Débito'}">
+					<c:if test="${debitoCreditoDesligamento=='DÃ©bito'}">
 						R$ ${totalDesligamento}
 					</c:if>
 				</td>
@@ -248,15 +248,15 @@
 		<c:if test="${not empty totalNatalina}">
 			<tr>
 				<td>
-					Acerto de gratificação natalina
+					Acerto de gratificaÃ§Ã£o natalina
 				</td>
 				<td>
-					<c:if test="${debitoCreditoNatalina=='Crédito'}">
+					<c:if test="${debitoCreditoNatalina=='CrÃ©dito'}">
 						R$ ${totalNatalina}
 					</c:if>     
 				</td>
 				<td>
-					<c:if test="${debitoCreditoNatalina=='Débito'}">
+					<c:if test="${debitoCreditoNatalina=='DÃ©bito'}">
 						R$ ${totalNatalina}
 					</c:if>
 				</td>
@@ -265,15 +265,15 @@
 		<c:if test="${not empty totalFerias}">
 			<tr>
 				<td>
-					Indenização de férias
+					IndenizaÃ§Ã£o de fÃ©rias
 				</td>
 				<td>
-					<c:if test="${debitoCreditoFerias=='Crédito'}">
+					<c:if test="${debitoCreditoFerias=='CrÃ©dito'}">
 						R$ ${totalFerias}
 					</c:if>   
 				</td>
 				<td>
-					<c:if test="${debitoCreditoFerias=='Débito'}">
+					<c:if test="${debitoCreditoFerias=='DÃ©bito'}">
 						R$ ${totalFerias}
 					</c:if>
 				</td>
@@ -283,15 +283,15 @@
 		<c:if test="${not empty totalBeneficios}">
 			<tr>
 				<td>
-					Lançamento de benefícios
+					LanÃ§amento de benefÃ­cios
 				</td>
 				<td>
-					<c:if test="${debitoCreditoBeneficios=='Crédito'}">
+					<c:if test="${debitoCreditoBeneficios=='CrÃ©dito'}">
 						R$ ${totalBeneficios}
 					</c:if>   
 				</td>
 				<td>
-					<c:if test="${debitoCreditoBeneficios=='Débito'}">
+					<c:if test="${debitoCreditoBeneficios=='DÃ©bito'}">
 						R$ ${totalBeneficios}
 					</c:if>
 				</td>
@@ -303,12 +303,12 @@
 					${requestScope[f:concat('lancamento',i)]}
 				</td>
 				<td>
-					<c:if test="${requestScope[f:concat('debitoCreditoLancamento',i)]=='Crédito'}">
+					<c:if test="${requestScope[f:concat('debitoCreditoLancamento',i)]=='CrÃ©dito'}">
 						R$ ${requestScope[f:concat('valorLancamento',i)]}
 					</c:if>					
 				</td>
 				<td>
-					<c:if test="${requestScope[f:concat('debitoCreditoLancamento',i)]=='Débito'}">
+					<c:if test="${requestScope[f:concat('debitoCreditoLancamento',i)]=='DÃ©bito'}">
 						R$ ${requestScope[f:concat('valorLancamento',i)]}
 					</c:if>					
 				</td>				
@@ -320,12 +320,12 @@
 		<p align="center">Resultado Geral  
 					<c:choose>
 					<c:when test="${total > 0}">
-						<b>Crédito de</b> <c:set var="tot" value="${f:floatParaMonetario(total)}"/>
+						<b>CrÃ©dito de</b> <c:set var="tot" value="${f:floatParaMonetario(total)}"/>
 						<c:set var="totExtenso" value="${f:reaisPorExtenso(f:floatParaMonetario(total))}"/>	
 						${tot} (${totExtenso}).
 					</c:when>
 					<c:otherwise>
-						<b>Débito de</b> <c:set var="tot" value="${f:floatParaMonetario(total)}"/>
+						<b>DÃ©bito de</b> <c:set var="tot" value="${f:floatParaMonetario(total)}"/>
 						<c:set var="totExtenso" value="${f:reaisPorExtenso(f:floatParaMonetario(total))}"/>	
 						${tot} (${totExtenso}).
 					</c:otherwise>

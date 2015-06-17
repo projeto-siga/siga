@@ -25,7 +25,7 @@
 				${mov.titular.funcaoConfianca.nomeFuncao} 
 				<c:if
 					test="${substituicao==true && doc.titular.idPessoa!=doc.subscritor.idPessoa}">
-					EM EXERCÕCIO
+					EM EXERC√çCIO
 				</c:if>
 			</c:when>
 			<c:when test="${not empty mov.subscritor.funcaoConfianca.nomeFuncao}">

@@ -10,7 +10,7 @@
 
 		<mod:grupo>
 			<mod:selecao var="contadorDePessoas"
-				titulo="Quantidade de Magistrados, servidores e estagiários"
+				titulo="Quantidade de Magistrados, servidores e estagiÃ¡rios"
 				opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40"
 				reler="sim" idAjax="contDependAjax" />
 			<mod:grupo depende="contDependAjax">
@@ -34,7 +34,7 @@
 					<hr style="color: #FFFFFF;" />
 				</c:forEach>
 			</mod:grupo>
-			<mod:mensagem titulo="<b>Observação</b>" texto="Preencha o destinatário com <b>SG-SEI</b> e, após finalizar, transfira para a <b>SG-SEI</b>;" vermelho="Sim"></mod:mensagem>
+			<mod:mensagem titulo="<b>ObservaÃ§Ã£o</b>" texto="Preencha o destinatÃ¡rio com <b>SG-SEI</b> e, apÃ³s finalizar, transfira para a <b>SG-SEI</b>;" vermelho="Sim"></mod:mensagem>
 			<br />
 		</mod:grupo>
 
@@ -82,9 +82,9 @@
 			</tr>
 		</table>
 		<br />
-		<p style="text-align: left; text-indent: 2cm">Solicito a revogação
-		de Certificados Digitais Cert-JUS Institucional aos juízes, servidores e
-		estagiários da listagem anexa.</p>
+		<p style="text-align: left; text-indent: 2cm">Solicito a revogaÃ§Ã£o
+		de Certificados Digitais Cert-JUS Institucional aos juÃ­zes, servidores e
+		estagiÃ¡rios da listagem anexa.</p>
 		<p style="text-align: left; text-indent: 2cm">Atenciosamente,</p>
 		<br />
 		<br />
@@ -119,11 +119,11 @@
 					<tr>
 						<td width="50%" align="left" colspan="1">Nome:
 						${pes.descricao}</td>
-						<td width="50%" align="left" colspan="1">Matrícula:
+						<td width="50%" align="left" colspan="1">MatrÃ­cula:
 						RJ${pes.matricula}</td>
 					</tr>
 					<tr>
-						<td width="50%" align="left" colspan="1">Lotação:
+						<td width="50%" align="left" colspan="1">LotaÃ§Ã£o:
 						${pes.lotacao.descricao}</td>
 						<td width="50%" align="left" colspan="1">E-mail: ${e}@jfrj.jus.br</td>
 					</tr>

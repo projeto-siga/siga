@@ -11,26 +11,26 @@
 	<mod:entrevista>
 		
 		<mod:grupo>
-			<mod:texto var="n_ato" titulo="nº do ato"/>
+			<mod:texto var="n_ato" titulo="nÂº do ato"/>
 		</mod:grupo>
-		<mod:grupo titulo="Juíz a ser designado">
+		<mod:grupo titulo="JuÃ­z a ser designado">
 			<mod:grupo>
-				<mod:selecao titulo="Sexo" var="genero"  opcoes="masc;fem" reler="não" />
-				<mod:selecao titulo="Juiz Federal" var="sub" opcoes="Substituto;Titular" reler="não"/>
-				<mod:selecao titulo="na titularidade" var="estado"  opcoes="sim;não" reler="não" />
-				<mod:selecao titulo="Com prejuízo" var="prej"  opcoes="sim;não" reler="não" />
+				<mod:selecao titulo="Sexo" var="genero"  opcoes="masc;fem" reler="nÃ£o" />
+				<mod:selecao titulo="Juiz Federal" var="sub" opcoes="Substituto;Titular" reler="nÃ£o"/>
+				<mod:selecao titulo="na titularidade" var="estado"  opcoes="sim;nÃ£o" reler="nÃ£o" />
+				<mod:selecao titulo="Com prejuÃ­zo" var="prej"  opcoes="sim;nÃ£o" reler="nÃ£o" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="substituto" />
 			</mod:grupo>	
 		</mod:grupo>
 		
-		<mod:grupo titulo="Juíz a ser substituído">
+		<mod:grupo titulo="JuÃ­z a ser substituÃ­do">
 			<mod:grupo>
-				<mod:selecao titulo="Sexo" var="genero1"  opcoes="masc;fem" reler="não" />
-				<mod:selecao titulo="Juiz Federal" var="titulo1" opcoes="Titular;Substituto" reler="não"/>
-				<mod:selecao titulo="na titularidade" var="estado1"  opcoes="sim;não" reler="não" />
-				<mod:selecao titulo="em virtude" var="mot1" opcoes="licença médica;férias" reler="não"/>
+				<mod:selecao titulo="Sexo" var="genero1"  opcoes="masc;fem" reler="nÃ£o" />
+				<mod:selecao titulo="Juiz Federal" var="titulo1" opcoes="Titular;Substituto" reler="nÃ£o"/>
+				<mod:selecao titulo="na titularidade" var="estado1"  opcoes="sim;nÃ£o" reler="nÃ£o" />
+				<mod:selecao titulo="em virtude" var="mot1" opcoes="licenÃ§a mÃ©dica;fÃ©rias" reler="nÃ£o"/>
 			</mod:grupo>
 			<mod:grupo>
 
@@ -38,12 +38,12 @@
 			</mod:grupo>
 		</mod:grupo>
 		
-		<mod:grupo titulo="Juiz a ser substituído">
+		<mod:grupo titulo="Juiz a ser substituÃ­do">
 			<mod:grupo>
-				<mod:selecao titulo="Sexo" var="genero2"  opcoes="masc;fem" reler="não" />
-				<mod:selecao titulo="Juiz Federal" var="titulo2" opcoes="Titular;Substituto" reler="não"/>
-				<mod:selecao titulo="na titularidade" var="estado2"  opcoes="sim;não" reler="não" />
-				<mod:selecao titulo="em virtude" var="mot2" opcoes="licença médica;férias" reler="não"/>
+				<mod:selecao titulo="Sexo" var="genero2"  opcoes="masc;fem" reler="nÃ£o" />
+				<mod:selecao titulo="Juiz Federal" var="titulo2" opcoes="Titular;Substituto" reler="nÃ£o"/>
+				<mod:selecao titulo="na titularidade" var="estado2"  opcoes="sim;nÃ£o" reler="nÃ£o" />
+				<mod:selecao titulo="em virtude" var="mot2" opcoes="licenÃ§a mÃ©dica;fÃ©rias" reler="nÃ£o"/>
 			</mod:grupo>
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="titular2" />
@@ -72,9 +72,9 @@
 			<body>
 			<br/><br/>
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			O Doutor ${doc.subscritor.descricao}, Corregedor-Regional da Justiça Federal da 2ª Região, no uso 
-			de suas atribuições legais e nos termos do art 4º da Resolução nº 026 de 23 de julho 2009,
-			da Presidência deste Tribunal, RESOLVE alterar, em parte, o Ato nº ${n_ato} desta Corregedoria, que designou 
+			O Doutor ${doc.subscritor.descricao}, Corregedor-Regional da JustiÃ§a Federal da 2Âª RegiÃ£o, no uso 
+			de suas atribuiÃ§Ãµes legais e nos termos do art 4Âº da ResoluÃ§Ã£o nÂº 026 de 23 de julho 2009,
+			da PresidÃªncia deste Tribunal, RESOLVE alterar, em parte, o Ato nÂº ${n_ato} desta Corregedoria, que designou 
 			
 			<c:choose>
 			<c:when test="${genero == 'fem'}">a MM Juiza Federal</c:when>
@@ -94,7 +94,7 @@
 
 			do(a) ${pessoa_subst.lotacao.descricao },
 			<c:choose>
-				<c:when test="${genero1 == 'fem'}">Drª.</c:when>
+				<c:when test="${genero1 == 'fem'}">DrÂª.</c:when>
 				<c:otherwise>Dr.</c:otherwise>
 			</c:choose>
 			${ pessoa_subst.nomePessoa}, para assumir, 
@@ -104,7 +104,7 @@
 				<c:otherwise>sem</c:otherwise>
 			</c:choose>
 			
-			prejuizo de sua jurisdição, a titularidade do(a) ${pessoa_titular.lotacao.descricao}
+			prejuizo de sua jurisdiÃ§Ã£o, a titularidade do(a) ${pessoa_titular.lotacao.descricao}
 			 
 			no periodo de ${dtMarcada1} a ${dtMarcada2}, em virtude de ${mot1}
 			
@@ -122,7 +122,7 @@
 				<c:when test="${titulo1 != 'Titular' && estado1 == 'sim'}">na titularidade</c:when>
 			</c:choose>,
 			<c:choose>
-				<c:when test="${genero1 == 'fem'}">Drª.</c:when>
+				<c:when test="${genero1 == 'fem'}">DrÂª.</c:when>
 				<c:otherwise>Dr.</c:otherwise>
 			</c:choose>
 			${pessoa_titular.nomePessoa}<c:choose>
@@ -144,9 +144,9 @@
 				</c:choose>
 				
 				<c:choose>
-					<c:when test="${genero2 == 'fem'}">Drª.</c:when>
+					<c:when test="${genero2 == 'fem'}">DrÂª.</c:when>
 					<c:otherwise>Dr.</c:otherwise>
-				</c:choose>${ pessoa_titular2.nomePessoa}</c:when></c:choose>, para fazer constar que  a referida designação  dar-se-á de ${dtRemarcada1 } a ${dtRemarcada2 }.
+				</c:choose>${ pessoa_titular2.nomePessoa}</c:when></c:choose>, para fazer constar que  a referida designaÃ§Ã£o  dar-se-Ã¡ de ${dtRemarcada1 } a ${dtRemarcada2 }.
 		</mod:valor>
 		</body>
 		</html>

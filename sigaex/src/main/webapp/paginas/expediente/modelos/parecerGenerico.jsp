@@ -6,11 +6,11 @@
 <mod:modelo>
 	<mod:entrevista>
 	<br><p>
-		<mod:mensagem vermelho="sim" texto="O subscritor informado deverá ser o titular da unidade" titulo="Atenção"></mod:mensagem>
+		<mod:mensagem vermelho="sim" texto="O subscritor informado deverÃ¡ ser o titular da unidade" titulo="AtenÃ§Ã£o"></mod:mensagem>
 		</p>
 		<mod:grupo titulo="Dados referenciais">
 			<mod:grupo>	
-				<mod:lotacao titulo="Lotação" var="lotacao" reler="sim" />		
+				<mod:lotacao titulo="LotaÃ§Ã£o" var="lotacao" reler="sim" />		
 			</mod:grupo>
 			<mod:grupo>
 				<mod:texto titulo="Assunto " var="assunto" largura="30" />
@@ -19,7 +19,7 @@
 				<mod:texto titulo="Vocativo" var="vocativo" largura="30" />
 			</mod:grupo>
 		</mod:grupo>
-		<mod:grupo titulo="Texto a ser inserido no corpo da informação">
+		<mod:grupo titulo="Texto a ser inserido no corpo da informaÃ§Ã£o">
 			<mod:grupo>
 				<mod:editor titulo="" var="texto_informacao" />
 			</mod:grupo>

@@ -5,14 +5,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-Termo de Compromisso e Recebimento do Crachá  
-Ultima atualização 14/03/2007
+Termo de Compromisso e Recebimento do CrachÃ¡  
+Ultima atualizaÃ§Ã£o 14/03/2007
  -->
 
 <mod:modelo>
 <mod:entrevista>
-		<mod:grupo titulo="CRACHÁ">
-			<mod:selecao titulo="Nº de crachás a incluir"
+		<mod:grupo titulo="CRACHÃ">
+			<mod:selecao titulo="NÂº de crachÃ¡s a incluir"
 				var="crachas" opcoes="1;2;3;4;5;6;7;8;9;10" reler="sim" />
 			<c:forEach var="i" begin="1" end="${crachas}">
 				<mod:grupo>
@@ -20,7 +20,7 @@ Ultima atualização 14/03/2007
 					<mod:texto titulo="Matricula" largura="15" maxcaracteres="10" var="matricula${i}" />
 					<mod:data titulo="Data" var="data${i}" />
 						<mod:grupo>
-							<mod:lotacao titulo="Lotação" var="lotacao${i}" />
+							<mod:lotacao titulo="LotaÃ§Ã£o" var="lotacao${i}" />
 						</mod:grupo>
 				</mod:grupo>
 			</c:forEach>
@@ -35,39 +35,39 @@ Ultima atualização 14/03/2007
 
 
 		<p align="center"><b> TERMO DE COMPROMISSO E RECEBIMENTO DO
-		CRACHÁ DE IDENTIFICAÇÃO FUNCIONAL </b></p>
+		CRACHÃ DE IDENTIFICAÃ‡ÃƒO FUNCIONAL </b></p>
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">Recebi, nesta data,
-		o crahá de identificação no âmbito da <b>JUSTIÇA FEDERAL DE 1º
-		INSTÂNCIA - Seção Judiciária do Estado do Rio de janeiro</b>, e me
+		o crahÃ¡ de identificaÃ§Ã£o no Ã¢mbito da <b>JUSTIÃ‡A FEDERAL DE 1Âº
+		INSTÃ‚NCIA - SeÃ§Ã£o JudiciÃ¡ria do Estado do Rio de janeiro</b>, e me
 		comprometo, em caso de perda, roubo ou furto a comunicar, <b>incontinenti</b>,
-		à Subsecretaria de Gestão de Pessoas, bem como, em caso de
-		desligamento, devolvê-lo àquela Subsecretaria &nbsp; - &nbsp; Seção de
-		Avaliação de Desempenho.</p>
+		Ã  Subsecretaria de GestÃ£o de Pessoas, bem como, em caso de
+		desligamento, devolvÃª-lo Ã quela Subsecretaria &nbsp; - &nbsp; SeÃ§Ã£o de
+		AvaliaÃ§Ã£o de Desempenho.</p>
 
 		<p style="TEXT-INDENT: 2cm" align="justify">Declaro, outrossim
-		que, em caso de pedido de 2ª via do mesmo, deverei efetuar o
-		pagamento, diretamente na Subsecretaria de Planejamento, Orçamento e
-		Finanças, do valor para sua confecção.</p>
+		que, em caso de pedido de 2Âª via do mesmo, deverei efetuar o
+		pagamento, diretamente na Subsecretaria de Planejamento, OrÃ§amento e
+		FinanÃ§as, do valor para sua confecÃ§Ã£o.</p>
 
-		<b>Observação:</b>
+		<b>ObservaÃ§Ã£o:</b>
 		<ul type="square">
 			<li>Excetuam-se do pagamento acima descrito os casos de roubo,
-			furto e inutilização acidental do cracha, quando não se caracterizar
-			, neste último caso, negligência do estagiário.</li>
-			<li>Nessas situações, deverá ser anexada à solicitação de
-			segunda via uma declaração firmada pelo requerente com o relato do
+			furto e inutilizaÃ§Ã£o acidental do cracha, quando nÃ£o se caracterizar
+			, neste Ãºltimo caso, negligÃªncia do estagiÃ¡rio.</li>
+			<li>Nessas situaÃ§Ãµes, deverÃ¡ ser anexada Ã  solicitaÃ§Ã£o de
+			segunda via uma declaraÃ§Ã£o firmada pelo requerente com o relato do
 			ocorrido.</li>
-			<li>Tambem se excetua o caso de mudança de nome do requerente,
-			que deverá apresentar, com a solicitação, cópia autênticada de
-			documento comprobatório.</li>
+			<li>Tambem se excetua o caso de mudanÃ§a de nome do requerente,
+			que deverÃ¡ apresentar, com a solicitaÃ§Ã£o, cÃ³pia autÃªnticada de
+			documento comprobatÃ³rio.</li>
 		</ul>
 		<br>
 		<br>
 
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
-		<tr><td  bgcolor="#FFFFFF" width="15%" align="center">Matrícula</td><td bgcolor="#FFFFFF" width="35%" align="center">Nome</td><td bgcolor="#FFFFFF" width="10%" align="center">Lotação</td><td bgcolor="#FFFFFF" width="15%" align="center">Data</td><td bgcolor="#FFFFFF" width="25%" align="center">Assinatura</td></tr>
+		<tr><td  bgcolor="#FFFFFF" width="15%" align="center">MatrÃ­cula</td><td bgcolor="#FFFFFF" width="35%" align="center">Nome</td><td bgcolor="#FFFFFF" width="10%" align="center">LotaÃ§Ã£o</td><td bgcolor="#FFFFFF" width="15%" align="center">Data</td><td bgcolor="#FFFFFF" width="25%" align="center">Assinatura</td></tr>
        		
 			<c:forEach var="i" begin="1" end="${crachas}">
 			<tr>			

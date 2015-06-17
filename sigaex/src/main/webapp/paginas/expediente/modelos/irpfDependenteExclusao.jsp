@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-EXCLUS√O DE DEPENDENTE(S) DO ABATIMENTO DO 
+EXCLUS√ÉO DE DEPENDENTE(S) DO ABATIMENTO DO 
 IMPOSTO DE RENDA RETIDO NA FONTE  -->
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -12,19 +12,19 @@ IMPOSTO DE RENDA RETIDO NA FONTE  -->
 	<mod:entrevista>
 	
 		<mod:grupo titulo="DETALHES DO(S) DEPENDENTE(S)">
-			<mod:selecao titulo="N∫ de dependentes a informar para Excluir do IRPF"
+			<mod:selecao titulo="N¬∫ de dependentes a informar para Excluir do IRPF"
 				var="dependentes" opcoes="1;2;3;4;5" reler="sim" />
 				<c:forEach var="i" begin="1" end="${dependentes}">
 					<mod:grupo>
 						<mod:texto titulo="${i}) Nome" var="nome${i}" largura="60" />
 						<br/> 
 						<mod:selecao titulo="Grau de parentesco" var="grau${i}"
-						opcoes="absolutamente incapaz do qual o contribuinte seja tutor ou curador;companheiro(a);cÙnjuge;enteado(a);filho(a);irm„o(a)/neto(a)/bisneto(a)(sem arrimo dos pais);menor que o contribuinte crie ou eduque;pais/avÛs/bisavÛs;" />
+						opcoes="absolutamente incapaz do qual o contribuinte seja tutor ou curador;companheiro(a);c√¥njuge;enteado(a);filho(a);irm√£o(a)/neto(a)/bisneto(a)(sem arrimo dos pais);menor que o contribuinte crie ou eduque;pais/av√≥s/bisav√≥s;" />
 					</mod:grupo>
 				</c:forEach>
 		</mod:grupo>
 	
-	<mod:grupo titulo="EXCLUS√O DO DEPENDENTE">
+	<mod:grupo titulo="EXCLUS√ÉO DO DEPENDENTE">
 		<mod:memo colunas="60" linhas="3" titulo="Motivo" var="motivoDaExclusao" />
 	</mod:grupo>
 
@@ -34,7 +34,7 @@ IMPOSTO DE RENDA RETIDO NA FONTE  -->
 		<mod:valor var="texto_requerimento">	
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, requer a Vossa 
-		Senhoria a <b>exclus„o</b> de: 
+		Senhoria a <b>exclus√£o</b> de: 
 			<c:forEach var="i" begin="1" end="${dependentes}">
 				<b>${requestScope[f:concat('nome',i)]}</b> (${requestScope[f:concat('grau',i)]}), 
 					<c:if test="${i+1 == dependentes}">
@@ -49,7 +49,7 @@ IMPOSTO DE RENDA RETIDO NA FONTE  -->
     	<c:if test="${dependentes >'1'}">	
  			  como dependentes 
         </c:if>
- 		para fins de deduÁ„o no Imposto de Renda retido na fonte,  tendo em vista que:
+ 		para fins de dedu√ß√£o no Imposto de Renda retido na fonte,  tendo em vista que:
 		<b><i>${motivoDaExclusao} </i></b>.
 		</p>		
 		</mod:valor>

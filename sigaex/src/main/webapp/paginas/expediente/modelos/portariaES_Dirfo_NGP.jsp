@@ -8,12 +8,12 @@
 	<mod:entrevista>		
 		<c:if test="${empty texto_portaria}">
 		<c:set var="texto_portaria" scope="request">
-			<!-- Essa marcaÁ„o da abertura n„o est· funcionando. A marcaÁ„o do inÌcio da abertura 
-			est· sendo apagada no processamento do modelo -->
+			<!-- Essa marca√ß√£o da abertura n√£o est√° funcionando. A marca√ß√£o do in√≠cio da abertura 
+			est√° sendo apagada no processamento do modelo -->
 			<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify"><b>O JUIZ FEDERAL
-			- DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI«OS AUXILIARES DA
-			JUSTI«A FEDERAL DE 1&ordm; GRAU - SE«√O JUDICI¡RIA DO ESPÕRITO SANTO</b>, 
-			no uso de suas atribuiÁıes legais, </p>
+			- DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI√áOS AUXILIARES DA
+			JUSTI√áA FEDERAL DE 1&ordm; GRAU - SE√á√ÉO JUDICI√ÅRIA DO ESP√çRITO SANTO</b>, 
+			no uso de suas atribui√ß√µes legais, </p>
 
 			<p style="TEXT-INDENT: 2cm" align="justify"><b>RESOLVE:</b></p><!-- FIM ABERTURA -->
 			

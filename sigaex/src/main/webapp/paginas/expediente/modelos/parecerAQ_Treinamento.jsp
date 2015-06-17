@@ -7,7 +7,7 @@
 <mod:modelo>
 	<mod:entrevista>
 
-		<mod:texto titulo="Número do processo ao qual o parecer se refere"
+		<mod:texto titulo="NÃºmero do processo ao qual o parecer se refere"
 			var="numProc" largura="30" reler="ajax" idAjax="numProcAjax" />
 		<mod:grupo depende="numProcAjax">
 			<c:if test="${empty numProc}">
@@ -21,19 +21,19 @@
 		<mod:grupo depende="folhasAjax">
 			<c:if test="${empty folhas}">
 				<mod:mensagem titulo="Alerta"
-					texto="o campo acima deve ser preenchido com a seleção de páginas."
+					texto="o campo acima deve ser preenchido com a seleÃ§Ã£o de pÃ¡ginas."
 					vermelho="Sim" />
 			</c:if>
 		</mod:grupo>
 		<mod:mensagem
 			texto=""
-			titulo="Observações:" vermelho="Sim"></mod:mensagem><br />
+			titulo="ObservaÃ§Ãµes:" vermelho="Sim"></mod:mensagem><br />
 		<mod:mensagem
-			texto="1) Não preencha o campo 'Destinatário';"
-			titulo="" vermelho="Não"></mod:mensagem><br />
+			texto="1) NÃ£o preencha o campo 'DestinatÃ¡rio';"
+			titulo="" vermelho="NÃ£o"></mod:mensagem><br />
 		<mod:mensagem
-			texto="2) Antes de finalizar o documento, deverá ser incluído o cossignatário."
-			titulo="" vermelho="Não"></mod:mensagem>
+			texto="2) Antes de finalizar o documento, deverÃ¡ ser incluÃ­do o cossignatÃ¡rio."
+			titulo="" vermelho="NÃ£o"></mod:mensagem>
 
 	</mod:entrevista>
 	<mod:documento>
@@ -78,77 +78,77 @@
 		
 		
 		<p style="text-align: justify; text-indent: 3cm;">
-		Trata o presente processo da concessão e/ou alteração de
-		<b>Adicional de Qualificação</b> (AQ), instituído pela Lei n&ordm;
+		Trata o presente processo da concessÃ£o e/ou alteraÃ§Ã£o de
+		<b>Adicional de QualificaÃ§Ã£o</b> (AQ), instituÃ­do pela Lei n&ordm;
 		11.416/2006, em seu art. 14, abaixo transcrito, destinado aos
-		servidores das carreiras dos Quadros de Pessoal do Poder Judiciário da
-		União, em razão dos conhecimentos adicionais adquiridos em ações de
+		servidores das carreiras dos Quadros de Pessoal do Poder JudiciÃ¡rio da
+		UniÃ£o, em razÃ£o dos conhecimentos adicionais adquiridos em aÃ§Ãµes de
 		treinamento.</p>
 		
 		<p style="text-align: justify; margin-left: 5cm; text-indent: 3cm;"><b>
-		Art. 14. É instituído o Adicional de Qualificação - AQ destinado aos
-		servidores das Carreiras dos Quadros de Pessoal do Poder Judiciário,
-		em razão dos conhecimentos adicionais adquiridos em <u>ações de
-		treinamento</u>, títulos, diplomas ou certificados de cursos de
-		pós-graduação, em sentido amplo ou estrito, em áreas de interesse dos
-		órgãos do Poder Judiciário a serem estabelecidas em regulamento.</b> (grifos nossos)</p>
+		Art. 14. Ã‰ instituÃ­do o Adicional de QualificaÃ§Ã£o - AQ destinado aos
+		servidores das Carreiras dos Quadros de Pessoal do Poder JudiciÃ¡rio,
+		em razÃ£o dos conhecimentos adicionais adquiridos em <u>aÃ§Ãµes de
+		treinamento</u>, tÃ­tulos, diplomas ou certificados de cursos de
+		pÃ³s-graduaÃ§Ã£o, em sentido amplo ou estrito, em Ã¡reas de interesse dos
+		Ã³rgÃ£os do Poder JudiciÃ¡rio a serem estabelecidas em regulamento.</b> (grifos nossos)</p>
 		
 		<p style="text-align: justify; text-indent: 3cm;">
 		O AQ foi regulamentado pela Portaria Conjunta n&ordm; 01, de 07/03/2007, em seu
 		Anexo I, da Presidente do STF e do CNJ e dos Presidentes dos Tribunais
-		Superiores, do CJF, do Conselho Superior da Justiça do Trabalho e do
+		Superiores, do CJF, do Conselho Superior da JustiÃ§a do Trabalho e do
 		TJ-DF, publicada no D.O.U. de 09/03/2007 (retificada pela Portaria
 		n&ordm; 022, de 17/04/2007, do CJF, publicada no D.O.U.II de
-		19/04/2007), e pela Resolução nº 126, de 22/11/2010, do CJF, publicada 
-		no D.O.U. de 24/11/2010, além das orientações operacionais produzidas no 
-		Encontro de Dirigentes de Recursos Humanos do Conselho da Justiça Federal e dos
-		Tribunais Regionais Federais, realizado no período de 26 a 28/03/2007.</p>
+		19/04/2007), e pela ResoluÃ§Ã£o nÂº 126, de 22/11/2010, do CJF, publicada 
+		no D.O.U. de 24/11/2010, alÃ©m das orientaÃ§Ãµes operacionais produzidas no 
+		Encontro de Dirigentes de Recursos Humanos do Conselho da JustiÃ§a Federal e dos
+		Tribunais Regionais Federais, realizado no perÃ­odo de 26 a 28/03/2007.</p>
 		
 		<p style="text-align: justify; text-indent: 3cm;">
-		A norma regulamentadora estabeleceu no art. 5&ordm; as áreas de interesse do
-		Poder Judiciário Federal a seguir destacadas: serviços de
-		processamento de feitos; execução de mandados; análise e pesquisa de
-		legislação, doutrina e jurisprudência nos vários ramos do Direito;
-		estudo e pesquisa do sistema judiciário brasileiro; organização e
-		funcionamento dos ofícios judiciais e as inovações tecnológicas
-		introduzidas; elaboração de pareceres jurídicos; redação; gestão
-		estratégica, de pessoas, de processos, e da informação; material e
-		patrimônio; licitações e contratos; orçamento e finanças; controle
-		interno; segurança; transporte; tecnologia da informação; comunicação;
-		saúde; engenharia; arquitetura, além dos vinculados a especialidades
-		peculiares a cada órgão do Poder Judiciário da União, bem como aquelas
-		que venham a surgir no interesse do serviço.</p>
+		A norma regulamentadora estabeleceu no art. 5&ordm; as Ã¡reas de interesse do
+		Poder JudiciÃ¡rio Federal a seguir destacadas: serviÃ§os de
+		processamento de feitos; execuÃ§Ã£o de mandados; anÃ¡lise e pesquisa de
+		legislaÃ§Ã£o, doutrina e jurisprudÃªncia nos vÃ¡rios ramos do Direito;
+		estudo e pesquisa do sistema judiciÃ¡rio brasileiro; organizaÃ§Ã£o e
+		funcionamento dos ofÃ­cios judiciais e as inovaÃ§Ãµes tecnolÃ³gicas
+		introduzidas; elaboraÃ§Ã£o de pareceres jurÃ­dicos; redaÃ§Ã£o; gestÃ£o
+		estratÃ©gica, de pessoas, de processos, e da informaÃ§Ã£o; material e
+		patrimÃ´nio; licitaÃ§Ãµes e contratos; orÃ§amento e finanÃ§as; controle
+		interno; seguranÃ§a; transporte; tecnologia da informaÃ§Ã£o; comunicaÃ§Ã£o;
+		saÃºde; engenharia; arquitetura, alÃ©m dos vinculados a especialidades
+		peculiares a cada Ã³rgÃ£o do Poder JudiciÃ¡rio da UniÃ£o, bem como aquelas
+		que venham a surgir no interesse do serviÃ§o.</p>
 		
 		<p style="text-align: justify; text-indent: 3cm;">
-		Para a concessão do AQ decorrente de ações de treinamento, custeadas ou não pela 
-		Administração, devem ser observadas as áreas de interesse especificadas 
-		acima juntamente com as atribuições do cargo efetivo, ou com as atribuições 
-		do cargo em comissão/função comissionada que, porventura, estejam sendo exercidas pelo servidor, ou, 
+		Para a concessÃ£o do AQ decorrente de aÃ§Ãµes de treinamento, custeadas ou nÃ£o pela 
+		AdministraÃ§Ã£o, devem ser observadas as Ã¡reas de interesse especificadas 
+		acima juntamente com as atribuiÃ§Ãµes do cargo efetivo, ou com as atribuiÃ§Ãµes 
+		do cargo em comissÃ£o/funÃ§Ã£o comissionada que, porventura, estejam sendo exercidas pelo servidor, ou, 
 		ainda, com as atividades desenvolvidas pelo servidor em sua unidade de 
-		lotação, conforme disposto no art. 17 da Resolução n&ordm; 126.</p>
+		lotaÃ§Ã£o, conforme disposto no art. 17 da ResoluÃ§Ã£o n&ordm; 126.</p>
 		
 		<p style="text-align: justify; text-indent: 3cm;">Destaca-se que,
-		no que se refere às ações de treinamento custeadas por esta Seção 
-		Judiciária, os registros são averbados automaticamente pelo Núcleo de Capacitação e Desenvolvimento - NCDE.</p>
+		no que se refere Ã s aÃ§Ãµes de treinamento custeadas por esta SeÃ§Ã£o 
+		JudiciÃ¡ria, os registros sÃ£o averbados automaticamente pelo NÃºcleo de CapacitaÃ§Ã£o e Desenvolvimento - NCDE.</p>
 		
-		<p style="text-align: justify; text-indent: 3cm;">No que tange às ações 
-		de treinamento não custeadas pela Administração, deve ser observado 
-		o artigo 21 da Resolução nº 126.</p>
+		<p style="text-align: justify; text-indent: 3cm;">No que tange Ã s aÃ§Ãµes 
+		de treinamento nÃ£o custeadas pela AdministraÃ§Ã£o, deve ser observado 
+		o artigo 21 da ResoluÃ§Ã£o nÂº 126.</p>
 		
 		<p style="text-align: justify; text-indent: 3cm;">Norteando-se
-		pelas normas legais anteriormente mencionadas, após a análise de todos
-		os certificados e declarações enviadas, bem como dos registros
-		constantes no NCDE, sugiro a <b>concessão e/ou
-		alteração</b> do Adicional de Qualificação decorrente de Ações de
+		pelas normas legais anteriormente mencionadas, apÃ³s a anÃ¡lise de todos
+		os certificados e declaraÃ§Ãµes enviadas, bem como dos registros
+		constantes no NCDE, sugiro a <b>concessÃ£o e/ou
+		alteraÃ§Ã£o</b> do Adicional de QualificaÃ§Ã£o decorrente de AÃ§Ãµes de
 		Treinamento, conforme especificado no <b>Anexo I</b> (fls. ${folhas }), 
 		nos percentuais indicados para cada servidor, observando-se os respectivos
-		efeitos financeiros, pois preencheram todos os requisitos e condições para 
-		a sua implementação.</p>
+		efeitos financeiros, pois preencheram todos os requisitos e condiÃ§Ãµes para 
+		a sua implementaÃ§Ã£o.</p>
 		
-		<p style="text-align: justify; text-indent: 3cm;">É o Parecer.</p>
+		<p style="text-align: justify; text-indent: 3cm;">Ã‰ o Parecer.</p>
 		
-		<p style="text-align: justify; text-indent: 3cm;">À Superior
-		Consideração.</p>
+		<p style="text-align: justify; text-indent: 3cm;">Ã€ Superior
+		ConsideraÃ§Ã£o.</p>
 
 		<p style="text-align: justify; text-indent: 3cm;">RJ,
 		${doc.dtDocDDMMYY}.</p>
@@ -156,7 +156,7 @@
 		<c:import url="/paginas/expediente/modelos/inc_assinaturaSemCosig.jsp?formatarOrgao=sim" />
 		
 		<p style="text-align: justify; text-indent: 3cm;">Ratifico o
-		parecer. À DIRFO.</p>
+		parecer. Ã€ DIRFO.</p>
 		
 		<p style="text-align: justify; text-indent: 3cm;">RJ,
 		${doc.dtDocDDMMYY}.</p>

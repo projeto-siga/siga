@@ -27,9 +27,9 @@
 	$(css).appendTo("head");
 
 	function escapeAcentos(s){
-		//Edson: o replace abaixo é necessário porque o viz.js não monta o gráfico corretamente se
+		//Edson: o replace abaixo Ã© necessÃ¡rio porque o viz.js nÃ£o monta o grÃ¡fico corretamente se
 		//houver caracteres com acento...
-		return s.replace(/[ãâáàÃÁÀÂêéÊÉôõóÔÕÓúÚçÇ]/gim, function(i){
+		return s.replace(/[Ã£Ã¢Ã¡Ã ÃƒÃÃ€Ã‚ÃªÃ©ÃŠÃ‰Ã´ÃµÃ³Ã”Ã•Ã“ÃºÃšÃ§Ã‡]/gim, function(i){
 			return '&#'+i.charCodeAt(0)+';';
 			});
 	}
@@ -65,7 +65,7 @@
 
 				<c:set var="ocultarCodigo" value="${true}" />
 
-				<!-- Links para as ações de cada mobil -->
+				<!-- Links para as aÃ§Ãµes de cada mobil -->
 				<c:if test='${param.popup!="true"}'>
 					<c:set var="acoes" value="${m.acoesOrdenadasPorNome}" />
 					<%-- 			<ww:if test="%{#attr.m.mob.geral}"><c:set var="acoes" value="${docVO.acoesOrdenadasPorNome}"/></ww:if>--%>
@@ -129,7 +129,7 @@
 
 	<c:set var="dtUlt" value="" />
 
-	<!-- Verifica se haverá alguma movimentação para ser exibida -->
+	<!-- Verifica se haverÃ¡ alguma movimentaÃ§Ã£o para ser exibida -->
 	<c:set var="temmov" value="${false}" />
 	<c:forEach var="mov" items="${m.movs}">
 		<c:if
@@ -143,9 +143,9 @@
 	style="padding-top: 0px; margin-top: 25px;padding-left: 0px;">
 	<div class="gt-content">
 
-				<!-- Somente quando o workflow está ativado -->
+				<!-- Somente quando o workflow estÃ¡ ativado -->
 				<c:if test="${f:resource('isWorkflowEnabled')}">
-				<!-- Se for um processo administrativo, colocar a caixa do wf geral no último volume -->
+				<!-- Se for um processo administrativo, colocar a caixa do wf geral no Ãºltimo volume -->
 				<ww:if test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 						<div id="${docVO.sigla}" depende=";wf;" class="wf_div" />
 						<!--ajax:${doc.codigo}-${i}-->
@@ -177,7 +177,7 @@
 			</table>
 		</div>
 		
-	<!-- Tabela de movimentações -->
+	<!-- Tabela de movimentaÃ§Ãµes -->
 	<c:if test="${temmov}">
 		<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;margin-top: 10px;">
 			<script type="text/javascript">
@@ -192,9 +192,9 @@
 				<thead>
 					<tr>
 						<th rowspan="2" align="center" style="padding: 5px 5px;">Data</th>
-						<th rowspan="2" style="padding: 5px 5px;">Lotação</th>
+						<th rowspan="2" style="padding: 5px 5px;">LotaÃ§Ã£o</th>
 						<th rowspan="2" style="padding: 5px 5px;">Evento</th>
-						<th rowspan="2" style="padding: 5px 5px;">Descrição</th>
+						<th rowspan="2" style="padding: 5px 5px;">DescriÃ§Ã£o</th>
 					</tr>
 				</thead>
 				<c:set var="evenorodd" value="odd" />
@@ -273,7 +273,7 @@
 	
 		<c:if test="${m.pendencias}">
 		<div class="gt-sidebar-content" id="pendencias">
-			<h3>Pendências</h3>
+			<h3>PendÃªncias</h3>
 			<c:if test="${not empty m.pendenciasDeAnexacao}">
 			<p style="margin-bottom: 3px;">
 				<b style="color: rgb(195, 0, 0)">Anexos Pendentes:</b> 
@@ -293,7 +293,7 @@
 			</c:if>
 			<c:if test="${not empty m.anexosNaoAssinados}">
 			<p style="margin-bottom: 3px;">
-				<b style="color: rgb(195, 0, 0)">Anexos não assinados:</b> 
+				<b style="color: rgb(195, 0, 0)">Anexos nÃ£o assinados:</b> 
 			</p>
 			<ul>
 			<c:forEach var="naoAssinado" items="${m.anexosNaoAssinados}">
@@ -311,7 +311,7 @@
 			</c:if>
 			<c:if test="${not empty m.despachosNaoAssinados}">
 			<p style="margin-bottom: 3px;margin-top: 8px;">
-				<b style="color: rgb(195, 0, 0)">Despachos não assinados:</b>
+				<b style="color: rgb(195, 0, 0)">Despachos nÃ£o assinados:</b>
 			</p>
 			<ul>
 			<c:forEach var="naoAssinado" items="${m.despachosNaoAssinados}">
@@ -329,7 +329,7 @@
 			</c:if>
 			<c:if test="${not empty m.expedientesFilhosNaoJuntados}">
 			<p style="margin-bottom: 3px; margin-top: 8px;">
-				<b style="color: rgb(195, 0, 0)">Expedientes não juntados:</b> 
+				<b style="color: rgb(195, 0, 0)">Expedientes nÃ£o juntados:</b> 
 			</p>
 			<ul>
 			<c:forEach var="naoJuntado" items="${m.expedientesFilhosNaoJuntados}">
@@ -406,7 +406,7 @@
 								a partir de ${marca.dtIniMarcaDDMMYYYY}
 							</c:if>
 							<c:if test="${not empty marca.dtFimMarca}"> 
-								até ${marca.dtFimMarcaDDMMYYYY}
+								atÃ© ${marca.dtFimMarcaDDMMYYYY}
 							</c:if>
 							<c:if test="${not empty marca.dpLotacaoIni}">
 							[
@@ -423,7 +423,7 @@
 			</div>
 		</c:if>
 		
-		<!-- Início mapa relação entre documentos -->
+		<!-- InÃ­cio mapa relaÃ§Ã£o entre documentos -->
 		<c:if test="${docVO.dotRelacaoDocs.numNodos > 1}">
 		<!-- Sidebar List -->
 		<div class="gt-sidebar-content">
@@ -529,15 +529,15 @@
 			smallmapRelacaoDocs();
     	</script>
     	</c:if>
-    	<!-- Fim mapa relação entre documentos -->
+    	<!-- Fim mapa relaÃ§Ã£o entre documentos -->
 	
 	
 		<c:if test="${docVO.dotTramitacao.numNodos > 1}">
-		<!-- Início mapa tramitação -->
+		<!-- InÃ­cio mapa tramitaÃ§Ã£o -->
 	
 		<!-- Sidebar List -->
 		<div class="gt-sidebar-content" id="tramitacao">
-			<h3 style="margin-bottom: 10px">Tramitação</h3>
+			<h3 style="margin-bottom: 10px">TramitaÃ§Ã£o</h3>
 			<div style="display: none" id="inputTramitacao">
 			</div>
 			<a href="javascript:void(0)" href="javascript:void(0)" style="text-decoration: none">
@@ -574,7 +574,7 @@
 		function bigmapTramitacao() {
 			$('#svgTramitacao').dialog('open');
 			if ($('#naoCarregouBigTramitacao')[0] != undefined){
-				var input = 'digraph ""{ graph[tooltip="Tramitação"] ${docVO.dotTramitacao} }';
+				var input = 'digraph ""{ graph[tooltip="TramitaÃ§Ã£o"] ${docVO.dotTramitacao} }';
 				input = escapeAcentos(input);
 				var result = Viz(input, "svg", "dot");
 		  		document.getElementById("output2Tramitacao").innerHTML = result;
@@ -604,7 +604,7 @@
 		function smallmapTramitacao() {
 			$("#outputTramitacao").css("background-color", $("html").css("background-color"));
 			var bgcolor = rgb2hex($("#outputTramitacao").css("background-color"));
-			var input = 'digraph "" { graph[tooltip="Tramitação" ratio="' + ratioTramitacao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapTramitacao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotTramitacao} }';
+			var input = 'digraph "" { graph[tooltip="TramitaÃ§Ã£o" ratio="' + ratioTramitacao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapTramitacao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotTramitacao} }';
 			input = escapeAcentos(input);
 			var result = Viz(input, "svg", "dot");
 		  	document.getElementById("outputTramitacao").innerHTML = result;
@@ -639,7 +639,7 @@
 		smallmapTramitacao();
     	</script>
     	
-    	<!-- Fim mapa tramitação -->
+    	<!-- Fim mapa tramitaÃ§Ã£o -->
     	</c:if>
 	
 		<div class="gt-sidebar-content">
@@ -666,10 +666,10 @@
 				<b>Modelo:</b> ${docVO.modelo}
 			</p>
 			<p>
-				<b>Descrição:</b> ${docVO.descrDocumento}
+				<b>DescriÃ§Ã£o:</b> ${docVO.descrDocumento}
 			</p>
 			<p>
-				<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
+				<b>ClassificaÃ§Ã£o:</b> ${docVO.classificacaoDescricaoCompleta}
 			</p>
 
 			<c:if test="${not empty docVO.dadosComplementares}">
@@ -678,7 +678,7 @@
 			
 			<c:if test="${not empty docVO.cossignatarios}">
 			<div class="gt-sidebar-content" style="padding-top: 10px">
-			<h3>Cossignatários</h3>
+			<h3>CossignatÃ¡rios</h3>
 			<ul>
 			<c:forEach var="cossig" items="${docVO.cossignatarios}">
 				<li>
@@ -711,14 +711,14 @@
 			</c:if> 
 			
 			<div class="gt-sidebar-content" style="padding-top: 10px">
-			<h3>Nível de Acesso</h3>
+			<h3>NÃ­vel de Acesso</h3>
 			<p>
 				<b>${docVO.nmNivelAcesso}</b> 
 				<c:if test="${not empty docVO.listaDeAcessos}">
 					<ww:if test="%{#attr.docVO.listaDeAcessos.size() eq 1}">
 						<c:forEach var="acesso" items="${docVO.listaDeAcessos}" varStatus="loop">
 							<ww:if test="${acesso eq 'PUBLICO'}">
-								(Público)
+								(PÃºblico)
 							</ww:if>
 							<ww:else>
 								(${acesso.sigla})
@@ -750,9 +750,9 @@
 
 
 
-	<!-- Visualização dos principais dados do documento em questão -->
+	<!-- VisualizaÃ§Ã£o dos principais dados do documento em questÃ£o -->
 
-	<!-- Links para as ações de gerais do documento -->
+	<!-- Links para as aÃ§Ãµes de gerais do documento -->
 	<%--
 
  --%>
@@ -772,7 +772,7 @@
 				</div>
 			</div>
 		</div>
-		<p style="font-weight: bold">Clique sobre a imagem com o botão esquerdo para ampliar ou com o direito para reduzir.</p>
+		<p style="font-weight: bold">Clique sobre a imagem com o botÃ£o esquerdo para ampliar ou com o direito para reduzir.</p>
 		<a href="javascript:void(0)" onclick="javascript: $('#svgRelacaoDocs').dialog('close');"
 			class="gt-btn-large gt-btn-left">Voltar</a>
 
@@ -786,14 +786,14 @@
 				</div>
 			</div>
 		</div>
-		<p style="font-weight: bold">Clique sobre a imagem com o botão esquerdo para ampliar ou com o direito para reduzir.</p>
+		<p style="font-weight: bold">Clique sobre a imagem com o botÃ£o esquerdo para ampliar ou com o direito para reduzir.</p>
 		<a href="javascript:void(0)" onclick="javascript: $('#svgTramitacao').dialog('close');"
 			class="gt-btn-large gt-btn-left">Voltar</a>
 
 	</div>
 
 
-<!-- Somente quando o workflow está ativado -->
+<!-- Somente quando o workflow estÃ¡ ativado -->
 
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">

@@ -8,9 +8,9 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo largura="15">
-			<mod:selecao titulo="SeÁ„o" var="secao"
+			<mod:selecao titulo="Se√ß√£o" var="secao"
 				opcoes="CAMS;SIE;SGS;STI;DSEG" reler="sim" />	 
-				<!-- retirado opcao SEGRA, mas as referencias n„o foram retiradas. (06/2012) -->		
+				<!-- retirado opcao SEGRA, mas as referencias n√£o foram retiradas. (06/2012) -->		
 		</mod:grupo>
 		<mod:oculto var="idOrgaoUsu" valor="${doc.cadastrante.orgaoUsuario.idOrgaoUsu}" />
 		<mod:oculto var="unidGestora" valor="${f:buscarLotacaoPorSigla(secao,idOrgaoUsu)}" />	
@@ -33,13 +33,13 @@
 		</c:if>
 		<br>
  	
-		<mod:grupo titulo="ATESTO DE SERVI«OS">			
+		<mod:grupo titulo="ATESTO DE SERVI√áOS">			
 			<mod:grupo largura="30">
-				<mod:texto titulo="N∫ Processo" var="numProcesso" largura="25" obrigatorio="Sim" />
+				<mod:texto titulo="N¬∫ Processo" var="numProcesso" largura="25" obrigatorio="Sim" />
 			</mod:grupo>
 			<mod:grupo largura="70">
 				<c:if test="${secao == 'CAMS' or secao == 'SEGRA'}">
-					<mod:selecao titulo="MÍs de referÍncia" var="mes" opcoes="Janeiro;Fevereiro;MarÁo;Abril;Maio;
+					<mod:selecao titulo="M√™s de refer√™ncia" var="mes" opcoes="Janeiro;Fevereiro;Mar√ßo;Abril;Maio;
 										Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />	
 				</c:if>										
 			</mod:grupo>				
@@ -47,11 +47,11 @@
 				<mod:texto titulo="Nome da Empresa" var="descContrato" largura="72" obrigatorio="Sim" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="DescriÁ„o do objeto" var="objeto" largura="70" obrigatorio="Sim" />
+				<mod:texto titulo="Descri√ß√£o do objeto" var="objeto" largura="70" obrigatorio="Sim" />
 			</mod:grupo>
 			<ww:if test="${secao != 'SIE'}">
 				<mod:grupo>
-					<mod:pessoa titulo="Fiscal TÈcnico" var="fiscalTec" obrigatorio="Sim"/>
+					<mod:pessoa titulo="Fiscal T√©cnico" var="fiscalTec" obrigatorio="Sim"/>
 				</mod:grupo>
 				<mod:grupo>
 					<mod:pessoa titulo="Suplente" var="fiscalSup"  obrigatorio="Sim"/>
@@ -65,7 +65,7 @@
 				<mod:grupo depende="numFiscaisAjax">
 					<c:forEach var="i" begin="1" end="${numFiscais}">
 						<mod:grupo>
-							<b>${i}.</b><mod:texto titulo="Fiscal TÈcnico" var="tipoFiscal${i}" largura="20" obrigatorio="Sim" />
+							<b>${i}.</b><mod:texto titulo="Fiscal T√©cnico" var="tipoFiscal${i}" largura="20" obrigatorio="Sim" />
 							<mod:pessoa titulo="" var="fiscalTec${i}" obrigatorio="Sim"/>
 						</mod:grupo>
 						<mod:grupo>
@@ -78,22 +78,22 @@
 			<c:if test="${secao == 'SIE' or secao == 'SGS' or secao == 'STI' or secao == 'DSEG'}">
 				<hr color="#FFFFFF" />
 				<mod:grupo>
-					<mod:numero titulo="N˙mero da Nota Fiscal" var="nota" />
+					<mod:numero titulo="N√∫mero da Nota Fiscal" var="nota" />
 					<mod:monetario titulo="Valor" var="valNota" formataNum="sim" extensoNum="sim"/>  
 				</mod:grupo>
 				<mod:grupo>
-					<mod:data titulo="PerÌodo de referÍncia" var="dataIni" obrigatorio="Sim"/> a <mod:data var="dataFim" titulo="" obrigatorio="Sim"/>
+					<mod:data titulo="Per√≠odo de refer√™ncia" var="dataIni" obrigatorio="Sim"/> a <mod:data var="dataFim" titulo="" obrigatorio="Sim"/>
 				</mod:grupo>
 				<mod:grupo>
 					<mod:memo titulo="Ressalvas" var="ressalvaNota" linhas="2" colunas="80" />
 				</mod:grupo>
 			</c:if>
 			<hr color="#FFFFFF" />
-			<mod:grupo titulo="O atesto est· sendo encaminhado no prazo (entre o ˙ltimo dia ˙til do mÍs de competÍncia e o segundo dia ˙til do mÍs subsequente)?">
+			<mod:grupo titulo="O atesto est√° sendo encaminhado no prazo (entre o √∫ltimo dia √∫til do m√™s de compet√™ncia e o segundo dia √∫til do m√™s subsequente)?">
 				<mod:radio titulo="Sim." var="noPrazo" valor="1" marcado="Sim"
 							reler="ajax" idAjax="noPrazoAjax" />
 				<mod:grupo largura="7">
-					<mod:radio titulo="N„o." var="noPrazo" valor="2" reler="ajax"
+					<mod:radio titulo="N√£o." var="noPrazo" valor="2" reler="ajax"
 							idAjax="noPrazoAjax" />
 				</mod:grupo>
 				<c:set var="noPrazoVal" value="${noPrazo}" />
@@ -104,7 +104,7 @@
 					<mod:grupo depende="noPrazoAjax">
 						<c:if test="${noPrazoVal == 2}">
 							<mod:memo titulo="Justificar" var="jusNoPrazo" linhas="3" colunas="70" obrigatorio="Sim" />
-							<mod:oculto var="noPrazoNao" valor="n„o"/>	
+							<mod:oculto var="noPrazoNao" valor="n√£o"/>	
 						</c:if>
 					</mod:grupo>						
 				</mod:grupo>					
@@ -151,7 +151,7 @@
 		FIM PRIMEIRO CABECALHO -->
 		
 		<br>
-		<h3 align="center"> CONTRATOS: ATESTO DE SERVI«OS COM FREQU NCIA DE FUNCION¡RIOS </h3><br><br>
+		<h3 align="center"> CONTRATOS: ATESTO DE SERVI√áOS COM FREQU√äNCIA DE FUNCION√ÅRIOS </h3><br><br>
 
 		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 			<tr>
@@ -160,26 +160,26 @@
 				</td>
 			</tr>
 			<tr>
-				<td width="50%">N∫ Processo: <b>${numProcesso}</b></td>
+				<td width="50%">N¬∫ Processo: <b>${numProcesso}</b></td>
 				<ww:if test="${secao == 'CAMS' or secao == 'SEGRA'}">
-					<td width="50%" align="right">MÍs de ReferÍncia: <b>${mes}</b></td>
+					<td width="50%" align="right">M√™s de Refer√™ncia: <b>${mes}</b></td>
 				</ww:if>
 				<ww:else><td width="50%"> </td></ww:else>				
 			</tr>
 			<tr><td colspan="2">Nome da Empresa: <b>${descContrato}</b></td></tr>
-			<tr><td colspan="2">DescriÁ„o do Objeto: <b>${objeto}</b></td></tr>
+			<tr><td colspan="2">Descri√ß√£o do Objeto: <b>${objeto}</b></td></tr>
 		</table>
 		<br>
 		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">	
 			<ww:if test="${secao != 'SIE'}">
 				<c:if test="${not empty requestScope['fiscalTec_pessoaSel.id']}">
 					<tr>
-						<td width="75%">Fiscal TÈcnico: ${f:maiusculasEMinusculas(requestScope['fiscalTec_pessoaSel.descricao'])}</td>
-						<td width="25%" align="right">matrÌcula: ${f:pessoa(requestScope['fiscalTec_pessoaSel.id']).matricula}</td>			
+						<td width="75%">Fiscal T√©cnico: ${f:maiusculasEMinusculas(requestScope['fiscalTec_pessoaSel.descricao'])}</td>
+						<td width="25%" align="right">matr√≠cula: ${f:pessoa(requestScope['fiscalTec_pessoaSel.id']).matricula}</td>			
 					</tr>
 					<tr>
 						<td width="75%">Suplente: ${f:maiusculasEMinusculas(requestScope['fiscalSup_pessoaSel.descricao'])}</td>
-						<td width="25%" align="right">matrÌcula: ${f:pessoa(requestScope['fiscalSup_pessoaSel.id']).matricula}</td>			
+						<td width="25%" align="right">matr√≠cula: ${f:pessoa(requestScope['fiscalSup_pessoaSel.id']).matricula}</td>			
 					</tr>
 				</c:if>	
 			</ww:if>
@@ -192,13 +192,13 @@
 							value="${f:pessoa(requestScope[f:concat(f:concat('fiscalSup',i),'_pessoaSel.id')])}" />
 						<tr>
 							<td width="5%">${i}.</td>
-							<td width="70%">Fiscal TÈcnico ${requestScope[f:concat('tipoFiscal',i)]}: ${f:maiusculasEMinusculas(tec.descricao)}</td>
-							<td width="25%" align="right">matrÌcula: ${tec.matricula}</td>			
+							<td width="70%">Fiscal T√©cnico ${requestScope[f:concat('tipoFiscal',i)]}: ${f:maiusculasEMinusculas(tec.descricao)}</td>
+							<td width="25%" align="right">matr√≠cula: ${tec.matricula}</td>			
 						</tr>
 						<tr>
 							<td width="5%"></td>
 							<td width="70%">Suplente: ${f:maiusculasEMinusculas(sup.descricao)}</td>
-							<td width="25%" align="right">matrÌcula: ${sup.matricula}</td>			
+							<td width="25%" align="right">matr√≠cula: ${sup.matricula}</td>			
 						</tr>
 					</c:forEach>
 				</c:if>	
@@ -210,10 +210,10 @@
 				<tr>
 					<ww:if test="${not empty nota}">					
 						<td>Nota Fiscal: ${nota}</td>
-						<td>PerÌodo: ${dataIni} a ${dataFim}</td>
+						<td>Per√≠odo: ${dataIni} a ${dataFim}</td>
 					</ww:if>						
 					<ww:else>
-						<td colspan="2">PerÌodo: ${dataIni} a ${dataFim}</td>
+						<td colspan="2">Per√≠odo: ${dataIni} a ${dataFim}</td>
 					</ww:else>	
 				</tr>			
 				<c:if test="${not empty nota}">
@@ -228,7 +228,7 @@
 			</c:if>
 			<tr>
 				<td colspan="2">
-				    O atesto ${noPrazoNao} est· sendo encaminhado no prazo (entre o ˙ltimo dia ˙til do mÍs de competÍncia e o segundo dia ˙til do mÍs subsequente)
+				    O atesto ${noPrazoNao} est√° sendo encaminhado no prazo (entre o √∫ltimo dia √∫til do m√™s de compet√™ncia e o segundo dia √∫til do m√™s subsequente)
 					<ww:if test="${noPrazo == '2'}">
 						${jusNoPrazo}
 					</ww:if>

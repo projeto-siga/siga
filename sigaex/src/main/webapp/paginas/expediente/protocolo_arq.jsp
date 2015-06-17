@@ -39,20 +39,20 @@
 		<table class="gt-table" style="table-layout:fixed; word-wrap:break-word; width:100%;">
 				<thead>
 				<tr>
-					<th rowspan="2" align="right">Número</th>
+					<th rowspan="2" align="right">NÃºmero</th>
 					<th colspan="3" align="center">Documento</th>
-					<th colspan="3" align="center">Última Movimentação</th>
+					<th colspan="3" align="center">Ãšltima MovimentaÃ§Ã£o</th>
 					<th colspan="2" align="center">Atendente</th>
-					<th rowspan="2">Descrição</th>
+					<th rowspan="2">DescriÃ§Ã£o</th>
 				</tr>
 				<tr>
 					<th align="center">Data</th>
-					<th align="center">Lotação</th>
+					<th align="center">LotaÃ§Ã£o</th>
 					<th align="center">Pessoa</th>
 					<th align="center">Data</th>
-					<th align="center">Lotação</th>
+					<th align="center">LotaÃ§Ã£o</th>
 					<th align="center">Pessoa</th>
-					<th align="center">Lotação</th>
+					<th align="center">LotaÃ§Ã£o</th>
 					<th align="center">Pessoa</th>
 				</tr>
 				</thead>
@@ -125,7 +125,7 @@
 			</c:if>
 			<br />
 			<br />
-			<p align="center">Arquivado em: _____/_____/_____ às _____:_____</p>
+			<p align="center">Arquivado em: _____/_____/_____ Ã s _____:_____</p>
 			<br />
 			<br />
 			<br />

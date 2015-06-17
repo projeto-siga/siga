@@ -40,7 +40,7 @@ function sbmt() {
 				</tr>
 				<ww:textfield name="dtMovString" label="Data" />
 				<tr>
-					<td>Respons·vel:</td>
+					<td>Respons√°vel:</td>
 					<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 					&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 						onclick="javascript:displayTitular(this);" />Substituto</td>

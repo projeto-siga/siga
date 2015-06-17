@@ -15,7 +15,7 @@ function sbmt() {
 </script>
 <c:set var="titulo_pagina" scope="request">Documentos Criados</c:set>
 <ww:hidden name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
-	<td>Lotação</td>
+	<td>LotaÃ§Ã£o</td>
 	<div id="divLotaDestinatario" style="display: none">
 		<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple"
 			paramList="buscarFechadas=true" modulo="siga"/></td>

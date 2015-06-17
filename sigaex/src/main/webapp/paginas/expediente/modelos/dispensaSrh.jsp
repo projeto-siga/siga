@@ -11,7 +11,7 @@
 	<mod:entrevista>
 		<mod:grupo titulo="DETALHES DA DISPENSA">
 			<mod:grupo>
-				<mod:funcao titulo="FunÁ„o" var="funcaoComissionada" />
+				<mod:funcao titulo="Fun√ß√£o" var="funcaoComissionada" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:data titulo="Data Dispensa" var="dataDispensa" />
@@ -51,16 +51,16 @@
 		<br>
 
 		<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify">A DIRETORA DA
-		SUBSECRETARIA DE GEST√O DE PESSOAS DA JUSTI«A FEDERAL - SE«√O
-		JUDICI¡RIA DO RIO DE JANEIRO, usando a competÍncia que lhe foi
-		delegada pela Portaria n∫ 011 - GDF, de 26 de marÁo de 2003,
+		SUBSECRETARIA DE GEST√ÉO DE PESSOAS DA JUSTI√áA FEDERAL - SE√á√ÉO
+		JUDICI√ÅRIA DO RIO DE JANEIRO, usando a compet√™ncia que lhe foi
+		delegada pela Portaria n¬∫ 011 - GDF, de 26 de mar√ßo de 2003,
 		${textoPortaria}, RESOLVE:</p><!-- FIM ABERTURA -->
 		<br>
 		<br>
 
 		<p style="MARGIN-LEFT: 2cm" align="justify">DISPENSAR o(a) <b>${doc.subscritor.descricao}</b>,
 		<b>${doc.subscritor.cargo.nomeCargo}</b>, <b>${doc.subscritor.padraoReferenciaInvertido}</b>,
-		matrÌcula n&ordm; <b>${doc.subscritor.sigla}</b>, da funÁ„o
+		matr√≠cula n&ordm; <b>${doc.subscritor.sigla}</b>, da fun√ß√£o
 		comissionada de <b>${requestScope['funcaoComissionada_funcaoSel.descricao']}</b>,
 		da <b>${doc.subscritor.lotacao.descricao}</b>, a partir de <b>${dataDispensa}</b>.</p>
 		<br>
@@ -74,7 +74,7 @@
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
 		<!-- 
 		<p style="TEXT-INDENT: 2 cm" align="center"><b>REGINA HELENA MOREIRA FARIA</b> <br>
-		<b>Diretora de Subsecretaria de Gest„o de Pessoas</b></p>
+		<b>Diretora de Subsecretaria de Gest√£o de Pessoas</b></p>
 		-->
 		<br>
 		<br>

@@ -5,12 +5,12 @@
 <mod:modelo>
 	<mod:entrevista>
 	
-		<%--<mod:grupo titulo="DETALHES DO FUNCIONÁRIO">
+		<%--<mod:grupo titulo="DETALHES DO FUNCIONÃRIO">
 				<mod:texto titulo="Classe" var="classe"/>
-				<mod:texto titulo="Padrão" var="padrao" />
+				<mod:texto titulo="PadrÃ£o" var="padrao" />
 		</mod:grupo>--%>
 		
-		<mod:grupo titulo="DETALHES DA REDISTRIBUIÇÃO">
+		<mod:grupo titulo="DETALHES DA REDISTRIBUIÃ‡ÃƒO">
 				<FONT COLOR="BLUE"><B>
 				<mod:memo colunas="60" linhas="4"  titulo="Motivo" var="motivo"/>
 				</FONT></B>
@@ -30,9 +30,9 @@
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
 		classe ${doc.subscritor.padraoReferenciaInvertido}, 
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao},
-	    vem requerer a Vossa Excelência, que se digne encaminhar 
-	    o requerimento de <b>REDISTRIBUIÇÃO</b>, em anexo, ao E. Tribunal Regional 
-	    Federal da 2ª Região.
+	    vem requerer a Vossa ExcelÃªncia, que se digne encaminhar 
+	    o requerimento de <b>REDISTRIBUIÃ‡ÃƒO</b>, em anexo, ao E. Tribunal Regional 
+	    Federal da 2Âª RegiÃ£o.
 	    </p>
 	    
 	    
@@ -51,8 +51,8 @@
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
 		classe ${doc.subscritor.padraoReferenciaInvertido}, 
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao},
-		vem requerer a Vossa Excelência, nos termos do art. 37 da Lei n.º 8.112/90, 
-		c/c a redação dada pela Lei n.º 9.527/97, <B>REDISTRIBUIÇÃO</B>, 
+		vem requerer a Vossa ExcelÃªncia, nos termos do art. 37 da Lei n.Âº 8.112/90, 
+		c/c a redaÃ§Ã£o dada pela Lei n.Âº 9.527/97, <B>REDISTRIBUIÃ‡ÃƒO</B>, 
 		pelos motivos expostos a seguir:
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">

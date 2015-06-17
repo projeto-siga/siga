@@ -9,7 +9,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
 
-<siga:pagina titulo="Transferência em Lote">
+<siga:pagina titulo="TransferÃªncia em Lote">
 
 <script type="text/javascript" language="Javascript1.1"
 	src="<c:url value="/staticJavascript.action"/>"></script>
@@ -56,7 +56,7 @@
 	<c:set var="i" value="1" />
 	<c:choose>
 		<c:when test="${i == 1}">
-			<h2>Documentos com solicitação de publicação</h2>
+			<h2>Documentos com solicitaÃ§Ã£o de publicaÃ§Ã£o</h2>
 			<c:set var="elementos" value="${itensSolicitados}" />
 		<div class="gt-content-box gt-for-table">
 			<table class="gt-form-table">
@@ -64,7 +64,7 @@
 					<td colspan="2">Envio</td>
 				</tr>
 				<tr>
-					<td colspan="2"><ww:submit value="Remeter para publicação" cssClass="gt-btn-large gt-btn-left"/></td>
+					<td colspan="2"><ww:submit value="Remeter para publicaÃ§Ã£o" cssClass="gt-btn-large gt-btn-left"/></td>
 				</tr>
 			</table>
 		</div>
@@ -72,7 +72,7 @@
 			
 		</c:when>
 		<c:when test="${i == 2}">
-			<h2>Documentos remetidos para publicação</h2>
+			<h2>Documentos remetidos para publicaÃ§Ã£o</h2>
 			<c:set var="elementos" value="${itensRemetidos}" />
 		</c:when>
 		<c:when test="${i == 3}">
@@ -89,23 +89,23 @@
 				<td rowspan="2" align="center"><input type="checkbox"
 					name="checkall" onclick="checkUncheckAll(this)" /></td>
 			</c:if>
-			<td rowspan="2" align="center">Número</td>
+			<td rowspan="2" align="center">NÃºmero</td>
 			<c:choose>
 				<c:when test="${i == 1}">			
-				<td rowspan="2" style="color:red" align="center">Data de Disponibilização</td>	
+				<td rowspan="2" style="color:red" align="center">Data de DisponibilizaÃ§Ã£o</td>	
 				</c:when>
 				<c:when test="${i == 2}">
 					<td align="center">Data de remessa</td>
 				</c:when>
 			</c:choose>
 			<td colspan="3" align="center">Documento</td>
-			<td rowspan="2">Descrição</td>
-			<td rowspan="2" align="center">Tipo de Matéria</td>
-			<td rowspan="2" align="center">Lotação de Publicação</td>		
+			<td rowspan="2">DescriÃ§Ã£o</td>
+			<td rowspan="2" align="center">Tipo de MatÃ©ria</td>
+			<td rowspan="2" align="center">LotaÃ§Ã£o de PublicaÃ§Ã£o</td>		
 		</tr>
 		<tr>			
 			<td align="center">Data</td>
-			<td align="center">Lotação</td>
+			<td align="center">LotaÃ§Ã£o</td>
 			<td align="center">Pessoa</td>	
 					
 		</tr>
@@ -154,7 +154,7 @@
 							!movimentacao.cancelada}'>
 							<td width="44%">${movimentacao.descrPublicacao}</td>
 							<td width="2%" align="left">
-								<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tpm_${documento.idDoc}" id="tm" label="Tipo de Matéria"  
+								<ww:radio list="#{'J':'Judicial', 'A':'Administrativa'}" name="tpm_${documento.idDoc}" id="tm" label="Tipo de MatÃ©ria"  
 								value="'${movimentacao.cadernoPublicacaoDje}'"  />								
 							</td>								
 							<td align="center">${movimentacao.lotaPublicacao}</td>

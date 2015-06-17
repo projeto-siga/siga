@@ -10,51 +10,51 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">
 	<mod:entrevista>
 		</br>
-		<mod:selecao titulo="Tipos de Inclusão" var="tipoDeInclusao"
+		<mod:selecao titulo="Tipos de InclusÃ£o" var="tipoDeInclusao"
 			opcoes="Exclusivamente de Titular;De Titular e de seus Dependentes Diretos;Exclusivamente de Dependentes Diretos"
 			reler="sim" />
 		<c:if
 			test="${tipoDeInclusao == 'De Titular e de seus Dependentes Diretos' || tipoDeInclusao == 'Exclusivamente de Dependentes Diretos'}">
-			<span><b>(A inscrição de dependentes somente poderá ser
-			feita se o servidor for inscrito como titular no referido benefício e
-			somente ele poderá efetivá-la)</b></span>
+			<span><b>(A inscriÃ§Ã£o de dependentes somente poderÃ¡ ser
+			feita se o servidor for inscrito como titular no referido benefÃ­cio e
+			somente ele poderÃ¡ efetivÃ¡-la)</b></span>
 		</c:if>
-		<%--<mod:grupo titulo="Tipos de Inclusão">
+		<%--<mod:grupo titulo="Tipos de InclusÃ£o">
 			<mod:radio var="tipoDeInclusao" valor="1" reler="sim" marcado="sim" titulo="Exclusivamente de Titular"/>
-			<mod:radio var="tipoDeInclusao" valor="2" reler="sim" titulo="De Titular e de seus Dependentes Diretos (A inscrição de dependentes somente poderá ser feita se o servidor for inscrito como titular no referido benefício e somente ele poderá efetivá-la)"/>
-			<mod:radio var="tipoDeInclusao" valor="3" reler="sim" titulo="Exclusivamente de Dependentes Diretos (A inscrição de dependentes somente poderá ser feita se o servidor for inscrito como titular no referido benefício e somente ele poderá efetivá-la)"/>
+			<mod:radio var="tipoDeInclusao" valor="2" reler="sim" titulo="De Titular e de seus Dependentes Diretos (A inscriÃ§Ã£o de dependentes somente poderÃ¡ ser feita se o servidor for inscrito como titular no referido benefÃ­cio e somente ele poderÃ¡ efetivÃ¡-la)"/>
+			<mod:radio var="tipoDeInclusao" valor="3" reler="sim" titulo="Exclusivamente de Dependentes Diretos (A inscriÃ§Ã£o de dependentes somente poderÃ¡ ser feita se o servidor for inscrito como titular no referido benefÃ­cio e somente ele poderÃ¡ efetivÃ¡-la)"/>
 		</mod:grupo>--%>
 		<c:if
 			test="${tipoDeInclusao == 'Exclusivamente de Titular' || tipoDeInclusao == 'De Titular e de seus Dependentes Diretos'}">
 			<br />
 			<mod:grupo titulo="Dados do Titular">
 				<mod:grupo>
-					<mod:pessoa titulo="Matrícula" var="matriculaTitular" reler="sim" />
+					<mod:pessoa titulo="MatrÃ­cula" var="matriculaTitular" reler="sim" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:data titulo="Data do exercício" var="dataExercicio" />
+					<mod:data titulo="Data do exercÃ­cio" var="dataExercicio" />
 					<mod:data titulo="Data de nascimento" var="dataNascimentoTitular" />
 					<mod:selecao titulo="Sexo" opcoes="M;F" var="sexoTitular" />
 					<mod:selecao titulo="Estado Civil" var="estadoCivilTitular"
-						opcoes="Solteiro(a);Casado(a);Divorciado(a);Viúva(o);Desquitado"
+						opcoes="Solteiro(a);Casado(a);Divorciado(a);ViÃºva(o);Desquitado"
 						reler="sim" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="Plano de saúde a qual está vinculado"
+					<mod:texto titulo="Plano de saÃºde a qual estÃ¡ vinculado"
 						var="plano" largura="30" />
 					<mod:selecao
 						titulo="Todos os dependentes pertencem ao mesmo plano?"
-						var="pertence" opcoes="Sim;Não" reler="sim" />
+						var="pertence" opcoes="Sim;NÃ£o" reler="sim" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:selecao titulo="Data de vigência" var="mesVigencia"
-						opcoes="Janeiro;Fevereiro;Março;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
+					<mod:selecao titulo="Data de vigÃªncia" var="mesVigencia"
+						opcoes="Janeiro;Fevereiro;MarÃ§o;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
 					<mod:texto titulo="Ano" var="anoVigencia" largura="6"
 						maxcaracteres="4" reler="ajax" idAjax="anoAjax" />
 					<mod:grupo depende="anoAjax">
 						<c:if test="${empty anoVigencia}">
 							<mod:mensagem titulo="Alerta"
-								texto="o ano de Vigência deve ser preenchido." vermelho="sim" />
+								texto="o ano de VigÃªncia deve ser preenchido." vermelho="sim" />
 						</c:if>
 					</mod:grupo>
 				</mod:grupo>
@@ -64,12 +64,12 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 			test="${tipoDeInclusao == 'De Titular e de seus Dependentes Diretos' || tipoDeInclusao == 'Exclusivamente de Dependentes Diretos'}">
 			<br />
 			<mod:grupo titulo="Dados Dos Dependentes Diretos">
-				<mod:selecao titulo="Número total a incluir no Auxílilo-Saúde"
+				<mod:selecao titulo="NÃºmero total a incluir no AuxÃ­lilo-SaÃºde"
 					var="totalDeDependentes" opcoes="1;2;3;4;5;6;7;8;9;10" reler="sim" />
 				<c:forEach var="i" begin="1" end="${totalDeDependentes}">
 					<mod:grupo>
 						<mod:selecao titulo="Parentesco" var="parentesco${i}"
-							opcoes="Cônjuge;Filhos Menores De 21 Anos;Filhos Entre 21 e 24 Anos;Filho Maior, Inválido;Companheiro(A);Enteado(A) - Filho De Cônjuge, Menor De 21 Anos;Enteado(A) - Filho De Cônjuge, Entre 21 e 24 Anos;Enteado(A) - Filho de cônjuge, maior inválido;Enteado(A) - Filho de Companheiro, menor de 21 anos;Enteado(A) - Filho de Companheiro, entre 21 e 24 anos;Enteado(A) - Filho de Companheiro, maior inválido;Menor Sob Guarda Ou Tutela"
+							opcoes="CÃ´njuge;Filhos Menores De 21 Anos;Filhos Entre 21 e 24 Anos;Filho Maior, InvÃ¡lido;Companheiro(A);Enteado(A) - Filho De CÃ´njuge, Menor De 21 Anos;Enteado(A) - Filho De CÃ´njuge, Entre 21 e 24 Anos;Enteado(A) - Filho de cÃ´njuge, maior invÃ¡lido;Enteado(A) - Filho de Companheiro, menor de 21 anos;Enteado(A) - Filho de Companheiro, entre 21 e 24 anos;Enteado(A) - Filho de Companheiro, maior invÃ¡lido;Menor Sob Guarda Ou Tutela"
 							reler="sim" />
 					</mod:grupo>
 					<mod:grupo>
@@ -79,9 +79,9 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 							var="dataNascimentoDependente${i}" />
 					</mod:grupo>
 					<mod:grupo>
-						<c:if test="${pertence == 'Não'}">
+						<c:if test="${pertence == 'NÃ£o'}">
 							<mod:grupo>
-								<mod:texto titulo="Plano de Saúde" var="planoDep${i}"
+								<mod:texto titulo="Plano de SaÃºde" var="planoDep${i}"
 									largura="30" />
 							</mod:grupo>
 						</c:if>
@@ -89,257 +89,257 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 					<c:if
 						test="${requestScope[f:concat('parentesco',i)] == 'Filhos Menores De 21 Anos'}">
 						<mod:grupo>
-							<mod:selecao titulo="Dependente econômico"
-								var="dependenteEconomico${i}" opcoes="Sim;Não" />
+							<mod:selecao titulo="Dependente econÃ´mico"
+								var="dependenteEconomico${i}" opcoes="Sim;NÃ£o" />
 							<mod:selecao titulo="Solteiro" var="solteiro${i}"
-								opcoes="Sim;Não" />
+								opcoes="Sim;NÃ£o" />
 							<mod:selecao titulo="Estudante" var="estudante${i}"
-								opcoes="Sim;Não" />
+								opcoes="Sim;NÃ£o" />
 							<mod:selecao titulo="Reside em sua companhia"
-								var="resideCompanhia${i}" opcoes="Sim;Não" />
+								var="resideCompanhia${i}" opcoes="Sim;NÃ£o" />
 						</mod:grupo>
 					</c:if>
 					<c:if
 						test="${requestScope[f:concat('parentesco',i)] == 'Filhos Entre 21 e 24 Anos'}">
-						<mod:grupo titulo="Dependente econômico">
+						<mod:grupo titulo="Dependente econÃ´mico">
 							<mod:radio titulo="Sim" var="dependenteEconomico${i}"
 								marcado="Sim" valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="dependenteEconomico${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Solteiro">
 							<mod:radio titulo="Sim" var="solteiro${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="solteiro${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Estudante">
 							<mod:radio titulo="Sim" var="estudante${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="estudante${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Reside em sua companhia">
 							<mod:radio titulo="Sim" var="resideCompanhia${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="resideCompanhia${i}" valor="2" />
 						</mod:grupo>
 					</c:if>
 					<c:if
-						test="${requestScope[f:concat('parentesco',i)] == 'Filho Maior, Inválido'}">
-						<mod:grupo titulo="Dependente econômico">
+						test="${requestScope[f:concat('parentesco',i)] == 'Filho Maior, InvÃ¡lido'}">
+						<mod:grupo titulo="Dependente econÃ´mico">
 							<mod:radio titulo="Sim" var="dependenteEconomico${i}"
 								marcado="Sim" valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="dependenteEconomico${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Solteiro">
 							<mod:radio titulo="Sim" var="solteiro${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="solteiro${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Estudante">
 							<mod:radio titulo="Sim" var="estudante${i}" marcado="Sim"
 								valor="1" />
-							<mod:radio titulo="Não" var="estudante${i}" valor="2" />
+							<mod:radio titulo="NÃ£o" var="estudante${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Reside em sua companhia">
 							<mod:radio titulo="Sim" var="resideCompanhia${i}" marcado="Sim"
 								valor="1" />
-							<mod:radio titulo="Não" var="resideCompanhia${i}" valor="2" />
+							<mod:radio titulo="NÃ£o" var="resideCompanhia${i}" valor="2" />
 						</mod:grupo>
 					</c:if>
 					<c:if
 						test="${requestScope[f:concat('parentesco',i)] == 'Companheiro(A)'}">
 						<mod:selecao titulo="Estado Civil" var="estadoCivilDep${i}"
-							opcoes="Solteiro(a);Casado(a);Divorciado(a);Viúva(o);Desquitado"
+							opcoes="Solteiro(a);Casado(a);Divorciado(a);ViÃºva(o);Desquitado"
 							reler="sim" />
 					</c:if>
 					<c:if
-						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho De Cônjuge, Menor De 21 Anos'}">
-						<mod:grupo titulo="Dependente econômico">
+						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho De CÃ´njuge, Menor De 21 Anos'}">
+						<mod:grupo titulo="Dependente econÃ´mico">
 							<mod:radio titulo="Sim" var="dependenteEconomico${i}"
 								marcado="Sim" valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="dependenteEconomico${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Solteiro">
 							<mod:radio titulo="Sim" var="solteiro${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="solteiro${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Estudante">
 							<mod:radio titulo="Sim" var="estudante${i}" marcado="Sim"
 								valor="1" />
-							<mod:radio titulo="Não" var="estudante${i}" valor="2" />
+							<mod:radio titulo="NÃ£o" var="estudante${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Reside em sua companhia">
 							<mod:radio titulo="Sim" var="resideCompanhia${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="resideCompanhia${i}" valor="2" />
 						</mod:grupo>
 					</c:if>
 					<c:if
-						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho De Cônjuge, Entre 21 e 24 Anos'}">
-						<mod:texto titulo="Nº do Cartão do Auxílio-Saúde"
+						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho De CÃ´njuge, Entre 21 e 24 Anos'}">
+						<mod:texto titulo="NÂº do CartÃ£o do AuxÃ­lio-SaÃºde"
 							var="numeroCartaoAuxSau${i}" largura="59" />
-						<mod:grupo titulo="Dependente econômico">
+						<mod:grupo titulo="Dependente econÃ´mico">
 							<mod:radio titulo="Sim" var="dependenteEconomico${i}"
 								marcado="Sim" valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="dependenteEconomico${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Solteiro">
 							<mod:radio titulo="Sim" var="solteiro${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="solteiro${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Estudante">
 							<mod:radio titulo="Sim" var="estudante${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="estudante${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Reside em sua companhia">
 							<mod:radio titulo="Sim" var="resideCompanhia${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="resideCompanhia${i}" valor="2" />
 						</mod:grupo>
 					</c:if>
 					<c:if
-						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho de cônjuge, maior inválido'}">
-						<mod:grupo titulo="Dependente econômico">
+						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho de cÃ´njuge, maior invÃ¡lido'}">
+						<mod:grupo titulo="Dependente econÃ´mico">
 							<mod:radio titulo="Sim" var="dependenteEconomico${i}"
 								marcado="Sim" valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="dependenteEconomico${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Solteiro">
 							<mod:radio titulo="Sim" var="solteiro${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="solteiro${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Estudante">
 							<mod:radio titulo="Sim" var="estudante${i}" marcado="Sim"
 								valor="1" />
-							<mod:radio titulo="Não" var="estudante${i}" valor="2" />
+							<mod:radio titulo="NÃ£o" var="estudante${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Reside em sua companhia">
 							<mod:radio titulo="Sim" var="resideCompanhia${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="resideCompanhia${i}" valor="2" />
 						</mod:grupo>
 					</c:if>
 					<c:if
 						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho de Companheiro, menor de 21 anos'}">
-						<mod:grupo titulo="Dependente econômico">
+						<mod:grupo titulo="Dependente econÃ´mico">
 							<mod:radio titulo="Sim" var="dependenteEconomico${i}"
 								marcado="Sim" valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="dependenteEconomico${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Solteiro">
 							<mod:radio titulo="Sim" var="solteiro${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="solteiro${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Estudante">
 							<mod:radio titulo="Sim" var="estudante${i}" marcado="Sim"
 								valor="1" />
-							<mod:radio titulo="Não" var="estudante${i}" valor="2" />
+							<mod:radio titulo="NÃ£o" var="estudante${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Reside em sua companhia">
 							<mod:radio titulo="Sim" var="resideCompanhia${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="resideCompanhia${i}" valor="2" />
 						</mod:grupo>
 					</c:if>
 					<c:if
 						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho de Companheiro, entre 21 e 24 anos'}">
-						<mod:grupo titulo="Dependente econômico">
+						<mod:grupo titulo="Dependente econÃ´mico">
 							<mod:radio titulo="Sim" var="dependenteEconomico${i}"
 								marcado="Sim" valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="dependenteEconomico${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Solteiro">
 							<mod:radio titulo="Sim" var="solteiro${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="solteiro${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Estudante">
 							<mod:radio titulo="Sim" var="estudante${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="estudante${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Reside em sua companhia">
 							<mod:radio titulo="Sim" var="resideCompanhia${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="resideCompanhia${i}" valor="2" />
 						</mod:grupo>
 					</c:if>
 					<c:if
-						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho de Companheiro, maior inválido'}">
-						<mod:grupo titulo="Dependente econômico">
+						test="${requestScope[f:concat('parentesco',i)] == 'Enteado(A) - Filho de Companheiro, maior invÃ¡lido'}">
+						<mod:grupo titulo="Dependente econÃ´mico">
 							<mod:radio titulo="Sim" var="dependenteEconomico${i}"
 								marcado="Sim" valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="dependenteEconomico${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Solteiro">
 							<mod:radio titulo="Sim" var="solteiro${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="solteiro${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Estudante">
 							<mod:radio titulo="Sim" var="estudante${i}" marcado="Sim"
 								valor="1" />
-							<mod:radio titulo="Não" var="estudante${i}" valor="2" />
+							<mod:radio titulo="NÃ£o" var="estudante${i}" valor="2" />
 						</mod:grupo>
 						<mod:grupo titulo="Reside em sua companhia">
 							<mod:radio titulo="Sim" var="resideCompanhia${i}" marcado="Sim"
 								valor="1" />
 							<mod:radio
-								titulo="Não (Neste caso, não pode ser incluído no Auxílio-Saúde)"
+								titulo="NÃ£o (Neste caso, nÃ£o pode ser incluÃ­do no AuxÃ­lio-SaÃºde)"
 								var="resideCompanhia${i}" valor="2" />
 						</mod:grupo>
 					</c:if>
@@ -351,27 +351,27 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 		</c:if>
 		<mod:grupo>
 			<mod:caixaverif
-				titulo="Estou ciente de que devo enviar a documentação exigida"
-				var="documentacaoExigida" reler="Não" />
+				titulo="Estou ciente de que devo enviar a documentaÃ§Ã£o exigida"
+				var="documentacaoExigida" reler="NÃ£o" />
 			<a
 				href="${pageContext.request.contextPath}/arquivos_estaticos/TabelaDocumentacaoAuxilioSaude.htm"
-				target="_blank"> <b> &nbsp; &rarr; Visualizar Documentação
+				target="_blank"> <b> &nbsp; &rarr; Visualizar DocumentaÃ§Ã£o
 			Exigida </b></a>
 		</mod:grupo>
 		<mod:grupo>
 			<mod:caixaverif titulo="Declaro que estou ciente:"
-				var="declaracaoCiente" reler="Não" />
-			<p>- dos termos da Resolução nº 02/2008 do CJF e do despacho
+				var="declaracaoCiente" reler="NÃ£o" />
+			<p>- dos termos da ResoluÃ§Ã£o nÂº 02/2008 do CJF e do despacho
 			exarado pelo Exmo. Presidente do TRF em janeiro de 2009 e divulgado
-			por correio eletrônico institucional em 04/03/2009.</p>
-			<p>- de que a inclusão solicitada somente será
-			processada/efetivada mediante o envio imediato à SEBEN da
-			documentação requerida. Caso a documentação não chegue até à referida
-			Seção até o último dia do mês pretendido, deverá ser feita outra
-			solicitação com nova data de vigência.</p>
-			<p>- de que o(s) beneficiário(s) relacionado(s) não recebe(m)
-			auxílio semelhante e nem participa(m) de outro programa de
-			assistência à saúde, custeado pelos cofres públicos, ainda que em
+			por correio eletrÃ´nico institucional em 04/03/2009.</p>
+			<p>- de que a inclusÃ£o solicitada somente serÃ¡
+			processada/efetivada mediante o envio imediato Ã  SEBEN da
+			documentaÃ§Ã£o requerida. Caso a documentaÃ§Ã£o nÃ£o chegue atÃ© Ã  referida
+			SeÃ§Ã£o atÃ© o Ãºltimo dia do mÃªs pretendido, deverÃ¡ ser feita outra
+			solicitaÃ§Ã£o com nova data de vigÃªncia.</p>
+			<p>- de que o(s) beneficiÃ¡rio(s) relacionado(s) nÃ£o recebe(m)
+			auxÃ­lio semelhante e nem participa(m) de outro programa de
+			assistÃªncia Ã  saÃºde, custeado pelos cofres pÃºblicos, ainda que em
 			parte;</p>
 		</mod:grupo>
 	</mod:entrevista>
@@ -411,22 +411,22 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${f:pessoa(requestScope['matriculaTitular_pessoaSel.id']).nomePessoa},
-		matrícula nº
+		matrÃ­cula nÂº
 		${f:pessoa(requestScope['matriculaTitular_pessoaSel.id']).matricula},
 		lotado no(a)
 		${f:pessoa(requestScope['matriculaTitular_pessoaSel.id']).lotacao.descricao},
 		vem requerer <c:choose>
 			<c:when test="${tipoDeInclusao == 'Exclusivamente de Titular'}">					
-					sua inclusão no Auxílio-Saúde, a partir de mês de ano.
+					sua inclusÃ£o no AuxÃ­lio-SaÃºde, a partir de mÃªs de ano.
 				</c:when>
 			<c:when
 				test="${tipoDeInclusao == 'De Titular e de seus Dependentes Diretos'}">					
-					sua inclusão e a inclusão dos dependentes diretos abaixo relacionados:
+					sua inclusÃ£o e a inclusÃ£o dos dependentes diretos abaixo relacionados:
 				</c:when>
 			<c:otherwise>
-					a inclusão dos dependentes diretos abaixo relacionados: 
+					a inclusÃ£o dos dependentes diretos abaixo relacionados: 
 				</c:otherwise>
-		</c:choose> no Auxílio-Saúde, a partir de ${mesVigencia} de ${anoVigencia}.</p>
+		</c:choose> no AuxÃ­lio-SaÃºde, a partir de ${mesVigencia} de ${anoVigencia}.</p>
 		<br />
 				<br />
 
@@ -440,7 +440,7 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 				</tr>
 				<tr>
 					<td bgcolor="#FFFFFF" width="50%" height="30px" align="left"><b>Data
-					do exercício:</b> ${dataExercicio}</td>
+					do exercÃ­cio:</b> ${dataExercicio}</td>
 					<td bgcolor="#FFFFFF" width="50%" height="30px" align="left"><b>Data
 					de Nascimento:</b> ${dataNascimentoTitular}</td>
 				</tr>
@@ -473,13 +473,13 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 						<td bgcolor="#FFFFFF" width="50%" height="30px" align="left"><b>Data
 						de Nascimento:</b>
 						${requestScope[f:concat('dataNascimentoDependente',i)]}</td>
-						<td bgcolor="#FFFFFF" width="50%" height="30px" align="left"><b>Parentesco/Condição:</b>
+						<td bgcolor="#FFFFFF" width="50%" height="30px" align="left"><b>Parentesco/CondiÃ§Ã£o:</b>
 						${requestScope[f:concat('parentesco',i)]}</td>
 					</tr>
 					<tr>
 						<td bgcolor="#FFFFFF" height="30px" align="left"><b>Estado
 						Civil:</b> ${requestScope[f:concat('estadoCivilDep',i)]}</td>
-						<c:if test="${pertence == 'Não'}">
+						<c:if test="${pertence == 'NÃ£o'}">
 							<td width="20%" bgcolor="#FFFFFF" colspan="2" align="left"><b>Plano:</b>
 							${requestScope[f:concat('planoDep',i)]}</td>
 						</c:if>
@@ -495,26 +495,26 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 		<c:if test="${declaracaoCiente == 'Sim'}">
 			<p>Declara que:</p>
 
-			<p align="justify">- dos termos da Resolução nº 02/2008 do CJF e
+			<p align="justify">- dos termos da ResoluÃ§Ã£o nÂº 02/2008 do CJF e
 			do despacho exarado pelo Exmo. Presidente do TRF em janeiro de 2009 e
-			divulgado por correio eletrônico institucional em 04/03/2009.</p>
+			divulgado por correio eletrÃ´nico institucional em 04/03/2009.</p>
 
-			<p align="justify">- de que a inclusão solicitada somente será
-			processada/efetivada mediante o envio imediato à SEBEN da
-			documentação requerida. Caso a documentação não chegue até à referida
-			Seção até o último dia do mês pretendido, deverá ser feita outra
-			solicitação com nova data de vigência.</p>
+			<p align="justify">- de que a inclusÃ£o solicitada somente serÃ¡
+			processada/efetivada mediante o envio imediato Ã  SEBEN da
+			documentaÃ§Ã£o requerida. Caso a documentaÃ§Ã£o nÃ£o chegue atÃ© Ã  referida
+			SeÃ§Ã£o atÃ© o Ãºltimo dia do mÃªs pretendido, deverÃ¡ ser feita outra
+			solicitaÃ§Ã£o com nova data de vigÃªncia.</p>
 
-			<p align="justify">- de que o(s) beneficiário(s) relacionado(s)
-			não recebe(m) auxílio semelhante e nem participa(m) de outro programa
-			de assistência à saúde, custeado pelos cofres públicos, ainda que em
+			<p align="justify">- de que o(s) beneficiÃ¡rio(s) relacionado(s)
+			nÃ£o recebe(m) auxÃ­lio semelhante e nem participa(m) de outro programa
+			de assistÃªncia Ã  saÃºde, custeado pelos cofres pÃºblicos, ainda que em
 			parte;</p>
 		</c:if>
 
 		<c:if test="${documentacaoExigida == 'Sim'}">
 			<p align="justify">firma o seguinte compromisso: <b>Declara
 			estar ciente de que tais documentos devem ser apresentados,
-			impreterivelmente, até o pedido de vacância.</b></p>
+			impreterivelmente, atÃ© o pedido de vacÃ¢ncia.</b></p>
 		</c:if>
 
 		<c:forEach var="i" begin="1" end="${totalDeDependentes}">
@@ -522,7 +522,7 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 				test="${tipoDeInclusao == 'De Titular e de seus Dependentes Diretos' || tipoDeInclusao == 'Exclusivamente de Dependentes Diretos' }">
 
 				<c:if
-					test="${requestScope[f:concat('parentesco',i)] != 'Cônjuge' && requestScope[f:concat('parentesco',i)] != 'Filhos Menores De 21 Anos'}">
+					test="${requestScope[f:concat('parentesco',i)] != 'CÃ´njuge' && requestScope[f:concat('parentesco',i)] != 'Filhos Menores De 21 Anos'}">
 
 					<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
 
@@ -531,15 +531,15 @@ REQUERIMENTO PARA INSCRICAO NO AUXILIO SAUDE-->
 				<br />
 					<p align="justify" style="TEXT-INDENT: 2cm">
 					${f:pessoa(requestScope['matriculaTitular_pessoaSel.id']).nomePessoa},
-					matrícula nº
+					matrÃ­cula nÂº
 					${f:pessoa(requestScope['matriculaTitular_pessoaSel.id']).matricula},
 					lotado no(a)
 					${f:pessoa(requestScope['matriculaTitular_pessoaSel.id']).lotacao.descricao},
 					declara, sob as penas da lei, a fim de fazer prova perante o
-					Auxílio-Saúde da SJRJ, que
-					${requestScope[f:concat('nomeDependente',i)]} permanece na condição
+					AuxÃ­lio-SaÃºde da SJRJ, que
+					${requestScope[f:concat('nomeDependente',i)]} permanece na condiÃ§Ã£o
 					de solteiro(a), estudante, reside em sua companhia e que vive sob
-					sua dependência econômica.</p>
+					sua dependÃªncia econÃ´mica.</p>
 				<br />
 				<br />
 					<p align="center">${doc.dtExtenso}</p>

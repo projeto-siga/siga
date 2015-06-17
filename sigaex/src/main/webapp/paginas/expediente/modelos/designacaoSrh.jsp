@@ -3,14 +3,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!--
-Modelo de DesignaÁ„o SRH
-Ultima atualizaÁ„o 12/03/2007
+Modelo de Designa√ß√£o SRH
+Ultima atualiza√ß√£o 12/03/2007
  -->
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="DETALHES DA DESIGNA«√O">
+		<mod:grupo titulo="DETALHES DA DESIGNA√á√ÉO">
 			<mod:grupo>
-				<mod:funcao titulo="FunÁ„o" var="funcaoComissionada" />
+				<mod:funcao titulo="Fun√ß√£o" var="funcaoComissionada" />
 			</mod:grupo>
 		</mod:grupo>
 
@@ -53,9 +53,9 @@ Ultima atualizaÁ„o 12/03/2007
 		<br>
 
 		<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify">A DIRETORIA DA
-		SUBSECRETARIA DE GEST√O DE PESSOAS DA JUSTI«A FEDERAL - SE«√O
-		JUDICI¡RIA DO RIO DE JANEIRO, usando a competÍncia que lhe foi
-		delegada pela portaria n∫ 011 - GDF, de 26 de marÁo de 2003,
+		SUBSECRETARIA DE GEST√ÉO DE PESSOAS DA JUSTI√áA FEDERAL - SE√á√ÉO
+		JUDICI√ÅRIA DO RIO DE JANEIRO, usando a compet√™ncia que lhe foi
+		delegada pela portaria n¬∫ 011 - GDF, de 26 de mar√ßo de 2003,
 		${textoPortaria}, RESOLVE:</p><!-- FIM ABERTURA -->
 		<br>
 		<br>
@@ -63,10 +63,10 @@ Ultima atualizaÁ„o 12/03/2007
 
 		<p style="MARGIN-LEFT: 2cm" align="justify">DESIGNAR o(a)
 		servidor(a) <b>${doc.subscritor.descricao}</b>,<b>${doc.subscritor.cargo.nomeCargo}</b>,
-		<b>${doc.subscritor.padraoReferenciaInvertido}</b>, matrÌcula n&ordm; <b>${doc.subscritor.sigla}</b>,
-		para exercer a funÁ„o comissionada de <b>${param['funcaoComissionada_funcaoSel.descricao']}</b>
+		<b>${doc.subscritor.padraoReferenciaInvertido}</b>, matr√≠cula n&ordm; <b>${doc.subscritor.sigla}</b>,
+		para exercer a fun√ß√£o comissionada de <b>${param['funcaoComissionada_funcaoSel.descricao']}</b>
 		(FC <b>${param['funcaoComissionada_funcaoSel.sigla']}</b>) da <b>${doc.subscritor.lotacao.descricao
-		}</b>, a partir da publicaÁ„o desta portaria.</p>
+		}</b>, a partir da publica√ß√£o desta portaria.</p>
 		<br>
 		<br>
 		
@@ -78,7 +78,7 @@ Ultima atualizaÁ„o 12/03/2007
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
 		<!-- 
 		<p style="TEXT-INDENT: 2 cm" align="center"><b>REGINA HELENA MOREIRA FARIA</b> <br>
-		<b>Diretora de Subsecretaria de Gest„o de Pessoas</b></p>
+		<b>Diretora de Subsecretaria de Gest√£o de Pessoas</b></p>
 		-->
 		<br>
 		<br>
@@ -98,8 +98,8 @@ Ultima atualizaÁ„o 12/03/2007
 					<tr>
 
 						<td><font size=1>Publicada no boletim interno online<br>
-						de ___/___/__ , nos termos do art 15,ß 4∫, da<br>
-						lei n∫ 9527 de 10/12/97 c/c com o art 7∫ da resoluÁ„o n∫<br>
+						de ___/___/__ , nos termos do art 15,¬ß 4¬∫, da<br>
+						lei n¬∫ 9527 de 10/12/97 c/c com o art 7¬∫ da resolu√ß√£o n¬∫<br>
 						284/2002-CJF.</font><br>
 
 						</td>

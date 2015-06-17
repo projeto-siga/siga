@@ -40,7 +40,7 @@ function sbmt() {
 						<c:set var="ultMov" value="${mov}" />
 					</c:if>
 				</c:forEach>
-				<ww:select name="idResp" label="Novo Responsável"
+				<ww:select name="idResp" label="Novo ResponsÃ¡vel"
 					list="listaRespRecebimento" />
 				<tr class="button">
 					<td></td>

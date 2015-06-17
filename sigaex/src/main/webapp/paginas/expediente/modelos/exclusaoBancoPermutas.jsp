@@ -6,7 +6,7 @@
 <c:set var="para" value="diretoraRH" scope="request" />
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">
 	<mod:entrevista>
-		<mod:grupo><mod:texto titulo="LotaÁ„o a ser excluÌda do banco de permutas" var="lotaDesejada" largura="60"/></mod:grupo>
+		<mod:grupo><mod:texto titulo="Lota√ß√£o a ser exclu√≠da do banco de permutas" var="lotaDesejada" largura="60"/></mod:grupo>
 	</mod:entrevista>
 
 	<mod:documento>
@@ -14,8 +14,8 @@
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo},
 			${doc.subscritor.padraoReferenciaInvertido}, do Quadro de Pessoal Permanente 
-			da JustiÁa Federal de Primeiro Grau no Rio de Janeiro, lotado(a) no(a)
-			${doc.subscritor.lotacao.nomeLotacao}, vem requerer a Vossa Senhoria exclus„o do Banco de Permutas, em relaÁ„o ‡(s) seguinte(s) unidade(s): ${lotaDesejada}.</p>
+			da Justi√ßa Federal de Primeiro Grau no Rio de Janeiro, lotado(a) no(a)
+			${doc.subscritor.lotacao.nomeLotacao}, vem requerer a Vossa Senhoria exclus√£o do Banco de Permutas, em rela√ß√£o √†(s) seguinte(s) unidade(s): ${lotaDesejada}.</p>
 		</mod:valor>
 	</mod:documento>
 </mod:modelo>

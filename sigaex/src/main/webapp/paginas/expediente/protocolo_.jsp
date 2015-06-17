@@ -8,7 +8,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Protocolo de Transferência" popup="true">
+<siga:pagina titulo="Protocolo de TransferÃªncia" popup="true">
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
@@ -18,7 +18,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 
-			<h2>Protocolo de Transferência</h2>
+			<h2>Protocolo de TransferÃªncia</h2>
 
 			<div class="gt-content-box gt-for-table" style="margin-bottom: 25px;">
 
@@ -42,7 +42,7 @@
 
 			</div>
 
-			<h3>Documento(s) Não Transferido(s)</h3>
+			<h3>Documento(s) NÃ£o Transferido(s)</h3>
 
 			<div class="gt-content-box gt-for-table">
 				<table class="gt-table" style="word-wrap: break-word; width: 100%;">
@@ -51,8 +51,8 @@
 					<col width="54%" />
 					<tr class="header">
 						<td align="center">Documento</td>
-						<td align="center">Lotação</td>
-						<td align="center">Descrição</td>
+						<td align="center">LotaÃ§Ã£o</td>
+						<td align="center">DescriÃ§Ã£o</td>
 					</tr>
 					<c:forEach var="documento" items="${itens[0]}">
 						<tr >
@@ -91,20 +91,20 @@
 					<col width="4%" />
 					<col width="44%" />
 					<tr class="header">
-						<td rowspan="2" align="right">Número</td>
+						<td rowspan="2" align="right">NÃºmero</td>
 						<td colspan="3" align="center">Documento</td>
-						<td colspan="3" align="center">Última Movimentação</td>
+						<td colspan="3" align="center">Ãšltima MovimentaÃ§Ã£o</td>
 						<td colspan="2" align="center">Atendente</td>
-						<td rowspan="2">Descrição</td>
+						<td rowspan="2">DescriÃ§Ã£o</td>
 					</tr>
 					<tr class="header">
 						<td align="center">Data</td>
-						<td align="center">Lotação</td>
+						<td align="center">LotaÃ§Ã£o</td>
 						<td align="center">Pessoa</td>
 						<td align="center">Data</td>
-						<td align="center">Lotação</td>
+						<td align="center">LotaÃ§Ã£o</td>
 						<td align="center">Pessoa</td>
-						<td align="center">Lotação</td>
+						<td align="center">LotaÃ§Ã£o</td>
 						<td align="center">Pessoa</td>
 					</tr>
 

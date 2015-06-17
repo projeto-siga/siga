@@ -3,20 +3,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-Termo de Compromisso e Recebimento do Crachá de Identificação Funcional -->
+Termo de Compromisso e Recebimento do CrachÃ¡ de IdentificaÃ§Ã£o Funcional -->
 
 <mod:modelo>
 
 	<mod:entrevista>
 			
-		<mod:grupo titulo="Crachá">
-			<mod:selecao titulo="Nº de crachás a incluir"
+		<mod:grupo titulo="CrachÃ¡">
+			<mod:selecao titulo="NÂº de crachÃ¡s a incluir"
 				var="crachas" opcoes="1;2;3;4;5;6;7;8;9;10" reler="sim" />
 			<c:forEach var="i" begin="1" end="${crachas}">
 				<mod:grupo>
 					<mod:texto titulo="Nome" largura="40" var="nome${i}" />
 					<mod:texto titulo="Matricula" largura="15" maxcaracteres="13" var="matricula${i}" />
-					<mod:texto titulo="Lotação" largura="10" var="lotacao${i}" />
+					<mod:texto titulo="LotaÃ§Ã£o" largura="10" var="lotacao${i}" />
 					<mod:data titulo="Data" var="data${i}" />
 				</mod:grupo>
 			</c:forEach>
@@ -30,37 +30,37 @@ Termo de Compromisso e Recebimento do Crachá de Identificação Funcional -->
 		<body>
 		
 		<font size="2">
-		<p align="center"><b> TERMO DE COMPROMISSO E RECEBIMENTO DO CRACHÁ DE IDENTIFICAÇÃO FUNCIONAL </b></p>
+		<p align="center"><b> TERMO DE COMPROMISSO E RECEBIMENTO DO CRACHÃ DE IDENTIFICAÃ‡ÃƒO FUNCIONAL </b></p>
 		
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		Recebi, nesta data, o crahá de identificação no âmbito da <b>JUSTIÇA FEDERAL DE 1º INSTÂNCIA - ${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</b>, e me comprometo, em caso de perda, roubo ou furto a comunicar, <b>incontinenti</b>
-		à Subsecretaria de Gestão de Pessoas, bem como, em caso de desligamento, devolvê-lo àquela Subsecretaria - Seção 
-		de Avaliação de Desempenho.
+		Recebi, nesta data, o crahÃ¡ de identificaÃ§Ã£o no Ã¢mbito da <b>JUSTIÃ‡A FEDERAL DE 1Âº INSTÃ‚NCIA - ${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</b>, e me comprometo, em caso de perda, roubo ou furto a comunicar, <b>incontinenti</b>
+		Ã  Subsecretaria de GestÃ£o de Pessoas, bem como, em caso de desligamento, devolvÃª-lo Ã quela Subsecretaria - SeÃ§Ã£o 
+		de AvaliaÃ§Ã£o de Desempenho.
 		</p>	
 			
 		<p style="TEXT-INDENT: 1.5cm" align="justify">
-		Declaro, outrossim que, em caso de pedido de 2ª via do mesmo, deverei efetuar o pagamento, diretamente na Subsecretaria
-		de Planejamento, Orçamento e Finanças, do valor para sua confecção.
+		Declaro, outrossim que, em caso de pedido de 2Âª via do mesmo, deverei efetuar o pagamento, diretamente na Subsecretaria
+		de Planejamento, OrÃ§amento e FinanÃ§as, do valor para sua confecÃ§Ã£o.
 		</p>
 		
-		<b>Observação:</b>
+		<b>ObservaÃ§Ã£o:</b>
 		<ul type="square">
-			<li>Excetuam-se do pagamento acima descrito os casos de roubo, furto e inutilização acidental do cracha, quando não se caracterizar
-		, neste último caso, negligência do estagiário.</li>
-			<li>Nessas situações, deverá ser anexada à solicitação de segunda via uma declaração firmada pelo requerente com 
+			<li>Excetuam-se do pagamento acima descrito os casos de roubo, furto e inutilizaÃ§Ã£o acidental do cracha, quando nÃ£o se caracterizar
+		, neste Ãºltimo caso, negligÃªncia do estagiÃ¡rio.</li>
+			<li>Nessas situaÃ§Ãµes, deverÃ¡ ser anexada Ã  solicitaÃ§Ã£o de segunda via uma declaraÃ§Ã£o firmada pelo requerente com 
 		o relato do ocorrido.</li>
-			<li>Tambem se excetua o caso de mudança de nome do requerente, que deverá apresentar, com a solicitação, cópia 
-		autênticada de documento comprobatório. </li> 
+			<li>Tambem se excetua o caso de mudanÃ§a de nome do requerente, que deverÃ¡ apresentar, com a solicitaÃ§Ã£o, cÃ³pia 
+		autÃªnticada de documento comprobatÃ³rio. </li> 
 		</ul>
 		<br>
 		<p style="TEXT-INDENT: 1.5cm" align="center">
-		<b> ESTAGIÁRIOS ÁREA ADMINISTRATIVA - NÍVEL MÉDIO <br>
+		<b> ESTAGIÃRIOS ÃREA ADMINISTRATIVA - NÃVEL MÃ‰DIO <br>
 			Localidade: RIO BRANCO </b>
 		</p>
 		<br>
 		
 		<table width="100%" border="0" cellpadding="2">
-		<tr><td width="17%" align="center">Matrícula</td><td width="35%" align="center">Nome</td><td width="10%" align="center">Lotação</td><td width="13%" align="center">Data</td><td width="25%" align="center">Assinatura</td></tr>
+		<tr><td width="17%" align="center">MatrÃ­cula</td><td width="35%" align="center">Nome</td><td width="10%" align="center">LotaÃ§Ã£o</td><td width="13%" align="center">Data</td><td width="25%" align="center">Assinatura</td></tr>
 		</table> 
         
        <table width="100%" border="0" cellpadding="1">

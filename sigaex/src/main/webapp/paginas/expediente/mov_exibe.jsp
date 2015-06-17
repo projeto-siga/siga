@@ -13,7 +13,7 @@
 			incluirJs="sigaex/javascript/assinatura.js">
 
 	<script type="text/javascript" language="Javascript1.1">
-		/*  converte para maiúscula a sigla do estado  */
+		/*  converte para maiÃºscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
 			re = /^[a-zA-Z]{2}\d{3,6}$/;
 			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
@@ -148,7 +148,7 @@ function visualizarImpressao(via) {
 														<td><b>Data:</b> ${mov.dtRegMovDDMMYY}</td>
 													</tr>
 													<tr class="header_${exibemov}">
-														<td><b>Responsável:</b> ${mov.subscritor.descricao}</td>
+														<td><b>ResponsÃ¡vel:</b> ${mov.subscritor.descricao}</td>
 
 														<%-- TIPO_MOVIMENTACAO_ANEXACAO --%>
 														<c:if test="${exibemov == 'anexacao'}">
@@ -171,7 +171,7 @@ function visualizarImpressao(via) {
 
 														<%-- TIPO_MOVIMENTACAO_REFERENCIA --%>
 														<c:if test="${exibemov == 'vinculo'}">
-															<td><b>Ver também:</b> <ww:url id="url"
+															<td><b>Ver tambÃ©m:</b> <ww:url id="url"
 																	action="exibir" namespace="/expediente/doc">
 																	<c:choose>
 																		<c:when
@@ -232,17 +232,17 @@ function visualizarImpressao(via) {
 				</div>
 
 				<c:if test="${not empty mov.exMovimentacaoReferenciadoraSet}">
-					<h1>Assinaturas para essa movimentação:</h1>
+					<h1>Assinaturas para essa movimentaÃ§Ã£o:</h1>
 					<div class="gt-content-box" style="padding: 0">
 						<table border="0" class="gt-table">
 							<thead>
 								<tr>
 									<th rowspan="2">Data</th>
 									<th colspan="2">Cadastrante</th>
-									<th rowspan="2">Descrição</th>
+									<th rowspan="2">DescriÃ§Ã£o</th>
 								</tr>
 								<tr>
-									<th>Lotação</th>
+									<th>LotaÃ§Ã£o</th>
 									<th>Pessoa</th>
 								</tr>
 							</thead>
@@ -281,7 +281,7 @@ function visualizarImpressao(via) {
 
 				<div style="padding-left: 10; padding-top: 10px;">
 					<c:if test="${mov.exTipoMovimentacao.idTpMov!=2}">
-						<input type="button" value="Visualizar Impressão"
+						<input type="button" value="Visualizar ImpressÃ£o"
 							class="gt-btn-large gt-btn-left"
 							onclick="javascript:visualizarImpressao();" />
 					</c:if>
@@ -324,9 +324,9 @@ function visualizarImpressao(via) {
 
 					<c:set var="lote" value="false" />
 				</div>
-				<p><b>Link para assinatura externa: </b>${enderecoAutenticacao} (informar o código ${mov.siglaAssinaturaExterna})</p>
+				<p><b>Link para assinatura externa: </b>${enderecoAutenticacao} (informar o cÃ³digo ${mov.siglaAssinaturaExterna})</p>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
 					<div id="capicom-div">
 						<c:if
@@ -356,8 +356,8 @@ function visualizarImpressao(via) {
 							<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar Documento</a>
 						</c:if>
 					</div>
-					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
-					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrÃ£o do SIGA-DOC sÃ³ poderÃ¡ ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> Ã© permitida.</p>
+					<p id="capicom-missing" style="display: none;">NÃ£o foi possÃ­vel localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o mÃ©todo padrÃ£o do SIGA-DOC, serÃ¡ necessÃ¡rio instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. SerÃ¡ necessÃ¡rio expandir o <i>ZIP</i> e depois executar o arquivo de instalaÃ§Ã£o.</p>
 				<script type="text/javascript">
 					 if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
 						 document.getElementById("capicom-div").style.display = "block";
@@ -370,7 +370,7 @@ function visualizarImpressao(via) {
 				</c:if>
 
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 	    			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 			    </c:if>
 			</div>
@@ -389,7 +389,7 @@ function visualizarImpressao(via) {
 	 				<ww:hidden id="id" name="id" value="${mov.idMov}" />
 	 				<ww:hidden id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
 	    			<fieldset>
-	    			  <label>Matrícula</label> <br/>
+	    			  <label>MatrÃ­cula</label> <br/>
 	    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
 	    			  <label>Senha</label> <br/>
 	    			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>

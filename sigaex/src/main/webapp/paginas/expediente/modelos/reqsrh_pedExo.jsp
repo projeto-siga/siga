@@ -10,55 +10,55 @@
 <mod:modelo>
 	<mod:entrevista>
 			<br/>
-				<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI«√O COM NOME COMPLETO E ASSUNTO</b></span><br>
-		        <span style="color:red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ SRH</b></span>		
+				<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI√á√ÉO COM NOME COMPLETO E ASSUNTO</b></span><br>
+		        <span style="color:red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä SRH</b></span>		
 			<br><br>
 			<mod:grupo titulo=" ">	
 		   
 	        <mod:grupo>
 				<mod:selecao var="excel"
 				titulo="VOCATIVO"
-				opcoes="EXCELENTÕSSIMA SENHORA DESEMBARGADORA FEDERAL; EXCELENTÕSSIMO SENHOR DESEMBARGADOR FEDERAL"	
+				opcoes="EXCELENT√çSSIMA SENHORA DESEMBARGADORA FEDERAL; EXCELENT√çSSIMO SENHOR DESEMBARGADOR FEDERAL"	
 				reler="sim" />
 		    </mod:grupo>
 		    <br>	
 	        </mod:grupo>
 			<mod:grupo titulo=""> 
 		       	<mod:texto titulo="RAMAL DO REQUERENTE" var="ramal"/></mod> <br><br>
-		        <mod:selecao titulo="Acerto Gramatical da LotaÁ„o" var="acgr"  opcoes="no;na" reler="sim" />
+		        <mod:selecao titulo="Acerto Gramatical da Lota√ß√£o" var="acgr"  opcoes="no;na" reler="sim" />
 			</mod:grupo>
 			<br/>
 			<mod:grupo titulo="">
-					<mod:data titulo="Data da ExoneraÁ„o" var="dtinicio"/>
+					<mod:data titulo="Data da Exonera√ß√£o" var="dtinicio"/>
 			</mod:grupo>
 			<br/>
-			<mod:grupo titulo="Documentos em anexo (marcados com * s„o imprescindÌveis para instruÁ„o do processo administrativo, consoante ResoluÁ„o n∫ 148, de 26/05/95, do Conselho da JustiÁa Federal)">
+			<mod:grupo titulo="Documentos em anexo (marcados com * s√£o imprescind√≠veis para instru√ß√£o do processo administrativo, consoante Resolu√ß√£o n¬∫ 148, de 26/05/95, do Conselho da Justi√ßa Federal)">
 			<span style="color:red"> <b>*</b></span>	
-			<mod:caixaverif titulo="DeclaraÁ„o de bens atualizada atÈ a data da exoneraÁ„o, com os respectivos valores"
+			<mod:caixaverif titulo="Declara√ß√£o de bens atualizada at√© a data da exonera√ß√£o, com os respectivos valores"
 							var="declarabens" reler="sim"/><br/>
 			<span style="color:red"> <b>*</b></span>	
-			<mod:caixaverif titulo="CÛpia da declaraÁ„o de Imposto de Renda ou DeclaraÁ„o de IsenÁ„o de apresentaÁ„o da mesma"
+			<mod:caixaverif titulo="C√≥pia da declara√ß√£o de Imposto de Renda ou Declara√ß√£o de Isen√ß√£o de apresenta√ß√£o da mesma"
 							var="copiadeclara" reler="sim" /><br/>
 			<span style="color:red"> <b>*</b></span>	
-			<mod:caixaverif titulo="CÛpia do CPF"
+			<mod:caixaverif titulo="C√≥pia do CPF"
 							var="copiacpf" reler="sim"/><br/>
 			<span style="color:red"> <b>*</b></span>	
 			<mod:caixaverif titulo="Carteira Funcional"
 							var="cartfunc" reler="sim" /><br/>
 			<span style="color:red"> <b>*</b></span>	
-			<mod:caixaverif titulo="Instrumento de CertificaÁ„o Digital (Smartcard ou similar)"
+			<mod:caixaverif titulo="Instrumento de Certifica√ß√£o Digital (Smartcard ou similar)"
 							var="certdigi" reler="sim" obrigatorio="sim"/><br/>
 			&nbsp;&nbsp;
-			<mod:caixaverif titulo="Crach· Funcional"
+			<mod:caixaverif titulo="Crach√° Funcional"
 							var="crachafunc" reler="sim" /><br/>
 			&nbsp;&nbsp;
 
 		
-		    <mod:caixaverif titulo="Carteira(s) do Plano de Sa˙de do Titular e dependentes <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(se a exoneraÁ„o acontecer antes do tÈrmino do mÍs, 
-									a devoluÁ„o da(s)carteira(s) dever· ocorrer no inÌcio do mÍs subsequente, diretamente na DIMED)"
+		    <mod:caixaverif titulo="Carteira(s) do Plano de Sa√∫de do Titular e dependentes <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(se a exonera√ß√£o acontecer antes do t√©rmino do m√™s, 
+									a devolu√ß√£o da(s)carteira(s) dever√° ocorrer no in√≠cio do m√™s subsequente, diretamente na DIMED)"
 							var="cartplano" reler="sim"/><br/>
 			 &nbsp;&nbsp;
-			 <mod:selecao titulo="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quantidade de dependentes" var="dependente" opcoes=" ;1 (um) dependente;2 (dois) dependentes;3 (trÍs) dependentes;4 (quatro) dependentes;5 (cinco) dependentes;5 (cinco) dependentes;6 (seis) dependentes;7 (sete) dependentes;8 (oito) dependentes;9 (nove) dependentes;10 (dez) dependentes" reler="sim"/>
+			 <mod:selecao titulo="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quantidade de dependentes" var="dependente" opcoes=" ;1 (um) dependente;2 (dois) dependentes;3 (tr√™s) dependentes;4 (quatro) dependentes;5 (cinco) dependentes;5 (cinco) dependentes;6 (seis) dependentes;7 (sete) dependentes;8 (oito) dependentes;9 (nove) dependentes;10 (dez) dependentes" reler="sim"/>
 		     <br>
 		     
 		     <mod:grupo>
@@ -100,7 +100,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr><BR>
-						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:9pt;">SOLICITA«√O DE EXONERA«√O</p></td>
+						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:9pt;">SOLICITA√á√ÉO DE EXONERA√á√ÉO</p></td>
 						</tr>
 					</table>
 				</td>
@@ -117,49 +117,49 @@
 		</c:if>
 		<c:set var="opt" value="${f:classNivPadr(doc.subscritor.padraoReferencia)}"/>
          <BR>   
-			<p style="text-align: center;font-weight:bold;font-size:7pt;"><center><b> ${excel} PRESIDENTE DO TRIBUNAL REGIONAL FEDERAL DA 2™ REGI√O</b></center></p>
+			<p style="text-align: center;font-weight:bold;font-size:7pt;"><center><b> ${excel} PRESIDENTE DO TRIBUNAL REGIONAL FEDERAL DA 2¬™ REGI√ÉO</b></center></p>
 			
 			
-			${doc.subscritor.descricao}, matrÌcula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
-			do Quadro de Pessoal do Tribunal Regional Federal da 2™ Regi„o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, 
-			ramal ${ramal}, vem requerer a Vossa ExcelÍncia sua <b>exoneraÁ„o</b> do cargo que ora ocupa, a partir do dia ${dtinicio}, com base no art. 34, da Lei n∫ 8.112/90.<br/>
+			${doc.subscritor.descricao}, matr√≠cula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
+			do Quadro de Pessoal do Tribunal Regional Federal da 2¬™ Regi√£o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, 
+			ramal ${ramal}, vem requerer a Vossa Excel√™ncia sua <b>exonera√ß√£o</b> do cargo que ora ocupa, a partir do dia ${dtinicio}, com base no art. 34, da Lei n¬∫ 8.112/90.<br/>
 						
 			
 			<br />
-			Esclarece, ainda, estar ciente da diferenÁa entre os institutos da <b>ExoneraÁ„o</b> e <b>DeclaraÁ„o de Vac‚ncia</b>: que
-			a <b>ExoneraÁ„o</b> acarreta a <b> perda do vÌnculo </b> com a AdministraÁ„o P˙blica, com o consequente pagamento de indenizaÁ„o de fÈrias
-			e que na <b>DeclaraÁ„o de Vac‚ncia</b>, adotada nos casos de posse em outro cargo p˙blico inacumul·vel, permanece o vÌnculo, 
-			o que possibilita a <b>averbaÁ„o  de tempo para fÈrias</b> (sem pagamento de indenizaÁ„o de fÈrias) e a<b> manutenÁ„o de determinadas vantagens pessoais</b>,
-			desde que o regime jurÌdico permaneÁa o mesmo.   
+			Esclarece, ainda, estar ciente da diferen√ßa entre os institutos da <b>Exonera√ß√£o</b> e <b>Declara√ß√£o de Vac√¢ncia</b>: que
+			a <b>Exonera√ß√£o</b> acarreta a <b> perda do v√≠nculo </b> com a Administra√ß√£o P√∫blica, com o consequente pagamento de indeniza√ß√£o de f√©rias
+			e que na <b>Declara√ß√£o de Vac√¢ncia</b>, adotada nos casos de posse em outro cargo p√∫blico inacumul√°vel, permanece o v√≠nculo, 
+			o que possibilita a <b>averba√ß√£o  de tempo para f√©rias</b> (sem pagamento de indeniza√ß√£o de f√©rias) e a<b> manuten√ß√£o de determinadas vantagens pessoais</b>,
+			desde que o regime jur√≠dico permane√ßa o mesmo.   
 			<br /><br />
 			Seguem anexos os seguintes documentos : <br>
 			</p>
 			<p style="font-family:Arial;font-size:7pt">
 			*&nbsp;
 			<c:if test="${ declarabens == 'Sim'}">
-			    [X] DeclaraÁ„o de bens atualizada atÈ a data da exoneraÁ„o, com os respectivos valores.
+			    [X] Declara√ß√£o de bens atualizada at√© a data da exonera√ß√£o, com os respectivos valores.
 			    <br>	
 			</c:if>
 			<c:if test="${ declarabens == 'Nao'}">
-			    [&nbsp;&nbsp;] DeclaraÁ„o de bens atualizada atÈ a data da exoneraÁ„o, com os respectivos valores.
+			    [&nbsp;&nbsp;] Declara√ß√£o de bens atualizada at√© a data da exonera√ß√£o, com os respectivos valores.
 			    <br>	
 			</c:if>
 			*&nbsp;
 			<c:if test="${ copiadeclara == 'Sim'}">
-			    [X] CÛpia da declaraÁ„o de Imposto de Renda ou DeclaraÁ„o de IsenÁ„o de apresentaÁ„o da mesma.
+			    [X] C√≥pia da declara√ß√£o de Imposto de Renda ou Declara√ß√£o de Isen√ß√£o de apresenta√ß√£o da mesma.
 			    <br>		
 			</c:if>
 			<c:if test="${ copiadeclara == 'Nao'}">
-			    [&nbsp;&nbsp;] CÛpia da declaraÁ„o de Imposto de Renda ou DeclaraÁ„o de IsenÁ„o de apresentaÁ„o da mesma.
+			    [&nbsp;&nbsp;] C√≥pia da declara√ß√£o de Imposto de Renda ou Declara√ß√£o de Isen√ß√£o de apresenta√ß√£o da mesma.
 			    <br>		
 			</c:if>
 			*&nbsp;
 			<c:if test="${ copiacpf == 'Sim'}">
-			    [X] CÛpia do CPF.
+			    [X] C√≥pia do CPF.
 			    <br>		
 			</c:if>
 			<c:if test="${ copiacpf == 'Nao'}">
-			    [&nbsp;&nbsp;] CÛpia do CPF.
+			    [&nbsp;&nbsp;] C√≥pia do CPF.
 			    <br>		
 			</c:if>
 			*&nbsp;
@@ -173,20 +173,20 @@
 			</c:if>
 			*&nbsp;
 			<c:if test="${ certdigi == 'Sim'}">
-			    [X] Instrumento de CertificaÁ„o Digital (smartcard ou similar).
+			    [X] Instrumento de Certifica√ß√£o Digital (smartcard ou similar).
 			    <br>		
 			</c:if>
 			<c:if test="${ certdigi == 'Nao'}">
-			    [&nbsp;&nbsp;] Instrumento de CertificaÁ„o Digital (smartcard ou similar).
+			    [&nbsp;&nbsp;] Instrumento de Certifica√ß√£o Digital (smartcard ou similar).
 			    <br>		
 			</c:if>
 			&nbsp;&nbsp;&nbsp;
 			<c:if test="${ crachafunc == 'Sim'}">
-			    [X] Crach· Funcional.
+			    [X] Crach√° Funcional.
 			    <br>		
 			</c:if>
 			<c:if test="${ crachafunc == 'Nao'}">
-			    [&nbsp;&nbsp;] Crach· Funcional.
+			    [&nbsp;&nbsp;] Crach√° Funcional.
 			    <br>		
 			</c:if>
 			&nbsp;&nbsp;&nbsp;
@@ -194,15 +194,15 @@
 			<c:choose>
 					<c:when test="${cartplano == 'Sim' }"> 
 						<c:if test="${dependente == ' ' }">
-			    			[X] Carteira do Plano de Sa˙de
+			    			[X] Carteira do Plano de Sa√∫de
 						</c:if>	
 						<c:if test="${dependente != ' ' }">
-			    			[X] Carteira do Plano de Sa˙de do Titular e de ${dependente}
+			    			[X] Carteira do Plano de Sa√∫de do Titular e de ${dependente}
 						</c:if>
 					</c:when>
 					<c:otherwise>
 						<c:if test="${ cartplano == 'Nao'}">
-			    			[&nbsp;&nbsp;] Carteira(s) do Plano de Sa˙de do Titular e Dependentes
+			    			[&nbsp;&nbsp;] Carteira(s) do Plano de Sa√∫de do Titular e Dependentes
 						</c:if>
 					</c:otherwise>
 			</c:choose>
@@ -229,8 +229,8 @@
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp?formatarOrgao=sim" />
 		<!-- FIM ASSINATURA -->
 		
-		 * Documentos <b>imprescindÌveis</b> para instruÁ„o do processo administrativo<br>&nbsp;&nbsp;(ResoluÁ„o n∫ 148, 
-		de 26/05/95, do Conselho da JustiÁa Federal)
+		 * Documentos <b>imprescind√≠veis</b> para instru√ß√£o do processo administrativo<br>&nbsp;&nbsp;(Resolu√ß√£o n¬∫ 148, 
+		de 26/05/95, do Conselho da Justi√ßa Federal)
 		<br>  
 		<!-- INICIO PRIMEIRO RODAPE
 		<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />

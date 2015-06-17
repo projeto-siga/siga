@@ -14,7 +14,7 @@
 <c:set var="uri" value="${req.requestURI}" />
 <c:set var="baseURL" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 
-<c:set var="titulo_pagina" scope="request">Protocolo de Transferência</c:set>
+<c:set var="titulo_pagina" scope="request">Protocolo de TransferÃªncia</c:set>
 
 <script type="text/javascript" language="Javascript1.1"
 	src="<c:url value="/staticJavascript.action"/>"></script>
@@ -23,7 +23,7 @@
 
 <ww:form name="frm" action="principal" namespace="/" method="GET"
 	theme="simple">
-	<h1>Protocolo de Transferência</h1>
+	<h1>Protocolo de TransferÃªncia</h1>
 	<table>
 		<tr>
 		<tr>
@@ -40,21 +40,21 @@
 		</tr>
 		<table class="list" width="100%">
 			<tr class="header">
-				<td rowspan="2" align="right">Número</td>
+				<td rowspan="2" align="right">NÃºmero</td>
 				<td rowspan="2" align="center">Via</td>
 				<td colspan="3" align="center">Documento</td>
-				<td colspan="3" align="center">Última Movimentação</td>
+				<td colspan="3" align="center">Ãšltima MovimentaÃ§Ã£o</td>
 				<td colspan="2" align="center">Atendente</td>
-				<td rowspan="2">Descrição</td>
+				<td rowspan="2">DescriÃ§Ã£o</td>
 			</tr>
 			<tr class="header">
 				<td align="center">Data</td>
-				<td align="center">Lotação</td>
+				<td align="center">LotaÃ§Ã£o</td>
 				<td align="center">Pessoa</td>
 				<td align="center">Data</td>
-				<td align="center">Lotação</td>
+				<td align="center">LotaÃ§Ã£o</td>
 				<td align="center">Pessoa</td>
-				<td align="center">Lotação</td>
+				<td align="center">LotaÃ§Ã£o</td>
 				<td align="center">Pessoa</td>
 			</tr>
 
@@ -129,7 +129,7 @@
 		</c:if>
 		<br />
 		<br />
-		<p align="center">Recebido em: _____/_____/_____ às _____:_____</p>
+		<p align="center">Recebido em: _____/_____/_____ Ã s _____:_____</p>
 		<br />
 		<br />
 		<br />

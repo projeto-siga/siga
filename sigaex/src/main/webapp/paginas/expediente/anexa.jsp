@@ -9,7 +9,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 
-<siga:pagina titulo="Movimentação"
+<siga:pagina titulo="MovimentaÃ§Ã£o"
 						 onLoad="javascript: TestarAssinaturaDigital();"
 						 incluirJs="sigaex/javascript/assinatura.js">
 
@@ -17,7 +17,7 @@
 	<script type="text/javascript">$("html").addClass("fisico");</script>
 </c:if>
 	<c:if
-		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 		<c:import url="/paginas/expediente/inc_assina_js.jsp" />
 	</c:if>
 
@@ -34,7 +34,7 @@
 			a = x.arquivo.value;
 			OK = padrao.exec(a);
 			if (a != '' && !OK) {
-				window.alert("Somente é permitido anexar arquivo PDF!");
+				window.alert("Somente Ã© permitido anexar arquivo PDF!");
 				x.arquivo.value = '';
 				x.arquivo.focus();
 			}
@@ -70,13 +70,13 @@
 			var result = true;
 			var arquivo = form.arquivo;
 			if ( arquivo == null || arquivo.value == '' ) {
-				alert("O arquivo a ser anexado não foi selecionado!");
+				alert("O arquivo a ser anexado nÃ£o foi selecionado!");
 				result = false;
 			}
 			return result;
 		}
 
-		/*  converte para maiúscula a sigla do estado  */
+		/*  converte para maiÃºscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
 			re = /^[a-zA-Z]{2}\d{3,6}$/;
 			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
@@ -96,7 +96,7 @@
 	<div class="gt-bd clearfix">
 	    <div class="gt-content clearfix">
 	        <c:if test="${!assinandoAnexosGeral}">
-				<h2>Anexação de Arquivo - ${mob.siglaEDescricaoCompleta}</h2>
+				<h2>AnexaÃ§Ã£o de Arquivo - ${mob.siglaEDescricaoCompleta}</h2>
 				<div class="gt-content-box gt-for-table">
 					<ww:form action="anexar_gravar" namespace="/expediente/mov"
 						method="POST" enctype="multipart/form-data" cssClass="form">
@@ -113,7 +113,7 @@
 										onblur="javascript:verifica_data(this, true);" /></td>
 							</tr>
 							<tr>
-								<td>Responsável:</td>
+								<td>ResponsÃ¡vel:</td>
 								<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 									&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 										onclick="javascript:displayTitular(this);" />Substituto</td>
@@ -134,7 +134,7 @@
 							</td>
 							</tr>
 							<tr>
-								<ww:textfield name="descrMov" label="Descrição" maxlength="80"
+								<ww:textfield name="descrMov" label="DescriÃ§Ã£o" maxlength="80"
 									          size="80" />
 							</tr>
 							<tr>
@@ -150,12 +150,12 @@
 						    </c:forEach>
 						    <c:if test="${pendencias}">
 								<tr class="header">
-									<td colspan="2">Pendencias de Anexação</td>
+									<td colspan="2">Pendencias de AnexaÃ§Ã£o</td>
 								</tr>
 								<tr>
 									<td colspan="2">
 										<div class="gt-form">
-											<label>A anexação deste arquivo resolve as seguintes pendências:</label>
+											<label>A anexaÃ§Ã£o deste arquivo resolve as seguintes pendÃªncias:</label>
 											<c:forEach var="mov" items="${mobilCompletoVO.movs}">
 											    <c:if test="${(not mov.cancelada) and (mov.idTpMov eq 57)}">
 														<label class="gt-form-element-label"><input type="checkbox" class="gt-form-checkbox" name="pendencia_de_anexacao" value="${mov.idMov}"> ${mov.descricao}</label>
@@ -209,17 +209,17 @@
 								<th align="center" rowspan="2">&nbsp;&nbsp;&nbsp;Data</th>
 								<th colspan="2" align="center">Cadastrante</th>
 								<th colspan="2" align="center">Atendente</th>
-								<th rowspan="2">Descrição</th>
+								<th rowspan="2">DescriÃ§Ã£o</th>
 							</tr>
 							<tr>
-							    <ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+							    <ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 									<td align="center"><input type="checkbox" name="checkall"
 										onclick="checkUncheckAll(this)" /></td>
 								</ww:if>
 								<ww:else><td></td></ww:else>
-								<th align="left">Lotação</th>
+								<th align="left">LotaÃ§Ã£o</th>
 								<th align="left">Pessoa</th>
-								<th align="left">Lotação</th>
+								<th align="left">LotaÃ§Ã£o</th>
 								<th align="left">Pessoa</th>
 							</tr>
 						</thead>
@@ -234,7 +234,7 @@
 									<ww:else>
 									    <c:set var="dtUlt" value="${dt}" />
 									</ww:else>
-									<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+									<ww:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 									    <c:set var="x" scope="request">chk_${mov.mov.idMov}</c:set>
 										<c:remove var="x_checked" scope="request" />
 										<c:if test="${param[x] == 'true'}">
@@ -294,7 +294,7 @@
 											</c:forEach>
 										    </siga:links>
 
-										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 										      <ww:hidden name="pdf${x}" value="${mov.mov.referencia}" />
 						  					  <ww:hidden name="url${x}" value="/arquivo/exibir.action?arquivo=${mov.mov.nmPdf}"/>
 										</c:if>
@@ -329,13 +329,13 @@
 			    <c:set var="lote" value="true" />
 			</div>
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<div id="capicom-div">
 						<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a>
 						<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
 					</div>
-				<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
-				<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+				<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrÃ£o do SIGA-DOC sÃ³ poderÃ¡ ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> Ã© permitida.</p>
+				<p id="capicom-missing" style="display: none;">NÃ£o foi possÃ­vel localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o mÃ©todo padrÃ£o do SIGA-DOC, serÃ¡ necessÃ¡rio instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. SerÃ¡ necessÃ¡rio expandir o <i>ZIP</i> e depois executar o arquivo de instalaÃ§Ã£o.</p>
 				<script type="text/javascript">
 					 if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
 						 document.getElementById("capicom-div").style.display = "block";
@@ -347,7 +347,7 @@
 				 </script>
 			</c:if>
 
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 			    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 			</c:if>
 
@@ -362,7 +362,7 @@
 			 				<ww:hidden id="id" name="id" value="${mov.idMov}" />
 			 				<ww:hidden id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
 			    			<fieldset>
-			    			  <label>Matrícula</label> <br/>
+			    			  <label>MatrÃ­cula</label> <br/>
 			    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
 			    			  <label>Senha</label> <br/>
 			    			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>

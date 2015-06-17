@@ -12,7 +12,7 @@
 			<mod:texto titulo="Ramal" var="ramal" largura="10" />
 		</mod:grupo>
 		</br>
-		<mod:grupo titulo="RelaÁ„o de Benefici·rios">
+		<mod:grupo titulo="Rela√ß√£o de Benefici√°rios">
 			<br/>
 			<mod:selecao titulo="Total de pessoas"
 				var="totalDePessoal" opcoes="1;2;3;4;5;6;7;8;9;10" reler="sim" />
@@ -59,17 +59,17 @@
 			<mod:valor var="texto_requerimento"><p style="TEXT-INDENT: 2cm" align="justify">
 			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
 			${doc.subscritor.padraoReferenciaInvertido},
-			matricula n∫ ${doc.subscritor.matricula}, servidor(a) do Quadro de Pessoal Permanente da JustiÁa Federal &#8212; 
-			SeÁ„o Judici·ria do Rio de Janeiro, lotado(a) no(a) ${doc.subscritor.lotacao.nomeLotacao}, 
-			ramal ${ramal}, designa, para fins de Pens„o Estatut·ria, conforme o art. 217, da Lei n∫ 8.112/90, 
-			os benefici·rios abaixo discriminados e anexa os documentos necess·rios.
+			matricula n¬∫ ${doc.subscritor.matricula}, servidor(a) do Quadro de Pessoal Permanente da Justi√ßa Federal &#8212; 
+			Se√ß√£o Judici√°ria do Rio de Janeiro, lotado(a) no(a) ${doc.subscritor.lotacao.nomeLotacao}, 
+			ramal ${ramal}, designa, para fins de Pens√£o Estatut√°ria, conforme o art. 217, da Lei n¬∫ 8.112/90, 
+			os benefici√°rios abaixo discriminados e anexa os documentos necess√°rios.
 			</p>
 			<br/>
 				
 		<table width="100%" height="90px" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF" height="20px" align="center"><b>RELA«√O DE BENEFICI¡RIOS</b></td>
+				<td bgcolor="#FFFFFF" height="20px" align="center"><b>RELA√á√ÉO DE BENEFICI√ÅRIOS</b></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">

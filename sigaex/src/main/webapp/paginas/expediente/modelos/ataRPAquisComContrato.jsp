@@ -5,13 +5,13 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 
 <!-- este modelo trata de
-solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
+solicita√ß√£o de inscri√ß√£o para capacita√ß√£o sem onus -->
 
 <mod:modelo>
 	 <mod:entrevista>
 		
 			
-			<mod:grupo titulo="Ata de registro de preÁos">
+			<mod:grupo titulo="Ata de registro de pre√ßos">
 				<mod:texto	titulo="Quantidade de itens" largura="3" var="qtd" relertab="sim" />
 							
 				
@@ -19,11 +19,11 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 					<mod:grupo>
 							<mod:texto titulo="Item" largura="20" var="item${i}" />
 							
-							<mod:texto titulo="descriÁ„o" largura="20" var="descricao${i}" />
+							<mod:texto titulo="descri√ß√£o" largura="20" var="descricao${i}" />
 							
 							<mod:texto titulo="Quantidade" largura="5" maxcaracteres="3" var="quantidade${i}" />
 																					
-							<mod:texto titulo="PreÁo" largura="8" maxcaracteres="6" var="preco${i}" />
+							<mod:texto titulo="Pre√ßo" largura="8" maxcaracteres="6" var="preco${i}" />
 							
 							
 					
@@ -40,7 +40,7 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 				<mod:monetario titulo="CPF" largura="12" maxcaracteres="10" var="cpf" verificaNum="sim"/>		
 					
 			</mod:grupo>
-			<mod:grupo titulo="Preg„o">
+			<mod:grupo titulo="Preg√£o">
 			
 				<mod:monetario titulo="Numero" largura="12" maxcaracteres="10" var="pregao" verificaNum="sim"/>
 			    
@@ -81,22 +81,22 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 	
 	<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp"/>
 	
-	<h1> ATA DE REGISTRO DE PRE«OS N∫_____/20_____
-		PROCESSO N∫____/_____/_____-EOF
+	<h1> ATA DE REGISTRO DE PRE√áOS N¬∫_____/20_____
+		PROCESSO N¬∫____/_____/_____-EOF
 	
-	<p style="TEXT-INDENT: 2cm" align="justify"> A justiÁa Federal de 1∫ Grau no Rio de Janeiro, com sede na Av. Rio Branco, 243 - Anexo
-	14∫ andar, Centro/RJ, inscrita no C.N.P.J. sob o n∫ 05.424.540/0001-16, neste ato representada pelo Dr ${nome}, juiz Federal - Diretor do Foro,
-	identidade n∫ ${ident}, CPF${cpf} doravante denominada JUSTI«A FEDERAL, resolve,
-	em face das propostas no<b> Preg„o n∫&nbsp ${pregao}/ ,REGISTRAR OS PRE«OS  para contrataÁ„o<b> da(s) empresa(s) denominada(s) FORNECEDORA(S),
-	conforme especificado no Anexo 1 do Edital, que passa a fazer parte desta, tendo sido o(s) referido(s) preÁo(s) oferecido(s) pela(s) empresa(s)
+	<p style="TEXT-INDENT: 2cm" align="justify"> A justi√ßa Federal de 1¬∫ Grau no Rio de Janeiro, com sede na Av. Rio Branco, 243 - Anexo
+	14¬∫ andar, Centro/RJ, inscrita no C.N.P.J. sob o n¬∫ 05.424.540/0001-16, neste ato representada pelo Dr ${nome}, juiz Federal - Diretor do Foro,
+	identidade n¬∫ ${ident}, CPF${cpf} doravante denominada JUSTI√áA FEDERAL, resolve,
+	em face das propostas no<b> Preg√£o n¬∫&nbsp ${pregao}/ ,REGISTRAR OS PRE√áOS  para contrata√ß√£o<b> da(s) empresa(s) denominada(s) FORNECEDORA(S),
+	conforme especificado no Anexo 1 do Edital, que passa a fazer parte desta, tendo sido o(s) referido(s) pre√ßo(s) oferecido(s) pela(s) empresa(s)
 	 cuja(s) proposta(s) foi(ram) classificada(s) em primeiro(s) lugare(es) no certame acima numerado, como segue,em conformidade
-	 com o disposto na lei N∫10.520, de 17/07/2002 Decreto n∫ 3.555, de 08/08/2000 e n∫ 3931, de 19/09/2001 e, subsidiariamente, a lei n∫ 8.666, de 
-	 21/06/93 e suas alteraÁıes , mediante as cl·usulas e condiÁıes a seguir:</P>  
+	 com o disposto na lei N¬∫10.520, de 17/07/2002 Decreto n¬∫ 3.555, de 08/08/2000 e n¬∫ 3931, de 19/09/2001 e, subsidiariamente, a lei n¬∫ 8.666, de 
+	 21/06/93 e suas altera√ß√µes , mediante as cl√°usulas e condi√ß√µes a seguir:</P>  
 	
 	
 	<table width="100%" border="0" cellpadding="1">
 	<tr>
-		<td>item</td><td>PreÁo Unit·rio</td><td>Quantidade</td><td>DescriÁ„o</td>
+		<td>item</td><td>Pre√ßo Unit√°rio</td><td>Quantidade</td><td>Descri√ß√£o</td>
 	</tr>
 	
 	
@@ -126,70 +126,70 @@ solicitaÁ„o de inscriÁ„o para capacitaÁ„o sem onus -->
 		
 		
 		
-		<H2>CL¡USULA PRIMEIRA - DO OBJETIVO</H2>
+		<H2>CL√ÅUSULA PRIMEIRA - DO OBJETIVO</H2>
 		
-		<p style="TEXT-INDENT: 2cm" align="justify">1.1. ContrataÁ„o de empresa para fornecimento de produtos, conforme especificaÁıes constante do termo de ReferÍncia do Edital do Preg„o 
-		n∫${pregao}/.</p>
+		<p style="TEXT-INDENT: 2cm" align="justify">1.1. Contrata√ß√£o de empresa para fornecimento de produtos, conforme especifica√ß√µes constante do termo de Refer√™ncia do Edital do Preg√£o 
+		n¬∫${pregao}/.</p>
 		    
-		<h2>CL¡USULA SEGUNDA - DA VALIDADE DOS PRE«OS</h2>
+		<h2>CL√ÅUSULA SEGUNDA - DA VALIDADE DOS PRE√áOS</h2>
 		
-		<p style="TEXT-INDENT: 2cm" align="justify">2.1. A presente Ata de Registro de PreÁos ter· validade de ${validade} 
+		<p style="TEXT-INDENT: 2cm" align="justify">2.1. A presente Ata de Registro de Pre√ßos ter√° validade de ${validade} 
 		meses, apartir da sua assinatura.</p> 
 		
-		<p style="TEXT-INDENT: 2cm" align="justify"><b>PARAGRAFO ⁄NICO</b>: A presente Ata poder· ser prorrogada, na forma autorizada 
-		pelo art. 4∫ Decreto n∫ 3.931/2001.</p>
+		<p style="TEXT-INDENT: 2cm" align="justify"><b>PARAGRAFO √öNICO</b>: A presente Ata poder√° ser prorrogada, na forma autorizada 
+		pelo art. 4¬∫ Decreto n¬∫ 3.931/2001.</p>
 		
-		<p style="TEXT-INDENT: 2cm" align="justify">2.2. Durante o prazo de validade desta Ata de Registro de PreÁos, a JustiÁa Federal n„o ser· obrigada a firmar as contrataÁıes que deles poder„o adivir
-		, facultando-se a realizaÁ„o de licitaÁ„o especÌfica para aquisiÁ„o pretendida, sendo assegurado ao benefici·rio do registro preferÍncia de fornecimento
-		em igualdade de condiÁıes.</p>
+		<p style="TEXT-INDENT: 2cm" align="justify">2.2. Durante o prazo de validade desta Ata de Registro de Pre√ßos, a Justi√ßa Federal n√£o ser√° obrigada a firmar as contrata√ß√µes que deles poder√£o adivir
+		, facultando-se a realiza√ß√£o de licita√ß√£o espec√≠fica para aquisi√ß√£o pretendida, sendo assegurado ao benefici√°rio do registro prefer√™ncia de fornecimento
+		em igualdade de condi√ß√µes.</p>
 		
-		<h2>CL¡USULA TERCEIRA - DA UTILIZA«√O DA ATA DE REGISTRO DE PRE«OS</h2>
+		<h2>CL√ÅUSULA TERCEIRA - DA UTILIZA√á√ÉO DA ATA DE REGISTRO DE PRE√áOS</h2>
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">3.1. A presente Ata de Registro de PreÁos poder· ser usada por org„os usu·rios, desde que autorizadas pela JUSTI«A FEDERAL.
+		 <p style="TEXT-INDENT: 2cm" align="justify">3.1. A presente Ata de Registro de Pre√ßos poder√° ser usada por org√£os usu√°rios, desde que autorizadas pela JUSTI√áA FEDERAL.
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">3.2. O preÁo ofertado pela(s) empresa(s) siginat·rias da presente Ata de Registro de PreÁos È o especificado em anexo, de a cordo com  a respectiva
-		  classificaÁ„o no preg„o n∫${pregao}/.
+		 <p style="TEXT-INDENT: 2cm" align="justify">3.2. O pre√ßo ofertado pela(s) empresa(s) siginat√°rias da presente Ata de Registro de Pre√ßos √© o especificado em anexo, de a cordo com  a respectiva
+		  classifica√ß√£o no preg√£o n¬∫${pregao}/.
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">3.3. Em cada fornecimento decorrente desta Ata, ser„o observadas, quanto ao preÁo, as cl·usulas e condiÁoes constantes 
-		 do Edital do Preg„o N∫ ${pregao}/ , que a procedeu e integra o presente instrumento de compromisso.
+		 <p style="TEXT-INDENT: 2cm" align="justify">3.3. Em cada fornecimento decorrente desta Ata, ser√£o observadas, quanto ao pre√ßo, as cl√°usulas e condi√ßoes constantes 
+		 do Edital do Preg√£o N¬∫ ${pregao}/ , que a procedeu e integra o presente instrumento de compromisso.
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">3.4. A cada fornecimento, o preÁo unit·rio a ser pago ser· o constante da proposta
-		  apresentada no preg„o N∫ ${pregao} , pela(s) empresa(s) detentora(s) da presente Ata, as quais tambÈm a integram.</p>
+		 <p style="TEXT-INDENT: 2cm" align="justify">3.4. A cada fornecimento, o pre√ßo unit√°rio a ser pago ser√° o constante da proposta
+		  apresentada no preg√£o N¬∫ ${pregao} , pela(s) empresa(s) detentora(s) da presente Ata, as quais tamb√©m a integram.</p>
 
-		 <h2>CL¡USULA QUARTA DO LOCAL E PRAZO DA ENTREGA </h2>
+		 <h2>CL√ÅUSULA QUARTA DO LOCAL E PRAZO DA ENTREGA </h2>
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">4.1. A cada fornecimento, o prazo de entrega do produto ser· acordado pela unidade requisitante 
-		 ,n„o podendo, todavia, ultrapassar o prazo estipulado na especificaÁ„o do Edital do preg„o N∫ ${pregao}/.</p>
+		 <p style="TEXT-INDENT: 2cm" align="justify">4.1. A cada fornecimento, o prazo de entrega do produto ser√° acordado pela unidade requisitante 
+		 ,n√£o podendo, todavia, ultrapassar o prazo estipulado na especifica√ß√£o do Edital do preg√£o N¬∫ ${pregao}/.</p>
 
-		 <h2>CL¡USULA QUINTA - DO PAGAMENTO</h2>
+		 <h2>CL√ÅUSULA QUINTA - DO PAGAMENTO</h2>
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">5.1. A cada fornecimento o pagamento ser· efetivado, por crÈdito em conta corrente, mediante ordem banc·ria, atÈ o 10(dÈcimo) dia ˙til apÛs a apresentaÁ„o da fatura 
-		 ou nota fiscal discriminativa do material entregue, devidamente atestada por servidor ou comiss„o nomeada pelo org„o requisitante, conforme item 16 do Edital.</p>
+		 <p style="TEXT-INDENT: 2cm" align="justify">5.1. A cada fornecimento o pagamento ser√° efetivado, por cr√©dito em conta corrente, mediante ordem banc√°ria, at√© o 10(d√©cimo) dia √∫til ap√≥s a apresenta√ß√£o da fatura 
+		 ou nota fiscal discriminativa do material entregue, devidamente atestada por servidor ou comiss√£o nomeada pelo org√£o requisitante, conforme item 16 do Edital.</p>
 
-		 <h2>CL¡USULA SEXTA - DA AUTORIZA«√O PARA AQUISI«√O E EMISS√O DAS ORDENS DE FORNECIMENTO</h2>
+		 <h2>CL√ÅUSULA SEXTA - DA AUTORIZA√á√ÉO PARA AQUISI√á√ÉO E EMISS√ÉO DAS ORDENS DE FORNECIMENTO</h2>
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">6.1. As aquisiÁıes do objeto da presente Ata de Registro de PreÁos ser„o autorizadas, conforme a necessidade, pelo Juiz Federal Diretor do Foro da JUSTI«A FEDERAL - SeÁ„o Judici·ria do Rio de Janeiro.</p>
+		 <p style="TEXT-INDENT: 2cm" align="justify">6.1. As aquisi√ß√µes do objeto da presente Ata de Registro de Pre√ßos ser√£o autorizadas, conforme a necessidade, pelo Juiz Federal Diretor do Foro da JUSTI√áA FEDERAL - Se√ß√£o Judici√°ria do Rio de Janeiro.</p>
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">6.2. A emiss„o das ordens de fornecimento, sua retificaÁ„o ou cancelamento total ou parcial ser„o igualmente autorizadas pelo Juiz Federal Diretor do Foro da JUSTI«A FEDERAL - SeÁ„o Judici·ria do Rio de Janeiro.</p>
+		 <p style="TEXT-INDENT: 2cm" align="justify">6.2. A emiss√£o das ordens de fornecimento, sua retifica√ß√£o ou cancelamento total ou parcial ser√£o igualmente autorizadas pelo Juiz Federal Diretor do Foro da JUSTI√áA FEDERAL - Se√ß√£o Judici√°ria do Rio de Janeiro.</p>
 
-		 <h2>CL¡USULA S…TIMA - DAS DISPOSI«’ES FINAIS</h2>
+		 <h2>CL√ÅUSULA S√âTIMA - DAS DISPOSI√á√ïES FINAIS</h2>
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">7.1. Integram esta Ata, o Edital do preg„o N∫${pregao} / e seus anexos, as propostas das empresa(s): <c:forEach var="i" begin="1" end="${qtd_emp}">Empresa${i} - ${requestScope[f:concat('empresa',i)]}; </c:forEach>
+		 <p style="TEXT-INDENT: 2cm" align="justify">7.1. Integram esta Ata, o Edital do preg√£o N¬∫${pregao} / e seus anexos, as propostas das empresa(s): <c:forEach var="i" begin="1" end="${qtd_emp}">Empresa${i} - ${requestScope[f:concat('empresa',i)]}; </c:forEach>
 		 ,classificadas em primeiro(s) lugar(es), respectivamente, no certame supra numerado.</p>
 
-		 <h2>CL¡USULA OITAVA DO FORO</h2>
+		 <h2>CL√ÅUSULA OITAVA DO FORO</h2>
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">8.1 - Pra dirimir as questıes decorrentes da utilizaÁ„o da presente Ata de Registro de PreÁos, fica eleito o Foro da JustiÁa Federal - SeÁ„o Judiciaria do Rio de Janeiro, 
-		 sendo os casos omissos resolvido de acordo com a lei N∫ 10.520/2002 e decreto 3.555/2000, alterada, e demais normas aplic·veis.</p>
+		 <p style="TEXT-INDENT: 2cm" align="justify">8.1 - Pra dirimir as quest√µes decorrentes da utiliza√ß√£o da presente Ata de Registro de Pre√ßos, fica eleito o Foro da Justi√ßa Federal - Se√ß√£o Judiciaria do Rio de Janeiro, 
+		 sendo os casos omissos resolvido de acordo com a lei N¬∫ 10.520/2002 e decreto 3.555/2000, alterada, e demais normas aplic√°veis.</p>
 
-		 <p style="TEXT-INDENT: 2cm" align="justify">E por estarem ajustados, È lavrada a presente Ata, extraÌda em 03(trÍs) vias de igual teor e forma, que depois de lida e achada conforme vai assinada pelas partes.</p>   
+		 <p style="TEXT-INDENT: 2cm" align="justify">E por estarem ajustados, √© lavrada a presente Ata, extra√≠da em 03(tr√™s) vias de igual teor e forma, que depois de lida e achada conforme vai assinada pelas partes.</p>   
 		 
 		 <p style="TEXT-INDENT: 5cm" align="justify">Rio de Janeiro,&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp    de &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp      de &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp      .</p>
 		 
 		                                                                        
 		                                                                        
 		                                                                                     ____________________________________________________________<BR>
-		&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp												JUSTI«A FEDERAL DE 1∫ GRAU NO RIO DE JANEIRO<BR>
+		&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp												JUSTI√áA FEDERAL DE 1¬∫ GRAU NO RIO DE JANEIRO<BR>
 		 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp     JUIZ FEDERAL - DIRETOR DO FORO<BR>   
 		 																																															             
 		<br>

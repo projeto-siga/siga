@@ -10,12 +10,12 @@
 <mod:modelo urlBase="/paginas/expediente/modelos/portariaCorregedoria.jsp">
 	<mod:entrevista>
 			<mod:grupo>
-				<mod:texto titulo="Nº" var="port" largura="14"/>
+				<mod:texto titulo="NÂº" var="port" largura="14"/>
 			</mod:grupo>		
 
 			<mod:grupo>
-				<mod:selecao titulo="Dr" var="gen"  opcoes="masc;fem" reler="não" />
-				<mod:selecao titulo="Juiz Federal" var="titulo" opcoes="Titular;Substituto" reler="não"/>
+				<mod:selecao titulo="Dr" var="gen"  opcoes="masc;fem" reler="nÃ£o" />
+				<mod:selecao titulo="Juiz Federal" var="titulo" opcoes="Titular;Substituto" reler="nÃ£o"/>
 			</mod:grupo>
 				
 			<mod:grupo>
@@ -23,10 +23,10 @@
 			</mod:grupo>
 
 			<mod:grupo>
-				<mod:texto titulo="período de fruição" var="para"  largura="50"/>
+				<mod:texto titulo="perÃ­odo de fruiÃ§Ã£o" var="para"  largura="50"/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="referentes ao período" var="per"  largura="50"/>
+				<mod:texto titulo="referentes ao perÃ­odo" var="per"  largura="50"/>
 			</mod:grupo>
 
 	</mod:entrevista>
@@ -36,12 +36,12 @@
 				<body>
 					<c:set var="pessoa_resp" value ="${f:pessoa(requestScope['pessoa_pessoaSel.id'])}" />
 					<p style="TEXT-INDENT: 2cm" align="justify">
-						O Doutor ${doc.subscritor.descricao}, Corregedor-Regional da Justiça 
-						Federal da <br>2ª Região, no uso de suas atribuições legais RESOLVE:
+						O Doutor ${doc.subscritor.descricao}, Corregedor-Regional da JustiÃ§a 
+						Federal da <br>2Âª RegiÃ£o, no uso de suas atribuiÃ§Ãµes legais RESOLVE:
 						<br/><br/><br/>
-						Retificar a Portaria nº ${port}, desta Corregedoria-Regional, no que tange
+						Retificar a Portaria nÂº ${port}, desta Corregedoria-Regional, no que tange
 						<c:choose>
-							<c:when test="${gen=='fem'}">a MM. Juíza Federal</c:when>
+							<c:when test="${gen=='fem'}">a MM. JuÃ­za Federal</c:when>
 							<c:otherwise>ao MM.Juiz Federal</c:otherwise>
 						</c:choose>
 						<c:choose>
@@ -51,11 +51,11 @@
 						</c:choose>
 						do(a) ${pessoa_resp.lotacao.descricao},
 						<c:choose>
-							<c:when test="${gen=='fem'}">Drª.</c:when>
+							<c:when test="${gen=='fem'}">DrÂª.</c:when>
 							<c:otherwise>Dr.</c:otherwise>
 						</c:choose>
-						${pessoa_resp.nomePessoa}, para explicitar que as férias designadas para ${para }
-						são  referentes ao ${per}.
+						${pessoa_resp.nomePessoa}, para explicitar que as fÃ©rias designadas para ${para }
+						sÃ£o  referentes ao ${per}.
 
 
 						

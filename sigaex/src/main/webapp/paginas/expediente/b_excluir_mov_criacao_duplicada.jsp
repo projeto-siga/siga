@@ -8,7 +8,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib prefix="ww" uri="/webwork"%>
 
-<siga:pagina titulo="Corrigir Data de Fim de Movimentação">
+<siga:pagina titulo="Corrigir Data de Fim de MovimentaÃ§Ã£o">
 
 <script type="text/javascript" language="Javascript1.1">
 function sbmt() {
@@ -27,13 +27,13 @@ function sbmt() {
 			<input type="hidden" name="postback" value="1" />
 			<ww:token />
 
-			<h1>Excluir Movimentacao De Criação Duplicada
+			<h1>Excluir Movimentacao De CriaÃ§Ã£o Duplicada
 			</h1>
 			<table class="form" width="100%">
 				<tr class="header">
 					<td colspan="2">Dados</td>
 				</tr>
-				<ww:textfield label="Movimentação" name="id" />
+				<ww:textfield label="MovimentaÃ§Ã£o" name="id" />
 				<tr class="button">
 					<td></td>
 					<td><input type="submit" value="Ok" /> <input type="button"

@@ -7,13 +7,13 @@
 <mod:modelo>
 	<mod:entrevista>
 		<br/>
-		<span style="color:red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ CHEFIA IMEDIATA PARA CI NCIA E, EM SEGUIDA, ¿ DICAP</b></span>	
+		<span style="color:red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä CHEFIA IMEDIATA PARA CI√äNCIA E, EM SEGUIDA, √Ä DICAP</b></span>	
 		<br/><br/>
 	<mod:grupo titulo=" ">	
 		<mod:grupo>
 				<mod:selecao var="ilustrissima"
 				titulo="VOCATIVO"
-				opcoes="ILUSTRÕSSIMA SENHORA DIRETORA;ILUSTRÕSSIMO SENHOR DIRETOR; SENHOR PAL¥PITE INFELIZ"	
+				opcoes="ILUSTR√çSSIMA SENHORA DIRETORA;ILUSTR√çSSIMO SENHOR DIRETOR; SENHOR PAL¬¥PITE INFELIZ"	
 				reler="sim" />
 		</mod:grupo>
 		<br/>	
@@ -28,10 +28,10 @@
       <br/> 
 	 <mod:grupo titulo="Documento Anexado:">
 	    
-	     <mod:radio titulo="Comprovante de doaÁ„o de sangue" var="periodo" valor="1" reler="sim" />
+	     <mod:radio titulo="Comprovante de doa√ß√£o de sangue" var="periodo" valor="1" reler="sim" />
 		 <mod:radio titulo="Comprovante ao se alistar como eleitor" var="periodo" valor="2" reler="sim" />
-	     <mod:radio titulo="Xerox de Certid„o de Casamento" var="periodo" valor="3" reler="sim" />
-		 <mod:radio titulo="Xerox da Certid„o de ”bito" var="periodo" valor="4" reler="sim" />
+	     <mod:radio titulo="Xerox de Certid√£o de Casamento" var="periodo" valor="3" reler="sim" />
+		 <mod:radio titulo="Xerox da Certid√£o de √ìbito" var="periodo" valor="4" reler="sim" />
 		 <mod:radio titulo="Outros" var="periodo" valor="5" reler="sim" />
 		 <c:set var="valorperiodo" value="${periodo}" />
 		 <c:if test="${empty valorperiodo}"><c:set var="valorperiodo" value="${param['periodo']}" /></c:if>
@@ -91,15 +91,15 @@
 			<c:set var="lotc" value="lotada"></c:set>
 		</c:if>
 
-		<p style="text-align: center;font-weight:bold;font-size:11pt;"><b> ${ilustrissima} DA SECRETARIA DE RECURSOS HUMANOS DO TRIBUNAL REGIONAL FEDERAL DA 2™. REGI√O</b></p>
+		<p style="text-align: center;font-weight:bold;font-size:11pt;"><b> ${ilustrissima} DA SECRETARIA DE RECURSOS HUMANOS DO TRIBUNAL REGIONAL FEDERAL DA 2¬™. REGI√ÉO</b></p>
 				<br/><br/><br/><br/>		
-			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, matrÌcula ${doc.subscritor.matricula}, ${doc.subscritor.padraoReferencia}, ${lotc} no(a) ${doc.subscritor.lotacao.descricao}, ramal ${ramal}, vem ‡ presenÁa  
-			de V.S™ apresentar justificativa pelo afastamento  
-			<c:if test="${periodo == 1}">no dia ${dtiniafast}, nos termos do art. 97, inciso I da Lei n∫ 8.112 de 11/12/1990.</c:if>
-            <c:if test="${periodo == 2}">no perÌodo de ${dtiniafast} a ${f:calculaData(2,requestScope['dtiniafast'])}, nos termos do art. 97, inciso II da Lei n∫ 8.112 de 11/12/1990.</c:if>
-            <c:if test="${periodo == 3}">no perÌodo de ${dtiniafast} a ${f:calculaData(8,requestScope['dtiniafast'])}, nos termos do art. 97, inciso III, alÌnea 'a' da Lei n∫ 8.112 de 11/12/1990.</c:if>
-            <c:if test="${periodo == 4}">no perÌodo de ${dtiniafast} a ${f:calculaData(8,requestScope['dtiniafast'])}, nos termos do art. 97, inciso III, alÌnea 'b' da Lei n∫ 8.112 de 11/12/1990.</c:if>
-            <c:if test="${periodo == 5}">no perÌodo de ${dtiniafast} a ${dtfimafast}, ${outromot}.</c:if>
+			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, matr√≠cula ${doc.subscritor.matricula}, ${doc.subscritor.padraoReferencia}, ${lotc} no(a) ${doc.subscritor.lotacao.descricao}, ramal ${ramal}, vem √† presen√ßa  
+			de V.S¬™ apresentar justificativa pelo afastamento  
+			<c:if test="${periodo == 1}">no dia ${dtiniafast}, nos termos do art. 97, inciso I da Lei n¬∫ 8.112 de 11/12/1990.</c:if>
+            <c:if test="${periodo == 2}">no per√≠odo de ${dtiniafast} a ${f:calculaData(2,requestScope['dtiniafast'])}, nos termos do art. 97, inciso II da Lei n¬∫ 8.112 de 11/12/1990.</c:if>
+            <c:if test="${periodo == 3}">no per√≠odo de ${dtiniafast} a ${f:calculaData(8,requestScope['dtiniafast'])}, nos termos do art. 97, inciso III, al√≠nea 'a' da Lei n¬∫ 8.112 de 11/12/1990.</c:if>
+            <c:if test="${periodo == 4}">no per√≠odo de ${dtiniafast} a ${f:calculaData(8,requestScope['dtiniafast'])}, nos termos do art. 97, inciso III, al√≠nea 'b' da Lei n¬∫ 8.112 de 11/12/1990.</c:if>
+            <c:if test="${periodo == 5}">no per√≠odo de ${dtiniafast} a ${dtfimafast}, ${outromot}.</c:if>
 			
 			<br/><br/><br/><br/>
 				
@@ -107,17 +107,17 @@
 			<br/>
 			&nbsp;&nbsp;
 			<c:if test="${ periodo == 1}">
-			    [X] Comprovante de doaÁ„o de sangue
+			    [X] Comprovante de doa√ß√£o de sangue
 			    <br/>		
 			</c:if>
 			<c:if test="${ periodo == 2}">
 			    [X] Comprovante ao se alistar como eleitor
 			    <br/>		
 			</c:if><c:if test="${ periodo == 3}">
-			    [X] Xerox da Certid„o de Casamento
+			    [X] Xerox da Certid√£o de Casamento
 			    <br/>		
 			</c:if><c:if test="${ periodo == 4}">
-			    [X] Xerox da Certid„o de ”bito
+			    [X] Xerox da Certid√£o de √ìbito
 			    <br/>		
 			</c:if>
 			<c:if test="${ periodo == 5}">
@@ -136,7 +136,7 @@
 		<!-- INICIO ASSINATURA -->
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp?formatarOrgao=sim" />
 		<!-- FIM ASSINATURA -->
-		<p style="font-weight:bold;font-size:7pt;"><br/><br/><b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ CHEFIA IMEDIATA PARA CI NCIA E, EM SEGUIDA, ¿ DICAP</b></p>
+		<p style="font-weight:bold;font-size:7pt;"><br/><br/><b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä CHEFIA IMEDIATA PARA CI√äNCIA E, EM SEGUIDA, √Ä DICAP</b></p>
 		<!-- INICIO PRIMEIRO RODAPE
 		<c:import url="/paginas/expediente/modelos/inc_rodapeClassificacaoDocumental.jsp" />
 		FIM PRIMEIRO RODAPE -->

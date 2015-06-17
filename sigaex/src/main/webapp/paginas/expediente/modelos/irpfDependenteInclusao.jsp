@@ -8,7 +8,7 @@
 	<mod:entrevista>
 		<mod:grupo titulo="DETALHES DO(S) DEPENDENTE(S)">
 			<mod:selecao
-				titulo="N∫ de dependentes a informar para Inclus„o do IRPF"
+				titulo="N¬∫ de dependentes a informar para Inclus√£o do IRPF"
 				var="dependentes" opcoes="1;2;3;4;5" reler="ajax"
 				idAjax="dependAjax" />
 			<mod:grupo depende="dependAjax">
@@ -18,36 +18,36 @@
 					<mod:data titulo="Data de Nascimento" var="dataNasc${i}" />
 					<br />
 					<mod:texto
-						titulo="CPF (o campo dever· ser preenchido quando o dependente for maior de idade)"
+						titulo="CPF (o campo dever√° ser preenchido quando o dependente for maior de idade)"
 						var="cpf${i}" largura="30" />
 					<br />
 						<mod:selecao titulo="Grau de parentesco" var="grauParentesco${i}"
-							opcoes="absolutamente incapaz do qual o contribuinte seja tutor ou curador;companheiro(a);cÙnjuge;enteado(a);filho(a);irm„o(a)/neto(a)/bisneto(a)(sem arrimo dos pais);menor que o contribuinte crie ou eduque;pais/avÛs/bisavÛs;"
+							opcoes="absolutamente incapaz do qual o contribuinte seja tutor ou curador;companheiro(a);c√¥njuge;enteado(a);filho(a);irm√£o(a)/neto(a)/bisneto(a)(sem arrimo dos pais);menor que o contribuinte crie ou eduque;pais/av√≥s/bisav√≥s;"
 							reler="ajax" idAjax="grauParentescoAjax${i}" />
 					<br />
 					<mod:grupo depende="grauParentescoAjax${i}">
 						<c:choose>
 							<c:when
-								test="${(requestScope[f:concat('grauParentesco',i)] eq 'companheiro(a)') or (requestScope[f:concat('grauParentesco',i)] eq 'cÙnjuge')}">
+								test="${(requestScope[f:concat('grauParentesco',i)] eq 'companheiro(a)') or (requestScope[f:concat('grauParentesco',i)] eq 'c√¥njuge')}">
 							</c:when>
 							<c:when
-								test="${requestScope[f:concat('grauParentesco',i)] eq 'pais/avÛs/bisavÛs'}">
+								test="${requestScope[f:concat('grauParentesco',i)] eq 'pais/av√≥s/bisav√≥s'}">
 								<mod:texto
-									titulo="Nome pais/avÛs/bisavÛs para efeito na declaraÁ„o"
+									titulo="Nome pais/av√≥s/bisav√≥s para efeito na declara√ß√£o"
 									var="maepai${i}" largura="60" />
 							</c:when>
 							<c:otherwise>
 								<mod:texto
-									titulo="Nome do pai, da m„e ou do respons·vel do menor sob guarda"
+									titulo="Nome do pai, da m√£e ou do respons√°vel do menor sob guarda"
 									var="paimae${i}" largura="60" />
 								<mod:grupo>
 									<mod:caixaverif
-										titulo="N„o incluiu o referido dependente junto ‡ empresa/org„o onde trabalha"
+										titulo="N√£o incluiu o referido dependente junto √† empresa/org√£o onde trabalha"
 										var="opcao1${i}" />
 								</mod:grupo>
 								<mod:grupo>
 									<mod:caixaverif
-										titulo="N„o incluiu o referido dependente por n„o exercer atividade remunerada"
+										titulo="N√£o incluiu o referido dependente por n√£o exercer atividade remunerada"
 										var="opcao2${i}" />
 								</mod:grupo>
 							</c:otherwise>
@@ -72,13 +72,13 @@
 		</head>
 		<body>
 
-		<h1 align="center">Ilma. Sra. Diretora da Subsecretaria de Gest„o
+		<h1 align="center">Ilma. Sra. Diretora da Subsecretaria de Gest√£o
 		de Pessoas</h1>
 
 		<p style="TEXT-INDENT: 2cm" align="justify"><c:import
 			url="/paginas/expediente/modelos/subscritorIdentificacao.jsp" /> vem
-		requerer a Vossa Senhoria a <b>inclus„o</b> de seu(s) dependente(s), a
-		seguir relacionado(s), para fim de deduÁ„o do Imposto de Renda na
+		requerer a Vossa Senhoria a <b>inclus√£o</b> de seu(s) dependente(s), a
+		seguir relacionado(s), para fim de dedu√ß√£o do Imposto de Renda na
 		fonte:</p>
 		<br>
 
@@ -96,7 +96,7 @@
 					<td bgcolor="#FFFFFF" width="20%">${requestScope[f:concat('dataNasc',i)]}</td>
 					<td bgcolor="#FFFFFF" width="40%">${requestScope[f:concat('grauParentesco',i)]}</td>
 					<td bgcolor="#FFFFFF" width="40%"><c:if
-						test="${empty requestScope[f:concat('cpf',i)]}">N„o informado</c:if>${requestScope[f:concat('cpf',i)]}</td>
+						test="${empty requestScope[f:concat('cpf',i)]}">N√£o informado</c:if>${requestScope[f:concat('cpf',i)]}</td>
 				</tr>
 			</c:forEach>
 		</table>
@@ -105,21 +105,21 @@
 		<p style="TEXT-INDENT: 2cm" align="justify">Declara, ainda, estar
 		ciente de que:
 		<ul type="square">
-			<li>O ß 8∫ do art. 38 da InstruÁ„o Normativa n.∫ 15/2001, da
-			Secretaria da Receita Federal, prevÍ que "os rendimentos tribut·veis
+			<li>O ¬ß 8¬∫ do art. 38 da Instru√ß√£o Normativa n.¬∫ 15/2001, da
+			Secretaria da Receita Federal, prev√™ que "os rendimentos tribut√°veis
 			recebidos pelos dependentes devem ser somados aos rendimentos do
-			contribuinte para efeito de tribulaÁ„o na declaraÁ„o"</li>
-			<li>O art. 35, III, da Lei n&ordm; 9.250/95, prevÍ que os filhos
-			e enteados poder„o ser considerados dependentes, <b>independentemente
-			da idade</b>, quando incapacitados fÌsica ou mentalmente para o trabalho.
-			O mesmo artigo, em seu &sect; 1&ordm;, prevÍ que os filhos, enteados
+			contribuinte para efeito de tribula√ß√£o na declara√ß√£o"</li>
+			<li>O art. 35, III, da Lei n&ordm; 9.250/95, prev√™ que os filhos
+			e enteados poder√£o ser considerados dependentes, <b>independentemente
+			da idade</b>, quando incapacitados f√≠sica ou mentalmente para o trabalho.
+			O mesmo artigo, em seu &sect; 1&ordm;, prev√™ que os filhos, enteados
 			e menores pobres que o contribuinte eduque e do qual detenha a guarda
-			judicial poder„o ser considerados dependentes quando maiores <b>atÈ
+			judicial poder√£o ser considerados dependentes quando maiores <b>at√©
 			24 anos de idade</b>, se ainda estiverem cursando estabelecimento de
-			ensino superior ou escola tÈcnica de segundo grau.
-			<li>O art. 35, ß 3∫, da Lei n∫ 9.250/95 prevÍ que, "no caso de
-			filhos de pais separados, poder„o ser considerados dependentes os que
-			ficarem sob a guarda do contribuinte, em cumprimento de decis„o
+			ensino superior ou escola t√©cnica de segundo grau.
+			<li>O art. 35, ¬ß 3¬∫, da Lei n¬∫ 9.250/95 prev√™ que, "no caso de
+			filhos de pais separados, poder√£o ser considerados dependentes os que
+			ficarem sob a guarda do contribuinte, em cumprimento de decis√£o
 			judicial ou acordo homologado judicialmente."</li>
 		</ul>
 		</p>
@@ -135,26 +135,26 @@
 		<c:forEach var="i" begin="1" end="${dependentes}">
 			<c:choose>
 				<c:when
-					test="${(requestScope[f:concat('grauParentesco',i)] eq 'companheiro(a)') or (requestScope[f:concat('grauParentesco',i)] eq 'cÙnjuge')}"></c:when>
+					test="${(requestScope[f:concat('grauParentesco',i)] eq 'companheiro(a)') or (requestScope[f:concat('grauParentesco',i)] eq 'c√¥njuge')}"></c:when>
 				<c:when
-					test="${requestScope[f:concat('grauParentesco',i)] eq 'pais/avÛs/bisavÛs'}">
+					test="${requestScope[f:concat('grauParentesco',i)] eq 'pais/av√≥s/bisav√≥s'}">
 					<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
 					<c:import url="/paginas/expediente/modelos/inc_tit_declaracao.jsp" />
 					<p style="TEXT-INDENT: 2cm" align="justify">Declaro, para os
-					devidos fins, que meu(minha) pai(m„e) <b>${requestScope[f:concat('maepai',i)]}</b> n„o aufere
-					rendimentos, de quaisquer espÈcies, superiores ao limite
-					estabelecido pela legislaÁ„o do Imposto de Renda, ou seja, R$
-					1.903,98 (mil, novecentos e trÍs reais e noventa e oito centavos) mensais.</p>
+					devidos fins, que meu(minha) pai(m√£e) <b>${requestScope[f:concat('maepai',i)]}</b> n√£o aufere
+					rendimentos, de quaisquer esp√©cies, superiores ao limite
+					estabelecido pela legisla√ß√£o do Imposto de Renda, ou seja, R$
+					1.903,98 (mil, novecentos e tr√™s reais e noventa e oito centavos) mensais.</p>
 
 					<p style="TEXT-INDENT: 2cm" align="justify">Outrossim, declaro
-					estar ciente de que a legislaÁ„o do Imposto de Renda - Lei n&ordm;
-					9250/95 <u>veda</u>, em seu art. 35, &sect; 4&ordm;, a deduÁ„o
+					estar ciente de que a legisla√ß√£o do Imposto de Renda - Lei n&ordm;
+					9250/95 <u>veda</u>, em seu art. 35, &sect; 4&ordm;, a dedu√ß√£o
 					concomitante do montante referente a um mesmo dependente, na
-					determinaÁ„o da base de c·lculo do imposto, por mais de um
+					determina√ß√£o da base de c√°lculo do imposto, por mais de um
 					contribuinte.</p>
 
 					<p style="TEXT-INDENT: 2cm" align="justify">Comprometo-me a
-					informar qualquer alteraÁ„o na situaÁ„o acima descrita.</p>
+					informar qualquer altera√ß√£o na situa√ß√£o acima descrita.</p>
 
 					<c:import
 						url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" />
@@ -167,29 +167,29 @@
 					<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
 					<c:import url="/paginas/expediente/modelos/inc_tit_declaracao.jsp" />
 					<p style="TEXT-INDENT: 2cm" align="justify">Declaro, sob as
-					penas da lei, junto ‡ <c:choose>
+					penas da lei, junto √† <c:choose>
 						<c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when>
-						<c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise>
-					</c:choose>, com a finalidade de inclus„o do(s) dependente(s) <b>${requestScope[f:concat('nomeDependente',i)]}</b>
-					para deduÁ„o no c·lculo do Imposto de Renda retido na fonte, que <b>${requestScope[f:concat('paimae',i)]}</b>:
+						<c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise>
+					</c:choose>, com a finalidade de inclus√£o do(s) dependente(s) <b>${requestScope[f:concat('nomeDependente',i)]}</b>
+					para dedu√ß√£o no c√°lculo do Imposto de Renda retido na fonte, que <b>${requestScope[f:concat('paimae',i)]}</b>:
 					</p>
 					<br>
 					<br>
 					<p style="TEXT-INDENT: 2cm" align="justify">
 					<ul type="square">
 						<c:if test="${requestScope[f:concat('opcao1',i)] eq 'Sim'}">
-							<li>N„o inclui o referido dependente junto ‡ empresa/Ûrg„o
+							<li>N√£o inclui o referido dependente junto √† empresa/√≥rg√£o
 							onde trabalha.</li>
 						</c:if>
 						<c:if test="${requestScope[f:concat('opcao2',i)] eq 'Sim'}">
-							<li>N„o inclui o referido dependente por n„o exercer
+							<li>N√£o inclui o referido dependente por n√£o exercer
 							atividade remunerada.</li>
 						</c:if>
 					</ul>
 					</p>
 
 					<p style="TEXT-INDENT: 2cm" align="justify">Comprometo-me a
-					informar qualquer alteraÁ„o na situaÁ„o acima descrita.</p>
+					informar qualquer altera√ß√£o na situa√ß√£o acima descrita.</p>
 
 					<c:import
 						url="/paginas/expediente/modelos/inc_localDataAssinatura.jsp" />
@@ -199,7 +199,7 @@
 					<br>
 					<br>
 					________________________________________________________________</br>
-					Assinatura do(a) pai/m„e/respons·vel do menor sob guarda (firma
+					Assinatura do(a) pai/m√£e/respons√°vel do menor sob guarda (firma
 					reconhecida)</p>
 
 					<c:import

@@ -8,7 +8,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Transferência em Lote">
+<siga:pagina titulo="TransferÃªncia em Lote">
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
@@ -103,7 +103,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 
-			<h2>Transferência em Lote</h2>
+			<h2>TransferÃªncia em Lote</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -113,7 +113,7 @@
 					<ww:hidden name="postback" value="1" />
 					<table class="gt-form-table">
 						<tr class="header">
-							<td colspan="2">Transferência</td>
+							<td colspan="2">TransferÃªncia</td>
 						</tr>
 						<tr>
 							<td>Data:</td>
@@ -121,7 +121,7 @@
 									onblur="javascript:verifica_data(this,0);" /></td>
 						</tr>
 						<tr>
-							<td>Responsável:</td>
+							<td>ResponsÃ¡vel:</td>
 							<td><siga:selecao tema="simple" propriedade="subscritor"
 									modulo="siga" /> &nbsp;&nbsp;<ww:checkbox theme="simple"
 									name="substituicao" onclick="javascript:displayTitular(this);" />Substituto</td>
@@ -141,7 +141,7 @@
 								tema="simple" modulo="siga" /></td>
 						</tr>
 						<tr>
-							<td>Função do Responsável:</td>
+							<td>FunÃ§Ã£o do ResponsÃ¡vel:</td>
 							<td colspan="1"><input type="hidden" name="campos"
 								value="nmFuncaoSubscritor" /> <ww:textfield
 									name="nmFuncaoSubscritor" size="50" maxLength="128" />
@@ -168,12 +168,12 @@
 						</tr>
 						<c:if test="${tipoResponsavel == 3}">
 							<tr>
-								<td>Observação</td>
+								<td>ObservaÃ§Ã£o</td>
 								<td><ww:textfield size="30" name="obsOrgao" /></td>
 							</tr>
 						</c:if>
 						<tr>
-							<td>Despacho Único:</td>
+							<td>Despacho Ãšnico:</td>
 							<td>
 								<div id="div_tpdall">
 									<ww:select name="tpdall" id="tpdall"
@@ -215,10 +215,10 @@
 							<div class="gt-content-box gt-for-table">
 								<table class="gt-table">
 									<tr class="header">
-										<td rowspan="2" align="right">Número</td>
+										<td rowspan="2" align="right">NÃºmero</td>
 										<td colspan="3" align="center">Documento</td>
-										<td colspan="2" align="center">Última Movimentação</td>
-										<td rowspan="2">Descrição</td>
+										<td colspan="2" align="center">Ãšltima MovimentaÃ§Ã£o</td>
+										<td rowspan="2">DescriÃ§Ã£o</td>
 										<td rowspan="2" align="center"><input type="checkbox"
 											name="checkall" value="true" onclick="checkUncheckAll(this)" /></td>
 										<td rowspan="2">Despacho<c:if test="${secao==0}">
@@ -226,7 +226,7 @@
 									</tr>
 									<tr class="header">
 										<td align="center">Data</td>
-										<td align="center">Lotação</td>
+										<td align="center">LotaÃ§Ã£o</td>
 										<td align="center">Pessoa</td>
 										<td align="center">Data</td>
 										<td align="center">Pessoa</td>
@@ -319,7 +319,7 @@
 												</div>
 											</div>
 											<div id="div_${lbl_x}" style="display: none">Despacho
-												Único</div></td>
+												Ãšnico</div></td>
 									</tr>
 									</c:if>
 									</c:forEach>

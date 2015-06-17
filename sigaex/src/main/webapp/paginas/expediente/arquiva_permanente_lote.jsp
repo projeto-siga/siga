@@ -57,7 +57,7 @@
 					onblur="javascript:verifica_data(this,0);" /></td>
 			</tr>
 			<tr>
-				<td>Responsável:</td>
+				<td>ResponsÃ¡vel:</td>
 				<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
 				&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 					onclick="javascript:displayTitular(this);" />Substituto</td>
@@ -77,7 +77,7 @@
 				tema="simple" modulo="siga" /></td>
 			</tr>
 			<tr>
-				<td>Função do Responsável:</td>
+				<td>FunÃ§Ã£o do ResponsÃ¡vel:</td>
 				<td colspan="1"><input type="hidden" name="campos"
 					value="nmFuncaoSubscritor" /> <ww:textfield
 					name="nmFuncaoSubscritor" size="50" maxLength="128" /> (opcional)</td>
@@ -104,7 +104,7 @@
 					</a>
 				</pg:pages>  
 				&nbsp;&nbsp;&nbsp;&nbsp;<input id="pag" type="text" value="${currentPageNumber}" size="3" />
-				<input id="pag_btn" type="button" value="Ir para página" onclick="javascript: sbmt(($('#pag').val()-1)*100);" class="gt-btn-medium" style="display: inline;" />
+				<input id="pag_btn" type="button" value="Ir para pÃ¡gina" onclick="javascript: sbmt(($('#pag').val()-1)*100);" class="gt-btn-medium" style="display: inline;" />
 				</p>
 				<script>
 				$('#pag').keypress(function(eve) {
@@ -129,15 +129,15 @@
 								name="checkall" onclick="checkUncheckAll(this)" />
 							</c:if>
 						</td>
-						<td rowspan="2" align="right">Número</td>
+						<td rowspan="2" align="right">NÃºmero</td>
 								<td rowspan="2" align="center">A arquivar desde...</td>
 								<td colspan="3" align="center">Documento</td>
-								<%--<td colspan="2" align="center">Última Movimentação</td> --%>
-								<td rowspan="2">Descrição</td>
+								<%--<td colspan="2" align="center">Ãšltima MovimentaÃ§Ã£o</td> --%>
+								<td rowspan="2">DescriÃ§Ã£o</td>
 							</tr>
 							<tr class="header">
 								<td align="center">Data</td>
-								<td align="center">Lotação</td>
+								<td align="center">LotaÃ§Ã£o</td>
 								<td align="center">Pessoa</td>
 								<%--<td align="center">Data</td>
 								<td align="center">Pessoa</td> --%>

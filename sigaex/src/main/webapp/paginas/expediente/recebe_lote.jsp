@@ -79,14 +79,14 @@
 							<tr class="header">
 								<td rowspan="2" align="center"><input type="checkbox"
 									name="checkall" onclick="checkUncheckAll(this)" /></td>
-								<td rowspan="2" align="right">Número</td>
+								<td rowspan="2" align="right">NÃºmero</td>
 								<td colspan="3" align="center">Documento</td>
-								<td colspan="2" align="center">Última Movimentação</td>
-								<td rowspan="2">Descrição</td>
+								<td colspan="2" align="center">Ãšltima MovimentaÃ§Ã£o</td>
+								<td rowspan="2">DescriÃ§Ã£o</td>
 							</tr>
 							<tr class="header">
 								<td align="center">Data</td>
-								<td align="center">Lotação</td>
+								<td align="center">LotaÃ§Ã£o</td>
 								<td align="center">Pessoa</td>
 								<td align="center">Data</td>
 								<td align="center">Pessoa</td>

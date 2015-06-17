@@ -3,14 +3,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-LICENÇA PARA TRATAR DE INTERESSSES PARTICULARES -->
+LICENÃ‡A PARA TRATAR DE INTERESSSES PARTICULARES -->
 
 <c:set var="esconderTexto" value="sim" scope="request" />
 <c:set var="para" value="diretorForo" scope="request" />
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">
 	<mod:entrevista>
 	
-			<mod:memo colunas="60" linhas="3" titulo="MOTIVO DA LICENÇA" var="motivo" />
+			<mod:memo colunas="60" linhas="3" titulo="MOTIVO DA LICENÃ‡A" var="motivo" />
 			
 	</mod:entrevista>
 
@@ -19,9 +19,9 @@ LICENÇA PARA TRATAR DE INTERESSSES PARTICULARES -->
 		<mod:valor var="texto_requerimento">
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a)
-		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência que se digne encaminhar
-		o requerimento de <b>LICENÇA PARA TRATAR DE INTERESSES PARTICULARES</b>, 
-		em anexo, ao E. Tribunal Regional Federal da 2ª Região.
+		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia que se digne encaminhar
+		o requerimento de <b>LICENÃ‡A PARA TRATAR DE INTERESSES PARTICULARES</b>, 
+		em anexo, ao E. Tribunal Regional Federal da 2Âª RegiÃ£o.
 		</p>
 		</mod:valor>
 		
@@ -29,23 +29,23 @@ LICENÇA PARA TRATAR DE INTERESSSES PARTICULARES -->
 		<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a)
-		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência, nos termos do artigo 91 da Lei n.º 8.112/90, 
-		com a redação dada pela Lei n.º 9.527/97, alterado pela Medida Provisória 
-		n.º 2.225-45, em vigor por força do art. 2º da Emenda Constitucional 
-		n.º 32/2001, regulamentado pela Resolução n.º 5/2008 do Conselho da 
-		Justiça Federal, <b>LICENÇA PARA TRATAR DE INTERESSES PARTICULARES</b>
+		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia, nos termos do artigo 91 da Lei n.Âº 8.112/90, 
+		com a redaÃ§Ã£o dada pela Lei n.Âº 9.527/97, alterado pela Medida ProvisÃ³ria 
+		n.Âº 2.225-45, em vigor por forÃ§a do art. 2Âº da Emenda Constitucional 
+		n.Âº 32/2001, regulamentado pela ResoluÃ§Ã£o n.Âº 5/2008 do Conselho da 
+		JustiÃ§a Federal, <b>LICENÃ‡A PARA TRATAR DE INTERESSES PARTICULARES</b>
 		, pelos motivos expostos a seguir:
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${motivo}
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		Está ciente de que, nos termos do art. 79, b e c, da 
-		Resolução n.º 5/2008 do Conselho da Justiça Federal, 
-		<b>continuará na titularidade do cargo</b>, permanecendo sujeito às proibições 
-		e aos deveres contidos na Lei nº 8.112/90, assim como terá <b>suspensa</b> 
-		a contagem do período aquisitivo para fins de férias, retomando-se a 
-		contagem <b>na data do retorno da licença</b>.
+		EstÃ¡ ciente de que, nos termos do art. 79, b e c, da 
+		ResoluÃ§Ã£o n.Âº 5/2008 do Conselho da JustiÃ§a Federal, 
+		<b>continuarÃ¡ na titularidade do cargo</b>, permanecendo sujeito Ã s proibiÃ§Ãµes 
+		e aos deveres contidos na Lei nÂº 8.112/90, assim como terÃ¡ <b>suspensa</b> 
+		a contagem do perÃ­odo aquisitivo para fins de fÃ©rias, retomando-se a 
+		contagem <b>na data do retorno da licenÃ§a</b>.
 		</p>
 		
 		<c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" />
@@ -71,26 +71,26 @@ LICENÇA PARA TRATAR DE INTERESSSES PARTICULARES -->
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<i>
-		Declaro estar ciente de que o § 2º do art. 183 da Lei n.º 8.112/90, 
-		acrescentado pela Lei n.º 10.667/2003, prevê que o servidor afastado ou 
-		licenciado do cargo efetivo, sem direito à remuneração, inclusive para 
+		Declaro estar ciente de que o Â§ 2Âº do art. 183 da Lei n.Âº 8.112/90, 
+		acrescentado pela Lei n.Âº 10.667/2003, prevÃª que o servidor afastado ou 
+		licenciado do cargo efetivo, sem direito Ã  remuneraÃ§Ã£o, inclusive para 
 		servir em organismo oficial internacional do qual o Brasil seja membro 
-		efetivo ou com o qual coopere, ainda que contribua para regime de previdência 
-		social no exterior, terá suspenso o seu vínculo com o regime do Plano de 
-		Seguridade Social do Servidor Público enquanto durar o afastamento ou a 
-		licença, não lhe assistindo, neste período, os benefícios do mencionado 
-		regime de previdência.
+		efetivo ou com o qual coopere, ainda que contribua para regime de previdÃªncia 
+		social no exterior, terÃ¡ suspenso o seu vÃ­nculo com o regime do Plano de 
+		Seguridade Social do Servidor PÃºblico enquanto durar o afastamento ou a 
+		licenÃ§a, nÃ£o lhe assistindo, neste perÃ­odo, os benefÃ­cios do mencionado 
+		regime de previdÃªncia.
 		</i>
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<i>
-		Declaro, ainda, estar ciente de que o § 3º do referido artigo, também 
-		acrescentado pela Lei n.º 10.667/2003, assegura ao servidor, na situação 
-		acima descrita, a manutenção da vinculação ao regime do Plano de Seguridade 
-		Social do Servidor Público, mediante o recolhimento mensal da respectiva 
-		contribuição, no mesmo percentual devido pelos servidores em atividade, 
-		incidente sobre a remuneração total do cargo a que faz jus no exercício de 
-		suas atribuições, computando-se, para esse efeito, inclusive, as vantagens 
+		Declaro, ainda, estar ciente de que o Â§ 3Âº do referido artigo, tambÃ©m 
+		acrescentado pela Lei n.Âº 10.667/2003, assegura ao servidor, na situaÃ§Ã£o 
+		acima descrita, a manutenÃ§Ã£o da vinculaÃ§Ã£o ao regime do Plano de Seguridade 
+		Social do Servidor PÃºblico, mediante o recolhimento mensal da respectiva 
+		contribuiÃ§Ã£o, no mesmo percentual devido pelos servidores em atividade, 
+		incidente sobre a remuneraÃ§Ã£o total do cargo a que faz jus no exercÃ­cio de 
+		suas atribuiÃ§Ãµes, computando-se, para esse efeito, inclusive, as vantagens 
 		pessoais.
 		</i>
 		</p>

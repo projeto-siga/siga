@@ -15,7 +15,7 @@ function sbmt() {
 }
 </script>
 
-<siga:pagina titulo="MovimentaÁ„o">
+<siga:pagina titulo="Movimenta√ß√£o">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -24,7 +24,7 @@ function sbmt() {
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Cancelamento de MovimentaÁ„o - ${mob.siglaEDescricaoCompleta}</h2>
+			<h2>Cancelamento de Movimenta√ß√£o - ${mob.siglaEDescricaoCompleta}</h2>
 
 			<div class="gt-content-box gt-for-table">
 			
@@ -41,7 +41,7 @@ function sbmt() {
 					</tr>
 					<ww:textfield name="dtMovString" label="Data (Opcional)" />
 					<tr>
-						<td>Respons·vel (Opcional):</td>
+						<td>Respons√°vel (Opcional):</td>
 						<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 						&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 							onclick="javascript:displayTitular(this);" />Substituto</td>

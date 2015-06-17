@@ -8,7 +8,7 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
-<siga:pagina titulo="Transferência">
+<siga:pagina titulo="TransferÃªncia">
 
 <ww:form name="frm" action="testar_pdf_gravar"
 				namespace="/expediente/doc" theme="simple" method="GET">

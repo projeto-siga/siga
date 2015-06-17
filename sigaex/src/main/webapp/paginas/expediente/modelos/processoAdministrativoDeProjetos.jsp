@@ -66,12 +66,12 @@
 		FIM CABECALHO --> --%>
 
 		<br />
-		<%-- Não serão necessários os campos Apenso e volume abaixo, por isto estão comentados  --%>
+		<%-- NÃ£o serÃ£o necessÃ¡rios os campos Apenso e volume abaixo, por isto estÃ£o comentados  --%>
 		<table align="center" width="60%" border="1" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
 				<td width="30%" bgcolor="#FFFFFF" align="center"><br />
-				<b>Processo Nº</b><br />
+				<b>Processo NÂº</b><br />
 				<br />
 				</td>
 				<%-- 		<td width="15%" bgcolor="#FFFFFF" align="center"><b>Apenso</b></td> 
@@ -92,7 +92,7 @@
 				bgcolor="#000000">
 				<tr>
 					<td width="30%" bgcolor="#FFFFFF" align="center"><br />
-					<b>Nº no Sistema Antigo</b><br />
+					<b>NÂº no Sistema Antigo</b><br />
 					<br />
 					</td>
 					<%-- 		<td width="15%" bgcolor="#FFFFFF" align="center"><b>Apenso</b></td> 
@@ -154,8 +154,8 @@
 			bgcolor="#000000">
 			<tr>
 				<td bgcolor="#FFFFFF" align="left">
-				Findo este processo, deve-se encaminhá-lo ao Arquivo para guarda permanente, 
-				não cabendo eliminação.
+				Findo este processo, deve-se encaminhÃ¡-lo ao Arquivo para guarda permanente, 
+				nÃ£o cabendo eliminaÃ§Ã£o.
 				<br />
 				<br />
 				</td>
@@ -187,7 +187,7 @@
 	<%--
 	<mod:resumo visivel="false">
 		<mod:topico descricao="Dt. Abertura" valor="${doc.dtDocDDMMYYYY}" />
-		<mod:topico descricao="Dt. Término" valor="02/02/2002" />
+		<mod:topico descricao="Dt. TÃ©rmino" valor="02/02/2002" />
 		<mod:topico descricao="Total" valor="R$1000,00" />
 		<mod:topico descricao="Empresa" valor="fulano de tal" />
 	</mod:resumo>

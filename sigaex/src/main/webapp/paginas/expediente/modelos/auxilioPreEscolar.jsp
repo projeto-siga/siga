@@ -28,9 +28,9 @@
 		<mod:letra tamanho="${tl}">
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp" />
 		
-		<h3><b>RECADASTRAMENTO - AUXÕLIO PR…-ESCOLAR</b></h3>
+		<h3><b>RECADASTRAMENTO - AUX√çLIO PR√â-ESCOLAR</b></h3>
 
-		<h4><p><b>1 - DADOS DO MAGISTRADO/SERVIDOR BENEFICI¡RIO</b><p/></h4>
+		<h4><p><b>1 - DADOS DO MAGISTRADO/SERVIDOR BENEFICI√ÅRIO</b><p/></h4>
 		<c:import url="/paginas/expediente/modelos/subscritor.jsp" />
 		
 		<h4><p><b>2 - DEPENDENTES</b><p/></h4>
@@ -49,17 +49,17 @@
 			</c:forEach>
 		</table>
 
-		<h4><p><b>3 - DECLARA«√O</b></h4><br/>
-			Declaro estar ciente dos termos da ResoluÁ„o CJF n&ordm; 588, de 29/11/2007, que dispıe sobre o AuxÌlio PrÈ-Escolar, e de que o respectivo reembolso ser· realizado em 
+		<h4><p><b>3 - DECLARA√á√ÉO</b></h4><br/>
+			Declaro estar ciente dos termos da Resolu√ß√£o CJF n&ordm; 588, de 29/11/2007, que disp√µe sobre o Aux√≠lio Pr√©-Escolar, e de que o respectivo reembolso ser√° realizado em 
 		Folha de Pagamento, conforme apresentado abaixo:<br/>
 		
-			- O auxÌlio prÈ-escolar ser· devido a partir do mÍs em que for feita a inscriÁ„o do dependente, n„o sendo pagos valores relativos a meses anteriores;<br/>
-			- O auxÌlio prÈ-escolar ser· pago a cada crianÁa na faixa et·ria compreendida desde o nascimento atÈ o mÍs de completar 6 anos de idade inclusive; ou quando ingressar no ensino fundamental;<br/>
-			- O benefici·rio È respons·vel por comunicar a administraÁ„o qualquer situaÁ„o que cause perda do benefÌcio, pelas hipÛteses do art. 14 da referida ResoluÁ„o;<br/>
-			- Declaro, ainda, que o menor(es) acima relacionado(s) n„o est·(„o) cadastrado(s) como dependente(s), deste benefÌcio, ou programa similar em outro Ûrg„o ou entidade da AdministraÁ„o P˙blica direta ou indireta.
+			- O aux√≠lio pr√©-escolar ser√° devido a partir do m√™s em que for feita a inscri√ß√£o do dependente, n√£o sendo pagos valores relativos a meses anteriores;<br/>
+			- O aux√≠lio pr√©-escolar ser√° pago a cada crian√ßa na faixa et√°ria compreendida desde o nascimento at√© o m√™s de completar 6 anos de idade inclusive; ou quando ingressar no ensino fundamental;<br/>
+			- O benefici√°rio √© respons√°vel por comunicar a administra√ß√£o qualquer situa√ß√£o que cause perda do benef√≠cio, pelas hip√≥teses do art. 14 da referida Resolu√ß√£o;<br/>
+			- Declaro, ainda, que o menor(es) acima relacionado(s) n√£o est√°(√£o) cadastrado(s) como dependente(s), deste benef√≠cio, ou programa similar em outro √≥rg√£o ou entidade da Administra√ß√£o P√∫blica direta ou indireta.
 		<p/>
 		<p>
-			Declaro, ainda, que preencho os requisitos previstos pelo art. 5&deg; da ResoluÁ„o n&ordm; 588, de 29/11/2007.
+			Declaro, ainda, que preencho os requisitos previstos pelo art. 5&deg; da Resolu√ß√£o n&ordm; 588, de 29/11/2007.
 		</p>
 		<p>${doc.dtExtenso}
 		</p>
@@ -71,11 +71,11 @@
 			<tr>
 				<td bgcolor="#FFFFFF">
 					<p>
-						Tratando-se de dependentes excepcionais ser· considerada, como limite para o atendimento, a idade mental correspondente a 6 (seis) anos de idade, comprovada mediante laudo mÈdico, homologado pela ·rea competente do ”rg„o.
+						Tratando-se de dependentes excepcionais ser√° considerada, como limite para o atendimento, a idade mental correspondente a 6 (seis) anos de idade, comprovada mediante laudo m√©dico, homologado pela √°rea competente do √ìrg√£o.
 					</p>
 					<br/><br/>
 					<p>
-						Servidores requisitados ou cedidos ou que exerÁam mais de um cargo, devem apresentar declaraÁ„o fornecida pelo outro Ûrg„o de que n„o usufruem benefÌcio semelhante, informando o valor da remuneraÁ„o percebida naquele Ûrg„o.
+						Servidores requisitados ou cedidos ou que exer√ßam mais de um cargo, devem apresentar declara√ß√£o fornecida pelo outro √≥rg√£o de que n√£o usufruem benef√≠cio semelhante, informando o valor da remunera√ß√£o percebida naquele √≥rg√£o.
 					</p>
 				</td>
 			</tr>

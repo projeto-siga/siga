@@ -6,15 +6,15 @@
 
 <!-- 
 Este modelo trata da
-DesignaÁ„o do Servidor
-Ultima atualizaÁ„o 12/03/2007
+Designa√ß√£o do Servidor
+Ultima atualiza√ß√£o 12/03/2007
  -->
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="DETALHES DA DESIGNA«√O">
+		<mod:grupo titulo="DETALHES DA DESIGNA√á√ÉO">
 			<mod:grupo>
-				<mod:funcao titulo="FunÁ„o" var="funcaoComissionada" />
+				<mod:funcao titulo="Fun√ß√£o" var="funcaoComissionada" />
 			</mod:grupo>
 		</mod:grupo>
 
@@ -51,16 +51,16 @@ Ultima atualizaÁ„o 12/03/2007
 		<br>
 
 		<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify">O JUIZ FEDERAL -
-		DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI«OS AUXILIARES DA
-		JUSTI«A - SE«√O JUDICI¡RIA DO RIO DE JANEIRO, no uso de suas
-		atribuiÁıes legais, ${textoPortaria }, RESOLVE:</p><!-- FIM ABERTURA --> <br>
+		DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI√áOS AUXILIARES DA
+		JUSTI√áA - SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO, no uso de suas
+		atribui√ß√µes legais, ${textoPortaria }, RESOLVE:</p><!-- FIM ABERTURA --> <br>
 		<br>
 		<br>
 	
 		<p style="MARGIN-LEFT: 2cm" align="justify">DESIGNAR o(a) servidor(a) <b>${doc.subscritor.descricao}</b>,
-		<b>${doc.subscritor.cargo.nomeCargo}</b>, <b>${doc.subscritor.padraoReferenciaInvertido}</b>, matrÌcula n&ordm;
-		<b>${doc.subscritor.sigla}</b>, lotado no(a) <b>${doc.subscritor.lotacao.descricao}</b>, para exercer a funÁ„o
-		comissionada de <b>${requestScope['funcaoComissionada_funcaoSel.descricao']}</b> (FC <b>${requestScope['funcaoComissionada_funcaoSel.sigla']}</b>), a partir da publicaÁ„o desta portaria.</p>
+		<b>${doc.subscritor.cargo.nomeCargo}</b>, <b>${doc.subscritor.padraoReferenciaInvertido}</b>, matr√≠cula n&ordm;
+		<b>${doc.subscritor.sigla}</b>, lotado no(a) <b>${doc.subscritor.lotacao.descricao}</b>, para exercer a fun√ß√£o
+		comissionada de <b>${requestScope['funcaoComissionada_funcaoSel.descricao']}</b> (FC <b>${requestScope['funcaoComissionada_funcaoSel.sigla']}</b>), a partir da publica√ß√£o desta portaria.</p>
 		<br>
 		<br>
 
@@ -89,9 +89,9 @@ Ultima atualizaÁ„o 12/03/2007
 				<table align="center" border="1" cellpadding="1" cellspacing="1">
 					<tr>
 						<td><font size="1">Publicada no Boletim Interno "on
-						line" de ___/__/___, nos termos do art.15, ß 4∫, da Lei n∫ 9527 de
-						10/12/97, publicada no D.O.U. de 11/12/97 c/c com o art. 7∫ da
-						ResoluÁ„o n∫ 284/2002-CJF.</font> <br>
+						line" de ___/__/___, nos termos do art.15, ¬ß 4¬∫, da Lei n¬∫ 9527 de
+						10/12/97, publicada no D.O.U. de 11/12/97 c/c com o art. 7¬∫ da
+						Resolu√ß√£o n¬∫ 284/2002-CJF.</font> <br>
 						<br>
 						<br>
 

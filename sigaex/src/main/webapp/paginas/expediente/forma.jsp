@@ -38,7 +38,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Edição de Forma</h2>
+			<h2>EdiÃ§Ã£o de Forma</h2>
 
 			<div class="gt-content-box gt-for-table">
 			
@@ -55,7 +55,7 @@
 						<td colspan="2">Dados da Forma</td>
 					</tr>
 					<tr>
-						<td width="20%">Descrição:</td>
+						<td width="20%">DescriÃ§Ã£o:</td>
 						<td width="80%"><ww:textfield name="descricao" size="80" /></td>
 					</tr>
 					<tr>
@@ -130,7 +130,7 @@
 			$("#gravar_sigla").attr("value", sigla);
 			var characterReg = /^[A-Za-z]{3}$/;
 			if(!characterReg.test(sigla)) {
-				$('#mensagem').html('Sigla inválida. A sigla deve ser formada por 3 letras.').css('color','#FF0000');
+				$('#mensagem').html('Sigla invÃ¡lida. A sigla deve ser formada por 3 letras.').css('color','#FF0000');
 				return;
 		    }	
 			$.ajax({				     				  

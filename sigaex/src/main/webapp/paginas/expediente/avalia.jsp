@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -26,7 +26,7 @@ function sbmt() {
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Avaliação - ${mob.sigla}</h2>
+			<h2>AvaliaÃ§Ã£o - ${mob.sigla}</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -38,7 +38,7 @@ function sbmt() {
 
 			<table class="gt-form-table">
 				<tr class="header">
-					<td colspan="2">Avaliação</td>
+					<td colspan="2">AvaliaÃ§Ã£o</td>
 				</tr>
 				<tr>
 					<td>Data:</td>
@@ -46,7 +46,7 @@ function sbmt() {
 						onblur="javascript:verifica_data(this,0);" /></td>
 				</tr>
 				<tr>
-					<td>Responsável:</td>
+					<td>ResponsÃ¡vel:</td>
 					<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
 					&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 						onclick="javascript:displayTitular(this);" />Substituto</td>
@@ -65,9 +65,9 @@ function sbmt() {
 				<td colspan="3"><siga:selecao propriedade="titular"
 							tema="simple" modulo="siga" /></td>
 				</tr>
-				<siga:selecao titulo="Nova Classificação (opcional):" propriedade="classificacao" modulo="sigaex" />
+				<siga:selecao titulo="Nova ClassificaÃ§Ã£o (opcional):" propriedade="classificacao" modulo="sigaex" />
 				<tr>
-					<td>Motivo da reclassificação<br/> (obrigatório se informada nova classificação):</td>
+					<td>Motivo da reclassificaÃ§Ã£o<br/> (obrigatÃ³rio se informada nova classificaÃ§Ã£o):</td>
 					<td width="75%"><ww:textfield
 						name="descrMov" size="50" maxLength="128" theme="simple"/>
 					</td>
@@ -94,7 +94,7 @@ function sbmt() {
 				</c:if>--%>
 				<c:if test="${tipoResponsavel == 3}">
 					<tr>
-						<td>Observação</td>
+						<td>ObservaÃ§Ã£o</td>
 						<td><ww:textfield size="30" name="obsOrgao" /></td>
 					</tr>
 				</c:if>

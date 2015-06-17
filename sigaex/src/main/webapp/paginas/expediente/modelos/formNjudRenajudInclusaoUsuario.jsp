@@ -3,22 +3,22 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!-- este modelo trata de
-FORMULARIO DE inclusao de USU¡RIO-->
+FORMULARIO DE inclusao de USU√ÅRIO-->
 
 <mod:modelo>
 	<mod:entrevista>
 
 
 		<mod:grupo>
-			<mod:selecao titulo="Incluir Usu·rio" opcoes="Magistrado;Servidor"
+			<mod:selecao titulo="Incluir Usu√°rio" opcoes="Magistrado;Servidor"
 				var="tipoUsuario" reler="sim" /><br />
 			<mod:texto titulo="E-mail Institucional (alias)" var="email" largura="20"
 				maxcaracteres="30" obrigatorio="Sim" />@jfrj.jus.br	
 		</mod:grupo>
 
-		<mod:grupo titulo="EndereÁo funcional do usu·rio">
+		<mod:grupo titulo="Endere√ßo funcional do usu√°rio">
 			<mod:mensagem titulo=""
-				texto="(Incluindo Rua, Avenida, PraÁa, n˙mero do prÈdio, bloco, andar e sala, se pertinente)"
+				texto="(Incluindo Rua, Avenida, Pra√ßa, n√∫mero do pr√©dio, bloco, andar e sala, se pertinente)"
 				vermelho="" /><br /><br />
 			<mod:texto titulo="Logradouro" var="logradouro" largura="40"
 				obrigatorio="Sim" maxcaracteres="100" /><br />
@@ -29,22 +29,22 @@ FORMULARIO DE inclusao de USU¡RIO-->
 			<br />
 		</mod:grupo>
 		<mod:grupo titulo="Telefone funcional">
-			<mod:texto titulo="CÛdigo de ·rea" var="codArea" largura="2"
+			<mod:texto titulo="C√≥digo de √°rea" var="codArea" largura="2"
 				maxcaracteres="2" obrigatorio="Sim" />
-			<mod:texto titulo="N˙mero" var="telefone" largura="10"
+			<mod:texto titulo="N√∫mero" var="telefone" largura="10"
 				maxcaracteres="10" obrigatorio="Sim" />
 		</mod:grupo>
 
 		<c:if test="${tipoUsuario == 'Magistrado'}">
 			<mod:grupo>
 				<mod:mensagem
-					texto="Para indicaÁ„o de novo usu·rio, no caso de remoÁ„o do
-					magistrado para outra SeÁ„o Judici·ria ou Tribunal, dever· ser
-					preenchido e encaminhado ‡ SEJUD o respectivo formul·rio de
-					exclus„o. Caso o magistrado j· tenha sido removido, o formul·rio de
-					solicitaÁ„o de exclus„o poder· ser encaminhado pelo Diretor de
+					texto="Para indica√ß√£o de novo usu√°rio, no caso de remo√ß√£o do
+					magistrado para outra Se√ß√£o Judici√°ria ou Tribunal, dever√° ser
+					preenchido e encaminhado √† SEJUD o respectivo formul√°rio de
+					exclus√£o. Caso o magistrado j√° tenha sido removido, o formul√°rio de
+					solicita√ß√£o de exclus√£o poder√° ser encaminhado pelo Diretor de
 					Secretaria."
-					titulo="ObservaÁ„o" vermelho="N„o" />
+					titulo="Observa√ß√£o" vermelho="N√£o" />
 			</mod:grupo>
 		</c:if>
 		<c:if test="${tipoUsuario == 'Servidor'}">
@@ -52,13 +52,13 @@ FORMULARIO DE inclusao de USU¡RIO-->
 				<mod:pessoa titulo="Nome do Juiz autorizador" var="juiz" />
 			</mod:grupo>
 
-			<mod:grupo titulo="ObservaÁıes:">
+			<mod:grupo titulo="Observa√ß√µes:">
 				<ol style="list-style-type: decimal; font-weight: bold;">
-					<li>No caso de remoÁ„o do servidor, para indicaÁ„o de novo
-					usu·rio, dever· ser preenchido e encaminhado ‡ SEJUD o respectivo
-					formul·rio de exclus„o;</li>
-					<li>Antes de finalizar o documento, dever· ser incluÌdo o nome
-					do magistrado como cossignat·rio.</li>
+					<li>No caso de remo√ß√£o do servidor, para indica√ß√£o de novo
+					usu√°rio, dever√° ser preenchido e encaminhado √† SEJUD o respectivo
+					formul√°rio de exclus√£o;</li>
+					<li>Antes de finalizar o documento, dever√° ser inclu√≠do o nome
+					do magistrado como cossignat√°rio.</li>
 				</ol>
 			</mod:grupo>
 
@@ -94,7 +94,7 @@ FORMULARIO DE inclusao de USU¡RIO-->
 						</tr>
 						<tr>
 							<td align="right">
-								<p><b>Formul·rio N&ordm; ${doc.codigo}</b></p><br/>
+								<p><b>Formul√°rio N&ordm; ${doc.codigo}</b></p><br/>
 							</td>
 						</tr>
 						
@@ -115,14 +115,14 @@ FORMULARIO DE inclusao de USU¡RIO-->
 
 			<table bgcolor="#000000" border="1" cellpadding="5" width="900" align="center">
 				<tr>
-					<td bgcolor="#FFFFFF" colspan="3" align="left"><b> 1.1 - SOLICITA«√O DE
+					<td bgcolor="#FFFFFF" colspan="3" align="left"><b> 1.1 - SOLICITA√á√ÉO DE
 					CADASTRAMENTO DE <c:if test="${tipoUsuario == 'Magistrado'}">MAGISTRADO</c:if>
 					<c:if test="${tipoUsuario == 'Servidor'}">SERVIDOR</c:if> </b></td>
 				</tr>
 
 				<tr>
-					<td bgcolor="#FFFFFF" colspan="3" align="left"><b>1.1 - IDENTIFICA«√O DO
-					USU¡RIO </b></td>
+					<td bgcolor="#FFFFFF" colspan="3" align="left"><b>1.1 - IDENTIFICA√á√ÉO DO
+					USU√ÅRIO </b></td>
 				</tr>
 
 				<tr>
@@ -145,13 +145,13 @@ FORMULARIO DE inclusao de USU¡RIO-->
 				</tr>
 
 				<tr>
-					<td bgcolor="#FFFFFF" colspan="3" align="left"><b> 1.2 - ENDERE«O FUNCIONAL
-					DO USU¡RIO</b></td>
+					<td bgcolor="#FFFFFF" colspan="3" align="left"><b> 1.2 - ENDERE√áO FUNCIONAL
+					DO USU√ÅRIO</b></td>
 				</tr>
 
 				<tr>
 					<td bgcolor="#FFFFFF" align="left" colspan="3"><b>LOGRADOURO (INCLUINDO RUA,
-					AVENIDA, PRA«A, N⁄MERO DO PR…DIO, BLOCO, ANDAR E SALA, SE
+					AVENIDA, PRA√áA, N√öMERO DO PR√âDIO, BLOCO, ANDAR E SALA, SE
 					PERTINENTE)</b><br />
 					${logradouro}</td>
 				</tr>
@@ -172,47 +172,47 @@ FORMULARIO DE inclusao de USU¡RIO-->
 					<td bgcolor="#FFFFFF" colspan="2"><b>TERMO DE RESPONSABILIDADE</b> <br />
 					<br />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					Declaro estar ciente das atribuiÁıes referentes ‡ seguranÁa do
-					sistema RENAJUD, contidas no convÍnio celebrado entre a Uni„o, por
-					intermÈdio dos MinistÈrios das Cidades e da JustiÁa, e o Conselho
-					Nacional de JustiÁa (CNJ), e do respectivo regulamento,<b>
+					Declaro estar ciente das atribui√ß√µes referentes √† seguran√ßa do
+					sistema RENAJUD, contidas no conv√™nio celebrado entre a Uni√£o, por
+					interm√©dio dos Minist√©rios das Cidades e da Justi√ßa, e o Conselho
+					Nacional de Justi√ßa (CNJ), e do respectivo regulamento,<b>
 					comprometendo-me a:</b> <br />
 					<br />
 					a) manter sigilo sobre os dados a que vier a ter acesso ou
-					conhecimento em raz„o do referido convÍnio, estando ciente do que
-					preceitua o Decreto n∫ 4.553, de 27 de dezembro de 2002
-					(salvaguarda de dados, informaÁıes, documentos e materiais
+					conhecimento em raz√£o do referido conv√™nio, estando ciente do que
+					preceitua o Decreto n¬∫ 4.553, de 27 de dezembro de 2002
+					(salvaguarda de dados, informa√ß√µes, documentos e materiais
 					sigilosos); <br />
 					<br />
 
 
 					b) utilizar os dados a que tiver acesso exclusivamente dentro das
-					atribuiÁıes de minha responsabilidade; <br />
+					atribui√ß√µes de minha responsabilidade; <br />
 					<br />
 
-					c) n„o revelar, fora do ‚mbito profissional, fato ou informaÁ„o de
-					qualquer natureza de que tenha conhecimento por forÁa de minhas
-					atribuiÁıes, salvo em decorrÍncia de decis„o competente na esfera
+					c) n√£o revelar, fora do √¢mbito profissional, fato ou informa√ß√£o de
+					qualquer natureza de que tenha conhecimento por for√ßa de minhas
+					atribui√ß√µes, salvo em decorr√™ncia de decis√£o competente na esfera
 					legal ou judicial ou de autoridade superior; <br />
 					<br />
-					d) manter absoluta cautela quando da exibiÁ„o de dados em tela ou
-					impressora ou, ainda, na gravaÁ„o em meios eletrÙnicos, a fim de
-					que deles n„o venham tomar ciÍncia pessoas n„o autorizadas; <br />
+					d) manter absoluta cautela quando da exibi√ß√£o de dados em tela ou
+					impressora ou, ainda, na grava√ß√£o em meios eletr√¥nicos, a fim de
+					que deles n√£o venham tomar ci√™ncia pessoas n√£o autorizadas; <br />
 					<br />
-					e) n„o me ausentar da estaÁ„o de trabalho sem encerrar a sess„o de
-					uso do sistema, a fim de garantir que pessoas n„o autorizadas
-					utilizem indevidamente as informaÁıes; <br />
+					e) n√£o me ausentar da esta√ß√£o de trabalho sem encerrar a sess√£o de
+					uso do sistema, a fim de garantir que pessoas n√£o autorizadas
+					utilizem indevidamente as informa√ß√µes; <br />
 					<br />
-					f) acompanhar a impress„o e recolher as listagens cuja emiss„o eu
+					f) acompanhar a impress√£o e recolher as listagens cuja emiss√£o eu
 					tenha solicitado; <br />
 					<br />
-					g) responder em todas as inst‚ncias pelas consequÍncias decorrentes
-					das aÁıes ou omissıes de minha parte, as quais possam pÙr em risco
+					g) responder em todas as inst√¢ncias pelas consequ√™ncias decorrentes
+					das a√ß√µes ou omiss√µes de minha parte, as quais possam p√¥r em risco
 					ou comprometer a exclusividade de conhecimento de minha senha ou
-					das transaÁıes em que esteja habilitado. <br />
+					das transa√ß√µes em que esteja habilitado. <br />
 					<br />
-					Declaro ter conhecimento de que estou sujeito ‡s penalidades
-					previstas em lei pela n„o-observ‚ncia do contido neste Termo de
+					Declaro ter conhecimento de que estou sujeito √†s penalidades
+					previstas em lei pela n√£o-observ√¢ncia do contido neste Termo de
 					Responsabilidade.</td>
 				</tr>
 
@@ -232,7 +232,7 @@ FORMULARIO DE inclusao de USU¡RIO-->
 				<br />
 				<table bgcolor="#000000" border="1" cellpadding="2" width="900" align="center">
 					<tr>
-						<td bgcolor="#FFFFFF" colspan="2" align="left"><b>2- AUTORIZA«√O PARA
+						<td bgcolor="#FFFFFF" colspan="2" align="left"><b>2- AUTORIZA√á√ÉO PARA
 						CADASTRAMENTO</b></td>
 					</tr>
 					<tr>
@@ -249,7 +249,7 @@ FORMULARIO DE inclusao de USU¡RIO-->
 				<table bgcolor="#000000" border="1" cellpadding="2" width="900" align="center">
 					<tr>
 						<td bgcolor="#FFFFFF" colspan="2" align="left"><b>3- CADASTRAMENTO - CAMPO
-						RESTRITO ¿ SEJUD</b></td>
+						RESTRITO √Ä SEJUD</b></td>
 					</tr>
 
 					<tr>
@@ -283,7 +283,7 @@ FORMULARIO DE inclusao de USU¡RIO-->
 				<table bgcolor="#000000" border="1" cellpadding="2" width="900" align="center">
 					<tr>
 						<td bgcolor="#FFFFFF" colspan="2" align="left"><b>2- CADASTRAMENTO - CAMPO
-						RESTRITO ¿ SEJUD</b></td>
+						RESTRITO √Ä SEJUD</b></td>
 					</tr>
 
 					<tr>

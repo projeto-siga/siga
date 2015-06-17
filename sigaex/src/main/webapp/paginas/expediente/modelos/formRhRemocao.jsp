@@ -11,7 +11,7 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:lotacao titulo="PrÛxima lotaÁ„o" var="lotacao" />
+			<mod:lotacao titulo="Pr√≥xima lota√ß√£o" var="lotacao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="A partir de" var="dataInicio" />
@@ -45,7 +45,7 @@
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td align="left" width="40%">
-						<p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITA«√O
+						<p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITA√á√ÉO
 						N&ordm; ${doc.codigo}</p>
 						</td>
 						<td align="right" width="60%">
@@ -61,7 +61,7 @@
 		<br>
 		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForoSolicit.jsp" />
 
-		<p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>remoÁ„o</b>
+		<p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>remo√ß√£o</b>
 		do(a) servidor(a)<mod:identificacao pessoa="${requestScope['servidor_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" />
 		para o(a) ${f:lotacao(requestScope['lotacao_lotacaoSel.id']).descricao}<c:choose><c:when test="${not empty dataInicio}">, a partir de ${dataInicio}.</c:when><c:otherwise>.</c:otherwise></c:choose>
 		</p>

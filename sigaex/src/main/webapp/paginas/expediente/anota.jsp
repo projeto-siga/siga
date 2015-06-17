@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -39,7 +39,7 @@ function tamanho2() {
 }
 function corrige() {
 	if (tamanho2()<0) {
-		alert('Descrição com mais de 255 caracteres');
+		alert('DescriÃ§Ã£o com mais de 255 caracteres');
 		nota = new String();
 		nota = document.getElementById("descrMov").value;
 		document.getElementById("descrMov").value = nota.substring(0,255);
@@ -81,7 +81,7 @@ function popitup_movimentacao() {
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Anotação - ${mob.siglaEDescricaoCompleta}</h2>
+			<h2>AnotaÃ§Ã£o - ${mob.siglaEDescricaoCompleta}</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -102,7 +102,7 @@ function popitup_movimentacao() {
 
 			<table class="gt-form-table">
 				<tr class="header">
-					<td colspan="2">Anotação</td>
+					<td colspan="2">AnotaÃ§Ã£o</td>
 				</tr>
 				<tr>
 					<td>Data:</td>
@@ -110,7 +110,7 @@ function popitup_movimentacao() {
 						onblur="javascript:verifica_data(this,0);" /></td>
 				</tr>
 				<tr>
-					<td>Responsável:</td>
+					<td>ResponsÃ¡vel:</td>
 					<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 					&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 						onclick="javascript:displayTitular(this);" />Substituto</td>
@@ -130,7 +130,7 @@ function popitup_movimentacao() {
 							tema="simple" modulo="siga"/></td>
 				</tr>
 				<tr>
-					<td>Função do Responsável:</td>
+					<td>FunÃ§Ã£o do ResponsÃ¡vel:</td>
 					<td><input type="hidden" name="campos"
 						value="nmFuncaoSubscritor" /> <ww:textfield
 						name="nmFuncaoSubscritor" size="50" maxLength="128" theme="simple"/> (opcional)</td>
@@ -166,7 +166,7 @@ function popitup_movimentacao() {
 				</c:if>--%>
 				<c:if test="${tipoResponsavel == 3}">
 					<tr>
-						<td>Observação</td>
+						<td>ObservaÃ§Ã£o</td>
 						<td><ww:textfield size="30" name="obsOrgao" /></td>
 					</tr>
 				</c:if>

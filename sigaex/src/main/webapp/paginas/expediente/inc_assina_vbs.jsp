@@ -46,8 +46,8 @@ Function InicializarCapicom()
 	Set gUtil = CreateObject("CAPICOM.Utilities")
 	If Erro Then Exit Function
 
-	'Infelizmente não é possível armazenar o objeto Signer e utilizá-lo na próxima chamada para Sign.
-	'Renato: desabilitado temporariamente para não interferir com os testes de desempenho.
+	'Infelizmente nÃ£o Ã© possÃ­vel armazenar o objeto Signer e utilizÃ¡-lo na prÃ³xima chamada para Sign.
+	'Renato: desabilitado temporariamente para nÃ£o interferir com os testes de desempenho.
 	gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado."
 	Desprezar = gAssinatura.Sign(Nothing, True, 0)
 	gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
@@ -71,7 +71,7 @@ Dim intID ' set a global variable
 Function AssinarDocumentos(Copia, oElm)
 	TestCAPICOM
 	If InicializarCapicom() <> "OK" Then
-        MsgBox "Erro na inicializacao da CAPICOM.", 0, "Não foi possível completar a operação"
+        MsgBox "Erro na inicializacao da CAPICOM.", 0, "NÃ£o foi possÃ­vel completar a operaÃ§Ã£o"
 		Exit Function
     End If
 
@@ -91,8 +91,8 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
     oElm.InnerHTML = Caption
     If Copia = "true" Then
 		Copia = "true"
-'	    MsgBox "Iniciando conferência"
-	    Log "Iniciando conferência"
+'	    MsgBox "Iniciando conferÃªncia"
+	    Log "Iniciando conferÃªncia"
 	Else
 		Copia = "false"
 '	    MsgBox  "Iniciando assinatura"
@@ -181,7 +181,7 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
                If Status = "OK" Then
                    Log "Documento: " & oNome.value & ", OK, Gravado!"
                Else
-		            MsgBox Status, 0, "Não foi possível completar a operação"
+		            MsgBox Status, 0, "NÃ£o foi possÃ­vel completar a operaÃ§Ã£o"
 					Exit Function
                End If
            End If
@@ -190,7 +190,7 @@ Function AssinarDocumentosAgora(Copia, Id, Caption)
 
 	If Status = "OK" Then
 		'MsgBox "Redirecionando para " & oUrlNext.value
-        Log "Concluído, redirecionando..."
+        Log "ConcluÃ­do, redirecionando..."
 		Location.href = oUrlNext.value
     End If
 End Function
@@ -214,7 +214,7 @@ Function GravarAssinatura(url, datatosend)
 	objHTTP.setRequestHeader "Content-Type", "application/x-www-form-urlencoded"
 	objHTTP.send datatosend 
 
-	GravarAssinatura = "Erro inespecífico."
+	GravarAssinatura = "Erro inespecÃ­fico."
 	If objHTTP.Status = 200 Then
         Dim Conteudo, Inicio, Fim, Texto
 		'MsgBox "OK, enviado"

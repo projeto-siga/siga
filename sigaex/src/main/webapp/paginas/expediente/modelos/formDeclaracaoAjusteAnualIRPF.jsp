@@ -6,14 +6,14 @@
 	<mod:entrevista>
 
 		<mod:grupo titulo="">
-			<mod:selecao titulo="DeclaraÁ„o de ajuste anual de IRPF referente ‡" var="periodo"
+			<mod:selecao titulo="Declara√ß√£o de ajuste anual de IRPF referente √†" var="periodo"
 				opcoes="2012/2013;2013/2014;2014/2015" />
 		</mod:grupo>
 		
-		<mod:grupo titulo="Caso n„o tenha declarado bens ‡ Receita Federal, favor marcar uma das opÁıes abaixo:">	
-			<mod:radio titulo="N„o se aplica." var="tipoFormulario" valor="1" reler="sim" />
-			<mod:radio titulo="Declaro n„o possuir bens." var="tipoFormulario" valor="2" reler="sim" marcado="N„o" />
-			<mod:radio titulo="Declaro que possuo os seguintes bens:" var="tipoFormulario" reler="sim" valor="3" gerarHidden="N„o"/>
+		<mod:grupo titulo="Caso n√£o tenha declarado bens √† Receita Federal, favor marcar uma das op√ß√µes abaixo:">	
+			<mod:radio titulo="N√£o se aplica." var="tipoFormulario" valor="1" reler="sim" />
+			<mod:radio titulo="Declaro n√£o possuir bens." var="tipoFormulario" valor="2" reler="sim" marcado="N√£o" />
+			<mod:radio titulo="Declaro que possuo os seguintes bens:" var="tipoFormulario" reler="sim" valor="3" gerarHidden="N√£o"/>
 		</mod:grupo>
 		
 		<c:set var="valorTipoDeForm" value="${tipoFormulario}" />
@@ -28,16 +28,16 @@
 			</c:otherwise>
 		</c:choose>
 		
-		<mod:memo colunas="80" linhas="6" titulo="DeclaraÁ„o de bens e direitos" var="bens" />
+		<mod:memo colunas="80" linhas="6" titulo="Declara√ß√£o de bens e direitos" var="bens" />
 		</div>
 				
 		<mod:grupo titulo="">
-		<br /><b>A DeclaraÁ„o de IRPF e o Recibo de Entrega ‡ Receita Federal dever„o ser encaminhados, 
+		<br /><b>A Declara√ß√£o de IRPF e o Recibo de Entrega √† Receita Federal dever√£o ser encaminhados, 
 		DIGITALMENTE, em formato PDF, pelo SIGA-DOC, por meio do campo 'anexar arquivo': <br />
-		a) no caso de n„o possuir token, digitalizar a cÛpia da DeclaraÁ„o e a do respectivo 
+		a) no caso de n√£o possuir token, digitalizar a c√≥pia da Declara√ß√£o e a do respectivo 
 		Recibo (assinado e datado);<br />
-		b) no caso de possuir certificaÁ„o (token ou smartcard), anex·-los apÛs gerar imagem PDF
-		 por meio do programa da Receita Federal (n„o È necess·rio &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;imprimi-los). … obrigatÛria a assinatura digital dos arquivos.</b>
+		b) no caso de possuir certifica√ß√£o (token ou smartcard), anex√°-los ap√≥s gerar imagem PDF
+		 por meio do programa da Receita Federal (n√£o √© necess√°rio &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;imprimi-los). √â obrigat√≥ria a assinatura digital dos arquivos.</b>
 		</mod:grupo>
 		
 	</mod:entrevista>
@@ -69,17 +69,17 @@
 		FIM CABECALHO -->
 
 			<br />
-			<p style="font-family:Arial;font-size:10pt;">Sr.(a) Supervisor(a) da SeÁ„o de Cadastro</p>
+			<p style="font-family:Arial;font-size:10pt;">Sr.(a) Supervisor(a) da Se√ß√£o de Cadastro</p>
 			<br />
-			<p style="text-align: justify; line-height: 150%; font-family: Arial; font-size: 10pt;">${doc.subscritor.descricao}, matrÌcula n∫ RJ${doc.subscritor.matricula},
+			<p style="text-align: justify; line-height: 150%; font-family: Arial; font-size: 10pt;">${doc.subscritor.descricao}, matr√≠cula n¬∫ RJ${doc.subscritor.matricula},
 				 ${doc.subscritor.cargo.nomeCargo}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, encaminha, 
-				 em anexo, o arquivo digital da DeclaraÁ„o de Ajuste Anual do IRPF, referente ‡ 
-				 <c:out value="${periodo}"/>, e o respectivo Recibo de Entrega ‡ Receita Federal.
+				 em anexo, o arquivo digital da Declara√ß√£o de Ajuste Anual do IRPF, referente √† 
+				 <c:out value="${periodo}"/>, e o respectivo Recibo de Entrega √† Receita Federal.
 			</p>
 			<c:if test="${not empty tipoFormulario and tipoFormulario != 1}">
 				<p style="font-family:Arial;font-size:10pt;">Declara, ainda, que 
 					<c:choose>
-						<c:when test="${tipoFormulario == 2}">n„o possui bens.</c:when>
+						<c:when test="${tipoFormulario == 2}">n√£o possui bens.</c:when>
 						<c:otherwise>possui os seguintes bens: <p style="text-align: justify; line-height: 150%; font-family: Arial; font-size: 10pt;"><siga:fixcrlf><c:out value="${bens}"/></siga:fixcrlf></p></c:otherwise>
 					</c:choose>
 				</p>

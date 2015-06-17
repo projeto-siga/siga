@@ -8,22 +8,22 @@
 	<tr bgcolor="#C0C0C0"">
 		<td colspan="4" align="center"
 			style="font-size: 7pt; border-collapse: collapse; border-color: black;">
-			Solicitação de Empenho</td>
+			SolicitaÃ§Ã£o de Empenho</td>
 		<td width="5%" align="center"
 			style="font-size: 7pt; border-collapse: collapse; border-color: black;">Fls.</td>
 		<td width="12%" align="center"
-			style="font-size: 7pt; border-collapse: collapse; border-color: black;">CND<br />Válida
-			até</td>
+			style="font-size: 7pt; border-collapse: collapse; border-color: black;">CND<br />VÃ¡lida
+			atÃ©</td>
 		<td width="5%" align="center"
 			style="font-size: 7pt; border-collapse: collapse; border-color: black;">Fls.</td>
 		<td width="12%" align="center"
-			style="font-size: 7pt; border-collapse: collapse; border-color: black;">CCN<br />Válida
-			até</td>
+			style="font-size: 7pt; border-collapse: collapse; border-color: black;">CCN<br />VÃ¡lida
+			atÃ©</td>
 		<td width="5%" align="center"
 			style="font-size: 7pt; border-collapse: collapse; border-color: black;">Fls.</td>
 		<td width="12%" align="center"
-			style="font-size: 7pt; border-collapse: collapse; border-color: black;">CRF<br />Válida
-			até</td>
+			style="font-size: 7pt; border-collapse: collapse; border-color: black;">CRF<br />VÃ¡lida
+			atÃ©</td>
 		<td width="5%" align="center"
 			style="font-size: 7pt; border-collapse: collapse; border-color: black;">Fls.</td>
 	</tr>
@@ -109,7 +109,7 @@
 		<td align="center"
 			style="font-size: 7pt; border-collapse: collapse; border-color: black;">&nbsp;</td>
 		<td align="center"
-			style="font-size: 7pt; border-collapse: collapse; border-color: black;">Vigência</td>
+			style="font-size: 7pt; border-collapse: collapse; border-color: black;">VigÃªncia</td>
 		<td align="center"
 			style="font-size: 7pt; border-collapse: collapse; border-color: black;">Fls.</td>
 		<td align="center"

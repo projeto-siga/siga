@@ -38,7 +38,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Edição de Modelo</h2>
+			<h2>EdiÃ§Ã£o de Modelo</h2>
 
 			<div class="gt-content-box gt-for-table">
 			
@@ -59,16 +59,16 @@
 						<td width="80%"><ww:textfield name="nome" size="80" /></td>
 					</tr>
 					<tr>
-						<td>Descrição:</td>
+						<td>DescriÃ§Ã£o:</td>
 						<td><ww:textfield name="descricao" size="80" /></td>
 					</tr>
 					<tr>
-						<td>Classificação:</td>
+						<td>ClassificaÃ§Ã£o:</td>
 						<td><siga:selecao tema="simple" propriedade="classificacao" modulo="sigaex"/></td>
 					</tr>
 
 					<tr>
-						<td>Classificação para criação de vias:</td>
+						<td>ClassificaÃ§Ã£o para criaÃ§Ã£o de vias:</td>
 						<td><siga:selecao tema="simple" modulo="sigaex"
 							propriedade="classificacaoCriacaoVias" /></td>
 					</tr>

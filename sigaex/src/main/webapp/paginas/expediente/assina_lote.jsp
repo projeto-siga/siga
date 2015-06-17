@@ -14,7 +14,7 @@
 						 incluirJs="sigaex/javascript/assinatura.js">
 
 	<script type="text/javascript" language="Javascript1.1">
-		/*  converte para maiúscula a sigla do estado  */
+		/*  converte para maiÃºscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
 			re = /^[a-zA-Z]{2}\d{3,6}$/;
 			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
@@ -87,13 +87,13 @@
 				    <c:set var="lote" value="true"/>
 				</div>
 				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/paginas/expediente/inc_assina_js.jsp" />
 						<div id="capicom-div">
 							<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
 						</div>
-					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
-					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges"><u>aqui</u></a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrÃ£o do SIGA-DOC sÃ³ poderÃ¡ ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> Ã© permitida.</p>
+					<p id="capicom-missing" style="display: none;">NÃ£o foi possÃ­vel localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o mÃ©todo padrÃ£o do SIGA-DOC, serÃ¡ necessÃ¡rio instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges"><u>aqui</u></a>. SerÃ¡ necessÃ¡rio expandir o <i>ZIP</i> e depois executar o arquivo de instalaÃ§Ã£o.</p>
 				<script type="text/javascript">
 					 if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
 						 document.getElementById("capicom-div").style.display = "block";
@@ -106,7 +106,7 @@
 
 				</c:if>
 
-				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
 			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 	         	</c:if>
 	         	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
@@ -124,7 +124,7 @@
 			    <tr>
 			        <th width="3%"></th>
 			        <th width="3%"></th>
-			        <th width="13%" align="left">Número</th>
+			        <th width="13%" align="left">NÃºmero</th>
 			        <th  width="5%"></th>
 			        <th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>
 			        <th width="15%"></th>	 <th width="49%"></th>
@@ -138,7 +138,7 @@
 			        <th width="10%" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lotacao</th>
 			        <th width="5%" align="left">Pessoa</th>
 			        <th width="15%" align="left">Tipo</th>
-			        <th width="49%" align="left">Descrição</th>
+			        <th width="49%" align="left">DescriÃ§Ã£o</th>
 			    </tr>
 			    <c:forEach var="doc" items="${itensSolicitados}">
 			        <c:set var="x" scope="request">chk_${doc.idDoc}</c:set>
@@ -188,7 +188,7 @@
  				<ww:hidden id="id" name="id" value="${mov.idMov}" />
  				<ww:hidden id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
     			<fieldset>
-    			  <label>Matrícula</label> <br/>
+    			  <label>MatrÃ­cula</label> <br/>
     			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
     			  <label>Senha</label> <br/>
     			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off" />
@@ -229,7 +229,7 @@
 		      var n = $("input.nao-pode-assinar-senha:checked").length;
 
 		      if(n > 0) {
-		      	$("#mensagemAssinaSenha").html( n + (n === 1 ? " documento selecionado não pode ser assinado somente com senha." : " documentos selecionados não podem ser assinados somente com senha.") + " Selecione somente os documentos que estão marcados com ");
+		      	$("#mensagemAssinaSenha").html( n + (n === 1 ? " documento selecionado nÃ£o pode ser assinado somente com senha." : " documentos selecionados nÃ£o podem ser assinados somente com senha.") + " Selecione somente os documentos que estÃ£o marcados com ");
 		      	$("#mensagemAssinaSenha").append("<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />" );
 
 		      	dialogM.dialog("open");
@@ -237,7 +237,7 @@
 		    	    var nPode = $("input.pode-assinar-senha:checked").length;
 
                     if(nPode == 0) {
-				      	$("#mensagemAssinaSenha").html("Nenhum documento selecionado. Selecione somente os documentos que estão marcados com ");
+				      	$("#mensagemAssinaSenha").html("Nenhum documento selecionado. Selecione somente os documentos que estÃ£o marcados com ");
 				      	$("#mensagemAssinaSenha").append("<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />" );
 				      	dialogM.dialog("open");
                     } else {

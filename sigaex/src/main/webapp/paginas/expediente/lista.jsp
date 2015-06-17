@@ -104,7 +104,7 @@ function alteraAtendente()
 			document.getElementById('divUltMovResp').style.display = '';
 			document.getElementById('divUltMovLotaResp').style.display = 'none';
 			break;
-		//Pesquisa órgão
+		//Pesquisa Ã³rgÃ£o
 		case 2:
 			document.getElementById('divUltMovResp').style.display = 'none';
 			document.getElementById('divUltMovLotaResp').style.display = '';
@@ -124,7 +124,7 @@ function alteraCadastranteDocumento()
 			document.getElementById('divCadastrante').style.display = '';
 			document.getElementById('divLotaCadastrante').style.display = 'none';
 			break;
-		//Pesquisa órgão
+		//Pesquisa Ã³rgÃ£o
 		case 2:
 			document.getElementById('divCadastrante').style.display = 'none';
 			document.getElementById('divLotaCadastrante').style.display = '';
@@ -139,21 +139,21 @@ function alteraDestinatarioDocumento()
 	
 	switch (parseInt(objSelecionado.value))
 	{
-		//Pesquisa Matrícula
+		//Pesquisa MatrÃ­cula
 		case 1:
 			document.getElementById('divDestinatario').style.display = '';
 			document.getElementById('divLotaDestinatario').style.display = 'none';
 			document.getElementById('divOrgaoExternoDestinatario').style.display = 'none';
 			document.getElementById('divNmDestinatario').style.display = 'none';
 			break;
-		//Pesquisa Órgão Integrado
+		//Pesquisa Ã“rgÃ£o Integrado
 		case 2:
 			document.getElementById('divDestinatario').style.display = 'none';
 			document.getElementById('divLotaDestinatario').style.display = '';
 			document.getElementById('divOrgaoExternoDestinatario').style.display = 'none';
 			document.getElementById('divNmDestinatario').style.display = 'none';
 			break;
-		//Pesquisa Órgão Externo	
+		//Pesquisa Ã“rgÃ£o Externo	
 		case 3:
 			document.getElementById('divDestinatario').style.display = 'none';
 			document.getElementById('divLotaDestinatario').style.display = 'none';
@@ -186,7 +186,7 @@ function limpaCampos()
 			document.getElementById('ultMovLotaRespSel_sigla').value = '';
 			document.getElementById('ultMovLotaRespSelSpan').innerHTML = '';
 			break;
-		//Pesquisa órgão
+		//Pesquisa Ã³rgÃ£o
 		case 2:
 			document.getElementById('ultMovRespSel_id').value = '';
 			document.getElementById('ultMovRespSel_descricao').value = '';
@@ -209,7 +209,7 @@ function limpaCampos()
 			document.getElementById('lotaCadastranteSel_sigla').value = '';
 			document.getElementById('lotaCadastranteSelSpan').innerHTML = '';
 			break;
-		//Pesquisa órgão
+		//Pesquisa Ã³rgÃ£o
 		case 2:
 			document.getElementById('cadastranteSel_id').value = '';
 			document.getElementById('cadastranteSel_descricao').value = '';
@@ -224,7 +224,7 @@ function limpaCampos()
 	
 	switch (parseInt(tipoDestinatario.value))
 	{      
-		//Pesquisa Matrícula
+		//Pesquisa MatrÃ­cula
 		case 1:
 			document.getElementById('lotacaoDestinatarioSel_id').value = '';
 			document.getElementById('lotacaoDestinatarioSel_descricao').value = '';
@@ -243,7 +243,7 @@ function limpaCampos()
 			document.getElementById('nmDestinatario').value = '';
 
 			break;
-		//Pesquisa Órgão Integrado
+		//Pesquisa Ã“rgÃ£o Integrado
 		case 2:
 			document.getElementById('destinatarioSel_id').value = '';
 			document.getElementById('destinatarioSel_descricao').value = '';
@@ -262,7 +262,7 @@ function limpaCampos()
 			document.getElementById('nmDestinatario').value = '';
 
 			break;
-		//Pesquisa Órgão Externo	
+		//Pesquisa Ã“rgÃ£o Externo	
 		case 3:
 			document.getElementById('destinatarioSel_id').value = '';
 			document.getElementById('destinatarioSel_descricao').value = '';
@@ -315,39 +315,39 @@ function limpaCampos()
 	{
 		//Todos
 		case 0:
-			//Campo 'Nº Original do Documento'
+			//Campo 'NÂº Original do Documento'
 			document.getElementById('numExtDoc').value = '';
 			
-			//Campo 'Órgão Externo'
+			//Campo 'Ã“rgÃ£o Externo'
 			document.getElementById('cpOrgaoSel_id').value = '';
 			document.getElementById('cpOrgaoSel_descricao').value = '';
 			document.getElementById('cpOrgaoSel_buscar').value = '';
 			document.getElementById('cpOrgaoSel_sigla').value = '';
 			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
 			
-			//Campo 'Nº do Documento no Sistema Antigo'
+			//Campo 'NÂº do Documento no Sistema Antigo'
 			document.getElementById('numAntigoDoc').value = '';
 			
 			break;	
 		//Interno Produzido
 		case 1:
-			//Campo 'Nº Original do Documento'
+			//Campo 'NÂº Original do Documento'
 			document.getElementById('numExtDoc').value = '';
 			
-			//Campo 'Órgão Externo'
+			//Campo 'Ã“rgÃ£o Externo'
 			document.getElementById('cpOrgaoSel_id').value = '';
 			document.getElementById('cpOrgaoSel_descricao').value = '';
 			document.getElementById('cpOrgaoSel_buscar').value = '';
 			document.getElementById('cpOrgaoSel_sigla').value = '';
 			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
 			
-			//Campo 'Nº do Documento no Sistema Antigo'
+			//Campo 'NÂº do Documento no Sistema Antigo'
 			document.getElementById('numAntigoDoc').value = '';
 			
 			break;
 		//Interno Importado
 		case 2:
-			//Campo 'Órgão Externo'
+			//Campo 'Ã“rgÃ£o Externo'
 			document.getElementById('cpOrgaoSel_id').value = '';
 			document.getElementById('cpOrgaoSel_descricao').value = '';
 			document.getElementById('cpOrgaoSel_buscar').value = '';
@@ -363,7 +363,7 @@ function limpaCampos()
 			break;
 	}
 	
-	//Verifica a quantidade de campos que estão vazios
+	//Verifica a quantidade de campos que estÃ£o vazios
 	var count = 0;
 
 	if (document.getElementById('idTpDoc').value != 0)
@@ -430,7 +430,7 @@ function limpaCampos()
 		count++;	
 
 	if (count < 2) {
-		alert('Esta pesquisa retornará muitos resultados. Favor restringi-la um pouco mais.');
+		alert('Esta pesquisa retornarÃ¡ muitos resultados. Favor restringi-la um pouco mais.');
 		descarrega();
 		return false;
 	}
@@ -454,14 +454,14 @@ function limpaCampos()
 						<table class="gt-table">
 							<thead>
 								<tr>
-									<th rowspan="3" align="right">Número</th>
+									<th rowspan="3" align="right">NÃºmero</th>
 									<th colspan="3" align="center">Documento</th>
-									<th colspan="4" align="center">Situação</th>
+									<th colspan="4" align="center">SituaÃ§Ã£o</th>
 									<th rowspan="3">Tipo</th>
 									<th rowspan="3">Modelo</th>
-									<th rowspan="3">Descrição</th>
+									<th rowspan="3">DescriÃ§Ã£o</th>
 									<c:if test="${visualizacao == 1}"> 
-										<th rowspan="3">Última Anotação</th>
+										<th rowspan="3">Ãšltima AnotaÃ§Ã£o</th>
 									</c:if>
 								</tr>
 								<tr>
@@ -469,12 +469,12 @@ function limpaCampos()
 									<th colspan="2" align="center">Subscritor</th>
 									<th rowspan="2" align="center">Data</th>
 									<th colspan="2" align="center">Atendente</th>
-									<th rowspan="2" align="center">Situação</th>
+									<th rowspan="2" align="center">SituaÃ§Ã£o</th>
 								</tr>
 								<tr>
-									<th align="center">Lotação</th>
+									<th align="center">LotaÃ§Ã£o</th>
 									<th align="center">Pessoa</th>
-									<th align="center">Lotação</th>
+									<th align="center">LotaÃ§Ã£o</th>
 									<th align="center">Pessoa</th>
 								</tr>
 							</thead>
@@ -583,9 +583,9 @@ function limpaCampos()
 											</c:if>
 										</c:when>
 										<c:otherwise>
-											<td>[Descrição Inacessível]</td>
+											<td>[DescriÃ§Ã£o InacessÃ­vel]</td>
 											<c:if test="${visualizacao == 1}"> 
-												<td>[Anotação Inacessível]</td>
+												<td>[AnotaÃ§Ã£o InacessÃ­vel]</td>
 											</c:if>
 										</c:otherwise>
 									</c:choose>
@@ -596,7 +596,7 @@ function limpaCampos()
 							<br />
 							</c:if>
 							<c:if test="${empty tamanho or tamanho == 0}">
-								<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
+								<p class="gt-notice-box">A pesquisa nÃ£o retornou resultados.</p>
 							</c:if>
 							</c:if>
 
@@ -637,22 +637,22 @@ function limpaCampos()
 												Documento</td>
 										</tr>
 										<tr>
-											<td>Situação:</td>
-											<td><ww:select label="Situação" name="ultMovIdEstadoDoc"
+											<td>SituaÃ§Ã£o:</td>
+											<td><ww:select label="SituaÃ§Ã£o" name="ultMovIdEstadoDoc"
 													list="estados" listKey="idMarcador"
 													listValue="descrMarcador" headerKey="0"
 													headerValue="[Todos]" theme="simple" />
-												<span style="float: right; padding-left: 2em;">Ordenação:
+												<span style="float: right; padding-left: 2em;">OrdenaÃ§Ã£o:
 													<ww:select name="ordem"
-														list="#{0:'Data do documento', 1:'Data da situação', 2:'Ano e número', 3:'Data de finalização', 4:'Data de criação do temporário'}"
+														list="#{0:'Data do documento', 1:'Data da situaÃ§Ã£o', 2:'Ano e nÃºmero', 3:'Data de finalizaÃ§Ã£o', 4:'Data de criaÃ§Ã£o do temporÃ¡rio'}"
 														theme="simple" /> </span> <span
-												style="float: right; padding-left: 2em;">Visualização: <ww:select
+												style="float: right; padding-left: 2em;">VisualizaÃ§Ã£o: <ww:select
 														name="visualizacao" onchange="javascript:sbmt();"
-														list="#{0:'Normal', 1:'Última anotação'}" theme="simple" />
+														list="#{0:'Normal', 1:'Ãšltima anotaÃ§Ã£o'}" theme="simple" />
 											</span></td>
 										</tr>
 										<tr>
-											<td>Pessoa/Lotação:</td>
+											<td>Pessoa/LotaÃ§Ã£o:</td>
 											<td><ww:select name="ultMovTipoResp"
 													list="listaTipoResp" theme="simple"
 													onchange="javascript:alteraAtendente();" /> <ww:if
@@ -674,7 +674,7 @@ function limpaCampos()
 											</td>
 										</tr>
 										<tr>
-											<td>Órgão:</td>
+											<td>Ã“rgÃ£o:</td>
 											<td><ww:select name="orgaoUsu" list="orgaosUsu"
 													listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
 													headerKey="0" headerValue="[Todos]" />
@@ -714,9 +714,9 @@ function limpaCampos()
 											</div></td>
 										</tr>
 
-										<!-- Esse timeout no modelo está estranho. Está sendo necessário porque primeiro
-				 precisa ser executado o request ajax referente à FormaDocumento, da qual a lista 
-				 de modelos depende. Talvez seria bom tornar síncronos esses dois requests ajax -->
+										<!-- Esse timeout no modelo estÃ¡ estranho. EstÃ¡ sendo necessÃ¡rio porque primeiro
+				 precisa ser executado o request ajax referente Ã  FormaDocumento, da qual a lista 
+				 de modelos depende. Talvez seria bom tornar sÃ­ncronos esses dois requests ajax -->
 										<tr>
 											<td>Modelo:</td>
 											<td>
@@ -726,10 +726,10 @@ function limpaCampos()
 										</tr>
 
 										<tr>
-											<td>Ano de Emissão:</td>
+											<td>Ano de EmissÃ£o:</td>
 											<td><ww:select label="" name="anoEmissaoString"
 													list="listaAnos" headerKey="" headerValue="[Todos]"
-													theme="simple" /> &nbsp;&nbsp;&nbsp;&nbsp;Número: <ww:textfield
+													theme="simple" /> &nbsp;&nbsp;&nbsp;&nbsp;NÃºmero: <ww:textfield
 													size="7" label="" name="numExpediente" maxlength="6"
 													theme="simple" /> <%--
 			&nbsp;&nbsp;&nbsp;&nbsp;Via: <ww:select list="listaVias" label="Via"
@@ -747,7 +747,7 @@ function limpaCampos()
 											</c:otherwise>
 										</c:choose>
 
-										<td class="tdLabel"><label for="numExtDoc" class="label">Nº
+										<td class="tdLabel"><label for="numExtDoc" class="label">NÂº
 												Original do Documento:</label>
 										</td>
 										<td><input type="text" name="numExtDoc" size="16"
@@ -764,9 +764,9 @@ function limpaCampos()
 											</c:otherwise>
 										</c:choose>
 
-										<td>Órgão Externo:</td>
+										<td>Ã“rgÃ£o Externo:</td>
 										<td><siga:selecao propriedade="cpOrgao" modulo="siga"
-												titulo="Órgão Externo" tema="simple" />
+												titulo="Ã“rgÃ£o Externo" tema="simple" />
 										</td>
 										</tr>
 
@@ -781,7 +781,7 @@ function limpaCampos()
 										</c:choose>
 
 										<td class="tdLabel"><label for="numAntigoDoc"
-											class="label">Nº do Documento no Sistema Antigo:</label>
+											class="label">NÂº do Documento no Sistema Antigo:</label>
 										</td>
 										<td><input type="text" name="numAntigoDoc" size="16"
 											value="" id="numAntigoDoc" />
@@ -829,10 +829,10 @@ function limpaCampos()
 										</tr>
 
 										<tr>
-											<td>Destinatário:</td>
+											<td>DestinatÃ¡rio:</td>
 											<td>
 												<div style="float: left">
-													<ww:select label="Destinatário" name="tipoDestinatario"
+													<ww:select label="DestinatÃ¡rio" name="tipoDestinatario"
 														list="listaTipoDest" theme="simple"
 														onchange="javascript:alteraDestinatarioDocumento();" />
 												</div> <c:choose>
@@ -926,10 +926,10 @@ function limpaCampos()
 											</td>
 										</tr>
 
-										<siga:selecao titulo="Classificação:"
+										<siga:selecao titulo="ClassificaÃ§Ã£o:"
 											propriedade="classificacao" modulo="sigaex"/>
 
-										<ww:textfield label="Descrição" name="descrDocumento"
+										<ww:textfield label="DescriÃ§Ã£o" name="descrDocumento"
 											size="80" />
 
 										${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario,

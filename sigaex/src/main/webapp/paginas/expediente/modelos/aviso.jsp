@@ -7,12 +7,12 @@
 	<mod:entrevista>
 		<c:if test="${empty esconderTexto}">
 			<mod:grupo>
-				<mod:texto titulo="Título" var="tituloAviso" largura="45"/> <b>(Por extenso, em letras maiúsculas, mencionando-se a natureza/motivo.)<b/>
+				<mod:texto titulo="TÃ­tulo" var="tituloAviso" largura="45"/> <b>(Por extenso, em letras maiÃºsculas, mencionando-se a natureza/motivo.)<b/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Assunto" var="assunto" largura="45"/><b>(Por extenso, indicando a matéria, o tema ou o objeto.)<b/>
+				<mod:texto titulo="Assunto" var="assunto" largura="45"/><b>(Por extenso, indicando a matÃ©ria, o tema ou o objeto.)<b/>
 			</mod:grupo>
-			<mod:grupo titulo="Texto a ser inserido no corpo do AVISO: exposição do fato (conteúdo simples e objetivo; com informações precisas.)">
+			<mod:grupo titulo="Texto a ser inserido no corpo do AVISO: exposiÃ§Ã£o do fato (conteÃºdo simples e objetivo; com informaÃ§Ãµes precisas.)">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_aviso" />
 				</mod:grupo>

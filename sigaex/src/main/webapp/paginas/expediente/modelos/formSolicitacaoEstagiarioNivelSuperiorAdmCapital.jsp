@@ -10,36 +10,36 @@
 						<mod:lotacao titulo="Unidade Organizacional" var="unidade"/>
 				</mod:grupo>
 				<mod:grupo>
-					<mod:pessoa titulo="Matrícula do Supervisor do estágio" var="supervisor"/> 
+					<mod:pessoa titulo="MatrÃ­cula do Supervisor do estÃ¡gio" var="supervisor"/> 
 				</mod:grupo>
 				<br/>
 				<mod:grupo>
-				Projeto/Programa do planejamento estratégico para o quinquênio de 2010-2014 no âmbito da Justiça Federal da 2ª Região em que o estagiário atuará.
-				<span style="color:red"> Caso não conste do elenco de projetos estratégicos da SJRJ 
-				(Resolução nº 48/2009 pres. TRF2) um projeto especificamente da/para a Subsecretaria, devem ser indicadas 
-				ações que constem da respectiva programação de trabalho da área para o ano em curso. Nesse caso, 
-				também devem ser indicados os objetivos estratégcios relacionados a tais ações, ou seja, aqueles cujo 
-				alcance será facilitado/beneficiado com a realização das ações</span>
+				Projeto/Programa do planejamento estratÃ©gico para o quinquÃªnio de 2010-2014 no Ã¢mbito da JustiÃ§a Federal da 2Âª RegiÃ£o em que o estagiÃ¡rio atuarÃ¡.
+				<span style="color:red"> Caso nÃ£o conste do elenco de projetos estratÃ©gicos da SJRJ 
+				(ResoluÃ§Ã£o nÂº 48/2009 pres. TRF2) um projeto especificamente da/para a Subsecretaria, devem ser indicadas 
+				aÃ§Ãµes que constem da respectiva programaÃ§Ã£o de trabalho da Ã¡rea para o ano em curso. Nesse caso, 
+				tambÃ©m devem ser indicados os objetivos estratÃ©gcios relacionados a tais aÃ§Ãµes, ou seja, aqueles cujo 
+				alcance serÃ¡ facilitado/beneficiado com a realizaÃ§Ã£o das aÃ§Ãµes</span>
 				<mod:texto titulo="" var="projeto" largura="60" />
 				</mod:grupo>
 				<br />
 				<mod:grupo>
-					<mod:texto titulo="Área de formação do estagiário" var="area" largura="30" />
+					<mod:texto titulo="Ãrea de formaÃ§Ã£o do estagiÃ¡rio" var="area" largura="30" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:memo titulo="Proposta de trabalho com justificativa em relação ao Programa/Projeto em que o estagiário atuará" var="proposta" colunas="80" linhas="3"/> 
+					<mod:memo titulo="Proposta de trabalho com justificativa em relaÃ§Ã£o ao Programa/Projeto em que o estagiÃ¡rio atuarÃ¡" var="proposta" colunas="80" linhas="3"/> 
 				</mod:grupo>
 				<mod:grupo>
-					<mod:memo titulo="Descrição sucinta das atividades a serem realizadas pelo estagiário" var="atividades" colunas="80" linhas="3"/>
+					<mod:memo titulo="DescriÃ§Ã£o sucinta das atividades a serem realizadas pelo estagiÃ¡rio" var="atividades" colunas="80" linhas="3"/>
 				</mod:grupo>
 				<mod:grupo>
-					<mod:memo titulo="Objetivos educacionais para o estagiário (quanto à complementação do ensino profissional pelo desempenho das atividades; desenvolvimento de relações interpessoais; etc.)" var="objetivos" colunas="80" linhas="3"/>
+					<mod:memo titulo="Objetivos educacionais para o estagiÃ¡rio (quanto Ã  complementaÃ§Ã£o do ensino profissional pelo desempenho das atividades; desenvolvimento de relaÃ§Ãµes interpessoais; etc.)" var="objetivos" colunas="80" linhas="3"/>
 				</mod:grupo>
 				<mod:grupo>
-					<mod:memo titulo="Resultados previstos para o Projeto/Programa (em face do desempenho das atividades pelo estagiário)" var="resultados" colunas="80" linhas="3"/>
+					<mod:memo titulo="Resultados previstos para o Projeto/Programa (em face do desempenho das atividades pelo estagiÃ¡rio)" var="resultados" colunas="80" linhas="3"/>
 				</mod:grupo>
 				<mod:grupo>
-					<mod:memo titulo="Critério(s) previsto(s) para avaliação dos resultados" var="criterios" colunas="80" linhas="3"/>
+					<mod:memo titulo="CritÃ©rio(s) previsto(s) para avaliaÃ§Ã£o dos resultados" var="criterios" colunas="80" linhas="3"/>
 				</mod:grupo>
 				<br />
 		</mod:grupo>

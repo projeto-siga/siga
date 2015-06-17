@@ -10,14 +10,14 @@
 <mod:modelo urlBase="/paginas/expediente/modelos/portariaCorregedoria.jsp">
 	<mod:entrevista>
 			<mod:grupo>
-				<mod:texto titulo="Nº" var="port"/>
+				<mod:texto titulo="NÂº" var="port"/>
 			</mod:grupo>		
 			<mod:grupo>
-				<mod:texto titulo="referente ao período" var="periodo"/>
+				<mod:texto titulo="referente ao perÃ­odo" var="periodo"/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Dr" var="gen"  opcoes="masc;fem" reler="não" />
-				<mod:selecao titulo="Juiz Federal" var="juiz" opcoes="Substituto;Titular" reler="não"/>
+				<mod:selecao titulo="Dr" var="gen"  opcoes="masc;fem" reler="nÃ£o" />
+				<mod:selecao titulo="Juiz Federal" var="juiz" opcoes="Substituto;Titular" reler="nÃ£o"/>
 			</mod:grupo>
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="pessoa" />
@@ -45,8 +45,8 @@
 		<html>
 			<body>
 			<p style="TEXT-INDENT: 2cm" align="justify">
-				O Doutor ${doc.subscritor.descricao}, Corregedor-Regional da Justição 
-				Federal da <br>2ª Região, no uso de suas atribuições legais RESOLVE:
+				O Doutor ${doc.subscritor.descricao}, Corregedor-Regional da JustiÃ§Ã£o 
+				Federal da <br>2Âª RegiÃ£o, no uso de suas atribuiÃ§Ãµes legais RESOLVE:
 				<br/><br/><br/>
 				Alterar, a pedido, a portaria ${port} desta Corregedoria-Regional, no que 
 				tange
@@ -61,11 +61,11 @@
 				</c:choose>
 				do(a) ${pessoa_titular.lotacao.descricao}, 
 				<c:choose>
-					<c:when test="${gen=='fem'}">Drª.</c:when>
+					<c:when test="${gen=='fem'}">DrÂª.</c:when>
 					<c:otherwise>Dr.</c:otherwise>
 				</c:choose>
-				${ pessoa_titular.nomePessoa}, para explicitar que as férias referentes ao ${periodo},
-				anteriormente designadas para ${dtMarcada1} a ${dtMarcada2} serão fruídas de ${dtRemarcada1} a ${dtRemarcada2 }.
+				${ pessoa_titular.nomePessoa}, para explicitar que as fÃ©rias referentes ao ${periodo},
+				anteriormente designadas para ${dtMarcada1} a ${dtMarcada2} serÃ£o fruÃ­das de ${dtRemarcada1} a ${dtRemarcada2 }.
 			</body>
 		</html>
 		</mod:valor>

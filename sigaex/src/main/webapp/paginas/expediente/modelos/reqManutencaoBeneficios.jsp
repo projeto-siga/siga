@@ -6,9 +6,9 @@
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="SITUAÇÃO ANTERIOR">
+		<mod:grupo titulo="SITUAÃ‡ÃƒO ANTERIOR">
 			<mod:grupo>
-				<mod:pessoa titulo="Matrícula Anterior" var="matriculaAnterior"
+				<mod:pessoa titulo="MatrÃ­cula Anterior" var="matriculaAnterior"
 					reler="sim" buscarFechadas="true"/>
 			</mod:grupo>
 
@@ -20,46 +20,46 @@
 			</mod:grupo>
 		</mod:grupo>
 
-		<mod:grupo titulo="SITUAÇÃO ATUAL">
+		<mod:grupo titulo="SITUAÃ‡ÃƒO ATUAL">
 			<mod:grupo>
-				<mod:pessoa titulo="Matrícula atual" var="novaMatricula" reler="sim" />
+				<mod:pessoa titulo="MatrÃ­cula atual" var="novaMatricula" reler="sim" />
 			</mod:grupo>
 			<mod:texto titulo="Categoria funcional atual" var="categoriaAtual"
 				valor="${f:pessoa(requestScope['novaMatricula_pessoaSel.id']).cargo.descricao}"
 				largura="50" />
 			<mod:data titulo="Data da posse" var="dataPosse" />
-			<mod:data titulo="Data da exercício" var="dataExercicio" />
+			<mod:data titulo="Data da exercÃ­cio" var="dataExercicio" />
 		</mod:grupo>
 		<mod:grupo
-			titulo="Requeiro a manutenção dos benefícios abaixo relacionados">
+			titulo="Requeiro a manutenÃ§Ã£o dos benefÃ­cios abaixo relacionados">
 			<mod:grupo>
-				<mod:caixaverif titulo="Programa de Apoio à Psicologia (PAPSI)" var="papsi"
-					reler="Não" />
+				<mod:caixaverif titulo="Programa de Apoio Ã  Psicologia (PAPSI)" var="papsi"
+					reler="NÃ£o" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:caixaverif titulo="Auxílio Pré-escolar" var="preEscolar"
-					reler="Não" />
+				<mod:caixaverif titulo="AuxÃ­lio PrÃ©-escolar" var="preEscolar"
+					reler="NÃ£o" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:caixaverif titulo="Auxílio Creche" var="auxilioCreche"
-					reler="Não" />
+				<mod:caixaverif titulo="AuxÃ­lio Creche" var="auxilioCreche"
+					reler="NÃ£o" />
 			</mod:grupo>
-			<mod:grupo titulo="Tipo de Benefício Saúde:">
-				<mod:radio titulo="Auxílio Saúde" var="saude" valor="1" />
-				<mod:radio titulo="Plano de Saúde" var="saude" valor="2" />
+			<mod:grupo titulo="Tipo de BenefÃ­cio SaÃºde:">
+				<mod:radio titulo="AuxÃ­lio SaÃºde" var="saude" valor="1" />
+				<mod:radio titulo="Plano de SaÃºde" var="saude" valor="2" />
 				<mod:radio titulo="Nenhum" var="saude" marcado="Sim" valor="3" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:caixaverif
-					titulo="Auxílio Transporte (exceto para Analista Judiciário/Execução de Mandados)"
+					titulo="AuxÃ­lio Transporte (exceto para Analista JudiciÃ¡rio/ExecuÃ§Ã£o de Mandados)"
 					var="auxilioTransporte" reler="ajax" idAjax="transporteAjax" />
 				<mod:grupo depende="transporteAjax">
 
 					<c:if test="${auxilioTransporte == 'Sim'}">
 						<mod:grupo>
 							<mod:selecao
-								titulo="Altera o percurso Residência-Trabalho-Residência"
-								opcoes="Não;Sim" var="percurso" />
+								titulo="Altera o percurso ResidÃªncia-Trabalho-ResidÃªncia"
+								opcoes="NÃ£o;Sim" var="percurso" />
 						</mod:grupo>
 					</c:if>
 				</mod:grupo>
@@ -110,53 +110,53 @@
 		<mod:letra tamanho="${tl}">
 
 			<p style="TEXT-INDENT: 2cm" align="justify"><br>
-			<b>SITUAÇÃO ANTERIOR</b><br>
+			<b>SITUAÃ‡ÃƒO ANTERIOR</b><br>
 			<br>
 			<b>Nome:</b> ${requestScope['matriculaAnterior_pessoaSel.descricao']} <br>
-			<b>Matrícula anterior:</b>
+			<b>MatrÃ­cula anterior:</b>
 			${requestScope['matriculaAnterior_pessoaSel.sigla']} <br>
 			<b>Categoria funcional anterior:</b> ${categoriaAnterior} <br>
 			<br>
 
-			<b>SITUAÇÃO ATUAL</b><br>
+			<b>SITUAÃ‡ÃƒO ATUAL</b><br>
 			<br>
-			<b>Matrícula Atual:</b>
+			<b>MatrÃ­cula Atual:</b>
 			${requestScope['novaMatricula_pessoaSel.sigla']} <br>
 			<b>Categoria funcional atual:</b> ${categoriaAtual} <br>
 			<b>Data da posse:</b> ${dataPosse} <br>
-			<b>Data da exercício:</b> ${dataExercicio} <br>
+			<b>Data da exercÃ­cio:</b> ${dataExercicio} <br>
 			<br>
-			Venho requerer a V.S&ordf;. a manutenção do(s) benefício(s) abaixo
+			Venho requerer a V.S&ordf;. a manutenÃ§Ã£o do(s) benefÃ­cio(s) abaixo
 			relacionado(s): <br>
 			<br>
 			
 			<c:if test="${papsi=='Sim'}">
-			- Programa de Apoio à Psicologia (PAPSI)<br>
+			- Programa de Apoio Ã  Psicologia (PAPSI)<br>
 			</c:if>
 			<c:if test="${preEscolar=='Sim'}">
-			- Auxílio Pré-escolar<br>
+			- AuxÃ­lio PrÃ©-escolar<br>
 			</c:if>
 			<c:if test="${auxilioCreche=='Sim'}">
-			- Auxílio Creche<br>
+			- AuxÃ­lio Creche<br>
 			</c:if> <c:if test="${saude==1}">
-			- Auxílio Saúde<br>
+			- AuxÃ­lio SaÃºde<br>
 			</c:if> <c:if test="${saude==2}">
-			- Plano de Saúde<br>
+			- Plano de SaÃºde<br>
 			</c:if> <c:if test="${auxilioTransporte=='Sim'}">
-			- Auxílio Transporte <br>
+			- AuxÃ­lio Transporte <br>
 			</c:if></p>
 
 			<c:if test="${percurso eq 'Sim'}">
 				<p style="TEXT-INDENT: 2cm" align="justify">Comprometo-me a
 				atualizar o percurso declarado anteriormente, sob pena de perda do
-				benefício, tendo em vista a posse em novo cargo.</p>
+				benefÃ­cio, tendo em vista a posse em novo cargo.</p>
 			</c:if>
 			<c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" />
 			<p align="center">${doc.dtExtenso}</p>
 
 			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
 
-			<p align="center">Matrícula: RJ${doc.subscritor.matricula}</p>
+			<p align="center">MatrÃ­cula: RJ${doc.subscritor.matricula}</p>
 
 		</mod:letra>
 

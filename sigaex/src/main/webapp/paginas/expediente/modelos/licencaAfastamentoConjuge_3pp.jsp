@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-LICENÇA PARA AFASTAMENTO DO CONJUGUE
+LICENÃ‡A PARA AFASTAMENTO DO CONJUGUE
 < ESTE DOCUMENTO SE DIVIDE EM 3 PAGINAS >
 [OBS AO PROGRAMADOR: CRIAR DIGITO OU METODO P/ SALTAR PAGINA]  -->
 
@@ -12,7 +12,7 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 	
 		<mod:grupo titulo="DETALHES DO SERVIDOR">
 				<mod:texto titulo="Classe" var="classe"/>
-				<mod:texto titulo="Padrão" var="padrao" />
+				<mod:texto titulo="PadrÃ£o" var="padrao" />
 		</mod:grupo>
 				 
 	</mod:entrevista>
@@ -26,13 +26,13 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
-		classe ${classe} e padrão ${padrao}, 
+		classe ${classe} e padrÃ£o ${padrao}, 
 		lotado(a) no(a)${doc.subscritor.lotacao.descricao},
 	
 		
-		vem, respeitosamente, requerer a Vossa Excelência, que se digne encaminhar 
-		o requerimento de <b>LICENÇA POR MOTIVO DE AFASTAMENTO DO CÔNJUGE COM EXERCÍCIO 
-		PROVISÓRIO</b>, em anexo, ao E. Tribunal Regional Federal da 2ª Região
+		vem, respeitosamente, requerer a Vossa ExcelÃªncia, que se digne encaminhar 
+		o requerimento de <b>LICENÃ‡A POR MOTIVO DE AFASTAMENTO DO CÃ”NJUGE COM EXERCÃCIO 
+		PROVISÃ“RIO</b>, em anexo, ao E. Tribunal Regional Federal da 2Âª RegiÃ£o
 		</p>
 
 		<c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" />
@@ -54,12 +54,12 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
-		classe ${requestScope.classe} e padrão ${requestScope.padrao}, 
+		classe ${requestScope.classe} e padrÃ£o ${requestScope.padrao}, 
 		lotado(a) no(a)${doc.subscritor.lotacao.descricao},
 	
-		vem, respeitosamente, requerer a Vossa Excelência, que se digne encaminhar 
-		o requerimento de <B>LICENÇA POR MOTIVO DE AFASTAMENTO DO CÔNJUGE COM EXERCÍCIO 
-		PROVISÓRIO</B>, em anexo, ao E. Tribunal Regional Federal da 2ª Região
+		vem, respeitosamente, requerer a Vossa ExcelÃªncia, que se digne encaminhar 
+		o requerimento de <B>LICENÃ‡A POR MOTIVO DE AFASTAMENTO DO CÃ”NJUGE COM EXERCÃCIO 
+		PROVISÃ“RIO</B>, em anexo, ao E. Tribunal Regional Federal da 2Âª RegiÃ£o
 		</p>
 		
 		<c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" />
@@ -82,27 +82,27 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<i>
-		Declaro estar ciente de que o § 2º do art. 183 da Lei n.º 8.112/90, 
-		acrescentado pela Lei n.º 10.667/2003, prevê que o servidor afastado ou 
-		licenciado do cargo efetivo, sem direito à remuneração, inclusive para 
+		Declaro estar ciente de que o Â§ 2Âº do art. 183 da Lei n.Âº 8.112/90, 
+		acrescentado pela Lei n.Âº 10.667/2003, prevÃª que o servidor afastado ou 
+		licenciado do cargo efetivo, sem direito Ã  remuneraÃ§Ã£o, inclusive para 
 		servir em organismo oficial internacional do qual o Brasil seja membro 
 		efetivo ou com o qual coopere, ainda que contribua para regime de 
-		previdência social no exterior, terá suspenso o seu vínculo com o 
-		regime do Plano de Seguridade Social do Servidor Público enquanto 
-		durar o afastamento ou a licença, não lhes assistindo, neste período, 
-		os benefícios do mencionado regime de previdência.
+		previdÃªncia social no exterior, terÃ¡ suspenso o seu vÃ­nculo com o 
+		regime do Plano de Seguridade Social do Servidor PÃºblico enquanto 
+		durar o afastamento ou a licenÃ§a, nÃ£o lhes assistindo, neste perÃ­odo, 
+		os benefÃ­cios do mencionado regime de previdÃªncia.
 		</i>
 		</p> 
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<i>
-		Declaro, ainda, estar ciente de que o § 3º do referido artigo, 
-		também acrescentado pela Lei n.º 10.667/2003, assegura ao servidor na 
-		situação acima descrita, a manutenção da vinculação ao regime do Plano 
-		de Seguridade Social do Servidor Público, mediante o recolhimento mensal 
-		da respectiva contribuição, no mesmo percentual devido pelos servidores em 
-		atividade, incidente sobre a remuneração total do cargo a que faz jus no 
-		exercício de suas atribuições, computando-se, para esse efeito, inclusive, 
+		Declaro, ainda, estar ciente de que o Â§ 3Âº do referido artigo, 
+		tambÃ©m acrescentado pela Lei n.Âº 10.667/2003, assegura ao servidor na 
+		situaÃ§Ã£o acima descrita, a manutenÃ§Ã£o da vinculaÃ§Ã£o ao regime do Plano 
+		de Seguridade Social do Servidor PÃºblico, mediante o recolhimento mensal 
+		da respectiva contribuiÃ§Ã£o, no mesmo percentual devido pelos servidores em 
+		atividade, incidente sobre a remuneraÃ§Ã£o total do cargo a que faz jus no 
+		exercÃ­cio de suas atribuiÃ§Ãµes, computando-se, para esse efeito, inclusive, 
 		as vantagens pessoais.
 		</i>
 		</p>	

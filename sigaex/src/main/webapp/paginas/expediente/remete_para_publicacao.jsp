@@ -8,7 +8,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Remessa para Publicação">
+<siga:pagina titulo="Remessa para PublicaÃ§Ã£o">
 
 <script type="text/javascript" language="Javascript1.1"
 	src="<c:url value="/staticJavascript.action"/>"></script>
@@ -60,7 +60,7 @@
 				</table>
 			</c:when>
 			<c:when test="${i == 2}">
-				<h1>Documentos remetidos para publicação</h1>
+				<h1>Documentos remetidos para publicaÃ§Ã£o</h1>
 				<c:set var="elementos" value="${itensRemetidos}" />
 			</c:when>
 			<c:when test="${i == 3}">
@@ -74,7 +74,7 @@
 					<td rowspan="2" align="center"><input type="checkbox"
 						name="checkall" onclick="checkUncheckAll(this)" /></td>
 				</c:if>
-				<td rowspan="2" align="right">Número</td>
+				<td rowspan="2" align="right">NÃºmero</td>
 				<c:choose>
 					<c:when test="${i == 1}">
 						<td rowspan="2">Data de agendamento</td>
@@ -84,13 +84,13 @@
 					</c:when>
 				</c:choose>
 				<td colspan="3" align="center">Documento</td>
-				<td rowspan="2">Descrição</td>
+				<td rowspan="2">DescriÃ§Ã£o</td>
 
 				</td>
 			</tr>
 			<tr class="header">
 				<td align="center">Data</td>
-				<td align="center">Lotação</td>
+				<td align="center">LotaÃ§Ã£o</td>
 				<td align="center">Pessoa</td>
 			</tr>
 

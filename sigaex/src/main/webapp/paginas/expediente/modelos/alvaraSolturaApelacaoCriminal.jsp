@@ -15,7 +15,7 @@
 						<mod:texto titulo="Cargo" var="nomeCargo" largura="45" />
 				</mod:grupo>
 				<mod:grupo>
-						<mod:texto titulo="”rg„o" var="nomeOrgao" largura="45" />
+						<mod:texto titulo="√ìrg√£o" var="nomeOrgao" largura="45" />
 				</mod:grupo>				
 					
 	<mod:grupo>
@@ -39,7 +39,7 @@
 					<mod:texto titulo="Processo Origem ${i}" var="numProcesso${i}"/>	
 				</mod:grupo>	
 				<mod:grupo>
-					<mod:texto titulo="Nome do ”rg„o"  var="orig_processo${i}" largura="40"/>
+					<mod:texto titulo="Nome do √ìrg√£o"  var="orig_processo${i}" largura="40"/>
 				</mod:grupo>
 
 			</c:forEach>
@@ -50,7 +50,7 @@
 			</mod:grupo>
 			<mod:grupo>
 
-				<mod:texto titulo="Nome do ”rg„o"  var="orig_processo" largura="40"/>
+				<mod:texto titulo="Nome do √ìrg√£o"  var="orig_processo" largura="40"/>
 			</mod:grupo>
 			<mod:grupo>
 
@@ -58,7 +58,7 @@
 			</mod:grupo>
 			<mod:grupo>
 
-				<mod:texto titulo="Nome do ”rg„o"  var="orig_processo2" largura="40"/>
+				<mod:texto titulo="Nome do √ìrg√£o"  var="orig_processo2" largura="40"/>
 			</mod:grupo>						
 			<mod:grupo> -->
 				<mod:texto titulo="Apelante" var="apelante" largura="40"/>				
@@ -67,7 +67,7 @@
 				<mod:texto titulo="Apelado" var="apelado" largura="50"/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Benefici·rio" var="nm_beneficiario" largura="40"/>
+				<mod:texto titulo="Benefici√°rio" var="nm_beneficiario" largura="40"/>
 			</mod:grupo>
 						
 			<mod:grupo>
@@ -76,17 +76,17 @@
 			</mod:grupo>
 
 				<c:set var="texto_final"
-						value="Determino que o presente alvar· de soltura seja cumprido pelo Sr. Oficial de JustiÁa, na forma e sob as penas da lei, na sede da SuperintendÍncia da PolÌcia Federal no Estado do Rio de Janeiro" />
+						value="Determino que o presente alvar√° de soltura seja cumprido pelo Sr. Oficial de Justi√ßa, na forma e sob as penas da lei, na sede da Superintend√™ncia da Pol√≠cia Federal no Estado do Rio de Janeiro" />
 	
 					<c:if test="${not empty texto_final}">
 						<mod:grupo>
-							<mod:mensagem titulo="Texto de Conclus„o"
+							<mod:mensagem titulo="Texto de Conclus√£o"
 								texto="${texto_final}" />
 						</mod:grupo>
 					</c:if>				
 			<c:if test="${not empty texto_final}">
 					<mod:grupo>
-						<mod:caixaverif titulo="Alterar Texto de Conclus„o"
+						<mod:caixaverif titulo="Alterar Texto de Conclus√£o"
 							var="alterarTexto" reler="sim" />
 					</mod:grupo>
 				</c:if>
@@ -94,7 +94,7 @@
 				<c:choose>
 					<c:when test="${alterarTexto == 'Sim' or empty texto_final}">
 						<mod:grupo>
-							<mod:memo titulo="Texto de Conclus„o" var="texto_f" colunas="60" linhas="7" />
+							<mod:memo titulo="Texto de Conclus√£o" var="texto_f" colunas="60" linhas="7" />
 						</mod:grupo>
 					</c:when>
 					<c:otherwise>
@@ -162,7 +162,7 @@
 					<br/>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;"><u>ALVAR¡ DE SOLTURA</u> </p></td>
+							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;"><u>ALVAR√Å DE SOLTURA</u> </p></td>
 						</tr>
 						<tr>	
 							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;"><br><u>N&ordm; ${doc.codigo}</u></p></td>
@@ -185,23 +185,23 @@
 	
 		<c:if test="${quantidadeProcessos mod 2 == 0}">
 			
-		<p align="justify"><!-- INICIO FECHO -->${vocativo} <b>${doc.subscritor.descricao}</b>, ${nomeCargo} ${nomeOrgao}, nos autos da <b><i>APELA«√O CRIMINAL</i> N&ordm; ${apelacao_criminal} (Proc. Orig. n&ordm; ${numProcesso1} - ${orig_processo1} e ${numProcesso2} - ${orig_processo2})</b>, em que figuram, como APELANTE <b>${apelante }</b>, e, como APELADO <b>${apelado }</b> <!-- FIM FECHO --><br />
+		<p align="justify"><!-- INICIO FECHO -->${vocativo} <b>${doc.subscritor.descricao}</b>, ${nomeCargo} ${nomeOrgao}, nos autos da <b><i>APELA√á√ÉO CRIMINAL</i> N&ordm; ${apelacao_criminal} (Proc. Orig. n&ordm; ${numProcesso1} - ${orig_processo1} e ${numProcesso2} - ${orig_processo2})</b>, em que figuram, como APELANTE <b>${apelante }</b>, e, como APELADO <b>${apelado }</b> <!-- FIM FECHO --><br />
 		<br/>
 		</p>
 		<p align="right"><b><u>MANDA</u></b>
 					
-				<br><div align="justify" >Ao SUPERINTENDENTE DA POLÕCIA FEDERAL, ou quem suas vezes fizer, ao lhe ser este apresentado, indo por mim assinado, que ponha em liberdade, se "por al" n„o estiver preso, <font size="3"><b>${nm_beneficiario }</b></font>, ${texto}, nos autos da <i>APELA«√O CRIMINAL</i> N&ordm; <b>${apelaÁ„o_criminal} (Proc. Orig. n&ordm; ${numProcesso1} - ${orig_processo1} e ${numProcesso2} - ${orig_processo2} ), <u>ficando ressalvado que esta decis„o de soltura do preso È somente referente a este feito.</u></b>
+				<br><div align="justify" >Ao SUPERINTENDENTE DA POL√çCIA FEDERAL, ou quem suas vezes fizer, ao lhe ser este apresentado, indo por mim assinado, que ponha em liberdade, se "por al" n√£o estiver preso, <font size="3"><b>${nm_beneficiario }</b></font>, ${texto}, nos autos da <i>APELA√á√ÉO CRIMINAL</i> N&ordm; <b>${apela√ß√£o_criminal} (Proc. Orig. n&ordm; ${numProcesso1} - ${orig_processo1} e ${numProcesso2} - ${orig_processo2} ), <u>ficando ressalvado que esta decis√£o de soltura do preso √© somente referente a este feito.</u></b>
 				<br><b><u>${texto_f}.</u></b></br></div></p>
 						
 		</c:if>
 
 		<c:if test="${quantidadeProcessos mod 2 == 1}">
-		<p align="justify"><!-- INICIO FECHO -->${vocativo} <b>${doc.subscritor.descricao}</b>, ${nomeCargo} ${nomeOrgao}, nos autos da <b>APELA«√O CRIMINAL N&ordm; ${apelacao_criminal} (Proc. Orig. n&ordm; ${numProcesso1} - ${orig_processo1})</b>, em que figuram, como APELANTE <b>${apelante }</b>, e, como APELADO <b>${apelado }</b> <!-- FIM FECHO --><br />
+		<p align="justify"><!-- INICIO FECHO -->${vocativo} <b>${doc.subscritor.descricao}</b>, ${nomeCargo} ${nomeOrgao}, nos autos da <b>APELA√á√ÉO CRIMINAL N&ordm; ${apelacao_criminal} (Proc. Orig. n&ordm; ${numProcesso1} - ${orig_processo1})</b>, em que figuram, como APELANTE <b>${apelante }</b>, e, como APELADO <b>${apelado }</b> <!-- FIM FECHO --><br />
 		<br />
 		</p>
 		<p align="right"><b><u>MANDA</u></b>
 					
-				<br><div align="justify" >Ao SUPERINTENDENTE DA POLÕCIA FEDERAL, ou quem suas vezes fizer, ao lhe ser este apresentado, indo por mim assinado, que ponha em liberdade, se "por al" n„o estiver preso, <font size="3"><b>${nm_beneficiario }</b></font>, ${texto}, nos autos da <i>APELA«√O CRIMINAL</i> N&ordm; <b>${apelacao_criminal} (Proc. Orig. n&ordm; ${numProcesso1} - ${orig_processo1}), <u>ficando ressalvado que esta decis„o de soltura do preso È somente referente a este feito.
+				<br><div align="justify" >Ao SUPERINTENDENTE DA POL√çCIA FEDERAL, ou quem suas vezes fizer, ao lhe ser este apresentado, indo por mim assinado, que ponha em liberdade, se "por al" n√£o estiver preso, <font size="3"><b>${nm_beneficiario }</b></font>, ${texto}, nos autos da <i>APELA√á√ÉO CRIMINAL</i> N&ordm; <b>${apelacao_criminal} (Proc. Orig. n&ordm; ${numProcesso1} - ${orig_processo1}), <u>ficando ressalvado que esta decis√£o de soltura do preso √© somente referente a este feito.
 				<br><b><u>${texto_f}.</u></b></br></div></p>
 						
 		</c:if>

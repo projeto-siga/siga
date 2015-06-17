@@ -15,7 +15,7 @@ function sbmt() {
 }
 </script>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="MovimentaÃ§Ã£o">
 
 <c:if test="${not doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");</script>
@@ -37,7 +37,7 @@ function sbmt() {
 			
 			<table class="gt-form-table">
 					<tr class="header">
-						<td colspan="2">Dados da movimentação</td>
+						<td colspan="2">Dados da movimentaÃ§Ã£o</td>
 					</tr>
 					<tr id="tr_titular" style="display:none">
 						<td>Titular:</td>

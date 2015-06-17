@@ -37,7 +37,7 @@
 							</tr>
 						</c:if>
 						<tr>
-							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
+							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
 						</tr>
 					</table>
 				</td>
@@ -72,7 +72,7 @@
 							</tr>
 						</c:if>
 						<tr>
-							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
+							<td width="100%" align="center" style="font-family:AvantGarde Bk BT, Arial;font-size:8pt;"><c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose></td>
 						</tr>
 					</table>
 				</td>
@@ -85,11 +85,11 @@
 		<table width="100%" border="0" cellpadding="12" cellspacing="12"
 			bgcolor="#FFFFFF">
 			<tr>
-				<td width="25%">N˙mero Original:</td>
+				<td width="25%">N√∫mero Original:</td>
 				<td width="75%">${doc.numExtDoc}</td>
 			</tr>
 			<tr>
-				<td>N˙mero no Sistema Antigo:</td>
+				<td>N√∫mero no Sistema Antigo:</td>
 				<td>${doc.numAntigoDoc}</td>
 			</tr>
 			<tr>
@@ -105,11 +105,11 @@
 				<td>${doc.subscritorString}</td>
 			</tr>
 			<tr>
-				<td>Destinat·rio:</td>
+				<td>Destinat√°rio:</td>
 				<td>${doc.destinatarioString}</td>
 			</tr>
 			<tr>
-				<td>DescriÁ„o:</td>
+				<td>Descri√ß√£o:</td>
 				<td>${doc.descrDocumento}</td>
 			</tr>
 			<tr>

@@ -8,7 +8,7 @@
 <%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Anotação em Lote">
+<siga:pagina titulo="AnotaÃ§Ã£o em Lote">
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>
@@ -34,7 +34,7 @@
 	}
 	function corrige() {
 		if (tamanho2()<0) {
-			alert('Descrição com mais de 255 caracteres');
+			alert('DescriÃ§Ã£o com mais de 255 caracteres');
 			nota = new String();
 			nota = document.getElementById("descrMov").value;
 			document.getElementById("descrMov").value = nota.substring(0,255);
@@ -68,7 +68,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Anotação em Lote</h2>
+			<h2>AnotaÃ§Ã£o em Lote</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -83,7 +83,7 @@
 				<td>
 					<table class="form" width="100%">
 						<tr class="header">
-							<td colspan="2">Anotação</td>
+							<td colspan="2">AnotaÃ§Ã£o</td>
 						</tr>
 						<tr>
 							<td>Data:</td>
@@ -91,7 +91,7 @@
 								onblur="javascript:verifica_data(this,0);" /></td>
 						</tr>
 						<tr>
-							<td>Responsável:</td>
+							<td>ResponsÃ¡vel:</td>
 							<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 							&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 								onclick="javascript:displayTitular(this);" />Substituto</td>
@@ -111,7 +111,7 @@
 									tema="simple" modulo="siga"/></td>
 						</tr>
 						<tr>
-							<td>Função do Responsável:</td>
+							<td>FunÃ§Ã£o do ResponsÃ¡vel:</td>
 							<td><input type="hidden" name="campos"
 								value="nmFuncaoSubscritor" /> <ww:textfield
 								name="nmFuncaoSubscritor" size="50" maxLength="128" theme="simple"/> (opcional)</td>
@@ -127,7 +127,7 @@
 		
 						<c:if test="${tipoResponsavel == 3}">
 							<tr>
-								<td>Observação</td>
+								<td>ObservaÃ§Ã£o</td>
 								<td><ww:textfield size="30" name="obsOrgao" /></td>
 							</tr>
 						</c:if>
@@ -160,15 +160,15 @@
 							<tr class="header">
 								<td rowspan="2" align="center"><input type="checkbox"
 									name="checkall" onclick="checkUncheckAll(this)" /></td>
-								<td rowspan="2" align="right">Número</td>
-								<td rowspan="2" align="center">Destinação da via</td>
+								<td rowspan="2" align="right">NÃºmero</td>
+								<td rowspan="2" align="center">DestinaÃ§Ã£o da via</td>
 								<td colspan="3" align="center">Documento</td>
-								<td colspan="2" align="center">Última Movimentação</td>
-								<td rowspan="2">Descrição</td>
+								<td colspan="2" align="center">Ãšltima MovimentaÃ§Ã£o</td>
+								<td rowspan="2">DescriÃ§Ã£o</td>
 							</tr>
 							<tr class="header">
 								<td align="center">Data</td>
-								<td align="center">Lotação</td>
+								<td align="center">LotaÃ§Ã£o</td>
 								<td align="center">Pessoa</td>
 								<td align="center">Data</td>
 								<td align="center">Pessoa</td>

@@ -15,7 +15,7 @@
 				<mod:pessoa titulo="Servidor" var="servidor${i}" reler="sim" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="FunÁ„o" var="funcao${i}" />
+				<mod:texto titulo="Fun√ß√£o" var="funcao${i}" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:data titulo="A partir de (opcional)" var="dataInicio${i}" />
@@ -25,18 +25,18 @@
 		<c:if
 			test="${f:pessoa(requestScope['servidor_pessoaSel.id']).cargo.descricao == 'TECNICO JUDICIARIO/SEGURANCA E TRANSPORTE'}">
 			<mod:grupo>
-			Continuando na mesma lotaÁ„o, o servidor exercer· funÁıes de seguranÁa, <br />
+			Continuando na mesma lota√ß√£o, o servidor exercer√° fun√ß√µes de seguran√ßa, <br />
 				<mod:selecao titulo="conforme a Portaria PGD-2007/0046"
-					var="seguranca" opcoes="Sim;N„o" />
+					var="seguranca" opcoes="Sim;N√£o" />
 			</mod:grupo>
 		</c:if>
 		<mod:grupo>
 			<mod:selecao titulo="Documento feito de ordem de Magistrado?"
-				var="autoridade" opcoes="N√O;SIM" reler="ajax"
+				var="autoridade" opcoes="N√ÉO;SIM" reler="ajax"
 				idAjax="autoridadeAjax" />
 			<mod:grupo depende="autoridadeAjax">
 				<c:if test="${autoridade eq 'SIM'}">
-					<mod:pessoa titulo="MatrÌcula da Autoridade competente"
+					<mod:pessoa titulo="Matr√≠cula da Autoridade competente"
 						var="autoridade" />
 					<mod:grupo>
 						<mod:radio marcado="Sim" titulo="Titular" var="botao"
@@ -48,8 +48,8 @@
 			</mod:grupo>
 		</mod:grupo>
 		<mod:grupo>
-			<b> <mod:mensagem titulo="AtenÁ„o"
-				texto="preencha o destinat·rio com SELOT e, apÛs finalizar, transfira para a SELOT." />
+			<b> <mod:mensagem titulo="Aten√ß√£o"
+				texto="preencha o destinat√°rio com SELOT e, ap√≥s finalizar, transfira para a SELOT." />
 			</b>
 		</mod:grupo>
 	</mod:entrevista>
@@ -122,18 +122,18 @@
 					De ordem do(a) Exmo(a).
 					Juiz(a) Federal ${requestScope['botao']} do(a) <b>${f:lotacaoPessoa(requestScope['autoridade_pessoaSel.id'])}</b>,
 					Dr(a). <b>${requestScope['autoridade_pessoaSel.descricao']}</b>, solicito 
-			</c:if> <c:if test="${autoridade eq 'N√O'}">
+			</c:if> <c:if test="${autoridade eq 'N√ÉO'}">
 					Solicito 
 			</c:if> <c:if test="${servidores == 1}">
-				a dispensa do(a) servidor(a) abaixo relacionado(a) da seguinte funÁ„o comissionada
+				a dispensa do(a) servidor(a) abaixo relacionado(a) da seguinte fun√ß√£o comissionada
 			</c:if> <c:if test="${servidores > 1}">
-				a dispensa dos(as) servidores(as) abaixo relacionados(as) das seguintes funÁıes comissionadas
+				a dispensa dos(as) servidores(as) abaixo relacionados(as) das seguintes fun√ß√µes comissionadas
 			</c:if> <c:forEach var="i" begin="1" end="${servidores}">
 			<c:if test="${not empty requestScope[f:concat('dataInicio',i)]}">
 				<c:set var="alguemData" value="sim" />
 			</c:if>
 		</c:forEach> <c:if test="${empty alguemData}">
-						a partir da <b>publicaÁ„o da Portaria</b>.
+						a partir da <b>publica√ß√£o da Portaria</b>.
 				</c:if> <c:if test="${not empty alguemData}">
 						a partir da(s) respectiva(as) data(as):
 				</c:if> <%-- <c:forEach var="i" begin="1" end="${servidores}">
@@ -142,7 +142,7 @@
 				</c:if> 
 			</c:forEach> --%></p>
 		
-		<c:if test="${autoridade eq 'N√O'}">
+		<c:if test="${autoridade eq 'N√ÉO'}">
 			<c:if test="${servidores == 10}"><br /></c:if>
 			<c:if test="${servidores == 6}"><br /></c:if>
 		</c:if>
@@ -155,9 +155,9 @@
 				bgcolor="#000000">
 				<tr bgcolor="#BEBEBE">
 					<td bgcolor="#BEBEBE" align="center" width="30%"><b>Servidor</b></td>
-					<td bgcolor="#BEBEBE" align="center" width="12%"><b>MatrÌcula</b></td>
+					<td bgcolor="#BEBEBE" align="center" width="12%"><b>Matr√≠cula</b></td>
 					<td bgcolor="#BEBEBE" align="center" width="33%"><b>Cargo</b></td>
-					<td bgcolor="#BEBEBE" align="center" width="25%"><b>NÌvel/Classe/Padr„o</b></td>
+					<td bgcolor="#BEBEBE" align="center" width="25%"><b>N√≠vel/Classe/Padr√£o</b></td>
 				</tr>
 				<tr>					
 					<td bgcolor="#FFFFFF" align="center" width="30%">${pes.descricao}</td>
@@ -170,8 +170,8 @@
 			<table width="100%" border="1" cellpadding="2" cellspacing="1"
 				bgcolor="#000000">
 				<tr>					
-					<td bgcolor="#BEBEBE" align="center" width="40%"><b>LotaÁ„o</b></td>
-					<td bgcolor="#BEBEBE" align="center" width="30%"><b>FunÁ„o Comissionada</b></td>
+					<td bgcolor="#BEBEBE" align="center" width="40%"><b>Lota√ß√£o</b></td>
+					<td bgcolor="#BEBEBE" align="center" width="30%"><b>Fun√ß√£o Comissionada</b></td>
 					<td bgcolor="#BEBEBE" align="center" width="30%"><b>A partir de(a)</b></td>
 				</tr>
 				<tr>
@@ -179,7 +179,7 @@
 					<td bgcolor="#FFFFFF" align="center" width="40%">${pes.lotacao.descricao}</td>
 					<td bgcolor="#FFFFFF" align="center" width="30%">${requestScope[f:concat('funcao',i)]}</td>
 					<td bgcolor="#FFFFFF" align="center" width="30%">
-					<c:set var="portaria" value="PublicaÁ„o da Portaria" />
+					<c:set var="portaria" value="Publica√ß√£o da Portaria" />
 					<c:if test="${not empty requestScope[f:concat('dataInicio',i)]}">${requestScope[f:concat('dataInicio',i)]}</c:if>
 					<c:if test="${empty requestScope[f:concat('dataInicio',i)]}">${portaria}</c:if>
 					</td>
@@ -196,38 +196,38 @@
 				Dr(a). <b>${requestScope['autoridade_pessoaSel.descricao']}</b>, solicito  	
 			</c:if>
 
-			<c:if test="${autoridade eq 'N√O'}">
+			<c:if test="${autoridade eq 'N√ÉO'}">
 				Solicito 				
 			</c:if>
 			
 			a <b>dispensa</b> do(a) servidor(a) 
 			<mod:identificacao
 					pessoa="${requestScope['servidor_pessoaSel.id']}" negrito="sim"
-					nivelHierarquicoMaximoDaLotacao="4" /> da funÁ„o comissionada de <b>${funcao},</b>
+					nivelHierarquicoMaximoDaLotacao="4" /> da fun√ß√£o comissionada de <b>${funcao},</b>
 					<c:if test="${not empty dataInicio}">
 						a partir de <b>${dataInicio}</b>.
 					</c:if> 
 					<c:if test="${empty dataInicio}">
-						a partir da <b>publicaÁ„o da Portaria</b>.
+						a partir da <b>publica√ß√£o da Portaria</b>.
 					</c:if> </p>
 					<c:if test="${not empty seguranca}">
 					<p style="TEXT-INDENT: 2cm" align="justify">O servidor <b>
-					<c:if test="${seguranca == 'N„o'}">n„o
-						</c:if> exercer·</b> funÁıes de seguranÁa, conforme a Portaria PGD-2007/0046.</p>
+					<c:if test="${seguranca == 'N√£o'}">n√£o
+						</c:if> exercer√°</b> fun√ß√µes de seguran√ßa, conforme a Portaria PGD-2007/0046.</p>
 					</c:if>	--%>
 
 
 		<%--	</mod:valor> --%>
 
 		<%-- <c:if test="${servidores == 10}"><br /><br /><br /><br /></c:if> --%>
-		<c:if test="${autoridade eq 'N√O'}">
+		<c:if test="${autoridade eq 'N√ÉO'}">
 		<c:if test="${servidores == 5}"><p>&nbsp;</p></c:if>
 		</c:if>
 		<p style="align: justify; TEXT-INDENT: 2cm">Atenciosamente,</p>
 		<c:if test="${autoridade eq 'SIM'}">
 		<c:if test="${servidores != 4}"><p>&nbsp;</p></c:if>
 		</c:if>
-		<c:if test="${autoridade eq 'N√O'}">
+		<c:if test="${autoridade eq 'N√ÉO'}">
 		<c:if test="${servidores != 4}"><p>&nbsp;</p></c:if>
 		</c:if>
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />

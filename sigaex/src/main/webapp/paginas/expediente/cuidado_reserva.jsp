@@ -29,15 +29,15 @@
 				<td style="padding:2pt; font-size:14pt;">Documento Reservado</td>
 			</tr>
 			<tr align="center">
-				<td style="padding:2pt; font-size:14pt;">O documento que está
-				para ser mostrado é reservado, e seu acesso será registrado. Deseja
+				<td style="padding:2pt; font-size:14pt;">O documento que estÃ¡
+				para ser mostrado Ã© reservado, e seu acesso serÃ¡ registrado. Deseja
 				continuar?</td>
 			</tr>
 			<tr align="center">
 				<td style="padding:2pt; font-size:14pt;"><input value="Sim"
 					type="button"
 					onclick="javascript:window.location='exibir.action?id=${doc.idDoc}&via=${via}&confirmadoReservado=ok'">&nbsp&nbsp&nbsp<input
-					type="button" onclick="javascript:history.back()" value="Não"></td>
+					type="button" onclick="javascript:history.back()" value="NÃ£o"></td>
 			</tr>
 		</table>
 		</td>

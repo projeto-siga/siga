@@ -10,10 +10,10 @@
 	<mod:entrevista>
 		<mod:grupo titulo="">
 			<mod:grupo>
-				<mod:texto titulo="Forma de Endereçamento" var="formaDeEnderecamento" largura="80" valor="Ao Exmo. Sr. Diretor do Foro"/>
+				<mod:texto titulo="Forma de EndereÃ§amento" var="formaDeEnderecamento" largura="80" valor="Ao Exmo. Sr. Diretor do Foro"/>
 			</mod:grupo>
 		<%-- 	<mod:grupo>
-				<mod:texto titulo="Nome do órgão destinatário" var="orgao_dest" largura="30" valor="${orgao_dest_prov}" /> &nbsp&nbsp&nbsp <mod:selecao titulo="Gênero do Destinatário"
+				<mod:texto titulo="Nome do Ã³rgÃ£o destinatÃ¡rio" var="orgao_dest" largura="30" valor="${orgao_dest_prov}" /> &nbsp&nbsp&nbsp <mod:selecao titulo="GÃªnero do DestinatÃ¡rio"
 				var="genero" opcoes="Feminino;Masculino"/>
 			</mod:grupo> --%>
 		</mod:grupo>
@@ -51,7 +51,7 @@
 					<br />
 					<table width="100%">
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight: bold;"><br/>Relatório ${fn:toUpperCase(tipoDePauta)} N&ordm; ${doc.codigo}</p></td>	
+							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight: bold;"><br/>RelatÃ³rio ${fn:toUpperCase(tipoDePauta)} N&ordm; ${doc.codigo}</p></td>	
 						</tr>
 					</table>
 				</td>
@@ -66,7 +66,7 @@
 		<br />
 	<%-- 	<c:if test="${not empty orgao_dest}">
 			<c:if test="${genero=='Feminino'}">
-				<p>À ${orgao_dest}</p>
+				<p>Ã€ ${orgao_dest}</p>
 			</c:if>
 				<c:if test="${genero=='Masculino'}">
 				<p>Ao ${orgao_dest}</p>

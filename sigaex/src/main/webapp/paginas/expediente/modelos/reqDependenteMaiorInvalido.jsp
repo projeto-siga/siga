@@ -20,9 +20,9 @@ REQUERIMENTO PARA DEPENDENTE MAIOR INVALIDO-->
 	
 		<mod:valor var="texto_requerimento">
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			Eu, ${doc.subscritor.descricao}, matrícula RJ${doc.subscritor.matricula}, venho por meio deste solicitar a V.S.ª., 
-			s.m.e., o deferimento do pedido de inclusão de ${dependente}, como meu/minha dependente 
-			no Plano de Saúde da Justiça Federal, na qualidade de maior inválido(a).</p>
+			Eu, ${doc.subscritor.descricao}, matrÃ­cula RJ${doc.subscritor.matricula}, venho por meio deste solicitar a V.S.Âª., 
+			s.m.e., o deferimento do pedido de inclusÃ£o de ${dependente}, como meu/minha dependente 
+			no Plano de SaÃºde da JustiÃ§a Federal, na qualidade de maior invÃ¡lido(a).</p>
 		</mod:valor>
 	</mod:documento>
 </mod:modelo>

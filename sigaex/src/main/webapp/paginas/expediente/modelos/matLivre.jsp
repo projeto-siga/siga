@@ -11,7 +11,7 @@
 		<mod:grupo>
 			<c:forEach var="i" begin="1" end="${materias}">
 
-				<mod:selecao reler="sim" titulo="Tipo de MatÈria"
+				<mod:selecao reler="sim" titulo="Tipo de Mat√©ria"
 					opcoes="Portaria SGP;Errata;Anexo;Portaria;Campo Livre"
 					var="tipoMateria${i}" />
 
@@ -20,7 +20,7 @@
 					<c:when test="${param.entrevista == 1}">
 						<c:if
 							test="${requestScope[f:concat('tipoMateria',i)] eq 'Campo Livre'}">
-							<mod:texto titulo="DescriÁ„o" var="nmTipoMateria${i}" />
+							<mod:texto titulo="Descri√ß√£o" var="nmTipoMateria${i}" />
 						</c:if>
 					</c:when>
 					<c:otherwise>
@@ -31,11 +31,11 @@
 				</c:choose>
 
 				<mod:grupo>
-					<mod:texto titulo="TÌtulo da MatÈria" var="tituloMateria${i}"
+					<mod:texto titulo="T√≠tulo da Mat√©ria" var="tituloMateria${i}"
 						largura="40" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:lotacao titulo="”rg„o de Origem" var="orgOrigem${i}" />
+					<mod:lotacao titulo="√ìrg√£o de Origem" var="orgOrigem${i}" />
 				</mod:grupo>
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_publicacao${i}" />
@@ -94,8 +94,8 @@
 			</c:choose> <br>
 			PARA: ${doc.destinatarioString}</p>
 
-			<p align="center">SOLICITA«√O DE PUBLICA«√O BOLETIM INTERNO<br />
-			MatÈria Livre</p>
+			<p align="center">SOLICITA√á√ÉO DE PUBLICA√á√ÉO BOLETIM INTERNO<br />
+			Mat√©ria Livre</p>
 
 			<c:forEach var="i" begin="1" end="${materias}">
 				<p><b>${requestScope[f:concat('tituloMateria',i)]}</b><br />

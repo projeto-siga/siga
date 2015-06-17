@@ -7,18 +7,18 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<!-- este modelo trata de SOLICITAÇÃO DE LICENÇA MÉDICA
-    Ultima Alteração 08/03/2007 
+<!-- este modelo trata de SOLICITAÃ‡ÃƒO DE LICENÃ‡A MÃ‰DICA
+    Ultima AlteraÃ§Ã£o 08/03/2007 
  -->
 
 <mod:modelo>
     <mod:entrevista>
-        <mod:grupo titulo="DETALHES DA LICENÇA">
+        <mod:grupo titulo="DETALHES DA LICENÃ‡A">
             <mod:selecao titulo="Atestado em anexo de" var="tipoAtestado"
-                opcoes="médico da SJRJ;médico externo" />
+                opcoes="mÃ©dico da SJRJ;mÃ©dico externo" />
         </mod:grupo>
         <mod:grupo>
-            <mod:texto titulo="Endereço" largura="55" maxcaracteres="80"
+            <mod:texto titulo="EndereÃ§o" largura="55" maxcaracteres="80"
                 var="endereco" />
         </mod:grupo>
         <mod:grupo>
@@ -30,11 +30,11 @@
                 var="ramalLotacao" />
         </mod:grupo>
         <mod:selecao titulo="Tipo" var="tipolicenca"
-            opcoes="Licença para Tratamento da Própria Saúde;Licença à Gestante;Licença por Motivo de Doença de Pessoa da Família;"
+            opcoes="LicenÃ§a para Tratamento da PrÃ³pria SaÃºde;LicenÃ§a Ã  Gestante;LicenÃ§a por Motivo de DoenÃ§a de Pessoa da FamÃ­lia;"
             reler="sim" />
-        <c:if test="${tipolicenca eq 'Licença à Gestante'}">
+        <c:if test="${tipolicenca eq 'LicenÃ§a Ã  Gestante'}">
             <mod:grupo>
-                <mod:caixaverif titulo="Prorrogação da Licença à Gestante" var="plg"
+                <mod:caixaverif titulo="ProrrogaÃ§Ã£o da LicenÃ§a Ã  Gestante" var="plg"
                     reler="ajax" idAjax="plgAjax" />
             </mod:grupo>
         </c:if>
@@ -42,12 +42,12 @@
             <c:if test="${plg == 'Sim'}">
                 <mod:grupo>
                     <mod:mensagem
-                        texto="(Declaro estar ciente de que, caso haja falecimento da criança, cessará, imediatamente, o meu direito à prorrogação da Licença à Gestante, conforme disposto no art.7º da Res-CJF n.30/2008)"></mod:mensagem>
+                        texto="(Declaro estar ciente de que, caso haja falecimento da crianÃ§a, cessarÃ¡, imediatamente, o meu direito Ã  prorrogaÃ§Ã£o da LicenÃ§a Ã  Gestante, conforme disposto no art.7Âº da Res-CJF n.30/2008)"></mod:mensagem>
                 </mod:grupo>
             </c:if>
         </mod:grupo>
         <c:if
-            test="${tipolicenca eq 'Licença por Motivo de Doença de Pessoa da Família'}">
+            test="${tipolicenca eq 'LicenÃ§a por Motivo de DoenÃ§a de Pessoa da FamÃ­lia'}">
             <mod:grupo>
                 <mod:texto titulo="Nome do Familiar" largura="30" maxcaracteres="30"
                     var="nomeFamiliar" />
@@ -55,7 +55,7 @@
                     maxcaracteres="15" var="grauParentesco" />
             </mod:grupo>
         </c:if>
-        <mod:grupo titulo="Período Solicitado">
+        <mod:grupo titulo="PerÃ­odo Solicitado">
             <mod:data titulo="Data Inicial" var="dataInicio" />
             <mod:texto titulo="Quant. de dias" var="quantDias" largura="3"
                 maxcaracteres="3" obrigatorio="Sim" />
@@ -88,17 +88,17 @@
     
         FIM PRIMEIRO CABECALHO -->
 
-    <p style="font-size: 15pt;"><b>SOLICITAÇÃO DE LICENÇA MÉDICA</b></p>
+    <p style="font-size: 15pt;"><b>SOLICITAÃ‡ÃƒO DE LICENÃ‡A MÃ‰DICA</b></p>
         Atestado em anexo:&nbsp;&nbsp;&nbsp;&nbsp;
         <c:choose>
-            <c:when test="${tipoAtestado eq 'médico da SJRJ'}">
-                [x] de médico da SJRJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;] de médico externo
+            <c:when test="${tipoAtestado eq 'mÃ©dico da SJRJ'}">
+                [x] de mÃ©dico da SJRJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;] de mÃ©dico externo
             </c:when>
-            <c:when test="${tipoAtestado eq 'médico externo'}">
-                [&nbsp;&nbsp;] de médico da SJRJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[x] de médico externo
+            <c:when test="${tipoAtestado eq 'mÃ©dico externo'}">
+                [&nbsp;&nbsp;] de mÃ©dico da SJRJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[x] de mÃ©dico externo
             </c:when>
             <c:otherwise>
-                [&nbsp;&nbsp;] de médico da SJRJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;] de médico externo
+                [&nbsp;&nbsp;] de mÃ©dico da SJRJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;] de mÃ©dico externo
             </c:otherwise>
         </c:choose>
         <table width="100%" border="1" cellpadding="3" cellspacing="1">
@@ -109,61 +109,61 @@
         <table width="100%" border="1" cellpadding="3" cellspacing="1">
             <tr>
                 <td width="70%" bgcolor="#FFFFFF">Nome: <b>${doc.subscritor.descricao}</b></td>
-                <td width="30%" bgcolor="#FFFFFF">Matrícula: <b>${doc.subscritor.sigla}</b></td>
+                <td width="30%" bgcolor="#FFFFFF">MatrÃ­cula: <b>${doc.subscritor.sigla}</b></td>
             </tr>
         </table>
         <table width="100%" border="1" cellpadding="3">
             <tr>
-                <td width="30%">Lotação: <b>${doc.subscritor.lotacao.descricao}</b></td>
+                <td width="30%">LotaÃ§Ã£o: <b>${doc.subscritor.lotacao.descricao}</b></td>
                 <td width="70%">Cargo: <b>${doc.subscritor.cargo.nomeCargo}</b></td>
             </tr>
         </table>
         <table width="100%" border="1" cellpadding="3">
             <tr>
-                <td>Endereço: <b>${endereco}</b></td>
+                <td>EndereÃ§o: <b>${endereco}</b></td>
             </tr>
         </table>
         <table width="100%" border="1" cellpadding="3">
             <tr>
                 <td>Tel Residencial: <b>${telResidencial}</b></td>
                 <td>Tel Celular: <b>${telCelular}</b></td>
-                <td>Ramal da Lotação: <b>${ramalLotacao}</b></td>
+                <td>Ramal da LotaÃ§Ã£o: <b>${ramalLotacao}</b></td>
             </tr>
         </table>
         <table width="100%" border="1" cellpadding="3">
             <tr>
-                <td width="60%">Tipo de Licença:<br />
+                <td width="60%">Tipo de LicenÃ§a:<br />
                 <c:choose>
                     <c:when
-                        test="${tipolicenca eq 'Licença para Tratamento da Própria Saúde'}">
-                    <p style="font-size: 9pt;">LTS - Licença para Tratamento da Própria Saúde<br /> </p>
+                        test="${tipolicenca eq 'LicenÃ§a para Tratamento da PrÃ³pria SaÃºde'}">
+                    <p style="font-size: 9pt;">LTS - LicenÃ§a para Tratamento da PrÃ³pria SaÃºde<br /> </p>
                     </c:when>
                     <c:when
-                        test="${tipolicenca eq 'Licença à Gestante' && plg eq 'Nao'}">
-                   <p style="font-size: 9pt;"> LG - Licença à Gestante<br /></p>
+                        test="${tipolicenca eq 'LicenÃ§a Ã  Gestante' && plg eq 'Nao'}">
+                   <p style="font-size: 9pt;"> LG - LicenÃ§a Ã  Gestante<br /></p>
                     </c:when>
                     <c:when
-                        test="${tipolicenca eq 'Licença à Gestante' && plg eq 'Sim'}">
-                   <p style="font-size: 9pt;"> LG - Licença à Gestante<br />
-                    PLG - Prorrogação da Licença à Gestante (Declaro estar ciente de que, 
-                    caso haja falecimento da criança, cessará, imediatamente, o meu direito à prorrogação 
-                    da Licença à Gestante, conforme disposto no art.7º da Res-CJF n.30/2008)</p>
+                        test="${tipolicenca eq 'LicenÃ§a Ã  Gestante' && plg eq 'Sim'}">
+                   <p style="font-size: 9pt;"> LG - LicenÃ§a Ã  Gestante<br />
+                    PLG - ProrrogaÃ§Ã£o da LicenÃ§a Ã  Gestante (Declaro estar ciente de que, 
+                    caso haja falecimento da crianÃ§a, cessarÃ¡, imediatamente, o meu direito Ã  prorrogaÃ§Ã£o 
+                    da LicenÃ§a Ã  Gestante, conforme disposto no art.7Âº da Res-CJF n.30/2008)</p>
                     </c:when>
                     <c:when
-                        test="${tipolicenca eq 'Licença por Motivo de Doença de Pessoa da Família'}">
-                   <p style="font-size: 9pt;"> LTPF - Licença por Motivo de Doença de Pessoa da Família<br /></p>
+                        test="${tipolicenca eq 'LicenÃ§a por Motivo de DoenÃ§a de Pessoa da FamÃ­lia'}">
+                   <p style="font-size: 9pt;"> LTPF - LicenÃ§a por Motivo de DoenÃ§a de Pessoa da FamÃ­lia<br /></p>
                     </c:when>
                     <c:otherwise>
                     </c:otherwise>
                 </c:choose></td>
-                <td width="40%" align="center">Período Solicitado:<br /><br />
-                De: <b>${dataInicio}</b> até <c:if test="${not empty quantDias}">
+                <td width="40%" align="center">PerÃ­odo Solicitado:<br /><br />
+                De: <b>${dataInicio}</b> atÃ© <c:if test="${not empty quantDias}">
                     <b>${f:calculaData(requestScope['quantDias'],requestScope['dataInicio'])}</b>
                 </c:if></td>
             </tr>
         </table>
         <c:if
-            test="${tipolicenca eq 'Licença por Motivo de Doença de Pessoa da Família'}">
+            test="${tipolicenca eq 'LicenÃ§a por Motivo de DoenÃ§a de Pessoa da FamÃ­lia'}">
             <table width="100%" border="1" cellpadding="3">
                 <tr>
                     <td width="60%">Nome do Familiar: <b>${nomeFamiliar}</b></td>
@@ -184,32 +184,32 @@
         </table>
         <table width="100%" border="1" width="100%">
             <tr>
-                <td bgcolor="#C0C0C0"><b> OBSERVAÇÕES </b></td>
+                <td bgcolor="#C0C0C0"><b> OBSERVAÃ‡Ã•ES </b></td>
             </tr>
             <tr>
                 <td>
-                <p align="justify" style="font-size: 8pt;">- Deverá ser anexado
-                ao presente formulário atestado médico dentro de envelope lacrado,
-                com identificação de "confidencial", e encaminhado à SESAU/SRH ou às
-                SEAPOs no prazo de 3 (três) dias úteis apartir do 1º dia do
+                <p align="justify" style="font-size: 8pt;">- DeverÃ¡ ser anexado
+                ao presente formulÃ¡rio atestado mÃ©dico dentro de envelope lacrado,
+                com identificaÃ§Ã£o de "confidencial", e encaminhado Ã  SESAU/SRH ou Ã s
+                SEAPOs no prazo de 3 (trÃªs) dias Ãºteis apartir do 1Âº dia do
                 afastamento.<br />
                 </p>
-                <p align="justify" style="font-size: 8pt;">- Somente serão
-                aceitos formulários com assinatura do servidor e de seu superior
-                hierárquico, com carimbo de identificação.<br />
+                <p align="justify" style="font-size: 8pt;">- Somente serÃ£o
+                aceitos formulÃ¡rios com assinatura do servidor e de seu superior
+                hierÃ¡rquico, com carimbo de identificaÃ§Ã£o.<br />
                 </p>
                 <p align="justify" style="font-size: 8pt;"><b> - O atestado
-                firmado por médico externo</b>, de forma legível, sem rasuras e em
-                receituário adequado, deverá conter: nome completo do servidor;
-                diagnóstico definitivo ou provável, codificado (CID-10) ou por
-                extenso; período de afastamento recomendado e nome completo do
-                médico; assinatura, carimbo e nº de registro do CRM.<br />
+                firmado por mÃ©dico externo</b>, de forma legÃ­vel, sem rasuras e em
+                receituÃ¡rio adequado, deverÃ¡ conter: nome completo do servidor;
+                diagnÃ³stico definitivo ou provÃ¡vel, codificado (CID-10) ou por
+                extenso; perÃ­odo de afastamento recomendado e nome completo do
+                mÃ©dico; assinatura, carimbo e nÂº de registro do CRM.<br />
                 </p>
                 <p align="justify" style="font-size: 8pt;">Caso sejam concedidos
-                ao servidor <b>licenças ou afastamentos durante o periodo de
-                férias</b>, estas serão suspensas e o período remanescente será
-                remarcado pela SRH, iniciando-se no 1º dia imediatamente posterior
-                ao término da licença ou afastamento.<br />
+                ao servidor <b>licenÃ§as ou afastamentos durante o periodo de
+                fÃ©rias</b>, estas serÃ£o suspensas e o perÃ­odo remanescente serÃ¡
+                remarcado pela SRH, iniciando-se no 1Âº dia imediatamente posterior
+                ao tÃ©rmino da licenÃ§a ou afastamento.<br />
                 </p>
                 </td>
             </tr>
@@ -220,19 +220,19 @@
         <table width="100%" border="1" width="100%">
             <tr>
                 <td valign="top">
-                <p align="center" style="font-size: 8pt;"><b>Observações da
-                chefia para a perícia médica</b><br />
-                (preenchimento obrigatório, mesmo que seja com "nada a declarar").<br />
+                <p align="center" style="font-size: 8pt;"><b>ObservaÃ§Ãµes da
+                chefia para a perÃ­cia mÃ©dica</b><br />
+                (preenchimento obrigatÃ³rio, mesmo que seja com "nada a declarar").<br />
                 OBS:<br />
                 </p>
                 <p align="center" style="font-size: 8pt;">- Em caso de
-                solicitação de Licença por Motivo de Doença em Pessoa da Família -
-                LTPF, há possibilidade do servidor compensar os dias não
-                trabalhados?(conforme §2º do art. 2º da Resolução nº447/2005 - CJF)</p>
-                <p style="font-size: 10pt;"> [&nbsp;&nbsp;]sim [&nbsp;&nbsp;]não</p><br />
+                solicitaÃ§Ã£o de LicenÃ§a por Motivo de DoenÃ§a em Pessoa da FamÃ­lia -
+                LTPF, hÃ¡ possibilidade do servidor compensar os dias nÃ£o
+                trabalhados?(conforme Â§2Âº do art. 2Âº da ResoluÃ§Ã£o nÂº447/2005 - CJF)</p>
+                <p style="font-size: 10pt;"> [&nbsp;&nbsp;]sim [&nbsp;&nbsp;]nÃ£o</p><br />
                 </td>
                 <td valign="top">
-                <p align="center" style="font-size: 8pt;">Último dia de trabalho
+                <p align="center" style="font-size: 8pt;">Ãšltimo dia de trabalho
                 do servidor: <br />
                 <br />
                 _______/_______/_______<br />

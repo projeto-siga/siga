@@ -11,27 +11,27 @@
 	
 	
 		<mod:grupo>
-		<mod:selecao titulo="SeÁ„o" var="secao"
+		<mod:selecao titulo="Se√ß√£o" var="secao"
 				opcoes="SELEG;SGP;SECAD;SASGP" reler="ajax" idAjax="secaoAjax" />
 		</mod:grupo>
 		<mod:grupo depende="secaoAjax">
 			<ww:if test="${secao != 'SECAD' and secao != 'SASGP'}">
 				<mod:selecao titulo="Assunto" var="assunto"
-					opcoes="AusÍncia ao serviÁo;LicenÁa-paternidade" reler="ajax"
+					opcoes="Aus√™ncia ao servi√ßo;Licen√ßa-paternidade" reler="ajax"
 					idAjax="assuntoAjax" />
 				<mod:grupo depende="assuntoAjax">
 					<c:choose>
-						<c:when test="${assunto == 'AusÍncia ao serviÁo'}">
-							<mod:selecao titulo="Raz„o" var="razao"
-								opcoes="Casamento;DoaÁ„o de Sangue;Falecimento em famÌlia"
+						<c:when test="${assunto == 'Aus√™ncia ao servi√ßo'}">
+							<mod:selecao titulo="Raz√£o" var="razao"
+								opcoes="Casamento;Doa√ß√£o de Sangue;Falecimento em fam√≠lia"
 								reler="ajax" idAjax="razaoAjax" />
 							<mod:grupo depende="razaoAjax">
 								<c:if test="${razao == 'Casamento'}">
 									<mod:grupo>
-										<mod:radio titulo="Sem concomit‚ncia com outro afastamento"
+										<mod:radio titulo="Sem concomit√¢ncia com outro afastamento"
 											var="concomitancia" valor="1" reler="ajax"
 											idAjax="concomitanciaAjax" marcado="Sim" />
-										<mod:radio titulo="Concomit‚ncia com fÈrias"
+										<mod:radio titulo="Concomit√¢ncia com f√©rias"
 											var="concomitancia" valor="2" reler="ajax"
 											idAjax="concomitanciaAjax" />
 										<mod:radio titulo="Indeferimento" var="concomitancia"
@@ -48,12 +48,12 @@
 									<mod:grupo depende="concomitanciaAjax">
 										<c:choose>
 											<c:when test="${valConcomitancia == '1' or valConcomitancia == '2'}">
-												<%-- AusÍncia ao serviÁo em raz„o de casamento(sem concomit‚ncia com outro afastamento ou concomit‚ncia com ferias --%>
+												<%-- Aus√™ncia ao servi√ßo em raz√£o de casamento(sem concomit√¢ncia com outro afastamento ou concomit√¢ncia com ferias --%>
 												<c:if test="${secao == 'SELEG' or secao == 'SGP'}">													
-													<mod:data titulo="PerÌodo de AusÍncia" var="dataIni" /> a <mod:data
+													<mod:data titulo="Per√≠odo de Aus√™ncia" var="dataIni" /> a <mod:data
 														var="dataFim" titulo="" />
 													<c:if test="${valConcomitancia == '2' and secao == 'SELEG'}">
-														<mod:data titulo="PerÌodo de FÈrias" var="dataFeriasIni" /> a <mod:data
+														<mod:data titulo="Per√≠odo de F√©rias" var="dataFeriasIni" /> a <mod:data
 															var="dataFeriasFim" titulo="" />
 													</c:if>
 												</c:if> 												
@@ -62,41 +62,41 @@
 												<c:if test="${secao == 'SELEG' or secao == 'SGP'}">
 													<mod:grupo titulo="Causa">
 														<mod:grupo largura="30">
-															<mod:radio titulo="a ausÍncia de previs„o legal"
+															<mod:radio titulo="a aus√™ncia de previs√£o legal"
 																var="causaIndef" valor="1" marcado="Sim" />
 														</mod:grupo>
 														<mod:grupo largura="70">
-															<mod:radio titulo="a irregularidade da documentaÁ„o"
+															<mod:radio titulo="a irregularidade da documenta√ß√£o"
 																var="causaIndef" valor="2" />
 														</mod:grupo>
 													</mod:grupo>
 												</c:if>												
 												<c:if test="${secao == 'SECAD'}">
-													N√O DEFINIDO ??????
+													N√ÉO DEFINIDO ??????
 												</c:if>
 											</c:when>
 										</c:choose>
 									</mod:grupo>
 								</c:if>
-								<c:if test="${razao == 'DoaÁ„o de Sangue'}">
+								<c:if test="${razao == 'Doa√ß√£o de Sangue'}">
 									<mod:grupo>
 										<c:if test="${secao == 'SELEG' or secao == 'SGP'}">
-											<mod:data titulo="Data de doaÁ„o" var="dataDoacao" />
+											<mod:data titulo="Data de doa√ß√£o" var="dataDoacao" />
 										</c:if>										
 									</mod:grupo>
 								</c:if>
-								<c:if test="${razao == 'Falecimento em famÌlia'}">
+								<c:if test="${razao == 'Falecimento em fam√≠lia'}">
 									<mod:grupo>
 										<mod:grupo largura="50">
-											<mod:radio titulo="Sem concomit‚ncia com outro afastamento"
+											<mod:radio titulo="Sem concomit√¢ncia com outro afastamento"
 												var="concomitancia" valor="1" reler="ajax"
 												idAjax="concomitanciaAjax" marcado="Sim" />
 											<mod:radio
-												titulo="Concomit‚ncia com licenÁa para tratar da prÛpria sa˙de"
+												titulo="Concomit√¢ncia com licen√ßa para tratar da pr√≥pria sa√∫de"
 												var="concomitancia" valor="2" reler="ajax"
 												idAjax="concomitanciaAjax" />
 											<mod:radio
-												titulo="Concomit‚ncia com licenÁa por motivo de doenÁa em pessoa da famÌlia"
+												titulo="Concomit√¢ncia com licen√ßa por motivo de doen√ßa em pessoa da fam√≠lia"
 												var="concomitancia" valor="3" reler="ajax"
 												idAjax="concomitanciaAjax" />
 											<mod:radio titulo="Indeferimento" var="concomitancia"
@@ -113,18 +113,18 @@
 										<mod:grupo largura="50">
 											<mod:grupo depende="concomitanciaAjax">
 												<ww:if test="${valConcomitancia != '4'}">
-													<mod:data titulo="PerÌodo de AusÍncia" var="dataIni" /> a <mod:data
+													<mod:data titulo="Per√≠odo de Aus√™ncia" var="dataIni" /> a <mod:data
 																		var="dataFim" titulo="" />	
 													<c:if test="${secao == 'SELEG'}">					
 														<c:if test="${valConcomitancia == '2' or valConcomitancia == '3'}">					
-															<mod:data titulo="PerÌodo de LicenÁa" var="dataLicencaIni" /> a <mod:data
+															<mod:data titulo="Per√≠odo de Licen√ßa" var="dataLicencaIni" /> a <mod:data
 																			var="dataLicencaFim" titulo="" />	
 														</c:if>
 														<mod:radio
-															titulo="Sem exclus„o do parente falecido como dependente do I.R."
+															titulo="Sem exclus√£o do parente falecido como dependente do I.R."
 															var="exclusaoIR" valor="1" marcado="Sim" reler="ajax" idAjax="exclusaoIRajax" />
 														<mod:radio
-															titulo="Com exclus„o do parente falecido como dependente do I.R."
+															titulo="Com exclus√£o do parente falecido como dependente do I.R."
 															var="exclusaoIR" valor="2" reler="ajax" idAjax="exclusaoIRajax"/>
 														<c:set var="valExclusaoIR" value="${exclusaoIR}" />
 														<c:if test="${empty valExclusaoIR}">
@@ -135,8 +135,8 @@
 															<c:set var="valExclusaoIR" value="1" />
 														</c:if>	
 														<mod:grupo depende="exclusaoIRajax">
-															<c:if test="${valExclusaoIR == '2'}"> <%-- com exclus„o do parente falecido do IR --%>
-																<mod:texto titulo="N˙mero do Processo Administrativo" var="numPA" largura="10"/>
+															<c:if test="${valExclusaoIR == '2'}"> <%-- com exclus√£o do parente falecido do IR --%>
+																<mod:texto titulo="N√∫mero do Processo Administrativo" var="numPA" largura="10"/>
 															</c:if>
 														</mod:grupo>
 													</c:if>
@@ -145,11 +145,11 @@
 													<c:if test="${secao == 'SELEG' or secao == 'SGP'}">
 														<mod:grupo titulo="Causa">
 															<mod:grupo largura="30">
-																<mod:radio titulo="a ausÍncia de previs„o legal"
+																<mod:radio titulo="a aus√™ncia de previs√£o legal"
 																	var="causaIndef" valor="1" marcado="Sim" />
 															</mod:grupo>
 															<mod:grupo largura="70">
-																<mod:radio titulo="a irregularidade da documentaÁ„o"
+																<mod:radio titulo="a irregularidade da documenta√ß√£o"
 																	var="causaIndef" valor="2" />
 															</mod:grupo>
 														</mod:grupo>
@@ -161,9 +161,9 @@
 								</c:if>
 							</mod:grupo>						  
 						</c:when>
-						<c:when test="${assunto == 'LicenÁa-paternidade'}">
+						<c:when test="${assunto == 'Licen√ßa-paternidade'}">
 							<mod:grupo>
-								<mod:radio titulo="Sem concomit‚ncia com outro afastamento"
+								<mod:radio titulo="Sem concomit√¢ncia com outro afastamento"
 									var="concomitancia" valor="1" reler="ajax"
 									idAjax="concomitanciaAjax" marcado="Sim" />									
 								<mod:radio titulo="Indeferimento" var="concomitancia"
@@ -179,24 +179,24 @@
 							<mod:grupo depende="concomitanciaAjax">
 								<ww:if test="${valConcomitancia == '1'}">
 									<c:if test="${secao == 'SELEG' or secao == 'SGP'}">													
-										<mod:data titulo="PerÌodo de AusÍncia" var="dataIni" /> a <mod:data	var="dataFim" titulo="" />
+										<mod:data titulo="Per√≠odo de Aus√™ncia" var="dataIni" /> a <mod:data	var="dataFim" titulo="" />
 									</c:if>	
 								</ww:if>
 								<ww:else> <%-- ${valConcomitancia == '2'}  Indeferimento --%>
 									<c:if test="${secao == 'SELEG' or secao == 'SGP'}">
 								<mod:grupo titulo="Causa">
 											<mod:grupo largura="30">
-												<mod:radio titulo="a ausÍncia de previs„o legal"
+												<mod:radio titulo="a aus√™ncia de previs√£o legal"
 													var="causaIndef" valor="1" marcado="Sim" />
 											</mod:grupo>
 											<mod:grupo largura="70">
-												<mod:radio titulo="a irregularidade da documentaÁ„o"
+												<mod:radio titulo="a irregularidade da documenta√ß√£o"
 													var="causaIndef" valor="2" />
 											</mod:grupo>
 										</mod:grupo>
 									</c:if>												
 									<c:if test="${secao == 'SECAD'}">
-										N√O DEFINIDO ??????
+										N√ÉO DEFINIDO ??????
 									</c:if>
 								</ww:else>
 							</mod:grupo>	
@@ -211,10 +211,10 @@
 				<mod:grupo>
 					<c:choose>
 						<c:when test="${secao == 'SECAD'}">
-							<mod:data titulo="Data de PublicaÁ„o" var="dataPubl" />
+							<mod:data titulo="Data de Publica√ß√£o" var="dataPubl" />
 						</c:when>
 						<c:when test="${secao == 'SASGP'}">
-							<mod:data titulo="Data de CiÍncia do Servidor " var="dataCiencia" />
+							<mod:data titulo="Data de Ci√™ncia do Servidor " var="dataCiencia" />
 						</c:when>
 					</c:choose>					
 				</mod:grupo>
@@ -271,37 +271,37 @@
 
 			<ww:if test="${secao != 'SECAD' && secao != 'SASGP'}">
 				<c:choose>
-					<c:when test="${assunto == 'AusÍncia ao serviÁo'}">
+					<c:when test="${assunto == 'Aus√™ncia ao servi√ßo'}">
 						<c:choose>
 							<c:when test="${razao == 'Casamento'}">
 								<c:choose>
 									<c:when test="${concomitancia == '1' or concomitancia == '2'}">
-										<%-- AusÍncia ao serviÁo em raz„o de casamento --%>
+										<%-- Aus√™ncia ao servi√ßo em raz√£o de casamento --%>
 										<c:choose>
 											<c:when test="${secao == 'SELEG'}">											
 												<ww:if test="${concomitancia == '1'}">
-													<%-- concomit‚ncia com fÈrias --%>
+													<%-- concomit√¢ncia com f√©rias --%>
 													<mod:oculto var="textoDespacho"
-														valor="Sugiro o deferimento da ausÍncia ao serviÁo no perÌodo de ${dataIni} a
-																		${dataFim}, tendo em vista a regularidade da documentaÁ„o." />
+														valor="Sugiro o deferimento da aus√™ncia ao servi√ßo no per√≠odo de ${dataIni} a
+																		${dataFim}, tendo em vista a regularidade da documenta√ß√£o." />
 
 												</ww:if>
 												<ww:else>
-													<%--${concomitancia == '2' sem concomit‚ncia com outro afastamento--%>
+													<%--${concomitancia == '2' sem concomit√¢ncia com outro afastamento--%>
 													<mod:oculto var="textoDespacho"
-														valor="N„o obstante a regularidade da documentaÁ„o, sugiro o deferimento
-															da ausÍncia ao serviÁo no perÌodo de ${dataIni} a ${dataIni}, tendo
-															em vista que o(a) servidor(a) esteve em fruiÁ„o de fÈrias de 
-															${dataFeriasIni}a ${dataFeriasFim},n„o havendo previs„o legal para 
-															que o perÌodo de ausÍncia seja postergado." />
+														valor="N√£o obstante a regularidade da documenta√ß√£o, sugiro o deferimento
+															da aus√™ncia ao servi√ßo no per√≠odo de ${dataIni} a ${dataIni}, tendo
+															em vista que o(a) servidor(a) esteve em frui√ß√£o de f√©rias de 
+															${dataFeriasIni}a ${dataFeriasFim},n√£o havendo previs√£o legal para 
+															que o per√≠odo de aus√™ncia seja postergado." />
 												</ww:else>
 											</c:when> 											
-											<c:when test="${secao == 'SGP'}"> <%-- o mesmo texto para concomit‚ncia = 1 ou = 2 --%> 
+											<c:when test="${secao == 'SGP'}"> <%-- o mesmo texto para concomit√¢ncia = 1 ou = 2 --%> 
 												<mod:oculto var="textoDespacho"
-														valor="Defiro a ausÍncia no perÌodo de ${dataIni} a {dataIni}, nos termos 
-														do art. 97, III, ìaî, da Lei n∫ 8.112/90.
+														valor="Defiro a aus√™ncia no per√≠odo de ${dataIni} a {dataIni}, nos termos 
+														do art. 97, III, ‚Äúa‚Äù, da Lei n¬∫ 8.112/90.
 														
-														¿ SECAD para as providÍncias cabÌveis. " />
+														√Ä SECAD para as provid√™ncias cab√≠veis. " />
 											</c:when>											
 										</c:choose>
 									</c:when>
@@ -309,7 +309,7 @@
 										<c:choose>
 											<c:when test="${secao == 'SELEG'}">
 												<mod:oculto var="textoDespacho"
-														valor="Sugiro o indeferimento da ausÍncia ao serviÁo tendo em vista
+														valor="Sugiro o indeferimento da aus√™ncia ao servi√ßo tendo em vista
 														${causaIndef}. "/> 
 										
 											</c:when>
@@ -317,7 +317,7 @@
 												<mod:oculto var="textoDespacho"
 														valor="Indefiro tendo em vista ${causaIndef}. 
 
-														¿ SASGP para cientificar o(a) servidor(a). ApÛs, ‡ SECAD para as providÍncias cabÌveis. "/> 									
+														√Ä SASGP para cientificar o(a) servidor(a). Ap√≥s, √† SECAD para as provid√™ncias cab√≠veis. "/> 									
 											</c:when>
 											<c:when test="${secao == 'SECAD'}">
 												<%-- Verificar ???? --%>
@@ -327,29 +327,29 @@
 									</c:when>
 								</c:choose>	
 							</c:when>
-							<c:when test="${razao == 'DoaÁ„o de Sangue'}">
+							<c:when test="${razao == 'Doa√ß√£o de Sangue'}">
 								<c:choose>
 									<c:when test="${secao == 'SELEG'}">
 										<mod:oculto var="textoDespacho"
-													valor="Sugiro o deferimento da ausÍncia ao serviÁo no dia ${dataDoacao}, tendo em vista a 
-													comprovaÁ„o da doaÁ„o de sangue, bem como a anuÍncia do superior hier·rquico."/> 
+													valor="Sugiro o deferimento da aus√™ncia ao servi√ßo no dia ${dataDoacao}, tendo em vista a 
+													comprova√ß√£o da doa√ß√£o de sangue, bem como a anu√™ncia do superior hier√°rquico."/> 
 									</c:when>
 									<c:when test="${secao == 'SGP'}">
 										<mod:oculto var="textoDespacho"
-													valor="Defiro a ausÍncia no dia ${dataDoacao}, nos termos do art. 97, I, da Lei n∫ 8.112/90.
+													valor="Defiro a aus√™ncia no dia ${dataDoacao}, nos termos do art. 97, I, da Lei n¬∫ 8.112/90.
 
-													¿ SECAD para as providÍncias cabÌveis. "/> 
+													√Ä SECAD para as provid√™ncias cab√≠veis. "/> 
 									</c:when>
 								</c:choose>
 							</c:when>
-							<c:when test="${razao == 'Falecimento em famÌlia'}">
+							<c:when test="${razao == 'Falecimento em fam√≠lia'}">
 								<ww:if test="${concomitancia != '4'}">
 									<c:if test="${concomitancia == '1'}">
 										<c:choose>  <%-- PAREI AQUI --%>										
 											<c:when test="${secao == 'SELEG'}">	
 												<mod:oculto var="textoDespacho"
-													valor="Sugiro o deferimento da ausÍncia ao serviÁo no perÌodo de ___/___/___ a ___/___/___, 
-													tendo em vista a regularidade da documentaÁ„o. O(A) falecido(a) n„o era dependente no Imposto 
+													valor="Sugiro o deferimento da aus√™ncia ao servi√ßo no per√≠odo de ___/___/___ a ___/___/___, 
+													tendo em vista a regularidade da documenta√ß√£o. O(A) falecido(a) n√£o era dependente no Imposto 
 													de Renda na fonte."/> 
 											</c:when>
 										</c:choose>
@@ -357,14 +357,14 @@
 									</c:if>
 									<c:if test="${secao == 'SELEG'}">					
 										<c:if test="${valConcomitancia == '2' or valConcomitancia == '3'}">					
-											<mod:data titulo="PerÌodo de LicenÁa" var="dataLicencaIni" /> a <mod:data
+											<mod:data titulo="Per√≠odo de Licen√ßa" var="dataLicencaIni" /> a <mod:data
 															var="dataLicencaFim" titulo="" />	
 										</c:if>
 										<mod:radio
-											titulo="Sem exclus„o do parente falecido como dependente do I.R."
+											titulo="Sem exclus√£o do parente falecido como dependente do I.R."
 											var="exclusaoIR" valor="1" marcado="Sim" reler="ajax" idAjax="exclusaoIRajax" />
 										<mod:radio
-											titulo="Com exclus„o do parente falecido como dependente do I.R."
+											titulo="Com exclus√£o do parente falecido como dependente do I.R."
 											var="exclusaoIR" valor="2" reler="ajax" idAjax="exclusaoIRajax"/>
 										<c:set var="valExclusaoIR" value="${exclusaoIR}" />
 										<c:if test="${empty valExclusaoIR}">
@@ -375,8 +375,8 @@
 											<c:set var="valExclusaoIR" value="1" />
 										</c:if>	
 										<mod:grupo depende="exclusaoIRajax">
-											<c:if test="${valExclusaoIR == '2'}"> <%-- com exclus„o do parente falecido do IR --%>
-													<mod:texto titulo="N˙mero do Processo Administrativo" var="numPA" largura="10" />
+											<c:if test="${valExclusaoIR == '2'}"> <%-- com exclus√£o do parente falecido do IR --%>
+													<mod:texto titulo="N√∫mero do Processo Administrativo" var="numPA" largura="10" />
 										</c:if> 
 										</mod:grupo>
 									</c:if> 

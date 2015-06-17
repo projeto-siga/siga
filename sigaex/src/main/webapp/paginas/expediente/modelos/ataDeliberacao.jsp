@@ -45,7 +45,7 @@
 		
 		<mod:letra tamanho="${tl}">
 		<br>
-		<p align="center"><b>ATA N.บ&nbsp; ${doc.codigo}</b></p>
+		<p align="center"><b>ATA N.ยบ&nbsp; ${doc.codigo}</b></p>
 
 		<br>
 		<span style="font-size:${tl};">

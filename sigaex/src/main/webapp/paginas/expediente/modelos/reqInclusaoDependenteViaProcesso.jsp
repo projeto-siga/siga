@@ -13,7 +13,7 @@ REQUERIMENTO DE INCLUSAO DE DEPENDENTE VIA PROCESSO-->
 			<mod:texto titulo="Dependente nome" var="dependente" />
 			<mod:grupo>
 				<mod:selecao titulo="Dependente na qualidade de"
-					var="qualidade" opcoes="companheiro(a);enteado(a);dependente econômico(a);beneficiário(a) designado(a)" reler="sim" />
+					var="qualidade" opcoes="companheiro(a);enteado(a);dependente econÃ´mico(a);beneficiÃ¡rio(a) designado(a)" reler="sim" />
 			</mod:grupo>
 		</mod:grupo>
 		
@@ -23,9 +23,9 @@ REQUERIMENTO DE INCLUSAO DE DEPENDENTE VIA PROCESSO-->
 		<mod:valor var="texto_requerimento">
 		
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			Eu, ${doc.subscritor.descricao}, matrícula RJ${doc.subscritor.matricula}, venho por meio deste requerer a V.Exa. 
-			o encaminhamento da documentação que segue em anexo ao Egrégio TRF da 2ª Região, com a finalidade de inclusão de ${dependente}, 
-			como meu/minha dependente no Plano de Saúde da Justiça Federal, na qualidade de ${qualidade}.</p>
+			Eu, ${doc.subscritor.descricao}, matrÃ­cula RJ${doc.subscritor.matricula}, venho por meio deste requerer a V.Exa. 
+			o encaminhamento da documentaÃ§Ã£o que segue em anexo ao EgrÃ©gio TRF da 2Âª RegiÃ£o, com a finalidade de inclusÃ£o de ${dependente}, 
+			como meu/minha dependente no Plano de SaÃºde da JustiÃ§a Federal, na qualidade de ${qualidade}.</p>
 			
 		</mod:valor>
 
@@ -34,8 +34,8 @@ REQUERIMENTO DE INCLUSAO DE DEPENDENTE VIA PROCESSO-->
 			<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegi.jsp" />
 			
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			Eu, ${doc.subscritor.descricao}, matrícula RJ${doc.subscritor.matricula}, venho por meio deste solicitar a V.Exa., s.m.j., o deferimento do pedido de inclusão de ${dependente}, 
-			como meu/minha dependente no Plano de Saúde da Justiça Federal, na qualidade de ${qualidade}.</p>
+			Eu, ${doc.subscritor.descricao}, matrÃ­cula RJ${doc.subscritor.matricula}, venho por meio deste solicitar a V.Exa., s.m.j., o deferimento do pedido de inclusÃ£o de ${dependente}, 
+			como meu/minha dependente no Plano de SaÃºde da JustiÃ§a Federal, na qualidade de ${qualidade}.</p>
 		
 			<c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" />
 			<br/>

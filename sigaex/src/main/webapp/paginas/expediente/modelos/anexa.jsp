@@ -13,7 +13,7 @@ function sbmt() {
 }
 </script>
 
-<c:set var="titulo_pagina" scope="request">Movimentação</c:set>
+<c:set var="titulo_pagina" scope="request">MovimentaÃ§Ã£o</c:set>
 <c:import url="/cabecalho.jf" />
 <table width="100%">
 	<tr>
@@ -24,7 +24,7 @@ function sbmt() {
 			<html:hidden property="idDoc" />
 			<html:hidden property="numVia" />
 
-			<h1>Anexação de Arquivo
+			<h1>AnexaÃ§Ã£o de Arquivo
 			<c:if test="${numVia != null}">
 			- ${ExMovimentacaoForm.numVia}&ordf; Via
 			</c:if>
@@ -55,5 +55,5 @@ function sbmt() {
 	</tr>
 </table>
 
-<!--  tabela do rodapé -->
+<!--  tabela do rodapÃ© -->
 <c:import url="/rodape.jf" />

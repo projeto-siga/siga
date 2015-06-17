@@ -13,7 +13,7 @@ function sbmt() {
 }
 </script>
 
-<c:set var="titulo_pagina" scope="request">Relatório de Vias Inconsistentes</c:set>
+<c:set var="titulo_pagina" scope="request">RelatÃ³rio de Vias Inconsistentes</c:set>
 <c:set var="nomeRel" scope="request">"relMovInconsistentes.jrxml"</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
 <h1>${titulo_pagina}</h1>

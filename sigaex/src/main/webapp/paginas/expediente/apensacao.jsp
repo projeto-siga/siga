@@ -24,7 +24,7 @@ function sbmt() {
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Apensação de Documento - ${mob.siglaEDescricaoCompleta}</h2>
+			<h2>ApensaÃ§Ã£o de Documento - ${mob.siglaEDescricaoCompleta}</h2>
 
 			<div class="gt-content-box gt-for-table">
 			
@@ -37,10 +37,10 @@ function sbmt() {
 
 				<table class="gt-form-table">
 					<tr class="header">
-						<td colspan="2">Dados da apensação</td>
+						<td colspan="2">Dados da apensaÃ§Ã£o</td>
 					</tr>
 
-					<!-- Checa se o documento é eletronico ou não. Caso seja, seu valor default para Data é o atual e o Responsável é quem fez o Login. -->
+					<!-- Checa se o documento Ã© eletronico ou nÃ£o. Caso seja, seu valor default para Data Ã© o atual e o ResponsÃ¡vel Ã© quem fez o Login. -->
 					<c:choose>
 						<c:when test="${!doc.eletronico}">
 							<!-- Documento Eletronico -->
@@ -48,7 +48,7 @@ function sbmt() {
 							<ww:textfield name="dtMovString" label="Data"
 								onblur="javascript:verifica_data(this, true);" />
 							<tr>
-								<td>Responsável:</td>
+								<td>ResponsÃ¡vel:</td>
 								<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 								&nbsp;&nbsp;<ww:checkbox theme="simple" name="substituicao"
 									onclick="javascript:displayTitular(this);" />Substituto</td>

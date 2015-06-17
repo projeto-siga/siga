@@ -13,10 +13,10 @@
 			var="totalDeMaterial" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="sim" />
 			<c:forEach var="i" begin="1" end="${totalDeMaterial}">
 				<mod:grupo>
-					<mod:texto titulo="DescriÁ„o" var="descricao${i}" largura="60" />
+					<mod:texto titulo="Descri√ß√£o" var="descricao${i}" largura="60" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="N∫ de SÈrie" var="serie${i}" largura="60" />
+					<mod:texto titulo="N¬∫ de S√©rie" var="serie${i}" largura="60" />
 				</mod:grupo>
 				<mod:grupo>
 					<mod:selecao titulo="Quantidade"
@@ -27,11 +27,11 @@
 		</mod:grupo>
 		
 		<mod:grupo titulo="">
-				<mod:texto titulo="ObservaÁıes" var="obs" largura="80" />
+				<mod:texto titulo="Observa√ß√µes" var="obs" largura="80" />
 		</mod:grupo>
 		<br />
 		<mod:grupo titulo="">
-				<mod:texto titulo="Respons·vel" var="responsavel" largura="80" /><br />
+				<mod:texto titulo="Respons√°vel" var="responsavel" largura="80" /><br />
 				<mod:texto titulo="Identidade" var="identidade" largura="10" /><b>(Ex: 99999999-9)</b> 
 		</mod:grupo>
 		
@@ -58,7 +58,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr>
-							<td align="right"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">SAÕDA DE MATERIAL<br /><br />N&ordm; ${doc.codigo}</p></td>
+							<td align="right"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">SA√çDA DE MATERIAL<br /><br />N&ordm; ${doc.codigo}</p></td>
 						</tr>
 					</table>
 				</td>
@@ -74,8 +74,8 @@
 
 		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1">
 			<tr>
-				<td style="border-collapse: collapse; border-color: black; " align="center"><b>Fica autorizada a SAÕDA do(s) material(is), abaixo relacionado(s)<br />
-					nesta SeÁ„o Judici·ria.</b></td>
+				<td style="border-collapse: collapse; border-color: black; " align="center"><b>Fica autorizada a SA√çDA do(s) material(is), abaixo relacionado(s)<br />
+					nesta Se√ß√£o Judici√°ria.</b></td>
 			</tr>
 		</table>
 		
@@ -96,8 +96,8 @@
 		
 		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1">
 			<tr>
-				<td width="50%" style="border-collapse: collapse; border-color: black; " align="center"><b>DescriÁ„o do Material</b></td>
-				<td width="35%" style="border-collapse: collapse; border-color: black; " align="center"><b>N∫ de SÈrie</b></td>
+				<td width="50%" style="border-collapse: collapse; border-color: black; " align="center"><b>Descri√ß√£o do Material</b></td>
+				<td width="35%" style="border-collapse: collapse; border-color: black; " align="center"><b>N¬∫ de S√©rie</b></td>
 				<td width="15%" style="border-collapse: collapse; border-color: black; " align="center"><b>Quantidade</b></td>
 			</tr>
 		</table>
@@ -115,7 +115,7 @@
 		
 		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1">
 			<tr>
-				<td style="border-collapse: collapse; border-color: black; " ><b>ObservaÁıes</b></td>
+				<td style="border-collapse: collapse; border-color: black; " ><b>Observa√ß√µes</b></td>
 			</tr>
 			<tr>
 				<td style="border-collapse: collapse; border-color: black; ">
@@ -132,7 +132,7 @@
 				<td style="border-collapse: collapse; border-color: black; " width="70%" align="center"><c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" /></td>
 			</tr>
 			<tr>
-				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Respons·vel</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Respons√°vel</b></td>
 				<td style="border-collapse: collapse; border-color: black; " width="70%">&nbsp ${responsavel}</td>
 			</tr>
 			<tr>
@@ -147,7 +147,7 @@
 		<table width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" cellpadding="2" cellspacing="1" >
 			<tr>
 				<td style="border-collapse: collapse; border-color: black; " width="30%" align="center"><b>Controle Portaria</b></td>
-				<td style="border-collapse: collapse; border-color: black; " width="35%" align="center"><b>SAÕDA</b></td>
+				<td style="border-collapse: collapse; border-color: black; " width="35%" align="center"><b>SA√çDA</b></td>
 				<td style="border-collapse: collapse; border-color: black; " width="35%" align="center"><b>ENTRADA</b></td>
 			</tr>
 				<tr>

@@ -173,7 +173,7 @@
 	</form>
 </div>
 
-<siga:modal nome="controleAcesso" titulo="Cadastrar Permiss�o">
+<siga:modal nome="controleAcesso" titulo="Cadastrar Permiss�o">
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
@@ -197,24 +197,25 @@
 				<div class="gt-form-row div-modal-table">
 					<label>Lota&ccedil;&atilde;o</label>
 					<siga:selecao propriedade="lotacao.lotacaoAtual" tema="simple"
-						modulo="siga" />
+						modulo="siga"  inputName="lotacaoAtual"/>
 				</div>
 
 				<div class="gt-form-row div-modal-table">
 					<label>Pessoa</label>
 					<input type="hidden" name="Pessoa" id="Pessoa" class="selecao">
-						<siga:selecao propriedade="dpPessoa.pessoaAtual" tema="simple" modulo="siga" urlAcao="buscar" inputName="pessoa" />
+						<siga:selecao propriedade="dpPessoa.pessoaAtual" tema="simple" modulo="siga" urlAcao="buscar" 
+						inputName="dpPessoaAtual"/>
 				</div>
 
 				<div class="gt-form-row div-modal-table">
 					<label>Cargo</label>
-					<siga:selecao propriedade="cargo.cargoAtual" tema="simple" modulo="siga" />
+					<siga:selecao propriedade="cargo.cargoAtual" tema="simple" modulo="siga" inputName="cargoAtual" />
 				</div>
 
 				<div class="gt-form-row div-modal-table">
 					<label>Fun&ccedil;&atilde;o</label>					
 					<siga:selecao propriedade="funcaoConfianca" tema="simple"
- 						modulo="siga" inputName="funcaoAtual"/> 
+ 						modulo="siga" inputName="funcaoConfiancaAtual"/> 
 				</div>
 
 				<div class="gt-form-row div-modal-table">
@@ -286,7 +287,7 @@
 	<form id="formConfiguracaoInclusaoAutomatica">
 		<div class="gt-form gt-content-box"
 			style="width: 800px !important; max-width: 800px !important;">
-			<input id="configuracao" type="hidden" name="configuracao" value="${configuracao.id}"/>
+			<input id="configuracao" type="hidden" name="configuracao" value="0"/>
 			<input id="configuracao.hisIdIni" type="hidden" name="configuracao.hisIdIni"/>
 
 			<div id="divSolicitante" class="gt-form-row gt-width-100">
@@ -306,7 +307,7 @@
 				<label>&Oacute;rg&atilde;o</label>
 				<siga:select name="configuracao.orgaoUsuario" list="orgaos" listKey="idOrgaoUsu"
 					id="idOrgaoUsu" headerValue="" headerKey="0"
-					listValue="acronimoOrgaoUsu" theme="simple" value="${idOrgaoUsu}"
+					listValue="acronimoOrgaoUsu" theme="simple" value="${orgaoUsuario.idOrgaoUsu}"
 					style="width: 100%" />
 			</div>
 
@@ -347,10 +348,11 @@
 			var configuracao = Object.create(configuracaoInclusaoAutomatica);
 
 			//TODO  HD ARRUMAR!
-			configuracao["configuracao"] = 0;
+			configuracao["configuracao"] = $("#configuracao").val();
 			configuracao["configuracao.listaPrioridade"] = service.getIdLista();
-			configuracao.itemConfiguracaoSet = configuracaoItemAcaoService.getItensArray();
-			configuracao.acoesSet = configuracaoItemAcaoService.getAcoesArray();
+			configuracao["configuracao.dpPessoa"] = "";
+// 			configuracao.itemConfiguracaoSet = configuracaoItemAcaoService.getItensArray();
+// 			configuracao.acoesSet = configuracaoItemAcaoService.getAcoesArray();
 
 			var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo", "cpGrupo"];
 			solicitanteTypes.forEach(function(entry) {
@@ -490,12 +492,14 @@
 	
 			optsConfiguracaoInclusao.mostrarDesativados = mostrarDesativados;
 			$.get(urlConsulta, function(configuracoes) {
-				configuracaoInclusaoAutomaticaService.adicionarLista(JSON.parse(configuracoes));
+				configuracaoInclusaoAutomaticaService.adicionarLista(configuracoes);
 			});
 		}
 	}
 	
 	configuracaoInclusaoAutomaticaService.adicionarLista = function(configuracoes) {
+		configuracoesJSON = configuracoes;
+		configuracoes = JSON.parse(configuracoesJSON);
 		var table = $('#configuracao_inclusao_automatica_table');
 	
 		if(this.configuracaoInclusaoAutomaticaTable) {
@@ -520,7 +524,7 @@
 			tdAcoes.addClass('acoes');
 			tr.data('json', configuracao);
 			tr.data('json-id', configuracao.idConfiguracao);
-			tr.attr('data-json', configuracao);
+			tr.attr('data-json', JSON.stringify(configuracao));
 			tr.attr('data-json-id', configuracao.idConfiguracao);
 			
 			new DesativarReativar(configuracaoInclusaoAutomaticaService)
@@ -540,6 +544,8 @@
 	configuracaoInclusaoAutomaticaService.editar = function(configuracao, title) {
 		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
 		BaseService.prototype.editar.call(this, configuracao, title);
+
+		$("#configuracao").val(configuracao.idConfiguracao);
 	}
 	configuracaoInclusaoAutomaticaService.incluirInativas = function() {
 		configuracaoInclusaoAutomaticaService.carregarParaLista($('#idLista').val());
@@ -684,28 +690,28 @@
 			jComplexoCbb.selectedIndex = findSelectedIndexByValue(jComplexoCbb, permissao.complexo.id);
 	
 		if(permissao.lotacao) {
-			$("#lotacao").val(permissao.lotacao.id);
-			$("#lotacao_descricao").val(permissao.lotacao.descricao);
-			$("#lotacaoSpan").html(permissao.lotacao.descricao);
-			$("#lotacao_sigla").val(permissao.lotacao.sigla);
+			$("#formulario_lotacaoAtualSel_id").val(permissao.lotacao.id);
+			$("#formulario_lotacaoAtualSel_descricao").val(permissao.lotacao.descricao);
+			$("#formulario_lotacaoAtualSel_sigla").val(permissao.lotacao.sigla);
+			$("#lotacaoAtualSelSpan").html(permissao.lotacao.descricao);
 		}
 		if(permissao.dpPessoa) {
-			$("#dpPessoa").val(permissao.dpPessoa.id);
-			$("#dpPessoa_descricao").val(permissao.dpPessoa.descricao);
-			$("#dpPessoaSpan").html(permissao.dpPessoa.descricao);
-			$("#dpPessoa_sigla").val(permissao.dpPessoa.sigla);
+			$("#formulario_dpPessoaAtualSel_id").val(permissao.dpPessoa.id);
+			$("#formulario_dpPessoaAtualSel_descricao").val(permissao.dpPessoa.descricao);
+			$("#formulario_dpPessoaAtualSel_sigla").val(permissao.dpPessoa.sigla);
+			$("#dpPessoaAtualSelSpan").html(permissao.dpPessoa.descricao);
 		}
 		if(permissao.cargo) {
-			$("#cargo").val(permissao.cargo.id);
-			$("#cargo_descricao").val(permissao.cargo.descricao);
-			$("#cargoSpan").html(permissao.cargo.descricao);
-			$("#cargo_sigla").val(permissao.cargo.sigla);
+			$("#formulario_cargoAtualSel_id").val(permissao.cargo.id);
+			$("#formulario_cargoAtualSel_descricao").val(permissao.cargo.descricao);
+			$("#formulario_cargoAtualSel_sigla").val(permissao.cargo.sigla);
+			$("#cargoAtualSelSpan").html(permissao.cargo.descricao);
 		}
 		if(permissao.funcaoConfianca) { 
-			$("#funcaoConfianca").val(permissao.funcaoConfianca.id);
-			$("#funcaoConfianca_descricao").val(permissao.funcaoConfianca.descricao);
-			$("#funcaoConfiancaSpan").html(permissao.funcaoConfianca.descricao);
-			$("#funcaoConfianca_sigla").val(permissao.funcaoConfianca.sigla);
+			$("#formulario_funcaoConfiancaAtualSel_id").val(permissao.funcaoConfianca.id);
+			$("#formulario_funcaoConfiancaAtualSel_descricao").val(permissao.funcaoConfianca.descricao);
+			$("#formulario_funcaoConfiancaAtualSel_sigla").val(permissao.funcaoConfianca.sigla);
+			$("#funcaoConfiancaAtualSelSpan").html(permissao.funcaoConfianca.descricao);
 		}
 		$("#idConfiguracao").val(permissao.idConfiguracao);
 		atualizarListasTipoPermissaoEdicao(permissao);
@@ -736,29 +742,32 @@
 		
 		limparDadosAcessoModal();
 	};
-	
+
 	function limparDadosAcessoModal() {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 		jComplexoCbb = document.getElementsByName("complexo")[0];
 		
 		jOrgaoUsuarioCbb.selectedIndex = 0;
 		jComplexoCbb.selectedIndex = 0;
-		$("#formulario_lotacaolotacaoAtualSel_id").val('');
-		$("#formulario_lotacaolotacaoAtualSel_descricao").val('');
-		$("#formulario_lotacaolotacaoAtualSel_sigla").val('');
-		$("#lotacaoSpan").html('');
-		$("#dpPessoa").val('');
-		$("#dpPessoa_descricao").val('');
-		$("#dpPessoa_sigla").val('');
-		$("#dpPessoaSpan").html('');
-		$("#cargo").val('');
-		$("#cargo_descricao").val('');
-		$("#cargo_sigla").val('');
-		$("#cargoSpan").html('');
-		$("#funcaoConfianca").val('');
-		$("#funcaoConfianca_descricao").val('');
-		$("#funcaoConfiancaSpan").html('');
-		$("#funcaoConfianca_sigla").val('');
+		$("#formulario_lotacaoAtualSel_id").val('');
+		$("#formulario_lotacaoAtualSel_descricao").val('');
+		$("#formulario_lotacaoAtualSel_sigla").val('');
+		$("#lotacaoAtualSelSpan").html('');
+		
+		$("#formulario_dpPessoaAtualSel_id").val('');
+		$("#formulario_dpPessoaAtualSel_descricao").val('');
+		$("#formulario_dpPessoaAtualSel_sigla").val('');
+		$("#dpPessoaAtualSelSpan").html('');
+		
+		$("#formulario_cargoAtualSel_id").val('');
+		$("#formulario_cargoAtualSel_descricao").val('');
+		$("#formulario_cargoAtualSel_sigla").val('');
+		$("#cargoAtualSelSpan").html('');
+		
+		$("#formulario_funcaoConfiancaAtualSel_id").val('');
+		$("#formulario_funcaoConfiancaAtualSel_descricao").val('');
+		$("#formulario_funcaoConfiancaAtualSel_sigla").val('');
+		$("#funcaoConfiancaAtualSelSpan").html('');
 		removerItensListaTipoPermissao();
 		$("#idConfiguracao").val('');
 	
@@ -801,7 +810,7 @@
 	
 		return params;
 	};
-	
+
 	function inserirAcesso() {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 			jOrgaoUsuario = jOrgaoUsuarioCbb.options[jOrgaoUsuarioCbb.selectedIndex],
@@ -809,28 +818,31 @@
 			jComplexo = jComplexoCbb.options[jComplexoCbb.selectedIndex];
 	
 		var row = [ 
-		   			jOrgaoUsuario.value > 0 ? jOrgaoUsuario.value : '',
-					jOrgaoUsuario.value > 0 ? jOrgaoUsuario.text : '',
-	      			jComplexo.value > 0 ? jComplexo.value : '',
-	      			jComplexo.value > 0 ? jComplexo.text : '',
-	      			$("#formulario_lotacaolotacaoAtualSel_id").val(),
-	      			$("#formulario_lotacaolotacaoAtualSel_descricao").val(),
-	      			$("#formulario_lotacaolotacaoAtualSel_sigla").val(),
-	      			$("#formulario_pessoaSel_id").val(),
-	      			$("#formulario_pessoaSel_descricao").val(),
-	      			$("#formulario_pessoaSel_sigla").val(),
-	      			$("#formulario_cargocargoAtualSel_id").val(),
-	      			$("#formulario_cargocargoAtualSel_descricao").val(),
-	      			$("#formulario_cargocargoAtualSel_sigla").val(),
-	      			$("#formulario_funcaoAtualSel_sigla").val(),
-	      			$("#formulario_funcaoAtualSel_descricao").val(),
-	      			$("#formulario_funcaoAtualSel_id").val(),
-	      			atualizaTipoPermissaoJson(),			//16
-	      			$("#idConfiguracao").val(),				//17    
-	      			getListasPermissaoAsString(),			//18
-	      			getDescricaoTipoPermissao(),			//19
-	      			''										//20
-	      			];
+	   			jOrgaoUsuario.value > 0 ? jOrgaoUsuario.value : '',
+				jOrgaoUsuario.value > 0 ? jOrgaoUsuario.text : '',
+      			jComplexo.value > 0 ? jComplexo.value : '',
+      			jComplexo.value > 0 ? jComplexo.text : '',
+      			$("#formulario_lotacaoAtualSel_id").val(),
+      			$("#formulario_lotacaoAtualSel_descricao").val(),
+      			$("#formulario_lotacaoAtualSel_sigla").val(),
+      			
+      			$("#formulario_dpPessoaAtualSel_id").val(),
+      			$("#formulario_dpPessoaAtualSel_descricao").val(),
+      			$("#formulario_dpPessoaAtualSel_sigla").val(),
+      			
+      			$("#formulario_cargoAtualSel_id").val(),
+      			$("#formulario_cargoAtualSel_descricao").val(),
+      			$("#formulario_cargoAtualSel_sigla").val(),
+      			
+      			$("#formulario_funcaoConfiancaAtualSel_id").val(),
+      			$("#formulario_funcaoConfiancaAtualSel_descricao").val(),
+      			$("#formulario_funcaoConfiancaAtualSel_sigla").val(),
+      			atualizaTipoPermissaoJson(),			//16
+      			$("#idConfiguracao").val(),				//17    
+      			getListasPermissaoAsString(),			//18
+      			getDescricaoTipoPermissao(),			//19
+      			''										//20
+      			];
 			
 		$.ajax({
 	         type: "POST",
@@ -940,10 +952,10 @@
 	    });
 	
 		var tipoPermissaoJson = {
-				"listaTipoPermissaoListaVO": listaTipoPermissaoListaVO
-			};
-			return tipoPermissaoJson;
-		}
+			"listaTipoPermissaoListaVO": listaTipoPermissaoListaVO
+		};
+		return tipoPermissaoJson;
+	}
 	
 	function getListasPermissaoAsString() {
 		var params = '';
@@ -1204,7 +1216,7 @@
 				return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissÃÂ£o">' + 
 				'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
 				'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
-				'</a>'
+				'</a>';
 			}
 			return ' ';
 		}

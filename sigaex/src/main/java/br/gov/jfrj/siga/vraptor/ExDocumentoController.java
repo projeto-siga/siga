@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 public class ExDocumentoController extends ExController {
 
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
+	private static final String URL_EDITAR	 = "/app/expediente/doc/editar?sigla={0}";
 
 	public ExDocumentoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
@@ -2250,6 +2251,11 @@ public class ExDocumentoController extends ExController {
 	protected static void redirecionarParaExibir(final Result result,
 			final String sigla) {
 		result.redirectTo(MessageFormat.format(URL_EXIBIR, sigla));
+	}
+	
+	protected static void redirecionarParaEditar(final Result result,
+			final String sigla) {
+		result.redirectTo(MessageFormat.format(URL_EDITAR, sigla));
 	}
 
 	@Get("/app/expediente/doc/pdf")

@@ -1889,7 +1889,7 @@ public class ExMovimentacaoController extends ExController {
 		result.forwardTo(this).assinado(mob);
 	}
 	
-	@Get("/app/expediente/mov/cancelar_pedido_publicacao_boletim")
+	@Get({"/app/expediente/mov/cancelar_pedido_publicacao_boletim","/expediente/mov/cancelar_pedido_publicacao_boletim.action"})
 	public void aCancelarPedidoPublicacaoBoletim(final String sigla) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
@@ -1944,7 +1944,7 @@ public class ExMovimentacaoController extends ExController {
 					sbHtml.toString());
 		}
 		
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		ExDocumentoController.redirecionarParaEditar(result, null);
 	}
 	
 	@Get("/app/expediente/mov/atender_pedido_publicacao")

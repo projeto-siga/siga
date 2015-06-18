@@ -845,6 +845,9 @@ public class AssinaturaDigital {
 			Iterator<X509CertificateHolder> certIt = certCollection.iterator();
 			X509CertificateHolder certHolder = certIt.next();
 			X509Certificate cert = AssinaturaDigital.getX509Certificate(certHolder);
+			
+			java.util.logging.Logger.getLogger("siga.cd").fine("Certificado a validar (verificar LCRs = " + verificarLCRs + ")");
+			java.util.logging.Logger.getLogger("siga.cd").fine(cert.toString());
 
 			if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(certHolder)))
 				throw new Exception("Assinatura inválida!");
@@ -854,6 +857,7 @@ public class AssinaturaDigital {
 			final X509ChainValidator cadeia = new X509ChainValidator(
 					cadeiaTotal, /* trustedAnchors */new HashSet(
 							FachadaDeCertificadosAC.getTrustAnchors()), null);
+			
 			cadeia.checkCRL(verificarLCRs);
 			cadeia.validateChain(dtAssinatura);
 

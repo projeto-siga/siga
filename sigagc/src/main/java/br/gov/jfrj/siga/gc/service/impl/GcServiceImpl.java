@@ -19,16 +19,14 @@
 package br.gov.jfrj.siga.gc.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.jws.WebService;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
 import br.gov.jfrj.siga.gc.model.GcInformacao;
@@ -50,14 +48,12 @@ public class GcServiceImpl implements GcService {
 
 	@PostConstruct
 	public void init() {
-		factory = Persistence.createEntityManagerFactory("default");
+
 	}
 
 	@PreDestroy
 	public void destroy() {
-		if (factory.isOpen()) {
-			factory.close();
-		}
+
 	}
 
 	@Override
@@ -71,59 +67,7 @@ public class GcServiceImpl implements GcService {
 	 * id: 123
 	 * titulos: sistemas,siga,siga-doc
 	 */
-	public Integer atualizarTag(String tag) throws Exception {
-		Matcher matcher = GcTag.tagPattern.matcher(tag);
-		if (!matcher.find()) {
-			throw new Exception("Tag inválido. Deve seguir o padrão: "
-					+ GcTag.tagPattern.toString());
-		}
-		String grupo = matcher.group(1);
-		Integer indice = (matcher.group(2) != null) ? Integer.parseInt(matcher
-				.group(2)) : null;
-		String id = matcher.group(3);
-		String titulo = matcher.group(4);
-
-		EntityManager em = factory.createEntityManager();
-		ContextoPersistencia.setEntityManager(em);
-
-		EntityTransaction transaction = null;
-		int count = 0;
-		try {
-			transaction = em.getTransaction();
-			transaction.begin();
-
-			TypedQuery<GcInformacao> q = em.createQuery(
-					"select inf from GcInformacao as inf join inf.tags tag"
-							+ " where tag.categoria like :categoria",
-					GcInformacao.class);
-			q.setParameter("categoria", grupo + "-1-" + id);
-			List<GcInformacao> infs = q.getResultList();
-
-			count = atualizarTagAlg(tag, infs);
-
-			if (true)
-				throw new Exception("Nao queremos gravar");
-
-			if (transaction.isActive()) {
-				transaction.commit();
-			}
-
-		} finally {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-		}
-
-		if (em.isOpen()) {
-			em.close();
-		}
-
-		return count;
-	}
-
-	protected int atualizarTagAlg(String tags, List<GcInformacao> infs)
-			throws Exception {
-
+	public Integer atualizarTag(String tags) throws Exception {
 		String atags[] = tags.split(",\\s*");
 
 		Matcher matcher = GcTag.tagPattern.matcher(atags[atags.length - 1]);
@@ -136,6 +80,24 @@ public class GcServiceImpl implements GcService {
 				.group(2)) : null;
 		String id = matcher.group(3);
 		String titulo = matcher.group(4);
+
+		int count = 0;
+		TypedQuery<GcInformacao> q = ContextoPersistencia.em().createQuery(
+				"select distinct inf from GcInformacao as inf join inf.tags tag"
+						+ " where tag.categoria like :categoria",
+				GcInformacao.class);
+		q.setParameter("categoria", grupo + "-%-" + id);
+		List<GcInformacao> infs = q.getResultList();
+
+		count = atualizarTagAlg(grupo, indice, id, titulo,
+				Arrays.copyOf(atags, atags.length - 1), infs);
+
+		return count;
+	}
+
+	protected int atualizarTagAlg(String grupo, Integer indice, String id,
+			String titulo, String[] anteriores, List<GcInformacao> infs)
+			throws Exception {
 
 		int count;
 		count = infs.size();
@@ -171,6 +133,11 @@ public class GcServiceImpl implements GcService {
 					tagAtualizar.setIndice(indice);
 
 					// Inserir tags anteriores informados
+					//
+					for (String s : anteriores) {
+						GcTag ta = GcTag.getInstance(s, remover, true);
+						inf.getTags().add(ta);
+					}
 
 				}
 			}

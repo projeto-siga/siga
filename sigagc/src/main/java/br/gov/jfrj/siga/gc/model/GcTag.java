@@ -40,7 +40,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	@ManyToOne(optional = false)
 	public GcTipoTag tipo;
 
-	@Column(name = "CATEGORIA", length = 10)
+	@Column(name = "CATEGORIA", length = 32)
 	private String categoria;
 
 	@Column(name = "TITULO", length = 256)
@@ -62,8 +62,9 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 		this.setCategoria(categoria);
 		this.setTitulo(titulo);
 	}
-	
-	public static GcTag getInstance(String s) throws Exception {
+
+	public static GcTag getInstance(String s, List<GcTag> lista,
+			boolean atualizarTitulo) throws Exception {
 		Matcher matcher = tagPattern.matcher(s);
 		if (!matcher.find()) {
 			throw new Exception("Tag inválido. Deve seguir o padrão: "
@@ -74,20 +75,41 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 				.group(2)) : null;
 		String ide = matcher.group(3);
 		String titulo = matcher.group(4);
-		
-		if (GcTag.AR.em() == null) {
-			
+
+		GcTag tag = null;
+
+		// Tentar localizar na lista antes de buscar no banco de dados
+		if (lista != null) {
+			for (GcTag t : lista) {
+				if (grupo != null && ide != null) {
+					if (grupo.equals(t.getHierarquiaGrupo())
+							&& ide.equals(t.getHierarquiaId())) {
+						tag = t;
+						break;
+					}
+				}
+			}
 		}
-		
-		String query = "from GcTag where 1=1";
-		if (grupo != null && ide != null) {
-			query += " and categoria like '" + grupo + "-%-" + ide + "'";
+
+		// Se não estiver na lista, busca no banco
+		if (tag == null) {
+			String query = "from GcTag where 1=1";
+			if (grupo != null && ide != null) {
+				query += " and categoria like '" + grupo + "-%-" + ide + "'";
+			}
+			List<GcTag> itens = GcTag.AR.find(query).fetch();
+
+			if (itens.size() == 0 || itens.size() > 1)
+				return null;
+			tag = itens.get(0);
 		}
-		List<GcTag> itens =  GcTag.AR.find(query).fetch();
-		
-		if (itens.size() == 0 || itens.size() > 1)
-			return null;
-		return itens.get(0);
+
+		// Atualiza o título
+		if (titulo != null && !titulo.equals(tag.getTitulo())
+				&& atualizarTitulo)
+			tag.setTitulo(titulo);
+
+		return tag;
 	}
 
 	@Override
@@ -281,5 +303,8 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 
 	public void setIndice(Integer indice) {
 		this.indice = indice;
+
+		this.categoria = getHierarquiaGrupo() + "-" + this.indice + "-"
+				+ getHierarquiaId();
 	}
 }

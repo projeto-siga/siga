@@ -28,51 +28,111 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 import junit.framework.TestCase;
-
-import org.junit.Before;
-
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.gc.model.GcAcesso;
+import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
+import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
 import br.gov.jfrj.siga.gc.model.GcTipoTag;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class GcServiceImplTest extends TestCase {
 	GcServiceImpl service;
 	GcTag t1, t2, t3;
 	List<GcTag> list;
 	GcInformacao i1;
-	List<GcInformacao> infs;
-	GcTipoTag tipo = new GcTipoTag(1, "@");
 	Long tagSequential = 0L;
 
 	private EntityTransaction transaction;
 	private EntityManager em;
+	private GcTipoTag tt1;
+	private GcArquivo a1;
+	private DpPessoa p1;
+	private GcAcesso acc1;
+	private CpIdentidade id1;
+	private DpLotacao l1;
+	private CpOrgaoUsuario ou1;
+	private GcTipoInformacao ti1;
 
-	@Before
-	public void initializeDependencies(){
-		System.out.println("teste");
-	}
-	
-	public GcServiceImplTest() throws Exception {
+	protected void setUp() throws Exception {
+		super.setUp();
+
+		// System.out.println("teste");
 		em = Persistence.createEntityManagerFactory("default")
 				.createEntityManager();
-		transaction = em.getTransaction();
+		ContextoPersistencia.setEntityManager(em);
+
+		em.getTransaction().begin();
+
+		tt1 = new GcTipoTag(1, "@");
+		tt1.save();
 
 		t1 = buildTag("@sr-item-1-123:sistemas");
+		t1.save();
 		t2 = buildTag("@sr-item-2-231:gestao-do-trabalho");
+		t2.save();
 		t3 = buildTag("@sr-item-3-312:siga-doc");
+		t3.save();
 
 		list = new ArrayList<>();
 		list.add(t1);
 		list.add(t2);
 		list.add(t3);
 
+		acc1 = new GcAcesso(GcAcesso.ACESSO_PUBLICO, "Público");
+		acc1.save();
+
+		ou1 = new CpOrgaoUsuario();
+		ou1.setIdOrgaoUsu(1L);
+		ou1.setNmOrgaoUsu("Orgao 1");
+		ou1.setAcronimoOrgaoUsu("OU1");
+		ou1.save();
+
+		l1 = new DpLotacao();
+		l1.setNomeLotacao("L1");
+		l1.setOrgaoUsuario(ou1);
+		l1.save();
+
+		p1 = new DpPessoa();
+		p1.setOrgaoUsuario(ou1);
+		p1.save();
+
+		id1 = new CpIdentidade();
+		id1.setDpPessoa(p1);
+		id1.save();
+
+		ti1 = new GcTipoInformacao(
+				GcTipoInformacao.TIPO_INFORMACAO_REGISTRO_DE_CONHECIMENTO,
+				"Registro de Conhecimento");
+		ti1.save();
+
+		a1 = new GcArquivo();
+		a1.save();
+
 		i1 = new GcInformacao();
+		i1.tipo = ti1;
+		i1.arq = a1;
+		i1.autor = p1;
+		i1.lotacao = l1;
+		i1.edicao = acc1;
+		i1.visualizacao = acc1;
 		i1.tags = new TreeSet<GcTag>();
 		i1.tags.addAll(list);
+		i1.ou = ou1;
+		i1.hisIdcIni = id1;
+		i1.save();
 
-		infs = new ArrayList<>();
-		infs.add(i1);
+		em.getTransaction().commit();
+
 		service = new GcServiceImpl();
+	}
+
+	protected void tearDown() throws Exception {
+		super.tearDown();
 	}
 
 	private GcTag buildTag(String s) throws Exception {
@@ -89,40 +149,38 @@ public class GcServiceImplTest extends TestCase {
 
 		GcTag tag = new GcTag();
 		tag.setCategoria(grupo + "-" + indice + "-" + ide);
-		tag.tipo = tipo;
+		tag.tipo = tt1;
 		tag.setIde(ide);
 		tag.setIndice(indice);
 		tag.setTitulo(titulo);
-		tag.setId(++tagSequential);
+		// tag.setId(++tagSequential);
 
 		return tag;
 	}
 
 	public void testAlteracaoSimplesUltimoNivel() throws Exception {
-		service.atualizarTagAlg(
-				"@sr-item-1-123:sistemas, @sr-item-2-231:gestao-do-trabalho, @sr-item-3-312:siga-documentos",
-				infs);
+		service.atualizarTag("@sr-item-1-123:sistemas, @sr-item-2-231:gestao-do-trabalho, @sr-item-3-312:siga-documentos");
 		assertEquals(
 				"[@sr-item-1-123:sistemas, @sr-item-2-231:gestao-do-trabalho, @sr-item-3-312:siga-documentos]",
 				i1.getTags().toString());
 	}
 
 	public void testAlteracaoSimplesNivelIntermediario() throws Exception {
-		service.atualizarTagAlg("@sr-item-2-231:gt", infs);
+		service.atualizarTag("@sr-item-2-231:gt");
 		assertEquals(
 				"[@sr-item-1-123:sistemas, @sr-item-2-231:gt, @sr-item-3-312:siga-doc]",
 				i1.getTags().toString());
 	}
 
 	public void testAlteracaoSimplesPrimeiroNivel() throws Exception {
-		service.atualizarTagAlg("@sr-item-1-123:sistemas-informatizados", infs);
+		service.atualizarTag("@sr-item-1-123:sistemas-informatizados");
 		assertEquals(
 				"[@sr-item-1-123:sistemas-informatizados, @sr-item-2-231:gestao-do-trabalho, @sr-item-3-312:siga-doc]",
 				i1.getTags().toString());
 	}
 
 	public void testAlteracaoDeNivelDeUltimoParaPenultimo() throws Exception {
-		service.atualizarTagAlg("@sr-item-2-312:gestao-documental", infs);
+		service.atualizarTag("@sr-item-1-123:sistemas, @sr-item-2-312:gestao-documental");
 		assertEquals(
 				"[@sr-item-1-123:sistemas, @sr-item-2-312:gestao-documental]",
 				i1.getTags().toString());

@@ -1381,7 +1381,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			setAssinaturaB64(b64Applet);
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
-		Date dt = mov.getDtMov();
+		Date dt = dao().consultarDataEHoraDoServidor();
 
 		byte[] certificado = Base64.decode(getCertificadoB64());
 		if (certificado != null && certificado.length != 0)
@@ -1631,7 +1631,7 @@ public class ExMovimentacaoAction extends ExActionSupport {
 			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
 
 		byte[] assinatura = Base64.decode(getAssinaturaB64());
-		Date dt = mov.getDtMov();
+		Date dt = dao().consultarDataEHoraDoServidor();
 
 		byte[] certificado = Base64.decode(getCertificadoB64());
 		if (certificado != null && certificado.length != 0)

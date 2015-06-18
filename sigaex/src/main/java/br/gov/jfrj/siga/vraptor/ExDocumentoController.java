@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 public class ExDocumentoController extends ExController {
 
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
+	private static final String URL_EDITAR	 = "/app/expediente/doc/editar?sigla={0}";
 
 	public ExDocumentoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
@@ -367,7 +368,6 @@ public class ExDocumentoController extends ExController {
 	public ExDocumentoDTO recarregar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IllegalAccessException,
 			InvocationTargetException, IOException {
-		exDocumentoDTO.getClassificacaoSel().apagar();
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo());
@@ -744,7 +744,7 @@ public class ExDocumentoController extends ExController {
 				.getComp()
 				.podeAcessarDocumento(getTitular(), getLotaTitular(),
 						exDocumentoDTO.getMob())) {
-			String msgDestinoDoc = transferenciaAutomatica(exDocumentoDTO
+			String msgDestinoDoc = arquivamentoAutomatico(exDocumentoDTO
 					.getMob());
 
 			String s = "";
@@ -762,67 +762,133 @@ public class ExDocumentoController extends ExController {
 		}
 	}
 
-	private String transferenciaAutomatica(ExMobil mob) throws Exception {
+	private String arquivamentoAutomatico(ExMobil mob) throws Exception {
+		
 		String msgDestinoDoc = "";
-
-		if (!mob.doc().isArquivado() && !mob.isGeral()) {
-			DpLotacao lotaDest;
-			if (mob.doc().isFinalizado())
-				lotaDest = mob.getUltimaMovimentacaoNaoCancelada()
-						.getLotaResp();
-			else
-				lotaDest = getLotaTitular();
-
-			if (getLotaTitular().equivale(lotaDest) /*
-													 * a pessoa que está
-													 * tentando acessar está na
-													 * mesma lotação onde se
-													 * encontra o doc
-													 */
-					&& (mob.doc().getExNivelAcesso().getGrauNivelAcesso()
-							.intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA || mob
-							.doc().getExNivelAcesso().getGrauNivelAcesso()
-							.intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
-
-				Boolean alguemPodeAcessar = false;
-				Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet();
-				for (DpPessoa pes : pessoas) { /*
-												 * verificar se alguem da
-												 * lotação pode acessar o
-												 * documento
-												 */
-					if (Ex.getInstance().getComp()
-							.podeAcessarDocumento(pes, lotaDest, mob))
-						if (pes.getPessoaAtual().ativaNaData(new Date())) {
-							alguemPodeAcessar = true;
-							break;
-						}
-				}
-				if (!alguemPodeAcessar) { /* ninguem pode acessar este documento */
-					DpPessoa dest;
-					if (mob.doc().isFinalizado()) {
-						dest = mob.getUltimaMovimentacaoNaoCancelada()
-								.getResp().getPessoaAtual();
-						Ex.getInstance()
+		DpPessoa dest;
+		DpLotacao lotaDest;		
+		Boolean jaArquivado = false;
+		
+		if (mob.doc().isProcesso()) {
+			if (mob.doc().isArquivado())
+				jaArquivado = true;
+		} else
+			if (mob.isArquivado())
+				jaArquivado = true;	
+		
+		if (mob.doc().isFinalizado()) {
+			dest = mob.getUltimaMovimentacaoNaoCancelada().getResp().getPessoaAtual(); 
+			lotaDest = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp().getLotacaoAtual();	
+		} else {
+			dest = mob.doc().getCadastrante().getPessoaAtual();
+			lotaDest = mob.doc().getLotaCadastrante().getLotacaoAtual();
+		}
+		
+		if (!jaArquivado) {				
+			if (!dest.ativaNaData(new Date())) {																
+					if (getLotaTitular().equivale(lotaDest)  /* a pessoa que está tentando acessar está na mesma lotação onde se encontra o doc*/ 
+							&& (mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA					
+								|| mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
+						
+						Boolean alguemPodeAcessar = false;
+						Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet(); 
+						for (DpPessoa pes : pessoas) { /* verificar se alguem da lotação pode acessar o documento */
+							if(Ex.getInstance().getComp()
+									.podeAcessarDocumento(pes, lotaDest, mob))					
+								if (pes.getPessoaAtual().ativaNaData(new Date()))  {
+									alguemPodeAcessar = true;	
+									break;							
+								}					
+						}			
+						if (!alguemPodeAcessar) { /* ninguem pode acessar este documento */
+							if (mob.doc().isFinalizado()) {
+							Ex.getInstance()
 								.getBL()
-								.arquivarCorrenteAutomatico(dest,
-										getLotaTitular(), mob);
-						msgDestinoDoc = "documento sendo arquivado automaticamente";
-
-					} else { /* doc temporário */
-						dest = mob.doc().getCadastrante().getPessoaAtual();
-						Ex.getInstance()
-								.getBL()
-								.excluirDocumentoAutomatico(mob.doc(),
-										getCadastrante(), getLotaTitular());
-						msgDestinoDoc = "documento sendo excluído automaticamente";
+								.arquivarCorrenteAutomatico(dest, getLotaTitular(), mob);	
+							msgDestinoDoc = "documento sendo arquivado automaticamente";
+							} else {  /* doc temporário */								 
+								Ex.getInstance().getBL().excluirDocumentoAutomatico(mob.doc(), dest,
+											getLotaTitular());						
+									msgDestinoDoc = "documento sendo excluído automaticamente";								
+							}							
+						}								
 					}
-
-				}
-
 			}
 		}
+		
 		return msgDestinoDoc;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//		String msgDestinoDoc = "";
+//
+//		if (!mob.doc().isArquivado() && !mob.isGeral()) {
+//			DpLotacao lotaDest;
+//			if (mob.doc().isFinalizado())
+//				lotaDest = mob.getUltimaMovimentacaoNaoCancelada()
+//						.getLotaResp();
+//			else
+//				lotaDest = getLotaTitular();
+//
+//			if (getLotaTitular().equivale(lotaDest) /*
+//													 * a pessoa que está
+//													 * tentando acessar está na
+//													 * mesma lotação onde se
+//													 * encontra o doc
+//													 */
+//					&& (mob.doc().getExNivelAcesso().getGrauNivelAcesso()
+//							.intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA || mob
+//							.doc().getExNivelAcesso().getGrauNivelAcesso()
+//							.intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
+//
+//				Boolean alguemPodeAcessar = false;
+//				Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet();
+//				for (DpPessoa pes : pessoas) { /*
+//												 * verificar se alguem da
+//												 * lotação pode acessar o
+//												 * documento
+//												 */
+//					if (Ex.getInstance().getComp()
+//							.podeAcessarDocumento(pes, lotaDest, mob))
+//						if (pes.getPessoaAtual().ativaNaData(new Date())) {
+//							alguemPodeAcessar = true;
+//							break;
+//						}
+//				}
+//				if (!alguemPodeAcessar) { /* ninguem pode acessar este documento */
+//					DpPessoa dest;
+//					if (mob.doc().isFinalizado()) {
+//						dest = mob.getUltimaMovimentacaoNaoCancelada()
+//								.getResp().getPessoaAtual();
+//						Ex.getInstance()
+//								.getBL()
+//								.arquivarCorrenteAutomatico(dest,
+//										getLotaTitular(), mob);
+//						msgDestinoDoc = "documento sendo arquivado automaticamente";
+//
+//					} else { /* doc temporário */
+//						dest = mob.doc().getCadastrante().getPessoaAtual();
+//						Ex.getInstance()
+//								.getBL()
+//								.excluirDocumentoAutomatico(mob.doc(),
+//										getCadastrante(), getLotaTitular());
+//						msgDestinoDoc = "documento sendo excluído automaticamente";
+//					}
+//
+//				}
+//
+//			}
+//		}
+//		return msgDestinoDoc;
 	}
 
 	@Get("app/expediente/doc/exibirAntigo")
@@ -2185,6 +2251,11 @@ public class ExDocumentoController extends ExController {
 	protected static void redirecionarParaExibir(final Result result,
 			final String sigla) {
 		result.redirectTo(MessageFormat.format(URL_EXIBIR, sigla));
+	}
+	
+	protected static void redirecionarParaEditar(final Result result,
+			final String sigla) {
+		result.redirectTo(MessageFormat.format(URL_EDITAR, sigla));
 	}
 
 	@Get("/app/expediente/doc/pdf")

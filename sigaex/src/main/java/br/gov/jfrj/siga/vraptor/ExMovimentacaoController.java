@@ -1129,9 +1129,9 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel, 
 			final DpPessoaSelecao responsavelSel, 
 			final CpOrgaoSelecao cpOrgaoSel, 
+			final String dtDevolucaoMovString,
 			final String obsOrgao,
-			final String protocolo,
-			final String dtDevolucaoMovString) {
+			final String protocolo) {
 		
 		this.setPostback(postback);
 		
@@ -1189,7 +1189,7 @@ public class ExMovimentacaoController extends ExController {
 	public void transferirGravar(final int postback, final String sigla, final String dtMovString, final DpPessoaSelecao subscritorSel,
 			final boolean substituicao, final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor, final long idTpDespacho, final long idResp,
 			final List<ExTipoDespacho> tiposDespacho, final String descrMov, final List<Map<Integer, String>> listaTipoResp, final int tipoResponsavel,
-			final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, final CpOrgaoSelecao cpOrgacaoSel, final String obsOrgao,
+			final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, final CpOrgaoSelecao cpOrgacaoSel, final String dtDevolucaoMovString, final String obsOrgao,
 			final String protocolo) {
 		this.setPostback(postback);
 
@@ -1200,7 +1200,7 @@ public class ExMovimentacaoController extends ExController {
 		movimentacaoBuilder.setDtMovString(dtMovString).setSubscritorSel(subscritorSel)
 				.setMob(builder.getMob()).setSubstituicao(substituicao).setTitularSel(titularSel)
 				.setNmFuncaoSubscritor(nmFuncaoSubscritor).setIdTpDespacho(idTpDespacho).setDescrMov(descrMov).setLotaResponsavelSel(lotaResponsavelSel)
-				.setResponsavelSel(responsavelSel).setCpOrgaoSel(cpOrgacaoSel).setObsOrgao(obsOrgao);
+				.setResponsavelSel(responsavelSel).setDtDevolucaoMovString(dtDevolucaoMovString).setCpOrgaoSel(cpOrgacaoSel).setObsOrgao(obsOrgao);
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 
@@ -1889,7 +1889,7 @@ public class ExMovimentacaoController extends ExController {
 		result.forwardTo(this).assinado(mob);
 	}
 	
-	@Get("/app/expediente/mov/cancelar_pedido_publicacao_boletim")
+	@Get({"/app/expediente/mov/cancelar_pedido_publicacao_boletim","/expediente/mov/cancelar_pedido_publicacao_boletim.action"})
 	public void aCancelarPedidoPublicacaoBoletim(final String sigla) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
@@ -1944,7 +1944,7 @@ public class ExMovimentacaoController extends ExController {
 					sbHtml.toString());
 		}
 		
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+		ExDocumentoController.redirecionarParaEditar(result, null);
 	}
 	
 	@Get("/app/expediente/mov/atender_pedido_publicacao")

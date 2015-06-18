@@ -370,10 +370,10 @@
 						<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">
 							<c:set var="desativarClassif" value="sim" />
 						</c:if>
-						<input type="hidden" name="campos" value="classificacaoSel.id" />
 						<td colspan="3">
+						    <input type="hidden" name="campos" value="classificacaoSel.id" />
 							<siga:span id="classificacao" depende="forma;modelo">
-							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" reler="sim" />
+							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>

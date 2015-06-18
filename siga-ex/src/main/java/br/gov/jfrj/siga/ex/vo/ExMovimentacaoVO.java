@@ -119,7 +119,8 @@ public class ExMovimentacaoVO extends ExVO {
 
 		calcularClasse(mov);
 
-		desabilitada = mov.getExMovimentacaoCanceladora() != null
+		desabilitada = mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() 
+				|| mov.getExMovimentacaoCanceladora() != null
 				|| mov.getIdTpMov().equals(
 						TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 

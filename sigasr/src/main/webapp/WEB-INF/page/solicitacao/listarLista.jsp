@@ -215,7 +215,7 @@
 	}
 
 	listaService.getId = function(lista) {
-		return lista.idLista || lista['lista.idLista'];
+		return lista.lista || lista['lista.lista'];
 	}
 
 	listaService.getRow = function(lista) {

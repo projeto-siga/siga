@@ -313,18 +313,22 @@
 
 			<div class="gt-form-row gt-width-100">
 				<label>Prioridade</label>
-				<siga:select name="configuracao.prioridade" list="prioridades"
-					listKey="idPrioridade" id="idPrioridade" headerValue="Nenhuma"
-					headerKey="0" listValue="descPrioridade" theme="simple"
-					value="${descPrioridade}" style="width: 235px;" />
+			    <select name="configuracao.prioridade" id="prioridade" class="select-siga">
+					<option value="0"></option>
+					<c:forEach items="${prioridades}" var="item">
+					   <option value="${item}">${item.descPrioridade}</option>
+					</c:forEach>
+			    </select>
 			</div>
-
+			
 			<div class="gt-form-row gt-width-100">
 				<label>Prioridade na lista</label>
-				<siga:select name="configuracao.prioridadeNaLista" list="prioridades"
-					listKey="idPrioridade" id="idPrioridade" headerValue="Nenhuma"
-					headerKey="0" listValue="descPrioridade" theme="simple"
-					value="${descPrioridade}" style="width: 235px;" />
+			    <select name="configuracao.prioridadeNaLista" id="prioridade" class="select-siga">
+					<option value="0"></option>
+					<c:forEach items="${prioridades}" var="item">
+					   <option value="${item}">${item.descPrioridade}</option>
+					</c:forEach>
+			    </select>
 			</div>
 
 			<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
@@ -347,12 +351,20 @@
 		this.getObjetoParaGravar = function() {
 			var configuracao = Object.create(configuracaoInclusaoAutomatica);
 
-			//TODO  HD ARRUMAR!
 			configuracao["configuracao"] = $("#configuracao").val();
 			configuracao["configuracao.listaPrioridade"] = service.getIdLista();
 			configuracao["configuracao.dpPessoa"] = "";
-// 			configuracao.itemConfiguracaoSet = configuracaoItemAcaoService.getItensArray();
-// 			configuracao.acoesSet = configuracaoItemAcaoService.getAcoesArray();
+			
+			configuracao["serializar"] = "false";
+			for (index = 0; index < configuracaoItemAcaoService.getItensArray().length; ++index) {
+				if(configuracaoItemAcaoService.getItensArray()[index] != null)
+					configuracao["itemConfiguracaoSet["+ index + "]"] = configuracaoItemAcaoService.getItensArray()[index].idItemConfiguracao; 
+			}
+			
+			for (index = 0; index < configuracaoItemAcaoService.getAcoesArray().length; ++index) {
+				if(configuracaoItemAcaoService.getAcoesArray()[index] != null)
+					configuracao["acoesSet["+ index + "]"] = configuracaoItemAcaoService.getAcoesArray()[index].idAcao; 
+			}
 
 			var solicitanteTypes = ["lotacao", "dpPessoa", "funcaoConfianca", "cargo", "cpGrupo"];
 			solicitanteTypes.forEach(function(entry) {
@@ -444,12 +456,28 @@
 		
 		this.opts.dataTable = this.configuracaoInclusaoAutomaticaTable.dataTable;
 	}
+
+	function limparDadosConfiguracaoAutomatica() {
+		var jOrgaoUsuarioCbb = document.getElementsByName("configuracao.orgaoUsuario")[0],
+		jPrioridadeNaListaCbb = document.getElementsByName("configuracao.prioridadeNaLista")[0],
+		jPrioridadeCbb = document.getElementsByName("configuracao.prioridade")[0];
+		
+		jOrgaoUsuarioCbb.selectedIndex = 0;
+		jPrioridadeNaListaCbb.selectedIndex = 0;
+		jPrioridadeCbb.selectedIndex = 0;
+		
+		$("#formulario_dpPessoaSel_id").val('');
+		$("#formulario_dpPessoaSel_descricao").val('');
+		$("#formulario_dpPessoaSel_sigla").val('');
+		$("#dpPessoaSelSpan").html('');
+	}
 	
 	configuracaoInclusaoAutomaticaService.cadastrar = function(title) {
 		// Se eh novo, entao salva
 		if(!$("#idLista").val() && listaService.aplicar() == false) {
 			return;
 		}
+		limparDadosConfiguracaoAutomatica();
 		BaseService.prototype.cadastrar.call(this, title);
 		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao({});
 	}
@@ -460,7 +488,10 @@
 		return tr;
 	}
 	configuracaoInclusaoAutomaticaService.getId = function(configuracaoInclusaoAutomatica) {
-		return configuracaoInclusaoAutomatica.idConfiguracao;
+		if (configuracaoInclusaoAutomatica)
+			return configuracaoInclusaoAutomatica.configuracao;
+		else
+			return;
 	}
 	configuracaoInclusaoAutomaticaService.getObjetoParaGravar = function() {
 		var configuracao = BaseService.prototype.getObjetoParaGravar.call(this);
@@ -545,8 +576,30 @@
 		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
 		BaseService.prototype.editar.call(this, configuracao, title);
 
-		$("#configuracao").val(configuracao.idConfiguracao);
+		
+		configuracaoInclusaoAutomaticaService.setaCampos(configuracao);
 	}
+	
+	configuracaoInclusaoAutomaticaService.setaCampos = function(configuracao) {
+		$("#configuracao").val(configuracao.idConfiguracao);
+		
+		if(configuracao.orgaoUsuario) {
+			var jOrgaoUsuarioCbb = document.getElementsByName("configuracao.orgaoUsuario")[0];
+			jOrgaoUsuarioCbb.selectedIndex = findSelectedIndexByValue(jOrgaoUsuarioCbb, configuracao.orgaoUsuario.id);
+		}
+
+		if(configuracao.prioridade) {
+			var jPrioridadeCbb = document.getElementsByName("configuracao.prioridade")[0];
+			jPrioridadeCbb.selectedIndex = findSelectedIndexByText(jPrioridadeCbb, configuracao.descPrioridade);
+		}
+
+		if(configuracao.prioridadeNaLista) {
+			var jPrioridadeNaListaCbb = document.getElementsByName("configuracao.prioridadeNaLista")[0];
+			jPrioridadeNaListaCbb.selectedIndex = findSelectedIndexByText(jPrioridadeNaListaCbb, configuracao.descPrioridadeNaLista);
+		}
+	
+	}
+	
 	configuracaoInclusaoAutomaticaService.incluirInativas = function() {
 		configuracaoInclusaoAutomaticaService.carregarParaLista($('#idLista').val());
 	}
@@ -676,6 +729,15 @@
 		return 0;
 	};
 	
+	function findSelectedIndexByText(comboBox, text) {
+		for (var i = 0; i < comboBox.options.length; i++) {
+			if (comboBox.options[i].text == text)
+				return i;
+		}
+		
+		return 0;
+	};
+	
 	function atualizarControleAcessoModal(itemArray, tr) {
 		var jOrgaoUsuarioCbb = document.getElementsByName("orgaoUsuario")[0],
 			jComplexoCbb = document.getElementsByName("complexo")[0],
@@ -758,7 +820,7 @@
 		$("#formulario_dpPessoaAtualSel_descricao").val('');
 		$("#formulario_dpPessoaAtualSel_sigla").val('');
 		$("#dpPessoaAtualSelSpan").html('');
-		
+
 		$("#formulario_cargoAtualSel_id").val('');
 		$("#formulario_cargoAtualSel_descricao").val('');
 		$("#formulario_cargoAtualSel_sigla").val('');

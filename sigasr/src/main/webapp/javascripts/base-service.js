@@ -146,8 +146,10 @@ function BaseService(opts) {
 
 BaseService.prototype.serializar = function(obj) {
 	var queryString = jQuery.param(obj);
-	while(queryString.indexOf('%5B') > 1) {
-		queryString = queryString.replace('%5B', '.').replace('%5D', '');
+	if(!obj.serializar || obj.serializar != 'false') {
+		while(queryString.indexOf('%5B') > 1) {
+			queryString = queryString.replace('%5B', '.').replace('%5D', '');
+		}
 	}
 	return  queryString;
 }

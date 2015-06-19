@@ -173,11 +173,10 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.buscaParaConfiguracaoInsercaoAutomaticaListaJSON(lista.getListaAtual(), mostrarDesativados));
     }
 
-    @Path("/configuracaoAutomaticaGravar")
+    @Path("/configuracaoAutomaticaGravar") 
     public void configuracaoAutomaticaGravar(SrConfiguracao configuracao, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet) throws Exception {
         configuracao.setAcoesSet(acoesSet);
         configuracao.setItemConfiguracaoSet(itemConfiguracaoSet);
-        
         configuracao.salvarComoInclusaoAutomaticaLista(configuracao.getListaPrioridade());
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
@@ -196,7 +195,6 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
-//    @Path({"/listarListaDesativados"})
     @Path("/buscarPermissoesLista")
     public void buscarPermissoesLista(Long idLista) throws Exception {
         List<SrConfiguracao> permissoes;
@@ -354,12 +352,12 @@ public class SolicitacaoController extends SrController {
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicitaï¿½ï¿½o nï¿½o encontrada");
+            throw new Exception("Solicitação não encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
+            throw new Exception("Esta solicitação foi excluída");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
@@ -458,7 +456,7 @@ public class SolicitacaoController extends SrController {
         }
 
         // Montando o filtro...
-        String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
+        String[] tipos = new String[] { "Pessoa", "Lotação" };
         List<CpMarcador> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList();
 
         List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);

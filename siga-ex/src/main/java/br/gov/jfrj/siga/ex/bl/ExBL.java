@@ -159,8 +159,6 @@ public class ExBL extends CpBL {
 
 	private final static Logger log = Logger.getLogger(ExBL.class);
 
-	private Set<ExMovimentacao> transferenciasSet = new TreeSet<ExMovimentacao>();
-		
 	public ThreadLocal<SortedSet<ExMobil>> getThreadAlteracaoParcial() {
 		return threadAlteracaoParcial;
 	}
@@ -859,18 +857,9 @@ public class ExBL extends CpBL {
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA){
 					m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
-					transferenciasSet.add(mov);
-					if(mov.getDtFimMov()!=null){
-						movT.add(mov);
-					}
 				}
 				if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA || t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
 						&& !apensadoAVolumeDoMesmoProcesso){
-					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
-					transferenciasSet.add(mov);
-					if(mov.getDtFimMov()!=null){
-						movT.add(mov);
-					}
 				}
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 						&& mob.doc().isEletronico()) {
@@ -943,46 +932,61 @@ public class ExBL extends CpBL {
 				}
 			}
 						
-			Iterator itr = movT.iterator();
-
-			while (itr.hasNext()) {
-				ExMovimentacao element = (ExMovimentacao) itr.next();
-
-				if (element.getLotaCadastrante() != null
-						&& !transferenciasSet.isEmpty()
-						&& !contemRetornoTransferencia(element)) {
-					
-					Date dtMarca = element.getDtFimMov();
-					dtMarca.setHours(23);
-					dtMarca.setMinutes(59);
-					dtMarca.setSeconds(59);
-					
-					acrescentarMarcaTransferencia(set, mob, m_aguardando, dt,
-							dtMarca, element.getCadastrante(),
-							element.getLotaCadastrante()); // acrescenta a
-															// marca
-															// "Aguardando Devolu￧￣o"
-
-					acrescentarMarcaTransferencia(set, mob, m_aDevolver, dt,
-							dtMarca, element.getResp(),
-							element.getLotaResp());// acrescenta a marca
-													// "A Devolver"
-
-					acrescentarMarcaTransferencia(set, mob, m_aguardandoFora,
-							dtMarca, null,
-							element.getCadastrante(),
-							element.getLotaCadastrante()); // acrescenta a
-															// marca
-															// "Aguardando Devolu￧￣o (Fora do Prazo)"
-					
-					acrescentarMarcaTransferencia(set, mob, m_aDevolverFora,
-							dtMarca, null, element.getResp(),
-							element.getLotaResp());// acrescenta
-													// a
-													// marca
-													// "A Devolver (Fora do Prazo)"
-				}
+			List<ExMovimentacao> transferenciasMobil = mob.getMovimentacoesPorTipo(3);
+			Set<ExMovimentacao> transferenciasRetornoMobil = new TreeSet<ExMovimentacao>();
+						
+			Iterator it =  transferenciasMobil.iterator();
+						
+			while(it.hasNext()){			
+				ExMovimentacao elemento = (ExMovimentacao) it.next();
+					if(elemento.getDtFimMov() != null){
+						transferenciasRetornoMobil.add(elemento);
+					}
 			}
+									
+			Iterator itr = transferenciasRetornoMobil.iterator();
+						
+			while (itr.hasNext()) {
+ 				ExMovimentacao element = (ExMovimentacao) itr.next();
+
+				ExMobil mobil = element.getExMobil();
+				
+ 				if (element.getLotaCadastrante() != null
+ 				&& !transferenciasRetornoMobil.isEmpty()
+ 				&& !contemRetornoTransferencia(element, mobil)) {
+ 					
+ 					Date dtMarca = element.getDtFimMov();
+ 					dtMarca.setHours(23);
+ 					dtMarca.setMinutes(59);
+ 					dtMarca.setSeconds(59);
+ 					
+ 					acrescentarMarcaTransferencia(set, mob, m_aguardando, dt,
+ 							dtMarca, element.getCadastrante(),
+ 							element.getLotaCadastrante()); // acrescenta a
+ 															// marca
+ 															// "Aguardando Devolução"
+ 
+ 					acrescentarMarcaTransferencia(set, mob, m_aDevolver, dt,
+ 							dtMarca, element.getResp(),
+ 							element.getLotaResp());// acrescenta a marca
+ 													// "A Devolver"
+ 
+ 					acrescentarMarcaTransferencia(set, mob, m_aguardandoFora,
+ 							dtMarca, null,
+ 							element.getCadastrante(),
+ 							element.getLotaCadastrante()); // acrescenta a
+ 															// marca
+ 															// "Aguardando Devolução (Fora do Prazo)"
+ 					
+ 					acrescentarMarcaTransferencia(set, mob, m_aDevolverFora,
+ 							dtMarca, null, element.getResp(),
+ 							element.getLotaResp());// acrescenta
+ 													// a
+ 													// marca
+ 													// "A Devolver (Fora do Prazo)"
+ 				}
+
+ 			}
 			
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
 				if (!mob.getDoc().isAssinadoSubscritor())
@@ -1047,25 +1051,27 @@ public class ExBL extends CpBL {
 		return set;
 	}
 	
-	public boolean contemRetornoTransferencia(ExMovimentacao mov) {
+	public boolean contemRetornoTransferencia(ExMovimentacao mov, ExMobil mob) {
 		boolean contains = false;
-		Iterator itr = transferenciasSet.iterator();
+		Iterator it;
+		List<ExMovimentacao> listaTransf = mob.getMovimentacoesPorTipo(3);
+		it = listaTransf.iterator();
 		
-		while (itr.hasNext()) {
-			ExMovimentacao element = (ExMovimentacao) itr.next();
-			if(ExTipoMovimentacao.hasTransferencia(element.getIdTpMov()) == ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov()))
-			if (mov != null){
-				if (element.getIdMov() != mov.getIdMov()
-						&& ExTipoMovimentacao.hasTransferencia(element.getIdTpMov())
-						&& ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov())
-						&& mov.getLotaCadastrante() == element.getLotaResp()
-						) {
-					contains = !contains;
-					mov.setDtFimMov(null);
-					break;
+		while (it.hasNext()) {
+		
+				ExMovimentacao element = (ExMovimentacao) it.next();
+				if(ExTipoMovimentacao.hasTransferencia(element.getIdTpMov()) == ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov()))
+						if (mov != null){
+								if (element.getIdMov() != mov.getIdMov()
+										&& ExTipoMovimentacao.hasTransferencia(element.getIdTpMov())
+											&& ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov())
+											&& mov.getLotaCadastrante() == element.getLotaResp()
+											) {
+										contains = !contains;
+										mov.setDtFimMov(null);
+						}
 				}
-			}
-		}
+		 }
 		return contains;
 	}
 	

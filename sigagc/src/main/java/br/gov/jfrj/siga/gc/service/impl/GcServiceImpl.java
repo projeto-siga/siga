@@ -75,18 +75,18 @@ public class GcServiceImpl implements GcService {
 			throw new Exception("Tag inválido. Deve seguir o padrão: "
 					+ GcTag.tagPattern.toString());
 		}
-		String grupo = matcher.group(1);
-		Integer indice = (matcher.group(2) != null) ? Integer.parseInt(matcher
-				.group(2)) : null;
-		String id = matcher.group(3);
-		String titulo = matcher.group(4);
+		String grupo = matcher.group(2);
+		Integer indice = (matcher.group(3) != null) ? Integer.parseInt(matcher
+				.group(3)) : null;
+		String id = matcher.group(4);
+		String titulo = matcher.group(5);
 
 		int count = 0;
 		TypedQuery<GcInformacao> q = ContextoPersistencia.em().createQuery(
 				"select distinct inf from GcInformacao as inf join inf.tags tag"
 						+ " where tag.categoria like :categoria",
 				GcInformacao.class);
-		q.setParameter("categoria", grupo + "-%-" + id);
+		q.setParameter("categoria", grupo + "~%~" + id);
 		List<GcInformacao> infs = q.getResultList();
 
 		count = atualizarTagAlg(grupo, indice, id, titulo,
@@ -110,7 +110,7 @@ public class GcServiceImpl implements GcService {
 					tagAtualizar = t;
 			}
 			if (tagAtualizar != null) {
-				Integer indiceOriginal = tagAtualizar.getIndice();
+				Integer indiceOriginal = tagAtualizar.getHierarquiaIndice();
 
 				// Alteração de título
 				if (!tagAtualizar.getTitulo().equals(titulo))
@@ -122,20 +122,31 @@ public class GcServiceImpl implements GcService {
 					List<GcTag> remover = new ArrayList<>();
 					for (GcTag t : inf.getTags()) {
 						if (grupo.equals(t.getHierarquiaGrupo())
-								&& indiceOriginal.compareTo(t.getIndice()) > 0)
+								&& indiceOriginal.compareTo(t
+										.getHierarquiaIndice()) > 0)
 							remover.add(t);
 					}
 					inf.getTags().removeAll(remover);
 
 					// Reindexar posteriores
+					for (GcTag t : inf.getTags()) {
+						if (grupo.equals(t.getHierarquiaGrupo())
+								&& indiceOriginal.compareTo(t
+										.getHierarquiaIndice()) < 0)
+							t.setHierarquiaIndice(t.getHierarquiaIndice()
+									- indiceOriginal + indice);
+					}
 
 					// Atualizar o tag
-					tagAtualizar.setIndice(indice);
+					tagAtualizar.setHierarquiaIndice(indice);
 
 					// Inserir tags anteriores informados
 					//
 					for (String s : anteriores) {
-						GcTag ta = GcTag.getInstance(s, remover, true);
+						GcTag ta = GcTag.getInstance(s, remover, true, false);
+						if (ta == null)
+							throw new Exception("Não foi localizado o tag " + s
+									+ " durante a atualização.");
 						inf.getTags().add(ta);
 					}
 

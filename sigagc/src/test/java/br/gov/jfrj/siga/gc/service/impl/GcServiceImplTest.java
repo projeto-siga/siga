@@ -61,7 +61,6 @@ public class GcServiceImplTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		// System.out.println("teste");
 		em = Persistence.createEntityManagerFactory("default")
 				.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
@@ -71,11 +70,12 @@ public class GcServiceImplTest extends TestCase {
 		tt1 = new GcTipoTag(1, "@");
 		tt1.save();
 
-		t1 = buildTag("@sr-item-1-123:sistemas");
+		t1 = GcTag.getInstance("@sr-item~1~123:sistemas", null, true, true);
 		t1.save();
-		t2 = buildTag("@sr-item-2-231:gestao-do-trabalho");
+		t2 = GcTag.getInstance("@sr-item~2~231:gestao-do-trabalho", null, true,
+				true);
 		t2.save();
-		t3 = buildTag("@sr-item-3-312:siga-doc");
+		t3 = GcTag.getInstance("@sr-item~3~312:siga-doc", null, true, true);
 		t3.save();
 
 		list = new ArrayList<>();
@@ -135,55 +135,49 @@ public class GcServiceImplTest extends TestCase {
 		super.tearDown();
 	}
 
-	private GcTag buildTag(String s) throws Exception {
-		Matcher matcher = GcTag.tagPattern.matcher(s);
-		if (!matcher.find()) {
-			throw new Exception("Tag inválido. Deve seguir o padrão: "
-					+ GcTag.tagPattern.toString());
-		}
-		String grupo = matcher.group(1);
-		Integer indice = (matcher.group(2) != null) ? Integer.parseInt(matcher
-				.group(2)) : null;
-		String ide = matcher.group(3);
-		String titulo = matcher.group(4);
-
-		GcTag tag = new GcTag();
-		tag.setCategoria(grupo + "-" + indice + "-" + ide);
-		tag.tipo = tt1;
-		tag.setIde(ide);
-		tag.setIndice(indice);
-		tag.setTitulo(titulo);
-		// tag.setId(++tagSequential);
-
-		return tag;
-	}
-
 	public void testAlteracaoSimplesUltimoNivel() throws Exception {
-		service.atualizarTag("@sr-item-1-123:sistemas, @sr-item-2-231:gestao-do-trabalho, @sr-item-3-312:siga-documentos");
+		service.atualizarTag("@sr-item~1~123:sistemas, @sr-item~2~231:gestao-do-trabalho, @sr-item~3~312:siga-documentos");
 		assertEquals(
-				"[@sr-item-1-123:sistemas, @sr-item-2-231:gestao-do-trabalho, @sr-item-3-312:siga-documentos]",
+				"[@sr-item~1~123:sistemas, @sr-item~2~231:gestao-do-trabalho, @sr-item~3~312:siga-documentos]",
 				i1.getTags().toString());
 	}
 
 	public void testAlteracaoSimplesNivelIntermediario() throws Exception {
-		service.atualizarTag("@sr-item-2-231:gt");
+		service.atualizarTag("@sr-item~2~231:gt");
 		assertEquals(
-				"[@sr-item-1-123:sistemas, @sr-item-2-231:gt, @sr-item-3-312:siga-doc]",
+				"[@sr-item~1~123:sistemas, @sr-item~2~231:gt, @sr-item~3~312:siga-doc]",
 				i1.getTags().toString());
 	}
 
 	public void testAlteracaoSimplesPrimeiroNivel() throws Exception {
-		service.atualizarTag("@sr-item-1-123:sistemas-informatizados");
+		service.atualizarTag("@sr-item~1~123:sistemas-informatizados");
 		assertEquals(
-				"[@sr-item-1-123:sistemas-informatizados, @sr-item-2-231:gestao-do-trabalho, @sr-item-3-312:siga-doc]",
+				"[@sr-item~1~123:sistemas-informatizados, @sr-item~2~231:gestao-do-trabalho, @sr-item~3~312:siga-doc]",
 				i1.getTags().toString());
 	}
 
 	public void testAlteracaoDeNivelDeUltimoParaPenultimo() throws Exception {
-		service.atualizarTag("@sr-item-1-123:sistemas, @sr-item-2-312:gestao-documental");
+		service.atualizarTag("@sr-item~1~123:sistemas, @sr-item~2~312:gestao-documental");
 		assertEquals(
-				"[@sr-item-1-123:sistemas, @sr-item-2-312:gestao-documental]",
+				"[@sr-item~1~123:sistemas, @sr-item~2~312:gestao-documental]",
 				i1.getTags().toString());
 	}
+
+	public void testAlteracaoDeNivelDeSegundoParaPrimeiro() throws Exception {
+		service.atualizarTag("@sr-item~1~231:gestao-do-trabalho");
+		assertEquals(
+				"[@sr-item~1~231:gestao-do-trabalho, @sr-item~2~312:siga-doc]",
+				i1.getTags().toString());
+	}
+
+	// Tags adicionais não devem ser afetados
+
+	// Atualizar quando chamado com tag não hierárquico deve dar erro?
+
+	// Tem sentido e hierarquia sem id?
+
+	// Tem sentido em id sem hierarquia?
+
+	// Testar o webservice pelo soapui
 
 }

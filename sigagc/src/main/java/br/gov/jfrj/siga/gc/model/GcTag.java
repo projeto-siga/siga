@@ -14,6 +14,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.gc.ObjetoSelecionavel;
 import br.gov.jfrj.siga.gc.util.GcBL;
@@ -29,7 +30,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	public static ActiveRecord<GcTag> AR = new ActiveRecord<>(GcTag.class);
 
 	static public Pattern tagPattern = Pattern
-			.compile("^@([\\w-]+)-(\\d)-(\\d+):([\\w\\d-]+)$");
+			.compile("^([@#^])(?:([\\w-]+)(?:~(\\d)(?:~(\\d+))?+)?+:)?([\\w\\d-]+)$");
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcTagSeq")
@@ -46,11 +47,11 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	@Column(name = "TITULO", length = 256)
 	private String titulo;
 
-	@Column(name = "HIERARQUIA_INDICE")
-	private Integer indice;
-
-	@Column(name = "ID_EXTERNA", length = 256)
-	private String ide;
+	// @Column(name = "HIERARQUIA_INDICE")
+	// private Integer indice;
+	//
+	// @Column(name = "ID_EXTERNA", length = 256)
+	// private String ide;
 
 	public GcTag() {
 		// TODO Auto-generated constructor stub
@@ -64,17 +65,18 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	}
 
 	public static GcTag getInstance(String s, List<GcTag> lista,
-			boolean atualizarTitulo) throws Exception {
+			boolean atualizarTitulo, boolean criar) throws Exception {
 		Matcher matcher = tagPattern.matcher(s);
 		if (!matcher.find()) {
 			throw new Exception("Tag inválido. Deve seguir o padrão: "
 					+ GcTag.tagPattern.toString());
 		}
-		String grupo = matcher.group(1);
-		Integer indice = (matcher.group(2) != null) ? Integer.parseInt(matcher
-				.group(2)) : null;
-		String ide = matcher.group(3);
-		String titulo = matcher.group(4);
+		String tipo = matcher.group(1);
+		String grupo = matcher.group(2);
+		Integer indice = (matcher.group(3) != null) ? Integer.parseInt(matcher
+				.group(3)) : null;
+		String ide = matcher.group(4);
+		String titulo = matcher.group(5);
 
 		GcTag tag = null;
 
@@ -99,9 +101,32 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 			}
 			List<GcTag> itens = GcTag.AR.find(query).fetch();
 
-			if (itens.size() == 0 || itens.size() > 1)
+			if (itens.size() == 0 && !criar)
 				return null;
-			tag = itens.get(0);
+			if (itens.size() == 1)
+				tag = itens.get(0);
+			if (itens.size() > 1)
+				return null;
+		}
+
+		if (tag == null) {
+			GcTipoTag tipoTag;
+			switch (tipo) {
+			case "@":
+				tipoTag = GcTipoTag.AR
+						.findById(GcTipoTag.TIPO_TAG_CLASSIFICACAO);
+				break;
+			case "#":
+				tipoTag = GcTipoTag.AR.findById(GcTipoTag.TIPO_TAG_HASHTAG);
+				break;
+			default:
+				tipoTag = GcTipoTag.AR.findById(GcTipoTag.TIPO_TAG_ANCORA);
+			}
+
+			tag = new GcTag();
+			tag.setCategoria(grupo + "~" + indice + "~" + ide);
+			tag.tipo = tipoTag;
+			tag.setTitulo(titulo);
 		}
 
 		// Atualiza o título
@@ -257,54 +282,77 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	}
 
 	public String getHierarquiaGrupo() {
-
 		Matcher matcher = GcTag.tagPattern.matcher(this.toString());
 		if (!matcher.find()) {
 			return null;
 		}
-		String grupo = matcher.group(1);
+		String grupo = matcher.group(2);
+		if (grupo == null || grupo.length() == 0)
+			return null;
 
 		return grupo;
 	}
 
-	public String getHierarquiaIndice() {
-
+	public Integer getHierarquiaIndice() {
 		Matcher matcher = GcTag.tagPattern.matcher(this.toString());
 		if (!matcher.find()) {
 			return null;
 		}
-		String indice = matcher.group(2);
-
-		return indice;
+		String s = matcher.group(3);
+		if (s == null || s.length() == 0)
+			return null;
+		return Integer.valueOf(s);
 	}
 
 	public String getHierarquiaId() {
-
 		Matcher matcher = GcTag.tagPattern.matcher(this.toString());
 		if (!matcher.find()) {
 			return null;
 		}
-		String id = matcher.group(3);
+		String id = matcher.group(4);
+		if (id == null || id.length() == 0)
+			return null;
 
 		return id;
 	}
 
-	public String getIde() {
-		return ide;
+	public void setHierarquiaGrupo(String grupo) {
+		if (grupo == null) {
+			this.categoria = null;
+			return;
+		}
+		String s = grupo;
+		if (getHierarquiaIndice() != null) {
+			this.categoria += "~" + getHierarquiaIndice();
+			if (getHierarquiaId() != null)
+				this.categoria += "~" + getHierarquiaId();
+		}
+
 	}
 
-	public void setIde(String ide) {
-		this.ide = ide;
+	public void setHierarquiaIndice(Integer indice) {
+		if (getHierarquiaGrupo() == null)
+			throw new AplicacaoException(
+					"Não é permitido atualizar o indice se um conhecimeto que não possui grupo.");
+		if (getHierarquiaId() == null)
+			this.categoria = getHierarquiaGrupo() + "~" + indice;
+		else
+			this.categoria = getHierarquiaGrupo() + "~" + indice + "~"
+					+ getHierarquiaId();
 	}
 
-	public Integer getIndice() {
-		return indice;
+	public void setHierarquiaId(Long ide) {
+		if (getHierarquiaGrupo() == null)
+			throw new AplicacaoException(
+					"Não é permitido atualizar o id externo se um conhecimeto que não possui grupo.");
+		if (getHierarquiaIndice() == null)
+			throw new AplicacaoException(
+					"Não é permitido atualizar o id externo se um conhecimeto que não possui Indice.");
+		if (ide == null)
+			this.categoria = getHierarquiaGrupo() + "~" + getHierarquiaIndice();
+		else
+			this.categoria = getHierarquiaGrupo() + "~" + getHierarquiaIndice()
+					+ "~" + ide;
 	}
 
-	public void setIndice(Integer indice) {
-		this.indice = indice;
-
-		this.categoria = getHierarquiaGrupo() + "-" + this.indice + "-"
-				+ getHierarquiaId();
-	}
 }

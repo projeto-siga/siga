@@ -951,6 +951,10 @@ public class ExBL extends CpBL {
 
 				ExMobil mobil = element.getExMobil();
 				
+				if (element.getExMobil().isJuntado()){
+					mobil = element.getExMobil().getMobilPrincipal();
+				}
+				
  				if (element.getLotaCadastrante() != null
  				&& !transferenciasRetornoMobil.isEmpty()
  				&& !contemRetornoTransferencia(element, mobil)) {

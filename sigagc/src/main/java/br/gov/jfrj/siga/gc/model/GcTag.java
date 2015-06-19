@@ -30,7 +30,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 	public static ActiveRecord<GcTag> AR = new ActiveRecord<>(GcTag.class);
 
 	static public Pattern tagPattern = Pattern
-			.compile("^([@#^])(?:([\\w-]+)(?:~(\\d)(?:~(\\d+))?+)?+:)?([\\w\\d-]+)$");
+			.compile("^([@#^])(?:([\\w-]+?)(?:-(\\d)(?:-(\\d+))?)?:)?([\\w\\d-]+)$");
 
 	@Id
 	@SequenceGenerator(sequenceName = "SIGAGC.hibernate_sequence", name = "gcTagSeq")
@@ -124,7 +124,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 			}
 
 			tag = new GcTag();
-			tag.setCategoria(grupo + "~" + indice + "~" + ide);
+			tag.setCategoria(grupo + "-" + indice + "-" + ide);
 			tag.tipo = tipoTag;
 			tag.setTitulo(titulo);
 		}
@@ -323,9 +323,9 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 		}
 		String s = grupo;
 		if (getHierarquiaIndice() != null) {
-			this.categoria += "~" + getHierarquiaIndice();
+			this.categoria += "-" + getHierarquiaIndice();
 			if (getHierarquiaId() != null)
-				this.categoria += "~" + getHierarquiaId();
+				this.categoria += "-" + getHierarquiaId();
 		}
 
 	}
@@ -335,9 +335,9 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 			throw new AplicacaoException(
 					"Não é permitido atualizar o indice se um conhecimeto que não possui grupo.");
 		if (getHierarquiaId() == null)
-			this.categoria = getHierarquiaGrupo() + "~" + indice;
+			this.categoria = getHierarquiaGrupo() + "-" + indice;
 		else
-			this.categoria = getHierarquiaGrupo() + "~" + indice + "~"
+			this.categoria = getHierarquiaGrupo() + "-" + indice + "-"
 					+ getHierarquiaId();
 	}
 
@@ -349,10 +349,10 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 			throw new AplicacaoException(
 					"Não é permitido atualizar o id externo se um conhecimeto que não possui Indice.");
 		if (ide == null)
-			this.categoria = getHierarquiaGrupo() + "~" + getHierarquiaIndice();
+			this.categoria = getHierarquiaGrupo() + "-" + getHierarquiaIndice();
 		else
-			this.categoria = getHierarquiaGrupo() + "~" + getHierarquiaIndice()
-					+ "~" + ide;
+			this.categoria = getHierarquiaGrupo() + "-" + getHierarquiaIndice()
+					+ "-" + ide;
 	}
 
 }

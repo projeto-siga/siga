@@ -86,7 +86,7 @@ public class GcServiceImpl implements GcService {
 				"select distinct inf from GcInformacao as inf join inf.tags tag"
 						+ " where tag.categoria like :categoria",
 				GcInformacao.class);
-		q.setParameter("categoria", grupo + "~%~" + id);
+		q.setParameter("categoria", grupo + "-%-" + id);
 		List<GcInformacao> infs = q.getResultList();
 
 		count = atualizarTagAlg(grupo, indice, id, titulo,

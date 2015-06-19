@@ -215,7 +215,7 @@
 	}
 
 	listaService.getId = function(lista) {
-		return lista.lista || lista['lista.lista'];
+		return lista.lista || lista['lista.lista'] || lista.idLista;
 	}
 
 	listaService.getRow = function(lista) {
@@ -247,6 +247,7 @@
 			if (acoes)
 				acoes = acoes.append(" " + listaService.editarButton);
 	    }
+	    
 
 		if (objSalvo.podeConsultar) {
 		    tr.attr('onclick',"javascript:window.location='${linkTo[SolicitacaoController].exibirLista}"+listaService.getId(objSalvo)+"'");

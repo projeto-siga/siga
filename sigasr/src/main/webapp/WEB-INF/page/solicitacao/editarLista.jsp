@@ -489,7 +489,7 @@
 	}
 	configuracaoInclusaoAutomaticaService.getId = function(configuracaoInclusaoAutomatica) {
 		if (configuracaoInclusaoAutomatica)
-			return configuracaoInclusaoAutomatica.configuracao;
+			return configuracaoInclusaoAutomatica.configuracao || configuracaoInclusaoAutomatica.idConfiguracao;
 		else
 			return;
 	}

@@ -265,7 +265,7 @@ public class SolicitacaoController extends SrController {
         String jsonPrioridades = SrPrioridade.getJSON().toString();
 
         if (!lista.podeConsultar(getLotaTitular(), getCadastrante())) {
-            throw new Exception("Exibiï¿½ï¿½o nï¿½o permitida");
+            throw new Exception("Exibição não permitida");
         }
 
         try {
@@ -561,7 +561,7 @@ public class SolicitacaoController extends SrController {
     @Path("/exibir/incluirEmListaGravar")
     public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, Boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
-            throw new Exception("Selecione a lista para inclusï¿½o da solicitaï¿½ï¿½o");
+            throw new Exception("Selecione a lista para inclusão da solicitação");
         }
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
@@ -617,7 +617,7 @@ public class SolicitacaoController extends SrController {
     public void escalonarGravar(Long id, Long itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
         if (itemConfiguracao == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
-            throw new Exception("Operaï¿½ï¿½o nao permitida. Necessario informar um item de configuraï¿½ï¿½o " + "e uma aï¿½ï¿½o.");
+            throw new Exception("Operação não permitida. Necessario informar um item de configuração " + "e uma ação.");
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
 
         DpLotacao atendenteNaoDesignado = null;

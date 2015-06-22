@@ -32,10 +32,10 @@
 		</mod:grupo>
 		<mod:grupo>
 			<mod:selecao titulo="Possui Parentesco" var="parentesco"
-				opcoes="Não;Sim" reler="ajax" idAjax="parentescoajax" />
+				opcoes="Não;Sim;Sim, mas não infringi nenhum dos dispositivos da Resolução nº 07/2005 - CNJ" reler="ajax" idAjax="parentescoajax" />
 		</mod:grupo>
 		<mod:grupo depende="parentescoajax">
-			<c:if test="${parentesco == 'Sim'}">
+			<c:if test="${parentesco != 'Não'}">
 				<mod:grupo>
 					<mod:selecao titulo="Quantidade de parentes" var="nr_parentes"
 						opcoes="1;2;3;" reler="ajax" idAjax="nr_parentesajax" />
@@ -104,11 +104,16 @@
 
 		<mod:letra tamanho="${tl}">
 			<!-- Esta variável "corpoTexto" tem a finalidade de evitar duplicidade no código -->
-			<c:set var="corpoTexto"
-				value="relação familiar ou de parentesco que importe prática vedada pela
+			<c:set var="corpoTextoParte1"
+				value="relação familiar ou de parentesco que "></c:set>
+			<c:set var="corpoTextoParte2"
+				value="importe prática vedada pela
 						Súmula Vinculante Nº 13 de 29 de agosto de 2008 do Supremo Tribunal
 						Federal combinado com a Resolução Nº 07/2005 do Conselho Nacional de
 						Justiça (CNJ)."></c:set>
+			
+			<c:set var="corpoTexto"
+				value="${corpoTextoParte1}${corpoTextoParte2}"></c:set>
 
 			<!-- Estes ifs são para omitir  vírgulas e espaços no texto, dependendo dos campos que forem preenchidos -->
 
@@ -149,11 +154,15 @@
 						<br>
 					</c:forEach>
 				</c:when>
+				<c:when test="${parentesco eq 'Não'}">
+					<b>não tem</b>
+					${corpoTexto}
+				</c:when>
 				<c:otherwise>
-					<c:if test="${parentesco == 'Não'}">
-						<b>não tem</b>
-						${corpoTexto}
-					</c:if>
+					<b>tem</b>
+					${corpoTextoParte1}
+					<b>NÃO</b>
+					${corpoTextoParte2}
 				</c:otherwise>
 			</c:choose>
 

@@ -418,7 +418,7 @@
 			
 			if(acoes && acoes.length > 0) {
 				var acao = acoes[0];
-				descricao = acao.sigla + " - " + acao.titulo;
+				descricao = acao.sigla + " - " + acao.tituloAcao;
 				
 				if(acoes.length > 1)
 					descricao += " ...";

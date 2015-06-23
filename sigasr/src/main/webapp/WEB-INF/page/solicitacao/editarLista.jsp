@@ -570,7 +570,7 @@
 	}
 	
 	configuracaoInclusaoAutomaticaService.onRowClick = function(configuracao) {
-		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configura\u00e7\u00e3o para inclus\u00e3o autom\u00e1tica');
+		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configura&ccedil;&atilde;o para inclus&atilde;o autom&aacute;tica');
 	}
 	configuracaoInclusaoAutomaticaService.editar = function(configuracao, title) {
 		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
@@ -784,10 +784,10 @@
 		itemTipoPermissaoOptions = $("#itemTipoPermissao").clone();
 		
 		if (isEdicao)
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss\u00e3o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss&atilde;o');
 		else {
 			limparDadosAcessoModal();
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss\u00e3o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss&atilde;o');
 		}
 	
 		atualizarComboTipoPermissao();
@@ -1048,7 +1048,7 @@
 	        if ($("#itemTipoPermissao")[0].options.length > 0)
 	        	jDialog.data('acao', permissoes.incluirItem).dialog('open');
 	        else
-	            alert("N\u00e3o existem mais Tipos de Permiss\u00e3o para serem incluidos");
+	            alert("Não existem mais Tipos de Permissão para serem incluidos");
 	    });
 	   
 	    jDialog.dialog({
@@ -1061,7 +1061,7 @@
 	                jDialog.data('tipoPermissao','');
 	        },
 	        open: function(){
-	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permiss\u00e3o');
+	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permiss&atilde;o');
 	                jTipoPermissao.find("option[value=" + jDialog.data("tipoPermissao") + "]").prop('selected', true);
 	        }
 	    });
@@ -1267,7 +1267,7 @@
 	    		populatePermissoesFromJSonList(permissoesJSon);
 	    	},
 	    	error: function(error) {
-	        	alert("Não foi possíel carregar as Permissões desta Lista.");
+	        	alert("Não foi possível carregar as Permissões desta Lista.");
 	    	}
 	   	});
 	}

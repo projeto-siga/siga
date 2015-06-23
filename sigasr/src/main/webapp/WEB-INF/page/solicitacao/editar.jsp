@@ -570,7 +570,7 @@
 					</div>
 		
 					<div class="gt-form-row gt-width-66">
-						<label>DescriÃ§Ã£o</label>
+						<label>Descrição</label>
 						<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
 							id="descrSolicitacao" maxlength="8192">${solicitacao.descrSolicitacao}</textarea>
 							<siga:error name="solicitacao.descrSolicitacao"/>

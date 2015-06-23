@@ -68,7 +68,7 @@
 									- ${t.conf.atendente.descricao}</span>
 				<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.idLotacao}</span>
 				<c:if test="${catPosition.first && catPosition.last && tPosition.first}"> 
-					<c:set var="lotacaoDesignada" value="${t.conf.atendente.siglaCompleta}' - '${t.conf.atendente.descricao}"/>  
+					<c:set var="lotacaoDesignada" value="${t.conf.atendente.siglaCompleta} - ${t.conf.atendente.descricao}"/>  
 					<c:set var="idLotaAtendente" value="${t.conf.atendente.idLotacao}"/>
 					<c:set var="idDesignacao" value="${t.conf.idConfiguracao}"/>
 				</c:if>

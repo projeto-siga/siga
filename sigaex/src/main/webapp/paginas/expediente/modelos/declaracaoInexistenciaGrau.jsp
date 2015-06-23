@@ -145,14 +145,7 @@
 			<c:choose>
 				<c:when test="${parentesco eq 'Sim'}">
 					<b>tem</b>
-						${corpoTexto}		
-					<c:forEach var="i" begin="1" end="${nr_parentes}">
-						<p>Nome do Parente: <b>${requestScope[f:concat('parente',i)]}</b>.</p>
-						<p>Grau de parentesco: <b>${requestScope[f:concat('grau',i)]}</b>.</p>
-						<p>Data de ingresso no cargo em comissão/função de confiança:
-						<b>${requestScope[f:concat('dataingresso',i)]}</b>.</p>
-						<br>
-					</c:forEach>
+					${corpoTexto}		
 				</c:when>
 				<c:when test="${parentesco eq 'Não'}">
 					<b>não tem</b>
@@ -165,6 +158,15 @@
 					${corpoTextoParte2}
 				</c:otherwise>
 			</c:choose>
+			<c:if test="${parentesco ne 'Não'}">
+				<c:forEach var="i" begin="1" end="${nr_parentes}">
+					<p>Nome do Parente: <b>${requestScope[f:concat('parente',i)]}</b>.</p>
+					<p>Grau de parentesco: <b>${requestScope[f:concat('grau',i)]}</b>.</p>
+					<p>Data de ingresso no cargo em comissão/função de confiança:
+					<b>${requestScope[f:concat('dataingresso',i)]}</b>.</p>
+					<br>
+				</c:forEach>
+			</c:if>
 
 			<p style="TEXT-INDENT: 2cm" align="justify">Declara, por fim, que
 			deverá comunicar à Subsecretaria de Gestão de Pessoas, de imediato, a

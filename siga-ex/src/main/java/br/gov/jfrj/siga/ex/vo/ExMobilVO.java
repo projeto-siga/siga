@@ -98,7 +98,7 @@ public class ExMobilVO extends ExVO {
 		long tempoIni = System.currentTimeMillis();
 
 		/*
-		 * Markenson: O código abaixo foi comentado por questões de desempenho.
+		 * Markenson: O cÃ³digo abaixo foi comentado por questÃµes de desempenho.
 		 * Deve ser estudada uma maneira mais eficiente de calcular o tamanho
 		 * dos PDFs
 		 */
@@ -174,7 +174,7 @@ public class ExMobilVO extends ExVO {
 				}
 			}
 
-		// Edson: infelizmente, aí embaixo estamos varrendo de novo as movs.
+		// Edson: infelizmente, aÃ­ embaixo estamos varrendo de novo as movs.
 		// Melhorar?
 
 		if (mob.doc().isEletronico()) {
@@ -205,7 +205,7 @@ public class ExMobilVO extends ExVO {
 
 		marcasAtivas.addAll(mob.getExMarcaSetAtivas());
 
-		// Calcula o tempo que o documento ficou em cada uma das lotações por
+		// Calcula o tempo que o documento ficou em cada uma das lotaÃ§Ãµes por
 		// onde ele passou.
 		ExMovimentacaoVO movVOIni = null;
 		ExMovimentacaoVO movVOUlt = null;
@@ -271,7 +271,7 @@ public class ExMobilVO extends ExVO {
 			}
 		}
 
-		// Ocultar movimentações de cancelamento
+		// Ocultar movimentaÃ§Ãµes de cancelamento
 		j = 0;
 		span = 0;
 		for (ExMovimentacaoVO movVO : movs) {
@@ -315,7 +315,7 @@ public class ExMobilVO extends ExVO {
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		if (!mob.isGeral()) {
 			addAcao("application_side_tree",
-					"Visualizar Dossiê",
+					"Visualizar DossiÃª",
 					"/app/expediente/doc",
 					"exibirProcesso",
 					Ex.getInstance().getComp()
@@ -323,7 +323,7 @@ public class ExMobilVO extends ExVO {
 					null, null, null, null, "once");
 
 			addAcao("printer",
-					"Visualizar Impressão",
+					"Visualizar ImpressÃ£o",
 					"/app/arquivo",
 					"exibir",
 					Ex.getInstance().getComp()
@@ -381,7 +381,7 @@ public class ExMobilVO extends ExVO {
 					Ex.getInstance().getComp()
 							.podeAnexarArquivo(titular, lotaTitular, mob));
 			addAcao("tag_yellow",
-					"Fazer Anotação",
+					"Fazer AnotaÃ§Ã£o",
 					"/app/expediente/mov",
 					"anotar",
 					Ex.getInstance().getComp()
@@ -410,7 +410,7 @@ public class ExMobilVO extends ExVO {
 								mob));
 
 		addAcao("page_red",
-				"Retirar de Edital de Eliminação",
+				"Retirar de Edital de EliminaÃ§Ã£o",
 				"/app/expediente/mov",
 				"retirar_de_edital_eliminacao",
 				Ex.getInstance()
@@ -445,7 +445,7 @@ public class ExMobilVO extends ExVO {
 				null, null, null, null, "once");
 
 		addAcao("box",
-				"Arq. Intermediário",
+				"Arq. IntermediÃ¡rio",
 				"/app/expediente/mov",
 				"arquivar_intermediario",
 				Ex.getInstance()
@@ -459,7 +459,7 @@ public class ExMobilVO extends ExVO {
 				null, null, null, null, "once");
 
 		addAcao("box_go",
-				"Desarq. Intermediário",
+				"Desarq. IntermediÃ¡rio",
 				"/app/expediente/mov",
 				"desarquivar_intermediario_gravar",
 				Ex.getInstance()
@@ -486,8 +486,8 @@ public class ExMobilVO extends ExVO {
 		addAcao("link_add", "Apensar", "/app/expediente/mov", "apensar", Ex
 				.getInstance().getComp().podeApensar(titular, lotaTitular, mob));
 
-		// Não aparece a opção de Cancelar Movimentação para documentos
-		// temporários
+		// NÃ£o aparece a opÃ§Ã£o de Cancelar MovimentaÃ§Ã£o para documentos
+		// temporÃ¡rios
 		if (mob.getExDocumento().isFinalizado()
 				&& mob.getUltimaMovimentacaoNaoCancelada() != null
 				&& mob.getUltimaMovimentacaoNaoCancelada()
@@ -500,7 +500,7 @@ public class ExMobilVO extends ExVO {
 					Ex.getInstance()
 							.getComp()
 							.podeCancelarMovimentacao(titular, lotaTitular, mob),
-					"Confirma o cancelamento da última movimentação("
+					"Confirma o cancelamento da Ãºltima movimentaÃ§Ã£o("
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()
 							+ ")?", null, null, null, "once"); // popup,
 		// exibir+completo,

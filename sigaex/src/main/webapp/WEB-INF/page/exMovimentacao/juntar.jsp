@@ -99,5 +99,8 @@
 		</form>
 
 	</div></div></div>
-
+	
+	<script> 
+		muda_escolha(document.getElementById("idDocumentoEscolha"));
+	</script>
 </siga:pagina>

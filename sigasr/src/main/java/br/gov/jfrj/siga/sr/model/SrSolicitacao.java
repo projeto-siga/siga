@@ -1501,7 +1501,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
             throw new Exception("N�o foi encontrado nenhum atendente designado " + "para esta solicita��o. Sugest�o: alterar item de " + "configura��o e/ou a��o");
 
         if (isFilha()) {
-            if (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty())
+            if (getDescrSolicitacao() != null && (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty()))
                 setDescrSolicitacao(null);
 
             if (this.meuAtributoSolicitacaoSet != null)

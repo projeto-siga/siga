@@ -246,7 +246,7 @@
 								data-json='${tiposPermissaoJson}'></div>
 
 							<div class="gt-form-row gt-width-66">
-								<label>Tipo de Permiss√£o</label>
+								<label>Tipo de Permiss&atilde;o</label>
 
 								<siga:select name="itemTipoPermissao" list="tiposPermissao"
 									listKey="idTipoPermissaoLista" id="itemTipoPermissao"
@@ -570,7 +570,7 @@
 	}
 	
 	configuracaoInclusaoAutomaticaService.onRowClick = function(configuracao) {
-		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configura\u00e7\u00e3o para inclus\u00e3o autom\u00e1tica');
+		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configura&ccedil;&atilde;o para inclus&atilde;o autom&aacute;tica');
 	}
 	configuracaoInclusaoAutomaticaService.editar = function(configuracao, title) {
 		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
@@ -714,7 +714,7 @@
 	             }	        	 
 	         },
 	         error: function(response) {
-	        	alert("N√£o foi poss√≠vel desativar esta permiss√£o.");
+	        	alert("N„o foi possÌvel desativar esta permiss„o.");
 	         }
 	   });
 	       
@@ -784,10 +784,10 @@
 		itemTipoPermissaoOptions = $("#itemTipoPermissao").clone();
 		
 		if (isEdicao)
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss\u00e3o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss&atilde;o');
 		else {
 			limparDadosAcessoModal();
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss\u00e3o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss&atilde;o');
 		}
 	
 		atualizarComboTipoPermissao();
@@ -951,7 +951,7 @@
 	}
 	function getColunaAtivarDesativar (permissao) {
 		return '<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
-					'<a class="once desassociarPermissao" title="Remover permiss√É¬É√Ç¬£o">' + 
+					'<a class="once desassociarPermissao" title="Remover permiss&atilde;o">' + 
 						'<input class="idPermissao" type="hidden" value="' + permissao.idConfiguracao + '"/>' + 
 						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 					'</a>' + 
@@ -1048,7 +1048,7 @@
 	        if ($("#itemTipoPermissao")[0].options.length > 0)
 	        	jDialog.data('acao', permissoes.incluirItem).dialog('open');
 	        else
-	            alert("N\u00e3o existem mais Tipos de Permiss\u00e3o para serem incluidos");
+	            alert("N„o existem mais Tipos de Permiss„o para serem incluidos");
 	    });
 	   
 	    jDialog.dialog({
@@ -1061,7 +1061,7 @@
 	                jDialog.data('tipoPermissao','');
 	        },
 	        open: function(){
-	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permiss\u00e3o');
+	                jDialog.dialog('option', 'title', 'Incluir Tipo de Permiss&atilde;o');
 	                jTipoPermissao.find("option[value=" + jDialog.data("tipoPermissao") + "]").prop('selected', true);
 	        }
 	    });
@@ -1267,7 +1267,7 @@
 	    		populatePermissoesFromJSonList(permissoesJSon);
 	    	},
 	    	error: function(error) {
-	        	alert("N√£o foi poss√≠vel carregar as Permiss√µes desta Lista.");
+	        	alert("N„o foi possÈvel carregar as Permissıes desta Lista.");
 	    	}
 	   	});
 	}

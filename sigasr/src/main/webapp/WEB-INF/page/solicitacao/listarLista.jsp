@@ -168,8 +168,8 @@
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenaçã£o decrescente"
+			        "sortAscending":  ": clique para ordena&ccedil;&atilde;o crescente",
+			        "sortDescending": ": clique para ordena&ccedil;&atilde;o decrescente"
 			    }
 			},
 			"columnDefs": [{

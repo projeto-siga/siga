@@ -173,7 +173,7 @@
 	</form>
 </div>
 
-<siga:modal nome="controleAcesso" titulo="Cadastrar Permissï¿½o">
+<siga:modal nome="controleAcesso" titulo="Cadastrar Permissão">
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
@@ -784,10 +784,10 @@
 		itemTipoPermissaoOptions = $("#itemTipoPermissao").clone();
 		
 		if (isEdicao)
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss&atilde;o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permissão');
 		else {
 			limparDadosAcessoModal();
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss&atilde;o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permissão');
 		}
 	
 		atualizarComboTipoPermissao();

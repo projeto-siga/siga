@@ -8,7 +8,7 @@
 	</ul>
 </li>
 
-<li><a href="#">Prioriza&ccedil;&atilde;o</a>
+<li><a href="${linkTo[SolicitacaoController].listarLista[false]}">Prioriza&ccedil;&atilde;o</a>
 	<ul>
 		<li><a href="${linkTo[SolicitacaoController].listarLista[false]}">Lista de Prioridade</a></li>
 	</ul>

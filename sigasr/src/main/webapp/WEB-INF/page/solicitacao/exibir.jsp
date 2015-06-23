@@ -143,7 +143,7 @@
 							<c:if test="${ocultas}">
 								<th colspan="2">Atendente</th>
 							</c:if>
-							<th>Descrição</th>
+							<th>Descri&ccedil;&atilde;o</th>
 						</tr>
 					</thead>
 
@@ -233,7 +233,7 @@
 		<jsp:include page="exibirPendencias.jsp"></jsp:include>
 		<div class="gt-sidebar">
 			<div class="gt-sidebar-content">
-				<h3>Solicitação</h3>
+				<h3>Solicita&ccedil;&atilde;o</h3>
 				<p>
 					<b>Solicitante:</b>
 					${solicitacao.solicitante.descricaoIniciaisMaiusculas},
@@ -278,7 +278,7 @@
 						value="${solicitacao.getAcaoAtual().toString()}" />
 				</c:if>
 				<p>
-					<span class="historico-label">Item de Configuração:</span>
+					<span class="historico-label">Item de Configura&ccedil;&atilde;o:</span>
 				<div class="historico-item-container hidden">
 					<button type="button" class="button-historico"
 						title="Clique para abrir/fechar o histórico">+</button>
@@ -321,13 +321,13 @@
 					</span>
 				</p>
 				<p>
-					<b>Notificação:</b>
+					<b>Notifica&ccedil;&atilde;o:</b>
 					${solicitacao.formaAcompanhamento.descrFormaAcompanhamento}
 				</p>
 				<c:if
 					test="${solicitacao.isFechadoAutomaticamente() != null && solicitacao.isPai()}">
 					<p>
-						<b>Fechamento Automático:</b>
+						<b>Fechamento Autom&aacute;tico:</b>
 						${solicitacao.isFechadoAutomaticamente() ? "Sim" : "Não"}
 					</p>
 				</c:if>
@@ -431,7 +431,7 @@
                     <label>Arquivo</label> <input type="file" name="movimentacao.arquivo">
                 </div>
                 <div style="display: inline" class="gt-form-row gt-width-66">
-                    <label>Descrição</label>
+                    <label>Descri&ccedil;&atilde;o</label>
                     <textarea style="width: 100%" name="movimentacao.descrMovimentacao"
                         id="descrSolicitacao" cols="70" rows="4"
                         value="${movimentacao.descrMovimentacao}"></textarea>
@@ -466,15 +466,15 @@
             <input type="hidden" name="ocultas" value="${ocultas}" />
             <input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
-                <label>Solicitação</label> <br />
+                <label>Solicita&ccedil;&atilde;o</label> <br />
                 <siga:selecao2 propriedade="idSolicitacaoRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"
                 	tamanho="grande"/>
-                <span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
+                <span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicita&ccedil;&atilde;o n&atilde;o informada.</span>
             </div>
             <div class="gt-form-row gt-width-100" style="padding: 10px 0;">
                 <label>Justificativa</label>
                 <textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaJuncao" maxlength="255" onkeyup="validarAssociacao('Juncao')"></textarea>
-                <span id="erroJustificativaJuncao" style="color: red; display: none;"><br />Justificativa não informada.</span>
+                <span id="erroJustificativaJuncao" style="color: red; display: none;"><br />Justificativa n&atilde;o informada.</span>
             </div>
             <div style="display: inline" class="gt-form-row ">
                 <input type="button" onclick="gravarAssociacao('Juncao');" value="Gravar" class="gt-btn-medium gt-btn-left" />
@@ -487,15 +487,15 @@
             <input type="hidden" name="ocultas" value="${ocultas}" />
             <input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
-                <label>Solicitação</label> <br />
+                <label>Solicita&ccedil;&atilde;o</label> <br />
                 <siga:selecao2 propriedade="idSolicitacaoRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"
                 	tamanho="grande"/>
-                <span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
+                <span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicita&ccedil;&atilde;o n&atilde;o informada.</span>
             </div>
             <div class="gt-form-row gt-width-100" style="padding: 10px 0;">
                 <label>Justificativa</label>
                 <textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaVinculo" maxlength="255" onkeyup="validarAssociacao('Vinculo')"></textarea>
-                <span id="erroJustificativaVinculo" style="color: red; display: none;"><br />Justificativa não informada.</span>
+                <span id="erroJustificativaVinculo" style="color: red; display: none;"><br />Justificativa n&atilde;o informada.</span>
             </div>
             <div style="display: inline" class="gt-form-row ">
                 <input type="button" onclick="gravarAssociacao('Vinculo');" value="Gravar" class="gt-btn-medium gt-btn-left" />
@@ -513,11 +513,11 @@
                     <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
                     <input type="hidden" name="ocultas" value="${ocultas}" />
                     <div class="gt-form-row gt-width-66">
-                        <label>Data de Término</label>
+                        <label>Data de T&eacute;rmino</label>
                         <siga:dataCalendar nome="calendario" id="calendario"/>
                     </div>
                     <div class="gt-form-row gt-width-66">
-                        <label>Horário de Término</label>
+                        <label>Hor&aacute;rio de T&eacute;rmino</label>
                         <input type="text" name="horario" id="horario">
                     </div>
                     <div class="gt-form-row gt-width-66">
@@ -576,7 +576,7 @@
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
             <div style="display: inline" class="gt-form-row gt-width-66">
-                <label>Descrição</label>
+                <label>Descri&ccedil;&atilde;o</label>
                 <textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
             </div>
             <input

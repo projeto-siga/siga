@@ -112,7 +112,7 @@
 			
 			<div class=PRIORIDADE-MEDIO>
 				<span class="cor"></span>
-				<span class="descricao">Média</span>
+				<span class="descricao">M&eacute;dia</span>
 			</div>
 			
 			<div class="PRIORIDADE-BAIXO">
@@ -180,7 +180,7 @@
 						<siga:checkbox name="naoReposicionarAutomatico"
 									   value="${naoReposicionarAutomatico}">
 						</siga:checkbox> 
-						<b>Não reposicionar automaticamente</b>
+						<b>N&atilde;o reposicionar automaticamente</b>
 					</label>
 				</div>				
 				

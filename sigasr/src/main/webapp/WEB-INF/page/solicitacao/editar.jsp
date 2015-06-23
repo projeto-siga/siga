@@ -511,7 +511,7 @@
 					
 					<c:if test="${errors != null && !erros.isEmpty()}">
 						<div class="gt-form-table">
-							<p class="gt-error">Alguns campos obrigatórios não foram preenchidos</p>
+							<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram preenchidos</p>
 						</div>
 					</c:if>
 					
@@ -570,7 +570,7 @@
 					</div>
 		
 					<div class="gt-form-row gt-width-66">
-						<label>Descrição</label>
+						<label>Descri&ccedil;&atilde;o</label>
 						<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
 							id="descrSolicitacao" maxlength="8192">${solicitacao.descrSolicitacao}</textarea>
 							<siga:error name="solicitacao.descrSolicitacao"/>
@@ -637,10 +637,10 @@
 						</c:when>
 						<c:when test="${solicitacao.isPai() && solicitacao.idSolicitacao != null}">
 							<div class="gt-form-table">
-								<div class="barra-subtitulo header" align="center" valign="top"> Fechamento AutomÃ¡tico</div>
+								<div class="barra-subtitulo header" align="center" valign="top"> Fechamento Autom&aacute;tico</div>
 							</div>
 							<p> <siga:checkbox name="solicitacao.fechadoAutomaticamente"
-								value="${solicitacao.fechadoAutomaticamente}"/>Fechar automaticamente a solicitaÃ§Ã£o <b>${solicitacao.codigo}</b>.</p>
+								value="${solicitacao.fechadoAutomaticamente}"/>Fechar automaticamente a solicita&ccedil;&atilde;o <b>${solicitacao.codigo}</b>.</p>
 							<br />
 						</c:when>
 					</c:choose>

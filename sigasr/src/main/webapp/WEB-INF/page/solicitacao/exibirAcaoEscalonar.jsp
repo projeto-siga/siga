@@ -45,7 +45,7 @@
 
 <c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}"> 
 	<div class="gt-form-row gt-width-66">
-		<label>Ação</label>	
+		<label>A&ccedil;&atilde;o</label>	
 		<select name="acao.idAcao" id="selectAcao" value="${solicitacao.acao.idAcao}" onchage="carregarLotacaoDaAcao()">
 		    <option value="0">#</option>
 			<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">

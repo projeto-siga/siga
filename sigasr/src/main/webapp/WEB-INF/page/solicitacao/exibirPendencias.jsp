@@ -4,7 +4,7 @@
 	<c:set var="podeTerminar" value="${solicitacao.podeTerminarPendencia(titular, lotaTitular)}" />
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
-			<h3>Pendências</h3>
+			<h3>Pend&ecirc;cias</h3>
 			<ul>
 			<c:forEach items="${solicitacao.pendenciasEmAberto}" var="pendencia">
 				<li style="margin-left: 5px">

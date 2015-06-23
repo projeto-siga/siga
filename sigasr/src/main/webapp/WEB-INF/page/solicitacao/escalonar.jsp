@@ -56,7 +56,7 @@
 							<c:set var="codigo" value="${solicitacao.codigo}" />
 						</c:otherwise>
 					</c:choose>
-					Criar Solicitação filha de ${codigo}
+					Criar Solicita&ccedil;&atilde;o filha de ${codigo}
 				</label>
 				<br/>
 				<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
@@ -74,13 +74,13 @@
 			<input type="hidden" name="idAtendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
 			<br/>
 			<div id="outrasInformacoesDaFilha" class="gt-form-row">
-				<label>Descrição</label>
+				<label>Descri&ccedil;&atilde;o</label>
 				<textarea name="descricao" cols="85" rows="7">${solicitacao.descrSolicitacao}</textarea>
 				<br/><br/>
 				<c:if test="${!solicitacao.isPai() && !solicitacao.isFilha()}">
 					<siga:checkbox name="fechadoAuto" onchange="onchangeCheckCriaFilha()" value="${solicitacao.isFechadoAutomaticamente()}" />
-					Fechar automaticamente a solicitação <b>${codigo}</b>, quando
-					todas as solicitaç&otilde;es filhas forem fechadas pelos seus
+					Fechar automaticamente a solicita&ccedil;&atilde;o <b>${codigo}</b>, quando
+					todas as solicita&ccedil;&otilde;es filhas forem fechadas pelos seus
 					respectivos atendentes. 
 				</c:if>
 			</div>
@@ -98,16 +98,16 @@
 		</form>
 	</div>
 
-	<siga:modal nome="lotacaoAtendente" titulo="Alterar Atendente padrão">
+	<siga:modal nome="lotacaoAtendente" titulo="Alterar Atendente padr�o">
 		<div id="dialogAtendente">
 			<div class="gt-content">
 				<div class="gt-form gt-content-box">
 					<div class="gt-form-row">
 						<div class="gt-form-row">
-							<label>Lotação Atendente</label> 
+							<label>Lota&ccedil;&atilde;o Atendente</label> 
 							<input type="hidden" name="lotacaoSelecao" id="lotacaoSelecao" class="selecao">
 							<siga:selecao2 tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" />
-							<span style="display: none; color: red" id="atendente">Atendente não informado.</span>
+							<span style="display: none; color: red" id="atendente">Atendente n&atilde;o informado.</span>
 						</div>
 						<div class="gt-form-row">
 							<a href="javascript: alterarAtendente()" class="gt-btn-medium gt-btn-left">Ok</a>

@@ -246,7 +246,7 @@
 								data-json='${tiposPermissaoJson}'></div>
 
 							<div class="gt-form-row gt-width-66">
-								<label>Tipo de Permissão</label>
+								<label>Tipo de Permiss&atilde;o</label>
 
 								<siga:select name="itemTipoPermissao" list="tiposPermissao"
 									listKey="idTipoPermissaoLista" id="itemTipoPermissao"
@@ -714,7 +714,7 @@
 	             }	        	 
 	         },
 	         error: function(response) {
-	        	alert("Não foi possível desativar esta permissão.");
+	        	alert("N�o foi poss�vel desativar esta permiss�o.");
 	         }
 	   });
 	       
@@ -951,7 +951,7 @@
 	}
 	function getColunaAtivarDesativar (permissao) {
 		return '<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
-					'<a class="once desassociarPermissao" title="Remover permissÃÂ£o">' + 
+					'<a class="once desassociarPermissao" title="Remover permiss&atilde;o">' + 
 						'<input class="idPermissao" type="hidden" value="' + permissao.idConfiguracao + '"/>' + 
 						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 					'</a>' + 
@@ -1267,7 +1267,7 @@
 	    		populatePermissoesFromJSonList(permissoesJSon);
 	    	},
 	    	error: function(error) {
-	        	alert("Não foi possível carregar as Permissões desta Lista.");
+	        	alert("N�o foi poss�el carregar as Permiss�es desta Lista.");
 	    	}
 	   	});
 	}
@@ -1275,7 +1275,7 @@
 	$(document).ready(function() {
 		listaService.conteudoColunaAcao = function(permissao) {
 			if (permissao.ativo) { 		 
-				return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissÃÂ£o">' + 
+				return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permiss&atilde;o">' + 
 				'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
 				'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 				'</a>';

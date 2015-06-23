@@ -2,8 +2,8 @@ package br.gov.jfrj.siga.sr.model;
 
 public enum SrTipoMotivoPendencia {
 
-    AGUARDANDO_PRIORIZACAO(1, "Aguardando prioriza√ß√£o", false), AGUARDANDO_RECURSO_EXTERNO(2, "Aguardando recurso externo", false), USUARIO_INDISPONIVEL(3, "Usu√°rio indispon√≠vel", false), AGUARDANDO_RESPOSTA(
-            4, "Aguardando resposta do usu√°rio", false);
+    AGUARDANDO_PRIORIZACAO(1, "Aguardando priorizaÁ„o", false), AGUARDANDO_RECURSO_EXTERNO(2, "Aguardando recurso externo", false), USUARIO_INDISPONIVEL(3, "Usu·rio indisponÌvel", false), AGUARDANDO_RESPOSTA(
+            4, "Aguardando resposta do usu·rio", false);
 
     private int nivelTipoMotivoPendencia;
 

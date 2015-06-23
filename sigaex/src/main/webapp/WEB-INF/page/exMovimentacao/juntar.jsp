@@ -80,7 +80,7 @@
 						Documento:
 					</td>
 					<td>
-						<siga:escolha var="idDocumentoEscolha">
+						<siga:escolha id="idDocumentoEscolha" var="idDocumentoEscolha">
 							<siga:opcao id='1' texto="Documento Interno" >
 								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex"/>
 							</siga:opcao>

@@ -50,8 +50,12 @@
 						<mod:grupo>
 							<mod:texto titulo="&nbsp;&nbsp;&nbsp; Grau de parentesco"
 								var="grau${i}" largura="20" />
+							<mod:texto titulo="&nbsp;&nbsp;&nbsp; Órgão" var="orgao${i}"
+								largura="40" />
 						</mod:grupo>
 						<mod:grupo>
+							<mod:texto titulo="&nbsp;&nbsp;&nbsp; Cargo em Comissão/Funçao de confiança" var="cargo${i}"
+								largura="40" />
 							<mod:data
 								titulo="&nbsp;&nbsp;&nbsp Data de ingresso no cargo em comissão/função de confiança"
 								var="dataingresso${i}" />
@@ -158,17 +162,28 @@
 					${corpoTextoParte2}
 				</c:otherwise>
 			</c:choose>
-			<c:if test="${parentesco ne 'Não'}">
-				<c:forEach var="i" begin="1" end="${nr_parentes}">
-					<p>Nome do Parente: <b>${requestScope[f:concat('parente',i)]}</b>.</p>
-					<p>Grau de parentesco: <b>${requestScope[f:concat('grau',i)]}</b>.</p>
-					<p>Data de ingresso no cargo em comissão/função de confiança:
-					<b>${requestScope[f:concat('dataingresso',i)]}</b>.</p>
-					<br>
-				</c:forEach>
-			</c:if>
+		<c:if test="${parentesco ne 'Não'}">
+			<c:forEach var="i" begin="1" end="${nr_parentes}">
+				<p>
+					Nome do Parente: <b>${requestScope[f:concat('parente',i)]}</b>.
+				</p>
+				<p>
+					Grau de parentesco: <b>${requestScope[f:concat('grau',i)]}</b>.
+				</p>
+				<p>
+					Órgão: <b>${requestScope[f:concat('orgao',i)]}</b>.
+				</p>
+				<p>
+					Cargo em Comissão/Funçao de confiança: <b>${requestScope[f:concat('cargo',i)]}</b>.
+				</p>
+				<p>
+					Data de ingresso no cargo em comissão/função de confiança: <b>${requestScope[f:concat('dataingresso',i)]}</b>.
+				</p>
+				<br>
+			</c:forEach>
+		</c:if>
 
-			<p style="TEXT-INDENT: 2cm" align="justify">Declara, por fim, que
+		<p style="TEXT-INDENT: 2cm" align="justify">Declara, por fim, que
 			deverá comunicar à Subsecretaria de Gestão de Pessoas, de imediato, a
 			ocorrência de fatos que possam alterar a situação objeto desta
 			declaração.</p>

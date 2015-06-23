@@ -196,7 +196,7 @@ public class Documento {
 			return pdf;
 		else
 			throw new AplicacaoException(
-					"N„o existe arquivo pdf para esse documento.");
+					"N√£o existe arquivo pdf para esse documento.");
 
 		// String sHtml = getDocHTML(docvia, requestId);
 		// return generatePdf(sHtml);
@@ -516,7 +516,7 @@ public class Documento {
 				over.setColorFill(Color.GRAY);
 				over.beginText();
 				over.setFontAndSize(helv, 72);
-				over.showTextAligned(Element.ALIGN_CENTER, "INV¡LIDO",
+				over.showTextAligned(Element.ALIGN_CENTER, "INV√ÅLIDO",
 						r.getWidth() / 2, r.getHeight() / 2, 45);
 				over.endText();
 				over.restoreState();
@@ -697,7 +697,7 @@ public class Documento {
 	//
 	// return stamp(pdf, sigla, doc.isRascunho(), doc.isCancelado(), arq
 	// .getQRCode(), arq.getMensagem(), paginaInicial, paginaFinal,
-	// "JustiÁa Federal", doc.getOrgaoUsuario().getDescricao(),
+	// "Justi√ßa Federal", doc.getOrgaoUsuario().getDescricao(),
 	// request);
 	// }
 
@@ -720,7 +720,7 @@ public class Documento {
 	//
 	// return stamp(arq.getPdf(), sigla, arq.isRascunho(), arq.isCancelado(),
 	// arq.getQRCode(), arq.getMensagem(), paginaInicial, paginaFinal,
-	// "JustiÁa Federal", docViaPrincipal.getExDocumento()
+	// "Justi√ßa Federal", docViaPrincipal.getExDocumento()
 	// .getOrgaoUsuario().getDescricao(), request);
 	// }
 
@@ -912,7 +912,7 @@ public class Documento {
 		if(realPath == null)
 //			sHtml = sHtml.replace("contextpath", ServletActionContext
 //				.getServletContext().getRealPath(""));
-			; //Nato: Precisamos testar uma soluÁ„o para fazer essa substituiÁ„o sem precisar da dependÍncia do webwork.
+			; //Nato: Precisamos testar uma solu√ß√£o para fazer essa substitui√ß√£o sem precisar da depend√™ncia do webwork.
 		else
 			sHtml = sHtml.replace("contextpath", realPath);
 
@@ -985,7 +985,7 @@ public class Documento {
 				// step 3: we create a parser and set the document handler
 				// HtmlParser.parse(doc,
 				// "c:/Trabalhos/Java/siga/paginas/expediente/teste.xml");
-				// CabeÁalho
+				// Cabe√ßalho
 				{
 					// Document docHeader = new Document(PageSize.A4, 50, 50,
 					// 100, 72);
@@ -1001,7 +1001,7 @@ public class Documento {
 					final int i = sb.indexOf(request.getServletPath());
 
 					sb.replace(i, sb.length(), "/w3c/");
-					// devemos implementar a validaÁ„o se a url existe mesmo.
+					// devemos implementar a valida√ß√£o se a url existe mesmo.
 					blob = blob.replace("http://www.w3.org/TR/xhtml1/DTD/",
 							sb.toString());
 
@@ -1051,7 +1051,7 @@ public class Documento {
 				final int i = sb.indexOf(request.getServletPath());
 
 				sb.replace(i, sb.length(), "/w3c/");
-				// devemos implementar a validaÁ„o se a url existe mesmo.
+				// devemos implementar a valida√ß√£o se a url existe mesmo.
 				blob = blob.replace("http://www.w3.org/TR/xhtml1/DTD/",
 						sb.toString());
 
@@ -1153,13 +1153,13 @@ public class Documento {
 				table.addCell(new Phrase(new Chunk(headerImage, 0, 0)));
 
 				final Phrase p = new Phrase();
-				Chunk ck = new Chunk("PODER JUDICI¡RIO\n", new Font(
+				Chunk ck = new Chunk("PODER JUDICI√ÅRIO\n", new Font(
 						Font.HELVETICA, 12, Font.BOLD, Color.black));
 				p.add(ck);
-				ck = new Chunk("JUSTI«A FEDERAL\n", new Font(Font.HELVETICA,
+				ck = new Chunk("JUSTI√áA FEDERAL\n", new Font(Font.HELVETICA,
 						12, Font.BOLD, Color.black));
 				p.add(ck);
-				ck = new Chunk("SE«√O JUDICI¡RIA DO RIO DE JANEIRO", new Font(
+				ck = new Chunk("SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO", new Font(
 						Font.HELVETICA, 12, Font.NORMAL, Color.black));
 				p.add(ck);
 
@@ -1268,7 +1268,7 @@ public class Documento {
 
 		StringBuilder sb = new StringBuilder();
 		boolean fFirst = true;
-		// TAH: infelizmente o IE n„o funciona bem com background-color:
+		// TAH: infelizmente o IE n√£o funciona bem com background-color:
 		// transparent.
 		// sb.append("<html class=\"fisico\"><body style=\"margin:2px; padding:0pt; background-color: #E2EAEE;overflow:visible;\">");
 		sb.append("<html><head><base target=\"_parent\"/></head><body style=\"margin:2px; padding:0pt; background-color: "

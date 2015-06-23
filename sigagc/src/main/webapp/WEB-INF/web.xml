@@ -63,11 +63,33 @@
         	br.com.caelum.vraptor.util.jpa
    		</param-value>
 	</context-param>
-	
+
 	<session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>
-	
+
+	<servlet>
+		<servlet-name>GcService</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.gc.service.impl.GcServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>GcService</servlet-name>
+		<url-pattern>/servicos/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>GcService</servlet-name>
+		<url-pattern>/servicos/GcService</url-pattern>
+	</servlet-mapping>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>servicos</web-resource-name>
+			<url-pattern>/servicos/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>

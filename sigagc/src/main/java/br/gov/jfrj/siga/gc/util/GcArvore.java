@@ -94,7 +94,7 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 			for (GcTag tag : mapInf.get(inf)) {
 				final GcArvoreNo no;
 
-				if(tag.titulo.equals(classificacao)){
+				if(tag.getTitulo().equals(classificacao)){
 
 					if (!galho.containsKey(tag)) {
 						no = new GcArvoreNo(this, tag, inf);
@@ -127,10 +127,10 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 			for (int i = 0; i < ident; i++)
 				sb.append("  ");
 
-			sb.append(no.tag.titulo);
+			sb.append(no.tag.getTitulo());
 			for (GcTag tagIrmao : no.tagsIrmaos) {
 				sb.append(", ");
-				sb.append(tagIrmao.titulo);
+				sb.append(tagIrmao.getTitulo());
 			}
 
 			sb.append(" (");
@@ -155,12 +155,12 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 			for (int i = 0; i < ident; i++)
 				sb.append("  ");
 			
-			if( (no.tag.titulo == "Conhecimentos_Sem_Classificacao") && (texto== null || texto=="" || texto.isEmpty())){
+			if( (no.tag.getTitulo() == "Conhecimentos_Sem_Classificacao") && (texto== null || texto=="" || texto.isEmpty())){
 				sb.append("<li style='display:none'><b>");
-				sb.append(no.tag.titulo);
+				sb.append(no.tag.getTitulo());
 				for (GcTag tagIrmao : no.tagsIrmaos) {
 					sb.append(", ");
-					sb.append(tagIrmao.titulo);
+					sb.append(tagIrmao.getTitulo());
 				}
 
 				sb.append(" (");
@@ -177,7 +177,7 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 				if (no.infs.size() > 0) {
 					sb.append("<ul>");
 					for (GcInformacao inf : no.infs) {
-						sb.append("<li style='display:none' class=li"+ no.tag.titulo + "><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
+						sb.append("<li style='display:none' class=li"+ no.tag.getTitulo() + "><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
 						sb.append(inf.arq.titulo);
 						sb.append("</a></li>");
 					}
@@ -192,16 +192,16 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 			else{
 				final int size = no.infs.size();
 				//sb.append("<td width=\"2%\">");
-				sb.append("<li class=liclassificacao-" + no.tag.titulo +"><b>");
-				String imgPlus = "<img style=\"width: 13px;\" id=\"imgMais-" + no.tag.titulo + "\" src=\"/siga/css/famfamfam/icons/plus_toggle.png\" alt=\"mais\" title=\"Ver Detalhes\" />";
-				String imgMinus = "<img style=\"width: 13px;\" id=\"imgMenos-" + no.tag.titulo + "\" src=\"/siga/css/famfamfam/icons/minus_toggle.png\" alt=\"menos\" title=\"Ocultar Detalhes\"/>";
+				sb.append("<li class=liclassificacao-" + no.tag.getTitulo() +"><b>");
+				String imgPlus = "<img style=\"width: 13px;\" id=\"imgMais-" + no.tag.getTitulo() + "\" src=\"/siga/css/famfamfam/icons/plus_toggle.png\" alt=\"mais\" title=\"Ver Detalhes\" />";
+				String imgMinus = "<img style=\"width: 13px;\" id=\"imgMenos-" + no.tag.getTitulo() + "\" src=\"/siga/css/famfamfam/icons/minus_toggle.png\" alt=\"menos\" title=\"Ocultar Detalhes\"/>";
 
-				sb.append("<a class= classificacao-" + no.tag.titulo +">" + no.tag.titulo);
+				sb.append("<a class= classificacao-" + no.tag.getTitulo() +">" + no.tag.getTitulo());
 				sb.append("</a>");
 
 				for (GcTag tagIrmao : no.tagsIrmaos) {
 					sb.append(", "); /////// Tag irmao nao eh tratada como link "a"
-					sb.append(tagIrmao.titulo);
+					sb.append(tagIrmao.getTitulo());
 				}
 				
 				if (size > 0) {
@@ -223,7 +223,7 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 				if (no.infs.size() < 3) {
 					sb.append("<ul>");
 					for (GcInformacao inf : no.infs) {
-						sb.append("<li class=li"+ no.tag.titulo +"><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
+						sb.append("<li class=li"+ no.tag.getTitulo() +"><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
 						sb.append(inf.arq.titulo);
 						sb.append("</a></li>");
 					}
@@ -237,10 +237,10 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 						//sb.append("<li><a href=\"exibir?id=" + inf.id + "\">");
 						
 						if(contador < 3){
-							sb.append("<li class=li" + no.tag.titulo + contador + "><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
+							sb.append("<li class=li" + no.tag.getTitulo() + contador + "><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
 						}
 						else{
-							sb.append("<li style='display:none' class=li"+ no.tag.titulo +"><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
+							sb.append("<li style='display:none' class=li"+ no.tag.getTitulo() +"><a href=\"exibir/" + URLEncoder.encode(inf.getSiglaCompacta(), "UTF-8") + "\">");
 						}
 						sb.append(inf.arq.titulo);
 						sb.append("</a></li>");

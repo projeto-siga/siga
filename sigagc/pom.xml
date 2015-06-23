@@ -38,7 +38,9 @@
 									<fileset
 										dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib"
 										includes="*.jar" />
-									<fileset dir="${project.build.directory}/../../lib/static_scan_vraptor/" includes="*.jar" />
+									<fileset
+										dir="${project.build.directory}/../../lib/static_scan_vraptor/"
+										includes="*.jar" />
 								</path>
 								<java classpathref="build.classpath"
 									classname="br.com.caelum.vraptor.scan.VRaptorStaticScanning"
@@ -190,7 +192,19 @@
 			<version>1.1.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.2.0.Final</version>
+			<scope>test</scope>
+		</dependency>
 
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.11.1.1</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 

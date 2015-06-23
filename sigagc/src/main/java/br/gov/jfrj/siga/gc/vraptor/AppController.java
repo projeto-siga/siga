@@ -288,10 +288,10 @@ public class AppController extends GcController {
 				"from GcTag where titulo like '%" + before
 						+ "%' and tipo.id = 3").getResultList();
 		for (GcTag t : tags) {
-			t.titulo = t.titulo.replaceAll("^" + before + "(-.+|$)", after
-					+ "$1");
-			t.titulo = t.titulo.replaceAll("(.+-|^)" + before + "$", "$1"
-					+ after);
+			t.setTitulo(t.getTitulo().replaceAll("^" + before + "(-.+|$)", after
+					+ "$1"));
+			t.setTitulo(t.getTitulo().replaceAll("(.+-|^)" + before + "$", "$1"
+					+ after));
 			t.save();
 		}
 

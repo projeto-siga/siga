@@ -614,10 +614,10 @@ public class SolicitacaoController extends SrController {
     }
     
     @Path("/escalonarGravar")
-    public void escalonarGravar(Long id, Long itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
+    public void escalonarGravar(Long id, SrItemConfiguracao itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
-        if (itemConfiguracao == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
-            throw new Exception("Operação não permitida. Necessario informar um item de configuração " + "e uma ação.");
+        if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
+            throw new Exception("Operação não permitida. Necessario informar um item de configuração e uma ação.");
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
 
         DpLotacao atendenteNaoDesignado = null;
@@ -637,7 +637,7 @@ public class SolicitacaoController extends SrController {
                 filha = solicitacao.getSolicitacaoPai().criarFilhaSemSalvar();
             else
                 filha = solicitacao.criarFilhaSemSalvar();
-            filha.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao));
+            filha.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
             filha.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
             filha.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
             filha.setDescrSolicitacao(descricao);
@@ -648,7 +648,7 @@ public class SolicitacaoController extends SrController {
         } else {
             SrMovimentacao mov = new SrMovimentacao(solicitacao);
             mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
-            mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao));
+            mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
             mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
             mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
             if (solicitacao.getAtendente() != null && !mov.getLotaAtendente().equivale(solicitacao.getAtendente().getLotacao()))

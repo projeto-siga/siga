@@ -148,17 +148,20 @@
 			};
 
 	    jQuery("#checkmostrarAssocDesativada").click(function() {
+	    	$.blockUI(objBlock);
 			$.ajax({
 	   	         type: "POST",
 	   	         url: associacaoService.getUrlDesativarReativar(document.getElementById('checkmostrarAssocDesativada').checked),
 	   	         dataType: "text",
 	   	         success: function(response) {
+	   	        	$.unblockUI();
 		   	    	 associacaoService.atualizarListaAssociacoes({ 
 			   	    	 associacoesVO : JSON.parse(response)
 			   	    },
 			   	    true);
 	   	         },
 	   	         error: function(response) {
+	   	        	$.unblockUI();
 	   	        	$('#modal-associacao').hide(); 
 	
 	   	        	var modalErro = $("#modal-associacao-error");
@@ -457,7 +460,6 @@
 			idAssociacao = idAssociacaoDesativar ? idAssociacaoDesativar : row[colunas.idAssociacao],
 			idItem = $("#hisIdIni").val(),
 			mostrarDesativa = $('#checkmostrarAssocDesativada').is(':checked');
-
 
 		var modoExibicao = "${modoExibicao}";
 		var vUrl, vData = null;

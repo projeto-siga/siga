@@ -43,8 +43,7 @@
 		}
 	</script>
 	<div class="gt-content-box gt-form">
-		<form id="formEscalonar" action="${linkTo[SolicitacaoController].escalonarGravar}"
-			onsubmit="javascript: return block();" method="POST" enctype="multipart/form-data">
+		<form id="formEscalonar" action="${linkTo[SolicitacaoController].escalonarGravar}" onsubmit="javascript: return block();" method="POST">
 			<div class="gt-form-row">
 				<label><c:set var="valueCheckbox" value="${titular.orgaoUsuario.idOrgaoUsu == 1 ? false : true}" />
 					<siga:checkbox name="criaFilha" onchange="onchangeCheckCriaFilha()" value="valueCheckbox" /> 

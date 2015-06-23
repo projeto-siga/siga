@@ -55,7 +55,6 @@ function sbmt() {
 					.replace('VALOR_SIGLA', document.getElementById('transferir_gravar_sigla').value)
 					.replace('VALOR_ID_DESPACHO', document.getElementById('transferir_gravar_idTpDespacho').value);
 		}
-	console.log('submetendo...');
 	frm.submit();
 }
 

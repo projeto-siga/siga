@@ -49,7 +49,7 @@
 
 						<tr>
 							<td>Abrangência:</td>
-							<td><siga:escolha var='idAbrangencia'>
+							<td><siga:escolha id='idAbrangencia' var='idAbrangencia'>
 									<siga:opcao id='4' texto="Perfil">
 										<siga:selecao tema='simple' titulo="Perfil:"
 											propriedade="perfil" modulo="siga"/>
@@ -133,4 +133,7 @@
 			</c:if>
 		</div>
 	</div>
+	<script> 
+		muda_escolha(document.getElementById("idAbrangencia"));
+	</script>
 </siga:pagina>

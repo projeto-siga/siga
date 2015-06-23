@@ -13,7 +13,7 @@
 		    		<thead>
 						<tr class="gt-celula-nowrap">
 							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Incluir</th>
-							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Descrição da Lista</th>
+							<th style="color: #333; font-weight: bold; padding: 7px 10px;">Descri&ccedil;&atilde;o da Lista</th>
 		  				</tr>
 		  			</thead>
 				<tbody>
@@ -51,7 +51,7 @@
 				</div>
 				
 				<div class="gt-form-row gt-width-100">
-					<label>Não reposicionar automaticamente ao alterar a prioridade: <input type="checkbox" name="naoReposicionarAutomatico"></label> 
+					<label>N&atilde;o reposicionar automaticamente ao alterar a prioridade: <input type="checkbox" name="naoReposicionarAutomatico"></label> 
 				</div>
 				
 				<div class="gt-width-100 gt-form-row ">
@@ -78,7 +78,7 @@
 			if(listaService.selecionou()) {
 				if(listaService.podePriorizar()) listaService.abrirModalPrioridade();
 				else  listaService.form.submit();
-			} else alert('Selecione uma lista para inclusão da solicitação');
+			} else alert('Selecione uma lista para inclus�o da solicita��o');
 		}
 
 		listaService.abrirModalPrioridade = function() {

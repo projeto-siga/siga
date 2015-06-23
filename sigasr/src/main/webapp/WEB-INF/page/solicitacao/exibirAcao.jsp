@@ -92,7 +92,7 @@ function carregarLotacaoDaAcao(){
 
 <c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}" > 
     <div class="gt-form-row gt-width-66">
-    	<label>Ação</label>   
+    	<label>A&ccedil;&atilde;o</label>   
         <select name="solicitacao.acao" id="selectAcao" value="${solicitacao.acao.idAcao}" onchange="carregarAtributos();notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');">
             <option value="0">#</option>
             <c:forEach items="${acoesEAtendentes.keySet()}" var="cat">

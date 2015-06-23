@@ -80,7 +80,7 @@
                     <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" />
                     <siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
-                    <span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Horário inválido</span>
+                    <span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Hor&aacute;rio inv&aacute;lido</span>
                     <script>
                          $(function() {
                              $("#horarioAtributo${atributo.idAtributo}").mask("99:99");

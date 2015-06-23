@@ -1267,7 +1267,7 @@
 	    		populatePermissoesFromJSonList(permissoesJSon);
 	    	},
 	    	error: function(error) {
-	        	alert("Não foi possével carregar as Permissões desta Lista.");
+	        	alert("Não foi possível carregar as Permissões desta Lista.");
 	    	}
 	   	});
 	}
@@ -1275,7 +1275,7 @@
 	$(document).ready(function() {
 		listaService.conteudoColunaAcao = function(permissao) {
 			if (permissao.ativo) { 		 
-				return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissÃƒÂƒÃ‚Â£o">' + 
+				return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permiss&atilde;o">' + 
 				'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
 				'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 				'</a>';

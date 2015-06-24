@@ -1941,6 +1941,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         mov.salvarAtualizandoSolicitacao();
 
         lista.incluir(this, prioridade, naoReposicionarAutomatico);
+        ContextoPersistencia.em().flush();
     }
 
     public void retirarDeLista(SrLista lista, DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {

@@ -1749,6 +1749,8 @@ public class CpDao extends ModeloDao {
 			cache = manager.getCache(CACHE_CORPORATIVO);
 			config = cache.getCacheConfiguration();
 			config.setEternal(true);
+			config.setTimeToIdleSeconds(0);
+			config.setTimeToLiveSeconds(0);
 			config.setMaxElementsInMemory(10000);
 			config.setOverflowToDisk(false);
 			config.setMaxElementsOnDisk(0);

@@ -107,9 +107,6 @@ public class CpConfiguracaoBL {
 	public synchronized void inicializarCacheSeNecessario() {
 		if (cacheInicializado)
 			return;
-		Logger.getLogger("siga.conf.cache").info(
-				"Inicializando cache de configurações via "
-						+ this.getClass().getSimpleName());
 		long inicio = System.currentTimeMillis();
 
 		List<CpConfiguracao> results = (List<CpConfiguracao>) dao()
@@ -117,8 +114,6 @@ public class CpConfiguracaoBL {
 		evitarLazy(results);
 
 		hashListas.clear();
-		Logger.getLogger("siga.conf.cache").info(
-				"Cache de configurações reiniciado.");
 		for (CpConfiguracao cfg : results) {
 			Long idTpConfiguracao = cfg.getCpTipoConfiguracao()
 					.getIdTpConfiguracao();
@@ -135,8 +130,9 @@ public class CpConfiguracaoBL {
 		cacheInicializado = true;
 
 		Logger.getLogger("siga.conf.cache").info(
-				"Cache de configurações inicializado em ms: "
-						+ (System.currentTimeMillis() - inicio));
+				"Cache de configurações inicializado via "
+						+ this.getClass().getSimpleName() + " em "
+						+ (System.currentTimeMillis() - inicio) + "ms");
 	}
 
 	public HashMap<Long, TreeSet<CpConfiguracao>> getHashListas() {
@@ -327,7 +323,7 @@ public class CpConfiguracaoBL {
 		// }
 		if (lista == null)
 			return null;
-		
+
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn))
 					|| (cpConfiguracao.getCpSituacaoConfiguracao() != null && cpConfiguracao

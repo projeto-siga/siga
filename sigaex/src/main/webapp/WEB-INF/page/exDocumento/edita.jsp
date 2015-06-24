@@ -387,7 +387,15 @@
 							</siga:span></td>
 						</tr>
 					</c:if>
-					<tr style="display:<ww:if test="%{modelo.descricaoAutomatica}">none</ww:if><ww:else>visible</ww:else>">
+					<c:choose>
+						<c:when test='${exDocumentoDTO.modelo.descricaoAutomatica}'>
+    					   <c:set var="displayDescricao" value="none" />
+						</c:when>
+						<c:otherwise>
+            				<c:set var="displayDescricao" value="visible" />
+						</c:otherwise>
+					</c:choose>
+					<tr style="display:${displayDescricao}">
 					    <c:if test="${modelo.descricaoAutomatica}">
 							<input type="hidden" id="descricaoAutomatica" value="sim" />
 						</c:if>

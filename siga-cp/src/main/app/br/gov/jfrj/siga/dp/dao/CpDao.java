@@ -1356,7 +1356,12 @@ public class CpDao extends ModeloDao {
 		query.setCacheable(false);
 
 		return query.list();
+	}
 
+	public List<CpConfiguracao> consultarConfiguracoesAtivas() {
+		Query query = getSessao().getNamedQuery("consultarCpConfiguracoesAtivas");
+		query.setCacheable(false);
+		return query.list();
 	}
 
 

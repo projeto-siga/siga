@@ -869,13 +869,18 @@ public class CpConfiguracaoBL {
 			Logger.getLogger("siga.conf.cache").info("Inicializando cache de configurações via " + this.getClass().getSimpleName());
 			long inicio = System.currentTimeMillis();
 
-			List<CpTipoConfiguracao> tiposConfiguracao = CpDao.getInstance().listarTiposConfiguracao();
-			for (CpTipoConfiguracao cpTpConf : tiposConfiguracao) {
-				try{
-			        inicializarCache(cpTpConf.getIdTpConfiguracao());
-				}catch(Exception e){
-					Logger.getLogger("siga.conf.cache").warning("Não foi possível inicializar o cache CP_TIPO_CONFIGURACAO [" + cpTpConf.getDscTpConfiguracao() + "] ID: [" + cpTpConf.getIdTpConfiguracao() + "]");
+			List<CpConfiguracao> results = (List<CpConfiguracao>) dao().consultarConfiguracoesAtivas();
+			evitarLazy(results);
+			
+			hashListas.clear();
+			for (CpConfiguracao cfg : results) {
+				Long idTpConfiguracao = cfg.getCpTipoConfiguracao().getIdTpConfiguracao();
+				TreeSet<CpConfiguracao> tree = hashListas.get(idTpConfiguracao);
+				if (tree == null) {
+					tree = new TreeSet<CpConfiguracao>(comparator);
+					hashListas.put(idTpConfiguracao, tree);
 				}
+				tree.add(cfg);
 			}
 			cacheInicializado = true;
 			

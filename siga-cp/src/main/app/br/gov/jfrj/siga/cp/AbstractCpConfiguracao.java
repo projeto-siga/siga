@@ -23,6 +23,8 @@
  */
 package br.gov.jfrj.siga.cp;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -63,9 +65,9 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	 * 
 	 */
 	private static final long serialVersionUID = 4514355304185987860L;
-
+	
 	@Id
-	@GeneratedValue(generator = "generator")
+	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
 	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")
 	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar

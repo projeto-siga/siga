@@ -71,7 +71,8 @@ import com.google.common.base.Optional;
 public abstract class GrupoController<T extends CpGrupo> extends
 		GiSelecionavelControllerSupport<T, CpGrupoDaoFiltro> {
 
-	public GrupoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
+	public GrupoController(HttpServletRequest request, Result result,
+			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 	}
 
@@ -80,7 +81,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 */
 	private static final long serialVersionUID = 3768576909382652437L;
 
-	// Campos da lista de configuraÁıes do grupo
+	// Campos da lista de configura√ß√µes do grupo
 	private ArrayList<ConfiguracaoGrupo> configuracoesGrupo;
 
 	private String conteudoConfiguracaoNova;
@@ -98,9 +99,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	// Texto endereco email,
 	// etc. , conforme
 	// codigoTipoConfiguracao.
-	// Campos para uma nova configuraÁ„o par ao grupo
+	// Campos para uma nova configura√ß√£o par ao grupo
 	private String idConfiguracaoNova;
-	// Lista de grupos est· em itens da superclasse
+	// Lista de grupos est√° em itens da superclasse
 	// campos do grupo
 	private Long idCpGrupo;
 	private Long orgaoUsu;
@@ -118,7 +119,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	}
 
 	/*
-	 * Prepara a ediÁ„o do grupo selecionado na lista
+	 * Prepara a edi√ß√£o do grupo selecionado na lista
 	 */
 	protected String aEditar(Long idCpGrupo) throws Exception {
 		List<String> idConfiguracao = new ArrayList<String>();
@@ -130,7 +131,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		Integer t_idTpGrupo = getIdTipoGrupo();
 		setCpTipoGrupo(dao().consultar(t_idTpGrupo, CpTipoGrupo.class, false));
 
-		// idCpGrupo vazio indica inclus„o
+		// idCpGrupo vazio indica inclus√£o
 		if (idCpGrupo == null || idCpGrupo.equals("")) {
 			dscGrupo = "";
 			siglaGrupo = "";
@@ -143,12 +144,12 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			grp = daoGrupo(idCpGrupo);
 			if (grp == null) {
 				throw new AplicacaoException(
-						"Grupo n„o encontrado para Id do grupo: " + idCpGrupo
+						"Grupo n√£o encontrado para Id do grupo: " + idCpGrupo
 								+ ".");
 			}
 			if (!grp.isAtivo()) {
 				throw new AplicacaoException(
-						"Grupo antigo n„o pode ser editado. Favor atualizar a p·gina da lista de grupos antes de selecionar um grupo para ediÁ„o.");
+						"Grupo antigo n√£o pode ser editado. Favor atualizar a p√°gina da lista de grupos antes de selecionar um grupo para edi√ß√£o.");
 			}
 			dscGrupo = grp.getDscGrupo();
 			siglaGrupo = grp.getSiglaGrupo();
@@ -159,31 +160,40 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			tiposConfiguracaoGrupoParaTipoDeGrupo = obterTiposConfiguracaoGrupoParaTipoDeGrupo(tpGrp);
 			dscCpTipoGrupo = tpGrp.getDscTpGrupo();
 			try {
-				configuracoesGrupo = Cp.getInstance().getConf().obterCfgGrupo(grp);
+				configuracoesGrupo = Cp.getInstance().getConf()
+						.obterCfgGrupo(grp);
 				for (ConfiguracaoGrupo t_cfgConfiguracaoGrupo : configuracoesGrupo) {
-					CpConfiguracao t_cpcConfiguracaoCorrente = t_cfgConfiguracaoGrupo.getCpConfiguracao();
-					Long t_lngIdConfiguracao = t_cpcConfiguracaoCorrente.getIdConfiguracao();
+					CpConfiguracao t_cpcConfiguracaoCorrente = t_cfgConfiguracaoGrupo
+							.getCpConfiguracao();
+					Long t_lngIdConfiguracao = t_cpcConfiguracaoCorrente
+							.getIdConfiguracao();
 					idConfiguracao.add(t_lngIdConfiguracao.toString());
-					TipoConfiguracaoGrupoEnum t_tpcTipo = t_cfgConfiguracaoGrupo.getTipo();
-					codigoTipoConfiguracao.add(String.valueOf(t_tpcTipo.getCodigo()));
-					String t_strConteudoConfiguracaoCorrente = t_cfgConfiguracaoGrupo.getConteudoConfiguracao();
+					TipoConfiguracaoGrupoEnum t_tpcTipo = t_cfgConfiguracaoGrupo
+							.getTipo();
+					codigoTipoConfiguracao.add(String.valueOf(t_tpcTipo
+							.getCodigo()));
+					String t_strConteudoConfiguracaoCorrente = t_cfgConfiguracaoGrupo
+							.getConteudoConfiguracao();
 					conteudoConfiguracao.add(t_strConteudoConfiguracaoCorrente);
 				}
 			} catch (Exception e) {
-				throw new AplicacaoException(MessageFormat.format("Id do grupo: {0} erro ao obter configuraÁıes do grupo.", idCpGrupo), 0, e);
+				throw new AplicacaoException(
+						MessageFormat.format(
+								"Id do grupo: {0} erro ao obter configura√ß√µes do grupo.",
+								idCpGrupo), 0, e);
 			}
 		}
-		
+
 		result.include("idConfiguracao", idConfiguracao);
 		result.include("codigoTipoConfiguracao", codigoTipoConfiguracao);
 		result.include("conteudoConfiguracao", conteudoConfiguracao);
-		
+
 		return "edita";
 	}
 
 	/**
-	 * Exclui o grupo e as configuraÁıes A exclus„o no caso È lÛgica: atribui a
-	 * data de fim de vigÍncia das configuraÁıes do grupo e tambÈm a data de fim
+	 * Exclui o grupo e as configura√ß√µes A exclus√£o no caso √© l√≥gica: atribui a
+	 * data de fim de vig√™ncia das configura√ß√µes do grupo e tamb√©m a data de fim
 	 * do grupo.
 	 * 
 	 * @throws AplicacaoException
@@ -221,8 +231,10 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	}
 
 	/**
-	 * Grava o grupo e as configuraÁıes
-	 * @param idConfiguracao TODO
+	 * Grava o grupo e as configura√ß√µes
+	 * 
+	 * @param idConfiguracao
+	 *            TODO
 	 * 
 	 * @throws AplicacaoException
 	 * @throws IllegalAccessException
@@ -231,30 +243,24 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 */
 	protected Long aGravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
 			CpGrupoDeEmailSelecao grupoPaiSel,
-			Integer codigoTipoConfiguracaoNova, 
-			String conteudoConfiguracaoNova, 
-			List<String> idConfiguracao,
+			Integer codigoTipoConfiguracaoNova,
+			String conteudoConfiguracaoNova, List<String> idConfiguracao,
 			List<String> codigoTipoConfiguracao,
-			List<String> conteudoConfiguracao)
-			throws Exception {
-		
+			List<String> conteudoConfiguracao) throws Exception {
+
 		if (siglaGrupo == null) {
 			throw new AplicacaoException("A sigla do grupo deve ser definida!");
 		}
-		
-		idConfiguracao = Optional
-					.fromNullable(idConfiguracao)
-					.or(new ArrayList<String>());
 
-		codigoTipoConfiguracao = Optional
-				.fromNullable(codigoTipoConfiguracao)
-				.or( new ArrayList<String>());
-		
+		idConfiguracao = Optional.fromNullable(idConfiguracao).or(
+				new ArrayList<String>());
 
-		conteudoConfiguracao = Optional
-				.fromNullable(conteudoConfiguracao)
-				.or( new ArrayList<String>());
-		
+		codigoTipoConfiguracao = Optional.fromNullable(codigoTipoConfiguracao)
+				.or(new ArrayList<String>());
+
+		conteudoConfiguracao = Optional.fromNullable(conteudoConfiguracao).or(
+				new ArrayList<String>());
+
 		try {
 			CpGrupo grp = null;
 			CpGrupo grpNovo = null;
@@ -265,7 +271,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 						"Tipo de grupo nulo para Id do grupo: " + idCpGrupo);
 			}
 
-			// Substituir isso por uma f·brica
+			// Substituir isso por uma f√°brica
 			//
 			if (tpGrp.getIdTpGrupo() == CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO)
 				grpNovo = new CpGrupoDeEmail();
@@ -294,7 +300,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 
 			// Fabrica
 			ConfiguracaoGrupoFabrica fabrica = new ConfiguracaoGrupoFabrica();
-			// grava uma nova configuraÁ„o
+			// grava uma nova configura√ß√£o
 
 			TipoConfiguracaoGrupoEnum tpCfgGrpEnum = TipoConfiguracaoGrupoEnum
 					.obterPara(tpGrp, codigoTipoConfiguracaoNova);
@@ -303,9 +309,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				if (isConfiguracaoAvancada(cfgGrp)
 						&& !podeEditarConfiguracoesAvancadas()) {
 					throw new AplicacaoException(
-							"VocÍ n‚o tem permiss„o para configurar "
+							"Voc√™ n√¢o tem permiss√£o para configurar "
 									+ tpCfgGrpEnum.getDescricao()
-									+ ". Por favor, entre em contato com o suporte tÈcnico para realizar tal configuraÁ„o.");
+									+ ". Por favor, entre em contato com o suporte t√©cnico para realizar tal configura√ß√£o.");
 				}
 
 				if (conteudoConfiguracaoNova != null) {
@@ -316,7 +322,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 						|| cfgGrp.getConteudoConfiguracao() == null
 						|| cfgGrp.getConteudoConfiguracao().equals("")) {
 					throw new AplicacaoException(
-							"Erro ao gravar nova configuraÁ„o para o grupo: conte˙do do(a) "
+							"Erro ao gravar nova configura√ß√£o para o grupo: conte√∫do do(a) "
 									+ tpCfgGrpEnum.getDescricao()
 									+ " inexistente! ");
 				}
@@ -329,7 +335,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				dao().gravarComHistorico(cfg, getIdentidadeCadastrante());
 			}
 
-			// processa as configuraÁıes existentes
+			// processa as configura√ß√µes existentes
 			configuracoesGrupo = Cp.getInstance().getConf().obterCfgGrupo(grp);
 			for (int i = 0; i < idConfiguracao.size(); i++) {
 				Long idCfg = Long.parseLong(idConfiguracao.get(i));
@@ -339,17 +345,17 @@ public abstract class GrupoController<T extends CpGrupo> extends
 					if (idCfgGravada.equals(idCfg)) {
 						Integer tpCfg = Integer.parseInt(codigoTipoConfiguracao
 								.get(i));
-						// RemoÁ„o de uma configuraÁ„o gravada antes
+						// Remo√ß√£o de uma configura√ß√£o gravada antes
 						if (tpCfg.equals(-1)) {
-							// exclus„o remove apenas logicamente, deixa o
+							// exclus√£o remove apenas logicamente, deixa o
 							// registro antigo como log
 							if (isConfiguracaoAvancada(cfgGrpGravada)
 									&& !podeEditarConfiguracoesAvancadas()) {
 								throw new AplicacaoException(
-										"VocÍ n‚o tem permiss„o para remover "
+										"Voc√™ n√¢o tem permiss√£o para remover "
 												+ cfgGrpGravada.getTipo()
 														.getDescricao()
-												+ ". Por favor, entre em contato com o suporte tÈcnico para realizar tal configuraÁ„o.");
+												+ ". Por favor, entre em contato com o suporte t√©cnico para realizar tal configura√ß√£o.");
 							}
 
 							cfgGrpGravada.getCpConfiguracao().setHisDtFim(dt);
@@ -358,14 +364,14 @@ public abstract class GrupoController<T extends CpGrupo> extends
 									getIdentidadeCadastrante());
 						} else {
 							String cfgConteudo = conteudoConfiguracao.get(i);
-							// Nato: o ideal seria se pudÈssemos utilizar o
-							// mÈtodo "semelhante" para comparar configuraÁıes.
-							// No entanto, como as configuraÁıes anteriores s„o
-							// lidas do "cache-da-aplicaÁ„o", e n„o do
-							// Hibernate, fica impossÌvel fazer a comparaÁ„o
-							// automaticamente. Por isso, È necess·rio esse "if"
-							// que sÛ grava alteraÁıes se n„o for do mesmo tipo
-							// ou n„o tiver mesmo conte˙do que a gravada
+							// Nato: o ideal seria se pud√©ssemos utilizar o
+							// m√©todo "semelhante" para comparar configura√ß√µes.
+							// No entanto, como as configura√ß√µes anteriores s√£o
+							// lidas do "cache-da-aplica√ß√£o", e n√£o do
+							// Hibernate, fica imposs√≠vel fazer a compara√ß√£o
+							// automaticamente. Por isso, √© necess√°rio esse "if"
+							// que s√≥ grava altera√ß√µes se n√£o for do mesmo tipo
+							// ou n√£o tiver mesmo conte√∫do que a gravada
 							if (!tpCfg.equals(cfgGrpGravada.getTipo()
 									.getCodigo())
 									|| !cfgConteudo.equals(cfgGrpGravada
@@ -377,15 +383,15 @@ public abstract class GrupoController<T extends CpGrupo> extends
 								if (isConfiguracaoAvancada(cfgGrpNova)
 										&& !podeEditarConfiguracoesAvancadas()) {
 									throw new AplicacaoException(
-											"VocÍ n‚o tem permiss„o para configurar "
+											"Voc√™ n√¢o tem permiss√£o para configurar "
 													+ tpCfgGrpNova
 															.getDescricao()
-													+ ". Por favor, entre em contato com o suporte tÈcnico para realizar tal configuraÁ„o.");
+													+ ". Por favor, entre em contato com o suporte t√©cnico para realizar tal configura√ß√£o.");
 								}
 								if (cfgConteudo == null
 										|| cfgConteudo.equals("")) {
 									throw new AplicacaoException(
-											"Erro ao gravar alteraÁ„o da configuraÁ„o para o grupo: conte˙do do(a)"
+											"Erro ao gravar altera√ß√£o da configura√ß√£o para o grupo: conte√∫do do(a)"
 													+ tpCfgGrpEnum
 															.getDescricao()
 													+ " inexistente!");
@@ -406,15 +412,11 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			}
 
 			dao().commitTransacao();
-			Cp.getInstance()
-					.getConf()
-					.limparCache(
-							dao().consultar(
-									CpTipoConfiguracao.TIPO_CONFIG_PERTENCER,
-									CpTipoConfiguracao.class, false));
+			Cp.getInstance().getConf().limparCacheSeNecessario();
 			return idCpGrupo;
 		} catch (Exception e) {
-			throw new AplicacaoException("Id do grupo: " + idCpGrupo + " erro ao gravar grupo e configuraÁıes.", 0, e);
+			throw new AplicacaoException("Id do grupo: " + idCpGrupo
+					+ " erro ao gravar grupo e configura√ß√µes.", 0, e);
 		}
 	}
 
@@ -430,7 +432,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 				.getConfiguracaoBL()
 				.podeUtilizarServicoPorConfiguracao(getTitular(),
 						getLotaTitular(),
-						"SIGA;GI;GDISTR;CONF_AVANC:Configuracıes AvanÁadas");
+						"SIGA;GI;GDISTR;CONF_AVANC:Configurac√µes Avan√ßadas");
 	}
 
 	protected void aGravarGestorGrupo(Long idCpGrupo,
@@ -528,12 +530,12 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		Iterator<CpGrupo> it = itgGrupos.iterator();
 
 		CpConfiguracaoBL conf = Cp.getInstance().getConf();
-		// se n„o for administrador, exibe apenas os grupos que pode gerir
+		// se n√£o for administrador, exibe apenas os grupos que pode gerir
 		if (getIdTipoGrupo() == CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO
 				&& !conf.podeUtilizarServicoPorConfiguracao(
 						getTitular(),
 						getLotaTitular(),
-						"SIGA:Sistema Integrado de Gest„o Administrativa;GI:MÛdulo de Gest„o de Identidade;GDISTR:Gerenciar grupos de distribuiÁ„o")) {
+						"SIGA:Sistema Integrado de Gest√£o Administrativa;GI:M√≥dulo de Gest√£o de Identidade;GDISTR:Gerenciar grupos de distribui√ß√£o")) {
 			while (it.hasNext()) {
 				CpGrupo cpGrp = it.next();
 				CpConfiguracaoBL bl = Cp.getInstance().getConf();
@@ -685,9 +687,9 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	}
 
 	/**
-	 * ObtÈm a configuracao de grupo para o Ìndice
+	 * Obt√©m a configuracao de grupo para o √≠ndice
 	 * 
-	 * @return ArrayList<TipoConfiguracaoGrupoEnum> - Tipos de configuraÁ„o
+	 * @return ArrayList<TipoConfiguracaoGrupoEnum> - Tipos de configura√ß√£o
 	 *         possiveis para o grupo
 	 */
 	private ArrayList<TipoConfiguracaoGrupoEnum> obterTiposConfiguracaoGrupoParaTipoDeGrupo(
@@ -712,7 +714,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	}
 
 	/**
-	 * Prepara as listas de relaÁ„o
+	 * Prepara as listas de rela√ß√£o
 	 * 
 	 */
 	protected void prepare() {

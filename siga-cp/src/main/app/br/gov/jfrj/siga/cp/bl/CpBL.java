@@ -113,7 +113,7 @@ public class CpBL {
 
 	public void bloquearIdentidade(CpIdentidade ident,
 			CpIdentidade identidadeCadastrante, boolean fBloquear)
-			throws AplicacaoException {
+			throws Exception {
 		CpTipoConfiguracao tpConf = dao().consultar(
 				CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
 				CpTipoConfiguracao.class, false);
@@ -149,36 +149,32 @@ public class CpBL {
 		}
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 		dao().commitTransacao();
-		try {
-			comp.getConfiguracaoBL().limparCache(tpConf);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		comp.getConfiguracaoBL().limparCacheSeNecessario();
 	}
 
 	public void bloquearPessoa(DpPessoa pes,
 			CpIdentidade identidadeCadastrante, boolean fBloquear)
-			throws AplicacaoException {
-		
+			throws Exception {
+
 		try {
 			dao().iniciarTransacao();
-			
+
 			CpTipoConfiguracao tpConf = dao().consultar(
 					CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
 					CpTipoConfiguracao.class, false);
 			Date dt = dao().consultarDataEHoraDoServidor();
-	
+
 			CpConfiguracao confOld = null;
 			try {
 				CpConfiguracao confFiltro = new CpConfiguracao();
 				confFiltro.setDpPessoa(pes);
 				confFiltro.setCpTipoConfiguracao(tpConf);
-				confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro,
-						new int[] { 0 }, null);
+				confOld = comp.getConfiguracaoBL().buscaConfiguracao(
+						confFiltro, new int[] { 0 }, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-	
+
 			CpConfiguracao conf = new CpConfiguracao();
 			conf.setDpPessoa(pes);
 			conf.setCpSituacaoConfiguracao(dao()
@@ -188,29 +184,29 @@ public class CpBL {
 							CpSituacaoConfiguracao.class, false));
 			conf.setCpTipoConfiguracao(tpConf);
 			conf.setHisDtIni(dt);
-	
+
 			if (confOld != null) {
 				confOld.setHisDtFim(dt);
 				dao().gravarComHistorico(confOld, identidadeCadastrante);
 			}
 			dao().gravarComHistorico(conf, identidadeCadastrante);
-	
+
 			for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
 				if (fBloquear && ident.isBloqueada() == false)
 					bloquearIdentidade(ident, identidadeCadastrante, true);
 			}
-			comp.getConfiguracaoBL().limparCache(tpConf);
+			comp.getConfiguracaoBL().limparCacheSeNecessario();
 			dao().commitTransacao();
 		} catch (Exception e) {
 			dao().rollbackTransacao();
-			e.printStackTrace();
+			throw e;
 		}
 	}
 
 	public void configurarAcesso(CpPerfil perfil, CpOrgaoUsuario orgao,
 			DpLotacao lotacao, DpPessoa pes, CpServico servico,
 			CpSituacaoConfiguracao situacao, CpTipoConfiguracao tpConf,
-			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+			CpIdentidade identidadeCadastrante) throws Exception {
 		Date dt = dao().consultarDataEHoraDoServidor();
 
 		CpConfiguracao confOld = null;
@@ -248,11 +244,7 @@ public class CpBL {
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 		dao().commitTransacao();
 
-		try {
-			comp.getConfiguracaoBL().limparCache(tpConf);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		comp.getConfiguracaoBL().limparCacheSeNecessario();
 	}
 
 	/**
@@ -336,7 +328,7 @@ public class CpBL {
 			}
 
 		} else {
-			if(pessoa == null) {
+			if (pessoa == null) {
 				throw new AplicacaoException(
 						"Não foi encontrado usuário com matrícula e cpf informados.");
 			} else if (pessoa.getEmailPessoaAtual() == null) {
@@ -748,6 +740,5 @@ public class CpBL {
 			throws AplicacaoException {
 		throw new AplicacaoException(message, 0, cause);
 	}
-
 
 }

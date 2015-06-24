@@ -1813,7 +1813,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 
 		byte[] assinatura = Base64.decode(assinaturaB64);
-		Date dt = mov.getDtMov();
+		Date dt = dao().consultarDataEHoraDoServidor();
 
 		byte[] certificado = Base64.decode(certificadoB64);
 
@@ -3322,7 +3322,7 @@ public class ExMovimentacaoController extends ExController {
 			tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO;
 
 		byte[] assinatura = Base64.decode(assinaturaB64);
-		Date dt = mov.getDtMov();
+		Date dt = dao().consultarDataEHoraDoServidor();
 
 		byte[] certificado = Base64.decode(certificadoB64);
 		if (certificado != null && certificado.length != 0)

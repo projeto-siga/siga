@@ -32,10 +32,10 @@
 		</mod:grupo>
 		<mod:grupo>
 			<mod:selecao titulo="Possui Parentesco" var="parentesco"
-				opcoes="Não;Sim" reler="ajax" idAjax="parentescoajax" />
+				opcoes="Não;Sim;Sim, mas não infringi nenhum dos dispositivos da Resolução nº 07/2005 - CNJ" reler="ajax" idAjax="parentescoajax" />
 		</mod:grupo>
 		<mod:grupo depende="parentescoajax">
-			<c:if test="${parentesco == 'Sim'}">
+			<c:if test="${parentesco != 'Não'}">
 				<mod:grupo>
 					<mod:selecao titulo="Quantidade de parentes" var="nr_parentes"
 						opcoes="1;2;3;" reler="ajax" idAjax="nr_parentesajax" />
@@ -50,8 +50,12 @@
 						<mod:grupo>
 							<mod:texto titulo="&nbsp;&nbsp;&nbsp; Grau de parentesco"
 								var="grau${i}" largura="20" />
+							<mod:texto titulo="&nbsp;&nbsp;&nbsp; Órgão" var="orgao${i}"
+								largura="40" />
 						</mod:grupo>
 						<mod:grupo>
+							<mod:texto titulo="&nbsp;&nbsp;&nbsp; Cargo em Comissão/Funçao de confiança" var="cargo${i}"
+								largura="40" />
 							<mod:data
 								titulo="&nbsp;&nbsp;&nbsp Data de ingresso no cargo em comissão/função de confiança"
 								var="dataingresso${i}" />
@@ -104,11 +108,16 @@
 
 		<mod:letra tamanho="${tl}">
 			<!-- Esta variável "corpoTexto" tem a finalidade de evitar duplicidade no código -->
-			<c:set var="corpoTexto"
-				value="relação familiar ou de parentesco que importe prática vedada pela
+			<c:set var="corpoTextoParte1"
+				value="relação familiar ou de parentesco que "></c:set>
+			<c:set var="corpoTextoParte2"
+				value="importe prática vedada pela
 						Súmula Vinculante Nº 13 de 29 de agosto de 2008 do Supremo Tribunal
 						Federal combinado com a Resolução Nº 07/2005 do Conselho Nacional de
 						Justiça (CNJ)."></c:set>
+			
+			<c:set var="corpoTexto"
+				value="${corpoTextoParte1}${corpoTextoParte2}"></c:set>
 
 			<!-- Estes ifs são para omitir  vírgulas e espaços no texto, dependendo dos campos que forem preenchidos -->
 
@@ -140,24 +149,41 @@
 			<c:choose>
 				<c:when test="${parentesco eq 'Sim'}">
 					<b>tem</b>
-						${corpoTexto}		
-					<c:forEach var="i" begin="1" end="${nr_parentes}">
-						<p>Nome do Parente: <b>${requestScope[f:concat('parente',i)]}</b>.</p>
-						<p>Grau de parentesco: <b>${requestScope[f:concat('grau',i)]}</b>.</p>
-						<p>Data de ingresso no cargo em comissão/função de confiança:
-						<b>${requestScope[f:concat('dataingresso',i)]}</b>.</p>
-						<br>
-					</c:forEach>
+					${corpoTexto}		
+				</c:when>
+				<c:when test="${parentesco eq 'Não'}">
+					<b>não tem</b>
+					${corpoTexto}
 				</c:when>
 				<c:otherwise>
-					<c:if test="${parentesco == 'Não'}">
-						<b>não tem</b>
-						${corpoTexto}
-					</c:if>
+					<b>tem</b>
+					${corpoTextoParte1}
+					<b>NÃO</b>
+					${corpoTextoParte2}
 				</c:otherwise>
 			</c:choose>
+		<c:if test="${parentesco ne 'Não'}">
+			<c:forEach var="i" begin="1" end="${nr_parentes}">
+				<p>
+					Nome do Parente: <b>${requestScope[f:concat('parente',i)]}</b>.
+				</p>
+				<p>
+					Grau de parentesco: <b>${requestScope[f:concat('grau',i)]}</b>.
+				</p>
+				<p>
+					Órgão: <b>${requestScope[f:concat('orgao',i)]}</b>.
+				</p>
+				<p>
+					Cargo em Comissão/Funçao de confiança: <b>${requestScope[f:concat('cargo',i)]}</b>.
+				</p>
+				<p>
+					Data de ingresso no cargo em comissão/função de confiança: <b>${requestScope[f:concat('dataingresso',i)]}</b>.
+				</p>
+				<br>
+			</c:forEach>
+		</c:if>
 
-			<p style="TEXT-INDENT: 2cm" align="justify">Declara, por fim, que
+		<p style="TEXT-INDENT: 2cm" align="justify">Declara, por fim, que
 			deverá comunicar à Subsecretaria de Gestão de Pessoas, de imediato, a
 			ocorrência de fatos que possam alterar a situação objeto desta
 			declaração.</p>

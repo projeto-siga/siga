@@ -74,7 +74,7 @@ public class SigaObjects implements ConheceUsuario {
 		if (request.getUserPrincipal() == null)
 			return;
 
-		try {
+		//try {
 			if (UsuarioAutenticado.isClientCertAuth(request)) {
 				// autenticacao por certificado de cliente
 				UsuarioAutenticado.carregarUsuarioAutenticadoRequest(request,
@@ -84,9 +84,9 @@ public class SigaObjects implements ConheceUsuario {
 				String principal = request.getUserPrincipal().getName();
 				UsuarioAutenticado.carregarUsuarioAutenticado(principal, this);
 			}
-		} catch (Exception e) {
-			setCadastrante(null);
-		}
+		//} catch (Exception e) {
+		//	setCadastrante(null);
+		//}
 	}
 
 	public DpPessoa getCadastrante() {

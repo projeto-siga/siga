@@ -26,7 +26,9 @@
 		<class>br.gov.jfrj.siga.cp.CpServico</class>
 		<class>br.gov.jfrj.siga.cp.CpTipoGrupo</class>
 		<class>br.gov.jfrj.siga.cp.CpGrupo</class>
+		<class>br.gov.jfrj.siga.cp.CpGrupoDeEmail</class>
 		<class>br.gov.jfrj.siga.cp.CpPerfil</class>
+		<class>br.gov.jfrj.siga.cp.CpPerfilJEE</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoLotacao</class>
 		<class>br.gov.jfrj.siga.cp.CpTipoPapel</class>
 		<class>br.gov.jfrj.siga.cp.CpPapel</class>

@@ -66,7 +66,7 @@ public class CpConfiguracaoBL {
 
 	protected Comparator<CpConfiguracao> comparator = null;
 
-	protected static HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
+	protected HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
 
 	public static int PESSOA = 1;
 
@@ -104,39 +104,44 @@ public class CpConfiguracaoBL {
 		return new CpConfiguracao();
 	}
 
-	public synchronized void inicializarCache() {
-		if (!cacheInicializado) {
-			Logger.getLogger("siga.conf.cache").info(
-					"Inicializando cache de configurações via "
-							+ this.getClass().getSimpleName());
-			long inicio = System.currentTimeMillis();
+	public synchronized void inicializarCacheSeNecessario() {
+		if (cacheInicializado)
+			return;
+		Logger.getLogger("siga.conf.cache").info(
+				"Inicializando cache de configurações via "
+						+ this.getClass().getSimpleName());
+		long inicio = System.currentTimeMillis();
 
-			List<CpConfiguracao> results = (List<CpConfiguracao>) dao()
-					.consultarConfiguracoesAtivas();
-			evitarLazy(results);
+		List<CpConfiguracao> results = (List<CpConfiguracao>) dao()
+				.consultarConfiguracoesAtivas();
+		evitarLazy(results);
 
-			hashListas.clear();
-			for (CpConfiguracao cfg : results) {
-				Long idTpConfiguracao = cfg.getCpTipoConfiguracao()
-						.getIdTpConfiguracao();
-				TreeSet<CpConfiguracao> tree = hashListas.get(idTpConfiguracao);
-				if (tree == null) {
-					tree = new TreeSet<CpConfiguracao>(comparator);
-					hashListas.put(idTpConfiguracao, tree);
-				}
-				tree.add(cfg);
+		hashListas.clear();
+		Logger.getLogger("siga.conf.cache").info(
+				"Cache de configurações reiniciado.");
+		for (CpConfiguracao cfg : results) {
+			Long idTpConfiguracao = cfg.getCpTipoConfiguracao()
+					.getIdTpConfiguracao();
+			TreeSet<CpConfiguracao> tree = hashListas.get(idTpConfiguracao);
+			if (tree == null) {
+				tree = new TreeSet<CpConfiguracao>(comparator);
+				hashListas.put(idTpConfiguracao, tree);
 			}
-			cacheInicializado = true;
-
-			Logger.getLogger("siga.conf.cache").info(
-					"Cache de configurações inicializado em ms: "
-							+ (System.currentTimeMillis() - inicio));
+			tree.add(cfg);
 		}
+		if (hashListas.size() == 0 && results.size() > 0)
+			throw new RuntimeException(
+					"Ocorreu um erro na inicialização do cache.");
+		cacheInicializado = true;
+
+		Logger.getLogger("siga.conf.cache").info(
+				"Cache de configurações inicializado em ms: "
+						+ (System.currentTimeMillis() - inicio));
 	}
 
 	public HashMap<Long, TreeSet<CpConfiguracao>> getHashListas() {
 		if (!cacheInicializado) {
-			inicializarCache();
+			inicializarCacheSeNecessario();
 		}
 
 		return hashListas;
@@ -148,7 +153,7 @@ public class CpConfiguracaoBL {
 
 	private void atualizarCache() {
 		if (!cacheInicializado) {
-			inicializarCache();
+			inicializarCacheSeNecessario();
 			return;
 		}
 		Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
@@ -320,7 +325,9 @@ public class CpConfiguracaoBL {
 		// } catch (Exception e) {
 		// System.out.println(e.getStackTrace());
 		// }
-
+		if (lista == null)
+			return null;
+		
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn))
 					|| (cpConfiguracao.getCpSituacaoConfiguracao() != null && cpConfiguracao

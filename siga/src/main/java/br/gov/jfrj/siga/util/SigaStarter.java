@@ -37,7 +37,7 @@ public class SigaStarter {
 		Configuration cfg = CpDao.criarHibernateCfg(DATASOURCE);
 		HibernateUtil.configurarHibernate(cfg);
 		SigaAuditor.configuraAuditoria(new SigaHibernateChamadaAuditor(cfg));
-		Cp.getInstance().getConf().inicializarCache();
+		//Cp.getInstance().getConf().inicializarCache();
 	}
 	
 }

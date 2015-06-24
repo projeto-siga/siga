@@ -206,11 +206,7 @@ BaseService.prototype.desativar = function(event, id) {
 				service.opts.dataTable.api().row(tr).remove().draw();
 			}
 	     },
-	     error: function(response) {
-	    	var modalErro = $('#modal-error');
-	    	modalErro.find("h3").html(response.responseText);
-	    	modalErro.show();
-	     }
+	     error: BaseService.prototype.errorHandler
 	});
 }
 /**
@@ -242,11 +238,7 @@ BaseService.prototype.reativar = function(event, id) {
 	         $(tr).find('td').removeClass('item-desativado');
 	         service.opts.dataTable.api().row(tr).data(row).draw();
 	     },
-	     error: function(response) {
-	    	var modalErro = $('#modal-error');
-	    	modalErro.find("h3").html(response.responseText);
-	    	modalErro.show();
-	     }
+	     error: BaseService.prototype.errorHandler
 	});
 
 }

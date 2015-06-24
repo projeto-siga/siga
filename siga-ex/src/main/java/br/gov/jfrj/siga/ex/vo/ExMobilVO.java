@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sf.ehcache.statistics.beans.ProxiedDynamicMBean;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;

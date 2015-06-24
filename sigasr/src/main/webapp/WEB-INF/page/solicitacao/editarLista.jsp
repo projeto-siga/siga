@@ -307,7 +307,7 @@
 				<label>&Oacute;rg&atilde;o</label>
 				<siga:select name="configuracao.orgaoUsuario" list="orgaos" listKey="idOrgaoUsu"
 					id="idOrgaoUsu" headerValue="" headerKey="0"
-					listValue="acronimoOrgaoUsu" theme="simple" value="${orgaoUsuario.idOrgaoUsu}"
+					listValue="nmOrgaoUsu" theme="simple" value="${orgaoUsuario.idOrgaoUsu}"
 					style="width: 100%" />
 			</div>
 

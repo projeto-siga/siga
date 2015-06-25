@@ -176,6 +176,10 @@
 			<web-resource-name>servicos</web-resource-name>
 			<url-pattern>/servicos/*</url-pattern>
 		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>testes</web-resource-name>
+			<url-pattern>/app/testes/*</url-pattern>
+    	</web-resource-collection>
 	</security-constraint>
 
 	<login-config>

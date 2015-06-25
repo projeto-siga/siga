@@ -6277,7 +6277,7 @@ public class ExBL extends CpBL {
 		if((forma.getIdFormaDoc() == null && formaConsulta != null) ||
 				(forma.getIdFormaDoc() != null && formaConsulta != null && !formaConsulta.getIdFormaDoc().equals(forma.getIdFormaDoc())))
 			throw new AplicacaoException(
-					"Esta sigla já estásendo utilizada.");
+					"Esta sigla já está sendo utilizada.");
 		
 		try {
 			ExDao.iniciarTransacao();

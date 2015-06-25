@@ -64,7 +64,7 @@
 
 						<div class="login-invalido-descricao">
 							<p>XX ￩ a sigla do seu órgão (T2, RJ, ES, etc.)</p>
-							<p>99999 ￩ o n￺mero da matrícula.</p>
+							<p>99999 ￩ o número da matrícula.</p>
 						</div>
 					</div>
 					<!-- form row -->

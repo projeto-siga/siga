@@ -42,8 +42,8 @@ public class SubstituicaoController extends SigaController {
 	
 	private Map<Integer, String> getListaTipo() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
-		map.put(2, "Órgão Integrado");
+		map.put(1, "MatrÃ­cula");
+		map.put(2, "Ã“rgÃ£o Integrado");
 		return map;
 	}	
 		
@@ -204,36 +204,36 @@ public class SubstituicaoController extends SigaController {
 			dao().iniciarTransacao();
 			if (tipoTitular == 1) {
 				if (this.titularSel.getId() == null)
-					throw new AplicacaoException("Titular não informado");
+					throw new AplicacaoException("Titular nï¿½o informado");
 				
 				subst.setTitular(dao().consultar(this.titularSel.getId(),DpPessoa.class, false));
 				
 				if (!subst.getTitular().getIdPessoa().equals(getCadastrante().getIdPessoa())  
 						&& !podeCadastrarQualquerSubstituicao())
-					throw new AplicacaoException("Titular não permitido. Apenas o próprio usuário pode se definir como titular.");
+					throw new AplicacaoException("Titular nï¿½o permitido. Apenas o prï¿½prio usuï¿½rio pode se definir como titular.");
 				
 				subst.setLotaTitular(subst.getTitular().getLotacao());
 			} else {
 				subst.setTitular(null);
 				if (this.lotaTitularSel.getId() == null)
-					throw new AplicacaoException("A lotação titular não foi informada");
+					throw new AplicacaoException("A lotaï¿½ï¿½o titular nï¿½o foi informada");
 				
 				subst.setLotaTitular(dao().consultar(this.lotaTitularSel.getId(), DpLotacao.class, false));
 				
 				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
 						&& !podeCadastrarQualquerSubstituicao())
-					throw new AplicacaoException("Lotação titular não permitida. Apenas um usuário da própria lotação pode defini-la como titular.");
+					throw new AplicacaoException("Lotaï¿½ï¿½o titular nï¿½o permitida. Apenas um usuï¿½rio da prï¿½pria lotaï¿½ï¿½o pode defini-la como titular.");
 			}
 			if (tipoSubstituto == 1) {
 				if (this.substitutoSel.getId() == null)
-					throw new AplicacaoException("Substituto não informado");
+					throw new AplicacaoException("Substituto nï¿½o informado");
 				
 				subst.setSubstituto(daoPes(this.substitutoSel.getId()));
 				subst.setLotaSubstituto(subst.getSubstituto().getLotacao());
 			} else {
 				subst.setSubstituto(null);
 				if (this.lotaSubstitutoSel.getId() == null)
-					throw new AplicacaoException("A lotação do substituto não foi informada");
+					throw new AplicacaoException("A lotaï¿½ï¿½o do substituto nï¿½o foi informada");
 				
 				subst.setLotaSubstituto(daoLot(this.lotaSubstitutoSel.getId()));
 			}
@@ -277,7 +277,7 @@ public class SubstituicaoController extends SigaController {
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
 			result.include("exceptionStack", e);
-			throw new AplicacaoException("Não foi possível Gravar", 0, e);			
+			throw new AplicacaoException("Nï¿½o foi possï¿½vel Gravar", 0, e);			
 		}
 
 	}
@@ -359,13 +359,13 @@ public class SubstituicaoController extends SigaController {
 				dao().commitTransacao();
 				result.use(Results.referer()).redirect();				
 			} else
-				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
+				throw new AplicacaoException("Usuï¿½rio nï¿½o tem permissï¿½o para excluir esta substituiï¿½ï¿½o");	
 		} else
-			throw new AplicacaoException("Não foi informado id");
+			throw new AplicacaoException("Nï¿½o foi informado id");
 		
 		}catch (Exception e) {
 			result.include("exceptionStack", e);
-			throw new AplicacaoException("Não foi possível Excluir", 0, e);
+			throw new AplicacaoException("Nï¿½o foi possï¿½vel Excluir", 0, e);
 		}
 		
 	}	

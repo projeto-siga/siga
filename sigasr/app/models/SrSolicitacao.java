@@ -1770,7 +1770,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			SrMovimentacao movMarca = null;
 			
 			Long marcadorAndamento = 0L;
-			SrMovimentacao movMarcaAndamento = null;
 
 			List<SrMovimentacao> pendencias = new ArrayList<SrMovimentacao>();
 
@@ -1782,33 +1781,27 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					marcador = CpMarcador.MARCADOR_SOLICITACAO_ATIVO;
 					movMarca = mov;
 					marcadorAndamento = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
-					movMarcaAndamento = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_FECHAMENTO) {
 					marcador = CpMarcador.MARCADOR_SOLICITACAO_FECHADO;
 					movMarca = mov;
 					marcadorAndamento = null;
-					movMarcaAndamento = null;
 				}
 				if (t == TIPO_MOVIMENTACAO_REABERTURA) {
 					marcador = CpMarcador.MARCADOR_SOLICITACAO_ATIVO;
 					movMarca = mov;
 					marcadorAndamento = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
-					movMarcaAndamento = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO) {
 					marcador = CpMarcador.MARCADOR_SOLICITACAO_CANCELADO;
 					movMarca = mov;
 					marcadorAndamento = null;
-					movMarcaAndamento = null;
 				}
 				if (t == TIPO_MOVIMENTACAO_JUNTADA) {
 					marcadorAndamento = CpMarcador.MARCADOR_JUNTADO;
-					movMarcaAndamento = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_DESENTRANHAMENTO) {
 					marcadorAndamento = CpMarcador.MARCADOR_SOLICITACAO_EM_ANDAMENTO;
-					movMarcaAndamento = mov;
 				}
 				if (t == TIPO_MOVIMENTACAO_INICIO_PENDENCIA) {
 					if (mov.getDtFimMov() == null || mov.getDtFimMov().after(new Date()))
@@ -1851,12 +1844,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					//em que era permitido fechar estando pendente
 					if (dtFimPendenciaMaisLonge != null && marcador == CpMarcador.MARCADOR_SOLICITACAO_ATIVO)
 						acrescentarMarca(set, marcadorAndamento, dtFimPendenciaMaisLonge, null,
-							movMarcaAndamento.atendente, movMarcaAndamento.lotaAtendente);
+							movMarca.atendente, movMarca.lotaAtendente);
 				}
 			} else {
 				if (marcador == CpMarcador.MARCADOR_SOLICITACAO_ATIVO)
-					acrescentarMarca(set, marcadorAndamento, movMarcaAndamento.dtIniMov, null,
-							movMarcaAndamento.atendente, movMarcaAndamento.lotaAtendente);
+					acrescentarMarca(set, marcadorAndamento, movMarca.dtIniMov, null,
+							movMarca.atendente, movMarca.lotaAtendente);
 			}
 
 			if (marcador == CpMarcador.MARCADOR_SOLICITACAO_ATIVO) {

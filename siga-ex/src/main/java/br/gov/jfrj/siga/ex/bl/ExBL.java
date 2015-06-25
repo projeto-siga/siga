@@ -1368,9 +1368,8 @@ public class ExBL extends CpBL {
 					titular, lotaTitular, null);
 
 			mov.setDtDispPublicacao(dtDispPublicacao);
-			mov.setDescrMov("Publicação prevista para "
-					+ new SimpleDateFormat("dd/MM/yy").format(DJE
-							.getDataPublicacao()));
+			mov.setDescrMov("Disponibilização prevista para "
+					+ new SimpleDateFormat("dd/MM/yy").format(dtDispPublicacao));
 			mov.setCadernoPublicacaoDje(tipoMateria);
 
 			mov.setConteudoBlobXML("boletimadm", PublicacaoDJEBL
@@ -1442,6 +1441,7 @@ public class ExBL extends CpBL {
 					"Nova solicitação de publicação DJE ("
 							+ mov.getLotaCadastrante().getSiglaLotacao() + ") ",
 					sb.toString(), sbHtml.toString());
+					
 
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
@@ -1586,9 +1586,8 @@ public class ExBL extends CpBL {
 			// mov.setNumTRFPublicacao(numTRF);
 			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(dtDispPublicacao);
 			DJE.validarDataDeDisponibilizacao(true);
-			mov.setDescrMov("Publicação prevista para "
-					+ new SimpleDateFormat("dd/MM/yy").format(DJE
-							.getDataPublicacao()));
+			mov.setDescrMov("Disponibilização prevista para "
+					+ new SimpleDateFormat("dd/MM/yy").format(dtDispPublicacao));
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());

@@ -3,24 +3,7 @@
 	<PicketLinkIDP xmlns="urn:picketlink:identity-federation:config:2.1" HostedURI="/" >
 		<IdentityURL>${idp.url::http://localhost:8080/sigaidp/}</IdentityURL>
 		<Trust>
-			<Domains>
-					 localhost,
-					 dev-siga,
-					 dev-siga.corp.jfrj.gov.br,
-					 siga-dev,
-					 siga-dev.corp.jfrj.gov.br
-					 siga-hmg,
-					 siga-hmg.corp.jfrj.gov.br
-					 sigat,
-					 sigat.jfrj.jus.br,
-					 siga,
-					 siga.jfrj.jus.br,
-					 belina.jfrj.jus.br,
-					 classec250,
-					 classec250.corp.jfrj.gov.br
-					 classef,
-					 classef.corp.jfrj.gov.br
-			</Domains>
+			<Domains>${idp.trusted.domains::localhost}</Domains>
 		</Trust>
 	</PicketLinkIDP>
 

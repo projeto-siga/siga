@@ -30,7 +30,7 @@
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.Boolean podeGerirAlgumGrupo(br.gov.jfrj.siga.dp.DpPessoa, br.gov.jfrj.siga.dp.DpLotacao,java.lang.Long)</function-signature>
  </function>
- 
+
  <function>
   <name>concat</name>
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
@@ -95,5 +95,23 @@
   <name>evaluate</name>
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.Object evaluate( java.lang.String, java.lang.Object)</function-signature>
+ </function>
+
+ <function>
+  <description>
+   Encode function
+  </description>
+  <name>encode</name>
+  <function-class>br.gov.jfrj.siga.uteis.StringEncoder</function-class>
+  <function-signature>java.lang.String encode(java.lang.String)</function-signature>
+ </function>
+
+ <function>
+  <description>
+   Decode function
+  </description>
+  <name>decode</name>
+  <function-class>br.gov.jfrj.siga.uteis.StringEncoder</function-class>
+  <function-signature>java.lang.String decode(java.lang.String)</function-signature>
  </function>
 </taglib>

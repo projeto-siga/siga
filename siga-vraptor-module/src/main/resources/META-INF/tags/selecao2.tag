@@ -47,7 +47,7 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
 			document.getElementsByName('${propriedade}.descricao')[0].value = descricao;
-			document.getElementById('${propriedadeClean}Span').innerHTML = descricao;
+			document.getElementById('${propriedadeClean}Span').innerHTML = unescape(descricao);
 		} catch (E) {
 		}
 	</c:if>
@@ -167,7 +167,7 @@ self.ajax_${propriedadeClean} = function() {
 
 <c:if test="${ocultardescricao != 'sim'}">
 	<span id="${propriedadeClean}Span"> <c:out
-			value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}" />
+			value="${f:decode(f:evaluate(f:concat(propriedade,'.descricao'),requestScope))}" />
 	</span>
 </c:if>
 

@@ -1858,7 +1858,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         Collections.sort(listaFinal, new Comparator<SrLista>() {
             @Override
             public int compare(SrLista l1, SrLista l2) {
-                return l1.getNomeLista().compareTo(l2.getNomeLista());
+                return (l1.getNomeLista() == null) ? -1 : l1.getNomeLista().compareTo(l2.getNomeLista());
             }
         });
         return listaFinal;

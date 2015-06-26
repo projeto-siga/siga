@@ -24,7 +24,7 @@
 		
 		function carregarAcao() {
 			var inputIdSolicitacao = document.getElementById('id');
-			var inputIdItem = document.getElementById('itemConfiguracao');
+			var inputIdItem = document.getElementById('formulario_itemConfiguracao');
 			var params = 'id=' + inputIdSolicitacao.value
 					+ '&itemConfiguracao=' + inputIdItem.value;
 			jQuery.blockUI(objBlock);
@@ -60,7 +60,7 @@
 				<br/>
 				<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
 				<siga:selecao2 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"
-					onchange="carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')"
+					onchange="carregarAcao()"
 					paramList="sol.solicitante=${solicitacao.solicitante.idPessoa};sol.local=${solicitacao.local.idComplexo};sol.titular=${cadastrante.idPessoa};sol.lotaTitular=${lotaTitular.idLotacao}" />
 				<span style="color: red" />
 			</div>

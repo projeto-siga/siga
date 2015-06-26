@@ -115,12 +115,30 @@ public class EditaDocumentoPage {
 		}
 		util.preencheElemento(driver,dataDocumento, new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
 		preencheTipoDestinatario(propDocumentos.getProperty("tipoDestinatarioCriacao"), propDocumentos.getProperty("siglaDestinatarioCriacao"));
+		
+/*		try {
+			System.out.println("Sleep preenchendo Destinatario!");
+			Thread.sleep(2000);
+			System.out.println("Fim do Sleep de Destinatario!");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}*/
+		
 		util.preencheElemento(driver,funcaoLotacaoLocalidade, propDocumentos.getProperty("funcaoLocalidade"));
 		if(hasClassificacao) {
 			util.preencheElemento(driver,classificacao, propDocumentos.getProperty("classificacao"));
 			dataDocumento.click();
 			new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("classificacaoSelSpan")));	
 		}
+		
+/*		try {
+			System.out.println("Sleep preenchendo Classificacao!");
+			Thread.sleep(2000);
+			System.out.println("Fim do Sleep de Classificacao!");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}*/
+		
 		util.preencheElemento(driver,descricao,  propDocumentos.getProperty("descricao"));	
 	}
 
@@ -129,6 +147,14 @@ public class EditaDocumentoPage {
 		util.preencheElemento(driver,siglaSubscritor, propDocumentos.getProperty("siglaSubscritor"));
 		descricao.click();
 		new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("subscritorSelSpan")));
+		
+/*		try {
+			System.out.println("Sleep preenchendo Subscritor!");
+			Thread.sleep(2000);
+			System.out.println("Fim do Sleep de Subscritor!");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}*/
 	}	
 	
 	public void selectTipoDocumento(String tipoDocumento, String modeloDocumento, By checkMudancaTipo) {

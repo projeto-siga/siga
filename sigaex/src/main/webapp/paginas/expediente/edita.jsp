@@ -11,9 +11,23 @@
 <script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
 	
 <script type="text/javascript">
-
 <ww:url id="url" action="editar" namespace="/expediente/doc">
 </ww:url>
+function presskeySelect(event, id, parameter) {
+    if (event.type == 'keypress') {
+        if(event.keyCode == '13'){
+        	sbmt(parameter);
+        }
+    } 
+}
+function mouseSelect(event, id, parameter) {	
+	if (event.type == 'change') {
+        var click = document.getElementById('clickSelect').value;
+        if(click){
+			sbmt(parameter);
+        }
+    }
+}
 function sbmt(id) {
 	
 	var frm = document.getElementById('frm');
@@ -23,11 +37,11 @@ function sbmt(id) {
     	onSave();
     } 
 	
-	if (id == null || IsRunningAjaxRequest()) {
+	if (id != null || IsRunningAjaxRequest()) {
 		frm.action='<ww:property value="%{url}"/>';
-		frm.submit();
-	} else {
 		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
+	} else {
+		frm.submit();
 	}
 	return;
 	
@@ -44,7 +58,6 @@ function sbmt(id) {
 		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
 	}
 }
-
 <ww:url id="url" action="gravar" namespace="/expediente/doc">
 </ww:url>
 function gravarDoc() {
@@ -64,16 +77,13 @@ function gravarDoc() {
 	
 	frm.submit();
 }
-
 function validar(silencioso){
 	
 	var descr = document.getElementsByName('descrDocumento')[0].value;
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
 	var eletro2 = document.getElementById('eletronicoCheck2');
-	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
-
-	if (descricaoAutomatica == null && (descr==null || descr=="")) {
+	if (descr==null || descr=="") {
 		aviso("Preencha o campo Descrição antes de gravar o documento.", silencioso);
 		return false;
 	}
@@ -82,7 +92,6 @@ function validar(silencioso){
 		aviso("É necessário informar se o documento será digital ou físico, na parte superior da tela.", silencioso);
 		return false;
 	}
-
 	var limite = ${tamanhoMaximoDescricao};
 	if (document.getElementsByName('descrDocumento')[0].value.length >= limite) {
 		aviso('O tamanho máximo da descrição é de ' + limite + ' caracteres', silencioso);
@@ -92,7 +101,6 @@ function validar(silencioso){
 	return true;
 	
 }
-
 function aviso(msg, silencioso){
 	if (silencioso)
 		avisoVermelho('O documento não pôde ser salvo: ' + msg);
@@ -108,7 +116,6 @@ function removePreench(){
 frm.action='<ww:property value="%{url}"/>';
 frm.submit();
 }
-
 <ww:url id="url" action="alterarpreench" namespace="/expediente/doc"></ww:url>
 function alteraPreench(){
 			//Dispara a função onSave() do editor, caso exista
@@ -118,7 +125,6 @@ function alteraPreench(){
 frm.action='<ww:property value="%{url}"/>';
 frm.submit();
 }
-
 <ww:url id="url" action="carregarpreench" namespace="/expediente/doc"></ww:url>
 function carregaPreench(){
 if (frm.preenchimento.value==0){
@@ -136,7 +142,6 @@ else {
 	frm.submit();
 	}
 }
-
 <ww:url id="url" action="gravarpreench" namespace="/expediente/doc"></ww:url>
 function adicionaPreench(){
 var result='';
@@ -154,9 +159,7 @@ while((result=='') && (result!=null)){
 			frm.submit();
  	}
 }
-
 }
-
 <ww:url id="urlPdf" action="preverPdf" namespace="/expediente/doc">
 </ww:url>
 <ww:url id="url" action="prever" namespace="/expediente/doc">
@@ -196,19 +199,15 @@ function popitup_documento(pdf) {
 	}
 	return false;
 }			
-
 function checkBoxMsg() {
    window.alert('Atenção: essa opção só deve ser selecionada quando o subscritor possui certificado digital, pois será exigida a assinatura digital do documento.');   
 }
-
 var saveTimer;
 function triggerAutoSave(){
 	clearTimeout(saveTimer);
 	saveTimer=setTimeout('autoSave()',60000 * 2);
 }
-
 triggerAutoSave();
-
 var stillSaving = false;
 <ww:url id="url" action="gravar" namespace="/expediente/doc">
 </ww:url>
@@ -231,7 +230,6 @@ function autoSave(){
 	   	error: failAutoSave
 	});
 }
-
 function doneAutoSave(response){
 	var data = response.split('_');
     if (data[0] == 'OK'){
@@ -242,18 +240,15 @@ function doneAutoSave(response){
     	triggerAutoSave();
     } else failAutoSave();
 }
-
 function failAutoSave(response){
 	tryAgainAutoSave(); 
 	avisoVermelho('Atenção: Ocorreu um erro ao salvar o documento.');
 	stillSaving = false;
 }
-
 function tryAgainAutoSave(){
 	clearTimeout(saveTimer);
 	saveTimer=setTimeout('autoSave()',60000 * 2);
 }
-
 </script>
 
 <div class="gt-bd clearfix">
@@ -277,6 +272,7 @@ function tryAgainAutoSave(){
 				namespace="/expediente/doc" theme="simple" method="POST">
 				<ww:token />
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
+				<input type="hidden" id="clickSelect" name="clickSelect" />
 				<ww:hidden name="postback" value="1" />
 				<ww:hidden id="sigla" name="sigla" value="%{sigla}" />
 				<ww:hidden name="nomePreenchimento" value="" />
@@ -320,7 +316,8 @@ function tryAgainAutoSave(){
 						<td width="10%"><ww:select name="idTpDoc"
 							list="tiposDocumento" listKey="idTpDoc"
 							listValue="descrTipoDocumento"
-							onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();"
+							onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)"
 							cssStyle="${estiloTipo}" /> <span style="${estiloTipoSpan}">${doc.exTipoDocumento.descrTipoDocumento}</span>
 						</td>
 						<td width="5%" align="right">Data:</td>
@@ -413,7 +410,7 @@ function tryAgainAutoSave(){
 								<input type="hidden" name="campos" value="subscritorSel.id" />
 								<input type="hidden" name="campos" value="substituicao" />
 								<td colspan="3"><siga:selecao propriedade="subscritor" modulo="siga"
-									tema="simple" />&nbsp;&nbsp;<ww:checkbox name="substituicao"
+									tema="simple" idAjax="subscritor"/>&nbsp;&nbsp;<ww:checkbox name="substituicao"
 									onclick="javascript:displayTitular(this);" />Substituto</td>
 							</c:otherwise>
 						</c:choose>
@@ -465,31 +462,33 @@ function tryAgainAutoSave(){
 						<td>Destinatário:</td>
 						<input type="hidden" name="campos" value="tipoDestinatario" />
 						<td colspan="3"><ww:select name="tipoDestinatario"
-							onchange="javascript:sbmt();" list="listaTipoDest" /> <!-- sbmt('tipoDestinatario') -->
-						<siga:span id="destinatario" depende="tipoDestinatario">
+							onkeypress="presskeySelect(event, this, 'tipoDestinatario')" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, 'tipoDestinatario')"
+							list="listaTipoDest" /> <!-- sbmt('tipoDestinatario') -->
+						<siga:span id="destinatario" depende="tipoDestinatario"> 
 
 							<c:choose>
 								<c:when test='${tipoDestinatario == 1}'>
-									<input type="hidden" name="campos" value="destinatarioSel.id" />
+									<input type="hidden" name="campos" value="destinatario" />
 									<siga:selecao propriedade="destinatario" tema="simple"
-                                        reler="sim" modulo="siga" />
-                                    <!--  idAjax="destinatario"  -->
+                                          idAjax="destinatario" reler="ajax" modulo="siga"/>
+                                    <!--  reler="sim"  -->
 									    
 								</c:when>
 								<c:when test='${tipoDestinatario == 2}'>
 									<input type="hidden" name="campos"
 										value="lotacaoDestinatarioSel.id" />
 									<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
-                                        reler="sim" modulo="siga" /></td>
-                        			<!--  idAjax="destinatario" -->
+                                         idAjax="destinatario2" reler="ajax" modulo="siga" /></td>
+                        			<!--  reler="sim" -->
 						   
 						</c:when>
 						<c:when test='${tipoDestinatario == 3}'>
 							<input type="hidden" name="campos"
 								value="orgaoExternoDestinatarioSel.id" />
 							<siga:selecao propriedade="orgaoExternoDestinatario"
-                                tema="simple" reler="sim" modulo="siga" />
-                            <!-- idAjax="destinatario" -->
+                            idAjax="destinatario3" tema="simple" reler="ajax" modulo="siga" />
+                            <!-- reler="sim"-->
 							<br>
 							<ww:textfield name="nmOrgaoExterno" size="120" maxLength="256" />
 							<input type="hidden" name="campos" value="nmOrgaoExterno" />
@@ -512,7 +511,8 @@ function tryAgainAutoSave(){
 						<tr>
 							<td>Tipo:</td>
 							<td colspan="3"><ww:select name="idFormaDoc"
-								onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();"
+								onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+								onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)"
 								list="formasDocPorTipo" listKey="idFormaDoc"
 								listValue="descrFormaDoc" cssStyle="${estiloTipo}" /><!-- sbmt('forma') -->
 							<c:if test="${not empty doc.exFormaDocumento}">
@@ -525,7 +525,8 @@ function tryAgainAutoSave(){
 								<td>Modelo:</td>
 								<td colspan="3"><siga:div id="modelo" depende="forma">
 										<ww:select name="idMod"
-											onchange="document.getElementById('alterouModelo').value='true';sbmt();"
+											onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+											onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)"
 											list="modelos" listKey="idMod" listValue="nmMod" 
 											cssStyle="${estiloTipo}" />
 										<c:if test="${not empty doc.exModelo}">
@@ -599,8 +600,8 @@ function tryAgainAutoSave(){
 						<td colspan="3"><siga:span id="classificacao"
 							depende="forma;modelo">
 							<siga:selecao desativar="${desativarClassif}" modulo="sigaex"
-							propriedade="classificacao" tema="simple" reler="sim" />
-							<!--  idAjax="classificacao" -->
+							idAjax="classificacao" propriedade="classificacao" tema="simple" reler="ajax" />
+							<!-- reler="sim"-->
 						</siga:span></td>
 					</tr>
 					<c:if
@@ -614,10 +615,7 @@ function tryAgainAutoSave(){
 							</siga:span></td>
 						</tr>
 					</c:if>
-					<tr style="display:<ww:if test="%{modelo.descricaoAutomatica}">none</ww:if><ww:else>visible</ww:else>">
-					    <c:if test="${modelo.descricaoAutomatica}">
-							<input type="hidden" id="descricaoAutomatica" value="sim" />
-						</c:if>
+					<tr>
 						<input type="hidden" name="campos" value="descrDocumento" />
 						<td>Descrição:</td>
 						<td colspan="3"><ww:textarea name="descrDocumento" cols="80"

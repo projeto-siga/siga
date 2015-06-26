@@ -45,8 +45,9 @@ public class AnexoPage {
 		util.preencheElemento(driver,dataAnexo, new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()));
 		util.preencheElemento(driver, responsavel, propDocumentos.getProperty("siglaSubscritor"));
 		util.preencheElemento(driver, descricao, propDocumentos.getProperty("descricaoAnexo") ); 
-		File file = new File("src/test/resources/" + propDocumentos.getProperty("arquivoAnexo"));
-		arquivo.sendKeys(file.getAbsolutePath());
+		//File file = new File("src/test/resources/" + propDocumentos.getProperty("arquivoAnexo"));
+		//arquivo.sendKeys(file.getAbsolutePath());
+		arquivo.sendKeys(System.getProperty("baseURL") + "/siga/apostila_sigawf.pdf");
 		botaoOk.click();	
 	}
 	

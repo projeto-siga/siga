@@ -31,7 +31,7 @@ import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
 
 //O listener envia o resultado do testng para o saucelab
-@Listeners({SauceOnDemandTestListener.class})
+//@Listeners({SauceOnDemandTestListener.class})
 public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 	private String codigoDocumento;
 	private String codigoProcesso;
@@ -50,7 +50,8 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase impleme
 			
 			PortariaPage portariaPage = PageFactory.initElements(driver, PortariaPage.class);
 			portariaPage.criaPortaria(propDocumentos);
-						
+			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+			
 			operacoesDocumentoPage.clicarLinkFinalizar();
 			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
 			
@@ -142,7 +143,8 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase impleme
 		operacoesDocumentoPage.clicarLinkVisualizarDossie();
 		
 		// Garantir que o nome do anexo apareça na tela (é a seção OBJETO, da capa do processo)
-		String documentoDossie = nomeArquivo.substring(0, nomeArquivo.indexOf(".")).toLowerCase();
+		//String documentoDossie = nomeArquivo.substring(0, nomeArquivo.indexOf(".")).toLowerCase();
+		String documentoDossie = nomeArquivo.toLowerCase();
 		VisualizacaoDossiePage visualizacaoDossiePage = PageFactory.initElements(driver, VisualizacaoDossiePage.class);
 		Assert.assertTrue(visualizacaoDossiePage.visualizaConteudo(By.xpath("//td[contains(div[@class = 'numeracao'], '" + visualizacaoDossiePage.getNumeroPagina(documentoDossie) +"') "
 				+ "and contains(div[@class = 'anexo'], a[text()='" + documentoDossie +"'])]")), "O número da página não foi visualizado!");

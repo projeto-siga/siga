@@ -39,8 +39,8 @@ import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -49,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -65,10 +66,6 @@ import org.jbpm.graph.exe.Token;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
-
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageDecoder;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 /**
  * Classe que gera uma imagem de exibição do process definition com marcações
@@ -203,9 +200,13 @@ public class SingleImageServlet extends HttpServlet {
 					"Impossível acessar a imagem ou as definições do processo.");
 		}
 
-		ByteArrayInputStream in = new ByteArrayInputStream(imageBytes);
+/*		ByteArrayInputStream in = new ByteArrayInputStream(imageBytes);
 		JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(in);
 		BufferedImage image = decoder.decodeAsBufferedImage();
+		in.close();*/
+		
+		InputStream in = new ByteArrayInputStream(imageBytes);
+		BufferedImage image = ImageIO.read(in);
 		in.close();
 
 		Graphics2D g2dImage = image.createGraphics();
@@ -278,13 +279,17 @@ public class SingleImageServlet extends HttpServlet {
 			}
 		}
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+/*		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		JPEGImageEncoder jie = JPEGCodec.createJPEGEncoder(baos);
 		jie.encode(image);
-		byte[] bytes = baos.toByteArray();
+		byte[] bytes = baos.toByteArray();*/
 
-		OutputStream out = response.getOutputStream();
+		/*OutputStream out = response.getOutputStream();
 		out.write(bytes);
+		out.flush();*/
+		
+		OutputStream out = response.getOutputStream();
+		ImageIO.write(image, "jpg", out);
 		out.flush();
 	}
 

@@ -22,13 +22,14 @@ import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
 import com.saucelabs.testng.SauceOnDemandTestListener;
 // fim saucelabs
 
+
 import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
 import br.gov.jfrj.siga.page.objects.PortariaPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 
 //O listener envia o resultado do testng para o saucelab
-@Listeners({SauceOnDemandTestListener.class})
+//@Listeners({SauceOnDemandTestListener.class})
 public class AcoesDocumentoDigitalIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 	private String codigoDocumento;
 	
@@ -105,6 +106,6 @@ public class AcoesDocumentoDigitalIT extends IntegrationTestBase implements Sauc
 	@Override
 	public SauceOnDemandAuthentication getAuthentication() {
 	    return authentication;
-	}
+	}	
 	
 }

@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.page.objects.SolicitacaoEletronicaContratacaoPage;
 import br.gov.jfrj.siga.page.objects.TarefaPage;
 
 //O listener envia o resultado do testng para o saucelab
-@Listeners({SauceOnDemandTestListener.class})
+//@Listeners({SauceOnDemandTestListener.class})
 public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 	private String codigoDocumento;
 	private TarefaPage tarefaPage;

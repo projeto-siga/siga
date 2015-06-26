@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
 import br.gov.jfrj.siga.page.objects.PortariaPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
 
-@Listeners({SauceOnDemandTestListener.class})
+//@Listeners({SauceOnDemandTestListener.class})
 public class CriacaoDocumentoIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider{
 	private PrincipalPage principalPage;
 	private EditaDocumentoPage editaDocumentoPage;
@@ -77,7 +77,7 @@ public class CriacaoDocumentoIT extends IntegrationTestBase implements SauceOnDe
 		Assert.assertNotNull(util.getWebElement(driver, divVisualizacaoDocumento, By.xpath("//p[contains(., 'Expediente Externo Nº')]")), "Texto Expediente Externo Nº TMP não foi encontrado!");
 	}
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void criaDocumentoInternoImportado() {
 		editaDocumentoPage.preencheDocumentoInternoImportado(propDocumentos);
 		WebElement divVisualizacaoDocumento = util.getWebElement(driver, By.cssSelector("div.gt-content-box"));

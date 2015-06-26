@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.page.objects.VinculacaoPage;
 import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
 
 //O listener envia o resultado do testng para o saucelab
-@Listeners({SauceOnDemandTestListener.class})
+//@Listeners({SauceOnDemandTestListener.class})
 public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 	private String codigoDocumento;
 	private Boolean isDocumentoTesteCriado = Boolean.FALSE;
@@ -309,7 +309,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertTrue(juntada.getText().contains(codigoDocumentoJuntado), "Código do documento juntado não encontrado!");	
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = false, priority = 4)
 	public void visualizarDossie() {
 		operacoesDocumentoPage.clicarLinkVisualizarDossie();
 		VisualizacaoDossiePage visualizacaoDossiePage = PageFactory.initElements(driver, VisualizacaoDossiePage.class);

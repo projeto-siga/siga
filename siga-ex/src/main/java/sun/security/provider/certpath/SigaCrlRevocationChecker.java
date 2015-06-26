@@ -297,16 +297,14 @@ public class SigaCrlRevocationChecker extends PKIXCertPathChecker {
 			sel.setDateAndTime(mCurrentTime);
 
 			// add the default issuer string
-			CertPathHelper.addIssuer(sel, certIssuer);
+			//CertPathHelper.addIssuer(sel, certIssuer);
 
 			for (CertStore mStore : mStores) {
 				mPossibleCRLs.addAll((Collection<X509CRL>) mStore.getCRLs(sel));
 			}
-			DistributionPointFetcher store = DistributionPointFetcher
-					.getInstance();
+//			DistributionPointFetcher store = DistributionPointFetcher.getInstance();
 			boolean[] reasonsMask = new boolean[9];
-			mPossibleCRLs.addAll(store.getCRLs(sel, prevKey, mSigProvider,
-					mStores, reasonsMask));
+			//mPossibleCRLs.addAll(store.getCRLs(sel, prevKey, mSigProvider, mStores, reasonsMask));
 		} catch (Exception e) {
 			if (debug != null) {
 				debug.println("CrlRevocationChecker.verifyRevocationStatus() "

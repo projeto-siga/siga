@@ -8,9 +8,9 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-    	<module>siga-integration-test</module>
-		<module>sauce-siga-integration-test</module>
-        <module>siga-base</module>
+    	<!--<module>siga-integration-test</module> -->
+    	<module>sauce-siga-integration-test</module>
+		<module>siga-base</module>
         <module>siga-ws</module>
         <module>siga-rel</module>
         <module>siga-cd-base</module>
@@ -35,7 +35,7 @@
 		<module>sigapp</module>
         <module>sigari</module>
         <!-- <module>siga-assinador</module> -->
-    <module>siga-dump</module>
+        <module>siga-dump</module>
   </modules>
 
 

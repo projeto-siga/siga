@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
 
 //O listener envia o resultado do testng para o saucelab
-@Listeners({SauceOnDemandTestListener.class})
+//@Listeners({SauceOnDemandTestListener.class})
 public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {	
 	private String codigoDocumento;
 	private String codigoProcesso;
@@ -91,7 +91,7 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 		super.autuar(Boolean.FALSE, "Processo de Outros Assuntos Administrativos");	
 	}
 	
-	@Test(enabled = true, priority = 1)
+	@Test(enabled = false, priority = 1)
 	public void visualizarImpressao() {
 		// Clicar em Visualizar Impressão - Garantir que não retorne um erro
 		Assert.assertTrue(operacoesDocumentoPage.clicarLinkVisualizarImpressao());
@@ -156,7 +156,8 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 		operacoesDocumentoPage.clicarLinkVisualizarDossie();
 		
 		// Garantir que o nome do anexo apareça na tela (é a seção OBJETO, da capa do processo)
-		Assert.assertNotNull(util.getWebElement(driver, By.linkText(nomeArquivo.substring(0, nomeArquivo.indexOf(".")).toLowerCase())), "Nome do arquivo selecionado não encontrado na visualização do Dossiê!");
+		//Assert.assertNotNull(util.getWebElement(driver, By.linkText(nomeArquivo.substring(0, nomeArquivo.indexOf(".")).toLowerCase())), "Nome do arquivo selecionado não encontrado na visualização do Dossiê!");
+		Assert.assertNotNull(util.getWebElement(driver, By.partialLinkText(nomeArquivo.toLowerCase())), "Nome do arquivo selecionado não encontrado na visualização do Dossiê!");
 
 		// Clicar em "Visualizar Movimentações"
 		VisualizacaoDossiePage visualizacaoDossiePage = PageFactory.initElements(driver, VisualizacaoDossiePage.class);

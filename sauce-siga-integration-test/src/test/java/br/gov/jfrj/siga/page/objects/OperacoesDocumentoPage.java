@@ -249,6 +249,7 @@ public class OperacoesDocumentoPage {
 	}
 	
 	public void clicarLinkExibirInformacoesCompletas() {
+		new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(linkExibirInformacoesCompletas));	
 		linkExibirInformacoesCompletas.click();
 	}
 	

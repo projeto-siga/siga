@@ -3,14 +3,14 @@ Before Update or Delete on SIGA.EX_DOCUMENTO
 For Each Row
 WHEN (Old.dt_finalizacao is not null)
 DECLARE
-  PRAGMA AUTONOMOUS_TRANSACTION; -- Trigger em transação autônoma.
+  PRAGMA AUTONOMOUS_TRANSACTION; -- Trigger em transaÃ§Ã£o autÃ´noma.
   QTD_DOC_VAR  number(10,0):= 0;
         
 begin
         if updating then
             if  :Old.dt_finalizacao <> :New.dt_finalizacao
                then
-                 raise_application_error( -20101,'Não é permitido alterar uma DATA de FINALIZACAO já existente' );
+                 raise_application_error( -20101,'NÃ£o Ã© permitido alterar uma DATA de FINALIZACAO jÃ¡ existente' );
              end if;
  
              if :Old.fg_eletronico = 'N' then
@@ -64,10 +64,10 @@ begin
                       :old.DT_DOC_ORIGINAL <> :New.DT_DOC_ORIGINAL OR
                       :old.ID_MOB_AUTUADO <> :New.ID_MOB_AUTUADO
                   then
-                    raise_application_error( -20101,'Não é permitido alterar: não eletrônico com data de finalizacao e com conteúdo.' );
+                    raise_application_error( -20101,'NÃ£o Ã© permitido alterar: nÃ£o eletrÃ´nico com data de finalizacao e com conteÃºdo.' );
                   end if;
                 else
-                    raise_application_error( -20101,'Não é permitido alterar: não eletrônico com data de finalizacao e com conteúdo.' );
+                    raise_application_error( -20101,'NÃ£o Ã© permitido alterar: nÃ£o eletrÃ´nico com data de finalizacao e com conteÃºdo.' );
                 end if;
              elsif :Old.fg_eletronico = 'S' then
                     select count(*) into QTD_DOC_VAR
@@ -134,11 +134,11 @@ begin
                           :old.DT_DOC_ORIGINAL <> :New.DT_DOC_ORIGINAL OR
                           :old.ID_MOB_AUTUADO <> :New.ID_MOB_AUTUADO
                         then      
-                          raise_application_error( -20101,'Não é permitido alterar: eletrônico, com conteúdo, tipo mov. 11 e sem mov. canceladora.' );
+                          raise_application_error( -20101,'NÃ£o Ã© permitido alterar: eletrÃ´nico, com conteÃºdo, tipo mov. 11 e sem mov. canceladora.' );
                         end if;
                    end if;
              end if;
         elsif deleting then
-             raise_application_error( -20101,'Não é permitido excluir: data de finalizacao existente.' );
+             raise_application_error( -20101,'NÃ£o Ã© permitido excluir: data de finalizacao existente.' );
         end if;
 end;

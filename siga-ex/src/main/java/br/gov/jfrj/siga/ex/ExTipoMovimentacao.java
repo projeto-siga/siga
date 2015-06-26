@@ -161,6 +161,8 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 	
 	final static public long TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA = 60;
 
+	final static public long TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO = 61;
+
 
 	public static boolean hasDespacho(long id) {
 		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO

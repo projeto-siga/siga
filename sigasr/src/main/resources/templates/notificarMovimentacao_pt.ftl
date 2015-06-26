@@ -1,11 +1,11 @@
 <html>
 	<body>
 		<p>
-			Informamos que a solicitação <b>${(sol.codigo)!}</b>
-			recebeu a seguinte movimentação em ${(movimentacao.dtIniMovDDMMYYYYHHMM)!}:
+			Informamos que a solicita&ccedil;&atilde;o <b>${(sol.codigo)!}</b>
+			recebeu a seguinte movimenta&ccedil;&atilde;o em ${(movimentacao.dtIniMovDDMMYYYYHHMM)!}:
 		</p>
 		<blockquote>
-			<p>Tipo de movimentação: ${(movimentacao.tipoMov.nome)!}</p>
+			<p>Tipo de movimenta&ccedil;&atilde;o: ${(movimentacao.tipoMov.nome)!}</p>
 			<p>${(movimentacao.descrMovimentacao)!}</p>
 			<p>
 				Por ${(movimentacao.cadastrante.descricaoIniciaisMaiusculas)!}
@@ -13,7 +13,7 @@
 			</p>
 		</blockquote>
 		<p>
-			Para acessar a solicitação, clique <a href="${link}">aqui</a>.
+			Para acessar a solicita&ccedil;&atilde;o, clique <a href="${link}">aqui</a>.
 		</p>
 	</body>
 </html>

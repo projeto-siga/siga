@@ -53,7 +53,7 @@ function sbmt(offset) {
 		itens="${itens}" var="item">
 		<tr class="${evenorodd}">
 			<td width="10%" align="center">
-				<a href="javascript: opener.retorna_${param.propriedade}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a>
+				<a href="javascript: opener.retorna_${param.propriedade}('${item.id}','${item.sigla}',escape('${item.descricao}'));">${item.sigla}</a>
 			</td>
 			<td width="70%" align="left">${item.descricao}</td>
 			<td align="left" width="20%">${item.hisDtFim}</td>

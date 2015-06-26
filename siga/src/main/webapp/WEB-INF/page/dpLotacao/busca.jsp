@@ -57,11 +57,10 @@
 			<td align="left">Nome</td>
 			<td>Fim de Vigência</td>
 		</tr>
-		<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
-			itens="${itens}" var="item">
+		<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}" itens="${itens}" var="item">
 			<tr class="${evenorodd}">
 				<td width="10%" align="center"><a
-					href="javascript: opener.retorna_${param.propriedade}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
+					href="javascript: opener.retorna_${param.propriedade}('${item.id}','${item.sigla}',escape('${item.descricao}'));">${item.sigla}</a></td>
 				<td width="70%" align="left">${item.descricao}</td>
 				<td align="left" width="20%">${item.dataFimLotacao}</td>
 			</tr>

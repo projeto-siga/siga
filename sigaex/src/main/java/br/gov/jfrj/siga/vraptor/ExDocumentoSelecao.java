@@ -19,7 +19,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.libs.webwork.Selecao;
+import br.gov.jfrj.siga.model.Selecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 public class ExDocumentoSelecao extends Selecao {

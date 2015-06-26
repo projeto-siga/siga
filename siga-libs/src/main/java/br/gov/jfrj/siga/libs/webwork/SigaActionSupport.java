@@ -64,7 +64,7 @@ PrincipalAware, ConheceUsuario {
 	public String getMensagem() {
 		return mensagem;
 	}
-
+	
 	public void setMensagem(String mensagem) {
 		this.mensagem = mensagem;
 	}
@@ -148,6 +148,10 @@ PrincipalAware, ConheceUsuario {
 
 	public DpPessoa getCadastrante() {
 		return cadastrante;
+	}
+	
+	public DpLotacao getLotaCadastrante(){
+		return this.cadastrante.getLotacao();
 	}
 
 	public List<DpSubstituicao> getMeusTitulares() throws Exception {

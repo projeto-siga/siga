@@ -2,7 +2,7 @@
 <script>
 $(document).ready(function() {
 	$('#outrasInformacoesDaFilha').hide();
-	$("#escalonar_dialog").dialog('option', 'width', 580);
+	$("#escalonar_dialog").dialog('option', 'width', 700);
 	onchangeCheckCriaFilha();
 });
 function onchangeCheckCriaFilha(){
@@ -21,6 +21,7 @@ function carregarAcao(){
 	var inputIdSolicitacao = document.getElementById('id');
 	var inputIdItem = document.getElementById('itemConfiguracao');
 	var params = 'id='+ inputIdSolicitacao.value + '&itemConfiguracao='+inputIdItem.value;
+	jQuery.blockUI(objBlock);
 	PassAjaxResponseToFunction('@{Application.exibirAcaoEscalonar}?' + params , 'carregouAcao', null, false, null);
 }
 
@@ -30,6 +31,7 @@ function carregouAcao(response, param){
 	var scripts = div.getElementsByTagName("script");
 	for(var i=0;i<scripts.length;i++)  
 	   eval(scripts[i].text);
+	jQuery.unblockUI();
 }
 </script>
 <div class="gt-content-box gt-form">
@@ -37,7 +39,8 @@ function carregouAcao(response, param){
 			onsubmit="javascript: return block();" method="POST" enctype="multipart/form-data">
 		
 		<div class="gt-form-row" >
-			<label>#{checkbox name:'criaFilha', onchange:'onchangeCheckCriaFilha();', value:true /} 
+			<label>	#{set valueCheckbox : titular?.orgaoUsuario?.idOrgaoUsu == 1 ? false : true /}
+					#{checkbox name:'criaFilha', onchange:'onchangeCheckCriaFilha();', value: valueCheckbox /} 
 					#{if solicitacao.isFilha()} #{set codigo : solicitacao.solicitacaoPai.codigo /} #{/if}
 					#{else} #{set codigo : solicitacao.codigo /} #{/else}
 					Criar Solicitação filha de ${codigo}</label>
@@ -46,16 +49,16 @@ function carregouAcao(response, param){
 			nome:'itemConfiguracao',
 			value:solicitacao.itemConfiguracao, grande:true, onchange:"carregarAcao();",
 			params:'sol.solicitante='+solicitacao.solicitante?.idPessoa+'&sol.local='+solicitacao.local?.idComplexo+
-						'&sol.cadastrante.idPessoa='+cadastrante?.idPessoa+'&sol.lotaCadastrante.idLotacao='+lotaTitular?.idLotacao /} <span style="color: red">#{error
+						'&sol.titular='+cadastrante?.idPessoa+'&sol.lotaTitular='+lotaTitular?.idLotacao /} <span style="color: red">#{error
 				'solicitacao.itemConfiguracao' /}</span>
 		</div>
 		<div id="divAcaoEscalonar">#{include 'Application/exibirAcaoEscalonar.html' /}</div>
+		<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin:5px 0 0 -3px;" >Alterar atendente</a>
+		<input type="hidden" name="idAtendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
+		<br />
 		<div id="outrasInformacoesDaFilha" class="gt-form-row">
-			<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin:5px 0 0 -3px;" >Alterar atendente</a>
-			<input type="hidden" name="idAtendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
-			<br />
 			<label>Descrição</label>
-			<textarea name="descricao" cols="70" rows="4">${solicitacao.descrSolicitacao}</textarea>
+			<textarea name="descricao" cols="85" rows="7">${solicitacao.descrSolicitacao}</textarea>
 			<br /><br />	
 			#{if !solicitacao.isPai() && !solicitacao.isFilha()}
 				#{checkbox name:'fechadoAuto',
@@ -105,7 +108,7 @@ function carregouAcao(response, param){
 <script>	
 	function modalAbrir(componentId) {
 		limparCampos();
-		$("#" + componentId + "_dialog").dialog('option', 'width', 560);
+		$("#" + componentId + "_dialog").dialog('option', 'width', 580);
 		$("#" + componentId + "_dialog").dialog('open');
 	}
 	

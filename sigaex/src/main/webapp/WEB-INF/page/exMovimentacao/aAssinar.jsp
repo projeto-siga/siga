@@ -2,11 +2,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb" trimDirectiveWhitespaces="true"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 
 <siga:pagina titulo="Documento" onLoad="javascript: TestarAssinaturaDigital();">
+	<script type="text/javascript" language="Javascript1.1">
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
+		}
+	</script>
+	
 	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
 	</c:if>
@@ -66,14 +78,14 @@
 					<input type="hidden" id="pdfchk_0" name="pdfchk_${doc.idDoc}" value="${sigla}" />
 					<input type="hidden" id="urlchk_0" name="urlchk_${doc.idDoc}" value="/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
 				
-					<c:set var="jspServer" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/app/expediente/mov/assinar_gravar.action" />
-					<c:set var="nextURL" value="${request.scheme}://${request.serverName}:${request.localPort}${request.contextPath}/app/expediente/doc/exibir.action?sigla=${sigla}" />
-					<c:set var="urlPath" value="${request.contextPath}" />
+					<c:set var="jspServer" value="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.localPort}${pageContext.request.contextPath}/app/expediente/mov/assinar_gravar" />
+					<c:set var="nextURL" value="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.localPort}${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" />
+					<c:set var="urlPath" value="${pageContext.request.contextPath}" />
 
 					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
 					<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 					<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-					<c:set var="urlBase" value="${request.scheme}://${request.serverName}:${request.serverPort}" />
+					<c:set var="urlBase" value="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}" />
 					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
 
 					<c:set var="botao" value="" />
@@ -82,7 +94,7 @@
 				
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="/WEB-INF/page/exMovimentacao/inc_assina_js.jsp" />
+					<c:import url="/javascript/inc_assina_js.jsp" />
 					<div id="capicom-div">
 						<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);"
 							class="gt-btn-alternate-large gt-btn-left">Assinar Documento</a>
@@ -106,9 +118,52 @@
 				 
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
+					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,pageContext.request.scheme,pageContext.request.serverName,pageContext.request.localPort,urlPath,jspServer,nextURL,botao,lote)}	
 				</c:if>
 			</div>
 		</div>
 	</div>
+	<c:if test="${not autenticando}">
+		<c:if test="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}">
+			<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
+		        		
+			<div id="dialog-form" title="Assinar com Senha">
+	 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_senha_gravar" >
+	 				<input type="hidden" id="sigla" name="sigla"	value="${sigla}" />
+	    			<fieldset>
+	    			  <label>Matrícula</label> <br/>
+	    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+	    			  <label>Senha</label> <br/>
+	    			  <input type="password" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off"/>
+	    			</fieldset>
+	  			</form>
+			</div>
+		
+			 <script> 
+			    dialog = $("#dialog-form").dialog({
+			      autoOpen: false,
+			      height: 210,
+			      width: 350,
+			      modal: true,
+			      buttons: {
+			          "Assinar": assinarGravar,
+			          "Cancelar": function() {
+			            dialog.dialog( "close" );
+			          }
+			      },
+			      close: function() {
+			        
+			      }
+			    });
+				
+			    function assinarComSenha() {
+			       dialog.dialog( "open" );
+			    }
+		
+			    function assinarGravar() {
+			    	$("#form-assinarSenha").submit();
+				}
+			  </script>
+		</c:if>
+	</c:if>
 </siga:pagina>

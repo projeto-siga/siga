@@ -36,12 +36,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
 public abstract class AbstractCpServico extends Objeto implements Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_SERVICO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = Catalogs.CORPORATIVO + ".CP_SERVICO_SEQ")
 	@Id
 	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
 	@Column(name = "ID_SERVICO", nullable = false)

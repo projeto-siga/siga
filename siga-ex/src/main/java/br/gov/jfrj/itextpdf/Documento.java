@@ -1308,7 +1308,7 @@ public class Documento {
 						//+ "http://"
 						//+ servernameport
 						+ contextpath
-						+ "/arquivo/exibir.action?arquivo="
+						+ "/app/arquivo/exibir?arquivo="
 						+ an.getArquivo().getReferenciaPDF()
 						+ "\" target=\"_blank\">");
 				sb.append(an.getNome());
@@ -1319,14 +1319,7 @@ public class Documento {
 								+ ((ExMovimentacao) an.getArquivo())
 										.getDescrMov());
 					}
-//				sb.append("<iframe style=\"visibility: visible; margin: 0px; padding: 0px; display: block;height: 30em; border: 1px solid black;\" src=\"http://"
-//						+ servernameport
-//						+ contextpath
-//						+ "/arquivo/exibir.action?arquivo="
-//						+ an.getArquivo().getReferenciaPDF()
-//						+ "&semmarcas=1\" width=\"100%\" frameborder=\"0\" scrolling=\"auto\"></iframe>");
 
-				// sb.append("<br/>");
 				sb.append("</div>");
 			}
 

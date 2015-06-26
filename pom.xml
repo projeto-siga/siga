@@ -8,8 +8,7 @@
 	<packaging>pom</packaging>
 	<version>1.1</version>
 
-	<modules>
-		<module>siga-integration-test</module>
+	<modules>		
 		<module>siga-base</module>
 		<module>siga-ws</module>
 		<module>siga-rel</module>
@@ -27,9 +26,9 @@
 		<module>siga-ext</module>
 		<module>siga-ex</module>
 		<module>sigagc</module>
-		<!--<module>siga-play-module</module>
+		<module>siga-play-module</module>
  		<module>sigasr</module>
- 		<module>sigapp</module>
+ 		<!--<module>sigapp</module>
 		<module>sigari</module>
  		<module>sigacd</module>
  		<module>siga-cd</module>

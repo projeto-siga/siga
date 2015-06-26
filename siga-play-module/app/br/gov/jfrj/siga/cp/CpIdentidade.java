@@ -30,6 +30,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -37,7 +38,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "CP_IDENTIDADE", schema = "CORPORATIVO")
+@Table(name = "CP_IDENTIDADE", schema = Catalogs.CORPORATIVO)
 
 // Ver um lugar melhor para queries assim ficarem quando não se estiver usando
 // XML
@@ -52,7 +53,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 		+ "and (pes.situacaoFuncionalPessoa = '1' "
 		+ "or pes.situacaoFuncionalPessoa = '2' "
 		+ "or pes.situacaoFuncionalPessoa = '31') ") })
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpIdentidade extends AbstractCpIdentidade {
 	
 	public DpPessoa getPessoaAtual() {

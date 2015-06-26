@@ -36,14 +36,16 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "CP_CONFIGURACAO", schema = "CORPORATIVO")
+@Table(name = "CP_CONFIGURACAO", schema = Catalogs.CORPORATIVO)
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
 		@NamedQuery(name = "consultarDataUltimaAtualizacao", query = ""
@@ -57,12 +59,14 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 				+ "and hisDtFim is null")
 
 })
-public class CpConfiguracao extends AbstractCpConfiguracao {
+public class CpConfiguracao extends AbstractCpConfiguracao implements CpConvertableEntity {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3624557793773660738L;
+	
+	public static final ActiveRecord<CpConfiguracao> AR = new ActiveRecord<>(CpConfiguracao.class);
 
 	public CpConfiguracao() {
 	}

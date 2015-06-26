@@ -60,32 +60,27 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 	private Integer tamanho;
 
 	public String aBuscar(String sigla, String postback) throws Exception {
-		if (postback == null) {
-
-		}
-		if (sigla != null) {
+		if (sigla != null) 
 			setNome(sigla.toUpperCase());
-		}
 
 		int offset = 0;
 		int itemPagina = 0;
-		if (getP().getOffset() != null) {
+		if (getP().getOffset() != null) 
 			offset = getP().getOffset();
-		}
-		if (getItemPagina() != null) {
+
+		if (getItemPagina() != null) 
 			itemPagina = getItemPagina();
-		}
 
 		final DaoFiltroT flt = createDaoFiltro();
 
 		tamanho = dao().consultarQuantidade(flt);
-
 		itens = dao().consultarPorFiltro(flt, offset, itemPagina);
-
+		
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		return "busca";
 	}
 
-	public String aSelecionar(String sigla) throws Exception {
+	public String aSelecionar(String sigla) {
 		final DaoFiltroT flt = createDaoFiltro();
 		
 		try {
@@ -108,7 +103,7 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 				sel = (Selecionavel) lotacao;
 			}
 			else*/
-				sel = dao().consultarPorSigla(flt);
+			sel = dao().consultarPorSigla(flt);
 		} catch (final Exception ex) {
 			sel = null;
 		}
@@ -129,8 +124,15 @@ public abstract class SigaSelecionavelControllerSupport<T extends Selecionavel, 
 
 		return "ajax_retorno";
 	}
+	
+	public Integer calculaPaginaAtual(Integer offset) {
+		if(getItemPagina() == null)
+			setItemPagina(10);
+		
+		return offset == null ? 1 : (offset / getItemPagina()) + 1;
+	}
 
-	abstract public DaoFiltroT createDaoFiltro() throws Exception;
+	protected abstract DaoFiltroT createDaoFiltro();
 
 	public Integer getItemPagina() {
 		return itemPagina;

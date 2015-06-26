@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 
@@ -13,10 +13,9 @@
 			$("html").addClass("fisico");
 		</script>
 	</c:if>
-	<c:if
-		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-		<c:import url="/WEB-INF/page/exMovimentacao/inc_assina_js.jsp" />
-	</c:if>
+<%-- 	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}"> --%>
+		<c:import url="/javascript/inc_assina_js.jsp" />
+<%-- 	</c:if> --%>
 
 	<script type="text/javascript" language="Javascript1.1">
 		var frm = document.getElementById('frm');
@@ -73,6 +72,16 @@
 				result = false;
 			}
 			return result;
+		}
+
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
 		}
 	</script>
 
@@ -271,9 +280,21 @@
 															    </c:url>
 														    </c:otherwise>
 														</c:choose>
-														<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" url="${pageContext.request.contextPath}${acao.url}"
-															test="${true}" popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
-															ajax="${acao.ajax}" idAjax="${mov.idMov}" />
+														
+														<c:set var="retornaTela" value='${acao.acao == "excluir"}'></c:set>
+														<c:choose>
+															<c:when test="${retornaTela}">
+																<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" url="${pageContext.request.contextPath}${acao.url}continuarTela=TRUE"
+																test="${true}" popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
+																ajax="${acao.ajax}" idAjax="${mov.idMov}" />
+															</c:when>
+															<c:otherwise>
+																<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" url="${pageContext.request.contextPath}${acao.url}"
+																test="${true}" popup="${acao.popup}" confirm="${acao.msgConfirmacao}"
+																ajax="${acao.ajax}" idAjax="${mov.idMov}" />
+															</c:otherwise>
+														</c:choose>
+														
 														<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
 															    <c:set var="assinadopor" value="${false}" />
 														</c:if>
@@ -294,15 +315,15 @@
 					</div>
 					<br />
 					<div id="dados-assinatura" style="visible: hidden">
-						<c:set var="jspServer"
-							value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
-						<c:set var="nextURL"
-							value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
-						<c:set var="urlPath" value="/${request.contextPath}" />
+						<c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
+						<c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar"/>							
+						<c:set var="nextURL" value="${request.contextPath}/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
+						<c:set var="urlPath" value="${request.contextPath}" />
 		
-						<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" /> <input
-							type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" /> <input type="hidden"
-							id="urlpath" name="urlpath" value="${urlPath}" />
+						<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
+						<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
+						<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" /> 
+						<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
 						<c:set var="urlBase" value="${request.scheme}://${request.serverName}:${request.serverPort}" />
 						<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
 		
@@ -343,6 +364,62 @@
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 						    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}						
 					</c:if>
+					
+					<c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+					 <c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+			
+					 <c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
+		  				     <a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
+		  				     
+							<div id="dialog-form" title="Assinar com Senha">
+					 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" >
+					 				<input type="hidden" id="id" name="id" value="${mov.idMov}" />
+					 				<input type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
+					 				<input type="hidden" id="sigla" name="sigla" value="${sigla}" />
+					    			<fieldset>
+					    			  <label>Matrícula</label> <br/>
+					    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
+					    			  <label>Senha</label> <br/>
+					    			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>
+					    			</fieldset>
+					  			</form>
+							</div>
+		  				     
+			  				 <script> 
+							    dialog = $("#dialog-form").dialog({
+								    autoOpen: false,
+						      		height: 210,
+						      		width: 350,
+						      		modal: true,
+						      		buttons: {
+						    	  		<c:if test="${podeAssinarMovimentacaoComSenha}">
+						          			"Assinar": assinarGravar,
+						          		</c:if>	
+						    	  		<c:if test="${podeConferirCopiaMovimentacaoComSenha}">
+							          		"Autenticar": conferirCopiaGravar,
+						          		</c:if>	
+						          			"Cancelar": function() {
+						            		dialog.dialog( "close" );
+						          	}
+					      		},
+			    		      close: function() {
+					        
+						      }
+					    	});
+					
+							    function assinarComSenha() {
+							       dialog.dialog( "open" );
+							    }
+					
+							    function assinarGravar() {
+							    	AssinarDocumentosSenha('false', this);
+								}
+					
+							    function conferirCopiaGravar() {
+							    	AssinarDocumentosSenha('true', this);
+								}
+						  </script>
+					 </c:if>
 				</div>
 			</c:when>
 			<c:otherwise>

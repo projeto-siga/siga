@@ -18,13 +18,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+
+import com.google.common.collect.Lists;
 
 public class SigaController {
 	public SigaObjects so;
@@ -43,7 +48,7 @@ public class SigaController {
 	
 	private String mensagemAguarde = null;
 	
-	//Todo: verificar se após a migração do vraptor se ainda necessita deste atributo "par"
+	//Todo: verificar se apï¿½s a migraï¿½ï¿½o do vraptor se ainda necessita deste atributo "par"
 	private Map<String, String[]> par;
 	
 	protected Map<String, String[]> getPar() {
@@ -83,6 +88,7 @@ public class SigaController {
 		return postback;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public SigaController(HttpServletRequest request, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
 		super();
@@ -95,45 +101,83 @@ public class SigaController {
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-
+		
 		result.include("cadastrante", getCadastrante());
-		result.include("lotaCadastrante", getLotaTitular());
+		result.include("lotaCadastrante", getLotaCadastrante());
 		result.include("titular", getTitular());
 		result.include("lotaTitular", getLotaTitular());
+		result.include("meusTitulares", getMeusTitulares());
+		result.include("identidadeCadastrante",getIdentidadeCadastrante());
 	}
 
+	public List<DpSubstituicao> getMeusTitulares() {
+		try {
+			List<DpSubstituicao> substituicoes = so.getMeusTitulares();
+			if (substituicoes == null) {
+				return Lists.newArrayList();
+			}
+			resolveLazy(substituicoes);
+			return substituicoes;
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro", 500, e);
+		}
+	}
+
+	private void resolveLazy(List<DpSubstituicao> substituicoes) {
+		for (DpSubstituicao dpSubstituicao : substituicoes) {
+			if (dpSubstituicao.getTitular() != null) {
+				dpSubstituicao.getTitular().getId();
+			}
+			
+			if (dpSubstituicao.getLotaTitular() != null) {
+				dpSubstituicao.getLotaTitular().getId();
+			}
+		}
+	}
+	
 	public void appexception() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(400);
-		result.forwardTo("/sigalibs/erroGeral.jsp");
+		result.forwardTo("/WEB-INF/page/erroGeral.jsp");
 	}
 
 	public void exception() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(500);
-		result.forwardTo("/sigalibs/erroGeral.jsp");
+		if (requisicaoEhAjax()) {
+		    result.forwardTo("/WEB-INF/page/erroGeralAjax.jsp");
+		} else {
+		    result.forwardTo("/WEB-INF/page/erroGeral.jsp");
+		}
 	}
 
+    private boolean requisicaoEhAjax() {
+        return request.getHeader("X-Requested-With") != null;
+    }
+
 	protected DpLotacao getLotaTitular() {
-		// TODO Auto-generated method stub
 		return so.getLotaTitular();
 	}
 	
 	protected void setLotaTitular(DpLotacao lotaTitular) {
-		// TODO Auto-generated method stub
 		so.setLotaTitular(lotaTitular);
 	}	
 
 	protected DpPessoa getTitular() {
-		// TODO Auto-generated method stub
 		return so.getTitular();
 	}
 	
 	protected void setTitular(DpPessoa titular) {
-		// TODO Auto-generated method stub
 		so.setTitular(titular);
 	}
 	
+	protected DpLotacao getLotaCadastrante(){
+		if(null != so.getCadastrante()) {
+			return so.getCadastrante().getLotacao();
+		} else {
+			return null;
+		}
+	}
 
 	protected DpPessoa getCadastrante() {
 		return so.getCadastrante();
@@ -215,7 +259,7 @@ public class SigaController {
 	}
 
 	protected int redirectToHome() {
-		result.redirectTo("/../siga/principal.action");
+		result.redirectTo("/../siga/app/principal");
 		return 0;
 	}
 
@@ -231,7 +275,7 @@ public class SigaController {
 		this.request = request;
 	}
 	
-	protected void assertAcesso(String pathServico) throws AplicacaoException,Exception {
+	protected void assertAcesso(final String pathServico) {
 		so.assertAcesso(pathServico);
 	}	
 	
@@ -239,6 +283,7 @@ public class SigaController {
 		this.p = p;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void setPar(final Map par) {
 		this.par = par;
 	}
@@ -261,6 +306,11 @@ public class SigaController {
 	
 	protected Paginador getP() {
 		return p;
+	}
+	
+	protected boolean podeUtilizarServico(String servico)
+			throws Exception {
+		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), servico);
 	}
 
 }

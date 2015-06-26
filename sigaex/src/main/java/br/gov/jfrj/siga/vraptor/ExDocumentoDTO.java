@@ -18,6 +18,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -29,9 +32,6 @@ import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
-import br.gov.jfrj.siga.libs.webwork.CpOrgaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 
 public class ExDocumentoDTO {
 	
@@ -346,7 +346,7 @@ public class ExDocumentoDTO {
 	}
 
 	/*
-	 * como usamos <ww:file name="arquivo" .../> o content Type do arquivo será
+	 * como usamos <file name="arquivo" .../> o content Type do arquivo será
 	 * obtido através getter/setter de <file-tag-name>ContentType
 	 */
 	public String getArquivoContentType() {
@@ -354,7 +354,7 @@ public class ExDocumentoDTO {
 	}
 
 	/*
-	 * como usamos <ww:file name="arquivo" .../> o nome do arquivo será obtido
+	 * como usamos <file name="arquivo" .../> o nome do arquivo será obtido
 	 * através getter/setter de <file-tag-name>FileName
 	 */
 	public String getArquivoFileName() {
@@ -591,7 +591,7 @@ public class ExDocumentoDTO {
 		return substituicao;
 	}
 	
-	public ExFormaDocumento getFormaDocPorTipo() throws Exception {
+	public ExFormaDocumento getFormaDocPorTipo() {
 		return getFormasDoc().get(0);
 	}
 

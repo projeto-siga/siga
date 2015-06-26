@@ -65,6 +65,24 @@
 			and cpgrp.hisAtivo = 1
 		]]>
 	</query>
+	
+	<query name="consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome">
+		<![CDATA[
+			select count(*) from br.gov.jfrj.siga.cp.CpGrupo cpgrp
+			where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo)
+			and (upper(cpgrp.siglaGrupo) like upper('%'||:siglaGrupo||'%') or upper(cpgrp.dscGrupo) like upper('%'||:siglaGrupo||'%'))
+			and cpgrp.hisAtivo = 1
+		]]>
+	</query>
+	
+	<query name="consultarCpGrupoPorCpTipoGrupoIdENome">
+		<![CDATA[
+			from br.gov.jfrj.siga.cp.CpGrupo cpgrp
+			where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo)
+			and (upper(cpgrp.siglaGrupo) like upper('%'||:siglaGrupo||'%') or upper(cpgrp.dscGrupo) like upper('%'||:siglaGrupo||'%'))
+			and cpgrp.hisAtivo = 1
+		]]>
+	</query>
 
 	<query name="consultarPorSiglaCpGrupo">
 		<![CDATA[select g from br.gov.jfrj.siga.cp.CpGrupo g where

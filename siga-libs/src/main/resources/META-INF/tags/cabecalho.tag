@@ -198,16 +198,16 @@ ${meta}
 									<div class="gt-search-inner" onclick="">
 										<siga:selecao propriedade="buscar"
 											tipo="generico" tema="simple" ocultardescricao="sim"
-											buscar="nao" siglaInicial="Buscar" modulo="siga" />
-										<script type="text/javascript">
-
+											buscar="nao" siglaInicial="Buscar" modulo="siga" urlAcao="buscar" urlSelecionar="selecionar"/>
+											<script type="text/javascript">
+											
 											var lis = document
 													.getElementsByTagName('li');
 											 
 											for (var i = 0, li; li = lis[i]; i++) {
 												var link = li
 														.getElementsByTagName('a')[0];
-
+											
 												if (link) {
 													link.onfocus = function() {
 														var ul = this.parentNode
@@ -227,9 +227,9 @@ ${meta}
 															lastItem.onblur = function() {
 																this.parentNode.parentNode.style.display = 'none';
 																  if (this.id == "relclassificados"){
-	                                                                    var rel = document.getElementById("relatorios");
-	                                                                    rel.style.display = 'none';
-	                                                                }
+			                                                          var rel = document.getElementById("relatorios");
+			                                                          rel.style.display = 'none';
+			                                                      }
 															}
 															lastItem.parentNode.onblur = function() {
 																this.parentNode.style.display = '';
@@ -238,11 +238,9 @@ ${meta}
 													}
 												}
 											}
-
-											var fld = document
-													.getElementById("buscar_genericoSel_sigla");
-											fld.setAttribute("class",
-													"gt-search-text");
+											
+											var fld = document.getElementsByName('buscar_genericoSel.sigla')[0];
+											fld.setAttribute("class", "gt-search-text");
 											fld.className = "gt-search-text";
 											fld.onfocus = function() {
 												if (this.value == 'Buscar') {
@@ -258,9 +256,8 @@ ${meta}
 													ajax_buscar_generico();
 											};
 											fld.onkeypress = function(event) {
-												var fid = document
-														.getElementById("buscar_genericoSel_id");
-
+												var fid = document.getElementsByName('buscar_genericoSel.id')[0];
+											
 												event = (event) ? event
 														: window.event
 												var keyCode = (event.which) ? event.which
@@ -271,8 +268,7 @@ ${meta}
 														fld.onblur();
 													} else {
 														window.alert("1");
-														window.location.href = '${request.scheme}://${request.serverName}:${request.serverPort}/sigaex/expediente/doc/exibir.action?sigla='
-																+ fld.value;
+														window.location.href = '${request.scheme}://${request.serverName}:${request.serverPort}/sigaex/app/expediente/doc/exibir?sigla='+ fld.value;
 													}
 													return false;
 												} else {
@@ -280,11 +276,10 @@ ${meta}
 													return true;
 												}
 											};
-
+											
 											self.resposta_ajax_buscar_generico = function(
 													response, d1, d2, d3) {
-												var sigla = document
-														.getElementsByName('buscar_genericoSel.sigla')[0].value;
+												var sigla = document.getElementsByName('buscar_genericoSel.sigla')[0].value;
 												var data = response.split(';');
 												if (data[0] == '1') {
 													retorna_buscar_generico(
@@ -295,15 +290,15 @@ ${meta}
 														window.location.href = data[3];
 													}
 													return
-
+											
 												}
 												retorna_buscar_generico('', '',
 														'');
-
+											
 												return;
-
+											
 											}
-										</script>
+											</script>											
 									</div>
 							</c:if>
 						</div>

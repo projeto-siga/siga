@@ -36,6 +36,7 @@ import com.opensymphony.xwork.Action;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -296,8 +297,8 @@ public class CpFeriadoAction extends SigaAnonimoActionSupport {
 			CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(getIdOcorrencia());	
 			this.setId(ocorrencia.getCpFeriado().getIdFeriado());
 			this.setDscFeriado(ocorrencia.getCpFeriado().getDescricao());		
-			this.setDtIniFeriado(stringToDate(ocorrencia.getDtRegIniDDMMYY()));
-			this.setDtFimFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYY()));			
+			this.setDtIniFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYYYY()));
+			this.setDtFimFeriado(stringToDate(ocorrencia.getDtRegFimDDMMYYYY()));	
 		} else {
 			if (getId() != null) {
 				CpFeriado feriado = daoFeriado(getId());		

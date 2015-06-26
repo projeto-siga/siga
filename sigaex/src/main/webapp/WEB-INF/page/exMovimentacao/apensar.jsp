@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 
 <siga:pagina titulo="Apensar Documento">
@@ -70,7 +70,7 @@
 						<tr>
 							<td>Documento Mestre:</td>
 							<td>
-								<siga:selecao tema='simple' titulo="Documento Mestre:" propriedade="documentoRef" urlAcao="buscar" modulo="sigaex" />
+								<siga:selecao tema='simple' titulo="Documento Mestre:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex" />
 							</td>
 						</tr>
 						<tr class="button">

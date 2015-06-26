@@ -18,22 +18,27 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoGrupo;
+import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Resource
 public class PerfilController extends GrupoController {
 
-	public PerfilController(HttpServletRequest request, Result result,
-			SigaObjects so, EntityManager em) {
+	public PerfilController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -60,8 +65,10 @@ public class PerfilController extends GrupoController {
 
 	@Get("/app/gi/perfil/editar")
 	public void edita(Long idCpGrupo) throws Exception {
+		
 		assertAcesso("PERFIL:Gerenciar grupos de email");
 		super.aEditar(idCpGrupo);
+		
 		// Tipo Grupo = Perfil
 		result.include("idCpTipoGrupo", getIdTipoGrupo());
 		result.include("cpTipoGrupo", getCpTipoGrupo());
@@ -76,25 +83,35 @@ public class PerfilController extends GrupoController {
 		result.include("lotacaoGestoraSel", getLotacaoGestoraSel());
 		result.include("confGestores", getConfGestores(idCpGrupo));
 		result.include("configuracoesGrupo", getConfiguracoesGrupo());
-		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo",
-				getTiposConfiguracaoGrupoParaTipoDeGrupo());
+		result.include("tiposConfiguracaoGrupoParaTipoDeGrupo", getTiposConfiguracaoGrupoParaTipoDeGrupo());
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
-		result.include("idConfiguracao", getIdConfiguracao());
-
 	}
 
+	@SuppressWarnings("unchecked")
 	@Post("/app/gi/perfil/gravar")
 	public void gravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
 			CpGrupoDeEmailSelecao grupoPaiSel,
-			Integer codigoTipoConfiguracaoNova, String conteudoConfiguracaoNova)
+			List<String> codigoTipoConfiguracaoSelecionado,
+			Integer codigoTipoConfiguracaoNova, 
+			String conteudoConfiguracaoNova,
+			List<String> idConfiguracao,
+			List<String> conteudoConfiguracaoSelecionada)
 			throws Exception {
 
 		assertAcesso("PERFIL:Gerenciar grupos de email");
 
-		super.aGravar(idCpGrupo, siglaGrupo, dscGrupo, grupoPaiSel,
-				codigoTipoConfiguracaoNova, conteudoConfiguracaoNova);
-
-		result.redirectTo(this).lista();
+		Long novoIdCpGrupo = super.aGravar(
+				idCpGrupo
+				, siglaGrupo
+				, dscGrupo
+				, grupoPaiSel
+				, codigoTipoConfiguracaoNova
+				, conteudoConfiguracaoNova
+				, idConfiguracao
+				, codigoTipoConfiguracaoSelecionado
+				, conteudoConfiguracaoSelecionada);
+		
+		result.redirectTo(MessageFormat.format("/app/gi/perfil/editar?idCpGrupo={0}", novoIdCpGrupo.toString()));
 	}
 
 	@Post("/app/gi/perfil/excluir")
@@ -102,6 +119,38 @@ public class PerfilController extends GrupoController {
 		assertAcesso("PERFIL:Gerenciar grupos de email");
 		super.aExcluir(idCpGrupo);
 		result.redirectTo(this).lista();
+	}
+	
+	@Post
+	@Get
+	@Path("/app/gi/perfil/buscar")
+	public void buscar(final String sigla,
+			           final String postback,
+			           final Long idCpTipoGrupo,
+			           final Integer offset,
+			           final String propriedade) throws Exception{
+		
+		getP().setOffset(offset);
+		super.aBuscar(sigla, postback);
+		result.include("tamanho", getTamanho());
+		result.include("request",getRequest());
+		result.include("itens",this.getItens());
+		result.include("sigla",sigla);
+		result.include("postback",postback);
+		result.include("offset",offset);
+		result.include("param",getRequest().getParameterMap());
+		result.include("propriedade",propriedade);
+	}
+	
+	@Get("/app/gi/perfil/selecionar")
+	public void selecionar(String sigla){
+		String resultado =  super.aSelecionar(sigla);
+		if (resultado == "ajax_retorno"){
+			result.include("sel", getSel());
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+		}else{
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
+		}
 	}
 
 }

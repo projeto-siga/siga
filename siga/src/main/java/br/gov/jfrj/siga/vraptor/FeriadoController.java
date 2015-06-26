@@ -41,6 +41,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -48,17 +49,12 @@ import br.gov.jfrj.siga.dp.CpOcorrenciaFeriado;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 @Resource
 public class FeriadoController extends SigaController {
 	
 	public FeriadoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
 	@Get("/app/feriado/listar")
@@ -70,7 +66,6 @@ public class FeriadoController extends SigaController {
 			result.include("id", feriado.getId());
 			result.include("dscFeriado", feriado.getDescricao());
 		}			
-		
 		result.include("itens", CpDao.getInstance().listarCpFeriadoPorDescricao());
 	}
 	
@@ -89,14 +84,13 @@ public class FeriadoController extends SigaController {
 		feriado.setDscFeriado(dscFeriado);
 		
 		try {
-			ModeloDao.iniciarTransacao();
+			dao().iniciarTransacao();
 			dao().gravar(feriado);
-			ModeloDao.commitTransacao();
+			dao().commitTransacao();
 		} catch (final Exception e) {
-			ModeloDao.rollbackTransacao();
+			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
-		
 		result.redirectTo(this).lista(null);
 	}
 	
@@ -106,12 +100,12 @@ public class FeriadoController extends SigaController {
 		
 		if (id != null) {
 			try {
-				ModeloDao.iniciarTransacao();
+				dao().iniciarTransacao();
 				CpFeriado feriado = daoFeriado(id);				
 				dao().excluir(feriado);				
-				ModeloDao.commitTransacao();				
+				dao().commitTransacao();				
 			} catch (final Exception e) {
-				ModeloDao.rollbackTransacao();
+				dao().rollbackTransacao();
 				throw new AplicacaoException("Erro na exclusão de Feriado", 0, e);
 			}
 		} else {
@@ -127,24 +121,24 @@ public class FeriadoController extends SigaController {
 		
 		if (idOcorrencia != null) {
 			try {
-				ModeloDao.iniciarTransacao();
+				dao().iniciarTransacao();
 				dao().excluir(daoOcorrenciaFeriado(idOcorrencia));				
-				ModeloDao.commitTransacao();				
+				dao().commitTransacao();				
 			} catch (final Exception e) {
-				ModeloDao.rollbackTransacao();
-				throw new AplicacaoException("Erro na exclusão de ocorrencia de feriado", 0, e);
+				getCadastrante().getOrgaoUsuario().getId();
+				dao().rollbackTransacao();
+				throw new AplicacaoException("Erro na exclusão de ocorrencia de feriado", 0, new AplicacaoException(e.getMessage()));
 			}
 		} else {
 			throw new AplicacaoException("ID da ocorrencia não informada");
 		}
-		
 		result.redirectTo(this).lista(null);
 	}
 	
 	
 	
 	@Get("/app/feriado/editar-ocorrencia")
-	public void editaOcorrencia(Integer id, Integer idOcorrencia) throws Exception {
+	public void editaOcorrencia(Integer id, Long idOcorrencia) throws Exception {
 //		assertAcesso("FE:Ferramentas;CAD_FERIADO: Cadastrar Feriados");
 
 		result.include("orgaosUsu", dao().listarOrgaosUsuarios());
@@ -152,12 +146,13 @@ public class FeriadoController extends SigaController {
 		result.include("listaAplicacoes", new ArrayList<>());
 		
 		if (idOcorrencia != null) {
-			CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(id);	
+			CpOcorrenciaFeriado ocorrencia = daoOcorrenciaFeriado(idOcorrencia);	
 		
 			result.include("id", ocorrencia.getCpFeriado().getIdFeriado());
+			result.include("idOcorrencia", idOcorrencia);
 			result.include("dscFeriado", ocorrencia.getCpFeriado().getDescricao());
-			result.include("dtIniFeriado", stringToDate(ocorrencia.getDtRegIniDDMMYY()));
-			result.include("dtFimFeriado", stringToDate(ocorrencia.getDtRegFimDDMMYY()));
+			result.include("dtIniFeriado", ocorrencia.getDtRegIniDDMMYYYY());
+			result.include("dtFimFeriado", ocorrencia.getDtRegFimDDMMYYYY());
 			result.include("listaAplicacoes", getListaAplicacoes(idOcorrencia));
 		} else {
 			if (id != null) {
@@ -168,6 +163,7 @@ public class FeriadoController extends SigaController {
 				throw new AplicacaoException("ID não informado");
 			}
 		}	
+		
 	}
 	
 	@Post("/app/feriado/gravar-ocorrencia")
@@ -221,12 +217,12 @@ public class FeriadoController extends SigaController {
 		}
 
 		try {
-			ModeloDao.iniciarTransacao();
+			dao().iniciarTransacao();
 			dao().gravar(ocorrencia);
 			dao().gravar(aplicacao);
-			ModeloDao.commitTransacao();
+			dao().commitTransacao();
 		} catch (final Exception e) {
-			ModeloDao.rollbackTransacao();
+			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
 		
@@ -253,12 +249,12 @@ public class FeriadoController extends SigaController {
 		
 		if (idAplicacao != null) {
 			try {
-				ModeloDao.iniciarTransacao();
+				dao().iniciarTransacao();
 				CpAplicacaoFeriado aplicacao = daoAplicacaoFeriado(idAplicacao);
 				dao().excluir(aplicacao);
-				ModeloDao.commitTransacao();
+				dao().commitTransacao();
 			} catch (final Exception e) {
-				ModeloDao.rollbackTransacao();
+				dao().rollbackTransacao();
 				throw new AplicacaoException("Erro na exclusão de ocorrencia de feriado", 0, e);
 			}
 		} else {
@@ -292,7 +288,7 @@ public class FeriadoController extends SigaController {
     }  
 
 
-	public List<CpAplicacaoFeriado> getListaAplicacoes(Integer idOcorrencia) {
+	public List<CpAplicacaoFeriado> getListaAplicacoes(Long idOcorrencia) {
 		List<CpAplicacaoFeriado> aplicacoes = new ArrayList<CpAplicacaoFeriado>();
 		CpAplicacaoFeriado apl = new CpAplicacaoFeriado();
 		CpOcorrenciaFeriado ocorrencia = new CpOcorrenciaFeriado();

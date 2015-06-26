@@ -225,14 +225,19 @@ public class UsuarioController extends SigaController {
 	@Get("/app/usuario/check_email_valido")
 	public void checkEmailValido(String matricula) throws AplicacaoException {
 		try{
-			isEmailValido(matricula);
-			result.use(Results.http()).body("0");
+			if(isEmailValido(matricula)) {
+				result.use(Results.page()).forwardTo("/sigalibs/ajax_vazio.jsp");
+				return;
+			}
+			result.use(Results.page()).forwardTo("/sigalibs/ajax_retorno.jsp");
+			
 		}catch(Exception e){
-			result.use(Results.http()).body(e.getMessage());
+			result.include("ajaxMsgErro", e.getMessage());
+			result.use(Results.page()).forwardTo("/sigalibs/ajax_msg_erro.jsp");
 		}
 	}
 	
-	private void isEmailValido(String matricula) {
+	private boolean isEmailValido(String matricula) {
 		
 		CpOrgaoUsuario orgaoFlt = new CpOrgaoUsuario();
 		
@@ -262,13 +267,13 @@ public class UsuarioController extends SigaController {
 		if (lstPessoa != null && lstPessoa.size() == 1) {
 			DpPessoa p = lstPessoa.get(0);
 			if (p.getEmailPessoaAtual() != null && p.getEmailPessoaAtual().trim().length() > 0){
-				return;
+				return true;
 			}else{
 				throw new AplicacaoException("Você ainda não possui um e-mail válido. Tente mais tarde." );
 			}
 		}
 		
-		return;
+		return false;
 	}
 	
 }

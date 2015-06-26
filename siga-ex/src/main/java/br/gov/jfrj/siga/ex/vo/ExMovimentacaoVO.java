@@ -87,7 +87,7 @@ public class ExMovimentacaoVO extends ExVO {
 	}
 
 	public ExMovimentacaoVO(ExMobilVO mobVO, ExMovimentacao mov,
-			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular) {
 		this.mov = mov;
 		this.mobVO = mobVO;
 		originadaAqui = (this.mov.getExMobil().getId().equals(getMobVO().mob
@@ -132,13 +132,13 @@ public class ExMovimentacaoVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExMovimentacao mov, DpPessoa titular,
-			DpLotacao lotaTitular) throws Exception {
+			DpLotacao lotaTitular) {
 		if (complemento == null)
 			complemento = "";
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) {
 			descricao = "";
-			addAcao(null, "Verificar", "/expediente/mov", "assinar_verificar",
+			addAcao(null, "Verificar", "/app/expediente/mov", "assinar_verificar",
 					true, null, "&ajax=true&id=" + mov.getIdMov().toString(),
 					null, null, null);
 		}
@@ -162,7 +162,7 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			addAcao(null,
 					"Cancelar",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"cancelar",
 					Ex.getInstance()
 							.getComp()
@@ -173,7 +173,7 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
 			addAcao(null,
 					"Cancelar",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"cancelar",
 					Ex.getInstance()
 							.getComp()
@@ -228,11 +228,11 @@ public class ExMovimentacaoVO extends ExVO {
 					addAcao(
 							"script_key",
 							"Autenticar",
-							"/expediente/mov",
-							"autenticar_mov",
+							"/app/expediente/mov",
+							"exibir",
 							Ex.getInstance().getComp()
 									.podeAutenticarMovimentacao(titular, lotaTitular, mov),
-							null, "&popup=true", null, null, null);
+							null, "&popup=true&autenticando=true", null, null, null);
 				}
 			}
 
@@ -240,7 +240,7 @@ public class ExMovimentacaoVO extends ExVO {
 				if (!mov.mob().doc().isSemEfeito())
 					addAcao(null,
 							"Cancelar",
-							"/expediente/mov",
+							"/app/expediente/mov",
 							"cancelar",
 							Ex.getInstance()
 									.getComp()
@@ -274,11 +274,11 @@ public class ExMovimentacaoVO extends ExVO {
 						addAcao(
 								"script_key",
 								"Autenticar",
-								"/expediente/mov",
-								"autenticar_mov",
+								"/app/expediente/mov",
+								"exibir",
 								Ex.getInstance().getComp()
 										.podeAutenticarMovimentacao(titular, lotaTitular, mov),
-								null, "&popup=true", null, null, null);
+								null, "&popup=true&autenticando=true", null, null, null);
 
 					} else if(!(mov.isAssinada() && mov.mob().isEmTransito())) {
 						addAcao(null, "Ver/Assinar", "/app/expediente/mov", "exibir",
@@ -466,7 +466,7 @@ public class ExMovimentacaoVO extends ExVO {
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/expediente/mov", "protocolo_arq",
+				addAcao(null, "Protocolo", "/app/expediente/mov", "protocolo_arq",
 						true, null, "pessoa="
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
@@ -485,7 +485,7 @@ public class ExMovimentacaoVO extends ExVO {
 				pre = "Devolver até " + mov.getDtFimMovDDMMYY() + " | ";
 			}
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/expediente/mov",
+				addAcao(null, "Protocolo", "/app/expediente/mov",
 						"protocolo_transf", true, null,
 						"pessoa="
 								+ (mov.getCadastrante() == null ? "null" : mov
@@ -495,8 +495,7 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
-			addAcao(null, mov.getNmArqMov(), "/arquivo", "download.action",
-					mov.getNmArqMov() != null, null, "arquivo=" + mov.getReferenciaZIP(), null, null, null);
+			addAcao(null, mov.getNmArqMov(), "/app/arquivo", "download", mov.getNmArqMov() != null, null, "arquivo=" + mov.getReferenciaZIP(), null, null, null);
 		}
 
 		if (descricao != null && descricao.equals(mov.getObs())) {

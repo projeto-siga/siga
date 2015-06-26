@@ -2,7 +2,6 @@
 <%@tag import="com.ckeditor.CKEditorTag"%>
 <%@tag import="com.ckeditor.CKEditorConfig"%>
 <%@ tag body-content="empty"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://ckeditor.com" prefix="FCK"%>

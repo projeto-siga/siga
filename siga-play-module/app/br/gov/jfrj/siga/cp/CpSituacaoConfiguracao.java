@@ -21,9 +21,12 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.model.ActiveRecord;
+
 @Entity
-@Table(name = "CP_SITUACAO_CONFIGURACAO", schema="CORPORATIVO")
-public class CpSituacaoConfiguracao extends AbstractCpSituacaoConfiguracao {
+@Table(name = "CP_SITUACAO_CONFIGURACAO", schema = Catalogs.CORPORATIVO)
+public class CpSituacaoConfiguracao extends AbstractCpSituacaoConfiguracao implements CpConvertableEntity {
 
 	/**
 	 * 
@@ -48,6 +51,9 @@ public class CpSituacaoConfiguracao extends AbstractCpSituacaoConfiguracao {
 
 	public static final long SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR = 9;
 
+	public static final ActiveRecord<CpSituacaoConfiguracao> AR = new ActiveRecord<>(CpSituacaoConfiguracao.class);
+	
 	public CpSituacaoConfiguracao() {
 	}
+	
 }

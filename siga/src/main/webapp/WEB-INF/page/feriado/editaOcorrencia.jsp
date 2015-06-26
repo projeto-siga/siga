@@ -3,7 +3,7 @@
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Cadastro de ocorrência de feriado">
 	<!-- main content -->
@@ -17,7 +17,7 @@
 			frm.submit();					
 	}
 	function listaLocalidades(){	
-		var uf = $('#idUF :selected').text();	
+		var uf = $('[name=idUF] option:selected').text();
 		
 		if(uf != null && uf != '[Todas]') {							
 			$.ajax({				     				  
@@ -50,13 +50,13 @@
 						<tr>
 							<td width="20%">Data de Início</td>
 							<td width="80%" align="left">
-								<input type="text" name="dtIniFeriado" id="dtIniFeriado" title="Data de Início"	onblur="javascript:verifica_data(this, true);" />
+								<input type="text" name="dtIniFeriado" id="dtIniFeriado"  title="Data de Início"	onblur="javascript:verifica_data(this, true);" value="${dtIniFeriado}"/>
 							</td>
 						</tr>
 						<tr>
 							<td width="20%">Data de Fim</td>
 							<td width="80%" align="left">
-								<input name="dtFimFeriado" title="Data de Fim" onblur="javascript:verifica_data(this, true);" /></td>	
+								<input name="dtFimFeriado" title="Data de Fim" onblur="javascript:verifica_data(this, true);" value="${dtFimFeriado}"/></td>	
 						</tr>
 						<tr>		
 							<td>Órgão:</td>

@@ -23,14 +23,11 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,75 +40,50 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cd.service.CdService;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.vraptor.builder.ExDownloadRTF;
+import br.gov.jfrj.siga.vraptor.builder.ExDownloadZip;
+import br.gov.jfrj.siga.vraptor.builder.ExInputStreamDownload;
 
 import com.lowagie.text.pdf.codec.Base64;
 
 @Resource
 public class ExArquivoController extends ExController {
-	
+
+	private static final String TEXT_HTML = "text/html";
+	private static final String APPLICATION_PDF = "application/pdf";
+	private static final String TEXT_PLAIN = "text/plain";
+	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
+	private static byte[] idPattern = "/ModDate(D:20".getBytes();
+	private static int[] failure = computeFailure();
+
 	public ExArquivoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
-	
-	private InputStream inputStream;
-	
-	private String contentDisposition;
-	
-	private Integer contentLength;
-	
-	public void setContentLength(Integer contentLength) {
-		this.contentLength = contentLength;
-	}
-	
-	public Integer getContentLength() {
-		return contentLength;
-	}
-	
-	public void setContentDisposition(String contentDisposition) {
-		this.contentDisposition = contentDisposition;
-	}
-	
-	public String getContentDisposition() {
-		return contentDisposition;
-	}
-	
-	public InputStream getInputStream() {
-		return inputStream;
-	}
-	
-	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
-	}
-	
+
 	@Get("/app/arquivo/exibir")
-	public Download aExibir(String sigla, boolean popup, String arquivo, byte[] certificado, String hash,
-			String HASH_ALGORITHM, String certificadoB64, boolean completo, boolean semmarcas) throws Exception {
+	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado, String hash, final String HASH_ALGORITHM,
+			final String certificadoB64, boolean completo, final boolean semmarcas) {
 		try {
-			String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
-			String contextpath = getRequest().getContextPath();
-			@SuppressWarnings("unused")
-			ExDao dao = ExDao.getInstance();
-			boolean pacoteAssinavel = (certificadoB64 != null);
-			boolean fB64 = getRequest().getHeader("Accept") != null
-					&& getRequest().getHeader("Accept").startsWith("text/vnd.siga.b64encoded");
-			boolean isPdf = arquivo.endsWith(".pdf");
-			boolean isHtml = arquivo.endsWith(".html");
+			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
+			final String contextpath = getRequest().getContextPath();
+			final boolean pacoteAssinavel = (certificadoB64 != null);
+			final boolean fB64 = getRequest().getHeader("Accept") != null && getRequest().getHeader("Accept").startsWith("text/vnd.siga.b64encoded");
+			final boolean isPdf = arquivo.endsWith(".pdf");
+			final boolean isHtml = arquivo.endsWith(".html");
 			boolean estampar = !semmarcas;
-			boolean somenteHash = (hash != null) || (HASH_ALGORITHM != null);
+			final boolean somenteHash = (hash != null) || (HASH_ALGORITHM != null);
 			if (somenteHash) {
 				if (hash == null)
 					hash = HASH_ALGORITHM;
 				if (hash != null) {
-					if (!(hash.equals("SHA1") || hash.equals("SHA-256") || hash.equals("SHA-512") || hash.equals("MD5")))
-						throw new AplicacaoException(
-								"Algoritmo de hash inválido. Os permitidos são: SHA1, SHA-256, SHA-512 e MD5.");
+					if (!(hash.equals("SHA1") || hash.equals("SHA-256") || hash.equals("SHA-512") || hash.equals("MD5"))) {
+						throw new AplicacaoException("Algoritmo de hash inválido. Os permitidos são: SHA1, SHA-256, SHA-512 e MD5.");
+					}
 				}
 				completo = false;
 				estampar = false;
@@ -121,265 +93,195 @@ public class ExArquivoController extends ExController {
 				completo = false;
 				estampar = false;
 			}
-			ExMobil mob = Documento.getMobil(arquivo);
+			final ExMobil mob = Documento.getMobil(arquivo);
 			if (mob == null) {
 				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
 			}
 			if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-				throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário "
-						+ getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + ".");
+				throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário " + getTitular().getSigla() + "/"
+						+ getLotaTitular().getSiglaCompleta() + ".");
 			}
-			ExMovimentacao mov = Documento.getMov(mob, arquivo);
-			boolean imutavel = (mov != null) && !completo && !estampar && !somenteHash && !pacoteAssinavel;
+			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
+			final boolean imutavel = (mov != null) && !completo && !estampar && !somenteHash && !pacoteAssinavel;
 			String cacheControl = "private";
 			final Integer grauNivelAcesso = mob.doc().getExNivelAcessoDoDocumento().getGrauNivelAcesso();
-			if (ExNivelAcesso.NIVEL_ACESSO_PUBLICO == grauNivelAcesso
-					|| ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS == grauNivelAcesso)
+			if (ExNivelAcesso.NIVEL_ACESSO_PUBLICO == grauNivelAcesso || ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS == grauNivelAcesso) {
 				cacheControl = "public";
+			}
 			byte ab[] = null;
 			if (isPdf) {
-				if (mov != null && !completo && !estampar && hash == null)
+				if (mov != null && !completo && !estampar && hash == null) {
 					ab = mov.getConteudoBlobpdf();
-				else
-					ab = Documento.getDocumento(mob, mov, completo, estampar, hash, null);
-				if (ab == null)
-					throw new Exception("PDF inválido!");
-				String filename = null;
-				if (mov != null) {
-					filename = mov.getReferencia();
 				} else {
-					filename = mob.getCodigoCompacto();
+					ab = Documento.getDocumento(mob, mov, completo, estampar, hash, null);
+				}
+				if (ab == null) {
+					throw new Exception("PDF inválido!");
 				}
 				if (pacoteAssinavel) {
-					setContentDisposition("attachment; filename=" + filename + ".sa");
 					CdService client = Service.getCdService();
 					final Date dt = dao().consultarDataEHoraDoServidor();
-					 getResponse().setHeader("Atributo-Assinavel-Data-Hora", Long.toString(dt.getTime()));
+					getResponse().setHeader("Atributo-Assinavel-Data-Hora", Long.toString(dt.getTime()));
 					byte[] sa = client.produzPacoteAssinavel(certificado, certificado, ab, true, dt);
-					return new InputStreamDownload(makeByteArrayInputStream(sa, fB64), "application/octet-stream",
-							arquivo);
+					return new InputStreamDownload(makeByteArrayInputStream(sa, fB64), APPLICATION_OCTET_STREAM, arquivo);
 				}
 				if (hash != null) {
-					setContentDisposition("attachment; filename=" + filename + "." + hash.toLowerCase());
-					this.setContentLength(ab.length);
-					return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), "application/octet-stream",
-							arquivo);
+					return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), APPLICATION_OCTET_STREAM, arquivo);
 				}
-				setContentDisposition("filename=" + filename + ".pdf");
 			}
 			if (isHtml) {
 				ab = Documento.getDocumentoHTML(mob, mov, completo, contextpath, servernameport);
-				if (ab == null)
+				if (ab == null) {
 					throw new Exception("HTML inválido!");
+				}
 			}
 			if (imutavel) {
-				 getResponse().setHeader("Cache-Control", cacheControl);
-				 getResponse().setDateHeader("Expires", new Date().getTime() + (365 * 24 * 3600 * 1000L));
+				getResponse().setHeader("Cache-Control", cacheControl);
+				getResponse().setDateHeader("Expires", new Date().getTime() + (365 * 24 * 3600 * 1000L));
 			} else {
-				MessageDigest md = MessageDigest.getInstance("MD5");
-				int m = match(ab);
-				if (m != -1)
+				final MessageDigest md = MessageDigest.getInstance("MD5");
+				final int m = match(ab);
+				if (m != -1) {
 					md.update(ab, 0, m);
-				else
+				} else {
 					md.update(ab);
-				String etag = Base64.encodeBytes(md.digest());
-				String ifNoneMatch = getRequest().getHeader("If-None-Match");
-				getResponse().setHeader("Cache-Control","must-revalidate, " + cacheControl);
+				}
+				final String etag = Base64.encodeBytes(md.digest());
+				final String ifNoneMatch = getRequest().getHeader("If-None-Match");
+				getResponse().setHeader("Cache-Control", "must-revalidate, " + cacheControl);
 				getResponse().setDateHeader("Expires", (new Date()).getTime() + 30000);
 				getResponse().setHeader("ETag", etag);
-				
+
 				if ((etag).equals(ifNoneMatch) && ifNoneMatch != null) {
 					getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
-					return new InputStreamDownload(makeByteArrayInputStream((new byte[0]), false), "text/plain",
-							"arquivo inválido");
+					return new InputStreamDownload(makeByteArrayInputStream((new byte[0]), false), TEXT_PLAIN, "arquivo inválido");
 				}
 			}
 			getResponse().setHeader("Pragma", "");
-			return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), checkDownloadType(ab, isPdf, fB64),
-					arquivo);
+			return new InputStreamDownload(makeByteArrayInputStream(ab, fB64), checkDownloadType(ab, isPdf, fB64), arquivo);
 		} catch (Exception e) {
-			if (e.getClass().getSimpleName().equals("ClientAbortException"))
-				return new InputStreamDownload(makeByteArrayInputStream((new byte[0]), false), "text/plain",
-						"arquivo inválido");
-			throw new ServletException("erro na geração do documento.", e);
+			if (e.getClass().getSimpleName().equals("ClientAbortException")) {
+				return new InputStreamDownload(makeByteArrayInputStream((new byte[0]), false), TEXT_PLAIN, "arquivo inválido");
+			}
+			throw new RuntimeException("erro na geração do documento.", e);
 		}
 	}
-	
-	private ByteArrayInputStream makeByteArrayInputStream(byte[] content, boolean fB64) {
-		if (fB64)
-			content = Base64.encodeBytes(content).getBytes();
-		return (new ByteArrayInputStream(content));
-	}
-	
-	private String checkDownloadType(byte[] content, boolean isPdf, boolean isFB64) {
-		String contentType;
-		if (isFB64) {
-			contentType = "text/plain";
-		} else {
-			if (isPdf)
-				contentType = "application/pdf";
-			else
-				contentType = "text/html";
+
+
+	@Get("/app/arquivo/download")
+	public Download download(String arquivo, String hash, HttpServletResponse response) throws Exception {
+		boolean isZip = arquivo.endsWith(".zip");
+		boolean somenteHash = hash != null || getPar().containsKey("HASH_ALGORITHM");
+		String algoritmoHash = getAlgoritmoHash(hash);
+		ExMobil mob = Documento.getMobil(arquivo);
+		ExMovimentacao mov = Documento.getMov(mob, arquivo);
+		
+		validarDownload(somenteHash, algoritmoHash, mob);
+
+		if (isZip) {
+			if (algoritmoHash != null) {
+				return new ExDownloadZip(mov, algoritmoHash);
+			}
+			return iniciarDownload(mob, new ExDownloadZip(mov, algoritmoHash, ExInputStreamDownload.MEDIA_TYPE_ZIP));
 		}
-		return contentType;
-	}
-	
-	// Esta rotina foi criada para verificar se utilizar o StreamResult do
-	// WebWork estava causando uma instabilidade no sistema. Ou seja, se havia
-	// algum memory leak na rotina de enviar uma stream como resultado. Assim
-	// que fique comprovado que não há interferência, essa rotina deve ser
-	// desativada.
-	private String writeByteArray(byte[] ab, String contentType, boolean fB64) throws IOException {
-		if (ab == null)
-			throw new RuntimeException("Conteúdo inválido!");
-		
-		if (fB64) {
-			ab = Base64.encodeBytes(ab).getBytes();
-			contentType = "text/plain";
+		else {
+			if (algoritmoHash != null) {
+				return new ExDownloadRTF(mob, algoritmoHash);
+			}
+			return iniciarDownload(mob, new ExDownloadRTF(mob, algoritmoHash, ExInputStreamDownload.MEDIA_TYPE_RTF));
 		}
-		
-		this.setContentLength(ab.length);
-		
-		getResponse().setStatus(200);
-		getResponse().setContentLength(getContentLength());
-		getResponse().setContentType(contentType);
-		if (!getPar().get("arquivo")[0].endsWith(".html"))
-			getResponse().setHeader("Content-Disposition", getContentDisposition());
-		getResponse().getOutputStream().write(ab);
-		getResponse().getOutputStream().flush();
-		getResponse().getOutputStream().close();
-		return "donothing";
 	}
-	
-	public String aDownload() throws Exception {
+
+	private Download iniciarDownload(ExMobil mob, ExInputStreamDownload exDownload) {
 		try {
-			
-			String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
-			String contextpath = getRequest().getContextPath();
-			
-			// log.info("Iniciando servlet de documentos...");
-			
-			@SuppressWarnings("unused")
-			ExDao dao = ExDao.getInstance();
-			
-			String arquivo = getPar().get("arquivo")[0];
-			
-			boolean isZip = arquivo.endsWith(".zip");
-			boolean isRtf = arquivo.endsWith(".rtf");
-			boolean somenteHash = getPar().containsKey("hash") || getPar().containsKey("HASH_ALGORITHM");
-			String hash = null;
-			if (somenteHash) {
-				hash = getPar().get("hash")[0];
-				if (hash == null) {
-					hash = getPar().get("HASH_ALGORITHM")[0];
-				}
-				if (hash != null) {
-					if (!(hash.equals("SHA1") || hash.equals("SHA-256") || hash.equals("SHA-512") || hash.equals("MD5")))
-						throw new AplicacaoException(
-								"Algoritmo de hash inválido. Os permitidos são: SHA1, SHA-256, SHA-512 e MD5.");
-				}
-			}
-			
-			ExMobil mob = Documento.getMobil(arquivo);
-			if (mob == null) {
-				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
-			}
-			
-			if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
-				throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário "
-						+ getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + ".");
-			}
-			
-			ExMovimentacao mov = Documento.getMov(mob, arquivo);
-			
-			String cacheControl = "private";
-			final Integer grauNivelAcesso = mob.doc().getExNivelAcessoDoDocumento().getGrauNivelAcesso();
-			if (ExNivelAcesso.NIVEL_ACESSO_PUBLICO == grauNivelAcesso
-					|| ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS == grauNivelAcesso)
-				cacheControl = "public";
-			
-			byte ab[] = null;
-			if (isZip) {
-				ab = mov.getConteudoBlobMov2();
-				
-				String filename = mov.getNmArqMov();
-				
-				if (hash != null) {
-					this.setInputStream(new ByteArrayInputStream(ab));
-					this.setContentLength(ab.length);
-					
-					setContentDisposition("attachment; filename=" + filename + "." + hash.toLowerCase());
-					return "hash";
-				}
-				
-				setContentDisposition("filename=" + filename);
-			}
-			
-			if (isRtf) {
-				GeradorRTF gerador = new GeradorRTF();
-				ab = gerador.geraRTFFOP(mob.getDoc());
-				
-				String filename = mob.doc().getCodigo() + ".rtf";
-				
-				if (hash != null) {
-					this.setInputStream(new ByteArrayInputStream(ab));
-					this.setContentLength(ab.length);
-					
-					setContentDisposition("attachment; filename=" + filename + "." + hash.toLowerCase());
-					return "hash";
-				}
-				
-				setContentDisposition("filename=" + filename);
-			}
-			
 			// Calcula o hash do documento, mas não leva em consideração
 			// para fins de hash os últimos bytes do arquivos, pois lá
 			// fica armazanada a ID e as datas de criação e modificação
 			// e estas são sempre diferente de um pdf para o outro.
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			
+	
+			byte ab[] = exDownload.getBytes();
 			int m = match(ab);
 			if (m != -1)
 				md.update(ab, 0, m);
 			else
 				md.update(ab);
+	
 			String etag = Base64.encodeBytes(md.digest());
-			
 			String ifNoneMatch = getRequest().getHeader("If-None-Match");
-			getResponse().setHeader("Cache-Control", "must-revalidate, " + cacheControl);
+			getResponse().setHeader("Cache-Control", "must-revalidate, " + getCacheControl(mob));
 			getResponse().setDateHeader("Expires", 0);
 			getResponse().setHeader("ETag", etag);
 			getResponse().setHeader("Pragma", "");
+			
 			if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
 				getResponse().sendError(HttpServletResponse.SC_NOT_MODIFIED);
 				return null;
 			}
-			
-			this.setInputStream(new ByteArrayInputStream(ab));
-			this.setContentLength(ab.length);
-			
-			if (isZip)
-				return "zip";
-			else
-				return "rtf";
-			
-		} catch (Exception e) {
-			throw new ServletException("erro na geração do documento.", e);
+			return exDownload;
+		}catch(Exception e) {
+			throw new AplicacaoException("erro na geração do documento.");
+		}
+	}
+
+	private String getAlgoritmoHash(String hash) {
+		String[] value = getPar().get("HASH_ALGORITHM");
+		if (value != null && value.length > 0) {
+			return value[0];
+		}
+		return hash;
+	}
+
+	private String getCacheControl(ExMobil mob) {
+		String cacheControl = "private";
+		final Integer grauNivelAcesso = mob.doc().getExNivelAcessoDoDocumento().getGrauNivelAcesso();
+		if (ExNivelAcesso.NIVEL_ACESSO_PUBLICO == grauNivelAcesso || ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS == grauNivelAcesso)
+			cacheControl = "public";
+		return cacheControl;
+	}
+
+	private void validarDownload(boolean somenteHash, String algoritmoHash, ExMobil mob) {
+		if (somenteHash) {
+			if (algoritmoHash != null) {
+				if (!(algoritmoHash.equals("SHA1") || algoritmoHash.equals("SHA-256") || algoritmoHash.equals("SHA-512") || algoritmoHash.equals("MD5")))
+					throw new AplicacaoException("Algoritmo de hash inválido. Os permitidos são: SHA1, SHA-256, SHA-512 e MD5.");
+			}
+		}
+
+		if (mob == null) {
+			throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
+		}
+
+		if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário " + getTitular().getSigla() + "/" + getLotaTitular().getSiglaCompleta() + ".");
 		}
 	}
 	
-	static private byte[] idPattern = "/ModDate(D:20".getBytes();
-	static private int[] failure = computeFailure();
-	
-	/**
-	 * Finds the first occurrence of the pattern in the text.
-	 */
-	static public int match(byte[] text) {
-		
+	private ByteArrayInputStream makeByteArrayInputStream(final byte[] content, final boolean fB64) {
+		final byte[] conteudo = (fB64 ? Base64.encodeBytes(content).getBytes() : content);
+		return (new ByteArrayInputStream(conteudo));
+	}
+
+	private String checkDownloadType(final byte[] content, final boolean isPdf, final boolean isFB64) {
+		String contentType;
+		if (isFB64) {
+			contentType = TEXT_PLAIN;
+		} else {
+			if (isPdf) {
+				contentType = APPLICATION_PDF;
+			} else {
+				contentType = TEXT_HTML;
+			}
+		}
+		return contentType;
+	}
+
+	private static int match(byte[] text) {
 		int j = 0;
-		if (text.length == 0)
+		if (text.length == 0) {
 			return -1;
-		
+		}
+
 		for (int i = 0; i < text.length; i++) {
 			while (j > 0 && idPattern[j] != text[i]) {
 				j = failure[j - 1];
@@ -393,12 +295,8 @@ public class ExArquivoController extends ExController {
 		}
 		return -1;
 	}
-	
-	/**
-	 * Computes the failure function using a boot-strapping process, where the
-	 * pattern is matched against itself.
-	 */
-	static private int[] computeFailure() {
+
+	private static int[] computeFailure() {
 		failure = new int[idPattern.length];
 		int j = 0;
 		for (int i = 1; i < idPattern.length; i++) {
@@ -412,5 +310,5 @@ public class ExArquivoController extends ExController {
 		}
 		return failure;
 	}
-	
+
 }

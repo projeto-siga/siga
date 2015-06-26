@@ -35,6 +35,7 @@
 		}
 		
 		$("#checkmostrarDesativado").click(function() {
+			jQuery.blockUI(objBlock);
 			if (document.getElementById('checkmostrarDesativado').checked)
 				location.href = '@{Application.listarAssociacaoDesativadas()}';
 			else
@@ -95,7 +96,7 @@
 			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
 			
 		table.append(htmlConteudo(d, "Item de configuração:", 6, 2));
-		table.append(htmlConteudo(d, "Ação:", 7, 3));
+		table.append(htmlConteudo(d, "A&ccedil;&atilde;o:", 7, 3));
 		
 		td.append(table);
 		tr.append(td);
@@ -153,7 +154,7 @@
 						</th>
 						<th></th>
 						<th><i>Item &darr;</i></th>
-						<th>Ação</th>
+						<th>A&ccedil;&atilde;o</th>
 						<th>Tipo de atributo</th>
 						<th>Obrigatório</th>
 						<th></th>
@@ -174,7 +175,7 @@
 						<td>${assoc.atributoObrigatorioString}</td>
 						<td>${assoc.itemConfiguracaoUnitario?.atual?.siglaItemConfiguracao}</td>
 						<td>${assoc.acaoUnitaria?.atual?.siglaAcao}</td>
-						<td>
+						<td class="acoes">
 							#{desativarReativar id:assoc.idConfiguracao, 
 												onReativar:'reativarAssociacao',
 												onDesativar :'desativarAssociacao',

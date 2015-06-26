@@ -136,10 +136,6 @@
 		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
-			<artifactId>siga-libs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
 			<artifactId>siga-ex</artifactId>
 		</dependency>
 		<dependency>

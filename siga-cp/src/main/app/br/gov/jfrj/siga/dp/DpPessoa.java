@@ -27,9 +27,9 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -49,6 +49,7 @@ import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -58,19 +59,19 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
-@Table(name = "DP_PESSOA", schema = "CORPORATIVO")
+@Table(name = "DP_PESSOA", schema = Catalogs.CORPORATIVO)
 @Entity
 @SqlResultSetMapping(name = "scalar", columns = @ColumnResult(name = "dt"))
 @NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "SELECT sysdate dt FROM dual", resultSetMapping = "scalar")
 @NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
-		Selecionavel, Historico, Sincronizavel, Comparable {
+		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5743631829922578717L;
-	public static ActiveRecord<DpPessoa> AR = new ActiveRecord<>(DpPessoa.class);
+	public static final ActiveRecord<DpPessoa> AR = new ActiveRecord<>(DpPessoa.class);
 
 	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
 	@Desconsiderar
@@ -163,7 +164,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return Texto.maiusculasEMinusculas(getDescricao());
 	}
 
-	public void setSigla(final String sigla) {
+	public void setSigla(String sigla) {
+	    if (sigla == null) {
+	        sigla = "";
+	    }
 		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9])([0-9]+)");
 		final Matcher m = p1.matcher(sigla);
 		if (m.find()) {
@@ -181,7 +185,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	public boolean equivale(Object other) {
-		if (other == null)
+		if (other == null || ((DpPessoa) other).getId() == null || this.getId() == null)
 			return false;
 		return this.getIdInicial().longValue() == ((DpPessoa) other)
 				.getIdInicial().longValue();
@@ -199,8 +203,8 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	public String getPadraoReferenciaInvertido() {
 		if (getPadraoReferencia() != null && !getPadraoReferencia().equals("")) {
-			//Caso o padrão de referência não esteja no formado utilizado pela SJRJ.
-			//Retorna o padrão cadastrado no BD sem inverter.
+			//Caso o padrï¿½o de referï¿½ncia nï¿½o esteja no formado utilizado pela SJRJ.
+			//Retorna o padrï¿½o cadastrado no BD sem inverter.
 			try {
 				String partes[] = getPadraoReferencia().split("-");
 				String partesConcat = partes[1] + "-" + partes[0];
@@ -219,7 +223,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return getSigla();
 	}
 
-	// Métodos necessários para ser "Sincronizavel"
+	// Mï¿½todos necessï¿½rios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimPessoa();
@@ -273,7 +277,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	//
-	// Funções utilizadas nas fórmulas de inclusão em grupos de email.
+	// Funï¿½ï¿½es utilizadas nas fï¿½rmulas de inclusï¿½o em grupos de email.
 	//
 
 	public boolean tipoLotacaoSiglaIgual(String s) {
@@ -498,10 +502,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 	
     /**
-     * Retorna a data de início da pessoa no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de inï¿½cio da pessoa no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da pessoa no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de inï¿½cio da pessoa no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -518,7 +522,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
      * Retorna a data de fim da pessoa no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da fim no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de inï¿½cio da fim no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -543,16 +547,16 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
     
    /**
-    * Método que filtra o pessoaPosteriores para que apareça somente o histórico com informações corporativas, comparando 
-    * uma linha da lista com a próxima para verificar se ocorreu alguma alteração de lotação, função ou padrão.
-    * @return lista com histórico referentes as seguintes informações: lotações, função e padrão.
+    * Mï¿½todo que filtra o pessoaPosteriores para que apareï¿½a somente o histï¿½rico com informaï¿½ï¿½es corporativas, comparando 
+    * uma linha da lista com a prï¿½xima para verificar se ocorreu alguma alteraï¿½ï¿½o de lotaï¿½ï¿½o, funï¿½ï¿½o ou padrï¿½o.
+    * @return lista com histï¿½rico referentes as seguintes informaï¿½ï¿½es: lotaï¿½ï¿½es, funï¿½ï¿½o e padrï¿½o.
     */
     public List<DpPessoa> getHistoricoInfoCorporativas() {
-    	//transforma um treeSet (pessoaPosteriores) em um list para que se possa percorrer a lista do fim para o começo 
+    	//transforma um treeSet (pessoaPosteriores) em um list para que se possa percorrer a lista do fim para o comeï¿½o 
     	List<DpPessoa> listaPessoaPosterioresA = new ArrayList<DpPessoa>(getPessoaInicial().getPessoasPosteriores());
     	List<DpPessoa> listaPessoaPosterioresB = listaPessoaPosterioresA;
     	List<DpPessoa> listaHistoricoPessoa = new ArrayList<DpPessoa>();
-    	//define que o iterator começa pelo fim da lista 
+    	//define que o iterator comeï¿½a pelo fim da lista 
     	ListIterator<DpPessoa> itPessoaPosteriorA = listaPessoaPosterioresA.listIterator(listaPessoaPosterioresA.size());
     	ListIterator<DpPessoa> itPessoaPosteriorB = listaPessoaPosterioresB.listIterator(listaPessoaPosterioresB.size());
     	DpPessoa pessoaPost = null;
@@ -565,17 +569,17 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
     	while (itPessoaPosteriorB.hasPrevious() ) {
 			pessoaPost = itPessoaPosteriorA.previous();
 			pessoaHist = itPessoaPosteriorB.previous();
-			//verifica se a lotação da lista listaPessoaPosterioresA é a mesma que da lista listaPessoaPosterioresB, 
-			//que está um registro a frente (linha seguinte)
-			//somente adiciona na lista listaHistoricoPessoa,que será retornada pelo método, caso as lotações sejam diferentes
+			//verifica se a lotaï¿½ï¿½o da lista listaPessoaPosterioresA ï¿½ a mesma que da lista listaPessoaPosterioresB, 
+			//que estï¿½ um registro a frente (linha seguinte)
+			//somente adiciona na lista listaHistoricoPessoa,que serï¿½ retornada pelo mï¿½todo, caso as lotaï¿½ï¿½es sejam diferentes
 			if(!pessoaHist.getLotacao().getSigla().equals(pessoaPost.getLotacao().getSigla())) 
 				listaHistoricoPessoa.add(pessoaHist);
-			//verifica se o padrão de referência da lista listaPessoaPosterioresA é o mesma que da lista listaPessoaPosterioresB
+			//verifica se o padrï¿½o de referï¿½ncia da lista listaPessoaPosterioresA ï¿½ o mesma que da lista listaPessoaPosterioresB
 			else if((pessoaHist.getPadraoReferencia() == null ^ pessoaPost.getPadraoReferencia() == null) || 
 						((pessoaHist.getPadraoReferencia() != null && pessoaPost.getPadraoReferencia() != null) &&
 								!pessoaHist.getPadraoReferencia().equals(pessoaPost.getPadraoReferencia())) ) 
 				listaHistoricoPessoa.add(pessoaHist);	
-			//verifica se a função de confiança da lista listaPessoaPosterioresA é a mesma que da lista listaPessoaPosterioresB
+			//verifica se a funï¿½ï¿½o de confianï¿½a da lista listaPessoaPosterioresA ï¿½ a mesma que da lista listaPessoaPosterioresB
 			else if((pessoaHist.getFuncaoConfianca() == null ^ pessoaPost.getFuncaoConfianca() == null) || 
 						((pessoaHist.getFuncaoConfianca() != null && pessoaPost.getFuncaoConfianca() != null) &&
 								!pessoaHist.getFuncaoConfianca().getNomeFuncao().equals(pessoaPost.getFuncaoConfianca().getNomeFuncao())) ) 

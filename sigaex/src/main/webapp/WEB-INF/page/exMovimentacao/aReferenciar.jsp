@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Referência">
 
@@ -17,7 +17,7 @@
 <script type="text/javascript" language="Javascript1.1">
 function sbmt() {
 	ExMovimentacaoForm.page.value='';
-	ExMovimentacaoForm.acao.value='aReferenciar';
+	ExMovimentacaoForm.acao.value='${request.contextPath}/app/expediente/mov/referenciar_gravar';
 	ExMovimentacaoForm.submit();
 }
 
@@ -29,7 +29,7 @@ function sbmt() {
 				Vinculação de Documento - ${mob.siglaEDescricaoCompleta}
 			</h2>
 			<div class="gt-content-box gt-for-table">
-				<form action="referenciar_gravar" enctype="multipart/form-data" method="post">
+				<form action="${request.contextPath}/app/expediente/mov/referenciar_gravar" enctype="multipart/form-data" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
 					<table class="gt-form-table">
@@ -75,7 +75,7 @@ function sbmt() {
 						<td colspan="3">
 							<siga:selecao propriedade="titular"tema="simple" modulo="siga"/></td>
 						</tr>
-						<siga:selecao titulo="Documento:" propriedade="documentoRef" urlAcao="buscar" modulo="sigaex"/>
+						<siga:selecao titulo="Documento:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex"/>
 						<tr class="button">
 							<td colspan="2">
 							<input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"/>

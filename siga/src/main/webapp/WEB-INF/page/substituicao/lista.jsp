@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%-- pageContext.setAttribute("sysdate", new java.util.Date()); --%>
 <siga:pagina titulo="Lista Substituições">
 	<!-- main content -->

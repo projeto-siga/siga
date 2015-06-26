@@ -33,7 +33,7 @@ public class AssinaturaAnexoPage {
 			util.closePopup(driver);
 		}
 
-		driver.get(baseURL + "/sigaex/expediente/mov/simular_assinatura_mov.action?sigla="+ codigoDocumento + "&id="+codigoAnexo);				
+		driver.get(baseURL + "/sigaex/app/expediente/mov/simular_assinatura_mov?sigla="+ codigoDocumento + "&id="+codigoAnexo);				
 		System.out.println("URL: " + driver.getCurrentUrl());
 	}
 	

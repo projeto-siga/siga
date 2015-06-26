@@ -23,11 +23,11 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.wf.WfConhecimento;
@@ -280,7 +280,7 @@ public class AppController extends WfController {
 		// Apresenta a pagina do documento quando a sigla for fornecida
 		//
 		if (sigla != null) {
-			result.redirectTo("/../sigaex/expediente/doc/exibir.action?sigla="
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla="
 					+ sigla);
 			return;
 		}
@@ -317,7 +317,7 @@ public class AppController extends WfController {
 		}
 
 		if (sigla != null) {
-			result.redirectTo("/../sigaex/expediente/doc/exibir.action?sigla="
+			result.redirectTo("/../sigaex/app/expediente/doc/exibir?sigla="
 					+ sigla);
 			return;
 		}

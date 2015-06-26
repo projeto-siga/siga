@@ -43,13 +43,13 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
-import br.gov.jfrj.webwork.action.CpPerfilSelecao;
 
 @Resource
 public class AcessoController extends GiControllerSupport {
@@ -106,7 +106,7 @@ public class AcessoController extends GiControllerSupport {
 		result.include("idSituacao", this.idSituacao);		
 	}
 	
-	public void listar(int idAbrangencia
+	private void listar(int idAbrangencia
 					  ,DpPessoaSelecao pessoaSel
 					  ,DpLotacaoSelecao lotacaoSel
 					  ,CpPerfilSelecao perfilSel

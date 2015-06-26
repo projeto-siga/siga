@@ -21,10 +21,7 @@ package br.gov.jfrj.siga.util;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -35,28 +32,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.directwebremoting.util.SwallowingHttpServletResponse;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 
 public class ExProcessadorModelo implements ProcessadorModelo {
 	
-	
-	HttpServletRequest request;
-	HttpServletResponse response;
-	ServletContext context;
-	
-	public ExProcessadorModelo(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
-		this.request = request;
-		this.response = response;
-		this.context = context;
-	}
-	
 	public ExProcessadorModelo() {
-		// TODO Auto-generated constructor stub
 	}
-	
 
 	/**
 	 * Processar um template JSP e retornar o resultado na forma de uma string
@@ -68,46 +50,17 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 	 * @return
 	 * @throws Exception
 	 */
-	public String processarModelo(CpOrgaoUsuario ou, Map<String, Object> attrs,
-			Map<String, Object> params) throws Exception {
-
-		System.out.println(System.currentTimeMillis() + " - INI processarModelo");
+	public String processarModelo(CpOrgaoUsuario ou, Map<String, Object> attrs, Map<String, Object> params) throws Exception {
+		MyHttpRequest rw = createMyHttpRequest(attrs, params);
+		ServletContext context = CurrentRequest.get().getContext();
+		HttpServletResponse response = CurrentRequest.get().getResponse();
 		
-		ServletContext sc     ;
-		HttpServletResponse r ;
-		MyHttpRequest rw 	  ;		
-		
-		try {
-			sc     = com.opensymphony.webwork.ServletActionContext.getServletContext();
-			r = com.opensymphony.webwork.ServletActionContext.getResponse();
-			rw 	  = new MyHttpRequest(com.opensymphony.webwork.ServletActionContext.getRequest());
-		} catch (Exception e) {
-			sc     = CurrentRequest.get().getContext(); 
-			r = CurrentRequest.get().getResponse();
-			rw 	  = new MyHttpRequest(CurrentRequest.get().getRequest());
-		}
-
-
-		rw.clearAttributes();
-
-		for (String s : attrs.keySet()) {
-			rw.setAttribute(s, attrs.get(s));
-		}
-
-		Map<String, String> p = rw.getParameterMap();
-		p.clear();
-		for (String s : params.keySet()) {
-			p.put(s, (String) params.get(s));
-		}
-
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		Writer w = new OutputStreamWriter(bout);
-		SwallowingHttpServletResponse r2 = new SwallowingHttpServletResponse(r, w, "iso-8859-1");
-
-		javax.servlet.RequestDispatcher dispatcher = sc
-				.getRequestDispatcher("/paginas/expediente/processa_modelo.jsp");
-		// request.setAttribute("Language","Java");
-		dispatcher.include(rw, r2);
+		SwallowingHttpServletResponse responseToRead = new SwallowingHttpServletResponse(response, w, "iso-8859-1");
+		
+		javax.servlet.RequestDispatcher dispatcher = context.getRequestDispatcher("/WEB-INF/page/exDocumento/processa_modelo.jsp");
+		dispatcher.include(rw, responseToRead);
 		w.flush();
 		String s = bout.toString();
 
@@ -115,52 +68,34 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 		return s;
 	}
 
+	@SuppressWarnings("unchecked")
+	private MyHttpRequest createMyHttpRequest(Map<String, Object> attrs, Map<String, Object> params) {
+		MyHttpRequest requestWrapper = new MyHttpRequest(CurrentRequest.get().getRequest());
+		
+		for (String attr : attrs.keySet()) {
+			requestWrapper.setAttribute(attr, attrs.get(attr));
+		}
+		Map<String, String> p = requestWrapper.getParameterMap();
+		for (String s : params.keySet()) {
+			p.put(s, (String) params.get(s));
+		}
+		return requestWrapper;
+	}
 }
 
 class MyHttpRequest extends HttpServletRequestWrapper {
-	ExDocumento doc;
-
-	ExMovimentacao mov;
-
-	String queryString;
-
-	String form;
-
-	HashMap parameterMap;
-
-	public MyHttpRequest(HttpServletRequest arg0
-	// , ExDocumento doc,
-	// ExMovimentacao mov
-	) {
-		super(arg0);
-		this.doc = doc;
-		this.mov = mov;
-		// TODO Auto-generated constructor stub
-		this.parameterMap = new HashMap(super.getParameterMap());
+	@SuppressWarnings("rawtypes")
+	private Map parametersMap;
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public MyHttpRequest(HttpServletRequest request) {
+		super(request);
+		this.parametersMap = new HashMap(request.getParameterMap());
 	}
 
-	public void clearAttributes() {
-		Enumeration e = getAttributeNames();
-		List<String> l = new ArrayList<String>();
-		while (e.hasMoreElements()) {
-			String s = e.nextElement().toString();
-			l.add(s);
-		}
-		for (String s : l) {
-			removeAttribute(s);
-		}
-	}
-
-	// @Override
-	// public String getQueryString() {
-	// return "processar_modelo=1&idDoc="
-	// + mov.getExDocumento().getIdDoc() + "&id=" + mov.getIdMov());;
-	// }
-
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Map getParameterMap() {
-		// TODO Auto-generated method stub
-		return parameterMap;
+		return parametersMap;
 	}
-
 }

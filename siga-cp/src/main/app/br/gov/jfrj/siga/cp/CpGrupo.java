@@ -26,9 +26,12 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
-		Comparable<CpGrupo> {
+public class CpGrupo extends AbstractCpGrupo implements Selecionavel,
+		Comparable<CpGrupo>, CpConvertableEntity {
 
+	public CpGrupo() {
+	}
+	
 	public int compareTo(CpGrupo o) {
 		return getId().compareTo(o.getId());
 	}
@@ -47,7 +50,7 @@ public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 			t_grpGrupo = new CpPerfilJEE();
 			break;
 		default:
-			throw new AplicacaoException("Id do tipo do grupo inválido: "
+			throw new AplicacaoException("Id do tipo do grupo invï¿½lido: "
 					+ IdTipoGrupo);
 		}
 		return t_grpGrupo;
@@ -74,7 +77,7 @@ public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 	}
 
 	public int getNivel() {
-		if (getCpGrupoPai() != null)
+		if (getCpGrupoPai() != null && getCpGrupoPai().getId() != null)
 			return getCpGrupoPai().getNivel() + 1;
 		return 0;
 	}

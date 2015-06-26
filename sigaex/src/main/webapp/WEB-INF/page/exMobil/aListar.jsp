@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	buffer="64kb"%>
+	buffer="64kb"%> 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
-<%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
 <script type="text/javascript" language="Javascript1.1">
 
@@ -22,6 +22,7 @@ function sbmt(offset) {
 	if (offset==null) {d
 		offset=0;
 	}
+	listar["paramoffset"].value=offset;
 	listar["p.offset"].value=offset;
 	listar.submit();
 }
@@ -594,6 +595,7 @@ function limpaCampos()
 										<input type="hidden" name="propriedade" value="${propriedade}" />
 										<input type="hidden" name="postback" value="1" />
 										<input type="hidden" name="apenasRefresh" value="0" />
+										<input type="hidden" name="paramoffset" value="0" />
 										<input type="hidden" name="p.offset" value="0" />
 
 										<tr class="header">
@@ -700,10 +702,10 @@ function limpaCampos()
 														</option>  
 													</c:forEach>
 												</select>
-												&nbsp;&nbsp;&nbsp;&nbsp;
+												&nbsp;&nbsp;&nbsp;
 												Data Inicial: 
 												<input type="text" name="dtDocString" value="${dtDocString}" onblur="javascript:verifica_data(this,0);" />
-												&nbsp;&nbsp;
+												&nbsp;
 												Data Final: 
 												<input type="text" name="dtDocFinalString" value="${dtDocString}" onblur="javascript:verifica_data(this,0);"/>
 											</td>
@@ -770,7 +772,7 @@ function limpaCampos()
 														</option>
 													</c:forEach>
 												</select>
-												&nbsp;&nbsp;&nbsp;&nbsp;
+												&nbsp;&nbsp;&nbsp;
 												Número:
 												<input type="text"size="7" name="numExpediente" value="${numExpediente}" maxlength="6"/>
 											</td>
@@ -957,7 +959,7 @@ function limpaCampos()
 												</c:choose>
 											</td>
 										</tr>
-										<siga:selecao titulo="Classificação:" propriedade="classificacao" modulo="sigaex"/>
+										<siga:selecao titulo="Classificação:" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
 										<tr>
 											<td>
 												Descrição:

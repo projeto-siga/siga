@@ -67,11 +67,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.opensymphony</groupId>
-			<artifactId>webwork</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
@@ -92,7 +87,6 @@
 		<dependency>
 			<groupId>jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>

@@ -130,7 +130,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
  * parametros.put("orgaoUsuario",getRequest().getParameter("orgaoUsuario"));<br />
  * parametros.put("link_siga","http://" + getRequest().getServerName() + ":" <br />
  * + getRequest().getServerPort() <br />
- * + getRequest().getContextPath() + "/expediente/doc/exibir.action?id=");<br />
+ * + getRequest().getContextPath() + "/app/expediente/doc/exibir?id=");<br />
  * <br />
  * RelatorioDocumentosSubordinados rel = new
  * RelatorioDocumentosSubordinados(parametros);<br />

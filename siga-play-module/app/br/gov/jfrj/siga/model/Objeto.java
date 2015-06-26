@@ -84,6 +84,7 @@ public class Objeto extends ObjetoBase{
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public boolean isInstance(Class clazz) {
 		return this.getClass().isAssignableFrom(clazz);
 	}
@@ -92,17 +93,19 @@ public class Objeto extends ObjetoBase{
 		return this;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Objeto unproxyIfInstance(Class clazz) {
 		return isInstance(clazz) ? this : null;
 	}
 	
 	private static final long serialVersionUID = -7830448334427331897L;
 
-	protected static EntityManager em() {
+	public static EntityManager em() {
 		return ContextoPersistencia.em();
 	}
 
-	public void save() {
+	@SuppressWarnings("unchecked")
+	public Objeto save() {
 		if (!em().contains(this)) {
 			em().persist(this);
 		}
@@ -132,9 +135,11 @@ public class Objeto extends ObjetoBase{
 		} finally {
 			avoidCascadeSaveLoops.get().clear();
 		}
+		return this;
 	}
 
-	public void delete() {
+	@SuppressWarnings("unchecked")
+	public Objeto delete() {
 		try {
 			avoidCascadeSaveLoops.set(new HashSet<Objeto>());
 			try {
@@ -164,6 +169,7 @@ public class Objeto extends ObjetoBase{
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
+		return this;
 	}
 
 	public Object _key() {
@@ -177,6 +183,7 @@ public class Objeto extends ObjetoBase{
 	public transient boolean willBeSaved = false;
 	static transient ThreadLocal<Set<Objeto>> avoidCascadeSaveLoops = new ThreadLocal<Set<Objeto>>();
 
+	@SuppressWarnings("rawtypes")
 	private void saveAndCascade(boolean willBeSaved) throws UnexpectedException {
 		this.willBeSaved = willBeSaved;
 		if (avoidCascadeSaveLoops.get().contains(this)) {
@@ -390,6 +397,7 @@ public class Objeto extends ObjetoBase{
 		return getClass().getSimpleName() + "[" + keyStr + "]";
 	}
 
+	@SuppressWarnings("serial")
 	public static class JPAQueryException extends RuntimeException {
 
 		public JPAQueryException(String message) {

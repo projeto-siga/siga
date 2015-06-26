@@ -3,23 +3,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <siga:pagina titulo="Erro Geral">
-<%-- 
-<center>
-<table align="center" width="50%" height="100%" bordercolor="#FFFFFF"
-	bgcolor="#FFFFFF">
-	<tr>
-		<td align="center">Ocorreu um erro no sistema</td>
-	</tr>
-	<tr>
-		<td align="center" valign="middle"><!-- 	<h2><ww:property value="exceptionStack" /></h2>  -->
-		</td>
-	</tr>
-</table>
-</center>
- --%>
 
 <table width="100%" height="100%">
 	<tr>

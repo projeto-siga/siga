@@ -1,0 +1,95 @@
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	
+	<display-name>SIGA - Serviços</display-name>
+
+	<welcome-file-list>
+		<welcome-file>/WEB-INF/index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<context-param>
+	    <param-name>br.com.caelum.vraptor.provider</param-name>
+	    <param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>br.com.caelum.vraptor.encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>br.com.caelum.vraptor.packages</param-name>
+		<param-value>br.gov.jfrj.siga.vraptor, br.gov.jfrj.siga.feature.entity.instantiator.vraptor</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>vraptor</filter-name>
+		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+	<!--  
+	<jsp-config>
+		<taglib>
+			<taglib-uri>http://localhost/customtag</taglib-uri>
+			<taglib-location>/WEB-INF/tags/tags.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://localhost/functiontag</taglib-uri>
+			<taglib-location>/WEB-INF/tags/func.tld</taglib-location>
+		</taglib>
+		<jsp-property-group>
+			<description>Property group for common configuration for all the JSP's</description>
+			<url-pattern>*.jsp</url-pattern>
+			<el-ignored>false</el-ignored>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
+	-->
+	
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Paginas do Sistema</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>sigausuario</role-name>
+		</auth-constraint>
+	</security-constraint>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Recursos Publicos</web-resource-name>
+			<url-pattern>/public/*</url-pattern>
+			<url-pattern>/rest/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+	
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>SigaSr</realm-name>
+		<form-login-config>
+			<form-login-page>/paginas/login.jsp</form-login-page>
+			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+	
+	<security-role>
+		<role-name>sigausuario</role-name>
+	</security-role>
+	
+	<error-page>
+	<!-- <exception-type>java.lang.Throwable</exception-type> -->
+		<error-code>500</error-code>
+		<location>/WEB-INF/page/erroGeral.jsp</location>
+	</error-page>
+	
+</web-app>

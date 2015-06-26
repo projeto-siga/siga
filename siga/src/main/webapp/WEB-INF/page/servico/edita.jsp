@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 
 <siga:pagina
@@ -22,13 +22,7 @@
 						<th><a href="#" alt="${servico.descricao}"
 							title="${servico.descricao}">									
 							<c:choose>
-								<c:when test="${servico.siglaServico == 'FS-RAIZ'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-GAB'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-SEC'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-JUIZ'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-PUB'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-AUD'}">${servico.labelServico}</c:when>
-								<c:when test="${servico.siglaServico == 'FS-VIDEO'}">${servico.labelServico}</c:when>
+								<c:when test="${not empty servico.labelServico}">${servico.labelServico}</c:when>
 								<c:otherwise>${servico.siglaServico}</c:otherwise>
 							</c:choose>
 							</a>

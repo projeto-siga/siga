@@ -50,10 +50,10 @@ public class SigaObjects implements ConheceUsuario {
 		carregaPerfil();
 	}
 
-	public void assertAcesso(String pathServico) throws AplicacaoException,
-			Exception {
+	public void assertAcesso(String pathServico) throws AplicacaoException {
 		String servico = "SIGA:Sistema Integrado de Gestão Administrativa;"
 				+ pathServico;
+		System.out.println("\n" + servico + "\n");
 		if (!Cp.getInstance()
 				.getConf()
 				.podeUtilizarServicoPorConfiguracao(getTitular(),
@@ -111,8 +111,7 @@ public class SigaObjects implements ConheceUsuario {
 		DpSubstituicao dpSubstituicao = new DpSubstituicao();
 		dpSubstituicao.setSubstituto(getCadastrante());
 		dpSubstituicao.setLotaSubstituto(getCadastrante().getLotacao());
-		List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(
-				dpSubstituicao);
+		List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
 		return itens;
 	}
 
@@ -170,7 +169,6 @@ public class SigaObjects implements ConheceUsuario {
 	}
 
 	public CpDao dao() {
-		// TODO Auto-generated method stub
 		return CpDao.getInstance();
 	}
 

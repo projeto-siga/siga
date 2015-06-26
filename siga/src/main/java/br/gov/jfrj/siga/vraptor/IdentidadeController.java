@@ -13,21 +13,18 @@ import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 
 @Resource
 public class IdentidadeController extends GiControllerSupport {
 
-	private DpPessoaSelecao selecaoPessoa;
-	
 	public IdentidadeController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-		selecaoPessoa = new DpPessoaSelecao();
 	}
 	
 	@Get("/app/gi/identidade/listar")
@@ -38,12 +35,15 @@ public class IdentidadeController extends GiControllerSupport {
 		if (pes != null) {
 			result.include("itens", dao().consultaIdentidades(pes));
 		}
-		
-		result.include("pessoaSel", selecaoPessoa);
+		result.include("pessoaSel", enviarPessoaSelecao(pessoaSel));
+	}
+
+	private DpPessoaSelecao enviarPessoaSelecao(DpPessoaSelecao pessoaSel) {
+		return (pessoaSel == null) ? new DpPessoaSelecao() : pessoaSel;
 	}
 	
 	@Get("/app/gi/identidade/editar_gravar")
-	public void aEditarGravar(String dtExpiracao, Long id) throws Exception {
+	public void aEditarGravar(DpPessoaSelecao pessoaSel, String dtExpiracao, Long id) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id == null)
 			throw new AplicacaoException("Não foi informada id");
@@ -60,7 +60,7 @@ public class IdentidadeController extends GiControllerSupport {
 		CpIdentidade ident = daoId(id);
 		Cp.getInstance().getBL().alterarIdentidade(ident, dataExpiracao, getIdentidadeCadastrante());
 		
-		result.forwardTo(this).lista(selecaoPessoa);
+		result.forwardTo(this).lista(pessoaSel);
 	}
 
 	@Get("/app/gi/identidade/cancelar")
@@ -130,9 +130,7 @@ public class IdentidadeController extends GiControllerSupport {
 		
 		if (pessoaSel != null) {
 			pessoa = pessoaSel.buscarObjeto();
-			selecaoPessoa = pessoaSel;
 		}
-		
 		return pessoa;
 	}
 	

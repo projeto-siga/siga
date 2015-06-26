@@ -19,6 +19,7 @@
 <%@ attribute name="descricaoInicial" required="false"%>
 <%@ attribute name="inputName" required="false"%>
 <%@ attribute name="urlAcao" required="false"%>
+<%@ attribute name="urlSelecionar" required="false"%>
 <!-- A lista de par -->
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
@@ -165,7 +166,14 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	if (sigla == '') {
 		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
-	var url = '/${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+	<c:choose>
+		<c:when test="${empty urlSelecionar}">
+			var url = '/${urlPrefix}${acaoBusca}/selecionar.action?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+		</c:when>
+		<c:otherwise>
+			var url = '/${urlPrefix}/app${acaoBusca}/${urlSelecionar}?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+		</c:otherwise>
+	</c:choose>
 	url = url + '&sigla=' + sigla;
 	PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 }
@@ -186,10 +194,10 @@ self.ajax_${propriedade}${tipoSel} = function() {
 
 <input type="hidden" name="req${inputNameTipoSel}"  />
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
-<input type="hidden" name="${inputNameTipoSel}.id"        value="<c:out value="${requestScope[propriedadeTipoSel].id}" />"/>
-<input type="hidden" name="${inputNameTipoSel}.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}" />"/>
-<input type="hidden" name="${inputNameTipoSel}.buscar"    value="<c:out value="${requestScope[propriedadeTipoSel].buscar}" />"/>
-<input type="text"   name="${inputNameTipoSel}.sigla"     value="<c:out value="${requestScope[propriedadeTipoSel].sigla}" />"
+<input type="hidden" name="${inputNameTipoSel}.id" value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>" id="formulario_${inputNameTipoSel}_id"/>
+<input type="hidden" name="${inputNameTipoSel}.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>" id="formulario_${inputNameTipoSel}_descricao"/>
+<input type="hidden" name="${inputNameTipoSel}.buscar" value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>" id="formulario_${inputNameTipoSel}_buscar"/>
+<input type="text" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
 	onkeypress="return handleEnter(this, event)"
 	onblur="javascript: ajax_${propriedade}${tipoSel}();" size="25"
 	"${disabledTxt}" />	

@@ -7,7 +7,7 @@
 
 <li><a id="menu_siga" class="" href="#">SIGA</a>
 	<ul>
-		<li><a href="/siga/principal.action">Página Inicial</a>
+		<li><a href="/siga/app/principal">Página Inicial</a>
 		</li>
 		<c:if test="${empty pagina_de_erro}">
 			<li><a href="#">Módulos</a>
@@ -210,7 +210,7 @@
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO:Cadastrar Orgãos')}">
-						<li><ww:a href="/siga/orgao/listar.action">Cadastro de Orgãos Externos</ww:a>
+						<li><ww:a href="/siga/app/orgao/listar">Cadastro de Orgãos Externos</ww:a>
 						</li>
 					</c:if>
 					<c:if

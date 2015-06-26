@@ -26,6 +26,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -56,40 +57,31 @@ import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoEmail;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFormula;
 import br.gov.jfrj.siga.cp.grupo.TipoConfiguracaoGrupoEnum;
+import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpGrupoDaoFiltro;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-import com.opensymphony.xwork.Preparable;
+import com.google.common.base.Optional;
 
 public abstract class GrupoController<T extends CpGrupo> extends
-		GiSelecionavelControllerSupport<T, CpGrupoDaoFiltro> implements
-		Preparable {
+		GiSelecionavelControllerSupport<T, CpGrupoDaoFiltro> {
 
-	public GrupoController(HttpServletRequest request, Result result,
-			CpDao dao, SigaObjects so, EntityManager em) {
+	public GrupoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3768576909382652437L;
-	private ArrayList<String> codigoTipoConfiguracao; // 0- Pessoa, 1 -
-	// Lotação,
-
-	private Integer codigoTipoConfiguracaoNova;
 
 	// Campos da lista de configurações do grupo
 	private ArrayList<ConfiguracaoGrupo> configuracoesGrupo;
-
-	// 2 - email, etc.
-	private ArrayList<String> conteudoConfiguracao; // Id Pessoa ou Id Lotação,
 
 	private String conteudoConfiguracaoNova;
 
@@ -103,7 +95,6 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	// erro
 	private Exception exception;
 	private CpGrupoDeEmailSelecao grupoPaiSel;
-	private ArrayList<String> idConfiguracao;
 	// Texto endereco email,
 	// etc. , conforme
 	// codigoTipoConfiguracao.
@@ -118,8 +109,6 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	private List<TipoConfiguracaoGrupoEnum> tiposConfiguracaoGrupoParaTipoDeGrupo;
 	// Carga inicial
 	private List<CpTipoGrupo> tiposDeGrupo;
-
-	private Long idConfGestor;
 
 	@Override
 	public String aBuscar(String sigla, String postback) throws Exception {
@@ -143,6 +132,10 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * Prepara a edição do grupo selecionado na lista
 	 */
 	public String aEditar(Long idCpGrupo) throws Exception {
+		List<String> idConfiguracao = new ArrayList<String>();
+		List<String> codigoTipoConfiguracao = new ArrayList<String>();
+		List<String> conteudoConfiguracao = new ArrayList<String>();
+
 		Cp.getInstance().getConf().limparCacheSeNecessario();
 
 		Integer t_idTpGrupo = getIdTipoGrupo();
@@ -177,28 +170,25 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			tiposConfiguracaoGrupoParaTipoDeGrupo = obterTiposConfiguracaoGrupoParaTipoDeGrupo(tpGrp);
 			dscCpTipoGrupo = tpGrp.getDscTpGrupo();
 			try {
-				configuracoesGrupo = Cp.getInstance().getConf()
-						.obterCfgGrupo(grp);
+				configuracoesGrupo = Cp.getInstance().getConf().obterCfgGrupo(grp);
 				for (ConfiguracaoGrupo t_cfgConfiguracaoGrupo : configuracoesGrupo) {
-					CpConfiguracao t_cpcConfiguracaoCorrente = t_cfgConfiguracaoGrupo
-							.getCpConfiguracao();
-					Long t_lngIdConfiguracao = t_cpcConfiguracaoCorrente
-							.getIdConfiguracao();
+					CpConfiguracao t_cpcConfiguracaoCorrente = t_cfgConfiguracaoGrupo.getCpConfiguracao();
+					Long t_lngIdConfiguracao = t_cpcConfiguracaoCorrente.getIdConfiguracao();
 					idConfiguracao.add(t_lngIdConfiguracao.toString());
-					TipoConfiguracaoGrupoEnum t_tpcTipo = t_cfgConfiguracaoGrupo
-							.getTipo();
-					codigoTipoConfiguracao.add(String.valueOf(t_tpcTipo
-							.getCodigo()));
-					String t_strConteudoConfiguracaoCorrente = t_cfgConfiguracaoGrupo
-							.getConteudoConfiguracao();
+					TipoConfiguracaoGrupoEnum t_tpcTipo = t_cfgConfiguracaoGrupo.getTipo();
+					codigoTipoConfiguracao.add(String.valueOf(t_tpcTipo.getCodigo()));
+					String t_strConteudoConfiguracaoCorrente = t_cfgConfiguracaoGrupo.getConteudoConfiguracao();
 					conteudoConfiguracao.add(t_strConteudoConfiguracaoCorrente);
-
 				}
 			} catch (Exception e) {
-				throw new AplicacaoException("Id do grupo: " + idCpGrupo
-						+ " erro ao obter configurações do grupo.", 0, e);
+				throw new AplicacaoException(MessageFormat.format("Id do grupo: {0} erro ao obter configurações do grupo.", idCpGrupo), 0, e);
 			}
 		}
+		
+		result.include("idConfiguracao", idConfiguracao);
+		result.include("codigoTipoConfiguracao", codigoTipoConfiguracao);
+		result.include("conteudoConfiguracao", conteudoConfiguracao);
+		
 		return "edita";
 	}
 
@@ -243,19 +233,39 @@ public abstract class GrupoController<T extends CpGrupo> extends
 
 	/**
 	 * Grava o grupo e as configurações
+	 * @param idConfiguracao TODO
 	 * 
 	 * @throws AplicacaoException
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 * @throws InvocationTargetException
 	 */
-	public String aGravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
+	public Long aGravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
 			CpGrupoDeEmailSelecao grupoPaiSel,
-			Integer codigoTipoConfiguracaoNova, String conteudoConfiguracaoNova)
+			Integer codigoTipoConfiguracaoNova, 
+			String conteudoConfiguracaoNova, 
+			List<String> idConfiguracao,
+			List<String> codigoTipoConfiguracao,
+			List<String> conteudoConfiguracao)
 			throws Exception {
+		
 		if (siglaGrupo == null) {
 			throw new AplicacaoException("A sigla do grupo deve ser definida!");
 		}
+		
+		idConfiguracao = Optional
+					.fromNullable(idConfiguracao)
+					.or(new ArrayList<String>());
+
+		codigoTipoConfiguracao = Optional
+				.fromNullable(codigoTipoConfiguracao)
+				.or( new ArrayList<String>());
+		
+
+		conteudoConfiguracao = Optional
+				.fromNullable(conteudoConfiguracao)
+				.or( new ArrayList<String>());
+		
 		try {
 			CpGrupo grp = null;
 			CpGrupo grpNovo = null;
@@ -413,12 +423,10 @@ public abstract class GrupoController<T extends CpGrupo> extends
 							dao().consultar(
 									CpTipoConfiguracao.TIPO_CONFIG_PERTENCER,
 									CpTipoConfiguracao.class, false));
+			return idCpGrupo;
 		} catch (Exception e) {
-			throw new AplicacaoException("Id do grupo: " + idCpGrupo
-					+ " erro ao gravar grupo e configurações.", 0, e);
+			throw new AplicacaoException("Id do grupo: " + idCpGrupo + " erro ao gravar grupo e configurações.", 0, e);
 		}
-
-		return "edita";
 	}
 
 	private boolean isConfiguracaoAvancada(ConfiguracaoGrupo cfgGrupo) {
@@ -563,31 +571,10 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	}
 
 	/**
-	 * @return the codigoTipoConfiguracao
-	 */
-	public ArrayList<String> getCodigoTipoConfiguracao() {
-		return codigoTipoConfiguracao;
-	}
-
-	/**
-	 * @return the codigoTipoConfiguracaoNova
-	 */
-	public Integer getCodigoTipoConfiguracaoNova() {
-		return codigoTipoConfiguracaoNova;
-	}
-
-	/**
 	 * @return the configuracoesGrupo
 	 */
 	public ArrayList<ConfiguracaoGrupo> getConfiguracoesGrupo() {
 		return configuracoesGrupo;
-	}
-
-	/**
-	 * @return the conteudoConfiguracao
-	 */
-	public ArrayList<String> getConteudoConfiguracao() {
-		return conteudoConfiguracao;
 	}
 
 	/**
@@ -624,13 +611,6 @@ public abstract class GrupoController<T extends CpGrupo> extends
 
 	public CpGrupoDeEmailSelecao getGrupoPaiSel() {
 		return grupoPaiSel;
-	}
-
-	/**
-	 * @return the idConfiguracao
-	 */
-	public ArrayList<String> getIdConfiguracao() {
-		return idConfiguracao;
 	}
 
 	/**
@@ -753,11 +733,6 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		tipoConfiguracao = dao().consultar(
 				CpTipoConfiguracao.TIPO_CONFIG_PERTENCER,
 				CpTipoConfiguracao.class, false);
-		idConfiguracao = new ArrayList<String>();
-		codigoTipoConfiguracao = new ArrayList<String>(); // 0- Pessoa, 1 -
-		// Lotação, 2 -
-		// email, etc.
-		conteudoConfiguracao = new ArrayList<String>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -779,37 +754,12 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	}
 
 	/**
-	 * @param codigoTipoConfiguracao
-	 *            the codigoTipoConfiguracao to set
-	 */
-	public void setCodigoTipoConfiguracao(
-			ArrayList<String> codigoTipoConfiguracao) {
-		this.codigoTipoConfiguracao = codigoTipoConfiguracao;
-	}
-
-	/**
-	 * @param codigoTipoConfiguracaoNova
-	 *            the codigoTipoConfiguracaoNova to set
-	 */
-	public void setCodigoTipoConfiguracaoNova(Integer codigoTipoConfiguracaoNova) {
-		this.codigoTipoConfiguracaoNova = codigoTipoConfiguracaoNova;
-	}
-
-	/**
 	 * @param configuracoesGrupo
 	 *            the configuracoesGrupo to set
 	 */
 	public void setConfiguracoesGrupo(
 			ArrayList<ConfiguracaoGrupo> configuracoesGrupo) {
 		this.configuracoesGrupo = configuracoesGrupo;
-	}
-
-	/**
-	 * @param conteudoConfiguracao
-	 *            the conteudoConfiguracao to set
-	 */
-	public void setConteudoConfiguracao(ArrayList<String> conteudoConfiguracao) {
-		this.conteudoConfiguracao = conteudoConfiguracao;
 	}
 
 	/**
@@ -850,14 +800,6 @@ public abstract class GrupoController<T extends CpGrupo> extends
 
 	public void setGrupoPaiSel(CpGrupoDeEmailSelecao grupoPaiSel) {
 		this.grupoPaiSel = grupoPaiSel;
-	}
-
-	/**
-	 * @param idConfiguracao
-	 *            the idConfiguracao to set
-	 */
-	public void setIdConfiguracao(ArrayList<String> idConfiguracao) {
-		this.idConfiguracao = idConfiguracao;
 	}
 
 	/**
@@ -920,13 +862,4 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	public DpLotacaoSelecao getLotacaoGestoraSel() {
 		return lotacaoGestoraSel;
 	}
-
-	public void setIdConfGestor(Long idConfGestor) {
-		this.idConfGestor = idConfGestor;
-	}
-
-	public Long getIdConfGestor() {
-		return idConfGestor;
-	}
-
 }

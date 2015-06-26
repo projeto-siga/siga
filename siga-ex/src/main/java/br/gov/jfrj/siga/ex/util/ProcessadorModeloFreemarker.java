@@ -59,7 +59,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 	}
 
 	public String processarModelo(CpOrgaoUsuario ou, Map<String, Object> attrs,
-			Map<String, Object> params) throws Exception {
+			Map<String, Object> params) {
 		// Create the root hash
 		Map root = new HashMap();
 		root.put("root", root);
@@ -92,22 +92,22 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		}
 		sTemplate += "\n" + (String) attrs.get("template") + "\n[/#compress]";
 
-		Template temp = new Template((String) attrs.get("nmMod"),
-				new StringReader(sTemplate), cfg);
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Writer out = new OutputStreamWriter(baos);
 		try {
+			Template temp = new Template((String) attrs.get("nmMod"),
+					new StringReader(sTemplate), cfg);
+	
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			Writer out = new OutputStreamWriter(baos);		
 			temp.process(root, out);
+			out.flush();
+			return baos.toString();
 		} catch (TemplateException e) {
 			if (e.getCauseException() != null && e.getCauseException() instanceof AplicacaoException)
-				throw e.getCauseException();
+				throw (AplicacaoException) e.getCauseException();
 			return (e.getMessage() + "\n" + e.getFTLInstructionStack()).replace("\n", "<br/>").replace("\r", "");
 		} catch (IOException e) {
 			return e.getMessage();
-		}
-		out.flush();
-		return baos.toString();
+		}				
 	}
 
 	public void closeTemplateSource(Object arg0) throws IOException {

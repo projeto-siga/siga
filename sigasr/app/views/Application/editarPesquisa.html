@@ -1,29 +1,101 @@
 #{extends 'main.html' /} #{set title:'Edição de Pesquisa' /}
+<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
+<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
+
 <style>
-#sortable ul {
-        height: 1.5em;
-        line-height: 1.2em;
-}
-
-.ui-state-highlight {
-        height: 1.5em;
-        line-height: 1.2em;
-}
+	#sortable ul {
+			height: 1.5em;
+			line-height: 1.2em;
+	}
+	
+	.ui-state-highlight {
+			height: 1.5em;
+			line-height: 1.2em;
+	}
 </style>
-<script>
-$(function() {
 
-        var jPerguntas = $("#perguntas"),
-        perguntas = jPerguntas[0],
-        jDialog = $("#dialog"),
-        dialog = jDialog[0],
-        jDescrPergunta = $("#descrPergunta"),
-        jTipoPergunta = $("#tipoPergunta");
+<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
+	<form id="pesquisaForm">
+		<input type="hidden" name="idPesquisa" id="idPesquisa" />
+		<input type="hidden" name="hisIdIni" id="hisIdIni"/>
+		
+		<div class="gt-form-row gt-width-66">
+			<label>Nome <span>*</span></label> <input type="text"
+				name="nomePesquisa" id="nomePesquisa" size="60" maxlength="255" required />
+		</div>
+		<div class="gt-form-row gt-width-66">
+			<label>Descrição</label> <input type="text" name="descrPesquisa" id="descrPesquisa"
+				size="60" maxlength="255" />
+		</div>
+
+		<div class="gt-form-row">
+			<label>Perguntas</label>
+			<ul id="perguntas" style="color: #365b6d"></ul>
+			<input type="button" value="Incluir" id="botaoIncluir"
+				class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
+		</div>
+	</form>
+		
+	#{configuracaoAssociacao orgaos:orgaos,
+		locais:locais, 
+		itemConfiguracaoSet:itemConfiguracaoSet,
+		acoesSet:acoesSet,
+		modoExibicao:'pesquisa',
+		urlGravar:@Application.gravarAssociacaoPesquisa() }#{/configuracaoAssociacao}
+	
+	<div class="gt-form-row">
+		<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
+		<a class="gt-btn-medium gt-btn-left" onclick="pesquisaService.cancelarGravacao()">Cancelar</a>
+		<input type="button" value="Aplicar" class="gt-btn-medium gt-btn-left" onclick="pesquisaService.aplicar()"/>
+	</div>
+</div>
+
+<div id="dialog">
+	<div class="gt-content">
+		<div class="gt-form gt-content-box">
+			<form id="perguntaForm">
+				<div class="gt-form-row">
+					<label>Pergunta <span>*</span></label> <input type="text" id="descrPergunta"
+						name="descrPergunta" value="" size="60" maxlength="255" required/>
+				</div>
+				<div class="gt-form-row">
+					<label>Tipo</label> #{select name:'tipoPergunta', id:'tipoPergunta'}
+					#{list items:tipos, as:'tipo'} #{option tipo.idTipoPergunta}
+					${tipo.nomeTipoPergunta} #{/option} #{/list} #{/select}
+				</div>
+				<div class="gt-form-row">
+					<input type="button" id="modalOk" value="Ok" class="gt-btn-medium gt-btn-left" />
+					<input type="button" value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+	associacaoService.getUrlDesativarReativar = function(desativados) {
+	    var url = '@{Application.listarAssociacaoPesquisa()}',
+	        idPesquisa = $("[name=idPesquisa]").val();
+	
+	    if(desativados)
+	        url = '@{Application.listarAssociacaoPesquisaDesativados()}';
+	        
+	    return url + "?idPesquisa=" + idPesquisa;
+	}
+
+	jQuery(document).ready(function($) {
+		
+    	var jPerguntas = $("#perguntas"),
+	        perguntas = jPerguntas[0],
+	        jDialog = $("#dialog"),
+	        dialog = jDialog[0],
+	        jDescrPergunta = $("#descrPergunta"),
+	        jTipoPergunta = $("#tipoPergunta");
        
         $( "#perguntas" ).sortable({placeholder: "ui-state-highlight"});
         $( "#perguntas" ).disableSelection();
        
-        $("#botaoIncluir").click(function(){
+        $("#botaoIncluir").click(function() {
                 jDialog.data('acao',perguntas.incluirItem).dialog('open');
         });
        
@@ -48,6 +120,9 @@ $(function() {
                 }
         });
         $("#modalOk").click(function(){
+        	if (!jQuery("#perguntaForm").valid())
+                return false;
+            
                 var acao = jDialog.data('acao');
                 var jTipoEscolhido = jTipoPergunta.find("option:selected");
                 acao(jDescrPergunta.val(), jTipoEscolhido.val(), jTipoEscolhido.text(), jDialog.data("id"));
@@ -60,14 +135,13 @@ $(function() {
         perguntas["index"] = 0;
         perguntas.incluirItem = function(descr, idTipo, descrTipo, id){
                 if (!id)
-                        id = 'novo_' + ++perguntas["index"];
+                    id = 'novo_' + ++perguntas["index"];
                 jPerguntas.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
                 var jNewTr = jPerguntas.find("li:last-child");
-                jNewTr.append("<span>" + descr + "</span> - <span style=\"display: inline-block\" id=\"" + idTipo + "\">"
-                                + descrTipo + "</span>");
+                jNewTr.append("<span>" + descr + "</span> - <span style=\"display: inline-block\" id=\"" + idTipo + "\">" + descrTipo + "</span>");
                 jNewTr.append("&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/pencil.png\" style=\"visibility:hidden; cursor: pointer\" />");
                 jNewTr.append("&nbsp;<img src=\"/siga/css/famfamfam/icons/delete.png\" style=\"visibility: hidden; cursor: pointer\" />");
-                jNewTr.find("img:eq(0)").click(function(){
+                jNewTr.find("img:eq(0)").click(function() {
                         var jDivs=jNewTr.find("span");
                         jDialog.data("descrPergunta",jDivs[0].innerHTML)
                                 .data("tipoPergunta",jDivs[1].id)
@@ -96,77 +170,27 @@ $(function() {
                 perguntas["index"]--;
         }
 
-        #{list items:pesq.getPerguntaSetAtivas(), as:'pergunta'}
-                perguntas.incluirItem('${pergunta.descrPergunta}', '${pergunta.tipoPergunta.idTipoPergunta}', '${pergunta.tipoPergunta.nomeTipoPergunta}', ${pergunta.idPergunta});
-        #{/list}
+        perguntas.limpar = function() {
+       		$("#perguntas").html('');
+       	}
+        var pesquisaFormValidator = $("#pesquisaForm").validate();
+        var perguntaFormValidator = $("#perguntaForm").validate();
+	});
 
-        $("[value='Gravar']").click(function(){
-            	if (!block())
-                	return false;
-                var jForm = $("form"),
-                        params = jForm.serialize();
-                jPerguntas.find("li").each(function(i){
-                        var jDivs=$(this).find("span");
-                        params += '&pesq.perguntaSet[' + i + '].descrPergunta=' + jDivs[0].innerHTML;
-                        params += '&pesq.perguntaSet[' + i + '].tipoPergunta.idTipoPergunta=' + jDivs[1].id;
-                        params += '&pesq.perguntaSet[' + i + '].ordemPergunta=' + i;
-                        if (this.id.indexOf("novo_") < 1)
-                                params += '&pesq.perguntaSet[' + i + '].idPergunta=' + this.id;
-                });
-                location.href = '@{Application.gravarPesquisa()}?' + params;
-        });
-});
+	function isValidForm() {
+	    return jQuery("#pesquisaForm").valid();
+	}
+
+	function resetErrosForm() {
+		pesquisaFormValidator.reset();
+		perguntaFormValidator.reset();
+	}
+
+	function podeCadastrarAssociacao() {
+		var pesquisaId = $("#idPesquisa");
+        if ((pesquisaId == undefined || pesquisaId.val() == "")  && pesquisaService.aplicar() == false) 
+            return false;
+        else
+            return true;
+    }
 </script>
-<div class="gt-bd clearfix">
-        <div class="gt-content">
-                <h2>Cadastro de Pesquisa de Satisfação</h2>
-
-                <div class="gt-form gt-content-box">
-                        <form enctype="multipart/form-data">
-                                #{if pesq?.idPesquisa} <input type="hidden" name="pesq.idPesquisa"
-                                        value="${pesq.idPesquisa}"> #{/if}
-                                <div class="gt-form-row gt-width-66">
-                                        <label>Nome</label> <input type="text" name="pesq.nomePesquisa"
-                                                value="${pesq?.nomePesquisa}" size="60" />
-                                </div>
-                                <div class="gt-form-row gt-width-66">
-                                        <label>Descrição</label> <input type="text"
-                                                name="pesq.descrPesquisa" value="${pesq?.descrPesquisa}" size="60" />
-                                </div>
-                                <div class="gt-form-row">
-                                        <label>Perguntas</label>
-                                        <ul id="perguntas" style="color: #365b6d">
-                                        </ul>
-                                        <input type="button" value="Incluir" id="botaoIncluir"
-                                                class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
-                                </div>
-                                <div class="gt-form-row">
-                                        <input type="button" value="Gravar"
-                                                class="gt-btn-medium gt-btn-left" /> 
-                                       	<a href="@{Application.listarPesquisa}" class="gt-btn-medium gt-btn-left">Cancelar</a>
-                                </div>
-                        </form>
-                </div>
-        </div>
-</div>
-
-<div id="dialog">
-        <div class="gt-content">
-                <div class="gt-form gt-content-box">
-                        <div class="gt-form-row">
-                                <label>Pergunta</label> <input type="text" id="descrPergunta"
-                                        name="descrPergunta" value="" size="60" />
-                        </div>
-                        <div class="gt-form-row">
-                                <label>Tipo</label> #{select name:'tipoPergunta', id:'tipoPergunta'}
-                                #{list items:tipos, as:'tipo'} #{option tipo.idTipoPergunta}
-                                ${tipo.nomeTipoPergunta} #{/option} #{/list} #{/select}
-                        </div>
-                        <div class="gt-form-row">
-                                <input type="button" id="modalOk" value="Ok"
-                                        class="gt-btn-medium gt-btn-left" /> <input type="button"
-                                        value="Cancelar" id="modalCancel" class="gt-btn-medium gt-btn-left" />
-                        </div>
-                </div>
-        </div>
-</div>

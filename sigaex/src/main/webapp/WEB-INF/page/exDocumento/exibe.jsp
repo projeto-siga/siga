@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="libs"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
@@ -40,7 +40,6 @@
 			</p>
 		</c:if>
 		<form name="frm" action="exibir" theme="simple" method="POST">
-			<%-- <ww:token /> --%>
 		</form>
 		<h2>
 			<c:if test="${empty ocultarCodigo}">
@@ -389,8 +388,10 @@
 				</ul>
 			</div>
 		</c:if>
-
+		
+		<!-- Início mapa relação entre documentos -->
 		<c:if test="${docVO.dotRelacaoDocs.numNodos > 1}">
+		<!-- Sidebar List -->
 			<div class="gt-sidebar-content">
 				<h3 style="margin-bottom: 10px">Documentos Relacionados</h3>
 				<div id="outputRelacaoDocs" style="border: 0px; background-color: #e2eaee; padding: 0px">
@@ -499,127 +500,117 @@
 				smallmapRelacaoDocs();
 			</script>
 		</c:if>
+		<!-- Fim mapa relação entre documentos -->
 
 
 		<c:if test="${docVO.dotTramitacao.numNodos > 1}">
-			<div class="gt-sidebar-content" id="tramitacao">
-				<h3 style="margin-bottom: 10px">Tramitação</h3>
-				<div style="display: none" id="inputTramitacao" />
-				<a href="javascript:void(0)" href="javascript:void(0)" style="text-decoration: none">
-					<div id="outputTramitacao" style="border: 0px; background-color: #e2eaee; padding: 0px;" />
-				</a>
+		<!-- Início mapa tramitação -->
+	
+		<!-- Sidebar List -->
+		<div class="gt-sidebar-content" id="tramitacao">
+			<h3 style="margin-bottom: 10px">Tramitação</h3>
+			<div style="display: none" id="inputTramitacao">
 			</div>
-			<script>
-				$(document).ready(
-						function() {
-							$(window).resize(function() {
-								updateContainerTramitacao();
-							});
+			<a href="javascript:void(0)" href="javascript:void(0)" style="text-decoration: none">
+			<div id="outputTramitacao" style="border: 0px; background-color: #e2eaee; padding: 0px;">
+			</div>
+			</a>
+		</div>
+		<script>
+		$(document).ready(function () {
+		    $(window).resize(function() {
+			    updateContainerTramitacao();
+		    });
+		    	 
+			$("#svgTramitacao").dialog({
+		    	autoOpen: false,
+		    	height: $(window).height()*0.9,
+		    	width: $(window).width()*0.9,
+		    	modal: true,
+			    resizable: false
+		  	});
+			$("#output2Tramitacao").mousedown(function(e){
+				if (e.button == 0 && zoomTramitacao < 3)
+					zoomTramitacao += 0.2;
+				else if (e.button == 2 && zoomTramitacao > 0.5)
+					zoomTramitacao -= 0.2;
+				updateContainerTramitacao();
+			});
+			if (!document.getElementById("outputTramitacao").hasChildNodes()){
+				$("#tramitacao").hide();
+			}
+		});
+		
+		function bigmapTramitacao() {
+			$('#svgTramitacao').dialog('open');
+			if ($('#naoCarregouBigTramitacao')[0] != undefined){
+				var input = 'digraph ""{ graph[tooltip="Tramitação"] ${docVO.dotTramitacao} }';
+				input = escapeAcentos(input);
+				var result = Viz(input, "svg", "dot");
+		  		document.getElementById("output2Tramitacao").innerHTML = result;
+			}
+		  	updateContainerTramitacao();
+		} 
 
-							$("#svgTramitacao").dialog({
-								autoOpen : false,
-								height : $(window).height() * 0.9,
-								width : $(window).width() * 0.9,
-								modal : true,
-								resizable : false
-							});
-							$("#output2Tramitacao").mousedown(function(e) {
-								if (e.button == 0 && zoomTramitacao < 3)
-									zoomTramitacao += 0.2;
-								else if (e.button == 2 && zoomTramitacao > 0.5)
-									zoomTramitacao -= 0.2;
-								updateContainerTramitacao();
-							});
-							if (!document.getElementById("outputTramitacao")
-									.hasChildNodes()) {
-								$("#tramitacao").hide();
-							}
-						});
+		var hexDigits = new Array("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
+		function rgb2hex(rgb) {
+			 rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+			 return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+		}			
+		function hex(x) {
+  			return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+ 		}
+	 	function ratioTramitacao(){
+	 		var x = ${docVO.dotTramitacao.numNodos};
+	 		if (x <= 2)
+		 		return '0.4';
+	 		else if (x ==3)
+		 		return '0.5';
+	 		else if (x ==4)
+		 		return '0.6';
+	 		else return '0.7';
+	 	}
+		
+		function smallmapTramitacao() {
+			$("#outputTramitacao").css("background-color", $("html").css("background-color"));
+			var bgcolor = rgb2hex($("#outputTramitacao").css("background-color"));
+			var input = 'digraph "" { graph[tooltip="Tramitação" ratio="' + ratioTramitacao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapTramitacao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotTramitacao} }';
+			input = escapeAcentos(input);
+			var result = Viz(input, "svg", "dot");
+		  	document.getElementById("outputTramitacao").innerHTML = result;
+			updateContainerTramitacao();
+		}
 
-				function bigmapTramitacao() {
-					$('#svgTramitacao').dialog('open');
-					if ($('#naoCarregouBigTramitacao')[0] != undefined) {
-						var input = 'digraph ""{ graph[tooltip="Tramitação"] ${docVO.dotTramitacao} }';
-						input = escapeAcentos(input);
-						var result = Viz(input, "svg", "dot");
-						document.getElementById("output2Tramitacao").innerHTML = result;
-					}
-					updateContainerTramitacao();
-				}
-
-				var hexDigits = new Array("0", "1", "2", "3", "4", "5", "6",
-						"7", "8", "9", "a", "b", "c", "d", "e", "f");
-				function rgb2hex(rgb) {
-					rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-					return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-				}
-				function hex(x) {
-					return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16]
-							+ hexDigits[x % 16];
-				}
-				function ratioTramitacao() {
-					var x = $
-					{
-						docVO.dotTramitacao.numNodos
-					}
-					;
-					if (x <= 2)
-						return '0.4';
-					else if (x == 3)
-						return '0.5';
-					else if (x == 4)
-						return '0.6';
-					else
-						return '0.7';
-				}
-
-				function smallmapTramitacao() {
-					$("#outputTramitacao").css("background-color",
-							$("html").css("background-color"));
-					var bgcolor = rgb2hex($("#outputTramitacao").css(
-							"background-color"));
-					var input = 'digraph "" { graph[tooltip="Tramitação" ratio="'
-							+ ratioTramitacao()
-							+ '"  color="'
-							+ bgcolor
-							+ '" bgcolor="'
-							+ bgcolor
-							+ '" URL="javascript: bigmapTramitacao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotTramitacao} }';
-					input = escapeAcentos(input);
-					var result = Viz(input, "svg", "dot");
-					document.getElementById("outputTramitacao").innerHTML = result;
-					updateContainerTramitacao();
-				}
-
-				var zoomTramitacao = 1;
-				function updateContainerTramitacao() {
-					var smallwidth = $('#outputTramitacao').width();
-					var smallsvg = $('#outputTramitacao :first-child').first();
-					var smallviewbox = smallsvg.attr('viewBox');
-
-					if (typeof smallviewbox != 'undefined') {
-						var a = smallviewbox.split(' ');
-
-						// set attrs and 'resume' force 
-						smallsvg.attr('width', smallwidth);
-						smallsvg.attr('height', smallwidth * a[3] / a[2]);
-					}
-
-					var bigsvg = $('#output2Tramitacao :first-child').first();
-					var bigviewbox = bigsvg.attr('viewBox');
-
-					if (typeof bigviewbox != 'undefined') {
-						var a = bigviewbox.split(' ');
-
-						// set attrs and 'resume' force 
-						bigsvg.attr('width', a[2] * zoomTramitacao);
-						bigsvg.attr('height', zoomTramitacao * a[3]);
-					}
-					;
-				}
-				smallmapTramitacao();
-			</script>
-		</c:if>
+		var zoomTramitacao = 1;
+		function updateContainerTramitacao() {
+		    var smallwidth = $('#outputTramitacao').width(); 
+	    	var smallsvg = $('#outputTramitacao :first-child').first(); 
+	    	var smallviewbox = smallsvg.attr('viewBox');
+		      
+	    	if(typeof smallviewbox != 'undefined') {
+			    var a = smallviewbox.split(' ');  
+	
+		    	// set attrs and 'resume' force 
+		    	smallsvg.attr('width', smallwidth);
+		    	smallsvg.attr('height', smallwidth * a[3] / a[2]);
+	    	}
+		    
+	    	var bigsvg = $('#output2Tramitacao :first-child').first(); 
+	    	var bigviewbox = bigsvg.attr('viewBox');
+		      
+	    	if(typeof bigviewbox != 'undefined') {
+			    var a = bigviewbox.split(' ');  
+	
+		    	// set attrs and 'resume' force 
+		    	bigsvg.attr('width', a[2] * zoomTramitacao);
+		    	bigsvg.attr('height', zoomTramitacao * a[3]);
+	    	};
+		}
+		smallmapTramitacao();
+    	</script>
+    	
+    	<!-- Fim mapa tramitação -->
+    	</c:if>
 
 		<div class="gt-sidebar-content">
 			<h3>Documento ${docVO.doc.exTipoDocumento.descricao}</h3>
@@ -636,7 +627,7 @@
 				<b>Para:</b> ${docVO.destinatarioString}
 			</p>
 			<p>
-				<b>Cadastrante:</b> ${docVO.cadastranteString}${docVO.lotaCadastranteString}
+				<b>Cadastrante:</b> ${docVO.cadastranteString} ${docVO.lotaCadastranteString}
 			</p>
 			<p>
 				<b>Tipo:</b> ${docVO.forma}

@@ -35,11 +35,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "CP_FERIADO", schema="CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Table(name = "CP_FERIADO", schema = Catalogs.CORPORATIVO)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpFeriado extends AbstractCpFeriado implements Serializable,
 		Selecionavel {
 

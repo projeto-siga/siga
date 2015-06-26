@@ -1,6 +1,5 @@
 <%@ tag body-content="empty" pageEncoding="utf-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ attribute name="pessoa"%>
 <%@ attribute name="funcao"%>

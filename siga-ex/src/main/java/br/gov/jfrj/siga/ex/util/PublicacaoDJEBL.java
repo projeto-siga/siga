@@ -200,12 +200,13 @@ public class PublicacaoDJEBL {
 	}
 
 	public static void primeiroEnvio(ExMovimentacao mov) throws Exception {
-
-		String conteudoXML = enviarTRF(mov);
-
-		System.out.println("\n\n DJE envio " + mov.getExDocumento().getCodigo() + ", retorno: " + conteudoXML);
-
-		verificaRetornoErrosTRF(conteudoXML);
+		if(!SigaExProperties.getServidorDJE().isEmpty()) {
+			String conteudoXML = enviarTRF(mov);
+	
+			System.out.println("\n\n DJE envio " + mov.getExDocumento().getCodigo() + ", retorno: " + conteudoXML);
+	
+			verificaRetornoErrosTRF(conteudoXML);
+		}
 	}
 
 	/*
@@ -329,7 +330,9 @@ public class PublicacaoDJEBL {
 			attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", docForm.get("idTipoMateria"));
 		else {
 			ExTpDocPublicacao tpDocPubl = ExDao.getInstance().consultarPorModelo(movDoc.getExModelo());
-			attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", String.valueOf(tpDocPubl.getIdDocPublicacao().longValue()));
+			
+			if(tpDocPubl != null)
+				attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", String.valueOf(tpDocPubl.getIdDocPublicacao().longValue()));
 		}
 
 		String sMatricula;

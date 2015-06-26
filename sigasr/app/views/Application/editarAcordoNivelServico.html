@@ -79,7 +79,7 @@
 			itemConfiguracaoTable.api().row($(this).closest('tr')).remove().draw(false);
 		});
 		
-	 	// Delete Ação
+	 	// Delete A&ccedil;&atilde;o
 	    $('#acao_table tbody').on( 'click', 'a.acao_remove', function () {
 	    	acaoTable.api().row($(this).closest('tr')).remove().draw(false);
 	    } );
@@ -399,7 +399,7 @@
 	</div>
 #{/modal}
 
-#{modal nome:'acao', titulo:'Adicionar Ação'}
+#{modal nome:'acao', titulo:'Adicionar A&ccedil;&atilde;o'}
 	<script>
 	//Edson: esta funcao evita que o usuario de ok sem a busca por ajax ter terminado
 	function bloqueiaAcaoOk(){
@@ -417,9 +417,9 @@
 			<div class="gt-form gt-content-box">
 				<div class="gt-form-row">
 					<div class="gt-form-row">
-						<label>Ação</label> #{selecao tipo:'acao',
+						<label>A&ccedil;&atilde;o</label> #{selecao tipo:'acao',
 							nome:'acao', value:acao?.atual, onblur:'bloqueiaAcaoOk();', onchange:'bloqueiaAcaoOkSeVazio();' /}
-						<span style="display:none;color: red" id="sla.acao">Ação não informada.</span>
+						<span style="display:none;color: red" id="sla.acao">A&ccedil;&atilde;o não informada.</span>
 					</div>
 					<div class="gt-form-row">
 						<button id="modalAcaoOk" onclick="javascript: inserirAcao()" class="gt-btn-medium gt-btn-left" disabled>Ok</button>

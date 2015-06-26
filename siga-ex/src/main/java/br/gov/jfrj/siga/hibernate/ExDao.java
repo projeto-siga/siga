@@ -27,6 +27,7 @@ package br.gov.jfrj.siga.hibernate;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -67,6 +68,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
@@ -1274,7 +1276,7 @@ public class ExDao extends CpDao {
 
 		StringBuffer sbf = new StringBuffer();
 
-		sbf.append("select * from siga.ex_configuracao ex inner join corporativo.cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
+		sbf.append("select * from siga.ex_configuracao ex inner join " + Catalogs.CORPORATIVO + ".cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
 
 		sbf.append("" + "where 1 = 1");
 
@@ -1315,16 +1317,16 @@ public class ExDao extends CpDao {
 		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
 			sbf.append(" and (cp.id_orgao_usu = ");
 			sbf.append(orgao.getId());
-			sbf.append(" or cp.id_lotacao in (select id_lotacao from corporativo.dp_lotacao lot where lot.id_orgao_usu= ");
+			sbf.append(" or cp.id_lotacao in (select id_lotacao from " + Catalogs.CORPORATIVO + ".dp_lotacao lot where lot.id_orgao_usu= ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
-			sbf.append(" or cp.id_pessoa in (select id_pessoa from corporativo.dp_pessoa pes where pes.id_orgao_usu = ");
+			sbf.append(" or cp.id_pessoa in (select id_pessoa from " + Catalogs.CORPORATIVO + ".dp_pessoa pes where pes.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
-			sbf.append(" or cp.id_cargo in (select id_cargo from corporativo.dp_cargo cr where cr.id_orgao_usu = ");
+			sbf.append(" or cp.id_cargo in (select id_cargo from " + Catalogs.CORPORATIVO + ".dp_cargo cr where cr.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
-			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from corporativo.dp_funcao_confianca fc where fc.id_orgao_usu = ");
+			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from " + Catalogs.CORPORATIVO + ".dp_funcao_confianca fc where fc.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or (cp.id_orgao_usu is null and cp.id_lotacao is null and cp.id_pessoa is null and cp.id_cargo is null and cp.id_funcao_confianca is null");
@@ -1663,22 +1665,27 @@ public class ExDao extends CpDao {
 		return null;
 	}
 
-	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script)
-			throws Exception {
+	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script) {
 		final Query q = getSessao()
 				.createQuery(
 						"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
 								+ "order by f.descrFormaDoc, m.nmMod");
-		List<ExModelo> l = new ArrayList<ExModelo>();
-		for (ExModelo mod : (List<ExModelo>) q.list())
+		List<ExModelo> l = new ArrayList<ExModelo>();		
+		for (ExModelo mod : (List<ExModelo>) q.list()) {
 			if (script != null && script.trim().length() != 0) {
-				if ("template/freemarker".equals(mod.getConteudoTpBlob())
-						&& mod.getConteudoBlobMod2() != null
-						&& (new String(mod.getConteudoBlobMod2(), "utf-8"))
-						.contains(script))
-					l.add(mod);
+				if(mod.getConteudoBlobMod2() != null) {
+					String conteudo;
+					try {
+						conteudo = new String(mod.getConteudoBlobMod2(), "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						conteudo = new String(mod.getConteudoBlobMod2());
+					}
+					if ("template/freemarker".equals(mod.getConteudoTpBlob())&& (conteudo.contains(script)))
+						l.add(mod);
+				}
 			} else
 				l.add(mod);
+		}
 		return l;
 	}
 

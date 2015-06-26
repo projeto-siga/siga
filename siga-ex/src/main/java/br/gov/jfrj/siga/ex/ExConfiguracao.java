@@ -24,13 +24,7 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.util.Date;
-
 import br.gov.jfrj.siga.cp.CpConfiguracao;
-import br.gov.jfrj.siga.cp.CpServico;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpCargo;
-import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
@@ -138,4 +132,17 @@ public class ExConfiguracao extends CpConfiguracao {
 		return serialVersionUID;
 	}
 
+	public boolean isAgendamentoPublicacaoBoletim() {
+		return getExTipoMovimentacao() != null 
+				&& getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM;
+	}
+
+	public boolean podeAdicionarComoPublicador(DpPessoa titular, DpLotacao lotacaoTitular) {
+		return (getDpPessoa() != null 
+					&& titular != null 
+					&& getDpPessoa().getOrgaoUsuario().getId().equals(titular.getOrgaoUsuario().getId()))
+				|| (getLotacao() != null 
+						&& lotacaoTitular != null 
+						&& getLotacao().getOrgaoUsuario().getId().equals(lotacaoTitular.getOrgaoUsuario().getId()));
+	}
 }

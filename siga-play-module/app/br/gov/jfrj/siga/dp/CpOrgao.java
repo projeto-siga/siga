@@ -32,6 +32,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -40,7 +41,7 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "CP_ORGAO", schema = "CORPORATIVO")
+@Table(name = "CP_ORGAO", schema = Catalogs.CORPORATIVO)
 public class CpOrgao extends AbstractCpOrgao implements Serializable,
 		Selecionavel, Historico, Sincronizavel {
 
@@ -102,6 +103,10 @@ public class CpOrgao extends AbstractCpOrgao implements Serializable,
 
 	public String getDescricao() {
 		return getNmOrgao();
+	}
+	
+	public String getRegistroAtivo(){
+		return this.getAtivo();
 	}
 
 	public String getNmOrgaoAI() {

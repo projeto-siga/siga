@@ -24,15 +24,19 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.model.ActiveRecord;
+
 @Entity
-@Table(name = "CP_TIPO_CONFIGURACAO", schema="CORPORATIVO")
+@Table(name = "CP_TIPO_CONFIGURACAO", schema = Catalogs.CORPORATIVO)
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
+public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao implements CpConvertableEntity {
 
 	/**
 	 * 
 	 */
 	public static final long serialVersionUID = 3624557793773660738L;
+	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(CpTipoConfiguracao.class);
 
 	// SIGA-EX
 
@@ -111,6 +115,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 	public static final long TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA = 303;
 	
 	public static final long TIPO_CONFIG_SR_ABRANGENCIA_ACORDO = 304;
+	
+	public static final long TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA = 305;
 
 	public static final long TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO = 34;
 	
@@ -134,4 +140,5 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public CpTipoConfiguracao() {
 	}
+	
 }

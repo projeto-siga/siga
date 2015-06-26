@@ -20,9 +20,7 @@ package br.gov.jfrj.siga.ex.vo;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -83,12 +81,12 @@ public class ExMobilVO extends ExVO {
 	}
 
 	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
-			boolean completo) throws Exception {
+			boolean completo) {
 		this(mob, titular, lotaTitular, completo, null, false);
 	}
 
 	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
-			boolean completo, Long tpMov, boolean movAssinada) throws Exception {
+			boolean completo, Long tpMov, boolean movAssinada) {
 		this.mob = mob;
 		this.sigla = mob.getSigla();
 
@@ -302,8 +300,7 @@ public class ExMobilVO extends ExVO {
 	 * @param lotaTitular
 	 * @throws Exception
 	 */
-	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular)
-			throws Exception {
+	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		if (!mob.isGeral()) {
 			addAcao("application_side_tree",
 					"Visualizar Dossiê",
@@ -324,7 +321,7 @@ public class ExMobilVO extends ExVO {
 
 			addAcao("link_add",
 					"Criar Anexo",
-					"/expediente/doc",
+					"/app/expediente/doc",
 					"editar",
 					Ex.getInstance()
 							.getComp()
@@ -333,14 +330,14 @@ public class ExMobilVO extends ExVO {
 					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
 					null, null);
 		}
-		addAcao("link_break", "Desentranhar", "/expediente/mov",
+		addAcao("link_break", "Desentranhar", "/app/expediente/mov",
 				"cancelar_juntada", Ex.getInstance().getComp()
 						.podeCancelarJuntada(titular, lotaTitular, mob), null,
 				null, null, null, "once");
 
 		addAcao("link_delete",
 				"Desapensar",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"desapensar",
 				Ex.getInstance().getComp()
 						.podeDesapensar(titular, lotaTitular, mob), null, null,
@@ -348,7 +345,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("email_open",
 				"Receber",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"receber",
 				Ex.getInstance().getComp()
 						.podeReceber(titular, lotaTitular, mob), null, null,
@@ -379,21 +376,21 @@ public class ExMobilVO extends ExVO {
 							.podeFazerAnotacao(titular, lotaTitular, mob));
 		}
 
-		addAcao("package", "Arq. Corrente", "/expediente/mov",
+		addAcao("package", "Arq. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
 				null, null, null, "once");
 
 		addAcao("database_add",
 				"Indicar para Guarda Permanente",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"indicar_permanente",
 				Ex.getInstance().getComp()
 						.podeIndicarPermanente(titular, lotaTitular, mob));
 
 		addAcao("database_delete",
 				"Reverter Ind. Guarda Permanente",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"reverter_indicacao_permanente",
 				Ex.getInstance()
 						.getComp()
@@ -402,7 +399,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("page_red",
 				"Retirar de Edital de Eliminação",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"retirar_de_edital_eliminacao",
 				Ex.getInstance()
 						.getComp()
@@ -411,12 +408,12 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("table_edit",
 				"Reclassificar",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"reclassificar",
 				Ex.getInstance().getComp()
 						.podeReclassificar(titular, lotaTitular, mob));
 
-		addAcao("table", "Avaliar", "/expediente/mov", "avaliar", Ex
+		addAcao("table", "Avaliar", "/app/expediente/mov", "avaliar", Ex
 				.getInstance().getComp().podeAvaliar(titular, lotaTitular, mob));
 
 		addAcao("hourglass_add",
@@ -429,7 +426,7 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("database",
 				"Recolher ao Arq. Permanente",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"arquivar_permanente_gravar",
 				Ex.getInstance().getComp()
 						.podeBotaoArquivarPermanente(titular, lotaTitular, mob),
@@ -437,21 +434,21 @@ public class ExMobilVO extends ExVO {
 
 		addAcao("box",
 				"Arq. Intermediário",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"arquivar_intermediario",
 				Ex.getInstance()
 						.getComp()
 						.podeBotaoArquivarIntermediario(titular, lotaTitular,
 								mob), null, null, null, null, "once");
 
-		addAcao("package_go", "Desarq. Corrente", "/expediente/mov",
+		addAcao("package_go", "Desarq. Corrente", "/app/expediente/mov",
 				"reabrir_gravar", Ex.getInstance().getComp()
 						.podeDesarquivarCorrente(titular, lotaTitular, mob),
 				null, null, null, null, "once");
 
 		addAcao("box_go",
 				"Desarq. Intermediário",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"desarquivar_intermediario_gravar",
 				Ex.getInstance()
 						.getComp()

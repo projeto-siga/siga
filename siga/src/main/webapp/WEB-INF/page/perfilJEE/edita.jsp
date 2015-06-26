@@ -3,9 +3,8 @@
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <script type="text/javascript" language="Javascript1.1">
 	function gravarGestorGrupo() {
@@ -372,16 +371,16 @@
 						<c:forEach var="configuracaoGrupo" items="${configuracoesGrupo}">
 							<tr class="">
 								<td valign="top">
-									<select id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracao" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">
+									<select id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracaoSelecionada" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">
 									  <option value="-1">[Remover]</option>									              
 							          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
-							           <option value="${item.codigo}" >${value == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
-							            ${item.descricao}
+							           <option value="${item.codigo}" ${item.codigo == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
+							            	${item.descricao}
 							           </option>  
 							          </c:forEach>
 							         </select>
 							         
-									<input type="hidden" name="conteudoConfiguracao"
+									<input type="hidden" name="conteudoConfiguracaoSelecionada"
 										id="conteudo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
 										value="" /> 
 									

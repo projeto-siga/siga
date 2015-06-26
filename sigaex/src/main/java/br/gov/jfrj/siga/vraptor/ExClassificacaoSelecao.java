@@ -21,7 +21,7 @@ package br.gov.jfrj.siga.vraptor;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.libs.webwork.Selecao;
+import br.gov.jfrj.siga.model.Selecao;
 
 public class ExClassificacaoSelecao extends Selecao<ExClassificacao> {
 

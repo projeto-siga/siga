@@ -27,22 +27,26 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.cp.CpConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
-@Table(name = "CP_ORGAO_USUARIO", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Table(name = "CP_ORGAO_USUARIO", schema = Catalogs.CORPORATIVO)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@NamedQuery(name = "consultarCpOrgaoUsuario", query = "select u from CpOrgaoUsuario u order by u.siglaOrgaoUsu")
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
-		Serializable, Selecionavel, Assemelhavel {
+		Serializable, Selecionavel, Assemelhavel, CpConvertableEntity {
 	public static ActiveRecord<CpOrgaoUsuario> AR = new ActiveRecord<>(CpOrgaoUsuario.class);
 
 	/**

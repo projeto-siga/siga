@@ -34,6 +34,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MappedSuperclass;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
@@ -53,7 +54,7 @@ public abstract class AbstractCpSituacaoConfiguracao extends Objeto implements S
 	private Long restritividadeSitConfiguracao;
 	//private Set<CpTipoConfiguracao> cpTiposConfiguracaoSet;
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CP_TIPO_SERVICO_SITUACAO", schema="CORPORATIVO", joinColumns = { @JoinColumn(name = "ID_SIT_CONFIGURACAO", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "ID_TP_SERVICO", nullable = false, updatable = false) })
+	@JoinTable(name = "CP_TIPO_SERVICO_SITUACAO", schema = Catalogs.CORPORATIVO, joinColumns = { @JoinColumn(name = "ID_SIT_CONFIGURACAO", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "ID_TP_SERVICO", nullable = false, updatable = false) })
 	private Set<CpTipoServico> cpTiposServicoSet;
 
 	public Long getIdSitConfiguracao() {

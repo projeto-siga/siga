@@ -18,7 +18,8 @@
 					 classef,
 					 classef.corp.jfrj.gov.br,				 					 
 					 siga-beta,
-					 siga-beta.corp.jfrj.gov.br					 
+					 siga-beta.corp.jfrj.gov.br,
+					 trfrj.jus.db1.com.br					 
 			</Domains>
 		</Trust>
 	</PicketLinkIDP>

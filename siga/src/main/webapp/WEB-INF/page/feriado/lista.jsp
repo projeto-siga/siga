@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 
 <siga:pagina titulo="Lista Feriados">
@@ -71,20 +71,24 @@
 									<a href="${url}">${feriado.dscFeriado}</a>
 								</td>
 								<td align="center" rowspan="${feriado.quantidadeOcorrencias+1}">
-									<siga:link title="Incluir" url="${urlI}" />
+									<siga:links inline="${true}" separator="${false}">
+										<siga:link title="Incluir" url="${urlI}" />
+									</siga:links>
 								</td>
 								<c:choose>									
 									<c:when test="${(not empty feriado.cpOcorrenciaFeriadoSet)}">
 										<c:forEach var="ocorrencia" items="${feriado.cpOcorrenciaFeriadoSet}">	
 										<tr>											
-											<td align="left">${ocorrencia.dtRegIniDDMMYY}</td>
-											<td align="left">${ocorrencia.dtRegFimDDMMYY}</td>
+											<td align="left">${ocorrencia.dtRegIniDDMMYYYY}</td>
+											<td align="left">${ocorrencia.dtRegFimDDMMYYYY}</td>
 											<td align="left">
 												<c:url var="url" value="/app/feriado/editar-ocorrencia">
 													<c:param name="idOcorrencia">${ocorrencia.idOcorrencia}</c:param>
 													<c:param name="id">${feriado.id}</c:param>
 												</c:url>
-												<siga:link title="Alterar" url="${url}" />					
+												<siga:links inline="${true}" separator="${false}">
+													<siga:link title="Alterar" url="${url}" />
+												</siga:links>					
 											</td>
 											<td align="center" width="10%">									
 		 			 							<a href="javascript:if (confirm('Deseja excluir a ocorrência do feriado?')) location.href='/siga/app/feriado/excluir-ocorrencia?idOcorrencia=${ocorrencia.idOcorrencia}';">
@@ -98,13 +102,11 @@
 										</c:forEach>										
 									</c:when>
 									<c:otherwise>										
-										<td></td><td></td>
-					<%--					<td align="left"><ww:url id="url" action="editar_ocorrencia" namespace="/feriado">
-														<ww:param name="id">${feriado.id}</ww:param>
-													</ww:url>
-												<siga:link title="Incluir" url="${url}" />	
-												 --%>				
-											</td><td></td><td></td>										
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>										
 									</c:otherwise>	
 								</c:choose>													 							
 							</tr>

@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Juntar Documento">
 	
@@ -36,7 +36,7 @@
 						<tr>
 							<td>
 								<label>
-									Data
+									Data:
 								</label>
 							</td>
 							<td>
@@ -49,9 +49,9 @@
 							</td>
 							<td>
 								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
-								&nbsp;&nbsp;
+								&nbsp;
 								<input type="checkbox" theme="simple" name="substituicao" value="${substituicao}" onclick="javascript:displayTitular(this);" />
-								&nbsp;&nbsp;Substituto
+								Substituto
 							</td>
 						</tr>
 					</c:when>
@@ -82,10 +82,10 @@
 					<td>
 						<siga:escolha var="idDocumentoEscolha">
 							<siga:opcao id='1' texto="Documento Interno" >
-								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" urlAcao="buscar" modulo="sigaex"/>
+								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex"/>
 							</siga:opcao>
 							<siga:opcao id='2' texto="Documento Externo ao SIGAEX" >
-								<input type="checkbox" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" />
+								<input type="text" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" />
 							</siga:opcao>
 						</siga:escolha>
 					</td>

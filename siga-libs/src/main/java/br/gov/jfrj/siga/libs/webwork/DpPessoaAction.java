@@ -30,6 +30,7 @@ import com.opensymphony.xwork.Action;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
@@ -92,6 +93,9 @@ public class DpPessoaAction extends
 		if ( param("postback") == null 
 				&& lotacaoTitular != null ) {
 			setOrgaoUsu( lotacaoTitular.getIdOrgaoUsuario() );
+		}
+		if (getNome() == null){
+			setNome("");
 		}
 		return super.aBuscar();
 	}

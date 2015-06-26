@@ -1,6 +1,35 @@
 #{extends 'main.html' /} #{set title:'Movimentação de solicitação' /}
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
+<style>
+	ul.lista-historico li span {
+		text-decoration: line-through;
+	}
+	
+	ul.lista-historico li {
+		list-style: none;
+	}
+	
+	ul.lista-historico li.unico {
+		margin-left: 0px !important;
+	}
+	
+	button.button-historico {
+		padding-left: 2px;
+		padding-right: 2px;
+		width: 16px;
+	}
+	
+	.historico-label {
+		font-weight: bold;
+		margin-right: 4px;
+	}
+	
+	.hidden {
+		display: none;
+	}
+</style>
+
 <script>
 $(function() {
     $( "#calendario" ).datepicker({
@@ -31,7 +60,7 @@ function postback(){
 		<h2>${solicitacao.codigo}</h2>
 		<p></p>
 		<h3>
-			${solicitacao.getMarcadoresEmHtml(cadastrante, lotaTitular)} #{if
+			${solicitacao.getMarcadoresEmHtml(titular, lotaTitular)} #{if
 			solicitacao.solicitacaoPrincipal} - <a style="text-decoration: none"
 				href="@{Application.exibir(solicitacao.solicitacaoPrincipal.idSolicitacao)}">
 				${solicitacao.solicitacaoPrincipal.codigo} </a> #{/if}
@@ -44,11 +73,11 @@ function postback(){
 				style="margin-right: 1px;"> O atendente atual n&atilde;o &eacute; o
 			atendente designado.
 		</div>
-		#{/if}}* #{links acoes:solicitacao.operacoes(lotaTitular, titular), base:_base /}
+		#{/if}}* #{links acoes:solicitacao.operacoes(titular, lotaTitular), base:_base /}
 		<div class="gt-content-box" style="padding: 10px">
 			<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-				${solicitacao.descrItem} -
-				${solicitacao.descrAcao}</p>
+				#{descricaoItem itemConfiguracao: solicitacao.itemAtual /} -
+				#{descricaoAcao acao: solicitacao.acaoAtual /}</p>
 			<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 			<script language="javascript">
 				var descricao = document.getElementById('descrSolicitacao');
@@ -71,17 +100,24 @@ function postback(){
 				<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 				<input type="hidden" name="ocultas" value="${ocultas}" />
 				<input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-					value="${movimentacao.solicitacao.idSolicitacao}">*{ #{if
-				solicitacao.podeTrocarAtendente(lotaTitular, cadastrante)}
+					value="${movimentacao.solicitacao.idSolicitacao}"> #{if
+				solicitacao.podeTrocarAtendente(titular, lotaTitular)}
+				#{set atendentes: solicitacao.pessoasAtendentesDisponiveis /}
+				
+				#{if atendentes.size >= 1}
 				<div class="gt-form-row">
 					<label>Atendente</label>
-					<div id="divAtendente">#{pessoaLotaSelecao
-						nomeSelLotacao:'movimentacao.lotaAtendente',
-						nomeSelPessoa:'movimentacao.atendente',
-						valuePessoa:movimentacao.atendente,
-						valueLotacao:movimentacao.lotaAtendente, disabled:disabled /}</div>
+					<div id="divAtendente">
+					#{select name:'movimentacao.atendente',
+						items:atendentes,
+						labelProperty:'descricaoIniciaisMaiusculas',
+						value:solicitacao.atendente?.pessoaAtual?.idPessoa}
+					#{option 0}#{/option} 
+					#{/select}
+					</div>
 				</div>
-				#{/if}}*
+				#{/if}
+				#{/if}
 
 				<div style="display: inline" class="gt-form-row gt-width-66">
 					<label>Pr&oacute;ximo Andamento</label>
@@ -219,16 +255,36 @@ function postback(){
 				<b>Registro:</b> ${solicitacao.solicitacaoInicial.dtRegString}
 			</p>}*
 			#{if solicitacao.isEscalonada()}
-				#{set itemEscalonar : solicitacao.getItemAposEscalonar().toString().raw() /}
-				#{set acaoEscalonar : solicitacao.getAcaoAposEscalonar().toString().raw() /}
+				#{set itemEscalonar : solicitacao.getItemAtual().toString().raw() /}
+				#{set acaoEscalonar : solicitacao.getAcaoAtual().toString().raw() /}
 			#{/if}
 			<p>
-				<b>Item de Configuração:</b>
-				${itemEscalonar ?: solicitacao.siglaEDescrItem}
+				<span class="historico-label">Item de Configuração:</span>
+				<div class="historico-item-container hidden">
+					<button type="button" class="button-historico" title="Clique para abrir/fechar o histórico">+</button>
+				
+					<ul class="lista-historico historico-item">
+						#{list items:solicitacao.historicoItem, as:'item'}
+							<li>
+								<span>${item.sigla} - ${item.descricao}</span>
+							</li>
+						#{/list}
+					</ul>
+				</div>
 			</p>
 			<p>
-				<b>Ação:</b>
-				${acaoEscalonar ?: solicitacao.siglaEDescrAcao}
+				<span class="historico-label">A&ccedil;&atilde;o:</span>
+				<div class="historico-acao-container hidden">
+					<button type="button" class="button-historico" title="Clique para abrir/fechar o histórico">+</button>
+					
+					<ul class="lista-historico historico-acao">
+						#{list items:solicitacao.historicoAcao, as:'acao'}
+							<li>
+								<span>${acao.siglaAcao} - ${acao.descricao}</span>
+							</li>
+						#{/list}
+					</ul>
+				</div>
 			</p>
 			#{if (solicitacao?.GUT > 80)} #{set priorColor:'color: red' /} #{/if}
 			#{elseif (solicitacao?.GUT > 60)} #{set priorColor:'color: orange' /}
@@ -236,6 +292,10 @@ function postback(){
 			<p>
 				<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent} ${solicitacao.prioridade?.descPrioridade}
 					<br /> ${solicitacao.GUTString}</span>
+			</p>
+			<p>
+				<b>Notificação:</b>
+				${solicitacao.formaAcompanhamento.descrFormaAcompanhamento.raw()}
 			</p>
 			#{if solicitacao.fechadoAutomaticamente != null && solicitacao.isPai()}
 			<p>
@@ -296,25 +356,22 @@ function postback(){
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Listas de Prioridade</h3>
-			<p>
+				<ul>
 				#{list items:solicitacao.listasAssociadas, as:'listas'}
-				<tr>
-					<td class="gt-form-row gt-width-66"
-						style="font-size: 13px; font-weight: bold; ! important; padding: 7px 10px;">
+					<li>
 						&nbsp; <input type="hidden" name="idlista"
 						value="${listas?.idLista}"> <a
 						style="color: #365b6d; text-decoration: none"
 						href="@{Application.exibirLista(listas?.idLista)}">
 							${listas?.listaAtual?.nomeLista} </a>
-					</td>
-				</tr>
+					</li>
 				#{/list}
-			</p>
+				</ul>
 		</div>
 	</div>
 	#{/if} 
 	
-	#{if solicitacao.estaCom(lotaTitular, cadastrante) || exibirMenuAdministrar}
+	#{if solicitacao.estaCom(titular, lotaTitular) || exibirMenuAdministrar}
 		#{include 'Application/exibirAcordos.html' /}
 	#{/if}
 	
@@ -539,11 +596,89 @@ function postback(){
 #{/modal}
 
 <script>
-$("#terminarPendenciaModal_dialog").dialog({
-    autoOpen: false,
-    height: 'auto',
-    width: 'auto',
-    modal: true,
-    resizable: false
-  });
+	$("#terminarPendenciaModal_dialog").dialog({
+	    autoOpen: false,
+	    height: 'auto',
+	    width: 'auto',
+	    modal: true,
+	    resizable: false
+	});
+
+	var MostradorHistorico = function(container, emptyMessage) {
+		var url = container.find('ul'),
+			intermediarios = url.find('li span:not(:first):not(:last)'),
+			button = container.find('button'),
+			me = this,
+			TAMANHO_MAXIMO_DESCRICAO = 50;
+		
+		button.bind('click', function() {
+			me.toogleItens();
+		});
+		
+		this.toogleItens = function() {
+			intermediarios.toggleClass('hidden');
+	 		if(intermediarios.hasClass('hidden'))
+	 			button.html('+');
+	 		else {
+	 			button.html('-');
+	 		}
+		}
+
+		this.init = function() {
+			this.adicionarMensagemSeVazio();
+			this.verificarIntermediarios();
+			this.formatarDescricoes();
+			this.formatarLabel();
+			container.removeClass('hidden');
+		}
+
+		this.verificarIntermediarios = function() {
+			if(intermediarios.size() > 0) {
+				this.toogleItens();
+			} else {
+				button.remove();
+			}
+		}
+
+		this.formatarDescricoes = function() {
+			url.find('li span').each(function() {
+				var me = $(this),
+					html = me.html();
+				
+				if(html.length > TAMANHO_MAXIMO_DESCRICAO) {
+					me.attr('title', html);
+					me.css('cursor', 'default');
+					me.html(html.substr(0, TAMANHO_MAXIMO_DESCRICAO) + "...");
+				}
+			});
+			url.find('li span:last').css('text-decoration', 'none');
+		}
+
+		this.adicionarMensagemSeVazio = function() {
+			var lis = url.find('li');
+			if(lis.size() == 0) {
+				url.append('<li><span>' + emptyMessage + '</li></span>')
+			}
+		}
+
+		this.formatarLabel = function() {
+			if(container.find('ul li span').size() == 1) {
+				container
+					.prev('p')
+					.find('.historico-label')
+					.css('float', 'left');
+				container.find('ul li').addClass('unico');
+			} else if(container.find('ul li span').size() > 2) {
+				container
+					.find('.lista-historico')
+					.css('margin-top', '-20px');
+			}
+		}
+	}
+
+	new MostradorHistorico($('.historico-item-container'), "Item não informado")
+		.init();
+
+	new MostradorHistorico($('.historico-acao-container'), "Ação não informada")
+		.init();
 </script>

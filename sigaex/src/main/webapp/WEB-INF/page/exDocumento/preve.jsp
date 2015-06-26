@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
@@ -15,7 +14,7 @@
 	<c:set var="jsp" scope="request" value="${nmArqMod}" />
 </c:if>
 
-<c:import context="/siga" url="/paginas/cabecalho_popup.jsp" />
+<c:import context="/siga" url="/WEB-INF/page/principal/cabecalho_popup.jsp" />
 
 <table width="100%" border="0">
 	<tr>
@@ -36,5 +35,5 @@
 		</tags:fixdocumenthtml></td>
 	</tr>
 </table>
-<c:import context="/siga" url="/paginas/rodape_popup.jsp" />
+<c:import context="/siga" url="/WEB-INF/page/principal/rodape_popup.jsp" />
 

@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
@@ -22,7 +22,7 @@ function sbmt(offset) {
 	if (offset==null) {d
 		offset=0;
 	}
-	buscar["p.offset"].value=offset;
+	buscar["offset"].value=offset;
 	buscar.submit();
 }
 
@@ -594,7 +594,7 @@ function limpaCampos()
 										<input type="hidden" name="propriedade" value="${propriedade}" />
 										<input type="hidden" name="postback" value="1" />
 										<input type="hidden" name="apenasRefresh" value="0" />
-										<input type="hidden" name="p.offset" value="0" />
+										<input type="hidden" name="offset" value="0" />
 
 										<tr class="header">
 											<td align="center" valign="top" colspan="4">
@@ -957,7 +957,7 @@ function limpaCampos()
 												</c:choose>
 											</td>
 										</tr>
-										<siga:selecao titulo="Classificação:" propriedade="classificacao" modulo="sigaex"/>
+										<siga:selecao titulo="Classificação:" propriedade="classificacao" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
 										<tr>
 											<td>
 												Descrição:

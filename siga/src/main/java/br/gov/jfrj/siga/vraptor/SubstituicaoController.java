@@ -20,13 +20,13 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.libs.webwork.DpLotacaoSelecao;
-import br.gov.jfrj.siga.libs.webwork.DpPessoaSelecao;
 
 @Resource
 public class SubstituicaoController extends SigaController {
@@ -40,7 +40,7 @@ public class SubstituicaoController extends SigaController {
 	private DpPessoaSelecao substitutoSel;
 	private DpLotacaoSelecao lotaSubstitutoSel;	
 	
-	public Map<Integer, String> getListaTipo() {
+	private Map<Integer, String> getListaTipo() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
 		map.put(2, "Órgão Integrado");
@@ -53,7 +53,6 @@ public class SubstituicaoController extends SigaController {
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
 		result.on(Exception.class).forwardTo(this).exception();
-		
 
 		titularSel = new DpPessoaSelecao();	
 		lotaTitularSel = new DpLotacaoSelecao();
@@ -283,7 +282,19 @@ public class SubstituicaoController extends SigaController {
 
 	}
 	
+	@Get("/app/substituicao/finalizar")
 	public void finalizar() throws Exception {
+		try {
+			dao().iniciarTransacao();
+			gravarFinalizar();
+			dao().commitTransacao();
+		} catch (Exception e) {
+			dao().rollbackTransacao();
+		}
+		result.redirectTo("/");
+	}	
+	
+	private void gravarFinalizar() {
 		CpPersonalizacao per = dao().consultarPersonalizacao(getCadastrante());
 
 		if (per == null) {
@@ -293,42 +304,38 @@ public class SubstituicaoController extends SigaController {
 
 		per.setPesSubstituindo(null);
 		per.setLotaSubstituindo(null);
-
-		try {
-			dao().iniciarTransacao();
-			dao().gravar(per);
-			dao().commitTransacao();
-		} catch (Exception e) {
-			dao().rollbackTransacao();
-		}
-	}	
+		dao().gravar(per);
+	}
 	
 	@Get("/app/substituicao/substituirGravar")
 	public void substituirGravar(Long idTitular, Long idLotaTitular) throws Exception {
-		finalizar();
-		if (idTitular != null) {
-			setTitular(daoPes(idTitular));
-			setTitular(dao().consultarPorIdInicial(getTitular().getIdInicial()));
-			setLotaTitular(getTitular().getLotacao());
-			setLotaTitular(dao().consultarPorIdInicial(DpLotacao.class,getTitular().getLotacao().getIdInicial()));
-		} else {
-			setLotaTitular(daoLot(idLotaTitular));
-			setLotaTitular(dao().consultarPorIdInicialInclusiveLotacaoFechada(DpLotacao.class, getLotaTitular().getIdInicial()));
-		}
-
-		CpPersonalizacao per = dao().consultarPersonalizacao(getCadastrante());
-		if (per == null) {
-			per = new CpPersonalizacao();
-		}
-		per.setPessoa(getCadastrante());
-		per.setPesSubstituindo(getTitular() != getCadastrante() ? getTitular(): null);
-		per.setLotaSubstituindo(getLotaTitular() != getCadastrante().getLotacao() ? getLotaTitular() : null);
 		try {
 			dao().iniciarTransacao();
+			gravarFinalizar();
+			
+			if (idTitular != null) {
+				setTitular(daoPes(idTitular));
+				setTitular(dao().consultarPorIdInicial(getTitular().getIdInicial()));
+				setLotaTitular(getTitular().getLotacao());
+				setLotaTitular(dao().consultarPorIdInicial(DpLotacao.class,getTitular().getLotacao().getIdInicial()));
+			} else {
+				setLotaTitular(daoLot(idLotaTitular));
+				setLotaTitular(dao().consultarPorIdInicialInclusiveLotacaoFechada(DpLotacao.class, getLotaTitular().getIdInicial()));
+			}
+	
+			CpPersonalizacao per = dao().consultarPersonalizacao(getCadastrante());
+			if (per == null) {
+				per = new CpPersonalizacao();
+			}
+			per.setPessoa(getCadastrante());
+			per.setPesSubstituindo(getTitular() != getCadastrante() ? getTitular(): null);
+			per.setLotaSubstituindo(getLotaTitular() != getCadastrante().getLotacao() ? getLotaTitular() : null);
+		
 			dao().gravar(per);
 			dao().commitTransacao();
-			result.use(Results.referer()).redirect();
+//			result.use(Results.referer()).redirect();
 		} catch (Exception e) {
+			e.printStackTrace();
 			dao().rollbackTransacao();
 		}
 		result.redirectTo("/");

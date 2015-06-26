@@ -40,6 +40,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -57,7 +58,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
  */
 @MappedSuperclass
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
-		implements Serializable {
+		implements Serializable, CpConvertableEntity {
 
 	/**
 	 * 
@@ -66,10 +67,13 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	@Id
 	@GeneratedValue(generator = "generator")
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = Catalogs.CORPORATIVO + ".CP_CONFIGURACAO_SEQ")
 	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;
+	
+	@Column(name = "DESCR_CONFIGURACAO")
+	private String descrConfiguracao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
@@ -378,6 +382,14 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	public void setOrgaoObjeto(CpOrgaoUsuario orgaoObjeto) {
 		this.orgaoObjeto = orgaoObjeto;
+	}
+
+	public String getDescrConfiguracao() {
+		return descrConfiguracao;
+	}
+
+	public void setDescrConfiguracao(String descrConfiguracao) {
+		this.descrConfiguracao = descrConfiguracao;
 	}
 
 }

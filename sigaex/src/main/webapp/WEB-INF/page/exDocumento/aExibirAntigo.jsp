@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="libs"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
@@ -202,7 +202,7 @@
 												</c:forEach>
 											</siga:links>
 										</td>
-										<c:if test="${exibirCompleto eq 'true' and mov.duracaoSpan gt 0}">
+										<c:if test="${exibirCompleto != 'true' and mov.duracaoSpan > 0}">
 											<td align="center" class="duracaoborderbottom" rowspan="${mov.duracaoSpan}">
 												${mov.duracao}
 											</td>

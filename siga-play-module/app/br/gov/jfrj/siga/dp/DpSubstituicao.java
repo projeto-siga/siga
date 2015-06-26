@@ -35,9 +35,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.util.Catalogs;
+
 @Entity
-@Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Table(name = "DP_SUBSTITUICAO", schema = Catalogs.CORPORATIVO)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpSubstituicao extends AbstractDpSubstituicao implements Serializable{
 
 	/**

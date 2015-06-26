@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
@@ -21,19 +21,19 @@
 
 				<table class="gt-table">
 					<tr>
-					<tr>
-						<td>De:</td>
-						<td>${cadastrante.lotacao.descricao} -
-							${cadastrante.descricao}</td>
-					</tr>
-					<tr>
-						<td>Para:</td>
-						<td>${mov.respString}</td>
-					</tr>
-					<tr>
-						<td>Data:</td>
-						<td colspan="2">${mov.dtRegMovDDMMYYHHMMSS}</td>
-					</tr>
+						<tr>
+							<td>De:</td>
+							<td>${cadastrante.lotacao.descricao} -
+								${cadastrante.descricao}</td>
+						</tr>
+						<tr>
+							<td>Para:</td>
+							<td>${mov.respString}</td>
+						</tr>
+						<tr>
+							<td>Data:</td>
+							<td colspan="2">${mov.dtRegMovDDMMYYHHMMSS}</td>
+						</tr>
 				</table>
 
 			</div>
@@ -80,51 +80,43 @@
 							</c:otherwise>
 						</c:choose>
 						<tr class="${evenorodd}">
-							<td align="right">
-								<a href="/app/expediente/doc/exibir?sigla="${documento[1].exMobil.sigla}>${documento[1].exMobil.codigo}</a> 
+							<td align="right"><a
+								href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].exMobil.sigla}">${documento[1].exMobil.codigo}</a>
 								<c:if test="${not documento[1].exMobil.geral}">
 									<td align="center">${documento[0].dtDocDDMMYY}</td>
 									<td align="center"><siga:selecionado
 											sigla="${documento[0].lotaSubscritor.sigla}"
-											descricao="${documento[0].lotaSubscritor.descricao}" />
-									</td>
+											descricao="${documento[0].lotaSubscritor.descricao}" /></td>
 									<td align="center"><siga:selecionado
 											sigla="${documento[0].subscritor.iniciais}"
-											descricao="${documento[0].subscritor.descricao}" />
-									</td>
+											descricao="${documento[0].subscritor.descricao}" /></td>
 									<td align="center">${documento[1].dtMovDDMMYY}</td>
 									<td align="center"><siga:selecionado
 											sigla="${documento[1].lotaSubscritor.sigla}"
-											descricao="${documento[1].lotaSubscritor.descricao}" />
-									</td>
+											descricao="${documento[1].lotaSubscritor.descricao}" /></td>
 									<td align="center"><siga:selecionado
 											sigla="${documento[1].subscritor.iniciais}"
-											descricao="${documento[1].subscritor.descricao}" />
-									</td>
+											descricao="${documento[1].subscritor.descricao}" /></td>
 									<td align="center"><siga:selecionado
 											sigla="${documento[1].lotaResp.sigla}"
-											descricao="${documento[1].lotaResp.descricao}" />
-									</td>
+											descricao="${documento[1].lotaResp.descricao}" /></td>
 									<td align="center"><siga:selecionado
 											sigla="${documento[1].resp.iniciais}"
-											descricao="${documento[1].resp.descricao}" />
-									</td>
+											descricao="${documento[1].resp.descricao}" /></td>
 								</c:if> <c:if test="${documento[1].exMobil.geral}">
 									<td align="center">${documento[0].dtDocDDMMYY}</td>
 									<td align="center"><siga:selecionado
 											sigla="${documento[0].subscritor.iniciais}"
-											descricao="${documento[0].subscritor.descricao}" />
-									</td>
+											descricao="${documento[0].subscritor.descricao}" /></td>
 									<td align="center"><siga:selecionado
 											sigla="${documento[0].lotaSubscritor.sigla}"
-											descricao="${documento[0].lotaSubscritor.descricao}" />
-									</td>
+											descricao="${documento[0].lotaSubscritor.descricao}" /></td>
 									<td align="center"></td>
 									<td align="center"></td>
 									<td align="center"></td>
 									<td align="center"></td>
 								</c:if>
-							<td>${f:descricaoConfidencial(documento[0], lotaTitular)}</td>
+								<td>${f:descricaoConfidencial(documento[0], lotaTitular)}</td>
 						</tr>
 					</c:forEach>
 
@@ -133,26 +125,25 @@
 			</div>
 
 			<br />
-			<form name="frm" action="principal" namespace="/" method="get" theme="simple">
-				<input type="button" value="Imprimir" class="gt-btn-medium gt-btn-left"
-					onclick="javascript: document.body.offsetHeight; window.print();"/>
-				<c:if test="${param.popup != true}">
-					<input type="button" value="Voltar" class="gt-btn-medium gt-btn-left" 
+			<form name="frm" action="principal" namespace="/" method="get"
+				theme="simple">
+				<input type="button" value="Imprimir"
+					class="gt-btn-medium gt-btn-left"
+					onclick="javascript: document.body.offsetHeight; window.print();" />
+				<c:if test="${popup != true}">
+					<input type="button" value="Voltar"
+						class="gt-btn-medium gt-btn-left"
 						onclick="javascript:history.back();" />
 				</c:if>
 			</form>
-			<br />
-			<br />
-			<div>	
-				<br />
-				<br />
+			<br /> <br />
+			<div>
+				<br /> <br />
 				<p align="center">Recebido em: _____/_____/_____ às _____:_____</p>
-				<br />
-				<br />
-				<br />
+				<br /> <br /> <br />
 				<p align="center">________________________________________________</p>
 				<p align="center">Assinatura do Servidor</p>
-			</div>	
+			</div>
 		</div>
 	</div>
 </siga:pagina>

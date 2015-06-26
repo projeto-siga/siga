@@ -81,3 +81,7 @@ sigasr/desktop.ini
 
 siga-uteis-play-module/
 /sigatp/
+sigaex/.tern-project
+sigasr/.tern-project
+*.orig
+*rebel.xml

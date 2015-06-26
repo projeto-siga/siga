@@ -690,8 +690,8 @@ public class GcBL {
 
 	private String acronimoOrgao = null;
 	private final int CONTROLE_LINK_HASH_TAG = 2;
-	private final String URL_SIGA_DOC = "/sigaex/expediente/doc/exibir.action?sigla=";
-	private final String URL_SIGA_SR = "/sigasr/solicitacao/exibir?sigla=";
+	private final String URL_SIGA_DOC = "/sigaex/app/expediente/doc/exibir?sigla=";
+	private final String URL_SIGA_SR = "/sigasr/app/solicitacao/exibir?sigla=";
 	private final String URL_SIGA_GC = "/sigagc/app/exibir?sigla=";
 
 	// public void salvar(Historico o) throws Exception {

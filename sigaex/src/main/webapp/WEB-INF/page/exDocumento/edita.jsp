@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Novo Documento">
@@ -23,9 +23,7 @@
 		</h2>
 				
 		<div class="gt-content-box gt-for-table">
-
-			<form id="frm" name="frm" action="editar" namespace="/expediente/doc" theme="simple" method="POST">
-				<!-- <ww:token /> -->
+			<form id="frm" name="frm" theme="simple" method="post">
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" />
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
 				<input type="hidden" name="postback" value="1" />
@@ -125,10 +123,12 @@
 								    
 									<script type="text/javascript">
 										function setFisico() {
-											if ($('input[name=exDocumentoDTO.eletronico]:checked').val() == 2) 
+											if ($('input[name=exDocumentoDTO\\.eletronico]:checked').val() == 2)
 												$('html').addClass('fisico'); 
 											else 
-												$('html').removeClass('fisico');}; setFisico();
+												$('html').removeClass('fisico');
+										}; 
+										setFisico();
 									</script>									
 								</c:otherwise>
 							</c:choose>
@@ -240,27 +240,7 @@
 						Função;Lotação;Localidade)
 						</td>
 					</tr>
-					<%--
-					<tr>
-					<td>Função:</td>
-					<input type="hidden" name="campos" value="nmSubscritorFuncao" />
-					<td colspan="3"><ww:if test="${empty exDocumentoDTO.doc.nmSubscritorFuncao}">
-						<c:set var="style_subs_func_editar" value="display:none" />
-						<c:set var="subscritorFuncao" value="false" />
-					</ww:if><ww:else>
-						<c:set var="style_subs_func" value="display:none" />
-						<c:set var="subscritorFuncao" value="true" />
-					</ww:else> <span id="span_subs_func_editar" style="${style_subs_func_editar}">
-					<input type="hidden" name="subscritorFuncaoEditar" value="subscritorFuncao" />
-					<ww:textfield name="nmSubscritorFuncao" size="80" />
-					</span> <span
-						id="span_subs_func" style="${style_subs_func}"><input
-						type="button" name="but_subs_func" value="Editar"
-						onclick="javascript: document.getElementById('span_subs_func').style.display='none'; document.getElementById('span_subs_func_editar').style.display=''; document.getElementById('subscritorFuncaoEditar').value='true'; " /></span>
-					</td>
-				</tr>
---%>
-					<%--<c:if test='${exDocumentoDTO.tipoDocumento != "externo"}'>--%>
+					
 					<tr>
 						<td>Destinatário:</td>
 						<input type="hidden" name="campos" value="tipoDestinatario" />
@@ -373,37 +353,13 @@
 							</td>
 						</tr>
 
-						<%--
-					<tr>
-						<td>Protótipo:</td>
-						<td colspan="3"><ww:select name="idPrototipo"
-							onchange="javascript:sbmt();" list="prototipos" listKey="idPro"
-							listValue="nmPro" /><input type="button" name="" value="Novo" />
-						<input type="button" name="" value="Excluir" /></td>
-					</tr>
-					--%>
+						
 					</c:if>
 					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" }'>
 						<input type="hidden" name="exDocumentoDTO.idFormaDoc" value="${exDocumentoDTO.formaDocPorTipo.idFormaDoc}" />
 						<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.idMod}"/>
 					</c:if>
-					<%--<c:if test='${ exDocumentoDTO.tipoDocumento == "antigo" }'>
-					<tr>
-						<td>Forma:</td>
-						<td colspan="3"><ww:select name="idFormaDoc"
-							onchange="javascript:sbmt();" list="formasDocPorTipo"
-							listKey="idFormaDoc" listValue="descrFormaDoc" /></td>
-					</tr>
-					<input type="hidden" name="idMod" />
-					<ww:if test="%{modelos.size > 1}">
-						<tr>
-							<td>Modelo:</td>
-							<td colspan="3"><ww:select name="idMod"
-								onchange="javascript:sbmt();" list="modelos" listKey="idMod"
-								listValue="nmMod" /></td>
-						</tr>
-					</ww:if>
-				</c:if>--%>
+				
 
 						
 					<tr style="display:<c:choose><c:when test="${exDocumentoDTO.modelo.exClassificacao!=null}">none</c:when><c:otherwise>visible</c:otherwise></c:choose>">
@@ -414,7 +370,7 @@
 						<input type="hidden" name="campos" value="classificacaoSel.id" />
 						<td colspan="3">
 							<siga:span id="classificacao" depende="forma;modelo">
-							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" tema="simple" />
+							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>
@@ -436,31 +392,7 @@
 							<span><b>(preencher o campo acima com palavras-chave, sempre usando substantivos, gênero masculino e singular)</b></span>
 						</td>
 					</tr>
-					<%--
-				<c:if
-					test='${exDocumentoDTO.tipoDocumento == "externo" or tipoDocumento == "antigo"}'>
-					<tr>
-						<td>Anexo:</td>
-						<td colspan="3"><ww:if test="${empty exDocumentoDTO.doc.nmArqDoc}">
-							<c:set var="style_anexo" value="display:none" />
-							<c:set var="anexar" value="true" />
-						</ww:if><ww:else>
-							<c:set var="style_anexar" value="display:none" />
-							<c:set var="anexar" value="false" />
-						</ww:else> <span id="span_anexar" style="${style_anexar}"> <ww:file
-							name="arquivo" theme="simple" /><input type="hidden" id="anexar"
-							name="anexarString" value="${exDocumentoDTO.anexar}" /></span><span id="span_anexo"
-							style="${style_anexo}"> <ww:url id="url" action="anexo"
-							namespace="/expediente/doc">
-							<ww:param name="id">${exDocumentoDTO.doc.idDoc}</ww:param>
-						</ww:url> <tags:anexo url="${url}" nome="${exDocumentoDTO.doc.nmArqDoc}"
-							tipo="${exDocumentoDTO.doc.conteudoTpDoc}" /> <input type="button"
-							name="but_anexar" value="Substituir"
-							onclick="javascript: document.getElementById('span_anexo').style.display='none'; document.getElementById('span_anexar').style.display=''; document.getElementById('anexar').value='true'; " /></span>
-						</td>
-					</tr>
-				</c:if>
---%>
+				
 					<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
 						<c:if test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker' or not empty exDocumentoDTO.modelo.nmArqMod}">
 							<tr class="header">
@@ -501,10 +433,10 @@
 </siga:pagina>
 
 <script type="text/javascript">
-window.customOnsubmit = function() {return true;};
-{
+// window.customOnsubmit = function() {return true;};
+// {
 //	var frm = document.getElementById('frm');
 //	if (typeof(frm.submitsave) == "undefined")
 //		frm.submitsave = frm.submit;
-}
+// }
 </script>

@@ -167,7 +167,7 @@ self.ajax_${propriedadeClean} = function() {
 
 <c:if test="${ocultardescricao != 'sim'}">
 	<span id="${propriedadeClean}Span"> <c:out
-			value="${f:decode(f:evaluate(f:concat(propriedade,'.descricao'),requestScope))}" />
+			value="${f:decode(f:evaluate(f:concat(propriedade,'.descricao'),requestScope), 'iso-8859-1')}" />
 	</span>
 </c:if>
 

@@ -236,7 +236,7 @@ self.ajax_${propriedade}${tipoSel}${inputName} = function() {
 
 <c:if test="${ocultardescricao != 'sim'}">
 	<span id="${spanName}SelSpan">
-		<c:out value="${f:decode(requestScope[propriedadeTipoSel].descricao)}" />
+		<c:out value="${f:decode(requestScope[propriedadeTipoSel].descricao, 'iso-8859-1')}" />
 	</span>
 </c:if>
 

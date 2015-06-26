@@ -310,7 +310,6 @@ function visualizarImpressao(via) {
 					<c:set var="url">${request.requestURL}</c:set>
 					<c:set var="uri" value="${request.requestURI}" />
 					<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
-					<ww:hidden id="urlbase" name="urlbase" value="${urlBase}" />
 					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
 					
 					<c:if test="${not autenticando}">

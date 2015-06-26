@@ -511,7 +511,10 @@
 					
 					<c:if test="${errors != null && !erros.isEmpty()}">
 						<div class="gt-form-table">
-							<p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram preenchidos</p>
+					        <p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram preenchidos</p>
+						    <c:forEach items="${errors}" var="erro">
+								<p class="gt-error">${erro.message}</p>
+						    </c:forEach>
 						</div>
 					</c:if>
 					

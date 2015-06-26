@@ -302,10 +302,8 @@ public class SolicitacaoController extends SrController {
         if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
         	incluirListasEdicaoSolicitacao(solicitacao);
             validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getId());
-            
         	return;
         }
-
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getId(), todoOContexto(), ocultas());
     }

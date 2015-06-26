@@ -155,7 +155,7 @@
 		</div>
 		<div class="gt-table-buttons">
 			<a
-				href="javascript: configuracaoInclusaoAutomaticaService.cadastrar('Cadastro de configura&ccedil;&atilde;o de inclus&atilde;o autom&aacute;tica')"
+				href="javascript: configuracaoInclusaoAutomaticaService.cadastrar('Cadastro de configura\u00e7\u00e3o de inclus\u00e3o autom\u00e1tica')"
 				class="gt-btn-small gt-Sbtn-left">Incluir</a>
 		</div>
 		<div class="gt-form-row">
@@ -570,7 +570,7 @@
 	}
 	
 	configuracaoInclusaoAutomaticaService.onRowClick = function(configuracao) {
-		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configura&ccedil;&atilde;o para inclus&atilde;o autom&aacute;tica');
+		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configura\u00e7\u00e3o para inclus\u00e3o autom\u00e1tica');
 	}
 	configuracaoInclusaoAutomaticaService.editar = function(configuracao, title) {
 		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
@@ -1276,7 +1276,7 @@
 		listaService.conteudoColunaAcao = function(permissao) {
 			if (permissao.ativo) { 		 
 				return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permiss&atilde;o">' + 
-				'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
+				'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'"/>' + 
 				'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 				'</a>';
 			}

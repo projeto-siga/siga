@@ -616,7 +616,9 @@
 			return false;
 		if (validarAssociacao(tipo)) {
 			document.getElementById("formGravar" + tipo).submit();
-		}
+		} else {
+			unblock();
+	    }
 	}
 	$('#checksolicitacao.fechadoAutomaticamente').change(
 			function() {

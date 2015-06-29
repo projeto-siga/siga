@@ -1814,7 +1814,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
 
         List<ListaInclusaoAutomatica> listaFinal = new ArrayList<ListaInclusaoAutomatica>();
         for (SrConfiguracao conf : SrConfiguracao.listar(filtro, new int[] { SrConfiguracaoBL.ATENDENTE, SrConfiguracaoBL.LISTA_PRIORIDADE })) {
-            if (conf.getListaPrioridade() != null) {
+            if (conf.getListaPrioridade() != null && conf.getListaPrioridade().getListaAtual().isAtivo()) {
                 ListaInclusaoAutomatica listaInclusaoAutomatica = new ListaInclusaoAutomatica(conf.getListaPrioridade().getListaAtual(), conf.getPrioridadeNaLista());
 
                 if (!listaFinal.contains(listaInclusaoAutomatica))
@@ -1858,7 +1858,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         Collections.sort(listaFinal, new Comparator<SrLista>() {
             @Override
             public int compare(SrLista l1, SrLista l2) {
-                return l1.getNomeLista().compareTo(l2.getNomeLista());
+                return (l1.getNomeLista() == null) ? -1 : l1.getNomeLista().compareTo(l2.getNomeLista());
             }
         });
         return listaFinal;

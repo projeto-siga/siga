@@ -211,7 +211,7 @@
 	listaService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title);
 		populatePermissoesFromJSonList({});
-		configuracaoInclusaoAutomaticaService.adicionarLista({});
+		configuracaoInclusaoAutomaticaService.adicionarLista('{}');
 	}
 
 	listaService.getId = function(lista) {

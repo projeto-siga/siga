@@ -906,7 +906,7 @@ public class FuncoesEL {
 		final DpLotacao lotRetorno = CpDao.getInstance().consultarPorSigla(
 				lotacao);
 
-		return lotRetorno.getDescricao();
+		return lotRetorno==null?"":lotRetorno.getDescricao();
 	}
 
 	public static String obterExtensaoBuscaTextual(CpOrgaoUsuario orgao,

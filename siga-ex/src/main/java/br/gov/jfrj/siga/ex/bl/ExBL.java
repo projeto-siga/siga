@@ -1579,8 +1579,7 @@ public class ExBL extends CpBL {
 			try {
 				PublicacaoDJEBL.primeiroEnvio(mov);
 			} catch (Throwable t) {
-				throw new Exception(t.getMessage() + " -- "
-						+ t.getCause().getMessage());
+				throw new Exception(t.getMessage());
 			}
 
 			// mov.setNumTRFPublicacao(numTRF);

@@ -128,7 +128,7 @@ public class PublicacaoDJEBL {
 		Service service = new Service();
 		OperationDesc oper;
 
-		// operação------------------------------------------------
+		// operaï¿½ï¿½o------------------------------------------------
 		oper = new OperationDesc();
 		oper.setName("GerarRespostaStatusPublicacoes");
 		oper.addParameter(new QName("http://tempuri.org/", "_enmAreaJudicial"),
@@ -186,7 +186,7 @@ public class PublicacaoDJEBL {
 		 * .encode(mov.getConteudoBlobMov2()) });
 		 */
 
-		log.info("DJE: prestes a chamarrrr serviço");
+		log.info("DJE: prestes a chamarrrr serviï¿½o");
 		try {
 			AxisClientAlternativo cliente = new AxisClientAlternativo(SigaExProperties.getServidorDJE(), "RecebeDocumentos", true);
 
@@ -210,11 +210,11 @@ public class PublicacaoDJEBL {
 	}
 
 	/*
-	 * Rotina central para tratamento dos erros retornados pelo TRF através do
-	 * XML. Atualmente, as mensagens de erro são apenas associadas aos seus
-	 * respectivos códigos de erro e números de expedientes, para formar uma
-	 * exceção única, mas a ídéia é que aqui, quando necessário, seja tomada a
-	 * decisão adequada a cada tipo de erro, de acordo com o seu código
+	 * Rotina central para tratamento dos erros retornados pelo TRF atravï¿½s do
+	 * XML. Atualmente, as mensagens de erro sï¿½o apenas associadas aos seus
+	 * respectivos cï¿½digos de erro e nï¿½meros de expedientes, para formar uma
+	 * exceï¿½ï¿½o ï¿½nica, mas a ï¿½dï¿½ia ï¿½ que aqui, quando necessï¿½rio, seja tomada a
+	 * decisï¿½o adequada a cada tipo de erro, de acordo com o seu cï¿½digo
 	 */
 	public static void verificaRetornoErrosTRF(String xml) throws Exception {
 		StringReader st = new StringReader(xml);
@@ -239,11 +239,18 @@ public class PublicacaoDJEBL {
 					.getAttributeValue("DESCRICAO");
 			if (descricaoErro == null)
 				descricaoErro = retornoPublicacao.getChildText("DESCRICAO");
+			if (descricaoErro == null) {
+				Element filhoErro = retornoPublicacao.getChild("ERRO"); 
+				if(filhoErro != null) {
+					codErro = filhoErro.getAttributeValue("CODERRO");
+					descricaoErro = filhoErro.getAttributeValue("DESCRERRO");
+				}
+			}
 			if (descricaoErro == null)
 				descricaoErro = retornoPublicacao.getValue();
 
 			throw new AplicacaoException("TRF -> ERRO: " + codErro
-					+ " DESCRIÇÃO: " + descricaoErro);
+					+ " DESCRIÃ‡ÃƒO: " + descricaoErro);
 		}
 
 	}
@@ -342,11 +349,11 @@ public class PublicacaoDJEBL {
 			sMatricula = obterSiglaAlternativa(movDoc.getCadastrante());
 		}
 
-		// Está sendo acrescentado um zero no final das matrículas dos juízes do
-		// ES, pois a matrícula deles só possem 4 digitos
-		// E o DJE no tribunal exigia 5 dígitos. Em conversar com o Marcelo
-		// Santos, ele sugeriu que fosse feita esta alteração, pois eles não
-		// teria condições de realizá-la.
+		// Estï¿½ sendo acrescentado um zero no final das matrï¿½culas dos juï¿½zes do
+		// ES, pois a matrï¿½cula deles sï¿½ possem 4 digitos
+		// E o DJE no tribunal exigia 5 dï¿½gitos. Em conversar com o Marcelo
+		// Santos, ele sugeriu que fosse feita esta alteraï¿½ï¿½o, pois eles nï¿½o
+		// teria condiï¿½ï¿½es de realizï¿½-la.
 		if (sMatricula.length() == 6)
 			sMatricula = sMatricula + "0";
 
@@ -484,11 +491,11 @@ public class PublicacaoDJEBL {
 
 		if (!datas.isDisponibilizacaoMaiorQueDMais1())
 			throw new AplicacaoException(
-					"Não é possível cancelar a remessa no dia da assinatura (data de disponibilização - 1)");
+					"Nï¿½o ï¿½ possï¿½vel cancelar a remessa no dia da assinatura (data de disponibilizaï¿½ï¿½o - 1)");
 		Service service = new Service();
 		OperationDesc oper;
 
-		// operação------------------------------------------------
+		// operaï¿½ï¿½o------------------------------------------------
 		oper = new OperationDesc();
 		oper.setName("ExcluirDocumento");
 		oper.addParameter(new QName("http://tempuri.org/", "_strNumero"),

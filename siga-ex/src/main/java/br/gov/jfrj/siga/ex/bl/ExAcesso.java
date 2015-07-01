@@ -18,12 +18,13 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExAcesso {
 	public static final String ACESSO_PUBLICO = "PUBLICO";
 
-	// Armazena os acessos especÌficos de um documento. Para calcular o acesso
-	// ainda È necess·rio acrescentar os acessos do documento ao qual este est·
+	// Armazena os acessos espec√≠ficos de um documento. Para calcular o acesso
+	// ainda √© necess√°rio acrescentar os acessos do documento ao qual este est√°
 	// juntado, e por assim em diante.
 	//
 	private Map<ExDocumento, Set<Object>> cache = new HashMap<ExDocumento, Set<Object>>();
@@ -81,8 +82,9 @@ public class ExAcesso {
 	}
 
 	private void incluirCossignatarios(ExDocumento doc) {
-		if (doc.getMobilGeral().getExMovimentacaoSet() != null){
-			for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
+		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
+			for (ExMovimentacao mov : doc.getMobilGeral()
+					.getExMovimentacaoSet()) {
 				if (mov.getExTipoMovimentacao()
 						.getIdTpMov()
 						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)
@@ -92,9 +94,40 @@ public class ExAcesso {
 		}
 	}
 
+	private void incluirColaboradores(ExDocumento doc) {
+		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
+			for (ExMovimentacao mov : doc.getMobilGeral()
+					.getExMovimentacaoSet()) {
+				if (mov.getExTipoMovimentacao()
+						.getIdTpMov()
+						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
+						&& mov.getExMovimentacaoCanceladora() == null) {
+					ExParte parte = ExParte.create(mov.getDescrMov());
+					String as[] = parte.getResponsavel().split(";");
+					for (String s : as) {
+						s = s.trim();
+						DpPessoa pes = ExDao.getInstance()
+								.getPessoaFromSigla(s);
+						if (pes != null) {
+							add(pes);
+							continue;
+						}
+						DpLotacao lot = ExDao.getInstance()
+								.getLotacaoFromSigla(s);
+						if (lot != null) {
+							add(lot);
+							continue;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	private void incluirPerfis(ExDocumento doc) {
-		if (doc.getMobilGeral().getExMovimentacaoSet() != null){
-			for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
+		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
+			for (ExMovimentacao mov : doc.getMobilGeral()
+					.getExMovimentacaoSet()) {
 				if (!mov.isCancelada()
 						&& mov.getExTipoMovimentacao()
 								.getIdTpMov()
@@ -190,6 +223,7 @@ public class ExAcesso {
 			// podeMovimentar(titular, lotaTitular, mob)
 			incluirPerfis(doc);
 			incluirCossignatarios(doc);
+			incluirColaboradores(doc);
 		}
 
 		// TODO: devemos buscar a data de cancelamento
@@ -228,12 +262,12 @@ public class ExAcesso {
 				incluirPerfis(doc);
 				incluirCossignatarios(doc);
 
-				// Verifica se o titular È subscritor de algum despacho do
+				// Verifica se o titular √© subscritor de algum despacho do
 				// dumento
 				addSubscritorDespacho(doc);
 
-				// TODO: buscar a data que foi feita a ˙ltima movimentaÁ„o de
-				// mudanÁa de nivel de acesso
+				// TODO: buscar a data que foi feita a √∫ltima movimenta√ß√£o de
+				// mudan√ßa de nivel de acesso
 
 				switch (d.getExNivelAcesso().getGrauNivelAcesso().intValue()) {
 				case (int) ExNivelAcesso.NIVEL_ACESSO_PUBLICO:
@@ -295,7 +329,7 @@ public class ExAcesso {
 	}
 
 	/**
-	 * Retorna uma lista com os subscritores de todos os despachos n„o
+	 * Retorna uma lista com os subscritores de todos os despachos n√£o
 	 * cancelados do documento.
 	 */
 	private void addSubscritorDespacho(ExDocumento doc) {
@@ -319,21 +353,23 @@ public class ExAcesso {
 		if (acessos.contains(ACESSO_PUBLICO)) {
 			return ACESSO_PUBLICO;
 		}
-		
+
 		acessos.remove(null);
 
-		// Otimizar a lista removendo todas as pessoas e lotaÁıes de um Ûrg„o,
-		// quando este Ûrg„o todo pode acessar o documento
+		// Otimizar a lista removendo todas as pessoas e lota√ß√µes de um √≥rg√£o,
+		// quando este √≥rg√£o todo pode acessar o documento
 		Set<Object> toRemove = new HashSet<Object>();
 		for (Object o : acessos) {
 			if (o instanceof CpOrgaoUsuario) {
-				CpOrgaoUsuario ou = (CpOrgaoUsuario)o;
+				CpOrgaoUsuario ou = (CpOrgaoUsuario) o;
 				for (Object oo : acessos) {
 					if (oo instanceof DpLotacao) {
-						if (((DpLotacao) oo).getOrgaoUsuario().getId().equals(ou.getId()))
+						if (((DpLotacao) oo).getOrgaoUsuario().getId()
+								.equals(ou.getId()))
 							toRemove.add(oo);
 					} else if (oo instanceof DpPessoa) {
-						if (((DpPessoa) oo).getOrgaoUsuario().getId().equals(ou.getId()))
+						if (((DpPessoa) oo).getOrgaoUsuario().getId()
+								.equals(ou.getId()))
 							toRemove.add(oo);
 					}
 				}

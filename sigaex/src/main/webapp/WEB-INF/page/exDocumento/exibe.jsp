@@ -345,6 +345,22 @@
 						</c:forEach>
 					</ul>
 				</c:if>
+				<c:if test="${not empty m.pendenciasDeColaboracao}">
+					<p style="margin-bottom: 3px;">
+						<b style="color: rgb(195, 0, 0)">Pendências de Colaboração:</b>
+					</p>
+					<ul>
+						<c:forEach var="colaboracaoPendente" items="${m.pendenciasDeColaboracao}">
+							<li>
+								<a
+								href="${pageContext.request.contextPath}/app/expediente/mov/anexar?sigla=${m.sigla}"
+								title="${colaboracaoPendente.descricao}" style="text-decoration: none">
+									${colaboracaoPendente.descricao}
+								</a>
+							</li>
+						</c:forEach>
+					</ul>
+				</c:if>
 			</div>
 		</c:if>
 
@@ -420,6 +436,117 @@
 				</ul>
 			</div>
 		</c:if>
+		
+		<!-- Início mapa colaboração -->
+		<c:if test="${docVO.dotColaboracao.numNodos > 1}">
+		<!-- Início mapa tramitação -->
+	
+		<!-- Sidebar List -->
+		<div class="gt-sidebar-content" id="Colaboracao">
+			<h3 style="margin-bottom: 10px">Colaboração</h3>
+			<div style="display: none" id="inputColaboracao">
+			</div>
+			<a href="javascript:void(0)" href="javascript:void(0)" style="text-decoration: none">
+			<div id="outputColaboracao" style="border: 0px; background-color: #e2eaee; padding: 0px;">
+			</div>
+			</a>
+		</div>
+		<script>
+		$(document).ready(function () {
+		    $(window).resize(function() {
+			    updateContainerColaboracao();
+		    });
+		    	 
+			$("#svgColaboracao").dialog({
+		    	autoOpen: false,
+		    	height: $(window).height()*0.9,
+		    	width: $(window).width()*0.9,
+		    	modal: true,
+			    resizable: false
+		  	});
+			$("#output2Colaboracao").mousedown(function(e){
+				if (e.button == 0 && zoomColaboracao < 3)
+					zoomColaboracao += 0.2;
+				else if (e.button == 2 && zoomColaboracao > 0.5)
+					zoomColaboracao -= 0.2;
+				updateContainerColaboracao();
+			});
+			if (!document.getElementById("outputColaboracao").hasChildNodes()){
+				$("#Colaboracao").hide();
+			}
+		});
+		
+		function bigmapColaboracao() {
+			$('#svgColaboracao').dialog('open');
+			if ($('#naoCarregouBigColaboracao')[0] != undefined){
+				var input = 'digraph ""{ graph[tooltip="Colaboração"] ${docVO.dotColaboracao} }';
+				input = escapeAcentos(input);
+				var result = Viz(input, "svg", "dot");
+		  		document.getElementById("output2Colaboracao").innerHTML = result;
+			}
+		  	updateContainerColaboracao();
+		} 
+
+		var hexDigits = new Array("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
+		function rgb2hex(rgb) {
+			 rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+			 return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+		}			
+		function hex(x) {
+  			return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+ 		}
+	 	function ratioColaboracao(){
+	 		var x = ${docVO.dotColaboracao.numNodos};
+	 		if (x <= 2)
+		 		return '0.4';
+	 		else if (x ==3)
+		 		return '0.5';
+	 		else if (x ==4)
+		 		return '0.6';
+	 		else return '0.7';
+	 	}
+		
+		function smallmapColaboracao() {
+			$("#outputColaboracao").css("background-color", $("html").css("background-color"));
+			var bgcolor = rgb2hex($("#outputColaboracao").css("background-color"));
+			var input = 'digraph "" { graph[tooltip="Colaboração" ratio="' + ratioColaboracao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapColaboracao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotColaboracao} }';
+			input = escapeAcentos(input);
+			var result = Viz(input, "svg", "dot");
+		  	document.getElementById("outputColaboracao").innerHTML = result;
+			updateContainerColaboracao();
+		}
+
+		var zoomColaboracao = 1;
+		function updateContainerColaboracao() {
+		    var smallwidth = $('#outputColaboracao').width(); 
+	    	var smallsvg = $('#outputColaboracao :first-child').first(); 
+	    	var smallviewbox = document.getElementById('outputColaboracao').firstElementChild.getAttribute('viewBox');
+		      
+	    	if(typeof smallviewbox != 'undefined') {
+			    var a = smallviewbox.split(' ');  
+	
+		    	// set attrs and 'resume' force 
+		    	smallsvg.attr('width', smallwidth);
+		    	smallsvg.attr('height', smallwidth * a[3] / a[2]);
+	    	}
+		    
+	    	var bigsvg = $('#output2Colaboracao :first-child').first(); 
+	    	var bigviewbox = bigsvg.attr('viewBox');
+		      
+	    	if(typeof bigviewbox != 'undefined') {
+			    var a = bigviewbox.split(' ');  
+	
+		    	// set attrs and 'resume' force 
+		    	bigsvg.attr('width', a[2] * zoomColaboracao);
+		    	bigsvg.attr('height', zoomColaboracao * a[3]);
+	    	};
+		}
+		smallmapColaboracao();
+    	</script>
+    	
+    	<!-- Fim mapa colaboração -->
+    	</c:if>
+		
 		
 		<!-- Início mapa relação entre documentos -->
 		<c:if test="${docVO.dotRelacaoDocs.numNodos > 1}">
@@ -754,6 +881,25 @@
 	var css = "<style>.ui-widget-header {border: 1px solid #365b6d;background: #365b6d;}</style>";
 	$(css).appendTo("head");
 </script>
+
+<div class="gt-bd clearfix" id="svgColaboracao"
+	style="display: none; overflow-y: scroll;">
+	<div class="gt-content clearfix">
+		<div id="desc_editar_colaboracao">
+			<div style="padding-bottom: 15px;" id="output2Colaboracao"
+				oncontextmenu="return false;">
+				<h4 id="naoCarregouBigColaboracao">Carregando...</h4>
+			</div>
+		</div>
+	</div>
+	<p style="font-weight: bold">Clique sobre a imagem com o botão
+		esquerdo para ampliar ou com o direito para reduzir.</p>
+	<a href="javascript:void(0)"
+		onclick="javascript: $('#svgColaboracao').dialog('close');"
+		class="gt-btn-large gt-btn-left">Voltar</a>
+</div>
+
+
 
 <div class="gt-bd clearfix" id="svgRelacaoDocs" style="display: none; overflow-y: scroll;">
 	<div class="gt-content clearfix">

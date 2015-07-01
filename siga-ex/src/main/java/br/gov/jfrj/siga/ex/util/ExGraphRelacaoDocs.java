@@ -93,7 +93,7 @@ public class ExGraphRelacaoDocs extends ExGraph {
 
 		adicionar(new NodoMob(mobBase, pessVendo).setDestacar(true));
 
-		// Apensações
+		// ApensaÃ§Ãµes
 		for (ExMobil apenso : mobBase.getApensos(true, false)) {
 			adicionar(new NodoMob(apenso, pessVendo, mobBase.doc()));
 			adicionar(new TransicaoMob(mobBase, apenso, "apensacao"));
@@ -104,7 +104,7 @@ public class ExGraphRelacaoDocs extends ExGraph {
 			adicionar(new TransicaoMob(mestre, mobBase, "apensacao"));
 		}
 
-		// Vinculações
+		// VinculaÃ§Ãµes
 		for (ExMobil vinculado : mobBase.getVinculados()) {
 			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
 			adicionar(new TransicaoMob(mobBase, vinculado, "vinculacao"));
@@ -157,7 +157,7 @@ public class ExGraphRelacaoDocs extends ExGraph {
 		for (Transicao t : getTransicoes()) {
 			TransicaoMob tMob = (TransicaoMob) t;
 			if (tMob.tipo.equals("vinculacao")) {
-				cat = "Veja também";
+				cat = "Veja tambÃ©m";
 				mobilAAdicionar = tMob.mob2;
 			} else if (tMob.tipo.equals("juntada")) {
 				cat = "Juntado ao documento";

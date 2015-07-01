@@ -68,7 +68,7 @@ public class GeradorRTF {
 			if (parser.getEventType() == XmlPullParser.TEXT)
 				element.add(parser.getText().toUpperCase());
 
-			// Insere um parágrafo
+			// Insere um parÃ¡grafo
 			if (parser.getEventType() == XmlPullParser.START_TAG)
 				if (parser.getName().toUpperCase().equals("P")
 						&& considerarPTags
@@ -204,7 +204,7 @@ public class GeradorRTF {
 					String inicioTitulo = "<!-- INICIO NUMERO -->";
 					String fimTitulo = "<!-- FIM NUMERO -->";
 				for (ExDocumento docFilho : mob.getExDocumentoFilhoSet()) {
-					//Verifica se docFilho é do tipo anexo
+					//Verifica se docFilho Ã© do tipo anexo
 					if(docFilho.getExFormaDocumento().getIdFormaDoc() == 60) {
 						String htmlFilho = docFilho.getConteudoBlobHtmlString();
 						html = html + htmlFilho.substring(htmlFilho.indexOf(inicioTitulo) + inicioTitulo.length(),
@@ -226,11 +226,11 @@ public class GeradorRTF {
 			byte[] baHtml = html.getBytes();			
 			if (baHtml.length > 1.0 * 1024 * 1024)
 				throw new AplicacaoException(
-						"O tamanho do arquivo a ser publicado é maior do que a capacidade suportada.");			
+						"O tamanho do arquivo a ser publicado Ã© maior do que a capacidade suportada.");			
 			ConversorHtml conversor = new FOP("xhtml2foNovoSemStatic.xsl");
 			return conversor.converter(html, ConversorHtml.RTF);
 		} catch (Exception e) {
-			throw new AplicacaoException("Não foi possível ler o conteúdo do documento: " + e.getMessage());
+			throw new AplicacaoException("NÃ£o foi possÃ­vel ler o conteÃºdo do documento: " + e.getMessage());
 		}
 	}
 

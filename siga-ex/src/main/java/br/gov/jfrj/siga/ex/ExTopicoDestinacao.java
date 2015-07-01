@@ -25,8 +25,8 @@ public class ExTopicoDestinacao {
 		itens.add(item);
 	}
 
-	// Edson: isto n„o È o ideal. Quem der um getItens() ser· capaz de manipular
-	// diretamente a lista, que È private
+	// Edson: isto n√£o √© o ideal. Quem der um getItens() ser√° capaz de manipular
+	// diretamente a lista, que √© private
 	public List<ExItemDestinacao> getItens() {
 		return itens;
 	}

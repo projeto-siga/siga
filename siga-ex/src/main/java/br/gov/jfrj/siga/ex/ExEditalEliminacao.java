@@ -141,14 +141,14 @@ public class ExEditalEliminacao {
 		List<ExTopicoDestinacao> listaFinal = new ArrayList<ExTopicoDestinacao>();
 
 		if (getDoc().getSubscritor() == null) {
-			msgErro = "… necess·rio informar um subscritor para listar os documentos a eliminar do ”rg„o correspondente";
+			msgErro = "√â necess√°rio informar um subscritor para listar os documentos a eliminar do √ìrg√£o correspondente";
 			return listaFinal;
 		}
 
 		if (getQuantidadeDisponiveis() > 1000) {
-			msgErro = "H· "
+			msgErro = "H√° "
 					+ getQuantidadeDisponiveis()
-					+ " documentos para o perÌodo informado. O m·ximo permitido È de 1000 documentos.";
+					+ " documentos para o per√≠odo informado. O m√°ximo permitido √© de 1000 documentos.";
 			return listaFinal;
 		}
 
@@ -162,7 +162,7 @@ public class ExEditalEliminacao {
 		provisorio.addAll(jaInclusos);
 
 		if (provisorio.size() == 0) {
-			msgErro = "N„o h· dados para o perÌodo informado.";
+			msgErro = "N√£o h√° dados para o per√≠odo informado.";
 			return listaFinal;
 		}
 
@@ -171,9 +171,9 @@ public class ExEditalEliminacao {
 		ExTopicoDestinacao digitais = new ExTopicoDestinacao(
 				"Documentos Digitais a Eliminar", true);
 		ExTopicoDestinacao fisicos = new ExTopicoDestinacao(
-				"Documentos FÌsicos a Eliminar", true);
+				"Documentos F√≠sicos a Eliminar", true);
 		ExTopicoDestinacao indisponiveis = new ExTopicoDestinacao(
-				"Documentos a Eliminar N„o DisponÌveis", false);
+				"Documentos a Eliminar N√£o Dispon√≠veis", false);
 
 		for (ExItemDestinacao o : provisorio) {
 			if (!comp().podeIncluirEmEditalEliminacao(
@@ -220,16 +220,16 @@ public class ExEditalEliminacao {
 						getDoc().getLotaCadastrante(), mob))
 					throw new AplicacaoException("O documento "
 							+ mob.getCodigo()
-							+ "n„o est· disponÌvel para eliminaÁ„o.");
+							+ "n√£o est√° dispon√≠vel para elimina√ß√£o.");
 				if (movInclusao == null)
 					aIncluir.add(mob);
 				else if (referenciaEsteDoc) {
 					aManter.add(mob);
 				} else
 					throw new Exception(
-							"N„o foi possÌvel fazer a gravaÁ„o porque o documento "
+							"N√£o foi poss√≠vel fazer a grava√ß√£o porque o documento "
 									+ mob.getCodigo()
-									+ "j· faz parte do edital "
+									+ "j√° faz parte do edital "
 									+ movInclusao.getExMobilRef());
 			}
 		}

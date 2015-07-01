@@ -79,6 +79,29 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
   };
   return CodeMirror.overlayParser(CodeMirror.getMode(config, parserConfig.backdrop || "text/html"), freemarkerOverlay);
 });
+
+$(window)
+		.keydown(
+				function(e) {
+					if (!(String.fromCharCode(event.which).toLowerCase() == 's' && (event.ctrlKey || event.metaKey))
+							&& !(event.which == 19))
+						return true;
+					event.preventDefault();
+					//		switch (e.keyCode) {
+					//		case 116: // f5
+					fmDetail.save();
+					$.ajax({
+						type : "POST",
+						url : '/categoryForm',
+						data : $("#frm").serialize(), // serializes the form's elements.
+						error : function(data) {
+							alert("Erro gravando as alterações!");
+						}
+					});
+
+					return false; //"return false" will avoid further events
+					return; //using "return" other attached events will execute
+				});
 </script>
 
 <siga:pagina titulo="Lista de Modelos">

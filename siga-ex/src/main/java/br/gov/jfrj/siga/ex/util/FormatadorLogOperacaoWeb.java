@@ -22,11 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
- * @author eeh Define um formato padr„o para output de logs da aplicaÁ„o em
- *         ambiente web. … usado, por exemplo, quando se deseja imprimir, num
- *         dispositivo de saÌda, o estado atual de uma requisiÁ„o sendo
+ * @author eeh Define um formato padr√£o para output de logs da aplica√ß√£o em
+ *         ambiente web. √â usado, por exemplo, quando se deseja imprimir, num
+ *         dispositivo de sa√≠da, o estado atual de uma requisi√ß√£o sendo
  *         processada. Esta classe apenas gera a linha formatada para output,
- *         que se obtÈm por meio do toString()
+ *         que se obt√©m por meio do toString()
  */
 public class FormatadorLogOperacaoWeb {
 
@@ -39,11 +39,11 @@ public class FormatadorLogOperacaoWeb {
 	/**
 	 * 
 	 * @param request
-	 *            Objeto referente ‡ requisiÁ„o cujos dados se quer imprimir em
+	 *            Objeto referente √† requisi√ß√£o cujos dados se quer imprimir em
 	 *            log
 	 * @param tempoOperacao
-	 *            Tempo que a operaÁ„o tem levado desde um momento arbitr·rio,
-	 *            que pode ser o inÌcio do processamento da requisiÁ„o
+	 *            Tempo que a opera√ß√£o tem levado desde um momento arbitr√°rio,
+	 *            que pode ser o in√≠cio do processamento da requisi√ß√£o
 	 */
 	public FormatadorLogOperacaoWeb(HttpServletRequest request,
 			long tempoOperacao) {

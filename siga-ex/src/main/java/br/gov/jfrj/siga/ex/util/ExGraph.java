@@ -13,7 +13,7 @@ public class ExGraph {
 
 	protected class Nodo {
 
-		private String nome, shape, label, URL, tooltip;
+		private String nome, shape, label, URL, tooltip, color;
 		private boolean destacar;
 
 		protected Nodo(String nome) {
@@ -32,6 +32,11 @@ public class ExGraph {
 
 		protected Nodo setDestacar(boolean destacar) {
 			this.destacar = destacar;
+			return this;
+		}
+
+		protected Nodo setCor(String cor) {
+			this.color = cor;
 			return this;
 		}
 
@@ -54,6 +59,8 @@ public class ExGraph {
 				toString += "[label=\"" + label + "\"]";
 			if (destacar)
 				toString += "[color=\"red\"]";
+			if (color != null)
+				toString += "[color=\"" + color + "\"]";
 			if (URL != null)
 				toString += "[URL=\"" + URL + "\" penwidth=2]";
 			if (tooltip != null)

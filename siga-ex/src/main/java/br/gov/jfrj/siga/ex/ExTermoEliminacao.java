@@ -106,7 +106,7 @@ public class ExTermoEliminacao {
 		//Edson: comentando pra facilitar homologacao
 		//if (!editalIncluso.isDJEPublicado())
 			//throw new AplicacaoException(
-			//		"O edital n„o pode ser selecionado pois n„o est· publicado.");
+			//		"O edital n√£o pode ser selecionado pois n√£o est√° publicado.");
 	}
 
 	public void eliminarInclusos() {

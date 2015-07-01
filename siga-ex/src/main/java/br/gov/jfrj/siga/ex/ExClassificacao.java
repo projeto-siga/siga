@@ -61,11 +61,11 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	}
 
 	/**
-	 * Verifica se uma classificaÁ„o È do tipo intermedi·ria.
+	 * Verifica se uma classifica√ß√£o √© do tipo intermedi√°ria.
 	 * 
 
-	 * @return Verdadeiro caso a classificaÁ„o seja do tipo intermedi·ria e
-	 *         Falso caso a classificaÁ„o n„o seja do tipo intermedi·ria.
+	 * @return Verdadeiro caso a classifica√ß√£o seja do tipo intermedi√°ria e
+	 *         Falso caso a classifica√ß√£o n√£o seja do tipo intermedi√°ria.
 	 * 
 	 */
 	public boolean isIntermediaria() throws AplicacaoException {
@@ -87,7 +87,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 
 
 	/**
-	 * Retorna a sigla de uma classificaÁ„o.
+	 * Retorna a sigla de uma classifica√ß√£o.
 	 * 
 	 */
 	public String getSigla() {
@@ -95,7 +95,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	}
 
 	/**
-	 * Informa a sigla de uma classificaÁ„o.
+	 * Informa a sigla de uma classifica√ß√£o.
 	 * 
 	 * @param sigla
 	 * 
@@ -107,8 +107,8 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	/**
 
 
-	 * Retorna a descriÁ„o de uma classificaÁ„o. A descriÁ„o de uma
-	 * classificaÁ„o È formada pela descriÁ„o do Assunto, da classe e da
+	 * Retorna a descri√ß√£o de uma classifica√ß√£o. A descri√ß√£o de uma
+	 * classifica√ß√£o √© formada pela descri√ß√£o do Assunto, da classe e da
 	 * subclasse.
 	 * 
 	 * @param sigla
@@ -119,8 +119,8 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	}
 
 	/**
-	 * Retorna a sigla e a descriÁ„o simples, ou seja, n„o trazendo a informaÁ„o
-	 * completa sobre a hierarquia a que a classificaÁ„o pertence.
+	 * Retorna a sigla e a descri√ß√£o simples, ou seja, n√£o trazendo a informa√ß√£o
+	 * completa sobre a hierarquia a que a classifica√ß√£o pertence.
 	 * 
 	 * @param sigla
 	 * 
@@ -159,11 +159,11 @@ public class ExClassificacao extends AbstractExClassificacao implements
 
 
 	/**
-	 * Verifica se uma classificaÁ„o est· fechada.
+	 * Verifica se uma classifica√ß√£o est√° fechada.
 	 * 
 
-	 * @return Verdadeiro se a classificaÁ„o est· fechado e falso caso
-	 *         contr·rio.
+	 * @return Verdadeiro se a classifica√ß√£o est√° fechado e falso caso
+	 *         contr√°rio.
 	 * 
 	 */
 	public boolean isFechada() {

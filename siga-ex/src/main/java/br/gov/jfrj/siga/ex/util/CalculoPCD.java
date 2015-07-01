@@ -28,8 +28,8 @@ import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 /**
- * Classe que efetua o c·lculo dos valores a serem pagos no pedido de concess„o
- * de di·rias.
+ * Classe que efetua o c√°lculo dos valores a serem pagos no pedido de concess√£o
+ * de di√°rias.
  * 
  * @author kpf
  * 
@@ -46,29 +46,29 @@ public class CalculoPCD {
 	private String funcao;
 	private HashMap<String, Float> tabelaValores;
 
-	private float descontoSalario = 0F; // informaÁ„o do WEmul
-	private float valorConcedido = 0F;// informaÁ„o do WEmul
+	private float descontoSalario = 0F; // informa√ß√£o do WEmul
+	private float valorConcedido = 0F;// informa√ß√£o do WEmul
 
 	/**
-	 * Em valores de hoje o auxilio alimentaÁ„o È de R$630,00
+	 * Em valores de hoje o auxilio alimenta√ß√£o √© de R$630,00
 	 */
 	private static final float AUXILIO_ALIMENTACAO = 630F;
 	/**
-	 * Se o benefici·rio utilizar carro oficial durante o perÌodo de
-	 * afastamento, este atributo È true. Este valor influencia no c·lculo da
-	 * concess„o do adicional de deslocamento.
+	 * Se o benefici√°rio utilizar carro oficial durante o per√≠odo de
+	 * afastamento, este atributo √© true. Este valor influencia no c√°lculo da
+	 * concess√£o do adicional de deslocamento.
 	 */
 	private boolean carroOficial;
 
 	/**
-	 * Se o benefici·rio solicitar auxÌlio transporte durante o perÌodo de
-	 * afastamento, este atributo È true. Este valor influencia no c·lculo da
-	 * concess„o do adicional de deslocamento.
+	 * Se o benefici√°rio solicitar aux√≠lio transporte durante o per√≠odo de
+	 * afastamento, este atributo √© true. Este valor influencia no c√°lculo da
+	 * concess√£o do adicional de deslocamento.
 	 */
 	private boolean solicitaAuxTransporte;
 
 	/**
-	 * TRUE Se o benefici·rio for EXECUTOR DE MANDADOS.
+	 * TRUE Se o benefici√°rio for EXECUTOR DE MANDADOS.
 	 */
 	private boolean executorMandado;
 
@@ -77,8 +77,8 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Inicia e determina a tabela de valores da di·ria de acordo com o cargo ou
-	 * funÁ„o.
+	 * Inicia e determina a tabela de valores da di√°ria de acordo com o cargo ou
+	 * fun√ß√£o.
 	 */
 	private void inicializarTabelaValores() {
 		tabelaValores = new HashMap<String, Float>();
@@ -93,15 +93,15 @@ public class CalculoPCD {
 		tabelaValores.put("COORDENADOR", 264F);
 		tabelaValores.put("DIRETOR DE SUBSECRETARIA", 314F);
 		tabelaValores.put("DIRETOR DE SECRETARIA", 342F);
-		tabelaValores.put("ANALISTA JUDICI¡RIO", 214F);
-		tabelaValores.put("T…CNICO JUDICI¡RIO", 186F);
+		tabelaValores.put("ANALISTA JUDICI√ÅRIO", 214F);
+		tabelaValores.put("T√âCNICO JUDICI√ÅRIO", 186F);
 		tabelaValores.put("CJ01", 264F);
 		tabelaValores.put("CJ04", 368F);
 
 	}
 
 	/**
-	 * Feriado/S·bado/Domingo s„o excluÌdos do desconto de alimentaÁ„o e
+	 * Feriado/S√°bado/Domingo s√£o exclu√≠dos do desconto de alimenta√ß√£o e
 	 * transporte;
 	 * 
 	 * @return
@@ -123,20 +123,20 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * O n˙mero de di·rias È calculado pelo perÌodo entre as datas inicial e
-	 * final, inclusive a ida e metade do dia da volta ex: 02/10/2009 atÈ
-	 * 03/10/2009 = 1,5 di·rias (uma do dia 02 e 0,5 do dia 03);
+	 * O n√∫mero de di√°rias √© calculado pelo per√≠odo entre as datas inicial e
+	 * final, inclusive a ida e metade do dia da volta ex: 02/10/2009 at√©
+	 * 03/10/2009 = 1,5 di√°rias (uma do dia 02 e 0,5 do dia 03);
 	 * 
 	 * @return
 	 */
 	public float getNumeroDiarias() {
-		// AA (C¡LCULO DO N∫ DE DI¡RIAS)
+		// AA (C√ÅLCULO DO N¬∫ DE DI√ÅRIAS)
 		//
 		// dias = dataFinal - dataInicial + 0,5
 		// pernoiteOuDia30 = 0
 		// SE (Q7=30)
 		// entao pernoiteOuDia30 = 1
-		// SEN√O
+		// SEN√ÉO
 		// SE (Y7="x" ou Z7="x")
 		// entao pernoiteOuDia30=1
 		//
@@ -154,7 +154,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * O valor da di·ria È baseado no cargo/funÁ„o do benefici·rio.
+	 * O valor da di√°ria √© baseado no cargo/fun√ß√£o do benefici√°rio.
 	 * 
 	 * @param
 	 * @return
@@ -182,17 +182,17 @@ public class CalculoPCD {
 		}
 
 		if (cargo != null) {
-			if (cargo.equals("ANALISTA JUDICI¡RIO")
-					|| cargo.equals("T…CNICO JUDICI¡RIO")) {
+			if (cargo.equals("ANALISTA JUDICI√ÅRIO")
+					|| cargo.equals("T√âCNICO JUDICI√ÅRIO")) {
 				return tabelaValores.get(cargo);
 			}
 		}
-		return 0F; // retorna null para dar erro no c·lculo caso n„o tenha
+		return 0F; // retorna null para dar erro no c√°lculo caso n√£o tenha
 
 	}
 
 	/**
-	 * N∫ de di·rias * valor da di·ria + ajuste di·ria (arrendondado para baixo)
+	 * N¬∫ de di√°rias * valor da di√°ria + ajuste di√°ria (arrendondado para baixo)
 	 * 
 	 * @return
 	 */
@@ -202,18 +202,18 @@ public class CalculoPCD {
 
 	/**
 	 * Seja qual for o cargo ocupado pelo servidor ou mesmo o magistrado, o
-	 * adicional de deslocamento corresponde a 25% da di·ria de um analista.
+	 * adicional de deslocamento corresponde a 25% da di√°ria de um analista.
 	 * 
 	 * @return
 	 */
 	public float getValorDeslocamento() {
-		return (float) Math.floor((tabelaValores.get("ANALISTA JUDICI¡RIO") * 0.25));
+		return (float) Math.floor((tabelaValores.get("ANALISTA JUDICI√ÅRIO") * 0.25));
 	}
 
 	/**
-	 * O n˙mero de deslocamentos depende se o benefici·rio utilizar· carro
-	 * oficial e/ou solicitou o auxÌlio transporte para po perÌodo de
-	 * afastamento. A tabela È a seguinte:
+	 * O n√∫mero de deslocamentos depende se o benefici√°rio utilizar√° carro
+	 * oficial e/ou solicitou o aux√≠lio transporte para po per√≠odo de
+	 * afastamento. A tabela √© a seguinte:
 	 * 
 	 * carroOficial(false) e solicitaAuxTransporte (true) = 2 carroOficial(true)
 	 * e solicitaAuxTransporte (false) = 0 carroOficial(true) e
@@ -241,7 +241,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * valor do deslocamento * n∫ de deslocamentos
+	 * valor do deslocamento * n¬∫ de deslocamentos
 	 * 
 	 * @return
 	 */
@@ -250,7 +250,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna o valor di·rio do auxÌlio alimentaÁ„o.
+	 * Retorna o valor di√°rio do aux√≠lio alimenta√ß√£o.
 	 * 
 	 * @return
 	 */
@@ -264,14 +264,14 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * O auxilio alimentaÁ„o di·rio sempre È descontado em valor inteiro.
-	 * Exemplo: 02/10/2009 atÈ 03/10/2009 = 1,5 di·rias (uma do dia 02 e 0,5 do
-	 * dia 03). Embora seja condida 1,5 di·rias o desconto de alimentaÁ„o ser·
+	 * O auxilio alimenta√ß√£o di√°rio sempre √© descontado em valor inteiro.
+	 * Exemplo: 02/10/2009 at√© 03/10/2009 = 1,5 di√°rias (uma do dia 02 e 0,5 do
+	 * dia 03). Embora seja condida 1,5 di√°rias o desconto de alimenta√ß√£o ser√°
 	 * de 2 um referente ao dia 02 e um referente ao dia 03. Os magistrados
-	 * recebem subsÌdio ˙nico, desta forma n„o recebem e n„o descontam auxilo
-	 * alimentaÁ„o e transporte.
+	 * recebem subs√≠dio √∫nico, desta forma n√£o recebem e n√£o descontam auxilo
+	 * alimenta√ß√£o e transporte.
 	 * 
-	 * C·lculo: Se for juiz federal (titular ou sibstituto) = 0 Sen„o d1 =
+	 * C√°lculo: Se for juiz federal (titular ou sibstituto) = 0 Sen√£o d1 =
 	 * dataInicial - dataFinal + 1 se (dia(dataInicial)=30) d1 + 1; retorna d1 -
 	 * DiasInuteis;
 	 * 
@@ -292,7 +292,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna o total do desconto referente ao auxÌlio alimentaÁ„o.
+	 * Retorna o total do desconto referente ao aux√≠lio alimenta√ß√£o.
 	 * 
 	 * @return
 	 */
@@ -301,7 +301,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna o total do desconto referente ao auxÌlio transporte.
+	 * Retorna o total do desconto referente ao aux√≠lio transporte.
 	 * 
 	 * @return
 	 */
@@ -311,12 +311,12 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Para o desconto de transporte È necess·rio ter acesso via wemul ao
-	 * sistema de vale transporte (seÁ„o de benefÌcios na SGP) È efetuado
-	 * tomando por base o valor di·rio total R$ 34,8 menos a divis„o do valor
-	 * dos 6% V.BAs. ex (tabela em anexo): R$ 311,76/30 (um mÍs) = R$ 10,39 que
-	 * È igual a R$ R$ 24,41 x o valor inteiro do delocamento (vide item 7) que
-	 * È 2 totalizando R$ 48,00 (desprezndo-se os centavos, arrendondado para
+	 * Para o desconto de transporte √© necess√°rio ter acesso via wemul ao
+	 * sistema de vale transporte (se√ß√£o de benef√≠cios na SGP) √© efetuado
+	 * tomando por base o valor di√°rio total R$ 34,8 menos a divis√£o do valor
+	 * dos 6% V.BAs. ex (tabela em anexo): R$ 311,76/30 (um m√™s) = R$ 10,39 que
+	 * √© igual a R$ R$ 24,41 x o valor inteiro do delocamento (vide item 7) que
+	 * √© 2 totalizando R$ 48,00 (desprezndo-se os centavos, arrendondado para
 	 * baixo).
 	 * 
 	 * VD = valor concedido / 30; difDSVD = DS - VD; difDSVD *
@@ -364,7 +364,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna a data de inÌcio do c·lculo
+	 * Retorna a data de in√≠cio do c√°lculo
 	 * 
 	 * @return
 	 */
@@ -374,7 +374,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna a data final do c·lculo
+	 * Retorna a data final do c√°lculo
 	 * 
 	 * @return
 	 */
@@ -384,7 +384,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna se o c·lculo considera o uso de carro oficial.
+	 * Retorna se o c√°lculo considera o uso de carro oficial.
 	 * 
 	 * @return
 	 */
@@ -393,17 +393,17 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa se o c·lculo considera o uso de carro oficial.
+	 * Informa se o c√°lculo considera o uso de carro oficial.
 	 * 
 	 * @param carroOficial -
-	 *            TRUE se o c·lculo deve considerar o uso de carro oficial
+	 *            TRUE se o c√°lculo deve considerar o uso de carro oficial
 	 */
 	public void setCarroOficial(boolean carroOficial) {
 		this.carroOficial = carroOficial;
 	}
 
 	/**
-	 * Retorna se o c·lculo considera a solicitaÁ„o de auxÌlio transporte.
+	 * Retorna se o c√°lculo considera a solicita√ß√£o de aux√≠lio transporte.
 	 * 
 	 * @return
 	 */
@@ -412,17 +412,17 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa se o c·lculo considera a solicitaÁ„o de auxÌlio transporte.
+	 * Informa se o c√°lculo considera a solicita√ß√£o de aux√≠lio transporte.
 	 * 
 	 * @param solicitaAuxTransporte -
-	 *            TRUE se considera a solicitaÁ„o de auxÌlio transporte.
+	 *            TRUE se considera a solicita√ß√£o de aux√≠lio transporte.
 	 */
 	public void setSolicitaAuxTransporte(boolean solicitaAuxTransporte) {
 		this.solicitaAuxTransporte = solicitaAuxTransporte;
 	}
 
 	/**
-	 * Retorna o benefici·rio do c·lculo.
+	 * Retorna o benefici√°rio do c√°lculo.
 	 * 
 	 * @return
 	 */
@@ -431,7 +431,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Configura o benefici·rio do c·lculo.
+	 * Configura o benefici√°rio do c√°lculo.
 	 * 
 	 * @param beneficiario
 	 */
@@ -440,7 +440,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna se o c·lculo considera pernoite.
+	 * Retorna se o c√°lculo considera pernoite.
 	 * 
 	 * @return 1 - pernoite no dia anterior 2 - pernoite no dia posterior
 	 */
@@ -449,7 +449,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa se o c·lculo considera pernoite
+	 * Informa se o c√°lculo considera pernoite
 	 * 
 	 * @param pernoite
 	 */
@@ -458,8 +458,8 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna o valor que È descontado do sal·rio do benefici·rio devido ao
-	 * pagamento do auxÌlio transporte. A SOF realiza a consulta desse valor no
+	 * Retorna o valor que √© descontado do sal√°rio do benefici√°rio devido ao
+	 * pagamento do aux√≠lio transporte. A SOF realiza a consulta desse valor no
 	 * WEmul.
 	 * 
 	 * @return
@@ -469,8 +469,8 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa o valor que È descontado do sal·rio do benefici·rio devido ao
-	 * pagamento do auxÌlio transporte. A SOF realiza a consulta desse valor no
+	 * Informa o valor que √© descontado do sal√°rio do benefici√°rio devido ao
+	 * pagamento do aux√≠lio transporte. A SOF realiza a consulta desse valor no
 	 * WEmul.
 	 * 
 	 * @param ds
@@ -480,7 +480,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna o valor que È concedido ao benefici·rio pelo auxÌlio transporte.
+	 * Retorna o valor que √© concedido ao benefici√°rio pelo aux√≠lio transporte.
 	 * A SOF realiza a consulta desse valor no WEmul.
 	 * 
 	 * @return
@@ -490,7 +490,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa o valor que È concedido ao benefici·rio pelo auxÌlio transporte.
+	 * Informa o valor que √© concedido ao benefici√°rio pelo aux√≠lio transporte.
 	 * A SOF realiza a consulta desse valor no WEmul.
 	 * 
 	 * @param valorConcedido
@@ -500,7 +500,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa a data de inÌcio do c·lculo.
+	 * Informa a data de in√≠cio do c√°lculo.
 	 * 
 	 * @param data
 	 */
@@ -514,7 +514,7 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa a data final do c·lculo.
+	 * Informa a data final do c√°lculo.
 	 * 
 	 * @param data
 	 */
@@ -528,8 +528,8 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna se o benefic·rio È executor de mandados. Os oficiais de justiÁa
-	 * posuem c·culo diferenciado do adicional de deslocamento.
+	 * Retorna se o benefic√°rio √© executor de mandados. Os oficiais de justi√ßa
+	 * posuem c√°culo diferenciado do adicional de deslocamento.
 	 * 
 	 * @return
 	 */
@@ -538,8 +538,8 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa se o benefic·rio È executor de mandados. Os oficiais de justiÁa
-	 * posuem c·culo diferenciado do adicional de deslocamento.
+	 * Informa se o benefic√°rio √© executor de mandados. Os oficiais de justi√ßa
+	 * posuem c√°culo diferenciado do adicional de deslocamento.
 	 * 
 	 * @param executorMandado
 	 */
@@ -548,8 +548,8 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna o cargo a ser considerado para o c·lculo. As di·rias possuem
-	 * diferentes valores dependendo do cargo do benefici·rio.
+	 * Retorna o cargo a ser considerado para o c√°lculo. As di√°rias possuem
+	 * diferentes valores dependendo do cargo do benefici√°rio.
 	 * 
 	 * @return
 	 */
@@ -558,8 +558,8 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa o cargo a ser considerado para o c·lculo. As di·rias possuem
-	 * diferentes valores dependendo do cargo do benefici·rio.
+	 * Informa o cargo a ser considerado para o c√°lculo. As di√°rias possuem
+	 * diferentes valores dependendo do cargo do benefici√°rio.
 	 * 
 	 * @param cargo
 	 */
@@ -568,8 +568,8 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Retorna a funÁ„o comissionada a ser considerada para o c·lculo. As
-	 * di·rias possuem diferentes valores dependendo da funÁ„o.
+	 * Retorna a fun√ß√£o comissionada a ser considerada para o c√°lculo. As
+	 * di√°rias possuem diferentes valores dependendo da fun√ß√£o.
 	 * 
 	 * @return
 	 */
@@ -578,8 +578,8 @@ public class CalculoPCD {
 	}
 
 	/**
-	 * Informa a funÁ„o comissionada a ser considerada para o c·lculo. As
-	 * di·rias possuem diferentes valores dependendo da funÁ„o.
+	 * Informa a fun√ß√£o comissionada a ser considerada para o c√°lculo. As
+	 * di√°rias possuem diferentes valores dependendo da fun√ß√£o.
 	 * 
 	 * @param funcao
 	 */

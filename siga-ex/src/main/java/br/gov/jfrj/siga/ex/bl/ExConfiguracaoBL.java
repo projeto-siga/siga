@@ -71,7 +71,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	public static int SERVICO = 14;
 
 	/**
-	 * Verifica se a configuraÁ„o È uma configuraÁ„o v·lida.
+	 * Verifica se a configura√ß√£o √© uma configura√ß√£o v√°lida.
 	 */
 	@Override
 	public boolean atendeExigencias(CpConfiguracao cfgFiltro,
@@ -248,7 +248,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * MÈtodo com implementaÁ„o completa, chamado pelas outras sobrecargas
+	 * M√©todo com implementa√ß√£o completa, chamado pelas outras sobrecargas
 	 * 
 	 * @param exTpDoc
 	 * @param exFormaDoc
@@ -317,7 +317,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	/**
 	 * 
 	 * Usado para se verificar se uma pessoa pode realizar uma determinada
-	 * operaÁ„o no documento
+	 * opera√ß√£o no documento
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -334,7 +334,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * Usado para se saber se uma pessoa pode fazer uma certa movimentaÁ„o
+	 * Usado para se saber se uma pessoa pode fazer uma certa movimenta√ß√£o
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -353,7 +353,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	
 	/**
 	 * 
-	 * Usado para se saber se uma pessoa pode fazer uma certa movimentaÁ„o
+	 * Usado para se saber se uma pessoa pode fazer uma certa movimenta√ß√£o
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -409,7 +409,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * Usado para se saber se deve reiniciar a numeraÁ„o de um tipo de documento para um Ûrg„o
+	 * Usado para se saber se deve reiniciar a numera√ß√£o de um tipo de documento para um √≥rg√£o
 	 * 
 	 * @throws Exception
 	 */
@@ -421,7 +421,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	/**
 	 * 
 	 * Usado para se saber se uma determinada pessoa pode criar um documento de
-	 * uma certa espÈcie
+	 * uma certa esp√©cie
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -438,7 +438,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * Usado para se verificar se um usu·rio pode criar um documento de um certo
+	 * Usado para se verificar se um usu√°rio pode criar um documento de um certo
 	 * modelo
 	 * 
 	 * @param dpPessoa
@@ -468,7 +468,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 
 	// Pedro : Fim //
 	/**
-	 * Informa se um certo modelo pode sofrer uma certa movimentaÁ„o, por uma
+	 * Informa se um certo modelo pode sofrer uma certa movimenta√ß√£o, por uma
 	 * certa pessoa
 	 * 
 	 * @param dpPessoa
@@ -519,7 +519,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	}
 
 	/**
-	 * Infere configuraÁıes Ûbvias. Por exemplo, se for informado o tipo de documento e sÛ existir uma forma de documento para este tipo, a forma ser· preenchida automaticamente.
+	 * Infere configura√ß√µes √≥bvias. Por exemplo, se for informado o tipo de documento e s√≥ existir uma forma de documento para este tipo, a forma ser√° preenchida automaticamente.
 	 * @param cpConfiguracao
 	 */
 	@Override
@@ -528,7 +528,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		super.deduzFiltro(cpConfiguracao);
 
 		// *************************************************
-		// Ver regrinha pra habilitar e desabilitar esses if's aÌ, talvez
+		// Ver regrinha pra habilitar e desabilitar esses if's a√≠, talvez
 		// *************************************************
 
 		if (!(cpConfiguracao instanceof ExConfiguracao))
@@ -607,7 +607,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	
 	/**
 	 * 
-	 * Retorna uma lista de (ex)configuraÁıes vigentes de acordo com um certo tipo
+	 * Retorna uma lista de (ex)configura√ß√µes vigentes de acordo com um certo tipo
 	 * 
 	 * @param ExConfiguracao
 	 * 
@@ -627,10 +627,10 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	}
 	
 	/**
-	 * Varre as entidades definidas na configuraÁ„o para evitar que o hibernate
-	 * guarde versıes lazy delas.
+	 * Varre as entidades definidas na configura√ß√£o para evitar que o hibernate
+	 * guarde vers√µes lazy delas.
 	 * 
-	 * @param listaCfg - lista de configuraÁıes que podem ter objetos lazy
+	 * @param listaCfg - lista de configura√ß√µes que podem ter objetos lazy
 	 */
 	@Override
 	protected void evitarLazy(List<CpConfiguracao> listaCfg) {

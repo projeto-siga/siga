@@ -185,7 +185,7 @@ public class FuncoesEL {
 	}
 
 	public static String reaisPorExtenso(final String s) {
-		if (s == null)
+		if (s == null || s.trim().length() == 0)
 			return null;
 		String temp = s;
 		temp = temp.replaceAll("\\.", "");
@@ -716,12 +716,12 @@ public class FuncoesEL {
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
 			DpLotacao lotaTitular) throws Exception {
 
-		// Nato: Nesse caso, o titular � considerado o subscritor do documento.
-		// N�o sei se isso � 100% correto, mas acho que � uma abordagem bastante
-		// razo�vel.
+		// Nato: Nesse caso, o titular ï¿½ considerado o subscritor do documento.
+		// Nï¿½o sei se isso ï¿½ 100% correto, mas acho que ï¿½ uma abordagem bastante
+		// razoï¿½vel.
 		// Markenson: Conversando com o Renato, alteramos o titular para o
 		// titular do sistema
-		// e n�o do documento.
+		// e nï¿½o do documento.
 		Ex.getInstance()
 				.getBL()
 				.criarWorkflow(cadastrante,
@@ -812,7 +812,7 @@ public class FuncoesEL {
 	 */
 	public static String formatarCPF(String cpf) {
 
-		// Se CPF j� vem formatado, devolve cpf
+		// Se CPF jï¿½ vem formatado, devolve cpf
 		Pattern p = Pattern
 				.compile("[0-9]{2,3}?\\.[0-9]{3}?\\.[0-9]{3}?\\-[0-9]{2}?");
 		Matcher m = p.matcher(cpf);
@@ -821,15 +821,15 @@ public class FuncoesEL {
 			return cpf;
 		}
 
-		// O texto � truncado para 11 caracteres caso seja maior
+		// O texto ï¿½ truncado para 11 caracteres caso seja maior
 		if (cpf.length() > 11) {
 			cpf = cpf.substring(0, 11);
 		}
 
-		// Determina o n�mero de zeros � esquerda
+		// Determina o nï¿½mero de zeros ï¿½ esquerda
 		int numZerosAEsquerda = 11 - cpf.length();
 
-		// aplica os zeros � esquerda
+		// aplica os zeros ï¿½ esquerda
 		for (int i = 0; i < numZerosAEsquerda; i++) {
 			cpf = "0" + cpf;
 		}
@@ -884,13 +884,13 @@ public class FuncoesEL {
 			nivel = "Auxiliar";
 
 		if (nivel.indexOf('I') > 0)
-			nivel = "Intermedi�rio";
+			nivel = "Intermediï¿½rio";
 
 		if (nivel.indexOf('S') > 0)
 			nivel = "Superior";
 
-		return "N�vel " + nivel + ", Classe " + aux + classe + aux
-				+ ", Padr�o " + aux + padrao + aux;
+		return "Nï¿½vel " + nivel + ", Classe " + aux + classe + aux
+				+ ", Padrï¿½o " + aux + padrao + aux;
 	}
 
 	public static String buscarLotacaoPorSigla(String sigla, Long idOrgaoUsu)

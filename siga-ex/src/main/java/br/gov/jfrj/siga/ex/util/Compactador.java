@@ -32,11 +32,11 @@ import java.util.zip.ZipOutputStream;
 
 public class Compactador {
 	/**
-	 * Deleta o diretório informado e todos os arquivos e diretórios abaixo
+	 * Deleta o diretÃ³rio informado e todos os arquivos e diretÃ³rios abaixo
 	 * deste.
 	 * 
 	 * @param filename
-	 *            String - nome do diretório a ser apagado
+	 *            String - nome do diretÃ³rio a ser apagado
 	 * @return true se obteve sucesso
 	 */
 	public static boolean deleteDir(final String filename) {
@@ -45,11 +45,11 @@ public class Compactador {
 	}
 
 	/**
-	 * Deleta o diretório informado e todos os arquivos e diretórios abaixo
+	 * Deleta o diretÃ³rio informado e todos os arquivos e diretÃ³rios abaixo
 	 * deste.
 	 * 
 	 * @param dir
-	 *            File - objeto File que representa o diretório a ser apagado
+	 *            File - objeto File que representa o diretÃ³rio a ser apagado
 	 * @return true se obteve sucesso
 	 */
 	public static boolean deleteDir(final File dir) {
@@ -67,13 +67,13 @@ public class Compactador {
 	}
 
 	/**
-	 * Adiciona um arquivo novo a um arquivo compactado já existente
+	 * Adiciona um arquivo novo a um arquivo compactado jÃ¡ existente
 	 * 
 	 * @param arqEntrada -
-	 *            String com o path do arquivo a ser adicionado. O path só pode
-	 *            ser do diretório atual ou de subdiretórios do diretório atual.
+	 *            String com o path do arquivo a ser adicionado. O path sÃ³ pode
+	 *            ser do diretÃ³rio atual ou de subdiretÃ³rios do diretÃ³rio atual.
 	 * @param zipSaida -
-	 *            path do arquivo compactado já existente
+	 *            path do arquivo compactado jÃ¡ existente
 	 */
 	public void adicionar(final String arqEntrada, final String zipSaida) {
 		final ArrayList<String> arqEntradas = new ArrayList<String>();
@@ -82,14 +82,14 @@ public class Compactador {
 	}
 
 	/**
-	 * Adiciona arquivos novos a um arquivo compactado já existente
+	 * Adiciona arquivos novos a um arquivo compactado jÃ¡ existente
 	 * 
 	 * @param arqEntrada -
 	 *            ArrayList com o path dos arquivos a ser adicionados. Os paths
-	 *            só podem ser do diretório atual ou de subdiretórios do
-	 *            diretório atual.
+	 *            sÃ³ podem ser do diretÃ³rio atual ou de subdiretÃ³rios do
+	 *            diretÃ³rio atual.
 	 * @param zipSaida -
-	 *            path do arquivo compactado já existente
+	 *            path do arquivo compactado jÃ¡ existente
 	 */
 	public void adicionar(final ArrayList<String> arqEntrada, final String zipSaida) {
 		final ArrayList<String> arqExist = new ArrayList<String>();
@@ -193,13 +193,13 @@ public class Compactador {
 	}
 
 	/**
-	 * Remove um arquivo de um arquivo compactado já existente
+	 * Remove um arquivo de um arquivo compactado jÃ¡ existente
 	 * 
 	 * @param arqRemover -
-	 *            String com o path do arquivo a ser removido. O path só podem
-	 *            ser do diretório atual ou de subdiretórios do diretório atual.
+	 *            String com o path do arquivo a ser removido. O path sÃ³ podem
+	 *            ser do diretÃ³rio atual ou de subdiretÃ³rios do diretÃ³rio atual.
 	 * @param zipSaida -
-	 *            path do arquivo compactado já existente
+	 *            path do arquivo compactado jÃ¡ existente
 	 */
 	public void remover(final String arqRemover, final String zipSaida) {
 		final ArrayList<String> arqRemover2 = new ArrayList<String>();
@@ -208,14 +208,14 @@ public class Compactador {
 	}
 
 	/**
-	 * Remove arquivos de um arquivo compactado já existente
+	 * Remove arquivos de um arquivo compactado jÃ¡ existente
 	 * 
 	 * @param arqRemover -
-	 *            ArrayList com o path dos arquivos a ser removidos. Os paths só
-	 *            podem ser do diretório atual ou de subdiretórios do diretório
+	 *            ArrayList com o path dos arquivos a ser removidos. Os paths sÃ³
+	 *            podem ser do diretÃ³rio atual ou de subdiretÃ³rios do diretÃ³rio
 	 *            atual.
 	 * @param zipSaida -
-	 *            path do arquivo compactado já existente
+	 *            path do arquivo compactado jÃ¡ existente
 	 */
 	public void remover(final ArrayList<String> arqRemover, final String zipSaida) {
 
@@ -302,8 +302,8 @@ public class Compactador {
 	 * Compacta um arquivo em um arquivo do tipo zip
 	 * 
 	 * @param arqEntrada -
-	 *            String com o path do arquivo a ser compactado. O path só podem
-	 *            ser do diretório atual ou de subdiretórios do diretório atual.
+	 *            String com o path do arquivo a ser compactado. O path sÃ³ podem
+	 *            ser do diretÃ³rio atual ou de subdiretÃ³rios do diretÃ³rio atual.
 	 * @param zipSaida -
 	 *            path do arquivo compactado a ser criado
 	 */
@@ -318,8 +318,8 @@ public class Compactador {
 	 * 
 	 * @param arqEntrada -
 	 *            ArrayList com o path dos arquivos a ser compactados. Os paths
-	 *            só podem ser do diretório atual ou de subdiretórios do
-	 *            diretório atual.
+	 *            sÃ³ podem ser do diretÃ³rio atual ou de subdiretÃ³rios do
+	 *            diretÃ³rio atual.
 	 * @param zipSaida -
 	 *            path do arquivo compactado a ser criado
 	 */
@@ -367,7 +367,7 @@ public class Compactador {
 	 * Descompacta todos os arquivos
 	 * 
 	 * @param zipSaida -
-	 *            path do arquivo compactado já existente
+	 *            path do arquivo compactado jÃ¡ existente
 	 */
 	public void descompactarTudo(final String zipEntrada) {
 		try {
@@ -410,7 +410,7 @@ public class Compactador {
 	 * Lista todos os arquivos dentro do zip
 	 * 
 	 * @param zipSaida -
-	 *            path do arquivo compactado já existente
+	 *            path do arquivo compactado jÃ¡ existente
 	 * @return ArrayList com os nomes dos arquivos dentro do zip
 	 */
 	public ArrayList<String> Listar(final String zipEntrada) {
@@ -439,12 +439,12 @@ public class Compactador {
 	}
 
 	/**
-	 * Descompacta um arquivo de dentro do arquivo compactado já existente
+	 * Descompacta um arquivo de dentro do arquivo compactado jÃ¡ existente
 	 * 
 	 * @param arquivo -
 	 *            path do arquivo a ser descompactado.
 	 * @param zipEntrada -
-	 *            path do arquivo compactado já existente
+	 *            path do arquivo compactado jÃ¡ existente
 	 */
 	public void descompactar(final String zipEntrada, String arquivo) {
 
@@ -494,15 +494,15 @@ public class Compactador {
 	}
 
 	/**
-	 * Adiciona um array de bytes a outro array de bytes compactado já existente
+	 * Adiciona um array de bytes a outro array de bytes compactado jÃ¡ existente
 	 * 
 	 * @param arqNome -
-	 *            String com o nome interno para referência dentro do array
+	 *            String com o nome interno para referÃªncia dentro do array
 	 *            compactado.
 	 * @param arqEntrada -
 	 *            byte[] - array de bytes a ser adicionado.
 	 * @param zipEntrada -
-	 *            Array de bytes compactado já existente.
+	 *            Array de bytes compactado jÃ¡ existente.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
 	public byte[] adicionarStream(final String arqNome, final byte[] arqEntrada, final byte[] zipEntrada) {
@@ -514,15 +514,15 @@ public class Compactador {
 	}
 
 	/**
-	 * Adiciona array de bytes a outro array de bytes compactado já existente
+	 * Adiciona array de bytes a outro array de bytes compactado jÃ¡ existente
 	 * 
 	 * @param arqNome -
-	 *            ArrayList com os nomes internos para referência dentro do
+	 *            ArrayList com os nomes internos para referÃªncia dentro do
 	 *            array compactado.
 	 * @param arqEntrada -
 	 *            ArrayList com os arrays de bytes a ser adicionados.
 	 * @param zipEntrada -
-	 *            Array de bytes compactado já existente.
+	 *            Array de bytes compactado jÃ¡ existente.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
 	public byte[] adicionarStream(final ArrayList<String> arqNome, final ArrayList<byte[]> arqEntrada, final byte[] zipEntrada) {
@@ -624,10 +624,10 @@ public class Compactador {
 	 * Remove um array de bytes de dentro do array de bytes compactado
 	 * 
 	 * @param arqNome -
-	 *            String com o nomes de referência dos array de bytes a ser
+	 *            String com o nomes de referÃªncia dos array de bytes a ser
 	 *            removidos.
 	 * @param zipEntrada -
-	 *            Array de bytes compactado que contém o array a ser removidos.
+	 *            Array de bytes compactado que contÃ©m o array a ser removidos.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
 	public byte[] removerStream(final String arqNome, final byte[] zipEntrada) {
@@ -640,10 +640,10 @@ public class Compactador {
 	 * Remove arrays de bytes de dentro do array de bytes compactado
 	 * 
 	 * @param arqNome -
-	 *            ArrayList com os nomes de referência dos arrays de bytes a ser
+	 *            ArrayList com os nomes de referÃªncia dos arrays de bytes a ser
 	 *            removidos.
 	 * @param zipEntrada -
-	 *            Array de bytes compactado que contém os arrays a ser
+	 *            Array de bytes compactado que contÃ©m os arrays a ser
 	 *            removidos.
 	 * @return byte[] - array de bytes compactado resultante
 	 */
@@ -727,7 +727,7 @@ public class Compactador {
 	 * Compacta um array de bytes em um outro array de bytes
 	 * 
 	 * @param arqNome -
-	 *            String com o nome interno para referência dentro do array
+	 *            String com o nome interno para referÃªncia dentro do array
 	 *            compactado.
 	 * @param arqEntrada -
 	 *            byte[] - array de bytes a ser compactado.
@@ -745,7 +745,7 @@ public class Compactador {
 	 * Compacta arrays de bytes em um outro array de bytes
 	 * 
 	 * @param arqNome -
-	 *            ArrayList com os nomes internos para referência dentro do
+	 *            ArrayList com os nomes internos para referÃªncia dentro do
 	 *            array compactado.
 	 * @param arqEntrada -
 	 *            ArrayList com os arrays de bytes a ser adicionados.
@@ -790,13 +790,13 @@ public class Compactador {
 	}
 
 	/**
-	 * Descompacta todos os arrays de bytes que estão dentro do array de bytes
+	 * Descompacta todos os arrays de bytes que estÃ£o dentro do array de bytes
 	 * compactado
 	 * 
 	 * @param zipEntrada -
 	 *            array de bytes compactado
 	 * @param nomes -
-	 *            ArrayList com os nomes internos de referência.
+	 *            ArrayList com os nomes internos de referÃªncia.
 	 * @aparam aList - ArrayList com os arrays de bytes descompactados.
 	 * 
 	 */
@@ -838,12 +838,12 @@ public class Compactador {
 	}
 
 	/**
-	 * Lista todos os arrays de bytes que estão dentro do array de bytes
+	 * Lista todos os arrays de bytes que estÃ£o dentro do array de bytes
 	 * compactado
 	 * 
 	 * @param zipEntrada -
 	 *            array de bytes compactado
-	 * @return ArrayList com os nomes internos de referência.
+	 * @return ArrayList com os nomes internos de referÃªncia.
 	 * 
 	 */
 	public ArrayList<String> listarStream(final byte[] zipEntrada) {
@@ -871,13 +871,13 @@ public class Compactador {
 	}
 
 	/**
-	 * Descompacta um array de bytes que está dentro do array de bytes
+	 * Descompacta um array de bytes que estÃ¡ dentro do array de bytes
 	 * compactado
 	 * 
 	 * @param zipEntrada -
 	 *            array de bytes compactado
 	 * @param arquivo -
-	 *            Nome interno de referência do array de bytes a ser
+	 *            Nome interno de referÃªncia do array de bytes a ser
 	 *            descompactado.
 	 * @param arqSaida -
 	 *            Array de bytes descompactado.

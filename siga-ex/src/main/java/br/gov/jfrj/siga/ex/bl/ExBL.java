@@ -709,6 +709,10 @@ public class ExBL extends CpBL {
 
 					Long mDje = null;
 					ExMovimentacao movDje = null;
+
+					boolean fDocColaborativoPendencia = false;
+					Date dtDocColaborativo = null;
+
 					for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 						if (mov.isCancelada())
 							continue;
@@ -758,10 +762,10 @@ public class ExBL extends CpBL {
 								&& !mob.doc().jaTransferido()) {
 							m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
 							/*
-							 * n￣o ￩ poss￭vel usar ExMovimentacao.isAssinada()
-							 * pois n￣o h￡ tempo habil no BD de efetivar a
+							 * não é possível usar ExMovimentacao.isAssinada()
+							 * pois não há tempo habil no BD de efetivar a
 							 * inclusao de movimentacao de assinatura de
-							 * moviment￧￣o Edson: Por que n￣o?
+							 * movimentção Edson: Por que não?
 							 */
 							for (ExMovimentacao movAss : mob
 									.getExMovimentacaoSet()) {
@@ -825,7 +829,28 @@ public class ExBL extends CpBL {
 										CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA,
 										mov.getDtIniMov(), mov.getSubscritor(),
 										null);
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO) {
+							dtDocColaborativo = mov.getDtIniMov();
+							ExParte parte = ExParte.create(mov.getDescrMov());
+							if (parte.isAtivo() && !parte.isPreenchido()) {
+								fDocColaborativoPendencia = true;
+								acrescentarMarca(
+										set,
+										mob,
+										CpMarcador.MARCADOR_PENDENTE_DE_COLABORACAO,
+										mov.getDtIniMov(),
+										mov.getSubscritor(),
+										mov.getLotaSubscritor());
+							}
 						}
+					}
+					if (dtDocColaborativo != null && !fDocColaborativoPendencia) {
+						acrescentarMarca(
+								set,
+								mob,
+								CpMarcador.MARCADOR_FINALIZAR_DOCUMENTO_COLABORATIVO,
+								dtDocColaborativo, mob.doc().getCadastrante(),
+								mob.doc().getLotaCadastrante());
 					}
 					if (mDje != null && !mob.doc().isEliminado()) {
 						acrescentarMarca(set, mob, mDje, movDje.getDtIniMov(),
@@ -1470,7 +1495,6 @@ public class ExBL extends CpBL {
 					"Nova solicitação de publicação DJE ("
 							+ mov.getLotaCadastrante().getSiglaLotacao() + ") ",
 					sb.toString(), sbHtml.toString());
-					
 
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {

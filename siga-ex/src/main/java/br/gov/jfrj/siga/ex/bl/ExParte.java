@@ -14,7 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "parte")
 public class ExParte {
 	private String id;
+	private String titulo;
 	private String hash;
+	private String responsavel;
 	private boolean preenchido;
 	private boolean ativo;
 	private List<ExDependencia> dependencias = new ArrayList<>();
@@ -37,6 +39,17 @@ public class ExParte {
 		this.hash = hash;
 	}
 
+	@XmlAttribute(name = "depende")
+	public void setDepende(String depende) {
+		if (this.dependencias.size() > 0)
+			return;
+		for (String s : depende.split(";")) {
+			ExDependencia d = new ExDependencia();
+			d.setId(s.trim());
+			this.dependencias.add(d);
+		}
+	}
+
 	public List<ExDependencia> getDependencias() {
 		return dependencias;
 	}
@@ -46,15 +59,31 @@ public class ExParte {
 		this.dependencias = dependencias;
 	}
 
-	public String getDescricaoMov() {
-		return "id=\"" + getId() + "\" ativo=\"" + (isAtivo() ? 1 : 0)
-				+ "\" preenchida=\"" + (isPreenchido() ? 1 : 0) + "\"";
+	public String getDescricaoMov() { 
+
+		String deps = "";
+		for (ExDependencia d : this.dependencias) {
+			if (deps.length() > 0)
+				deps += ";";
+			deps += d.getId();
+		}
+
+		return "id=\"" + getId()
+				+ (deps.length() > 0 ? "\" depende=\"" + deps : "")
+				+ "\" titulo=\"" + getTitulo() + "\" ativo=\""
+				+ (isAtivo() ? 1 : 0) + "\" preenchido=\""
+				+ (isPreenchido() ? 1 : 0) + "\" responsavel=\""
+				+ getResponsavel() + "\"";
+	}
+
+	public String getString() {
+		return getTitulo() + (isAtivo() ? ", Ativa" : "")
+				+ (isPreenchido() ? ", Preenchida" : "") + ", Responsavel: "
+				+ getResponsavel() + "";
 	}
 
 	public boolean isMesmaId(String descricaoMov) throws JAXBException {
-		ExParte p = unmarshallParte("<parte "
-				+ (descricaoMov == null ? "" : descricaoMov) + "/>");
-		return getId().equals(p.getId());
+		return getId().equals(create(descricaoMov).getId());
 	}
 
 	public static ExParte unmarshallParte(String s) throws JAXBException {
@@ -65,8 +94,24 @@ public class ExParte {
 		return parte;
 	}
 
+	public static ExParte create(String descricaoMov) {
+		ExParte p;
+		try {
+			p = unmarshallParte("<parte "
+					+ (descricaoMov == null ? "" : descricaoMov) + "/>");
+		} catch (JAXBException e) {
+			throw new RuntimeException("Erro ao converter string em ExParte.",
+					e);
+		}
+		return p;
+	}
+
 	public boolean isAtivo() {
 		return ativo;
+	}
+
+	public boolean isPendente() {
+		return isAtivo() && !isPreenchido();
 	}
 
 	@XmlAttribute(name = "ativo")
@@ -89,6 +134,24 @@ public class ExParte {
 	@XmlAttribute
 	public void setPreenchido(boolean preenchido) {
 		this.preenchido = preenchido;
+	}
+
+	public String getResponsavel() {
+		return responsavel;
+	}
+
+	@XmlAttribute(name = "responsavel")
+	public void setResponsavel(String responsavel) {
+		this.responsavel = responsavel;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	@XmlAttribute(name = "titulo")
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
 	}
 
 }

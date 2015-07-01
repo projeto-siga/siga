@@ -32,6 +32,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExParte;
 
 public class ExMobilVO extends ExVO {
 
@@ -46,6 +47,7 @@ public class ExMobilVO extends ExVO {
 	List<ExMovimentacaoVO> despachosNaoAssinados = new ArrayList<ExMovimentacaoVO>();
 	List<ExDocumentoVO> expedientesFilhosNaoJuntados = new ArrayList<ExDocumentoVO>();
 	List<ExMovimentacaoVO> pendenciasDeAnexacao = new ArrayList<ExMovimentacaoVO>();
+	List<ExMovimentacaoVO> pendenciasDeColaboracao = new ArrayList<ExMovimentacaoVO>();
 	Long pendenciaProximoModelo = null;
 
 	List<ExMovimentacaoVO> movs = new ArrayList<ExMovimentacaoVO>();
@@ -191,16 +193,24 @@ public class ExMobilVO extends ExVO {
 				pendenciasDeAnexacao.add(new ExMovimentacaoVO(this, mov,
 						titular, lotaTitular));
 		}
-		
-		if(mob.getExDocumento().isAssinado()) {
-			if(mob.getExDocumento().getExFormaDocumento().getId() == 107L)
+
+		if (mob.getPendenciasDeColaboracao() != null) {
+			for (ExMovimentacao mov : mob.getPendenciasDeColaboracao()) {
+				ExMovimentacaoVO m = new ExMovimentacaoVO(this, mov, mov
+						.getSubscritor(), mov.getLotaSubscritor());
+				m.descricao = ExParte.create(mov.getDescrMov()).getString();
+				pendenciasDeColaboracao.add(m);
+			}
+		}
+
+		if (mob.getExDocumento().isAssinado()) {
+			if (mob.getExDocumento().getExFormaDocumento().getId() == 107L)
 				pendenciaProximoModelo = 110L;
-			else if(mob.getExDocumento().getExFormaDocumento().getId() == 110L)
+			else if (mob.getExDocumento().getExFormaDocumento().getId() == 110L)
 				pendenciaProximoModelo = 111L;
-			else if(mob.getExDocumento().getExFormaDocumento().getId() == 111L)
+			else if (mob.getExDocumento().getExFormaDocumento().getId() == 111L)
 				pendenciaProximoModelo = 112L;
 		}
-			
 
 		marcasAtivas.addAll(mob.getExMarcaSetAtivas());
 
@@ -472,8 +482,8 @@ public class ExMobilVO extends ExVO {
 						.podeDesobrestar(titular, lotaTitular, mob), null,
 				null, null, null, "once");
 
-		addAcao("link", "Juntar", "/app/expediente/mov", "juntar", Ex.getInstance()
-				.getComp().podeJuntar(titular, lotaTitular, mob));
+		addAcao("link", "Juntar", "/app/expediente/mov", "juntar", Ex
+				.getInstance().getComp().podeJuntar(titular, lotaTitular, mob));
 
 		addAcao("page_find",
 				"Vincular",
@@ -506,10 +516,10 @@ public class ExMobilVO extends ExVO {
 		// confirmacao
 
 		addAcao("folder_page_white", "Encerrar Volume", "/app/expediente/mov",
-				"encerrar_volume", Ex.getInstance().getComp().podeEncerrarVolume(titular, lotaTitular, mob),
+				"encerrar_volume", Ex.getInstance().getComp()
+						.podeEncerrarVolume(titular, lotaTitular, mob),
 				"Confirma o encerramento do volume?", null, null, null, "once");
 
-		
 		addAcao("cancel", "Cancelar Via", "/expediente/mov",
 				"cancelarMovimentacao", Ex.getInstance().getComp()
 						.podeCancelarVia(titular, lotaTitular, mob),
@@ -654,6 +664,10 @@ public class ExMobilVO extends ExVO {
 		return pendenciasDeAnexacao;
 	}
 
+	public List<ExMovimentacaoVO> getPendenciasDeColaboracao() {
+		return pendenciasDeColaboracao;
+	}
+
 	@Override
 	public String toString() {
 		return getSigla() + "[" + getAcoes() + "] ";
@@ -686,12 +700,13 @@ public class ExMobilVO extends ExVO {
 	public Long getPendenciaProximoModelo() {
 		return pendenciaProximoModelo;
 	}
-	
+
 	public boolean isPendencias() {
 		return anexosNaoAssinados.size() > 0
 				|| despachosNaoAssinados.size() > 0
 				|| expedientesFilhosNaoJuntados.size() > 0
 				|| pendenciasDeAnexacao.size() > 0
+				|| pendenciasDeColaboracao.size() > 0
 				|| pendenciaProximoModelo != null;
 	}
 }

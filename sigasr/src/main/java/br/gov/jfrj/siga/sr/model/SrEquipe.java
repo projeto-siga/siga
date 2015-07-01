@@ -20,6 +20,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
@@ -78,11 +79,13 @@ public class SrEquipe extends HistoricoSuporteVraptor implements ConvertableEnti
     @Override
     public void salvar() throws Exception {
         super.salvar();
-        if (getExcecaoHorarioSet() != null)
+        if (getExcecaoHorarioSet() != null) {
             for (SrExcecaoHorario eh : getExcecaoHorarioSet()) {
                 eh.setEquipe(this);
                 eh.salvar();
             }
+            ContextoPersistencia.em().flush();
+        }
     }
 
     public List<SrConfiguracao> getDesignacoes() throws Exception {

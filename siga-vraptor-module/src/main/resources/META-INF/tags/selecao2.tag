@@ -91,7 +91,7 @@ self.popitup_${propriedadeClean} = function(sigla) {
 			var winleft = (screen.width - popW) / 2;
 			var winUp = (screen.height - popH) / 2;	
 		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_${propriedadeClean}=window.open(url,'${propriedade}',winProp);
+		newwindow_${propriedadeClean}=window.open(url,'${propriedadeClean}',winProp);
 	}
 	newwindow_${propriedadeClean}.opener = self;
 	

@@ -72,10 +72,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
     public void carregarSelecao() {
         if (atendenteSel != null) {
             this.setAtendente(atendenteSel.buscarObjeto());
+            atendenteSel.carregarDadosParaView(this.getAtendente());
         }
 
         if (lotaAtendenteSel != null) {
             this.setLotaAtendente(lotaAtendenteSel.buscarObjeto());
+            lotaAtendenteSel.carregarDadosParaView(this.getLotaAtendente());
         }
 
         if (cadastranteSel != null) {

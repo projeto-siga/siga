@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
@@ -80,7 +81,7 @@
 							<td>${perm.complexo.idComplexo}</td>
 							<td>${perm.complexo.nomeComplexo}</td>
 							<td>${perm.lotacao.lotacaoAtual.id}</td>
-							<td>${perm.lotacao.lotacaoAtual.nomeLotacao}</td>
+							<td>${f:decode(perm.lotacao.lotacaoAtual.nomeLotacao, 'iso-8859-1')}</td>
 							<td>${perm.lotacao.lotacaoAtual.siglaLotacao}</td>
 							<td>${perm.dpPessoa.id}</td>
 							<td>${perm.dpPessoa.nomePessoa}</td>
@@ -893,7 +894,7 @@
       			$("#formulario_dpPessoaAtualSel_sigla").val(),
       			
       			$("#formulario_cargoAtualSel_id").val(),
-      			$("#formulario_cargoAtualSel_descricao").val(),
+      			unescape($("#formulario_cargoAtualSel_descricao").val()),
       			$("#formulario_cargoAtualSel_sigla").val(),
       			
       			$("#formulario_funcaoConfiancaAtualSel_id").val(),

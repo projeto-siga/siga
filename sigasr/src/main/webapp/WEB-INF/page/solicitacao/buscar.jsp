@@ -52,7 +52,7 @@
 	                                </label>
 	                            </div>
 	                            <script language="javascript">
-	                                $("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
+	                                $("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendenteSel");
 	                            </script>
 	                        </td>
 	                    </tr>

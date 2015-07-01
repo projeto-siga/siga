@@ -38,6 +38,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
 import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
@@ -465,6 +466,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
                 }
             }
         }
+        ContextoPersistencia.em().flush();
     }
 
     public List<SrItemConfiguracao> getItemETodosDescendentes() {

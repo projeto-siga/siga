@@ -337,15 +337,15 @@ public class SolicitacaoController extends SrController {
         return !validator.hasErrors();
     }
 
-	public boolean todoOContexto() {
+	public Boolean todoOContexto() {
          return Boolean.parseBoolean(getRequest().getParameter("todoOContexto"));
     }
 
-    public boolean ocultas() {
+    public Boolean ocultas() {
          return Boolean.parseBoolean(getRequest().getParameter("ocultas"));
     }
 
-    @Path({"/exibir/{id}", "/exibir/{id}/{todoOContexto}/{ocultas}"})
+    @Path({"/exibir/{id}/{todoOContexto}/{ocultas}","/exibir/{id}"})
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
@@ -371,6 +371,7 @@ public class SolicitacaoController extends SrController {
 
         result.include(SOLICITACAO, solicitacao);
         result.include("movimentacao", movimentacao);
+        result.include("idPessoa",movimentacao.getAtendente().getId());
         result.include("todoOContexto", todoOContexto);
         result.include("ocultas", ocultas);
         result.include("movs", movs);

@@ -39,7 +39,7 @@
 					</thead>
 					<tbody>
 						<c:forEach items="${acoes}" var="acao">
-							<tr <c:if test="${!acao.ativo}"> class="configuracao-herdada" </c:if> data-json-id="${acao.idAcao}" data-json='${acao.toJson()}' onclick="acaoService.editar($(this).data('json'), 'Alterar A&ccedil;&atilde;o')" style="cursor: pointer;">
+							<tr data-json-id="${acao.idAcao}" data-json='${acao.toJson()}' onclick="acaoService.editar($(this).data('json'), 'Alterar A&ccedil;&atilde;o')" style="cursor: pointer;">
 								<td>${acao.siglaAcao}</td>
 								<td>
 									<span style="margin-left: ${(acao.nivel-1)*2}em; <c:if test="${acao.nivel == 1}">font-weight: bold;</c:if>">

@@ -151,7 +151,24 @@
 				"targets": [colunasTipoAcao.acoes],
 				"searchable": false,
 				"sortable" : false
-			}]
+			}],
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                var tipoAcao = undefined;
+
+                try {
+                	tipoAcao = JSON.parse($(nRow).data('json'));
+                }
+                catch(err) {
+                	tipoAcao = $(nRow).data('json');
+                }
+
+                if (tipoAcao) {
+                    if (tipoAcao.ativo == false)
+                        $('td', nRow).addClass('item-desativado');
+                    else
+                        $('td', nRow).removeClass('item-desativado');
+                }
+            }
 		});
 	});
 

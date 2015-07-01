@@ -586,19 +586,23 @@
 		return params;
 	};
 
+	function endsWith(src, s) {
+		return src.length >= s.length && src.substr(src.length - s.length) == s;
+	}
+
 	function getSolicitante() {
 		var solicitante = {"name": '', "id":'', "descricao": '', "sigla": ''};
 		$('#divSolicitante span').each(function(i,span){
 			$(span).find('input').filter(function(i, input){
 			    if($(input).attr('name') !== undefined && $(input).val() !== ''){
 			      
-			    	if($(input).attr('name').endsWith('descricao'))
+			    	if(endsWith($(input).attr('name'),'descricao'))
 			       		solicitante.descricao = $(input).val();
 			     
-			     	if($(input).attr('name').endsWith('sigla'))
+			     	if(endsWith($(input).attr('name'),'sigla'))
 			      		solicitante.sigla = $(input).val();
 			    
-			      	if($(input).attr('name').endsWith('id')) {
+			      	if(endsWith($(input).attr('name'),'id')) {
 			        	solicitante.name = $(input).closest('span').find(".pessoaLotaFuncCargoSelecao").attr('name');
 			        	solicitante.id = $(input).val();
 			      	}

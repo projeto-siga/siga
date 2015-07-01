@@ -47,7 +47,7 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
 			document.getElementsByName('${propriedade}.descricao')[0].value = descricao;
-			document.getElementById('${propriedadeClean}Span').innerHTML = descricao;
+			document.getElementById('${propriedadeClean}Span').innerHTML = unescape(descricao);
 		} catch (E) {
 		}
 	</c:if>
@@ -91,7 +91,7 @@ self.popitup_${propriedadeClean} = function(sigla) {
 			var winleft = (screen.width - popW) / 2;
 			var winUp = (screen.height - popH) / 2;	
 		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_${propriedadeClean}=window.open(url,'${propriedade}',winProp);
+		newwindow_${propriedadeClean}=window.open(url,'${propriedadeClean}',winProp);
 	}
 	newwindow_${propriedadeClean}.opener = self;
 	
@@ -167,7 +167,7 @@ self.ajax_${propriedadeClean} = function() {
 
 <c:if test="${ocultardescricao != 'sim'}">
 	<span id="${propriedadeClean}Span"> <c:out
-			value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}" />
+			value="${f:decode(f:evaluate(f:concat(propriedade,'.descricao'),requestScope), 'iso-8859-1')}" />
 	</span>
 </c:if>
 

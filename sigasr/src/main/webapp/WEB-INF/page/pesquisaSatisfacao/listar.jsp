@@ -41,7 +41,7 @@
 
 					<tbody>
 						<c:forEach items="${pesquisas}" var="pesquisa">
-							<tr <c:if test="${!pesquisa.ativo}"> class="configuracao-herdada" </c:if> data-json-id="${pesquisa.idPesquisa}" data-json='${pesquisa.toJson()}' onclick="pesquisaService.editar($(this).data('json'), 'Alterar pesquisa')"	style="cursor: pointer;">
+							<tr data-json-id="${pesquisa.idPesquisa}" data-json='${pesquisa.toJson()}' onclick="pesquisaService.editar($(this).data('json'), 'Alterar pesquisa')"	style="cursor: pointer;">
 								<td>${pesquisa.nomePesquisa}</td>
 								<td>${pesquisa.descrPesquisa}</td>
 								<td class="acoes">

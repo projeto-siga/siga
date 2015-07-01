@@ -35,9 +35,9 @@ public abstract class ExArquivo extends Objeto {
 	public abstract Set<ExMovimentacao> getAssinaturasDigitais();
 
 	/**
-	 * Retorna o número de páginas de um arquivo.
+	 * Retorna o nÃºmero de pÃ¡ginas de um arquivo.
 	 * 
-	 * @return Número de páginas de um arquivo.
+	 * @return NÃºmero de pÃ¡ginas de um arquivo.
 	 * 
 	 */
 	public Integer getContarNumeroDePaginas() {
@@ -53,8 +53,8 @@ public abstract class ExArquivo extends Objeto {
 	}
 
 	/**
-	 * Retorna o pdf do documento com stamp. Método criado para tentar stampar
-	 * um documento que está sendo anexado.
+	 * Retorna o pdf do documento com stamp. MÃ©todo criado para tentar stampar
+	 * um documento que estÃ¡ sendo anexado.
 	 * 
 	 * @return pdf com stamp.
 	 * 
@@ -66,7 +66,7 @@ public abstract class ExArquivo extends Objeto {
 			if (abPdf == null)
 				return null;
 
-			// Verifica se é possível estampar o documento
+			// Verifica se Ã© possÃ­vel estampar o documento
 			try {
 				byte[] documentoComStamp = Documento.stamp(abPdf, "", true,
 						false, false, false, null, null, null, null, null,
@@ -106,27 +106,27 @@ public abstract class ExArquivo extends Objeto {
 	public abstract DpLotacao getLotacao();
 
 	/**
-	 * Retorna uma mensagem informando quem assinou o documento e o endereço
-	 * onde o usuário pode verificar a autenticidade de um documento com base em
-	 * um código gerado.
+	 * Retorna uma mensagem informando quem assinou o documento e o endereÃ§o
+	 * onde o usuÃ¡rio pode verificar a autenticidade de um documento com base em
+	 * um cÃ³digo gerado.
 	 * 
 	 */
 	public String getMensagem() {
 		String sMensagem = "";
 		if (isAssinadoDigitalmente()) {
 			sMensagem += getAssinantesCompleto();
-			sMensagem += "Documento Nº: " + getSiglaAssinatura()
-					+ " - consulta à autenticidade em "
+			sMensagem += "Documento NÂº: " + getSiglaAssinatura()
+					+ " - consulta Ã  autenticidade em "
 					+ SigaExProperties.getEnderecoAutenticidadeDocs();
 		}
 		return sMensagem;
 	}
 
 	/**
-	 * Caso o método esteja sendo executado em um objeto do tipo documento,
-	 * retorna a código do documento. Caso o método esteja sendo executado em um
-	 * objeto do tipo movimentação, retorna o nome do arquivo desta
-	 * movimentação.
+	 * Caso o mÃ©todo esteja sendo executado em um objeto do tipo documento,
+	 * retorna a cÃ³digo do documento. Caso o mÃ©todo esteja sendo executado em um
+	 * objeto do tipo movimentaÃ§Ã£o, retorna o nome do arquivo desta
+	 * movimentaÃ§Ã£o.
 	 * 
 	 */
 	public String getNome() {
@@ -143,7 +143,7 @@ public abstract class ExArquivo extends Objeto {
 	}
 
 	/**
-	 * Retorna o número de páginas do documento para exibir no dossiê.
+	 * Retorna o nÃºmero de pÃ¡ginas do documento para exibir no dossiÃª.
 	 * 
 	 */
 	public int getNumeroDePaginasParaInsercaoEmDossie() {
@@ -192,10 +192,10 @@ public abstract class ExArquivo extends Objeto {
 	}
 
 	/**
-	 * Quando o objeto for do tipo documento retorna o código compacto do
-	 * documento. Quando o objeto for do tipo movimentação retorna a referência
-	 * da movimentação que é o codigo compacto da movimentação mais o id da
-	 * movimentação.
+	 * Quando o objeto for do tipo documento retorna o cÃ³digo compacto do
+	 * documento. Quando o objeto for do tipo movimentaÃ§Ã£o retorna a referÃªncia
+	 * da movimentaÃ§Ã£o que Ã© o codigo compacto da movimentaÃ§Ã£o mais o id da
+	 * movimentaÃ§Ã£o.
 	 * 
 	 */
 	public String getReferencia() {
@@ -212,7 +212,7 @@ public abstract class ExArquivo extends Objeto {
 	}
 
 	/**
-	 * Retorna a referência do objeto mais o extensão ".html".
+	 * Retorna a referÃªncia do objeto mais o extensÃ£o ".html".
 	 * 
 	 */
 	public String getReferenciaHtml() {
@@ -222,7 +222,7 @@ public abstract class ExArquivo extends Objeto {
 	}
 
 	/**
-	 * Retorna a referência do objeto mais o extensão ".pdf".
+	 * Retorna a referÃªncia do objeto mais o extensÃ£o ".pdf".
 	 * 
 	 */
 	public String getReferenciaPDF() {
@@ -232,7 +232,7 @@ public abstract class ExArquivo extends Objeto {
 	};
 	
 	/**
-	 * Retorna a referência do objeto mais o extensão ".pdf".
+	 * Retorna a referÃªncia do objeto mais o extensÃ£o ".pdf".
 	 * 
 	 */
 	public String getReferenciaZIP() {
@@ -251,7 +251,7 @@ public abstract class ExArquivo extends Objeto {
 	 * Verifica se um arquivo foi assinado digitalmente.
 	 * 
 	 * @return Verdadeiro caso o arquivo tenha sido assinado digitalmente e
-	 *         Falso caso o arquivo não tenha sido assinado digitalmente.
+	 *         Falso caso o arquivo nÃ£o tenha sido assinado digitalmente.
 	 * 
 	 */
 	public boolean isAssinadoDigitalmente() {

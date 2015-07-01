@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cd.ChainValidationException;
 
 /**
- * Testa as funcionalidades de c·lculo da ExCalculoPCD.
+ * Testa as funcionalidades de c√°lculo da ExCalculoPCD.
  * 
  * @author kpf
  * 
@@ -84,28 +84,28 @@ public class CdServiceImplTest extends TestCase {
 
 		// Erro pois foi informada o hash errado
 		s = c.validarAssinatura(HASH_SHA1_WRONG, PKCS7, SIGNING_DATE, false);
-		assertTrue(s.startsWith(Service.ERRO) && s.contains("Assinatura inv·lida"));
+		assertTrue(s.startsWith(Service.ERRO) && s.contains("Assinatura inv√°lida"));
 
-		// Data de assinatura È posterior a data atual.
+		// Data de assinatura √© posterior a data atual.
 		s = c.validarAssinatura(HASH_SHA1, PKCS7, new Date(new Date().getTime() + 3600), false);
 		assertTrue(s.startsWith(Service.ERRO));
 
-		// N„o È possÌvel validar CRLs se a assinatura for antiga (anterior ao
-		// fim de validade de algum dos certificados) e a CRL da Època da
-		// assinatura n„o estiver incluida no CMS.
+		// N√£o √© poss√≠vel validar CRLs se a assinatura for antiga (anterior ao
+		// fim de validade de algum dos certificados) e a CRL da √©poca da
+		// assinatura n√£o estiver incluida no CMS.
 
 		// Agora validando as CRLs
 		// s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		// SIGNING_DATE, true);
 		// assertEquals(s, EXPECTED_RESULT);
 
-		// Mesmo que a data de assinatura seja bem anterior ao inÌcio de
-		// vigÍncia das CRLs
+		// Mesmo que a data de assinatura seja bem anterior ao in√≠cio de
+		// vig√™ncia das CRLs
 		// s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		// new Date(109, 2, 13), true);
 		// assertEquals(s, EXPECTED_RESULT);
 
-		// Os certificados ainda n„o haviam sido emitidos no ano de 2000
+		// Os certificados ainda n√£o haviam sido emitidos no ano de 2000
 		// s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		// new Date(100, 0, 1), true);
 		// assertTrue(s.startsWith(Service.ERRO) && s.contains("NotBefore"));
@@ -115,7 +115,7 @@ public class CdServiceImplTest extends TestCase {
 		// new Date(112, 0, 1), true);
 		// assertTrue(s.startsWith(Service.ERRO) && s.contains("NotAfter"));
 
-		// Data de assinatura È posterior a data atual
+		// Data de assinatura √© posterior a data atual
 		// s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		// new Date(new Date().getTime() + 3600), true);
 		// assertTrue(s.startsWith(Service.ERRO)
@@ -141,29 +141,29 @@ public class CdServiceImplTest extends TestCase {
 		s = c.validarAssinaturaPKCS7(HASH_SHA1_WRONG, "1.3.14.3.2.26", PKCS7,
 				SIGNING_DATE, false);
 		assertTrue(s.startsWith(Service.ERRO)
-				&& s.contains("Assinatura inv·lida"));
+				&& s.contains("Assinatura inv√°lida"));
 
-		// Data de assinatura È posterior a data atual.
+		// Data de assinatura √© posterior a data atual.
 		s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 				new Date(new Date().getTime() + 3600), false);
 		assertTrue(s.startsWith(Service.ERRO));
 
-		// N„o È possÌvel validar CRLs se a assinatura for antiga (anterior ao
-		// fim de validade de algum dos certificados) e a CRL da Època da
-		// assinatura n„o estiver incluida no CMS.
+		// N√£o √© poss√≠vel validar CRLs se a assinatura for antiga (anterior ao
+		// fim de validade de algum dos certificados) e a CRL da √©poca da
+		// assinatura n√£o estiver incluida no CMS.
 
 		// Agora validando as CRLs 
 //		s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 //				SIGNING_DATE, true);
 //		assertEquals(s, EXPECTED_RESULT);
 
-		// Mesmo que a data de assinatura seja bem anterior ao inÌcio de
-		// vigÍncia das CRLs
+		// Mesmo que a data de assinatura seja bem anterior ao in√≠cio de
+		// vig√™ncia das CRLs
 //		s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 //				new Date(109, 2, 13), true);
 //		assertEquals(s, EXPECTED_RESULT);
 
-		// Os certificados ainda n„o haviam sido emitidos no ano de 2000 //
+		// Os certificados ainda n√£o haviam sido emitidos no ano de 2000 //
 //		s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 //				new Date(100, 0, 1), true);
 //		assertTrue(s.startsWith(Service.ERRO) && s.contains("NotBefore"));
@@ -173,7 +173,7 @@ public class CdServiceImplTest extends TestCase {
 //				new Date(112, 0, 1), true);
 //		assertTrue(s.startsWith(Service.ERRO) && s.contains("NotAfter"));
 
-		// Data de assinatura È posterior a data atual
+		// Data de assinatura √© posterior a data atual
 //		s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 //				new Date(new Date().getTime() + 3600), true);
 //		assertTrue(s.startsWith(Service.ERRO)
@@ -200,29 +200,29 @@ assertTrue(s.startsWith(Service.ERRO));
 s = c.validarAssinaturaPKCS7(HASH_SHA1_WRONG, "1.3.14.3.2.26", PKCS7,
 		SIGNING_DATE, false);
 assertTrue(s.startsWith(Service.ERRO)
-		&& s.contains("Assinatura inv·lida"));
+		&& s.contains("Assinatura inv√°lida"));
 
-// Data de assinatura È posterior a data atual.
+// Data de assinatura √© posterior a data atual.
 s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		new Date(new Date().getTime() + 3600), false);
 assertTrue(s.startsWith(Service.ERRO));
 
-// N„o È possÌvel validar CRLs se a assinatura for antiga (anterior ao
-// fim de validade de algum dos certificados) e a CRL da Època da
-// assinatura n„o estiver incluida no CMS.
+// N√£o √© poss√≠vel validar CRLs se a assinatura for antiga (anterior ao
+// fim de validade de algum dos certificados) e a CRL da √©poca da
+// assinatura n√£o estiver incluida no CMS.
 
 // Agora validando as CRLs //
 s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		SIGNING_DATE, true);
 assertEquals(s, EXPECTED_RESULT);
 
-// Mesmo que a data de assinatura seja bem anterior ao inÌcio de
-// vigÍncia das CRLs
+// Mesmo que a data de assinatura seja bem anterior ao in√≠cio de
+// vig√™ncia das CRLs
 s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		new Date(109, 2, 13), true);
 assertEquals(s, EXPECTED_RESULT);
 
-// Os certificados ainda n„o haviam sido emitidos no ano de 2000 //
+// Os certificados ainda n√£o haviam sido emitidos no ano de 2000 //
 s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		new Date(100, 0, 1), true);
 assertTrue(s.startsWith(Service.ERRO) && s.contains("NotBefore"));
@@ -232,7 +232,7 @@ s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		new Date(112, 0, 1), true);
 assertTrue(s.startsWith(Service.ERRO) && s.contains("NotAfter"));
 
-// Data de assinatura È posterior a data atual
+// Data de assinatura √© posterior a data atual
 s = c.validarAssinaturaPKCS7(HASH_SHA1, "1.3.14.3.2.26", PKCS7,
 		new Date(new Date().getTime() + 3600), true);
 assertTrue(s.startsWith(Service.ERRO)
@@ -255,19 +255,19 @@ assertTrue(s.startsWith(Service.ERRO)
 	 * // Erro pois foi informada o hash errado s =
 	 * c.validarAssinaturaCMS(HASH_SHA1_WRONG, "1.3.14.3.2.26", cms,
 	 * signingDate); assertTrue(s.startsWith(Service.ERRO) &&
-	 * s.contains("Assinatura inv·lida"));
+	 * s.contains("Assinatura inv√°lida"));
 	 * 
-	 * // Quando a data de assinatura for anterior ao inÌcio de // vigÍncia das
+	 * // Quando a data de assinatura for anterior ao in√≠cio de // vig√™ncia das
 	 * CRLs, deve dar erro s = c.validarAssinaturaCMS(HASH_SHA1,
 	 * "1.3.14.3.2.26", cms, new Date( 109, 2, 13));
 	 * assertTrue(s.startsWith(Service.ERRO) && s.contains("No CRLs found"));
 	 * 
-	 * // Se for recebido um PKCS7 em vez de um CMS completo, n„o deve validar
-	 * // pois n„o possui as CRLs s = c.validarAssinaturaCMS(HASH_SHA1,
+	 * // Se for recebido um PKCS7 em vez de um CMS completo, n√£o deve validar
+	 * // pois n√£o possui as CRLs s = c.validarAssinaturaCMS(HASH_SHA1,
 	 * "1.3.14.3.2.26", PKCS7, signingDate);
 	 * assertTrue(s.startsWith(Service.ERRO) && s.contains("No CRLs found"));
 	 * 
-	 * // Os certificados ainda n„o haviam sido emitidos no ano de 2000 s =
+	 * // Os certificados ainda n√£o haviam sido emitidos no ano de 2000 s =
 	 * c.validarAssinaturaCMS(HASH_SHA1, "1.3.14.3.2.26", cms, new Date( 100, 0,
 	 * 1)); assertTrue(s.startsWith(Service.ERRO) && s.contains("NotBefore"));
 	 * 
@@ -275,14 +275,14 @@ assertTrue(s.startsWith(Service.ERRO)
 	 * c.validarAssinaturaCMS(HASH_SHA1, "1.3.14.3.2.26", cms, new Date( 112, 0,
 	 * 1)); assertTrue(s.startsWith(Service.ERRO) && s.contains("NotAfter"));
 	 * 
-	 * // Data de assinatura È posterior a data atual s =
+	 * // Data de assinatura √© posterior a data atual s =
 	 * c.validarAssinaturaCMS(HASH_SHA1, "1.3.14.3.2.26", cms, new Date( new
 	 * Date().getTime() + 3600)); assertTrue(s.startsWith(Service.ERRO) &&
 	 * (s.contains("Validation time is in future") || s .contains("NotAfter")));
 	 * }
 	 * 
 	 * 
-	 * // Desabilitado porque o carimbador est· fora do ar... // public void
+	 * // Desabilitado porque o carimbador est√° fora do ar... // public void
 	 * testConverterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo() { // byte[]
 	 * cms = c // .converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(PKCS7);
 	 * // // if (Service.isError(cms)) // fail(Service.retrieveError(cms)); //
@@ -295,8 +295,8 @@ assertTrue(s.startsWith(Service.ERRO)
 	 * 
 	 * 
 	 * // Desabilitado porque o exemplo de assinatura que estamos usando possui
-	 * um certificado j· expirado. Dessa forma, n„o È possÌvel obter as LCRs
-	 * necess·rias. // public void testConverterPkcs7EmCMSComCertificadosLCRs()
+	 * um certificado j√° expirado. Dessa forma, n√£o √© poss√≠vel obter as LCRs
+	 * necess√°rias. // public void testConverterPkcs7EmCMSComCertificadosLCRs()
 	 * { // byte[] cms = c.converterPkcs7EmCMSComCertificadosLCRs(PKCS7); // //
 	 * if (Service.isError(cms)) // fail(Service.retrieveError(cms)); // //
 	 * testValidarAssinaturaCMS(cms, new Date()); // }

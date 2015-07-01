@@ -19,9 +19,9 @@
 package br.gov.jfrj.siga.util;
 
 /**
- * DAO genÈrico para acesso ‡s Globais
+ * DAO gen√©ico para acesso √†s Globais
  *   
- * Classe Padr„o para acesso ‡s Globais
+ * Classe Padr√£o para acesso √†s Globais
  * 
  * @author MQF
  * 

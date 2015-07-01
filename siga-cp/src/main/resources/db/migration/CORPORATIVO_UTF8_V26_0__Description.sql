@@ -1,6 +1,6 @@
 -------------------------------------------
 --	SCRIPT:CORPORATIVO_DESTINACAO
--- Cria nova coluna ORD_MARCADOR para ordenar os marcadores de expedientes da p·gina inicial do Siga-doc
+-- Cria nova coluna ORD_MARCADOR para ordenar os marcadores de expedientes da p√°gina inicial do Siga-doc
 -------------------------------------------
 
 alter table corporativo.cp_marcador add ORD_MARCADOR number;

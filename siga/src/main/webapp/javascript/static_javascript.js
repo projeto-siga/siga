@@ -30,7 +30,7 @@ function popitup(url) {
 	
 	var nameWindow =  url.replace(/[^a-zA-Z 0-9]+/g,'');
 	
-	//Redimensionamento da janela pop up apenas para a op��o despachar/transferir
+	//Redimensionamento da janela pop up apenas para a opção despachar/transferir
 	if(nameWindow.indexOf("transferir") > -1){
 		popW = 900;
 		popH = 600;
@@ -80,10 +80,10 @@ function abreEnquete(clicou_voto, form, num_opcao) {
 			"enquete",
 	"directories=no,height=276,width=520,hotkeys=no,location=no,menubar=no,resizable=no,scrollbars=yes,status=no,toolbar=no,copyhistory=no");
 
-	// Se receber o nome do formul�rio por par�metro, utiliza-o;
-	// caso contr�rio, usa o nome do formul�rio padr�o (enquete)
-	// esta possibilidade est� aberta para o caso de termos mais
-	// de uma pesquisa na mesma p�gina ao mesmo tempo
+	// Se receber o nome do formulário por parâmetro, utiliza-o;
+	// caso contrário, usa o nome do formulário padrão (enquete)
+	// esta possibilidade está aberta para o caso de termos mais
+	// de uma pesquisa na mesma página ao mesmo tempo
 
 	form.voto.value = clicou_voto;
 	form.opcao.value = num_opcao;
@@ -322,9 +322,9 @@ function formataReais(fld, milSep, decSep, e) {
 	var whichCode = (window.Event) ? e.which : e.keyCode;
 	if (whichCode == 13)
 		return true;
-	key = String.fromCharCode(whichCode);// Valor para o c�digo da Chave
+	key = String.fromCharCode(whichCode);// Valor para o código da Chave
 	if (strCheck.indexOf(key) == -1)
-		return false; // Chave inv�lida
+		return false; // Chave inválida
 	len = fld.value.length;
 	for (i = 0; i < len; i++)
 		if ((fld.value.charAt(i) != '0') && (fld.value.charAt(i) != decSep))
@@ -580,7 +580,7 @@ function verificaCampos() {
 			document.form3.elements[i].style.backgroundColor = "transparent";
 		}
 	}
-	alert("Formul�rio V�lido");
+	alert("Formulário Válido");
 	return false;
 }
 
@@ -590,7 +590,7 @@ function verificaCampos() {
  * onchange="dataMaiorIgual(datafim,datainicio);"
  */
 //*-------------------------------------------------------------*//
-//Verifica se a data1 � maior ou igual que a data 2
+//Verifica se a data1 é maior ou igual que a data 2
 function dataMaiorIgual(dt1, dt2) {
 	alert("Entrou na funcao data Maior");
 	var hoje = new Date();
@@ -779,9 +779,9 @@ function numeroExtenso(label, valor) {
 				if (parseFloat(aGrupo[1]) != 0) {
 					cFinal = aTexto[1];
 					if (parseFloat(aGrupo[1]) > 1) {
-						cFinal += "Milh�es ";
+						cFinal += "Milhões ";
 					} else {
-						cFinal += "Milh�o ";
+						cFinal += "Milhão ";
 					}
 					if (parseFloat(aGrupo[2] + aGrupo[3]) == 0) {
 						cFinal += "de ";

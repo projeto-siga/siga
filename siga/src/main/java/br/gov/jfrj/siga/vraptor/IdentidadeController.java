@@ -46,7 +46,7 @@ public class IdentidadeController extends GiControllerSupport {
 	public void aEditarGravar(DpPessoaSelecao pessoaSel, String dtExpiracao, Long id) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id == null)
-			throw new AplicacaoException("Não foi informada id");
+			throw new AplicacaoException("NÃ£o foi informada id");
 
 		Date dataExpiracao = null;
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -67,7 +67,7 @@ public class IdentidadeController extends GiControllerSupport {
 	public void aCancelar(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
 		if (id == null)
-			throw new AplicacaoException("Não foi informada id");
+			throw new AplicacaoException("NÃ£o foi informada id");
 
 		CpIdentidade ident = daoId(id);
 		Cp.getInstance().getBL().cancelarIdentidade(ident, getIdentidadeCadastrante());
@@ -83,7 +83,7 @@ public class IdentidadeController extends GiControllerSupport {
 			Cp.getInstance().getBL().bloquearIdentidade(ident, getIdentidadeCadastrante(), true);
 			result.forwardTo(this).lista(pessoaSel);
 		} else
-			throw new AplicacaoException("Não foi informada id");
+			throw new AplicacaoException("NÃ£o foi informada id");
 	}
 
 	@Get("/app/gi/identidade/bloquear")
@@ -94,7 +94,7 @@ public class IdentidadeController extends GiControllerSupport {
 			Cp.getInstance().getBL().bloquearIdentidade(ident,getIdentidadeCadastrante(), false);
 			result.forwardTo(this).lista(pessoaSel);
 		} else
-			throw new AplicacaoException("Não foi informada id");
+			throw new AplicacaoException("NÃ£o foi informada id");
 	}
 
 	@Get("/app/gi/identidade/bloquear_pessoa")
@@ -106,7 +106,7 @@ public class IdentidadeController extends GiControllerSupport {
 			Cp.getInstance().getBL().bloquearPessoa(pes,getIdentidadeCadastrante(), true);
 			result.forwardTo(this).lista(pessoaSel);
 		} else
-			throw new AplicacaoException("Não foi informada a pessoa");
+			throw new AplicacaoException("NÃ£o foi informada a pessoa");
 	}
 
 	@Get("/app/gi/identidade/desbloquear_pessoa")
@@ -118,7 +118,7 @@ public class IdentidadeController extends GiControllerSupport {
 			Cp.getInstance().getBL().bloquearPessoa(pes,getIdentidadeCadastrante(), false);
 			result.forwardTo(this).lista(pessoaSel);
 		} else
-			throw new AplicacaoException("Não foi informada a pessoa");
+			throw new AplicacaoException("NÃ£o foi informada a pessoa");
 	}
 	
 	public CpIdentidade daoId(long id) {

@@ -79,7 +79,7 @@ public class ModeloController extends SigaController {
 			} catch (Exception e) {
 				ModeloDao.rollbackTransacao();
 				throw new AplicacaoException(
-						"Não foi possível gravar o modelo.", 9, e);
+						"NÃ£o foi possÃ­vel gravar o modelo.", 9, e);
 			}
 		}
 		

@@ -43,7 +43,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 	}
 	
 	public void excluir(final Long id) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Org�os");
+		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
 		if (id != null) {
 			try {
 				dao().iniciarTransacao();
@@ -52,10 +52,10 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 				dao().commitTransacao();				
 			} catch (final Exception e) {
 				dao().rollbackTransacao();
-				throw new AplicacaoException("Erro na exclus�o de Org�o", 0, e);
+				throw new AplicacaoException("Erro na exclusão de Orgão", 0, e);
 			}
 		} else
-			throw new AplicacaoException("ID n�o informada");
+			throw new AplicacaoException("ID não informada");
 		this.result.redirectTo(this).lista();
 	}
 	
@@ -79,13 +79,13 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 							 final String siglaOrgao, 
 							 final Long idOrgaoUsu, 
 							 final String ativo) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Org�os");
+		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
 		
 		if(nmOrgao == null)
-			throw new AplicacaoException("Nome do �rg�o Externo n�o informado");
+			throw new AplicacaoException("Nome do órgão Externo não informado");
 		
 		if(siglaOrgao == null)
-			throw new AplicacaoException("Sigla do �rg�o Externo n�o informada");
+			throw new AplicacaoException("Sigla do órgão Externo não informada");
 		
 		CpOrgao orgao;		
 		if (id == null)
@@ -110,7 +110,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 			dao().commitTransacao();			
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("Erro na grava��o", 0, e);
+			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
 		this.result.redirectTo(this).lista();
 	}

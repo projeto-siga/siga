@@ -61,7 +61,7 @@ public class GrupoDeEmailController extends GrupoController {
 		if (conf.podeUtilizarServicoPorConfiguracao(
 				getTitular(),
 				getLotaTitular(),
-				"SIGA:Sistema Integrado de Gest„o Administrativa;GI:MÛdulo de Gest„o de Identidade;GDISTR:Gerenciar grupos de distribuiÁ„o")
+				"SIGA:Sistema Integrado de Gest√£o Administrativa;GI:M√≥dulo de Gest√£o de Identidade;GDISTR:Gerenciar grupos de distribui√ß√£o")
 				|| conf.podeGerirGrupo(
 						getTitular(),
 						getLotaTitular(),
@@ -86,13 +86,13 @@ public class GrupoDeEmailController extends GrupoController {
 			result.include("tiposConfiguracaoGrupoParaTipoDeGrupo", getTiposConfiguracaoGrupoParaTipoDeGrupo());
 			result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 		} else {
-			throw new AplicacaoException("Acesso negado!<br/> VocÍ precisa ser um administrador ou gestor de grupo.");
+			throw new AplicacaoException("Acesso negado!<br/> Voc√™ precisa ser um administrador ou gestor de grupo.");
 		}
 	}
 
 	@Post("app/gi/grupoDeEmail/excluir")
 	public void excluir(Long idCpGrupo) throws Exception {
-		assertAcesso("GDISTR:Gerenciar grupos de distribuiÁ„o;EXC:Excluir");
+		assertAcesso("GDISTR:Gerenciar grupos de distribui√ß√£o;EXC:Excluir");
 		super.aExcluir(idCpGrupo);
 		result.redirectTo(this).lista();
 	}
@@ -112,7 +112,7 @@ public class GrupoDeEmailController extends GrupoController {
 		if (conf.podeUtilizarServicoPorConfiguracao(
 				getTitular(),
 				getLotaTitular(),
-				"SIGA:Sistema Integrado de Gest„o Administrativa;GI:MÛdulo de Gest„o de Identidade;GDISTR:Gerenciar grupos de distribuiÁ„o")
+				"SIGA:Sistema Integrado de Gest√£o Administrativa;GI:M√≥dulo de Gest√£o de Identidade;GDISTR:Gerenciar grupos de distribui√ß√£o")
 				|| conf.podeGerirGrupo(
 						getTitular(),
 						getLotaTitular(),
@@ -131,7 +131,7 @@ public class GrupoDeEmailController extends GrupoController {
 			
 			result.redirectTo(MessageFormat.format("/app/gi/grupoDeEmail/editar?idCpGrupo={0}", novoIdGrupo.toString()));
 		} else {
-			throw new AplicacaoException("Acesso negado!<br/> VocÍ precisa ser um administrador ou gestor de grupo.");
+			throw new AplicacaoException("Acesso negado!<br/> Voc√™ precisa ser um administrador ou gestor de grupo.");
 		}
 	}
 
@@ -141,7 +141,7 @@ public class GrupoDeEmailController extends GrupoController {
 		if (conf.podeUtilizarServicoPorConfiguracao(
 				getTitular(),
 				getLotaTitular(),
-				"SIGA:Sistema Integrado de Gest„o Administrativa;GI:MÛdulo de Gest„o de Identidade;GDISTR:Gerenciar grupos de distribuiÁ„o")
+				"SIGA:Sistema Integrado de Gest√£o Administrativa;GI:M√≥dulo de Gest√£o de Identidade;GDISTR:Gerenciar grupos de distribui√ß√£o")
 				|| conf.podeGerirAlgumGrupo(
 						getTitular(),
 						getLotaTitular(),
@@ -154,7 +154,7 @@ public class GrupoDeEmailController extends GrupoController {
 			result.include("lotaTitular", getLotaTitular());
 		} else {
 			throw new AplicacaoException(
-					"Acesso negado!<br/> VocÍ precisa ser um administrador ou gestor de grupo.");
+					"Acesso negado!<br/> Voc√¢ precisa ser um administrador ou gestor de grupo.");
 		}
 
 	}
@@ -166,7 +166,7 @@ public class GrupoDeEmailController extends GrupoController {
 		if (conf.podeUtilizarServicoPorConfiguracao(
 				getTitular(),
 				getLotaTitular(),
-				"SIGA:Sistema Integrado de Gest„o Administrativa;GI:MÛdulo de Gest„o de Identidade;GDISTR:Gerenciar grupos de distribuiÁ„o")
+				"SIGA:Sistema Integrado de Gest√£o Administrativa;GI:M√≥dulo de Gest√£o de Identidade;GDISTR:Gerenciar grupos de distribui√ß√£o")
 				|| conf.podeGerirAlgumGrupo(
 						getTitular(),
 						getLotaTitular(),
@@ -174,7 +174,7 @@ public class GrupoDeEmailController extends GrupoController {
 			super.aExcluirGestorGrupo(idCpGrupo, idConfGestor);
 		} else {
 			throw new AplicacaoException(
-					"Acesso negado!<br/> VocÍ precisa ser um administrador ou gestor de grupo.");
+					"Acesso negado!<br/> Voc√™ precisa ser um administrador ou gestor de grupo.");
 		}
 		result.redirectTo("editar?idCpGrupo=" + idCpGrupo);
 	}
@@ -186,7 +186,7 @@ public class GrupoDeEmailController extends GrupoController {
 		if (conf.podeUtilizarServicoPorConfiguracao(
 				getTitular(),
 				getLotaTitular(),
-				"SIGA:Sistema Integrado de Gest„o Administrativa;GI:MÛdulo de Gest„o de Identidade;GDISTR:Gerenciar grupos de distribuiÁ„o")
+				"SIGA:Sistema Integrado de Gest√£o Administrativa;GI:M√≥dulo de Gest√£o de Identidade;GDISTR:Gerenciar grupos de distribui√ß√£o")
 				|| conf.podeGerirAlgumGrupo(
 						getTitular(),
 						getLotaTitular(),
@@ -195,7 +195,7 @@ public class GrupoDeEmailController extends GrupoController {
 			super.aGravarGestorGrupo(idCpGrupo, lotacaoGestoraSel);
 		} else {
 			throw new AplicacaoException(
-					"Acesso negado!<br/> VocÍ precisa ser um administrador ou gestor de grupo.");
+					"Acesso negado!<br/> Voc√™ precisa ser um administrador ou gestor de grupo.");
 		}
 		result.redirectTo("editar?idCpGrupo=" + idCpGrupo);
 	}

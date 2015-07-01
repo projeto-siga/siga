@@ -111,7 +111,7 @@ public class AcessoController extends GiControllerSupport {
 					  ,DpLotacaoSelecao lotacaoSel
 					  ,CpPerfilSelecao perfilSel
 					  ,Long idOrgaoUsuSel) throws Exception {
-		assertAcesso("PERMISSAO:Gerenciar permissıes");
+		assertAcesso("PERMISSAO:Gerenciar permiss√µes");
 		if (idAbrangencia == 0) {
 			this.idAbrangencia = 1;
 			this.idOrgaoUsuSel = getLotaTitular().getOrgaoUsuario().getId();
@@ -165,7 +165,7 @@ public class AcessoController extends GiControllerSupport {
 					  ,CpPerfilSelecao perfilSel
 					  ,Long idOrgaoUsuSel) throws Exception {
 		
-		assertAcesso("PERMISSAO:Gerenciar permissıes");
+		assertAcesso("PERMISSAO:Gerenciar permiss√µes");
 		CpPerfil perfil = null;
 		DpPessoa pessoa = null;
 		DpLotacao lotacao = null;
@@ -181,7 +181,7 @@ public class AcessoController extends GiControllerSupport {
 			orgao = dao().consultar(idOrgaoUsuSel,CpOrgaoUsuario.class, false);
 		} else {
 			throw new AplicacaoException(
-					"N„o foi informada pessoa, lotaÁ„o ou Ûrg„o usu·rio.");
+					"N√£o foi informada pessoa, lota√ß√£o ou √≥rg√£o usu√°rio.");
 		}
 
 		CpServico servico = dao().consultar(idServico, CpServico.class, false);
@@ -221,7 +221,7 @@ public class AcessoController extends GiControllerSupport {
 
 	private void acessoHTML(StringBuilder sb, ConfiguracaoAcesso ac) {
 		boolean fPode = ac.getSituacao().getDscSitConfiguracao().equals("Pode");
-		boolean fNaoPode = ac.getSituacao().getDscSitConfiguracao().equals("N„o Pode");
+		boolean fNaoPode = ac.getSituacao().getDscSitConfiguracao().equals("N√£o Pode");
 		
 		sb.append("<li style=\"color:"+ (fPode ? "green" : (fNaoPode ? "red" : "black")) + ";\">");
 		
@@ -305,7 +305,7 @@ public class AcessoController extends GiControllerSupport {
 	private void acessoHTMLOld(StringBuilder sb, ConfiguracaoAcesso ac) {
 		boolean fPode = ac.getSituacao().getDscSitConfiguracao().equals("Pode");
 		boolean fNaoPode = ac.getSituacao().getDscSitConfiguracao().equals(
-				"N„o Pode");
+				"N√£o Pode");
 		sb.append("<li style=\"color:"
 				+ (fPode ? "green" : (fNaoPode ? "red" : "black")) + ";\">");
 		if (ac.getServico().getCpServicoPai() != null

@@ -75,7 +75,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		flt.setIdOrgaoUsu(orgaoUsu);
 		if (flt.getIdOrgaoUsu() == null) {
 			if (getLotaTitular() == null)
-				throw new AplicacaoException("Usu�rio n�o est� logado.");
+				throw new AplicacaoException("Usuário não está logado.");
 			else 
 				flt.setIdOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
 		}
@@ -108,10 +108,10 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		if (getSel() != null) {
 			try {
 				/*
-				 * Essa condi��o � necess�rio porque o retorno do m�todo getSigla para o ExMobil e DpPessoa
-				 * s�o as siglas completas, ex: JFRJ-MEM-2014/00003 e RJ14723. No caso da lota��o o getSigla
-				 * somente retorna SESIA. No entanto � necess�rio que o m�todo selecionar retorne a sigla completa, ex:
-				 * RJSESIA, pois esse retorno � o parametro de entrada para o m�todo aExibir, que necessita da sigla completa.
+				 * Essa condição é necessário porque o retorno do método getSigla para o ExMobil e DpPessoa
+				 * são as siglas completas, ex: JFRJ-MEM-2014/00003 e RJ14723. No caso da lotação o getSigla
+				 * somente retorna SESIA. No entanto é necessário que o método selecionar retorne a sigla completa, ex:
+				 * RJSESIA, pois esse retorno é o parametro de entrada para o método aExibir, que necessita da sigla completa.
 				 * */
 				DpLotacao lotacao = new DpLotacao();
 				lotacao = (DpLotacao) dao().consultar(getSel().getId(), DpLotacao.class, false);

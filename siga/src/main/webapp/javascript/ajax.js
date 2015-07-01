@@ -158,7 +158,7 @@ function SetInnerHTMLFromAjaxResponse(url, obj_id)
 	}
   
 	// Caso seja necessario acrescentar algum script na pagina, ficou convencionado que
-	// o script dever� ser marcado com <script type="text/javascript" > e < /script>
+	// o script deverá ser marcado com <script type="text/javascript" > e < /script>
 	if (s.indexOf('<script type="text/javascript">') != -1) {
 		var j = 0;
 		var len = 0;
@@ -208,7 +208,7 @@ function SetInnerHTMLFromAjaxResponse(url, obj_id)
                   		}
 	                  
 						// Caso seja necessario acrescentar algum script na pagina, ficou convencionado que
-		            	// o script dever� ser marcado com <script type="text/javascript" > e < /script>
+		            	// o script deverá ser marcado com <script type="text/javascript" > e < /script>
 	               		if (s.indexOf('<script type="text/javascript">') != -1) {
 							var j = 0;
 							var len = 0;
@@ -316,7 +316,7 @@ function MixWithNewPage(aElements, sPage, sIdObj) {
 						e.innerHTML = s;
 //alert(s);							
 		              	// Caso seja necessario acrescentar algum script na pagina, ficou convencionado que
-		              	// o script dever� ser marcado com <script type="text/javascript" > e < /script>
+		              	// o script deverá ser marcado com <script type="text/javascript" > e < /script>
 		               	if (s.indexOf('<script type="text/javascript">') != -1) {
 							var j = 0;
 							var len = 0;

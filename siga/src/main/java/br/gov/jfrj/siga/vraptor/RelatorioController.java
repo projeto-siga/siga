@@ -97,7 +97,7 @@ public class RelatorioController extends SigaController {
 
 	@Get("app/gi/relatorio/selecionar_permissao_usuario")
 	public void permissao_usuario_selecionar() {
-		System.out.println("Filtro do Relatório foi chamado.");
+		System.out.println("Filtro do RelatÃ³rio foi chamado.");
 	}
 
 	@Get("app/gi/relatorio/emitir_permissao_usuario")
@@ -117,7 +117,7 @@ public class RelatorioController extends SigaController {
 	
 	@Get("app/gi/relatorio/selecionar_historico_usuario")
 	public void historico_usuario_selecionar() {
-		System.out.println("Filtro do Relatório foi chamado.");
+		System.out.println("Filtro do RelatÃ³rio foi chamado.");
 	}
 
 	
@@ -163,7 +163,7 @@ public class RelatorioController extends SigaController {
 					String.valueOf(t_cpsServico.getIdServico()));
 			if (t_setSituacao.size() < 1) {
 				throw new AplicacaoException(
-						"Serviço sem situação! >> Avise sistemas");
+						"ServiÃ§o sem situaÃ§Ã£o! >> Avise sistemas");
 			}
 			CpSituacaoConfiguracao t_scfSituacaoDefault = t_cpsServico
 					.getCpTipoServico().getSituacaoDefault();

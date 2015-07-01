@@ -53,13 +53,13 @@ import br.gov.jfrj.siga.libs.rpc.FaultMethodResponseRPC;
 import br.gov.jfrj.siga.libs.rpc.SimpleMethodResponseRPC;
 import br.gov.jfrj.siga.vraptor.suporte.ConfiguracaoConfManual;
 
-//MIGRA«√O VRAPTOR DA CLASSE WEB-WORK "package br.gov.jfrj.webwork.action.SelfConfigAction"
+//MIGRA√á√ÉO VRAPTOR DA CLASSE WEB-WORK "package br.gov.jfrj.webwork.action.SelfConfigAction"
 
 @Resource
 public class ServicoController 	extends SigaController {
 	
 	
-	// preparaÁ„o do ambiente
+	// prepara√ß√£o do ambiente
 	private CpTipoConfiguracao cpTipoConfiguracaoUtilizador;
 	private CpTipoConfiguracao cpTipoConfiguracaoAConfigurar;
 	private List<CpServico> cpServicosDisponiveis;
@@ -67,17 +67,17 @@ public class ServicoController 	extends SigaController {
 	
 	private List<CpSituacaoConfiguracao> cpSituacoesPossiveis;
 	*/
-	// ediÁ„o
+	// edi√ß√£o
 	private DpLotacao dpLotacaoConsiderada;
 	private List<DpPessoa> dpPessoasDaLotacao; 
 	private List<CpConfiguracao> cpConfiguracoesAdotadas;
-	// gravaÁ„o - parametros
+	// grava√ß√£o - parametros
 	private String idPessoaConfiguracao;
 	private String idServicoConfiguracao;
 	private String idSituacaoConfiguracao;
 	private Long idTipoConfiguracao;
 	
-	// gravaÁ„o - retorno
+	// grava√ß√£o - retorno
 	private String respostaXMLStringRPC;
 	private String resultadoRetornoAjax;
 	private String mensagemRetornoAjax;
@@ -111,12 +111,12 @@ public class ServicoController 	extends SigaController {
 			DpLotacao t_dltLotacao = obterLotacaoEfetiva();
 			dpLotacaoConsiderada = t_dltLotacao;
 			if (t_dltLotacao != null) {
-				// TODO: _LAGS - verificar opÁ„o para sublotaÁıes
+				// TODO: _LAGS - verificar op√ß√£o para sublota√ß√µes
 				setDpPessoasDaLotacao(dao().pessoasPorLotacao(t_dltLotacao.getIdLotacao(), false,false,SituacaoFuncionalEnum.ATIVOS_E_CEDIDOS));
 				setCpConfiguracoesAdotadas(obterConfiguracoesDasPessoasDaLotacaoConsiderada());
 			}
 		} else {
-			throw new AplicacaoException("Acesso n„o permitido !");
+			throw new AplicacaoException("Acesso n√£o permitido !");
 			
 		}	
 		
@@ -132,7 +132,7 @@ public class ServicoController 	extends SigaController {
 	}
 	
 	/**
-	 * Retorna as configuraÁıes para as pessoas da lotaÁ„o considerada   
+	 * Retorna as configura√ß√µes para as pessoas da lota√ß√£o considerada   
 	 *  
 	 */
 	private List<CpConfiguracao> obterConfiguracoesDasPessoasDaLotacaoConsiderada() throws AplicacaoException {
@@ -160,7 +160,7 @@ public class ServicoController 	extends SigaController {
 	}
 	
 	/**
-	 *  Retorna a situacao padr„o para um dado servico
+	 *  Retorna a situacao padr√£o para um dado servico
 	 * 
 	 */
 	private CpSituacaoConfiguracao obterSituacaoPadrao(CpServico p_cpsServico) {
@@ -169,17 +169,17 @@ public class ServicoController 	extends SigaController {
 	
 
 	/**
-	 *  Retorna se o usu·rio ou quem ele substitui pode
+	 *  Retorna se o usu√°rio ou quem ele substitui pode
 	 *  pode executar a interface
 	 */
 	private boolean seUsuarioPodeExecutar() {
-		// TODO: _LAGS - obterPessoaEfetiva() e ver se È diretor
+		// TODO: _LAGS - obterPessoaEfetiva() e ver se √© diretor
 		/// ID_TIPO_CONFIGURACAO_PODE_EXECUTAR_SERVICO = new Long(202);
 		return true;
 	}
 
 	/**
-	 * Retorna a configuraÁ„o para a pessoa, lotaÁ„o e cpTipoConfiguracaoAConfigurar  
+	 * Retorna a configura√ß√£o para a pessoa, lota√ß√£o e cpTipoConfiguracaoAConfigurar  
 	 *  
 	 */
 	private CpConfiguracao obterConfiguracao(DpLotacao p_dltLotacao,
@@ -223,8 +223,8 @@ public class ServicoController 	extends SigaController {
 	}
 	
 	/**
-	 *  Retorna o tipo de configuraÁ„o que o utilizador da interface  
-	 *  tem permiss„o
+	 *  Retorna o tipo de configura√ß√£o que o utilizador da interface  
+	 *  tem permiss√£o
 	 */
 	private CpTipoConfiguracao obterCpTipoConfiguracaoUtilizador() {
 		CpTipoConfiguracao t_tcfTipo = dao.consultar(
@@ -245,7 +245,7 @@ public class ServicoController 	extends SigaController {
 	}
 	
 	/**
-	*  Retorna o tipo de configuraÁ„o a Configurar  
+	*  Retorna o tipo de configura√ß√£o a Configurar  
 	*  
 	*/
 	private CpTipoConfiguracao obterCpTipoConfiguracaoAConfigurar(Long idTipoConfiguracao) {
@@ -265,7 +265,7 @@ public class ServicoController 	extends SigaController {
 	}
 	
 	/**
-	*  ObtÈm, os servicos da lotaÁ„o efetiva
+	*  Obt√©m, os servicos da lota√ß√£o efetiva
 	*/
 	@SuppressWarnings("unchecked")
 	private ArrayList<CpServico> obterServicosDaLotacaoEfetiva() {
@@ -288,21 +288,21 @@ public class ServicoController 	extends SigaController {
 	}
 	
 	/**
-	*  Retorna o tipo de lotaÁ„o do usu·rio 
-	*  ou o tipo de lotaÁ„o na qual ele substitui alguÈm
+	*  Retorna o tipo de lota√ß√£o do usu√°rio 
+	*  ou o tipo de lota√ß√£o na qual ele substitui algu√©m
 	*/     
 	private CpTipoLotacao obterTipoDeLotacaoEfetiva() {
-		 /*CÛdigo definitivo
+		 /*C√≥digo definitivo
 		 * return obterLotacaoEfetiva().getCpTipoLotacao();
-		 * abaixo codigo tempor·rio : usado nos testes iniciais
+		 * abaixo codigo tempor√°rio : usado nos testes iniciais
 		 */
 		//return dao.consultar(100L, CpTipoLotacao.class, false);
 		return obterLotacaoEfetiva().getCpTipoLotacao();
 	}
 	
 	/**
-	 *  Retorna a lotaÁ„o do usu·rio ou a lotaÁ„o na qual ele
-	 *  substitui alguÈm
+	 *  Retorna a lota√ß√£o do usu√°rio ou a lota√ß√£o na qual ele
+	 *  substitui algu√©m
 	 */
 	private DpLotacao obterLotacaoEfetiva() {
 		if (getLotaTitular() != null)  {
@@ -321,20 +321,20 @@ public class ServicoController 	extends SigaController {
 	public void aInserirPessoaExtra() throws Exception{
 		DpPessoa pes = dao.consultar(paramLong("pessoaExtra_pessoaSel.id"), DpPessoa.class,false);
 		if (pes.getLotacao().equivale(obterLotacaoEfetiva())){
-			throw new AplicacaoException("A pessoa selecionada deve ser de outra lotaÁ„o!");
+			throw new AplicacaoException("A pessoa selecionada deve ser de outra lota√ß√£o!");
 		}
 		
 		
 		/*
-		 * MELHORAR: Permite a inclus„o apenas de pessoas ativas. 
-		 * Isso deve ser melhorado, pois ainda n„o existe uma referÍncia nem mapeamento no hibernate
-		 *  para a descriÁ„o da situaÁ„o funciona da pessoa. 
+		 * MELHORAR: Permite a inclus√£o apenas de pessoas ativas. 
+		 * Isso deve ser melhorado, pois ainda n√£o existe uma refer√™ncia nem mapeamento no hibernate
+		 *  para a descri√ß√£o da situa√ßao funcional da pessoa. 
 		 * */
 		if(!pes.getSituacaoFuncionalPessoa().equals("1")){
 			if (pes.getSituacaoFuncionalPessoa().equals("2")){
-				throw new AplicacaoException("N„o È possÌvel inserir uma pessoa que est· CEDIDA!<br/>Por favor, abra um chamado para o suporte tÈcnico.");
+				throw new AplicacaoException("N√£o √© poss√©vel inserir uma pessoa que est√° CEDIDA!<br/>Por favor, abra um chamado para o suporte t√©cnico.");
 			}else{
-				throw new AplicacaoException("A pessoa n„o est· com situaÁ„o funcional ATIVA! SituaÁ„o atual: " + pes.getSituacaoFuncionalPessoa() + "<br/>Por favor, abra um chamado para o suporte tÈcnico.");	
+				throw new AplicacaoException("A pessoa n√£o est√° com situa√ß√£o funcional ATIVA! Situa√ß√£o atual: " + pes.getSituacaoFuncionalPessoa() + "<br/>Por favor, abra um chamado para o suporte t√©cnico.");	
 			}
 			
 		}
@@ -390,7 +390,7 @@ public class ServicoController 	extends SigaController {
 																		t_cpsServico);
                 
                 t_cfgConfigGravada.toString();
-                // devolve os ids como confirmaÁ„o
+                // devolve os ids como confirma√ß√£o
 				HashMap<String, String> t_hmpRetorno = new HashMap<String, String>();
 				t_hmpRetorno.put("idpessoa", /*idPessoaConfiguracao*/ String.valueOf(t_cfgConfigGravada.getDpPessoa().getIdPessoa()));
 				t_hmpRetorno.put("idservico", /*idServicoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpServico().getIdServico()));
@@ -406,7 +406,7 @@ public class ServicoController 	extends SigaController {
 			}
 		} else {
 			FaultMethodResponseRPC t_fmrRetorno = new FaultMethodResponseRPC();
-			t_fmrRetorno.set(0, "Acesso n„o permitido !");
+			t_fmrRetorno.set(0, "Acesso n√£o permitido !");
 			setRespostaXMLStringRPC(t_fmrRetorno.toXMLString());
 		}
 	    result

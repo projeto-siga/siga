@@ -204,36 +204,36 @@ public class SubstituicaoController extends SigaController {
 			dao().iniciarTransacao();
 			if (tipoTitular == 1) {
 				if (this.titularSel.getId() == null)
-					throw new AplicacaoException("Titular n�o informado");
+					throw new AplicacaoException("Titular não informado");
 				
 				subst.setTitular(dao().consultar(this.titularSel.getId(),DpPessoa.class, false));
 				
 				if (!subst.getTitular().getIdPessoa().equals(getCadastrante().getIdPessoa())  
 						&& !podeCadastrarQualquerSubstituicao())
-					throw new AplicacaoException("Titular n�o permitido. Apenas o pr�prio usu�rio pode se definir como titular.");
+					throw new AplicacaoException("Titular não permitido. Apenas o próprio usuário pode se definir como titular.");
 				
 				subst.setLotaTitular(subst.getTitular().getLotacao());
 			} else {
 				subst.setTitular(null);
 				if (this.lotaTitularSel.getId() == null)
-					throw new AplicacaoException("A lota��o titular n�o foi informada");
+					throw new AplicacaoException("A lotação titular não foi informada");
 				
 				subst.setLotaTitular(dao().consultar(this.lotaTitularSel.getId(), DpLotacao.class, false));
 				
 				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
 						&& !podeCadastrarQualquerSubstituicao())
-					throw new AplicacaoException("Lota��o titular n�o permitida. Apenas um usu�rio da pr�pria lota��o pode defini-la como titular.");
+					throw new AplicacaoException("Lotação titular não permitida. Apenas um usuário da própria lotação pode defini-la como titular.");
 			}
 			if (tipoSubstituto == 1) {
 				if (this.substitutoSel.getId() == null)
-					throw new AplicacaoException("Substituto n�o informado");
+					throw new AplicacaoException("Substituto não informado");
 				
 				subst.setSubstituto(daoPes(this.substitutoSel.getId()));
 				subst.setLotaSubstituto(subst.getSubstituto().getLotacao());
 			} else {
 				subst.setSubstituto(null);
 				if (this.lotaSubstitutoSel.getId() == null)
-					throw new AplicacaoException("A lota��o do substituto n�o foi informada");
+					throw new AplicacaoException("A lotação do substituto não foi informada");
 				
 				subst.setLotaSubstituto(daoLot(this.lotaSubstitutoSel.getId()));
 			}
@@ -277,7 +277,7 @@ public class SubstituicaoController extends SigaController {
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
 			result.include("exceptionStack", e);
-			throw new AplicacaoException("N�o foi poss�vel Gravar", 0, e);			
+			throw new AplicacaoException("Não foi possível Gravar", 0, e);			
 		}
 
 	}
@@ -359,13 +359,13 @@ public class SubstituicaoController extends SigaController {
 				dao().commitTransacao();
 				result.use(Results.referer()).redirect();				
 			} else
-				throw new AplicacaoException("Usu�rio n�o tem permiss�o para excluir esta substitui��o");	
+				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
 		} else
-			throw new AplicacaoException("N�o foi informado id");
+			throw new AplicacaoException("Não foi informado id");
 		
 		}catch (Exception e) {
 			result.include("exceptionStack", e);
-			throw new AplicacaoException("N�o foi poss�vel Excluir", 0, e);
+			throw new AplicacaoException("Não foi possível Excluir", 0, e);
 		}
 		
 	}	

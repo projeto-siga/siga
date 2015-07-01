@@ -49,11 +49,11 @@ public class PrincipalQuadrosController extends SigaController {
 		String html = http.get(url, getRequest(), null);
 		
 		if (html.contains("HTTP Status 404")) {
-			return "<span style='color:red' class='error'> 404 - Módulo indisponível. </span>";
+			return "<span style='color:red' class='error'> 404 - MÃ³dulo indisponÃ­vel. </span>";
 		} else if (html.contains("HTTP Status 500")) {
-			return "<span style='color:red' class='error'> 500 - Módulo indisponível. </span>";
+			return "<span style='color:red' class='error'> 500 - MÃ³dulo indisponÃ­vel. </span>";
 		} else if (html.contains("HTTP Status")) {
-			return "<span style='color:red' class='error'> Módulo indisponível. </span>";
+			return "<span style='color:red' class='error'> MÃ³dulo indisponÃ­vel. </span>";
 		}
 		return html;
 	}

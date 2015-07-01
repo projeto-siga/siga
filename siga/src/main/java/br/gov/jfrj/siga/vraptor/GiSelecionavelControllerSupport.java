@@ -35,6 +35,6 @@ public abstract class GiSelecionavelControllerSupport<T extends Selecionavel, Da
 	}
 
 	protected void assertAcesso(String pathServico) throws AplicacaoException {
-		super.assertAcesso("GI:Módulo de Gestão de Identidade;" + pathServico);
+		super.assertAcesso("GI:MÃ³dulo de GestÃ£o de Identidade;" + pathServico);
 	}
 }

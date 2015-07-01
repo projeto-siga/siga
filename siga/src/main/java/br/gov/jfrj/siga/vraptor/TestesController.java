@@ -108,8 +108,8 @@ public class TestesController extends SigaController {
 
 			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
 				//verificar se apos retirada dos prefixos referente 
-				//ao orgao (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e n�o achar resultado com as opcoes anteriores 
-				//a string copiaSigla somente possui n�meros
+				//ao orgao (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e não achar resultado com as opcoes anteriores 
+				//a string copiaSigla somente possui números
 				if (copiaSigla.matches("(^[0-9]+$)")) {
 					URLSelecionar = urlBase + "/siga"
 							+ (testes.length() > 0 ? testes : "/pessoa")

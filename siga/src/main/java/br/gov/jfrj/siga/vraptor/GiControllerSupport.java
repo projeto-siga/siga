@@ -33,7 +33,7 @@ public class GiControllerSupport extends SigaController {
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException {
-		super.assertAcesso("GI:MÛdulo de Gest„o de Identidade;" + pathServico);
+		super.assertAcesso("GI:M√≥dulo de Gest√£o de Identidade;" + pathServico);
 	}
 
 }

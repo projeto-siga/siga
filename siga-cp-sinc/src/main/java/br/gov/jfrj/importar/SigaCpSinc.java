@@ -68,8 +68,8 @@ import br.gov.jfrj.siga.util.ImportarXmlProperties;
 
 public class SigaCpSinc {
 
-	// a rotina do Markenson est· fazendo coisas demais
-	// a rotina de sync est· atribuindo um nÌvel de dependencia estranho para
+	// a rotina do Markenson est√° fazendo coisas demais
+	// a rotina de sync est√° atribuindo um n√≠vel de dependencia estranho para
 	// renato (8)
 
 	private static boolean modoLog = false;
@@ -134,7 +134,7 @@ public class SigaCpSinc {
 	//
 	private Logger logger = Logger.getLogger("br.gov.jfrj.log.sinc");
 	/*
-	 * verificar duplicidades (·rvore de Hashtables : nivel 0: orgaoUsuario,
+	 * verificar duplicidades (√°rvore de Hashtables : nivel 0: orgaoUsuario,
 	 * nivel 1: entidade, nivel 2: atributo,valor
 	 */
 	Hashtable<String, Hashtable<String, Hashtable<String, Hashtable<String, String>>>> unicidades = new Hashtable<String, Hashtable<String, Hashtable<String, Hashtable<String, String>>>>();
@@ -158,22 +158,22 @@ public class SigaCpSinc {
 			// sinc.religarListaPorIdExterna(setAntigo);
 			sinc.setSetAntigo(setAntigo);
 
-			// verifica se as pessoas possuem lotaÁ„o
+			// verifica se as pessoas possuem lota√ß√£o
 			
 			if (modoLog) {
 				for (Sincronizavel item : setNovo) {
 					if (item instanceof DpPessoa) {
 						DpPessoa p = ((DpPessoa) item);
 						if (p.getLotacao() == null) {
-							log("Pessoa sem lotaÁ„o! " + p.getSigla());
+							log("Pessoa sem lota√ß√£o! " + p.getSigla());
 						}
 					}
 				}
 			}
 			list = sinc.getOperacoes(dt);
 		} catch (Exception e) {
-			log("TransaÁ„o abortada por erro: " + e.getMessage());
-			throw new Exception("Erro na gravaÁ„o", e);
+			log("Transa√ß√£o abortada por erro: " + e.getMessage());
+			throw new Exception("Erro na grava√ß√£o", e);
 		}
 		try {
 			CpDao.getInstance().iniciarTransacao();
@@ -200,7 +200,7 @@ public class SigaCpSinc {
 
 			}
 			/*
-			 * sqls para inspeÁ„o no display :
+			 * sqls para inspe√ß√£o no display :
 			 * 
 			 * HibernateUtil.getSessao().createSQLQuery(
 			 * "select * from corporativo.dp_cargo where ID_ORGAO_USU = 9999"
@@ -219,18 +219,18 @@ public class SigaCpSinc {
 			if (modoLog) {
 				log("");
 				log("*********MODO LOG **********");
-				log("As alteraÁıes n„o ser„o efetivadas! Executando rollback...");
+				log("As altera√ß√µes n√£o ser√£o efetivadas! Executando rollback...");
 				log("");
 				log("");
 				CpDao.getInstance().rollbackTransacao();
 			} else if (maxSinc > 0 && list.size() > maxSinc) {
 				log("");
 				log("");
-				log("***ATEN«√O***: Limite de operaÁıes por sincronismo excedido!");
-				log("OperaÁıes a serem executadas: " + list.size()
-						+ "\nOperaÁıes permitidas: " + maxSinc);
-				log("Ajuste o pa‚metro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
-				log("As alteraÁıes n„o ser„o efetivadas! Executando rollback...");
+				log("***ATEN√á√ÉO***: Limite de opera√ß√µes por sincronismo excedido!");
+				log("Opera√ß√µes a serem executadas: " + list.size()
+						+ "\nOpera√ß√µes permitidas: " + maxSinc);
+				log("Ajuste o par√¢metro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
+				log("As altera√ß√µes n√£o serao efetivadas! Executando rollback...");
 				log("");
 				log("");
 
@@ -238,22 +238,22 @@ public class SigaCpSinc {
 			} else {
 
 				CpDao.getInstance().commitTransacao();
-				log("TransaÁ„o confirmada");
+				log("Transa√ß√£o confirmada");
 			}
 		} catch (Exception e) {
 			CpDao.getInstance().rollbackTransacao();
-			log("TransaÁ„o abortada por erro: " + e.getMessage());
-			throw new Exception("Erro na gravaÁ„o", e);
+			log("Transa√ß√£o abortada por erro: " + e.getMessage());
+			throw new Exception("Erro na grava√ß√£o", e);
 		}
 
 		HibernateUtil.getSessao().flush();
-		log("Total de alteraÁıes: " + list.size());
+		log("Total de altera√ß√µes: " + list.size());
 		// ((GenericoHibernateDao) dao).getSessao().flush();
 	}
 
 	/**
-	 * Verifica se a entidade que est· sendo incluÌda È uma entidade que j·
-	 * existe e foi removida indevidamente ocasionando a perda do histÛrico
+	 * Verifica se a entidade que est√° sendo inclu√≠da √† uma entidade que j√°
+	 * existe e foi removida indevidamente ocasionando a perda do hist√≥rico
 	 * 
 	 * @param opr
 	 * @return
@@ -378,7 +378,7 @@ public class SigaCpSinc {
 	protected static int parseParametros(String[] pars) {
 
 		if (pars.length < 2) {
-			System.err.println("N˙mero de Parametros inv·lidos");
+			System.err.println("N√∫mero de Parametros inv√°lidos");
 			return 10;
 		}
 		String servidor = pars[0];
@@ -386,7 +386,7 @@ public class SigaCpSinc {
 				&& !servidor.toLowerCase().contains("-desenv")
 				&& !servidor.toLowerCase().contains("-homolo")
 				&& !servidor.toLowerCase().contains("-treina")) {
-			System.err.println("Servidor n„o informado");
+			System.err.println("Servidor n√£o informado");
 			return 11;
 		}
 
@@ -419,22 +419,22 @@ public class SigaCpSinc {
 
 	/**
 	 * @param args
-	 *            - recebe os parametros da linha de comando. Os par‚metros
+	 *            - recebe os parametros da linha de comando. Os par√¢metros
 	 *            devem ser definidos na ordem abaixo:
 	 * 
 	 *            ****Banco de dados**** -prod --> aponta para o banco de dados
-	 *            de produÁ„o -homolo --> aponta para o banco de dados de
-	 *            homologaÁ„o -treina --> aponta para o banco de dados de
+	 *            de produ√ß√£o -homolo --> aponta para o banco de dados de
+	 *            homologa√ß√£o -treina --> aponta para o banco de dados de
 	 *            treinamento -desenv --> aponta para o banco de dados de testes
 	 * 
-	 *            ****Localidade**** -sjrj --> os dados que ser„o sincronizados
-	 *            s„o da SJRJ -trf2 --> os dados que ser„o sincronizados s„o do
-	 *            TRF2 -sjes --> os dados que ser„o sincronizados s„o da SJES
+	 *            ****Localidade**** -sjrj --> os dados que ser√£o sincronizados
+	 *            s√£o da SJRJ -trf2 --> os dados que ser√£o sincronizados s√£o do
+	 *            TRF2 -sjes --> os dados que ser√£o sincronizados s√£o da SJES
 	 * 
 	 *            ****Funcionalidades***** -ldap --> sincroniza o banco de dados
 	 *            com o Active Directory
 	 * 
-	 *            obs: se nenhum par‚metro for definido, sincorniza o XML com o
+	 *            obs: se nenhum par√¢metro for definido, sincorniza o XML com o
 	 *            banco de dados
 	 * 
 	 * 
@@ -497,7 +497,7 @@ public class SigaCpSinc {
 
 			if (url == null || (!url.startsWith("-url") && url.length() < 3)
 					|| (url.replace("-url=", "").startsWith("-"))) {
-				throw new AplicacaoException(("url n„o informada"));
+				throw new AplicacaoException(("url n√£o informada"));
 			}
 
 		}
@@ -515,12 +515,12 @@ public class SigaCpSinc {
 				urlOrigem = url.substring(5);
 
 			} else {
-				// VerificaÁ„o do acÙnimo do org„o usu·rio
+				// Verifica√ß√£o do acr√¥nimo do org√£o usu√°rio
 				String acron = url.substring(1);
 				CpOrgaoUsuario orgu = obterOrgaoUsuario(acron);
 				if (orgu == null) {
-					log("AcrÙnimo '" + acron
-							+ "' do ”rg„o Usu·rio n„o encontrado no servidor '"
+					log("Acr√¥nimo '" + acron
+							+ "' do √≥rg√£o Usu√°rio n√£o encontrado no servidor '"
 							+ servidor + "'");
 					return;
 				}
@@ -544,14 +544,14 @@ public class SigaCpSinc {
 			importarXml(connMumps.getInputStream());
 			log("Importando: BD");
 			setAntigo.addAll(importarTabela());
-			log("Gravando alteraÁıes");
+			log("Gravando altera√ß√µes");
 			gravar(dt);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log(e.getMessage());
 		}
 		long total = (System.currentTimeMillis()-inicio)/1000;
-		log("Tempo total de execuÁ„o: " + total + " segundos (" + total/60 +" min)" );
+		log("Tempo total de execu√ß√£o: " + total + " segundos (" + total/60 +" min)" );
 
 	}
 
@@ -574,7 +574,7 @@ public class SigaCpSinc {
 		
 		
 		if (modoLog) {
-			logComDestaque(">>>Iniciando em modo LOG!<<<\nUse -modoLog=false para sair do modo LOG e escrever as alteraÁıes");
+			logComDestaque(">>>Iniciando em modo LOG!<<<\nUse -modoLog=false para sair do modo LOG e escrever as altera√ß√µes");
 		}
 		log("MAX SINC = " + maxSinc);
 
@@ -605,9 +605,9 @@ public class SigaCpSinc {
 				DpFuncaoConfianca.class, "dataFimFuncao", orgaoUsuario)) {
 			l.add(o);
 		}
-		// Comentado por Edson, pois precisa ser resolvido problema dos Ûrg„os
+		// Comentado por Edson, pois precisa ser resolvido problema dos √≥rg√£os
 		// (do CJF)
-		// cadastrados manualmente mas que n„o constam s„o enviados pelo XML
+		// cadastrados manualmente mas que n√£o constam s√£o enviados pelo XML
 		/*
 		 * if (getVersaoInteira().intValue() >= 2) { for (CpOrgao o :
 		 * CpDao.getInstance().listarAtivos(CpOrgao.class, "hisDtFim",
@@ -643,8 +643,8 @@ public class SigaCpSinc {
 				return tp;
 			}
 		}
-		throw new Exception("CpTipoPessoa com descriÁ„o '" + dscTpPessoa
-				+ "' n„o encontrado(a) !");
+		throw new Exception("CpTipoPessoa com descri√ß√£o '" + dscTpPessoa
+				+ "' n√£o encontrado(a) !");
 	}
 
 	private CpTipoPessoa obterTipoPessoaPorId(Integer idTpPessoa)
@@ -659,7 +659,7 @@ public class SigaCpSinc {
 			}
 		}
 		throw new Exception("CpTipoPessoa com id '" + idTpPessoa
-				+ "' n„o encontrado(a) !");
+				+ "' n√£o encontrado(a) !");
 	}
 
 	private CpTipoPapel obterTipoPapelPorDescricao(String dscTpPapel)
@@ -673,8 +673,8 @@ public class SigaCpSinc {
 				return tp;
 			}
 		}
-		throw new Exception("CpTipoPapel com descriÁ„o " + dscTpPapel
-				+ " n„o encontrado !");
+		throw new Exception("CpTipoPapel com descri√ß√£o " + dscTpPapel
+				+ " n√£o encontrado !");
 	}
 
 	private CpTipoLotacao obterTipoLotacaoPorDescricao(String dscTpLotacao)
@@ -688,8 +688,8 @@ public class SigaCpSinc {
 				return tl;
 			}
 		}
-		throw new Exception("CpTipoLotacao com descriÁ„o " + dscTpLotacao
-				+ " n„o encontrado !");
+		throw new Exception("CpTipoLotacao com descri√ß√£o " + dscTpLotacao
+				+ " n√£o encontrado !");
 	}
 
 	private CpTipoLotacao obterTipoLotacaoPorId(Long idTpLotacao)
@@ -704,7 +704,7 @@ public class SigaCpSinc {
 			}
 		}
 		throw new Exception("CpTipoPessoa com id " + idTpLotacao
-				+ "n„o encontrado !");
+				+ "n√£o encontrado !");
 	}
 
 	protected static CpOrgaoUsuario obterOrgaoUsuario(String acronimo) {
@@ -758,7 +758,7 @@ public class SigaCpSinc {
 		try {
 			// Mensagens.getString("url.origem")
 			/*
-			 * CÛdigo antigo (passou para )superior.
+			 * C√≥digo antigo (passou para )superior.
 			 * 
 			 * String urlOrigem = ""; if (this.url.startsWith("-url")) urlOrigem
 			 * = this.url.substring(5);
@@ -804,7 +804,7 @@ public class SigaCpSinc {
 					} else if (parser.getName().equals("orgao")) {
 						if (getVersaoInteira().intValue() < 2)
 							throw new Exception(
-									"Vers„o n„o possui Ûrg„o ou atributo 'versao' n„o especificado. ");
+									"Vers√£o n√£o possui √≥rg√£o ou atributo 'versao' n√£o especificado. ");
 						setNovo.add(importarXmlOrgao(parser));
 					} else if (parser.getName().equals("lotacao")) {
 						setNovo.add(importarXmlLotacao(parser));
@@ -815,7 +815,7 @@ public class SigaCpSinc {
 					} else if (parser.getName().equals("papel")) {
 						if (getVersaoInteira().intValue() < 2)
 							throw new Exception(
-									"Vers„o n„o possui papel ou atributo 'versao' n„o especificado. ");
+									"Vers√£o n√£o possui papel ou atributo 'versao' n√£o especificado. ");
 						setNovo.add(importarXmlPapel(parser));
 					}
 				}
@@ -834,44 +834,44 @@ public class SigaCpSinc {
 		}
 
 		if (!contemCargo) {
-			throw new AplicacaoException("XML n„o contÈm cargo!");
+			throw new AplicacaoException("XML n√£o cont√©m cargo!");
 		}
 		if (!contemLotacao) {
-			throw new AplicacaoException("XML n„o contÈm lotaÁ„o!");
+			throw new AplicacaoException("XML n√£o cont√©m lota√ß√£o!");
 		}
 		if (!contemPessoa) {
-			throw new AplicacaoException("XML n„o contÈm pessoa!");
+			throw new AplicacaoException("XML n√£o cont√©m pessoa!");
 		}
 		if (!contemFuncao) {
 			// throw new
-			// AplicacaoException("XML n„o contÈm funÁ„o de confianÁa!");
+			// AplicacaoException("XML n√£o cont√©m fun√ß√£o de confian√ßa!");
 		}
 		if (!contemPapel) {
 			// throw new
-			// AplicacaoException("XML n„o contÈm funÁ„o de confianÁa!");
+			// AplicacaoException("XML n√£o cont√©m fun√ß√£o de confian√ßa!");
 		}
 
 		if (!fDocumentoCompleto) {
 			throw new Exception(
-					"XML arquivo n„o estava completo! Nenhuma alteraÁ„o foi realizada na base.");
+					"XML arquivo n√£o estava completo! Nenhuma altera√ß√£o foi realizada na base.");
 		}
 
 	}
 
 	/**
-	 * Cria registro de processamento do XML com o objetivo de verificar se h·
+	 * Cria registro de processamento do XML com o objetivo de verificar se h√°
 	 * duplicidade
 	 * 
 	 * @param siglaOrgao
-	 *            - sigla do Ûrgao (base)
+	 *            - sigla do √≥rgao (base)
 	 * @param nomeEntidade
-	 *            - nome da entidade (Se È 'orgao', 'pessoa', 'lotacao' etc.
+	 *            - nome da entidade (Se √© 'orgao', 'pessoa', 'lotacao' etc.
 	 * @param nomeAtributo
 	 *            - nome do atributo da entidade
 	 * @param valor
 	 *            - valor do atributo
 	 * @param identificador
-	 *            - conte˙do que procura identificar onde ocorreu a duplicaÁ„o
+	 *            - conte√∫do que procura identificar onde ocorreu a duplica√ß√£o
 	 * @throws Exception
 	 *             - no caso de haver duplicidade.
 	 */
@@ -879,7 +879,7 @@ public class SigaCpSinc {
 			String nomeAtributo, String valor, String identificador)
 			throws Exception {
 		if (valor == null || valor.equals("")) {
-			throw new Exception("Org„o usu·rio: " + siglaOrgao + "; Entidade: "
+			throw new Exception("Org√£o usu√°rio: " + siglaOrgao + "; Entidade: "
 					+ nomeEntidade + "; Atributo: " + nomeAtributo
 					+ "; Valor: " + valor
 					+ " => valor nulo para o identificador: " + identificador);
@@ -903,15 +903,15 @@ public class SigaCpSinc {
 				unicidades.get(siglaOrgao).get(nomeEntidade).get(nomeAtributo)
 						.put(valor, identificador);
 			} catch (Exception e) {
-				throw new Exception("Org„o usu·rio: " + siglaOrgao.toString()
+				throw new Exception("Org√£o usu√°rio: " + siglaOrgao.toString()
 						+ "; Entidade: " + nomeEntidade.toString()
 						+ "; Atributo: " + nomeAtributo.toString()
 						+ "; Valor: " + valor.toString()
-						+ " Erro na tentativa de inserir a lotaÁ„o. " + " => "
+						+ " Erro na tentativa de inserir a lota√ß√£o. " + " => "
 						+ e.getMessage());
 			}
 		} else {
-			throw new Exception("Org„o usu·rio: "
+			throw new Exception("Org√£o usu√°rio: "
 					+ siglaOrgao
 					+ "; Entidade: "
 					+ nomeEntidade
@@ -919,7 +919,7 @@ public class SigaCpSinc {
 					+ nomeAtributo
 					+ "; Valor: "
 					+ valor
-					+ " => j· existe para o identificador: "
+					+ " => j√° existe para o identificador: "
 					+ unicidades.get(siglaOrgao).get(nomeEntidade)
 							.get(nomeAtributo).get(valor)
 					+ " na tentativa de inserir o identificador: "
@@ -934,7 +934,7 @@ public class SigaCpSinc {
 				parseStr(parser, "id"), parseStr(parser, "nome"));
 		cargo.setNomeCargo(parseStr(parser, "nome"));
 		cargo.setSigla(parseStr(parser, "sigla"));
-		// leiaute antigo ainda n„o contÈm sigla
+		// leiaute antigo ainda n√£o cont√©m sigla
 		if (parseStr(parser, "sigla") != null) {
 			criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "cargo", "sigla",
 					parseStr(parser, "sigla"), parseStr(parser, "id"));
@@ -951,7 +951,7 @@ public class SigaCpSinc {
 				"idExterna", parseStr(parser, "id"), parseStr(parser, "nome"));
 		funcao.setNomeFuncao(parseStr(parser, "nome"));
 		funcao.setSigla(parseStr(parser, "sigla"));
-		// leiaute antigo ainda n„o contÈm sigla
+		// leiaute antigo ainda n√£o cont√©m sigla
 		if (parseStr(parser, "sigla") != null) {
 			criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "funcao",
 					"sigla", parseStr(parser, "sigla"), parseStr(parser, "id"));
@@ -1026,7 +1026,7 @@ public class SigaCpSinc {
 			pessoa.setIdExterna(parseStr(parser, "id"));
 			String situacaoFuncPessoa = obterSituacaoPessoaPelaDescricao(
 					parseStr(parser, "situacao").trim(), parseStr(parser, "id"));
-			// A unicidade da ID somente È verificada para os ATIVOS
+			// A unicidade da ID somente √© verificada para os ATIVOS
 			// (situacao=1)
 			/*
 			 * if ("1".equals(situacaoFuncPessoa) ) {
@@ -1039,7 +1039,7 @@ public class SigaCpSinc {
 			} catch (Exception ex) {
 				pessoa.setCpfPessoa(parseLong(parser, "id"));
 			}
-			// A unicidade do CPF somente È verificada para os ATIVOS
+			// A unicidade do CPF somente √© verificada para os ATIVOS
 			// (situacao=1)
 			/*
 			 * if ("1".equals(situacaoFuncPessoa ) ) {
@@ -1127,11 +1127,11 @@ public class SigaCpSinc {
 				pessoa.setLotacao(o);
 			}
 			CpTipoPessoa o;
-			// Edson: 1) alguns XML's informam a descriÁ„o do tipo
+			// Edson: 1) alguns XML's informam a descri√ß√£o do tipo
 			// ("Servidor", por exemplo) em vez do ID. 2) Alterar o nome do atributo de
-			// tipo_rh para tipo e, na hora de importar, ver se o valor È ID ou
-			// descriÁ„o. Ou ent„o solicitar que os Ûrg„os passem a enviar o ID, n„o
-			// a descriÁ„o
+			// tipo_rh para tipo e, na hora de importar, ver se o valor √© ID ou
+			// descri√ß√£o. Ou ent√£o solicitar que os √≥rg√£os passem a enviar o ID, n√£o
+			// a descri√ß√£o
 			if (parseStr(parser, "tipo") != null) {
 				o = obterTipoPessoaPorDescricao(parseStr(parser, "tipo"));
 				pessoa.setCpTipoPessoa(o);
@@ -1194,7 +1194,7 @@ public class SigaCpSinc {
 		}
 
 		if (maxSinc != -1 && list != null && (list.size() > maxSinc)){
-			logHandler.setAssunto("Limite de operaÁıes por sincronismo superior a 200. Execute o sincronismo manualmente.");
+			logHandler.setAssunto("Limite de opera√ß√µes por sincronismo superior a 200. Execute o sincronismo manualmente.");
 		}
 		
 		logHandler.setDestinatariosEmail(sDest.split(","));
@@ -1281,7 +1281,7 @@ public class SigaCpSinc {
 	}
 
 	/**
-	 * Atribui o tipo de lotacao caso ela seja da SJRJ (ProvisÛrio)
+	 * Atribui o tipo de lotacao caso ela seja da SJRJ (Provis√≥rio)
 	 * 
 	 * @throws Exception
 	 * @throws NumberFormatException
@@ -1290,7 +1290,7 @@ public class SigaCpSinc {
 	public void inferirTipoLotacaoSJRJ(DpLotacao lot)
 			throws NumberFormatException, Exception {
 		CpOrgaoUsuario org = lot.getOrgaoUsuario();
-		// ver se Ûrg„o usu·rio È SJRJ
+		// ver se √≥rg√£o usu√°rio √© SJRJ
 		if (org.getIdOrgaoUsu() == null)
 			return;
 		if (!org.getSigla().equals(obterOrgaoUsuarioSJRJ().getSigla()))
@@ -1301,7 +1301,7 @@ public class SigaCpSinc {
 			if (lotDIRFO != null
 					&& lotPaiAdm.getIdeLotacao()
 							.equals(lotDIRFO.getIdLotacao())) {
-				// È administrativo
+				// √© administrativo
 				lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("1")));
 				return;
 			} else {
@@ -1309,16 +1309,16 @@ public class SigaCpSinc {
 				lotPaiAdm = lotPaiAdm.getLotacaoPai();
 			}
 		}
-		// se n„o encontrou, procura para ver se È jurÌdico (Filho da SJRJ ou
+		// se n√£o encontrou, procura para ver se √© jur√≠dico (Filho da SJRJ ou
 		// ela)
-		// note que a A DIRFO se encaixa no critÈrio, mas j· foi tratada acima
+		// note que a A DIRFO se encaixa no crit√©rio, mas j√° foi tratada acima
 		DpLotacao lotSJRJ = getLotacaoSJRJ();
 		DpLotacao lotPaiJur = lot;
 		while (lotPaiJur != null) {
 			if (lotSJRJ != null
 					&& lotPaiJur.getIdeLotacao()
 							.equals(lotSJRJ.getIdeLotacao())) {
-				// È jurÌdico
+				// √© jur√≠dico
 				lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("100")));
 				return;
 			} else {
@@ -1331,14 +1331,14 @@ public class SigaCpSinc {
 		if (lot.getSiglaLotacao().contains("TR-")) {
 			lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("100")));
 		} else {
-			// Se È exceÁ„o, trata como administrativo
+			// Se √© exce√ß√£o, trata como administrativo
 			lot.setCpTipoLotacao(obterTipoLotacaoPorId(Long.valueOf("1")));
 		}
 		return;
 	}
 
 	/**
-	 * Atribui o tipo de pessoa caso ela seja da SJRJ (ProvisÛrio)
+	 * Atribui o tipo de pessoa caso ela seja da SJRJ (Provis√≥rio)
 	 * 
 	 * @throws Exception
 	 * 
@@ -1360,10 +1360,10 @@ public class SigaCpSinc {
 					// magistrado (1)
 					tipid = 1;
 				} else if (mat >= 20000L && mat <= 29999L) {
-					// aposentados na Època da implantaÁ„o do SIRH (2)
+					// aposentados na √©poca da implanta√ß√£o do SIRH (2)
 					tipid = 2;
 				} else if (mat >= 30000L && mat <= 69999L) {
-					// Estagi·rios (3)
+					// Estagi√°rios (3)
 					tipid = 3;
 				} else {
 					// TODO: _LAGS - Verificar como identificar tercerizados
@@ -1379,22 +1379,22 @@ public class SigaCpSinc {
 	}
 
 	/**
-	 * ObtÈm o cÛdigo da situaÁ„o funcional da pessoa a partir de ALGUMAS
-	 * descriÁıes Somente para os casos onde h· erro no envio pelo remetete -
+	 * Obt√©m o c√≥digo da situa√ß√£o funcional da pessoa a partir de ALGUMAS
+	 * descri√ß√µes Somente para os casos onde h√° erro no envio pelo remetete -
 	 * solicitar acerto nesse caso
 	 * 
 	 * @param situacaoFuncPessoa
 	 *            - parseStr(parser, "situacao").trim()
 	 * @param idPessoa
-	 *            - identificador ou descriÁ„o da situaÁ„o fuuncioal da pessoa
+	 *            - identificador ou descri√ß√£o da situa√ßao fuuncioal da pessoa
 	 * @return - identif
 	 * @throws Exception
 	 */
 	public String obterSituacaoPessoaPelaDescricao(String situacaoFuncPessoa,
 			String idPessoa) throws Exception {
 		// String situacaoFuncPessoa = parseStr(parser, "situacao").trim();
-		// Alguns tem enviado a descriÁ„o da pessoa baseado no manual ao
-		// invÈs do ID
+		// Alguns tem enviado a descri√ß√£o da pessoa baseado no manual ao
+		// inv√©s do ID
 		if ("ATIVO".equalsIgnoreCase(situacaoFuncPessoa)) {
 			return "1";
 		} else if ("CEDIDO".equalsIgnoreCase(situacaoFuncPessoa)) {
@@ -1422,13 +1422,13 @@ public class SigaCpSinc {
 					throw new Exception(
 							"Tag pessoa id "
 									+ idPessoa // parseStr(parser, "id")
-									+ " tem situacao funcional n„o tratada no roteiro: '"
+									+ " tem situacao funcional n√£o tratada no roteiro: '"
 									+ situacaoFuncPessoa + "'");
 				}
 			} catch (Exception e) {
 				throw new Exception("Tag pessoa id "
 						+ idPessoa // parseStr(parser, "id")
-						+ " tem situacao funcional n„o conhecida: '"
+						+ " tem situacao funcional n√£o conhecida: '"
 						+ situacaoFuncPessoa + "'");
 			}
 		}
@@ -1460,20 +1460,20 @@ public class SigaCpSinc {
 	}
 
 	/**
-	 * Acrescenta destinat·rios a serem notificados da sincronizaÁ„o
+	 * Acrescenta destinat√°rios a serem notificados da sincroniza√ß√£o
 	 * 
 	 * @param destinatarios
-	 *            - lista de e-mails separados por vÌrgula
+	 *            - lista de e-mails separados por v√≠rgula
 	 */
 	protected static void setDestinatariosExtras(String destinatarios) {
 		destinatariosExtras = destinatarios;
 	}
 
 	protected void exibirMensagemMaxSinc(List<Item> list) {
-		log("***ATEN«√O***: Limite de operaÁıes por sincronismo excedido!");
-		log("OperaÁıes a serem executadas: " + list.size()
-				+ "\nOperaÁıes permitidas: " + maxSinc);
-		log("Ajuste o pa‚metro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
-		log("As alteraÁıes n„o ser„o efetivadas! Executando rollback...");
+		log("***ATEN√á√ÉO***: Limite de opera√ß√µes por sincronismo excedido!");
+		log("Opera√ß√µes a serem executadas: " + list.size()
+				+ "\nOpera√ß√µes permitidas: " + maxSinc);
+		log("Ajuste o par√¢metro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
+		log("As altera√ß√µes n√£o ser√£o efetivadas! Executando rollback...");
 	}
 }

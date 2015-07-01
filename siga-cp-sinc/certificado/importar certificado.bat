@@ -1,1 +1,1 @@
-keytool -import -alias _____autoridade_raiz -keystore <caminho para o arquivo que contém os certificados do java> -file <caminho para o certificado da autoridade criada anteriormente>
+keytool -import -alias _____autoridade_raiz -keystore <caminho para o arquivo que contÃ©m os certificados do java> -file <caminho para o certificado da autoridade criada anteriormente>
